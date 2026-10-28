@@ -1,8 +1,8 @@
 import { createContext, useContext, type ReactNode } from 'react';
 import { Column, Text } from '@envsemble/envui';
 import { InteractiveMark } from '../../template/InteractiveMark';
-import { ExampleCode } from '../../template/LiveExample';
-import { MotionStage } from '../MotionStage';
+import { ExampleCode } from '../LiveExample';
+import { MotionStage } from '../../motion/MotionStage';
 
 /**
  * The parts a foundation page is written in, on the same rules as a component page's: a section

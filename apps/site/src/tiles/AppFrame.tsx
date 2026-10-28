@@ -12,7 +12,7 @@ import {
 import { Category } from '@envsemble/envui/icons/Category';
 import { Group } from '@envsemble/envui/icons/Group';
 import { Home } from '@envsemble/envui/icons/Home';
-import { usePointer, type PointerStep } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 
 const item = (index: number) => `.env-rail-list > li:nth-child(${index}) .env-rail-item`;
 

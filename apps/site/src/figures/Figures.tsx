@@ -11,20 +11,24 @@ import { Column, Theme, useTheme } from '@envsemble/envui';
 import { Check } from '@envsemble/envui/icons/Check';
 import { Close } from '@envsemble/envui/icons/Close';
 import { Warning } from '@envsemble/envui/icons/Warning';
-import type { DocumentationBlock, DocumentationSection, StageFill } from '../DocumentationTypes';
+import type {
+  DocumentationBlock,
+  DocumentationSection,
+  StageFill,
+} from '../shared/DocumentationTypes';
 import { Documentation } from '../pages/Documentation';
-import type { Documentation as Document } from '../Reference';
+import type { Documentation as Document } from '../pages/PageModel';
 import { AnatomyFigure } from './AnatomyFigure';
 import { CodeSlot, ExampleCode, ExampleRender, keepLinksInPlace, LiveExample } from './LiveExample';
 import { OpenExample } from './OpenExample';
-import { SiteMarkdown } from './OptionLegend';
+import { SiteMarkdown } from '../template/OptionLegend';
 import { optionPieces, type OptionTable } from '../shared/CatalogueContent';
-import { InteractiveMark } from './InteractiveMark';
+import { InteractiveMark } from '../template/InteractiveMark';
 import { Specimen, SpecimenRender } from './Specimen';
-import { VerdictMotion } from '../previews/MotionStage';
-import { foundationFigure } from '../previews/foundations/FoundationFigures';
-import { FigureCode } from '../previews/foundations/Topic';
-import { useVerdictFit } from './VerdictFit';
+import { VerdictMotion } from '../motion/MotionStage';
+import { foundationFigure } from './foundations/FoundationFigures';
+import { FigureCode } from './foundations/Topic';
+import { useVerdictFit } from '../template/VerdictFit';
 
 type ExampleBlock = Extract<DocumentationBlock, { kind: 'example' }>;
 type FoundationBlock = Extract<DocumentationBlock, { kind: 'figure' }>;
@@ -288,12 +292,12 @@ function SharedRow(props: ComponentPropsWithoutRef<'div'>) {
  * after the section's own lead paragraph, as Use it when follows a page's Rules lead.
  */
 export function FigureSection({
-  reference,
+  page,
   section,
   lead,
   leadAfter = false,
 }: {
-  reference: Document;
+  page: Document;
   section: DocumentationSection;
   lead?: ReactNode;
   leadAfter?: boolean;
@@ -322,7 +326,7 @@ export function FigureSection({
         .join(''),
     };
   });
-  const groups = groupFigures(blocks, reference.id);
+  const groups = groupFigures(blocks, page.id);
   /** Subsections of text shown beside the figure at an index of groups. */
   const beside = new Map<number, string>();
   const content: ReactNode[] = lead && !leadAfter ? [<Fragment key="lead">{lead}</Fragment>] : [];
@@ -333,7 +337,7 @@ export function FigureSection({
     leadShown = true;
   };
   const markdown = (key: number, text: string) => (
-    <SiteMarkdown key={key} markdown={text} path={reference.path} />
+    <SiteMarkdown key={key} markdown={text} path={page.path} />
   );
   groups.forEach((group, index) => {
     const opensWithLead =
@@ -347,15 +351,15 @@ export function FigureSection({
       content.push(
         <SharedRow key={index} className="site-figure-split">
           <div>
-            <Documentation markdown={text} path={reference.path} />
+            <Documentation markdown={text} path={page.path} />
           </div>
-          <Figure page={reference} block={group[0]} />
+          <Figure page={page} block={group[0]} />
         </SharedRow>,
       );
     else if (Array.isArray(group))
       content.push(
         group.length === 1 ? (
-          <Figure key={index} page={reference} block={group[0]} />
+          <Figure key={index} page={page} block={group[0]} />
         ) : (
           <SharedRow
             key={index}
@@ -366,7 +370,7 @@ export function FigureSection({
             }
           >
             {group.map((block) => (
-              <Figure key={block.name} page={reference} block={block} />
+              <Figure key={block.name} page={page} block={block} />
             ))}
           </SharedRow>
         ),
@@ -380,7 +384,7 @@ export function FigureSection({
           <Documentation
             key="section-lead"
             markdown={lead[0]}
-            path={reference.path}
+            path={page.path}
             className="site-lead"
           />,
         );
@@ -400,7 +404,7 @@ export function FigureSection({
           <Documentation
             key={index}
             markdown={text}
-            path={reference.path}
+            path={page.path}
             className="site-figure-note"
           />,
         );
@@ -415,24 +419,24 @@ export function FigureSection({
       } else if (text.trim()) content.push(markdown(index, text));
     } else if (group.kind === 'example' || group.kind === 'figure')
       content.push(
-        <Figure key={index} page={reference} block={group} options={options.get(group.name)} />,
+        <Figure key={index} page={page} block={group} options={options.get(group.name)} />,
       );
     else if (group.kind === 'specimen')
-      content.push(<Specimen key={index} page={reference.id} name={group.name} headingLevel={3} />);
+      content.push(<Specimen key={index} page={page.id} name={group.name} headingLevel={3} />);
   });
   showLead();
   // The changelog is its Markdown alone.
   if (section.id === 'changelog')
     return (
       <section data-section={section.id}>
-        <Documentation markdown={title} path={reference.path} />
+        <Documentation markdown={title} path={page.path} />
         {content}
       </section>
     );
   return (
     <section className="site-figure-section" data-section={section.id}>
       <div className="site-figure-section-heading">
-        <Documentation markdown={title} path={reference.path} />
+        <Documentation markdown={title} path={page.path} />
       </div>
       {content}
     </section>

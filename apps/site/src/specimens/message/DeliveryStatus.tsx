@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Button, Column, Message, MessageList, type MessageStatus } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
-import { Renew } from '../../previews/Renew';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
+import { Renew } from '../../motion/Renew';
 
 /*
  * The reply shows as Sending, and fails: Not sent, with Try again. The pointer presses Try again,

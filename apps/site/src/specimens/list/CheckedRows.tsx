@@ -1,6 +1,6 @@
 import CheckedRows from '../../examples/list/CheckedRows';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 
 const box = (index: number) =>
   `.env-list-item:nth-child(${index} of .env-list-item) .env-list-item-start`;

@@ -1,7 +1,7 @@
 import { Card, Column, Grid, Text } from '@envsemble/envui';
-import { Example } from '../../previews/Example';
-import { useTimeline } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { Example } from '../../figures/Example';
+import { useTimeline } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 
 /*
  * Two loads that start together, on one timeline: a quick one, whose project lands at 0.1 s,

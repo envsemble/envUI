@@ -1,5 +1,5 @@
 import { Avatar, avatarHues, Row } from '@envsemble/envui';
-import { Example, Specimen, SpecimenGrid } from '../../previews/Example';
+import { Example, Specimen, SpecimenGrid } from '../../figures/Example';
 
 /** Every hue an avatar without a picture takes, with initials and with the default person picture. */
 export default function Hues() {

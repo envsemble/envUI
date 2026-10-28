@@ -1,6 +1,6 @@
 import CustomTooltip from '../../examples/calendar-heatmap/CustomTooltip';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 
 /** A day by its weekday's row and its week's column. */
 const day = (row: number, week: number) =>

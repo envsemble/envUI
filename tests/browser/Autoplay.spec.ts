@@ -3,7 +3,7 @@ import { siteDevUrl } from './Servers';
 import { displayStorageKeys } from '../../apps/site/src/theme/DisplayStorage';
 
 /*
- * Tiles that play by themselves where the reader can't hover (apps/site/src/previews/Autoplay.ts):
+ * Tiles that play by themselves where the reader can't hover (apps/site/src/motion/Autoplay.ts):
  * on a phone, the gallery's tile in the middle of the viewport plays once scrolling settles, one at
  * a time on the whole page, and none where the animations are paused or reduced motion is preferred.
  */

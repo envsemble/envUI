@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { PortalContainer, Toast, useToast } from '@envsemble/envui';
-import { usePointer, usePreviewLayer, type PointerStep } from '../previews/Motion';
+import { usePointer, usePreviewLayer, type PointerStep } from '../motion/Motion';
 
 const invitation = '.env-toast[data-tone="success"] .env-toast-dismiss';
 

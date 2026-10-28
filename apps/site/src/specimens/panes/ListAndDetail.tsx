@@ -1,6 +1,6 @@
 import ListAndDetail from '../../examples/panes/ListAndDetail';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 
 const message = (id: string) => `.env-panes-list a[href="/inbox/${id}"]`;
 const back = '.env-panes-back .env-button';

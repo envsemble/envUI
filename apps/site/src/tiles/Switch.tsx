@@ -1,5 +1,5 @@
 import { Switch } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 
 /** Hovered and clicked on, then off again. */
 const script: PointerStep[] = [

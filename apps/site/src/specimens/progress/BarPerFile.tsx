@@ -1,5 +1,5 @@
 import { Card, Column, Progress } from '@envsemble/envui';
-import { MotionStage } from '../../previews/MotionStage';
+import { MotionStage } from '../../motion/MotionStage';
 import { useBatch } from './Batch';
 
 const files = ['budget.xlsx', 'brief.docx', 'logo.svg'];

@@ -1,7 +1,7 @@
 import { Column, Composer, Message, MessageList, Spinner } from '@envsemble/envui';
 import { Markdown } from '@envsemble/envui/content';
-import { useSharedTimeline } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { useSharedTimeline } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 import { replyClock, replySteps, replyWords } from './Reply';
 
 const stop = () => undefined;

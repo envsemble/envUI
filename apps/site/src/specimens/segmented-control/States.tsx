@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { SegmentedControl } from '@envsemble/envui';
 import { ViewList } from '@envsemble/envui/icons/ViewList';
 import { ViewModule } from '@envsemble/envui/icons/ViewModule';
-import { Example, Specimen, SpecimenGrid } from '../../previews/Example';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { Example, Specimen, SpecimenGrid } from '../../figures/Example';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 
 const statuses = [
   { value: 'open', label: 'Open', count: 12 },

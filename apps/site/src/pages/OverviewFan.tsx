@@ -22,12 +22,7 @@ const team = [{ name: 'Alex Morgan' }, { name: 'Priya Shah' }, { name: 'Sam Lee'
 function CardHeader({ title, note, end }: { title: string; note: string; end?: ReactNode }) {
   const heading = (
     <Column gap={1}>
-      <Text
-        variant="body-sm"
-        emphasis="default"
-        render={<span />}
-        className="catalogue-showcase-title"
-      >
+      <Text variant="body-sm" emphasis="default" render={<span />} className="catalogue-fan-title">
         {title}
       </Text>
       <CardNote>{note}</CardNote>
@@ -75,7 +70,7 @@ const cards: {
     content: (
       <>
         <CardHeader title="Mobile release" note="2 of 3 done" />
-        <Column gap={3} className="catalogue-showcase-body">
+        <Column gap={3} className="catalogue-fan-body">
           <Checkbox label="Release notes" defaultChecked />
           <Checkbox label="Screenshots" defaultChecked />
           <Checkbox label="Store listing" />
@@ -91,7 +86,7 @@ const cards: {
     content: (
       <>
         <CardHeader title="Notifications" note="Sent by email" />
-        <List.Root aria-label="Notifications" className="catalogue-showcase-body">
+        <List.Root aria-label="Notifications" className="catalogue-fan-body">
           <List.Item label="Mentions" action={<Switch aria-label="Mentions" defaultChecked />} />
           <List.Item label="Comments" action={<Switch aria-label="Comments" defaultChecked />} />
         </List.Root>
@@ -111,10 +106,10 @@ const cards: {
           background="muted"
           padding={4}
           radius="sm"
-          className="catalogue-showcase-body"
+          className="catalogue-fan-body"
           render={<Column gap={3} />}
         >
-          <span className="catalogue-showcase-figure">7.2 GB</span>
+          <span className="catalogue-fan-figure">7.2 GB</span>
           <Meter label="72% of 10 GB" value={7.2} max={10} />
         </Surface>
       </>
@@ -129,11 +124,11 @@ const cards: {
     content: (
       <>
         <CardHeader title="Tasks completed" note="Since 1 January" />
-        <Column gap={1} className="catalogue-showcase-body">
-          <span className="catalogue-showcase-figure">
+        <Column gap={1} className="catalogue-fan-body">
+          <span className="catalogue-fan-figure">
             <AnimatedNumber value={1280} />
           </span>
-          <Text variant="caption" render={<span />} className="catalogue-showcase-trend">
+          <Text variant="caption" render={<span />} className="catalogue-fan-trend">
             +12% from last year
           </Text>
         </Column>
@@ -153,7 +148,7 @@ const cards: {
           note="Due 12 March"
           end={<Badge tone="accent">In review</Badge>}
         />
-        <Column gap={4} className="catalogue-showcase-body">
+        <Column gap={4} className="catalogue-fan-body">
           <Progress label="Tasks" value={18} max={24} valueText="18 of 24" />
           <AvatarGroup people={team} size="md" total={6} max={3} />
         </Column>
@@ -163,26 +158,26 @@ const cards: {
 ];
 
 /**
- * The Overview's showcase, under its banner: a hand of cards fanned evenly from one point below
+ * The Overview's fan of cards, under its banner: a hand of cards fanned evenly from one point below
  * them, each a few live components. It is a still picture: hidden from assistive technology, and
  * its components inert.
  */
-export function OverviewShowcase() {
+export function OverviewFan() {
   return (
-    <div className="catalogue-showcase" aria-hidden="true" inert>
-      <div className="catalogue-showcase-stack">
+    <div className="catalogue-fan" aria-hidden="true" inert>
+      <div className="catalogue-fan-stack">
         {cards.map((card) => (
           <Card
             key={card.id}
-            className="catalogue-showcase-card"
+            className="catalogue-fan-card"
             padding={5}
             data-narrow={card.narrowPlace === undefined ? 'hidden' : undefined}
             style={
               {
-                '--catalogue-showcase-place': card.place,
-                '--catalogue-showcase-narrow-place': card.narrowPlace ?? 0,
-                '--catalogue-showcase-tilt': `${card.tilt}deg`,
-                '--catalogue-showcase-lift': `${card.lift}rem`,
+                '--catalogue-fan-place': card.place,
+                '--catalogue-fan-narrow-place': card.narrowPlace ?? 0,
+                '--catalogue-fan-tilt': `${card.tilt}deg`,
+                '--catalogue-fan-lift': `${card.lift}rem`,
               } as CSSProperties
             }
           >

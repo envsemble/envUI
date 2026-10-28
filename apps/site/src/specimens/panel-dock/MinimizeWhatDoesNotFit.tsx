@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import MinimizeWhatDoesNotFit from '../../examples/panel-dock/MinimizeWhatDoesNotFit';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
-import { Renew } from '../../previews/Renew';
-import { WidthSweep } from '../../previews/WidthSweep';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
+import { Renew } from '../../motion/Renew';
+import { WidthSweep } from '../../motion/WidthSweep';
 
 const tab = (label: string) => `.env-panel-dock-tab-restore[aria-label="Show ${label}"]`;
 

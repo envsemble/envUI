@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { PanelDock, Text, type PanelDockPanel } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 
 const minimize = '.env-panel-dock-panel[data-panel-id="notes"] [aria-label="Minimize"]';
 const notesTab = '.env-panel-dock-tab[data-panel-id="notes"] .env-panel-dock-tab-restore';

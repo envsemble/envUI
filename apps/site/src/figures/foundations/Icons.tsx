@@ -19,7 +19,7 @@ import { MoreVert } from '@envsemble/envui/icons/MoreVert';
 import { Person } from '@envsemble/envui/icons/Person';
 import { Settings } from '@envsemble/envui/icons/Settings';
 import { Star } from '@envsemble/envui/icons/Star';
-import { usePointer, useTimeline, type PointerStep } from '../Motion';
+import { usePointer, useTimeline, type PointerStep } from '../../motion/Motion';
 import { LoadBoundary, lazyPart } from '../../template/LoadBoundary';
 import { Loading } from '../../template/Loading';
 import type { FoundationFigure } from './FoundationFigures';
@@ -133,7 +133,7 @@ function OutlinedAndFilledFigure() {
 const iconList = lazyPart(
   () => import('./IconCatalogue'),
   (module) => module.IconCatalogue,
-  'src/previews/foundations/IconCatalogue.tsx',
+  'src/figures/foundations/IconCatalogue.tsx',
 );
 
 function CatalogueFigure() {

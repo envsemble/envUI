@@ -1,6 +1,6 @@
 import NavigationForms from '../../examples/scaffold/NavigationForms';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 
 /*
  * The pointer turns the wheel over the body: the list scrolls under the top bar and beside the

@@ -1,5 +1,5 @@
 import { Checkbox } from '@envsemble/envui';
-import { Example, MatrixScroll } from '../../previews/Example';
+import { Example, MatrixScroll } from '../../figures/Example';
 
 const states = [
   { title: 'Unchecked', checked: false },

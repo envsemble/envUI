@@ -106,7 +106,7 @@ export function generateDocumentation() {
       }),
     };
   });
-  const source = `// Generated from docs/index.md, its pages and docs/generated/props.json; edit the sources.\nimport type { DocumentationEntry } from '../DocumentationTypes';\n\nexport const documents: DocumentationEntry[] = ${JSON.stringify(entries, null, 2)};\n`;
+  const source = `// Generated from docs/index.md, its pages and docs/generated/props.json; edit the sources.\nimport type { DocumentationEntry } from '../shared/DocumentationTypes';\n\nexport const documents: DocumentationEntry[] = ${JSON.stringify(entries, null, 2)};\n`;
   mkdirSync(dirname(generatedFile), { recursive: true });
   if (!existsSync(generatedFile) || readFileSync(generatedFile, 'utf8') !== source)
     writeFileSync(generatedFile, source);

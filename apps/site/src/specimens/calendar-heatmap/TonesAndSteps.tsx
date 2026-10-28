@@ -7,9 +7,9 @@ import {
   type CalendarHeatmapDay,
   type CalendarHeatmapProps,
 } from '@envsemble/envui';
-import { Example } from '../../previews/Example';
-import { useTimeline } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { Example } from '../../figures/Example';
+import { useTimeline } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 
 /** Stands in for sixteen weeks of edits: busier midweek, with a quiet stretch. */
 const data: CalendarHeatmapDay[] = Array.from({ length: 112 }, (_, index) => {

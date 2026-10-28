@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 import { Spinner } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 
 /** It turns while the tile plays. */
 const script: PointerStep[] = [{ cue: 'turn' }, { wait: 2800 }];

@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import FilterPanel from '../../examples/filtering/FilterPanel';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
-import { Renew } from '../../previews/Renew';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
+import { Renew } from '../../motion/Renew';
 
 const filters = '.env-button[aria-haspopup]';
 const plans = '.env-popover .env-checkbox:nth-child(2 of .env-checkbox)';

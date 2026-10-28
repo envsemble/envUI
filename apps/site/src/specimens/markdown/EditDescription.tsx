@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import EditDescription from '../../examples/markdown/EditDescription';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
-import { Renew } from '../../previews/Renew';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
+import { Renew } from '../../motion/Renew';
 
 const source = 'textarea.env-markdown-source';
 const tab = (index: number) => `[role="tab"]:nth-child(${index} of [role="tab"])`;

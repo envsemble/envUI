@@ -1,5 +1,5 @@
 import { Select } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 
 const options = [
   { value: 'team', label: 'Team' },

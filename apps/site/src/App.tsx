@@ -148,7 +148,7 @@ function Shell() {
   const area: Area = page?.area ?? (inDocs(routePath) ? 'docs' : 'catalogue');
   const title = documentTitle(page, area);
   // Every page lists its contents beside it but the two homes: the catalogue's overview, a hero
-  // and a showcase rather than sections, and the Docs' home, an index of them.
+  // and a fan of cards rather than sections, and the Docs' home, an index of them.
   const contents = page && page.kind !== 'home' && page.kind !== 'docs-home';
   useEffect(() => {
     // ⌘K, or Ctrl+K, opens search from anywhere, text fields included, and closes it again; an

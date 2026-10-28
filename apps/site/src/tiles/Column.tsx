@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { Column, type LayoutAlign, type SpaceStep } from '@envsemble/envui';
-import { useTimeline } from '../previews/Motion';
+import { useTimeline } from '../motion/Motion';
 import { along, easing, edges, Item, line, Mark, useReflow } from './reflow';
 
 /** The blocks' widths: a heading, two lines and an action, as a column often holds. */

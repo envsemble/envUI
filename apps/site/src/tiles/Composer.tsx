@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Composer } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 
 const input = '.env-composer-input';
 

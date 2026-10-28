@@ -1,5 +1,5 @@
 import { ColorPicker } from '@envsemble/envui/color';
-import { usePointer, type PointerStep } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 
 const area = '.env-color-picker-area';
 const swatch = (index: number) =>

@@ -29,7 +29,7 @@
 .catalogue-explore-grid {
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
 }
-/* The home page's hero: no card of its own, it stands on the page above the showcase, which it
+/* The home page's hero: no card of its own, it stands on the page above the fan of cards, which it
    introduces, so the two read as one picture. The lockup, small, names the page; the line under
    it, the largest text on the page, says what envUI is; the facts under that are quiet. */
 .catalogue-overview-header {

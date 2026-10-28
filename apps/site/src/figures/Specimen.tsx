@@ -1,8 +1,8 @@
 import { lazy, Suspense, useState, type ComponentType } from 'react';
-import { SpecimenHeadingLevel, SpecimenStage } from '../previews/Example';
-import { Preview } from '../previews/Preview';
-import { LoadBoundary, loadModule, reloadModule } from './LoadBoundary';
-import { Loading } from './Loading';
+import { SpecimenHeadingLevel, SpecimenStage } from './Example';
+import { SpecimenArea } from './SpecimenArea';
+import { LoadBoundary, loadModule, reloadModule } from '../template/LoadBoundary';
+import { Loading } from '../template/Loading';
 
 /**
  * Catalogue-only specimens: visual references that are not usage examples, such as a matrix of
@@ -57,11 +57,11 @@ export function Specimen({
 }) {
   return (
     <SpecimenHeadingLevel value={headingLevel}>
-      <Preview specimen={name}>
+      <SpecimenArea specimen={name}>
         <SpecimenStage value>
           <SpecimenRender page={page} name={name} />
         </SpecimenStage>
-      </Preview>
+      </SpecimenArea>
     </SpecimenHeadingLevel>
   );
 }

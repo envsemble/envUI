@@ -1,7 +1,7 @@
 import OpenInPanel from '../../examples/markdown/OpenInPanel';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
-import { keepLinksInPlace } from '../../template/LiveExample';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
+import { keepLinksInPlace } from '../../figures/LiveExample';
 
 const link = 'a[href="/documents/launch-plan"]';
 const close = '.env-sheet-popup .env-dialog-heading > .env-button';

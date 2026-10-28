@@ -1,6 +1,6 @@
 import Reviewers from '../../examples/combobox/Reviewers';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage, roomFor } from '../../previews/MotionStage';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage, roomFor } from '../../motion/MotionStage';
 
 const trigger = '.env-combobox-trigger';
 const option = (index: number) => `.env-combobox-item:nth-child(${index} of .env-combobox-item)`;

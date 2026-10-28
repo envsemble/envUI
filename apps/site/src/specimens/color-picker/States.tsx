@@ -1,5 +1,5 @@
 import { ColorPicker } from '@envsemble/envui/color';
-import { Example, Specimen, SpecimenGrid } from '../../previews/Example';
+import { Example, Specimen, SpecimenGrid } from '../../figures/Example';
 
 /** Small pickers, centred in their cells, so the four states take little room. */
 const small = { inlineSize: 'min(100%, 11rem)', marginInline: 'auto' };

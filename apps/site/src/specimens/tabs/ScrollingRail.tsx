@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import ScrollingRail from '../../examples/tabs/ScrollingRail';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
-import { WidthSweep } from '../../previews/WidthSweep';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
+import { WidthSweep } from '../../motion/WidthSweep';
 
 /** The sweep's widths, in rem: the still, with every tab in view, and the narrow end. */
 const widths = [40, 20];

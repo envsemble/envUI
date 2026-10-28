@@ -129,7 +129,7 @@
   }
 }
 /* Topics of the catalogue's own pages, such as Dev mode, and the parts of foundations' figures
-   (previews/foundations/Topic.tsx): sections under their h2, each opened by a paragraph, then
+   (figures/foundations/Topic.tsx): sections under their h2, each opened by a paragraph, then
    titled blocks beside their figures, a sub-topic apart from the next. */
 .catalogue-topic {
   --catalogue-subtopic-gap: var(--env-space-7);

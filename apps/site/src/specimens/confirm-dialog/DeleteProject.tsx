@@ -1,6 +1,6 @@
 import DeleteProject from '../../examples/confirm-dialog/DeleteProject';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 
 /*
  * The pointer presses Delete project: the danger dialog opens over the stage and asks first. The

@@ -8,7 +8,7 @@ import {
   sectionHome,
   catalogueSections,
 } from '../../apps/site/src/navigation/SiteRoutes';
-import { componentGroups } from '../../apps/site/src/Reference';
+import { componentGroups } from '../../apps/site/src/pages/PageModel';
 import { displayStorageKeys } from '../../apps/site/src/theme/DisplayStorage';
 import { goTo } from './SiteSpecHelpers';
 

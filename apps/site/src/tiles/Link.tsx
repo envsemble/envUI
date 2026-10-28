@@ -1,5 +1,5 @@
 import { Link } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 
 /** Hovered, pressed and let go: the link answers as it does under a pointer. */
 const script: PointerStep[] = [

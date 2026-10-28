@@ -1,6 +1,6 @@
 import SelectAll from '../../examples/checkbox/SelectAll';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 
 const group = '[aria-label="Projects to export"]';
 const parent = `${group} > .env-checkbox .env-checkbox-input`;

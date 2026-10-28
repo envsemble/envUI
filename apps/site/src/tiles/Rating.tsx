@@ -1,5 +1,5 @@
 import { Rating } from '@envsemble/envui';
-import { useTimeline } from '../previews/Motion';
+import { useTimeline } from '../motion/Motion';
 
 /* The score as reviews come in, a half star at a time, down and up again. */
 const scores = [4.5, 4, 3.5, 4, 4.5, 5];

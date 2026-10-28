@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import FindPlan from '../../examples/dialog/FindPlan';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
-import { Renew } from '../../previews/Renew';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
+import { Renew } from '../../motion/Renew';
 
 const field = '.env-dialog-popup input';
 const roadmap = '.env-dialog-popup .env-list-item:first-child .env-button';

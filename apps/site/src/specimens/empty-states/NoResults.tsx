@@ -1,6 +1,6 @@
 import NoResults from '../../examples/empty-states/NoResults';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage, roomFor } from '../../previews/MotionStage';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage, roomFor } from '../../motion/MotionStage';
 
 const search = 'input[type="search"]';
 

@@ -1,7 +1,7 @@
 import ResizableDetails from '../../examples/panes/ResizableDetails';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
-import { WidthSweep } from '../../previews/WidthSweep';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
+import { WidthSweep } from '../../motion/WidthSweep';
 
 const divider = '.env-panes-divider';
 const panes = '.env-panes';

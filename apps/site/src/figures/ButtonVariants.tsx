@@ -33,7 +33,7 @@ export const buttonForms = [
   { value: 'icon', title: 'Icon only' },
 ] as const;
 
-export function ButtonSample({
+export function VariantButton({
   example,
   form,
   className,

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { RelativeTime, Text } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 
 /** When the draft was saved: a fixed moment, so the tooltip's date is always the same. */
 const saved = Date.UTC(2026, 9, 14, 9, 41);

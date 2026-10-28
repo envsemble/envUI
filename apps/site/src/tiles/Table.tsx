@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Table } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 
 const projects = [
   { name: 'Website', tasks: 12 },

@@ -1,5 +1,5 @@
 import { AnimatedNumber, Badge, DescriptionList } from '@envsemble/envui';
-import { useTimeline } from '../previews/Motion';
+import { useTimeline } from '../motion/Motion';
 
 /* The open tasks counted down to none, when the project is done, and opened again. */
 const steps = [

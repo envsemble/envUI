@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { AvatarButton, Button, Menu, TopBar } from '@envsemble/envui';
 import { UnfoldMore } from '@envsemble/envui/icons/UnfoldMore';
-import { usePointer, type PointerStep } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 
 const organizations = [
   { id: 'northwind', label: 'Northwind Labs', role: 'Admin' },

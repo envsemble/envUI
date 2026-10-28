@@ -2,9 +2,9 @@ import { useRef } from 'react';
 import { Column, Link, Text } from '@envsemble/envui';
 import { routeHref } from '../navigation/Address';
 import type { RoutePage } from '../navigation/SiteRoutes';
-import { useAutoplay } from '../previews/Autoplay';
-import { usePlaying } from '../previews/Motion';
-import { previewOf, TilePreview, useNear, type Preview } from './Related';
+import { useAutoplay } from '../motion/Autoplay';
+import { usePlaying } from '../motion/Motion';
+import { previewOf, TilePreview, useNear, type Preview } from '../template/Related';
 
 /** One group of a gallery, such as a kind of component or what people are doing. */
 export interface GalleryGroup {

@@ -1,7 +1,7 @@
 import { Button, Column, DescriptionList, Row, Sheet } from '@envsemble/envui';
-import { Example } from '../../previews/Example';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { Example } from '../../figures/Example';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 
 const trigger = (index: number) => `.catalogue-sheet-sides > .env-button:nth-child(${index})`;
 const close = '.env-sheet-popup .env-dialog-heading > .env-button';

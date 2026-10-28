@@ -11,7 +11,7 @@ import {
 } from '@envsemble/envui';
 import { TrendingDown } from '@envsemble/envui/icons/TrendingDown';
 import { TrendingUp } from '@envsemble/envui/icons/TrendingUp';
-import { usePointer, type PointerStep } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 
 const periods = {
   week: { lead: 2.5, faster: 0.5, done: 42, more: 6 },

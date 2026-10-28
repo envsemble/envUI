@@ -1,4 +1,4 @@
-import { componentGroupId } from '../Reference';
+import { componentGroupId } from '../pages/PageModel';
 import { homeRoute } from './Address';
 import { sectionHome, type RoutePage, type TrailStep, type CatalogueSection } from './SiteRoutes';
 

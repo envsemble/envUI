@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { DropZone } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 
 const zone = '.env-drop-zone-target';
 

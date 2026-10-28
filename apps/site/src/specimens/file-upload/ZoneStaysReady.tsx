@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import ZoneStaysReady from '../../examples/file-upload/ZoneStaysReady';
-import { usePointer } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
-import { Renew } from '../../previews/Renew';
+import { usePointer } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
+import { Renew } from '../../motion/Renew';
 import { readyScript, zoneClock } from './Zone';
 
 function Adding() {

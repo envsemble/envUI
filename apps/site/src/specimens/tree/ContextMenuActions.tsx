@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import ContextMenuActions from '../../examples/tree/ContextMenuActions';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
-import { Renew } from '../../previews/Renew';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
+import { Renew } from '../../motion/Renew';
 
 const budget = '.env-tree-item[data-id="budget"]';
 

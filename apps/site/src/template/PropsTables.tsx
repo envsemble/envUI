@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react';
 import { Link, Column, Table, Text } from '@envsemble/envui';
 import { PlainCode } from './SimpleTable';
-import type { ExportEntry, PropEntry } from '../DocumentationTypes';
-import type { Reference } from '../Reference';
+import type { ExportEntry, PropEntry } from '../shared/DocumentationTypes';
+import type { Documentation } from '../pages/PageModel';
 // The ids search leads to, as the search index writes them.
 import { exportSection, propSection } from '../shared/SearchAnchors';
 
@@ -161,8 +161,8 @@ function ExportProps({ name, entry }: { name: string; entry: ExportEntry }) {
 }
 
 /** The Props view: every component and part the page documents, generated from their types. */
-export function PropsTables({ reference }: { reference: Reference }) {
-  const sources = [...new Set(Object.values(reference.props ?? {}).map(({ source }) => source))];
+export function PropsTables({ document }: { document: Documentation }) {
+  const sources = [...new Set(Object.values(document.props ?? {}).map(({ source }) => source))];
   return (
     <Column gap={7}>
       <Text emphasis="muted">
@@ -179,7 +179,7 @@ export function PropsTables({ reference }: { reference: Reference }) {
         ))}
         ; the packaged Markdown carries the same tables.
       </Text>
-      {Object.entries(reference.props ?? {}).map(([name, entry]) => (
+      {Object.entries(document.props ?? {}).map(([name, entry]) => (
         <ExportProps key={name} name={name} entry={entry} />
       ))}
     </Column>

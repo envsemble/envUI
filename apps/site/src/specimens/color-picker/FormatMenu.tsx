@@ -1,7 +1,7 @@
 import { ColorPicker } from '@envsemble/envui/color';
-import { Example } from '../../previews/Example';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { Example } from '../../figures/Example';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 
 const format = '.env-color-picker-format .env-button';
 const choice = (index: number) => `.env-menu-item:nth-child(${index} of .env-menu-item)`;

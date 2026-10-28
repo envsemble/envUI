@@ -1,5 +1,5 @@
 import { createElement, useState, type ReactNode } from 'react';
-import { useSharedTimeline } from '../../previews/Motion';
+import { useSharedTimeline } from '../../motion/Motion';
 
 /*
  * The do and the don't of a full meter play one timeline, side by side: seats are assigned, 3, 4

@@ -238,7 +238,7 @@ An Adapting to width figure sweeps instead: `widths="30 16" sweep` shows the exa
 - **A faint ruler** above the frame names its width; `classes` adds the window class, such as "40 rem · Medium", for an example that changes at one; a foundation's figure, which shows no lengths, names the class alone, with `classes="only"` on `WidthSweep`.
 - **One height and one scale.** The figure keeps the height of the tallest the example gets along the way. The frame is drawn at one scale for the stage, no smaller than 0.8; where the widest width doesn't fit even then, it sweeps only as wide as the stage shows, never clipped.
 - **`fit`** lets the frame be drawn as small as 0.6 to reach its widest width, for an example that changes only at a width wider than the column, such as a diff side by side from 56 rem on [Code](components/code.md).
-- **More than a sweep**, such as opening a sheet at the narrow end, is a specimen: `WidthSweep` (`apps/site/src/previews/WidthSweep.tsx`) on a `MotionStage`, given `at`, the index of the width to move to, from a `useTimeline` step or a `usePointer` cue, and the scripted pointer doing the rest.
+- **More than a sweep**, such as opening a sheet at the narrow end, is a specimen: `WidthSweep` (`apps/site/src/motion/WidthSweep.tsx`) on a `MotionStage`, given `at`, the index of the width to move to, from a `useTimeline` step or a `usePointer` cue, and the scripted pointer doing the rest.
 
 ### Wide figures
 
@@ -383,7 +383,7 @@ Its words follow the [writing guide](writing.md), as an application's would.
 
 ## Specimens
 
-Some visual references are not examples: a matrix of every variant in every form, or controls forced into their hover and pressed looks. These are specimens in `apps/site/src/specimens/<page>/<Name>.tsx`. They may use the catalogue's helpers in `apps/site/src/previews`, and a page places one with a comment, which the packaged page leaves out:
+Some visual references are not examples: a matrix of every variant in every form, or controls forced into their hover and pressed looks. These are specimens in `apps/site/src/specimens/<page>/<Name>.tsx`. They may use the catalogue's figure helpers in `apps/site/src/figures` and its motion in `apps/site/src/motion`, and a page places one with a comment, which the packaged page leaves out:
 
 ```md
 <!-- specimen: VariantMatrix -->
@@ -398,7 +398,7 @@ The visual baseline captures a page's specimens, and its first example when it h
 
 ### Animated specimens
 
-Where a section is about motion, such as a slider stretching past its ends or a reply arriving, its specimen can play it: the live component on a `MotionStage` (`apps/site/src/previews/MotionStage.tsx`), driven by a script of what a pointer no one sees does (`usePointer`) or by steps of its props (`useTimeline`), both in `apps/site/src/previews/Motion.tsx`.
+Where a section is about motion, such as a slider stretching past its ends or a reply arriving, its specimen can play it: the live component on a `MotionStage` (`apps/site/src/motion/MotionStage.tsx`), driven by a script of what a pointer no one sees does (`usePointer`) or by steps of its props (`useTimeline`), both in `apps/site/src/motion/Motion.tsx`.
 
 - **It loops**, ending where it began, and plays while it is in view; its pause button, at the stage's bottom end, holds it where it is, and the sidebar's pause holds every animation, the reader's choice kept with the display settings. Where reduced motion is preferred, it starts paused.
 - **The component's own behaviour.** The pointer hovers, presses, drags, clicks and types by the events a mouse and a keyboard send, so the component shows its own hover, drag and transitions; change props only where no person could, such as a reply arriving.
@@ -413,7 +413,7 @@ Where a section is about motion, such as a slider stretching past its ends or a 
 The galleries of components and patterns, and Related, show each page by a tile of its own: `apps/site/src/tiles/<Page>.tsx`, named after the page's id in PascalCase, with a default-exported component.
 
 - **The component alone, large and centred**, with as little else as it needs to be recognised: short labels, two or three items where a list is needed, no helper text. Ask whether it looks good and whether someone would know at once what it is.
-- **A still that is the animation's first frame.** On hover or keyboard focus the tile plays a short script of the component in use, as an animated specimen does, and the pointer leaving brings back its still. On a touch screen, the tile nearest the middle of the viewport plays once scrolling settles, one at a time (`previews/Autoplay.ts`). Write the script to end where it began.
+- **A still that is the animation's first frame.** On hover or keyboard focus the tile plays a short script of the component in use, as an animated specimen does, and the pointer leaving brings back its still. On a touch screen, the tile nearest the middle of the viewport plays once scrolling settles, one at a time (`motion/Autoplay.ts`). Write the script to end where it began.
 - **Its window.** A tile lays out in a window of 10 by 7.5 rem, drawn at one scale for every tile; a component that needs more room, or less, takes a window of its own in `tileWindows` (`apps/site/src/tiles/Tiles.ts`), large enough for what opens as it plays.
 - **A still with a popup open**, such as a menu, keeps it in state and puts it back with `usePointer`'s `onRest`, rather than the tile being drawn anew, which would bring it in again.
 
@@ -423,9 +423,9 @@ A foundation page, such as Spacing & density or Colors & themes, explains how en
 
 - **The same structure.** Its sections are a component's, with Options in place of Variants: its topics as titled blocks under Options, Behaviour and Rules, Accessibility only where it has something to say, its Words to use, and its tokens and values under Compose.
 - **How envUI handles it, in pictures.** Each block explains one idea, such as "space shows what belongs together" or "colors are roles", with a real envUI example, such as a small screen, a form or a toolbar, rather than a ladder of values. Where the idea is in the example's layout, mark it on the example, as Spacing & density numbers the space between groups, with a numbered legend below in plain words.
-- **Its figures are the catalogue's.** They are drawn in its preview in `apps/site/src/previews/foundations/`, which keeps only the figures, take their words from the legend after their fence, `1. **Name**: what it means`, and are registered by name in `FoundationFigures.ts`. They take no attributes on their fence, and the package ships their legends.
+- **Its figures are the catalogue's.** They are drawn in `apps/site/src/figures/foundations/`, which keeps only the figures, take their words from the legend after their fence, `1. **Name**: what it means`, and are registered by name in `FoundationFigures.ts`. They take no attributes on their fence, and the package ships their legends.
 - **Code under a figure that shows code.** Where a figure shows what an application writes, such as a nested Theme with colors of its own, an [example](#examples) of the figure's name, `apps/site/src/examples/<page>/<Name>.tsx`, is its code: `Figure` shows it in the same Code disclosure as a component's figure, and the package ships it, the page naming it before the legend. It is the plain application code for what the figure shows, not the figure's animation or marks. A pure illustration, such as the palette or every text style, has none.
-- **Animated figures too.** Where a block is about a change, its figure plays as a component page's [animated specimen](#animated-specimens) does: `Figure` (`previews/foundations/Topic.tsx`) with `motion`, the words its pause button names, sets it on a `MotionStage`, driven by `usePointer`, `useTimeline` or `WidthSweep`. A nested `Theme` in an animated figure eases between themes, its colors cross-fading briefly, and snaps where reduced motion is preferred, as on Colors & themes, where the pointer chooses each theme on a control under one screen.
+- **Animated figures too.** Where a block is about a change, its figure plays as a component page's [animated specimen](#animated-specimens) does: `Figure` (`figures/foundations/Topic.tsx`) with `motion`, the words its pause button names, sets it on a `MotionStage`, driven by `usePointer`, `useTimeline` or `WidthSweep`. A nested `Theme` in an animated figure eases between themes, its colors cross-fading briefly, and snaps where reduced motion is preferred, as on Colors & themes, where the pointer chooses each theme on a control under one screen.
 - **The words to use.** Its Words to use is an option table whose In code column maps each phrase to the props and tokens it means, so an agent turns the reader's words into code; the Docs show that column as Words in code.
 - **No technical text** in its plain sections, its figures included: name a swatch by its role and use, such as "Supporting text: details, captions and icons", never by its token or value.
 

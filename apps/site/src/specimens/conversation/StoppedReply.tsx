@@ -1,6 +1,6 @@
 import StoppedReply from '../../examples/conversation/StoppedReply';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 
 /*
  * The pointer presses Try again on the stopped reply: a new reply arrives a few words at a time,

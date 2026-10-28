@@ -3,9 +3,9 @@ import { Button, Column, Page, Scaffold, Text, TopBar } from '@envsemble/envui';
 import { Lock } from '@envsemble/envui/icons/Lock';
 import { SearchOff } from '@envsemble/envui/icons/SearchOff';
 import { WifiOff } from '@envsemble/envui/icons/WifiOff';
-import { useTimeline } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
-import { Renew } from '../../previews/Renew';
+import { useTimeline } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
+import { Renew } from '../../motion/Renew';
 
 /** The three reasons a whole page can't show, each with its own way on. */
 const cases: { icon: ReactNode; title: string; text: string; action: string }[] = [

@@ -1,7 +1,7 @@
 import PagesOfAList from '../../examples/pagination/PagesOfAList';
-import { Example } from '../../previews/Example';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { Example } from '../../figures/Example';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 
 const previous = '.env-pagination-button:nth-child(1 of .env-pagination-button)';
 const next = '.env-pagination-button:nth-child(2 of .env-pagination-button)';

@@ -23,7 +23,7 @@ export const ExampleStage = createContext(false);
 
 /**
  * Whether a SpecimenGrid or MatrixScroll is a component's specimen on its own stage, as a page's
- * specimen is (template/Specimen.tsx); one inside it, or in a foundation's figure, is not.
+ * specimen is (figures/Specimen.tsx); one inside it, or in a foundation's figure, is not.
  */
 export const SpecimenStage = createContext(false);
 

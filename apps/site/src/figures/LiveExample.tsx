@@ -14,19 +14,19 @@ import {
 import { createPortal } from 'react-dom';
 import { Disclosure, Column, Text, Theme, useTheme } from '@envsemble/envui';
 import { CodeBlock } from '@envsemble/envui/content';
-import type { StageFill } from '../DocumentationTypes';
-import { LoadBoundary, loadModule, reloadModule } from './LoadBoundary';
+import type { StageFill } from '../shared/DocumentationTypes';
+import { LoadBoundary, loadModule, reloadModule } from '../template/LoadBoundary';
 import { OpenExample } from './OpenExample';
-import { InteractiveMark } from './InteractiveMark';
-import { Loading } from './Loading';
-import { MotionStage } from '../previews/MotionStage';
-import { WidthSweep } from '../previews/WidthSweep';
+import { InteractiveMark } from '../template/InteractiveMark';
+import { Loading } from '../template/Loading';
+import { MotionStage } from '../motion/MotionStage';
+import { WidthSweep } from '../motion/WidthSweep';
 import { SpecimenRender } from './Specimen';
 
 /**
  * Every example file, rendered live, and its source as text, each loaded with the page that shows
  * it. An example is apps/site/src/examples/<page>/<Name>.tsx with a default-exported
- * component; the page's Markdown names it in an empty ```tsx example=Name``` fence.
+ * component; the page's Markdown places it by name in an empty ```tsx figure=Name``` fence.
  */
 const loaders = import.meta.glob<{ default: ComponentType }>('../examples/*/*.tsx');
 const sourceLoaders = import.meta.glob<string>('../examples/*/*.tsx', {

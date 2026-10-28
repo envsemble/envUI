@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Avatar, Link, List } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 
 const people = [
   { id: 'alex', name: 'Alex Morgan', role: 'Design' },

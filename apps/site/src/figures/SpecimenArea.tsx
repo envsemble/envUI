@@ -1,7 +1,7 @@
 import type { MouseEvent, ReactNode } from 'react';
 import { Column, Theme, useTheme } from '@envsemble/envui';
 
-/** Link specimens retain native link semantics without navigating out of the demo. */
+/** Link specimens retain native link semantics without navigating away from the page. */
 function preventExampleNavigation(event: MouseEvent<HTMLDivElement>) {
   if (event.target instanceof Element && event.target.closest('a[href]')) {
     event.preventDefault();
@@ -12,7 +12,7 @@ function preventExampleNavigation(event: MouseEvent<HTMLDivElement>) {
  * One specimen area that follows the documentation's current theme; `specimen` names the catalogue
  * specimen it shows, so the visual baseline can name an untitled one's image after it.
  */
-export function Preview({ specimen, children }: { specimen?: string; children: ReactNode }) {
+export function SpecimenArea({ specimen, children }: { specimen?: string; children: ReactNode }) {
   const theme = useTheme();
   return (
     <Column

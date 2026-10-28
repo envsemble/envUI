@@ -24,7 +24,7 @@ import { Draw } from '@envsemble/envui/icons/Draw';
 import { InkEraser } from '@envsemble/envui/icons/InkEraser';
 import { PlayArrow } from '@envsemble/envui/icons/PlayArrow';
 import { Repeat } from '@envsemble/envui/icons/Repeat';
-import { SpecimenGrid, SpecimenHeadingLevel } from '../../previews/Example';
+import { SpecimenGrid, SpecimenHeadingLevel } from '../../figures/Example';
 
 /** Each drawing's name, as people say it. */
 const names: Record<LineArtDrawing, string> = {

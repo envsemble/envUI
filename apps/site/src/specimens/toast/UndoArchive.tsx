@@ -1,6 +1,6 @@
 import UndoArchive from '../../examples/toast/UndoArchive';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 
 const archive = 'button[aria-label="Archive Onboarding emails"]';
 const undo = '.env-toast-action';

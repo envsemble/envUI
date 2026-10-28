@@ -1,6 +1,6 @@
 import EveryNumberRolls from '../../examples/animated-number/EveryNumberRolls';
-import { usePointer } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { usePointer } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 import { invitingTwo } from './Seats';
 
 function Inviting() {

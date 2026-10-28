@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import FirstMessage from '../../examples/conversation/FirstMessage';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
-import { Renew } from '../../previews/Renew';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
+import { Renew } from '../../motion/Renew';
 
 const suggestion = '[data-env-layout="row"] > .env-button:nth-child(3)';
 

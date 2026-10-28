@@ -1,5 +1,5 @@
 import { CodeBlock } from '@envsemble/envui/content';
-import { usePointer, type PointerStep } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 
 const copy = '.env-code-block-heading .env-icon-button';
 

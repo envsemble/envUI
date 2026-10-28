@@ -2,7 +2,7 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { marked, type Token, type Tokens } from 'marked';
-import type { DocumentationBlock } from '../../apps/site/src/DocumentationTypes.ts';
+import type { DocumentationBlock } from '../../apps/site/src/shared/DocumentationTypes.ts';
 import { optionTable, optionTableProblems } from '../../apps/site/src/shared/CatalogueContent.ts';
 import {
   codeSubsections,
@@ -399,7 +399,7 @@ export function readPartNames(directory = documentationDirectory): PartNames {
  * sections pageSections knows, once each, in its order, with Rules; every example the frontmatter
  * lists placed once, but the overview's, which the generated Overview shows; and on a component or
  * a pattern, an overview example and Accessibility's lists. A foundation's figures are the
- * catalogue's (previews/foundations); an example file there is the code of the figure of its name.
+ * catalogue's (figures/foundations); an example file there is the code of the figure of its name.
  */
 export function readPage(
   document: { id: string; path: string; title: string },

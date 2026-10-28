@@ -1,4 +1,5 @@
-/* Documentation layout and specimens. Product components come from @envsemble/envui. */
+/* The site's shell: its frame, navigation, page layout, banners and contents. Product components
+   come from @envsemble/envui. */
 html {
   scroll-behavior: auto;
 }

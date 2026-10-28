@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { DocumentTabs, IconButton, Surface, Text, type DocumentTab } from '@envsemble/envui';
 import { Add } from '@envsemble/envui/icons/Add';
-import { usePointer, type PointerStep } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 
 const documents: DocumentTab[] = ['Plan.md', 'Notes.md'].map((label) => ({
   id: label,

@@ -1,7 +1,7 @@
 import { Button, IconButton, type ControlSize, Row } from '@envsemble/envui';
 import { Add } from '@envsemble/envui/icons/Add';
 import { Edit } from '@envsemble/envui/icons/Edit';
-import { Example, Specimen, SpecimenGrid } from '../../previews/Example';
+import { Example, Specimen, SpecimenGrid } from '../../figures/Example';
 
 const sizes: readonly { size: ControlSize; title: string; caption: string }[] = [
   { size: 'sm', title: 'Small', caption: 'A table row or a dense toolbar' },

@@ -1,4 +1,4 @@
-import { useSharedTimeline } from '../../previews/Motion';
+import { useSharedTimeline } from '../../motion/Motion';
 
 /**
  * The pane's widths, in rem: narrow, where the rule matters, and wide enough for two fitting

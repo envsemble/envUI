@@ -1,6 +1,6 @@
 import PageProgress from '../../examples/loading/PageProgress';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 import { useStayOnPage } from '../navigation/StayOnPage';
 
 const place = (index: number) => `.env-rail-list > li:nth-child(${index}) .env-rail-item`;

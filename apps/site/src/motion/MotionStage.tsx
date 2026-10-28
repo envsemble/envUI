@@ -10,7 +10,7 @@ import {
 import { IconButton, Tooltip } from '@envsemble/envui';
 import { Pause } from '@envsemble/envui/icons/Pause';
 import { PlayArrow } from '@envsemble/envui/icons/PlayArrow';
-import type { StageFill } from '../DocumentationTypes';
+import type { StageFill } from '../shared/DocumentationTypes';
 import { useVerdictFit } from '../template/VerdictFit';
 import { useDisplaySettings } from '../theme/DisplaySettings';
 import { Playback, PreviewOverlays, useInView } from './Motion';

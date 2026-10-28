@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { TimePicker } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 
 const row = (part: string, value: string) =>
   `.env-time-list-column[data-part="${part}"] .env-time-list-row[data-value="${value}"]`;

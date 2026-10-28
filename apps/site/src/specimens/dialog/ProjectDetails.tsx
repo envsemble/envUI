@@ -1,6 +1,6 @@
 import ProjectDetails from '../../examples/dialog/ProjectDetails';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 
 /*
  * The pointer presses View project: the dialog opens over the stage, its close button and its

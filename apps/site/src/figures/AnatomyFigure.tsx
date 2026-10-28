@@ -1,12 +1,12 @@
 import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { Theme, useTheme } from '@envsemble/envui';
-import type { AnatomyLegendItem, StageFill } from '../DocumentationTypes';
+import type { AnatomyLegendItem, StageFill } from '../shared/DocumentationTypes';
 import { Documentation } from '../pages/Documentation';
 import { ExampleCode, ExampleRender, leastFitScale } from './LiveExample';
 import { OpenExample, openerBox } from './OpenExample';
-import { legendOf, partDescription, partSelector } from './Parts';
+import { legendOf, partDescription, partSelector } from '../template/Parts';
 import { legendName } from '../shared/CatalogueContent';
-import { OptionLegend } from './OptionLegend';
+import { OptionLegend } from '../template/OptionLegend';
 import { SpecimenRender } from './Specimen';
 import type { OptionTable } from '../shared/CatalogueContent';
 

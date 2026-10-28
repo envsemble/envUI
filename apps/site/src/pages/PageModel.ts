@@ -1,4 +1,4 @@
-import { documents } from './generated/Documentation';
+import { documents } from '../generated/Documentation';
 
 export { documents };
 export const componentGroups = [
@@ -16,12 +16,13 @@ export type ComponentGroup = (typeof componentGroups)[number];
 export const componentGroupId = (group: string) =>
   `components-${group.toLowerCase().replace(/[^a-z]+/g, '-')}`;
 export type Documentation = (typeof documents)[number];
-export type Reference = Omit<Documentation, 'group'> & {
+/** A component's or foundation's page of docs/: its group is a component group or Foundations. */
+export type GroupedDocument = Omit<Documentation, 'group'> & {
   group: ComponentGroup | 'Foundations';
 };
 export const foundations = documents.filter(
-  (document): document is Reference => document.group === 'Foundations',
+  (document): document is GroupedDocument => document.group === 'Foundations',
 );
-export const references = documents.filter((document): document is Reference =>
+export const componentDocuments = documents.filter((document): document is GroupedDocument =>
   componentGroups.some((group) => group === document.group),
 );

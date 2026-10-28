@@ -1,6 +1,6 @@
 import ExplainATerm from '../../examples/progressive-disclosure/ExplainATerm';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 
 const help = '[aria-label="About billable hours"]';
 const popover = '.env-popover';

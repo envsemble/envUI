@@ -1,4 +1,4 @@
-import type { PointerStep } from '../../previews/Motion';
+import type { PointerStep } from '../../motion/Motion';
 
 const add = '.env-icon-button:nth-child(2 of .env-icon-button)';
 const remove = '.env-icon-button:nth-child(1 of .env-icon-button)';

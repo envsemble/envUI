@@ -4,7 +4,7 @@ import { FormatBold } from '@envsemble/envui/icons/FormatBold';
 import { FormatItalic } from '@envsemble/envui/icons/FormatItalic';
 import { FormatListBulleted } from '@envsemble/envui/icons/FormatListBulleted';
 import { Undo } from '@envsemble/envui/icons/Undo';
-import { usePointer, type PointerStep } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 
 const button = (label: string) => `.env-toolbar-button[aria-label="${label}"]`;
 

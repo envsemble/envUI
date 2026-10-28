@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { Grid } from '@envsemble/envui';
 import { MarkdownEditor } from '@envsemble/envui/content';
-import { Example } from '../../previews/Example';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
-import { Renew } from '../../previews/Renew';
+import { Example } from '../../figures/Example';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
+import { Renew } from '../../motion/Renew';
 
 const agenda = ['- Welcome', '- Roadmap review', '- Budget', '- Hiring plan', '- Questions'];
 

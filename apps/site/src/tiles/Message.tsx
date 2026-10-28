@@ -1,5 +1,5 @@
 import { CopyButton, Message, MessageList } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 
 const answer = '.env-message[data-from="other"] .env-message-content';
 

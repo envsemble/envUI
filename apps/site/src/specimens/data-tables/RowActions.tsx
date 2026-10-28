@@ -1,6 +1,6 @@
 import RowActions from '../../examples/data-tables/RowActions';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 
 const trigger = '[aria-label="More actions for Website refresh"]';
 const item = (index: number) => `.env-menu-item:nth-child(${index} of .env-menu-item)`;

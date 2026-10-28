@@ -1,7 +1,7 @@
 import { Column } from '@envsemble/envui';
 import FiscalYear from '../../examples/month-picker/FiscalYear';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 
 /*
  * The pointer opens Budget month, where the months before April are unavailable, and presses Next

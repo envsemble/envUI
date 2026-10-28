@@ -100,7 +100,7 @@ export type DocumentationBlock =
     }
   /**
    * A foundation's figure: one of the catalogue's own, from its page's
-   * preview (previews/foundations), by name, with the legend that follows it, each mark's or
+   * preview (figures/foundations), by name, with the legend that follows it, each mark's or
    * picture's name and what it means.
    */
   | {

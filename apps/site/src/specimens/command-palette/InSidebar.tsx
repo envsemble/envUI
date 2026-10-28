@@ -1,9 +1,9 @@
 import { useRef, useState, type KeyboardEvent } from 'react';
 import { useModifierKey } from '@envsemble/envui';
 import InSidebar from '../../examples/command-palette/InSidebar';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
-import { PressedKeys } from '../../previews/PressedKeys';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
+import { PressedKeys } from '../../motion/PressedKeys';
 import { applePlatform } from '../../search/SearchShortcut';
 
 const input = '.env-command-palette-input';

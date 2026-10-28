@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import TextAbbreviation from '../../examples/tooltip/TextAbbreviation';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
-import { PressedKeys } from '../../previews/PressedKeys';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
+import { PressedKeys } from '../../motion/PressedKeys';
 
 /*
  * The keyboard's focus arrives on CET: its tooltip opens at once. Focus leaves, and then the

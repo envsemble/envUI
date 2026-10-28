@@ -1,6 +1,6 @@
 import FixedColumns from '../../examples/grid/FixedColumns';
-import { MotionStage } from '../../previews/MotionStage';
-import { WidthSweep } from '../../previews/WidthSweep';
+import { MotionStage } from '../../motion/MotionStage';
+import { WidthSweep } from '../../motion/WidthSweep';
 import { paneWidths, usePaneWidth } from './PaneWidth';
 
 function Resizing() {

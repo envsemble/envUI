@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 import { Markdown } from '@envsemble/envui/content';
-import { usePointer, type PointerStep } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 
 const word = '.md';
 /** The source as it is written, step by step: the word, wrapped once, and wrapped twice. */

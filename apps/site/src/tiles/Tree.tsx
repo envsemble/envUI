@@ -3,7 +3,7 @@ import { Tree, type TreeItem } from '@envsemble/envui';
 import { Description } from '@envsemble/envui/icons/Description';
 import { Folder } from '@envsemble/envui/icons/Folder';
 import { FolderOpen } from '@envsemble/envui/icons/FolderOpen';
-import { usePointer, type PointerStep } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 
 const row = (id: string) => `.env-tree-item[data-id="${id}"]`;
 const chevron = (id: string) => `${row(id)} .env-tree-chevron`;

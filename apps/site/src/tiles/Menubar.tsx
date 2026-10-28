@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Menu, Menubar } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 
 const menu = (label: string) => `.env-menubar-trigger:nth-child(${label} of .env-menubar-trigger)`;
 

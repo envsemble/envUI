@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import OpenOnError from '../../examples/disclosure/OpenOnError';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
-import { Renew } from '../../previews/Renew';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
+import { Renew } from '../../motion/Renew';
 
 /*
  * Advanced settings closed. The pointer presses Save site: the domain has a space, so the

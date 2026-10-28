@@ -1,5 +1,5 @@
 import { DatePicker } from '@envsemble/envui';
-import { Example, Specimen, SpecimenGrid } from '../../previews/Example';
+import { Example, Specimen, SpecimenGrid } from '../../figures/Example';
 
 /** Invalid, read-only and disabled fields. */
 export default function States() {

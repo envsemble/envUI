@@ -3,7 +3,7 @@ import { CommandPalette, type CommandPaletteItem } from '@envsemble/envui';
 import { NoteAdd } from '@envsemble/envui/icons/NoteAdd';
 import { PersonAdd } from '@envsemble/envui/icons/PersonAdd';
 import { Settings } from '@envsemble/envui/icons/Settings';
-import { usePointer, type PointerStep } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 
 const items: CommandPaletteItem[] = [
   { id: 'new', label: 'New document', icon: <NoteAdd /> },

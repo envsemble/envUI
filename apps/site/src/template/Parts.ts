@@ -5,7 +5,7 @@
  * these class names and take a part's description from here when their legend gives none; the
  * build checks that every legend names a part that exists.
  */
-import type { AnatomyLegendItem } from '../DocumentationTypes';
+import type { AnatomyLegendItem } from '../shared/DocumentationTypes';
 
 interface PartGroup {
   root: string;

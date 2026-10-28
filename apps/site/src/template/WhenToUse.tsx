@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react';
-import type { DocumentationMetadata } from '../DocumentationTypes';
+import type { DocumentationMetadata } from '../shared/DocumentationTypes';
 import { Documentation } from '../pages/Documentation';
 import { pageOf } from './Related';
 
@@ -20,8 +20,8 @@ export function visibleComponents(composes: string[]) {
     if (!/^[A-Z]/.test(name) || /(?:Provider|Close)$/.test(name)) continue;
     const page = pageOf(name);
     if (!page || page.section !== 'Components' || page.path.startsWith('docs/')) continue;
-    if (layoutPages.has(page.reference.id)) continue;
-    pages.set(page.path, { title: page.reference.title, path: page.reference.path });
+    if (layoutPages.has(page.document.id)) continue;
+    pages.set(page.path, { title: page.document.title, path: page.document.path });
   }
   return [...pages.values()];
 }

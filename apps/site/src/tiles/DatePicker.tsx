@@ -1,5 +1,5 @@
 import { Calendar } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 
 const day = (date: string) => `.env-calendar-day[data-date="${date}"]`;
 

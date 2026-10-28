@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { Row } from '@envsemble/envui';
-import { useTimeline } from '../previews/Motion';
+import { useTimeline } from '../motion/Motion';
 import { edges, gap, Item, Mark, useReflow } from './reflow';
 
 /** The blocks' widths, in rem, at a height of 1.25: two squares between longer blocks. */

@@ -1,7 +1,7 @@
 import { CalendarHeatmap, Column, Text, Theme, useTheme } from '@envsemble/envui';
 import ColorByRank from '../../examples/calendar-heatmap/ColorByRank';
-import { useTimeline } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { useTimeline } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 
 // The example's heatmap, whose data and thresholds the figure toggles.
 const { props: example } = ColorByRank();

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Button, Column, DropZone, List, Progress } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 
 /*
  * A photo dragged in from the desktop and dropped: it uploads, and once it is up, it is removed

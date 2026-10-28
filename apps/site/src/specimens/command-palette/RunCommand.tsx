@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import RunCommand from '../../examples/command-palette/RunCommand';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage, roomFor } from '../../previews/MotionStage';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage, roomFor } from '../../motion/MotionStage';
 
 const input = '.env-command-palette-input';
 

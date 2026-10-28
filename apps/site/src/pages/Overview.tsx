@@ -6,7 +6,7 @@ import { version } from '../../../../packages/ui/package.json';
 import { EnvUILogo } from '../brand/EnvUILogo';
 import { routeHref } from '../navigation/Address';
 import { pagesOf, sectionHome } from '../navigation/SiteRoutes';
-import { OverviewShowcase } from './OverviewShowcase';
+import { OverviewFan } from './OverviewFan';
 
 /**
  * Where the home page leads, each with what it is for rather than what it lists, so a page that
@@ -72,7 +72,7 @@ export function Overview() {
           </Text>
         </Column>
       </header>
-      <OverviewShowcase />
+      <OverviewFan />
       <Column gap={8} className="site-article catalogue-overview">
         <Column render={<section aria-labelledby="overview-explore" />} gap={5}>
           <Text render={<h2 id="overview-explore" />} variant="headline">

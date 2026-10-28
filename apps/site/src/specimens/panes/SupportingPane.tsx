@@ -1,6 +1,6 @@
 import SupportingPane from '../../examples/panes/SupportingPane';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 
 /*
  * Narrow, the details wait in a sheet: the pointer presses Details, and the sheet rises over the

@@ -43,7 +43,7 @@ import { Map as MapIcon } from '@envsemble/envui/icons/Map';
 import { RadioButtonChecked } from '@envsemble/envui/icons/RadioButtonChecked';
 import { TaskAlt } from '@envsemble/envui/icons/TaskAlt';
 import { Warning } from '@envsemble/envui/icons/Warning';
-import { useTimeline } from '../Motion';
+import { useTimeline } from '../../motion/Motion';
 import type { FoundationFigure } from './FoundationFigures';
 import { MarkedSubject } from './Marks';
 import { CornerLabel } from './Steps';

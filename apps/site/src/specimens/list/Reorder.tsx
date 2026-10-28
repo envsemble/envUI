@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import Reorder from '../../examples/list/Reorder';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
-import { PressedKeys } from '../../previews/PressedKeys';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
+import { PressedKeys } from '../../motion/PressedKeys';
 
 const handle = (index: number) =>
   `.env-list-item:nth-child(${index} of .env-list-item) .env-list-item-handle`;

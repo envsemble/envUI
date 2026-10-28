@@ -1,5 +1,5 @@
 import { CalendarHeatmap, type CalendarHeatmapDay } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 
 /** Nine weeks of edits from Monday 2 February 2026, busier in waves. */
 const data: CalendarHeatmapDay[] = Array.from({ length: 63 }, (_, index) => ({

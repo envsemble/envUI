@@ -8,7 +8,7 @@ import {
   Surface,
   Text,
 } from '@envsemble/envui';
-import { WidthSweep } from '../WidthSweep';
+import { WidthSweep } from '../../motion/WidthSweep';
 import type { FoundationFigure } from './FoundationFigures';
 import { ClassTextSizeFigure } from './ResponsiveTextSize';
 import { Figure, type LegendEntry } from './Topic';

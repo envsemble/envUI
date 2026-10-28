@@ -301,7 +301,7 @@ const compositionFrontmatter: FrontmatterSchema = {
 };
 /**
  * Frontmatter of a foundation page: what it is, the words people search for, its related pages and
- * its figures, which are the catalogue's (previews/foundations), each once with its role and
+ * its figures, which are the catalogue's (figures/foundations), each once with its role and
  * caption.
  */
 const foundationFrontmatter: FrontmatterSchema = {

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Button, Column, Row, Text, Theme, useTheme } from '@envsemble/envui';
 import { ViewInAr } from '@envsemble/envui/icons/ViewInAr';
 import type { DevModeHandle } from '@envsemble/envui/dev';
-import { keepLinksInPlace } from '../../template/LiveExample';
+import { keepLinksInPlace } from '../LiveExample';
 import { DemoApp } from './DemoApp';
 // The 3D view of the application below, captured from the real dev mode by
 // scripts/docs/CaptureDevModeImage.ts (npm run docs:dev-mode-image).

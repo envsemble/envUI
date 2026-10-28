@@ -13,17 +13,17 @@ import {
 } from 'react';
 import { Column, Link, Text, Theme, useTheme } from '@envsemble/envui';
 import { Article } from '@envsemble/envui/icons/Article';
-import type { DocumentationMetadata, StageFill } from '../DocumentationTypes';
+import type { DocumentationMetadata, StageFill } from '../shared/DocumentationTypes';
 import { routeHref } from '../navigation/Address';
-import { pageHref, referencePages, routeOfDocument } from '../navigation/SiteRoutes';
+import { pageHref, groupedPages, routeOfDocument } from '../navigation/SiteRoutes';
 import { Documentation } from '../pages/Documentation';
-import { useAutoplay } from '../previews/Autoplay';
-import { Playback, PreviewOverlays, usePlaying } from '../previews/Motion';
+import { useAutoplay } from '../motion/Autoplay';
+import { Playback, PreviewOverlays, usePlaying } from '../motion/Motion';
 import { useDisplaySettings } from '../theme/DisplaySettings';
 import { tileOf, tileWindows } from '../tiles/Tiles';
-import { documents, type Documentation as Document } from '../Reference';
-import { ExampleRender } from './LiveExample';
-import { hasPageSpecimen, PageSpecimen } from './PageSpecimens';
+import { documents, type Documentation as Document } from '../pages/PageModel';
+import { ExampleRender } from '../figures/LiveExample';
+import { hasPageSpecimen, PageSpecimen } from '../figures/PageSpecimens';
 
 /**
  * The page that documents a component, for the components a page relates to and the exports a
@@ -32,14 +32,14 @@ import { hasPageSpecimen, PageSpecimen } from './PageSpecimens';
  */
 export function pageOf(component: string) {
   const namespace = component.split('.')[0];
-  return referencePages.find((page) =>
-    (page.reference.metadata?.components ?? page.reference.components)?.includes(namespace),
+  return groupedPages.find((page) =>
+    (page.document.metadata?.components ?? page.document.components)?.includes(namespace),
   );
 }
 
 /** The address of a related page: a component's or foundation's page, or any other page's route. */
 export function relatedHref(id: string) {
-  const page = referencePages.find((item) => item.reference.id === id);
+  const page = groupedPages.find((item) => item.document.id === id);
   if (page) return pageHref(page);
   const route = routeOfDocument(id);
   return route && routeHref(route);
@@ -138,7 +138,7 @@ export function alternativesOf(metadata: DocumentationMetadata): Alternative[] {
         key: use,
         name: use,
         href: page && pageHref(page),
-        preview: page && previewOf(page.reference, use),
+        preview: page && previewOf(page.document, use),
         line: text,
       };
     }
@@ -510,7 +510,7 @@ function contain(at: number, low: number, high: number, half: number) {
  * to fit, rendered once the tiles near the viewport; for a page without one, its specimen, in the
  * same way. Without either, a page icon. A page's own tile, or a gallery's composition, takes the
  * example's place. A gallery's tile passes its own stage class. While `playing`, unless the
- * sidebar paused every animation, its animation plays (previews/Motion.tsx), and it rests at its
+ * sidebar paused every animation, its animation plays (motion/Motion.tsx), and it rests at its
  * still once that ends.
  */
 export function TilePreview({

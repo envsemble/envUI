@@ -1,5 +1,5 @@
 import { type ControlSize, SegmentedControl } from '@envsemble/envui';
-import { Example, Specimen, SpecimenGrid } from '../../previews/Example';
+import { Example, Specimen, SpecimenGrid } from '../../figures/Example';
 
 const sizes: readonly { size: ControlSize; title: string; caption: string }[] = [
   { size: 'sm', title: 'Small', caption: '2 rem' },

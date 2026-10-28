@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { TextField } from '@envsemble/envui';
-import { Example } from '../../previews/Example';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
-import { PressedKeys } from '../../previews/PressedKeys';
-import { Renew } from '../../previews/Renew';
+import { Example } from '../../figures/Example';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
+import { PressedKeys } from '../../motion/PressedKeys';
+import { Renew } from '../../motion/Renew';
 
 const input = 'input[name="project"]';
 

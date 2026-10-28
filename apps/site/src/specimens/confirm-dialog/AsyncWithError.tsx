@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import AsyncWithError from '../../examples/confirm-dialog/AsyncWithError';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 
 const confirm = '.env-dialog-actions .env-button:last-child';
 

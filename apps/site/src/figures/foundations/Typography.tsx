@@ -9,8 +9,8 @@ import {
   useTheme,
   type TextVariant,
 } from '@envsemble/envui';
-import { useTimeline } from '../Motion';
-import { WidthSweep } from '../WidthSweep';
+import { useTimeline } from '../../motion/Motion';
+import { WidthSweep } from '../../motion/WidthSweep';
 import type { FoundationFigure } from './FoundationFigures';
 import { MarkedSubject } from './Marks';
 import { AtTextSize, CornerLabel, StepStack } from './Steps';

@@ -1,5 +1,5 @@
 import { Column, List, Switch, Text } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../previews/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 
 const toggle = (index: number) =>
   `.env-list-item:nth-child(${index} of .env-list-item) .env-switch-input`;

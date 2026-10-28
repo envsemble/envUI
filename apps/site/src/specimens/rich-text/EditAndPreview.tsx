@@ -1,6 +1,6 @@
 import EditAndPreview from '../../examples/rich-text/EditAndPreview';
-import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
 
 const editor = '.env-rich-text-editor';
 const task = `${editor} li:nth-child(2 of li) .env-checkbox-input`;
