@@ -55,6 +55,13 @@ test('the three pickers open the same card, their actions inset alike from its e
     await expect(openCard(page)).toBeVisible();
     const geometry = await cardGeometry(page);
     expect(geometry.buttons).toEqual(buttons);
+    // It opens 8 px clear of the field's box, as every popup opens from its trigger, at its start.
+    const control = (await field(page, name)
+      .locator('xpath=ancestor::*[contains(@class, "env-text-field-control")][1]')
+      .boundingBox())!;
+    const card = (await openCard(page).boundingBox())!;
+    expect(card.y - (control.y + control.height)).toBeCloseTo(8, 0);
+    expect(card.x).toBeCloseTo(control.x, 0);
     cards.push(geometry);
     await page.keyboard.press('Escape');
     await expect(openCard(page)).toHaveCount(0);

@@ -170,6 +170,8 @@ export function PickerField({
   const { id } = metadata;
   const labelId = `${id}-label`;
   const triggerRef = useRef<HTMLButtonElement>(null);
+  // The control box, the field's visible box, which the popup opens under.
+  const controlRef = useRef<HTMLDivElement>(null);
   const nativeRef = useRef<HTMLInputElement>(null);
   const popupRef = useRef<HTMLDivElement>(null);
   // Whether the popup was open when a press on the label began, which closes it.
@@ -216,6 +218,7 @@ export function PickerField({
     return (
       <div
         {...boxProps}
+        ref={controlRef}
         className={`${boxProps.className} env-date-picker-control`}
         data-label-floating={labelFloats || undefined}
         data-actions={showClear ? '2' : '1'}
@@ -332,7 +335,7 @@ export function PickerField({
       </FieldFrame>
       <PickerPopup
         className={popupClassName}
-        triggerRef={triggerRef}
+        anchorRef={controlRef}
         popupRef={popupRef}
         // The portal leaves the field's text direction behind; the popup keeps it.
         dir={direction}
