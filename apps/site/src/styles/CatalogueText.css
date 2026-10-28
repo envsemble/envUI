@@ -64,16 +64,13 @@
   margin-block-start: calc(var(--env-space-4) - var(--catalogue-subtopic-gap));
 }
 
-/* The rules of a block, the bullets after its lead: plain dots in the quieter color of supporting
-   text, close together, so a block reads as its point and then its rules. What a page is for,
-   under Use it when, keeps its sparks. */
+/* The rules of a block, the bullets after its lead: envUI's sparks in the quieter color of
+   supporting text, close together, so a block reads as its point and then its rules. */
 :where(.site-figure-section .env-markdown:not(.site-when *)) > ul {
   --env-prose-list-item-gap: var(--env-space-2);
   --env-prose-list-marker-fill: transparent;
   --env-prose-list-marker-size: calc(var(--env-space-4) + var(--env-space-1));
   --env-prose-list-marker-gap: var(--env-space-2);
-  --env-prose-list-mark: none;
-  --env-prose-list-mark-size: 0.3125rem;
   --env-prose-list-mark-color: var(--env-color-fg-muted);
   line-height: 1.5;
   color: var(--env-color-fg-muted);

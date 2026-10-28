@@ -61,19 +61,6 @@
   letter-spacing: -0.015em;
 }
 
-/* Guidance lists, on the pages of components, patterns and foundations (GuidanceLists in
-   Documentation.tsx): envUI's list, with a small spark instead of its dot, four points with curved
-   sides, in the text's color, centred on its first line. A list nested in one keeps envUI's quiet
-   ring. */
-.site-guidance {
-  --env-prose-list-marker-size: calc(var(--env-space-4) + var(--env-space-1));
-  --env-prose-list-marker-gap: var(--env-space-2);
-  --env-prose-list-marker-fill: transparent;
-  --env-prose-list-mark-color: var(--env-color-fg-default);
-  --env-prose-list-mark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 0C12.9 7.4 16.6 11.1 24 12C16.6 12.9 12.9 16.6 12 24C11.1 16.6 7.4 12.9 0 12C7.4 11.1 11.1 7.4 12 0Z'/%3E%3C/svg%3E");
-  --env-prose-list-mark-size: 0.5625rem;
-}
-
 /* A component named at an item's end follows it after a muted middle dot, in the muted color too
    where it isn't a link. */
 .catalogue-list-name-dot,

@@ -79,8 +79,7 @@ const headingIds: NonNullable<MarkdownProps['rehypePlugins']>[number] = () => (t
 
 /**
  * Whether the Markdown below is guidance, as the pages of components, patterns and foundations are:
- * its lists are then marked with a small spark instead of envUI's dot
- * (`site-guidance`, Template.css), and a component named at an item's end follows a muted dot.
+ * it takes `site-guidance`, and a component named at an item's end follows a muted dot.
  */
 export const GuidanceLists = createContext(false);
 
