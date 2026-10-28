@@ -214,18 +214,18 @@
   margin: 0;
   border: 0;
 }
-/* A group is its own set of rows below a small muted heading, apart from the rows before it by
-   space; after a separator, the separator is that space. */
+/* A group is its own set of rows below a small muted heading, a little ahead of its rows, apart
+   from the rows before it by space; after a separator, the separator is that space. */
 .env-menu > .env-menu-group:not(:first-child, .env-menu-separator + *),
 .env-menu > .env-skeleton-content > .env-menu-group:not(:first-child, .env-menu-separator + *) {
   margin-block-start: var(--env-popup-group-gap);
 }
 .env-menu-group-label {
   padding-block: var(--env-popup-padding) calc(0.1 * var(--env-control-height-md));
-  padding-inline: calc(var(--env-popup-row-padding-inline) + var(--env-menu-leading))
-    var(--env-popup-row-padding-inline);
+  padding-inline: var(--env-popup-label-padding-inline);
   color: var(--env-color-fg-muted);
   font: var(--env-font-weight-medium) var(--env-font-size-caption) / 1.4 var(--env-font-family);
+  letter-spacing: 0.01em;
   overflow-wrap: anywhere;
 }
 

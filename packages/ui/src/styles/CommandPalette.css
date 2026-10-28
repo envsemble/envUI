@@ -64,7 +64,7 @@
   max-block-size: 60vh;
   margin-block-start: var(--env-popup-group-gap);
   align-content: start;
-  gap: 0.125rem;
+  gap: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-width: thin;
@@ -72,8 +72,9 @@
 .env-command-palette-list[hidden] {
   display: none;
 }
+/* Options are ListRows, as in every popup list, in the text color, one under the next. */
 .env-command-palette-group {
-  gap: 0.125rem;
+  gap: 0;
 }
 /* Groups stand apart by space, under a small muted heading, with no line. */
 .env-command-palette-group + .env-command-palette-group,
@@ -81,14 +82,11 @@
   margin-block-start: var(--env-popup-group-gap);
 }
 .env-command-palette-heading {
-  padding: var(--env-popup-padding) var(--env-popup-row-padding-inline)
+  padding: var(--env-popup-padding) var(--env-popup-label-padding-inline)
     calc(0.1 * var(--env-control-height-md));
   color: var(--env-color-fg-muted);
   font: var(--env-font-weight-medium) var(--env-font-size-caption) / 1.4 var(--env-font-family);
-}
-/* Options are ListRows, as in every popup list. */
-.env-command-palette-item {
-  color: var(--env-color-fg-control);
+  letter-spacing: 0.01em;
 }
 /* The status announces the number of results; it shows only when it says that nothing matches. */
 .env-command-palette-status:not([data-empty]) {

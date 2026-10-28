@@ -88,6 +88,12 @@ test.describe('Menus', () => {
     expect(frosted.padding).toBeCloseTo(6, 0);
     const row = (await menu.getByRole('menuitemradio', { name: 'Name' }).boundingBox())!;
     expect(row.height).toBeCloseTo(40, 0);
+    // A group's label sits 10 px in, a little ahead of the rows' 12 px, whatever leads them.
+    const labelInset = await menu
+      .locator('.env-menu-group-label')
+      .first()
+      .evaluate((label) => Number.parseFloat(getComputedStyle(label).paddingLeft));
+    expect(labelInset).toBeCloseTo(10, 0);
     await page.keyboard.press('Escape');
     await page
       .getByTestId('menus-light')
