@@ -6,6 +6,12 @@ import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 export const checkoutPath = '/__envui/checkout';
+
+/**
+ * The development servers' ports when no other checkout or program holds them: the site's, which
+ * `npm run dev` serves on too (apps/site/package.json), and the test fixture's.
+ */
+export const defaultPorts = { site: 8770, fixture: 8766 };
 const root = resolve(fileURLToPath(new URL('../..', import.meta.url)));
 
 /** A short hash of the checkout's folder; Windows paths compare without case. */

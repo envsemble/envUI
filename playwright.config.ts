@@ -1,7 +1,7 @@
 import { availableParallelism } from 'node:os';
 import { fileURLToPath } from 'node:url';
 import { defineConfig, devices } from '@playwright/test';
-import { resolveServers } from './scripts/test/CheckoutMarker.ts';
+import { defaultPorts, resolveServers } from './scripts/test/CheckoutMarker.ts';
 
 /**
  * The development servers this run needs: ENVUI_SERVERS lists them (site, fixture, or none; the
@@ -35,8 +35,8 @@ process.env.ENVUI_SITE_PORT ||= process.env.ENVUI_CATALOGUE_PORT;
 const servers = await resolveServers(
   Object.fromEntries(
     Object.entries({
-      site: { variable: 'ENVUI_SITE_PORT', port: 8770, offset: 0 },
-      fixture: { variable: 'ENVUI_FIXTURE_PORT', port: 8766, offset: 1 },
+      site: { variable: 'ENVUI_SITE_PORT', port: defaultPorts.site, offset: 0 },
+      fixture: { variable: 'ENVUI_FIXTURE_PORT', port: defaultPorts.fixture, offset: 1 },
     }).filter(([name]) => wanted.has(name)),
   ),
 );

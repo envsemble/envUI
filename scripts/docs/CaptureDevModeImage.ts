@@ -19,9 +19,10 @@ import { writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium } from '@playwright/test';
+import { defaultPorts } from '../test/CheckoutMarker.ts';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
-const site = (process.argv[2] ?? 'http://127.0.0.1:8770').replace(/\/$/, '');
+const site = (process.argv[2] ?? `http://127.0.0.1:${defaultPorts.site}`).replace(/\/$/, '');
 const page = 'docs/dev-mode';
 /** The 3D picture's shape, width to height, as DevModeDemo.tsx declares it, and its margin in px. */
 const aspect = 16 / 10;
