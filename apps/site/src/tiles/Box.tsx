@@ -1,6 +1,6 @@
 import { Box, Column, type SpaceStep } from '@envsemble/envui';
 import { useTimeline } from '../motion/Motion';
-import { along, easing, edges, Item, line, Mark } from './reflow';
+import { along, easing, edges, Item, line, Mark } from './Reflow';
 
 /** The inset, step by step: a small one, a larger one, and back. */
 const paddings: SpaceStep[] = [2, 5];

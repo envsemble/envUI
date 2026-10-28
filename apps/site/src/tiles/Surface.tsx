@@ -1,6 +1,6 @@
 import { Surface, Text, type SurfaceBackground, type SurfaceRadius } from '@envsemble/envui';
 import { useTimeline } from '../motion/Motion';
-import { easing } from './reflow';
+import { easing } from './Reflow';
 
 /** Step by step: the page's fill, the default, muted, its corners small, the page's again. */
 const looks: { background: SurfaceBackground; radius: SurfaceRadius }[] = [

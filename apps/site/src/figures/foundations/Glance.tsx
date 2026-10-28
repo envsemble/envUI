@@ -12,12 +12,12 @@ import { Search } from '@envsemble/envui/icons/Search';
 import { Settings } from '@envsemble/envui/icons/Settings';
 import { Share } from '@envsemble/envui/icons/Share';
 import { Star } from '@envsemble/envui/icons/Star';
-import { edges, gap, Item, Mark } from '../../tiles/reflow';
+import { edges, gap, Item, Mark } from '../../tiles/Reflow';
 
 /*
  * The pictures of the page of all foundations (FoundationCatalogue.tsx), one for each foundation:
  * the system's own values in its tokens, so they follow the reader's theme, contrast and scale.
- * Space, width and the keyboard are drawn as the layout tiles are, in hairlines (tiles/reflow.ts);
+ * Space, width and the keyboard are drawn as the layout tiles are, in hairlines (tiles/Reflow.ts);
  * type, color and icons show themselves. They are pictures: hidden from assistive technology,
  * since the foundation's name beside them says what they are.
  */
