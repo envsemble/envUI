@@ -124,7 +124,7 @@
    theme: navigation that opens in a sheet in a narrow window keeps the color it has at the window's
    edge in a wide one, and a Drawer or a Rail in it takes the sheet's color as on any surface. Its
    elevation edge and its scrim set it apart from the page. */
-.env-surface.env-dialog-surface.env-sheet-popup {
+.env-sheet-viewport .env-sheet-popup {
   --env-surface-color: var(--env-color-bg-default);
 }
 /* resizable: a side sheet as wide as --env-sheet-width, which the component sets, at every window

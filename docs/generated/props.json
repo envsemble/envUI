@@ -2997,7 +2997,7 @@
           "type": "'default' | 'page'",
           "required": false,
           "default": "'default'",
-          "description": "The drawer's background, named as Surface's and Card's: default, the navigation's background, the default surface color, as a plain rectangle; page, the page's background, so it sits on the page. On a surface, such as a Sheet, both take the surface's color. Set it on its own, such as a Drawer with its background under a TopBar with page."
+          "description": "The drawer's background, named as Surface's and Card's: default, the navigation's background, the default surface color, as a plain rectangle; page, the page's background, so it sits on the page. On a surface, such as a Sheet, both take the surface's color; a Sheet's is the navigation's background, so it keeps its color in a narrow window. Set it on its own, such as a Drawer with its background under a TopBar with page."
         },
         {
           "name": "aria-label",
@@ -6231,7 +6231,7 @@
           "type": "'default' | 'page'",
           "required": false,
           "default": "'default'",
-          "description": "The rail's background, named as Surface's and Card's: default, the navigation's background, the default surface color, as a plain rectangle; page, the page's background, so it sits on the page. On a surface, such as a Sheet, both take the surface's color. Set it on its own, such as a Rail with its background beside a TopBar with page."
+          "description": "The rail's background, named as Surface's and Card's: default, the navigation's background, the default surface color, as a plain rectangle; page, the page's background, so it sits on the page. On a surface, such as a Sheet, both take the surface's color; a Sheet's is the navigation's background, so it keeps its color in a narrow window. Set it on its own, such as a Rail with its background beside a TopBar with page."
         },
         {
           "name": "aria-label",
