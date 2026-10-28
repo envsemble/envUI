@@ -131,8 +131,9 @@
 .catalogue-mini-steps > span {
   aspect-ratio: 1;
   border-radius: var(--env-radius-xs);
+  box-sizing: border-box;
+  border: 1px solid var(--env-color-border-accent);
   background: var(--env-color-bg-accent-muted);
-  box-shadow: inset 0 0 0 1px var(--env-color-border-accent);
 }
 
 .catalogue-mini-corners {
@@ -165,7 +166,7 @@
 }
 .catalogue-mini-corner > [data-corner='circle'] {
   inline-size: 2.25rem;
-  border-radius: 50%;
+  border-radius: var(--env-radius-full);
 }
 
 /* Adapting to width: a window of each class, from the narrowest, with its panes. */
@@ -567,21 +568,22 @@
 }
 
 /* The parts a foundation picks out, marked as a highlighter would: the text styles, the icons. */
-.catalogue-foundations-screen [data-part] {
+.catalogue-foundations-screen :is([data-part='type'], [data-part='icon']) {
   border-radius: var(--env-radius-xs);
+  outline: 0.1875rem solid transparent;
   transition:
     background-color var(--env-motion-duration-fast) var(--env-motion-ease),
-    box-shadow var(--env-motion-duration-fast) var(--env-motion-ease);
+    outline-color var(--env-motion-duration-fast) var(--env-motion-ease);
 }
 
 .catalogue-foundations-screen[data-shown='typography'] [data-part='type'],
 .catalogue-foundations-screen[data-shown='icons'] [data-part='icon'] {
+  outline: 0.1875rem solid var(--env-color-bg-accent-muted);
   background-color: var(--env-color-bg-accent-muted);
-  box-shadow: 0 0 0 0.1875rem var(--env-color-bg-accent-muted);
 }
 
 .catalogue-foundations-screen[data-shown='icons'] svg[data-part='icon'] {
-  border-radius: 50%;
+  border-radius: var(--env-radius-full);
 }
 
 /* The key that moved the focus, in the stage's corner, while Accessibility is shown. */

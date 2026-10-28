@@ -275,15 +275,17 @@ test('the navigation shows the current page, and focus moves to the page only on
   await navigation.getByRole('link', { name: 'Button', exact: true }).click();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
   await expect(main).toBeFocused();
-  // A destination of the rail opens its first page, and the drawer lists its pages.
+  // A destination of the rail opens its first page, the page of all its pages, and the drawer
+  // lists its pages.
   await page
     .getByRole('navigation', { name: 'Catalogue' })
     .getByRole('link', { name: 'Foundations', exact: true })
     .click();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Foundations');
+  const foundations = page.getByRole('navigation', { name: 'Foundations' });
+  await expect(foundations.getByRole('link', { name: 'Typography' })).toBeVisible();
+  await foundations.getByRole('link', { name: 'Colors & themes', exact: true }).click();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Colors & themes');
-  await expect(
-    page.getByRole('navigation', { name: 'Foundations' }).getByRole('link', { name: 'Typography' }),
-  ).toBeVisible();
   // The Docs have a navigation of their own, and the switch at the top end leads to the same
   // subject in the other part and back.
   await page.locator('.site-page-actions').getByRole('link', { name: 'Docs', exact: true }).click();
