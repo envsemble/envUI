@@ -3,6 +3,8 @@
 .env-theme {
   min-inline-size: 0;
   overflow-wrap: anywhere;
+  /* Standard contrast until a rule below says otherwise (see the switch at the end). */
+  --env-theme-high-contrast: initial;
 }
 /* The outermost theme boundary is the env-window container, on which the window classes are
    measured: a themed document root, the Theme around an application, or the portal of a popup or a
@@ -45,4 +47,17 @@ html.env-theme > body {
 }
 .env-theme a {
   color: inherit;
+}
+/* A switch for the high-contrast looks of components, set by each boundary as the tokens' contrast
+   is: empty under high contrast, and invalid otherwise, so a custom property that starts with it,
+   such as Alert's --env-alert-high-contrast-fill, holds its high-contrast value or nothing, and the
+   standard look applies. Every boundary sets it again, standard in its first rule, so the nearest
+   one decides. */
+.env-theme[data-env-contrast='high'] {
+  --env-theme-high-contrast: ;
+}
+@media (prefers-contrast: more) {
+  .env-theme:not([data-env-contrast='standard']) {
+    --env-theme-high-contrast: ;
+  }
 }
