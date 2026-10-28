@@ -4601,6 +4601,7 @@
     "--env-elevation-3-border on --env-color-bg-popup": {
       "kind": "non-text",
       "minimum": {
+        "standard": 1.6,
         "high": 4.5
       }
     },

@@ -76,8 +76,8 @@ const recessedHover = '--env-color-bg-recessed-hover';
 const recessedPressed = '--env-color-bg-recessed-pressed';
 const surface = '--env-color-bg-default'; // Surface's default, sidebars, standard menus
 const muted = '--env-color-bg-muted'; // Surface background="muted", cards, radio rows
-const raised = '--env-color-bg-raised'; // Surface background="raised", dialogs, tables, rows on a contrasting surface
-const popup = '--env-color-bg-popup'; // Select lists, popovers, compact menus, menu rows, the composer
+const raised = '--env-color-bg-raised'; // Surface background="raised", tables, rows on a contrasting surface
+const popup = '--env-color-bg-popup'; // Select lists, popovers, compact menus, menu rows, the composer, solid dialogs
 const field = '--env-color-bg-field';
 const overlay = '--env-color-bg-overlay'; // the scrim behind dialogs
 const selected = '--env-color-bg-selected';
@@ -525,14 +525,14 @@ const registry: readonly ContrastPair[] = merged([
   ]),
   ...nonText(
     '--env-elevation-3-border',
-    [raised, [overlay, page]],
-    'The edge of dialogs and the command palette, against the dialog and the scrim',
+    [popup, raised, [overlay, page]],
+    'The edge of dialogs and the command palette where they are solid, against their fill and the scrim',
     popupEdge,
   ),
   ...nonText(
     '--env-elevation-3-border',
-    [popup, surface, page, muted],
-    'The edge of a solid popup at high contrast, a modal’s, against the popup and what it floats over; a raised surface is measured above',
+    [surface, page, muted],
+    'The edge of a solid popup at high contrast, a modal’s, against what it floats over; against the popup and a raised surface it is measured above',
     {
       contrast: 'high',
       rationale:

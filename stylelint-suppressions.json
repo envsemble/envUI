@@ -69,7 +69,7 @@
   },
   "packages/ui/src/styles/Dialog.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 6
+      "count": 5
     }
   },
   "packages/ui/src/styles/Pager.css": {
