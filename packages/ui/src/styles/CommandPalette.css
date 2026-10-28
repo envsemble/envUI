@@ -164,6 +164,7 @@
   --env-kbd-fg: var(--env-color-fg-muted);
   --env-kbd-bg: var(--env-color-bg-neutral-muted);
   --env-kbd-border: transparent;
+  --env-kbd-border-end-width: var(--env-control-border-width);
   --env-kbd-font-size: var(--env-font-size-caption);
   flex: 0 0 auto;
   padding: var(--env-popup-group-gap) var(--env-popup-row-padding-inline)
@@ -171,9 +172,6 @@
   gap: var(--env-space-1) var(--env-space-4);
   color: var(--env-color-fg-muted);
   font: var(--env-type-body-small);
-}
-.env-command-palette-footer .env-kbd {
-  border-block-end-width: var(--env-control-border-width);
 }
 /* The application's own footer content flows as text after the hints. */
 .env-command-palette-footer-content {

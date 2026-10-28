@@ -133,6 +133,7 @@
   --env-kbd-fg: var(--env-color-fg-muted);
   --env-kbd-bg: var(--env-color-bg-neutral-muted);
   --env-kbd-border: transparent;
+  --env-kbd-border-end-width: var(--env-control-border-width);
   --env-kbd-font-size: var(--env-font-size-caption);
 }
 /* On a highlighted row, where the chip lies on the highlight, its label takes the text color. */
@@ -151,10 +152,6 @@
   color: var(--env-color-fg-muted);
   font: var(--env-type-body-small);
   white-space: nowrap;
-}
-/* With no edge, a chip's heavier bottom edge would only lift its label. */
-.env-menu-item :is(.env-menu-item-end, .env-menu-item-shortcut) .env-kbd {
-  border-block-end-width: var(--env-control-border-width);
 }
 /* Radio and checkbox items keep a check-mark slot, so their labels align whether checked or not. */
 .env-menu-item-check {

@@ -199,6 +199,9 @@
   text-align: start;
   overflow-wrap: anywhere;
 }
+.env-combobox-item[data-disabled] {
+  cursor: default;
+}
 .env-combobox-item[data-selected] {
   font-weight: var(--env-font-weight-medium);
 }

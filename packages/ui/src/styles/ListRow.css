@@ -95,6 +95,7 @@
   --env-kbd-fg: var(--env-color-fg-muted);
   --env-kbd-bg: var(--env-color-bg-neutral-muted);
   --env-kbd-border: transparent;
+  --env-kbd-border-end-width: var(--env-control-border-width);
   --env-kbd-font-size: var(--env-font-size-caption);
 }
 /* On a highlighted row, where the chip lies on the highlight, its label takes the text color. */
@@ -107,9 +108,6 @@
   color: var(--env-color-fg-muted);
   font: var(--env-type-body-small);
   white-space: nowrap;
-}
-.env-list-row :is(.env-list-row-end, .env-list-row-shortcut) .env-kbd {
-  border-block-end-width: var(--env-control-border-width);
 }
 
 /* Forced colors: the system paints no fills, so a highlighted row takes the selection colors and a

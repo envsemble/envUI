@@ -10,7 +10,7 @@
    second drop shadow after the avatars'. The opacity is above the least that keeps muted text at
    4.5:1 over black (light) or white (dark) behind the popup. The command palette and rich text
    suggestions take the same look. */
-:where(.env-theme) {
+.env-theme {
   --env-popup-opacity: 88%;
   --env-popup-blur: 1.375rem;
   /* A small contact layer and the soft shadow, in the text's color. */
@@ -33,7 +33,7 @@
   --env-popup-radius: calc(var(--env-popup-row-radius) + var(--env-popup-padding));
   --env-popup-group-gap: calc(0.25 * var(--env-control-height-md));
 }
-:where(.env-theme[data-env-theme='dark']) {
+.env-theme[data-env-theme='dark'] {
   --env-popup-opacity: 90%;
   /* In dark a deeper shade of the page, stronger, as a light shadow would not show. */
   --env-popup-shadow: 0 12px 32px -10px
@@ -41,14 +41,14 @@
 }
 /* Solid: the fill covers what is behind, with no blur and no shadow, and the edge returns as the
    popup's boundary. */
-:where(.env-theme[data-env-contrast='high']) {
+.env-theme[data-env-contrast='high'] {
   --env-popup-opacity: 100%;
   --env-popup-blur: 0rem;
   --env-popup-shadow: none;
   --env-popup-solid: ;
 }
 @media (prefers-contrast: more) {
-  :where(.env-theme:not([data-env-contrast='standard'])) {
+  .env-theme:not([data-env-contrast='standard']) {
     --env-popup-opacity: 100%;
     --env-popup-blur: 0rem;
     --env-popup-shadow: none;
@@ -56,7 +56,8 @@
   }
 }
 @media (prefers-reduced-transparency: reduce), (forced-colors: active) {
-  :where(.env-theme) {
+  .env-theme,
+  .env-theme[data-env-theme='dark'] {
     --env-popup-opacity: 100%;
     --env-popup-blur: 0rem;
     --env-popup-shadow: none;

@@ -125,15 +125,15 @@
    edge in a wide one, and a Drawer or a Rail in it takes the sheet's color as on any surface. Its
    fill and its scrim set it apart from the page, with no edge; at high contrast its elevation edge
    returns as its boundary. */
-:where(.env-theme) {
+.env-theme {
   /* A switch, as Code.css's: invalid at standard contrast, empty at high contrast. */
   --env-sheet-high-contrast: initial;
 }
-:where(.env-theme[data-env-contrast='high']) {
+.env-theme[data-env-contrast='high'] {
   --env-sheet-high-contrast: ;
 }
 @media (prefers-contrast: more) {
-  :where(.env-theme:not([data-env-contrast='standard'])) {
+  .env-theme:not([data-env-contrast='standard']) {
     --env-sheet-high-contrast: ;
   }
 }
