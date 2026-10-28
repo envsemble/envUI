@@ -77,7 +77,14 @@ const squash = (text: string) => text.toLowerCase().replace(/[^a-z\d]/g, '');
 export function previewOf(document: Document, component?: string): Preview | undefined {
   const own = component && document.metadata?.components[0] !== component.split('.')[0];
   const tile = !own && tileOf(document.id);
-  // A tile's popups, such as a menu it opens as it plays, open inside its canvas.
+  const blocks = (document.sections ?? []).flatMap((section) =>
+    section.blocks.flatMap((block) => (block.kind === 'example' ? [block] : [])),
+  );
+  const lead = document.sections
+    ?.find((section) => section.id === 'overview')
+    ?.blocks.find((block) => block.kind === 'example' && !block.role);
+  // A tile's popups, such as a menu it opens as it plays, open inside its canvas; it takes the
+  // overview's stage, such as the deeper one of a whole window.
   if (tile)
     return {
       page: document.id,
@@ -86,10 +93,8 @@ export function previewOf(document: Document, component?: string): Preview | und
       composition: tile,
       tile: true,
       window: tileWindows[document.id],
+      stage: lead?.kind === 'example' ? lead.stage : undefined,
     };
-  const blocks = (document.sections ?? []).flatMap((section) =>
-    section.blocks.flatMap((block) => (block.kind === 'example' ? [block] : [])),
-  );
   const anatomy = blocks.find((block) => block.role === 'anatomy');
   const named =
     own &&
@@ -99,9 +104,6 @@ export function previewOf(document: Document, component?: string): Preview | und
         !block.widths &&
         [block.name, block.heading].some((text) => squash(text).includes(squash(component))),
     );
-  const lead = document.sections
-    ?.find((section) => section.id === 'overview')
-    ?.blocks.find((block) => block.kind === 'example' && !block.role);
   const chosen = named || (!own && anatomy?.open ? anatomy : lead);
   if (!chosen || chosen.kind !== 'example')
     return hasPageSpecimen(document.id)

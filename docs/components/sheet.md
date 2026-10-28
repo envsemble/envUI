@@ -75,7 +75,7 @@ A medium side sheet takes the whole width of a compact window, and a large one o
 
 ## Anatomy
 
-```tsx figure=SheetAnatomy open
+```tsx figure=SheetAnatomy stage=shaded open
 
 ```
 
@@ -97,7 +97,7 @@ A sheet has a dialog's surface, title, description and actions.
 - On a touch screen a swipe toward its edge closes it too.
 - A mouse or a pen never moves the sheet, and a drag inside it selects text.
 - In a sheet too short for all it holds, its content scrolls between the title and the actions, which stay in view.
-- A sheet is on the navigation's color, so a [Drawer](drawer.md) in it looks as it does at the window's edge; its edge and the scrim set it apart.
+- A sheet is on the navigation's color, so a [Drawer](drawer.md) in it looks as it does at the window's edge; its fill and the scrim set it apart.
 
 ### Inspector beside the page
 
@@ -106,7 +106,7 @@ The page can stay usable beside the sheet.
 - The sheet then stays open while people choose another row.
 - When it closes, focus returns to the row it showed last.
 
-```tsx figure=InspectorPanel motion
+```tsx figure=InspectorPanel stage=shaded motion
 
 ```
 

@@ -10,7 +10,7 @@ import { inSkeleton } from './inSkeleton.js';
 /**
  * A surface's fill: default, the background of panes and side regions; muted, the background of
  * rows; page, the page behind everything; raised, a block that stands out on a pane; recessed, a
- * well a shade deeper than the page.
+ * well on the page: a shade deeper than it in dark, and lighter than it and the panes in light.
  */
 export type SurfaceBackground = 'default' | 'muted' | 'page' | 'raised' | 'recessed';
 
@@ -24,7 +24,8 @@ export interface SurfaceAppearanceProps extends SkeletonProps {
   /**
    * The fill: default, the background of panes and side regions; muted, the background of rows;
    * page, the page background; raised, a block that stands out on a pane; or recessed, a well on
-   * the page, a shade deeper than it, that what it holds rises out of.
+   * the page that what it holds rises out of: a shade deeper than it in dark, and lighter than it
+   * and the panes in light.
    * @default 'default'
    */
   background?: SurfaceBackground;

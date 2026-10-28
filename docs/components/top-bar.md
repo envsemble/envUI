@@ -28,7 +28,9 @@ avoidWhen:
 components:
   - TopBar
 examples:
-  AppTopBar: overview
+  AppTopBar:
+    role: overview
+    stage: shaded
   TitleBar: example
   TopBarAnatomy: anatomy
   TitleFirstToGo: example
@@ -54,13 +56,13 @@ The bar can be the window's own title bar in an installed web app: empty space d
 
 - It then spans the whole Scaffold.
 
-```tsx figure=TitleBar widths="40"
+```tsx figure=TitleBar stage=shaded widths="40"
 
 ```
 
 ## Anatomy
 
-```tsx figure=TopBarAnatomy
+```tsx figure=TopBarAnatomy stage=shaded
 
 ```
 
@@ -77,7 +79,7 @@ Not shown: the page progress.
 
 The bar never wraps: the title is cut short first, and the start content and actions keep their size.
 
-```tsx figure=TitleFirstToGo widths="40 20" sweep
+```tsx figure=TitleFirstToGo stage=shaded widths="40 20" sweep
 
 ```
 
@@ -85,11 +87,11 @@ The bar never wraps: the title is cut short first, and the start content and act
 
 The bar goes in a [Scaffold](scaffold.md)'s top bar region, the screen's banner, and keeps room for its title.
 
-```tsx figure=FewActions
+```tsx figure=FewActions stage=shaded
 
 ```
 
-```tsx figure=ManyActions
+```tsx figure=ManyActions stage=shaded
 
 ```
 
