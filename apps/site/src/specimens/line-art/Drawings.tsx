@@ -119,7 +119,7 @@ const room: CSSProperties = { position: 'absolute', inset: '6%', containerType: 
 /** A drawing's card: its fill, a step lighter than the stage in every theme. */
 const card = {
   '--env-surface-container-default':
-    'light-dark(var(--env-color-bg-page), var(--env-color-bg-default))',
+    'light-dark(var(--env-color-bg-muted), var(--env-color-bg-default))',
 } as CSSProperties;
 
 /** A card's place in the gallery: its card, its name and its line, each a row of the gallery's. */
@@ -175,9 +175,9 @@ function DrawingCard({ drawing }: { drawing: LineArtDrawing }) {
   return (
     // Three rows of the gallery's, so the names and their lines line up across a row.
     <li style={row}>
-      {/* A lighter card on the figure's stage: the page's own fill in the light themes, where the
-          stage is a shade deeper than the page, and a pane's in the dark ones, where the page is
-          barely lighter than the stage. The drawing is on top, the buttons in a row below it. */}
+      {/* A lighter card on the figure's stage: a card's white in the light themes, where the
+          stage is lighter than the page and the panes, and a pane's in the dark ones, where the
+          page is barely lighter than the stage. The drawing is on top, the buttons in a row below it. */}
       <Surface background="page" padding={3} style={card} render={<Column gap={2} />}>
         <div style={area}>
           <div style={room}>
