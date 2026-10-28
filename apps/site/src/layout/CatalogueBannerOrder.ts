@@ -7,7 +7,13 @@ export const bannerSubject = (page: RoutePage) => page.document?.id ?? page.path
  * Each catalogue page's place in the catalogue's order, the order of its sidebar and galleries:
  * the foundations, then the components by group, then the patterns.
  */
-const places = new Map(pagesOf('catalogue').map((page, index) => [bannerSubject(page), index]));
+const places = new Map(
+  pagesOf('catalogue')
+    // The page of all foundations came after the rest; it stays out of the order, so every other
+    // page keeps its drawing, and takes the first.
+    .filter((page) => page.kind !== 'foundations')
+    .map((page, index) => [bannerSubject(page), index]),
+);
 
 /**
  * The drawing of a catalogue page's banner, from its place in the catalogue's order, as an index

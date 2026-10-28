@@ -17,6 +17,7 @@ import { PageBoundary } from './layout/PageBoundary';
 import { PageHeader } from './layout/PageHeader';
 import { PageFooter } from './layout/PageFooter';
 import { Overview } from './pages/Overview';
+import { FoundationsPage } from './pages/foundations/FoundationsPage';
 import {
   ComponentPage,
   ComponentsPage,
@@ -54,6 +55,7 @@ import { SiteSearch } from './search/SiteSearch';
 /** What each kind of page renders. */
 const pageContent: Record<RoutePage['kind'], (props: { page: RoutePage }) => ReactNode> = {
   home: Overview,
+  foundations: FoundationsPage,
   components: ComponentsPage,
   patterns: PatternsPage,
   component: ComponentPage,
@@ -97,7 +99,7 @@ const contentsHeading = (heading: HTMLElement) =>
  * The index pages of the catalogue, a gallery of tiles under group headings: their contents list
  * the groups alone, as a tile's name heads a tile rather than a section of the page.
  */
-const indexKinds = new Set<RoutePage['kind']>(['components', 'patterns']);
+const indexKinds = new Set<RoutePage['kind']>(['foundations', 'components', 'patterns']);
 
 /**
  * The page's contents beside it, in the catalogue and the Docs alike, on a window wide enough for
