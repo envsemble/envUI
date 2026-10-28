@@ -122,24 +122,37 @@ function highlight() {
 
 /**
  * Where the caret would go for a point in a preview: a node and an offset in it, as a press puts it
- * there. The browser finds no caret in what is inert, as a preview is, so it is found for a moment
- * as if the preview weren't, which changes nothing it shows or sends.
+ * there. The browser finds no caret in what is inert, as a preview is, nor under what covers it,
+ * such as a gallery tile's link stretched over its preview, so it is found for a moment as if the
+ * preview weren't inert and nothing covered it, which changes nothing it shows or sends.
  */
 function caretAt(point: Point, scope: Element) {
   const doc = document as Document & {
     caretPositionFromPoint?: (x: number, y: number) => CaretPosition | null;
     caretRangeFromPoint?: (x: number, y: number) => Range | null;
   };
-  const inert = scope.closest<HTMLElement>('[inert]');
-  if (inert) inert.inert = false;
-  try {
+  const read = () => {
     if (doc.caretPositionFromPoint) {
       const position = doc.caretPositionFromPoint(point.x, point.y);
       return position && { node: position.offsetNode, offset: position.offset };
     }
     const range = doc.caretRangeFromPoint?.(point.x, point.y);
     return range ? { node: range.startContainer, offset: range.startOffset } : null;
+  };
+  const inert = scope.closest<HTMLElement>('[inert]');
+  if (inert) inert.inert = false;
+  const covers: [HTMLElement, string][] = [];
+  try {
+    for (;;) {
+      const caret = read();
+      const top = document.elementFromPoint(point.x, point.y);
+      if (scope.contains(caret?.node ?? null) || !(top instanceof HTMLElement)) return caret;
+      if (scope.contains(top) || covers.length > 3) return caret;
+      covers.push([top, top.style.pointerEvents]);
+      top.style.pointerEvents = 'none';
+    }
   } finally {
+    for (const [cover, value] of covers) cover.style.pointerEvents = value;
     if (inert) inert.inert = true;
   }
 }
@@ -298,17 +311,21 @@ function shapeLike(copy: HTMLElement, field: Field) {
 }
 
 /**
- * Where a text is in an element's text, or in a field's value, for the pointer to go to: a point
- * of the character `x` along it, by its characters, `y` down its line. Nothing where the text
- * isn't there, such as before it is typed.
+ * Where a text is in an element's text, or in a field's value, for the pointer to go to: `x` along
+ * it, by its characters, so 0 is just inside its start and 1 just inside its end, and `y` down its
+ * line. Nothing where the text isn't there, such as before it is typed.
  */
 export function textPoint(element: Element, text: string, x: number, y: number): Point | null {
-  const along = (start: number) =>
-    start + Math.min(text.length - 1, Math.max(0, Math.floor(x * text.length)));
+  if (!text) return null;
+  const position = Math.min(Math.max(x, 0), 1) * text.length;
+  const offset = Math.min(text.length - 1, Math.floor(position));
+  // Within its character, a little in from its edges, so the press is on that side of it.
+  const within = Math.min(Math.max(position - offset, 0.2), 0.8);
+  const along = (start: number) => start + offset;
   const box = element.matches(selectableFields)
     ? fieldCharacterBox(element as Field, text, along)
     : contentCharacterBox(element, text, along);
-  return box && { x: box.left + box.width / 2, y: box.top + box.height * y };
+  return box && { x: box.left + box.width * within, y: box.top + box.height * y };
 }
 
 /** The box of a character of a text in a field's value, measured on a hidden copy of its text. */
