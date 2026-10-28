@@ -426,6 +426,20 @@ export class PointerSelection {
       field.setSelectionRange(this.fieldAnchor, this.fieldAnchor);
       return;
     }
+    // In text, the caret is found once a drag needs it, so a click reads no layout; a rich text
+    // editor takes its caret at once.
+    this.pressed = point;
+    if (editorOf(target)) this.anchorAt();
+  }
+
+  /** Where a press in text was, until a drag from it finds its caret. */
+  private pressed: Point | null = null;
+
+  /** Finds the caret where the press in text was, where a drag selects from. */
+  private anchorAt() {
+    const point = this.pressed;
+    this.pressed = null;
+    if (!point) return;
     const caret = caretAt(point, this.scope);
     if (!caret || caret.node.nodeType !== Node.TEXT_NODE || !this.scope.contains(caret.node))
       return;
@@ -481,6 +495,7 @@ export class PointerSelection {
       this.paint();
       return;
     }
+    this.anchorAt();
     const anchor = this.anchor;
     if (!anchor) return;
     const caret = caretAt(point, this.scope);
@@ -593,6 +608,7 @@ export class PointerSelection {
     this.editor = null;
     this.field = null;
     this.anchor = null;
+    this.pressed = null;
     this.selected = null;
     this.caret = null;
     this.paint();

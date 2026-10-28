@@ -128,6 +128,12 @@ function pictureOf(type: string, scope: Element) {
 /** A layer over a whole preview, which no pointer is over: it only holds the preview's popups. */
 const passThrough = '.catalogue-overlay-layer';
 
+/** A point a move goes to, and the element under it, read ahead of the move (VirtualPointer.aim). */
+export interface Aimed {
+  point: Point;
+  target: Element;
+}
+
 /** The ids of the pointers no one sees count up from here, clear of a real pointer's. */
 let nextId = 9000;
 
@@ -287,9 +293,9 @@ export class VirtualPointer {
   }
 
   /** Moves a carried file over the preview: the elements it enters, leaves and is over hear it. */
-  private dragTo(point: Point) {
+  private dragTo(point: Point, aimed: Aimed | null) {
     this.at = point;
-    const target = this.hit(point);
+    const target = aimed?.point === point ? aimed.target : this.hit(point);
     const chain = this.chain(target);
     for (const element of this.over.filter((item) => !chain.includes(item)))
       this.sendDrag(element, 'dragleave');
@@ -299,14 +305,32 @@ export class VirtualPointer {
     this.sendDrag(target, 'dragover');
   }
 
-  /** Moves the pointer to a point, coming over the preview there if it wasn't. */
-  moveTo(point: Point) {
-    if (this.carried) return this.dragTo(point);
+  /** Whether a move to a point is no move: a pointer at rest sends nothing. */
+  private rests(point: Point) {
     const from = this.at;
+    return Boolean(from && Math.abs(point.x - from.x) < 0.05 && Math.abs(point.y - from.y) < 0.05);
+  }
+
+  /**
+   * What a move to a point will be over, read ahead of it, while the page's layout is still the
+   * one the frame starts with: nothing where the move sends nothing.
+   */
+  aim(point: Point): Aimed | null {
+    if (!this.carried && this.rests(point)) return null;
+    return { point, target: this.hit(point) };
+  }
+
+  /**
+   * Moves the pointer to a point, coming over the preview there if it wasn't; `aimed`, what aim
+   * read for the point, saves reading the layout again.
+   */
+  moveTo(point: Point, aimed: Aimed | null = null) {
+    if (this.carried) return this.dragTo(point, aimed);
     // A pointer at rest sends nothing, as a resting mouse doesn't: a tooltip opens once it rests.
-    if (from && Math.abs(point.x - from.x) < 0.05 && Math.abs(point.y - from.y) < 0.05) return;
+    if (this.rests(point)) return;
+    const from = this.at;
     this.at = point;
-    const target = this.hit(point);
+    const target = aimed?.point === point ? aimed.target : this.hit(point);
     const chain = this.chain(target);
     const previous = this.over[0] ?? null;
     const left = this.over.filter((element) => !chain.includes(element));
