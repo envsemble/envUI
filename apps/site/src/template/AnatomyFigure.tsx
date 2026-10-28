@@ -555,10 +555,16 @@ function AnatomyStage({
       attributeFilter: ['class', 'style'],
     });
     void document.fonts?.ready.then(update);
+    // And as its parts settle where they enter with motion, such as a dock's panel rising into
+    // place, which moves them without resizing them.
+    subjectElement.addEventListener('animationend', update);
+    subjectElement.addEventListener('transitionend', update);
     return () => {
       cancelAnimationFrame(frame);
       resize.disconnect();
       mutation.disconnect();
+      subjectElement.removeEventListener('animationend', update);
+      subjectElement.removeEventListener('transitionend', update);
     };
   }, [legend, open, enlarged, variants]);
   const example = specimen ? (
