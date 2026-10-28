@@ -15,7 +15,12 @@ export default function FieldsBesideButtons() {
         <Button>Invite</Button>
       </Grid>
       <Grid columns="minmax(0, 1fr) auto" align="center" gap={3}>
-        <SearchField size="sm" label="Filter projects" placeholder="Filter projects" />
+        <SearchField
+          variant="ghost"
+          size="sm"
+          label="Filter projects"
+          placeholder="Filter projects"
+        />
         <Button size="sm" variant="secondary">
           New project
         </Button>

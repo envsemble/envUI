@@ -51,17 +51,14 @@ components:
 examples:
   ProjectName:
     role: overview
-    caption: A short value on one line, with a label, a description and an error.
-  SearchMembers:
+    caption: 'Outline: a short value on one line, with a label, a description and an error.'
+  SearchInSidebar:
     role: overview
-    caption: 'SearchField: a query, with a search icon and a clear button.'
-  Notes:
-    role: overview
-    caption: 'Textarea: text over several lines.'
+    caption: 'Ghost: a search atop a sidebar, only its icon and words until it is used.'
   Variants: variants
+  SearchInToolbar: example
   FieldsBesideButtons: example
   PrefixAndSuffix: example
-  IconAndAction: example
   TextFieldAnatomy: anatomy
   Validation: example
   TextareaSizing: example
@@ -96,14 +93,26 @@ examples:
 | -------- | ---------------------------------------------------------------------------------------------------------- |
 | Outline  | In forms, dialogs, panes and toolbars. The default.                                                        |
 | Floating | A long form on a page, or a field on its own, such as a search above what it filters. Not for a text area. |
-| Ghost    | A search in an application's chrome, such as atop a sidebar.                                               |
+| Ghost    | A search in an application's chrome: atop a sidebar, among quiet buttons in a toolbar, or in a palette.    |
 
-### Fill
+### Outline and floating
 
 Outline and floating fields have no fill of their own: they take the background of what they sit on, such as a card, a sheet or a dialog.
 
 - A floated label opens the border behind it.
 - A field can be given a fill of its own where it needs one.
+
+### Ghost
+
+A ghost field has no edge: it is its icon and words until the pointer rests on it or it has focus, when its fill shows.
+
+- Its placeholder clears once it has focus.
+- An invalid ghost field shows a red edge.
+- The [CommandPalette](command-palette.md)'s search is a large ghost field that keeps its fill.
+
+```tsx figure=SearchInToolbar motion
+
+```
 
 ### Sizes
 
@@ -127,10 +136,6 @@ An icon at the start only decorates the field.
 
 - The end can hold a control, such as a button that shows the password.
 - That control takes a quiet look to sit inside the field.
-
-```tsx figure=IconAndAction
-
-```
 
 ## Anatomy
 

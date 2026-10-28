@@ -262,7 +262,7 @@
       "env-command-palette-item": "One command.",
       "env-command-palette-list": "The list of commands.",
       "env-command-palette-positioner": "The palette's positioner.",
-      "env-command-palette-search": "The row with the search input.",
+      "env-command-palette-search": "The search field, a ghost TextField around the search input.",
       "env-command-palette-status": "The empty state in place of the list, and the announcement of the number of results."
     },
     "Composer": {

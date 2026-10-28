@@ -3,6 +3,7 @@
 import { Autocomplete as BaseAutocomplete } from '@base-ui/react/autocomplete';
 import { Dialog as BaseDialog } from '@base-ui/react/dialog';
 import {
+  useId,
   useRef,
   type ComponentPropsWithRef,
   type KeyboardEvent,
@@ -13,6 +14,7 @@ import { classNames } from '../internal/classNames.js';
 import { Column, Grid, Row } from '../foundations/Layout.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { ListRow } from '../internal/ListRow.js';
+import { FieldFrame } from '../forms/internal/FieldFrame.js';
 import { useLocale, useMessages } from '../internal/EnvUIContext.js';
 import { commandPalette } from '../foundations/messages/commandPalette.js';
 import { useTheme } from '../foundations/Theme.js';
@@ -162,6 +164,7 @@ export function CommandPalette({
   const locale = useLocale();
   const messages = useMessages('commandPalette', commandPalette);
   const input = useRef<HTMLInputElement>(null);
+  const searchId = useId();
   const highlighted = useRef<{ item?: CommandPaletteItem; index: number }>({ index: -1 });
   const list = useRef<HTMLDivElement>(null);
   const query = inputValue.trim();
@@ -283,13 +286,20 @@ export function CommandPalette({
                     highlighted.current = { item, index: item ? details.index : -1 };
                   }}
                 >
-                  <Row align="center" gap={3} className="env-command-palette-search">
-                    <DecorativeIcon>
-                      <Search />
-                    </DecorativeIcon>
+                  {/* The search is a ghost TextField's frame around Autocomplete's input, kept
+                    solid on the frosted palette (CommandPalette.css). */}
+                  <FieldFrame
+                    id={searchId}
+                    floatingLabel
+                    variant="ghost"
+                    size="lg"
+                    startIcon={<Search />}
+                    className="env-command-palette-search"
+                  >
                     <BaseAutocomplete.Input
                       ref={input}
-                      className="env-command-palette-input"
+                      id={searchId}
+                      className="env-text-field-input env-command-palette-input"
                       aria-label={label}
                       autoComplete="off"
                       autoCorrect="off"
@@ -297,7 +307,7 @@ export function CommandPalette({
                       placeholder={placeholder}
                       onKeyDown={onKeyDown}
                     />
-                  </Row>
+                  </FieldFrame>
                   <BaseAutocomplete.List
                     ref={list}
                     render={<Grid />}
