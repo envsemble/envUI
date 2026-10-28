@@ -461,8 +461,8 @@ const oklch = (lightness: number, chroma: number, hue: number, alpha?: number) =
 /**
  * The roles a scheme gives its area, with their hover and press, as an application gives an area
  * colors of its own (customizing.md's Recolor an area). It keeps envUI's own grades and only moves
- * them to its hue: a pale tinted page and surfaces with a deep accent in the light theme, deep
- * tinted ones with a pale accent in the dark; a tint of the accent for what is selected, with
+ * them to its hue: a pale tinted page with paler surfaces and cards and a deep accent in the light
+ * theme, lighter again at high contrast, and deep tinted ones with a pale accent in the dark; a tint of the accent for what is selected, with
  * accent text on it; translucent tinted fills for quiet controls. At high contrast the accent goes
  * a step further from the page, and text and edges keep the theme's own, stronger colors.
  */
@@ -488,10 +488,11 @@ function schemeColors({ hue }: (typeof schemes)[number], theme: ThemeValue, high
   const fills = {
     ...(light
       ? {
-          '--env-color-bg-page': oklch(0.99, 0.008, hue),
-          '--env-color-bg-default': oklch(0.955, 0.024, hue),
-          '--env-color-bg-raised': oklch(0.955, 0.024, hue),
-          '--env-color-bg-muted': oklch(0.92, 0.032, hue),
+          // As envUI's light theme: the page deepest, the surfaces a step lighter, cards the lightest.
+          '--env-color-bg-page': high ? oklch(0.96, 0.02, hue) : oklch(0.935, 0.03, hue),
+          '--env-color-bg-default': high ? oklch(0.98, 0.01, hue) : oklch(0.965, 0.018, hue),
+          '--env-color-bg-raised': high ? oklch(0.98, 0.01, hue) : oklch(0.965, 0.018, hue),
+          '--env-color-bg-muted': oklch(0.99, 0.006, hue),
           '--env-color-fg-on-emphasis': oklch(1, 0, 0),
           ...tone('bg-selected', 0.9, 0.05),
           '--env-color-bg-navigation-hover': oklch(0.9, 0.04, hue),

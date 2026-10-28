@@ -6,86 +6,86 @@
     "bg": {
       "page": {
         "$root": {
-          "$description": "The page behind all content: the app frame, title bars and Surface background=\"page\".",
-          "$value": "{palette.neutral.0}"
+          "$description": "The page behind all content: the app frame, title bars and Surface background=\"page\". Deeper than the panes and cards on it in both themes, so they part from it.",
+          "$value": "{palette.gray.6}"
         },
         "hover": {
           "$description": "An interactive page-colored surface under the pointer.",
-          "$value": "{palette.neutral.4}"
+          "$value": "{palette.gray.10}"
         },
         "pressed": {
           "$description": "An interactive page-colored surface while pressed.",
-          "$value": "{palette.neutral.8}"
+          "$value": "{palette.gray.13}"
         }
       },
       "recessed": {
         "$root": {
-          "$description": "A recessed surface, a shade deeper than the page in both themes: a well that what it holds rises out of, such as a stage for a preview or a drop area, and Surface background=\"recessed\". Everything measured on the page keeps its minimum on it.",
-          "$value": "{palette.neutral.3}"
+          "$description": "A recessed surface: a well that what it holds rises out of, such as a stage for a preview or a drop area, and Surface background=\"recessed\". A shade deeper than the page in dark; in light a shade lighter than the page and the panes, since a deeper gray would take edges and focus rings below 3:1. Everything measured on the page keeps its minimum on it.",
+          "$value": "{palette.gray.2}"
         },
         "hover": {
           "$description": "An interactive recessed surface under the pointer.",
-          "$value": "{palette.neutral.7}"
+          "$value": "{palette.gray.6}"
         },
         "pressed": {
           "$description": "An interactive recessed surface while pressed.",
-          "$value": "{palette.neutral.10}"
+          "$value": "{palette.gray.9}"
         }
       },
       "default": {
         "$root": {
-          "$description": "The default surface: Surface, navigation, sheets, standard menus.",
-          "$value": "{palette.neutral.4}"
+          "$description": "The default surface: Surface, navigation, sheets, standard menus. A step lighter than the page in both themes.",
+          "$value": "{palette.gray.3}"
         },
         "hover": {
           "$description": "An interactive default surface, such as a card or a list row, under the pointer.",
-          "$value": "{palette.neutral.10}"
+          "$value": "{palette.gray.7}"
         },
         "pressed": {
           "$description": "An interactive default surface while pressed. Muted text and an inset focus ring keep their minimums on it.",
-          "$value": "{palette.neutral.13}"
+          "$value": "{palette.gray.10}"
         }
       },
       "muted": {
         "$root": {
-          "$description": "The muted surface: Surface background=\"muted\", radio rows. Grayer than the default surface in the light theme, so cards stand apart from a pane, and lighter than it in the dark theme.",
-          "$value": "{palette.neutral.8}"
+          "$description": "The muted surface: Surface background=\"muted\", cards, list and radio rows. Lighter than the default surface in both themes, white in light, so cards stand apart from a pane.",
+          "$value": "{palette.neutral.0}"
         },
         "hover": {
           "$description": "An interactive muted surface under the pointer.",
-          "$value": "{palette.neutral.12}"
+          "$value": "{palette.gray.4}"
         },
         "pressed": {
           "$description": "An interactive muted surface while pressed.",
-          "$value": "{palette.neutral.13}"
+          "$value": "{palette.gray.8}"
         }
       },
       "raised": {
         "$root": {
           "$description": "A raised surface: Surface background=\"raised\", dialogs, rows on a contrasting surface, outlined buttons.",
-          "$value": "{palette.neutral.4}"
+          "$value": "{palette.gray.3}"
         },
         "hover": {
           "$description": "An interactive raised surface under the pointer.",
-          "$value": "{palette.neutral.8}"
+          "$value": "{palette.gray.7}"
         },
         "pressed": {
           "$description": "An interactive raised surface while pressed.",
-          "$value": "{palette.neutral.10}"
+          "$value": "{palette.gray.10}"
         }
       },
       "popup": {
         "$root": {
-          "$description": "Popups over the page: menus, Select lists, popovers, the composer. They take elevation 2. In light they are white, a step lighter than the panes they open over, as in dark they are a step lighter than the page; a popup the pane's gray would blend into it.",
-          "$value": "{palette.neutral.0}"
+          "$description": "Popups over the page: menus, Select lists, popovers, the composer. They take elevation 2. In light a gray between the recessed well and the panes, so a popup parts from the white cards it opens over; in dark a step lighter than the page.",
+          "$value": "{palette.gray.2-75}"
         },
         "hover": {
           "$description": "A highlighted row in a popup.",
-          "$value": "{palette.neutral.4}"
+          "$value": "{palette.gray.9}"
         },
         "pressed": {
           "$description": "A pressed row in a popup.",
-          "$value": "{palette.neutral.8}"
+          "$value": "{palette.gray.12}"
         }
       },
       "field": {
@@ -98,7 +98,7 @@
           "$value": {
             "colorSpace": "oklch",
             "components": {
-              "$ref": "#/palette/neutral/92/$value/components"
+              "$ref": "#/palette/gray/92/$value/components"
             },
             "alpha": 0.55
           }
@@ -108,7 +108,7 @@
           "$value": {
             "colorSpace": "oklch",
             "components": {
-              "$ref": "#/palette/neutral/92/$value/components"
+              "$ref": "#/palette/gray/92/$value/components"
             },
             "alpha": 0.3
           }
@@ -145,7 +145,7 @@
             "$value": {
               "colorSpace": "oklch",
               "components": {
-                "$ref": "#/palette/neutral/92/$value/components"
+                "$ref": "#/palette/gray/92/$value/components"
               },
               "alpha": 0.1
             }
@@ -155,7 +155,7 @@
             "$value": {
               "colorSpace": "oklch",
               "components": {
-                "$ref": "#/palette/neutral/92/$value/components"
+                "$ref": "#/palette/gray/92/$value/components"
               },
               "alpha": 0.17
             }
@@ -165,7 +165,7 @@
             "$value": {
               "colorSpace": "oklch",
               "components": {
-                "$ref": "#/palette/neutral/92/$value/components"
+                "$ref": "#/palette/gray/92/$value/components"
               },
               "alpha": 0.25
             }
@@ -185,7 +185,7 @@
             "$value": {
               "colorSpace": "oklch",
               "components": {
-                "$ref": "#/palette/neutral/92/$value/components"
+                "$ref": "#/palette/gray/92/$value/components"
               },
               "alpha": 0.08
             }
@@ -195,7 +195,7 @@
             "$value": {
               "colorSpace": "oklch",
               "components": {
-                "$ref": "#/palette/neutral/92/$value/components"
+                "$ref": "#/palette/gray/92/$value/components"
               },
               "alpha": 0.1
             }
@@ -203,20 +203,20 @@
         },
         "emphasis": {
           "$description": "A solid neutral fill, such as a solid neutral badge; paired with fg.on-emphasis.",
-          "$value": "{palette.neutral.60}"
+          "$value": "{palette.gray.60}"
         },
         "strong": {
           "$root": {
             "$description": "The dark neutral fill of tooltips and neutral toasts in both themes; paired with fg.on-strong.",
-            "$value": "{palette.neutral.75}"
+            "$value": "{palette.gray.75}"
           },
           "hover": {
             "$description": "A control on the strong neutral fill under the pointer.",
-            "$value": "{palette.neutral.60}"
+            "$value": "{palette.gray.60}"
           },
           "pressed": {
             "$description": "A control on the strong neutral fill while pressed.",
-            "$value": "{palette.neutral.50}"
+            "$value": "{palette.gray.50}"
           }
         }
       },
@@ -544,25 +544,25 @@
     "fg": {
       "default": {
         "$description": "Body text and the labels of rows, fields and choice controls.",
-        "$value": "{palette.neutral.92}"
+        "$value": "{palette.gray.92}"
       },
       "muted": {
         "$root": {
           "$description": "Supporting text, icons, field labels, descriptions and placeholders, row details, unchecked checkbox rings: every former synonym (muted, quiet, icon, field label, hint, placeholder, row detail).",
-          "$value": "{palette.neutral.70}"
+          "$value": "{palette.gray.70}"
         },
         "hover": {
           "$description": "Muted text that responds to the pointer, such as a Disclosure summary, gains contrast.",
-          "$value": "{palette.neutral.75}"
+          "$value": "{palette.gray.75}"
         },
         "pressed": {
           "$description": "Muted text while pressed.",
-          "$value": "{palette.neutral.80}"
+          "$value": "{palette.gray.80}"
         }
       },
       "control": {
         "$description": "The labels of navigation items, secondary buttons and Select options, the values of meters and sliders, and the thumb of a switch that is off.",
-        "$value": "{palette.neutral.75}"
+        "$value": "{palette.gray.75}"
       },
       "link": {
         "$root": {
@@ -594,7 +594,7 @@
       },
       "accent": {
         "$description": "Accent text and icons: the accent tone, outlined button labels, chips, the icon of a pager link.",
-        "$value": "{palette.blue.60}"
+        "$value": "{palette.blue.65}"
       },
       "on-selected": {
         "$description": "Text and indicators on bg.selected and its states.",
@@ -629,29 +629,29 @@
       "default": {
         "$root": {
           "$description": "The boundary of a control that has no other edge: outlined fields and buttons, the track of a switch that is off. At least 3:1 on every surface.",
-          "$value": "{palette.neutral.45}"
+          "$value": "{palette.gray.45}"
         },
         "hover": {
           "$description": "A control boundary under the pointer.",
-          "$value": "{palette.neutral.50}"
+          "$value": "{palette.gray.50}"
         },
         "pressed": {
           "$description": "A control boundary while pressed.",
-          "$value": "{palette.neutral.55}"
+          "$value": "{palette.gray.55}"
         }
       },
       "muted": {
         "$root": {
           "$description": "The hairlines between the items of one list, across its full width: table rows, Markdown rules, menu separators and accordion items; and decorative edges that are not a control’s only boundary: quote bars, keyboard keys and color swatches. Regions separate by space and background instead. A floating layer takes its own, clearer edge, elevation.{level}.border.",
-          "$value": "{palette.neutral.14}"
+          "$value": "{palette.gray.14}"
         },
         "hover": {
           "$description": "A decorative outline under the pointer, such as a resize handle or a pager link.",
-          "$value": "{palette.neutral.20}"
+          "$value": "{palette.gray.20}"
         },
         "pressed": {
           "$description": "A decorative outline while pressed.",
-          "$value": "{palette.neutral.30}"
+          "$value": "{palette.gray.30}"
         }
       },
       "accent": {
@@ -736,14 +736,14 @@
           "$value": {
             "colorSpace": "oklch",
             "components": {
-              "$ref": "#/palette/neutral/60/$value/components"
+              "$ref": "#/palette/gray/60/$value/components"
             },
             "alpha": 0.55
           }
         },
         "strong": {
           "$description": "The edge of the strong neutral fill where it floats, on tooltips and neutral toasts. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge, elevation.2.border, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted.",
-          "$value": "{palette.neutral.84}"
+          "$value": "{palette.gray.84}"
         }
       },
       "success": {
@@ -829,7 +829,7 @@
       "$description": "Component tokens of list items: they take another role in each scheme, which no one role names.",
       "bg": {
         "$root": {
-          "$description": "The fill of a list item: the muted surface in both themes, so items stand apart from the page and from a surface; high contrast keeps the default surface in light.",
+          "$description": "The fill of a list item: the muted surface in both themes and at high contrast, so items stand apart from the page and from a surface.",
           "$value": "{color.bg.muted}",
           "$extensions": {
             "com.envsemble.envui": {

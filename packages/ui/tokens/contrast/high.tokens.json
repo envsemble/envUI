@@ -24,6 +24,9 @@
         }
       },
       "page": {
+        "$root": {
+          "$value": "{contrast-high.color.bg.page}"
+        },
         "hover": {
           "$value": "{contrast-high.color.bg.page.hover}"
         },
@@ -32,6 +35,9 @@
         }
       },
       "default": {
+        "$root": {
+          "$value": "{contrast-high.color.bg.default}"
+        },
         "hover": {
           "$value": "{contrast-high.color.bg.default.hover}"
         },
@@ -252,6 +258,17 @@
           "pressed": {
             "$value": "{contrast-high.color.bg.important.strong.pressed}"
           }
+        }
+      },
+      "recessed": {
+        "$root": {
+          "$value": "{contrast-high.color.bg.recessed}"
+        },
+        "hover": {
+          "$value": "{contrast-high.color.bg.recessed.hover}"
+        },
+        "pressed": {
+          "$value": "{contrast-high.color.bg.recessed.pressed}"
         }
       }
     },

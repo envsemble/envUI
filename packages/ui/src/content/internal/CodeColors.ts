@@ -39,7 +39,7 @@ interface CodeColors {
   foreground: string;
 }
 
-const light = '#1e1f21';
+const light = '#1f1f22';
 const dark = '#e8eaee';
 
 /**
@@ -52,13 +52,13 @@ const dark = '#e8eaee';
 const colors: Record<ThemeValue, Record<CodeContrast, CodeColors>> = {
   light: {
     standard: {
-      surfaces: ['#ffffff', '#eff1f5', '#e2e4e8'],
+      surfaces: ['#eaeaec', '#f4f4f6', '#f5f5f7', '#ffffff'],
       block: { color: light, alpha: 0.06 },
       inline: { color: light, alpha: 0.1 },
       foreground: '#1f2328',
     },
     high: {
-      surfaces: ['#ffffff', '#eff1f5', '#f6f8fc'],
+      surfaces: ['#f1f1f3', '#f5f5f7', '#f8f8fa', '#ffffff'],
       block: { color: light, alpha: 0.06 },
       inline: { color: light, alpha: 0.06 },
       foreground: '#0e1116',

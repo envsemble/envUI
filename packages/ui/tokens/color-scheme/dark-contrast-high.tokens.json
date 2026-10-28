@@ -38,6 +38,9 @@
           }
         },
         "page": {
+          "$root": {
+            "$value": "{palette.neutral.92}"
+          },
           "hover": {
             "$value": "{palette.neutral.88}"
           },
@@ -46,6 +49,9 @@
           }
         },
         "default": {
+          "$root": {
+            "$value": "{palette.neutral.88}"
+          },
           "hover": {
             "$value": "{palette.neutral.84}"
           },
@@ -377,6 +383,17 @@
             "pressed": {
               "$value": "{palette.purple.84}"
             }
+          }
+        },
+        "recessed": {
+          "$root": {
+            "$value": "{palette.neutral.94}"
+          },
+          "hover": {
+            "$value": "{palette.neutral.88}"
+          },
+          "pressed": {
+            "$value": "{palette.neutral.82}"
           }
         }
       },
