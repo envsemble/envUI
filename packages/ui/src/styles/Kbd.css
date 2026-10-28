@@ -1,9 +1,11 @@
-/* Keyboard keys: small key caps with a heavier bottom edge. Their label sits on the surrounding
-   text's baseline, so keys line up in prose whatever glyphs they show. A container that shows
-   smaller or quieter keys, such as a menu's shortcuts, sets the custom properties below on its own
-   element: --env-kbd-size, -padding-inline, -radius, -fg and -font-size for the keys, and
-   --env-kbd-separator-padding-inline, -fg and -font for the + between them; a container that draws
-   keys as chips with no edge sets --env-kbd-border-end-width to the other sides' width. */
+/* Keyboard keys: small key caps, a faint fill with a barely darker edge, heavier at the bottom. Fill
+   and edge are both the text color, translucent, so a key looks the same on any surface it sits on,
+   the page, a pane or a card; at high contrast the edge takes the border color. Their label sits on
+   the surrounding text's baseline, so keys line up in prose whatever glyphs they show. A container
+   that shows smaller or quieter keys, such as a menu's shortcuts, sets the custom properties below
+   on its own element: --env-kbd-size, -padding-inline, -radius, -fg and -font-size for the keys,
+   and --env-kbd-separator-padding-inline, -fg and -font for the + between them; a container that
+   draws keys as chips with no edge sets --env-kbd-border-end-width to the other sides' width. */
 .env-kbd {
   box-sizing: border-box;
   min-inline-size: var(--env-kbd-size, 1.375rem);
@@ -13,7 +15,15 @@
   justify-content: center;
   padding-inline: var(--env-kbd-padding-inline, 0.3125rem);
   /* Hooks: a container sets --env-kbd-fg, --env-kbd-bg and --env-kbd-border for its own fill. */
-  border: 0.0625rem solid var(--env-kbd-border, var(--env-color-border-muted));
+  --env-kbd-high-contrast-edge: var(--env-theme-high-contrast) var(--env-color-border-default);
+  border: 0.0625rem solid
+    var(
+      --env-kbd-border,
+      var(
+        --env-kbd-high-contrast-edge,
+        color-mix(in srgb, var(--env-color-fg-default) 5%, transparent)
+      )
+    );
   border-block-end-width: var(--env-kbd-border-end-width, 0.125rem);
   border-radius: var(--env-kbd-radius, 0.3125rem);
   background: var(--env-kbd-bg, var(--env-color-bg-neutral-muted));
