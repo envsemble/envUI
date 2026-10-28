@@ -81,7 +81,7 @@ function deform({ lean, stretch }: WaveMotion) {
  * short list, shorter, so the thin stroke still runs beside some of it.
  */
 export function waveReach(count: number): number {
-  return Math.min(1, Math.max(0.5, (count - 1) / 6));
+  return Math.min(1, Math.max(0.85, (count - 1) / 6));
 }
 
 /**
