@@ -5,13 +5,28 @@
  * inert, so only these events reach it.
  *
  * What a stylesheet shows under a real pointer, `:hover` and `:active`, no event can set; the
- * pointer marks what it is over with data-catalogue-hover and what it presses with
- * data-catalogue-pressed, and mirrorPointerStates gives every such rule of the site's stylesheets
- * a twin for those marks. A pointer's capture, which a drag takes, is kept for it here too, as the
- * browser keeps none for a pointer it didn't make.
+ * pointer marks what it is over and presses, and PointerStates.ts gives every such rule of the
+ * site's stylesheets a twin for those marks. What the browser keeps only for a pointer it made,
+ * such as a drag's capture, StandIns.ts keeps for it.
  */
 
 import { editorOf, PointerSelection } from './VirtualSelection';
+import {
+  focusMark,
+  focusWithinMark,
+  hoverMark,
+  mark,
+  mirrorPointerStates,
+  pressMark,
+} from './PointerStates';
+import {
+  captures,
+  keepCaptures,
+  keepClipboard,
+  keepFocus,
+  keyboardFocused,
+  lendSelection,
+} from './StandIns';
 
 /** A file the pointer carries in, as from the desktop: its name, its type and its size in bytes. */
 export interface CarriedFile {
@@ -43,11 +58,6 @@ function codeOf(key: string) {
   return key;
 }
 
-const hoverMark = 'data-catalogue-hover';
-const pressMark = 'data-catalogue-pressed';
-const focusMark = 'data-catalogue-focus';
-const focusWithinMark = 'data-catalogue-focus-within';
-
 /**
  * The id of the pointer holding its button down, if any: a page has one mouse, so a component that follows
  * a drag on the document, such as a slider, hears every move there, and takes a move without a
@@ -72,67 +82,6 @@ function holdReaderMoves() {
     window.addEventListener(type, hold, { capture: true });
 }
 
-/** The ids of the pointers no one sees, and what each has captured. */
-const captures = new Map<number, Element | null>();
-let nextId = 9000;
-
-/**
- * Keeps a pointer's capture for the pointers no one sees: the browser throws for an id it doesn't
- * know. Only those ids are kept here; a real pointer's capture is the browser's, as before.
- */
-function keepCaptures() {
-  const proto = Element.prototype;
-  if ((proto as { catalogueCaptures?: boolean }).catalogueCaptures) return;
-  (proto as { catalogueCaptures?: boolean }).catalogueCaptures = true;
-  const { setPointerCapture, releasePointerCapture, hasPointerCapture } = proto;
-  proto.setPointerCapture = function (id: number) {
-    if (!captures.has(id)) return setPointerCapture.call(this, id);
-    captures.set(id, this);
-  };
-  proto.releasePointerCapture = function (id: number) {
-    if (!captures.has(id)) return releasePointerCapture.call(this, id);
-    if (captures.get(id) === this) captures.set(id, null);
-  };
-  proto.hasPointerCapture = function (id: number) {
-    if (!captures.has(id)) return hasPointerCapture.call(this, id);
-    return captures.get(id) === this;
-  };
-}
-
-/** The previews the keyboard's focus is in, by their scope, and what follows a move of it there. */
-const keyboardFocused = new Map<Element, (element: Element) => void>();
-
-/**
- * Keeps the keyboard's focus inside a preview that has it: the preview is inert, so where one of
- * its components moves focus, as an arrow key along tabs does, the pointer's focus follows
- * instead (VirtualPointer.keyboardFocus), and a component asking whether an element of it matches
- * :focus or :focus-visible is answered by the pointer's mark, as its stylesheets are
- * (mirrorPointerStates). Elsewhere, focus is the browser's, as before.
- */
-function keepFocus() {
-  const proto = HTMLElement.prototype;
-  if ((proto as { catalogueFocus?: boolean }).catalogueFocus) return;
-  (proto as { catalogueFocus?: boolean }).catalogueFocus = true;
-  const { focus } = proto;
-  proto.focus = function (options?: FocusOptions) {
-    for (const [scope, follow] of keyboardFocused) if (scope.contains(this)) return follow(this);
-    return focus.call(this, options);
-  };
-  const { matches } = Element.prototype;
-  Element.prototype.matches = function (selectors: string) {
-    if (selectors.includes(':focus'))
-      for (const scope of keyboardFocused.keys())
-        if (scope.contains(this))
-          return matches.call(
-            this,
-            selectors
-              .replace(/:focus-visible\b/g, `[${focusMark}]`)
-              .replace(/:focus\b(?!-)/g, `[${focusMark}]`),
-          );
-    return matches.call(this, selectors);
-  };
-}
-
 /** The mouse event a pointer event is followed by, as a browser follows it, for older handlers. */
 const mouseTwin: Record<string, string> = {
   pointerover: 'mouseover',
@@ -146,39 +95,6 @@ const mouseTwin: Record<string, string> = {
 
 /** Events that don't bubble: each element the pointer enters or leaves gets its own. */
 const once = new Set(['pointerenter', 'pointerleave', 'mouseenter', 'mouseleave']);
-
-/**
- * Sets or clears one of the pointer's marks on an element, outside an editable region: an editor
- * such as ProseMirror redraws what changes in its document, so a mark inside it would replace
- * the very element pressed. Its frame, outside, still shows hover and focus.
- */
-function mark(element: Element, name: string, on: boolean) {
-  if (element.closest('[contenteditable="true"]')) return;
-  element.toggleAttribute(name, on);
-}
-
-/**
- * Runs a click with the reader's clipboard kept as it is: a preview's copy button, pressed by the
- * pointer no one sees, copies nowhere. Its writes resolve, so it shows that it copied.
- */
-function keepClipboard(click: () => void) {
-  const clipboard = navigator.clipboard as Clipboard | undefined;
-  if (!clipboard) return click();
-  const names = ['writeText', 'write'] as const;
-  // The clipboard's own properties, if any, to put back; its methods are usually its prototype's.
-  const own = names.map((name) => Object.getOwnPropertyDescriptor(clipboard, name));
-  for (const name of names)
-    Object.defineProperty(clipboard, name, { value: () => Promise.resolve(), configurable: true });
-  try {
-    click();
-  } finally {
-    names.forEach((name, index) => {
-      const descriptor = own[index];
-      if (descriptor) Object.defineProperty(clipboard, name, descriptor);
-      else delete (clipboard as unknown as Record<string, unknown>)[name];
-    });
-  }
-}
 
 /** How soon a second click makes a double click, in ms, as a desktop's default. */
 const doubleClickTime = 500;
@@ -211,6 +127,9 @@ function pictureOf(type: string, scope: Element) {
 
 /** A layer over a whole preview, which no pointer is over: it only holds the preview's popups. */
 const passThrough = '.catalogue-overlay-layer';
+
+/** The ids of the pointers no one sees count up from here, clear of a real pointer's. */
+let nextId = 9000;
 
 /** The pointer no one sees, over one preview's elements, `scope`. */
 export class VirtualPointer {
@@ -825,89 +744,6 @@ export class VirtualPointer {
     this.selection.clear();
     captures.delete(this.id);
   }
-}
-
-/**
- * Runs what a key does in a rich text editor with the page's selection lent to the preview, at its
- * start, outside the editor, so nothing takes focus, and then given back as the reader left it: a
- * command that reads the page's selection, such as inserting a reference, finds one, as it would
- * in a focused editor, though nothing in an inert preview holds the page's selection.
- */
-function lendSelection(scope: Element | undefined, run: () => void) {
-  const selection = scope ? window.getSelection() : null;
-  if (!scope || !selection) return run();
-  const kept = Array.from({ length: selection.rangeCount }, (_, index) =>
-    selection.getRangeAt(index),
-  );
-  const range = document.createRange();
-  range.setStart(scope, 0);
-  selection.removeAllRanges();
-  selection.addRange(range);
-  try {
-    run();
-  } finally {
-    selection.removeAllRanges();
-    for (const each of kept) selection.addRange(each);
-  }
-}
-
-/** The site's rules for :hover and :active, written again for the pointer's marks. */
-const mirror = typeof CSSStyleSheet === 'undefined' ? null : new CSSStyleSheet();
-let mirroredSheets = -1;
-
-/** Writes a rule's text again inside the group rules around it, such as @media and @layer. */
-type Wrap = (text: string) => string;
-
-function mirrorRules(rules: CSSRuleList, out: string[], wrap: Wrap) {
-  for (const rule of rules) {
-    if (rule instanceof CSSStyleRule) {
-      const selector = rule.selectorText;
-      // A rule for what isn't hovered would hold for the marked element still; it is left alone.
-      if (
-        !/:(hover|active|focus)/.test(selector) ||
-        /:not\([^)]*:(hover|active|focus)/.test(selector)
-      )
-        continue;
-      const marked = selector
-        .replace(/:hover\b/g, `[${hoverMark}]`)
-        .replace(/:active\b/g, `[${pressMark}]`)
-        .replace(/:focus-visible\b/g, `[${focusMark}]`)
-        .replace(/:focus-within\b/g, `[${focusWithinMark}]`)
-        .replace(/:focus\b(?!-)/g, `[${focusMark}]`);
-      out.push(wrap(`${marked} { ${rule.style.cssText} }`));
-    } else if (rule instanceof CSSMediaRule || rule instanceof CSSSupportsRule) {
-      const at = rule instanceof CSSMediaRule ? '@media' : '@supports';
-      mirrorRules(rule.cssRules, out, (text) => wrap(`${at} ${rule.conditionText} { ${text} }`));
-    } else if (typeof CSSContainerRule !== 'undefined' && rule instanceof CSSContainerRule) {
-      mirrorRules(rule.cssRules, out, (text) =>
-        wrap(`@container ${rule.conditionText} { ${text} }`),
-      );
-    } else if (typeof CSSLayerBlockRule !== 'undefined' && rule instanceof CSSLayerBlockRule) {
-      mirrorRules(rule.cssRules, out, (text) => wrap(`@layer ${rule.name} { ${text} }`));
-    }
-  }
-}
-
-/**
- * Gives every :hover and :active rule of the site's stylesheets a twin for the marks of the
- * pointer no one sees, in a sheet of its own after them, so a marked element looks as hovered or
- * pressed as it would under a real pointer. It writes them again when stylesheets are added, as a
- * page's load.
- */
-export function mirrorPointerStates() {
-  if (!mirror || document.styleSheets.length === mirroredSheets) return;
-  mirroredSheets = document.styleSheets.length;
-  const rules: string[] = [];
-  for (const sheet of document.styleSheets) {
-    try {
-      mirrorRules(sheet.cssRules, rules, (text) => text);
-    } catch {
-      // A stylesheet from elsewhere can't be read; the site has none with these states.
-    }
-  }
-  mirror.replaceSync(rules.join('\n'));
-  if (!document.adoptedStyleSheets.includes(mirror))
-    document.adoptedStyleSheets = [...document.adoptedStyleSheets, mirror];
 }
 
 /** Whether an event comes from a pointer no one sees, which a tile's own hover ignores. */
