@@ -1571,6 +1571,13 @@
         "high": 7
       }
     },
+    "--env-color-fg-accent on popup-frosted over popup-worst-backdrop": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
     "--env-color-fg-control on --env-color-bg-default": {
       "kind": "text",
       "minimum": {

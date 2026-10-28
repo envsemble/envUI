@@ -105,6 +105,8 @@ const frostedOverWorst = [
   '--env-color-fg-control',
   '--env-color-fg-link',
   '--env-color-fg-danger',
+  // Today in a calendar and this month in a month picker.
+  '--env-color-fg-accent',
 ] as const;
 // Component tokens that take a different role per theme.
 const row = '--env-color-list-item-bg'; // List rows: the muted surface in both themes
