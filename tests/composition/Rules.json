@@ -243,9 +243,6 @@
         "classes": ["env-icon-button"],
         "modules": ["actions/internal/ButtonBase.tsx"]
       },
-      "AvatarButton": {
-        "styles": ["Button.css"]
-      },
       "ConfirmButton": {
         "styles": ["Button.css"]
       },
