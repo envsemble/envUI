@@ -340,11 +340,15 @@ test(
     // The icon starts at the padding and the keys end at it, with the room between them.
     expect(Math.abs(layout.startGap)).toBeLessThan(1);
     expect(Math.abs(layout.endGap)).toBeLessThan(1);
-    // The slot and its keys take the button's own content color, on no fill of their own, and the
-    // + between the keys is quieter, which the contrast gate measures on every variant.
+    // The slot and its keys take the button's own content color, each key on a faint fill of it as
+    // keys are drawn everywhere, and the + between the keys is quieter, which the contrast gate
+    // measures on every variant.
     expect(layout.endColor).toBe(layout.label);
     expect(layout.capColor).toBe(layout.label);
-    expect(layout.capFill).toBe('rgba(0, 0, 0, 0)');
+    const [red, green, blue, alpha] = channels(layout.capFill);
+    const label = channels(layout.label);
+    expect([red, green, blue].map(Math.round)).toEqual(label.slice(0, 3).map(Math.round));
+    expect(alpha).toBeCloseTo(0.1, 2);
     expect(layout.separatorColor).toBe(layout.separator);
   },
 );

@@ -446,9 +446,9 @@
 /* The end slot, such as a shortcut's keys, at the far end of a button wider than its content, while
    the icon and label stay at the start. Its colors come from the button's own content color,
    currentColor, so they follow every variant, tone, state and color property: text in it takes the
-   label's color, which holds 4.5:1 on every fill, and keys are drawn as a tooltip draws them, in
-   the label's color on no fill of their own, quieter for their outlined caps and smaller type,
-   with a faint edge and the + between them at 80%, which holds 3:1 (Kbd.css's hooks). */
+   label's color, which holds 4.5:1 on every fill, and keys are drawn as everywhere else, in the
+   label's color: a faint fill of it at 10% with an edge 5% stronger, as Kbd.css draws keys from the
+   text color, and the + between them at 80%, which holds 3:1 (Kbd.css's hooks). */
 .env-button-end {
   display: inline-flex;
   flex: 0 0 auto;
@@ -456,8 +456,8 @@
   margin-inline-start: auto;
   white-space: nowrap;
   --env-kbd-fg: currentColor;
-  --env-kbd-bg: transparent;
-  --env-kbd-border: color-mix(in srgb, currentColor 45%, transparent);
+  --env-kbd-bg: color-mix(in srgb, currentColor 10%, transparent);
+  --env-kbd-border: color-mix(in srgb, currentColor 5%, transparent);
   /* contrast: button-end-separator */
   --env-kbd-separator-fg: color-mix(in srgb, currentColor 80%, transparent);
 }
