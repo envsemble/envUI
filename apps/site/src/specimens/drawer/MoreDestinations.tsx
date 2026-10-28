@@ -44,7 +44,7 @@ function Picking() {
 /** More, opened by a pointer no one sees, which picks a destination from it. */
 export default function MoreDestinationsMotion() {
   return (
-    <MotionStage label="More opening and taking the current fill">
+    <MotionStage label="More opening and taking the current fill" stage="shaded">
       <Picking />
     </MotionStage>
   );
