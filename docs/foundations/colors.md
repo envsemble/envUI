@@ -184,7 +184,7 @@ Status icons, short status text and badges share these tokens, at least 4.5:1 on
 
 Tokens are named `--env-color-{bg|fg|border}-{role}[-{emphasis}][-{state}]`, emphasis weakest first: `subtle`, `muted`, none, `emphasis` and `strong`. Every `fg-on-X` pairs with a `bg-X`, every state token has its resting token, and the contrast gate measures every pair a component paints, in all four themes.
 
-- **Backgrounds:** `bg-page`, the deepest; `bg-recessed`, a well on it; `bg-default`, `bg-muted` and `bg-raised`, the surfaces; `bg-popup`, the fill of dialogs, and of menus and popovers in light, which take `bg-default` in dark; `bg-field`, `bg-selected`; `bg-overlay`, the scrim behind dialogs.
+- **Backgrounds:** `bg-page`, the deepest; `bg-recessed`, a well on it; `bg-default`, `bg-muted` and `bg-raised`, the surfaces; `bg-popup`, the fill of dialogs, menus and popovers in light, which take `bg-default` in dark, and wherever they are solid; `bg-field`, `bg-selected`; `bg-overlay`, the scrim behind dialogs.
 - **Fills:** `bg-neutral-muted`, a translucent layer of the text color under secondary buttons, chips, switch tracks and skeletons; `bg-neutral-subtle`, the state layer of controls without a fill; `emphasis` and `strong` solid fills.
 - **Text:** `fg-default`, `fg-muted` for supporting text and icons, `fg-control`, `fg-link`, `fg-on-selected`, and one per tone.
 - **Borders:** `border-default`, the only boundary of a control, at least 3:1; `border-muted` for the hairlines between a list's items, quote bars and other decorative edges; `border-focus`; `border-media`, the inner edge of images.
@@ -196,11 +196,11 @@ The colors come from an internal palette of eleven hues, and the pastel hues of 
 - **Hover and pressed** are tokens of their own, other grades of the same hue, so labels keep their contrast in every state. A component given colors of its own through its color properties draws its states as state layers instead: the content color over the container at `--env-state-hover-opacity`, `--env-state-focus-opacity` and `--env-state-pressed-opacity`.
 - **Selection** stays apart from every other item, at rest and under the pointer, and carries a second cue: its label color, a check or a bar.
 - **High contrast** moves text to 7:1 and boundaries, indicators and focus rings to 4.5:1. A nested Theme and envUI's popups take the contrast and theme of where they open.
-- **Elevation** 0–3 is an edge, not a shadow: a dialog separates by its background, its edge and, as a modal, its scrim. Popups float at 2, dialogs, sheets and the command palette at 3; a frosted popup and a sheet show their level's edge only where they are solid.
-- **Small popups are frosted:** menus, lists, popovers, pickers, hover cards and the command palette let a little of what is behind them through, blurred, with a soft shadow and no edge. At high contrast and with reduced transparency they are solid, with their edge.
-- **Shadows:** a popup's and an avatar's faint one, which parts the avatars of a group, are envUI's only shadows.
+- **Elevation** 0–3 is an edge, shown only where a surface is solid: popups float at 2, dialogs, sheets and the command palette at 3. Elsewhere a popup or a dialog separates by its fill and a soft shadow, a sheet by its fill, and a modal by its scrim too.
+- **Small popups are frosted:** menus, lists, popovers, pickers, hover cards and the command palette let a little of what is behind them through, blurred, with a soft shadow and no edge. Dialogs take the same fill and shadow, solid over their scrim. At high contrast and with reduced transparency all are solid, with their edge.
+- **Shadows:** a popup's, which dialogs share, and an avatar's faint one, which parts the avatars of a group, are envUI's only shadows.
 - **Sheets** keep the navigation's fill, so navigation that opens in one looks as it does at the window's edge, and have no edge but at high contrast.
-- **Hairlines separate a list's items, never regions:** Markdown rules, table rows and accordion items take a hairline across their container's full width, never inset from its edges. Regions, such as a top bar, a footer, a sticky header, a tab bar and two panes, separate by space and background instead; controls, dialogs and tooltips keep their edges. A popup has none: its groups part by space and a quiet label.
+- **Hairlines separate a list's items, never regions:** Markdown rules, table rows and accordion items take a hairline across their container's full width, never inset from its edges. Regions, such as a top bar, a footer, a sticky header, a tab bar and two panes, separate by space and background instead; controls and tooltips keep their edges. A popup or a dialog has none: a popup's groups part by space and a quiet label, a dialog's heading, content and actions by space.
 - **Forced colors** take system colors, such as `Highlight` and `GrayText`, for every state a fill carried.
 
 #### Guidelines
