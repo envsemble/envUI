@@ -496,11 +496,14 @@
   stroke-width: 1px;
 }
 
+/* A part's box, dashed, with a faint rim in the page's color, so it still shows on a part of a
+   strong fill, such as a notification's. */
 .site-anatomy-box {
   fill: none;
   stroke: var(--env-color-fg-muted);
   stroke-width: 1px;
   stroke-dasharray: 3 2;
+  filter: drop-shadow(0 0 1px var(--env-color-bg-page));
 }
 
 .site-anatomy-badge,

@@ -59,6 +59,37 @@ function boxOf(element: Element, text: boolean, origin: DOMRect): Box | undefine
   };
 }
 
+/** A part's corner radii, in px, as drawn: none for the text of a part. */
+interface Corners {
+  topLeft: number;
+  topRight: number;
+  bottomLeft: number;
+  bottomRight: number;
+}
+
+function cornersOf(element: Element, text: boolean, box: Box): Corners {
+  const style = getComputedStyle(element);
+  const most = Math.min(box.right - box.left, box.bottom - box.top) / 2;
+  const radius = (value: string) => (text ? 0 : Math.min(parseFloat(value) || 0, most));
+  return {
+    topLeft: radius(style.borderTopLeftRadius),
+    topRight: radius(style.borderTopRightRadius),
+    bottomLeft: radius(style.borderBottomLeftRadius),
+    bottomRight: radius(style.borderBottomRightRadius),
+  };
+}
+
+/**
+ * How far in from its box's side a part's edge is at `along` past the box's start on that side, by
+ * the corners at either end of the side: a callout that meets a rounded part near its corner
+ * meets its curve, not the empty corner of its box.
+ */
+function cornerInset(along: number, length: number, start: number, end: number) {
+  const curve = (radius: number, from: number) =>
+    from < radius ? radius - Math.sqrt(radius ** 2 - (radius - from) ** 2) : 0;
+  return Math.max(curve(start, along), curve(end, length - along));
+}
+
 /** Spreads positions along one side so badges never overlap, within `min` and `max`. */
 function spread(positions: number[], min: number, max: number) {
   const order = positions.map((_, index) => index).sort((a, b) => positions[a] - positions[b]);
@@ -100,7 +131,16 @@ function measure(stage: HTMLElement, subject: HTMLElement, legend: AnatomyLegend
       return [];
     }
     const box = element && boxOf(element, text, origin);
-    return box ? [{ number: index + 1, box, inline: !!element && followsText(element) }] : [];
+    return element && box
+      ? [
+          {
+            number: index + 1,
+            box,
+            corners: cornersOf(element, text, box),
+            inline: followsText(element),
+          },
+        ]
+      : [];
   });
   if (!found.length) return [];
   const outer: Box = {
@@ -144,11 +184,11 @@ function measure(stage: HTMLElement, subject: HTMLElement, legend: AnatomyLegend
   // their callouts sit above and below it instead, in turn.
   const roots = found.filter(({ box }) => isRoot(box)).length;
   let stacked = 0;
-  const placed = found.map(({ number, box, inline }) => {
+  const placed = found.map(({ number, box, corners, inline }) => {
     const root = isRoot(box);
     if (root && roots > 1) {
       const side: Side = stacked++ % 2 ? 'bottom' : 'top';
-      return { number, box, root, side };
+      return { number, box, corners, root, side };
     }
     // The nearest side, with the sides above and below preferred by a few pixels.
     const distances = (
@@ -184,7 +224,7 @@ function measure(stage: HTMLElement, subject: HTMLElement, legend: AnatomyLegend
     const above = distances.find(([name]) => name === 'top');
     if (side === 'top' && !root && holds && below && above && Math.abs(below[1] - above[1]) < 1)
       side = 'bottom';
-    return { number, box, root: root && !inline, side };
+    return { number, box, corners, root: root && !inline, side };
   });
   const callouts: Callout[] = [];
   for (const side of ['top', 'bottom', 'left', 'right'] as const) {
@@ -205,7 +245,7 @@ function measure(stage: HTMLElement, subject: HTMLElement, legend: AnatomyLegend
       badgeSize / 2 + 2,
       extent - badgeSize / 2 - 2,
     );
-    items.forEach(({ number, box, root }, index) => {
+    items.forEach(({ number, box, corners, root }, index) => {
       const at = along[index];
       const clamp = (value: number, low: number, high: number) =>
         Math.min(Math.max(value, low + 2), Math.max(high - 2, low + 2));
@@ -217,14 +257,19 @@ function measure(stage: HTMLElement, subject: HTMLElement, legend: AnatomyLegend
             : side === 'left'
               ? { x: reachOuter.left - reach, y: at }
               : { x: reachOuter.right + reach, y: at };
+      const x = clamp(at, box.left, box.right);
+      const y = clamp(at, box.top, box.bottom);
+      const width = box.right - box.left;
+      const height = box.bottom - box.top;
+      const { topLeft, topRight, bottomLeft, bottomRight } = corners;
       const anchor =
         side === 'top'
-          ? { x: clamp(at, box.left, box.right), y: box.top }
+          ? { x, y: box.top + cornerInset(x - box.left, width, topLeft, topRight) }
           : side === 'bottom'
-            ? { x: clamp(at, box.left, box.right), y: box.bottom }
+            ? { x, y: box.bottom - cornerInset(x - box.left, width, bottomLeft, bottomRight) }
             : side === 'left'
-              ? { x: box.left, y: clamp(at, box.top, box.bottom) }
-              : { x: box.right, y: clamp(at, box.top, box.bottom) };
+              ? { x: box.left + cornerInset(y - box.top, height, topLeft, bottomLeft), y }
+              : { x: box.right - cornerInset(y - box.top, height, topRight, bottomRight), y };
       callouts.push({
         number,
         badge,
