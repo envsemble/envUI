@@ -169,7 +169,7 @@ Status icons, short status text and badges share these tokens, at least 4.5:1 on
 | `--env-color-fg-warning`         | Warning: needs attention soon                                       |
 | `--env-color-fg-danger`          | Danger: failed, or an action that destroys something                |
 | `--env-color-fg-done`            | Done: completed work                                                |
-| `--env-color-bg-{tone}-muted`    | The tone's tint behind badges and alerts                            |
+| `--env-color-bg-{tone}-muted`    | The tone's tint behind badges, and behind alerts at high contrast   |
 | `--env-color-bg-{tone}-emphasis` | A solid fill in the tone, with `fg-on-emphasis`                     |
 
 ```css

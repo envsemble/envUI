@@ -1,9 +1,11 @@
-/* Alerts: an inline banner tinted with its tone. Text stays primary; the icon carries the tone.
-   Links and text buttons in it take the link colors for a tint, as the link blue falls below 4.5:1
-   on the tints in the light theme. */
+/* Alerts: an inline banner filled with its tone's stronger tint, without an edge, in a card's
+   rounder corner. The title and the icon carry the tone; the message stays primary. Links and text
+   buttons in it take the link colors for a tint, as the link blue falls below 4.5:1 on the tints in
+   the light theme. At high contrast the fill is the tone's softer tint and a 1px edge in the border
+   color bounds it; under forced colors the edge, transparent otherwise, is what the system paints. */
 /* Color properties: an alert's colors, which an application sets on one alert through style or its
-   own CSS: its tint, its text, its edge and its icon, which its dismiss button takes too. They
-   don't inherit, and they win over its tone. */
+   own CSS: its tint, its text, which its title takes too, its edge and its icon, which its title
+   and dismiss button take while its text is its own. They don't inherit, and they win over its tone. */
 @property --env-alert-container {
   syntax: '*';
   inherits: false;
@@ -24,42 +26,53 @@
   /* The colors its parts take, which can't read the alert's own properties. */
   --env-alert-icon-color: var(--env-alert-icon, var(--env-alert-icon-default));
   --env-alert-text-color: var(--env-alert-content, var(--env-color-fg-default));
+  --env-alert-title-color: var(--env-alert-content, var(--env-alert-icon-color));
   /* Valid only while the application sets the container or the icon (see Button.css). */
   --env-alert-custom: var(--env-alert-container, var(--env-alert-icon));
   --env-color-fg-link: var(--env-color-fg-link-on-tint);
   --env-color-fg-link-hover: var(--env-color-fg-link-on-tint-hover);
   --env-color-fg-link-pressed: var(--env-color-fg-link-on-tint-pressed);
+  /* Its tone: the text color of the icon and title, the stronger tint it is filled with, and the
+     softer tint, its fill at high contrast. */
   --env-alert-icon-default: var(--env-color-fg-accent);
-  --env-alert-container-default: var(--env-color-bg-accent-muted);
-  --env-alert-outline-default: var(--env-color-border-accent-muted);
+  --env-alert-fill: var(--env-color-bg-accent-subtle-hover);
+  --env-alert-soft-fill: var(--env-color-bg-accent-muted);
   --env-alert-hover: var(--env-color-bg-accent-subtle-hover);
   --env-alert-pressed: var(--env-color-bg-accent-subtle-pressed);
+  /* A card's corner, a step rounder than a control's and below a surface's. */
+  --env-alert-radius: 1.25rem;
+  /* The high-contrast fill and edge, valid only under high contrast (see Theme.css). */
+  --env-alert-high-contrast-fill: var(--env-theme-high-contrast) var(--env-alert-soft-fill);
+  --env-alert-high-contrast-edge: var(--env-theme-high-contrast) var(--env-color-border-default);
   box-sizing: border-box;
-  border: 0.0625rem solid var(--env-alert-outline, var(--env-alert-outline-default));
-  border-radius: var(--env-radius-lg);
-  background: var(--env-alert-container, var(--env-alert-container-default));
+  border: 0.0625rem solid var(--env-alert-outline, var(--env-alert-high-contrast-edge, transparent));
+  border-radius: var(--env-alert-radius);
+  background: var(
+    --env-alert-container,
+    var(--env-alert-high-contrast-fill, var(--env-alert-fill))
+  );
   color: var(--env-alert-text-color);
   font: var(--env-type-body);
   overflow-wrap: anywhere;
 }
 .env-alert[data-tone='success'] {
   --env-alert-icon-default: var(--env-color-fg-success);
-  --env-alert-container-default: var(--env-color-bg-success-muted);
-  --env-alert-outline-default: var(--env-color-border-success-muted);
+  --env-alert-fill: var(--env-color-bg-success-subtle-hover);
+  --env-alert-soft-fill: var(--env-color-bg-success-muted);
   --env-alert-hover: var(--env-color-bg-success-subtle-hover);
   --env-alert-pressed: var(--env-color-bg-success-subtle-pressed);
 }
 .env-alert[data-tone='warning'] {
   --env-alert-icon-default: var(--env-color-fg-warning);
-  --env-alert-container-default: var(--env-color-bg-warning-muted);
-  --env-alert-outline-default: var(--env-color-border-warning-muted);
+  --env-alert-fill: var(--env-color-bg-warning-subtle-hover);
+  --env-alert-soft-fill: var(--env-color-bg-warning-muted);
   --env-alert-hover: var(--env-color-bg-warning-subtle-hover);
   --env-alert-pressed: var(--env-color-bg-warning-subtle-pressed);
 }
 .env-alert[data-tone='danger'] {
   --env-alert-icon-default: var(--env-color-fg-danger);
-  --env-alert-container-default: var(--env-color-bg-danger-muted);
-  --env-alert-outline-default: var(--env-color-border-danger-muted);
+  --env-alert-fill: var(--env-color-bg-danger-subtle-hover);
+  --env-alert-soft-fill: var(--env-color-bg-danger-muted);
   --env-alert-hover: var(--env-color-bg-danger-subtle-hover);
   --env-alert-pressed: var(--env-color-bg-danger-subtle-pressed);
 }
@@ -78,6 +91,7 @@
   grid-column: 2;
 }
 .env-alert-title {
+  color: var(--env-alert-title-color);
   font: var(--env-type-h2);
 }
 .env-alert-message {
