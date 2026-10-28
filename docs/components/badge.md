@@ -171,7 +171,7 @@ A Badge's label is its `children`, a state, a name or a category in a word or tw
 
 #### Variants and tones
 
-`variant` is `soft`, the default, which tints the background, `solid`, which fills it with the tone, or `outline`, which draws a border. `tone` is `neutral`, the default, `accent`, `success`, `warning`, `danger` or `done`, the purple of completed work.
+`variant` is `soft`, the default, which tints the background without an edge, in the tone's stronger tint for accent, success, warning and danger, with a semibold label, `solid`, which fills it with the tone, or `outline`, which draws a border. `tone` is `neutral`, the default, `accent`, `success`, `warning`, `danger` or `done`, the purple of completed work.
 
 ```tsx
 <Badge tone="success">Ready</Badge>
@@ -229,6 +229,7 @@ The parts are the pill, `env-badge`, its icon, `env-badge > env-icon`, and its l
 
 ## Changelog
 
+- **1.0.0**: A soft badge in the accent, success, warning or danger tone takes the tone's stronger tint, and its label is semibold; at high contrast it keeps the softer tint.
 - **1.0.0**: InfoChip is Badge, a pill, and its page joins this one. The `subtle` variant is `soft`. `Counter` is a Badge with `count`, which the `v1-structure` codemod writes, `.env-badge[data-count]` with `env-badge-count-label`, and `DiffCount` is `DiffStat`, with its props type and the `env-diff-stat-*` classes; the page is `badge`. DiffStat writes its numbers and its name in the locale, and its name comes from `messages.diffStat.label`. A control sets the badges inside it through the `--env-badge-*`, `--env-badge-count-*` and `--env-diff-stat-*` hooks.
 - **0.7.0**: DiffCount; a counter in a button keeps its own filled pill, except on primary and important fills.
 - **0.5.0**: Badge in six tones and three variants, and Counter; in a button, a badge or counter takes the button's text color as an outlined pill.
