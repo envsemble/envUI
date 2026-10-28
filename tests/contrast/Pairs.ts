@@ -90,6 +90,16 @@ const layerHover = '--env-color-bg-neutral-subtle-hover';
 const layerPressed = '--env-color-bg-neutral-subtle-pressed';
 const navigationHover = '--env-color-bg-navigation-hover';
 const navigationPressed = '--env-color-bg-navigation-pressed';
+// A frosted popup's fill, translucent (derived below), and the worst that can be behind it.
+const frosted = 'popup-frosted';
+const worstBackdrop = 'popup-worst-backdrop';
+const frostedOverWorst = [
+  '--env-color-fg-default',
+  '--env-color-fg-muted',
+  '--env-color-fg-control',
+  '--env-color-fg-link',
+  '--env-color-fg-danger',
+] as const;
 // Component tokens that take a different role per theme.
 const row = '--env-color-list-item-bg'; // List rows: the muted surface in both themes
 const rowHover = '--env-color-list-item-bg-hover';
@@ -501,6 +511,51 @@ const registry: readonly ContrastPair[] = merged([
     'The edge of dialogs and the command palette, against the dialog and the scrim',
     popupEdge,
   ),
+
+  // Frosted popups: menus, Select and Combobox lists, popovers, hover cards, the pickers, rich text
+  // suggestions and the command palette let a little of what is behind them through. Text on the
+  // fill is held over the worst that can be behind, a black area in light and a white one in dark;
+  // the highlight, the key chips and the palette's search are held over what popups float over.
+  // At high contrast the fill is solid, so these measure the solid popup.
+  ...frostedOverWorst.flatMap((fg) =>
+    text(fg, [[frosted, worstBackdrop]], 'Text on a frosted popup, over the worst behind it'),
+  ),
+  ...nonText(
+    '--env-color-bg-brand-emphasis',
+    [[frosted, worstBackdrop]],
+    'Check marks in a menu, on a frosted popup over the worst behind it',
+  ),
+  ...[page, surface, muted].flatMap((behind) => [
+    ...text('--env-color-fg-default', [[fill, frosted, behind]], 'A highlighted row, a key chip'),
+    ...text(
+      '--env-color-fg-muted',
+      [[fill, frosted, behind]],
+      'A highlighted row’s description and icon, and keys as chips at rest',
+    ),
+    ...text(
+      '--env-color-fg-default',
+      [[fill, fill, frosted, behind]],
+      'Key chips on a highlighted row',
+    ),
+    ...text('--env-color-fg-default', [['--env-color-bg-neutral-muted-pressed', frosted, behind]]),
+    ...different(fill, [[frosted, behind]], 'A highlighted option or menu item on a frosted popup'),
+    ...distinct(
+      selected,
+      [[fill, frosted, behind]],
+      'The chosen option against a highlighted one on a frosted popup',
+    ),
+    ...focus(
+      '--env-color-border-focus',
+      [[fill, frosted, behind]],
+      'The inset ring of a highlighted row on a frosted popup',
+    ),
+  ]),
+  ...text(
+    '--env-color-fg-muted',
+    [[fill, popup]],
+    'The command palette’s search placeholder, on its opaque pill',
+  ),
+  ...text('--env-color-fg-default', [[fill, popup]], 'Text typed in the command palette’s search'),
 
   // Choice controls.
   ...text(
@@ -2366,6 +2421,11 @@ export const derived: Readonly<Record<string, string>> = {
   'badge-outline-important': ofLabel(badgeOutline, '--env-color-fg-on-strong'),
   'heatmap-accent-lowest':
     'color-mix(in srgb, var(--env-color-fg-accent) 30%, var(--env-color-bg-page))',
+  // The frosted fill of popups (Popup.css), and the worst behind it: black under a light popup's
+  // dark text, white under a dark popup's light text.
+  'popup-frosted':
+    'color-mix(in srgb, var(--env-color-bg-popup) var(--env-popup-opacity), transparent)',
+  'popup-worst-backdrop': 'light-dark(#000, #fff)',
 };
 
 /** The CSS color a name in a pair stands for. */
