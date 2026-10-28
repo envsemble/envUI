@@ -156,7 +156,7 @@ function overlayKind(element: Element): OverlayKind {
  * `env-window` container, else the first theme boundary, else the body. Dev mode's own UI and the
  * boundaries popups carry don't count.
  */
-export function defaultRoot(): HTMLElement {
+function defaultRoot(): HTMLElement {
   const boundaries = Array.from(document.querySelectorAll<HTMLElement>('.env-theme')).filter(
     (element) =>
       element !== document.documentElement &&

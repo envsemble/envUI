@@ -1,7 +1,7 @@
 /** Column widths are percentages of the table width, in column order, that add up to 100. */
 
 /** The smallest width of a column in percent unless the application sets its own. */
-export const defaultMinColumnWidth = 5;
+const defaultMinColumnWidth = 5;
 /** Keyboard steps of a resize handle in percent: arrow keys, and arrow keys with Shift. */
 export const columnResizeStep = 1;
 export const columnResizeLargeStep = 5;

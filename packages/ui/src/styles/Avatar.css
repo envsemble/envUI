@@ -130,12 +130,6 @@
     color: HighlightText;
   }
 }
-/* Hook: a container that covers the end of an avatar, such as an avatar group, sets
-   --env-avatar-initials-inset-end to that width, so initials center in the part left uncovered. */
-.env-avatar:has(> .env-avatar-fallback-initials) {
-  box-sizing: border-box;
-  padding-inline-end: var(--env-avatar-initials-inset-end, 0);
-}
 .env-avatar:has(.env-avatar-fallback-person) {
   background: none;
 }

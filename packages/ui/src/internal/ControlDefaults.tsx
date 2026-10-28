@@ -68,7 +68,7 @@ const designedTones: Readonly<Record<ControlVariant, readonly ControlTone[]>> = 
 };
 
 /** Whether `variant` is designed in `tone`. */
-export function takesTone(variant: ControlVariant, tone: ControlTone) {
+function takesTone(variant: ControlVariant, tone: ControlTone) {
   return designedTones[variant].includes(tone);
 }
 

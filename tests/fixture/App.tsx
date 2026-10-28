@@ -77,7 +77,6 @@ import { AccordionsFixture } from './Accordions.js';
 import { DensityFixture } from './Density.js';
 import { ChoiceControlsFixture } from './ChoiceControls.js';
 import { StackingFixture } from './Stacking.js';
-import { ResponsiveHooksFixture } from './ResponsiveHooks.js';
 import { PrimitivesFixture } from './Primitives.js';
 import { MessageStringsFixture } from './MessageStrings.js';
 import { DirectionFixture } from './Direction.js';
@@ -112,7 +111,6 @@ const standaloneFixtures: Record<string, () => ReactNode> = {
   'choice-controls': ChoiceControlsFixture,
   stacking: StackingFixture,
   'portal-containers': PortalContainersFixture,
-  'responsive-hooks': ResponsiveHooksFixture,
   primitives: PrimitivesFixture,
   'message-strings': MessageStringsFixture,
   direction: DirectionFixture,

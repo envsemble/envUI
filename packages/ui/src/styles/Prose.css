@@ -76,9 +76,8 @@
    color; a number is plain, in tabular figures in the muted text color, ending at the column's end.
    A nested list steps down quietly: closer items, a smaller spark in the muted color, letters for
    numbers. Task lists keep their checkboxes (Markdown.css, RichText.css).
-   The bullet is each item's ::after, masked to --env-prose-list-mark (the spark; none for a dot) at
-   --env-prose-list-mark-size. --env-prose-list-marker-fill sets a circle behind it, and
-   --env-prose-list-mark-color its color. All stay private. */
+   The bullet is each item's ::after, masked to the spark. --env-prose-list-marker-fill sets a
+   circle behind it, and --env-prose-list-mark-color its color. Both stay private. */
 .env-prose :where(ul, ol) {
   padding-inline-start: 0;
   list-style: none;
@@ -121,7 +120,7 @@
 }
 /* A bullet's mark, in the middle of the marker column. */
 .env-prose :where(ul:not(.contains-task-list, [data-type='taskList']) > li)::after {
-  --env-prose-list-mark-box: var(--env-prose-list-mark-size, 0.5625rem);
+  --env-prose-list-mark-box: 0.5625rem;
   position: absolute;
   inset-block-start: calc((1lh - var(--env-prose-list-mark-box)) / 2);
   inset-inline-start: calc(
@@ -131,7 +130,7 @@
   block-size: var(--env-prose-list-mark-box);
   border-radius: var(--env-radius-full);
   background-color: var(--env-prose-list-mark-color, var(--env-color-fg-default));
-  mask: var(--env-prose-list-mark, var(--env-prose-list-spark)) center / contain no-repeat;
+  mask: var(--env-prose-list-spark) center / contain no-repeat;
   content: '';
 }
 /* One level in, a smaller spark in the muted text color, with no circle behind it, whatever the

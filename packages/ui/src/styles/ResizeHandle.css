@@ -3,11 +3,8 @@
    table's columns. With data-grip, for a handle between two surfaces or on a surface's edge, as in
    Panes, a side Sheet and the Drawer, it is never a line: three small dots at its middle are the
    grip that says it moves, which darken under the pointer and take the focus color with keyboard
-   focus or while dragging, and focus rings the handle. Hooks, set on the owner's element:
-   --env-resize-handle-size, its thickness, also under a coarse pointer;
-   --env-resize-handle-line: none, which leaves the line out for an owner that draws its own grip;
-   and --env-resize-handle-line-start, where the line sits across an inline handle, from its start,
-   for a handle on a region's edge whose line is on that edge rather than in the middle. */
+   focus or while dragging, and focus rings the handle. Hook, set on the owner's element:
+   --env-resize-handle-size, its thickness, also under a coarse pointer. */
 .env-resize-handle {
   position: relative;
   flex: 0 0 auto;
@@ -29,17 +26,14 @@
 }
 .env-resize-handle::after {
   content: '';
-  display: var(--env-resize-handle-line, block);
+  display: block;
   position: absolute;
   background: transparent;
   transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
 }
 .env-resize-handle[data-axis='inline']::after {
   inset-block: 0;
-  inset-inline-start: var(
-    --env-resize-handle-line-start,
-    calc(50% - var(--env-control-border-width))
-  );
+  inset-inline-start: calc(50% - var(--env-control-border-width));
   inline-size: calc(2 * var(--env-control-border-width));
 }
 .env-resize-handle[data-axis='block']::after {

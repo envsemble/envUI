@@ -66,12 +66,3 @@ export const ViewLeft = () => (
 export const ViewRight = () => (
   <CubeIcon outline={cube.right.outline} face={<Face d={faces.right} />} />
 );
-/** Fit: the whole page brought back into view, a small cube inside the corners of the view. */
-export const ViewFit = () => (
-  <Icon viewBox="0 0 24 24">
-    <Lines>
-      <path d="M3 8V3h5M16 3h5v5M21 16v5h-5M8 21H3v-5" />
-      <path d="M8 16V10h6v6zM8 10l2-2h6l-2 2M16 8v6l-2 2" strokeWidth={1.5} />
-    </Lines>
-  </Icon>
-);

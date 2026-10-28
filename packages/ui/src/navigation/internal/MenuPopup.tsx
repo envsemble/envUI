@@ -13,7 +13,7 @@ import {
  * Renders a menu popup element with, when given, its own name. Base UI names a menu after its
  * trigger; a label replaces that name.
  */
-export function renderMenuPopup(label: string | undefined) {
+function renderMenuPopup(label: string | undefined) {
   return function renderPopup(props: ComponentPropsWithRef<'div'>) {
     return (
       <Grid

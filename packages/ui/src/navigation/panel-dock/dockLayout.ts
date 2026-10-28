@@ -168,7 +168,7 @@ export function revealInWindow(view: Window | null, shown: Area) {
 }
 
 /** Whether an element scrolls content that overflows it, on either axis. */
-export function scrollsOverflow(element: HTMLElement) {
+function scrollsOverflow(element: HTMLElement) {
   const style = getComputedStyle(element);
   const scrolls = (value: string) => value === 'auto' || value === 'scroll' || value === 'hidden';
   return (
@@ -186,7 +186,7 @@ export interface Area {
 }
 
 /** Where a scrolling element shows its content, within its scroll padding, in the viewport. */
-export function viewArea(scroller: HTMLElement): Area {
+function viewArea(scroller: HTMLElement): Area {
   const box = scroller.getBoundingClientRect();
   const style = getComputedStyle(scroller);
   const top = box.top + scroller.clientTop;
@@ -200,10 +200,7 @@ export function viewArea(scroller: HTMLElement): Area {
 }
 
 /** The part of an element that shows through every one of these scrolling elements, if any. */
-export function shownPart(
-  element: HTMLElement,
-  scrollers: readonly HTMLElement[],
-): Area | undefined {
+function shownPart(element: HTMLElement, scrollers: readonly HTMLElement[]): Area | undefined {
   let { top, bottom, left, right } = element.getBoundingClientRect();
   for (const scroller of scrollers) {
     const area = viewArea(scroller);
@@ -219,7 +216,7 @@ export function shownPart(
  * How far to scroll on one axis so a span shows in an area: as little as shows it, and from its
  * start where it is larger than the area.
  */
-export function nearestScroll(start: number, end: number, areaStart: number, areaEnd: number) {
+function nearestScroll(start: number, end: number, areaStart: number, areaEnd: number) {
   if (start < areaStart) return start - areaStart;
   if (end > areaEnd) return Math.min(start - areaStart, end - areaEnd);
   return 0;

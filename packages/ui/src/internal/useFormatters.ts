@@ -31,7 +31,7 @@ export interface Formatters {
 }
 
 /** The formatters of a locale, undefined for the runtime's, created once per locale and options. */
-export function formattersFor(locale: string | undefined): Formatters {
+function formattersFor(locale: string | undefined): Formatters {
   return {
     locale,
     number: (options) =>

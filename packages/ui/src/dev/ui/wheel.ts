@@ -10,7 +10,7 @@ import { prefersReducedMotion } from './motion.js';
  * 'end' where it is at its end that way, else null. The sizes are read first, so an element with
  * nothing to scroll costs no style lookup.
  */
-export function scrollsToward(element: Element, dx: number, dy: number): 'room' | 'end' | null {
+function scrollsToward(element: Element, dx: number, dy: number): 'room' | 'end' | null {
   const mostY = element.scrollHeight - element.clientHeight;
   const mostX = element.scrollWidth - element.clientWidth;
   if ((dy === 0 || mostY <= 1) && (dx === 0 || mostX <= 1)) return null;

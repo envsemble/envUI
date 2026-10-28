@@ -6,7 +6,7 @@
  */
 
 /** How many entries away from the reader's place the shape still swells: two and a half. */
-export const waveSpread = 2.5;
+const waveSpread = 2.5;
 /** How round the bulge is: above 2, fuller at its middle and quicker at its foot than a bell. */
 const waveRound = 3;
 /** How quickly the swell falls away: to half 0.9 entries from the reader's place. */
@@ -14,7 +14,7 @@ const waveFall = 0.9 / Math.LN2 ** (1 / waveRound);
 /** How thin the shape runs away from the reader's place, as a share of its fullest. */
 export const waveThin = 0.1;
 /** How far the entry under the pointer swells the shape, as a share of the reader's place. */
-export const hoverSwell = 0.4;
+const hoverSwell = 0.4;
 /** How many entries away from the one under the pointer its swell reaches. */
 const hoverSpread = 0.8;
 /** How finely the shape's edges are drawn, in px. */
@@ -45,7 +45,7 @@ export interface WaveMotion {
 const still: WaveMotion = { lean: 0, stretch: 0 };
 
 /** A smooth bell: 1 at 0, easing to 0 at 1 and beyond, either way. */
-export function bell(distance: number): number {
+function bell(distance: number): number {
   const d = Math.min(1, Math.abs(distance));
   return Math.cos((d * Math.PI) / 2) ** 2;
 }
@@ -88,7 +88,7 @@ export function waveReach(count: number): number {
  * The entry at a height, as a fractional index: between two entries' middles in proportion, and
  * beyond the first and last at the spacing next to them.
  */
-export function entryAt(anchors: readonly number[], y: number): number {
+function entryAt(anchors: readonly number[], y: number): number {
   const count = anchors.length;
   if (count === 0) return 0;
   if (count === 1) return 0;

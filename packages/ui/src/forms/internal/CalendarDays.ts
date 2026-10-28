@@ -1,5 +1,3 @@
-import { defaultServerLocale } from '../../internal/locale.js';
-
 /** A day of the week: 0 for Sunday through 6 for Saturday. */
 export type Weekday = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
@@ -88,7 +86,7 @@ export function now() {
   };
 }
 
-export function daysInMonth(year: number, month: number) {
+function daysInMonth(year: number, month: number) {
   return dayParts(utcDay(year, month + 1, 0)).date;
 }
 
@@ -193,13 +191,6 @@ export function toUtcDate(day: number, minutes = 0) {
 export function dateFormat(locale: string | undefined, options: Intl.DateTimeFormatOptions) {
   return new Intl.DateTimeFormat(locale, { calendar: 'gregory', ...options, timeZone: 'UTC' });
 }
-
-/**
- * The locale of a calendar or date field without one while it renders on the server and while that
- * output hydrates: the server cannot know the reader's language. Its weeks start on Monday, as where
- * a browser has no week data, so every browser reproduces the server's output.
- */
-export const serverLocale = defaultServerLocale;
 
 type LocaleWithWeekInfo = Intl.Locale & {
   getWeekInfo?: () => { firstDay: number };

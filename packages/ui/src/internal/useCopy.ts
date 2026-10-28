@@ -88,7 +88,7 @@ export function useCopy({ write, resetAfter = 2000, onCopy, fieldClassName }: Co
 }
 
 /** Writes the text with the asynchronous Clipboard API, or by copying a selection where it fails. */
-export async function writeToClipboard(
+async function writeToClipboard(
   value: CopyValue,
   anchor: HTMLElement | null,
   { onWait, fieldClassName, write }: WriteOptions = {},

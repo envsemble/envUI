@@ -7,7 +7,7 @@
 // added to the content, so its layout and selectors don't change.
 
 /** The attribute that marks a root whose text bars the script draws, which hides the line through. */
-export const skeletonTextAttribute = 'data-env-skeleton-text';
+const skeletonTextAttribute = 'data-env-skeleton-text';
 
 interface Tracked {
   resize: ResizeObserver | undefined;

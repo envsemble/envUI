@@ -106,7 +106,7 @@ const helpers = new Set([
 ]);
 
 /** Whether a class is a part class: `env-*`, but not the window's container or dev mode's own. */
-export const isPartClass = (name: string) =>
+const isPartClass = (name: string) =>
   name.startsWith('env-') && name !== 'env-window' && !name.startsWith('env-dev');
 
 /**

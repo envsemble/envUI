@@ -137,7 +137,7 @@ function atSize<T>(
 }
 
 /** Measures and reads the page once, at a width and height if they are given. */
-export function readLayout(options: LayoutOptions = {}): Reading {
+function readLayout(options: LayoutOptions = {}): Reading {
   const root = resolveRoot(options.root);
   return atSize(root, options.width, options.height, () =>
     read(measure(root, { inner: true, minTextChars: options.minTextChars })),

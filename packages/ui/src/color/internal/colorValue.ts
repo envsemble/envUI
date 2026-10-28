@@ -28,7 +28,7 @@ function commaSeparated(value: string) {
  * A color from a string, such as #6750a4 or 6750a4, rgb(), rgba(), hsl(), hsla() or hsb(), comma
  * or space separated, or a Color; undefined for a string that is no color.
  */
-export function parseColorValue(value: ColorValue): Color | undefined {
+function parseColorValue(value: ColorValue): Color | undefined {
   if (typeof value !== 'string') return value;
   // Hexadecimal digits without their #, as earlier ColorPickers took them.
   const text = /^[0-9a-f]{3,8}$/i.test(value.trim()) ? `#${value.trim()}` : value.trim();

@@ -92,7 +92,7 @@ export function over(color: string, alpha: number, background: string) {
 }
 
 /** The distance of two colors in OKLab, about 0.02 for a difference people just notice. */
-export function colorDistance(a: string, b: string) {
+function colorDistance(a: string, b: string) {
   const [x, y] = [toOklab(a), toOklab(b)];
   return Math.hypot(x[0] - y[0], x[1] - y[1], x[2] - y[2]);
 }
@@ -105,7 +105,7 @@ export type Direction = 'darker' | 'lighter';
  * at the lightness nearest its own that reaches it, with the chroma the gamut allows there. `beyond`
  * is the lightness, if any, it must at least move past.
  */
-export function readableColor(
+function readableColor(
   color: string,
   backgrounds: readonly string[],
   target: number,
