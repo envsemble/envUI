@@ -37,8 +37,16 @@ const script: PointerStep[] = [
 function Switching() {
   usePointer(script);
   return (
-    // The avatar at the top, with room below it for the menu and beside it for the submenu.
-    <div style={{ inlineSize: 'min(100%, 16rem)', blockSize: '16rem' }}>
+    // The avatar at the top, with room below it for the menu and beside it for the submenu: the
+    // menu and its submenu, rather than the avatar alone, centred, so the submenu and its shadow
+    // stay clear of the stage's edge and its pause button.
+    <div
+      style={{
+        inlineSize: 'min(100%, 16rem)',
+        blockSize: '17rem',
+        marginInlineEnd: 'clamp(0px, 100% - 16rem, 9rem)',
+      }}
+    >
       <WithOrganizations />
     </div>
   );
