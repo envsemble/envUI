@@ -12,7 +12,7 @@
 .env-month-picker-header {
   /* The year buttons, side by side at the end, as the calendar's month buttons. */
   --env-control-height: calc(0.8 * var(--env-control-height-md));
-  gap: 0.125rem;
+  gap: calc(var(--env-space-1) / 2);
 }
 .env-month-picker-heading {
   order: -1;

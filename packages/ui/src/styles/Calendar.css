@@ -11,7 +11,7 @@
 .env-calendar-header {
   /* The month buttons, side by side at the end, are a little smaller than a control. */
   --env-control-height: calc(0.8 * var(--env-control-height-md));
-  gap: 0.125rem;
+  gap: calc(var(--env-space-1) / 2);
 }
 /* The month's name leads the header, a little in from the edge, with both buttons after it. */
 .env-calendar-heading {
@@ -45,7 +45,7 @@
 /* Weeks stand a hair apart; the days of a week touch. */
 .env-calendar-day,
 .env-calendar-pad {
-  block-size: calc(var(--env-calendar-day) + 0.125rem);
+  block-size: calc(var(--env-calendar-day) + var(--env-space-1) / 2);
   padding: 0;
   text-align: center;
   vertical-align: middle;
