@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { Link, Column, Table, Text } from '@envsemble/envui';
 import { PlainCode } from './SimpleTable';
 import type { ExportEntry, PropEntry } from '../DocumentationTypes';
@@ -32,20 +33,24 @@ function description(prop: PropEntry) {
 
 /**
  * A type's top-level alternatives, such as 'sm' | 'md' | 'lg', split at the bars outside brackets,
- * quotes and parentheses; a function, object or generic type stays whole.
+ * quotes and parentheses; a function, object or generic type stays whole, and an arrow's > closes
+ * no bracket.
  */
 function alternatives(type: string): string[] {
   const parts: string[] = [];
   let depth = 0;
   let quote = '';
   let part = '';
+  // After a function's arrow outside brackets, the rest is its return type, which stays whole.
+  let returnType = false;
   for (const character of type) {
     if (quote) {
       if (character === quote) quote = '';
     } else if (character === "'" || character === '"' || character === '`') quote = character;
+    else if (character === '>' && part.endsWith('=')) returnType ||= depth === 0;
     else if ('([{<'.includes(character)) depth += 1;
     else if (')]}>'.includes(character)) depth -= 1;
-    else if (character === '|' && depth === 0) {
+    else if (character === '|' && depth === 0 && !returnType) {
       parts.push(part.trim());
       part = '';
       continue;
@@ -56,15 +61,29 @@ function alternatives(type: string): string[] {
   return parts.filter(Boolean);
 }
 
-/** A prop's type: each alternative of a union as its own small tag, so they wrap whole. */
+/**
+ * A type's text with a break opportunity after each dot, comma, opening bracket, colon and bar, so
+ * a type longer than its column wraps between its parts, such as after React., rather than inside
+ * a name.
+ */
+function breakable(type: string): ReactNode[] {
+  return type
+    .split(/(?<=[.,:;|&([{<])/)
+    .flatMap((part, index) => (index === 0 ? [part] : [<wbr key={index} />, part]));
+}
+
+/**
+ * A prop's type: each alternative of a union as its own small tag, so they wrap whole; a type or
+ * tag longer than the column wraps inside it.
+ */
 function PropType({ type }: { type: string }) {
   const options = alternatives(type);
-  if (options.length < 2) return <PlainCode>{type}</PlainCode>;
+  if (options.length < 2) return <PlainCode>{breakable(type)}</PlainCode>;
   return (
     <span className="docs-prop-type">
       {options.map((option) => (
         <code key={option} className="docs-prop-option">
-          {option}
+          {breakable(option)}
         </code>
       ))}
     </span>
