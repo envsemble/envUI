@@ -432,6 +432,13 @@ test('a small Select has a small trigger, and its popup has the menus anatomy wi
   expect(surface.border).toBeGreaterThanOrEqual(1);
   expect(surface.radius).toBeCloseTo(20, 0);
   expect(surface.padding).toBeCloseTo(6, 0);
+  // It opens 8 px clear of its trigger, as every popup does, whatever the trigger's size.
+  const [triggerBox, popupBox] = [(await compact.boundingBox())!, (await popup.boundingBox())!];
+  const gap =
+    popupBox.y > triggerBox.y
+      ? popupBox.y - (triggerBox.y + triggerBox.height)
+      : triggerBox.y - (popupBox.y + popupBox.height);
+  expect(gap).toBeCloseTo(8, 0);
   const starter = page.getByRole('option', { name: 'Starter', exact: true });
   const team = page.getByRole('option', { name: 'Team', exact: true });
   await expect(starter).toBeFocused();
@@ -443,6 +450,13 @@ test('a small Select has a small trigger, and its popup has the menus anatomy wi
   const textStart = (option: typeof starter) =>
     option.evaluate((element) => element.lastElementChild!.getBoundingClientRect().x);
   expect(await textStart(team)).toBeCloseTo(await textStart(starter), 0);
+  // The check ends the row, after the label.
+  const ends = await starter.evaluate((element) => {
+    const check = element.querySelector('.env-select-item-indicator')!.getBoundingClientRect();
+    const label = element.lastElementChild!.getBoundingClientRect();
+    return check.left >= label.right - 1;
+  });
+  expect(ends).toBe(true);
   await page.keyboard.press('ArrowDown');
   await expect(team).toBeFocused();
   // The highlight fades out as rows' highlights do, leaving the selection's fill.

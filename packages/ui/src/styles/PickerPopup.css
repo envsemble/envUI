@@ -8,6 +8,7 @@
   align-content: start;
   inline-size: auto;
   max-inline-size: var(--available-width, calc(100vw - 2rem));
+  padding: var(--env-popup-panel-padding);
 }
 .env-picker-popup-body {
   min-inline-size: 0;

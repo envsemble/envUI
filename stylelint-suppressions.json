@@ -6,7 +6,7 @@
   },
   "packages/ui/src/styles/Badge.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 10
+      "count": 9
     }
   },
   "packages/ui/src/styles/Breadcrumbs.css": {
@@ -26,7 +26,7 @@
   },
   "packages/ui/src/styles/Calendar.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 5
+      "count": 2
     }
   },
   "packages/ui/src/styles/Card.css": {
@@ -49,7 +49,7 @@
   },
   "packages/ui/src/styles/CommandPalette.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 5
+      "count": 3
     }
   },
   "packages/ui/src/styles/Composer.css": {
@@ -127,7 +127,7 @@
   },
   "packages/ui/src/styles/Menu.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 6
+      "count": 5
     }
   },
   "packages/ui/src/styles/Menubar.css": {

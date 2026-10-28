@@ -35,7 +35,7 @@ export function TooltipPopup({
   side,
   trigger,
   anchor,
-  sideOffset = 6,
+  sideOffset = 8,
   positionerClassName,
   popupProps,
 }: {
@@ -45,7 +45,7 @@ export function TooltipPopup({
   trigger?: RefObject<Element | null>;
   /** What it opens beside, where that isn't its trigger, such as one day of a calendar heatmap. */
   anchor?: PopupSurfaceProps['anchor'];
-  /** The gap to the anchor in px; 6 by default. */
+  /** The gap to the anchor in px; 8 by default, as every popup opens. */
   sideOffset?: number;
   /** The owner's positioner class, beside env-tooltip-positioner. */
   positionerClassName?: string;

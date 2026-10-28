@@ -209,12 +209,10 @@
 }
 .env-combobox-group-label {
   padding-block: var(--env-popup-padding) calc(0.1 * var(--env-control-height-md));
-  padding-inline: calc(
-      var(--env-popup-row-padding-inline) + var(--env-control-icon-size) + var(--env-popup-row-gap)
-    )
-    var(--env-popup-row-padding-inline);
+  padding-inline: var(--env-popup-label-padding-inline);
   color: var(--env-color-fg-muted);
   font: var(--env-font-weight-medium) var(--env-font-size-caption) / 1.4 var(--env-font-family);
+  letter-spacing: 0.01em;
   overflow-wrap: anywhere;
 }
 .env-combobox-status:not(:empty),

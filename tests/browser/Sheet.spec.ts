@@ -224,6 +224,24 @@ test.describe('Sheet', () => {
     expect(style.offset).toBe('2rem');
   });
 
+  test('a side sheet keeps its actions at its foot, however little its body holds', async ({
+    page,
+  }) => {
+    await page.goto(sheets);
+    await page.getByRole('button', { name: 'Open filters' }).click();
+    const sheet = page.getByRole('dialog', { name: 'Filters' });
+    await expect(sheet).toBeVisible();
+    await slidIn(sheet);
+    const [box, action] = [
+      (await sheet.boundingBox())!,
+      (await sheet.getByRole('button', { name: 'Apply' }).boundingBox())!,
+    ];
+    const padding = await sheet.evaluate((element) =>
+      Number.parseFloat(getComputedStyle(element).paddingBottom),
+    );
+    expect(box.y + box.height - (action.y + action.height)).toBeCloseTo(padding, 0);
+  });
+
   test('a sheet too short for its content scrolls its body and keeps its heading and actions in view', async ({
     page,
   }) => {

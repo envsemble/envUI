@@ -88,6 +88,12 @@ test.describe('Menus', () => {
     expect(frosted.padding).toBeCloseTo(6, 0);
     const row = (await menu.getByRole('menuitemradio', { name: 'Name' }).boundingBox())!;
     expect(row.height).toBeCloseTo(40, 0);
+    // A group's label sits 10 px in, a little ahead of the rows' 12 px, whatever leads them.
+    const labelInset = await menu
+      .locator('.env-menu-group-label')
+      .first()
+      .evaluate((label) => Number.parseFloat(getComputedStyle(label).paddingLeft));
+    expect(labelInset).toBeCloseTo(10, 0);
     await page.keyboard.press('Escape');
     await page
       .getByTestId('menus-light')
@@ -104,9 +110,7 @@ test.describe('Menus', () => {
     expect(action.height).toBeCloseTo(32, 0);
   });
 
-  test('in dark a frosted menu takes the default surface, and a solid one the popup color', async ({
-    page,
-  }) => {
+  test('in dark a menu takes the default surface, frosted and solid', async ({ page }) => {
     await page.goto(menusFixture);
     const open = async () => {
       await page.getByTestId('menus-dark').getByRole('button', { name: 'View options' }).click();
@@ -116,10 +120,7 @@ test.describe('Menus', () => {
       return menu;
     };
     let menu = await open();
-    const [surface, popup] = await tokenColors(menu, [
-      '--env-color-bg-default',
-      '--env-color-bg-popup',
-    ]);
+    const [surface] = await tokenColors(menu, ['--env-color-bg-default']);
     expect(surface).toBe('rgb(40, 41, 43)');
     expect((await popupSurface(menu)).background).toBe(
       'color(srgb 0.156863 0.160784 0.168627 / 0.9)',
@@ -128,18 +129,21 @@ test.describe('Menus', () => {
     await expect(menu).toBeHidden();
     await page.emulateMedia({ contrast: 'more' });
     menu = await open();
-    expect(popup).not.toBe(surface);
-    // Solid: the popup color itself, as the same mix resolves it.
-    const solid = await menu.evaluate((element) => {
+    // Solid: the default surface itself, as the same mix resolves it, inside the strongest edge.
+    const [solid, edge] = await menu.evaluate((element) => {
       const probe = document.createElement('div');
-      probe.style.backgroundColor =
-        'color-mix(in srgb, var(--env-color-bg-popup) 100%, transparent)';
       element.append(probe);
-      const color = getComputedStyle(probe).backgroundColor;
+      probe.style.backgroundColor =
+        'color-mix(in srgb, var(--env-color-bg-default) 100%, transparent)';
+      const fill = getComputedStyle(probe).backgroundColor;
+      probe.style.backgroundColor = 'var(--env-elevation-3-border)';
+      const border = getComputedStyle(probe).backgroundColor;
       probe.remove();
-      return color;
+      return [fill, border];
     });
-    expect((await popupSurface(menu)).background).toBe(solid);
+    const look = await popupSurface(menu);
+    expect(look.background).toBe(solid);
+    expect(look.borderColor).toBe(edge);
   });
 
   for (const [why, setUp] of [
@@ -161,9 +165,10 @@ test.describe('Menus', () => {
       const menu = page.getByRole('menu', { name: 'View options' });
       await expect(menu).toBeVisible();
       await settled(menu);
+      // The edge is its elevation's, and at high contrast a modal's, the strongest.
       const [popup, edge] = await tokenColors(menu, [
         '--env-color-bg-popup',
-        '--env-elevation-2-border',
+        why === 'high contrast' ? '--env-elevation-3-border' : '--env-elevation-2-border',
       ]);
       const solid = await popupSurface(menu);
       // Opaque: the popup color itself.
@@ -520,6 +525,20 @@ test('menu groups, radio and checkbox items keep their choice', async ({ page })
   const name = menu.getByRole('menuitemradio', { name: 'Name' });
   const date = menu.getByRole('menuitemradio', { name: 'Date' });
   await expect(name).toHaveAttribute('aria-checked', 'true');
+  // The chosen radio row takes the selection's fill and text; the other keeps none.
+  const [selected, onSelected] = await tokenColors(menu, [
+    '--env-color-bg-selected',
+    '--env-color-fg-on-selected',
+  ]);
+  const look = (item: Locator) =>
+    item.evaluate((element) => {
+      const style = getComputedStyle(element);
+      return [style.backgroundColor, style.color];
+    });
+  await expect(menu).not.toHaveAttribute('data-starting-style');
+  await page.mouse.move(0, 0);
+  expect(await look(name)).toEqual([selected, onSelected]);
+  expect((await look(date))[0]).toBe('rgba(0, 0, 0, 0)');
   await expect(date).toHaveAccessibleDescription('Most recently changed first');
   await date.click();
   await expect(menu).toBeHidden();
@@ -546,6 +565,29 @@ test('menu groups, radio and checkbox items keep their choice', async ({ page })
       .getByRole('menuitem', { name: 'Command palette' })
       .locator('.env-menu-item-shortcut kbd.env-kbd'),
   ).toHaveText(['Ctrl', 'Shift', 'P']);
+  // Side by side, as flat chips 3 px apart, the + between them read but not shown; the chords of
+  // a sequence stand further apart.
+  const spacing = (name: string) =>
+    menu
+      .getByRole('menuitem', { name })
+      .locator('.env-menu-item-shortcut')
+      .evaluate((shortcut) => {
+        const keys = [...shortcut.querySelectorAll('kbd.env-kbd')].map((key) =>
+          key.getBoundingClientRect(),
+        );
+        const separators = [...shortcut.querySelectorAll('.env-kbd-separator')];
+        return {
+          text: shortcut.textContent,
+          gaps: keys.slice(1).map((key, index) => Math.round(key.left - keys[index]!.right)),
+          shown: separators.some((separator) => separator.getBoundingClientRect().width > 6),
+        };
+      });
+  expect(await spacing('Command palette')).toEqual({
+    text: 'Ctrl+Shift+P',
+    gaps: [3, 3],
+    shown: false,
+  });
+  expect((await spacing('Keyboard shortcuts')).gaps).toEqual([3, 6, 3]);
   // The plus key keeps its name, and a sequence shows its keys without claiming a single shortcut.
   const zoom = menu.getByRole('menuitem', { name: 'Zoom in' });
   await expect(zoom).toHaveAttribute('aria-keyshortcuts', 'Control+Plus');

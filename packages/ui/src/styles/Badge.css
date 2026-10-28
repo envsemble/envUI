@@ -42,7 +42,8 @@
   display: inline-flex;
   align-items: center;
   gap: var(--env-space-1);
-  padding: 0.0625rem var(--env-space-2);
+  /* With the border, 3 px above and below and 10 px at the sides. */
+  padding: calc(var(--env-space-1) / 2) calc(var(--env-space-2) + var(--env-control-border-width));
   border: var(--env-badge-own-border, var(--env-badge-border, 0.0625rem solid transparent));
   border-radius: var(--env-radius-full);
   background: var(--env-badge-container, var(--env-badge-bg, var(--env-badge-soft)));

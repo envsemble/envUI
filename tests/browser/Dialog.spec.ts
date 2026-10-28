@@ -32,6 +32,25 @@ test('notices use status and alert roles by tone and dismiss on request', async 
     }));
     expect(colors.icon).not.toBe(colors.text);
   }
+  // A card's inset, 14 px above and below and 16 at the sides; the title semibold in the body
+  // size right above the message, a step smaller.
+  const look = await blocked.evaluate((element) => {
+    const style = getComputedStyle(element);
+    const title = getComputedStyle(element.querySelector('.env-alert-title')!);
+    const message = getComputedStyle(element.querySelector('.env-alert-message')!);
+    return {
+      padding: [style.paddingTop, style.paddingLeft],
+      title: [title.fontSize, title.fontWeight],
+      message: message.fontSize,
+      gap: getComputedStyle(element.querySelector('.env-alert-content')!).rowGap,
+    };
+  });
+  expect(look).toEqual({
+    padding: ['14px', '16px'],
+    title: ['15px', '600'],
+    message: '14px',
+    gap: '2px',
+  });
 });
 
 test(

@@ -155,12 +155,13 @@ function problems(sheets, { allowed = [] } = {}) {
   return [...new Set(found)];
 }
 
-/** The library's drop shadows: under avatars and an avatar group's count, and under frosted popups. */
+/** The library's drop shadows: under avatars and an avatar group's count, and under frosted popups and tooltips. */
 const avatarShadow = '--env-avatar-shadow';
 const popupShadow = '--env-popup-shadow';
+const tooltipShadow = '--env-tooltip-shadow';
 
-test('no envUI style sheet draws a drop shadow but the avatars’ and the popups’; rings stay', async () => {
-  const library = { allowed: [avatarShadow, popupShadow] };
+test('no envUI style sheet draws a drop shadow but the avatars’, the popups’ and the tooltips’; rings stay', async () => {
+  const library = { allowed: [avatarShadow, popupShadow, tooltipShadow] };
   assert.deepEqual(problems([await shipped()], library), [], 'The shipped style sheet');
   assert.deepEqual(
     problems([await shipped(), await devMode()], library),
@@ -180,28 +181,28 @@ test('no envUI style sheet draws a drop shadow but the avatars’ and the popups
   );
 });
 
-test('no token or custom property is a shadow but the avatars’ and the popups’', async () => {
+test('no token or custom property is a shadow but the avatars’, the popups’ and the tooltips’', async () => {
   const css = await shipped();
   const shadows = declarations(css)
     .map(([property]) => property)
     .filter((property) => /^--env-.*shadow$/.test(property));
-  assert.deepEqual([...new Set(shadows)].sort(), [avatarShadow, popupShadow].sort());
+  assert.deepEqual([...new Set(shadows)].sort(), [avatarShadow, popupShadow, tooltipShadow].sort());
 });
 
-test('the popups’ shadow is soft, follows the theme, goes where popups are solid and stays on popups', async () => {
-  const css = await shipped();
+/** The values a frosted shadow takes: one in light, one in dark, and none where it is solid. */
+function frostedShadows(css, name) {
   const values = [
     ...new Set(
       declarations(css)
-        .filter(([property]) => property === popupShadow)
+        .filter(([property]) => property === name)
         .map(([, value]) => value.replace(/\s+/g, ' ')),
     ),
   ];
   // The light and the dark shadow, and none: at high contrast, under reduced transparency and
   // forced colors, where the popup is solid.
-  assert.ok(values.includes('none'), 'solid popups have no shadow');
+  assert.ok(values.includes('none'), `${name}: solid popups have no shadow`);
   const shadows = values.filter((value) => value !== 'none');
-  assert.equal(shadows.length, 2, 'one shadow in light, one in dark');
+  assert.equal(shadows.length, 2, `${name}: one shadow in light, one in dark`);
   for (const value of shadows)
     for (const layer of split(value, /,/)) {
       const [x, y, blur, ...rest] = split(layer, /\s/);
@@ -213,18 +214,45 @@ test('the popups’ shadow is soft, follows the theme, goes where popups are sol
       assert.match(color, /^oklch\(from var\(--env-color-[\w-]+\) /, layer);
       assert.ok(rest.length <= 2, layer);
     }
-  // Only the frosted popups use it.
-  const users = [
+  return shadows;
+}
+
+/** The selectors whose box-shadow is the property `name`. */
+function usersOf(css, name) {
+  return [
     ...css
       .replace(/\/\*[\s\S]*?\*\//g, '')
-      .matchAll(/([^{}]+)\{[^}]*box-shadow:\s*var\(--env-popup-shadow\)/g),
+      .matchAll(new RegExp(String.raw`([^{}]+)\{[^}]*box-shadow:\s*var\(${name}\)`, 'g')),
   ].map(([, selector]) => selector.trim().replace(/\s+/g, ' '));
-  assert.deepEqual(users.sort(), [
+}
+
+test('the popups’ shadow is soft, follows the theme, goes where popups are solid and stays on popups', async () => {
+  const css = await shipped();
+  frostedShadows(css, popupShadow);
+  // Only the frosted popups use it.
+  assert.deepEqual(usersOf(css, popupShadow).sort(), [
     '.env-command-palette',
     '.env-popup',
     '.env-rich-text-suggestions',
     '.env-surface.env-dialog-popup',
   ]);
+});
+
+test('the tooltips’ shadow is smaller than the popups’, goes where they are solid and stays on tooltips', async () => {
+  const css = await shipped();
+  const [light, dark] = frostedShadows(css, tooltipShadow);
+  const [popupLight, popupDark] = frostedShadows(css, popupShadow);
+  // A single layer, its blur below the popups’ largest.
+  const blurOf = (value) =>
+    Math.max(...split(value, /,/).map((layer) => parseFloat(split(layer, /\s/)[2])));
+  for (const [tooltip, popup] of [
+    [light, popupLight],
+    [dark, popupDark],
+  ]) {
+    assert.equal(split(tooltip, /,/).length, 1, 'one layer');
+    assert.ok(blurOf(tooltip) < blurOf(popup), 'smaller than a popup’s');
+  }
+  assert.deepEqual(usersOf(css, tooltipShadow), ['.env-tooltip']);
 });
 
 test('the avatars’ shadow is small, faint and follows the surface below', async () => {

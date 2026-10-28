@@ -61,6 +61,41 @@ test('the field shows its value in the locale and the calendar follows the date 
   await expect(grid.locator('td[tabindex="0"]')).toHaveCount(1);
   await expect(grid.locator('[data-date="2026-10-20"]')).toHaveAttribute('aria-selected', 'true');
   await expect(grid.locator('[data-date="2026-10-14"]')).toHaveAttribute('aria-current', 'date');
+  // Today is in the accent color with no ring; the days of a week touch, a row height wide; the
+  // month's name leads the header, its buttons after it.
+  const look = await dialog.evaluate(async (card) => {
+    // The card grows in; its boxes have their final size once the transition has run.
+    await Promise.allSettled(card.getAnimations().map(({ finished }) => finished));
+    const mark = (date: string) =>
+      card.querySelector(`[data-date="${date}"] > .env-calendar-day-mark`)!;
+    const probe = document.createElement('div');
+    probe.style.color = 'var(--env-color-fg-accent)';
+    card.append(probe);
+    const accent = getComputedStyle(probe).color;
+    probe.remove();
+    const today = getComputedStyle(mark('2026-10-14'));
+    const [first, second] = [mark('2026-10-13'), mark('2026-10-14')].map((day) =>
+      day.getBoundingClientRect(),
+    );
+    const heading = card.querySelector('.env-calendar-heading')!.getBoundingClientRect();
+    const previous = card.querySelector('.env-calendar-previous')!.getBoundingClientRect();
+    return {
+      todayColor: today.color === accent,
+      ring: today.boxShadow,
+      width: first!.width,
+      gap: second!.left - first!.right,
+      headingFirst: heading.left < previous.left,
+    };
+  });
+  expect(look.width).toBeCloseTo(36, 0);
+  expect(look.gap).toBeCloseTo(0, 0);
+  expect({ ...look, width: 0, gap: 0 }).toEqual({
+    todayColor: true,
+    ring: 'none',
+    width: 0,
+    gap: 0,
+    headingFirst: true,
+  });
   await expect(grid.locator('[data-date="2026-10-20"]')).toHaveAccessibleName(
     /Tuesday,? 20 October 2026/,
   );
@@ -415,7 +450,8 @@ test('on touch screens days are touch-sized and the calendar still fits the phon
     await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
     await Promise.allSettled(element.getAnimations().map(({ finished }) => finished));
     const box = element.getBoundingClientRect();
-    const day = element.querySelector('.env-calendar-day')!.getBoundingClientRect();
+    // A day's mark is the touch height; its row adds the hair between weeks.
+    const day = element.querySelector('.env-calendar-day-mark')!.getBoundingClientRect();
     return { left: box.left, right: box.right, day: day.height };
   });
   expect(geometry.day).toBeCloseTo(44, 0);

@@ -95,12 +95,18 @@ const navigationPressed = '--env-color-bg-navigation-pressed';
 const frosted = 'popup-frosted';
 const popupFill = 'popup-fill';
 const worstBackdrop = 'popup-worst-backdrop';
+// A tooltip's frosted fill, a key chip on it and the worst behind it (Tooltip.css).
+const tooltipFrosted = 'tooltip-frosted';
+const tooltipKey = 'tooltip-key';
+const tooltipWorstBackdrop = 'tooltip-worst-backdrop';
 const frostedOverWorst = [
   '--env-color-fg-default',
   '--env-color-fg-muted',
   '--env-color-fg-control',
   '--env-color-fg-link',
   '--env-color-fg-danger',
+  // Today in a calendar and this month in a month picker.
+  '--env-color-fg-accent',
 ] as const;
 // Component tokens that take a different role per theme.
 const row = '--env-color-list-item-bg'; // List rows: the muted surface in both themes
@@ -523,6 +529,16 @@ const registry: readonly ContrastPair[] = merged([
     'The edge of dialogs and the command palette where they are solid, against their fill and the scrim',
     popupEdge,
   ),
+  ...nonText(
+    '--env-elevation-3-border',
+    [surface, page, muted],
+    'The edge of a solid popup at high contrast, a modal’s, against what it floats over; against the popup and a raised surface it is measured above',
+    {
+      contrast: 'high',
+      rationale:
+        'Popups are frosted with no edge at standard contrast; at high contrast they are solid, bounded by the strongest elevation edge, measured as a boundary there.',
+    },
+  ),
 
   // Frosted popups: menus, Select and Combobox lists, popovers, hover cards, the pickers, rich text
   // suggestions and the command palette let a little of what is behind them through. Text on the
@@ -562,6 +578,19 @@ const registry: readonly ContrastPair[] = merged([
       'The inset ring of a highlighted row on a frosted popup',
     ),
   ]),
+  // Frosted tooltips: their strong fill lets a little of what is behind through (Tooltip.css), so
+  // their light text and its key chips are held over the worst behind, a white area, in every
+  // theme. At high contrast the fill is solid.
+  ...text(
+    '--env-color-fg-on-strong',
+    [[tooltipFrosted, tooltipWorstBackdrop]],
+    'Text on a frosted tooltip, over the worst behind it',
+  ),
+  ...text(
+    '--env-color-fg-on-strong',
+    [[tooltipKey, tooltipFrosted, tooltipWorstBackdrop]],
+    'A key chip in a frosted tooltip, over the worst behind it',
+  ),
   ...text(
     '--env-color-fg-muted',
     [[fill, popupFill]],
@@ -2486,6 +2515,8 @@ const ofLabel = (formula: string, token: string) =>
 
 const separator = markedColor('packages/ui/src/styles/Button.css', 'button-end-separator');
 const badgeOutline = markedColor('packages/ui/src/styles/Button.css', 'badge-outline');
+const tooltipFill = markedColor('packages/ui/src/styles/Tooltip.css', 'tooltip-frosted');
+const tooltipKeyFill = markedColor('packages/ui/src/styles/Tooltip.css', 'tooltip-key');
 
 export const derived: Readonly<Record<string, string>> = {
   ...Object.fromEntries(
@@ -2503,6 +2534,11 @@ export const derived: Readonly<Record<string, string>> = {
     'color-mix(in srgb, var(--env-popup-fill) var(--env-popup-opacity), transparent)',
   'popup-fill': 'var(--env-popup-fill)',
   'popup-worst-backdrop': 'light-dark(#000, #fff)',
+  // A tooltip's frosted fill and a key chip on it, a share of its light text (Tooltip.css), and
+  // the worst behind it: white under its light text, in light and in dark.
+  'tooltip-frosted': tooltipFill,
+  'tooltip-key': ofLabel(tooltipKeyFill, '--env-color-fg-on-strong'),
+  'tooltip-worst-backdrop': '#fff',
 };
 
 /** The CSS color a name in a pair stands for. */

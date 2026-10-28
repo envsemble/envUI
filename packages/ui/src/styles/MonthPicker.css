@@ -1,22 +1,26 @@
 /* Month field: DatePicker's field on the picker card, whose body holds a year of months in rows of
-   three, as wide as a calendar. As the calendar's days, this month has a ring, the chosen month a
-   solid fill, and unavailable months are faded. Coarse pointers get touch-tall months. */
+   three, as wide as a calendar, under the year and its buttons. As the calendar's days, this month
+   is in the accent color, the chosen month a solid fill, and unavailable months are faded. Coarse
+   pointers get touch-tall months. */
 .env-month-picker-year {
   --env-month-picker-row: var(--env-control-height-md);
-  inline-size: calc(7 * var(--env-control-height-md));
+  inline-size: calc(7 * var(--env-row-height));
   max-inline-size: 100%;
   color: var(--env-color-fg-default);
   font: var(--env-type-body-small);
 }
 .env-month-picker-header {
-  /* The year buttons are as tall as a month. */
-  --env-control-height: var(--env-month-picker-row);
+  /* The year buttons, side by side at the end, as the calendar's month buttons. */
+  --env-control-height: calc(0.8 * var(--env-control-height-md));
+  gap: calc(var(--env-space-1) / 2);
 }
 .env-month-picker-heading {
+  order: -1;
   flex: 1 1 auto;
   min-inline-size: 0;
-  text-align: center;
-  font: var(--env-type-h2);
+  padding-inline-start: calc(0.25 * var(--env-control-height-md));
+  text-align: start;
+  font: var(--env-font-weight-semibold) var(--env-font-size-body) / 1.4 var(--env-font-family);
   overflow-wrap: anywhere;
 }
 /* The year buttons point back and forward in the reading direction. */
@@ -54,14 +58,14 @@
 }
 .env-month-picker-month:hover:not([aria-disabled='true'], [aria-selected='true'])
   > .env-month-picker-month-mark {
-  background: var(--env-color-bg-neutral-subtle-hover);
+  background: var(--env-color-bg-neutral-muted);
 }
 .env-month-picker-month:active:not([aria-disabled='true'], [aria-selected='true'])
   > .env-month-picker-month-mark {
-  background: var(--env-color-bg-neutral-subtle-pressed);
+  background: var(--env-color-bg-neutral-muted-pressed);
 }
 .env-month-picker-month[aria-current='date'] > .env-month-picker-month-mark {
-  box-shadow: inset 0 0 0 1px var(--env-color-border-accent-emphasis);
+  color: var(--env-color-fg-accent);
   font-weight: var(--env-font-weight-semibold);
 }
 .env-month-picker-month[aria-selected='true'] > .env-month-picker-month-mark {
