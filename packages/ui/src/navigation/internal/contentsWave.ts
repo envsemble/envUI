@@ -81,7 +81,7 @@ function deform({ lean, stretch }: WaveMotion) {
  * short list, shorter, so the thin stroke still runs beside some of it.
  */
 export function waveReach(count: number): number {
-  return Math.min(1, Math.max(0.5, (count - 1) / 6));
+  return Math.min(1, Math.max(0.85, (count - 1) / 6));
 }
 
 /**
@@ -200,12 +200,21 @@ export function wavePath(
     const swell = swellAt(entryAt(anchors, y), place, hovers, motion, reach);
     return full * (waveThin + (1 - waveThin) * swell);
   };
+  // Where the bulb swells at the first or the last entry, the shape runs on past the list's end
+  // until it is thin again, at most the bulb's own reach, so the bulb closes round there rather
+  // than being cut off flat.
+  const thin = full * waveThin * 1.1;
+  const reachPast = full * 4;
+  let start = top;
+  while (start > top - reachPast && width(start - step) > thin) start -= step;
+  let finish = bottom;
+  while (finish < bottom + reachPast && width(finish + step) > thin) finish += step;
   // The ends are round, as wide as the shape there, and never overlap.
-  const room = (bottom - top) / 2;
-  const startRadius = Math.min(width(top) / 2, room);
-  const endRadius = Math.min(width(bottom) / 2, room);
-  const from = top + startRadius;
-  const to = bottom - endRadius;
+  const room = (finish - start) / 2;
+  const startRadius = Math.min(width(start) / 2, room);
+  const endRadius = Math.min(width(finish) / 2, room);
+  const from = start + startRadius;
+  const to = finish - endRadius;
   // The end edge's heights and widths, leaving out points inside a run of one width.
   const edge: [number, number][] = [];
   for (let y = from; y < to + step; y += step) {
