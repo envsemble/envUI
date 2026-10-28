@@ -1,9 +1,12 @@
 import {
   useContext,
+  useLayoutEffect,
+  useRef,
   useState,
   type AnimationEvent,
   type CSSProperties,
   type ReactNode,
+  type RefObject,
 } from 'react';
 import {
   LineArt,
@@ -211,12 +214,43 @@ function DrawingCard({ drawing }: { drawing: LineArtDrawing }) {
   );
 }
 
-/**
- * The columns of the gallery: four across where four cards fit with room for their buttons, else
- * two, so sixteen never leave one alone on a row.
- */
+/** The gap between the gallery's cards, across. */
 const gap = 'var(--env-space-3)';
-const columns = `repeat(auto-fill, minmax(clamp(calc(25% - 0.75 * ${gap} - 0.01rem), (37rem - 100%) * 999, calc(50% - 0.5 * ${gap} - 0.01rem)), 1fr))`;
+
+/**
+ * How many cards the gallery shows across: four where four fit, else two, else one, so sixteen
+ * never leave one alone on a row. A card fits where it holds its row of buttons at their full size,
+ * which grows under a coarse pointer, so the count is measured rather than set at a fixed width.
+ */
+function useColumns(list: RefObject<HTMLUListElement | null>) {
+  const [columns, setColumns] = useState<1 | 2 | 4>(4);
+  useLayoutEffect(() => {
+    const ul = list.current;
+    const toolbar = ul?.querySelector<HTMLElement>('[role="toolbar"]');
+    const card = toolbar?.parentElement;
+    if (!ul || !toolbar || !card) return;
+    const measure = () => {
+      const buttons = [...toolbar.querySelectorAll('button')].map((button) =>
+        button.getBoundingClientRect(),
+      );
+      if (!buttons.length) return;
+      // The buttons' row at its own width, and the card's padding around it.
+      const row =
+        Math.max(...buttons.map(({ right }) => right)) -
+        Math.min(...buttons.map(({ left }) => left));
+      const need = row + card.offsetWidth - toolbar.offsetWidth;
+      const space = ul.clientWidth;
+      const between = Number.parseFloat(getComputedStyle(ul).columnGap) || 0;
+      setColumns(space >= 4 * need + 3 * between ? 4 : space >= 2 * need + between ? 2 : 1);
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(ul);
+    observer.observe(toolbar);
+    return () => observer.disconnect();
+  }, [list]);
+  return columns;
+}
 
 /**
  * Every drawing on a card of its own, whole and centred, on one stage, with its name and the
@@ -224,14 +258,17 @@ const columns = `repeat(auto-fill, minmax(clamp(calc(25% - 0.75 * ${gap} - 0.01r
  */
 export default function Drawings() {
   const theme = useTheme();
+  const list = useRef<HTMLUListElement>(null);
+  const columns = useColumns(list);
   return (
     <SpecimenGrid size="wide">
-      {/* The compact scale, so four buttons fit in a row inside each card; the stage shows through. */}
+      {/* The compact scale, the cards' small buttons and quiet names; the stage shows through. */}
       <Theme {...theme} scale="compact" style={{ background: 'none' }}>
         <ul
+          ref={list}
           style={{
             display: 'grid',
-            gridTemplateColumns: columns,
+            gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
             gap: `var(--env-space-5) ${gap}`,
             margin: 0,
             padding: 0,
