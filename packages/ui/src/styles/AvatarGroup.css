@@ -104,7 +104,7 @@
 }
 
 .env-avatar-group > * {
-  --env-avatar-group-pad: 0rem;
+  --env-avatar-group-padding: 0rem;
   /* At rest: each item's small offsets, which vary by its place, below. */
   --env-avatar-group-nudge: 0rem;
   --env-avatar-group-rest-lift: 0rem;
@@ -136,7 +136,7 @@
   );
   position: relative;
   flex: 0 0 auto;
-  margin-inline: var(--env-avatar-group-pad);
+  margin-inline: var(--env-avatar-group-padding);
   /* Piled, the pointer reaches the group alone. */
   pointer-events: none;
   translate: calc(
@@ -149,7 +149,7 @@
     );
 }
 .env-avatar-group > * + * {
-  margin-inline-start: calc(var(--env-avatar-group-gap) + var(--env-avatar-group-pad));
+  margin-inline-start: calc(var(--env-avatar-group-gap) + var(--env-avatar-group-padding));
 }
 /* The avatars turn; the count stays upright, so its figures never lean like italics. */
 .env-avatar-group > :not(.env-avatar-group-overflow) {
@@ -309,7 +309,9 @@
     );
   }
   .env-avatar-group[data-interactive] > :not(.env-avatar-group-item, .env-avatar-group-overflow) {
-    --env-avatar-group-pad: calc((var(--env-avatar-group-slot) - var(--env-avatar-group-size)) / 2);
+    --env-avatar-group-padding: calc(
+      (var(--env-avatar-group-slot) - var(--env-avatar-group-size)) / 2
+    );
   }
   .env-avatar-group-item {
     justify-content: center;

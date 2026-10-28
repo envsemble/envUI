@@ -1,27 +1,15 @@
 .env-theme {
   --env-code-font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
   --env-code-font-size: 0.8125rem;
-  /*
-   * A switch for the high-contrast colors of code, set by each Theme as the tokens' contrast is:
-   * empty under high contrast, and invalid otherwise, so that a custom property that starts with
-   * it, such as a token's --env-code-token-now, holds its high-contrast color or nothing.
-   */
-  --env-code-high-contrast: initial;
 }
-.env-theme[data-env-contrast='high'] {
-  --env-code-high-contrast: ;
-}
-@media (prefers-contrast: more) {
-  .env-theme:not([data-env-contrast='standard']) {
-    --env-code-high-contrast: ;
-  }
-}
-/* Code's colors come from the code theme, standard and high-contrast; see .env-theme. */
+/* Code's colors come from the code theme, standard and high-contrast: a custom property that starts
+   with the theme's high-contrast switch (Theme.css), such as a token's --env-code-token-now, holds
+   its high-contrast color or nothing. */
 .env-code,
 .env-code-block,
 .env-code-diff {
-  --env-code-background-now: var(--env-code-high-contrast) var(--env-code-background-high);
-  --env-code-foreground-now: var(--env-code-high-contrast) var(--env-code-foreground-high);
+  --env-code-background-now: var(--env-theme-high-contrast) var(--env-code-background-high);
+  --env-code-foreground-now: var(--env-theme-high-contrast) var(--env-code-foreground-high);
 
   background: var(--env-code-background-now, var(--env-code-background));
   color: var(--env-code-foreground-now, var(--env-code-foreground));
@@ -56,9 +44,9 @@
 .env-code-block code {
   font: inherit;
 }
-/* Each highlighted token has its standard color and its high-contrast one; see .env-theme. */
+/* Each highlighted token has its standard color and its high-contrast one, as above. */
 .env-code-block code span {
-  --env-code-token-now: var(--env-code-high-contrast) var(--env-code-token-high);
+  --env-code-token-now: var(--env-theme-high-contrast) var(--env-code-token-high);
 
   color: var(--env-code-token-now, var(--env-code-token));
 }

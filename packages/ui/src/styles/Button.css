@@ -403,13 +403,13 @@
    Its own box is its hit area, so it never reaches over a neighbour, whatever the layout around
    it, and every control of a size grows alike, so the controls of a row still match. A control
    that sizes its parts itself, such as a tab rail or the actions inside a field, sets
-   --env-touch-height to 0rem and gives them a hit area inside its own box. A link-like text button
+   --env-button-touch-height to 0rem and gives them a hit area inside its own box. A link-like text button
    in running text keeps its size, and so does a button that already covers its row. */
 @media (pointer: coarse) {
   .env-button:not(.env-link, [data-row-target]) {
     --env-button-height: max(
       var(--env-control-height),
-      var(--env-touch-height, var(--env-control-height-touch))
+      var(--env-button-touch-height, var(--env-control-height-touch))
     );
     min-inline-size: var(--env-button-height);
   }

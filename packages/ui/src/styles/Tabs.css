@@ -63,7 +63,7 @@
     --env-tabs-height: max(var(--env-tabs-rail), var(--env-control-height-touch));
   }
   .env-tabs-list:not([data-orientation='vertical']) {
-    --env-touch-height: 0rem;
+    --env-button-touch-height: 0rem;
   }
   .env-tabs-list:not([data-orientation='vertical']) > .env-tabs-tab {
     position: relative;

@@ -29,8 +29,9 @@
   --env-tooltip-shadow: 0 6px 16px -6px oklch(from var(--env-color-fg-default) l c h / 0.3);
   /*
    * A switch for the solid popup of high contrast, reduced transparency and forced colors, as
-   * Code.css's is: invalid while popups are frosted, empty while they are solid, so that a custom
-   * property that starts with it, such as a popup's --env-popup-edge, holds its value or nothing.
+   * Theme.css's high-contrast one is: invalid while popups are frosted, empty while they are solid,
+   * so that a custom property that starts with it, such as a popup's --env-popup-edge, holds its
+   * value or nothing.
    */
   --env-popup-solid: initial;
   /* The geometry popups share, following the scale as the md control height does (2.5 rem, 2 rem

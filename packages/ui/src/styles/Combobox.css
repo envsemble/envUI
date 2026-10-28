@@ -157,7 +157,7 @@
    coarse pointer, where its hit area reaches past it (below). */
 .env-combobox-chip-remove {
   --env-control-height: calc(var(--env-combobox-row) - 0.25rem);
-  --env-touch-height: 0rem;
+  --env-button-touch-height: 0rem;
   --env-icon-size: 0.875rem;
   flex: 0 0 auto;
   border-radius: calc(var(--env-radius-sm) - 0.125rem);

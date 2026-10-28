@@ -56,20 +56,20 @@
   padding-block-start: var(--env-space-2);
 }
 .env-text-field-control {
-  --env-field-border-base: var(--env-text-field-edge, var(--env-color-border-default));
-  --env-field-interaction-color: var(
+  --env-text-field-border-base: var(--env-text-field-edge, var(--env-color-border-default));
+  --env-text-field-interaction-color: var(
     --env-text-field-accent,
     var(--env-color-border-accent-emphasis)
   );
-  --env-field-interaction-hover: var(
+  --env-text-field-interaction-hover: var(
     --env-text-field-accent-hover,
     var(--env-color-border-accent-emphasis-hover)
   );
-  --env-field-interaction-pressed: var(
+  --env-text-field-interaction-pressed: var(
     --env-text-field-accent-pressed,
     var(--env-color-border-accent-emphasis-pressed)
   );
-  --env-field-border-color: var(--env-field-border-base);
+  --env-text-field-border-color: var(--env-text-field-border-base);
   /* Where the label starts, resting and floated, and the height of the notch it cuts. */
   --env-text-field-label-start: var(--env-space-4);
   --env-text-field-notch: var(--env-space-2);
@@ -93,7 +93,7 @@
   margin: 0;
   padding-block: 0;
   padding-inline: calc(var(--env-text-field-label-start) - var(--env-space-1)) var(--env-space-2);
-  border: var(--env-control-border-width) solid var(--env-field-border-color);
+  border: var(--env-control-border-width) solid var(--env-text-field-border-color);
   border-radius: inherit;
   pointer-events: none;
   transition: border-color var(--env-motion-duration-medium) var(--env-motion-ease);
@@ -118,17 +118,17 @@
 }
 @media (hover: hover) {
   .env-text-field-control:hover:not(:has(> .env-text-field-input:disabled), [data-disabled]) {
-    --env-field-border-color: var(--env-field-interaction-hover);
+    --env-text-field-border-color: var(--env-text-field-interaction-hover);
   }
 }
 .env-text-field-control:is(:active, :has(> .env-textarea-resize-edge[data-dragging])):not(
     :has(> .env-text-field-input:disabled),
     [data-disabled]
   ) {
-  --env-field-border-color: var(--env-field-interaction-pressed);
+  --env-text-field-border-color: var(--env-text-field-interaction-pressed);
 }
 .env-text-field-control:focus-within {
-  --env-field-border-color: var(--env-field-interaction-color);
+  --env-text-field-border-color: var(--env-text-field-interaction-color);
 }
 .env-text-field-input {
   box-sizing: border-box;
@@ -242,10 +242,10 @@
 }
 /* Invalid controls recolor their existing border. */
 .env-text-field-control:is(:has(> .env-text-field-input[aria-invalid='true']), [data-invalid]) {
-  --env-field-border-base: var(--env-field-error-color);
-  --env-field-interaction-color: var(--env-field-error-color);
-  --env-field-interaction-hover: var(--env-color-border-danger-emphasis-hover);
-  --env-field-interaction-pressed: var(--env-color-border-danger-emphasis-pressed);
+  --env-text-field-border-base: var(--env-field-error-color);
+  --env-text-field-interaction-color: var(--env-field-error-color);
+  --env-text-field-interaction-hover: var(--env-color-border-danger-emphasis-hover);
+  --env-text-field-interaction-pressed: var(--env-color-border-danger-emphasis-pressed);
 }
 .env-text-field-control:is(:has(> .env-text-field-input[aria-invalid='true']), [data-invalid])
   > label {
@@ -283,7 +283,7 @@ textarea.env-text-field-input[data-sizing='content'][data-rows] {
   border: 0;
   outline: none;
   background: transparent;
-  color: var(--env-field-border-color);
+  color: var(--env-text-field-border-color);
   cursor: ns-resize;
   touch-action: none;
   user-select: none;
@@ -499,7 +499,7 @@ textarea.env-text-field-input:disabled + .env-textarea-resize-edge {
     --env-field-height: max(var(--env-control-height), var(--env-control-height-touch));
   }
   .env-text-field-end {
-    --env-touch-height: 0rem;
+    --env-button-touch-height: 0rem;
   }
   .env-text-field-end .env-icon-button {
     position: relative;
