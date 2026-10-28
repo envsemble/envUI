@@ -119,7 +119,7 @@ function Reading() {
 export default function ReadersPlace() {
   return (
     <Example size="content">
-      <MotionStage label="the contents following the reader">
+      <MotionStage label="the contents following the reader" stage="shaded">
         <Reading />
       </MotionStage>
     </Example>

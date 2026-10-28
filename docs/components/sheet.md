@@ -75,7 +75,7 @@ A medium side sheet takes the whole width of a compact window, and a large one o
 
 ## Anatomy
 
-```tsx figure=SheetAnatomy open
+```tsx figure=SheetAnatomy stage=shaded open
 
 ```
 
@@ -106,7 +106,7 @@ The page can stay usable beside the sheet.
 - The sheet then stays open while people choose another row.
 - When it closes, focus returns to the row it showed last.
 
-```tsx figure=InspectorPanel motion
+```tsx figure=InspectorPanel stage=shaded motion
 
 ```
 
