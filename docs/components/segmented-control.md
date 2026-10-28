@@ -63,7 +63,7 @@ Small, medium and large, the control heights of the [scale](../foundations/spaci
 1. **Outline** (`env-segmented-control`)
 2. **Segment** (`env-segmented-control-item`)
 3. **Check** (`env-segmented-control-item-check`)
-4. **Icon** (`env-segmented-control-item > env-icon`, `icon`)
+4. **Icon** (`env-segmented-control-item[data-unchecked] > env-icon:not(env-segmented-control-item-check)`, `icon`)
 5. **Label** (`env-segmented-control-item-label`, `label`)
 6. **Count** (`env-segmented-control-item-count`, `count`)
 

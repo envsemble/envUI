@@ -51,7 +51,7 @@ examples:
 
 1. **Checkbox** (`env-checkbox`)
 2. **Box** (`env-checkbox-box`)
-3. **Check** (`env-checkbox-indicator`)
+3. **Check** (`env-checkbox-indicator path`)
 4. **Label** (`env-checkbox-label`, `label`)
 
 ## Behaviour

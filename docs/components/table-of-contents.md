@@ -64,7 +64,7 @@ A section need not be a heading: name any part of the page, such as a card or a 
 
 1. **Contents** (`env-table-of-contents`)
 2. **Reader's place** (`env-table-of-contents-wave`)
-3. **Link** (`env-table-of-contents-link`)
+3. **Link** (`env-table-of-contents-link:not([aria-current])`)
 4. **Current section** (`env-table-of-contents-link[aria-current='location']`)
 
 Not shown: the sections passed, their labels as dark as the current one's.
