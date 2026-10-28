@@ -63,7 +63,9 @@ test('the field shows its value in the locale and the calendar follows the date 
   await expect(grid.locator('[data-date="2026-10-14"]')).toHaveAttribute('aria-current', 'date');
   // Today is in the accent color with no ring; the days of a week touch, a row height wide; the
   // month's name leads the header, its buttons after it.
-  const look = await dialog.evaluate((card) => {
+  const look = await dialog.evaluate(async (card) => {
+    // The card grows in; its boxes have their final size once the transition has run.
+    await Promise.allSettled(card.getAnimations().map(({ finished }) => finished));
     const mark = (date: string) =>
       card.querySelector(`[data-date="${date}"] > .env-calendar-day-mark`)!;
     const probe = document.createElement('div');

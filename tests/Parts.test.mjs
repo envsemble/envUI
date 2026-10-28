@@ -34,7 +34,10 @@ test('a component lists its root, its part classes and the states it is styled b
   // A class built from a value is expanded over the value's type.
   assert.ok(component('Avatar').parts.some((part) => part.class === 'env-avatar-fallback-person'));
   // The style sheets add the states Base UI sets, on the part they style.
-  assert.deepEqual(state(component('Menu'), 'data-highlighted')?.parts, ['env-menu-item']);
+  assert.deepEqual(state(component('Menu'), 'data-highlighted')?.parts, [
+    'env-menu-choice',
+    'env-menu-item',
+  ]);
   // A component whose root is not env-<name> takes it from packages/ui/src/parts.json.
   assert.equal(component('Dialog').root, 'env-dialog-popup');
 });
