@@ -30,7 +30,7 @@ async function shipped() {
     entryPoints: [join(styles, 'index.css')],
     bundle: true,
     write: false,
-    loader: { '.woff2': 'file' },
+    loader: { '.woff2': 'file', '.svg': 'file' },
     assetNames: 'assets/[name]',
     outfile: join(styles, 'out.css'),
     logLevel: 'silent',
