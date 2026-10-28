@@ -17,6 +17,7 @@ import type { DocumentationMetadata, StageFill } from '../DocumentationTypes';
 import { routeHref } from '../navigation/Address';
 import { pageHref, referencePages, routeOfDocument } from '../navigation/SiteRoutes';
 import { Documentation } from '../pages/Documentation';
+import { useAutoplay } from '../previews/Autoplay';
 import { Playback, PreviewOverlays, usePlaying } from '../previews/Motion';
 import { useDisplaySettings } from '../theme/DisplaySettings';
 import { tileOf, tileWindows } from '../tiles/Tiles';
@@ -561,6 +562,7 @@ export function TilePreview({
       data-specimen={preview?.specimen}
       data-stage={preview?.stage}
       data-empty={preview ? undefined : ''}
+      data-playing={plays ? '' : undefined}
     >
       {!preview ? (
         <Article className="catalogue-related-placeholder" aria-hidden />
@@ -649,7 +651,10 @@ export function useNear(element: RefObject<HTMLElement | null>) {
   return near;
 }
 
-/** One alternative's tile, whose preview plays while the pointer or the keyboard is on it. */
+/**
+ * One alternative's tile, whose preview plays while the pointer or the keyboard is on it, and where
+ * the reader can't hover, while it is the tile in the middle of the viewport, as a gallery's does.
+ */
 function RelatedTile({
   preview,
   near,
@@ -659,10 +664,12 @@ function RelatedTile({
   near: boolean;
   children: ReactNode;
 }) {
+  const tile = useRef<HTMLLIElement>(null);
   const [playing, playOn] = usePlaying();
+  const autoplay = useAutoplay(tile, playing);
   return (
-    <li className="catalogue-related-tile" {...playOn}>
-      <TilePreview preview={preview} near={near} playing={playing} />
+    <li ref={tile} className="catalogue-related-tile" {...playOn}>
+      <TilePreview preview={preview} near={near} playing={playing || autoplay} />
       {children}
     </li>
   );
