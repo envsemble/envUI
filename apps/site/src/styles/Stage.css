@@ -122,7 +122,14 @@
    navigation, top bar and body, whose edges must show on the canvas. In the dark themes the
    recessed surface is already deeper than both, the navigation being lighter than the page. In the
    light themes it is lighter than both, so the canvas is a shade deeper than the page instead, the
-   darker of the window's two. */
+   darker of the window's two. An animated figure's stage takes its theme from the page rather than
+   carrying one, so light-dark() picks the fill there. */
+:is(.site-live-example, .site-verdict-stage, .site-anatomy-stage)[data-stage='shaded'] {
+  --catalogue-card-fill: light-dark(
+    oklch(from var(--env-color-bg-page) calc(l - 0.035) c h),
+    var(--env-color-bg-recessed)
+  );
+}
 :is(
     .site-live-example,
     .site-verdict-stage,
