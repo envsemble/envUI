@@ -538,9 +538,9 @@
         },
         {
           "stylesheet": "Sheet.css",
-          "classes": ["env-dialog-content"],
+          "classes": ["env-dialog-content", "env-dialog-actions"],
           "properties": [],
-          "note": "A resizable side sheet makes its content, which scrolls with the sheet, at least as tall as the sheet and the containing block of its resize handle, so the handle runs down the whole edge; it never restyles the content."
+          "note": "A resizable side sheet makes its content, which scrolls with the sheet, at least as tall as the sheet and the containing block of its resize handle, so the handle runs down the whole edge; a side sheet's content fills its height and its actions sit at its foot. It never restyles them."
         },
         {
           "stylesheet": "ColorSwatch.css",

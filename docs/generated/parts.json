@@ -3002,6 +3002,7 @@
           "attribute": "data-highlighted",
           "values": [],
           "parts": [
+            "env-menu-choice",
             "env-menu-item"
           ]
         },
@@ -3018,6 +3019,7 @@
           "attribute": "data-popup-open",
           "values": [],
           "parts": [
+            "env-menu-choice",
             "env-menu-item"
           ]
         }

@@ -24,14 +24,3 @@
   white-space: nowrap;
   overflow-wrap: normal;
 }
-/* Clear, at the end, is quieter than the shortcut at the start: muted, and the text color under the
-   pointer. */
-.env-picker-popup-footer-end > .env-button:where([data-variant='text']) {
-  color: var(--env-button-content, var(--env-color-fg-muted));
-}
-.env-picker-popup-footer-end
-  > .env-button:where([data-variant='text']):is(:hover, :active):not(:disabled):not(
-    [aria-disabled='true']
-  ) {
-  color: var(--env-button-content, var(--env-color-fg-default));
-}
