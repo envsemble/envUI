@@ -1,41 +1,50 @@
+import { useState } from 'react';
 import { RichTextEditor } from '@envsemble/envui/rich-text';
 import { usePointer, type PointerStep } from '../previews/Motion';
+import { Renew } from '../previews/Renew';
 
-const task = (index: number) =>
-  `li:nth-child(${index} of li:has(.env-rich-text-task)) .env-checkbox-input`;
+const line = '.ProseMirror p';
+const bold = '[aria-label="Bold"]';
 
-const notes = '**Launch**\n\n- [ ] Book the venue\n- [ ] Send the press kit';
-
-/** The tasks of a checklist ticked off, one and then the other, and cleared again. */
+/*
+ * A word is selected as a person selects it and Bold is pressed: the word turns bold in place, as
+ * the editor shows it, with no markup to see. A press after it lets the selection go, so the bold
+ * word shows, and the line is drawn anew as it began, with a short fade (Renew).
+ */
 const script: PointerStep[] = [
   { wait: 300 },
-  { to: task(1) },
-  { wait: 400 },
-  { click: true },
-  { wait: 700 },
-  { to: task(2), duration: 400 },
+  { to: line, text: 'Friday', x: 0, duration: 0 },
+  { wait: 250 },
+  { press: true },
+  { to: line, text: 'Friday', x: 1, duration: 400 },
+  { release: true },
+  { wait: 300 },
+  { to: bold, duration: 450 },
   { wait: 200 },
   { click: true },
-  { wait: 1100 },
-  { to: task(1), duration: 400 },
+  { wait: 450 },
+  { to: line, text: 'Friday', x: 1, duration: 400 },
   { click: true },
-  { wait: 200 },
-  { to: task(2), duration: 350 },
-  { click: true },
-  { wait: 500 },
+  { wait: 300 },
   { leave: true },
-  { wait: 400 },
+  { blur: true },
+  { wait: 1400 },
+  { cue: 'renew' },
+  { wait: 500 },
 ];
 
-/** A rich text editor: its formatting toolbar over a short checklist. */
+/** A rich text editor: its formatting toolbar over a line whose word turns bold. */
 export default function RichTextTile() {
-  usePointer(script);
+  const [round, setRound] = useState(0);
+  usePointer(script, { onCue: () => setRound((count) => count + 1) });
   return (
-    <RichTextEditor
-      aria-label="Launch notes"
-      defaultValue={notes}
-      toolbar={['bold', 'italic', 'task-list']}
-      style={{ inlineSize: '13rem' }}
-    />
+    <Renew round={round}>
+      <RichTextEditor
+        aria-label="Launch note"
+        defaultValue="Launch on Friday"
+        toolbar={['bold', 'italic']}
+        style={{ inlineSize: '10rem' }}
+      />
+    </Renew>
   );
 }
