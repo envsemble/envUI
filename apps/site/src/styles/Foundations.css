@@ -209,9 +209,6 @@
 .catalogue-align-subject {
   justify-content: center;
 }
-.catalogue-align-subject > .env-search-field {
-  inline-size: 12rem;
-}
 
 /* The corners figure: one small screen with each kind of corner numbered on it. */
 .catalogue-shape-screen {
