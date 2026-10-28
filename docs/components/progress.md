@@ -41,8 +41,8 @@ examples:
     role: do
     caption: One bar for one task, however many items it covers.
   BarPerFile:
-    role: dont
-    caption: A bar for every file of one task, as when they upload together.
+    role: caution
+    caption: 'A bar for every file of one task: more to follow than one bar for the whole.'
 ---
 
 # Progress

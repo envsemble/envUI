@@ -135,10 +135,17 @@ export function VerdictFigure({
             <InteractiveMark enabled={!open} />
           </Column>
         )}
-        <div className="site-verdict-bar env-connected-row" id={`${id}-verdict`}>
+        {/* A caution's bar is a dark island in either theme: the dark theme's bright warning fill,
+            with its dark text, where light's is a deep brown. */}
+        <Theme
+          {...theme}
+          theme={verdict === 'caution' ? 'dark' : theme.theme}
+          className="site-verdict-bar env-connected-row"
+          id={`${id}-verdict`}
+        >
           {icon}
           <span>{label}</span>
-        </div>
+        </Theme>
       </div>
       <figcaption className="site-verdict-caption" id={`${id}-caption`}>
         {caption}

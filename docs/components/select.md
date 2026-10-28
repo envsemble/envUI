@@ -187,7 +187,7 @@ Where a row's title names the select, give the select that name as its `aria-lab
 
 #### Variants and sizes
 
-`variant` is the trigger's Button variant: `secondary`, a filled pill and the default, or `outline`, a bordered pill. `size` is `sm`, `md` or `lg`; without it, the trigger takes its container's control height.
+`variant` is the trigger's Button variant: `secondary`, a filled pill and the default, or `outline`, a bordered pill with no fill at rest. `size` is `sm`, `md` or `lg`; without it, the trigger takes its container's control height.
 
 ### Composition
 
@@ -201,7 +201,7 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 
 ## Changelog
 
-- **1.0.0-prerelease.5**: The open list is frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge, and is solid with its edge at high contrast and with reduced transparency. Options are the md control height in body text, and the chosen one takes the selection's fill as well as its check mark. The list opens 8 px clear of the trigger at every scale and size. Its options lie one under the next with no space between them. The chosen option's check mark ends its row, after the label.
+- **1.0.0-prerelease.5**: The open list is frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge, and is solid with its edge at high contrast and with reduced transparency. Options are the md control height in body text, and the chosen one takes the selection's fill as well as its check mark. The list opens 8 px clear of the trigger at every scale and size. Its options lie one under the next with no space between them. The chosen option's check mark ends its row, after the label. The outline trigger has no fill at rest, as an outline button has none.
 - **1.0.0**: `options` is `items`, and `SelectOption` is `SelectItem`; `hint` is `description`; `variant="outlined"` is `variant="outline"`, which the codemods write. `className` and `style` style the field's root rather than the trigger, which takes `ref`. The trigger is a Button, the popup the shared popup and the options its rows: `env-dropdown-trigger` is `env-select-trigger`, `env-dropdown-options` `env-select-popup`, `env-dropdown-list` `env-select-list`, `env-dropdown-option` `env-select-item` and `env-dropdown-option-check` `env-select-item-indicator`.
 - **1.0.0**: The open list takes the level-2 elevation edge, with no shadow.
 - **0.5.0**: `density="compact"`. The outlined trigger is the outlined Button style, and the open list takes the popup surface corners, with rounded options inset by its padding.

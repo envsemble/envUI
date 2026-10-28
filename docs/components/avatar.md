@@ -40,7 +40,9 @@ examples:
     motion: true
   Sizes: variants
   Fallbacks: example
-  AvatarAnatomy: anatomy
+  AvatarAnatomy:
+    role: anatomy
+    caption: Spread, as under the pointer, and held level.
   ProjectMembers: example
   ChooseReviewers: example
   PressableAvatars: example
@@ -92,7 +94,7 @@ The name chooses one of eight pastel colors, the same on every page.
 
 ## Anatomy
 
-```tsx figure=AvatarAnatomy
+```tsx figure=AvatarAnatomy specimen
 
 ```
 

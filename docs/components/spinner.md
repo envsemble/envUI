@@ -35,7 +35,9 @@ examples:
     role: overview
     motion: true
   Sizes: variants
-  SpinnerAnatomy: anatomy
+  SpinnerAnatomy:
+    role: anatomy
+    caption: Held still at one moment of its turn.
 ---
 
 # Spinner
@@ -58,7 +60,7 @@ examples:
 
 ## Anatomy
 
-```tsx figure=SpinnerAnatomy
+```tsx figure=SpinnerAnatomy specimen
 
 ```
 
