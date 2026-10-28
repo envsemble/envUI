@@ -1,5 +1,6 @@
-/* Quick open: a dialog near the top of the window with a search field over its options. It shares
-   the dialog surface, and its options take the Select options' shape and selection colors. */
+/* Quick open: a dialog near the top of the window with a search field over its options. It is a
+   frosted popup over the dialog's scrim (Popup.css), with a solid search pill, and its options take
+   the Select options' shape and colors. */
 .env-command-palette-positioner {
   box-sizing: border-box;
   position: fixed;
@@ -16,13 +17,20 @@
   pointer-events: none;
 }
 .env-command-palette {
+  /* The edge of a solid palette; frosted, it has none. */
+  --env-command-palette-edge: var(--env-popup-solid) var(--env-elevation-3-border);
   box-sizing: border-box;
   inline-size: min(40rem, 100% - 2 * var(--env-viewport-gutter));
   margin-inline: var(--env-viewport-gutter);
   max-block-size: 100%;
-  border: 0.0625rem solid var(--env-elevation-3-border);
+  /* An inset that keeps the rows' corners concentric with the palette's. */
+  padding: calc(var(--env-radius-surface) - var(--env-popup-row-radius));
+  border: var(--env-control-border-width) solid var(--env-command-palette-edge, transparent);
   border-radius: var(--env-radius-surface);
-  background: var(--env-color-bg-popup);
+  background: color-mix(in srgb, var(--env-color-bg-popup) var(--env-popup-opacity), transparent);
+  box-shadow: var(--env-popup-shadow);
+  -webkit-backdrop-filter: blur(var(--env-popup-blur)) saturate(1.4);
+  backdrop-filter: blur(var(--env-popup-blur)) saturate(1.4);
   color: var(--env-color-fg-default);
   font: var(--env-type-body);
   overflow: hidden;
@@ -32,12 +40,21 @@
   transform-origin: var(--transform-origin, center);
   transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);
 }
+/* The search is a solid pill on the neutral fill with no edge, the one field in a popup with a fill
+   of its own; its edge returns on a solid palette. */
 .env-command-palette-search {
+  --env-command-palette-search-edge: var(--env-popup-solid) var(--env-color-border-default);
   flex: 0 0 auto;
-  min-block-size: var(--env-control-height);
-  padding-inline: var(--env-space-4);
+  min-block-size: var(--env-control-height-lg);
+  padding-inline: var(--env-popup-row-padding-inline);
   border-radius: var(--env-radius-full);
-  background: var(--env-color-bg-neutral-muted);
+  /* Opaque, the neutral fill over the popup's own color, so what shows through the palette never
+     reaches the text typed in it. */
+  background:
+    linear-gradient(var(--env-color-bg-neutral-muted), var(--env-color-bg-neutral-muted)),
+    var(--env-color-bg-popup);
+  box-shadow: inset 0 0 0 var(--env-control-border-width)
+    var(--env-command-palette-search-edge, transparent);
 }
 .env-command-palette-search > .env-icon {
   color: var(--env-color-fg-muted);
@@ -45,7 +62,7 @@
 .env-command-palette-input {
   flex: 1 1 auto;
   min-inline-size: 0;
-  block-size: var(--env-control-height);
+  block-size: var(--env-control-height-lg);
   padding: 0;
   border: 0;
   background: transparent;
@@ -67,7 +84,7 @@
   flex: 0 1 auto;
   min-block-size: 0;
   max-block-size: 60vh;
-  margin-block-start: var(--env-space-2);
+  margin-block-start: var(--env-popup-group-gap);
   align-content: start;
   gap: 0.125rem;
   overflow-y: auto;
@@ -80,29 +97,20 @@
 .env-command-palette-group {
   gap: 0.125rem;
 }
+/* Groups stand apart by space, under a small muted heading, with no line. */
 .env-command-palette-group + .env-command-palette-group,
 .env-command-palette-item + .env-command-palette-group {
-  margin-block-start: var(--env-space-2);
+  margin-block-start: var(--env-popup-group-gap);
 }
 .env-command-palette-heading {
-  padding: var(--env-space-2) var(--env-space-4) var(--env-space-1);
+  padding: var(--env-popup-padding) var(--env-popup-row-padding-inline)
+    calc(0.1 * var(--env-control-height-md));
   color: var(--env-color-fg-muted);
-  font: var(--env-type-body-small);
-  font-weight: var(--env-font-weight-medium);
+  font: var(--env-font-weight-medium) var(--env-font-size-caption) / 1.4 var(--env-font-family);
 }
-/* Options are ListRows; the palette gives them its taller rows, body text, wider gaps and its
-   concentric corners. */
+/* Options are ListRows, as in every popup list. */
 .env-command-palette-item {
-  min-block-size: var(--env-control-height-md);
-  gap: var(--env-space-3);
-  font: var(--env-type-body);
-  padding: var(--env-space-1) var(--env-space-4);
-  /* Concentric with the palette's corners through its padding, like the search field above. */
-  border-radius: calc(var(--env-radius-surface) - var(--env-space-2));
   color: var(--env-color-fg-control);
-}
-.env-command-palette-item:active {
-  background: var(--env-color-bg-popup-pressed);
 }
 /* The status announces the number of results; it shows only when it says that nothing matches. */
 .env-command-palette-status:not([data-empty]) {
@@ -149,12 +157,23 @@
 /* The footer stands apart from the options by space, its small muted text and its keys, with no
    line. */
 .env-command-palette-footer {
+  /* Its keys are the rows' muted chips. */
+  --env-kbd-size: calc(0.5 * var(--env-control-height-md));
+  --env-kbd-padding-inline: calc(0.125 * var(--env-control-height-md));
+  --env-kbd-radius: calc(0.125 * var(--env-control-height-md));
+  --env-kbd-fg: var(--env-color-fg-muted);
+  --env-kbd-bg: var(--env-color-bg-neutral-muted);
+  --env-kbd-border: transparent;
+  --env-kbd-font-size: var(--env-font-size-caption);
   flex: 0 0 auto;
-  margin-block-start: var(--env-space-3);
-  padding: var(--env-space-2) var(--env-space-4) var(--env-space-1);
+  padding: var(--env-popup-group-gap) var(--env-popup-row-padding-inline)
+    calc(0.1 * var(--env-control-height-md));
   gap: var(--env-space-1) var(--env-space-4);
   color: var(--env-color-fg-muted);
   font: var(--env-type-body-small);
+}
+.env-command-palette-footer .env-kbd {
+  border-block-end-width: var(--env-control-border-width);
 }
 /* The application's own footer content flows as text after the hints. */
 .env-command-palette-footer-content {
