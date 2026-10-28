@@ -560,6 +560,8 @@ test('touch screens give fields, chips and options the touch height', async ({
   await expect(owner).toHaveCSS('font-size', '16px');
   const chip = wellOf(field(page, 'Compact labels light')).locator('.env-combobox-chip').first();
   expect((await chip.boundingBox())!.height).toBeCloseTo(28, 0);
+  // Wrapped rows of chips lie a small step apart, as for a mouse, not a touch height apart.
+  await expect(wellOf(field(page, 'Compact labels light'))).toHaveCSS('row-gap', '8px');
   await owner.tap();
   const option = page.getByRole('option', { name: 'Sam Lee', exact: true });
   await expect(option).toBeVisible();
@@ -578,7 +580,7 @@ test('touch screens give fields, chips and options the touch height', async ({
   await page.context().close();
 });
 
-test("touch screens give every chip's remove button a hit area of the touch size", async ({
+test("touch screens give every chip's remove button a hit area as tall as a row and its gap", async ({
   browser,
 }) => {
   const page = await openOnTouchScreen(browser);
@@ -616,8 +618,9 @@ test("touch screens give every chip's remove button a hit area of the touch size
     }
     return results;
   });
-  // Measured in half pixels, so a hit area of 44 px can measure 43.
-  expect(areas.filter(({ width, height }) => width < 43 || height < 43)).toEqual([]);
+  // A 28 px row and its 8 px gap: hit areas of rows above and below meet without overlapping, so
+  // each reaches its full size. Measured in half pixels, so 36 px can measure 35.
+  expect(areas.filter(({ width, height }) => width < 35 || height < 35)).toEqual([]);
   await page.context().close();
 });
 

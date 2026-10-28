@@ -154,9 +154,8 @@
   white-space: nowrap;
 }
 /* The remove button is an IconButton with a cross, a little smaller than the chip, at that size also under a
-   coarse pointer, where its hit area reaches the touch size within the field. */
+   coarse pointer, where its hit area reaches past it (below). */
 .env-combobox-chip-remove {
-  --env-icon-button-hit-area: var(--env-control-height-touch);
   --env-control-height: calc(var(--env-combobox-row) - 0.25rem);
   --env-touch-height: 0rem;
   --env-icon-size: 0.875rem;
@@ -230,18 +229,18 @@
   overflow-wrap: anywhere;
 }
 
-/* Coarse pointers keep the touch height for options, and larger chips and remove buttons. Each
-   remove button's hit area is the touch height: wrapped rows of chips lie that far apart, and the
-   hit area lies over the label on the field's edge, so a press there removes the chip. */
+/* Coarse pointers keep the touch height for options, and larger chips and remove buttons. Wrapped
+   rows of chips lie a small step apart, as they do for a mouse, and each remove button's hit area
+   reaches across that step to the middle of the gap on either side: as tall as a row and its gap,
+   so the hit areas of rows above and below meet without overlapping, and over the label on the
+   field's edge, so a press there removes the chip. */
 @media (pointer: coarse) {
   .env-combobox .env-combobox-control {
     --env-combobox-row: 1.75rem;
-    row-gap: max(
-      var(--env-space-1),
-      calc(var(--env-control-height-touch) - var(--env-combobox-row))
-    );
+    row-gap: var(--env-space-2);
   }
   .env-combobox-chip-remove {
+    --env-icon-button-hit-area: calc(var(--env-combobox-row) + var(--env-space-2));
     z-index: var(--env-z-raised);
   }
   .env-combobox-popup .env-combobox-item {
