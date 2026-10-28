@@ -100,6 +100,7 @@ export const aliases: Record<string, string[]> = {
   suggestions: ['RichTextEditor'],
   taskItem: ['RichTextEditor'],
   TooltipPopup: ['Tooltip'],
+  accessibleName: ['Tooltip'],
   DialogParts: ['Dialog', 'Skeleton'],
   SkeletonScope: ['Skeleton'],
   skeleton: ['Skeleton'],
