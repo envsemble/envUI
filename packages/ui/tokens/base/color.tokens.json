@@ -62,7 +62,7 @@
       },
       "raised": {
         "$root": {
-          "$description": "A raised surface: Surface background=\"raised\", dialogs, rows on a contrasting surface, outlined buttons.",
+          "$description": "A raised surface: Surface background=\"raised\", rows on a contrasting surface, outlined buttons.",
           "$value": "{palette.gray.3}"
         },
         "hover": {
