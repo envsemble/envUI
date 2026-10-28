@@ -351,7 +351,18 @@ const registry: readonly ContrastPair[] = merged([
   ...text(
     '--env-color-fg-accent',
     [raised, '--env-color-bg-raised-hover', '--env-color-bg-raised-pressed'],
-    'Outlined buttons and the icon of a pager link',
+    'The icon of a pager link',
+  ),
+  // An outline button has no fill: its label sits on the surface beneath it, and on hover and
+  // press on the state layer over that surface.
+  ...text(
+    '--env-color-fg-accent',
+    [page, surface, muted, raised, popup].flatMap((ground) => [
+      ground,
+      [layerHover, ground],
+      [layerPressed, ground],
+    ]),
+    'The label of an outline button and an outline Select trigger, on the page, a pane, a card, a raised surface or a popup, at rest, hovered and pressed',
   ),
   ...text(
     '--env-color-fg-on-strong',
@@ -393,7 +404,16 @@ const registry: readonly ContrastPair[] = merged([
       [layerHover, surface],
       [layerPressed, surface],
     ],
-    'Outline, ghost and text buttons in the danger tone: the label on the raised fill of an outline button, at rest, hovered and pressed, and on the state layer of a ghost button on hover and press',
+    'Ghost and text buttons in the danger tone, on a raised surface and on the state layer of a ghost button on hover and press',
+  ),
+  ...text(
+    '--env-color-fg-danger',
+    [page, surface, muted, raised, popup].flatMap((ground) => [
+      ground,
+      [layerHover, ground],
+      [layerPressed, ground],
+    ]),
+    'The label of an outline button in the danger tone, which has no fill: on the page, a pane, a card, a raised surface or a popup, at rest, hovered and pressed',
   ),
 
   // Fields.
@@ -466,11 +486,13 @@ const registry: readonly ContrastPair[] = merged([
   ),
   ...nonText(
     '--env-color-border-danger-emphasis',
-    [raised],
-    'The edge of an outline button in the danger tone',
+    [page, surface, muted, raised, popup],
+    'The edge of an outline button in the danger tone, on the surface beneath it',
   ),
-  ...nonText('--env-color-border-danger-emphasis-hover', [raised]),
-  ...nonText('--env-color-border-danger-emphasis-pressed', [raised]),
+  // Hovered and pressed, the edge is measured against the surface beside it, outside the button;
+  // the state layer is inside.
+  ...nonText('--env-color-border-danger-emphasis-hover', [page, surface, muted, raised, popup]),
+  ...nonText('--env-color-border-danger-emphasis-pressed', [page, surface, muted, raised, popup]),
   ...nonText(
     '--env-color-border-accent-emphasis',
     [page, surface, popup],
@@ -790,6 +812,11 @@ const registry: readonly ContrastPair[] = merged([
       'Solid badges and counters',
     ),
   ]),
+  ...text(
+    '--env-color-fg-on-emphasis',
+    ['--env-color-bg-warning-emphasis'],
+    "The catalogue's caution bar, a dark island in both themes: the dark themes' values are its",
+  ),
   // A diff stat's additions and deletions over its neutral fill, wherever it sits.
   ...['--env-color-fg-success', '--env-color-fg-danger'].flatMap((fg) =>
     text(

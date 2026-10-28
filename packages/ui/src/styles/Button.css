@@ -154,20 +154,21 @@
   background: var(--env-button-custom-fill, var(--env-color-bg-neutral-muted-pressed));
 }
 
+/* Outline: just an edge, with no fill at rest, so it reads the same on the page, a pane, a card or
+   a popup; hover and press lay a state layer over whatever is beneath, as a ghost button does. */
 .env-button:where([data-variant='outline']) {
-  --env-button-container-default: var(--env-color-bg-raised);
-  background: var(--env-button-custom-fill, var(--env-color-bg-raised));
+  background: var(--env-button-custom-fill, transparent);
   color: var(--env-button-content, var(--env-color-fg-accent));
   border-color: var(--env-button-outline, var(--env-color-border-default));
 }
 
 .env-button:where([data-variant='outline']):hover:not(:disabled):not([aria-disabled='true']) {
-  background: var(--env-button-custom-fill, var(--env-color-bg-raised-hover));
+  background: var(--env-button-custom-fill, var(--env-color-bg-neutral-subtle-hover));
   border-color: var(--env-button-outline, var(--env-color-border-default-hover));
 }
 
 .env-button:where([data-variant='outline']):active:not(:disabled):not([aria-disabled='true']) {
-  background: var(--env-button-custom-fill, var(--env-color-bg-raised-pressed));
+  background: var(--env-button-custom-fill, var(--env-color-bg-neutral-subtle-pressed));
   border-color: var(--env-button-outline, var(--env-color-border-default-pressed));
 }
 

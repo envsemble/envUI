@@ -43,8 +43,8 @@ examples:
     role: do
     caption: Short labels, with each explanation in a description.
   LongInlineLabels:
-    role: dont
-    caption: Explanations packed into inline labels.
+    role: caution
+    caption: 'Explanations packed into inline labels: long rows, slow to scan.'
 ---
 
 # Radio

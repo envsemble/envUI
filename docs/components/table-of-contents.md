@@ -40,7 +40,7 @@ examples:
     role: do
     caption: 'Two levels at most: the sections and their parts.'
   DeepOutline:
-    role: dont
+    role: caution
     caption: 'Every level of the page: the deepest ones crowd the column.'
 ---
 

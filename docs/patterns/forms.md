@@ -52,7 +52,7 @@ examples:
     role: do
     caption: One column, read top to bottom, with the action after the last field.
   SideBySide:
-    role: dont
+    role: caution
     caption: 'Fields side by side: people miss the one beside their path.'
   FormAnatomy: anatomy
   ErrorSummary: example
