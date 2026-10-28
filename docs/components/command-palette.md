@@ -361,8 +361,13 @@ The palette is `env-command-palette`: its search field, `env-command-palette-inp
 
 The button that opens it is Button's: `env-button`, its icon, `env-button > env-icon`, its label, and the keys in its end slot, `env-button-end`. The icon-only button is an `env-icon-button` in a tooltip.
 
+### Customize
+
+Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blur` and `--env-popup-shadow`, set on a theme, change it, as [Popover](popover.md#customize) describes.
+
 ## Changelog
 
+- **1.0.0-prerelease.5**: The palette is frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge, and is solid with its edge at high contrast and with reduced transparency. Its search is an opaque 3 rem pill on the neutral fill with no outline, whose edge returns at high contrast; its headings are small and muted, and its rows and keys are the popup lists'.
 - **1.0.0-prerelease.4**: An empty state with an icon, a title and a description, which tells an invitation before people type from no results; `emptyDescription`, `emptyIcon` and `messages.commandPalette.emptyQuery` and `emptyHint`. `defaultItems` show before people type.
 - **1.0.0-prerelease.3**: The search trigger pattern is part of this page, as the button and the shortcut that open the palette; the pattern's address opens it.
 - **1.0.0**: Opens from a Button with the shortcut's keys in its new `end` slot, in place of the SearchTrigger component. Rebuilt on Base UI's autocomplete: `inputValue`, `onInputValueChange`, `onAction` and `closeOnAction` for `query`, `onQueryChange`, `onSelect` and `closeOnSelect`, and `CommandPaletteActionOptions`; items take `description`, `end` and `disabled`; options are list rows; the number of results is announced; `className`, `style`, `ref` and data attributes reach the surface.

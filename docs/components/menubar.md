@@ -165,7 +165,12 @@ In a window that draws its own title bar, a TopBar with `titleBar`, put the menu
 
 The menubar is `env-menubar`, with a trigger, `env-menubar-trigger`, for each menu, whose access key is `env-menubar-access-key`. Each menu's popup is the shared popup surface, `env-menu`; `className`, `style` and `ref` on Menubar.Menu reach it, and the trigger is the menubar's own. The arrow keys between menus follow the text direction.
 
+### Customize
+
+Its menus are frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blur` and `--env-popup-shadow`, set on a theme, change it, as [Popover](popover.md#customize) describes.
+
 ## Changelog
 
+- **1.0.0-prerelease.5**: A Menubar's menus are frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge, and is solid with its edge at high contrast and with reduced transparency, with Menu's new rows.
 - **1.0.0**: The parts are members of the `Menubar` namespace: `Menubar` is `Menubar.Root`, `MenubarMenu` is `Menubar.Menu`, and `MenubarMenuOpenChangeDetails` is `Menubar.MenuOpenChangeDetails`. Menubar.Menu's popup is the shared popup surface and takes `ref` and `style`; the arrow keys between menus follow the text direction.
 - **0.5.0**: Menubar and MenubarMenu, with compact menus, switching on hover and with the arrow keys, focus returning to where it was with `previousFocus`, and `accessKeys`.
