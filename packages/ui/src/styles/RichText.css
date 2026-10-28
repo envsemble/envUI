@@ -153,7 +153,7 @@
   outline: 0.125rem solid var(--env-color-border-focus);
 }
 /* The suggestions of a trigger, such as @: a list beside the caret, above what the editor sits in,
-   on the popup surface. */
+   a frosted popup as menus are (Popup.css), with their corners and rows. */
 .env-rich-text-suggestions-positioner {
   z-index: var(--env-z-popover);
 }
@@ -163,9 +163,14 @@
   max-inline-size: min(24rem, calc(100dvw - 2 * var(--env-viewport-gutter)));
   max-block-size: min(18rem, calc(100dvh - 2 * var(--env-viewport-gutter)));
   overflow: auto;
-  border: var(--env-control-border-width) solid var(--env-elevation-2-border);
-  border-radius: var(--env-radius-surface);
-  background: var(--env-color-bg-popup);
+  /* The edge of a solid list; frosted, it has none. */
+  --env-rich-text-suggestions-edge: var(--env-popup-solid) var(--env-elevation-2-border);
+  border: var(--env-control-border-width) solid var(--env-rich-text-suggestions-edge, transparent);
+  border-radius: var(--env-popup-radius);
+  background: color-mix(in srgb, var(--env-color-bg-popup) var(--env-popup-opacity), transparent);
+  box-shadow: var(--env-popup-shadow);
+  -webkit-backdrop-filter: blur(var(--env-popup-blur)) saturate(1.4);
+  backdrop-filter: blur(var(--env-popup-blur)) saturate(1.4);
   color: var(--env-color-fg-default);
   font: var(--env-type-body);
 }

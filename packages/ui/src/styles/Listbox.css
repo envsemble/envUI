@@ -6,7 +6,7 @@
   display: grid;
   gap: calc(var(--env-space-1) / 2);
   min-inline-size: 0;
-  padding: var(--env-space-1);
+  padding: var(--env-popup-padding);
 }
 /* With no options, the list takes no room and the status beside it says why. */
 .env-listbox-options:empty {
