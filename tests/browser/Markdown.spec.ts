@@ -41,7 +41,7 @@ test('a rule is a hairline across the whole text column', async ({ page }) => {
   expect(own).toBeCloseTo(column, 0);
 });
 
-test('list markers are plain: a dot in the text color or a muted number on the first line, quieter one level in', async ({
+test('list markers are plain: a spark in the text color or a muted number on the first line, quieter one level in', async ({
   page,
 }) => {
   await page.goto(fixture);
@@ -54,7 +54,7 @@ test('list markers are plain: a dot in the text color or a muted number on the f
         // A bullet is the item's ::after, a number its ::before.
         const marker = getComputedStyle(item, bullet ? '::after' : '::before');
         const line = parseFloat(getComputedStyle(item).lineHeight);
-        // The dot's middle, from its offset in the item, against the middle of the first line; a
+        // The spark's middle, from its offset in the item, against the middle of the first line; a
         // number sits on the first line itself.
         const middle = parseFloat(marker.top) + parseFloat(marker.height) / 2;
         const probe = document.createElement('span');
@@ -64,16 +64,12 @@ test('list markers are plain: a dot in the text color or a muted number on the f
         probe.style.color = 'var(--env-color-fg-muted)';
         const muted = getComputedStyle(probe).color;
         probe.remove();
-        // A dot is filled; a ring, one level in, is only its border.
-        const ring = bullet && marker.backgroundColor === 'rgba(0, 0, 0, 0)';
-        const color = !bullet
-          ? marker.color
-          : ring
-            ? marker.borderTopColor
-            : marker.backgroundColor;
+        // A spark is its fill, masked to the four-pointed shape.
+        const spark = bullet && marker.maskImage.includes('svg');
+        const color = !bullet ? marker.color : marker.backgroundColor;
         return {
           content: marker.content,
-          shape: !bullet ? 'number' : ring ? 'ring' : 'dot',
+          shape: !bullet ? 'number' : spark ? 'spark' : 'dot',
           size: bullet ? marker.width : undefined,
           // No circle behind any marker.
           circle: getComputedStyle(item, '::before').backgroundColor !== 'rgba(0, 0, 0, 0)',
@@ -83,9 +79,9 @@ test('list markers are plain: a dot in the text color or a muted number on the f
       }),
     );
   expect(markers).toEqual([
-    { content: '""', shape: 'dot', size: '5px', circle: false, tone: 'text', onFirstLine: true },
-    { content: '""', shape: 'dot', size: '5px', circle: false, tone: 'text', onFirstLine: true },
-    { content: '""', shape: 'ring', size: '5px', circle: false, tone: 'muted', onFirstLine: true },
+    { content: '""', shape: 'spark', size: '9px', circle: false, tone: 'text', onFirstLine: true },
+    { content: '""', shape: 'spark', size: '9px', circle: false, tone: 'text', onFirstLine: true },
+    { content: '""', shape: 'spark', size: '7px', circle: false, tone: 'muted', onFirstLine: true },
     {
       content: 'counter(list-item) "."',
       shape: 'number',

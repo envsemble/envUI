@@ -208,7 +208,7 @@ At the default 16 px root, in the comfortable [scale](spacing.md), as its Sizes 
 
 Formatted text, which Markdown, RichText and RichTextEditor render in the `env-prose` class, sets its lists apart from the text around them.
 
-- A bullet is a plain small dot in the text color, on the middle of the item's first line.
+- A bullet is a small spark, four points with curved sides, in the text color, on the middle of the item's first line; one level in, a smaller spark in the muted color.
 - An ordered item's number is plain, in tabular figures in the muted text color.
 - Items stand a full step apart.
 - A nested list steps down quietly, with closer items and a small muted ring, or a letter for an ordered item.

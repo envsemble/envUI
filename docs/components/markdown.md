@@ -226,7 +226,7 @@ The editor's root is `env-markdown-editor`, with the tabs, `env-tabs-list`, the 
 
 - `className` and `style` reach the root, and `ref` and the other native props the textarea.
 - A rendered document is `env-markdown`, with `env-prose`, and a table in it scrolls in `env-markdown-table`.
-- Lists in it take envUI's list markers: a plain small dot in the text color, or the item's number in the muted text color, with a small muted ring or a letter one level in.
+- Lists in it take envUI's list markers: a small spark, four points with curved sides, in the text color, or the item's number in the muted text color, with a smaller muted spark or a letter one level in.
 
 ## Changelog
 
