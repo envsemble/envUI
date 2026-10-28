@@ -254,3 +254,25 @@ test("the shape's outline is straight at its start, widest beside the reader's p
   assert.equal((path.match(/A/g) ?? []).length, 2);
   assert.equal(wavePath({ ...layout, anchors: [] }, 0, []), '');
 });
+
+test('near either end the edge runs on into the round end, with no step to a second peak', () => {
+  const anchors = Array.from({ length: 12 }, (_, index) => 20 + index * 41);
+  const layout = { anchors, top: 8, bottom: anchors.at(-1) + 12, full: 32 };
+  const ends = (path) => {
+    const edge = [...path.matchAll(/L([\d.]+) ([\d.]+)/g)].map((m) => Number(m[1]));
+    const radii = [...path.matchAll(/A([\d.]+)/g)].map((m) => Number(m[1]));
+    return { edge, radii };
+  };
+  // The bulge just short of either end, and on the end entry itself.
+  for (const place of [0, 0.3, 0.6, 10.4, 10.7, 11]) {
+    const { edge, radii } = ends(wavePath(layout, place, []));
+    // Points two pixels apart never jump in width: the shape's own slope, at most.
+    for (let index = 1; index < edge.length; index += 1)
+      assert.ok(Math.abs(edge[index] - edge[index - 1]) < 2, `a step of the edge at ${place}`);
+    // Each round end is as wide as the edge where it starts.
+    assert.ok(Math.abs(radii[0] * 2 - edge[0]) < 0.05, `the start at ${place}`);
+    assert.ok(Math.abs(radii[1] * 2 - edge.at(-1)) < 0.05, `the end at ${place}`);
+  }
+  // On the last entry, the end is as round as the shape is full.
+  assert.ok(Math.abs(ends(wavePath(layout, 11, [])).radii[1] - 16) < 0.1);
+});

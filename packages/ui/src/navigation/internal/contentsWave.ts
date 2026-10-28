@@ -183,6 +183,22 @@ export function springAtRest(spring: Spring, target: number, near: number): bool
 const round = (value: number) => Math.round(value * 100) / 100;
 
 /**
+ * The radius of the round end at `end`, from which the shape runs `inward` (1 down, -1 up): the one
+ * at which the shape, that far in, is as wide as the end, found by halving; at most `room`.
+ */
+function roundEnd(width: (y: number) => number, end: number, inward: 1 | -1, room: number) {
+  if (width(end + inward * room) >= 2 * room) return room;
+  let low = 0;
+  let high = room;
+  for (let step = 0; step < 24; step += 1) {
+    const radius = (low + high) / 2;
+    if (width(end + inward * radius) > 2 * radius) low = radius;
+    else high = radius;
+  }
+  return low;
+}
+
+/**
  * The shape's outline as SVG path data: straight down its start edge, at the box's start, and
  * swelling only toward its end, so at the reader's place it is as wide as the box; a point every
  * two pixels where its width changes, with round ends.
@@ -200,10 +216,12 @@ export function wavePath(
     const swell = swellAt(entryAt(anchors, y), place, hovers, motion, reach);
     return full * (waveThin + (1 - waveThin) * swell);
   };
-  // The ends are round, as wide as the shape there, and never overlap.
+  // The ends are round and never overlap. Each starts where the shape is as wide as the round end,
+  // so the edge runs on into it: sized by the width at the very end, a bulge just short of it would
+  // step in to the end's width and stand out as a second peak.
   const room = (bottom - top) / 2;
-  const startRadius = Math.min(width(top) / 2, room);
-  const endRadius = Math.min(width(bottom) / 2, room);
+  const startRadius = roundEnd(width, top, 1, room);
+  const endRadius = roundEnd(width, bottom, -1, room);
   const from = top + startRadius;
   const to = bottom - endRadius;
   // The end edge's heights and widths, leaving out points inside a run of one width.
