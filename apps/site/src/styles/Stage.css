@@ -122,13 +122,17 @@
    navigation, top bar and body, whose edges must show on the canvas. In the dark themes the
    recessed surface is already deeper than both, the navigation being lighter than the page. In the
    light themes it is lighter than both, so the canvas is a shade deeper than the page instead, the
-   darker of the window's two. */
+   darker of the window's two. An animated figure's stage (MotionStage.tsx) is no theme of its own:
+   it takes the page's. */
 :is(
     .site-live-example,
     .site-verdict-stage,
     .site-anatomy-stage,
     .catalogue-related-stage
-  )[data-stage='shaded'][data-env-theme='light'] {
+  )[data-stage='shaded']:is(
+    [data-env-theme='light'],
+    [data-env-theme='light'] .catalogue-motion-stage:not([data-env-theme])
+  ) {
   --catalogue-card-fill: oklch(from var(--env-color-bg-page) calc(l - 0.035) c h);
 }
 
