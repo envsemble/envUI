@@ -12,6 +12,8 @@ import { richText as richTextMessages } from '../../foundations/messages/richTex
 import { useMessages } from '../../internal/EnvUIContext.js';
 import { RichTextRenderingContext } from './Reference.js';
 import '../../styles/Base.css';
+// Rich text's rules refine the prose typography, so Prose.css comes first.
+import '../../styles/Prose.css';
 import '../../styles/RichText.css';
 
 /**

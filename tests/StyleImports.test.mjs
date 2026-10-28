@@ -251,6 +251,7 @@ test('style sheets whose rules tie come in index.css order in every bundle', () 
     ['PickerPopup.css', 'TimePicker.css'],
     ['Popup.css', 'Menu.css'],
     ['Popup.css', 'Tooltip.css'],
+    ['Prose.css', 'RichText.css'],
     ['Text.css', 'PageHeader.css'],
     ['TextField.css', 'Combobox.css'],
     ['TextField.css', 'DatePicker.css'],

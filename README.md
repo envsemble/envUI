@@ -83,7 +83,7 @@ export function App() {
 }
 ```
 
-Without a bundler, import `@envsemble/envui/styles.css` once at the entry point instead; [setup](docs/setup.md#styles-come-with-the-components) explains both.
+Without a bundler, import `@envsemble/envui/styles.css` once at the entry point instead; [setup](docs/setup.md) explains both.
 
 Native form behavior stays familiar. Render this inside your application’s theme:
 

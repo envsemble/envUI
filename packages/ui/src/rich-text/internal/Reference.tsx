@@ -7,6 +7,8 @@ import { ActionElement } from '../../internal/ActionElement.js';
 import { referenceFromAttributes, safeRichTextUrl } from './referenceAttributes.js';
 import type { RichTextReference, RichTextRenderOptions } from '../types.js';
 import '../../styles/Base.css';
+// Rich text's rules refine the prose typography, so Prose.css comes first.
+import '../../styles/Prose.css';
 import '../../styles/RichText.css';
 
 export const RichTextRenderingContext = createContext<
