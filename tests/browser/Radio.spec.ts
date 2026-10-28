@@ -61,3 +61,36 @@ test('keyboard focus rings a radio side by side, and the whole row of a row radi
   if (await editor.evaluate((input) => input.matches(':focus-visible')))
     await expect(row).toHaveCSS('outline-style', 'solid');
 });
+
+test('the chosen row takes the selection fill and text, also under the pointer', async ({
+  page,
+}) => {
+  const role = page.getByRole('group', { name: 'Role' });
+  const chosen = role.locator('label.env-radio', {
+    has: page.getByRole('radio', { name: /Viewer/ }),
+  });
+  const other = role.locator('label.env-radio', {
+    has: page.getByRole('radio', { name: /Editor/ }),
+  });
+  const tokens = await role.evaluate((element) => {
+    const probe = document.createElement('div');
+    element.append(probe);
+    const read = (name: string) => {
+      probe.style.backgroundColor = `var(${name})`;
+      return getComputedStyle(probe).backgroundColor;
+    };
+    const colors = {
+      selected: read('--env-color-bg-selected'),
+      selectedHover: read('--env-color-bg-selected-hover'),
+      onSelected: read('--env-color-fg-on-selected'),
+      muted: read('--env-color-bg-muted'),
+    };
+    probe.remove();
+    return colors;
+  });
+  await expect(chosen).toHaveCSS('background-color', tokens.selected);
+  await expect(chosen).toHaveCSS('color', tokens.onSelected);
+  await expect(other).toHaveCSS('background-color', tokens.muted);
+  await chosen.hover();
+  await expect(chosen).toHaveCSS('background-color', tokens.selectedHover);
+});
