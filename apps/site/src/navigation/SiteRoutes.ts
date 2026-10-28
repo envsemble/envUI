@@ -25,6 +25,7 @@ export type CatalogueSection = (typeof catalogueSections)[number];
 /** What a page shows, which decides how it renders. */
 export type PageKind =
   | 'home'
+  | 'foundations'
   | 'components'
   | 'component'
   | 'patterns'
@@ -131,6 +132,15 @@ const cataloguePages: RoutePage[] = [
     area: 'catalogue',
     section: 'Overview',
     kind: 'home',
+  },
+  {
+    path: 'foundations',
+    title: 'Foundations',
+    label: 'All foundations',
+    area: 'catalogue',
+    section: 'Foundations',
+    kind: 'foundations',
+    summary: 'What every screen built with envUI shares, beneath its components.',
   },
   ...referencePages
     .filter(({ section }) => section === 'Foundations')
@@ -476,6 +486,7 @@ export function routeOfDocument(
   if (id === 'overview') return homeRoute;
   const own: Record<string, string> = {
     'get-started': 'docs/setup',
+    foundations: 'foundations',
     components: 'components',
     patterns: 'patterns',
     // Dev mode's page in the catalogue, folded into its guide in the Docs.
@@ -585,8 +596,6 @@ export function normalizeRoute(route: string): string {
   if (originalPath === 'changelog') return `docs/changelog${rest()}`;
   // Dev mode's page in the catalogue folded into its guide in the Docs, which shows its pictures.
   if (originalPath === 'dev-mode') return `docs/dev-mode${rest()}`;
-  // A destination's own address opens its first page.
-  if (originalPath === 'foundations') return `${sectionHome('Foundations').path}${rest()}`;
   // What every pattern needs was one page in the Docs; each pattern's guide says it now, and the
   // Docs' home lists the guides under Patterns.
   if (originalPath === 'docs/patterns') return `${docsRoute}${rest()}`;

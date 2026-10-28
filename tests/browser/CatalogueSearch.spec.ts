@@ -296,9 +296,10 @@ test.describe('hosted build', () => {
     await expect(page).toHaveURL(`${siteUrl}/docs/components/button`);
     await page.goto(`${siteUrl}/foundations/tokens`);
     await expect(page).toHaveURL(`${siteUrl}/docs/tokens`);
-    // The section addresses open their first page.
+    // A section's address is its own page, as the rail opens it.
     await page.goto(`${siteUrl}/foundations`);
-    await expect(page).toHaveURL(`${siteUrl}/foundations/colors`);
+    await expect(page).toHaveURL(`${siteUrl}/foundations`);
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Foundations');
   });
 
   test('search loads its index from its own file, when it first opens', async ({ page }) => {
