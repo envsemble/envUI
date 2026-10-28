@@ -11,7 +11,42 @@
  * - in a rich text editor (ProseMirror, through Tiptap), it is also the editor's own selection, set
  *   through its state, so its toolbar shows what is on there and typing goes there; the highlight
  *   then follows the editor's selection as its content changes, such as when the text is bolded.
+ * A drag selects whole words, as a person selecting a word or a phrase does: from the start of the
+ * word it begins in to the end of the word it ends in, without the space after it.
  */
+
+/** A character of a word: a letter, a digit, or an apostrophe or underscore inside one. */
+const wordCharacter = /[\p{L}\p{N}\p{M}_'’]/u;
+const isWord = (text: string, index: number) => wordCharacter.test(text.charAt(index));
+const isSpace = (text: string, index: number) => /\s/.test(text.charAt(index));
+
+/** Where a selection starts in a text: at the start of the word it is in, past any spaces. */
+function wordStart(text: string, at: number) {
+  let index = at;
+  if (isWord(text, index - 1) && isWord(text, index))
+    while (index > 0 && isWord(text, index - 1)) index--;
+  while (index < text.length && isSpace(text, index)) index++;
+  return index;
+}
+
+/** Where a selection ends in a text: at the end of the word it is in, before any spaces. */
+function wordEnd(text: string, at: number) {
+  let index = at;
+  if (isWord(text, index - 1) && isWord(text, index))
+    while (index < text.length && isWord(text, index)) index++;
+  while (index > 0 && isSpace(text, index - 1)) index--;
+  return index;
+}
+
+/**
+ * The part of a text a drag from `start` to `end` selects, in whole words: nothing, as `null`, if
+ * it holds no word.
+ */
+function wholeWords(text: string, start: number, end: number) {
+  const from = wordStart(text, start);
+  const to = wordEnd(text, end);
+  return from < to ? { from, to } : null;
+}
 
 /** A point in the viewport. */
 interface Point {
@@ -187,8 +222,11 @@ const copied = [
 /**
  * Paints a field's selection over it: a copy of its text, in the field's place and box, whose
  * selected part takes the selection's colours and whose rest is transparent, so the field shows
- * through. It is in the preview's overlay layer, over what the preview shows, or where it has none,
- * in the box the field is placed in, so the component's own elements stay as they are.
+ * through. A field of the preview's content has it in the preview's overlay layer, first, under
+ * what opens there, so a dialog and its scrim cover it as they cover the field (Stage.css hides it
+ * while a modal one is open, which takes the field's focus); a field in what opens there, such as
+ * a dialog, or a preview without that layer, has it in the box the field is placed in. The
+ * component's own elements stay as they are.
  */
 function paintField(
   field: Field,
@@ -203,9 +241,14 @@ function paintField(
     copy.setAttribute('aria-hidden', 'true');
     copy.append(document.createElement('div'));
   }
-  const layer = scope.querySelector<HTMLElement>(':scope > .catalogue-overlay-layer');
-  const holder = layer ?? (field.offsetParent as HTMLElement | null) ?? scope;
-  if (copy.parentElement !== holder) holder.append(copy);
+  const overlays = scope.querySelector<HTMLElement>(':scope > .catalogue-overlay-layer');
+  const layer = overlays && !overlays.contains(field) ? overlays : null;
+  if (layer) {
+    if (layer.firstChild !== copy) layer.prepend(copy);
+  } else {
+    const holder = (field.offsetParent as HTMLElement | null) ?? scope;
+    if (copy.parentElement !== holder) holder.append(copy);
+  }
   const style = getComputedStyle(field);
   for (const property of copied) copy.style[property] = style[property];
   copy.style.borderStyle = 'solid';
@@ -243,6 +286,24 @@ function paintField(
   selected.textContent = value.slice(start, end);
   lines.replaceChildren(value.slice(0, start), selected, value.slice(end) || '​');
   return copy;
+}
+
+/**
+ * Brings a range in content to whole words, within the text at each of its ends: returns whether
+ * it holds a word, else it is left collapsed at its start.
+ */
+function toWholeWords(range: Range) {
+  if (range.collapsed) return false;
+  const { startContainer: first, endContainer: last } = range;
+  if (first.nodeType === Node.TEXT_NODE)
+    range.setStart(first, wordStart(first.textContent ?? '', range.startOffset));
+  if (last.nodeType === Node.TEXT_NODE)
+    range.setEnd(last, wordEnd(last.textContent ?? '', range.endOffset));
+  if (range.collapsed || range.toString().trim() === '') {
+    range.collapse(true);
+    return false;
+  }
+  return true;
 }
 
 /** A text position the pointer pressed at or dragged to, in content. */
@@ -319,9 +380,19 @@ export class PointerSelection {
     if (field) {
       if (!field.isConnected) return this.clear();
       const focus = fieldOffsetAt(field, point);
-      const [start, end] = [Math.min(this.fieldAnchor, focus), Math.max(this.fieldAnchor, focus)];
-      field.setSelectionRange(start, end, focus < this.fieldAnchor ? 'backward' : 'forward');
-      this.selected = start < end ? { field, start, end } : null;
+      const words = wholeWords(
+        field.value,
+        Math.min(this.fieldAnchor, focus),
+        Math.max(this.fieldAnchor, focus),
+      );
+      if (words)
+        field.setSelectionRange(
+          words.from,
+          words.to,
+          focus < this.fieldAnchor ? 'backward' : 'forward',
+        );
+      else field.setSelectionRange(this.fieldAnchor, this.fieldAnchor);
+      this.selected = words ? { field, start: words.from, end: words.to } : null;
       this.paint();
       return;
     }
@@ -335,19 +406,20 @@ export class PointerSelection {
       range.setStart(caret.node, caret.offset);
       range.setEnd(anchor.node, anchor.offset);
     } else range.setEnd(caret.node, caret.offset);
+    const words = toWholeWords(range);
     // In a rich text editor, the editor's selection, which paints itself as it changes.
     const editor = this.editor?.editor;
     if (editor) {
       const { view } = editor;
       const from = view.posAtDOM(range.startContainer, range.startOffset);
-      const to = view.posAtDOM(range.endContainer, range.endOffset);
+      const to = words ? view.posAtDOM(range.endContainer, range.endOffset) : from;
       editor.commands.setTextSelection({ from, to });
       return;
     }
     const shown = highlight();
     if (this.range) shown?.delete(this.range);
-    this.range = range;
-    shown?.add(range);
+    this.range = words ? range : null;
+    if (words) shown?.add(range);
   }
 
   /** Paints the field's selection again, as its value or scroll changed. */
@@ -356,10 +428,41 @@ export class PointerSelection {
     if (!selected) {
       this.mirror?.remove();
       this.mirror = null;
+      if (this.watching) cancelAnimationFrame(this.watching);
+      this.watching = 0;
       return;
     }
     this.mirror = paintField(selected.field, selected.start, selected.end, this.mirror, this.scope);
+    this.painted = { value: selected.field.value, scroll: selected.field.scrollTop };
+    if (!this.watching) this.watching = requestAnimationFrame(this.watch);
   }
+
+  /** The field's value and scroll as last painted, and the frame that looks for a change to them. */
+  private painted = { value: '', scroll: 0 };
+  private watching = 0;
+
+  /**
+   * Follows the field while its selection is painted: a component that changes its text, such as
+   * Bold wrapping the selected word, sets its own selection there, which is painted in its place;
+   * a field drawn anew or emptied of its selection paints none.
+   */
+  private readonly watch = () => {
+    this.watching = 0;
+    const selected = this.selected;
+    if (!selected) return;
+    const { field } = selected;
+    if (!field.isConnected) {
+      this.selected = null;
+      return this.paint();
+    }
+    const { selectionStart: start, selectionEnd: end, value, scrollTop } = field;
+    if (start !== selected.start || end !== selected.end || value !== this.painted.value) {
+      this.selected = start !== null && end !== null && start < end ? { field, start, end } : null;
+      return this.paint();
+    }
+    if (scrollTop !== this.painted.scroll) return this.paint();
+    this.watching = requestAnimationFrame(this.watch);
+  };
 
   /**
    * The value a field takes for text typed into it, as a keyboard types: over its selected part,
