@@ -69,8 +69,13 @@ const routes = new Map<string, Set<string>>([
   ),
 ]);
 
+/** The note KnownViolations.json opens with: it is written, not edited. */
+const generatedNote =
+  'Written by tests/accessibility/Accessibility.spec.ts. After fixing violations, run npm run test:a11y:update; add to it only for a reviewed reason.';
+
 function readExceptions(): Violations {
-  return JSON.parse(readFileSync(exceptionsFile, 'utf8'));
+  const { $comment: _note, ...violations } = JSON.parse(readFileSync(exceptionsFile, 'utf8'));
+  return violations;
 }
 
 function sortKeys<T>(value: T): T {
@@ -104,7 +109,10 @@ function updateExceptions(change: (violations: Violations) => void) {
   try {
     const violations = readExceptions();
     change(violations);
-    writeFileSync(exceptionsFile, `${JSON.stringify(sortKeys(violations), null, 2)}\n`);
+    writeFileSync(
+      exceptionsFile,
+      `${JSON.stringify({ $comment: generatedNote, ...sortKeys(violations) }, null, 2)}\n`,
+    );
   } finally {
     rmdirSync(lock);
   }

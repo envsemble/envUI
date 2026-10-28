@@ -13,6 +13,9 @@ import { fixtureUrl } from './helpers/Servers';
  */
 const snapshotFile = fileURLToPath(new URL('./DefaultColors.json', import.meta.url));
 const record = process.env.ENVUI_RECORD_DEFAULT_COLORS === '1';
+/** The note DefaultColors.json opens with: it is recorded, not edited. */
+const generatedNote =
+  'Recorded by tests/browser/DefaultColors.spec.ts with ENVUI_RECORD_DEFAULT_COLORS=1; do not edit.';
 
 const themes = [
   { name: 'light', attributes: { 'data-env-theme': 'light' } },
@@ -157,11 +160,16 @@ test('with no color property set, every component paints its colors of before in
     }
   }
   if (record) {
-    writeFileSync(snapshotFile, `${JSON.stringify(measured, null, 2)}\n`);
+    writeFileSync(
+      snapshotFile,
+      `${JSON.stringify({ $comment: generatedNote, ...measured }, null, 2)}\n`,
+    );
     return;
   }
   expect(existsSync(snapshotFile), 'DefaultColors.json is recorded').toBe(true);
-  const recorded = JSON.parse(readFileSync(snapshotFile, 'utf8')) as Record<string, string>;
+  const { $comment: _note, ...recorded }: Record<string, string> = JSON.parse(
+    readFileSync(snapshotFile, 'utf8'),
+  );
   const changed = Object.keys(recorded).filter((key) => measured[key] !== recorded[key]);
   expect(
     changed.slice(0, 20).map((key) => `${key}:\n${details[key] ?? '(gone)'}`),
