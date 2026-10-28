@@ -519,8 +519,8 @@ const registry: readonly ContrastPair[] = merged([
   ]),
   ...nonText(
     '--env-elevation-3-border',
-    [raised, [overlay, page]],
-    'The edge of dialogs and the command palette, against the dialog and the scrim',
+    [popup, raised, [overlay, page]],
+    'The edge of dialogs and the command palette where they are solid, against their fill and the scrim',
     popupEdge,
   ),
 
