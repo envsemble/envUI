@@ -9,12 +9,14 @@
    (--env-popup-opacity), the blur (--env-popup-blur) and the shadow (--env-popup-shadow), envUI's
    second drop shadow after the avatars'. The fill (--env-popup-fill, private) is the popup color,
    --env-color-bg-popup, in light; in dark it is the default surface, --env-color-bg-default, darker
-   than the cards, tables and rows popups open over, so they part from them; solid popups keep the
-   popup color, as they part by their edge. The opacity is above the least that keeps muted text at
-   4.5:1 over black (light) or white (dark) behind the popup. The command palette and rich text
-   suggestions take the same look. */
+   than the cards, tables and rows popups open over, so they part from them, frosted or solid. The
+   opacity is above the least that keeps muted text at 4.5:1 over black (light) or white (dark)
+   behind the popup. The command palette and rich text suggestions take the same look. A solid
+   popup's edge (--env-popup-edge-color, private) is its elevation's, and at high contrast the
+   strongest, a modal's, as the boundary it then is. */
 .env-theme {
   --env-popup-fill: var(--env-color-bg-popup);
+  --env-popup-edge-color: var(--env-elevation-2-border);
   --env-popup-opacity: 88%;
   --env-popup-blur: 1.375rem;
   /* A small contact layer and the soft shadow, in the text's color. */
@@ -52,7 +54,7 @@
 /* Solid: the fill covers what is behind, with no blur and no shadow, and the edge returns as the
    popup's boundary. */
 .env-theme[data-env-contrast='high'] {
-  --env-popup-fill: var(--env-color-bg-popup);
+  --env-popup-edge-color: var(--env-elevation-3-border);
   --env-popup-opacity: 100%;
   --env-popup-blur: 0rem;
   --env-popup-shadow: none;
@@ -62,7 +64,7 @@
 }
 @media (prefers-contrast: more) {
   .env-theme:not([data-env-contrast='standard']) {
-    --env-popup-fill: var(--env-color-bg-popup);
+    --env-popup-edge-color: var(--env-elevation-3-border);
     --env-popup-opacity: 100%;
     --env-popup-blur: 0rem;
     --env-popup-shadow: none;
@@ -74,7 +76,6 @@
 @media (prefers-reduced-transparency: reduce), (forced-colors: active) {
   .env-theme,
   .env-theme[data-env-theme='dark'] {
-    --env-popup-fill: var(--env-color-bg-popup);
     --env-popup-opacity: 100%;
     --env-popup-blur: 0rem;
     --env-popup-shadow: none;
@@ -107,7 +108,7 @@
   outline: none;
 }
 .env-popup {
-  --env-popup-border: var(--env-elevation-2-border);
+  --env-popup-border: var(--env-popup-edge-color);
   /* The edge of a solid popup; frosted, it has none. */
   --env-popup-edge: var(--env-popup-solid) var(--env-popup-border);
   box-sizing: border-box;

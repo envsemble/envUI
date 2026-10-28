@@ -164,7 +164,7 @@
   max-block-size: min(18rem, calc(100dvh - 2 * var(--env-viewport-gutter)));
   overflow: auto;
   /* The edge of a solid list; frosted, it has none. */
-  --env-rich-text-suggestions-edge: var(--env-popup-solid) var(--env-elevation-2-border);
+  --env-rich-text-suggestions-edge: var(--env-popup-solid) var(--env-popup-edge-color);
   border: var(--env-control-border-width) solid var(--env-rich-text-suggestions-edge, transparent);
   border-radius: var(--env-popup-radius);
   background: color-mix(in srgb, var(--env-popup-fill) var(--env-popup-opacity), transparent);

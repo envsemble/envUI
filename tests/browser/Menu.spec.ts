@@ -104,9 +104,7 @@ test.describe('Menus', () => {
     expect(action.height).toBeCloseTo(32, 0);
   });
 
-  test('in dark a frosted menu takes the default surface, and a solid one the popup color', async ({
-    page,
-  }) => {
+  test('in dark a menu takes the default surface, frosted and solid', async ({ page }) => {
     await page.goto(menusFixture);
     const open = async () => {
       await page.getByTestId('menus-dark').getByRole('button', { name: 'View options' }).click();
@@ -116,10 +114,7 @@ test.describe('Menus', () => {
       return menu;
     };
     let menu = await open();
-    const [surface, popup] = await tokenColors(menu, [
-      '--env-color-bg-default',
-      '--env-color-bg-popup',
-    ]);
+    const [surface] = await tokenColors(menu, ['--env-color-bg-default']);
     expect(surface).toBe('rgb(40, 41, 43)');
     expect((await popupSurface(menu)).background).toBe(
       'color(srgb 0.156863 0.160784 0.168627 / 0.9)',
@@ -128,18 +123,21 @@ test.describe('Menus', () => {
     await expect(menu).toBeHidden();
     await page.emulateMedia({ contrast: 'more' });
     menu = await open();
-    expect(popup).not.toBe(surface);
-    // Solid: the popup color itself, as the same mix resolves it.
-    const solid = await menu.evaluate((element) => {
+    // Solid: the default surface itself, as the same mix resolves it, inside the strongest edge.
+    const [solid, edge] = await menu.evaluate((element) => {
       const probe = document.createElement('div');
-      probe.style.backgroundColor =
-        'color-mix(in srgb, var(--env-color-bg-popup) 100%, transparent)';
       element.append(probe);
-      const color = getComputedStyle(probe).backgroundColor;
+      probe.style.backgroundColor =
+        'color-mix(in srgb, var(--env-color-bg-default) 100%, transparent)';
+      const fill = getComputedStyle(probe).backgroundColor;
+      probe.style.backgroundColor = 'var(--env-elevation-3-border)';
+      const border = getComputedStyle(probe).backgroundColor;
       probe.remove();
-      return color;
+      return [fill, border];
     });
-    expect((await popupSurface(menu)).background).toBe(solid);
+    const look = await popupSurface(menu);
+    expect(look.background).toBe(solid);
+    expect(look.borderColor).toBe(edge);
   });
 
   for (const [why, setUp] of [
@@ -161,9 +159,10 @@ test.describe('Menus', () => {
       const menu = page.getByRole('menu', { name: 'View options' });
       await expect(menu).toBeVisible();
       await settled(menu);
+      // The edge is its elevation's, and at high contrast a modal's, the strongest.
       const [popup, edge] = await tokenColors(menu, [
         '--env-color-bg-popup',
-        '--env-elevation-2-border',
+        why === 'high contrast' ? '--env-elevation-3-border' : '--env-elevation-2-border',
       ]);
       const solid = await popupSurface(menu);
       // Opaque: the popup color itself.

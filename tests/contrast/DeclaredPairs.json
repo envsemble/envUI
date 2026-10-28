@@ -4559,6 +4559,18 @@
         "high": 4.5
       }
     },
+    "--env-elevation-3-border on --env-color-bg-default": {
+      "kind": "non-text",
+      "minimum": {
+        "high": 4.5
+      }
+    },
+    "--env-elevation-3-border on --env-color-bg-muted": {
+      "kind": "non-text",
+      "minimum": {
+        "high": 4.5
+      }
+    },
     "--env-elevation-3-border on --env-color-bg-overlay over --env-color-bg-page": {
       "kind": "non-text",
       "minimum": {
@@ -4573,10 +4585,28 @@
         "high": 4.5
       }
     },
+    "--env-elevation-3-border on --env-color-bg-page": {
+      "kind": "non-text",
+      "minimum": {
+        "high": 4.5
+      }
+    },
+    "--env-elevation-3-border on --env-color-bg-popup": {
+      "kind": "non-text",
+      "minimum": {
+        "high": 4.5
+      }
+    },
     "--env-elevation-3-border on --env-color-bg-raised": {
       "kind": "non-text",
       "minimum": {
         "standard": 1.6,
+        "high": 4.5
+      }
+    },
+    "--env-elevation-3-border on --env-color-bg-recessed": {
+      "kind": "non-text",
+      "minimum": {
         "high": 4.5
       }
     },
@@ -5473,6 +5503,7 @@
     "--env-color-fg-warning on catalogue-canvas",
     "--env-elevation-2-border on catalogue-canvas",
     "--env-elevation-3-border on --env-color-bg-overlay over catalogue-canvas",
+    "--env-elevation-3-border on catalogue-canvas",
     "badge-outline-important on --color-bg-important-strong",
     "badge-outline-primary on --color-bg-brand-emphasis",
     "button-end-separator-control on --env-color-bg-neutral-muted over catalogue-canvas",

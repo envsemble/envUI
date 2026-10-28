@@ -202,11 +202,11 @@ Leave it uncontrolled, with `defaultOpen` to start open, or control it with `ope
 
 Every popup, a popover, a menu, a Select's or a Combobox's list, a picker, a hover card, rich text suggestions and the command palette, is frosted. Three properties, set on a `.env-theme` boundary, change them all:
 
-- `--env-popup-opacity`, 88 % in light and 90 % in dark, how much of the popup's color covers what is behind it; `100%` makes popups solid. The color is `--env-color-bg-popup` in light and `--env-color-bg-default` in dark, darker than the cards and rows popups open over; solid popups take `--env-color-bg-popup`.
+- `--env-popup-opacity`, 88 % in light and 90 % in dark, how much of the popup's color covers what is behind it; `100%` makes popups solid. The color is `--env-color-bg-popup` in light and `--env-color-bg-default` in dark, darker than the cards and rows popups open over, frosted or solid.
 - `--env-popup-blur`, 1.375 rem, the blur of what shows through, with a little more saturation.
 - `--env-popup-shadow`, a soft shadow in the text's color in light and a deeper shade of the page in dark: with the avatars', envUI's only shadow.
 
-At high contrast, with reduced transparency and under forced colors popups are solid, with their elevation edge and no blur or shadow. Tooltips are frosted too, at `--env-tooltip-opacity` with a smaller `--env-tooltip-shadow`, as [Tooltip](tooltip.md#customize) describes.
+At high contrast, with reduced transparency and under forced colors popups are solid, with their elevation edge and no blur or shadow; at high contrast the edge is a modal's, `--env-elevation-3-border`, the strongest. Tooltips are frosted too, at `--env-tooltip-opacity` with a smaller `--env-tooltip-shadow`, as [Tooltip](tooltip.md#customize) describes.
 
 `className`, `style`, `ref` and data attributes reach the surface, `env-popover`, which has `data-width="lg"` when large and renders on PopupSurface in the trigger's text direction and theme. Its title is `env-popover-title`.
 

@@ -527,6 +527,16 @@ const registry: readonly ContrastPair[] = merged([
     'The edge of dialogs and the command palette, against the dialog and the scrim',
     popupEdge,
   ),
+  ...nonText(
+    '--env-elevation-3-border',
+    [popup, surface, page, muted],
+    'The edge of a solid popup at high contrast, a modal’s, against the popup and what it floats over; a raised surface is measured above',
+    {
+      contrast: 'high',
+      rationale:
+        'Popups are frosted with no edge at standard contrast; at high contrast they are solid, bounded by the strongest elevation edge, measured as a boundary there.',
+    },
+  ),
 
   // Frosted popups: menus, Select and Combobox lists, popovers, hover cards, the pickers, rich text
   // suggestions and the command palette let a little of what is behind them through. Text on the
