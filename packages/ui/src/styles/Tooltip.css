@@ -31,6 +31,10 @@
   border-radius: var(--env-radius-sm);
   background: var(--env-tooltip-container, var(--env-color-bg-neutral-strong));
   color: var(--env-tooltip-content, var(--env-color-fg-on-strong));
+  /* A tooltip is solid, not frosted as the other popups are, with no shadow. */
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
   font: var(--env-type-body-small);
   overflow-wrap: anywhere;
   /* A Kbd in a tooltip, such as a shortcut beside the name, takes key caps for the dark fill. */
