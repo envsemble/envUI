@@ -520,6 +520,20 @@ test('menu groups, radio and checkbox items keep their choice', async ({ page })
   const name = menu.getByRole('menuitemradio', { name: 'Name' });
   const date = menu.getByRole('menuitemradio', { name: 'Date' });
   await expect(name).toHaveAttribute('aria-checked', 'true');
+  // The chosen radio row takes the selection's fill and text; the other keeps none.
+  const [selected, onSelected] = await tokenColors(menu, [
+    '--env-color-bg-selected',
+    '--env-color-fg-on-selected',
+  ]);
+  const look = (item: Locator) =>
+    item.evaluate((element) => {
+      const style = getComputedStyle(element);
+      return [style.backgroundColor, style.color];
+    });
+  await expect(menu).not.toHaveAttribute('data-starting-style');
+  await page.mouse.move(0, 0);
+  expect(await look(name)).toEqual([selected, onSelected]);
+  expect((await look(date))[0]).toBe('rgba(0, 0, 0, 0)');
   await expect(date).toHaveAccessibleDescription('Most recently changed first');
   await date.click();
   await expect(menu).toBeHidden();

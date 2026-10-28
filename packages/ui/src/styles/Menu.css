@@ -170,6 +170,17 @@
 .env-menu-choice[data-checked] .env-menu-item-label {
   font-weight: var(--env-font-weight-medium);
 }
+/* The chosen row of a radio group takes the selection's fill and text, its check mark and icon in
+   the same color, as a Select's chosen option does; under the pointer and pressed, the selection's
+   own steps. */
+.env-menu-item[role='menuitemradio'][data-checked] {
+  --env-menu-item-icon-color: var(--env-menu-item-icon, var(--env-color-fg-on-selected));
+  background: var(--env-menu-item-custom-fill, var(--env-color-bg-selected));
+  color: var(--env-menu-item-content, var(--env-color-fg-on-selected));
+}
+.env-menu-item[role='menuitemradio'][data-checked] .env-menu-item-check-mark {
+  color: var(--env-menu-item-content, var(--env-color-fg-on-selected));
+}
 /* A row that opened a submenu stays highlighted while the submenu is open. */
 .env-menu-item:is([data-highlighted], [data-popup-open]) {
   --env-menu-item-layer: calc(var(--env-state-hover-opacity) * 100%);
@@ -179,9 +190,15 @@
 .env-menu-submenu-chevron:dir(rtl) {
   transform: scaleX(-1);
 }
+.env-menu-item[role='menuitemradio'][data-checked]:is([data-highlighted], [data-popup-open]) {
+  background: var(--env-menu-item-custom-fill, var(--env-color-bg-selected-hover));
+}
 .env-menu-item:active {
   --env-menu-item-layer: calc(var(--env-state-pressed-opacity) * 100%);
   background: var(--env-menu-item-custom-fill, var(--env-color-bg-neutral-muted-pressed));
+}
+.env-menu-item[role='menuitemradio'][data-checked]:active {
+  background: var(--env-menu-item-custom-fill, var(--env-color-bg-selected-pressed));
 }
 .env-menu-item:focus-visible {
   outline: 0.125rem solid var(--env-color-border-focus);
