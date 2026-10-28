@@ -5,11 +5,15 @@
 @import './BannerMotifs.css';
 @import './Examples.css';
 @import './Overview.css';
+@import './DocsPalette.css';
 @import './Foundations.css';
 @import './InteractionStates.css';
 @import './Template.css';
 @import './Stage.css';
 @import './Figures.css';
+@import './Verdicts.css';
+@import './Anatomy.css';
+@import './DocsDevMode.css';
 @import './SiteText.css';
 @import './Related.css';
 @import './Gallery.css';
