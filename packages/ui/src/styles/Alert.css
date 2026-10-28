@@ -45,6 +45,8 @@
   --env-alert-high-contrast-fill: var(--env-theme-high-contrast) var(--env-alert-soft-fill);
   --env-alert-high-contrast-edge: var(--env-theme-high-contrast) var(--env-color-border-default);
   box-sizing: border-box;
+  /* A little less inset above and below than at the sides, as a card's. */
+  padding-block: calc(var(--env-space-4) - var(--env-space-1) / 2);
   border: 0.0625rem solid var(--env-alert-outline, var(--env-alert-high-contrast-edge, transparent));
   border-radius: var(--env-alert-radius);
   background: var(
@@ -87,15 +89,18 @@
   inline-size: 1.25rem;
   block-size: 1.25rem;
 }
+/* The title, in the body size and semibold, sits right above the message, a step smaller. */
 .env-alert-content {
   grid-column: 2;
+  row-gap: calc(var(--env-space-1) / 2);
 }
 .env-alert-title {
   color: var(--env-alert-title-color);
-  font: var(--env-type-h2);
+  font: var(--env-font-weight-semibold) var(--env-font-size-body) / 1.4 var(--env-font-family);
 }
 .env-alert-message {
   color: var(--env-alert-text-color);
+  font: var(--env-type-body-small);
 }
 .env-alert-action {
   margin-block-start: var(--env-space-2);
@@ -119,9 +124,7 @@
      button itself does. */
   --env-alert-dismiss-height: var(--env-control-height-sm);
   grid-column: 3;
-  margin-block: calc(
-    (1.4 * var(--env-font-size-heading-small) - var(--env-alert-dismiss-height)) / 2
-  );
+  margin-block: calc((1.4 * var(--env-font-size-body) - var(--env-alert-dismiss-height)) / 2);
   margin-inline-end: calc(-1 * var(--env-space-2));
   border-radius: 50%;
   color: var(--env-alert-icon-color);

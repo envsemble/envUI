@@ -195,6 +195,7 @@ The parts are the container, `env-alert`, the icon, `env-alert-icon`, the title,
 
 ## Changelog
 
+- **1.0.0-prerelease.5**: A card's inset, 14 px above and below and 16 px at the sides; the title is semibold in the body size, 2 px above the message, which takes the small body size.
 - **1.0.0**: No edge outside high contrast: the tone's stronger tint fills it, the title takes the tone's color as the icon does, and its corners are a card's, 1.25 rem. At high contrast it keeps the softer tint with an edge in the border color.
 - **1.0.0**: `tone="danger"` for `error`; the dismiss button is an IconButton with a cross, named Dismiss in the provider's language.
 - **1.0.0**: `Notice` is `Alert`, with `AlertTone` and the `env-alert-*` classes; the page is `alert`.

@@ -225,6 +225,7 @@ The parts are each placement's region, `env-toast-viewport`, with `data-placemen
 
 ## Changelog
 
+- **1.0.0-prerelease.5**: 16 px from its start edge to its icon or message, and 10 px between its parts.
 - **1.0.0**: No edge outside high contrast, where the tone's edge bounds it, and an alert's corners, 1.25 rem.
 - **1.0.0**: `tone` for `variant`, with `danger` for `error`, and `ToastTone`; `bottom-end` for `bottom-right`, which follows the text direction, with the top-center stack centred in either direction; the region names, hidden count and dismiss button come from the provider's messages; danger notifications are alerts at once and always shown; the dismiss button is an IconButton with a cross; the manual `Toast` is gone.
 - **1.0.0**: `ToastProvider` is `Toast.Provider`, and `useToast` keeps its name. The manual `Toast` component and `ToastProps` are no longer exported; show notifications with `useToast` inside `Toast.Provider`.
