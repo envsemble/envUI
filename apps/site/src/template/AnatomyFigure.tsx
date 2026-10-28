@@ -74,6 +74,20 @@ function spread(positions: number[], min: number, max: number) {
   return result;
 }
 
+/**
+ * How far a point on the edge of a box's bounds lies outside its round corner, in px: the depth of
+ * the corner's curve where the point meets it, along the side, or 0 past the curve.
+ */
+function cornerInset(point: { x: number; y: number }, box: Box, radius: number, vertical: boolean) {
+  const r = Math.min(radius || 0, (box.right - box.left) / 2, (box.bottom - box.top) / 2);
+  if (r <= 0) return 0;
+  const along = vertical
+    ? Math.min(point.x - box.left, box.right - point.x)
+    : Math.min(point.y - box.top, box.bottom - point.y);
+  if (along >= r) return 0;
+  return r - Math.sqrt(r * r - (r - along) ** 2);
+}
+
 /** Whether an element comes after text in its line, such as a time inside a sentence. */
 function followsText(element: Element) {
   for (let node = element.previousSibling; node; node = node.previousSibling)
@@ -100,7 +114,11 @@ function measure(stage: HTMLElement, subject: HTMLElement, legend: AnatomyLegend
       return [];
     }
     const box = element && boxOf(element, text, origin);
-    return box ? [{ number: index + 1, box, inline: !!element && followsText(element) }] : [];
+    // A part drawn without a box, the root, is pointed at on its own edge, round corners and all.
+    const radius = element && !text ? parseFloat(getComputedStyle(element).borderTopLeftRadius) : 0;
+    return box
+      ? [{ number: index + 1, box, radius, inline: !!element && followsText(element) }]
+      : [];
   });
   if (!found.length) return [];
   const outer: Box = {
@@ -144,11 +162,11 @@ function measure(stage: HTMLElement, subject: HTMLElement, legend: AnatomyLegend
   // their callouts sit above and below it instead, in turn.
   const roots = found.filter(({ box }) => isRoot(box)).length;
   let stacked = 0;
-  const placed = found.map(({ number, box, inline }) => {
+  const placed = found.map(({ number, box, radius, inline }) => {
     const root = isRoot(box);
     if (root && roots > 1) {
       const side: Side = stacked++ % 2 ? 'bottom' : 'top';
-      return { number, box, root, side };
+      return { number, box, radius, root, side };
     }
     // The nearest side, with the sides above and below preferred by a few pixels.
     const distances = (
@@ -184,7 +202,7 @@ function measure(stage: HTMLElement, subject: HTMLElement, legend: AnatomyLegend
     const above = distances.find(([name]) => name === 'top');
     if (side === 'top' && !root && holds && below && above && Math.abs(below[1] - above[1]) < 1)
       side = 'bottom';
-    return { number, box, root: root && !inline, side };
+    return { number, box, radius, root: root && !inline, side };
   });
   const callouts: Callout[] = [];
   for (const side of ['top', 'bottom', 'left', 'right'] as const) {
@@ -205,7 +223,7 @@ function measure(stage: HTMLElement, subject: HTMLElement, legend: AnatomyLegend
       badgeSize / 2 + 2,
       extent - badgeSize / 2 - 2,
     );
-    items.forEach(({ number, box, root }, index) => {
+    items.forEach(({ number, box, radius, root }, index) => {
       const at = along[index];
       const clamp = (value: number, low: number, high: number) =>
         Math.min(Math.max(value, low + 2), Math.max(high - 2, low + 2));
@@ -217,7 +235,7 @@ function measure(stage: HTMLElement, subject: HTMLElement, legend: AnatomyLegend
             : side === 'left'
               ? { x: reachOuter.left - reach, y: at }
               : { x: reachOuter.right + reach, y: at };
-      const anchor =
+      const edge =
         side === 'top'
           ? { x: clamp(at, box.left, box.right), y: box.top }
           : side === 'bottom'
@@ -225,6 +243,17 @@ function measure(stage: HTMLElement, subject: HTMLElement, legend: AnatomyLegend
             : side === 'left'
               ? { x: box.left, y: clamp(at, box.top, box.bottom) }
               : { x: box.right, y: clamp(at, box.top, box.bottom) };
+      // The root has no box drawn, so its callout meets its own edge: in a round corner, such as a
+      // popup's, on the curve rather than on the corner of its bounds outside it.
+      const inset = root ? cornerInset(edge, box, radius, vertical) : 0;
+      const anchor =
+        side === 'top'
+          ? { x: edge.x, y: edge.y + inset }
+          : side === 'bottom'
+            ? { x: edge.x, y: edge.y - inset }
+            : side === 'left'
+              ? { x: edge.x + inset, y: edge.y }
+              : { x: edge.x - inset, y: edge.y };
       callouts.push({
         number,
         badge,
