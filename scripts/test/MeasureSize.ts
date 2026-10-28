@@ -92,7 +92,8 @@ async function bundle(source: string, ownCode = false) {
   const outputs = result.metafile.outputs;
   const key = (path: string) => relative(root, path).replaceAll('\\', '/');
   // What the page loads first: the entry and, transitively, the chunks it imports statically.
-  const entry = Object.keys(outputs).find((path) => outputs[path]!.entryPoint !== undefined)!;
+  // A lazily imported module is an entry point of its own; the page's is the consumer's source.
+  const entry = Object.keys(outputs).find((path) => outputs[path]!.entryPoint === 'consumer.js')!;
   const initial = new Set<string>();
   const visit = (path: string) => {
     if (initial.has(path)) return;
