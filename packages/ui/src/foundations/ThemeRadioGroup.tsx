@@ -4,7 +4,7 @@ import { useContext, type ReactNode } from 'react';
 import * as Menu from '../navigation/Menu.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { themeToggle } from './messages/themeToggle.js';
-import { ThemePreferenceContext } from './ThemePreferenceContext.js';
+import { ThemePreferenceContext } from './internal/ThemePreferenceContext.js';
 import type { ThemePreference } from './ThemeBootstrap.js';
 import { Computer } from '../icons/Computer.js';
 import { DarkMode } from '../icons/DarkMode.js';

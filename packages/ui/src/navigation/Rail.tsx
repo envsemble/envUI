@@ -3,7 +3,7 @@
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { Column } from '../foundations/Layout.js';
 import { classNames } from '../internal/classNames.js';
-import { inSkeleton } from '../foundations/inSkeleton.js';
+import { inSkeleton } from '../foundations/internal/inSkeleton.js';
 import { skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import {
   destinationKey,

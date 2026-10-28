@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useLayoutEffect, useRef, type RefObject } from 'react';
-import { useHydrated } from '../../internal/useHydrated.js';
+import { useHydrated } from '../../../internal/useHydrated.js';
 
 /** The server's output, in place before its way of showing was known. */
 const serverOutput = '\0server';

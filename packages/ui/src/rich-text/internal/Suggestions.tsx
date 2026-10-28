@@ -11,11 +11,11 @@ import {
 import { ReactRenderer } from '@tiptap/react';
 import { exitSuggestion, type SuggestionOptions, type SuggestionProps } from '@tiptap/suggestion';
 import { PluginKey } from '@tiptap/pm/state';
-import { richText as richTextMessages } from '../foundations/messages/richText.js';
-import { useMessages } from '../internal/EnvUIContext.js';
-import { Listbox } from '../internal/Listbox.js';
-import { useActiveDescendant } from '../internal/useRovingFocus.js';
-import type { RichTextReference, RichTextReferenceSource } from './Types.js';
+import { richText as richTextMessages } from '../../foundations/messages/richText.js';
+import { useMessages } from '../../internal/EnvUIContext.js';
+import { Listbox } from './Listbox.js';
+import { useActiveDescendant } from '../../internal/useRovingFocus.js';
+import type { RichTextReference, RichTextReferenceSource } from '../Types.js';
 
 interface SuggestionItem {
   id: string;

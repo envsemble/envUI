@@ -19,7 +19,7 @@ import { setRef } from '../../internal/setRef.js';
 import { useMessages } from '../../internal/EnvUIContext.js';
 import { useStackedReport } from '../../internal/useStackedReport.js';
 import { panelDock as panelDockMessages } from '../../foundations/messages/panelDock.js';
-import type { PanelDockMode } from '../internal/PanelDockContext.js';
+import type { PanelDockMode } from './internal/PanelDockContext.js';
 import {
   clampRound,
   fitsInRow,
@@ -42,9 +42,9 @@ import {
   type Placement,
   type ScrollPosition,
   type TabChoice,
-} from './dockLayout.js';
-import { PanelFrame } from './PanelFrame.js';
-import { PanelTab } from './PanelTab.js';
+} from './internal/dockLayout.js';
+import { PanelFrame } from './internal/PanelFrame.js';
+import { PanelTab } from './internal/PanelTab.js';
 
 export type { PanelDockMode };
 

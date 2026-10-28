@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useMemo, type ComponentPropsWithRef } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { outsideTheme } from '../internal/outsideTheme.js';
+import { outsideTheme } from './internal/outsideTheme.js';
 
 /** A color scheme. */
 export type ThemeValue = 'light' | 'dark';

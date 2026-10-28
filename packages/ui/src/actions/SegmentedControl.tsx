@@ -12,7 +12,7 @@ import {
   type ReactNode,
 } from 'react';
 import type { ControlSize } from '../foundations/Theme.js';
-import { TooltipPopup } from '../feedback/internal/TooltipPopup.js';
+import { TooltipPopup } from '../internal/TooltipPopup.js';
 import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { useDirectionScope } from '../internal/useDirection.js';

@@ -21,7 +21,7 @@ import { useMessages } from '../../internal/EnvUIContext.js';
 import { setRef } from '../../internal/setRef.js';
 import { useFormatters } from '../../internal/useFormatters.js';
 import { useHydrated } from '../../internal/useHydrated.js';
-import { useReorder, type Announcement, type ReorderHandlers } from '../../internal/useReorder.js';
+import { useReorder, type Announcement, type ReorderHandlers } from './useReorder.js';
 import type { RootProps } from '../List.js';
 import { usePortalContainer } from '../../internal/PortalContainerContext.js';
 

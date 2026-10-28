@@ -19,15 +19,15 @@ import { classNames } from '../internal/classNames.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { FileInput } from '../internal/FileInput.js';
 import { createRichTextExtensions } from './Extensions.js';
-import { createSuggestionOptions, referenceSuggestion } from './Suggestions.js';
+import { createSuggestionOptions, referenceSuggestion } from './internal/Suggestions.js';
 import {
   defaultRichTextCommands,
   richTextCommandActive,
   runRichTextCommand,
   slashCommandIds,
-} from './Commands.js';
-import { RichTextRenderingContext } from './Reference.js';
-import { safeRichTextUrl } from './ReferenceAttributes.js';
+} from './internal/Commands.js';
+import { RichTextRenderingContext } from './internal/Reference.js';
+import { safeRichTextUrl } from './internal/ReferenceAttributes.js';
 import type { RichTextCommand, RichTextEditorProps, RichTextSlashCommand } from './Types.js';
 
 const emptySources: NonNullable<RichTextEditorProps['references']> = [];

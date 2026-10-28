@@ -7,9 +7,9 @@ import {
   ReactNodeViewRenderer,
   type NodeViewProps,
 } from '@tiptap/react';
-import { Checkbox } from '../forms/Checkbox.js';
-import { richText as richTextMessages } from '../foundations/messages/richText.js';
-import { useMessages } from '../internal/EnvUIContext.js';
+import { Checkbox } from '../../forms/Checkbox.js';
+import { richText as richTextMessages } from '../../foundations/messages/richText.js';
+import { useMessages } from '../../internal/EnvUIContext.js';
 import { RichTextRenderingContext } from './Reference.js';
 
 /**

@@ -1,4 +1,4 @@
-import type { PanelDockPanel } from './Root.js';
+import type { PanelDockPanel } from '../Root.js';
 
 /** Where a panel shows: in the row, filling the region, or out of sight behind its tab. */
 export type Placement = 'row' | 'fill' | 'hidden';

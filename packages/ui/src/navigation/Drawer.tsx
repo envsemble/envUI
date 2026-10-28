@@ -17,11 +17,11 @@ import {
 } from 'react';
 import { Column } from '../foundations/Layout.js';
 import { ChevronRight } from '../icons/ChevronRight.js';
-import { TooltipPopup } from '../feedback/internal/TooltipPopup.js';
+import { TooltipPopup } from '../internal/TooltipPopup.js';
 import { classNames } from '../internal/classNames.js';
 import { ResizeHandle } from '../internal/ResizeHandle.js';
 import { containerWidth, useResizableWidth } from '../internal/useResizableWidth.js';
-import { inSkeleton } from '../foundations/inSkeleton.js';
+import { inSkeleton } from '../foundations/internal/inSkeleton.js';
 import { skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import {
   destinationKey,

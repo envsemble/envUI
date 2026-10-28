@@ -17,7 +17,7 @@ import { ChevronRight } from '../icons/ChevronRight.js';
 import { ActionElement } from '../internal/ActionElement.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { breadcrumbs } from '../foundations/messages/breadcrumbs.js';
-import { TooltipPopup } from '../feedback/internal/TooltipPopup.js';
+import { TooltipPopup } from '../internal/TooltipPopup.js';
 
 export interface BreadcrumbItem {
   /**

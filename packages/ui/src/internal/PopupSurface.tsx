@@ -24,7 +24,7 @@ import {
   containedPopupStyle,
   usePortalContainer,
 } from './PortalContainerContext.js';
-import { inSkeleton } from '../foundations/inSkeleton.js';
+import { inSkeleton } from '../foundations/internal/inSkeleton.js';
 import { skeletonAttributes } from './skeleton.js';
 
 /** A side of the anchor; inline-start and inline-end follow the text direction. */

@@ -10,7 +10,7 @@ import {
   type ReactNode,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { outsideTheme } from '../internal/outsideTheme.js';
+import { outsideTheme } from './internal/outsideTheme.js';
 import { Theme, useTheme, type ThemeContrast, type ThemeScale, type ThemeValue } from './Theme.js';
 import { IconButton, type IconButtonProps } from '../actions/Button.js';
 import { useMessages } from '../internal/EnvUIContext.js';
@@ -25,7 +25,10 @@ import {
   scaleSourceAttribute,
   type ThemePreference,
 } from './ThemeBootstrap.js';
-import { ThemePreferenceContext, type ThemePreferenceValue } from './ThemePreferenceContext.js';
+import {
+  ThemePreferenceContext,
+  type ThemePreferenceValue,
+} from './internal/ThemePreferenceContext.js';
 
 const systemDarkQuery = '(prefers-color-scheme: dark)';
 

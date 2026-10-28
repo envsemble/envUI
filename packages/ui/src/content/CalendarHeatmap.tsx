@@ -15,7 +15,7 @@ import {
   type PointerEvent,
   type ReactNode,
 } from 'react';
-import { TooltipPopup } from '../feedback/internal/TooltipPopup.js';
+import { TooltipPopup } from '../internal/TooltipPopup.js';
 import { classNames } from '../internal/classNames.js';
 import { Grid, Row } from '../foundations/Layout.js';
 import { useMessages } from '../internal/EnvUIContext.js';

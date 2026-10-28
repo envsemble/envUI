@@ -36,7 +36,7 @@
       "navigation/LinkProvider.tsx": "foundations",
       "foundations/ThemePreference.tsx": "composites",
       "foundations/ThemeRadioGroup.tsx": "composites",
-      "navigation/internal/PanelDockContext.ts": "shell",
+      "navigation/panel-dock/internal/PanelDockContext.ts": "shell",
       "actions/AvatarButton.tsx": "composites",
       "actions/Button.tsx": "composites",
       "actions/internal/ButtonBase.tsx": "composites",
@@ -125,6 +125,7 @@
       "navigation/TopBar.tsx": "composites",
       "navigation/Tree.tsx": "composites",
       "internal/PopupSurface.tsx": "foundations",
+      "internal/TooltipPopup.tsx": "base",
       "messages.ts": "entries"
     },
     "private": {
@@ -173,7 +174,7 @@
       "forms/internal/MonthGrid.tsx": ["role=\"grid\""],
       "content/CalendarHeatmap.tsx": ["role=\"grid\"", "role=\"gridcell\""],
       "internal/FileInput.tsx": ["input"],
-      "internal/Listbox.tsx": ["role=\"listbox\"", "role=\"option\""],
+      "rich-text/internal/Listbox.tsx": ["role=\"listbox\"", "role=\"option\""],
       "color/ColorPickerButton.tsx": ["button"],
       "color/internal/ColorArea.tsx": ["input"],
       "color/internal/ColorFields.tsx": ["input"],
@@ -291,7 +292,7 @@
         "styles": ["Popover.css"]
       },
       "Tooltip": {
-        "modules": ["feedback/internal/TooltipPopup.tsx"],
+        "modules": ["internal/TooltipPopup.tsx"],
         "slots": ["env-tooltip-disabled-target"]
       },
       "Toast": {
@@ -353,7 +354,7 @@
       "ThemePreference": {
         "classes": ["env-theme-toggle"],
         "styles": ["ThemeToggle.css"],
-        "modules": ["foundations/ThemePreferenceContext.ts"]
+        "modules": ["foundations/internal/ThemePreferenceContext.ts"]
       },
       "Breadcrumbs": {},
       "DocumentTabs": {},
@@ -365,24 +366,24 @@
       "PanelDock": {
         "modules": [
           "navigation/panel-dock/Root.tsx",
-          "navigation/panel-dock/PanelFrame.tsx",
+          "navigation/panel-dock/internal/PanelFrame.tsx",
           "navigation/panel-dock/Header.tsx",
-          "navigation/panel-dock/PanelTab.tsx",
-          "navigation/panel-dock/dockLayout.ts",
-          "navigation/panel-dock/useEntrance.ts",
-          "navigation/internal/PanelDockContext.ts"
+          "navigation/panel-dock/internal/PanelTab.tsx",
+          "navigation/panel-dock/internal/dockLayout.ts",
+          "navigation/panel-dock/internal/useEntrance.ts",
+          "navigation/panel-dock/internal/PanelDockContext.ts"
         ]
       },
       "Tabs": {},
       "RichText": {
         "modules": [
           "rich-text/RichTextEditor.tsx",
-          "rich-text/Reference.tsx",
-          "rich-text/ReferenceAttributes.ts",
-          "rich-text/ReferenceExtension.ts",
-          "rich-text/Suggestions.tsx",
-          "rich-text/TaskItem.tsx",
-          "rich-text/Commands.ts",
+          "rich-text/internal/Reference.tsx",
+          "rich-text/internal/ReferenceAttributes.ts",
+          "rich-text/internal/ReferenceExtension.ts",
+          "rich-text/internal/Suggestions.tsx",
+          "rich-text/internal/TaskItem.tsx",
+          "rich-text/internal/Commands.ts",
           "rich-text/Extensions.ts",
           "rich-text/Types.ts"
         ]

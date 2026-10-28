@@ -26,7 +26,7 @@ import { ResizeHandle } from '../internal/ResizeHandle.js';
 import { setRef } from '../internal/setRef.js';
 import { useFormatters } from '../internal/useFormatters.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
-import { inSkeleton } from '../foundations/inSkeleton.js';
+import { inSkeleton } from '../foundations/internal/inSkeleton.js';
 import { skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import { readPanesSize, writePanesSize } from './panesSize.js';
 import { Close } from '../icons/Close.js';

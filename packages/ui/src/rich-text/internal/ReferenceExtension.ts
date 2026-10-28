@@ -5,7 +5,7 @@ import { createInlineMarkdownSpec, flattenExtensions, mergeAttributes } from '@t
 import Mention from '@tiptap/extension-mention';
 import { createReferenceNodeView } from './Reference.js';
 import { referenceFromAttributes } from './ReferenceAttributes.js';
-import type { RichTextRenderOptions } from './Types.js';
+import type { RichTextRenderOptions } from '../Types.js';
 
 /** Use percent encoding inside Tiptap's shortcode utility so quotes/brackets roundtrip. */
 const referenceMarkdown = createInlineMarkdownSpec({

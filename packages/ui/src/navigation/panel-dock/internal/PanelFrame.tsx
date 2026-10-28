@@ -10,15 +10,15 @@ import {
   type FocusEvent,
   type ReactNode,
 } from 'react';
-import { useResize } from '../../internal/useResize.js';
-import { Column } from '../../foundations/Layout.js';
+import { useResize } from '../../../internal/useResize.js';
+import { Column } from '../../../foundations/Layout.js';
 import {
   PanelDockPanelContext,
   type PanelDockMode,
   type PanelDockPanelContextValue,
-} from '../internal/PanelDockContext.js';
+} from './PanelDockContext.js';
 import { pixels, type HeightBounds, type Placement } from './dockLayout.js';
-import type { PanelDockPanel } from './Root.js';
+import type { PanelDockPanel } from '../Root.js';
 import { useEntrance } from './useEntrance.js';
 
 /** How far an arrow key changes a panel's height, in pixels; with Shift, or Page Up and Down. */

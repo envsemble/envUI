@@ -27,7 +27,7 @@ import {
   TooltipNestingContext,
   TooltipPopup,
   type TooltipSide,
-} from './internal/TooltipPopup.js';
+} from '../internal/TooltipPopup.js';
 import { keepsOpen, usePortalContainer } from '../internal/PortalContainerContext.js';
 
 /** The props of the control a Tooltip describes, as far as the tooltip reads them. */

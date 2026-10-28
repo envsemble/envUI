@@ -1,5 +1,5 @@
 import type { Editor } from '@tiptap/core';
-import type { RichTextCommand } from './Types.js';
+import type { RichTextCommand } from '../Types.js';
 
 /** Every command of RichTextEditor's toolbar, in order. */
 export const defaultRichTextCommands: readonly RichTextCommand[] = [

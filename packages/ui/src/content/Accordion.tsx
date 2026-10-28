@@ -5,7 +5,7 @@ import { createContext, useContext, type ComponentPropsWithRef, type ReactNode }
 import { Add } from '../icons/Add.js';
 import { Remove } from '../icons/Remove.js';
 import { classNames } from '../internal/classNames.js';
-import { inSkeleton } from '../foundations/inSkeleton.js';
+import { inSkeleton } from '../foundations/internal/inSkeleton.js';
 import { given, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 

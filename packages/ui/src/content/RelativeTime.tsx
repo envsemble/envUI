@@ -2,7 +2,7 @@
 
 import { useCallback, useContext, useSyncExternalStore, type ComponentPropsWithRef } from 'react';
 import { Tooltip } from '../feedback/Tooltip.js';
-import { TooltipNestingContext } from '../feedback/internal/TooltipPopup.js';
+import { TooltipNestingContext } from '../internal/TooltipPopup.js';
 import { classNames } from '../internal/classNames.js';
 import { hoverDetailClass } from '../internal/hoverDetail.js';
 import { useEnvUI } from '../internal/EnvUIContext.js';

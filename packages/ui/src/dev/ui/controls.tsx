@@ -4,7 +4,7 @@
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { IconButton } from '../../actions/Button.js';
 import { Tooltip } from '../../feedback/Tooltip.js';
-import type { TooltipSide } from '../../feedback/internal/TooltipPopup.js';
+import type { TooltipSide } from '../../internal/TooltipPopup.js';
 import type { ControlSize } from '../../foundations/Theme.js';
 import { LeftPanelClose } from '../../icons/LeftPanelClose.js';
 import { LeftPanelOpen } from '../../icons/LeftPanelOpen.js';

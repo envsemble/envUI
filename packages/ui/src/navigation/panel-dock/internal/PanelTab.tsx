@@ -1,13 +1,13 @@
 'use client';
 
 import { useId, useRef } from 'react';
-import { IconButton } from '../../actions/Button.js';
-import { Close } from '../../icons/Close.js';
-import { Tooltip } from '../../feedback/Tooltip.js';
-import { ActionElement } from '../../internal/ActionElement.js';
-import { DecorativeIcon } from '../../internal/DecorativeIcon.js';
-import { Row } from '../../foundations/Layout.js';
-import type { PanelDockPanel } from './Root.js';
+import { IconButton } from '../../../actions/Button.js';
+import { Close } from '../../../icons/Close.js';
+import { Tooltip } from '../../../feedback/Tooltip.js';
+import { ActionElement } from '../../../internal/ActionElement.js';
+import { DecorativeIcon } from '../../../internal/DecorativeIcon.js';
+import { Row } from '../../../foundations/Layout.js';
+import type { PanelDockPanel } from '../Root.js';
 import { useEntrance } from './useEntrance.js';
 
 interface PanelTabProps {

@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState, type ComponentPropsWithRef, type ReactNode } from 'react';
-import { classNames } from './classNames.js';
-import { ListRow, type ListRowProps } from './ListRow.js';
+import { classNames } from '../../internal/classNames.js';
+import { ListRow, type ListRowProps } from '../../internal/ListRow.js';
 
 export interface ListboxProps<Item> extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
   /** The options, in order. */

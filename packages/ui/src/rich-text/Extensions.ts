@@ -6,9 +6,9 @@ import { TableKit } from '@tiptap/extension-table';
 import Image from '@tiptap/extension-image';
 import Placeholder from '@tiptap/extension-placeholder';
 import { Marked, type marked } from 'marked';
-import { safeRichTextUrl } from './ReferenceAttributes.js';
-import { createReferenceExtension } from './ReferenceExtension.js';
-import { createTaskItemNodeView } from './TaskItem.js';
+import { safeRichTextUrl } from './internal/ReferenceAttributes.js';
+import { createReferenceExtension } from './internal/ReferenceExtension.js';
+import { createTaskItemNodeView } from './internal/TaskItem.js';
 import type { RichTextRenderOptions } from './Types.js';
 
 /**
