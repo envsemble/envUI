@@ -71,7 +71,6 @@
 .env-radio > span {
   min-inline-size: 0;
 }
-.env-radio[data-orientation='vertical']:has(input:checked),
 .env-radio[data-orientation='vertical']:hover:not(:has(input:disabled)) {
   --env-radio-layer: calc(var(--env-state-hover-opacity) * 100%);
   background: var(--env-radio-custom-fill, var(--env-color-bg-muted-hover));
@@ -81,8 +80,10 @@
   background: var(--env-radio-custom-fill, var(--env-color-bg-muted-pressed));
 }
 /* The chosen row takes the selection's fill and text, as a selected list row and Select's chosen
-   option do, with their hover and pressed fills; its description stays muted. */
+   option do, with their hover and pressed fills; its description stays muted. With a color
+   property of the application's, it keeps the hover layer at rest. */
 .env-radio[data-orientation='vertical']:has(input:checked) {
+  --env-radio-layer: calc(var(--env-state-hover-opacity) * 100%);
   background: var(--env-radio-custom-fill, var(--env-color-bg-selected));
   color: var(--env-radio-content, var(--env-color-fg-on-selected));
 }
