@@ -1,26 +1,17 @@
 // The files the hosted site serves to coding agents at its root: the setup skill, SKILL.md, and the
-// index of the Docs, llms.txt (scripts/site/SiteAgentFiles.ts).
+// signpost llms.txt (scripts/site/SiteAgentFiles.ts).
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import { parse } from 'yaml';
-import { readDocumentation } from '../scripts/docs/GenerateDocumentation.ts';
-import { unlistedPages } from '../scripts/site/SearchIndex.ts';
-import {
-  libraryVersion,
-  pageUrl,
-  renderLlmsText,
-  renderSkill,
-  siteOrigin,
-} from '../scripts/site/SiteAgentFiles.ts';
+import { libraryVersion, renderLlmsText, renderSkill } from '../scripts/site/SiteAgentFiles.ts';
 
 const repository = fileURLToPath(new URL('../', import.meta.url));
 const version = libraryVersion();
 const skill = renderSkill();
-const documents = readDocumentation();
-const llms = renderLlmsText({ documents });
+const llms = renderLlmsText();
 
 /** The skill's frontmatter and body. */
 function skillParts(text) {
@@ -78,25 +69,14 @@ test("the skill's AGENTS.md block is short and points at docs the package ships"
   }
 });
 
-test('llms.txt introduces envUI, links the setup skill and every page of the Docs', () => {
+test('llms.txt introduces envUI and points to the setup skill and the installed docs, no pages', () => {
   const [title, , summary] = llms.split('\n');
   assert.equal(title, '# envUI');
   assert.match(summary, /^> envUI is /);
-  assert.match(
-    llms,
-    /^## Agent setup\n\n- \[Setup skill\]\(https:\/\/envui\.envsemble\.com\/SKILL\.md\)/m,
-  );
-  const links = [...llms.matchAll(/\]\(([^)]+)\)/g)].map((match) => match[1]);
-  for (const link of links) assert.ok(link.startsWith(`${siteOrigin}/`), link);
-  const listed = documents.filter((document) => !unlistedPages.has(document.id));
-  assert.ok(listed.length > 50);
-  for (const document of listed) assert.ok(links.includes(pageUrl(document.path)), document.path);
-  // The contributor pages stay in the repository.
-  for (const id of ['library-development', 'component-pages', 'pattern-pages'])
-    assert.ok(!links.some((link) => link.endsWith(`/docs/${id}`)), id);
-  assert.equal(pageUrl('components/button.md'), `${siteOrigin}/docs/components/button`);
-  assert.match(llms, /^## Components: Actions$/m);
-  assert.match(llms, /^## Optional$/m);
+  assert.match(llms, /^- \[Setup skill\]\(https:\/\/envui\.envsemble\.com\/SKILL\.md\)/m);
+  assert.match(llms, /node_modules\/@envsemble\/envui\/docs\//);
+  // A signpost, not another index: the skill is its only link.
+  assert.equal([...llms.matchAll(/\]\(([^)]+)\)/g)].length, 1);
   assert.ok(llms.endsWith('\n') && !llms.endsWith('\n\n'));
 });
 

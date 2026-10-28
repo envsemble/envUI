@@ -70,7 +70,10 @@
   transform-origin: 0 0;
 }
 
+/* Above its stage, so the stage's shadow falls around the figure, not across the bar. */
 .site-verdict-bar {
+  position: relative;
+  z-index: var(--env-z-raised);
   display: flex;
   align-items: center;
   gap: var(--env-space-2);
@@ -94,7 +97,9 @@
   background: var(--env-color-bg-danger-strong);
 }
 
-/* A caution, acceptable with care: amber, with the text a warning badge's solid fill takes. */
+/* A caution, acceptable with care: a bright amber, with the dark text a warning badge's solid fill
+   takes. The bar is a dark island in both themes (Figures.tsx), so it takes the dark theme's warning
+   fill, which is bright, where light's is a deep brown. */
 .site-verdict[data-verdict='caution'] .site-verdict-bar {
   background: var(--env-color-bg-warning-emphasis);
   color: var(--env-color-fg-on-emphasis);

@@ -46,7 +46,7 @@
     background: var(--env-button-custom-fill, var(--env-color-bg-neutral-muted-hover));
   }
   .env-select-trigger[data-variant='outline'][aria-expanded='true']:not(:disabled, :active) {
-    background: var(--env-button-custom-fill, var(--env-color-bg-raised-hover));
+    background: var(--env-button-custom-fill, var(--env-color-bg-neutral-subtle-hover));
     border-color: var(--env-button-outline, var(--env-color-border-default-hover));
   }
   /* Invalid triggers recolor their border and keep their fill. */
@@ -69,7 +69,7 @@
   .env-select-trigger[data-variant='outline'][aria-invalid='true']:is(:hover, :active):not(
       :disabled
     ) {
-    background: var(--env-button-custom-fill, var(--env-color-bg-raised));
+    background: var(--env-button-custom-fill, transparent);
   }
   @media (hover: hover) {
     .env-select > .env-select-trigger[aria-invalid='true']:hover:not(:disabled) {

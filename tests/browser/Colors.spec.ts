@@ -23,10 +23,11 @@ const sources: Record<string, readonly [rest: string, hover: string, pressed: st
     '--env-color-bg-neutral-muted-hover',
     '--env-color-bg-neutral-muted-pressed',
   ],
+  // No fill at rest: a state layer over the surface beneath on hover and press.
   'button-outlined': [
-    '--env-color-bg-raised',
-    '--env-color-bg-raised-hover',
-    '--env-color-bg-raised-pressed',
+    '--env-color-bg-neutral-subtle',
+    '--env-color-bg-neutral-subtle-hover',
+    '--env-color-bg-neutral-subtle-pressed',
   ],
   'button-destructive': [
     '--env-color-bg-danger-strong',

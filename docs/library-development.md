@@ -83,7 +83,7 @@ The contrast gate measures the tokens, which are what envUI paints; the colors a
 Agents read the documentation the package ships, as [For agents](agent-tooling.md) describes; nothing else is generated for them in the package. The hosted site serves two files at its root, from `scripts/site/SiteAgentFiles.ts`:
 
 - `SKILL.md`, the setup skill, is `apps/site/hosting/SKILL.md` with the version of `@envsemble/envui` in place of each `{{version}}`. Keep it short: it sets envUI up with the user and leads to the docs, which hold everything else. The Docs' home gives the prompt that leads to it, and [For agents](agent-tooling.md) shows the same AGENTS.md block, which `tests/SiteAgentFiles.test.mjs` keeps equal to the skill's.
-- `llms.txt` is generated from the index and each page's summary, linked to the pages of the Docs.
+- `llms.txt` is a signpost: what envUI is, the setup skill and the installed package's docs. It lists no pages, so the Docs and the skill stay the only places that say the rest.
 
 The site's development server serves both, and `npm run build:site` writes them into `dist/site`.
 

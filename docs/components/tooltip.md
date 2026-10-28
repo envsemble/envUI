@@ -42,8 +42,8 @@ examples:
     role: do
     caption: Name an icon-only control.
   RepeatsLabel:
-    role: dont
-    caption: A tooltip that repeats a visible label.
+    role: caution
+    caption: 'A tooltip that repeats a visible label: it adds nothing to read.'
 ---
 
 # Tooltip
