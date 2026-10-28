@@ -254,7 +254,9 @@
   grid-template-rows: auto auto;
   row-gap: var(--env-space-4);
   justify-items: center;
-  inline-size: var(--catalogue-sweep-widest, auto);
+  /* The widest frame with its outline on both sides, as wide as the ruler gets, so the room and
+     the frame in it stay centred on the stage. */
+  inline-size: calc(var(--catalogue-sweep-widest, 0rem) + 2 * var(--env-space-2) + 0.125rem);
   max-inline-size: 100%;
   /* The frame's outline, at its offset, below the room. */
   padding-block-end: var(--env-space-2);
