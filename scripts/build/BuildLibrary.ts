@@ -62,7 +62,7 @@ const stylesheetBuild = await build({
   entryPoints: [resolve(sourceDirectory, 'styles/index.css')],
   bundle: true,
   write: false,
-  loader: { '.woff2': 'file' },
+  loader: { '.woff2': 'file', '.svg': 'file' },
   assetNames: 'assets/[name]',
   outfile: resolve(outputDirectory, 'styles.css'),
 });
