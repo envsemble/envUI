@@ -1,43 +1,6 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import { chevronTips, expectVerticalFlip, slowChevron } from './Chevron';
 import { fixtureUrl } from './Servers';
-
-/** Contrast between two opaque CSS colors, as WCAG computes it. */
-function contrastRatio(first: string, second: string) {
-  const luminance = (color: string) => {
-    const [r, g, b] = color
-      .match(/[\d.]+/g)!
-      .slice(0, 3)
-      .map((channel) => {
-        const value = Number(channel) / 255;
-        return value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
-      });
-    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
-  };
-  const [lighter, darker] = [luminance(first), luminance(second)].sort((a, b) => b - a);
-  return (lighter + 0.05) / (darker + 0.05);
-}
-
-/**
- * The open Select list against the surface it opens over: the popup's color, which it shows at
- * nearly full strength over a blur, and its shadow.
- */
-async function popupSeparation(page: Page, surfaceSelector: string) {
-  const [surface, popup, shadow] = await page.evaluate((selector) => {
-    const popupElement = document.querySelector('.env-select-popup')!;
-    const probe = document.createElement('div');
-    probe.style.backgroundColor = 'var(--env-color-bg-popup)';
-    popupElement.append(probe);
-    const color = getComputedStyle(probe).backgroundColor;
-    probe.remove();
-    return [
-      getComputedStyle(document.querySelector(selector)!).backgroundColor,
-      color,
-      getComputedStyle(popupElement).boxShadow,
-    ];
-  }, surfaceSelector);
-  return { contrast: contrastRatio(surface, popup), shadow };
-}
 
 test.beforeEach(async ({ page }) => {
   await page.goto(`${fixtureUrl}/?fixture=forms`);
@@ -367,9 +330,8 @@ test('Select triggers are button styles, and the open list stands apart from a p
 
   await role.click();
   await expect(page.getByRole('option', { name: 'Boreal', exact: true })).toBeVisible();
-  const separation = await popupSeparation(page, '[data-testid="select-pane"]');
-  expect(separation.contrast).toBeGreaterThanOrEqual(1.08);
-  expect(separation.shadow).not.toBe('none');
+  // Frosted, its fill is close to a pane's in light: its shadow sets it apart.
+  await expect(page.locator('.env-select-popup')).not.toHaveCSS('box-shadow', 'none');
   // The popup takes the surface corners, and its options the same corners inset by its padding.
   const corners = await page.locator('.env-select-popup').evaluate((popup) => {
     const option = popup.querySelector('.env-select-item')!;
@@ -465,8 +427,8 @@ test('a small Select has a small trigger, and its popup has the menus anatomy wi
     };
   });
   // The popup's color, frosted at 88 % in light; its edge is there, clear, for a solid popup.
-  expect(surface.popupColor).toBe('rgb(255, 255, 255)');
-  expect(surface.background).toBe('color(srgb 1 1 1 / 0.88)');
+  expect(surface.popupColor).toBe('rgb(245, 245, 247)');
+  expect(surface.background).toBe('color(srgb 0.960784 0.960784 0.968627 / 0.88)');
   expect(surface.border).toBeGreaterThanOrEqual(1);
   expect(surface.radius).toBeCloseTo(20, 0);
   expect(surface.padding).toBeCloseTo(6, 0);

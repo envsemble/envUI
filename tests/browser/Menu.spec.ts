@@ -78,9 +78,9 @@ test.describe('Menus', () => {
     await settled(menu);
     // Frosted: the popup color at 88 % in light over a blur, no visible edge, a soft shadow.
     const [popup] = await tokenColors(menu, ['--env-color-bg-popup']);
-    expect(popup).toBe('rgb(255, 255, 255)');
+    expect(popup).toBe('rgb(245, 245, 247)');
     const frosted = await popupSurface(menu);
-    expect(frosted.background).toBe('color(srgb 1 1 1 / 0.88)');
+    expect(frosted.background).toBe('color(srgb 0.960784 0.960784 0.968627 / 0.88)');
     expect(frosted.borderColor).toBe('rgba(0, 0, 0, 0)');
     expect(frosted.shadow).not.toBe('none');
     expect(frosted.filter).toBe('blur(22px) saturate(1.4)');
@@ -129,8 +129,8 @@ test.describe('Menus', () => {
       ]);
       const solid = await popupSurface(menu);
       // Opaque: the popup color itself.
-      expect(popup).toBe('rgb(255, 255, 255)');
-      expect(solid.background).toBe('color(srgb 1 1 1)');
+      expect(popup).toBe('rgb(245, 245, 247)');
+      expect(solid.background).toBe('color(srgb 0.960784 0.960784 0.968627)');
       expect(solid.borderColor).toBe(edge);
       expect(solid.borderWidth).toBe(1);
       expect(solid.shadow).toBe('none');
