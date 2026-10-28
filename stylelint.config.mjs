@@ -1,4 +1,4 @@
-// Stylelint for the library's and the catalogue's CSS. Existing violations of the rules that the
+// Stylelint for the library's and the site's CSS. Existing violations of the rules that the
 // token work removes are recorded in stylelint-suppressions.json, and tests/StylelintSuppressions
 // requires the recorded counts to match the CSS exactly; anything new fails. See
 // docs/library-development.md.
@@ -17,6 +17,9 @@ const {
 } = stylelint;
 
 const hexColor = '/#[\\da-f]{3,8}\\b/i';
+
+/** A name of the site's, by its part, or of the library's: kebab case after the prefix. */
+const sitePrefixed = '^(?:site|catalogue|docs|env)-[a-z0-9]+(?:-[a-z0-9]+)*$';
 
 /**
  * Where em may appear: typography that follows the element's own font size rather than the
@@ -149,6 +152,15 @@ export default {
         'declaration-property-value-allowed-list': null,
         'declaration-property-unit-disallowed-list': null,
         'unit-disallowed-list': unitRule(['px'], { px: hairlineProperties }),
+      },
+    },
+    {
+      // The site's classes and custom properties say which part they belong to (AGENTS.md); env-
+      // are the library's, which the site styles through its part classes and reads as tokens.
+      files: ['apps/site/src/**/*.css'],
+      rules: {
+        'selector-class-pattern': sitePrefixed,
+        'custom-property-pattern': sitePrefixed,
       },
     },
   ],

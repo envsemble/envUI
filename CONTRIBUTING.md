@@ -106,7 +106,7 @@ The website has two parts, and names say which they belong to: **site** for the 
 root, and **docs** for the part under /docs. The site's CSS classes and custom properties take
 the same prefixes, `site-`, `catalogue-` and `docs-`, by where they render.
 
-React components and scripts use PascalCase filenames; hooks and helpers use camelCase. Documentation uses lowercase filenames. Keep standard tool filenames such as `package.json`, `index.ts` and `vite.config.ts`. Generated icons, catalogue data, builds and packaged copies of the README and documentation have explicit sources; edit the source and regenerate.
+In the library, React components use PascalCase filenames; hooks and helpers use camelCase. In the site, the tests and the scripts, every module's filename is PascalCase and a hook's is `useX`: a script that runs as a command starts with a verb, such as `GenerateParts.ts`, and a module others import is a noun, such as `Reader.ts`. Spec helpers sit in `tests/browser/helpers/`. Documentation uses lowercase filenames. Keep standard tool filenames such as `package.json`, `index.ts` and `vite.config.ts`. Generated icons, catalogue data, builds and packaged copies of the README and documentation have explicit sources; edit the source and regenerate.
 
 ## Hosting
 
