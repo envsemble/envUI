@@ -34,7 +34,7 @@
       },
       "default": {
         "$root": {
-          "$description": "The default surface: Surface, navigation, standard menus.",
+          "$description": "The default surface: Surface, navigation, sheets, standard menus.",
           "$value": "{palette.neutral.4}"
         },
         "hover": {

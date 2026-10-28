@@ -92,7 +92,7 @@ Each pane scrolls on its own where the panes have a height, as in a [Scaffold](s
 
 The panes decide how they sit from their own width alone.
 
-- A supporting pane becomes a side sheet in a medium width and a bottom sheet in a compact one, which a button in the main pane opens.
+- A supporting pane becomes a side sheet in a medium width and a bottom sheet in a compact one, which a button in the main pane opens. The sheet is on a [Sheet](sheet.md)'s color, so a surface in the pane reads as the same panel.
 - In less room a list and its detail show one at a time, and a back button named after the list, here Team inbox, returns to it.
 
 ```tsx figure=SupportingByWidth motion
@@ -228,4 +228,5 @@ The parts are the root, `env-panes`, with `data-behavior`, `data-split-at` and `
 
 ## Changelog
 
+- **1.0.0-prerelease.5**: The supporting sheet is on a Sheet's fill, `--env-color-bg-default`, rather than `--env-color-bg-raised`, which differ only at high contrast in the light theme.
 - **1.0.0**: Panes, which replaces SplitPane and ListDetail: the supporting and list-detail behaviors, `splitAt` at a window class, a divider in rem, and Panes.Trigger, which opens the supporting sheet.

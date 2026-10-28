@@ -211,7 +211,7 @@ A button that narrows the navigation sets `forms={{ expanded: 'rail', large: 'ra
 #### Top bar span and backgrounds
 
 - `topBarSpan` is `body`, the default, where the top bar sits above the body beside the rail or drawer, which run the full height, or `full`, where it runs across the whole width above the navigation, as a window's title bar must.
-- `background="page"` on a TopBar, a Rail or a Drawer puts it on the page's background instead of the navigation's, the default; on a surface, such as a Sheet, both values take the surface's color.
+- `background="page"` on a TopBar, a Rail or a Drawer puts it on the page's background instead of the navigation's, the default; on a surface, such as a Sheet, both values take the surface's color. A Sheet is on the navigation's background, so the navigation keeps its color in the sheet of a narrow window.
 
 ```tsx
 <Scaffold topBar={<TopBar title="Northwind" background="page" />} navigation={{ drawer }}>
