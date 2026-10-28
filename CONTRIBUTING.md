@@ -106,7 +106,7 @@ The website has two parts, and names say which they belong to: **site** for the 
 root, and **docs** for the part under /docs. The site's CSS classes and custom properties take
 the same prefixes, `site-`, `catalogue-` and `docs-`, by where they render.
 
-React components and scripts use PascalCase filenames; hooks and helpers use camelCase. Documentation uses lowercase filenames. Keep standard tool filenames such as `package.json`, `index.ts` and `vite.config.ts`. Generated icons, catalogue data, builds and packaged copies of the README and documentation have explicit sources; edit the source and regenerate.
+In the library, `packages/ui/src`, a file takes its main export's name: PascalCase for a component, a React context or a namespace of parts, `useX` for a hook and camelCase for other modules, with the entry points lowercase, such as `index.ts` and `theme-bootstrap.ts`. Code that one family uses sits in that family's `internal/` folder, and the top-level `internal/` holds what several families share. A component's styles are a PascalCase file of `src/styles`, named after it or the group it shares. React components and scripts use PascalCase filenames; hooks and helpers use camelCase. Documentation uses lowercase filenames. Keep standard tool filenames such as `package.json`, `index.ts` and `vite.config.ts`. Generated icons, catalogue data, builds and packaged copies of the README and documentation have explicit sources; edit the source and regenerate.
 
 ## Hosting
 
