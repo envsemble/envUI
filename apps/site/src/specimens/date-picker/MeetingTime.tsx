@@ -55,7 +55,7 @@ function Choosing() {
   return (
     // The field at the top of the room its calendar and wheels open into, below it.
     <div
-      style={{ display: 'grid', justifyItems: 'center', inlineSize: '100%', blockSize: '23rem' }}
+      style={{ display: 'grid', justifyItems: 'center', inlineSize: '100%', blockSize: '26rem' }}
     >
       <MeetingTime />
     </div>

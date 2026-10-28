@@ -31,7 +31,7 @@ function Reviewing() {
 /** The large dialog, with its table, opened and closed by a pointer no one sees. */
 export default function ReviewChangesMotion() {
   return (
-    <MotionStage label="the large dialog opening and closing" height="24rem">
+    <MotionStage label="the large dialog opening and closing" height="26rem">
       <Reviewing />
     </MotionStage>
   );

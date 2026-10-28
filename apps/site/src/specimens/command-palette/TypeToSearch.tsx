@@ -35,7 +35,7 @@ function Searching() {
 /** The open palette: its invitation, a search that finds nothing, and one that finds the roadmap. */
 export default function TypeToSearchMotion() {
   return (
-    <MotionStage label="the invitation, no results and results" height="18rem">
+    <MotionStage label="the invitation, no results and results" height="20rem">
       <Searching />
     </MotionStage>
   );
