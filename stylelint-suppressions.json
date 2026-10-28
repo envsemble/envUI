@@ -210,11 +210,6 @@
       "count": 2
     }
   },
-  "apps/site/src/styles/Reference.css": {
-    "no-duplicate-selectors": {
-      "count": 1
-    }
-  },
   "packages/ui/src/styles/Checkbox.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 4

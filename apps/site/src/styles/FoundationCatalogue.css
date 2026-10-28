@@ -148,13 +148,13 @@
 }
 
 .catalogue-glance-tone-chips > :nth-child(1) {
-  background: var(--muted);
+  background: var(--catalogue-tone-muted);
 }
 .catalogue-glance-tone-chips > :nth-child(2) {
-  background: var(--emphasis);
+  background: var(--catalogue-tone-emphasis);
 }
 .catalogue-glance-tone-chips > :nth-child(3) {
-  background: var(--strong);
+  background: var(--catalogue-tone-strong);
 }
 
 /* Type: the typeface's letters large, and each style's name in its own style. */

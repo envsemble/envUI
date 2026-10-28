@@ -1,4 +1,4 @@
-/* The catalogue's type hierarchy, which its parts set so a page never has to (Topic.tsx,
+/* The type hierarchy of the site's pages, which its parts set so a page never has to (Topic.tsx,
    FigureSection in Figures.tsx): a section's title large; its lead, the paragraph that opens it, a step larger
    than body text in the main color; a block's title in the title style; the paragraphs that
    support a figure or a heading in body text, in the quieter muted color; and the notes of figures
@@ -12,7 +12,7 @@
 .catalogue-supporting,
 .site-figure-note,
 :where(.site-figures .env-markdown) > :is(p, ul, ol) {
-  /* The cap of a figure page's parts reads it (Previews.css). In Geist, whose zero is wide, 53ch
+  /* The cap of a figure page's parts reads it (Examples.css). In Geist, whose zero is wide, 53ch
      holds about 70 characters of text. */
   --catalogue-measure: 53ch;
   max-inline-size: min(100%, var(--catalogue-measure));

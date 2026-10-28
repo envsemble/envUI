@@ -18,8 +18,8 @@ export function SpecimenArea({ specimen, children }: { specimen?: string; childr
     <Column
       render={<Theme {...theme} />}
       gap={0}
-      className="catalogue-preview"
-      data-specimen={specimen}
+      className="catalogue-specimen-area"
+      data-catalogue-specimen={specimen}
       onClickCapture={preventExampleNavigation}
       onAuxClickCapture={preventExampleNavigation}
     >

@@ -1,15 +1,16 @@
 /* Keep this order: page framing precedes specimen and responsive overrides. */
 @import './Shell.css';
+@import './Docs.css';
 @import './Banners.css';
 @import './BannerMotifs.css';
-@import './Previews.css';
-@import './Reference.css';
+@import './Examples.css';
+@import './Overview.css';
 @import './Foundations.css';
 @import './InteractionStates.css';
 @import './Template.css';
 @import './Stage.css';
 @import './Figures.css';
-@import './CatalogueText.css';
+@import './SiteText.css';
 @import './Related.css';
 @import './Gallery.css';
 @import './FoundationCatalogue.css';

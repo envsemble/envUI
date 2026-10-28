@@ -228,7 +228,7 @@ async function scan(page: Page, route: string, theme: Theme): Promise<Scan> {
             ['.site-page-header, .site-page-banner, .catalogue-overview-hero', 'header'],
             ['.site-page-navigation', 'page navigation'],
             ['.site-article', 'article'],
-            ['.catalogue-preview', 'preview'],
+            ['.catalogue-specimen-area', 'specimen area'],
             ['#site-main', 'main'],
           ];
           return regions.find(([selector]) => element.closest(selector))?.[1] ?? 'page';

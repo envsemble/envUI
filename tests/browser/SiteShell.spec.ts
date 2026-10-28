@@ -401,7 +401,7 @@ test('the theme in the Display menu switches the whole page and keeps the canvas
   await page.setViewportSize({ width: 1920, height: 1400 });
   await page.goto(`${siteDevUrl}/components/checkbox/preview`);
   const app = page.locator('.site-app');
-  const panes = page.locator('.catalogue-preview');
+  const panes = page.locator('.catalogue-specimen-area');
   // The 0.x preview opens the Checkbox page, whose live example follows the theme with its state.
   const example = page.getByRole('group', { name: 'Checkbox example', exact: true });
   const archived = example.getByRole('checkbox', { name: 'Include archived projects' });

@@ -1,99 +1,99 @@
 /* Artificial state examples are intentionally private to this application. */
-.catalogue-preview
+.catalogue-specimen-area
   .catalogue-force-hover.env-button:where([data-variant='primary'][data-tone='neutral']) {
   background: var(--env-color-bg-brand-emphasis-hover);
 }
-.catalogue-preview
+.catalogue-specimen-area
   .catalogue-force-pressed.env-button:where([data-variant='primary'][data-tone='neutral']) {
   background: var(--env-color-bg-brand-emphasis-pressed);
 }
-.catalogue-preview
+.catalogue-specimen-area
   .catalogue-force-hover.env-button:where([data-variant='primary'][data-tone='accent']) {
   background: var(--env-color-bg-important-strong-hover);
 }
-.catalogue-preview
+.catalogue-specimen-area
   .catalogue-force-pressed.env-button:where([data-variant='primary'][data-tone='accent']) {
   background: var(--env-color-bg-important-strong-pressed);
 }
-.catalogue-preview
+.catalogue-specimen-area
   .catalogue-force-hover.env-button:where([data-variant='primary'][data-tone='danger']) {
   background: var(--env-color-bg-danger-strong-hover);
 }
-.catalogue-preview
+.catalogue-specimen-area
   .catalogue-force-pressed.env-button:where([data-variant='primary'][data-tone='danger']) {
   background: var(--env-color-bg-danger-strong-pressed);
 }
-.catalogue-preview .catalogue-force-hover.env-button:where([data-variant='secondary']) {
+.catalogue-specimen-area .catalogue-force-hover.env-button:where([data-variant='secondary']) {
   background: var(--env-color-bg-neutral-muted-hover);
 }
-.catalogue-preview .catalogue-force-pressed.env-button:where([data-variant='secondary']) {
+.catalogue-specimen-area .catalogue-force-pressed.env-button:where([data-variant='secondary']) {
   background: var(--env-color-bg-neutral-muted-pressed);
 }
-.catalogue-preview .catalogue-force-hover.env-button:where([data-variant='outline']) {
+.catalogue-specimen-area .catalogue-force-hover.env-button:where([data-variant='outline']) {
   background: var(--env-color-bg-raised-hover);
   border-color: var(--env-color-border-default-hover);
 }
-.catalogue-preview .catalogue-force-pressed.env-button:where([data-variant='outline']) {
+.catalogue-specimen-area .catalogue-force-pressed.env-button:where([data-variant='outline']) {
   background: var(--env-color-bg-raised-pressed);
   border-color: var(--env-color-border-default-pressed);
 }
-.catalogue-preview .catalogue-force-hover.env-button:where([data-variant='text']) {
+.catalogue-specimen-area .catalogue-force-hover.env-button:where([data-variant='text']) {
   color: var(--env-color-fg-link-hover);
 }
-.catalogue-preview .catalogue-force-pressed.env-button:where([data-variant='text']) {
+.catalogue-specimen-area .catalogue-force-pressed.env-button:where([data-variant='text']) {
   color: var(--env-color-fg-link-pressed);
 }
 /* The danger pairs of outline and text buttons. */
-.catalogue-preview
+.catalogue-specimen-area
   .catalogue-force-hover.env-button:where([data-variant='outline'][data-tone='danger']) {
   border-color: var(--env-color-border-danger-emphasis-hover);
 }
-.catalogue-preview
+.catalogue-specimen-area
   .catalogue-force-pressed.env-button:where([data-variant='outline'][data-tone='danger']) {
   border-color: var(--env-color-border-danger-emphasis-pressed);
 }
-.catalogue-preview
+.catalogue-specimen-area
   :is(.catalogue-force-hover, .catalogue-force-pressed).env-button:where(
     [data-variant='text'][data-tone='danger']
   ) {
   color: var(--env-color-fg-danger);
 }
-.catalogue-preview .catalogue-force-focus {
+.catalogue-specimen-area .catalogue-force-focus {
   outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: 0.125rem;
 }
-.catalogue-preview .catalogue-force-focus.env-button:where([data-variant='outline']) {
+.catalogue-specimen-area .catalogue-force-focus.env-button:where([data-variant='outline']) {
   outline-color: var(--env-color-border-focus);
   outline-offset: 0.0625rem;
 }
 /* Ghost buttons, which the Colors page's interaction states show. */
-.catalogue-preview .catalogue-force-hover.env-button:where([data-variant='ghost']) {
+.catalogue-specimen-area .catalogue-force-hover.env-button:where([data-variant='ghost']) {
   background: var(--env-color-bg-neutral-subtle-hover);
   color: var(--env-color-fg-default);
 }
-.catalogue-preview .catalogue-force-pressed.env-button:where([data-variant='ghost']) {
+.catalogue-specimen-area .catalogue-force-pressed.env-button:where([data-variant='ghost']) {
   background: var(--env-color-bg-neutral-subtle-pressed);
   color: var(--env-color-fg-default);
 }
 /* The Colors page's list rows, navigation items and fields inside a forced state: each takes its
    state's semantic color through its public color property, as an application would set it, so
    none of envUI's private component tokens is copied here. */
-.catalogue-preview .catalogue-force-hover > .env-list-item[data-interactive] {
+.catalogue-specimen-area .catalogue-force-hover > .env-list-item[data-interactive] {
   --env-list-item-container: var(--env-color-list-item-bg-hover);
 }
-.catalogue-preview .catalogue-force-pressed > .env-list-item[data-interactive] {
+.catalogue-specimen-area .catalogue-force-pressed > .env-list-item[data-interactive] {
   --env-list-item-container: var(--env-color-list-item-bg-pressed);
 }
-.catalogue-preview .catalogue-force-hover .env-drawer-item {
+.catalogue-specimen-area .catalogue-force-hover .env-drawer-item {
   --env-drawer-item-container: var(--env-color-bg-navigation-hover);
 }
-.catalogue-preview .catalogue-force-pressed .env-drawer-item {
+.catalogue-specimen-area .catalogue-force-pressed .env-drawer-item {
   --env-drawer-item-container: var(--env-color-bg-navigation-pressed);
 }
-.catalogue-preview .catalogue-force-hover .env-text-field {
+.catalogue-specimen-area .catalogue-force-hover .env-text-field {
   --env-text-field-outline: var(--env-color-border-accent-emphasis-hover);
 }
-.catalogue-preview .catalogue-force-pressed .env-text-field {
+.catalogue-specimen-area .catalogue-force-pressed .env-text-field {
   --env-text-field-outline: var(--env-color-border-accent-emphasis-pressed);
 }
 /* An anatomy figure's AnimatedNumber caught as its value rolls in: the value still below the line,

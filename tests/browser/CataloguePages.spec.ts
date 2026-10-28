@@ -485,7 +485,10 @@ test('a Related tile of a page without an example shows its specimen', async ({ 
     'href',
     '/foundations/icons',
   );
-  await expect(tile.locator('.catalogue-related-stage')).toHaveAttribute('data-specimen', 'icons');
+  await expect(tile.locator('.catalogue-related-stage')).toHaveAttribute(
+    'data-catalogue-specimen',
+    'icons',
+  );
   await expect(tile.locator('.catalogue-related-canvas[data-fitted] svg')).toHaveCount(6);
   await expect(page.locator('.catalogue-related-placeholder')).toHaveCount(0);
 });

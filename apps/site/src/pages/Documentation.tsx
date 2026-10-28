@@ -169,7 +169,7 @@ const rehypePlugins = [headingIds];
 /**
  * A page's Markdown, or a part of it such as one section, with its links resolved. `className`
  * gives it a role in the catalogue's type hierarchy, such as `site-lead` for a section's opening
- * paragraph (CatalogueText.css).
+ * paragraph (SiteText.css).
  */
 export function Documentation(
   props: ({ document: Document } | { markdown: string; path: string }) & { className?: string },

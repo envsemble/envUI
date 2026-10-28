@@ -421,7 +421,7 @@ test.describe('catalogue', () => {
         for (const view of visited) {
           await open(view);
           const examples = page.locator(
-            '.catalogue-preview .site-example:not(.site-example .site-example)',
+            '.catalogue-specimen-area .site-example:not(.site-example .site-example)',
           );
           for (const example of await examples.all()) {
             if (!(await example.isVisible())) continue;
@@ -431,7 +431,10 @@ test.describe('catalogue', () => {
               ':scope > :is(h2, h3), :scope > .catalogue-example-heading > :is(h2, h3)',
             );
             const specimen = await example.evaluate(
-              (element) => element.closest('[data-specimen]')?.getAttribute('data-specimen') ?? '',
+              (element) =>
+                element
+                  .closest('[data-catalogue-specimen]')
+                  ?.getAttribute('data-catalogue-specimen') ?? '',
             );
             const part = example.locator('summary, h3, h4').first();
             const title = (await own.count())
@@ -448,7 +451,7 @@ test.describe('catalogue', () => {
           // The forced hover, pressed, focus and disabled states of InteractionStates.ts, opened
           // where the catalogue keeps them in a closed disclosure.
           const states = page.locator(
-            '.catalogue-preview [role="region"][aria-label$="interaction states"]',
+            '.catalogue-specimen-area [role="region"][aria-label$="interaction states"]',
           );
           for (const matrix of await states.all()) {
             const label = ((await matrix.getAttribute('aria-label')) ?? '').replace(

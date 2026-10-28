@@ -1,4 +1,4 @@
-.catalogue-preview {
+.catalogue-specimen-area {
   padding: 2rem var(--site-gutter) 3rem;
   container-type: inline-size;
 }
@@ -9,7 +9,7 @@
   min-width: 0;
 }
 /* Sections share the frame; only their actual specimens need a size limit, and running text its
-   measure, which it sets as --catalogue-measure (CatalogueText.css). */
+   measure, which it sets as --catalogue-measure (SiteText.css). */
 .site-example > :not(h2):not(.catalogue-caption) {
   max-inline-size: min(100%, var(--catalogue-example-width), var(--catalogue-measure, 100%));
 }

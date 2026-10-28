@@ -235,7 +235,7 @@ export function lastSubsection(markdown: string): [string, string] | undefined {
 
 /**
  * Markdown cut after the paragraph that opens it, when it opens with one: a section's lead, which
- * the catalogue sets larger than the text below it (CatalogueText.css).
+ * the catalogue sets larger than the text below it (SiteText.css).
  */
 export function leadParagraph(markdown: string): [string, string] | undefined {
   const text = markdown.replace(/^(?:[ \t]*\n)+/, '');

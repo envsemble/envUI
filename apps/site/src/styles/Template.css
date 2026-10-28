@@ -9,7 +9,7 @@
 
 /* Specimens inside an article share its gutter instead of adding their own, and the page's
    background: only their canvas is filled. */
-.site-article .catalogue-preview {
+.site-article .catalogue-specimen-area {
   padding: 0;
   background: none;
 }

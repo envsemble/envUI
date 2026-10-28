@@ -1,3 +1,5 @@
+/* The article every page's text sits in, the Overview's hero and the catalogue's index pages of
+   components, patterns and foundations. */
 .site-article {
   padding: 0 var(--site-gutter) 3rem;
 }
@@ -5,10 +7,7 @@
   max-inline-size: 75ch;
 }
 .catalogue-overview {
-  padding: 0 var(--site-gutter) var(--env-space-8);
-}
-.catalogue-overview {
-  padding-block-start: var(--env-space-5);
+  padding: var(--env-space-5) var(--site-gutter) var(--env-space-8);
   text-align: center;
 }
 .catalogue-catalogue-content {

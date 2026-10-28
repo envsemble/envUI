@@ -561,7 +561,7 @@ export function TilePreview({
       ref={stage}
       className={className}
       data-example={preview?.specimen || Composition ? undefined : preview?.name}
-      data-specimen={preview?.specimen}
+      data-catalogue-specimen={preview?.specimen}
       data-stage={preview?.stage}
       data-empty={preview ? undefined : ''}
       data-playing={plays ? '' : undefined}

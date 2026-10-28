@@ -34,9 +34,10 @@ const tones = [
 
 const toneStyle = (tone: string) =>
   ({
-    '--muted': `var(--env-color-bg-${tone}-muted)`,
-    '--emphasis': `var(--env-color-bg-${tone}-emphasis)`,
-    '--strong': tone === 'neutral' ? 'var(--env-color-fg-default)' : `var(--env-color-fg-${tone})`,
+    '--catalogue-tone-muted': `var(--env-color-bg-${tone}-muted)`,
+    '--catalogue-tone-emphasis': `var(--env-color-bg-${tone}-emphasis)`,
+    '--catalogue-tone-strong':
+      tone === 'neutral' ? 'var(--env-color-fg-default)' : `var(--env-color-fg-${tone})`,
   }) as CSSProperties;
 
 /** A row for each tone: its name, then its soft fill, its solid fill and its text. */
