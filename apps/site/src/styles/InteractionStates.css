@@ -30,11 +30,11 @@
   background: var(--env-color-bg-neutral-muted-pressed);
 }
 .catalogue-preview .catalogue-force-hover.env-button:where([data-variant='outline']) {
-  background: var(--env-color-bg-raised-hover);
+  background: var(--env-color-bg-neutral-subtle-hover);
   border-color: var(--env-color-border-default-hover);
 }
 .catalogue-preview .catalogue-force-pressed.env-button:where([data-variant='outline']) {
-  background: var(--env-color-bg-raised-pressed);
+  background: var(--env-color-bg-neutral-subtle-pressed);
   border-color: var(--env-color-border-default-pressed);
 }
 .catalogue-preview .catalogue-force-hover.env-button:where([data-variant='text']) {
