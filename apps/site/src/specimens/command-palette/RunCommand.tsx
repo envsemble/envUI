@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import RunCommand from '../../examples/command-palette/RunCommand';
 import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { MotionStage, roomFor } from '../../previews/MotionStage';
 
 const input = '.env-command-palette-input';
 
@@ -36,8 +36,9 @@ function Running() {
   const [round, setRound] = useState(0);
   usePointer(script, { onCue: () => setRound((count) => count + 1) });
   return (
-    // As tall as the button and what it says it ran, so the button stays put as that comes.
-    <div style={{ minBlockSize: '4.5rem' }}>
+    // As tall as the button and what it says it ran, so the button stays put as that comes; on a
+    // narrow stage, where the commands wrap, as tall as the palette's whole list.
+    <div style={{ minBlockSize: roomFor(4.5, 24, 30) }}>
       <RunCommand key={round} />
     </div>
   );

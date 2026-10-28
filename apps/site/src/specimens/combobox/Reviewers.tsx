@@ -1,6 +1,6 @@
 import Reviewers from '../../examples/combobox/Reviewers';
 import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { MotionStage, roomFor } from '../../previews/MotionStage';
 
 const trigger = '.env-combobox-trigger';
 const option = (index: number) => `.env-combobox-item:nth-child(${index} of .env-combobox-item)`;
@@ -44,10 +44,15 @@ const script: PointerStep[] = [
 function Choosing() {
   usePointer(script);
   // The field at the top of a box as tall as it and its whole open list, so the list fits in the
-  // stage from the start.
+  // stage from the start, taller on a narrow stage, where the chips wrap and push the list down.
   return (
     <div
-      style={{ display: 'grid', justifyItems: 'center', inlineSize: '100%', minBlockSize: '21rem' }}
+      style={{
+        display: 'grid',
+        justifyItems: 'center',
+        inlineSize: '100%',
+        minBlockSize: roomFor(21, 22.5, 30),
+      }}
     >
       <Reviewers />
     </div>

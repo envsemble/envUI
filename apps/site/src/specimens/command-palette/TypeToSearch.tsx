@@ -1,6 +1,6 @@
 import TypeToSearch from '../../examples/command-palette/TypeToSearch';
 import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { MotionStage, roomFor } from '../../previews/MotionStage';
 
 const input = '.env-command-palette-input';
 
@@ -29,7 +29,12 @@ const script: PointerStep[] = [
 
 function Searching() {
   usePointer(script);
-  return <TypeToSearch />;
+  return (
+    // On a narrow stage, where the empty state's words wrap, room for the palette to hold them.
+    <div style={{ display: 'grid', placeItems: 'center', minBlockSize: roomFor(0, 17.5, 30) }}>
+      <TypeToSearch />
+    </div>
+  );
 }
 
 /** The open palette: its invitation, a search that finds nothing, and one that finds the roadmap. */

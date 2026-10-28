@@ -1,6 +1,6 @@
 import ReviewChanges from '../../examples/dialog/ReviewChanges';
 import { usePointer, type PointerStep } from '../../previews/Motion';
-import { MotionStage } from '../../previews/MotionStage';
+import { MotionStage, roomFor } from '../../previews/MotionStage';
 
 /*
  * The pointer presses Review changes: the large dialog opens over the stage with its table of
@@ -25,7 +25,12 @@ const script: PointerStep[] = [
 
 function Reviewing() {
   usePointer(script);
-  return <ReviewChanges />;
+  return (
+    // On a narrow stage, where the table's rows wrap, room for the whole dialog.
+    <div style={{ display: 'grid', placeItems: 'center', minBlockSize: roomFor(0, 27.5, 30) }}>
+      <ReviewChanges />
+    </div>
+  );
 }
 
 /** The large dialog, with its table, opened and closed by a pointer no one sees. */
