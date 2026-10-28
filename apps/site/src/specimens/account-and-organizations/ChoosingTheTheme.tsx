@@ -129,7 +129,8 @@ function Choosing() {
 /** The account menu's Theme submenu, used by a pointer no one sees: the window changes at once. */
 export default function ChoosingTheTheme() {
   return (
-    <MotionStage label="the theme changing from the account menu">
+    // A whole window, on the shaded stage, as the App frame figures are.
+    <MotionStage label="the theme changing from the account menu" stage="shaded">
       <Choosing />
     </MotionStage>
   );
