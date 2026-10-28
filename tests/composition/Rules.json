@@ -93,6 +93,8 @@
       "forms/Calendar.tsx": "composites",
       "forms/Checkbox.tsx": "base",
       "forms/Combobox.tsx": "composites",
+      "forms/internal/ComboboxPopup.tsx": "composites",
+      "forms/internal/comboboxItems.ts": "composites",
       "forms/Composer.tsx": "composites",
       "forms/DatePicker.tsx": "composites",
       "forms/TimePicker.tsx": "composites",
@@ -282,6 +284,9 @@
       },
       "Table": {
         "modules": ["content/internal/ColumnResizeHandle.tsx"]
+      },
+      "Combobox": {
+        "modules": ["forms/internal/ComboboxPopup.tsx", "forms/internal/comboboxItems.ts"]
       },
       "Dialog": {
         "modules": ["feedback/internal/DialogParts.tsx", "feedback/ConfirmDialog.tsx"],

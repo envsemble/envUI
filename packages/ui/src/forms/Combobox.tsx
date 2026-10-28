@@ -5,7 +5,6 @@ import { DirectionProvider } from '@base-ui/react/direction-provider';
 import {
   useCallback,
   useEffect,
-  useId,
   useLayoutEffect,
   useMemo,
   useRef,
@@ -18,20 +17,15 @@ import {
 import { setRef } from '../internal/setRef.js';
 import { useDirection } from '../internal/useDirection.js';
 import { useLocale, useMessages } from '../internal/EnvUIContext.js';
-import { PopupSurface } from '../internal/PopupSurface.js';
 import {
   keepsOpen,
   useKeepPageVisible,
   usePortalContainer,
 } from '../internal/PortalContainerContext.js';
-import { Column, Grid } from '../foundations/Layout.js';
-import { ListRow } from '../internal/ListRow.js';
 import { type ControlSize } from '../foundations/Theme.js';
 import { combobox as comboboxMessages } from '../foundations/messages/combobox.js';
 import { common as commonMessages } from '../foundations/messages/common.js';
 import { IconButton } from '../actions/Button.js';
-import { Spinner } from '../feedback/Spinner.js';
-import { Check } from '../icons/Check.js';
 import { ChevronRight } from '../icons/ChevronRight.js';
 import { Close } from '../icons/Close.js';
 import {
@@ -41,6 +35,8 @@ import {
   type FieldProps,
 } from './internal/FieldFrame.js';
 import { subscribeFormReset } from './internal/subscribeFormReset.js';
+import { flattenItems, isGroup, standIn } from './internal/comboboxItems.js';
+import { ComboboxPopup } from './internal/ComboboxPopup.js';
 import { useFieldMetadata } from './internal/useFieldMetadata.js';
 
 /** One option of a Combobox. */
@@ -173,31 +169,6 @@ type ChangeDetails = BaseCombobox.Root.ChangeEventDetails;
 
 /** Changes of the typed text that people make, rather than the field filling in a chosen label. */
 const typedChanges = new Set(['input-change', 'input-clear', 'clear-press', 'escape-key']);
-
-/** A chosen value the field never saw among the options stands for itself, as its chip shows. */
-function standIn<Item extends ComboboxItem>(value: string) {
-  return { value, label: value } as Item;
-}
-
-function isGroup<Item extends ComboboxItem>(
-  entry: Item | ComboboxGroup<Item>,
-): entry is ComboboxGroup<Item> {
-  return Array.isArray((entry as ComboboxGroup<Item>).items);
-}
-
-function flattenItems<Item extends ComboboxItem>(
-  items: readonly Item[] | readonly ComboboxGroup<Item>[],
-) {
-  return (items as readonly (Item | ComboboxGroup<Item>)[]).flatMap((entry) =>
-    isGroup(entry) ? entry.items : [entry],
-  );
-}
-
-const popupParts = {
-  Portal: BaseCombobox.Portal,
-  Positioner: BaseCombobox.Positioner,
-  Popup: BaseCombobox.Popup,
-};
 
 /**
  * A text field that filters a list of options as people type, for choosing one option or several.
@@ -588,99 +559,16 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
             {selectedValues.map(labelOf).join(', ')}
           </span>
         )}
-        <PopupSurface
-          parts={popupParts}
-          side="bottom"
-          align="start"
-          dir={direction}
-          className="env-combobox-popup"
-          layout={<Column padding={1} />}
-          popupProps={{ ref: popupRef }}
-        >
-          <BaseCombobox.Status className="env-combobox-status">
-            {loading ? (
-              <>
-                <Spinner size="sm" />
-                {loadingLabel ?? messages.loading}
-              </>
-            ) : null}
-          </BaseCombobox.Status>
-          <BaseCombobox.Empty className="env-combobox-empty">
-            {loading ? null : (emptyLabel ?? messages.empty)}
-          </BaseCombobox.Empty>
-          {/* The options are busy while they load, not the popup, whose status announces
-              the loading label meanwhile. */}
-          <BaseCombobox.List
-            render={<Grid />}
-            className="env-combobox-list"
-            aria-busy={loading || undefined}
-          >
-            {(entry: Item | ComboboxGroup<Item>) =>
-              grouped && isGroup(entry) ? (
-                <BaseCombobox.Group
-                  key={entry.label}
-                  items={entry.items as Item[]}
-                  render={<Grid />}
-                  className="env-combobox-group"
-                >
-                  <BaseCombobox.GroupLabel className="env-combobox-group-label">
-                    {entry.label}
-                  </BaseCombobox.GroupLabel>
-                  <BaseCombobox.Collection>
-                    {(item: Item) => (
-                      <ComboboxOption key={item.value} item={item} startSlot={hasStart} />
-                    )}
-                  </BaseCombobox.Collection>
-                </BaseCombobox.Group>
-              ) : (
-                <ComboboxOption
-                  key={(entry as Item).value}
-                  item={entry as Item}
-                  startSlot={hasStart}
-                />
-              )
-            }
-          </BaseCombobox.List>
-        </PopupSurface>
+        <ComboboxPopup
+          popupRef={popupRef}
+          direction={direction}
+          loading={loading}
+          loadingLabel={loadingLabel ?? messages.loading}
+          emptyLabel={emptyLabel ?? messages.empty}
+          grouped={grouped}
+          startSlot={hasStart}
+        />
       </BaseCombobox.Root>
     </DirectionProvider>
-  );
-}
-
-/** An option row: a check mark slot, optional start content, the label and its description. */
-function ComboboxOption<Item extends ComboboxItem>({
-  item,
-  startSlot,
-}: {
-  item: Item;
-  startSlot: boolean;
-}) {
-  const descriptionId = useId();
-  return (
-    <ListRow
-      render={
-        <BaseCombobox.Item
-          value={item.value}
-          disabled={item.disabled}
-          aria-describedby={item.description ? descriptionId : undefined}
-        />
-      }
-      className="env-combobox-item"
-      indicator={
-        <BaseCombobox.ItemIndicator className="env-icon env-combobox-item-indicator">
-          <Check />
-        </BaseCombobox.ItemIndicator>
-      }
-      icon={startSlot ? <span className="env-combobox-leading">{item.start}</span> : undefined}
-      label={item.label}
-      description={
-        item.description ? (
-          // Announced through aria-describedby rather than as part of the option's name.
-          <span id={descriptionId} aria-hidden="true">
-            {item.description}
-          </span>
-        ) : undefined
-      }
-    />
   );
 }

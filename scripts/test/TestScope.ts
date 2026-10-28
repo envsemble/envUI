@@ -113,6 +113,8 @@ export const aliases: Record<string, string[]> = {
   Skeletons: ['Skeleton'],
   AlertDismiss: ['Dialog'],
   Listbox: ['Forms', 'Combobox'],
+  ComboboxPopup: ['Combobox'],
+  comboboxItems: ['Combobox'],
   ListRow: ['List'],
   ColumnResizeHandle: ['Table'],
   calendarHeatmapModel: ['CalendarHeatmap'],
