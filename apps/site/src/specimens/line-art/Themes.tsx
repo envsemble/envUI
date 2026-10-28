@@ -8,7 +8,11 @@ const themes: { title: string; theme: ThemeValue; contrast: ThemeContrast }[] = 
   { title: 'Dark, high contrast', theme: 'dark', contrast: 'high' },
 ];
 
-/** One drawing on a surface in each theme: always the muted edge color, a quiet line. */
+/**
+ * One drawing in each theme, always the muted edge color, a quiet line: on a light theme's page,
+ * deeper than the light canvas, and on a dark theme's surface, lighter than the dark canvas, so
+ * every box shows on the canvas in either theme.
+ */
 export default function Themes() {
   return (
     <Example size="collection">
@@ -25,7 +29,7 @@ export default function Themes() {
               }}
             >
               <Surface
-                background="default"
+                background={theme === 'light' ? 'page' : 'default'}
                 padding={0}
                 style={{ overflow: 'hidden', inlineSize: '100%', aspectRatio: '480 / 330' }}
               >
