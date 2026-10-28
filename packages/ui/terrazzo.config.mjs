@@ -256,6 +256,79 @@ function withoutDescriptions(plugin) {
 }
 
 /**
+ * The theme rules an element of each theme also matches, whose values it takes where its own rule
+ * declares nothing, nearest first. A dark high-contrast element falls back to the light
+ * high-contrast rule before the dark one: both have the same specificity, and the high-contrast
+ * rule comes later in Tokens.css.
+ */
+const rulesBelow = {
+  light: [],
+  dark: ['light'],
+  'light-high-contrast': ['light'],
+  'dark-high-contrast': ['light-high-contrast', 'dark', 'light'],
+};
+
+/**
+ * Tokens.css without the declarations of a theme rule that repeat the value an element of that
+ * theme takes from the rules below it anyway, such as a dark value that is the light one. Every
+ * element computes the same tokens; the token files still give each scheme and contrast all its
+ * values, and the generated modules list them all.
+ */
+export function withoutRepeatedValues(css) {
+  const themeOf = new Map(
+    themes.flatMap((theme) => [
+      ...theme.selectors.map((selector) => [selector, theme.name]),
+      ...(theme.media ? [[theme.media.selector, theme.name]] : []),
+    ]),
+  );
+  const declared = Object.fromEntries(themes.map((theme) => [theme.name, new Map()]));
+  for (const { property, value, selector } of cssDeclarations(css)) {
+    const theme = themeOf.get(selector);
+    if (theme && property.startsWith('--')) declared[theme].set(property, value);
+  }
+  const repeated = {};
+  for (const theme of themes) {
+    repeated[theme.name] = new Set(
+      [...declared[theme.name]]
+        .filter(([property, value]) => {
+          // The value below: of the nearest rule that still declares the property.
+          const below = rulesBelow[theme.name]
+            .filter((name) => !repeated[name]?.has(property))
+            .map((name) => declared[name].get(property))
+            .find((each) => each !== undefined);
+          return below === value;
+        })
+        .map(([property]) => property),
+    );
+  }
+  // Each theme rule, `selector {` to its `}`, without the lines of the repeated declarations.
+  return css.replace(/([^\n{}]+) \{\n([^{}]*)\}/g, (rule, selector, body) => {
+    const theme = themeOf.get(selector.trim());
+    if (!theme) return rule;
+    const kept = body
+      .split('\n')
+      .filter((line) => !repeated[theme].has(line.match(/^\s*(--[\w-]+):/)?.[1]));
+    return `${selector} {\n${kept.join('\n')}}`;
+  });
+}
+
+/** plugin-css with Tokens.css written by withoutRepeatedValues(). */
+function withoutRepeatedDeclarations(plugin) {
+  return {
+    ...plugin,
+    build: (options) =>
+      plugin.build({
+        ...options,
+        outputFile: (filename, contents) =>
+          options.outputFile(
+            filename,
+            filename.endsWith('.css') ? withoutRepeatedValues(contents) : contents,
+          ),
+      }),
+  };
+}
+
+/**
  * `envui/color-schemes`: every semantic color is declared in the dark scheme, so dark is designed
  * rather than inherited, and every other color outside the palette is an alias, which follows its
  * target into each scheme. (core/required-modes reads only the legacy `$extensions.mode`, so with a
@@ -746,49 +819,51 @@ export function createConfig({
     tokens: [resolverFile],
     outDir,
     plugins: [
-      withoutDescriptions(
-        css({
-          filename: 'styles/Tokens.css',
-          // Every property takes the prefix. plugin-css also passes this the parts that an alias of
-          // a composite token reads, as `type.label-fontSize`, which makeCSSVar() writes as
-          // `--env-type-label-font-size`, the part's own property.
-          variableName: (token) => cssVariable(token.id),
-          exclude: internalGroups.map((group) => `${group}.**`),
-          transform,
-          permutations: [
-            {
-              // The base set: every token, in the light scheme at standard contrast.
-              input: {},
-              prepare: (contents) =>
-                `${header}.env-theme {\n  color-scheme: light;\n  ${contents}\n}`,
-            },
-            {
-              // Only what the dark scheme overrides, so the dark rule declares what it always did.
-              input: { colorScheme: 'dark' },
-              include: dark,
-              prepare: (contents) =>
-                `.env-theme[data-env-theme='dark'] {\n  color-scheme: dark;\n  ${contents}\n}`,
-            },
-            ...themes
-              .filter((theme) => theme.media)
-              .map((theme) => ({
-                // Every token high contrast changes, in both schemes, so the dark high-contrast rule
-                // also replaces the light one's values.
-                input: theme.input,
-                include: high,
+      withoutRepeatedDeclarations(
+        withoutDescriptions(
+          css({
+            filename: 'styles/Tokens.css',
+            // Every property takes the prefix. plugin-css also passes this the parts that an alias
+            // of a composite token reads, as `type.label-fontSize`, which makeCSSVar() writes as
+            // `--env-type-label-font-size`, the part's own property.
+            variableName: (token) => cssVariable(token.id),
+            exclude: internalGroups.map((group) => `${group}.**`),
+            transform,
+            permutations: [
+              {
+                // The base set: every token, in the light scheme at standard contrast.
+                input: {},
                 prepare: (contents) =>
-                  `${block(theme.selectors.join(', '), contents)}\n@media ${theme.media.query} {\n  ${block(theme.media.selector, contents)}\n}`,
-              })),
-            ...scales
-              .filter((scale) => scale.selector)
-              .map((scale) => ({
-                // Only the sizes the scale changes; colors come from the theme rules above.
-                input: scale.input,
-                include: scaleTokens[scale.name],
-                prepare: (contents) => block(scale.selector, contents),
-              })),
-          ],
-        }),
+                  `${header}.env-theme {\n  color-scheme: light;\n  ${contents}\n}`,
+              },
+              {
+                // What the dark scheme overrides, less what withoutRepeatedValues() finds repeated.
+                input: { colorScheme: 'dark' },
+                include: dark,
+                prepare: (contents) =>
+                  `.env-theme[data-env-theme='dark'] {\n  color-scheme: dark;\n  ${contents}\n}`,
+              },
+              ...themes
+                .filter((theme) => theme.media)
+                .map((theme) => ({
+                  // Every token high contrast changes, in both schemes, so the dark high-contrast
+                  // rule also replaces the light one's values.
+                  input: theme.input,
+                  include: high,
+                  prepare: (contents) =>
+                    `${block(theme.selectors.join(', '), contents)}\n@media ${theme.media.query} {\n  ${block(theme.media.selector, contents)}\n}`,
+                })),
+              ...scales
+                .filter((scale) => scale.selector)
+                .map((scale) => ({
+                  // Only the sizes the scale changes; colors come from the theme rules above.
+                  input: scale.input,
+                  include: scaleTokens[scale.name],
+                  prepare: (contents) => block(scale.selector, contents),
+                })),
+            ],
+          }),
+        ),
       ),
       envui({
         removedFile: new URL('removed-tokens.json', tokensDirectory),
