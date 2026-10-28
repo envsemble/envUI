@@ -140,6 +140,8 @@ export default function AssistantChat() {
             startIcon={<ArrowDownward />}
             onClick={jumpToLatest}
             style={{
+              // Over the log, whose list items are positioned and would otherwise paint above it.
+              position: 'relative',
               gridArea: '1 / 1',
               alignSelf: 'end',
               justifySelf: 'center',

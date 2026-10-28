@@ -536,6 +536,15 @@
   max-inline-size: calc(100% - var(--env-space-4) - var(--catalogue-toast-end));
 }
 
+/* A sheet at a figure's end keeps its actions beside the pause button too, rather than under it:
+   the room the button takes at the stage's end, less the sheet's own padding. */
+.catalogue-motion-subject .env-sheet-popup[data-side='end'] .env-dialog-actions {
+  padding-inline-end: max(
+    0rem,
+    2 * var(--env-space-2) + var(--env-control-height-sm) - var(--env-surface-padding, 0rem)
+  );
+}
+
 /* Forced colors paint the canvas in Canvas, like the page: a frame keeps each example apart. A
    figure that explains the system sits on the page and takes none. */
 @media (forced-colors: active) {

@@ -65,11 +65,20 @@ function Choosing() {
   usePointer(script);
   return (
     // The window at the top, with room below it for the menu, in the theme the person chose: it
-    // changes at once, with the menu still open.
+    // changes at once, with the menu still open. The window and the Theme submenu beside it are
+    // centred together, so the submenu and its shadow stay clear of the stage's edge and its
+    // pause button.
     <div
-      style={{ display: 'grid', justifyItems: 'center', inlineSize: '100%', blockSize: '21rem' }}
+      style={{ display: 'grid', justifyItems: 'center', inlineSize: '100%', blockSize: '22rem' }}
     >
-      <Theme {...site} theme={theme} style={{ inlineSize: 'min(100%, 22rem)' }}>
+      <Theme
+        {...site}
+        theme={theme}
+        style={{
+          inlineSize: 'min(100%, 22rem)',
+          marginInlineEnd: 'clamp(0px, 100% - 22rem, 12rem)',
+        }}
+      >
         <Scaffold
           scroll="body"
           landmarks={false}
@@ -120,7 +129,8 @@ function Choosing() {
 /** The account menu's Theme submenu, used by a pointer no one sees: the window changes at once. */
 export default function ChoosingTheTheme() {
   return (
-    <MotionStage label="the theme changing from the account menu">
+    // A whole window, on the shaded stage, as the App frame figures are.
+    <MotionStage label="the theme changing from the account menu" stage="shaded">
       <Choosing />
     </MotionStage>
   );
