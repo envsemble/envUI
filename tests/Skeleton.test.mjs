@@ -147,5 +147,5 @@ test('the style sheet draws text as bars, shapes and missing text, and keeps sti
   assert.equal(css.indexOf('animation:'), css.indexOf('animation:', motion));
   const index = readFileSync(join(repository, 'packages/ui/src/styles/index.css'), 'utf8');
   // Last among the components, so its rules follow theirs.
-  assert.match(index, /@import '\.\/Skeleton\.css' layer\(env\.components\);\n\/\*/);
+  assert.match(index, /@import '\.\/Skeleton\.css';\n$/);
 });

@@ -1,22 +1,24 @@
-/* Listbox: the options of a list whose focus stays in a text input, as ListRows. */
-.env-listbox {
-  min-inline-size: 0;
-}
-.env-listbox-options {
-  display: grid;
-  gap: 0;
-  min-inline-size: 0;
-  padding: var(--env-popup-padding);
-}
-/* With no options, the list takes no room and the status beside it says why. */
-.env-listbox-options:empty {
-  padding: 0;
-}
-.env-listbox-empty {
-  padding: var(--env-space-2);
-  color: var(--env-color-fg-muted);
-  font: var(--env-type-body-small);
-}
-.env-listbox-empty:empty {
-  padding: 0;
+@layer env.components {
+  /* Listbox: the options of a list whose focus stays in a text input, as ListRows. */
+  .env-listbox {
+    min-inline-size: 0;
+  }
+  .env-listbox-options {
+    display: grid;
+    gap: 0;
+    min-inline-size: 0;
+    padding: var(--env-popup-padding);
+  }
+  /* With no options, the list takes no room and the status beside it says why. */
+  .env-listbox-options:empty {
+    padding: 0;
+  }
+  .env-listbox-empty {
+    padding: var(--env-space-2);
+    color: var(--env-color-fg-muted);
+    font: var(--env-type-body-small);
+  }
+  .env-listbox-empty:empty {
+    padding: 0;
+  }
 }

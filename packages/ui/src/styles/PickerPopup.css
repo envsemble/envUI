@@ -1,26 +1,28 @@
-/* The picker card: the shared popup that DatePicker, TimePicker and MonthPicker open, with one inset,
-   gap and size of controls for all three. Its body holds the picker's content, as wide as the
-   content and never wider than the room the positioner finds in the window; its footer holds the
-   actions, the shortcut at the start and Clear at the end. The text buttons there take back their
-   own padding, so their labels line up with the body's edge, inside the card's inset. */
-.env-picker-popup {
-  --env-control-height: var(--env-control-height-sm);
-  align-content: start;
-  inline-size: auto;
-  max-inline-size: var(--available-width, calc(100vw - 2rem));
-  padding: var(--env-popup-panel-padding);
-}
-.env-picker-popup-body {
-  min-inline-size: 0;
-}
-/* Each action keeps its label on one line, as Today, Now and Clear are short: where the card is too
-   narrow for them side by side, the row wraps whole buttons rather than the words inside one. */
-.env-picker-popup-footer-end {
-  flex: 0 0 auto;
-  margin-inline-start: auto;
-}
-.env-picker-popup-footer .env-button {
-  flex: 0 0 auto;
-  white-space: nowrap;
-  overflow-wrap: normal;
+@layer env.components {
+  /* The picker card: the shared popup that DatePicker, TimePicker and MonthPicker open, with one inset,
+     gap and size of controls for all three. Its body holds the picker's content, as wide as the
+     content and never wider than the room the positioner finds in the window; its footer holds the
+     actions, the shortcut at the start and Clear at the end. The text buttons there take back their
+     own padding, so their labels line up with the body's edge, inside the card's inset. */
+  .env-picker-popup {
+    --env-control-height: var(--env-control-height-sm);
+    align-content: start;
+    inline-size: auto;
+    max-inline-size: var(--available-width, calc(100vw - 2rem));
+    padding: var(--env-popup-panel-padding);
+  }
+  .env-picker-popup-body {
+    min-inline-size: 0;
+  }
+  /* Each action keeps its label on one line, as Today, Now and Clear are short: where the card is too
+     narrow for them side by side, the row wraps whole buttons rather than the words inside one. */
+  .env-picker-popup-footer-end {
+    flex: 0 0 auto;
+    margin-inline-start: auto;
+  }
+  .env-picker-popup-footer .env-button {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    overflow-wrap: normal;
+  }
 }

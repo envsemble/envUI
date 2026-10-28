@@ -1,18 +1,22 @@
-/* Connected rows: blocks joined into one, with large outer corners on the first and last and small
-   inner corners between them, whatever the rows hold, such as a list's items, a vertical radio
-   group's options or a figure and its caption bar. The owner sets the small gap between them. */
-.env-connected-rows > .env-connected-row {
-  border-radius: var(--env-radius-row-inner);
-}
-.env-connected-rows > .env-connected-row:nth-child(1 of .env-connected-row) {
-  border-start-start-radius: var(--env-radius-row-outer);
-  border-start-end-radius: var(--env-radius-row-outer);
-}
-.env-connected-rows > .env-connected-row:nth-last-child(1 of .env-connected-row) {
-  border-end-start-radius: var(--env-radius-row-outer);
-  border-end-end-radius: var(--env-radius-row-outer);
-}
-.env-connected-rows
-  > .env-connected-row:nth-child(1 of .env-connected-row):nth-last-child(1 of .env-connected-row) {
-  border-radius: var(--env-radius-row-single);
+@layer env.components {
+  /* Connected rows: blocks joined into one, with large outer corners on the first and last and small
+     inner corners between them, whatever the rows hold, such as a list's items, a vertical radio
+     group's options or a figure and its caption bar. The owner sets the small gap between them. */
+  .env-connected-rows > .env-connected-row {
+    border-radius: var(--env-radius-row-inner);
+  }
+  .env-connected-rows > .env-connected-row:nth-child(1 of .env-connected-row) {
+    border-start-start-radius: var(--env-radius-row-outer);
+    border-start-end-radius: var(--env-radius-row-outer);
+  }
+  .env-connected-rows > .env-connected-row:nth-last-child(1 of .env-connected-row) {
+    border-end-start-radius: var(--env-radius-row-outer);
+    border-end-end-radius: var(--env-radius-row-outer);
+  }
+  .env-connected-rows
+    > .env-connected-row:nth-child(1 of .env-connected-row):nth-last-child(
+      1 of .env-connected-row
+    ) {
+    border-radius: var(--env-radius-row-single);
+  }
 }

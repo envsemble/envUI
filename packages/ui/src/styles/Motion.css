@@ -1,15 +1,17 @@
-/* The motion that several components share: the keyframes of a fade and of a small control that
-   settles into size. Each component's own style sheet holds its transitions and animations, which
-   stay brief and small and never delay an action: opacity fades always apply, and movement only
-   without a reduced-motion preference. Durations and easings are the motion tokens. */
-@keyframes env-motion-fade-in {
-  from {
-    opacity: 0;
+@layer env.components {
+  /* The motion that several components share: the keyframes of a fade and of a small control that
+     settles into size. Each component's own style sheet holds its transitions and animations, which
+     stay brief and small and never delay an action: opacity fades always apply, and movement only
+     without a reduced-motion preference. Durations and easings are the motion tokens. */
+  @keyframes env-motion-fade-in {
+    from {
+      opacity: 0;
+    }
   }
-}
-@keyframes env-motion-pop-in {
-  from {
-    opacity: 0;
-    transform: scale(0.6);
+  @keyframes env-motion-pop-in {
+    from {
+      opacity: 0;
+      transform: scale(0.6);
+    }
   }
 }

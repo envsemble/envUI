@@ -1,134 +1,136 @@
-/* Calendar: a month of days as round marks side by side in a grid, as wide as seven days, under the
-   month's name and, at its end, the month buttons. Today is in the accent color, the chosen day a
-   solid fill, and unavailable days are faded. Coarse pointers get touch-sized days. */
-.env-calendar {
-  --env-calendar-day: var(--env-row-height);
-  inline-size: calc(7 * var(--env-calendar-day));
-  max-inline-size: 100%;
-  color: var(--env-color-fg-default);
-  font: var(--env-type-body-small);
-}
-.env-calendar-header {
-  /* The month buttons, side by side at the end, are a little smaller than a control. */
-  --env-control-height: calc(0.8 * var(--env-control-height-md));
-  gap: calc(var(--env-space-1) / 2);
-}
-/* The month's name leads the header, a little in from the edge, with both buttons after it. */
-.env-calendar-heading {
-  order: -1;
-  flex: 1 1 auto;
-  min-inline-size: 0;
-  padding-inline-start: calc(0.25 * var(--env-control-height-md));
-  text-align: start;
-  font: var(--env-font-weight-semibold) var(--env-font-size-body) / 1.4 var(--env-font-family);
-  overflow-wrap: anywhere;
-}
-/* The month buttons point back and forward in the reading direction. */
-.env-calendar-header .env-icon:dir(rtl) {
-  transform: scaleX(-1);
-}
-.env-calendar-grid {
-  inline-size: 100%;
-  table-layout: fixed;
-  border-collapse: collapse;
-  border-spacing: 0;
-}
-.env-calendar-grid th {
-  block-size: calc(0.7 * var(--env-control-height-md));
-  padding: 0;
-  overflow: hidden;
-  color: var(--env-color-fg-muted);
-  font: var(--env-font-weight-medium) var(--env-font-size-caption) / 1.4 var(--env-font-family);
-  text-align: center;
-  white-space: nowrap;
-}
-/* Weeks stand a hair apart; the days of a week touch. */
-.env-calendar-day,
-.env-calendar-pad {
-  block-size: calc(var(--env-calendar-day) + var(--env-space-1) / 2);
-  padding: 0;
-  text-align: center;
-  vertical-align: middle;
-}
-.env-calendar-day {
-  cursor: pointer;
-  outline: none;
-  -webkit-tap-highlight-color: transparent;
-}
-.env-calendar-day-mark {
-  box-sizing: border-box;
-  display: grid;
-  place-items: center;
-  inline-size: min(100%, var(--env-calendar-day));
-  aspect-ratio: 1;
-  margin-inline: auto;
-  border-radius: 50%;
-  font-variant-numeric: tabular-nums;
-  transition:
-    background-color var(--env-motion-duration-fast) var(--env-motion-ease),
-    color var(--env-motion-duration-fast) var(--env-motion-ease);
-}
-/* Under the pointer a day takes the neutral fill, as a popup's rows do. */
-.env-calendar-day:hover:not([aria-disabled='true'], [aria-selected='true'])
-  > .env-calendar-day-mark {
-  background: var(--env-color-bg-neutral-muted);
-}
-.env-calendar-day:active:not([aria-disabled='true'], [aria-selected='true'])
-  > .env-calendar-day-mark {
-  background: var(--env-color-bg-neutral-muted-pressed);
-}
-.env-calendar-day[aria-current='date'] > .env-calendar-day-mark {
-  color: var(--env-color-fg-accent);
-  font-weight: var(--env-font-weight-semibold);
-}
-.env-calendar-day[aria-selected='true'] > .env-calendar-day-mark {
-  background: var(--env-color-bg-brand-emphasis);
-  box-shadow: none;
-  color: var(--env-color-fg-on-emphasis);
-  font-weight: var(--env-font-weight-semibold);
-}
-.env-calendar-day:focus-visible > .env-calendar-day-mark {
-  outline: 0.125rem solid var(--env-color-border-focus);
-  outline-offset: 0.0625rem;
-}
-.env-calendar-day[aria-disabled='true'] {
-  cursor: default;
-}
-.env-calendar-day[aria-disabled='true'] > .env-calendar-day-mark {
-  opacity: var(--env-state-disabled-opacity);
-}
-@media (pointer: coarse) {
+@layer env.components {
+  /* Calendar: a month of days as round marks side by side in a grid, as wide as seven days, under the
+     month's name and, at its end, the month buttons. Today is in the accent color, the chosen day a
+     solid fill, and unavailable days are faded. Coarse pointers get touch-sized days. */
   .env-calendar {
-    --env-calendar-day: var(--env-control-height-touch);
+    --env-calendar-day: var(--env-row-height);
+    inline-size: calc(7 * var(--env-calendar-day));
+    max-inline-size: 100%;
+    color: var(--env-color-fg-default);
+    font: var(--env-type-body-small);
   }
-}
-@media (prefers-reduced-motion: reduce) {
+  .env-calendar-header {
+    /* The month buttons, side by side at the end, are a little smaller than a control. */
+    --env-control-height: calc(0.8 * var(--env-control-height-md));
+    gap: calc(var(--env-space-1) / 2);
+  }
+  /* The month's name leads the header, a little in from the edge, with both buttons after it. */
+  .env-calendar-heading {
+    order: -1;
+    flex: 1 1 auto;
+    min-inline-size: 0;
+    padding-inline-start: calc(0.25 * var(--env-control-height-md));
+    text-align: start;
+    font: var(--env-font-weight-semibold) var(--env-font-size-body) / 1.4 var(--env-font-family);
+    overflow-wrap: anywhere;
+  }
+  /* The month buttons point back and forward in the reading direction. */
+  .env-calendar-header .env-icon:dir(rtl) {
+    transform: scaleX(-1);
+  }
+  .env-calendar-grid {
+    inline-size: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    border-spacing: 0;
+  }
+  .env-calendar-grid th {
+    block-size: calc(0.7 * var(--env-control-height-md));
+    padding: 0;
+    overflow: hidden;
+    color: var(--env-color-fg-muted);
+    font: var(--env-font-weight-medium) var(--env-font-size-caption) / 1.4 var(--env-font-family);
+    text-align: center;
+    white-space: nowrap;
+  }
+  /* Weeks stand a hair apart; the days of a week touch. */
+  .env-calendar-day,
+  .env-calendar-pad {
+    block-size: calc(var(--env-calendar-day) + var(--env-space-1) / 2);
+    padding: 0;
+    text-align: center;
+    vertical-align: middle;
+  }
+  .env-calendar-day {
+    cursor: pointer;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+  }
   .env-calendar-day-mark {
-    transition: none;
+    box-sizing: border-box;
+    display: grid;
+    place-items: center;
+    inline-size: min(100%, var(--env-calendar-day));
+    aspect-ratio: 1;
+    margin-inline: auto;
+    border-radius: 50%;
+    font-variant-numeric: tabular-nums;
+    transition:
+      background-color var(--env-motion-duration-fast) var(--env-motion-ease),
+      color var(--env-motion-duration-fast) var(--env-motion-ease);
   }
-}
-
-/* Forced colors: the system paints no fills or shadows, so the chosen day takes the system’s
-   selection colors, today is outlined, and unavailable days take the disabled color. */
-@media (forced-colors: active) {
-  /* Today's outline gives way to the focus ring when the day has focus, as it does when a
-     calendar opens on today. */
-  .env-calendar-day[aria-current='date']:not(:focus-visible) > .env-calendar-day-mark {
-    outline: 1px solid CanvasText;
-    outline-offset: -1px;
+  /* Under the pointer a day takes the neutral fill, as a popup's rows do. */
+  .env-calendar-day:hover:not([aria-disabled='true'], [aria-selected='true'])
+    > .env-calendar-day-mark {
+    background: var(--env-color-bg-neutral-muted);
+  }
+  .env-calendar-day:active:not([aria-disabled='true'], [aria-selected='true'])
+    > .env-calendar-day-mark {
+    background: var(--env-color-bg-neutral-muted-pressed);
+  }
+  .env-calendar-day[aria-current='date'] > .env-calendar-day-mark {
+    color: var(--env-color-fg-accent);
+    font-weight: var(--env-font-weight-semibold);
   }
   .env-calendar-day[aria-selected='true'] > .env-calendar-day-mark {
-    forced-color-adjust: none;
-    background-color: Highlight;
-    color: HighlightText;
+    background: var(--env-color-bg-brand-emphasis);
+    box-shadow: none;
+    color: var(--env-color-fg-on-emphasis);
+    font-weight: var(--env-font-weight-semibold);
   }
-  .env-calendar-day[aria-selected='true'] > .env-calendar-day-mark :where(*) {
-    color: inherit;
+  .env-calendar-day:focus-visible > .env-calendar-day-mark {
+    outline: 0.125rem solid var(--env-color-border-focus);
+    outline-offset: 0.0625rem;
   }
   .env-calendar-day[aria-disabled='true'] {
-    color: GrayText;
+    cursor: default;
   }
-  .env-calendar-day[aria-selected='true']:focus-visible > .env-calendar-day-mark {
-    outline-color: CanvasText;
+  .env-calendar-day[aria-disabled='true'] > .env-calendar-day-mark {
+    opacity: var(--env-state-disabled-opacity);
+  }
+  @media (pointer: coarse) {
+    .env-calendar {
+      --env-calendar-day: var(--env-control-height-touch);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .env-calendar-day-mark {
+      transition: none;
+    }
+  }
+
+  /* Forced colors: the system paints no fills or shadows, so the chosen day takes the system’s
+     selection colors, today is outlined, and unavailable days take the disabled color. */
+  @media (forced-colors: active) {
+    /* Today's outline gives way to the focus ring when the day has focus, as it does when a
+       calendar opens on today. */
+    .env-calendar-day[aria-current='date']:not(:focus-visible) > .env-calendar-day-mark {
+      outline: 1px solid CanvasText;
+      outline-offset: -1px;
+    }
+    .env-calendar-day[aria-selected='true'] > .env-calendar-day-mark {
+      forced-color-adjust: none;
+      background-color: Highlight;
+      color: HighlightText;
+    }
+    .env-calendar-day[aria-selected='true'] > .env-calendar-day-mark :where(*) {
+      color: inherit;
+    }
+    .env-calendar-day[aria-disabled='true'] {
+      color: GrayText;
+    }
+    .env-calendar-day[aria-selected='true']:focus-visible > .env-calendar-day-mark {
+      outline-color: CanvasText;
+    }
   }
 }

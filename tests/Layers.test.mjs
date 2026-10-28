@@ -67,17 +67,35 @@ test('the shipped style sheet puts every rule in a cascade layer of env, in orde
   for (const layer of used) assert.ok(layerOrder.includes(layer), `${layer} is one of envUI's`);
 });
 
-test('index.css imports every style sheet into a layer of env', async () => {
-  const index = await readFile(join(styles, 'index.css'), 'utf8');
-  const imports = [...index.matchAll(/^@import '\.\/([\w.]+)'(.*);$/gm)];
+test('every style sheet is imported once and puts its rules in a layer of env', async () => {
+  const importsOf = async (file) =>
+    [...(await readFile(join(styles, file), 'utf8')).matchAll(/^@import '\.\/([\w.]+)'(.*);$/gm)];
+  const index = await importsOf('index.css');
+  const base = await importsOf('Base.css');
+  // index.css starts with the base, which declares the layer order, and then takes every other
+  // style sheet as it is.
+  assert.equal(index[0][1], 'Base.css');
   const files = (await readdir(styles)).filter(
     (file) => file.endsWith('.css') && file !== 'index.css',
   );
-  assert.deepEqual(imports.map(([, file]) => file).sort(), files.sort());
-  for (const [, file, rest] of imports)
-    assert.match(rest, /^ layer\(env\.(?:reset|tokens|base|components|utilities)\)$/, file);
+  const imported = [...index, ...base].map(([, file]) => file);
+  assert.deepEqual([...imported].sort(), files.sort());
   // Nothing is imported twice.
-  assert.equal(new Set(imports.map(([, file]) => file)).size, imports.length);
+  assert.equal(new Set(imported).size, imported.length);
+  const layer = /^ layer\(env\.(?:reset|tokens|base|components|utilities)\)$/;
+  for (const [, file, rest] of [...index, ...base]) {
+    if (rest) {
+      // The base's own parts, which nothing else loads, take their layer as Base.css imports them.
+      assert.ok(base.some(([, part]) => part === file), `${file} takes its layer from Base.css`);
+      assert.match(rest, layer, file);
+      continue;
+    }
+    if (file === 'Base.css') continue;
+    // Every other style sheet, which a component's module imports on its own, is one block in
+    // env.components.
+    const statements = topLevel(await readFile(join(styles, file), 'utf8'));
+    assert.deepEqual(statements, [{ prelude: '@layer env.components', block: true }], file);
+  }
 });
 
 test("the library's custom properties take the --env- prefix", async () => {

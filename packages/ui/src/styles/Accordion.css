@@ -1,114 +1,116 @@
-/* Accordion: a list of sections separated by hairlines across its whole width, as a table's rows
-   are, with a line under every item and none above the first. Each heading is a full-width button,
-   a plus at its start that is a minus while the section is open, and a title in medium weight; the
-   panel below is muted text lined up with the title, not under the indicator. */
-.env-accordion {
-  --env-accordion-indicator-size: var(--env-icon-size-lg);
-  --env-accordion-gap: var(--env-space-3);
-  display: flex;
-  flex-direction: column;
-  min-inline-size: 0;
-}
-.env-accordion-item {
-  border-block-end: var(--env-control-border-width) solid var(--env-color-border-muted);
-}
-.env-accordion-header {
-  margin: 0;
-  font: inherit;
-}
-.env-accordion-trigger {
-  box-sizing: border-box;
-  display: flex;
-  align-items: flex-start;
-  gap: var(--env-accordion-gap);
-  inline-size: 100%;
-  padding-block: var(--env-space-4);
-  padding-inline: 0;
-  border: 0;
-  border-radius: var(--env-radius-sm);
-  background: none;
-  color: var(--env-color-fg-default);
-  font: var(--env-type-body);
-  font-weight: var(--env-font-weight-medium);
-  text-align: start;
-  overflow-wrap: anywhere;
-  cursor: pointer;
-  outline: none;
-}
-/* The ring stands clear outside the heading, so it never touches the indicator or the title, which
-   sit at the heading's edges. */
-.env-accordion-trigger:focus-visible {
-  outline: 2px solid var(--env-color-border-focus);
-  outline-offset: 4px;
-}
-.env-accordion-trigger[data-disabled] {
-  opacity: var(--env-state-disabled-opacity);
-  cursor: default;
-}
-/* The indicator sits on the title's first line, centered on it. */
-.env-accordion-indicator {
-  flex: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  inline-size: var(--env-accordion-indicator-size);
-  block-size: 1lh;
-  color: var(--env-color-fg-muted);
-  transition: color var(--env-motion-duration-fast) var(--env-motion-ease);
-}
-.env-accordion-indicator > svg {
-  inline-size: var(--env-accordion-indicator-size);
-  block-size: var(--env-accordion-indicator-size);
-}
-/* A plus while closed, a minus while open: one of the two icons shows. */
-.env-accordion-trigger:not([data-panel-open]) .env-accordion-indicator > svg:last-child,
-.env-accordion-trigger[data-panel-open] .env-accordion-indicator > svg:first-child {
-  display: none;
-}
-.env-accordion-trigger:not([data-disabled]):hover .env-accordion-indicator {
-  color: var(--env-color-fg-default);
-}
-.env-accordion-label {
-  min-inline-size: 0;
-}
-/* The panel grows to its content's height as it opens and shrinks as it closes. */
-.env-accordion-panel {
-  block-size: var(--accordion-panel-height, auto);
-  overflow: hidden;
-  transition: block-size var(--env-motion-duration-medium) var(--env-motion-ease);
-}
-.env-accordion-panel:is([data-starting-style], [data-ending-style]) {
-  block-size: 0;
-}
-.env-accordion-content {
-  padding-block-end: var(--env-space-4);
-  padding-inline-start: calc(var(--env-accordion-indicator-size) + var(--env-accordion-gap));
-  color: var(--env-color-fg-muted);
-  font: var(--env-type-body);
-  overflow-wrap: anywhere;
-}
-.env-accordion-content > :where(p:not(.env-text)) {
-  margin: 0;
-  color: inherit;
-  font: inherit;
-}
-.env-accordion-content > :where(* + *) {
-  margin-block-start: var(--env-space-2);
-}
-@media (pointer: coarse) {
+@layer env.components {
+  /* Accordion: a list of sections separated by hairlines across its whole width, as a table's rows
+     are, with a line under every item and none above the first. Each heading is a full-width button,
+     a plus at its start that is a minus while the section is open, and a title in medium weight; the
+     panel below is muted text lined up with the title, not under the indicator. */
+  .env-accordion {
+    --env-accordion-indicator-size: var(--env-icon-size-lg);
+    --env-accordion-gap: var(--env-space-3);
+    display: flex;
+    flex-direction: column;
+    min-inline-size: 0;
+  }
+  .env-accordion-item {
+    border-block-end: var(--env-control-border-width) solid var(--env-color-border-muted);
+  }
+  .env-accordion-header {
+    margin: 0;
+    font: inherit;
+  }
   .env-accordion-trigger {
-    min-block-size: var(--env-control-height-touch);
+    box-sizing: border-box;
+    display: flex;
+    align-items: flex-start;
+    gap: var(--env-accordion-gap);
+    inline-size: 100%;
+    padding-block: var(--env-space-4);
+    padding-inline: 0;
+    border: 0;
+    border-radius: var(--env-radius-sm);
+    background: none;
+    color: var(--env-color-fg-default);
+    font: var(--env-type-body);
+    font-weight: var(--env-font-weight-medium);
+    text-align: start;
+    overflow-wrap: anywhere;
+    cursor: pointer;
+    outline: none;
   }
-}
-@media (prefers-reduced-motion: reduce) {
-  .env-accordion-panel,
+  /* The ring stands clear outside the heading, so it never touches the indicator or the title, which
+     sit at the heading's edges. */
+  .env-accordion-trigger:focus-visible {
+    outline: 2px solid var(--env-color-border-focus);
+    outline-offset: 4px;
+  }
+  .env-accordion-trigger[data-disabled] {
+    opacity: var(--env-state-disabled-opacity);
+    cursor: default;
+  }
+  /* The indicator sits on the title's first line, centered on it. */
   .env-accordion-indicator {
-    transition: none;
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: var(--env-accordion-indicator-size);
+    block-size: 1lh;
+    color: var(--env-color-fg-muted);
+    transition: color var(--env-motion-duration-fast) var(--env-motion-ease);
   }
-}
+  .env-accordion-indicator > svg {
+    inline-size: var(--env-accordion-indicator-size);
+    block-size: var(--env-accordion-indicator-size);
+  }
+  /* A plus while closed, a minus while open: one of the two icons shows. */
+  .env-accordion-trigger:not([data-panel-open]) .env-accordion-indicator > svg:last-child,
+  .env-accordion-trigger[data-panel-open] .env-accordion-indicator > svg:first-child {
+    display: none;
+  }
+  .env-accordion-trigger:not([data-disabled]):hover .env-accordion-indicator {
+    color: var(--env-color-fg-default);
+  }
+  .env-accordion-label {
+    min-inline-size: 0;
+  }
+  /* The panel grows to its content's height as it opens and shrinks as it closes. */
+  .env-accordion-panel {
+    block-size: var(--accordion-panel-height, auto);
+    overflow: hidden;
+    transition: block-size var(--env-motion-duration-medium) var(--env-motion-ease);
+  }
+  .env-accordion-panel:is([data-starting-style], [data-ending-style]) {
+    block-size: 0;
+  }
+  .env-accordion-content {
+    padding-block-end: var(--env-space-4);
+    padding-inline-start: calc(var(--env-accordion-indicator-size) + var(--env-accordion-gap));
+    color: var(--env-color-fg-muted);
+    font: var(--env-type-body);
+    overflow-wrap: anywhere;
+  }
+  .env-accordion-content > :where(p:not(.env-text)) {
+    margin: 0;
+    color: inherit;
+    font: inherit;
+  }
+  .env-accordion-content > :where(* + *) {
+    margin-block-start: var(--env-space-2);
+  }
+  @media (pointer: coarse) {
+    .env-accordion-trigger {
+      min-block-size: var(--env-control-height-touch);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .env-accordion-panel,
+    .env-accordion-indicator {
+      transition: none;
+    }
+  }
 
-/* In a skeleton, a title given as undefined, as over a placeholder item, is a bar. */
-[data-env-skeleton] .env-accordion-label {
-  --env-skeleton-placeholder: inline-block;
-  --env-skeleton-length: 14rem;
+  /* In a skeleton, a title given as undefined, as over a placeholder item, is a bar. */
+  [data-env-skeleton] .env-accordion-label {
+    --env-skeleton-placeholder: inline-block;
+    --env-skeleton-length: 14rem;
+  }
 }

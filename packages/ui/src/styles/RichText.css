@@ -1,176 +1,178 @@
-/* RichTextEditor: a field whose control box, the text field's, holds the document; the box draws
-   the border, the fill and the states of the field variants. RichText shows saved documents in the
-   same prose. */
-.env-rich-text-editor {
-  min-inline-size: 0;
-}
-.env-rich-text-document {
-  min-inline-size: 0;
-  max-inline-size: 100%;
-  min-block-size: 10rem;
-  padding: var(--env-space-4);
-  border-radius: inherit;
-  outline: none;
-  /* The editing host takes the control font size: 1 rem on touch screens, where a smaller size on
-     the focused element zooms the page. */
-  font-size: var(--env-control-font-size);
-  caret-color: var(--env-color-border-accent-emphasis);
-}
-/* Paragraphs set their own type, so they take the size too. */
-.env-rich-text-document p {
-  font-size: var(--env-control-font-size);
-}
-.env-rich-text-document p.is-editor-empty:first-child::before {
-  color: var(--env-color-fg-muted);
-  content: attr(data-placeholder);
-  float: left;
-  height: 0;
-  pointer-events: none;
-}
-.env-rich-text :where(ul[data-type='taskList']),
-.env-rich-text-document :where(ul[data-type='taskList']) {
-  list-style: none;
-  padding-inline-start: 0;
-}
-/* The editor renders task items without data-type, so select them by their list. */
-.env-rich-text :where(ul[data-type='taskList'] > li),
-.env-rich-text-document :where(ul[data-type='taskList'] > li) {
-  display: flex;
-  align-items: baseline;
-  gap: var(--env-space-2);
-}
-.env-rich-text :where(ul[data-type='taskList'] > li > div),
-.env-rich-text-document :where(ul[data-type='taskList'] > li > div) {
-  min-inline-size: 0;
-  flex: 1;
-}
-/* A task's text sits beside its checkbox, not below it: no space before it, so a task's row is as
-   tall in RichText as in the editor. */
-.env-rich-text :where(ul[data-type='taskList'] > li > div) {
-  margin-block-start: 0;
-}
-/* The editor's task item: its checkbox beside the item's text, as in RichText. */
-.env-rich-text-task {
-  display: flex;
-  align-items: baseline;
-  gap: var(--env-space-2);
-}
-.env-rich-text-task-content {
-  min-inline-size: 0;
-  flex: 1;
-}
-/* ProseMirror's base styles, which Tiptap would add in a style element outside any cascade layer:
-   here they are in envUI's layer, so the document's own rules, such as code blocks that scroll
-   rather than wrap, win over them, and an application's CSS still overrides both. */
-.env-rich-text-document.ProseMirror {
-  position: relative;
-  overflow-wrap: break-word;
-  white-space: pre-wrap;
-  white-space: break-spaces;
-  font-variant-ligatures: none;
-  font-feature-settings: 'liga' 0;
-}
-.env-rich-text-document [contenteditable='false'] {
-  white-space: normal;
-}
-.env-rich-text-document [contenteditable='false'] [contenteditable='true'] {
-  white-space: pre-wrap;
-}
-/* Tiptap's !important here is kept: inside envUI's layer, an important declaration still wins
-   over an unlayered reset such as img { display: block } (Tailwind's preflight), which would
-   otherwise turn the separator into a line of its own. */
-.env-rich-text-document img.ProseMirror-separator {
-  display: inline !important;
-  inline-size: 0 !important;
-  block-size: 0 !important;
-  margin: 0 !important;
-  border: none !important;
-}
-.env-rich-text-document .ProseMirror-gapcursor {
-  display: none;
-  position: absolute;
-  margin: 0;
-  pointer-events: none;
-}
-.env-rich-text-document .ProseMirror-gapcursor::after {
-  content: '';
-  display: block;
-  position: absolute;
-  inset-block-start: calc(-2 * var(--env-control-border-width));
-  inline-size: var(--env-space-5);
-  border-block-start: var(--env-control-border-width) solid currentColor;
-  animation: env-rich-text-gapcursor-blink 1.1s steps(2, start) infinite;
-}
-@keyframes env-rich-text-gapcursor-blink {
-  to {
-    visibility: hidden;
+@layer env.components {
+  /* RichTextEditor: a field whose control box, the text field's, holds the document; the box draws
+     the border, the fill and the states of the field variants. RichText shows saved documents in the
+     same prose. */
+  .env-rich-text-editor {
+    min-inline-size: 0;
   }
-}
-/* Under reduced motion the gap cursor stays lit rather than blinking. */
-@media (prefers-reduced-motion: reduce) {
+  .env-rich-text-document {
+    min-inline-size: 0;
+    max-inline-size: 100%;
+    min-block-size: 10rem;
+    padding: var(--env-space-4);
+    border-radius: inherit;
+    outline: none;
+    /* The editing host takes the control font size: 1 rem on touch screens, where a smaller size on
+       the focused element zooms the page. */
+    font-size: var(--env-control-font-size);
+    caret-color: var(--env-color-border-accent-emphasis);
+  }
+  /* Paragraphs set their own type, so they take the size too. */
+  .env-rich-text-document p {
+    font-size: var(--env-control-font-size);
+  }
+  .env-rich-text-document p.is-editor-empty:first-child::before {
+    color: var(--env-color-fg-muted);
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    pointer-events: none;
+  }
+  .env-rich-text :where(ul[data-type='taskList']),
+  .env-rich-text-document :where(ul[data-type='taskList']) {
+    list-style: none;
+    padding-inline-start: 0;
+  }
+  /* The editor renders task items without data-type, so select them by their list. */
+  .env-rich-text :where(ul[data-type='taskList'] > li),
+  .env-rich-text-document :where(ul[data-type='taskList'] > li) {
+    display: flex;
+    align-items: baseline;
+    gap: var(--env-space-2);
+  }
+  .env-rich-text :where(ul[data-type='taskList'] > li > div),
+  .env-rich-text-document :where(ul[data-type='taskList'] > li > div) {
+    min-inline-size: 0;
+    flex: 1;
+  }
+  /* A task's text sits beside its checkbox, not below it: no space before it, so a task's row is as
+     tall in RichText as in the editor. */
+  .env-rich-text :where(ul[data-type='taskList'] > li > div) {
+    margin-block-start: 0;
+  }
+  /* The editor's task item: its checkbox beside the item's text, as in RichText. */
+  .env-rich-text-task {
+    display: flex;
+    align-items: baseline;
+    gap: var(--env-space-2);
+  }
+  .env-rich-text-task-content {
+    min-inline-size: 0;
+    flex: 1;
+  }
+  /* ProseMirror's base styles, which Tiptap would add in a style element outside any cascade layer:
+     here they are in envUI's layer, so the document's own rules, such as code blocks that scroll
+     rather than wrap, win over them, and an application's CSS still overrides both. */
+  .env-rich-text-document.ProseMirror {
+    position: relative;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+    white-space: break-spaces;
+    font-variant-ligatures: none;
+    font-feature-settings: 'liga' 0;
+  }
+  .env-rich-text-document [contenteditable='false'] {
+    white-space: normal;
+  }
+  .env-rich-text-document [contenteditable='false'] [contenteditable='true'] {
+    white-space: pre-wrap;
+  }
+  /* Tiptap's !important here is kept: inside envUI's layer, an important declaration still wins
+     over an unlayered reset such as img { display: block } (Tailwind's preflight), which would
+     otherwise turn the separator into a line of its own. */
+  .env-rich-text-document img.ProseMirror-separator {
+    display: inline !important;
+    inline-size: 0 !important;
+    block-size: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+  }
+  .env-rich-text-document .ProseMirror-gapcursor {
+    display: none;
+    position: absolute;
+    margin: 0;
+    pointer-events: none;
+  }
   .env-rich-text-document .ProseMirror-gapcursor::after {
-    animation: none;
+    content: '';
+    display: block;
+    position: absolute;
+    inset-block-start: calc(-2 * var(--env-control-border-width));
+    inline-size: var(--env-space-5);
+    border-block-start: var(--env-control-border-width) solid currentColor;
+    animation: env-rich-text-gapcursor-blink 1.1s steps(2, start) infinite;
   }
-}
-.env-rich-text-document.ProseMirror-focused .ProseMirror-gapcursor {
-  display: block;
-}
-.env-rich-text-document.ProseMirror-hideselection *::selection {
-  background: transparent;
-}
-.env-rich-text-document.ProseMirror-hideselection * {
-  caret-color: transparent;
-}
-/* A code block, a selected cell and a reference stand out from the editor by translucent fills,
-   which take the background of what the editor sits on, as the editor itself does. */
-.env-rich-text-document pre {
-  padding: var(--env-space-4);
-  background: var(--env-color-bg-neutral-muted);
-  overflow: auto;
-  white-space: pre;
-}
-.env-rich-text-document .tableWrapper {
-  overflow-x: auto;
-}
-.env-rich-text-document td,
-.env-rich-text-document th {
-  min-inline-size: 3rem;
-  position: relative;
-}
-.env-rich-text-document .selectedCell {
-  background: var(--env-color-bg-selected);
-}
-.env-rich-text-reference {
-  display: inline;
-  padding: 0 var(--env-space-1);
-  border-radius: 0.25rem;
-  background: var(--env-color-bg-neutral-muted);
-  color: var(--env-color-fg-default);
-  text-decoration: none;
-  box-decoration-break: clone;
-}
-.env-rich-text-reference:focus-visible {
-  outline: 0.125rem solid var(--env-color-border-focus);
-}
-/* The suggestions of a trigger, such as @: a list beside the caret, above what the editor sits in,
-   a frosted popup as menus are (Popup.css), with their corners and rows. */
-.env-rich-text-suggestions-positioner {
-  z-index: var(--env-z-popover);
-}
-.env-rich-text-suggestions {
-  box-sizing: border-box;
-  min-inline-size: min(12rem, calc(100dvw - 2 * var(--env-viewport-gutter)));
-  max-inline-size: min(24rem, calc(100dvw - 2 * var(--env-viewport-gutter)));
-  max-block-size: min(18rem, calc(100dvh - 2 * var(--env-viewport-gutter)));
-  overflow: auto;
-  /* The edge of a solid list; frosted, it has none. */
-  --env-rich-text-suggestions-edge: var(--env-popup-solid) var(--env-popup-edge-color);
-  border: var(--env-control-border-width) solid var(--env-rich-text-suggestions-edge, transparent);
-  border-radius: var(--env-popup-radius);
-  background: color-mix(in srgb, var(--env-popup-fill) var(--env-popup-opacity), transparent);
-  box-shadow: var(--env-popup-shadow);
-  -webkit-backdrop-filter: blur(var(--env-popup-blur)) saturate(1.4);
-  backdrop-filter: blur(var(--env-popup-blur)) saturate(1.4);
-  color: var(--env-color-fg-default);
-  font: var(--env-type-body);
+  @keyframes env-rich-text-gapcursor-blink {
+    to {
+      visibility: hidden;
+    }
+  }
+  /* Under reduced motion the gap cursor stays lit rather than blinking. */
+  @media (prefers-reduced-motion: reduce) {
+    .env-rich-text-document .ProseMirror-gapcursor::after {
+      animation: none;
+    }
+  }
+  .env-rich-text-document.ProseMirror-focused .ProseMirror-gapcursor {
+    display: block;
+  }
+  .env-rich-text-document.ProseMirror-hideselection *::selection {
+    background: transparent;
+  }
+  .env-rich-text-document.ProseMirror-hideselection * {
+    caret-color: transparent;
+  }
+  /* A code block, a selected cell and a reference stand out from the editor by translucent fills,
+     which take the background of what the editor sits on, as the editor itself does. */
+  .env-rich-text-document pre {
+    padding: var(--env-space-4);
+    background: var(--env-color-bg-neutral-muted);
+    overflow: auto;
+    white-space: pre;
+  }
+  .env-rich-text-document .tableWrapper {
+    overflow-x: auto;
+  }
+  .env-rich-text-document td,
+  .env-rich-text-document th {
+    min-inline-size: 3rem;
+    position: relative;
+  }
+  .env-rich-text-document .selectedCell {
+    background: var(--env-color-bg-selected);
+  }
+  .env-rich-text-reference {
+    display: inline;
+    padding: 0 var(--env-space-1);
+    border-radius: 0.25rem;
+    background: var(--env-color-bg-neutral-muted);
+    color: var(--env-color-fg-default);
+    text-decoration: none;
+    box-decoration-break: clone;
+  }
+  .env-rich-text-reference:focus-visible {
+    outline: 0.125rem solid var(--env-color-border-focus);
+  }
+  /* The suggestions of a trigger, such as @: a list beside the caret, above what the editor sits in,
+     a frosted popup as menus are (Popup.css), with their corners and rows. */
+  .env-rich-text-suggestions-positioner {
+    z-index: var(--env-z-popover);
+  }
+  .env-rich-text-suggestions {
+    box-sizing: border-box;
+    min-inline-size: min(12rem, calc(100dvw - 2 * var(--env-viewport-gutter)));
+    max-inline-size: min(24rem, calc(100dvw - 2 * var(--env-viewport-gutter)));
+    max-block-size: min(18rem, calc(100dvh - 2 * var(--env-viewport-gutter)));
+    overflow: auto;
+    /* The edge of a solid list; frosted, it has none. */
+    --env-rich-text-suggestions-edge: var(--env-popup-solid) var(--env-popup-edge-color);
+    border: var(--env-control-border-width) solid var(--env-rich-text-suggestions-edge, transparent);
+    border-radius: var(--env-popup-radius);
+    background: color-mix(in srgb, var(--env-popup-fill) var(--env-popup-opacity), transparent);
+    box-shadow: var(--env-popup-shadow);
+    -webkit-backdrop-filter: blur(var(--env-popup-blur)) saturate(1.4);
+    backdrop-filter: blur(var(--env-popup-blur)) saturate(1.4);
+    color: var(--env-color-fg-default);
+    font: var(--env-type-body);
+  }
 }
