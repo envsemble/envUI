@@ -145,6 +145,22 @@ test(
   },
 );
 
+test('the list opens 8 px clear of the field, at its start edge', async ({ page }) => {
+  const owner = field(page, 'Owner light');
+  await wellOf(owner).locator('.env-combobox-trigger').click();
+  const popup = page.locator('.env-combobox-popup[data-open]');
+  await expect(popup).toBeVisible();
+  await popup.evaluate((element) =>
+    Promise.allSettled(element.getAnimations().map(({ finished }) => finished)),
+  );
+  const well = (await wellOf(owner).boundingBox())!;
+  const box = (await popup.boundingBox())!;
+  // Below the field, or above it where the window has no room below.
+  const gap = box.y > well.y ? box.y - (well.y + well.height) : well.y - (box.y + box.height);
+  expect(gap).toBeCloseTo(8, 0);
+  expect(box.x).toBeCloseTo(well.x, 0);
+});
+
 test('the chevron flips as the popup opens and closes, never pointing sideways', async ({
   page,
 }) => {

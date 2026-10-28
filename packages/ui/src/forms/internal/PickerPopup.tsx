@@ -13,11 +13,6 @@ const popupParts = {
   Popup: BasePopover.Popup,
 };
 
-function remPixels(element: Element | null) {
-  if (!element) return 16;
-  return Number.parseFloat(getComputedStyle(element.ownerDocument.documentElement).fontSize) || 16;
-}
-
 /** The accessible name of a picker's field, which its popup and the list in it take too. */
 export interface PickerName {
   'aria-labelledby': string | undefined;
@@ -27,8 +22,8 @@ export interface PickerName {
 export interface PickerPopupProps {
   /** The picker's own popup class, such as env-time-picker-popup, beside the shared ones. */
   className?: string;
-  /** The field's button, which the popup opens under, a quarter rem away. */
-  triggerRef: RefObject<HTMLElement | null>;
+  /** The field's control box, which the popup opens under, 8 px clear as every popup is. */
+  anchorRef: RefObject<HTMLElement | null>;
   /** The popup element. */
   popupRef: RefObject<HTMLDivElement | null>;
   /** The text direction at the field, which the portal leaves behind. */
@@ -53,7 +48,7 @@ export interface PickerPopupProps {
  */
 export function PickerPopup({
   className,
-  triggerRef,
+  anchorRef,
   popupRef,
   dir,
   name,
@@ -67,7 +62,7 @@ export function PickerPopup({
       parts={popupParts}
       side="bottom"
       align="start"
-      sideOffset={() => remPixels(triggerRef.current) * 0.25}
+      anchor={anchorRef}
       dir={dir}
       className={classNames('env-picker-popup', 'env-date-picker-popup', className)}
       layout={<Grid gap={3} padding={4} />}

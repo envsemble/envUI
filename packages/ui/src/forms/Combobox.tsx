@@ -193,12 +193,6 @@ function flattenItems<Item extends ComboboxItem>(
   );
 }
 
-/** Field geometry in rem follows the reader's text size; Base UI positions in pixels. */
-function remPixels(element: Element | null) {
-  if (!element) return 16;
-  return Number.parseFloat(getComputedStyle(element.ownerDocument.documentElement).fontSize) || 16;
-}
-
 const popupParts = {
   Portal: BaseCombobox.Portal,
   Positioner: BaseCombobox.Positioner,
@@ -403,10 +397,6 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
     }
   }
 
-  function popupOffset() {
-    return remPixels(inputRef.current) * 0.25;
-  }
-
   const hasChips = isMultiple && selectedValues.length > 0;
   const labelShown = label != null && isLabelShown({ showLabel });
   // A floating label needs a blank placeholder to detect the empty state; chips fill the field.
@@ -602,7 +592,6 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
           parts={popupParts}
           side="bottom"
           align="start"
-          sideOffset={popupOffset}
           dir={direction}
           className="env-combobox-popup"
           layout={<Column padding={1} />}
