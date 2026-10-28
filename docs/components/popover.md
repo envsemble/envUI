@@ -200,10 +200,19 @@ Leave it uncontrolled, with `defaultOpen` to start open, or control it with `ope
 
 ### Customize
 
+Every popup, a popover, a menu, a Select's or a Combobox's list, a picker, a hover card, rich text suggestions and the command palette, is frosted. Three properties, set on a `.env-theme` boundary, change them all:
+
+- `--env-popup-opacity`, 88 % in light and 90 % in dark, how much of the popup's color, `--env-color-bg-popup`, covers what is behind it; `100%` makes popups solid.
+- `--env-popup-blur`, 1.375 rem, the blur of what shows through, with a little more saturation.
+- `--env-popup-shadow`, a soft shadow in the text's color in light and a deeper shade of the page in dark: with the avatars', envUI's only shadow.
+
+At high contrast, with reduced transparency and under forced colors popups are solid, with their elevation edge and no blur or shadow. Tooltips stay solid.
+
 `className`, `style`, `ref` and data attributes reach the surface, `env-popover`, which has `data-width="lg"` when large and renders on PopupSurface in the trigger's text direction and theme. Its title is `env-popover-title`.
 
 ## Changelog
 
+- **1.0.0-prerelease.5**: Popovers are frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge, and is solid with its edge at high contrast and with reduced transparency: `--env-popup-opacity`, `--env-popup-blur` and `--env-popup-shadow`.
 - **1.0.0**: `width` is `md` or `lg`, the widest the popover grows as it sizes to its content; `side` takes `inline-start` and `inline-end`; `className`, `style`, `ref` and data attributes reach the surface, which renders on PopupSurface in the trigger's text direction.
 - **1.0.0**: Popovers take the level-2 elevation edge, with no shadow.
 - **0.5.0**: Popover, with a title, two widths and a close function for its content.

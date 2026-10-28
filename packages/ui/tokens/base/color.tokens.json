@@ -567,15 +567,15 @@
       "link": {
         "$root": {
           "$description": "Links and text buttons: at least 4.5:1 on every surface and row.",
-          "$value": "{palette.blue.60}"
+          "$value": "{palette.blue.65}"
         },
         "hover": {
           "$description": "A link under the pointer.",
-          "$value": "{palette.blue.65}"
+          "$value": "{palette.blue.70}"
         },
         "pressed": {
           "$description": "A link while pressed.",
-          "$value": "{palette.blue.70}"
+          "$value": "{palette.blue.75}"
         }
       },
       "link-on-tint": {

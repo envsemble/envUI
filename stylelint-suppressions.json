@@ -44,12 +44,12 @@
   },
   "packages/ui/src/styles/Combobox.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 10
+      "count": 9
     }
   },
   "packages/ui/src/styles/CommandPalette.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 8
+      "count": 7
     }
   },
   "packages/ui/src/styles/Composer.css": {
@@ -127,7 +127,7 @@
   },
   "packages/ui/src/styles/Menu.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 7
+      "count": 6
     }
   },
   "packages/ui/src/styles/Menubar.css": {

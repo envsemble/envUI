@@ -287,6 +287,24 @@ test.describe('Sheet', () => {
     expect(await fill(sheet.getByRole('navigation', { name: 'Sections' }))).toBe(navigation);
   });
 
+  test('a sheet has no edge, and at high contrast its edge returns', async ({ page }) => {
+    const edge = (locator: Locator) =>
+      locator.evaluate((element) => {
+        const style = getComputedStyle(element);
+        return [style.borderInlineStartColor, style.boxShadow];
+      });
+    await page.goto(sheets);
+    await page.getByRole('button', { name: 'Open filters' }).click();
+    const filters = page.getByRole('dialog', { name: 'Filters' });
+    expect(await edge(filters)).toEqual(['rgba(0, 0, 0, 0)', 'none']);
+    await page.keyboard.press('Escape');
+    await page.emulateMedia({ contrast: 'more' });
+    await page.reload();
+    await page.getByRole('button', { name: 'Open filters' }).click();
+    const [color] = await edge(filters);
+    expect(color).not.toBe('rgba(0, 0, 0, 0)');
+  });
+
   test('a md side sheet takes the whole width of a compact window', async ({ page }) => {
     await page.setViewportSize({ width: 400, height: 700 });
     await page.goto(sheets);

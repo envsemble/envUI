@@ -1564,7 +1564,7 @@ export const tokens = {
     cssVariable: '--env-color-fg-link',
     type: 'color',
     values: {
-      light: '#005cc8',
+      light: '#0053b5',
       dark: '#9fc1f8',
       'light-high-contrast': '#00377c',
       'dark-high-contrast': '#e0ebfd',
@@ -1608,7 +1608,7 @@ export const tokens = {
     cssVariable: '--env-color-fg-link-hover',
     type: 'color',
     values: {
-      light: '#0053b5',
+      light: '#004aa2',
       dark: '#8ab3f5',
       'light-high-contrast': '#002f6d',
       'dark-high-contrast': '#eaf2ff',
@@ -1619,7 +1619,7 @@ export const tokens = {
     cssVariable: '--env-color-fg-link-pressed',
     type: 'color',
     values: {
-      light: '#004aa2',
+      light: '#00408f',
       dark: '#75a5f2',
       'light-high-contrast': '#00275c',
       'dark-high-contrast': '#f4f8ff',

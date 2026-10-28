@@ -96,16 +96,17 @@
   height: var(--env-control-icon-size);
 }
 
-/* The open list is the menus' raised popup: its own color, a hairline border, small corners and
-   rows of the row height that highlight on hover and keyboard focus, where a check mark and a
-   heavier label show the chosen option. It stands apart from the page, panes, rows and dialogs. */
+/* The open list is the menus' frosted popup, with their corners and rows that highlight on hover
+   and keyboard focus, where the selection's fill, a check mark and a heavier label show the chosen
+   option. */
 .env-select-popup {
   width: max-content;
   min-width: min(var(--anchor-width), var(--available-width));
   max-width: min(22rem, var(--available-width));
   max-height: var(--available-height);
   overflow: hidden;
-  border-radius: calc(var(--env-radius-sm) + var(--env-space-1));
+  padding: var(--env-popup-padding);
+  border-radius: var(--env-popup-radius);
 }
 .env-select-popup[hidden] {
   display: none;
@@ -122,9 +123,6 @@
   white-space: normal;
   overflow-wrap: anywhere;
   text-align: start;
-}
-.env-select-item:active:not([data-disabled]) {
-  background: var(--env-color-bg-popup-pressed);
 }
 .env-select-item[data-selected] {
   font-weight: var(--env-font-weight-medium);
