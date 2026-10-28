@@ -98,6 +98,7 @@ export * as Accordion from './content/Accordion.js';
 export * as DescriptionList from './content/DescriptionList.js';
 export * from './content/CalendarHeatmap.js';
 export * from './foundations/ThemePreference.js';
+export * from './foundations/ThemeToggle.js';
 export {
   createThemeBootstrapScript,
   type ThemeBootstrapOptions,

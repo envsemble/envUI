@@ -35,6 +35,7 @@
       "MaterialSymbolState.tsx": "foundations",
       "navigation/LinkProvider.tsx": "foundations",
       "foundations/ThemePreference.tsx": "composites",
+      "foundations/ThemeToggle.tsx": "composites",
       "foundations/ThemeRadioGroup.tsx": "composites",
       "navigation/panel-dock/internal/PanelDockPanelContext.ts": "shell",
       "actions/AvatarButton.tsx": "composites",
@@ -356,8 +357,6 @@
         "styles": ["Tokens.css", "TokensHandwritten.css"]
       },
       "ThemePreference": {
-        "classes": ["env-theme-toggle"],
-        "styles": ["ThemeToggle.css"],
         "modules": ["foundations/internal/ThemePreferenceContext.ts"]
       },
       "Breadcrumbs": {},

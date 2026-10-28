@@ -76,6 +76,7 @@ export const aliases: Record<string, string[]> = {
   themeBootstrap: ['ThemePreference', 'ThemeContrast'],
   'theme-bootstrap': ['ThemePreference', 'ThemeContrast'],
   ThemePreferenceContext: ['ThemePreference'],
+  ThemeToggle: ['ThemePreference'],
   Density: ['Scale'],
   DensitySections: ['Scale'],
   MessageStrings: ['Messages'],

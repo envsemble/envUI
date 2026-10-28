@@ -8201,7 +8201,7 @@
     },
     "ThemeToggle": {
       "kind": "component",
-      "source": "packages/ui/src/foundations/ThemePreference.tsx",
+      "source": "packages/ui/src/foundations/ThemeToggle.tsx",
       "description": "Switches between the light and dark themes and stores the choice.",
       "props": [
         {
