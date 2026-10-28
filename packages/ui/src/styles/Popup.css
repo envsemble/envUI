@@ -42,6 +42,9 @@
   --env-popup-row-gap: calc(0.25 * var(--env-control-height-md));
   --env-popup-radius: calc(var(--env-popup-row-radius) + var(--env-popup-padding));
   --env-popup-group-gap: calc(0.25 * var(--env-control-height-md));
+  /* The inset of a panel, a popover's, a hover card's or a picker's, on a surface's corners: as
+     wide as a row's corner, so content keeps clear of the curve. */
+  --env-popup-panel-padding: calc(0.35 * var(--env-control-height-md));
 }
 .env-theme[data-env-theme='dark'] {
   --env-popup-fill: var(--env-color-bg-default);

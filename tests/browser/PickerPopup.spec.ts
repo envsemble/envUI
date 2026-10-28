@@ -67,8 +67,9 @@ test('the three pickers open the same card, their actions inset alike from its e
     await expect(openCard(page)).toHaveCount(0);
   }
   const [date, time, month] = cards;
-  // One inset and one radius: the spacing scale's 1 rem at the default scale.
-  expect(date!.padding).toBe('16px');
+  // One inset and one radius: a panel's, as wide as a popup row's corner, 14 px at the default
+  // scale.
+  expect(date!.padding).toBe('14px');
   for (const card of [time, month]) {
     expect(card!.padding).toBe(date!.padding);
     expect(card!.radius).toBe(date!.radius);

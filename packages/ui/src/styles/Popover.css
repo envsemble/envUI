@@ -10,6 +10,7 @@
   min-inline-size: min(12rem, var(--env-popover-room));
   max-inline-size: min(20rem, var(--env-popover-room));
   align-content: start;
+  padding: var(--env-popup-panel-padding);
 }
 .env-popover[data-width='lg'],
 .env-hover-card[data-width='lg'] {
