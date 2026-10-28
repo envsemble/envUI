@@ -208,12 +208,15 @@ test('the import check reads every way a source loads a module', () => {
   assert.match('@envsemble/envui/icons/Home', publicModules);
 });
 
-test('every specimen file is placed by its page, or plays the example it is named after', () => {
+test('every specimen file is placed by its page, or plays or holds the example it is named after', () => {
   const placed = new Set();
   for (const document of sectioned)
     for (const section of document.sections ?? [])
       for (const block of section.blocks)
-        if (block.kind === 'specimen' || (block.kind === 'example' && block.motion))
+        if (
+          block.kind === 'specimen' ||
+          (block.kind === 'example' && (block.motion || block.specimen))
+        )
           placed.add(`${document.id}/${block.name}`);
   for (const { page, name } of files(specimensDirectory))
     assert.ok(

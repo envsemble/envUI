@@ -186,6 +186,7 @@ function Figure({
         of={block.of ?? page.title}
         open={block.open}
         enlarge={block.enlarge}
+        specimen={block.specimen}
         stage={block.stage}
         variants={block.role === 'variants'}
         options={options}

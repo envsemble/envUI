@@ -99,7 +99,7 @@ The name chooses one of eight pastel colors, the same on every page.
 1. **Group** (`env-avatar-group`)
 2. **Avatar** (`env-avatar`)
 3. **Initials** (`env-avatar-fallback-initials::text`)
-4. **Person picture** (`env-avatar-person`)
+4. **Person picture** (`env-avatar-person-figure`)
 5. **Overflow** (`env-avatar-group-overflow`, `max`)
 
 ## Behaviour

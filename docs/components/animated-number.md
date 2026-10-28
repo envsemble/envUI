@@ -36,7 +36,9 @@ examples:
   EveryNumberRolls:
     role: dont
     caption: 'Several numbers rolling at once: none of them draws the eye.'
-  AnimatedNumberAnatomy: anatomy
+  AnimatedNumberAnatomy:
+    role: anatomy
+    caption: Caught as a new value rolls in.
 ---
 
 # AnimatedNumber
@@ -53,11 +55,11 @@ The number can be written in any format, such as a currency. By default it is wr
 
 ## Anatomy
 
-```tsx figure=AnimatedNumberAnatomy
+```tsx figure=AnimatedNumberAnatomy specimen
 
 ```
 
-1. **Number** (`env-animated-number`)
+1. **Window** (`env-animated-number`)
 2. **Value** (`env-animated-number-value`, `value`)
 
 ## Behaviour

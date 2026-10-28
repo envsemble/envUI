@@ -7,6 +7,7 @@ import { OpenExample, openerBox } from './OpenExample';
 import { legendOf, partDescription, partSelector } from './Parts';
 import { legendName } from '../shared/CatalogueContent';
 import { OptionLegend } from './OptionLegend';
+import { SpecimenRender } from './Specimen';
 import type { OptionTable } from '../shared/CatalogueContent';
 
 /** A callout's number, where it sits and the part it points at, in the stage's coordinates. */
@@ -493,6 +494,7 @@ function AnatomyStage({
   legend,
   open,
   enlarged,
+  specimen,
   stage: fill,
   variants,
   width,
@@ -503,6 +505,8 @@ function AnatomyStage({
   open: boolean;
   /** Whether the subject shows half as large again, though it isn't small. */
   enlarged: boolean;
+  /** Whether the subject is the example's specimen of the same name, held in a moment. */
+  specimen: boolean;
   stage?: StageFill;
   /** Whether the callouts name the variants rather than number the parts. */
   variants: boolean;
@@ -551,19 +555,24 @@ function AnatomyStage({
       attributeFilter: ['class', 'style'],
     });
     void document.fonts?.ready.then(update);
+    // And as its parts settle where they enter with motion, such as a dock's panel rising into
+    // place, which moves them without resizing them.
+    subjectElement.addEventListener('animationend', update);
+    subjectElement.addEventListener('transitionend', update);
     return () => {
       cancelAnimationFrame(frame);
       resize.disconnect();
       mutation.disconnect();
+      subjectElement.removeEventListener('animationend', update);
+      subjectElement.removeEventListener('transitionend', update);
     };
   }, [legend, open, enlarged, variants]);
-  const render = open ? (
-    <OpenExample name={name}>
-      <ExampleRender page={page} name={name} />
-    </OpenExample>
+  const example = specimen ? (
+    <SpecimenRender page={page} name={name} />
   ) : (
     <ExampleRender page={page} name={name} />
   );
+  const render = open ? <OpenExample name={name}>{example}</OpenExample> : example;
   return (
     <Theme
       {...theme}
@@ -655,6 +664,7 @@ export function AnatomyFigure({
   of,
   open = false,
   enlarge: enlarged = false,
+  specimen = false,
   stage,
   variants = false,
   options,
@@ -670,6 +680,11 @@ export function AnatomyFigure({
   open?: boolean;
   /** Whether the subject shows half as large again where its stage has room, as a small one does. */
   enlarge?: boolean;
+  /**
+   * Whether the parts are numbered on the example's specimen of the same name, which holds it in a
+   * moment its parts show apart, such as a value caught as it rolls in; the code is the example's.
+   */
+  specimen?: boolean;
   /** The stage's fill, where the page's would hide the subject. */
   stage?: StageFill;
   /** A variants figure: a callout with each variant's name on the example's items. */
@@ -688,6 +703,7 @@ export function AnatomyFigure({
         legend={items}
         open={open}
         enlarged={enlarged}
+        specimen={specimen}
         stage={stage}
         variants={variants}
         width={width}

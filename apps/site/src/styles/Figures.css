@@ -448,6 +448,8 @@
   justify-items: center;
   inline-size: 100%;
   min-inline-size: 0;
+  /* Parts raised in their component, such as a dock's panels, stay under the callouts. */
+  isolation: isolate;
 }
 
 /* A subject that needs a width to show its parts (`width` on its fence): it fills the stage, or,

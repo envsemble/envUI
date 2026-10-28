@@ -321,7 +321,7 @@ const figureAttributes: Record<string, { allowed: string[]; required: string[] }
   do: { allowed: ['open', 'stage', 'wide', 'motion'], required: ['caption'] },
   dont: { allowed: ['open', 'stage', 'wide', 'motion'], required: ['caption'] },
   caution: { allowed: ['open', 'stage', 'wide', 'motion'], required: ['caption'] },
-  anatomy: { allowed: ['of', 'open', 'stage', 'enlarge', 'width'], required: [] },
+  anatomy: { allowed: ['of', 'open', 'stage', 'enlarge', 'width', 'specimen'], required: [] },
   variants: { allowed: ['stage'], required: [] },
 };
 /**
@@ -339,9 +339,20 @@ const stageFills = ['shaded'];
  * other. With `widths`, `sweep` shows one
  * frame whose width sweeps between them and back, `classes` names the window class on its ruler,
  * and `fit` draws the frame smaller where it must to reach its widest width on the stage; `motion`
- * plays the example in the catalogue: its animated specimen of the same name takes its place.
+ * plays the example in the catalogue: its animated specimen of the same name takes its place; and
+ * `specimen` numbers an anatomy figure's parts on its specimen of the same name, which holds the
+ * example in a moment its parts show apart, such as a value caught as it rolls in.
  */
-const figureFlags = new Set(['open', 'enlarge', 'wide', 'sweep', 'classes', 'fit', 'motion']);
+const figureFlags = new Set([
+  'open',
+  'enlarge',
+  'wide',
+  'sweep',
+  'classes',
+  'fit',
+  'motion',
+  'specimen',
+]);
 /** A file name as words: ConnectedButtons is "Connected buttons". */
 const fileWords = (name: string) =>
   name
@@ -750,6 +761,11 @@ export function readPage(
       if (block.motion && !specimens.has(name))
         problems.push(
           `example ${name} has motion but no specimen apps/site/src/specimens/${document.id}/${name}.tsx to play it`,
+        );
+      if (attributes.specimen === true) block.specimen = true;
+      if (block.specimen && !specimens.has(name))
+        problems.push(
+          `anatomy ${name} has specimen but no specimen apps/site/src/specimens/${document.id}/${name}.tsx to number`,
         );
       blocks.push(block);
       if (role === 'anatomy' || role === 'variants') legendOf = block;
