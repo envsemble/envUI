@@ -812,6 +812,11 @@ const registry: readonly ContrastPair[] = merged([
       'Solid badges and counters',
     ),
   ]),
+  ...text(
+    '--env-color-fg-on-emphasis',
+    ['--env-color-bg-warning-emphasis'],
+    "The catalogue's caution bar, a dark island in both themes: the dark themes' values are its",
+  ),
   // A diff stat's additions and deletions over its neutral fill, wherever it sits.
   ...['--env-color-fg-success', '--env-color-fg-danger'].flatMap((fg) =>
     text(
