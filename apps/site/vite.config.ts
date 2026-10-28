@@ -12,6 +12,9 @@ import {
 // `vite build` makes the static site: separate files with content-hashed names that browsers keep
 // cached, the catalogue at the root and the Docs under /docs, both from one index.html.
 import { tokensVitePlugin } from '../../scripts/build/BuildTokens.ts';
+// Node runs this file as it is, before anything is built: the package's entry,
+// @envsemble/envui/theme-bootstrap, is its build in dist/, which a checkout has only after
+// npm run build, so the library's source module is imported instead.
 import { createThemeBootstrapScript } from '../../packages/ui/src/foundations/ThemeBootstrap.ts';
 import {
   createDisplayBootstrapScript,
