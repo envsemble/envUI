@@ -1602,7 +1602,7 @@
         },
         {
           "class": "env-command-palette-search",
-          "description": "The row with the search input."
+          "description": "The search field, a ghost TextField around the search input."
         },
         {
           "class": "env-command-palette-status",
@@ -1636,11 +1636,13 @@
       ],
       "uses": [
         "Dialog",
+        "Field",
         "Icon",
         "Kbd",
         "ListRow",
         "Skeleton",
         "Surface",
+        "TextField",
         "Theme"
       ]
     },

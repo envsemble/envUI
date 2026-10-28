@@ -207,9 +207,13 @@
 }
 /* Ghost fields are only their text and icon at rest: no border or fill. A soft fill
    shows under the pointer and while the field has focus, the icon keeps its quiet color, and the
-   placeholder clears once the field has focus. An invalid ghost field shows its red border. */
+   placeholder clears once the field has focus. An invalid ghost field shows its red border.
+   The command palette's search is a ghost field that sets three private properties
+   (CommandPalette.css): --env-text-field-ghost-solid, a fill it keeps in every state;
+   --env-text-field-ghost-placeholder, its placeholder's color while focused; and
+   --env-text-field-ghost-edge, an edge. */
 .env-text-field-control[data-variant='ghost'] {
-  background: transparent;
+  background: var(--env-text-field-ghost-solid, transparent);
   transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
 }
 @media (hover: hover) {
@@ -217,24 +221,24 @@
       :has(> .env-text-field-input:disabled),
       [data-disabled]
     ) {
-    background: var(--env-color-bg-neutral-muted);
+    background: var(--env-text-field-ghost-solid, var(--env-color-bg-neutral-muted));
   }
 }
 .env-text-field-control[data-variant='ghost']:focus-within {
-  background: var(--env-color-bg-neutral-muted);
+  background: var(--env-text-field-ghost-solid, var(--env-color-bg-neutral-muted));
 }
 .env-text-field-control[data-variant='ghost']:focus-within > .env-text-field-start {
   color: var(--env-color-fg-muted);
 }
 .env-text-field-control[data-variant='ghost'] > .env-text-field-input:focus::placeholder {
-  color: transparent;
+  color: var(--env-text-field-ghost-placeholder, transparent);
 }
 .env-text-field-control[data-variant='ghost']:not(
     :has(> .env-text-field-input[aria-invalid='true']),
     [data-invalid]
   )
   > .env-text-field-border {
-  border-color: transparent;
+  border-color: var(--env-text-field-ghost-edge, transparent);
 }
 /* Invalid controls recolor their existing border. */
 .env-text-field-control:is(:has(> .env-text-field-input[aria-invalid='true']), [data-invalid]) {

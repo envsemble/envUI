@@ -40,43 +40,32 @@
   transform-origin: var(--transform-origin, center);
   transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);
 }
-/* The search is a solid pill on the neutral fill with no edge, the one field in a popup with a fill
-   of its own; its edge returns on a solid palette. */
+/* The search is a ghost TextField at the large height (TextField.css), the one field in a popup
+   with a fill of its own: solid in every state, the neutral fill over the popup's own color, so what
+   shows through the palette never reaches the text typed in it. It is always focused, so its
+   placeholder stays, and its edge returns on a solid palette. Its icon lines up with the options'. */
 .env-command-palette-search {
-  --env-command-palette-search-edge: var(--env-popup-solid) var(--env-color-border-default);
-  flex: 0 0 auto;
-  min-block-size: var(--env-control-height-lg);
-  padding-inline: var(--env-popup-row-padding-inline);
-  border-radius: var(--env-radius-full);
-  /* Opaque, the neutral fill over the popup's own color, so what shows through the palette never
-     reaches the text typed in it. */
-  background:
+  --env-text-field-ghost-solid:
     linear-gradient(var(--env-color-bg-neutral-muted), var(--env-color-bg-neutral-muted)),
     var(--env-color-bg-popup);
-  box-shadow: inset 0 0 0 var(--env-control-border-width)
-    var(--env-command-palette-search-edge, transparent);
+  --env-text-field-ghost-placeholder: var(--env-color-fg-muted);
+  --env-text-field-ghost-edge: var(--env-popup-solid) var(--env-color-border-default);
+  flex: 0 0 auto;
 }
-.env-command-palette-search > .env-icon {
-  color: var(--env-color-fg-muted);
+.env-command-palette-search .env-text-field-control {
+  /* Where the options' icons sit, inside the control's border. */
+  --env-command-palette-search-inset: calc(
+    var(--env-popup-row-padding-inline) - var(--env-control-border-width)
+  );
 }
-.env-command-palette-input {
-  flex: 1 1 auto;
-  min-inline-size: 0;
-  block-size: var(--env-control-height-lg);
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: var(--env-color-fg-default);
-  font: var(--env-type-body);
-  font-size: var(--env-control-font-size);
-  outline: none;
+.env-command-palette-search .env-text-field-start {
+  inset-inline-start: var(--env-command-palette-search-inset);
 }
-.env-command-palette-input::placeholder {
-  color: var(--env-color-fg-muted);
-}
-.env-command-palette-search:has(.env-command-palette-input:focus-visible) {
-  outline: 0.125rem solid var(--env-color-border-focus);
-  outline-offset: -0.125rem;
+.env-command-palette-search .env-text-field-control[data-start-icon] > .env-command-palette-input {
+  padding-inline: calc(
+      var(--env-command-palette-search-inset) + var(--env-control-icon-size) + var(--env-space-3)
+    )
+    var(--env-command-palette-search-inset);
 }
 .env-command-palette-list {
   /* The options' offset parent, so the highlight scrolls into view by their offsets. */
