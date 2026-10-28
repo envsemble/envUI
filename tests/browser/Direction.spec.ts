@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { fixtureUrl } from './Servers';
+import { fixtureUrl } from './helpers/Servers';
 
 // The direction check: components whose keyboard or placement follows the text direction read it
 // from EnvUIProvider's dir, or else from the dir at their element. tests/fixture/Direction.tsx

@@ -24,7 +24,7 @@ import {
   type Page,
   type TestInfo,
 } from '@playwright/test';
-import { siteDevUrl, fixtureUrl } from '../browser/Servers';
+import { siteDevUrl, fixtureUrl } from '../browser/helpers/Servers';
 import {
   allThemes,
   chooseScheme,
@@ -32,7 +32,7 @@ import {
   themesFor,
   type CatalogueTheme,
   type ThemeName,
-} from '../browser/CatalogueThemes';
+} from '../browser/helpers/CatalogueThemes';
 import { groupedPages } from '../../apps/site/src/navigation/SiteRoutes';
 import { displayStorageKeys } from '../../apps/site/src/theme/DisplayStorage';
 

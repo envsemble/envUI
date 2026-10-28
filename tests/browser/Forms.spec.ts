@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
-import { chevronTips, expectVerticalFlip, slowChevron } from './Chevron';
-import { fixtureUrl } from './Servers';
+import { chevronTips, expectVerticalFlip, slowChevron } from './helpers/Chevron';
+import { fixtureUrl } from './helpers/Servers';
 
 test.beforeEach(async ({ page }) => {
   await page.goto(`${fixtureUrl}/?fixture=forms`);

@@ -7,8 +7,8 @@
 import { test, expect, type Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { siteDevUrl } from './Servers';
-import { moduleFiles, requireSite, serveSite, site, siteUrl } from './HostedSite';
+import { siteDevUrl } from './helpers/Servers';
+import { moduleFiles, requireSite, serveSite, site, siteUrl } from './helpers/HostedSite';
 import { normalizeRoute, routeOfDocument } from '../../apps/site/src/navigation/SiteRoutes';
 
 const dialog = (page: Page) => page.getByRole('dialog', { name: 'Search envUI' });

@@ -1,6 +1,6 @@
 import { test, expect, type Locator } from '@playwright/test';
-import { fixtureUrl } from './Servers';
-import { openServerMarkup } from './ServerMarkup';
+import { fixtureUrl } from './helpers/Servers';
+import { openServerMarkup } from './helpers/ServerMarkup';
 
 const tablesFixture = `${fixtureUrl}/?fixture=tables`;
 const themes = ['light', 'dark'] as const;

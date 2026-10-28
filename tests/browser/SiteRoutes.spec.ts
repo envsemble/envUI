@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { siteDevUrl } from './Servers';
+import { siteDevUrl } from './helpers/Servers';
 import { readMap } from '../../packages/codemods/src/map.mjs';
 import {
   allPages,
@@ -13,7 +13,7 @@ import {
   routeOfDocument,
 } from '../../apps/site/src/navigation/SiteRoutes';
 import { componentGroups } from '../../apps/site/src/pages/PageModel';
-import { goTo } from './SiteSpecHelpers';
+import { goTo } from './helpers/SiteSpecHelpers';
 import { componentDocuments } from '../../apps/site/src/pages/PageModel';
 
 const components = componentDocuments.map(({ id }) => id);

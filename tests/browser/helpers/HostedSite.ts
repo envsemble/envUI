@@ -7,8 +7,8 @@
 import { expect, test, type Page } from '@playwright/test';
 import { existsSync, readFileSync } from 'node:fs';
 import { extname, resolve } from 'node:path';
-import worker from '../../apps/site/hosting/Worker.mjs';
-import { headersFor, siteHeaders } from '../../scripts/site/SiteHeaders.ts';
+import worker from '../../../apps/site/hosting/Worker.mjs';
+import { headersFor, siteHeaders } from '../../../scripts/site/SiteHeaders.ts';
 
 export const site = resolve('dist/site');
 export const siteUrl = 'http://envui.site.test';

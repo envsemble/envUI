@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
-import { siteDevUrl } from './Servers';
-import { requireSite, serveSite, siteUrl } from './HostedSite';
-import { chooseScheme } from './CatalogueThemes';
+import { siteDevUrl } from './helpers/Servers';
+import { requireSite, serveSite, siteUrl } from './helpers/HostedSite';
+import { chooseScheme } from './helpers/CatalogueThemes';
 import { renderLlmsText, renderSkill } from '../../scripts/site/SiteAgentFiles.ts';
 import {
   allPages,
@@ -10,7 +10,7 @@ import {
 } from '../../apps/site/src/navigation/SiteRoutes';
 import { componentGroups } from '../../apps/site/src/pages/PageModel';
 import { displayStorageKeys } from '../../apps/site/src/theme/DisplayStorage';
-import { goTo } from './SiteSpecHelpers';
+import { goTo } from './helpers/SiteSpecHelpers';
 
 test('the hosted build opens every page of the catalogue and the Docs without network or script errors', async ({
   page,

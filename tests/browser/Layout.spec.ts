@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { fixtureUrl } from './Servers';
+import { fixtureUrl } from './helpers/Servers';
 
 test('public composition owns spacing and content-fit sizing without documentation CSS', async ({
   page,

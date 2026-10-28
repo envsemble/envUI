@@ -60,7 +60,7 @@ export function checkoutPort(offset, id = checkoutId()) {
 
 /**
  * Picks each server's port and whether to reuse what runs there, and records the ports in the
- * environment, where tests/browser/Servers.ts and the worker processes read them. A port given in
+ * environment, where tests/browser/helpers/Servers.ts and the worker processes read them. A port given in
  * the environment is used as it is, and fails when another checkout serves it; a default port held
  * by another checkout or program gives way to this checkout's own.
  */

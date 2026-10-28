@@ -1,4 +1,4 @@
-import { defaultPorts } from '../../scripts/test/CheckoutMarker.ts';
+import { defaultPorts } from '../../../scripts/test/CheckoutMarker.ts';
 
 /**
  * Servers the browser suite starts or reuses. playwright.config.ts picks the ports before any spec

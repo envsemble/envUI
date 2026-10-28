@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { fixtureUrl } from './Servers';
+import { fixtureUrl } from './helpers/Servers';
 
 // Meter, Progress and Spinner: the values assistive technology reads, and what it doesn't.
 test('meters and progress bars read their values; spinners hide their drawing', async ({

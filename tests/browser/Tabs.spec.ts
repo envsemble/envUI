@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { siteDevUrl, fixtureUrl } from './Servers';
+import { siteDevUrl, fixtureUrl } from './helpers/Servers';
 
 /** The computed display of the panel each tab of a tab list controls, in order. */
 function panelDisplays(page: Page, list: string) {

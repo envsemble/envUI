@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { fixtureUrl } from './Servers';
+import { fixtureUrl } from './helpers/Servers';
 // The type brings dev mode's `window.envui` with it.
 import type { LayoutProblem } from '@envsemble/envui/dev';
 

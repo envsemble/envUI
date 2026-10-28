@@ -1,6 +1,6 @@
 import { test, expect, type Browser, type Locator, type Page } from '@playwright/test';
-import { chevronTips, expectVerticalFlip, slowChevron } from './Chevron';
-import { fixtureUrl } from './Servers';
+import { chevronTips, expectVerticalFlip, slowChevron } from './helpers/Chevron';
+import { fixtureUrl } from './helpers/Servers';
 
 const comboboxFixture = `${fixtureUrl}/?fixture=combobox`;
 

@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { fixtureUrl } from './Servers';
+import { fixtureUrl } from './helpers/Servers';
 
 test('a disclosure reports each change through onOpenChange, controlled or on its own', async ({
   page,

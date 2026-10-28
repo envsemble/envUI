@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { fixtureUrl } from './Servers';
+import { fixtureUrl } from './helpers/Servers';
 
 // The primitives batch A of 1.0 adds: Toolbar and Field, which are public, and the
 // internals that envUI's own components build on: ResizeHandle, useRovingFocus, PopupSurface,

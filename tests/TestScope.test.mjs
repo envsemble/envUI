@@ -101,8 +101,9 @@ test('a shared file runs the shared set, and an unknown file runs no spec', () =
 
 test('a changed spec runs itself, and a changed helper the specs that import it', () => {
   assert.deepEqual(specs('tests/browser/Tree.spec.ts'), ['Tree']);
+  assert.deepEqual(specs('tests/browser/helpers/Chevron.ts'), ['Combobox', 'Forms']);
   // Every spec imports Servers.ts: verify covers it.
-  assert.deepEqual(specs('tests/browser/Servers.ts'), []);
+  assert.deepEqual(specs('tests/browser/helpers/Servers.ts'), []);
 });
 
 test('a module of the documentation generator runs the specs of the site', () => {

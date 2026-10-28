@@ -1,6 +1,6 @@
 import { test, expect, type Page } from '@playwright/test';
-import { fixtureUrl } from './Servers';
-import { openServerMarkup } from './ServerMarkup';
+import { fixtureUrl } from './helpers/Servers';
+import { openServerMarkup } from './helpers/ServerMarkup';
 
 const fixture = `${fixtureUrl}/?fixture=adoption`;
 

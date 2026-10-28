@@ -1,5 +1,5 @@
 import { test, expect, type Locator } from '@playwright/test';
-import { fixtureUrl } from './Servers';
+import { fixtureUrl } from './helpers/Servers';
 
 /**
  * A star's box and its half fill's, read in one layout: as the page's font loads, the number before

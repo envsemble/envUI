@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { fixtureUrl } from './Servers';
+import { fixtureUrl } from './helpers/Servers';
 
 test('a switch takes its class and style on its root, and its ref and native props on the input', async ({
   page,

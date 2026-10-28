@@ -1,9 +1,9 @@
 import { test, expect, type Page } from '@playwright/test';
-import { siteDevUrl } from './Servers';
+import { siteDevUrl } from './helpers/Servers';
 import { readdirSync, readFileSync } from 'node:fs';
 import { technicalText } from '../../apps/site/src/shared/CatalogueContent.ts';
 import { allPages } from '../../apps/site/src/navigation/SiteRoutes';
-import { goTo } from './SiteSpecHelpers';
+import { goTo } from './helpers/SiteSpecHelpers';
 
 /**
  * The words a page of the catalogue shows and names, as a reader and a screen reader meet them:

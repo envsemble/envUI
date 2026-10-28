@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { fixtureUrl } from './Servers';
+import { fixtureUrl } from './helpers/Servers';
 
 test('the previous link comes first and the next link last, with strings from messages', async ({
   page,

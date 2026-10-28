@@ -3,7 +3,7 @@
  * light, and the pages in samplePages in dark, light high contrast and dark high contrast as well.
  */
 import { expect, type Page } from '@playwright/test';
-import { allPages } from '../../apps/site/src/navigation/SiteRoutes';
+import { allPages } from '../../../apps/site/src/navigation/SiteRoutes';
 
 export type ThemeName = 'light' | 'dark' | 'light-hc' | 'dark-hc';
 
@@ -53,7 +53,7 @@ const unknownPages = [...samplePages].filter(
 );
 if (unknownPages.length)
   throw new Error(
-    `samplePages in tests/browser/CatalogueThemes.ts names pages the catalogue does not have: ${unknownPages.join(', ')}.`,
+    `samplePages in tests/browser/helpers/CatalogueThemes.ts names pages the catalogue does not have: ${unknownPages.join(', ')}.`,
   );
 
 /** The themes a catalogue page, by its path such as components/button, is checked in. */

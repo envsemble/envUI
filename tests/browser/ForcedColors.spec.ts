@@ -1,6 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
-import { fixtureUrl } from './Servers';
-import { closePopup, openPopup, popupKinds } from './Popups';
+import { fixtureUrl } from './helpers/Servers';
+import { closePopup, openPopup, popupKinds } from './helpers/Popups';
 
 /**
  * Under forced colors the system replaces envUI's colors, drops shadows and paints no fills, so a

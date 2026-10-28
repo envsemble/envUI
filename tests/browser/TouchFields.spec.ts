@@ -1,5 +1,5 @@
 import { test, expect, type Browser } from '@playwright/test';
-import { fixtureUrl } from './Servers';
+import { fixtureUrl } from './helpers/Servers';
 
 /** A phone-sized page with a touch screen, whose primary pointer is coarse. */
 async function openOnTouchScreen(browser: Browser, path: string) {

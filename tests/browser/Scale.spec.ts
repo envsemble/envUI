@@ -9,7 +9,7 @@
  */
 import { expect, test, type Locator, type Page } from '@playwright/test';
 import { controlSizes, densityScales } from '../fixture/DensitySections';
-import { fixtureUrl } from './Servers';
+import { fixtureUrl } from './helpers/Servers';
 
 /** The control heights of each scale, in CSS pixels at the default 16 px root. */
 const heights = {

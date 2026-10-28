@@ -1,5 +1,5 @@
 import { test, expect, type Browser, type Locator, type Page } from '@playwright/test';
-import { fixtureUrl } from './Servers';
+import { fixtureUrl } from './helpers/Servers';
 
 const dateFixture = `${fixtureUrl}/?fixture=date-picker`;
 /** Today is fixed, so the calendar marks the same day in every run. */

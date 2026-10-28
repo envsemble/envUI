@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { fixtureUrl as fixtureServer } from './Servers';
+import { fixtureUrl as fixtureServer } from './helpers/Servers';
 
 const fixtureUrl = `${fixtureServer}/?fixture=markdown`;
 

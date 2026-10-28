@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { fixtureUrl } from './Servers';
+import { fixtureUrl } from './helpers/Servers';
 
 /** The clock is fixed, so Today, Now and This month stay available. */
 const today = new Date('2026-10-14T10:00:00');

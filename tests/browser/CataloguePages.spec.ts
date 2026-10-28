@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test';
-import { siteDevUrl } from './Servers';
-import { chooseScheme } from './CatalogueThemes';
+import { siteDevUrl } from './helpers/Servers';
+import { chooseScheme } from './helpers/CatalogueThemes';
 import { documents, componentDocuments } from '../../apps/site/src/pages/PageModel';
-import { version, goTo } from './SiteSpecHelpers';
+import { version, goTo } from './helpers/SiteSpecHelpers';
 import { pagesOf } from '../../apps/site/src/navigation/SiteRoutes';
 import { bannerDrawingIndex, bannerSubject } from '../../apps/site/src/layout/CatalogueBannerOrder';
 

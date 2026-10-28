@@ -1,5 +1,5 @@
 import { test, expect, type Locator, type Page } from '@playwright/test';
-import { fixtureUrl } from './Servers';
+import { fixtureUrl } from './helpers/Servers';
 
 const panes = (query = '') => `${fixtureUrl}/?fixture=panes${query}`;
 const scaffoldPanes = `${fixtureUrl}/?fixture=scaffold-panes`;
