@@ -93,7 +93,7 @@ A Surface gives its content a `background`, an inset and corners.
 
 #### Backgrounds, corners and inset
 
-- `background` is `default`, the default, `muted`, `page`, `raised`, which matches `default`, or `recessed`, a shade deeper than the page, for a well on it.
+- `background` is `default`, the default, `muted`, `page`, `raised`, which matches `default`, or `recessed`, a well on the page: a shade deeper than it in dark, and lighter than it and the panes in light.
 - `radius` is `xl`, 1.75 rem and the default, `sm`, 0.5 rem, `full`, fully rounded ends, or `none`, square.
 - `padding` sets the inset as a step of the spacing scale, from `1`, 0.25 rem, to `9`, 4 rem, and `0` removes it; without it, the inset grows from 1.25 rem in narrow windows to 1.5 rem from 50 rem wide.
 

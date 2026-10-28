@@ -146,10 +146,10 @@ function ThemeLabel() {
 
 The Design tokens page of the Docs lists every value in each theme, and this guide ends with the palette, which shows each role's value in the theme you are reading in and lets you try another.
 
-- **Page**: `--env-color-bg-page`, the document's background, behind everything.
-- **Recessed surface**: `--env-color-bg-recessed`, a well on the page a shade deeper than it, `background="recessed"`, such as the stage of a preview.
-- **Surface**: `--env-color-bg-default`: Surface's `background="default"`, panes, the navigation and sheets.
-- **Filled card**: `--env-color-bg-muted`: a group inside a surface, a Card's fill, `background="muted"`, and tab rails.
+- **Page**: `--env-color-bg-page`, the document's background, behind everything: deeper than the panes and cards on it.
+- **Recessed surface**: `--env-color-bg-recessed`, a well on the page, `background="recessed"`, such as the stage of a preview: a shade deeper than the page in dark, lighter than the page and the panes in light.
+- **Surface**: `--env-color-bg-default`: Surface's `background="default"`, panes, the navigation and sheets, a step lighter than the page.
+- **Filled card**: `--env-color-bg-muted`: a group inside a surface, a Card's fill, `background="muted"`, list rows and tab rails, lighter than the surface: white in light.
 - **Text**: `--env-color-fg-default`, Text's default, for headings and the main words.
 - **Supporting text**: `--env-color-fg-muted`: `emphasis="muted"` on Text, details, captions, hints and icons.
 - **Accent**: `--env-color-bg-brand-emphasis`, the main action's fill; `--env-color-fg-accent` and `fg-link` in text, such as links and what is selected.
@@ -184,12 +184,12 @@ Status icons, short status text and badges share these tokens, at least 4.5:1 on
 
 Tokens are named `--env-color-{bg|fg|border}-{role}[-{emphasis}][-{state}]`, emphasis weakest first: `subtle`, `muted`, none, `emphasis` and `strong`. Every `fg-on-X` pairs with a `bg-X`, every state token has its resting token, and the contrast gate measures every pair a component paints, in all four themes.
 
-- **Backgrounds:** `bg-page`; `bg-recessed`, a shade deeper than the page; `bg-default`, `bg-muted` and `bg-raised`, the surfaces; `bg-popup`, the fill of menus, popovers and dialogs; `bg-field`, `bg-selected`; `bg-overlay`, the scrim behind dialogs.
+- **Backgrounds:** `bg-page`, the deepest; `bg-recessed`, a well on it; `bg-default`, `bg-muted` and `bg-raised`, the surfaces; `bg-popup`, the fill of menus, popovers and dialogs; `bg-field`, `bg-selected`; `bg-overlay`, the scrim behind dialogs.
 - **Fills:** `bg-neutral-muted`, a translucent layer of the text color under secondary buttons, chips, switch tracks and skeletons; `bg-neutral-subtle`, the state layer of controls without a fill; `emphasis` and `strong` solid fills.
 - **Text:** `fg-default`, `fg-muted` for supporting text and icons, `fg-control`, `fg-link`, `fg-on-selected`, and one per tone.
 - **Borders:** `border-default`, the only boundary of a control, at least 3:1; `border-muted` for the hairlines between a list's items, quote bars and other decorative edges; `border-focus`; `border-media`, the inner edge of images.
 
-The colors come from an internal palette of ten hues, and the pastel hues of avatars, in grades from 0 to 100, where the grade difference alone sets the contrast: 50 grades apart give at least 4.5:1. The 0.7 names are gone; the [migration guide](../migration.md#tokens) lists what replaces each.
+The colors come from an internal palette of eleven hues, and the pastel hues of avatars, in grades from 0 to 100, where the grade difference alone sets the contrast: 50 grades apart give at least 4.5:1. The light theme takes a nearly neutral gray, the dark theme a slightly blue-tinted one. The 0.7 names are gone; the [migration guide](../migration.md#tokens) lists what replaces each.
 
 #### States and contrast
 
