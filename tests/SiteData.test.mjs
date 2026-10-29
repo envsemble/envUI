@@ -1,7 +1,15 @@
 // The catalogue's data from the repository: the release notes, which the Docs' Changelog page
-// reads when the site builds.
+// reads when the site builds, and the outlines the skeletons of the parts that load with a page are
+// drawn from.
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
+import {
+  markdownShape,
+  readChangelogOutline,
+  readExampleLines,
+  readTokenOutline,
+} from '../scripts/site/PartOutlines.ts';
 import {
   inlinePieces,
   parseReleaseNotes,
@@ -42,4 +50,41 @@ test('the release notes checks find what is wrong', () => {
     { kind: 'link', href: '/docs/migration#tokens', children: [{ kind: 'code', text: 'Row' }] },
     { kind: 'text', text: ' now' },
   ]);
+});
+
+test("the changelog's outline heads each release as the changelog does, over the shape of its text", () => {
+  const changelog = readFileSync(new URL('../packages/ui/CHANGELOG.md', import.meta.url), 'utf8');
+  const releases = readChangelogOutline();
+  // The page shows the changelog a level lower, so each release heading is one of the contents'.
+  assert.deepEqual(
+    releases.map(({ heading }) => heading),
+    [...changelog.matchAll(/^## (.+)$/gm)].map(([, text]) => `### ${text.trim()}`),
+  );
+  assert.equal(
+    markdownShape(
+      [
+        'Some [linked](https://example.com) `code`.',
+        '',
+        '#### Added',
+        '',
+        '- One item',
+        '  - Nested',
+      ].join('\n'),
+    ),
+    ['~17', '', '#### Added', '', '- ~8', '  - ~6'].join('\n'),
+  );
+});
+
+test('the token outline lists every token once, in its group, and each example its lines', () => {
+  const { tokens } = JSON.parse(
+    readFileSync(new URL('../packages/ui/src/generated/tokens.json', import.meta.url), 'utf8'),
+  );
+  const rows = readTokenOutline().flatMap((group) => group.rows.map(([name]) => name));
+  assert.deepEqual(rows.toSorted(), tokens.map((token) => token.cssVariable).toSorted());
+  const lines = readExampleLines();
+  const source = readFileSync(
+    new URL('../apps/site/src/examples/loading/CardsLoading.tsx', import.meta.url),
+    'utf8',
+  );
+  assert.equal(lines['loading/CardsLoading'], source.trimEnd().split('\n').length);
 });

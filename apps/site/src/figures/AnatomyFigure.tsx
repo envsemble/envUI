@@ -185,7 +185,7 @@ function AnatomyStage({
     };
   }, [legend, open, enlarged, variants]);
   const example = specimen ? (
-    <SpecimenRender page={page} name={name} />
+    <SpecimenRender page={page} name={name} onStage />
   ) : (
     <ExampleRender page={page} name={name} />
   );

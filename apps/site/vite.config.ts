@@ -26,14 +26,39 @@ import { checkoutMarker } from '../../scripts/test/CheckoutMarker.ts';
 import { resetClosedConnections } from '../../scripts/test/ServerSockets.ts';
 import { readReleaseNotes, releaseNotesSources } from '../../scripts/site/ReleaseNotes.ts';
 import { siteAgentFiles } from '../../scripts/site/SiteAgentFiles.ts';
+import {
+  changelogOutlineSources,
+  exampleLinesSources,
+  readChangelogOutline,
+  readExampleLines,
+  readTokenOutline,
+  tokenOutlineSources,
+} from '../../scripts/site/PartOutlines.ts';
 
 /**
  * Data the site's pages read from the repository when the site app builds or serves, as
- * virtual modules: the release notes. While serving, a change to their files reloads the page with
- * the new data.
+ * virtual modules: the release notes, and the outlines of the parts that load with a page, which
+ * their skeletons are drawn from. While serving, a change to their files reloads the page with the
+ * new data; an outline (`reloads: false`), which only shapes a skeleton, waits for the next load,
+ * so editing an example updates it in place.
  */
-const siteData: Record<string, { read: () => unknown; sources: string[] }> = {
+const siteData: Record<string, { read: () => unknown; sources: string[]; reloads?: false }> = {
   'virtual:envui-release-notes': { read: readReleaseNotes, sources: releaseNotesSources },
+  'virtual:envui-example-lines': {
+    read: readExampleLines,
+    sources: exampleLinesSources,
+    reloads: false,
+  },
+  'virtual:envui-changelog-outline': {
+    read: readChangelogOutline,
+    sources: changelogOutlineSources,
+    reloads: false,
+  },
+  'virtual:envui-token-outline': {
+    read: readTokenOutline,
+    sources: tokenOutlineSources,
+    reloads: false,
+  },
 };
 const resolvedId = (id: string) => `\0${id}`;
 /** The library's generated list of every icon, which only the icon catalogue imports. */
@@ -136,7 +161,7 @@ export default defineConfig(() => {
           const sources = Object.values(siteData).flatMap((entry) => entry.sources);
           server.watcher.add(sources);
           server.watcher.on('all', (_event, path) => {
-            for (const [name, { sources: files }] of Object.entries(siteData)) {
+            for (const [name, { sources: files, reloads }] of Object.entries(siteData)) {
               const touched = files.some((source) => {
                 const contained = relative(source, path);
                 return !contained.startsWith('..') && !isAbsolute(contained);
@@ -144,7 +169,7 @@ export default defineConfig(() => {
               const module = touched && server.moduleGraph.getModuleById(resolvedId(name));
               if (!module) continue;
               server.moduleGraph.invalidateModule(module);
-              server.ws.send({ type: 'full-reload' });
+              if (reloads !== false) server.ws.send({ type: 'full-reload' });
             }
           });
         },

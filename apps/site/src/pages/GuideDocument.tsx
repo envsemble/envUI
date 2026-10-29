@@ -2,7 +2,7 @@ import { Fragment, Suspense, useState } from 'react';
 import type { Documentation as Document } from './PageModel';
 import { LoadBoundary, lazyPart } from '../template/LoadBoundary';
 import { Documentation } from './Documentation';
-import { Loading } from '../template/Loading';
+import { StageSkeleton } from '../template/Loading';
 
 /**
  * The live demos a guide page places with a `<!-- demo: Name -->` line, each loaded with the page
@@ -70,7 +70,7 @@ export function Demo({ name }: { name: string }) {
         setAttempt((count) => count + 1);
       }}
     >
-      <Suspense fallback={<Loading what="the demo" />}>
+      <Suspense fallback={<StageSkeleton part={`demo:${name}`} what="demos" stage />}>
         <Part />
       </Suspense>
     </LoadBoundary>

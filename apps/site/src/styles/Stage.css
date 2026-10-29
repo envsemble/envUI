@@ -14,6 +14,7 @@
 .site-live-example,
 .site-verdict-stage,
 .site-anatomy-stage,
+.site-loading-stage,
 .catalogue-related-stage,
 .site-foundation-stage[data-figure='example'],
 .site-figures :is(.catalogue-specimen-grid, .catalogue-matrix-scroll),
@@ -54,6 +55,7 @@
 
 .site-live-example,
 .site-anatomy-stage,
+.site-loading-stage,
 .site-foundation-stage,
 .catalogue-related-stage,
 .site-figures :is(.catalogue-specimen-grid, .catalogue-matrix-scroll) {
@@ -67,6 +69,7 @@
 .site-live-example,
 .site-verdict-stage,
 .site-anatomy-stage,
+.site-loading-stage,
 .catalogue-related-stage,
 .site-foundation-stage[data-figure='example'],
 .site-figures :is(.catalogue-specimen-grid, .catalogue-matrix-scroll),

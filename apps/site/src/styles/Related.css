@@ -263,3 +263,19 @@
 .catalogue-page-specimen-content {
   text-align: center;
 }
+
+/* A tile's skeleton (TileSkeleton in template/Loading.tsx): over the whole stage, which pulses as
+   envUI's skeleton surfaces do, from a moment after the page opens until the picture is fitted on
+   the stage and fades in over it. */
+.catalogue-tile-loading {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-color: transparent;
+}
+.catalogue-tile-loading:not([data-shown]) {
+  opacity: 0;
+}
+.catalogue-related-canvas[data-fitted] ~ .catalogue-tile-loading {
+  display: none;
+}

@@ -124,14 +124,10 @@ function updating(testInfo: TestInfo) {
 
 async function settle(page: Page) {
   await page.locator('#site-main').waitFor();
-  // The catalogue's Loading spinner (.site-loading) marks a part that is still loading: an
-  // example, its code, a specimen, a demo or the icon list; a part from LoadedPart says "Loading
-  // the …".
-  await page
-    .locator('.site-loading')
-    .or(page.getByText(/^Loading .*…$/))
-    .first()
-    .waitFor({ state: 'detached' });
+  // A skeleton of the site's (.site-loading, template/Loading.tsx) marks a part that is still
+  // loading: an example, its code, a specimen, a demo, the icon list, the token reference or the
+  // changelog. A tile's (.catalogue-tile-loading) waits for the tile to come into view instead.
+  await page.locator('.site-loading').first().waitFor({ state: 'detached' });
   await page.evaluate(() => document.fonts.ready);
   // Theme changes transition colors; contrast measured mid-transition is neither theme's. The
   // animations' states are polled rather than their finished promises awaited: Chromium does not

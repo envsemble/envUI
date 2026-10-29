@@ -18,10 +18,11 @@ import type { StageFill } from '../shared/DocumentationTypes';
 import { LoadBoundary, loadModule, reloadModule } from '../template/LoadBoundary';
 import { OpenExample } from './OpenExample';
 import { InteractiveMark } from '../template/InteractiveMark';
-import { Loading } from '../template/Loading';
+import { CodeSkeleton, StageSkeleton } from '../template/Loading';
 import { MotionStage } from '../motion/MotionStage';
 import { WidthSweep } from '../motion/WidthSweep';
 import { SpecimenRender } from './Specimen';
+import exampleLines from 'virtual:envui-example-lines';
 
 /**
  * Every example file, rendered live, and its source as text, each loaded with the page that shows
@@ -121,7 +122,11 @@ export function ExampleSource({ page, name }: { page: string; name: string }) {
         setAttempt((count) => count + 1);
       }}
     >
-      <Suspense fallback={<Loading what="code" />}>
+      <Suspense
+        fallback={
+          <CodeSkeleton label={`${name}.tsx`} lines={exampleLines[`${page}/${name}`] ?? 1} />
+        }
+      >
         <Source path={path} name={name} />
       </Suspense>
     </LoadBoundary>
@@ -171,11 +176,14 @@ export function ExampleCode({ page, name }: { page: string; name: string }) {
 export function ExampleRender({
   page,
   name,
-  fallback = <Loading what="example" />,
+  fallback = <StageSkeleton part={`example:${page}/${name}`} what="examples" />,
 }: {
   page: string;
   name: string;
-  /** What shows while the file loads; a tile's tiny preview shows nothing. */
+  /**
+   * What shows while the file loads: a skeleton at the example's size in its place on the stage.
+   * A tile's picture shows nothing, as its whole stage is a skeleton meanwhile (Related.tsx).
+   */
   fallback?: ReactNode;
 }) {
   // A retry renders the example afresh from its file loaded again, and leaves its code as it is.
