@@ -30,8 +30,8 @@ const barLimit = 5;
 /** The part classes of the bar's destinations. */
 const barClasses: DestinationClasses = {
   item: 'env-bar-item',
-  indicator: 'env-bar-icon',
-  label: 'env-bar-text',
+  indicator: 'env-bar-indicator',
+  label: 'env-bar-label',
   count: 'env-bar-count',
 };
 
@@ -123,9 +123,9 @@ export function Bar({
                     gap={1}
                   >
                     {/* The label, then the count, as the name reads them. */}
-                    <span className="env-bar-text">{messages.more}</span>
+                    <span className="env-bar-label">{messages.more}</span>
                     {restShown !== undefined && ' '}
-                    <span className="env-bar-icon">
+                    <span className="env-bar-indicator">
                       <DecorativeIcon>
                         <MoreHoriz />
                       </DecorativeIcon>

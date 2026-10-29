@@ -1162,6 +1162,14 @@ Every other name only takes the prefix, `--body-font-weight` as `--env-body-font
 
 <!-- token-migration:end -->
 
+## Changed during the 1.0 prereleases
+
+The codemods rewrite 0.x names. A name that only a 1.0 prerelease had is renamed by hand, as listed here; the changelog gives each change's reason.
+
+| In a 1.0 prerelease            | Now                                                      |
+| ------------------------------ | -------------------------------------------------------- |
+| `env-bar-icon`, `env-bar-text` | `env-bar-indicator`, `env-bar-label`, as Rail names them |
+
 ## Migrate by responsibility
 
 Prefer a small complete slice with shared controls and representative interactions, then expand through callers. The first slice should expose routing, forms or overlays rather than only a static button. Choose an order that fits the application; shared wrappers can reduce repetition when their contract still fits.

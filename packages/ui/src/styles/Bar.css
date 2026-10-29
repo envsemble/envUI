@@ -4,8 +4,8 @@
      label. The current destination fills its indicator; the count sits on the icon's top end. It
      keeps clear of a phone's home indicator. */
   .env-bar {
-    --env-bar-icon-width: 4rem;
-    --env-bar-icon-height: 2rem;
+    --env-bar-indicator-width: 4rem;
+    --env-bar-indicator-height: 2rem;
     /* The count's pill on the icon: as tall as it is wide for one digit. */
     --env-bar-count-size: 1rem;
     box-sizing: border-box;
@@ -106,19 +106,19 @@
     text-decoration: none;
   }
   /* The icon's indicator, above the label, which comes first in the item's text. */
-  .env-bar-icon {
+  .env-bar-indicator {
     order: -1;
     position: relative;
     flex: none;
-    inline-size: min(var(--env-bar-icon-width), 100%);
-    block-size: var(--env-bar-icon-height);
+    inline-size: min(var(--env-bar-indicator-width), 100%);
+    block-size: var(--env-bar-indicator-height);
     display: grid;
     place-items: center;
     border-radius: var(--env-radius-full);
     background: var(--env-bar-item-custom-fill, transparent);
     transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
   }
-  .env-bar-text {
+  .env-bar-label {
     max-inline-size: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -146,8 +146,8 @@
   .env-bar-item:not([data-current]) .env-icon {
     color: var(--env-bar-item-icon-color, var(--env-color-fg-muted));
   }
-  .env-bar-item:hover .env-bar-icon,
-  .env-bar-more[aria-expanded='true'] .env-bar-icon {
+  .env-bar-item:hover .env-bar-indicator,
+  .env-bar-more[aria-expanded='true'] .env-bar-indicator {
     background: var(--env-bar-item-custom-fill, var(--env-color-bg-navigation-hover));
   }
   .env-bar-item:hover,
@@ -163,20 +163,20 @@
   .env-bar-item[data-current]:active {
     --env-bar-item-layer: calc(var(--env-state-pressed-opacity) * 90%);
   }
-  .env-bar-item:active .env-bar-icon {
+  .env-bar-item:active .env-bar-indicator {
     background: var(--env-bar-item-custom-fill, var(--env-color-bg-navigation-pressed));
   }
   .env-bar-item[data-current] {
     color: var(--env-bar-item-content, var(--env-color-fg-default));
   }
-  .env-bar-item[data-current] .env-bar-icon {
+  .env-bar-item[data-current] .env-bar-indicator {
     color: var(--env-bar-item-selected-icon, var(--env-color-fg-on-selected));
     background: var(--env-bar-item-selected-fill, var(--env-color-bg-selected));
   }
-  .env-bar-item[data-current]:hover .env-bar-icon {
+  .env-bar-item[data-current]:hover .env-bar-indicator {
     background: var(--env-bar-item-selected-fill, var(--env-color-bg-selected-hover));
   }
-  .env-bar-item[data-current]:active .env-bar-icon {
+  .env-bar-item[data-current]:active .env-bar-indicator {
     background: var(--env-bar-item-selected-fill, var(--env-color-bg-selected-pressed));
   }
   .env-bar-item:focus-visible {
@@ -185,17 +185,17 @@
   }
   /* Under a reduced-motion preference, fills change at once. */
   @media (prefers-reduced-motion: reduce) {
-    .env-bar-icon {
+    .env-bar-indicator {
       transition: none;
     }
   }
   /* Motion: the indicator settles slightly while it is held, only without a reduced-motion
      preference. */
   @media (prefers-reduced-motion: no-preference) {
-    .env-bar-icon {
+    .env-bar-indicator {
       transition-property: background-color, transform;
     }
-    .env-bar-item:active .env-bar-icon {
+    .env-bar-item:active .env-bar-indicator {
       transform: scale(0.96);
     }
   }
@@ -205,12 +205,12 @@
     .env-bar {
       border-block-start: 1px solid CanvasText;
     }
-    .env-bar-item[data-current] .env-bar-icon {
+    .env-bar-item[data-current] .env-bar-indicator {
       forced-color-adjust: none;
       background-color: Highlight;
       color: HighlightText;
     }
-    .env-bar-item[data-current] .env-bar-icon :where(*) {
+    .env-bar-item[data-current] .env-bar-indicator :where(*) {
       color: inherit;
     }
     .env-bar-count {
@@ -241,7 +241,7 @@
   .env-bar:is([data-env-skeleton], [data-env-skeleton] *) .env-bar-item .env-icon * {
     visibility: hidden;
   }
-  .env-bar:is([data-env-skeleton], [data-env-skeleton] *) .env-bar-icon {
+  .env-bar:is([data-env-skeleton], [data-env-skeleton] *) .env-bar-indicator {
     background: transparent;
   }
   [data-env-skeleton] .env-bar-count {
@@ -254,7 +254,7 @@
     visibility: hidden;
   }
   /* A destination whose label is loading, given as an empty string, is a bar of a label's length. */
-  .env-bar:is([data-env-skeleton], [data-env-skeleton] *) .env-bar-text {
+  .env-bar:is([data-env-skeleton], [data-env-skeleton] *) .env-bar-label {
     --env-skeleton-placeholder: inline-block;
     --env-skeleton-length: 3rem;
   }

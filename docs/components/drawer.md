@@ -140,9 +140,9 @@ A drawer's destinations can go without icons, such as the sections of a guide; t
 
 1. **Bar** (`env-bar`)
 2. **Item** (`env-bar li:nth-child(2) > env-bar-item`)
-3. **Indicator** (`env-bar-icon`)
+3. **Indicator** (`env-bar-indicator`)
 4. **Count** (`env-bar-count`, `count`)
-5. **Label** (`env-bar-text`)
+5. **Label** (`env-bar-label`)
 
 ```tsx figure=SectionAnatomy stage=shaded
 

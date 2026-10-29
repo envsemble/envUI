@@ -314,7 +314,7 @@ test('navigation as a skeleton: icons are shapes, labels bars, no current fill',
   for (const [id, label] of [
     ['drawer', 'env-drawer-label'],
     ['rail', 'env-rail-label'],
-    ['bar', 'env-bar-text'],
+    ['bar', 'env-bar-label'],
   ]) {
     const nav = page.getByTestId(id);
     await expect(nav).toHaveAttribute('aria-busy', 'true');

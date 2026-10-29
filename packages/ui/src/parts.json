@@ -112,8 +112,8 @@
       "env-bar": "The navigation bar: a nav landmark across the bottom of a compact window.",
       "env-bar-list": "The row of destinations, which share the bar's width.",
       "env-bar-item": "A destination: a link or button with its indicator above its label.",
-      "env-bar-icon": "The pill around a destination's icon, filled while the destination is current.",
-      "env-bar-text": "A destination's label, under its indicator, cut short with an ellipsis.",
+      "env-bar-indicator": "The pill around a destination's icon, filled while the destination is current.",
+      "env-bar-label": "A destination's label, under its indicator, cut short with an ellipsis.",
       "env-bar-count": "A destination's count, on the icon's top end; 999+ above 999.",
       "env-bar-more": "The last item past five destinations, which opens the rest in a menu."
     },

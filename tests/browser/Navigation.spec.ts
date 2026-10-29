@@ -116,7 +116,7 @@ test('Bar shows five destinations at most, and opens the rest from More', async 
 
   const bar = scope.getByRole('navigation', { name: 'Many bar' });
   await expect(bar.getByRole('listitem')).toHaveCount(5);
-  await expect(bar.locator('.env-bar-text')).toHaveText([
+  await expect(bar.locator('.env-bar-label')).toHaveText([
     'Home',
     'Inbox',
     'Drafts',
@@ -132,9 +132,9 @@ test('Bar shows five destinations at most, and opens the rest from More', async 
   await expect(more).not.toHaveAttribute('aria-current');
   // Its text is its label, then its count, as its name reads them, with its icon drawn above.
   expect(await more.evaluate((element) => element.textContent)).toBe('More 5');
-  const icon = (await more.locator('.env-bar-icon').boundingBox())!;
+  const icon = (await more.locator('.env-bar-indicator').boundingBox())!;
   expect(icon.y + icon.height).toBeLessThanOrEqual(
-    (await more.locator('.env-bar-text').boundingBox())!.y + 0.5,
+    (await more.locator('.env-bar-label').boundingBox())!.y + 0.5,
   );
   await more.click();
   const menu = page.getByRole('menu', { name: 'More' });
