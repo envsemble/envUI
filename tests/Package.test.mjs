@@ -1162,8 +1162,8 @@ test('the panel dock renders its panels, tabs and header on a server and types i
     import { EnvUIProvider, PanelDock, type PanelDockMode, type PanelDockPanel } from '@envsemble/envui';
     type Document = PanelDockPanel & { body: string };
     const documents: Document[] = [
-      { id: 'notes', title: 'Notes', mode: 'open', body: 'Text', height: 320, preferredWidth: 480, minWidth: 320,
-        maxWidth: 640, minHeight: 240, maxHeight: 560, active: true, label: 'Notes', icon: <span />, attention: 'Unsaved', tooltip: 'Notes' },
+      { id: 'notes', title: 'Notes', mode: 'open', body: 'Text', height: 20, preferredWidth: 30, minWidth: 20,
+        maxWidth: 40, minHeight: 15, maxHeight: 35, active: true, label: 'Notes', icon: <span />, attention: 'Unsaved', tooltip: 'Notes' },
     ];
     const headerProps: PanelDock.HeaderProps = { title: 'Notes', meta: 'Edited today', headingLevel: 3, controls: true };
     const dockProps: Omit<PanelDock.RootProps<Document>, 'children'> = {
