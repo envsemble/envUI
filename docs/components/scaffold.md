@@ -193,7 +193,7 @@ A button that narrows the navigation sets `navigationForms={{ expanded: 'rail', 
     <TopBar
       start={
         <IconButton
-          icon={narrow ? <LeftPanelOpen /> : <LeftPanelClose />}
+          icon={narrow ? <IconLeftPanelOpen /> : <IconLeftPanelClose />}
           aria-label={narrow ? 'Show full navigation' : 'Narrow navigation'}
           onClick={toggle}
         />

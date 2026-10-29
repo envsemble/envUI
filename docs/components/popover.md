@@ -162,7 +162,7 @@ Leave it uncontrolled, with `defaultOpen` to start open, or control it with `ope
     setOpen(next);
     if (next) setDraft(applied); // Each time it opens, start from the filters in use.
   }}
-  trigger={<Button startIcon={<FilterList />}>Assignees</Button>}
+  trigger={<Button startIcon={<IconFilterList />}>Assignees</Button>}
 >
   {people.map((person) => (
     <Checkbox
@@ -192,7 +192,7 @@ Leave it uncontrolled, with `defaultOpen` to start open, or control it with `ope
   title="Billing periods"
   side="right"
   align="start"
-  trigger={<IconButton variant="text" icon={<Help />} aria-label="About billing periods" />}
+  trigger={<IconButton variant="text" icon={<IconHelp />} aria-label="About billing periods" />}
 >
   <Text>Members added later are billed from the next period.</Text>
 </Popover>

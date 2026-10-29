@@ -151,8 +151,15 @@ Keep buttons, links and fields out of rows: their actions go in the context menu
 <Tree
   aria-label="Files"
   items={[
-    { value: 'src', depth: 0, label: 'src', icon: <Folder />, expandable: true, expanded: true },
-    { value: 'src/index.ts', depth: 1, label: 'index.ts', icon: <Description /> },
+    {
+      value: 'src',
+      depth: 0,
+      label: 'src',
+      icon: <IconFolder />,
+      expandable: true,
+      expanded: true,
+    },
+    { value: 'src/index.ts', depth: 1, label: 'index.ts', icon: <IconDescription /> },
   ]}
   value={selected}
   onAction={(row) => setSelected(row.value)}

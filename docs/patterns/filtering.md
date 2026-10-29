@@ -182,7 +182,7 @@ Each token is a Button with `variant="secondary"`, `size="sm"` and a Close `endI
 <Button
   variant="secondary"
   size="sm"
-  endIcon={<Close />}
+  endIcon={<IconClose />}
   aria-label="Remove filter Status: Open"
   onClick={() => remove('status')}
 >
@@ -201,7 +201,7 @@ Measure the filters' own width with `useContainerSize` and compare it with `wind
   title="Filters"
   closeLabel="Close filters"
   trigger={
-    <Button variant="secondary" size="sm" startIcon={<FilterList />}>
+    <Button variant="secondary" size="sm" startIcon={<IconFilterList />}>
       Filters
       {applied > 0 && <Badge count={applied} aria-label={`${applied} in use`} />}
     </Button>

@@ -187,7 +187,7 @@ The row's other actions are a Menu whose trigger is an IconButton with `aria-lab
 ```tsx
 <Menu.Root
   aria-label={`Actions for ${project.name}`}
-  trigger={<IconButton icon={<MoreVert />} aria-label={`More actions for ${project.name}`} />}
+  trigger={<IconButton icon={<IconMoreVert />} aria-label={`More actions for ${project.name}`} />}
 >
   <Menu.Item onClick={() => setConfirming(true)}>Delete project…</Menu.Item>
 </Menu.Root>

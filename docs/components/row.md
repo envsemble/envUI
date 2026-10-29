@@ -130,7 +130,7 @@ Row lays out its children side by side, in the reading direction.
     </Text>
     <Badge>12</Badge>
   </Row>
-  <Button variant="secondary" size="sm" startIcon={<Add />}>
+  <Button variant="secondary" size="sm" startIcon={<IconAdd />}>
     Invite people
   </Button>
 </Row>

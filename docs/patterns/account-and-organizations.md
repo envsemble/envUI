@@ -180,7 +180,7 @@ A ThemeMenuRadioGroup inside the Theme `Menu.Submenu` applies the choice at once
 A `Menu.Submenu` labelled Organization, with the current one as its `description`, holds a `Menu.RadioGroup` with `value` and `onValueChange` and a `Menu.RadioItem` for each organization.
 
 ```tsx
-<Menu.Submenu label="Organization" icon={<Groups3 />} description={current?.label}>
+<Menu.Submenu label="Organization" icon={<IconGroups3 />} description={current?.label}>
   <Menu.RadioGroup value={organization} onValueChange={setOrganization}>
     {organizations.map(({ id, label }) => (
       <Menu.RadioItem key={id} value={id}>
@@ -204,7 +204,7 @@ A `Menu.Root` named by `aria-label="Organizations"`, with `align="start"`, takes
   aria-label="Organizations"
   align="start"
   trigger={
-    <Button variant="secondary" endIcon={<UnfoldMore />}>
+    <Button variant="secondary" endIcon={<IconUnfoldMore />}>
       {active.label}
     </Button>
   }
@@ -227,7 +227,7 @@ The trigger is a Button with `variant="ghost"`, `fullWidth` and an `endIcon`, ho
   side="top"
   align="start"
   trigger={
-    <Button variant="ghost" fullWidth endIcon={<UnfoldMore />}>
+    <Button variant="ghost" fullWidth endIcon={<IconUnfoldMore />}>
       <Row align="center" gap={2}>
         <Avatar name="Priya Shah" size="sm" />
         <Text>Priya Shah</Text>
@@ -235,13 +235,13 @@ The trigger is a Button with `variant="ghost"`, `fullWidth` and an `endIcon`, ho
     </Button>
   }
 >
-  <Menu.Item icon={<Logout />}>Sign out</Menu.Item>
+  <Menu.Item icon={<IconLogout />}>Sign out</Menu.Item>
 </Menu.Root>
 ```
 
 ### Composition
 
-The switcher's first row is a `Menu.Header`, not an item: a centred Column with the Groups3 icon above a headline Text, whose `id` names the radio group through `aria-labelledby`. Each organization is a `Menu.RadioItem` with the person's role as its `description`. A `Menu.Separator` and a `Menu.Item` with the Add icon end the menu with the create action. In a NavigationDrawer the switcher goes in its `header`.
+The switcher's first row is a `Menu.Header`, not an item: a centred Column with IconGroups3 above a headline Text, whose `id` names the radio group through `aria-labelledby`. Each organization is a `Menu.RadioItem` with the person's role as its `description`. A `Menu.Separator` and a `Menu.Item` with IconAdd end the menu with the create action. In a NavigationDrawer the switcher goes in its `header`.
 
 The parts are the trigger, `env-button`, the heading row, `env-menu-header`, each organization, `env-menu-item`, its role, `env-menu-item-description`, and the create action, `env-menu-separator + env-menu-item`.
 

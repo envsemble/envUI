@@ -198,20 +198,20 @@ A row's text Button, with `aria-haspopup="dialog"`, opens a Sheet controlled thr
 
 #### Overflow actions
 
-A Menu named by `aria-label` takes a ghost IconButton with the MoreVert icon and `aria-label="More actions"` as its `trigger`, wrapped in a Tooltip that names it. A `Menu.Separator` sets a destructive item apart, last, as on Menu.
+A Menu named by `aria-label` takes a ghost IconButton with IconMoreVert and `aria-label="More actions"` as its `trigger`, wrapped in a Tooltip that names it. A `Menu.Separator` sets a destructive item apart, last, as on Menu.
 
 ```tsx
 <Menu.Root
   aria-label="Launch brief actions"
   trigger={
     <Tooltip content="More actions">
-      <IconButton variant="ghost" icon={<MoreVert />} aria-label="More actions" />
+      <IconButton variant="ghost" icon={<IconMoreVert />} aria-label="More actions" />
     </Tooltip>
   }
 >
-  <Menu.Item icon={<FileCopy />}>Duplicate</Menu.Item>
+  <Menu.Item icon={<IconFileCopy />}>Duplicate</Menu.Item>
   <Menu.Separator />
-  <Menu.Item icon={<Archive />}>Archive</Menu.Item>
+  <Menu.Item icon={<IconArchive />}>Archive</Menu.Item>
 </Menu.Root>
 ```
 

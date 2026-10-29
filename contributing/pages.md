@@ -265,7 +265,7 @@ An outline field takes no fill of its own; give it one with its container color.
 
 An example is a file in `apps/site/src/examples/<page>/<Name>.tsx`: a small, default-exported component an application could copy as it is.
 
-- Import only what an application can: `react`, `@envsemble/envui`, its `/content`, `/diff`, `/rich-text` and `/color` entries, and icons from `@envsemble/envui/icons/<Name>`.
+- Import only what an application can: `react`, `@envsemble/envui`, its `/content`, `/diff`, `/rich-text` and `/color` entries, and icons, `Icon<Name>` from `@envsemble/envui/icons/<Name>`.
 - No catalogue classes or helpers. Lay out with envUI's components; where envUI has no layout for it yet, a short inline style with a comment.
 - Keep state inside the example, and stand in for slow work with a timer.
 - Keep it small: the stage centres it at its own width. Give the root a width where it should be wider, such as `inlineSize: '100%'`; a root that is a size container fills the stage.

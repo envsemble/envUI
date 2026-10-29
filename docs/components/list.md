@@ -203,7 +203,7 @@ With `interactive`, a row reacts to hover, keyboard focus inside it and presses.
   end={
     <IconButton
       variant="text"
-      icon={<MoreHoriz />}
+      icon={<IconMoreHoriz />}
       aria-label="More actions for Roadmap"
       style={{ position: 'relative' }}
     />

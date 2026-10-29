@@ -84,12 +84,12 @@ Upgrade `@envsemble/envui` and the [lint packages](#lint-rules) together, to the
 
 ```tsx
 import { Theme, Button } from '@envsemble/envui';
-import { Add } from '@envsemble/envui/icons/Add';
+import { IconAdd } from '@envsemble/envui/icons/Add';
 
 export function App() {
   return (
     <Theme theme="light">
-      <Button startIcon={<Add />}>Create item</Button>
+      <Button startIcon={<IconAdd />}>Create item</Button>
     </Theme>
   );
 }
@@ -335,7 +335,7 @@ A server component passes a client component only serializable values, no functi
 ## Public entry points
 
 - `@envsemble/envui` for ordinary UI.
-- `@envsemble/envui/icons/Name` for individual official symbols.
+- `@envsemble/envui/icons/<Name>` for individual official symbols, each `Icon<Name>`.
 - `@envsemble/envui/content` when the feature needs code or Markdown.
 - `@envsemble/envui/diff` when the feature shows code diffs.
 - `@envsemble/envui/rich-text` when the feature needs formatted editing or rendering.
@@ -374,7 +374,7 @@ The content, rich-text, diff and color entries need libraries that envUI doesn't
 
 They aren't peer dependencies, since GitHub Packages drops `peerDependenciesMeta`; a missing one fails the build where the entry is imported.
 
-Import each icon by its own path, such as `import { Add } from '@envsemble/envui/icons/Add'`. See [icons](foundations/icons.md).
+Import each icon by its own path, such as `import { IconAdd } from '@envsemble/envui/icons/Add'`. See [icons](foundations/icons.md).
 
 ### Bundle size
 

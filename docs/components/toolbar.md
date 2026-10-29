@@ -193,10 +193,10 @@ A Surface with `radius="full"` floats a small toolbar over content, as the ViewC
   render={<Toolbar.Root aria-label="Diagram view" size="sm" tooltipDelay={0} />}
   style={{ inlineSize: 'fit-content' }}
 >
-  <Toolbar.Button icon={<ZoomOut />} label="Zoom out" shortcut="Ctrl+-" />
-  <Toolbar.Button icon={<ZoomIn />} label="Zoom in" shortcut="Ctrl+=" />
+  <Toolbar.Button icon={<IconZoomOut />} label="Zoom out" shortcut="Ctrl+-" />
+  <Toolbar.Button icon={<IconZoomIn />} label="Zoom in" shortcut="Ctrl+=" />
   <Toolbar.Separator />
-  <Toolbar.Link href="/help/diagrams" icon={<Help />} label="Diagram help" />
+  <Toolbar.Link href="/help/diagrams" icon={<IconHelp />} label="Diagram help" />
 </Surface>
 ```
 
@@ -229,7 +229,7 @@ A bar with a field, a Select or labelled actions is a Row:
           items={statuses}
         />
       </Row>
-      <Button startIcon={<Add />}>New task</Button>
+      <Button startIcon={<IconAdd />}>New task</Button>
     </Row>
   }
 />

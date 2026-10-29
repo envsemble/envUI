@@ -271,8 +271,8 @@ Keep a resizable drawer on its own background, so its handle is the edge of a su
 
 ```tsx
 const destinations: Destination[] = [
-  { label: 'Inbox', href: '/inbox', icon: <Inbox />, count: 12, current: true },
-  { label: 'Projects', href: '/projects', icon: <Folder />, group: 'Work' },
+  { label: 'Inbox', href: '/inbox', icon: <IconInbox />, count: 12, current: true },
+  { label: 'Projects', href: '/projects', icon: <IconFolder />, group: 'Work' },
 ];
 
 <NavigationDrawer destinations={destinations} header={<Text>Northwind</Text>} footer={account} />;

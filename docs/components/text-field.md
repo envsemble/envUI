@@ -283,7 +283,7 @@ A TextField is a native `<input>` with its `label`, `description` and `error`. G
 
 ```tsx
 <TextField variant="floating" label="Owner" name="owner" />
-<TextField variant="ghost" label="Find projects" showLabel={false} startIcon={<Search />} />
+<TextField variant="ghost" label="Find projects" showLabel={false} startIcon={<IconSearch />} />
 <TextField size="sm" label="Filter" name="filter" />
 ```
 

@@ -274,7 +274,7 @@ const typed = query.trim() !== '';
   inputValue={query}
   onInputValueChange={setQuery}
   items={[
-    { id: 'new', label: 'New document', icon: <NoteAdd />, end: <Kbd keys={['Ctrl', 'N']} /> },
+    { id: 'new', label: 'New document', icon: <IconNoteAdd />, end: <Kbd keys={['Ctrl', 'N']} /> },
     { id: 'automations', label: 'Create an automation', end: <Badge tone="primary">New</Badge> },
   ]}
   onAction={(item, { modifier }) => run(item.id, { beside: modifier })}
@@ -285,7 +285,7 @@ const typed = query.trim() !== '';
 
 #### The button that opens it
 
-The button is a Button with `variant="secondary"`, the Search icon as its `startIcon`, and a Kbd of the keys in its `end` slot, as the InSidebar example does.
+The button is a Button with `variant="secondary"`, IconSearch as its `startIcon`, and a Kbd of the keys in its `end` slot, as the InSidebar example does.
 
 - `aria-hidden` on the Kbd and `aria-keyshortcuts` on the button announce the shortcut once.
 - Its `onClick` opens the palette.
@@ -295,7 +295,7 @@ The button is a Button with `variant="secondary"`, the Search icon as its `start
 <Button
   variant="secondary"
   fullWidth
-  startIcon={<Search />}
+  startIcon={<IconSearch />}
   end={<Kbd keys={[modifier.label, 'K']} aria-hidden />}
   aria-keyshortcuts={`${modifier.key}+K`}
   onClick={() => setOpen(true)}
@@ -347,7 +347,7 @@ In a narrow header, the button is an IconButton with `variant="ghost"`, `aria-la
 >
   <IconButton
     variant="ghost"
-    icon={<Search />}
+    icon={<IconSearch />}
     aria-label="Search"
     aria-keyshortcuts={`${modifier.key}+K`}
     onClick={() => setOpen(true)}

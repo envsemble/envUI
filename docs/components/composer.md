@@ -178,7 +178,7 @@ The field shows `minRows` lines while empty, 1 by default, and grows to `maxRows
   aria-label="Comment"
   minRows={2}
   maxRows={6}
-  start={<IconButton variant="text" icon={<AttachFile />} aria-label="Attach files" />}
+  start={<IconButton variant="text" icon={<IconAttachFile />} aria-label="Attach files" />}
   description="Files up to 10 MB."
   onSend={addComment}
 />

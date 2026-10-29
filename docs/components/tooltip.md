@@ -163,7 +163,7 @@ Tooltip wraps the one control it describes, its `children`, such as an IconButto
 
 ```tsx
 <Tooltip content="Show files" side="inline-end">
-  <IconButton icon={<Folder />} aria-label="Show files" variant="ghost" />
+  <IconButton icon={<IconFolder />} aria-label="Show files" variant="ghost" />
 </Tooltip>
 ```
 
@@ -176,11 +176,11 @@ A Tooltip can be the `trigger` of a Menu.Root, Popover, Dialog, Sheet or Confirm
   aria-label="Project actions"
   trigger={
     <Tooltip content="More actions">
-      <IconButton icon={<MoreVert />} aria-label="More actions" />
+      <IconButton icon={<IconMoreVert />} aria-label="More actions" />
     </Tooltip>
   }
 >
-  <Menu.Item icon={<Archive />}>Archive</Menu.Item>
+  <Menu.Item icon={<IconArchive />}>Archive</Menu.Item>
 </Menu.Root>
 ```
 
@@ -190,7 +190,7 @@ Write the shortcut after the name in `content`, and give the control `aria-keysh
 
 ```tsx
 <Tooltip content="Bold (Ctrl+B)" side="bottom">
-  <IconButton icon={<FormatBold />} aria-label="Bold" aria-keyshortcuts="Control+B" />
+  <IconButton icon={<IconFormatBold />} aria-label="Bold" aria-keyshortcuts="Control+B" />
 </Tooltip>
 ```
 

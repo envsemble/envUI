@@ -78,11 +78,11 @@ Ask an agent for accessibility in these words; envUI does the rest in every comp
 
 ```tsx
 import { Column, IconButton, TextField } from '@envsemble/envui';
-import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
+import { IconChevronRight } from '@envsemble/envui/icons/ChevronRight';
 
 <Column gap={4}>
   <TextField label="Project name" description="Visible labels stay while people type." />
-  <IconButton icon={<ChevronRight />} aria-label="Next project" />
+  <IconButton icon={<IconChevronRight />} aria-label="Next project" />
 </Column>;
 ```
 

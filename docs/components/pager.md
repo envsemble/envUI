@@ -115,10 +115,10 @@ Use the title as the page's heading reads it. Leave Next or Back out of it: the 
 
 ```tsx
 <Pager.Root>
-  <Pager.Previous href="/guide/projects" icon={<ArrowBack />}>
+  <Pager.Previous href="/guide/projects" icon={<IconArrowBack />}>
     Create a project
   </Pager.Previous>
-  <Pager.Next href="/guide/team" icon={<ArrowForward />}>
+  <Pager.Next href="/guide/team" icon={<IconArrowForward />}>
     Invite your team
   </Pager.Next>
 </Pager.Root>

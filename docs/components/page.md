@@ -217,7 +217,7 @@ A PageHeader takes the page's `title`, which wraps, balanced across its lines, a
   meta={<Badge tone="success">On track</Badge>}
   actions={
     <>
-      <Button variant="secondary" startIcon={<Share />}>
+      <Button variant="secondary" startIcon={<IconShare />}>
         Share
       </Button>
       <Button>New task</Button>
@@ -242,7 +242,7 @@ The title is an `h1` by default. Set `headingLevel` lower for a header inside a 
 <PageHeader
   title="People"
   controlSize="sm"
-  actions={<Button startIcon={<Add />}>Invite</Button>}
+  actions={<Button startIcon={<IconAdd />}>Invite</Button>}
   toolbar={
     <Row wrap align="center" justify="between" gap={3}>
       <SearchField label="Search people" size="sm" />

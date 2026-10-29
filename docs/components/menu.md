@@ -240,11 +240,11 @@ Menu.Header holds the context at the top, such as the signed-in person's avatar,
       </Text>
     </Column>
   </Menu.Header>
-  <Menu.Item href="/account" icon={<ManageAccounts />}>
+  <Menu.Item href="/account" icon={<IconManageAccounts />}>
     Account settings
   </Menu.Item>
   <Menu.Separator />
-  <Menu.Item icon={<Logout />}>Sign out</Menu.Item>
+  <Menu.Item icon={<IconLogout />}>Sign out</Menu.Item>
 </Menu.Root>
 ```
 
@@ -283,7 +283,7 @@ With `href`, a Menu.Item is a link, through the link component of `LinkProvider`
 - `aria-current="page"` marks the page shown now.
 
 ```tsx
-<Menu.Item href="/help/guide" icon={<MenuBook />}>
+<Menu.Item href="/help/guide" icon={<IconMenuBook />}>
   User guide
 </Menu.Item>
 ```

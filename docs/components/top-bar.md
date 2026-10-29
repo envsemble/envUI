@@ -154,7 +154,7 @@ Put it in a Scaffold's top bar region, which is the banner landmark.
   titleBar
   title="Roadmap.md"
   start={<Menubar.Root aria-label="Application menu">…</Menubar.Root>}
-  actions={<IconButton icon={<Share />} aria-label="Share" />}
+  actions={<IconButton icon={<IconShare />} aria-label="Share" />}
 />
 ```
 

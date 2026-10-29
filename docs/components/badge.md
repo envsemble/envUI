@@ -207,8 +207,8 @@ A NavigationDrawer destination's `count` shows the count at its end and adds it 
 
 ```tsx
 const destinations: Destination[] = [
-  { label: 'Inbox', icon: <Inbox />, href: '/inbox', count: 12, current: true },
-  { label: 'Later', icon: <Schedule />, href: '/later', count: 1200 },
+  { label: 'Inbox', icon: <IconInbox />, href: '/inbox', count: 12, current: true },
+  { label: 'Later', icon: <IconSchedule />, href: '/later', count: 1200 },
 ];
 
 <NavigationDrawer aria-label="Workspace" destinations={destinations} />;

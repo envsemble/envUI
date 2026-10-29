@@ -266,8 +266,8 @@ An IconButton with the Close cross closes, dismisses or removes what it sits in.
 <Button variant="secondary">Cancel</Button>
 <Button tone="danger">Delete project</Button>
 <Button href="/projects">Open projects</Button>
-<Button startIcon={<Add />}>Create project</Button>
-<IconButton icon={<Settings />} aria-label="Project settings" />
+<Button startIcon={<IconAdd />}>Create project</Button>
+<IconButton icon={<IconSettings />} aria-label="Project settings" />
 <Button pending={saving} onClick={save}>Save changes</Button>
 ```
 

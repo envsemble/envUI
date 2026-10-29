@@ -107,8 +107,8 @@ A group of controls, as wide as its controls in a Column with `align="start"`:
   aria-label="Diagram view"
   render={<Row wrap align="center" gap={4} />}
 >
-  <IconButton variant="ghost" size="sm" icon={<ZoomOut />} aria-label="Zoom out" />
-  <IconButton variant="ghost" size="sm" icon={<ZoomIn />} aria-label="Zoom in" />
+  <IconButton variant="ghost" size="sm" icon={<IconZoomOut />} aria-label="Zoom out" />
+  <IconButton variant="ghost" size="sm" icon={<IconZoomIn />} aria-label="Zoom in" />
   <Button variant="secondary" size="sm">
     Fit to screen
   </Button>
