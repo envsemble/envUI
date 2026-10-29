@@ -64,7 +64,7 @@ test('it reports where a snippet disagrees with envUI, and nothing a fragment as
       "import { NotAThing } from '@envsemble/envui';\n<Accordion.Rooot />\n<EnvUIProvider messages={{ calendarHeatmap: { lesss: 'Quieter' } }}>…</EnvUIProvider>",
     ),
     // Reported: a component neither declared nor exported, such as one envUI renamed.
-    snippet('<ToastProvider>\n  <App />\n</ToastProvider>'),
+    snippet('<LoadingBar>\n  <App />\n</LoadingBar>'),
     // Reported: an option toast.show doesn't take, toast being what useToast returns.
     snippet("toast.show({ messag: 'Saved' });", 'ts'),
     // Ignored: names the snippet assumes, modules other than envUI's, errors of its own code, and
@@ -95,5 +95,5 @@ test('it reports where a snippet disagrees with envUI, and nothing a fragment as
   );
   assert.match(findings[0].message, /"bogus"/);
   assert.match(findings[1].message, /frobnicate/);
-  assert.match(findings[6].message, /<ToastProvider>/);
+  assert.match(findings[6].message, /<LoadingBar>/);
 });
