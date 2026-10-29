@@ -1,11 +1,11 @@
 import { useState, type ComponentPropsWithRef } from 'react';
 import {
-  Bar,
+  NavigationBar,
   Button,
   Icon,
   LinkProvider,
-  Drawer,
-  Rail,
+  NavigationDrawer,
+  NavigationRail,
   Surface,
   Theme,
   TopBar,
@@ -38,8 +38,8 @@ function useDestinations(start: string) {
 }
 
 /**
- * Bar, Rail and Drawer over the same destinations, in both themes, mounted with
- * ?fixture=navigation: icon fill, counts, groups, the Bar's More menu, landmark names and routing.
+ * NavigationBar, NavigationRail and NavigationDrawer over the same destinations, in both themes, mounted with
+ * ?fixture=navigation: icon fill, counts, groups, the NavigationBar's More menu, landmark names and routing.
  */
 export function NavigationFixture({ theme }: { theme: ColorScheme }) {
   const icons = useDestinations('Home');
@@ -91,21 +91,21 @@ export function NavigationFixture({ theme }: { theme: ColorScheme }) {
   return (
     <Theme theme={theme} data-testid={`navigation-${theme}`} className="fixture-section">
       <div data-testid="icons">
-        <Drawer aria-label="Icon fill" destinations={iconDestinations} />
+        <NavigationDrawer aria-label="Icon fill" destinations={iconDestinations} />
       </div>
       <div className="fixture-navigation-forms" data-testid="forms">
-        <Drawer
+        <NavigationDrawer
           aria-label="Mail drawer"
           destinations={mailDestinations}
           header={<Button size="sm">Compose</Button>}
           footer={<span>Footer</span>}
         />
-        <Rail aria-label="Mail rail" destinations={mailDestinations} />
+        <NavigationRail aria-label="Mail rail" destinations={mailDestinations} />
         <div className="fixture-navigation-bars">
-          <Bar aria-label="Mail bar" destinations={mailDestinations.slice(0, 4)} />
-          <Bar aria-label="Five bar" destinations={mailDestinations.slice(0, 5)} />
-          <Bar aria-label="Many bar" destinations={manyDestinations} />
-          <Bar destinations={linked} />
+          <NavigationBar aria-label="Mail bar" destinations={mailDestinations.slice(0, 4)} />
+          <NavigationBar aria-label="Five bar" destinations={mailDestinations.slice(0, 5)} />
+          <NavigationBar aria-label="Many bar" destinations={manyDestinations} />
+          <NavigationBar destinations={linked} />
         </div>
       </div>
       {/* The backgrounds: each form and the top bar on the navigation's background by default,
@@ -113,20 +113,20 @@ export function NavigationFixture({ theme }: { theme: ColorScheme }) {
       <div className="fixture-navigation-backgrounds" data-testid="backgrounds">
         <TopBar title="Filled" data-testid="top-bar-default" />
         <TopBar title="On the page" background="page" data-testid="top-bar-none" />
-        <Drawer aria-label="Filled drawer" destinations={linked} />
-        <Drawer aria-label="Plain drawer" background="page" destinations={linked} />
-        <Rail aria-label="Filled rail" destinations={linked} />
-        <Rail aria-label="Plain rail" background="page" destinations={linked} />
-        <Bar aria-label="Filled bar" destinations={linked} />
-        <Bar aria-label="Plain bar" background="page" destinations={linked} />
+        <NavigationDrawer aria-label="Filled drawer" destinations={linked} />
+        <NavigationDrawer aria-label="Plain drawer" background="page" destinations={linked} />
+        <NavigationRail aria-label="Filled rail" destinations={linked} />
+        <NavigationRail aria-label="Plain rail" background="page" destinations={linked} />
+        <NavigationBar aria-label="Filled bar" destinations={linked} />
+        <NavigationBar aria-label="Plain bar" background="page" destinations={linked} />
         <Surface background="muted" padding={0} radius="none" data-testid="surface">
-          <Drawer aria-label="Drawer on a surface" destinations={linked} />
+          <NavigationDrawer aria-label="Drawer on a surface" destinations={linked} />
         </Surface>
       </div>
       <p data-testid="current">{`${mail.current}, ${many.current}`}</p>
       <LinkProvider component={RouterLink}>
         <h2 id={`routed-heading-${theme}`}>Routed</h2>
-        <Rail aria-labelledby={`routed-heading-${theme}`} destinations={linked} />
+        <NavigationRail aria-labelledby={`routed-heading-${theme}`} destinations={linked} />
       </LinkProvider>
     </Theme>
   );

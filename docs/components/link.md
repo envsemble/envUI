@@ -15,7 +15,7 @@ avoidWhen:
   - text: An action, such as saving or deleting, even when it looks like text, or the next step of a flow.
     use: Button
   - text: Destinations in an application's navigation, such as a sidebar.
-    use: Drawer
+    use: NavigationDrawer
   - text: Previous and next pages of a sequence.
     use: Pager
 components:

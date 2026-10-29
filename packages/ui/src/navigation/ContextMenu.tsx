@@ -19,7 +19,7 @@ import { MenuPopup } from './internal/MenuPopup.js';
 import type {
   OpenChangeDetails as MenuOpenChangeDetails,
   OpenChangeReason as MenuOpenChangeReason,
-} from './Menu.js';
+} from './internal/menuOpenChange.js';
 import { keepsOpen, usePortalContainer } from '../internal/PortalContainerContext.js';
 import { isRightToLeft } from '../internal/direction.js';
 

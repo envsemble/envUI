@@ -403,7 +403,7 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     join(consumerDirectory, 'Consumer.tsx'),
     `
     import { createRef } from 'react';
-    import { Theme, Button, ButtonGroup, ConfirmButton, IconButton, Bar, Rail, Drawer, Pager, Icon, TextField, Textarea, Checkbox, Switch, Row, Column,
+    import { Theme, Button, ButtonGroup, ConfirmButton, IconButton, NavigationBar, NavigationRail, NavigationDrawer, Pager, Icon, TextField, Textarea, Checkbox, Switch, Row, Column,
       EnvUIProvider, Toolbar, Field, RadioGroup, Radio, Select, Combobox, DatePicker, Calendar, Dialog, DialogClose, Toast, useToast,
       type ColorScheme, type ButtonProps, type ButtonGroupProps, type SelectItem, type ComboboxItem, type ToastManager } from '@envsemble/envui';
     import { Home } from '@envsemble/envui/icons/Home';
@@ -433,9 +433,9 @@ test('installed declarations typecheck a React 19 consumer without source aliase
       <EnvUIProvider locale="de-CH" dir="ltr" messages={{ common: { clear: 'Leeren' }, toast: { hidden: ({ count }) => count + ' hidden' } }}><IconButton ref={createRef<HTMLButtonElement>()} aria-label="Schließen" icon={<Home />} /></EnvUIProvider>
       <Toolbar.Root aria-label="Formatting"><Toolbar.Button icon={<Home />} label="Home" pressed shortcut="Ctrl+H" /><Toolbar.Separator /><Toolbar.Link href="/" icon={<Home />} label="Home" /></Toolbar.Root>
       <Field.Root name="project" invalid><Field.Label>Project</Field.Label><Field.Control size="sm" /><Field.Description>Shown to everyone</Field.Description><Field.Error>Enter a name</Field.Error></Field.Root>
-      <Bar ref={createRef<HTMLElement>()} destinations={[{ label: 'Home', icon: <Home />, href: '/', current: true }, { label: 'View', icon: <Home />, onSelect: () => undefined, count: 2 }]} />
-      <Rail aria-label="Places" destinations={[{ label: 'Home', icon: <Home />, href: '/' }]} header={<Home />} />
-      <Drawer destinations={[{ label: 'Guide', href: '/guide', group: 'Help' }]} footer={<Home />} />
+      <NavigationBar ref={createRef<HTMLElement>()} destinations={[{ label: 'Home', icon: <Home />, href: '/', current: true }, { label: 'View', icon: <Home />, onClick: () => undefined, count: 2 }]} />
+      <NavigationRail aria-label="Places" destinations={[{ label: 'Home', icon: <Home />, href: '/' }]} header={<Home />} />
+      <NavigationDrawer destinations={[{ label: 'Guide', href: '/guide', group: 'Help' }]} footer={<Home />} />
       <Pager.Next {...pagerLinkProps} target="_blank" rel="noopener" />
       <Pager.Previous href="/previous">Previous guide</Pager.Previous>
       <Icon label="Custom" viewBox="0 0 1 1"><path d="M0 0L1 1" /></Icon><BarrelHome />

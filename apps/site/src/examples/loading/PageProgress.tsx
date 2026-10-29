@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import {
-  Drawer,
+  NavigationDrawer,
   Page,
   PageHeader,
-  Rail,
+  NavigationRail,
   Scaffold,
   Text,
   TopBar,
@@ -75,8 +75,8 @@ export default function PageProgress() {
       }
       bodyRef={main}
       navigation={{
-        rail: <Rail destinations={destinations} />,
-        drawer: <Drawer destinations={destinations} />,
+        rail: <NavigationRail destinations={destinations} />,
+        drawer: <NavigationDrawer destinations={destinations} />,
       }}
     >
       <Page width="md" header={<PageHeader title={page.label} headingLevel={3} />}>

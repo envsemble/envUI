@@ -139,7 +139,7 @@ Where the application's contrast is fixed, pass it to both, `contrast: 'high'` t
 
 ## Connect your router
 
-Destinations in envUI render native anchors: Button and Link with `href`, Bar, Rail and Drawer destinations, Card, Pager, Breadcrumbs and Menu.Item. Register the router's link once with `LinkProvider`, around the application, so they navigate on the client. The component gets native anchor props with a string `href`, and renders an anchor with them and the ref:
+Destinations in envUI render native anchors: Button and Link with `href`, NavigationBar, NavigationRail and NavigationDrawer destinations, Card, Pager, Breadcrumbs and Menu.Item. Register the router's link once with `LinkProvider`, around the application, so they navigate on the client. The component gets native anchor props with a string `href`, and renders an anchor with them and the ref:
 
 ```tsx
 <LinkProvider component={RouterLink}>{app}</LinkProvider>
@@ -254,11 +254,11 @@ export function RouterLinks({ children }: { children: ReactNode }) {
 
 ### The current page and focus
 
-The application marks the current destination `current` in the array it passes to Bar, Rail or Drawer, from the router's location; a destination stays current on the pages under it.
+The application marks the current destination `current` in the array it passes to NavigationBar, NavigationRail or NavigationDrawer, from the router's location; a destination stays current on the pages under it.
 
 ```tsx recipe
 import { useLocation } from 'react-router';
-import { Drawer } from '@envsemble/envui';
+import { NavigationDrawer } from '@envsemble/envui';
 import { Folder } from '@envsemble/envui/icons/Folder';
 import { Group } from '@envsemble/envui/icons/Group';
 
@@ -266,7 +266,7 @@ export function ProjectNavigation() {
   const { pathname } = useLocation();
   const current = (path: string) => pathname === path || pathname.startsWith(`${path}/`);
   return (
-    <Drawer
+    <NavigationDrawer
       aria-label="Projects"
       destinations={[
         { label: 'Projects', icon: <Folder />, href: '/projects', current: current('/projects') },

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Drawer, type DrawerDestination } from '@envsemble/envui';
+import { NavigationDrawer, type NavigationDrawerDestination } from '@envsemble/envui';
 
 /** A guide's pages: a page with pages under it is a section, and one without href only heads it. */
 interface Page {
@@ -49,7 +49,7 @@ const guide: Page[] = [
 export default function NestedSections() {
   // The current page comes from the router; here a press stands in for it.
   const [current, setCurrent] = useState('/guide/projects/roles');
-  const destinationsOf = (pages: Page[]): DrawerDestination[] =>
+  const destinationsOf = (pages: Page[]): NavigationDrawerDestination[] =>
     pages.map(({ href, children, ...page }) => {
       const nested = children && destinationsOf(children);
       // A section without an address of its own is only its heading.
@@ -63,5 +63,5 @@ export default function NestedSections() {
       };
     });
   // The sections that hold the current page start open; the others open with their chevrons.
-  return <Drawer aria-label="Guide" destinations={destinationsOf(guide)} />;
+  return <NavigationDrawer aria-label="Guide" destinations={destinationsOf(guide)} />;
 }

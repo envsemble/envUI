@@ -4,20 +4,20 @@ import {
   AnimatedNumber,
   Avatar,
   Badge,
-  Bar,
+  NavigationBar,
   Button,
   Card,
   Checkbox,
   Column,
   Dialog,
-  Drawer,
+  NavigationDrawer,
   Grid,
   Kbd,
   List,
   Menu,
   Message,
   Popover,
-  Rail,
+  NavigationRail,
   Row,
   Surface,
   Table,
@@ -237,9 +237,9 @@ export function SkeletonsFixture() {
       </List.Root>
 
       {/* Navigation whose destinations are loading: bars and icon shapes. */}
-      <Drawer skeleton data-testid="drawer" destinations={destinations} />
-      <Rail skeleton data-testid="rail" destinations={destinations} />
-      <Bar skeleton data-testid="bar" destinations={destinations} />
+      <NavigationDrawer skeleton data-testid="drawer" destinations={destinations} />
+      <NavigationRail skeleton data-testid="rail" destinations={destinations} />
+      <NavigationBar skeleton data-testid="bar" destinations={destinations} />
 
       {/* The same content loaded, which the shift check toggles. */}
       <Surface data-testid="loaded" background="muted" padding={4}>

@@ -211,7 +211,7 @@ Now:
 
 ### Navigation forms
 
-NavList and NavList.Skeleton are gone. An application's destinations are one array, which it passes to the navigation form that suits the window: Bar on compact windows, Rail on medium ones and Drawer from expanded, all three on [Drawer's page](components/drawer.md); Scaffold shows one per window class. 0.x's NavigationItem, which 1.0.0-prerelease.0 named NavList.Item, is gone with it. The prerelease's Drawer, the panel that slides over the page, is [Sheet](#overlays-and-feedback).
+NavList and NavList.Skeleton are gone. An application's destinations are one array, which it passes to the navigation form that suits the window: Bar on compact windows, Rail on medium ones and Drawer from expanded, all three on [Drawer's page](components/navigation-drawer.md); Scaffold shows one per window class. 0.x's NavigationItem, which 1.0.0-prerelease.0 named NavList.Item, is gone with it. The prerelease's Drawer, the panel that slides over the page, is [Sheet](#overlays-and-feedback).
 
 | Before                                                  | 1.0                                                                                           |
 | ------------------------------------------------------- | --------------------------------------------------------------------------------------------- |

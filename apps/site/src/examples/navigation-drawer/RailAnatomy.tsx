@@ -1,4 +1,4 @@
-import { Avatar, IconButton, Rail, type Destination } from '@envsemble/envui';
+import { Avatar, IconButton, NavigationRail, type Destination } from '@envsemble/envui';
 import { Edit } from '@envsemble/envui/icons/Edit';
 import { Folder } from '@envsemble/envui/icons/Folder';
 import { Inbox } from '@envsemble/envui/icons/Inbox';
@@ -11,7 +11,7 @@ const destinations: Destination[] = [
 export default function RailAnatomy() {
   return (
     <div style={{ blockSize: '20rem' }}>
-      <Rail
+      <NavigationRail
         destinations={destinations}
         header={<IconButton variant="primary" icon={<Edit />} aria-label="New message" />}
         footer={<Avatar name="Alex Morgan" size="sm" />}

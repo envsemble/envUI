@@ -14,7 +14,6 @@ import { setRef } from '../internal/setRef.js';
 import { subscribeFormReset } from './internal/subscribeFormReset.js';
 import { fieldMessageIds } from './internal/useFieldMetadata.js';
 import '../styles/Base.css';
-import '../styles/Field.css';
 import '../styles/Radio.css';
 import '../styles/ConnectedRows.css';
 
@@ -157,12 +156,12 @@ export function RadioGroup({
       {label != null && <legend>{label}</legend>}
       {children}
       {description != null && (
-        <small id={ids.description} className="env-field-description">
+        <small id={ids.description} className="env-radio-group-description">
           {description}
         </small>
       )}
       {error != null && (
-        <div id={ids.error} className="env-field-error">
+        <div id={ids.error} className="env-radio-group-error">
           {error}
         </div>
       )}

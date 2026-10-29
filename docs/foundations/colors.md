@@ -14,7 +14,7 @@ avoidWhen:
   - text: The main action in the accent, or a danger action.
     use: Button
   - text: Navigation whose selected place takes the selected color.
-    use: Drawer
+    use: NavigationDrawer
   - text: Letting people pick a color of their own.
     use: ColorPicker
   - text: A short status in its tone, with words.

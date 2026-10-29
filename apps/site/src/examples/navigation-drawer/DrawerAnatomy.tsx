@@ -1,4 +1,4 @@
-import { Avatar, Drawer, Row, Text, type Destination } from '@envsemble/envui';
+import { Avatar, NavigationDrawer, Row, Text, type Destination } from '@envsemble/envui';
 import { Inbox } from '@envsemble/envui/icons/Inbox';
 import { Label } from '@envsemble/envui/icons/Label';
 import { Star } from '@envsemble/envui/icons/Star';
@@ -11,7 +11,7 @@ const destinations: Destination[] = [
 
 export default function DrawerAnatomy() {
   return (
-    <Drawer
+    <NavigationDrawer
       destinations={destinations}
       header={
         <Text variant="title" render={<span />}>

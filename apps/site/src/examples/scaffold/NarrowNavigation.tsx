@@ -1,11 +1,11 @@
 import { useState, type CSSProperties } from 'react';
 import {
-  Bar,
-  Drawer,
+  NavigationBar,
+  NavigationDrawer,
   IconButton,
   Page,
   PageHeader,
-  Rail,
+  NavigationRail,
   Scaffold,
   Text,
   TopBar,
@@ -57,9 +57,9 @@ export default function NarrowNavigation() {
         />
       }
       navigation={{
-        bar: <Bar aria-label="Main, narrowable" destinations={destinations} />,
-        rail: <Rail aria-label="Main, narrowable" destinations={destinations} />,
-        drawer: <Drawer aria-label="Main, narrowable" destinations={destinations} />,
+        bar: <NavigationBar aria-label="Main, narrowable" destinations={destinations} />,
+        rail: <NavigationRail aria-label="Main, narrowable" destinations={destinations} />,
+        drawer: <NavigationDrawer aria-label="Main, narrowable" destinations={destinations} />,
       }}
     >
       <Page header={<PageHeader title="Projects" headingLevel={3} />}>

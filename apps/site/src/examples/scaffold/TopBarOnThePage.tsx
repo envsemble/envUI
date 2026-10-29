@@ -1,5 +1,5 @@
 import {
-  Drawer,
+  NavigationDrawer,
   Page,
   PageHeader,
   Scaffold,
@@ -25,7 +25,9 @@ export default function TopBarOnThePage() {
       style={{ blockSize: '16rem' }}
       topBar={<TopBar title="Northwind" background="page" />}
       navigation={{
-        drawer: <Drawer aria-label="Main, top bar on the page" destinations={destinations} />,
+        drawer: (
+          <NavigationDrawer aria-label="Main, top bar on the page" destinations={destinations} />
+        ),
       }}
     >
       <Page header={<PageHeader title="Documents" headingLevel={3} />}>

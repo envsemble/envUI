@@ -2,7 +2,7 @@ import {
   Button,
   Page,
   PageHeader,
-  Rail,
+  NavigationRail,
   Scaffold,
   TopBar,
   type Destination,
@@ -27,7 +27,9 @@ export default function DestinationsInNavigation() {
       navigationForms={{ compact: 'rail', medium: 'rail', expanded: 'rail', large: 'rail' }}
       topBar={<TopBar title="Northwind" />}
       navigation={{
-        rail: <Rail aria-label="Main, destinations in the rail" destinations={destinations} />,
+        rail: (
+          <NavigationRail aria-label="Main, destinations in the rail" destinations={destinations} />
+        ),
       }}
     >
       <Page

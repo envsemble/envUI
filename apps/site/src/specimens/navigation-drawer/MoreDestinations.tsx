@@ -1,4 +1,4 @@
-import MoreDestinations from '../../examples/drawer/MoreDestinations';
+import MoreDestinations from '../../examples/navigation-drawer/MoreDestinations';
 import { usePointer, type PointerStep } from '../../motion/Motion';
 import { MotionStage } from '../../motion/MotionStage';
 

@@ -182,7 +182,7 @@ A field's error is its `error` prop, as on the forms page. An Alert on the page 
 
 #### Status and counts
 
-A Badge's `tone` adds to its words, one tone per status everywhere, such as `success` for On track and `warning` for At risk. A Drawer or Rail destination's `count` shows its unread items and is said with its label; 0 shows nothing. A count Badge's `aria-label` says what it counts, such as "12 unread".
+A Badge's `tone` adds to its words, one tone per status everywhere, such as `success` for On track and `warning` for At risk. A NavigationDrawer or NavigationRail destination's `count` shows its unread items and is said with its label; 0 shows nothing. A count Badge's `aria-label` says what it counts, such as "12 unread".
 
 ### Composition
 

@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import {
   Button,
   DialogClose,
-  Drawer,
+  NavigationDrawer,
   Sheet,
   Column,
   Row,
@@ -12,7 +12,7 @@ import {
 } from '@envsemble/envui';
 
 /**
- * Side sheets at both edges, named by a title or by aria-label, one holding a Drawer, one whose
+ * Side sheets at both edges, named by a title or by aria-label, one holding a NavigationDrawer, one whose
  * first element is a field,
  * one in right-to-left text, a bottom sheet, and two taller than the window.
  */
@@ -39,7 +39,7 @@ export function SheetsFixture() {
           width="min(18rem, 100vw - 2rem)"
           trigger={<Button variant="secondary">Open navigation</Button>}
         >
-          <Drawer
+          <NavigationDrawer
             aria-label="Sections"
             destinations={[
               { label: 'Overview', href: '#overview', current: true },

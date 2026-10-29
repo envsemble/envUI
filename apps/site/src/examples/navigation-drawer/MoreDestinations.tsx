@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Bar, type Destination } from '@envsemble/envui';
+import { NavigationBar, type Destination } from '@envsemble/envui';
 import { Archive } from '@envsemble/envui/icons/Archive';
 import { CalendarMonth } from '@envsemble/envui/icons/CalendarMonth';
 import { Folder } from '@envsemble/envui/icons/Folder';
@@ -28,7 +28,7 @@ export default function MoreDestinations() {
   return (
     // As wide as a phone.
     <div style={{ inlineSize: 'min(100%, 24rem)' }}>
-      <Bar aria-label="Main, seven destinations" destinations={destinations} />
+      <NavigationBar aria-label="Main, seven destinations" destinations={destinations} />
     </div>
   );
 }

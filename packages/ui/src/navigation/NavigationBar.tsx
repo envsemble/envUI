@@ -22,7 +22,7 @@ import {
 } from './internal/Destinations.js';
 import { backgroundAttribute, type NavigationBackground } from './internal/background.js';
 import '../styles/Base.css';
-import '../styles/Bar.css';
+import '../styles/NavigationBar.css';
 
 /** The most destinations the bar shows; past it, the last place opens the rest in a menu. */
 const barLimit = 5;
@@ -35,9 +35,11 @@ const barClasses: DestinationClasses = {
   count: 'env-bar-count',
 };
 
-export interface BarProps extends Omit<ComponentPropsWithRef<'nav'>, 'children'>, SkeletonProps {
+export interface NavigationBarProps
+  extends Omit<ComponentPropsWithRef<'nav'>, 'children'>,
+    SkeletonProps {
   /**
-   * The application's destinations, the same array Rail and Drawer take. Give the bar 3 to 5: past
+   * The application's destinations, the same array NavigationRail and NavigationDrawer take. Give the bar 3 to 5: past
    * 5 it shows the first 4 and a More item that opens the rest in a menu. Groups and nested
    * destinations don't show: a destination whose `children` hold the current one takes the current
    * fill.
@@ -47,7 +49,7 @@ export interface BarProps extends Omit<ComponentPropsWithRef<'nav'>, 'children'>
    * The bar's background, named as Surface's and Card's: default, the navigation's background,
    * the default surface color, as a plain rectangle; page, the page's background, so it sits on the
    * page. On a surface, such as a Sheet, both take the surface's color. Set it on its own, such as
-   * a Bar with page under a TopBar with its background.
+   * a NavigationBar with page under a TopBar with its background.
    * @default 'default'
    */
   background?: NavigationBackground;
@@ -63,7 +65,7 @@ export interface BarProps extends Omit<ComponentPropsWithRef<'nav'>, 'children'>
  * each an icon above its label, at the bottom of the window. A `nav` landmark; the current
  * destination reports aria-current="page", and every destination is a tab stop.
  */
-export function Bar({
+export function NavigationBar({
   destinations,
   background = 'default',
   'aria-label': label,
@@ -71,7 +73,7 @@ export function Bar({
   skeleton = false,
   className,
   ...props
-}: BarProps) {
+}: NavigationBarProps) {
   const messages = useNavigationMessages();
   const overflow = destinations.length > barLimit;
   const shown = overflow ? destinations.slice(0, barLimit - 1) : destinations;

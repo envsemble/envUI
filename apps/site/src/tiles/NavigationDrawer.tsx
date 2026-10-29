@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Drawer, Text, type Destination } from '@envsemble/envui';
+import { NavigationDrawer, Text, type Destination } from '@envsemble/envui';
 import { Inbox } from '@envsemble/envui/icons/Inbox';
 import { Send } from '@envsemble/envui/icons/Send';
 import { Star } from '@envsemble/envui/icons/Star';
@@ -40,7 +40,7 @@ export default function DrawerTile() {
     { label: 'Sent', icon: <Send />, ...destination('sent') },
   ];
   return (
-    <Drawer
+    <NavigationDrawer
       aria-label="Mail"
       destinations={destinations}
       header={

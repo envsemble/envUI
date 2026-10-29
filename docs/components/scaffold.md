@@ -51,7 +51,7 @@ examples:
 
 ### The navigation for each width
 
-Scaffold shows the [navigation](drawer.md) that fits its own width: the bar on a phone, the rail on a tablet and the drawer on wider windows.
+Scaffold shows the [navigation](navigation-drawer.md) that fits its own width: the bar on a phone, the rail on a tablet and the drawer on wider windows.
 
 - The application can choose another form for a width, or none, such as on a phone where the top bar opens the navigation.
 - Where it asks for a form it didn't give, the nearest one shows.
@@ -156,7 +156,7 @@ One Scaffold sits at the application's root and stays as the pages change.
 Render one Scaffold at the application's root, around the router's outlet, and keep it mounted as the pages change.
 
 - `topBar` holds the top bar, usually a TopBar.
-- `navigation` holds the forms, such as `{ bar: <Bar … />, rail: <Rail … />, drawer: <Drawer … /> }`, with the same destinations.
+- `navigation` holds the forms, such as `{ bar: <NavigationBar … />, rail: <NavigationRail … />, drawer: <NavigationDrawer … /> }`, with the same destinations.
 - `children` is the body, the current page, usually a Page or Panes.
 - One form shows at a time, chosen by the Scaffold's own width, in CSS; give only the forms the application uses, and don't pick one in script from the window's width.
 
@@ -176,7 +176,7 @@ Render one Scaffold at the application's root, around the router's outlet, and k
 <Scaffold
   navigationForms={{ compact: 'none' }}
   topBar={<TopBar title="Settings" />}
-  navigation={{ drawer: <Drawer aria-label="Settings" destinations={destinations} /> }}
+  navigation={{ drawer: <NavigationDrawer aria-label="Settings" destinations={destinations} /> }}
 >
   …
 </Scaffold>
@@ -201,7 +201,7 @@ A button that narrows the navigation sets `navigationForms={{ expanded: 'rail', 
       title="Northwind"
     />
   }
-  navigation={{ bar: <Bar … />, rail: <Rail … />, drawer: <Drawer … /> }}
+  navigation={{ bar: <NavigationBar … />, rail: <NavigationRail … />, drawer: <NavigationDrawer … /> }}
 >
   …
 </Scaffold>
@@ -210,7 +210,7 @@ A button that narrows the navigation sets `navigationForms={{ expanded: 'rail', 
 #### Top bar span and backgrounds
 
 - `topBarSpan` is `body`, the default, where the top bar sits above the body beside the rail or drawer, which run the full height, or `full`, where it runs across the whole width above the navigation, as a window's title bar must.
-- `background="page"` on a TopBar, a Rail or a Drawer puts it on the page's background instead of the navigation's, the default; on a surface, such as a Sheet, both values take the surface's color. A Sheet is on the navigation's background, so the navigation keeps its color in the sheet of a narrow window.
+- `background="page"` on a TopBar, a NavigationRail or a NavigationDrawer puts it on the page's background instead of the navigation's, the default; on a surface, such as a Sheet, both values take the surface's color. A Sheet is on the navigation's background, so the navigation keeps its color in the sheet of a narrow window.
 
 ```tsx
 <Scaffold topBar={<TopBar title="Northwind" background="page" />} navigation={{ drawer }}>

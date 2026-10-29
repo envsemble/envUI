@@ -145,12 +145,19 @@
     gap: var(--env-space-4) var(--env-space-6);
   }
   .env-radio-group[data-orientation='horizontal'] legend,
-  .env-radio-group[data-orientation='horizontal'] > .env-field-description,
-  .env-radio-group[data-orientation='horizontal'] > .env-field-error {
+  .env-radio-group[data-orientation='horizontal'] > .env-radio-group-description,
+  .env-radio-group[data-orientation='horizontal'] > .env-radio-group-error {
     flex-basis: 100%;
   }
-  /* A group's error, outside a field, takes the field's error color. */
-  .env-radio-group > .env-field-error {
+  /* The group's description and error, as a field's are. */
+  .env-radio-group-description,
+  .env-radio-group-error {
+    font: var(--env-type-body-small);
+  }
+  .env-radio-group-description {
+    color: var(--env-color-fg-muted);
+  }
+  .env-radio-group-error {
     color: var(--env-color-fg-danger);
   }
   .env-radio-description {

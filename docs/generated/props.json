@@ -444,46 +444,6 @@
         "@envsemble/envui"
       ]
     },
-    "Bar": {
-      "kind": "component",
-      "source": "packages/ui/src/navigation/Bar.tsx",
-      "description": "The navigation bar for compact windows, such as phones: up to five destinations side by side, each an icon above its label, at the bottom of the window. A `nav` landmark; the current destination reports aria-current=\"page\", and every destination is a tab stop.",
-      "props": [
-        {
-          "name": "destinations",
-          "type": "readonly Destination[]",
-          "required": true,
-          "description": "The application's destinations, the same array Rail and Drawer take. Give the bar 3 to 5: past 5 it shows the first 4 and a More item that opens the rest in a menu. Groups and nested destinations don't show: a destination whose `children` hold the current one takes the current fill."
-        },
-        {
-          "name": "background",
-          "type": "'default' | 'page'",
-          "required": false,
-          "default": "'default'",
-          "description": "The bar's background, named as Surface's and Card's: default, the navigation's background, the default surface color, as a plain rectangle; page, the page's background, so it sits on the page. On a surface, such as a Sheet, both take the surface's color. Set it on its own, such as a Bar with page under a TopBar with its background."
-        },
-        {
-          "name": "aria-label",
-          "type": "string",
-          "required": false,
-          "default": "messages.navigation.label, Main",
-          "description": "Names the navigation landmark, such as Main or Project; give each landmark of a page its own."
-        },
-        {
-          "name": "skeleton",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
-        }
-      ],
-      "native": [
-        "nav"
-      ],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
     "Box": {
       "kind": "component",
       "source": "packages/ui/src/foundations/Layout.tsx",
@@ -2933,131 +2893,6 @@
         "@envsemble/envui"
       ]
     },
-    "Drawer": {
-      "kind": "component",
-      "source": "packages/ui/src/navigation/Drawer.tsx",
-      "description": "The navigation drawer for expanded and larger windows: a column at the window's start with every destination as a row of icon, label and count, under the headings of their groups, and nested destinations in sections that open and close. A `nav` landmark; the current destination reports aria-current=\"page\", and every destination and section button is a tab stop. Its list scrolls where the drawer is shorter than its destinations. With `resizable`, people resize it by its end edge.",
-      "props": [
-        {
-          "name": "destinations",
-          "type": "readonly DrawerDestination[]",
-          "required": true,
-          "description": "The application's destinations, the same array Bar and Rail take: each a row with its icon, its label and its count. A heading starts each run of destinations of one `group`. A destination with `children` is a section that opens and closes, with them under it, indented."
-        },
-        {
-          "name": "expanded",
-          "type": "readonly string[]",
-          "required": false,
-          "description": "The open sections, for a drawer whose sections the application keeps open, such as for the next visit: each a destination with `children`, named by its `id`, else its `href`, else its label. Update it from onExpandedChange. Leave it out for the drawer to keep its own."
-        },
-        {
-          "name": "defaultExpanded",
-          "type": "readonly string[]",
-          "required": false,
-          "default": "[]",
-          "description": "The sections open at first, as in `expanded`, for a drawer that keeps its own. The sections that hold the current destination open as well."
-        },
-        {
-          "name": "onExpandedChange",
-          "type": "(expanded: string[]) => void",
-          "required": false,
-          "description": "Receives the open sections, as in `expanded`, as one opens or closes, and as the current destination moves into a closed section, which opens."
-        },
-        {
-          "name": "header",
-          "type": "ReactNode",
-          "required": false,
-          "description": "Content above the destinations, such as the application's name or a search trigger."
-        },
-        {
-          "name": "footer",
-          "type": "ReactNode",
-          "required": false,
-          "description": "Content below the destinations, at the bottom of the drawer, such as the account's menu."
-        },
-        {
-          "name": "headingLevel",
-          "type": "Exclude<HeadingLevel, 1>",
-          "required": false,
-          "default": "2",
-          "description": "The level of the groups' headings, which assistive technology lists with the page's headings: one below the heading the drawer sits under, such as 3 in a drawer under an h2."
-        },
-        {
-          "name": "background",
-          "type": "'default' | 'page'",
-          "required": false,
-          "default": "'default'",
-          "description": "The drawer's background, named as Surface's and Card's: default, the navigation's background, the default surface color, as a plain rectangle; page, the page's background, so it sits on the page. On a surface, such as a Sheet, both take the surface's color; a Sheet's is the navigation's background, so it keeps its color in a narrow window. Set it on its own, such as a Drawer with its background under a TopBar with page."
-        },
-        {
-          "name": "aria-label",
-          "type": "string",
-          "required": false,
-          "default": "messages.navigation.label, Main",
-          "description": "Names the navigation landmark, such as Main or Project; give each landmark of a page its own."
-        },
-        {
-          "name": "resizable",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "Lets people resize the drawer by its inner edge, the end edge: a handle there that the pointer drags and the arrow keys move, between `minWidth` and `maxWidth`, which a double click returns to `defaultWidth`. Its labels and headings keep to one line: one that doesn't fit ends in an ellipsis, a label cut short shows in full in a tooltip and a heading in its title. Leave it out of a drawer in a sheet of a narrow window."
-        },
-        {
-          "name": "width",
-          "type": "number",
-          "required": false,
-          "description": "The drawer's width in rem while `resizable`, for a drawer the application controls with onWidthChange, such as a width it keeps for the next visit."
-        },
-        {
-          "name": "defaultWidth",
-          "type": "number",
-          "required": false,
-          "default": "17.5",
-          "description": "The width in rem a `resizable` drawer starts at until people resize it, and that a double click on the handle returns it to."
-        },
-        {
-          "name": "onWidthChange",
-          "type": "(width: number, details: ResizeDetails) => void",
-          "required": false,
-          "description": "Receives each new width of a `resizable` drawer, in rem: while dragging with committed false, and with committed true as a drag ends, a key moves the handle or a double click resets it. Store the committed width to keep it, and pass it back as `width`."
-        },
-        {
-          "name": "minWidth",
-          "type": "number",
-          "required": false,
-          "default": "15",
-          "description": "The smallest width of a `resizable` drawer, in rem."
-        },
-        {
-          "name": "maxWidth",
-          "type": "number",
-          "required": false,
-          "default": "30",
-          "description": "The largest width of a `resizable` drawer, in rem. It never takes more than half its container, such as the Scaffold, or of the window."
-        },
-        {
-          "name": "resizeLabel",
-          "type": "string",
-          "required": false,
-          "default": "'Resize navigation', or EnvUIProvider's messages.navigation.resize",
-          "description": "The resize handle's name."
-        },
-        {
-          "name": "skeleton",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
-        }
-      ],
-      "native": [
-        "element"
-      ],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
     "DropZone": {
       "kind": "component",
       "source": "packages/ui/src/forms/DropZone.tsx",
@@ -3823,7 +3658,7 @@
           "name": "component",
           "type": "ComponentType<LinkComponentProps>",
           "required": true,
-          "description": "Renders every envUI destination (Button, Link, the destinations of Bar, Rail and Drawer, Card, Pager links and menu links with href). It must render an anchor and forward native props and ref, for example a router's link that navigates on the client."
+          "description": "Renders every envUI destination (Button, Link, the destinations of NavigationBar, NavigationRail and NavigationDrawer, Card, Pager links and menu links with href). It must render an anchor and forward native props and ref, for example a router's link that navigates on the client."
         },
         {
           "name": "children",
@@ -4283,7 +4118,7 @@
           "name": "aria-current",
           "type": "AriaAttributes['aria-current']",
           "required": false,
-          "description": "Marks a destination as the page shown now, such as aria-current=\"page\" on the current one of a Bar's destinations that its More menu holds."
+          "description": "Marks a destination as the page shown now, such as aria-current=\"page\" on the current one of a NavigationBar's destinations that its More menu holds."
         },
         {
           "name": "aria-label",
@@ -5097,6 +4932,223 @@
       ],
       "native": [
         "button"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "NavigationBar": {
+      "kind": "component",
+      "source": "packages/ui/src/navigation/NavigationBar.tsx",
+      "description": "The navigation bar for compact windows, such as phones: up to five destinations side by side, each an icon above its label, at the bottom of the window. A `nav` landmark; the current destination reports aria-current=\"page\", and every destination is a tab stop.",
+      "props": [
+        {
+          "name": "destinations",
+          "type": "readonly Destination[]",
+          "required": true,
+          "description": "The application's destinations, the same array NavigationRail and NavigationDrawer take. Give the bar 3 to 5: past 5 it shows the first 4 and a More item that opens the rest in a menu. Groups and nested destinations don't show: a destination whose `children` hold the current one takes the current fill."
+        },
+        {
+          "name": "background",
+          "type": "'default' | 'page'",
+          "required": false,
+          "default": "'default'",
+          "description": "The bar's background, named as Surface's and Card's: default, the navigation's background, the default surface color, as a plain rectangle; page, the page's background, so it sits on the page. On a surface, such as a Sheet, both take the surface's color. Set it on its own, such as a NavigationBar with page under a TopBar with its background."
+        },
+        {
+          "name": "aria-label",
+          "type": "string",
+          "required": false,
+          "default": "messages.navigation.label, Main",
+          "description": "Names the navigation landmark, such as Main or Project; give each landmark of a page its own."
+        },
+        {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
+        }
+      ],
+      "native": [
+        "nav"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "NavigationDrawer": {
+      "kind": "component",
+      "source": "packages/ui/src/navigation/NavigationDrawer.tsx",
+      "description": "The navigation drawer for expanded and larger windows: a column at the window's start with every destination as a row of icon, label and count, under the headings of their groups, and nested destinations in sections that open and close. A `nav` landmark; the current destination reports aria-current=\"page\", and every destination and section button is a tab stop. Its list scrolls where the drawer is shorter than its destinations. With `resizable`, people resize it by its end edge.",
+      "props": [
+        {
+          "name": "destinations",
+          "type": "readonly NavigationDrawerDestination[]",
+          "required": true,
+          "description": "The application's destinations, the same array NavigationBar and NavigationRail take: each a row with its icon, its label and its count. A heading starts each run of destinations of one `group`. A destination with `children` is a section that opens and closes, with them under it, indented."
+        },
+        {
+          "name": "expanded",
+          "type": "readonly string[]",
+          "required": false,
+          "description": "The open sections, for a drawer whose sections the application keeps open, such as for the next visit: each a destination with `children`, named by its `id`, else its `href`, else its label. Update it from onExpandedChange. Leave it out for the drawer to keep its own."
+        },
+        {
+          "name": "defaultExpanded",
+          "type": "readonly string[]",
+          "required": false,
+          "default": "[]",
+          "description": "The sections open at first, as in `expanded`, for a drawer that keeps its own. The sections that hold the current destination open as well."
+        },
+        {
+          "name": "onExpandedChange",
+          "type": "(expanded: string[]) => void",
+          "required": false,
+          "description": "Receives the open sections, as in `expanded`, as one opens or closes, and as the current destination moves into a closed section, which opens."
+        },
+        {
+          "name": "header",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content above the destinations, such as the application's name or a search trigger."
+        },
+        {
+          "name": "footer",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content below the destinations, at the bottom of the drawer, such as the account's menu."
+        },
+        {
+          "name": "headingLevel",
+          "type": "Exclude<HeadingLevel, 1>",
+          "required": false,
+          "default": "2",
+          "description": "The level of the groups' headings, which assistive technology lists with the page's headings: one below the heading the drawer sits under, such as 3 in a drawer under an h2."
+        },
+        {
+          "name": "background",
+          "type": "'default' | 'page'",
+          "required": false,
+          "default": "'default'",
+          "description": "The drawer's background, named as Surface's and Card's: default, the navigation's background, the default surface color, as a plain rectangle; page, the page's background, so it sits on the page. On a surface, such as a Sheet, both take the surface's color; a Sheet's is the navigation's background, so it keeps its color in a narrow window. Set it on its own, such as a NavigationDrawer with its background under a TopBar with page."
+        },
+        {
+          "name": "aria-label",
+          "type": "string",
+          "required": false,
+          "default": "messages.navigation.label, Main",
+          "description": "Names the navigation landmark, such as Main or Project; give each landmark of a page its own."
+        },
+        {
+          "name": "resizable",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Lets people resize the drawer by its inner edge, the end edge: a handle there that the pointer drags and the arrow keys move, between `minWidth` and `maxWidth`, which a double click returns to `defaultWidth`. Its labels and headings keep to one line: one that doesn't fit ends in an ellipsis, a label cut short shows in full in a tooltip and a heading in its title. Leave it out of a drawer in a sheet of a narrow window."
+        },
+        {
+          "name": "width",
+          "type": "number",
+          "required": false,
+          "description": "The drawer's width in rem while `resizable`, for a drawer the application controls with onWidthChange, such as a width it keeps for the next visit."
+        },
+        {
+          "name": "defaultWidth",
+          "type": "number",
+          "required": false,
+          "default": "17.5",
+          "description": "The width in rem a `resizable` drawer starts at until people resize it, and that a double click on the handle returns it to."
+        },
+        {
+          "name": "onWidthChange",
+          "type": "(width: number, details: ResizeDetails) => void",
+          "required": false,
+          "description": "Receives each new width of a `resizable` drawer, in rem: while dragging with committed false, and with committed true as a drag ends, a key moves the handle or a double click resets it. Store the committed width to keep it, and pass it back as `width`."
+        },
+        {
+          "name": "minWidth",
+          "type": "number",
+          "required": false,
+          "default": "15",
+          "description": "The smallest width of a `resizable` drawer, in rem."
+        },
+        {
+          "name": "maxWidth",
+          "type": "number",
+          "required": false,
+          "default": "30",
+          "description": "The largest width of a `resizable` drawer, in rem. It never takes more than half its container, such as the Scaffold, or of the window."
+        },
+        {
+          "name": "resizeLabel",
+          "type": "string",
+          "required": false,
+          "default": "'Resize navigation', or EnvUIProvider's messages.navigation.resize",
+          "description": "The resize handle's name."
+        },
+        {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
+        }
+      ],
+      "native": [
+        "element"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "NavigationRail": {
+      "kind": "component",
+      "source": "packages/ui/src/navigation/NavigationRail.tsx",
+      "description": "The navigation rail for medium windows, such as tablets: a narrow column at the window's start with the destinations one under another, each an icon above a short label. A `nav` landmark; the current destination reports aria-current=\"page\", and every destination is a tab stop.",
+      "props": [
+        {
+          "name": "destinations",
+          "type": "readonly Destination[]",
+          "required": true,
+          "description": "The application's destinations, the same array NavigationBar and NavigationDrawer take, each an icon above a short label. Groups don't show: the destinations follow one another in the array's order. Nested destinations don't show either: a destination whose `children` hold the current one takes the current fill."
+        },
+        {
+          "name": "header",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content above the destinations, such as a button that opens a Sheet with the NavigationDrawer, or the main action of the page."
+        },
+        {
+          "name": "footer",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content at the bottom of the rail, such as the account's AvatarButton."
+        },
+        {
+          "name": "background",
+          "type": "'default' | 'page'",
+          "required": false,
+          "default": "'default'",
+          "description": "The rail's background, named as Surface's and Card's: default, the navigation's background, the default surface color, as a plain rectangle; page, the page's background, so it sits on the page. On a surface, such as a Sheet, both take the surface's color; a Sheet's is the navigation's background, so it keeps its color in a narrow window. Set it on its own, such as a NavigationRail with its background beside a TopBar with page."
+        },
+        {
+          "name": "aria-label",
+          "type": "string",
+          "required": false,
+          "default": "messages.navigation.label, Main",
+          "description": "Names the navigation landmark, such as Main or Project; give each landmark of a page its own."
+        },
+        {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
+        }
+      ],
+      "native": [
+        "element"
       ],
       "entries": [
         "@envsemble/envui"
@@ -6210,58 +6262,6 @@
         "@envsemble/envui"
       ]
     },
-    "Rail": {
-      "kind": "component",
-      "source": "packages/ui/src/navigation/Rail.tsx",
-      "description": "The navigation rail for medium windows, such as tablets: a narrow column at the window's start with the destinations one under another, each an icon above a short label. A `nav` landmark; the current destination reports aria-current=\"page\", and every destination is a tab stop.",
-      "props": [
-        {
-          "name": "destinations",
-          "type": "readonly Destination[]",
-          "required": true,
-          "description": "The application's destinations, the same array Bar and Drawer take, each an icon above a short label. Groups don't show: the destinations follow one another in the array's order. Nested destinations don't show either: a destination whose `children` hold the current one takes the current fill."
-        },
-        {
-          "name": "header",
-          "type": "ReactNode",
-          "required": false,
-          "description": "Content above the destinations, such as a button that opens a Sheet with the Drawer, or the main action of the page."
-        },
-        {
-          "name": "footer",
-          "type": "ReactNode",
-          "required": false,
-          "description": "Content at the bottom of the rail, such as the account's AvatarButton."
-        },
-        {
-          "name": "background",
-          "type": "'default' | 'page'",
-          "required": false,
-          "default": "'default'",
-          "description": "The rail's background, named as Surface's and Card's: default, the navigation's background, the default surface color, as a plain rectangle; page, the page's background, so it sits on the page. On a surface, such as a Sheet, both take the surface's color; a Sheet's is the navigation's background, so it keeps its color in a narrow window. Set it on its own, such as a Rail with its background beside a TopBar with page."
-        },
-        {
-          "name": "aria-label",
-          "type": "string",
-          "required": false,
-          "default": "messages.navigation.label, Main",
-          "description": "Names the navigation landmark, such as Main or Project; give each landmark of a page its own."
-        },
-        {
-          "name": "skeleton",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
-        }
-      ],
-      "native": [
-        "element"
-      ],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
     "Rating": {
       "kind": "component",
       "source": "packages/ui/src/content/Rating.tsx",
@@ -6639,7 +6639,7 @@
     "Scaffold": {
       "kind": "component",
       "source": "packages/ui/src/layout/Scaffold.tsx",
-      "description": "The invisible structure of an application's screen, after Material's: a top bar region, a navigation region and the body. It never paints. It shows one navigation form at a time by its own width, CSS only: a Bar at the bottom of a compact window, a Rail at the start of a medium one and a Drawer at the start from expanded. The document scrolls by default, with the top bar, the bar and the rail or the drawer kept in view; `scroll=\"body\"` scrolls the body alone. Skip links to the body and the navigation come first.",
+      "description": "The invisible structure of an application's screen, after Material's: a top bar region, a navigation region and the body. It never paints. It shows one navigation form at a time by its own width, CSS only: a NavigationBar at the bottom of a compact window, a NavigationRail at the start of a medium one and a NavigationDrawer at the start from expanded. The document scrolls by default, with the top bar, the bar and the rail or the drawer kept in view; `scroll=\"body\"` scrolls the body alone. Skip links to the body and the navigation come first.",
       "props": [
         {
           "name": "topBar",
@@ -6651,7 +6651,7 @@
           "name": "navigation",
           "type": "ScaffoldNavigation",
           "required": false,
-          "description": "The navigation forms, such as `{ bar: <Bar … />, rail: <Rail … />, drawer: <Drawer … /> }` with the same destinations. One shows at a time, chosen by the Scaffold's own width; give only the forms the application uses."
+          "description": "The navigation forms, such as `{ bar: <NavigationBar … />, rail: <NavigationRail … />, drawer: <NavigationDrawer … /> }` with the same destinations. One shows at a time, chosen by the Scaffold's own width; give only the forms the application uses."
         },
         {
           "name": "navigationForms",
@@ -8818,7 +8818,7 @@
           "type": "'default' | 'page'",
           "required": false,
           "default": "'default'",
-          "description": "The bar's background, named as Surface's and Card's: default, the navigation's background, the default surface color, as a plain rectangle; page, the page's background, so it sits on the page. On a surface, such as a Sheet, both take the surface's color. Set it on its own, such as a TopBar with page over a Drawer with its background."
+          "description": "The bar's background, named as Surface's and Card's: default, the navigation's background, the default surface color, as a plain rectangle; page, the page's background, so it sits on the page. On a surface, such as a Sheet, both take the surface's color. Set it on its own, such as a TopBar with page over a NavigationDrawer with its background."
         },
         {
           "name": "loading",

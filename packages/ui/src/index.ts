@@ -23,10 +23,13 @@ export * from './actions/AvatarButton.js';
 export * from './actions/ConfirmButton.js';
 export * from './actions/CopyButton.js';
 export * from './actions/SegmentedControl.js';
-export * from './navigation/Bar.js';
-export * from './navigation/Rail.js';
-export * from './navigation/Drawer.js';
-export type { Destination, DrawerDestination } from './navigation/internal/Destinations.js';
+export * from './navigation/NavigationBar.js';
+export * from './navigation/NavigationRail.js';
+export * from './navigation/NavigationDrawer.js';
+export type {
+  Destination,
+  NavigationDrawerDestination,
+} from './navigation/internal/Destinations.js';
 export type { NavigationBackground } from './navigation/internal/background.js';
 export * as Pager from './navigation/Pager.js';
 export * from './navigation/Tabs.js';

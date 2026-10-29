@@ -179,7 +179,7 @@ A red outline marks a node with problems; coloured by window class, a solid outl
 
 <!-- demo: DevModeInspectorPicture -->
 
-Each sidebar has a button in its header, in the window's top corner on its side, that hides it; while it is hidden the button stays in that corner, over the view, to show it again. Drag a sidebar's inner edge, by the same grip as a resizable [Drawer](components/drawer.md)'s, to make it wider or narrower, up to all the window leaves beside the other sidebar and a narrow view: the arrow keys on the grip step by 1 rem, <kbd>Shift</kbd>+arrow by 5 rem, and a double-click gives it its first width back. Dev mode remembers the widths and which sidebars are hidden in this browser.
+Each sidebar has a button in its header, in the window's top corner on its side, that hides it; while it is hidden the button stays in that corner, over the view, to show it again. Drag a sidebar's inner edge, by the same grip as a resizable [NavigationDrawer](components/navigation-drawer.md)'s, to make it wider or narrower, up to all the window leaves beside the other sidebar and a narrow view: the arrow keys on the grip step by 1 rem, <kbd>Shift</kbd>+arrow by 5 rem, and a double-click gives it its first width back. Dev mode remembers the widths and which sidebars are hidden in this browser.
 
 ## Skeleton shift
 

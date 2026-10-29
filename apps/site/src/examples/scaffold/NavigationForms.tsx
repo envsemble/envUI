@@ -1,12 +1,12 @@
 import { useState, type CSSProperties } from 'react';
 import {
-  Bar,
-  Drawer,
+  NavigationBar,
+  NavigationDrawer,
   IconButton,
   List,
   Page,
   PageHeader,
-  Rail,
+  NavigationRail,
   Scaffold,
   TopBar,
   type Destination,
@@ -67,9 +67,9 @@ export default function NavigationForms() {
         <TopBar title="Northwind" actions={<IconButton icon={<Search />} aria-label="Search" />} />
       }
       navigation={{
-        bar: <Bar destinations={destinations} />,
-        rail: <Rail destinations={destinations} />,
-        drawer: <Drawer destinations={destinations} />,
+        bar: <NavigationBar destinations={destinations} />,
+        rail: <NavigationRail destinations={destinations} />,
+        drawer: <NavigationDrawer destinations={destinations} />,
       }}
     >
       <Page header={<PageHeader title={current} headingLevel={3} />}>

@@ -28,7 +28,7 @@ avoidWhen:
   - text: Data compared across columns, or rows people sort by a value.
     use: Table
   - text: Destinations in an application's navigation.
-    use: Drawer
+    use: NavigationDrawer
   - text: A hierarchy people expand, such as folders.
     use: Tree
   - text: One choice from a few options shown as rows.

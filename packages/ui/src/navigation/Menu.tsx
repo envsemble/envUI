@@ -31,6 +31,7 @@ import { setRef } from '../internal/setRef.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 import { markTriggerOwner } from '../internal/triggerOwner.js';
 import { keyShortcuts, shortcutChords } from '../internal/shortcuts.js';
+import type { OpenChangeDetails, OpenChangeReason } from './internal/menuOpenChange.js';
 import '../styles/Base.css';
 import '../styles/Menu.css';
 
@@ -41,30 +42,7 @@ const menuParts = {
   Popup: BaseMenu.Popup,
 };
 
-/**
- * Why a menu asks to open or close, as Base UI says: its trigger, hover or focus, a press outside,
- * Esc, a chosen item, the arrow keys, focus leaving it, a sibling menu opening, or the application.
- */
-export type OpenChangeReason =
-  | 'trigger-press'
-  | 'trigger-hover'
-  | 'trigger-focus'
-  | 'outside-press'
-  | 'escape-key'
-  | 'item-press'
-  | 'list-navigation'
-  | 'focus-out'
-  | 'close-press'
-  | 'sibling-open'
-  | 'cancel-open'
-  | 'imperative-action'
-  | 'none';
-
-/** What a menu's onOpenChange receives beside the requested state. */
-export interface OpenChangeDetails {
-  /** Why it asks to open or close. */
-  reason: OpenChangeReason;
-}
+export type { OpenChangeDetails, OpenChangeReason } from './internal/menuOpenChange.js';
 
 export interface RootProps
   extends Omit<ComponentPropsWithRef<'div'>, 'children' | 'aria-label' | 'role' | 'onToggle'>,
@@ -248,7 +226,7 @@ interface ItemSharedProps extends ItemContentProps {
   disabled?: boolean;
   /**
    * Marks a destination as the page shown now, such as aria-current="page" on the current one of a
-   * Bar's destinations that its More menu holds.
+   * NavigationBar's destinations that its More menu holds.
    */
   'aria-current'?: AriaAttributes['aria-current'];
   /**

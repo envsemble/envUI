@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import {
-  Bar,
-  Drawer,
+  NavigationBar,
+  NavigationDrawer,
   Page,
   PageHeader,
-  Rail,
+  NavigationRail,
   Scaffold,
   Text,
   TopBar,
@@ -36,9 +36,9 @@ export default function OneListThreeForms() {
       style={{ blockSize: '22rem' }}
       topBar={<TopBar title="Northwind" />}
       navigation={{
-        drawer: <Drawer aria-label="Main" destinations={destinations} />,
-        rail: <Rail aria-label="Main" destinations={destinations} />,
-        bar: <Bar aria-label="Main" destinations={destinations} />,
+        drawer: <NavigationDrawer aria-label="Main" destinations={destinations} />,
+        rail: <NavigationRail aria-label="Main" destinations={destinations} />,
+        bar: <NavigationBar aria-label="Main" destinations={destinations} />,
       }}
     >
       <Page header={<PageHeader title={current} headingLevel={3} />}>

@@ -1,4 +1,4 @@
-import { Bar, type Destination } from '@envsemble/envui';
+import { NavigationBar, type Destination } from '@envsemble/envui';
 import { Folder } from '@envsemble/envui/icons/Folder';
 import { Home } from '@envsemble/envui/icons/Home';
 import { Inbox } from '@envsemble/envui/icons/Inbox';
@@ -12,5 +12,5 @@ const destinations: Destination[] = [
 ];
 
 export default function SharedWidth() {
-  return <Bar aria-label="Main, shared width" destinations={destinations} />;
+  return <NavigationBar aria-label="Main, shared width" destinations={destinations} />;
 }

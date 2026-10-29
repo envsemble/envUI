@@ -1,7 +1,7 @@
 import { Suspense, useState } from 'react';
 import {
   Alert,
-  Bar,
+  NavigationBar,
   Button,
   Column,
   IconButton,
@@ -115,7 +115,7 @@ function DestinationSteps() {
   }));
   return (
     <div className="catalogue-icons-bar">
-      <Bar destinations={destinations} />
+      <NavigationBar destinations={destinations} />
     </div>
   );
 }

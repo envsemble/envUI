@@ -2,7 +2,7 @@ import {
   IconButton,
   Page,
   PageHeader,
-  Rail,
+  NavigationRail,
   Scaffold,
   Text,
   TopBar,
@@ -28,7 +28,7 @@ export default function ScaffoldAnatomy() {
       topBar={
         <TopBar title="Northwind" actions={<IconButton icon={<Search />} aria-label="Search" />} />
       }
-      navigation={{ rail: <Rail destinations={destinations} /> }}
+      navigation={{ rail: <NavigationRail destinations={destinations} /> }}
     >
       <Page header={<PageHeader title="Inbox" headingLevel={3} />}>
         <Text emphasis="muted">Three messages since yesterday.</Text>

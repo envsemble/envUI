@@ -32,7 +32,7 @@ avoidWhen:
   - text: Searching for and running one of many commands.
     use: CommandPalette
   - text: An application's navigation, such as the pages in a sidebar.
-    use: Drawer
+    use: NavigationDrawer
   - text: Content people work in beside a trigger, such as a small form or a color picker.
     use: Popover
   - text: One or two actions that fit beside the content they act on.

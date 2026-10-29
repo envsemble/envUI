@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Drawer, type DrawerDestination } from '@envsemble/envui';
+import { NavigationDrawer, type NavigationDrawerDestination } from '@envsemble/envui';
 
 const pages = [
   { href: '/guide/overview', label: 'Overview', group: 'Getting started' },
@@ -11,11 +11,11 @@ const pages = [
 
 export default function GuideSections() {
   const [current, setCurrent] = useState('/guide/install');
-  // Without icons, the drawer suits the sections of a guide; Rail and Bar need icons.
-  const destinations: DrawerDestination[] = pages.map((page) => ({
+  // Without icons, the drawer suits the sections of a guide; NavigationRail and NavigationBar need icons.
+  const destinations: NavigationDrawerDestination[] = pages.map((page) => ({
     ...page,
     current: current === page.href,
     onClick: () => setCurrent(page.href),
   }));
-  return <Drawer aria-label="Help" destinations={destinations} />;
+  return <NavigationDrawer aria-label="Help" destinations={destinations} />;
 }

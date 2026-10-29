@@ -12,8 +12,8 @@ import {
   TextField,
   Menu,
   Menubar,
-  Drawer,
-  Rail,
+  NavigationDrawer,
+  NavigationRail,
   type Destination,
   Pagination,
   PanelDock,
@@ -415,16 +415,18 @@ const destinations: Destination[] = [
   { label: 'Settings', icon: <Settings />, href: '#settings' },
 ];
 
-function NavigationDrawer({ label }: { label: string }) {
-  return <Drawer className="density-drawer" aria-label={label} destinations={destinations} />;
+function DensityDrawer({ label }: { label: string }) {
+  return (
+    <NavigationDrawer className="density-drawer" aria-label={label} destinations={destinations} />
+  );
 }
 
 function NavigationSection() {
   return (
     <div className="density-columns">
       <Column title="Drawer, Rail and Breadcrumbs">
-        <NavigationDrawer label="Navigation" />
-        <Rail aria-label="Rail navigation" destinations={destinations} />
+        <DensityDrawer label="Navigation" />
+        <NavigationRail aria-label="Rail navigation" destinations={destinations} />
         <Breadcrumbs
           aria-label="Location"
           items={[
@@ -463,7 +465,7 @@ function DesktopSection() {
       </div>
       <div className="density-app-body">
         <aside className="density-app-side">
-          <NavigationDrawer label="Sections" />
+          <DensityDrawer label="Sections" />
           <FileTree label="Files" />
         </aside>
         <div className="density-app-main">

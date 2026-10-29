@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState, type ComponentProps } from 'react';
 import {
   Button,
-  Drawer,
+  NavigationDrawer,
   IconButton,
   Link,
-  Rail,
+  NavigationRail,
   Tooltip,
   type Destination,
-  type DrawerDestination,
+  type NavigationDrawerDestination,
 } from '@envsemble/envui';
 import { Home } from '@envsemble/envui/icons/Home';
 import { Widgets } from '@envsemble/envui/icons/Widgets';
@@ -59,7 +59,7 @@ export function pageDestinations(
   pages: readonly RoutePage[],
   currentPath: string,
   onChoose?: () => void,
-): DrawerDestination[] {
+): NavigationDrawerDestination[] {
   return pages.map((page) => ({
     group: page.group,
     label: page.label ?? page.title,
@@ -86,8 +86,11 @@ function useCurrentInView() {
  * each a section of their pages that opens and closes, open while it holds the current page. A
  * section that is one page of its name, such as Changelog, is that page alone, under no heading.
  */
-export function docsDestinations(currentPath: string, onChoose?: () => void): DrawerDestination[] {
-  const link = (page: RoutePage, group?: string): DrawerDestination => ({
+export function docsDestinations(
+  currentPath: string,
+  onChoose?: () => void,
+): NavigationDrawerDestination[] {
+  const link = (page: RoutePage, group?: string): NavigationDrawerDestination => ({
     group,
     label: page.label ?? page.title,
     href: routeHref(page.path),
@@ -101,7 +104,7 @@ export function docsDestinations(currentPath: string, onChoose?: () => void): Dr
   return docsTree.flatMap((section) => [
     ...section.pages.map((page) => link(page, lone(section) ? undefined : section.label)),
     ...section.groups.map(
-      (group): DrawerDestination => ({
+      (group): NavigationDrawerDestination => ({
         group: section.label,
         label: group.label,
         children: group.pages.map((page) => link(page)),
@@ -138,7 +141,10 @@ function storedDrawerWidth(area: Area) {
  * the next visit; read before the first render, so nothing moves as the page loads. The drawer in
  * the sheet of a narrower window takes the sheet's width and isn't resizable.
  */
-function useDrawerWidth(area: Area, inSheet: boolean): Partial<ComponentProps<typeof Drawer>> {
+function useDrawerWidth(
+  area: Area,
+  inSheet: boolean,
+): Partial<ComponentProps<typeof NavigationDrawer>> {
   const [width, setWidth] = useState(() => storedDrawerWidth(area));
   if (inSheet) return {};
   return {
@@ -185,8 +191,8 @@ function Brand({ area }: { area: Area }) {
 }
 
 /**
- * The catalogue's navigation, one pane: a Rail of its destinations, Overview, Foundations,
- * Components and Patterns, under the envUI wordmark, beside a Drawer of the chosen
+ * The catalogue's navigation, one pane: a NavigationRail of its destinations, Overview, Foundations,
+ * Components and Patterns, under the envUI wordmark, beside a NavigationDrawer of the chosen
  * destination's pages under search, both on the navigation's background with no seam or line
  * between them. A rail item opens its destination's first page; in the sheet of a narrower window
  * it leaves the sheet open, so a page can be chosen.
@@ -204,14 +210,14 @@ export function CatalogueNavigation({
   const pages = pagesOf('catalogue').filter((entry) => entry.section === section);
   return (
     <div ref={element} className="site-navigation" data-in-sheet={inSheet || undefined}>
-      <Rail
+      <NavigationRail
         aria-label="Catalogue"
         className="catalogue-rail"
         header={<Brand area="catalogue" />}
         footer={<MotionButton />}
         destinations={catalogueDestinations(page?.area === 'catalogue' ? section : undefined)}
       />
-      <Drawer
+      <NavigationDrawer
         aria-label={section}
         className="site-sidebar"
         header={<SearchButton onClick={onSearch} className="site-drawer-search" />}
@@ -223,7 +229,7 @@ export function CatalogueNavigation({
 }
 
 /**
- * The Docs' navigation: a Drawer of every page of the Docs, as a tree of their sections and groups
+ * The Docs' navigation: a NavigationDrawer of every page of the Docs, as a tree of their sections and groups
  * (docsDestinations), with the wordmark and search side by side at its top.
  */
 export function DocsNavigation({
@@ -236,7 +242,7 @@ export function DocsNavigation({
   const drawerWidth = useDrawerWidth('docs', inSheet);
   return (
     <div ref={element} className="site-navigation" data-in-sheet={inSheet || undefined}>
-      <Drawer
+      <NavigationDrawer
         aria-label="Docs"
         className="site-sidebar"
         header={

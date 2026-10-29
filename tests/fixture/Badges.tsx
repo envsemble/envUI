@@ -1,7 +1,7 @@
 import {
   Badge,
-  Drawer,
-  Rail,
+  NavigationDrawer,
+  NavigationRail,
   Column,
   Surface,
   Theme,
@@ -46,11 +46,11 @@ export function BadgesFixture({ theme }: { theme: ColorScheme }) {
           </Column>
         </Surface>
       ))}
-      <Drawer
+      <NavigationDrawer
         aria-label={`Badges ${theme}`}
         destinations={[{ label: 'Inbox', icon: <Inbox />, href: '#inbox', count: 12 }]}
       />
-      <Rail
+      <NavigationRail
         aria-label={`Badges rail ${theme}`}
         destinations={[{ label: 'Inbox', icon: <Inbox />, href: '#inbox', count: 12 }]}
       />

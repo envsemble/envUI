@@ -3,7 +3,7 @@ import {
   Theme,
   Button,
   IconButton,
-  Drawer,
+  NavigationDrawer,
   Column,
   Surface,
   Card,
@@ -55,7 +55,7 @@ export function ColorControls({ theme }: { theme: ColorScheme }) {
         aria-label={`${theme} chevron`}
         data-testid={`${theme}-icon-button`}
       />
-      <Drawer
+      <NavigationDrawer
         aria-label={`${theme} navigation`}
         data-testid={`${theme}-navigation`}
         destinations={[

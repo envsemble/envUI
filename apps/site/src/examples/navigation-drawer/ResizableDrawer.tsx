@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Drawer, type DrawerDestination } from '@envsemble/envui';
+import { NavigationDrawer, type NavigationDrawerDestination } from '@envsemble/envui';
 
 const pages = [
   { href: '/guide/overview', label: 'Overview', group: 'Getting started' },
@@ -33,13 +33,13 @@ export default function ResizableDrawer() {
     const stored = storedWidth();
     if (stored !== undefined) setWidth(stored);
   }, []);
-  const destinations: DrawerDestination[] = pages.map((page) => ({
+  const destinations: NavigationDrawerDestination[] = pages.map((page) => ({
     ...page,
     current: current === page.href,
     onClick: () => setCurrent(page.href),
   }));
   return (
-    <Drawer
+    <NavigationDrawer
       aria-label="Guide"
       destinations={destinations}
       resizable

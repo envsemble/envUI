@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Drawer, SearchField, type Destination } from '@envsemble/envui';
+import { NavigationDrawer, SearchField, type Destination } from '@envsemble/envui';
 import { Folder } from '@envsemble/envui/icons/Folder';
 
 const projects = [
@@ -24,7 +24,7 @@ export default function SearchInSidebar() {
       onClick: () => setCurrent(name),
     }));
   return (
-    <Drawer
+    <NavigationDrawer
       aria-label="Projects"
       destinations={destinations}
       header={

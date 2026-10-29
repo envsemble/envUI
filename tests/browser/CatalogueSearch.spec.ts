@@ -318,7 +318,7 @@ test.describe('hosted build', () => {
     await expect.poll(() => highlighted(page)).toBe('page:drawer');
     expect(requested).toContain(files[0]);
     await page.keyboard.press('Enter');
-    await expect(page).toHaveURL(`${siteUrl}/components/drawer`);
+    await expect(page).toHaveURL(`${siteUrl}/components/navigation-drawer`);
 
     // An index that fails to load says so, and offers to load the page again.
     failing = true;

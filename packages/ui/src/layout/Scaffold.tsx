@@ -22,18 +22,18 @@ import '../styles/Base.css';
 import '../styles/Scaffold.css';
 
 /**
- * One of the three ways an application's destinations show: a Bar at the bottom, a Rail at the
- * start or a Drawer at the start.
+ * One of the three ways an application's destinations show: a NavigationBar at the bottom, a NavigationRail at the
+ * start or a NavigationDrawer at the start.
  */
 export type ScaffoldNavigationForm = 'bar' | 'rail' | 'drawer';
 
 /** The navigation forms an application gives a Scaffold, each the component that renders it. */
 export interface ScaffoldNavigation {
-  /** The navigation Bar, at the bottom of a compact window. */
+  /** The NavigationBar, at the bottom of a compact window. */
   bar?: ReactNode;
-  /** The navigation Rail, at the start of a medium window. */
+  /** The NavigationRail, at the start of a medium window. */
   rail?: ReactNode;
-  /** The navigation Drawer, at the start of an expanded or a large window. */
+  /** The NavigationDrawer, at the start of an expanded or a large window. */
   drawer?: ReactNode;
 }
 
@@ -47,7 +47,7 @@ export interface ScaffoldProps extends Omit<ComponentPropsWithRef<'div'>, 'child
   /** The top bar region, above the body: usually a TopBar. */
   topBar?: ReactNode;
   /**
-   * The navigation forms, such as `{ bar: <Bar … />, rail: <Rail … />, drawer: <Drawer … /> }`
+   * The navigation forms, such as `{ bar: <NavigationBar … />, rail: <NavigationRail … />, drawer: <NavigationDrawer … /> }`
    * with the same destinations. One shows at a time, chosen by the Scaffold's own width; give only
    * the forms the application uses.
    */
@@ -140,8 +140,8 @@ function focusRegion(target: HTMLElement) {
 /**
  * The invisible structure of an application's screen, after Material's: a top bar region, a
  * navigation region and the body. It never paints. It shows one navigation form at a time by its
- * own width, CSS only: a Bar at the bottom of a compact window, a Rail at the start of a medium one
- * and a Drawer at the start from expanded. The document scrolls by default, with the top bar, the
+ * own width, CSS only: a NavigationBar at the bottom of a compact window, a NavigationRail at the start of a medium one
+ * and a NavigationDrawer at the start from expanded. The document scrolls by default, with the top bar, the
  * bar and the rail or the drawer kept in view; `scroll="body"` scrolls the body alone. Skip links
  * to the body and the navigation come first.
  */

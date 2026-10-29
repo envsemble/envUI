@@ -1,11 +1,11 @@
 import { useState, type CSSProperties, type ReactNode } from 'react';
 import {
-  Bar,
+  NavigationBar,
   Button,
   Checkbox,
   Column,
   Progress,
-  Rail,
+  NavigationRail,
   Row,
   SearchField,
   SegmentedControl,
@@ -232,9 +232,9 @@ function SchemeChoice({ names, narrow }: { names: readonly string[]; narrow: boo
         )}
         <Tile name="nav">
           {narrow ? (
-            <Bar aria-label="Trip" destinations={destinations} />
+            <NavigationBar aria-label="Trip" destinations={destinations} />
           ) : (
-            <Rail aria-label="Trip" destinations={destinations} />
+            <NavigationRail aria-label="Trip" destinations={destinations} />
           )}
         </Tile>
       </div>

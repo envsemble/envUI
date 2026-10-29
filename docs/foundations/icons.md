@@ -12,7 +12,7 @@ avoidWhen:
   - text: A button that is only an icon, with a name of its own.
     use: IconButton
   - text: Navigation that fills the icon of the place that is selected.
-    use: Drawer
+    use: NavigationDrawer
   - text: Views whose selected tab fills its icon.
     use: Tabs
   - text: Names and announcements for everything people can use.

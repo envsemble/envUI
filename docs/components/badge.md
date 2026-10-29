@@ -42,8 +42,8 @@ avoidWhen:
     use: Meter
   - text: A headline number with its label and trend, such as on a dashboard.
     see: key-figures
-  - text: A count beside a destination in the navigation, which a Drawer item shows itself.
-    use: Drawer
+  - text: A count beside a destination in the navigation, which a NavigationDrawer item shows itself.
+    use: NavigationDrawer
   - text: An identifier or a command in text.
     use: Code
 components:
@@ -202,7 +202,7 @@ DiffStat shows `additions` as +12 in the success tone and `deletions` as −3 in
 
 #### In navigation
 
-A Drawer destination's `count` shows the count at its end and adds it to the destination's name, such as Inbox, 12 new.
+A NavigationDrawer destination's `count` shows the count at its end and adds it to the destination's name, such as Inbox, 12 new.
 
 ```tsx
 const destinations: Destination[] = [
@@ -210,7 +210,7 @@ const destinations: Destination[] = [
   { label: 'Later', icon: <Schedule />, href: '/later', count: 1200 },
 ];
 
-<Drawer aria-label="Workspace" destinations={destinations} />;
+<NavigationDrawer aria-label="Workspace" destinations={destinations} />;
 ```
 
 ### Composition

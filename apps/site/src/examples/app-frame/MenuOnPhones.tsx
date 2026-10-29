@@ -1,6 +1,6 @@
 import { useRef, useState, type CSSProperties } from 'react';
 import {
-  Drawer,
+  NavigationDrawer,
   IconButton,
   Page,
   PageHeader,
@@ -10,7 +10,7 @@ import {
   TopBar,
   useContainerSize,
   windowClasses,
-  type DrawerDestination,
+  type NavigationDrawerDestination,
 } from '@envsemble/envui';
 import { Menu } from '@envsemble/envui/icons/Menu';
 
@@ -37,7 +37,7 @@ export default function MenuOnPhones() {
   const frame = useRef<HTMLDivElement>(null);
   const size = useContainerSize(frame);
   const compact = size !== undefined && size.inlineSize < remToPixels(windowClasses.medium);
-  const destinations = (inSheet: boolean): DrawerDestination[] =>
+  const destinations = (inSheet: boolean): NavigationDrawerDestination[] =>
     chapters.map((chapter) => ({
       label: chapter,
       href: `#${chapter.toLowerCase().replace(/\s+/g, '-')}`,
@@ -71,13 +71,15 @@ export default function MenuOnPhones() {
           title="Guide"
         />
       }
-      navigation={{ drawer: <Drawer aria-label="Chapters" destinations={destinations(false)} /> }}
+      navigation={{
+        drawer: <NavigationDrawer aria-label="Chapters" destinations={destinations(false)} />,
+      }}
     >
       <Page width="md" header={<PageHeader title={current} headingLevel={3} />}>
         <Text emphasis="muted">{summaries[current]}</Text>
       </Page>
       <Sheet side="start" aria-label="Chapters" width="md" open={menu} onOpenChange={setMenu}>
-        <Drawer aria-label="Chapters" destinations={destinations(true)} />
+        <NavigationDrawer aria-label="Chapters" destinations={destinations(true)} />
       </Sheet>
     </Scaffold>
   );

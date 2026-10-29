@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import {
-  Bar,
-  Drawer,
+  NavigationBar,
+  NavigationDrawer,
   Page,
   PageHeader,
-  Rail,
+  NavigationRail,
   Scaffold,
   Text,
   TopBar,
@@ -34,9 +34,9 @@ export default function FormsByWidth() {
       style={{ blockSize: '20rem' }}
       topBar={<TopBar title="Northwind" />}
       navigation={{
-        bar: <Bar aria-label="Main, by width" destinations={destinations} />,
-        rail: <Rail aria-label="Main, by width" destinations={destinations} />,
-        drawer: <Drawer aria-label="Main, by width" destinations={destinations} />,
+        bar: <NavigationBar aria-label="Main, by width" destinations={destinations} />,
+        rail: <NavigationRail aria-label="Main, by width" destinations={destinations} />,
+        drawer: <NavigationDrawer aria-label="Main, by width" destinations={destinations} />,
       }}
     >
       <Page header={<PageHeader title={current} headingLevel={3} />}>

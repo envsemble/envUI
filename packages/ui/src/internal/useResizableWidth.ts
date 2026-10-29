@@ -40,7 +40,7 @@ interface Options {
 }
 
 /**
- * The width of a region that a handle on its inner edge resizes, the Drawer's or a side Sheet's,
+ * The width of a region that a handle on its inner edge resizes, the NavigationDrawer's or a side Sheet's,
  * in rem: the application's where it controls it, else the one people chose, else the default,
  * within the least and the largest width. It returns the width and the props of the ResizeHandle,
  * the same handle and keys as Panes.Divider: 1 rem a step, 5 with Shift or Page Up and Page Down,

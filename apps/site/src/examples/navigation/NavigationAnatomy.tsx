@@ -5,7 +5,7 @@ import {
   IconButton,
   Page,
   PageHeader,
-  Rail,
+  NavigationRail,
   Scaffold,
   Tabs,
   Text,
@@ -41,7 +41,7 @@ export default function NavigationAnatomy() {
           }
         />
       }
-      navigation={{ rail: <Rail destinations={destinations} /> }}
+      navigation={{ rail: <NavigationRail destinations={destinations} /> }}
     >
       <Page
         header={

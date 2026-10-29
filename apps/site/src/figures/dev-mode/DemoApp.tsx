@@ -1,16 +1,16 @@
 import { useState, type CSSProperties } from 'react';
 import {
   AvatarButton,
-  Bar,
+  NavigationBar,
   Button,
   Card,
   Column,
-  Drawer,
+  NavigationDrawer,
   Grid,
   List,
   Page,
   PageHeader,
-  Rail,
+  NavigationRail,
   Scaffold,
   TopBar,
   type Destination,
@@ -42,9 +42,9 @@ export function DemoApp({ fixedColumns = false }: { fixedColumns?: boolean }) {
       style={preview}
       topBar={<TopBar title="Northwind" actions={<AvatarButton name="Alex Morgan" />} />}
       navigation={{
-        bar: <Bar destinations={destinations} />,
-        rail: <Rail destinations={destinations} />,
-        drawer: <Drawer destinations={destinations} />,
+        bar: <NavigationBar destinations={destinations} />,
+        rail: <NavigationRail destinations={destinations} />,
+        drawer: <NavigationDrawer destinations={destinations} />,
       }}
     >
       <Page

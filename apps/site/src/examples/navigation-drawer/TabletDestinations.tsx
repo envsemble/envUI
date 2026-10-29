@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { IconButton, Rail, type Destination } from '@envsemble/envui';
+import { IconButton, NavigationRail, type Destination } from '@envsemble/envui';
 import { Edit } from '@envsemble/envui/icons/Edit';
 import { Folder } from '@envsemble/envui/icons/Folder';
 import { Home } from '@envsemble/envui/icons/Home';
@@ -23,7 +23,7 @@ export default function TabletDestinations() {
   return (
     // As tall as a short window; in an app, Scaffold gives the rail the window's height.
     <div style={{ blockSize: '24rem' }}>
-      <Rail
+      <NavigationRail
         destinations={destinations}
         header={<IconButton variant="primary" icon={<Edit />} aria-label="New message" />}
       />

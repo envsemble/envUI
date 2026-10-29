@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import NestedSections from '../../examples/drawer/NestedSections';
+import NestedSections from '../../examples/navigation-drawer/NestedSections';
 import { usePointer, type PointerStep } from '../../motion/Motion';
 import { MotionStage } from '../../motion/MotionStage';
 import { Renew } from '../../motion/Renew';

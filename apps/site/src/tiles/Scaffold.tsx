@@ -3,7 +3,7 @@ import {
   IconButton,
   Page,
   PageHeader,
-  Rail,
+  NavigationRail,
   Scaffold,
   Text,
   TopBar,
@@ -55,7 +55,7 @@ export default function ScaffoldTile() {
       topBar={
         <TopBar title="Northwind" actions={<IconButton icon={<Search />} aria-label="Search" />} />
       }
-      navigation={{ rail: <Rail destinations={destinations} /> }}
+      navigation={{ rail: <NavigationRail destinations={destinations} /> }}
     >
       <Page header={<PageHeader title={current} headingLevel={3} />}>
         <Text emphasis="muted">{places.find((place) => place.label === current)?.line}</Text>

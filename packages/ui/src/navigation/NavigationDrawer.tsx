@@ -29,13 +29,13 @@ import {
   destinationSections,
   useNavigationMessages,
   type DestinationClasses,
-  type DrawerDestination,
+  type NavigationDrawerDestination,
 } from './internal/Destinations.js';
 import { backgroundAttribute, type NavigationBackground } from './internal/background.js';
 import type { ResizeDetails } from '../internal/resizeDetails.js';
 import type { HeadingLevel } from '../foundations/headingLevel.js';
 import '../styles/Base.css';
-import '../styles/Drawer.css';
+import '../styles/NavigationDrawer.css';
 
 /** The part classes of the drawer's destinations: a row of icon, label and count. */
 const drawerClasses: DestinationClasses = {
@@ -44,13 +44,15 @@ const drawerClasses: DestinationClasses = {
   count: 'env-drawer-count',
 };
 
-export interface DrawerProps extends Omit<ComponentPropsWithRef<'nav'>, 'children'>, SkeletonProps {
+export interface NavigationDrawerProps
+  extends Omit<ComponentPropsWithRef<'nav'>, 'children'>,
+    SkeletonProps {
   /**
-   * The application's destinations, the same array Bar and Rail take: each a row with its icon, its
+   * The application's destinations, the same array NavigationBar and NavigationRail take: each a row with its icon, its
    * label and its count. A heading starts each run of destinations of one `group`. A destination
    * with `children` is a section that opens and closes, with them under it, indented.
    */
-  destinations: readonly DrawerDestination[];
+  destinations: readonly NavigationDrawerDestination[];
   /**
    * The open sections, for a drawer whose sections the application keeps open, such as for the
    * next visit: each a destination with `children`, named by its `id`, else its `href`, else its
@@ -83,7 +85,7 @@ export interface DrawerProps extends Omit<ComponentPropsWithRef<'nav'>, 'childre
    * the default surface color, as a plain rectangle; page, the page's background, so it sits on the
    * page. On a surface, such as a Sheet, both take the surface's color; a Sheet's is the
    * navigation's background, so it keeps its color in a narrow window. Set it on its own, such as
-   * a Drawer with its background under a TopBar with page.
+   * a NavigationDrawer with its background under a TopBar with page.
    * @default 'default'
    */
   background?: NavigationBackground;
@@ -180,7 +182,7 @@ function DrawerControl({
   end,
   as,
 }: {
-  destination: DrawerDestination;
+  destination: NavigationDrawerDestination;
   oneLine: boolean;
   end?: ReactNode;
   as?: (item: ReactElement) => ReactElement;
@@ -220,8 +222,8 @@ function DrawerBranch({
   nested,
   state,
 }: {
-  destination: DrawerDestination;
-  nested: readonly DrawerDestination[];
+  destination: NavigationDrawerDestination;
+  nested: readonly NavigationDrawerDestination[];
   state: DrawerState;
 }) {
   const messages = useNavigationMessages();
@@ -266,7 +268,7 @@ function DrawerItem({
   destination,
   state,
 }: {
-  destination: DrawerDestination;
+  destination: NavigationDrawerDestination;
   state: DrawerState;
 }) {
   const nested = destination.children;
@@ -291,7 +293,7 @@ function Section({
   state,
 }: {
   group: string;
-  items: DrawerDestination[];
+  items: NavigationDrawerDestination[];
   level: Exclude<HeadingLevel, 1>;
   state: DrawerState;
 }) {
@@ -319,7 +321,7 @@ function Section({
 }
 
 /** The keys of the sections that hold the current destination, from the outermost in. */
-function currentPath(destinations: readonly DrawerDestination[]): string[] {
+function currentPath(destinations: readonly NavigationDrawerDestination[]): string[] {
   for (const destination of destinations) {
     const nested = destination.children;
     if (nested === undefined || nested.length === 0) continue;
@@ -341,7 +343,7 @@ const joined = (keys: readonly string[], more: readonly string[]) => [
  * becomes current: the drawer's own at once, and the application's through onExpandedChange.
  */
 function useExpanded(
-  destinations: readonly DrawerDestination[],
+  destinations: readonly NavigationDrawerDestination[],
   expanded: readonly string[] | undefined,
   defaultExpanded: readonly string[],
   onExpandedChange: ((expanded: string[]) => void) | undefined,
@@ -392,7 +394,7 @@ const roomFor = (handle: HTMLElement) => containerWidth(handle.parentElement ?? 
  * aria-current="page", and every destination and section button is a tab stop. Its list scrolls where the drawer is shorter than its destinations. With `resizable`,
  * people resize it by its end edge.
  */
-export function Drawer({
+export function NavigationDrawer({
   destinations,
   expanded: expandedProp,
   defaultExpanded = noKeys,
@@ -414,7 +416,7 @@ export function Drawer({
   className,
   style,
   ...props
-}: DrawerProps) {
+}: NavigationDrawerProps) {
   const messages = useNavigationMessages();
   const sections = useExpanded(destinations, expandedProp, defaultExpanded, onExpandedChange);
   const state: DrawerState = { oneLine: resizable, ...sections };

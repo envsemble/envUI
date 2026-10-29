@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Bar, type Destination } from '@envsemble/envui';
+import { NavigationBar, type Destination } from '@envsemble/envui';
 import { Home } from '@envsemble/envui/icons/Home';
 import { Inbox } from '@envsemble/envui/icons/Inbox';
 import { Person } from '@envsemble/envui/icons/Person';
@@ -22,5 +22,5 @@ export default function OutlinedAndFilled() {
     current: current === place.label,
     onClick: () => setCurrent(place.label),
   }));
-  return <Bar aria-label="Main" destinations={destinations} />;
+  return <NavigationBar aria-label="Main" destinations={destinations} />;
 }

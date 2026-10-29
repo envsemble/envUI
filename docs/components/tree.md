@@ -20,7 +20,7 @@ useWhen:
   - Rows previewed with a click and opened to keep with a double click
 avoidWhen:
   - text: An application's destinations, such as the pages in a sidebar, one or two levels deep.
-    use: Drawer
+    use: NavigationDrawer
   - text: A flat list of items, each with its own actions.
     use: List
   - text: Records that share the same fields and that people compare.

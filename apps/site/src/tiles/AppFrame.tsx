@@ -3,7 +3,7 @@ import {
   AvatarButton,
   Page,
   PageHeader,
-  Rail,
+  NavigationRail,
   Scaffold,
   Text,
   TopBar,
@@ -58,7 +58,7 @@ export default function AppFrameTile() {
       navigationForms={{ compact: 'rail', medium: 'rail', expanded: 'rail', large: 'rail' }}
       style={{ inlineSize: '16rem', blockSize: '13.5rem' }}
       topBar={<TopBar title="Northwind" actions={<AvatarButton name="Alex Morgan" />} />}
-      navigation={{ rail: <Rail destinations={destinations} /> }}
+      navigation={{ rail: <NavigationRail destinations={destinations} /> }}
     >
       <Page header={<PageHeader title={current} headingLevel={3} />}>
         <Text emphasis="muted">{places.find((place) => place.label === current)?.line}</Text>

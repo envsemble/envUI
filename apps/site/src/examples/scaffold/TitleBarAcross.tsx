@@ -1,5 +1,5 @@
 import {
-  Drawer,
+  NavigationDrawer,
   Page,
   PageHeader,
   Scaffold,
@@ -26,7 +26,9 @@ export default function TitleBarAcross() {
       style={{ blockSize: '16rem' }}
       topBar={<TopBar title="Northwind" />}
       navigation={{
-        drawer: <Drawer aria-label="Main, title bar across" destinations={destinations} />,
+        drawer: (
+          <NavigationDrawer aria-label="Main, title bar across" destinations={destinations} />
+        ),
       }}
     >
       <Page header={<PageHeader title="Documents" headingLevel={3} />}>

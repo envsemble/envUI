@@ -1,6 +1,6 @@
-import { Drawer, type DrawerDestination } from '@envsemble/envui';
+import { NavigationDrawer, type NavigationDrawerDestination } from '@envsemble/envui';
 
-const destinations: DrawerDestination[] = [
+const destinations: NavigationDrawerDestination[] = [
   {
     label: 'Projects',
     href: '/guide/projects',
@@ -16,5 +16,5 @@ const destinations: DrawerDestination[] = [
 ];
 
 export default function SectionAnatomy() {
-  return <Drawer aria-label="Help" destinations={destinations} />;
+  return <NavigationDrawer aria-label="Help" destinations={destinations} />;
 }

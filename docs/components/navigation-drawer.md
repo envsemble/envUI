@@ -1,5 +1,5 @@
 ---
-title: Drawer
+title: NavigationDrawer
 summary: An application's main destinations, as a drawer with group headings, counts and sections that open and close on wider windows, a rail on tablets or a bar on phones.
 status: beta
 since: 1.0.0
@@ -47,8 +47,8 @@ useWhen:
   - Many destinations, in groups under headings, with counts
   - The sections of a guide or of the settings, beside their content
   - A documentation site's pages, in sections that open and close
-  - The same destinations on a tablet, each an icon above a short label (Rail)
-  - Three to five destinations on a phone, along the bottom of the window (Bar)
+  - The same destinations on a tablet, each an icon above a short label (NavigationRail)
+  - Three to five destinations on a phone, along the bottom of the window (NavigationBar)
 avoidWhen:
   - text: Switching between views of the same content in one place.
     use: Tabs
@@ -59,9 +59,9 @@ avoidWhen:
   - text: Actions, such as New or Share.
     use: Toolbar
 components:
-  - Drawer
-  - Rail
-  - Bar
+  - NavigationDrawer
+  - NavigationRail
+  - NavigationBar
 examples:
   AppDestinations:
     role: overview
@@ -69,11 +69,11 @@ examples:
   TabletDestinations:
     role: overview
     stage: shaded
-    caption: 'Rail: each destination an icon above a short label, for a tablet.'
+    caption: 'NavigationRail: each destination an icon above a short label, for a tablet.'
   PhoneDestinations:
     role: overview
     stage: shaded
-    caption: 'Bar: three to five destinations along the bottom of a phone.'
+    caption: 'NavigationBar: three to five destinations along the bottom of a phone.'
   GuideSections: example
   DrawerAnatomy: anatomy
   RailAnatomy: anatomy
@@ -86,7 +86,7 @@ examples:
   SharedWidth: example
 ---
 
-# Drawer
+# NavigationDrawer
 
 ## Variants
 
@@ -113,7 +113,7 @@ A drawer's destinations can go without icons, such as the sections of a guide; t
 
 ```
 
-1. **Drawer** (`env-drawer`)
+1. **NavigationDrawer** (`env-drawer`)
 2. **Header** (`env-drawer-header`, `header`)
 3. **Item** (`env-drawer-item`)
 4. **Label** (`env-drawer-label`)
@@ -126,7 +126,7 @@ A drawer's destinations can go without icons, such as the sections of a guide; t
 
 ```
 
-1. **Rail** (`env-rail`)
+1. **NavigationRail** (`env-rail`)
 2. **Header** (`env-rail-header`, `header`)
 3. **Item** (`env-rail-item`)
 4. **Indicator** (`env-rail-indicator`)
@@ -138,7 +138,7 @@ A drawer's destinations can go without icons, such as the sections of a guide; t
 
 ```
 
-1. **Bar** (`env-bar`)
+1. **NavigationBar** (`env-bar`)
 2. **Item** (`env-bar li:nth-child(2) > env-bar-item`)
 3. **Indicator** (`env-bar-icon`)
 4. **Count** (`env-bar-count`, `count`)
@@ -275,19 +275,19 @@ const destinations: Destination[] = [
   { label: 'Projects', href: '/projects', icon: <Folder />, group: 'Work' },
 ];
 
-<Drawer destinations={destinations} header={<Text>Northwind</Text>} footer={account} />;
+<NavigationDrawer destinations={destinations} header={<Text>Northwind</Text>} footer={account} />;
 ```
 
-Drawer, Rail and Bar take `destinations`, one array of `Destination`s, each with its `label`, an `icon`, a `count` and a `group`. With `href`, a destination is a native link, through the router link from `LinkProvider`, and `onClick(event)` runs as it is followed; with `onClick` alone it is a button, for a view without an address. Set `current` on one destination, from the router: a press doesn't select one by itself. `header` and `footer` hold content above and below the destinations of a Drawer or a Rail. Scaffold shows the form that fits its width, at the window's start or, for the bar, at its bottom.
+NavigationDrawer, NavigationRail and NavigationBar take `destinations`, one array of `Destination`s, each with its `label`, an `icon`, a `count` and a `group`. With `href`, a destination is a native link, through the router link from `LinkProvider`, and `onClick(event)` runs as it is followed; with `onClick` alone it is a button, for a view without an address. Set `current` on one destination, from the router: a press doesn't select one by itself. `header` and `footer` hold content above and below the destinations of a NavigationDrawer or a NavigationRail. Scaffold shows the form that fits its width, at the window's start or, for the bar, at its bottom.
 
 #### One list, three forms
 
-Pass the same array to each form. A heading starts each run of destinations of one `group` in the drawer, at `headingLevel`, 2 by default, so keep a group's destinations next to each other; the rail and the bar show no headings, so order the array. A `DrawerDestination` may leave its `icon` out: leave it out of every destination of a list, or of none. Rail and Bar need icons.
+Pass the same array to each form. A heading starts each run of destinations of one `group` in the drawer, at `headingLevel`, 2 by default, so keep a group's destinations next to each other; the rail and the bar show no headings, so order the array. A `NavigationDrawerDestination` may leave its `icon` out: leave it out of every destination of a list, or of none. NavigationRail and NavigationBar need icons.
 
 #### Nested sections
 
 ```tsx
-const projects: DrawerDestination = {
+const projects: NavigationDrawerDestination = {
   label: 'Projects',
   href: '/guide/projects',
   children: [
@@ -297,30 +297,30 @@ const projects: DrawerDestination = {
 };
 ```
 
-A destination's `children` nest under it, at any depth. A section with `href` or `onClick` is a destination itself, with a button at its end that opens and closes it; one with neither is only its heading, a button that does. Drawer reads `group` at the top level only. In Rail and Bar, a destination whose `children` hold the current one takes the current fill and reports `aria-current="true"`, so give the top level an `href` where the same array goes to them.
+A destination's `children` nest under it, at any depth. A section with `href` or `onClick` is a destination itself, with a button at its end that opens and closes it; one with neither is only its heading, a button that does. NavigationDrawer reads `group` at the top level only. In NavigationRail and NavigationBar, a destination whose `children` hold the current one takes the current fill and reports `aria-current="true"`, so give the top level an `href` where the same array goes to them.
 
 The sections that hold the current destination open as it becomes current; the drawer keeps the rest as people open and close them, from `defaultExpanded`. To keep them yourself, such as for the next visit, pass `expanded` and update it from `onExpandedChange`, which also asks to open the sections of a new current destination. Both name a section by its `id`, else its `href`, else its label: give a section whose label is translated an `id`, so its name stays the same in every language.
 
 ```tsx
 const [expanded, setExpanded] = useState<string[]>([]);
-<Drawer destinations={destinations} expanded={expanded} onExpandedChange={setExpanded} />;
+<NavigationDrawer destinations={destinations} expanded={expanded} onExpandedChange={setExpanded} />;
 ```
 
-#### Rail and Bar
+#### NavigationRail and NavigationBar
 
-A Rail's `header` holds the main action or a button that opens the navigation, and `footer` the account's AvatarButton; Scaffold gives the rail the window's height. Give a Bar three to five destinations: past five it shows the first four and More.
+A NavigationRail's `header` holds the main action or a button that opens the navigation, and `footer` the account's AvatarButton; Scaffold gives the rail the window's height. Give a NavigationBar three to five destinations: past five it shows the first four and More.
 
 #### Background and name
 
 ```tsx
-<Bar background="page" aria-label="Project" destinations={destinations} />
+<NavigationBar background="page" aria-label="Project" destinations={destinations} />
 ```
 
 `background` is `default`, the navigation's fill, the same as TopBar's, or `page`, the page's background. `aria-label` names the landmark, Main by default from EnvUIProvider's `messages.navigation`; give each navigation landmark of a page its own.
 
 #### Resizable
 
-With `resizable`, people resize a Drawer between `minWidth` and `maxWidth`, 15 and 30 rem by default, and never past half its container or the window; the arrow keys move the handle 1 rem, and 5 with <kbd>Shift</kbd>. It starts at `defaultWidth`, 17.5 rem, which a double click on the handle returns to. `width` and `onWidthChange` let the application keep the width for the next visit, in rem: `onWidthChange` reports each width while dragging, and with `committed` true as a drag ends, a key moves the handle or a double click resets it. A `width` that isn't a finite number is ignored. `resizeLabel` names the handle.
+With `resizable`, people resize a NavigationDrawer between `minWidth` and `maxWidth`, 15 and 30 rem by default, and never past half its container or the window; the arrow keys move the handle 1 rem, and 5 with <kbd>Shift</kbd>. It starts at `defaultWidth`, 17.5 rem, which a double click on the handle returns to. `width` and `onWidthChange` let the application keep the width for the next visit, in rem: `onWidthChange` reports each width while dragging, and with `committed` true as a drag ends, a key moves the handle or a double click resets it. A `width` that isn't a finite number is ignored. `resizeLabel` names the handle.
 
 The example keeps the width in the browser's storage. It reads it once the drawer is in the browser, so a page rendered on a server starts at the default, and guards, since storage can be blocked or hold something that isn't a number.
 
@@ -336,13 +336,14 @@ The parts the anatomy doesn't show: a section's row, `env-drawer-branch-row`, an
 
 ### Customize
 
-`--env-drawer-item-container`, `--env-drawer-item-content`, `--env-drawer-item-icon`, `--env-drawer-item-selected` and `--env-drawer-item-selected-content` color one Drawer's items, through `style` or CSS: their fill, their label, their icon, and the current item's fill and its label and icon. Rail takes `--env-rail-item-container`, `--env-rail-item-content`, `--env-rail-item-icon`, `--env-rail-item-selected` and `--env-rail-item-selected-content`, and Bar `--env-bar-item-container`, `--env-bar-item-content`, `--env-bar-item-icon`, `--env-bar-item-selected` and `--env-bar-item-selected-content`. Hover, focus and press follow them; with none set, each keeps its own colors.
+`--env-drawer-item-container`, `--env-drawer-item-content`, `--env-drawer-item-icon`, `--env-drawer-item-selected` and `--env-drawer-item-selected-content` color one NavigationDrawer's items, through `style` or CSS: their fill, their label, their icon, and the current item's fill and its label and icon. NavigationRail takes `--env-rail-item-container`, `--env-rail-item-content`, `--env-rail-item-icon`, `--env-rail-item-selected` and `--env-rail-item-selected-content`, and NavigationBar `--env-bar-item-container`, `--env-bar-item-content`, `--env-bar-item-icon`, `--env-bar-item-selected` and `--env-bar-item-selected-content`. Hover, focus and press follow them; with none set, each keeps its own colors.
 
 ## Changelog
 
+- **1.0.0-prerelease.5**: Bar, Rail and Drawer are NavigationBar, NavigationRail and NavigationDrawer, with their props types and `NavigationDrawerDestination`, after Material's names, so they don't read as an overlay drawer or any bar; the page is `navigation-drawer`. Their part classes are unchanged.
 - **1.0.0-prerelease.5**: A destination runs `onClick(event)`, as a link or a button does, where it ran `onSelect()`, and takes an optional `id`, which names its section in `expanded` in every language.
-- **1.0.0-prerelease.5**: A Sheet is on the navigation's background, `--env-color-bg-default`, so a Drawer or a Rail in the sheet of a narrow window keeps its color.
+- **1.0.0-prerelease.5**: A Sheet is on the navigation's background, `--env-color-bg-default`, so a NavigationDrawer or a NavigationRail in the sheet of a narrow window keeps its color.
 - **1.0.0-prerelease.4**: A destination's `children` nest under it: Drawer shows them indented, in a section that opens and closes with a chevron, open while it holds the current destination, whose links stay in the page, hidden until found. A section without `href` or `onSelect` is only its heading. `expanded`, `defaultExpanded` and `onExpandedChange` keep the open sections. Rail and Bar show the top level, and mark a destination whose section holds the current one.
 - **1.0.0-prerelease.3**: A resizable Drawer keeps each label and group heading on one line as it narrows: one that doesn't fit ends in an ellipsis, a label cut short shows in full in a tooltip, and a heading cut short gives its full text as its title. Bar and Rail are documented on this page, `drawer`, which their pages' addresses open.
 - **1.0.0-prerelease.2**: With `resizable`, people resize it by its end edge, between `minWidth` and `maxWidth` and never past half its container, from `defaultWidth`; `width` and `onWidthChange` keep it. The handle is `env-drawer-resize-handle`, the same grip as Panes.Divider's.
-- **1.0.0**: Drawer, the navigation drawer, Rail, the navigation rail, and Bar, the navigation bar; together they replace NavList and the sidebar's rail. NavList.Item's `selected` is a destination's `current`, its `end` count is `count`, and NavList.Group is a destination's `group`.
+- **1.0.0**: NavigationDrawer, the navigation drawer, NavigationRail, the navigation rail, and NavigationBar, the navigation bar; together they replace NavList and the sidebar's rail. NavList.Item's `selected` is a destination's `current`, its `end` count is `count`, and NavList.Group is a destination's `group`.

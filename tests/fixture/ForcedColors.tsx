@@ -10,8 +10,8 @@ import {
   List,
   Menu,
   Menubar,
-  Drawer,
-  Rail,
+  NavigationDrawer,
+  NavigationRail,
   Pagination,
   Radio,
   RadioGroup,
@@ -99,14 +99,14 @@ function Page() {
           { value: 'two', button: <Button>Two</Button>, content: 'Second' },
         ]}
       />
-      <Drawer
+      <NavigationDrawer
         aria-label="Places"
         destinations={[
           { label: 'Home', icon: <Home />, href: '#home', current: true },
           { label: 'Inbox', icon: <Inbox />, href: '#inbox', count: 3 },
         ]}
       />
-      <Rail
+      <NavigationRail
         aria-label="Rail places"
         destinations={[
           { label: 'Home', icon: <Home />, href: '#home', current: true },

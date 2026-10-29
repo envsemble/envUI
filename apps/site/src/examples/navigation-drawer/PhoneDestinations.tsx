@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Bar, type Destination } from '@envsemble/envui';
+import { NavigationBar, type Destination } from '@envsemble/envui';
 import { Folder } from '@envsemble/envui/icons/Folder';
 import { Home } from '@envsemble/envui/icons/Home';
 import { Inbox } from '@envsemble/envui/icons/Inbox';
@@ -22,7 +22,7 @@ export default function PhoneDestinations() {
   return (
     // As wide as a phone; in an app, Scaffold places the bar at the bottom of the window.
     <div style={{ inlineSize: 'min(100%, 24rem)' }}>
-      <Bar destinations={destinations} />
+      <NavigationBar destinations={destinations} />
     </div>
   );
 }

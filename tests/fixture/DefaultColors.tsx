@@ -3,20 +3,20 @@ import {
   Alert,
   Avatar,
   Badge,
-  Bar,
+  NavigationBar,
   Button,
   Card,
   Checkbox,
   Column,
   Combobox,
-  Drawer,
+  NavigationDrawer,
   IconButton,
   List,
   Menu,
   Meter,
   Radio,
   RadioGroup,
-  Rail,
+  NavigationRail,
   Row,
   SegmentedControl,
   Progress,
@@ -129,9 +129,9 @@ export function DefaultColors() {
           <Menu.Item icon={<Settings />}>Preferences</Menu.Item>
           <Menu.Item>Rename</Menu.Item>
         </Menu.Root>
-        <Drawer aria-label="Drawer destinations" destinations={destinations} />
-        <Rail aria-label="Rail destinations" destinations={destinations} />
-        <Bar aria-label="Bar destinations" destinations={destinations} />
+        <NavigationDrawer aria-label="Drawer destinations" destinations={destinations} />
+        <NavigationRail aria-label="Rail destinations" destinations={destinations} />
+        <NavigationBar aria-label="Bar destinations" destinations={destinations} />
         <Tabs
           aria-label="Tabs"
           items={[

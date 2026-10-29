@@ -289,7 +289,7 @@ The button is a Button with `variant="secondary"`, the Search icon as its `start
 
 - `aria-hidden` on the Kbd and `aria-keyshortcuts` on the button announce the shortcut once.
 - Its `onClick` opens the palette.
-- With `fullWidth` it fills its container, such as a Drawer's `header`.
+- With `fullWidth` it fills its container, such as a NavigationDrawer's `header`.
 
 ```tsx
 <Button

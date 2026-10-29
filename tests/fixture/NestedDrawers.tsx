@@ -1,5 +1,11 @@
 import { useState } from 'react';
-import { Bar, Drawer, Rail, type Destination, type DrawerDestination } from '@envsemble/envui';
+import {
+  NavigationBar,
+  NavigationDrawer,
+  NavigationRail,
+  type Destination,
+  type NavigationDrawerDestination,
+} from '@envsemble/envui';
 import { Home } from '@envsemble/envui/icons/Home';
 import { MenuBook } from '@envsemble/envui/icons/MenuBook';
 import { Settings } from '@envsemble/envui/icons/Settings';
@@ -49,7 +55,7 @@ const guide: Page[] = [
 
 /** The pages as destinations, the one at current marked, each choosing itself as a router would. */
 function destinationsOf(pages: Page[], current: string, choose: (href: string) => void) {
-  return pages.map((page): DrawerDestination => {
+  return pages.map((page): NavigationDrawerDestination => {
     const children = page.children && destinationsOf(page.children, current, choose);
     if (page.href === undefined)
       return { label: page.label, group: page.group, children: children! };
@@ -68,7 +74,7 @@ function destinationsOf(pages: Page[], current: string, choose: (href: string) =
 /**
  * Drawers with nested sections, mounted with ?fixture=nested-drawers: one that keeps its own open
  * sections, its current page in a section, with a button that moves the current page into a closed
- * one; one whose open sections the application keeps; and Rail and Bar over destinations whose
+ * one; one whose open sections the application keeps; and NavigationRail and NavigationBar over destinations whose
  * nested one is current.
  */
 export function NestedDrawersFixture() {
@@ -88,14 +94,17 @@ export function NestedDrawersFixture() {
   return (
     <div className="fixture-section" style={{ display: 'flex', gap: '1rem', alignItems: 'start' }}>
       <div>
-        <Drawer aria-label="Guide" destinations={destinationsOf(guide, current, setCurrent)} />
+        <NavigationDrawer
+          aria-label="Guide"
+          destinations={destinationsOf(guide, current, setCurrent)}
+        />
         <button type="button" onClick={() => setCurrent('#invoices')}>
           Go to invoices
         </button>
         <p data-testid="current">{current}</p>
       </div>
       <div>
-        <Drawer
+        <NavigationDrawer
           aria-label="Controlled"
           destinations={destinationsOf(guide, controlledCurrent, setControlledCurrent)}
           expanded={expanded}
@@ -106,8 +115,8 @@ export function NestedDrawersFixture() {
         </button>
         <p data-testid="expanded">{expanded.join(', ')}</p>
       </div>
-      <Rail aria-label="Top rail" destinations={top} />
-      <Bar aria-label="Top bar" destinations={top} />
+      <NavigationRail aria-label="Top rail" destinations={top} />
+      <NavigationBar aria-label="Top bar" destinations={top} />
     </div>
   );
 }

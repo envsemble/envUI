@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import ResizableDrawer from '../../examples/drawer/ResizableDrawer';
+import ResizableDrawer from '../../examples/navigation-drawer/ResizableDrawer';
 import { usePointer, type PointerStep } from '../../motion/Motion';
 import { MotionStage } from '../../motion/MotionStage';
 import { Renew } from '../../motion/Renew';

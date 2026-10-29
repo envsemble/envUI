@@ -1,10 +1,10 @@
 import { useState, type CSSProperties } from 'react';
 import {
-  Bar,
+  NavigationBar,
   Column,
-  Drawer,
+  NavigationDrawer,
   Panes,
-  Rail,
+  NavigationRail,
   Scaffold,
   Text,
   TopBar,
@@ -31,9 +31,9 @@ export default function WithDetails() {
       style={preview}
       topBar={<TopBar title="Documents" />}
       navigation={{
-        bar: <Bar aria-label="Main, with details" destinations={destinations} />,
-        rail: <Rail aria-label="Main, with details" destinations={destinations} />,
-        drawer: <Drawer aria-label="Main, with details" destinations={destinations} />,
+        bar: <NavigationBar aria-label="Main, with details" destinations={destinations} />,
+        rail: <NavigationRail aria-label="Main, with details" destinations={destinations} />,
+        drawer: <NavigationDrawer aria-label="Main, with details" destinations={destinations} />,
       }}
     >
       <Panes.Root behavior="supporting" open={details} onOpenChange={setDetails}>

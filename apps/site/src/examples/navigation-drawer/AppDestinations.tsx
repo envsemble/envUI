@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Drawer, Text, type Destination } from '@envsemble/envui';
+import { NavigationDrawer, Text, type Destination } from '@envsemble/envui';
 import { Archive } from '@envsemble/envui/icons/Archive';
 import { Group } from '@envsemble/envui/icons/Group';
 import { Home } from '@envsemble/envui/icons/Home';
@@ -26,7 +26,7 @@ export default function AppDestinations() {
     { label: 'Settings', icon: <Settings />, group: 'Workspace', ...destination('/settings') },
   ];
   return (
-    <Drawer
+    <NavigationDrawer
       destinations={destinations}
       header={
         <Text variant="title" render={<span />}>

@@ -3,7 +3,7 @@ import {
   IconButton,
   Page,
   PageHeader,
-  Rail,
+  NavigationRail,
   Scaffold,
   Text,
   Tooltip,
@@ -40,7 +40,7 @@ export default function AppFrameAnatomy() {
           }
         />
       }
-      navigation={{ rail: <Rail destinations={destinations} /> }}
+      navigation={{ rail: <NavigationRail destinations={destinations} /> }}
     >
       <Page header={<PageHeader title="Projects" headingLevel={3} />}>
         <Text emphasis="muted">Four projects are active.</Text>

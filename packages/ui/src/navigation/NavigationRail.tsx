@@ -14,7 +14,7 @@ import {
 } from './internal/Destinations.js';
 import { backgroundAttribute, type NavigationBackground } from './internal/background.js';
 import '../styles/Base.css';
-import '../styles/Rail.css';
+import '../styles/NavigationRail.css';
 
 /** The part classes of the rail's destinations. */
 const railClasses: DestinationClasses = {
@@ -24,16 +24,18 @@ const railClasses: DestinationClasses = {
   count: 'env-rail-count',
 };
 
-export interface RailProps extends Omit<ComponentPropsWithRef<'nav'>, 'children'>, SkeletonProps {
+export interface NavigationRailProps
+  extends Omit<ComponentPropsWithRef<'nav'>, 'children'>,
+    SkeletonProps {
   /**
-   * The application's destinations, the same array Bar and Drawer take, each an icon above a short
+   * The application's destinations, the same array NavigationBar and NavigationDrawer take, each an icon above a short
    * label. Groups don't show: the destinations follow one another in the array's order. Nested
    * destinations don't show either: a destination whose `children` hold the current one takes the
    * current fill.
    */
   destinations: readonly Destination[];
   /**
-   * Content above the destinations, such as a button that opens a Sheet with the Drawer, or the
+   * Content above the destinations, such as a button that opens a Sheet with the NavigationDrawer, or the
    * main action of the page.
    */
   header?: ReactNode;
@@ -44,7 +46,7 @@ export interface RailProps extends Omit<ComponentPropsWithRef<'nav'>, 'children'
    * the default surface color, as a plain rectangle; page, the page's background, so it sits on the
    * page. On a surface, such as a Sheet, both take the surface's color; a Sheet's is the
    * navigation's background, so it keeps its color in a narrow window. Set it on its own, such as
-   * a Rail with its background beside a TopBar with page.
+   * a NavigationRail with its background beside a TopBar with page.
    * @default 'default'
    */
   background?: NavigationBackground;
@@ -60,7 +62,7 @@ export interface RailProps extends Omit<ComponentPropsWithRef<'nav'>, 'children'
  * with the destinations one under another, each an icon above a short label. A `nav` landmark; the
  * current destination reports aria-current="page", and every destination is a tab stop.
  */
-export function Rail({
+export function NavigationRail({
   destinations,
   header,
   footer,
@@ -70,7 +72,7 @@ export function Rail({
   skeleton = false,
   className,
   ...props
-}: RailProps) {
+}: NavigationRailProps) {
   const messages = useNavigationMessages();
   return (
     <Column
