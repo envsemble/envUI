@@ -1329,22 +1329,22 @@
     "--elevation-0-border": { "kind": "prefixed", "cssVariable": "--env-elevation-0-border" },
     "--elevation-0-shadow": {
       "kind": "removed",
-      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its backdrop as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+      "note": "The elevation shadows are gone: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its backdrop as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
     },
     "--elevation-1-border": { "kind": "prefixed", "cssVariable": "--env-elevation-1-border" },
     "--elevation-1-shadow": {
       "kind": "removed",
-      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its backdrop as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+      "note": "The elevation shadows are gone: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its backdrop as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
     },
     "--elevation-2-border": { "kind": "prefixed", "cssVariable": "--env-elevation-2-border" },
     "--elevation-2-shadow": {
       "kind": "removed",
-      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its backdrop as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+      "note": "The elevation shadows are gone: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its backdrop as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
     },
     "--elevation-3-border": { "kind": "prefixed", "cssVariable": "--env-elevation-3-border" },
     "--elevation-3-shadow": {
       "kind": "removed",
-      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its backdrop as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+      "note": "The elevation shadows are gone: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its backdrop as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
     },
     "--env-alert-edge": {
       "kind": "renamed",
@@ -1480,19 +1480,19 @@
     },
     "--env-elevation-0-shadow": {
       "kind": "removed",
-      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its backdrop as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+      "note": "The elevation shadows are gone: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its backdrop as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
     },
     "--env-elevation-1-shadow": {
       "kind": "removed",
-      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its backdrop as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+      "note": "The elevation shadows are gone: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its backdrop as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
     },
     "--env-elevation-2-shadow": {
       "kind": "removed",
-      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its backdrop as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+      "note": "The elevation shadows are gone: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its backdrop as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
     },
     "--env-elevation-3-shadow": {
       "kind": "removed",
-      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its backdrop as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+      "note": "The elevation shadows are gone: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its backdrop as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
     },
     "--env-font-size-body-small": {
       "kind": "renamed",
@@ -1531,6 +1531,12 @@
       "cssVariable": "--env-list-item-container",
       "colorPropertyOf": "env-list-item",
       "note": "A row's fill is the public color property --env-list-item-container, set on the row."
+    },
+    "--env-motion-ease-standard": {
+      "kind": "renamed",
+      "token": "motion.ease",
+      "cssVariable": "--env-motion-ease",
+      "note": "The standard easing is --env-motion-ease; the alias, the same curve, is gone."
     },
     "--env-sidebar-collapsed-width": {
       "kind": "removed",
@@ -1829,7 +1835,12 @@
     "--motion-ease": { "kind": "prefixed", "cssVariable": "--env-motion-ease" },
     "--motion-ease-enter": { "kind": "prefixed", "cssVariable": "--env-motion-ease-enter" },
     "--motion-ease-exit": { "kind": "prefixed", "cssVariable": "--env-motion-ease-exit" },
-    "--motion-ease-standard": { "kind": "prefixed", "cssVariable": "--env-motion-ease-standard" },
+    "--motion-ease-standard": {
+      "kind": "renamed",
+      "token": "motion.ease",
+      "cssVariable": "--env-motion-ease",
+      "note": "The standard easing is --env-motion-ease; the alias, the same curve, is gone."
+    },
     "--radius-large": {
       "kind": "renamed",
       "token": "radius.lg",

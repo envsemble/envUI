@@ -3,6 +3,7 @@
   "elevation": {
     "0": {
       "border": {
+        "$description": "The edge of a level-0 layer, which lies in the page: none.",
         "$type": "color",
         "$value": { "colorSpace": "srgb", "components": [0, 0, 0], "alpha": 0 }
       }
@@ -10,7 +11,7 @@
     "1": {
       "border": {
         "$type": "color",
-        "$description": "The edge of a level-1 layer, the same as every level's: envUI draws no shadows, so the edge and the fill set a floating layer apart.",
+        "$description": "The edge of a level-1 layer, the same as every level's: where a floating layer is solid, the edge and its fill set it apart.",
         "$value": "{palette.gray.25}"
       }
     },

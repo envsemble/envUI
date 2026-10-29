@@ -609,7 +609,7 @@
 .catalogue-density-steps .env-tree-item {
   transition:
     background-color var(--env-motion-duration-fast) var(--env-motion-ease),
-    transform var(--env-motion-duration-medium) var(--env-motion-ease-standard);
+    transform var(--env-motion-duration-medium) var(--env-motion-ease);
 }
 
 @media (prefers-reduced-motion: reduce) {

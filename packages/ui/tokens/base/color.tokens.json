@@ -966,6 +966,7 @@
           }
         },
         "powder": {
+          "$description": "The default figure on the powder fill, the shade of its initials.",
           "$value": "{color.avatar.fg.powder}",
           "$extensions": {
             "com.envsemble.envui": {
@@ -974,6 +975,7 @@
           }
         },
         "seafoam": {
+          "$description": "The default figure on the seafoam fill, the shade of its initials.",
           "$value": "{color.avatar.fg.seafoam}",
           "$extensions": {
             "com.envsemble.envui": {
@@ -982,6 +984,7 @@
           }
         },
         "sage": {
+          "$description": "The default figure on the sage fill, the shade of its initials.",
           "$value": "{color.avatar.fg.sage}",
           "$extensions": {
             "com.envsemble.envui": {
@@ -990,6 +993,7 @@
           }
         },
         "butter": {
+          "$description": "The default figure on the butter fill, the shade of its initials.",
           "$value": "{color.avatar.fg.butter}",
           "$extensions": {
             "com.envsemble.envui": {
@@ -998,6 +1002,7 @@
           }
         },
         "blush": {
+          "$description": "The default figure on the blush fill, the shade of its initials.",
           "$value": "{color.avatar.fg.blush}",
           "$extensions": {
             "com.envsemble.envui": {
@@ -1006,6 +1011,7 @@
           }
         },
         "periwinkle": {
+          "$description": "The default figure on the periwinkle fill, the shade of its initials.",
           "$value": "{color.avatar.fg.periwinkle}",
           "$extensions": {
             "com.envsemble.envui": {
@@ -1014,6 +1020,7 @@
           }
         },
         "orchid": {
+          "$description": "The default figure on the orchid fill, the shade of its initials.",
           "$value": "{color.avatar.fg.orchid}",
           "$extensions": {
             "com.envsemble.envui": {
@@ -1022,6 +1029,7 @@
           }
         },
         "oat": {
+          "$description": "The default figure on the oat fill, the shade of its initials.",
           "$value": "{color.avatar.fg.oat}",
           "$extensions": {
             "com.envsemble.envui": {

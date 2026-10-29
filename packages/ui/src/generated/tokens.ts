@@ -237,6 +237,7 @@ export const tokens = {
       'dark-high-contrast': '#002e56',
     },
   },
+  /** The default figure on the blush fill, the shade of its initials. */
   'color.avatar.figure.blush': {
     cssVariable: '--env-color-avatar-figure-blush',
     type: 'color',
@@ -247,6 +248,7 @@ export const tokens = {
       'dark-high-contrast': '#59131b',
     },
   },
+  /** The default figure on the butter fill, the shade of its initials. */
   'color.avatar.figure.butter': {
     cssVariable: '--env-color-avatar-figure-butter',
     type: 'color',
@@ -257,6 +259,7 @@ export const tokens = {
       'dark-high-contrast': '#422800',
     },
   },
+  /** The default figure on the oat fill, the shade of its initials. */
   'color.avatar.figure.oat': {
     cssVariable: '--env-color-avatar-figure-oat',
     type: 'color',
@@ -267,6 +270,7 @@ export const tokens = {
       'dark-high-contrast': '#392b1f',
     },
   },
+  /** The default figure on the orchid fill, the shade of its initials. */
   'color.avatar.figure.orchid': {
     cssVariable: '--env-color-avatar-figure-orchid',
     type: 'color',
@@ -277,6 +281,7 @@ export const tokens = {
       'dark-high-contrast': '#4e193b',
     },
   },
+  /** The default figure on the periwinkle fill, the shade of its initials. */
   'color.avatar.figure.periwinkle': {
     cssVariable: '--env-color-avatar-figure-periwinkle',
     type: 'color',
@@ -287,6 +292,7 @@ export const tokens = {
       'dark-high-contrast': '#2c255f',
     },
   },
+  /** The default figure on the powder fill, the shade of its initials. */
   'color.avatar.figure.powder': {
     cssVariable: '--env-color-avatar-figure-powder',
     type: 'color',
@@ -297,6 +303,7 @@ export const tokens = {
       'dark-high-contrast': '#002e56',
     },
   },
+  /** The default figure on the sage fill, the shade of its initials. */
   'color.avatar.figure.sage': {
     cssVariable: '--env-color-avatar-figure-sage',
     type: 'color',
@@ -307,6 +314,7 @@ export const tokens = {
       'dark-high-contrast': '#193312',
     },
   },
+  /** The default figure on the seafoam fill, the shade of its initials. */
   'color.avatar.figure.seafoam': {
     cssVariable: '--env-color-avatar-figure-seafoam',
     type: 'color',
@@ -1769,6 +1777,7 @@ export const tokens = {
       'dark-high-contrast': '1px',
     },
   },
+  /** The text of a control and of a field's value: the body size, and 1 rem under a coarse pointer, where smaller text makes touch browsers zoom into a focused field. */
   'control.font-size': {
     cssVariable: '--env-control-font-size',
     type: 'dimension',
@@ -1883,6 +1892,7 @@ export const tokens = {
     },
     scales: { compact: '1rem' },
   },
+  /** The edge of a level-0 layer, which lies in the page: none. */
   'elevation.0.border': {
     cssVariable: '--env-elevation-0-border',
     type: 'color',
@@ -1893,7 +1903,7 @@ export const tokens = {
       'dark-high-contrast': 'transparent',
     },
   },
-  /** The edge of a level-1 layer, the same as every level's: envUI draws no shadows, so the edge and the fill set a floating layer apart. */
+  /** The edge of a level-1 layer, the same as every level's: where a floating layer is solid, the edge and its fill set it apart. */
   'elevation.1.border': {
     cssVariable: '--env-elevation-1-border',
     type: 'color',
@@ -1938,6 +1948,7 @@ export const tokens = {
     },
     scales: { compact: '2.75rem' },
   },
+  /** envUI's typeface, Geist, which the package ships, falling back to the system's sans-serif. */
   'font.family': {
     cssVariable: '--env-font-family',
     type: 'fontFamily',
@@ -1948,6 +1959,7 @@ export const tokens = {
       'dark-high-contrast': "'envUI Geist', sans-serif",
     },
   },
+  /** Running text: Text's body variant and a type role's default, 15 px in the comfortable scale. */
   'font.size.body': {
     cssVariable: '--env-font-size-body',
     type: 'dimension',
@@ -1959,6 +1971,7 @@ export const tokens = {
     },
     scales: { compact: '0.8125rem' },
   },
+  /** Supporting text: Text's body-sm and caption variants, 14 px in the comfortable scale. */
   'font.size.body-sm': {
     cssVariable: '--env-font-size-body-sm',
     type: 'dimension',
@@ -1982,6 +1995,7 @@ export const tokens = {
     },
     scales: { compact: '0.6875rem' },
   },
+  /** A page's heading: Text's headline variant, 18 px in the comfortable scale. */
   'font.size.headline': {
     cssVariable: '--env-font-size-headline',
     type: 'dimension',
@@ -2017,6 +2031,7 @@ export const tokens = {
     },
     scales: { compact: '0.75rem' },
   },
+  /** A section's heading: Text's title variant, 16 px in the comfortable scale. */
   'font.size.title': {
     cssVariable: '--env-font-size-title',
     type: 'dimension',
@@ -2039,6 +2054,7 @@ export const tokens = {
       'dark-high-contrast': '400',
     },
   },
+  /** Medium, 500: headings, labels that lead and emphasis in a row. */
   'font.weight.medium': {
     cssVariable: '--env-font-weight-medium',
     type: 'fontWeight',
@@ -2049,6 +2065,7 @@ export const tokens = {
       'dark-high-contrast': '500',
     },
   },
+  /** Regular, 400: running text and most labels. */
   'font.weight.regular': {
     cssVariable: '--env-font-weight-regular',
     type: 'fontWeight',
@@ -2059,6 +2076,7 @@ export const tokens = {
       'dark-high-contrast': '400',
     },
   },
+  /** Semibold, 600: the strongest emphasis in a small space, such as today in a calendar. */
   'font.weight.semibold': {
     cssVariable: '--env-font-weight-semibold',
     type: 'fontWeight',
@@ -2093,6 +2111,7 @@ export const tokens = {
     },
     scales: { compact: '1rem' },
   },
+  /** A small icon, such as inside a control: the control's icon size, 1 rem. */
   'icon.size-sm': {
     cssVariable: '--env-icon-size-sm',
     type: 'dimension',
@@ -2103,6 +2122,7 @@ export const tokens = {
       'dark-high-contrast': '1rem',
     },
   },
+  /** A small change, such as a state layer or a color under the pointer: 120 ms. */
   'motion.duration.fast': {
     cssVariable: '--env-motion-duration-fast',
     type: 'duration',
@@ -2113,6 +2133,7 @@ export const tokens = {
       'dark-high-contrast': '0.12s',
     },
   },
+  /** A part that opens, moves or fades in, such as a popup or a field's floating label: 160 ms. */
   'motion.duration.medium': {
     cssVariable: '--env-motion-duration-medium',
     type: 'duration',
@@ -2123,6 +2144,7 @@ export const tokens = {
       'dark-high-contrast': '0.16s',
     },
   },
+  /** A larger movement, such as a sheet sliding in or a dialog's backdrop: 240 ms. */
   'motion.duration.slow': {
     cssVariable: '--env-motion-duration-slow',
     type: 'duration',
@@ -2133,6 +2155,7 @@ export const tokens = {
       'dark-high-contrast': '0.24s',
     },
   },
+  /** The standard easing of a change on screen, which speeds up and then settles. */
   'motion.ease': {
     cssVariable: '--env-motion-ease',
     type: 'cubicBezier',
@@ -2165,16 +2188,6 @@ export const tokens = {
       'dark-high-contrast': 'cubic-bezier(0.3, 0, 0.8, 0.15)',
     },
   },
-  'motion.ease-standard': {
-    cssVariable: '--env-motion-ease-standard',
-    type: 'cubicBezier',
-    values: {
-      light: 'cubic-bezier(0.45, 0, 0.2, 1)',
-      dark: 'cubic-bezier(0.45, 0, 0.2, 1)',
-      'light-high-contrast': 'cubic-bezier(0.45, 0, 0.2, 1)',
-      'dark-high-contrast': 'cubic-bezier(0.45, 0, 0.2, 1)',
-    },
-  },
   /** Medium corners: fields, tables, alerts and other blocks. */
   'radius.lg': {
     cssVariable: '--env-radius-lg',
@@ -2187,6 +2200,7 @@ export const tokens = {
     },
     scales: { compact: '0.75rem' },
   },
+  /** Corners between sm and lg, such as a navigation item's indicator. */
   'radius.md': {
     cssVariable: '--env-radius-md',
     type: 'dimension',
@@ -2198,11 +2212,13 @@ export const tokens = {
     },
     scales: { compact: '0.625rem' },
   },
+  /** Square corners. */
   'radius.none': {
     cssVariable: '--env-radius-none',
     type: 'dimension',
     values: { light: '0', dark: '0', 'light-high-contrast': '0', 'dark-high-contrast': '0' },
   },
+  /** The corners where connected rows meet: small, so the rows read as one block. */
   'radius.row-inner': {
     cssVariable: '--env-radius-row-inner',
     type: 'dimension',
@@ -2213,6 +2229,7 @@ export const tokens = {
       'dark-high-contrast': '0.5rem',
     },
   },
+  /** The outer corners of connected rows, the first row's top and the last row's bottom: a surface's. */
   'radius.row-outer': {
     cssVariable: '--env-radius-row-outer',
     type: 'dimension',
@@ -2223,6 +2240,7 @@ export const tokens = {
       'dark-high-contrast': '1.75rem',
     },
   },
+  /** A row that stands alone, with the outer corners on every side. */
   'radius.row-single': {
     cssVariable: '--env-radius-row-single',
     type: 'dimension',
@@ -2256,6 +2274,7 @@ export const tokens = {
       'dark-high-contrast': '1.75rem',
     },
   },
+  /** The largest corners of the scale. */
   'radius.xl': {
     cssVariable: '--env-radius-xl',
     type: 'dimension',
@@ -2267,6 +2286,7 @@ export const tokens = {
     },
     scales: { compact: '1.375rem' },
   },
+  /** The smallest corners, such as a checkbox's box and a color swatch. */
   'radius.xs': {
     cssVariable: '--env-radius-xs',
     type: 'dimension',
@@ -2361,6 +2381,7 @@ export const tokens = {
     },
     scales: { compact: '1.25rem' },
   },
+  /** Spacing step 1: 4 px, the same in both scales. */
   'space.1': {
     cssVariable: '--env-space-1',
     type: 'dimension',
@@ -2371,6 +2392,7 @@ export const tokens = {
       'dark-high-contrast': '0.25rem',
     },
   },
+  /** Spacing step 2: 8 px in the comfortable scale, 6 px in compact. */
   'space.2': {
     cssVariable: '--env-space-2',
     type: 'dimension',
@@ -2382,6 +2404,7 @@ export const tokens = {
     },
     scales: { compact: '0.375rem' },
   },
+  /** Spacing step 3: 12 px in the comfortable scale, 10 px in compact. */
   'space.3': {
     cssVariable: '--env-space-3',
     type: 'dimension',
@@ -2393,6 +2416,7 @@ export const tokens = {
     },
     scales: { compact: '0.625rem' },
   },
+  /** Spacing step 4: 16 px in the comfortable scale, 12 px in compact. */
   'space.4': {
     cssVariable: '--env-space-4',
     type: 'dimension',
@@ -2404,6 +2428,7 @@ export const tokens = {
     },
     scales: { compact: '0.75rem' },
   },
+  /** Spacing step 5: 24 px in the comfortable scale, 20 px in compact. */
   'space.5': {
     cssVariable: '--env-space-5',
     type: 'dimension',
@@ -2415,6 +2440,7 @@ export const tokens = {
     },
     scales: { compact: '1.25rem' },
   },
+  /** Spacing step 6: 32 px in the comfortable scale, 26 px in compact. */
   'space.6': {
     cssVariable: '--env-space-6',
     type: 'dimension',
@@ -2426,6 +2452,7 @@ export const tokens = {
     },
     scales: { compact: '1.625rem' },
   },
+  /** Spacing step 7: 40 px in the comfortable scale, 32 px in compact. */
   'space.7': {
     cssVariable: '--env-space-7',
     type: 'dimension',
@@ -2437,6 +2464,7 @@ export const tokens = {
     },
     scales: { compact: '2rem' },
   },
+  /** Spacing step 8: 48 px in the comfortable scale, 38 px in compact. */
   'space.8': {
     cssVariable: '--env-space-8',
     type: 'dimension',
@@ -2448,6 +2476,7 @@ export const tokens = {
     },
     scales: { compact: '2.375rem' },
   },
+  /** Spacing step 9: 64 px in the comfortable scale, 52 px in compact. */
   'space.9': {
     cssVariable: '--env-space-9',
     type: 'dimension',
@@ -2459,6 +2488,7 @@ export const tokens = {
     },
     scales: { compact: '3.25rem' },
   },
+  /** The opacity of a disabled control, which keeps its colors: 48%. */
   'state.disabled-opacity': {
     cssVariable: '--env-state-disabled-opacity',
     type: 'number',
@@ -2562,6 +2592,7 @@ export const tokens = {
     },
     scales: { compact: '0.25rem' },
   },
+  /** Running text: Text's body variant, regular. */
   'type.body': {
     cssVariable: '--env-type-body',
     type: 'typography',
@@ -2596,6 +2627,7 @@ export const tokens = {
       },
     },
   },
+  /** Supporting text: Text's body-sm and caption variants, regular. */
   'type.body-sm': {
     cssVariable: '--env-type-body-sm',
     type: 'typography',
@@ -2630,6 +2662,7 @@ export const tokens = {
       },
     },
   },
+  /** A page's heading: Text's headline variant, medium. */
   'type.headline': {
     cssVariable: '--env-type-headline',
     type: 'typography',
@@ -2664,6 +2697,7 @@ export const tokens = {
       },
     },
   },
+  /** A section's heading: Text's title variant, medium. */
   'type.title': {
     cssVariable: '--env-type-title',
     type: 'typography',

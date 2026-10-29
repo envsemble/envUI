@@ -3,15 +3,42 @@
   "space": {
     "$type": "dimension",
     "$description": "Relative spacing is reset at every explicit theme boundary, including portals.",
-    "1": { "$value": { "value": 0.25, "unit": "rem" } },
-    "2": { "$value": { "value": 0.5, "unit": "rem" } },
-    "3": { "$value": { "value": 0.75, "unit": "rem" } },
-    "4": { "$value": { "value": 1, "unit": "rem" } },
-    "5": { "$value": { "value": 1.5, "unit": "rem" } },
-    "6": { "$value": { "value": 2, "unit": "rem" } },
-    "7": { "$value": { "value": 2.5, "unit": "rem" } },
-    "8": { "$value": { "value": 3, "unit": "rem" } },
-    "9": { "$value": { "value": 4, "unit": "rem" } }
+    "1": {
+      "$description": "Spacing step 1: 4 px, the same in both scales.",
+      "$value": { "value": 0.25, "unit": "rem" }
+    },
+    "2": {
+      "$description": "Spacing step 2: 8 px in the comfortable scale, 6 px in compact.",
+      "$value": { "value": 0.5, "unit": "rem" }
+    },
+    "3": {
+      "$description": "Spacing step 3: 12 px in the comfortable scale, 10 px in compact.",
+      "$value": { "value": 0.75, "unit": "rem" }
+    },
+    "4": {
+      "$description": "Spacing step 4: 16 px in the comfortable scale, 12 px in compact.",
+      "$value": { "value": 1, "unit": "rem" }
+    },
+    "5": {
+      "$description": "Spacing step 5: 24 px in the comfortable scale, 20 px in compact.",
+      "$value": { "value": 1.5, "unit": "rem" }
+    },
+    "6": {
+      "$description": "Spacing step 6: 32 px in the comfortable scale, 26 px in compact.",
+      "$value": { "value": 2, "unit": "rem" }
+    },
+    "7": {
+      "$description": "Spacing step 7: 40 px in the comfortable scale, 32 px in compact.",
+      "$value": { "value": 2.5, "unit": "rem" }
+    },
+    "8": {
+      "$description": "Spacing step 8: 48 px in the comfortable scale, 38 px in compact.",
+      "$value": { "value": 3, "unit": "rem" }
+    },
+    "9": {
+      "$description": "Spacing step 9: 64 px in the comfortable scale, 52 px in compact.",
+      "$value": { "value": 4, "unit": "rem" }
+    }
   },
   "row": {
     "$type": "dimension",
