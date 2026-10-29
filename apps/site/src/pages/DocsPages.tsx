@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Column, CopyButton, DescriptionList, Link, Row, Surface, Text } from '@envsemble/envui';
 import { Code } from '@envsemble/envui/content';
 import { AgentLogos } from '../brand/AgentLogos';
@@ -20,7 +21,7 @@ import { PropsTables } from '../template/PropsTables';
 import { MetadataBadges, PageChangelog, TemplateContent } from '../template/TemplateContent';
 import type { Documentation as Document } from './PageModel';
 import { useDocument } from './PageContent';
-import { useAfterPaint } from '../template/useAfterPaint';
+import { useRevealed } from '../template/useRevealed';
 import { Documentation } from './Documentation';
 import { GuideDocument } from './GuideDocument';
 import { LoadedPart } from './LoadedPart';
@@ -517,8 +518,32 @@ export function DocsReferencePage({ page }: { page: RoutePage }) {
   const cataloguePage = pagesOf('catalogue').find((entry) => entry.document?.id === document.id);
   const metadata = document.metadata;
   const pattern = cataloguePage?.kind === 'pattern';
-  // What follows the guide, its reference, renders once the page has painted.
-  const rest = useAfterPaint();
+  // The guide, then once it has painted its reference, together: each step lays the whole page out
+  // again, which costs more here than a step saves (useRevealed).
+  const guide = useMemo(() => <CodeGuide document={document} />, [document]);
+  const parts = useMemo(
+    () =>
+      [
+        cataloguePage && <WordsInCode key="words" document={document} />,
+        cataloguePage && (
+          <Provides key="provides" document={document} title="Accessibility" id="provides" />
+        ),
+        !pattern && (
+          <Column key="props" render={<section />} gap={5} aria-labelledby="props">
+            <Text render={<h2 />} variant="headline" id="props">
+              Props
+            </Text>
+            <PropsTables document={document} />
+          </Column>
+        ),
+        <PartNames key="parts" components={metadata?.components ?? []} />,
+        <ColorProperties key="colors" components={metadata?.components ?? []} />,
+        <Strings key="strings" document={document} />,
+        <PageChangelog key="changelog" document={document} />,
+      ].filter(Boolean),
+    [document, cataloguePage, pattern, metadata],
+  );
+  const revealed = useRevealed(2);
   return (
     <>
       <PageHeader
@@ -537,26 +562,9 @@ export function DocsReferencePage({ page }: { page: RoutePage }) {
       {/* Field, which has no page in the catalogue, shows the whole file, what envUI and the
           application provide in place. */}
       {!cataloguePage && <TemplateContent document={document} provides related={false} />}
-      <Column gap={8} className="site-article docs-api" aria-busy={!rest || undefined}>
-        <CodeGuide document={document} />
-        {rest && (
-          <>
-            {cataloguePage && <WordsInCode document={document} />}
-            {cataloguePage && <Provides document={document} title="Accessibility" id="provides" />}
-            {!pattern && (
-              <Column render={<section />} gap={5} aria-labelledby="props">
-                <Text render={<h2 />} variant="headline" id="props">
-                  Props
-                </Text>
-                <PropsTables document={document} />
-              </Column>
-            )}
-            <PartNames components={metadata?.components ?? []} />
-            <ColorProperties components={metadata?.components ?? []} />
-            <Strings document={document} />
-            <PageChangelog document={document} />
-          </>
-        )}
+      <Column gap={8} className="site-article docs-api" aria-busy={revealed < 2 || undefined}>
+        {guide}
+        {revealed === 2 && parts}
       </Column>
     </>
   );

@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { Badge, Column, DescriptionList, Disclosure, Text } from '@envsemble/envui';
 import { Documentation, GuidanceLists } from '../pages/Documentation';
 import type { Documentation as Document } from '../pages/PageModel';
@@ -8,7 +8,7 @@ import { catalogueSection } from './Provides';
 import { docsOnlySections } from '../shared/CatalogueContent';
 import { Related } from './Related';
 import { WhenToUse } from './WhenToUse';
-import { useAfterPaint } from './useAfterPaint';
+import { useRevealed } from './useRevealed';
 import { subscribeToAddress } from '../navigation/Address';
 import { statusTones } from '../navigation/PageBadges';
 
@@ -97,7 +97,8 @@ function groupSections(sections: readonly DocumentationSection[]) {
 /**
  * Sections in the page's order, in their three groups, far apart, then, with `related`, Related;
  * Compose and the changelog are on the page in the Docs. A group without sections is left out. The
- * sections after the first render once the page has painted (useAfterPaint), busy until then.
+ * sections after the first render one after another as the page paints (useRevealed), Related last;
+ * it is busy until they all have.
  */
 function Sections({
   page,
@@ -110,25 +111,47 @@ function Sections({
   provides: boolean;
   related: boolean;
 }) {
-  const shown = sections
-    .filter((section) => !docsOnlySections.has(section.id))
-    .flatMap((section) => (provides ? section : (catalogueSection(section) ?? [])));
-  const rest = useAfterPaint();
-  const end = rest &&
-    related &&
-    sections.some((section) => section.id === 'overview') &&
-    page.metadata && <Related metadata={page.metadata} path={page.path} />;
+  const shown = useMemo(
+    () =>
+      sections
+        .filter((section) => !docsOnlySections.has(section.id))
+        .flatMap((section) => (provides ? section : (catalogueSection(section) ?? []))),
+    [sections, provides],
+  );
+  // Each section's element, made once, so revealing the next leaves those shown as they are.
+  const elements = useMemo(
+    () =>
+      new Map(
+        shown.map((section) => [
+          section.id,
+          <Section key={section.id} page={page} section={section} />,
+        ]),
+      ),
+    [shown, page],
+  );
+  const withRelated = related && sections.some((section) => section.id === 'overview');
+  const total = shown.length + (withRelated ? 1 : 0);
+  const revealed = useRevealed(total);
+  const relatedElement = useMemo(
+    () => page.metadata && <Related metadata={page.metadata} path={page.path} />,
+    [page],
+  );
+  const end = revealed > shown.length && relatedElement;
+  const groups = groupSections(shown);
+  // The sections before each group, to count the group's revealed ones.
+  const before = groups.map((_, index) =>
+    groups.slice(0, index).reduce((count, group) => count + group.length, 0),
+  );
   return (
-    <div className="site-section-groups" aria-busy={!rest || undefined}>
-      {groupSections(shown).map((group, index) =>
-        group.length && (index === 0 || rest) ? (
+    <div className="site-section-groups" aria-busy={revealed < total || undefined}>
+      {groups.map((group, index) => {
+        const visible = group.slice(0, Math.max(0, revealed - before[index]!));
+        return visible.length ? (
           <div key={index} className="site-article site-template site-figures site-section-group">
-            {(rest ? group : group.slice(0, 1)).map((section) => (
-              <Section key={section.id} page={page} section={section} />
-            ))}
+            {visible.map((section) => elements.get(section.id))}
           </div>
-        ) : null,
-      )}
+        ) : null;
+      })}
       {end && (
         <div className="site-article site-template site-figures site-section-group">{end}</div>
       )}
