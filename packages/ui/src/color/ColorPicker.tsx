@@ -1,6 +1,13 @@
 'use client';
 
-import { useId, useRef, useState, type ComponentPropsWithRef, type ReactNode } from 'react';
+import {
+  useContext,
+  useId,
+  useRef,
+  useState,
+  type ComponentPropsWithRef,
+  type ReactNode,
+} from 'react';
 import type { Color } from '@react-stately/color';
 import { CopyButton } from '../actions/CopyButton.js';
 import { Button, IconButton } from '../actions/Button.js';
@@ -18,6 +25,7 @@ import { ColorLocale, displayColor } from './internal/ColorLocale.js';
 import { ColorSlider } from './internal/ColorSlider.js';
 import { SwatchList, type ColorPickerSwatch } from './internal/SwatchList.js';
 import { useEyeDropper } from './internal/useEyeDropper.js';
+import { ColorChangeContext } from './internal/colorChange.js';
 import { useColorState, useFormResetOf } from './internal/useColorState.js';
 import {
   formatColor,
@@ -52,11 +60,8 @@ export interface ColorPickerValueProps {
    * @default '#000000'
    */
   defaultValue?: ColorValue;
-  /**
-   * Receives the color as it changes, as a string in valueFormat, such as #6750a4, and as React
-   * Aria's Color, which keeps the hue of a gray and converts to any format.
-   */
-  onValueChange?: (value: string, color: Color) => void;
+  /** Receives the color as it changes, as a string in valueFormat, such as #6750a4. */
+  onValueChange?: (value: string) => void;
   /**
    * The format of the string onValueChange receives and a form submits: hex (#rrggbb, or #rrggbbaa
    * while translucent), rgb (rgb() or rgba()) or hsl (hsl() or hsla()).
@@ -170,13 +175,14 @@ export function ColorPicker({
   );
   const pick = useEyeDropper();
   const inactive = disabled || readOnly;
+  const onColorChange = useContext(ColorChangeContext);
 
   function change(next: Color) {
     if (inactive || resetting.current) return;
     const normalized = alpha ? next : next.withChannelValue('alpha', 1);
     setOwn(normalized);
-    if (!sameColor(normalized, color))
-      onValueChange?.(formatColor(normalized, valueFormat), normalized);
+    onColorChange?.(normalized);
+    if (!sameColor(normalized, color)) onValueChange?.(formatColor(normalized, valueFormat));
   }
 
   const shorts = {

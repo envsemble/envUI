@@ -10,6 +10,7 @@ import { useMessages } from '../internal/EnvUIContext.js';
 import { ColorPicker, type ColorPickerValueProps } from './ColorPicker.js';
 import { ColorSwatch } from './ColorSwatch.js';
 import { ColorLocale, displayColor } from './internal/ColorLocale.js';
+import { ColorChangeContext } from './internal/colorChange.js';
 import { formatColor, sameColor } from './internal/colorValue.js';
 import { useColorState, useFormResetOf } from './internal/useColorState.js';
 import '../styles/Base.css';
@@ -96,19 +97,22 @@ export function ColorPickerButton({
           </button>
         }
       >
-        <ColorPicker
-          {...picker}
-          label={label}
-          showLabel={false}
-          value={color}
-          alpha={alpha}
-          valueFormat={valueFormat}
-          disabled={disabled}
-          onValueChange={(next, nextColor) => {
+        <ColorChangeContext
+          value={(nextColor) => {
             setOwn(nextColor);
-            if (!sameColor(nextColor, color)) onValueChange?.(next, nextColor);
+            if (!sameColor(nextColor, color)) onValueChange?.(formatColor(nextColor, valueFormat));
           }}
-        />
+        >
+          <ColorPicker
+            {...picker}
+            label={label}
+            showLabel={false}
+            value={color}
+            alpha={alpha}
+            valueFormat={valueFormat}
+            disabled={disabled}
+          />
+        </ColorChangeContext>
       </Popover>
       <input
         ref={inputRef}

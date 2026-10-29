@@ -1191,9 +1191,9 @@
         },
         {
           "name": "onValueChange",
-          "type": "(value: string, color: Color) => void",
+          "type": "(value: string) => void",
           "required": false,
-          "description": "Receives the color as it changes, as a string in valueFormat, such as #6750a4, and as React Aria's Color, which keeps the hue of a gray and converts to any format."
+          "description": "Receives the color as it changes, as a string in valueFormat, such as #6750a4."
         },
         {
           "name": "valueFormat",
@@ -1334,9 +1334,9 @@
         },
         {
           "name": "onValueChange",
-          "type": "(value: string, color: Color) => void",
+          "type": "(value: string) => void",
           "required": false,
-          "description": "Receives the color as it changes, as a string in valueFormat, such as #6750a4, and as React Aria's Color, which keeps the hue of a gray and converts to any format."
+          "description": "Receives the color as it changes, as a string in valueFormat, such as #6750a4."
         },
         {
           "name": "valueFormat",
