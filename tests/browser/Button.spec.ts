@@ -119,6 +119,11 @@ test('a pending button keeps its size and name, reports busy and ignores presses
   await expect(button).toHaveAttribute('aria-busy', 'true');
   await expect(button.locator('.env-spinner')).toBeVisible();
   await expect(button.locator('.env-button-content')).toHaveCSS('color', 'rgba(0, 0, 0, 0)');
+  // The spinner turns in the label's color, which holds its contrast on the fill, as an arc alone
+  // rather than a labelled status line.
+  const color = await button.evaluate((element) => getComputedStyle(element).color);
+  await expect(button.locator('.env-spinner')).toHaveCSS('color', color);
+  await expect(button.locator('.env-spinner')).toHaveAttribute('data-label-hidden', '');
   await button.click({ force: true });
   await expect(page.getByTestId('pending-presses')).toHaveText('0');
   await expect(page.getByRole('progressbar', { name: 'Refreshing seats' })).toBeVisible();

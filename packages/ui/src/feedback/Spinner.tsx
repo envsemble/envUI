@@ -54,7 +54,6 @@ export function Spinner({
       aria-label={label}
       aria-hidden={label ? undefined : true}
       className={className}
-      data-label-hidden=""
     />
   );
 }
