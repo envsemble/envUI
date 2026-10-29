@@ -785,7 +785,7 @@ export const tokens = {
     values: {
       light: 'rgb(31 31 34 / 0.17)',
       dark: 'rgb(232 234 238 / 0.2)',
-      'light-high-contrast': 'rgb(31 31 34 / 0.12)',
+      'light-high-contrast': 'rgb(31 31 34 / 0.17)',
       'dark-high-contrast': 'rgb(232 234 238 / 0.12)',
     },
   },
@@ -796,7 +796,7 @@ export const tokens = {
     values: {
       light: 'rgb(31 31 34 / 0.25)',
       dark: 'rgb(232 234 238 / 0.28)',
-      'light-high-contrast': 'rgb(31 31 34 / 0.18)',
+      'light-high-contrast': 'rgb(31 31 34 / 0.25)',
       'dark-high-contrast': 'rgb(232 234 238 / 0.15)',
     },
   },
@@ -1755,17 +1755,6 @@ export const tokens = {
       dark: '#ebb750',
       'light-high-contrast': '#553200',
       'dark-high-contrast': '#ffe8be',
-    },
-  },
-  /** The soft highlight that sweeps across a skeleton's bars and shapes: lighter than their fill on every surface, the raised surface in the light theme and the default border's gray in the dark. */
-  'color.skeleton.shine': {
-    cssVariable: '--env-color-skeleton-shine',
-    type: 'color',
-    values: {
-      light: '#f4f4f6',
-      dark: '#898c91',
-      'light-high-contrast': '#f8f8fa',
-      'dark-high-contrast': '#a1a4a9',
     },
   },
   /** The hairline border of controls and fields, which stays 1 px in both scales. */

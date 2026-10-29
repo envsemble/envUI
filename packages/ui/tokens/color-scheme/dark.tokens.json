@@ -706,11 +706,6 @@
         }
       }
     },
-    "skeleton": {
-      "shine": {
-        "$value": "{color.border.default}"
-      }
-    },
     "avatar": {
       "bg": {
         "powder": {

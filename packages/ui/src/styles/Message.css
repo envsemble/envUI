@@ -121,4 +121,13 @@
     .env-message-content {
     --env-skeleton-length: 12rem;
   }
+  /* One's own bubble carries the skeleton's tint over its fill (Skeleton.css). The message has no
+     fill of its own, so it carries none: it would show a box that isn't there. */
+  .env-message[data-from='self'][data-env-skeleton] .env-message-content,
+  [data-env-skeleton] .env-message[data-from='self'] .env-message-content {
+    background-image: var(--env-skeleton-overlay);
+  }
+  .env-message[data-env-skeleton]:not(env-none) {
+    background-image: none;
+  }
 }

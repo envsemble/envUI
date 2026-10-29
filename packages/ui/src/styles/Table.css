@@ -403,6 +403,13 @@
     }
   }
 
+  /* In a skeleton, the header's cells carry the skeleton's tint over their fill, as the region does
+     over its own (Skeleton.css). */
+  [data-env-skeleton] .env-table-head .env-table-header-cell {
+    background-image:
+      var(--env-skeleton-overlay),
+      linear-gradient(var(--env-color-bg-neutral-muted), var(--env-color-bg-neutral-muted));
+  }
   /* In a skeleton, an empty cell, as over a placeholder row, is a bar of about a value's length. */
   [data-env-skeleton] .env-table-cell {
     --env-skeleton-placeholder: inline-block;

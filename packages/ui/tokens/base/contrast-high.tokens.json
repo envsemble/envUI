@@ -104,12 +104,13 @@
               }
             },
             "hover": {
+              "$description": "As strong as the standard light value, never fainter: skeletons' bars and switch tracks take it, and stay as visible at high contrast.",
               "$value": {
                 "colorSpace": "oklch",
                 "components": {
                   "$ref": "#/palette/gray/92/$value/components"
                 },
-                "alpha": 0.12
+                "alpha": 0.17
               }
             },
             "pressed": {
@@ -118,7 +119,7 @@
                 "components": {
                   "$ref": "#/palette/gray/92/$value/components"
                 },
-                "alpha": 0.18
+                "alpha": 0.25
               }
             }
           },

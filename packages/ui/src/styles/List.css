@@ -278,9 +278,13 @@
     }
   }
 
-  /* In a skeleton, a row carries the skeleton's highlight over its fill (Skeleton.css). */
+  /* In a skeleton, a row carries the skeleton's tint over its fill (Skeleton.css). A list's root is
+     a plain box around its rounded rows, so it carries none: its tint would show square corners
+     between and around them. */
   [data-env-skeleton] .env-list-item {
-    background-image: var(--env-skeleton-glow);
-    background-attachment: fixed;
+    background-image: var(--env-skeleton-overlay);
+  }
+  .env-list[data-env-skeleton]:not(env-none) {
+    background-image: none;
   }
 }

@@ -857,18 +857,6 @@
         }
       }
     },
-    "skeleton": {
-      "$description": "Component tokens of skeletons, whose bars and shapes take the neutral fill under the pointer.",
-      "shine": {
-        "$description": "The soft highlight that sweeps across a skeleton's bars and shapes: lighter than their fill on every surface, the raised surface in the light theme and the default border's gray in the dark.",
-        "$value": "{color.bg.raised}",
-        "$extensions": {
-          "com.envsemble.envui": {
-            "component": "Skeletons"
-          }
-        }
-      }
-    },
     "avatar": {
       "$description": "Component tokens of avatars without an image: a soft pastel fill in one of eight hues, which the avatar takes from its name, with initials and a figure in a deep shade of the same hue: a tonal pair.",
       "bg": {

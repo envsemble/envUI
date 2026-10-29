@@ -153,7 +153,7 @@ function shiftsOf(surface: HTMLElement, tolerance: number, rootPx: number): Layo
   } finally {
     surface.toggleAttribute(skeletonAttribute, wasSkeleton);
     wrapper.restore(wasSkeleton);
-    // Toggling started the root's shimmer anew: put it back in step with the others.
+    // Toggling started the root's pulse anew: put it back in step with the others.
     alignPulses();
   }
   const index = new Map(elements.map((element, at) => [element, at]));
