@@ -274,9 +274,9 @@ test('a packed consumer resolves compiled public exports and its own React insta
     'Button',
     'ButtonGroup',
     'IconButton',
-    'Bar',
-    'Rail',
-    'Drawer',
+    'NavigationBar',
+    'NavigationRail',
+    'NavigationDrawer',
     'Pager',
     'Card',
     'Row',
@@ -440,7 +440,7 @@ test('installed declarations typecheck a React 19 consumer without source aliase
       <Pager.Previous href="/previous">Previous guide</Pager.Previous>
       <Icon label="Custom" viewBox="0 0 1 1"><path d="M0 0L1 1" /></Icon><BarrelHome />
       <TextField name="title" label="Title" required ref={createRef<HTMLInputElement>()} />
-      <ColorPicker label="Accent color" name="accent" defaultValue="#abcdef" formats={['hex', 'rgb']} alpha ref={createRef<HTMLDivElement>()} onValueChange={(value, color) => { const typed: string = value; const hsl: string = color.toString('hsl'); void typed; void hsl; }} />
+      <ColorPicker label="Accent color" name="accent" defaultValue="#abcdef" formats={['hex', 'rgb']} alpha ref={createRef<HTMLDivElement>()} onValueChange={(value) => { const typed: string = value; void typed; }} />
       <ColorPickerButton label="Border color" value={colorValue} valueFormat="hsl" swatches={['#abcdef', { color: colorValue, label: 'Current' }]} />
       <ColorSwatch color="#abcdef" format="hex" size="sm" label="Accent" />
       <Textarea label="Notes" ref={createRef<HTMLTextAreaElement>()} />
