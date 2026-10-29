@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { NavigationDrawer, type NavigationDrawerDestination } from '@envsemble/envui';
 
 const pages = [
@@ -33,11 +33,16 @@ export default function ResizableDrawer() {
     const stored = storedWidth();
     if (stored !== undefined) setWidth(stored);
   }, []);
-  const destinations: NavigationDrawerDestination[] = pages.map((page) => ({
-    ...page,
-    current: current === page.href,
-    onClick: () => setCurrent(page.href),
-  }));
+  // The same array while the width changes, so a drag renders the drawer, not each destination.
+  const destinations = useMemo<NavigationDrawerDestination[]>(
+    () =>
+      pages.map((page) => ({
+        ...page,
+        current: current === page.href,
+        onClick: () => setCurrent(page.href),
+      })),
+    [current],
+  );
   return (
     <NavigationDrawer
       aria-label="Guide"

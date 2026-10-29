@@ -287,16 +287,32 @@ export interface Room {
   top: number;
 }
 
-/** A name's width in px, as its callout draws it, measured off-screen in the stage. */
-function labelWidth(stage: HTMLElement, text: string) {
-  const probe = document.createElement('span');
-  probe.className = 'site-anatomy-badge catalogue-variant-label';
-  probe.style.visibility = 'hidden';
-  probe.textContent = text;
-  stage.append(probe);
-  const width = probe.getBoundingClientRect().width;
-  probe.remove();
-  return width;
+/**
+ * The names' widths in px, as their callouts draw them, measured off-screen in the stage, or kept in
+ * `known` from an earlier measure: a name's width follows the root's font size and the fonts, not
+ * the stage's width, and placing a probe in the stage restyles the whole example, which every
+ * frame of a resize made it lag. Those still to measure are all placed before any is read, so the
+ * browser lays out once for them all.
+ */
+function labelWidths(stage: HTMLElement, texts: string[], known: Map<string, number>) {
+  const rem = getComputedStyle(document.documentElement).fontSize;
+  const keyOf = (text: string) => `${rem} ${text}`;
+  const missing = [...new Set(texts.filter((text) => !known.has(keyOf(text))))];
+  if (missing.length) {
+    const probes = missing.map((text) => {
+      const probe = document.createElement('span');
+      probe.className = 'site-anatomy-badge catalogue-variant-label';
+      probe.style.visibility = 'hidden';
+      probe.textContent = text;
+      return probe;
+    });
+    stage.append(...probes);
+    probes.forEach((probe, index) =>
+      known.set(keyOf(missing[index]!), probe.getBoundingClientRect().width),
+    );
+    for (const probe of probes) probe.remove();
+  }
+  return texts.map((text) => known.get(keyOf(text))!);
 }
 
 /**
@@ -309,6 +325,8 @@ export function measureVariants(
   stage: HTMLElement,
   subject: HTMLElement,
   legend: AnatomyLegendItem[],
+  /** The names' widths measured before, which the caller keeps until the fonts change. */
+  labels: Map<string, number> = new Map(),
 ): { callouts: Callout[]; room: Room } {
   const origin = stage.getBoundingClientRect();
   const rtl = getComputedStyle(stage).direction === 'rtl';
@@ -335,7 +353,11 @@ export function measureVariants(
     return box ? [{ number: index + 1, box, label: item.label ?? '' }] : [];
   });
   if (!found.length) return { callouts: [], room: { start: 0, top: 0 } };
-  const widths = found.map(({ label }) => labelWidth(stage, label));
+  const widths = labelWidths(
+    stage,
+    found.map(({ label }) => label),
+    labels,
+  );
   const outer: Box = {
     left: Math.min(...found.map(({ box }) => box.left)),
     top: Math.min(...found.map(({ box }) => box.top)),

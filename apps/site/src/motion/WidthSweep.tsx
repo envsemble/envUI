@@ -137,8 +137,10 @@ export function WidthSweep({
       const exact = stops.find((stop) => Math.abs(stop - width) < 0.01 && widths.includes(stop));
       const words = `${exact ?? Math.round(width)} rem`;
       const name = classNames[classOf(width)];
-      reading.current.textContent =
-        classes === 'only' ? name : classes ? `${words} · ${name}` : words;
+      const text = classes === 'only' ? name : classes ? `${words} · ${name}` : words;
+      // The same words leave the text as it is: setting it replaces the text node, which the
+      // page's :has() rules restyle much of the page for, on each frame the stage resizes.
+      if (reading.current.textContent !== text) reading.current.textContent = text;
     }
   };
   const drawRef = useRef(draw);
@@ -155,6 +157,8 @@ export function WidthSweep({
     const spot = place.current;
     if (!room || !box || !spot) return;
     const stops = key.split(' ').map(Number);
+    /** The tallest the example is along a sweep, by the root's font size and the sweep's ends. */
+    const tallestOf = new Map<string, number>();
     const measure = () => {
       const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
       const outline = getComputedStyle(box);
@@ -172,10 +176,18 @@ export function WidthSweep({
       const shownStops = stops.map((width) => Math.min(width, limit));
       const narrowest = Math.min(...shownStops);
       const most = Math.max(...shownStops);
-      let tallest = 0;
-      for (let width = narrowest; width < most + sampleStep; width += sampleStep) {
-        box.style.inlineSize = `${Math.min(width, most)}rem`;
-        tallest = Math.max(tallest, box.offsetHeight);
+      // The frame's height follows its own width alone, not the stage's, so a sweep already
+      // sampled keeps its tallest as the stage resizes, such as while the drawer beside the page
+      // is dragged: a layout for each sample, every frame, made that drag lag.
+      const range = `${rem} ${narrowest} ${most}`;
+      let tallest = tallestOf.get(range);
+      if (tallest === undefined) {
+        tallest = 0;
+        for (let width = narrowest; width < most + sampleStep; width += sampleStep) {
+          box.style.inlineSize = `${Math.min(width, most)}rem`;
+          tallest = Math.max(tallest, box.offsetHeight);
+        }
+        tallestOf.set(range, tallest);
       }
       layout.current = { scale, stops: shownStops };
       spot.style.setProperty('--catalogue-sweep-widest', `${most * scale}rem`);
@@ -191,6 +203,11 @@ export function WidthSweep({
       cancelAnimationFrame(request);
       request = requestAnimationFrame(measure);
     };
+    /** As later, sampling the example's height afresh, which its content and fonts change. */
+    const afresh = () => {
+      tallestOf.clear();
+      later();
+    };
     let width = room.clientWidth;
     const resize = new ResizeObserver(() => {
       if (room.clientWidth === width) return;
@@ -198,9 +215,9 @@ export function WidthSweep({
       later();
     });
     resize.observe(room);
-    const content = new MutationObserver(later);
+    const content = new MutationObserver(afresh);
     content.observe(box, { childList: true, subtree: true, characterData: true });
-    void document.fonts?.ready.then(later);
+    void document.fonts?.ready.then(afresh);
     return () => {
       cancelAnimationFrame(request);
       resize.disconnect();
