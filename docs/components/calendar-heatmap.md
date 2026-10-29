@@ -80,7 +80,7 @@ The application can lay out the tooltip itself; each day's name keeps its date a
 
 ### Languages
 
-The months, weekdays, dates and the legend follow the application's language, and weeks can start on Monday.
+The months, weekdays, dates and the legend follow the application's language, and weeks start on the locale's first day, as a calendar's do.
 
 ```tsx figure=ApplicationStrings
 
@@ -170,7 +170,7 @@ CalendarHeatmap takes `data`, one entry per day with its `date`, as YYYY-MM-DD, 
 
 #### Languages
 
-EnvUIProvider's `locale` names the months, weekdays and dates, through `Intl`, and `messages.calendarHeatmap` writes the legend's Less and More; `monthLabels`, `weekdayLabels`, `lessLabel` and `moreLabel` set them for one heatmap. `weekStart={1}` starts weeks on Monday, and `0`, Sunday, is the default.
+EnvUIProvider's `locale` names the months, weekdays and dates, through `Intl`, and `messages.calendarHeatmap` writes the legend's Less and More; `monthLabels`, `weekdayLabels`, `lessLabel` and `moreLabel` set them for one heatmap. Weeks start on the locale's first day, as on Calendar; `weekStart` sets another, from `0` for Sunday to `6` for Saturday, such as `weekStart={1}` for Monday.
 
 ```tsx
 <EnvUIProvider messages={{ calendarHeatmap: { less: 'Quieter', more: 'Busier' } }}>
@@ -184,5 +184,6 @@ The parts are the month names, `env-calendar-heatmap-month`, the weekday names, 
 
 ## Changelog
 
+- **1.0.0**: Weeks start on the locale's first day, as on Calendar, and `weekStart` takes any weekday; they started on Sunday. A date that doesn't exist, such as 2026-02-31, is left out and reported while developing, where it moved to the next month.
 - **1.0.0**: Month and weekday names, dates and numbers follow the locale, from `Intl`, and the legend comes from `messages.calendarHeatmap`; the tooltip is the shared tooltip popup. `Heatmap` is `CalendarHeatmap`, with `CalendarHeatmapDay`, `CalendarHeatmapCell` and the `env-calendar-heatmap-*` classes; the page is `calendar-heatmap`.
 - **0.5.0**: Heatmap, with tones, color steps, `thresholds`, a tooltip and keyboard access for every day.

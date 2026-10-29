@@ -789,10 +789,10 @@
         },
         {
           "name": "weekStart",
-          "type": "0 | 1",
+          "type": "0 | 1 | 2 | 3 | 4 | 5 | 6",
           "required": false,
-          "default": "0",
-          "description": "The first day of each week column: 0 for Sunday (default) or 1 for Monday."
+          "default": "the locale's, or Monday where the browser cannot tell",
+          "description": "The first day of each week column, from 0 for Sunday to 6 for Saturday, as on Calendar."
         },
         {
           "name": "tone",
