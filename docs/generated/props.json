@@ -7806,7 +7806,7 @@
           "name": "items",
           "type": "readonly TabsItem[]",
           "required": true,
-          "description": "The tabs in order, each with its value, button and panel content."
+          "description": "The tabs in order, each with its value, its label or button, and its panel content."
         },
         {
           "name": "aria-label",

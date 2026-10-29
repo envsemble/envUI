@@ -1,4 +1,4 @@
-import { Button, Tabs, Text } from '@envsemble/envui';
+import { Tabs, Text } from '@envsemble/envui';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
 const tab = (index: number) => `.env-tabs-tab:nth-child(${index} of .env-tabs-tab)`;
@@ -31,13 +31,13 @@ export default function TabsTile() {
       items={[
         {
           value: 'summary',
-          button: <Button>Summary</Button>,
+          label: 'Summary',
           content: <Text>Plans and owners.</Text>,
         },
-        { value: 'files', button: <Button>Files</Button>, content: <Text>Twelve files.</Text> },
+        { value: 'files', label: 'Files', content: <Text>Twelve files.</Text> },
         {
           value: 'activity',
-          button: <Button>Activity</Button>,
+          label: 'Activity',
           content: <Text>Updated today.</Text>,
         },
       ]}
