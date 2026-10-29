@@ -261,7 +261,7 @@
       "ToastProvider": { "to": ["Toast.Provider"] },
       "ToastProviderProps": { "to": ["Toast.ProviderProps"] },
       "ToastVariant": { "to": ["ToastTone"] },
-      "TreeOpenOptions": { "to": ["TreeActionDetails"] },
+      "TreeOpenOptions": { "to": ["TreeActionOptions"] },
       "WindowFrame": {
         "to": [],
         "use": "WindowFrame is gone: a window that draws its title bar is a Scaffold with topBarSpan=\"full\" and topBar={<TopBar titleBar … />}, and bodyRef for scrollRef, as the window frame pattern shows."
