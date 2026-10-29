@@ -68,7 +68,7 @@ Commit `docs/generated/parts.json` with the change. `npm run docs:check` fails w
 
 ### Color properties and state layers
 
-A component's colors are public color properties on its root, which an application sets on one instance through `style` or CSS ([Customize and extend](customizing.md)):
+A component's colors are public color properties on its root, or on each item for a collection's `-item-` properties, which an application sets on one instance through `style` or CSS ([Customize and extend](customizing.md)):
 
 - **Names:** `--env-<component>-<role>`, the component in kebab case, or its item's for the rows and destinations of a collection, such as `--env-list-item-container` and `--env-drawer-item-selected`. IconButton and a toolbar's toggles take Button's, Textarea TextField's.
 - **Roles, few and the same everywhere:** `container`, the fill; `content`, the text and icons on it, which colors the state layers; `outline`, the edge; `icon`, an icon with a color of its own; `selected` and `selected-content`, what is chosen, current or on; `indicator`, a value's or a focus's mark, such as a slider's fill or a field's focused edge. Add a role only where these don't fit.
