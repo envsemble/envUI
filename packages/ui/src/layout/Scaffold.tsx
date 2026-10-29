@@ -92,12 +92,12 @@ export interface ScaffoldProps extends Omit<ComponentPropsWithRef<'div'>, 'child
    * The name of the skip link to the body.
    * @default 'Skip to content', or EnvUIProvider's messages.scaffold.skipToContent
    */
-  skipLabel?: string;
+  skipToContentLabel?: string;
   /**
    * The name of the skip link to the navigation.
    * @default 'Skip to navigation', or EnvUIProvider's messages.scaffold.skipToNavigation
    */
-  skipNavigationLabel?: string;
+  skipToNavigationLabel?: string;
   /**
    * false renders the regions without landmarks, a div for the banner and the main, and no skip
    * links, for a preview of an application inside another page's main content.
@@ -153,8 +153,8 @@ export function Scaffold({
   scroll = 'document',
   bodyId,
   bodyRef,
-  skipLabel,
-  skipNavigationLabel,
+  skipToContentLabel,
+  skipToNavigationLabel,
   landmarks = true,
   name,
   className,
@@ -316,7 +316,7 @@ export function Scaffold({
             className="env-scaffold-skip-link"
             onClick={skipToBody}
           >
-            {skipLabel ?? messages.skipToContent}
+            {skipToContentLabel ?? messages.skipToContent}
           </Button>
           {hasNavigation && (
             // Hidden where the Scaffold's width shows no navigation form.
@@ -327,7 +327,7 @@ export function Scaffold({
               data-skip="navigation"
               onClick={skipToNavigation}
             >
-              {skipNavigationLabel ?? messages.skipToNavigation}
+              {skipToNavigationLabel ?? messages.skipToNavigation}
             </Button>
           )}
         </div>

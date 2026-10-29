@@ -6683,14 +6683,14 @@
           "description": "The body's element: with `scroll=\"body\"` the element that scrolls, to read or restore its scroll position on."
         },
         {
-          "name": "skipLabel",
+          "name": "skipToContentLabel",
           "type": "string",
           "required": false,
           "default": "'Skip to content', or EnvUIProvider's messages.scaffold.skipToContent",
           "description": "The name of the skip link to the body."
         },
         {
-          "name": "skipNavigationLabel",
+          "name": "skipToNavigationLabel",
           "type": "string",
           "required": false,
           "default": "'Skip to navigation', or EnvUIProvider's messages.scaffold.skipToNavigation",

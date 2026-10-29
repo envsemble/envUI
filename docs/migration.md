@@ -1183,6 +1183,7 @@ An application written for a 1.0 prerelease follows these renames by hand: the n
 | AvatarGroup `gather`                        | `align`                                                                    |
 | Scaffold `forms`, `NavigationForm`          | `navigationForms`, `ScaffoldNavigationForm`                                |
 | `resolveNavigationForms`                    | Removed: Scaffold works the forms out itself                               |
+| Scaffold `skipLabel`, `skipNavigationLabel` | `skipToContentLabel`, `skipToNavigationLabel`, after their messages        |
 
 ## Migrate by responsibility
 
