@@ -27,7 +27,7 @@ export interface MeasureOptions {
   /** Also read what sticks, scrolls or holds squeezed text inside the nodes; the readout does. */
   inner?: boolean;
   /** The fewest characters a line of text may hold before it counts as squeezed. */
-  minTextChars?: number;
+  minTextCharacters?: number;
 }
 
 const ids = new WeakMap<Element, number>();
@@ -136,7 +136,7 @@ export function resolveRoot(root?: Element | string | null): HTMLElement {
 /** Measures the page under a root, with the open overlays anywhere in the document. */
 export function measure(root: HTMLElement, options: MeasureOptions = {}): Snapshot {
   const rootPx = rootFontPx();
-  const minTextChars = options.minTextChars ?? 8;
+  const minTextCharacters = options.minTextCharacters ?? 8;
   const queries = pageContainerQueries(rootPx);
   const windowBox: Box = { x: 0, y: 0, w: window.innerWidth, h: window.innerHeight };
   const rootBox = toBox(root.getBoundingClientRect());
@@ -357,7 +357,7 @@ export function measure(root: HTMLElement, options: MeasureOptions = {}): Snapsh
   );
   for (const index of overlayOf.keys()) nodes[index].level += Math.ceil(top) + 2;
 
-  if (options.inner) measureInner(root, outerOverlays, nodes, indexOf, minTextChars, rootPx);
+  if (options.inner) measureInner(root, outerOverlays, nodes, indexOf, minTextCharacters, rootPx);
 
   return {
     rootPx,
@@ -366,7 +366,7 @@ export function measure(root: HTMLElement, options: MeasureOptions = {}): Snapsh
     nodes,
     tops: nodes.filter((node) => node.parent === null).map((node) => node.index),
     queries,
-    minTextChars,
+    minTextCharacters,
     elements,
   };
 }
@@ -481,7 +481,7 @@ function measureInner(
   overlays: HTMLElement[],
   nodes: NodeData[],
   indexOf: Map<Element, number>,
-  minTextChars: number,
+  minTextCharacters: number,
   rootPx: number,
 ) {
   const nearestNode = (element: Element): number | null => {
@@ -503,7 +503,7 @@ function measureInner(
       if (indexOf.has(element) || !(element instanceof HTMLElement)) continue;
       const sticky = style.position === 'sticky';
       const scroll = scrollOf(element, style);
-      const squeezed = squeezedText(element, style, minTextChars, rootPx);
+      const squeezed = squeezedText(element, style, minTextCharacters, rootPx);
       if (!sticky && !scroll && !squeezed) continue;
       const index = nearestNode(element);
       if (index === null || nodes[index].hidden !== null || isDevElement(element)) continue;
@@ -552,25 +552,29 @@ function transformReach(
 }
 
 /**
- * Text squeezed so narrow that it wraps at fewer than `minTextChars` characters a line: an element
+ * Text squeezed so narrow that it wraps at fewer than `minTextCharacters` characters a line: an element
  * holding text of its own that is longer than that, and wraps, in a box narrower than that many
  * characters of its font (a character taken as half the font size).
  */
 function squeezedText(
   element: HTMLElement,
   style: CSSStyleDeclaration,
-  minTextChars: number,
+  minTextCharacters: number,
   rootPx: number,
 ): { chars: number; width: number } | null {
   const width = element.clientWidth - px(style.paddingLeft) - px(style.paddingRight);
   const fontSize = px(style.fontSize) || rootPx;
   const charWidth = fontSize / 2;
-  if (width <= 0 || width >= minTextChars * charWidth) return null;
+  if (width <= 0 || width >= minTextCharacters * charWidth) return null;
   let text = '';
   for (const child of Array.from(element.childNodes))
     if (child.nodeType === Node.TEXT_NODE) text += child.textContent ?? '';
   text = text.trim();
-  if (text.length <= minTextChars || style.whiteSpace === 'nowrap' || style.whiteSpace === 'pre')
+  if (
+    text.length <= minTextCharacters ||
+    style.whiteSpace === 'nowrap' ||
+    style.whiteSpace === 'pre'
+  )
     return null;
   const lineHeight = px(style.lineHeight) || fontSize * 1.4;
   // The content's height, without the padding, holds the lines.

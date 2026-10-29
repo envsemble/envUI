@@ -54,12 +54,12 @@ envui.layout.at(['22rem', '40rem', '60rem', '80rem']); // both, at each width in
 envui.layout.at([{ width: 393, height: 852 }]); // or at a width and height, such as a phone's
 ```
 
-| Option         | What it does                                                                                                          |
-| -------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `root`         | The element to measure, or a selector; by default the outermost theme boundary, else the body.                        |
-| `width`        | Measure at this width, `describe` and `check` only: a px number or a length such as `'40rem'`; `em` is read as `rem`. |
-| `height`       | Measure at this height too, as `width` takes it; the root takes the height and scrolls what is taller.                |
-| `minTextChars` | The fewest characters a line of text may hold before it counts as squeezed; 8 by default.                             |
+| Option              | What it does                                                                                                          |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `root`              | The element to measure, or a selector; by default the outermost theme boundary, else the body.                        |
+| `width`             | Measure at this width, `describe` and `check` only: a px number or a length such as `'40rem'`; `em` is read as `rem`. |
+| `height`            | Measure at this height too, as `width` takes it; the root takes the height and scrolls what is taller.                |
+| `minTextCharacters` | The fewest characters a line of text may hold before it counts as squeezed; 8 by default.                             |
 
 ### describe()
 
@@ -116,7 +116,7 @@ A list of problems, each a plain object. The same application at 22 rem:
 | `overlay-off-window`    | An open overlay that reaches outside the window.                                                                                                                                                     |
 | `layout-paints`         | A primitive, scaffold or Page without a part class that paints a background, border or shadow.                                                                                                       |
 | `sticky-without-scroll` | A sticky element whose scroll container never scrolls, so it never sticks.                                                                                                                           |
-| `text-squeezed`         | Text longer than `minTextChars` that wraps in a box narrower than that many characters.                                                                                                              |
+| `text-squeezed`         | Text longer than `minTextCharacters` that wraps in a box narrower than that many characters.                                                                                                         |
 | `skeleton-shift`        | Only from `skeletonShift()`: an element that moves or resizes when its skeleton loads.                                                                                                               |
 
 ### at()

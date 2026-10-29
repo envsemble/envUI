@@ -227,7 +227,7 @@ function snapshot(entries, more = {}) {
         ],
       ],
     ]),
-    minTextChars: 8,
+    minTextCharacters: 8,
     ...more,
   };
 }
