@@ -58,7 +58,7 @@ export interface CommandPaletteHint {
   label: ReactNode;
 }
 
-export interface CommandPaletteActionOptions {
+export interface CommandPaletteActionDetails {
   /** Ctrl or Cmd was held, for example to open beside the current document. */
   modifier: boolean;
 }
@@ -83,7 +83,7 @@ export interface CommandPaletteProps
    */
   suggestedItems?: readonly CommandPaletteItem[];
   /** Enter or a press on an option; Ctrl or Cmd sets modifier. */
-  onAction: (item: CommandPaletteItem, options: CommandPaletteActionOptions) => void;
+  onAction: (item: CommandPaletteItem, details: CommandPaletteActionDetails) => void;
   /**
    * Close after an option is chosen.
    * @default true

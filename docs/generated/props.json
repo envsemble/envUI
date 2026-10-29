@@ -1734,7 +1734,7 @@
         },
         {
           "name": "onAction",
-          "type": "(item: CommandPaletteItem, options: CommandPaletteActionOptions) => void",
+          "type": "(item: CommandPaletteItem, details: CommandPaletteActionDetails) => void",
           "required": true,
           "description": "Enter or a press on an option; Ctrl or Cmd sets modifier."
         },

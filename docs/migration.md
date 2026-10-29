@@ -564,7 +564,7 @@ Status tones say `danger` where 0.x said `error`, popups and dialogs take a `wid
 | Popover and HoverCard `width`: `standard`, `wide`                                                                              | `md` (the default), `lg`                                                                                                                                                                             |
 | Spinner `size`: `small`, `standard`, `large`                                                                                   | `sm`, `md` (the default), `lg`                                                                                                                                                                       |
 | CommandPalette `query`, `onQueryChange`, `onSelect`, `closeOnSelect`                                                           | `inputValue`, `onInputValueChange`, `onAction`, `closeOnAction`                                                                                                                                      |
-| `CommandPaletteSelectOptions`                                                                                                  | `CommandPaletteActionOptions`                                                                                                                                                                        |
+| `CommandPaletteSelectOptions`                                                                                                  | `CommandPaletteActionDetails`                                                                                                                                                                        |
 | `CommandPaletteItem` `detail`, `trailing`                                                                                      | `description`, `end`                                                                                                                                                                                 |
 | The manual `Toast` and `ToastProps`                                                                                            | Removed: `useToast()` inside `Toast.Provider`, and `ToastNotification`                                                                                                                               |
 | `env-modal-pane`                                                                                                               | `env-dialog-popup`; a Sheet's surface is `env-sheet-popup`, and both are `env-dialog-surface`                                                                                                        |
@@ -1169,11 +1169,12 @@ Every other name only takes the prefix, `--body-font-weight` as `--env-body-font
 
 An application written for a 1.0 prerelease follows these renames by hand: the names are new in the prereleases, so no codemod rewrites them, and TypeScript points at each one.
 
-| Before                                      | Now                                                                  |
-| ------------------------------------------- | -------------------------------------------------------------------- |
-| A destination's `onSelect: () => void`      | `onClick(event)`, as on a link or a button                           |
-| DropZone `onDropAccepted`, `onDropRejected` | `onFilesAccepted`, `onFilesRejected`: they run for browsed files too |
-| CommandPalette `defaultItems`               | `suggestedItems`                                                     |
+| Before                                      | Now                                                                        |
+| ------------------------------------------- | -------------------------------------------------------------------------- |
+| A destination's `onSelect: () => void`      | `onClick(event)`, as on a link or a button                                 |
+| DropZone `onDropAccepted`, `onDropRejected` | `onFilesAccepted`, `onFilesRejected`: they run for browsed files too       |
+| CommandPalette `defaultItems`               | `suggestedItems`                                                           |
+| `CommandPaletteActionOptions`               | `CommandPaletteActionDetails`, as every callback's extra argument is named |
 
 ## Migrate by responsibility
 
