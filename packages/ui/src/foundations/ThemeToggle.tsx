@@ -10,9 +10,12 @@ import { useThemePreference } from './ThemePreference.js';
 import '../styles/Base.css';
 import '../styles/ThemeToggle.css';
 
-export type ThemeToggleProps = (IconButtonProps extends infer Props
+/** IconButton's props as a button: a toggle runs its own onClick, so it is never a link. */
+type ToggleButtonProps = Extract<IconButtonProps, { href?: undefined }>;
+
+export type ThemeToggleProps = (ToggleButtonProps extends infer Props
   ? Props extends unknown
-    ? Omit<Props, 'icon' | 'aria-label' | 'onClick'>
+    ? Omit<Props, 'icon' | 'aria-label' | 'onClick' | 'href'>
     : never
   : never) & {
   /**

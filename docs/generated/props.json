@@ -8213,18 +8213,6 @@
       "description": "Switches between the light and dark themes and stores the choice.",
       "props": [
         {
-          "name": "disabled",
-          "type": "boolean",
-          "required": false,
-          "description": "A disabled button cannot be pressed; a disabled link has no destination, cannot be focused or followed, and reports aria-disabled."
-        },
-        {
-          "name": "href",
-          "type": "string",
-          "required": false,
-          "description": "The destination: the button is a native link, through the LinkProvider's link component."
-        },
-        {
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
@@ -8259,8 +8247,7 @@
         }
       ],
       "native": [
-        "button",
-        "a"
+        "button"
       ],
       "entries": [
         "@envsemble/envui"
