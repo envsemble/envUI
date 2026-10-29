@@ -420,7 +420,7 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     const options: SelectItem[] = [{ value: 'one', label: 'One' }];
     const people: ComboboxItem[] = [{ value: 'first', label: 'First person', description: 'first@example.com', start: <Home /> }];
     const theme: ColorScheme = 'dark';
-    const referenceSources: RichTextReferenceSource[] = [{ char: '@', items: async ({ query, signal }) => signal.aborted ? [] : [{ id: query, label: query }] }];
+    const referenceSources: RichTextReferenceSource[] = [{ trigger: '@', search: async ({ query, signal }) => signal.aborted ? [] : [{ id: query, label: query }] }];
     const richTextConsumer = <><RichTextEditor ref={createRef<RichTextEditorHandle>()} value="Notes" references={referenceSources} onValueChange={markdown => { const typed: string = markdown; void typed; }} onUpload={async (file, { signal }) => signal.aborted ? null : ({ url: '/uploads/example', label: file.name, id: 'stable-file-id', kind: 'file' })} /><RichText onReferenceClick={(reference, event) => { event.preventDefault(); void reference.id; }}>Notes</RichText></>;
     void richTextConsumer;
     function NotificationAction() { const manager: ToastManager = useToast(); return <Button onClick={() => manager.show({ message: 'Saved' })}>Save</Button>; }

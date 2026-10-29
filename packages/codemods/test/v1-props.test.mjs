@@ -55,6 +55,8 @@ const reports = {
     `line 6: RichTextEditor's variant: ${report('RichTextEditor', 'variant', 'plain', richText)}`,
     `line 7: RichTextEditor's variant: ${report('RichTextEditor', 'variant', 'underline', richText)}`,
     `line 10: RichTextEditor's variant has a value the codemod can't move: ${report('RichTextEditor', 'variant', undefined, richText)}`,
+    // A reference source's char and items are renamed in an array written in place.
+    `line 12: RichTextEditor's references has entries the codemod can't read: ${report('RichTextEditor', 'references', undefined, richText)}`,
   ],
   // Data a prop takes, such as Combobox's items, is renamed in an array written in the prop and
   // reported where the codemod can't read it.

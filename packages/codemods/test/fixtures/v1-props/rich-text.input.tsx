@@ -1,6 +1,6 @@
 import { RichTextEditor } from '@envsemble/envui/rich-text';
 
-export function Notes({ look }) {
+export function Notes({ look, find, sources }) {
   return (
     <>
       <RichTextEditor label="Notes" hint="Shown to the team." variant="plain" />
@@ -8,6 +8,8 @@ export function Notes({ look }) {
       <RichTextEditor label="Brief" variant="quiet" />
       <RichTextEditor label="Summary" variant="outlined" />
       <RichTextEditor label="Draft" variant={look} />
+      <RichTextEditor label="Comment" references={[{ char: '@', items: find }]} />
+      <RichTextEditor label="Reply" references={sources} />
     </>
   );
 }

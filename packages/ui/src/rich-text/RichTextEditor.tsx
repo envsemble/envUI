@@ -110,16 +110,16 @@ export function RichTextEditor({
   const focusTarget = useRef<HTMLElement | null>(null);
   const [, rerender] = useState(0);
   const configured = useMemo(() => {
-    if (new Set(references.map((source) => source.char)).size !== references.length)
+    if (new Set(references.map((source) => source.trigger)).size !== references.length)
       throw new Error('Reference triggers must be unique.');
-    if (slashCommands && references.some((source) => source.char === '/'))
+    if (slashCommands && references.some((source) => source.trigger === '/'))
       throw new Error('Use either a / reference source or slashCommands.');
     const result = createRichTextExtensions({
       extensions,
       placeholder,
       renderReference: (reference, context) =>
         latest.current.renderReference?.(reference, context) ??
-        `${reference.char ?? ''}${reference.label}`,
+        `${reference.trigger ?? ''}${reference.label}`,
       onReferenceClick: (reference, event) => latest.current.onReferenceClick?.(reference, event),
     });
     const reference = result.find((extension) => extension.name === 'envReference')!;

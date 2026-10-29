@@ -14,7 +14,7 @@ export interface RichTextReference {
   /** A destination: a relative path or an http, https, mailto or tel URL makes it a link. */
   href?: string;
   /** The trigger it was inserted with, such as @, shown before the label. */
-  char?: string;
+  trigger?: string;
 }
 /** A kind of reference people insert by typing its trigger, such as @ for people. */
 export interface RichTextReferenceSource {
@@ -22,7 +22,7 @@ export interface RichTextReferenceSource {
    * The character that opens the suggestions when typed at the start of a line or after a space,
    * such as @ or #; unique within an editor.
    */
-  char: string;
+  trigger: string;
   /**
    * The suggestion list's accessible name, such as Contacts.
    * @default 'Suggestions'
@@ -30,7 +30,7 @@ export interface RichTextReferenceSource {
   label?: string;
   /** How many characters after the trigger before suggestions are asked for; 0 by default. */
   minQueryLength?: number;
-  /** Milliseconds to wait after typing stops before items is called; 0 by default. */
+  /** Milliseconds to wait after typing stops before search is called; 0 by default. */
   debounce?: number;
   /** Let the query run on past spaces, such as for full names. */
   allowSpaces?: boolean;
@@ -39,7 +39,7 @@ export interface RichTextReferenceSource {
    * such as from a search on a server. The signal aborts when the query changes or the menu closes;
    * a rejected promise shows Suggestions could not load.
    */
-  items: (request: {
+  search: (request: {
     query: string;
     signal: AbortSignal;
   }) => readonly RichTextReference[] | Promise<readonly RichTextReference[]>;
