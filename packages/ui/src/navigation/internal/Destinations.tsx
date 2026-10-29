@@ -85,6 +85,14 @@ export type Destination = DestinationFields &
 export type DrawerDestination = DestinationFields & {
   /** A decorative icon before the label; leave it out of every destination of a list, or none. */
   icon?: ReactNode;
+  /**
+   * A short word at the end of the item, after the label and before any count, such as a Badge
+   * that says the page is New: part of the item's name, so keep it to a word or two. An item with
+   * a count is named by its label and count alone. Drawer alone shows it; Rail and Bar leave it
+   * out.
+   * @default none
+   */
+  badge?: ReactNode;
 } & (
     | (DestinationTarget & NestedDestinations)
     | {
@@ -235,6 +243,8 @@ export function DestinationItem({
       <span className={classes.label} ref={labelRef}>
         {label}
       </span>
+      {/* Drawer's own badge, such as New, after the label: part of the item's name. */}
+      {destination.badge}
       {apart}
       {badge}
       {end}

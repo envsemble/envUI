@@ -284,6 +284,14 @@ Drawer, Rail and Bar take `destinations`, one array of `Destination`s, each with
 
 Pass the same array to each form. A heading starts each run of destinations of one `group` in the drawer, at `headingLevel`, 2 by default, so keep a group's destinations next to each other; the rail and the bar show no headings, so order the array. A `DrawerDestination` may leave its `icon` out: leave it out of every destination of a list, or of none. Rail and Bar need icons.
 
+#### A badge after the label
+
+```tsx
+{ label: 'Reports', href: '/reports', badge: <Badge tone="success">New</Badge> }
+```
+
+A Drawer destination's `badge` shows at the end of its item, after the label and before any count, such as a status of the page it leads to. It is part of the item's name, so keep it to a word; an item with a `count` is named by its label and count alone. Rail and Bar leave it out.
+
 #### Nested sections
 
 ```tsx
@@ -340,7 +348,7 @@ The parts the anatomy doesn't show: a section's row, `env-drawer-branch-row`, an
 
 ## Changelog
 
-- **1.0.0-prerelease.5**: A Sheet is on the navigation's background, `--env-color-bg-default`, so a Drawer or a Rail in the sheet of a narrow window keeps its color.
+- **1.0.0-prerelease.5**: A Sheet is on the navigation's background, `--env-color-bg-default`, so a Drawer or a Rail in the sheet of a narrow window keeps its color. A destination's `badge` shows a short word at the end of its Drawer item, such as New.
 - **1.0.0-prerelease.4**: A destination's `children` nest under it: Drawer shows them indented, in a section that opens and closes with a chevron, open while it holds the current destination, whose links stay in the page, hidden until found. A section without `href` or `onSelect` is only its heading. `expanded`, `defaultExpanded` and `onExpandedChange` keep the open sections. Rail and Bar show the top level, and mark a destination whose section holds the current one.
 - **1.0.0-prerelease.3**: A resizable Drawer keeps each label and group heading on one line as it narrows: one that doesn't fit ends in an ellipsis, a label cut short shows in full in a tooltip, and a heading cut short gives its full text as its title. Bar and Rail are documented on this page, `drawer`, which their pages' addresses open.
 - **1.0.0-prerelease.2**: With `resizable`, people resize it by its end edge, between `minWidth` and `maxWidth` and never past half its container, from `defaultWidth`; `width` and `onWidthChange` keep it. The handle is `env-drawer-resize-handle`, the same grip as Panes.Divider's.

@@ -1,5 +1,6 @@
 import { useState, type ComponentPropsWithRef } from 'react';
 import {
+  Badge,
   Bar,
   Button,
   Icon,
@@ -124,6 +125,13 @@ export function NavigationFixture({ theme }: { theme: ThemeValue }) {
         </Surface>
       </div>
       <p data-testid="current">{`${mail.current}, ${many.current}`}</p>
+      <Drawer
+        aria-label="Badged drawer"
+        destinations={[
+          { label: 'Reports', href: '#reports', badge: <Badge tone="success">New</Badge> },
+          { label: 'Archive', href: '#archive', count: 2, badge: <Badge>Beta</Badge> },
+        ]}
+      />
       <LinkProvider component={RouterLink}>
         <h2 id={`routed-heading-${theme}`}>Routed</h2>
         <Rail aria-labelledby={`routed-heading-${theme}`} destinations={linked} />
