@@ -294,8 +294,6 @@ The parts are the popup, `env-menu`, and its positioner, `env-menu-positioner`; 
 
 ### Customize
 
-`--env-menu-item-container`, `--env-menu-item-content` and `--env-menu-item-icon` set the colors of one Menu's items, through `style` or CSS: their fill, their labels and their leading icons. The highlight and press then follow them, as state layers; with none set, it keeps its own colors.
-
 Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blur` and `--env-popup-shadow`, set on a theme, change it, as [Popover](popover.md#customize) describes.
 
 ## Changelog

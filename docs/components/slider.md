@@ -210,10 +210,6 @@ The field marks what it shows besides its text and fill:
 - `data-dragging` while the pointer presses it and drags the value.
 - A release clears them until the pointer leaves and comes back.
 
-### Customize
-
-`--env-slider-container` sets the track's tint, `--env-slider-indicator` the fill and `--env-slider-content` the label, the value, the handle and the ticks of one Slider, through `style` or CSS; with none set, it keeps its own colors.
-
 ## Changelog
 
 - **1.0.0-prerelease.5**: `error`, as on a field.

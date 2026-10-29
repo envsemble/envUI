@@ -158,10 +158,6 @@ A checked box submits its `name` with its `value`; an unchecked one submits noth
 
 `className` and `style` reach the root, `env-checkbox`, the label around the box and the text; `ref` and the other native props, such as `name` and `required`, reach the input, `env-checkbox-input`, so a form library can register and focus it. The box is `env-checkbox-box`, the check `env-checkbox-indicator` and the text `env-checkbox-label`.
 
-### Customize
-
-`--env-checkbox-outline`, `--env-checkbox-selected` and `--env-checkbox-selected-content` set the colors of one Checkbox, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
-
 ## Changelog
 
 - **1.0.0-prerelease.5**: `description`, a muted line under the label.

@@ -184,14 +184,7 @@ The parts are the container, `env-alert`, the icon, `env-alert-icon`, the title,
 
 ### Customize
 
-`--env-alert-container`, `--env-alert-content`, `--env-alert-outline` and `--env-alert-icon` set the colors of one Alert, through `style` or CSS: its fill, its text, title included, an edge, which it otherwise draws only at high contrast, and its icon, which the title takes while the text is the tone's. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
-
-```tsx
-<Alert
-  title="Trial ends in 3 days"
-  style={{ '--env-alert-container': 'var(--env-color-bg-primary-muted)' } as CSSProperties}
-/>
-```
+An Alert draws an edge only at high contrast, unless its outline color sets one, and its title takes the icon's color while its text takes the tone's.
 
 ## Changelog
 

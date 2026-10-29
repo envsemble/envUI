@@ -155,10 +155,6 @@ In a List row, the row's title names the switch through `aria-labelledby`, and i
 
 The root, `env-switch`, is the label around the track, `env-switch-input`, and the text, `env-switch-label`. `className` and `style` reach the root, and `ref` and the other native props the input.
 
-### Customize
-
-`--env-switch-container`, `--env-switch-content`, `--env-switch-outline`, `--env-switch-selected` and `--env-switch-selected-content` color one Switch, through `style` or CSS; hover, focus and press follow them.
-
 ## Changelog
 
 - **1.0.0-prerelease.5**: `description`, a muted line under the label.

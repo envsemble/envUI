@@ -136,35 +136,8 @@ A group of controls, as wide as its controls in a Column with `align="start"`:
 
 ### Customize
 
-`--env-surface-container`, `--env-surface-content` and `--env-surface-outline` set the fill, the text and an edge of one surface, through `style` or CSS; a surface inside keeps its own.
-
-- To recolor everything in an area, its controls included, override the semantic tokens on a nested Theme, with hover and pressed values of their own, such as `--env-color-bg-primary-emphasis` with `-hover` and `-pressed`, for each theme.
+- To recolor an area, its controls included, set the semantic tokens on a nested Theme, as [Customize and extend](../customizing.md#recolor-an-area) shows.
 - CSS may target `env-surface`, with `data-background` and `data-radius` for the values other than the defaults.
-
-```tsx
-/** The brand's roles in green, with their hover and pressed values, for each theme. */
-const green = {
-  light: {
-    '--env-color-bg-primary-emphasis': '#176f35',
-    '--env-color-bg-primary-emphasis-hover': '#115a2a',
-    '--env-color-bg-primary-emphasis-pressed': '#0b4520',
-    '--env-color-fg-on-emphasis': '#ffffff',
-  },
-  dark: {
-    '--env-color-bg-primary-emphasis': '#7ad197',
-    '--env-color-bg-primary-emphasis-hover': '#5fbf80',
-    '--env-color-bg-primary-emphasis-pressed': '#45ad69',
-    '--env-color-fg-on-emphasis': '#1e1f21',
-  },
-};
-
-const { theme } = useTheme();
-<Theme theme={theme} style={green[theme] as CSSProperties}>
-  <Surface background="muted" padding={4} render={<Column gap={3} align="start" />}>
-    …
-  </Surface>
-</Theme>;
-```
 
 ## Changelog
 

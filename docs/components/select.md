@@ -195,8 +195,6 @@ The field is `env-field` with `env-select`, a text field's frame: its well, `env
 
 ### Customize
 
-`--env-select-container`, `--env-select-content` and `--env-select-outline` color one Select's well, value and edge, through `style` or CSS, as TextField's color properties do a text field's.
-
 Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blur` and `--env-popup-shadow`, set on a theme, change it, as [Popover](popover.md#customize) describes.
 
 ## Changelog

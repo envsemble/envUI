@@ -223,7 +223,7 @@ The parts are each placement's region, `env-toast-viewport`, with `data-placemen
 
 ### Customize
 
-`--env-toast-container`, `--env-toast-content` and `--env-toast-outline` set the colors of one Toast, through `style` or CSS: the fill in place of the tone's, the message, icons and dismiss button, and an edge, which it otherwise draws only at high contrast. The dismiss button's hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
+A Toast draws an edge only at high contrast, unless its outline color sets one, and its container color takes the place of the tone's fill.
 
 ## Changelog
 

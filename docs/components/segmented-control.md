@@ -150,10 +150,6 @@ Leave it uncontrolled, starting at `defaultValue`, the first item by default, or
 
 The outline, `env-segmented-control`, carries `data-size` and `data-full-width`; each segment, `env-segmented-control-item`, `data-checked` while chosen and `data-disabled`. The check, `env-segmented-control-item-indicator`, takes the chosen segment's icon's place.
 
-### Customize
-
-`--env-segmented-control-container`, `--env-segmented-control-content`, `--env-segmented-control-outline`, `--env-segmented-control-selected` and `--env-segmented-control-selected-content` color one SegmentedControl, through `style` or CSS; hover, focus and press follow them.
-
 ## Changelog
 
 - **1.0.0-prerelease.5**: It can be uncontrolled, with `defaultValue`.

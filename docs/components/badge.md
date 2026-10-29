@@ -218,16 +218,6 @@ const destinations: Destination[] = [
 
 The parts are the pill, `env-badge`, its icon, `env-badge > env-icon`, and its label, `env-badge-label`. A count is `env-badge[data-count]`, with `env-badge-count-label` for its `aria-label`; DiffStat has `env-diff-stat-additions` and `env-diff-stat-deletions`.
 
-### Customize
-
-`--env-badge-container`, `--env-badge-content` and `--env-badge-outline` set the colors of one Badge, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
-
-```tsx
-<Badge style={{ '--env-badge-container': 'var(--env-color-bg-primary-muted)' } as CSSProperties}>
-  Beta
-</Badge>
-```
-
 ## Changelog
 
 - **1.0.0-prerelease.5**: A little roomier: 3 px above and below its label and 10 px at the sides, edge included.

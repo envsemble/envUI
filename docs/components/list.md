@@ -257,10 +257,6 @@ With `interactive`, a row reacts to hover, keyboard focus inside it and presses.
 
 The parts are the list, `env-list`, each row, `env-list-item`, with its handle, `env-list-item-handle`, its start, `env-list-item-start`, its content, `env-list-item-content`, which holds the label and the description, and its action at the end. Rows render on the server; only the handle of a reorderable row needs the browser.
 
-### Customize
-
-`--env-list-item-container`, `--env-list-item-content`, `--env-list-item-selected` and `--env-list-item-selected-content` set the colors of one List, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
-
 ## Changelog
 
 - **1.0.0-prerelease.5**: List.Item's `selected` is `current`, as it marks the current row with `aria-current`; `selected` means chosen elsewhere.

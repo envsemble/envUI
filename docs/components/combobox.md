@@ -276,8 +276,6 @@ The field is `env-field` with `env-combobox`: the control, `env-combobox-control
 
 ### Customize
 
-`--env-combobox-chip-container` and `--env-combobox-chip-content` set the colors of one Combobox's chips, through `style` or CSS. Their hover, focus and press then follow them, as state layers; with none set, they keep their own colors.
-
 Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blur` and `--env-popup-shadow`, set on a theme, change it, as [Popover](popover.md#customize) describes.
 
 ## Changelog

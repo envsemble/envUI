@@ -309,16 +309,6 @@ A field fills its container's width, so set the width on the container, or on th
 
 ### Customize
 
-`--env-text-field-container`, `--env-text-field-content`, `--env-text-field-outline` and `--env-text-field-indicator` color one TextField or Textarea, through `style` or CSS; hover, focus and press follow them. Outline and floating fields have no fill of their own, so `--env-text-field-container` gives one a fill.
-
-```tsx
-<TextField
-  label="Project name"
-  name="project"
-  style={{ '--env-text-field-container': 'var(--env-color-bg-field)' } as CSSProperties}
-/>
-```
-
 `className` and `style` reach the field's root, and `ref` and the other native props the input. CSS may target the part classes and their state attributes, such as `data-invalid` on the control, listed under Part names below.
 
 ## Changelog

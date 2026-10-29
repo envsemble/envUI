@@ -280,18 +280,8 @@ The title is an `h3`; set `headingLevel` to fit the page's outline, and its type
 
 ### Customize
 
-`--env-card-container`, `--env-card-content` and `--env-card-outline` set the colors of one Card, through `style` or CSS.
-
 - Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
 - `padding` sets the inset as a step of the spacing scale, such as `6` for 2 rem, and `0` removes it.
-
-```tsx
-<Card
-  title="Northwind launch"
-  padding={6}
-  style={{ '--env-card-container': 'var(--env-color-bg-primary-muted)' } as CSSProperties}
-/>
-```
 
 ## Changelog
 

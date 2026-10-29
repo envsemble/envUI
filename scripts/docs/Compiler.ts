@@ -1,4 +1,4 @@
-import { cpSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { readDocumentation, type DocumentRecord } from './Reader.ts';
 import {
@@ -116,6 +116,67 @@ export function renderProps(names, props, headingDepth = 2) {
   return lines.join('\n');
 }
 
+/** docs/generated/parts.json: each component's part classes, states and color properties. */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- generated JSON; GenerateParts writes it
+export type PartsFile = { components: Record<string, any> };
+
+export function readParts(directory = documentationDirectory): PartsFile | undefined {
+  const file = resolve(directory, 'generated/parts.json');
+  return existsSync(file) ? JSON.parse(readFileSync(file, 'utf8')) : undefined;
+}
+
+/**
+ * The generated Part names and Color properties of a page, as Markdown, from parts.json: the same
+ * lists the page in the Docs shows, so a page's prose never repeats them.
+ */
+export function renderParts(names, parts, headingDepth = 2) {
+  const heading = '#'.repeat(headingDepth);
+  const entries = names.flatMap((name) => {
+    const entry = parts?.components?.[name];
+    return entry ? [{ name, entry }] : [];
+  });
+  const named = entries.length > 1;
+  const values = (list) =>
+    list.length
+      ? list.map((value) => (value === '' ? 'present' : codeCell(value))).join(', ')
+      : 'any value, or present';
+  const lines: string[] = [];
+  const withParts = entries.filter(({ entry }) => entry.parts?.length || entry.states?.length);
+  if (withParts.length) {
+    lines.push(`${heading} Part names`, '');
+    for (const { name, entry } of withParts) {
+      if (named) lines.push(`${heading}# ${name}`, '');
+      for (const part of entry.parts ?? [])
+        lines.push(`- ${codeCell(part.class)}: ${part.description}`);
+      for (const state of entry.states ?? [])
+        lines.push(
+          `- ${codeCell(state.attribute)}: ${values(state.values)}${
+            state.parts.length > 1 || state.parts[0] !== entry.root
+              ? `, on ${state.parts.map(codeCell).join(', ')}`
+              : ''
+          }`,
+        );
+      lines.push('');
+    }
+  }
+  const withColors = entries.filter(({ entry }) => entry.colors?.length);
+  if (withColors.length) {
+    lines.push(
+      `${heading} Color properties`,
+      '',
+      'Each sets a color of one instance, through `style` or CSS; its hover, focus and press follow it.',
+      '',
+    );
+    for (const { name, entry } of withColors) {
+      if (withColors.length > 1) lines.push(`${heading}# ${name}`, '');
+      for (const color of entry.colors)
+        lines.push(`- ${codeCell(color.property)}: ${color.description}`);
+      lines.push('');
+    }
+  }
+  return lines.join('\n');
+}
+
 /** An example's source as the package and agents read it. */
 export function exampleSource(page, name, directory = examplesDirectory) {
   return readFileSync(resolve(directory, page, `${name}.tsx`), 'utf8');
@@ -224,7 +285,11 @@ function compilePage(document, { props, examples, title }) {
 export function compileDocument(
   document: DocumentRecord,
   documents: readonly DocumentRecord[],
-  { props, examples = examplesDirectory }: { props?: PropsFile; examples?: string } = {},
+  {
+    props,
+    parts,
+    examples = examplesDirectory,
+  }: { props?: PropsFile; parts?: PartsFile; examples?: string } = {},
 ): string {
   const title = `# ${document.title}\n\n`;
   if (document.id === 'index') {
@@ -237,10 +302,13 @@ export function compileDocument(
     return `${title}${markdown}`;
   }
   if (document.sections) {
-    const propsSection =
-      props && document.frontmatter?.components
-        ? renderProps(document.frontmatter.components, props)
-        : '';
+    const components = document.frontmatter?.components;
+    const propsSection = [
+      props && components ? renderProps(components, props) : '',
+      parts && components ? renderParts(components, parts) : '',
+    ]
+      .filter(Boolean)
+      .join('\n');
     return compilePage(document, { props: propsSection, examples, title });
   }
   const head = document.frontmatter
@@ -254,13 +322,14 @@ export function compileDocumentation(
   directory = documentationDirectory,
   {
     props = readProps(directory),
+    parts = readParts(directory),
     examples = examplesDirectory,
-  }: { props?: PropsFile; examples?: string } = {},
+  }: { props?: PropsFile; parts?: PartsFile; examples?: string } = {},
 ): Map<string, string> {
   const documents = readDocumentation(directory, { props, examples });
   const files = new Map<string, string>();
   for (const document of documents)
-    files.set(document.path, compileDocument(document, documents, { props, examples }));
+    files.set(document.path, compileDocument(document, documents, { props, parts, examples }));
   for (const document of documents)
     for (const section of document.sections ?? [])
       for (const block of section.blocks)

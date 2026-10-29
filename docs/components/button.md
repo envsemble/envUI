@@ -299,16 +299,6 @@ The label's parts are flex items the button's gap spaces apart, such as its word
 
 ### Customize
 
-`--env-button-container`, `--env-button-content`, `--env-button-outline`, `--env-button-selected` and `--env-button-selected-content` color one Button or IconButton, through `style` or CSS; hover, focus and press follow them.
-
-```tsx
-<Button
-  style={{ '--env-button-container': '#0a5c42', '--env-button-content': '#fff' } as CSSProperties}
->
-  Start trial
-</Button>
-```
-
 Parts the anatomy doesn't show: the spinner, `env-button-spinner`, the end slot, `env-button-end`, and the group, `env-button-group`. A container that sets `--env-icon-button-hit-area: var(--env-control-height-touch)` gives its smaller icon buttons the touch size under a coarse pointer, as Alert and Toast do for their close buttons.
 
 A wrapper of your own that passes a variant and a tone on types them as Button does: `ButtonEmphasisProps`, the designed pairs of `variant` and `tone`, `IconButtonEmphasisProps`, IconButton's, and `ButtonAppearanceProps`, the pairs with `size`, `fullWidth` and `underline`.

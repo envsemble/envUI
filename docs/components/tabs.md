@@ -205,7 +205,7 @@ The tabs, `env-tabs`, carry `data-fill` when they fill a region; the rail, `env-
 
 ### Customize
 
-`--env-tabs-container`, `--env-tabs-content`, `--env-tabs-selected-content` and `--env-tabs-indicator` color one Tabs, through `style` or CSS; hover, focus and press follow them. The rail has no fill unless `--env-tabs-container` sets one.
+The rail has no fill unless its container color sets one.
 
 ## Changelog
 

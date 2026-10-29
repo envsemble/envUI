@@ -249,7 +249,7 @@ The group is `env-avatar-group`, with an `env-avatar` for each person, an `env-a
 
 ### Customize
 
-`--env-avatar-container` and `--env-avatar-content` set the colors of one avatar, its fill and its initials or figure, through `style` or CSS, in place of its hue. The hues are tokens, `--env-color-bg-avatar-{hue}`, `--env-color-fg-avatar-{hue}` and `--env-color-fg-avatar-figure-{hue}`, and the powder hue is also the unsuffixed `--env-color-bg-avatar`, `--env-color-fg-avatar` and `--env-color-fg-avatar-figure`. That faint shadow, 1 px down and 2 px soft, is envUI's one drop shadow; under forced colors there is none, and `box-shadow: none` on `.env-avatar` and `.env-avatar-group-overflow` removes it.
+Its color properties take the place of its hue. The hues are tokens, `--env-color-bg-avatar-{hue}`, `--env-color-fg-avatar-{hue}` and `--env-color-fg-avatar-figure-{hue}`, and the powder hue is also the unsuffixed `--env-color-bg-avatar`, `--env-color-fg-avatar` and `--env-color-fg-avatar-figure`. That faint shadow, 1 px down and 2 px soft, is envUI's one drop shadow; under forced colors there is none, and `box-shadow: none` on `.env-avatar` and `.env-avatar-group-overflow` removes it.
 
 ## Changelog
 

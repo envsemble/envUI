@@ -303,7 +303,7 @@ ColorPickerButton is `env-color-picker-button`, with its value, `env-color-picke
 
 ### Customize
 
-ColorPickerButton has no fill of its own; `--env-color-picker-button-container` gives one button a fill, through `style` or CSS.
+ColorPickerButton has no fill of its own; its container color gives it one.
 
 Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blur` and `--env-popup-shadow`, set on a theme, change it, as [Popover](popover.md#customize) describes.
 

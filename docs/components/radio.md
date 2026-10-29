@@ -185,18 +185,6 @@ A RadioGroup holds Radio options and is a native `<fieldset>`: its `label`, the 
 
 The parts are the group, `env-radio-group`, with `data-orientation` and its legend, `env-radio-group > legend`; each option, `env-radio`, the label around the radio and its text; the description, `env-radio-description`; and the native radio, `env-radio-input`. A Radio's `className` and `style` reach its root, and `ref` and the other native props the input, so a form library can register and focus it.
 
-### Customize
-
-`--env-radio-container`, `--env-radio-content` and `--env-radio-selected` set the colors of one Radio, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
-
-```tsx
-<Radio
-  value="team"
-  label="My team"
-  style={{ '--env-radio-selected': 'var(--env-color-fg-success)' } as CSSProperties}
-/>
-```
-
 ## Changelog
 
 - **1.0.0-prerelease.5**: RadioGroup takes `description` and `error`, as a field does, and a controlled `value` of `null` chooses none.

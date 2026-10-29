@@ -206,7 +206,7 @@ Text that isn't a control takes the dotted underline, `env-hover-detail`, with t
 
 ### Customize
 
-`--env-tooltip-container`, `--env-tooltip-content` and `--env-tooltip-outline` set the fill, the text and the edge of one Tooltip, through `style` or CSS. `popupClassName` adds a class to the popup, `env-tooltip`, beside its own; its positioner is `env-tooltip-positioner`.
+`popupClassName` adds a class to the popup, `env-tooltip`, beside its own; its positioner is `env-tooltip-positioner`.
 
 A tooltip is frosted, as every popup is: `--env-color-bg-neutral-strong` at `--env-tooltip-opacity`, 82 %, over `--env-popup-blur`, with a smaller shadow of its own, `--env-tooltip-shadow`, and no edge. Set them on a `.env-theme` boundary, as [Popover](popover.md#customize) describes the popups' own. At high contrast, with reduced transparency and under forced colors it is solid, with its edge and no shadow. A Kbd in it is a flat chip of its text color, with the keys of a combination side by side.
 

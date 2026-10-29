@@ -1295,7 +1295,12 @@ test('a page ships the whole file, in its order, with code once', () => {
     'Accessibility',
     'Compose',
     'Props',
+    'Part names',
+    'Color properties',
   ]);
+  // The generated lists are the page's one list of its parts and color properties.
+  assert.ok(hasLine(button, '- `env-button`: The button.'));
+  assert.match(button, /^- `--env-button-container`: /m);
   // A run of figures is a line that names them; no figure's code ships in the page.
   assert.ok(
     hasLine(
