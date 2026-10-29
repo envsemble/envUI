@@ -55,14 +55,20 @@
     --env-text-field-start-inset: calc(
       var(--env-popup-row-padding-inline) - var(--env-control-border-width)
     );
+    /* The containing block of its focus ring, below. */
+    position: relative;
     flex: 0 0 auto;
   }
   /* While it holds the caret, the search shows the focus ring inside its edge, as every focused
-     control does: drawn by the search itself, a pill as its field is, at the field's own box. */
-  .env-command-palette-search:focus-within {
+     control does. The search draws it over its field, a pill as the field is: an outline of its
+     own would sit under the field, which is positioned and paints after it. */
+  .env-command-palette-search:focus-within::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 2px solid var(--env-color-border-focus);
     border-radius: var(--env-radius-full);
-    outline: 2px solid var(--env-color-border-focus);
-    outline-offset: -2px;
+    pointer-events: none;
   }
   .env-command-palette-list {
     /* The options' offset parent, so the highlight scrolls into view by their offsets. */
