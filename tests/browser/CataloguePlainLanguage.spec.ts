@@ -142,6 +142,8 @@ test('component pages show no technical text, in their words or their figures', 
   for (const { path, title } of plainComponentPages) {
     await goTo(page, `/${path}`);
     await expect(page.getByRole('heading', { level: 1 })).toHaveAccessibleName(title);
+    // Its figures, whose captions are words of the page too, have loaded.
+    await expect(page.locator('.site-loading')).toHaveCount(0);
     for (const entry of technicalOf(await catalogueWords(page))) found.push(`${path}: ${entry}`);
   }
   expect(found, "Say it in words, and move the value to the page's In code.").toEqual([]);

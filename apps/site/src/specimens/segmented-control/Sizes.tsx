@@ -2,9 +2,9 @@ import { type ControlSize, SegmentedControl } from '@envsemble/envui';
 import { Example, Specimen, SpecimenGrid } from '../../figures/Example';
 
 const sizes: readonly { size: ControlSize; title: string; caption: string }[] = [
-  { size: 'sm', title: 'Small', caption: '2 rem' },
-  { size: 'md', title: 'Medium', caption: '2.5 rem' },
-  { size: 'lg', title: 'Large', caption: '3 rem' },
+  { size: 'sm', title: 'Small', caption: 'A table row or a dense toolbar' },
+  { size: 'md', title: 'Medium', caption: 'The default' },
+  { size: 'lg', title: 'Large', caption: 'A step larger than medium' },
 ];
 const ignore = () => undefined;
 

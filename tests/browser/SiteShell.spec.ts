@@ -41,9 +41,23 @@ test('the hosted build opens every page of the catalogue and the Docs without ne
     await expect(page.getByText('This page failed to render')).toHaveCount(0);
     // A page of the catalogue links into the Docs only through its banner's Docs button and the
     // Docs link at its top end, not from its content, the links generated from its frontmatter
-    // included, such as Built from.
+    // included, such as Built from. An example's links are the application's, such as a document's
+    // at /docs/launch-plan in rich text, and stay in place.
     if (area === 'catalogue' && kind !== 'home')
-      await expect(page.locator('.site-main .site-article a[href^="/docs"]'), path).toHaveCount(0);
+      expect(
+        await page
+          .locator('.site-main .site-article a[href^="/docs"]')
+          .evaluateAll(
+            (links) =>
+              links.filter(
+                (link) =>
+                  !link.closest(
+                    '.site-live-example, .site-verdict-stage, .site-anatomy-subject, .catalogue-open-example, .catalogue-related-stage, .catalogue-specimen',
+                  ),
+              ).length,
+          ),
+        path,
+      ).toBe(0);
   }
   // A deep link loads its page, in the Docs too.
   await page.goto(`${siteUrl}/docs/setup`);
