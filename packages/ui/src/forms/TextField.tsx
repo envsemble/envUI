@@ -11,6 +11,9 @@ import {
   type TextFieldAppearanceProps,
   type TextFieldDecorationProps,
 } from './internal/FieldFrame.js';
+
+/** A text field's look: outline, floating or ghost. */
+export type { FieldVariant as TextFieldVariant } from './internal/FieldFrame.js';
 import '../styles/Base.css';
 import '../styles/TextField.css';
 
