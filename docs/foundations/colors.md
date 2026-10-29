@@ -98,6 +98,10 @@ An area can take a color scheme of its own, such as a brand's; every component i
 
 A tone always comes with words or an icon, so nobody has to tell colors apart.
 
+### Outlined and filled
+
+Fields that hold a value are outlined; what you press or drag keeps the filled gray.
+
 ## Words to use
 
 Ask an agent for color in these words; envUI turns each into a role.

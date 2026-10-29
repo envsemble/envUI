@@ -1,8 +1,8 @@
 @layer env.components {
   /* Color properties: a select's colors, which an application sets on one Select through style or
-     its own CSS: its trigger's fill, label and edge. They don't inherit; the select passes them on to
-     its trigger as Button's, which shows state layers over them. An invalid trigger keeps the error
-     color on its edge. */
+     its own CSS: its well, its value and chevron, and its edge at rest. They don't inherit; the
+     select passes them on to its field, in place of TextField's, which it takes otherwise. An
+     invalid select keeps the error color on its edge. */
   @property --env-select-container {
     syntax: '*';
     inherits: false;
@@ -15,86 +15,113 @@
     syntax: '*';
     inherits: false;
   }
-  .env-select {
-    /* Invalid while unset, which leaves the trigger's own properties unset. */
-    --env-select-trigger-container: var(--env-select-container);
-    --env-select-trigger-content: var(--env-select-content);
-    --env-select-trigger-outline: var(--env-select-outline);
+  .env-select.env-text-field {
+    /* prettier-ignore */
+    --env-text-field-well: var(--env-select-container, var(--env-text-field-container, transparent));
+    --env-text-field-text: var(
+      --env-select-content,
+      var(--env-text-field-content, var(--env-color-fg-default))
+    );
+    --env-text-field-edge: var(
+      --env-select-outline,
+      var(--env-text-field-outline, var(--env-color-border-default))
+    );
   }
 
-  /* Select: a Button trigger, secondary or outline, with the same colors and states, that opens the
-     shared popup (PopupSurface) with a list of rows (ListRow). The trigger starts at the field's start
-     and keeps its width. */
-  .env-select > .env-select-trigger {
-    --env-button-container: var(--env-select-trigger-container);
-    --env-button-content: var(--env-select-trigger-content);
-    --env-button-outline: var(--env-select-trigger-outline);
-    position: relative;
+  /* Select: an outlined field, as TextField is, whose control is a button that shows the chosen
+     option and opens the shared popup (PopupSurface) with a list of rows (ListRow), its chevron at
+     the end where Combobox's is. The chevron is as tall as the field's own icon buttons: the small
+     control height in a floating field, a little less than the field elsewhere. */
+  .env-select .env-select-control {
+    --env-select-action: max(
+      var(--env-control-target-min),
+      calc(var(--env-field-height) - var(--env-space-2))
+    );
+    --env-select-end: var(--env-space-1);
+  }
+  .env-select[data-tall] .env-select-control {
+    --env-select-action: var(--env-control-height-sm);
+    --env-select-end: var(--env-space-2);
+  }
+  .env-select .env-select-control > .env-select-trigger {
+    display: flex;
+    align-items: center;
+    padding-inline-end: calc(var(--env-select-end) + var(--env-select-action) + var(--env-space-1));
+    text-align: start;
+    cursor: pointer;
+  }
+  .env-select .env-select-control > .env-select-trigger:disabled {
+    cursor: default;
+  }
+  .env-select-value,
+  .env-select-placeholder {
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  /* The hidden labels of every option, one over another, as wide as the longest with the trigger's
+     padding, so the well, and a select without a visible label, take that width. */
+  .env-select-sizer {
+    display: grid;
+    block-size: 0;
+    padding-inline: var(--env-space-4)
+      calc(var(--env-select-end) + var(--env-select-action) + var(--env-space-1));
+    overflow: hidden;
+    visibility: hidden;
+    font: var(--env-type-body);
+    font-size: var(--env-control-font-size);
+    white-space: nowrap;
+  }
+  .env-select-sizer > * {
+    grid-area: 1 / 1;
+  }
+  /* Beside other controls, such as in a toolbar, a select without a visible label fits its options;
+     with a label it fills its container, as every field does. */
+  .env-select[data-label-hidden],
+  .env-select:not(:has(.env-select-label)) {
     justify-self: start;
-    gap: var(--env-space-2);
+    inline-size: max-content;
+    max-inline-size: 100%;
   }
-  /* A transparent border lets an invalid secondary trigger show the error color without resizing. */
-  .env-select-trigger[data-variant='secondary'] {
-    border: var(--env-control-border-width) solid
-      var(--env-select-trigger-border, var(--env-button-outline, transparent));
+  .env-select-placeholder {
+    color: var(--env-color-fg-muted);
   }
-  /* The open trigger keeps the hover state while its list is open. */
-  .env-select-trigger[aria-expanded='true']:not(:disabled, :active) {
-    --env-button-layer: calc(var(--env-state-hover-opacity) * 100%);
+  /* Like an input's placeholder, it waits while the label rests inside the empty field. A field
+     without a label, named by aria-label, shows it. */
+  .env-select:not([data-label-hidden])
+    .env-select-control:has(> label):not([data-label-floating], :focus-within)
+    .env-select-placeholder {
+    color: transparent;
   }
-  .env-select-trigger[data-variant='secondary'][aria-expanded='true']:not(:disabled, :active) {
-    background: var(--env-button-custom-fill, var(--env-color-bg-neutral-muted-hover));
+  .env-select-control > .env-select-label {
+    cursor: pointer;
   }
-  .env-select-trigger[data-variant='outline'][aria-expanded='true']:not(:disabled, :active) {
-    background: var(--env-button-custom-fill, var(--env-color-bg-neutral-subtle-hover));
-    border-color: var(--env-button-outline, var(--env-color-border-default-hover));
+  /* The chevron shows what the field opens; presses on it reach the field. */
+  .env-select-end {
+    pointer-events: none;
+    inset-inline-end: var(--env-select-end);
   }
-  /* Invalid triggers recolor their border and keep their fill. */
-  .env-select-trigger[aria-invalid='true'] {
-    --env-select-trigger-border: var(--env-color-fg-danger);
-    --env-select-trigger-border-hover: var(--env-color-border-danger-emphasis-hover);
-    --env-select-trigger-border-pressed: var(--env-color-border-danger-emphasis-pressed);
-  }
-  .env-select > .env-select-trigger[aria-invalid='true']:not(:disabled) {
-    border-color: var(--env-select-trigger-border);
-  }
-  .env-select-trigger[aria-invalid='true']:is(:hover, :active):not(:disabled) {
-    --env-button-layer: initial;
-  }
-  .env-select-trigger[data-variant='secondary'][aria-invalid='true']:is(:hover, :active):not(
-      :disabled
-    ) {
-    background: var(--env-button-custom-fill, var(--env-color-bg-neutral-muted));
-  }
-  .env-select-trigger[data-variant='outline'][aria-invalid='true']:is(:hover, :active):not(
-      :disabled
-    ) {
-    background: var(--env-button-custom-fill, transparent);
-  }
-  @media (hover: hover) {
-    .env-select > .env-select-trigger[aria-invalid='true']:hover:not(:disabled) {
-      border-color: var(--env-select-trigger-border-hover);
-    }
-  }
-  .env-select > .env-select-trigger[aria-invalid='true']:active:not(:disabled) {
-    border-color: var(--env-select-trigger-border-pressed);
-  }
-
   /* The chevron points down, and up while the list is open. It flips over its horizontal axis rather
      than turning half a circle, which swings it through pointing sideways, as a submenu's chevron
      does, in a frame or two: the list's trigger would twitch as it opens and closes. */
-  .env-select-trigger .env-select-icon {
-    width: var(--env-icon-size-md);
-    height: var(--env-icon-size-md);
+  .env-select-end > .env-icon.env-select-icon {
+    display: grid;
+    place-items: center;
+    inline-size: var(--env-select-action);
+    block-size: var(--env-select-action);
+    color: var(--env-text-field-text, var(--env-color-fg-default));
     transform: rotate(90deg) scaleX(1);
   }
-  .env-select-trigger[aria-expanded='true'] .env-select-icon {
+  .env-select-control:has(> [aria-expanded='true']) .env-select-icon {
     transform: rotate(90deg) scaleX(-1);
   }
-  /* Small triggers keep the chevron at the control icon size. */
-  .env-select-trigger[data-size='sm'] .env-select-icon {
-    width: var(--env-control-icon-size);
-    height: var(--env-control-icon-size);
+  .env-select-icon > svg {
+    inline-size: var(--env-control-icon-size);
+    block-size: var(--env-control-icon-size);
+  }
+  .env-select-control:focus-within .env-select-icon {
+    color: var(--env-text-field-accent, var(--env-color-border-accent-emphasis));
   }
 
   /* The open list is the menus' frosted popup, with their corners and rows that highlight on hover
@@ -143,20 +170,21 @@
     }
   }
 
-  /* Motion: the trigger's chevron flips. Movement only without a reduced-motion preference. */
+  /* Motion: the chevron flips. Movement only without a reduced-motion preference. The chevron,
+     always in the field, doesn't settle in as the field's other actions do. */
+  .env-select-icon {
+    animation: none;
+  }
   @media (prefers-reduced-motion: no-preference) {
-    .env-select-trigger .env-select-icon {
+    .env-select-end .env-select-icon {
       transition: transform var(--env-motion-duration-medium) var(--env-motion-ease);
     }
   }
 
-  /* Forced colors: an invalid trigger has a dashed border, and an unavailable option under the
-     highlight keeps the selection pair, which reads, and fades as every unavailable item does:
-     GrayText on Highlight would not read. */
+  /* Forced colors: an unavailable option under the highlight keeps the selection pair, which reads,
+     and fades as every unavailable item does: GrayText on Highlight would not read. An invalid
+     select takes the field's own forced-colors edge. */
   @media (forced-colors: active) {
-    .env-select-trigger[aria-invalid='true'] {
-      border-style: dashed;
-    }
     .env-select-item[data-highlighted]:focus-visible,
     .env-select-item[data-highlighted] :focus-visible {
       outline-color: HighlightText;

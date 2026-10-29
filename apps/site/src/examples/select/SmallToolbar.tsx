@@ -40,7 +40,6 @@ export default function SmallToolbar() {
         />
         <Select
           size="sm"
-          variant="outline"
           aria-label="Zoom"
           items={zoomOptions}
           value={zoom}

@@ -1,4 +1,4 @@
-import { Select, Surface, Row } from '@envsemble/envui';
+import { Select, Column } from '@envsemble/envui';
 
 const sortOptions = [
   { value: 'recent', label: 'Most recent' },
@@ -8,13 +8,11 @@ const sortOptions = [
 
 export default function TriggerStyles() {
   return (
-    <Row wrap align="center" gap={4}>
-      {/* Secondary, the filled pill, on the page. */}
+    <Column gap={4} style={{ inlineSize: 'min(100%, 20rem)' }}>
+      {/* Outline, the default, as every field is. */}
       <Select label="Sort files" items={sortOptions} defaultValue="recent" />
-      {/* Outlined on a pane, where a fill would blend with the surface. */}
-      <Surface padding={4}>
-        <Select variant="outline" label="Sort members" items={sortOptions} defaultValue="name" />
-      </Surface>
-    </Row>
+      {/* Floating, roomier, for a long form on a page. */}
+      <Select variant="floating" label="Sort members" items={sortOptions} defaultValue="name" />
+    </Column>
   );
 }

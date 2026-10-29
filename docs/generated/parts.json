@@ -4490,6 +4490,14 @@
           "description": "The select field."
         },
         {
+          "class": "env-select-control",
+          "description": "The outlined well that holds the button, the label and the chevron."
+        },
+        {
+          "class": "env-select-end",
+          "description": "The chevron's place at the end of the well."
+        },
+        {
           "class": "env-select-icon",
           "description": "The chevron."
         },
@@ -4503,19 +4511,31 @@
         },
         {
           "class": "env-select-label",
-          "description": "The label."
+          "description": "The label, inside the well, which floats into the outline."
         },
         {
           "class": "env-select-list",
           "description": "The list of options."
         },
         {
+          "class": "env-select-placeholder",
+          "description": "What the button shows while nothing is chosen."
+        },
+        {
           "class": "env-select-popup",
           "description": "The popup with the options."
         },
         {
+          "class": "env-select-sizer",
+          "description": "The labels of every option, hidden, which give the field its width without a visible label."
+        },
+        {
           "class": "env-select-trigger",
           "description": "The button that shows the value and opens the list."
+        },
+        {
+          "class": "env-select-value",
+          "description": "The chosen option's label."
         }
       ],
       "states": [
@@ -4534,6 +4554,22 @@
           ]
         },
         {
+          "attribute": "data-label-floating",
+          "values": [
+            "true"
+          ],
+          "parts": [
+            "env-select-control"
+          ]
+        },
+        {
+          "attribute": "data-label-hidden",
+          "values": [],
+          "parts": [
+            "env-select"
+          ]
+        },
+        {
           "attribute": "data-selected",
           "values": [],
           "parts": [
@@ -4541,27 +4577,14 @@
           ]
         },
         {
-          "attribute": "data-size",
-          "values": [
-            "sm"
-          ],
+          "attribute": "data-tall",
+          "values": [],
           "parts": [
-            "env-select-trigger"
-          ]
-        },
-        {
-          "attribute": "data-variant",
-          "values": [
-            "outline",
-            "secondary"
-          ],
-          "parts": [
-            "env-select-trigger"
+            "env-select"
           ]
         }
       ],
       "uses": [
-        "Button",
         "Field",
         "Icon",
         "ListRow",
@@ -4573,15 +4596,15 @@
       "colors": [
         {
           "property": "--env-select-container",
-          "description": "The trigger's fill; the state layers lie over it."
+          "description": "The field's well, transparent by default."
         },
         {
           "property": "--env-select-content",
-          "description": "The trigger's label and chevron, and the color of the state layers."
+          "description": "The chosen option's label and the chevron."
         },
         {
           "property": "--env-select-outline",
-          "description": "The trigger's edge, where its variant draws one."
+          "description": "The field's edge at rest."
         }
       ]
     },

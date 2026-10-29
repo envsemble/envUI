@@ -694,13 +694,18 @@
     },
     "Select": {
       "env-select": "The select field.",
+      "env-select-control": "The outlined well that holds the button, the label and the chevron.",
+      "env-select-end": "The chevron's place at the end of the well.",
       "env-select-icon": "The chevron.",
       "env-select-item": "One option.",
       "env-select-item-indicator": "The check of the chosen option.",
-      "env-select-label": "The label.",
+      "env-select-label": "The label, inside the well, which floats into the outline.",
       "env-select-list": "The list of options.",
+      "env-select-placeholder": "What the button shows while nothing is chosen.",
       "env-select-popup": "The popup with the options.",
-      "env-select-trigger": "The button that shows the value and opens the list."
+      "env-select-sizer": "The labels of every option, hidden, which give the field its width without a visible label.",
+      "env-select-trigger": "The button that shows the value and opens the list.",
+      "env-select-value": "The chosen option's label."
     },
     "Sheet": {
       "env-sheet-popup": "The sheet.",
@@ -932,9 +937,9 @@
       "--env-segmented-control-selected-content": "The chosen option's label."
     },
     "Select": {
-      "--env-select-container": "The trigger's fill; the state layers lie over it.",
-      "--env-select-content": "The trigger's label and chevron, and the color of the state layers.",
-      "--env-select-outline": "The trigger's edge, where its variant draws one."
+      "--env-select-container": "The field's well, transparent by default.",
+      "--env-select-content": "The chosen option's label and the chevron.",
+      "--env-select-outline": "The field's edge at rest."
     },
     "Slider": {
       "--env-slider-container": "The track: the field's tint.",

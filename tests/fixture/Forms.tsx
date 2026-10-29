@@ -147,8 +147,7 @@ export function FormsFixture() {
         />
         <Select
           size="sm"
-          variant="outline"
-          label="Compact outlined plan"
+          aria-label="Compact unlabelled plan"
           items={planOptions}
           defaultValue="team"
         />
@@ -156,8 +155,9 @@ export function FormsFixture() {
       </form>
       <output data-testid="compact-values">{JSON.stringify(compactValues)}</output>
       <Surface padding={4} data-testid="select-pane">
-        <Select variant="outline" label="Pane sort" items={planOptions} defaultValue="starter" />
-        <Select variant="outline" label="Pane role" items={dialogOptions} defaultValue="aurora" />
+        <Select label="Pane sort" items={planOptions} defaultValue="starter" />
+        <Select variant="floating" label="Pane role" items={dialogOptions} defaultValue="aurora" />
+        <Select aria-label="Pane filter" items={planOptions} defaultValue="starter" />
       </Surface>
       <div data-testid="growing-textareas" className="fixture-actions">
         <Textarea label="One line" sizing="content" rows={1} />

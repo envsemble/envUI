@@ -6902,7 +6902,7 @@
     "Select": {
       "kind": "component",
       "source": "packages/ui/src/forms/Select.tsx",
-      "description": "One choice from a list that stays collapsed until opened: a Button trigger that shows the chosen option and opens a popup list, where a check mark shows the chosen option, with a label above it, a description, an error and native form participation.",
+      "description": "One choice from a list that stays collapsed until opened: an outlined field, as TextField is, whose button shows the chosen option and opens a popup list, where a check mark shows the chosen option, with its label inside, a description, an error and native form participation.",
       "props": [
         {
           "name": "ref",
@@ -6947,11 +6947,30 @@
           "description": "Receives the value of the option people choose."
         },
         {
+          "name": "open",
+          "type": "boolean",
+          "required": false,
+          "description": "Whether the list is open, for a select the application controls with onOpenChange."
+        },
+        {
           "name": "defaultOpen",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Whether the list starts open, such as in a picture of the open list."
+          "description": "Whether the list of an uncontrolled select starts open, such as in a picture of the open list."
+        },
+        {
+          "name": "onOpenChange",
+          "type": "(open: boolean, details: SelectOpenChangeDetails) => void",
+          "required": false,
+          "description": "Receives the requested state, and why, each time the list asks to open or close."
+        },
+        {
+          "name": "readOnly",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "People can read the chosen option, and a form submits it, but the list doesn't open."
         },
         {
           "name": "name",
@@ -6979,16 +6998,16 @@
         },
         {
           "name": "variant",
-          "type": "'secondary' | 'outline'",
+          "type": "'outline' | 'floating'",
           "required": false,
-          "default": "'secondary'",
-          "description": "The trigger's Button variant, to suit its surroundings: secondary, a filled pill, for the page; or outline, a bordered pill, for panes, dialogs, rows and toolbars, where a fill would blend with the surface."
+          "default": "'outline'",
+          "description": "The field's look, as on every field: outline, with a thin border, at the control height; or floating, an outlined field 3.5 rem tall whose label rests inside and floats into the outline, for long forms on a page. A select without a visible label, such as in a toolbar, is as wide as its longest option."
         },
         {
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The trigger's height, as on every control: sm, md or lg in the current scale. Without it, the trigger takes the control height of its container, md unless the container sets another. The popup's rows take the row height of the scale."
+          "description": "The field's height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another. A floating field has its own height. The popup's rows take the row height of the scale."
         },
         {
           "name": "label",
@@ -7007,6 +7026,13 @@
           "type": "ReactNode",
           "required": false,
           "description": "A message under the field that says how to correct the value. While it is set, the control is invalid (aria-invalid) and the message joins its description, after the description."
+        },
+        {
+          "name": "showLabel",
+          "type": "boolean",
+          "required": false,
+          "default": "true",
+          "description": "Show the label in the field, where it rests while the field is empty and floats into the outline while the field has focus or a value. Set false for a field whose purpose is clear without it, such as a search in a toolbar: the label still names the field for assistive technology, and a placeholder gives the visible guidance."
         }
       ],
       "native": [

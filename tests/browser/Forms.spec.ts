@@ -274,7 +274,7 @@ test("a Select's chevron flips as the list opens and closes, never pointing side
   // A half turn swings the chevron through pointing right in a frame or two, a twitch beside the
   // opening list. It flips over instead.
   const trigger = page.getByRole('combobox', { name: 'Plan', exact: true });
-  const icon = trigger.locator('.env-select-icon');
+  const icon = trigger.locator('xpath=..').locator('.env-select-icon');
   await slowChevron(icon);
   await trigger.click();
   await expect(page.getByRole('listbox')).toBeVisible();
@@ -296,37 +296,39 @@ test("a Select's chevron flips as the list opens and closes, never pointing side
   await page.keyboard.press('Escape');
 });
 
-test('Select triggers are button styles, and the open list stands apart from a pane', async ({
+test('a Select is an outlined field, and the open list stands apart from a pane', async ({
   page,
 }) => {
   const outlined = page.getByRole('combobox', { name: 'Pane sort', exact: true });
-  await expect(outlined).toHaveAttribute('data-variant', 'outline');
-  // The outlined trigger looks like an outlined Button beside it.
-  const looks = await outlined.evaluate((element) => {
-    const button = document.createElement('button');
-    button.className = 'env-button';
-    button.dataset.variant = 'outline';
-    button.dataset.tone = 'neutral';
-    element.parentElement!.append(button);
-    const read = (target: Element) => {
-      const style = getComputedStyle(target);
-      return [style.backgroundColor, style.color, style.borderTopColor, style.borderTopWidth];
-    };
-    const result = { trigger: read(element), button: read(button) };
-    button.remove();
-    return result;
-  });
-  expect(looks.trigger).toEqual(looks.button);
-  expect(Number.parseFloat(looks.trigger[3]!)).toBeGreaterThan(0);
-  // The label sits above a trigger that fits its content, as for every select.
-  const role = page.getByRole('combobox', { name: 'Pane role', exact: true });
-  const [roleBox, labelBox, paneBox] = await Promise.all([
-    role.boundingBox(),
-    page.getByText('Pane role', { exact: true }).boundingBox(),
+  // An outlined field, as a TextField is: the well has an edge and no fill, and the label rests
+  // inside it.
+  const [field, labelBox, paneBox] = await Promise.all([
+    outlined
+      .locator('xpath=ancestor::*[contains(@class, "env-select-control")][1]')
+      .evaluate((control) => {
+        const edge = getComputedStyle(control.querySelector('.env-text-field-border')!);
+        return {
+          box: control.getBoundingClientRect().toJSON() as DOMRect,
+          edge: Number.parseFloat(edge.borderTopWidth),
+          fill: getComputedStyle(control).backgroundColor,
+        };
+      }),
+    page.locator('label.env-select-label', { hasText: 'Pane sort' }).boundingBox(),
     page.getByTestId('select-pane').boundingBox(),
   ]);
-  expect(labelBox!.y + labelBox!.height).toBeLessThanOrEqual(roleBox!.y + 1);
-  expect(roleBox!.width).toBeLessThan(paneBox!.width / 2);
+  expect(field.edge).toBeGreaterThan(0);
+  expect(field.fill).toBe('rgba(0, 0, 0, 0)');
+  expect(labelBox!.y).toBeGreaterThanOrEqual(field.box.y - labelBox!.height);
+  // With a visible label it fills its container, as every field does; without one it is as wide
+  // as its longest option.
+  const filter = page.getByRole('combobox', { name: 'Pane filter', exact: true });
+  expect(field.box.width).toBeGreaterThan(paneBox!.width / 2);
+  expect((await filter.boundingBox())!.width).toBeLessThan(paneBox!.width / 2);
+  // The floating variant is taller.
+  const role = page.getByRole('combobox', { name: 'Pane role', exact: true });
+  expect((await role.boundingBox())!.height).toBeGreaterThan(
+    (await outlined.boundingBox())!.height,
+  );
 
   await role.click();
   await expect(page.getByRole('option', { name: 'Boreal', exact: true })).toBeVisible();
@@ -383,24 +385,21 @@ test('a small Select has a small trigger, and its popup has the menus anatomy wi
 }) => {
   const compact = page.getByRole('combobox', { name: 'Compact plan', exact: true });
   const standard = page.getByRole('combobox', { name: 'Plan', exact: true });
-  await expect(compact).toHaveAttribute('data-size', 'sm');
-  const [compactBox, standardBox] = await Promise.all([
-    compact.boundingBox(),
-    standard.boundingBox(),
-  ]);
+  // The field's well, with its edge, is as tall as the control height.
+  const well = (locator: typeof compact) =>
+    locator.locator('xpath=ancestor::*[contains(@class, "env-select-control")][1]').boundingBox();
+  const [compactBox, standardBox] = await Promise.all([well(compact), well(standard)]);
   expect(compactBox!.height).toBeCloseTo(32, 0);
   expect(compactBox!.height).toBeLessThan(standardBox!.height);
   const chevron = (locator: typeof compact) =>
-    locator.locator('.env-icon').evaluate((icon) => icon.getBoundingClientRect().width);
+    locator
+      .locator('xpath=..')
+      .locator('.env-select-icon')
+      .evaluate((icon) => icon.getBoundingClientRect().width);
   expect(await chevron(compact)).toBeLessThan(await chevron(standard));
-  // The outlined variant keeps its Button style at the small height.
-  const outlined = page.getByRole('combobox', { name: 'Compact outlined plan', exact: true });
-  expect((await outlined.boundingBox())!.height).toBeCloseTo(32, 0);
-  expect(
-    Number.parseFloat(
-      await outlined.evaluate((element) => getComputedStyle(element).borderTopWidth),
-    ),
-  ).toBeGreaterThan(0);
+  // Without a visible label, a small select keeps the small height.
+  const unlabelled = page.getByRole('combobox', { name: 'Compact unlabelled plan', exact: true });
+  expect((await well(unlabelled))!.height).toBeCloseTo(32, 0);
 
   await compact.focus();
   await page.keyboard.press('Space');
