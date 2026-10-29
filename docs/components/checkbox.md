@@ -160,7 +160,7 @@ A checked box submits its `name` with its `value`; an unchecked one submits noth
 
 ### Customize
 
-`--env-checkbox-outline`, `--env-checkbox-selected` and `--env-checkbox-icon` set the colors of one Checkbox, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
+`--env-checkbox-outline`, `--env-checkbox-selected` and `--env-checkbox-selected-content` set the colors of one Checkbox, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
 
 ## Changelog
 

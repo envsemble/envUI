@@ -763,6 +763,11 @@
     "--env-counter-badge-height": {
       "replacement": "badge-count.height",
       "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-checkbox-icon": {
+      "cssVariable": "--env-checkbox-selected-content",
+      "colorPropertyOf": "env-checkbox",
+      "note": "The check mark's color is the selected-content role, as on every component."
     }
   },
   "aliases": {

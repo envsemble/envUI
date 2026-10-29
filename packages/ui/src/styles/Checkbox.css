@@ -12,7 +12,7 @@
     syntax: '*';
     inherits: false;
   }
-  @property --env-checkbox-icon {
+  @property --env-checkbox-selected-content {
     syntax: '*';
     inherits: false;
   }
@@ -22,13 +22,16 @@
     --env-checkbox-edge: var(--env-checkbox-outline, var(--env-color-fg-muted));
     --env-checkbox-edge-hover: var(--env-checkbox-outline, var(--env-color-fg-muted-hover));
     --env-checkbox-edge-pressed: var(--env-checkbox-outline, var(--env-color-fg-muted-pressed));
-    --env-checkbox-mark: var(--env-checkbox-icon, var(--env-color-fg-on-emphasis));
-    --env-checkbox-icon-gate: color-mix(
+    --env-checkbox-mark: var(--env-checkbox-selected-content, var(--env-color-fg-on-emphasis));
+    --env-checkbox-selected-content-gate: color-mix(
       in srgb,
-      var(--env-checkbox-icon) 0%,
+      var(--env-checkbox-selected-content) 0%,
       var(--env-color-bg-brand-emphasis)
     );
-    --env-checkbox-custom-base: var(--env-checkbox-selected, var(--env-checkbox-icon-gate));
+    --env-checkbox-custom-base: var(
+      --env-checkbox-selected,
+      var(--env-checkbox-selected-content-gate)
+    );
     min-inline-size: 0;
     max-inline-size: 100%;
     overflow-wrap: anywhere;

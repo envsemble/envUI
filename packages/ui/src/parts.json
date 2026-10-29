@@ -842,7 +842,7 @@
     "Checkbox": {
       "--env-checkbox-outline": "The box's edge while unchecked.",
       "--env-checkbox-selected": "The box's fill while checked or indeterminate; set, it takes state layers instead of the designed hover and press fills.",
-      "--env-checkbox-icon": "The check mark or dash, and the color of the state layers."
+      "--env-checkbox-selected-content": "The check mark or dash, and the color of the state layers."
     },
     "ColorPickerButton": {
       "--env-color-picker-button-container": "The fill behind the swatch and the value, transparent by default."

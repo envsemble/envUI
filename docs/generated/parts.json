@@ -1009,7 +1009,7 @@
           "description": "The box's fill while checked or indeterminate; set, it takes state layers instead of the designed hover and press fills."
         },
         {
-          "property": "--env-checkbox-icon",
+          "property": "--env-checkbox-selected-content",
           "description": "The check mark or dash, and the color of the state layers."
         }
       ]
