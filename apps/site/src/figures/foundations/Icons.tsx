@@ -6,6 +6,9 @@ import {
   Column,
   IconButton,
   Row,
+  SearchField,
+  Switch,
+  Text,
   type AlertTone,
   type ControlSize,
   type Destination,
@@ -21,7 +24,8 @@ import { IconSettings } from '@envsemble/envui/icons/Settings';
 import { IconStar } from '@envsemble/envui/icons/Star';
 import { usePointer, useTimeline, type PointerStep } from '../../motion/Motion';
 import { LoadBoundary, lazyPart } from '../../template/LoadBoundary';
-import { Loading } from '../../template/Loading';
+import { PartSkeleton, placeholderText } from '../../template/Loading';
+import { Example } from '../Example';
 import type { FoundationFigure } from './FoundationFigures';
 import { Figure } from './Topic';
 
@@ -137,6 +141,50 @@ const iconList = lazyPart(
   'src/figures/foundations/IconCatalogue.tsx',
 );
 
+/** How many icons a page of the list shows (IconCatalogue.tsx), and its skeleton. */
+export const iconPageSize = 72;
+/** Lengths of the icons' names on the list's first page, in turn, for the skeleton's bars. */
+const nameLengths = [6, 4, 4, 5, 8, 12, 8, 3, 6, 10, 4, 13];
+
+/**
+ * Every icon while the list loads: the list's own search, switch, page of icons and pager, as a
+ * skeleton, each icon a shape over a bar of its name.
+ */
+function IconCatalogueSkeleton() {
+  return (
+    <PartSkeleton what="icons">
+      <Example size="collection">
+        <div className="catalogue-icon-toolbar">
+          <SearchField variant="floating" label="Search icons" showLabel />
+          <Switch label="Filled icons" />
+        </div>
+        <ul className="catalogue-icon-catalogue">
+          {Array.from({ length: iconPageSize }, (_, index) => (
+            <li key={index}>
+              <span className="catalogue-icon-tile">
+                <IconHome width="2rem" height="2rem" />
+                <Text
+                  render={<span />}
+                  variant="caption"
+                  emphasis="default"
+                  className="catalogue-icon-label"
+                >
+                  {placeholderText(nameLengths[index % nameLengths.length]!)}
+                </Text>
+              </span>
+            </li>
+          ))}
+        </ul>
+        <Row wrap align="center" gap={4}>
+          <Button variant="secondary">Previous</Button>
+          <Text variant="caption">Page 1 of 99</Text>
+          <Button variant="secondary">Next</Button>
+        </Row>
+      </Example>
+    </PartSkeleton>
+  );
+}
+
 function CatalogueFigure() {
   const [, setAttempt] = useState(0);
   const IconCatalogue = iconList.component;
@@ -149,7 +197,7 @@ function CatalogueFigure() {
         setAttempt((count) => count + 1);
       }}
     >
-      <Suspense fallback={<Loading what="icons" />}>
+      <Suspense fallback={<IconCatalogueSkeleton />}>
         <IconCatalogue />
       </Suspense>
     </LoadBoundary>

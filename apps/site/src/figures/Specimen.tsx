@@ -1,8 +1,9 @@
-import { lazy, Suspense, useState, type ComponentType } from 'react';
+import { lazy, Suspense, use, useState, type ComponentType } from 'react';
 import { SpecimenHeadingLevel, SpecimenStage } from './Example';
 import { SpecimenArea } from './SpecimenArea';
 import { LoadBoundary, loadModule, reloadModule } from '../template/LoadBoundary';
-import { Loading } from '../template/Loading';
+import { StageSkeleton } from '../template/Loading';
+import { VerdictMotion } from '../motion/MotionStage';
 
 /**
  * Catalogue-only specimens: visual references that are not usage examples, such as a matrix of
@@ -19,10 +20,21 @@ const specimenPath = (page: string, name: string) => `../specimens/${page}/${nam
 /**
  * A page's specimen file rendered, loaded with the page and loaded again on a retry: the body of a
  * placed specimen, and of an example's figure that plays it (`motion`), whose specimen is named
- * after it.
+ * after it. Until it loads, a skeleton at its size holds its place: a stage of its own, unless
+ * it shows on a stage of the figure's (`onStage`), as on an anatomy figure.
  */
-export function SpecimenRender({ page, name }: { page: string; name: string }) {
+export function SpecimenRender({
+  page,
+  name,
+  onStage = false,
+}: {
+  page: string;
+  name: string;
+  onStage?: boolean;
+}) {
   const [, setAttempt] = useState(0);
+  // On a do or don't figure, the stage it stands for is the figure's, joined to its bar.
+  const verdict = use(VerdictMotion);
   const path = specimenPath(page, name);
   const Component = specimens.get(path);
   if (!Component) throw new Error(`No specimen apps/site/src/specimens/${page}/${name}.tsx`);
@@ -36,7 +48,16 @@ export function SpecimenRender({ page, name }: { page: string; name: string }) {
         setAttempt((count) => count + 1);
       }}
     >
-      <Suspense fallback={<Loading what="specimen" />}>
+      <Suspense
+        fallback={
+          <StageSkeleton
+            part={`specimen:${page}/${name}`}
+            what="specimens"
+            stage={!onStage}
+            className={verdict ? 'site-verdict-stage env-connected-row' : undefined}
+          />
+        }
+      >
         {/* The specimen is looked up among module-level lazy components, not created here. */}
         {/* eslint-disable-next-line react-hooks/static-components */}
         <Component />

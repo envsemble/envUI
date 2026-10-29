@@ -22,6 +22,8 @@ import type { Documentation as Document } from './PageModel';
 import { Documentation } from './Documentation';
 import { GuideDocument } from './GuideDocument';
 import { LoadedPart } from './LoadedPart';
+import { ChangelogSkeleton } from './ChangelogOutline';
+import { TokenReferenceSkeleton } from './TokenTables';
 import { ColorPalette } from '../figures/foundations/ColorPalette';
 import { SpecimenHeadingLevel } from '../figures/Example';
 import { ReleaseNotes } from './ReleaseNotes';
@@ -159,7 +161,11 @@ export function TokensPage({ page }: { page: RoutePage }) {
         kind="docs"
       />
       <Column gap={7} className="site-article">
-        <LoadedPart part={tokenReference} what="token reference" />
+        <LoadedPart
+          part={tokenReference}
+          what="token reference"
+          placeholder={<TokenReferenceSkeleton />}
+        />
       </Column>
     </>
   );
@@ -196,7 +202,7 @@ export function ChangelogDocsPage({ page }: { page: RoutePage }) {
           <Text render={<h2 id="every-change" />} variant="headline">
             Every change
           </Text>
-          <LoadedPart part={changelog} what="changelog" />
+          <LoadedPart part={changelog} what="changelog" placeholder={<ChangelogSkeleton />} />
         </Column>
       </Column>
     </>

@@ -19,6 +19,7 @@ import { useDisplaySettings } from '../theme/DisplaySettings';
 import { ExampleRender } from '../figures/LiveExample';
 import { PageSpecimen } from '../figures/PageSpecimens';
 import { alternativesOf, type Alternative, type Preview } from './RelatedPages';
+import { TileSkeleton } from './Loading';
 import { useFit } from './useFit';
 
 /**
@@ -38,10 +39,10 @@ class TileBoundary extends Component<{ children: ReactNode }, { failed: boolean 
 /**
  * A tiny live picture of an alternative on the recessed canvas: its example, inert and scaled down
  * to fit, rendered once the tiles near the viewport; for a page without one, its specimen, in the
- * same way. Without either, a page icon. A page's own tile, or a gallery's composition, takes the
- * example's place. A gallery's tile passes its own stage class. While `playing`, unless the
- * sidebar paused every animation, its animation plays (motion/Motion.tsx), and it rests at its
- * still once that ends.
+ * same way, and until it shows, a skeleton of the stage. Without either, a page icon. A page's own
+ * tile, or a gallery's composition, takes the example's place. A gallery's tile passes its own
+ * stage class. While `playing`, unless the sidebar paused every animation, its animation plays
+ * (motion/Motion.tsx), and it rests at its still once that ends.
  */
 export function TilePreview({
   preview,
@@ -121,6 +122,8 @@ export function TilePreview({
           </div>
         )
       )}
+      {/* After the canvas, which hides it once the picture is fitted (Related.css). */}
+      {preview && <TileSkeleton />}
     </Theme>
   );
 }

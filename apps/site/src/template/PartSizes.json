@@ -1,0 +1,3 @@
+{
+  "$comment": "Recorded by scripts/site/RecordPartSizes.ts (npm run site:part-sizes): the width and height, in rem, of each part that loads with a page, which its skeleton keeps while it loads."
+}

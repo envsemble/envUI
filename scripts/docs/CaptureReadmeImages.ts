@@ -28,8 +28,8 @@ try {
     for (const { part, page } of pictures) {
       await context.goto(`${site}/${page}`, { waitUntil: 'networkidle' });
       await context.locator('.site-page-banner').waitFor();
-      // Every example in view has loaded.
-      await context.getByText('Loading example').first().waitFor({ state: 'detached' });
+      // Every part of the page has loaded: no skeleton of one is left (template/Loading.tsx).
+      await context.locator('.site-loading').first().waitFor({ state: 'detached' });
       // The fonts and every entrance settle before the picture is taken; an animation that runs
       // forever, or is cancelled as the page settles, isn't waited for.
       await context.evaluate(async () => {

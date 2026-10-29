@@ -8,3 +8,24 @@ declare module 'virtual:envui-release-notes' {
   const releases: import('./pages/SiteData').Release[];
   export default releases;
 }
+
+/** The lines of each example's code, by page/Name: scripts/site/PartOutlines.ts. */
+declare module 'virtual:envui-example-lines' {
+  const lines: Record<string, number>;
+  export default lines;
+}
+
+/** Each release of the changelog: its heading and the shape of its text (PartOutlines.ts). */
+declare module 'virtual:envui-changelog-outline' {
+  const releases: { heading: string; shape: string }[];
+  export default releases;
+}
+
+/**
+ * The token reference's groups, each with a row for each token: its name, the length of its
+ * description and of each value (PartOutlines.ts).
+ */
+declare module 'virtual:envui-token-outline' {
+  const groups: { title: string; colors: boolean; rows: [string, number, ...number[]][] }[];
+  export default groups;
+}

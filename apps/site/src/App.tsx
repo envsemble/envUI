@@ -50,6 +50,7 @@ import { SearchButton } from './search/SearchButton';
 import { useSiteRoute } from './navigation/useSiteRoute';
 import { DisplaySettingsProvider } from './theme/DisplaySettings';
 import { SiteSearch } from './search/SiteSearch';
+import { LoadingStatus } from './template/Loading';
 
 /** What each kind of page renders. */
 const pageContent: Record<RoutePage['kind'], (props: { page: RoutePage }) => ReactNode> = {
@@ -264,6 +265,8 @@ function Shell() {
           </div>
         </div>
         <PageFooter />
+        {/* What the page is still loading, said once, while its parts show as skeletons. */}
+        <LoadingStatus />
       </div>
       <Sheet
         className="site-navigation-sheet"

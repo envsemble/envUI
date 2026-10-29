@@ -6,6 +6,7 @@ import { CodeBlock } from '@envsemble/envui/content';
 // config and tsconfig point envui-icon-list at packages/ui/src/icons/index.ts.
 import * as symbols from 'envui-icon-list';
 import { Example } from '../Example';
+import { iconPageSize as pageSize } from './Icons';
 
 const normalizeName = (name: string) => name.toLowerCase().replace(/[\s_-]/g, '');
 /** An icon's module, its name without the prefix: IconAdd is icons/Add, Icon10k icons/10k. */
@@ -53,7 +54,6 @@ const catalogue = Object.entries(symbols)
     Symbol,
     searchName: normalizeName(name),
   }));
-const pageSize = 72;
 
 function IconDetails({ name, filled }: { name: keyof typeof symbols; filled: boolean }) {
   const Symbol = symbols[name];
