@@ -2086,9 +2086,9 @@
         },
         {
           "name": "finalFocus",
-          "type": "RefObject<HTMLElement | null>",
+          "type": "DialogFocusTarget",
           "required": false,
-          "description": "The element to focus when the dialog closes, such as the menu button whose item opened it. By default focus returns to the trigger, or to the element that had focus when it opened."
+          "description": "The element to focus when the dialog closes, such as the menu button whose item opened it: its ref, or a function of how the dialog was opened that returns it, as on Dialog. By default focus returns to the trigger, or to the element that had focus when it opened."
         }
       ],
       "native": [
