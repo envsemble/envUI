@@ -28,6 +28,8 @@ import {
 } from './internal/ThemePreferenceContext.js';
 import { reportOnce } from '../internal/developmentReport.js';
 
+export type { ThemePreferenceValue } from './internal/ThemePreferenceContext.js';
+
 const systemDarkQuery = '(prefers-color-scheme: dark)';
 
 export interface ThemePreferenceProviderProps {

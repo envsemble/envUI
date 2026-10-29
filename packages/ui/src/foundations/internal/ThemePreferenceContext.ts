@@ -4,11 +4,13 @@ import { createContext } from 'react';
 import type { ColorScheme } from '../Theme.js';
 import type { ThemePreference } from '../themeBootstrap.js';
 
+/** What useThemePreference returns: the stored choice, the theme in use, and how to change them. */
 export interface ThemePreferenceValue {
   /** The stored choice. */
   preference: ThemePreference;
   /** The theme in use after resolving "system". */
   theme: ColorScheme;
+  /** Store a choice: system, light or dark. */
   setPreference: (preference: ThemePreference) => void;
   /** Store the opposite of the current theme. */
   toggleTheme: () => void;

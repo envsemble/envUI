@@ -138,7 +138,7 @@ function ThemeLabel() {
 | Theme scale             | comfortable or compact, the app's [scale](spacing.md); inherited from the enclosing Theme                                                                    |
 | useTheme()              | `{ theme, contrast, scale }` of the nearest Theme, also across envUI's portals                                                                               |
 | ThemePreferenceProvider | Stores the preference, follows the system and other windows, and themes the document root; see [setup](../setup.md)                                          |
-| useThemePreference()    | `preference` (light, dark or system), the resolved `theme`, `setPreference` and `toggleTheme`                                                                |
+| useThemePreference()    | A `ThemePreferenceValue`: `preference` (light, dark or system), the resolved `theme`, `setPreference` and `toggleTheme`                                      |
 | ThemeToggle             | An IconButton that switches between light and dark                                                                                                           |
 
 #### The words of the figures
