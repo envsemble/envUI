@@ -454,8 +454,6 @@
   --env-color-bg-navigation-pressed: #ceced0;
   --env-color-bg-neutral-emphasis: #39393d;
   --env-color-bg-neutral-muted: rgb(31 31 34 / 0.06);
-  --env-color-bg-neutral-muted-hover: rgb(31 31 34 / 0.12);
-  --env-color-bg-neutral-muted-pressed: rgb(31 31 34 / 0.18);
   --env-color-bg-neutral-strong-hover: #313134;
   --env-color-bg-neutral-strong-pressed: #29292c;
   --env-color-bg-neutral-subtle-hover: rgb(31 31 34 / 0.06);
@@ -580,8 +578,6 @@
     --env-color-bg-navigation-pressed: #ceced0;
     --env-color-bg-neutral-emphasis: #39393d;
     --env-color-bg-neutral-muted: rgb(31 31 34 / 0.06);
-    --env-color-bg-neutral-muted-hover: rgb(31 31 34 / 0.12);
-    --env-color-bg-neutral-muted-pressed: rgb(31 31 34 / 0.18);
     --env-color-bg-neutral-strong-hover: #313134;
     --env-color-bg-neutral-strong-pressed: #29292c;
     --env-color-bg-neutral-subtle-hover: rgb(31 31 34 / 0.06);
