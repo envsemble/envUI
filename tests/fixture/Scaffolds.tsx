@@ -85,7 +85,7 @@ export function ScaffoldFixture() {
           name="app"
           topBarSpan={query.get('span') === 'full' ? 'full' : 'body'}
           landmarks={query.get('landmarks') !== 'off'}
-          forms={forms}
+          navigationForms={forms}
           navigation={given}
           topBar={
             <TopBar
@@ -173,7 +173,7 @@ export function ScrollKeysFixture() {
     <Scaffold
       scroll="body"
       topBarSpan="full"
-      forms={{ compact: 'drawer', medium: 'drawer' }}
+      navigationForms={{ compact: 'drawer', medium: 'drawer' }}
       navigation={{
         drawer: (
           <nav aria-label="Keys navigation" className="fixture-keys-navigation">

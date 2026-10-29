@@ -7,7 +7,7 @@ import '../styles/ListRow.css';
 
 export interface ListRowProps {
   /**
-   * The row's element, which gives it its role and behaviour: a Base UI item, such as
+   * The row's element, which gives it its role and behavior: a Base UI item, such as
    * <BaseSelect.Item value={…} />, <BaseMenu.Item />, <BaseMenu.RadioItem value={…} /> or
    * <BaseCombobox.Item value={…} />, or an option element of a listbox. ListRow fills it with the
    * row's anatomy and the env-list-row class; its state shows through Base UI's data-highlighted,

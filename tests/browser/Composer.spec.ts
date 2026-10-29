@@ -108,7 +108,7 @@ for (const signal of ['isComposing', 'keyCode 229'] as const) {
   );
 }
 
-test('without onSubmit, Enter and the send button submit the form and keep the text', async ({
+test('without onSend, Enter and the send button submit the form and keep the text', async ({
   page,
 }) => {
   const errors = collectErrors(page);
@@ -139,7 +139,7 @@ test('without onSubmit, Enter and the send button submit the form and keep the t
   await page.keyboard.up('Enter');
   await expect(posts).toHaveText('Quarterly report | Quarterly report | Held key');
   await expect(field).toHaveValue('Held key');
-  // Without onSubmit or a form there is nothing to send: the button is unavailable and Enter
+  // Without onSend or a form there is nothing to send: the button is unavailable and Enter
   // starts a new line.
   const reply = scope.getByRole('textbox', { name: 'Reply light' });
   await expect(

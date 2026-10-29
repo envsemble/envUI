@@ -19,7 +19,8 @@ export interface TableColumns {
   /** The column whose resize handle is being dragged. */
   resizing: number | null;
   setResizing: (column: number | null) => void;
-  change: (widths: number[]) => void;
+  /** Sets the widths: committed false while dragging, true as a change is complete. */
+  change: (widths: number[], committed: boolean) => void;
   reset: () => void;
 }
 
@@ -53,15 +54,19 @@ export function ColumnResizeHandle({
   function dragTo(event: ReactPointerEvent<HTMLDivElement>) {
     const current = drag.current!;
     const delta = ((event.clientX - current.startX) * current.direction * 100) / current.tableWidth;
-    change(resizeColumns(current.widths, minimums, column, delta));
+    change(resizeColumns(current.widths, minimums, column, delta), false);
   }
 
   function finish(event: ReactPointerEvent<HTMLDivElement>) {
     const current = drag.current;
     if (!current || current.pointerId !== event.pointerId) return;
-    if (event.type === 'pointerup') dragTo(event);
+    if (event.type === 'pointerup') {
+      const delta =
+        ((event.clientX - current.startX) * current.direction * 100) / current.tableWidth;
+      change(resizeColumns(current.widths, minimums, column, delta), true);
+    }
     // A cancelled drag, such as one the browser took over for scrolling, returns to where it began.
-    else change([...current.widths]);
+    else change([...current.widths], true);
     drag.current = null;
     setResizing(null);
     if (event.currentTarget.hasPointerCapture(event.pointerId))
@@ -119,7 +124,7 @@ export function ColumnResizeHandle({
         else if (event.key === 'End') next = max;
         else return;
         event.preventDefault();
-        change(resizeColumns(widths, minimums, column, next - width));
+        change(resizeColumns(widths, minimums, column, next - width), true);
       }}
     />
   );

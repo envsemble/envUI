@@ -188,7 +188,7 @@ Item roles (`menuitem`, `option`, `tab`, `row`) are not reported on their own: t
 Each entry has an `id`, an `element` (or `*` with an `except` list) or a `role`, optional `attributes` conditions, and `use`: the component, then alternatives with `when`. `import` overrides the bindings to import, `note` adds a sentence, and `describe` how the message names the element. An attribute condition is `true` (present), `false` (absent) or a list of values, where `null` stands for an absent attribute and a trailing `*` matches a prefix. Absence is unknown while an element spreads props. For example, a later envUI component could be added as:
 
 ```json
-{ "id": "nav", "element": "nav", "use": [{ "component": "Drawer" }] }
+{ "id": "nav", "element": "nav", "use": [{ "component": "NavigationDrawer" }] }
 ```
 
 The tests check that every entry names a 1.0 component and appears in the table above.

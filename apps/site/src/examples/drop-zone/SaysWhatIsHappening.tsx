@@ -8,7 +8,7 @@ export default function SaysWhatIsHappening() {
       pending
       label="Uploading the logo"
       description="This takes a moment"
-      onDropAccepted={ignore}
+      onFilesAccepted={ignore}
       style={{ inlineSize: 'min(100%, 22rem)' }}
     />
   );

@@ -5,7 +5,7 @@ export default function AlertAnatomy() {
     <Alert
       tone="warning"
       title="Two decisions are blocked"
-      action={<Button variant="secondary">Review blockers</Button>}
+      actions={<Button variant="secondary">Review blockers</Button>}
       onDismiss={() => {}}
       style={{ inlineSize: 'min(100%, 26rem)' }}
     >

@@ -58,7 +58,7 @@ On a page, Compose holds the code, and Accessibility's **You provide** what the 
 
 ## Navigation
 
-- [Drawer](components/drawer.md)
+- [NavigationDrawer](components/navigation-drawer.md)
 - [Tabs](components/tabs.md)
 - [Breadcrumbs](components/breadcrumbs.md)
 - [TableOfContents](components/table-of-contents.md)

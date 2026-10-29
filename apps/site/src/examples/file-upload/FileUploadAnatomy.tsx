@@ -5,12 +5,12 @@ const take = () => undefined;
 export default function FileUploadAnatomy() {
   return (
     <Column gap={4} style={{ inlineSize: 'min(100%, 26rem)' }}>
-      <DropZone size="sm" multiple label="Add files" onDropAccepted={take} />
+      <DropZone size="sm" multiple label="Add files" onFilesAccepted={take} />
       <List.Root aria-label="Files">
         <List.Item
           label="annual-review.pdf"
           description="2.4 MB"
-          action={
+          end={
             <Button variant="text" aria-label="Remove annual-review.pdf">
               Remove
             </Button>
@@ -18,7 +18,7 @@ export default function FileUploadAnatomy() {
         />
         <List.Item
           label="team-photo.jpg"
-          action={
+          end={
             <Button variant="text" aria-label="Remove team-photo.jpg">
               Remove
             </Button>

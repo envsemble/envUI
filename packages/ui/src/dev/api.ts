@@ -24,7 +24,7 @@ export interface LayoutOptions {
    */
   height?: number | string;
   /** The fewest characters a line of text may hold before it counts as squeezed. @default 8 */
-  minTextChars?: number;
+  minTextCharacters?: number;
 }
 
 /** A size `at()` measures at: a width, or a width and a height, such as a device's. */
@@ -140,7 +140,7 @@ function atSize<T>(
 function readLayout(options: LayoutOptions = {}): Reading {
   const root = resolveRoot(options.root);
   return atSize(root, options.width, options.height, () =>
-    read(measure(root, { inner: true, minTextChars: options.minTextChars })),
+    read(measure(root, { inner: true, minTextCharacters: options.minTextCharacters })),
   );
 }
 

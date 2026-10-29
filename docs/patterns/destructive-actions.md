@@ -199,7 +199,7 @@ Put a TextField for the name inside the ConfirmDialog, as the TypeToConfirm exam
 
 ### Composition
 
-Lay the items out as a List, each List.Item taking its trigger as its `action`: a Button, an IconButton named with `aria-label`, a ConfirmButton or a Menu. The danger tone, `tone="danger"`, goes only on what deletes or ends something.
+Lay the items out as a List, each List.Item taking its trigger at its `end`: a Button, an IconButton named with `aria-label`, a ConfirmButton or a Menu. The danger tone, `tone="danger"`, goes only on what deletes or ends something.
 
 Bulk delete selects rows with Checkboxes and names the count in an outline danger Button, the dialog's `title` and its `confirmLabel`, as the BulkDelete example does. Its `finalFocus` returns focus to the button, or to the list, with `tabIndex={-1}`, once the button has gone with the deleted selection.
 

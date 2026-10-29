@@ -231,7 +231,7 @@ async function ask(question: string) {
 <MessageList aria-label="Conversation with the assistant" busy={running}>…</MessageList>
 <Composer
   aria-label="Message the assistant"
-  onSubmit={send}
+  onSend={send}
   running={running}
   onStop={() => request.current?.abort()}
 />

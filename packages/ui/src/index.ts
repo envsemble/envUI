@@ -7,7 +7,8 @@ export * from './foundations/useContainerSize.js';
 export * from './layout/Scaffold.js';
 export * as Panes from './layout/Panes.js';
 export type { PanesBehavior, PanesSplitAt } from './layout/Panes.js';
-export { readPanesSize } from './layout/panesSize.js';
+export { readPanesWidth } from './layout/panesSize.js';
+export type { ResizeDetails } from './internal/resizeDetails.js';
 export * from './layout/Page.js';
 export * from './layout/PageHeader.js';
 export * from './layout/LineArt.js';
@@ -22,10 +23,13 @@ export * from './actions/AvatarButton.js';
 export * from './actions/ConfirmButton.js';
 export * from './actions/CopyButton.js';
 export * from './actions/SegmentedControl.js';
-export * from './navigation/Bar.js';
-export * from './navigation/Rail.js';
-export * from './navigation/Drawer.js';
-export type { Destination, DrawerDestination } from './navigation/internal/Destinations.js';
+export * from './navigation/NavigationBar.js';
+export * from './navigation/NavigationRail.js';
+export * from './navigation/NavigationDrawer.js';
+export type {
+  Destination,
+  NavigationDrawerDestination,
+} from './navigation/internal/Destinations.js';
 export type { NavigationBackground } from './navigation/internal/background.js';
 export * as Pager from './navigation/Pager.js';
 export * from './navigation/Tabs.js';
@@ -104,7 +108,8 @@ export {
   type ThemeBootstrapOptions,
   type ThemePreference,
 } from './foundations/themeBootstrap.js';
-export * from './foundations/ThemeRadioGroup.js';
+export * from './foundations/ThemeMenuRadioGroup.js';
+export type { HeadingLevel } from './foundations/headingLevel.js';
 export * as Menu from './navigation/Menu.js';
 export * from './navigation/ContextMenu.js';
 export * as Menubar from './navigation/Menubar.js';

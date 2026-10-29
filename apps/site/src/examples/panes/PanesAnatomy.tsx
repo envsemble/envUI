@@ -7,13 +7,13 @@ export default function PanesAnatomy() {
     <Panes.Root
       behavior="list-detail"
       splitAt="medium"
-      defaultSize={16}
+      defaultWidth={16}
       style={{ blockSize: '12rem' }}
     >
       <Panes.List label="Inbox">
         <Surface padding={2} style={{ minBlockSize: '100%' }}>
           <List.Root aria-label="Messages">
-            <List.Item label="Launch checklist" description="Priya Shah" selected />
+            <List.Item label="Launch checklist" description="Priya Shah" current />
             <List.Item label="Budget review" description="Sam Lee" />
           </List.Root>
         </Surface>

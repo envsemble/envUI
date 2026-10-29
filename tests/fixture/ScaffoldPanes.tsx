@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import {
-  Bar,
+  NavigationBar,
   Button,
-  Drawer,
+  NavigationDrawer,
   Page,
   PageHeader,
   Panes,
-  Rail,
+  NavigationRail,
   Scaffold,
   Text,
   TopBar,
@@ -26,7 +26,7 @@ const destinations: Destination[] = [
 
 /**
  * The default arrangement of an application, mounted with ?fixture=scaffold-panes: a Scaffold whose
- * document scrolls, with a TopBar and the real Bar, Rail and Drawer, around a Page with a sticky
+ * document scrolls, with a TopBar and the real NavigationBar, NavigationRail and NavigationDrawer, around a Page with a sticky
  * header whose content is supporting Panes. The main pane is a long list of messages, each a
  * button, and the supporting pane, a sheet below expanded, holds a message's details.
  */
@@ -36,9 +36,9 @@ export function ScaffoldPanesFixture() {
     <Scaffold
       topBar={<TopBar title="Mail" />}
       navigation={{
-        bar: <Bar destinations={destinations} />,
-        rail: <Rail destinations={destinations} />,
-        drawer: <Drawer destinations={destinations} />,
+        bar: <NavigationBar destinations={destinations} />,
+        rail: <NavigationRail destinations={destinations} />,
+        drawer: <NavigationDrawer destinations={destinations} />,
       }}
     >
       <Page header={<PageHeader title="Inbox" sticky data-testid="page-header" />}>

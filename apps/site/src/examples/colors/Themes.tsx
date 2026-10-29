@@ -9,11 +9,11 @@ import {
   Switch,
   Text,
   Theme,
-  type ThemeValue,
+  type ColorScheme,
 } from '@envsemble/envui';
 
 export default function Themes() {
-  const [theme, setTheme] = useState<ThemeValue>('light');
+  const [theme, setTheme] = useState<ColorScheme>('light');
   const [high, setHigh] = useState(false);
   return (
     <Column gap={5}>

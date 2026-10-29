@@ -236,7 +236,7 @@ The application sorts the rows. `onSortChange` on a header cell makes it a sort 
 
 #### Resizable columns
 
-`resizableColumns` needs widths in percent that add up to 100, in column order: `defaultColumnWidths`, or `columnWidths` with `onColumnWidthsChange`.
+`resizableColumns` needs widths in percent that add up to 100, in column order: `defaultColumnWidths`, or `columnWidths` with `onColumnWidthsChange`, which receives `{ committed }`, a `ResizeDetails`, as Panes' and Sheet's width callbacks do: `false` while people drag and `true` once a change is complete, the widths to save.
 
 ```tsx
 <Table.Root aria-label="Files" resizableColumns defaultColumnWidths={[40, 25, 20, 15]}>
@@ -262,4 +262,6 @@ Parts the anatomy doesn't show: a column's resize handle, `env-table-column-resi
 
 ## Changelog
 
+- **1.0.0-prerelease.5**: A number for `stackBelow` is a number of rem, as on PanelDock, where it was pixels.
+- **1.0.0-prerelease.5**: `onColumnWidthsChange` receives `{ committed }` beside the widths, as the other resize callbacks do.
 - **1.0.0**: The parts are members of the `Table` namespace: `Table` is `Table.Root`, and `TableHead`, `TableBody`, `TableRow`, `TableHeaderCell` and `TableCell` are `Table.Head`, `Table.Body`, `Table.Row`, `Table.HeaderCell` and `Table.Cell`; `TableSortDirection` is `Table.SortDirection`. The page is `table`, after the component. Table.HeaderCell's `onSort` is `onSortChange`, called with the order pressing asks for. A table named by `aria-labelledby` names its scroll region too, which was left unnamed. The sort and resize words come from `messages.table`. A column's resize handle, `env-table-column-resize`, is `env-table-column-resize-handle`, as every resize handle is named.

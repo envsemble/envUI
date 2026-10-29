@@ -3,7 +3,7 @@ import {
   AvatarButton,
   Page,
   PageHeader,
-  Rail,
+  NavigationRail,
   Scaffold,
   Text,
   TopBar,
@@ -14,7 +14,8 @@ import { Group } from '@envsemble/envui/icons/Group';
 import { Home } from '@envsemble/envui/icons/Home';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
-const item = (index: number) => `.env-rail-list > li:nth-child(${index}) .env-rail-item`;
+const item = (index: number) =>
+  `.env-navigation-rail-list > li:nth-child(${index}) .env-navigation-rail-item`;
 
 /** Projects chosen, then Team, the page following each, and Home again: the frame stays. */
 const script: PointerStep[] = [
@@ -49,16 +50,16 @@ export default function AppFrameTile() {
     label,
     icon,
     current: label === current,
-    onSelect: () => setCurrent(label),
+    onClick: () => setCurrent(label),
   }));
   return (
     <Scaffold
       scroll="body"
       landmarks={false}
-      forms={{ compact: 'rail', medium: 'rail', expanded: 'rail', large: 'rail' }}
+      navigationForms={{ compact: 'rail', medium: 'rail', expanded: 'rail', large: 'rail' }}
       style={{ inlineSize: '16rem', blockSize: '13.5rem' }}
       topBar={<TopBar title="Northwind" actions={<AvatarButton name="Alex Morgan" />} />}
-      navigation={{ rail: <Rail destinations={destinations} /> }}
+      navigation={{ rail: <NavigationRail destinations={destinations} /> }}
     >
       <Page header={<PageHeader title={current} headingLevel={3} />}>
         <Text emphasis="muted">{places.find((place) => place.label === current)?.line}</Text>

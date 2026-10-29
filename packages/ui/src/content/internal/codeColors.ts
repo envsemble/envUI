@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react';
-import type { ThemeValue } from '../../foundations/Theme.js';
+import type { ColorScheme } from '../../foundations/Theme.js';
 import { over } from './readableColors.js';
 
 /** Whether code takes its standard colors or those of a high-contrast theme. */
@@ -49,7 +49,7 @@ const dark = '#e8eaee';
  * theme loaded; tests/CodeHighlighting.test.mjs checks them against the installed themes and the
  * color tokens.
  */
-const colors: Record<ThemeValue, Record<CodeContrast, CodeColors>> = {
+const colors: Record<ColorScheme, Record<CodeContrast, CodeColors>> = {
   light: {
     standard: {
       surfaces: ['#eaeaec', '#f4f4f6', '#f5f5f7', '#ffffff'],
@@ -81,7 +81,7 @@ const colors: Record<ThemeValue, Record<CodeContrast, CodeColors>> = {
 };
 
 /** The colors of code around its tokens in an app theme and contrast. */
-export function codeColors(scheme: ThemeValue, contrast: CodeContrast = 'standard'): CodeColors {
+export function codeColors(scheme: ColorScheme, contrast: CodeContrast = 'standard'): CodeColors {
   return colors[scheme][contrast];
 }
 
@@ -91,7 +91,7 @@ export function codeColors(scheme: ThemeValue, contrast: CodeContrast = 'standar
  */
 export function codeBackgrounds(
   kind: 'block' | 'inline',
-  scheme: ThemeValue,
+  scheme: ColorScheme,
   contrast: CodeContrast = 'standard',
 ) {
   const { surfaces, [kind]: layer } = colors[scheme][contrast];
@@ -121,7 +121,7 @@ function layerColor({ color, alpha }: CodeLayer) {
 }
 
 /** The name envUI registers a code theme under, for code blocks and diffs alike. */
-export const codeThemeName = (scheme: ThemeValue, contrast: CodeContrast) =>
+export const codeThemeName = (scheme: ColorScheme, contrast: CodeContrast) =>
   `envui-github-${scheme}${contrast === 'high' ? '-high' : ''}`;
 
 /**
@@ -129,7 +129,7 @@ export const codeThemeName = (scheme: ThemeValue, contrast: CodeContrast) =>
  * the style sheet takes the high-contrast ones where the nearest Theme's contrast is high. Inline
  * code takes the neutral muted fill from the color tokens.
  */
-export function codeThemeStyle(theme: ThemeValue): CSSProperties {
+export function codeThemeStyle(theme: ColorScheme): CSSProperties {
   const [standard, high] = [colors[theme].standard, colors[theme].high];
   return {
     '--env-code-background': layerColor(standard.block),

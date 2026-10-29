@@ -4,7 +4,8 @@ import { MotionStage } from '../../motion/MotionStage';
 import { useStayOnPage } from './StayOnPage';
 
 /** A destination in the navigation the frame shows at its width: the rail, or the bar. */
-const place = (href: string) => `:is(.env-rail-item, .env-bar-item)[href="${href}"]`;
+const place = (href: string) =>
+  `:is(.env-navigation-rail-item, .env-navigation-bar-item)[href="${href}"]`;
 
 /*
  * The pointer taps Inbox, then Documents, then Projects again: the current marker and its filled

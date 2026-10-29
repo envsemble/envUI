@@ -33,7 +33,7 @@ export default function RemoveFile() {
           key={file.name}
           label={file.name}
           description={file.size}
-          action={
+          end={
             // Little is at stake: the first press arms the button in place, and a second removes
             // the file.
             <ConfirmButton

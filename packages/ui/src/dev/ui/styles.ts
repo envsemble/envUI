@@ -48,7 +48,7 @@ export const devStyles = /* css */ `
   }
 
   /* The sidebars: flush, square panes as wide as people drag them, each with the grip of a
-     resizable Drawer on its inner edge, inside it. */
+     resizable NavigationDrawer on its inner edge, inside it. */
   :where(.env-dev-sidebar) {
     position: relative;
     flex: none;

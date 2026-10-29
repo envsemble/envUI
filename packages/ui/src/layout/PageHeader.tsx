@@ -4,6 +4,7 @@ import { Text } from '../foundations/Text.js';
 import { classNames } from '../internal/classNames.js';
 import { ControlDefaults } from '../internal/ControlDefaults.js';
 import { StickyHeaderSize } from './internal/StickyHeaderSize.js';
+import type { HeadingLevel } from '../foundations/headingLevel.js';
 import '../styles/Base.css';
 import '../styles/PageHeader.css';
 
@@ -15,7 +16,7 @@ export interface PageHeaderProps extends Omit<ComponentPropsWithRef<'div'>, 'tit
    * pane or a section that sits under another heading. It looks the same at every level.
    * @default 1
    */
-  headingLevel?: 1 | 2 | 3 | 4 | 5 | 6;
+  headingLevel?: HeadingLevel;
   /** A sentence under the title, in the smaller muted text, such as what the page is for. */
   description?: ReactNode;
   /** The trail to the page, usually Breadcrumbs with wrap={false}, above the title. */

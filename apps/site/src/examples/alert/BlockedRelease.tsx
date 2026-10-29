@@ -5,7 +5,7 @@ export default function BlockedRelease() {
     <Alert
       tone="warning"
       title="Two decisions are blocked"
-      action={<Button variant="secondary">Review blockers</Button>}
+      actions={<Button variant="secondary">Review blockers</Button>}
       style={{ inlineSize: 'min(100%, 32rem)' }}
     >
       The release can’t start until both are resolved.

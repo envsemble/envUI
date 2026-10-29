@@ -38,7 +38,7 @@ export default function ComposerTile() {
       placeholder="Message"
       running={replying}
       onStop={() => setReplying(false)}
-      onSubmit={() => {
+      onSend={() => {
         setReplying(true);
         // A timer stands in for the reply.
         timer.current = window.setTimeout(() => setReplying(false), 1300);

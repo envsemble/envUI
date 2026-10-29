@@ -111,7 +111,7 @@ A tab names its document, and closing one never loses work.
 
 ### When a tab closes
 
-Activate a neighbour when the active tab closes.
+Activate a neighbor when the active tab closes.
 
 - Offer a way back when the last one closes.
 - Ask before closing a document with unsaved changes.
@@ -160,7 +160,7 @@ A tab holds its icon, its name and its close button, and no other controls.
 <div role="tabpanel" id="document-panel" aria-label={activeDocument.label}>…</div>
 ```
 
-`items` are the open documents in tab order, each with an `id`, its `label`, an optional `icon`, a `title`, the native tooltip, such as the full path, and `preview`. `value` is the active tab's id, or `null`. `onClose` is called from every way of closing a tab: remove the tab there, activate a neighbour when it was active, and ask first about unsaved changes.
+`items` are the open documents in tab order, each a `DocumentTabsItem` with its `value`, its `label`, an optional `icon`, a `tooltip`, the native tooltip, such as the full path, and `preview`. `value` is the active tab's value, or `null`. `onClose` is called from every way of closing a tab: remove the tab there, activate a neighbour when it was active, and ask first about unsaved changes.
 
 #### Preview, pin and reorder
 
@@ -172,8 +172,9 @@ Each tab opens a context menu with Close on right click, long press, the <kbd>Me
 
 ### Composition
 
-`closeLabel`, a function of the tab's label, `closeAllLabel` and `contextMenuLabel` name the close actions and the menu, from EnvUIProvider's `messages.documentTabs` by default. `className`, `style` and `ref` reach the root, `env-document-tabs`, the bar that holds the strip and the end content. Each item, `env-document-tabs-item`, lays out its tab beside its close button, an IconButton with a cross hidden from assistive technology.
+`closeLabel`, a function of the tab's label, `closeAllLabel` and `contextMenuLabel` name the close actions and the menu, from EnvUIProvider's `messages.documentTabs` by default. `className`, `style`, `ref` and the other native props reach the root, `env-document-tabs`, the bar that holds the strip and the end content. Each item, `env-document-tabs-item`, lays out its tab beside its close button, an IconButton with a cross hidden from assistive technology.
 
 ## Changelog
 
+- **1.0.0-prerelease.5**: `DocumentTab` is `DocumentTabsItem`, keyed by `value` where it had `id`, with `tooltip` where it had `title`; the root takes the native props.
 - **1.0.0**: `onReorder`: a tab dragged with a mouse or pen shows where it will land and moves there when let go, and each tab's context menu offers Move left and Move right. `end` holds content after the tabs, such as a button that closes them all. Tabs that run past an edge fade out toward it. Rebuilt on Base UI Tabs: each tab sits beside its close button, an IconButton with a cross hidden from assistive technology, instead of around it, which fixes the nested-interactive control, and announces Delete and Backspace, which close it, through `aria-keyshortcuts`. Each tab opens a context menu with Close, also without `onCloseAll`, which adds Close all tabs. The arrow keys and the wheel follow the text direction. Strings come from `messages.documentTabs`, and the strip takes `ref` and `style`. Classes: `env-document-tabs-item` lays out each tab, and `env-document-tab`, `-label` and `-close` are `env-document-tabs-tab`, `-tab-label` and `env-document-tabs-close`. The root, `env-document-tabs`, is the bar that holds the strip and the end content, and takes `className`, `style` and `ref`; the strip, the tab list, which they reached before, is `env-document-tabs-list`.

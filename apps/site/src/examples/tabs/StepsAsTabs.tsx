@@ -1,4 +1,4 @@
-import { Button, Tabs, Text } from '@envsemble/envui';
+import { Tabs, Text } from '@envsemble/envui';
 
 export default function StepsAsTabs() {
   return (
@@ -8,17 +8,17 @@ export default function StepsAsTabs() {
       items={[
         {
           value: 'name',
-          button: <Button>1. Name</Button>,
+          label: '1. Name',
           content: <Text>Name the project.</Text>,
         },
         {
           value: 'team',
-          button: <Button>2. Team</Button>,
+          label: '2. Team',
           content: <Text>Invite the people who work on it.</Text>,
         },
         {
           value: 'review',
-          button: <Button>3. Review</Button>,
+          label: '3. Review',
           content: <Text>Check the details and create it.</Text>,
         },
       ]}

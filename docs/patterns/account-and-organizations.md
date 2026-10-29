@@ -37,7 +37,7 @@ composes:
   - Row
   - Column
   - Text
-  - ThemeRadioGroup
+  - ThemeMenuRadioGroup
   - TopBar
 examples:
   AvatarMenu:
@@ -79,7 +79,7 @@ A submenu switches between the person's organizations, and names the current one
 
 Where people switch often, a button names the active organization and opens them all.
 
-- It sits at the top of the navigation [Drawer](../components/drawer.md), or at the start of the top bar.
+- It sits at the top of the [NavigationDrawer](../components/navigation-drawer.md), or at the start of the top bar.
 - The menu shows the person's role under each organization, and an action that creates one.
 - Before the first organization, that action is a button of its own.
 
@@ -173,7 +173,7 @@ A `Menu.Root` named `aria-label="Account"`, with `align="end"`, takes as its `tr
 
 #### The theme
 
-A ThemeRadioGroup inside the Theme `Menu.Submenu` applies the choice at once and keeps the menu open; the nearest ThemePreferenceProvider stores it.
+A ThemeMenuRadioGroup inside the Theme `Menu.Submenu` applies the choice at once and keeps the menu open; the nearest ThemePreferenceProvider stores it.
 
 #### Organizations in the account menu
 
@@ -241,7 +241,7 @@ The trigger is a Button with `variant="ghost"`, `fullWidth` and an `endIcon`, ho
 
 ### Composition
 
-The switcher's first row is a `Menu.Header`, not an item: a centred Column with the Groups3 icon above a headline Text, whose `id` names the radio group through `aria-labelledby`. Each organization is a `Menu.RadioItem` with the person's role as its `description`. A `Menu.Separator` and a `Menu.Item` with the Add icon end the menu with the create action. In a navigation Drawer the switcher goes in its `header`.
+The switcher's first row is a `Menu.Header`, not an item: a centred Column with the Groups3 icon above a headline Text, whose `id` names the radio group through `aria-labelledby`. Each organization is a `Menu.RadioItem` with the person's role as its `description`. A `Menu.Separator` and a `Menu.Item` with the Add icon end the menu with the create action. In a NavigationDrawer the switcher goes in its `header`.
 
 The parts are the trigger, `env-button`, the heading row, `env-menu-header`, each organization, `env-menu-item`, its role, `env-menu-item-description`, and the create action, `env-menu-separator + env-menu-item`.
 

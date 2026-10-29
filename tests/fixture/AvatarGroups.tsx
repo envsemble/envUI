@@ -8,7 +8,7 @@ import {
   List,
   Surface,
   Theme,
-  type ThemeValue,
+  type ColorScheme,
 } from '@envsemble/envui';
 import { Settings } from '@envsemble/envui/icons/Settings';
 
@@ -43,7 +43,7 @@ function RecordingLink({ href, onClick, ...props }: LinkComponentProps) {
   );
 }
 
-export function AvatarGroupsFixture({ theme }: { theme: ThemeValue }) {
+export function AvatarGroupsFixture({ theme }: { theme: ColorScheme }) {
   const [pressed, setPressed] = useState('');
   return (
     <Theme theme={theme} data-testid={`avatar-groups-${theme}`} className="fixture-section">
@@ -156,7 +156,7 @@ export function AvatarGroupsFixture({ theme }: { theme: ThemeValue }) {
           <List.Item
             label="Northwind launch"
             description="4 members"
-            action={<AvatarGroup data-testid="in-row" people={people} max={3} gather="end" />}
+            end={<AvatarGroup data-testid="in-row" people={people} max={3} align="end" />}
           />
         </List.Root>
       </div>

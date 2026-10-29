@@ -226,9 +226,10 @@ export function createSuggestionOptions<I extends SuggestionItem>(source: {
   };
 }
 
-export function referenceSuggestion(source: RichTextReferenceSource) {
+export function referenceSuggestion({ trigger, search, ...source }: RichTextReferenceSource) {
   return createSuggestionOptions<RichTextReference>({
     ...source,
-    items: async (request) => [...(await source.items(request))],
+    char: trigger,
+    items: async (request) => [...(await search(request))],
   });
 }

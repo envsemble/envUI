@@ -24,7 +24,7 @@ avoidWhen:
   - text: The path from the top of a hierarchy down to the current page.
     use: Breadcrumbs
   - text: The application's pages, rather than the sections of one.
-    use: Drawer
+    use: NavigationDrawer
   - text: The previous and next pages of a guide.
     use: Pager
 components:

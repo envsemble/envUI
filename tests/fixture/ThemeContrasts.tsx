@@ -20,7 +20,7 @@ import {
   Tooltip,
   useToast,
   type ThemeContrast,
-  type ThemeValue,
+  type ColorScheme,
   Sheet,
 } from '@envsemble/envui';
 
@@ -126,7 +126,7 @@ function Boundary({
   contrast,
 }: {
   name: string;
-  theme: ThemeValue;
+  theme: ColorScheme;
   contrast?: ThemeContrast;
 }) {
   return (

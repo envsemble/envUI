@@ -247,9 +247,9 @@ test('a packed consumer resolves compiled public exports and its own React insta
     'Button',
     'ButtonGroup',
     'IconButton',
-    'Bar',
-    'Rail',
-    'Drawer',
+    'NavigationBar',
+    'NavigationRail',
+    'NavigationDrawer',
     'Pager',
     'Card',
     'Row',
@@ -376,9 +376,9 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     join(consumerDirectory, 'Consumer.tsx'),
     `
     import { createRef } from 'react';
-    import { Theme, Button, ButtonGroup, ConfirmButton, IconButton, Bar, Rail, Drawer, Pager, Icon, TextField, Textarea, Checkbox, Switch, Row, Column,
+    import { Theme, Button, ButtonGroup, ConfirmButton, IconButton, NavigationBar, NavigationRail, NavigationDrawer, Pager, Icon, TextField, Textarea, Checkbox, Switch, Row, Column,
       EnvUIProvider, Toolbar, Field, RadioGroup, Radio, Select, Combobox, DatePicker, Calendar, Dialog, DialogClose, Toast, useToast,
-      type ThemeValue, type ButtonProps, type ButtonGroupProps, type SelectItem, type ComboboxItem, type ToastManager } from '@envsemble/envui';
+      type ColorScheme, type ButtonProps, type ButtonGroupProps, type SelectItem, type ComboboxItem, type ToastManager } from '@envsemble/envui';
     import { Home } from '@envsemble/envui/icons/Home';
     import { Home as BarrelHome } from '@envsemble/envui/icons';
     import '@envsemble/envui/styles.css';
@@ -392,9 +392,9 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     const pagerLinkProps: Pager.LinkProps = { href: '/guide', children: 'Read the guide', ref: createRef<HTMLAnchorElement>(), icon: <Home /> };
     const options: SelectItem[] = [{ value: 'one', label: 'One' }];
     const people: ComboboxItem[] = [{ value: 'first', label: 'First person', description: 'first@example.com', start: <Home /> }];
-    const theme: ThemeValue = 'dark';
-    const referenceSources: RichTextReferenceSource[] = [{ char: '@', items: async ({ query, signal }) => signal.aborted ? [] : [{ id: query, label: query }] }];
-    const richTextConsumer = <><RichTextEditor ref={createRef<RichTextEditorHandle>()} value="Notes" references={referenceSources} onValueChange={markdown => { const typed: string = markdown; void typed; }} onUpload={async (file, { signal }) => signal.aborted ? null : ({ url: '/uploads/example', label: file.name, id: 'stable-file-id', kind: 'file' })} /><RichText onReferenceClick={(reference, event) => { event.preventDefault(); void reference.id; }}>Notes</RichText></>;
+    const theme: ColorScheme = 'dark';
+    const referenceSources: RichTextReferenceSource[] = [{ trigger: '@', search: async ({ query, signal }) => signal.aborted ? [] : [{ id: query, label: query }] }];
+    const richTextConsumer = <><RichTextEditor editorRef={createRef<RichTextEditorHandle>()} value="Notes" references={referenceSources} onValueChange={markdown => { const typed: string = markdown; void typed; }} onUpload={async (file, { signal }) => signal.aborted ? null : ({ url: '/uploads/example', label: file.name, id: 'stable-file-id', kind: 'file' })} /><RichText onReferenceClick={(reference, event) => { event.preventDefault(); void reference.id; }}>Notes</RichText></>;
     void richTextConsumer;
     function NotificationAction() { const manager: ToastManager = useToast(); return <Button onClick={() => manager.show({ message: 'Saved' })}>Save</Button>; }
     export const consumer = <Theme theme={theme} ref={createRef<HTMLDivElement>()}>
@@ -406,14 +406,14 @@ test('installed declarations typecheck a React 19 consumer without source aliase
       <EnvUIProvider locale="de-CH" dir="ltr" messages={{ common: { clear: 'Leeren' }, toast: { hidden: ({ count }) => count + ' hidden' } }}><IconButton ref={createRef<HTMLButtonElement>()} aria-label="Schließen" icon={<Home />} /></EnvUIProvider>
       <Toolbar.Root aria-label="Formatting"><Toolbar.Button icon={<Home />} label="Home" pressed shortcut="Ctrl+H" /><Toolbar.Separator /><Toolbar.Link href="/" icon={<Home />} label="Home" /></Toolbar.Root>
       <Field.Root name="project" invalid><Field.Label>Project</Field.Label><Field.Control size="sm" /><Field.Description>Shown to everyone</Field.Description><Field.Error>Enter a name</Field.Error></Field.Root>
-      <Bar ref={createRef<HTMLElement>()} destinations={[{ label: 'Home', icon: <Home />, href: '/', current: true }, { label: 'View', icon: <Home />, onSelect: () => undefined, count: 2 }]} />
-      <Rail aria-label="Places" destinations={[{ label: 'Home', icon: <Home />, href: '/' }]} header={<Home />} />
-      <Drawer destinations={[{ label: 'Guide', href: '/guide', group: 'Help' }]} footer={<Home />} />
+      <NavigationBar ref={createRef<HTMLElement>()} destinations={[{ label: 'Home', icon: <Home />, href: '/', current: true }, { label: 'View', icon: <Home />, onClick: () => undefined, count: 2 }]} />
+      <NavigationRail aria-label="Places" destinations={[{ label: 'Home', icon: <Home />, href: '/' }]} header={<Home />} />
+      <NavigationDrawer destinations={[{ label: 'Guide', href: '/guide', group: 'Help' }]} footer={<Home />} />
       <Pager.Next {...pagerLinkProps} target="_blank" rel="noopener" />
       <Pager.Previous href="/previous">Previous guide</Pager.Previous>
       <Icon label="Custom" viewBox="0 0 1 1"><path d="M0 0L1 1" /></Icon><BarrelHome />
       <TextField name="title" label="Title" required ref={createRef<HTMLInputElement>()} />
-      <ColorPicker label="Accent color" name="accent" defaultValue="#abcdef" formats={['hex', 'rgb']} alpha ref={createRef<HTMLDivElement>()} onValueChange={(value, color) => { const typed: string = value; const hsl: string = color.toString('hsl'); void typed; void hsl; }} />
+      <ColorPicker label="Accent color" name="accent" defaultValue="#abcdef" formats={['hex', 'rgb']} alpha ref={createRef<HTMLDivElement>()} onValueChange={(value) => { const typed: string = value; void typed; }} />
       <ColorPickerButton label="Border color" value={colorValue} valueFormat="hsl" swatches={['#abcdef', { color: colorValue, label: 'Current' }]} />
       <ColorSwatch color="#abcdef" format="hex" size="sm" label="Accent" />
       <Textarea label="Notes" ref={createRef<HTMLTextAreaElement>()} />
@@ -1051,7 +1051,7 @@ test('avatar groups, relative times, copy buttons and pagination render on a ser
     export const display = <>
       <AvatarGroup {...groupProps} onPersonClick={(clicked, event) => { void clicked.name; event.preventDefault(); }} />
       <RelativeTime {...timeProps} nowLabel="moments ago" />
-      <CopyButton {...copyProps} onCopy={(copied) => { const typed: string = copied; void typed; }} />
+      <CopyButton {...copyProps} onCopied={(copied) => { const typed: string = copied; void typed; }} />
       <CopyButton value="text" size="sm" variant="text">Copy</CopyButton>
       <Pagination {...pagerProps} formatRange={describe} hasNextPage pending size="sm" />
     </>;
@@ -1135,8 +1135,8 @@ test('the panel dock renders its panels, tabs and header on a server and types i
     import { EnvUIProvider, PanelDock, type PanelDockMode, type PanelDockPanel } from '@envsemble/envui';
     type Document = PanelDockPanel & { body: string };
     const documents: Document[] = [
-      { id: 'notes', title: 'Notes', mode: 'open', body: 'Text', height: 320, preferredWidth: 480, minWidth: 320,
-        maxWidth: 640, minHeight: 240, maxHeight: 560, active: true, label: 'Notes', icon: <span />, attention: 'Unsaved', tooltip: 'Notes' },
+      { id: 'notes', title: 'Notes', mode: 'open', body: 'Text', height: 20, preferredWidth: 30, minWidth: 20,
+        maxWidth: 40, minHeight: 15, maxHeight: 35, active: true, label: 'Notes', icon: <span />, attention: 'Unsaved', tooltip: 'Notes' },
     ];
     const headerProps: PanelDock.HeaderProps = { title: 'Notes', meta: 'Edited today', headingLevel: 3, controls: true };
     const dockProps: Omit<PanelDock.RootProps<Document>, 'children'> = {

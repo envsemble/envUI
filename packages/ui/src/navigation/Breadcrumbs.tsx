@@ -21,7 +21,7 @@ import { TooltipPopup, tooltipDelay } from '../internal/TooltipPopup.js';
 import '../styles/Base.css';
 import '../styles/Breadcrumbs.css';
 
-export interface BreadcrumbItem {
+export interface BreadcrumbsItem {
   /**
    * The level's name, such as a folder's title. Beyond 20 rem it ends with an ellipsis, and a
    * tooltip shows it in full on hover and keyboard focus.
@@ -35,7 +35,7 @@ export interface BreadcrumbItem {
 
 export interface BreadcrumbsProps extends Omit<ComponentPropsWithRef<'nav'>, 'children'> {
   /** From the top level to the current page, which is last. */
-  items: readonly BreadcrumbItem[];
+  items: readonly BreadcrumbsItem[];
   /**
    * The trail wraps onto more lines when it runs out of room; true by default. False keeps it on
    * one line, for a bar or header: the current page is cut short first, and earlier levels keep
@@ -68,7 +68,7 @@ function useTruncated(element: RefObject<HTMLElement | null>) {
 }
 
 /** One level: a link, a button, plain text or the current page, with its full label on hover. */
-function Crumb({ item, current }: { item: BreadcrumbItem; current: boolean }) {
+function Crumb({ item, current }: { item: BreadcrumbsItem; current: boolean }) {
   const label = useRef<HTMLSpanElement>(null);
   const truncated = useTruncated(label);
   const [focused, setFocused] = useState(false);

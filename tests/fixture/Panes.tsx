@@ -9,7 +9,8 @@ const projects = ['Northwind launch', 'Website refresh', 'Annual report'];
  * Panes in a frame whose width the test sets, mounted with ?fixture=panes: supporting Panes with a
  * divider and a button that opens the supporting pane, and list-detail Panes whose list opens a
  * project. ?split= sets splitAt, ?persist= the cookie, ?kept= the width the server read from it,
- * ?size= the default size, ?divider=none leaves out both dividers and ?dir=rtl mirrors them.
+ * ?size= the default width, ?divider=none leaves out both dividers, ?uncontrolled leaves the
+ * supporting Panes' open state to them and ?dir=rtl mirrors them.
  */
 export function PanesFixture() {
   const query = params();
@@ -20,6 +21,8 @@ export function PanesFixture() {
   const [chosen, setChosen] = useState<string | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
   const [sizes, setSizes] = useState<string[]>([]);
+  const uncontrolled = query.has('uncontrolled');
+  const [reasons, setReasons] = useState<string[]>([]);
   return (
     <div dir={query.get('dir') ?? undefined} className="fixture-section">
       <div className="fixture-actions">
@@ -37,12 +40,15 @@ export function PanesFixture() {
         <Panes.Root
           behavior="supporting"
           splitAt={splitAt}
-          open={open}
-          onOpenChange={setOpen}
+          open={uncontrolled ? undefined : open}
+          onOpenChange={(next, { reason }) => {
+            setOpen(next);
+            setReasons((current) => [...current, `${next ? 'open' : 'close'} ${reason}`]);
+          }}
           persist={query.get('persist') ?? undefined}
-          defaultSize={query.get('size') ? Number(query.get('size')) : undefined}
-          persistedSize={query.get('kept') ? Number(query.get('kept')) : undefined}
-          onSizeChange={(size, { committed }) =>
+          defaultWidth={query.get('size') ? Number(query.get('size')) : undefined}
+          persistedWidth={query.get('kept') ? Number(query.get('kept')) : undefined}
+          onWidthChange={(size, { committed }) =>
             setSizes((current) => [...current, `${size}${committed ? '!' : ''}`])
           }
           name="document"
@@ -61,6 +67,7 @@ export function PanesFixture() {
         </Panes.Root>
       </div>
       <output data-testid="sizes">{sizes.join(' ')}</output>
+      <output data-testid="reasons">{reasons.join(', ')}</output>
       <div className="fixture-panes-frame" style={{ inlineSize: width }} data-testid="list-frame">
         <Panes.Root
           behavior="list-detail"

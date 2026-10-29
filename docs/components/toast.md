@@ -178,6 +178,8 @@ Put one Toast.Provider near the root of the application. Any component inside it
 
 `tone` is `neutral`, the default, with no icon, `success`, `info` or `danger`. A danger notification stays until it is dismissed, is announced at once as an alert, and is never hidden behind the count.
 
+A toast has no `warning` tone, unlike Alert: a warning needs attention where it applies, so it is an Alert on the page, not a notification that passes.
+
 ```tsx
 toast.show({ tone: 'danger', message: 'Changes couldn’t be saved.' });
 ```
@@ -207,10 +209,10 @@ const id = toast.show({
 
 #### Placement and limit
 
-Toast.Provider's `defaultPlacement` is `bottom-end`, stacking upward from the bottom corner at the end of the line in the text direction, or `top-center`; `placement` on one notification overrides it. `visibleLimit`, 3 by default, is how many each placement shows at once.
+Toast.Provider's `defaultPlacement` is `bottom-end`, stacking upward from the bottom corner at the end of the line in the text direction, or `top-center`; `placement` on one notification overrides it. `limit`, 3 by default, is how many each placement shows at once.
 
 ```tsx
-<Toast.Provider defaultPlacement="top-center" visibleLimit={2}>
+<Toast.Provider defaultPlacement="top-center" limit={2}>
   <App />
 </Toast.Provider>
 ```
@@ -227,5 +229,5 @@ The parts are each placement's region, `env-toast-viewport`, with `data-placemen
 
 - **1.0.0-prerelease.5**: 16 px from its start edge to its icon or message, and 10 px between its parts.
 - **1.0.0**: No edge outside high contrast, where the tone's edge bounds it, and an alert's corners, 1.25 rem. The notifications' theme boundary, `env-toast-portal-theme`, is `env-toast-theme`, as Popup's is `env-popup-theme`.
-- **1.0.0**: `tone` for `variant`, with `danger` for `error`, and `ToastTone`; `bottom-end` for `bottom-right`, which follows the text direction, with the top-center stack centred in either direction; the region names, hidden count and dismiss button come from the provider's messages; danger notifications are alerts at once and always shown; the dismiss button is an IconButton with a cross; the manual `Toast` is gone.
+- **1.0.0**: `limit` for `visibleLimit`, as Base UI names it. `tone` for `variant`, with `danger` for `error`, and `ToastTone`; `bottom-end` for `bottom-right`, which follows the text direction, with the top-center stack centered in either direction; the region names, hidden count and dismiss button come from the provider's messages; danger notifications are alerts at once and always shown; the dismiss button is an IconButton with a cross; the manual `Toast` is gone.
 - **1.0.0**: `ToastProvider` is `Toast.Provider`, and `useToast` keeps its name. The manual `Toast` component and `ToastProps` are no longer exported; show notifications with `useToast` inside `Toast.Provider`.

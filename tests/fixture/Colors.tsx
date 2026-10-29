@@ -3,7 +3,7 @@ import {
   Theme,
   Button,
   IconButton,
-  Drawer,
+  NavigationDrawer,
   Column,
   Surface,
   Card,
@@ -18,7 +18,7 @@ import {
   Checkbox,
   Switch,
   Badge,
-  type ThemeValue,
+  type ColorScheme,
 } from '@envsemble/envui';
 import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 import { Home } from '@envsemble/envui/icons/Home';
@@ -34,7 +34,7 @@ const emphasis = {
   text: { variant: 'text' },
 } as const;
 
-export function ColorControls({ theme }: { theme: ThemeValue }) {
+export function ColorControls({ theme }: { theme: ColorScheme }) {
   const variants: readonly (keyof typeof emphasis)[] = [
     'primary',
     'secondary',
@@ -55,16 +55,16 @@ export function ColorControls({ theme }: { theme: ThemeValue }) {
         aria-label={`${theme} chevron`}
         data-testid={`${theme}-icon-button`}
       />
-      <Drawer
+      <NavigationDrawer
         aria-label={`${theme} navigation`}
         data-testid={`${theme}-navigation`}
         destinations={[
-          { label: `${theme} navigation`, icon: <Home />, onSelect: () => {} },
+          { label: `${theme} navigation`, icon: <Home />, onClick: () => {} },
           {
             label: `${theme} selected navigation`,
             icon: <Home />,
             current: true,
-            onSelect: () => {},
+            onClick: () => {},
           },
         ]}
       />

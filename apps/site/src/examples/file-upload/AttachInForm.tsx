@@ -62,7 +62,7 @@ export default function AttachInForm() {
             multiple
             label="Attach photos or documents"
             description="Any file up to 10 MB"
-            onDropAccepted={add}
+            onFilesAccepted={add}
           />
           <List.Root aria-label="Attached files">
             {uploads.map((upload) => (

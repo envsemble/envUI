@@ -142,7 +142,7 @@ export default function ConversationTile() {
       <Composer
         aria-label="Message the assistant"
         placeholder="Ask anything"
-        onSubmit={send}
+        onSend={send}
         running={replying}
         onStop={() => {
           window.clearInterval(timer.current);

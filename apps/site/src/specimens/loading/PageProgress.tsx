@@ -3,7 +3,8 @@ import { usePointer, type PointerStep } from '../../motion/Motion';
 import { MotionStage } from '../../motion/MotionStage';
 import { useStayOnPage } from '../navigation/StayOnPage';
 
-const place = (index: number) => `.env-rail-list > li:nth-child(${index}) .env-rail-item`;
+const place = (index: number) =>
+  `.env-navigation-rail-list > li:nth-child(${index}) .env-navigation-rail-item`;
 
 /*
  * The pointer presses Projects in the rail: the top bar's progress runs while Home stays, and

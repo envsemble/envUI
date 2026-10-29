@@ -10,7 +10,7 @@ import { IconButton } from '../../actions/Button.js';
 import { Tooltip } from '../../feedback/Tooltip.js';
 import { Row } from '../../foundations/Layout.js';
 import { PortalContainer } from '../../foundations/PortalContainer.js';
-import { Theme, type ThemeValue } from '../../foundations/Theme.js';
+import { Theme, type ColorScheme } from '../../foundations/Theme.js';
 import { ViewInAr } from '../../icons/ViewInAr.js';
 import { resizeRoot } from '../api.js';
 import { resolveRoot } from '../measure.js';
@@ -53,7 +53,7 @@ export interface DevModeController {
  * its root, or the root's own, which a nested Theme gives a page of another theme than the document,
  * else the document's first.
  */
-function pageTheme(root?: Element | string): ThemeValue {
+function pageTheme(root?: Element | string): ColorScheme {
   let element: Element | null | undefined;
   try {
     const resolved = resolveRoot(root);

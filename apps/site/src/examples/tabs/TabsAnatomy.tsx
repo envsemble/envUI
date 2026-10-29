@@ -1,4 +1,4 @@
-import { Button, Tabs, Text } from '@envsemble/envui';
+import { Tabs, Text } from '@envsemble/envui';
 
 export default function TabsAnatomy() {
   return (
@@ -7,10 +7,10 @@ export default function TabsAnatomy() {
       items={[
         {
           value: 'summary',
-          button: <Button>Summary</Button>,
+          label: 'Summary',
           content: <Text>Plans and owners for the launch.</Text>,
         },
-        { value: 'files', button: <Button>Files</Button>, content: <Text>Twelve files.</Text> },
+        { value: 'files', label: 'Files', content: <Text>Twelve files.</Text> },
       ]}
     />
   );

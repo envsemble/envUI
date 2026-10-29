@@ -146,7 +146,7 @@ Feedback doesn't move focus, with two exceptions.
 - `show({ tone, message, action })` shows a toast and returns its id; `tone` is `neutral`, `success`, `info` or `danger`.
 - A success or neutral toast closes after its `duration`, 5 seconds by default.
 - A danger toast, and one with an `action`, stays until dismissed unless `duration` is set.
-- The provider's `visibleLimit`, 3 by default, sets how many show at a time.
+- The provider's `limit`, 3 by default, sets how many show at a time.
 
 ```tsx source=SaveConfirmation
 
@@ -164,13 +164,13 @@ A toast with an `action`, such as `{ label: 'Download', onClick }`, stays until 
 
 #### Alerts
 
-A field's error is its `error` prop, as on the forms page. An Alert on the page from the start takes a `tone` and an `action`, and no `announce`, so it is read with the page; `announce` gives a warning or danger Alert the alert role, for one that appears because something just happened. After a refused form or failed save, a danger Alert with `tabIndex={-1}` and a ref takes focus.
+A field's error is its `error` prop, as on the forms page. An Alert on the page from the start takes a `tone` and `actions`, and no `announce`, so it is read with the page; `announce` gives a warning or danger Alert the alert role, for one that appears because something just happened. After a refused form or failed save, a danger Alert with `tabIndex={-1}` and a ref takes focus.
 
 ```tsx
 <Alert
   tone="warning"
   title="This project is read-only"
-  action={
+  actions={
     <Button variant="secondary" size="sm" onClick={requestAccess}>
       Request edit access
     </Button>
@@ -182,7 +182,7 @@ A field's error is its `error` prop, as on the forms page. An Alert on the page 
 
 #### Status and counts
 
-A Badge's `tone` adds to its words, one tone per status everywhere, such as `success` for On track and `warning` for At risk. A Drawer or Rail destination's `count` shows its unread items and is said with its label; 0 shows nothing. A count Badge's `aria-label` says what it counts, such as "12 unread".
+A Badge's `tone` adds to its words, one tone per status everywhere, such as `success` for On track and `warning` for At risk. A NavigationDrawer or NavigationRail destination's `count` shows its unread items and is said with its label; 0 shows nothing. A count Badge's `aria-label` says what it counts, such as "12 unread".
 
 ### Composition
 

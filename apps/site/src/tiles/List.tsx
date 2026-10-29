@@ -42,7 +42,7 @@ export default function ListTile() {
         <List.Item
           key={id}
           interactive
-          selected={id === current}
+          current={id === current}
           start={<Avatar name={name} size="sm" />}
           label={
             <Link

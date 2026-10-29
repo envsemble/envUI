@@ -11,7 +11,7 @@ export default function AttachDocuments() {
         multiple
         label="Attach documents"
         description="Any file, several at once"
-        onDropAccepted={(files) => setDocuments((current) => [...current, ...files])}
+        onFilesAccepted={(files) => setDocuments((current) => [...current, ...files])}
       />
       {documents.length > 0 && (
         <List.Root aria-label="Attached documents">
@@ -20,7 +20,7 @@ export default function AttachDocuments() {
               key={`${index}-${file.name}`}
               label={file.name}
               description={`${Math.max(1, Math.round(file.size / 1024))} KB`}
-              action={
+              end={
                 <Button
                   variant="text"
                   aria-label={`Remove ${file.name}`}

@@ -37,7 +37,7 @@ export default function ShowRecent() {
         inputValue={query}
         onInputValueChange={setQuery}
         items={items}
-        defaultItems={recent}
+        suggestedItems={recent}
         onAction={() => {}}
         emptyLabel="No matching documents"
       />

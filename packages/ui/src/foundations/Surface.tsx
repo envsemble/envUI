@@ -65,7 +65,7 @@ export type SurfaceProps<RenderedElement extends HTMLElement = HTMLDivElement> =
 
 /**
  * A container with a background, an inset and corners, but no layout of its own: spacing between
- * its children, alignment and behaviour come from what it holds, such as a Column. Card and other
+ * its children, alignment and behavior come from what it holds, such as a Column. Card and other
  * containers build on it.
  */
 export function Surface<RenderedElement extends HTMLElement = HTMLDivElement>({

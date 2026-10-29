@@ -97,7 +97,7 @@ A sheet has a dialog's surface, title, description and actions.
 - On a touch screen a swipe toward its edge closes it too.
 - A mouse or a pen never moves the sheet, and a drag inside it selects text.
 - In a sheet too short for all it holds, its content scrolls between the title and the actions, which stay in view.
-- A sheet is on the navigation's color, so a [Drawer](drawer.md) in it looks as it does at the window's edge; its fill and the backdrop set it apart.
+- A sheet is on the navigation's color, so a [NavigationDrawer](navigation-drawer.md) in it looks as it does at the window's edge; its fill and the backdrop set it apart.
 
 ### Inspector beside the page
 
@@ -210,7 +210,7 @@ With `modal={false}` the page stays usable beside the sheet. `disablePointerDism
 With `resizable`, people resize a side sheet by its inner edge, between `minWidth` and `maxWidth`, 16 and 60 rem by default, and never past the window.
 
 - The arrow keys on the handle resize it 1 rem, 5 rem with <kbd>Shift</kbd>.
-- It starts at `defaultWidth`; `width` and `onWidthChange` let the application keep the width, as a number of rem.
+- It starts at `defaultWidth`; `width` and `onWidthChange` let the application keep the width, as a number of rem; `onWidthChange` receives a `ResizeDetails`, `{ committed }`.
 - A CSS length as `width`, such as `min(30rem, 90%)`, is ignored then, with a warning while developing.
 - `resizeLabel` names the handle.
 

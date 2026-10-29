@@ -3,7 +3,7 @@ import {
   IconButton,
   Page,
   PageHeader,
-  Rail,
+  NavigationRail,
   Scaffold,
   Text,
   Tooltip,
@@ -26,7 +26,7 @@ export default function AppFrameAnatomy() {
       scroll="body"
       landmarks={false}
       style={{ blockSize: '18rem' }}
-      forms={{ compact: 'rail', medium: 'rail', expanded: 'rail', large: 'rail' }}
+      navigationForms={{ compact: 'rail', medium: 'rail', expanded: 'rail', large: 'rail' }}
       topBar={
         <TopBar
           title="Northwind"
@@ -40,7 +40,7 @@ export default function AppFrameAnatomy() {
           }
         />
       }
-      navigation={{ rail: <Rail destinations={destinations} /> }}
+      navigation={{ rail: <NavigationRail destinations={destinations} /> }}
     >
       <Page header={<PageHeader title="Projects" headingLevel={3} />}>
         <Text emphasis="muted">Four projects are active.</Text>

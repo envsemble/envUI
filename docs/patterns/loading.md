@@ -27,8 +27,8 @@ avoidWhen:
 composes:
   - Scaffold
   - TopBar
-  - Rail
-  - Drawer
+  - NavigationRail
+  - NavigationDrawer
   - Page
   - PageHeader
   - Card

@@ -28,7 +28,7 @@ avoidWhen:
   - text: Data compared across columns, or rows people sort by a value.
     use: Table
   - text: Destinations in an application's navigation.
-    use: Drawer
+    use: NavigationDrawer
   - text: A hierarchy people expand, such as folders.
     use: Tree
   - text: One choice from a few options shown as rows.
@@ -91,7 +91,7 @@ Rows pack more or less tightly, from extra small to large, which changes only th
 4. **Start** (`env-list-item-start > env-avatar`, `start`)
 5. **Content** (`env-list-item-content`, `label`)
 6. **Description** (`env-list-item-content > small`, `description`)
-7. **Action** (`env-list-item > env-button:last-child`, `action`)
+7. **End** (`env-list-item > env-button:last-child`, `end`)
 
 ## Behaviour
 
@@ -181,7 +181,7 @@ Keep the description to one fact that tells items apart, such as who changed it 
 
 ### Usage
 
-List.Root is a `ul` of List.Item rows, each with its `label`, a `description` below it, one short fact, an `action` at its end, such as a Button, and `children` after the description, such as a Badge. `start` holds content before the label, such as an Avatar, an icon or a Checkbox. Name the list with `aria-label` where its heading doesn't.
+List.Root is a `ul` of List.Item rows, each with its `label`, a `description` below it, one short fact, content at its `end`, such as a Button, and `children` after the description, such as a Badge. `start` holds content before the label, such as an Avatar, an icon or a Checkbox. Name the list with `aria-label` where its heading doesn't.
 
 ```tsx source=SettingsRows
 
@@ -200,7 +200,7 @@ With `interactive`, a row reacts to hover, keyboard focus inside it and presses.
     </Link>
   }
   description="Updated today by Sam Lee"
-  action={
+  end={
     <IconButton
       variant="text"
       icon={<MoreHoriz />}
@@ -213,10 +213,10 @@ With `interactive`, a row reacts to hover, keyboard focus inside it and presses.
 
 #### The current and checked rows
 
-`selected` marks the current row, such as the one whose details show beside the list, with the selected fill and `aria-current="true"` on its `data-row-target`, or on the row without one. A row whose `start` checkbox is checked takes the selected fill too; name each checkbox after its row.
+`current` marks the current row, such as the one whose details show beside the list, with the selected fill and `aria-current="true"` on its `data-row-target`, or on the row without one. A row whose `start` checkbox is checked takes the selected fill too; name each checkbox after its row.
 
 ```tsx
-<List.Item interactive selected={id === current} label="Roadmap" />
+<List.Item interactive current={id === shown} label="Roadmap" />
 ```
 
 #### Put in order
@@ -263,4 +263,5 @@ The parts are the list, `env-list`, each row, `env-list-item`, with its handle, 
 
 ## Changelog
 
-- **1.0.0**: List.Item takes `selected` for the current row, marked in the server's HTML, `start` for content before the label, such as an avatar or a checkbox, and `textValue`; List.Root takes `onReorder`, which moves rows by a drag handle, by keyboard, by a press and by pointer, with announcements. `GroupedRows` is `List.Root` and `Row` is `List.Item`, with the `env-list` and `env-list-item` classes; the page is `list`. List.Item's `title` is `label` and its `detail` is `description`. List.Root's `contrast` is gone: put the list directly in `<Surface background="muted" padding={3}>`, where its rows take the raised fill.
+- **1.0.0-prerelease.5**: List.Item's `selected` is `current`, as it marks the current row with `aria-current`; `selected` means chosen elsewhere.
+- **1.0.0**: List.Item takes `current` for the current row, marked in the server's HTML, `start` for content before the label, such as an avatar or a checkbox, and `textValue`; List.Root takes `onReorder`, which moves rows by a drag handle, by keyboard, by a press and by pointer, with announcements. `GroupedRows` is `List.Root` and `Row` is `List.Item`, with the `env-list` and `env-list-item` classes; the page is `list`. List.Item's `title` is `label`, its `detail` is `description` and its `action` is `end`, as on CommandPalette's items and Button. List.Root's `contrast` is gone: put the list directly in `<Surface background="muted" padding={3}>`, where its rows take the raised fill.

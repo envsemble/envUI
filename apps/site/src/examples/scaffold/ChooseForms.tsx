@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react';
-import { Drawer, Page, PageHeader, Scaffold, Text, TopBar } from '@envsemble/envui';
+import { NavigationDrawer, Page, PageHeader, Scaffold, Text, TopBar } from '@envsemble/envui';
 import { Home } from '@envsemble/envui/icons/Home';
 import { Settings } from '@envsemble/envui/icons/Settings';
 
@@ -14,11 +14,11 @@ export default function ChooseForms() {
       scroll="body"
       landmarks={false}
       style={preview}
-      forms={{ compact: 'none' }}
+      navigationForms={{ compact: 'none' }}
       topBar={<TopBar title="Settings" />}
       navigation={{
         drawer: (
-          <Drawer
+          <NavigationDrawer
             aria-label="Settings"
             destinations={[
               { label: 'General', icon: <Home />, href: '#general', current: true },

@@ -222,7 +222,7 @@ export function SiteSearch({
       inputValue={query}
       onInputValueChange={setQuery}
       items={items}
-      defaultItems={suggestions}
+      suggestedItems={suggestions}
       {...empty}
       hints={[
         { keys: ['Enter'], label: 'Open' },

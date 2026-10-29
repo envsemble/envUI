@@ -26,12 +26,12 @@ const states: Record<string, [state: string, rest: string]> = {
   ],
   'the selected tab': ['[role=tab] >> nth=0', '[role=tab] >> nth=1'],
   'the selected navigation item': [
-    '.env-drawer-item[data-current]',
-    '.env-drawer-item:not([data-current]) >> nth=0',
+    '.env-navigation-drawer-item[data-current]',
+    '.env-navigation-drawer-item:not([data-current]) >> nth=0',
   ],
   'the current rail destination': [
-    '.env-rail-item[data-current] .env-rail-indicator',
-    '.env-rail-item:not([data-current]) .env-rail-indicator >> nth=0',
+    '.env-navigation-rail-item[data-current] .env-navigation-rail-indicator',
+    '.env-navigation-rail-item:not([data-current]) .env-navigation-rail-indicator >> nth=0',
   ],
   'a checked checkbox': [
     '.env-checkbox:has-text("Checked") >> nth=0',
@@ -201,8 +201,8 @@ test(
         .evaluate((element) => getComputedStyle(element).backgroundColor);
     for (const selector of [
       '.env-segmented-control-item[data-checked]',
-      '.env-drawer-item[data-current]',
-      '.env-rail-item[data-current] .env-rail-indicator',
+      '.env-navigation-drawer-item[data-current]',
+      '.env-navigation-rail-item[data-current] .env-navigation-rail-indicator',
       "[role=treeitem][aria-selected='true']",
       '.env-calendar-day[aria-selected=true] > .env-calendar-day-mark',
       '[data-part=hour] .env-time-list-row[data-centered]',
@@ -213,7 +213,9 @@ test(
       expect(await background(selector), selector).toBe(system.highlight);
     // Where the system forces colors, an unselected item paints no fill of its own.
     if (browserName !== 'webkit')
-      expect(await background('.env-drawer-item:not([data-current])')).not.toBe(system.highlight);
+      expect(await background('.env-navigation-drawer-item:not([data-current])')).not.toBe(
+        system.highlight,
+      );
   },
 );
 
@@ -272,7 +274,11 @@ interface FocusCase {
 const focusCases: FocusCase[] = [
   // A text tab has no fill: its ring is drawn on the canvas.
   { name: 'the selected tab', ring: '[role=tab][aria-selected=true]', over: 'canvas' },
-  { name: 'the selected navigation item', ring: '.env-drawer-item[data-current]', over: 'fill' },
+  {
+    name: 'the selected navigation item',
+    ring: '.env-navigation-drawer-item[data-current]',
+    over: 'fill',
+  },
   // The ring is drawn inside the segment, on its fill, as the control clips what reaches past it.
   { name: 'the chosen segment', ring: '.env-segmented-control-item[data-checked]', over: 'fill' },
   {

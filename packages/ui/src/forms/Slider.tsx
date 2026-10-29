@@ -27,7 +27,7 @@ import '../styles/Base.css';
 import '../styles/Slider.css';
 
 export interface SliderProps
-  extends Omit<ComponentPropsWithRef<'div'>, 'defaultValue' | 'onChange' | 'children'> {
+  extends Omit<ComponentPropsWithRef<'div'>, 'defaultValue' | 'onChange' | 'children' | 'ref'> {
   /**
    * The value's name, inside the slider at its start, such as Opacity. It names the slider.
    */
@@ -37,6 +37,11 @@ export interface SliderProps
    * its description.
    */
   description?: ReactNode;
+  /**
+   * A message under the slider that says how to correct the value; it joins the slider's
+   * description, after the description.
+   */
+  error?: ReactNode;
   /** The value of a controlled slider; update it from onValueChange. */
   value?: number;
   /**
@@ -81,8 +86,12 @@ export interface SliderProps
   name?: string;
   /** The id of a form the slider belongs to when it sits outside of it. */
   form?: string;
-  /** The native range input, for example to focus it. */
-  inputRef?: Ref<HTMLInputElement>;
+  /**
+   * The native range input, which holds the value and takes focus, as a field's ref reaches its
+   * input: for example to focus it, or for a form library to register it. className, style and
+   * the other native props go to the root.
+   */
+  ref?: Ref<HTMLInputElement>;
 }
 
 /**
@@ -96,6 +105,7 @@ export interface SliderProps
 export function Slider({
   label,
   description,
+  error,
   value,
   defaultValue,
   onValueChange,
@@ -109,7 +119,6 @@ export function Slider({
   disabled = false,
   name,
   form,
-  inputRef,
   className,
   ref,
   onFocus,
@@ -118,7 +127,7 @@ export function Slider({
   ...props
 }: SliderProps) {
   // The arrow keys follow the text direction: Base UI reads it from its DirectionProvider.
-  const scope = useDirectionScope(ref);
+  const scope = useDirectionScope<HTMLDivElement>();
   const id = useId();
   const providedLocale = useLocale();
   const input = useRef<HTMLInputElement>(null);
@@ -225,7 +234,11 @@ export function Slider({
   // Faint ticks mark the steps, or, where they are many, the large steps, so they never crowd.
   const ticks = tickCount(min, max, step, largeStep);
   const describedByIds =
-    [describedBy, description != null ? fieldMessageIds(id).description : undefined]
+    [
+      describedBy,
+      description != null ? fieldMessageIds(id).description : undefined,
+      error != null ? fieldMessageIds(id).error : undefined,
+    ]
       .filter(Boolean)
       .join(' ') || undefined;
   return (
@@ -264,7 +277,7 @@ export function Slider({
         name={name}
         form={form}
       >
-        <FieldFrame id={id} description={description}>
+        <FieldFrame id={id} description={description} error={error}>
           <BaseSlider.Control
             ref={control}
             className="env-slider-control"
@@ -291,7 +304,7 @@ export function Slider({
                 className="env-slider-thumb"
                 inputRef={(node: HTMLInputElement | null) => {
                   input.current = node;
-                  setRef(inputRef, node);
+                  setRef(ref, node);
                 }}
                 aria-describedby={describedByIds}
                 getAriaValueText={(formatted, number) =>

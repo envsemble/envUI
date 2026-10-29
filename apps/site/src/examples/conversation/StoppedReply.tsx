@@ -64,7 +64,7 @@ export default function StoppedReply() {
         ref={composer}
         aria-label="Message the assistant"
         placeholder="Ask anything"
-        onSubmit={(text) => {
+        onSend={(text) => {
           setQuestion(text);
           tryAgain();
         }}

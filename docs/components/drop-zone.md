@@ -155,7 +155,7 @@ Say what to add in the label, and which files fit in the description.
 A DropZone takes dropped files and opens the file picker when pressed.
 
 - `label` says what to add and `description` which files fit; together they name the zone.
-- `onDropAccepted` receives the files it takes.
+- `onFilesAccepted` receives the files it takes.
 - `icon` replaces the upload icon.
 
 ```tsx source=LogoUpload
@@ -164,7 +164,7 @@ A DropZone takes dropped files and opens the file picker when pressed.
 
 #### Accept, several files and errors
 
-`accept` filters dropped and chosen files, as the native attribute does, with MIME types such as `image/png`, groups such as `image/*` and extensions such as `.webp`; any file by default. Without `multiple` the zone takes the first file. Files that don't fit, and those after the first without `multiple`, go to `onDropRejected`. Check size and contents yourself, and show the message in `error`, which takes the error color on the zone's outline. `disabled` turns the zone off; it still keeps the browser from opening dropped files.
+`accept` filters dropped and chosen files, as the native attribute does, with MIME types such as `image/png`, groups such as `image/*` and extensions such as `.webp`; any file by default. Without `multiple` the zone takes the first file. Files that don't fit, and those after the first without `multiple`, go to `onFilesRejected`. Check size and contents yourself, and show the message in `error`, which takes the error color on the zone's outline. `disabled` turns the zone off; it still keeps the browser from opening dropped files.
 
 ```tsx
 <DropZone
@@ -173,8 +173,8 @@ A DropZone takes dropped files and opens the file picker when pressed.
   label="Drop documents here, or browse"
   description="PDF up to 10 MB each"
   error={error}
-  onDropAccepted={(files) => setDocuments((current) => [...current, ...files])}
-  onDropRejected={() => setError('Only PDF files can be attached.')}
+  onFilesAccepted={(files) => setDocuments((current) => [...current, ...files])}
+  onFilesRejected={() => setError('Only PDF files can be attached.')}
 />
 ```
 
@@ -188,7 +188,7 @@ While `pending`, a spinner replaces the icon, the zone reports `aria-busy` and t
   label={uploading ? `Uploading ${uploading}` : 'Drop a report here, or browse'}
   description={uploading ? 'This takes a moment' : 'PDF up to 10 MB'}
   accept="application/pdf,.pdf"
-  onDropAccepted={upload}
+  onFilesAccepted={upload}
 />
 ```
 
@@ -198,7 +198,7 @@ While `pending`, a spinner replaces the icon, the zone reports `aria-busy` and t
 
 #### In a form
 
-With `name`, a native form submits the last files the zone took, dropped ones too, and a reset clears them; `new FormData(form).getAll('attachments')` reads them, with an empty entry when there are none. `files` hands the zone the files the application keeps, such as after a Remove, and replaces the ones it took. `form` names a form the zone sits outside of, and `inputRef` reaches the native file input, to open the picker from a Replace button.
+With `name`, a native form submits the last files the zone took, dropped ones too, and a reset clears them; `new FormData(form).getAll('attachments')` reads them, with an empty entry when there are none. `files` hands the zone the files the application keeps, such as after a Remove, and replaces the ones it took. `form` names a form the zone sits outside of, and `inputRef` reaches the native file input, to open the picker from a Replace button. `ref` reaches the zone itself: unlike a field's input, the file input holds no value a form library could register.
 
 ```tsx
 <form onSubmit={send}>
@@ -220,5 +220,5 @@ The zone's frame is Field's root and error. Its parts are the zone, `env-drop-zo
 
 ## Changelog
 
-- **1.0.0**: `onFiles` is `onDropAccepted` and `onReject` is `onDropRejected`. The zone is named by what it shows, its label and its description, and described by its error. Its frame is Field's root and error.
+- **1.0.0**: `onFiles` is `onFilesAccepted` and `onReject` is `onFilesRejected`; they run for dropped and browsed files alike. The zone is named by what it shows, its label and its description, and described by its error. Its frame is Field's root and error.
 - **1.0.0**: `FileDropzone` is `DropZone`, with the `env-drop-zone-*` classes; the page is `drop-zone`.

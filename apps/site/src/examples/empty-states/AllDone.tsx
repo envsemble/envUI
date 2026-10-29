@@ -35,7 +35,7 @@ export default function AllDone() {
               key={review.id}
               label={review.title}
               description={`From ${review.author}`}
-              action={
+              end={
                 <Button
                   variant="secondary"
                   size="sm"

@@ -6,7 +6,7 @@ import { FolderOpen } from '@envsemble/envui/icons/FolderOpen';
 const rowsFor = (open: boolean): TreeItem[] =>
   [
     {
-      id: 'design',
+      value: 'design',
       depth: 0,
       label: 'Design',
       icon: <FolderOpen />,
@@ -15,7 +15,7 @@ const rowsFor = (open: boolean): TreeItem[] =>
       end: <Badge count={2} aria-label="2 unread" />,
     },
     {
-      id: 'design/brand.md',
+      value: 'design/brand.md',
       depth: 1,
       label: 'Brand.md',
       icon: <Description />,
@@ -30,8 +30,8 @@ export default function TreeAnatomy() {
       <Tree
         aria-label="Files"
         items={rowsFor(open)}
-        onAction={(row) => row.id === 'design' && setOpen(!open)}
-        onExpandedChange={(row, expanded) => row.id === 'design' && setOpen(expanded)}
+        onAction={(row) => row.value === 'design' && setOpen(!open)}
+        onExpandedChange={(row, expanded) => row.value === 'design' && setOpen(expanded)}
       />
     </div>
   );

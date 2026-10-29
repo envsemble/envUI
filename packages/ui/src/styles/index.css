@@ -14,9 +14,9 @@
 @import './Toolbar.css';
 @import './CopyButton.css';
 @import './SegmentedControl.css';
-@import './Bar.css';
-@import './Rail.css';
-@import './Drawer.css';
+@import './NavigationBar.css';
+@import './NavigationRail.css';
+@import './NavigationDrawer.css';
 @import './Card.css';
 @import './Disclosure.css';
 @import './Accordion.css';

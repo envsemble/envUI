@@ -22,7 +22,7 @@ export default function ConversationAnatomy() {
         </Message>
         <Message from="self">Remind Sam Lee about the pricing page.</Message>
       </MessageList>
-      <Composer aria-label="Message the assistant" placeholder="Ask anything" onSubmit={send} />
+      <Composer aria-label="Message the assistant" placeholder="Ask anything" onSend={send} />
     </Column>
   );
 }

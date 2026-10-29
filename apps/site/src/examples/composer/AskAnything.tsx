@@ -28,7 +28,7 @@ export default function AskAnything() {
         placeholder="Ask anything"
         value={draft}
         onValueChange={setDraft}
-        onSubmit={send}
+        onSend={send}
         running={running}
         onStop={stop}
       />

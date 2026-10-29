@@ -18,16 +18,16 @@ Install an exact release and follow [setup](setup.md): the registry, styles, `Th
 
 Start with a small slice that takes in routing, a form or an overlay, not only a static button, then widen it through its callers. Read the page of each component before you adopt it:
 
-| What the application has                        | What envUI offers                                         |
-| ----------------------------------------------- | --------------------------------------------------------- |
-| Text, panels, vertical layouts, rows of actions | Text, Surface, Column, Row, Grid                          |
-| Buttons, inline links, icon buttons             | Button, Link, IconButton, ButtonGroup                     |
-| Side navigation and the current destination     | Bar, Rail or Drawer, with `current` from the router       |
-| Cards                                           | Card                                                      |
-| Fields and choices                              | TextField, Textarea, Select, Checkbox, RadioGroup, Switch |
-| Dialogs, inspectors and notifications           | Dialog, Sheet, Toast.Provider with useToast               |
-| Loading and empty results                       | `skeleton`, Spinner with `showLabel`, empty states        |
-| Code, Markdown and formatted text               | The content and rich-text entries                         |
+| What the application has                        | What envUI offers                                                                 |
+| ----------------------------------------------- | --------------------------------------------------------------------------------- |
+| Text, panels, vertical layouts, rows of actions | Text, Surface, Column, Row, Grid                                                  |
+| Buttons, inline links, icon buttons             | Button, Link, IconButton, ButtonGroup                                             |
+| Side navigation and the current destination     | NavigationBar, NavigationRail or NavigationDrawer, with `current` from the router |
+| Cards                                           | Card                                                                              |
+| Fields and choices                              | TextField, Textarea, Select, Checkbox, RadioGroup, Switch                         |
+| Dialogs, inspectors and notifications           | Dialog, Sheet, Toast.Provider with useToast                                       |
+| Loading and empty results                       | `skeleton`, Spinner with `showLabel`, empty states                                |
+| Code, Markdown and formatted text               | The content and rich-text entries                                                 |
 
 - Move behaviour, not props: keep labels and accessible names, links and router state, callback payloads, refs, form names and reset, where focus returns, and when a change is saved.
 - Check the type of each button inside a form, and whether a dialog may close while its work is pending.

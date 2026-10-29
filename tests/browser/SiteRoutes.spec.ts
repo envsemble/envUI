@@ -55,8 +55,9 @@ test('the addresses of the views before the catalogue and the Docs split open th
     'dev-mode': 'docs/dev-mode',
     'dev-mode?section=opening-it': 'docs/dev-mode?section=opening-it',
     // Pages folded into another open it, at the section that holds them, and in the Docs its page.
-    'components/bar': 'components/drawer',
-    'components/rail/props': 'docs/components/drawer',
+    'components/bar': 'components/navigation-drawer',
+    'components/rail/props': 'docs/components/navigation-drawer',
+    'components/drawer': 'components/navigation-drawer',
     'components/page-header?section=sticky': 'components/page?section=sticky',
     'docs/components/page-header': 'docs/components/page',
     'patterns/feature-cards': 'components/card?section=feature-card',

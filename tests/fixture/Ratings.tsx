@@ -4,7 +4,7 @@ import {
   EnvUIProvider,
   Rating,
   Theme,
-  type ThemeValue,
+  type ColorScheme,
 } from '@envsemble/envui';
 
 /** German names for the stars, from the provider's messages. */
@@ -15,7 +15,7 @@ const german = {
 };
 
 /** Read-only ratings and a color swatch on a button, mounted with ?fixture=ratings. */
-export function RatingsFixture({ theme }: { theme: ThemeValue }) {
+export function RatingsFixture({ theme }: { theme: ColorScheme }) {
   return (
     <Theme theme={theme} data-testid={`ratings-${theme}`} className="fixture-section">
       <Rating value={3.5} showValue data-testid={`rating-half-${theme}`} />

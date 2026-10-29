@@ -14,7 +14,7 @@ avoidWhen:
   - text: The main action in the primary color, or a danger action.
     use: Button
   - text: Navigation whose selected place takes the selected color.
-    use: Drawer
+    use: NavigationDrawer
   - text: Letting people pick a color of their own.
     use: ColorPicker
   - text: A short status in its tone, with words.
@@ -98,6 +98,10 @@ An area can take a color scheme of its own, such as a brand's; every component i
 
 A tone always comes with words or an icon, so nobody has to tell colors apart.
 
+### Outlined and filled
+
+Fields that hold a value are outlined; what you press or drag keeps the filled gray.
+
 ## Words to use
 
 Ask an agent for color in these words; envUI turns each into a role.
@@ -138,7 +142,7 @@ function ThemeLabel() {
 | Theme scale             | comfortable or compact, the app's [scale](spacing.md); inherited from the enclosing Theme                                                                    |
 | useTheme()              | `{ theme, contrast, scale }` of the nearest Theme, also across envUI's portals                                                                               |
 | ThemePreferenceProvider | Stores the preference, follows the system and other windows, and themes the document root; see [setup](../setup.md)                                          |
-| useThemePreference()    | `preference` (light, dark or system), the resolved `theme`, `setPreference` and `toggleTheme`                                                                |
+| useThemePreference()    | A `ThemePreferenceValue`: `preference` (light, dark or system), the resolved `theme`, `setPreference` and `toggleTheme`                                      |
 | ThemeToggle             | An IconButton that switches between light and dark                                                                                                           |
 
 #### The words of the figures

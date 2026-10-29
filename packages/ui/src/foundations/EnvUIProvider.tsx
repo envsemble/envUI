@@ -28,6 +28,7 @@ export interface EnvUIProviderProps {
    * from dir attributes and CSS. It doesn't set the dir attribute: set that on the page or region.
    */
   dir?: Direction;
+  /** The application, or the part of it that takes these messages, locale and direction. */
   children?: ReactNode;
 }
 

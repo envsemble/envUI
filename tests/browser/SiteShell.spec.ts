@@ -162,13 +162,13 @@ test('the navigation holds the wordmark and search, the page the other area and 
     const drawer = (await page.locator('.site-sidebar').boundingBox())!;
     expect(field!.width).toBeLessThan(drawer.width - 24);
     // The list may be scrolled to the current page: where it starts is where its first item does.
-    const first = (await page.locator('.site-sidebar .env-drawer-list').boundingBox())!;
+    const first = (await page.locator('.site-sidebar .env-navigation-drawer-list').boundingBox())!;
     if (brand === 'Catalogue') {
       const left = field!.x - drawer.x;
       const right = drawer.x + drawer.width - (field!.x + field!.width);
       expect(Math.abs(left - right), address).toBeLessThan(2);
       const destination = (await page
-        .locator('.catalogue-rail .env-rail-item')
+        .locator('.catalogue-rail .env-navigation-rail-item')
         .first()
         .boundingBox())!;
       expect(Math.abs(first.y - destination.y), address).toBeLessThan(1);
@@ -241,10 +241,10 @@ test("every label and heading of the catalogue's and the Docs' drawers fits on o
   for (const path of [...catalogueSections.map((section) => sectionHome(section).path), 'docs']) {
     await page.goto(`${siteDevUrl}/${path}`);
     const drawer = page.locator('.site-sidebar');
-    await expect(drawer.locator('.env-drawer-item').first()).toBeVisible();
+    await expect(drawer.locator('.env-navigation-drawer-item').first()).toBeVisible();
     // The drawer keeps each on one line, cut short where it doesn't fit: none may be cut.
     const cut = await drawer
-      .locator('.env-drawer-label, .env-drawer-group-label')
+      .locator('.env-navigation-drawer-label, .env-navigation-drawer-group-label')
       .evaluateAll((elements) =>
         elements
           .filter((element) => element.scrollWidth > element.clientWidth)

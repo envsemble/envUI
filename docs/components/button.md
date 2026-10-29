@@ -311,6 +311,8 @@ The label's parts are flex items the button's gap spaces apart, such as its word
 
 Parts the anatomy doesn't show: the spinner, `env-button-spinner`, the end slot, `env-button-end`, and the group, `env-button-group`. A container that sets `--env-icon-button-hit-area: var(--env-control-height-touch)` gives its smaller icon buttons the touch size under a coarse pointer, as Alert and Toast do for their close buttons.
 
+A wrapper of your own that passes a variant and a tone on types them as Button does: `ButtonEmphasisProps`, the designed pairs of `variant` and `tone`, `IconButtonEmphasisProps`, IconButton's, and `ButtonAppearanceProps`, the pairs with `size`, `fullWidth` and `underline`.
+
 ## Changelog
 
 - **1.0.0-prerelease.5**: An outline button is an edge with no fill at rest, the same on the page, a pane, a card or a popup; hover and press lay a state layer over the surface beneath it.

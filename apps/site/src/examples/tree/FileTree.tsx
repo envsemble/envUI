@@ -56,13 +56,13 @@ export default function FileTree() {
       for (const node of nodes) {
         const open = expanded.has(node.path);
         visible.push({
-          id: node.path,
+          value: node.path,
           depth,
           label: node.name,
           expandable: Boolean(node.children),
           expanded: open,
           icon: node.children ? open ? <FolderOpen /> : <Folder /> : <Description />,
-          title: node.path,
+          tooltip: node.path,
         });
         if (node.children && open) visit(node.children, depth + 1);
       }
@@ -85,9 +85,9 @@ export default function FileTree() {
         items={rows}
         value={selected}
         onAction={(row) =>
-          row.expandable ? setFolder(row.id, !row.expanded) : setSelected(row.id)
+          row.expandable ? setFolder(row.value, !row.expanded) : setSelected(row.value)
         }
-        onExpandedChange={(row, open) => setFolder(row.id, open)}
+        onExpandedChange={(row, open) => setFolder(row.value, open)}
       />
     </div>
   );

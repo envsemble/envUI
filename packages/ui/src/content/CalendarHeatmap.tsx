@@ -19,17 +19,17 @@ import { TooltipPopup, tooltipDelay } from '../internal/TooltipPopup.js';
 import { classNames } from '../internal/classNames.js';
 import { Grid, Row } from '../foundations/Layout.js';
 import { useMessages } from '../internal/EnvUIContext.js';
-import { useFormatters } from '../internal/useFormatters.js';
+import { useFormatters, useResolvedLocale } from '../internal/useFormatters.js';
 import { calendarHeatmap as calendarHeatmapMessages } from '../foundations/messages/calendarHeatmap.js';
 import type { BadgeTone } from './Badge.js';
 import { isRightToLeft } from '../internal/direction.js';
-import { dayParts } from '../internal/calendarDays.js';
+import { reportInDevelopment } from '../internal/developmentReport.js';
+import { dayParts, localeWeekStart, parseDay, type Weekday } from '../internal/calendarDays.js';
 import { day as dayMilliseconds } from '../internal/durations.js';
 import {
   calendarHeatmapModel,
   levelMix,
   localeNames,
-  parseDay,
   type CalendarHeatmapModel,
 } from './internal/calendarHeatmapModel.js';
 import '../styles/Base.css';
@@ -67,8 +67,11 @@ interface CalendarHeatmapOptions {
    * first threshold shows as empty, and a first threshold of 0 or less colors days of 0 too.
    */
   thresholds?: readonly number[];
-  /** The first day of each week column: 0 for Sunday (default) or 1 for Monday. */
-  weekStart?: 0 | 1;
+  /**
+   * The first day of each week column, from 0 for Sunday to 6 for Saturday, as on Calendar.
+   * @default the locale's, or Monday where the browser cannot tell
+   */
+  weekStart?: Weekday;
   /** The tone the colors are mixed from: primary by default. */
   tone?: BadgeTone;
   /**
@@ -82,7 +85,7 @@ interface CalendarHeatmapOptions {
    */
   formatDate?: (date: string) => string;
   /** Tooltip content for a day; the date and value by default. */
-  formatTooltip?: (day: CalendarHeatmapCell) => ReactNode;
+  renderTooltip?: (day: CalendarHeatmapCell) => ReactNode;
   /**
    * Twelve month names above the weeks, from January.
    * @default the locale's short month names, from Intl
@@ -136,11 +139,11 @@ export function CalendarHeatmap({
   levels = 5,
   maxValue,
   thresholds,
-  weekStart = 0,
+  weekStart: ownWeekStart,
   tone = 'primary',
   formatValue: ownFormatValue,
   formatDate: ownFormatDate,
-  formatTooltip,
+  renderTooltip,
   monthLabels: ownMonthLabels,
   weekdayLabels: ownWeekdayLabels,
   lessLabel: ownLessLabel,
@@ -156,6 +159,11 @@ export function CalendarHeatmap({
   const lessLabel = ownLessLabel ?? messages.less;
   const moreLabel = ownMoreLabel ?? messages.more;
   const formatters = useFormatters();
+  const resolvedLocale = useResolvedLocale();
+  const weekStart = useMemo(
+    () => ownWeekStart ?? localeWeekStart(resolvedLocale),
+    [ownWeekStart, resolvedLocale],
+  );
   const names = useMemo(() => localeNames(formatters), [formatters]);
   const monthLabels = ownMonthLabels ?? names.months;
   const weekdayLabels = ownWeekdayLabels ?? names.weekdays;
@@ -208,6 +216,16 @@ export function CalendarHeatmap({
       formatDate,
       monthLabels,
     ],
+  );
+
+  // A date it can't read, such as 2026-02-31, is left out rather than moved to another day: said
+  // while developing, once.
+  reportInDevelopment(
+    () =>
+      process.env.NODE_ENV !== 'production' &&
+      model.invalid.length > 0 &&
+      `CalendarHeatmap leaves out dates it can't read, such as ${JSON.stringify(model.invalid[0])}: write each as YYYY-MM-DD, a day that exists.`,
+    { level: 'warn' },
   );
 
   const [activeDay, setActiveDay] = useState<number>();
@@ -462,8 +480,8 @@ export function CalendarHeatmap({
           }}
           content={
             shown &&
-            (formatTooltip
-              ? formatTooltip({
+            (renderTooltip
+              ? renderTooltip({
                   date: shown.date,
                   value: shown.value,
                   label: shown.label,
@@ -486,7 +504,7 @@ const CalendarHeatmapDays = memo(function CalendarHeatmapDays({
 }: {
   model: CalendarHeatmapModel;
   active: number;
-  weekStart: 0 | 1;
+  weekStart: Weekday;
   weekdayLabels: readonly string[];
 }) {
   const weeks = Array.from({ length: model.weeks }, (_, week) => week);

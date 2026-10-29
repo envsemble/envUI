@@ -53,7 +53,15 @@ test('a component lists its color properties, each registered so it does not inh
   ]);
   // IconButton is a Button, and takes its properties.
   assert.deepEqual(colors('IconButton'), colors('Button'));
-  for (const name of ['Card', 'List', 'Drawer', 'TextField', 'Checkbox', 'Switch', 'Slider'])
+  for (const name of [
+    'Card',
+    'List',
+    'NavigationDrawer',
+    'TextField',
+    'Checkbox',
+    'Switch',
+    'Slider',
+  ])
     assert.ok(colors(name).length > 0, `${name} lists its color properties`);
   for (const entry of Object.values(parts.components))
     for (const color of entry.colors ?? []) {

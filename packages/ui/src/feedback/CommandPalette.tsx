@@ -22,6 +22,7 @@ import { Search } from '../icons/Search.js';
 import { SearchOff } from '../icons/SearchOff.js';
 import { Kbd } from '../content/Kbd.js';
 import { DialogBackdrop, OverlayTheme } from './internal/DialogParts.js';
+import type { DialogOpenChangeReason } from './Dialog.js';
 import { ResetControlDefaults } from '../internal/ControlDefaults.js';
 import {
   containedModal,
@@ -59,17 +60,26 @@ export interface CommandPaletteHint {
   label: ReactNode;
 }
 
-export interface CommandPaletteActionOptions {
+export interface CommandPaletteActionDetails {
   /** Ctrl or Cmd was held, for example to open beside the current document. */
   modifier: boolean;
+}
+
+/** What CommandPalette's onOpenChange receives beside the requested state. */
+export interface CommandPaletteOpenChangeDetails {
+  /**
+   * Why the palette asks to close: a dialog's reasons, such as escape-key or outside-press, or
+   * item-press when a chosen option closes it under closeOnAction.
+   */
+  reason: DialogOpenChangeReason | 'item-press';
 }
 
 export interface CommandPaletteProps
   extends Omit<ComponentPropsWithRef<'div'>, 'children' | 'defaultValue' | 'onChange'> {
   /** Whether the palette is open; the application opens it, such as from a shortcut. */
   open: boolean;
-  /** Called with false when Esc, a press on the backdrop or a choice closes the palette. */
-  onOpenChange: (open: boolean) => void;
+  /** Called with false, and why, when Esc, a press on the backdrop or a choice closes the palette. */
+  onOpenChange: (open: boolean, details: CommandPaletteOpenChangeDetails) => void;
   /** Accessible name of the dialog, the search field and the list. */
   'aria-label': string;
   /** The text in the search field. */
@@ -82,9 +92,9 @@ export interface CommandPaletteProps
    * Shown in place of items while the search field is empty, such as recent documents or
    * suggested pages under a group heading; options like any other.
    */
-  defaultItems?: readonly CommandPaletteItem[];
+  suggestedItems?: readonly CommandPaletteItem[];
   /** Enter or a press on an option; Ctrl or Cmd sets modifier. */
-  onAction: (item: CommandPaletteItem, options: CommandPaletteActionOptions) => void;
+  onAction: (item: CommandPaletteItem, details: CommandPaletteActionDetails) => void;
   /**
    * Close after an option is chosen.
    * @default true
@@ -99,14 +109,14 @@ export interface CommandPaletteProps
    */
   emptyLabel?: ReactNode;
   /**
-   * Quieter text under the empty state's title, such as what the palette searches; null shows
-   * none.
+   * Quieter text under the empty state's title, such as what the palette searches; null or false
+   * shows none.
    * @default None while the search field is empty; when its text finds nothing, 'Nothing matches
    * “…”. Check the spelling or try other words.', or messages.commandPalette.emptyHint
    */
   emptyDescription?: ReactNode;
   /**
-   * The empty state's decorative icon, above its title; null shows none.
+   * The empty state's decorative icon, above its title; null or false shows none.
    * @default Search while the search field is empty, SearchOff when its text finds nothing
    */
   emptyIcon?: ReactNode;
@@ -150,7 +160,7 @@ export function CommandPalette({
   inputValue,
   onInputValueChange,
   items: results,
-  defaultItems,
+  suggestedItems,
   onAction,
   closeOnAction = true,
   placeholder,
@@ -172,7 +182,7 @@ export function CommandPalette({
   const list = useRef<HTMLDivElement>(null);
   const query = inputValue.trim();
   // Until people type, the default items, where there are any, show in place of the results.
-  const items = query === '' && defaultItems ? defaultItems : results;
+  const items = query === '' && suggestedItems ? suggestedItems : results;
   const sections = sectionsOf(items);
   const grouped = sections.some((section) => section.label !== undefined);
   // With no options, the empty state invites a search before people type, and says what to try
@@ -191,7 +201,7 @@ export function CommandPalette({
   function act(item: CommandPaletteItem, modifier: boolean) {
     if (item.disabled) return;
     onAction(item, { modifier });
-    if (closeOnAction) onOpenChange(false);
+    if (closeOnAction) onOpenChange(false, { reason: 'item-press' });
   }
 
   /** Options that fit in the list's height, for Page Up and Page Down. */
@@ -253,7 +263,7 @@ export function CommandPalette({
           eventDetails.cancel();
           return;
         }
-        onOpenChange(next);
+        onOpenChange(next, { reason: eventDetails.reason as DialogOpenChangeReason });
       }}
       modal={containedModal(portal, true)}
     >
@@ -352,13 +362,13 @@ export function CommandPalette({
                   >
                     {empty ? (
                       <>
-                        {icon != null && (
+                        {icon != null && icon !== false && (
                           <span className="env-command-palette-empty-icon">
                             <DecorativeIcon>{icon}</DecorativeIcon>
                           </span>
                         )}
                         <span className="env-command-palette-empty-title">{title}</span>
-                        {description != null && (
+                        {description != null && description !== false && (
                           <>
                             {/* A space between the lines, so they are read as two. */}{' '}
                             <span className="env-command-palette-empty-description">

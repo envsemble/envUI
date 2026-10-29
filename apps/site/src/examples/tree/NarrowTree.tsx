@@ -6,7 +6,7 @@ import { FolderOpen } from '@envsemble/envui/icons/FolderOpen';
 const rowsFor = (open: boolean): TreeItem[] =>
   [
     {
-      id: 'eng',
+      value: 'eng',
       depth: 0,
       label: 'Engineering',
       icon: <FolderOpen />,
@@ -14,14 +14,14 @@ const rowsFor = (open: boolean): TreeItem[] =>
       expanded: open,
     },
     {
-      id: 'eng/checklist.md',
+      value: 'eng/checklist.md',
       depth: 1,
       label: 'Release checklist.md',
       icon: <Description />,
       description: 'Shared',
     },
     {
-      id: 'eng/roadmap.md',
+      value: 'eng/roadmap.md',
       depth: 1,
       label: 'Roadmap.md',
       icon: <Description />,
@@ -37,8 +37,8 @@ export default function NarrowTree() {
       <Tree
         aria-label="Files"
         items={rowsFor(open)}
-        onAction={(row) => row.id === 'eng' && setOpen(!open)}
-        onExpandedChange={(row, expanded) => row.id === 'eng' && setOpen(expanded)}
+        onAction={(row) => row.value === 'eng' && setOpen(!open)}
+        onExpandedChange={(row, expanded) => row.value === 'eng' && setOpen(expanded)}
       />
     </div>
   );

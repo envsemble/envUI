@@ -49,7 +49,7 @@ export interface TopBarProps
    * The bar's background, named as Surface's and Card's: default, the navigation's background,
    * the default surface color, as a plain rectangle; page, the page's background, so it sits on the
    * page. On a surface, such as a Sheet, both take the surface's color. Set it on its own, such as
-   * a TopBar with page over a Drawer with its background.
+   * a TopBar with page over a NavigationDrawer with its background.
    * @default 'default'
    */
   background?: NavigationBackground;

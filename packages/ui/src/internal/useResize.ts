@@ -10,6 +10,7 @@ import {
 } from 'react';
 import { useEnvUI } from './EnvUIContext.js';
 import { remPixels, roundToHundredth } from './lengths.js';
+import type { ResizeDetails } from './resizeDetails.js';
 
 export interface ResizeOptions {
   /**
@@ -45,7 +46,7 @@ export interface ResizeOptions {
    * more with committed true as the drag ends or a key moves it. A cancelled drag ends at the size
    * it began with.
    */
-  onChange: (value: number, details: { committed: boolean }) => void;
+  onChange: (value: number, details: ResizeDetails) => void;
   /** The size as words, such as 240 pixels or Narrow, for assistive technology. */
   valueText?: (value: number) => string;
   /**

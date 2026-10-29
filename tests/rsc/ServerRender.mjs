@@ -134,10 +134,10 @@ const list = render(
     { 'aria-label': 'Plans' },
     h(ui.List.Item, {
       interactive: true,
-      selected: true,
+      current: true,
       label: h('a', { href: '/plans/launch', 'data-row-target': true }, 'Launch'),
     }),
-    h(ui.List.Item, { label: 'Roadmap', selected: true }),
+    h(ui.List.Item, { label: 'Roadmap', current: true }),
     h(ui.List.Item, { label: 'Budget', start: h('span', null, 'B') }),
   ),
 );

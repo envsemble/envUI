@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { Button, ButtonGroup, IconButton, Column, Theme, type ThemeValue } from '@envsemble/envui';
+import { Button, ButtonGroup, IconButton, Column, Theme, type ColorScheme } from '@envsemble/envui';
 import { Add } from '@envsemble/envui/icons/Add';
 import { Check } from '@envsemble/envui/icons/Check';
 import { ExpandMore } from '@envsemble/envui/icons/ExpandMore';
 import { Settings } from '@envsemble/envui/icons/Settings';
 
-export function ButtonGroupsFixture({ theme }: { theme: ThemeValue }) {
+export function ButtonGroupsFixture({ theme }: { theme: ColorScheme }) {
   const [activations, setActivations] = useState(0);
   const [ends, setEnds] = useState(true);
   return (

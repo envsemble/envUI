@@ -1,4 +1,4 @@
-import { Button, Column, Row, Surface, Tabs, Text } from '@envsemble/envui';
+import { Column, Row, Surface, Tabs, Text } from '@envsemble/envui';
 import type { ReactNode } from 'react';
 import { ArrowForward } from '@envsemble/envui/icons/ArrowForward';
 
@@ -58,7 +58,7 @@ export default function FillARegion() {
         items={[
           {
             value: 'canvas',
-            button: <Button>Canvas</Button>,
+            label: 'Canvas',
             content: (
               <View>
                 <Diagram />
@@ -67,7 +67,7 @@ export default function FillARegion() {
           },
           {
             value: 'outline',
-            button: <Button>Outline</Button>,
+            label: 'Outline',
             content: (
               <View>
                 <Outline />

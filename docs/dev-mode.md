@@ -91,12 +91,12 @@ envui.layout.at(['22rem', '40rem', '60rem', '80rem']); // both, at each width in
 envui.layout.at([{ width: 393, height: 852 }]); // or at a width and height, such as a phone's
 ```
 
-| Option         | What it does                                                                                                          |
-| -------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `root`         | The element to measure, or a selector; by default the outermost theme boundary, else the body.                        |
-| `width`        | Measure at this width, `describe` and `check` only: a px number or a length such as `'40rem'`; `em` is read as `rem`. |
-| `height`       | Measure at this height too, as `width` takes it; the root takes the height and scrolls what is taller.                |
-| `minTextChars` | The fewest characters a line of text may hold before it counts as squeezed; 8 by default.                             |
+| Option              | What it does                                                                                                          |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `root`              | The element to measure, or a selector; by default the outermost theme boundary, else the body.                        |
+| `width`             | Measure at this width, `describe` and `check` only: a px number or a length such as `'40rem'`; `em` is read as `rem`. |
+| `height`            | Measure at this height too, as `width` takes it; the root takes the height and scrolls what is taller.                |
+| `minTextCharacters` | The fewest characters a line of text may hold before it counts as squeezed; 8 by default.                             |
 
 ### describe()
 
@@ -106,11 +106,11 @@ One line per layout node, indented by nesting: its kind and name, its size and w
 root div · 40×30rem · medium · window 89.19×50.56rem · 1rem = 16px
 scaffold "env-scaffold" · 40×30rem · medium · container env-scaffold (queried at 37.5, 52.5, 75rem) · grid · columns 2 = 5 | 35rem · rows 3 = 3.25 | 26.75 | 0rem
   row "env-top-bar" · 35×3.25rem · compact · flex row · align center · gap 0.75rem · padding 0 1rem
-  column "env-drawer" · hidden: inside div.env-scaffold-drawer, which is display: none (5 nodes inside)
-  column "env-rail" · 5×30rem · compact · flex column · align center · gap 1rem · padding 0.75 0rem
-    column "env-rail-list" · 5×16.63rem · compact · flex column · gap 0.25rem · scrolls (everything fits)
-      column "env-rail-item" · 5×4rem · compact · flex column · align center · gap 0.25rem · padding 0.25 0.25 0.5 0.25rem
-      … and 3 more like "env-rail-item" ("env-rail-item", "env-rail-item", "env-rail-item")
+  column "env-navigation-drawer" · hidden: inside div.env-scaffold-drawer, which is display: none (5 nodes inside)
+  column "env-navigation-rail" · 5×30rem · compact · flex column · align center · gap 1rem · padding 0.75 0rem
+    column "env-navigation-rail-list" · 5×16.63rem · compact · flex column · gap 0.25rem · scrolls (everything fits)
+      column "env-navigation-rail-item" · 5×4rem · compact · flex column · align center · gap 0.25rem · padding 0.25 0.25 0.5 0.25rem
+      … and 3 more like "env-navigation-rail-item" ("env-navigation-rail-item", "env-navigation-rail-item", "env-navigation-rail-item")
   page "env-page" · 35×34.81rem · compact · container env-page (queried at 37.5rem) · block · padding 2 1.5 3 1.5rem
     column · 32×22.75rem · compact · flex column · gap 2rem
       grid "projects" · 32×12.69rem · compact · grid · gap 1rem · columns 3 = 10 | 10 | 10rem
@@ -140,7 +140,7 @@ A list of problems, each a plain object. The same application at 22 rem:
 | `overlay-off-window`    | An open overlay that reaches outside the window.                                                                                                                                                     |
 | `layout-paints`         | A primitive, scaffold or Page without a part class that paints a background, border or shadow.                                                                                                       |
 | `sticky-without-scroll` | A sticky element whose scroll container never scrolls, so it never sticks.                                                                                                                           |
-| `text-squeezed`         | Text longer than `minTextChars` that wraps in a box narrower than that many characters.                                                                                                              |
+| `text-squeezed`         | Text longer than `minTextCharacters` that wraps in a box narrower than that many characters.                                                                                                         |
 | `skeleton-shift`        | Only from `skeletonShift()`: an element that moves or resizes when its skeleton loads.                                                                                                               |
 
 ### at()

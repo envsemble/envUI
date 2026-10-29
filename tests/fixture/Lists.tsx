@@ -26,7 +26,7 @@ function Slides({ testId }: { testId: string }) {
           <List.Item
             key={slide}
             interactive
-            selected={slide === current}
+            current={slide === current}
             label={
               <Link
                 href={`#${slide.toLowerCase()}`}

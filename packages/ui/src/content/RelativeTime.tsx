@@ -80,7 +80,7 @@ export function RelativeTime({
       {...props}
       dateTime={new Date(time).toISOString()}
       // With a tooltip of its own, the time takes the dotted underline of text with more on hover,
-      // which Tooltip gives text it recognises but not another component's part.
+      // which Tooltip gives text it recognizes but not another component's part.
       className={classNames('env-relative-time', withTooltip && hoverDetailClass, className)}
       // The server's clock, time zone or language can differ from the browser's. The text then
       // differs while hydrating, which is expected: it is rendered as a separate text node until

@@ -13,7 +13,8 @@ import {
 } from 'react';
 import { classNames } from '../../internal/classNames.js';
 import { Column, Row } from '../../foundations/Layout.js';
-import { cssLength } from '../../internal/cssLength.js';
+import { remLength } from '../../internal/cssLength.js';
+import { roundToHundredth } from '../../internal/lengths.js';
 import { setRef } from '../../internal/setRef.js';
 import { useMessages } from '../../internal/EnvUIContext.js';
 import { useStackedReport } from '../../internal/useStackedReport.js';
@@ -59,19 +60,31 @@ export interface PanelDockPanel {
    */
   mode: PanelDockMode;
   /**
-   * Height of the open panel in pixels. Without it, the panel starts at 85% of the room in the
-   * dock, up to 40 rem, and keeps the height people choose.
+   * Height of the open panel in rem, as Sheet's and Panes' sizes are. Without it, the panel starts
+   * at 85% of the room in the dock, up to 40 rem, and keeps the height people choose.
    */
   height?: number;
-  /** Width of the open panel where the row has room, in pixels; 32 rem by default. */
+  /**
+   * Width of the open panel where the row has room, in rem.
+   * @default 32
+   */
   preferredWidth?: number;
-  /** The narrowest the open panel gets when the row runs short, in pixels; 20 rem by default. */
+  /**
+   * The narrowest the open panel gets when the row runs short, in rem.
+   * @default 20
+   */
   minWidth?: number;
-  /** The widest the open panel gets, in pixels; 48 rem by default. */
+  /**
+   * The widest the open panel gets, in rem.
+   * @default 48
+   */
   maxWidth?: number;
-  /** The lowest height people can resize the panel to, in pixels; 15 rem by default. */
+  /**
+   * The lowest height people can resize the panel to, in rem.
+   * @default 15
+   */
   minHeight?: number;
-  /** The greatest height people can resize the panel to, in pixels; the room in the dock. */
+  /** The greatest height people can resize the panel to, in rem; the room in the dock by default. */
   maxHeight?: number;
   /** The panel people work in: in front of the other open panels, and shown by a stacked dock. */
   active?: boolean;
@@ -85,18 +98,18 @@ export interface PanelDockPanel {
   tooltip?: ReactNode;
 }
 
-export interface RootProps<T extends PanelDockPanel = PanelDockPanel>
+export interface RootProps<Panel extends PanelDockPanel = PanelDockPanel>
   extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
   /**
    * The panels in order, each a PanelDockPanel: open panels sit side by side, the newest at the
    * end, and tabs follow in the same order. The application owns them.
    */
-  panels: readonly T[];
+  panels: readonly Panel[];
   /**
    * Renders a panel's content from its panel, such as a PanelDock.Header above the panel's body.
    * The content mounts once and stays mounted until the panel closes.
    */
-  children: (panel: T) => ReactNode;
+  children: (panel: Panel) => ReactNode;
   /**
    * Called with the mode a panel asks for, from its window controls and its tab, and from the dock
    * itself with overflow="minimize".
@@ -110,14 +123,15 @@ export interface RootProps<T extends PanelDockPanel = PanelDockPanel>
    */
   onActivate?: (id: string) => void;
   /**
-   * Called with a panel's new height in pixels when a drag on its top edge ends, and on each key
+   * Called with a panel's new height in rem when a drag on its top edge ends, and on each key
    * press there.
    */
   onHeightChange?: (id: string, height: number) => void;
   /**
-   * A width, 40rem by default, or a number of pixels, such as 600 or "600": while the dock itself
-   * is narrower, one panel at a time fills it and the others wait as tabs. The dock then has
+   * A width, as a CSS length, such as "40rem", or a number of rem, such as 40: while the dock
+   * itself is narrower, one panel at a time fills it and the others wait as tabs. The dock then has
    * data-stacked.
+   * @default '40rem'
    */
   stackBelow?: string | number;
   /** Called with true when the dock stacks and with false when its panels sit side by side. */
@@ -178,7 +192,7 @@ const defaultStackBelow = '40rem';
  * filling the region, and minimized panels as tabs. A panel's content stays mounted through every
  * change of mode and order.
  */
-export function Root<T extends PanelDockPanel>({
+export function Root<Panel extends PanelDockPanel>({
   panels,
   children,
   onModeChange,
@@ -196,7 +210,7 @@ export function Root<T extends PanelDockPanel>({
   style,
   ref,
   ...props
-}: RootProps<T>) {
+}: RootProps<Panel>) {
   // Words that fit a minimized panel and one a stacked dock leaves out alike.
   const messages = useMessages('panelDock', panelDockMessages);
   const tabsLabel = minimizedLabel ?? messages.hidden;
@@ -244,7 +258,11 @@ export function Root<T extends PanelDockPanel>({
     [],
   );
   const close = useCallback((id: string) => latest.current.onClose(id), []);
-  const { fitRow, returningTime, release } = useDockOverflow<T>({ overflow, changeMode, refresh });
+  const { fitRow, returningTime, release } = useDockOverflow<Panel>({
+    overflow,
+    changeMode,
+    refresh,
+  });
 
   // A stacked dock fills the region with one shown panel: the one its tab asked for, else the
   // active one, else the newest; a wide one with its maximized panel. The others wait behind their
@@ -307,12 +325,15 @@ export function Root<T extends PanelDockPanel>({
     [panels, children],
   );
 
-  function heightOf(panel: T): { height?: number; bounds?: HeightBounds } {
-    const requested = panel.height ?? chosenHeights.get(panel.id);
+  function heightOf(panel: Panel): { height?: number; bounds?: HeightBounds } {
+    // The panel's sizes are in rem, and the dock works in pixels: until it has measured itself, a
+    // rem is the browser's default 16 px.
+    const rem = measurements?.rem ?? 16;
+    const requested = panel.height === undefined ? chosenHeights.get(panel.id) : panel.height * rem;
     if (!measurements) return { height: requested };
-    const { rem, room } = measurements;
-    const max = Math.floor(Math.max(0, Math.min(panel.maxHeight ?? Infinity, room)));
-    const min = Math.round(Math.min(panel.minHeight ?? minHeightRem * rem, max));
+    const { room } = measurements;
+    const max = Math.floor(Math.max(0, Math.min((panel.maxHeight ?? Infinity) * rem, room)));
+    const min = Math.round(Math.min((panel.minHeight ?? minHeightRem) * rem, max));
     const fallback = Math.min(room * defaultHeightShare, defaultHeightRem * rem);
     return { height: clampRound(requested ?? fallback, min, max), bounds: { min, max, room } };
   }
@@ -321,13 +342,13 @@ export function Root<T extends PanelDockPanel>({
     recency.current.set(id, ++clock.current);
   }
 
-  function activate(panel: T) {
+  function activate(panel: Panel) {
     if (placements.get(panel.id) === 'hidden') return;
     bringForward(panel.id);
     if (!panel.active) latest.current.onActivate?.(panel.id);
   }
 
-  function restoreFromTab(panel: T) {
+  function restoreFromTab(panel: Panel) {
     pendingRestore.current = panel.id;
     bringForward(panel.id);
     // A stacked dock shows the panel brought forward, even without an active panel.
@@ -358,12 +379,12 @@ export function Root<T extends PanelDockPanel>({
     }
   }
 
-  function resize(panel: T, height: number) {
+  function resize(panel: Panel, height: number) {
     if (panel.height === undefined)
       setChosenHeights((current) =>
         current.get(panel.id) === height ? current : new Map(current).set(panel.id, height),
       );
-    latest.current.onHeightChange?.(panel.id, height);
+    latest.current.onHeightChange?.(panel.id, roundToHundredth(height / (measurements?.rem ?? 16)));
   }
 
   function frameOf(id: string) {
@@ -590,7 +611,7 @@ export function Root<T extends PanelDockPanel>({
         setRef(ref, node);
       }}
       className={classNames('env-panel-dock', className)}
-      style={{ ...style, '--env-panel-dock-stack-below': cssLength(stackBelow) } as CSSProperties}
+      style={{ ...style, '--env-panel-dock-stack-below': remLength(stackBelow) } as CSSProperties}
       data-stacked={flag(stacked)}
       data-filled={flag(filled)}
       data-tabs={flag(hasTabs)}

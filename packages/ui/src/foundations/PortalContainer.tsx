@@ -27,6 +27,7 @@ export interface PortalContainerProps {
    * @default false
    */
   contained?: boolean;
+  /** The content whose popups, dialogs and toasts render in the container. */
   children: ReactNode;
 }
 

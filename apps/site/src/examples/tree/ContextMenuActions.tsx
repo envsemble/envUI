@@ -43,7 +43,7 @@ export default function ContextMenuActions() {
       for (const entry of entries.filter((candidate) => candidate.parent === parent)) {
         const open = expanded.has(entry.id);
         visible.push({
-          id: entry.id,
+          value: entry.id,
           depth,
           label: entry.name,
           expandable: entry.folder,
@@ -109,24 +109,24 @@ export default function ContextMenuActions() {
           items={rows}
           value={selected}
           onAction={(row) =>
-            row.expandable ? setFolder(row.id, !row.expanded) : setSelected(row.id)
+            row.expandable ? setFolder(row.value, !row.expanded) : setSelected(row.value)
           }
-          onExpandedChange={(row, open) => setFolder(row.id, open)}
+          onExpandedChange={(row, open) => setFolder(row.value, open)}
           contextMenuLabel="File actions"
           contextMenu={(row) =>
             row ? (
               <>
                 {row.expandable ? (
-                  <Menu.Item icon={<NoteAdd />} onClick={() => create(row.id)}>
+                  <Menu.Item icon={<NoteAdd />} onClick={() => create(row.value)}>
                     New document here
                   </Menu.Item>
                 ) : (
-                  <Menu.Item icon={<FileCopy />} onClick={() => duplicate(row.id)}>
+                  <Menu.Item icon={<FileCopy />} onClick={() => duplicate(row.value)}>
                     Duplicate
                   </Menu.Item>
                 )}
                 <Menu.Separator />
-                <Menu.Item icon={<Delete />} onClick={() => remove(row.id)}>
+                <Menu.Item icon={<Delete />} onClick={() => remove(row.value)}>
                   Delete
                 </Menu.Item>
               </>

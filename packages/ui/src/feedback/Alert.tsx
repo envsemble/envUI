@@ -28,10 +28,10 @@ export interface AlertProps
   title?: ReactNode;
   /** The message: what it means and what people can do. */
   children?: ReactNode;
-  /** Replaces the tone's icon; false shows none. */
-  icon?: ReactNode | false;
-  /** An action below the message, such as a Button or Link. */
-  action?: ReactNode;
+  /** Replaces the tone's icon; null or false shows none. */
+  icon?: ReactNode;
+  /** Actions below the message, such as a Button or a Link, in a row that wraps. */
+  actions?: ReactNode;
   /** Shows a dismiss button that calls it; the application removes the alert. */
   onDismiss?: () => void;
   /**
@@ -42,6 +42,7 @@ export interface AlertProps
   /**
    * The alert appeared because of something that just happened and should interrupt: warning and
    * danger alerts take the alert role. Info and success alerts are always polite status messages.
+   * @default false
    */
   announce?: boolean;
 }
@@ -63,7 +64,7 @@ export function Alert(allProps: AlertProps) {
     title,
     children,
     icon,
-    action,
+    actions,
     onDismiss,
     dismissLabel,
     announce = false,
@@ -103,9 +104,9 @@ export function Alert(allProps: AlertProps) {
           <Grid gap={1} className="env-alert-content">
             {hasTitle && <div className="env-alert-title">{title}</div>}
             {hasMessage && <div className="env-alert-message">{children}</div>}
-            {action != null && (
+            {actions != null && (
               <Row wrap gap={2} className="env-alert-action">
-                {action}
+                {actions}
               </Row>
             )}
           </Grid>

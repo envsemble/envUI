@@ -140,7 +140,7 @@ Name each option with a word or two for its view.
 />
 ```
 
-It is always controlled: set `value` and update it from `onValueChange`. `items` are two to five `SegmentedControlItem`s in the order they show, each with its `value`, a short `label`, and optionally a `count`, read as part of its name, a decorative `icon` and `disabled`. `aria-label` names the control, which has no visible label; `disabled` turns off the whole control.
+Leave it uncontrolled, starting at `defaultValue`, the first item by default, or control it with `value` and `onValueChange`. `items` are two to five `SegmentedControlItem`s in the order they show, each with its `value`, a short `label`, and optionally a `count`, read as part of its name, a decorative `icon` and `disabled`. `aria-label` names the control, which has no visible label; `disabled` turns off the whole control.
 
 #### Size and width
 
@@ -156,5 +156,6 @@ The outline, `env-segmented-control`, carries `data-size` and `data-full-width`;
 
 ## Changelog
 
+- **1.0.0-prerelease.5**: It can be uncontrolled, with `defaultValue`.
 - **1.0.0-prerelease.2**: SegmentedControl looks like Material's segmented buttons: connected segments in one outline, the chosen one in the selected fill, `--env-color-bg-selected`, with a check, `env-segmented-control-item-check`, in place of its icon, so it reads differently from Tabs. `--env-segmented-control-outline` sets the outline. The API stays.
 - **1.0.0**: `options` is `items`, and `SegmentedControlOption` is `SegmentedControlItem`. The segments' classes are `env-segmented-control-item`, `-item-label` and `-item-count`. An unchosen segment's count keeps 4.5:1 contrast. SegmentedControl takes `ref`, `style`, `id` and other attributes of its rail, and its page is under Forms & selection.

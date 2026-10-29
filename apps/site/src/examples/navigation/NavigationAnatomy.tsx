@@ -5,7 +5,7 @@ import {
   IconButton,
   Page,
   PageHeader,
-  Rail,
+  NavigationRail,
   Scaffold,
   Tabs,
   Text,
@@ -30,7 +30,7 @@ export default function NavigationAnatomy() {
       scroll="body"
       landmarks={false}
       style={{ blockSize: '20rem' }}
-      forms={{ compact: 'rail', medium: 'rail', expanded: 'rail', large: 'rail' }}
+      navigationForms={{ compact: 'rail', medium: 'rail', expanded: 'rail', large: 'rail' }}
       topBar={
         <TopBar
           title="Northwind"
@@ -41,7 +41,7 @@ export default function NavigationAnatomy() {
           }
         />
       }
-      navigation={{ rail: <Rail destinations={destinations} /> }}
+      navigation={{ rail: <NavigationRail destinations={destinations} /> }}
     >
       <Page
         header={

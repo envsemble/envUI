@@ -497,8 +497,8 @@ const componentPatterns: Record<string, string> = {
  * section of it that does, if one. Their pages in the Docs open the other's.
  */
 const foldedPages: Record<string, { page: string; section?: string }> = {
-  'components/bar': { page: 'components/drawer' },
-  'components/rail': { page: 'components/drawer' },
+  'components/bar': { page: 'components/navigation-drawer' },
+  'components/rail': { page: 'components/navigation-drawer' },
   'components/page-header': { page: 'components/page' },
   'patterns/feature-cards': { page: 'components/card', section: 'feature-card' },
   'patterns/search-trigger': {
@@ -637,8 +637,8 @@ export function normalizeRoute(route: string): string {
     .replace(/^components\/rows(?=\/|$)/, 'components/list')
     .replace(/^components\/(split-view|split-pane|list-detail)(?=\/|$)/, 'components/panes')
     .replace(/^components\/app-shell(?=\/|$)/, 'components/scaffold')
-    .replace(/^components\/sidebar(?=\/|$)/, 'components/drawer')
-    .replace(/^components\/(navigation|nav-list)(?=\/|$)/, 'components/drawer')
+    .replace(/^components\/(sidebar|drawer)(?=\/|$)/, 'components/navigation-drawer')
+    .replace(/^components\/(navigation|nav-list)(?=\/|$)/, 'components/navigation-drawer')
     .replace(/^components\/direction-links(?=\/|$)/, 'components/pager')
     .replace(/^foundations\/motion(?=\/|$)/, 'foundations/accessibility')
     .replace(/^foundations\/scale(?=\/|$)/, 'foundations/spacing');

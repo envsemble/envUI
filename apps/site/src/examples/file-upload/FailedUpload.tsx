@@ -63,7 +63,7 @@ export default function FailedUpload() {
         <List.Item
           label="annual-review.pdf"
           description="2.4 MB"
-          action={
+          end={
             <Button
               variant="text"
               aria-label="Remove annual-review.pdf"
@@ -84,7 +84,7 @@ export default function FailedUpload() {
                 ? '1.1 MB'
                 : undefined
           }
-          action={
+          end={
             <>
               {state === 'failed' && (
                 <Button

@@ -30,7 +30,7 @@ export function ReferenceContent({
 }) {
   const content =
     options.renderReference?.(reference, { readOnly, selected }) ??
-    `${reference.char ?? ''}${reference.label}`;
+    `${reference.trigger ?? ''}${reference.label}`;
   const className = 'env-rich-text-reference';
   if (linked)
     return (

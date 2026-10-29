@@ -7,7 +7,7 @@ import { reportOnce } from '../internal/developmentReport.js';
 import '../styles/Base.css';
 
 /** A color scheme. */
-export type ThemeValue = 'light' | 'dark';
+export type ColorScheme = 'light' | 'dark';
 
 /**
  * The contrast of a Theme: the standard colors, the high-contrast ones, or `system`, which takes the
@@ -32,14 +32,14 @@ export type RowDensity = 'xs' | 'sm' | 'md' | 'lg';
 
 /** The theme of the nearest Theme boundary, as useTheme returns it. */
 export interface ThemeContextValue {
-  theme: ThemeValue;
+  theme: ColorScheme;
   contrast: ThemeContrast;
   scale: ThemeScale;
 }
 
 export interface ThemeProps extends ComponentPropsWithRef<'div'> {
   /** The color scheme. */
-  theme: ThemeValue;
+  theme: ColorScheme;
   /**
    * `high` for the high-contrast colors; `standard` keeps the standard ones even while the system
    * asks for more contrast; `system` follows `prefers-contrast: more`. Defaults to the contrast of

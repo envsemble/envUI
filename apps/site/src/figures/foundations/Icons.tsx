@@ -1,7 +1,7 @@
 import { Suspense, useState } from 'react';
 import {
   Alert,
-  Bar,
+  NavigationBar,
   Button,
   Column,
   IconButton,
@@ -73,7 +73,8 @@ function FollowTextFigure() {
 }
 
 /** A destination of the bar, by its place from 1. */
-const destination = (index: number) => `.env-bar-list > li:nth-child(${index}) > .env-bar-item`;
+const destination = (index: number) =>
+  `.env-navigation-bar-list > li:nth-child(${index}) > .env-navigation-bar-item`;
 
 /**
  * The pointer taps across the destinations and back to the first: each one it selects fills its
@@ -111,11 +112,11 @@ function DestinationSteps() {
   const destinations: Destination[] = places.map((place) => ({
     ...place,
     current: current === place.label,
-    onSelect: () => setCurrent(place.label),
+    onClick: () => setCurrent(place.label),
   }));
   return (
     <div className="catalogue-icons-bar">
-      <Bar destinations={destinations} />
+      <NavigationBar destinations={destinations} />
     </div>
   );
 }

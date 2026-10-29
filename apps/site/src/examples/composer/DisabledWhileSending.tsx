@@ -15,7 +15,7 @@ export default function DisabledWhileSending() {
       placeholder="Write a message"
       // Wrong: disabling the field while sending takes focus away, so people can't keep writing.
       disabled={sending}
-      onSubmit={send}
+      onSend={send}
       style={{ inlineSize: 'min(100%, 26rem)' }}
     />
   );

@@ -67,7 +67,7 @@ export default function Conversation() {
       <Composer
         aria-label="Message the assistant"
         placeholder="Ask anything"
-        onSubmit={send}
+        onSend={send}
         running={replying}
         onStop={stop}
       />

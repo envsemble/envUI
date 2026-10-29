@@ -1,6 +1,6 @@
 ---
 title: Select
-summary: One choice from a list that stays collapsed until opened, on a Button-style trigger with a label, description and error.
+summary: One choice from a list that stays collapsed until opened, in an outlined field with a label, description and error.
 status: stable
 since: 1.0.0
 category: Forms & selection
@@ -52,17 +52,17 @@ examples:
 
 ```
 
-1. **Secondary**
-2. **Outline**
+1. **Outline**
+2. **Floating**
 
-| Variant   | Use for                                           |
-| --------- | ------------------------------------------------- |
-| Secondary | A select on the page. The default.                |
-| Outline   | A select on a pane, a dialog, a row or a toolbar. |
+| Variant  | Use for                                                    |
+| -------- | ---------------------------------------------------------- |
+| Outline  | A select anywhere, as every field. The default.            |
+| Floating | A select in a long form on a page, beside floating fields. |
 
 ### Sizes
 
-Small, medium and large, the control heights of the [scale](../foundations/spacing.md). Without a size of its own the select takes its container's, so it lines up with the buttons beside it.
+Small, medium and large, the control heights of the [scale](../foundations/spacing.md). Without a size of its own the select takes its container's, so it lines up with the buttons beside it. Without a visible label, as in a toolbar, it is as wide as its longest option.
 
 ```tsx figure=SmallToolbar
 
@@ -183,24 +183,25 @@ With `name`, a hidden input submits the chosen value, and a form reset restores 
 
 #### In list rows
 
-Where a row's title names the select, give the select that name as its `aria-label`, and the `outline` variant.
+Where a row's title names the select, give the select that name as its `aria-label`; it is then as wide as its longest option.
 
 #### Variants and sizes
 
-`variant` is the trigger's Button variant: `secondary`, a filled pill and the default, or `outline`, a bordered pill with no fill at rest. `size` is `sm`, `md` or `lg`; without it, the trigger takes its container's control height.
+`variant` is a field's: `outline`, the default, or `floating`, taller, with its label resting inside and floating into the outline. `size` is `sm`, `md` or `lg`; without it, the field takes its container's control height. `showLabel={false}` keeps the label for assistive technology only, as on a TextField, and the field fits its longest option.
 
 ### Composition
 
-The field is `env-field` with `env-select`; the trigger is a Button. The open list is the shared popup, with its list, `env-select-list`, and its options are the popup's rows. `className` and `style` reach the field's root, and `ref` the trigger; `defaultOpen` opens the list on the first render.
+The field is `env-field` with `env-select`, a text field's frame: its well, `env-select-control`, holds the trigger, `env-select-trigger`, with the chosen option's label, `env-select-value`, the label and the chevron, `env-select-icon`. The open list is the shared popup, with its list, `env-select-list`, and its options are the popup's rows. `className` and `style` reach the field's root, and `ref` the trigger. `defaultOpen` opens the list on the first render, `open` and `onOpenChange`, which receives why, control it, and `readOnly` shows the choice without opening the list.
 
 ### Customize
 
-`--env-select-container`, `--env-select-content` and `--env-select-outline` color one Select, through `style` or CSS; hover, focus and press follow them.
+`--env-select-container`, `--env-select-content` and `--env-select-outline` color one Select's well, value and edge, through `style` or CSS, as TextField's color properties do a text field's.
 
 Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blur` and `--env-popup-shadow`, set on a theme, change it, as [Popover](popover.md#customize) describes.
 
 ## Changelog
 
+- **1.0.0-prerelease.5**: Select is an outlined field, as TextField and DatePicker are, with the label inside: `variant` is `outline`, the default, or `floating`, where it was a Button's `secondary` or `outline`. Without a visible label it fits its longest option. It takes `open`, `onOpenChange`, `readOnly` and `showLabel`.
 - **1.0.0-prerelease.5**: The open list is frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge, and is solid with its edge at high contrast and with reduced transparency. Options are the md control height in body text, and the chosen one takes the selection's fill as well as its check mark. The list opens 8 px clear of the trigger at every scale and size. Its options lie one under the next with no space between them. The chosen option's check mark ends its row, after the label. The outline trigger has no fill at rest, as an outline button has none.
 - **1.0.0**: `options` is `items`, and `SelectOption` is `SelectItem`; `hint` is `description`; `variant="outlined"` is `variant="outline"`. `className` and `style` style the field's root rather than the trigger, which takes `ref`. The trigger is a Button, the popup the shared popup and the options its rows: `env-dropdown-trigger` is `env-select-trigger`, `env-dropdown-options` `env-select-popup`, `env-dropdown-list` `env-select-list`, `env-dropdown-option` `env-select-item` and `env-dropdown-option-check` `env-select-item-indicator`.
 - **1.0.0**: The open list takes the level-2 elevation edge, with no shadow.

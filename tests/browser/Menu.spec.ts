@@ -514,6 +514,28 @@ test.describe('ContextMenu', () => {
   });
 });
 
+test("a menu takes its trigger's name, and keeps its own choices from their defaults", async ({
+  page,
+}) => {
+  await page.goto(menusFixture);
+  await page.getByTestId('menus-light').getByRole('button', { name: 'Density' }).click();
+  const menu = page.getByRole('menu', { name: 'Density' });
+  await expect(menu.getByRole('menuitemradio', { name: 'Cozy' })).toHaveAttribute(
+    'aria-checked',
+    'true',
+  );
+  await expect(menu.getByRole('menuitemcheckbox', { name: 'Show icons' })).toHaveAttribute(
+    'aria-checked',
+    'true',
+  );
+  await expect(page.getByTestId('density-separator-light')).toHaveClass(/env-menu-separator/);
+  await menu.getByRole('menuitemradio', { name: 'Tight' }).click();
+  await page.getByTestId('menus-light').getByRole('button', { name: 'Density' }).click();
+  await expect(
+    page.getByRole('menu', { name: 'Density' }).getByRole('menuitemradio', { name: 'Tight' }),
+  ).toHaveAttribute('aria-checked', 'true');
+});
+
 test('menu groups, radio and checkbox items keep their choice', async ({ page }) => {
   await page.goto(menusFixture);
   const scope = page.getByTestId('menus-light');

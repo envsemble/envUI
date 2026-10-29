@@ -1,4 +1,4 @@
-import { Button, Card, Tabs, Text } from '@envsemble/envui';
+import { Card, Tabs, Text } from '@envsemble/envui';
 
 export default function ListBesideAHeading() {
   return (
@@ -26,12 +26,12 @@ export default function ListBesideAHeading() {
         items={[
           {
             value: 'recent',
-            button: <Button>Recent</Button>,
+            label: 'Recent',
             content: <Text>Northwind ordered 40 chairs today.</Text>,
           },
           {
             value: 'returned',
-            button: <Button>Returned</Button>,
+            label: 'Returned',
             content: <Text>Sam Lee returned a desk on Monday.</Text>,
           },
         ]}

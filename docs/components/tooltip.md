@@ -151,7 +151,7 @@ Say why a control is disabled in the page, not only in its tooltip: touch screen
 Tooltip wraps the one control it describes, its `children`, such as an IconButton, which takes the trigger's props and ref; `content` is its text.
 
 - While it is open, a control with a name of its own is described by it, through `aria-describedby`, so name an icon-only control with `aria-label` too.
-- The pointer rests on the control for `delay`, 400 ms by default, before it opens, and keyboard focus opens it at once; `defaultOpen` starts it open.
+- The pointer rests on the control for `delay`, 400 ms by default, before it opens, and keyboard focus opens it at once; `defaultOpen` starts it open, and `open` with `onOpenChange`, which receives why, lets the application open it, such as for a step of a tour.
 
 ```tsx source=IconActions
 
@@ -159,7 +159,7 @@ Tooltip wraps the one control it describes, its `children`, such as an IconButto
 
 #### Side
 
-`side` is `top`, the default, `bottom`, `left`, `right`, or `inline-start` and `inline-end`, which follow the text direction. Where the window has no room, it flips to the other side.
+`side` is `top`, the default, `bottom`, `left`, `right`, or `inline-start` and `inline-end`, which follow the text direction. Where the window has no room, it flips to the other side. `align` lines it up with the control along that side: `start`, `center`, the default, or `end`.
 
 ```tsx
 <Tooltip content="Show files" side="inline-end">
@@ -212,5 +212,6 @@ A tooltip is frosted, as every popup is: `--env-color-bg-neutral-strong` at `--e
 
 ## Changelog
 
+- **1.0.0-prerelease.5**: `open` and `onOpenChange`, and `align`, as on Popover.
 - **1.0.0-prerelease.5**: Tooltips are frosted: the strong fill at 82 % over a blur, with 0.75 rem corners, a small soft shadow and no edge, and solid with their edge at high contrast, with reduced transparency and under forced colors. A Kbd inside is a flat chip with no edge, its keys side by side, and the tooltip opens 8 px from its control, as every popup does.
 - **1.0.0**: A text trigger, such as a focusable span or Text that holds text, takes a quiet dotted underline, `env-hover-detail`. The tooltip describes a named control (`aria-describedby`) while it is open; a disabled button's, link's, tab's or menu item's wrapper carries its role, name, state and `aria-disabled`; a Kbd inside takes light key caps; native props and `ref` reach the control, so a Tooltip can be the `trigger` of a Menu.Root, Popover, Dialog, Sheet or ConfirmDialog, and goes to their trigger around one; it stays closed while the control's menu or popover is open, and when focus returns to the control as it closes; around a HoverCard it shows nothing; `popupClassName` styles the popup; it renders on PopupSurface, in the control's text direction.

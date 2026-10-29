@@ -66,9 +66,7 @@ export interface MarkdownEditorProps
     'headingOffset' | 'renderLink' | 'codeCopyable'
   >;
   /** Optional application picker. Return null to cancel; otherwise return an ordinary link. */
-  onRequestLink?: (
-    request: MarkdownLinkRequest,
-  ) => MarkdownLink | null | Promise<MarkdownLink | null>;
+  pickLink?: (request: MarkdownLinkRequest) => MarkdownLink | null | Promise<MarkdownLink | null>;
 }
 
 /**
@@ -83,7 +81,7 @@ export function MarkdownEditor({
   toolbar = defaultMarkdownCommands,
   preview = true,
   previewProps,
-  onRequestLink,
+  pickLink,
   label,
   description,
   error,
@@ -154,14 +152,14 @@ export function MarkdownEditor({
     }
   }
   async function requestLink(selection: MarkdownSelection) {
-    if (!onRequestLink) {
+    if (!pickLink) {
       setLinkSelection(selection);
       return;
     }
     const version = ++linkRequestVersion.current;
     setLinkPending(true);
     try {
-      const result = await onRequestLink({
+      const result = await pickLink({
         selectedText: selection.value.slice(selection.start, selection.end),
       });
       if (linkRequestVersion.current === version && result) insertLink(selection, result);

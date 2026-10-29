@@ -229,7 +229,7 @@ function Shell() {
       bodyRef={mainElement}
       // The navigation is at the start of a wide window, and in a sheet that the page's menu button
       // opens in a narrower one. There is no top bar: the navigation holds the wordmark and search.
-      forms={{ compact: 'none', medium: 'none' }}
+      navigationForms={{ compact: 'none', medium: 'none' }}
       navigation={{ drawer: navigation(false) }}
     >
       {/* Below an expanded window, where the navigation is in a sheet, a small pill of the menu

@@ -107,15 +107,6 @@
       "env-badge-count-label": "What a count means, such as 12 unread, for assistive technology; visually hidden.",
       "env-badge-label": "The badge's text, or its count."
     },
-    "Bar": {
-      "env-bar": "The navigation bar: a nav landmark across the bottom of a compact window.",
-      "env-bar-list": "The row of destinations, which share the bar's width.",
-      "env-bar-item": "A destination: a link or button with its indicator above its label.",
-      "env-bar-indicator": "The pill around a destination's icon, filled while the destination is current.",
-      "env-bar-label": "A destination's label, under its indicator, cut short with an ellipsis.",
-      "env-bar-count": "A destination's count, on the icon's top end; 999+ above 999.",
-      "env-bar-more": "The last item past five destinations, which opens the rest in a menu."
-    },
     "Breadcrumbs": {
       "env-breadcrumbs": "The breadcrumb navigation.",
       "env-breadcrumbs-current": "The current page, the last crumb.",
@@ -174,6 +165,7 @@
       "env-checkbox-box": "The box that shows the state.",
       "env-checkbox-indicator": "The check or dash inside the box.",
       "env-checkbox-input": "The native input.",
+      "env-checkbox-description": "The muted line under the label.",
       "env-checkbox-label": "The label."
     },
     "Code": {
@@ -481,22 +473,41 @@
       "env-month-picker-previous": "The button for the previous year.",
       "env-month-picker-year": "The year's grid of months."
     },
-    "Drawer": {
-      "env-drawer": "The navigation drawer: a nav landmark, a column with the header, the list and the footer.",
-      "env-drawer-header": "Content above the destinations, such as the application's name or a search trigger.",
-      "env-drawer-list": "The list of destinations and groups, which scrolls where the drawer is shorter.",
-      "env-drawer-section": "A group: its heading and the list of its destinations.",
-      "env-drawer-group-label": "A group's label, which names the group's list.",
-      "env-drawer-item": "A destination: a link or button as wide as the drawer, with its icon, label and count.",
-      "env-drawer-label": "A destination's label.",
-      "env-drawer-count": "A destination's count, at the item's end; 999+ above 999.",
-      "env-drawer-branch": "A section: a destination with destinations nested under it, which open and close below it.",
-      "env-drawer-branch-row": "A section's row: the destination's link or button, with the section's button over its end.",
-      "env-drawer-toggle": "The button at the end of a section's link that opens and closes the section.",
-      "env-drawer-chevron": "A section's chevron, which points down, and up while the section is open.",
-      "env-drawer-children": "The list of a section's nested destinations, indented, hidden until found while closed.",
-      "env-drawer-footer": "Content below the destinations, at the bottom of the drawer.",
-      "env-drawer-resize-handle": "The handle on a resizable drawer's end edge, a separator that resizes it."
+    "NavigationBar": {
+      "env-navigation-bar": "The navigation bar: a nav landmark across the bottom of a compact window.",
+      "env-navigation-bar-list": "The row of destinations, which share the bar's width.",
+      "env-navigation-bar-item": "A destination: a link or button with its indicator above its label.",
+      "env-navigation-bar-indicator": "The pill around a destination's icon, filled while the destination is current.",
+      "env-navigation-bar-label": "A destination's label, under its indicator, cut short with an ellipsis.",
+      "env-navigation-bar-count": "A destination's count, on the icon's top end; 999+ above 999.",
+      "env-navigation-bar-more": "The last item past five destinations, which opens the rest in a menu."
+    },
+    "NavigationDrawer": {
+      "env-navigation-drawer": "The navigation drawer: a nav landmark, a column with the header, the list and the footer.",
+      "env-navigation-drawer-header": "Content above the destinations, such as the application's name or a search trigger.",
+      "env-navigation-drawer-list": "The list of destinations and groups, which scrolls where the drawer is shorter.",
+      "env-navigation-drawer-section": "A group: its heading and the list of its destinations.",
+      "env-navigation-drawer-group-label": "A group's label, which names the group's list.",
+      "env-navigation-drawer-item": "A destination: a link or button as wide as the drawer, with its icon, label and count.",
+      "env-navigation-drawer-label": "A destination's label.",
+      "env-navigation-drawer-count": "A destination's count, at the item's end; 999+ above 999.",
+      "env-navigation-drawer-branch": "A section: a destination with destinations nested under it, which open and close below it.",
+      "env-navigation-drawer-branch-row": "A section's row: the destination's link or button, with the section's button over its end.",
+      "env-navigation-drawer-toggle": "The button at the end of a section's link that opens and closes the section.",
+      "env-navigation-drawer-chevron": "A section's chevron, which points down, and up while the section is open.",
+      "env-navigation-drawer-children": "The list of a section's nested destinations, indented, hidden until found while closed.",
+      "env-navigation-drawer-footer": "Content below the destinations, at the bottom of the drawer.",
+      "env-navigation-drawer-resize-handle": "The handle on a resizable drawer's end edge, a separator that resizes it."
+    },
+    "NavigationRail": {
+      "env-navigation-rail": "The navigation rail: a nav landmark, a narrow column with the header, the list and the footer.",
+      "env-navigation-rail-header": "Content above the destinations, such as a button that opens the drawer or the main action.",
+      "env-navigation-rail-list": "The list of destinations, one under another, which scrolls where the rail is shorter.",
+      "env-navigation-rail-item": "A destination: a link or button with its indicator above its label.",
+      "env-navigation-rail-indicator": "The pill around a destination's icon, filled while the destination is current.",
+      "env-navigation-rail-label": "A destination's short label, under its indicator.",
+      "env-navigation-rail-count": "A destination's count, on the icon's top end; 999+ above 999.",
+      "env-navigation-rail-footer": "Content at the bottom of the rail, such as the account's button."
     },
     "Overlay": {
       "env-overlay-theme": "The theme boundary of a dialog's, a sheet's or the command palette's portal. It has no box, so their backdrop and positioner keep their own layers; the positioner is the env-window container."
@@ -598,17 +609,9 @@
       "env-radio-input": "The native input."
     },
     "RadioGroup": {
-      "env-radio-group": "The group of radios."
-    },
-    "Rail": {
-      "env-rail": "The navigation rail: a nav landmark, a narrow column with the header, the list and the footer.",
-      "env-rail-header": "Content above the destinations, such as a button that opens the drawer or the main action.",
-      "env-rail-list": "The list of destinations, one under another, which scrolls where the rail is shorter.",
-      "env-rail-item": "A destination: a link or button with its indicator above its label.",
-      "env-rail-indicator": "The pill around a destination's icon, filled while the destination is current.",
-      "env-rail-label": "A destination's short label, under its indicator.",
-      "env-rail-count": "A destination's count, on the icon's top end; 999+ above 999.",
-      "env-rail-footer": "Content at the bottom of the rail, such as the account's button."
+      "env-radio-group": "The group of radios.",
+      "env-radio-group-description": "The description under the options.",
+      "env-radio-group-error": "The error under the options."
     },
     "Rating": {
       "env-rating": "The rating.",
@@ -658,13 +661,18 @@
     },
     "Select": {
       "env-select": "The select field.",
+      "env-select-control": "The outlined well that holds the button, the label and the chevron.",
+      "env-select-end": "The chevron's place at the end of the well.",
       "env-select-icon": "The chevron.",
       "env-select-item": "One option.",
       "env-select-item-indicator": "The check of the chosen option.",
-      "env-select-label": "The label.",
+      "env-select-label": "The label, inside the well, which floats into the outline.",
       "env-select-list": "The list of options.",
+      "env-select-placeholder": "What the button shows while nothing is chosen.",
       "env-select-popup": "The popup with the options.",
-      "env-select-trigger": "The button that shows the value and opens the list."
+      "env-select-sizer": "The labels of every option, hidden, which give the field its width without a visible label.",
+      "env-select-trigger": "The button that shows the value and opens the list.",
+      "env-select-value": "The chosen option's label."
     },
     "Sheet": {
       "env-sheet": "The sheet.",
@@ -698,6 +706,7 @@
     "Switch": {
       "env-switch": "The switch with its label.",
       "env-switch-input": "The native input.",
+      "env-switch-description": "The muted line under the label.",
       "env-switch-label": "The label."
     },
     "Table": {
@@ -820,13 +829,6 @@
       "--env-badge-content": "The label, count or icon.",
       "--env-badge-outline": "An edge in this color."
     },
-    "Bar": {
-      "--env-bar-item-container": "The pill around the icon at rest; set, it takes state layers instead of the navigation's designed hover and press fills.",
-      "--env-bar-item-content": "The label, and the color of the state layers.",
-      "--env-bar-item-icon": "The icon of a destination that is not current.",
-      "--env-bar-item-selected": "The pill around the icon of the current destination.",
-      "--env-bar-item-selected-content": "The icon of the current destination."
-    },
     "Button": {
       "--env-button-container": "The fill, in every variant; the state layers lie over it, and a solid variant takes them instead of its designed hover and press fills.",
       "--env-button-content": "The label and icons, and the color of the state layers.",
@@ -851,13 +853,6 @@
       "--env-combobox-chip-container": "The fill of a chosen option’s chip.",
       "--env-combobox-chip-content": "The chip's label and remove button."
     },
-    "Drawer": {
-      "--env-drawer-item-container": "The item at rest; set, it takes state layers instead of the navigation's designed hover and press fills.",
-      "--env-drawer-item-content": "The label, and the color of the state layers.",
-      "--env-drawer-item-icon": "The icon of a destination that is not current.",
-      "--env-drawer-item-selected": "The item of the current destination.",
-      "--env-drawer-item-selected-content": "The label and icon of the current destination."
-    },
     "IconButton": {
       "--env-button-container": "The fill, in every variant; the state layers lie over it, and a solid variant takes them instead of its designed hover and press fills.",
       "--env-button-content": "The label and icons, and the color of the state layers.",
@@ -876,17 +871,31 @@
       "--env-menu-item-content": "The label, and the color of the state layers.",
       "--env-menu-item-icon": "The leading icon."
     },
+    "NavigationBar": {
+      "--env-navigation-bar-item-container": "The pill around the icon at rest; set, it takes state layers instead of the navigation's designed hover and press fills.",
+      "--env-navigation-bar-item-content": "The label, and the color of the state layers.",
+      "--env-navigation-bar-item-icon": "The icon of a destination that is not current.",
+      "--env-navigation-bar-item-selected": "The pill around the icon of the current destination.",
+      "--env-navigation-bar-item-selected-content": "The icon of the current destination."
+    },
+    "NavigationDrawer": {
+      "--env-navigation-drawer-item-container": "The item at rest; set, it takes state layers instead of the navigation's designed hover and press fills.",
+      "--env-navigation-drawer-item-content": "The label, and the color of the state layers.",
+      "--env-navigation-drawer-item-icon": "The icon of a destination that is not current.",
+      "--env-navigation-drawer-item-selected": "The item of the current destination.",
+      "--env-navigation-drawer-item-selected-content": "The label and icon of the current destination."
+    },
+    "NavigationRail": {
+      "--env-navigation-rail-item-container": "The pill around the icon at rest; set, it takes state layers instead of the navigation's designed hover and press fills.",
+      "--env-navigation-rail-item-content": "The label, and the color of the state layers.",
+      "--env-navigation-rail-item-icon": "The icon of a destination that is not current.",
+      "--env-navigation-rail-item-selected": "The pill around the icon of the current destination.",
+      "--env-navigation-rail-item-selected-content": "The icon of the current destination."
+    },
     "Radio": {
       "--env-radio-container": "The row's fill in a vertical group; the state layers lie over it.",
       "--env-radio-content": "The label, and the color of a row's state layers.",
       "--env-radio-selected": "The dot and ring of the chosen option."
-    },
-    "Rail": {
-      "--env-rail-item-container": "The pill around the icon at rest; set, it takes state layers instead of the navigation's designed hover and press fills.",
-      "--env-rail-item-content": "The label, and the color of the state layers.",
-      "--env-rail-item-icon": "The icon of a destination that is not current.",
-      "--env-rail-item-selected": "The pill around the icon of the current destination.",
-      "--env-rail-item-selected-content": "The icon of the current destination."
     },
     "SegmentedControl": {
       "--env-segmented-control-container": "The fill behind the options, transparent by default.",
@@ -896,9 +905,9 @@
       "--env-segmented-control-selected-content": "The chosen option's label."
     },
     "Select": {
-      "--env-select-container": "The trigger's fill; the state layers lie over it.",
-      "--env-select-content": "The trigger's label and chevron, and the color of the state layers.",
-      "--env-select-outline": "The trigger's edge, where its variant draws one."
+      "--env-select-container": "The field's well, transparent by default.",
+      "--env-select-content": "The chosen option's label and the chevron.",
+      "--env-select-outline": "The field's edge at rest."
     },
     "Slider": {
       "--env-slider-container": "The track: the field's tint.",

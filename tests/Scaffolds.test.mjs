@@ -19,6 +19,7 @@ await build({
       "export * from './packages/ui/src/layout/Scaffold.tsx';",
       "export * as Panes from './packages/ui/src/layout/Panes.tsx';",
       "export * from './packages/ui/src/layout/Page.tsx';",
+      "export { resolveNavigationForms } from './packages/ui/src/layout/internal/navigationForms.ts';",
     ].join('\n'),
     resolveDir: repository,
     loader: 'ts',
@@ -148,7 +149,7 @@ test('Panes renders its behavior, its split and its size for CSS, and the parts 
   const markup = renderToString(
     h(
       Panes.Root,
-      { behavior: 'supporting', name: 'doc', defaultSize: 20 },
+      { behavior: 'supporting', name: 'doc', defaultWidth: 20 },
       h(Panes.Main, { label: 'Document' }, 'Main'),
       h(Panes.Divider),
       h(Panes.Supporting, { label: 'Details' }, 'Side'),
