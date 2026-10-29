@@ -34,10 +34,10 @@ const initialPanels: FixturePanel[] = [
     title: 'Meeting notes',
     mode: 'open',
     active: true,
-    preferredWidth: 448,
-    minWidth: 288,
-    minHeight: 200,
-    maxHeight: 400,
+    preferredWidth: 28,
+    minWidth: 18,
+    minHeight: 12.5,
+    maxHeight: 25,
   },
   {
     id: 'budget',
@@ -225,7 +225,7 @@ const OtherDocks = memo(function OtherDocks({ theme }: { theme: ColorScheme }) {
             name="lone"
             theme={theme}
             className="fixture-dock-single"
-            initial={[{ id: 'solo', title: 'Solo', mode: 'open', minWidth: 720 }]}
+            initial={[{ id: 'solo', title: 'Solo', mode: 'open', minWidth: 45 }]}
           />
           {/* The active panel alone is wider than the row. */}
           <MinimizingDock
@@ -235,7 +235,7 @@ const OtherDocks = memo(function OtherDocks({ theme }: { theme: ColorScheme }) {
             initial={[
               { id: 'draft', title: 'Draft', mode: 'open' },
               { id: 'outline', title: 'Outline', mode: 'open' },
-              { id: 'canvas', title: 'Canvas', mode: 'open', active: true, minWidth: 720 },
+              { id: 'canvas', title: 'Canvas', mode: 'open', active: true, minWidth: 45 },
             ]}
             activates
           />

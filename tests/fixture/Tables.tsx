@@ -301,7 +301,7 @@ export function TablesFixture({ theme }: { theme: ColorScheme }) {
         </button>
       </div>
       <div className="fixture-measured-stack-frame" data-testid={`bare-stack-frame-${theme}`}>
-        <Table.Root aria-label={`Bare threshold ${theme}`} narrowLayout="stack" stackBelow="600">
+        <Table.Root aria-label={`Bare threshold ${theme}`} narrowLayout="stack" stackBelow="37.5">
           <Table.Head>
             <Table.Row>
               <Table.HeaderCell>Report</Table.HeaderCell>
@@ -316,7 +316,7 @@ export function TablesFixture({ theme }: { theme: ColorScheme }) {
           </Table.Body>
         </Table.Root>
         {/* A number of pixels works as well. */}
-        <Table.Root aria-label={`Number threshold ${theme}`} narrowLayout="stack" stackBelow={600}>
+        <Table.Root aria-label={`Number threshold ${theme}`} narrowLayout="stack" stackBelow={37.5}>
           <Table.Head>
             <Table.Row>
               <Table.HeaderCell>Report</Table.HeaderCell>

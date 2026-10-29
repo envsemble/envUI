@@ -10,9 +10,9 @@ import {
 export default function MinimizeWhatDoesNotFit() {
   // The newest panel is last and active; the first was active longest ago.
   const [panels, setPanels] = useState<PanelDockPanel[]>([
-    { id: 'queue', title: 'Support queue', mode: 'open', height: 240 },
-    { id: 'checklist', title: 'Release checklist', mode: 'open', height: 240 },
-    { id: 'hiring', title: 'Hiring plan', mode: 'open', height: 240, active: true },
+    { id: 'queue', title: 'Support queue', mode: 'open', height: 15 },
+    { id: 'checklist', title: 'Release checklist', mode: 'open', height: 15 },
+    { id: 'hiring', title: 'Hiring plan', mode: 'open', height: 15, active: true },
   ]);
   const update = (change: (panel: PanelDockPanel) => PanelDockPanel) =>
     setPanels((current) => current.map(change));

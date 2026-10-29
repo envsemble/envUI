@@ -5597,14 +5597,14 @@
           "name": "onHeightChange",
           "type": "(id: string, height: number) => void",
           "required": false,
-          "description": "Called with a panel's new height in pixels when a drag on its top edge ends, and on each key press there."
+          "description": "Called with a panel's new height in rem when a drag on its top edge ends, and on each key press there."
         },
         {
           "name": "stackBelow",
           "type": "string | number",
           "required": false,
           "default": "'40rem'",
-          "description": "A width, 40rem by default, or a number of pixels, such as 600 or \"600\": while the dock itself is narrower, one panel at a time fills it and the others wait as tabs. The dock then has data-stacked."
+          "description": "A width, as a CSS length, such as \"40rem\", or a number of rem, such as 40: while the dock itself is narrower, one panel at a time fills it and the others wait as tabs. The dock then has data-stacked."
         },
         {
           "name": "onStackedChange",
@@ -7678,7 +7678,7 @@
           "type": "string | number",
           "required": false,
           "default": "'36rem'",
-          "description": "The region width below which a table with narrowLayout=\"stack\" stacks its rows: a CSS length such as 60rem or 480px, or a number of pixels, such as 600 or \"600\". Wide tables, such as seven sortable columns, need more."
+          "description": "The region width below which a table with narrowLayout=\"stack\" stacks its rows: a CSS length such as 60rem or 480px, or a number of rem, such as 40 or \"40\", as PanelDock's. Wide tables, such as seven sortable columns, need more."
         },
         {
           "name": "onStackedChange",

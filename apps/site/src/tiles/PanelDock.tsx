@@ -26,9 +26,9 @@ const start: PanelDockPanel[] = [
     title: 'Notes',
     mode: 'open',
     active: true,
-    height: 168,
-    preferredWidth: 192,
-    minWidth: 192,
+    height: 10.5,
+    preferredWidth: 12,
+    minWidth: 12,
   },
   // After the notes, so its tab keeps its place at the end as the notes' tab comes and goes.
   { id: 'budget', title: 'Budget', mode: 'minimized' },

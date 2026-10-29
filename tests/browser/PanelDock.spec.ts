@@ -2,6 +2,9 @@ import { test, expect, type Locator, type Page } from '@playwright/test';
 import { openServerMarkup } from './helpers/ServerMarkup';
 import { fixtureUrl } from './helpers/Servers';
 
+/** A length in pixels as a number of rem, to a hundredth, as the dock reports heights. */
+const inRem = (pixels: number) => Math.round((pixels / 16) * 100) / 100;
+
 const dockFixture = `${fixtureUrl}/?fixture=panel-dock`;
 
 function collectErrors(page: Page) {
@@ -301,7 +304,8 @@ test.describe('PanelDock', () => {
       expect(await lastLog(page)).not.toMatch(/^height/);
       await page.mouse.up();
       await expect(report).not.toHaveAttribute('data-resizing');
-      await expect.poll(() => lastLog(page)).toBe(`height report ${start - 100}`);
+      // It reports the height in rem.
+      await expect.poll(() => lastLog(page)).toBe(`height report ${inRem(start - 100)}`);
       await expect(handle).toHaveAttribute('aria-valuenow', String(start - 100));
 
       // The arrow keys move by 16 px, 64 with Shift; Home and End reach the bounds.
@@ -312,7 +316,7 @@ test.describe('PanelDock', () => {
       await expect(handle).toHaveAttribute('aria-valuenow', String(start - 20));
       await page.keyboard.press('ArrowDown');
       await expect(handle).toHaveAttribute('aria-valuenow', String(start - 36));
-      await expect.poll(() => lastLog(page)).toBe(`height report ${start - 36}`);
+      await expect.poll(() => lastLog(page)).toBe(`height report ${inRem(start - 36)}`);
       await page.keyboard.press('Home');
       await expect(handle).toHaveAttribute('aria-valuenow', '240');
       await expect(handle).toHaveAttribute('aria-valuetext', `${Math.round((240 / room) * 100)}%`);

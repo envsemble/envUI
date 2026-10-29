@@ -17,7 +17,7 @@ import {
   type PanelDockMode,
   type PanelDockPanelContextValue,
 } from './PanelDockPanelContext.js';
-import { pixels, type HeightBounds, type Placement } from './dockLayout.js';
+import { pixels, rems, type HeightBounds, type Placement } from './dockLayout.js';
 import type { PanelDockPanel } from '../Root.js';
 import { useEntrance } from './useEntrance.js';
 import '../../../styles/Base.css';
@@ -171,9 +171,9 @@ export function PanelFrame({
           data-resizing={preview !== undefined || undefined}
           style={
             {
-              '--env-panel-dock-panel-width': pixels(panel.preferredWidth),
-              '--env-panel-dock-panel-min-width': pixels(panel.minWidth),
-              '--env-panel-dock-panel-max-width': pixels(panel.maxWidth),
+              '--env-panel-dock-panel-width': rems(panel.preferredWidth),
+              '--env-panel-dock-panel-min-width': rems(panel.minWidth),
+              '--env-panel-dock-panel-max-width': rems(panel.maxWidth),
               '--env-panel-dock-panel-height': pixels(shownHeight),
             } as CSSProperties
           }

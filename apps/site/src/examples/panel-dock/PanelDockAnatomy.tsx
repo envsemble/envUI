@@ -3,7 +3,7 @@ import { Button, PanelDock, Surface, Text, type PanelDockPanel } from '@envsembl
 
 export default function PanelDockAnatomy() {
   const [panels, setPanels] = useState<PanelDockPanel[]>([
-    { id: 'press', title: 'Press release', mode: 'open', active: true, height: 200 },
+    { id: 'press', title: 'Press release', mode: 'open', active: true, height: 12.5 },
     { id: 'budget', title: 'Budget', mode: 'minimized' },
   ]);
   return (

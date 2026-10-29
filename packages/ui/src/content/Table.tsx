@@ -17,7 +17,7 @@ import {
 import { classNames } from '../internal/classNames.js';
 import type { RowDensity } from '../foundations/Theme.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
-import { cssLength } from '../internal/cssLength.js';
+import { remLength } from '../internal/cssLength.js';
 import { setRef } from '../internal/setRef.js';
 import { useStackedReport } from '../internal/useStackedReport.js';
 import { ArrowDownward } from '../icons/ArrowDownward.js';
@@ -77,8 +77,8 @@ export interface RootProps
   narrowLayout?: 'scroll' | 'stack';
   /**
    * The region width below which a table with narrowLayout="stack" stacks its rows: a CSS length
-   * such as 60rem or 480px, or a number of pixels, such as 600 or "600". Wide tables, such as
-   * seven sortable columns, need more.
+   * such as 60rem or 480px, or a number of rem, such as 40 or "40", as PanelDock's. Wide tables,
+   * such as seven sortable columns, need more.
    */
   stackBelow?: string | number;
   /**
@@ -243,7 +243,7 @@ function Root({
       // The container query compares the region with 37.5em, an em of stackBelow / 37.5: in a
       // query, em is the container's own.
       style={
-        stack ? ({ '--env-table-stack-below': cssLength(stackBelow) } as CSSProperties) : undefined
+        stack ? ({ '--env-table-stack-below': remLength(stackBelow) } as CSSProperties) : undefined
       }
     >
       {inSkeleton(

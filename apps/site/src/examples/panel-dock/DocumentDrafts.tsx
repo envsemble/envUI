@@ -71,7 +71,7 @@ function panelFor(document: Document, mode: PanelDockMode, active = false): Docu
     mode,
     active,
     // The application keeps each panel's height, in pixels; this one leaves the buttons in view.
-    height: 320,
+    height: 20,
     icon: <Description />,
     tooltip: `${document.title} · ${document.editor}`,
     document,
