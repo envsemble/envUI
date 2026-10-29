@@ -260,9 +260,9 @@ function MenuSection() {
 
 function treeRows(): TreeItem[] {
   return [
-    { id: 'src', depth: 0, label: 'src', icon: <Folder />, expandable: true, expanded: true },
+    { value: 'src', depth: 0, label: 'src', icon: <Folder />, expandable: true, expanded: true },
     {
-      id: 'components',
+      value: 'components',
       depth: 1,
       label: 'components',
       icon: <Folder />,
@@ -270,20 +270,26 @@ function treeRows(): TreeItem[] {
       expanded: true,
     },
     ...['Button.tsx', 'Input.tsx', 'Select.tsx', 'Tree.tsx'].map((name) => ({
-      id: `components/${name}`,
+      value: `components/${name}`,
       depth: 2,
       label: name,
       icon: <Description />,
     })),
     {
-      id: 'styles',
+      value: 'styles',
       depth: 1,
       label: 'styles',
       icon: <Folder />,
       expandable: true,
       expanded: false,
     },
-    { id: 'readme', depth: 0, label: 'README.md', icon: <Description />, description: 'Modified' },
+    {
+      value: 'readme',
+      depth: 0,
+      label: 'README.md',
+      icon: <Description />,
+      description: 'Modified',
+    },
   ];
 }
 

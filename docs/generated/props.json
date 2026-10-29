@@ -8828,7 +8828,7 @@
       "props": [
         {
           "name": "items",
-          "type": "readonly T[]",
+          "type": "readonly Item[]",
           "required": true,
           "description": "The visible rows in order, flattened: an expanded row is followed by its visible descendants. The application owns expansion; collapsing a row removes its descendants from items."
         },
@@ -8843,23 +8843,23 @@
           "type": "string | null",
           "required": false,
           "default": "null",
-          "description": "The selected row's id: it takes the navigation selection colors and scrolls into view when it changes. The application sets it, usually from onAction."
+          "description": "The selected row's value: it takes the navigation selection colors and scrolls into view when it changes. The application sets it, usually from onAction."
         },
         {
           "name": "onAction",
-          "type": "(item: T, options: TreeActionOptions) => void",
+          "type": "(item: Item, details: TreeActionDetails) => void",
           "required": true,
           "description": "Called when people open a row: with preview true on a single click and Space, and false on a double click and Enter. Expandable rows call it too, and disabled rows don't."
         },
         {
           "name": "onExpandedChange",
-          "type": "(item: T, expanded: boolean) => void",
+          "type": "(item: Item, expanded: boolean) => void",
           "required": true,
           "description": "Called with the row and its new state from a press on its chevron, the right arrow key on a collapsed row and the left arrow key on an expanded one, mirrored in right-to-left text. The application updates items."
         },
         {
           "name": "contextMenu",
-          "type": "(item: T | null) => ReactNode",
+          "type": "(item: Item | null) => ReactNode",
           "required": false,
           "description": "Menu items for the row people right-click, or press Shift+F10 or the Menu key on, or for the tree's empty area when the item is null. Without it, the browser's own context menu stays."
         },
@@ -8876,24 +8876,6 @@
           "required": false,
           "default": "'sm'",
           "description": "How tightly the rows pack: xs, sm, md or lg changes only their block padding, never the text or the icons. In the comfortable scale sm rows are 1.75 rem tall and md rows 2.25 rem. Under a coarse pointer every row is at least 2.75 rem."
-        },
-        {
-          "name": "className",
-          "type": "string",
-          "required": false,
-          "description": "A class for the tree, the element that scrolls."
-        },
-        {
-          "name": "style",
-          "type": "CSSProperties",
-          "required": false,
-          "description": "The tree's inline style, such as a height."
-        },
-        {
-          "name": "ref",
-          "type": "Ref<HTMLDivElement>",
-          "required": false,
-          "description": "The tree element, which scrolls and holds focus."
         }
       ],
       "native": [

@@ -512,7 +512,7 @@ Change by hand:
 | 0.x                                                             | 1.0                                                                                        |
 | --------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
 | `trailing` on Menu.Item                                         | `end`                                                                                      |
-| Tree `selectedId`, `onOpen`, `TreeOpenOptions`                  | `value`, `onAction`, `TreeActionOptions`                                                   |
+| Tree `selectedId`, `onOpen`, `TreeOpenOptions`                  | `value`, `onAction`, `TreeActionDetails`                                                   |
 | A TreeItem's `detail` and `trailing`                            | `description` and `end`                                                                    |
 | Table.HeaderCell `onSort`                                       | `onSortChange`, called with the order pressing asks for                                    |
 | List.Item `title`, `detail`, `action`                           | `label`, `description`, `end`                                                              |

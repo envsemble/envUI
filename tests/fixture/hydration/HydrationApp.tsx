@@ -41,7 +41,7 @@ import {
 import { ColorPicker } from '@envsemble/envui/color';
 
 const treeItems = Array.from({ length: 40 }, (_, index) => ({
-  id: `doc-${index}`,
+  value: `doc-${index}`,
   depth: 0,
   label: `Hydrated document ${index}`,
 }));
@@ -191,7 +191,7 @@ export function HydrationApp() {
             aria-label="Hydrated tree"
             items={treeItems}
             value={selected}
-            onAction={(item) => setSelected(item.id)}
+            onAction={(item) => setSelected(item.value)}
             onExpandedChange={() => undefined}
           />
         </div>

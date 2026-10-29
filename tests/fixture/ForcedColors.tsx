@@ -166,8 +166,8 @@ function Page() {
       <Tree
         aria-label="Files"
         items={[
-          { id: 'a', depth: 0, label: 'Selected file' },
-          { id: 'b', depth: 0, label: 'Other file' },
+          { value: 'a', depth: 0, label: 'Selected file' },
+          { value: 'b', depth: 0, label: 'Other file' },
         ]}
         value="a"
         onAction={noop}

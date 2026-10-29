@@ -356,7 +356,7 @@ function Nodes({ full, selected, onSelect, onTreeHover }: NodesProps) {
       const open = !collapsed.has(node.key);
       const problems = problemsByKey.get(node.key)?.length ?? 0;
       rows.push({
-        id: String(node.key),
+        value: String(node.key),
         depth,
         node,
         label: labelOf(node),
@@ -364,7 +364,7 @@ function Nodes({ full, selected, onSelect, onTreeHover }: NodesProps) {
         expandable: node.hidden === null && node.children.length > 0,
         expanded: open,
         description: node.hidden ?? undefined,
-        title: node.hidden ?? undefined,
+        tooltip: node.hidden ?? undefined,
         end: problems ? (
           <Badge tone="danger" variant="soft">
             {problems}
@@ -401,12 +401,12 @@ function Nodes({ full, selected, onSelect, onTreeHover }: NodesProps) {
         density="xs"
         items={items}
         value={selected === null ? null : String(selected)}
-        onAction={(item) => onSelect(Number(item.id) === selected ? null : Number(item.id))}
+        onAction={(item) => onSelect(Number(item.value) === selected ? null : Number(item.value))}
         onExpandedChange={(item, expanded) =>
           setCollapsed((keys) => {
             const next = new Set(keys);
-            if (expanded) next.delete(Number(item.id));
-            else next.add(Number(item.id));
+            if (expanded) next.delete(Number(item.value));
+            else next.add(Number(item.value));
             return next;
           })
         }
