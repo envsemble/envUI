@@ -28,7 +28,7 @@ export function FormVocabulary({ look, items }) {
       </RadioGroup>
       <RadioGroup label="Plan" orientation="horizontal" />
       <Slider label="Volume" description="Of alerts" onValueCommitted={() => {}} />
-      <DropZone label="Files" onDropAccepted={() => {}} onDropRejected={() => {}} />
+      <DropZone label="Files" onFilesAccepted={() => {}} onFilesRejected={() => {}} />
     </>
   );
 }

@@ -445,7 +445,7 @@ Fields take a `description` under them and the field variants, and choice contro
 | Slider `onValueCommit`, `inputRef`                                                                            | `onValueCommitted`, `ref`: a Slider's `ref` reached its root                                 |
 | Composer `onSubmit`                                                                                           | `onSend`: `onSubmit` is the native submit event's name                                       |
 | Composer `footer`                                                                                             | `description`, as on a field                                                                 |
-| DropZone `onFiles`, `onReject`                                                                                | `onDropAccepted`, `onDropRejected`                                                           |
+| DropZone `onFiles`, `onReject`                                                                                | `onFilesAccepted`, `onFilesRejected`                                                         |
 | RadioGroup `variant`: `inline`, `rows`                                                                        | `orientation`: `horizontal`, `vertical`                                                      |
 | Radio `detail`                                                                                                | `description`                                                                                |
 | A Combobox option's `leading`, in `items`                                                                     | `start`, as on List.Item                                                                     |
@@ -1169,9 +1169,10 @@ Every other name only takes the prefix, `--body-font-weight` as `--env-body-font
 
 An application written for a 1.0 prerelease follows these renames by hand: the names are new in the prereleases, so no codemod rewrites them, and TypeScript points at each one.
 
-| Before                                 | Now                                        |
-| -------------------------------------- | ------------------------------------------ |
-| A destination's `onSelect: () => void` | `onClick(event)`, as on a link or a button |
+| Before                                      | Now                                                                  |
+| ------------------------------------------- | -------------------------------------------------------------------- |
+| A destination's `onSelect: () => void`      | `onClick(event)`, as on a link or a button                           |
+| DropZone `onDropAccepted`, `onDropRejected` | `onFilesAccepted`, `onFilesRejected`: they run for browsed files too |
 
 ## Migrate by responsibility
 

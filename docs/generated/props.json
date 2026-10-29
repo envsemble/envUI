@@ -3105,13 +3105,13 @@
           "description": "Take several files at once; otherwise the zone takes the first file."
         },
         {
-          "name": "onDropAccepted",
+          "name": "onFilesAccepted",
           "type": "(files: File[]) => void",
           "required": true,
           "description": "Receives the dropped or chosen files that the zone takes."
         },
         {
-          "name": "onDropRejected",
+          "name": "onFilesRejected",
           "type": "(files: File[]) => void",
           "required": false,
           "description": "Receives the files that do not match accept, and those after the first without multiple."

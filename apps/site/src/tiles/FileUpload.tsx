@@ -40,7 +40,7 @@ export default function FileUploadTile() {
   }, [uploading, uploaded]);
   return (
     <Column gap={3} style={{ inlineSize: '16rem' }}>
-      <DropZone size="sm" multiple label="Add files" onDropAccepted={() => setUploaded(0)} />
+      <DropZone size="sm" multiple label="Add files" onFilesAccepted={() => setUploaded(0)} />
       <List.Root aria-label="Files">
         <List.Item label="annual-review.pdf" description="2.4 MB" />
         {uploaded !== null && (

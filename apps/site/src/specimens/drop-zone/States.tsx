@@ -60,11 +60,11 @@ function CoverZone() {
       accept="image/*"
       pending={uploading != null}
       error={error}
-      onDropAccepted={([file]) => {
+      onFilesAccepted={([file]) => {
         setError(undefined);
         setUploading(file.name);
       }}
-      onDropRejected={() => setError('Choose a JPG, PNG or WebP image.')}
+      onFilesRejected={() => setError('Choose a JPG, PNG or WebP image.')}
       style={{ inlineSize: 'min(100%, 24rem)' }}
     />
   );

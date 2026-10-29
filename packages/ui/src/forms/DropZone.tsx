@@ -47,9 +47,9 @@ export interface DropZoneProps
   /** Take several files at once; otherwise the zone takes the first file. */
   multiple?: boolean;
   /** Receives the dropped or chosen files that the zone takes. */
-  onDropAccepted: (files: File[]) => void;
+  onFilesAccepted: (files: File[]) => void;
   /** Receives the files that do not match accept, and those after the first without multiple. */
-  onDropRejected?: (files: File[]) => void;
+  onFilesRejected?: (files: File[]) => void;
   /** The zone can't be pressed or focused and takes no files; it still keeps the browser from opening dropped files. */
   disabled?: boolean;
   /**
@@ -96,8 +96,8 @@ export function DropZone({
   icon,
   accept,
   multiple = false,
-  onDropAccepted,
-  onDropRejected,
+  onFilesAccepted,
+  onFilesRejected,
   disabled = false,
   pending = false,
   error,
@@ -152,8 +152,8 @@ export function DropZone({
     const rejected = chosen.filter((file) => !taken.includes(file));
     // Rejected files leave the held ones as they were, and files from the application win.
     if (taken.length > 0 && files === undefined) hold(taken);
-    if (rejected.length > 0) onDropRejected?.(rejected);
-    if (taken.length > 0) onDropAccepted(taken);
+    if (rejected.length > 0) onFilesRejected?.(rejected);
+    if (taken.length > 0) onFilesAccepted(taken);
   }
 
   function endDrag() {

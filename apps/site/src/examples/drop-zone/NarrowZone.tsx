@@ -9,7 +9,7 @@ export default function NarrowZone() {
       multiple
       label="Attach documents"
       description="Any file, several at once, up to 25 MB each"
-      onDropAccepted={ignore}
+      onFilesAccepted={ignore}
     />
   );
 }

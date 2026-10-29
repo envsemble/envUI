@@ -119,7 +119,7 @@ function Uploads() {
         label="Add files"
         description="Any file up to 10 MB"
         error={error}
-        onDropAccepted={add}
+        onFilesAccepted={add}
       />
       <List.Root ref={list} aria-label="Files" tabIndex={-1}>
         {uploads.map((upload) => (

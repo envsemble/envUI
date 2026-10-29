@@ -282,7 +282,7 @@ export function HydrationApp() {
           size="sm"
           label="Hydrated files"
           description="Any file"
-          onDropAccepted={(chosen) => setFiles(chosen.map((file) => file.name).join(' '))}
+          onFilesAccepted={(chosen) => setFiles(chosen.map((file) => file.name).join(' '))}
         />
         <p>{files}</p>
         <CalendarHeatmap
