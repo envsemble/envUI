@@ -8,7 +8,7 @@
      The group's box is always the spread row, and resting and spreading only move the items, by
      translate and rotate, within it: spreading never changes the group's size, so it can't push what
      is around it, wrap the row it sits in, or move out from under the pointer and bunch again. At rest
-     the items gather toward the start of that room, or its end with data-gather="end", each by its
+     the items gather toward the start of that room, or its end with data-align="end", each by its
      place, which the component sets as --env-avatar-group-before, -after, -count-before and
      -count-after. */
   .env-avatar-group {
@@ -54,7 +54,7 @@
   .env-avatar-group[data-size='xl'] {
     --env-avatar-group-size: 5.5rem;
   }
-  .env-avatar-group[data-gather='end'] {
+  .env-avatar-group[data-align='end'] {
     --env-avatar-group-gather: 1;
   }
   .env-avatar-group:dir(rtl) {

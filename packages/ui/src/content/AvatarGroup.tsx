@@ -179,7 +179,7 @@ export function AvatarGroup({
       className={classNames('env-avatar-group', className)}
       style={style}
       data-size={size}
-      data-gather={align === 'end' ? 'end' : undefined}
+      data-align={align}
       data-interactive={interactive ? '' : undefined}
       data-spread={tapped ? '' : undefined}
       // At rest the pile is one target, the group itself under the style sheet's cover: a tap on it

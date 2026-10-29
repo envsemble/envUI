@@ -331,9 +331,10 @@
       ],
       "states": [
         {
-          "attribute": "data-gather",
+          "attribute": "data-align",
           "values": [
-            "end"
+            "end",
+            "start"
           ],
           "parts": [
             "env-avatar-group"
