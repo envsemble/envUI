@@ -21,24 +21,24 @@ test('a guide in the Docs renders shared Markdown and follows relative links', a
   await expect(page).toHaveURL(/\/components\/surface$/);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Surface');
 
-  // A guide opens on a page of its own in the Docs, current in their navigation.
+  // A guide opens on a page of its own in the Docs, current in their navigation, with its status
+  // under its title and beside its name.
   await page.goto(`${siteDevUrl}/docs`);
-  await page
-    .locator('.site-article')
-    .getByRole('link', { name: 'Develop envUI locally', exact: true })
-    .click();
-  await expect(page).toHaveURL(/\/docs\/local-development$/);
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Develop envUI locally');
-  await expect(page.locator('.site-article')).toContainText('npm run dev:library');
-  await expect(
-    page
-      .getByRole('navigation', { name: 'Docs' })
-      .getByRole('link', { name: 'Develop envUI locally', exact: true }),
-  ).toHaveAttribute('aria-current', 'page');
+  await page.locator('.site-article').getByRole('link', { name: 'Dev mode', exact: true }).click();
+  await expect(page).toHaveURL(/\/docs\/dev-mode$/);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Dev mode');
+  await expect(page.locator('.site-article')).toContainText('installDevMode');
+  await expect(page.locator('.site-page-meta').getByText('Alpha', { exact: true })).toBeVisible();
+  const navigation = page.getByRole('navigation', { name: 'Docs' });
+  await expect(navigation.getByRole('link', { name: /^Dev mode/ })).toHaveAttribute(
+    'aria-current',
+    'page',
+  );
+  await expect(navigation.getByRole('link', { name: /^Dev mode/ })).toContainText('Alpha');
   // The address it had on the Get started view, as a hash, leads to the same page as a path.
   await page.goto(`${siteDevUrl}/#/overview/get-started?document=migration&section=documentation`);
   await expect(page).toHaveURL(/\/docs\/migration$/);
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Migrate an interface to envUI');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Move an app to envUI');
 });
 
 test('palette editing uses public controls and remains temporary and independent between themes', async ({
@@ -332,11 +332,11 @@ test("the Docs' Changelog page lists each release's highlights, newest first, an
     .evaluateAll((links) => links.map((link) => link.getAttribute('href')!));
   const sections = new Map<string, Set<string>>();
   for (const href of hrefs) {
-    expect(href, href).toMatch(/^\/docs\/(?:migration|changelog)(?:#|$)/);
+    expect(href, href).toMatch(/^\/docs\/changelog(?:#|$)/);
     const [path, section] = href.split('#');
     sections.set(path, new Set([...(sections.get(path) ?? []), ...(section ? [section] : [])]));
   }
-  expect([...sections.keys()].sort()).toEqual(['/docs/changelog', '/docs/migration']);
+  expect([...sections.keys()]).toEqual(['/docs/changelog']);
   for (const [path, ids] of sections) {
     await page.goto(`${siteDevUrl}${path}`);
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();

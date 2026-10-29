@@ -12,4 +12,4 @@ SplitPane and ListDetail are gone: Panes replaces them, one scaffold for two pan
 - A vertical split pane has no counterpart.
 - `v1-classes` renames the classes of SplitPane and ListDetail to Panes', `env-split-pane-handle` to `env-panes-divider` and `env-list-detail-back` to `env-panes-back`, and reports `env-split-pane-probe` and the states Panes no longer sets, such as `[data-stacked]`.
 
-Migration guide: [Split panes](https://github.com/envsemble/envUI/blob/main/docs/migration.md#split-panes).
+Migration guide: [Split panes](https://github.com/envsemble/envUI/blob/main/docs/migration.md).

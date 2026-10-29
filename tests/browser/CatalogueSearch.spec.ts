@@ -284,9 +284,7 @@ test.describe('hosted build', () => {
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Table');
     await page.goto(`${siteUrl}/#/overview/get-started?document=migration&section=documentation`);
     await expect(page).toHaveURL(`${siteUrl}/docs/migration`);
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText(
-      'Migrate an interface to envUI',
-    );
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Move an app to envUI');
     // An old hash address entered in an open page is redirected to its path too.
     await page.evaluate(() => (location.hash = '/components/buttons/preview'));
     await expect(page).toHaveURL(`${siteUrl}/components/button`);

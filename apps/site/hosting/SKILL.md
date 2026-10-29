@@ -32,8 +32,6 @@ Leave out a step that is already done. Skip a step the user declines, and say on
 
 If the app already has its own UI components or another component library, set envUI up beside them and change none of them. After setup, offer to plan a migration with the user, following `node_modules/@envsemble/envui/docs/migration.md`: map each existing component to envUI, choose a first slice, and agree what stays. Never rewrite, restyle or remove the app's UI without the user's approval of that plan.
 
-If it already uses envUI 0.x, the same guide's "Upgrade from envUI 0.x to 1.0" applies, with `@envsemble/envui-codemods` at `{{version}}`. Remove earlier envUI agent tooling if you find it: an `envui` server in `.mcp.json` or the agent's MCP configuration, and copied `envui-use`, `envui-migrate` and `envui-contribute` skill folders. Step 2 replaces them.
-
 ## Step 1: Install envUI
 
 envUI is on GitHub Packages. Add the registry to the project's `.npmrc`, creating it if missing and keeping its other lines:
@@ -53,7 +51,7 @@ Then, as `node_modules/@envsemble/envui/docs/setup.md` shows:
 
 ## Step 2: Point AGENTS.md to the docs
 
-Add this block to `AGENTS.md` in the project root, creating the file if missing and keeping the rest. Replace an earlier block between the same markers, such as the index that `envui agents` wrote.
+Add this block to `AGENTS.md` in the project root, creating the file if missing and keeping the rest. Replace an earlier block between the same markers.
 
 ```md
 <!-- BEGIN envui -->
@@ -74,7 +72,7 @@ Install both as dev dependencies at exactly `{{version}}`, the same version as e
 - `@envsemble/eslint-plugin-envui`, needing ESLint 10 and a flat config: add `envui.configs.recommended` to `eslint.config.js`, imported from `@envsemble/eslint-plugin-envui`.
 - `@envsemble/stylelint-config-envui`, needing Stylelint 17: add it to `extends` after the project's base config.
 
-If the project has neither tool, offer to add it with a minimal config. If it runs an older ESLint or a legacy `.eslintrc`, say so and skip rather than upgrading it. Each package's README in `node_modules/@envsemble/` has the options. In an app with UI of its own, the rules report its hand-built controls: that list is the migration's work, not this setup's. If it blocks the user's CI, ask whether to start those rules as warnings.
+`node_modules/@envsemble/envui/docs/setup.md` (Lint rules) and each package's README in `node_modules/@envsemble/` have the options. If the project has neither tool, offer to add it with a minimal config. If it runs an older ESLint or a legacy `.eslintrc`, say so and skip rather than upgrading it. In an app with UI of its own, the rules report its hand-built controls: that list is the migration's work, not this setup's. If it blocks the user's CI, ask whether to start those rules as warnings.
 
 ## Step 4: Verify
 
@@ -90,4 +88,4 @@ Run the project's type check or build and its lint, then start the app and confi
 
 ## After setup
 
-Tell the user what changed, file by file, and what they skipped. Then offer the next step: build a first screen with envUI, starting from its patterns in `docs/index.md`, or, for an app with UI of its own, plan the migration. To upgrade later, raise all three packages to the same new version and read `docs/migration.md` and the changelog. For anything else, read https://envui.envsemble.com/llms.txt.
+Tell the user what changed, file by file, and what they skipped. Then offer the next step: build a first screen with envUI, starting from its patterns in `docs/index.md`, or, for an app with UI of its own, plan the migration. To upgrade later, raise all three packages to the same new version and read the changelog. For anything else, read https://envui.envsemble.com/llms.txt.

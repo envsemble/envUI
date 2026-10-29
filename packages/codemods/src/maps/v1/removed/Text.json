@@ -1,7 +1,0 @@
-{
-  "@envsemble/envui": {
-    "TextElement": {
-      "use": "Text renders another element through render, such as render={<h2 />}."
-    }
-  }
-}

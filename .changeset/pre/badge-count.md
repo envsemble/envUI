@@ -11,4 +11,4 @@ CounterBadge folds into Badge: a Badge with `count` is a compact count.
 - The part classes `env-counter-badge` and `env-counter-badge-label` are `.env-badge[data-count]` and `env-badge-count-label`, and the hooks a control sets for the counts inside it, `--env-counter-badge-fg`, `-bg` and `-border`, are `--env-badge-count-fg`, `-bg` and `-border`.
 - `v1-structure` rewrites CounterBadge and Counter into a Badge with `count`, and reports a `tone` that is an expression; `v1-names` renames `CounterBadgeProps` and `CounterProps` to `BadgeProps`, and `v1-classes` renames the classes and hooks. `envui/no-renamed-exports` reports Counter with what replaces it.
 
-Migration guide: [Folded components and patterns](https://github.com/envsemble/envUI/blob/main/docs/migration.md#folded-components-and-patterns).
+Migration guide: [Folded components and patterns](https://github.com/envsemble/envUI/blob/main/docs/migration.md).

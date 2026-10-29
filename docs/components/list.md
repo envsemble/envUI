@@ -2,7 +2,7 @@
 title: List
 summary: A vertical list of connected rows, each with a title, a detail and an action, that can open what it names, show the current one and be put in order.
 status: stable
-since: 0.1.0
+since: 1.0.0
 category: Data display
 aliases:
   - GroupedRows
@@ -257,13 +257,7 @@ With `interactive`, a row reacts to hover, keyboard focus inside it and presses.
 
 The parts are the list, `env-list`, each row, `env-list-item`, with its handle, `env-list-item-handle`, its start, `env-list-item-start`, its content, `env-list-item-content`, which holds the label and the description, and its action at the end. Rows render on the server; only the handle of a reorderable row needs the browser.
 
-### Customize
-
-`--env-list-item-container`, `--env-list-item-content`, `--env-list-item-selected` and `--env-list-item-selected-content` set the colors of one List, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
-
 ## Changelog
 
 - **1.0.0-prerelease.5**: List.Item's `selected` is `current`, as it marks the current row with `aria-current`; `selected` means chosen elsewhere.
 - **1.0.0**: List.Item takes `current` for the current row, marked in the server's HTML, `start` for content before the label, such as an avatar or a checkbox, and `textValue`; List.Root takes `onReorder`, which moves rows by a drag handle, by keyboard, by a press and by pointer, with announcements. `GroupedRows` is `List.Root` and `Row` is `List.Item`, with the `env-list` and `env-list-item` classes; the page is `list`. List.Item's `title` is `label`, its `detail` is `description` and its `action` is `end`, as on CommandPalette's items and Button. List.Root's `contrast` is gone: put the list directly in `<Surface background="muted" padding={3}>`, where its rows take the raised fill.
-- **0.5.0**: `interactive` rows, which react to hover, focus inside them and presses, and open from anywhere through a `data-row-target`.
-- **0.1.0**: GroupedRows and Row, with connected corners.

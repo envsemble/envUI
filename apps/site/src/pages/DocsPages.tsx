@@ -1,5 +1,5 @@
 import { Column, CopyButton, DescriptionList, Link, Row, Surface, Text } from '@envsemble/envui';
-import { Code, Markdown } from '@envsemble/envui/content';
+import { Code } from '@envsemble/envui/content';
 import { AgentLogos } from '../brand/AgentLogos';
 import { EnvUIDocsLogo } from '../brand/EnvUIDocsLogo';
 import { PageHeader } from '../layout/PageHeader';
@@ -27,7 +27,6 @@ import { SpecimenHeadingLevel } from '../figures/Example';
 import { ReleaseNotes } from './ReleaseNotes';
 import { codeColumns, subsections } from '../shared/CatalogueContent';
 import { headingSlug } from '../shared/SearchAnchors';
-import codemodsReadme from '../../../../packages/codemods/README.md?raw';
 
 /** The token reference, a large page that loads with the page that shows it. */
 const tokenReference = lazyPart(
@@ -101,9 +100,7 @@ export function DocsHome({ page }: { page: RoutePage }) {
             Set up with your agent
           </Text>
           <Text render={<p />} className="docs-agent-setup-text">
-            Paste this into your coding agent. It shows you a short checklist, then installs envUI
-            with its styles and theme, points your AGENTS.md to envUI's docs and turns on its lint
-            rules. You can skip any step.
+            Paste this into your coding agent: it shows you its plan and waits for your yes.
           </Text>
           <Surface
             background="muted"
@@ -138,27 +135,14 @@ export function GuidePage({ page }: { page: RoutePage }) {
         trail={docsTrail(page)}
         description={page.summary}
         kind="docs"
-        meta={<OtherPartButton page={page} />}
+        meta={
+          <MetadataBadges metadata={{ status: page.document?.status }}>
+            <OtherPartButton page={page} />
+          </MetadataBadges>
+        }
       />
       <Column gap={7} className="site-article">
         <GuideDocument document={page.document!} />
-      </Column>
-    </>
-  );
-}
-
-/** The codemods' README, as the package ships it, without its title. */
-export function CodemodsPage({ page }: { page: RoutePage }) {
-  return (
-    <>
-      <PageHeader
-        title={page.title}
-        trail={docsTrail(page)}
-        description={page.summary}
-        kind="docs"
-      />
-      <Column gap={7} className="site-article">
-        <Markdown codeCopyable>{codemodsReadme.replace(/^# [^\n]*\n+/, '')}</Markdown>
       </Column>
     </>
   );
@@ -483,6 +467,33 @@ function ColorProperties({ components }: { components: readonly string[] }) {
   );
 }
 
+/** The built-in strings a page's exports show, each a key of EnvUIProvider's `messages`. */
+function Strings({ document }: { document: Document }) {
+  const strings = document.strings ?? [];
+  if (!strings.length) return null;
+  return (
+    <Column render={<section />} gap={5} aria-labelledby="strings">
+      <Text render={<h2 />} variant="headline" id="strings">
+        Strings
+      </Text>
+      <Text emphasis="muted">
+        EnvUIProvider&apos;s <Code>messages</Code> overrides each, and a component&apos;s own label
+        prop wins over it.
+      </Text>
+      <DescriptionList.Root className="docs-parts">
+        {strings.map((string) => (
+          <DescriptionList.Item
+            key={`${string.namespace}.${string.key}`}
+            label={<Code>{`messages.${string.namespace}.${string.key}`}</Code>}
+          >
+            <Code>{string.value}</Code> {string.description}
+          </DescriptionList.Item>
+        ))}
+      </DescriptionList.Root>
+    </Column>
+  );
+}
+
 /**
  * A component's or a pattern's page in the Docs, its guide to using it in code, which complements
  * its page in the catalogue rather than repeating it: how to import it, its common uses, how its
@@ -529,6 +540,7 @@ export function DocsReferencePage({ page }: { page: RoutePage }) {
         )}
         <PartNames components={metadata?.components ?? []} />
         <ColorProperties components={metadata?.components ?? []} />
+        <Strings document={document} />
         <PageChangelog document={document} />
       </Column>
     </>

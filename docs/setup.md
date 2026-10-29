@@ -47,6 +47,13 @@ aliases:
   - quick start
   - get started
   - getting started
+  - agents
+  - coding agents
+  - AI agents
+  - AGENTS.md
+  - SKILL.md
+  - setup skill
+  - lint rules
 ---
 
 # Install and set up
@@ -71,6 +78,8 @@ Locally, `NODE_AUTH_TOKEN` is a classic GitHub token with `read:packages`; in Gi
 npm install --save-exact @envsemble/envui@<version>
 ```
 
+Upgrade `@envsemble/envui` and the [lint packages](#lint-rules) together, to the same exact version.
+
 ## Connect styles and theme
 
 ```tsx
@@ -86,16 +95,15 @@ export function App() {
 }
 ```
 
-Put the UI inside `Theme`: a theme attribute on the document alone gives no React context. The styles include Geist and sit in the `env` cascade layer, so the application's CSS outside layers overrides them without `!important`. Declare the order once, such as `@layer reset, env, app;`, with resets and element rules in a layer before `env`: an element rule outside layers, such as `button { border: 0 }`, restyles envUI's components too. [Cascade layers](migration.md#cascade-layers) shows how to override a token per theme, and [colors and themes](foundations/colors.md) nested themes, portals and high contrast.
+Put the UI inside `Theme`: a theme attribute on the document alone gives no React context. The styles include Geist and sit in the `env` cascade layer: [cascade layers](customizing.md#cascade-layers) says how the application's CSS and resets take their place around it, and [colors and themes](foundations/colors.md) covers nested themes, portals and high contrast.
 
 ### Styles come with the components
 
 Each component's module imports its own style sheet, after the base every component shares: the layer order, the tokens, the theme and the font. A bundler that loads CSS from dependencies, such as Vite, Next.js, webpack with a CSS loader or esbuild, puts in the page what the application's modules import, so the page loads the CSS of the components it uses.
 
 - **Without a bundler**, import `@envsemble/envui/styles.css` once, in the client entry: it holds every component's styles. Don't import it as well as the components' own: the styles would load twice.
-- **Your own layers.** envUI's styles load with the first component, wherever the bundler puts it. If the application declares cascade layers, declare the order in a style sheet the client entry imports before any component, so `env` takes its place in it.
 - **In Node**, as when a server renders or tests run without a bundler, the same modules load without their CSS: the package's style sheet imports resolve to an empty module under the `node` condition, and only a bundler, which sets the `module` condition, loads the CSS. Server-rendered pages get their CSS from the client bundle, or from the framework that collects it, as Next.js does.
-- **What a bundle keeps.** Vite and webpack keep the style sheets of the modules they keep. esbuild, Rollup's CSS plugins and Next.js with Turbopack, where a server component imports from envUI, keep those of every module the import reaches, about all of `styles.css`. Next.js with webpack keeps only what the page uses when `experimental.optimizePackageImports` lists `@envsemble/envui`.
+- **Next.js** with webpack keeps only the style sheets a page uses when `experimental.optimizePackageImports` lists `@envsemble/envui`.
 
 ### Theme preference
 
@@ -254,33 +262,6 @@ export function RouterLinks({ children }: { children: ReactNode }) {
 }
 ```
 
-### The current page and focus
-
-The application marks the current destination `current` in the array it passes to NavigationBar, NavigationRail or NavigationDrawer, from the router's location; a destination stays current on the pages under it.
-
-```tsx recipe
-import { useLocation } from 'react-router';
-import { NavigationDrawer } from '@envsemble/envui';
-import { Folder } from '@envsemble/envui/icons/Folder';
-import { Group } from '@envsemble/envui/icons/Group';
-
-export function ProjectNavigation() {
-  const { pathname } = useLocation();
-  const current = (path: string) => pathname === path || pathname.startsWith(`${path}/`);
-  return (
-    <NavigationDrawer
-      aria-label="Projects"
-      destinations={[
-        { label: 'Projects', icon: <Folder />, href: '/projects', current: current('/projects') },
-        { label: 'People', icon: <Group />, href: '/people', current: current('/people') },
-      ]}
-    />
-  );
-}
-```
-
-After a navigation, move focus to the new page's `main` or `h1`, with `tabIndex={-1}`, and `preventScroll` where the page restores its own scroll; otherwise screen readers hear nothing of it. A link that only changes a view in place, such as a tab or a filter, keeps focus.
-
 ## Locale, strings and direction
 
 envUI works without setup in English, in the runtime's locale and in each element's direction. To translate or format for its people, an application wraps itself or a region in `EnvUIProvider`, here in a client component, where `t` is its translation function:
@@ -397,26 +378,16 @@ Import each icon by its subpath, such as `import { Add } from '@envsemble/envui/
 
 ### Bundle size
 
-The modules have no side effects, so bundlers keep only what the application uses, with one difference in namespaces: Vite, on Rolldown, keeps the parts the application renders, and esbuild every part of a namespace it uses, at most the namespace's size. Measured on envUI 1.0, minified, envUI's own code only:
+The modules have no side effects, so a bundler keeps only what the application uses; Vite keeps only the parts of a namespace the application renders.
 
-| Application renders                    | esbuild | Vite (Rolldown) |
-| -------------------------------------- | ------: | --------------: |
-| `Table.Cell` alone                     |  9.1 KB |          1.4 KB |
-| `Table.Root`, `Body`, `Row` and `Cell` |  9.2 KB |          5.3 KB |
-| `Menu.Item` alone                      |  7.7 KB |          3.8 KB |
-| `Menu.Root` with a `Menu.Item`         |  9.2 KB |          7.4 KB |
-| `Pager.Next`                           |  1.5 KB |          1.6 KB |
-| `Badge`, which is no namespace's part  |  0.6 KB |          0.9 KB |
+## Lint rules
 
-Gzipped, `Table.Cell` alone is 3.7 KB with esbuild and 0.6 KB with Vite.
+[`@envsemble/eslint-plugin-envui`](https://github.com/envsemble/envUI/tree/main/packages/eslint-plugin) and [`@envsemble/stylelint-config-envui`](https://github.com/envsemble/envUI/tree/main/packages/stylelint-config) report hand-built controls and raw colors, naming the envUI component or token to use, so people and agents see them as they edit and check. Install them at envUI's version; each one's README says how to turn it on:
+
+```sh
+npm install --save-dev --save-exact @envsemble/eslint-plugin-envui@<version> @envsemble/stylelint-config-envui@<version>
+```
 
 ## Coding agents
 
-A coding agent can do this setup with you: give it the prompt `Set up envUI in my app: envui.envsemble.com/SKILL.md`. It also adds a short pointer to these docs to the project's `AGENTS.md` and turns on envUI's lint rules, each of which you may skip. [For agents](agent-tooling.md) describes it.
-
-## Related workflows
-
-- [Documentation index](index.md)
-- [For agents](agent-tooling.md)
-- [Migration](migration.md)
-- [Local development](local-development.md)
+A coding agent can do this setup with you, following [the setup skill](https://envui.envsemble.com/SKILL.md) the site hosts: it shows its plan and waits for your yes, adds a pointer to these docs to the project's `AGENTS.md` and turns on the lint rules.

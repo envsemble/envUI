@@ -1,6 +1,5 @@
 ---
 '@envsemble/envui': minor
-'@envsemble/envui-codemods': minor
 ---
 
-Callbacks no longer take the name of a DOM event they don't behave like. CopyButton's `onCopy(text)` is `onCopied(text)`, and Composer's `onSubmit(value)` is `onSend(value)`, which pairs with `sendLabel`; `v1-props` renames both. A destination of Drawer, Rail and Bar runs `onClick(event)` instead of `onSelect()`, as BreadcrumbsItem does, and Menu.Item's `onClick` receives the event too.
+Callbacks no longer take the name of a DOM event they don't behave like. CopyButton's `onCopy(text)` is `onCopied(text)`, and Composer's `onSubmit(value)` is `onSend(value)`, which pairs with `sendLabel`; A destination of Drawer, Rail and Bar runs `onClick(event)` instead of `onSelect()`, as BreadcrumbsItem does, and Menu.Item's `onClick` receives the event too.

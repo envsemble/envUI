@@ -1,9 +1,0 @@
-{
-  "env-counter-badge-bg": "env-badge-count-bg",
-  "env-counter-badge-border": "env-badge-count-border",
-  "env-counter-badge-fg": "env-badge-count-fg",
-  "env-counter-badge-label": "env-badge-count-label",
-  "env-counter-label": "env-badge-count-label",
-  "env-diff-count": "env-diff-stat",
-  "env-info-chip": "env-badge"
-}

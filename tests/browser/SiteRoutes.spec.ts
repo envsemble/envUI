@@ -1,6 +1,5 @@
 import { test, expect } from '@playwright/test';
 import { siteDevUrl } from './helpers/Servers';
-import { readMap } from '../../packages/codemods/src/map.mjs';
 import {
   allPages,
   counterpartOf,
@@ -14,26 +13,6 @@ import {
 } from '../../apps/site/src/navigation/SiteRoutes';
 import { componentGroups } from '../../apps/site/src/pages/PageModel';
 import { goTo } from './helpers/SiteSpecHelpers';
-import { componentDocuments } from '../../apps/site/src/pages/PageModel';
-
-const components = componentDocuments.map(({ id }) => id);
-
-test('the 0.x routes of renamed pages open the pages under their new names', () => {
-  const { docs } = readMap() as { docs: Record<string, string> };
-  // Pages renamed again since the map was written, which the routes follow to their current name.
-  const renamedSince: Record<string, string> = { drawer: 'navigation-drawer' };
-  for (const [from, mapped] of Object.entries<string>(docs).filter(
-    ([key]) => !key.startsWith('$'),
-  )) {
-    const to = renamedSince[mapped] ?? mapped;
-    expect(components).toContain(to);
-    expect(components).not.toContain(from);
-    // A page's views are gone: Preview and Usage open its page, and Props its page in the Docs.
-    for (const view of ['preview', 'usage'])
-      expect(normalizeRoute(`components/${from}/${view}`)).toBe(`components/${to}`);
-    expect(normalizeRoute(`components/${from}/props`)).toBe(`docs/components/${to}`);
-  }
-});
 
 test('the addresses of the views before the catalogue and the Docs split open the pages they became', () => {
   const routes: Record<string, string> = {
@@ -55,9 +34,14 @@ test('the addresses of the views before the catalogue and the Docs split open th
     'overview/components': 'overview',
     'overview/components?section=components-actions': 'components?section=components-actions',
     'overview/get-started': 'docs/setup',
-    'overview/get-started?skill=migrate&section=local-development': 'docs/agent-tooling',
-    // The agent skills' page went with the skills.
-    'docs/agent-skills': 'docs/agent-tooling',
+    'overview/get-started?skill=migrate&section=local-development':
+      'docs/setup?section=coding-agents',
+    // The agent skills' page went with the skills, and the guide for agents into setup.
+    'docs/agent-skills': 'docs/setup?section=coding-agents',
+    'docs/agent-tooling': 'docs/setup?section=coding-agents',
+    // The codemods went, and developing envUI locally is a contributor's guide now.
+    'docs/codemods': 'docs/migration',
+    'docs/local-development': 'docs',
     // The agent benchmark went, and its page opens the overview.
     benchmark: 'overview',
     'get-started/migration': 'docs/migration',

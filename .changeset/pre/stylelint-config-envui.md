@@ -6,4 +6,4 @@ The first release: a Stylelint config for applications built with envUI, for Sty
 
 The config is released with `@envsemble/envui` at the same version; install the version that matches envUI.
 
-Migration guide: [Upgrade from envUI 0.x to 1.0](https://github.com/envsemble/envUI/blob/main/docs/migration.md#upgrade-from-envui-0x-to-10).
+Migration guide: [Upgrade from envUI 0.x to 1.0](https://github.com/envsemble/envUI/blob/main/docs/migration.md).

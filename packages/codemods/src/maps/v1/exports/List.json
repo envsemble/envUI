@@ -1,8 +1,0 @@
-{
-  "@envsemble/envui": {
-    "GroupedRows": "List.Root",
-    "GroupedRowsProps": "List.RootProps",
-    "Row": "List.Item",
-    "RowProps": "List.ItemProps"
-  }
-}

@@ -2,7 +2,7 @@
 title: DocumentTabs
 summary: Editor-style tabs for open documents, which people switch, close, pin and close all.
 status: stable
-since: 0.5.0
+since: 1.0.0
 category: Navigation
 aliases:
   - editor tabs
@@ -142,7 +142,6 @@ A tab holds its icon, its name and its close button, and no other controls.
 ### You provide
 
 - An `aria-label` for the strip, and the `tabpanel` with `panelId`, named after the active document.
-- The labels in the application's language, through `messages.documentTabs`.
 
 ## Compose
 
@@ -172,11 +171,9 @@ Each tab opens a context menu with Close on right click, long press, the <kbd>Me
 
 ### Composition
 
-`closeLabel`, a function of the tab's label, `closeAllLabel` and `contextMenuLabel` name the close actions and the menu, from EnvUIProvider's `messages.documentTabs` by default. `className`, `style`, `ref` and the other native props reach the root, `env-document-tabs`, the bar that holds the strip and the end content. Each item, `env-document-tabs-item`, lays out its tab beside its close button, an IconButton with a cross hidden from assistive technology.
+`closeLabel`, a function of the tab's label, `closeAllLabel` and `contextMenuLabel` name the close actions and the menu. `className`, `style`, `ref` and the other native props reach the root, `env-document-tabs`, the bar that holds the strip and the end content. Each item, `env-document-tabs-item`, lays out its tab beside its close button, an IconButton with a cross hidden from assistive technology.
 
 ## Changelog
 
 - **1.0.0-prerelease.5**: `DocumentTab` is `DocumentTabsItem`, keyed by `value` where it had `id`, with `tooltip` where it had `title`; the root takes the native props.
 - **1.0.0**: `onReorder`: a tab dragged with a mouse or pen shows where it will land and moves there when let go, and each tab's context menu offers Move left and Move right. `end` holds content after the tabs, such as a button that closes them all. Tabs that run past an edge fade out toward it. Rebuilt on Base UI Tabs: each tab sits beside its close button, an IconButton with a cross hidden from assistive technology, instead of around it, which fixes the nested-interactive control, and announces Delete and Backspace, which close it, through `aria-keyshortcuts`. Each tab opens a context menu with Close, also without `onCloseAll`, which adds Close all tabs. The arrow keys and the wheel follow the text direction. Strings come from `messages.documentTabs`, and the strip takes `ref` and `style`. Classes: `env-document-tabs-item` lays out each tab, and `env-document-tab`, `-label` and `-close` are `env-document-tabs-tab`, `-tab-label` and `env-document-tabs-close`. The root, `env-document-tabs`, is the bar that holds the strip and the end content, and takes `className`, `style` and `ref`; the strip, the tab list, which they reached before, is `env-document-tabs-list`.
-- **0.6.0**: `onCloseAll`: the strip and each tab open a compact context menu with Close all tabs, and on a tab, closing that tab; focus moves to the tab that becomes active.
-- **0.5.0**: DocumentTabs, with preview tabs, pinning and closing.

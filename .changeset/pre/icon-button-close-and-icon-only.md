@@ -9,4 +9,4 @@ IconButton is the one icon-only button, and the one close button.
 - `Button iconOnly` is gone: `<IconButton icon aria-label>` replaces it, and takes `href` for an icon-only link.
 - `v1-structure` rewrites `<CloseButton>` into the IconButton, importing `Close` from `@envsemble/envui/icons/Close`, and writes `aria-label="Close"` where it had no name, which it reports to translate. It rewrites `<Button iconOnly>` into `<IconButton>`, reporting those without a `variant`, which were primary where IconButton is secondary, and those that set `fullWidth`, `underline` or a `tone` without a `variant`, which IconButton doesn't take; a structure case's `reportProps` reports such props. `v1-classes` reports `env-close-button`. A structure case can now add a component imported from another module, such as an icon.
 
-Migration guide: [Folded components and patterns](https://github.com/envsemble/envUI/blob/main/docs/migration.md#folded-components-and-patterns).
+Migration guide: [Folded components and patterns](https://github.com/envsemble/envUI/blob/main/docs/migration.md).

@@ -148,4 +148,4 @@ A row never turns into a column by itself. `container` makes it a size container
 
 ## Changelog
 
-- **1.0.0**: Row, with Column, Grid and Box, replaces Stack: a Stack with `direction="row"` is a Row, which the `v1-stack` codemod writes. A Row has no gap of its own; the codemod writes `gap={4}`, Stack's default, where a Stack set none.
+- **1.0.0**: Row, with Column, Grid and Box, replaces Stack: a Stack with `direction="row"` is a Row. A Row has no gap of its own, where Stack's default was `gap={4}`.

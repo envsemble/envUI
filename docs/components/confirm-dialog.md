@@ -150,7 +150,7 @@ Ask the question in the title, and name the consequence on the confirm button.
 
 A ConfirmDialog opens from its `trigger`, such as a Button. Its `title` asks the question, such as “Delete Northwind launch?”, its `description` says what confirming does and whether it can be undone, and `confirmLabel` names the consequence, such as Delete project.
 
-- `cancelLabel` is Cancel by default, from EnvUIProvider's `messages.confirmDialog.cancel`.
+- `cancelLabel` names the cancel button.
 - `children` holds more content between the heading and the actions, such as the one field a confirmation holds, where <kbd>Enter</kbd> confirms.
 - A press outside doesn't close it.
 

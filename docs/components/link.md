@@ -2,7 +2,7 @@
 title: Link
 summary: A destination inside running text, underlined by default, routed by the application.
 status: beta
-since: 0.1.0
+since: 1.0.0
 category: Actions
 aliases:
   - anchor
@@ -134,4 +134,3 @@ Link is a text Button with the class `env-link`, whose `data-underline` says whe
 ## Changelog
 
 - **1.0.0**: Link has a page of its own, split from the button page.
-- **0.1.0**: Link, an inline link built on Button.

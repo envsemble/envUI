@@ -1,4 +1,0 @@
-[
-  "line 2: env-skeleton has no 1.0 class: Skeleton is gone in 1.0, and with it env-skeleton and env-skeleton-highlight: a component with skeleton marks its root with data-env-skeleton, so select [data-env-skeleton] and what is inside it.",
-  "line 5: env-skeleton-highlight has no 1.0 class: Skeleton is gone in 1.0, and with it env-skeleton and env-skeleton-highlight: a component with skeleton marks its root with data-env-skeleton, so select [data-env-skeleton] and what is inside it."
-]

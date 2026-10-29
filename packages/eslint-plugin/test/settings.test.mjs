@@ -6,41 +6,45 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import rule from '../src/rules/no-renamed-exports.js';
+import rule from '../src/rules/no-html-elements.js';
 
 /** An application whose `src/ui/index.ts` re-exports envUI. */
 const fixture = fileURLToPath(new URL('fixtures/app/', import.meta.url));
 const app = resolve(fixture, 'src/App.js');
 
-/** The rules that report `import { Input } from <source>`: `no-renamed-exports` when it matches. */
+/**
+ * The rules that report `<Menu.Root role="menu">` imported from <source>: none when the source is
+ * a module that re-exports envUI, whose Menu.Root owns the role, else `no-html-elements`.
+ */
 function lint(reexportModules, { cwd = fixture, filename = app, source = './ui' } = {}) {
   return new Linter({ cwd })
     .verify(
-      `import { Input } from '${source}';`,
+      `import { Menu } from '${source}';\nconst menu = <Menu.Root role="menu" />;`,
       {
-        plugins: { envui: { rules: { 'no-renamed-exports': rule } } },
-        languageOptions: { sourceType: 'module' },
+        plugins: { envui: { rules: { 'no-html-elements': rule } } },
+        languageOptions: { sourceType: 'module', parserOptions: { ecmaFeatures: { jsx: true } } },
         settings: { envui: { reexportModules } },
-        rules: { 'envui/no-renamed-exports': 'error' },
+        rules: { 'envui/no-html-elements': 'error' },
       },
       filename,
     )
     .map((message) => message.ruleId ?? message.message);
 }
 
-const reported = ['envui/no-renamed-exports'];
+/** What a source that matches an entry reports: nothing. */
+const matched = [];
 
 test('an absolute entry matches from any working directory', () => {
   const elsewhere = resolve(fixture, '..');
-  assert.deepEqual(lint([resolve(fixture, 'src/ui')], { cwd: elsewhere }), reported);
-  assert.deepEqual(lint([resolve(fixture, 'src/ui/index.ts')], { cwd: elsewhere }), reported);
-  assert.deepEqual(lint([resolve(fixture, 'src/ui/')], { cwd: elsewhere }), reported);
+  assert.deepEqual(lint([resolve(fixture, 'src/ui')], { cwd: elsewhere }), matched);
+  assert.deepEqual(lint([resolve(fixture, 'src/ui/index.ts')], { cwd: elsewhere }), matched);
+  assert.deepEqual(lint([resolve(fixture, 'src/ui/')], { cwd: elsewhere }), matched);
 });
 
 test('a relative entry is read from the working directory', () => {
-  assert.deepEqual(lint(['./src/ui']), reported);
-  assert.deepEqual(lint(['./src/ui/index'], { source: './ui.ts' }), reported);
-  assert.deepEqual(lint(['./ui'], { cwd: resolve(fixture, 'src') }), reported);
+  assert.deepEqual(lint(['./src/ui']), matched);
+  assert.deepEqual(lint(['./src/ui/index'], { source: './ui.ts' }), matched);
+  assert.deepEqual(lint(['./ui'], { cwd: resolve(fixture, 'src') }), matched);
 });
 
 test('a path entry that names no module is a configuration error', () => {
@@ -56,7 +60,7 @@ test('a path entry that names no module is a configuration error', () => {
   );
   assert.throws(() => lint([resolve(fixture, 'src/missing')]), /names no module/);
   // An alias is not a path, and names no file to look for.
-  assert.deepEqual(lint(['@/components/ui']), []);
+  assert.deepEqual(lint(['@/components/ui']), ['envui/no-html-elements']);
 });
 
 test('a module reached through a link matches its real path', (t) => {
@@ -67,8 +71,8 @@ test('a module reached through a link matches its real path', (t) => {
   symlinkSync(fixture, link, 'junction');
   // A file under the link imports the module the entry names by its real path, and the other way.
   const linked = { cwd: directory, filename: join(link, 'src/App.js') };
-  assert.deepEqual(lint([resolve(fixture, 'src/ui')], linked), reported);
-  assert.deepEqual(lint([join(link, 'src/ui')]), reported);
+  assert.deepEqual(lint([resolve(fixture, 'src/ui')], linked), matched);
+  assert.deepEqual(lint([join(link, 'src/ui')]), matched);
 });
 
 test(
@@ -85,7 +89,7 @@ test(
       [entry, swap(app)],
       [swap(entry).toUpperCase(), app],
     ])
-      assert.deepEqual(lint([entryPath], { filename }), reported, `${entryPath} from ${filename}`);
-    assert.deepEqual(lint(['./src/ui'], { cwd: swap(fixture), filename: app }), reported);
+      assert.deepEqual(lint([entryPath], { filename }), matched, `${entryPath} from ${filename}`);
+    assert.deepEqual(lint(['./src/ui'], { cwd: swap(fixture), filename: app }), matched);
   },
 );

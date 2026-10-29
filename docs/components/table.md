@@ -3,7 +3,7 @@ title: Table
 summary: 'Semantic data tables on a rounded surface: sorting, resizable columns, selected rows and
   stacked rows in narrow containers.'
 status: stable
-since: 0.5.0
+since: 1.0.0
 category: Data display
 aliases:
   - data table
@@ -203,7 +203,6 @@ Start each row with the cell that identifies it, which titles the row when rows 
 - A `caption` or an `aria-label` for every table.
 - The sorting, the selection control and the row actions, named for the row they act on.
 - A `label` on every cell after the first in a stacking table.
-- The sort and resize words in the page's language, through `messages.table`.
 
 ## Compose
 
@@ -265,5 +264,3 @@ Parts the anatomy doesn't show: a column's resize handle, `env-table-column-resi
 - **1.0.0-prerelease.5**: A number for `stackBelow` is a number of rem, as on PanelDock, where it was pixels.
 - **1.0.0-prerelease.5**: `onColumnWidthsChange` receives `{ committed }` beside the widths, as the other resize callbacks do.
 - **1.0.0**: The parts are members of the `Table` namespace: `Table` is `Table.Root`, and `TableHead`, `TableBody`, `TableRow`, `TableHeaderCell` and `TableCell` are `Table.Head`, `Table.Body`, `Table.Row`, `Table.HeaderCell` and `Table.Cell`; `TableSortDirection` is `Table.SortDirection`. The page is `table`, after the component. Table.HeaderCell's `onSort` is `onSortChange`, called with the order pressing asks for. A table named by `aria-labelledby` names its scroll region too, which was left unnamed. The sort and resize words come from `messages.table`. A column's resize handle, `env-table-column-resize`, is `env-table-column-resize-handle`, as every resize handle is named.
-- **0.6.0**: A table with `stickyHeader` no longer swallows the wheel: over a region without a height of its own, or scrolled to an end, the wheel scrolls the page.
-- **0.5.0**: Table and its parts, with density, sticky headers, numeric cells and a focusable scroll region; sortable headers with `sortDirection` and `onSort`; resizable columns; selected rows; and stacked rows with `narrowLayout="stack"`, `stackBelow` and `onStackedChange`.

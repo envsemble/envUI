@@ -40,8 +40,6 @@ export default defineConfig(
     'apps/site/src/generated/**',
     // Packaged copies of the documentation.
     'packages/ui/docs/**',
-    // Codemod fixtures: inputs and expected outputs, compared byte for byte.
-    'packages/codemods/test/fixtures/**',
   ]),
   {
     files: ['**/*.{ts,tsx,mjs,js,cjs}'],

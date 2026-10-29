@@ -2,7 +2,7 @@
 title: Progress
 summary: How much of a task is done, such as an upload, as a labelled bar, or that it runs while the amount is unknown.
 status: beta
-since: 0.2.0
+since: 1.0.0
 category: Feedback
 aliases:
   - progress bar
@@ -166,5 +166,3 @@ The parts are the bar, `env-progress`, its label, `env-progress-label`, its valu
 
 - **1.0.0**: The classes are `env-progress*`; `segments` splits the track into steps; an indeterminate bar is read as Loading, and sweeps toward the end of the line also in right-to-left text; without `aria-valuetext` the formatted value stays; `className`, `style`, `ref` and data attributes reach the root.
 - **1.0.0**: `LoadingBar` is no longer exported: TopBar's `loading` and `loadingLabel` show page progress, and Progress shows a task's.
-- **0.4.0**: The track uses the translucent neutral fill, so it stays visible on panes, rows and cards.
-- **0.2.0**: Progress.

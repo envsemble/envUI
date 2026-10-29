@@ -1,8 +1,0 @@
-{
-  "@envsemble/envui": {
-    "PanelDock": "PanelDock.Root",
-    "PanelDockProps": "PanelDock.RootProps",
-    "PanelDockHeader": "PanelDock.Header",
-    "PanelDockHeaderProps": "PanelDock.HeaderProps"
-  }
-}

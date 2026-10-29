@@ -2,7 +2,7 @@
 title: Breadcrumbs
 summary: The path from the top level to the current page, with earlier levels as links or buttons.
 status: stable
-since: 0.5.0
+since: 1.0.0
 category: Navigation
 aliases:
   - breadcrumb
@@ -134,7 +134,7 @@ Pair the trail with the main navigation: it never replaces it.
 
 ### envUI provides
 
-- A `nav` landmark named Breadcrumb, from `messages.breadcrumbs`, around an ordered list.
+- A `nav` landmark named Breadcrumb around an ordered list.
 - `aria-current="page"` on the last level, which is never a link.
 - Separators hidden from assistive technology, and full labels for those cut short.
 
@@ -170,10 +170,9 @@ Give levels `onClick` where the application has no URLs. Pressing one makes it t
 
 ### Composition
 
-The landmark is named Breadcrumb, from EnvUIProvider's `messages.breadcrumbs`; `aria-label` tells two trails on a page apart. Pair it with the main navigation, such as a NavigationDrawer. Each level sits in an item, `env-breadcrumbs-item`. The chevrons mirror in right-to-left text.
+The landmark is named Breadcrumb; `aria-label` tells two trails on a page apart. Pair it with the main navigation, such as a NavigationDrawer. Each level sits in an item, `env-breadcrumbs-item`. The chevrons mirror in right-to-left text.
 
 ## Changelog
 
 - **1.0.0-prerelease.5**: An item's type is `BreadcrumbsItem`, after the component, where it was `BreadcrumbItem`.
 - **1.0.0**: A label cut short with an ellipsis shows in full in a tooltip, on hover and keyboard focus; a plain level or the current page cut short takes keyboard focus for it, keeping `aria-current`. The landmark's default name comes from `messages.breadcrumbs`, and the `nav` takes `ref`, `style` and native props. Classes: `env-breadcrumb` and `env-breadcrumb-*` are `env-breadcrumbs-item` and `env-breadcrumbs-*`.
-- **0.5.0**: Breadcrumbs, with `wrap={false}` for a trail that stays on one line in a bar or header.

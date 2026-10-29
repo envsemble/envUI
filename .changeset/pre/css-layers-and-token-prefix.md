@@ -16,4 +16,4 @@ envUI's CSS moves into cascade layers, and every token takes the `--env-` prefix
 
 To migrate, run `npx @envsemble/envui-codemods v1-classes src`: it rewrites the old custom properties in style sheets and scripts, declared or read, to their 1.0 names, the 0.7 aliases straight to the tokens that replace them, and reports `--color-white`, `--color-canvas-dark` and the removed names with what to use instead. The migration guide lists every name. The ESLint plugin and the Stylelint config suggest the prefixed tokens.
 
-Migration guide: [Cascade layers](https://github.com/envsemble/envUI/blob/main/docs/migration.md#cascade-layers) and [Tokens](https://github.com/envsemble/envUI/blob/main/docs/migration.md#tokens).
+Migration guide: [Cascade layers](https://github.com/envsemble/envUI/blob/main/docs/migration.md) and [Tokens](https://github.com/envsemble/envUI/blob/main/docs/migration.md).

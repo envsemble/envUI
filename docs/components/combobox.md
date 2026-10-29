@@ -2,7 +2,7 @@
 title: Combobox
 summary: A text field that filters a list of options as people type, to choose one option or, as chips, several.
 status: stable
-since: 0.6.0
+since: 1.0.0
 category: Forms & selection
 aliases:
   - autocomplete
@@ -276,12 +276,9 @@ The field is `env-field` with `env-combobox`: the control, `env-combobox-control
 
 ### Customize
 
-`--env-combobox-chip-container` and `--env-combobox-chip-content` set the colors of one Combobox's chips, through `style` or CSS. Their hover, focus and press then follow them, as state layers; with none set, they keep their own colors.
-
 Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blur` and `--env-popup-shadow`, set on a theme, change it, as [Popover](popover.md#customize) describes.
 
 ## Changelog
 
 - **1.0.0-prerelease.5**: The popup is frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge, and is solid with its edge at high contrast and with reduced transparency. Options are the md control height in body text, chosen ones take the selection's fill as well as their check mark, and groups part by space. Group labels sit a little ahead of the rows, and options lie one under the next with no space between them. A chosen option's check mark ends its row, after the label.
-- **1.0.0**: `hint` is `description` and `variant="outlined"` is `variant="outline"`, which the `v1-props` codemod writes. `className` and `style` style the field's root rather than the input, which takes `ref`. Read-only chips no longer carry `aria-readonly`, which the input reports. The popup is the shared popup and the options its rows, and a chip's remove button is an IconButton with a cross: `env-combobox-well` is `env-combobox-control`, `env-combobox-option` `env-combobox-item` and `env-combobox-check` `env-combobox-item-indicator`, and the icons at the start, `env-combobox-leading` and `env-combobox-value-leading`, are `env-combobox-start` and `env-combobox-value-icon`, as other components name their start slots. The loading, empty, clear and remove labels come from EnvUIProvider's `messages`. An option's `leading` content is `start`, as on List.Item.
-- **0.6.0**: Combobox, for one option or several, with leading content, descriptions, groups, a server search, compact density and native form support.
+- **1.0.0**: `hint` is `description` and `variant="outlined"` is `variant="outline"`. `className` and `style` style the field's root rather than the input, which takes `ref`. Read-only chips no longer carry `aria-readonly`, which the input reports. The popup is the shared popup and the options its rows, and a chip's remove button is an IconButton with a cross: `env-combobox-well` is `env-combobox-control`, `env-combobox-option` `env-combobox-item` and `env-combobox-check` `env-combobox-item-indicator`, and the icons at the start, `env-combobox-leading` and `env-combobox-value-leading`, are `env-combobox-start` and `env-combobox-value-icon`, as other components name their start slots. The loading, empty, clear and remove labels come from EnvUIProvider's `messages`. An option's `leading` content is `start`, as on List.Item.

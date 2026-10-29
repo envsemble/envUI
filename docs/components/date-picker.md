@@ -2,7 +2,7 @@
 title: DatePicker
 summary: A field that opens a calendar to choose a date, or a date and time, and the calendar on its own.
 status: stable
-since: 0.6.0
+since: 1.0.0
 category: Forms & selection
 aliases:
   - DateTimeField
@@ -267,6 +267,5 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 - **1.0.0-prerelease.5**: The calendar popup is frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge, and is solid with its edge at high contrast and with reduced transparency. Its inset is a panel's, as wide as a popup row's corner: 14 px, 11.2 px at the compact scale. The calendar leads with the month's name, its buttons side by side at the end; the days of a week touch, a row height wide; today is in the accent color rather than ringed, and a day under the pointer takes the neutral fill.
 - **1.0.0**: The field keeps its minimum width, 12 rem, in a container sized to its content, such as an inline-flex toolbar, rather than growing after the container measured it and pushing its neighbours onto another row; in a narrower container it still takes the container's width. The calendar's month and year, `env-calendar-heading`, are `env-calendar-title`.
 - **1.0.0**: With the minute granularity, the time is chosen on wheels of hours, minutes every `minuteStep` minutes (15) and, on a 12-hour clock, day periods, beside the calendar, in place of the time field under it; turning a wheel sets the time at once. The calendar has no Done button, and `doneLabel` is gone: it closes as a date-only one does. The field and popup are shared with TimePicker and MonthPicker.
-- **1.0.0**: `withTime` is `granularity`, `"day"` or `"minute"`; `hint` is `description`; `variant="outlined"` is `variant="outline"`, which the `v1-props` codemod writes. `className` and `style` style the field's root rather than the button, which takes `ref`. The calendar opens on the shared popup, its month buttons are ghost icon buttons, and its labels come from EnvUIProvider's `messages`, as its locale does: `env-date-time-well` is `env-date-picker-control`.
+- **1.0.0**: `withTime` is `granularity`, `"day"` or `"minute"`; `hint` is `description`; `variant="outlined"` is `variant="outline"`. `className` and `style` style the field's root rather than the button, which takes `ref`. The calendar opens on the shared popup, its month buttons are ghost icon buttons, and its labels come from EnvUIProvider's `messages`, as its locale does: `env-date-time-well` is `env-date-picker-control`.
 - **1.0.0**: `DateTimeField` is `DatePicker`, with the `env-date-picker-*` classes; the page is `date-picker`.
-- **0.6.0**: DateTimeField, for a day or, with `withTime`, a date and time, and Calendar.

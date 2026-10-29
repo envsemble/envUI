@@ -6,12 +6,7 @@
   "commit": false,
   "format": "prettier",
   "fixed": [
-    [
-      "@envsemble/envui",
-      "@envsemble/envui-codemods",
-      "@envsemble/eslint-plugin-envui",
-      "@envsemble/stylelint-config-envui"
-    ]
+    ["@envsemble/envui", "@envsemble/eslint-plugin-envui", "@envsemble/stylelint-config-envui"]
   ],
   "linked": [],
   "ignore": [],

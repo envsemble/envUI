@@ -1,17 +1,16 @@
-import { cpSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { readDocumentation, type DocumentRecord } from './Reader.ts';
 import {
-  contributorPages,
   documentationDirectory,
   examplesDirectory,
   examplesOf,
-  linkContributorPages,
   pageKindOf,
   readProps,
   type PropsFile,
 } from './Schema.ts';
 import { cell, fenceFor } from './Validation.ts';
+import { readMessages, renderStrings, type MessageNamespace } from './Messages.ts';
 
 /** How the package names a do, a don't or a caution figure in a run of figures. */
 const verdictWords: Record<string, string> = { do: 'do', dont: "don't", caution: 'caution' };
@@ -118,6 +117,67 @@ export function renderProps(names, props, headingDepth = 2) {
   return lines.join('\n');
 }
 
+/** docs/generated/parts.json: each component's part classes, states and color properties. */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- generated JSON; GenerateParts writes it
+export type PartsFile = { components: Record<string, any> };
+
+export function readParts(directory = documentationDirectory): PartsFile | undefined {
+  const file = resolve(directory, 'generated/parts.json');
+  return existsSync(file) ? JSON.parse(readFileSync(file, 'utf8')) : undefined;
+}
+
+/**
+ * The generated Part names and Color properties of a page, as Markdown, from parts.json: the same
+ * lists the page in the Docs shows, so a page's prose never repeats them.
+ */
+export function renderParts(names, parts, headingDepth = 2) {
+  const heading = '#'.repeat(headingDepth);
+  const entries = names.flatMap((name) => {
+    const entry = parts?.components?.[name];
+    return entry ? [{ name, entry }] : [];
+  });
+  const named = entries.length > 1;
+  const values = (list) =>
+    list.length
+      ? list.map((value) => (value === '' ? 'present' : codeCell(value))).join(', ')
+      : 'any value, or present';
+  const lines: string[] = [];
+  const withParts = entries.filter(({ entry }) => entry.parts?.length || entry.states?.length);
+  if (withParts.length) {
+    lines.push(`${heading} Part names`, '');
+    for (const { name, entry } of withParts) {
+      if (named) lines.push(`${heading}# ${name}`, '');
+      for (const part of entry.parts ?? [])
+        lines.push(`- ${codeCell(part.class)}: ${part.description}`);
+      for (const state of entry.states ?? [])
+        lines.push(
+          `- ${codeCell(state.attribute)}: ${values(state.values)}${
+            state.parts.length > 1 || state.parts[0] !== entry.root
+              ? `, on ${state.parts.map(codeCell).join(', ')}`
+              : ''
+          }`,
+        );
+      lines.push('');
+    }
+  }
+  const withColors = entries.filter(({ entry }) => entry.colors?.length);
+  if (withColors.length) {
+    lines.push(
+      `${heading} Color properties`,
+      '',
+      'Each sets a color of one instance, through `style` or CSS; its hover, focus and press follow it.',
+      '',
+    );
+    for (const { name, entry } of withColors) {
+      if (withColors.length > 1) lines.push(`${heading}# ${name}`, '');
+      for (const color of entry.colors)
+        lines.push(`- ${codeCell(color.property)}: ${color.description}`);
+      lines.push('');
+    }
+  }
+  return lines.join('\n');
+}
+
 /** An example's source as the package and agents read it. */
 export function exampleSource(page, name, directory = examplesDirectory) {
   return readFileSync(resolve(directory, page, `${name}.tsx`), 'utf8');
@@ -220,19 +280,28 @@ function compilePage(document, { props, examples, title }) {
 
 /**
  * The Markdown of a page as it ships: a component, pattern or foundation page as compilePage writes
- * it, with its props; the index with each page's summary and without the contributor pages; and a
+ * it, with its props; the index with each page's summary; and a
  * guide as it is written.
  */
 export function compileDocument(
   document: DocumentRecord,
   documents: readonly DocumentRecord[],
-  { props, examples = examplesDirectory }: { props?: PropsFile; examples?: string } = {},
+  {
+    props,
+    parts,
+    messages,
+    examples = examplesDirectory,
+  }: {
+    props?: PropsFile;
+    parts?: PartsFile;
+    messages?: MessageNamespace[];
+    examples?: string;
+  } = {},
 ): string {
   const title = `# ${document.title}\n\n`;
   if (document.id === 'index') {
     const markdown = document.markdown
       .replace(/^- \[([^\]]+)\]\(([^)]+\.md)\)(.*)$/gm, (line, text, path, rest) => {
-        if (contributorPages.has(path)) return '';
         const target = documents.find((entry) => entry.path === path);
         return target?.frontmatter && !rest ? `${line} — ${target.summary}` : line;
       })
@@ -240,10 +309,14 @@ export function compileDocument(
     return `${title}${markdown}`;
   }
   if (document.sections) {
-    const propsSection =
-      props && document.frontmatter?.components
-        ? renderProps(document.frontmatter.components, props)
-        : '';
+    const components = document.frontmatter?.components;
+    const propsSection = [
+      props && components ? renderProps(components, props) : '',
+      parts && components ? renderParts(components, parts) : '',
+      messages && components ? renderStrings(components, messages) : '',
+    ]
+      .filter(Boolean)
+      .join('\n');
     return compilePage(document, { props: propsSection, examples, title });
   }
   const head = document.frontmatter
@@ -252,28 +325,28 @@ export function compileDocument(
   return `${head}${title}${document.markdown}`;
 }
 
-/**
- * Every packaged documentation file: compiled pages, the index and the example sources, without the
- * contributor pages.
- */
+/** Every packaged documentation file: compiled pages, the index and the example sources. */
 export function compileDocumentation(
   directory = documentationDirectory,
   {
     props = readProps(directory),
+    parts = readParts(directory),
+    messages = readMessages(),
     examples = examplesDirectory,
-  }: { props?: PropsFile; examples?: string } = {},
+  }: {
+    props?: PropsFile;
+    parts?: PartsFile;
+    messages?: MessageNamespace[];
+    examples?: string;
+  } = {},
 ): Map<string, string> {
   const documents = readDocumentation(directory, { props, examples });
   const files = new Map<string, string>();
   for (const document of documents)
-    if (!contributorPages.has(document.path))
-      files.set(
-        document.path,
-        linkContributorPages(
-          compileDocument(document, documents, { props, examples }),
-          document.path,
-        ),
-      );
+    files.set(
+      document.path,
+      compileDocument(document, documents, { props, parts, messages, examples }),
+    );
   for (const document of documents)
     for (const section of document.sections ?? [])
       for (const block of section.blocks)
@@ -285,14 +358,10 @@ export function compileDocumentation(
   return files;
 }
 
-/**
- * Writes the package's docs/: compiled pages and examples, and every other file as it is but the
- * contributor pages.
- */
+/** Writes the package's docs/: compiled pages and examples, and every other file as it is. */
 export function packageDocumentation(outputDirectory) {
   rmSync(outputDirectory, { recursive: true, force: true });
   cpSync(documentationDirectory, outputDirectory, { recursive: true });
-  for (const path of contributorPages) rmSync(resolve(outputDirectory, path), { force: true });
   for (const [path, contents] of compileDocumentation()) {
     const file = resolve(outputDirectory, path);
     mkdirSync(dirname(file), { recursive: true });

@@ -2,9 +2,6 @@ import { readFile } from 'node:fs/promises';
 const libraryPackage = JSON.parse(
   await readFile(new URL('../../packages/ui/package.json', import.meta.url), 'utf8'),
 );
-const codemodsPackage = JSON.parse(
-  await readFile(new URL('../../packages/codemods/package.json', import.meta.url), 'utf8'),
-);
 const cataloguePackage = JSON.parse(
   await readFile(new URL('../../apps/site/package.json', import.meta.url), 'utf8'),
 );
@@ -13,8 +10,6 @@ const cataloguePackage = JSON.parse(
 const tag = process.env.RELEASE_TAG ?? process.env.GITHUB_REF_NAME;
 if (tag !== `v${libraryPackage.version}`)
   throw new Error(`Tag ${tag} must match @envsemble/envui v${libraryPackage.version}.`);
-if (codemodsPackage.version !== libraryPackage.version)
-  throw new Error('@envsemble/envui-codemods must share the release version.');
 if (cataloguePackage.dependencies['@envsemble/envui'] !== libraryPackage.version)
   throw new Error('Catalogue dependency must match the release version.');
 // The lint packages are published with the library at its version (a fixed group in Changesets).

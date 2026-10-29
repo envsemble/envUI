@@ -10,4 +10,4 @@ envUI responds to containers at window classes rather than to the viewport: comp
 - Card's feature layout and PageHeader take their wide layout from 37.5 rem of their own width (38 and 32 rem before), and DatePicker sets its time beside the calendar from a medium `env-window` rather than a viewport of 32 rem.
 - The viewport breakpoint helpers and tokens of earlier prereleases (`breakpoints`, `Breakpoint`, `breakpointQuery`, `useBreakpoint`, `useMediaQuery`, `MediaQueryOptions` and `--env-breakpoint-*`) are gone: `v1-names` reports the exports and `v1-classes` the tokens.
 
-Migration guide: [Window classes and container queries](https://github.com/envsemble/envUI/blob/main/docs/migration.md#window-classes-and-container-queries).
+Migration guide: [Window classes and container queries](https://github.com/envsemble/envUI/blob/main/docs/migration.md).

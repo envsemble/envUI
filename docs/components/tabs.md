@@ -2,7 +2,7 @@
 title: Tabs
 summary: Switches between panels of related content in one place, from a row of text tabs.
 status: stable
-since: 0.1.0
+since: 1.0.0
 category: Navigation
 aliases:
   - tab bar
@@ -205,15 +205,10 @@ The tabs, `env-tabs`, carry `data-fill` when they fill a region; the rail, `env-
 
 ### Customize
 
-`--env-tabs-container`, `--env-tabs-content`, `--env-tabs-selected-content` and `--env-tabs-indicator` color one Tabs, through `style` or CSS; hover, focus and press follow them. The rail has no fill unless `--env-tabs-container` sets one.
+The rail has no fill unless its container color sets one.
 
 ## Changelog
 
 - **1.0.0-prerelease.5**: An item takes a `label` and an `icon`, as SegmentedControl's do; `button` is for a control of your own.
 - **1.0.0-prerelease.2**: Tabs look like Material's: text tabs on no fill, whatever their buttons' variants, the selected one in the accent's text color with an indicator under it, so they read differently from SegmentedControl. `--env-tabs-selected-content` and `--env-tabs-indicator` set those colors, and the rail has no fill unless `--env-tabs-container` sets one. The API stays.
 - **1.0.0**: The arrow keys follow the text direction, from EnvUIProvider's `dir` or the direction at the tabs; only the tab list takes it, so a panel keeps the direction around it. The tab and panel classes are `env-tabs-tab` and `env-tabs-panel` (were `env-tab` and `env-tab-panel`).
-- **0.7.0**: `size="compact"`: the whole rail as tall as a compact control, for bars and toolbars.
-- **0.5.0**: `fill`, for panels that fill a region. Labels in a selected tab keep 4.5:1 contrast on hover.
-- **0.4.0**: Unselected tabs show translucent hover and press layers, and the rail's fill stays visible on panes.
-- **0.3.0**: Content after the tabs moves once when the tab changes: the outgoing panel fades out of the layout.
-- **0.1.0**: Tabs, with keyboard selection, animated panels and `renderList`.

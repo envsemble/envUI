@@ -2,7 +2,7 @@
 title: Radio
 summary: One choice from a few options shown together, side by side or as selectable rows.
 status: stable
-since: 0.1.0
+since: 1.0.0
 category: Forms & selection
 aliases:
   - radio button
@@ -185,22 +185,8 @@ A RadioGroup holds Radio options and is a native `<fieldset>`: its `label`, the 
 
 The parts are the group, `env-radio-group`, with `data-orientation` and its legend, `env-radio-group > legend`; each option, `env-radio`, the label around the radio and its text; the description, `env-radio-description`; and the native radio, `env-radio-input`. A Radio's `className` and `style` reach its root, and `ref` and the other native props the input, so a form library can register and focus it.
 
-### Customize
-
-`--env-radio-container`, `--env-radio-content` and `--env-radio-selected` set the colors of one Radio, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
-
-```tsx
-<Radio
-  value="team"
-  label="My team"
-  style={{ '--env-radio-selected': 'var(--env-color-fg-success)' } as CSSProperties}
-/>
-```
-
 ## Changelog
 
 - **1.0.0-prerelease.5**: RadioGroup takes `description` and `error`, as a field does, and a controlled `value` of `null` chooses none.
 - **1.0.0-prerelease.5**: The chosen row of a group in rows takes the selection's fill and text, as a selected list row and Select's chosen option do, rather than the hover fill.
-- **1.0.0**: RadioGroup's `variant` is `orientation`: `inline` is `horizontal` and `rows` is `vertical`; Radio's `detail` is `description`, which the `v1-props` codemod writes. `className` and `style` style a Radio's root rather than the input, which keeps `ref` and the other native props. A focused radio shows the focus ring. The classes follow the component: `env-radio-options` is `env-radio-group` with `[data-orientation]`, `env-radio-option` and the inline label are `env-radio`, `env-radio-control` is `env-radio-input` and `env-radio-detail` `env-radio-description`.
-- **0.4.0**: Radio rows take the stronger row hover and pressed fills, settle like clickable cards while pressed, and keep 1.5 rem inline padding; radios shrink slightly while they or their labels are pressed.
-- **0.1.0**: Radio and RadioGroup, inline or as rows.
+- **1.0.0**: RadioGroup's `variant` is `orientation`: `inline` is `horizontal` and `rows` is `vertical`; Radio's `detail` is `description`. `className` and `style` style a Radio's root rather than the input, which keeps `ref` and the other native props. A focused radio shows the focus ring. The classes follow the component: `env-radio-options` is `env-radio-group` with `[data-orientation]`, `env-radio-option` and the inline label are `env-radio`, `env-radio-control` is `env-radio-input` and `env-radio-detail` `env-radio-description`.

@@ -4,7 +4,6 @@ packages/ui/icon-manifest.json
 packages/ui/README.md
 packages/ui/docs
 apps/site/src/generated
-packages/codemods/test/fixtures
 apps/site/src/brand/EnvUILogo.tsx
 packages/ui/licenses/Runtime-Dependencies-LICENSE.txt
 **/dist

@@ -2,7 +2,7 @@
 title: CalendarHeatmap
 summary: A calendar grid that shades each day by its value, with a tooltip and keyboard access for every day.
 status: stable
-since: 0.5.0
+since: 1.0.0
 category: Data display
 aliases:
   - Heatmap
@@ -170,7 +170,7 @@ CalendarHeatmap takes `data`, one entry per day with its `date`, as YYYY-MM-DD, 
 
 #### Languages
 
-EnvUIProvider's `locale` names the months, weekdays and dates, through `Intl`, and `messages.calendarHeatmap` writes the legend's Less and More; `monthLabels`, `weekdayLabels`, `lessLabel` and `moreLabel` set them for one heatmap. Weeks start on the locale's first day, as on Calendar; `weekStart` sets another, from `0` for Sunday to `6` for Saturday, such as `weekStart={1}` for Monday.
+EnvUIProvider's `locale` names the months, weekdays and dates, through `Intl`; `monthLabels`, `weekdayLabels`, `lessLabel` and `moreLabel` set them for one heatmap. Weeks start on the locale's first day, as on Calendar; `weekStart` sets another, from `0` for Sunday to `6` for Saturday, such as `weekStart={1}` for Monday.
 
 ```tsx
 <EnvUIProvider messages={{ calendarHeatmap: { less: 'Quieter', more: 'Busier' } }}>
@@ -184,6 +184,5 @@ The parts are the month names, `env-calendar-heatmap-month`, the weekday names, 
 
 ## Changelog
 
-- **1.0.0**: `formatTooltip` is `renderTooltip`, as it returns content, as `render*` callbacks do; `v1-props` renames it. Weeks start on the locale's first day, as on Calendar, and `weekStart` takes any weekday; they started on Sunday. A date that doesn't exist, such as 2026-02-31, is left out and reported while developing, where it moved to the next month.
+- **1.0.0**: `formatTooltip` is `renderTooltip`, as it returns content, as `render*` callbacks do; Weeks start on the locale's first day, as on Calendar, and `weekStart` takes any weekday; they started on Sunday. A date that doesn't exist, such as 2026-02-31, is left out and reported while developing, where it moved to the next month.
 - **1.0.0**: Month and weekday names, dates and numbers follow the locale, from `Intl`, and the legend comes from `messages.calendarHeatmap`; the tooltip is the shared tooltip popup. `Heatmap` is `CalendarHeatmap`, with `CalendarHeatmapDay`, `CalendarHeatmapCell` and the `env-calendar-heatmap-*` classes; the page is `calendar-heatmap`.
-- **0.5.0**: Heatmap, with tones, color steps, `thresholds`, a tooltip and keyboard access for every day.

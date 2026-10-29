@@ -1,6 +1,6 @@
 // Counts what the recommended config reports in envUI's own catalogue and test fixture, without
 // enforcing it: they render raw elements on purpose. The counts show how the rules behave on real
-// envUI code, and what is left of the old names after the renames.
+// envUI code.
 //
 //   node scripts/Dogfood.mjs [directory …]   default: apps/site/src tests/fixture
 
@@ -35,7 +35,6 @@ function subject(ruleId, message) {
       /^Inline `display: ([\w-]+)` lays out (a row or a column|a row|a column|a grid)/,
     'envui/no-html-elements': /^Use envUI's (\S+) instead of (.+?)(?:, or |: import)/,
     'envui/no-raw-colors': /^Raw color (.+) in an inline style/,
-    'envui/no-renamed-exports': /^(?:In envUI 1\.0 )?(\S+)/,
   };
   const match = message.match(patterns[ruleId]);
   if (!match) return message;

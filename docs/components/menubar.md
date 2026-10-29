@@ -2,7 +2,7 @@
 title: Menubar
 summary: A desktop-style menubar of menus, such as File, Edit and View, with shortcuts, submenus and access keys.
 status: stable
-since: 0.5.0
+since: 1.0.0
 category: Actions
 aliases:
   - menu bar
@@ -173,4 +173,3 @@ Its menus are frosted, as every popup is: `--env-popup-opacity`, `--env-popup-bl
 
 - **1.0.0-prerelease.5**: A Menubar's menus are frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge, and is solid with its edge at high contrast and with reduced transparency, with Menu's new rows.
 - **1.0.0**: The parts are members of the `Menubar` namespace: `Menubar` is `Menubar.Root`, `MenubarMenu` is `Menubar.Menu`, and `MenubarMenuOpenChangeDetails` is `Menubar.MenuOpenChangeDetails`. Menubar.Menu's popup is the shared popup surface and takes `ref` and `style`; the arrow keys between menus follow the text direction.
-- **0.5.0**: Menubar and MenubarMenu, with compact menus, switching on hover and with the arrow keys, focus returning to where it was with `previousFocus`, and `accessKeys`.

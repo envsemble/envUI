@@ -2,7 +2,7 @@
 title: Card
 summary: A rounded surface that groups content about one subject, as a content card with a title and actions, or one link or button.
 status: stable
-since: 0.1.0
+since: 1.0.0
 category: App frame & layout
 aliases:
   - tile
@@ -280,23 +280,10 @@ The title is an `h3`; set `headingLevel` to fit the page's outline, and its type
 
 ### Customize
 
-`--env-card-container`, `--env-card-content` and `--env-card-outline` set the colors of one Card, through `style` or CSS.
-
 - Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
 - `padding` sets the inset as a step of the spacing scale, such as `6` for 2 rem, and `0` removes it.
-
-```tsx
-<Card
-  title="Northwind launch"
-  padding={6}
-  style={{ '--env-card-container': 'var(--env-color-bg-primary-muted)' } as CSSProperties}
-/>
-```
 
 ## Changelog
 
 - **1.0.0-prerelease.3**: The feature cards pattern is the feature card on this page, which the pattern's address opens.
 - **1.0.0**: ClickableCard, ActionCard and FeatureCard are Card: `onClick` makes a button card, `render` the element of a content card, and the feature card is a Card holding a Row of Text and a Button, as [Feature card](#feature-card) shows, in place of `layout` and `icon`, with `env-card-layout` and `env-card-icon`. `tone` is `background`, `heading` is `title`, which takes `headingLevel`, and Card takes `description`; the native `title` attribute is not a prop of a card. The page is `card`, after the component.
-- **0.5.0**: `meta` sits at the end of the heading row, also in right-to-left text.
-- **0.2.0**: Link cards render through the application's router link, from `LinkProvider`.
-- **0.1.0**: Card for plain, interactive and action-strip cards, with ClickableCard and ActionCard as wrappers; FeatureCard.

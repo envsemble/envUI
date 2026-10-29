@@ -9,4 +9,4 @@ Control sizes and row density replace the `density`, `compact` and size-as-densi
 - **Removed:** `density` on Select, Combobox, DatePicker, Surface, Menu.Root, ContextMenu and Menubar.Menu; `compact` on TextField and SearchField; `size` on NavList.Item; the `standard` and `compact` sizes of Tabs, SegmentedControl, Pagination and CopyButton, which are `md` or `lg` and `sm`. DropZone's `compact` is `size="sm"`. For a compact app or region, set `scale="compact"` on its Theme; for a small control, set `size="sm"`.
 - **Rows match:** buttons, icon buttons and fields in table cells take the small control height at every density, so a row with an action is no taller than it needs to be. Title bars, panel headers, message actions and the date picker's popup hold small controls.
 
-Migration guide: [Scale and density](https://github.com/envsemble/envUI/blob/main/docs/migration.md#scale-and-density).
+Migration guide: [Scale and density](https://github.com/envsemble/envUI/blob/main/docs/migration.md).

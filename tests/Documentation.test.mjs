@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { existsSync, readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import { cp, mkdtemp, mkdir, readFile, writeFile, rm } from 'node:fs/promises';
 import { resolve, join, relative, isAbsolute } from 'node:path';
@@ -818,13 +819,13 @@ test('since names a stable release or the version the changesets lead to, also i
     await mkdir(changesets);
     await writeFile(
       join(changesets, 'config.json'),
-      JSON.stringify({ fixed: [['@envsemble/envui', '@envsemble/envui-codemods']] }),
+      JSON.stringify({ fixed: [['@envsemble/envui', '@envsemble/eslint-plugin-envui']] }),
     );
     await writeFile(changelog, '# Changelog\n\n## 0.7.0\n\nText.\n\n## 0.6.0\n\nText.\n');
     await changeset('fix', { '@envsemble/envui': 'patch' });
     assert.deepEqual(versions(), ['0.6.0', '0.7.0', '0.7.1']);
     // A package that shares envUI's version raises it too.
-    await changeset('codemods', { '@envsemble/envui-codemods': 'minor' });
+    await changeset('lint', { '@envsemble/eslint-plugin-envui': 'minor' });
     assert.deepEqual(versions(), ['0.6.0', '0.7.0', '0.8.0']);
     // In prerelease mode, a released prerelease is no version of its own, and the changesets lead
     // to the version the prereleases are for, from the version before them.
@@ -1205,7 +1206,7 @@ ${long}
   assert.ok(long.length > paragraphLength);
 });
 
-test("a guide's statuses and exportAliases name only the exports it lists", async () => {
+test("a guide's status, statuses and exportAliases hold, and name only the exports it lists", async () => {
   const cache = resolve('.cache');
   await mkdir(cache, { recursive: true });
   const directory = await mkdtemp(join(cache, 'guide-'));
@@ -1225,6 +1226,22 @@ test("a guide's statuses and exportAliases name only the exports it lists", asyn
       source.replace('exportAliases:\n', 'exportAliases:\n  Button:\n    - push\n'),
     );
     assert.throws(read, /exportAliases names Button, which components does not list/);
+    // A guide may carry a status of the ladder, which its exports take, so one that says so
+    // repeats the guide's.
+    const withStatus = (status, text = source) => `---\nstatus: ${status}\n${text.slice(4)}`;
+    await writeFile(setup, withStatus('experimental'));
+    assert.throws(read, /status must be one of alpha, beta, stable, deprecated/);
+    await writeFile(
+      setup,
+      withStatus(
+        'alpha',
+        source.replace(/^statuses:.*\n(?: {2}.*\n)*/m, 'statuses:\n  LinkProvider: alpha\n'),
+      ),
+    );
+    assert.throws(read, /statuses of LinkProvider repeats the page's status/);
+    await writeFile(setup, withStatus('alpha'));
+    const guide = read().find((document) => document.path === 'setup.md');
+    assert.equal(guide.frontmatter.status, 'alpha');
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
@@ -1252,8 +1269,6 @@ test('Table ships each example once, by name in its frontmatter, its rules and l
   assert.ok(hasLine(table, '1. **Region** (`env-table-region`)'));
   assert.ok(hasLine(table, 'Native props: `<table>`.'));
   assert.doesNotMatch(table, /^## (?:Changelog|Related)/m);
-  // The index leaves out the contributor pages.
-  assert.ok(!compiled.get('index.md').includes('component-pages.md'));
 });
 
 test('a page ships the whole file, in its order, with code once', () => {
@@ -1280,7 +1295,15 @@ test('a page ships the whole file, in its order, with code once', () => {
     'Accessibility',
     'Compose',
     'Props',
+    'Part names',
+    'Color properties',
+    'Strings',
   ]);
+  // Its strings are generated from envUI's messages, ConfirmButton's among them.
+  assert.match(button, /^\| `messages\.confirmButton\.[a-z]\w*` \| /m);
+  // The generated lists are the page's one list of its parts and color properties.
+  assert.ok(hasLine(button, '- `env-button`: The button.'));
+  assert.match(button, /^- `--env-button-container`: /m);
   // A run of figures is a line that names them; no figure's code ships in the page.
   assert.ok(
     hasLine(
@@ -1305,4 +1328,41 @@ test('a page ships the whole file, in its order, with code once', () => {
   assert.ok(spacing.includes('\nExample: Grouping.\n\n1. **Tight, inside a group**: '));
   assert.ok(compiled.has('examples/spacing/Grouping.tsx'));
   assert.ok(spacing.includes('\n| More room between these | The next larger step'));
+});
+
+test("the contributor guides' relative links reach files, and headings, that exist", async () => {
+  const { headingsOf } = await import('../scripts/docs/MarkdownHeadings.ts');
+  const guides = ['README.md', 'CONTRIBUTING.md', 'AGENTS.md', 'contributing/pages.md'];
+  const broken = [];
+  for (const guide of guides) {
+    const source = await readFile(resolve(guide), 'utf8');
+    marked.walkTokens(marked.lexer(source), (token) => {
+      if (token.type !== 'link' || /^[a-z][a-z\d+.-]*:/i.test(token.href)) return;
+      const [path, fragment] = token.href.split('#');
+      const target = path ? join(resolve(guide, '..'), path) : resolve(guide);
+      if (!existsSync(target)) broken.push(`${guide}: ${token.href}`);
+      else if (
+        fragment &&
+        !headingsOf(readFileSync(target, 'utf8')).some(({ id }) => id === fragment)
+      )
+        broken.push(`${guide}: ${token.href} names no heading`);
+    });
+  }
+  assert.deepEqual(broken, []);
+});
+
+test("every namespace of envUI's strings but the shared one shows on a component's page", async () => {
+  const { readMessages } = await import('../scripts/docs/Messages.ts');
+  const documented = new Set(
+    readDocumentation().flatMap((document) => document.frontmatter?.components ?? []),
+  );
+  for (const { namespace, components, strings } of readMessages()) {
+    assert.ok(strings.length, `${namespace} has strings`);
+    for (const string of strings) assert.ok(string.description, `${namespace}.${string.key}`);
+    if (namespace === 'common') continue;
+    assert.ok(
+      components.some((name) => documented.has(name)),
+      `${namespace} names no documented export: ${components.join(', ')}`,
+    );
+  }
 });

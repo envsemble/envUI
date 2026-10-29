@@ -230,7 +230,7 @@ A button that narrows the navigation sets `navigationForms={{ expanded: 'rail', 
 
 The top bar is the banner landmark and the body the main one, with the id `bodyId`, `main` by default, the target of the skip link.
 
-- `skipToContentLabel` and `skipToNavigationLabel` name the skip links, Skip to content and Skip to navigation by default, from EnvUIProvider's `messages.scaffold`.
+- `skipToContentLabel` and `skipToNavigationLabel` name the skip links.
 - `landmarks={false}` renders divs and no skip links, for a preview of an application inside another page's main content.
 - `name` names the node for dev mode, as `data-env-name`.
 

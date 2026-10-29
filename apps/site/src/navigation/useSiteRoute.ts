@@ -10,7 +10,7 @@ function readRoute() {
 export const currentRoute = readRoute;
 
 /**
- * An old address, such as a page's 0.x name or a view pages had before the catalogue and the Docs
+ * An old address, such as a page's old name or a view pages had before the catalogue and the Docs
  * split, is replaced in place by the address of the route it leads to, so the address bar, a new
  * bookmark and the history show the page's own address. An old hash address of the offline
  * catalogue, such as a bookmark, is redirected the same way, once, to the path of the route it

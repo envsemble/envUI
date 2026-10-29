@@ -84,22 +84,6 @@ test('every public export is documented on exactly one page', () => {
     assert.ok(props.exports[name], `A page lists ${name}, which envUI does not export.`);
 });
 
-test("every component's page names each of its color properties", () => {
-  const parts = JSON.parse(
-    readFileSync(new URL('../docs/generated/parts.json', import.meta.url), 'utf8'),
-  );
-  for (const [name, entry] of Object.entries(parts.components)) {
-    if (!entry.colors?.length) continue;
-    const page = documents.find((document) => document.frontmatter?.components?.includes(name));
-    assert.ok(page, `${name} has color properties but no page`);
-    for (const { property } of entry.colors)
-      assert.ok(
-        page.markdown.includes(`\`${property}\``),
-        `${page.path} names ${name}'s color property ${property}, under Compose's Customize`,
-      );
-  }
-});
-
 test('every alternative a page suggests has a page to link to', () => {
   // As the catalogue links them: a part such as Menu.Item goes to its namespace's page.
   const documented = new Set(
@@ -120,7 +104,7 @@ test('every component, pattern and foundation page is in the one-file structure'
     .filter((document) => /^(components|patterns|foundations)\//.test(document.path))
     .filter((document) => !document.sections || !document.frontmatter?.examples)
     .map(({ path }) => path);
-  assert.deepEqual(outside, [], 'Write these pages as docs/component-pages.md describes.');
+  assert.deepEqual(outside, [], 'Write these pages as contributing/pages.md describes.');
 });
 
 test('pages list no props by hand', () => {

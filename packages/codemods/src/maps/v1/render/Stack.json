@@ -1,7 +1,0 @@
-{
-  "@envsemble/envui": {
-    "Stack": {
-      "prop": "as"
-    }
-  }
-}

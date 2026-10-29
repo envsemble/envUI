@@ -28,7 +28,6 @@ import {
 import {
   DocsReferencePage,
   ChangelogDocsPage,
-  CodemodsPage,
   DocsHome,
   FoundationGuidePage,
   GuidePage,
@@ -63,7 +62,6 @@ const pageContent: Record<RoutePage['kind'], (props: { page: RoutePage }) => Rea
   foundation: FoundationPage,
   'docs-home': DocsHome,
   guide: GuidePage,
-  codemods: CodemodsPage,
   'docs-changelog': ChangelogDocsPage,
   tokens: TokensPage,
   'foundation-guide': FoundationGuidePage,

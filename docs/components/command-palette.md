@@ -2,7 +2,7 @@
 title: CommandPalette
 summary: A quick-open dialog near the top of the window that finds a document, a page, a person or a command by name.
 status: stable
-since: 0.5.0
+since: 1.0.0
 category: Actions
 aliases:
   - quick open
@@ -199,13 +199,13 @@ Name commands with a verb and what they act on, such as Invite people.
 
 Ask for the palette's states in these words.
 
-| Words            | In code                                                                                       | Use for                                                        |
-| ---------------- | --------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
-| Suggestions      | `suggestedItems`, with a `group` such as Suggested                                            | Options shown before people type.                              |
-| Recent items     | `suggestedItems`, with a `group` such as Recently opened                                      | The items people opened last, before they type.                |
-| Type to search   | The empty state with an empty query: `emptyDescription`, `messages.commandPalette.emptyQuery` | Inviting a search, and what it finds, with nothing to suggest. |
-| No results       | `emptyLabel`, `emptyDescription`, `messages.commandPalette.empty` and `emptyHint`             | Saying that the text found nothing, and what to try.           |
-| Without the icon | `emptyIcon={null}`                                                                            | An empty state of words alone, such as one that loads.         |
+| Words            | In code                                                  | Use for                                                        |
+| ---------------- | -------------------------------------------------------- | -------------------------------------------------------------- |
+| Suggestions      | `suggestedItems`, with a `group` such as Suggested       | Options shown before people type.                              |
+| Recent items     | `suggestedItems`, with a `group` such as Recently opened | The items people opened last, before they type.                |
+| Type to search   | The empty state with an empty query: `emptyDescription`  | Inviting a search, and what it finds, with nothing to suggest. |
+| No results       | `emptyLabel`, `emptyDescription` and `emptyHint`         | Saying that the text found nothing, and what to try.           |
+| Without the icon | `emptyIcon={null}`                                       | An empty state of words alone, such as one that loads.         |
 
 ## Compose
 
@@ -241,8 +241,8 @@ Each CommandPaletteItem has an `id` and a `label`, with `textValue` for a label 
 
 With no options, the empty state shows in place of the list: an icon on a muted circle, a title and a quieter description, as the polite status.
 
-- While the field is empty: the Search icon and `messages.commandPalette.emptyQuery`, Type to search, with no description; `emptyDescription` says what the palette finds.
-- When the text finds nothing: SearchOff, `messages.commandPalette.empty`, No results, and `messages.commandPalette.emptyHint({ query })`, which quotes the trimmed text.
+- While the field is empty: the Search icon and Type to search, with no description; `emptyDescription` says what the palette finds.
+- When the text finds nothing: SearchOff, No results, and a hint that quotes the trimmed text.
 - `emptyLabel`, `emptyDescription` and `emptyIcon` replace the title, the description and the icon in either state; `null` or `false` hides the description or the icon. Pass a value that depends on the query to change one state only.
 - The icon is decorative and hidden from assistive technology; the title and description are announced.
 
@@ -373,4 +373,3 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 - **1.0.0-prerelease.4**: An empty state with an icon, a title and a description, which tells an invitation before people type from no results; `emptyDescription`, `emptyIcon` and `messages.commandPalette.emptyQuery` and `emptyHint`. `defaultItems` show before people type.
 - **1.0.0-prerelease.3**: The search trigger pattern is part of this page, as the button and the shortcut that open the palette; the pattern's address opens it.
 - **1.0.0**: Opens from a Button with the shortcut's keys in its new `end` slot, in place of the SearchTrigger component. Rebuilt on Base UI's autocomplete: `inputValue`, `onInputValueChange`, `onAction` and `closeOnAction` for `query`, `onQueryChange`, `onSelect` and `closeOnSelect`, and `CommandPaletteActionDetails`; items take `description`, `end` and `disabled`; options are list rows; the number of results is announced; `className`, `style`, `ref` and data attributes reach the surface. A group's label, `env-command-palette-heading`, is `env-command-palette-group-label`, as in Menu.
-- **0.5.0**: CommandPalette, with grouped options, keyboard highlight, modifier selection and key `hints` shown as Kbd keys.

@@ -9,8 +9,7 @@
 // a file in apps/site/src/examples/<page>/<Name>.tsx, or on a foundation one of the
 // catalogue's figures, placed by an empty fence ```tsx figure=Name```; the Overview, Props and
 // Related are generated, Related from its avoidWhen. The build fails on a page of these kinds that
-// is not in the structure. docs/component-pages.md and docs/pattern-pages.md describe it for
-// authors.
+// is not in the structure. contributing/pages.md describes it for authors.
 //
 // The work is in scripts/docs/: Schema.ts (the page kinds, sections, roles and frontmatter),
 // Validation.ts (a page read and checked), Reader.ts (every page, its index and links) and
@@ -25,11 +24,11 @@ import { writeSearchIndex } from '../site/SearchIndex.ts';
 import { documentationDirectory, generatedFile, pageKindOf, readProps } from './Schema.ts';
 import { readDocumentation } from './Reader.ts';
 import { documentedExports } from './Compiler.ts';
+import { readMessages, stringsOf } from './Messages.ts';
 
 export {
   codeSubsections,
   componentGroups,
-  contributorPages,
   documentationDirectory,
   exampleRoles,
   examplesDirectory,
@@ -39,7 +38,6 @@ export {
   importMarkdown,
   intents,
   libraryVersions,
-  linkContributorPages,
   pageKindOf,
   pageSchemas,
   pageSections,
@@ -63,14 +61,19 @@ export {
 export function generateDocumentation() {
   const props = readProps();
   const documents = readDocumentation(documentationDirectory, { props });
+  const messages = readMessages();
   const entries = documents.map((document) => {
     const { yaml: _yaml, frontmatter, sections, ...entry } = document;
     const kind = pageKindOf(document.path);
     if (!frontmatter) return entry;
     // A guide names the exports it documents, such as LinkProvider, so a page that relates to one
-    // links to it.
+    // links to it, and may carry a status, such as alpha.
     if (!sections)
-      return frontmatter.components ? { ...entry, components: frontmatter.components } : entry;
+      return {
+        ...entry,
+        ...(frontmatter.status && { status: frontmatter.status }),
+        ...(frontmatter.components && { components: frontmatter.components }),
+      };
     const metadata = {
       ...(frontmatter.status && { status: frontmatter.status }),
       ...(frontmatter.since && { since: frontmatter.since }),
@@ -102,6 +105,9 @@ export function generateDocumentation() {
             name,
             props!.exports[name],
           ]),
+        ),
+        strings: stringsOf(frontmatter.components ?? [], messages).flatMap(
+          (entry) => entry.strings,
         ),
       }),
     };

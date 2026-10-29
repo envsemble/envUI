@@ -13,7 +13,7 @@ No changes in this release.
   - **Component tokens are private.** The custom properties a component declares for itself, such as `--env-card-padding` or `--env-badge-fill`, may change in any release. Set the system tokens, such as `--env-space-4` or `--env-color-bg-muted`, instead.
   - **The `no-private-classes` rules are removed** from the ESLint plugin (`envui/no-private-classes`) and the Stylelint config (`envui/no-private-classes`), since the classes they reported are public now. To migrate, delete the rule from any configuration or disable comment that names it: ESLint and Stylelint report a rule they don't know.
 
-  Migration guide: [Part names and component tokens](https://github.com/envsemble/envUI/blob/main/docs/migration.md#part-names-and-component-tokens).
+  Migration guide: [Part names and component tokens](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 ### Patch Changes
 
@@ -30,7 +30,7 @@ No changes in this release.
   - A row that moves in a reorderable list takes the elevation edge as a ring, and the color picker's thumbs take a ring outside their white edge. Neither has a shadow any more. Docked panels and the active one are no longer set apart by shadows: the active docked panel's edge takes the accent, `--env-color-border-accent-emphasis`, in every theme and contrast.
   - Focus rings, halos, inset edges and selection bars drawn with `box-shadow` are rings, not shadows, and stay.
 
-  Migration guide: [Tokens](https://github.com/envsemble/envUI/blob/main/docs/migration.md#tokens).
+  Migration guide: [Tokens](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 ## 1.0.0-prerelease.0
 
@@ -46,10 +46,10 @@ No changes in this release.
 
   To migrate, run `npx @envsemble/envui-codemods v1-classes src`: it rewrites the old custom properties in style sheets and scripts, declared or read, to their 1.0 names, the 0.7 aliases straight to the tokens that replace them, and reports `--color-white`, `--color-canvas-dark` and the removed names with what to use instead. The migration guide lists every name. The ESLint plugin and the Stylelint config suggest the prefixed tokens.
 
-  Migration guide: [Cascade layers](https://github.com/envsemble/envUI/blob/main/docs/migration.md#cascade-layers) and [Tokens](https://github.com/envsemble/envUI/blob/main/docs/migration.md#tokens).
+  Migration guide: [Cascade layers](https://github.com/envsemble/envUI/blob/main/docs/migration.md) and [Tokens](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - The first release: a Stylelint config for applications built with envUI, for Stylelint 17. It reports selectors of envUI's private `env-` classes (besides the `.env-theme` boundary), raw colors, a literal `z-index`, and px outside hairlines, and each message says what to use instead: the component's props, the envUI color tokens for the property by name, rem, or for `z-index`, envUI's stacking tokens (`--env-z-…`).
 
   The config is released with `@envsemble/envui` at the same version; install the version that matches envUI.
 
-  Migration guide: [Upgrade from envUI 0.x to 1.0](https://github.com/envsemble/envUI/blob/main/docs/migration.md#upgrade-from-envui-0x-to-10).
+  Migration guide: [Upgrade from envUI 0.x to 1.0](https://github.com/envsemble/envUI/blob/main/docs/migration.md).

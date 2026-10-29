@@ -2,7 +2,7 @@
 title: SegmentedControl
 summary: One choice among a few items, as connected outlined segments, such as views or filters of the same content.
 status: stable
-since: 0.5.0
+since: 1.0.0
 category: Forms & selection
 aliases:
   - segmented button
@@ -150,15 +150,8 @@ Leave it uncontrolled, starting at `defaultValue`, the first item by default, or
 
 The outline, `env-segmented-control`, carries `data-size` and `data-full-width`; each segment, `env-segmented-control-item`, `data-checked` while chosen and `data-disabled`. The check, `env-segmented-control-item-indicator`, takes the chosen segment's icon's place.
 
-### Customize
-
-`--env-segmented-control-container`, `--env-segmented-control-content`, `--env-segmented-control-outline`, `--env-segmented-control-selected` and `--env-segmented-control-selected-content` color one SegmentedControl, through `style` or CSS; hover, focus and press follow them.
-
 ## Changelog
 
 - **1.0.0-prerelease.5**: It can be uncontrolled, with `defaultValue`.
 - **1.0.0-prerelease.2**: SegmentedControl looks like Material's segmented buttons: connected segments in one outline, the chosen one in the selected fill, `--env-color-bg-selected`, with a check, `env-segmented-control-item-check`, in place of its icon, so it reads differently from Tabs. `--env-segmented-control-outline` sets the outline. The API stays.
 - **1.0.0**: `options` is `items`, and `SegmentedControlOption` is `SegmentedControlItem`. The segments' classes are `env-segmented-control-item`, `-item-label` and `-item-count`. An unchosen segment's count keeps 4.5:1 contrast. SegmentedControl takes `ref`, `style`, `id` and other attributes of its rail, and its page is under Forms & selection.
-- **0.7.0**: The chosen segment takes the soft blue primary in the dark theme, as primary buttons do.
-- **0.6.0**: `fullWidth`: the rail fills its container and splits it evenly; a label too long for its share ends with an ellipsis and shows whole in a tooltip, or wraps on touch screens.
-- **0.5.0**: SegmentedControl, with counts, icons and the compact size.

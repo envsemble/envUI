@@ -2,7 +2,7 @@
 title: Rating
 summary: A read-only rating as stars filled in half steps, named once for assistive technology.
 status: stable
-since: 0.7.0
+since: 1.0.0
 category: Data display
 aliases:
   - stars
@@ -102,7 +102,6 @@ Keep to one scale on a page, so ratings compare at a glance.
 ### You provide
 
 - Text that says whose rating it is.
-- `messages.rating.label` in the page's language.
 - A separate input, such as a RadioGroup, where people give a rating.
 
 ## Compose
@@ -117,7 +116,7 @@ A Rating shows `value`, from 0 to `max`, such as 4.5, rounded to the nearest hal
 
 #### Name and language
 
-The stars are one image, named such as 4.5 out of 5 stars, from EnvUIProvider's `messages.rating.label`, or `formatLabel` for one rating, which receives the shown value and the number of stars. The number from `showValue` is hidden from assistive technology, since the name says it.
+The stars are one image, named such as 4.5 out of 5 stars, or by `formatLabel` for one rating, which receives the shown value and the number of stars. The number from `showValue` is hidden from assistive technology, since the name says it.
 
 ```tsx
 const messages = {
@@ -142,4 +141,3 @@ The parts are the number, `env-rating-value`, and the stars, `env-rating-stars`,
 ## Changelog
 
 - **1.0.0**: The shown number and the name follow the locale, and the name comes from `messages.rating.label`. Empty stars take the boundary color of controls, at least 3:1 against every surface. Filled stars take a clear gold of their own, `--env-color-fg-rating-star`, in place of the warning tone.
-- **0.7.0**: Rating, with half stars, `max`, `showValue` and `formatLabel`.

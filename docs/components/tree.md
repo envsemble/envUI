@@ -2,7 +2,7 @@
 title: Tree
 summary: A tree of rows for large hierarchies, such as file trees, with keyboard navigation and a context menu.
 status: stable
-since: 0.5.0
+since: 1.0.0
 category: Navigation
 aliases:
   - TreeView
@@ -172,7 +172,7 @@ Keep buttons, links and fields out of rows: their actions go in the context menu
 
 #### Context menu
 
-`contextMenu` returns the menu items for the row, or for the tree's empty area when the row is `null`; without it, the browser's own context menu stays. `contextMenuLabel` names the menu, Actions by default, from EnvUIProvider's `messages.tree.contextMenu`.
+`contextMenu` returns the menu items for the row, or for the tree's empty area when the row is `null`; without it, the browser's own context menu stays. `contextMenuLabel` names the menu.
 
 #### Thousands of rows
 
@@ -196,4 +196,3 @@ The tree renders only the rows in view, and is as tall as its parent: give the p
 
 - **1.0.0-prerelease.5**: A row is keyed by `value`, which the tree's `value` names, where it had `id`, and its native tooltip is `tooltip`, where it was `title`. `TreeActionOptions` is `TreeActionDetails`. The tree takes the native props, such as `id` and `data-*`.
 - **1.0.0**: `selectedId` is `value` and `onOpen` is `onAction`, with `TreeActionDetails`; a TreeItem's `detail` is `description` and its `trailing` is `end`. The context menu's default name comes from `messages.tree`, and the tree takes `ref` and `style`. A row's class is `env-tree-item` (was `env-tree-row`), and `env-tree-detail` and `-trailing` are `env-tree-description` and `-end`; a description keeps more room from its label.
-- **0.5.0**: Tree: a virtualized tree for thousands of rows, with keyboard navigation, type-ahead, preview and open callbacks, a context menu and two densities. Keys pressed with <kbd>Alt</kbd>, <kbd>Ctrl</kbd> or <kbd>⌘</kbd> are left to the application.

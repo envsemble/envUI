@@ -6,4 +6,4 @@ Page is invisible structure: `data-env-layout="page"`, `name` as `data-env-name`
 
 PageHeader is built from Row and Column. A sticky one sticks at the top of the area that scrolls, under a Scaffold's top bar where the document scrolls (`--env-scaffold-sticky-top`), and no longer reads `--env-frame-sticky-top`. What scrolls into view in its Page's content keeps clear of it by a scroll margin: it still publishes its height as `--env-page-header-block-size` on its Page, and until script runs CSS reckons the height from its rows; put content that should stay in view under it in its `toolbar`.
 
-Migration guide: [The app frame](https://github.com/envsemble/envUI/blob/main/docs/migration.md#the-app-frame).
+Migration guide: [The app frame](https://github.com/envsemble/envUI/blob/main/docs/migration.md).

@@ -33,7 +33,6 @@ export type PageKind =
   | 'foundation'
   | 'docs-home'
   | 'guide'
-  | 'codemods'
   | 'docs-changelog'
   | 'tokens'
   | 'foundation-guide'
@@ -75,18 +74,8 @@ export interface GroupedPage {
 /** Field is documented in the Docs only, as "Build your own field". */
 const docsOnlyComponents = new Set(['field']);
 
-/**
- * Pages of docs/ that neither the catalogue nor the Docs show: the contributor pages, for people who
- * change envUI itself, which stay in the repository and which the package leaves out
- * (contributorPages in scripts/docs/GenerateDocumentation.ts), and the agents' index of the pages, which
- * the package ships.
- */
-export const unlistedDocuments = new Set([
-  'index',
-  'library-development',
-  'component-pages',
-  'pattern-pages',
-]);
+/** Pages of docs/ that neither the catalogue nor the Docs show: the agents' index of the pages. */
+export const unlistedDocuments = new Set(['index']);
 
 /** The component and foundation pages, each at the address of the page that shows it. */
 export const groupedPages: GroupedPage[] = [
@@ -206,14 +195,13 @@ const cataloguePages: RoutePage[] = [
 /** The shorter names of guides in the Docs' navigation. */
 const guideLabels: Record<string, string> = {
   setup: 'Install and set up',
-  migration: 'Migrate to envUI',
 };
 
 /**
  * The guides that get an application going, in the Docs' Get started group; every other guide of
  * the index's Setup and workflows, such as customizing colors or dev mode, is in Guides.
  */
-const startGuides = new Set(['setup', 'migration', 'agent-tooling']);
+const startGuides = new Set(['setup', 'migration']);
 
 const guidePage = (document: Documentation): RoutePage => ({
   path: `docs/${document.id}`,
@@ -226,26 +214,10 @@ const guidePage = (document: Documentation): RoutePage => ({
   document,
 });
 
-/** The Docs' pages for getting started, in reading order, with codemods after migration. */
+/** The Docs' pages for getting started, in reading order. */
 const startPages: RoutePage[] = guideDocuments
   .filter((document) => startGuides.has(document.id))
-  .flatMap((document) => {
-    const page = guidePage(document);
-    if (document.id === 'migration')
-      return [
-        page,
-        {
-          path: 'docs/codemods',
-          title: 'Codemods',
-          area: 'docs',
-          section: 'Get started',
-          kind: 'codemods',
-          summary:
-            'Upgrade an application from envUI 0.x to 1.0 with @envsemble/envui-codemods, which renames what it can and reports the rest.',
-        },
-      ];
-    return [page];
-  });
+  .map(guidePage);
 
 /** The Docs' other guides, in the index's order. */
 const guidePages: RoutePage[] = guideDocuments
@@ -493,10 +465,12 @@ export function routeOfDocument(
     'dev-mode-overview': 'docs/dev-mode',
     changelog: 'docs/changelog',
     tokens: 'docs/tokens',
-    codemods: 'docs/codemods',
+    // The codemods are gone: their page opens the migration guide.
+    codemods: 'docs/migration',
     'full-changelog': 'docs/changelog',
-    // The agent skills are gone; the guide for agents says what replaced them.
-    'agent-skills': 'docs/agent-tooling',
+    // The agent skills are gone, and so is the guide for agents: setup leads to the skill.
+    'agent-skills': 'docs/setup?section=coding-agents',
+    'agent-tooling': 'docs/setup?section=coding-agents',
     // Pages merged into others.
     'customizing-colors': 'docs/customizing',
     composition: 'docs/customizing',
@@ -550,7 +524,7 @@ const apiSection = (section: string | null) => section?.startsWith('props-') ?? 
 
 /**
  * Keeps old addresses working: the views pages had before the catalogue and the Docs split, the
- * 0.x names of pages and the pages that moved, each opens the page it became.
+ * old names of pages and the pages that moved, each opens the page it became.
  */
 export function normalizeRoute(route: string): string {
   const [originalPath, ...query] = route.split('?');
@@ -578,7 +552,8 @@ export function normalizeRoute(route: string): string {
       search.delete('section');
       return routeOfDocument(shown) ?? docsRoute;
     }
-    if (search.has('skill') || section === 'local-development') return 'docs/agent-tooling';
+    if (search.has('skill') || section === 'local-development')
+      return 'docs/setup?section=coding-agents';
     if (section === 'documentation') return docsRoute;
     if (section === 'setup') search.delete('section');
     return `docs/setup${rest()}`;
@@ -588,8 +563,14 @@ export function normalizeRoute(route: string): string {
   const guide = /^get-started\/(.+)$/.exec(originalPath)?.[1];
   if (guide) return routeOfDocument(guide, { section: section ?? undefined }) ?? docsRoute;
   if (/^contributing(?:\/|$)/.test(originalPath)) return homeRoute;
-  // The agent skills' page is gone with the skills: the guide for agents replaces them.
-  if (originalPath === 'docs/agent-skills') return 'docs/agent-tooling';
+  // The agent skills' page is gone with the skills, and so is the guide for agents: setup's
+  // section on coding agents leads to the skill.
+  if (originalPath === 'docs/agent-skills' || originalPath === 'docs/agent-tooling')
+    return 'docs/setup?section=coding-agents';
+  // The codemods are gone: their page opens the migration guide.
+  if (originalPath === 'docs/codemods') return `docs/migration${rest()}`;
+  // Developing envUI locally is a contributor's guide now, in the repository.
+  if (originalPath === 'docs/local-development') return `${docsRoute}${rest()}`;
   // The agent benchmark is gone: its page opens the overview.
   if (originalPath === 'benchmark') return `${homeRoute}${rest()}`;
   // The catalogue's changelog moved to the Docs, with its release notes.

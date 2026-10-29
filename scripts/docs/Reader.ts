@@ -157,11 +157,11 @@ export function readDocumentation(
       const structured = pageKinds.has(kind);
       if (structured && !frontmatter)
         throw new Error(
-          `${kind[0].toUpperCase()}${kind.slice(1)} page ${path} needs frontmatter: it is in the one-file structure (docs/component-pages.md).`,
+          `${kind[0].toUpperCase()}${kind.slice(1)} page ${path} needs frontmatter: it is in the one-file structure (contributing/pages.md).`,
         );
       if (structured && !('examples' in frontmatter!))
         throw new Error(
-          `${path} is not in the one-file structure: its frontmatter lists no examples, each once with its role (docs/component-pages.md).`,
+          `${path} is not in the one-file structure: its frontmatter lists no examples, each once with its role (contributing/pages.md).`,
         );
       if (frontmatter) validateFrontmatter(frontmatter, path, { kind, versions });
       if (structured) {

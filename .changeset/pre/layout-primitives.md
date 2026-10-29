@@ -11,4 +11,4 @@ Row, Column, Grid and Box, the layout primitives, replace Stack: thin wrappers o
 - Each renders `data-env-layout` (`box`, `row`, `column` or `grid`), `name` as `data-env-name`, and its options as attributes such as `data-gap`, and takes `render`, `className` and `ref`. Its rules have no specificity, so any class overrides them; the `env-stack` class and `StackProps` are gone.
 - The `v1-stack` codemod rewrites each Stack, after `v1-structure` and `v1-render`, and reports a `direction` that is an expression. `envui/no-renamed-exports` no longer reports `Row` and `RowProps`, 0.x's list row, as 1.0 exports `Row` again.
 
-Migration guide: [Layout primitives](https://github.com/envsemble/envUI/blob/main/docs/migration.md#layout-primitives).
+Migration guide: [Layout primitives](https://github.com/envsemble/envUI/blob/main/docs/migration.md).

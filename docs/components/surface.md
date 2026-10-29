@@ -2,7 +2,7 @@
 title: Surface
 summary: A container with a background, an inset and corners, but no layout of its own.
 status: beta
-since: 0.1.0
+since: 1.0.0
 category: App frame & layout
 aliases:
   - panel
@@ -136,40 +136,10 @@ A group of controls, as wide as its controls in a Column with `align="start"`:
 
 ### Customize
 
-`--env-surface-container`, `--env-surface-content` and `--env-surface-outline` set the fill, the text and an edge of one surface, through `style` or CSS; a surface inside keeps its own.
-
-- To recolor everything in an area, its controls included, override the semantic tokens on a nested Theme, with hover and pressed values of their own, such as `--env-color-bg-primary-emphasis` with `-hover` and `-pressed`, for each theme.
+- To recolor an area, its controls included, set the semantic tokens on a nested Theme, as [Customize and extend](../customizing.md#recolor-an-area) shows.
 - CSS may target `env-surface`, with `data-background` and `data-radius` for the values other than the defaults.
-
-```tsx
-/** The brand's roles in green, with their hover and pressed values, for each theme. */
-const green = {
-  light: {
-    '--env-color-bg-primary-emphasis': '#176f35',
-    '--env-color-bg-primary-emphasis-hover': '#115a2a',
-    '--env-color-bg-primary-emphasis-pressed': '#0b4520',
-    '--env-color-fg-on-emphasis': '#ffffff',
-  },
-  dark: {
-    '--env-color-bg-primary-emphasis': '#7ad197',
-    '--env-color-bg-primary-emphasis-hover': '#5fbf80',
-    '--env-color-bg-primary-emphasis-pressed': '#45ad69',
-    '--env-color-fg-on-emphasis': '#1e1f21',
-  },
-};
-
-const { theme } = useTheme();
-<Theme theme={theme} style={green[theme] as CSSProperties}>
-  <Surface background="muted" padding={4} render={<Column gap={3} align="start" />}>
-    …
-  </Surface>
-</Theme>;
-```
 
 ## Changelog
 
 - **1.0.0-prerelease.5**: `background="recessed"`, a well on the page a shade deeper than it, in `--env-color-bg-recessed`.
 - **1.0.0**: `skeleton`, with `placeholders()`, `isPlaceholder()` and `useSkeleton()`. `tone` is `background`, with the names of the background roles: `pane` is `default`, `row` `muted`, `canvas` `page` and `alternate` `raised`; `corners` is `radius`: `surface` is `xl`, `standard` `sm` and `pill` `full`; `render` replaces `as`. The backgrounds take the semantic background colors.
-- **0.5.0**: `density="compact"`, which gives the controls inside the compact height.
-- **0.4.0**: The inset is at least 1.25 rem.
-- **0.1.0**: Surface, with backgrounds, padding and corners.

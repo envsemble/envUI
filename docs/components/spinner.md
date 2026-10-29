@@ -2,7 +2,7 @@
 title: Spinner
 summary: Work of unknown length in a small area, such as a panel that is updating, as a turning arc.
 status: stable
-since: 0.4.0
+since: 1.0.0
 category: Feedback
 aliases:
   - loader
@@ -119,5 +119,4 @@ The parts are the spinner, `env-spinner`, its arc, `env-spinner-arc`, and with `
 
 ## Changelog
 
-- **1.0.0**: `showLabel` shows the label beside the spinner, in a busy status, for loading with no known shape, in place of the LoadingState component of 1.0.0-prerelease.0, which the `v1-structure` codemod rewrites. `size` is `sm`, `md` or `lg`, as `data-size`; the drawing is hidden from assistive technology also when the spinner has a label.
-- **0.4.0**: Spinner, in small, standard and large sizes; pending buttons show a small one.
+- **1.0.0**: `showLabel` shows the label beside the spinner, in a busy status, for loading with no known shape, in place of the LoadingState component of 1.0.0-prerelease.0. `size` is `sm`, `md` or `lg`, as `data-size`; the drawing is hidden from assistive technology also when the spinner has a label.

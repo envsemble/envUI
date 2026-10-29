@@ -2,7 +2,7 @@
 title: Alert
 summary: An inline message about a page or a section, in an info, success, warning or danger tone, with an optional action and dismiss button.
 status: stable
-since: 0.5.0
+since: 1.0.0
 category: Feedback
 aliases:
   - Notice
@@ -176,7 +176,7 @@ Info and success alerts take the `status` role and are read politely. `announce`
 
 #### Dismiss
 
-`onDismiss` shows a dismiss button that calls it; the application removes the alert, and moves focus, such as to the control the alert concerned. Offer it only where the message can safely be hidden. `dismissLabel` names the button, Dismiss by default or EnvUIProvider's `messages.alert.dismiss`, and is also its tooltip.
+`onDismiss` shows a dismiss button that calls it; the application removes the alert, and moves focus, such as to the control the alert concerned. Offer it only where the message can safely be hidden. `dismissLabel` names the button, and is also its tooltip.
 
 ### Composition
 
@@ -184,14 +184,7 @@ The parts are the container, `env-alert`, the icon, `env-alert-icon`, the title,
 
 ### Customize
 
-`--env-alert-container`, `--env-alert-content`, `--env-alert-outline` and `--env-alert-icon` set the colors of one Alert, through `style` or CSS: its fill, its text, title included, an edge, which it otherwise draws only at high contrast, and its icon, which the title takes while the text is the tone's. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
-
-```tsx
-<Alert
-  title="Trial ends in 3 days"
-  style={{ '--env-alert-container': 'var(--env-color-bg-primary-muted)' } as CSSProperties}
-/>
-```
+An Alert draws an edge only at high contrast, unless its outline color sets one, and its title takes the icon's color while its text takes the tone's.
 
 ## Changelog
 
@@ -199,4 +192,3 @@ The parts are the container, `env-alert`, the icon, `env-alert-icon`, the title,
 - **1.0.0**: No edge outside high contrast: the tone's stronger tint fills it, the title takes the tone's color as the icon does, and its corners are a card's, 1.25 rem. At high contrast it keeps the softer tint with an edge in the border color.
 - **1.0.0**: `actions` for `action`, as on Card and Dialog. `tone="danger"` for `error`; the dismiss button is an IconButton with a cross, named Dismiss in the provider's language.
 - **1.0.0**: `Notice` is `Alert`, with `AlertTone` and the `env-alert-*` classes; the page is `alert`.
-- **0.5.0**: Notice, an inline banner in four tones with an action, a round dismiss button in its tone and `announce`.

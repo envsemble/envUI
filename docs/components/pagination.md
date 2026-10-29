@@ -2,7 +2,7 @@
 title: Pagination
 summary: The range of items shown with previous and next page buttons, small enough for a toolbar.
 status: stable
-since: 0.6.0
+since: 1.0.0
 category: Navigation
 aliases:
   - paginator
@@ -118,7 +118,6 @@ Show the total once it is known. Hide Pagination where the items fit on one page
 
 - An `aria-label` that names what it pages through, where a page has several navigation landmarks.
 - `pending` while a page loads, and the page itself.
-- The strings in the application's language, through `messages.pagination`.
 
 ## Compose
 
@@ -134,9 +133,9 @@ Show the total once it is known. Hide Pagination where the items fit on one page
 
 `total` counts all items: the range ends with it, and the last page ends the list. Pass it once it is known. Without it, the range shows only the page's items, as in 61–120, and `hasNextPage`, `true` by default, says whether a later page exists, such as from a cursor's has more.
 
-#### Strings
+#### Names and the range
 
-EnvUIProvider's `messages.pagination` sets the names, `label`, `previous` and `next`, and the `range` for every pager inside it, and its `locale` formats the numbers. `aria-label`, `previousLabel`, `nextLabel` and `formatRange` set them for one pager: `formatRange` receives the first and last item shown, the total, the page and the page count.
+EnvUIProvider's `locale` formats the numbers. `aria-label`, `previousLabel`, `nextLabel` and `formatRange` set the names and the range for one pager: `formatRange` receives the first and last item shown, the total, the page and the page count.
 
 ```tsx
 const messages = {
@@ -167,4 +166,3 @@ The pager is a `nav`, `env-pagination`, with the range, `env-pagination-range`, 
 ## Changelog
 
 - **1.0.0**: The range's numbers are in the locale, EnvUIProvider's or the runtime's, instead of always English, and the names and the range come from `messages.pagination`; `previousLabel`, `nextLabel`, `formatRange` and `aria-label` still override them.
-- **0.6.0**: Pagination: the range of items shown, with previous and next buttons that wait while a page loads, `formatRange`, `hideWhenSinglePage` and `size="compact"`.

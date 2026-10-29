@@ -10,7 +10,7 @@
 // `props` a component's page in the Docs, `usage` a foundation's guide there.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
+import { fileURLToPath } from 'node:url';
 import { marked } from 'marked';
 import MiniSearch from 'minisearch';
 import { plainText } from '../docs/MarkdownHeadings.ts';
@@ -24,9 +24,9 @@ import {
   tokenSection,
 } from '../../apps/site/src/shared/SearchAnchors.ts';
 
-/** The token list, packages/ui/src/generated/tokens.json, with each token's names before 1.0. */
+/** The token list, packages/ui/src/generated/tokens.json. */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- generated JSON; the token build writes it
-export type TokenList = Record<string, any> & { formerNames?: Record<string, string[]> };
+export type TokenList = Record<string, any>;
 
 /** What the search index is built from. */
 export interface SearchSources {
@@ -113,12 +113,6 @@ export const standalonePages: {
     aliases: ['token reference', 'CSS custom properties', 'CSS variables'],
   },
   {
-    page: 'codemods',
-    title: 'Codemods',
-    area: 'docs',
-    aliases: ['envui-codemods', 'upgrade', 'transforms'],
-  },
-  {
     page: 'full-changelog',
     title: 'Changelog',
     area: 'docs',
@@ -126,16 +120,8 @@ export const standalonePages: {
   },
 ];
 
-/**
- * Pages of docs/ for people who change envUI itself, and the agents' index of the pages, which
- * neither the catalogue nor the Docs show, so search finds none of them.
- */
-export const unlistedPages = new Set([
-  'index',
-  'library-development',
-  'component-pages',
-  'pattern-pages',
-]);
+/** The agents' index of the pages, which neither the catalogue nor the Docs show. */
+export const unlistedPages = new Set(['index']);
 
 /** Components documented in the Docs alone: Field, as "Build your own field". */
 const docsOnlyPages = new Set(['field']);
@@ -334,11 +320,7 @@ export function searchDocuments({
       aliases: '',
       keywords: [token.id, token.type, aliasOf].filter(Boolean).join(' '),
       owner: '',
-      // Its names before 1.0, such as the 0.7 alias --color-text-muted, find it too.
-      text: [
-        sentence(token.description ?? ''),
-        ...(tokens.formerNames?.[token.cssVariable] ?? []).map((name) => `Before 1.0: ${name}.`),
-      ].join(' '),
+      text: sentence(token.description ?? ''),
       page: 'tokens',
       area: 'docs',
       section: tokenSection(token.cssVariable),
@@ -398,21 +380,9 @@ function withNames(document: SearchDocument) {
   return { ...document, names: [...new Set(names.map(nameKey).filter(Boolean))] };
 }
 
-/**
- * The token list, with each token's names before 1.0 (formerNames, by its custom property) from the
- * token migration map beside it.
- */
+/** The token list. */
 export function readTokens(): TokenList {
-  const list = JSON.parse(readFileSync(tokensFile, 'utf8'));
-  const migrationFile = fileURLToPath(new URL('token-migration.json', pathToFileURL(tokensFile)));
-  const formerNames: Record<string, string[]> = {};
-  if (existsSync(migrationFile))
-    for (const [name, entry] of Object.entries<{ cssVariable?: string; kind: string }>(
-      JSON.parse(readFileSync(migrationFile, 'utf8')).names,
-    ))
-      if (entry.cssVariable && (entry.kind === 'alias' || entry.kind === 'renamed'))
-        (formerNames[entry.cssVariable] ??= []).push(name);
-  return { ...list, formerNames };
+  return JSON.parse(readFileSync(tokensFile, 'utf8'));
 }
 
 /** Writes the site's index when it changed. */

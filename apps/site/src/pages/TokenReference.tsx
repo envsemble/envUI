@@ -137,9 +137,7 @@ export function TokenReference() {
     <>
       <Text>
         Each token is a CSS custom property on every envUI theme boundary. Use the semantic names in
-        application styles; the values change with the theme, the contrast and the scale. Names
-        before 1.0, such as the 0.7 aliases, are listed in the migration guide with what replaces
-        them.
+        application styles; the values change with the theme, the contrast and the scale.
       </Text>
       {tokenGroups.map((group) => {
         const tokens = tokenList.tokens.filter((token) => groupOf(token) === group);

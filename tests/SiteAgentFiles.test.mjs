@@ -80,14 +80,10 @@ test('llms.txt introduces envUI and points to the setup skill and the installed 
   assert.ok(llms.endsWith('\n') && !llms.endsWith('\n\n'));
 });
 
-test('For agents shows the AGENTS.md block and the prompt the skill and the Docs home give', () => {
-  const block = (text) =>
-    /```md\n(<!-- BEGIN envui -->[\s\S]*?<!-- END envui -->)\n```/.exec(text)?.[1];
-  const guide = readFileSync(join(repository, 'docs/agent-tooling.md'), 'utf8');
-  assert.ok(block(guide));
-  assert.equal(block(guide), block(skill));
+test('the Docs home and setup lead to the skill the site serves at /SKILL.md', () => {
   const docsHome = readFileSync(join(repository, 'apps/site/src/pages/DocsPages.tsx'), 'utf8');
   const prompt = /setupPrompt = '([^']+)'/.exec(docsHome)?.[1];
   assert.equal(prompt, 'Set up envUI in my app: envui.envsemble.com/SKILL.md');
-  assert.ok(guide.includes(`\`\`\`text\n${prompt}\n\`\`\``));
+  const setup = readFileSync(join(repository, 'docs/setup.md'), 'utf8');
+  assert.ok(setup.includes('(https://envui.envsemble.com/SKILL.md)'));
 });
