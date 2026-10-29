@@ -241,12 +241,12 @@
       "env-combobox-item": "One option.",
       "env-combobox-item-indicator": "The check of a chosen option.",
       "env-combobox-label": "The label.",
-      "env-combobox-leading": "The leading icon of the well.",
+      "env-combobox-start": "The icon at the start of the well, or of an option in the popup.",
       "env-combobox-list": "The list of options.",
       "env-combobox-popup": "The popup with the options.",
       "env-combobox-status": "The announcement of the number of options.",
       "env-combobox-trigger": "The button that opens the list.",
-      "env-combobox-value-leading": "The chosen option's icon in the well."
+      "env-combobox-value-icon": "The chosen option's icon in the well."
     },
     "CommandPalette": {
       "env-command-palette": "The command palette's dialog.",

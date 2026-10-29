@@ -454,7 +454,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
           renderControlBox={renderControlBox}
         >
           {showStart && (
-            <span className="env-combobox-leading env-combobox-value-leading" aria-hidden="true">
+            <span className="env-combobox-start env-combobox-value-icon" aria-hidden="true">
               {singleItem.start}
             </span>
           )}
@@ -470,7 +470,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
                   render={({ 'aria-readonly': _readOnly, ...chipProps }) => <div {...chipProps} />}
                 >
                   {item?.start != null && (
-                    <span className="env-combobox-leading" aria-hidden="true">
+                    <span className="env-combobox-start" aria-hidden="true">
                       {item.start}
                     </span>
                   )}

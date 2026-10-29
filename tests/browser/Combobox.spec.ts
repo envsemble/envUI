@@ -37,7 +37,7 @@ test('typing filters by label and description, ignoring case and accents, and En
   await expect(author).toHaveAttribute('aria-expanded', 'false');
   await expect(author).toHaveAccessibleDescription('The person who answers questions.');
   // The chosen option's avatar sits before its label in the field.
-  await expect(wellOf(author).locator('.env-combobox-value-leading .env-avatar')).toBeVisible();
+  await expect(wellOf(author).locator('.env-combobox-value-icon .env-avatar')).toBeVisible();
 
   await author.fill('SAM');
   const list = page.getByRole('listbox');
@@ -50,7 +50,7 @@ test('typing filters by label and description, ignoring case and accents, and En
   await expect.poll(() => highlighted(page)).toEqual(['Sam Lee']);
   await expect(author).toHaveAttribute('aria-activedescendant', (await sam.getAttribute('id'))!);
   // While the typed text differs from the chosen label, the chosen avatar steps aside.
-  await expect(wellOf(author).locator('.env-combobox-value-leading')).toHaveCount(0);
+  await expect(wellOf(author).locator('.env-combobox-value-icon')).toHaveCount(0);
   await page.keyboard.press('Enter');
   await expect(list).toHaveCount(0);
   await expect(author).toHaveValue('Sam Lee');

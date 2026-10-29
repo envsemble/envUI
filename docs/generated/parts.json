@@ -1459,16 +1459,16 @@
           "description": "The label."
         },
         {
-          "class": "env-combobox-leading",
-          "description": "The leading icon of the well."
-        },
-        {
           "class": "env-combobox-list",
           "description": "The list of options."
         },
         {
           "class": "env-combobox-popup",
           "description": "The popup with the options."
+        },
+        {
+          "class": "env-combobox-start",
+          "description": "The icon at the start of the well, or of an option in the popup."
         },
         {
           "class": "env-combobox-status",
@@ -1479,7 +1479,7 @@
           "description": "The button that opens the list."
         },
         {
-          "class": "env-combobox-value-leading",
+          "class": "env-combobox-value-icon",
           "description": "The chosen option's icon in the well."
         }
       ],
