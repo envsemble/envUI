@@ -43,7 +43,7 @@ export default function NarrowNavigation() {
       scroll="body"
       landmarks={false}
       style={preview}
-      forms={narrow ? { expanded: 'rail', large: 'rail' } : undefined}
+      navigationForms={narrow ? { expanded: 'rail', large: 'rail' } : undefined}
       topBar={
         <TopBar
           start={

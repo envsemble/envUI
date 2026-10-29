@@ -30,7 +30,6 @@ avoidWhen:
     see: app-frame
 components:
   - Scaffold
-  - resolveNavigationForms
 examples:
   NavigationForms:
     role: overview
@@ -167,7 +166,7 @@ Render one Scaffold at the application's root, around the router's outlet, and k
 
 #### Which form shows
 
-`forms` sets which form shows at each window class, `compact`, `medium`, `expanded` and `large`, or `none`; the default is `{ compact: 'bar', medium: 'rail', expanded: 'drawer', large: 'drawer' }`.
+`navigationForms` sets which form shows at each window class, `compact`, `medium`, `expanded` and `large`, or `none`; the default is `{ compact: 'bar', medium: 'rail', expanded: 'drawer', large: 'drawer' }`.
 
 - The window classes are those of the Scaffold's own width: `compact` below 37.5 rem, `medium` from 37.5 to 52.5 rem, `expanded` from 52.5 to 75 rem and `large` from 75 rem.
 - `{ compact: 'none' }` suits an application that opens its navigation from the top bar on a phone.
@@ -175,7 +174,7 @@ Render one Scaffold at the application's root, around the router's outlet, and k
 
 ```tsx
 <Scaffold
-  forms={{ compact: 'none' }}
+  navigationForms={{ compact: 'none' }}
   topBar={<TopBar title="Settings" />}
   navigation={{ drawer: <Drawer aria-label="Settings" destinations={destinations} /> }}
 >
@@ -185,11 +184,11 @@ Render one Scaffold at the application's root, around the router's outlet, and k
 
 #### A button that narrows the navigation
 
-A button that narrows the navigation sets `forms={{ expanded: 'rail', large: 'rail' }}`, and the application keeps the choice, such as in `localStorage`.
+A button that narrows the navigation sets `navigationForms={{ expanded: 'rail', large: 'rail' }}`, and the application keeps the choice, such as in `localStorage`.
 
 ```tsx
 <Scaffold
-  forms={narrow ? { expanded: 'rail', large: 'rail' } : undefined}
+  navigationForms={narrow ? { expanded: 'rail', large: 'rail' } : undefined}
   topBar={
     <TopBar
       start={
@@ -243,4 +242,5 @@ The parts are the root, `env-scaffold`, the top bar, `env-scaffold-top-bar`, the
 
 ## Changelog
 
+- **1.0.0-prerelease.5**: `forms` is `navigationForms`, and `NavigationForm` is `ScaffoldNavigationForm`, so neither reads as a form of fields. `resolveNavigationForms` is internal.
 - **1.0.0**: Scaffold, which replaces AppShell and WindowFrame: a top bar region, the navigation forms by window class, and the body, with the document or the body scrolling.

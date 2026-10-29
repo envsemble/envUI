@@ -19,6 +19,7 @@ await build({
       "export * from './packages/ui/src/layout/Scaffold.tsx';",
       "export * as Panes from './packages/ui/src/layout/Panes.tsx';",
       "export * from './packages/ui/src/layout/Page.tsx';",
+      "export { resolveNavigationForms } from './packages/ui/src/layout/internal/navigationForms.ts';",
     ].join('\n'),
     resolveDir: repository,
     loader: 'ts',

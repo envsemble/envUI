@@ -17,6 +17,7 @@ import { classNames } from '../internal/classNames.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { setRef } from '../internal/setRef.js';
 import { useScrollKeys } from './internal/useScrollKeys.js';
+import { resolveNavigationForms } from './internal/navigationForms.js';
 import '../styles/Base.css';
 import '../styles/Scaffold.css';
 
@@ -24,7 +25,7 @@ import '../styles/Scaffold.css';
  * One of the three ways an application's destinations show: a Bar at the bottom, a Rail at the
  * start or a Drawer at the start.
  */
-export type NavigationForm = 'bar' | 'rail' | 'drawer';
+export type ScaffoldNavigationForm = 'bar' | 'rail' | 'drawer';
 
 /** The navigation forms an application gives a Scaffold, each the component that renders it. */
 export interface ScaffoldNavigation {
@@ -40,7 +41,7 @@ export interface ScaffoldNavigation {
  * Which navigation form shows at each window class, or none. A window class left out keeps its
  * default: bar on compact, rail on medium, drawer on expanded and large.
  */
-export type ScaffoldForms = Partial<Record<WindowClass, NavigationForm | 'none'>>;
+export type ScaffoldForms = Partial<Record<WindowClass, ScaffoldNavigationForm | 'none'>>;
 
 export interface ScaffoldProps extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
   /** The top bar region, above the body: usually a TopBar. */
@@ -58,7 +59,7 @@ export interface ScaffoldProps extends Omit<ComponentPropsWithRef<'div'>, 'child
    * way round, then the bar.
    * @default { compact: 'bar', medium: 'rail', expanded: 'drawer', large: 'drawer' }
    */
-  forms?: ScaffoldForms;
+  navigationForms?: ScaffoldForms;
   /**
    * body: the top bar sits above the body, beside the rail or drawer, which run the full height.
    * full: the top bar runs across the whole width, above the navigation, as a window's title bar
@@ -112,42 +113,6 @@ export interface ScaffoldProps extends Omit<ComponentPropsWithRef<'div'>, 'child
   children?: ReactNode;
 }
 
-/** The window classes, smallest first. */
-const classes = ['compact', 'medium', 'expanded', 'large'] as const;
-
-const defaultForms: Record<WindowClass, NavigationForm> = {
-  compact: 'bar',
-  medium: 'rail',
-  expanded: 'drawer',
-  large: 'drawer',
-};
-
-/** The forms that stand in for one that wasn't given, nearest first. */
-const standIns: Record<NavigationForm, readonly NavigationForm[]> = {
-  bar: ['bar', 'rail', 'drawer'],
-  rail: ['rail', 'drawer', 'bar'],
-  drawer: ['drawer', 'rail', 'bar'],
-};
-
-/**
- * The form that shows at each window class: the one asked for, else the nearest one given, else
- * none. Worked out from the props alone, so the server's markup has it, and CSS shows it at its
- * width.
- */
-export function resolveNavigationForms(
-  navigation: ScaffoldNavigation | undefined,
-  forms: ScaffoldForms | undefined,
-): Record<WindowClass, NavigationForm | 'none'> {
-  const given = (form: NavigationForm) => navigation?.[form] != null;
-  const resolved = {} as Record<WindowClass, NavigationForm | 'none'>;
-  for (const windowClass of classes) {
-    const asked = forms?.[windowClass] ?? defaultForms[windowClass];
-    resolved[windowClass] =
-      asked === 'none' ? 'none' : (standIns[asked].find(given) ?? ('none' as const));
-  }
-  return resolved;
-}
-
 /** The element of a navigation form to put focus on: its current item, else its first one. */
 function entryOf(form: HTMLElement) {
   const focusable = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -183,7 +148,7 @@ function focusRegion(target: HTMLElement) {
 export function Scaffold({
   topBar,
   navigation,
-  forms,
+  navigationForms,
   topBarSpan = 'body',
   scroll = 'document',
   bodyId,
@@ -221,7 +186,7 @@ export function Scaffold({
   // document, also before anything in it has focus.
   useScrollKeys(scroll === 'body' ? root : null, body);
 
-  const resolved = resolveNavigationForms(navigation, forms);
+  const resolved = resolveNavigationForms(navigation, navigationForms);
   const shown = new Set(Object.values(resolved));
   const hasNavigation = shown.has('bar') || shown.has('rail') || shown.has('drawer');
   const hasTopBar = topBar != null;
@@ -304,7 +269,7 @@ export function Scaffold({
   }, [root, hasNavigation, navigationId]);
   // Every form that shows at some window class is rendered; CSS shows the one for the Scaffold's
   // width, and the others are display: none, out of the tab order and the accessibility tree.
-  const slot = (form: NavigationForm) =>
+  const slot = (form: ScaffoldNavigationForm) =>
     shown.has(form) ? (
       <div className={`env-scaffold-${form}`} data-navigation-form={form}>
         {navigation?.[form]}

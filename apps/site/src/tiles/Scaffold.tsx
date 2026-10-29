@@ -50,7 +50,7 @@ export default function ScaffoldTile() {
     <Scaffold
       scroll="body"
       landmarks={false}
-      forms={{ compact: 'rail', medium: 'rail', expanded: 'rail', large: 'rail' }}
+      navigationForms={{ compact: 'rail', medium: 'rail', expanded: 'rail', large: 'rail' }}
       style={{ inlineSize: '16rem', blockSize: '10.5rem' }}
       topBar={
         <TopBar title="Northwind" actions={<IconButton icon={<Search />} aria-label="Search" />} />

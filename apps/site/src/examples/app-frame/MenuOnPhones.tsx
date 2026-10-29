@@ -55,7 +55,7 @@ export default function MenuOnPhones() {
       scroll="body"
       landmarks={false}
       style={preview}
-      forms={{ compact: 'none', medium: 'drawer' }}
+      navigationForms={{ compact: 'none', medium: 'drawer' }}
       topBar={
         <TopBar
           start={

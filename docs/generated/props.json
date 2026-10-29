@@ -6649,7 +6649,7 @@
           "description": "The navigation forms, such as `{ bar: <Bar … />, rail: <Rail … />, drawer: <Drawer … /> }` with the same destinations. One shows at a time, chosen by the Scaffold's own width; give only the forms the application uses."
         },
         {
-          "name": "forms",
+          "name": "navigationForms",
           "type": "ScaffoldForms",
           "required": false,
           "default": "{ compact: 'bar', medium: 'rail', expanded: 'drawer', large: 'drawer' }",
@@ -8985,15 +8985,6 @@
       "source": "packages/ui/src/layout/panesSize.ts",
       "description": "The width Panes keeps under its `persist` key, read from a Cookie header, such as the request's on the server, or from `document.cookie`. Render Panes.Root with it as `persistedSize`, on the server and in the browser alike, so the server's markup has the width people chose and nothing moves as the page hydrates: <Panes.Root persist=\"inbox\" persistedSize={readPanesSize(cookieHeader, 'inbox')}> Returns undefined where no width is kept under the key.",
       "signature": "(cookies: string | null | undefined, key: string): number | undefined",
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
-    "resolveNavigationForms": {
-      "kind": "function",
-      "source": "packages/ui/src/layout/Scaffold.tsx",
-      "description": "The form that shows at each window class: the one asked for, else the nearest one given, else none. Worked out from the props alone, so the server's markup has it, and CSS shows it at its width.",
-      "signature": "(navigation: ScaffoldNavigation | undefined, forms: ScaffoldForms | undefined): Record<WindowClass, NavigationForm | \"none\">",
       "entries": [
         "@envsemble/envui"
       ]

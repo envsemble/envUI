@@ -1181,6 +1181,8 @@ An application written for a 1.0 prerelease follows these renames by hand: the n
 | List.Item `selected`                        | `current`: it marks the current row with `aria-current`                    |
 | ColorPicker and ColorPickerButton `copy`    | `copyable`, as on CodeBlock                                                |
 | AvatarGroup `gather`                        | `align`                                                                    |
+| Scaffold `forms`, `NavigationForm`          | `navigationForms`, `ScaffoldNavigationForm`                                |
+| `resolveNavigationForms`                    | Removed: Scaffold works the forms out itself                               |
 
 ## Migrate by responsibility
 

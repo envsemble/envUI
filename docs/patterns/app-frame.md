@@ -179,11 +179,11 @@ Render one Scaffold at the application's root, around the router's outlet.
 
 #### A menu on phones
 
-`forms={{ compact: 'none', medium: 'drawer' }}` shows no navigation on a compact window and the drawer from medium. A menu IconButton in the TopBar's `start` opens a Sheet with `side="start"` holding the same Drawer, which closes the sheet when a destination is chosen.
+`navigationForms={{ compact: 'none', medium: 'drawer' }}` shows no navigation on a compact window and the drawer from medium. A menu IconButton in the TopBar's `start` opens a Sheet with `side="start"` holding the same Drawer, which closes the sheet when a destination is chosen.
 
 ```tsx
 <Scaffold
-  forms={{ compact: 'none', medium: 'drawer' }}
+  navigationForms={{ compact: 'none', medium: 'drawer' }}
   topBar={
     <TopBar
       title="Guide"

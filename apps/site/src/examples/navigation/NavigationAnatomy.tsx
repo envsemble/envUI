@@ -30,7 +30,7 @@ export default function NavigationAnatomy() {
       scroll="body"
       landmarks={false}
       style={{ blockSize: '20rem' }}
-      forms={{ compact: 'rail', medium: 'rail', expanded: 'rail', large: 'rail' }}
+      navigationForms={{ compact: 'rail', medium: 'rail', expanded: 'rail', large: 'rail' }}
       topBar={
         <TopBar
           title="Northwind"

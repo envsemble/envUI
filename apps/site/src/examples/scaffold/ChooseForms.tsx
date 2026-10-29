@@ -14,7 +14,7 @@ export default function ChooseForms() {
       scroll="body"
       landmarks={false}
       style={preview}
-      forms={{ compact: 'none' }}
+      navigationForms={{ compact: 'none' }}
       topBar={<TopBar title="Settings" />}
       navigation={{
         drawer: (

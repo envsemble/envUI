@@ -24,7 +24,7 @@ export default function DestinationsInNavigation() {
       scroll="body"
       landmarks={false}
       style={{ blockSize: '16rem' }}
-      forms={{ compact: 'rail', medium: 'rail', expanded: 'rail', large: 'rail' }}
+      navigationForms={{ compact: 'rail', medium: 'rail', expanded: 'rail', large: 'rail' }}
       topBar={<TopBar title="Northwind" />}
       navigation={{
         rail: <Rail aria-label="Main, destinations in the rail" destinations={destinations} />,
