@@ -81,7 +81,10 @@ export interface DatePickerProps
    * browser's. Dates are Gregorian, also in a locale with a calendar of its own.
    */
   locale?: string;
-  /** The calendar's first day of the week, from 0 for Sunday to 6 for Saturday; see Calendar. */
+  /**
+   * The calendar's first day of the week, from 0 for Sunday to 6 for Saturday.
+   * @default the locale's, or Monday where the browser cannot tell
+   */
   weekStart?: Weekday;
   /**
    * How the field shows the value: Intl.DateTimeFormat options, by default the medium date style
@@ -91,7 +94,10 @@ export interface DatePickerProps
   formatOptions?: Intl.DateTimeFormatOptions;
   /** The name the value is submitted under with a form, as YYYY-MM-DD or YYYY-MM-DDTHH:mm. */
   name?: string;
-  /** A value is needed: an empty field keeps its form from submitting and takes focus. */
+  /**
+   * A value is needed: an empty field keeps its form from submitting and takes focus.
+   * @default false
+   */
   required?: boolean;
   /** The value can be read and focused but not changed. */
   readOnly?: boolean;

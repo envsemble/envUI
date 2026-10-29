@@ -31,7 +31,10 @@ export interface RootProps extends Omit<ComponentPropsWithRef<'div'>, 'children'
    * Without it, the control height of the container.
    */
   size?: ControlSize;
-  /** Disables every control inside. */
+  /**
+   * Disables every control inside.
+   * @default false
+   */
   disabled?: boolean;
   /**
    * Whether the arrow keys move from the last control to the first and back.
@@ -123,7 +126,10 @@ function Root({
 export interface GroupProps extends ComponentPropsWithRef<'div'> {
   /** Names the group, such as Text style, where its controls belong together. */
   'aria-label'?: string;
-  /** Disables every control in the group. */
+  /**
+   * Disables every control in the group.
+   * @default false
+   */
   disabled?: boolean;
   /** Another element to render the group as, such as a ButtonGroup. */
   render?: ReactElement;
@@ -190,7 +196,10 @@ export interface ButtonProps
   shortcut?: string;
   /** As Button's; ghost by default, from the toolbar. */
   variant?: ButtonVariant;
-  /** As Button's: a spinner replaces the icon while the work runs. */
+  /**
+   * As Button's: a spinner replaces the icon while the work runs.
+   * @default false
+   */
   pending?: boolean;
 }
 

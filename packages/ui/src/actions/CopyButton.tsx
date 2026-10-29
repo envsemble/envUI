@@ -36,16 +36,25 @@ interface CopyButtonBaseProps
   write?: (text: string) => Promise<void>;
   /** As Button's: sm, md or lg; without it, the control height of the container. */
   size?: ControlSize;
-  /** The icon at rest, ContentCopy by default; a check replaces it once the text is copied. */
+  /**
+   * The icon at rest; a check replaces it once the text is copied.
+   * @default ContentCopy
+   */
   icon?: ReactNode;
-  /** Shown in the tooltip and announced after copying; Copied by default. */
+  /**
+   * Shown in the tooltip and announced after copying.
+   * @default 'Copied', or EnvUIProvider's messages.copy.copied
+   */
   copiedLabel?: string;
-  /** Shown in the tooltip and announced when nothing could be copied; Couldn’t copy by default. */
+  /**
+   * Shown in the tooltip and announced when nothing could be copied.
+   * @default 'Couldn’t copy', or EnvUIProvider's messages.copy.failed
+   */
   failedLabel?: string;
   /**
    * The button's name, also in an icon-only button's tooltip, where it has none of its own: no
-   * aria-label or aria-labelledby, and a label without words, such as an empty string; Copy by
-   * default.
+   * aria-label or aria-labelledby, and a label without words, such as an empty string.
+   * @default 'Copy', or EnvUIProvider's messages.copy.copy
    */
   copyLabel?: string;
 }
@@ -69,9 +78,14 @@ export type CopyButtonProps = CopyButtonBaseProps &
          * aria-label, such as Copy link; a blank one leaves it named by copyLabel.
          */
         children?: boolean | null;
+        /** The icon-only button's name, such as Copy link, which its tooltip shows. */
         'aria-label': string;
       }
-    | { children: CopyButtonLabel; 'aria-label'?: string }
+    | {
+        children: CopyButtonLabel;
+        /** A name in place of the label's words, where they don't say it as wanted. */
+        'aria-label'?: string;
+      }
   );
 
 /** How long the result of a press shows: the check, the tooltip and the announcement. */

@@ -72,6 +72,7 @@ export type ConfirmButtonProps = ConfirmButtonBaseProps &
          * confirm label, so the consequence is still named.
          */
         icon: ReactNode;
+        /** The icon-only button's name at rest, such as Delete draft. */
         'aria-label': string;
         children?: never;
       } & ConfirmButtonEmphasisProps<'neutral'>)

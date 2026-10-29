@@ -42,6 +42,7 @@ export interface AlertProps
   /**
    * The alert appeared because of something that just happened and should interrupt: warning and
    * danger alerts take the alert role. Info and success alerts are always polite status messages.
+   * @default false
    */
   announce?: boolean;
 }

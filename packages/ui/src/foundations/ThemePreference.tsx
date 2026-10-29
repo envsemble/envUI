@@ -33,6 +33,7 @@ export type { ThemePreferenceValue } from './internal/ThemePreferenceContext.js'
 const systemDarkQuery = '(prefers-color-scheme: dark)';
 
 export interface ThemePreferenceProviderProps {
+  /** The application, or the part of it that the preference themes. */
   children: ReactNode;
   /** localStorage key; match the bootstrap script's. Defaults to "env-theme". */
   storageKey?: string;

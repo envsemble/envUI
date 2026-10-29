@@ -90,7 +90,10 @@ interface ComboboxSharedProps<Item extends ComboboxItem>
   filter?: ComboboxFilter<Item> | null;
   /** Receives the typed text, and an empty string once it is cleared, such as to search a server. */
   onInputValueChange?: (query: string) => void;
-  /** The options are loading: the popup shows loadingLabel instead of emptyLabel. */
+  /**
+   * The options are loading: the popup shows loadingLabel instead of emptyLabel.
+   * @default false
+   */
   loading?: boolean;
   /**
    * Shown in the popup while loading.
@@ -121,7 +124,10 @@ interface ComboboxSharedProps<Item extends ComboboxItem>
    * @default true
    */
   showLabel?: boolean;
-  /** A clear button removes the value while there is one; Esc on the closed field clears it too. */
+  /**
+   * A clear button removes the value while there is one; Esc on the closed field clears it too.
+   * @default false
+   */
   clearable?: boolean;
   /**
    * Accessible name of the clear button.
@@ -135,7 +141,10 @@ interface ComboboxSharedProps<Item extends ComboboxItem>
   removeLabel?: (label: string) => string;
   /** Whether the list is open; with `onOpenChange` it controls the popup. */
   open?: boolean;
-  /** Whether an uncontrolled list starts open; closed by default. */
+  /**
+   * Whether an uncontrolled list starts open; closed by default.
+   * @default false
+   */
   defaultOpen?: boolean;
   /** Called as the popup opens and closes, such as to load the options as it opens. */
   onOpenChange?: (open: boolean) => void;

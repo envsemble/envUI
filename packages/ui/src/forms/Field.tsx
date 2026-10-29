@@ -10,7 +10,10 @@ import type { ControlSize } from '../foundations/Theme.js';
 import '../styles/Base.css';
 import '../styles/Field.css';
 
-type ClassName = { className?: string };
+type ClassName = {
+  /** The part's class, beside its own env-field class. */
+  className?: string;
+};
 
 /** Whether Field.Root was given invalid, which shows its error as Base UI's own failures do. */
 const InvalidContext = createContext(false);

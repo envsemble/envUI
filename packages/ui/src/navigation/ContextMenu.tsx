@@ -59,7 +59,10 @@ export interface ContextMenuProps {
   content: ReactNode | ((target: Element | null) => ReactNode);
   /** One element that becomes the region; it must accept native props and a ref. */
   children: ReactElement;
-  /** The region keeps the browser's own context menu. */
+  /**
+   * The region keeps the browser's own context menu.
+   * @default false
+   */
   disabled?: boolean;
   /** Controlled visibility, for example to open the menu from another control. */
   open?: boolean;

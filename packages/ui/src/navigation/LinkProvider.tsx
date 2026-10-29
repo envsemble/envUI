@@ -14,6 +14,7 @@ export interface LinkProviderProps {
    * ref, for example a router's link that navigates on the client.
    */
   component: ComponentType<LinkComponentProps>;
+  /** The application, or the part of it whose destinations use the link component. */
   children: ReactNode;
 }
 

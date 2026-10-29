@@ -36,7 +36,9 @@ interface CardSurfaceProps extends SkeletonProps {
    * @default 1.25 rem in narrow windows, growing to 1.5 rem from 50 rem wide
    */
   padding?: SpaceStep;
+  /** The card's class, beside env-card. */
   className?: string;
+  /** Styles of the card. */
   style?: CSSProperties;
 }
 
@@ -84,6 +86,7 @@ export type CardLinkProps = CardSurfaceProps &
     /**
      * A disabled link card has no destination, cannot be focused and reports aria-disabled; a
      * disabled button card cannot be pressed.
+     * @default false
      */
     disabled?: boolean;
   };

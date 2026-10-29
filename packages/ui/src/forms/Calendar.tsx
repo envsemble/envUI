@@ -50,8 +50,8 @@ export interface CalendarProps
   /** The latest day that can be chosen, as YYYY-MM-DD; later days are unavailable. */
   max?: string;
   /**
-   * The first day of each week, from 0 for Sunday to 6 for Saturday: by default the locale's, or
-   * Monday where the browser cannot tell.
+   * The first day of each week, from 0 for Sunday to 6 for Saturday.
+   * @default the locale's, or Monday where the browser cannot tell
    */
   weekStart?: Weekday;
   /**

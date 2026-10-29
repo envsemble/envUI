@@ -40,6 +40,7 @@
           "name": "disabled",
           "type": "boolean",
           "required": false,
+          "default": "false",
           "description": "The item ignores presses and can't be focused; it stays dimmed."
         },
         {
@@ -182,6 +183,7 @@
           "name": "announce",
           "type": "boolean",
           "required": false,
+          "default": "false",
           "description": "The alert appeared because of something that just happened and should interrupt: warning and danger alerts take the alert role. Info and success alerts are always polite status messages."
         },
         {
@@ -549,6 +551,7 @@
           "name": "underline",
           "type": "boolean",
           "required": false,
+          "default": "false",
           "description": "Show an underline for the text variant; defaults to false."
         },
         {
@@ -561,6 +564,7 @@
           "name": "fullWidth",
           "type": "boolean",
           "required": false,
+          "default": "false",
           "description": "Fill the width of the container, such as the actions of a narrow form stacked in a column."
         },
         {
@@ -585,6 +589,7 @@
           "name": "pending",
           "type": "boolean",
           "required": false,
+          "default": "false",
           "description": "Work started by this button is running: a spinner replaces the content without changing the button's size, and the button reports busy and ignores activation until pending ends."
         },
         {
@@ -675,7 +680,8 @@
           "name": "weekStart",
           "type": "0 | 1 | 2 | 3 | 4 | 5 | 6",
           "required": false,
-          "description": "The first day of each week, from 0 for Sunday to 6 for Saturday: by default the locale's, or Monday where the browser cannot tell."
+          "default": "the locale's, or Monday where the browser cannot tell",
+          "description": "The first day of each week, from 0 for Sunday to 6 for Saturday."
         },
         {
           "name": "locale",
@@ -854,13 +860,13 @@
           "name": "className",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "The card's class, beside env-card."
         },
         {
           "name": "style",
           "type": "CSSProperties",
           "required": false,
-          "description": ""
+          "description": "Styles of the card."
         },
         {
           "name": "skeleton",
@@ -923,6 +929,7 @@
           "name": "disabled",
           "type": "boolean",
           "required": false,
+          "default": "false",
           "description": "A disabled link card has no destination, cannot be focused and reports aria-disabled; a disabled button card cannot be pressed."
         }
       ],
@@ -1367,6 +1374,7 @@
           "name": "readOnly",
           "type": "boolean",
           "required": false,
+          "default": "false",
           "description": "Whether people can read and copy the color, but not change it."
         }
       ],
@@ -1523,6 +1531,7 @@
           "name": "loading",
           "type": "boolean",
           "required": false,
+          "default": "false",
           "description": "The options are loading: the popup shows loadingLabel instead of emptyLabel."
         },
         {
@@ -1563,6 +1572,7 @@
           "name": "clearable",
           "type": "boolean",
           "required": false,
+          "default": "false",
           "description": "A clear button removes the value while there is one; Esc on the closed field clears it too."
         },
         {
@@ -1589,6 +1599,7 @@
           "name": "defaultOpen",
           "type": "boolean",
           "required": false,
+          "default": "false",
           "description": "Whether an uncontrolled list starts open; closed by default."
         },
         {
@@ -1893,12 +1904,14 @@
           "name": "underline",
           "type": "boolean",
           "required": false,
+          "default": "false",
           "description": "Show an underline for the text variant; defaults to false."
         },
         {
           "name": "fullWidth",
           "type": "boolean",
           "required": false,
+          "default": "false",
           "description": "Fill the width of the container, such as the actions of a narrow form stacked in a column."
         },
         {
@@ -1917,6 +1930,7 @@
           "name": "pending",
           "type": "boolean",
           "required": false,
+          "default": "false",
           "description": "Work started by this button is running: a spinner replaces the content without changing the button's size, and the button reports busy and ignores activation until pending ends."
         },
         {
@@ -1924,7 +1938,7 @@
           "type": "string",
           "required": false,
           "requiredWhen": "`icon` is set",
-          "description": ""
+          "description": "The icon-only button's name at rest, such as Delete draft."
         },
         {
           "name": "confirmLabel",
@@ -2093,6 +2107,7 @@
           "name": "disabled",
           "type": "boolean",
           "required": false,
+          "default": "false",
           "description": "The region keeps the browser's own context menu."
         },
         {
@@ -2172,32 +2187,36 @@
           "name": "icon",
           "type": "ReactNode",
           "required": false,
-          "description": "The icon at rest, ContentCopy by default; a check replaces it once the text is copied."
+          "default": "ContentCopy",
+          "description": "The icon at rest; a check replaces it once the text is copied."
         },
         {
           "name": "copiedLabel",
           "type": "string",
           "required": false,
-          "description": "Shown in the tooltip and announced after copying; Copied by default."
+          "default": "'Copied', or EnvUIProvider's messages.copy.copied",
+          "description": "Shown in the tooltip and announced after copying."
         },
         {
           "name": "failedLabel",
           "type": "string",
           "required": false,
-          "description": "Shown in the tooltip and announced when nothing could be copied; Couldn’t copy by default."
+          "default": "'Couldn’t copy', or EnvUIProvider's messages.copy.failed",
+          "description": "Shown in the tooltip and announced when nothing could be copied."
         },
         {
           "name": "copyLabel",
           "type": "string",
           "required": false,
-          "description": "The button's name, also in an icon-only button's tooltip, where it has none of its own: no aria-label or aria-labelledby, and a label without words, such as an empty string; Copy by default."
+          "default": "'Copy', or EnvUIProvider's messages.copy.copy",
+          "description": "The button's name, also in an icon-only button's tooltip, where it has none of its own: no aria-label or aria-labelledby, and a label without words, such as an empty string."
         },
         {
           "name": "aria-label",
           "type": "string",
           "required": false,
           "requiredWhen": "`children` is not set",
-          "description": ""
+          "description": "The icon-only button's name, such as Copy link, which its tooltip shows."
         },
         {
           "name": "variant",
@@ -2313,7 +2332,8 @@
           "name": "weekStart",
           "type": "0 | 1 | 2 | 3 | 4 | 5 | 6",
           "required": false,
-          "description": "The calendar's first day of the week, from 0 for Sunday to 6 for Saturday; see Calendar."
+          "default": "the locale's, or Monday where the browser cannot tell",
+          "description": "The calendar's first day of the week, from 0 for Sunday to 6 for Saturday."
         },
         {
           "name": "formatOptions",
@@ -2331,6 +2351,7 @@
           "name": "required",
           "type": "boolean",
           "required": false,
+          "default": "false",
           "description": "A value is needed: an empty field keeps its form from submitting and takes focus."
         },
         {
@@ -2677,6 +2698,7 @@
           "name": "underline",
           "type": "boolean",
           "required": false,
+          "default": "false",
           "description": "Show an underline for the text variant; defaults to false."
         },
         {
@@ -2689,6 +2711,7 @@
           "name": "fullWidth",
           "type": "boolean",
           "required": false,
+          "default": "false",
           "description": "Fill the width of the container, such as the actions of a narrow form stacked in a column."
         },
         {
@@ -2713,6 +2736,7 @@
           "name": "pending",
           "type": "boolean",
           "required": false,
+          "default": "false",
           "description": "Work started by this button is running: a spinner replaces the content without changing the button's size, and the button reports busy and ignores activation until pending ends."
         }
       ],
@@ -2920,7 +2944,8 @@
           "name": "accept",
           "type": "string",
           "required": false,
-          "description": "The file types the zone takes, as in the native accept attribute: MIME types such as image/png, groups such as image/*, and extensions such as .webp. Any file by default."
+          "default": "any file",
+          "description": "The file types the zone takes, as in the native accept attribute: MIME types such as image/png, groups such as image/*, and extensions such as .webp."
         },
         {
           "name": "multiple",
@@ -3027,7 +3052,7 @@
           "name": "children",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "The application, or the part of it that takes these messages, locale and direction."
         }
       ],
       "native": [],
@@ -3087,7 +3112,7 @@
           "name": "className",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "The part's class, beside its own env-field class."
         },
         {
           "name": "size",
@@ -3126,7 +3151,7 @@
           "name": "className",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "The part's class, beside its own env-field class."
         }
       ],
       "native": [
@@ -3166,7 +3191,7 @@
           "name": "className",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "The part's class, beside its own env-field class."
         },
         {
           "name": "children",
@@ -3213,7 +3238,7 @@
           "name": "className",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "The part's class, beside its own env-field class."
         }
       ],
       "native": [
@@ -3312,7 +3337,7 @@
           "name": "className",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "The part's class, beside its own env-field class."
         }
       ],
       "native": [
@@ -3498,6 +3523,7 @@
           "name": "disabled",
           "type": "boolean",
           "required": false,
+          "default": "false",
           "description": "A disabled button cannot be pressed; a disabled link has no destination, cannot be focused or followed, and reports aria-disabled."
         },
         {
@@ -3537,6 +3563,7 @@
           "name": "pending",
           "type": "boolean",
           "required": false,
+          "default": "false",
           "description": "As Button's: a spinner replaces the icon while the work runs."
         },
         {
@@ -3664,7 +3691,7 @@
           "name": "children",
           "type": "ReactNode",
           "required": true,
-          "description": ""
+          "description": "The application, or the part of it whose destinations use the link component."
         }
       ],
       "native": [],
@@ -3717,6 +3744,7 @@
           "name": "interactive",
           "type": "boolean",
           "required": false,
+          "default": "false",
           "description": "The row opens something through a link or button inside: it reacts to hover, keyboard focus inside it and presses. Mark that link or button `data-row-target` to stretch it over the row."
         },
         {
@@ -4527,6 +4555,7 @@
           "name": "disabled",
           "type": "boolean",
           "required": false,
+          "default": "false",
           "description": "The trigger stays in place, dimmed, but doesn't open its menu."
         },
         {
@@ -4539,6 +4568,7 @@
           "name": "defaultOpen",
           "type": "boolean",
           "required": false,
+          "default": "false",
           "description": "Whether an uncontrolled menu starts open; closed by default."
         },
         {
@@ -4850,6 +4880,7 @@
           "name": "required",
           "type": "boolean",
           "required": false,
+          "default": "false",
           "description": "A value is needed: an empty field keeps its form from submitting and takes focus."
         },
         {
@@ -5914,6 +5945,7 @@
           "name": "underline",
           "type": "boolean",
           "required": false,
+          "default": "false",
           "description": "Show an underline for the text variant; defaults to false."
         },
         {
@@ -5926,6 +5958,7 @@
           "name": "fullWidth",
           "type": "boolean",
           "required": false,
+          "default": "false",
           "description": "Fill the width of the container, such as the actions of a narrow form stacked in a column."
         },
         {
@@ -5950,6 +5983,7 @@
           "name": "pending",
           "type": "boolean",
           "required": false,
+          "default": "false",
           "description": "Work started by this button is running: a spinner replaces the content without changing the button's size, and the button reports busy and ignores activation until pending ends."
         }
       ],
@@ -6066,7 +6100,7 @@
           "name": "children",
           "type": "ReactNode",
           "required": true,
-          "description": ""
+          "description": "The content whose popups, dialogs and toasts render in the container."
         }
       ],
       "native": [],
@@ -6576,6 +6610,7 @@
           "name": "wrap",
           "type": "boolean",
           "required": false,
+          "default": "false",
           "description": "Lets the row run onto more lines when its children don't fit, as a row of actions does."
         },
         {
@@ -6982,6 +7017,7 @@
           "name": "required",
           "type": "boolean",
           "required": false,
+          "default": "false",
           "description": "Require a choice before the form submits: the browser refuses the form and moves focus to the trigger while nothing is chosen."
         },
         {
@@ -8204,7 +8240,7 @@
           "name": "children",
           "type": "ReactNode",
           "required": true,
-          "description": ""
+          "description": "The application, or the part of it that the preference themes."
         },
         {
           "name": "storageKey",
@@ -8281,6 +8317,7 @@
           "name": "pending",
           "type": "boolean",
           "required": false,
+          "default": "false",
           "description": "As Button's: a spinner replaces the icon while the work runs."
         },
         {
@@ -8394,6 +8431,7 @@
           "name": "required",
           "type": "boolean",
           "required": false,
+          "default": "false",
           "description": "A value is needed: an empty field keeps its form from submitting and takes focus."
         },
         {
@@ -8577,6 +8615,7 @@
           "name": "pending",
           "type": "boolean",
           "required": false,
+          "default": "false",
           "description": "As Button's: a spinner replaces the icon while the work runs."
         }
       ],
@@ -8602,6 +8641,7 @@
           "name": "disabled",
           "type": "boolean",
           "required": false,
+          "default": "false",
           "description": "Disables every control in the group."
         },
         {
@@ -8677,6 +8717,7 @@
           "name": "disabled",
           "type": "boolean",
           "required": false,
+          "default": "false",
           "description": "Disables every control inside."
         },
         {

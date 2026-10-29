@@ -41,7 +41,8 @@ export interface DropZoneProps
   icon?: ReactNode;
   /**
    * The file types the zone takes, as in the native accept attribute: MIME types such as image/png,
-   * groups such as image/*, and extensions such as .webp. Any file by default.
+   * groups such as image/*, and extensions such as .webp.
+   * @default any file
    */
   accept?: string;
   /** Take several files at once; otherwise the zone takes the first file. */

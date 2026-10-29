@@ -102,7 +102,10 @@ export interface ColorPickerValueProps {
   form?: string;
   /** Whether the picker takes no input, faded. */
   disabled?: boolean;
-  /** Whether people can read and copy the color, but not change it. */
+  /**
+   * Whether people can read and copy the color, but not change it.
+   * @default false
+   */
   readOnly?: boolean;
 }
 

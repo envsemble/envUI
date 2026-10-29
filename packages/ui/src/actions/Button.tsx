@@ -65,7 +65,10 @@ export type IconButtonEmphasisProps =
   | { variant: 'primary'; tone?: ButtonTone };
 
 export type ButtonAppearanceProps = ButtonEmphasisProps & {
-  /** Show an underline for the text variant; defaults to false. */
+  /**
+   * Show an underline for the text variant; defaults to false.
+   * @default false
+   */
   underline?: boolean;
   /**
    * The height, as on every control: sm, md or lg in the current scale, such as sm for an action
@@ -74,7 +77,10 @@ export type ButtonAppearanceProps = ButtonEmphasisProps & {
    * field takes the field's size.
    */
   size?: ControlSize;
-  /** Fill the width of the container, such as the actions of a narrow form stacked in a column. */
+  /**
+   * Fill the width of the container, such as the actions of a narrow form stacked in a column.
+   * @default false
+   */
   fullWidth?: boolean;
   /** A decorative icon before the label, such as an Add icon. */
   startIcon?: ReactNode;
@@ -91,6 +97,7 @@ export type ButtonAppearanceProps = ButtonEmphasisProps & {
   /**
    * Work started by this button is running: a spinner replaces the content without changing the
    * button's size, and the button reports busy and ignores activation until pending ends.
+   * @default false
    */
   pending?: boolean;
 };
@@ -113,6 +120,7 @@ type IconButtonElementProps =
       /**
        * A disabled button cannot be pressed; a disabled link has no destination, cannot be focused
        * or followed, and reports aria-disabled.
+       * @default false
        */
       disabled?: boolean;
     });
@@ -123,7 +131,10 @@ export type IconButtonProps = IconButtonElementProps &
     icon: ReactNode;
     /** The action's name, which assistive technology announces, such as Open settings. */
     'aria-label': string;
-    /** As Button's: a spinner replaces the icon while the work runs. */
+    /**
+     * As Button's: a spinner replaces the icon while the work runs.
+     * @default false
+     */
     pending?: boolean;
     /** As Button's: the height, and the width, of the square button. */
     size?: ControlSize;

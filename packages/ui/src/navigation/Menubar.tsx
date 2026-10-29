@@ -76,7 +76,10 @@ export interface RootProps extends Omit<ComponentPropsWithRef<'div'>, 'children'
    * menubar per window.
    */
   accessKeys?: boolean;
-  /** Disables every menu of the menubar. */
+  /**
+   * Disables every menu of the menubar.
+   * @default false
+   */
   disabled?: boolean;
 }
 
@@ -323,11 +326,17 @@ export interface MenuProps {
   children: ReactNode;
   /** Accessible name of the menu; by default the label, when it is a string. */
   'aria-label'?: string;
-  /** The trigger stays in place, dimmed, but doesn't open its menu. */
+  /**
+   * The trigger stays in place, dimmed, but doesn't open its menu.
+   * @default false
+   */
   disabled?: boolean;
   /** Controlled visibility. */
   open?: boolean;
-  /** Whether an uncontrolled menu starts open; closed by default. */
+  /**
+   * Whether an uncontrolled menu starts open; closed by default.
+   * @default false
+   */
   defaultOpen?: boolean;
   /**
    * Called when the menu opens or closes, with the element that had focus before the menubar took it.

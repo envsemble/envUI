@@ -129,6 +129,7 @@ export interface ItemProps extends ComponentPropsWithRef<'li'>, SkeletonProps {
   /**
    * The row opens something through a link or button inside: it reacts to hover, keyboard focus
    * inside it and presses. Mark that link or button `data-row-target` to stretch it over the row.
+   * @default false
    */
   interactive?: boolean;
   /**

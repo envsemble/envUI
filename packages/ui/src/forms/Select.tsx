@@ -94,6 +94,7 @@ export interface SelectProps
   /**
    * Require a choice before the form submits: the browser refuses the form and moves focus to the
    * trigger while nothing is chosen.
+   * @default false
    */
   required?: boolean;
   /** What the trigger shows while nothing is chosen, such as Choose an owner. */

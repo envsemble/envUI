@@ -40,7 +40,10 @@ export interface PickerFieldProps
   style?: CSSProperties;
   /** The name the value is submitted under with a form. */
   name?: string;
-  /** A value is needed: an empty field keeps its form from submitting and takes focus. */
+  /**
+   * A value is needed: an empty field keeps its form from submitting and takes focus.
+   * @default false
+   */
   required?: boolean;
   /** The value can be read and focused but not changed. */
   readOnly?: boolean;

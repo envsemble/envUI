@@ -43,7 +43,10 @@ export interface RootProps
    * @default 3
    */
   headingLevel?: Exclude<HeadingLevel, 1>;
-  /** Every item ignores presses and can't be focused. */
+  /**
+   * Every item ignores presses and can't be focused.
+   * @default false
+   */
   disabled?: boolean;
   /**
    * Keeps closed panels in the page, hidden until found, so the browser's find in page reaches
@@ -104,7 +107,10 @@ export interface ItemProps extends Omit<ComponentPropsWithRef<'div'>, 'title'> {
    * first. Without it, the item takes a generated one.
    */
   value?: string;
-  /** The item ignores presses and can't be focused; it stays dimmed. */
+  /**
+   * The item ignores presses and can't be focused; it stays dimmed.
+   * @default false
+   */
   disabled?: boolean;
   /** Receives whether this item is open, each time it opens or closes. */
   onOpenChange?: (open: boolean) => void;
