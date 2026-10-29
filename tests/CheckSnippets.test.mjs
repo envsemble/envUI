@@ -97,3 +97,24 @@ test('it reports where a snippet disagrees with envUI, and nothing a fragment as
   assert.match(findings[1].message, /frobnicate/);
   assert.match(findings[6].message, /<LoadingBar>/);
 });
+
+test('an icon resolves by its name with the Icon prefix, and a bare glyph name does not', () => {
+  const snippet = (code) => ({ file: 'docs/page.md', line: 10, lang: 'tsx', code });
+  const { findings } = checkSnippets([
+    // Imported from icons/Add, so its props are checked: an unknown one is reported.
+    snippet('<IconButton icon={<IconAdd frobnicate />} aria-label="Add" />'),
+    // Icon10k from icons/10k, and the icon Menu, not the component, written IconMenu.
+    snippet('<Icon10k />\n<IconMenu filled />'),
+    // A bare name is the component of that name or nothing envUI has: Add is reported.
+    snippet('<Add />'),
+  ]);
+  assert.deepEqual(
+    findings.map(({ line, code }) => [line, code]),
+    [
+      [10, 2322],
+      [10, 'tag'],
+    ],
+  );
+  assert.match(findings[0].message, /frobnicate/);
+  assert.match(findings[1].message, /<Add>/);
+});

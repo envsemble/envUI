@@ -9,7 +9,7 @@
 // Each fence becomes a module of one TypeScript program against the library's source, resolved as
 // the site resolves `@envsemble/envui`. A snippet is a fragment, so on its first line, which the
 // page doesn't have, it gets what it leaves out: an import of each name it uses but doesn't declare
-// that an envUI entry exports (else an icon of that name, unless a global has it), React's hooks,
+// that an envUI entry exports (else the icon of that name, such as IconAdd), React's hooks,
 // `toast` as what useToast returns, and `any` for a DOM global it means as its own variable, such
 // as `open`. Its top-level JSX becomes an expression (`wrapSnippet`). Lines keep their numbers.
 //
@@ -457,12 +457,13 @@ export function checkSnippets(
       )
       .map((symbol) => symbol.name),
   );
-  // An icon is named like the glyph, so a global of its name, such as Error, wins.
-  const iconsDirectory = join(root, 'packages/ui/src/icons');
-  const isIcon = (name: string) =>
-    /^[A-Z]\w*$/.test(name) &&
-    !(name in globalThis) &&
-    existsSync(join(iconsDirectory, `${name}.tsx`));
+  // An icon is its module's name with the Icon prefix: IconAdd is icons/Add, Icon10k icons/10k.
+  const iconModule = (name: string) => {
+    const module = /^Icon(\w+)$/.exec(name)?.[1];
+    return module && existsSync(join(root, 'packages/ui/src/icons', `${module}.tsx`))
+      ? `@envsemble/envui/icons/${module}`
+      : undefined;
+  };
 
   // Each snippet as a module, with what it leaves out on its first line: the imports, and the
   // values it assumes.
@@ -480,8 +481,9 @@ export function checkSnippets(
       if (declared.has(name)) continue;
       const found = exporter.get(name);
       const hook = hookValues.get(name);
+      const icon = iconModule(name);
       if (found) add(found.entry, name, found.type);
-      else if (isIcon(name)) add(`@envsemble/envui/icons/${name}`, name);
+      else if (icon) add(icon, name);
       else if (hook && exporter.has(hook)) {
         add(exporter.get(hook)!.entry, hook);
         assumed.push(`${name}: ReturnType<typeof ${hook}>`);
