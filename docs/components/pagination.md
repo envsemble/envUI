@@ -133,7 +133,7 @@ Show the total once it is known. Hide Pagination where the items fit on one page
 
 `total` counts all items: the range ends with it, and the last page ends the list. Pass it once it is known. Without it, the range shows only the page's items, as in 61–120, and `hasNextPage`, `true` by default, says whether a later page exists, such as from a cursor's has more.
 
-#### Strings
+#### Names and the range
 
 EnvUIProvider's `locale` formats the numbers. `aria-label`, `previousLabel`, `nextLabel` and `formatRange` set the names and the range for one pager: `formatRange` receives the first and last item shown, the total, the page and the page count.
 
