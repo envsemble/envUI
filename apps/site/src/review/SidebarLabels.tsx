@@ -1,4 +1,10 @@
-import { EnvUIProvider, NavigationDrawer, Text, Theme } from '@envsemble/envui';
+import {
+  EnvUIProvider,
+  NavigationDrawer,
+  Text,
+  Theme,
+  type NavigationDrawerDestination,
+} from '@envsemble/envui';
 import { pagesOf } from '../navigation/SiteRoutes';
 import { pageDestinations } from '../navigation/SiteNavigation';
 import './SidebarLabels.css';
@@ -19,10 +25,33 @@ const options = [
   },
   { id: 'c', name: 'C · Air above', note: 'caption 12 px, medium, fg-muted; space-6 above' },
   { id: 'd', name: 'D · Heading', note: 'title 16 px, medium, fg-default, -0.01em; space-5 above' },
+  { id: 'e', name: 'E · Nested', note: 'as the Docs: each group a section that opens and closes' },
 ] as const;
 
 const components = pagesOf('catalogue').filter((page) => page.section === 'Components');
 const currentPath = components.find((page) => page.path.endsWith('/button'))?.path ?? '';
+
+/**
+ * E: the Docs' mechanism (docsDestinations): each group a destination with children, its pages
+ * nested under it; a page outside any group stays a link of its own.
+ */
+function nestedDestinations(): NavigationDrawerDestination[] {
+  const flat = pageDestinations(components, currentPath);
+  const groups = [...new Set(flat.flatMap(({ group }) => (group ? [group] : [])))];
+  return [
+    ...flat.filter(({ group }) => !group),
+    ...groups.map(
+      (group): NavigationDrawerDestination => ({
+        label: group,
+        children: flat
+          .filter((destination) => destination.group === group)
+          .map(({ group: _, ...destination }) => destination as NavigationDrawerDestination),
+      }),
+    ),
+  ];
+}
+/** The section with the current page opens itself; one more is open to show both states. */
+const otherOpen = ['Feedback'];
 
 export function SidebarLabels() {
   const contrast =
@@ -50,7 +79,12 @@ export function SidebarLabels() {
                 <NavigationDrawer
                   aria-label={`Components, ${option.name}, ${theme}`}
                   className="site-labels-drawer"
-                  destinations={pageDestinations(components, currentPath)}
+                  destinations={
+                    option.id === 'e'
+                      ? nestedDestinations()
+                      : pageDestinations(components, currentPath)
+                  }
+                  defaultExpanded={option.id === 'e' ? otherOpen : undefined}
                 />
               </section>
             ))}

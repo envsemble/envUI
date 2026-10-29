@@ -7,7 +7,7 @@
 }
 .site-labels-grid {
   display: grid;
-  grid-template-columns: repeat(5, 16rem);
+  grid-template-columns: repeat(6, 16rem);
   gap: var(--env-space-5);
   margin-block-start: var(--env-space-3);
 }
@@ -17,7 +17,7 @@
   gap: var(--env-space-1);
 }
 .site-labels-drawer {
-  block-size: 40rem;
+  block-size: 50rem;
   margin-block-start: var(--env-space-2);
   padding: var(--env-space-4) var(--env-space-3);
 }
