@@ -32,8 +32,6 @@ Leave out a step that is already done. Skip a step the user declines, and say on
 
 If the app already has its own UI components or another component library, set envUI up beside them and change none of them. After setup, offer to plan a migration with the user, following `node_modules/@envsemble/envui/docs/migration.md`: map each existing component to envUI, choose a first slice, and agree what stays. Never rewrite, restyle or remove the app's UI without the user's approval of that plan.
 
-If it already uses envUI 0.x, the same guide's "Upgrade from envUI 0.x to 1.0" applies, with `@envsemble/envui-codemods` at `{{version}}`. Remove earlier envUI agent tooling if you find it: an `envui` server in `.mcp.json` or the agent's MCP configuration, and copied `envui-use`, `envui-migrate` and `envui-contribute` skill folders. Step 2 replaces them.
-
 ## Step 1: Install envUI
 
 envUI is on GitHub Packages. Add the registry to the project's `.npmrc`, creating it if missing and keeping its other lines:

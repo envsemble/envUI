@@ -202,7 +202,6 @@ At the default 16 px root, in the comfortable [scale](spacing.md), as its Sizes 
 - Text adds no outer spacing: a Column, a Row or the component around it owns the gaps.
 - Vary the text by its role rather than setting everything as body: open with what matters in the default color, and set supporting text, such as a description under a title, details and hints, `emphasis="muted"` or `body-sm`.
 - Keep running text to a readable measure, about 60–75 characters a line: give paragraphs and Markdown a `max-inline-size` of about `53ch`, since Text and Markdown fill their container. Write short paragraphs, one point each, a few lines long.
-- The 0.7 names are gone: page-heading is headline, section-heading is title, supporting is body-sm, `tone` is `emphasis` and `as` is `render`.
 
 #### Lists
 

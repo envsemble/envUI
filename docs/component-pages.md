@@ -36,7 +36,7 @@ After the YAML frontmatter and the `# Title`, a page has these `##` sections in 
 | Accessibility                      | on a component or pattern page | `### Keyboard`, a Key and Action table, or the focus and keys in a block of their own; then `### envUI provides` and `### You provide` lists. |
 | Words to use                       |                                | The phrases people ask for, as an option table; a column headed In code gives the props each phrase means.                                    |
 | Compose                            |                                | The developer part: [Compose](#compose-the-developer-part).                                                                                   |
-| Changelog                          |                                | Releases that changed the component, newest first, such as `- **0.6.0**: The quiet variant.`                                                  |
+| Changelog                          |                                | Releases that changed the component, newest first, such as `- **1.1.0**: The quiet variant.`                                                  |
 
 The build adds **Props**, generated from the TypeScript declarations, after Compose, and **Related**, from `avoidWhen`; don't write them, and don't list props anywhere, as [Props](#props) describes. It fails on:
 
@@ -57,7 +57,7 @@ summary: A labelled single-line text input with a description and an error. # On
 status: beta # experimental, beta, stable or deprecated.
 statuses: # Optional: the exports whose status differs from the page's.
   SearchField: stable
-since: 0.1.0 # The release that added the component, under any earlier name: a released version, or the next.
+since: 1.0.0 # The release that added the component, under any earlier name: a released version, or the next.
 category: Forms & selection # The index group the page is listed under.
 aliases: # Words people and agents search for, including earlier names; at least one.
   - Input

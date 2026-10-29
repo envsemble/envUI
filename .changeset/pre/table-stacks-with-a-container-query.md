@@ -10,4 +10,4 @@ A Table with `narrowLayout="stack"` stacks its rows through a container query on
 - A stacking region is now the `env-table` size container and fills the width its context gives it (`inline-size: 100%`), as a container must; give a stacking table a width where it sits in a row that sizes to its content.
 - `data-stacked` and `onStackedChange` still report the layout once the table is in the document. Style stacked rows under `@container env-table (width < 37.5em)`, where the region makes 37.5em its `stackBelow`, rather than through `data-stacked`, so they apply before hydration.
 
-Migration guide: [Navigation and collections](https://github.com/envsemble/envUI/blob/main/docs/migration.md#navigation-and-collections).
+Migration guide: [Navigation and collections](https://github.com/envsemble/envUI/blob/main/docs/migration.md).

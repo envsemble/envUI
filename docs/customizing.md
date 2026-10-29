@@ -156,7 +156,7 @@ export function ProjectSummary({ title, description, ...props }: ProjectSummaryP
 
 ## Style a component's parts
 
-Props come first. Where CSS must adjust a component, it targets its parts, `env-<component>-<part>` such as `.env-card-header`, and its `data-*` states, such as `[data-tone='danger']`. Part classes and states are public and versioned; `docs/generated/parts.json` lists them. envUI's CSS is in the `env` cascade layer, so an application's rule wins without extra specificity.
+Props come first. Where CSS must adjust a component, it targets its parts, `env-<component>-<part>` such as `.env-card-header`, and its `data-*` states, such as `[data-tone='danger']`. Part classes and states are public and versioned; `docs/generated/parts.json` lists them. An application's rule wins without extra specificity, through the [cascade layers](#cascade-layers).
 
 ```css
 @layer app {
@@ -167,6 +167,47 @@ Props come first. Where CSS must adjust a component, it targets its parts, `env-
 ```
 
 Set system tokens, such as `--env-space-4`, to change what every component takes from them. Component tokens, such as `--env-card-padding`, are each component's own and may change in any release: don't set or read them.
+
+## Cascade layers
+
+envUI's styles sit in the `env` cascade layer, so CSS outside layers overrides them whatever its specificity, without `!important`. That cuts both ways:
+
+- **Resets and element rules.** A rule outside layers, such as `* { margin: 0 }` or `button { border: 0 }`, or a utility framework's preflight, restyles envUI's components too. Put resets in a layer before `env` and the application's own styles after it. Declare the order once, in a style sheet the client entry imports before any component, so `env` takes its place in it:
+
+  ```css
+  @layer reset, env, app;
+  ```
+
+  A framework with layers of its own takes its place in the same statement, its base before `env`: `@layer reset, base, env, components, utilities, app;`.
+
+- **Token overrides.** A token set on `.env-theme` outside layers wins in every theme: a color set there applies in dark and at high contrast too, and can break the contrast the themes are checked for. Override a token per theme and contrast, with the themes' selectors, in this order:
+
+  ```css
+  .env-theme {
+    --env-color-fg-link: #0b57d0;
+  }
+  .env-theme[data-env-theme='dark'] {
+    --env-color-fg-link: #a8c7fa;
+  }
+  .env-theme[data-env-contrast='high'] {
+    --env-color-fg-link: #0842a0;
+  }
+  .env-theme[data-env-theme='dark'][data-env-contrast='high'] {
+    --env-color-fg-link: #d3e3fd;
+  }
+  /* Under the system's prefers-contrast: more, high contrast applies to a boundary that sets no
+     data-env-contrast too, unless it opts out with 'standard'. */
+  @media (prefers-contrast: more) {
+    .env-theme:not([data-env-contrast='standard']) {
+      --env-color-fg-link: #0842a0;
+    }
+    .env-theme[data-env-theme='dark']:not([data-env-contrast='standard']) {
+      --env-color-fg-link: #d3e3fd;
+    }
+  }
+  ```
+
+- **`!important`.** envUI declares nothing `!important`, so an important declaration of the application's wins as its other rules do.
 
 ## When envUI lacks it
 

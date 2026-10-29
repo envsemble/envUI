@@ -2,7 +2,7 @@
 title: Slider
 summary: A value in a known range, chosen by pressing or dragging along a field, or with the keyboard.
 status: stable
-since: 0.5.0
+since: 1.0.0
 category: Forms & selection
 aliases:
   - range
@@ -219,4 +219,3 @@ The field marks what it shows besides its text and fill:
 - **1.0.0-prerelease.2**: Slider is a field: as tall as the fields and with their corners, its label inside at the start, its value at the end in the text style of a field, with numbers of one width and a fill from the start, with a thin handle and faint ticks under the pointer and on focus, both fading where they pass under the text. The track has no outline. `--env-slider-indicator` colors the fill alone, and `--env-slider-content` the label, value, handle and ticks.
 - **1.0.0**: `onValueCommit` is `onValueCommitted`, as Base UI names it, and `hint` is `description`. The value is formatted in EnvUIProvider's `locale`, or the one Slider takes. The row of the label and the value, `env-slider-heading`, is `env-slider-header`.
 - **1.0.0**: Sliders in the dark theme reach 3:1 contrast on every surface.
-- **0.5.0**: Slider, with `formatValue`, `min`, `max`, `step`, `largeStep`, `hint`, `disabled`, `name`, `form` and `onValueCommit`; the thumb grows on touch screens.

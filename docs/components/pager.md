@@ -2,7 +2,7 @@
 title: Pager
 summary: Previous and next links between the pages of an ordered sequence, such as a guide, centered at the end of the content.
 status: beta
-since: 0.1.0
+since: 1.0.0
 category: Navigation
 aliases:
   - DirectionLinks
@@ -140,6 +140,3 @@ The pager is the `nav` landmark `env-pager`; each link is `env-pager-link-previo
 ## Changelog
 
 - **1.0.0**: `DirectionLinks` is `Pager.Root`, and `DirectionLink` is `Pager.Previous` or `Pager.Next`, which no longer take `direction`. Pager.Root also accepts the two parts as children. `DirectionLinkProps` and `DirectionLinksDestination` are `Pager.LinkProps`, the classes are `env-pager` and `env-pager-link-*`, and the page is `pager`. The direction labels and the landmark's name come from `messages.pager`, and children render between the `previous` and `next` props' links instead of after both.
-- **0.4.0**: Links settle slightly while pressed.
-- **0.2.0**: Destinations render through the `LinkProvider`'s link component.
-- **0.1.0**: DirectionLink and DirectionLinks: previous and next destinations that wrap on narrow screens.

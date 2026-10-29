@@ -2,7 +2,7 @@
 title: Pagination
 summary: The range of items shown with previous and next page buttons, small enough for a toolbar.
 status: stable
-since: 0.6.0
+since: 1.0.0
 category: Navigation
 aliases:
   - paginator
@@ -167,4 +167,3 @@ The pager is a `nav`, `env-pagination`, with the range, `env-pagination-range`, 
 ## Changelog
 
 - **1.0.0**: The range's numbers are in the locale, EnvUIProvider's or the runtime's, instead of always English, and the names and the range come from `messages.pagination`; `previousLabel`, `nextLabel`, `formatRange` and `aria-label` still override them.
-- **0.6.0**: Pagination: the range of items shown, with previous and next buttons that wait while a page loads, `formatRange`, `hideWhenSinglePage` and `size="compact"`.

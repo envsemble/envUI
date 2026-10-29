@@ -6,4 +6,4 @@
 
 `useTheme()` returns `{ theme, contrast }` instead of the color scheme alone: read the scheme as `const { theme } = useTheme()`, and re-theme an application's own portal with `<Theme {...useTheme()}>`, which the `v1-names` codemod writes for `<Theme theme={useTheme()}>`; it turns other calls into `useTheme().theme` unless the file already reads them as `{ theme, contrast }`, and reports those that are returned or passed to a context. In development, where the bundler defines `process.env.NODE_ENV`, Theme reports a `theme` that is not `light` or `dark`; a production build leaves the report out, and without a bundler it stays silent. Its `contrast` wins over a `data-env-contrast` attribute passed to it; without the prop, such an attribute sets the contrast for the boundary and everything in it.
 
-Migration guide: [useTheme returns the theme, its contrast and its scale](https://github.com/envsemble/envUI/blob/main/docs/migration.md#usetheme-returns-the-theme-its-contrast-and-its-scale).
+Migration guide: [useTheme returns the theme, its contrast and its scale](https://github.com/envsemble/envUI/blob/main/docs/migration.md).

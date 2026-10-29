@@ -6,4 +6,4 @@ Popover and HoverCard size to their content, from 12 rem up to their `width`, so
 
 Migration: `width` (`md` 20 rem, `lg` 28 rem) is now the maximum, not a fixed width. To keep a fixed width, set `inline-size` through `className`, such as `.rename-popover { inline-size: 28rem; }`.
 
-Migration guide: [Overlays and feedback](https://github.com/envsemble/envUI/blob/main/docs/migration.md#overlays-and-feedback).
+Migration guide: [Overlays and feedback](https://github.com/envsemble/envUI/blob/main/docs/migration.md).

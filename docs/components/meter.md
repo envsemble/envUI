@@ -2,7 +2,7 @@
 title: Meter
 summary: A measurement within a known range, such as the seats assigned of a plan or the storage used of a quota, as a labelled bar.
 status: stable
-since: 0.2.0
+since: 1.0.0
 category: Data display
 aliases:
   - gauge
@@ -113,5 +113,3 @@ The parts are the meter, `env-meter`, its label, `env-meter-label`, its value, `
 
 - **1.0.0**: The classes are `env-meter*`; without `aria-valuetext` the formatted value stays; `className`, `style`, `ref` and data attributes reach the root, and numbers follow the provider's locale.
 - **1.0.0**: In the dark theme, meters reach 3:1 on every surface.
-- **0.4.0**: The track uses the translucent neutral fill, so it stays visible on panes, rows and cards.
-- **0.2.0**: Meter.

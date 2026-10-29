@@ -12,7 +12,7 @@
 
 envUI brings consistent themes, composition and interaction to React applications: from a button or a native form to dialogs, notifications and rich text. It ships as a private ESM package with TypeScript declarations, local fonts, icons and documentation that people and coding agents read alike.
 
-[Set up](docs/setup.md) · [For agents](docs/agent-tooling.md) · [Migrate an app](docs/migration.md) · [Dev mode](docs/dev-mode.md) · [Changelog](packages/ui/CHANGELOG.md)
+[Set up](docs/setup.md) · [For agents](docs/agent-tooling.md) · [Move an app to envUI](docs/migration.md) · [Dev mode](docs/dev-mode.md) · [Changelog](packages/ui/CHANGELOG.md)
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/readme/catalogue-dark.png">
@@ -45,20 +45,6 @@ Requires React and React DOM 19, Node.js 22.13 or a later 22 release, or Node.js
 ```sh
 npm install --save-exact @envsemble/envui@<version>
 ```
-
-Upgrading an application from envUI 0.x to 1.0? The `@envsemble/envui-codemods` package moves its imports, components, props, types and `env-*` classes to the 1.0 names and reports what needs a decision. Commit first, then run the seven transforms in this order, before installing 1.0:
-
-```sh
-npx @envsemble/envui-codemods@<version> v1-names src
-npx @envsemble/envui-codemods@<version> v1-structure src
-npx @envsemble/envui-codemods@<version> v1-render src
-npx @envsemble/envui-codemods@<version> v1-stack src
-npx @envsemble/envui-codemods@<version> v1-props src
-npx @envsemble/envui-codemods@<version> v1-entries src
-npx @envsemble/envui-codemods@<version> v1-classes src
-```
-
-The [migration guide](docs/migration.md), under "Upgrade from envUI 0.x to 1.0", explains each step, what the codemods leave to you and the renamed tokens.
 
 Compose public components; with a bundler, each brings its own styles:
 

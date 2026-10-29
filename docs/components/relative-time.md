@@ -3,7 +3,7 @@ title: RelativeTime
 summary: A moment as text relative to now, such as 3 hours ago, kept current, with the date and time
   in a tooltip.
 status: stable
-since: 0.6.0
+since: 1.0.0
 category: Data display
 aliases:
   - time ago
@@ -160,4 +160,3 @@ RelativeTime is a native `<time>`, `env-relative-time`, whose `dateTime` holds t
 ## Changelog
 
 - **1.0.0**: RelativeTime's time, which shows the full date in a tooltip, takes the quiet dotted underline, `env-hover-detail`, that marks text with more on hover. RelativeTime takes EnvUIProvider's `locale` and `messages.relativeTime.now`. `formatRelativeTime` runs in React Server Components; RelativeTime is a client component.
-- **0.6.0**: RelativeTime and `formatRelativeTime`, with `format`, `locale`, `nowLabel`, `now` and `tooltip`, kept current by one shared clock.

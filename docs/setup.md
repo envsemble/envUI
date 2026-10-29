@@ -86,14 +86,13 @@ export function App() {
 }
 ```
 
-Put the UI inside `Theme`: a theme attribute on the document alone gives no React context. The styles include Geist and sit in the `env` cascade layer, so the application's CSS outside layers overrides them without `!important`. Declare the order once, such as `@layer reset, env, app;`, with resets and element rules in a layer before `env`: an element rule outside layers, such as `button { border: 0 }`, restyles envUI's components too. [Cascade layers](migration.md#cascade-layers) shows how to override a token per theme, and [colors and themes](foundations/colors.md) nested themes, portals and high contrast.
+Put the UI inside `Theme`: a theme attribute on the document alone gives no React context. The styles include Geist and sit in the `env` cascade layer: [cascade layers](customizing.md#cascade-layers) says how the application's CSS and resets take their place around it, and [colors and themes](foundations/colors.md) covers nested themes, portals and high contrast.
 
 ### Styles come with the components
 
 Each component's module imports its own style sheet, after the base every component shares: the layer order, the tokens, the theme and the font. A bundler that loads CSS from dependencies, such as Vite, Next.js, webpack with a CSS loader or esbuild, puts in the page what the application's modules import, so the page loads the CSS of the components it uses.
 
 - **Without a bundler**, import `@envsemble/envui/styles.css` once, in the client entry: it holds every component's styles. Don't import it as well as the components' own: the styles would load twice.
-- **Your own layers.** envUI's styles load with the first component, wherever the bundler puts it. If the application declares cascade layers, declare the order in a style sheet the client entry imports before any component, so `env` takes its place in it.
 - **In Node**, as when a server renders or tests run without a bundler, the same modules load without their CSS: the package's style sheet imports resolve to an empty module under the `node` condition, and only a bundler, which sets the `module` condition, loads the CSS. Server-rendered pages get their CSS from the client bundle, or from the framework that collects it, as Next.js does.
 - **What a bundle keeps.** Vite and webpack keep the style sheets of the modules they keep. esbuild, Rollup's CSS plugins and Next.js with Turbopack, where a server component imports from envUI, keep those of every module the import reaches, about all of `styles.css`. Next.js with webpack keeps only what the page uses when `experimental.optimizePackageImports` lists `@envsemble/envui`.
 

@@ -2,7 +2,7 @@
 title: Button
 summary: Starts an action, or goes to a destination as a link, alone, icon-only, confirmed in place, copying a value or connected in a group.
 status: stable
-since: 0.1.0
+since: 1.0.0
 category: Actions
 aliases:
   - action
@@ -315,7 +315,3 @@ Parts the anatomy doesn't show: the spinner, `env-button-spinner`, the end slot,
 
 - **1.0.0-prerelease.5**: An outline button is an edge with no fill at rest, the same on the page, a pane, a card or a popup; hover and press lay a state layer over the surface beneath it.
 - **1.0.0**: `end`, a quiet slot at the far end for a shortcut's keys, in the button's content color, which the search trigger pattern uses. IconButton is the one icon-only button, and takes `href`: `Button iconOnly` is gone, and CloseButton is an IconButton with the Close cross. `variant` is `primary`, `secondary`, `outline`, `ghost` or `text`, and `tone` is `neutral`, `accent` or `danger`: `important` is `variant="primary" tone="accent"`, `destructive` is `variant="primary" tone="danger"`, `outlined` is `outline` and `quiet` is `ghost`. Outline, ghost and text buttons take the danger tone. `fullWidth`. Buttons take the variant their container gives where they set none. The page is `button`, after the component, and Link has a page of its own. CopyButton takes `write`, a clipboard writer of the application's own. A Badge or DiffStat inside a button takes its colors through their custom properties, which the button sets.
-- **0.6.0**: The `quiet` variant on Button, IconButton and ConfirmButton; CopyButton; ButtonGroup `fullWidth`.
-- **0.5.0**: ConfirmButton `icon`, an icon-only form that grows when armed.
-- **0.4.0**: `pending` on Button and IconButton; ConfirmButton.
-- **0.1.0**: Button, IconButton and ButtonGroup.

@@ -12,4 +12,4 @@ AppShell, its parts, Sidebar and SidebarTrigger are gone, with `useAppShell`, `u
 - SearchTrigger no longer shows only its icon by itself in a sidebar's rail: set `iconOnly`.
 - The `v1-app-shell` codemod goes: no codemod rewrites an app frame. `v1-names` reports AppShell, AppShellSkeleton, Sidebar, SidebarTrigger, the hooks and the types, `AppShellContextValue` and `SidebarApi` among them, wherever they are used, and the migration guide shows a frame before and after. `v1-classes` renames the part classes that carry on, `env-app-shell-header` to `env-top-bar` and the others as listed above, and reports `env-app-shell` itself and the `env-sidebar-*` classes.
 
-Migration guide: [The app frame](https://github.com/envsemble/envUI/blob/main/docs/migration.md#the-app-frame).
+Migration guide: [The app frame](https://github.com/envsemble/envUI/blob/main/docs/migration.md).

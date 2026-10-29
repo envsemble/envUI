@@ -10,4 +10,4 @@ Stat is a pattern now, not a component: a figure carries no behavior of its own,
 - The part classes `env-stat`, `env-stat-label`, `env-stat-value`, `env-stat-footer`, `env-stat-trend`, `env-stat-description` and `env-stat-group` go, with the `data-direction` and `data-tone` of the trend. The `stat` page opens the pattern.
 - `v1-names` reports Stat, 0.x's Stat and StatGroup and their types where they are used, and `v1-classes` reports the `env-stat-*` classes; no codemod rewrites them. `envui/no-renamed-exports` reports them with the pattern to use instead.
 
-Migration guide: [Folded components and patterns](https://github.com/envsemble/envUI/blob/main/docs/migration.md#folded-components-and-patterns).
+Migration guide: [Folded components and patterns](https://github.com/envsemble/envUI/blob/main/docs/migration.md).

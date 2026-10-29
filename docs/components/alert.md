@@ -2,7 +2,7 @@
 title: Alert
 summary: An inline message about a page or a section, in an info, success, warning or danger tone, with an optional action and dismiss button.
 status: stable
-since: 0.5.0
+since: 1.0.0
 category: Feedback
 aliases:
   - Notice
@@ -199,4 +199,3 @@ The parts are the container, `env-alert`, the icon, `env-alert-icon`, the title,
 - **1.0.0**: No edge outside high contrast: the tone's stronger tint fills it, the title takes the tone's color as the icon does, and its corners are a card's, 1.25 rem. At high contrast it keeps the softer tint with an edge in the border color.
 - **1.0.0**: `tone="danger"` for `error`; the dismiss button is an IconButton with a cross, named Dismiss in the provider's language.
 - **1.0.0**: `Notice` is `Alert`, with `AlertTone` and the `env-alert-*` classes; the page is `alert`.
-- **0.5.0**: Notice, an inline banner in four tones with an action, a round dismiss button in its tone and `announce`.

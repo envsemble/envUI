@@ -2,7 +2,7 @@
 title: AnimatedNumber
 summary: A number in text that rolls to its new value when it changes, so a count updated elsewhere is noticed.
 status: stable
-since: 0.4.0
+since: 1.0.0
 category: Data display
 aliases:
   - animated counter
@@ -129,4 +129,3 @@ AnimatedNumber is the root, `env-animated-number`, around the value, `env-animat
 ## Changelog
 
 - **1.0.0**: The default format follows EnvUIProvider's `locale`. `format` is `formatValue`, as on Slider and CalendarHeatmap.
-- **0.4.0**: AnimatedNumber: a count rolls up as it grows and down as it shrinks, and fades with reduced motion.

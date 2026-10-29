@@ -205,7 +205,6 @@ const cataloguePages: RoutePage[] = [
 /** The shorter names of guides in the Docs' navigation. */
 const guideLabels: Record<string, string> = {
   setup: 'Install and set up',
-  migration: 'Migrate to envUI',
 };
 
 /**

@@ -3,7 +3,7 @@ title: Message
 summary: 'Conversation entries in a log: compact bubbles for your own messages, full-width content
   from others.'
 status: stable
-since: 0.5.0
+since: 1.0.0
 category: Text & content
 aliases:
   - Messages
@@ -194,4 +194,3 @@ The list is `env-message-list`, and each message `env-message`, with its author,
 ## Changelog
 
 - **1.0.0**: Buttons in `actions` are small ghost buttons unless they set their own variant or size, and the statuses come from `messages.message`. The page is `message`, after the component, instead of `messages`. Message and MessageList can render in React Server Components.
-- **0.5.0**: Message and MessageList, with `from`, `author`, `meta`, `actions`, `status` and `statusLabel`, and `busy` on the list.

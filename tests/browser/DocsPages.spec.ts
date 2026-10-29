@@ -332,11 +332,11 @@ test("the Docs' Changelog page lists each release's highlights, newest first, an
     .evaluateAll((links) => links.map((link) => link.getAttribute('href')!));
   const sections = new Map<string, Set<string>>();
   for (const href of hrefs) {
-    expect(href, href).toMatch(/^\/docs\/(?:migration|changelog)(?:#|$)/);
+    expect(href, href).toMatch(/^\/docs\/changelog(?:#|$)/);
     const [path, section] = href.split('#');
     sections.set(path, new Set([...(sections.get(path) ?? []), ...(section ? [section] : [])]));
   }
-  expect([...sections.keys()].sort()).toEqual(['/docs/changelog', '/docs/migration']);
+  expect([...sections.keys()]).toEqual(['/docs/changelog']);
   for (const [path, ids] of sections) {
     await page.goto(`${siteDevUrl}${path}`);
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();

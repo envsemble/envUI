@@ -2,7 +2,7 @@
 title: Breadcrumbs
 summary: The path from the top level to the current page, with earlier levels as links or buttons.
 status: stable
-since: 0.5.0
+since: 1.0.0
 category: Navigation
 aliases:
   - breadcrumb
@@ -175,4 +175,3 @@ The landmark is named Breadcrumb, from EnvUIProvider's `messages.breadcrumbs`; `
 ## Changelog
 
 - **1.0.0**: A label cut short with an ellipsis shows in full in a tooltip, on hover and keyboard focus; a plain level or the current page cut short takes keyboard focus for it, keeping `aria-current`. The landmark's default name comes from `messages.breadcrumbs`, and the `nav` takes `ref`, `style` and native props. Classes: `env-breadcrumb` and `env-breadcrumb-*` are `env-breadcrumbs-item` and `env-breadcrumbs-*`.
-- **0.5.0**: Breadcrumbs, with `wrap={false}` for a trail that stays on one line in a bar or header.

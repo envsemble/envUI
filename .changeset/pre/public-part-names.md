@@ -10,4 +10,4 @@ Part names are public; component tokens are private.
 - **Component tokens are private.** The custom properties a component declares for itself, such as `--env-card-padding` or `--env-badge-fill`, may change in any release. Set the system tokens, such as `--env-space-4` or `--env-color-bg-muted`, instead.
 - **The `no-private-classes` rules are removed** from the ESLint plugin (`envui/no-private-classes`) and the Stylelint config (`envui/no-private-classes`), since the classes they reported are public now. To migrate, delete the rule from any configuration or disable comment that names it: ESLint and Stylelint report a rule they don't know.
 
-Migration guide: [Part names and component tokens](https://github.com/envsemble/envUI/blob/main/docs/migration.md#part-names-and-component-tokens).
+Migration guide: [Part names and component tokens](https://github.com/envsemble/envUI/blob/main/docs/migration.md).

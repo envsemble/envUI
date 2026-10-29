@@ -2,7 +2,7 @@
 title: Checkbox
 summary: A native checkbox with its label, for a choice people turn on or off on its own, with a mixed state for a group's parent.
 status: stable
-since: 0.1.0
+since: 1.0.0
 category: Forms & selection
 aliases:
   - check box
@@ -165,5 +165,3 @@ A checked box submits its `name` with its `value`; an unchecked one submits noth
 ## Changelog
 
 - **1.0.0**: `className` and `style` style the root, `env-checkbox`, rather than the input, which keeps `ref` and the other native props. The classes follow the component: `env-choice-control` is `env-checkbox`, `env-checkbox-control` `env-checkbox-input` and `env-checkbox-mark` `env-checkbox-indicator`.
-- **0.4.0**: Checkboxes shrink slightly whether the box or its label is pressed.
-- **0.1.0**: Checkbox.

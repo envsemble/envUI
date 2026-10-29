@@ -2,7 +2,7 @@
 title: CalendarHeatmap
 summary: A calendar grid that shades each day by its value, with a tooltip and keyboard access for every day.
 status: stable
-since: 0.5.0
+since: 1.0.0
 category: Data display
 aliases:
   - Heatmap
@@ -185,4 +185,3 @@ The parts are the month names, `env-calendar-heatmap-month`, the weekday names, 
 ## Changelog
 
 - **1.0.0**: Month and weekday names, dates and numbers follow the locale, from `Intl`, and the legend comes from `messages.calendarHeatmap`; the tooltip is the shared tooltip popup. `Heatmap` is `CalendarHeatmap`, with `CalendarHeatmapDay`, `CalendarHeatmapCell` and the `env-calendar-heatmap-*` classes; the page is `calendar-heatmap`.
-- **0.5.0**: Heatmap, with tones, color steps, `thresholds`, a tooltip and keyboard access for every day.

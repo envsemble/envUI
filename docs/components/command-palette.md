@@ -2,7 +2,7 @@
 title: CommandPalette
 summary: A quick-open dialog near the top of the window that finds a document, a page, a person or a command by name.
 status: stable
-since: 0.5.0
+since: 1.0.0
 category: Actions
 aliases:
   - quick open
@@ -371,4 +371,3 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 - **1.0.0-prerelease.4**: An empty state with an icon, a title and a description, which tells an invitation before people type from no results; `emptyDescription`, `emptyIcon` and `messages.commandPalette.emptyQuery` and `emptyHint`. `defaultItems` show before people type.
 - **1.0.0-prerelease.3**: The search trigger pattern is part of this page, as the button and the shortcut that open the palette; the pattern's address opens it.
 - **1.0.0**: Opens from a Button with the shortcut's keys in its new `end` slot, in place of the SearchTrigger component. Rebuilt on Base UI's autocomplete: `inputValue`, `onInputValueChange`, `onAction` and `closeOnAction` for `query`, `onQueryChange`, `onSelect` and `closeOnSelect`, and `CommandPaletteActionOptions`; items take `description`, `end` and `disabled`; options are list rows; the number of results is announced; `className`, `style`, `ref` and data attributes reach the surface. A group's label, `env-command-palette-heading`, is `env-command-palette-group-label`, as in Menu.
-- **0.5.0**: CommandPalette, with grouped options, keyboard highlight, modifier selection and key `hints` shown as Kbd keys.

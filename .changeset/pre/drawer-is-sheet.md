@@ -10,4 +10,4 @@ Drawer, the panel that slides in over the page, is Sheet, after Material's side 
 - The part classes `env-drawer-popup`, `env-drawer-viewport` and `env-drawer-backdrop` are `env-sheet-popup`, `env-sheet-viewport` and `env-sheet-backdrop`, with the same state attributes, `data-side`, `data-width`, `data-starting-style`, `data-ending-style` and `data-swiping`.
 - `v1-structure` turns a 0.x `<Dialog placement="right">` into a Sheet. 0.x had no Drawer, and the name is the navigation drawer's now, so no codemod renames one: rename `Drawer` and `DrawerProps` from the prerelease to `Sheet` and `SheetProps`, and the `env-drawer-*` classes to `env-sheet-*`, by hand. `v1-structure` reports a Drawer without `destinations`, and `v1-classes` the classes.
 
-Migration guide: [Overlays and feedback](https://github.com/envsemble/envUI/blob/main/docs/migration.md#overlays-and-feedback).
+Migration guide: [Overlays and feedback](https://github.com/envsemble/envUI/blob/main/docs/migration.md).

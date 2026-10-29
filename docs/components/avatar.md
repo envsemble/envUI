@@ -2,7 +2,7 @@
 title: Avatar
 summary: A round picture of a person or organization, with the default person picture or initials as fallback, as a button, or piled in a group.
 status: stable
-since: 0.2.0
+since: 1.0.0
 category: Data display
 aliases:
   - profile picture
@@ -257,6 +257,3 @@ The group is `env-avatar-group`, with an `env-avatar` for each person, an `env-a
 - **1.0.0-prerelease.3**: AvatarGroup rests as a compact pile, like stacked cards, which is one pointer target: hover, a tap or keyboard focus spreads it, and its avatars take presses only once spread, in place of a looser rest that kept 1.5 rem of each pressable avatar uncovered. A tap spreads a group on touch screens too, marked with `data-spread`. The count is a rounded square the size of the avatars, at the bottom of the pile.
 - **1.0.0-prerelease.2**: The eight colors are a new pastel palette of tonal pairs: a soft fill with initials and a figure in a deep shade of the same hue, rather than white. The hues are named for their colors, in `hue`, `data-hue` and the tokens: `blue` is `powder`, `teal` `seafoam`, `green` `sage`, `amber` `butter`, `red` `blush`, `violet` `periwinkle`, `purple` `orchid` and `slate` `oat`. `selected` shows an avatar as chosen, with a ring and a check, `env-avatar-check`. AvatarGroup rests bunched where a pointer can hover, with the count of the rest under the last avatar, and spreads along an arch under the pointer or with focus inside, within the room it keeps for the spread; `gather` sets where the avatars gather at rest. Avatars in a group and the count take no ring; `--env-avatar-ring` is gone, and `--env-avatar-group-ring` sets only the gap in a chosen avatar's ring.
 - **1.0.0**: An avatar without a picture takes a solid color that its name chooses, one of eight, with white initials or a white figure; `hue` sets the color, and `avatarHue` returns the one a name chooses. Initials are semibold. Sizes are `sm`, `md`, `lg` and `xl` (were `small`, `standard`, `large` and `display`), set as `data-size` rather than the `env-avatar-{size}` classes. AvatarButton's `detail` is `description`, and it takes the touch height on touch screens. AvatarGroup's strings come from `messages.avatarGroup`, with the counts in the locale's digits. `getInitials` is internal; Avatar shows initials with `fallback="initials"`. Avatar's `label`, which named it as an image, is `named`.
-- **0.6.0**: AvatarGroup.
-- **0.4.0**: AvatarButton; initials use the avatar blue of the default person picture.
-- **0.2.0**: Avatar, with the default person picture or initials as fallback.

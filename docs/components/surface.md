@@ -2,7 +2,7 @@
 title: Surface
 summary: A container with a background, an inset and corners, but no layout of its own.
 status: beta
-since: 0.1.0
+since: 1.0.0
 category: App frame & layout
 aliases:
   - panel
@@ -170,6 +170,3 @@ const { theme } = useTheme();
 
 - **1.0.0-prerelease.5**: `background="recessed"`, a well on the page a shade deeper than it, in `--env-color-bg-recessed`.
 - **1.0.0**: `skeleton`, with `placeholders()`, `isPlaceholder()` and `useSkeleton()`. `tone` is `background`, with the names of the background roles: `pane` is `default`, `row` `muted`, `canvas` `page` and `alternate` `raised`; `corners` is `radius`: `surface` is `xl`, `standard` `sm` and `pill` `full`; `render` replaces `as`. The backgrounds take the semantic background colors.
-- **0.5.0**: `density="compact"`, which gives the controls inside the compact height.
-- **0.4.0**: The inset is at least 1.25 rem.
-- **0.1.0**: Surface, with backgrounds, padding and corners.

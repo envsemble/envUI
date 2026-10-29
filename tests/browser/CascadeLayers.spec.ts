@@ -76,12 +76,12 @@ test(
 );
 
 test(
-  'the migration guide’s per-theme token override applies in each theme and contrast',
+  'the customizing guide’s per-theme token override applies in each theme and contrast',
   { tag: '@engines' },
   async ({ page }) => {
     await openLayers(page);
-    // The example in docs/migration.md, as written, so the guide can't drift from the cascade.
-    const guide = readFileSync('docs/migration.md', 'utf8');
+    // The example in docs/customizing.md, as written, so the guide can't drift from the cascade.
+    const guide = readFileSync('docs/customizing.md', 'utf8');
     const example = [...guide.matchAll(/```css\n([\s\S]*?)```/g)]
       .map(([, css]) => css)
       .find((css) => css.includes('--env-color-fg-link') && css.includes('prefers-contrast'));

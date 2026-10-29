@@ -9,4 +9,4 @@ SearchTrigger is gone: CommandPalette's page builds the button that opens the pa
 - Button takes `end`: quiet content after the label, such as the Kbd of a shortcut, in the button's content color with outlined key caps, so it keeps its contrast on every variant, and at the far end of a button wider than its content, the part `env-button-end`. Kbd takes `--env-kbd-separator-fg` for the + between keys.
 - `v1-names` reports SearchTrigger and `SearchTriggerProps` where they are used, and `v1-classes` the `env-search-trigger-*` classes, each with a pointer to CommandPalette's page; no codemod rewrites them.
 
-Migration guide: [Folded components and patterns](https://github.com/envsemble/envUI/blob/main/docs/migration.md#folded-components-and-patterns).
+Migration guide: [Folded components and patterns](https://github.com/envsemble/envUI/blob/main/docs/migration.md).

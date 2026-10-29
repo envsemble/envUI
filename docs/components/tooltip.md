@@ -2,7 +2,7 @@
 title: Tooltip
 summary: A short label beside a control on hover and keyboard focus, such as an icon-only button's name or why a control is disabled.
 status: stable
-since: 0.2.0
+since: 1.0.0
 category: Overlays
 aliases:
   - hint
@@ -214,6 +214,3 @@ A tooltip is frosted, as every popup is: `--env-color-bg-neutral-strong` at `--e
 
 - **1.0.0-prerelease.5**: Tooltips are frosted: the strong fill at 82 % over a blur, with 0.75 rem corners, a small soft shadow and no edge, and solid with their edge at high contrast, with reduced transparency and under forced colors. A Kbd inside is a flat chip with no edge, its keys side by side, and the tooltip opens 8 px from its control, as every popup does.
 - **1.0.0**: A text trigger, such as a focusable span or Text that holds text, takes a quiet dotted underline, `env-hover-detail`. The tooltip describes a named control (`aria-describedby`) while it is open; a disabled button's, link's, tab's or menu item's wrapper carries its role, name, state and `aria-disabled`; a Kbd inside takes light key caps; native props and `ref` reach the control, so a Tooltip can be the `trigger` of a Menu.Root, Popover, Dialog, Sheet or ConfirmDialog, and goes to their trigger around one; it stays closed while the control's menu or popover is open, and when focus returns to the control as it closes; around a HoverCard it shows nothing; `popupClassName` styles the popup; it renders on PopupSurface, in the control's text direction.
-- **0.5.0**: `side` takes `inline-start` and `inline-end`, which follow the text direction. A tooltip keeps opening on hover after its control becomes enabled or disabled.
-- **0.3.0**: Tooltips grow from their control.
-- **0.2.0**: Tooltip.

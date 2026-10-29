@@ -2,7 +2,7 @@
 title: DropZone
 summary: An area that takes dropped files and opens the file picker when pressed; the application handles and shows the files.
 status: stable
-since: 0.5.0
+since: 1.0.0
 category: Forms & selection
 aliases:
   - FileDropzone
@@ -222,4 +222,3 @@ The zone's frame is Field's root and error. Its parts are the zone, `env-drop-zo
 
 - **1.0.0**: `onFiles` is `onDropAccepted` and `onReject` is `onDropRejected`. The zone is named by what it shows, its label and its description, and described by its error. Its frame is Field's root and error.
 - **1.0.0**: `FileDropzone` is `DropZone`, with the `env-drop-zone-*` classes; the page is `drop-zone`.
-- **0.5.0**: FileDropzone, with `accept`, `multiple`, `onReject`, `pending`, `error`, `compact`, and `name`, `files` and `inputRef` for forms and replacing a file.

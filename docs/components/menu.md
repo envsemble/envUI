@@ -2,7 +2,7 @@
 title: Menu
 summary: Actions and destinations, opened from a trigger or a right click.
 status: stable
-since: 0.3.0
+since: 1.0.0
 category: Actions
 aliases:
   - dropdown menu
@@ -302,6 +302,3 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 
 - **1.0.0-prerelease.5**: Menus are frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge, and is solid with its edge at high contrast and with reduced transparency. Rows are the md control height in body text, in a menu with 1.25 rem corners; separators and groups part by space, with no hairline, and shortcut keys are muted chips with no edge, side by side with the + read but not shown. A chosen radio item takes the selection's fill and text as well as its check mark. Group labels sit 10 px from the menu's edge, a little ahead of the rows' icons and text, rather than in line with the labels.
 - **1.0.0**: ThemeRadioGroup, the theme choice for any menu. The parts are members of the `Menu` namespace: `Menu` is `Menu.Root`, and `MenuItem`, `MenuHeader`, `MenuSeparator`, `MenuGroup`, `MenuRadioGroup`, `MenuRadioItem`, `MenuCheckboxItem` and `MenuSubmenu` are `Menu.Item`, `Menu.Header`, `Menu.Separator`, `Menu.Group`, `Menu.RadioGroup`, `Menu.RadioItem`, `Menu.CheckboxItem` and `Menu.Submenu`. Menus have one anatomy at the scale's row height: `density` and the `MenuDensity` type are gone. `OrganizationMenu`, OrganizationSwitcher in 1.0.0-prerelease.0, is the organization switcher pattern, built from Menu.Root, Menu.RadioGroup and Menu.RadioItem. ContextMenu keeps its name, and a `content` function that returns `null` leaves the menu closed on that element. Menu.Item's `trailing` is `end`. A Menu.Item with `href` closes the menu as it is followed and takes an `onClick`, which runs as it is followed, and a disabled one renders no link. Every menu's popup is the shared popup surface, which takes the direction at its trigger, and Menu.Root takes `side="inline-start"` and `"inline-end"` and passes `ref`, `style` and native props to its popup. A chosen item's check is `env-menu-item-indicator`, as in Select and Combobox, in its place, `env-menu-item-indicator-slot`; they were `env-menu-item-check-mark` and `env-menu-item-check`.
-- **0.5.0**: ContextMenu; `description`, `shortcut` and `trailing` on items; MenuGroup, MenuRadioGroup, MenuRadioItem and MenuCheckboxItem; `density="compact"` on Menu and ContextMenu; MenuSubmenu.
-- **0.4.0**: OrganizationMenu's `detail` for each organization, and its trigger is a secondary Button with up and down arrows. Menu items keep 1.5 rem inline padding, and hover and press shift 6 and 10 points of lightness.
-- **0.3.0**: Menu, MenuHeader, MenuItem for actions and destinations, MenuSeparator, and OrganizationMenu; menus grow from their trigger.

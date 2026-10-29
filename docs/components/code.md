@@ -2,7 +2,7 @@
 title: Code
 summary: Inline code in text, highlighted code blocks with a copy button, and the changes between two versions of a file.
 status: stable
-since: 0.1.0
+since: 1.0.0
 category: Text & content
 aliases:
   - inline code
@@ -218,5 +218,3 @@ Inline code is one part, `env-code`. A block is `env-code-block`: its header, `e
 ## Changelog
 
 - **1.0.0**: Code, CodeBlock, CodeDiff and Markdown's code use Shiki's `github-light-default` and `github-dark-dimmed` code themes instead of the Pierre themes, and `github-light-high-contrast` and `github-dark-high-contrast` under high contrast; envUI no longer needs `@pierre/theme`. The `DiffCount` that `countDiffLines` feeds is `DiffStat`. Highlighted tokens reach 4.5:1 in both app themes, and 7:1 under high contrast, in code blocks and code diffs. CodeDiff takes CodeBlock's code theme, token colors and translucent layer, instead of a theme and an opaque grey of its own. CodeBlock's and CodeDiff's words come from EnvUIProvider's `messages`; the copy button copies through the selection fallback that CopyButton uses, and its status is `env-code-block-copy-status`. The row above a block's code, `env-code-block-heading`, is `env-code-block-header`.
-- **0.7.0**: Code uses the Pierre code themes that Diffs uses, and follows the app theme; `Code`'s `appearance`, `Markdown`'s `inlineCode` and `CodeBlock`'s `theme` are removed. CodeDiff and countDiffLines, in `@envsemble/envui/diff`. The copy button is a quiet icon button.
-- **0.1.0**: Code and CodeBlock.

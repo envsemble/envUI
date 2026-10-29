@@ -7,7 +7,7 @@ Every component, pattern and foundation page reads in one order: its frontmatter
 ## Setup and workflows
 
 - [Install and set up](setup.md) — Registry access, styles, themes and public entry points.
-- [Migrate an interface to envUI](migration.md) — Replace existing UI while preserving application behavior.
+- [Move an app to envUI](migration.md) — Bring an application with a UI of its own onto envUI a slice at a time, keeping what it does.
 - [Customize and extend](customizing.md) — Give one element colors of its own or recolor an area, compose components into the application's own, and style their parts.
 - [For agents](agent-tooling.md) — Set envUI up with a coding agent from one prompt, and point it to the docs in the package.
 - [Writing](writing.md) — The words of an interface built with envUI: voice, capitalisation, action words, numbers and dates, and wording ready for translation.

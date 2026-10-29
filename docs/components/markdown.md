@@ -4,7 +4,7 @@ summary: Renders a Markdown string in envUI's typography and code, and MarkdownE
 status: stable
 statuses:
   MarkdownEditor: beta
-since: 0.1.0
+since: 1.0.0
 category: Text & content
 aliases:
   - MD
@@ -237,6 +237,3 @@ The editor's root is `env-markdown-editor`, with the tabs, `env-tabs-list`, the 
 
 - **1.0.0-prerelease.2**: MarkdownEditor's `underline` variant, which `plain` became in the earlier prereleases, is gone, for the default outline.
 - **1.0.0**: Code in Markdown takes the new code themes, as Code and CodeBlock do. MarkdownEditor takes Textarea's `description` instead of `hint`, and its variants `outline` and `ghost`: `outlined` is `outline` and `quiet` is `ghost`, and `plain` is gone, for the default outline. `className` and `style` style the root, `env-markdown-editor`, rather than the textarea; `ref` and the other native props still reach the textarea. Its toolbar is a Toolbar, with tooltips instead of native titles, and its words come from EnvUIProvider's `messages`, as do Markdown's table and task names. Markdown's root carries `env-prose` beside `env-markdown`. Markdown is stable; MarkdownEditor stays beta. The editor's source text area, `env-markdown-source`, is `env-markdown-editor-input`, a MarkdownEditor part as `env-text-field-input` is a TextField's.
-- **0.7.0**: Code in Markdown takes the code theme of the app theme; `inlineCode` is removed.
-- **0.5.0**: `components`, `remarkPlugins` and `rehypePlugins`; raw HTML is dropped before any rehype plugin runs, except keys written as `<kbd>`, which render as Kbd.
-- **0.1.0**: Markdown and MarkdownEditor.

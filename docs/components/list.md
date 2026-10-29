@@ -2,7 +2,7 @@
 title: List
 summary: A vertical list of connected rows, each with a title, a detail and an action, that can open what it names, show the current one and be put in order.
 status: stable
-since: 0.1.0
+since: 1.0.0
 category: Data display
 aliases:
   - GroupedRows
@@ -264,5 +264,3 @@ The parts are the list, `env-list`, each row, `env-list-item`, with its handle, 
 ## Changelog
 
 - **1.0.0**: List.Item takes `selected` for the current row, marked in the server's HTML, `start` for content before the label, such as an avatar or a checkbox, and `textValue`; List.Root takes `onReorder`, which moves rows by a drag handle, by keyboard, by a press and by pointer, with announcements. `GroupedRows` is `List.Root` and `Row` is `List.Item`, with the `env-list` and `env-list-item` classes; the page is `list`. List.Item's `title` is `label` and its `detail` is `description`. List.Root's `contrast` is gone: put the list directly in `<Surface background="muted" padding={3}>`, where its rows take the raised fill.
-- **0.5.0**: `interactive` rows, which react to hover, focus inside them and presses, and open from anywhere through a `data-row-target`.
-- **0.1.0**: GroupedRows and Row, with connected corners.

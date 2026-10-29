@@ -16,7 +16,7 @@ Open the catalogue at [localhost:8770](http://127.0.0.1:8770). It consumes libra
 The site app (`apps/site`) builds the website, in two parts that each feel like a site of their own:
 
 - **The catalogue**, at the root, is for people: what envUI is, what each part looks like and when to use it. Its rail holds the destinations Overview, Foundations, Components and Patterns, and the drawer beside it lists the chosen destination's pages, such as Dev mode under Overview. Component and pattern pages speak plain language and show live figures with the code under each. Foundation pages explain how envUI handles a subject, such as space or color, in real examples and plain words, and teach the words to ask an agent for it; they name no tokens or values, which each foundation's page in the Docs holds.
-- **The Docs**, under `/docs`, are the developer reference: setup, with the prompt that sets envUI up through a coding agent, migration, codemods, the guide for agents, dev mode, the design tokens, "Build your own field", and each foundation's, component's and pattern's page on using it in code, from the Compose section of its Markdown, with its props, part names and changelog. Their navigation is a tree: Get started, Guides and Foundations, then Components by their group and Patterns by their intent, each group a section that opens and closes, the current page's open. Each page has breadcrumbs above its title, such as Docs / Components / Actions / Button, and, on a pane wide enough, its contents beside it: its h2 and h3 headings, with each export's props under Props, the reader's place marked.
+- **The Docs**, under `/docs`, are the developer reference: setup, with the prompt that sets envUI up through a coding agent, migration, the guide for agents, dev mode, the design tokens, "Build your own field", and each foundation's, component's and pattern's page on using it in code, from the Compose section of its Markdown, with its props, part names and changelog. Their navigation is a tree: Get started, Guides and Foundations, then Components by their group and Patterns by their intent, each group a section that opens and closes, the current page's open. Each page has breadcrumbs above its title, such as Docs / Components / Actions / Button, and, on a pane wide enough, its contents beside it: its h2 and h3 headings, with each export's props under Props, the reader's place marked.
 
 The two parts are linked page to page: a component's, pattern's or foundation's page, and dev mode's, has a button in its banner to its page in the other part, Docs in the catalogue and Catalogue in the Docs (`counterpartOf` in `SiteRoutes.ts`).
 
@@ -86,7 +86,6 @@ apps/site/           The website: the catalogue, for people, and the Docs at /do
 packages/ui/         The publishable @envsemble/envui package
   src/               Components by family, styles and public entry points
   licenses/          Third-party license texts
-packages/codemods/   @envsemble/envui-codemods: upgrades code from 0.x to 1.0
 packages/eslint-plugin/      @envsemble/eslint-plugin-envui: lint rules for apps
 packages/stylelint-config/   @envsemble/stylelint-config-envui: style rules for apps
 assets/brand/        Original envUI artwork, used by the catalogue only
@@ -147,13 +146,13 @@ Builds run on Cloudflare with Workers Builds, so they use no GitHub Actions minu
 
 ## Releases
 
-Releases are cut from `main`. Each change records its changelog entry as a changeset in `.changeset/`; see [library development](docs/library-development.md). The four published packages (`packages/ui`, `packages/codemods`, `packages/eslint-plugin` and `packages/stylelint-config`) are a fixed group in Changesets and share one version. A prerelease goes out under its own name as the dist-tag, `prerelease` for `1.0.0-prerelease.N`; stable releases use `latest`. Breaking changes are `major` changesets.
+Releases are cut from `main`. Each change records its changelog entry as a changeset in `.changeset/`; see [library development](docs/library-development.md). The three published packages (`packages/ui`, `packages/eslint-plugin` and `packages/stylelint-config`) are a fixed group in Changesets and share one version. A prerelease goes out under its own name as the dist-tag, `prerelease` for `1.0.0-prerelease.N`; stable releases use `latest`. Breaking changes are `major` changesets.
 
 Published versions are immutable. Breaking changes require a new major version and migration notes.
 
 ### Changelog links
 
-A changeset's entry ends up in `packages/ui/CHANGELOG.md`, on the Docs' Changelog page, in the CHANGELOG of the npm tarball and in the GitHub release notes. A relative link resolves differently in each, so changesets link to documentation with an absolute URL to the file on `main`, such as `https://github.com/envsemble/envUI/blob/main/docs/migration.md#tokens`, never `../../docs/migration.md#tokens` or `./docs/migration.md#tokens`. The repository is private, and the changelog's readers are envsemble members who can open it. Once a released entry links to a heading in `docs/migration.md`, keep that heading's anchor.
+A changeset's entry ends up in `packages/ui/CHANGELOG.md`, on the Docs' Changelog page, in the CHANGELOG of the npm tarball and in the GitHub release notes. A relative link resolves differently in each, so changesets link to documentation with an absolute URL to the file on `main`, such as `https://github.com/envsemble/envUI/blob/main/docs/customizing.md#cascade-layers`, never `../../docs/customizing.md#cascade-layers` or `./docs/customizing.md#cascade-layers`. The repository is private, and the changelog's readers are envsemble members who can open it.
 
 ### Prepare the release commit
 
@@ -173,7 +172,7 @@ A later prerelease line starts with `npx changeset pre enter prerelease`.
 The GitHub release's notes are the version's changelog section, so its first paragraph, written by hand, is what most readers see:
 
 - One or two sentences on what the release brings for people who use envUI, in the style of the earlier releases: the headline components and changes, not a list.
-- For 1.0.0, say that it is the first stable release, that it breaks code written for 0.x, that `@envsemble/envui-codemods` makes most of the changes, and link the [migration guide](docs/migration.md) by its absolute URL on `main`.
+- For 1.0.0, say that it is the first stable release.
 - Name no application built on envUI, as in changesets.
 - Leave the generated entries below as Changesets wrote them. Fix a wrong entry where it stands rather than rewriting the section.
 
@@ -185,12 +184,12 @@ The GitHub release's notes are the version's changelog section, so its first par
    - validates the release with `scripts/release/ValidateRelease.ts`;
    - builds the packages;
    - drafts a GitHub release with the version's CHANGELOG section;
-   - publishes the four packages to GitHub Packages under the version's dist-tag, the library first, then the codemods and the two lint packages;
+   - publishes the three packages to GitHub Packages under the version's dist-tag, the library first, then the two lint packages;
    - publishes the release, which creates the `v<version>` tag on the merge commit.
 
    A failed run leaves the draft; re-running it publishes only the packages that are still missing, then the release. A merge whose version is already released publishes nothing.
 
-4. **Grant package access** after the first release of a package. 1.0.0-prerelease.0 is the first release of `@envsemble/envui-codemods`, `@envsemble/eslint-plugin-envui` and `@envsemble/stylelint-config-envui`, and a new package grants no repository access. In each one's settings, `https://github.com/orgs/envsemble/packages/npm/<name>/settings`, check that it is linked to `envsemble/envUI`, and under Manage Actions access give Read to every repository that has Read on `@envsemble/envui`. Later releases keep these settings.
+4. **Grant package access** after the first release of a package. 1.0.0-prerelease.0 is the first release of `@envsemble/eslint-plugin-envui` and `@envsemble/stylelint-config-envui`, and a new package grants no repository access. In each one's settings, `https://github.com/orgs/envsemble/packages/npm/<name>/settings`, check that it is linked to `envsemble/envUI`, and under Manage Actions access give Read to every repository that has Read on `@envsemble/envui`. Later releases keep these settings.
 5. **Check the release.** In a consuming project, `npm view @envsemble/envui dist-tags` shows the version under its dist-tag, and after installing it `npx --no envui -v` prints it. `--version` must follow `--`, as in `npx --no -- envui --version`; `npx envui --version` prints npm's own version.
 6. **Merge `main` back into `dev`** through a pull request (`gh pr create --base dev --head main`), so `dev` has the merge commit and the next release merges cleanly.
 

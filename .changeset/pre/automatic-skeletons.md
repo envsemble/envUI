@@ -12,4 +12,4 @@ Any surface can become its own skeleton, and the Skeleton component goes.
 - Dev mode's `envui.layout.skeletonShift(root)` toggles a skeleton and reports, as `skeleton-shift` problems, the elements that move or resize when it loads, and media without an aspect ratio or a size of its own.
 - `v1-names` reports `Skeleton` and `SkeletonProps`, and `v1-classes` `env-skeleton`, `env-skeleton-highlight` and NavList.Skeleton's classes, with what to use instead; Skeleton's `tone` no longer moves to `emphasis`. `envui/no-renamed-exports` reports Skeleton too.
 
-Migration guide: [Skeletons](https://github.com/envsemble/envUI/blob/main/docs/migration.md#skeletons).
+Migration guide: [Skeletons](https://github.com/envsemble/envUI/blob/main/docs/migration.md).

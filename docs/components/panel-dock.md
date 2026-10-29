@@ -2,7 +2,7 @@
 title: PanelDock
 summary: Panels docked side by side at the bottom of a region, for work beside the page, that minimize to tabs and maximize while their content stays mounted.
 status: experimental
-since: 0.6.0
+since: 1.0.0
 category: App frame & layout
 aliases:
   - dock
@@ -222,4 +222,3 @@ The parts are the dock, `env-panel-dock`; each panel, `env-panel-dock-panel`, wi
 ## Changelog
 
 - **1.0.0**: One namespace, `PanelDock.Root` and `PanelDock.Header`; PanelDockControls is internal, `controls` is a boolean and the controls' names come from EnvUIProvider's `messages.panelDock`. Minimized panels are tabs, `env-panel-dock-tab` and `data-tabs`, where they were chips, and a header's application buttons are ghost by default. `showLabel`, which names a tab's button, is `openLabel`. A panel's resize handle, `env-panel-dock-resize`, is `env-panel-dock-resize-handle`, as every resize handle is named.
-- **0.6.0**: PanelDock, PanelDockHeader and PanelDockControls: open panels side by side on the bottom inline-end edge, a maximized panel filling the region and minimized panels as chips, with content that stays mounted, resizing from the top edge, `overflow="minimize"`, stacking below `stackBelow`, focus that follows the panels, and labels that localize the dock.

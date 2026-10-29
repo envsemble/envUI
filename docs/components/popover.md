@@ -2,7 +2,7 @@
 title: Popover
 summary: A floating panel beside its trigger for details or a small form; Esc or a press outside closes it.
 status: stable
-since: 0.5.0
+since: 1.0.0
 category: Overlays
 aliases:
   - popup
@@ -215,4 +215,3 @@ At high contrast, with reduced transparency and under forced colors popups are s
 - **1.0.0-prerelease.5**: Popovers are frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge, and is solid with its edge at high contrast and with reduced transparency: `--env-popup-opacity`, `--env-popup-blur` and `--env-popup-shadow`. Its inset is a panel's, as wide as a popup row's corner: 14 px, 11.2 px at the compact scale.
 - **1.0.0**: `width` is `md` or `lg`, the widest the popover grows as it sizes to its content; `side` takes `inline-start` and `inline-end`; `className`, `style`, `ref` and data attributes reach the surface, which renders on PopupSurface in the trigger's text direction.
 - **1.0.0**: Popovers take the level-2 elevation edge, with no shadow.
-- **0.5.0**: Popover, with a title, two widths and a close function for its content.

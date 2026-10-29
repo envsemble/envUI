@@ -12,4 +12,4 @@ ColorPicker and ColorSwatch move to their own entry point, `@envsemble/envui/col
 
 The `v1-props` and `v1-entries` codemods move the props and the imports.
 
-Migration guide: [Color picker and swatches](https://github.com/envsemble/envUI/blob/main/docs/migration.md#color-picker-and-swatches).
+Migration guide: [Color picker and swatches](https://github.com/envsemble/envUI/blob/main/docs/migration.md).

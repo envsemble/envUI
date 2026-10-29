@@ -2,7 +2,7 @@
 title: HoverCard
 summary: A card of supplementary details that opens beside a link on hover and keyboard focus, like a link preview.
 status: stable
-since: 0.6.0
+since: 1.0.0
 category: Overlays
 aliases:
   - PreviewCard
@@ -170,4 +170,3 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 
 - **1.0.0-prerelease.5**: Hover cards are frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge, and is solid with its edge at high contrast and with reduced transparency. Its inset is a panel's, as wide as a popup row's corner: 14 px, 11.2 px at the compact scale.
 - **1.0.0**: A text trigger, such as a span or Text that holds text, takes a quiet dotted underline, `env-hover-detail`, and one without `tabIndex` gets a warning while developing. `width` is `md` or `lg`, the widest the card grows as it sizes to its content; `className`, `style`, `ref` and data attributes reach the card, `env-hover-card`, which renders on PopupSurface in the trigger's text direction. A Tooltip around it, or as its `trigger`, shows no tooltip.
-- **0.6.0**: HoverCard.

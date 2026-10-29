@@ -2,7 +2,7 @@
 title: Dialog
 summary: A focused task over the page, as a centered modal or a modal near the top of the window, with shared focus and dismissal.
 status: stable
-since: 0.1.0
+since: 1.0.0
 category: Overlays
 aliases:
   - modal
@@ -246,8 +246,3 @@ The surface takes the popups' color and their shadow, `--env-popup-shadow`, as [
 
 - **1.0.0-prerelease.5**: Dialogs take the popups' color and soft shadow, with no outline edge, and stay solid over the scrim; at high contrast and with reduced transparency the shadow goes and the edge returns.
 - **1.0.0**: `width` (`md` or `lg`) for `size`; the side panel, `placement="right"`, is [Sheet](../components/sheet.md); `onOpenChange` reports the reason; `initialFocus` and `finalFocus` take functions too; the surface's class is `env-dialog`. The page is `dialog`, after the component.
-- **0.5.0**: `size="wide"`, also for side panels, and `placement="top"`. Dialogs share Popover's raised surface with a hairline border; in the dark theme they keep the pane color through `--env-color-bg-raised`. The title and description sit together above the content. A side panel takes the whole width of a narrow window, with its content clear of the safe areas.
-- **0.4.0**: Secondary buttons in dialogs and side panels, such as the close button, stay distinct on their surface.
-- **0.3.0**: Dialogs rise into place and side panels slide in, over a backdrop that fades in.
-- **0.2.0**: `pending`.
-- **0.1.0**: Dialog and DialogClose.
