@@ -67,7 +67,7 @@
     background: var(--env-color-bg-selected-pressed);
   }
   /* The active row shows the focus ring only while the tree has keyboard focus. */
-  .env-tree[data-focus-visible]:focus .env-tree-item[data-active] {
+  .env-tree[data-focus-visible]:focus .env-tree-item[data-highlighted] {
     outline: 0.125rem solid var(--env-color-border-focus);
     outline-offset: -0.125rem;
   }
@@ -159,7 +159,7 @@
     .env-tree-item[aria-selected='true'] :where(*) {
       color: inherit;
     }
-    .env-tree[data-focus-visible]:focus .env-tree-item[aria-selected='true'][data-active] {
+    .env-tree[data-focus-visible]:focus .env-tree-item[aria-selected='true'][data-highlighted] {
       outline-color: HighlightText;
     }
   }

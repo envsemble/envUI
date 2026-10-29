@@ -5917,15 +5917,6 @@
       ],
       "states": [
         {
-          "attribute": "data-active",
-          "values": [
-            ""
-          ],
-          "parts": [
-            "env-tree-item"
-          ]
-        },
-        {
           "attribute": "data-density",
           "values": [
             "lg",
@@ -5953,6 +5944,15 @@
           ],
           "parts": [
             "env-tree"
+          ]
+        },
+        {
+          "attribute": "data-highlighted",
+          "values": [
+            ""
+          ],
+          "parts": [
+            "env-tree-item"
           ]
         },
         {

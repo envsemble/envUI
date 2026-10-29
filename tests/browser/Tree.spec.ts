@@ -71,7 +71,7 @@ test.describe('Tree', () => {
     await expect.poll(() => activeRowId(page)).toBe('folder-1');
     // The active row shows a focus ring only with keyboard focus.
     const ring = () =>
-      tree.locator('[data-active]').evaluate((row) => getComputedStyle(row).outlineStyle);
+      tree.locator('[data-highlighted]').evaluate((row) => getComputedStyle(row).outlineStyle);
     await page.keyboard.press('ArrowDown');
     await expect.poll(() => activeRowId(page)).toBe('folder-1/nested');
     await expect.poll(ring).toBe('solid');
