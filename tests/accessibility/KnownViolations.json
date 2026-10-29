@@ -7,7 +7,7 @@
       }
     }
   },
-  "components/drawer": {
+  "components/navigation-drawer": {
     "light": {
       "landmark-unique": {
         "article :: nav.env-navigation-drawer": 1

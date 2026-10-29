@@ -265,4 +265,12 @@
     white-space: nowrap;
     pointer-events: none;
   }
+
+  /* Forced colors: the edge takes the system's text color, as a popup's does, where the engine
+     leaves a transparent one transparent. */
+  @media (forced-colors: active) {
+    .env-toast {
+      border-color: CanvasText;
+    }
+  }
 }

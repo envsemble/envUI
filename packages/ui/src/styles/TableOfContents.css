@@ -75,7 +75,7 @@
   /* The sections still to come, quieter than muted text yet still 4.5:1 on the page and on a
      surface in both themes; at high contrast they keep the muted text color. */
   .env-table-of-contents .env-table-of-contents-link:not([data-passed], [aria-current]) {
-    color: color-mix(in srgb, var(--env-color-fg-muted) 80%, transparent);
+    color: color-mix(in srgb, var(--env-color-fg-muted) 85%, transparent);
   }
   :where([data-env-contrast='high'])
     .env-table-of-contents
