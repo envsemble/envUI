@@ -170,7 +170,7 @@ export function Documentation(
 ) {
   const [markdown, path] =
     'document' in props
-      ? [props.document.markdown, props.document.path]
+      ? [props.document.markdown ?? '', props.document.path]
       : [props.markdown, props.path];
   const guidance = useContext(GuidanceLists);
   const plugins = useMemo(

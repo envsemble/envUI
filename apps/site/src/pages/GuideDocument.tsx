@@ -79,7 +79,7 @@ export function Demo({ name }: { name: string }) {
 
 /** A guide page's Markdown, with its live demos in place. */
 export function GuideDocument({ document }: { document: Document }) {
-  const pieces = document.markdown.split(new RegExp(demoLine.source, 'gm'));
+  const pieces = (document.markdown ?? '').split(new RegExp(demoLine.source, 'gm'));
   if (pieces.length === 1) return <Documentation document={document} />;
   // Markdown and demo names alternate: the split keeps each demo's name.
   return pieces.map((piece, index) => (

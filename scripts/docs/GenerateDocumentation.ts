@@ -1,7 +1,8 @@
 // Reads the documentation in docs/: the index, which groups and orders the pages, and each page with
-// its frontmatter. It validates them, generates the catalogue's data
-// (apps/site/src/generated/Documentation.ts) and compiles the Markdown that ships in the
-// package, where example files and generated props tables are filled in.
+// its frontmatter. It validates them, generates the catalogue's data (every page's summary in
+// apps/site/src/generated/Documentation.ts, each page's content in generated/pages/<id>.json) and
+// compiles the Markdown that ships in the package, where example files and generated props tables
+// are filled in.
 //
 // Component, pattern and foundation pages (docs/components, docs/patterns and docs/foundations)
 // are in the one-file structure: YAML frontmatter (see pageSchemas) that lists each example once,
@@ -15,9 +16,13 @@
 // Validation.ts (a page read and checked), Reader.ts (every page, its index and links) and
 // Compiler.ts (the props tables and the Markdown the package ships). This file writes the
 // catalogue's data and runs as the command; it exports what the modules did as one file.
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import type {
+  DocumentationEntry,
+  DocumentationSummary,
+} from '../../apps/site/src/shared/DocumentationTypes.ts';
 import { headingsOf } from './MarkdownHeadings.ts';
 import { headingSlugger } from '../../apps/site/src/shared/SearchAnchors.ts';
 import { writeSearchIndex } from '../site/SearchIndex.ts';
@@ -57,6 +62,15 @@ export {
   propDescription,
   renderProps,
 } from './Compiler.ts';
+
+/** Each page's content for the catalogue: generated/pages/<id>.json beside generatedFile. */
+const pagesDirectory = resolve(dirname(generatedFile), 'pages');
+
+/** Writes a generated file only when it changes, so a dev server watching it doesn't reload. */
+function writeIfChanged(file: string, source: string) {
+  mkdirSync(dirname(file), { recursive: true });
+  if (!existsSync(file) || readFileSync(file, 'utf8') !== source) writeFileSync(file, source);
+}
 
 export function generateDocumentation() {
   const props = readProps();
@@ -112,10 +126,57 @@ export function generateDocumentation() {
       }),
     };
   });
-  const source = `// Generated from docs/index.md, its pages and docs/generated/props.json; edit the sources.\nimport type { DocumentationEntry } from '../shared/DocumentationTypes';\n\nexport const documents: DocumentationEntry[] = ${JSON.stringify(entries, null, 2)};\n`;
-  mkdirSync(dirname(generatedFile), { recursive: true });
-  if (!existsSync(generatedFile) || readFileSync(generatedFile, 'utf8') !== source)
-    writeFileSync(generatedFile, source);
+  // Every page's summary loads with the site, for its navigation, galleries and routes; a page's
+  // content, in a file of its own, loads with the page. A page in sections is shown from them, so
+  // only a guide's content keeps its whole Markdown.
+  const summaries: DocumentationSummary[] = entries.map((entry) => {
+    const {
+      markdown: _markdown,
+      sections,
+      props: _props,
+      strings: _strings,
+      metadata,
+      ...summary
+    } = entry as DocumentationEntry;
+    if (!sections) return summary;
+    const { aliases: _aliases, useWhen: _useWhen, avoidWhen: _avoidWhen, ...shared } = metadata!;
+    return {
+      ...summary,
+      metadata: shared,
+      outline: sections.map((section) => ({
+        id: section.id,
+        anchors: section.anchors ?? [],
+        examples: section.blocks.flatMap((block) =>
+          block.kind === 'example'
+            ? [
+                {
+                  name: block.name,
+                  heading: block.heading,
+                  ...(block.role && { role: block.role }),
+                  ...(block.widths && { widths: block.widths }),
+                  ...(block.open && { open: block.open }),
+                  ...(block.stage && { stage: block.stage }),
+                },
+              ]
+            : [],
+        ),
+      })),
+    };
+  });
+  const source = `// Generated from docs/index.md, its pages and docs/generated/props.json; edit the sources.\nimport type { DocumentationSummary } from '../shared/DocumentationTypes';\n\nexport const documents: DocumentationSummary[] = ${JSON.stringify(summaries, null, 2)};\n`;
+  writeIfChanged(generatedFile, source);
+  const contents = new Map(
+    entries.map((entry) => {
+      const { sections, markdown, ...rest } = entry as DocumentationEntry;
+      const content = sections ? { ...rest, sections } : { ...rest, markdown };
+      return [`${entry.id}.json`, `${JSON.stringify(content)}\n`];
+    }),
+  );
+  if (contents.size !== entries.length) throw new Error('Two documentation pages share an id.');
+  mkdirSync(pagesDirectory, { recursive: true });
+  for (const name of readdirSync(pagesDirectory))
+    if (!contents.has(name)) rmSync(resolve(pagesDirectory, name));
+  for (const [name, content] of contents) writeIfChanged(resolve(pagesDirectory, name), content);
   // The catalogue's search index, of the same pages, props and the token list.
   writeSearchIndex({ documents, props: props! });
   return documents;

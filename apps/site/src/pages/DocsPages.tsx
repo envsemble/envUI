@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Column, CopyButton, DescriptionList, Link, Row, Surface, Text } from '@envsemble/envui';
 import { Code } from '@envsemble/envui/content';
 import { AgentLogos } from '../brand/AgentLogos';
@@ -19,12 +20,14 @@ import { providesOf } from '../template/Provides';
 import { PropsTables } from '../template/PropsTables';
 import { MetadataBadges, PageChangelog, TemplateContent } from '../template/TemplateContent';
 import type { Documentation as Document } from './PageModel';
+import { useDocument } from './PageContent';
+import { useRevealed } from '../template/useRevealed';
 import { Documentation } from './Documentation';
 import { GuideDocument } from './GuideDocument';
 import { LoadedPart } from './LoadedPart';
 import { ChangelogSkeleton } from './ChangelogOutline';
 import { TokenReferenceSkeleton } from './TokenTables';
-import { ColorPalette } from '../figures/foundations/ColorPalette';
+import { ColorPaletteSkeleton } from '../figures/foundations/ColorPaletteSkeleton';
 import { SpecimenHeadingLevel } from '../figures/Example';
 import { ReleaseNotes } from './ReleaseNotes';
 import { codeColumns, subsections } from '../shared/CatalogueContent';
@@ -35,6 +38,13 @@ const tokenReference = lazyPart(
   () => import('./TokenReference'),
   (module) => module.TokenReference,
   'src/pages/TokenReference.tsx',
+);
+
+/** The palette's swatches, with their color picker, which load with the page that shows them. */
+const colorPalette = lazyPart(
+  () => import('../figures/foundations/ColorPalette'),
+  (module) => module.ColorPalette,
+  'src/figures/foundations/ColorPalette.tsx',
 );
 
 /** What people paste into a coding agent to set envUI up: the skill the site serves at /SKILL.md. */
@@ -130,6 +140,7 @@ export function DocsHome({ page }: { page: RoutePage }) {
 
 /** A guide of docs/, such as setup or migration, with its live demos in place. */
 export function GuidePage({ page }: { page: RoutePage }) {
+  const document = useDocument(page.document!);
   return (
     <>
       <PageHeader
@@ -144,7 +155,7 @@ export function GuidePage({ page }: { page: RoutePage }) {
         }
       />
       <Column gap={7} className="site-article">
-        <GuideDocument document={page.document!} />
+        <GuideDocument document={document} />
       </Column>
     </>
   );
@@ -224,7 +235,7 @@ function PaletteSection() {
         another color: the whole catalogue follows, in this theme only, until you reload.
       </Text>
       <SpecimenHeadingLevel value={3}>
-        <ColorPalette />
+        <LoadedPart part={colorPalette} what="palette" placeholder={<ColorPaletteSkeleton />} />
       </SpecimenHeadingLevel>
     </Column>
   );
@@ -236,7 +247,7 @@ function PaletteSection() {
  * provide. No Related.
  */
 export function FoundationGuidePage({ page }: { page: RoutePage }) {
-  const document = page.document!;
+  const document = useDocument(page.document!);
   return (
     <>
       <PageHeader
@@ -510,10 +521,36 @@ function Strings({ document }: { document: Document }) {
  * page, as "Build your own field".
  */
 export function DocsReferencePage({ page }: { page: RoutePage }) {
-  const document = page.document!;
+  const document = useDocument(page.document!);
   const cataloguePage = pagesOf('catalogue').find((entry) => entry.document?.id === document.id);
   const metadata = document.metadata;
   const pattern = cataloguePage?.kind === 'pattern';
+  // The guide, then once it has painted its reference, together: each step lays the whole page out
+  // again, which costs more here than a step saves (useRevealed).
+  const guide = useMemo(() => <CodeGuide document={document} />, [document]);
+  const parts = useMemo(
+    () =>
+      [
+        cataloguePage && <WordsInCode key="words" document={document} />,
+        cataloguePage && (
+          <Provides key="provides" document={document} title="Accessibility" id="provides" />
+        ),
+        !pattern && (
+          <Column key="props" render={<section />} gap={5} aria-labelledby="props">
+            <Text render={<h2 />} variant="headline" id="props">
+              Props
+            </Text>
+            <PropsTables document={document} />
+          </Column>
+        ),
+        <PartNames key="parts" components={metadata?.components ?? []} />,
+        <ColorProperties key="colors" components={metadata?.components ?? []} />,
+        <Strings key="strings" document={document} />,
+        <PageChangelog key="changelog" document={document} />,
+      ].filter(Boolean),
+    [document, cataloguePage, pattern, metadata],
+  );
+  const revealed = useRevealed(2);
   return (
     <>
       <PageHeader
@@ -532,22 +569,9 @@ export function DocsReferencePage({ page }: { page: RoutePage }) {
       {/* Field, which has no page in the catalogue, shows the whole file, what envUI and the
           application provide in place. */}
       {!cataloguePage && <TemplateContent document={document} provides related={false} />}
-      <Column gap={8} className="site-article docs-api">
-        <CodeGuide document={document} />
-        {cataloguePage && <WordsInCode document={document} />}
-        {cataloguePage && <Provides document={document} title="Accessibility" id="provides" />}
-        {!pattern && (
-          <Column render={<section />} gap={5} aria-labelledby="props">
-            <Text render={<h2 />} variant="headline" id="props">
-              Props
-            </Text>
-            <PropsTables document={document} />
-          </Column>
-        )}
-        <PartNames components={metadata?.components ?? []} />
-        <ColorProperties components={metadata?.components ?? []} />
-        <Strings document={document} />
-        <PageChangelog document={document} />
+      <Column gap={8} className="site-article docs-api" aria-busy={revealed < 2 || undefined}>
+        {guide}
+        {revealed === 2 && parts}
       </Column>
     </>
   );

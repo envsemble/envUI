@@ -30,9 +30,9 @@ interface Figure {
 
 /** Every figure the documentation places, but the don'ts, which show mistakes on purpose. */
 const figures: Figure[] = documents.flatMap((document) =>
-  (document.sections ?? []).flatMap((section) =>
-    section.blocks.flatMap((block) =>
-      block.kind === 'example' && block.role !== 'dont'
+  (document.outline ?? []).flatMap((section) =>
+    section.examples.flatMap((block) =>
+      block.role !== 'dont'
         ? [{ page: document.id, name: block.name, role: block.role ?? 'example' }]
         : [],
     ),

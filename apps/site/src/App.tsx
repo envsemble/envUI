@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { Suspense, useEffect, useRef, useState, type ReactNode } from 'react';
 import {
   Column,
   EnvUIProvider,
@@ -257,7 +257,12 @@ function Shell() {
           <div className="site-page-grid" data-contents={contents || undefined}>
             <div className="site-page-column">
               <PageBoundary title={page?.title ?? 'Page not found'} route={route}>
-                {content}
+                {/* A page's content loads with it (useDocument); nothing shows in its place until
+                    it has, which the first page and a link's page wait for before they render. A
+                    boundary of its own for each page, so the page before doesn't stay, hidden. */}
+                <Suspense key={page?.path ?? routePath} fallback={null}>
+                  {content}
+                </Suspense>
               </PageBoundary>
               {page && <PageNavigation page={page} />}
             </div>

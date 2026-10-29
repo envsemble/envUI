@@ -26,7 +26,10 @@ import { optionPieces, type OptionTable } from '../shared/CatalogueContent';
 import { InteractiveMark } from '../template/InteractiveMark';
 import { Specimen, SpecimenRender } from './Specimen';
 import { VerdictMotion } from '../motion/MotionStage';
-import { foundationFigure } from './foundations/FoundationFigures';
+import {
+  useFoundationFigures,
+  type FoundationFigure as Figure,
+} from './foundations/FoundationFigures';
 import { FigureCode } from './foundations/Topic';
 import { useVerdictFit } from '../template/VerdictFit';
 
@@ -39,7 +42,7 @@ type FigureBlock = ExampleBlock | FoundationBlock;
  * with the legend its Markdown gives it, and its code where it has an example file of its name.
  */
 function FoundationFigure({ page, block }: { page: Document; block: FoundationBlock }) {
-  const figure = foundationFigure(page.id, block.name);
+  const figure = useFoundationFigures(page.id)?.[block.name];
   const code = useMemo(
     () => (block.code ? { page: page.id, name: block.name } : null),
     [block.code, block.name, page.id],
@@ -256,7 +259,7 @@ export function leadParagraph(markdown: string): [string, string] | undefined {
  * The blocks of a section in the order they are written, with figures that follow each other, such
  * as a do and a don't, side by side; Markdown that is only blank lines between them doesn't count.
  */
-function groupFigures(blocks: DocumentationBlock[], page: string) {
+function groupFigures(blocks: DocumentationBlock[], figures: Record<string, Figure> | undefined) {
   const groups: (DocumentationBlock | FigureBlock[])[] = [];
   for (const block of blocks) {
     if (block.kind === 'markdown' && !block.markdown.trim()) continue;
@@ -269,7 +272,7 @@ function groupFigures(blocks: DocumentationBlock[], page: string) {
         block.role !== 'variants' &&
         !block.widths &&
         !block.wide) ||
-      (block.kind === 'figure' && !foundationFigure(page, block.name)?.wide);
+      (block.kind === 'figure' && !figures?.[block.name]?.wide);
     if (figure && Array.isArray(last)) last.push(block);
     else groups.push(figure ? [block] : block);
   }
@@ -333,7 +336,7 @@ export function FigureSection({
         .join(''),
     };
   });
-  const groups = groupFigures(blocks, page.id);
+  const groups = groupFigures(blocks, useFoundationFigures(page.id));
   /** Subsections of text shown beside the figure at an index of groups. */
   const beside = new Map<number, string>();
   const content: ReactNode[] = lead && !leadAfter ? [<Fragment key="lead">{lead}</Fragment>] : [];

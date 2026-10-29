@@ -4,9 +4,23 @@ import App from './App';
 // cascade layers that the site's style sheets build on.
 import './styles/index.css';
 import { PaletteCustomizationProvider } from './theme/PaletteCustomization';
+import { findPage } from './navigation/SiteRoutes';
+import { currentRoute } from './navigation/useSiteRoute';
+import { preloadPage } from './pages/PreloadPage';
 
-createRoot(document.getElementById('root')!).render(
-  <PaletteCustomizationProvider>
-    <App />
-  </PaletteCustomizationProvider>,
+// The site renders once what the page it opens on needs has loaded, which started as it did, so
+// its first paint has the whole page rather than the frame and then the page.
+void preloadPage(findPage(currentRoute().split('?')[0]!)).then(() =>
+  createRoot(document.getElementById('root')!).render(
+    <PaletteCustomizationProvider>
+      <App />
+    </PaletteCustomizationProvider>,
+  ),
+);
+
+// Those modules serve the start alone: a change to them, such as the documentation's while
+// developing, updates the pages that use them in place rather than loading the site again.
+import.meta.hot?.accept(
+  ['./navigation/SiteRoutes', './navigation/useSiteRoute', './pages/PreloadPage'],
+  () => {},
 );

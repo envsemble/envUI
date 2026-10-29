@@ -3,7 +3,7 @@ import {
   documents,
   foundations,
   componentDocuments,
-  type Documentation,
+  type DocumentSummary,
   type GroupedDocument,
 } from '../pages/PageModel';
 import { docsRoute, homeRoute, routeHref } from './Address';
@@ -58,7 +58,7 @@ export interface RoutePage {
   kind: PageKind;
   summary?: string;
   /** The page of docs/ the page shows. */
-  document?: Documentation;
+  document?: DocumentSummary;
 }
 
 /**
@@ -141,7 +141,7 @@ const cataloguePages: RoutePage[] = [
         section: 'Foundations',
         kind: 'foundation',
         summary: document.summary,
-        document: document as Documentation,
+        document: document as DocumentSummary,
       }),
     ),
   {
@@ -165,7 +165,7 @@ const cataloguePages: RoutePage[] = [
           group,
           kind: 'component',
           summary: document.summary,
-          document: document as Documentation,
+          document: document as DocumentSummary,
         }),
       ),
   ),
@@ -203,7 +203,7 @@ const guideLabels: Record<string, string> = {
  */
 const startGuides = new Set(['setup', 'migration']);
 
-const guidePage = (document: Documentation): RoutePage => ({
+const guidePage = (document: DocumentSummary): RoutePage => ({
   path: `docs/${document.id}`,
   title: document.title,
   label: guideLabels[document.id],
@@ -248,7 +248,7 @@ const docsPages: RoutePage[] = [
           section: 'Guides',
           kind: 'reference',
           summary: field.summary,
-          document: field as Documentation,
+          document: field as DocumentSummary,
         } satisfies RoutePage,
       ]
     : []),
@@ -260,7 +260,7 @@ const docsPages: RoutePage[] = [
       section: 'Foundations',
       kind: 'foundation-guide',
       summary: document.summary,
-      document: document as Documentation,
+      document: document as DocumentSummary,
     }),
   ),
   {
@@ -284,7 +284,7 @@ const docsPages: RoutePage[] = [
           group,
           kind: 'reference',
           summary: document.summary,
-          document: document as Documentation,
+          document: document as DocumentSummary,
         }),
       ),
   ),
@@ -652,7 +652,7 @@ export function normalizeRoute(route: string): string {
     grouped.section === 'Components'
       ? view === 'props' || apiSection(section)
       : view === 'usage' &&
-        !(section && grouped.document.sections?.some((part) => part.anchors?.includes(section)));
+        !(section && grouped.document.outline?.some((part) => part.anchors.includes(section)));
   return (
     routeOfDocument(id!, {
       view: toDocs ? (grouped.section === 'Components' ? 'props' : 'usage') : undefined,

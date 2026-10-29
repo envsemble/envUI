@@ -34,6 +34,7 @@ import {
   readTokenOutline,
   tokenOutlineSources,
 } from '../../scripts/site/PartOutlines.ts';
+import { withoutComments } from '../../scripts/site/CssComments.ts';
 
 /**
  * Data the site's pages read from the repository when the site app builds or serves, as
@@ -120,6 +121,69 @@ export default defineConfig(() => {
                 }</script>`,
             );
           },
+        },
+      },
+      {
+        // The style sheets ship without their comments, which are about half their size. Their
+        // rules and values stay as written, as cssMinify is off for the token reference.
+        name: 'envui-css-comments',
+        apply: 'build',
+        enforce: 'post',
+        generateBundle(_options, bundle) {
+          for (const file of Object.values(bundle))
+            if (file.type === 'asset' && file.fileName.endsWith('.css'))
+              file.source = withoutComments(String(file.source));
+        },
+      },
+      {
+        // The page's content (generated/pages/<id>.json, PageContent.ts) loads beside the site's
+        // script rather than once that has arrived and run: a script in index.html preloads the
+        // file of the page the address names by its last segment, such as button for
+        // /components/button and /docs/components/button. A segment that names no page, such as
+        // components, preloads nothing.
+        name: 'envui-content-preload',
+        apply: 'build',
+        transformIndexHtml: {
+          order: 'post',
+          handler: (_html, { bundle }) => {
+            const files: Record<string, string> = {};
+            for (const file of Object.values(bundle ?? {})) {
+              const page =
+                file.type === 'chunk' &&
+                /[\\/]generated[\\/]pages[\\/]([\w-]+)\.json$/.exec(file.facadeModuleId ?? '')?.[1];
+              if (page) files[page] = file.fileName;
+            }
+            return [
+              {
+                tag: 'script',
+                children: `(function(){var f=${JSON.stringify(files)}[location.pathname.split('/').filter(Boolean).pop()];if(f){var l=document.createElement('link');l.rel='modulepreload';l.href='/'+f;document.head.appendChild(l)}})();`,
+                injectTo: 'head' as const,
+              },
+            ];
+          },
+        },
+      },
+      {
+        // The text's font loads with the page rather than once the style sheets that name it have
+        // arrived, so the text shows in it from the first paint more often.
+        name: 'envui-font-preload',
+        apply: 'build',
+        transformIndexHtml: {
+          order: 'post',
+          handler: (_html, { bundle }) =>
+            Object.values(bundle ?? {})
+              .filter((file) => file.type === 'asset' && file.fileName.endsWith('.woff2'))
+              .map((font) => ({
+                tag: 'link',
+                attrs: {
+                  rel: 'preload',
+                  href: `/${font.fileName}`,
+                  as: 'font',
+                  type: 'font/woff2',
+                  crossorigin: '',
+                },
+                injectTo: 'head' as const,
+              })),
         },
       },
       // Rebuilds Tokens.css from packages/ui/tokens on every token edit; Vite hot-reloads it.
@@ -211,6 +275,16 @@ export default defineConfig(() => {
       target: 'es2022',
       // The token reference reads the authored HSL channels from CSS.
       cssMinify: false,
+      rolldownOptions: {
+        output: {
+          codeSplitting: {
+            // What the site starts with is one file, with one style sheet, rather than a file for
+            // each set of its modules that parts of pages loaded later share: over a hundred, most
+            // under 2 kB, each a request of its own, and smaller to compress.
+            groups: [{ name: 'site', tags: ['$initial'] }],
+          },
+        },
+      },
     },
   };
 });

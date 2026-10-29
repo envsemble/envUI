@@ -1,11 +1,6 @@
-import type { ComponentType } from 'react';
+import { use, type ComponentType } from 'react';
 import type { LegendEntry } from './Topic';
-import { accessibilityFigures } from './Accessibility';
-import { colorsFigures } from './Colors';
-import { iconsFigures } from './Icons';
-import { responsiveFigures } from './Responsive';
-import { spacingFigures } from './Spacing';
-import { typographyFigures } from './Typography';
+import { loadOnce } from '../../template/LoadOnce';
 
 /**
  * A foundation's figure: the picture alone, which the page's
@@ -18,16 +13,27 @@ export interface FoundationFigure {
   wide?: boolean;
 }
 
-/** Each foundation's figures, by its page's id. */
-const figures: Record<string, Record<string, FoundationFigure>> = {
-  colors: colorsFigures,
-  typography: typographyFigures,
-  spacing: spacingFigures,
-  responsive: responsiveFigures,
-  icons: iconsFigures,
-  accessibility: accessibilityFigures,
-};
+type Figures = Record<string, FoundationFigure>;
 
-/** A foundation page's figure, by the page's id and the figure's name. */
-export const foundationFigure = (page: string, name: string): FoundationFigure | undefined =>
-  figures[page]?.[name];
+/** Each foundation's figures, by its page's id, which load with the page. */
+const loaders: Record<string, () => Promise<Figures>> = {
+  colors: () => import('./Colors').then((module) => module.colorsFigures),
+  typography: () => import('./Typography').then((module) => module.typographyFigures),
+  spacing: () => import('./Spacing').then((module) => module.spacingFigures),
+  responsive: () => import('./Responsive').then((module) => module.responsiveFigures),
+  icons: () => import('./Icons').then((module) => module.iconsFigures),
+  accessibility: () => import('./Accessibility').then((module) => module.accessibilityFigures),
+};
+const loads = new Map<string, Promise<Figures>>();
+
+/** A foundation page's figures, loaded once and kept (loadOnce); a page with none has none. */
+export function loadFoundationFigures(page: string): Promise<Figures> | undefined {
+  const loader = loaders[page];
+  return loader && loadOnce(loads, page, loader);
+}
+
+/** A foundation page's figures, by the page's id, suspending until they have loaded. */
+export function useFoundationFigures(page: string): Figures | undefined {
+  const load = loadFoundationFigures(page);
+  return load && use(load);
+}

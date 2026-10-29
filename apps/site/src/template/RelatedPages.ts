@@ -6,7 +6,7 @@ import type { ComponentType } from 'react';
 import type { DocumentationMetadata, StageFill } from '../shared/DocumentationTypes';
 import { routeHref } from '../navigation/Address';
 import { pageHref, groupedPages, routeOfDocument } from '../navigation/SiteRoutes';
-import { documents, type Documentation as Document } from '../pages/PageModel';
+import { documents, type DocumentSummary } from '../pages/PageModel';
 import { hasPageSpecimen } from '../figures/PageSpecimens';
 import { tileOf, tileWindows } from '../tiles/Tiles';
 
@@ -59,15 +59,13 @@ const squash = (text: string) => text.toLowerCase().replace(/[^a-z\d]/g, '');
  * first, such as Textarea on the TextField page, the first example named after it, where there is
  * one. A page without one, such as a foundation's, shows its specimen.
  */
-export function previewOf(document: Document, component?: string): Preview | undefined {
+export function previewOf(document: DocumentSummary, component?: string): Preview | undefined {
   const own = component && document.metadata?.components[0] !== component.split('.')[0];
   const tile = !own && tileOf(document.id);
-  const blocks = (document.sections ?? []).flatMap((section) =>
-    section.blocks.flatMap((block) => (block.kind === 'example' ? [block] : [])),
-  );
-  const lead = document.sections
+  const blocks = (document.outline ?? []).flatMap((section) => section.examples);
+  const lead = document.outline
     ?.find((section) => section.id === 'overview')
-    ?.blocks.find((block) => block.kind === 'example' && !block.role);
+    ?.examples.find((block) => !block.role);
   // A tile's popups, such as a menu it opens as it plays, open inside its canvas; it takes the
   // overview's stage, such as the deeper one of a whole window.
   if (tile)
@@ -78,7 +76,7 @@ export function previewOf(document: Document, component?: string): Preview | und
       composition: tile,
       tile: true,
       window: tileWindows[document.id],
-      stage: lead?.kind === 'example' ? lead.stage : undefined,
+      stage: lead?.stage,
     };
   const anatomy = blocks.find((block) => block.role === 'anatomy');
   const named =
@@ -90,7 +88,7 @@ export function previewOf(document: Document, component?: string): Preview | und
         [block.name, block.heading].some((text) => squash(text).includes(squash(component))),
     );
   const chosen = named || (!own && anatomy?.open ? anatomy : lead);
-  if (!chosen || chosen.kind !== 'example')
+  if (!chosen)
     return hasPageSpecimen(document.id)
       ? { page: document.id, name: document.id, open: false, specimen: document.id }
       : undefined;

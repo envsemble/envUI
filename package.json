@@ -31,6 +31,7 @@
     "test:visual:update": "node scripts/test/VisualTests.ts --update",
     "measure:size": "node scripts/test/MeasureSize.ts",
     "measure:runtime": "node scripts/test/MeasureRuntime.ts",
+    "measure:site": "node scripts/test/MeasureSite.ts",
     "lint": "eslint . --cache --cache-location .cache/eslint/",
     "lint:css": "stylelint \"packages/ui/src/**/*.css\" \"apps/site/src/**/*.css\"",
     "format": "prettier --write .",
