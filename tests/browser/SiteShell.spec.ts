@@ -47,7 +47,7 @@ test('the hosted build opens every page of the catalogue and the Docs without ne
   }
   // A deep link loads its page, in the Docs too.
   await page.goto(`${siteUrl}/docs/setup`);
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Install the private package');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Install and set up');
   await expect(page.locator('.env-code-block').first()).toContainText('@envsemble:registry');
   // The files for coding agents are at the root, as text rather than the page.
   const agentFiles = await page.evaluate(async () =>
@@ -445,7 +445,7 @@ test('the theme in the Display menu switches the whole page and keeps the canvas
   await expect(app).toHaveAttribute('data-env-theme', 'dark');
   // The setup guide, in the Docs, keeps the theme.
   await goTo(page, '/getting-started');
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Install the private package');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Install and set up');
   await expect(app).toHaveAttribute('data-env-theme', 'dark');
   await expect(panes).toHaveCount(0);
 });

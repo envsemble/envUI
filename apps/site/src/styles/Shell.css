@@ -555,6 +555,10 @@ body {
   padding-inline-start: var(--env-space-3);
   border-radius: var(--env-radius-full);
 }
+/* The way to set envUI up by hand, under the prompt. */
+.docs-agent-setup > .docs-setup-by-hand {
+  margin-block-start: var(--env-space-2);
+}
 .docs-agent-prompt-text {
   overflow: hidden;
   font: var(--env-font-size-body-small) / 1.5 var(--site-code-font-family);
