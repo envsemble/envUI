@@ -129,6 +129,14 @@
         }
       },
       "navigation": {
+        "$root": {
+          "$description": "A navigation item that isn’t selected, at rest: no fill, over the navigation’s own background.",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [0, 0, 0],
+            "alpha": 0
+          }
+        },
         "hover": {
           "$description": "A navigation item that isn’t selected, under the pointer: a blue-gray tint in light, deeper than the selection so it doesn’t read as selected; in dark and at high contrast, a gray, since a blue tint there would read as the selection.",
           "$value": "{palette.slate.12}"
@@ -539,6 +547,127 @@
           },
           "alpha": 0.5
         }
+      },
+      "skeleton-shine": {
+        "$description": "The soft highlight that sweeps across a skeleton's bars and shapes: lighter than their fill on every surface, the raised surface in the light theme and the default border's gray in the dark.",
+        "$value": "{color.bg.raised}",
+        "$extensions": {
+          "com.envsemble.envui": {
+            "component": "Skeletons"
+          }
+        }
+      },
+      "list-item": {
+        "$root": {
+          "$description": "The fill of a list item: the muted surface in both themes and at high contrast, so items stand apart from the page and from a surface.",
+          "$value": "{color.bg.muted}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "List items"
+            }
+          }
+        },
+        "hover": {
+          "$description": "A list item under the pointer.",
+          "$value": "{color.bg.muted.hover}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "List items"
+            }
+          }
+        },
+        "pressed": {
+          "$description": "A list item while pressed.",
+          "$value": "{color.bg.muted.pressed}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "List items"
+            }
+          }
+        }
+      },
+      "avatar": {
+        "$root": {
+          "$description": "The default fill, the powder hue: the fill of an avatar whose hue nothing sets.",
+          "$value": "{color.bg.avatar.powder}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          }
+        },
+        "powder": {
+          "$description": "The powder blue pastel fill, one of the hues an avatar takes from its name.",
+          "$value": "{palette.powder.10}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          }
+        },
+        "seafoam": {
+          "$description": "The seafoam pastel fill, one of the hues an avatar takes from its name.",
+          "$value": "{palette.seafoam.10}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          }
+        },
+        "sage": {
+          "$description": "The sage pastel fill, one of the hues an avatar takes from its name.",
+          "$value": "{palette.sage.10}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          }
+        },
+        "butter": {
+          "$description": "The butter yellow pastel fill, one of the hues an avatar takes from its name.",
+          "$value": "{palette.butter.10}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          }
+        },
+        "blush": {
+          "$description": "The blush pink pastel fill, one of the hues an avatar takes from its name.",
+          "$value": "{palette.blush.10}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          }
+        },
+        "periwinkle": {
+          "$description": "The periwinkle pastel fill, one of the hues an avatar takes from its name.",
+          "$value": "{palette.periwinkle.10}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          }
+        },
+        "orchid": {
+          "$description": "The orchid pastel fill, one of the hues an avatar takes from its name.",
+          "$value": "{palette.orchid.10}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          }
+        },
+        "oat": {
+          "$description": "The warm oat pastel fill, one of the hues an avatar takes from its name.",
+          "$value": "{palette.oat.10}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          }
+        }
       }
     },
     "fg": {
@@ -578,20 +707,6 @@
           "$value": "{palette.blue.75}"
         }
       },
-      "link-on-tint": {
-        "$root": {
-          "$description": "Links and text buttons on a tint, where fg.link falls below 4.5:1: inside alerts, on bg.brand-muted, and in list rows and interactive table rows under the pointer or pressed. In light it is a grade darker than fg.link and darkens on hover and press; in dark it is fg.link at rest and lightens on hover and press, where fg.link darkens. Alerts and those rows point fg.link at it; an application puts it on bg.brand-muted.",
-          "$value": "{palette.blue.65}"
-        },
-        "hover": {
-          "$description": "A link on a tint under the pointer.",
-          "$value": "{palette.blue.70}"
-        },
-        "pressed": {
-          "$description": "A link on a tint while pressed.",
-          "$value": "{palette.blue.75}"
-        }
-      },
       "accent": {
         "$description": "Accent text and icons: the accent tone, outlined button labels, chips, the icon of a pager link.",
         "$value": "{palette.blue.65}"
@@ -623,6 +738,197 @@
       "on-strong": {
         "$description": "White in both themes, on the strong fills: labels at 4.5:1 on the danger, important, neutral, success and information fills, at rest, hovered and pressed; marks at 3:1 on the brand’s strong fill.",
         "$value": "{palette.neutral.0}"
+      },
+      "link-on-muted": {
+        "$root": {
+          "$description": "Links and text buttons on a tint, where fg.link falls below 4.5:1: inside alerts, on bg.brand-muted, and in list rows and interactive table rows under the pointer or pressed. In light it is a grade darker than fg.link and darkens on hover and press; in dark it is fg.link at rest and lightens on hover and press, where fg.link darkens. Alerts and those rows point fg.link at it; an application puts it on bg.brand-muted.",
+          "$value": "{palette.blue.65}"
+        },
+        "hover": {
+          "$description": "A link on a tint under the pointer.",
+          "$value": "{palette.blue.70}"
+        },
+        "pressed": {
+          "$description": "A link on a tint while pressed.",
+          "$value": "{palette.blue.75}"
+        }
+      },
+      "avatar-figure": {
+        "$description": "The default figure of an avatar without an image, the same deep shade as its initials, at least 3:1 on its fill.",
+        "$root": {
+          "$description": "The default figure, on the powder fill.",
+          "$value": "{color.fg.avatar-figure.powder}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          }
+        },
+        "powder": {
+          "$description": "The default figure on the powder fill, the shade of its initials.",
+          "$value": "{color.fg.avatar.powder}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          }
+        },
+        "seafoam": {
+          "$description": "The default figure on the seafoam fill, the shade of its initials.",
+          "$value": "{color.fg.avatar.seafoam}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          }
+        },
+        "sage": {
+          "$description": "The default figure on the sage fill, the shade of its initials.",
+          "$value": "{color.fg.avatar.sage}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          }
+        },
+        "butter": {
+          "$description": "The default figure on the butter fill, the shade of its initials.",
+          "$value": "{color.fg.avatar.butter}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          }
+        },
+        "blush": {
+          "$description": "The default figure on the blush fill, the shade of its initials.",
+          "$value": "{color.fg.avatar.blush}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          }
+        },
+        "periwinkle": {
+          "$description": "The default figure on the periwinkle fill, the shade of its initials.",
+          "$value": "{color.fg.avatar.periwinkle}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          }
+        },
+        "orchid": {
+          "$description": "The default figure on the orchid fill, the shade of its initials.",
+          "$value": "{color.fg.avatar.orchid}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          }
+        },
+        "oat": {
+          "$description": "The default figure on the oat fill, the shade of its initials.",
+          "$value": "{color.fg.avatar.oat}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          }
+        }
+      },
+      "rating-star": {
+        "$description": "The filled stars and the filled half of a half star: a clear gold.",
+        "$value": "{palette.amber.25}",
+        "$extensions": {
+          "com.envsemble.envui": {
+            "component": "Rating"
+          }
+        }
+      },
+      "avatar": {
+        "$description": "The initials of an avatar, in a deep shade of its fill's hue: at least 4.5:1 on its fill, and 7:1 at high contrast.",
+        "$root": {
+          "$description": "The default initials, on the powder fill.",
+          "$value": "{color.fg.avatar.powder}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          }
+        },
+        "powder": {
+          "$value": "{palette.powder.60}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          },
+          "$description": "The initials on the powder fill."
+        },
+        "seafoam": {
+          "$value": "{palette.seafoam.60}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          },
+          "$description": "The initials on the seafoam fill."
+        },
+        "sage": {
+          "$value": "{palette.sage.60}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          },
+          "$description": "The initials on the sage fill."
+        },
+        "butter": {
+          "$value": "{palette.butter.60}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          },
+          "$description": "The initials on the butter fill."
+        },
+        "blush": {
+          "$value": "{palette.blush.60}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          },
+          "$description": "The initials on the blush fill."
+        },
+        "periwinkle": {
+          "$value": "{palette.periwinkle.60}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          },
+          "$description": "The initials on the periwinkle fill."
+        },
+        "orchid": {
+          "$value": "{palette.orchid.60}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          },
+          "$description": "The initials on the orchid fill."
+        },
+        "oat": {
+          "$value": "{palette.oat.60}",
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Avatars"
+            }
+          },
+          "$description": "The initials on the oat fill."
+        }
       }
     },
     "border": {
@@ -822,316 +1128,6 @@
             "$ref": "#/palette/neutral/100/$value/components"
           },
           "alpha": 0.05
-        }
-      }
-    },
-    "list-item": {
-      "$description": "Component tokens of list items: they take another role in each scheme, which no one role names.",
-      "bg": {
-        "$root": {
-          "$description": "The fill of a list item: the muted surface in both themes and at high contrast, so items stand apart from the page and from a surface.",
-          "$value": "{color.bg.muted}",
-          "$extensions": {
-            "com.envsemble.envui": {
-              "component": "List items"
-            }
-          }
-        },
-        "hover": {
-          "$description": "A list item under the pointer.",
-          "$value": "{color.bg.muted.hover}",
-          "$extensions": {
-            "com.envsemble.envui": {
-              "component": "List items"
-            }
-          }
-        },
-        "pressed": {
-          "$description": "A list item while pressed.",
-          "$value": "{color.bg.muted.pressed}",
-          "$extensions": {
-            "com.envsemble.envui": {
-              "component": "List items"
-            }
-          }
-        }
-      }
-    },
-    "skeleton": {
-      "$description": "Component tokens of skeletons, whose bars and shapes take the neutral fill under the pointer.",
-      "shine": {
-        "$description": "The soft highlight that sweeps across a skeleton's bars and shapes: lighter than their fill on every surface, the raised surface in the light theme and the default border's gray in the dark.",
-        "$value": "{color.bg.raised}",
-        "$extensions": {
-          "com.envsemble.envui": {
-            "component": "Skeletons"
-          }
-        }
-      }
-    },
-    "avatar": {
-      "$description": "Component tokens of avatars without an image: a soft pastel fill in one of eight hues, which the avatar takes from its name, with initials and a figure in a deep shade of the same hue: a tonal pair.",
-      "bg": {
-        "$root": {
-          "$description": "The default fill, the powder hue: the fill of an avatar whose hue nothing sets.",
-          "$value": "{color.avatar.bg.powder}",
-          "$extensions": {
-            "com.envsemble.envui": {
-              "component": "Avatars"
-            }
-          }
-        },
-        "powder": {
-          "$description": "The powder blue pastel fill, one of the hues an avatar takes from its name.",
-          "$value": "{palette.powder.10}",
-          "$extensions": {
-            "com.envsemble.envui": {
-              "component": "Avatars"
-            }
-          }
-        },
-        "seafoam": {
-          "$description": "The seafoam pastel fill, one of the hues an avatar takes from its name.",
-          "$value": "{palette.seafoam.10}",
-          "$extensions": {
-            "com.envsemble.envui": {
-              "component": "Avatars"
-            }
-          }
-        },
-        "sage": {
-          "$description": "The sage pastel fill, one of the hues an avatar takes from its name.",
-          "$value": "{palette.sage.10}",
-          "$extensions": {
-            "com.envsemble.envui": {
-              "component": "Avatars"
-            }
-          }
-        },
-        "butter": {
-          "$description": "The butter yellow pastel fill, one of the hues an avatar takes from its name.",
-          "$value": "{palette.butter.10}",
-          "$extensions": {
-            "com.envsemble.envui": {
-              "component": "Avatars"
-            }
-          }
-        },
-        "blush": {
-          "$description": "The blush pink pastel fill, one of the hues an avatar takes from its name.",
-          "$value": "{palette.blush.10}",
-          "$extensions": {
-            "com.envsemble.envui": {
-              "component": "Avatars"
-            }
-          }
-        },
-        "periwinkle": {
-          "$description": "The periwinkle pastel fill, one of the hues an avatar takes from its name.",
-          "$value": "{palette.periwinkle.10}",
-          "$extensions": {
-            "com.envsemble.envui": {
-              "component": "Avatars"
-            }
-          }
-        },
-        "orchid": {
-          "$description": "The orchid pastel fill, one of the hues an avatar takes from its name.",
-          "$value": "{palette.orchid.10}",
-          "$extensions": {
-            "com.envsemble.envui": {
-              "component": "Avatars"
-            }
-          }
-        },
-        "oat": {
-          "$description": "The warm oat pastel fill, one of the hues an avatar takes from its name.",
-          "$value": "{palette.oat.10}",
-          "$extensions": {
-            "com.envsemble.envui": {
-              "component": "Avatars"
-            }
-          }
-        }
-      },
-      "figure": {
-        "$description": "The default figure of an avatar without an image, the same deep shade as its initials, at least 3:1 on its fill.",
-        "$root": {
-          "$description": "The default figure, on the powder fill.",
-          "$value": "{color.avatar.figure.powder}",
-          "$extensions": {
-            "com.envsemble.envui": {
-              "component": "Avatars"
-            }
-          }
-        },
-        "powder": {
-          "$description": "The default figure on the powder fill, the shade of its initials.",
-          "$value": "{color.avatar.fg.powder}",
-          "$extensions": {
-            "com.envsemble.envui": {
-              "component": "Avatars"
-            }
-          }
-        },
-        "seafoam": {
-          "$description": "The default figure on the seafoam fill, the shade of its initials.",
-          "$value": "{color.avatar.fg.seafoam}",
-          "$extensions": {
-            "com.envsemble.envui": {
-              "component": "Avatars"
-            }
-          }
-        },
-        "sage": {
-          "$description": "The default figure on the sage fill, the shade of its initials.",
-          "$value": "{color.avatar.fg.sage}",
-          "$extensions": {
-            "com.envsemble.envui": {
-              "component": "Avatars"
-            }
-          }
-        },
-        "butter": {
-          "$description": "The default figure on the butter fill, the shade of its initials.",
-          "$value": "{color.avatar.fg.butter}",
-          "$extensions": {
-            "com.envsemble.envui": {
-              "component": "Avatars"
-            }
-          }
-        },
-        "blush": {
-          "$description": "The default figure on the blush fill, the shade of its initials.",
-          "$value": "{color.avatar.fg.blush}",
-          "$extensions": {
-            "com.envsemble.envui": {
-              "component": "Avatars"
-            }
-          }
-        },
-        "periwinkle": {
-          "$description": "The default figure on the periwinkle fill, the shade of its initials.",
-          "$value": "{color.avatar.fg.periwinkle}",
-          "$extensions": {
-            "com.envsemble.envui": {
-              "component": "Avatars"
-            }
-          }
-        },
-        "orchid": {
-          "$description": "The default figure on the orchid fill, the shade of its initials.",
-          "$value": "{color.avatar.fg.orchid}",
-          "$extensions": {
-            "com.envsemble.envui": {
-              "component": "Avatars"
-            }
-          }
-        },
-        "oat": {
-          "$description": "The default figure on the oat fill, the shade of its initials.",
-          "$value": "{color.avatar.fg.oat}",
-          "$extensions": {
-            "com.envsemble.envui": {
-              "component": "Avatars"
-            }
-          }
-        }
-      },
-      "fg": {
-        "$description": "The initials of an avatar, in a deep shade of its fill's hue: at least 4.5:1 on its fill, and 7:1 at high contrast.",
-        "$root": {
-          "$description": "The default initials, on the powder fill.",
-          "$value": "{color.avatar.fg.powder}",
-          "$extensions": {
-            "com.envsemble.envui": {
-              "component": "Avatars"
-            }
-          }
-        },
-        "powder": {
-          "$value": "{palette.powder.60}",
-          "$extensions": {
-            "com.envsemble.envui": {
-              "component": "Avatars"
-            }
-          },
-          "$description": "The initials on the powder fill."
-        },
-        "seafoam": {
-          "$value": "{palette.seafoam.60}",
-          "$extensions": {
-            "com.envsemble.envui": {
-              "component": "Avatars"
-            }
-          },
-          "$description": "The initials on the seafoam fill."
-        },
-        "sage": {
-          "$value": "{palette.sage.60}",
-          "$extensions": {
-            "com.envsemble.envui": {
-              "component": "Avatars"
-            }
-          },
-          "$description": "The initials on the sage fill."
-        },
-        "butter": {
-          "$value": "{palette.butter.60}",
-          "$extensions": {
-            "com.envsemble.envui": {
-              "component": "Avatars"
-            }
-          },
-          "$description": "The initials on the butter fill."
-        },
-        "blush": {
-          "$value": "{palette.blush.60}",
-          "$extensions": {
-            "com.envsemble.envui": {
-              "component": "Avatars"
-            }
-          },
-          "$description": "The initials on the blush fill."
-        },
-        "periwinkle": {
-          "$value": "{palette.periwinkle.60}",
-          "$extensions": {
-            "com.envsemble.envui": {
-              "component": "Avatars"
-            }
-          },
-          "$description": "The initials on the periwinkle fill."
-        },
-        "orchid": {
-          "$value": "{palette.orchid.60}",
-          "$extensions": {
-            "com.envsemble.envui": {
-              "component": "Avatars"
-            }
-          },
-          "$description": "The initials on the orchid fill."
-        },
-        "oat": {
-          "$value": "{palette.oat.60}",
-          "$extensions": {
-            "com.envsemble.envui": {
-              "component": "Avatars"
-            }
-          },
-          "$description": "The initials on the oat fill."
-        }
-      }
-    },
-    "rating": {
-      "$description": "Component tokens of ratings: the gold of their filled stars, set apart from the boundary grey of the empty ones.",
-      "star": {
-        "$description": "The filled stars and the filled half of a half star: a clear gold.",
-        "$value": "{palette.amber.25}",
-        "$extensions": {
-          "com.envsemble.envui": {
-            "component": "Rating"
-          }
         }
       }
     }

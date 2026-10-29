@@ -196,8 +196,8 @@
     box-sizing: border-box;
     flex: none;
     margin-inline-start: auto;
-    min-inline-size: var(--env-counter-badge-height);
-    block-size: var(--env-counter-badge-height);
+    min-inline-size: var(--env-badge-count-height);
+    block-size: var(--env-badge-count-height);
     display: inline-flex;
     align-items: center;
     justify-content: center;

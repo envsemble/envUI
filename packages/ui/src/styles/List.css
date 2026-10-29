@@ -30,9 +30,9 @@
     list-style: none;
   }
   .env-list > .env-list-item {
-    --env-list-item-container-default: var(--env-color-list-item-bg);
-    --env-list-item-fill-hover: var(--env-color-list-item-bg-hover);
-    --env-list-item-fill-pressed: var(--env-color-list-item-bg-pressed);
+    --env-list-item-container-default: var(--env-color-bg-list-item);
+    --env-list-item-fill-hover: var(--env-color-bg-list-item-hover);
+    --env-list-item-fill-pressed: var(--env-color-bg-list-item-pressed);
     /* With no color property set, the designed fills below apply in every state. The custom fill is
        valid only while the application sets the container or the content (see Button.css), and
        then hover, focus and press lay the content color over the container. */
@@ -202,9 +202,9 @@
   /* Links and text buttons in a row under the pointer or pressed take the link colors for a tint: the
      link blue falls below 4.5:1 on the row's hover and press fills in the light theme. */
   .env-list > .env-list-item[data-interactive]:is(:hover, :has(:focus-visible)) {
-    --env-color-fg-link: var(--env-color-fg-link-on-tint);
-    --env-color-fg-link-hover: var(--env-color-fg-link-on-tint-hover);
-    --env-color-fg-link-pressed: var(--env-color-fg-link-on-tint-pressed);
+    --env-color-fg-link: var(--env-color-fg-link-on-muted);
+    --env-color-fg-link-hover: var(--env-color-fg-link-on-muted-hover);
+    --env-color-fg-link-pressed: var(--env-color-fg-link-on-muted-pressed);
     --env-list-item-layer: calc(var(--env-state-hover-opacity) * 100%);
     background: var(--env-list-item-custom-fill, var(--env-list-item-fill-hover));
   }
@@ -213,9 +213,9 @@
       :has([data-row-target]:active),
       :not(:has([data-row-target])):active
     ) {
-    --env-color-fg-link: var(--env-color-fg-link-on-tint);
-    --env-color-fg-link-hover: var(--env-color-fg-link-on-tint-hover);
-    --env-color-fg-link-pressed: var(--env-color-fg-link-on-tint-pressed);
+    --env-color-fg-link: var(--env-color-fg-link-on-muted);
+    --env-color-fg-link-hover: var(--env-color-fg-link-on-muted-hover);
+    --env-color-fg-link-pressed: var(--env-color-fg-link-on-muted-pressed);
     --env-list-item-layer: calc(var(--env-state-pressed-opacity) * 100%);
     background: var(--env-list-item-custom-fill, var(--env-list-item-fill-pressed));
   }

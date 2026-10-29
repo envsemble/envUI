@@ -4,19 +4,6 @@
     "$type": "color",
     "$description": "The dark scheme’s high-contrast values. Internal: never CSS.",
     "color": {
-      "list-item": {
-        "bg": {
-          "$root": {
-            "$value": "{palette.neutral.82}"
-          },
-          "hover": {
-            "$value": "{palette.neutral.80}"
-          },
-          "pressed": {
-            "$value": "{palette.neutral.75}"
-          }
-        }
-      },
       "bg": {
         "selected": {
           "$root": {
@@ -395,6 +382,43 @@
           "pressed": {
             "$value": "{palette.neutral.82}"
           }
+        },
+        "list-item": {
+          "$root": {
+            "$value": "{palette.neutral.82}"
+          },
+          "hover": {
+            "$value": "{palette.neutral.80}"
+          },
+          "pressed": {
+            "$value": "{palette.neutral.75}"
+          }
+        },
+        "avatar": {
+          "powder": {
+            "$value": "{palette.powder.15}"
+          },
+          "seafoam": {
+            "$value": "{palette.seafoam.15}"
+          },
+          "sage": {
+            "$value": "{palette.sage.15}"
+          },
+          "butter": {
+            "$value": "{palette.butter.15}"
+          },
+          "blush": {
+            "$value": "{palette.blush.15}"
+          },
+          "periwinkle": {
+            "$value": "{palette.periwinkle.15}"
+          },
+          "orchid": {
+            "$value": "{palette.orchid.15}"
+          },
+          "oat": {
+            "$value": "{palette.oat.15}"
+          }
         }
       },
       "fg": {
@@ -446,6 +470,35 @@
         },
         "on-emphasis": {
           "$value": "{palette.neutral.96}"
+        },
+        "rating-star": {
+          "$value": "{palette.amber.6}"
+        },
+        "avatar": {
+          "powder": {
+            "$value": "{palette.powder.86}"
+          },
+          "seafoam": {
+            "$value": "{palette.seafoam.86}"
+          },
+          "sage": {
+            "$value": "{palette.sage.86}"
+          },
+          "butter": {
+            "$value": "{palette.butter.86}"
+          },
+          "blush": {
+            "$value": "{palette.blush.86}"
+          },
+          "periwinkle": {
+            "$value": "{palette.periwinkle.86}"
+          },
+          "orchid": {
+            "$value": "{palette.orchid.86}"
+          },
+          "oat": {
+            "$value": "{palette.oat.86}"
+          }
         }
       },
       "border": {
@@ -612,65 +665,6 @@
             },
             "alpha": 0.55
           }
-        }
-      },
-      "avatar": {
-        "bg": {
-          "powder": {
-            "$value": "{palette.powder.15}"
-          },
-          "seafoam": {
-            "$value": "{palette.seafoam.15}"
-          },
-          "sage": {
-            "$value": "{palette.sage.15}"
-          },
-          "butter": {
-            "$value": "{palette.butter.15}"
-          },
-          "blush": {
-            "$value": "{palette.blush.15}"
-          },
-          "periwinkle": {
-            "$value": "{palette.periwinkle.15}"
-          },
-          "orchid": {
-            "$value": "{palette.orchid.15}"
-          },
-          "oat": {
-            "$value": "{palette.oat.15}"
-          }
-        },
-        "fg": {
-          "powder": {
-            "$value": "{palette.powder.86}"
-          },
-          "seafoam": {
-            "$value": "{palette.seafoam.86}"
-          },
-          "sage": {
-            "$value": "{palette.sage.86}"
-          },
-          "butter": {
-            "$value": "{palette.butter.86}"
-          },
-          "blush": {
-            "$value": "{palette.blush.86}"
-          },
-          "periwinkle": {
-            "$value": "{palette.periwinkle.86}"
-          },
-          "orchid": {
-            "$value": "{palette.orchid.86}"
-          },
-          "oat": {
-            "$value": "{palette.oat.86}"
-          }
-        }
-      },
-      "rating": {
-        "star": {
-          "$value": "{palette.amber.6}"
         }
       }
     }

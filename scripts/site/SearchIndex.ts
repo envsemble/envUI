@@ -375,7 +375,7 @@ export function buildSearchIndex({ documents, props, tokens = readTokens() }: Se
 /**
  * A search document with the names a query may give it whole, folded as queries are: its title,
  * each topic of a page's title, an export's name written out in words, its aliases, a prop as its export and name (Button variant), never its name alone, and a token as
- * its name too (color.fg.muted). A query that is one of them ranks the document first.
+ * its name too (color.fg.muted), a color by its role words too (fg muted). A query that is one of them ranks the document first.
  */
 function withNames(document: SearchDocument) {
   // A foundation's guide in the Docs shares its page's title; the page in the catalogue takes the name.
@@ -390,7 +390,10 @@ function withNames(document: SearchDocument) {
     ...(document.kind === 'export' ? [document.title.replace(/(\p{Ll})(\p{Lu})/gu, '$1 $2')] : []),
     ...document.aliases.split('\n'),
     ...(document.owner ? [`${document.owner} ${document.title}`] : []),
-    ...(document.kind === 'token' ? [document.id.replace(/^token:/, '')] : []),
+    // A token by its id, and a color by its role words alone, fg muted for color.fg.muted.
+    ...(document.kind === 'token'
+      ? [document.id.replace(/^token:/, ''), document.id.replace(/^token:color\./, '')]
+      : []),
   ];
   return { ...document, names: [...new Set(names.map(nameKey).filter(Boolean))] };
 }

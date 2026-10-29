@@ -37,7 +37,7 @@
     "$type": "dimension",
     "height": { "$value": { "value": 2.625, "unit": "rem" } }
   },
-  "counter-badge": {
+  "badge-count": {
     "$type": "dimension",
     "height": { "$value": { "value": 1, "unit": "rem" } }
   },

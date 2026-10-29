@@ -79,10 +79,10 @@
    state's semantic color through its public color property, as an application would set it, so
    none of envUI's private component tokens is copied here. */
 .catalogue-specimen-area .catalogue-force-hover > .env-list-item[data-interactive] {
-  --env-list-item-container: var(--env-color-list-item-bg-hover);
+  --env-list-item-container: var(--env-color-bg-list-item-hover);
 }
 .catalogue-specimen-area .catalogue-force-pressed > .env-list-item[data-interactive] {
-  --env-list-item-container: var(--env-color-list-item-bg-pressed);
+  --env-list-item-container: var(--env-color-bg-list-item-pressed);
 }
 .catalogue-specimen-area .catalogue-force-hover .env-drawer-item {
   --env-drawer-item-container: var(--env-color-bg-navigation-hover);

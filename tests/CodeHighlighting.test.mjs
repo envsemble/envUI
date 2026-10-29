@@ -140,7 +140,7 @@ test('every highlighted token is readable on its code background, in code blocks
           ...new Set(
             [
               ...['page', 'default', 'raised', 'popup', 'muted'].map((name) => `color.bg.${name}`),
-              'color.list-item.bg',
+              'color.bg.list-item',
             ].map(value),
           ),
         ].sort(),

@@ -105,6 +105,13 @@
         }
       },
       "navigation": {
+        "$root": {
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [0, 0, 0],
+            "alpha": 0
+          }
+        },
         "hover": {
           "$value": "{palette.neutral.75}"
         },
@@ -454,6 +461,49 @@
           },
           "alpha": 0.5
         }
+      },
+      "skeleton-shine": {
+        "$value": "{color.border.default}"
+      },
+      "list-item": {
+        "$root": {
+          "$value": "{color.bg.muted}"
+        },
+        "hover": {
+          "$value": "{color.bg.muted.hover}"
+        },
+        "pressed": {
+          "$value": "{color.bg.muted.pressed}"
+        }
+      },
+      "avatar": {
+        "$root": {
+          "$value": "{color.bg.avatar.powder}"
+        },
+        "powder": {
+          "$value": "{palette.powder.15}"
+        },
+        "seafoam": {
+          "$value": "{palette.seafoam.15}"
+        },
+        "sage": {
+          "$value": "{palette.sage.15}"
+        },
+        "butter": {
+          "$value": "{palette.butter.15}"
+        },
+        "blush": {
+          "$value": "{palette.blush.15}"
+        },
+        "periwinkle": {
+          "$value": "{palette.periwinkle.15}"
+        },
+        "orchid": {
+          "$value": "{palette.orchid.15}"
+        },
+        "oat": {
+          "$value": "{palette.oat.15}"
+        }
       }
     },
     "fg": {
@@ -485,17 +535,6 @@
           "$value": "{palette.blue.30}"
         }
       },
-      "link-on-tint": {
-        "$root": {
-          "$value": "{palette.blue.20}"
-        },
-        "hover": {
-          "$value": "{palette.blue.15}"
-        },
-        "pressed": {
-          "$value": "{palette.blue.10}"
-        }
-      },
       "accent": {
         "$value": "{palette.blue.20}"
       },
@@ -519,6 +558,78 @@
       },
       "on-strong": {
         "$value": "{palette.neutral.0}"
+      },
+      "link-on-muted": {
+        "$root": {
+          "$value": "{palette.blue.20}"
+        },
+        "hover": {
+          "$value": "{palette.blue.15}"
+        },
+        "pressed": {
+          "$value": "{palette.blue.10}"
+        }
+      },
+      "rating-star": {
+        "$value": "{palette.amber.20}"
+      },
+      "avatar": {
+        "$root": {
+          "$value": "{color.fg.avatar.powder}"
+        },
+        "powder": {
+          "$value": "{palette.powder.65}"
+        },
+        "seafoam": {
+          "$value": "{palette.seafoam.65}"
+        },
+        "sage": {
+          "$value": "{palette.sage.65}"
+        },
+        "butter": {
+          "$value": "{palette.butter.65}"
+        },
+        "blush": {
+          "$value": "{palette.blush.65}"
+        },
+        "periwinkle": {
+          "$value": "{palette.periwinkle.65}"
+        },
+        "orchid": {
+          "$value": "{palette.orchid.65}"
+        },
+        "oat": {
+          "$value": "{palette.oat.65}"
+        }
+      },
+      "avatar-figure": {
+        "$root": {
+          "$value": "{color.fg.avatar-figure.powder}"
+        },
+        "powder": {
+          "$value": "{color.fg.avatar.powder}"
+        },
+        "seafoam": {
+          "$value": "{color.fg.avatar.seafoam}"
+        },
+        "sage": {
+          "$value": "{color.fg.avatar.sage}"
+        },
+        "butter": {
+          "$value": "{color.fg.avatar.butter}"
+        },
+        "blush": {
+          "$value": "{color.fg.avatar.blush}"
+        },
+        "periwinkle": {
+          "$value": "{color.fg.avatar.periwinkle}"
+        },
+        "orchid": {
+          "$value": "{color.fg.avatar.orchid}"
+        },
+        "oat": {
+          "$value": "{color.fg.avatar.oat}"
+        }
       }
     },
     "border": {
@@ -691,83 +802,6 @@
           },
           "alpha": 0.05
         }
-      }
-    },
-    "list-item": {
-      "bg": {
-        "$root": {
-          "$value": "{color.bg.muted}"
-        },
-        "hover": {
-          "$value": "{color.bg.muted.hover}"
-        },
-        "pressed": {
-          "$value": "{color.bg.muted.pressed}"
-        }
-      }
-    },
-    "skeleton": {
-      "shine": {
-        "$value": "{color.border.default}"
-      }
-    },
-    "avatar": {
-      "bg": {
-        "powder": {
-          "$value": "{palette.powder.15}"
-        },
-        "seafoam": {
-          "$value": "{palette.seafoam.15}"
-        },
-        "sage": {
-          "$value": "{palette.sage.15}"
-        },
-        "butter": {
-          "$value": "{palette.butter.15}"
-        },
-        "blush": {
-          "$value": "{palette.blush.15}"
-        },
-        "periwinkle": {
-          "$value": "{palette.periwinkle.15}"
-        },
-        "orchid": {
-          "$value": "{palette.orchid.15}"
-        },
-        "oat": {
-          "$value": "{palette.oat.15}"
-        }
-      },
-      "fg": {
-        "powder": {
-          "$value": "{palette.powder.65}"
-        },
-        "seafoam": {
-          "$value": "{palette.seafoam.65}"
-        },
-        "sage": {
-          "$value": "{palette.sage.65}"
-        },
-        "butter": {
-          "$value": "{palette.butter.65}"
-        },
-        "blush": {
-          "$value": "{palette.blush.65}"
-        },
-        "periwinkle": {
-          "$value": "{palette.periwinkle.65}"
-        },
-        "orchid": {
-          "$value": "{palette.orchid.65}"
-        },
-        "oat": {
-          "$value": "{palette.oat.65}"
-        }
-      }
-    },
-    "rating": {
-      "star": {
-        "$value": "{palette.amber.20}"
       }
     }
   },

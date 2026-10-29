@@ -373,31 +373,31 @@
       "note": "An alert's icon color, which its dismiss button takes too, is the public color property --env-alert-icon."
     },
     "--env-color-avatar-bg-teal": {
-      "replacement": "color.avatar.bg.seafoam",
+      "replacement": "color.bg.avatar.seafoam",
       "note": "The avatar hues are named for their colors: teal is seafoam. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-seafoam and --env-color-avatar-figure-seafoam."
     },
     "--env-color-avatar-bg-green": {
-      "replacement": "color.avatar.bg.sage",
+      "replacement": "color.bg.avatar.sage",
       "note": "The avatar hues are named for their colors: green is sage. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-sage and --env-color-avatar-figure-sage."
     },
     "--env-color-avatar-bg-amber": {
-      "replacement": "color.avatar.bg.butter",
+      "replacement": "color.bg.avatar.butter",
       "note": "The avatar hues are named for their colors: amber is butter. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-butter and --env-color-avatar-figure-butter."
     },
     "--env-color-avatar-bg-red": {
-      "replacement": "color.avatar.bg.blush",
+      "replacement": "color.bg.avatar.blush",
       "note": "The avatar hues are named for their colors: red is blush. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-blush and --env-color-avatar-figure-blush."
     },
     "--env-color-avatar-bg-violet": {
-      "replacement": "color.avatar.bg.periwinkle",
+      "replacement": "color.bg.avatar.periwinkle",
       "note": "The avatar hues are named for their colors: violet is periwinkle. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-periwinkle and --env-color-avatar-figure-periwinkle."
     },
     "--env-color-avatar-bg-purple": {
-      "replacement": "color.avatar.bg.orchid",
+      "replacement": "color.bg.avatar.orchid",
       "note": "The avatar hues are named for their colors: purple is orchid. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-orchid and --env-color-avatar-figure-orchid."
     },
     "--env-color-avatar-bg-slate": {
-      "replacement": "color.avatar.bg.oat",
+      "replacement": "color.bg.avatar.oat",
       "note": "The avatar hues are named for their colors: slate is oat. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-oat and --env-color-avatar-figure-oat."
     },
     "--color-bg-overlay": {
@@ -619,6 +619,150 @@
     "--env-motion-ease-standard": {
       "replacement": "motion.ease",
       "note": "The standard easing is --env-motion-ease; the alias, the same curve, is gone."
+    },
+    "--env-color-avatar-bg": {
+      "replacement": "color.bg.avatar",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-bg-blush": {
+      "replacement": "color.bg.avatar.blush",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-bg-butter": {
+      "replacement": "color.bg.avatar.butter",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-bg-oat": {
+      "replacement": "color.bg.avatar.oat",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-bg-orchid": {
+      "replacement": "color.bg.avatar.orchid",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-bg-periwinkle": {
+      "replacement": "color.bg.avatar.periwinkle",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-bg-powder": {
+      "replacement": "color.bg.avatar.powder",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-bg-sage": {
+      "replacement": "color.bg.avatar.sage",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-bg-seafoam": {
+      "replacement": "color.bg.avatar.seafoam",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-fg": {
+      "replacement": "color.fg.avatar",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-fg-blush": {
+      "replacement": "color.fg.avatar.blush",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-fg-butter": {
+      "replacement": "color.fg.avatar.butter",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-fg-oat": {
+      "replacement": "color.fg.avatar.oat",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-fg-orchid": {
+      "replacement": "color.fg.avatar.orchid",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-fg-periwinkle": {
+      "replacement": "color.fg.avatar.periwinkle",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-fg-powder": {
+      "replacement": "color.fg.avatar.powder",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-fg-sage": {
+      "replacement": "color.fg.avatar.sage",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-fg-seafoam": {
+      "replacement": "color.fg.avatar.seafoam",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-figure": {
+      "replacement": "color.fg.avatar-figure",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-figure-blush": {
+      "replacement": "color.fg.avatar-figure.blush",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-figure-butter": {
+      "replacement": "color.fg.avatar-figure.butter",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-figure-oat": {
+      "replacement": "color.fg.avatar-figure.oat",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-figure-orchid": {
+      "replacement": "color.fg.avatar-figure.orchid",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-figure-periwinkle": {
+      "replacement": "color.fg.avatar-figure.periwinkle",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-figure-powder": {
+      "replacement": "color.fg.avatar-figure.powder",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-figure-sage": {
+      "replacement": "color.fg.avatar-figure.sage",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-figure-seafoam": {
+      "replacement": "color.fg.avatar-figure.seafoam",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-fg-link-on-tint": {
+      "replacement": "color.fg.link-on-muted",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-fg-link-on-tint-hover": {
+      "replacement": "color.fg.link-on-muted.hover",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-fg-link-on-tint-pressed": {
+      "replacement": "color.fg.link-on-muted.pressed",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-list-item-bg": {
+      "replacement": "color.bg.list-item",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-list-item-bg-hover": {
+      "replacement": "color.bg.list-item.hover",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-list-item-bg-pressed": {
+      "replacement": "color.bg.list-item.pressed",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-rating-star": {
+      "replacement": "color.fg.rating-star",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-skeleton-shine": {
+      "replacement": "color.bg.skeleton-shine",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-counter-badge-height": {
+      "replacement": "badge-count.height",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
     }
   },
   "aliases": {
@@ -639,12 +783,12 @@
       "component": "The action strip of a card"
     },
     "--color-avatar": {
-      "replacement": "color.avatar.bg",
+      "replacement": "color.bg.avatar",
       "component": "Avatars",
       "note": "A system token named for avatars now."
     },
     "--color-avatar-figure": {
-      "replacement": "color.avatar.figure",
+      "replacement": "color.fg.avatar-figure",
       "component": "Avatars",
       "note": "A system token named for avatars now."
     },
@@ -837,7 +981,7 @@
       "component": "Navigation items"
     },
     "--color-navigation-quiet": {
-      "replacement": "color.list-item.bg",
+      "replacement": "color.bg.list-item",
       "component": "Navigation items",
       "note": "The quiet navigation item’s rest, which envUI no longer reads; list items have the same fill."
     },
@@ -862,7 +1006,7 @@
       "component": "Important buttons"
     },
     "--color-on-avatar": {
-      "replacement": "color.avatar.fg",
+      "replacement": "color.fg.avatar",
       "component": "Avatars",
       "note": "A system token named for avatars now."
     },
@@ -973,7 +1117,7 @@
       "component": "Radios"
     },
     "--color-row": {
-      "replacement": "color.list-item.bg",
+      "replacement": "color.bg.list-item",
       "component": "List rows",
       "note": "A system token named for list rows: the default surface in light, the muted one in dark."
     },
@@ -986,12 +1130,12 @@
       "component": "List rows"
     },
     "--color-row-hover": {
-      "replacement": "color.list-item.bg.hover",
+      "replacement": "color.bg.list-item.hover",
       "component": "List rows",
       "note": "A system token named for list rows: the default surface in light, the muted one in dark."
     },
     "--color-row-pressed": {
-      "replacement": "color.list-item.bg.pressed",
+      "replacement": "color.bg.list-item.pressed",
       "component": "List rows",
       "note": "A system token named for list rows: the default surface in light, the muted one in dark."
     },

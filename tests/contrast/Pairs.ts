@@ -5,7 +5,7 @@
  * and fails on any pair below the theme's minimum for its kind that Exceptions.json doesn't list.
  *
  * - `fg` and each `bg` layer name a custom property: a semantic role (`--env-color-{bg|fg|border}-…`),
- *   or a component token where the component takes a different role per theme (`--env-color-list-item-bg`,
+ *   or a component token where the component takes a different role per theme (`--env-color-bg-list-item`,
  *   `--env-color-bg-brand-emphasis`…). The few colors a component still composes where it paints, because they
  *   depend on something no token can name, are listed in `derived` below and measured like tokens.
  * - `bg` lists what the foreground sits on, nearest first. A translucent layer is composited over
@@ -109,9 +109,9 @@ const frostedOverWorst = [
   '--env-color-fg-accent',
 ] as const;
 // Component tokens that take a different role per theme.
-const row = '--env-color-list-item-bg'; // List rows: the muted surface in both themes
-const rowHover = '--env-color-list-item-bg-hover';
-const rowPressed = '--env-color-list-item-bg-pressed';
+const row = '--env-color-bg-list-item'; // List rows: the muted surface in both themes
+const rowHover = '--env-color-bg-list-item-hover';
+const rowPressed = '--env-color-bg-list-item-pressed';
 
 type Background = string | readonly string[];
 
@@ -255,7 +255,7 @@ const registry: readonly ContrastPair[] = merged([
   // the link colors for a tint: alerts and rows under the pointer or pressed point fg.link at them,
   // and applications put them on the brand's muted tint.
   ...text(
-    '--env-color-fg-link-on-tint',
+    '--env-color-fg-link-on-muted',
     [
       [layerHover, raised],
       [layerHover, surface],
@@ -267,7 +267,7 @@ const registry: readonly ContrastPair[] = merged([
     'Links and text buttons in an interactive table row under the pointer or holding focus, in a list row under the pointer or pressed, and on the brand’s muted tint',
   ),
   ...text(
-    '--env-color-fg-link-on-tint-hover',
+    '--env-color-fg-link-on-muted-hover',
     [
       [layerHover, raised],
       [layerHover, surface],
@@ -278,7 +278,7 @@ const registry: readonly ContrastPair[] = merged([
     'A link under the pointer in a row under the pointer, and on the brand’s muted tint',
   ),
   ...text(
-    '--env-color-fg-link-on-tint-pressed',
+    '--env-color-fg-link-on-muted-pressed',
     [
       [layerHover, raised],
       [layerHover, surface],
@@ -290,9 +290,9 @@ const registry: readonly ContrastPair[] = merged([
   ),
   ...alertTones.flatMap((tone) =>
     [
-      '--env-color-fg-link-on-tint',
-      '--env-color-fg-link-on-tint-hover',
-      '--env-color-fg-link-on-tint-pressed',
+      '--env-color-fg-link-on-muted',
+      '--env-color-fg-link-on-muted-hover',
+      '--env-color-fg-link-on-muted-pressed',
     ].flatMap((link) => [
       ...on(
         'text',
@@ -935,23 +935,23 @@ const registry: readonly ContrastPair[] = merged([
   ),
   ...text('--env-color-fg-default', [[fill, field]], 'Combobox chips'),
   // Avatars are tonal pairs: each hue's initials, and its figure, a deep shade on its pastel fill.
-  ...text('--env-color-avatar-fg', ['--env-color-avatar-bg'], 'Avatar initials on their hue'),
+  ...text('--env-color-fg-avatar', ['--env-color-bg-avatar'], 'Avatar initials on their hue'),
   ...avatarHues.flatMap((hue) =>
     text(
-      `--env-color-avatar-fg-${hue}`,
-      [`--env-color-avatar-bg-${hue}`],
+      `--env-color-fg-avatar-${hue}`,
+      [`--env-color-bg-avatar-${hue}`],
       'Avatar initials on their hue',
     ),
   ),
   ...nonText(
-    '--env-color-avatar-figure',
-    ['--env-color-avatar-bg'],
+    '--env-color-fg-avatar-figure',
+    ['--env-color-bg-avatar'],
     'The avatar figure on its hue',
   ),
   ...avatarHues.flatMap((hue) =>
     nonText(
-      `--env-color-avatar-figure-${hue}`,
-      [`--env-color-avatar-bg-${hue}`],
+      `--env-color-fg-avatar-figure-${hue}`,
+      [`--env-color-bg-avatar-${hue}`],
       'The avatar figure on its hue',
     ),
   ),
@@ -2348,6 +2348,186 @@ const apiReviewTokens: readonly (readonly [from: string, to: string, rationale: 
     '--env-z-overlay',
     '--env-z-backdrop',
     'The layer behind a modal is the backdrop, as Base UI and the Colors page name it.',
+  ],
+  [
+    '--env-color-avatar-bg',
+    '--env-color-bg-avatar',
+    'Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role.',
+  ],
+  [
+    '--env-color-avatar-bg-blush',
+    '--env-color-bg-avatar-blush',
+    'Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role.',
+  ],
+  [
+    '--env-color-avatar-bg-butter',
+    '--env-color-bg-avatar-butter',
+    'Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role.',
+  ],
+  [
+    '--env-color-avatar-bg-oat',
+    '--env-color-bg-avatar-oat',
+    'Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role.',
+  ],
+  [
+    '--env-color-avatar-bg-orchid',
+    '--env-color-bg-avatar-orchid',
+    'Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role.',
+  ],
+  [
+    '--env-color-avatar-bg-periwinkle',
+    '--env-color-bg-avatar-periwinkle',
+    'Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role.',
+  ],
+  [
+    '--env-color-avatar-bg-powder',
+    '--env-color-bg-avatar-powder',
+    'Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role.',
+  ],
+  [
+    '--env-color-avatar-bg-sage',
+    '--env-color-bg-avatar-sage',
+    'Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role.',
+  ],
+  [
+    '--env-color-avatar-bg-seafoam',
+    '--env-color-bg-avatar-seafoam',
+    'Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role.',
+  ],
+  [
+    '--env-color-avatar-fg',
+    '--env-color-fg-avatar',
+    'Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role.',
+  ],
+  [
+    '--env-color-avatar-fg-blush',
+    '--env-color-fg-avatar-blush',
+    'Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role.',
+  ],
+  [
+    '--env-color-avatar-fg-butter',
+    '--env-color-fg-avatar-butter',
+    'Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role.',
+  ],
+  [
+    '--env-color-avatar-fg-oat',
+    '--env-color-fg-avatar-oat',
+    'Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role.',
+  ],
+  [
+    '--env-color-avatar-fg-orchid',
+    '--env-color-fg-avatar-orchid',
+    'Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role.',
+  ],
+  [
+    '--env-color-avatar-fg-periwinkle',
+    '--env-color-fg-avatar-periwinkle',
+    'Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role.',
+  ],
+  [
+    '--env-color-avatar-fg-powder',
+    '--env-color-fg-avatar-powder',
+    'Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role.',
+  ],
+  [
+    '--env-color-avatar-fg-sage',
+    '--env-color-fg-avatar-sage',
+    'Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role.',
+  ],
+  [
+    '--env-color-avatar-fg-seafoam',
+    '--env-color-fg-avatar-seafoam',
+    'Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role.',
+  ],
+  [
+    '--env-color-avatar-figure',
+    '--env-color-fg-avatar-figure',
+    'Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role.',
+  ],
+  [
+    '--env-color-avatar-figure-blush',
+    '--env-color-fg-avatar-figure-blush',
+    'Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role.',
+  ],
+  [
+    '--env-color-avatar-figure-butter',
+    '--env-color-fg-avatar-figure-butter',
+    'Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role.',
+  ],
+  [
+    '--env-color-avatar-figure-oat',
+    '--env-color-fg-avatar-figure-oat',
+    'Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role.',
+  ],
+  [
+    '--env-color-avatar-figure-orchid',
+    '--env-color-fg-avatar-figure-orchid',
+    'Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role.',
+  ],
+  [
+    '--env-color-avatar-figure-periwinkle',
+    '--env-color-fg-avatar-figure-periwinkle',
+    'Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role.',
+  ],
+  [
+    '--env-color-avatar-figure-powder',
+    '--env-color-fg-avatar-figure-powder',
+    'Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role.',
+  ],
+  [
+    '--env-color-avatar-figure-sage',
+    '--env-color-fg-avatar-figure-sage',
+    'Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role.',
+  ],
+  [
+    '--env-color-avatar-figure-seafoam',
+    '--env-color-fg-avatar-figure-seafoam',
+    'Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role.',
+  ],
+  [
+    '--env-color-fg-link-on-tint',
+    '--env-color-fg-link-on-muted',
+    'Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role.',
+  ],
+  [
+    '--env-color-fg-link-on-tint-hover',
+    '--env-color-fg-link-on-muted-hover',
+    'Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role.',
+  ],
+  [
+    '--env-color-fg-link-on-tint-pressed',
+    '--env-color-fg-link-on-muted-pressed',
+    'Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role.',
+  ],
+  [
+    '--env-color-list-item-bg',
+    '--env-color-bg-list-item',
+    'Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role.',
+  ],
+  [
+    '--env-color-list-item-bg-hover',
+    '--env-color-bg-list-item-hover',
+    'Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role.',
+  ],
+  [
+    '--env-color-list-item-bg-pressed',
+    '--env-color-bg-list-item-pressed',
+    'Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role.',
+  ],
+  [
+    '--env-color-rating-star',
+    '--env-color-fg-rating-star',
+    'Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role.',
+  ],
+  [
+    '--env-color-skeleton-shine',
+    '--env-color-bg-skeleton-shine',
+    'Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role.',
+  ],
+  [
+    '--env-counter-badge-height',
+    '--env-badge-count-height',
+    'Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role.',
   ],
 ];
 

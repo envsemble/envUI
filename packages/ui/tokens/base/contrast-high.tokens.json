@@ -4,19 +4,6 @@
     "$type": "color",
     "$description": "The light scheme’s high-contrast values: text 70 grades from what it sits on, boundaries and indicators 50. contrast/high.tokens.json points the roles here; color-scheme/dark-contrast-high.tokens.json holds the dark values. Internal: never CSS.",
     "color": {
-      "list-item": {
-        "bg": {
-          "$root": {
-            "$value": "{palette.neutral.0}"
-          },
-          "hover": {
-            "$value": "{palette.gray.4}"
-          },
-          "pressed": {
-            "$value": "{palette.gray.8}"
-          }
-        }
-      },
       "bg": {
         "selected": {
           "$root": {
@@ -395,6 +382,43 @@
           "pressed": {
             "$value": "{palette.gray.9}"
           }
+        },
+        "list-item": {
+          "$root": {
+            "$value": "{palette.neutral.0}"
+          },
+          "hover": {
+            "$value": "{palette.gray.4}"
+          },
+          "pressed": {
+            "$value": "{palette.gray.8}"
+          }
+        },
+        "avatar": {
+          "powder": {
+            "$value": "{palette.powder.10}"
+          },
+          "seafoam": {
+            "$value": "{palette.seafoam.10}"
+          },
+          "sage": {
+            "$value": "{palette.sage.10}"
+          },
+          "butter": {
+            "$value": "{palette.butter.10}"
+          },
+          "blush": {
+            "$value": "{palette.blush.10}"
+          },
+          "periwinkle": {
+            "$value": "{palette.periwinkle.10}"
+          },
+          "orchid": {
+            "$value": "{palette.orchid.10}"
+          },
+          "oat": {
+            "$value": "{palette.oat.10}"
+          }
         }
       },
       "fg": {
@@ -446,6 +470,35 @@
         },
         "on-emphasis": {
           "$value": "{palette.neutral.0}"
+        },
+        "rating-star": {
+          "$value": "{palette.amber.80}"
+        },
+        "avatar": {
+          "powder": {
+            "$value": "{palette.powder.80}"
+          },
+          "seafoam": {
+            "$value": "{palette.seafoam.80}"
+          },
+          "sage": {
+            "$value": "{palette.sage.80}"
+          },
+          "butter": {
+            "$value": "{palette.butter.80}"
+          },
+          "blush": {
+            "$value": "{palette.blush.80}"
+          },
+          "periwinkle": {
+            "$value": "{palette.periwinkle.80}"
+          },
+          "orchid": {
+            "$value": "{palette.orchid.80}"
+          },
+          "oat": {
+            "$value": "{palette.oat.80}"
+          }
         }
       },
       "border": {
@@ -613,65 +666,6 @@
             },
             "alpha": 0.55
           }
-        }
-      },
-      "avatar": {
-        "bg": {
-          "powder": {
-            "$value": "{palette.powder.10}"
-          },
-          "seafoam": {
-            "$value": "{palette.seafoam.10}"
-          },
-          "sage": {
-            "$value": "{palette.sage.10}"
-          },
-          "butter": {
-            "$value": "{palette.butter.10}"
-          },
-          "blush": {
-            "$value": "{palette.blush.10}"
-          },
-          "periwinkle": {
-            "$value": "{palette.periwinkle.10}"
-          },
-          "orchid": {
-            "$value": "{palette.orchid.10}"
-          },
-          "oat": {
-            "$value": "{palette.oat.10}"
-          }
-        },
-        "fg": {
-          "powder": {
-            "$value": "{palette.powder.80}"
-          },
-          "seafoam": {
-            "$value": "{palette.seafoam.80}"
-          },
-          "sage": {
-            "$value": "{palette.sage.80}"
-          },
-          "butter": {
-            "$value": "{palette.butter.80}"
-          },
-          "blush": {
-            "$value": "{palette.blush.80}"
-          },
-          "periwinkle": {
-            "$value": "{palette.periwinkle.80}"
-          },
-          "orchid": {
-            "$value": "{palette.orchid.80}"
-          },
-          "oat": {
-            "$value": "{palette.oat.80}"
-          }
-        }
-      },
-      "rating": {
-        "star": {
-          "$value": "{palette.amber.80}"
         }
       }
     }

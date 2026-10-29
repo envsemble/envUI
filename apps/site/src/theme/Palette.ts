@@ -30,7 +30,7 @@ export const colorGroups: [string, [string, string][]][] = [
   [
     'Rows',
     [
-      ['list-item-bg', 'Row background'],
+      ['bg-list-item', 'Row background'],
       ['bg-raised', 'Contrast row background'],
       ['fg-default', 'Row text'],
       ['fg-muted', 'Row details'],
@@ -132,7 +132,7 @@ export const colorGroups: [string, [string, string][]][] = [
       ['bg-info-strong', 'Info toast background'],
       ['bg-danger-strong', 'Error toast background'],
       ['fg-on-strong', 'Toast text'],
-      ['bg-overlay', 'Dialog backdrop'],
+      ['bg-backdrop', 'Dialog backdrop'],
     ],
   ],
   [

@@ -33,7 +33,7 @@
     /* Out of sight at rest; the animation below moves it across. */
     --env-skeleton-sweep: -50%;
     --env-skeleton-fill: var(--env-color-bg-neutral-muted-hover);
-    --env-skeleton-shine: var(--env-color-skeleton-shine);
+    --env-skeleton-shine: var(--env-color-bg-skeleton-shine);
     /* The plain fill, for what can only take a color: the line through text. */
     --env-skeleton-color: var(--env-skeleton-fill);
     /* The paint of every bar and shape: the fill with a soft highlight across it. It is laid out on

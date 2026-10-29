@@ -40,7 +40,7 @@ const sources: Record<string, readonly [rest: string, hover: string, pressed: st
     '--env-color-bg-neutral-muted-pressed',
   ],
   navigation: [
-    '--env-color-list-item-bg',
+    '--env-color-bg-list-item',
     '--env-color-bg-navigation-hover',
     '--env-color-bg-navigation-pressed',
   ],
@@ -248,7 +248,7 @@ test('compositions reuse primitive colors while unrelated roles stay independent
       // A list item's component token is the muted surface in both themes.
       ['--env-color-bg-default', ['pane', 'paneCard']],
       ['--env-color-bg-muted', ['surface', 'card', 'contrastPane', 'radioRow', 'row']],
-      ['--env-color-list-item-bg', ['row']],
+      ['--env-color-bg-list-item', ['row']],
       ['--env-color-bg-neutral-muted', ['secondary', 'icon', 'select', 'selectError', 'chip']],
       ['--env-color-fg-control', ['secondary', 'icon', 'select', 'selectError']],
       ['--env-color-fg-link', ['link', 'textButton']],

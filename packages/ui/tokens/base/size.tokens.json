@@ -114,7 +114,7 @@
       "$value": { "value": 3.25, "unit": "rem" }
     }
   },
-  "counter-badge": {
+  "badge-count": {
     "$type": "dimension",
     "height": {
       "$description": "The height, and the least width, of a counter badge and a diff stat.",

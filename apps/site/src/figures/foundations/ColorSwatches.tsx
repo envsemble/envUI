@@ -16,7 +16,7 @@ const roleGroups: readonly (readonly (readonly string[])[])[] = [
     ['bg-muted'],
     ['bg-raised'],
     ['bg-field'],
-    ['bg-overlay'],
+    ['bg-backdrop'],
   ],
   [
     ['fg-default'],

@@ -117,9 +117,9 @@
      colors for a tint: the link blue falls below 4.5:1 on the hover fill over the default surface in
      the light theme. A selected row keeps the selection's text color, below. */
   .env-table-row[data-interactive]:not([aria-selected='true']):is(:hover, :focus-within) {
-    --env-color-fg-link: var(--env-color-fg-link-on-tint);
-    --env-color-fg-link-hover: var(--env-color-fg-link-on-tint-hover);
-    --env-color-fg-link-pressed: var(--env-color-fg-link-on-tint-pressed);
+    --env-color-fg-link: var(--env-color-fg-link-on-muted);
+    --env-color-fg-link-hover: var(--env-color-fg-link-on-muted-hover);
+    --env-color-fg-link-pressed: var(--env-color-fg-link-on-muted-pressed);
   }
   /* Selected rows take the navigation selection, with a bar at the start of the row. Links and text
      buttons in them take the selection's text color at rest, on hover and on press, also while the row
