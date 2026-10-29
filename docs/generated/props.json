@@ -5565,13 +5565,13 @@
       "props": [
         {
           "name": "panels",
-          "type": "readonly T[]",
+          "type": "readonly Panel[]",
           "required": true,
           "description": "The panels in order, each a PanelDockPanel: open panels sit side by side, the newest at the end, and tabs follow in the same order. The application owns them."
         },
         {
           "name": "children",
-          "type": "(panel: T) => ReactNode",
+          "type": "(panel: Panel) => ReactNode",
           "required": true,
           "description": "Renders a panel's content from its panel, such as a PanelDock.Header above the panel's body. The content mounts once and stays mounted until the panel closes."
         },

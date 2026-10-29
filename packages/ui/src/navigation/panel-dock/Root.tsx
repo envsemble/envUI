@@ -97,18 +97,18 @@ export interface PanelDockPanel {
   tooltip?: ReactNode;
 }
 
-export interface RootProps<T extends PanelDockPanel = PanelDockPanel>
+export interface RootProps<Panel extends PanelDockPanel = PanelDockPanel>
   extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
   /**
    * The panels in order, each a PanelDockPanel: open panels sit side by side, the newest at the
    * end, and tabs follow in the same order. The application owns them.
    */
-  panels: readonly T[];
+  panels: readonly Panel[];
   /**
    * Renders a panel's content from its panel, such as a PanelDock.Header above the panel's body.
    * The content mounts once and stays mounted until the panel closes.
    */
-  children: (panel: T) => ReactNode;
+  children: (panel: Panel) => ReactNode;
   /**
    * Called with the mode a panel asks for, from its window controls and its tab, and from the dock
    * itself with overflow="minimize".
@@ -191,7 +191,7 @@ const defaultStackBelow = '40rem';
  * filling the region, and minimized panels as tabs. A panel's content stays mounted through every
  * change of mode and order.
  */
-export function Root<T extends PanelDockPanel>({
+export function Root<Panel extends PanelDockPanel>({
   panels,
   children,
   onModeChange,
@@ -209,7 +209,7 @@ export function Root<T extends PanelDockPanel>({
   style,
   ref,
   ...props
-}: RootProps<T>) {
+}: RootProps<Panel>) {
   // Words that fit a minimized panel and one a stacked dock leaves out alike.
   const messages = useMessages('panelDock', panelDockMessages);
   const tabsLabel = minimizedLabel ?? messages.hidden;
@@ -257,7 +257,11 @@ export function Root<T extends PanelDockPanel>({
     [],
   );
   const close = useCallback((id: string) => latest.current.onClose(id), []);
-  const { fitRow, returningTime, release } = useDockOverflow<T>({ overflow, changeMode, refresh });
+  const { fitRow, returningTime, release } = useDockOverflow<Panel>({
+    overflow,
+    changeMode,
+    refresh,
+  });
 
   // A stacked dock fills the region with one shown panel: the one its tab asked for, else the
   // active one, else the newest; a wide one with its maximized panel. The others wait behind their
@@ -320,7 +324,7 @@ export function Root<T extends PanelDockPanel>({
     [panels, children],
   );
 
-  function heightOf(panel: T): { height?: number; bounds?: HeightBounds } {
+  function heightOf(panel: Panel): { height?: number; bounds?: HeightBounds } {
     // The panel's sizes are in rem, and the dock works in pixels: until it has measured itself, a
     // rem is the browser's default 16 px.
     const rem = measurements?.rem ?? 16;
@@ -337,13 +341,13 @@ export function Root<T extends PanelDockPanel>({
     recency.current.set(id, ++clock.current);
   }
 
-  function activate(panel: T) {
+  function activate(panel: Panel) {
     if (placements.get(panel.id) === 'hidden') return;
     bringForward(panel.id);
     if (!panel.active) latest.current.onActivate?.(panel.id);
   }
 
-  function restoreFromTab(panel: T) {
+  function restoreFromTab(panel: Panel) {
     pendingRestore.current = panel.id;
     bringForward(panel.id);
     // A stacked dock shows the panel brought forward, even without an active panel.
@@ -374,7 +378,7 @@ export function Root<T extends PanelDockPanel>({
     }
   }
 
-  function resize(panel: T, height: number) {
+  function resize(panel: Panel, height: number) {
     if (panel.height === undefined)
       setChosenHeights((current) =>
         current.get(panel.id) === height ? current : new Map(current).set(panel.id, height),
