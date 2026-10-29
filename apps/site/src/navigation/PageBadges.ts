@@ -1,8 +1,9 @@
 /*
- * The small badge beside a page's name in the Docs' navigation: its status where it isn't stable,
- * and New while the page came in the current minor release. One badge a page, the first that
- * applies: Deprecated and Experimental, which a reader must not miss, then New, then Beta. Kept
- * free of imports, so the unit tests read it as it is.
+ * The small badge beside a page's name in the Docs' navigation: Deprecated or Experimental, which
+ * a reader must not miss, else New while the page came in the current minor release. One badge a
+ * page, the first that applies. Beta has none here: it stays on the page, as so many pages are
+ * beta that the navigation would be a column of them. Kept free of imports, so the unit tests
+ * read it as it is.
  */
 
 /** A page's status, from its frontmatter. */
@@ -10,7 +11,7 @@ export type PageStatus = 'experimental' | 'beta' | 'stable' | 'deprecated';
 
 /** The badge a page shows: its words and the tone of envUI's Badge. */
 export interface PageBadge {
-  label: 'Deprecated' | 'Experimental' | 'New' | 'Beta';
+  label: 'Deprecated' | 'Experimental' | 'New';
   tone: 'warning' | 'accent' | 'success';
 }
 
@@ -35,6 +36,5 @@ export function pageBadge(
   if (status === 'deprecated') return { label: 'Deprecated', tone: 'warning' };
   if (status === 'experimental') return { label: 'Experimental', tone: 'accent' };
   if (isNew(since, version)) return { label: 'New', tone: 'success' };
-  if (status === 'beta') return { label: 'Beta', tone: 'accent' };
   return undefined;
 }

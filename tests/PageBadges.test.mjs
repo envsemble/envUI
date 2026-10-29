@@ -15,17 +15,20 @@ test('a page is New in the minor release it came in, but never in 1.0', () => {
   assert.equal(isNew(undefined, '1.1.0'), false);
 });
 
-test('a page shows one badge: Deprecated or Experimental first, then New, then Beta', () => {
+test('a page shows one badge, Deprecated or Experimental before New, and none for Beta or stable', () => {
   assert.equal(pageBadge({ status: 'stable', since: '1.0.0' }, '1.1.0'), undefined);
-  assert.deepEqual(pageBadge({ status: 'beta', since: '1.0.0' }, '1.1.0'), {
-    label: 'Beta',
-    tone: 'accent',
+  assert.equal(pageBadge({ status: 'beta', since: '1.0.0' }, '1.1.0'), undefined);
+  assert.deepEqual(pageBadge({ status: 'beta', since: '1.1.0' }, '1.1.0'), {
+    label: 'New',
+    tone: 'success',
   });
-  assert.equal(pageBadge({ status: 'beta', since: '1.1.0' }, '1.1.0')?.label, 'New');
   assert.equal(pageBadge({ status: 'stable', since: '1.1.0' }, '1.1.0')?.label, 'New');
   assert.equal(
     pageBadge({ status: 'experimental', since: '1.1.0' }, '1.1.0')?.label,
     'Experimental',
   );
-  assert.equal(pageBadge({ status: 'deprecated' }, '1.1.0')?.label, 'Deprecated');
+  assert.deepEqual(pageBadge({ status: 'deprecated' }, '1.1.0'), {
+    label: 'Deprecated',
+    tone: 'warning',
+  });
 });

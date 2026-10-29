@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type ComponentProps } from 'react';
 import {
+  Badge,
   Button,
   Drawer,
   IconButton,
@@ -13,11 +14,13 @@ import { Home } from '@envsemble/envui/icons/Home';
 import { Widgets } from '@envsemble/envui/icons/Widgets';
 import { Pattern } from '@envsemble/envui/icons/Pattern';
 import { Palette } from '@envsemble/envui/icons/Palette';
+import { version } from '../../../../packages/ui/package.json';
 import { EnvUIDocsLogo } from '../brand/EnvUIDocsLogo';
 import { EnvUILogo } from '../brand/EnvUILogo';
 import { SearchButton } from '../search/SearchButton';
 import { DisplayMenu, MotionButton } from '../theme/DisplaySettings';
 import { drawerWidthKey } from '../theme/DisplayStorage';
+import { pageBadge } from './PageBadges';
 import {
   docsTree,
   otherPartRoute,
@@ -81,6 +84,16 @@ function useCurrentInView() {
 }
 
 /**
+ * The badge after a page's name in the Docs' navigation, such as Experimental or New, from its
+ * frontmatter and the package's version (PageBadges.ts); nothing for most pages.
+ */
+function PageBadgeOf({ page }: { page: RoutePage }) {
+  const metadata = page.document?.metadata;
+  const badge = metadata && pageBadge(metadata, version);
+  return badge ? <Badge tone={badge.tone}>{badge.label}</Badge> : null;
+}
+
+/**
  * The Docs' navigation: each section, such as Get started or Components, as a group under its
  * heading, its pages, then its groups, such as the kinds of component and the patterns' intents,
  * each a section of their pages that opens and closes, open while it holds the current page. A
@@ -90,6 +103,7 @@ export function docsDestinations(currentPath: string, onChoose?: () => void): Dr
   const link = (page: RoutePage, group?: string): DrawerDestination => ({
     group,
     label: page.label ?? page.title,
+    badge: <PageBadgeOf page={page} />,
     href: routeHref(page.path),
     current: page.path === currentPath,
     onSelect: onChoose,
