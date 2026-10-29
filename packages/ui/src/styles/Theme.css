@@ -63,10 +63,11 @@ html.env-theme > body {
 }
 /* While a ThemePreferenceProvider switches the page's theme or contrast, nothing transitions: the
    new colors show in the frame they change, not eased over the next ones. Important in the first of
-   envUI's layers that sets it, so no component's transition wins. */
-:root[data-env-theme-switching],
-:root[data-env-theme-switching] *,
-:root[data-env-theme-switching] ::before,
-:root[data-env-theme-switching] ::after {
+   envUI's layers that sets it, so no component's transition wins. The provider marks the root it
+   themes, so the rule names the themed root, never the document's root as such. */
+.env-theme[data-env-theme-switching],
+.env-theme[data-env-theme-switching] *,
+.env-theme[data-env-theme-switching] ::before,
+.env-theme[data-env-theme-switching] ::after {
   transition: none !important;
 }

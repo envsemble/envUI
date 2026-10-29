@@ -438,6 +438,9 @@ export function analyze() {
   return {
     problems,
     layers: order,
+    // Who owns what, for tests/StyleImports.test.mjs: each module's component, each component's
+    // style sheets, and a class's owner, a component or 'shared'.
+    ownership: { componentOf, components, ownerOf: (token) => ownerOf(token, 'a test') },
     findings: {
       imports: importFindings,
       interactive: interactiveFindings,

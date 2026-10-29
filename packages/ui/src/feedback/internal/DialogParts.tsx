@@ -7,6 +7,8 @@ import { Column, Grid, Row } from '../../foundations/Layout.js';
 import { Surface, type SurfaceProps } from '../../foundations/Surface.js';
 import { Theme, type ThemeProps } from '../../foundations/Theme.js';
 import { SkeletonScope } from '../../foundations/SkeletonScope.js';
+import '../../styles/Base.css';
+import '../../styles/Dialog.css';
 
 /**
  * The parts Dialog, Sheet, CommandPalette and other modal surfaces share, inside a Base UI Dialog

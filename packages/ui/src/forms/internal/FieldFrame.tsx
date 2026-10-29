@@ -14,6 +14,8 @@ import { ControlDefaults } from '../../internal/ControlDefaults.js';
 import { classNames } from '../../internal/classNames.js';
 import type { ControlSize } from '../../foundations/Theme.js';
 import { fieldMessageIds } from './useFieldMetadata.js';
+import '../../styles/Base.css';
+import '../../styles/TextField.css';
 
 /** The attributes and content of a text field's control box, for a control that renders it itself. */
 export type FieldControlBoxProps = ComponentPropsWithoutRef<'div'> & {

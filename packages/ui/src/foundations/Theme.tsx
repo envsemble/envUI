@@ -4,6 +4,7 @@ import { createContext, useContext, useMemo, type ComponentPropsWithRef } from '
 import { classNames } from '../internal/classNames.js';
 import { outsideTheme } from './internal/outsideTheme.js';
 import { reportOnce } from '../internal/developmentReport.js';
+import '../styles/Base.css';
 
 /** A color scheme. */
 export type ThemeValue = 'light' | 'dark';

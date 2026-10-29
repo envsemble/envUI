@@ -1,3 +1,5 @@
+import '../styles/Base.css';
+import '../styles/Skeleton.css';
 // What every component that paints a container shares to become a skeleton: its prop, and the
 // attributes that mark its root. Plain functions, so a server component calls them too.
 

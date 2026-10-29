@@ -23,6 +23,8 @@ import { MenuPopup } from './internal/MenuPopup.js';
 import { keepsOpen, usePortalContainer } from '../internal/PortalContainerContext.js';
 import { useDirection } from '../internal/useDirection.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
+import '../styles/Base.css';
+import '../styles/Menubar.css';
 
 /** The Base UI parts of a menubar menu's popup. */
 const menuParts = {

@@ -20,6 +20,8 @@ import {
 import { pixels, type HeightBounds, type Placement } from './dockLayout.js';
 import type { PanelDockPanel } from '../Root.js';
 import { useEntrance } from './useEntrance.js';
+import '../../../styles/Base.css';
+import '../../../styles/PanelDock.css';
 
 /** How far an arrow key changes a panel's height, in pixels; with Shift, or Page Up and Down. */
 const resizeStep = 16;

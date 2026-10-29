@@ -5,6 +5,8 @@ import type { ComponentPropsWithRef } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { Check } from '../icons/Check.js';
 import { useResolvedLocale } from '../internal/useFormatters.js';
+import '../styles/Base.css';
+import '../styles/Avatar.css';
 
 /** An avatar's size: sm 1.5 rem, md 2 rem, lg 3 rem or xl 5.5 rem. */
 export type AvatarSize = 'sm' | 'md' | 'lg' | 'xl';

@@ -5,6 +5,8 @@ import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { Grid, Row } from '../foundations/Layout.js';
 import { useLocale } from '../internal/EnvUIContext.js';
+import '../styles/Base.css';
+import '../styles/Meter.css';
 
 /** What Meter and Progress share: a label, a range, an optional value text and native passthrough. */
 export interface RangeBarProps

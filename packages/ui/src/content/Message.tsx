@@ -8,6 +8,8 @@ import { Error as ErrorIcon } from '../icons/Error.js';
 import { MessageStatusLabel } from './internal/MessageStatusLabel.js';
 import { inSkeleton } from '../foundations/internal/inSkeleton.js';
 import { given, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
+import '../styles/Base.css';
+import '../styles/Message.css';
 
 export type MessageStatus = 'sending' | 'failed';
 

@@ -1,6 +1,8 @@
 import { cloneElement, isValidElement, type ReactElement, type ReactNode } from 'react';
 import { classNames } from './classNames.js';
 import { DecorativeIcon } from './DecorativeIcon.js';
+import '../styles/Base.css';
+import '../styles/ListRow.css';
 
 export interface ListRowProps {
   /**

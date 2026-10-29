@@ -8,6 +8,8 @@ import {
   type PopupSide,
   type PopupSurfaceProps,
 } from '../../internal/PopupSurface.js';
+import '../../styles/Base.css';
+import '../../styles/Menu.css';
 
 /**
  * Renders a menu popup element with, when given, its own name. Base UI names a menu after its

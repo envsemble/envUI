@@ -16,6 +16,10 @@ import { useMessages } from '../../internal/EnvUIContext.js';
 import { Listbox } from './Listbox.js';
 import { useActiveDescendant } from '../../internal/useRovingFocus.js';
 import type { RichTextReference, RichTextReferenceSource } from '../types.js';
+import '../../styles/Base.css';
+// Rich text's rules refine the prose typography, so Prose.css comes first.
+import '../../styles/Prose.css';
+import '../../styles/RichText.css';
 
 interface SuggestionItem {
   id: string;

@@ -68,6 +68,8 @@ test('prepare compiled-public-API hydration acceptance fixture', async () => {
     },
     jsx: 'automatic',
     bundle: true,
+    // The page loads styles.css itself.
+    loader: { '.css': 'empty' },
     format: 'iife',
     platform: 'browser',
     define: { 'process.env.NODE_ENV': '"production"' },

@@ -4,6 +4,8 @@ import { useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent } from
 import { matchTyped } from '../../internal/calendarDays.js';
 import { prefersReducedMotion } from '../../internal/reducedMotion.js';
 import { isRightToLeft } from '../../internal/direction.js';
+import '../../styles/Base.css';
+import '../../styles/TimeList.css';
 
 // One column of a TimeList: a wheel of hours, minutes or day periods.
 

@@ -3,6 +3,8 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { common } from './messages/common.js';
+import '../styles/Base.css';
+import '../styles/Skeleton.css';
 
 const SkeletonContext = createContext(false);
 

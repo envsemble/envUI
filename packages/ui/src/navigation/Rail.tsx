@@ -13,6 +13,8 @@ import {
   type DestinationClasses,
 } from './internal/Destinations.js';
 import { backgroundAttribute, type NavigationBackground } from './internal/background.js';
+import '../styles/Base.css';
+import '../styles/Rail.css';
 
 /** The part classes of the rail's destinations. */
 const railClasses: DestinationClasses = {

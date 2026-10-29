@@ -25,6 +25,8 @@ import { documentTabs } from '../foundations/messages/documentTabs.js';
 import { ContextMenu } from './ContextMenu.js';
 import * as Menu from './Menu.js';
 import { isRightToLeft } from '../internal/direction.js';
+import '../styles/Base.css';
+import '../styles/DocumentTabs.css';
 
 export interface DocumentTab {
   /** Stable identifier; the tab carries it as data-tab-id. */

@@ -20,6 +20,8 @@ import { useCopy } from '../internal/useCopy.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { copy as copyMessages } from '../foundations/messages/copy.js';
 import type { ControlSize } from '../foundations/Theme.js';
+import '../styles/Base.css';
+import '../styles/CopyButton.css';
 
 interface CopyButtonBaseProps
   extends Omit<ComponentPropsWithRef<'button'>, 'value' | 'onCopy' | 'children' | 'type'> {

@@ -5,6 +5,8 @@ import { ActionElement, type ActionElementProps } from '../../internal/ActionEle
 import { SpinnerArc } from '../../feedback/internal/SpinnerArc.js';
 import { textRuns } from '../../internal/textRuns.js';
 import type { ButtonAppearanceProps, ButtonVariant } from '../Button.js';
+import '../../styles/Base.css';
+import '../../styles/Button.css';
 
 export type ButtonBaseProps = ButtonAppearanceProps &
   ActionElementProps & {

@@ -4,6 +4,8 @@ import { Text } from '../foundations/Text.js';
 import { classNames } from '../internal/classNames.js';
 import { ControlDefaults } from '../internal/ControlDefaults.js';
 import { StickyHeaderSize } from './internal/StickyHeaderSize.js';
+import '../styles/Base.css';
+import '../styles/PageHeader.css';
 
 export interface PageHeaderProps extends Omit<ComponentPropsWithRef<'div'>, 'title'> {
   /** The page's title. It wraps, balanced across its lines, and is never cut short. */

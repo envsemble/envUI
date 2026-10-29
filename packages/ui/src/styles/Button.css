@@ -1,554 +1,556 @@
-/* Canonical control geometry shared by native buttons and button links. A button takes the control
-   height of its size, or of its container where it sets none. */
+@layer env.components {
+  /* Canonical control geometry shared by native buttons and button links. A button takes the control
+     height of its size, or of its container where it sets none. */
 
-.env-button {
-  margin: 0;
-  box-sizing: border-box;
-  transition:
-    background-color var(--env-motion-duration-fast) var(--env-motion-ease),
-    color var(--env-motion-duration-fast) var(--env-motion-ease),
-    border-color var(--env-motion-duration-fast) var(--env-motion-ease);
-  /* Badges inside take the button's text color as an outlined pill (Badge.css's hooks; the
-     count and diff stat hooks are further down). */
-  --env-badge-fg: currentColor;
-  --env-badge-bg: transparent;
-  /* contrast: badge-outline */
-  --env-badge-border: 0.0625rem solid color-mix(in srgb, currentColor 55%, transparent);
-  /* The height the button draws at: the control height, or more under a coarse pointer. */
-  --env-button-height: var(--env-control-height);
-  /* Its icons take the control icon size. */
-  --env-icon-size: var(--env-control-icon-size);
-  inline-size: fit-content;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--env-control-gap);
-  min-height: var(--env-button-height);
-  /* The block padding gives way where a line of the label and the padding would outgrow the
-     control height, as in a small control of the compact scale. */
-  padding: min(
-      var(--env-space-1),
-      calc((var(--env-button-height) - 2 * var(--env-control-border-width) - 1lh) / 2)
-    )
-    var(--env-space-3);
-  border: var(--env-control-border-width) solid transparent;
-  /* The capped full corner: rounded ends at one line, and the same corners, a rounded rectangle,
-     when a label wraps onto more lines. */
-  border-radius: var(--env-radius-full);
-  font: var(--env-body-font-weight) var(--env-font-size-label) / 1.4 var(--env-font-family);
-  white-space: normal;
-  overflow-wrap: anywhere;
-  text-align: center;
-  text-decoration: none;
-  max-inline-size: 100%;
-  min-inline-size: 0;
-  /* The fill the custom fill starts from: the container the application set, or, where it set
-     only the content, the variant's own fill, which the content gate gives while the content is
-     set. Each variant sets its own --env-button-container-default. */
-  --env-button-layer: initial;
-  --env-button-container-default: transparent;
-  --env-button-content-gate: color-mix(
-    in srgb,
-    var(--env-button-content) 0%,
-    var(--env-button-container-default)
-  );
-  --env-button-custom-base: var(--env-button-container, var(--env-button-content-gate));
-  --env-button-custom-layered: color-mix(
-    in srgb,
-    var(--env-button-custom-base),
-    currentColor var(--env-button-layer)
-  );
-  --env-button-custom-fill: var(--env-button-custom-layered, var(--env-button-custom-base));
-}
-@media (prefers-reduced-motion: reduce) {
   .env-button {
-    transition: none;
-  }
-}
-
-.env-button[data-size='sm'] {
-  --env-control-height: var(--env-control-height-sm);
-}
-.env-button[data-size='md'] {
-  --env-control-height: var(--env-control-height-md);
-}
-.env-button[data-size='lg'] {
-  --env-control-height: var(--env-control-height-lg);
-}
-
-/* Color properties: a button's colors, which an application sets on one button through style or
-   its own CSS, after Material's component tokens. They are registered so they don't inherit: set
-   on a toolbar, they color nothing inside it. Every variant reads them; outline applies where the
-   variant draws an edge, and selected and selected-content to a pressed toggle (Toolbar.Button).
-
-   With none set, a button paints its designed colors in every state, from the theme's tokens. Once
-   the application sets its container or content, hover, focus and press are state layers: the
-   content color, currentColor, at the state's opacity over the container. The guard: unset, a
-   registered property of the universal syntax is guaranteed-invalid, and so is a custom property
-   that refers to it without a fallback. --env-button-custom-fill is valid only while the container
-   or the content is set, and each designed fill below is its fallback. */
-@property --env-button-container {
-  syntax: '*';
-  inherits: false;
-}
-@property --env-button-content {
-  syntax: '*';
-  inherits: false;
-}
-@property --env-button-outline {
-  syntax: '*';
-  inherits: false;
-}
-@property --env-button-selected {
-  syntax: '*';
-  inherits: false;
-}
-@property --env-button-selected-content {
-  syntax: '*';
-  inherits: false;
-}
-
-/* The layer's opacity, unset at rest, when the custom fill is the plain container. */
-.env-button:hover:not(:disabled):not([aria-disabled='true']) {
-  --env-button-layer: calc(var(--env-state-hover-opacity) * 100%);
-}
-.env-button:focus-visible:not(:disabled):not([aria-disabled='true']) {
-  --env-button-layer: calc(var(--env-state-focus-opacity) * 100%);
-}
-.env-button:active:not(:disabled):not([aria-disabled='true']) {
-  --env-button-layer: calc(var(--env-state-pressed-opacity) * 100%);
-}
-
-/* Variants and tones. A modifier attribute counts as the one class it replaced: the root class
-   carries it in :where(), so the rules keep the specificity application styles meet. Tones apply
-   to the designed pairs: primary takes neutral, accent or danger; outline, ghost and text take
-   neutral or danger; secondary is neutral. */
-.env-button:where([data-variant='primary']) {
-  --env-button-container-default: var(--env-color-bg-brand-emphasis);
-  background: var(--env-button-custom-fill, var(--env-color-bg-brand-emphasis));
-  color: var(--env-button-content, var(--env-color-fg-on-emphasis));
-  border: 0;
-}
-
-.env-button:where([data-variant='primary']):hover:not(:disabled):not([aria-disabled='true']) {
-  background: var(--env-button-custom-fill, var(--env-color-bg-brand-emphasis-hover));
-}
-
-.env-button:where([data-variant='primary']):active:not(:disabled):not([aria-disabled='true']) {
-  background: var(--env-button-custom-fill, var(--env-color-bg-brand-emphasis-pressed));
-}
-
-/* The secondary fill is a translucent layer, so it stays visible on rows, panes and dialogs. */
-.env-button:where([data-variant='secondary']) {
-  --env-button-container-default: var(--env-color-bg-neutral-muted);
-  background: var(--env-button-custom-fill, var(--env-color-bg-neutral-muted));
-  color: var(--env-button-content, var(--env-color-fg-control));
-  border: 0;
-}
-
-.env-button:where([data-variant='secondary']):hover:not(:disabled):not([aria-disabled='true']) {
-  background: var(--env-button-custom-fill, var(--env-color-bg-neutral-muted-hover));
-}
-
-.env-button:where([data-variant='secondary']):active:not(:disabled):not([aria-disabled='true']) {
-  background: var(--env-button-custom-fill, var(--env-color-bg-neutral-muted-pressed));
-}
-
-/* Outline: just an edge, with no fill at rest, so it reads the same on the page, a pane, a card or
-   a popup; hover and press lay a state layer over whatever is beneath, as a ghost button does. */
-.env-button:where([data-variant='outline']) {
-  background: var(--env-button-custom-fill, transparent);
-  color: var(--env-button-content, var(--env-color-fg-accent));
-  border-color: var(--env-button-outline, var(--env-color-border-default));
-}
-
-.env-button:where([data-variant='outline']):hover:not(:disabled):not([aria-disabled='true']) {
-  background: var(--env-button-custom-fill, var(--env-color-bg-neutral-subtle-hover));
-  border-color: var(--env-button-outline, var(--env-color-border-default-hover));
-}
-
-.env-button:where([data-variant='outline']):active:not(:disabled):not([aria-disabled='true']) {
-  background: var(--env-button-custom-fill, var(--env-color-bg-neutral-subtle-pressed));
-  border-color: var(--env-button-outline, var(--env-color-border-default-pressed));
-}
-
-/* Text: a label in the link color. Its hit area and focus ring reach 0.25 rem past the label on
-   each side, so the ring never touches the letters, and a negative margin takes that back, so the
-   label lines up with the text around it as a bare label would. */
-.env-button:where([data-variant='text']) {
-  padding-inline: var(--env-space-1);
-  border: 0;
-  background: var(--env-button-custom-fill, transparent);
-  color: var(--env-button-content, var(--env-color-fg-link));
-  cursor: pointer;
-}
-
-.env-button:where([data-variant='text']):not(.env-icon-button, [data-full-width]) {
-  margin-inline: calc(-1 * var(--env-space-1));
-  /* Its margins give its padding back, so it may be that much wider than its container: alone in
-     a container as wide as its content, such as a list row's name, it keeps its words in a line. */
-  max-inline-size: calc(100% + 2 * var(--env-space-1));
-}
-
-/* A Link in running text has no padding, so it takes no margin back either: the spaces and the
-   punctuation beside it stay clear. */
-.env-button.env-link {
-  margin-inline: 0;
-}
-
-.env-button:where([data-variant='text'])[data-underline] {
-  text-decoration: underline;
-  text-underline-offset: 0.15em;
-}
-
-.env-button:where([data-variant='text']):hover:not(:disabled):not([aria-disabled='true']) {
-  color: var(--env-button-content, var(--env-color-fg-link-hover));
-}
-
-.env-button:where([data-variant='text']):active:not(:disabled):not([aria-disabled='true']) {
-  color: var(--env-button-content, var(--env-color-fg-link-pressed));
-}
-
-/* Without a label, a color change alone is too faint; icon-only text buttons such as a field's clear
-   action also show a translucent state layer on hover and press. A container whose chrome is quiet,
-   such as a field's end or a title bar, sets --env-button-text-icon-color and
-   --env-button-text-icon-color-active on its own element: the icon takes that color at rest and the
-   active one on hover and press, in place of the link blue. The hook is documented on the button
-   page; a ghost button looks the same without it, and replaces it where a container is reworked. */
-.env-button:where([data-variant='text']).env-icon-button {
-  color: var(--env-button-content, var(--env-button-text-icon-color, var(--env-color-fg-link)));
-  transition-property: background-color, color;
-  transition-duration: var(--env-motion-duration-fast);
-  transition-timing-function: var(--env-motion-ease);
-}
-
-/* A container that lines a text icon button's icon up with its own edge, rather than the button's
-   round hit area, such as a message's actions, sets --env-button-text-icon-edge-start and
-   --env-button-text-icon-edge-end on its own element: the margin of a first child at the start and
-   of a last child at the end, usually negative. */
-.env-button:where([data-variant='text']).env-icon-button:first-child {
-  margin-inline-start: var(--env-button-text-icon-edge-start, 0);
-}
-.env-button:where([data-variant='text']).env-icon-button:last-child {
-  margin-inline-end: var(--env-button-text-icon-edge-end, 0);
-}
-
-.env-button:where([data-variant='text']).env-icon-button:hover:not(:disabled):not(
-    [aria-disabled='true']
-  ) {
-  background: var(--env-button-custom-fill, var(--env-color-bg-neutral-subtle-hover));
-  color: var(
-    --env-button-content,
-    var(--env-button-text-icon-color-active, var(--env-color-fg-link-hover))
-  );
-}
-
-.env-button:where([data-variant='text']).env-icon-button:active:not(:disabled):not(
-    [aria-disabled='true']
-  ) {
-  background: var(--env-button-custom-fill, var(--env-color-bg-neutral-subtle-pressed));
-  color: var(
-    --env-button-content,
-    var(--env-button-text-icon-color-active, var(--env-color-fg-link-pressed))
-  );
-}
-
-/* Ghost: an action in the application's chrome, such as a sidebar toggle or the actions of a toolbar
-   or of a section inside a surface. The icon, or the label, takes the quiet icon color and darkens
-   to the text color over a state layer on hover and press, as a docked panel's window controls do;
-   there is no fill or border. */
-.env-button:where([data-variant='ghost']) {
-  border: 0;
-  background: var(--env-button-custom-fill, transparent);
-  color: var(--env-button-content, var(--env-color-fg-muted));
-  cursor: pointer;
-  transition-property: background-color, color;
-  transition-duration: var(--env-motion-duration-fast);
-  transition-timing-function: var(--env-motion-ease);
-}
-
-.env-button:where([data-variant='ghost']):hover:not(:disabled):not([aria-disabled='true']) {
-  background: var(--env-button-custom-fill, var(--env-color-bg-neutral-subtle-hover));
-  color: var(--env-button-content, var(--env-color-fg-default));
-}
-
-.env-button:where([data-variant='ghost']):active:not(:disabled):not([aria-disabled='true']) {
-  background: var(--env-button-custom-fill, var(--env-color-bg-neutral-subtle-pressed));
-  color: var(--env-button-content, var(--env-color-fg-default));
-}
-
-.env-link {
-  display: inline;
-  min-height: 0;
-  padding: 0;
-  border-radius: var(--env-radius-sm);
-  font: inherit;
-  text-align: inherit;
-}
-
-/* Danger: a primary button takes the strong danger fill; outline, ghost and text buttons take the
-   danger color, which stays on hover and press, over the variant's own fill or state layer. */
-.env-button:where([data-variant='primary'][data-tone='danger']) {
-  --env-button-container-default: var(--env-color-bg-danger-strong);
-  background: var(--env-button-custom-fill, var(--env-color-bg-danger-strong));
-  color: var(--env-button-content, var(--env-color-fg-on-strong));
-  border: 0;
-}
-
-.env-button:where([data-variant='primary'][data-tone='danger']):hover:not(:disabled):not(
-    [aria-disabled='true']
-  ) {
-  background: var(--env-button-custom-fill, var(--env-color-bg-danger-strong-hover));
-}
-
-.env-button:where([data-variant='primary'][data-tone='danger']):active:not(:disabled):not(
-    [aria-disabled='true']
-  ) {
-  background: var(--env-button-custom-fill, var(--env-color-bg-danger-strong-pressed));
-}
-
-.env-button:where([data-variant='outline'][data-tone='danger']) {
-  color: var(--env-button-content, var(--env-color-fg-danger));
-  border-color: var(--env-button-outline, var(--env-color-border-danger-emphasis));
-}
-
-.env-button:where([data-variant='outline'][data-tone='danger']):hover:not(:disabled):not(
-    [aria-disabled='true']
-  ) {
-  border-color: var(--env-button-outline, var(--env-color-border-danger-emphasis-hover));
-}
-
-.env-button:where([data-variant='outline'][data-tone='danger']):active:not(:disabled):not(
-    [aria-disabled='true']
-  ) {
-  border-color: var(--env-button-outline, var(--env-color-border-danger-emphasis-pressed));
-}
-
-.env-button:where([data-tone='danger']):where([data-variant='ghost'], [data-variant='text']),
-.env-button:where([data-tone='danger'][data-variant='text']).env-icon-button,
-.env-button:where([data-tone='danger']):where([data-variant='ghost'], [data-variant='text']):is(
-    :hover,
-    :active
-  ):not(:disabled):not([aria-disabled='true']),
-.env-button:where([data-tone='danger'][data-variant='text']).env-icon-button:is(
-    :hover,
-    :active
-  ):not(:disabled):not([aria-disabled='true']) {
-  color: var(--env-button-content, var(--env-color-fg-danger));
-}
-
-/* Accent: a primary button for a rare, consequential action, with square corners; like every
-   button it takes the row's control height. */
-.env-button:where([data-variant='primary'][data-tone='accent']) {
-  --env-button-container-default: var(--env-color-bg-important-strong);
-  background: var(--env-button-custom-fill, var(--env-color-bg-important-strong));
-  color: var(--env-button-content, var(--env-color-fg-on-strong));
-  border: 0;
-  border-radius: var(--env-radius-sm);
-}
-
-.env-button:where([data-variant='primary'][data-tone='accent']):hover:not(:disabled):not(
-    [aria-disabled='true']
-  ) {
-  background: var(--env-button-custom-fill, var(--env-color-bg-important-strong-hover));
-}
-
-.env-button:where([data-variant='primary'][data-tone='accent']):active:not(:disabled):not(
-    [aria-disabled='true']
-  ) {
-  background: var(--env-button-custom-fill, var(--env-color-bg-important-strong-pressed));
-}
-
-.env-button:focus-visible {
-  outline: 0.125rem solid var(--env-color-border-focus);
-  outline-offset: 0.125rem;
-}
-/* A container that draws the ring inset (ButtonGroup, an active tab) sets --env-button-focus-inner-ring;
-   on a solid fill the inset ring would match the fill, so an inner ring in the label color shows it. */
-.env-button:is([data-variant='primary']):focus-visible {
-  box-shadow: inset 0 0 0 var(--env-button-focus-inner-ring, 0) currentColor;
-}
-
-/* A ghost button shows no shape until hover, so its ring traces the edge its state layer fills,
-   rather than floating past an outline nobody sees. */
-.env-button:where([data-variant='ghost']):focus-visible {
-  outline-offset: 0;
-}
-
-.env-button:where([data-variant='outline']):focus-visible {
-  outline-color: var(--env-color-border-focus);
-  outline-offset: 0.0625rem;
-}
-
-.env-button:is(:disabled, [aria-disabled='true']) {
-  opacity: var(--env-state-disabled-opacity);
-  cursor: default;
-}
-
-/* fullWidth: a labelled button fills its container, such as a narrow form's stacked actions. */
-.env-button:where([data-full-width]):not(.env-icon-button) {
-  inline-size: 100%;
-}
-
-/* An icon-only button keeps its square size, also where its container is squeezed narrower. */
-.env-button.env-icon-button {
-  width: var(--env-button-height);
-  height: var(--env-button-height);
-  min-height: var(--env-button-height);
-  max-inline-size: none;
-  flex-shrink: 0;
-  padding: 0;
-}
-
-/* Under a coarse pointer, a button is at least the touch height tall and wide, in either scale.
-   Its own box is its hit area, so it never reaches over a neighbour, whatever the layout around
-   it, and every control of a size grows alike, so the controls of a row still match. A control
-   that sizes its parts itself, such as a tab rail or the actions inside a field, sets
-   --env-button-touch-height to 0rem and gives them a hit area inside its own box. A link-like text button
-   in running text keeps its size, and so does a button that already covers its row. */
-@media (pointer: coarse) {
-  .env-button:not(.env-link, [data-row-target]) {
-    --env-button-height: max(
-      var(--env-control-height),
-      var(--env-button-touch-height, var(--env-control-height-touch))
+    margin: 0;
+    box-sizing: border-box;
+    transition:
+      background-color var(--env-motion-duration-fast) var(--env-motion-ease),
+      color var(--env-motion-duration-fast) var(--env-motion-ease),
+      border-color var(--env-motion-duration-fast) var(--env-motion-ease);
+    /* Badges inside take the button's text color as an outlined pill (Badge.css's hooks; the
+       count and diff stat hooks are further down). */
+    --env-badge-fg: currentColor;
+    --env-badge-bg: transparent;
+    /* contrast: badge-outline */
+    --env-badge-border: 0.0625rem solid color-mix(in srgb, currentColor 55%, transparent);
+    /* The height the button draws at: the control height, or more under a coarse pointer. */
+    --env-button-height: var(--env-control-height);
+    /* Its icons take the control icon size. */
+    --env-icon-size: var(--env-control-icon-size);
+    inline-size: fit-content;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--env-control-gap);
+    min-height: var(--env-button-height);
+    /* The block padding gives way where a line of the label and the padding would outgrow the
+       control height, as in a small control of the compact scale. */
+    padding: min(
+        var(--env-space-1),
+        calc((var(--env-button-height) - 2 * var(--env-control-border-width) - 1lh) / 2)
+      )
+      var(--env-space-3);
+    border: var(--env-control-border-width) solid transparent;
+    /* The capped full corner: rounded ends at one line, and the same corners, a rounded rectangle,
+       when a label wraps onto more lines. */
+    border-radius: var(--env-radius-full);
+    font: var(--env-body-font-weight) var(--env-font-size-label) / 1.4 var(--env-font-family);
+    white-space: normal;
+    overflow-wrap: anywhere;
+    text-align: center;
+    text-decoration: none;
+    max-inline-size: 100%;
+    min-inline-size: 0;
+    /* The fill the custom fill starts from: the container the application set, or, where it set
+       only the content, the variant's own fill, which the content gate gives while the content is
+       set. Each variant sets its own --env-button-container-default. */
+    --env-button-layer: initial;
+    --env-button-container-default: transparent;
+    --env-button-content-gate: color-mix(
+      in srgb,
+      var(--env-button-content) 0%,
+      var(--env-button-container-default)
     );
-    min-inline-size: var(--env-button-height);
+    --env-button-custom-base: var(--env-button-container, var(--env-button-content-gate));
+    --env-button-custom-layered: color-mix(
+      in srgb,
+      var(--env-button-custom-base),
+      currentColor var(--env-button-layer)
+    );
+    --env-button-custom-fill: var(--env-button-custom-layered, var(--env-button-custom-base));
   }
-}
-
-/* An icon button that its container draws smaller than the touch size, such as a component's close
-   or remove button, reaches it with its hit area under a coarse pointer where the container sets
-   the hook --env-icon-button-hit-area to the touch size, also where it draws the buttons smaller,
-   as a field's end does; never wider than the button's box allows across. */
-@media (pointer: coarse) {
-  :where(.env-icon-button) {
-    position: relative;
+  @media (prefers-reduced-motion: reduce) {
+    .env-button {
+      transition: none;
+    }
   }
-  .env-icon-button::before {
-    content: '';
-    position: absolute;
-    inset: min(0%, calc((100% - var(--env-icon-button-hit-area, 0%)) / 2));
+
+  .env-button[data-size='sm'] {
+    --env-control-height: var(--env-control-height-sm);
   }
-}
+  .env-button[data-size='md'] {
+    --env-control-height: var(--env-control-height-md);
+  }
+  .env-button[data-size='lg'] {
+    --env-control-height: var(--env-control-height-lg);
+  }
 
-/* Pending: the transparent label keeps the button's size and name while a spinner shows the work. */
-.env-button[data-pending] {
-  /* The spinner takes the label's color through its hook. */
-  --env-spinner-color: currentColor;
-  position: relative;
-  cursor: progress;
-}
-.env-button[data-pending]:is(:disabled, [aria-disabled='true']) {
-  opacity: 1;
-}
-.env-button-content {
-  display: contents;
-}
-/* The end slot, such as a shortcut's keys, at the far end of a button wider than its content, while
-   the icon and label stay at the start. Its colors come from the button's own content color,
-   currentColor, so they follow every variant, tone, state and color property: text in it takes the
-   label's color, which holds 4.5:1 on every fill, and keys are drawn as everywhere else, in the
-   label's color: a faint fill of it at 10% with an edge 5% stronger, as Kbd.css draws keys from the
-   text color, and the + between them at 80%, which holds 3:1 (Kbd.css's hooks). */
-.env-button-end {
-  display: inline-flex;
-  flex: 0 0 auto;
-  align-items: center;
-  margin-inline-start: auto;
-  white-space: nowrap;
-  --env-kbd-fg: currentColor;
-  --env-kbd-bg: color-mix(in srgb, currentColor 10%, transparent);
-  --env-kbd-border: color-mix(in srgb, currentColor 5%, transparent);
-  /* contrast: button-end-separator */
-  --env-kbd-separator-fg: color-mix(in srgb, currentColor 80%, transparent);
-}
-/* Transparent rather than hidden, so the label stays the button's accessible name. */
-.env-button[data-pending] > .env-button-content {
-  color: transparent;
-}
-.env-button[data-pending] > .env-button-content > * {
-  opacity: 0;
-}
-/* ConfirmButton announces its armed state from a visually hidden status beside the button. */
-.env-confirm-button-status {
-  position: absolute;
-  inline-size: 0.0625rem;
-  block-size: 0.0625rem;
-  margin: -0.0625rem;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
-.env-button-spinner {
-  position: absolute;
-  inset: 0;
-  margin: auto;
-}
+  /* Color properties: a button's colors, which an application sets on one button through style or
+     its own CSS, after Material's component tokens. They are registered so they don't inherit: set
+     on a toolbar, they color nothing inside it. Every variant reads them; outline applies where the
+     variant draws an edge, and selected and selected-content to a pressed toggle (Toolbar.Button).
 
-/* Motion: a button settles slightly while it is held. Only without a reduced-motion preference. */
-@media (prefers-reduced-motion: no-preference) {
-  .env-button {
-    transition-property: background-color, color, border-color, transform;
+     With none set, a button paints its designed colors in every state, from the theme's tokens. Once
+     the application sets its container or content, hover, focus and press are state layers: the
+     content color, currentColor, at the state's opacity over the container. The guard: unset, a
+     registered property of the universal syntax is guaranteed-invalid, and so is a custom property
+     that refers to it without a fallback. --env-button-custom-fill is valid only while the container
+     or the content is set, and each designed fill below is its fallback. */
+  @property --env-button-container {
+    syntax: '*';
+    inherits: false;
+  }
+  @property --env-button-content {
+    syntax: '*';
+    inherits: false;
+  }
+  @property --env-button-outline {
+    syntax: '*';
+    inherits: false;
+  }
+  @property --env-button-selected {
+    syntax: '*';
+    inherits: false;
+  }
+  @property --env-button-selected-content {
+    syntax: '*';
+    inherits: false;
+  }
+
+  /* The layer's opacity, unset at rest, when the custom fill is the plain container. */
+  .env-button:hover:not(:disabled):not([aria-disabled='true']) {
+    --env-button-layer: calc(var(--env-state-hover-opacity) * 100%);
+  }
+  .env-button:focus-visible:not(:disabled):not([aria-disabled='true']) {
+    --env-button-layer: calc(var(--env-state-focus-opacity) * 100%);
+  }
+  .env-button:active:not(:disabled):not([aria-disabled='true']) {
+    --env-button-layer: calc(var(--env-state-pressed-opacity) * 100%);
+  }
+
+  /* Variants and tones. A modifier attribute counts as the one class it replaced: the root class
+     carries it in :where(), so the rules keep the specificity application styles meet. Tones apply
+     to the designed pairs: primary takes neutral, accent or danger; outline, ghost and text take
+     neutral or danger; secondary is neutral. */
+  .env-button:where([data-variant='primary']) {
+    --env-button-container-default: var(--env-color-bg-brand-emphasis);
+    background: var(--env-button-custom-fill, var(--env-color-bg-brand-emphasis));
+    color: var(--env-button-content, var(--env-color-fg-on-emphasis));
+    border: 0;
+  }
+
+  .env-button:where([data-variant='primary']):hover:not(:disabled):not([aria-disabled='true']) {
+    background: var(--env-button-custom-fill, var(--env-color-bg-brand-emphasis-hover));
+  }
+
+  .env-button:where([data-variant='primary']):active:not(:disabled):not([aria-disabled='true']) {
+    background: var(--env-button-custom-fill, var(--env-color-bg-brand-emphasis-pressed));
+  }
+
+  /* The secondary fill is a translucent layer, so it stays visible on rows, panes and dialogs. */
+  .env-button:where([data-variant='secondary']) {
+    --env-button-container-default: var(--env-color-bg-neutral-muted);
+    background: var(--env-button-custom-fill, var(--env-color-bg-neutral-muted));
+    color: var(--env-button-content, var(--env-color-fg-control));
+    border: 0;
+  }
+
+  .env-button:where([data-variant='secondary']):hover:not(:disabled):not([aria-disabled='true']) {
+    background: var(--env-button-custom-fill, var(--env-color-bg-neutral-muted-hover));
+  }
+
+  .env-button:where([data-variant='secondary']):active:not(:disabled):not([aria-disabled='true']) {
+    background: var(--env-button-custom-fill, var(--env-color-bg-neutral-muted-pressed));
+  }
+
+  /* Outline: just an edge, with no fill at rest, so it reads the same on the page, a pane, a card or
+     a popup; hover and press lay a state layer over whatever is beneath, as a ghost button does. */
+  .env-button:where([data-variant='outline']) {
+    background: var(--env-button-custom-fill, transparent);
+    color: var(--env-button-content, var(--env-color-fg-accent));
+    border-color: var(--env-button-outline, var(--env-color-border-default));
+  }
+
+  .env-button:where([data-variant='outline']):hover:not(:disabled):not([aria-disabled='true']) {
+    background: var(--env-button-custom-fill, var(--env-color-bg-neutral-subtle-hover));
+    border-color: var(--env-button-outline, var(--env-color-border-default-hover));
+  }
+
+  .env-button:where([data-variant='outline']):active:not(:disabled):not([aria-disabled='true']) {
+    background: var(--env-button-custom-fill, var(--env-color-bg-neutral-subtle-pressed));
+    border-color: var(--env-button-outline, var(--env-color-border-default-pressed));
+  }
+
+  /* Text: a label in the link color. Its hit area and focus ring reach 0.25 rem past the label on
+     each side, so the ring never touches the letters, and a negative margin takes that back, so the
+     label lines up with the text around it as a bare label would. */
+  .env-button:where([data-variant='text']) {
+    padding-inline: var(--env-space-1);
+    border: 0;
+    background: var(--env-button-custom-fill, transparent);
+    color: var(--env-button-content, var(--env-color-fg-link));
+    cursor: pointer;
+  }
+
+  .env-button:where([data-variant='text']):not(.env-icon-button, [data-full-width]) {
+    margin-inline: calc(-1 * var(--env-space-1));
+    /* Its margins give its padding back, so it may be that much wider than its container: alone in
+       a container as wide as its content, such as a list row's name, it keeps its words in a line. */
+    max-inline-size: calc(100% + 2 * var(--env-space-1));
+  }
+
+  /* A Link in running text has no padding, so it takes no margin back either: the spaces and the
+     punctuation beside it stay clear. */
+  .env-button.env-link {
+    margin-inline: 0;
+  }
+
+  .env-button:where([data-variant='text'])[data-underline] {
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+
+  .env-button:where([data-variant='text']):hover:not(:disabled):not([aria-disabled='true']) {
+    color: var(--env-button-content, var(--env-color-fg-link-hover));
+  }
+
+  .env-button:where([data-variant='text']):active:not(:disabled):not([aria-disabled='true']) {
+    color: var(--env-button-content, var(--env-color-fg-link-pressed));
+  }
+
+  /* Without a label, a color change alone is too faint; icon-only text buttons such as a field's clear
+     action also show a translucent state layer on hover and press. A container whose chrome is quiet,
+     such as a field's end or a title bar, sets --env-button-text-icon-color and
+     --env-button-text-icon-color-active on its own element: the icon takes that color at rest and the
+     active one on hover and press, in place of the link blue. The hook is documented on the button
+     page; a ghost button looks the same without it, and replaces it where a container is reworked. */
+  .env-button:where([data-variant='text']).env-icon-button {
+    color: var(--env-button-content, var(--env-button-text-icon-color, var(--env-color-fg-link)));
+    transition-property: background-color, color;
     transition-duration: var(--env-motion-duration-fast);
     transition-timing-function: var(--env-motion-ease);
   }
-  .env-button:active:not(:disabled):not([aria-disabled='true']) {
-    transform: scale(0.97);
-  }
-  /* A row target, stretched over its row or card by a pseudo-element, leaves the press to the row:
-     shrinking, it would hold the pseudo-element in place of the row. */
-  .env-button[data-row-target]:active:not(:disabled):not([aria-disabled='true']) {
-    transform: none;
-  }
-}
 
-/* Badges in a button, such as a tab with a count, through Badge.css's hooks. A badge takes the
-   button's text color as an outlined pill. A badge with a count or a diff stat keeps its own filled pill,
-   except on the solid primary fills, neutral and accent, where that pill can't keep its contrast:
-   there it is an outlined pill in the text color too. The outline is the label color at 55%, which
-   only the button knows; the contrast gate measures it on each fill as a derived color
-   (tests/contrast/Pairs.ts). The hooks every button sets for its badges are in its first rule. */
-.env-button:is([data-variant='primary']:where(:not([data-tone='danger']))) {
-  --env-badge-count-fg: currentColor;
-  --env-badge-count-bg: transparent;
-  --env-badge-count-border: 0.0625rem solid color-mix(in srgb, currentColor 55%, transparent);
-  --env-diff-stat-fg: currentColor;
-  --env-diff-stat-bg: transparent;
-  --env-diff-stat-border: 0.0625rem solid color-mix(in srgb, currentColor 55%, transparent);
-}
-/* On a button's own fill, which already adds up with a tab rail's, a diff stat's pill leans halfway
-   back toward the canvas instead of adding another fill. It looks about as it does on the canvas,
-   and its tones keep their 4.5:1 contrast in both themes. */
-.env-button:not([data-variant='primary']:where(:not([data-tone='danger']))) {
-  --env-diff-stat-bg: var(--env-color-bg-inset);
-}
+  /* A container that lines a text icon button's icon up with its own edge, rather than the button's
+     round hit area, such as a message's actions, sets --env-button-text-icon-edge-start and
+     --env-button-text-icon-edge-end on its own element: the margin of a first child at the start and
+     of a last child at the end, usually negative. */
+  .env-button:where([data-variant='text']).env-icon-button:first-child {
+    margin-inline-start: var(--env-button-text-icon-edge-start, 0);
+  }
+  .env-button:where([data-variant='text']).env-icon-button:last-child {
+    margin-inline-end: var(--env-button-text-icon-edge-end, 0);
+  }
 
-/* Forced colors: the system paints no fills or shadows, so every button takes the system's button
-   edge, and an unavailable one the disabled color. Links keep the look of links: Link, with or
-   without its underline, a text button that is a link, and an underlined text button. */
-@media (forced-colors: active) {
-  .env-button:not([data-underline], .env-link, [data-variant='text'][href]) {
-    border: var(--env-control-border-width) solid ButtonText;
-  }
-  .env-button:is(:disabled, [aria-disabled='true']) {
-    color: GrayText;
-  }
-  .env-button:not([data-underline], .env-link, [data-variant='text'][href]):is(
-      :disabled,
+  .env-button:where([data-variant='text']).env-icon-button:hover:not(:disabled):not(
       [aria-disabled='true']
     ) {
-    border-color: GrayText;
+    background: var(--env-button-custom-fill, var(--env-color-bg-neutral-subtle-hover));
+    color: var(
+      --env-button-content,
+      var(--env-button-text-icon-color-active, var(--env-color-fg-link-hover))
+    );
   }
-}
 
-/* In a skeleton, a button, a link drawn as one included, is a filled shape of its size. */
-[data-env-skeleton] .env-button {
-  forced-color-adjust: none;
-  border-color: transparent;
-  box-shadow: none;
-  --env-skeleton-shape: 1;
-  background: var(--env-skeleton-paint);
-}
-[data-env-skeleton] .env-button * {
-  visibility: hidden;
+  .env-button:where([data-variant='text']).env-icon-button:active:not(:disabled):not(
+      [aria-disabled='true']
+    ) {
+    background: var(--env-button-custom-fill, var(--env-color-bg-neutral-subtle-pressed));
+    color: var(
+      --env-button-content,
+      var(--env-button-text-icon-color-active, var(--env-color-fg-link-pressed))
+    );
+  }
+
+  /* Ghost: an action in the application's chrome, such as a sidebar toggle or the actions of a toolbar
+     or of a section inside a surface. The icon, or the label, takes the quiet icon color and darkens
+     to the text color over a state layer on hover and press, as a docked panel's window controls do;
+     there is no fill or border. */
+  .env-button:where([data-variant='ghost']) {
+    border: 0;
+    background: var(--env-button-custom-fill, transparent);
+    color: var(--env-button-content, var(--env-color-fg-muted));
+    cursor: pointer;
+    transition-property: background-color, color;
+    transition-duration: var(--env-motion-duration-fast);
+    transition-timing-function: var(--env-motion-ease);
+  }
+
+  .env-button:where([data-variant='ghost']):hover:not(:disabled):not([aria-disabled='true']) {
+    background: var(--env-button-custom-fill, var(--env-color-bg-neutral-subtle-hover));
+    color: var(--env-button-content, var(--env-color-fg-default));
+  }
+
+  .env-button:where([data-variant='ghost']):active:not(:disabled):not([aria-disabled='true']) {
+    background: var(--env-button-custom-fill, var(--env-color-bg-neutral-subtle-pressed));
+    color: var(--env-button-content, var(--env-color-fg-default));
+  }
+
+  .env-link {
+    display: inline;
+    min-height: 0;
+    padding: 0;
+    border-radius: var(--env-radius-sm);
+    font: inherit;
+    text-align: inherit;
+  }
+
+  /* Danger: a primary button takes the strong danger fill; outline, ghost and text buttons take the
+     danger color, which stays on hover and press, over the variant's own fill or state layer. */
+  .env-button:where([data-variant='primary'][data-tone='danger']) {
+    --env-button-container-default: var(--env-color-bg-danger-strong);
+    background: var(--env-button-custom-fill, var(--env-color-bg-danger-strong));
+    color: var(--env-button-content, var(--env-color-fg-on-strong));
+    border: 0;
+  }
+
+  .env-button:where([data-variant='primary'][data-tone='danger']):hover:not(:disabled):not(
+      [aria-disabled='true']
+    ) {
+    background: var(--env-button-custom-fill, var(--env-color-bg-danger-strong-hover));
+  }
+
+  .env-button:where([data-variant='primary'][data-tone='danger']):active:not(:disabled):not(
+      [aria-disabled='true']
+    ) {
+    background: var(--env-button-custom-fill, var(--env-color-bg-danger-strong-pressed));
+  }
+
+  .env-button:where([data-variant='outline'][data-tone='danger']) {
+    color: var(--env-button-content, var(--env-color-fg-danger));
+    border-color: var(--env-button-outline, var(--env-color-border-danger-emphasis));
+  }
+
+  .env-button:where([data-variant='outline'][data-tone='danger']):hover:not(:disabled):not(
+      [aria-disabled='true']
+    ) {
+    border-color: var(--env-button-outline, var(--env-color-border-danger-emphasis-hover));
+  }
+
+  .env-button:where([data-variant='outline'][data-tone='danger']):active:not(:disabled):not(
+      [aria-disabled='true']
+    ) {
+    border-color: var(--env-button-outline, var(--env-color-border-danger-emphasis-pressed));
+  }
+
+  .env-button:where([data-tone='danger']):where([data-variant='ghost'], [data-variant='text']),
+  .env-button:where([data-tone='danger'][data-variant='text']).env-icon-button,
+  .env-button:where([data-tone='danger']):where([data-variant='ghost'], [data-variant='text']):is(
+      :hover,
+      :active
+    ):not(:disabled):not([aria-disabled='true']),
+  .env-button:where([data-tone='danger'][data-variant='text']).env-icon-button:is(
+      :hover,
+      :active
+    ):not(:disabled):not([aria-disabled='true']) {
+    color: var(--env-button-content, var(--env-color-fg-danger));
+  }
+
+  /* Accent: a primary button for a rare, consequential action, with square corners; like every
+     button it takes the row's control height. */
+  .env-button:where([data-variant='primary'][data-tone='accent']) {
+    --env-button-container-default: var(--env-color-bg-important-strong);
+    background: var(--env-button-custom-fill, var(--env-color-bg-important-strong));
+    color: var(--env-button-content, var(--env-color-fg-on-strong));
+    border: 0;
+    border-radius: var(--env-radius-sm);
+  }
+
+  .env-button:where([data-variant='primary'][data-tone='accent']):hover:not(:disabled):not(
+      [aria-disabled='true']
+    ) {
+    background: var(--env-button-custom-fill, var(--env-color-bg-important-strong-hover));
+  }
+
+  .env-button:where([data-variant='primary'][data-tone='accent']):active:not(:disabled):not(
+      [aria-disabled='true']
+    ) {
+    background: var(--env-button-custom-fill, var(--env-color-bg-important-strong-pressed));
+  }
+
+  .env-button:focus-visible {
+    outline: 0.125rem solid var(--env-color-border-focus);
+    outline-offset: 0.125rem;
+  }
+  /* A container that draws the ring inset (ButtonGroup, an active tab) sets --env-button-focus-inner-ring;
+     on a solid fill the inset ring would match the fill, so an inner ring in the label color shows it. */
+  .env-button:is([data-variant='primary']):focus-visible {
+    box-shadow: inset 0 0 0 var(--env-button-focus-inner-ring, 0) currentColor;
+  }
+
+  /* A ghost button shows no shape until hover, so its ring traces the edge its state layer fills,
+     rather than floating past an outline nobody sees. */
+  .env-button:where([data-variant='ghost']):focus-visible {
+    outline-offset: 0;
+  }
+
+  .env-button:where([data-variant='outline']):focus-visible {
+    outline-color: var(--env-color-border-focus);
+    outline-offset: 0.0625rem;
+  }
+
+  .env-button:is(:disabled, [aria-disabled='true']) {
+    opacity: var(--env-state-disabled-opacity);
+    cursor: default;
+  }
+
+  /* fullWidth: a labelled button fills its container, such as a narrow form's stacked actions. */
+  .env-button:where([data-full-width]):not(.env-icon-button) {
+    inline-size: 100%;
+  }
+
+  /* An icon-only button keeps its square size, also where its container is squeezed narrower. */
+  .env-button.env-icon-button {
+    width: var(--env-button-height);
+    height: var(--env-button-height);
+    min-height: var(--env-button-height);
+    max-inline-size: none;
+    flex-shrink: 0;
+    padding: 0;
+  }
+
+  /* Under a coarse pointer, a button is at least the touch height tall and wide, in either scale.
+     Its own box is its hit area, so it never reaches over a neighbour, whatever the layout around
+     it, and every control of a size grows alike, so the controls of a row still match. A control
+     that sizes its parts itself, such as a tab rail or the actions inside a field, sets
+     --env-button-touch-height to 0rem and gives them a hit area inside its own box. A link-like text button
+     in running text keeps its size, and so does a button that already covers its row. */
+  @media (pointer: coarse) {
+    .env-button:not(.env-link, [data-row-target]) {
+      --env-button-height: max(
+        var(--env-control-height),
+        var(--env-button-touch-height, var(--env-control-height-touch))
+      );
+      min-inline-size: var(--env-button-height);
+    }
+  }
+
+  /* An icon button that its container draws smaller than the touch size, such as a component's close
+     or remove button, reaches it with its hit area under a coarse pointer where the container sets
+     the hook --env-icon-button-hit-area to the touch size, also where it draws the buttons smaller,
+     as a field's end does; never wider than the button's box allows across. */
+  @media (pointer: coarse) {
+    :where(.env-icon-button) {
+      position: relative;
+    }
+    .env-icon-button::before {
+      content: '';
+      position: absolute;
+      inset: min(0%, calc((100% - var(--env-icon-button-hit-area, 0%)) / 2));
+    }
+  }
+
+  /* Pending: the transparent label keeps the button's size and name while a spinner shows the work. */
+  .env-button[data-pending] {
+    /* The spinner takes the label's color through its hook. */
+    --env-spinner-color: currentColor;
+    position: relative;
+    cursor: progress;
+  }
+  .env-button[data-pending]:is(:disabled, [aria-disabled='true']) {
+    opacity: 1;
+  }
+  .env-button-content {
+    display: contents;
+  }
+  /* The end slot, such as a shortcut's keys, at the far end of a button wider than its content, while
+     the icon and label stay at the start. Its colors come from the button's own content color,
+     currentColor, so they follow every variant, tone, state and color property: text in it takes the
+     label's color, which holds 4.5:1 on every fill, and keys are drawn as everywhere else, in the
+     label's color: a faint fill of it at 10% with an edge 5% stronger, as Kbd.css draws keys from the
+     text color, and the + between them at 80%, which holds 3:1 (Kbd.css's hooks). */
+  .env-button-end {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    margin-inline-start: auto;
+    white-space: nowrap;
+    --env-kbd-fg: currentColor;
+    --env-kbd-bg: color-mix(in srgb, currentColor 10%, transparent);
+    --env-kbd-border: color-mix(in srgb, currentColor 5%, transparent);
+    /* contrast: button-end-separator */
+    --env-kbd-separator-fg: color-mix(in srgb, currentColor 80%, transparent);
+  }
+  /* Transparent rather than hidden, so the label stays the button's accessible name. */
+  .env-button[data-pending] > .env-button-content {
+    color: transparent;
+  }
+  .env-button[data-pending] > .env-button-content > * {
+    opacity: 0;
+  }
+  /* ConfirmButton announces its armed state from a visually hidden status beside the button. */
+  .env-confirm-button-status {
+    position: absolute;
+    inline-size: 0.0625rem;
+    block-size: 0.0625rem;
+    margin: -0.0625rem;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .env-button-spinner {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+  }
+
+  /* Motion: a button settles slightly while it is held. Only without a reduced-motion preference. */
+  @media (prefers-reduced-motion: no-preference) {
+    .env-button {
+      transition-property: background-color, color, border-color, transform;
+      transition-duration: var(--env-motion-duration-fast);
+      transition-timing-function: var(--env-motion-ease);
+    }
+    .env-button:active:not(:disabled):not([aria-disabled='true']) {
+      transform: scale(0.97);
+    }
+    /* A row target, stretched over its row or card by a pseudo-element, leaves the press to the row:
+       shrinking, it would hold the pseudo-element in place of the row. */
+    .env-button[data-row-target]:active:not(:disabled):not([aria-disabled='true']) {
+      transform: none;
+    }
+  }
+
+  /* Badges in a button, such as a tab with a count, through Badge.css's hooks. A badge takes the
+     button's text color as an outlined pill. A badge with a count or a diff stat keeps its own filled pill,
+     except on the solid primary fills, neutral and accent, where that pill can't keep its contrast:
+     there it is an outlined pill in the text color too. The outline is the label color at 55%, which
+     only the button knows; the contrast gate measures it on each fill as a derived color
+     (tests/contrast/Pairs.ts). The hooks every button sets for its badges are in its first rule. */
+  .env-button:is([data-variant='primary']:where(:not([data-tone='danger']))) {
+    --env-badge-count-fg: currentColor;
+    --env-badge-count-bg: transparent;
+    --env-badge-count-border: 0.0625rem solid color-mix(in srgb, currentColor 55%, transparent);
+    --env-diff-stat-fg: currentColor;
+    --env-diff-stat-bg: transparent;
+    --env-diff-stat-border: 0.0625rem solid color-mix(in srgb, currentColor 55%, transparent);
+  }
+  /* On a button's own fill, which already adds up with a tab rail's, a diff stat's pill leans halfway
+     back toward the canvas instead of adding another fill. It looks about as it does on the canvas,
+     and its tones keep their 4.5:1 contrast in both themes. */
+  .env-button:not([data-variant='primary']:where(:not([data-tone='danger']))) {
+    --env-diff-stat-bg: var(--env-color-bg-inset);
+  }
+
+  /* Forced colors: the system paints no fills or shadows, so every button takes the system's button
+     edge, and an unavailable one the disabled color. Links keep the look of links: Link, with or
+     without its underline, a text button that is a link, and an underlined text button. */
+  @media (forced-colors: active) {
+    .env-button:not([data-underline], .env-link, [data-variant='text'][href]) {
+      border: var(--env-control-border-width) solid ButtonText;
+    }
+    .env-button:is(:disabled, [aria-disabled='true']) {
+      color: GrayText;
+    }
+    .env-button:not([data-underline], .env-link, [data-variant='text'][href]):is(
+        :disabled,
+        [aria-disabled='true']
+      ) {
+      border-color: GrayText;
+    }
+  }
+
+  /* In a skeleton, a button, a link drawn as one included, is a filled shape of its size. */
+  [data-env-skeleton] .env-button {
+    forced-color-adjust: none;
+    border-color: transparent;
+    box-shadow: none;
+    --env-skeleton-shape: 1;
+    background: var(--env-skeleton-paint);
+  }
+  [data-env-skeleton] .env-button * {
+    visibility: hidden;
+  }
 }

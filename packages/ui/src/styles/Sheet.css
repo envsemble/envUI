@@ -1,242 +1,244 @@
-/* Sheet: a panel over the page at an edge of the window, on the dialog surface (DialogSurface) in
-   the navigation's fill (below). A side sheet runs the full height at the start or the end edge,
-   which follow the text direction; a bottom sheet sits at the bottom edge, as tall as its content.
-   Its widths follow the window classes of the env-window container around it, compact first: a
-   sheet that would leave only a sliver of the page beside it takes the whole width, clear of the
-   safe areas. */
-.env-sheet-viewport {
-  box-sizing: border-box;
-  position: fixed;
-  inset: 0;
-  z-index: var(--env-z-modal);
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  grid-template-rows: minmax(0, 1fr);
-  place-items: stretch end;
-  /* The env-window container of the sheet and what it holds (see .env-overlay-theme in
-     Dialog.css): it has no inline padding, so it measures the whole window. */
-  container: env-window / inline-size;
-  pointer-events: none;
-}
-.env-sheet-viewport[data-side='start'] {
-  place-items: stretch start;
-}
-.env-sheet-viewport[data-side='bottom'] {
-  place-items: end center;
-  padding-block-start: max(var(--env-space-8), env(safe-area-inset-top));
-}
-.env-sheet-popup {
-  --env-sheet-width: 24rem;
-  --env-sheet-bottom-width: 40rem;
-  /* A swipe toward the edge moves the sheet with the finger: Base UI sets the movement, and its
-     own transform while the finger is down. */
-  --env-sheet-swipe-x: var(--drawer-swipe-movement-x, 0rem);
-  --env-sheet-swipe-y: var(--drawer-swipe-movement-y, 0rem);
-  box-sizing: border-box;
-  /* A column of its heading, body and actions, no taller than the sheet (below). */
-  display: flex;
-  flex-direction: column;
-  max-block-size: none;
-  outline: none;
-  transform: translate(var(--env-sheet-swipe-x), var(--env-sheet-swipe-y));
-  transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);
-}
-/* Its heading, body and actions stack in a column no taller than the sheet: the body scrolls on its
-   own, so the heading and the actions stay in view in a sheet too short for all it holds. The body
-   reaches a little past the column on every side, into the gaps around it, so a focus ring at its
-   edge isn't cut off. */
-.env-sheet-popup > .env-dialog-content {
-  flex: 0 1 auto;
-  min-block-size: 0;
-}
-.env-sheet-popup > .env-dialog-content > :not(.env-sheet-body),
-.env-sheet-body > * {
-  flex-shrink: 0;
-}
-/* A side sheet runs the window's height, its actions at its foot, however little the body holds. */
-.env-sheet-popup:is([data-side='start'], [data-side='end']) > .env-dialog-content {
-  flex-grow: 1;
-}
-.env-sheet-popup:is([data-side='start'], [data-side='end'])
-  > .env-dialog-content
-  > .env-dialog-actions {
-  margin-block-start: auto;
-}
-.env-sheet-body {
-  flex: 0 1 auto;
-  min-block-size: 0;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  margin: calc(-1 * var(--env-space-1));
-  padding: var(--env-space-1);
-}
-/* A side sheet: as tall as the window, and in a compact window as wide as it, with no border and
-   clear of the safe areas on both sides, such as a phone's rounded corners in landscape. */
-.env-sheet-popup:is([data-side='start'], [data-side='end']) {
-  inline-size: 100%;
-  block-size: 100%;
-  border-block-width: 0;
-  border-inline-width: 0;
-  padding-block-start: max(var(--env-space-5), env(safe-area-inset-top));
-  padding-block-end: max(var(--env-space-5), env(safe-area-inset-bottom));
-  padding-inline: max(var(--env-space-5), env(safe-area-inset-left), env(safe-area-inset-right));
-}
-.env-sheet-popup[data-width='custom']:not([data-side='bottom']) {
-  inline-size: min(var(--env-sheet-width), 100%);
-}
-/* A bottom sheet: as wide as the window up to 40 rem, as tall as its content, with its top corners
-   rounded, and clear of the safe area at the bottom. */
-.env-sheet-popup[data-side='bottom'] {
-  inline-size: min(var(--env-sheet-bottom-width), 100%);
-  max-block-size: 100%;
-  border-block-end-width: 0;
-  border-end-start-radius: 0;
-  border-end-end-radius: 0;
-  padding-block-end: max(var(--env-space-5), env(safe-area-inset-bottom));
-}
-/* From a medium window, a md side sheet leaves the page beside it; from an expanded one, a lg side
-   sheet does too. The edge it slides from has no border, and the safe area of that window edge
-   pads it. */
-@container env-window (width >= 37.5rem) {
-  .env-sheet-popup[data-width='md']:not([data-side='bottom']) {
-    inline-size: min(var(--env-sheet-width), 100%);
+@layer env.components {
+  /* Sheet: a panel over the page at an edge of the window, on the dialog surface (DialogSurface) in
+     the navigation's fill (below). A side sheet runs the full height at the start or the end edge,
+     which follow the text direction; a bottom sheet sits at the bottom edge, as tall as its content.
+     Its widths follow the window classes of the env-window container around it, compact first: a
+     sheet that would leave only a sliver of the page beside it takes the whole width, clear of the
+     safe areas. */
+  .env-sheet-viewport {
+    box-sizing: border-box;
+    position: fixed;
+    inset: 0;
+    z-index: var(--env-z-modal);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr);
+    place-items: stretch end;
+    /* The env-window container of the sheet and what it holds (see .env-overlay-theme in
+       Dialog.css): it has no inline padding, so it measures the whole window. */
+    container: env-window / inline-size;
+    pointer-events: none;
   }
-  .env-sheet-popup[data-width='md'][data-side='end'] {
-    border-inline-start-width: var(--env-control-border-width);
-    padding-inline: var(--env-space-5) max(var(--env-space-5), env(safe-area-inset-right));
+  .env-sheet-viewport[data-side='start'] {
+    place-items: stretch start;
   }
-  .env-sheet-popup[data-width='md'][data-side='start'] {
-    border-inline-end-width: var(--env-control-border-width);
-    padding-inline: max(var(--env-space-5), env(safe-area-inset-left)) var(--env-space-5);
+  .env-sheet-viewport[data-side='bottom'] {
+    place-items: end center;
+    padding-block-start: max(var(--env-space-8), env(safe-area-inset-top));
   }
-}
-@container env-window (width >= 52.5rem) {
-  .env-sheet-popup[data-width='lg']:not([data-side='bottom']) {
-    --env-sheet-width: 44rem;
-    inline-size: min(var(--env-sheet-width), 100%);
-  }
-  .env-sheet-popup[data-width='lg'][data-side='end'] {
-    border-inline-start-width: var(--env-control-border-width);
-    padding-inline: var(--env-space-5) max(var(--env-space-5), env(safe-area-inset-right));
-  }
-  .env-sheet-popup[data-width='lg'][data-side='start'] {
-    border-inline-end-width: var(--env-control-border-width);
-    padding-inline: max(var(--env-space-5), env(safe-area-inset-left)) var(--env-space-5);
-  }
-}
-/* In right-to-left text the end edge is the left one, so its safe area pads it. */
-.env-sheet-popup[data-side='end']:dir(rtl),
-.env-sheet-popup[data-side='start']:dir(rtl) {
-  padding-inline: max(var(--env-space-5), env(safe-area-inset-left), env(safe-area-inset-right));
-}
-/* A sheet is solid, on the navigation's fill, the default surface, rather than the popup's, in every
-   theme: navigation that opens in a sheet in a narrow window keeps the color it has at the window's
-   edge in a wide one, and a Drawer or a Rail in it takes the sheet's color as on any surface. Its
-   fill and its scrim set it apart from the page, with no edge; at high contrast its elevation edge
-   returns as its boundary, through the theme's high-contrast switch (Theme.css). */
-.env-sheet-viewport .env-sheet-popup {
-  --env-surface-color: var(--env-color-bg-default);
-  --env-sheet-edge: var(--env-theme-high-contrast) var(--env-elevation-3-border);
-  border-color: var(--env-sheet-edge, transparent);
-}
-/* resizable: a side sheet as wide as --env-sheet-width, which the component sets, at every window
-   width, but never wider than the window, with an edge on its inner side. Its content runs the
-   sheet's full height and holds the resize handle (ResizeHandle.css), the same handle as between
-   Panes: as wide as their gap, inside the inner edge over the padding, a grip at its middle and
-   never a line. It runs down the whole sheet, so it stays as tall as the sheet, and its grip sticks
-   to the middle of the sheet's height should the sheet itself scroll. Under a coarse pointer it is as wide as the padding, a touch target that leaves the
-   content alone. */
-.env-sheet-popup[data-resizable]:is([data-side='start'], [data-side='end']) {
-  --env-sheet-padding-inline: max(
-    var(--env-space-5),
-    env(safe-area-inset-left),
-    env(safe-area-inset-right)
-  );
-  --env-sheet-padding-block-start: max(var(--env-space-5), env(safe-area-inset-top));
-  --env-sheet-padding-block-end: max(var(--env-space-5), env(safe-area-inset-bottom));
-  inline-size: min(var(--env-sheet-width), 100%);
-  padding: var(--env-sheet-padding-block-start) var(--env-sheet-padding-inline)
-    var(--env-sheet-padding-block-end);
-}
-.env-sheet-popup[data-resizable][data-side='end'] {
-  border-inline-start-width: var(--env-control-border-width);
-}
-.env-sheet-popup[data-resizable][data-side='start'] {
-  border-inline-end-width: var(--env-control-border-width);
-}
-.env-sheet-popup[data-resizable] > .env-dialog-content {
-  position: relative;
-  min-block-size: 100%;
-}
-.env-sheet-popup[data-resizable] .env-sheet-resize-handle {
-  --env-resize-handle-size: var(--env-space-4);
-  position: absolute;
-  inset-block: calc(-1 * var(--env-sheet-padding-block-start))
-    calc(-1 * var(--env-sheet-padding-block-end));
-}
-.env-sheet-popup[data-resizable] .env-sheet-resize-handle::after {
-  position: sticky;
-}
-.env-sheet-popup[data-resizable][data-side='end'] .env-sheet-resize-handle {
-  inset-inline-start: calc(-1 * var(--env-sheet-padding-inline));
-}
-.env-sheet-popup[data-resizable][data-side='start'] .env-sheet-resize-handle {
-  inset-inline-end: calc(-1 * var(--env-sheet-padding-inline));
-}
-@media (pointer: coarse) {
-  .env-sheet-popup[data-resizable] .env-sheet-resize-handle {
-    --env-resize-handle-size: var(--env-space-5);
-  }
-}
-
-/* Motion: the sheet fades and slides in from its edge. Movement only without a reduced-motion
-   preference, and none while a finger moves it. */
-.env-sheet-popup[data-starting-style],
-.env-sheet-popup[data-ending-style] {
-  opacity: 0;
-}
-.env-sheet-popup[data-ending-style] {
-  transition-duration: var(--env-motion-duration-fast);
-  transition-timing-function: var(--env-motion-ease-exit);
-}
-.env-sheet-popup[data-swiping] {
-  transition: none;
-  user-select: none;
-}
-@media (prefers-reduced-motion: no-preference) {
   .env-sheet-popup {
-    --env-sheet-offset-x: 2rem;
-    --env-sheet-offset-y: 0rem;
-    transition:
-      opacity var(--env-motion-duration-medium) var(--env-motion-ease),
-      transform var(--env-motion-duration-slow) var(--env-motion-ease-enter);
+    --env-sheet-width: 24rem;
+    --env-sheet-bottom-width: 40rem;
+    /* A swipe toward the edge moves the sheet with the finger: Base UI sets the movement, and its
+       own transform while the finger is down. */
+    --env-sheet-swipe-x: var(--drawer-swipe-movement-x, 0rem);
+    --env-sheet-swipe-y: var(--drawer-swipe-movement-y, 0rem);
+    box-sizing: border-box;
+    /* A column of its heading, body and actions, no taller than the sheet (below). */
+    display: flex;
+    flex-direction: column;
+    max-block-size: none;
+    outline: none;
+    transform: translate(var(--env-sheet-swipe-x), var(--env-sheet-swipe-y));
+    transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);
   }
-  .env-sheet-popup:is([data-side='start'], [data-side='end']:dir(rtl)) {
-    --env-sheet-offset-x: -2rem;
+  /* Its heading, body and actions stack in a column no taller than the sheet: the body scrolls on its
+     own, so the heading and the actions stay in view in a sheet too short for all it holds. The body
+     reaches a little past the column on every side, into the gaps around it, so a focus ring at its
+     edge isn't cut off. */
+  .env-sheet-popup > .env-dialog-content {
+    flex: 0 1 auto;
+    min-block-size: 0;
   }
-  .env-sheet-popup[data-side='start']:dir(rtl) {
-    --env-sheet-offset-x: 2rem;
+  .env-sheet-popup > .env-dialog-content > :not(.env-sheet-body),
+  .env-sheet-body > * {
+    flex-shrink: 0;
   }
+  /* A side sheet runs the window's height, its actions at its foot, however little the body holds. */
+  .env-sheet-popup:is([data-side='start'], [data-side='end']) > .env-dialog-content {
+    flex-grow: 1;
+  }
+  .env-sheet-popup:is([data-side='start'], [data-side='end'])
+    > .env-dialog-content
+    > .env-dialog-actions {
+    margin-block-start: auto;
+  }
+  .env-sheet-body {
+    flex: 0 1 auto;
+    min-block-size: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    margin: calc(-1 * var(--env-space-1));
+    padding: var(--env-space-1);
+  }
+  /* A side sheet: as tall as the window, and in a compact window as wide as it, with no border and
+     clear of the safe areas on both sides, such as a phone's rounded corners in landscape. */
+  .env-sheet-popup:is([data-side='start'], [data-side='end']) {
+    inline-size: 100%;
+    block-size: 100%;
+    border-block-width: 0;
+    border-inline-width: 0;
+    padding-block-start: max(var(--env-space-5), env(safe-area-inset-top));
+    padding-block-end: max(var(--env-space-5), env(safe-area-inset-bottom));
+    padding-inline: max(var(--env-space-5), env(safe-area-inset-left), env(safe-area-inset-right));
+  }
+  .env-sheet-popup[data-width='custom']:not([data-side='bottom']) {
+    inline-size: min(var(--env-sheet-width), 100%);
+  }
+  /* A bottom sheet: as wide as the window up to 40 rem, as tall as its content, with its top corners
+     rounded, and clear of the safe area at the bottom. */
   .env-sheet-popup[data-side='bottom'] {
-    --env-sheet-offset-x: 0rem;
-    --env-sheet-offset-y: 2rem;
+    inline-size: min(var(--env-sheet-bottom-width), 100%);
+    max-block-size: 100%;
+    border-block-end-width: 0;
+    border-end-start-radius: 0;
+    border-end-end-radius: 0;
+    padding-block-end: max(var(--env-space-5), env(safe-area-inset-bottom));
   }
+  /* From a medium window, a md side sheet leaves the page beside it; from an expanded one, a lg side
+     sheet does too. The edge it slides from has no border, and the safe area of that window edge
+     pads it. */
+  @container env-window (width >= 37.5rem) {
+    .env-sheet-popup[data-width='md']:not([data-side='bottom']) {
+      inline-size: min(var(--env-sheet-width), 100%);
+    }
+    .env-sheet-popup[data-width='md'][data-side='end'] {
+      border-inline-start-width: var(--env-control-border-width);
+      padding-inline: var(--env-space-5) max(var(--env-space-5), env(safe-area-inset-right));
+    }
+    .env-sheet-popup[data-width='md'][data-side='start'] {
+      border-inline-end-width: var(--env-control-border-width);
+      padding-inline: max(var(--env-space-5), env(safe-area-inset-left)) var(--env-space-5);
+    }
+  }
+  @container env-window (width >= 52.5rem) {
+    .env-sheet-popup[data-width='lg']:not([data-side='bottom']) {
+      --env-sheet-width: 44rem;
+      inline-size: min(var(--env-sheet-width), 100%);
+    }
+    .env-sheet-popup[data-width='lg'][data-side='end'] {
+      border-inline-start-width: var(--env-control-border-width);
+      padding-inline: var(--env-space-5) max(var(--env-space-5), env(safe-area-inset-right));
+    }
+    .env-sheet-popup[data-width='lg'][data-side='start'] {
+      border-inline-end-width: var(--env-control-border-width);
+      padding-inline: max(var(--env-space-5), env(safe-area-inset-left)) var(--env-space-5);
+    }
+  }
+  /* In right-to-left text the end edge is the left one, so its safe area pads it. */
+  .env-sheet-popup[data-side='end']:dir(rtl),
+  .env-sheet-popup[data-side='start']:dir(rtl) {
+    padding-inline: max(var(--env-space-5), env(safe-area-inset-left), env(safe-area-inset-right));
+  }
+  /* A sheet is solid, on the navigation's fill, the default surface, rather than the popup's, in every
+     theme: navigation that opens in a sheet in a narrow window keeps the color it has at the window's
+     edge in a wide one, and a Drawer or a Rail in it takes the sheet's color as on any surface. Its
+     fill and its scrim set it apart from the page, with no edge; at high contrast its elevation edge
+     returns as its boundary, through the theme's high-contrast switch (Theme.css). */
+  .env-sheet-viewport .env-sheet-popup {
+    --env-surface-color: var(--env-color-bg-default);
+    --env-sheet-edge: var(--env-theme-high-contrast) var(--env-elevation-3-border);
+    border-color: var(--env-sheet-edge, transparent);
+  }
+  /* resizable: a side sheet as wide as --env-sheet-width, which the component sets, at every window
+     width, but never wider than the window, with an edge on its inner side. Its content runs the
+     sheet's full height and holds the resize handle (ResizeHandle.css), the same handle as between
+     Panes: as wide as their gap, inside the inner edge over the padding, a grip at its middle and
+     never a line. It runs down the whole sheet, so it stays as tall as the sheet, and its grip sticks
+     to the middle of the sheet's height should the sheet itself scroll. Under a coarse pointer it is as wide as the padding, a touch target that leaves the
+     content alone. */
+  .env-sheet-popup[data-resizable]:is([data-side='start'], [data-side='end']) {
+    --env-sheet-padding-inline: max(
+      var(--env-space-5),
+      env(safe-area-inset-left),
+      env(safe-area-inset-right)
+    );
+    --env-sheet-padding-block-start: max(var(--env-space-5), env(safe-area-inset-top));
+    --env-sheet-padding-block-end: max(var(--env-space-5), env(safe-area-inset-bottom));
+    inline-size: min(var(--env-sheet-width), 100%);
+    padding: var(--env-sheet-padding-block-start) var(--env-sheet-padding-inline)
+      var(--env-sheet-padding-block-end);
+  }
+  .env-sheet-popup[data-resizable][data-side='end'] {
+    border-inline-start-width: var(--env-control-border-width);
+  }
+  .env-sheet-popup[data-resizable][data-side='start'] {
+    border-inline-end-width: var(--env-control-border-width);
+  }
+  .env-sheet-popup[data-resizable] > .env-dialog-content {
+    position: relative;
+    min-block-size: 100%;
+  }
+  .env-sheet-popup[data-resizable] .env-sheet-resize-handle {
+    --env-resize-handle-size: var(--env-space-4);
+    position: absolute;
+    inset-block: calc(-1 * var(--env-sheet-padding-block-start))
+      calc(-1 * var(--env-sheet-padding-block-end));
+  }
+  .env-sheet-popup[data-resizable] .env-sheet-resize-handle::after {
+    position: sticky;
+  }
+  .env-sheet-popup[data-resizable][data-side='end'] .env-sheet-resize-handle {
+    inset-inline-start: calc(-1 * var(--env-sheet-padding-inline));
+  }
+  .env-sheet-popup[data-resizable][data-side='start'] .env-sheet-resize-handle {
+    inset-inline-end: calc(-1 * var(--env-sheet-padding-inline));
+  }
+  @media (pointer: coarse) {
+    .env-sheet-popup[data-resizable] .env-sheet-resize-handle {
+      --env-resize-handle-size: var(--env-space-5);
+    }
+  }
+
+  /* Motion: the sheet fades and slides in from its edge. Movement only without a reduced-motion
+     preference, and none while a finger moves it. */
   .env-sheet-popup[data-starting-style],
   .env-sheet-popup[data-ending-style] {
-    transform: translate(
-      calc(var(--env-sheet-swipe-x) + var(--env-sheet-offset-x)),
-      calc(var(--env-sheet-swipe-y) + var(--env-sheet-offset-y))
-    );
+    opacity: 0;
   }
   .env-sheet-popup[data-ending-style] {
     transition-duration: var(--env-motion-duration-fast);
     transition-timing-function: var(--env-motion-ease-exit);
   }
-}
+  .env-sheet-popup[data-swiping] {
+    transition: none;
+    user-select: none;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .env-sheet-popup {
+      --env-sheet-offset-x: 2rem;
+      --env-sheet-offset-y: 0rem;
+      transition:
+        opacity var(--env-motion-duration-medium) var(--env-motion-ease),
+        transform var(--env-motion-duration-slow) var(--env-motion-ease-enter);
+    }
+    .env-sheet-popup:is([data-side='start'], [data-side='end']:dir(rtl)) {
+      --env-sheet-offset-x: -2rem;
+    }
+    .env-sheet-popup[data-side='start']:dir(rtl) {
+      --env-sheet-offset-x: 2rem;
+    }
+    .env-sheet-popup[data-side='bottom'] {
+      --env-sheet-offset-x: 0rem;
+      --env-sheet-offset-y: 2rem;
+    }
+    .env-sheet-popup[data-starting-style],
+    .env-sheet-popup[data-ending-style] {
+      transform: translate(
+        calc(var(--env-sheet-swipe-x) + var(--env-sheet-offset-x)),
+        calc(var(--env-sheet-swipe-y) + var(--env-sheet-offset-y))
+      );
+    }
+    .env-sheet-popup[data-ending-style] {
+      transition-duration: var(--env-motion-duration-fast);
+      transition-timing-function: var(--env-motion-ease-exit);
+    }
+  }
 
-/* Forced colors: the system paints no fills, so the sheet keeps an edge on its inner sides. */
-@media (forced-colors: active) {
-  .env-sheet-viewport .env-sheet-popup {
-    border-color: CanvasText;
+  /* Forced colors: the system paints no fills, so the sheet keeps an edge on its inner sides. */
+  @media (forced-colors: active) {
+    .env-sheet-viewport .env-sheet-popup {
+      border-color: CanvasText;
+    }
   }
 }

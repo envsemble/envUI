@@ -31,6 +31,8 @@ import { setRef } from '../internal/setRef.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 import { markTriggerOwner } from '../internal/triggerOwner.js';
 import { keyShortcuts, shortcutChords } from '../internal/shortcuts.js';
+import '../styles/Base.css';
+import '../styles/Menu.css';
 
 /** The Base UI parts every menu's popup is made of. */
 const menuParts = {

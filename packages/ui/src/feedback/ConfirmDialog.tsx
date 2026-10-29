@@ -30,6 +30,8 @@ import {
   OverlayTheme,
 } from './internal/DialogParts.js';
 import { reportInDevelopment } from '../internal/developmentReport.js';
+import '../styles/Base.css';
+import '../styles/Dialog.css';
 
 export interface ConfirmDialogProps
   extends Omit<ComponentPropsWithRef<'div'>, 'title' | 'children' | 'onError'> {

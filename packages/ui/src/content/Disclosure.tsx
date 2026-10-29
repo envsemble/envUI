@@ -3,6 +3,8 @@
 import { useState, type ComponentPropsWithRef, type MouseEvent, type ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { Column } from '../foundations/Layout.js';
+import '../styles/Base.css';
+import '../styles/Disclosure.css';
 
 export interface DisclosureProps extends Omit<ComponentPropsWithRef<'details'>, 'title'> {
   /** The summary: one line that says what the details hold and opens or closes them. */

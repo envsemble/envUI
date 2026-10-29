@@ -21,6 +21,8 @@ await build({
     loader: 'ts',
   },
   bundle: true,
+  // The style sheets the modules import are the browser's concern.
+  loader: { '.css': 'empty' },
   platform: 'node',
   format: 'esm',
   packages: 'external',

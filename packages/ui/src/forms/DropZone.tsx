@@ -22,6 +22,8 @@ import { CloudUpload } from '../icons/CloudUpload.js';
 import * as Field from './Field.js';
 import { acceptsFile } from './internal/acceptsFile.js';
 import { subscribeFormReset } from './internal/subscribeFormReset.js';
+import '../styles/Base.css';
+import '../styles/DropZone.css';
 
 export interface DropZoneProps
   extends Omit<

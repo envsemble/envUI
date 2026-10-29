@@ -1,4 +1,6 @@
 import { roundToHundredth } from '../../internal/lengths.js';
+import '../../styles/Base.css';
+import '../../styles/Skeleton.css';
 // Text that is there in a skeleton, such as a heading that doesn't wait for data, drawn as bars like
 // the rest: a rounded bar over each line of it, which shimmers with the other bars. CSS alone draws
 // such text as a line through it, square and in one color, which stays as the fallback until this

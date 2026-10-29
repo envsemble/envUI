@@ -4,6 +4,8 @@ import { IconButton } from '../../actions/Button.js';
 import { Close } from '../../icons/Close.js';
 import { useMessages } from '../../internal/EnvUIContext.js';
 import { alert } from '../../foundations/messages/alert.js';
+import '../../styles/Base.css';
+import '../../styles/Alert.css';
 
 /**
  * An Alert's dismiss button: a small ghost IconButton with a cross in the alert's tone, named by the alert's label or

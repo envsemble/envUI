@@ -26,6 +26,8 @@ import {
   type ColorFormat,
   type ColorValue,
 } from './internal/colorValue.js';
+import '../styles/Base.css';
+import '../styles/ColorPicker.css';
 
 export type { Color } from '@react-stately/color';
 export type { ColorFormat, ColorValue } from './internal/colorValue.js';

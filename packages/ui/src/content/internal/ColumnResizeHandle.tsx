@@ -8,6 +8,8 @@ import {
   columnResizeStep,
   resizeColumns,
 } from './tableColumns.js';
+import '../../styles/Base.css';
+import '../../styles/Table.css';
 
 /** What a table with resizable columns gives its header cells. */
 export interface TableColumns {

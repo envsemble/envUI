@@ -18,7 +18,8 @@
 //   values from the attribute's type, and the `[data-*]` selectors that the style sheets
 //   (src/styles) put on a part class, with the values they compare;
 //   attributes named data-env-ssr-* are private and left out: server markup carries them only until
-//   a component reads its layout in the browser;
+//   a component reads its layout in the browser; so is data-env-theme-switching, which a theme
+//   switch sets on the themed root for a frame;
 // - the components: every component and namespace the public entries export, whose parts are the
 //   classes that start with `env-<its name in kebab case>`.
 //
@@ -104,10 +105,12 @@ const byText = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0);
 /**
  * Whether a state attribute is private: data-env-ssr-*, which server markup carries only until a
  * component reads its layout in the browser, such as a dock that stacks before it hydrates. Neither
- * the contract nor the docs list them, and they may change in any release.
+ * the contract nor the docs list them, and they may change in any release. So is
+ * data-env-theme-switching, which ThemePreferenceProvider sets on the themed root for the frame a
+ * theme switch restyles, pausing transitions.
  */
 export function isPrivateState(attribute: string) {
-  return attribute.startsWith('data-env-ssr-');
+  return attribute.startsWith('data-env-ssr-') || attribute === 'data-env-theme-switching';
 }
 
 /** An `env-*` class in a string, not part of a selector, custom property or data attribute. */

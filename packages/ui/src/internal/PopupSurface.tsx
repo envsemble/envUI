@@ -27,6 +27,8 @@ import {
 import { inSkeleton } from '../foundations/internal/inSkeleton.js';
 import { skeletonAttributes } from './skeleton.js';
 import { computedDirection } from './direction.js';
+import '../styles/Base.css';
+import '../styles/Popup.css';
 
 /** A side of the anchor; inline-start and inline-end follow the text direction. */
 export type PopupSide = 'top' | 'bottom' | 'left' | 'right' | 'inline-start' | 'inline-end';

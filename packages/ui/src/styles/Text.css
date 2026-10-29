@@ -1,124 +1,126 @@
-.env-text {
-  min-inline-size: 0;
-  max-inline-size: 100%;
-  overflow-wrap: anywhere;
-  margin: 0;
-  font: var(--env-type-body);
-  color: var(--env-color-fg-default);
-}
-/* Display text introduces a page or hero; it scales with the viewport and keeps a tight measure. */
-.env-text:where([data-variant='display']) {
-  font: var(--env-font-weight-medium) clamp(1.75rem, 1.25rem + 2.5vw, 2.75rem) / 1.1
-    var(--env-font-family);
-  letter-spacing: -0.03em;
-  text-wrap: balance;
-}
-.env-text:where([data-variant='headline']) {
-  font: var(--env-type-h1);
-}
-.env-text:where([data-variant='title']) {
-  font: var(--env-type-h2);
-}
-.env-text:where([data-variant='body-sm']) {
-  font: var(--env-type-body-small);
-  color: var(--env-color-fg-muted);
-}
-.env-text:where([data-variant='caption']) {
-  font: var(--env-type-body-small);
-  color: var(--env-color-fg-muted);
-}
-.env-text:where([data-emphasis='default']) {
-  color: var(--env-color-fg-default);
-}
-.env-text:where([data-emphasis='muted']) {
-  color: var(--env-color-fg-muted);
-}
-.env-text:where([data-emphasis='subtle']) {
-  color: var(--env-color-fg-muted);
-}
+@layer env.components {
+  .env-text {
+    min-inline-size: 0;
+    max-inline-size: 100%;
+    overflow-wrap: anywhere;
+    margin: 0;
+    font: var(--env-type-body);
+    color: var(--env-color-fg-default);
+  }
+  /* Display text introduces a page or hero; it scales with the viewport and keeps a tight measure. */
+  .env-text:where([data-variant='display']) {
+    font: var(--env-font-weight-medium) clamp(1.75rem, 1.25rem + 2.5vw, 2.75rem) / 1.1
+      var(--env-font-family);
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+  .env-text:where([data-variant='headline']) {
+    font: var(--env-type-h1);
+  }
+  .env-text:where([data-variant='title']) {
+    font: var(--env-type-h2);
+  }
+  .env-text:where([data-variant='body-sm']) {
+    font: var(--env-type-body-small);
+    color: var(--env-color-fg-muted);
+  }
+  .env-text:where([data-variant='caption']) {
+    font: var(--env-type-body-small);
+    color: var(--env-color-fg-muted);
+  }
+  .env-text:where([data-emphasis='default']) {
+    color: var(--env-color-fg-default);
+  }
+  .env-text:where([data-emphasis='muted']) {
+    color: var(--env-color-fg-muted);
+  }
+  .env-text:where([data-emphasis='subtle']) {
+    color: var(--env-color-fg-muted);
+  }
 
-/* In a skeleton, Text given no text, as over a placeholder item, is a bar of its style's length:
-   running text is three lines and a paragraph's supporting text two, the last one shorter; a
-   heading, a caption and text inside a line are one bar. */
-[data-env-skeleton] .env-text {
-  --env-skeleton-placeholder: inline-block;
-  --env-skeleton-length: 36rem;
-  --env-skeleton-lines: 3;
-  --env-skeleton-last: 60%;
-}
-[data-env-skeleton] .env-text:where([data-variant='body-sm']) {
-  --env-skeleton-lines: 2;
-}
-[data-env-skeleton] .env-text:where([data-variant='display']) {
-  --env-skeleton-length: 20rem;
-  --env-skeleton-lines: 1;
-  --env-skeleton-last: 100%;
-}
-[data-env-skeleton] .env-text:where([data-variant='headline']) {
-  --env-skeleton-length: 14rem;
-  --env-skeleton-lines: 1;
-  --env-skeleton-last: 100%;
-}
-[data-env-skeleton] .env-text:where([data-variant='title']) {
-  --env-skeleton-length: 10rem;
-  --env-skeleton-lines: 1;
-  --env-skeleton-last: 100%;
-}
-[data-env-skeleton] .env-text:where([data-variant='caption']) {
-  --env-skeleton-length: 6rem;
-  --env-skeleton-lines: 1;
-  --env-skeleton-last: 100%;
-}
-[data-env-skeleton] .env-text:where(span) {
-  --env-skeleton-length: 8rem;
-  --env-skeleton-lines: 1;
-  --env-skeleton-last: 100%;
-}
+  /* In a skeleton, Text given no text, as over a placeholder item, is a bar of its style's length:
+     running text is three lines and a paragraph's supporting text two, the last one shorter; a
+     heading, a caption and text inside a line are one bar. */
+  [data-env-skeleton] .env-text {
+    --env-skeleton-placeholder: inline-block;
+    --env-skeleton-length: 36rem;
+    --env-skeleton-lines: 3;
+    --env-skeleton-last: 60%;
+  }
+  [data-env-skeleton] .env-text:where([data-variant='body-sm']) {
+    --env-skeleton-lines: 2;
+  }
+  [data-env-skeleton] .env-text:where([data-variant='display']) {
+    --env-skeleton-length: 20rem;
+    --env-skeleton-lines: 1;
+    --env-skeleton-last: 100%;
+  }
+  [data-env-skeleton] .env-text:where([data-variant='headline']) {
+    --env-skeleton-length: 14rem;
+    --env-skeleton-lines: 1;
+    --env-skeleton-last: 100%;
+  }
+  [data-env-skeleton] .env-text:where([data-variant='title']) {
+    --env-skeleton-length: 10rem;
+    --env-skeleton-lines: 1;
+    --env-skeleton-last: 100%;
+  }
+  [data-env-skeleton] .env-text:where([data-variant='caption']) {
+    --env-skeleton-length: 6rem;
+    --env-skeleton-lines: 1;
+    --env-skeleton-last: 100%;
+  }
+  [data-env-skeleton] .env-text:where(span) {
+    --env-skeleton-length: 8rem;
+    --env-skeleton-lines: 1;
+    --env-skeleton-last: 100%;
+  }
 
-/* An animated number keeps the line box of the text around it; the rolling value is clipped to it. */
-.env-animated-number {
-  display: inline-flex;
-  overflow: clip;
-  vertical-align: bottom;
-  font-variant-numeric: tabular-nums;
-}
-.env-animated-number-value {
-  display: inline-block;
-}
+  /* An animated number keeps the line box of the text around it; the rolling value is clipped to it. */
+  .env-animated-number {
+    display: inline-flex;
+    overflow: clip;
+    vertical-align: bottom;
+    font-variant-numeric: tabular-nums;
+  }
+  .env-animated-number-value {
+    display: inline-block;
+  }
 
-/* In a skeleton, an animated number is a bar: its value is laid out as a block of its own in the
-   line, which the skeleton's line through text doesn't reach, so it draws its own. */
-[data-env-skeleton] .env-animated-number-value {
-  text-decoration: line-through var(--env-skeleton-color);
-  text-decoration-thickness: 0.8em;
-  text-decoration-skip-ink: none;
-}
+  /* In a skeleton, an animated number is a bar: its value is laid out as a block of its own in the
+     line, which the skeleton's line through text doesn't reach, so it draws its own. */
+  [data-env-skeleton] .env-animated-number-value {
+    text-decoration: line-through var(--env-skeleton-color);
+    text-decoration-thickness: 0.8em;
+    text-decoration-skip-ink: none;
+  }
 
-/* Motion: a changed number fades in, and without a reduced-motion preference rolls in from below
-   when it grows and from above when it shrinks. */
-.env-animated-number-value[data-direction] {
-  animation: env-motion-fade-in var(--env-motion-duration-medium) var(--env-motion-ease);
-}
-@media (prefers-reduced-motion: no-preference) {
+  /* Motion: a changed number fades in, and without a reduced-motion preference rolls in from below
+     when it grows and from above when it shrinks. */
   .env-animated-number-value[data-direction] {
-    animation: var(--env-motion-duration-slow) var(--env-motion-ease-enter) both;
+    animation: env-motion-fade-in var(--env-motion-duration-medium) var(--env-motion-ease);
   }
-  .env-animated-number-value[data-direction='up'] {
-    animation-name: env-motion-roll-up;
+  @media (prefers-reduced-motion: no-preference) {
+    .env-animated-number-value[data-direction] {
+      animation: var(--env-motion-duration-slow) var(--env-motion-ease-enter) both;
+    }
+    .env-animated-number-value[data-direction='up'] {
+      animation-name: env-motion-roll-up;
+    }
+    .env-animated-number-value[data-direction='down'] {
+      animation-name: env-motion-roll-down;
+    }
   }
-  .env-animated-number-value[data-direction='down'] {
-    animation-name: env-motion-roll-down;
+  @keyframes env-motion-roll-up {
+    from {
+      opacity: 0;
+      transform: translateY(0.6em);
+    }
   }
-}
-@keyframes env-motion-roll-up {
-  from {
-    opacity: 0;
-    transform: translateY(0.6em);
-  }
-}
-@keyframes env-motion-roll-down {
-  from {
-    opacity: 0;
-    transform: translateY(-0.6em);
+  @keyframes env-motion-roll-down {
+    from {
+      opacity: 0;
+      transform: translateY(-0.6em);
+    }
   }
 }

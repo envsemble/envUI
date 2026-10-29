@@ -23,6 +23,8 @@ import { ChevronRight } from '../icons/ChevronRight.js';
 import { ContextMenu } from './ContextMenu.js';
 import { remPixels } from '../internal/lengths.js';
 import { isRightToLeft } from '../internal/direction.js';
+import '../styles/Base.css';
+import '../styles/Tree.css';
 
 export interface TreeItem {
   /** Stable, unique identifier; rows carry it as data-id. */

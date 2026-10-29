@@ -29,6 +29,9 @@ import {
 import { RichTextRenderingContext } from './internal/Reference.js';
 import { safeRichTextUrl } from './internal/referenceAttributes.js';
 import type { RichTextCommand, RichTextEditorProps, RichTextSlashCommand } from './types.js';
+import '../styles/Base.css';
+import '../styles/Prose.css';
+import '../styles/RichText.css';
 
 const emptySources: NonNullable<RichTextEditorProps['references']> = [];
 const emptyExtensions: NonNullable<RichTextEditorProps['extensions']> = [];

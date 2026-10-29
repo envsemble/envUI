@@ -14,6 +14,9 @@ import { createRichTextExtensions } from './extensions.js';
 import { ReferenceContent } from './internal/Reference.js';
 import { referenceFromAttributes, safeRichTextUrl } from './internal/referenceAttributes.js';
 import type { RichTextProps } from './types.js';
+import '../styles/Base.css';
+import '../styles/Prose.css';
+import '../styles/RichText.css';
 
 /**
  * Saved rich text, read-only: Markdown rendered with the editor's own schema and parser, so it

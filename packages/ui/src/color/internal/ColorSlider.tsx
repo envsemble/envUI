@@ -5,6 +5,8 @@ import { useColorSlider } from '@react-aria/color';
 import { useColorSliderState, type Color, type ColorChannel } from '@react-stately/color';
 import { useLocale } from '@react-aria/i18n';
 import { classNames } from '../../internal/classNames.js';
+import '../../styles/Base.css';
+import '../../styles/ColorPicker.css';
 
 export interface ColorSliderProps {
   /** The channel it moves: hue or alpha. */

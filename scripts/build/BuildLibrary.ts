@@ -11,13 +11,13 @@ const libraryDirectory = resolve(repositoryRoot, 'packages/ui');
 const sourceDirectory = resolve(libraryDirectory, 'src');
 const outputDirectory = resolve(libraryDirectory, 'dist');
 
-async function findTypeScriptFiles(directory) {
+async function findFiles(directory: string, pattern: RegExp): Promise<string[]> {
   const entries = await readdir(directory, { withFileTypes: true });
   const files = await Promise.all(
     entries.map((entry) =>
       entry.isDirectory()
-        ? findTypeScriptFiles(join(directory, entry.name))
-        : /\.tsx?$/.test(entry.name)
+        ? findFiles(join(directory, entry.name), pattern)
+        : pattern.test(entry.name)
           ? [join(directory, entry.name)]
           : [],
     ),
@@ -36,7 +36,7 @@ if (relative(libraryDirectory, outputDirectory) !== 'dist')
   throw new Error('Library output must remain within packages/ui/dist.');
 await rm(outputDirectory, { recursive: true, force: true });
 await mkdir(outputDirectory, { recursive: true });
-const sourceEntryPoints = await findTypeScriptFiles(sourceDirectory);
+const sourceEntryPoints = await findFiles(sourceDirectory, /\.tsx?$/);
 await build({
   entryPoints: sourceEntryPoints,
   outbase: sourceDirectory,
@@ -58,20 +58,70 @@ execFileSync(
 );
 // The generated token module is internal: no export reaches it, so it does not ship.
 await rm(resolve(outputDirectory, 'generated'), { recursive: true, force: true });
-// The style sheet ships without comments and whitespace, which only the sources need. Its rules and
-// values stay as written, in the same order and layers: custom properties keep their exact text.
-const stylesheetBuild = await build({
-  entryPoints: [resolve(sourceDirectory, 'styles/index.css')],
+// Each module imports the style sheets it draws with, as ../styles/Button.css in the source. In the
+// package they become #styles/Button.css, the package's own import (package.json "imports"): a
+// bundler, which sets the `module` condition, loads dist/styles/Button.css, and Node, which can't
+// load CSS, an empty module. So the modules a tree-shaken application keeps bring exactly their
+// style sheets, and the same modules still run in Node for server rendering and tests.
+const stylesheetImport = /^import "(?:\.\.?\/)+styles\/(\w+\.css)";$/gm;
+const importedStylesheets = new Set<string>();
+for (const file of await findFiles(outputDirectory, /\.js$/)) {
+  const code = await readFile(file, 'utf8');
+  const rewritten = code.replace(stylesheetImport, (_, stylesheet: string) => {
+    importedStylesheets.add(stylesheet);
+    return `import "#styles/${stylesheet}";`;
+  });
+  if (rewritten !== code) await writeFile(file, rewritten);
+}
+// The declarations carry no style sheet imports: they hold no types, and a checker that resolves
+// side-effect imports would look for declarations of CSS.
+const declarationStylesheetImport = /^import '(?:\.\.?\/)+styles\/\w+\.css';\n/gm;
+for (const file of await findFiles(outputDirectory, /\.d\.ts$/)) {
+  const declarations = await readFile(file, 'utf8');
+  const stripped = declarations.replace(declarationStylesheetImport, '');
+  if (stripped !== declarations) await writeFile(file, stripped);
+}
+await mkdir(resolve(outputDirectory, 'styles'), { recursive: true });
+await writeFile(
+  resolve(outputDirectory, 'styles/empty.js'),
+  "// What a style sheet import of envUI's resolves to where CSS can't load, as in Node.\nexport {};\n",
+);
+// The style sheets ship without comments and whitespace, which only the sources need. Their rules
+// and values stay as written, in the same order and layers: custom properties keep their exact
+// text. styles.css holds them all, for applications without a bundler; dist/styles/ holds each one
+// a module imports, Base.css with the parts it imports. Each of those starts with the layer order,
+// so the layers keep their order whichever of envUI's style sheets a page loads first.
+const layerOrder = /^@layer [\w., ]+;$/m.exec(
+  await readFile(resolve(sourceDirectory, 'styles/Base.css'), 'utf8'),
+)![0];
+const stylesheetOptions = {
   bundle: true,
   minifyWhitespace: true,
   write: false,
   loader: { '.woff2': 'file', '.svg': 'file' },
-  assetNames: 'assets/[name]',
-  outfile: resolve(outputDirectory, 'styles.css'),
-});
-for (const output of stylesheetBuild.outputFiles) {
+} as const;
+const stylesheetBuilds = await Promise.all([
+  build({
+    ...stylesheetOptions,
+    entryPoints: [resolve(sourceDirectory, 'styles/index.css')],
+    assetNames: 'assets/[name]',
+    outfile: resolve(outputDirectory, 'styles.css'),
+  }),
+  build({
+    ...stylesheetOptions,
+    entryPoints: [...importedStylesheets].map((name) => resolve(sourceDirectory, 'styles', name)),
+    assetNames: '../assets/[name]',
+    outdir: resolve(outputDirectory, 'styles'),
+  }),
+]);
+const minifiedLayerOrder = layerOrder.replaceAll(', ', ',');
+for (const output of stylesheetBuilds.flatMap(({ outputFiles }) => outputFiles)) {
   await mkdir(resolve(output.path, '..'), { recursive: true });
-  await writeFile(output.path, output.contents);
+  const ownSheet =
+    output.path.endsWith('.css') &&
+    !relative(resolve(outputDirectory, 'styles'), output.path).startsWith('..') &&
+    !output.text.startsWith(minifiedLayerOrder);
+  await writeFile(output.path, ownSheet ? `${minifiedLayerOrder}${output.text}` : output.contents);
 }
 // The package ships no logos: the brand artwork stays in the repository for the catalogue.
 await cp(resolve(repositoryRoot, 'assets/readme'), resolve(outputDirectory, 'assets/readme'), {

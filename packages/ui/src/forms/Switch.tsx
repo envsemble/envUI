@@ -4,6 +4,8 @@ import type { CSSProperties, ReactNode, Ref } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { setRef } from '../internal/setRef.js';
 import { useCheckedInput, type CheckedProps } from './internal/useCheckedInput.js';
+import '../styles/Base.css';
+import '../styles/Switch.css';
 
 export interface SwitchProps extends CheckedProps<boolean> {
   /**

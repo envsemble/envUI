@@ -1,5 +1,7 @@
 import type { ComponentPropsWithRef, CSSProperties, ReactElement, Ref } from 'react';
 import { renderElement } from '../internal/renderElement.js';
+import '../styles/Base.css';
+import '../styles/Layout.css';
 
 /**
  * A step in the shared spacing scale: 1 is 0.25 rem, 2 is 0.5 rem, 3 is 0.75 rem, 4 is 1 rem, 5 is

@@ -11,6 +11,8 @@ import { Row } from '../foundations/Layout.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { useFormatters } from '../internal/useFormatters.js';
 import { pagination } from '../foundations/messages/pagination.js';
+import '../styles/Base.css';
+import '../styles/Pagination.css';
 
 /** The items a page shows, for the text of the range. */
 export interface PaginationRange {

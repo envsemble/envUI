@@ -9,6 +9,8 @@ import { CheckCircle } from '../icons/CheckCircle.js';
 import { Error as ErrorIcon } from '../icons/Error.js';
 import { Info } from '../icons/Info.js';
 import { Warning } from '../icons/Warning.js';
+import '../styles/Base.css';
+import '../styles/Alert.css';
 
 /** What an alert means: info, success, warning or danger. */
 export type AlertTone = 'info' | 'success' | 'warning' | 'danger';

@@ -2,6 +2,8 @@ import type { ComponentPropsWithRef } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { lineArtShapes } from './internal/lineArtShapes.js';
 import { MovingLineArt } from './internal/MovingLineArt.js';
+import '../styles/Base.css';
+import '../styles/LineArt.css';
 
 /**
  * LineArt's drawings, by name: geometric constructions in thin lines, each following one rule,

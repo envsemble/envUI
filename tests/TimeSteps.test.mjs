@@ -12,6 +12,8 @@ await build({
   absWorkingDir: repository,
   entryPoints: [join(repository, 'packages/ui/src/internal/calendarDays.ts')],
   bundle: true,
+  // The style sheets the modules import are the browser's concern.
+  loader: { '.css': 'empty' },
   platform: 'node',
   format: 'esm',
   packages: 'external',

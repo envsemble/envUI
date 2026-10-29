@@ -5,6 +5,8 @@ import { useLocale } from '@react-aria/i18n';
 import type { Color } from '@react-stately/color';
 import { useRovingFocus } from '../../internal/useRovingFocus.js';
 import { sameColor, toColor, type ColorValue } from './colorValue.js';
+import '../../styles/Base.css';
+import '../../styles/ColorPicker.css';
 
 /** A preset color, as a CSS color string or React Aria's Color, or with a name of its own. */
 export type ColorPickerSwatch = ColorValue | { color: ColorValue; label: string };

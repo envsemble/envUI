@@ -18,6 +18,8 @@ import {
   parseMonth,
   toUtcDate,
 } from '../internal/calendarDays.js';
+import '../styles/Base.css';
+import '../styles/DatePicker.css';
 
 export interface MonthPickerProps extends PickerFieldProps {
   /** The value: a month as YYYY-MM. null, or an empty string, for none. */

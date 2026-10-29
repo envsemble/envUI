@@ -3,6 +3,8 @@
 import { useRef } from 'react';
 import { useColorArea } from '@react-aria/color';
 import { useColorAreaState, type Color } from '@react-stately/color';
+import '../../styles/Base.css';
+import '../../styles/ColorPicker.css';
 
 export interface ColorAreaProps {
   /** The color it shows. */

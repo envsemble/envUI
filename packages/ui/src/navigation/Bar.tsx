@@ -21,6 +21,8 @@ import {
   type DestinationClasses,
 } from './internal/Destinations.js';
 import { backgroundAttribute, type NavigationBackground } from './internal/background.js';
+import '../styles/Base.css';
+import '../styles/Bar.css';
 
 /** The most destinations the bar shows; past it, the last place opens the rest in a menu. */
 const barLimit = 5;

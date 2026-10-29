@@ -3,6 +3,8 @@
 import { useEffect, useState, type ComponentPropsWithRef, type ReactNode } from 'react';
 import { classNames } from '../../internal/classNames.js';
 import { ListRow, type ListRowProps } from '../../internal/ListRow.js';
+import '../../styles/Base.css';
+import '../../styles/Listbox.css';
 
 export interface ListboxProps<Item> extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
   /** The options, in order. */

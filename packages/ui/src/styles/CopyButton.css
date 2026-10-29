@@ -1,26 +1,28 @@
-/* CopyButton: a Button that copies text, at a Button's sizes. The result is announced from a visually hidden status beside the button; the fallback copies
-   from a hidden field there for a moment. */
-.env-copy-button-status,
-.env-copy-button-field {
-  position: absolute;
-  inline-size: 0.0625rem;
-  block-size: 0.0625rem;
-  margin: -0.0625rem;
-  padding: 0;
-  border: 0;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
-.env-copy-button-field {
-  position: fixed;
-  inset-block-start: 0;
-  inset-inline-start: 0;
-  opacity: 0;
-  pointer-events: none;
-}
-@media (prefers-reduced-motion: no-preference) {
-  .env-copy-button[data-copied] .env-icon > svg {
-    animation: env-motion-pop-in var(--env-motion-duration-medium) var(--env-motion-ease-enter);
+@layer env.components {
+  /* CopyButton: a Button that copies text, at a Button's sizes. The result is announced from a visually hidden status beside the button; the fallback copies
+     from a hidden field there for a moment. */
+  .env-copy-button-status,
+  .env-copy-button-field {
+    position: absolute;
+    inline-size: 0.0625rem;
+    block-size: 0.0625rem;
+    margin: -0.0625rem;
+    padding: 0;
+    border: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .env-copy-button-field {
+    position: fixed;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    opacity: 0;
+    pointer-events: none;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .env-copy-button[data-copied] .env-icon > svg {
+      animation: env-motion-pop-in var(--env-motion-duration-medium) var(--env-motion-ease-enter);
+    }
   }
 }

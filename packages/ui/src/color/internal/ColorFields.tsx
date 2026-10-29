@@ -11,6 +11,8 @@ import {
 } from '@react-stately/color';
 import { useLocale } from '@react-aria/i18n';
 import type { ColorFormat } from './colorValue.js';
+import '../../styles/Base.css';
+import '../../styles/ColorPicker.css';
 
 interface FieldProps {
   /** The color the field shows. */

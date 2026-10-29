@@ -3,6 +3,8 @@ import { CheckCircle } from '../../icons/CheckCircle.js';
 import { Info } from '../../icons/Info.js';
 import { Warning } from '../../icons/Warning.js';
 import type { ToastTone } from './toastTypes.js';
+import '../../styles/Base.css';
+import '../../styles/Toast.css';
 
 function StatusIcon({ tone }: { tone: ToastTone }) {
   if (tone === 'neutral') return null;

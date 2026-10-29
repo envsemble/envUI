@@ -137,6 +137,7 @@ async function bundleTheme({ define = {}, stdin, plugins = [] }) {
   const built = await esbuild({
     ...(stdin ? { stdin: { contents: stdin, loader: 'js' } } : { entryPoints: [themeModule] }),
     bundle: true,
+    loader: { '.css': 'empty' },
     write: false,
     format: 'cjs',
     platform: 'neutral',
@@ -218,6 +219,7 @@ test('a production bundle leaves the development warning out', async () => {
   const built = await esbuild({
     entryPoints: [themeModule],
     bundle: true,
+    loader: { '.css': 'empty' },
     minify: true,
     write: false,
     format: 'esm',

@@ -1,24 +1,26 @@
-/* The parts MarkdownEditor and RichTextEditor share: the formatting toolbar, which scrolls sideways
-   where it is wider than the editor, and the status line under the field, out of sight while it
-   is empty. */
-.env-editor-toolbar {
-  min-inline-size: 0;
-  overflow-x: auto;
-  scrollbar-width: thin;
-  /* Let focus rings stay visible while keeping the buttons aligned with the field. */
-  padding: var(--env-space-2);
-  margin: calc(-1 * var(--env-space-2));
-}
-/* The row of buttons is as wide as its buttons, at least the toolbar's width, so where they don't
-   fit the toolbar scrolls the whole row rather than the buttons spilling out of it. */
-.env-editor-toolbar > .env-toolbar {
-  inline-size: max-content;
-  min-inline-size: 100%;
-}
-.env-editor-status:empty {
-  position: absolute;
-  inline-size: 0.0625rem;
-  block-size: 0.0625rem;
-  clip-path: inset(50%);
-  overflow: hidden;
+@layer env.components {
+  /* The parts MarkdownEditor and RichTextEditor share: the formatting toolbar, which scrolls sideways
+     where it is wider than the editor, and the status line under the field, out of sight while it
+     is empty. */
+  .env-editor-toolbar {
+    min-inline-size: 0;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    /* Let focus rings stay visible while keeping the buttons aligned with the field. */
+    padding: var(--env-space-2);
+    margin: calc(-1 * var(--env-space-2));
+  }
+  /* The row of buttons is as wide as its buttons, at least the toolbar's width, so where they don't
+     fit the toolbar scrolls the whole row rather than the buttons spilling out of it. */
+  .env-editor-toolbar > .env-toolbar {
+    inline-size: max-content;
+    min-inline-size: 100%;
+  }
+  .env-editor-status:empty {
+    position: absolute;
+    inline-size: 0.0625rem;
+    block-size: 0.0625rem;
+    clip-path: inset(50%);
+    overflow: hidden;
+  }
 }

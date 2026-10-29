@@ -18,6 +18,8 @@ import { DirectedToolbarRoot } from './internal/DirectedToolbarRoot.js';
 import { keyShortcuts, shortcutChords } from '../internal/shortcuts.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 import type { ControlSize } from '../foundations/Theme.js';
+import '../styles/Base.css';
+import '../styles/Toolbar.css';
 
 export interface RootProps extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
   /** Names the toolbar for assistive technology, such as Formatting. */

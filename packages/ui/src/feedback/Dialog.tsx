@@ -24,6 +24,8 @@ import {
   usePortalContainer,
 } from '../internal/PortalContainerContext.js';
 import type { SkeletonProps } from '../internal/skeleton.js';
+import '../styles/Base.css';
+import '../styles/Dialog.css';
 
 /**
  * Why a dialog or a sheet asks to open or close: its trigger, Escape, a press outside, focus

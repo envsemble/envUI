@@ -23,6 +23,8 @@ import { FieldFrame } from './internal/FieldFrame.js';
 import { fieldMessageIds } from './internal/useFieldMetadata.js';
 import { subscribeFormReset } from './internal/subscribeFormReset.js';
 import { followOverdrag } from './internal/sliderOverdrag.js';
+import '../styles/Base.css';
+import '../styles/Slider.css';
 
 export interface SliderProps
   extends Omit<ComponentPropsWithRef<'div'>, 'defaultValue' | 'onChange' | 'children'> {

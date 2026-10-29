@@ -1,4 +1,7 @@
 import { Children, isValidElement, type ReactElement, type ReactNode } from 'react';
+import '../styles/Base.css';
+import '../styles/Text.css';
+import '../styles/HoverDetail.css';
 
 /**
  * The class a HoverCard or Tooltip gives a text trigger: a quiet dotted underline that says the

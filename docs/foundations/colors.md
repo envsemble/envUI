@@ -116,7 +116,6 @@ Ask an agent for color in these words; envUI turns each into a role.
 
 ```tsx
 import { Theme, Text, useTheme } from '@envsemble/envui';
-import '@envsemble/envui/styles.css';
 
 function ThemeLabel() {
   const { theme, contrast } = useTheme();

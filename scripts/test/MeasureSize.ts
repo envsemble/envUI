@@ -8,7 +8,10 @@
 // is. Each bundle is made with esbuild as an application would: React external, CSS imports
 // external, and for "own code only" Base UI external too, split where the code imports a module
 // lazily. A bundle's sizes are what the page loads first, the entry and the chunks it imports;
-// `lazy` is what loads later, when the code asks for it. It prints JSON.
+// `lazy` is what loads later, when the code asks for it. A bundle's `css` is the style sheets its
+// modules import, as a bundler that drops the modules it shakes out puts them in the page (Vite,
+// webpack), the modules the page loads first; esbuild itself would keep those of every module the
+// entry reaches. It prints JSON.
 import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { relative, resolve } from 'node:path';
@@ -47,6 +50,9 @@ const typicalApp = [
 
 /** The bundles a page may load, as the source that imports them. */
 const sets: Record<string, { source: string; ownCode?: boolean }> = {
+  'Small app (Theme, Button, TextField, Card)': {
+    source: "export { Theme, Button, TextField, Card } from '@envsemble/envui';",
+  },
   'Theme + Button + Icon': { source: "export { Theme, Button, Icon } from '@envsemble/envui';" },
   'Typical app (23 components, with Base UI)': {
     source: `export { ${typicalApp.join(', ')} } from '@envsemble/envui';`,
@@ -57,6 +63,9 @@ const sets: Record<string, { source: string; ownCode?: boolean }> = {
   },
   'Everything, envUI’s own code': { source: "export * from '@envsemble/envui';", ownCode: true },
 };
+
+/** A style sheet import of a built module, as `import "#styles/Button.css";`. */
+const stylesheetImport = /^import "#styles\/(\w+\.css)";$/gm;
 
 /** Single components, each with what it depends on. */
 const components = ['Tooltip', 'Popover', 'Menu', 'Select', 'TextField', 'Alert'];
@@ -120,8 +129,26 @@ async function bundle(source: string, ownCode = false) {
       else parts.other += bytesInOutput;
     }
   const lazyBytes = contents(lazy);
+  // The style sheets the first load's envUI modules import, in the order they come, each once.
+  const stylesheets: string[] = [];
+  for (const path of initial)
+    for (const [input, { bytesInOutput }] of Object.entries(outputs[path]!.inputs)) {
+      const file = input.replaceAll('\\', '/');
+      if (bytesInOutput === 0 || !file.includes('packages/ui/dist/')) continue;
+      for (const [, name] of readFileSync(resolve(root, file), 'utf8').matchAll(stylesheetImport))
+        if (!stylesheets.includes(name!)) stylesheets.push(name!);
+    }
+  const css = (
+    await transform(
+      stylesheets
+        .map((name) => readFileSync(resolve(root, 'packages/ui/dist/styles', name), 'utf8'))
+        .join('\n'),
+      { loader: 'css', minify: true, target: 'chrome120' },
+    )
+  ).code;
   return {
     ...sizes(contents([...initial])),
+    css: { stylesheets: stylesheets.length, ...sizes(css) },
     parts,
     lazy: {
       chunks: lazy.length,

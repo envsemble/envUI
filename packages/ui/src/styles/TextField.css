@@ -1,546 +1,553 @@
-/* Color properties: a field's colors, which an application sets on one TextField or Textarea
-   through style or its own CSS: container its well, which is transparent by default, so the field
-   takes the background of what it sits on, content the entered text, outline its edge at
-   rest and indicator its edge under the pointer, pressed and focused, with the caret and the
-   floating label while focused. They don't inherit; the field passes them on to its parts. An
-   invalid field keeps the error color. */
-@property --env-text-field-container {
-  syntax: '*';
-  inherits: false;
-}
-@property --env-text-field-content {
-  syntax: '*';
-  inherits: false;
-}
-@property --env-text-field-outline {
-  syntax: '*';
-  inherits: false;
-}
-@property --env-text-field-indicator {
-  syntax: '*';
-  inherits: false;
-}
-
-/* A field takes the control height of its size, or of its container where it sets none. A tall
-   field (the floating variant and text areas) keeps room above it for its label. */
-.env-text-field {
-  --env-text-field-well: var(--env-text-field-container, transparent);
-  --env-text-field-text: var(--env-text-field-content, var(--env-color-fg-default));
-  --env-text-field-edge: var(--env-text-field-outline, var(--env-color-border-default));
-  --env-text-field-accent: var(--env-text-field-indicator, var(--env-color-border-accent-emphasis));
-  --env-text-field-accent-hover: var(
-    --env-text-field-indicator,
-    var(--env-color-border-accent-emphasis-hover)
-  );
-  --env-text-field-accent-pressed: var(
-    --env-text-field-indicator,
-    var(--env-color-border-accent-emphasis-pressed)
-  );
-  /* The floated label while focused: the accent's text color, as it sits on what the field sits
-     on, or the indicator an application sets. */
-  --env-text-field-label-accent: var(--env-text-field-indicator, var(--env-color-fg-accent));
-  --env-field-height: var(--env-control-height);
-  /* The color of the field's error and of its invalid control, as on every field. */
-  --env-field-error-color: var(--env-color-fg-danger);
-}
-.env-text-field[data-size='sm'] {
-  --env-control-height: var(--env-control-height-sm);
-}
-.env-text-field[data-size='md'] {
-  --env-control-height: var(--env-control-height-md);
-}
-.env-text-field[data-size='lg'] {
-  --env-control-height: var(--env-control-height-lg);
-}
-.env-text-field[data-tall]:not([data-label-hidden]):has(> .env-text-field-control > label) {
-  padding-block-start: var(--env-space-2);
-}
-.env-text-field-control {
-  --env-text-field-border-base: var(--env-text-field-edge, var(--env-color-border-default));
-  --env-text-field-interaction-color: var(
-    --env-text-field-accent,
-    var(--env-color-border-accent-emphasis)
-  );
-  --env-text-field-interaction-hover: var(
-    --env-text-field-accent-hover,
-    var(--env-color-border-accent-emphasis-hover)
-  );
-  --env-text-field-interaction-pressed: var(
-    --env-text-field-accent-pressed,
-    var(--env-color-border-accent-emphasis-pressed)
-  );
-  --env-text-field-border-color: var(--env-text-field-border-base);
-  /* Where the label starts, resting and floated, and the height of the notch it cuts. */
-  --env-text-field-label-start: var(--env-space-4);
-  --env-text-field-notch: var(--env-space-2);
-  position: relative;
-  min-width: 0;
-  /* The border takes its room here and is drawn by the fieldset inside (env-text-field-border). */
-  border: var(--env-control-border-width) solid transparent;
-  border-radius: var(--env-radius-lg);
-  background: var(--env-text-field-well, transparent);
-}
-/* The field has no fill of its own, so the line behind its floated label can't be hidden under a
-   fill: the border is a fieldset over the control's border box, and the legend, a hidden copy of
-   the label as long as the floated label, cuts a notch in it where the label sits. The legend's
-   middle sits on the border, so the fieldset starts half a notch higher. */
-.env-text-field-border {
-  position: absolute;
-  inset-inline: calc(-1 * var(--env-control-border-width));
-  inset-block: calc(-0.5 * (var(--env-text-field-notch) + var(--env-control-border-width)))
-    calc(-1 * var(--env-control-border-width));
-  min-inline-size: 0;
-  margin: 0;
-  padding-block: 0;
-  padding-inline: calc(var(--env-text-field-label-start) - var(--env-space-1)) var(--env-space-2);
-  border: var(--env-control-border-width) solid var(--env-text-field-border-color);
-  border-radius: inherit;
-  pointer-events: none;
-  transition: border-color var(--env-motion-duration-medium) var(--env-motion-ease);
-}
-.env-text-field-border > legend {
-  display: block;
-  inline-size: auto;
-  max-inline-size: 0rem;
-  block-size: var(--env-text-field-notch);
-  padding: 0;
-  overflow: hidden;
-  font: var(--env-type-body);
-  font-size: var(--env-font-size-body-small);
-  line-height: 1;
-  white-space: nowrap;
-  visibility: hidden;
-  transition: max-inline-size var(--env-motion-duration-fast) var(--env-motion-ease);
-}
-.env-text-field-border > legend > span {
-  display: inline-block;
-  padding-inline: var(--env-space-1);
-}
-@media (hover: hover) {
-  .env-text-field-control:hover:not(:has(> .env-text-field-input:disabled), [data-disabled]) {
-    --env-text-field-border-color: var(--env-text-field-interaction-hover);
+@layer env.components {
+  /* Color properties: a field's colors, which an application sets on one TextField or Textarea
+     through style or its own CSS: container its well, which is transparent by default, so the field
+     takes the background of what it sits on, content the entered text, outline its edge at
+     rest and indicator its edge under the pointer, pressed and focused, with the caret and the
+     floating label while focused. They don't inherit; the field passes them on to its parts. An
+     invalid field keeps the error color. */
+  @property --env-text-field-container {
+    syntax: '*';
+    inherits: false;
   }
-}
-.env-text-field-control:is(:active, :has(> .env-textarea-resize-edge[data-dragging])):not(
-    :has(> .env-text-field-input:disabled),
-    [data-disabled]
-  ) {
-  --env-text-field-border-color: var(--env-text-field-interaction-pressed);
-}
-.env-text-field-control:focus-within {
-  --env-text-field-border-color: var(--env-text-field-interaction-color);
-}
-.env-text-field-input {
-  box-sizing: border-box;
-  display: block;
-  width: 100%;
-  min-width: 0;
-  min-height: var(--env-field-floating-height);
-  margin: 0;
-  padding: var(--env-space-4);
-  border: 0;
-  border-radius: inherit;
-  outline: none;
-  background: transparent;
-  color: var(--env-text-field-text, var(--env-color-fg-default));
-  font: var(--env-type-body);
-  /* The control font size is 1 rem on touch screens, where smaller entered text zooms the page. */
-  font-size: var(--env-control-font-size);
-  caret-color: var(--env-text-field-accent, var(--env-color-border-accent-emphasis));
-}
-.env-text-field-input::placeholder {
-  color: var(--env-color-fg-muted);
-  opacity: 1;
-}
-.env-text-field-control > label {
-  position: absolute;
-  inset-block-start: calc(var(--env-space-4) + 0.0625rem);
-  inset-inline-start: var(--env-text-field-label-start);
-  max-width: calc(100% - var(--env-space-6));
-  overflow: hidden;
-  color: var(--env-color-fg-muted);
-  font: var(--env-type-body);
-  font-size: var(--env-control-font-size);
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  cursor: text;
-  transition:
-    inset-block-start var(--env-motion-duration-medium) var(--env-motion-ease),
-    font-size var(--env-motion-duration-medium) var(--env-motion-ease),
-    color var(--env-motion-duration-medium) var(--env-motion-ease),
-    padding var(--env-motion-duration-medium) var(--env-motion-ease);
-}
-/* Native placeholder state tracks controlled values, autofill and form reset without JS. A control
-   that is not a text input, such as the button of a date field, marks its well data-label-floating
-   while it has a value. */
-.env-text-field-control:is(
-    :has(
-      > .env-text-field-input:focus,
-      > .env-text-field-input:is(input, textarea):not(:placeholder-shown)
-    ),
-    [data-label-floating]
-  )
-  > label {
-  inset-block-start: -0.625rem;
-  padding-inline: var(--env-space-1);
-  margin-inline-start: calc(-1 * var(--env-space-1));
-  font-size: var(--env-font-size-body-small);
-}
-/* The floated label opens the notch in the border behind it, as wide as the label shows. */
-.env-text-field-control:is(
-    :has(
-      > .env-text-field-input:focus,
-      > .env-text-field-input:is(input, textarea):not(:placeholder-shown)
-    ),
-    [data-label-floating]
-  )
-  > .env-text-field-border
-  > legend {
-  max-inline-size: calc(100% - var(--env-space-4));
-  transition-duration: var(--env-motion-duration-medium);
-}
-.env-text-field-control:has(> label) > .env-text-field-input:not(:focus)::placeholder {
-  color: transparent;
-}
-.env-text-field-control:focus-within > label {
-  color: var(--env-text-field-label-accent, var(--env-color-fg-accent));
-}
-/* Ghost fields are only their text and icon at rest: no border or fill. A soft fill
-   shows under the pointer and while the field has focus, the icon keeps its quiet color, and the
-   placeholder clears once the field has focus. An invalid ghost field shows its red border.
-   The command palette's search is a ghost field that sets private properties (CommandPalette.css):
-   --env-text-field-ghost-solid, a fill it keeps in every state; --env-text-field-ghost-placeholder,
-   its placeholder's color while focused; --env-text-field-ghost-edge, an edge; and, as any field
-   may, --env-text-field-start-inset, where its start icon sits. */
-.env-text-field-control[data-variant='ghost'] {
-  background: var(--env-text-field-ghost-solid, transparent);
-  transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
-}
-@media (hover: hover) {
-  .env-text-field-control[data-variant='ghost']:hover:not(
+  @property --env-text-field-content {
+    syntax: '*';
+    inherits: false;
+  }
+  @property --env-text-field-outline {
+    syntax: '*';
+    inherits: false;
+  }
+  @property --env-text-field-indicator {
+    syntax: '*';
+    inherits: false;
+  }
+
+  /* A field takes the control height of its size, or of its container where it sets none. A tall
+     field (the floating variant and text areas) keeps room above it for its label. */
+  .env-text-field {
+    --env-text-field-well: var(--env-text-field-container, transparent);
+    --env-text-field-text: var(--env-text-field-content, var(--env-color-fg-default));
+    --env-text-field-edge: var(--env-text-field-outline, var(--env-color-border-default));
+    /* prettier-ignore */
+    --env-text-field-accent: var(--env-text-field-indicator, var(--env-color-border-accent-emphasis));
+    --env-text-field-accent-hover: var(
+      --env-text-field-indicator,
+      var(--env-color-border-accent-emphasis-hover)
+    );
+    --env-text-field-accent-pressed: var(
+      --env-text-field-indicator,
+      var(--env-color-border-accent-emphasis-pressed)
+    );
+    /* The floated label while focused: the accent's text color, as it sits on what the field sits
+       on, or the indicator an application sets. */
+    --env-text-field-label-accent: var(--env-text-field-indicator, var(--env-color-fg-accent));
+    --env-field-height: var(--env-control-height);
+    /* The color of the field's error and of its invalid control, as on every field. */
+    --env-field-error-color: var(--env-color-fg-danger);
+  }
+  .env-text-field[data-size='sm'] {
+    --env-control-height: var(--env-control-height-sm);
+  }
+  .env-text-field[data-size='md'] {
+    --env-control-height: var(--env-control-height-md);
+  }
+  .env-text-field[data-size='lg'] {
+    --env-control-height: var(--env-control-height-lg);
+  }
+  .env-text-field[data-tall]:not([data-label-hidden]):has(> .env-text-field-control > label) {
+    padding-block-start: var(--env-space-2);
+  }
+  .env-text-field-control {
+    --env-text-field-border-base: var(--env-text-field-edge, var(--env-color-border-default));
+    --env-text-field-interaction-color: var(
+      --env-text-field-accent,
+      var(--env-color-border-accent-emphasis)
+    );
+    --env-text-field-interaction-hover: var(
+      --env-text-field-accent-hover,
+      var(--env-color-border-accent-emphasis-hover)
+    );
+    --env-text-field-interaction-pressed: var(
+      --env-text-field-accent-pressed,
+      var(--env-color-border-accent-emphasis-pressed)
+    );
+    --env-text-field-border-color: var(--env-text-field-border-base);
+    /* Where the label starts, resting and floated, and the height of the notch it cuts. */
+    --env-text-field-label-start: var(--env-space-4);
+    --env-text-field-notch: var(--env-space-2);
+    position: relative;
+    min-width: 0;
+    /* The border takes its room here and is drawn by the fieldset inside (env-text-field-border). */
+    border: var(--env-control-border-width) solid transparent;
+    border-radius: var(--env-radius-lg);
+    background: var(--env-text-field-well, transparent);
+  }
+  /* The field has no fill of its own, so the line behind its floated label can't be hidden under a
+     fill: the border is a fieldset over the control's border box, and the legend, a hidden copy of
+     the label as long as the floated label, cuts a notch in it where the label sits. The legend's
+     middle sits on the border, so the fieldset starts half a notch higher. */
+  .env-text-field-border {
+    position: absolute;
+    inset-inline: calc(-1 * var(--env-control-border-width));
+    inset-block: calc(-0.5 * (var(--env-text-field-notch) + var(--env-control-border-width)))
+      calc(-1 * var(--env-control-border-width));
+    min-inline-size: 0;
+    margin: 0;
+    padding-block: 0;
+    padding-inline: calc(var(--env-text-field-label-start) - var(--env-space-1)) var(--env-space-2);
+    border: var(--env-control-border-width) solid var(--env-text-field-border-color);
+    border-radius: inherit;
+    pointer-events: none;
+    transition: border-color var(--env-motion-duration-medium) var(--env-motion-ease);
+  }
+  .env-text-field-border > legend {
+    display: block;
+    inline-size: auto;
+    max-inline-size: 0rem;
+    block-size: var(--env-text-field-notch);
+    padding: 0;
+    overflow: hidden;
+    font: var(--env-type-body);
+    font-size: var(--env-font-size-body-small);
+    line-height: 1;
+    white-space: nowrap;
+    visibility: hidden;
+    transition: max-inline-size var(--env-motion-duration-fast) var(--env-motion-ease);
+  }
+  .env-text-field-border > legend > span {
+    display: inline-block;
+    padding-inline: var(--env-space-1);
+  }
+  @media (hover: hover) {
+    .env-text-field-control:hover:not(:has(> .env-text-field-input:disabled), [data-disabled]) {
+      --env-text-field-border-color: var(--env-text-field-interaction-hover);
+    }
+  }
+  .env-text-field-control:is(:active, :has(> .env-textarea-resize-edge[data-dragging])):not(
       :has(> .env-text-field-input:disabled),
       [data-disabled]
     ) {
-    background: var(--env-text-field-ghost-solid, var(--env-color-bg-neutral-muted));
+    --env-text-field-border-color: var(--env-text-field-interaction-pressed);
   }
-}
-.env-text-field-control[data-variant='ghost']:focus-within {
-  background: var(--env-text-field-ghost-solid, var(--env-color-bg-neutral-muted));
-}
-.env-text-field-control[data-variant='ghost']:focus-within > .env-text-field-start {
-  color: var(--env-color-fg-muted);
-}
-.env-text-field-control[data-variant='ghost'] > .env-text-field-input:focus::placeholder {
-  color: var(--env-text-field-ghost-placeholder, transparent);
-}
-.env-text-field-control[data-variant='ghost']:not(
-    :has(> .env-text-field-input[aria-invalid='true']),
-    [data-invalid]
-  )
-  > .env-text-field-border {
-  border-color: var(--env-text-field-ghost-edge, transparent);
-}
-/* Invalid controls recolor their existing border. */
-.env-text-field-control:is(:has(> .env-text-field-input[aria-invalid='true']), [data-invalid]) {
-  --env-text-field-border-base: var(--env-field-error-color);
-  --env-text-field-interaction-color: var(--env-field-error-color);
-  --env-text-field-interaction-hover: var(--env-color-border-danger-emphasis-hover);
-  --env-text-field-interaction-pressed: var(--env-color-border-danger-emphasis-pressed);
-}
-.env-text-field-control:is(:has(> .env-text-field-input[aria-invalid='true']), [data-invalid])
-  > label {
-  color: var(--env-field-error-color);
-}
-.env-text-field-control:is(:has(> .env-text-field-input:disabled), [data-disabled]) {
-  opacity: var(--env-state-disabled-opacity);
-}
-.env-text-field-input:disabled,
-.env-text-field-control:is(:has(> .env-text-field-input:disabled), [data-disabled]) > label {
-  cursor: default;
-}
-textarea.env-text-field-input {
-  min-height: 7.5rem;
-  field-sizing: fixed;
-  overflow-y: auto;
-  scrollbar-width: thin;
-  resize: none;
-}
-textarea.env-text-field-input[data-sizing='content'] {
-  field-sizing: content;
-  min-height: max(7.5rem, calc(var(--env-textarea-rows, 2) * 1lh + var(--env-space-6)));
-}
-/* Given rows, a growing field starts at that many lines, also when that is less than 7.5 rem. */
-textarea.env-text-field-input[data-sizing='content'][data-rows] {
-  min-height: calc(var(--env-textarea-rows) * 1lh + var(--env-space-6));
-}
-.env-textarea-resize-edge {
-  position: absolute;
-  inset-inline: 0;
-  inset-block-end: -0.0625rem;
-  block-size: var(--env-space-3);
-  padding: 0;
-  margin: 0;
-  border: 0;
-  outline: none;
-  background: transparent;
-  color: var(--env-text-field-border-color);
-  cursor: ns-resize;
-  touch-action: none;
-  user-select: none;
-  transition: color var(--env-motion-duration-medium) var(--env-motion-ease);
-}
-.env-textarea-resize-edge::after {
-  content: '';
-  position: absolute;
-  inset-inline: var(--env-radius-lg);
-  inset-block-end: 0;
-  block-size: 0.125rem;
-  border-radius: var(--env-radius-full);
-  background: currentColor;
-  pointer-events: none;
-}
-/* Older browsers retain the shared edge when native content sizing is unavailable. */
-@supports (field-sizing: content) {
-  textarea.env-text-field-input[data-sizing='content'] + .env-textarea-resize-edge {
-    display: none;
+  .env-text-field-control:focus-within {
+    --env-text-field-border-color: var(--env-text-field-interaction-color);
   }
-}
-textarea.env-text-field-input:disabled + .env-textarea-resize-edge {
-  display: none;
-}
-@media (pointer: coarse) {
-  .env-textarea-resize-edge {
-    block-size: var(--env-control-height-touch);
+  .env-text-field-input {
+    box-sizing: border-box;
+    display: block;
+    width: 100%;
+    min-width: 0;
+    min-height: var(--env-field-floating-height);
+    margin: 0;
+    padding: var(--env-space-4);
+    border: 0;
+    border-radius: inherit;
+    outline: none;
+    background: transparent;
+    color: var(--env-text-field-text, var(--env-color-fg-default));
+    font: var(--env-type-body);
+    /* The control font size is 1 rem on touch screens, where smaller entered text zooms the page. */
+    font-size: var(--env-control-font-size);
+    caret-color: var(--env-text-field-accent, var(--env-color-border-accent-emphasis));
   }
-  textarea.env-text-field-input:not(:disabled):has(+ .env-textarea-resize-edge) {
-    padding-block-end: var(--env-control-height-touch);
+  .env-text-field-input::placeholder {
+    color: var(--env-color-fg-muted);
+    opacity: 1;
   }
-  @supports (field-sizing: content) {
-    textarea.env-text-field-input[data-sizing='content']:not(:disabled) {
-      padding-block-end: var(--env-space-4);
+  .env-text-field-control > label {
+    position: absolute;
+    inset-block-start: calc(var(--env-space-4) + 0.0625rem);
+    inset-inline-start: var(--env-text-field-label-start);
+    max-width: calc(100% - var(--env-space-6));
+    overflow: hidden;
+    color: var(--env-color-fg-muted);
+    font: var(--env-type-body);
+    font-size: var(--env-control-font-size);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    cursor: text;
+    transition:
+      inset-block-start var(--env-motion-duration-medium) var(--env-motion-ease),
+      font-size var(--env-motion-duration-medium) var(--env-motion-ease),
+      color var(--env-motion-duration-medium) var(--env-motion-ease),
+      padding var(--env-motion-duration-medium) var(--env-motion-ease);
+  }
+  /* Native placeholder state tracks controlled values, autofill and form reset without JS. A control
+     that is not a text input, such as the button of a date field, marks its well data-label-floating
+     while it has a value. */
+  .env-text-field-control:is(
+      :has(
+        > .env-text-field-input:focus,
+        > .env-text-field-input:is(input, textarea):not(:placeholder-shown)
+      ),
+      [data-label-floating]
+    )
+    > label {
+    inset-block-start: -0.625rem;
+    padding-inline: var(--env-space-1);
+    margin-inline-start: calc(-1 * var(--env-space-1));
+    font-size: var(--env-font-size-body-small);
+  }
+  /* The floated label opens the notch in the border behind it, as wide as the label shows. */
+  .env-text-field-control:is(
+      :has(
+        > .env-text-field-input:focus,
+        > .env-text-field-input:is(input, textarea):not(:placeholder-shown)
+      ),
+      [data-label-floating]
+    )
+    > .env-text-field-border
+    > legend {
+    max-inline-size: calc(100% - var(--env-space-4));
+    transition-duration: var(--env-motion-duration-medium);
+  }
+  .env-text-field-control:has(> label) > .env-text-field-input:not(:focus)::placeholder {
+    color: transparent;
+  }
+  .env-text-field-control:focus-within > label {
+    color: var(--env-text-field-label-accent, var(--env-color-fg-accent));
+  }
+  /* Ghost fields are only their text and icon at rest: no border or fill. A soft fill
+     shows under the pointer and while the field has focus, the icon keeps its quiet color, and the
+     placeholder clears once the field has focus. An invalid ghost field shows its red border.
+     The command palette's search is a ghost field that sets private properties (CommandPalette.css):
+     --env-text-field-ghost-solid, a fill it keeps in every state; --env-text-field-ghost-placeholder,
+     its placeholder's color while focused; --env-text-field-ghost-edge, an edge; and, as any field
+     may, --env-text-field-start-inset, where its start icon sits. */
+  .env-text-field-control[data-variant='ghost'] {
+    background: var(--env-text-field-ghost-solid, transparent);
+    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
+  }
+  @media (hover: hover) {
+    .env-text-field-control[data-variant='ghost']:hover:not(
+        :has(> .env-text-field-input:disabled),
+        [data-disabled]
+      ) {
+      background: var(--env-text-field-ghost-solid, var(--env-color-bg-neutral-muted));
     }
   }
-}
-@media (prefers-reduced-motion: reduce) {
-  .env-text-field-border,
-  .env-text-field-border > legend,
-  .env-text-field-control > label,
-  .env-textarea-resize-edge {
-    transition: none;
+  .env-text-field-control[data-variant='ghost']:focus-within {
+    background: var(--env-text-field-ghost-solid, var(--env-color-bg-neutral-muted));
   }
-}
-/* Decorations sit inside the well; the native input keeps its full hit area and caret. */
-.env-text-field-start,
-.env-text-field-end {
-  /* Icon actions, such as the clear action, take the field's quiet icon color rather than the
-     link blue of text buttons, darkening to the field text on hover and press. */
-  --env-button-text-icon-color: var(--env-color-fg-muted);
-  --env-button-text-icon-color-active: var(--env-color-fg-default);
-  position: absolute;
-  inset-block: 0;
-  display: flex;
-  align-items: center;
-  color: var(--env-color-fg-muted);
-}
-.env-text-field-start {
-  /* Where the start icon sits; the command palette's search lines it up with its options'. */
-  inset-inline-start: var(--env-text-field-start-inset, var(--env-space-4));
-  pointer-events: none;
-}
-.env-text-field-end {
-  inset-inline-end: var(--env-space-2);
-}
-.env-text-field-start .env-icon {
-  width: var(--env-control-icon-size);
-  height: var(--env-control-icon-size);
-}
-.env-text-field-control[data-start-icon] > .env-text-field-input {
-  padding-inline-start: calc(
-    var(--env-text-field-start-inset, var(--env-space-4)) + var(--env-control-icon-size) +
-      var(--env-space-3)
-  );
-}
-.env-text-field-control[data-start-icon] {
-  --env-text-field-label-start: calc(
-    var(--env-text-field-start-inset, var(--env-space-4)) + var(--env-control-icon-size) +
-      var(--env-space-3)
-  );
-}
-.env-text-field-control[data-end-action] > .env-text-field-input {
-  padding-inline-end: calc((var(--env-control-height) + var(--env-space-3)));
-}
-.env-text-field-control:focus-within > .env-text-field-start {
-  color: var(--env-text-field-accent, var(--env-color-border-accent-emphasis));
-}
-/* Search inputs supply their own clear action. */
-.env-text-field-input[type='search']::-webkit-search-cancel-button {
-  appearance: none;
-}
-/* Fields share the button height and rounded ends so they line up with buttons in a row. The capped
-   full corner keeps the corners of a field that grows taller, as a combobox whose chips wrap, and
-   makes it a rounded rectangle. */
-.env-text-field:not([data-tall]) .env-text-field-control {
-  box-sizing: border-box;
-  display: flex;
-  min-height: var(--env-field-height);
-  border-radius: var(--env-radius-full);
-}
-.env-text-field:not([data-tall]) .env-text-field-input {
-  /* The well owns the height, including its border, so it matches the button height exactly; the
-     block padding gives way where a line and the padding would outgrow it. */
-  flex: 1 1 auto;
-  min-height: 0;
-  padding-block: min(
-    var(--env-space-1),
-    calc((var(--env-field-height) - 2 * var(--env-control-border-width) - 1lh) / 2)
-  );
-}
-/* The label rests at the vertical center and floats into the outline like a tall field's, without
-   reserving space above the field, so the field still lines up with adjacent buttons. */
-.env-text-field:where(:not([data-tall])) .env-text-field-control > label {
-  inset-block-start: calc((var(--env-field-height) - 1lh) / 2 - var(--env-control-border-width));
-}
-/* A hidden label stays available to assistive technology; the placeholder gives visible guidance. */
-.env-text-field[data-label-hidden]
-  .env-text-field-control
-  > .env-text-field-input:not(:focus)::placeholder {
-  color: var(--env-color-fg-muted);
-}
-.env-text-field[data-label-hidden] .env-text-field-control > label {
-  position: absolute;
-  width: 0.0625rem;
-  height: 0.0625rem;
-  padding: 0;
-  margin: -0.0625rem;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
-.env-text-field:not([data-tall]) .env-text-field-end {
-  --env-control-height: max(
-    var(--env-control-target-min),
-    calc(var(--env-field-height) - var(--env-space-2))
-  );
-  inset-inline-end: var(--env-space-1);
-}
-.env-text-field:not([data-tall]) .env-text-field-control[data-end-action] > .env-text-field-input {
-  padding-inline-end: var(--env-field-height);
-}
-/* Prefix and suffix text sit in line with the value, inside the well. A long prefix is cut short
-   with an ellipsis, so the control always keeps room for its value. */
-.env-text-field-control:is([data-prefix], [data-suffix]) {
-  display: flex;
-}
-.env-text-field-control:is([data-prefix], [data-suffix]) > .env-text-field-input {
-  flex: 1 1 0;
-  min-inline-size: min(6rem, 50%);
-}
-.env-text-field-prefix,
-.env-text-field-suffix {
-  flex: 0 1 auto;
-  align-self: center;
-  min-inline-size: 0;
-  overflow: hidden;
-  color: var(--env-color-fg-muted);
-  font: var(--env-type-body);
-  font-size: var(--env-control-font-size);
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  cursor: text;
-  transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);
-}
-.env-text-field-prefix {
-  padding-inline-start: var(--env-space-4);
-}
-.env-text-field-suffix {
-  padding-inline-end: var(--env-space-4);
-}
-.env-text-field-control[data-prefix] > .env-text-field-input {
-  padding-inline-start: 0.125rem;
-}
-.env-text-field-control[data-suffix] > .env-text-field-input {
-  padding-inline-end: 0.125rem;
-}
-.env-text-field-control[data-start-icon] > .env-text-field-prefix {
-  padding-inline-start: calc(
-    var(--env-text-field-start-inset, var(--env-space-4)) + var(--env-control-icon-size) +
-      var(--env-space-3)
-  );
-}
-.env-text-field-control[data-end-action] > .env-text-field-suffix {
-  padding-inline-end: calc((var(--env-control-height) + var(--env-space-3)));
-}
-.env-text-field:not([data-tall])
-  .env-text-field-control[data-end-action][data-suffix]
-  > .env-text-field-input {
-  padding-inline-end: 0.125rem;
-}
-.env-text-field:not([data-tall]) .env-text-field-control[data-end-action] > .env-text-field-suffix {
-  padding-inline-end: var(--env-field-height);
-}
-/* While the label rests inside an empty field, the prefix and suffix wait for focus or a value. */
-.env-text-field:not([data-label-hidden])
-  .env-text-field-control:has(> label):has(> .env-text-field-input:not(:focus):placeholder-shown)
-  > :is(.env-text-field-prefix, .env-text-field-suffix) {
-  opacity: 0;
-}
-@media (prefers-reduced-motion: reduce) {
-  .env-text-field-prefix,
-  .env-text-field-suffix {
-    transition: none;
+  .env-text-field-control[data-variant='ghost']:focus-within > .env-text-field-start {
+    color: var(--env-color-fg-muted);
   }
-}
-/* Under a coarse pointer, single-line fields grow to the touch height, whatever the scale, as every
-   control does, and their text to 1 rem. The actions inside keep their size, a little less than
-   the field's, and their hit area grows above and below them to the touch height, within the
-   field: never beside them, over the next action or the text. */
-@media (pointer: coarse) {
-  .env-text-field {
-    --env-field-height: max(var(--env-control-height), var(--env-control-height-touch));
+  .env-text-field-control[data-variant='ghost'] > .env-text-field-input:focus::placeholder {
+    color: var(--env-text-field-ghost-placeholder, transparent);
   }
-  .env-text-field-end {
-    --env-button-touch-height: 0rem;
+  .env-text-field-control[data-variant='ghost']:not(
+      :has(> .env-text-field-input[aria-invalid='true']),
+      [data-invalid]
+    )
+    > .env-text-field-border {
+    border-color: var(--env-text-field-ghost-edge, transparent);
   }
-  .env-text-field-end .env-icon-button {
-    position: relative;
-  }
-  .env-text-field-end .env-icon-button::before {
-    content: '';
-    position: absolute;
-    inset-block: min(0%, calc((100% - var(--env-control-height-touch)) / 2));
-    inset-inline: 0;
-  }
-}
-
-/* Motion: a field's actions settle in as they appear. Only without a reduced-motion preference;
-   an action that is always there, such as a combobox's chevron, stays still in its own sheet. */
-@media (prefers-reduced-motion: no-preference) {
-  .env-text-field-end > * {
-    animation: env-motion-pop-in var(--env-motion-duration-medium) var(--env-motion-ease-enter);
-  }
-}
-
-/* Forced colors: the system paints no fills or shadows, so a focused field is outlined in the
-   selection color, an invalid one has a dashed border, and a disabled one takes the disabled
-   color. */
-@media (forced-colors: active) {
-  .env-text-field-control:focus-within {
-    outline: 2px solid Highlight;
-    outline-offset: 1px;
+  /* Invalid controls recolor their existing border. */
+  .env-text-field-control:is(:has(> .env-text-field-input[aria-invalid='true']), [data-invalid]) {
+    --env-text-field-border-base: var(--env-field-error-color);
+    --env-text-field-interaction-color: var(--env-field-error-color);
+    --env-text-field-interaction-hover: var(--env-color-border-danger-emphasis-hover);
+    --env-text-field-interaction-pressed: var(--env-color-border-danger-emphasis-pressed);
   }
   .env-text-field-control:is(:has(> .env-text-field-input[aria-invalid='true']), [data-invalid])
-    > .env-text-field-border {
-    border-style: dashed;
+    > label {
+    color: var(--env-field-error-color);
   }
   .env-text-field-control:is(:has(> .env-text-field-input:disabled), [data-disabled]) {
-    color: GrayText;
+    opacity: var(--env-state-disabled-opacity);
   }
-  .env-text-field-control:is(:has(> .env-text-field-input:disabled), [data-disabled])
-    > .env-text-field-border {
-    border-color: GrayText;
+  .env-text-field-input:disabled,
+  .env-text-field-control:is(:has(> .env-text-field-input:disabled), [data-disabled]) > label {
+    cursor: default;
   }
-  .env-text-field-control:is(:has(> .env-text-field-input:disabled), [data-disabled])
+  textarea.env-text-field-input {
+    min-height: 7.5rem;
+    field-sizing: fixed;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    resize: none;
+  }
+  textarea.env-text-field-input[data-sizing='content'] {
+    field-sizing: content;
+    min-height: max(7.5rem, calc(var(--env-textarea-rows, 2) * 1lh + var(--env-space-6)));
+  }
+  /* Given rows, a growing field starts at that many lines, also when that is less than 7.5 rem. */
+  textarea.env-text-field-input[data-sizing='content'][data-rows] {
+    min-height: calc(var(--env-textarea-rows) * 1lh + var(--env-space-6));
+  }
+  .env-textarea-resize-edge {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: -0.0625rem;
+    block-size: var(--env-space-3);
+    padding: 0;
+    margin: 0;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: var(--env-text-field-border-color);
+    cursor: ns-resize;
+    touch-action: none;
+    user-select: none;
+    transition: color var(--env-motion-duration-medium) var(--env-motion-ease);
+  }
+  .env-textarea-resize-edge::after {
+    content: '';
+    position: absolute;
+    inset-inline: var(--env-radius-lg);
+    inset-block-end: 0;
+    block-size: 0.125rem;
+    border-radius: var(--env-radius-full);
+    background: currentColor;
+    pointer-events: none;
+  }
+  /* Older browsers retain the shared edge when native content sizing is unavailable. */
+  @supports (field-sizing: content) {
+    textarea.env-text-field-input[data-sizing='content'] + .env-textarea-resize-edge {
+      display: none;
+    }
+  }
+  textarea.env-text-field-input:disabled + .env-textarea-resize-edge {
+    display: none;
+  }
+  @media (pointer: coarse) {
+    .env-textarea-resize-edge {
+      block-size: var(--env-control-height-touch);
+    }
+    textarea.env-text-field-input:not(:disabled):has(+ .env-textarea-resize-edge) {
+      padding-block-end: var(--env-control-height-touch);
+    }
+    @supports (field-sizing: content) {
+      textarea.env-text-field-input[data-sizing='content']:not(:disabled) {
+        padding-block-end: var(--env-space-4);
+      }
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .env-text-field-border,
+    .env-text-field-border > legend,
+    .env-text-field-control > label,
+    .env-textarea-resize-edge {
+      transition: none;
+    }
+  }
+  /* Decorations sit inside the well; the native input keeps its full hit area and caret. */
+  .env-text-field-start,
+  .env-text-field-end {
+    /* Icon actions, such as the clear action, take the field's quiet icon color rather than the
+       link blue of text buttons, darkening to the field text on hover and press. */
+    --env-button-text-icon-color: var(--env-color-fg-muted);
+    --env-button-text-icon-color-active: var(--env-color-fg-default);
+    position: absolute;
+    inset-block: 0;
+    display: flex;
+    align-items: center;
+    color: var(--env-color-fg-muted);
+  }
+  .env-text-field-start {
+    /* Where the start icon sits; the command palette's search lines it up with its options'. */
+    inset-inline-start: var(--env-text-field-start-inset, var(--env-space-4));
+    pointer-events: none;
+  }
+  .env-text-field-end {
+    inset-inline-end: var(--env-space-2);
+  }
+  .env-text-field-start .env-icon {
+    width: var(--env-control-icon-size);
+    height: var(--env-control-icon-size);
+  }
+  .env-text-field-control[data-start-icon] > .env-text-field-input {
+    padding-inline-start: calc(
+      var(--env-text-field-start-inset, var(--env-space-4)) + var(--env-control-icon-size) +
+        var(--env-space-3)
+    );
+  }
+  .env-text-field-control[data-start-icon] {
+    --env-text-field-label-start: calc(
+      var(--env-text-field-start-inset, var(--env-space-4)) + var(--env-control-icon-size) +
+        var(--env-space-3)
+    );
+  }
+  .env-text-field-control[data-end-action] > .env-text-field-input {
+    padding-inline-end: calc((var(--env-control-height) + var(--env-space-3)));
+  }
+  .env-text-field-control:focus-within > .env-text-field-start {
+    color: var(--env-text-field-accent, var(--env-color-border-accent-emphasis));
+  }
+  /* Search inputs supply their own clear action. */
+  .env-text-field-input[type='search']::-webkit-search-cancel-button {
+    appearance: none;
+  }
+  /* Fields share the button height and rounded ends so they line up with buttons in a row. The capped
+     full corner keeps the corners of a field that grows taller, as a combobox whose chips wrap, and
+     makes it a rounded rectangle. */
+  .env-text-field:not([data-tall]) .env-text-field-control {
+    box-sizing: border-box;
+    display: flex;
+    min-height: var(--env-field-height);
+    border-radius: var(--env-radius-full);
+  }
+  .env-text-field:not([data-tall]) .env-text-field-input {
+    /* The well owns the height, including its border, so it matches the button height exactly; the
+       block padding gives way where a line and the padding would outgrow it. */
+    flex: 1 1 auto;
+    min-height: 0;
+    padding-block: min(
+      var(--env-space-1),
+      calc((var(--env-field-height) - 2 * var(--env-control-border-width) - 1lh) / 2)
+    );
+  }
+  /* The label rests at the vertical center and floats into the outline like a tall field's, without
+     reserving space above the field, so the field still lines up with adjacent buttons. */
+  .env-text-field:where(:not([data-tall])) .env-text-field-control > label {
+    inset-block-start: calc((var(--env-field-height) - 1lh) / 2 - var(--env-control-border-width));
+  }
+  /* A hidden label stays available to assistive technology; the placeholder gives visible guidance. */
+  .env-text-field[data-label-hidden]
+    .env-text-field-control
+    > .env-text-field-input:not(:focus)::placeholder {
+    color: var(--env-color-fg-muted);
+  }
+  .env-text-field[data-label-hidden] .env-text-field-control > label {
+    position: absolute;
+    width: 0.0625rem;
+    height: 0.0625rem;
+    padding: 0;
+    margin: -0.0625rem;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .env-text-field:not([data-tall]) .env-text-field-end {
+    --env-control-height: max(
+      var(--env-control-target-min),
+      calc(var(--env-field-height) - var(--env-space-2))
+    );
+    inset-inline-end: var(--env-space-1);
+  }
+  .env-text-field:not([data-tall])
+    .env-text-field-control[data-end-action]
     > .env-text-field-input {
-    color: GrayText;
+    padding-inline-end: var(--env-field-height);
+  }
+  /* Prefix and suffix text sit in line with the value, inside the well. A long prefix is cut short
+     with an ellipsis, so the control always keeps room for its value. */
+  .env-text-field-control:is([data-prefix], [data-suffix]) {
+    display: flex;
+  }
+  .env-text-field-control:is([data-prefix], [data-suffix]) > .env-text-field-input {
+    flex: 1 1 0;
+    min-inline-size: min(6rem, 50%);
+  }
+  .env-text-field-prefix,
+  .env-text-field-suffix {
+    flex: 0 1 auto;
+    align-self: center;
+    min-inline-size: 0;
+    overflow: hidden;
+    color: var(--env-color-fg-muted);
+    font: var(--env-type-body);
+    font-size: var(--env-control-font-size);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    cursor: text;
+    transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);
+  }
+  .env-text-field-prefix {
+    padding-inline-start: var(--env-space-4);
+  }
+  .env-text-field-suffix {
+    padding-inline-end: var(--env-space-4);
+  }
+  .env-text-field-control[data-prefix] > .env-text-field-input {
+    padding-inline-start: 0.125rem;
+  }
+  .env-text-field-control[data-suffix] > .env-text-field-input {
+    padding-inline-end: 0.125rem;
+  }
+  .env-text-field-control[data-start-icon] > .env-text-field-prefix {
+    padding-inline-start: calc(
+      var(--env-text-field-start-inset, var(--env-space-4)) + var(--env-control-icon-size) +
+        var(--env-space-3)
+    );
+  }
+  .env-text-field-control[data-end-action] > .env-text-field-suffix {
+    padding-inline-end: calc((var(--env-control-height) + var(--env-space-3)));
+  }
+  .env-text-field:not([data-tall])
+    .env-text-field-control[data-end-action][data-suffix]
+    > .env-text-field-input {
+    padding-inline-end: 0.125rem;
+  }
+  .env-text-field:not([data-tall])
+    .env-text-field-control[data-end-action]
+    > .env-text-field-suffix {
+    padding-inline-end: var(--env-field-height);
+  }
+  /* While the label rests inside an empty field, the prefix and suffix wait for focus or a value. */
+  .env-text-field:not([data-label-hidden])
+    .env-text-field-control:has(> label):has(> .env-text-field-input:not(:focus):placeholder-shown)
+    > :is(.env-text-field-prefix, .env-text-field-suffix) {
+    opacity: 0;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .env-text-field-prefix,
+    .env-text-field-suffix {
+      transition: none;
+    }
+  }
+  /* Under a coarse pointer, single-line fields grow to the touch height, whatever the scale, as every
+     control does, and their text to 1 rem. The actions inside keep their size, a little less than
+     the field's, and their hit area grows above and below them to the touch height, within the
+     field: never beside them, over the next action or the text. */
+  @media (pointer: coarse) {
+    .env-text-field {
+      --env-field-height: max(var(--env-control-height), var(--env-control-height-touch));
+    }
+    .env-text-field-end {
+      --env-button-touch-height: 0rem;
+    }
+    .env-text-field-end .env-icon-button {
+      position: relative;
+    }
+    .env-text-field-end .env-icon-button::before {
+      content: '';
+      position: absolute;
+      inset-block: min(0%, calc((100% - var(--env-control-height-touch)) / 2));
+      inset-inline: 0;
+    }
+  }
+
+  /* Motion: a field's actions settle in as they appear. Only without a reduced-motion preference;
+     an action that is always there, such as a combobox's chevron, stays still in its own sheet. */
+  @media (prefers-reduced-motion: no-preference) {
+    .env-text-field-end > * {
+      animation: env-motion-pop-in var(--env-motion-duration-medium) var(--env-motion-ease-enter);
+    }
+  }
+
+  /* Forced colors: the system paints no fills or shadows, so a focused field is outlined in the
+     selection color, an invalid one has a dashed border, and a disabled one takes the disabled
+     color. */
+  @media (forced-colors: active) {
+    .env-text-field-control:focus-within {
+      outline: 2px solid Highlight;
+      outline-offset: 1px;
+    }
+    .env-text-field-control:is(:has(> .env-text-field-input[aria-invalid='true']), [data-invalid])
+      > .env-text-field-border {
+      border-style: dashed;
+    }
+    .env-text-field-control:is(:has(> .env-text-field-input:disabled), [data-disabled]) {
+      color: GrayText;
+    }
+    .env-text-field-control:is(:has(> .env-text-field-input:disabled), [data-disabled])
+      > .env-text-field-border {
+      border-color: GrayText;
+    }
+    .env-text-field-control:is(:has(> .env-text-field-input:disabled), [data-disabled])
+      > .env-text-field-input {
+      color: GrayText;
+    }
   }
 }

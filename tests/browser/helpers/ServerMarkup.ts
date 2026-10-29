@@ -34,6 +34,8 @@ export async function openServerMarkup(
     alias: { '@envsemble/envui': './packages/ui/src/index.ts' },
     jsx: 'automatic',
     bundle: true,
+    // The page loads the style sheets itself.
+    loader: { '.css': 'empty' },
     platform: 'node',
     format: 'esm',
     packages: 'external',
@@ -69,6 +71,7 @@ import { hydrateRoot } from 'react-dom/client';
       define: { 'process.env.NODE_ENV': '"development"' },
       jsx: 'automatic',
       bundle: true,
+      loader: { '.css': 'empty' },
       platform: 'browser',
       format: 'iife',
       write: false,

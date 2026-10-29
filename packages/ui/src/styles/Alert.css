@@ -1,162 +1,166 @@
-/* Alerts: an inline banner filled with its tone's stronger tint, without an edge, in a card's
-   rounder corner. The title and the icon carry the tone; the message stays primary. Links and text
-   buttons in it take the link colors for a tint, as the link blue falls below 4.5:1 on the tints in
-   the light theme. At high contrast the fill is the tone's softer tint and a 1px edge in the border
-   color bounds it; under forced colors the edge, transparent otherwise, is what the system paints. */
-/* Color properties: an alert's colors, which an application sets on one alert through style or its
-   own CSS: its tint, its text, which its title takes too, its edge and its icon, which its title
-   and dismiss button take while its text is its own. They don't inherit, and they win over its tone. */
-@property --env-alert-container {
-  syntax: '*';
-  inherits: false;
-}
-@property --env-alert-content {
-  syntax: '*';
-  inherits: false;
-}
-@property --env-alert-outline {
-  syntax: '*';
-  inherits: false;
-}
-@property --env-alert-icon {
-  syntax: '*';
-  inherits: false;
-}
-.env-alert {
-  /* The colors its parts take, which can't read the alert's own properties. */
-  --env-alert-icon-color: var(--env-alert-icon, var(--env-alert-icon-default));
-  --env-alert-text-color: var(--env-alert-content, var(--env-color-fg-default));
-  --env-alert-title-color: var(--env-alert-content, var(--env-alert-icon-color));
-  /* Valid only while the application sets the container or the icon (see Button.css). */
-  --env-alert-custom: var(--env-alert-container, var(--env-alert-icon));
-  --env-color-fg-link: var(--env-color-fg-link-on-tint);
-  --env-color-fg-link-hover: var(--env-color-fg-link-on-tint-hover);
-  --env-color-fg-link-pressed: var(--env-color-fg-link-on-tint-pressed);
-  /* Its tone: the text color of the icon and title, the stronger tint it is filled with, and the
-     softer tint, its fill at high contrast. */
-  --env-alert-icon-default: var(--env-color-fg-accent);
-  --env-alert-fill: var(--env-color-bg-accent-subtle-hover);
-  --env-alert-soft-fill: var(--env-color-bg-accent-muted);
-  --env-alert-hover: var(--env-color-bg-accent-subtle-hover);
-  --env-alert-pressed: var(--env-color-bg-accent-subtle-pressed);
-  /* A card's corner, a step rounder than a control's and below a surface's. */
-  --env-alert-radius: 1.25rem;
-  /* The high-contrast fill and edge, valid only under high contrast (see Theme.css). */
-  --env-alert-high-contrast-fill: var(--env-theme-high-contrast) var(--env-alert-soft-fill);
-  --env-alert-high-contrast-edge: var(--env-theme-high-contrast) var(--env-color-border-default);
-  box-sizing: border-box;
-  /* A little less inset above and below than at the sides, as a card's. */
-  padding-block: calc(var(--env-space-4) - var(--env-space-1) / 2);
-  border: 0.0625rem solid var(--env-alert-outline, var(--env-alert-high-contrast-edge, transparent));
-  border-radius: var(--env-alert-radius);
-  background: var(
-    --env-alert-container,
-    var(--env-alert-high-contrast-fill, var(--env-alert-fill))
-  );
-  color: var(--env-alert-text-color);
-  font: var(--env-type-body);
-  overflow-wrap: anywhere;
-}
-.env-alert[data-tone='success'] {
-  --env-alert-icon-default: var(--env-color-fg-success);
-  --env-alert-fill: var(--env-color-bg-success-subtle-hover);
-  --env-alert-soft-fill: var(--env-color-bg-success-muted);
-  --env-alert-hover: var(--env-color-bg-success-subtle-hover);
-  --env-alert-pressed: var(--env-color-bg-success-subtle-pressed);
-}
-.env-alert[data-tone='warning'] {
-  --env-alert-icon-default: var(--env-color-fg-warning);
-  --env-alert-fill: var(--env-color-bg-warning-subtle-hover);
-  --env-alert-soft-fill: var(--env-color-bg-warning-muted);
-  --env-alert-hover: var(--env-color-bg-warning-subtle-hover);
-  --env-alert-pressed: var(--env-color-bg-warning-subtle-pressed);
-}
-.env-alert[data-tone='danger'] {
-  --env-alert-icon-default: var(--env-color-fg-danger);
-  --env-alert-fill: var(--env-color-bg-danger-subtle-hover);
-  --env-alert-soft-fill: var(--env-color-bg-danger-muted);
-  --env-alert-hover: var(--env-color-bg-danger-subtle-hover);
-  --env-alert-pressed: var(--env-color-bg-danger-subtle-pressed);
-}
-.env-alert-icon {
-  grid-column: 1;
-  display: grid;
-  place-items: center;
-  block-size: 1.4em;
-  color: var(--env-alert-icon-color);
-}
-.env-alert-icon .env-icon {
-  inline-size: 1.25rem;
-  block-size: 1.25rem;
-}
-/* The title, in the body size and semibold, sits right above the message, a step smaller. */
-.env-alert-content {
-  grid-column: 2;
-  row-gap: calc(var(--env-space-1) / 2);
-}
-.env-alert-title {
-  color: var(--env-alert-title-color);
-  font: var(--env-font-weight-semibold) var(--env-font-size-body) / 1.4 var(--env-font-family);
-}
-.env-alert-message {
-  color: var(--env-alert-text-color);
-  font: var(--env-type-body-small);
-}
-.env-alert-action {
-  margin-block-start: var(--env-space-2);
-}
-/* The dismiss button is a small IconButton circle with a cross in the alert's tone, centered on the first line.
-   Under a coarse pointer it grows to the touch height, as every button does. Alert.css comes after
-   Button.css, so at equal specificity the tone wins over the ghost colors. */
-.env-alert-dismiss {
-  --env-icon-button-hit-area: var(--env-control-height-touch);
-  --env-alert-custom-hover: color-mix(
-    in srgb,
-    var(--env-alert-custom) 0%,
-    color-mix(in srgb, transparent, currentColor 14%)
-  );
-  --env-alert-custom-pressed: color-mix(
-    in srgb,
-    var(--env-alert-custom) 0%,
-    color-mix(in srgb, transparent, currentColor 22%)
-  );
-  /* The small button's height, which grows to the touch height under a coarse pointer, as the
-     button itself does. */
-  --env-alert-dismiss-height: var(--env-control-height-sm);
-  grid-column: 3;
-  margin-block: calc((1.4 * var(--env-font-size-body) - var(--env-alert-dismiss-height)) / 2);
-  margin-inline-end: calc(-1 * var(--env-space-2));
-  border-radius: 50%;
-  color: var(--env-alert-icon-color);
-}
-@media (pointer: coarse) {
-  .env-alert-dismiss {
-    --env-alert-dismiss-height: max(var(--env-control-height-sm), var(--env-control-height-touch));
+@layer env.components {
+  /* Alerts: an inline banner filled with its tone's stronger tint, without an edge, in a card's
+     rounder corner. The title and the icon carry the tone; the message stays primary. Links and text
+     buttons in it take the link colors for a tint, as the link blue falls below 4.5:1 on the tints in
+     the light theme. At high contrast the fill is the tone's softer tint and a 1px edge in the border
+     color bounds it; under forced colors the edge, transparent otherwise, is what the system paints. */
+  /* Color properties: an alert's colors, which an application sets on one alert through style or its
+     own CSS: its tint, its text, which its title takes too, its edge and its icon, which its title
+     and dismiss button take while its text is its own. They don't inherit, and they win over its tone. */
+  @property --env-alert-container {
+    syntax: '*';
+    inherits: false;
   }
-}
-/* Hover and press tint the circle with the tone instead of the ghost button's neutral layer; with
-   the application's colors, a layer of the icon color, as strong as the tone's tints. */
-.env-alert-dismiss:hover:not(:disabled):not([aria-disabled='true']) {
-  background: var(--env-alert-custom-hover, var(--env-alert-hover));
-  color: var(--env-alert-icon-color);
-}
-.env-alert-dismiss:active:not(:disabled):not([aria-disabled='true']) {
-  background: var(--env-alert-custom-pressed, var(--env-alert-pressed));
-  color: var(--env-alert-icon-color);
-}
+  @property --env-alert-content {
+    syntax: '*';
+    inherits: false;
+  }
+  @property --env-alert-outline {
+    syntax: '*';
+    inherits: false;
+  }
+  @property --env-alert-icon {
+    syntax: '*';
+    inherits: false;
+  }
+  .env-alert {
+    /* The colors its parts take, which can't read the alert's own properties. */
+    --env-alert-icon-color: var(--env-alert-icon, var(--env-alert-icon-default));
+    --env-alert-text-color: var(--env-alert-content, var(--env-color-fg-default));
+    --env-alert-title-color: var(--env-alert-content, var(--env-alert-icon-color));
+    /* Valid only while the application sets the container or the icon (see Button.css). */
+    --env-alert-custom: var(--env-alert-container, var(--env-alert-icon));
+    --env-color-fg-link: var(--env-color-fg-link-on-tint);
+    --env-color-fg-link-hover: var(--env-color-fg-link-on-tint-hover);
+    --env-color-fg-link-pressed: var(--env-color-fg-link-on-tint-pressed);
+    /* Its tone: the text color of the icon and title, the stronger tint it is filled with, and the
+       softer tint, its fill at high contrast. */
+    --env-alert-icon-default: var(--env-color-fg-accent);
+    --env-alert-fill: var(--env-color-bg-accent-subtle-hover);
+    --env-alert-soft-fill: var(--env-color-bg-accent-muted);
+    --env-alert-hover: var(--env-color-bg-accent-subtle-hover);
+    --env-alert-pressed: var(--env-color-bg-accent-subtle-pressed);
+    /* A card's corner, a step rounder than a control's and below a surface's. */
+    --env-alert-radius: 1.25rem;
+    /* The high-contrast fill and edge, valid only under high contrast (see Theme.css). */
+    --env-alert-high-contrast-fill: var(--env-theme-high-contrast) var(--env-alert-soft-fill);
+    --env-alert-high-contrast-edge: var(--env-theme-high-contrast) var(--env-color-border-default);
+    box-sizing: border-box;
+    /* A little less inset above and below than at the sides, as a card's. */
+    padding-block: calc(var(--env-space-4) - var(--env-space-1) / 2);
+    border: 0.0625rem solid
+      var(--env-alert-outline, var(--env-alert-high-contrast-edge, transparent));
+    border-radius: var(--env-alert-radius);
+    background: var(
+      --env-alert-container,
+      var(--env-alert-high-contrast-fill, var(--env-alert-fill))
+    );
+    color: var(--env-alert-text-color);
+    font: var(--env-type-body);
+    overflow-wrap: anywhere;
+  }
+  .env-alert[data-tone='success'] {
+    --env-alert-icon-default: var(--env-color-fg-success);
+    --env-alert-fill: var(--env-color-bg-success-subtle-hover);
+    --env-alert-soft-fill: var(--env-color-bg-success-muted);
+    --env-alert-hover: var(--env-color-bg-success-subtle-hover);
+    --env-alert-pressed: var(--env-color-bg-success-subtle-pressed);
+  }
+  .env-alert[data-tone='warning'] {
+    --env-alert-icon-default: var(--env-color-fg-warning);
+    --env-alert-fill: var(--env-color-bg-warning-subtle-hover);
+    --env-alert-soft-fill: var(--env-color-bg-warning-muted);
+    --env-alert-hover: var(--env-color-bg-warning-subtle-hover);
+    --env-alert-pressed: var(--env-color-bg-warning-subtle-pressed);
+  }
+  .env-alert[data-tone='danger'] {
+    --env-alert-icon-default: var(--env-color-fg-danger);
+    --env-alert-fill: var(--env-color-bg-danger-subtle-hover);
+    --env-alert-soft-fill: var(--env-color-bg-danger-muted);
+    --env-alert-hover: var(--env-color-bg-danger-subtle-hover);
+    --env-alert-pressed: var(--env-color-bg-danger-subtle-pressed);
+  }
+  .env-alert-icon {
+    grid-column: 1;
+    display: grid;
+    place-items: center;
+    block-size: 1.4em;
+    color: var(--env-alert-icon-color);
+  }
+  .env-alert-icon .env-icon {
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+  }
+  /* The title, in the body size and semibold, sits right above the message, a step smaller. */
+  .env-alert-content {
+    grid-column: 2;
+    row-gap: calc(var(--env-space-1) / 2);
+  }
+  .env-alert-title {
+    color: var(--env-alert-title-color);
+    font: var(--env-font-weight-semibold) var(--env-font-size-body) / 1.4 var(--env-font-family);
+  }
+  .env-alert-message {
+    color: var(--env-alert-text-color);
+    font: var(--env-type-body-small);
+  }
+  .env-alert-action {
+    margin-block-start: var(--env-space-2);
+  }
+  /* The dismiss button is a small IconButton circle with a cross in the alert's tone, centered on the first line.
+     Under a coarse pointer it grows to the touch height, as every button does. Alert.css comes after
+     Button.css, so at equal specificity the tone wins over the ghost colors. */
+  .env-alert-dismiss {
+    --env-icon-button-hit-area: var(--env-control-height-touch);
+    --env-alert-custom-hover: color-mix(
+      in srgb,
+      var(--env-alert-custom) 0%,
+      color-mix(in srgb, transparent, currentColor 14%)
+    );
+    --env-alert-custom-pressed: color-mix(
+      in srgb,
+      var(--env-alert-custom) 0%,
+      color-mix(in srgb, transparent, currentColor 22%)
+    );
+    /* The small button's height, which grows to the touch height under a coarse pointer, as the
+       button itself does. */
+    --env-alert-dismiss-height: var(--env-control-height-sm);
+    grid-column: 3;
+    margin-block: calc((1.4 * var(--env-font-size-body) - var(--env-alert-dismiss-height)) / 2);
+    margin-inline-end: calc(-1 * var(--env-space-2));
+    border-radius: 50%;
+    color: var(--env-alert-icon-color);
+  }
+  @media (pointer: coarse) {
+    .env-alert-dismiss {
+      /* prettier-ignore */
+      --env-alert-dismiss-height: max(var(--env-control-height-sm), var(--env-control-height-touch));
+    }
+  }
+  /* Hover and press tint the circle with the tone instead of the ghost button's neutral layer; with
+     the application's colors, a layer of the icon color, as strong as the tone's tints. */
+  .env-alert-dismiss:hover:not(:disabled):not([aria-disabled='true']) {
+    background: var(--env-alert-custom-hover, var(--env-alert-hover));
+    color: var(--env-alert-icon-color);
+  }
+  .env-alert-dismiss:active:not(:disabled):not([aria-disabled='true']) {
+    background: var(--env-alert-custom-pressed, var(--env-alert-pressed));
+    color: var(--env-alert-icon-color);
+  }
 
-/* A title or message given as undefined, as over a placeholder item, takes no room outside a
-   skeleton; in one it is a bar. */
-.env-alert-title:empty:not([data-env-skeleton] *),
-.env-alert-message:empty:not([data-env-skeleton] *) {
-  display: none;
-}
-[data-env-skeleton] :is(.env-alert-title, .env-alert-message) {
-  --env-skeleton-placeholder: inline-block;
-}
-[data-env-skeleton] .env-alert-title {
-  --env-skeleton-length: 12rem;
-}
-[data-env-skeleton] .env-alert-message {
-  --env-skeleton-length: 24rem;
+  /* A title or message given as undefined, as over a placeholder item, takes no room outside a
+     skeleton; in one it is a bar. */
+  .env-alert-title:empty:not([data-env-skeleton] *),
+  .env-alert-message:empty:not([data-env-skeleton] *) {
+    display: none;
+  }
+  [data-env-skeleton] :is(.env-alert-title, .env-alert-message) {
+    --env-skeleton-placeholder: inline-block;
+  }
+  [data-env-skeleton] .env-alert-title {
+    --env-skeleton-length: 12rem;
+  }
+  [data-env-skeleton] .env-alert-message {
+    --env-skeleton-length: 24rem;
+  }
 }

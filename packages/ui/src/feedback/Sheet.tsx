@@ -45,6 +45,8 @@ import {
 } from '../internal/PortalContainerContext.js';
 import { computedDirection } from '../internal/direction.js';
 import { reportInDevelopment } from '../internal/developmentReport.js';
+import '../styles/Base.css';
+import '../styles/Sheet.css';
 
 export interface SheetProps
   extends Omit<ComponentPropsWithRef<'div'>, 'title' | 'children' | 'defaultValue'>,

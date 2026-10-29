@@ -47,7 +47,7 @@ Take the token from the GitHub CLI for each install, never writing it into a fil
 
 Then, as `node_modules/@envsemble/envui/docs/setup.md` shows:
 
-- import `@envsemble/envui/styles.css` once in the client entry;
+- with a bundler, the components bring their own styles; without one, import `@envsemble/envui/styles.css` once in the client entry, never both;
 - wrap the app in `ThemePreferenceProvider`, or `Theme` for a fixed theme, and add the theme bootstrap script to the document head;
 - register the app's router link with `LinkProvider`, from the recipes there.
 

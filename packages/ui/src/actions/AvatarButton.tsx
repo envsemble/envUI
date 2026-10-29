@@ -3,6 +3,8 @@ import { Avatar, type AvatarProps } from '../content/Avatar.js';
 import { Tooltip } from '../feedback/Tooltip.js';
 import { ActionElement } from '../internal/ActionElement.js';
 import { classNames } from '../internal/classNames.js';
+import '../styles/Base.css';
+import '../styles/AvatarButton.css';
 
 export interface AvatarButtonProps extends Omit<ComponentPropsWithRef<'button'>, 'children'> {
   /** The person's name: shown in the tooltip, and the accessible name unless aria-label is set. */

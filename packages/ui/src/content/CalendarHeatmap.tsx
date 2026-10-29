@@ -32,6 +32,8 @@ import {
   parseDay,
   type CalendarHeatmapModel,
 } from './internal/calendarHeatmapModel.js';
+import '../styles/Base.css';
+import '../styles/CalendarHeatmap.css';
 
 export interface CalendarHeatmapDay {
   /** The day, as YYYY-MM-DD. */

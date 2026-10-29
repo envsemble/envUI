@@ -9,6 +9,8 @@ import { DecorativeIcon } from '../../../internal/DecorativeIcon.js';
 import { Row } from '../../../foundations/Layout.js';
 import type { PanelDockPanel } from '../Root.js';
 import { useEntrance } from './useEntrance.js';
+import '../../../styles/Base.css';
+import '../../../styles/PanelDock.css';
 
 interface PanelTabProps {
   panel: PanelDockPanel;

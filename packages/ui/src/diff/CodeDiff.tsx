@@ -30,6 +30,8 @@ import { codeDiff as codeDiffMessages } from '../foundations/messages/codeDiff.j
 import { classNames } from '../internal/classNames.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { remPixels } from '../internal/lengths.js';
+import '../styles/Base.css';
+import '../styles/Code.css';
 
 export interface CodeDiffProps extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
   /** The source before the change. */
