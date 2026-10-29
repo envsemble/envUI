@@ -30,8 +30,8 @@ export interface AlertProps
   children?: ReactNode;
   /** Replaces the tone's icon; null or false shows none. */
   icon?: ReactNode;
-  /** An action below the message, such as a Button or Link. */
-  action?: ReactNode;
+  /** Actions below the message, such as a Button or a Link, in a row that wraps. */
+  actions?: ReactNode;
   /** Shows a dismiss button that calls it; the application removes the alert. */
   onDismiss?: () => void;
   /**
@@ -63,7 +63,7 @@ export function Alert(allProps: AlertProps) {
     title,
     children,
     icon,
-    action,
+    actions,
     onDismiss,
     dismissLabel,
     announce = false,
@@ -103,9 +103,9 @@ export function Alert(allProps: AlertProps) {
           <Grid gap={1} className="env-alert-content">
             {hasTitle && <div className="env-alert-title">{title}</div>}
             {hasMessage && <div className="env-alert-message">{children}</div>}
-            {action != null && (
+            {actions != null && (
               <Row wrap gap={2} className="env-alert-action">
-                {action}
+                {actions}
               </Row>
             )}
           </Grid>

@@ -160,10 +160,10 @@
           "description": "Replaces the tone's icon; null or false shows none."
         },
         {
-          "name": "action",
+          "name": "actions",
           "type": "ReactNode",
           "required": false,
-          "description": "An action below the message, such as a Button or Link."
+          "description": "Actions below the message, such as a Button or a Link, in a row that wraps."
         },
         {
           "name": "onDismiss",
@@ -3862,7 +3862,7 @@
     "List.Item": {
       "kind": "component",
       "source": "packages/ui/src/content/List.tsx",
-      "description": "One `li` row with a label, a description and an action; the current row, content at its start, and in a reorderable list a drag handle. It renders on the server: only the handle of a reorderable row needs the browser.",
+      "description": "One `li` row with a label, a description and content at its end; the current row, content at its start, and in a reorderable list a drag handle. It renders on the server: only the handle of a reorderable row needs the browser.",
       "props": [
         {
           "name": "label",
@@ -3877,10 +3877,10 @@
           "description": "A short fact in muted text below the label, such as who changed the item and when. Given as undefined, such as over a placeholder item, a skeleton shows a bar in its place."
         },
         {
-          "name": "action",
+          "name": "end",
           "type": "ReactNode",
           "required": false,
-          "description": "A control at the end of the row, such as a Button; it moves below the text when it doesn't fit."
+          "description": "Content at the end of the row, such as a Button or a Switch; it moves below the text when it doesn't fit."
         },
         {
           "name": "children",

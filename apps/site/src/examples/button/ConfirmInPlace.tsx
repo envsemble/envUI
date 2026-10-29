@@ -45,7 +45,7 @@ export default function ConfirmInPlace() {
           <List.Item
             key={name}
             label={name}
-            action={
+            end={
               <ConfirmButton
                 confirmLabel={`Remove ${name.split(' ')[0]}`}
                 onConfirm={() => remove(name)}
@@ -64,7 +64,7 @@ export default function ConfirmInPlace() {
       <List.Root ref={draft} aria-label="Drafts" style={{ inlineSize: 'min(100%, 24rem)' }}>
         <List.Item
           label={draftDeleted ? 'Q3 notes draft deleted' : 'Q3 notes draft'}
-          action={
+          end={
             draftDeleted ? (
               <Button variant="text" onClick={() => setDraft(false)}>
                 Restore

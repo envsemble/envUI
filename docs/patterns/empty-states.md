@@ -220,14 +220,14 @@ Keep the SearchField and the Select in the PageHeader's `toolbar`, and say the c
 
 #### Load failed
 
-A failure is an Alert with `tone="danger"` and `announce`, its Try again Button in `action`, in the table's place. Try again moves focus to the region's heading, a Text with `tabIndex={-1}` and a ref, while the same Table loads as a `skeleton` over `placeholders()` rows, as the LoadFailed example does.
+A failure is an Alert with `tone="danger"` and `announce`, its Try again Button in `actions`, in the table's place. Try again moves focus to the region's heading, a Text with `tabIndex={-1}` and a ref, while the same Table loads as a `skeleton` over `placeholders()` rows, as the LoadFailed example does.
 
 ```tsx
 <Alert
   tone="danger"
   announce
   title="Couldn’t load documents"
-  action={
+  actions={
     <Button variant="secondary" onClick={retry}>
       Try again
     </Button>

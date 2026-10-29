@@ -14,12 +14,12 @@ export default function ProjectMembers() {
       <List.Item
         label="Northwind launch"
         description="4 members"
-        action={<AvatarGroup people={members} max={3} gather="end" />}
+        end={<AvatarGroup people={members} max={3} gather="end" />}
       />
       <List.Item
         label="Pricing research"
         description="12 members"
-        action={<AvatarGroup people={members.slice(0, 2)} total={12} max={2} gather="end" />}
+        end={<AvatarGroup people={members.slice(0, 2)} total={12} max={2} gather="end" />}
       />
     </List.Root>
   );

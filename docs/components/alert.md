@@ -84,7 +84,7 @@ An alert can take another icon in place of its tone's, or none at all.
 2. **Icon** (`env-alert-icon`, `icon`)
 3. **Title** (`env-alert-title`, `title`)
 4. **Message** (`env-alert-message`, `children`)
-5. **Action** (`env-alert-action`, `action`)
+5. **Actions** (`env-alert-action`, `actions`)
 6. **Dismiss button** (`env-alert-dismiss`, `onDismiss`)
 
 ## Behaviour
@@ -140,7 +140,7 @@ Remove an alert once it no longer applies. Let people dismiss it only where the 
 
 ### Usage
 
-An Alert takes its `tone`, a short `title`, the message as `children`, and an `action` below the message, such as a Button or a Link. Put it above the content it concerns, and remove it once it no longer applies.
+An Alert takes its `tone`, a short `title`, the message as `children`, and `actions` below the message, such as a Button or a Link. Put it above the content it concerns, and remove it once it no longer applies.
 
 ```tsx source=BlockedRelease
 
@@ -197,6 +197,6 @@ The parts are the container, `env-alert`, the icon, `env-alert-icon`, the title,
 
 - **1.0.0-prerelease.5**: A card's inset, 14 px above and below and 16 px at the sides; the title is semibold in the body size, 2 px above the message, which takes the small body size.
 - **1.0.0**: No edge outside high contrast: the tone's stronger tint fills it, the title takes the tone's color as the icon does, and its corners are a card's, 1.25 rem. At high contrast it keeps the softer tint with an edge in the border color.
-- **1.0.0**: `tone="danger"` for `error`; the dismiss button is an IconButton with a cross, named Dismiss in the provider's language.
+- **1.0.0**: `actions` for `action`, as on Card and Dialog. `tone="danger"` for `error`; the dismiss button is an IconButton with a cross, named Dismiss in the provider's language.
 - **1.0.0**: `Notice` is `Alert`, with `AlertTone` and the `env-alert-*` classes; the page is `alert`.
 - **0.5.0**: Notice, an inline banner in four tones with an action, a round dismiss button in its tone and `announce`.

@@ -13,7 +13,7 @@ export default function ChangeSize() {
         <List.Item
           key={name}
           label={name}
-          action={<DiffStat additions={additions} deletions={deletions} />}
+          end={<DiffStat additions={additions} deletions={deletions} />}
         />
       ))}
     </List.Root>

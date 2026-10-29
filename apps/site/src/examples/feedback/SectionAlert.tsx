@@ -23,7 +23,7 @@ export default function SectionAlert() {
         tabIndex={-1}
         tone="warning"
         title="This project is read-only"
-        action={
+        actions={
           requested ? undefined : (
             <Button variant="secondary" size="sm" onClick={() => setRequested(true)}>
               Request edit access

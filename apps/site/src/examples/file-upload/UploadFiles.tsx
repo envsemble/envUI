@@ -133,7 +133,7 @@ function Uploads() {
                   ? "Couldn't upload. Check your connection and try again."
                   : undefined
             }
-            action={
+            end={
               <>
                 {upload.state === 'failed' && (
                   <Button

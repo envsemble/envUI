@@ -164,13 +164,13 @@ A toast with an `action`, such as `{ label: 'Download', onClick }`, stays until 
 
 #### Alerts
 
-A field's error is its `error` prop, as on the forms page. An Alert on the page from the start takes a `tone` and an `action`, and no `announce`, so it is read with the page; `announce` gives a warning or danger Alert the alert role, for one that appears because something just happened. After a refused form or failed save, a danger Alert with `tabIndex={-1}` and a ref takes focus.
+A field's error is its `error` prop, as on the forms page. An Alert on the page from the start takes a `tone` and `actions`, and no `announce`, so it is read with the page; `announce` gives a warning or danger Alert the alert role, for one that appears because something just happened. After a refused form or failed save, a danger Alert with `tabIndex={-1}` and a ref takes focus.
 
 ```tsx
 <Alert
   tone="warning"
   title="This project is read-only"
-  action={
+  actions={
     <Button variant="secondary" size="sm" onClick={requestAccess}>
       Request edit access
     </Button>

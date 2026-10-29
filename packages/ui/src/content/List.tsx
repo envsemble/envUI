@@ -119,8 +119,11 @@ export interface ItemProps extends ComponentPropsWithRef<'li'>, SkeletonProps {
    * undefined, such as over a placeholder item, a skeleton shows a bar in its place.
    */
   description?: ReactNode;
-  /** A control at the end of the row, such as a Button; it moves below the text when it doesn't fit. */
-  action?: ReactNode;
+  /**
+   * Content at the end of the row, such as a Button or a Switch; it moves below the text when it
+   * doesn't fit.
+   */
+  end?: ReactNode;
   /** More content after the label and the description, such as a Badge. */
   children?: ReactNode;
   /**
@@ -174,7 +177,7 @@ function markCurrent(node: ReactNode): [ReactNode, boolean] {
 }
 
 /**
- * One `li` row with a label, a description and an action; the current row, content at its start,
+ * One `li` row with a label, a description and content at its end; the current row, content at its start,
  * and in a reorderable list a drag handle. It renders on the server: only the handle of a
  * reorderable row needs the browser.
  */
@@ -182,7 +185,7 @@ function Item(props: ItemProps) {
   const {
     label,
     description,
-    action,
+    end,
     interactive = false,
     selected = false,
     start,
@@ -242,7 +245,7 @@ function Item(props: ItemProps) {
             {hasDescription && <small>{shownDescription}</small>}
             {shownChildren}
           </div>
-          {action}
+          {end}
         </>,
       )}
     </Row>

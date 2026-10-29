@@ -20,7 +20,7 @@ export default function AttachDocuments() {
               key={`${index}-${file.name}`}
               label={file.name}
               description={`${Math.max(1, Math.round(file.size / 1024))} KB`}
-              action={
+              end={
                 <Button
                   variant="text"
                   aria-label={`Remove ${file.name}`}

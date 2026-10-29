@@ -17,7 +17,7 @@ export default function SoftInLists() {
   return (
     <List.Root aria-label="Projects" style={{ inlineSize: 'min(100%, 20rem)' }}>
       {projects.map(({ name, status }) => (
-        <List.Item key={name} label={name} action={status} />
+        <List.Item key={name} label={name} end={status} />
       ))}
     </List.Root>
   );

@@ -91,7 +91,7 @@ Rows pack more or less tightly, from extra small to large, which changes only th
 4. **Start** (`env-list-item-start > env-avatar`, `start`)
 5. **Content** (`env-list-item-content`, `label`)
 6. **Description** (`env-list-item-content > small`, `description`)
-7. **Action** (`env-list-item > env-button:last-child`, `action`)
+7. **End** (`env-list-item > env-button:last-child`, `end`)
 
 ## Behaviour
 
@@ -181,7 +181,7 @@ Keep the description to one fact that tells items apart, such as who changed it 
 
 ### Usage
 
-List.Root is a `ul` of List.Item rows, each with its `label`, a `description` below it, one short fact, an `action` at its end, such as a Button, and `children` after the description, such as a Badge. `start` holds content before the label, such as an Avatar, an icon or a Checkbox. Name the list with `aria-label` where its heading doesn't.
+List.Root is a `ul` of List.Item rows, each with its `label`, a `description` below it, one short fact, content at its `end`, such as a Button, and `children` after the description, such as a Badge. `start` holds content before the label, such as an Avatar, an icon or a Checkbox. Name the list with `aria-label` where its heading doesn't.
 
 ```tsx source=SettingsRows
 
@@ -200,7 +200,7 @@ With `interactive`, a row reacts to hover, keyboard focus inside it and presses.
     </Link>
   }
   description="Updated today by Sam Lee"
-  action={
+  end={
     <IconButton
       variant="text"
       icon={<MoreHoriz />}
@@ -263,6 +263,6 @@ The parts are the list, `env-list`, each row, `env-list-item`, with its handle, 
 
 ## Changelog
 
-- **1.0.0**: List.Item takes `selected` for the current row, marked in the server's HTML, `start` for content before the label, such as an avatar or a checkbox, and `textValue`; List.Root takes `onReorder`, which moves rows by a drag handle, by keyboard, by a press and by pointer, with announcements. `GroupedRows` is `List.Root` and `Row` is `List.Item`, with the `env-list` and `env-list-item` classes; the page is `list`. List.Item's `title` is `label` and its `detail` is `description`. List.Root's `contrast` is gone: put the list directly in `<Surface background="muted" padding={3}>`, where its rows take the raised fill.
+- **1.0.0**: List.Item takes `selected` for the current row, marked in the server's HTML, `start` for content before the label, such as an avatar or a checkbox, and `textValue`; List.Root takes `onReorder`, which moves rows by a drag handle, by keyboard, by a press and by pointer, with announcements. `GroupedRows` is `List.Root` and `Row` is `List.Item`, with the `env-list` and `env-list-item` classes; the page is `list`. List.Item's `title` is `label`, its `detail` is `description` and its `action` is `end`, as on CommandPalette's items and Button. List.Root's `contrast` is gone: put the list directly in `<Surface background="muted" padding={3}>`, where its rows take the raised fill.
 - **0.5.0**: `interactive` rows, which react to hover, focus inside them and presses, and open from anywhere through a `data-row-target`.
 - **0.1.0**: GroupedRows and Row, with connected corners.

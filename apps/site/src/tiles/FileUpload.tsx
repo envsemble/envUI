@@ -47,7 +47,7 @@ export default function FileUploadTile() {
           <List.Item
             label="team-photo.jpg"
             description={uploading ? undefined : '1.1 MB'}
-            action={
+            end={
               <Button
                 variant="text"
                 aria-label="Remove team-photo.jpg"

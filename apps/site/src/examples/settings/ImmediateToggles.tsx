@@ -33,7 +33,7 @@ function SettingsSection({
             style={{ flexWrap: 'nowrap' }}
             label={<span id={`${id}-${setting.id}-title`}>{setting.title}</span>}
             description={<span id={`${id}-${setting.id}-detail`}>{setting.detail}</span>}
-            action={
+            end={
               // The row's title names the switch, and its detail describes it.
               <Switch
                 aria-labelledby={`${id}-${setting.id}-title`}

@@ -11,6 +11,10 @@
             }
           }
         }
+      },
+      "action": {
+        "to": "actions",
+        "report": "Alert's action is actions in 1.0, as on Card and Dialog."
       }
     }
   }

@@ -161,7 +161,7 @@ export function DataDisplayFixture({ theme }: { theme: ThemeValue }) {
             </span>
           }
           description="Updated today"
-          action={
+          end={
             <IconButton
               variant="text"
               icon={<MoreHoriz />}

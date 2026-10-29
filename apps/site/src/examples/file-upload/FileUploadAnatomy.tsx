@@ -10,7 +10,7 @@ export default function FileUploadAnatomy() {
         <List.Item
           label="annual-review.pdf"
           description="2.4 MB"
-          action={
+          end={
             <Button variant="text" aria-label="Remove annual-review.pdf">
               Remove
             </Button>
@@ -18,7 +18,7 @@ export default function FileUploadAnatomy() {
         />
         <List.Item
           label="team-photo.jpg"
-          action={
+          end={
             <Button variant="text" aria-label="Remove team-photo.jpg">
               Remove
             </Button>

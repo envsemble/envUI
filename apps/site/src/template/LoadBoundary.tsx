@@ -230,7 +230,7 @@ export class LoadBoundary extends Component<LoadBoundaryProps, LoadBoundaryState
           tabIndex={-1}
           tone="warning"
           title={`The ${what} could not load`}
-          action={
+          actions={
             <Row wrap align="center" gap={4}>
               {canRetryLoad && (
                 <Button variant="secondary" onClick={this.retry}>

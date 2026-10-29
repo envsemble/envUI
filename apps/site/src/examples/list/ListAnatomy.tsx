@@ -23,7 +23,7 @@ export default function ListAnatomy() {
           start={<Avatar name={name} size="sm" />}
           label={name}
           description="10 minutes"
-          action={<IconButton icon={<MoreHoriz />} aria-label={`More actions for ${name}`} />}
+          end={<IconButton icon={<MoreHoriz />} aria-label={`More actions for ${name}`} />}
         />
       ))}
     </List.Root>

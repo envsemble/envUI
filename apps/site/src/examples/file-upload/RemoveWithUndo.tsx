@@ -52,7 +52,7 @@ function Files() {
           key={file.name}
           label={file.name}
           description={file.size}
-          action={
+          end={
             <Button variant="text" aria-label={`Remove ${file.name}`} onClick={() => remove(file)}>
               Remove
             </Button>
