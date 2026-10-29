@@ -209,6 +209,7 @@ With `name`, a native form submits the last files the zone took, dropped ones to
     name="attachments"
     label="Attach files"
     description="Sent with the message"
+    onFilesAccepted={setAttachments}
   />
   <Button type="submit">Send</Button>
 </form>

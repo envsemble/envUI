@@ -182,6 +182,8 @@ Render one Scaffold at the application's root, around the router's outlet.
 `navigationForms={{ compact: 'none', medium: 'drawer' }}` shows no navigation on a compact window and the drawer from medium. A menu IconButton in the TopBar's `start` opens a Sheet with `side="start"` holding the same NavigationDrawer, which closes the sheet when a destination is chosen.
 
 ```tsx
+import { Menu } from '@envsemble/envui/icons/Menu';
+
 <Scaffold
   navigationForms={{ compact: 'none', medium: 'drawer' }}
   topBar={
@@ -198,7 +200,7 @@ Render one Scaffold at the application's root, around the router's outlet.
   <Sheet side="start" aria-label="Chapters" open={menu} onOpenChange={setMenu}>
     <NavigationDrawer aria-label="Chapters" destinations={destinationsThatCloseTheSheet} />
   </Sheet>
-</Scaffold>
+</Scaffold>;
 ```
 
 #### Details beside the page
