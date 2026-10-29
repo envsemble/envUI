@@ -140,7 +140,7 @@ const MessagesProbe = memo(function MessagesProbe() {
   });
   return (
     <span ref={ref} data-testid="inline-probe">
-      {messages.clear}
+      {messages.loading}
     </span>
   );
 });
@@ -156,7 +156,7 @@ function InlineMessages() {
       <button type="button" onClick={() => setRenders((current) => current + 1)}>
         ⟦rerender⟧ {renders}
       </button>
-      <EnvUIProvider messages={{ common: { clear: '⟦inline.clear⟧' } }}>
+      <EnvUIProvider messages={{ common: { loading: '⟦inline.loading⟧' } }}>
         <MessagesProbe />
       </EnvUIProvider>
     </>

@@ -18,7 +18,7 @@ import { classNames } from '../internal/classNames.js';
 import { useButtonEmphasis } from '../internal/ControlDefaults.js';
 import { useCopy } from '../internal/useCopy.js';
 import { useMessages } from '../internal/EnvUIContext.js';
-import { copy as copyMessages } from '../foundations/messages/copy.js';
+import { copyButton as copyButtonMessages } from '../foundations/messages/copyButton.js';
 import type { ControlSize } from '../foundations/Theme.js';
 import '../styles/Base.css';
 import '../styles/CopyButton.css';
@@ -40,18 +40,18 @@ interface CopyButtonBaseProps
   icon?: ReactNode;
   /**
    * Shown in the tooltip and announced after copying.
-   * @default 'Copied', or EnvUIProvider's messages.copy.copied
+   * @default 'Copied', or EnvUIProvider's messages.copyButton.copied
    */
   copiedLabel?: string;
   /**
    * Shown in the tooltip and announced when nothing could be copied.
-   * @default 'Couldn’t copy', or EnvUIProvider's messages.copy.failed
+   * @default 'Couldn’t copy', or EnvUIProvider's messages.copyButton.failed
    */
   failedLabel?: string;
   /**
    * The button's name, also in an icon-only button's tooltip, where it has none of its own: no
    * aria-label or aria-labelledby, and a label without words, such as an empty string.
-   * @default 'Copy', or EnvUIProvider's messages.copy.copy
+   * @default 'Copy', or EnvUIProvider's messages.copyButton.copy
    */
   copyLabel?: string;
 }
@@ -111,7 +111,7 @@ export function CopyButton({
   ...props
 }: CopyButtonProps) {
   // A label prop wins over the provider's messages, which win over the English defaults.
-  const messages = useMessages('copy', copyMessages);
+  const messages = useMessages('copyButton', copyButtonMessages);
   const copiedLabel = ownCopiedLabel ?? messages.copied;
   const failedLabel = ownFailedLabel ?? messages.failed;
   const copyLabel = ownCopyLabel ?? messages.copy;

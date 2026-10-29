@@ -296,7 +296,8 @@ export function Localized({ children }: { children: ReactNode }) {
     <EnvUIProvider
       locale="de-CH"
       messages={{
-        common: { clear: 'Leeren', loading: 'Wird geladen' },
+        common: { loading: 'Wird geladen' },
+        combobox: { clear: 'Leeren' },
         toast: { hidden: ({ count }) => t('notifications.hidden', { count }) },
       }}
       dir="ltr"

@@ -24,7 +24,6 @@ import {
 } from '../internal/PortalContainerContext.js';
 import { type ControlSize } from '../foundations/Theme.js';
 import { combobox as comboboxMessages } from '../foundations/messages/combobox.js';
-import { common as commonMessages } from '../foundations/messages/common.js';
 import { IconButton } from '../actions/Button.js';
 import { ChevronRight } from '../icons/ChevronRight.js';
 import { Close } from '../icons/Close.js';
@@ -131,7 +130,7 @@ interface ComboboxSharedProps<Item extends ComboboxItem>
   clearable?: boolean;
   /**
    * Accessible name of the clear button.
-   * @default 'Clear', or EnvUIProvider's messages.common.clear
+   * @default 'Clear', or EnvUIProvider's messages.combobox.clear
    */
   clearLabel?: string;
   /**
@@ -227,10 +226,9 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
   } = props;
   const isMultiple = multiple === true;
   const messages = useMessages('combobox', comboboxMessages);
-  const common = useMessages('common', commonMessages);
   const providedLocale = useLocale();
   const locale = ownLocale ?? providedLocale;
-  const clearName = clearLabel ?? common.clear;
+  const clearName = clearLabel ?? messages.clear;
   const removeName = removeLabel ?? ((text: string) => messages.remove({ label: text }));
   const metadata = useFieldMetadata(suppliedId, description, error, describedBy, invalid);
   const { id } = metadata;

@@ -1579,7 +1579,7 @@
           "name": "clearLabel",
           "type": "string",
           "required": false,
-          "default": "'Clear', or EnvUIProvider's messages.common.clear",
+          "default": "'Clear', or EnvUIProvider's messages.combobox.clear",
           "description": "Accessible name of the clear button."
         },
         {
@@ -2193,21 +2193,21 @@
           "name": "copiedLabel",
           "type": "string",
           "required": false,
-          "default": "'Copied', or EnvUIProvider's messages.copy.copied",
+          "default": "'Copied', or EnvUIProvider's messages.copyButton.copied",
           "description": "Shown in the tooltip and announced after copying."
         },
         {
           "name": "failedLabel",
           "type": "string",
           "required": false,
-          "default": "'Couldn’t copy', or EnvUIProvider's messages.copy.failed",
+          "default": "'Couldn’t copy', or EnvUIProvider's messages.copyButton.failed",
           "description": "Shown in the tooltip and announced when nothing could be copied."
         },
         {
           "name": "copyLabel",
           "type": "string",
           "required": false,
-          "default": "'Copy', or EnvUIProvider's messages.copy.copy",
+          "default": "'Copy', or EnvUIProvider's messages.copyButton.copy",
           "description": "The button's name, also in an icon-only button's tooltip, where it has none of its own: no aria-label or aria-labelledby, and a label without words, such as an empty string."
         },
         {
@@ -3039,7 +3039,7 @@
           "name": "messages",
           "type": "EnvUIMessagesInput",
           "required": false,
-          "description": "Overrides of envUI's built-in English strings, per namespace, such as `{ common: { close: 'Schließen' }, toast: { hidden: ({ count }) => t('hidden', { count }) } }`. A message is a string, or a function of the values it names. Nested providers merge per namespace, the inner winning; a component's own label prop, such as closeLabel, wins over both."
+          "description": "Overrides of envUI's built-in English strings, per namespace, such as `{ dialog: { close: 'Schließen' }, toast: { hidden: ({ count }) => t('hidden', { count }) } }`. A message is a string, or a function of the values it names. Nested providers merge per namespace, the inner winning; a component's own label prop, such as closeLabel, wins over both."
         },
         {
           "name": "dir",
@@ -8323,7 +8323,7 @@
           "name": "aria-label",
           "type": "string",
           "required": false,
-          "description": "The button's name; without it, Switch to dark theme or Switch to light theme, or EnvUIProvider's messages.themeToggle."
+          "description": "The button's name; without it, Switch to dark theme or Switch to light theme, or EnvUIProvider's messages.themePreference."
         }
       ],
       "native": [

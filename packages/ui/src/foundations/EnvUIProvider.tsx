@@ -17,7 +17,7 @@ export interface EnvUIProviderProps {
   locale?: string;
   /**
    * Overrides of envUI's built-in English strings, per namespace, such as
-   * `{ common: { close: 'Schließen' }, toast: { hidden: ({ count }) => t('hidden', { count }) } }`.
+   * `{ dialog: { close: 'Schließen' }, toast: { hidden: ({ count }) => t('hidden', { count }) } }`.
    * A message is a string, or a function of the values it names. Nested providers merge per
    * namespace, the inner winning; a component's own label prop, such as closeLabel, wins over both.
    */

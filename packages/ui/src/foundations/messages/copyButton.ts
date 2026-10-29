@@ -1,8 +1,8 @@
 /**
- * The English defaults of the `copy` messages: CopyButton. EnvUIProvider's `messages.copy`
- * overrides any of them.
+ * The English defaults of the `copyButton` messages: CopyButton. EnvUIProvider's
+ * `messages.copyButton` overrides any of them.
  */
-export const copy = {
+export const copyButton = {
   /** The button's name. */
   copy: 'Copy',
   /** Shown and announced once the text is copied. */
@@ -13,4 +13,4 @@ export const copy = {
   unavailable: 'The clipboard is unavailable.',
 };
 
-export type CopyMessages = typeof copy;
+export type CopyButtonMessages = typeof copyButton;

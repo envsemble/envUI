@@ -3,7 +3,7 @@
 import { classNames } from '../internal/classNames.js';
 import { IconButton, type IconButtonProps } from '../actions/Button.js';
 import { useMessages } from '../internal/EnvUIContext.js';
-import { themeToggle } from './messages/themeToggle.js';
+import { themePreference } from './messages/themePreference.js';
 import { DarkMode } from '../icons/DarkMode.js';
 import { LightMode } from '../icons/LightMode.js';
 import { useThemePreference } from './ThemePreference.js';
@@ -20,7 +20,7 @@ export type ThemeToggleProps = (ToggleButtonProps extends infer Props
   : never) & {
   /**
    * The button's name; without it, Switch to dark theme or Switch to light theme, or
-   * EnvUIProvider's messages.themeToggle.
+   * EnvUIProvider's messages.themePreference.
    */
   'aria-label'?: string;
 };
@@ -33,7 +33,7 @@ export function ThemeToggle({
   ...props
 }: ThemeToggleProps) {
   const { theme, toggleTheme } = useThemePreference();
-  const messages = useMessages('themeToggle', themeToggle);
+  const messages = useMessages('themePreference', themePreference);
   const label = ownLabel ?? (theme === 'light' ? messages.toDark : messages.toLight);
   return (
     <IconButton

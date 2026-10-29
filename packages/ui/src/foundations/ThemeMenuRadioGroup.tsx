@@ -3,7 +3,7 @@
 import { useContext, type ReactNode } from 'react';
 import * as Menu from '../navigation/Menu.js';
 import { useMessages } from '../internal/EnvUIContext.js';
-import { themeToggle } from './messages/themeToggle.js';
+import { themePreference } from './messages/themePreference.js';
 import { ThemePreferenceContext } from './internal/ThemePreferenceContext.js';
 import type { ThemePreference } from './themeBootstrap.js';
 import { Computer } from '../icons/Computer.js';
@@ -55,7 +55,7 @@ export function ThemeMenuRadioGroup({
   closeOnClick = false,
 }: ThemeMenuRadioGroupProps) {
   const provider = useContext(ThemePreferenceContext);
-  const messages = useMessages('themeToggle', themeToggle);
+  const messages = useMessages('themePreference', themePreference);
   const current = value ?? provider?.preference;
   const change = onValueChange ?? provider?.setPreference;
   if (current === undefined || !change)

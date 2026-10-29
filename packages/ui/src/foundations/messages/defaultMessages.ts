@@ -12,7 +12,7 @@ import { commandPalette } from './commandPalette.js';
 import { composer } from './composer.js';
 import { confirmButton } from './confirmButton.js';
 import { confirmDialog } from './confirmDialog.js';
-import { copy } from './copy.js';
+import { copyButton } from './copyButton.js';
 import { datePicker } from './datePicker.js';
 import { dialog } from './dialog.js';
 import { diffStat } from './diffStat.js';
@@ -37,8 +37,8 @@ import { searchField } from './searchField.js';
 import { table } from './table.js';
 import { tableOfContents } from './tableOfContents.js';
 import { textarea } from './textarea.js';
+import { themePreference } from './themePreference.js';
 import { timePicker } from './timePicker.js';
-import { themeToggle } from './themeToggle.js';
 import { toast } from './toast.js';
 import { topBar } from './topBar.js';
 import { tree } from './tree.js';
@@ -64,7 +64,7 @@ export const defaultMessages = {
   composer,
   confirmButton,
   confirmDialog,
-  copy,
+  copyButton,
   datePicker,
   dialog,
   diffStat,
@@ -89,8 +89,8 @@ export const defaultMessages = {
   table,
   tableOfContents,
   textarea,
+  themePreference,
   timePicker,
-  themeToggle,
   toast,
   topBar,
   tree,
