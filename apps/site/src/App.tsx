@@ -51,6 +51,8 @@ import { useSiteRoute } from './navigation/useSiteRoute';
 import { DisplaySettingsProvider } from './theme/DisplaySettings';
 import { SiteSearch } from './search/SiteSearch';
 import { LoadingStatus } from './template/Loading';
+import { restoreScroll, scrolled } from './navigation/ScrollRestoration';
+import { PageSkeleton } from './template/PageSkeleton';
 
 /** What each kind of page renders. */
 const pageContent: Record<RoutePage['kind'], (props: { page: RoutePage }) => ReactNode> = {
@@ -169,10 +171,19 @@ function Shell() {
     if (takeShownAddress()) return;
     if (firstLoad.current) firstLoad.current = false;
     else mainElement.current?.focus({ preventScroll: true });
+    // Back, Forward and a reload return to where the reader was on the page.
+    const restoring = mainElement.current && restoreScroll(mainElement.current);
+    if (restoring) return restoring;
     const section = new URLSearchParams(route.split('?')[1]).get('section');
     if (section) return revealSection(section);
     mainElement.current?.scrollTo({ top: 0 });
   }, [route, title]);
+  // Each step of the history keeps where the reader is on its page (ScrollRestoration.ts).
+  useEffect(() => {
+    const main = mainElement.current;
+    main?.addEventListener('scroll', scrolled, { passive: true });
+    return () => main?.removeEventListener('scroll', scrolled);
+  }, []);
   const openSearch = () => setSearchOpen(true);
   // The navigation's sheet is for narrower windows: one wide enough for the drawer closes it.
   useEffect(() => {
@@ -257,10 +268,14 @@ function Shell() {
           <div className="site-page-grid" data-contents={contents || undefined}>
             <div className="site-page-column">
               <PageBoundary title={page?.title ?? 'Page not found'} route={route}>
-                {/* A page's content loads with it (useDocument); nothing shows in its place until
-                    it has, which the first page and a link's page wait for before they render. A
-                    boundary of its own for each page, so the page before doesn't stay, hidden. */}
-                <Suspense key={page?.path ?? routePath} fallback={null}>
+                {/* A page's content loads with it (useDocument), which the first page and a link's
+                    page wait for before they render; a page gone back to, or opened from search,
+                    before it has loaded shows as a skeleton of its shape meanwhile. A boundary of
+                    its own for each page, so the page before doesn't stay, hidden. */}
+                <Suspense
+                  key={page?.path ?? routePath}
+                  fallback={page && <PageSkeleton page={page} />}
+                >
                   {content}
                 </Suspense>
               </PageBoundary>

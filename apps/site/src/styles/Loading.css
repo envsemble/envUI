@@ -47,3 +47,26 @@
   inset-block-start: 0;
   inset-inline: 0;
 }
+
+/* A page while its content loads (PageSkeleton.tsx): its banner without its art, then its first
+   section, whose figure's stage or code is a filled shape of the room it takes. */
+.site-page-skeleton {
+  display: flex;
+  flex-direction: column;
+}
+.site-page-skeleton-lead {
+  max-inline-size: min(100%, 53ch);
+  font: var(--env-font-weight-regular) var(--env-font-size-headline) / 1.5 var(--env-font-family);
+}
+.site-page-skeleton .site-banner-shapes {
+  visibility: hidden;
+}
+.site-page-skeleton-stage,
+.site-page-skeleton-code {
+  border-radius: var(--env-radius-md);
+  forced-color-adjust: none;
+  background-image: var(--env-skeleton-paint);
+}
+.site-page-skeleton-code {
+  block-size: 7.5rem;
+}

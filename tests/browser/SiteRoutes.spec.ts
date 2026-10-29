@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Locator, type Route } from '@playwright/test';
 import { siteDevUrl } from './helpers/Servers';
 import {
   allPages,
@@ -240,3 +240,79 @@ test(
     await expect(page.getByRole('heading', { name: 'Props', exact: true })).toBeVisible();
   },
 );
+
+/** How far a page's element is below the top of the body that scrolls. */
+const belowTop = (element: Locator) =>
+  element.evaluate(
+    (node) =>
+      node.getBoundingClientRect().top -
+      document.getElementById('site-main')!.getBoundingClientRect().top,
+  );
+
+test(
+  'Back and Forward return to where the reader was, and a section addressed holds its place as the page loads',
+  { tag: '@engines' },
+  async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    const body = page.locator('#site-main');
+    const scroll = () => body.evaluate((element) => element.scrollTop);
+    // A later section's address opens at it, and it stays there as the parts above it load.
+    await page.goto(`${siteDevUrl}/components/table#rules`);
+    const rules = page.locator('#rules');
+    await expect.poll(() => belowTop(rules)).toBeLessThan(80);
+    const landed = await belowTop(rules);
+    await expect(page.locator('.site-loading')).toHaveCount(0);
+    // A part that lands moves it until the next frame, which holds it in place again.
+    await expect.poll(async () => Math.abs((await belowTop(rules)) - landed)).toBeLessThan(2);
+    // Partway down a page, a link opens the next at its top; Back returns to the same place.
+    await goTo(page, '/components/button');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
+    await expect(page.locator('.site-loading, [data-site-pending]')).toHaveCount(0);
+    await body.evaluate((element) => element.scrollTo(0, 2500));
+    // The first heading in view, which the reader sees again at the same place.
+    const inView = await body.evaluate((main) => {
+      const top = main.getBoundingClientRect().top;
+      return [...main.querySelectorAll('.site-page-column :is(h2, h3)[id]')].find(
+        (heading) => heading.getBoundingClientRect().top >= top,
+      )!.id;
+    });
+    const heading = page.locator(`[id="${inView}"]`);
+    const before = await belowTop(heading);
+    // A press that doesn't scroll the link into view first, as a reader's press doesn't.
+    await page.locator('.site-page-navigation a').last().dispatchEvent('click');
+    await expect(page.getByRole('heading', { level: 1 })).not.toHaveText('Button');
+    await expect.poll(scroll).toBe(0);
+    await page.goBack();
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
+    await expect.poll(() => belowTop(heading)).toBeCloseTo(before, 0);
+    await page.goForward();
+    await expect(page.getByRole('heading', { level: 1 })).not.toHaveText('Button');
+    await expect.poll(scroll).toBe(0);
+  },
+);
+
+test('a page the history shows before it has loaded is a skeleton of its shape, then where the reader was', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto(`${siteDevUrl}/components/button`);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
+  // An entry of Table, kept 3000 pixels down, whose content this visit hasn't loaded.
+  await page.evaluate(() =>
+    history.pushState({ siteScroll: { top: 3000 } }, '', '/components/table'),
+  );
+  await page.goBack();
+  const held: Route[] = [];
+  await page.route(/\/generated\/pages\/table\.json/, (route) => void held.push(route));
+  await page.goForward();
+  const skeleton = page.locator('.site-page-skeleton');
+  await expect(skeleton).toHaveAttribute('aria-busy', 'true');
+  // It shows once the load has taken a moment, and the page's one status says what is loading.
+  await expect(skeleton).toHaveAttribute('data-shown', '');
+  await expect(page.getByRole('status').filter({ hasText: 'Loading page' })).toBeAttached();
+  await expect(skeleton.locator('.site-page-banner-title')).toHaveText('Table');
+  for (const route of held) await route.continue();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Table');
+  await expect(skeleton).toHaveCount(0);
+  await expect.poll(() => page.locator('#site-main').evaluate((main) => main.scrollTop)).toBe(3000);
+});

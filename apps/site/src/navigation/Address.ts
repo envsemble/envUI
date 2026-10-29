@@ -14,6 +14,9 @@
  * named (oldHashRoute), and the route is read from the path.
  */
 
+import { holdPlace } from './HoldPlace';
+import { saveScroll } from './ScrollRestoration';
+
 /** The route of the catalogue's home page, which the root address shows. */
 export const homeRoute = 'overview';
 
@@ -129,9 +132,11 @@ function scrollToTop(element: HTMLElement) {
 /**
  * Scrolls to the element a route names, such as a heading or a prop's row, and moves focus to it,
  * so reading and the keyboard go on from there, once it is there: a part of the page that loads on
- * its own, such as the token reference, renders it later. Returns the cleanup.
+ * its own, such as the token reference, renders it later. It then holds there while the parts above
+ * it load (holdPlace). Returns the cleanup.
  */
 export function revealSection(id: string) {
+  let hold: (() => void) | undefined;
   const reveal = (late: boolean) => {
     const element = document.getElementById(id);
     if (!element) return false;
@@ -139,9 +144,16 @@ export function revealSection(id: string) {
     // A section that renders later takes focus only from where the route left it, the page's
     // content or search closing, not from wherever the reader has moved since.
     if (!late || focusIsUnclaimed()) focusOn(element);
+    const main = document.getElementById('site-main');
+    if (main)
+      hold = holdPlace(
+        main,
+        () => document.getElementById(id),
+        element.getBoundingClientRect().top - main.getBoundingClientRect().top,
+      );
     return true;
   };
-  if (reveal(false)) return;
+  if (reveal(false)) return () => hold?.();
   const observer = new MutationObserver(() => {
     if (reveal(true)) observer.disconnect();
   });
@@ -151,6 +163,7 @@ export function revealSection(id: string) {
   return () => {
     observer.disconnect();
     clearTimeout(timeout);
+    hold?.();
   };
 }
 
@@ -213,6 +226,8 @@ export function navigate(route: string, { replace = false }: { replace?: boolean
     return false;
   }
   shownAddress = undefined;
+  // The page left keeps where the reader was, for Back; the new one opens at its top or section.
+  if (!replace) saveScroll();
   history[replace ? 'replaceState' : 'pushState'](null, '', href);
   dispatchEvent(new Event(navigationEvent));
   return true;
