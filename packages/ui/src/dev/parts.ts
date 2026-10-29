@@ -31,7 +31,8 @@ export interface PartsIndex {
 
 /** One component or shared group of parts.json. */
 export interface PartsEntry {
-  root: string;
+  /** The root class, or null for a shared group without one of its own. */
+  root: string | null;
   parts: { class: string; description: string }[];
   states?: { attribute: string; values: string[]; parts: string[] }[];
 }
