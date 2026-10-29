@@ -28,8 +28,8 @@ export interface AlertProps
   title?: ReactNode;
   /** The message: what it means and what people can do. */
   children?: ReactNode;
-  /** Replaces the tone's icon; false shows none. */
-  icon?: ReactNode | false;
+  /** Replaces the tone's icon; null or false shows none. */
+  icon?: ReactNode;
   /** An action below the message, such as a Button or Link. */
   action?: ReactNode;
   /** Shows a dismiss button that calls it; the application removes the alert. */

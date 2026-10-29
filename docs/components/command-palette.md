@@ -243,7 +243,7 @@ With no options, the empty state shows in place of the list: an icon on a muted 
 
 - While the field is empty: the Search icon and `messages.commandPalette.emptyQuery`, Type to search, with no description; `emptyDescription` says what the palette finds.
 - When the text finds nothing: SearchOff, `messages.commandPalette.empty`, No results, and `messages.commandPalette.emptyHint({ query })`, which quotes the trimmed text.
-- `emptyLabel`, `emptyDescription` and `emptyIcon` replace the title, the description and the icon in either state; `null` hides the description or the icon. Pass a value that depends on the query to change one state only.
+- `emptyLabel`, `emptyDescription` and `emptyIcon` replace the title, the description and the icon in either state; `null` or `false` hides the description or the icon. Pass a value that depends on the query to change one state only.
 - The icon is decorative and hidden from assistive technology; the title and description are announced.
 
 ```tsx

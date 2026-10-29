@@ -155,9 +155,9 @@
         },
         {
           "name": "icon",
-          "type": "ReactNode | false",
+          "type": "ReactNode",
           "required": false,
-          "description": "Replaces the tone's icon; false shows none."
+          "description": "Replaces the tone's icon; null or false shows none."
         },
         {
           "name": "action",
@@ -1763,14 +1763,14 @@
           "type": "ReactNode",
           "required": false,
           "default": "None while the search field is empty; when its text finds nothing, 'Nothing matches “…”. Check the spelling or try other words.', or messages.commandPalette.emptyHint",
-          "description": "Quieter text under the empty state's title, such as what the palette searches; null shows none."
+          "description": "Quieter text under the empty state's title, such as what the palette searches; null or false shows none."
         },
         {
           "name": "emptyIcon",
           "type": "ReactNode",
           "required": false,
           "default": "Search while the search field is empty, SearchOff when its text finds nothing",
-          "description": "The empty state's decorative icon, above its title; null shows none."
+          "description": "The empty state's decorative icon, above its title; null or false shows none."
         },
         {
           "name": "hints",

@@ -167,7 +167,7 @@ Info and success alerts take the `status` role and are read politely. `announce`
 
 #### Icon
 
-`icon` replaces the tone's icon, and `icon={false}` leaves it out.
+`icon` replaces the tone's icon, and `null` or `false` leaves it out.
 
 ```tsx
 <Alert icon={<Construction />} title="Maintenance on Saturday">…</Alert>

@@ -108,14 +108,14 @@ export interface CommandPaletteProps
    */
   emptyLabel?: ReactNode;
   /**
-   * Quieter text under the empty state's title, such as what the palette searches; null shows
-   * none.
+   * Quieter text under the empty state's title, such as what the palette searches; null or false
+   * shows none.
    * @default None while the search field is empty; when its text finds nothing, 'Nothing matches
    * “…”. Check the spelling or try other words.', or messages.commandPalette.emptyHint
    */
   emptyDescription?: ReactNode;
   /**
-   * The empty state's decorative icon, above its title; null shows none.
+   * The empty state's decorative icon, above its title; null or false shows none.
    * @default Search while the search field is empty, SearchOff when its text finds nothing
    */
   emptyIcon?: ReactNode;
@@ -361,13 +361,13 @@ export function CommandPalette({
                   >
                     {empty ? (
                       <>
-                        {icon != null && (
+                        {icon != null && icon !== false && (
                           <span className="env-command-palette-empty-icon">
                             <DecorativeIcon>{icon}</DecorativeIcon>
                           </span>
                         )}
                         <span className="env-command-palette-empty-title">{title}</span>
-                        {description != null && (
+                        {description != null && description !== false && (
                           <>
                             {/* A space between the lines, so they are read as two. */}{' '}
                             <span className="env-command-palette-empty-description">
