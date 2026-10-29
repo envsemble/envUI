@@ -76,9 +76,19 @@ const contextOptions = (form: Form) =>
         hasTouch: true,
       }
     : { viewport: { width: 1350, height: 940 } };
-/** What a page shows while a part of it loads (template/Loading.tsx); the navigation waits until none
- * is in view. A page showing other placeholders, such as skeletons, adds their class here. */
-const loadingSelector = '.site-loading';
+/**
+ * What a page shows while a part of it loads, which the measures wait for until none is in view: a
+ * part's or the whole page's skeleton (template/Loading.tsx, template/PageSkeleton.tsx), a tile's
+ * skeleton, and a section still to show, hidden as its outline (template/SectionOutline.ts).
+ */
+const loadingSelector = '.site-loading, .catalogue-tile-loading, [data-site-pending]';
+
+/** Whether none of what `selector` matches is in the window, run in the page. */
+const noneInView = (selector: string) =>
+  ![...document.querySelectorAll(selector)].some((element) => {
+    const box = element.getBoundingClientRect();
+    return box.bottom > 0 && box.top < innerHeight && box.width > 0;
+  });
 
 const args = process.argv.slice(2);
 const option = (name: string) => {
@@ -393,9 +403,7 @@ async function navigation(from: string, form: Form, to?: string) {
     requests++;
   });
   await page.goto(`${origin}${from}`, { waitUntil: 'networkidle', timeout: 120_000 });
-  await page.waitForFunction((selector) => !document.querySelector(selector), loadingSelector, {
-    timeout: 60_000,
-  });
+  await page.waitForFunction(noneInView, loadingSelector, { timeout: 60_000 });
   // The first page's lazy work, such as code highlighting after its figures, has finished.
   await page.waitForTimeout(1000);
   await page.waitForLoadState('networkidle');
@@ -420,20 +428,21 @@ async function navigation(from: string, form: Form, to?: string) {
     await link.click();
   } else if (!to) await link.tap();
   const time = await page.evaluate(
-    ({ to, title, selector }) =>
+    ({ to, title, selector, inView }) =>
       new Promise<number>((done) => {
         let start = performance.now();
         if (to) {
           history.pushState(null, '', to);
           dispatchEvent(new PopStateEvent('popstate'));
         } else start = (window as { pressed?: number }).pressed ?? start;
+        const noneInView = (0, eval)(inView) as (selector: string) => boolean;
         const shown = () => {
-          const heading = document.querySelector('main h1, h1');
+          // The new page's own heading, not its skeleton's.
+          const heading = document.querySelector(
+            'main h1:not(.site-loading *), h1:not(.site-loading *)',
+          );
           if (!heading?.textContent?.trim() || heading.textContent.trim() === title) return false;
-          return ![...document.querySelectorAll(selector)].some((element) => {
-            const box = element.getBoundingClientRect();
-            return box.bottom > 0 && box.top < innerHeight && box.width > 0;
-          });
+          return noneInView(selector);
         };
         const frame = () => {
           if (shown()) requestAnimationFrame(() => done(performance.now() - start));
@@ -443,7 +452,7 @@ async function navigation(from: string, form: Form, to?: string) {
         };
         frame();
       }),
-    { to, title, selector: loadingSelector },
+    { to, title, selector: loadingSelector, inView: `(${noneInView})` },
   );
   await page.waitForLoadState('networkidle');
   await page.waitForTimeout(500);
@@ -464,11 +473,7 @@ async function coverage(path: string, form: Form) {
   await page.coverage.startJSCoverage({ resetOnNavigation: false });
   await page.coverage.startCSSCoverage({ resetOnNavigation: false });
   await page.goto(`${origin}${path}`, { waitUntil: 'networkidle', timeout: 120_000 });
-  await page
-    .waitForFunction((selector) => !document.querySelector(selector), loadingSelector, {
-      timeout: 30_000,
-    })
-    .catch(() => {});
+  await page.waitForFunction(noneInView, loadingSelector, { timeout: 30_000 }).catch(() => {});
   const scripts = await page.coverage.stopJSCoverage();
   const styles = await page.coverage.stopCSSCoverage();
   await context.close();
