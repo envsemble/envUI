@@ -25,7 +25,7 @@ export default function ListDetailByWidth() {
             {messages.map((message) => (
               <List.Item
                 key={message.id}
-                selected={message.id === chosen.id}
+                current={message.id === chosen.id}
                 label={
                   <Link
                     href={`/inbox/${message.id}`}

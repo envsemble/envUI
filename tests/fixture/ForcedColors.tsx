@@ -160,7 +160,7 @@ function Page() {
         </Table.Body>
       </Table.Root>
       <List.Root aria-label="Slides">
-        <List.Item selected label="Current slide" data-testid="list-selected" />
+        <List.Item current label="Current slide" data-testid="list-selected" />
         <List.Item label="Other slide" data-testid="list-item" />
       </List.Root>
       <Tree

@@ -45,7 +45,7 @@ export default function PanesTile() {
       <Panes.List label="Inbox">
         <Surface padding={2} style={larger}>
           <List.Root aria-label="Messages">
-            <List.Item label="Launch" description="Priya Shah" selected />
+            <List.Item label="Launch" description="Priya Shah" current />
             <List.Item label="Budget" description="Sam Lee" />
             <List.Item label="Hiring" description="Alex Morgan" />
           </List.Root>

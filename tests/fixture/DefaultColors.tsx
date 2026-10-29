@@ -117,7 +117,7 @@ export function DefaultColors() {
           />
           <List.Item
             interactive
-            selected
+            current
             label={
               <a href="#current" data-row-target>
                 Current row

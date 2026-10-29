@@ -137,7 +137,7 @@ export interface ItemProps extends ComponentPropsWithRef<'li'>, SkeletonProps {
    * or on the row without one.
    * @default false
    */
-  selected?: boolean;
+  current?: boolean;
   /**
    * Content before the label, such as an Avatar, an icon or a Checkbox for choosing several rows;
    * a row whose checkbox is checked takes the selected fill.
@@ -187,7 +187,7 @@ function Item(props: ItemProps) {
     description,
     end,
     interactive = false,
-    selected = false,
+    current = false,
     start,
     textValue,
     skeleton = false,
@@ -198,11 +198,11 @@ function Item(props: ItemProps) {
   } = props as ItemProps & { [reorderableProp]?: boolean };
   const hasDescription = description != null || given(props, 'description');
   // The current row says so on its target, which people reach and hear, or on the row itself.
-  let current = false;
+  let targetMarked = false;
   const mark = (node: ReactNode) => {
-    if (!selected || current || node == null) return node;
+    if (!current || targetMarked || node == null) return node;
     const [marked, found] = markCurrent(node);
-    current = found;
+    targetMarked = found;
     return marked;
   };
   const shownLabel = mark(label);
@@ -220,12 +220,12 @@ function Item(props: ItemProps) {
       gap={3}
       render={
         <li
-          aria-current={selected && !current ? 'true' : undefined}
+          aria-current={current && !targetMarked ? 'true' : undefined}
           {...rest}
           {...skeletonAttributes(skeleton)}
           className={classNames('env-list-item', 'env-connected-row', className)}
           data-interactive={interactive ? '' : undefined}
-          data-selected={selected ? '' : undefined}
+          data-selected={current ? '' : undefined}
           data-start={hasStart ? '' : undefined}
         />
       }

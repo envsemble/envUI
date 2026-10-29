@@ -1176,6 +1176,7 @@ An application written for a 1.0 prerelease follows these renames by hand: the n
 | DropZone `onDropAccepted`, `onDropRejected` | `onFilesAccepted`, `onFilesRejected`: they run for browsed files too       |
 | CommandPalette `defaultItems`               | `suggestedItems`                                                           |
 | `CommandPaletteActionOptions`               | `CommandPaletteActionDetails`, as every callback's extra argument is named |
+| List.Item `selected`                        | `current`: it marks the current row with `aria-current`                    |
 
 ## Migrate by responsibility
 
