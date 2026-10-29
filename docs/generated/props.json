@@ -2137,9 +2137,9 @@
         },
         {
           "name": "onOpenChange",
-          "type": "(open: boolean) => void",
+          "type": "(open: boolean, details: ContextMenuOpenChangeDetails) => void",
           "required": false,
-          "description": "Called with the new visibility as the menu opens or closes."
+          "description": "Called with the new visibility, and why, as the menu opens or closes."
         },
         {
           "name": "anchorPoint",
@@ -4145,13 +4145,20 @@
         {
           "name": "checked",
           "type": "boolean",
-          "required": true,
-          "description": "Whether the option is on; a check mark shows while it is."
+          "required": false,
+          "description": "Whether the option is on, for an item the application controls; a check mark shows while it is."
+        },
+        {
+          "name": "defaultChecked",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Whether an uncontrolled item starts on."
         },
         {
           "name": "onCheckedChange",
           "type": "(checked: boolean) => void",
-          "required": true,
+          "required": false,
           "description": "Called with the new state when the item is toggled."
         },
         {
@@ -4226,15 +4233,11 @@
           "type": "ReactNode",
           "required": true,
           "description": "Items of the group."
-        },
-        {
-          "name": "className",
-          "type": "string",
-          "required": false,
-          "description": "Class of the group."
         }
       ],
-      "native": [],
+      "native": [
+        "div"
+      ],
       "entries": [
         "@envsemble/envui"
       ]
@@ -4358,13 +4361,20 @@
         {
           "name": "value",
           "type": "string | null",
-          "required": true,
-          "description": "Value of the checked item, or null for none."
+          "required": false,
+          "description": "Value of the checked item, or null for none, for a group the application controls."
+        },
+        {
+          "name": "defaultValue",
+          "type": "string | null",
+          "required": false,
+          "default": "null",
+          "description": "Value of the item an uncontrolled group starts with checked, or null for none."
         },
         {
           "name": "onValueChange",
           "type": "(value: string) => void",
-          "required": true,
+          "required": false,
           "description": "Called with the chosen item's value."
         },
         {
@@ -4384,15 +4394,11 @@
           "type": "string",
           "required": false,
           "description": "Id of a heading elsewhere in the menu that names the group, in place of label."
-        },
-        {
-          "name": "className",
-          "type": "string",
-          "required": false,
-          "description": "Class of the group."
         }
       ],
-      "native": [],
+      "native": [
+        "div"
+      ],
       "entries": [
         "@envsemble/envui"
       ]
@@ -4472,8 +4478,9 @@
         {
           "name": "aria-label",
           "type": "string",
-          "required": true,
-          "description": "Accessible name of the menu, such as Account."
+          "required": false,
+          "default": "the trigger's name, such as Account",
+          "description": "Accessible name of the menu, where its trigger's name doesn't say it."
         },
         {
           "name": "children",
@@ -4510,9 +4517,9 @@
         },
         {
           "name": "onOpenChange",
-          "type": "(open: boolean) => void",
+          "type": "(open: boolean, details: OpenChangeDetails) => void",
           "required": false,
-          "description": "Called with the new visibility as the menu opens or closes."
+          "description": "Called with the new visibility, and why, as the menu opens or closes."
         },
         {
           "name": "className",
@@ -4540,7 +4547,9 @@
       "source": "packages/ui/src/navigation/Menu.tsx",
       "description": "Separates groups of menu items.",
       "props": [],
-      "native": [],
+      "native": [
+        "div"
+      ],
       "entries": [
         "@envsemble/envui"
       ]
@@ -4590,9 +4599,9 @@
         },
         {
           "name": "onOpenChange",
-          "type": "(open: boolean) => void",
+          "type": "(open: boolean, details: OpenChangeDetails) => void",
           "required": false,
-          "description": "Called with the new visibility as the submenu opens or closes, for example to load its items."
+          "description": "Called with the new visibility, and why, as the submenu opens or closes, for example to load its items."
         },
         {
           "name": "className",

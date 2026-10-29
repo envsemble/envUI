@@ -146,6 +146,15 @@ export function MenusFixture({ theme }: { theme: ColorScheme }) {
           Open to the side
         </Menu.Item>
       </Menu.Root>
+      {/* Named by its trigger, with choices the menu keeps itself. */}
+      <Menu.Root trigger={<button type="button">Density</button>}>
+        <Menu.RadioGroup label="Rows" defaultValue="cozy">
+          <Menu.RadioItem value="cozy">Cozy</Menu.RadioItem>
+          <Menu.RadioItem value="tight">Tight</Menu.RadioItem>
+        </Menu.RadioGroup>
+        <Menu.Separator data-testid={`density-separator-${theme}`} />
+        <Menu.CheckboxItem defaultChecked>Show icons</Menu.CheckboxItem>
+      </Menu.Root>
       {/* A compact region: its context menu and submenus open at the compact scale. */}
       <Theme theme={theme} scale="compact" data-testid={`compact-region-${theme}`}>
         <ContextMenu
