@@ -47,7 +47,7 @@
     transition-delay: var(--env-motion-duration-medium);
   }
   .env-resize-handle:not([data-grip]):focus-visible::after,
-  .env-resize-handle:not([data-grip])[data-dragging]::after {
+  .env-resize-handle:not([data-grip])[data-resizing]::after {
     background: var(--env-color-border-focus);
     transition-delay: 0s;
   }
@@ -82,7 +82,7 @@
     --env-resize-handle-grip-color: var(--env-color-fg-muted);
   }
   .env-resize-handle[data-grip]:focus-visible,
-  .env-resize-handle[data-grip][data-dragging] {
+  .env-resize-handle[data-grip][data-resizing] {
     --env-resize-handle-grip-color: var(--env-color-border-focus);
   }
   .env-resize-handle[data-grip]:focus-visible {
@@ -101,7 +101,7 @@
   /* Forced colors: the line and the grip take the system's colors. */
   @media (forced-colors: active) {
     .env-resize-handle:not([data-grip]):focus-visible::after,
-    .env-resize-handle:not([data-grip])[data-dragging]::after {
+    .env-resize-handle:not([data-grip])[data-resizing]::after {
       background: Highlight;
     }
     .env-resize-handle[data-grip] {
@@ -109,7 +109,7 @@
       forced-color-adjust: none;
     }
     .env-resize-handle[data-grip]:focus-visible,
-    .env-resize-handle[data-grip][data-dragging] {
+    .env-resize-handle[data-grip][data-resizing] {
       --env-resize-handle-grip-color: Highlight;
     }
   }

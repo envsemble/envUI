@@ -2151,15 +2151,6 @@
           ]
         },
         {
-          "attribute": "data-dragging",
-          "values": [
-            ""
-          ],
-          "parts": [
-            "env-document-tabs-item"
-          ]
-        },
-        {
           "attribute": "data-drop",
           "values": [
             "after",
@@ -2185,6 +2176,15 @@
           ],
           "parts": [
             "env-document-tabs-list"
+          ]
+        },
+        {
+          "attribute": "data-moving",
+          "values": [
+            "pointer"
+          ],
+          "parts": [
+            "env-document-tabs-item"
           ]
         },
         {
@@ -2395,7 +2395,7 @@
       ],
       "states": [
         {
-          "attribute": "data-dragging",
+          "attribute": "data-drag-over",
           "values": [
             ""
           ],
@@ -4710,7 +4710,7 @@
           ]
         },
         {
-          "attribute": "data-handle",
+          "attribute": "data-dragging",
           "values": [
             ""
           ],
@@ -4719,7 +4719,7 @@
           ]
         },
         {
-          "attribute": "data-pressed",
+          "attribute": "data-handle",
           "values": [
             ""
           ],
@@ -5448,7 +5448,7 @@
       ],
       "states": [
         {
-          "attribute": "data-dragging",
+          "attribute": "data-resizing",
           "values": [],
           "parts": [
             "env-textarea-resize-handle"
@@ -6360,17 +6360,17 @@
           ]
         },
         {
-          "attribute": "data-dragging",
-          "values": [],
+          "attribute": "data-grip",
+          "values": [
+            ""
+          ],
           "parts": [
             "env-resize-handle"
           ]
         },
         {
-          "attribute": "data-grip",
-          "values": [
-            ""
-          ],
+          "attribute": "data-resizing",
+          "values": [],
           "parts": [
             "env-resize-handle"
           ]

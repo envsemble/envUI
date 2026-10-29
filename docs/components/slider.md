@@ -207,7 +207,7 @@ The field marks what it shows besides its text and fill:
 
 - `data-handle` while the handle shows, under a hovering or pressing pointer and with keyboard focus.
 - `data-ruler` while the ticks do, under a hovering or pressing pointer.
-- `data-pressed` while the pointer presses it.
+- `data-dragging` while the pointer presses it and drags the value.
 - A release clears them until the pointer leaves and comes back.
 
 ### Customize

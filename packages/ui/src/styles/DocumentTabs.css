@@ -67,7 +67,7 @@
     cursor: grabbing;
   }
   /* Only the dragged tab's contents dim, so a line drawn on its edge keeps its full strength. */
-  .env-document-tabs-item[data-dragging] > * {
+  .env-document-tabs-item[data-moving] > * {
     opacity: 0.5;
   }
   .env-document-tabs-item[data-drop]::before {

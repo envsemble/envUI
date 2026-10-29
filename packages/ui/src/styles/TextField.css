@@ -123,7 +123,7 @@
       --env-text-field-border-color: var(--env-text-field-interaction-hover);
     }
   }
-  .env-text-field-control:is(:active, :has(> .env-textarea-resize-handle[data-dragging])):not(
+  .env-text-field-control:is(:active, :has(> .env-textarea-resize-handle[data-resizing])):not(
       :has(> .env-text-field-input:disabled),
       [data-disabled]
     ) {

@@ -378,7 +378,7 @@ export function DocumentTabs({
             key={item.id}
             className="env-document-tabs-item"
             data-active={active ? '' : undefined}
-            data-dragging={drag?.id === item.id ? '' : undefined}
+            data-moving={drag?.id === item.id ? 'pointer' : undefined}
             data-drop={
               item.id === dropBefore ? 'before' : item.id === dropAfter ? 'after' : undefined
             }

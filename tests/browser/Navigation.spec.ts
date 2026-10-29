@@ -374,7 +374,7 @@ test.describe('Drawer resizable', () => {
       await page.mouse.move(box.x + box.width / 2, y);
       await page.mouse.down();
       await page.mouse.move(box.x + box.width / 2 - 32, y, { steps: 4 });
-      await expect(handle).toHaveAttribute('data-dragging', '');
+      await expect(handle).toHaveAttribute('data-resizing', '');
       // While dragging, the application hears each width, uncommitted.
       await expect(page.getByTestId('width')).toHaveText('18');
       await expect(page.getByTestId('committed')).toHaveText('');
@@ -384,7 +384,7 @@ test.describe('Drawer resizable', () => {
       await expect(page.getByTestId('width')).toHaveText('24');
       await page.mouse.up();
       await expect(page.getByTestId('committed')).toHaveText('24');
-      await expect(handle).not.toHaveAttribute('data-dragging');
+      await expect(handle).not.toHaveAttribute('data-resizing');
       expect(await widthOf(drawer)).toBeCloseTo(24 * 16, 0);
     },
   );

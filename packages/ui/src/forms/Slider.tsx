@@ -268,7 +268,7 @@ export function Slider({
           <BaseSlider.Control
             ref={control}
             className="env-slider-control"
-            data-pressed={pressed && !disabled ? '' : undefined}
+            data-dragging={pressed && !disabled ? '' : undefined}
             data-handle={reveal.handle ? '' : undefined}
             data-ruler={reveal.ruler ? '' : undefined}
             onPointerDown={(event) => {
