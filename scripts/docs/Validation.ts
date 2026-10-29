@@ -842,7 +842,7 @@ export function readPage(
   }
   if (problems.length)
     throw new Error(
-      `${document.path} does not follow the one-file structure (docs/component-pages.md):\n  - ${problems.join('\n  - ')}`,
+      `${document.path} does not follow the one-file structure (contributing/pages.md):\n  - ${problems.join('\n  - ')}`,
     );
   const result = sections.map(({ id, title, blocks }) => ({ id, title, blocks }));
   // The Overview: the frontmatter's overview examples, side by side, the first named after the page.

@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { existsSync, readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import { cp, mkdtemp, mkdir, readFile, writeFile, rm } from 'node:fs/promises';
 import { resolve, join, relative, isAbsolute } from 'node:path';
@@ -1268,8 +1269,6 @@ test('Table ships each example once, by name in its frontmatter, its rules and l
   assert.ok(hasLine(table, '1. **Region** (`env-table-region`)'));
   assert.ok(hasLine(table, 'Native props: `<table>`.'));
   assert.doesNotMatch(table, /^## (?:Changelog|Related)/m);
-  // The index leaves out the contributor pages.
-  assert.ok(!compiled.get('index.md').includes('component-pages.md'));
 });
 
 test('a page ships the whole file, in its order, with code once', () => {
@@ -1321,4 +1320,25 @@ test('a page ships the whole file, in its order, with code once', () => {
   assert.ok(spacing.includes('\nExample: Grouping.\n\n1. **Tight, inside a group**: '));
   assert.ok(compiled.has('examples/spacing/Grouping.tsx'));
   assert.ok(spacing.includes('\n| More room between these | The next larger step'));
+});
+
+test("the contributor guides' relative links reach files, and headings, that exist", async () => {
+  const { headingsOf } = await import('../scripts/docs/MarkdownHeadings.ts');
+  const guides = ['README.md', 'CONTRIBUTING.md', 'AGENTS.md', 'contributing/pages.md'];
+  const broken = [];
+  for (const guide of guides) {
+    const source = await readFile(resolve(guide), 'utf8');
+    marked.walkTokens(marked.lexer(source), (token) => {
+      if (token.type !== 'link' || /^[a-z][a-z\d+.-]*:/i.test(token.href)) return;
+      const [path, fragment] = token.href.split('#');
+      const target = path ? join(resolve(guide, '..'), path) : resolve(guide);
+      if (!existsSync(target)) broken.push(`${guide}: ${token.href}`);
+      else if (
+        fragment &&
+        !headingsOf(readFileSync(target, 'utf8')).some(({ id }) => id === fragment)
+      )
+        broken.push(`${guide}: ${token.href} names no heading`);
+    });
+  }
+  assert.deepEqual(broken, []);
 });

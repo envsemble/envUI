@@ -2,7 +2,7 @@
 // src/styles/Tokens.css and the generated token modules in src/generated. Run it through
 // `npm run tokens:build`, which formats the output with Prettier; `npm run tokens:check` fails when
 // the committed output is stale. `npx tz check --config packages/ui/terrazzo.config.mjs` only lints
-// the tokens. See docs/library-development.md.
+// the tokens. See AGENTS.md.
 import { existsSync, readFileSync } from 'node:fs';
 import { RECOMMENDED_CONFIG } from '@terrazzo/parser';
 import css from '@terrazzo/plugin-css';

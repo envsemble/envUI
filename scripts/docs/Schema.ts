@@ -1,32 +1,9 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
-import { isAbsolute, posix, relative, resolve } from 'node:path';
+import { isAbsolute, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parse as parseYaml } from 'yaml';
 
 export const documentationDirectory = fileURLToPath(new URL('../../docs/', import.meta.url));
-
-/**
- * Pages the package leaves out, whose links in its pages lead to the copies on main instead, and
- * which the packaged index doesn't list: the contributor pages, for people who work on envUI
- * itself, which neither the catalogue nor the Docs show
- * (unlistedDocuments in apps/site/src/navigation/SiteRoutes.ts), and local
- * development, which needs a checkout of envUI and which the Docs show.
- */
-export const contributorPages = new Set([
-  'local-development.md',
-  'library-development.md',
-  'component-pages.md',
-  'pattern-pages.md',
-]);
-const repositoryDocumentation = 'https://github.com/envsemble/envUI/blob/main/docs/';
-
-/** A packaged page's links to contributor pages, pointed at the repository's copies on main. */
-export function linkContributorPages(markdown, path) {
-  return markdown.replace(/\]\(([^)\s#:]+\.md)(#[^)\s]*)?\)/g, (link, href, hash = '') => {
-    const target = posix.normalize(posix.join(posix.dirname(path), href));
-    return contributorPages.has(target) ? `](${repositoryDocumentation}${target}${hash})` : link;
-  });
-}
 
 export const examplesDirectory = fileURLToPath(
   new URL('../../apps/site/src/examples/', import.meta.url),
@@ -98,7 +75,7 @@ export const kindFolders = {
  * how it adapts to width, its rules, which open with when to use it, its accessibility, the words
  * people use, and how to compose it in code. Overview is generated from the frontmatter's overview
  * examples, Props from the TypeScript declarations of the page's exports and Related from its
- * avoidWhen. A foundation calls its variants Options. docs/component-pages.md describes it.
+ * avoidWhen. A foundation calls its variants Options. contributing/pages.md describes it.
  */
 
 /**

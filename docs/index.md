@@ -19,10 +19,6 @@ Every component, pattern and foundation page reads in one order: its frontmatter
 - [Customize and extend](customizing.md) — Give one element colors of its own or recolor an area, compose components into the application's own, and style their parts.
 - [Writing](writing.md) — The words of an interface built with envUI: voice, capitalisation, action words, numbers and dates, and wording ready for translation.
 - [Dev mode](dev-mode.md) — Check a page's layout while developing: the readout and its problems for agents, at any width, and a 3D view with an inspector for people.
-- [Develop envUI locally](local-development.md) — Link a checkout while co-developing a consuming application.
-- [Extend the shared library](library-development.md) — Public API changes, changesets, catalogue specimens and acceptance checks.
-- [Write a component page](component-pages.md) — The one-file structure, its frontmatter, figures and writing rules, generated props and example files.
-- [Write a pattern page](pattern-pages.md) — What a pattern says, and its frontmatter and sections in the one-file structure.
 
 ## Foundations
 

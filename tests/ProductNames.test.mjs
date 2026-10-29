@@ -43,6 +43,8 @@ const allowedIn = {
 const sources = [
   { path: 'README.md', read: 'whole' },
   { path: 'CONTRIBUTING.md', read: 'whole' },
+  { path: 'AGENTS.md', read: 'whole' },
+  { directory: 'contributing', extensions: ['.md'], read: 'whole' },
   { path: 'packages/ui/CHANGELOG.md', read: 'whole' },
   { directory: '.changeset', extensions: ['.md'], read: 'whole' },
   { directory: 'docs', extensions: ['.md'], read: 'whole' },

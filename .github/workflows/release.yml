@@ -91,7 +91,7 @@ jobs:
           fi
           gh release create "$TAG" --draft --target "$SHA" --title "envUI $TAG" \
             --notes-file "$RUNNER_TEMP/release-notes.md" $(node scripts/release/ValidateRelease.ts --release-flag)
-      # The library first, then the lint packages, as in CONTRIBUTING. A version
+      # The library first, then the lint packages. A version
       # already on the registry, from an earlier attempt, is left as it is.
       - name: Publish the packages
         if: ${{ steps.version.outputs.release == 'true' }}

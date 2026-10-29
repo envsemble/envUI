@@ -120,7 +120,7 @@ test('every component, pattern and foundation page is in the one-file structure'
     .filter((document) => /^(components|patterns|foundations)\//.test(document.path))
     .filter((document) => !document.sections || !document.frontmatter?.examples)
     .map(({ path }) => path);
-  assert.deepEqual(outside, [], 'Write these pages as docs/component-pages.md describes.');
+  assert.deepEqual(outside, [], 'Write these pages as contributing/pages.md describes.');
 });
 
 test('pages list no props by hand', () => {

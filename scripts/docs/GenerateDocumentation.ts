@@ -9,8 +9,7 @@
 // a file in apps/site/src/examples/<page>/<Name>.tsx, or on a foundation one of the
 // catalogue's figures, placed by an empty fence ```tsx figure=Name```; the Overview, Props and
 // Related are generated, Related from its avoidWhen. The build fails on a page of these kinds that
-// is not in the structure. docs/component-pages.md and docs/pattern-pages.md describe it for
-// authors.
+// is not in the structure. contributing/pages.md describes it for authors.
 //
 // The work is in scripts/docs/: Schema.ts (the page kinds, sections, roles and frontmatter),
 // Validation.ts (a page read and checked), Reader.ts (every page, its index and links) and
@@ -29,7 +28,6 @@ import { documentedExports } from './Compiler.ts';
 export {
   codeSubsections,
   componentGroups,
-  contributorPages,
   documentationDirectory,
   exampleRoles,
   examplesDirectory,
@@ -39,7 +37,6 @@ export {
   importMarkdown,
   intents,
   libraryVersions,
-  linkContributorPages,
   pageKindOf,
   pageSchemas,
   pageSections,

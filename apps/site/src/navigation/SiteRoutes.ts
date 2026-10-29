@@ -74,18 +74,8 @@ export interface GroupedPage {
 /** Field is documented in the Docs only, as "Build your own field". */
 const docsOnlyComponents = new Set(['field']);
 
-/**
- * Pages of docs/ that neither the catalogue nor the Docs show: the contributor pages, for people who
- * change envUI itself, which stay in the repository and which the package leaves out
- * (contributorPages in scripts/docs/GenerateDocumentation.ts), and the agents' index of the pages, which
- * the package ships.
- */
-export const unlistedDocuments = new Set([
-  'index',
-  'library-development',
-  'component-pages',
-  'pattern-pages',
-]);
+/** Pages of docs/ that neither the catalogue nor the Docs show: the agents' index of the pages. */
+export const unlistedDocuments = new Set(['index']);
 
 /** The component and foundation pages, each at the address of the page that shows it. */
 export const groupedPages: GroupedPage[] = [
@@ -579,6 +569,8 @@ export function normalizeRoute(route: string): string {
     return 'docs/setup?section=coding-agents';
   // The codemods are gone: their page opens the migration guide.
   if (originalPath === 'docs/codemods') return `docs/migration${rest()}`;
+  // Developing envUI locally is a contributor's guide now, in the repository.
+  if (originalPath === 'docs/local-development') return `${docsRoute}${rest()}`;
   // The agent benchmark is gone: its page opens the overview.
   if (originalPath === 'benchmark') return `${homeRoute}${rest()}`;
   // The catalogue's changelog moved to the Docs, with its release notes.

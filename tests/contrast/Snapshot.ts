@@ -11,6 +11,11 @@
  * `renamed` and `relaxed` stay once recorded, so the reasons can't be removed after the snapshot is
  * updated either. The pairs are also compared with the base branches' copies of the file
  * (readBaseSnapshot), which a branch can't edit along with Pairs.ts.
+ *
+ * A relaxation the branch recorded but its base doesn't yet can be undone: restore the pair, delete
+ * its `relaxed` entry, restore the snapshot with `git checkout <base> -- tests/contrast/DeclaredPairs.json`
+ * and record the branch's other changes again with `npm run test:contrast -- --update-snapshots`.
+ * Once the base records it, it stays, and the pair is tightened again in Pairs.ts alone.
  */
 import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';

@@ -120,16 +120,8 @@ export const standalonePages: {
   },
 ];
 
-/**
- * Pages of docs/ for people who change envUI itself, and the agents' index of the pages, which
- * neither the catalogue nor the Docs show, so search finds none of them.
- */
-export const unlistedPages = new Set([
-  'index',
-  'library-development',
-  'component-pages',
-  'pattern-pages',
-]);
+/** The agents' index of the pages, which neither the catalogue nor the Docs show. */
+export const unlistedPages = new Set(['index']);
 
 /** Components documented in the Docs alone: Field, as "Build your own field". */
 const docsOnlyPages = new Set(['field']);

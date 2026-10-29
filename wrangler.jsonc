@@ -1,7 +1,20 @@
-// The hosted site: a Worker that serves the static build in dist/site from `npm run build:site`,
-// the Site at the root and the Docs under /docs, both from the one index.html. Page loads and
-// files outside /assets/ are served without running the script; it answers /assets/ and requests
-// that match no file. CONTRIBUTING.md's Hosting section describes deployment.
+// The hosted site, envui.envsemble.com: a Worker that serves the static build in dist/site from
+// `npm run build:site`, the catalogue at the root and the Docs under /docs, both from the one
+// index.html. Page loads and files outside /assets/ are served without running the script; it
+// answers /assets/ and requests that match no file. `npm run site:dev` builds and serves it here.
+//
+// Deploying, once, with Workers Builds, which uses no GitHub Actions minutes:
+// 1. In the Cloudflare dashboard, Workers & Pages, import envsemble/envUI (limit the app to this
+//    repository) as the Worker `envui`, from the repository root: build `npm run build:site`, deploy
+//    `npx wrangler deploy`, preview `npx wrangler preview`; NODE_VERSION pins Node.
+// 2. `main` is the production branch; with preview builds on, every other branch gets a Preview URL,
+//    `<branch>-envui.<subdomain>.workers.dev`, and pull requests a comment with it.
+// 3. Add the custom domain envui.envsemble.com in the Worker's Domains & Routes (the zone must be
+//    on the same account).
+// 4. Protect it with Cloudflare Access: GitHub login through an OAuth app of the envsemble
+//    organization, allowing its members, and the one-time PIN for listed addresses.
+// 5. Only then enable Access for workers.dev and the Preview URLs, set `workers_dev` and
+//    `preview_urls` below to true, and check in a private window that both ask for the login.
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "envui",
@@ -11,7 +24,7 @@
   "assets": {
     "directory": "./dist/site",
     "binding": "ASSETS",
-    // A path without a file answers with index.html, so the Site's routes and the Docs' under
+    // A path without a file answers with index.html, so the catalogue's routes and the Docs' under
     // /docs load from a deep link and on a refresh.
     "not_found_handling": "single-page-application",
     // The script answers /assets/ first, so a missing hashed file is not found even when a browser
@@ -19,7 +32,7 @@
     "run_worker_first": ["/assets/*"],
   },
   // The workers.dev address and the Preview URLs of branches stay off until Cloudflare Access
-  // protects them; the deploy steps in CONTRIBUTING.md turn them on after that.
+  // protects them (step 5 above).
   "workers_dev": false,
   "preview_urls": false,
   // `npm run site:dev -- --port <port>` chooses another port.

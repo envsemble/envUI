@@ -2,14 +2,10 @@ import { createContext, useContext, useMemo } from 'react';
 import { Link } from '@envsemble/envui';
 import { Markdown, type MarkdownLinkProps, type MarkdownProps } from '@envsemble/envui/content';
 import { documents, type Documentation as Document } from './PageModel';
-import { groupedPages, routeOfDocument, unlistedDocuments } from '../navigation/SiteRoutes';
+import { groupedPages, routeOfDocument } from '../navigation/SiteRoutes';
 import { inDocs, routeHref } from '../navigation/Address';
 import { currentRoute } from '../navigation/useSiteRoute';
 import { headingSlugger } from '../shared/SearchAnchors';
-
-/** The repository's copy of a page of docs/ that neither the catalogue nor the Docs show. */
-const repositoryFile = (path: string) =>
-  `https://github.com/envsemble/envUI/blob/main/docs/${path}`;
 
 /** The current route scrolled to `section`, keeping its other parameters. */
 function sectionOfCurrentRoute(section: string) {
@@ -42,8 +38,6 @@ export function documentationHref(href: string, sourcePath: string) {
     (document) => document.path === url.pathname.slice('/docs/'.length),
   );
   if (!target) return href;
-  if (unlistedDocuments.has(target.id) && target.id !== 'index')
-    return `${repositoryFile(target.path)}${url.hash}`;
   const section = url.hash.length > 1 ? decodedFragment(url.hash) : undefined;
   const page = groupedPages.find((entry) => entry.document.path === target.path);
   const guide = page?.section === 'Foundations' && (section || inDocs(currentRoute()));

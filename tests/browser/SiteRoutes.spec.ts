@@ -39,6 +39,9 @@ test('the addresses of the views before the catalogue and the Docs split open th
     // The agent skills' page went with the skills, and the guide for agents into setup.
     'docs/agent-skills': 'docs/setup?section=coding-agents',
     'docs/agent-tooling': 'docs/setup?section=coding-agents',
+    // The codemods went, and developing envUI locally is a contributor's guide now.
+    'docs/codemods': 'docs/migration',
+    'docs/local-development': 'docs',
     // The agent benchmark went, and its page opens the overview.
     benchmark: 'overview',
     'get-started/migration': 'docs/migration',

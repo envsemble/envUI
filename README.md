@@ -102,7 +102,7 @@ export function ProjectForm() {
 
 ## Working with agents
 
-Documentation ships under `node_modules/@envsemble/envui/docs/`. Each component, pattern and foundation is one Markdown page, the same file the catalogue and the Docs are built from: what it is, its variants, anatomy and behaviour, its rules, accessibility and words to use, then how to compose it in code, with its props and part names generated from the public TypeScript declarations. The example files are in `docs/examples/`, and every export’s props in `docs/generated/props.json`. Edit the maintained pages under `docs/`, as [the component page guide](https://github.com/envsemble/envUI/blob/main/docs/component-pages.md) describes, and improve the relevant page as integrations reveal gaps.
+Documentation ships under `node_modules/@envsemble/envui/docs/`. Each component, pattern and foundation is one Markdown page, the same file the catalogue and the Docs are built from: what it is, its variants, anatomy and behaviour, its rules, accessibility and words to use, then how to compose it in code, with its props and part names generated from the public TypeScript declarations. The example files are in `docs/examples/`, and every export’s props in `docs/generated/props.json`. Edit the maintained pages under `docs/`, as [the page guide](https://github.com/envsemble/envUI/blob/main/contributing/pages.md) describes, and improve the relevant page as integrations reveal gaps.
 
 ## Versions and license
 

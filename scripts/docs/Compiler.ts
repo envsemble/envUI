@@ -2,11 +2,9 @@ import { cpSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path';
 import { readDocumentation, type DocumentRecord } from './Reader.ts';
 import {
-  contributorPages,
   documentationDirectory,
   examplesDirectory,
   examplesOf,
-  linkContributorPages,
   pageKindOf,
   readProps,
   type PropsFile,
@@ -220,7 +218,7 @@ function compilePage(document, { props, examples, title }) {
 
 /**
  * The Markdown of a page as it ships: a component, pattern or foundation page as compilePage writes
- * it, with its props; the index with each page's summary and without the contributor pages; and a
+ * it, with its props; the index with each page's summary; and a
  * guide as it is written.
  */
 export function compileDocument(
@@ -232,7 +230,6 @@ export function compileDocument(
   if (document.id === 'index') {
     const markdown = document.markdown
       .replace(/^- \[([^\]]+)\]\(([^)]+\.md)\)(.*)$/gm, (line, text, path, rest) => {
-        if (contributorPages.has(path)) return '';
         const target = documents.find((entry) => entry.path === path);
         return target?.frontmatter && !rest ? `${line} — ${target.summary}` : line;
       })
@@ -252,10 +249,7 @@ export function compileDocument(
   return `${head}${title}${document.markdown}`;
 }
 
-/**
- * Every packaged documentation file: compiled pages, the index and the example sources, without the
- * contributor pages.
- */
+/** Every packaged documentation file: compiled pages, the index and the example sources. */
 export function compileDocumentation(
   directory = documentationDirectory,
   {
@@ -266,14 +260,7 @@ export function compileDocumentation(
   const documents = readDocumentation(directory, { props, examples });
   const files = new Map<string, string>();
   for (const document of documents)
-    if (!contributorPages.has(document.path))
-      files.set(
-        document.path,
-        linkContributorPages(
-          compileDocument(document, documents, { props, examples }),
-          document.path,
-        ),
-      );
+    files.set(document.path, compileDocument(document, documents, { props, examples }));
   for (const document of documents)
     for (const section of document.sections ?? [])
       for (const block of section.blocks)
@@ -285,14 +272,10 @@ export function compileDocumentation(
   return files;
 }
 
-/**
- * Writes the package's docs/: compiled pages and examples, and every other file as it is but the
- * contributor pages.
- */
+/** Writes the package's docs/: compiled pages and examples, and every other file as it is. */
 export function packageDocumentation(outputDirectory) {
   rmSync(outputDirectory, { recursive: true, force: true });
   cpSync(documentationDirectory, outputDirectory, { recursive: true });
-  for (const path of contributorPages) rmSync(resolve(outputDirectory, path), { force: true });
   for (const [path, contents] of compileDocumentation()) {
     const file = resolve(outputDirectory, path);
     mkdirSync(dirname(file), { recursive: true });
