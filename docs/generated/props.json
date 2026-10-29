@@ -2905,7 +2905,7 @@
           "name": "contextMenuLabel",
           "type": "string",
           "required": false,
-          "default": "'Tab actions', or EnvUIProvider's messages.documentTabs.actions",
+          "default": "'Tab actions', or EnvUIProvider's messages.documentTabs.contextMenu",
           "description": "Accessible name of the context menu."
         }
       ],
@@ -5653,21 +5653,21 @@
           "name": "minimizedLabel",
           "type": "string",
           "required": false,
-          "default": "'Hidden panels', or EnvUIProvider's messages.panelDock.hidden",
+          "default": "'Hidden panels', or EnvUIProvider's messages.panelDock.minimized",
           "description": "Accessible name of the list of tabs, which holds minimized panels and the panels a stacked dock leaves out, for this dock only."
         },
         {
           "name": "openLabel",
           "type": "(label: string) => string",
           "required": false,
-          "default": "Show and the text, such as Show Budget, or EnvUIProvider's messages.panelDock.show",
+          "default": "Show and the text, such as Show Budget, or EnvUIProvider's messages.panelDock.open",
           "description": "Accessible name of a tab's button that opens its panel, from the tab's text, for this dock only. A function, as each tab names its own panel."
         },
         {
           "name": "closeLabel",
           "type": "(label: string) => string",
           "required": false,
-          "default": "Close and the text, such as Close Budget, or EnvUIProvider's messages.panelDock.closePanel",
+          "default": "Close and the text, such as Close Budget, or EnvUIProvider's messages.panelDock.close",
           "description": "Accessible name of a tab's close button, from the tab's text, for this dock only."
         },
         {
@@ -8897,7 +8897,7 @@
           "name": "loadingLabel",
           "type": "string",
           "required": false,
-          "default": "'Loading page', or EnvUIProvider's messages.topBar.loadingPage",
+          "default": "'Loading page', or EnvUIProvider's messages.topBar.loading",
           "description": "The progress bar's name."
         },
         {
@@ -8967,7 +8967,7 @@
           "name": "contextMenuLabel",
           "type": "string",
           "required": false,
-          "default": "'Actions', or EnvUIProvider's messages.tree.actions",
+          "default": "'Actions', or EnvUIProvider's messages.tree.contextMenu",
           "description": "The context menu's accessible name."
         },
         {

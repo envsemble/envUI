@@ -12,7 +12,7 @@ export const documentTabs = {
   /** Moves a tab one place to the right, in its context menu. */
   moveRight: 'Move right',
   /** Names a tab's menu of actions. */
-  actions: 'Tab actions',
+  contextMenu: 'Tab actions',
 };
 
 export type DocumentTabsMessages = typeof documentTabs;

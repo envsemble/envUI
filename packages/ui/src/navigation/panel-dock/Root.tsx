@@ -148,18 +148,18 @@ export interface RootProps<Panel extends PanelDockPanel = PanelDockPanel>
   /**
    * Accessible name of the list of tabs, which holds minimized panels and the panels a stacked dock
    * leaves out, for this dock only.
-   * @default 'Hidden panels', or EnvUIProvider's messages.panelDock.hidden
+   * @default 'Hidden panels', or EnvUIProvider's messages.panelDock.minimized
    */
   minimizedLabel?: string;
   /**
    * Accessible name of a tab's button that opens its panel, from the tab's text, for this dock
    * only. A function, as each tab names its own panel.
-   * @default Show and the text, such as Show Budget, or EnvUIProvider's messages.panelDock.show
+   * @default Show and the text, such as Show Budget, or EnvUIProvider's messages.panelDock.open
    */
   openLabel?: (label: string) => string;
   /**
    * Accessible name of a tab's close button, from the tab's text, for this dock only.
-   * @default Close and the text, such as Close Budget, or EnvUIProvider's messages.panelDock.closePanel
+   * @default Close and the text, such as Close Budget, or EnvUIProvider's messages.panelDock.close
    */
   closeLabel?: (label: string) => string;
   /**
@@ -213,9 +213,9 @@ export function Root<Panel extends PanelDockPanel>({
 }: RootProps<Panel>) {
   // Words that fit a minimized panel and one a stacked dock leaves out alike.
   const messages = useMessages('panelDock', panelDockMessages);
-  const tabsLabel = minimizedLabel ?? messages.hidden;
-  const nameOpen = openLabel ?? ((label: string) => messages.show({ label }));
-  const nameClose = closeLabel ?? ((label: string) => messages.closePanel({ label }));
+  const tabsLabel = minimizedLabel ?? messages.minimized;
+  const nameOpen = openLabel ?? ((label: string) => messages.open({ label }));
+  const nameClose = closeLabel ?? ((label: string) => messages.close({ label }));
   const nameResize = resizeLabel ?? ((label: string) => messages.resize({ label }));
   const root = useRef<HTMLDivElement>(null);
   const row = useRef<HTMLDivElement>(null);

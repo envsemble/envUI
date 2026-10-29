@@ -91,7 +91,7 @@ export interface DocumentTabsProps
   closeAllLabel?: string;
   /**
    * Accessible name of the context menu.
-   * @default 'Tab actions', or EnvUIProvider's messages.documentTabs.actions
+   * @default 'Tab actions', or EnvUIProvider's messages.documentTabs.contextMenu
    */
   contextMenuLabel?: string;
 }
@@ -439,7 +439,7 @@ export function DocumentTabs({
         className={classNames('env-document-tabs', className)}
       >
         <ContextMenu
-          aria-label={contextMenuLabel ?? messages.actions}
+          aria-label={contextMenuLabel ?? messages.contextMenu}
           onOpenChange={(open) => {
             if (open)
               menuOpenedInside.current = Boolean(

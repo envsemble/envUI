@@ -140,11 +140,11 @@ function WindowControls() {
           onClick={() => panel.changeMode(maximized ? 'open' : 'maximized')}
         />
       )}
-      <Tooltip content={messages.close}>
+      <Tooltip content={messages.closeWindow}>
         <IconButton
           variant="ghost"
           icon={<Close />}
-          aria-label={messages.close}
+          aria-label={messages.closeWindow}
           onClick={panel.close}
         />
       </Tooltip>

@@ -1181,7 +1181,7 @@ test('the panel dock renders its panels, tabs and header on a server and types i
       resizeLabel: (title) => 'Resize ' + title,
     };
     export const dock = (
-      <EnvUIProvider messages={{ panelDock: { minimize: 'Min', maximize: 'Max', restore: 'Back', close: 'Shut' } }}>
+      <EnvUIProvider messages={{ panelDock: { minimize: 'Min', maximize: 'Max', restore: 'Back', closeWindow: 'Shut' } }}>
         <PanelDock.Root {...dockProps}>
           {(panel) => <PanelDock.Header {...headerProps} title={panel.body} controls={false} />}
         </PanelDock.Root>

@@ -110,7 +110,7 @@ export interface TreeProps<Item extends TreeItem>
   contextMenu?: (item: Item | null) => ReactNode;
   /**
    * The context menu's accessible name.
-   * @default 'Actions', or EnvUIProvider's messages.tree.actions
+   * @default 'Actions', or EnvUIProvider's messages.tree.contextMenu
    */
   contextMenuLabel?: string;
   /**
@@ -508,7 +508,7 @@ export function Tree<Item extends TreeItem>({
   if (!contextMenu) return tree;
   return (
     <ContextMenu
-      aria-label={contextMenuLabel ?? messages.actions}
+      aria-label={contextMenuLabel ?? messages.contextMenu}
       content={(target) => {
         const id = target?.closest<HTMLElement>('.env-tree-item')?.dataset.id;
         const index = id === undefined ? undefined : indexById.get(id);

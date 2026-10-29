@@ -172,7 +172,7 @@ Keep buttons, links and fields out of rows: their actions go in the context menu
 
 #### Context menu
 
-`contextMenu` returns the menu items for the row, or for the tree's empty area when the row is `null`; without it, the browser's own context menu stays. `contextMenuLabel` names the menu, Actions by default, from EnvUIProvider's `messages.tree.actions`.
+`contextMenu` returns the menu items for the row, or for the tree's empty area when the row is `null`; without it, the browser's own context menu stays. `contextMenuLabel` names the menu, Actions by default, from EnvUIProvider's `messages.tree.contextMenu`.
 
 #### Thousands of rows
 

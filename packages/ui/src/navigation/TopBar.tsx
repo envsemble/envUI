@@ -57,7 +57,7 @@ export interface TopBarProps
   loading?: boolean;
   /**
    * The progress bar's name.
-   * @default 'Loading page', or EnvUIProvider's messages.topBar.loadingPage
+   * @default 'Loading page', or EnvUIProvider's messages.topBar.loading
    */
   loadingLabel?: string;
   /**
@@ -130,7 +130,7 @@ export function TopBar({
       )}
       <LoadingBar
         active={loading}
-        label={loadingLabel ?? messages.loadingPage}
+        label={loadingLabel ?? messages.loading}
         contained
         className="env-top-bar-loading-bar"
       />

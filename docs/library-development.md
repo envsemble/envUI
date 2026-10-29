@@ -12,6 +12,8 @@ A boolean prop defaults to false, unless it turns off a feature a component show
 
 Signatures use envUI's own types, but a third-party type stays where it is the point of a prop: Tiptap's `Editor` and extensions on RichTextEditor, and react-markdown's `Components` on Markdown. A major release of such a library is a major release of envUI, so a prop takes a plain value, such as a color's string, where that is enough.
 
+A component's own strings are messages in `foundations/messages/`, one namespace per component or family, named after it, such as `copyButton`, or after the concept a family sets, such as `themePreference`. A prop that overrides a message is named after its key: `<x>Label` reads `messages.<namespace>.<x>`, such as Tree's `contextMenuLabel` and `messages.tree.contextMenu`.
+
 When a shared capability is missing, identify the required behavior and reusable API. Implement a variant, slot or component when library work is within scope. Otherwise report the concrete gap and preserve functioning product behavior. Keep routing, authorization, validation, preference and persistence in the application.
 
 ## Design tokens
