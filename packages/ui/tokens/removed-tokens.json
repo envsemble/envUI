@@ -1,7 +1,6 @@
 {
   "$comment": "Every custom property that envUI 0.x or 1.0’s development defined and 1.0 no longer does, with what replaces it. prefixed: names that only take the --env- prefix. renamed: names that changed beyond the prefix, to a token (replacement) or a hand-written property (cssVariable); a name of 1.0’s development has the prefix already, and colorPropertyOf names the class of the component whose color property, which doesn't inherit, the cssVariable is, so the codemods report a declaration on a wrapper. aliases: the 0.7 alias tokens, removed with the prefix, each to the token of its role or the value of a fixed color. removed: names with no counterpart, with the token to use instead where there is one, which does not take its place as it is, such as a color token for a state opacity; a name that one token replaces as it is goes in renamed, which the codemods rewrite: every use, and a declaration only where no other name becomes the same token, since a declaration of a name merged into a token with others, such as --control-height-small, would set the token for all of them, so the codemods report it. The token build turns this into src/generated/token-migration.json, the map that the codemods (v1-classes) and the migration guide read.",
   "prefixed": [
-    "--body-font-weight",
     "--color-bg-accent-emphasis",
     "--color-bg-accent-muted",
     "--color-bg-accent-subtle-hover",
@@ -118,12 +117,8 @@
     "--field-floating-height",
     "--font-family",
     "--font-size-body",
-    "--font-size-body-small",
     "--font-size-caption",
-    "--font-size-heading",
-    "--font-size-heading-small",
     "--font-size-label",
-    "--font-size-label-small",
     "--icon-size-lg",
     "--icon-size-md",
     "--icon-size-sm",
@@ -164,25 +159,7 @@
     "--type-body-font-size",
     "--type-body-font-weight",
     "--type-body-letter-spacing",
-    "--type-body-line-height",
-    "--type-body-small",
-    "--type-body-small-font-family",
-    "--type-body-small-font-size",
-    "--type-body-small-font-weight",
-    "--type-body-small-letter-spacing",
-    "--type-body-small-line-height",
-    "--type-h1",
-    "--type-h1-font-family",
-    "--type-h1-font-size",
-    "--type-h1-font-weight",
-    "--type-h1-letter-spacing",
-    "--type-h1-line-height",
-    "--type-h2",
-    "--type-h2-font-family",
-    "--type-h2-font-size",
-    "--type-h2-font-weight",
-    "--type-h2-letter-spacing",
-    "--type-h2-line-height"
+    "--type-body-line-height"
   ],
   "renamed": {
     "--color-border-accent": {
@@ -451,6 +428,190 @@
     "--env-z-popover": {
       "replacement": "z.popup",
       "note": "The stacking levels say what they hold: popups, and a supporting pane over its main pane."
+    },
+    "--body-font-weight": {
+      "replacement": "font.weight.body",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--font-size-body-small": {
+      "replacement": "font.size.body-sm",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--font-size-heading": {
+      "replacement": "font.size.headline",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--font-size-heading-small": {
+      "replacement": "font.size.title",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--font-size-label-small": {
+      "replacement": "font.size.label-sm",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--type-body-small": {
+      "replacement": "type.body-sm",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--type-body-small-font-family": {
+      "cssVariable": "--env-type-body-sm-font-family",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--type-body-small-font-size": {
+      "cssVariable": "--env-type-body-sm-font-size",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--type-body-small-font-weight": {
+      "cssVariable": "--env-type-body-sm-font-weight",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--type-body-small-letter-spacing": {
+      "cssVariable": "--env-type-body-sm-letter-spacing",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--type-body-small-line-height": {
+      "cssVariable": "--env-type-body-sm-line-height",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--type-h1": {
+      "replacement": "type.headline",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--type-h1-font-family": {
+      "cssVariable": "--env-type-headline-font-family",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--type-h1-font-size": {
+      "cssVariable": "--env-type-headline-font-size",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--type-h1-font-weight": {
+      "cssVariable": "--env-type-headline-font-weight",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--type-h1-letter-spacing": {
+      "cssVariable": "--env-type-headline-letter-spacing",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--type-h1-line-height": {
+      "cssVariable": "--env-type-headline-line-height",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--type-h2": {
+      "replacement": "type.title",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--type-h2-font-family": {
+      "cssVariable": "--env-type-title-font-family",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--type-h2-font-size": {
+      "cssVariable": "--env-type-title-font-size",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--type-h2-font-weight": {
+      "cssVariable": "--env-type-title-font-weight",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--type-h2-letter-spacing": {
+      "cssVariable": "--env-type-title-letter-spacing",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--type-h2-line-height": {
+      "cssVariable": "--env-type-title-line-height",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-body-font-weight": {
+      "replacement": "font.weight.body",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-font-size-body-small": {
+      "replacement": "font.size.body-sm",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-font-size-heading": {
+      "replacement": "font.size.headline",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-font-size-heading-small": {
+      "replacement": "font.size.title",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-font-size-label-small": {
+      "replacement": "font.size.label-sm",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-body-small": {
+      "replacement": "type.body-sm",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-h1": {
+      "replacement": "type.headline",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-h2": {
+      "replacement": "type.title",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-body-small-font-family": {
+      "cssVariable": "--env-type-body-sm-font-family",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-body-small-font-size": {
+      "cssVariable": "--env-type-body-sm-font-size",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-body-small-font-weight": {
+      "cssVariable": "--env-type-body-sm-font-weight",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-body-small-letter-spacing": {
+      "cssVariable": "--env-type-body-sm-letter-spacing",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-body-small-line-height": {
+      "cssVariable": "--env-type-body-sm-line-height",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-h1-font-family": {
+      "cssVariable": "--env-type-headline-font-family",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-h1-font-size": {
+      "cssVariable": "--env-type-headline-font-size",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-h1-font-weight": {
+      "cssVariable": "--env-type-headline-font-weight",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-h1-letter-spacing": {
+      "cssVariable": "--env-type-headline-letter-spacing",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-h1-line-height": {
+      "cssVariable": "--env-type-headline-line-height",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-h2-font-family": {
+      "cssVariable": "--env-type-title-font-family",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-h2-font-size": {
+      "cssVariable": "--env-type-title-font-size",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-h2-font-weight": {
+      "cssVariable": "--env-type-title-font-weight",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-h2-letter-spacing": {
+      "cssVariable": "--env-type-title-letter-spacing",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-h2-line-height": {
+      "cssVariable": "--env-type-title-line-height",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
     }
   },
   "aliases": {

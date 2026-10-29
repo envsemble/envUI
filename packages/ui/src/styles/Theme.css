@@ -35,11 +35,11 @@ html.env-theme > body {
 }
 .env-theme h1 {
   margin: 0;
-  font: var(--env-type-h1);
+  font: var(--env-type-headline);
 }
 .env-theme :is(h2, h3, h4, h5, h6) {
   margin: 0;
-  font: var(--env-type-h2);
+  font: var(--env-type-title);
 }
 .env-theme p {
   margin: 0;

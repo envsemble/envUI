@@ -24,7 +24,7 @@
   .env-pagination-range {
     margin-inline-end: var(--env-space-2);
     color: var(--env-color-fg-muted);
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
   }

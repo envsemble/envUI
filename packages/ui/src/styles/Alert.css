@@ -102,7 +102,7 @@
   }
   .env-alert-message {
     color: var(--env-alert-text-color);
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
   }
   .env-alert-action {
     margin-block-start: var(--env-space-2);

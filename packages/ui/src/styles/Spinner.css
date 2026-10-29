@@ -33,7 +33,7 @@
     inline-size: auto;
     block-size: auto;
     color: var(--env-color-fg-muted);
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
   }
   .env-spinner[data-show-label]:where([data-size='sm']) {
     --env-spinner-size: 1rem;

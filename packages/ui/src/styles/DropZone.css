@@ -47,7 +47,7 @@
   }
   .env-drop-zone-description {
     color: var(--env-color-fg-muted);
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
   }
   @media (hover: hover) {
     .env-drop-zone-target:hover:not(:disabled, [aria-disabled='true']) {
@@ -98,7 +98,7 @@
     block-size: var(--env-control-icon-size);
   }
   .env-drop-zone[data-size='sm'] .env-drop-zone-label {
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
     font-weight: var(--env-font-weight-medium);
   }
   @media (prefers-reduced-motion: reduce) {

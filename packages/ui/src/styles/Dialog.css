@@ -47,10 +47,10 @@
   .env-dialog-title {
     min-inline-size: 0;
     overflow-wrap: anywhere;
-    font: var(--env-type-h1);
+    font: var(--env-type-headline);
   }
   .env-dialog-description {
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
     color: var(--env-color-fg-muted);
   }
   /* The theme boundary of a modal surface's portal (Dialog, ConfirmDialog, Sheet, CommandPalette) has

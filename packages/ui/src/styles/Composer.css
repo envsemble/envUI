@@ -71,7 +71,7 @@
     /* Start content lines up with the field's text above it. */
     padding-inline-start: var(--env-space-4);
     color: var(--env-color-fg-muted);
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
     cursor: default;
   }
   /* A leading icon button reaches into that inset, so its icon, not its round target, lines up. */
@@ -110,7 +110,7 @@
     min-inline-size: 0;
     padding-inline: var(--env-space-5);
     color: var(--env-color-fg-muted);
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
     overflow-wrap: anywhere;
   }
   @media (prefers-reduced-motion: reduce) {

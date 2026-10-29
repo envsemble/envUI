@@ -17,7 +17,7 @@
     overscroll-behavior: contain;
     scrollbar-width: thin;
     color: var(--env-color-fg-control);
-    font: var(--env-body-font-weight) var(--env-font-size-label) / 1.4 var(--env-font-family);
+    font: var(--env-font-weight-body) var(--env-font-size-label) / 1.4 var(--env-font-family);
     outline: none;
   }
   .env-tree[data-density='xs'] {
@@ -123,7 +123,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     color: var(--env-color-fg-muted);
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
   }
   .env-tree-end {
     flex: 0 0 auto;

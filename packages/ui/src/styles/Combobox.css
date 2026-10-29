@@ -131,12 +131,12 @@
     border-radius: var(--env-radius-sm);
     background: var(--env-combobox-chip-container, var(--env-color-bg-neutral-muted));
     color: var(--env-combobox-chip-content, var(--env-color-fg-default));
-    font: var(--env-body-font-weight) var(--env-font-size-label) / 1.25 var(--env-font-family);
+    font: var(--env-font-weight-body) var(--env-font-size-label) / 1.25 var(--env-font-family);
     cursor: default;
     outline: none;
   }
   .env-combobox:not([data-tall]) .env-combobox-chip {
-    font-size: var(--env-font-size-label-small);
+    font-size: var(--env-font-size-label-sm);
   }
   .env-combobox-chip:not(:has(> .env-combobox-chip-remove)) {
     padding-inline-end: var(--env-space-2);
@@ -227,7 +227,7 @@
     min-block-size: var(--env-control-height-md);
     padding: var(--env-space-1) var(--env-popup-row-padding-inline);
     color: var(--env-color-fg-muted);
-    font: var(--env-body-font-weight) var(--env-font-size-body) / 1.35 var(--env-font-family);
+    font: var(--env-font-weight-body) var(--env-font-size-body) / 1.35 var(--env-font-family);
     overflow-wrap: anywhere;
   }
 

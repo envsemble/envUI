@@ -8,7 +8,7 @@
     border: 0;
     background: none;
     color: var(--env-color-fg-muted);
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
   }
   .env-disclosure > summary {
     display: flex;

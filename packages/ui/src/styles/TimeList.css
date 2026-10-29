@@ -13,7 +13,7 @@
     gap: var(--env-space-1);
     min-inline-size: 0;
     color: var(--env-color-fg-muted);
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
   }
   .env-time-list-column {
     position: relative;

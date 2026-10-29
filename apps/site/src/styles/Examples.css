@@ -79,7 +79,7 @@
   text-align: left;
 }
 .catalogue-matrix th {
-  font: var(--env-type-body-small);
+  font: var(--env-type-body-sm);
   color: var(--env-color-fg-muted);
   font-weight: var(--env-font-weight-regular);
   padding: 0.5rem 0.75rem 1rem;

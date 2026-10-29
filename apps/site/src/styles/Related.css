@@ -167,7 +167,7 @@
 
 .catalogue-related-line .env-markdown {
   color: var(--env-color-fg-muted);
-  font: var(--env-type-body-small);
+  font: var(--env-type-body-sm);
 }
 
 .catalogue-related-line .env-markdown > * {

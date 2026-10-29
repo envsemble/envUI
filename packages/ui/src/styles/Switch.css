@@ -49,8 +49,8 @@
     display: inline-flex;
     align-items: center;
     gap: var(--env-space-3);
-    font: var(--env-type-body-small);
-    font-size: var(--env-font-size-body-small);
+    font: var(--env-type-body-sm);
+    font-size: var(--env-font-size-body-sm);
     color: var(--env-color-fg-default);
     cursor: pointer;
     /* The row is at least the 24 px minimum target in both scales, with the track as drawn. */

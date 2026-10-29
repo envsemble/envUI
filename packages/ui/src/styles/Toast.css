@@ -60,7 +60,7 @@
     border: 1px solid var(--env-toast-outline, var(--env-toast-high-contrast-edge, transparent));
     border-radius: var(--env-toast-radius);
     background: var(--env-toast-container, var(--env-toast-container-default));
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
     color: var(--env-toast-text);
     flex-wrap: nowrap;
   }

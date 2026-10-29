@@ -36,7 +36,7 @@
     /* The capped full corner: rounded ends at one line, and the same corners, a rounded rectangle,
        when a label wraps onto more lines. */
     border-radius: var(--env-radius-full);
-    font: var(--env-body-font-weight) var(--env-font-size-label) / 1.4 var(--env-font-family);
+    font: var(--env-font-weight-body) var(--env-font-size-label) / 1.4 var(--env-font-family);
     white-space: normal;
     overflow-wrap: anywhere;
     text-align: center;

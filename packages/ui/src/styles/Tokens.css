@@ -6,7 +6,6 @@
    are in TokensHandwritten.css. */
 .env-theme {
   color-scheme: light;
-  --env-body-font-weight: var(--env-font-weight-regular);
   --env-color-avatar-bg: var(--env-color-avatar-bg-powder);
   --env-color-avatar-bg-blush: #ffd3d4;
   --env-color-avatar-bg-butter: #efdca4;
@@ -183,12 +182,13 @@
   --env-field-floating-height: 3.5rem;
   --env-font-family: 'envUI Geist', sans-serif;
   --env-font-size-body: 0.9375rem;
-  --env-font-size-body-small: 0.875rem;
+  --env-font-size-body-sm: 0.875rem;
   --env-font-size-caption: 0.75rem;
-  --env-font-size-heading: 1.125rem;
-  --env-font-size-heading-small: 1rem;
+  --env-font-size-headline: 1.125rem;
   --env-font-size-label: 0.875rem;
-  --env-font-size-label-small: 0.8125rem;
+  --env-font-size-label-sm: 0.8125rem;
+  --env-font-size-title: 1rem;
+  --env-font-weight-body: var(--env-font-weight-regular);
   --env-font-weight-medium: 500;
   --env-font-weight-regular: 400;
   --env-font-weight-semibold: 600;
@@ -241,31 +241,30 @@
     var(--env-type-body-line-height) var(--env-type-body-font-family);
   --env-type-body-font-family: var(--env-font-family);
   --env-type-body-font-size: var(--env-font-size-body);
-  --env-type-body-font-weight: var(--env-body-font-weight);
+  --env-type-body-font-weight: var(--env-font-weight-body);
   --env-type-body-letter-spacing: 0rem;
   --env-type-body-line-height: 1.4em;
-  --env-type-body-small: var(--env-type-body-small-font-weight)
-    var(--env-type-body-small-font-size) / var(--env-type-body-small-line-height)
-    var(--env-type-body-small-font-family);
-  --env-type-body-small-font-family: var(--env-font-family);
-  --env-type-body-small-font-size: var(--env-font-size-body-small);
-  --env-type-body-small-font-weight: var(--env-body-font-weight);
-  --env-type-body-small-letter-spacing: 0rem;
-  --env-type-body-small-line-height: 1.4em;
-  --env-type-h1: var(--env-type-h1-font-weight) var(--env-type-h1-font-size) /
-    var(--env-type-h1-line-height) var(--env-type-h1-font-family);
-  --env-type-h1-font-family: var(--env-font-family);
-  --env-type-h1-font-size: var(--env-font-size-heading);
-  --env-type-h1-font-weight: var(--env-font-weight-medium);
-  --env-type-h1-letter-spacing: 0rem;
-  --env-type-h1-line-height: 1.4em;
-  --env-type-h2: var(--env-type-h2-font-weight) var(--env-type-h2-font-size) /
-    var(--env-type-h2-line-height) var(--env-type-h2-font-family);
-  --env-type-h2-font-family: var(--env-font-family);
-  --env-type-h2-font-size: var(--env-font-size-heading-small);
-  --env-type-h2-font-weight: var(--env-font-weight-medium);
-  --env-type-h2-letter-spacing: 0rem;
-  --env-type-h2-line-height: 1.4em;
+  --env-type-body-sm: var(--env-type-body-sm-font-weight) var(--env-type-body-sm-font-size) /
+    var(--env-type-body-sm-line-height) var(--env-type-body-sm-font-family);
+  --env-type-body-sm-font-family: var(--env-font-family);
+  --env-type-body-sm-font-size: var(--env-font-size-body-sm);
+  --env-type-body-sm-font-weight: var(--env-font-weight-body);
+  --env-type-body-sm-letter-spacing: 0rem;
+  --env-type-body-sm-line-height: 1.4em;
+  --env-type-headline: var(--env-type-headline-font-weight) var(--env-type-headline-font-size) /
+    var(--env-type-headline-line-height) var(--env-type-headline-font-family);
+  --env-type-headline-font-family: var(--env-font-family);
+  --env-type-headline-font-size: var(--env-font-size-headline);
+  --env-type-headline-font-weight: var(--env-font-weight-medium);
+  --env-type-headline-letter-spacing: 0rem;
+  --env-type-headline-line-height: 1.4em;
+  --env-type-title: var(--env-type-title-font-weight) var(--env-type-title-font-size) /
+    var(--env-type-title-line-height) var(--env-type-title-font-family);
+  --env-type-title-font-family: var(--env-font-family);
+  --env-type-title-font-size: var(--env-font-size-title);
+  --env-type-title-font-weight: var(--env-font-weight-medium);
+  --env-type-title-letter-spacing: 0rem;
+  --env-type-title-line-height: 1.4em;
   --env-window-class-expanded: 52.5rem;
   --env-window-class-large: 75rem;
   --env-window-class-medium: 37.5rem;
@@ -897,12 +896,12 @@
   --env-counter-badge-height: 1rem;
   --env-field-floating-height: 2.75rem;
   --env-font-size-body: 0.8125rem;
-  --env-font-size-body-small: 0.75rem;
+  --env-font-size-body-sm: 0.75rem;
   --env-font-size-caption: 0.6875rem;
-  --env-font-size-heading: 1rem;
-  --env-font-size-heading-small: 0.875rem;
+  --env-font-size-headline: 1rem;
   --env-font-size-label: 0.8125rem;
-  --env-font-size-label-small: 0.75rem;
+  --env-font-size-label-sm: 0.75rem;
+  --env-font-size-title: 0.875rem;
   --env-icon-size-lg: 1.125rem;
   --env-icon-size-md: 1rem;
   --env-radius-lg: 0.75rem;

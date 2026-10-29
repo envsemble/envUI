@@ -9,23 +9,22 @@
   }
   /* Display text introduces a page or hero; it scales with the viewport and keeps a tight measure. */
   .env-text:where([data-variant='display']) {
-    font: var(--env-font-weight-medium) clamp(1.75rem, 1.25rem + 2.5vw, 2.75rem) / 1.1
-      var(--env-font-family);
+    font: var(--env-type-display);
     letter-spacing: -0.03em;
     text-wrap: balance;
   }
   .env-text:where([data-variant='headline']) {
-    font: var(--env-type-h1);
+    font: var(--env-type-headline);
   }
   .env-text:where([data-variant='title']) {
-    font: var(--env-type-h2);
+    font: var(--env-type-title);
   }
   .env-text:where([data-variant='body-sm']) {
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
     color: var(--env-color-fg-muted);
   }
   .env-text:where([data-variant='caption']) {
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
     color: var(--env-color-fg-muted);
   }
   .env-text:where([data-emphasis='default']) {

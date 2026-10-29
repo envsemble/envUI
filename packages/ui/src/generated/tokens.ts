@@ -28,16 +28,6 @@ export interface TokenDefinition {
 
 /** Every token, by its DTCG path. */
 export const tokens = {
-  'body.font-weight': {
-    cssVariable: '--env-body-font-weight',
-    type: 'fontWeight',
-    values: {
-      light: '400',
-      dark: '400',
-      'light-high-contrast': '400',
-      'dark-high-contrast': '400',
-    },
-  },
   /** The default fill, the powder hue: the fill of an avatar whose hue nothing sets. */
   'color.avatar.bg': {
     cssVariable: '--env-color-avatar-bg',
@@ -1969,8 +1959,8 @@ export const tokens = {
     },
     scales: { compact: '0.8125rem' },
   },
-  'font.size.body-small': {
-    cssVariable: '--env-font-size-body-small',
+  'font.size.body-sm': {
+    cssVariable: '--env-font-size-body-sm',
     type: 'dimension',
     values: {
       light: '0.875rem',
@@ -1992,8 +1982,8 @@ export const tokens = {
     },
     scales: { compact: '0.6875rem' },
   },
-  'font.size.heading': {
-    cssVariable: '--env-font-size-heading',
+  'font.size.headline': {
+    cssVariable: '--env-font-size-headline',
     type: 'dimension',
     values: {
       light: '1.125rem',
@@ -2002,17 +1992,6 @@ export const tokens = {
       'dark-high-contrast': '1.125rem',
     },
     scales: { compact: '1rem' },
-  },
-  'font.size.heading-small': {
-    cssVariable: '--env-font-size-heading-small',
-    type: 'dimension',
-    values: {
-      light: '1rem',
-      dark: '1rem',
-      'light-high-contrast': '1rem',
-      'dark-high-contrast': '1rem',
-    },
-    scales: { compact: '0.875rem' },
   },
   /** The label of a control, and the text of menu, tree and option rows. */
   'font.size.label': {
@@ -2027,8 +2006,8 @@ export const tokens = {
     scales: { compact: '0.8125rem' },
   },
   /** A label inside a field at the control height, such as a combobox chip's. */
-  'font.size.label-small': {
-    cssVariable: '--env-font-size-label-small',
+  'font.size.label-sm': {
+    cssVariable: '--env-font-size-label-sm',
     type: 'dimension',
     values: {
       light: '0.8125rem',
@@ -2037,6 +2016,28 @@ export const tokens = {
       'dark-high-contrast': '0.8125rem',
     },
     scales: { compact: '0.75rem' },
+  },
+  'font.size.title': {
+    cssVariable: '--env-font-size-title',
+    type: 'dimension',
+    values: {
+      light: '1rem',
+      dark: '1rem',
+      'light-high-contrast': '1rem',
+      'dark-high-contrast': '1rem',
+    },
+    scales: { compact: '0.875rem' },
+  },
+  /** The weight of running text, which the body type roles take: regular. */
+  'font.weight.body': {
+    cssVariable: '--env-font-weight-body',
+    type: 'fontWeight',
+    values: {
+      light: '400',
+      dark: '400',
+      'light-high-contrast': '400',
+      'dark-high-contrast': '400',
+    },
   },
   'font.weight.medium': {
     cssVariable: '--env-font-weight-medium',
@@ -2595,8 +2596,8 @@ export const tokens = {
       },
     },
   },
-  'type.body-small': {
-    cssVariable: '--env-type-body-small',
+  'type.body-sm': {
+    cssVariable: '--env-type-body-sm',
     type: 'typography',
     values: {
       light: {
@@ -2629,8 +2630,8 @@ export const tokens = {
       },
     },
   },
-  'type.h1': {
-    cssVariable: '--env-type-h1',
+  'type.headline': {
+    cssVariable: '--env-type-headline',
     type: 'typography',
     values: {
       light: {
@@ -2663,8 +2664,8 @@ export const tokens = {
       },
     },
   },
-  'type.h2': {
-    cssVariable: '--env-type-h2',
+  'type.title': {
+    cssVariable: '--env-type-title',
     type: 'typography',
     values: {
       light: {

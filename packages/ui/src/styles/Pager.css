@@ -37,10 +37,10 @@
   }
   .env-pager-link-label {
     color: var(--env-color-fg-muted);
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
   }
   .env-pager-link-title {
-    font: var(--env-type-h2);
+    font: var(--env-type-title);
   }
   .env-pager-link .env-icon {
     inline-size: 1.25rem;

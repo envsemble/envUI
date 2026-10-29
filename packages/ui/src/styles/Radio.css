@@ -65,8 +65,8 @@
     min-width: 0;
     padding: var(--env-space-3) var(--env-row-padding-inline);
     background: var(--env-radio-custom-fill, var(--env-color-bg-muted));
-    font: var(--env-type-body-small);
-    font-size: var(--env-font-size-body-small);
+    font: var(--env-type-body-sm);
+    font-size: var(--env-font-size-body-sm);
     color: var(--env-radio-content, var(--env-color-fg-default));
     cursor: pointer;
   }
@@ -121,8 +121,8 @@
     display: inline-flex;
     align-items: center;
     gap: var(--env-space-3);
-    font: var(--env-type-body-small);
-    font-size: var(--env-font-size-body-small);
+    font: var(--env-type-body-sm);
+    font-size: var(--env-font-size-body-sm);
     color: var(--env-color-fg-default);
     cursor: pointer;
   }
@@ -150,7 +150,7 @@
   .env-radio-description {
     display: block;
     color: var(--env-color-fg-muted);
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
   }
 
   /* Motion: choice controls settle while they or their label are held, a radio row a little and

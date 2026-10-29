@@ -6,7 +6,7 @@
   .env-meter-header,
   .env-progress-header {
     align-items: baseline;
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
   }
   .env-meter-label,
   .env-progress-label {

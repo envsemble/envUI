@@ -6,7 +6,7 @@
     grid-template-columns: minmax(min-content, max-content) minmax(0, 1fr);
     gap: var(--env-space-2) var(--env-space-4);
     margin: 0;
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
     color: var(--env-color-fg-default);
   }
   .env-description-list[data-size='md'] {

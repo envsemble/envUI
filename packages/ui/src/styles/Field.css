@@ -7,14 +7,14 @@
     align-content: start;
     max-inline-size: 100%;
     overflow-wrap: anywhere;
-    font: var(--env-type-body-small);
-    font-size: var(--env-font-size-body-small);
+    font: var(--env-type-body-sm);
+    font-size: var(--env-font-size-body-sm);
     color: var(--env-color-fg-default);
   }
   .env-field-description,
   .env-field-error {
-    font: var(--env-type-body-small);
-    font-size: var(--env-font-size-body-small);
+    font: var(--env-type-body-sm);
+    font-size: var(--env-font-size-body-sm);
   }
   .env-field-description {
     color: var(--env-color-fg-muted);

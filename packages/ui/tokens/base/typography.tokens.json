@@ -8,49 +8,49 @@
         "$description": "Captions, a menu's group labels and other small secondary text.",
         "$value": { "value": 0.75, "unit": "rem" }
       },
-      "body-small": { "$value": { "value": 0.875, "unit": "rem" } },
+      "body-sm": { "$value": { "value": 0.875, "unit": "rem" } },
       "label": {
         "$description": "The label of a control, and the text of menu, tree and option rows.",
         "$value": { "value": 0.875, "unit": "rem" }
       },
-      "label-small": {
+      "label-sm": {
         "$description": "A label inside a field at the control height, such as a combobox chip's.",
         "$value": { "value": 0.8125, "unit": "rem" }
       },
       "body": { "$value": { "value": 0.9375, "unit": "rem" } },
-      "heading-small": { "$value": { "value": 1, "unit": "rem" } },
-      "heading": { "$value": { "value": 1.125, "unit": "rem" } }
+      "title": { "$value": { "value": 1, "unit": "rem" } },
+      "headline": { "$value": { "value": 1.125, "unit": "rem" } }
     },
     "weight": {
       "$type": "fontWeight",
       "$description": "The font weights: regular for body text, medium for headings, labels that lead and emphasis in a row, semibold for the strongest emphasis in a small space, such as today in a calendar. The same in every scale.",
       "regular": { "$value": 400 },
       "medium": { "$value": 500 },
-      "semibold": { "$value": 600 }
+      "semibold": { "$value": 600 },
+      "body": {
+        "$description": "The weight of running text, which the body type roles take: regular.",
+        "$value": "{font.weight.regular}"
+      }
     }
-  },
-  "body": {
-    "$type": "fontWeight",
-    "font-weight": { "$value": "{font.weight.regular}" }
   },
   "type": {
     "$type": "typography",
     "$description": "Font shorthands for the type roles, as the `font` property takes them: weight, size, line height and family. The line height is in em, so it follows the role's own size.",
-    "h1": {
+    "headline": {
       "$extensions": { "com.envsemble.envui": { "lineHeightUnit": "em" } },
       "$value": {
         "fontFamily": "{font.family}",
-        "fontSize": "{font.size.heading}",
+        "fontSize": "{font.size.headline}",
         "fontWeight": "{font.weight.medium}",
         "letterSpacing": { "value": 0, "unit": "rem" },
         "lineHeight": 1.4
       }
     },
-    "h2": {
+    "title": {
       "$extensions": { "com.envsemble.envui": { "lineHeightUnit": "em" } },
       "$value": {
         "fontFamily": "{font.family}",
-        "fontSize": "{font.size.heading-small}",
+        "fontSize": "{font.size.title}",
         "fontWeight": "{font.weight.medium}",
         "letterSpacing": { "value": 0, "unit": "rem" },
         "lineHeight": 1.4
@@ -61,17 +61,17 @@
       "$value": {
         "fontFamily": "{font.family}",
         "fontSize": "{font.size.body}",
-        "fontWeight": "{body.font-weight}",
+        "fontWeight": "{font.weight.body}",
         "letterSpacing": { "value": 0, "unit": "rem" },
         "lineHeight": 1.4
       }
     },
-    "body-small": {
+    "body-sm": {
       "$extensions": { "com.envsemble.envui": { "lineHeightUnit": "em" } },
       "$value": {
         "fontFamily": "{font.family}",
-        "fontSize": "{font.size.body-small}",
-        "fontWeight": "{body.font-weight}",
+        "fontSize": "{font.size.body-sm}",
+        "fontWeight": "{font.weight.body}",
         "letterSpacing": { "value": 0, "unit": "rem" },
         "lineHeight": 1.4
       }

@@ -18,7 +18,7 @@
   .env-message-header {
     align-items: baseline;
     column-gap: var(--env-space-2);
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
   }
   .env-message-author {
     color: var(--env-color-fg-default);
@@ -59,7 +59,7 @@
     /* The spinner takes the status's color, through its hook. */
     --env-spinner-color: currentColor;
     color: var(--env-color-fg-muted);
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
   }
   .env-message[data-status='failed'] .env-message-status {
     color: var(--env-color-fg-danger);

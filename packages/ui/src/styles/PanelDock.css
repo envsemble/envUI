@@ -220,13 +220,13 @@
   .env-panel-dock-title {
     margin: 0;
     padding-block-start: max(0rem, calc((var(--env-panel-dock-control) - 1.4em) / 2));
-    font: var(--env-type-h1);
+    font: var(--env-type-headline);
     overflow-wrap: break-word;
   }
   .env-panel-dock-meta {
     min-inline-size: 0;
     color: var(--env-color-fg-muted);
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
   }
   .env-panel-dock-actions,
   .env-panel-dock-controls {
@@ -284,7 +284,7 @@
     border-start-end-radius: var(--env-radius-sm);
     background: var(--env-color-bg-popup);
     color: var(--env-color-fg-default);
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
     pointer-events: auto;
   }
   .env-panel-dock-tab-restore {

@@ -55,7 +55,7 @@
     box-sizing: border-box;
     min-height: calc(var(--env-control-height-sm) + 2 * var(--env-list-row-padding));
     padding: var(--env-list-row-padding) var(--env-row-padding-inline);
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
     background: var(--env-list-item-custom-fill, var(--env-list-item-container-default));
     color: var(--env-list-item-content, var(--env-color-fg-default));
   }
@@ -149,7 +149,7 @@
   .env-list small {
     display: block;
     color: var(--env-color-fg-muted);
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
   }
   /* A description given as undefined, as over a placeholder item, takes no room outside a skeleton;
      in one it is a bar. */

@@ -108,7 +108,7 @@
     padding: 0;
     overflow: hidden;
     font: var(--env-type-body);
-    font-size: var(--env-font-size-body-small);
+    font-size: var(--env-font-size-body-sm);
     line-height: 1;
     white-space: nowrap;
     visibility: hidden;
@@ -186,7 +186,7 @@
     inset-block-start: -0.625rem;
     padding-inline: var(--env-space-1);
     margin-inline-start: calc(-1 * var(--env-space-1));
-    font-size: var(--env-font-size-body-small);
+    font-size: var(--env-font-size-body-sm);
   }
   /* The floated label opens the notch in the border behind it, as wide as the label shows. */
   .env-text-field-control:is(

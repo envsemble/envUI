@@ -41,10 +41,10 @@
     /* Everything under the area and the strips takes their width, so a wide picker stays compact. */
     max-inline-size: var(--env-color-picker-max-width);
     color: var(--env-color-fg-default);
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
   }
   .env-color-picker-label {
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
   }
 
   /* The area and the strips have square corners: their colors run edge to edge, as in a design
@@ -306,7 +306,7 @@
     border-radius: var(--env-radius-sm);
     background: var(--env-color-picker-button-container, transparent);
     color: var(--env-color-fg-default);
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
     font-variant-numeric: tabular-nums;
     cursor: pointer;
     transition: border-color var(--env-motion-duration-medium) var(--env-motion-ease);

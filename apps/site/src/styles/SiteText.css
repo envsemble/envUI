@@ -22,7 +22,7 @@
 /* A lead: the one or two sentences that open a section, a step larger than the text below it. */
 .site-lead,
 :where(.site-lead) > p {
-  font: var(--env-font-weight-regular) var(--env-font-size-heading) / 1.5 var(--env-font-family);
+  font: var(--env-font-weight-regular) var(--env-font-size-headline) / 1.5 var(--env-font-family);
   color: var(--env-color-fg-default);
 }
 
@@ -49,7 +49,7 @@
 /* A figure's note, such as the parts an anatomy figure can't show: the small muted text of its
    caption. */
 :where(.site-figure-note) > p {
-  font: var(--env-type-body-small);
+  font: var(--env-type-body-sm);
   color: var(--env-color-fg-muted);
 }
 

@@ -47,7 +47,7 @@
   .env-kbd-separator {
     padding-inline: var(--env-kbd-separator-padding-inline, 0.1875rem);
     color: var(--env-kbd-separator-fg, var(--env-kbd-fg, var(--env-color-fg-muted)));
-    font: var(--env-kbd-separator-font, var(--env-type-body-small));
+    font: var(--env-kbd-separator-font, var(--env-type-body-sm));
   }
 
   /* In a skeleton, a key keeps its cap and its label is a bar. A key is laid out as a block of its own

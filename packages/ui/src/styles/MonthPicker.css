@@ -8,7 +8,7 @@
     inline-size: calc(7 * var(--env-row-height));
     max-inline-size: 100%;
     color: var(--env-color-fg-default);
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
   }
   .env-month-picker-header {
     /* The year buttons, side by side at the end, as the calendar's month buttons. */

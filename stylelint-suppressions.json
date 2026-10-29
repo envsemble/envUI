@@ -190,9 +190,6 @@
     }
   },
   "packages/ui/src/styles/Text.css": {
-    "declaration-property-unit-disallowed-list": {
-      "count": 3
-    },
     "unit-disallowed-list": {
       "count": 2
     }
