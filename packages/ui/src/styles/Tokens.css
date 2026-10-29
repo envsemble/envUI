@@ -164,7 +164,6 @@
   --env-color-list-item-bg-hover: var(--env-color-bg-muted-hover);
   --env-color-list-item-bg-pressed: var(--env-color-bg-muted-pressed);
   --env-color-rating-star: #dea846;
-  --env-color-skeleton-shine: var(--env-color-bg-raised);
   --env-control-border-width: 1px;
   --env-control-font-size: var(--env-font-size-body);
   --env-control-gap: 0.4375rem;
@@ -406,7 +405,6 @@
   --env-color-fg-success: #7ad197;
   --env-color-fg-warning: #ebb750;
   --env-color-rating-star: #ebb750;
-  --env-color-skeleton-shine: var(--env-color-border-default);
   --env-elevation-1-border: #686b70;
   --env-elevation-2-border: #686b70;
   --env-elevation-3-border: #686b70;
