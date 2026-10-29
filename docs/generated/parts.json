@@ -55,6 +55,13 @@
           ]
         },
         {
+          "attribute": "data-env-skeleton",
+          "values": [],
+          "parts": [
+            "env-accordion"
+          ]
+        },
+        {
           "attribute": "data-interactive",
           "values": [
             ""
@@ -2765,6 +2772,13 @@
             "sm",
             "xs"
           ],
+          "parts": [
+            "env-list"
+          ]
+        },
+        {
+          "attribute": "data-env-skeleton",
+          "values": [],
           "parts": [
             "env-list"
           ]

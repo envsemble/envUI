@@ -18,6 +18,17 @@ async function open(page: Page) {
   });
 }
 
+/** Holds every skeleton's pulse at its start, so paints read at different moments compare. */
+function holdPulses(page: Page) {
+  return page.evaluate(() => {
+    for (const animation of document.getAnimations())
+      if ((animation as CSSAnimation).animationName?.startsWith('env-skeleton-pulse')) {
+        animation.pause();
+        animation.currentTime = 0;
+      }
+  });
+}
+
 /** A computed style of an element, or of one of its pseudo-elements. */
 function style(page: Page, selector: string, property: string, pseudo?: string) {
   return page
@@ -35,6 +46,7 @@ test('a skeleton is one busy region with inert content, draws text as bars and s
 }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await open(page);
+  await holdPulses(page);
   const projects = page.getByTestId('projects');
   await expect(projects).toHaveAttribute('data-env-skeleton', '');
   await expect(projects).toHaveAttribute('aria-busy', 'true');
