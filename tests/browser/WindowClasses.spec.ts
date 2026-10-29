@@ -266,7 +266,7 @@ for (const containsLayout of [false, true]) {
         await open(page, `${fixtureUrl}/?fixture=dialog-variants`, { scroll: false });
         await page.addStyleTag({
           content:
-            '@layer env.components { @container env-window (width >= 37.5rem) { .env-dialog-popup { --window-probe: medium; } } }',
+            '@layer env.components { @container env-window (width >= 37.5rem) { .env-dialog { --window-probe: medium; } } }',
         });
         await page.getByRole('button', { name: 'Open top dialog' }).click();
         const dialog = page.getByRole('dialog', { name: 'Search plans' });

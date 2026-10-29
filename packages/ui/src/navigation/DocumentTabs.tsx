@@ -20,7 +20,6 @@ import { Row } from '../foundations/Layout.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { useDirection } from '../internal/useDirection.js';
 import { useMessages } from '../internal/EnvUIContext.js';
-import { setRef } from '../internal/setRef.js';
 import { documentTabs } from '../foundations/messages/documentTabs.js';
 import { ContextMenu } from './ContextMenu.js';
 import * as Menu from './Menu.js';
@@ -91,11 +90,11 @@ export interface DocumentTabsProps {
    * @default 'Tab actions', or EnvUIProvider's messages.documentTabs.actions
    */
   contextMenuLabel?: string;
-  /** Classes for the strip, the tab list. */
+  /** Classes for the root element, which holds the strip of tabs and the actions at its end. */
   className?: string;
-  /** The strip's inline style. */
+  /** The root element's inline style. */
   style?: CSSProperties;
-  /** The strip, the tab list element. */
+  /** The root element, which holds the strip of tabs and the actions at its end. */
   ref?: Ref<HTMLDivElement>;
 }
 
@@ -359,15 +358,11 @@ export function DocumentTabs({
 
   const strip = (
     <BaseTabs.List
-      ref={(node: HTMLDivElement | null) => {
-        list.current = node;
-        setRef(ref, node);
-      }}
+      ref={list}
       aria-label={label}
       activateOnFocus
       render={<Row align="stretch" />}
-      className={classNames('env-document-tabs', className)}
-      style={style}
+      className="env-document-tabs-list"
       data-fade-left={fades.left ? '' : undefined}
       data-fade-right={fades.right ? '' : undefined}
       data-reordering={drag ? '' : undefined}
@@ -438,83 +433,84 @@ export function DocumentTabs({
         onValueChange={(next) => {
           if (typeof next === 'string') onValueChange(next);
         }}
-        className="env-document-tabs-root"
+        ref={ref}
+        render={<Row align="center" />}
+        className={classNames('env-document-tabs', className)}
+        style={style}
       >
-        <Row align="center" className="env-document-tabs-bar">
-          <ContextMenu
-            aria-label={contextMenuLabel ?? messages.actions}
-            onOpenChange={(open) => {
-              if (open)
-                menuOpenedInside.current = Boolean(
-                  list.current?.contains(list.current.ownerDocument.activeElement),
-                );
-            }}
-            content={(target) => {
-              // Read from the tab's item, so the menu keeps its items while it closes after the tab.
-              const tab = target
-                ?.closest('.env-document-tabs-item')
-                ?.querySelector<HTMLElement>('[role="tab"]');
-              const id = tab?.dataset.tabId;
-              const onTab = tab != null && id !== undefined;
-              // Without onCloseAll, only a tab offers a menu.
-              if (!onTab && !onCloseAll) return null;
-              return (
-                <>
-                  {onTab && (
-                    <Menu.Item
-                      onClick={() => {
-                        if (menuOpenedInside.current) setClosedFromMenu(true);
-                        onClose(id);
-                      }}
-                    >
-                      {closeName(tab.getAttribute('aria-label') ?? '')}
-                    </Menu.Item>
-                  )}
-                  {onTab && onReorder && (
-                    <>
-                      <Menu.Item
-                        onClick={() => moveTab(id, 'left')}
-                        disabled={moveTarget(id, 'left') < 0}
-                      >
-                        {messages.moveLeft}
-                      </Menu.Item>
-                      <Menu.Item
-                        onClick={() => moveTab(id, 'right')}
-                        disabled={moveTarget(id, 'right') < 0}
-                      >
-                        {messages.moveRight}
-                      </Menu.Item>
-                    </>
-                  )}
-                  {onCloseAll && (
-                    <Menu.Item onClick={onCloseAll} disabled={items.length === 0}>
-                      {closeAllLabel ?? messages.closeAll}
-                    </Menu.Item>
-                  )}
-                </>
+        <ContextMenu
+          aria-label={contextMenuLabel ?? messages.actions}
+          onOpenChange={(open) => {
+            if (open)
+              menuOpenedInside.current = Boolean(
+                list.current?.contains(list.current.ownerDocument.activeElement),
               );
-            }}
+          }}
+          content={(target) => {
+            // Read from the tab's item, so the menu keeps its items while it closes after the tab.
+            const tab = target
+              ?.closest('.env-document-tabs-item')
+              ?.querySelector<HTMLElement>('[role="tab"]');
+            const id = tab?.dataset.tabId;
+            const onTab = tab != null && id !== undefined;
+            // Without onCloseAll, only a tab offers a menu.
+            if (!onTab && !onCloseAll) return null;
+            return (
+              <>
+                {onTab && (
+                  <Menu.Item
+                    onClick={() => {
+                      if (menuOpenedInside.current) setClosedFromMenu(true);
+                      onClose(id);
+                    }}
+                  >
+                    {closeName(tab.getAttribute('aria-label') ?? '')}
+                  </Menu.Item>
+                )}
+                {onTab && onReorder && (
+                  <>
+                    <Menu.Item
+                      onClick={() => moveTab(id, 'left')}
+                      disabled={moveTarget(id, 'left') < 0}
+                    >
+                      {messages.moveLeft}
+                    </Menu.Item>
+                    <Menu.Item
+                      onClick={() => moveTab(id, 'right')}
+                      disabled={moveTarget(id, 'right') < 0}
+                    >
+                      {messages.moveRight}
+                    </Menu.Item>
+                  </>
+                )}
+                {onCloseAll && (
+                  <Menu.Item onClick={onCloseAll} disabled={items.length === 0}>
+                    {closeAllLabel ?? messages.closeAll}
+                  </Menu.Item>
+                )}
+              </>
+            );
+          }}
+        >
+          {strip}
+        </ContextMenu>
+        {end != null && (
+          <Row align="center" gap={1} className="env-document-tabs-end">
+            {end}
+          </Row>
+        )}
+        {drag && dragged && (
+          // The floating copy of the dragged tab, beside the pointer; decorative, since the drag is
+          // a pointer's alternative to the context menu.
+          <div
+            className="env-document-tabs-drag-image"
+            aria-hidden="true"
+            style={{ left: drag.x + 12, top: drag.y + 12 }}
           >
-            {strip}
-          </ContextMenu>
-          {end != null && (
-            <Row align="center" gap={1} className="env-document-tabs-end">
-              {end}
-            </Row>
-          )}
-          {drag && dragged && (
-            // The floating copy of the dragged tab, beside the pointer; decorative, since the drag is
-            // a pointer's alternative to the context menu.
-            <div
-              className="env-document-tabs-drag-image"
-              aria-hidden="true"
-              style={{ left: drag.x + 12, top: drag.y + 12 }}
-            >
-              {dragged.icon != null && <DecorativeIcon>{dragged.icon}</DecorativeIcon>}
-              <span className="env-document-tabs-tab-label">{dragged.label}</span>
-            </div>
-          )}
-        </Row>
+            {dragged.icon != null && <DecorativeIcon>{dragged.icon}</DecorativeIcon>}
+            <span className="env-document-tabs-tab-label">{dragged.label}</span>
+          </div>
+        )}
       </BaseTabs.Root>
     </DirectionProvider>
   );

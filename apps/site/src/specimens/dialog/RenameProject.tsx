@@ -4,7 +4,7 @@ import { usePointer, type PointerStep } from '../../motion/Motion';
 import { MotionStage } from '../../motion/MotionStage';
 import { Renew } from '../../motion/Renew';
 
-const field = '.env-dialog-popup input';
+const field = '.env-dialog input';
 
 /*
  * The pointer opens Rename project, deletes "launch" from the name and types "website",

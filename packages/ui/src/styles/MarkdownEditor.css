@@ -2,7 +2,7 @@
   .env-markdown-editor {
     min-inline-size: 0;
   }
-  .env-markdown-source {
+  .env-markdown-editor-input {
     caret-color: var(--env-color-fg-default);
     tab-size: 2;
   }

@@ -1,10 +1,7 @@
 {
   "$comment": "The hand-written part of the part contract, which scripts/docs/GenerateParts.ts merges into docs/generated/parts.json. descriptions: one line per part class, by component. roots: a component whose root is not env-<its name>. shared: anatomy several components render, by its class prefix. placed: a class that no prefix places, and its group. colors: the color properties of each component, public custom properties registered so they don’t inherit, with what each colors.",
   "roots": {
-    "Dialog": "env-dialog-popup",
-    "ConfirmDialog": "env-dialog-popup",
-    "Textarea": "env-text-field",
-    "Sheet": "env-sheet-popup"
+    "ConfirmDialog": "env-dialog"
   },
   "shared": {
     "ConnectedRows": {
@@ -314,7 +311,7 @@
       "env-description-list-value": "A value."
     },
     "Dialog": {
-      "env-dialog-popup": "The dialog.",
+      "env-dialog": "The dialog.",
       "env-dialog-actions": "The row of actions at the bottom.",
       "env-dialog-backdrop": "The backdrop behind a modal dialog.",
       "env-dialog-content": "The dialog's content between the header and the actions.",
@@ -337,13 +334,12 @@
       "env-disclosure-panel": "The panel it shows."
     },
     "DocumentTabs": {
-      "env-document-tabs": "The tabs of open documents.",
-      "env-document-tabs-bar": "The bar that holds the tabs.",
+      "env-document-tabs-list": "The tabs of open documents, which scroll sideways.",
       "env-document-tabs-close": "A tab's close button.",
       "env-document-tabs-drag-image": "The image that follows the pointer while a tab is dragged.",
       "env-document-tabs-end": "The actions at the end of the bar.",
       "env-document-tabs-item": "One tab with its close button.",
-      "env-document-tabs-root": "The tabs' root element.",
+      "env-document-tabs": "The root: a bar that holds the strip of tabs and the content after it.",
       "env-document-tabs-tab": "A tab's button.",
       "env-document-tabs-tab-label": "A tab's title."
     },
@@ -420,12 +416,12 @@
     },
     "Markdown": {
       "env-markdown": "The rendered Markdown.",
-      "env-markdown-source": "The Markdown source shown as text.",
       "env-markdown-table": "The region that scrolls a wide table."
     },
     "MarkdownEditor": {
       "env-markdown-editor": "The Markdown editor.",
-      "env-markdown-editor-write": "The text area for writing."
+      "env-markdown-editor-write": "The text area for writing.",
+      "env-markdown-editor-input": "The text area that shows the Markdown source as text."
     },
     "Menu": {
       "env-menu": "The menu's popup.",
@@ -667,7 +663,7 @@
       "env-select-trigger": "The button that shows the value and opens the list."
     },
     "Sheet": {
-      "env-sheet-popup": "The sheet.",
+      "env-sheet": "The sheet.",
       "env-sheet-body": "The sheet's content, which scrolls between the heading and the actions.",
       "env-sheet-backdrop": "The backdrop behind a modal sheet.",
       "env-sheet-viewport": "The viewport the sheet slides in from, at its edge.",
@@ -745,7 +741,8 @@
       "env-text-field-suffix": "Fixed text after the input."
     },
     "Textarea": {
-      "env-textarea-resize-handle": "The handle on the text area's bottom edge, which resizes it."
+      "env-textarea-resize-handle": "The handle on the text area's bottom edge, which resizes it.",
+      "env-textarea": "The text area's root, beside env-field and env-text-field."
     },
     "Theme": {
       "env-theme": "The theme boundary."

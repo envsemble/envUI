@@ -4,7 +4,7 @@ import { MotionStage } from '../../motion/MotionStage';
 import { keepLinksInPlace } from '../../figures/LiveExample';
 
 const link = 'a[href="/documents/launch-plan"]';
-const close = '.env-sheet-popup .env-dialog-heading > .env-button';
+const close = '.env-sheet .env-dialog-heading > .env-button';
 
 /*
  * The pointer clicks "launch plan": the document opens in the side panel beside the text, which

@@ -90,7 +90,7 @@ Both narrow to fit the window.
 
 ```
 
-1. **Dialog** (`env-dialog-popup`)
+1. **Dialog** (`env-dialog`)
 2. **Title** (`env-dialog-title`, `title`)
 3. **Description** (`env-dialog-description`, `description`)
 4. **Content** (`env-text-field`, `children`)
@@ -238,14 +238,14 @@ Keep one task per dialog: show a field's error on the field rather than in a sec
 
 ### Customize
 
-The parts are the surface, `env-dialog-popup`, its heading, `env-dialog-heading`, with the title, `env-dialog-title`, the description, `env-dialog-description`, and the actions, `env-dialog-actions`, which start with the close button. The scrim behind a modal dialog is `env-dialog-backdrop`.
+The parts are the surface, `env-dialog`, its heading, `env-dialog-heading`, with the title, `env-dialog-title`, the description, `env-dialog-description`, and the actions, `env-dialog-actions`, which start with the close button. The scrim behind a modal dialog is `env-dialog-backdrop`.
 
 The surface takes the popups' color and their shadow, `--env-popup-shadow`, as [Popover](popover.md#customize) describes, with no edge. It stays solid over the scrim, so `--env-popup-opacity` and `--env-popup-blur` don't reach it. At high contrast, with reduced transparency and under forced colors it has no shadow and its level-3 elevation edge returns.
 
 ## Changelog
 
 - **1.0.0-prerelease.5**: Dialogs take the popups' color and soft shadow, with no outline edge, and stay solid over the scrim; at high contrast and with reduced transparency the shadow goes and the edge returns.
-- **1.0.0**: `width` (`md` or `lg`) for `size`; the side panel, `placement="right"`, is [Sheet](../components/sheet.md); `onOpenChange` reports the reason; `initialFocus` and `finalFocus` take functions too; the surface's class is `env-dialog-popup`. The page is `dialog`, after the component.
+- **1.0.0**: `width` (`md` or `lg`) for `size`; the side panel, `placement="right"`, is [Sheet](../components/sheet.md); `onOpenChange` reports the reason; `initialFocus` and `finalFocus` take functions too; the surface's class is `env-dialog`. The page is `dialog`, after the component.
 - **0.5.0**: `size="wide"`, also for side panels, and `placement="top"`. Dialogs share Popover's raised surface with a hairline border; in the dark theme they keep the pane color through `--env-color-bg-raised`. The title and description sit together above the content. A side panel takes the whole width of a narrow window, with its content clear of the safe areas.
 - **0.4.0**: Secondary buttons in dialogs and side panels, such as the close button, stay distinct on their surface.
 - **0.3.0**: Dialogs rise into place and side panels slide in, over a backdrop that fades in.

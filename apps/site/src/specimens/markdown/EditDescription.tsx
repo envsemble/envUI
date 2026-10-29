@@ -4,7 +4,7 @@ import { usePointer, type PointerStep } from '../../motion/Motion';
 import { MotionStage } from '../../motion/MotionStage';
 import { Renew } from '../../motion/Renew';
 
-const source = 'textarea.env-markdown-source';
+const source = 'textarea.env-markdown-editor-input';
 const tab = (index: number) => `[role="tab"]:nth-child(${index} of [role="tab"])`;
 
 /*

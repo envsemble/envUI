@@ -2921,19 +2921,19 @@
           "name": "className",
           "type": "string",
           "required": false,
-          "description": "Classes for the strip, the tab list."
+          "description": "Classes for the root element, which holds the strip of tabs and the actions at its end."
         },
         {
           "name": "style",
           "type": "CSSProperties",
           "required": false,
-          "description": "The strip's inline style."
+          "description": "The root element's inline style."
         },
         {
           "name": "ref",
           "type": "Ref<HTMLDivElement>",
           "required": false,
-          "description": "The strip, the tab list element."
+          "description": "The root element, which holds the strip of tabs and the actions at its end."
         }
       ],
       "native": [
@@ -4091,7 +4091,7 @@
           "name": "className",
           "type": "string",
           "required": false,
-          "description": "The field's class, on its root element, beside env-field and env-text-field."
+          "description": "The field's class, on its root element, beside env-field, env-text-field and env-textarea."
         },
         {
           "name": "rows",
@@ -8008,7 +8008,7 @@
           "name": "className",
           "type": "string",
           "required": false,
-          "description": "The field's class, on its root element, beside env-field and env-text-field."
+          "description": "The field's class, on its root element, beside env-field, env-text-field and env-textarea."
         },
         {
           "name": "style",

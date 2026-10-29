@@ -8,7 +8,7 @@ import { usePointer, type PointerStep } from '../motion/Motion';
  */
 const script: PointerStep[] = [
   { wait: 400 },
-  { to: '.env-dialog-popup .env-button[type="submit"]', x: 0.4, y: 0.6 },
+  { to: '.env-dialog .env-button[type="submit"]', x: 0.4, y: 0.6 },
   { wait: 700 },
   { click: true },
   { wait: 1900 },

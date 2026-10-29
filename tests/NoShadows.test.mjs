@@ -234,7 +234,7 @@ test('the popups’ shadow is soft, follows the theme, goes where popups are sol
     '.env-command-palette',
     '.env-popup',
     '.env-rich-text-suggestions',
-    '.env-surface.env-dialog-popup',
+    '.env-surface.env-dialog',
   ]);
 });
 

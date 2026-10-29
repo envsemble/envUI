@@ -224,7 +224,7 @@ export function ConfirmDialog({
               <BaseAlertDialog.Popup
                 render={<DialogSurface radius="xl" />}
                 {...popupProps}
-                className={classNames('env-dialog-popup', className)}
+                className={classNames('env-dialog', className)}
                 data-placement="center"
                 data-width="md"
                 data-tone={tone}

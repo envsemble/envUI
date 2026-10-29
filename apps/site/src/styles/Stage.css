@@ -152,7 +152,7 @@
     .env-page-header,
     .env-panes,
     [data-env-name='key-figures'],
-    .env-document-tabs,
+    .env-document-tabs-list,
     .env-panel-dock,
     .env-scaffold,
     [data-env-skeleton],
@@ -163,7 +163,7 @@
       .env-page-header,
       .env-panes,
       [data-env-name='key-figures'],
-      .env-document-tabs,
+      .env-document-tabs-list,
       .env-panel-dock,
       .env-scaffold,
       [data-env-skeleton],
@@ -172,10 +172,9 @@
   ),
 /* A Scaffold straight on an animated figure's stage stands in for a window there too. */
 .catalogue-motion-subject > .env-scaffold,
-/* A strip of document tabs lays out its bar straight on the stage, its root being contents. */
+/* A strip of document tabs fills the stage's width. */
 :is(.site-live-example, .site-verdict-fit, .site-anatomy-subject, .catalogue-related-canvas)
-  > .env-document-tabs-root
-  > .env-document-tabs-bar {
+  > .env-document-tabs {
   inline-size: 100%;
 }
 
@@ -538,7 +537,7 @@
 
 /* A sheet at a figure's end keeps its actions beside the pause button too, rather than under it:
    the room the button takes at the stage's end, less the sheet's own padding. */
-.catalogue-motion-subject .env-sheet-popup[data-side='end'] .env-dialog-actions {
+.catalogue-motion-subject .env-sheet[data-side='end'] .env-dialog-actions {
   padding-inline-end: max(
     0rem,
     2 * var(--env-space-2) + var(--env-control-height-sm) - var(--env-surface-padding, 0rem)

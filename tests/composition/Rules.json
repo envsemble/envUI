@@ -343,7 +343,7 @@
           "forms/internal/markdown/MarkdownPreview.tsx",
           "forms/internal/markdown/useMarkdownEditing.ts"
         ],
-        "classes": ["env-markdown-source"]
+        "classes": ["env-markdown-editor-input"]
       },
       "Editor": {
         "modules": [

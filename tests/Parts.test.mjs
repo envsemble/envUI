@@ -39,7 +39,7 @@ test('a component lists its root, its part classes and the states it is styled b
     'env-menu-item',
   ]);
   // A component whose root is not env-<name> takes it from packages/ui/src/parts.json.
-  assert.equal(component('Dialog').root, 'env-dialog-popup');
+  assert.equal(component('Dialog').root, 'env-dialog');
 });
 
 test('a component lists its color properties, each registered so it does not inherit', () => {

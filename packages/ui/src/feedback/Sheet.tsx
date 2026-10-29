@@ -344,7 +344,7 @@ export function Sheet({
                 }
                 {...popupProps}
                 ref={attachPopup}
-                className={classNames('env-sheet-popup', className)}
+                className={classNames('env-sheet', className)}
                 style={
                   {
                     ...(customWidth !== undefined && { '--env-sheet-width': customWidth }),

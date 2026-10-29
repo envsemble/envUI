@@ -327,7 +327,7 @@ test.describe('DocumentTabs', () => {
       }) => {
         await page.goto(`${tabsFixture}&scale=${scale}`);
         expect(await page.evaluate(() => matchMedia('(pointer: coarse)').matches)).toBe(true);
-        const strip = page.locator('.env-document-tabs').first();
+        const strip = page.locator('.env-document-tabs-list').first();
         await expect(
           strip.locator('xpath=ancestor::*[contains(@class, "env-theme")][1]'),
         ).toHaveAttribute('data-env-scale', scale);

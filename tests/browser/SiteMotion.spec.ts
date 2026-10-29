@@ -172,7 +172,7 @@ test("a figure's dialog opens live inside its stage, its scrim over the stage al
   const before = (await stage.boundingBox())!;
   const scrolled = await pageScroll(page);
   // The pointer no one sees presses View project, and the dialog opens in the stage.
-  const dialog = stage.locator('.env-dialog-popup');
+  const dialog = stage.locator('.env-dialog');
   await expect(dialog).toBeVisible({ timeout: 4000 });
   const frame = (await stage.boundingBox())!;
   expect(inside((await dialog.boundingBox())!, frame)).toBe(true);

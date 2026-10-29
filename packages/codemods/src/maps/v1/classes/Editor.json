@@ -1,4 +1,5 @@
 {
   "env-markdown-toolbar": "env-editor-toolbar",
-  "env-markdown-editor-status": "env-editor-status"
+  "env-markdown-editor-status": "env-editor-status",
+  "env-markdown-source": "env-markdown-editor-input"
 }

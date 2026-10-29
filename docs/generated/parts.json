@@ -1733,7 +1733,7 @@
       ]
     },
     "ConfirmDialog": {
-      "root": "env-dialog-popup",
+      "root": "env-dialog",
       "source": "packages/ui/src/feedback/ConfirmDialog.tsx",
       "parts": [
         {
@@ -1953,11 +1953,11 @@
       ]
     },
     "Dialog": {
-      "root": "env-dialog-popup",
+      "root": "env-dialog",
       "source": "packages/ui/src/feedback/Dialog.tsx",
       "parts": [
         {
-          "class": "env-dialog-popup",
+          "class": "env-dialog",
           "description": "The dialog."
         },
         {
@@ -2006,8 +2006,8 @@
           "attribute": "data-ending-style",
           "values": [],
           "parts": [
-            "env-dialog-backdrop",
-            "env-dialog-popup"
+            "env-dialog",
+            "env-dialog-backdrop"
           ]
         },
         {
@@ -2016,7 +2016,7 @@
             ""
           ],
           "parts": [
-            "env-dialog-popup"
+            "env-dialog"
           ]
         },
         {
@@ -2026,7 +2026,7 @@
             "top"
           ],
           "parts": [
-            "env-dialog-popup",
+            "env-dialog",
             "env-dialog-positioner"
           ]
         },
@@ -2034,8 +2034,8 @@
           "attribute": "data-starting-style",
           "values": [],
           "parts": [
-            "env-dialog-backdrop",
-            "env-dialog-popup"
+            "env-dialog",
+            "env-dialog-backdrop"
           ]
         },
         {
@@ -2045,7 +2045,7 @@
             "neutral"
           ],
           "parts": [
-            "env-dialog-popup"
+            "env-dialog"
           ]
         },
         {
@@ -2055,7 +2055,7 @@
             "md"
           ],
           "parts": [
-            "env-dialog-popup"
+            "env-dialog"
           ]
         }
       ],
@@ -2110,11 +2110,7 @@
       "parts": [
         {
           "class": "env-document-tabs",
-          "description": "The tabs of open documents."
-        },
-        {
-          "class": "env-document-tabs-bar",
-          "description": "The bar that holds the tabs."
+          "description": "The root: a bar that holds the strip of tabs and the content after it."
         },
         {
           "class": "env-document-tabs-close",
@@ -2133,8 +2129,8 @@
           "description": "One tab with its close button."
         },
         {
-          "class": "env-document-tabs-root",
-          "description": "The tabs' root element."
+          "class": "env-document-tabs-list",
+          "description": "The tabs of open documents, which scroll sideways."
         },
         {
           "class": "env-document-tabs-tab",
@@ -2180,7 +2176,7 @@
             ""
           ],
           "parts": [
-            "env-document-tabs"
+            "env-document-tabs-list"
           ]
         },
         {
@@ -2189,7 +2185,7 @@
             ""
           ],
           "parts": [
-            "env-document-tabs"
+            "env-document-tabs-list"
           ]
         },
         {
@@ -2208,7 +2204,7 @@
             ""
           ],
           "parts": [
-            "env-document-tabs"
+            "env-document-tabs-list"
           ]
         },
         {
@@ -2864,10 +2860,6 @@
           "description": "The rendered Markdown."
         },
         {
-          "class": "env-markdown-source",
-          "description": "The Markdown source shown as text."
-        },
-        {
           "class": "env-markdown-table",
           "description": "The region that scrolls a wide table."
         }
@@ -2889,6 +2881,10 @@
         {
           "class": "env-markdown-editor",
           "description": "The Markdown editor."
+        },
+        {
+          "class": "env-markdown-editor-input",
+          "description": "The text area that shows the Markdown source as text."
         },
         {
           "class": "env-markdown-editor-write",
@@ -4574,11 +4570,11 @@
       ]
     },
     "Sheet": {
-      "root": "env-sheet-popup",
+      "root": "env-sheet",
       "source": "packages/ui/src/feedback/Sheet.tsx",
       "parts": [
         {
-          "class": "env-sheet-popup",
+          "class": "env-sheet",
           "description": "The sheet."
         },
         {
@@ -4603,7 +4599,7 @@
           "attribute": "data-ending-style",
           "values": [],
           "parts": [
-            "env-sheet-popup"
+            "env-sheet"
           ]
         },
         {
@@ -4612,7 +4608,7 @@
             ""
           ],
           "parts": [
-            "env-sheet-popup"
+            "env-sheet"
           ]
         },
         {
@@ -4621,7 +4617,7 @@
             ""
           ],
           "parts": [
-            "env-sheet-popup"
+            "env-sheet"
           ]
         },
         {
@@ -4632,7 +4628,7 @@
             "start"
           ],
           "parts": [
-            "env-sheet-popup",
+            "env-sheet",
             "env-sheet-viewport"
           ]
         },
@@ -4640,21 +4636,21 @@
           "attribute": "data-starting-style",
           "values": [],
           "parts": [
-            "env-sheet-popup"
+            "env-sheet"
           ]
         },
         {
           "attribute": "data-swiping",
           "values": [],
           "parts": [
-            "env-sheet-popup"
+            "env-sheet"
           ]
         },
         {
           "attribute": "data-width",
           "values": [],
           "parts": [
-            "env-sheet-popup"
+            "env-sheet"
           ]
         }
       ],
@@ -5438,9 +5434,13 @@
       ]
     },
     "Textarea": {
-      "root": "env-text-field",
+      "root": "env-textarea",
       "source": "packages/ui/src/forms/Textarea.tsx",
       "parts": [
+        {
+          "class": "env-textarea",
+          "description": "The text area's root, beside env-field and env-text-field."
+        },
         {
           "class": "env-textarea-resize-handle",
           "description": "The handle on the text area's bottom edge, which resizes it."

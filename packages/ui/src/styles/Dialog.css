@@ -17,13 +17,13 @@
      shows through would only grey the dialog and smudge it with the shapes the scrim dims. Where
      popups are solid, at high contrast, with reduced transparency and under forced colors, it has no
      shadow and its elevation edge returns. What it holds takes the fill as the color beneath it. */
-  .env-surface.env-dialog-popup {
+  .env-surface.env-dialog {
     --env-surface-color: var(--env-popup-fill);
     --env-dialog-edge: var(--env-popup-solid) var(--env-elevation-3-border);
     border-color: var(--env-dialog-edge, transparent);
     box-shadow: var(--env-popup-shadow);
   }
-  .env-dialog-popup {
+  .env-dialog {
     /* The positioner's inline gutters, as the popup's margins: the positioner is the env-window
        container, so its content box stays as wide as the window. */
     --env-dialog-gutters: calc(
@@ -37,7 +37,7 @@
     transform-origin: var(--transform-origin, center);
     transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);
   }
-  .env-dialog-popup[data-width='lg'] {
+  .env-dialog[data-width='lg'] {
     width: min(44rem, 100% - var(--env-dialog-gutters));
   }
   .env-dialog-title,
@@ -107,30 +107,30 @@
      reduced-motion preference. Dialogs have no positioner, so they scale from the center. */
   .env-dialog-backdrop[data-starting-style],
   .env-dialog-backdrop[data-ending-style],
-  .env-dialog-popup[data-starting-style],
-  .env-dialog-popup[data-ending-style] {
+  .env-dialog[data-starting-style],
+  .env-dialog[data-ending-style] {
     opacity: 0;
   }
   .env-dialog-backdrop[data-ending-style],
-  .env-dialog-popup[data-ending-style] {
+  .env-dialog[data-ending-style] {
     transition-duration: var(--env-motion-duration-fast);
     transition-timing-function: var(--env-motion-ease-exit);
   }
   @media (prefers-reduced-motion: no-preference) {
-    .env-dialog-popup {
+    .env-dialog {
       transition:
         opacity var(--env-motion-duration-medium) var(--env-motion-ease),
         transform var(--env-motion-duration-slow) var(--env-motion-ease-enter);
     }
-    .env-dialog-popup[data-starting-style],
-    .env-dialog-popup[data-ending-style] {
+    .env-dialog[data-starting-style],
+    .env-dialog[data-ending-style] {
       transform: translateY(0.75rem) scale(0.98);
     }
-    .env-dialog-popup[data-placement='top'][data-starting-style],
-    .env-dialog-popup[data-placement='top'][data-ending-style] {
+    .env-dialog[data-placement='top'][data-starting-style],
+    .env-dialog[data-placement='top'][data-ending-style] {
       transform: translateY(-0.5rem) scale(0.98);
     }
-    .env-dialog-popup[data-ending-style] {
+    .env-dialog[data-ending-style] {
       transition-duration: var(--env-motion-duration-fast);
       transition-timing-function: var(--env-motion-ease-exit);
     }
@@ -138,7 +138,7 @@
 
   /* Forced colors: the system replaces the edge's color, so the dialog keeps a visible one. */
   @media (forced-colors: active) {
-    .env-surface.env-dialog-popup {
+    .env-surface.env-dialog {
       border-color: CanvasText;
     }
   }

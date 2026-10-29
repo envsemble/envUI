@@ -14,7 +14,7 @@ const script: PointerStep[] = [
   { cue: 'landed' },
   { wait: 2600 },
   { cue: 'escape' },
-  { key: 'Escape', on: '.env-dialog-popup' },
+  { key: 'Escape', on: '.env-dialog' },
   { wait: 150 },
   { cue: 'back' },
   { wait: 1500 },
@@ -53,7 +53,7 @@ export function useKeyboardOpening(root: { current: HTMLElement | null }) {
   const marked = useRef<Element | null>(null);
   useLayoutEffect(() => {
     const scope = subject();
-    const popup = scope?.querySelector<HTMLElement>('.env-dialog-popup');
+    const popup = scope?.querySelector<HTMLElement>('.env-dialog');
     const target =
       focused === 'trigger'
         ? scope?.querySelector('.env-button')
