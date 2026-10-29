@@ -77,14 +77,17 @@ function documentTitle(page: RoutePage | undefined, area: Area) {
 }
 
 /**
- * Whether a heading belongs in the page's contents: one of the page's own, not an example's or a
- * figure's, which show components rather than the page's sections. Each export's props are listed
- * under Props; the exports' part names and color properties, and the two lists under
- * Accessibility, are their sections' alone, so the contents don't repeat the exports three times.
+ * Whether a heading belongs in the page's contents: one of the page's own, not an example's, a
+ * figure's or a tile's, which show components rather than the page's sections. A tile's picture is
+ * inert, but a tile that shows an overlay open, such as a sheet, marks the page around it as behind
+ * a popup, where the contents keep what is hidden, so its tiles' headings are left out by name. Each
+ * export's props are listed under Props; the exports' part names and color properties, and the two
+ * lists under Accessibility, are their sections' alone, so the contents don't repeat the exports
+ * three times.
  */
 const contentsHeading = (heading: HTMLElement) =>
   !heading.closest(
-    '.site-live-example, .site-verdict-stage, .site-anatomy-stage, .catalogue-open-example, .catalogue-specimen, .env-dialog',
+    '.site-live-example, .site-verdict-stage, .site-anatomy-stage, .catalogue-open-example, .catalogue-specimen, .catalogue-related-stage, .env-dialog',
   ) &&
   !(
     heading.localName === 'h3' &&
