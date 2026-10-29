@@ -39,20 +39,28 @@ import {
  * Data the site's pages read from the repository when the site app builds or serves, as
  * virtual modules: the release notes, and the outlines of the parts that load with a page, which
  * their skeletons are drawn from. While serving, a change to their files reloads the page with the
- * new data.
+ * new data; an outline (`reloads: false`), which only shapes a skeleton, waits for the next load,
+ * so editing an example updates it in place.
  */
-const siteData: Record<string, { read: () => unknown; sources: string[] }> = {
+const siteData: Record<string, { read: () => unknown; sources: string[]; reloads?: false }> = {
   'virtual:envui-release-notes': { read: readReleaseNotes, sources: releaseNotesSources },
-  'virtual:envui-example-lines': { read: readExampleLines, sources: exampleLinesSources },
+  'virtual:envui-example-lines': {
+    read: readExampleLines,
+    sources: exampleLinesSources,
+    reloads: false,
+  },
   'virtual:envui-changelog-outline': {
     read: readChangelogOutline,
     sources: changelogOutlineSources,
+    reloads: false,
   },
-  'virtual:envui-token-outline': { read: readTokenOutline, sources: tokenOutlineSources },
+  'virtual:envui-token-outline': {
+    read: readTokenOutline,
+    sources: tokenOutlineSources,
+    reloads: false,
+  },
 };
 const resolvedId = (id: string) => `\0${id}`;
-/** The data each virtual module last served, by its name. */
-const served = new Map<string, string>();
 /** The library's generated list of every icon, which only the icon catalogue imports. */
 const iconList = fileURLToPath(new URL('../../packages/ui/src/icons/index.ts', import.meta.url));
 
@@ -147,32 +155,21 @@ export default defineConfig(() => {
         load(id) {
           const name = Object.keys(siteData).find((entry) => resolvedId(entry) === id);
           if (!name) return undefined;
-          const data = JSON.stringify(siteData[name].read());
-          served.set(name, data);
-          return `export default ${data};`;
+          return `export default ${JSON.stringify(siteData[name].read())};`;
         },
         configureServer(server) {
           const sources = Object.values(siteData).flatMap((entry) => entry.sources);
           server.watcher.add(sources);
           server.watcher.on('all', (_event, path) => {
-            for (const [name, { read, sources: files }] of Object.entries(siteData)) {
+            for (const [name, { sources: files, reloads }] of Object.entries(siteData)) {
               const touched = files.some((source) => {
                 const contained = relative(source, path);
                 return !contained.startsWith('..') && !isAbsolute(contained);
               });
               const module = touched && server.moduleGraph.getModuleById(resolvedId(name));
               if (!module) continue;
-              // A change that leaves the data as it was, such as an example's code edited on the
-              // same lines, keeps the page; the example's own module updates in place.
-              let data: string | undefined;
-              try {
-                data = JSON.stringify(read());
-              } catch {
-                // Data that fails to read reloads the page, which shows the problem.
-              }
-              if (data !== undefined && data === served.get(name)) continue;
               server.moduleGraph.invalidateModule(module);
-              server.ws.send({ type: 'full-reload' });
+              if (reloads !== false) server.ws.send({ type: 'full-reload' });
             }
           });
         },
