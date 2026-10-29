@@ -2523,11 +2523,6 @@ const apiReviewTokens: readonly (readonly [from: string, to: string, rationale: 
     'Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role.',
   ],
   [
-    '--env-color-skeleton-shine',
-    '--env-color-bg-skeleton-shine',
-    'Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role.',
-  ],
-  [
     '--env-counter-badge-height',
     '--env-badge-count-height',
     'Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role.',
