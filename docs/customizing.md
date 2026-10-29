@@ -4,7 +4,7 @@ Make envUI the application's own without copying its styles: give one element co
 
 ## Color one element
 
-Each component has a few public color properties, named `--env-<component>-<role>`, which the application sets on one instance through `style` or its CSS: on the component's root, or, for a collection's rows and destinations, on each item, as their properties take the item's name, such as `--env-menu-item-container`. They don't inherit, so the menu itself ignores an item's:
+Each component has a few public color properties, named `--env-<component>-<role>`, which the application sets on one instance through `style` or its CSS: on the component's root, or, for a collection's rows and destinations, on each item, as their properties take the item's name, such as `--env-menu-item-container`. Its page in the Docs lists them. They don't inherit, so set them on the element itself, or through a selector that matches it, such as `.my-toolbar .env-button`: set on a toolbar, `--env-button-container` colors none of its buttons, and the menu ignores an item's.
 
 ```tsx
 import type { CSSProperties } from 'react';
@@ -38,10 +38,6 @@ The roles are the same across components:
 - **selected** and **selected-content**: the fill and content of what is chosen, current or on: a selected row, the current destination, a checked box, an on switch, a pressed toggle.
 - **indicator**: the part that shows the value or the focus, such as a slider's fill, a selected tab's indicator or a field's focused edge.
 
-The properties don't inherit: each is registered with `@property` as a property that doesn't inherit, so set them on the element itself, through its `style` or a selector that matches it, such as `.my-toolbar .env-button`. Set on a toolbar, `--env-button-container` colors none of its buttons, and a surface inside a recolored surface keeps its own color.
-
-Each component's page lists its color properties under Anatomy, and `docs/generated/parts.json` lists them with the parts, with what each colors. Like the part classes and state attributes, they are public and versioned. So are the few other custom properties it lists under `properties`, such as a popup's `--env-popup-opacity`, which an application sets, or Scaffold's `--env-scaffold-sticky-top`, which it reads. The other custom properties a component declares for itself, such as `--env-card-padding`, stay private.
-
 ### Give a field a fill
 
 Fields and editors have no fill of their own: TextField, Textarea, SearchField, Combobox, DatePicker, TimePicker, MonthPicker, MarkdownEditor, RichTextEditor, ColorPicker's fields and `Field.Control` take the background of what they sit on, the page, a card, a sheet or a dialog, in every theme. ColorPickerButton does too. To give one a fill, set its container:
@@ -71,8 +67,6 @@ With no color property set, a component paints its designed colors in every stat
 - `--env-state-pressed-opacity`: 10%, 12% in the dark theme and 7% at high contrast.
 
 A few layers are stronger or lighter, as the designed states beside them are: a tab that isn't selected, whose muted label makes a lighter layer, and an alert's dismiss button, in the alert's tone, are stronger; a selected item's are lighter. For what is chosen, current or on, selected and selected-content start its layers.
-
-How the guard works: the color properties are registered with `@property` and no initial value, so unset they are invalid, and so is every value that refers to one without a fallback. Each state reads `var(<the layered fill>, <the designed token>)`, and the layered fill refers to the container or the content, so it applies only while you set one. It works in every engine, for properties set inline or in CSS, without style queries.
 
 ## Recolor an area
 
@@ -156,7 +150,7 @@ export function ProjectSummary({ title, description, ...props }: ProjectSummaryP
 
 ## Style a component's parts
 
-Props come first. Where CSS must adjust a component, it targets its parts, `env-<component>-<part>` such as `.env-card-header`, and its `data-*` states, such as `[data-tone='danger']`. Part classes and states are public and versioned; `docs/generated/parts.json` lists them. An application's rule wins without extra specificity, through the [cascade layers](#cascade-layers).
+Props come first. Where CSS must adjust a component, it targets its parts, `env-<component>-<part>` such as `.env-card-header`, and its `data-*` states, such as `[data-tone='danger']`, without extra specificity, through the [cascade layers](#cascade-layers). Part classes, states and color properties are public and versioned, and so are the few other custom properties `docs/generated/parts.json` lists under `properties`, such as `--env-popup-opacity`, which an application sets, or `--env-scaffold-sticky-top`, which it reads; `parts.json` lists them all.
 
 ```css
 @layer app {
