@@ -1272,20 +1272,8 @@
     "ColorPickerButton": {
       "kind": "component",
       "source": "packages/ui/src/color/ColorPickerButton.tsx",
-      "description": "A compact button that shows a color as a swatch and its value, and opens a ColorPicker in a Popover: the common way to choose a color in a toolbar, a row or a form. The button is named after the label and the color, such as Accent color, #6750A4.",
+      "description": "A compact button that shows a color as a swatch and its value, and opens a ColorPicker in a Popover: the common way to choose a color in a toolbar, a row or a form. The button is named after the label and the color, such as Accent color, #6750A4. className, style, ref and the other native props go to the button.",
       "props": [
-        {
-          "name": "className",
-          "type": "string",
-          "required": false,
-          "description": "The button's class, beside env-color-picker-button."
-        },
-        {
-          "name": "style",
-          "type": "CSSProperties",
-          "required": false,
-          "description": "Styles of the button."
-        },
         {
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
@@ -1307,11 +1295,23 @@
           "description": "How the picker lines up with the button along that side."
         },
         {
+          "name": "open",
+          "type": "boolean",
+          "required": false,
+          "description": "Whether the picker is open, for a picker the application controls with onOpenChange."
+        },
+        {
           "name": "defaultOpen",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Whether the picker starts open, such as in a picture of it."
+          "description": "Whether an uncontrolled picker starts open, such as in a picture of it."
+        },
+        {
+          "name": "onOpenChange",
+          "type": "(open: boolean, details: PopoverOpenChangeDetails) => void",
+          "required": false,
+          "description": "Receives the requested state, and why, as Popover's onOpenChange does: such as to close the picker once a swatch is chosen."
         },
         {
           "name": "label",
@@ -1404,7 +1404,9 @@
           "description": "Whether people can read and copy the color, but not change it."
         }
       ],
-      "native": [],
+      "native": [
+        "button"
+      ],
       "entries": [
         "@envsemble/envui/color"
       ]

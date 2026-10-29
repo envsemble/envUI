@@ -254,9 +254,9 @@ Offer only the formats and the alpha the stored color can hold: a color stored a
 ColorPickerButton takes the picker's props, and opens it in a popover.
 
 - `side` places the popover, `bottom` by default, lined up by `align`, `start` by default.
-- `defaultOpen` starts it open.
+- `defaultOpen` starts it open; `open` and `onOpenChange` let the application open and close it, such as once a swatch is chosen.
 - `size` is `sm`, `md` or `lg`, or its container's control height.
-- `className` and `style` reach the button.
+- `className`, `style`, `ref` and the other native props, such as `aria-describedby`, reach the button.
 
 ```tsx
 <ColorPickerButton label="Label color" defaultValue="#2f6f62" />
@@ -309,6 +309,7 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 
 ## Changelog
 
+- **1.0.0-prerelease.5**: ColorPickerButton takes `open` and `onOpenChange`, and passes `ref` and the native props on to its button.
 - **1.0.0-prerelease.5**: `copy` is `copyable`, as on CodeBlock. `onValueChange` receives the string alone, without React Aria's `Color`.
 - **1.0.0-prerelease.5**: ColorPickerButton's popover is frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge, and is solid with its edge at high contrast and with reduced transparency.
 - **1.0.0-prerelease.3**: `formats` with two or more formats shows their fields together, a row each with its own copy button, where in 1.0.0-prerelease.2 it limited the format menu to them; the format menu stays the default. Remove `formats` to keep the menu, which offers every format, as [the migration guide](../migration.md#color-picker-and-swatches) says. `--env-color-picker-button-container` gives one ColorPickerButton a fill.
