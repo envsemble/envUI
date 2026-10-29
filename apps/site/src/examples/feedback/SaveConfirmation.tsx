@@ -1,5 +1,14 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
-import { Button, Select, Column, Row, Text, TextField, Toast, useToast } from '@envsemble/envui';
+import {
+  Button,
+  Select,
+  Column,
+  Row,
+  Text,
+  TextField,
+  ToastProvider,
+  useToast,
+} from '@envsemble/envui';
 import { Send } from '@envsemble/envui/icons/Send';
 
 const isEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
@@ -78,11 +87,11 @@ function InviteForm() {
 }
 
 export default function SaveConfirmation() {
-  // An application has one Toast.Provider at its root; the example brings its own.
+  // An application has one ToastProvider at its root; the example brings its own.
   return (
-    <Toast.Provider>
+    <ToastProvider>
       <InviteForm />
-    </Toast.Provider>
+    </ToastProvider>
   );
 }
 

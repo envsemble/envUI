@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Button, Toast, useToast } from '@envsemble/envui';
+import { Button, ToastProvider, useToast } from '@envsemble/envui';
 
 export function ToastTriggers() {
   const toast = useToast();
@@ -127,9 +127,9 @@ export function StrictToastFixture() {
     <>
       <Button onClick={() => setStress(true)}>Mount strict toast provider</Button>
       {stress && (
-        <Toast.Provider>
+        <ToastProvider>
           <MountNotice />
-        </Toast.Provider>
+        </ToastProvider>
       )}
     </>
   );

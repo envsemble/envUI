@@ -8,7 +8,7 @@ import {
   Row,
   Table,
   Text,
-  Toast,
+  ToastProvider,
   Toolbar,
   useToast,
 } from '@envsemble/envui';
@@ -171,11 +171,11 @@ function Projects() {
 }
 
 export default function SelectAndBulkActions() {
-  // An application has one Toast.Provider at its root; the example brings its own.
+  // An application has one ToastProvider at its root; the example brings its own.
   return (
-    <Toast.Provider>
+    <ToastProvider>
       <Projects />
-    </Toast.Provider>
+    </ToastProvider>
   );
 }
 

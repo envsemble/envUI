@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, List, Toast, useToast } from '@envsemble/envui';
+import { Button, List, ToastProvider, useToast } from '@envsemble/envui';
 import { Archive } from '@envsemble/envui/icons/Archive';
 
 function Projects() {
@@ -61,11 +61,11 @@ function Projects() {
 }
 
 export default function UndoInstead() {
-  // An application has one Toast.Provider at its root; the example brings its own.
+  // An application has one ToastProvider at its root; the example brings its own.
   return (
-    <Toast.Provider>
+    <ToastProvider>
       <Projects />
-    </Toast.Provider>
+    </ToastProvider>
   );
 }
 

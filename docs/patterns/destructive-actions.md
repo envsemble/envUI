@@ -27,7 +27,7 @@ composes:
   - List
   - Checkbox
   - TextField
-  - Toast
+  - ToastProvider
   - useToast
   - Column
   - Row

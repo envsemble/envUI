@@ -21,7 +21,7 @@ avoidWhen:
   - text: Details or a few fields beside the control that opens them.
     use: Popover
   - text: Feedback after an action, such as Saved or Invitation sent.
-    use: Toast
+    use: ToastProvider
   - text: A message about the page or a section that stays in place, such as a warning.
     use: Alert
   - text: Quick open of a document or a command by name.

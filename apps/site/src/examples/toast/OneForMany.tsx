@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Button, Toast, useToast, type ToastNotification } from '@envsemble/envui';
+import { Button, ToastProvider, useToast, type ToastNotification } from '@envsemble/envui';
 
 const people = ['Alex Morgan', 'Sam Lee', 'Priya Shah'];
 const sent: ToastNotification = { tone: 'success', message: `${people.length} invitations sent.` };
@@ -17,8 +17,8 @@ function InviteButton() {
 
 export default function OneForMany() {
   return (
-    <Toast.Provider>
+    <ToastProvider>
       <InviteButton />
-    </Toast.Provider>
+    </ToastProvider>
   );
 }

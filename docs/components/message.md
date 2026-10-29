@@ -28,7 +28,7 @@ avoidWhen:
   - text: Items people scan, open and act on, such as a list of conversations.
     use: List
   - text: A short notification that comes and goes, such as Message sent.
-    use: Toast
+    use: ToastProvider
   - text: Formatted text on its own, outside a conversation.
     use: Markdown
 components:

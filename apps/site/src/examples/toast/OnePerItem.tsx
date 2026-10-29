@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Button, Toast, useToast, type ToastNotification } from '@envsemble/envui';
+import { Button, ToastProvider, useToast, type ToastNotification } from '@envsemble/envui';
 
 const people = ['Alex Morgan', 'Sam Lee', 'Priya Shah'];
 // Wrong: one action, and a notification for each person it reached.
@@ -21,8 +21,8 @@ function InviteButton() {
 
 export default function OnePerItem() {
   return (
-    <Toast.Provider>
+    <ToastProvider>
       <InviteButton />
-    </Toast.Provider>
+    </ToastProvider>
   );
 }

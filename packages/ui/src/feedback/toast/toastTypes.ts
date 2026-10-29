@@ -60,7 +60,7 @@ export interface ToastNotification {
    */
   duration?: number;
 }
-/** Shows and dismisses the notifications of the nearest Toast.Provider; useToast returns it. */
+/** Shows and dismisses the notifications of the nearest ToastProvider; useToast returns it. */
 export interface ToastManager {
   /**
    * Shows a notification at once and returns its id, for dismiss. Throws a RangeError for an

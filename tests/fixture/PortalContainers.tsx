@@ -10,7 +10,7 @@ import {
   Panes,
   PortalContainer,
   Theme,
-  Toast,
+  ToastProvider,
   Tooltip,
   useToast,
 } from '@envsemble/envui';
@@ -65,7 +65,7 @@ export function PortalContainersFixture() {
       <Button data-testid="outside">Outside the preview</Button>
       <div data-testid="preview" style={region}>
         <PortalContainer container={layer} contained>
-          <Toast.Provider>
+          <ToastProvider>
             <Menu.Root
               aria-label="Actions"
               defaultOpen
@@ -80,7 +80,7 @@ export function PortalContainersFixture() {
             </Tooltip>
             <SavedNotice />
             <NotifyButton />
-          </Toast.Provider>
+          </ToastProvider>
         </PortalContainer>
         <div ref={setLayer} data-testid="layer" />
       </div>

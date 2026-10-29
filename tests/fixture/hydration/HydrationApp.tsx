@@ -6,7 +6,7 @@ import {
   Select,
   Dialog,
   Button,
-  Toast,
+  ToastProvider,
   useToast,
   Badge,
   Breadcrumbs,
@@ -83,7 +83,7 @@ export function HydrationApp() {
   const [page, setPage] = useState(1);
   return (
     <Theme theme="dark">
-      <Toast.Provider>
+      <ToastProvider>
         <TopBar
           titleBar
           title="Hydrated title"
@@ -324,7 +324,7 @@ export function HydrationApp() {
           onPageChange={setPage}
         />
         <output>{name}</output>
-      </Toast.Provider>
+      </ToastProvider>
     </Theme>
   );
 }

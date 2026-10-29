@@ -1,4 +1,4 @@
-import { Button, Dialog, Menu, Theme, Toast, Tooltip, useToast } from '@envsemble/envui';
+import { Button, Dialog, Menu, Theme, ToastProvider, Tooltip, useToast } from '@envsemble/envui';
 
 /**
  * Every layer the library's style sheets give a z-index, as an element with the classes and the
@@ -80,10 +80,10 @@ function LayeredDialog() {
 export function StackingFixture() {
   return (
     <Theme theme="light" className="fixture-section">
-      <Toast.Provider>
+      <ToastProvider>
         <Ladder />
         <LayeredDialog />
-      </Toast.Provider>
+      </ToastProvider>
     </Theme>
   );
 }

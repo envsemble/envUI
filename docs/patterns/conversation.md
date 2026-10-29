@@ -23,7 +23,7 @@ avoidWhen:
   - text: Comments on one item, read more often than written.
     use: Message
   - text: A short notice that comes and goes, such as Message sent.
-    use: Toast
+    use: ToastProvider
   - text: Several answers given together and submitted once.
     see: forms
 composes:

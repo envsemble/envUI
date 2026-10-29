@@ -1,5 +1,12 @@
 import { useEffect, useState } from 'react';
-import { Button, Column, PortalContainer, TextField, Toast, useToast } from '@envsemble/envui';
+import {
+  Button,
+  Column,
+  PortalContainer,
+  TextField,
+  ToastProvider,
+  useToast,
+} from '@envsemble/envui';
 import { Send } from '@envsemble/envui/icons/Send';
 import { usePointer, usePreviewLayer, type PointerStep } from '../motion/Motion';
 
@@ -45,9 +52,9 @@ export default function FeedbackTile() {
   if (!layer) return null;
   return (
     <PortalContainer container={layer}>
-      <Toast.Provider>
+      <ToastProvider>
         <Invite />
-      </Toast.Provider>
+      </ToastProvider>
     </PortalContainer>
   );
 }

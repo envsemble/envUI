@@ -30,7 +30,7 @@ composes:
   - List
   - Progress
   - Button
-  - Toast
+  - ToastProvider
   - useToast
   - Textarea
   - Column
@@ -158,7 +158,7 @@ Say which files fit before people choose, and what went wrong in words.
 - The checks of kind and size, and the zone's `error`.
 - An `aria-valuetext` on each bar that names its file.
 - A `role="status"` line that counts the files up and those that failed.
-- Focus after Remove and Try again, and one Toast.Provider at the application's root.
+- Focus after Remove and Try again, and one ToastProvider at the application's root.
 
 ## Compose
 

@@ -1,5 +1,5 @@
 import { useId, useState } from 'react';
-import { List, Column, Switch, Text, Toast, useToast } from '@envsemble/envui';
+import { List, Column, Switch, Text, ToastProvider, useToast } from '@envsemble/envui';
 
 interface Setting {
   id: string;
@@ -83,11 +83,11 @@ function NotificationSettings() {
 }
 
 export default function ImmediateToggles() {
-  // An application has one Toast.Provider at its root; the example brings its own.
+  // An application has one ToastProvider at its root; the example brings its own.
   return (
-    <Toast.Provider>
+    <ToastProvider>
       <NotificationSettings />
-    </Toast.Provider>
+    </ToastProvider>
   );
 }
 

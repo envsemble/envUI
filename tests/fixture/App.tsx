@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Theme, Toast } from '@envsemble/envui';
+import { Theme, ToastProvider } from '@envsemble/envui';
 import '@envsemble/envui/styles.css';
 import './Fixture.css';
 import { FormsFixture } from './Forms.js';
@@ -177,9 +177,9 @@ export default function App() {
           )}
           {includes('toast') && (
             <>
-              <Toast.Provider>
+              <ToastProvider>
                 <ToastTriggers />
-              </Toast.Provider>
+              </ToastProvider>
               <StrictToastFixture />
             </>
           )}

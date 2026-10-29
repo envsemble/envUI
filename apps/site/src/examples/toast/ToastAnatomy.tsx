@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Toast, useToast } from '@envsemble/envui';
+import { ToastProvider, useToast } from '@envsemble/envui';
 
 function ArchivedNotice() {
   const toast = useToast();
@@ -17,8 +17,8 @@ function ArchivedNotice() {
 
 export default function ToastAnatomy() {
   return (
-    <Toast.Provider>
+    <ToastProvider>
       <ArchivedNotice />
-    </Toast.Provider>
+    </ToastProvider>
   );
 }

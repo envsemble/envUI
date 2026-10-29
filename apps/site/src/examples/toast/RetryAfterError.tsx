@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Button, Toast, useToast } from '@envsemble/envui';
+import { Button, ToastProvider, useToast } from '@envsemble/envui';
 
 function PublishButton() {
   const toast = useToast();
@@ -37,8 +37,8 @@ function PublishButton() {
 
 export default function RetryAfterError() {
   return (
-    <Toast.Provider>
+    <ToastProvider>
       <PublishButton />
-    </Toast.Provider>
+    </ToastProvider>
   );
 }

@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { Button, Toast, useToast } from '@envsemble/envui';
+import { Button, ToastProvider, useToast } from '@envsemble/envui';
 import { Send } from '@envsemble/envui/icons/Send';
 
 const people = [
@@ -34,8 +34,8 @@ function ReminderButton() {
 
 export default function TopCenter() {
   return (
-    <Toast.Provider defaultPlacement="top-center" limit={2}>
+    <ToastProvider defaultPlacement="top-center" limit={2}>
       <ReminderButton />
-    </Toast.Provider>
+    </ToastProvider>
   );
 }

@@ -36,7 +36,7 @@ const typicalApp = [
   'Card',
   'Table',
   'Tabs',
-  'Toast',
+  'ToastProvider',
   'Badge',
   'Alert',
   'Avatar',

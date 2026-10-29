@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Toast, useToast } from '@envsemble/envui';
+import { Button, ToastProvider, useToast } from '@envsemble/envui';
 
 function SaveButton() {
   const toast = useToast();
@@ -20,10 +20,10 @@ function SaveButton() {
 }
 
 export default function SaveChanges() {
-  // An application puts one Toast.Provider near its root.
+  // An application puts one ToastProvider near its root.
   return (
-    <Toast.Provider>
+    <ToastProvider>
       <SaveButton />
-    </Toast.Provider>
+    </ToastProvider>
   );
 }

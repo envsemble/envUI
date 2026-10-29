@@ -21,7 +21,7 @@ useWhen:
   - A warning before people act in a section, such as storage almost full
 avoidWhen:
   - text: Brief feedback after an action, such as Saved or Invitation sent.
-    use: Toast
+    use: ToastProvider
   - text: A region without content yet, such as an empty list or no search results.
     see: empty-states
   - text: An error about one field, shown on the field.

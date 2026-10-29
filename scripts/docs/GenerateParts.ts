@@ -473,7 +473,10 @@ export function buildParts({
   >();
   for (const [name, entry] of Object.entries(props.exports)) {
     if (name.includes('.') || !['component', 'namespace'].includes(entry.kind)) continue;
-    groups.set(name, { name, prefix: `env-${kebab(name)}`, source: entry.source, shared: false });
+    // A component's classes take its name, unless `prefixes` gives it another, as ToastProvider's
+    // notifications are env-toast.
+    const prefix = source.prefixes?.[name] ?? `env-${kebab(name)}`;
+    groups.set(name, { name, prefix, source: entry.source, shared: false });
   }
   for (const [name, entry] of Object.entries<{ prefix: string; root?: string }>(
     source.shared ?? {},

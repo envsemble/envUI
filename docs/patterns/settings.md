@@ -39,7 +39,7 @@ composes:
   - Badge
   - Button
   - ConfirmDialog
-  - Toast
+  - ToastProvider
   - useToast
   - useThemePreference
 examples:
@@ -146,7 +146,7 @@ Name a section after what people want to do, such as "Email notifications", not 
 
 - A heading for every section, and a name for every switch: its label, or `aria-labelledby` and `aria-describedby` to the row's title and detail.
 - Storing each change, and a status when a section is saved.
-- One Toast.Provider and one ThemePreferenceProvider at the root.
+- One ToastProvider and one ThemePreferenceProvider at the root.
 
 ## Compose
 

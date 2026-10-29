@@ -16,7 +16,7 @@ import {
   Theme,
   ThemePreferenceProvider,
   ThemeToggle,
-  Toast,
+  ToastProvider,
   Tooltip,
   useToast,
   type ThemeContrast,
@@ -42,9 +42,9 @@ const commands = [{ id: 'rename', label: 'Rename' }];
  */
 function Popups({ name }: { name: string }) {
   return (
-    <Toast.Provider>
+    <ToastProvider>
       <PopupTriggers name={name} />
-    </Toast.Provider>
+    </ToastProvider>
   );
 }
 

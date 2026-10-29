@@ -1,5 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, Column, DropZone, List, Progress, Text, Toast, useToast } from '@envsemble/envui';
+import {
+  Button,
+  Column,
+  DropZone,
+  List,
+  Progress,
+  Text,
+  ToastProvider,
+  useToast,
+} from '@envsemble/envui';
 
 interface Upload {
   id: number;
@@ -176,10 +185,10 @@ function Uploads() {
 }
 
 export default function UploadFiles() {
-  // An application has one Toast.Provider at its root; the example brings its own.
+  // An application has one ToastProvider at its root; the example brings its own.
   return (
-    <Toast.Provider>
+    <ToastProvider>
       <Uploads />
-    </Toast.Provider>
+    </ToastProvider>
   );
 }

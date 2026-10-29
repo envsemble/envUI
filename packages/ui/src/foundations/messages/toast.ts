@@ -1,7 +1,7 @@
 import { plural } from './plural.js';
 
 /**
- * The English defaults of the `toast` messages: Toast.Provider and useToast. EnvUIProvider's
+ * The English defaults of the `toast` messages: ToastProvider and useToast. EnvUIProvider's
  * `messages.toast` overrides any of them.
  */
 export const toast = {

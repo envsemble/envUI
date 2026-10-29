@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, List, Text, Toast, useToast } from '@envsemble/envui';
+import { Button, List, Text, ToastProvider, useToast } from '@envsemble/envui';
 
 const initialProjects = ['Website refresh', 'Onboarding emails', 'Billing migration'];
 
@@ -46,8 +46,8 @@ function Projects() {
 
 export default function UndoArchive() {
   return (
-    <Toast.Provider>
+    <ToastProvider>
       <Projects />
-    </Toast.Provider>
+    </ToastProvider>
   );
 }

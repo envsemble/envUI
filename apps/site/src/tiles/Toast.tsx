@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { PortalContainer, Toast, useToast } from '@envsemble/envui';
+import { PortalContainer, ToastProvider, useToast } from '@envsemble/envui';
 import { usePointer, usePreviewLayer, type PointerStep } from '../motion/Motion';
 
 const invitation = '.env-toast[data-tone="success"] .env-toast-dismiss';
@@ -61,9 +61,9 @@ export default function ToastTile() {
   if (!layer) return null;
   return (
     <PortalContainer container={layer}>
-      <Toast.Provider>
+      <ToastProvider>
         <Notices />
-      </Toast.Provider>
+      </ToastProvider>
     </PortalContainer>
   );
 }

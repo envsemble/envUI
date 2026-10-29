@@ -21,7 +21,7 @@ avoidWhen:
   - text: A task with fields, a choice between several actions or content to review.
     use: Dialog
   - text: Undoing an action after it ran, such as an archived item.
-    use: Toast
+    use: ToastProvider
   - text: A warning that needs no answer, shown in the page.
     use: Alert
 components:

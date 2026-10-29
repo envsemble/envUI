@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, Link, Column, Row, Text, Toast, useToast } from '@envsemble/envui';
+import { Button, Link, Column, Row, Text, ToastProvider, useToast } from '@envsemble/envui';
 import { Download } from '@envsemble/envui/icons/Download';
 
 const file = 'quarterly-report.csv';
@@ -57,10 +57,10 @@ function ExportReport() {
 }
 
 export default function BackgroundTask() {
-  // An application has one Toast.Provider at its root; the example brings its own.
+  // An application has one ToastProvider at its root; the example brings its own.
   return (
-    <Toast.Provider>
+    <ToastProvider>
       <ExportReport />
-    </Toast.Provider>
+    </ToastProvider>
   );
 }

@@ -39,7 +39,7 @@ avoidWhen:
   - text: A short label over the page.
     use: Tooltip
   - text: A notification over the page.
-    use: Toast
+    use: ToastProvider
 examples:
   Widths: example
   TextSize: example

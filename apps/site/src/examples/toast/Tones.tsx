@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Toast, useToast, type ToastNotification } from '@envsemble/envui';
+import { ToastProvider, useToast, type ToastNotification } from '@envsemble/envui';
 
 const notifications: ToastNotification[] = [
   { tone: 'neutral', message: 'Files archived.' },
@@ -27,8 +27,8 @@ function EachTone() {
 
 export default function Tones() {
   return (
-    <Toast.Provider limit={4}>
+    <ToastProvider limit={4}>
       <EachTone />
-    </Toast.Provider>
+    </ToastProvider>
   );
 }

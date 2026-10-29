@@ -25,7 +25,7 @@ avoidWhen:
   - text: Undo after a delete, or a confirmation before one.
     see: destructive-actions
 composes:
-  - Toast
+  - ToastProvider
   - useToast
   - Alert
   - Badge
@@ -133,7 +133,7 @@ Feedback doesn't move focus, with two exceptions.
 
 ### You provide
 
-- One Toast.Provider at the root, and messages that make sense out of context.
+- One ToastProvider at the root, and messages that make sense out of context.
 - `announce` only on an Alert that appears because something just happened.
 - An `aria-label` on every count whose number alone doesn't say what it counts.
 
@@ -141,7 +141,7 @@ Feedback doesn't move focus, with two exceptions.
 
 ### Usage
 
-`useToast()` returns `show`, `dismiss` and `clear`. One Toast.Provider at the application's root holds the toasts.
+`useToast()` returns `show`, `dismiss` and `clear`. One ToastProvider at the application's root holds the toasts.
 
 - `show({ tone, message, action })` shows a toast and returns its id; `tone` is `neutral`, `success`, `info` or `danger`.
 - A success or neutral toast closes after its `duration`, 5 seconds by default.

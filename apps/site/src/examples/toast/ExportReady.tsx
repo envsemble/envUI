@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Toast, useToast } from '@envsemble/envui';
+import { Button, ToastProvider, useToast } from '@envsemble/envui';
 import { Download } from '@envsemble/envui/icons/Download';
 
 function ExportButton() {
@@ -38,8 +38,8 @@ function ExportButton() {
 
 export default function ExportReady() {
   return (
-    <Toast.Provider>
+    <ToastProvider>
       <ExportButton />
-    </Toast.Provider>
+    </ToastProvider>
   );
 }

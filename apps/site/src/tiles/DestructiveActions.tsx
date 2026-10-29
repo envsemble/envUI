@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, List, PortalContainer, Toast, useToast } from '@envsemble/envui';
+import { Button, List, PortalContainer, ToastProvider, useToast } from '@envsemble/envui';
 import { Archive } from '@envsemble/envui/icons/Archive';
 import { usePointer, usePreviewLayer, type PointerStep } from '../motion/Motion';
 
@@ -68,9 +68,9 @@ export default function DestructiveActionsTile() {
   if (!layer) return null;
   return (
     <PortalContainer container={layer}>
-      <Toast.Provider>
+      <ToastProvider>
         <Projects />
-      </Toast.Provider>
+      </ToastProvider>
     </PortalContainer>
   );
 }

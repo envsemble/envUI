@@ -41,7 +41,7 @@ composes:
   - RelativeTime
   - Pagination
   - ConfirmDialog
-  - Toast
+  - ToastProvider
   - useToast
   - Column
   - Row

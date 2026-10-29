@@ -28,7 +28,7 @@ import {
   TextField,
   Textarea,
   Theme,
-  Toast,
+  ToastProvider,
   Toolbar,
   Tooltip,
   useToast,
@@ -217,9 +217,9 @@ export function DefaultColors() {
         <Checkbox label="Disabled checked" defaultChecked disabled />
         <Switch label="Disabled on" defaultChecked disabled />
         <Slider label="Disabled volume" defaultValue={40} disabled />
-        <Toast.Provider>
+        <ToastProvider>
           <Toasts />
-        </Toast.Provider>
+        </ToastProvider>
         <Combobox
           multiple
           label="Reviewers"

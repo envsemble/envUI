@@ -184,7 +184,7 @@ before(
       h(ui.DatePicker, { name: 'due', label: 'Due', defaultValue: '2026-10-14T09:30', granularity: 'minute', locale: 'en-GB' }),
       h(ui.Calendar, { 'aria-label': 'Planning', defaultValue: '2026-03-09', locale: 'en-GB', weekStart: 1 }),
       h(ui.Dialog, { title: 'Example', open: false, trigger: h(ui.Button, null, 'Open') }),
-      h(ui.Toast.Provider, null, 'Managed notifications'),
+      h(ui.ToastProvider, null, 'Managed notifications'),
       h(ui.Spinner, { label: 'Loading projects', showLabel: true }),
       h(ui.Card, { skeleton: true, title: ui.placeholders(1)[0].title }, h(ui.Text))
     ));
@@ -304,7 +304,7 @@ test('a packed consumer resolves compiled public exports and its own React insta
     'Calendar',
     'Dialog',
     'DialogClose',
-    'Toast',
+    'ToastProvider',
     'useToast',
     'Icon',
     'DropZone',
@@ -404,7 +404,7 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     `
     import { createRef } from 'react';
     import { Theme, Button, ButtonGroup, ConfirmButton, IconButton, NavigationBar, NavigationRail, NavigationDrawer, Pager, Icon, TextField, Textarea, Checkbox, Switch, Row, Column,
-      EnvUIProvider, Toolbar, Field, RadioGroup, Radio, Select, Combobox, DatePicker, Calendar, Dialog, DialogClose, Toast, useToast,
+      EnvUIProvider, Toolbar, Field, RadioGroup, Radio, Select, Combobox, DatePicker, Calendar, Dialog, DialogClose, ToastProvider, useToast,
       type ColorScheme, type ButtonProps, type ButtonGroupProps, type SelectItem, type ComboboxItem, type ToastManager } from '@envsemble/envui';
     import { Home } from '@envsemble/envui/icons/Home';
     import { Home as BarrelHome } from '@envsemble/envui/icons';
@@ -452,7 +452,7 @@ test('installed declarations typecheck a React 19 consumer without source aliase
       <DatePicker label="Due" granularity="minute" clearable onValueChange={value => { const typed: string | null = value; void typed; }} ref={createRef<HTMLButtonElement>()} />
       <Calendar value="2026-10-14" weekStart={1} onValueChange={value => { const typed: string = value; void typed; }} />
       <Dialog title="Confirm" trigger={<Button>Open</Button>} actions={<DialogClose>Done</DialogClose>} />
-      <Toast.Provider><NotificationAction /></Toast.Provider>
+      <ToastProvider><NotificationAction /></ToastProvider>
     </Theme>;
     // @ts-expect-error Icon-only actions require an accessible name.
     const unnamedIconButton = <IconButton icon={<Home />} />;

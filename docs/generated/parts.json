@@ -5676,9 +5676,9 @@
         "TimeList"
       ]
     },
-    "Toast": {
+    "ToastProvider": {
       "root": "env-toast",
-      "source": "packages/ui/src/feedback/toast/Toast.tsx",
+      "source": "packages/ui/src/feedback/toast/ToastProvider.tsx",
       "parts": [
         {
           "class": "env-toast",

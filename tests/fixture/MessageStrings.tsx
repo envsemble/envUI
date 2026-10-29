@@ -10,7 +10,7 @@ import {
   CommandPalette,
   Sheet,
   Progress,
-  Toast,
+  ToastProvider,
   useToast,
   ConfirmButton,
   CopyButton,
@@ -244,9 +244,9 @@ export function MessageStringsFixture() {
           >
             Body
           </Scaffold>
-          <Toast.Provider>
+          <ToastProvider>
             <FeedbackStrings />
-          </Toast.Provider>
+          </ToastProvider>
           <ShellAndEditorStrings />
           {/* App parts: a reorderable list's handle and announcements, and a confirm dialog. */}
           <List.Root aria-label="Order" onReorder={() => {}}>

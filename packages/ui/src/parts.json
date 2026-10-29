@@ -1,7 +1,10 @@
 {
-  "$comment": "The hand-written part of the part contract, which scripts/docs/GenerateParts.ts merges into docs/generated/parts.json. descriptions: one line per part class, by component. roots: a component whose root is not env-<its name>. shared: anatomy several components render, by its class prefix. placed: a class that no prefix places, and its group. colors: the color properties of each component, public custom properties registered so they don’t inherit, with what each colors. properties: the other public custom properties of each component, with whether an application sets it or reads it and what it does; every other custom property a component declares is private.",
+  "$comment": "The hand-written part of the part contract, which scripts/docs/GenerateParts.ts merges into docs/generated/parts.json. descriptions: one line per part class, by component. roots: a component whose root is not env-<its name>. prefixes: a component whose classes do not start with env-<its name>, and the prefix they take. shared: anatomy several components render, by its class prefix. placed: a class that no prefix places, and its group. colors: the color properties of each component, public custom properties registered so they don’t inherit, with what each colors. properties: the other public custom properties of each component, with whether an application sets it or reads it and what it does; every other custom property a component declares is private.",
   "roots": {
     "ConfirmDialog": "env-dialog"
+  },
+  "prefixes": {
+    "ToastProvider": "env-toast"
   },
   "shared": {
     "ConnectedRows": {
@@ -772,7 +775,7 @@
       "env-time-picker": "The time field.",
       "env-time-picker-popup": "The popup with the times."
     },
-    "Toast": {
+    "ToastProvider": {
       "env-toast": "One notification.",
       "env-toast-action": "A notification's action.",
       "env-toast-announcer": "The announcements of notifications.",
@@ -944,7 +947,7 @@
       "--env-text-field-outline": "The edge at rest.",
       "--env-text-field-indicator": "The edge under the pointer, pressed and focused, the caret and the floating label while focused."
     },
-    "Toast": {
+    "ToastProvider": {
       "--env-toast-container": "The fill, in place of the tone; set, the dismiss button's states are state layers over it.",
       "--env-toast-content": "The message, icons and dismiss button, and the color of its state layers.",
       "--env-toast-outline": "The edge."

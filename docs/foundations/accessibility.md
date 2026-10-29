@@ -21,7 +21,7 @@ avoidWhen:
   - text: A task that holds focus until people finish it.
     use: Dialog
   - text: A message announced without moving focus.
-    use: Toast
+    use: ToastProvider
   - text: Colors and their contrast in every theme.
     see: colors
 examples:

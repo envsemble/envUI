@@ -10,7 +10,6 @@ aliases:
   - flash message
   - toaster
   - ToastProvider
-  - Toast.Provider
   - useToast
   - undo notification
 useWhen:
@@ -30,7 +29,7 @@ avoidWhen:
   - text: Work that runs after a press, shown on the control that started it.
     use: Button
 components:
-  - Toast
+  - ToastProvider
   - useToast
 examples:
   SaveChanges:
@@ -160,7 +159,7 @@ Label an action with a short verb, such as Undo or Try again, and give a notific
 
 ### You provide
 
-- One Toast.Provider around the components that call `useToast`.
+- One ToastProvider around the components that call `useToast`.
 - A message that makes sense read on its own.
 - `dismiss(id)` once an action has run.
 
@@ -168,7 +167,7 @@ Label an action with a short verb, such as Undo or Try again, and give a notific
 
 ### Usage
 
-Put one Toast.Provider near the root of the application. Any component inside it calls `useToast()`, whose `show` shows a notification and returns its id, `dismiss(id)` dismisses one, and `clear()` dismisses them all. `show` takes the `message`, a short sentence that wraps to three lines, its `tone`, an `action`, a `placement`, `dismissible` and a `duration`.
+Put one ToastProvider near the root of the application. Any component inside it calls `useToast()`, whose `show` shows a notification and returns its id, `dismiss(id)` dismisses one, and `clear()` dismisses them all. `show` takes the `message`, a short sentence that wraps to three lines, its `tone`, an `action`, a `placement`, `dismissible` and a `duration`.
 
 ```tsx source=SaveChanges
 
@@ -209,12 +208,12 @@ const id = toast.show({
 
 #### Placement and limit
 
-Toast.Provider's `defaultPlacement` is `bottom-end`, stacking upward from the bottom corner at the end of the line in the text direction, or `top-center`; `placement` on one notification overrides it. `limit`, 3 by default, is how many each placement shows at once.
+ToastProvider's `defaultPlacement` is `bottom-end`, stacking upward from the bottom corner at the end of the line in the text direction, or `top-center`; `placement` on one notification overrides it. `limit`, 3 by default, is how many each placement shows at once.
 
 ```tsx
-<Toast.Provider defaultPlacement="top-center" limit={2}>
+<ToastProvider defaultPlacement="top-center" limit={2}>
   <App />
-</Toast.Provider>
+</ToastProvider>
 ```
 
 ### Composition
@@ -230,7 +229,7 @@ The parts are each placement's region, `env-toast-viewport`, with `data-placemen
 - **1.0.0-prerelease.5**: 16 px from its start edge to its icon or message, and 10 px between its parts.
 - **1.0.0**: No edge outside high contrast, where the tone's edge bounds it, and an alert's corners, 1.25 rem. The notifications' theme boundary, `env-toast-portal-theme`, is `env-toast-theme`, as Popup's is `env-popup-theme`.
 - **1.0.0**: `limit` for `visibleLimit`, as Base UI names it. `tone` for `variant`, with `danger` for `error`, and `ToastTone`; `bottom-end` for `bottom-right`, which follows the text direction, with the top-center stack centered in either direction; the region names, hidden count and dismiss button come from the provider's messages; danger notifications are alerts at once and always shown; the dismiss button is an IconButton with a cross; the manual `Toast` is gone.
-- **1.0.0**: `ToastProvider` is `Toast.Provider`, and `useToast` keeps its name. The manual `Toast` component and `ToastProps` are no longer exported; show notifications with `useToast` inside `Toast.Provider`.
+- **1.0.0**: `ToastProvider` and `useToast` keep their names. The manual `Toast` component and `ToastProps` are no longer exported; show notifications with `useToast` inside `ToastProvider`.
 - **0.5.0**: The hidden count is a counter badge. A dismissed notification steps out of the stack at once and fades where it was, and one revealed from the hidden ones fades in. The regions no longer throw where the Web Animations API is missing, such as in jsdom.
 - **0.4.0**: Notifications glide to their new place as others arrive and leave; the top-center hidden count sits below the stack, centred. The dismiss button settles when pressed.
 - **0.3.0**: Notifications arrive from their screen edge.
