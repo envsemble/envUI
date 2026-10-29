@@ -3413,7 +3413,7 @@
           "type": "'start' | 'center' | 'end'",
           "required": false,
           "default": "'center'",
-          "description": "Lines the card up with the trigger's centre, start or end along the side."
+          "description": "Lines the card up with the trigger's center, start or end along the side."
         },
         {
           "name": "delay",
@@ -3589,7 +3589,7 @@
           "type": "'start' | 'center' | 'end'",
           "required": false,
           "default": "'end'",
-          "description": "Where the drawing sits in its box when the box's shape crops it: at the end, at the start or in the centre, flipped in right-to-left text, as the drawing itself is. It is cropped from the other side, or from both, and always rests on the box's foot, cropped from its top."
+          "description": "Where the drawing sits in its box when the box's shape crops it: at the end, at the start or in the center, flipped in right-to-left text, as the drawing itself is. It is cropped from the other side, or from both, and always rests on the box's foot, cropped from its top."
         },
         {
           "name": "label",
@@ -7356,7 +7356,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Show the label beside the spinner, for loading with no known shape, such as search results: a status line, marked busy, that centres the spinner and its label in its row. Without a label it says Loading in the provider's language, from EnvUIProvider's messages.common.loading."
+          "description": "Show the label beside the spinner, for loading with no known shape, such as search results: a status line, marked busy, that centers the spinner and its label in its row. Without a label it says Loading in the provider's language, from EnvUIProvider's messages.common.loading."
         },
         {
           "name": "size",
@@ -7376,7 +7376,7 @@
     "Surface": {
       "kind": "component",
       "source": "packages/ui/src/foundations/Surface.tsx",
-      "description": "A container with a background, an inset and corners, but no layout of its own: spacing between its children, alignment and behaviour come from what it holds, such as a Column. Card and other containers build on it.",
+      "description": "A container with a background, an inset and corners, but no layout of its own: spacing between its children, alignment and behavior come from what it holds, such as a Column. Card and other containers build on it.",
       "props": [
         {
           "name": "background",

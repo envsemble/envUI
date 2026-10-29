@@ -52,7 +52,7 @@ export interface HoverCardProps
    */
   side?: PopupSide;
   /**
-   * Lines the card up with the trigger's centre, start or end along the side.
+   * Lines the card up with the trigger's center, start or end along the side.
    * @default 'center'
    */
   align?: 'start' | 'center' | 'end';
