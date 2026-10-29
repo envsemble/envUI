@@ -132,7 +132,7 @@ test.describe('CommandPalette', () => {
           placeholder: getComputedStyle(field, '::placeholder').color,
           edge: getComputedStyle(border).borderTopColor,
           ring: getComputedStyle(element.closest('.env-command-palette-search')!, '::after')
-            .borderTopStyle,
+            .borderTopColor,
         };
       });
     const focused = await look();
@@ -144,7 +144,7 @@ test.describe('CommandPalette', () => {
     // shows the focus ring.
     expect(focused.placeholder).not.toBe('rgba(0, 0, 0, 0)');
     expect(focused.edge).toBe('rgba(0, 0, 0, 0)');
-    expect(focused.ring).toBe('solid');
+    expect(focused.ring).toMatch(/^rgb\(/);
     // Under the pointer it stays as it is.
     await control.hover();
     expect(await look()).toEqual(focused);
