@@ -199,10 +199,17 @@
       "kind": "prefixed",
       "cssVariable": "--env-color-bg-neutral-subtle-pressed"
     },
-    "--color-bg-overlay": { "kind": "prefixed", "cssVariable": "--env-color-bg-overlay" },
+    "--color-bg-overlay": {
+      "kind": "renamed",
+      "token": "color.bg.backdrop",
+      "cssVariable": "--env-color-bg-backdrop",
+      "note": "The layer behind a modal is the backdrop, as Base UI and the Colors page name it."
+    },
     "--color-bg-overlay-muted": {
-      "kind": "prefixed",
-      "cssVariable": "--env-color-bg-overlay-muted"
+      "kind": "renamed",
+      "token": "color.bg.backdrop.muted",
+      "cssVariable": "--env-color-bg-backdrop-muted",
+      "note": "The layer behind a modal is the backdrop, as Base UI and the Colors page name it."
     },
     "--color-bg-page": { "kind": "prefixed", "cssVariable": "--env-color-bg-page" },
     "--color-bg-page-hover": { "kind": "prefixed", "cssVariable": "--env-color-bg-page-hover" },
@@ -552,9 +559,9 @@
     },
     "--color-dialog-overlay": {
       "kind": "alias",
-      "token": "color.bg.overlay",
-      "cssVariable": "--env-color-bg-overlay",
-      "note": "0.7's was opaque, #1f1f1f (hsl(0 0% 12.157%) in both themes), and the dialog backdrop made it 55% opaque with --state-dialog-overlay-opacity, which is removed. The role is the scrim itself, 55% opaque: paint it as it is, since a style that applies its own opacity now applies it twice. For the opaque color, write #1f1f1f."
+      "token": "color.bg.backdrop",
+      "cssVariable": "--env-color-bg-backdrop",
+      "note": "0.7's was opaque, #1f1f1f (hsl(0 0% 12.157%) in both themes), and the dialog backdrop made it 55% opaque with --state-dialog-overlay-opacity, which is removed. The role is the backdrop itself, 55% opaque: paint it as it is, since a style that applies its own opacity now applies it twice. For the opaque color, write #1f1f1f."
     },
     "--color-direction-link": {
       "kind": "alias",
@@ -1317,22 +1324,22 @@
     "--elevation-0-border": { "kind": "prefixed", "cssVariable": "--env-elevation-0-border" },
     "--elevation-0-shadow": {
       "kind": "removed",
-      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its backdrop as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
     },
     "--elevation-1-border": { "kind": "prefixed", "cssVariable": "--env-elevation-1-border" },
     "--elevation-1-shadow": {
       "kind": "removed",
-      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its backdrop as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
     },
     "--elevation-2-border": { "kind": "prefixed", "cssVariable": "--env-elevation-2-border" },
     "--elevation-2-shadow": {
       "kind": "removed",
-      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its backdrop as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
     },
     "--elevation-3-border": { "kind": "prefixed", "cssVariable": "--env-elevation-3-border" },
     "--elevation-3-shadow": {
       "kind": "removed",
-      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its backdrop as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
     },
     "--env-alert-edge": {
       "kind": "renamed",
@@ -1448,21 +1455,33 @@
       "cssVariable": "--env-color-avatar-bg-periwinkle",
       "note": "The avatar hues are named for their colors: violet is periwinkle. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-periwinkle and --env-color-avatar-figure-periwinkle."
     },
+    "--env-color-bg-overlay": {
+      "kind": "renamed",
+      "token": "color.bg.backdrop",
+      "cssVariable": "--env-color-bg-backdrop",
+      "note": "The layer behind a modal is the backdrop, as Base UI and the Colors page name it."
+    },
+    "--env-color-bg-overlay-muted": {
+      "kind": "renamed",
+      "token": "color.bg.backdrop.muted",
+      "cssVariable": "--env-color-bg-backdrop-muted",
+      "note": "The layer behind a modal is the backdrop, as Base UI and the Colors page name it."
+    },
     "--env-elevation-0-shadow": {
       "kind": "removed",
-      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its backdrop as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
     },
     "--env-elevation-1-shadow": {
       "kind": "removed",
-      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its backdrop as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
     },
     "--env-elevation-2-shadow": {
       "kind": "removed",
-      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its backdrop as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
     },
     "--env-elevation-3-shadow": {
       "kind": "removed",
-      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its backdrop as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
     },
     "--env-frame-header-block-size": {
       "kind": "removed",
@@ -1561,6 +1580,12 @@
       "kind": "renamed",
       "cssVariable": "--env-top-bar-title-bar-start",
       "note": "WindowFrame is gone: a TopBar with titleBar keeps clear of the window's controls at the start."
+    },
+    "--env-z-overlay": {
+      "kind": "renamed",
+      "token": "z.backdrop",
+      "cssVariable": "--env-z-backdrop",
+      "note": "The layer behind a modal is the backdrop, as Base UI and the Colors page name it."
     },
     "--field-floating-height": { "kind": "prefixed", "cssVariable": "--env-field-floating-height" },
     "--font-family": { "kind": "prefixed", "cssVariable": "--env-font-family" },
@@ -1687,9 +1712,9 @@
     "--state-card-strip-weight": { "kind": "removed", "note": "Unused." },
     "--state-dialog-overlay-opacity": {
       "kind": "removed",
-      "token": "color.bg.overlay",
-      "cssVariable": "--env-color-bg-overlay",
-      "note": "The scrim is a translucent color token now."
+      "token": "color.bg.backdrop",
+      "cssVariable": "--env-color-bg-backdrop",
+      "note": "The backdrop is a translucent color token now."
     },
     "--state-disabled-opacity": {
       "kind": "prefixed",

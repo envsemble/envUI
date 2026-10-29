@@ -11,7 +11,7 @@ function Ladder() {
       <div data-layer="top-bar-sticky" className="env-top-bar" data-sticky="" />
       <div className="env-panes" data-behavior="supporting" data-open="">
         <div data-layer="panes-supporting-sheet" className="env-panes-supporting" />
-        <div data-layer="panes-scrim" className="env-panes-scrim" />
+        <div data-layer="panes-backdrop" className="env-panes-backdrop" />
       </div>
       <div data-layer="dialog-backdrop" className="env-dialog-backdrop" />
       <div data-layer="dialog-positioner" className="env-dialog-positioner" />

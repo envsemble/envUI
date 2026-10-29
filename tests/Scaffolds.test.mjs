@@ -164,7 +164,7 @@ test('Panes renders its behavior, its split and its size for CSS, and the parts 
   const controls = /aria-controls="([^"]+)"/.exec(markup)?.[1];
   assert.ok(controls && markup.includes(`id="${controls}"`), markup);
   assert.match(markup, /role="separator"[^>]*aria-valuetext="20 rem"/);
-  assert.match(markup, /class="env-panes-scrim" aria-hidden="true"/);
+  assert.match(markup, /class="env-panes-backdrop" aria-hidden="true"/);
   const open = renderToString(
     h(
       Panes.Root,
@@ -175,7 +175,7 @@ test('Panes renders its behavior, its split and its size for CSS, and the parts 
   assert.match(open, /data-split-at="large" data-open=""/);
   // The back button is always in the markup; CSS shows it while one pane shows at a time.
   assert.match(open, /class="env-panes-back"/);
-  assert.doesNotMatch(open, /env-panes-scrim/);
+  assert.doesNotMatch(open, /env-panes-backdrop/);
 });
 
 test('Panes decides its arrangement in CSS at the window classes of its own width', () => {

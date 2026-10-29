@@ -112,7 +112,7 @@ export function usePreviewLayer() {
  * render through envUI's PortalContainer, contained, into a layer beside the component, so they
  * neither lock the page's scroll, take focus nor close as the reader presses elsewhere, and the
  * pointer no one sees finds them in the preview. The box around it that is a containing block,
- * a tile's canvas or a figure's stage, places them: a dialog's scrim covers it, not the page.
+ * a tile's canvas or a figure's stage, places them: a dialog's backdrop covers it, not the page.
  * Render it as a direct child of the preview's root (Playback), where usePreviewLayer finds it.
  */
 export function PreviewOverlays({ children }: { children: ReactNode }) {

@@ -162,7 +162,7 @@ Panes.Root takes a `behavior`: `supporting` holds Panes.Main and Panes.Supportin
 
 - Below `splitAt`, the supporting pane is a modal sheet over the main one while `open`, and a list-detail shows the detail instead of the list while `open`.
 - The application keeps `open`, setting it as an item is chosen or the sheet's button is pressed.
-- `onOpenChange` receives `false` as people close it: <kbd>Esc</kbd>, the close button or a press on the scrim close the sheet, and the back button returns to the list.
+- `onOpenChange` receives `false` as people close it: <kbd>Esc</kbd>, the close button or a press on the backdrop close the sheet, and the back button returns to the list.
 
 ```tsx source=SupportingPane
 
@@ -224,7 +224,7 @@ Panes.Divider, named by its `label`, Resize panes by default, resizes the suppor
 
 ### Composition
 
-The parts are the root, `env-panes`, with `data-behavior`, `data-split-at` and `data-open`; the main pane, `env-panes-main`, and the supporting one, `env-panes-supporting`, with its close button, `env-panes-close`, and its scrim, `env-panes-scrim`, while it is a sheet, and the trigger that opens it, `env-panes-trigger`; the list, `env-panes-list`, and the detail, `env-panes-detail`, with its back button, `env-panes-back`; and the divider, `env-panes-divider`. Panes paints no background of its own: the surfaces in its panes do. `name` names the node for dev mode, as `data-env-name`.
+The parts are the root, `env-panes`, with `data-behavior`, `data-split-at` and `data-open`; the main pane, `env-panes-main`, and the supporting one, `env-panes-supporting`, with its close button, `env-panes-close`, and its backdrop, `env-panes-backdrop`, while it is a sheet, and the trigger that opens it, `env-panes-trigger`; the list, `env-panes-list`, and the detail, `env-panes-detail`, with its back button, `env-panes-back`; and the divider, `env-panes-divider`. Panes paints no background of its own: the surfaces in its panes do. `name` names the node for dev mode, as `data-env-name`.
 
 ## Changelog
 

@@ -67,7 +67,7 @@ export interface RootProps extends Omit<ComponentPropsWithRef<'div'>, 'children'
   open?: boolean;
   /**
    * Called with false when people close what `open` shows below `splitAt`: Escape, the close
-   * button or a press on the scrim closes the supporting sheet, and the back button returns from
+   * button or a press on the backdrop closes the supporting sheet, and the back button returns from
    * the detail to the list. Set `open` from it.
    */
   onOpenChange?: (open: boolean) => void;
@@ -316,9 +316,9 @@ function Root({
       >
         {children}
         {behavior === 'supporting' && (
-          // The scrim behind the supporting sheet; a press on it closes the sheet. Pointer only:
+          // The backdrop behind the supporting sheet; a press on it closes the sheet. Pointer only:
           // Escape closes it from the keyboard.
-          <div className="env-panes-scrim" aria-hidden="true" onClick={close} />
+          <div className="env-panes-backdrop" aria-hidden="true" onClick={close} />
         )}
       </div>
     </PanesContext>
@@ -341,9 +341,9 @@ function Main({ label, className, ...props }: PaneProps) {
  * The supporting pane, at the end, such as details or filters for the main pane. Below `splitAt` it
  * is a modal sheet over the main pane while `open`: a side sheet in a medium width, a bottom sheet
  * in a compact one. Inside a Scaffold whose document scrolls, the sheet is the window's, as Sheet
- * is: fixed to the window over a scrim, scrolling inside itself while the page stays. As a sheet
+ * is: fixed to the window over a backdrop, scrolling inside itself while the page stays. As a sheet
  * it is a modal dialog with a close button: everything else on the page is inert, focus moves into
- * it and Tab stays in it, and Escape, the close button or a press on the scrim closes it, which
+ * it and Tab stays in it, and Escape, the close button or a press on the backdrop closes it, which
  * returns focus to where it was. In a contained PortalContainer, such as a preview on a page, the
  * sheet belongs to the container: it is not modal, so the page stays in use and focus stays where
  * it is.
@@ -402,9 +402,9 @@ function Supporting({
           other instanceof HTMLElement &&
           other !== node &&
           !other.inert &&
-          // The scrim stays live, as a press on it closes the sheet, and so do live regions, such
+          // The backdrop stays live, as a press on it closes the sheet, and so do live regions, such
           // as toasts, which announce what happens meanwhile.
-          !other.classList.contains('env-panes-scrim') &&
+          !other.classList.contains('env-panes-backdrop') &&
           !other.hasAttribute('aria-live')
         )
           others.push(other);

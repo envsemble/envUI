@@ -79,7 +79,7 @@ const muted = '--env-color-bg-muted'; // Surface background="muted", cards, radi
 const raised = '--env-color-bg-raised'; // Surface background="raised", tables, rows on a contrasting surface
 const popup = '--env-color-bg-popup'; // Select lists, popovers, compact menus, menu rows, the composer, solid dialogs
 const field = '--env-color-bg-field';
-const overlay = '--env-color-bg-overlay'; // the scrim behind dialogs
+const overlay = '--env-color-bg-backdrop'; // the backdrop behind dialogs
 const selected = '--env-color-bg-selected';
 const selectedHover = '--env-color-bg-selected-hover';
 const selectedPressed = '--env-color-bg-selected-pressed';
@@ -158,7 +158,7 @@ const distinct = (fill: string, backgrounds: readonly Background[], note?: strin
 
 /**
  * The edge of an elevated surface at standard contrast. envUI draws no shadows, so a popup is set
- * apart by its fill and this edge alone, and a modal by its scrim as well: the edge must be clearly
+ * apart by its fill and this edge alone, and a modal by its backdrop as well: the edge must be clearly
  * visible, about 2:1 against the popup's own fill and the page, and at least 1.6:1 against every
  * surface it floats over. It stays below 3:1 by design: WCAG 1.4.11 asks 3:1 of what is needed to
  * identify a component, and a popup is identified by its fill and its content; a 3:1 edge would
@@ -548,7 +548,7 @@ const registry: readonly ContrastPair[] = merged([
   ...nonText(
     '--env-elevation-3-border',
     [popup, raised, [overlay, page]],
-    'The edge of dialogs and the command palette where they are solid, against their fill and the scrim',
+    'The edge of dialogs and the command palette where they are solid, against their fill and the backdrop',
     popupEdge,
   ),
   ...nonText(
@@ -2330,6 +2330,48 @@ const renamedTokenPairs: readonly (readonly [from: string, to: string])[] = [
 ];
 
 /**
+ * Tokens the 1.0 API review renamed, from the old custom property to the new, with the reason. Every
+ * pair that names one is measured under its new name, as `renamed` records.
+ */
+const apiReviewTokens: readonly (readonly [from: string, to: string, rationale: string])[] = [
+  [
+    '--env-color-bg-overlay',
+    '--env-color-bg-backdrop',
+    'The layer behind a modal is the backdrop, as Base UI and the Colors page name it.',
+  ],
+  [
+    '--env-color-bg-overlay-muted',
+    '--env-color-bg-backdrop-muted',
+    'The layer behind a modal is the backdrop, as Base UI and the Colors page name it.',
+  ],
+  [
+    '--env-z-overlay',
+    '--env-z-backdrop',
+    'The layer behind a modal is the backdrop, as Base UI and the Colors page name it.',
+  ],
+];
+
+/** The token names before the review, by their name now. */
+const beforeReview = new Map(apiReviewTokens.map(([from, to, why]) => [to, { from, why }]));
+
+/** A pair's name before the review, for the renames recorded earlier from today's pairs. */
+const reviewed = (name: string) =>
+  name
+    .split(' ')
+    .map((word) => beforeReview.get(word)?.from ?? word)
+    .join(' ');
+
+/** The pairs `apiReviewTokens` renames: each current pair, from its name before the review. */
+function apiReviewRenames() {
+  return pairs.flatMap((pair) => {
+    const to = pairName(pair);
+    const from = reviewed(to);
+    const why = [...new Set(to.split(' ').flatMap((word) => beforeReview.get(word)?.why ?? []))];
+    return from === to ? [] : [{ from, to, rationale: why.join(' ') }];
+  });
+}
+
+/**
  * Pairs the gate still measures under another name, from the old name to the new, with the reason.
  * tests/browser/Contrast.spec.ts checks that each old name is not declared, and that each new one
  * is, or has since been dropped or renamed onward in turn.
@@ -2337,8 +2379,8 @@ const renamedTokenPairs: readonly (readonly [from: string, to: string])[] = [
 export const renamed: readonly { from: string; to: string; rationale: string }[] = [
   // The catalogue's canvas is the recessed surface, a token now rather than a formula of its own.
   ...onPage.map((pair) => ({
-    from: pairName({ ...pair, bg: [...pair.bg.slice(0, -1), 'catalogue-canvas'] }),
-    to: pairName(onRecessed(pair)),
+    from: reviewed(pairName({ ...pair, bg: [...pair.bg.slice(0, -1), 'catalogue-canvas'] })),
+    to: reviewed(pairName(onRecessed(pair))),
     rationale:
       'The catalogue’s canvas, a formula in its style sheet, is the recessed surface, --env-color-bg-recessed: the same shade deeper than the page, a token of the themes.',
   })),
@@ -2460,6 +2502,7 @@ export const renamed: readonly { from: string; to: string; rationale: string }[]
     rationale:
       'Every token takes the --env- prefix, and the tone borders are named by emphasis: the solid edge is border.{tone}.emphasis, the translucent one border.{tone}.',
   })),
+  ...apiReviewRenames(),
 ];
 
 /** What a pair is held to: its kind, and its minimum at each contrast it is measured in. */

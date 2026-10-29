@@ -40,6 +40,8 @@
   --env-color-bg-accent-subtle: transparent;
   --env-color-bg-accent-subtle-hover: rgb(0 92 200 / 0.14);
   --env-color-bg-accent-subtle-pressed: rgb(0 92 200 / 0.22);
+  --env-color-bg-backdrop: rgb(31 31 34 / 0.55);
+  --env-color-bg-backdrop-muted: rgb(31 31 34 / 0.3);
   --env-color-bg-brand-emphasis: #1872e7;
   --env-color-bg-brand-emphasis-hover: #005cc8;
   --env-color-bg-brand-emphasis-pressed: #00408f;
@@ -83,8 +85,6 @@
   --env-color-bg-neutral-subtle: transparent;
   --env-color-bg-neutral-subtle-hover: rgb(31 31 34 / 0.08);
   --env-color-bg-neutral-subtle-pressed: rgb(31 31 34 / 0.1);
-  --env-color-bg-overlay: rgb(31 31 34 / 0.55);
-  --env-color-bg-overlay-muted: rgb(31 31 34 / 0.3);
   --env-color-bg-page: #eaeaec;
   --env-color-bg-page-hover: #dddddf;
   --env-color-bg-page-pressed: #d4d4d6;
@@ -269,9 +269,9 @@
   --env-window-class-expanded: 52.5rem;
   --env-window-class-large: 75rem;
   --env-window-class-medium: 37.5rem;
+  --env-z-backdrop: 90;
   --env-z-base: 0;
   --env-z-modal: 100;
-  --env-z-overlay: 90;
   --env-z-peek: 30;
   --env-z-popover: 110;
   --env-z-raised: 1;
@@ -303,6 +303,8 @@
   --env-color-bg-accent-muted: rgb(159 193 248 / 0.14);
   --env-color-bg-accent-subtle-hover: rgb(159 193 248 / 0.14);
   --env-color-bg-accent-subtle-pressed: rgb(159 193 248 / 0.22);
+  --env-color-bg-backdrop: rgb(30 31 33 / 0.55);
+  --env-color-bg-backdrop-muted: rgb(30 31 33 / 0.3);
   --env-color-bg-brand-emphasis: #9fc1f8;
   --env-color-bg-brand-emphasis-hover: #75a5f2;
   --env-color-bg-brand-emphasis-pressed: #4b8bec;
@@ -335,8 +337,6 @@
   --env-color-bg-neutral-strong-pressed: #72767b;
   --env-color-bg-neutral-subtle-hover: rgb(232 234 238 / 0.08);
   --env-color-bg-neutral-subtle-pressed: rgb(232 234 238 / 0.1);
-  --env-color-bg-overlay: rgb(30 31 33 / 0.55);
-  --env-color-bg-overlay-muted: rgb(30 31 33 / 0.3);
   --env-color-bg-page: #1e1f21;
   --env-color-bg-page-hover: #2c2d30;
   --env-color-bg-page-pressed: #383a3d;

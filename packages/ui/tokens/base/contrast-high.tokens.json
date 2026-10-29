@@ -596,8 +596,8 @@
         "focus": {
           "$value": "{palette.blue.65}"
         },
-        "scrim": {
-          "$description": "The edge of a dialog against the scrim: 4.5:1 against the gray of the page under the scrim, which only near-black reaches in light.",
+        "backdrop": {
+          "$description": "The edge of a dialog against the backdrop: 4.5:1 against the gray of the page under the backdrop, which only near-black reaches in light.",
           "$value": "{palette.gray.96}"
         },
         "info": {

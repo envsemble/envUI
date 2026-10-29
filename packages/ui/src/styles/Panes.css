@@ -75,9 +75,9 @@
   }
 
   /* Supporting, below data-split-at: the supporting pane is a modal bottom sheet over the main pane
-     while open, as wide as the panes and at most 85% of their height, over a scrim that closes it,
+     while open, as wide as the panes and at most 85% of their height, over a backdrop that closes it,
      with its close button at the top end. It is on a Sheet's fill, the navigation's, so a surface in
-     it, which it holds side by side, reads as the same panel. As a Sheet, its fill and the scrim set
+     it, which it holds side by side, reads as the same panel. As a Sheet, its fill and the backdrop set
      it apart, with no edge; at high contrast its elevation edge returns (the switch is Theme.css's).
      Inside a Scaffold whose document scrolls, Scaffold.css makes it the window's. */
   .env-panes-supporting {
@@ -108,15 +108,15 @@
     padding: var(--env-space-2);
     background: var(--env-color-bg-default);
   }
-  .env-panes-scrim {
+  .env-panes-backdrop {
     display: none;
   }
-  .env-panes[data-behavior='supporting'][data-open] > .env-panes-scrim {
+  .env-panes[data-behavior='supporting'][data-open] > .env-panes-backdrop {
     position: absolute;
     inset: 0;
     z-index: calc(var(--env-z-peek) - 1);
     display: block;
-    background: var(--env-color-bg-overlay-muted);
+    background: var(--env-color-bg-backdrop-muted);
   }
   /* From a medium width, still below data-split-at: a side sheet at the end, as tall as the panes,
      or the window's inside a Scaffold whose document scrolls (Scaffold.css). */
@@ -183,7 +183,7 @@
       border-radius: 0;
       background: none;
     }
-    .env-panes:is([data-split-at='medium'])[data-behavior='supporting'] > .env-panes-scrim {
+    .env-panes:is([data-split-at='medium'])[data-behavior='supporting'] > .env-panes-backdrop {
       display: none;
     }
     .env-panes:is([data-split-at='medium'])[data-behavior='supporting']
@@ -238,7 +238,7 @@
       background: none;
     }
     .env-panes:is([data-split-at='medium'], [data-split-at='expanded'])[data-behavior='supporting']
-      > .env-panes-scrim {
+      > .env-panes-backdrop {
       display: none;
     }
     .env-panes:is([data-split-at='medium'], [data-split-at='expanded'])[data-behavior='supporting']
@@ -292,7 +292,7 @@
       border-radius: 0;
       background: none;
     }
-    .env-panes:is([data-split-at])[data-behavior='supporting'] > .env-panes-scrim {
+    .env-panes:is([data-split-at])[data-behavior='supporting'] > .env-panes-backdrop {
       display: none;
     }
     .env-panes:is([data-split-at])[data-behavior='supporting']

@@ -92,9 +92,9 @@
         "$description": "A well that keeps a fill of its own, such as the color picker's value button and code and references in rich text. Text fields have none: they take the background of what they sit on.",
         "$value": "{palette.neutral.0}"
       },
-      "overlay": {
+      "backdrop": {
         "$root": {
-          "$description": "The scrim behind dialogs and the command palette: the dark page color at 55%.",
+          "$description": "The backdrop behind dialogs and the command palette: the dark page color at 55%.",
           "$value": {
             "colorSpace": "oklch",
             "components": {
@@ -104,7 +104,7 @@
           }
         },
         "muted": {
-          "$description": "The lighter scrim behind a sheet that leaves the page usable, such as a supporting pane over its main pane: the dark page color at 30%.",
+          "$description": "The lighter backdrop behind a sheet that leaves the page usable, such as a supporting pane over its main pane: the dark page color at 30%.",
           "$value": {
             "colorSpace": "oklch",
             "components": {

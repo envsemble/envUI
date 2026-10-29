@@ -32,7 +32,7 @@ export const VerdictMotion = createContext<false | 'square' | 'wide'>(false);
  * example's fence gives it.
  *
  * Its overlays, such as a menu, a dialog or a tooltip, open live inside the stage, as a tile's do
- * (PreviewOverlays): a dialog's scrim covers the stage, not the page, and nothing leaves it.
+ * (PreviewOverlays): a dialog's backdrop covers the stage, not the page, and nothing leaves it.
  * `height`, a CSS length, keeps the stage as tall as what opens in it from the start, so the
  * figure keeps one height as it plays. Whatever the figure, the stage keeps the tallest height it
  * has reached at its width (useTallest), so a figure that grows for a moment as it plays never

@@ -148,7 +148,7 @@
   min-block-size: 0;
 }
 
-/* A picture of the overlay, without the scrim, which would fill the canvas. */
+/* A picture of the overlay, without the backdrop, which would fill the canvas. */
 .catalogue-related-canvas :is(.env-dialog-backdrop, .env-sheet-backdrop) {
   display: none;
 }

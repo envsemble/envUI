@@ -4762,6 +4762,20 @@
         "high": 4.5
       }
     },
+    "--env-elevation-3-border on --env-color-bg-backdrop over --env-color-bg-page": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 1.6,
+        "high": 4.5
+      }
+    },
+    "--env-elevation-3-border on --env-color-bg-backdrop over --env-color-bg-recessed": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 1.6,
+        "high": 4.5
+      }
+    },
     "--env-elevation-3-border on --env-color-bg-default": {
       "kind": "non-text",
       "minimum": {
@@ -4771,20 +4785,6 @@
     "--env-elevation-3-border on --env-color-bg-muted": {
       "kind": "non-text",
       "minimum": {
-        "high": 4.5
-      }
-    },
-    "--env-elevation-3-border on --env-color-bg-overlay over --env-color-bg-page": {
-      "kind": "non-text",
-      "minimum": {
-        "standard": 1.6,
-        "high": 4.5
-      }
-    },
-    "--env-elevation-3-border on --env-color-bg-overlay over --env-color-bg-recessed": {
-      "kind": "non-text",
-      "minimum": {
-        "standard": 1.6,
         "high": 4.5
       }
     },
@@ -5710,6 +5710,8 @@
     "--env-color-fg-warning on --env-color-bg-warning-subtle-pressed over --env-color-bg-warning-subtle-hover over catalogue-canvas",
     "--env-color-fg-warning on catalogue-canvas",
     "--env-elevation-2-border on catalogue-canvas",
+    "--env-elevation-3-border on --env-color-bg-overlay over --env-color-bg-page",
+    "--env-elevation-3-border on --env-color-bg-overlay over --env-color-bg-recessed",
     "--env-elevation-3-border on --env-color-bg-overlay over catalogue-canvas",
     "--env-elevation-3-border on catalogue-canvas",
     "badge-outline-important on --color-bg-important-strong",

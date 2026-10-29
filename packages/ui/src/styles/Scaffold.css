@@ -80,7 +80,7 @@
     position: absolute;
     inset-block-start: var(--env-space-2);
     inset-inline-start: var(--env-space-2);
-    z-index: var(--env-z-overlay);
+    z-index: var(--env-z-backdrop);
     display: flex;
     flex-wrap: wrap;
     gap: var(--env-space-2);
@@ -252,7 +252,7 @@
 
   /* Panes in a body where the document scrolls are as tall as their content, so a supporting sheet
      placed against them would be as tall as the content too, under the window's edges. Here it is
-     the window's, as a Sheet is: fixed to the window at the modal layer, over a scrim fixed over the
+     the window's, as a Sheet is: fixed to the window at the modal layer, over a backdrop fixed over the
      whole window, top bar and bar included, scrolling inside itself and clear of the safe areas; a
      bottom sheet as tall as the window allows, less the room Sheet leaves above one. The panes
      don't scroll on their own there, so sticky content in them sticks to the window. Only places,
@@ -271,9 +271,9 @@
   }
   :where(.env-scaffold[data-scroll='document'])
     .env-panes[data-behavior='supporting'][data-open]
-    > .env-panes-scrim[aria-hidden] {
+    > .env-panes-backdrop[aria-hidden] {
     position: fixed;
-    z-index: var(--env-z-overlay);
+    z-index: var(--env-z-backdrop);
   }
   @container env-panes (width < 37.5rem) {
     :where(.env-scaffold[data-scroll='document'])

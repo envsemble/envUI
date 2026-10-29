@@ -526,8 +526,8 @@
     "3": {
       "border": {
         "$type": "color",
-        "$description": "Dialogs float over the scrim, so their edge keeps 4.5:1 against the scrim over the page.",
-        "$value": "{contrast-high.color.border.scrim}"
+        "$description": "Dialogs float over the backdrop, so their edge keeps 4.5:1 against the backdrop over the page.",
+        "$value": "{contrast-high.color.border.backdrop}"
       }
     }
   },

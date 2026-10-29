@@ -73,7 +73,7 @@
       "field": {
         "$value": "{palette.neutral.92}"
       },
-      "overlay": {
+      "backdrop": {
         "$root": {
           "$value": {
             "colorSpace": "oklch",

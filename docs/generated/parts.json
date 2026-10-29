@@ -1640,6 +1640,7 @@
         "Icon",
         "Kbd",
         "ListRow",
+        "Overlay",
         "Skeleton",
         "Surface",
         "TextField",
@@ -1746,6 +1747,7 @@
         "Alert",
         "Button",
         "Dialog",
+        "Overlay",
         "Skeleton",
         "Surface",
         "Theme"
@@ -1995,10 +1997,6 @@
         {
           "class": "env-dialog-title",
           "description": "The title."
-        },
-        {
-          "class": "env-overlay-theme",
-          "description": "The theme boundary of a dialog's, a sheet's or the command palette's portal. It has no box, so their scrim and positioner keep their own layers; the positioner is the env-window container."
         }
       ],
       "states": [
@@ -2061,6 +2059,7 @@
       ],
       "uses": [
         "Button",
+        "Overlay",
         "Skeleton",
         "Surface",
         "Theme"
@@ -3700,6 +3699,10 @@
           "description": "The button back to the list, when one pane shows at a time."
         },
         {
+          "class": "env-panes-backdrop",
+          "description": "The backdrop behind the supporting sheet."
+        },
+        {
           "class": "env-panes-close",
           "description": "The supporting sheet's close button, which shows only while the pane is a sheet."
         },
@@ -3718,10 +3721,6 @@
         {
           "class": "env-panes-main",
           "description": "The main pane of supporting panes."
-        },
-        {
-          "class": "env-panes-scrim",
-          "description": "The scrim behind the supporting sheet."
         },
         {
           "class": "env-panes-supporting",
@@ -4658,6 +4657,7 @@
         "Dialog",
         "Icon",
         "IconButton",
+        "Overlay",
         "ResizeHandle",
         "Skeleton",
         "Surface",
@@ -5589,16 +5589,16 @@
           "description": "A notification's message."
         },
         {
-          "class": "env-toast-portal-theme",
-          "description": "The theme boundary around the notifications."
-        },
-        {
           "class": "env-toast-queued-count",
           "description": "The count of notifications waiting."
         },
         {
           "class": "env-toast-status-icon",
           "description": "The icon of a notification's tone."
+        },
+        {
+          "class": "env-toast-theme",
+          "description": "The theme boundary around the notifications."
         },
         {
           "class": "env-toast-viewport",
@@ -6207,6 +6207,22 @@
       ],
       "usedBy": [
         "TopBar"
+      ]
+    },
+    "Overlay": {
+      "root": null,
+      "parts": [
+        {
+          "class": "env-overlay-theme",
+          "description": "The theme boundary of a dialog's, a sheet's or the command palette's portal. It has no box, so their backdrop and positioner keep their own layers; the positioner is the env-window container."
+        }
+      ],
+      "states": [],
+      "usedBy": [
+        "CommandPalette",
+        "ConfirmDialog",
+        "Dialog",
+        "Sheet"
       ]
     },
     "PickerPopup": {

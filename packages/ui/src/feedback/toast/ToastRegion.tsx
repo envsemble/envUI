@@ -291,7 +291,7 @@ export function ToastRegion({
   if (contained)
     return (
       <BaseToast.Portal container={container}>
-        <Theme {...theme} className="env-toast-portal-theme">
+        <Theme {...theme} className="env-toast-theme">
           <div
             ref={attachViewport}
             className="env-toast-viewport"
@@ -352,7 +352,7 @@ export function ToastRegion({
     );
   return (
     <BaseToast.Portal container={container}>
-      <Theme {...theme} className="env-toast-portal-theme">
+      <Theme {...theme} className="env-toast-theme">
         <BaseToast.Viewport
           ref={attachViewport}
           className="env-toast-viewport"

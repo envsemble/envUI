@@ -140,7 +140,7 @@
   }
   /* The toasts need no window, so their portal's boundary is no container: nothing changes for the
      fixed viewport inside it. */
-  .env-toast-portal-theme {
+  .env-toast-theme {
     container-type: normal;
     background: none;
   }

@@ -1,6 +1,6 @@
 @layer env.components {
   /* Quick open: a dialog near the top of the window with a search field over its options. It is a
-     frosted popup over the dialog's scrim (Popup.css), with a solid search pill, and its options take
+     frosted popup over the dialog's backdrop (Popup.css), with a solid search pill, and its options take
      the Select options' shape and colors. */
   .env-command-palette-positioner {
     box-sizing: border-box;

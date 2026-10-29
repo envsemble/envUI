@@ -13,8 +13,8 @@
     pointer-events: auto;
   }
   /* A dialog follows the popups' rules (Popup.css): their fill, their soft shadow and no edge, and its
-     header, content and actions part by space. Unlike a popup it isn't frosted: over its scrim, what
-     shows through would only grey the dialog and smudge it with the shapes the scrim dims. Where
+     header, content and actions part by space. Unlike a popup it isn't frosted: over its backdrop, what
+     shows through would only grey the dialog and smudge it with the shapes the backdrop dims. Where
      popups are solid, at high contrast, with reduced transparency and under forced colors, it has no
      shadow and its elevation edge returns. What it holds takes the fill as the color beneath it. */
   .env-surface.env-dialog {
@@ -54,13 +54,13 @@
     color: var(--env-color-fg-muted);
   }
   /* The theme boundary of a modal surface's portal (Dialog, ConfirmDialog, Sheet, CommandPalette) has
-     no box: it carries the theme to the scrim and the surface and is no container. The surface's
+     no box: it carries the theme to the backdrop and the surface and is no container. The surface's
      layer, the fixed positioner over the viewport (Sheet's viewport), is the env-window container
      instead, as wide as the window, so the boundary is neither a stacking context nor a containing
-     block in any engine. The scrim and the positioner keep their own layers in the root context,
+     block in any engine. The backdrop and the positioner keep their own layers in the root context,
      under the menus, toasts and tooltips opened over them, which portal beside them: a boundary that
      were fixed over the viewport would start a stacking context even without a z-index (a fixed box
-     always does), and one of no height out of flow would be the fixed scrim's containing block in an
+     always does), and one of no height out of flow would be the fixed backdrop's containing block in an
      engine whose container-type also contains layout. The positioner, a stacking context already,
      is safe as the container in both. */
   .env-overlay-theme {
@@ -71,9 +71,9 @@
     position: fixed;
     inset: 0;
     pointer-events: auto;
-    z-index: var(--env-z-overlay);
-    background: var(--env-color-bg-overlay);
-    /* Motion: the scrim fades in and out. */
+    z-index: var(--env-z-backdrop);
+    background: var(--env-color-bg-backdrop);
+    /* Motion: the backdrop fades in and out. */
     transition: opacity var(--env-motion-duration-slow) var(--env-motion-ease-enter);
   }
   .env-confirm-dialog-form {
@@ -103,7 +103,7 @@
     padding-block-start: max(var(--env-viewport-gutter), min(12vh, 6rem), env(safe-area-inset-top));
   }
 
-  /* Motion: the scrim fades, and the dialog fades and rises into place. Movement only without a
+  /* Motion: the backdrop fades, and the dialog fades and rises into place. Movement only without a
      reduced-motion preference. Dialogs have no positioner, so they scale from the center. */
   .env-dialog-backdrop[data-starting-style],
   .env-dialog-backdrop[data-ending-style],

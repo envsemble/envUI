@@ -19,7 +19,7 @@ export interface PortalContainerProps {
    * sizes to its content; toasts are shown without the page's F6 shortcut; and a press or Esc
    * outside the container and the overlay's trigger doesn't close them, while the trigger and the
    * overlay's own controls do. Make the container a containing block, such as with
-   * `contain: layout`, to keep fixed overlays, such as dialogs and their scrims, inside it, and
+   * `contain: layout`, to keep fixed overlays, such as dialogs and their backdrops, inside it, and
    * give it or an ancestor `container-type: inline-size`: a popup is at most as wide as that size
    * container, or else as the window. A ContextMenu opens there too, at the pointer or below the
    * focused element, without hiding the page or locking its scroll; a long press doesn't open it.

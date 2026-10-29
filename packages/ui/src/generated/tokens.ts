@@ -393,6 +393,28 @@ export const tokens = {
       'dark-high-contrast': 'rgb(224 235 253 / 0.22)',
     },
   },
+  /** The backdrop behind dialogs and the command palette: the dark page color at 55%. */
+  'color.bg.backdrop': {
+    cssVariable: '--env-color-bg-backdrop',
+    type: 'color',
+    values: {
+      light: 'rgb(31 31 34 / 0.55)',
+      dark: 'rgb(30 31 33 / 0.55)',
+      'light-high-contrast': 'rgb(31 31 34 / 0.55)',
+      'dark-high-contrast': 'rgb(30 31 33 / 0.55)',
+    },
+  },
+  /** The lighter backdrop behind a sheet that leaves the page usable, such as a supporting pane over its main pane: the dark page color at 30%. */
+  'color.bg.backdrop.muted': {
+    cssVariable: '--env-color-bg-backdrop-muted',
+    type: 'color',
+    values: {
+      light: 'rgb(31 31 34 / 0.3)',
+      dark: 'rgb(30 31 33 / 0.3)',
+      'light-high-contrast': 'rgb(31 31 34 / 0.3)',
+      'dark-high-contrast': 'rgb(30 31 33 / 0.3)',
+    },
+  },
   /** The brand fill of primary actions, chosen radios and the chosen calendar day; paired with fg.on-emphasis. In dark and at high contrast, checked checkboxes, switches that are on, sliders, meters and spinners take it too: a soft blue with dark marks at 4.5:1. */
   'color.bg.brand.emphasis': {
     cssVariable: '--env-color-bg-brand-emphasis',
@@ -864,28 +886,6 @@ export const tokens = {
       dark: 'rgb(232 234 238 / 0.1)',
       'light-high-contrast': 'rgb(31 31 34 / 0.08)',
       'dark-high-contrast': 'rgb(232 234 238 / 0.08)',
-    },
-  },
-  /** The scrim behind dialogs and the command palette: the dark page color at 55%. */
-  'color.bg.overlay': {
-    cssVariable: '--env-color-bg-overlay',
-    type: 'color',
-    values: {
-      light: 'rgb(31 31 34 / 0.55)',
-      dark: 'rgb(30 31 33 / 0.55)',
-      'light-high-contrast': 'rgb(31 31 34 / 0.55)',
-      'dark-high-contrast': 'rgb(30 31 33 / 0.55)',
-    },
-  },
-  /** The lighter scrim behind a sheet that leaves the page usable, such as a supporting pane over its main pane: the dark page color at 30%. */
-  'color.bg.overlay.muted': {
-    cssVariable: '--env-color-bg-overlay-muted',
-    type: 'color',
-    values: {
-      light: 'rgb(31 31 34 / 0.3)',
-      dark: 'rgb(30 31 33 / 0.3)',
-      'light-high-contrast': 'rgb(31 31 34 / 0.3)',
-      'dark-high-contrast': 'rgb(30 31 33 / 0.3)',
     },
   },
   /** The page behind all content: the app frame, title bars and Surface background="page". Deeper than the panes and cards on it in both themes, so they part from it. */
@@ -1925,7 +1925,7 @@ export const tokens = {
       'dark-high-contrast': '#a1a4a9',
     },
   },
-  /** The edge of dialogs, sheets and the command palette where they are solid, the same as level 2's; a modal's scrim sets it apart as well. A dialog and the palette otherwise part by their fill and the popups' soft shadow, a sheet by its fill. */
+  /** The edge of dialogs, sheets and the command palette where they are solid, the same as level 2's; a modal's backdrop sets it apart as well. A dialog and the palette otherwise part by their fill and the popups' soft shadow, a sheet by its fill. */
   'elevation.3.border': {
     cssVariable: '--env-elevation-3-border',
     type: 'color',
@@ -2730,13 +2730,19 @@ export const tokens = {
       'dark-high-contrast': '37.5rem',
     },
   },
+  /** The backdrop behind a modal layer, which covers the page and the frame. */
+  'z.backdrop': {
+    cssVariable: '--env-z-backdrop',
+    type: 'number',
+    values: { light: '90', dark: '90', 'light-high-contrast': '90', 'dark-high-contrast': '90' },
+  },
   /** The flow of a page or a component; a part drawn behind its siblings takes calc(var(--env-z-base) - 1). */
   'z.base': {
     cssVariable: '--env-z-base',
     type: 'number',
     values: { light: '0', dark: '0', 'light-high-contrast': '0', 'dark-high-contrast': '0' },
   },
-  /** Modal layers over their scrim: dialogs, sheets and the command palette. */
+  /** Modal layers over their backdrop: dialogs, sheets and the command palette. */
   'z.modal': {
     cssVariable: '--env-z-modal',
     type: 'number',
@@ -2747,13 +2753,7 @@ export const tokens = {
       'dark-high-contrast': '100',
     },
   },
-  /** The scrim behind a modal layer, which covers the page and the frame. */
-  'z.overlay': {
-    cssVariable: '--env-z-overlay',
-    type: 'number',
-    values: { light: '90', dark: '90', 'light-high-contrast': '90', 'dark-high-contrast': '90' },
-  },
-  /** A supporting pane that opens over its main pane as a sheet, and the scrim behind it, above the sticky parts. */
+  /** A supporting pane that opens over its main pane as a sheet, and the backdrop behind it, above the sticky parts. */
   'z.peek': {
     cssVariable: '--env-z-peek',
     type: 'number',

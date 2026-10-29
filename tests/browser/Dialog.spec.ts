@@ -229,7 +229,7 @@ const token = (page: import('@playwright/test').Page, name: string) =>
     return color;
   }, name);
 
-test('dialogs take the popups’ fill and shadow with no edge, solid over the scrim; the command palette and popovers are frosted', async ({
+test('dialogs take the popups’ fill and shadow with no edge, solid over the backdrop; the command palette and popovers are frosted', async ({
   page,
 }) => {
   await page.goto(`${fixtureUrl}/?fixture=popover`);

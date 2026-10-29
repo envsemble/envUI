@@ -596,7 +596,7 @@
         "focus": {
           "$value": "{palette.blue.15}"
         },
-        "scrim": {
+        "backdrop": {
           "$value": "{palette.neutral.30}"
         },
         "info": {

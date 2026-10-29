@@ -12,20 +12,20 @@ import '../../styles/Dialog.css';
 
 /**
  * The parts Dialog, Sheet, CommandPalette and other modal surfaces share, inside a Base UI Dialog
- * or Drawer root: the scrim, the raised surface, the heading block and the actions row. Each owner
+ * or Drawer root: the backdrop, the raised surface, the heading block and the actions row. Each owner
  * adds its own class for its placement and motion.
  */
 
 /**
  * The theme boundary in a modal surface's portal. It has no box and is no container, so it starts
- * no stacking context: the scrim and the surface's positioner keep their own layers, under what
+ * no stacking context: the backdrop and the surface's positioner keep their own layers, under what
  * opens over them, and the positioner, fixed over the viewport, is the env-window container.
  */
 export function OverlayTheme({ className, ...props }: ThemeProps) {
   return <Theme {...props} className={classNames('env-overlay-theme', className)} />;
 }
 
-/** The scrim behind a modal surface, which fades in and out. */
+/** The backdrop behind a modal surface, which fades in and out. */
 export function DialogBackdrop({ className }: { className?: string }) {
   return <BaseDialog.Backdrop className={classNames('env-dialog-backdrop', className)} />;
 }

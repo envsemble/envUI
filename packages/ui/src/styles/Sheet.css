@@ -133,7 +133,7 @@
   /* A sheet is solid, on the navigation's fill, the default surface, rather than the popup's, in every
      theme: navigation that opens in a sheet in a narrow window keeps the color it has at the window's
      edge in a wide one, and a Drawer or a Rail in it takes the sheet's color as on any surface. Its
-     fill and its scrim set it apart from the page, with no edge; at high contrast its elevation edge
+     fill and its backdrop set it apart from the page, with no edge; at high contrast its elevation edge
      returns as its boundary, through the theme's high-contrast switch (Theme.css). */
   .env-sheet-viewport .env-sheet {
     --env-surface-color: var(--env-color-bg-default);

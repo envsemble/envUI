@@ -47,8 +47,6 @@
     "--color-bg-neutral-subtle",
     "--color-bg-neutral-subtle-hover",
     "--color-bg-neutral-subtle-pressed",
-    "--color-bg-overlay",
-    "--color-bg-overlay-muted",
     "--color-bg-page",
     "--color-bg-page-hover",
     "--color-bg-page-pressed",
@@ -425,6 +423,26 @@
     "--env-color-avatar-bg-slate": {
       "replacement": "color.avatar.bg.oat",
       "note": "The avatar hues are named for their colors: slate is oat. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-oat and --env-color-avatar-figure-oat."
+    },
+    "--color-bg-overlay": {
+      "replacement": "color.bg.backdrop",
+      "note": "The layer behind a modal is the backdrop, as Base UI and the Colors page name it."
+    },
+    "--color-bg-overlay-muted": {
+      "replacement": "color.bg.backdrop.muted",
+      "note": "The layer behind a modal is the backdrop, as Base UI and the Colors page name it."
+    },
+    "--env-color-bg-overlay": {
+      "replacement": "color.bg.backdrop",
+      "note": "The layer behind a modal is the backdrop, as Base UI and the Colors page name it."
+    },
+    "--env-color-bg-overlay-muted": {
+      "replacement": "color.bg.backdrop.muted",
+      "note": "The layer behind a modal is the backdrop, as Base UI and the Colors page name it."
+    },
+    "--env-z-overlay": {
+      "replacement": "z.backdrop",
+      "note": "The layer behind a modal is the backdrop, as Base UI and the Colors page name it."
     }
   },
   "aliases": {
@@ -535,8 +553,8 @@
       "replacement": "color.bg.raised"
     },
     "--color-dialog-overlay": {
-      "replacement": "color.bg.overlay",
-      "note": "0.7's was opaque, #1f1f1f (hsl(0 0% 12.157%) in both themes), and the dialog backdrop made it 55% opaque with --state-dialog-overlay-opacity, which is removed. The role is the scrim itself, 55% opaque: paint it as it is, since a style that applies its own opacity now applies it twice. For the opaque color, write #1f1f1f."
+      "replacement": "color.bg.backdrop",
+      "note": "0.7's was opaque, #1f1f1f (hsl(0 0% 12.157%) in both themes), and the dialog backdrop made it 55% opaque with --state-dialog-overlay-opacity, which is removed. The role is the backdrop itself, 55% opaque: paint it as it is, since a style that applies its own opacity now applies it twice. For the opaque color, write #1f1f1f."
     },
     "--color-direction-link": {
       "replacement": "color.bg.raised",
@@ -1083,8 +1101,8 @@
       "note": "Each tone has its tint as a color token: color.bg.{tone}.muted."
     },
     "--state-dialog-overlay-opacity": {
-      "replacement": "color.bg.overlay",
-      "note": "The scrim is a translucent color token now."
+      "replacement": "color.bg.backdrop",
+      "note": "The backdrop is a translucent color token now."
     },
     "--state-fill-opacity": {
       "replacement": "color.bg.neutral.muted",
@@ -1190,28 +1208,28 @@
       "note": "WindowFrame is gone: a TopBar with titleBar keeps clear of the window's controls through --env-top-bar-title-bar-start and -end."
     },
     "--elevation-0-shadow": {
-      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its backdrop as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
     },
     "--elevation-1-shadow": {
-      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its backdrop as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
     },
     "--elevation-2-shadow": {
-      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its backdrop as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
     },
     "--elevation-3-shadow": {
-      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its backdrop as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
     },
     "--env-elevation-0-shadow": {
-      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its backdrop as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
     },
     "--env-elevation-1-shadow": {
-      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its backdrop as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
     },
     "--env-elevation-2-shadow": {
-      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its backdrop as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
     },
     "--env-elevation-3-shadow": {
-      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its backdrop as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
     },
     "--env-toast-fill-hover": {
       "note": "A toast's hover and press fill tokens are gone, not private: set --env-toast-container, and its dismiss button's hover and press become layers of its text color."
