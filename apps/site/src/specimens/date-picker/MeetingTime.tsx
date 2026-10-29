@@ -6,8 +6,8 @@ const field = '.env-date-picker-control';
 const day = (date: string) => `.env-calendar-day[data-date="${date}"]`;
 const hours = '.env-time-list-column[data-part="hour"]';
 // The rows beside the hour in the wheel's middle.
-const later = `${hours} .env-time-list-row[data-centred] + .env-time-list-row`;
-const earlier = `${hours} .env-time-list-row:has(+ [data-centred])`;
+const later = `${hours} .env-time-list-row[data-centered] + .env-time-list-row`;
+const earlier = `${hours} .env-time-list-row:has(+ [data-centered])`;
 
 /*
  * The pointer opens the field on the 21st at 9:30 and picks the 22nd: the calendar stays open

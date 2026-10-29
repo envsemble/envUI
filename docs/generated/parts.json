@@ -6448,7 +6448,7 @@
       ],
       "states": [
         {
-          "attribute": "data-centred",
+          "attribute": "data-centered",
           "values": [
             "true"
           ],

@@ -411,7 +411,7 @@ export function TimeWheel({
               aria-hidden="true"
               className="env-time-list-row"
               data-value={item.value}
-              data-centred={rowIndex === centred || undefined}
+              data-centered={rowIndex === centred || undefined}
               data-disabled={item.disabled || undefined}
               onClick={() => {
                 if (!item.disabled) scrollToRow(rowIndex, true);

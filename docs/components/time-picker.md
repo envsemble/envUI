@@ -73,7 +73,7 @@ examples:
 
 1. **Popup** (`env-time-picker-popup`)
 2. **Column** (`env-time-list-column`)
-3. **Time** (`env-time-list-row[data-centred]`)
+3. **Time** (`env-time-list-row[data-centered]`)
 4. **Actions** (`env-date-picker-actions`)
 
 ## Behaviour
@@ -159,7 +159,7 @@ The value is a time of day as `HH:mm` on the 24-hour clock, or `null` for none: 
 
 ### Composition
 
-TimePicker shares DatePicker's field and its picker card, `env-picker-popup` with `env-date-picker-popup` and `env-time-picker-popup`: the wheels in its body, `env-picker-popup-body`, and Now and Clear in its footer, `env-picker-popup-footer` with `env-date-picker-actions`. The wheels are for hours, minutes and, on a 12-hour clock, the day period, each row an `env-time-list-row`, the chosen one with `data-centred`. `className` and `style` reach the root, and `ref` the field's button.
+TimePicker shares DatePicker's field and its picker card, `env-picker-popup` with `env-date-picker-popup` and `env-time-picker-popup`: the wheels in its body, `env-picker-popup-body`, and Now and Clear in its footer, `env-picker-popup-footer` with `env-date-picker-actions`. The wheels are for hours, minutes and, on a 12-hour clock, the day period, each row an `env-time-list-row`, the chosen one with `data-centered`. `className` and `style` reach the root, and `ref` the field's button.
 
 ### Customize
 

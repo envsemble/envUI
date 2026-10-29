@@ -66,7 +66,7 @@ const states: Record<string, [state: string, rest: string]> = {
     '.env-calendar-day:has-text("20")',
   ],
   'the chosen hour': [
-    '[data-part=hour] .env-time-list-row[data-centred]',
+    '[data-part=hour] .env-time-list-row[data-centered]',
     '[data-part=hour] .env-time-list-row[data-value="10"]',
   ],
   'an unavailable hour': [
@@ -205,7 +205,7 @@ test(
       '.env-rail-item[data-current] .env-rail-indicator',
       "[role=treeitem][aria-selected='true']",
       '.env-calendar-day[aria-selected=true] > .env-calendar-day-mark',
-      '[data-part=hour] .env-time-list-row[data-centred]',
+      '[data-part=hour] .env-time-list-row[data-centered]',
       '.env-month-picker-month[aria-selected=true] > .env-month-picker-month-mark',
       '.env-checkbox:has-text("Checked") >> nth=0 >> .env-checkbox-input',
       '.env-switch:has-text("On") >> .env-switch-input',
