@@ -179,6 +179,20 @@ function useDrawerWidth(
   };
 }
 
+/**
+ * A part's NavigationDrawer, with the width the reader drags (useDrawerWidth) kept here, so a drag
+ * renders the drawer alone on each move, not the navigation around it, whose destinations stay the
+ * same array and leave the drawer's rows as they are.
+ */
+function SiteDrawer({
+  area,
+  inSheet,
+  ...props
+}: { area: Area; inSheet: boolean } & ComponentProps<typeof NavigationDrawer>) {
+  const drawerWidth = useDrawerWidth(area, inSheet);
+  return <NavigationDrawer {...props} {...drawerWidth} />;
+}
+
 interface NavigationProps {
   /** The page shown, whose destination and page the navigation marks as current. */
   page?: RoutePage;
@@ -221,7 +235,6 @@ export function CatalogueNavigation({
   onSearch,
 }: NavigationProps) {
   const element = useCurrentInView();
-  const drawerWidth = useDrawerWidth('catalogue', inSheet);
   const section = (page?.area === 'catalogue' ? page.section : 'Overview') as CatalogueSection;
   const pages = pagesOf('catalogue').filter((entry) => entry.section === section);
   return (
@@ -233,12 +246,13 @@ export function CatalogueNavigation({
         footer={<MotionButton />}
         destinations={catalogueDestinations(page?.area === 'catalogue' ? section : undefined)}
       />
-      <NavigationDrawer
+      <SiteDrawer
+        area="catalogue"
+        inSheet={inSheet}
         aria-label={section}
         className="site-sidebar"
         header={<SearchButton onClick={onSearch} className="site-drawer-search" />}
         destinations={pageDestinations(pages, routePath, onChoose)}
-        {...drawerWidth}
       />
     </div>
   );
@@ -255,10 +269,11 @@ export function DocsNavigation({
   onSearch,
 }: NavigationProps) {
   const element = useCurrentInView();
-  const drawerWidth = useDrawerWidth('docs', inSheet);
   return (
     <div ref={element} className="site-navigation" data-in-sheet={inSheet || undefined}>
-      <NavigationDrawer
+      <SiteDrawer
+        area="docs"
+        inSheet={inSheet}
         aria-label="Docs"
         className="site-sidebar"
         header={
@@ -268,7 +283,6 @@ export function DocsNavigation({
           </div>
         }
         destinations={docsDestinations(routePath, onChoose)}
-        {...drawerWidth}
       />
     </div>
   );

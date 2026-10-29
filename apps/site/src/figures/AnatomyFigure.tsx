@@ -135,6 +135,8 @@ function AnatomyStage({
     const subjectElement = subject.current;
     if (!stageElement || !subjectElement) return;
     let frame = 0;
+    /** The variants' names' widths, measured once, and again as the fonts arrive. */
+    const labels = new Map<string, number>();
     const update = () => {
       cancelAnimationFrame(frame);
       // Only a change of place re-renders the callouts.
@@ -142,7 +144,7 @@ function AnatomyStage({
         // Open overlays take the room they need; they are never small.
         if (!open && !variants) enlarge(subjectElement, enlarged);
         const measured = variants
-          ? measureVariants(stageElement, subjectElement, legend)
+          ? measureVariants(stageElement, subjectElement, legend, labels)
           : { callouts: measure(stageElement, subjectElement, legend), room: undefined };
         const next = measured.callouts;
         setCallouts((current) =>
@@ -166,7 +168,10 @@ function AnatomyStage({
       subtree: true,
       attributeFilter: ['class', 'style'],
     });
-    void document.fonts?.ready.then(update);
+    void document.fonts?.ready.then(() => {
+      labels.clear();
+      update();
+    });
     // And as its parts settle where they enter with motion, such as a dock's panel rising into
     // place, which moves them without resizing them.
     subjectElement.addEventListener('animationend', update);

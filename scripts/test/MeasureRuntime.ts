@@ -8,7 +8,8 @@
 // and the site into .cache/perf, serves both with `vite preview` on ENVUI_FIXTURE_PORT and
 // ENVUI_SITE_PORT (8779 and 8778 by default), and prints JSON. --no-build serves the last build.
 // Each scenario runs once to warm up and then --runs times (7 by default); the median is reported,
-// with the fastest and slowest run. --only takes some of table, list, popups, theme and idle.
+// with the fastest and slowest run. --only takes some of table, list, popups, theme, idle and
+// resize.
 //
 // - table, list: a 1,000-row Table and a 1,000-item List, first render on a fresh page; the table
 //   then changes one row. `commit` is React's render and commit (flushSync), `frame` that and the
@@ -21,6 +22,12 @@
 // - idle: the Button page left still for 5 s, its figures paused, off-screen or playing:
 //   requestAnimationFrame calls by caller, and from a trace the frames, timers and layouts, forced
 //   ones (synchronous, from script) by where in the source they were forced.
+// - resize: the site's NavigationDrawer dragged by its handle, there and back, on the catalogue's
+//   Button page, its figures paused, and on the Docs' Button page, whose drawer lists every page:
+//   a mouse that moves 1.5 px every 8 ms for 100 moves, not waiting for the page. The frames
+//   dropped and the longest, the long animation frames, React's commits and the components they
+//   rendered (counted through React's DevTools hook) for each pointermove the page received, and
+//   the script, style and layout time CDP's Performance domain counts, for each frame.
 import { availableParallelism, cpus, platform, release } from 'node:os';
 import { mkdir, readFile } from 'node:fs/promises';
 import { SourceMap } from 'node:module';
@@ -59,14 +66,14 @@ const option = (name: string) => {
   return index === -1 ? undefined : args[index + 1];
 };
 const runs = Number(option('--runs') ?? 7);
-const allScenarios = ['table', 'list', 'popups', 'theme', 'idle'];
+const allScenarios = ['table', 'list', 'popups', 'theme', 'idle', 'resize'];
 const only = (option('--only') ?? allScenarios.join(',')).split(',');
 for (const name of only)
   if (!allScenarios.includes(name))
     throw new Error(`Unknown scenario ${name}: ${allScenarios.join(', ')}.`);
 const fresh = !args.includes('--no-build');
 const wants = (name: string) => only.includes(name);
-const needsSite = wants('theme') || wants('idle');
+const needsSite = wants('theme') || wants('idle') || wants('resize');
 const needsFixture = wants('table') || wants('list') || wants('popups');
 
 /** Rounded to a tenth of a millisecond. */
@@ -131,7 +138,8 @@ async function serve(name: 'site' | 'fixture'): Promise<PreviewServer> {
 
 const fixtureUrl = (scenario: string) =>
   `http://127.0.0.1:${ports.fixture}/perf.html?scenario=${scenario}`;
-const catalogueUrl = `http://127.0.0.1:${ports.site}/components/button`;
+const siteUrl = (path: string) => `http://127.0.0.1:${ports.site}/${path}`;
+const catalogueUrl = siteUrl('components/button');
 
 async function openFixture(browser: Browser, scenario: string) {
   const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
@@ -201,8 +209,14 @@ const storageKeys = { theme: 'envui-site-theme', motion: 'envui-site-motion' };
  * A fresh page of the catalogue, with the theme and the figures' playback stored before it loads,
  * and requestAnimationFrame counted by caller while `window.envuiIdle.counting` is on.
  */
-async function openCatalogue(browser: Browser, theme: string, motion: 'paused' | 'playing') {
+async function openCatalogue(
+  browser: Browser,
+  theme: string,
+  motion: 'paused' | 'playing',
+  { url = catalogueUrl, before }: { url?: string; before?: () => void } = {},
+) {
   const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
+  if (before) await context.addInitScript(before);
   await context.addInitScript(
     ({ keys, theme, motion }) => {
       localStorage.setItem(keys.theme, theme);
@@ -222,7 +236,7 @@ async function openCatalogue(browser: Browser, theme: string, motion: 'paused' |
     { keys: storageKeys, theme, motion },
   );
   const page = await context.newPage();
-  await page.goto(catalogueUrl);
+  await page.goto(url);
   await page.waitForLoadState('networkidle');
   await page.evaluate(() => document.fonts.ready.then(() => undefined));
   return page;
@@ -487,6 +501,177 @@ async function idle(browser: Browser, figures: 'paused' | 'offScreen' | 'playing
   };
 }
 
+/**
+ * Counts React's commits, and the components each rendered, while `window.envuiRenders.counting`
+ * is on, through the hook React DevTools installs: a component counts where React rendered it (its
+ * fiber's PerformedWork flag), not where it kept the subtree it had.
+ */
+function countRenders() {
+  interface Fiber {
+    tag: number;
+    flags: number;
+    child: Fiber | null;
+    sibling: Fiber | null;
+    alternate: Fiber | null;
+  }
+  const renders = { counting: false, commits: 0, components: 0 };
+  (window as unknown as { envuiRenders: typeof renders }).envuiRenders = renders;
+  // Function, class, forwardRef, memo and simple memo components.
+  const components = new Set([0, 1, 11, 14, 15]);
+  const mounted = (first: Fiber | null) => {
+    for (let fiber = first; fiber; fiber = fiber.sibling) {
+      if (components.has(fiber.tag)) renders.components += 1;
+      mounted(fiber.child);
+    }
+  };
+  const updated = (parent: Fiber) => {
+    for (let fiber = parent.child; fiber; fiber = fiber.sibling) {
+      const before = fiber.alternate;
+      if (!before) {
+        if (components.has(fiber.tag)) renders.components += 1;
+        mounted(fiber.child);
+        continue;
+      }
+      if (components.has(fiber.tag) && fiber.flags & 1) renders.components += 1;
+      // Where React bailed out, the fiber keeps the children it had, which didn't render.
+      if (fiber.child !== before.child) updated(fiber);
+    }
+  };
+  Object.assign(window, {
+    __REACT_DEVTOOLS_GLOBAL_HOOK__: {
+      supportsFiber: true,
+      isDisabled: false,
+      renderers: new Map(),
+      inject: () => 1,
+      checkDCE() {},
+      onScheduleFiberRoot() {},
+      onCommitFiberUnmount() {},
+      onPostCommitFiberRoot() {},
+      setStrictMode() {},
+      onCommitFiberRoot(_id: number, root: { current: Fiber }) {
+        if (!renders.counting) return;
+        renders.commits += 1;
+        const current = root.current;
+        if (current.alternate && current.child !== current.alternate.child) updated(current);
+      },
+    },
+  });
+}
+
+/** What the page records through one drag. */
+interface DragRecord {
+  frames: number[];
+  longFrames: number;
+  moves: number;
+  commits: number;
+  components: number;
+}
+declare global {
+  interface Window {
+    envuiRenders: { counting: boolean; commits: number; components: number };
+    envuiDrag: DragRecord & { stop(): DragRecord };
+  }
+}
+
+/** The site's drawer dragged by its handle, there and back, as a mouse at 125 Hz does. */
+async function resizeDrawer(browser: Browser, path: string) {
+  const page = await openCatalogue(browser, 'light', 'paused', {
+    url: siteUrl(path),
+    before: countRenders,
+  });
+  await settle(page, 1500);
+  const read = await metrics(page);
+  const session = await page.context().newCDPSession(page);
+  const handle = page.locator('.site-sidebar .env-navigation-drawer-resize-handle');
+  const moves = 100;
+  const step = 1.5;
+  const frameTime = 1000 / 60;
+  const mouse = (
+    type: 'mouseMoved' | 'mousePressed' | 'mouseReleased',
+    x: number,
+    y: number,
+    buttons: number,
+  ) =>
+    session.send('Input.dispatchMouseEvent', {
+      type,
+      x,
+      y,
+      buttons,
+      button: type === 'mouseMoved' && !buttons ? 'none' : 'left',
+      clickCount: type === 'mouseMoved' ? 0 : 1,
+    });
+  let direction = 1;
+  const dragOnce = async () => {
+    const box = (await handle.boundingBox())!;
+    const x = box.x + box.width / 2;
+    const y = box.y + box.height / 2;
+    await mouse('mouseMoved', x, y, 0);
+    await mouse('mousePressed', x, y, 1);
+    await page.evaluate(() => {
+      const drag = { frames: [] as number[], longFrames: 0, moves: 0, commits: 0, components: 0 };
+      let on = true;
+      const frame = (time: number) => {
+        drag.frames.push(time);
+        if (on) requestAnimationFrame(frame);
+      };
+      requestAnimationFrame(frame);
+      const onMove = () => (drag.moves += 1);
+      document.addEventListener('pointermove', onMove, { capture: true });
+      const observer = new PerformanceObserver((list) => {
+        drag.longFrames += list.getEntries().length;
+      });
+      observer.observe({ type: 'long-animation-frame' });
+      Object.assign(window.envuiRenders, { counting: true, commits: 0, components: 0 });
+      window.envuiDrag = Object.assign(drag, {
+        stop() {
+          on = false;
+          document.removeEventListener('pointermove', onMove, { capture: true });
+          observer.disconnect();
+          window.envuiRenders.counting = false;
+          return { ...drag, ...window.envuiRenders };
+        },
+      });
+    });
+    const before = await read();
+    const sent: Promise<unknown>[] = [];
+    for (let move = 1; move <= moves; move += 1) {
+      sent.push(mouse('mouseMoved', x + direction * move * step, y, 1));
+      await new Promise((resolve) => setTimeout(resolve, 8));
+    }
+    await Promise.all(sent);
+    // The frame that draws the last move.
+    await page.evaluate(
+      () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+    );
+    const counters = difference(await read(), before);
+    const record = await page.evaluate(() => window.envuiDrag.stop());
+    await mouse('mouseReleased', x + direction * moves * step, y, 0);
+    direction = -direction;
+    await settle(page, 300);
+    const gaps = record.frames.slice(1).map((time, index) => time - record.frames[index]!);
+    const frames = Math.max(1, gaps.length);
+    const perMove = Math.max(1, record.moves);
+    return {
+      droppedFrames: gaps.reduce(
+        (sum, gap) => sum + Math.max(0, Math.round(gap / frameTime) - 1),
+        0,
+      ),
+      longestFrame: Math.max(0, ...gaps),
+      longAnimationFrames: record.longFrames,
+      pointermoves: record.moves,
+      commitsPerMove: record.commits / perMove,
+      componentsPerMove: record.components / perMove,
+      scriptPerFrame: counters.script / frames,
+      stylePerFrame: counters.recalcStyle / frames,
+      layoutPerFrame: counters.layout / frames,
+      layoutsPerFrame: counters.layoutCount / frames,
+    };
+  };
+  const result = await repeat(dragOnce);
+  await page.context().close();
+  return result;
+}
+
 if (fresh) await buildPages();
 const servers: PreviewServer[] = [];
 if (needsFixture) servers.push(await serve('fixture'));
@@ -517,6 +702,11 @@ try {
       paused: await idle(browser, 'paused'),
       offScreen: await idle(browser, 'offScreen'),
       playing: await idle(browser, 'playing'),
+    };
+  if (wants('resize'))
+    report.resizeDrawer = {
+      catalogue: await resizeDrawer(browser, 'components/button'),
+      docs: await resizeDrawer(browser, 'docs/components/button'),
     };
   // One line for each measurement's median, fastest and slowest.
   console.log(
