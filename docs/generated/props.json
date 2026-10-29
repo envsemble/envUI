@@ -552,7 +552,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Show an underline for the text variant; defaults to false."
+          "description": "Show an underline for the text variant."
         },
         {
           "name": "size",
@@ -1905,7 +1905,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Show an underline for the text variant; defaults to false."
+          "description": "Show an underline for the text variant."
         },
         {
           "name": "fullWidth",
@@ -2699,7 +2699,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Show an underline for the text variant; defaults to false."
+          "description": "Show an underline for the text variant."
         },
         {
           "name": "size",
@@ -5946,7 +5946,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Show an underline for the text variant; defaults to false."
+          "description": "Show an underline for the text variant."
         },
         {
           "name": "size",

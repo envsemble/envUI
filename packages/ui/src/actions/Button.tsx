@@ -66,7 +66,7 @@ export type IconButtonEmphasisProps =
 
 export type ButtonAppearanceProps = ButtonEmphasisProps & {
   /**
-   * Show an underline for the text variant; defaults to false.
+   * Show an underline for the text variant.
    * @default false
    */
   underline?: boolean;
