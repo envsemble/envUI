@@ -222,7 +222,7 @@ test('a server component imports envUI and renders it on the server', () => {
   // The page's client components receive only what a server can send them.
   const page = JSON.stringify(result.page);
   assert.match(page, /"client":"navigation\/Menu\.js#Item"/);
-  assert.match(page, /"client":"icons\/Home\.js#Home"/);
+  assert.match(page, /"client":"icons\/Home\.js#IconHome"/);
   // A pending Button hands ActionElement a boolean, not a click handler.
   assert.match(
     page,
