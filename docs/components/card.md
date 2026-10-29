@@ -246,7 +246,7 @@ A feature card is a Card holding a Row with `wrap` and `align="center"`: the ico
 
 #### Backgrounds
 
-`background` is `muted`, the default, `default` or `page`.
+`background` is `muted`, the default, `default` or `page`. `default` names the token role it paints, `--env-color-bg-default`, as Surface's does, not Card's default.
 
 ```tsx
 <Card background="default" title="Notifications">

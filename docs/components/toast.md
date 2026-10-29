@@ -178,6 +178,8 @@ Put one Toast.Provider near the root of the application. Any component inside it
 
 `tone` is `neutral`, the default, with no icon, `success`, `info` or `danger`. A danger notification stays until it is dismissed, is announced at once as an alert, and is never hidden behind the count.
 
+A toast has no `warning` tone, unlike Alert: a warning needs attention where it applies, so it is an Alert on the page, not a notification that passes.
+
 ```tsx
 toast.show({ tone: 'danger', message: 'Changes couldn’t be saved.' });
 ```

@@ -8,6 +8,10 @@ Keep authored components in their existing family under `packages/ui/src`, named
 
 The site owns routes, page grids, specimen state and token measurement. Reusable UI behavior belongs in the package. Icons and brand wrappers are generated from their existing pinned inputs.
 
+A boolean prop defaults to false, unless it turns off a feature a component shows by default: then it is named after the feature, such as `header`, `tooltip` or `closeButton`, and defaults to true, so `header={false}` reads as what it does. `show*` is for an opt-in display, such as Spinner's `showLabel`.
+
+Signatures use envUI's own types, but a third-party type stays where it is the point of a prop: Tiptap's `Editor` and extensions on RichTextEditor, and react-markdown's `Components` on Markdown. A major release of such a library is a major release of envUI, so a prop takes a plain value, such as a color's string, where that is enough.
+
 When a shared capability is missing, identify the required behavior and reusable API. Implement a variant, slot or component when library work is within scope. Otherwise report the concrete gap and preserve functioning product behavior. Keep routing, authorization, validation, preference and persistence in the application.
 
 ## Design tokens
