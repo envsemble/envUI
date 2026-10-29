@@ -55,13 +55,15 @@
   .env-navigation-drawer-section:not(:last-child) {
     margin-block-end: var(--env-space-3);
   }
-  /* A group's heading lines up with its destinations' icons and labels. */
+  /* A group's heading lines up with its destinations' icons and labels. It is semibold in the text
+     color over the muted destinations, so each group stands apart from its destinations by type
+     alone, with no line or fill. */
   .env-navigation-drawer-group-label {
     display: block;
     margin: 0;
     padding: var(--env-space-1) var(--env-space-3);
-    color: var(--env-color-fg-muted);
-    font: var(--env-type-body-sm);
+    color: var(--env-color-fg-default);
+    font: var(--env-font-weight-semibold) var(--env-font-size-body-sm) / 1.4 var(--env-font-family);
     overflow-wrap: anywhere;
   }
   /* resizable: the drawer is --env-navigation-drawer-width wide, which the component sets with its bounds, and
@@ -179,7 +181,8 @@
     /* The capped full corner, so a label that wraps keeps the corners. */
     border-radius: var(--env-radius-full);
     background: var(--env-navigation-drawer-item-custom-fill, transparent);
-    color: var(--env-navigation-drawer-item-content, var(--env-color-fg-control));
+    /* Muted, under the group headings in the text color; a section's heading is an item too. */
+    color: var(--env-navigation-drawer-item-content, var(--env-color-fg-muted));
     font: var(--env-font-weight-body) var(--env-font-size-body) / 1.4 var(--env-font-family);
     text-align: start;
     text-decoration: none;
@@ -216,12 +219,16 @@
   .env-navigation-drawer-item:not([data-current]) .env-icon {
     color: var(--env-navigation-drawer-item-icon-color, var(--env-color-fg-muted));
   }
+  /* Hover and press fill the item and gain contrast on its muted label, as muted text that responds
+     to the pointer does. */
   .env-navigation-drawer-item:hover {
     --env-navigation-drawer-item-layer: calc(var(--env-state-hover-opacity) * 100%);
+    color: var(--env-navigation-drawer-item-content, var(--env-color-fg-muted-hover));
     background: var(--env-navigation-drawer-item-custom-fill, var(--env-color-bg-navigation-hover));
   }
   .env-navigation-drawer-item:active {
     --env-navigation-drawer-item-layer: calc(var(--env-state-pressed-opacity) * 100%);
+    color: var(--env-navigation-drawer-item-content, var(--env-color-fg-muted-pressed));
     background: var(
       --env-navigation-drawer-item-custom-fill,
       var(--env-color-bg-navigation-pressed)
