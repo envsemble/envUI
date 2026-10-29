@@ -47,7 +47,7 @@ export function DatePickerFixture({ theme }: { theme: ColorScheme }) {
           granularity="minute"
           defaultValue="2026-10-21T09:30"
           locale="en-GB"
-          defaultTime="09:00"
+          placeholderTime="09:00"
           clearable
         />
         <DatePicker

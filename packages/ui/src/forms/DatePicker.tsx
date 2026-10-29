@@ -69,7 +69,7 @@ export interface DatePickerProps
   /** The latest value, as YYYY-MM-DD or YYYY-MM-DDTHH:mm; later days are unavailable. */
   max?: string;
   /** The time a newly chosen day starts with, as HH:mm; 00:00 by default. */
-  defaultTime?: string;
+  placeholderTime?: string;
   /**
    * With the minute granularity, the minutes between the times the list offers, from 1 to 60. A
    * value between them still shows in the list, in its place.
@@ -195,7 +195,7 @@ export function DatePicker({
   granularity = 'day',
   min,
   max,
-  defaultTime,
+  placeholderTime,
   minuteStep,
   locale,
   weekStart,
@@ -224,7 +224,7 @@ export function DatePicker({
     disabled,
     readOnly,
   });
-  const defaultMinutes = parseTime(defaultTime) ?? 0;
+  const defaultMinutes = parseTime(placeholderTime) ?? 0;
 
   const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
   const current = parseValue(
@@ -370,7 +370,7 @@ export function DatePicker({
               value={current?.minutes}
               onValueChange={(minutes) => commit({ day: timeDay, minutes })}
               minuteStep={minuteStep}
-              start={defaultTime === undefined ? undefined : defaultMinutes}
+              start={placeholderTime === undefined ? undefined : defaultMinutes}
               min={boundMinutes(minMoment, timeDay)}
               max={boundMinutes(maxMoment, timeDay)}
               locale={locale}

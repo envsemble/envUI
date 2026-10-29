@@ -193,13 +193,13 @@ A DatePicker is a field with its `label`, `description` and `error`, whose butto
 `granularity` is `day`, the default, or `minute`, for a local date and time as `YYYY-MM-DDTHH:mm`.
 
 - The time is chosen on wheels of hours, minutes every `minuteStep` minutes, 15 by default, and, on a 12-hour clock, day periods.
-- `defaultTime`, as `HH:mm`, is the time a newly chosen day starts with, 00:00 by default.
+- `placeholderTime`, as `HH:mm`, is the time a newly chosen day starts with, 00:00 by default.
 
 ```tsx
 <DatePicker
   label="Meeting"
   granularity="minute"
-  defaultTime="09:00"
+  placeholderTime="09:00"
   minuteStep={30}
   value={meeting}
   onValueChange={setMeeting}
@@ -263,6 +263,7 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 
 ## Changelog
 
+- **1.0.0-prerelease.5**: `defaultTime` is `placeholderTime`, as React Aria names it: `default` names an uncontrolled starting value elsewhere.
 - **1.0.0-prerelease.5**: The calendar popup is frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge, and is solid with its edge at high contrast and with reduced transparency. Its inset is a panel's, as wide as a popup row's corner: 14 px, 11.2 px at the compact scale. The calendar leads with the month's name, its buttons side by side at the end; the days of a week touch, a row height wide; today is in the accent color rather than ringed, and a day under the pointer takes the neutral fill.
 - **1.0.0**: The field keeps its minimum width, 12 rem, in a container sized to its content, such as an inline-flex toolbar, rather than growing after the container measured it and pushing its neighbours onto another row; in a narrower container it still takes the container's width.
 - **1.0.0**: With the minute granularity, the time is chosen on wheels of hours, minutes every `minuteStep` minutes (15) and, on a 12-hour clock, day periods, beside the calendar, in place of the time field under it; turning a wheel sets the time at once. The calendar has no Done button, and `doneLabel` is gone: it closes as a date-only one does. The field and popup are shared with TimePicker and MonthPicker.

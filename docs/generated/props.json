@@ -2331,7 +2331,7 @@
           "description": "The latest value, as YYYY-MM-DD or YYYY-MM-DDTHH:mm; later days are unavailable."
         },
         {
-          "name": "defaultTime",
+          "name": "placeholderTime",
           "type": "string",
           "required": false,
           "description": "The time a newly chosen day starts with, as HH:mm; 00:00 by default."
@@ -5347,7 +5347,7 @@
     "Pagination": {
       "kind": "component",
       "source": "packages/ui/src/navigation/Pagination.tsx",
-      "description": "A compact pager for toolbars: the range of items shown, such as 1–60 of 245, and icon buttons for the previous and next pages, in a navigation landmark. The application loads the pages; the range is announced as it changes, and focus stays on the button pressed.",
+      "description": "Compact pagination for toolbars: the range of items shown, such as 1–60 of 245, and icon buttons for the previous and next pages, in a navigation landmark. The application loads the pages; the range is announced as it changes, and focus stays on the button pressed.",
       "props": [
         {
           "name": "page",
