@@ -49,11 +49,13 @@ aliases:
   - getting started
 ---
 
-# Install the private package
+# Install and set up
 
-envUI is a private package of React components and design tokens for React and React DOM 19. Install an exact version and read the docs shipped with it.
+envUI is a package of React components and design tokens for React and React DOM 19. Install an exact version and read the docs shipped with it.
 
 ## Registry access
+
+envUI is published to GitHub Packages for now, so npm needs its registry and a token:
 
 ```ini
 # Project .npmrc

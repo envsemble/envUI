@@ -180,6 +180,11 @@ test("the Docs' home gives a prompt to copy that sets envUI up through the skill
   await expect(setup).toContainText(prompt);
   await setup.getByRole('button', { name: 'Copy prompt' }).click();
   await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toBe(prompt);
+  // Under it, the guide for setting envUI up by hand.
+  await expect(setup.getByRole('link', { name: 'Install and set up' })).toHaveAttribute(
+    'href',
+    '/docs/setup',
+  );
   // The development server serves the skill and llms.txt as the build writes them.
   const skill = await page.request.get(`${siteDevUrl}/SKILL.md`);
   expect(skill.headers()['content-type']).toBe('text/markdown; charset=utf-8');

@@ -139,7 +139,7 @@ test('a result names the page it opens', () => {
   const detail = (id) => records.find((record) => record.id === id).detail;
   assert.equal(detail('export:useTheme'), 'Colors & themes');
   assert.equal(detail('export:useThemePreference'), 'Colors & themes');
-  assert.equal(detail('export:ThemeToggle'), 'Install the private package');
+  assert.equal(detail('export:ThemeToggle'), 'Install and set up');
 });
 
 test('an export on a page without a Props view leads to the section that shows it', () => {

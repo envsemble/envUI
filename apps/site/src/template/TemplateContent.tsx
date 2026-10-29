@@ -9,13 +9,7 @@ import { docsOnlySections } from '../shared/CatalogueContent';
 import { Related } from './Related';
 import { WhenToUse } from './WhenToUse';
 import { subscribeToAddress } from '../navigation/Address';
-
-const statusTones = {
-  experimental: 'warning',
-  beta: 'neutral',
-  stable: 'success',
-  deprecated: 'danger',
-} as const;
+import { statusTones } from '../navigation/PageBadges';
 
 /**
  * Status and first release under the title of a component's or pattern's page, and after them
