@@ -75,7 +75,7 @@ A composer is its field alone, or has a row below the field with controls at its
 3. **Input** (`env-composer-input`)
 4. **Start** (`env-composer-start`, `start`)
 5. **Send** (`env-composer-action`)
-6. **Footer** (`env-composer-footer`, `footer`)
+6. **Footer** (`env-composer-footer`, `description`)
 
 ## Behaviour
 
@@ -169,9 +169,9 @@ Without `onSend`, <kbd>Enter</kbd> and the send button submit the composer's for
 </form>
 ```
 
-#### Rows, start and footer
+#### Rows, start and description
 
-The field shows `minRows` lines while empty, 1 by default, and grows to `maxRows`, 8 by default, before it scrolls. `start` holds content at the start of the action row, such as an attach button or the name of a model, and `footer` supporting text below the composer, which describes the field. `sendLabel` and `stopLabel` name the button.
+The field shows `minRows` lines while empty, 1 by default, and grows to `maxRows`, 8 by default, before it scrolls. `start` holds content at the start of the action row, such as an attach button or the name of a model, and `description` supporting text below the composer, which describes the field. `sendLabel` and `stopLabel` name the button.
 
 ```tsx
 <Composer
@@ -179,7 +179,7 @@ The field shows `minRows` lines while empty, 1 by default, and grows to `maxRows
   minRows={2}
   maxRows={6}
   start={<IconButton variant="text" icon={<AttachFile />} aria-label="Attach files" />}
-  footer="Files up to 10 MB."
+  description="Files up to 10 MB."
   onSend={addComment}
 />
 ```
@@ -194,5 +194,5 @@ The composer, `env-composer`, is on the raised popup surface, `env-composer-surf
 
 ## Changelog
 
-- **1.0.0**: `onSubmit` is `onSend`, which pairs with `sendLabel` and leaves the native submit event's name alone. The send and stop labels come from EnvUIProvider's `messages`, unless `sendLabel` and `stopLabel` set them.
+- **1.0.0**: `footer` is `description`, as on a field, since it describes the field. `onSubmit` is `onSend`, which pairs with `sendLabel` and leaves the native submit event's name alone. The send and stop labels come from EnvUIProvider's `messages`, unless `sendLabel` and `stopLabel` set them.
 - **0.5.0**: Composer, on the raised popup surface, with `onSubmit` or form submission, `pending`, `running` and `onStop`, `minRows` and `maxRows`, `start` and `footer`.

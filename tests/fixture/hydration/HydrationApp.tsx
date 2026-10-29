@@ -237,7 +237,7 @@ export function HydrationApp() {
             setMessage(value);
             setDraft('');
           }}
-          footer="Hydrated composer footer"
+          description="Hydrated composer footer"
         />
         <Panes.Root behavior="supporting" splitAt="medium">
           <Panes.Main label="Hydrated main">Hydrated main pane</Panes.Main>

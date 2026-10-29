@@ -71,7 +71,7 @@ interface ComposerOptions {
   /** Content at the start of the action row, such as an attach button or the name of a model. */
   start?: ReactNode;
   /** Supporting text below the composer, such as a note on attachments; it describes the field. */
-  footer?: ReactNode;
+  description?: ReactNode;
 }
 
 /** The field needs a name: aria-label without a visible label, or aria-labelledby. */
@@ -150,7 +150,7 @@ export function Composer({
   minRows = 1,
   maxRows = 8,
   start,
-  footer,
+  description,
   disabled = false,
   enterKeyHint,
   id: suppliedId,
@@ -166,7 +166,7 @@ export function Composer({
   const messages = useMessages('composer', composerMessages);
   const generatedId = useId();
   const id = suppliedId ?? generatedId;
-  const footerId = `${id}-footer`;
+  const descriptionId = `${id}-description`;
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
   const text = value ?? uncontrolledValue;
@@ -271,8 +271,9 @@ export function Composer({
           // Touch keyboards label Enter Send only where it sends.
           enterKeyHint={enterKeyHint ?? (canSend ? 'send' : undefined)}
           aria-describedby={
-            [describedBy, footer != null ? footerId : undefined].filter(Boolean).join(' ') ||
-            undefined
+            [describedBy, description != null ? descriptionId : undefined]
+              .filter(Boolean)
+              .join(' ') || undefined
           }
           className="env-composer-input"
           onChange={(event) => {
@@ -303,9 +304,9 @@ export function Composer({
           }}
         />
       </div>
-      {footer != null && (
-        <div className="env-composer-footer" id={footerId}>
-          {footer}
+      {description != null && (
+        <div className="env-composer-footer" id={descriptionId}>
+          {description}
         </div>
       )}
     </Grid>

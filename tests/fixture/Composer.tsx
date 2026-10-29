@@ -42,7 +42,7 @@ export function ComposerFixture({ theme }: { theme: ThemeValue }) {
           minRows={2}
           maxRows={4}
           start={<IconButton variant="text" icon={<AttachFile />} aria-label="Attach files" />}
-          footer="Attachments up to 10 MB"
+          description="Attachments up to 10 MB"
           onSend={(value) => setNotes((list) => [...list, value])}
         />
       </Surface>

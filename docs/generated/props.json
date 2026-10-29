@@ -1877,7 +1877,7 @@
           "description": "Content at the start of the action row, such as an attach button or the name of a model."
         },
         {
-          "name": "footer",
+          "name": "description",
           "type": "ReactNode",
           "required": false,
           "description": "Supporting text below the composer, such as a note on attachments; it describes the field."

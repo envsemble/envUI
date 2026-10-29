@@ -24,7 +24,7 @@ export default function PendingSend() {
         placeholder="Write a reply"
         pending={sending}
         onSend={send}
-        footer={sending ? 'Sending…' : 'Replies go to the whole thread.'}
+        description={sending ? 'Sending…' : 'Replies go to the whole thread.'}
       />
       <Text variant="caption" emphasis="muted" role="status">
         {log.length > 0 && `${log.length} ${log.length === 1 ? 'reply' : 'replies'} sent.`}

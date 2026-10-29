@@ -4,6 +4,10 @@
       "onSubmit": {
         "to": "onSend",
         "report": "Composer's onSubmit is onSend in 1.0, as its sendLabel names the button; onSubmit is the native submit event again."
+      },
+      "footer": {
+        "to": "description",
+        "report": "Composer's footer is description in 1.0, as on a field: it describes the field."
       }
     }
   }
