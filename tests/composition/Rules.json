@@ -85,7 +85,7 @@
       "feedback/internal/AlertDismiss.tsx": "composites",
       "feedback/toast/ToastBody.tsx": "composites",
       "feedback/toast/toastInternals.ts": "composites",
-      "feedback/toast/Toast.tsx": "composites",
+      "feedback/toast/ToastProvider.tsx": "composites",
       "feedback/toast/ToastRegion.tsx": "composites",
       "feedback/toast/toastTypes.ts": "composites",
       "feedback/toast/useToast.ts": "composites",
@@ -308,7 +308,7 @@
         "modules": [
           "feedback/toast/ToastBody.tsx",
           "feedback/toast/toastInternals.ts",
-          "feedback/toast/Toast.tsx",
+          "feedback/toast/ToastProvider.tsx",
           "feedback/toast/ToastRegion.tsx",
           "feedback/toast/toastTypes.ts",
           "feedback/toast/useToast.ts",
