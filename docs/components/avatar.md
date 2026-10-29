@@ -214,7 +214,7 @@ Avatar takes the person's or organization's `name`, a picture in `src`, and `fal
 
 #### Colors
 
-`hue` sets one of the eight colors by name, in place of the one the name chooses: `powder` (powder blue), `seafoam`, `sage`, `butter`, `blush`, `periwinkle`, `orchid` or `oat` (a warm oat). `avatarHue(name)` returns the one a name chooses. Each is a tonal pair, a soft fill with the initials or the figure in a deep shade of the same hue, slightly deeper in the dark theme.
+`hue` sets one of the eight colors by name, in place of the one the name chooses: `powder` (powder blue), `seafoam`, `sage`, `butter`, `blush`, `periwinkle`, `orchid` or `oat` (a warm oat). `avatarHue(name)` returns the one a name chooses, and `avatarHues` lists the eight in order. Each is a tonal pair, a soft fill with the initials or the figure in a deep shade of the same hue, slightly deeper in the dark theme.
 
 #### Groups
 
