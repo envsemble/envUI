@@ -9,7 +9,19 @@ declare module 'virtual:envui-release-notes' {
   export default releases;
 }
 
-/** The lines of each example's code, by page/Name: scripts/site/PartOutlines.ts. */
+/**
+ * The recorded size of each part that loads with a page, by its key (template/PartSizes.json): in a
+ * build, only those of no one page's, as each page's content brings its own (vite.config.ts).
+ */
+declare module 'virtual:envui-part-sizes' {
+  const sizes: Record<string, readonly [number, number]>;
+  export default sizes;
+}
+
+/**
+ * The lines of each example's code, by page/Name: scripts/site/PartOutlines.ts. In a build, none,
+ * as each page's content brings its own.
+ */
 declare module 'virtual:envui-example-lines' {
   const lines: Record<string, number>;
   export default lines;

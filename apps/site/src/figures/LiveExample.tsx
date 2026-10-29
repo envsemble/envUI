@@ -18,11 +18,10 @@ import type { StageFill } from '../shared/DocumentationTypes';
 import { LoadBoundary, loadModule, reloadModule } from '../template/LoadBoundary';
 import { OpenExample } from './OpenExample';
 import { InteractiveMark } from '../template/InteractiveMark';
-import { CodeSkeleton, StageSkeleton } from '../template/Loading';
+import { CodeSkeleton, exampleLines, StageSkeleton } from '../template/Loading';
 import { MotionStage } from '../motion/MotionStage';
 import { WidthSweep } from '../motion/WidthSweep';
 import { SpecimenRender } from './Specimen';
-import exampleLines from 'virtual:envui-example-lines';
 
 /**
  * Every example file, rendered live, and its source as text, each loaded with the page that shows
@@ -124,7 +123,7 @@ export function ExampleSource({ page, name }: { page: string; name: string }) {
     >
       <Suspense
         fallback={
-          <CodeSkeleton label={`${name}.tsx`} lines={exampleLines[`${page}/${name}`] ?? 1} />
+          <CodeSkeleton label={`${name}.tsx`} lines={exampleLines(`${page}/${name}`) ?? 1} />
         }
       >
         <Source path={path} name={name} />

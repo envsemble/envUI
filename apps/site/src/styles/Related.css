@@ -265,8 +265,8 @@
 }
 
 /* A tile's skeleton (TileSkeleton in template/Loading.tsx): over the whole stage, which pulses as
-   envUI's skeleton surfaces do, from a moment after the page opens until the picture is fitted on
-   the stage and fades in over it. */
+   envUI's skeleton surfaces do, from a moment after the tile nears the view until the picture is
+   fitted on the stage and fades in over it. */
 .catalogue-tile-loading {
   position: absolute;
   inset: 0;

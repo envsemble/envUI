@@ -36,6 +36,23 @@ import {
 } from '../../scripts/site/PartOutlines.ts';
 import { withoutComments } from '../../scripts/site/CssComments.ts';
 
+/** Whether the site is building rather than serving: set by envui-page-parts. */
+let building = false;
+
+/** The recorded size of each part that loads with a page (scripts/site/RecordPartSizes.ts). */
+const partSizesFile = fileURLToPath(new URL('./src/template/PartSizes.json', import.meta.url));
+function readPartSizes(): Record<string, [number, number]> {
+  const { $comment: _comment, ...sizes } = JSON.parse(readFileSync(partSizesFile, 'utf8'));
+  return sizes;
+}
+/** Every part's size and every example's lines, read once a build. */
+let pageParts: { sizes: Record<string, [number, number]>; lines: Record<string, number> } = {
+  sizes: {},
+  lines: {},
+};
+/** The key of a part of one page, an example or a specimen, with the page's id. */
+const pagePart = /^(?:example|specimen):([^/]+)\//;
+
 /**
  * Data the site's pages read from the repository when the site app builds or serves, as
  * virtual modules: the release notes, and the outlines of the parts that load with a page, which
@@ -45,8 +62,20 @@ import { withoutComments } from '../../scripts/site/CssComments.ts';
  */
 const siteData: Record<string, { read: () => unknown; sources: string[]; reloads?: false }> = {
   'virtual:envui-release-notes': { read: readReleaseNotes, sources: releaseNotesSources },
+  // In a build, a page's parts' sizes and lines go with its content (envui-page-parts), and the
+  // site's start keeps only the sizes of parts of no one page.
+  'virtual:envui-part-sizes': {
+    read: () =>
+      building
+        ? Object.fromEntries(
+            Object.entries(readPartSizes()).filter(([part]) => !pagePart.test(part)),
+          )
+        : readPartSizes(),
+    sources: [partSizesFile],
+    reloads: false,
+  },
   'virtual:envui-example-lines': {
-    read: readExampleLines,
+    read: () => (building ? {} : readExampleLines()),
     sources: exampleLinesSources,
     reloads: false,
   },
@@ -209,6 +238,35 @@ export default defineConfig(() => {
               server.config.logger.error(String(error));
             }
           });
+        },
+      },
+      {
+        // Each page's content file carries the recorded sizes of its examples and specimens and
+        // its examples' lines of code, which their skeletons keep, so the site's start doesn't
+        // carry every page's (the virtual modules above, while developing).
+        name: 'envui-page-parts',
+        apply: 'build',
+        enforce: 'pre',
+        config() {
+          building = true;
+        },
+        buildStart() {
+          pageParts = { sizes: readPartSizes(), lines: readExampleLines() };
+        },
+        transform(code, id) {
+          const page = /\/src\/generated\/pages\/([^/]+)\.json$/.exec(id.split('?')[0]!)?.[1];
+          if (!page) return undefined;
+          const { sizes, lines } = pageParts;
+          const content = {
+            ...JSON.parse(code),
+            partSizes: Object.fromEntries(
+              Object.entries(sizes).filter(([part]) => pagePart.exec(part)?.[1] === page),
+            ),
+            exampleLines: Object.fromEntries(
+              Object.entries(lines).filter(([example]) => example.startsWith(`${page}/`)),
+            ),
+          };
+          return { code: JSON.stringify(content), map: null };
         },
       },
       {

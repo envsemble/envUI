@@ -7,7 +7,8 @@ import {
 } from 'react';
 import { Surface } from '@envsemble/envui';
 import { CodeBlock } from '@envsemble/envui/content';
-import partSizes from './PartSizes.json';
+import sharedSizes from 'virtual:envui-part-sizes';
+import sharedLines from 'virtual:envui-example-lines';
 
 /*
  * What the site shows while a part of a page loads, such as an example, its code or a specimen,
@@ -81,9 +82,31 @@ export function LoadingStatus() {
   );
 }
 
+/**
+ * What the build gives each page's content of the parts on it, rather than every page's to the
+ * site's start (vite.config.ts): its examples' and specimens' recorded sizes and its examples'
+ * lines of code. While developing, every part's is in the virtual modules instead.
+ */
+const pageSizes = new Map<string, readonly [number, number]>();
+const pageLines = new Map<string, number>();
+
+/** Keeps the parts' data a page's content brought, as it loads (PageContent.ts). */
+export function keepPageParts(content: {
+  partSizes?: Record<string, [number, number]>;
+  exampleLines?: Record<string, number>;
+}) {
+  for (const [part, size] of Object.entries(content.partSizes ?? {})) pageSizes.set(part, size);
+  for (const [example, lines] of Object.entries(content.exampleLines ?? {}))
+    pageLines.set(example, lines);
+}
+
 /** A part's recorded width and height, in rem (scripts/site/RecordPartSizes.ts). */
 export const recordedSize = (part: string): readonly [number, number] | undefined =>
-  (partSizes as Record<string, unknown>)[part] as [number, number] | undefined;
+  sharedSizes[part] ?? pageSizes.get(part);
+
+/** The lines of an example's code, by page/Name, where they are known. */
+export const exampleLines = (example: string): number | undefined =>
+  sharedLines[example] ?? pageLines.get(example);
 
 /**
  * A part of a page while it loads, as envUI's skeleton of its shape: a surface with `skeleton`,
@@ -231,7 +254,7 @@ export function CodeSkeleton({ label, lines }: { label: string; lines: number })
 }
 
 /**
- * A gallery's or Related's tile while its picture loads, or until it comes near enough to load:
+ * A gallery's or Related's tile while its picture loads, once it has come near enough to load:
  * a skeleton over the whole stage, which pulses in its place until the picture is fitted on it
  * (Related.css). The picture is decorative, as the tile's name leads to the page, so its skeleton
  * is hidden from assistive technology and says nothing.

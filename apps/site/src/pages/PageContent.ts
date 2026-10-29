@@ -1,6 +1,7 @@
 import { use } from 'react';
 import type { DocumentationEntry } from '../shared/DocumentationTypes';
 import { loadOnce } from '../template/LoadOnce';
+import { keepPageParts } from '../template/Loading';
 
 /** Each page's content, in a file of its own that loads with the page. */
 const contents = import.meta.glob<DocumentationEntry>('../generated/pages/*.json', {
@@ -15,7 +16,12 @@ const loads = new Map<string, Promise<DocumentationEntry>>();
 export function loadDocument(id: string) {
   const loader = contents[`../generated/pages/${id}.json`];
   if (!loader) throw new Error(`No content for the page ${id}`);
-  return loadOnce(loads, id, loader);
+  return loadOnce(loads, id, () =>
+    loader().then((content) => {
+      keepPageParts(content);
+      return content;
+    }),
+  );
 }
 
 /** A page's content, suspending the page until it has loaded. */

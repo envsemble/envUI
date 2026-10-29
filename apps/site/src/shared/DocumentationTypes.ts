@@ -228,6 +228,12 @@ export interface DocumentationSummary {
 
 /** A page with its content, which loads with the page. */
 export interface DocumentationEntry extends Omit<DocumentationSummary, 'outline' | 'metadata'> {
+  /**
+   * The recorded sizes of the page's examples and specimens and its examples' lines of code, which
+   * their skeletons keep: the build adds them (vite.config.ts).
+   */
+  partSizes?: Record<string, [number, number]>;
+  exampleLines?: Record<string, number>;
   metadata?: DocumentationMetadata;
   /** A guide's Markdown after its title; the other pages show their sections. */
   markdown?: string;
