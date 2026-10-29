@@ -218,7 +218,7 @@ By default the list shows the options whose label or description contains the ty
 
 - With `filter={null}` it shows `items` as given: search from `onInputValueChange`, which receives the typed text.
 - Set `loading` while the search runs, which shows `loadingLabel` instead of `emptyLabel`.
-- `onOpenChange` can load the options as the list opens.
+- `onOpenChange` can load the options as the list opens; its second argument, `ComboboxOpenChangeDetails`, says why it opens or closes.
 
 ```tsx
 <Combobox

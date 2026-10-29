@@ -16,6 +16,7 @@ import { useHydrated } from '../../internal/useHydrated.js';
 import { useDirection } from '../../internal/useDirection.js';
 import { keepsOpen, usePortalContainer } from '../../internal/PortalContainerContext.js';
 import { type ControlSize } from '../../foundations/Theme.js';
+import type { PopoverOpenChangeReason } from '../../feedback/Popover.js';
 import { IconButton } from '../../actions/Button.js';
 import { Close } from '../../icons/Close.js';
 import { FieldFrame, type FieldControlBoxProps, type FieldProps } from './FieldFrame.js';
@@ -27,6 +28,24 @@ import '../../styles/Base.css';
 import '../../styles/DatePicker.css';
 
 /** The props every picker field shares with DatePicker: its frame, form value and open state. */
+/**
+ * Why a date, time or month picker's popup asks to open or close: a popover's reasons, such as
+ * trigger-press, outside-press or escape-key; list-navigation for the arrow keys on the field;
+ * item-press for a chosen value, such as a day, a month, Today or Now; or clear-press for the
+ * clear button.
+ */
+export type PickerOpenChangeReason =
+  | PopoverOpenChangeReason
+  | 'list-navigation'
+  | 'item-press'
+  | 'clear-press';
+
+/** What a date, time or month picker's onOpenChange receives beside the requested state. */
+export interface PickerOpenChangeDetails {
+  /** Why the popup asks to open or close. */
+  reason: PickerOpenChangeReason;
+}
+
 export interface PickerFieldProps
   extends Omit<
       ButtonHTMLAttributes<HTMLButtonElement>,
@@ -73,8 +92,8 @@ export interface PickerFieldProps
   open?: boolean;
   /** Whether an uncontrolled popup starts open; closed by default. */
   defaultOpen?: boolean;
-  /** Called with the new state when the popup opens or closes. */
-  onOpenChange?: (open: boolean) => void;
+  /** Called with the new state, and why, when the popup opens or closes. */
+  onOpenChange?: (open: boolean, details: PickerOpenChangeDetails) => void;
 }
 
 /** The open state of a picker's popup, controlled or not; a disabled or read-only field stays closed. */
@@ -87,10 +106,10 @@ export function usePickerOpen({
 }: Pick<PickerFieldProps, 'open' | 'defaultOpen' | 'onOpenChange' | 'disabled' | 'readOnly'>) {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
   const open = controlledOpen ?? uncontrolledOpen;
-  function setOpen(next: boolean) {
+  function setOpen(next: boolean, reason: PickerOpenChangeReason) {
     if (next && (disabled || readOnly)) return;
     if (controlledOpen === undefined) setUncontrolledOpen(next);
-    onOpenChange?.(next);
+    onOpenChange?.(next, { reason });
   }
   return [open, setOpen] as const;
 }
@@ -168,7 +187,7 @@ export function PickerField({
   /** Restores the value a form reset gives an uncontrolled field. */
   onFormReset: () => void;
   open: boolean;
-  setOpen: (open: boolean) => void;
+  setOpen: (open: boolean, reason: PickerOpenChangeReason) => void;
   /** The popup's body, or a function of the name the field and popup share, for its parts. */
   children: ReactNode | ((name: PickerName) => ReactNode);
 }) {
@@ -209,7 +228,7 @@ export function PickerField({
     if (event.defaultPrevented || disabled || readOnly) return;
     if ((event.key === 'ArrowDown' || event.key === 'ArrowUp') && !open) {
       event.preventDefault();
-      setOpen(true);
+      setOpen(true, 'list-navigation');
     } else if (clearable && serialized && (event.key === 'Backspace' || event.key === 'Delete')) {
       event.preventDefault();
       onClear();
@@ -237,7 +256,7 @@ export function PickerField({
       open={open}
       onOpenChange={(next, details) => {
         if (keepsOpen(portal, next, details)) details.cancel();
-        else setOpen(next);
+        else setOpen(next, details.reason as PopoverOpenChangeReason);
       }}
     >
       <FieldFrame

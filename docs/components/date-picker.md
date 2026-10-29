@@ -253,7 +253,7 @@ Calendar is the month on its own, for a page or a panel: it takes `value`, `defa
 
 ### Composition
 
-`open`, `defaultOpen` and `onOpenChange` control the calendar. `clearLabel`, `todayLabel`, `nowLabel`, `timeLabel`, `previousMonthLabel` and `nextMonthLabel` name its buttons, from EnvUIProvider's `messages` by default. `className` and `style` reach the field's root, and `ref` the button.
+`open`, `defaultOpen` and `onOpenChange` control the calendar; `onOpenChange` also receives why it opens or closes, `PickerOpenChangeDetails`, such as `item-press` for a chosen day. `clearLabel`, `todayLabel`, `nowLabel`, `timeLabel`, `previousMonthLabel` and `nextMonthLabel` name its buttons, from EnvUIProvider's `messages` by default. `className` and `style` reach the field's root, and `ref` the button.
 
 The field's parts are the root, `env-field` with `env-date-picker`; the control, `env-date-picker-control`, with the label, `env-date-picker-label`, the value, `env-date-picker-value`, the clear button, `env-date-picker-clear`, and the calendar icon, `env-date-picker-icon`; then the description, `env-field-description`, and the error, `env-field-error`. The popup is the picker card TimePicker and MonthPicker open too, `env-picker-popup` with `env-date-picker-popup`. Its body, `env-picker-popup-body`, holds the calendar, with `env-calendar-previous`, `env-calendar-title`, `env-calendar-next` and `env-calendar-day`, and the times, `env-date-picker-time`, beside it with `granularity="minute"`; its footer, `env-picker-popup-footer` with `env-date-picker-actions`, holds the actions, Clear in `env-picker-popup-footer-end` with `env-date-picker-actions-end`.
 

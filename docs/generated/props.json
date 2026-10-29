@@ -1604,9 +1604,9 @@
         },
         {
           "name": "onOpenChange",
-          "type": "(open: boolean) => void",
+          "type": "(open: boolean, details: ComboboxOpenChangeDetails) => void",
           "required": false,
-          "description": "Called as the popup opens and closes, such as to load the options as it opens."
+          "description": "Called as the popup opens and closes, and why, such as to load the options as it opens."
         },
         {
           "name": "locale",
@@ -2408,9 +2408,9 @@
         },
         {
           "name": "onOpenChange",
-          "type": "(open: boolean) => void",
+          "type": "(open: boolean, details: PickerOpenChangeDetails) => void",
           "required": false,
-          "description": "Called with the new state when the calendar opens or closes."
+          "description": "Called with the new state, and why, when the calendar opens or closes."
         },
         {
           "name": "clearLabel",
@@ -4937,9 +4937,9 @@
         },
         {
           "name": "onOpenChange",
-          "type": "(open: boolean) => void",
+          "type": "(open: boolean, details: PickerOpenChangeDetails) => void",
           "required": false,
-          "description": "Called with the new state when the popup opens or closes."
+          "description": "Called with the new state, and why, when the popup opens or closes."
         },
         {
           "name": "label",
@@ -8488,9 +8488,9 @@
         },
         {
           "name": "onOpenChange",
-          "type": "(open: boolean) => void",
+          "type": "(open: boolean, details: PickerOpenChangeDetails) => void",
           "required": false,
-          "description": "Called with the new state when the popup opens or closes."
+          "description": "Called with the new state, and why, when the popup opens or closes."
         },
         {
           "name": "label",

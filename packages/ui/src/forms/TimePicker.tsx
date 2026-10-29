@@ -120,7 +120,7 @@ export function TimePicker({
 
   function clear() {
     commit(null);
-    setOpen(false);
+    setOpen(false, 'clear-press');
   }
 
   const reference = now().minutes;

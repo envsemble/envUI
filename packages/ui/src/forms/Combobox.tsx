@@ -62,6 +62,15 @@ export interface ComboboxGroup<Item extends ComboboxItem = ComboboxItem> {
   items: readonly Item[];
 }
 
+/** What a combobox's onOpenChange receives beside the requested state. */
+export interface ComboboxOpenChangeDetails {
+  /**
+   * Why it asks to open or close, as Base UI says, such as trigger-press, input-change, item-press,
+   * input-clear or escape-key.
+   */
+  reason: string;
+}
+
 /** Whether an option matches the text typed into the field. */
 export type ComboboxFilter<Item extends ComboboxItem = ComboboxItem> = (
   item: Item,
@@ -145,8 +154,8 @@ interface ComboboxSharedProps<Item extends ComboboxItem>
    * @default false
    */
   defaultOpen?: boolean;
-  /** Called as the popup opens and closes, such as to load the options as it opens. */
-  onOpenChange?: (open: boolean) => void;
+  /** Called as the popup opens and closes, and why, such as to load the options as it opens. */
+  onOpenChange?: (open: boolean, details: ComboboxOpenChangeDetails) => void;
   /** The locale of the default filter's matching: EnvUIProvider's, else the browser's. */
   locale?: string;
 }
@@ -311,9 +320,9 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
   // closes and as the field takes focus.
   const [direction, readDirection] = useDirection(inputRef, popupOpen);
 
-  function changeOpen(next: boolean) {
+  function changeOpen(next: boolean, reason: string) {
     if (open === undefined) setUncontrolledOpen(next);
-    onOpenChange?.(next);
+    onOpenChange?.(next, { reason });
   }
 
   useEffect(
@@ -339,7 +348,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
       details.cancel();
       details.allowPropagation();
       // Emptied text shows every option to choose another; closing the popup restores the label.
-      if (details.reason === 'input-clear' && !popupOpen) changeOpen(true);
+      if (details.reason === 'input-clear' && !popupOpen) changeOpen(true, details.reason);
       return;
     }
     if (value === undefined) setUncontrolledValue(next);
@@ -431,7 +440,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
         open={popupOpen}
         onOpenChange={(next, details) => {
           if (keepsOpen(portal, next, details)) details.cancel();
-          else changeOpen(next);
+          else changeOpen(next, details.reason);
         }}
         name={name}
         form={form}

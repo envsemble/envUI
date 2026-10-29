@@ -162,7 +162,7 @@ A MonthPicker takes its `label`, a `description` and an `error`, and its value i
 
 #### Variants, sizes and the popup
 
-`variant` is `outline`, the default, at the control height, or `floating`, 3.5 rem tall with room for its label. `size` is `sm`, `md` or `lg`; without it the field takes its container's control height. `showLabel={false}` hides the label for a field whose purpose is clear, and `placeholder` shows while it is empty. `open`, `defaultOpen` and `onOpenChange` control the popup. `clearLabel`, `thisMonthLabel`, `previousYearLabel` and `nextYearLabel` name its buttons.
+`variant` is `outline`, the default, at the control height, or `floating`, 3.5 rem tall with room for its label. `size` is `sm`, `md` or `lg`; without it the field takes its container's control height. `showLabel={false}` hides the label for a field whose purpose is clear, and `placeholder` shows while it is empty. `open`, `defaultOpen` and `onOpenChange` control the popup; `onOpenChange` also receives why it opens or closes, `PickerOpenChangeDetails`. `clearLabel`, `thisMonthLabel`, `previousYearLabel` and `nextYearLabel` name its buttons.
 
 ### Composition
 

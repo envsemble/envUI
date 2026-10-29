@@ -129,7 +129,7 @@ export function MonthPicker({
 
   function choose(month: number | null) {
     commit(month);
-    setOpen(false);
+    setOpen(false, month === null ? 'clear-press' : 'item-press');
   }
 
   const thisMonth = monthOfDay(now().day);

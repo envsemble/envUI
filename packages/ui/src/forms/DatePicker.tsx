@@ -18,7 +18,11 @@ import { CalendarClock } from '../icons/CalendarClock.js';
 import { CalendarMonth } from '../icons/CalendarMonth.js';
 import { Calendar, calendarActiveDay } from './Calendar.js';
 import { type FieldProps } from './internal/FieldFrame.js';
-import { PickerField, usePickerOpen } from './internal/PickerField.js';
+import {
+  PickerField,
+  usePickerOpen,
+  type PickerOpenChangeDetails,
+} from './internal/PickerField.js';
 import { TimeList } from './internal/TimeList.js';
 import {
   clampDay,
@@ -36,6 +40,8 @@ import {
 } from '../internal/calendarDays.js';
 import '../styles/Base.css';
 import '../styles/DatePicker.css';
+
+export type { PickerOpenChangeDetails, PickerOpenChangeReason } from './internal/PickerField.js';
 
 export interface DatePickerProps
   extends Omit<
@@ -126,8 +132,8 @@ export interface DatePickerProps
   open?: boolean;
   /** Whether an uncontrolled calendar starts open; closed by default. */
   defaultOpen?: boolean;
-  /** Called with the new state when the calendar opens or closes. */
-  onOpenChange?: (open: boolean) => void;
+  /** Called with the new state, and why, when the calendar opens or closes. */
+  onOpenChange?: (open: boolean, details: PickerOpenChangeDetails) => void;
   /**
    * Accessible name of the field's clear button and text of the calendar's.
    * @default 'Clear', or EnvUIProvider's messages.datePicker.clear
@@ -287,7 +293,7 @@ export function DatePicker({
     const chosen = parseDay(day);
     if (chosen === undefined) return;
     commit({ day: chosen, minutes: current?.minutes ?? defaultMinutes });
-    if (!withTime) setOpen(false);
+    if (!withTime) setOpen(false, 'item-press');
   }
 
   // Without a value, a chosen time goes with today, kept within min and max.
@@ -296,12 +302,12 @@ export function DatePicker({
   function chooseNow() {
     const moment = now();
     commit(withTime ? moment : { day: moment.day, minutes: 0 });
-    if (!withTime) setOpen(false);
+    if (!withTime) setOpen(false, 'item-press');
   }
 
   function clear() {
     commit(null);
-    setOpen(false);
+    setOpen(false, 'clear-press');
   }
 
   const reference = now();
