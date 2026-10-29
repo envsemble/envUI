@@ -7,6 +7,7 @@ import { inDocs, routeHref } from '../navigation/Address';
 import { currentRoute } from '../navigation/useSiteRoute';
 import { headingSlugger } from '../shared/SearchAnchors';
 import { headingsOnly, useSectionOutline } from '../template/SectionOutline';
+import { marked, type Token, type Tokens } from 'marked';
 
 /** The current route scrolled to `section`, keeping its other parameters. */
 function sectionOfCurrentRoute(section: string) {
@@ -161,6 +162,44 @@ const componentNames =
 
 const rehypePlugins = [headingIds];
 
+/** Text with its HTML entities, such as &amp;, as the characters they stand for. */
+function decodeEntities(text: string) {
+  const element = document.createElement('textarea');
+  element.innerHTML = text;
+  return element.value;
+}
+
+/** Inline Markdown's text as it renders, without its syntax: code keeps its characters. */
+function inlineText(tokens: readonly Token[]): string {
+  return tokens
+    .map((token) => {
+      if ('tokens' in token && token.tokens) return inlineText(token.tokens);
+      if (token.type === 'html') return '';
+      const text = 'text' in token ? String(token.text) : '';
+      return token.type === 'codespan' || !text.includes('&') ? text : decodeEntities(text);
+    })
+    .join('');
+}
+
+/**
+ * Markdown's headings alone, with the ids and words they take rendered (headingIds), for a section
+ * waiting its turn to show (SectionOutline): without the Markdown pipeline, which a page's later
+ * sections would otherwise run before its first paint.
+ */
+function OutlineHeadings({ markdown }: { markdown: string }) {
+  const slug = headingSlugger();
+  return marked.lexer(headingsOnly(markdown)).flatMap((token, index) => {
+    if (token.type !== 'heading') return [];
+    const text = inlineText((token as Tokens.Heading).tokens);
+    const Heading = `h${(token as Tokens.Heading).depth}` as 'h2';
+    return [
+      <Heading key={index} id={slug(text)}>
+        {text}
+      </Heading>,
+    ];
+  });
+}
+
 /**
  * A page's Markdown, or a part of it such as one section, with its links resolved. `className`
  * gives it a role in the catalogue's type hierarchy, such as `site-lead` for a section's opening
@@ -175,12 +214,13 @@ export function Documentation(
       : [props.markdown, props.path];
   // A section waiting its turn to show renders its headings alone (SectionOutline).
   const outline = useSectionOutline();
-  const markdown = outline ? headingsOnly(written) : written;
+  const markdown = written;
   const guidance = useContext(GuidanceLists);
   const plugins = useMemo(
     () => (guidance ? [headingIds, componentNames(path)] : rehypePlugins),
     [guidance, path],
   );
+  if (outline) return <OutlineHeadings markdown={markdown} />;
   return (
     <Markdown
       codeCopyable
