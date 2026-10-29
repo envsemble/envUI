@@ -4773,7 +4773,7 @@
       "parts": [
         {
           "class": "env-spinner",
-          "description": "The spinner, or with data-show-label the status line that holds it and its label."
+          "description": "The spinner, data-label-hidden while its label is hidden, or else the status line that holds it and its label."
         },
         {
           "class": "env-spinner-arc",
@@ -4786,7 +4786,7 @@
       ],
       "states": [
         {
-          "attribute": "data-show-label",
+          "attribute": "data-label-hidden",
           "values": [],
           "parts": [
             "env-spinner"

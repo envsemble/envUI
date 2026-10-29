@@ -42,14 +42,7 @@ export function Spinner({
   if (showLabel)
     return (
       // A status region marked busy, which the label names as it shows.
-      <SpinnerArc
-        {...props}
-        size={size}
-        role="status"
-        aria-busy="true"
-        className={className}
-        data-show-label=""
-      >
+      <SpinnerArc {...props} size={size} role="status" aria-busy="true" className={className}>
         <SpinnerLabel label={label} />
       </SpinnerArc>
     );
@@ -61,6 +54,7 @@ export function Spinner({
       aria-label={label}
       aria-hidden={label ? undefined : true}
       className={className}
+      data-label-hidden=""
     />
   );
 }

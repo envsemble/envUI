@@ -688,7 +688,7 @@
       "env-slider-value": "The value as text."
     },
     "Spinner": {
-      "env-spinner": "The spinner, or with data-show-label the status line that holds it and its label.",
+      "env-spinner": "The spinner, data-label-hidden while its label is hidden, or else the status line that holds it and its label.",
       "env-spinner-arc": "The turning arc.",
       "env-spinner-label": "The label shown beside the spinner, which says what is loading."
     },

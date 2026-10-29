@@ -24,7 +24,7 @@
   }
   /* With its label shown: a status line that centres the spinner and a muted label in its row, for
      loading with no known shape. The arc keeps the size the spinner's own box had. */
-  .env-spinner[data-show-label] {
+  .env-spinner:not([data-label-hidden]) {
     --env-spinner-size: 1.5rem;
     display: flex;
     align-items: center;
@@ -35,13 +35,13 @@
     color: var(--env-color-fg-muted);
     font: var(--env-type-body-sm);
   }
-  .env-spinner[data-show-label]:where([data-size='sm']) {
+  .env-spinner:not([data-label-hidden]):where([data-size='sm']) {
     --env-spinner-size: 1rem;
   }
-  .env-spinner[data-show-label]:where([data-size='lg']) {
+  .env-spinner:not([data-label-hidden]):where([data-size='lg']) {
     --env-spinner-size: 3rem;
   }
-  .env-spinner[data-show-label] > svg {
+  .env-spinner:not([data-label-hidden]) > svg {
     flex: 0 0 auto;
     inline-size: var(--env-spinner-size);
     block-size: var(--env-spinner-size);
