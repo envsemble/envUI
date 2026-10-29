@@ -1179,6 +1179,7 @@ An application written for a 1.0 prerelease follows these renames by hand: the n
 | `CommandPaletteActionOptions`               | `CommandPaletteActionDetails`, as every callback's extra argument is named |
 | List.Item `selected`                        | `current`: it marks the current row with `aria-current`                    |
 | ColorPicker and ColorPickerButton `copy`    | `copyable`, as on CodeBlock                                                |
+| AvatarGroup `gather`                        | `align`                                                                    |
 
 ## Migrate by responsibility
 

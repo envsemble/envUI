@@ -156,7 +156,7 @@ export function AvatarGroupsFixture({ theme }: { theme: ThemeValue }) {
           <List.Item
             label="Northwind launch"
             description="4 members"
-            end={<AvatarGroup data-testid="in-row" people={people} max={3} gather="end" />}
+            end={<AvatarGroup data-testid="in-row" people={people} max={3} align="end" />}
           />
         </List.Root>
       </div>

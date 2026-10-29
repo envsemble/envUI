@@ -50,11 +50,11 @@ export interface AvatarGroupProps extends Omit<ComponentPropsWithRef<'div'>, 'ch
   size?: AvatarSize;
   /**
    * The group keeps the room its spread takes, so spreading never moves what is around it, and the
-   * pile gathers at rest toward one end of that room: start, or end for a group at the end of a
-   * row, such as a list row's action.
+   * pile rests at one end of that room, along the inline axis: start, or end for a group at the
+   * end of a row, such as at a list row's end.
    * @default 'start'
    */
-  gather?: 'start' | 'end';
+  align?: 'start' | 'end';
   /** How many people there are in all, when people is only a preview of them. */
   total?: number;
   /**
@@ -90,7 +90,7 @@ export function AvatarGroup({
   people,
   max,
   size = 'md',
-  gather = 'start',
+  align = 'start',
   total,
   onPersonClick,
   formatMore: ownFormatMore,
@@ -179,7 +179,7 @@ export function AvatarGroup({
       className={classNames('env-avatar-group', className)}
       style={style}
       data-size={size}
-      data-gather={gather === 'end' ? 'end' : undefined}
+      data-gather={align === 'end' ? 'end' : undefined}
       data-interactive={interactive ? '' : undefined}
       data-spread={tapped ? '' : undefined}
       // At rest the pile is one target, the group itself under the style sheet's cover: a tap on it

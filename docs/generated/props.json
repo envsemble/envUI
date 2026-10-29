@@ -353,11 +353,11 @@
           "description": "As Avatar: sm 1.5 rem, md 2 rem, lg 3 rem or xl 5.5 rem."
         },
         {
-          "name": "gather",
+          "name": "align",
           "type": "'start' | 'end'",
           "required": false,
           "default": "'start'",
-          "description": "The group keeps the room its spread takes, so spreading never moves what is around it, and the pile gathers at rest toward one end of that room: start, or end for a group at the end of a row, such as a list row's action."
+          "description": "The group keeps the room its spread takes, so spreading never moves what is around it, and the pile rests at one end of that room, along the inline axis: start, or end for a group at the end of a row, such as at a list row's end."
         },
         {
           "name": "total",
