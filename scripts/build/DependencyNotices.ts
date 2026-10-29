@@ -1,10 +1,7 @@
 import { readFile, readdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
-/**
- * The workspaces whose runtime dependencies ship: the library's and the hosted site's. The
- * codemods package runs on the developer's machine and its dependencies ship with it, not here.
- */
+/** The workspaces whose runtime dependencies ship: the library's and the hosted site's. */
 const shippingWorkspaces = ['packages/ui', 'apps/site'];
 
 /** The lockfile location a dependency of the package at `from` resolves to, as Node finds it. */

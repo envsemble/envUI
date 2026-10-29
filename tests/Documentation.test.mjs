@@ -818,13 +818,13 @@ test('since names a stable release or the version the changesets lead to, also i
     await mkdir(changesets);
     await writeFile(
       join(changesets, 'config.json'),
-      JSON.stringify({ fixed: [['@envsemble/envui', '@envsemble/envui-codemods']] }),
+      JSON.stringify({ fixed: [['@envsemble/envui', '@envsemble/eslint-plugin-envui']] }),
     );
     await writeFile(changelog, '# Changelog\n\n## 0.7.0\n\nText.\n\n## 0.6.0\n\nText.\n');
     await changeset('fix', { '@envsemble/envui': 'patch' });
     assert.deepEqual(versions(), ['0.6.0', '0.7.0', '0.7.1']);
     // A package that shares envUI's version raises it too.
-    await changeset('codemods', { '@envsemble/envui-codemods': 'minor' });
+    await changeset('lint', { '@envsemble/eslint-plugin-envui': 'minor' });
     assert.deepEqual(versions(), ['0.6.0', '0.7.0', '0.8.0']);
     // In prerelease mode, a released prerelease is no version of its own, and the changesets lead
     // to the version the prereleases are for, from the version before them.

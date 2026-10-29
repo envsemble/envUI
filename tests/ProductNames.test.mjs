@@ -58,17 +58,6 @@ const sources = [
   // The test fixtures' sample data and copy.
   { directory: 'tests/fixture', extensions: ['.ts', '.tsx'], read: 'code' },
   { directory: 'tests/fixture', extensions: ['.css', '.html'], read: 'whole' },
-  // The codemods package, its rename map and the code its fixtures show.
-  { path: 'packages/codemods/README.md', read: 'whole' },
-  { directory: 'packages/codemods/src', extensions: ['.json'], read: 'whole' },
-  { directory: 'packages/codemods/src', extensions: ['.mjs'], read: 'code' },
-  { directory: 'packages/codemods/bin', extensions: ['.mjs'], read: 'code' },
-  {
-    directory: 'packages/codemods/test/fixtures',
-    extensions: ['.ts', '.tsx', '.jsx'],
-    read: 'code',
-  },
-  { directory: 'packages/codemods/test/fixtures', extensions: ['.css', '.scss'], read: 'whole' },
   // The lint packages: their READMEs, the rules with their messages, the data they ship, and the
   // code their tests lint.
   { path: 'packages/eslint-plugin/README.md', read: 'whole' },

@@ -7,7 +7,6 @@ import { dirname, join, resolve, relative, isAbsolute, delimiter } from 'node:pa
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
 import { compileDocumentation } from '../scripts/docs/GenerateDocumentation.ts';
-import { readMap } from '../packages/codemods/src/map.mjs';
 import { documentedLibraries } from '../scripts/build/EntryLibraries.ts';
 
 const repository = fileURLToPath(new URL('../', import.meta.url));
@@ -231,32 +230,6 @@ test('the packed package ships no logos', () => {
     packedFiles.filter((path) => /(?:^|\/)(?:brand|envUI)\/|lockup|favicon/i.test(path)),
     [],
   );
-});
-
-test('no 0.x name of the rename map is exported, and every namespace is', async () => {
-  const map = readMap(join(repository, 'packages/codemods/src/maps/v1'));
-  const names = (section) => Object.keys(section).filter((name) => !name.startsWith('$'));
-  const entries = {
-    '@envsemble/envui': ssr.exports,
-    '@envsemble/envui/theme-bootstrap': ssr.themeBootstrapExports,
-  };
-  // Namespaces such as Menu and Toast reuse the name of a 0.x component.
-  const namespaces = new Set(
-    Object.values(map.exports['@envsemble/envui'])
-      .filter((name) => name.includes('.'))
-      .map((name) => name.split('.')[0]),
-  );
-  // Names that 1.0 exports again for something else, such as Row, a list row in 0.x and a layout
-  // primitive in 1.0, which the map lists as reused.
-  const reused = new Set(map.reused ?? []);
-  for (const [entry, exported] of Object.entries(entries)) {
-    for (const section of ['exports', 'split', 'removed'])
-      for (const name of names(map[section][entry] ?? {}))
-        if (!namespaces.has(name) && !reused.has(name))
-          assert.ok(!exported.includes(name), `${entry} still exports ${name}.`);
-  }
-  for (const namespace of namespaces)
-    assert.ok(ssr.exports.includes(namespace), `Missing namespace export: ${namespace}`);
 });
 
 test('a packed consumer resolves compiled public exports and its own React installation', async function () {

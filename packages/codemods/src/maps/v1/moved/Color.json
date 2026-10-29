@@ -1,8 +1,0 @@
-{
-  "@envsemble/envui": {
-    "ColorPicker": "@envsemble/envui/color",
-    "ColorPickerProps": "@envsemble/envui/color",
-    "ColorSwatch": "@envsemble/envui/color",
-    "ColorSwatchProps": "@envsemble/envui/color"
-  }
-}

@@ -1,5 +1,0 @@
-[
-  "line 8: env-feature-card has no 1.0 class: FeatureCard is the feature card on Card's page in 1.0, a Card holding a Row of Text and a Button: style env-card, env-text and env-button, or classes of your own on them.",
-  "line 8: env-feature-card-icon has no 1.0 class: FeatureCard is the feature card on Card's page in 1.0, a Card holding a Row of Text and a Button: style env-card, env-text and env-button, or classes of your own on them.",
-  "line 22: env-stat-detail has no 1.0 class: Stat is gone, and the key figures pattern builds it from Surface, Grid, Text and Badge: style env-surface, env-text and env-badge, or classes of your own on them."
-]

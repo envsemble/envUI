@@ -155,12 +155,12 @@ test('a part or state that goes is reported until a major changeset names it', (
   assert.equal(meta([minor('Card drops `env-card-meta`.')]), false);
   assert.equal(meta(['Card drops `env-card-meta`.']), false);
   assert.equal(
-    meta([`---\n'@envsemble/envui-codemods': major\n---\n\nCard drops \`env-card-meta\`.\n`]),
+    meta([`---\n'@envsemble/eslint-plugin-envui': major\n---\n\nCard drops \`env-card-meta\`.\n`]),
     false,
   );
   assert.equal(
     meta([
-      `---\n"@envsemble/envui-codemods": minor\n"@envsemble/envui": major\n---\n\nCard drops \`env-card-meta\`.\n`,
+      `---\n"@envsemble/eslint-plugin-envui": minor\n"@envsemble/envui": major\n---\n\nCard drops \`env-card-meta\`.\n`,
     ]),
     true,
   );

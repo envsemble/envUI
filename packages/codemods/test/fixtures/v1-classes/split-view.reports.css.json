@@ -1,8 +1,0 @@
-[
-  "line 3: --env-split-view-size is removed in 1.0: SplitView is gone: Panes takes the resized pane's size in rem, as size or defaultSize on Panes.Root.",
-  "line 4: --env-split-view-gutter is removed in 1.0: SplitView is gone: Panes has no gutter; Panes.Divider has a width of its own.",
-  "line 6: env-panes-pane has no 1.0 class: Panes has no generic pane: its panes are env-panes-main and env-panes-supporting, or env-panes-list and env-panes-detail.",
-  "line 9: .env-panes[data-resizing] matches nothing in 1.0: Panes decides its arrangement in CSS and marks it with data-behavior, data-split-at and data-open, the pane shown in less room: it has no orientation or stacking, and while its divider is dragged the divider has data-dragging, so write .env-panes:has(> .env-panes-divider[data-dragging]) for data-resizing.",
-  "line 12: env-panes-pane has no 1.0 class: Panes has no generic pane: its panes are env-panes-main and env-panes-supporting, or env-panes-list and env-panes-detail.",
-  "line 19: .env-panes has no data-resizing in 1.0, so .env-panes:not([data-resizing]) now matches every .env-panes: Panes decides its arrangement in CSS and marks it with data-behavior, data-split-at and data-open, the pane shown in less room: it has no orientation or stacking, and while its divider is dragged the divider has data-dragging, so write .env-panes:has(> .env-panes-divider[data-dragging]) for data-resizing."
-]

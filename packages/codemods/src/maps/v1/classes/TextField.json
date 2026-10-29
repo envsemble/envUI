@@ -1,7 +1,0 @@
-{
-  "env-text-input": "env-text-field-input",
-  "env-text-field-well": "env-text-field-control",
-  "env-form-field": "env-field",
-  "env-field-hint": "env-field-description",
-  "env-textarea-resize-edge": "env-textarea-resize-handle"
-}

@@ -1,6 +1,5 @@
 import { test, expect } from '@playwright/test';
 import { siteDevUrl } from './helpers/Servers';
-import { readMap } from '../../packages/codemods/src/map.mjs';
 import {
   allPages,
   counterpartOf,
@@ -14,21 +13,6 @@ import {
 } from '../../apps/site/src/navigation/SiteRoutes';
 import { componentGroups } from '../../apps/site/src/pages/PageModel';
 import { goTo } from './helpers/SiteSpecHelpers';
-import { componentDocuments } from '../../apps/site/src/pages/PageModel';
-
-const components = componentDocuments.map(({ id }) => id);
-
-test('the 0.x routes of renamed pages open the pages under their new names', () => {
-  const { docs } = readMap() as { docs: Record<string, string> };
-  for (const [from, to] of Object.entries<string>(docs).filter(([key]) => !key.startsWith('$'))) {
-    expect(components).toContain(to);
-    expect(components).not.toContain(from);
-    // A page's views are gone: Preview and Usage open its page, and Props its page in the Docs.
-    for (const view of ['preview', 'usage'])
-      expect(normalizeRoute(`components/${from}/${view}`)).toBe(`components/${to}`);
-    expect(normalizeRoute(`components/${from}/props`)).toBe(`docs/components/${to}`);
-  }
-});
 
 test('the addresses of the views before the catalogue and the Docs split open the pages they became', () => {
   const routes: Record<string, string> = {

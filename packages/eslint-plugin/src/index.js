@@ -2,7 +2,6 @@ import { readFileSync } from 'node:fs';
 import noHandRolledLayout from './rules/no-hand-rolled-layout.js';
 import noHtmlElements from './rules/no-html-elements.js';
 import noRawColors from './rules/no-raw-colors.js';
-import noRenamedExports from './rules/no-renamed-exports.js';
 
 const { name, version } = JSON.parse(
   readFileSync(new URL('../package.json', import.meta.url), 'utf8'),
@@ -15,7 +14,6 @@ const plugin = {
     'no-hand-rolled-layout': noHandRolledLayout,
     'no-html-elements': noHtmlElements,
     'no-raw-colors': noRawColors,
-    'no-renamed-exports': noRenamedExports,
   },
   configs: {},
 };
@@ -30,7 +28,6 @@ plugin.configs.recommended = {
     'envui/no-hand-rolled-layout': 'warn',
     'envui/no-html-elements': 'error',
     'envui/no-raw-colors': 'error',
-    'envui/no-renamed-exports': 'error',
   },
 };
 

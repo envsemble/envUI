@@ -1,6 +1,0 @@
-{
-  "@envsemble/envui": {
-    "Input": "TextField",
-    "InputProps": "TextFieldProps"
-  }
-}

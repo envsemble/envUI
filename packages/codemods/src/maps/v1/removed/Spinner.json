@@ -1,7 +1,0 @@
-{
-  "@envsemble/envui": {
-    "LoadingState": {
-      "use": "LoadingState is a Spinner with showLabel in 1.0: <Spinner label=\"…\" showLabel />, which says Loading without a label; v1-structure rewrites each use."
-    }
-  }
-}

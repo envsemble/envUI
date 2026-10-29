@@ -1,8 +1,0 @@
-.env-alert,
-.env-badge[data-count],
-.env-badge-count-label,
-.env-list-item:not(.env-list-item-fill),
-[class*='env-pager-link-'] {
-  --env-alert-icon: red;
-  color: var(--env-calendar-heatmap-tone);
-}

@@ -1,7 +1,0 @@
-/* 0.7's Stack, which 1.0 replaces with Row and Column, which render no class. */
-.settings .env-stack {
-  --env-stack-gap: 2rem;
-}
-.env-stack[data-direction='row'] > .avatar {
-  margin: 0;
-}

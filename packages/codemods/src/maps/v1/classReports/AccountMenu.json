@@ -1,5 +1,0 @@
-{
-  "env-account-menu": {
-    "report": "AccountMenu is gone, and the account menu pattern builds it from Menu.Root, AvatarButton and Avatar: style env-menu-header, env-avatar-button and env-avatar, or a class of your own on the trigger."
-  }
-}

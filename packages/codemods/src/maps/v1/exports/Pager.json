@@ -1,8 +1,0 @@
-{
-  "@envsemble/envui": {
-    "DirectionLinks": "Pager.Root",
-    "DirectionLinksProps": "Pager.RootProps",
-    "DirectionLinksDestination": "Pager.LinkProps",
-    "DirectionLinkProps": "Pager.LinkProps"
-  }
-}

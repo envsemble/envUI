@@ -1,5 +1,5 @@
 import { Column, CopyButton, DescriptionList, Link, Row, Surface, Text } from '@envsemble/envui';
-import { Code, Markdown } from '@envsemble/envui/content';
+import { Code } from '@envsemble/envui/content';
 import { AgentLogos } from '../brand/AgentLogos';
 import { EnvUIDocsLogo } from '../brand/EnvUIDocsLogo';
 import { PageHeader } from '../layout/PageHeader';
@@ -27,7 +27,6 @@ import { SpecimenHeadingLevel } from '../figures/Example';
 import { ReleaseNotes } from './ReleaseNotes';
 import { codeColumns, subsections } from '../shared/CatalogueContent';
 import { headingSlug } from '../shared/SearchAnchors';
-import codemodsReadme from '../../../../packages/codemods/README.md?raw';
 
 /** The token reference, a large page that loads with the page that shows it. */
 const tokenReference = lazyPart(
@@ -142,23 +141,6 @@ export function GuidePage({ page }: { page: RoutePage }) {
       />
       <Column gap={7} className="site-article">
         <GuideDocument document={page.document!} />
-      </Column>
-    </>
-  );
-}
-
-/** The codemods' README, as the package ships it, without its title. */
-export function CodemodsPage({ page }: { page: RoutePage }) {
-  return (
-    <>
-      <PageHeader
-        title={page.title}
-        trail={docsTrail(page)}
-        description={page.summary}
-        kind="docs"
-      />
-      <Column gap={7} className="site-article">
-        <Markdown codeCopyable>{codemodsReadme.replace(/^# [^\n]*\n+/, '')}</Markdown>
       </Column>
     </>
   );

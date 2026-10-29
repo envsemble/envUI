@@ -4,7 +4,6 @@
   "type": "module",
   "workspaces": [
     "packages/ui",
-    "packages/codemods",
     "packages/eslint-plugin",
     "packages/stylelint-config",
     "apps/site"

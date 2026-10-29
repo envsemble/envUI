@@ -1,5 +1,0 @@
-[
-  "line 1: env-title-bar has no 1.0 class: TitleBar is gone: a TopBar with titleBar is the window's title bar, .env-top-bar[data-title-bar], with the parts env-top-bar-start, env-top-bar-title and env-top-bar-actions.",
-  "line 5: env-title-bar-center has no 1.0 class: TitleBar is gone: a TopBar with titleBar is the window's title bar, .env-top-bar[data-title-bar], with the parts env-top-bar-start, env-top-bar-title and env-top-bar-actions.",
-  "line 6: env-title-bar-end has no 1.0 class: TitleBar is gone: a TopBar with titleBar is the window's title bar, .env-top-bar[data-title-bar], with the parts env-top-bar-start, env-top-bar-title and env-top-bar-actions."
-]

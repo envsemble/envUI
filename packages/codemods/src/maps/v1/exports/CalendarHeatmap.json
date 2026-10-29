@@ -1,8 +1,0 @@
-{
-  "@envsemble/envui": {
-    "Heatmap": "CalendarHeatmap",
-    "HeatmapProps": "CalendarHeatmapProps",
-    "HeatmapDay": "CalendarHeatmapDay",
-    "HeatmapCell": "CalendarHeatmapCell"
-  }
-}

@@ -87,8 +87,6 @@ test('search finds components by alias, props and tokens by name, and pages befo
   assert.ok(best('start icon', 5).includes('prop:Button.startIcon'));
   assert.deepEqual(best('--env-color-fg-muted'), ['token:color.fg.muted']);
   assert.deepEqual(best('fg muted'), ['token:color.fg.muted']);
-  // A 0.7 name finds the token that replaces it.
-  assert.ok(best('--color-text-muted', 3).includes('token:color.fg.muted'));
   assert.deepEqual(best('button'), ['page:button']);
   assert.ok(best('loading', 3).includes('page:loading'));
   // A typo in a longer word still finds it.
@@ -205,8 +203,8 @@ test('a result names its area: the catalogue, or the Docs for the reference', ()
   assert.equal(area('export:useTheme'), 'docs');
   assert.equal(area('token:color.fg.muted'), 'docs');
   for (const record of records) assert.ok(['catalogue', 'docs'].includes(record.area), record.id);
-  // The site's own pages: the Docs' home, tokens, codemods and the full changelog are in the Docs.
-  const inDocs = new Set(['docs', 'tokens', 'codemods', 'full-changelog']);
+  // The site's own pages: the Docs' home, tokens and the full changelog are in the Docs.
+  const inDocs = new Set(['docs', 'tokens', 'full-changelog']);
   for (const { page, area: where } of standalonePages)
     assert.equal(where, inDocs.has(page) ? 'docs' : 'catalogue', page);
   // A foundation's page in the catalogue ranks above its guide in the Docs.

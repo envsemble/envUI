@@ -37,8 +37,7 @@
     "node": "^22.13.0 || >=24"
   },
   "scripts": {
-    "prepack": "node scripts/SyncRenames.mjs && node scripts/SyncTokens.mjs",
-    "sync:renames": "node scripts/SyncRenames.mjs",
+    "prepack": "node scripts/SyncTokens.mjs",
     "sync:tokens": "node scripts/SyncTokens.mjs",
     "dogfood": "node scripts/Dogfood.mjs",
     "test": "node --test test/*.test.mjs"

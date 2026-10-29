@@ -1,8 +1,0 @@
-{
-  "env-empty-state": {
-    "report": "EmptyState is gone, and the empty states pattern builds it from a Column of Text, an icon and a Button: style env-text and env-button, or classes of your own on them."
-  },
-  "env-empty-copy": {
-    "report": "EmptyState is gone, and the empty states pattern builds it from a Column of Text, an icon and a Button: style env-text, or a class of your own on the description."
-  }
-}

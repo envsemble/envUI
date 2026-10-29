@@ -1,7 +1,0 @@
-{
-  "@envsemble/envui": {
-    "SurfaceDensity": {
-      "use": "Surface's density is gone in 1.0: give the controls inside a ControlSize with their size prop, or set a ThemeScale with scale on a Theme around the region."
-    }
-  }
-}

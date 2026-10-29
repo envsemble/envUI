@@ -1,10 +1,6 @@
 // Builds envUI's design tokens: packages/ui/tokens (DTCG 2025.10 and its resolver) through
-// Terrazzo into packages/ui/src/styles/Tokens.css, packages/ui/src/generated/tokens.ts,
-// packages/ui/src/generated/tokens.json and packages/ui/src/generated/token-migration.json,
-// formatted with Prettier. Terrazzo lints the tokens first. The migration map's copies follow it:
-// the `tokens` section of the codemods' rename map, its fragment
-// packages/codemods/src/maps/v1/tokens/Tokens.json, and the token list in docs/migration.md,
-// between its token-migration markers.
+// Terrazzo into packages/ui/src/styles/Tokens.css, packages/ui/src/generated/tokens.ts and
+// packages/ui/src/generated/tokens.json, formatted with Prettier. Terrazzo lints the tokens first.
 //
 //   node scripts/build/BuildTokens.ts [--check]
 //
@@ -22,169 +18,6 @@ const repositoryRoot = fileURLToPath(new URL('../../', import.meta.url));
 const libraryDirectory = resolve(repositoryRoot, 'packages/ui');
 export const tokensDirectory = resolve(libraryDirectory, 'tokens');
 const configFile = pathToFileURL(resolve(libraryDirectory, 'terrazzo.config.mjs'));
-export const codemodsMapFile = resolve(
-  repositoryRoot,
-  'packages/codemods/src/maps/v1/tokens/Tokens.json',
-);
-export const migrationGuideFile = resolve(repositoryRoot, 'docs/migration.md');
-
-/** An entry of the token build's migration map: what a name of before became. */
-interface MigrationEntry {
-  kind: 'renamed' | 'alias' | 'fixed' | 'removed' | 'prefixed';
-  cssVariable?: string;
-  /** A fixed color's value, or its value in each theme. */
-  value?: string | Record<string, string>;
-  component?: string;
-  colorPropertyOf?: string;
-  note?: string;
-}
-
-/** packages/ui/src/generated/token-migration.json, which the token build writes. */
-export interface TokenMigration {
-  names: Record<string, MigrationEntry>;
-}
-
-const mapComment =
-  'Every custom property that envUI 0.x or 1.0’s development defined and 1.0 no longer does, with what replaces it: `to`, the 1.0 custom property, which v1-classes writes in its place (every token takes the --env- prefix, and a few names change beyond it), in a declaration only where no other name has the same `to` or it is the token’s own name, and reports otherwise; `value`, the color of a 0.7 fixed color that no token replaces, which v1-classes reports; or `removed`, with `to` what to use instead where there is one, which v1-classes also reports. A `note` says what changed beyond the name. `npm run tokens:build` writes this section from packages/ui/src/generated/token-migration.json.';
-
-/** The `tokens` section of the codemods' rename map, from the token build's migration map. */
-export function migrationMapSection(migration: TokenMigration) {
-  const section: Record<string, unknown> = { $comment: mapComment };
-  for (const [name, entry] of Object.entries(migration.names))
-    section[name] = {
-      ...(entry.kind === 'removed'
-        ? { removed: true, to: entry.cssVariable ?? null }
-        : entry.kind === 'fixed'
-          ? { value: entry.value }
-          : { to: entry.cssVariable }),
-      ...(entry.component && { component: entry.component }),
-      ...(entry.colorPropertyOf && { colorPropertyOf: entry.colorPropertyOf }),
-      ...(entry.note && { note: entry.note }),
-    };
-  return section;
-}
-
-/**
- * The text of the rename map's tokens fragment for `section`: one JSON object whose entries are each
- * written on one line, which Prettier keeps when it fits.
- */
-export function mapFragmentText(section: Record<string, unknown>) {
-  const entries = Object.entries(section).map(
-    ([key, value]) => `  ${JSON.stringify(key)}: ${JSON.stringify(value)}`,
-  );
-  return `{\n${entries.join(',\n')}\n}\n`;
-}
-
-const guideStart = '<!-- token-migration:start';
-const guideEnd = '<!-- token-migration:end -->';
-
-/**
- * The token list of the migration guide: the names that change beyond the prefix, the 0.7 aliases
- * with their replacements, the fixed colors, the removed names, and the names that only take the
- * prefix.
- */
-export function migrationGuideList(migration: TokenMigration) {
-  const code = (name: string | undefined) => (name ? `\`${name}\`` : '—');
-  const text = (value: string | undefined) => (value ?? '').replaceAll('|', '\\|');
-  const table = (header: string[], rows: string[][]) =>
-    [header, header.map(() => '---'), ...rows].map((cells) => `| ${cells.join(' | ')} |`);
-  const entries = Object.entries(migration.names);
-  const of = (kind: MigrationEntry['kind']) => entries.filter(([, entry]) => entry.kind === kind);
-  const theme = (name: string) =>
-    name
-      .replace(/^\w/, (letter) => letter.toUpperCase())
-      .replace('-high-contrast', ', high contrast');
-  /** A fixed value, or each value of a fixed color per theme, with the themes that take it. */
-  const valueOf = (value: MigrationEntry['value']): string =>
-    typeof value === 'string'
-      ? code(value)
-      : [...new Set(Object.values(value ?? {}))]
-          .map(
-            (each) =>
-              `${code(each)} (${Object.keys(value ?? {})
-                .filter((name) => value?.[name] === each)
-                .map((name) => theme(name).toLowerCase())
-                .join('; ')})`,
-          )
-          .join(', ');
-  const blocks: (string | string[])[] = [];
-  const renamed = of('renamed');
-  if (renamed.length > 0)
-    blocks.push(
-      'Renamed beyond the prefix:',
-      table(
-        ['Before 1.0', '1.0', 'Note'],
-        renamed.map(([name, entry]) => [code(name), code(entry.cssVariable), text(entry.note)]),
-      ),
-    );
-  const aliases = of('alias');
-  if (aliases.length > 0)
-    blocks.push(
-      'The 0.7 aliases, removed, each with the token that replaces it:',
-      table(
-        ['0.7 custom property', '1.0', 'Used for'],
-        aliases.map(([name, entry]) => [
-          code(name),
-          code(entry.cssVariable),
-          text(entry.component),
-        ]),
-      ),
-    );
-  const changed = aliases.filter(([, entry]) => entry.note);
-  if (changed.length > 0)
-    blocks.push(
-      'Aliases whose replacement is not the 0.7 role, or whose value changed, so a style that relied on them needs a look:',
-      table(
-        ['0.7 custom property', '1.0', 'What changed'],
-        changed.map(([name, entry]) => [code(name), code(entry.cssVariable), text(entry.note)]),
-      ),
-    );
-  const fixed = of('fixed');
-  if (fixed.length > 0)
-    blocks.push(
-      'Fixed colors, which no token replaces: write the value, or a custom property of your own that holds it.',
-      table(
-        ['0.7 custom property', 'Used for', 'Value'],
-        fixed.map(([name, entry]) => [code(name), text(entry.component), valueOf(entry.value)]),
-      ),
-    );
-  const removed = of('removed');
-  if (removed.length > 0)
-    blocks.push(
-      'Removed, with what to use instead:',
-      table(
-        ['0.7 custom property', 'Use instead', 'Note'],
-        removed.map(([name, entry]) => [code(name), code(entry.cssVariable), text(entry.note)]),
-      ),
-    );
-  const prefixed = of('prefixed');
-  if (prefixed.length > 0)
-    blocks.push(
-      `Every other name only takes the prefix, ${code(prefixed[0]![0])} as ${code(prefixed[0]![1].cssVariable)}: ${prefixed.map(([name]) => code(name)).join(', ')}.`,
-    );
-  return blocks.map((block) => (Array.isArray(block) ? block.join('\n') : block)).join('\n\n');
-}
-
-/** The migration guide's text with `list` between its token-migration markers. */
-export function withGuideList(text: string, list: string) {
-  const start = text.indexOf(guideStart);
-  const startEnd = start === -1 ? -1 : text.indexOf('-->', start) + '-->'.length;
-  const end = text.indexOf(guideEnd);
-  if (start === -1 || end === -1 || end < startEnd)
-    throw new Error(
-      `${migrationGuideFile} needs the markers ${guideStart} … --> and ${guideEnd} around the token list.`,
-    );
-  return `${text.slice(0, startEnd)}\n\n${list}\n\n${text.slice(end)}`;
-}
-
-/** The codemods' rename map and the migration guide, with the token list of `migration`. */
-export async function migrationCopies(migration: TokenMigration) {
-  const guide = await readFile(migrationGuideFile, 'utf8');
-  return [
-    { path: codemodsMapFile, contents: mapFragmentText(migrationMapSection(migration)) },
-    { path: migrationGuideFile, contents: withGuideList(guide, migrationGuideList(migration)) },
-  ];
-}
 
 /** `contents` as Prettier formats the file at `path`. */
 export async function formatted(path: string, contents: string) {
@@ -194,7 +27,7 @@ export async function formatted(path: string, contents: string) {
 /**
  * Builds the tokens. With `check`, compares instead of writing and throws when anything is stale.
  * `tokensDirectory` and `outDir` (file URLs ending in a slash) build other tokens elsewhere, as
- * the tests do, and leave the codemods' rename map and the migration guide alone.
+ * the tests do.
  */
 export async function buildTokens({
   check = false,
@@ -219,11 +52,6 @@ export async function buildTokens({
     path: fileURLToPath(new URL(filename, config.outDir)),
     contents,
   }));
-  // The library's own tokens also bring the migration map's copies up to date.
-  if (tokensDirectory === undefined && outDir === undefined) {
-    const migration = outputs.find(({ path }) => path.endsWith('token-migration.json'));
-    outputs.push(...(await migrationCopies(JSON.parse(String(migration!.contents)))));
-  }
   const stale: string[] = [];
   for (const { path, contents } of outputs) {
     const text = await formatted(path, String(contents));

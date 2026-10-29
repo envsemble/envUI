@@ -33,7 +33,6 @@ export type PageKind =
   | 'foundation'
   | 'docs-home'
   | 'guide'
-  | 'codemods'
   | 'docs-changelog'
   | 'tokens'
   | 'foundation-guide'
@@ -226,26 +225,10 @@ const guidePage = (document: Documentation): RoutePage => ({
   document,
 });
 
-/** The Docs' pages for getting started, in reading order, with codemods after migration. */
+/** The Docs' pages for getting started, in reading order. */
 const startPages: RoutePage[] = guideDocuments
   .filter((document) => startGuides.has(document.id))
-  .flatMap((document) => {
-    const page = guidePage(document);
-    if (document.id === 'migration')
-      return [
-        page,
-        {
-          path: 'docs/codemods',
-          title: 'Codemods',
-          area: 'docs',
-          section: 'Get started',
-          kind: 'codemods',
-          summary:
-            'Upgrade an application from envUI 0.x to 1.0 with @envsemble/envui-codemods, which renames what it can and reports the rest.',
-        },
-      ];
-    return [page];
-  });
+  .map(guidePage);
 
 /** The Docs' other guides, in the index's order. */
 const guidePages: RoutePage[] = guideDocuments
@@ -493,7 +476,8 @@ export function routeOfDocument(
     'dev-mode-overview': 'docs/dev-mode',
     changelog: 'docs/changelog',
     tokens: 'docs/tokens',
-    codemods: 'docs/codemods',
+    // The codemods are gone: their page opens the migration guide.
+    codemods: 'docs/migration',
     'full-changelog': 'docs/changelog',
     // The agent skills are gone; the guide for agents says what replaced them.
     'agent-skills': 'docs/agent-tooling',
@@ -550,7 +534,7 @@ const apiSection = (section: string | null) => section?.startsWith('props-') ?? 
 
 /**
  * Keeps old addresses working: the views pages had before the catalogue and the Docs split, the
- * 0.x names of pages and the pages that moved, each opens the page it became.
+ * old names of pages and the pages that moved, each opens the page it became.
  */
 export function normalizeRoute(route: string): string {
   const [originalPath, ...query] = route.split('?');
@@ -590,6 +574,8 @@ export function normalizeRoute(route: string): string {
   if (/^contributing(?:\/|$)/.test(originalPath)) return homeRoute;
   // The agent skills' page is gone with the skills: the guide for agents replaces them.
   if (originalPath === 'docs/agent-skills') return 'docs/agent-tooling';
+  // The codemods are gone: their page opens the migration guide.
+  if (originalPath === 'docs/codemods') return `docs/migration${rest()}`;
   // The agent benchmark is gone: its page opens the overview.
   if (originalPath === 'benchmark') return `${homeRoute}${rest()}`;
   // The catalogue's changelog moved to the Docs, with its release notes.

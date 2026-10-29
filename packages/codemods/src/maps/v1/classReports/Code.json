@@ -1,5 +1,0 @@
-{
-  "env-code-subtle": {
-    "report": "0.6's subtle inline code is gone: Code has one look in 1.0, in the code theme of the app theme, which envUI chooses, so drop the style."
-  }
-}
