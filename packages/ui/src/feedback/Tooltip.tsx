@@ -32,6 +32,7 @@ import {
 import { accessibleName } from '../internal/accessibleName.js';
 import { keepsOpen, usePortalContainer } from '../internal/PortalContainerContext.js';
 import { reportInDevelopment } from '../internal/developmentReport.js';
+import type { PopoverOpenChangeDetails, PopoverOpenChangeReason } from './Popover.js';
 import '../styles/Base.css';
 import '../styles/Tooltip.css';
 
@@ -81,6 +82,11 @@ export interface TooltipProps
    */
   side?: TooltipSide;
   /**
+   * How the tooltip lines up with the control along that side: its start, center or end.
+   * @default 'center'
+   */
+  align?: 'start' | 'center' | 'end';
+  /**
    * Milliseconds the pointer rests on the control before the tooltip opens; keyboard focus opens it
    * at once.
    * @default 400
@@ -92,7 +98,20 @@ export interface TooltipProps
    * @default false
    */
   defaultOpen?: boolean;
+  /**
+   * Whether the tooltip shows, for a tooltip the application controls with onOpenChange, such as
+   * one a step of a tour opens.
+   */
+  open?: boolean;
+  /**
+   * Receives the requested state, and why, as the pointer rests on the control or leaves it, focus
+   * reaches or leaves it, it is pressed or Esc closes the tooltip.
+   */
+  onOpenChange?: (open: boolean, details: TooltipOpenChangeDetails) => void;
 }
+
+/** What a tooltip's onOpenChange receives beside the requested state: a popover's details. */
+export type TooltipOpenChangeDetails = PopoverOpenChangeDetails;
 
 /** The control's own accessible name, where its props give one as text: a first guess. */
 function ownName(props: TriggerProps): string | undefined {
@@ -164,7 +183,10 @@ function typeName(type: unknown): string {
   return named?.displayName || named?.name || 'a component';
 }
 
-type Forwarded = Omit<TooltipProps, 'content' | 'children' | 'side' | 'delay' | 'popupClassName'>;
+type Forwarded = Omit<
+  TooltipProps,
+  'content' | 'children' | 'side' | 'align' | 'delay' | 'popupClassName' | 'open' | 'onOpenChange'
+>;
 
 /**
  * The control with the Tooltip's own props joined to its own, handlers chained and the control's
@@ -201,8 +223,11 @@ export function Tooltip(props: TooltipProps) {
     content,
     children,
     side = 'top',
+    align = 'center',
     delay = tooltipDelay,
     defaultOpen = false,
+    open,
+    onOpenChange,
     popupClassName,
     ...forwarded
   } = props;
@@ -244,8 +269,11 @@ export function Tooltip(props: TooltipProps) {
     <TooltipTrigger
       content={content}
       side={side}
+      align={align}
       delay={delay}
       defaultOpen={defaultOpen}
+      open={open}
+      onOpenChange={onOpenChange}
       popupClassName={popupClassName}
       forwarded={forwarded}
     >
@@ -270,16 +298,22 @@ function TooltipTrigger({
   content,
   children,
   side,
+  align,
   delay,
   defaultOpen,
+  open: controlledOpen,
+  onOpenChange,
   popupClassName,
   forwarded,
 }: {
   content: ReactNode;
   children: ReactElement<TriggerProps>;
   side: TooltipSide;
+  align: 'start' | 'center' | 'end';
   delay: number;
   defaultOpen: boolean;
+  open: boolean | undefined;
+  onOpenChange: TooltipProps['onOpenChange'];
   popupClassName?: string;
   forwarded: Forwarded;
 }) {
@@ -290,8 +324,13 @@ function TooltipTrigger({
   // closes that popup and the tooltip doesn't cover it.
   const expanded = isExpanded(trigger);
   const popupId = `${useId()}-tooltip`;
-  const [open, setOpen] = useState(defaultOpen);
-  if (open && expanded) setOpen(false);
+  const [ownOpen, setOwnOpen] = useState(defaultOpen);
+  if (ownOpen && expanded) setOwnOpen(false);
+  const open = (controlledOpen ?? ownOpen) && !expanded;
+  function setOpen(next: boolean, reason: PopoverOpenChangeReason) {
+    if (controlledOpen === undefined) setOwnOpen(next);
+    onOpenChange?.(next, { reason });
+  }
   const portal = usePortalContainer();
   // The tooltip takes the text direction at its trigger, the control or its wrapper.
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -402,7 +441,7 @@ function TooltipTrigger({
             returning.current = false;
           }
           if (next && !isDisabled) setName(accessibleName(triggerRef.current) ?? ownName(trigger));
-          setOpen(next);
+          setOpen(next, details.reason as PopoverOpenChangeReason);
         }}
       >
         <BaseTooltip.Trigger
@@ -445,6 +484,7 @@ function TooltipTrigger({
         <TooltipPopup
           content={content}
           side={side}
+          align={align}
           trigger={triggerRef}
           popupProps={{ id: popupId, className: popupClassName }}
         />

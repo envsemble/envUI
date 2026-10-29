@@ -16,6 +16,24 @@ async function overlayViolations(page: Page) {
 }
 
 test.describe('Tooltip', () => {
+  test('a controlled tooltip opens from the application, lines up by align and says why it closes', async ({
+    page,
+  }) => {
+    await page.goto(tooltips);
+    const control = page.getByRole('button', { name: 'Filter tour' });
+    await page.getByRole('button', { name: 'Tour step' }).click();
+    const tooltip = page.getByRole('tooltip');
+    await expect(tooltip).toHaveText('Filters live here');
+    // align="start" lines its start up with the control's, below it.
+    const [own, popup] = [(await control.boundingBox())!, (await tooltip.boundingBox())!];
+    expect(Math.abs(popup.x - own.x)).toBeLessThanOrEqual(1);
+    expect(popup.y).toBeGreaterThan(own.y);
+    await control.focus();
+    await page.keyboard.press('Escape');
+    await expect(tooltip).toHaveCount(0);
+    await expect(page.getByTestId('tour-reasons')).toContainText('close escape-key');
+  });
+
   test('describes a named control while open, and adds nothing that repeats its name', async ({
     page,
   }) => {

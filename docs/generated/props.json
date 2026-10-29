@@ -8720,6 +8720,13 @@
           "description": "The side of the control it opens on: top, bottom, left, right, or inline-start and inline-end, which follow the text direction. Where the window has no room, it flips to the other side."
         },
         {
+          "name": "align",
+          "type": "'start' | 'center' | 'end'",
+          "required": false,
+          "default": "'center'",
+          "description": "How the tooltip lines up with the control along that side: its start, center or end."
+        },
+        {
           "name": "delay",
           "type": "number",
           "required": false,
@@ -8732,6 +8739,18 @@
           "required": false,
           "default": "false",
           "description": "Whether the tooltip starts open, such as in a picture of the interface; it then closes as an opened one does."
+        },
+        {
+          "name": "open",
+          "type": "boolean",
+          "required": false,
+          "description": "Whether the tooltip shows, for a tooltip the application controls with onOpenChange, such as one a step of a tour opens."
+        },
+        {
+          "name": "onOpenChange",
+          "type": "(open: boolean, details: TooltipOpenChangeDetails) => void",
+          "required": false,
+          "description": "Receives the requested state, and why, as the pointer rests on the control or leaves it, focus reaches or leaves it, it is pressed or Esc closes the tooltip."
         }
       ],
       "native": [
