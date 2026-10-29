@@ -1223,7 +1223,7 @@
           "description": "Whether to show the eyedropper, which picks a color from the screen, where the browser has one (Chromium-based browsers on the desktop); elsewhere it never shows."
         },
         {
-          "name": "copy",
+          "name": "copyable",
           "type": "boolean",
           "required": false,
           "default": "true",
@@ -1366,7 +1366,7 @@
           "description": "Whether to show the eyedropper, which picks a color from the screen, where the browser has one (Chromium-based browsers on the desktop); elsewhere it never shows."
         },
         {
-          "name": "copy",
+          "name": "copyable",
           "type": "boolean",
           "required": false,
           "default": "true",

@@ -85,7 +85,7 @@ export interface ColorPickerValueProps {
    * Whether to show the button that copies the color, as the fields show it.
    * @default true
    */
-  copy?: boolean;
+  copyable?: boolean;
   /**
    * Preset colors to choose from, under the fields: CSS color strings, React Aria's Colors, or
    * `{ color, label }` with a name, such as the colors of a brand.
@@ -138,7 +138,7 @@ export function ColorPicker({
   formats: ownFormats,
   alpha = false,
   eyeDropper = true,
-  copy = true,
+  copyable = true,
   swatches,
   name,
   form,
@@ -272,7 +272,7 @@ export function ColorPicker({
               >
                 {fields(each)}
                 {index === 0 && eyeDropperButton}
-                {copy && (
+                {copyable && (
                   <div className="env-color-picker-copy">
                     <CopyButton
                       variant="ghost"
@@ -324,7 +324,7 @@ export function ColorPicker({
             )}
             {fields(format)}
             {eyeDropperButton}
-            {copy && (
+            {copyable && (
               <div className="env-color-picker-copy">
                 <CopyButton
                   variant="ghost"

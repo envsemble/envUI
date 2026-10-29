@@ -236,7 +236,7 @@ Offer only the formats and the alpha the stored color can hold: a color stored a
 
 #### Copy, the eyedropper and swatches
 
-`copy` and `eyeDropper` are on by default. The eyedropper shows only where the browser has one, Chromium-based browsers on the desktop. `swatches` lists preset colors under the fields: CSS color strings, `Color`s, or `{ color, label }` with a name.
+`copyable` and `eyeDropper` are on by default. The eyedropper shows only where the browser has one, Chromium-based browsers on the desktop. `swatches` lists preset colors under the fields: CSS color strings, `Color`s, or `{ color, label }` with a name.
 
 ```tsx
 <ColorPicker
@@ -309,6 +309,7 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 
 ## Changelog
 
+- **1.0.0-prerelease.5**: `copy` is `copyable`, as on CodeBlock.
 - **1.0.0-prerelease.5**: ColorPickerButton's popover is frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge, and is solid with its edge at high contrast and with reduced transparency.
 - **1.0.0-prerelease.3**: `formats` with two or more formats shows their fields together, a row each with its own copy button, where in 1.0.0-prerelease.2 it limited the format menu to them; the format menu stays the default. Remove `formats` to keep the menu, which offers every format, as [the migration guide](../migration.md#color-picker-and-swatches) says. `--env-color-picker-button-container` gives one ColorPickerButton a fill.
 - **1.0.0**: ColorPicker, ColorPickerButton and ColorSwatch come from `@envsemble/envui/color`, on React Aria's color hooks: hex, RGB and HSL fields named by their letters, with a format menu, an alpha slider and field with `alpha`, a copy button, the browser's eyedropper and preset `swatches`. Values are CSS color strings or React Aria's `Color`, and `onValueChange` receives both. The area is square with the hue and alpha strips upright at its side, all with square corners, and the fields are quiet. ColorSwatch is a small square that writes its color in a `format`, with a `label` and a small size. ColorPickerButton has no fill of its own, as fields have none. Before, the color area and the hue were envUI's own, on Base UI's Slider, with a HEX field.
