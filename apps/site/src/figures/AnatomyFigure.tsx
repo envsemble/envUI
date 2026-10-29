@@ -4,7 +4,7 @@ import type { AnatomyLegendItem, StageFill } from '../shared/DocumentationTypes'
 import { Documentation } from '../pages/Documentation';
 import { ExampleCode, ExampleRender, leastFitScale } from './LiveExample';
 import { OpenExample } from './OpenExample';
-import { useParts, type Parts } from '../template/Parts';
+import { legendOf, partDescription } from '../template/Parts';
 import { legendName } from '../shared/CatalogueContent';
 import { OptionLegend } from '../template/OptionLegend';
 import { SpecimenRender } from './Specimen';
@@ -259,10 +259,10 @@ function AnatomyStage({
  * class names and props are on the page's guide in the Docs. An item without a name shows the
  * description parts.json gives its part, or else what it is written as.
  */
-function legendText(item: AnatomyLegendItem, parts: Parts) {
+function legendText(item: AnatomyLegendItem) {
   const name = legendName(item);
   if (name) return name;
-  return parts.description(item.part.replace(/::text$/, '')) ?? item.text;
+  return partDescription(item.part.replace(/::text$/, '')) ?? item.text;
 }
 
 /**
@@ -311,8 +311,7 @@ export function AnatomyFigure({
   /** The width, in rem, the subject needs to show its parts: a narrower stage draws it smaller. */
   width?: number;
 }) {
-  const parts = useParts();
-  const [items] = useState(() => (legend?.length ? legend : parts.legendOf(of ?? '')));
+  const [items] = useState(() => (legend?.length ? legend : legendOf(of ?? '')));
   return (
     <figure className={variants ? 'catalogue-variants' : 'site-anatomy'} aria-label={title}>
       <AnatomyStage
@@ -343,7 +342,7 @@ export function AnatomyFigure({
                 <span className="site-anatomy-number" aria-hidden="true">
                   {index + 1}
                 </span>
-                <Documentation markdown={legendText(item, parts)} path={`components/${page}.md`} />
+                <Documentation markdown={legendText(item)} path={`components/${page}.md`} />
               </li>
             ))}
           </ol>

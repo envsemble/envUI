@@ -14,11 +14,12 @@ import { routeHref } from '../navigation/Address';
 import { OtherPartButton } from '../navigation/OtherPart';
 import { lazyPart } from '../template/LoadBoundary';
 import { ExampleSource } from '../figures/LiveExample';
-import { useParts } from '../template/Parts';
+import { partsOf } from '../template/Parts';
 import { providesOf } from '../template/Provides';
 import { PropsTables } from '../template/PropsTables';
 import { MetadataBadges, PageChangelog, TemplateContent } from '../template/TemplateContent';
-import { useDocument, type Documentation as Document } from './PageModel';
+import type { Documentation as Document } from './PageModel';
+import { useDocument } from './PageContent';
 import { Documentation } from './Documentation';
 import { GuideDocument } from './GuideDocument';
 import { LoadedPart } from './LoadedPart';
@@ -273,9 +274,8 @@ function StateValues({ values }: { values: readonly string[] }) {
 
 /** The part names and state attributes of the exports a page documents, as simple lists. */
 function PartNames({ components }: { components: readonly string[] }) {
-  const file = useParts();
   const entries = components.flatMap((name) => {
-    const parts = file.of(name);
+    const parts = partsOf(name);
     return parts ? [{ name, parts }] : [];
   });
   if (!entries.length) return null;
@@ -441,9 +441,8 @@ function WordsInCode({ document }: { document: Document }) {
 
 /** The color properties of the exports a page documents, from docs/generated/parts.json. */
 function ColorProperties({ components }: { components: readonly string[] }) {
-  const parts = useParts();
   const entries = components.flatMap((name) => {
-    const colors = parts.of(name)?.colors ?? [];
+    const colors = partsOf(name)?.colors ?? [];
     return colors.length ? [{ name, colors }] : [];
   });
   if (!entries.length) return null;

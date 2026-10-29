@@ -8,7 +8,7 @@ import { Catalogue } from './Catalogue';
 import { FoundationCatalogue } from './FoundationCatalogue';
 import { PatternCatalogue } from './PatternCatalogue';
 import { Documentation } from './Documentation';
-import { useDocument } from './PageModel';
+import { useDocument } from './PageContent';
 
 /**
  * A component's page in the catalogue: what it looks like and when to use it, in live figures

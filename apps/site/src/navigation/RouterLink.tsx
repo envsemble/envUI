@@ -1,21 +1,27 @@
 import type { LinkComponentProps } from '@envsemble/envui';
 import { navigate, routeOfLink } from './Address';
 import { findPage, normalizeRoute } from './SiteRoutes';
-import { preloadPage } from '../pages/PreloadPage';
+import { pageLoaded, preloadPage } from '../pages/PreloadPage';
+
+/** The page of a route, such as components/button?section=props. */
+const pageOfRoute = (route: string) => findPage(route.split('?')[0]!);
 
 /** Starts loading what the page a link leads to needs, as a press on it is coming. */
 function preload(href: string | undefined) {
   const route = href === undefined ? undefined : routeOfLink(href);
-  if (route !== undefined)
-    void preloadPage(findPage(normalizeRoute(route || 'overview').split('?')[0]!));
+  if (route !== undefined) void preloadPage(pageOfRoute(normalizeRoute(route || 'overview')));
 }
+
+/** The latest press on a link, which a press made while an earlier page loads takes over. */
+let latestPress = 0;
 
 /**
  * The anchor of every envUI destination on the site, through LinkProvider. A plain press on a link
  * to one of its pages, the catalogue's or the Docs', shows the page without loading the site again; a
  * press with a modifier and a link to a file or another site behave as anchors do. An example's
  * links, which a preview keeps from navigating, stay in place. A pointer over a link, or a press
- * starting on it, starts loading its page's content.
+ * starting on it, starts loading what its page needs; the address and the page change together,
+ * once that has loaded, rather than the address first with the page before it still shown.
  */
 export function RouterLink({
   onClick,
@@ -42,7 +48,14 @@ export function RouterLink({
         const route = routeOfLink(props.href);
         if (route === undefined) return;
         event.preventDefault();
-        navigate(normalizeRoute(route || 'overview'));
+        const target = normalizeRoute(route || 'overview');
+        const page = pageOfRoute(target);
+        const press = ++latestPress;
+        if (pageLoaded(page)) navigate(target);
+        else
+          void preloadPage(page).then(() => {
+            if (press === latestPress) navigate(target);
+          });
       }}
     />
   );

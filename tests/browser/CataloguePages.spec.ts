@@ -209,9 +209,9 @@ test('every anatomy figure numbers each part its legend names', async ({ page })
   const pages = figurePages.map((document) => ({
     id: document.id,
     route: document.route,
-    figures: (document.sections ?? [])
-      .flatMap((section) => section.blocks)
-      .filter((block) => block.kind === 'example' && block.role === 'anatomy').length,
+    figures: (document.outline ?? [])
+      .flatMap((section) => section.examples)
+      .filter((example) => example.role === 'anatomy').length,
   }));
   expect(pages.length).toBeGreaterThan(0);
   // A window wide enough for every figure's parts beside the page's contents: in a narrower
@@ -596,9 +596,7 @@ test('figures with open overlays keep them in their stages, inert, and leave the
   test.slow();
   const pages = componentDocuments
     .filter((document) =>
-      (document.sections ?? []).some((section) =>
-        section.blocks.some((block) => block.kind === 'example' && block.open),
-      ),
+      (document.outline ?? []).some((section) => section.examples.some((example) => example.open)),
     )
     .map(({ id }) => id);
   expect(pages).toEqual(expect.arrayContaining(['dialog', 'menu', 'tooltip', 'toast', 'select']));

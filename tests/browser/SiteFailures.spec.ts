@@ -6,13 +6,14 @@ import { goTo } from './helpers/SiteSpecHelpers';
 
 /**
  * Opens the overview of the hosted build, then the Button page with every file under /assets/ that
- * the overview had not loaded failing, chosen by when it is asked for rather than by
- * module-files.json, so a file the map leaves out fails too. Returns the hero example, and a
+ * the overview had not loaded failing but the page's content, chosen by when it is asked for rather
+ * than by module-files.json, so a file the map leaves out fails too. Returns the hero example, and a
  * setter: `assets` makes every file under /assets/ fail, as when only the map arrives, and `up`
  * serves every file.
  */
 async function openFailingButtonPage(page: Page) {
-  const loaded = new Set<string>();
+  // The page's content, which a failure would take the whole page down with, arrives.
+  const loaded = new Set(moduleFiles('src/generated/pages/button.json'));
   let state: 'opening' | 'failing' | 'assets' | 'up' = 'opening';
   await serveSite(page, {
     failing: (pathname) => {

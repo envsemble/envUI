@@ -1,4 +1,4 @@
-import { startTransition, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { normalizeRoute } from './SiteRoutes';
 import { oldHashRoute, replaceAddress, subscribeToAddress, writtenRoute } from './Address';
 
@@ -22,8 +22,9 @@ function correctAddress() {
 }
 
 /**
- * The current route, from the address's path. A new route renders as a transition: the page shown
- * stays until the next one's content has loaded (useDocument), rather than blanking meanwhile.
+ * The current route, from the address's path. A new route renders at once: a link changes the
+ * address once its page has what it needs (RouterLink); a page that hasn't, such as one gone back
+ * to that hasn't loaded, shows nothing in its place until its content has (App.tsx).
  */
 export function useSiteRoute() {
   // An old hash address is redirected before the first render, which reads the path.
@@ -37,7 +38,7 @@ export function useSiteRoute() {
     setRoute(readRoute());
     return subscribeToAddress(() => {
       correctAddress();
-      startTransition(() => setRoute(readRoute()));
+      setRoute(readRoute());
     });
   }, []);
   return route;

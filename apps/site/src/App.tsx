@@ -253,9 +253,12 @@ function Shell() {
           <div className="site-page-grid" data-contents={contents || undefined}>
             <div className="site-page-column">
               <PageBoundary title={page?.title ?? 'Page not found'} route={route}>
-                {/* A page's content loads with it (useDocument): on the first page, nothing shows
-                    in its place meanwhile; a route change keeps the page shown until it's there. */}
-                <Suspense fallback={null}>{content}</Suspense>
+                {/* A page's content loads with it (useDocument); nothing shows in its place until
+                    it has, which the first page and a link's page wait for before they render. A
+                    boundary of its own for each page, so the page before doesn't stay, hidden. */}
+                <Suspense key={page?.path ?? routePath} fallback={null}>
+                  {content}
+                </Suspense>
               </PageBoundary>
               {page && <PageNavigation page={page} />}
             </div>
