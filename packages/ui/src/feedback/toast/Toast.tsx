@@ -15,17 +15,13 @@ export type { ToastProviderProps as ProviderProps } from './toastTypes.js';
  * and dismissed after a few seconds or by people. Put one near the root of the application; it
  * renders a region for each placement in a portal, in the theme of the place it is rendered.
  */
-function Provider({
-  children,
-  defaultPlacement = 'bottom-end',
-  visibleLimit = 3,
-}: ToastProviderProps) {
-  if (!Number.isInteger(visibleLimit) || visibleLimit < 1)
-    throw new RangeError('visibleLimit must be a positive integer.');
+function Provider({ children, defaultPlacement = 'bottom-end', limit = 3 }: ToastProviderProps) {
+  if (!Number.isInteger(limit) || limit < 1)
+    throw new RangeError('limit must be a positive integer.');
   if (!toastPlacements.includes(defaultPlacement))
     throw new RangeError('Unsupported toast placement.');
   return (
-    <ManagedToastRegions defaultPlacement={defaultPlacement} visibleLimit={visibleLimit}>
+    <ManagedToastRegions defaultPlacement={defaultPlacement} visibleLimit={limit}>
       {children}
     </ManagedToastRegions>
   );

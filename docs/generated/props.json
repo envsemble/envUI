@@ -8474,7 +8474,7 @@
           "description": "Where notifications show unless show names a placement: bottom-end, stacking upward from the bottom corner at the end of the line, or top-center, stacking downward from the top."
         },
         {
-          "name": "visibleLimit",
+          "name": "limit",
           "type": "number",
           "required": false,
           "default": "3",

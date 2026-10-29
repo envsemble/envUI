@@ -1,4 +1,4 @@
-import { Alert, CalendarHeatmap, Composer, CopyButton, List, Slider } from '@envsemble/envui';
+import { Alert, CalendarHeatmap, Composer, CopyButton, List, Slider, Toast } from '@envsemble/envui';
 
 export function ApiReview({ link, onCopied, send, opacity }) {
   return (
@@ -11,6 +11,7 @@ export function ApiReview({ link, onCopied, send, opacity }) {
         <List.Item label="Roadmap" end={<button>Open</button>} />
       </List.Root>
       <CalendarHeatmap aria-label="Deployments" data={[]} renderTooltip={(day) => day.date} />
+      <Toast.Provider limit={2}>{null}</Toast.Provider>
     </>
   );
 }

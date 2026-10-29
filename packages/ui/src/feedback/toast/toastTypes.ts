@@ -87,5 +87,5 @@ export interface ToastProviderProps {
    * close. Danger notifications always show, and take their places first.
    * @default 3
    */
-  visibleLimit?: number;
+  limit?: number;
 }

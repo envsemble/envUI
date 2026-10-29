@@ -146,7 +146,7 @@ Feedback doesn't move focus, with two exceptions.
 - `show({ tone, message, action })` shows a toast and returns its id; `tone` is `neutral`, `success`, `info` or `danger`.
 - A success or neutral toast closes after its `duration`, 5 seconds by default.
 - A danger toast, and one with an `action`, stays until dismissed unless `duration` is set.
-- The provider's `visibleLimit`, 3 by default, sets how many show at a time.
+- The provider's `limit`, 3 by default, sets how many show at a time.
 
 ```tsx source=SaveConfirmation
 
