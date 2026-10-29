@@ -110,6 +110,29 @@ export default defineConfig(() => {
               file.source = withoutComments(String(file.source));
         },
       },
+      {
+        // The text's font loads with the page rather than once the style sheets that name it have
+        // arrived, so the text shows in it from the first paint more often.
+        name: 'envui-font-preload',
+        apply: 'build',
+        transformIndexHtml: {
+          order: 'post',
+          handler: (_html, { bundle }) =>
+            Object.values(bundle ?? {})
+              .filter((file) => file.type === 'asset' && file.fileName.endsWith('.woff2'))
+              .map((font) => ({
+                tag: 'link',
+                attrs: {
+                  rel: 'preload',
+                  href: `/${font.fileName}`,
+                  as: 'font',
+                  type: 'font/woff2',
+                  crossorigin: '',
+                },
+                injectTo: 'head' as const,
+              })),
+        },
+      },
       // Rebuilds Tokens.css from packages/ui/tokens on every token edit; Vite hot-reloads it.
       tokensVitePlugin(),
       {
