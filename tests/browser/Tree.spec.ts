@@ -115,7 +115,7 @@ test.describe('Tree', () => {
     await expect.poll(() => activeRowId(page)).toBe('folder-2');
     await page.keyboard.press('f');
     await expect.poll(() => activeRowId(page)).toBe('folder-3');
-    await page.clock.runFor(700);
+    await page.clock.runFor(800);
     await page.keyboard.type('doc 1');
     await expect.poll(() => activeRowId(page)).toBe('folder-2/doc-1.md');
 
