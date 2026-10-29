@@ -6,12 +6,22 @@
   .env-line-art {
     /* How long a motion takes (see Motion below). */
     --env-line-art-duration: calc(var(--env-motion-duration-slow) * 10);
+    /* The muted edge is about 1.4:1 on a surface in light but 2.3:1 in dark, where the lines would
+       stand out: dark takes 45 % of it, about 1.4:1 again. High contrast keeps the whole edge. */
+    --env-line-art-high-contrast-stroke: var(--env-theme-high-contrast)
+      var(--env-color-border-muted);
     display: block;
     inline-size: 100%;
     block-size: 100%;
     overflow: hidden;
     fill: none;
-    stroke: var(--env-color-border-muted);
+    stroke: var(
+      --env-line-art-high-contrast-stroke,
+      light-dark(
+        var(--env-color-border-muted),
+        color-mix(in srgb, var(--env-color-border-muted) 45%, transparent)
+      )
+    );
     stroke-width: 1px;
     pointer-events: none;
   }
