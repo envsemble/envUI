@@ -15,7 +15,8 @@
     syntax: '*';
     inherits: false;
   }
-  .env-select.env-text-field {
+  .env-select {
+    --env-field-height: var(--env-control-height);
     /* prettier-ignore */
     --env-text-field-well: var(--env-select-container, var(--env-text-field-container, transparent));
     --env-text-field-text: var(
@@ -26,6 +27,11 @@
       --env-select-outline,
       var(--env-text-field-outline, var(--env-color-border-default))
     );
+  }
+  @media (pointer: coarse) {
+    .env-select {
+      --env-field-height: max(var(--env-control-height), var(--env-control-height-touch));
+    }
   }
 
   /* Select: an outlined field, as TextField is, whose control is a button that shows the chosen
@@ -43,8 +49,11 @@
     --env-select-action: var(--env-control-height-sm);
     --env-select-end: var(--env-space-2);
   }
+  /* The trigger holds the value and, in the same cell, the hidden labels of every option, so it is
+     as wide as the longest. */
   .env-select .env-select-control > .env-select-trigger {
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
     align-items: center;
     padding-inline-end: calc(var(--env-select-end) + var(--env-select-action) + var(--env-space-1));
     text-align: start;
@@ -53,6 +62,10 @@
   .env-select .env-select-control > .env-select-trigger:disabled {
     cursor: default;
   }
+  .env-select-trigger > *,
+  .env-select-sizer > * {
+    grid-area: 1 / 1;
+  }
   .env-select-value,
   .env-select-placeholder {
     min-inline-size: 0;
@@ -60,21 +73,15 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  /* The hidden labels of every option, one over another, as wide as the longest with the trigger's
-     padding, so the well, and a select without a visible label, take that width. */
   .env-select-sizer {
     display: grid;
     block-size: 0;
-    padding-inline: var(--env-space-4)
-      calc(var(--env-select-end) + var(--env-select-action) + var(--env-space-1));
     overflow: hidden;
     visibility: hidden;
-    font: var(--env-type-body);
-    font-size: var(--env-control-font-size);
     white-space: nowrap;
   }
-  .env-select-sizer > * {
-    grid-area: 1 / 1;
+  .env-select-sizer > ::before {
+    content: attr(data-label);
   }
   /* Beside other controls, such as in a toolbar, a select without a visible label fits its options;
      with a label it fills its container, as every field does. */

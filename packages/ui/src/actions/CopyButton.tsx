@@ -36,10 +36,7 @@ interface CopyButtonBaseProps
   write?: (text: string) => Promise<void>;
   /** As Button's: sm, md or lg; without it, the control height of the container. */
   size?: ControlSize;
-  /**
-   * The icon at rest; a check replaces it once the text is copied.
-   * @default ContentCopy
-   */
+  /** The icon at rest, ContentCopy by default; a check replaces it once the text is copied. */
   icon?: ReactNode;
   /**
    * Shown in the tooltip and announced after copying.

@@ -278,14 +278,14 @@ export function Select({
             className="env-select-value"
             placeholder={<span className="env-select-placeholder">{placeholder ?? ' '}</span>}
           />
+          {/* The labels of every option, hidden, as generated content, which the trigger's text
+              leaves out: without a visible label, the field is as wide as its longest option. */}
+          <span className="env-select-sizer" aria-hidden="true">
+            {items.map((item) => (
+              <span key={item.value} data-label={item.label} />
+            ))}
+          </span>
         </BaseSelect.Trigger>
-        {/* The labels of every option, hidden: without a visible label, the field is as wide as its
-            longest option. */}
-        <span className="env-select-sizer" aria-hidden="true">
-          {items.map((item) => (
-            <span key={item.value}>{item.label}</span>
-          ))}
-        </span>
         <span className="env-text-field-end env-select-end" aria-hidden="true">
           <span className="env-icon env-select-icon">
             <ChevronRight />

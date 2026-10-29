@@ -35,12 +35,5 @@ const script: PointerStep[] = [
 /** A select. */
 export default function SelectTile() {
   usePointer(script);
-  return (
-    <Select
-      aria-label="Visibility"
-      items={options}
-      defaultValue="team"
-      style={{ inlineSize: '7.5rem' }}
-    />
-  );
+  return <Select aria-label="Visibility" items={options} defaultValue="team" />;
 }

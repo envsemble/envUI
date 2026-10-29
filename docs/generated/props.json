@@ -2187,8 +2187,7 @@
           "name": "icon",
           "type": "ReactNode",
           "required": false,
-          "default": "ContentCopy",
-          "description": "The icon at rest; a check replaces it once the text is copied."
+          "description": "The icon at rest, ContentCopy by default; a check replaces it once the text is copied."
         },
         {
           "name": "copiedLabel",

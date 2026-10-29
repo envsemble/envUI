@@ -42,7 +42,7 @@ export const tileWindows: Readonly<Record<string, { width: number; height: numbe
   composer: { width: 12, height: 9 },
   accordion: { width: 15, height: 11.25 },
   alert: { width: 14, height: 10.5 },
-  drawer: { width: 17, height: 12.75 },
+  'navigation-drawer': { width: 17, height: 12.75 },
   tabs: { width: 15, height: 11.25 },
   breadcrumbs: { width: 15, height: 11.25 },
   pager: { width: 14, height: 10.5 },

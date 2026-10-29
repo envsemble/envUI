@@ -27,6 +27,7 @@ export function CalendarHeatmapFixture({ theme }: { theme: ColorScheme }) {
   return (
     <Theme theme={theme} data-testid={`calendar-heatmap-${theme}`} className="fixture-section">
       <CalendarHeatmap
+        weekStart={0}
         aria-label={`Activity ${theme}`}
         data={data}
         data-testid={`calendar-heatmap-year-${theme}`}
@@ -84,6 +85,7 @@ export function CalendarHeatmapFixture({ theme }: { theme: ColorScheme }) {
       {/* Names, dates and values from the provider's locale, and its legend from its messages. */}
       <EnvUIProvider locale="de-DE" messages={{ calendarHeatmap: { less: 'Wenig', more: 'Viel' } }}>
         <CalendarHeatmap
+          weekStart={0}
           aria-label={`Provided ${theme}`}
           data={[{ date: '2026-10-06', value: 1234 }]}
           startDate="2026-10-04"
@@ -93,6 +95,7 @@ export function CalendarHeatmapFixture({ theme }: { theme: ColorScheme }) {
       </EnvUIProvider>
       <Dialog title={`Activity details ${theme}`} trigger={<Button>Open activity {theme}</Button>}>
         <CalendarHeatmap
+          weekStart={0}
           aria-label={`Activity in a dialog ${theme}`}
           data={year.slice(-60)}
           startDate="2026-08-12"
@@ -100,6 +103,7 @@ export function CalendarHeatmapFixture({ theme }: { theme: ColorScheme }) {
         />
       </Dialog>
       <CalendarHeatmap
+        weekStart={0}
         aria-label={`Ranked ${theme}`}
         data={[
           { date: '2026-05-04', value: 5 },
@@ -113,6 +117,7 @@ export function CalendarHeatmapFixture({ theme }: { theme: ColorScheme }) {
         thresholds={[40, 1, 20, 10]}
       />
       <CalendarHeatmap
+        weekStart={0}
         aria-label={`From zero ${theme}`}
         data={[
           { date: '2026-05-04', value: 0 },
@@ -124,6 +129,7 @@ export function CalendarHeatmapFixture({ theme }: { theme: ColorScheme }) {
         thresholds={[0, 10]}
       />
       <CalendarHeatmap
+        weekStart={0}
         aria-label={`Two steps ${theme}`}
         data={[
           { date: '2026-05-04', value: 3 },
