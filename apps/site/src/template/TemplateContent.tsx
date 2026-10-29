@@ -8,6 +8,7 @@ import { catalogueSection } from './Provides';
 import { docsOnlySections } from '../shared/CatalogueContent';
 import { Related } from './Related';
 import { WhenToUse } from './WhenToUse';
+import { useAfterPaint } from './useAfterPaint';
 import { subscribeToAddress } from '../navigation/Address';
 import { statusTones } from '../navigation/PageBadges';
 
@@ -95,7 +96,8 @@ function groupSections(sections: readonly DocumentationSection[]) {
 
 /**
  * Sections in the page's order, in their three groups, far apart, then, with `related`, Related;
- * Compose and the changelog are on the page in the Docs. A group without sections is left out.
+ * Compose and the changelog are on the page in the Docs. A group without sections is left out. The
+ * sections after the first render once the page has painted (useAfterPaint), busy until then.
  */
 function Sections({
   page,
@@ -111,15 +113,17 @@ function Sections({
   const shown = sections
     .filter((section) => !docsOnlySections.has(section.id))
     .flatMap((section) => (provides ? section : (catalogueSection(section) ?? [])));
-  const end = related && sections.some((section) => section.id === 'overview') && page.metadata && (
-    <Related metadata={page.metadata} path={page.path} />
-  );
+  const rest = useAfterPaint();
+  const end = rest &&
+    related &&
+    sections.some((section) => section.id === 'overview') &&
+    page.metadata && <Related metadata={page.metadata} path={page.path} />;
   return (
-    <div className="site-section-groups">
+    <div className="site-section-groups" aria-busy={!rest || undefined}>
       {groupSections(shown).map((group, index) =>
-        group.length ? (
+        group.length && (index === 0 || rest) ? (
           <div key={index} className="site-article site-template site-figures site-section-group">
-            {group.map((section) => (
+            {(rest ? group : group.slice(0, 1)).map((section) => (
               <Section key={section.id} page={page} section={section} />
             ))}
           </div>

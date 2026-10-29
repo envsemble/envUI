@@ -13,6 +13,8 @@ import { goTo } from './helpers/SiteSpecHelpers';
  * count.
  */
 async function catalogueWords(page: Page) {
+  // Every section has rendered, those after the first once the page has painted.
+  await expect(page.locator('.site-section-groups[aria-busy]')).toHaveCount(0);
   return page.locator('.site-main').evaluate((main) => {
     const skipped =
       '.site-live-example-code, .site-code-slot, pre, .env-code-block, .site-live-example, .site-verdict-stage, .site-anatomy-subject, .catalogue-related-stage, .catalogue-open-example, [hidden], .catalogue-banner-motif';
@@ -80,6 +82,8 @@ const typographyPages = [
 test("a specimen's titles and captions name options in words, not values", async ({ page }) => {
   // The catalogue speaks plain language in its specimens too: Small rather than sm, Step 1 rather
   // than gap={1}. A value starts in lower case or is written as code, with =, braces, quotes or --.
+  // It visits every component page with a specimen.
+  test.slow();
   const pages = readdirSync('docs/components')
     .filter((file) => readFileSync(`docs/components/${file}`, 'utf8').includes('<!-- specimen:'))
     .map((file) => file.replace(/\.md$/, ''));
@@ -87,6 +91,8 @@ test("a specimen's titles and captions name options in words, not values", async
   await page.goto(`${siteDevUrl}/`);
   for (const id of pages) {
     await goTo(page, `/components/${id}`);
+    // Every section has rendered, those after the first once the page has painted.
+    await expect(page.locator('.site-section-groups[aria-busy]')).toHaveCount(0);
     await expect(
       page
         .locator(

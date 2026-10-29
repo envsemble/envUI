@@ -20,6 +20,7 @@ import { PropsTables } from '../template/PropsTables';
 import { MetadataBadges, PageChangelog, TemplateContent } from '../template/TemplateContent';
 import type { Documentation as Document } from './PageModel';
 import { useDocument } from './PageContent';
+import { useAfterPaint } from '../template/useAfterPaint';
 import { Documentation } from './Documentation';
 import { GuideDocument } from './GuideDocument';
 import { LoadedPart } from './LoadedPart';
@@ -516,6 +517,8 @@ export function DocsReferencePage({ page }: { page: RoutePage }) {
   const cataloguePage = pagesOf('catalogue').find((entry) => entry.document?.id === document.id);
   const metadata = document.metadata;
   const pattern = cataloguePage?.kind === 'pattern';
+  // What follows the guide, its reference, renders once the page has painted.
+  const rest = useAfterPaint();
   return (
     <>
       <PageHeader
@@ -534,22 +537,26 @@ export function DocsReferencePage({ page }: { page: RoutePage }) {
       {/* Field, which has no page in the catalogue, shows the whole file, what envUI and the
           application provide in place. */}
       {!cataloguePage && <TemplateContent document={document} provides related={false} />}
-      <Column gap={8} className="site-article docs-api">
+      <Column gap={8} className="site-article docs-api" aria-busy={!rest || undefined}>
         <CodeGuide document={document} />
-        {cataloguePage && <WordsInCode document={document} />}
-        {cataloguePage && <Provides document={document} title="Accessibility" id="provides" />}
-        {!pattern && (
-          <Column render={<section />} gap={5} aria-labelledby="props">
-            <Text render={<h2 />} variant="headline" id="props">
-              Props
-            </Text>
-            <PropsTables document={document} />
-          </Column>
+        {rest && (
+          <>
+            {cataloguePage && <WordsInCode document={document} />}
+            {cataloguePage && <Provides document={document} title="Accessibility" id="provides" />}
+            {!pattern && (
+              <Column render={<section />} gap={5} aria-labelledby="props">
+                <Text render={<h2 />} variant="headline" id="props">
+                  Props
+                </Text>
+                <PropsTables document={document} />
+              </Column>
+            )}
+            <PartNames components={metadata?.components ?? []} />
+            <ColorProperties components={metadata?.components ?? []} />
+            <Strings document={document} />
+            <PageChangelog document={document} />
+          </>
         )}
-        <PartNames components={metadata?.components ?? []} />
-        <ColorProperties components={metadata?.components ?? []} />
-        <Strings document={document} />
-        <PageChangelog document={document} />
       </Column>
     </>
   );
