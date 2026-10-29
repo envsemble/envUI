@@ -45,7 +45,7 @@ function Projects() {
           <List.Item
             key={name}
             label={name}
-            action={
+            end={
               <Button
                 variant="secondary"
                 size="sm"

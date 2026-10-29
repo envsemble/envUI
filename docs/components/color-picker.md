@@ -211,7 +211,7 @@ ColorPicker, ColorPickerButton and ColorSwatch come from their own entry, `@envs
 
 - A ColorPicker takes its `label`, which names it, a `description` and an `error`; `showLabel={false}` hides the label where something else names the picker, such as a popover.
 - `value` and `defaultValue`, `#000000` by default, take a CSS color string, such as `#6750a4`, `rgb(103, 80, 164)` or `hsl(256, 34%, 48%)`, or React Aria's `Color`.
-- `onValueChange` receives the color as a string in `valueFormat` and as a `Color`, which keeps the hue of a gray and converts to any format.
+- `onValueChange` receives the color as a string in `valueFormat`; the picker keeps the hue of a gray itself.
 - `valueFormat` is `hex`, the default, `#rrggbb` or `#rrggbbaa` while translucent, `rgb` or `hsl`.
 - With `alpha`, the picker adds an alpha slider and field; without it, colors are opaque.
 
@@ -236,7 +236,7 @@ Offer only the formats and the alpha the stored color can hold: a color stored a
 
 #### Copy, the eyedropper and swatches
 
-`copy` and `eyeDropper` are on by default. The eyedropper shows only where the browser has one, Chromium-based browsers on the desktop. `swatches` lists preset colors under the fields: CSS color strings, `Color`s, or `{ color, label }` with a name.
+`copyable` and `eyeDropper` are on by default. The eyedropper shows only where the browser has one, Chromium-based browsers on the desktop. `swatches` lists preset colors under the fields: CSS color strings, `Color`s, or `{ color, label }` with a name.
 
 ```tsx
 <ColorPicker
@@ -254,9 +254,9 @@ Offer only the formats and the alpha the stored color can hold: a color stored a
 ColorPickerButton takes the picker's props, and opens it in a popover.
 
 - `side` places the popover, `bottom` by default, lined up by `align`, `start` by default.
-- `defaultOpen` starts it open.
+- `defaultOpen` starts it open; `open` and `onOpenChange` let the application open and close it, such as once a swatch is chosen.
 - `size` is `sm`, `md` or `lg`, or its container's control height.
-- `className` and `style` reach the button.
+- `className`, `style`, `ref` and the other native props, such as `aria-describedby`, reach the button.
 
 ```tsx
 <ColorPickerButton label="Label color" defaultValue="#2f6f62" />
@@ -309,6 +309,8 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 
 ## Changelog
 
+- **1.0.0-prerelease.5**: ColorPickerButton takes `open` and `onOpenChange`, and passes `ref` and the native props on to its button.
+- **1.0.0-prerelease.5**: `copy` is `copyable`, as on CodeBlock. `onValueChange` receives the string alone, without React Aria's `Color`.
 - **1.0.0-prerelease.5**: ColorPickerButton's popover is frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge, and is solid with its edge at high contrast and with reduced transparency.
 - **1.0.0-prerelease.3**: `formats` with two or more formats shows their fields together, a row each with its own copy button, where in 1.0.0-prerelease.2 it limited the format menu to them; the format menu stays the default. Remove `formats` to keep the menu, which offers every format, as [the migration guide](../migration.md#color-picker-and-swatches) says. `--env-color-picker-button-container` gives one ColorPickerButton a fill.
 - **1.0.0**: ColorPicker, ColorPickerButton and ColorSwatch come from `@envsemble/envui/color`, on React Aria's color hooks: hex, RGB and HSL fields named by their letters, with a format menu, an alpha slider and field with `alpha`, a copy button, the browser's eyedropper and preset `swatches`. Values are CSS color strings or React Aria's `Color`, and `onValueChange` receives both. The area is square with the hue and alpha strips upright at its side, all with square corners, and the fields are quiet. ColorSwatch is a small square that writes its color in a `format`, with a `label` and a small size. ColorPickerButton has no fill of its own, as fields have none. Before, the color area and the hue were envUI's own, on Base UI's Slider, with a HEX field.

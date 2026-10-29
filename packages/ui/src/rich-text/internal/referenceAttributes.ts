@@ -6,7 +6,7 @@ export function referenceFromAttributes(attributes: Record<string, unknown>): Ri
     label: String(attributes.label ?? attributes.id ?? ''),
     kind: typeof attributes.kind === 'string' ? attributes.kind : undefined,
     href: typeof attributes.href === 'string' ? attributes.href : undefined,
-    char: String(attributes.mentionSuggestionChar ?? ''),
+    trigger: String(attributes.mentionSuggestionChar ?? ''),
   };
 }
 

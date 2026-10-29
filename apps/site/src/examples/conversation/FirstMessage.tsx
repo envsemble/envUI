@@ -98,7 +98,7 @@ export default function FirstMessage() {
         ref={composer}
         aria-label="Message the assistant"
         placeholder="Ask anything"
-        onSubmit={send}
+        onSend={send}
         running={replying}
         onStop={stop}
       />

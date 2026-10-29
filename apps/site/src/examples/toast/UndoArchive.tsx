@@ -29,7 +29,7 @@ function Projects() {
         <List.Item
           key={project}
           label={project}
-          action={
+          end={
             <Button
               variant="secondary"
               aria-label={`Archive ${project}`}

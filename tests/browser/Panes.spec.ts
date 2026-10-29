@@ -242,6 +242,19 @@ test.describe('Panes, supporting', () => {
     },
   );
 
+  test('uncontrolled, the trigger opens the sheet and Escape closes it, each with its reason', async ({
+    page,
+  }) => {
+    await page.goto(panes('&width=30rem&uncontrolled'));
+    const root = page.getByTestId('supporting');
+    await root.getByRole('button', { name: 'Show details' }).click();
+    const sheet = root.getByRole('dialog', { name: 'Details' });
+    await expect(sheet).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(sheet).toBeHidden();
+    await expect(page.getByTestId('reasons')).toHaveText('open trigger-press, close escape-key');
+  });
+
   test('mirrors in right-to-left text', async ({ page }) => {
     await page.goto(panes('&width=60rem&dir=rtl'));
     const root = page.getByTestId('supporting');

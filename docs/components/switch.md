@@ -136,7 +136,7 @@ A disabled switch keeps its setting from changing.
 <Switch label="Show completed tasks" checked={showCompleted} onCheckedChange={setShowCompleted} />
 ```
 
-A Switch is a native checkbox with `role="switch"`, named by its `label`. Apply the setting from `onCheckedChange`, which receives the new state; control it with `checked`, or leave it uncontrolled with `defaultChecked`, which a form reset restores. When saving fails, set it back. `name` and the other native props reach the input.
+A Switch is a native checkbox with `role="switch"`, named by its `label`; an optional `description` is a short muted line under it, read with its name. Apply the setting from `onCheckedChange`, which receives the new state; control it with `checked`, or leave it uncontrolled with `defaultChecked`, which a form reset restores. When saving fails, set it back. `name` and the other native props reach the input.
 
 #### Disabled
 
@@ -161,6 +161,7 @@ The root, `env-switch`, is the label around the track, `env-switch-input`, and t
 
 ## Changelog
 
+- **1.0.0-prerelease.5**: `description`, a muted line under the label.
 - **1.0.0**: `className` and `style` style the root, `env-switch`, rather than the input, which keeps `ref` and the other native props. `env-choice-control` is `env-switch` and `env-switch-control` `env-switch-input`.
 - **1.0.0**: The track of a switch that is off has a 3:1 boundary, and switches in the dark theme reach 3:1 on every surface.
 - **0.4.0**: A switch shrinks slightly while it or its label is pressed. The off track uses the shared fill, so switches on rows stand apart from their surface.

@@ -20,25 +20,22 @@ export default function StepThroughAGuide() {
       <Text render={<h3 />} variant="title">
         {pages[index].title}
       </Text>
-      <Pager.Root
-        aria-label="Setup guide"
-        previous={
-          previous && {
-            href: previous.href,
-            children: previous.title,
-            icon: <ArrowBack />,
-            onClick: () => setIndex(index - 1),
-          }
-        }
-        next={
-          next && {
-            href: next.href,
-            children: next.title,
-            icon: <ArrowForward />,
-            onClick: () => setIndex(index + 1),
-          }
-        }
-      />
+      <Pager.Root aria-label="Setup guide">
+        {previous && (
+          <Pager.Previous
+            href={previous.href}
+            icon={<ArrowBack />}
+            onClick={() => setIndex(index - 1)}
+          >
+            {previous.title}
+          </Pager.Previous>
+        )}
+        {next && (
+          <Pager.Next href={next.href} icon={<ArrowForward />} onClick={() => setIndex(index + 1)}>
+            {next.title}
+          </Pager.Next>
+        )}
+      </Pager.Root>
     </Column>
   );
 }

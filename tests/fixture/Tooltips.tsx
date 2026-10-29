@@ -50,8 +50,26 @@ export function TooltipsFixture() {
   const [menuOpens, setMenuOpens] = useState(0);
   const [popoverOpens, setPopoverOpens] = useState(0);
   const [copied, setCopied] = useState(false);
+  const [tour, setTour] = useState(false);
+  const [tourReasons, setTourReasons] = useState<string[]>([]);
   return (
     <div className="fixture-actions fixture-section">
+      <button type="button" onClick={() => setTour((current) => !current)}>
+        Tour step
+      </button>
+      <Tooltip
+        content="Filters live here"
+        open={tour}
+        onOpenChange={(next, { reason }) => {
+          setTour(next);
+          setTourReasons((current) => [...current, `${next ? 'open' : 'close'} ${reason}`]);
+        }}
+        side="bottom"
+        align="start"
+      >
+        <IconButton icon={<FilterList />} aria-label="Filter tour" />
+      </Tooltip>
+      <output data-testid="tour-reasons">{tourReasons.join(', ')}</output>
       <Tooltip content="Moves it out of the list" delay={0}>
         <IconButton icon={<Archive />} aria-label="Archive" />
       </Tooltip>

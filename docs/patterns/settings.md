@@ -24,7 +24,7 @@ avoidWhen:
 composes:
   - Page
   - PageHeader
-  - Drawer
+  - NavigationDrawer
   - Surface
   - Column
   - Row
@@ -120,7 +120,7 @@ Each setting either applies the moment it changes, or waits with the settings it
 
 ### Sections
 
-Group settings by what people want to do, not by how the data is stored. A long page lists its sections in a [Drawer](../components/drawer.md) beside them, or gives each its own page.
+Group settings by what people want to do, not by how the data is stored. A long page lists its sections in a [NavigationDrawer](../components/navigation-drawer.md) beside them, or gives each its own page.
 
 ### Content
 
@@ -152,7 +152,7 @@ Name a section after what people want to do, such as "Email notifications", not 
 
 ### Usage
 
-A section of settings that apply at once is a `section` named by its heading, holding a List whose items each take a Switch as their `action`.
+A section of settings that apply at once is a `section` named by its heading, holding a List whose items each take a Switch at their `end`.
 
 - Each Switch's `onCheckedChange` stores the change at once; name it with `aria-labelledby` and `aria-describedby` pointing at the row's title and detail.
 - Show a toast through `useToast` only for what the page can't show.
@@ -197,7 +197,7 @@ A section that saves together is a `form` with `noValidate` and an `onSubmit`, o
 
 #### Danger zone
 
-The danger zone is the last section: a List item whose `action` is an outline Button with `tone="danger"`, opening a ConfirmDialog with `tone="danger"`. Where the action can't be undone and reaches everyone, the dialog holds a TextField for the name, and `onConfirm` sets its `error` and focuses it while the name doesn't match; `onOpenChange` keeps the dialog open meanwhile, as the DangerZone example does.
+The danger zone is the last section: a List item whose `end` is an outline Button with `tone="danger"`, opening a ConfirmDialog with `tone="danger"`. Where the action can't be undone and reaches everyone, the dialog holds a TextField for the name, and `onConfirm` sets its `error` and focuses it while the name doesn't match; `onOpenChange` keeps the dialog open meanwhile, as the DangerZone example does.
 
 ```tsx
 <ConfirmDialog
@@ -220,7 +220,7 @@ The danger zone is the last section: a List item whose `action` is an outline Bu
 
 ### Composition
 
-Lay the page out as a Page with a PageHeader, its sections in a Column, each a `section` with a `h2` or `h3` Text heading and a List of settings. A long page lists its sections in a Drawer beside them. The anatomy's parts are the section heading, `env-text`, each setting, `env-list-item`, its Switch, `env-switch`, and the danger zone's button, `env-button`. Text fields, Selects and a RadioGroup sit in a section that saves together; a DescriptionList shows values that are only read.
+Lay the page out as a Page with a PageHeader, its sections in a Column, each a `section` with a `h2` or `h3` Text heading and a List of settings. A long page lists its sections in a NavigationDrawer beside them. The anatomy's parts are the section heading, `env-text`, each setting, `env-list-item`, its Switch, `env-switch`, and the danger zone's button, `env-button`. Text fields, Selects and a RadioGroup sit in a section that saves together; a DescriptionList shows values that are only read.
 
 ## Changelog
 

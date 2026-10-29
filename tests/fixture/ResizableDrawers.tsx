@@ -1,14 +1,14 @@
 import { useState, type ReactNode } from 'react';
-import { Drawer, type DrawerDestination } from '@envsemble/envui';
+import { NavigationDrawer, type NavigationDrawerDestination } from '@envsemble/envui';
 
-const destinations: DrawerDestination[] = [
+const destinations: NavigationDrawerDestination[] = [
   { label: 'Inbox', href: '#inbox', current: true },
   { label: 'Drafts', href: '#drafts' },
   { label: 'Archive', href: '#archive' },
 ];
 
 /** Destinations whose label and heading are cut short once the drawer is narrowed. */
-const longDestinations: DrawerDestination[] = [
+const longDestinations: NavigationDrawerDestination[] = [
   { label: 'Inbox', href: '#inbox', group: 'Shared across the organization', current: true },
   {
     label: 'Reviews waiting for the whole team',
@@ -48,10 +48,10 @@ export function ResizableDrawersFixture() {
   return (
     <div className="fixture-section" style={{ display: 'grid', gap: '1rem' }}>
       <Frame width="64rem">
-        <Drawer aria-label="Own width" destinations={destinations} resizable />
+        <NavigationDrawer aria-label="Own width" destinations={destinations} resizable />
       </Frame>
       <Frame width="48rem">
-        <Drawer
+        <NavigationDrawer
           aria-label="Controlled"
           destinations={destinations}
           resizable
@@ -66,13 +66,13 @@ export function ResizableDrawersFixture() {
       <output data-testid="width">{width}</output>
       <output data-testid="committed">{committed ?? ''}</output>
       <Frame width="64rem" dir="rtl">
-        <Drawer aria-label="Right to left" destinations={destinations} resizable />
+        <NavigationDrawer aria-label="Right to left" destinations={destinations} resizable />
       </Frame>
       <Frame width="64rem">
-        <Drawer aria-label="Fixed" destinations={destinations} />
+        <NavigationDrawer aria-label="Fixed" destinations={destinations} />
       </Frame>
       <Frame width="64rem">
-        <Drawer
+        <NavigationDrawer
           aria-label="Long labels"
           destinations={longDestinations}
           resizable
@@ -82,7 +82,7 @@ export function ResizableDrawersFixture() {
       </Frame>
       {/* A width that is no number, as from a stored value that didn't parse: ignored. */}
       <Frame width="64rem">
-        <Drawer
+        <NavigationDrawer
           aria-label="Not a number"
           destinations={destinations}
           resizable

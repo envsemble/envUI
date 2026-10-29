@@ -56,7 +56,7 @@ export default function TreeTile() {
   const rows: TreeItem[] = files.flatMap((folder) => {
     const open = !closed.has(folder.id);
     const head: TreeItem = {
-      id: folder.id,
+      value: folder.id,
       depth: 0,
       label: folder.label,
       icon: open ? <FolderOpen /> : <Folder />,
@@ -67,7 +67,7 @@ export default function TreeTile() {
     return [
       head,
       ...folder.children.map((name) => ({
-        id: `${folder.id}/${name.toLowerCase()}`,
+        value: `${folder.id}/${name.toLowerCase()}`,
         depth: 1,
         label: name,
         icon: <Description />,
@@ -81,9 +81,9 @@ export default function TreeTile() {
         items={rows}
         value={selected}
         onAction={(item) =>
-          item.expandable ? toggle(item.id, !item.expanded) : setSelected(item.id)
+          item.expandable ? toggle(item.value, !item.expanded) : setSelected(item.value)
         }
-        onExpandedChange={(item, open) => toggle(item.id, open)}
+        onExpandedChange={(item, open) => toggle(item.value, open)}
       />
     </div>
   );

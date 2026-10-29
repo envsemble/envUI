@@ -18,12 +18,12 @@ export default function TurnedAway() {
         description="PDF or images, up to 10 MB each"
         accept="application/pdf,.pdf,image/*"
         error={error}
-        onDropRejected={(files) => {
+        onFilesRejected={(files) => {
           refused.current = `${files[0].name} isn't a PDF or an image.`;
           setError(refused.current);
           queueMicrotask(() => (refused.current = undefined));
         }}
-        onDropAccepted={(files) => {
+        onFilesAccepted={(files) => {
           const tooLarge = files.find((file) => file.size > limit);
           setError(tooLarge ? `${tooLarge.name} is larger than 10 MB.` : refused.current);
           const fit = files.filter((file) => file.size <= limit).map((file) => file.name);

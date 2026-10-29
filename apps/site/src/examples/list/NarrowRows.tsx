@@ -6,12 +6,12 @@ export default function NarrowRows() {
       <List.Item
         label="Notifications"
         description="E-mail and in-app alerts"
-        action={<Button variant="outline">Manage</Button>}
+        end={<Button variant="outline">Manage</Button>}
       />
       <List.Item
         label="Members"
         description="12 people · 3 pending invitations"
-        action={<Button variant="outline">Manage</Button>}
+        end={<Button variant="outline">Manage</Button>}
       />
     </List.Root>
   );

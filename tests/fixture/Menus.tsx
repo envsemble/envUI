@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, ContextMenu, Menu, Theme, type ThemeValue } from '@envsemble/envui';
+import { Button, ContextMenu, Menu, Theme, type ColorScheme } from '@envsemble/envui';
 import { Edit } from '@envsemble/envui/icons/Edit';
 import { Delete } from '@envsemble/envui/icons/Delete';
 import { Add } from '@envsemble/envui/icons/Add';
@@ -7,7 +7,7 @@ import { History } from '@envsemble/envui/icons/History';
 
 const documents = ['Alpha', 'Beta', 'Gamma'];
 
-export function MenusFixture({ theme }: { theme: ThemeValue }) {
+export function MenusFixture({ theme }: { theme: ColorScheme }) {
   const [log, setLog] = useState('');
   const [sort, setSort] = useState('name');
   const [hidden, setHidden] = useState(false);
@@ -145,6 +145,15 @@ export function MenusFixture({ theme }: { theme: ThemeValue }) {
         >
           Open to the side
         </Menu.Item>
+      </Menu.Root>
+      {/* Named by its trigger, with choices the menu keeps itself. */}
+      <Menu.Root trigger={<button type="button">Density</button>}>
+        <Menu.RadioGroup label="Rows" defaultValue="cozy">
+          <Menu.RadioItem value="cozy">Cozy</Menu.RadioItem>
+          <Menu.RadioItem value="tight">Tight</Menu.RadioItem>
+        </Menu.RadioGroup>
+        <Menu.Separator data-testid={`density-separator-${theme}`} />
+        <Menu.CheckboxItem defaultChecked>Show icons</Menu.CheckboxItem>
       </Menu.Root>
       {/* A compact region: its context menu and submenus open at the compact scale. */}
       <Theme theme={theme} scale="compact" data-testid={`compact-region-${theme}`}>

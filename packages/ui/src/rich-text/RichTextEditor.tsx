@@ -41,11 +41,13 @@ const noCommands: readonly RichTextCommand[] = [];
 /**
  * A labelled editor for formatted text that people edit as it looks, built on Tiptap, with a
  * formatting toolbar, references typed with a trigger such as @, optional slash commands and
- * attachments; its value is Markdown. ref.editor gives the Tiptap editor for commands. Its words
+ * attachments; its value is Markdown. ref reaches the root element, and editorRef.current.editor
+ * gives the Tiptap editor for commands. Its words
  * come from EnvUIProvider's messages: richText, editor and linkDialog.
  */
 export function RichTextEditor({
   ref,
+  editorRef,
   value,
   defaultValue = '',
   onValueChange,
@@ -61,7 +63,7 @@ export function RichTextEditor({
   renderReference,
   onReferenceClick,
   onLinkClick,
-  onRequestLink,
+  pickLink,
   onUpload,
   accept,
   multiple = true,
@@ -111,16 +113,16 @@ export function RichTextEditor({
   const focusTarget = useRef<HTMLElement | null>(null);
   const [, rerender] = useState(0);
   const configured = useMemo(() => {
-    if (new Set(references.map((source) => source.char)).size !== references.length)
+    if (new Set(references.map((source) => source.trigger)).size !== references.length)
       throw new Error('Reference triggers must be unique.');
-    if (slashCommands && references.some((source) => source.char === '/'))
+    if (slashCommands && references.some((source) => source.trigger === '/'))
       throw new Error('Use either a / reference source or slashCommands.');
     const result = createRichTextExtensions({
       extensions,
       placeholder,
       renderReference: (reference, context) =>
         latest.current.renderReference?.(reference, context) ??
-        `${reference.char ?? ''}${reference.label}`,
+        `${reference.trigger ?? ''}${reference.label}`,
       onReferenceClick: (reference, event) => latest.current.onReferenceClick?.(reference, event),
     });
     const reference = result.find((extension) => extension.name === 'envReference')!;
@@ -230,7 +232,7 @@ export function RichTextEditor({
           }
         : null,
   });
-  useImperativeHandle(ref, () => ({ editor }), [editor]);
+  useImperativeHandle(editorRef, () => ({ editor }), [editor]);
   const describedByIds = metadata['aria-describedby'];
   const invalidState = metadata['aria-invalid'];
   useLayoutEffect(() => {
@@ -357,7 +359,7 @@ export function RichTextEditor({
       }
     };
     setStatus('');
-    if (!onRequestLink) {
+    if (!pickLink) {
       setLinkRequest({ selectedText, insert });
       return;
     }
@@ -366,7 +368,7 @@ export function RichTextEditor({
     pending.current = controller;
     setBusy(true);
     void Promise.resolve()
-      .then(() => onRequestLink({ selectedText }))
+      .then(() => pickLink({ selectedText }))
       .then((link) => {
         if (!controller.signal.aborted && link) insert(link);
       })
@@ -445,6 +447,7 @@ export function RichTextEditor({
   return (
     <div
       {...props}
+      ref={ref}
       className={classNames('env-rich-text-editor', className)}
       data-disabled={flag(disabled)}
       data-readonly={flag(readOnly)}

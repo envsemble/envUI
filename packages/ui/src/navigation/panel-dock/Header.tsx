@@ -22,6 +22,7 @@ import { useMessages } from '../../internal/EnvUIContext.js';
 import { setRef } from '../../internal/setRef.js';
 import { PanelDockPanelContext } from './internal/PanelDockPanelContext.js';
 import { flag } from '../../internal/flag.js';
+import type { HeadingLevel } from '../../foundations/headingLevel.js';
 import '../../styles/Base.css';
 import '../../styles/PanelDock.css';
 
@@ -48,7 +49,7 @@ export interface HeaderProps extends Omit<ComponentPropsWithRef<'header'>, 'titl
    * The title's heading level in the page outline; the look stays the same.
    * @default 2
    */
-  headingLevel?: 1 | 2 | 3 | 4 | 5 | 6;
+  headingLevel?: HeadingLevel;
   /** Content below the title row that stays with the sticky header, such as Tabs. */
   children?: ReactNode;
 }

@@ -30,7 +30,7 @@ export interface PartsIndex {
 }
 
 /** One component or shared group of parts.json. */
-interface PartsEntry {
+export interface PartsEntry {
   root: string;
   parts: { class: string; description: string }[];
   states?: { attribute: string; values: string[]; parts: string[] }[];

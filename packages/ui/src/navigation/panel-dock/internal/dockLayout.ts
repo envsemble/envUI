@@ -237,6 +237,10 @@ export function pixels(value: number | undefined) {
   return value === undefined ? undefined : `${value}px`;
 }
 
+export function rems(value: number | undefined) {
+  return value === undefined ? undefined : `${value}rem`;
+}
+
 /** The inline size the row has for its panels, and the gap between them, in pixels. */
 export function rowRoom(rowElement: HTMLElement) {
   const style = getComputedStyle(rowElement);

@@ -315,10 +315,10 @@ test.describe('hosted build', () => {
     await openCatalogue(page, `${siteUrl}/`);
     expect(requested.filter((path) => files.includes(path))).toEqual([]);
     await search(page, 'hamburger');
-    await expect.poll(() => highlighted(page)).toBe('page:drawer');
+    await expect.poll(() => highlighted(page)).toBe('page:navigation-drawer');
     expect(requested).toContain(files[0]);
     await page.keyboard.press('Enter');
-    await expect(page).toHaveURL(`${siteUrl}/components/drawer`);
+    await expect(page).toHaveURL(`${siteUrl}/components/navigation-drawer`);
 
     // An index that fails to load says so, and offers to load the page again.
     failing = true;

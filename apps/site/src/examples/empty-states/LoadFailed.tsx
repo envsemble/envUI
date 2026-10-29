@@ -55,7 +55,7 @@ export default function LoadFailed() {
           tone="danger"
           announce
           title="Couldn’t load documents"
-          action={
+          actions={
             <Button variant="secondary" onClick={retry}>
               Try again
             </Button>

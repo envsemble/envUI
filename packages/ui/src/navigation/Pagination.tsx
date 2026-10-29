@@ -103,7 +103,7 @@ interface Press {
 }
 
 /**
- * A compact pager for toolbars: the range of items shown, such as 1–60 of 245, and icon buttons
+ * Compact pagination for toolbars: the range of items shown, such as 1–60 of 245, and icon buttons
  * for the previous and next pages, in a navigation landmark. The application loads the pages; the
  * range is announced as it changes, and focus stays on the button pressed.
  */

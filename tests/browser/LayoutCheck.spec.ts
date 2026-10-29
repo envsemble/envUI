@@ -11,7 +11,7 @@
  * (scripts/test/TestScope.ts); the fast tier leaves it to those.
  */
 import { test, expect, type Page } from '@playwright/test';
-import type { LayoutProblem, ProblemRule } from '@envsemble/envui/dev';
+import type { LayoutProblem, LayoutProblemRule } from '@envsemble/envui/dev';
 import { documents } from '../../apps/site/src/generated/Documentation';
 import { fixtureUrl } from './helpers/Servers';
 
@@ -47,7 +47,7 @@ const figures: Figure[] = documents.flatMap((document) =>
 interface Allowance {
   page: string;
   name: string;
-  rule: ProblemRule;
+  rule: LayoutProblemRule;
   /** The problem's path, as the readout writes it, or its end, such as `column "env-card"`. */
   path: string;
   widths?: Width[];

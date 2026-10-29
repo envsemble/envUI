@@ -9,10 +9,10 @@ import {
   Scaffold,
   Text,
   Theme,
-  ThemeRadioGroup,
+  ThemeMenuRadioGroup,
   TopBar,
   useTheme,
-  type ThemeValue,
+  type ColorScheme,
 } from '@envsemble/envui';
 import { Logout } from '@envsemble/envui/icons/Logout';
 import { ManageAccounts } from '@envsemble/envui/icons/ManageAccounts';
@@ -23,14 +23,14 @@ import { MotionStage } from '../../motion/MotionStage';
 const user = { name: 'Alex Morgan', email: 'alex.morgan@example.com' };
 
 /** The theme's choice in its submenu: System, Light and Dark, in that order. */
-const choice = (theme: ThemeValue) =>
+const choice = (theme: ColorScheme) =>
   `[role="menuitemradio"]:nth-child(${theme === 'light' ? 2 : 3} of [role="menuitemradio"])`;
 
 /*
  * The pointer opens the account menu, then Theme, and picks the other theme: the window takes it
  * at once while the menu stays open. It picks the first theme again, and the menu closes.
  */
-const scriptFrom = (first: ThemeValue): PointerStep[] => {
+const scriptFrom = (first: ColorScheme): PointerStep[] => {
   const other = first === 'dark' ? 'light' : 'dark';
   return [
     { wait: 500 },
@@ -60,7 +60,7 @@ const scriptFrom = (first: ThemeValue): PointerStep[] => {
 
 function Choosing() {
   const site = useTheme();
-  const [theme, setTheme] = useState<ThemeValue>(site.theme);
+  const [theme, setTheme] = useState<ColorScheme>(site.theme);
   const [script] = useState(() => scriptFrom(site.theme));
   usePointer(script);
   return (
@@ -105,7 +105,7 @@ function Choosing() {
                     Account settings
                   </Menu.Item>
                   <Menu.Submenu label="Theme" icon={<Palette />}>
-                    <ThemeRadioGroup
+                    <ThemeMenuRadioGroup
                       value={theme}
                       onValueChange={(next) => setTheme(next === 'dark' ? 'dark' : 'light')}
                     />

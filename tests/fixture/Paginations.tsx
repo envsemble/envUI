@@ -1,5 +1,12 @@
 import { useEffect, useState } from 'react';
-import { Button, Pagination, SearchField, Surface, Theme, type ThemeValue } from '@envsemble/envui';
+import {
+  Button,
+  Pagination,
+  SearchField,
+  Surface,
+  Theme,
+  type ColorScheme,
+} from '@envsemble/envui';
 
 const ignore = () => undefined;
 
@@ -7,7 +14,7 @@ const ignore = () => undefined;
  * Pages whose loading starts in an effect once the page changes, as with a query keyed by the page:
  * pending follows a page later than the press. The fixture finishes loading on request.
  */
-function EffectLoadedPages({ theme }: { theme: ThemeValue }) {
+function EffectLoadedPages({ theme }: { theme: ColorScheme }) {
   const [page, setPage] = useState(1);
   const [loaded, setLoaded] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -40,7 +47,7 @@ function EffectLoadedPages({ theme }: { theme: ThemeValue }) {
   );
 }
 
-export function PaginationsFixture({ theme }: { theme: ThemeValue }) {
+export function PaginationsFixture({ theme }: { theme: ColorScheme }) {
   const [page, setPage] = useState(1);
   // The page asked for while it loads; the fixture finishes loading on request.
   const [requested, setRequested] = useState<number | null>(null);

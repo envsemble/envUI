@@ -17,12 +17,12 @@ export default function SmallRail() {
         },
         {
           value: 'approved',
-          button: <Button>Approved</Button>,
+          label: 'Approved',
           content: <Text>Requests approved this month.</Text>,
         },
         {
           value: 'declined',
-          button: <Button>Declined</Button>,
+          label: 'Declined',
           content: <Text>Requests declined this month.</Text>,
         },
       ]}

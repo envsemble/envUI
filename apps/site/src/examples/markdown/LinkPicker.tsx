@@ -30,7 +30,7 @@ export default function LinkPicker() {
         toolbar={['bold', 'italic', 'link']}
         value={notes}
         onValueChange={setNotes}
-        onRequestLink={({ selectedText }) =>
+        pickLink={({ selectedText }) =>
           new Promise<MarkdownLink | null>((resolve) =>
             setRequest({ text: selectedText, answer: resolve }),
           )

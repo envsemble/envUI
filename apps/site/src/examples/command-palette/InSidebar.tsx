@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import {
   Button,
   CommandPalette,
-  Drawer,
+  NavigationDrawer,
   Kbd,
   Column,
   Text,
@@ -38,7 +38,7 @@ export default function InSidebar() {
   );
   return (
     <Column gap={3}>
-      <Drawer
+      <NavigationDrawer
         aria-label="Workspace"
         destinations={destinations}
         header={

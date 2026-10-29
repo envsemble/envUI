@@ -27,7 +27,7 @@ function EachTone() {
 
 export default function Tones() {
   return (
-    <Toast.Provider visibleLimit={4}>
+    <Toast.Provider limit={4}>
       <EachTone />
     </Toast.Provider>
   );

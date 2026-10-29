@@ -215,13 +215,13 @@ MarkdownEditor is a Textarea with a toolbar and Write and Preview tabs.
 
 #### Toolbar and link picker
 
-`toolbar` lists the actions, of `heading`, `bold`, `italic`, `inline-code`, `bullet-list`, `numbered-list`, `quote`, `code-block` and `link`, shown in that order, grouped by kind; undo and redo come with a visible toolbar, and `toolbar={false}` hides it. `onRequestLink` opens the application's own link picker: it receives the `selectedText` and returns a MarkdownLink, `{ label, href }`, or `null` to cancel, also as a promise.
+`toolbar` lists the actions, of `heading`, `bold`, `italic`, `inline-code`, `bullet-list`, `numbered-list`, `quote`, `code-block` and `link`, shown in that order, grouped by kind; undo and redo come with a visible toolbar, and `toolbar={false}` hides it. `pickLink` opens the application's own link picker: it receives the `selectedText` and returns a MarkdownLink, `{ label, href }`, or `null` to cancel, also as a promise.
 
 ```tsx
 <MarkdownEditor
   label="Notes"
   toolbar={['bold', 'italic', 'link']}
-  onRequestLink={({ selectedText }) => pickDocument(selectedText)}
+  pickLink={({ selectedText }) => pickDocument(selectedText)}
 />
 ```
 
@@ -235,6 +235,7 @@ The editor's root is `env-markdown-editor`, with the tabs, `env-tabs-list`, the 
 
 ## Changelog
 
+- **1.0.0-prerelease.5**: `onRequestLink` is `pickLink`: it supplies the link rather than reporting an event.
 - **1.0.0-prerelease.2**: MarkdownEditor's `underline` variant, which `plain` became in the earlier prereleases, is gone; the `v1-props` codemod drops `underline` and `plain` for the default outline.
 - **1.0.0**: Code in Markdown takes the new code themes, as Code and CodeBlock do. MarkdownEditor takes Textarea's `description` instead of `hint`, and its variants `outline` and `ghost`: `outlined` is `outline` and `quiet` is `ghost`, which the `v1-props` codemod writes, and it drops `plain` for the default outline. `className` and `style` style the root, `env-markdown-editor`, rather than the textarea; `ref` and the other native props still reach the textarea. Its toolbar is a Toolbar, with tooltips instead of native titles, and its words come from EnvUIProvider's `messages`, as do Markdown's table and task names. Markdown's root carries `env-prose` beside `env-markdown`. Markdown is stable; MarkdownEditor stays beta. The editor's source text area, `env-markdown-source`, is `env-markdown-editor-input`, a MarkdownEditor part as `env-text-field-input` is a TextField's.
 - **0.7.0**: Code in Markdown takes the code theme of the app theme; `inlineCode` is removed.

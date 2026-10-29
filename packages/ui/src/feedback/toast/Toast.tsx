@@ -15,34 +15,26 @@ export type { ToastProviderProps as ProviderProps } from './toastTypes.js';
  * and dismissed after a few seconds or by people. Put one near the root of the application; it
  * renders a region for each placement in a portal, in the theme of the place it is rendered.
  */
-function Provider({
-  children,
-  defaultPlacement = 'bottom-end',
-  visibleLimit = 3,
-}: ToastProviderProps) {
-  if (!Number.isInteger(visibleLimit) || visibleLimit < 1)
-    throw new RangeError('visibleLimit must be a positive integer.');
+function Provider({ children, defaultPlacement = 'bottom-end', limit = 3 }: ToastProviderProps) {
+  if (!Number.isInteger(limit) || limit < 1)
+    throw new RangeError('limit must be a positive integer.');
   if (!toastPlacements.includes(defaultPlacement))
     throw new RangeError('Unsupported toast placement.');
   return (
-    <ManagedToastRegions defaultPlacement={defaultPlacement} visibleLimit={visibleLimit}>
+    <ManagedToastRegions defaultPlacement={defaultPlacement} limit={limit}>
       {children}
     </ManagedToastRegions>
   );
 }
 
-function ManagedToastRegions({
-  children,
-  defaultPlacement,
-  visibleLimit,
-}: Required<ToastProviderProps>) {
+function ManagedToastRegions({ children, defaultPlacement, limit }: Required<ToastProviderProps>) {
   const controller = useToastController(defaultPlacement);
   return (
     <ToastManagerContext value={controller.manager}>
       {children}
       {toastPlacements.map((placement) => (
         <BaseToast.Provider key={placement} timeout={0} limit={Number.MAX_SAFE_INTEGER}>
-          <ToastRegion placement={placement} controller={controller} visibleLimit={visibleLimit} />
+          <ToastRegion placement={placement} controller={controller} visibleLimit={limit} />
         </BaseToast.Provider>
       ))}
     </ToastManagerContext>

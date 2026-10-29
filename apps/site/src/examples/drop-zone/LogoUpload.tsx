@@ -39,13 +39,13 @@ export default function LogoUpload() {
         accept="image/png,image/jpeg,.webp"
         pending={uploading != null}
         error={error}
-        onDropAccepted={([file]) => {
+        onFilesAccepted={([file]) => {
           // The zone checks the type; the size is the application's to check.
           if (file.size > twoMegabytes) return setError('Choose an image up to 2 MB.');
           setError(undefined);
           setUploading(file);
         }}
-        onDropRejected={() => setError('Choose a PNG, JPG or WebP image.')}
+        onFilesRejected={() => setError('Choose a PNG, JPG or WebP image.')}
       />
       {logo && (
         <Row wrap align="center" gap={4}>

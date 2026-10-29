@@ -166,8 +166,8 @@ Say which files fit before people choose, and what went wrong in words.
 
 Keep the uploads in state, each with its file's name and size, how much has been sent and whether it is uploading, done or failed.
 
-- DropZone with `multiple` hands the files it takes to `onDropAccepted`: check their size, set the zone's `error` for any turned away, add the rest and start each upload.
-- Each upload is a List.Item: Progress in its children while it runs, the size or the failure in `description`, and Try again and Remove as text Buttons in a Row in `action`.
+- DropZone with `multiple` hands the files it takes to `onFilesAccepted`: check their size, set the zone's `error` for any turned away, add the rest and start each upload.
+- Each upload is a List.Item: Progress in its children while it runs, the size or the failure in `description`, and Try again and Remove as text Buttons in a Row at its `end`.
 
 ```tsx source=UploadFiles
 
@@ -195,7 +195,7 @@ function upload(file: File, onProgress: (sent: number) => void, signal: AbortSig
 
 #### Files that don't fit
 
-`accept` turns away other kinds of file, which go to `onDropRejected`; check the size of those `onDropAccepted` receives. Name the file and the reason in `error`. A drop of both kinds calls `onDropRejected`, then `onDropAccepted`, so keep the first message through the second, as the TurnedAway example does.
+`accept` turns away other kinds of file, which go to `onFilesRejected`; check the size of those `onFilesAccepted` receives. Name the file and the reason in `error`. A drop of both kinds calls `onFilesRejected`, then `onFilesAccepted`, so keep the first message through the second, as the TurnedAway example does.
 
 ```tsx
 <DropZone
@@ -204,8 +204,8 @@ function upload(file: File, onProgress: (sent: number) => void, signal: AbortSig
   description="PDF or images, up to 10 MB each"
   accept="application/pdf,.pdf,image/*"
   error={error}
-  onDropRejected={(files) => setError(`${files[0].name} isn't a PDF or an image.`)}
-  onDropAccepted={addAndCheckSize}
+  onFilesRejected={(files) => setError(`${files[0].name} isn't a PDF or an image.`)}
+  onFilesAccepted={addAndCheckSize}
 />
 ```
 
@@ -243,7 +243,7 @@ Upload the files as they are added, and keep what the server returns for each, s
 
 ### Composition
 
-A Column holds the DropZone, a List.Root named with `aria-label`, and a caption Text with `role="status"`. Each List.Item has the file's name as `label`; its `description` is the size once done or the reason it failed, its children a Progress while it uploads, and its `action` a Row with Try again, when it failed, and Remove. In a form, the zone is `size="sm"` among the fields, with the list under it.
+A Column holds the DropZone, a List.Root named with `aria-label`, and a caption Text with `role="status"`. Each List.Item has the file's name as `label`; its `description` is the size once done or the reason it failed, its children a Progress while it uploads, and its `end` a Row with Try again, when it failed, and Remove. In a form, the zone is `size="sm"` among the fields, with the list under it.
 
 ## Changelog
 

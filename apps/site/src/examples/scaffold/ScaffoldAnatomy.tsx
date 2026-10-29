@@ -2,7 +2,7 @@ import {
   IconButton,
   Page,
   PageHeader,
-  Rail,
+  NavigationRail,
   Scaffold,
   Text,
   TopBar,
@@ -24,11 +24,11 @@ export default function ScaffoldAnatomy() {
       scroll="body"
       landmarks={false}
       style={{ blockSize: '16rem' }}
-      forms={{ compact: 'rail', medium: 'rail', expanded: 'rail', large: 'rail' }}
+      navigationForms={{ compact: 'rail', medium: 'rail', expanded: 'rail', large: 'rail' }}
       topBar={
         <TopBar title="Northwind" actions={<IconButton icon={<Search />} aria-label="Search" />} />
       }
-      navigation={{ rail: <Rail destinations={destinations} /> }}
+      navigation={{ rail: <NavigationRail destinations={destinations} /> }}
     >
       <Page header={<PageHeader title="Inbox" headingLevel={3} />}>
         <Text emphasis="muted">Three messages since yesterday.</Text>

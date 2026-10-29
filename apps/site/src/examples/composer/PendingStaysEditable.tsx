@@ -15,7 +15,7 @@ export default function PendingStaysEditable() {
       aria-label="Message"
       placeholder="Write a message"
       pending={sending}
-      onSubmit={send}
+      onSend={send}
       style={{ inlineSize: 'min(100%, 26rem)' }}
     />
   );

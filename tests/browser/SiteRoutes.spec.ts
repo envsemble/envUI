@@ -20,7 +20,12 @@ const components = componentDocuments.map(({ id }) => id);
 
 test('the 0.x routes of renamed pages open the pages under their new names', () => {
   const { docs } = readMap() as { docs: Record<string, string> };
-  for (const [from, to] of Object.entries<string>(docs).filter(([key]) => !key.startsWith('$'))) {
+  // Pages renamed again since the map was written, which the routes follow to their current name.
+  const renamedSince: Record<string, string> = { drawer: 'navigation-drawer' };
+  for (const [from, mapped] of Object.entries<string>(docs).filter(
+    ([key]) => !key.startsWith('$'),
+  )) {
+    const to = renamedSince[mapped] ?? mapped;
     expect(components).toContain(to);
     expect(components).not.toContain(from);
     // A page's views are gone: Preview and Usage open its page, and Props its page in the Docs.
@@ -66,8 +71,9 @@ test('the addresses of the views before the catalogue and the Docs split open th
     'dev-mode': 'docs/dev-mode',
     'dev-mode?section=opening-it': 'docs/dev-mode?section=opening-it',
     // Pages folded into another open it, at the section that holds them, and in the Docs its page.
-    'components/bar': 'components/drawer',
-    'components/rail/props': 'docs/components/drawer',
+    'components/bar': 'components/navigation-drawer',
+    'components/rail/props': 'docs/components/navigation-drawer',
+    'components/drawer': 'components/navigation-drawer',
     'components/page-header?section=sticky': 'components/page?section=sticky',
     'docs/components/page-header': 'docs/components/page',
     'patterns/feature-cards': 'components/card?section=feature-card',

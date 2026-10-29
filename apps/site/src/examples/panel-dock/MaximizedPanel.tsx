@@ -16,7 +16,7 @@ const notes: Record<string, string> = {
 export default function MaximizedPanel() {
   const [panels, setPanels] = useState<PanelDockPanel[]>([
     { id: 'plan', title: 'Launch plan', mode: 'maximized', active: true },
-    { id: 'press', title: 'Press release', mode: 'open', height: 260 },
+    { id: 'press', title: 'Press release', mode: 'open', height: 16.25 },
     { id: 'pricing', title: 'Pricing', mode: 'minimized' },
   ]);
   const update = (change: (panel: PanelDockPanel) => PanelDockPanel) =>

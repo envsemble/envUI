@@ -1,6 +1,5 @@
 import type { Formatters } from '../../internal/useFormatters.js';
-import { dayParts } from '../../internal/calendarDays.js';
-import { day as dayMilliseconds } from '../../internal/durations.js';
+import { dayParts, formatDay, parseDay } from '../../internal/calendarDays.js';
 import type { CalendarHeatmapCell, CalendarHeatmapDay } from '../CalendarHeatmap.js';
 
 /** The locale's short month names, from January, and weekday names, from Sunday. */
@@ -14,29 +13,14 @@ export function localeNames(formatters: Formatters) {
   };
 }
 
-/**
- * Days count from 1970-01-01 in UTC, so daylight saving never shifts a week. Unlike calendarDays'
- * parseDay, this one lets an impossible date such as 2026-02-30 roll over into the next month, and
- * reads years before 100 as 1900 onward, as Date.UTC does; dayKey writes a year before 1000 with
- * fewer than four digits.
- */
-export function parseDay(date: string | undefined) {
-  const match = date === undefined ? null : /^(\d{4})-(\d{2})-(\d{2})$/.exec(date);
-  if (!match) return undefined;
-  return Math.floor(Date.UTC(+match[1]!, +match[2]! - 1, +match[3]!) / dayMilliseconds);
-}
-
-function dayKey(day: number) {
-  const { year, month, date } = dayParts(day);
-  return `${year}-${String(month + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
-}
-
 interface DayModel extends CalendarHeatmapCell {
   day: number;
   name: string;
 }
 
 export interface CalendarHeatmapModel {
+  /** The dates the model couldn't read, such as 2026-02-31, which it leaves out. */
+  invalid: string[];
   start: number;
   end: number;
   /** The first day of the first week column. */
@@ -91,9 +75,11 @@ export function calendarHeatmapModel({
     .sort((first, second) => first - second)
     .slice(0, 9);
   const values = new Map<number, CalendarHeatmapDay>();
+  const invalid: string[] = [];
   for (const entry of data) {
     const day = parseDay(entry.date);
     if (day !== undefined) values.set(day, entry);
+    else invalid.push(entry.date);
   }
   let earliest: number | undefined;
   let latest: number | undefined;
@@ -103,11 +89,22 @@ export function calendarHeatmapModel({
   }
   const start = parseDay(startDate) ?? earliest;
   const end = parseDay(endDate) ?? latest;
+  for (const date of [startDate, endDate])
+    if (date !== undefined && parseDay(date) === undefined) invalid.push(date);
   const levelCount = steps?.length
     ? steps.length + 1
     : Math.min(10, Math.max(2, Math.round(levels)));
   if (start === undefined || end === undefined || end < start)
-    return { start: 0, end: -1, first: 0, weeks: 0, levelCount, days: new Map(), months: [] };
+    return {
+      invalid,
+      start: 0,
+      end: -1,
+      first: 0,
+      weeks: 0,
+      levelCount,
+      days: new Map(),
+      months: [],
+    };
   const offset = (day: number) => (dayParts(day).weekday - weekStart + 7) % 7;
   const first = start - offset(start);
   const weeks = (end - offset(end) - first) / 7 + 1;
@@ -127,7 +124,7 @@ export function calendarHeatmapModel({
       : value > 0 && top > 0
         ? Math.min(levelCount - 1, Math.max(1, Math.ceil((value / top) * (levelCount - 1))))
         : 0;
-    const date = dayKey(day);
+    const date = formatDay(day);
     const valueText = entry?.label ?? formatValue(value);
     days.set(day, {
       day,
@@ -146,5 +143,5 @@ export function calendarHeatmapModel({
     span: (columns[index + 1] ?? weeks) - column,
     label: monthLabels[monthColumns.get(column)!] ?? '',
   }));
-  return { start, end, first, weeks, levelCount, days, months };
+  return { invalid, start, end, first, weeks, levelCount, days, months };
 }

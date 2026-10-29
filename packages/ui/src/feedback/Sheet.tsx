@@ -45,6 +45,7 @@ import {
 } from '../internal/PortalContainerContext.js';
 import { computedDirection } from '../internal/direction.js';
 import { reportInDevelopment } from '../internal/developmentReport.js';
+import type { ResizeDetails } from '../internal/resizeDetails.js';
 import '../styles/Base.css';
 import '../styles/Sheet.css';
 
@@ -131,7 +132,7 @@ export interface SheetProps
    * false, and with committed true as a drag ends, a key moves the handle or a double click resets
    * it. Store the committed width to keep it, and pass it back as `width`.
    */
-  onWidthChange?: (width: number, details: { committed: boolean }) => void;
+  onWidthChange?: (width: number, details: ResizeDetails) => void;
   /**
    * The smallest width of a `resizable` side sheet, in rem.
    * @default 16

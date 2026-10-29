@@ -214,19 +214,19 @@ Avatar takes the person's or organization's `name`, a picture in `src`, and `fal
 
 #### Colors
 
-`hue` sets one of the eight colors by name, in place of the one the name chooses: `powder` (powder blue), `seafoam`, `sage`, `butter`, `blush`, `periwinkle`, `orchid` or `oat` (a warm oat). `avatarHue(name)` returns the one a name chooses. Each is a tonal pair, a soft fill with the initials or the figure in a deep shade of the same hue, slightly deeper in the dark theme.
+`hue` sets one of the eight colors by name, in place of the one the name chooses: `powder` (powder blue), `seafoam`, `sage`, `butter`, `blush`, `periwinkle`, `orchid` or `oat` (a warm oat). `avatarHue(name)` returns the one a name chooses, and `avatarHues` lists the eight in order. Each is a tonal pair, a soft fill with the initials or the figure in a deep shade of the same hue, slightly deeper in the dark theme.
 
 #### Groups
 
 AvatarGroup takes `people`, each with a `name` and an optional `src`, `fallback`, `id` and `selected`. `max` sets how many show, and the count chip counts the rest; `total` counts people beyond a preview list.
 
 - At rest the avatars pile up, each a little off the line and turned, with the count chip at the bottom of the pile.
-- The group always keeps the room its spread takes, so spreading never moves what is around it; `gather="end"` piles a group at the end of that room, for a group that ends a row, such as a list row's action.
+- The group always keeps the room its spread takes, so spreading never moves what is around it; `align="end"` piles a group at the end of that room, for a group that ends a row, such as a list row's action.
 - With reduced motion it spreads at once.
 - `formatMore` and `formatLabel`, or `messages.avatarGroup`, set its words.
 
 ```tsx
-<AvatarGroup people={members} max={3} total={12} gather="end" />
+<AvatarGroup people={members} max={3} total={12} align="end" />
 ```
 
 #### Pressable groups
@@ -253,6 +253,7 @@ The group is `env-avatar-group`, with an `env-avatar` for each person, an `env-a
 
 ## Changelog
 
+- **1.0.0-prerelease.5**: AvatarGroup's `gather` is `align`, as Row and Popover name the inline axis.
 - **1.0.0-prerelease.5**: An avatar and AvatarGroup's count cast a faint, small shadow in a deeper shade of the surface below, so the avatars of a group part from one another.
 - **1.0.0-prerelease.3**: AvatarGroup rests as a compact pile, like stacked cards, which is one pointer target: hover, a tap or keyboard focus spreads it, and its avatars take presses only once spread, in place of a looser rest that kept 1.5 rem of each pressable avatar uncovered. A tap spreads a group on touch screens too, marked with `data-spread`. The count is a rounded square the size of the avatars, at the bottom of the pile.
 - **1.0.0-prerelease.2**: The eight colors are a new pastel palette of tonal pairs: a soft fill with initials and a figure in a deep shade of the same hue, rather than white. The hues are named for their colors, in `hue`, `data-hue` and the tokens: `blue` is `powder`, `teal` `seafoam`, `green` `sage`, `amber` `butter`, `red` `blush`, `violet` `periwinkle`, `purple` `orchid` and `slate` `oat`; `v1-props` rewrites a literal `hue`. `selected` shows an avatar as chosen, with a ring and a check, `env-avatar-check`. AvatarGroup rests bunched where a pointer can hover, with the count of the rest under the last avatar, and spreads along an arch under the pointer or with focus inside, within the room it keeps for the spread; `gather` sets where the avatars gather at rest. Avatars in a group and the count take no ring; `--env-avatar-ring` is gone, and `--env-avatar-group-ring` sets only the gap in a chosen avatar's ring.

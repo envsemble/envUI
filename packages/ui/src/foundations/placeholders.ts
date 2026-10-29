@@ -4,11 +4,17 @@
 /** The start of every placeholder item's id, which isPlaceholder() reads. */
 const placeholderPrefix = 'envui-placeholder-';
 
+/** Marks the placeholder type, so an item of the application's never passes for one. */
+declare const placeholderMark: unique symbol;
+
 /**
  * A stand-in for an item that is loading: its `id`, and every other field of the item possibly
- * missing, as it is, so code that reads a field must handle its absence.
+ * missing, as it is, so code that reads a field must handle its absence. Only `placeholders()`
+ * makes one; the type tells it from an item, so isPlaceholder() narrows either way.
  */
-export type Placeholder<Item = object> = { id: string } & Partial<Omit<Item, 'id'>>;
+export type Placeholder<Item = object> = { id: string; readonly [placeholderMark]: true } & Partial<
+  Omit<Item, 'id'>
+>;
 
 /**
  * Stand-in items for data that is loading, so the page renders its normal components over them
@@ -26,9 +32,10 @@ export function placeholders<Item = object>(count: number): Placeholder<Item>[] 
 
 /**
  * Whether an item is one of the stand-ins that `placeholders()` returns, by its id, so it holds
- * after the items are serialized, such as from a server component to a client one.
+ * after the items are serialized, such as from a server component to a client one. It narrows the
+ * type: `isPlaceholder(item) ? <Skeleton /> : item.name`, where item.name is the item's own.
  */
-export function isPlaceholder(item: unknown): boolean {
+export function isPlaceholder<Item>(item: Item | Placeholder<Item>): item is Placeholder<Item> {
   if (typeof item !== 'object' || item === null || !('id' in item)) return false;
   const { id } = item as { id: unknown };
   return typeof id === 'string' && id.startsWith(placeholderPrefix);

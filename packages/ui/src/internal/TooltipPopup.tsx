@@ -37,6 +37,7 @@ const parts = {
 export function TooltipPopup({
   content,
   side,
+  align = 'center',
   trigger,
   anchor,
   sideOffset = 8,
@@ -45,6 +46,8 @@ export function TooltipPopup({
 }: {
   content: ReactNode;
   side: TooltipSide;
+  /** How it lines up with the trigger along that side; center by default. */
+  align?: 'start' | 'center' | 'end';
   /** The trigger, whose text direction the tooltip takes as it opens. */
   trigger?: RefObject<Element | null>;
   /** What it opens beside, where that isn't its trigger, such as one day of a calendar heatmap. */
@@ -61,6 +64,7 @@ export function TooltipPopup({
     <PopupSurface
       parts={parts}
       side={side}
+      align={align}
       trigger={trigger}
       anchor={anchor}
       sideOffset={sideOffset}

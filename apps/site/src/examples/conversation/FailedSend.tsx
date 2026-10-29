@@ -66,7 +66,7 @@ export default function FailedSend() {
         ref={composer}
         aria-label="Message Sam Lee"
         placeholder="Write a message"
-        onSubmit={(text) => {
+        onSend={(text) => {
           const id = Date.now();
           setEntries((list) => [...list, { id, from: 'self', text }]);
           deliver(id, false);

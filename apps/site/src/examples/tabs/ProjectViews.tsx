@@ -1,4 +1,4 @@
-import { Button, Column, Tabs, Text } from '@envsemble/envui';
+import { Column, Tabs, Text } from '@envsemble/envui';
 
 export default function ProjectViews() {
   return (
@@ -8,7 +8,7 @@ export default function ProjectViews() {
       items={[
         {
           value: 'summary',
-          button: <Button>Summary</Button>,
+          label: 'Summary',
           content: (
             <Column gap={2}>
               <Text render={<h3 />} variant="title">
@@ -20,7 +20,7 @@ export default function ProjectViews() {
         },
         {
           value: 'details',
-          button: <Button>Details</Button>,
+          label: 'Details',
           content: (
             <Column gap={2}>
               <Text render={<h3 />} variant="title">
@@ -32,7 +32,7 @@ export default function ProjectViews() {
         },
         {
           value: 'activity',
-          button: <Button>Activity</Button>,
+          label: 'Activity',
           content: (
             <Column gap={2}>
               <Text render={<h3 />} variant="title">

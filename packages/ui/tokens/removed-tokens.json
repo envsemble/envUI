@@ -1410,7 +1410,7 @@
       "note": "SplitView is gone: Panes has no gutter; Panes.Divider has a width of its own."
     },
     "--env-split-view-size": {
-      "note": "SplitView is gone: Panes takes the resized pane's size in rem, as size or defaultSize on Panes.Root."
+      "note": "SplitView is gone: Panes takes the resized pane's width in rem, as width or defaultWidth on Panes.Root."
     },
     "--state-lightness-direction": {
       "replacement": null,
@@ -1550,7 +1550,7 @@
       "note": "Sidebar is gone: the navigation forms, Bar, Rail and Drawer, keep their own insets."
     },
     "--env-split-pane-size": {
-      "note": "SplitPane is gone: Panes takes the resized pane's size in rem, as size or defaultSize on Panes.Root."
+      "note": "SplitPane is gone: Panes takes the resized pane's width in rem, as width or defaultWidth on Panes.Root."
     },
     "--env-breakpoint-sm": {
       "note": "The viewport breakpoints are gone: envUI responds to containers at window classes, compact below 37.5 rem, medium from 37.5, expanded from 52.5 and large from 75 rem, as @container env-window (width >= 37.5rem); --env-window-class-medium, -expanded and -large hold the thresholds."

@@ -94,12 +94,12 @@ export function createReferenceExtension(options: RichTextRenderOptions) {
           'data-type': this.name,
           class: 'env-rich-text-reference',
         }),
-        `${reference.char}${reference.label}`,
+        `${reference.trigger}${reference.label}`,
       ];
     },
     renderText({ node }) {
       const ref = referenceFromAttributes(node.attrs);
-      return `${ref.char}${ref.label}`;
+      return `${ref.trigger}${ref.label}`;
     },
   }).configure({ deleteTriggerWithBackspace: true });
 }

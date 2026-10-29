@@ -179,10 +179,10 @@ A minimized panel is a tab.
 
 #### Make room
 
-A panel takes `preferredWidth`, 32 rem, where the row has room, and shrinks to `minWidth`, 20 rem, up to `maxWidth`, 48 rem; then the row scrolls sideways.
+A panel's sizes are numbers of rem, as Sheet's and Panes' are. It takes `preferredWidth`, 32 rem, where the row has room, and shrinks to `minWidth`, 20 rem, up to `maxWidth`, 48 rem; then the row scrolls sideways.
 
 - With `overflow="minimize"`, the dock instead asks `onModeChange` to minimize the open panel active longest ago, one at a time, until the rest fit, and to open it again once there is room. It never asks for the active panel, the newest one or the one that holds focus.
-- A panel starts at 85% of the dock's room, up to 40 rem, unless `height` sets it, and people resize it between `minHeight`, 15 rem, and `maxHeight`, the dock's room; all of them are in pixels.
+- A panel starts at 85% of the dock's room, up to 40 rem, unless `height` sets it, and people resize it between `minHeight`, 15 rem, and `maxHeight`, the dock's room; `onHeightChange` reports the new height in rem.
 - The tabs float over the bottom of the open panels, so a panel minimized or brought back never moves the others; their content keeps the tabs' height clear at its end, so it scrolls out from beneath them.
 - The arrow keys on a resize handle change the height by 16 px, and by 64 px with <kbd>Shift</kbd>.
 
@@ -203,7 +203,7 @@ A panel takes `preferredWidth`, 32 rem, where the row has room, and shrinks to `
 
 #### Stacking
 
-Below `stackBelow`, 40 rem of the dock's own width, or a number of pixels, one panel at a time fills the region and the others wait as tabs.
+Below `stackBelow`, 40 rem of the dock's own width, a CSS length or a number of rem, one panel at a time fills the region and the others wait as tabs.
 
 - A container query on the dock decides it, so the server's markup and the first paint already stack.
 - The dock then reads the layout to report it with `data-stacked` and `onStackedChange`, and to make the panels it leaves out inert.
@@ -221,5 +221,6 @@ The parts are the dock, `env-panel-dock`; each panel, `env-panel-dock-panel`, wi
 
 ## Changelog
 
+- **1.0.0-prerelease.5**: A panel's `height`, `preferredWidth`, `minWidth`, `maxWidth`, `minHeight` and `maxHeight`, and the height `onHeightChange` reports, are in rem, where they were pixels: divide them by 16. A number for `stackBelow` is rem too.
 - **1.0.0**: One namespace, `PanelDock.Root` and `PanelDock.Header`; PanelDockControls is internal, `controls` is a boolean and the controls' names come from EnvUIProvider's `messages.panelDock`. Minimized panels are tabs, `env-panel-dock-tab` and `data-tabs`, where they were chips, and a header's application buttons are ghost by default. `showLabel`, which names a tab's button, is `openLabel`. A panel's resize handle, `env-panel-dock-resize`, is `env-panel-dock-resize-handle`, as every resize handle is named.
 - **0.6.0**: PanelDock, PanelDockHeader and PanelDockControls: open panels side by side on the bottom inline-end edge, a maximized panel filling the region and minimized panels as chips, with content that stays mounted, resizing from the top edge, `overflow="minimize"`, stacking below `stackBelow`, focus that follows the panels, and labels that localize the dock.

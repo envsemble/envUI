@@ -3,7 +3,7 @@ import {
   IconButton,
   Page,
   PageHeader,
-  Rail,
+  NavigationRail,
   Scaffold,
   Text,
   TopBar,
@@ -44,18 +44,18 @@ export default function ScaffoldTile() {
     label,
     icon,
     current: label === current,
-    onSelect: () => setCurrent(label),
+    onClick: () => setCurrent(label),
   }));
   return (
     <Scaffold
       scroll="body"
       landmarks={false}
-      forms={{ compact: 'rail', medium: 'rail', expanded: 'rail', large: 'rail' }}
+      navigationForms={{ compact: 'rail', medium: 'rail', expanded: 'rail', large: 'rail' }}
       style={{ inlineSize: '16rem', blockSize: '10.5rem' }}
       topBar={
         <TopBar title="Northwind" actions={<IconButton icon={<Search />} aria-label="Search" />} />
       }
-      navigation={{ rail: <Rail destinations={destinations} /> }}
+      navigation={{ rail: <NavigationRail destinations={destinations} /> }}
     >
       <Page header={<PageHeader title={current} headingLevel={3} />}>
         <Text emphasis="muted">{places.find((place) => place.label === current)?.line}</Text>

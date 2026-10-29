@@ -29,9 +29,9 @@ avoidWhen:
 composes:
   - Scaffold
   - TopBar
-  - Bar
-  - Rail
-  - Drawer
+  - NavigationBar
+  - NavigationRail
+  - NavigationDrawer
   - Breadcrumbs
   - Page
   - PageHeader
@@ -177,9 +177,9 @@ After a page opens, from a destination, a trail level or a search result, focus 
 
 ### Usage
 
-Build one array of destinations, each with its `label`, `icon` and `href`, `current` on the place shown, and optionally a `count`, a `group` and an `onSelect`.
+Build one array of destinations, each with its `label`, `icon` and `href`, `current` on the place shown, and optionally a `count`, a `group` and an `onClick`.
 
-- Give the same array to a Bar, a Rail and a Drawer, in the Scaffold's `navigation` as `bar`, `rail` and `drawer`.
+- Give the same array to a NavigationBar, a NavigationRail and a NavigationDrawer, in the Scaffold's `navigation` as `bar`, `rail` and `drawer`.
 - Render every `href` through the router's link with `LinkProvider`.
 - After the router shows the new page, set `document.title`, such as "Projects – Northwind", and move focus to the body or the page's heading.
 
@@ -230,7 +230,7 @@ Tabs go under the PageHeader for the views of the object the page is about; a li
 
 ### Composition
 
-The primary navigation is a Rail here, from Scaffold's `navigation`; the trail is Breadcrumbs in the PageHeader, the views Tabs below it, and quick open an IconButton in the TopBar's actions. A Pager ends a page read in order. The parts are the rail, `env-rail`, the quick-open button, `env-top-bar-actions > env-icon-button`, the trail, `env-breadcrumbs`, and the tabs, `env-tabs-list`.
+The primary navigation is a NavigationRail here, from Scaffold's `navigation`; the trail is Breadcrumbs in the PageHeader, the views Tabs below it, and quick open an IconButton in the TopBar's actions. A Pager ends a page read in order. The parts are the rail, `env-rail`, the quick-open button, `env-top-bar-actions > env-icon-button`, the trail, `env-breadcrumbs`, and the tabs, `env-tabs-list`.
 
 ## Changelog
 

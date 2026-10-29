@@ -55,26 +55,26 @@ export const punctuatedReference = {
 };
 const references: RichTextReferenceSource[] = [
   {
-    char: '@',
+    trigger: '@',
     label: 'People',
-    items: () => [punctuatedReference, { id: 'person-2', label: 'Second person' }],
+    search: () => [punctuatedReference, { id: 'person-2', label: 'Second person' }],
   },
   {
-    char: '#',
+    trigger: '#',
     label: 'Records',
-    items: () => [{ id: 'issue-17', label: 'Roadmap issue', kind: 'issue' }],
+    search: () => [{ id: 'issue-17', label: 'Roadmap issue', kind: 'issue' }],
   },
   {
-    char: '/',
+    trigger: '/',
     label: 'Files',
-    items: () => [{ id: 'file-8', label: 'Release file', kind: 'file' }],
+    search: () => [{ id: 'file-8', label: 'Release file', kind: 'file' }],
   },
 ];
 const asyncReferences: RichTextReferenceSource[] = [
   {
-    char: '@',
+    trigger: '@',
     label: 'Remote references',
-    items: ({ query, signal }) => deferred(query, signal, window.richTextFixture.requests),
+    search: ({ query, signal }) => deferred(query, signal, window.richTextFixture.requests),
   },
 ];
 const slashCommands: RichTextSlashCommand[] = [
@@ -128,7 +128,7 @@ export function RichTextEditingFixture() {
             }}
           >
             <RichTextEditor
-              ref={editorHandle}
+              editorRef={editorHandle}
               label="Rich source"
               defaultValue="alpha"
               name="richSource"
@@ -154,7 +154,7 @@ export function RichTextEditingFixture() {
             onReferenceClick={(reference, event) => {
               event.preventDefault();
               setClickedReference(
-                `${reference.id}|${reference.label}|${reference.kind}|${reference.char}`,
+                `${reference.id}|${reference.label}|${reference.kind}|${reference.trigger}`,
               );
             }}
             onLinkClick={(href, event) => {

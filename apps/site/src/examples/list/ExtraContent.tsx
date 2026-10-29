@@ -6,7 +6,7 @@ export default function ExtraContent() {
       <List.Item
         label="Sam Lee"
         description="sam.lee@example.com"
-        action={<Button variant="outline">Resend</Button>}
+        end={<Button variant="outline">Resend</Button>}
       >
         {/* Children follow the title and detail, such as a status. */}
         <Badge tone="warning">Expires tomorrow</Badge>
@@ -14,7 +14,7 @@ export default function ExtraContent() {
       <List.Item
         label="Jordan Ellis"
         description="jordan.ellis@example.com"
-        action={<Button variant="outline">Resend</Button>}
+        end={<Button variant="outline">Resend</Button>}
       >
         <Badge>Sent today</Badge>
       </List.Item>

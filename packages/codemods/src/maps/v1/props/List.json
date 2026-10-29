@@ -8,6 +8,10 @@
       "detail": {
         "to": "description",
         "report": "List.Item's detail is description in 1.0."
+      },
+      "action": {
+        "to": "end",
+        "report": "List.Item's action is end in 1.0, as start is the content before the label."
       }
     }
   }

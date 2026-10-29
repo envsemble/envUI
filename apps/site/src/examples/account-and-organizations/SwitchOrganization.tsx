@@ -16,7 +16,7 @@ export default function SwitchOrganization() {
   const headingId = useId();
   const active = organizations.find(({ id }) => id === current);
   return (
-    // As wide as a navigation Drawer's header.
+    // As wide as a NavigationDrawer's header.
     <Column gap={4} align="start" style={{ inlineSize: 'min(100%, 14rem)' }}>
       <Menu.Root
         aria-label="Organizations"

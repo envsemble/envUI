@@ -40,6 +40,10 @@
             }
           }
         }
+      },
+      "onCopy": {
+        "to": "onCopied",
+        "report": "CopyButton's onCopy is onCopied in 1.0: it runs once the text is on the clipboard, unlike the native copy event."
       }
     },
     "Button": {

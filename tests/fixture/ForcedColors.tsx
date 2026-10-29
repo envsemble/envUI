@@ -10,8 +10,8 @@ import {
   List,
   Menu,
   Menubar,
-  Drawer,
-  Rail,
+  NavigationDrawer,
+  NavigationRail,
   Pagination,
   Radio,
   RadioGroup,
@@ -99,14 +99,14 @@ function Page() {
           { value: 'two', button: <Button>Two</Button>, content: 'Second' },
         ]}
       />
-      <Drawer
+      <NavigationDrawer
         aria-label="Places"
         destinations={[
           { label: 'Home', icon: <Home />, href: '#home', current: true },
           { label: 'Inbox', icon: <Inbox />, href: '#inbox', count: 3 },
         ]}
       />
-      <Rail
+      <NavigationRail
         aria-label="Rail places"
         destinations={[
           { label: 'Home', icon: <Home />, href: '#home', current: true },
@@ -160,14 +160,14 @@ function Page() {
         </Table.Body>
       </Table.Root>
       <List.Root aria-label="Slides">
-        <List.Item selected label="Current slide" data-testid="list-selected" />
+        <List.Item current label="Current slide" data-testid="list-selected" />
         <List.Item label="Other slide" data-testid="list-item" />
       </List.Root>
       <Tree
         aria-label="Files"
         items={[
-          { id: 'a', depth: 0, label: 'Selected file' },
-          { id: 'b', depth: 0, label: 'Other file' },
+          { value: 'a', depth: 0, label: 'Selected file' },
+          { value: 'b', depth: 0, label: 'Other file' },
         ]}
         value="a"
         onAction={noop}
@@ -191,8 +191,8 @@ function Page() {
         onValueChange={noop}
         onClose={noop}
         items={[
-          { id: 'a', label: 'Active.md' },
-          { id: 'b', label: 'Other.md' },
+          { value: 'a', label: 'Active.md' },
+          { value: 'b', label: 'Other.md' },
         ]}
       />
       <Rating value={3} />

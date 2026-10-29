@@ -2,7 +2,7 @@
 
 // Dev mode's two sidebars: the nodes as a tree on one side of the 3D view, with dev mode's theme at
 // its foot, and on the other the inspector, with the selected node in detail and the readout an
-// agent reads. Each is resizable by its inner edge, with the grip of a resizable Drawer, and hides
+// agent reads. Each is resizable by its inner edge, with the grip of a resizable NavigationDrawer, and hides
 // with the button in its header's outer corner.
 
 import { Fragment, memo, useMemo, useState, type CSSProperties, type ReactNode } from 'react';
@@ -55,8 +55,8 @@ function roomFor(handle: HTMLElement) {
 }
 
 /**
- * A sidebar: a flush, square pane on the navigation's background, as a Drawer is, resizable by its
- * inner edge with the same grip, keyboard and double click as a resizable Drawer's. It keeps its
+ * A sidebar: a flush, square pane on the navigation's background, as a NavigationDrawer is, resizable by its
+ * inner edge with the same grip, keyboard and double click as a resizable NavigationDrawer's. It keeps its
  * width while it is dragged, rendering only itself, and hands it on once the drag ends.
  */
 function Sidebar({
@@ -356,7 +356,7 @@ function Nodes({ full, selected, onSelect, onTreeHover }: NodesProps) {
       const open = !collapsed.has(node.key);
       const problems = problemsByKey.get(node.key)?.length ?? 0;
       rows.push({
-        id: String(node.key),
+        value: String(node.key),
         depth,
         node,
         label: labelOf(node),
@@ -364,7 +364,7 @@ function Nodes({ full, selected, onSelect, onTreeHover }: NodesProps) {
         expandable: node.hidden === null && node.children.length > 0,
         expanded: open,
         description: node.hidden ?? undefined,
-        title: node.hidden ?? undefined,
+        tooltip: node.hidden ?? undefined,
         end: problems ? (
           <Badge tone="danger" variant="soft">
             {problems}
@@ -401,12 +401,12 @@ function Nodes({ full, selected, onSelect, onTreeHover }: NodesProps) {
         density="xs"
         items={items}
         value={selected === null ? null : String(selected)}
-        onAction={(item) => onSelect(Number(item.id) === selected ? null : Number(item.id))}
+        onAction={(item) => onSelect(Number(item.value) === selected ? null : Number(item.value))}
         onExpandedChange={(item, expanded) =>
           setCollapsed((keys) => {
             const next = new Set(keys);
-            if (expanded) next.delete(Number(item.id));
-            else next.add(Number(item.id));
+            if (expanded) next.delete(Number(item.value));
+            else next.add(Number(item.value));
             return next;
           })
         }
@@ -415,7 +415,7 @@ function Nodes({ full, selected, onSelect, onTreeHover }: NodesProps) {
   );
 }
 
-/** A heading of the details, quiet and small, as a Drawer's group headings are. */
+/** A heading of the details, quiet and small, as a NavigationDrawer's group headings are. */
 const Heading = ({ children }: { children: ReactNode }) => (
   <Text variant="caption" render={<h3 />}>
     {children}

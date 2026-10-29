@@ -147,9 +147,10 @@ A RadioGroup holds Radio options and is a native `<fieldset>`: its `label`, the 
 
 - Each Radio has a `value`, which the group reports and a form submits, its `label`, and an optional `description`, a short muted line read with its name.
 - Uncontrolled: `defaultValue`, which a form reset returns to.
-- Controlled: `value` and `onValueChange`.
+- Controlled: `value` and `onValueChange`; `null` chooses none.
 - Without either, no option is chosen until people choose one.
 - Set `name` in a form; without it the group takes a unique generated one.
+- `description` under the options, and `error`, such as for a required group left empty, describe the group, as on a field.
 
 ```tsx source=ProjectAccess
 
@@ -198,6 +199,7 @@ The parts are the group, `env-radio-group`, with `data-orientation` and its lege
 
 ## Changelog
 
+- **1.0.0-prerelease.5**: RadioGroup takes `description` and `error`, as a field does, and a controlled `value` of `null` chooses none.
 - **1.0.0-prerelease.5**: The chosen row of a group in rows takes the selection's fill and text, as a selected list row and Select's chosen option do, rather than the hover fill.
 - **1.0.0**: RadioGroup's `variant` is `orientation`: `inline` is `horizontal` and `rows` is `vertical`; Radio's `detail` is `description`, which the `v1-props` codemod writes. `className` and `style` style a Radio's root rather than the input, which keeps `ref` and the other native props. A focused radio shows the focus ring. The classes follow the component: `env-radio-options` is `env-radio-group` with `[data-orientation]`, `env-radio-option` and the inline label are `env-radio`, `env-radio-control` is `env-radio-input` and `env-radio-detail` `env-radio-description`.
 - **0.4.0**: Radio rows take the stronger row hover and pressed fills, settle like clickable cards while pressed, and keep 1.5 rem inline padding; radios shrink slightly while they or their labels are pressed.

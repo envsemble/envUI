@@ -16,7 +16,7 @@ export default function SwitchesApplyAtOnce() {
       <List.Root aria-labelledby="immediate-heading">
         <List.Item
           label="Comments"
-          action={
+          end={
             <Switch
               aria-label="Comments"
               checked={on.comments}
@@ -26,7 +26,7 @@ export default function SwitchesApplyAtOnce() {
         />
         <List.Item
           label="Weekly summary"
-          action={
+          end={
             <Switch
               aria-label="Weekly summary"
               checked={on.summary}

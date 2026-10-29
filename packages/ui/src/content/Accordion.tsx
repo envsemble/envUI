@@ -8,13 +8,13 @@ import { classNames } from '../internal/classNames.js';
 import { inSkeleton } from '../foundations/internal/inSkeleton.js';
 import { given, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
+import type { HeadingLevel } from '../foundations/headingLevel.js';
 import '../styles/Base.css';
 import '../styles/Accordion.css';
 
 /** The level of an accordion's headings, from h2 to h6. */
-export type AccordionHeadingLevel = 2 | 3 | 4 | 5 | 6;
 
-const HeadingLevelContext = createContext<AccordionHeadingLevel>(3);
+const HeadingLevelContext = createContext<Exclude<HeadingLevel, 1>>(3);
 
 export interface RootProps
   extends Omit<ComponentPropsWithRef<'div'>, 'defaultValue' | 'onChange'>,
@@ -42,8 +42,11 @@ export interface RootProps
    * The level of each item's heading, for the page's outline; they look the same at every level.
    * @default 3
    */
-  headingLevel?: AccordionHeadingLevel;
-  /** Every item ignores presses and can't be focused. */
+  headingLevel?: Exclude<HeadingLevel, 1>;
+  /**
+   * Every item ignores presses and can't be focused.
+   * @default false
+   */
   disabled?: boolean;
   /**
    * Keeps closed panels in the page, hidden until found, so the browser's find in page reaches
@@ -104,7 +107,10 @@ export interface ItemProps extends Omit<ComponentPropsWithRef<'div'>, 'title'> {
    * first. Without it, the item takes a generated one.
    */
   value?: string;
-  /** The item ignores presses and can't be focused; it stays dimmed. */
+  /**
+   * The item ignores presses and can't be focused; it stays dimmed.
+   * @default false
+   */
   disabled?: boolean;
   /** Receives whether this item is open, each time it opens or closes. */
   onOpenChange?: (open: boolean) => void;

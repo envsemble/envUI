@@ -118,7 +118,7 @@ Write the label as the choice it turns on, in sentence case, so checking it mean
 
 ### Usage
 
-A Checkbox is a native checkbox inside its `<label>`, named by `label`.
+A Checkbox is a native checkbox inside its `<label>`, named by `label`; an optional `description` is a short muted line under it, read with its name.
 
 - Uncontrolled: `defaultChecked`.
 - Controlled: `checked` and `onCheckedChange`, which receives the new state as a boolean.
@@ -164,6 +164,7 @@ A checked box submits its `name` with its `value`; an unchecked one submits noth
 
 ## Changelog
 
+- **1.0.0-prerelease.5**: `description`, a muted line under the label.
 - **1.0.0**: `className` and `style` style the root, `env-checkbox`, rather than the input, which keeps `ref` and the other native props. The classes follow the component: `env-choice-control` is `env-checkbox`, `env-checkbox-control` `env-checkbox-input` and `env-checkbox-mark` `env-checkbox-indicator`.
 - **0.4.0**: Checkboxes shrink slightly whether the box or its label is pressed.
 - **0.1.0**: Checkbox.

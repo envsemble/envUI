@@ -8,11 +8,11 @@ import {
   useMemo,
   useRef,
   useState,
+  type ComponentPropsWithRef,
   type CSSProperties,
   type KeyboardEvent,
   type MouseEvent,
   type ReactNode,
-  type Ref,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { setRef } from '../internal/setRef.js';
@@ -27,8 +27,8 @@ import '../styles/Base.css';
 import '../styles/Tree.css';
 
 export interface TreeItem {
-  /** Stable, unique identifier; rows carry it as data-id. */
-  id: string;
+  /** The row's value, a stable, unique identifier, which the tree's value names; rows carry it as data-id. */
+  value: string;
   /** The row's nesting level, 0 for a top-level row; each level indents it by 0.75 rem. */
   depth: number;
   /**
@@ -53,7 +53,7 @@ export interface TreeItem {
   /** Content at the end of the row, such as a Badge with a count; it is read with the label. */
   end?: ReactNode;
   /** The row's native tooltip, such as the full path of a truncated name. */
-  title?: string;
+  tooltip?: string;
   /** The text type-ahead matches, where the label is not a plain string. */
   textValue?: string;
   /**
@@ -63,7 +63,8 @@ export interface TreeItem {
   disabled?: boolean;
 }
 
-export interface TreeActionOptions {
+/** What Tree's onAction receives beside the row. */
+export interface TreeActionDetails {
   /**
    * True for a single click and Space, which preview the item, such as in a preview tab; false for
    * a double click and Enter, which open it to keep.
@@ -71,16 +72,23 @@ export interface TreeActionOptions {
   preview: boolean;
 }
 
-export interface TreeProps<T extends TreeItem> {
+/** The native events the tree handles itself, for its rows; the others reach its element. */
+type TreeOwnEvents = 'onClick' | 'onDoubleClick' | 'onContextMenu' | 'onPointerDown';
+
+export interface TreeProps<Item extends TreeItem>
+  extends Omit<
+    ComponentPropsWithRef<'div'>,
+    'children' | 'defaultValue' | 'onChange' | 'aria-label' | 'contextMenu' | TreeOwnEvents
+  > {
   /**
    * The visible rows in order, flattened: an expanded row is followed by its visible descendants.
    * The application owns expansion; collapsing a row removes its descendants from items.
    */
-  items: readonly T[];
+  items: readonly Item[];
   /** The tree's accessible name, such as Files. */
   'aria-label': string;
   /**
-   * The selected row's id: it takes the navigation selection colors and scrolls into view when it
+   * The selected row's value: it takes the navigation selection colors and scrolls into view when it
    * changes. The application sets it, usually from onAction.
    */
   value?: string | null;
@@ -88,18 +96,18 @@ export interface TreeProps<T extends TreeItem> {
    * Called when people open a row: with preview true on a single click and Space, and false on a
    * double click and Enter. Expandable rows call it too, and disabled rows don't.
    */
-  onAction: (item: T, options: TreeActionOptions) => void;
+  onAction: (item: Item, details: TreeActionDetails) => void;
   /**
    * Called with the row and its new state from a press on its chevron, the right arrow key on a
    * collapsed row and the left arrow key on an expanded one, mirrored in right-to-left text. The
    * application updates items.
    */
-  onExpandedChange: (item: T, expanded: boolean) => void;
+  onExpandedChange: (item: Item, expanded: boolean) => void;
   /**
    * Menu items for the row people right-click, or press Shift+F10 or the Menu key on, or for the
    * tree's empty area when the item is null. Without it, the browser's own context menu stays.
    */
-  contextMenu?: (item: T | null) => ReactNode;
+  contextMenu?: (item: Item | null) => ReactNode;
   /**
    * The context menu's accessible name.
    * @default 'Actions', or EnvUIProvider's messages.tree.actions
@@ -112,12 +120,6 @@ export interface TreeProps<T extends TreeItem> {
    * @default 'sm'
    */
   density?: RowDensity;
-  /** A class for the tree, the element that scrolls. */
-  className?: string;
-  /** The tree's inline style, such as a height. */
-  style?: CSSProperties;
-  /** The tree element, which scrolls and holds focus. */
-  ref?: Ref<HTMLDivElement>;
 }
 
 /** Rows outside the viewport kept rendered above and below it. */
@@ -172,7 +174,7 @@ function siblingPositions(items: readonly TreeItem[]) {
  * visible rows and owns expansion and selection; the tree owns focus, keyboard navigation and
  * scrolling. It fills its parent's height, scrolls itself and renders only the rows in view.
  */
-export function Tree<T extends TreeItem>({
+export function Tree<Item extends TreeItem>({
   items,
   'aria-label': label,
   value: selectedId = null,
@@ -182,9 +184,12 @@ export function Tree<T extends TreeItem>({
   contextMenuLabel,
   density = 'sm',
   className,
-  style,
   ref,
-}: TreeProps<T>) {
+  onKeyDown: ownKeyDown,
+  onScroll: ownScroll,
+  onFocus: ownFocus,
+  ...props
+}: TreeProps<Item>) {
   const messages = useMessages('tree', treeMessages);
   const treeId = useId().replace(/[^A-Za-z0-9-]/g, '');
   const container = useRef<HTMLDivElement>(null);
@@ -201,7 +206,7 @@ export function Tree<T extends TreeItem>({
 
   const indexById = useMemo(() => {
     const map = new Map<string, number>();
-    items.forEach((item, index) => map.set(item.id, index));
+    items.forEach((item, index) => map.set(item.value, index));
     return map;
   }, [items]);
   const { positions, sizes } = useMemo(() => siblingPositions(items), [items]);
@@ -272,15 +277,15 @@ export function Tree<T extends TreeItem>({
   function activate(index: number) {
     const item = items[Math.max(0, Math.min(items.length - 1, index))];
     if (!item) return;
-    setActiveId(item.id);
-    scrollToIndex(indexById.get(item.id)!);
+    setActiveId(item.value);
+    scrollToIndex(indexById.get(item.value)!);
   }
 
-  function open(item: T, preview: boolean) {
+  function open(item: Item, preview: boolean) {
     if (!item.disabled) onAction(item, { preview });
   }
 
-  function setExpanded(item: T, expanded: boolean) {
+  function setExpanded(item: Item, expanded: boolean) {
     if (!item.disabled) onExpandedChange(item, expanded);
   }
 
@@ -381,7 +386,7 @@ export function Tree<T extends TreeItem>({
   function onRowClick(event: MouseEvent<HTMLElement>) {
     const item = rowFromEvent(event);
     if (!item) return;
-    setActiveId(item.id);
+    setActiveId(item.value);
     if ((event.target as Element).closest('.env-tree-chevron') && item.expandable) {
       setExpanded(item, !item.expanded);
       return;
@@ -408,25 +413,32 @@ export function Tree<T extends TreeItem>({
 
   const tree = (
     <div
+      {...props}
       ref={(node: HTMLDivElement | null) => {
         container.current = node;
         setRef(ref, node);
       }}
-      style={style}
       role="tree"
       aria-label={label}
-      aria-activedescendant={activeItem ? rowElementId(treeId, activeItem.id) : undefined}
+      aria-activedescendant={activeItem ? rowElementId(treeId, activeItem.value) : undefined}
       tabIndex={0}
       className={classNames('env-tree', className)}
       data-density={density}
       data-focus-visible={focusVisible ? '' : undefined}
-      onKeyDown={onKeyDown}
-      onScroll={(event) => setScrollTop(event.currentTarget.scrollTop)}
+      onKeyDown={(event) => {
+        ownKeyDown?.(event);
+        if (!event.defaultPrevented) onKeyDown(event);
+      }}
+      onScroll={(event) => {
+        ownScroll?.(event);
+        setScrollTop(event.currentTarget.scrollTop);
+      }}
       onPointerDown={() => {
         pointerFocus.current = true;
         setFocusVisible(false);
       }}
       onFocus={(event) => {
+        ownFocus?.(event);
         if (event.target === event.currentTarget) setFocusVisible(!pointerFocus.current);
         pointerFocus.current = false;
       }}
@@ -434,7 +446,7 @@ export function Tree<T extends TreeItem>({
       onDoubleClick={onRowDoubleClick}
       onContextMenu={(event) => {
         const item = rowFromEvent(event);
-        if (item) setActiveId(item.id);
+        if (item) setActiveId(item.value);
       }}
     >
       <div className="env-tree-rows" style={{ blockSize: items.length * rowHeight }}>
@@ -442,18 +454,18 @@ export function Tree<T extends TreeItem>({
           const item = items[index]!;
           return (
             <div
-              key={item.id}
-              id={rowElementId(treeId, item.id)}
+              key={item.value}
+              id={rowElementId(treeId, item.value)}
               role="treeitem"
               aria-level={item.depth + 1}
               aria-posinset={positions[index]}
               aria-setsize={sizes[index]}
               aria-expanded={item.expandable ? Boolean(item.expanded) : undefined}
-              aria-selected={item.id === selectedId}
+              aria-selected={item.value === selectedId}
               aria-disabled={item.disabled || undefined}
-              title={item.title}
+              title={item.tooltip}
               className="env-tree-item"
-              data-id={item.id}
+              data-id={item.value}
               data-highlighted={index === activeIndex ? '' : undefined}
               style={
                 {

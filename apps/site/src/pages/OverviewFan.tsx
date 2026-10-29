@@ -87,8 +87,8 @@ const cards: {
       <>
         <CardHeader title="Notifications" note="Sent by email" />
         <List.Root aria-label="Notifications" className="catalogue-fan-body">
-          <List.Item label="Mentions" action={<Switch aria-label="Mentions" defaultChecked />} />
-          <List.Item label="Comments" action={<Switch aria-label="Comments" defaultChecked />} />
+          <List.Item label="Mentions" end={<Switch aria-label="Mentions" defaultChecked />} />
+          <List.Item label="Comments" end={<Switch aria-label="Comments" defaultChecked />} />
         </List.Root>
       </>
     ),

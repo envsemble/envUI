@@ -182,7 +182,7 @@ export function AdoptionFixture() {
             <List.Item
               label="Seat"
               data-testid="secondary-row"
-              action={<Button variant="secondary">Remove</Button>}
+              end={<Button variant="secondary">Remove</Button>}
             />
           </List.Root>
           <Column role="alert" gap={4} padding={5}>

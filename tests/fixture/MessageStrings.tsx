@@ -226,7 +226,7 @@ export function MessageStringsFixture() {
           <TimePicker label="Starts" clearable defaultValue="09:30" />
           <MonthPicker label="Period" clearable defaultValue="2026-10" />
           <Calendar aria-label="Planning" defaultValue="2026-10-14" />
-          <Composer aria-label="Reply" defaultValue="Hello" onSubmit={() => {}} />
+          <Composer aria-label="Reply" defaultValue="Hello" onSend={() => {}} />
           <ColorPicker label="Accent" defaultValue="#336699" swatches={['#336699']} />
           <ColorPickerButton label="Border" defaultValue="#336699" />
           {/* Layout: the divider between two panes, a detail's back button, and a scaffold's skip

@@ -62,7 +62,7 @@ export class PageBoundary extends Component<PageBoundaryProps, PageBoundaryState
           tabIndex={-1}
           tone="danger"
           title="This page failed to render"
-          action={
+          actions={
             overview ? (
               <Button variant="secondary" onClick={() => void this.reload()}>
                 Reload the page

@@ -2,19 +2,19 @@ import { useMemo, useState, type CSSProperties } from 'react';
 import {
   Avatar,
   AvatarButton,
-  Bar,
+  NavigationBar,
   Column,
   CommandPalette,
-  Drawer,
+  NavigationDrawer,
   IconButton,
   List,
   Menu,
   Page,
   PageHeader,
-  Rail,
+  NavigationRail,
   Scaffold,
   Text,
-  ThemeRadioGroup,
+  ThemeMenuRadioGroup,
   Tooltip,
   TopBar,
   type CommandPaletteItem,
@@ -51,7 +51,7 @@ export default function AppFrame() {
     icon,
     group,
     current: href === current,
-    onSelect: () => setCurrent(href),
+    onClick: () => setCurrent(href),
   }));
   const page = places.find((place) => place.href === current) ?? places[0];
 
@@ -83,7 +83,7 @@ export default function AppFrame() {
         Account settings
       </Menu.Item>
       <Menu.Submenu label="Theme" icon={<Palette />}>
-        <ThemeRadioGroup />
+        <ThemeMenuRadioGroup />
       </Menu.Submenu>
       <Menu.Separator />
       <Menu.Item icon={<Logout />}>Sign out</Menu.Item>
@@ -114,9 +114,9 @@ export default function AppFrame() {
         />
       }
       navigation={{
-        bar: <Bar destinations={destinations} />,
-        rail: <Rail destinations={destinations} />,
-        drawer: <Drawer destinations={destinations} headingLevel={3} />,
+        bar: <NavigationBar destinations={destinations} />,
+        rail: <NavigationRail destinations={destinations} />,
+        drawer: <NavigationDrawer destinations={destinations} headingLevel={3} />,
       }}
     >
       <Page width="lg" header={<PageHeader title={page.label} headingLevel={3} />}>

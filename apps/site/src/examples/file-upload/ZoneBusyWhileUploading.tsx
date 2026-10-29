@@ -46,7 +46,7 @@ export default function ZoneBusyWhileUploading() {
           running === 0 ? 'Add files' : `Uploading ${running} ${running === 1 ? 'file' : 'files'}`
         }
         description={running === 0 ? undefined : 'This takes a moment'}
-        onDropAccepted={add}
+        onFilesAccepted={add}
       />
     </Column>
   );

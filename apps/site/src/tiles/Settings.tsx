@@ -33,8 +33,8 @@ export default function SettingsTile() {
         Notifications
       </Text>
       <List.Root aria-label="Notifications">
-        <List.Item label="Email" action={<Switch aria-label="Email" defaultChecked />} />
-        <List.Item label="Weekly digest" action={<Switch aria-label="Weekly digest" />} />
+        <List.Item label="Email" end={<Switch aria-label="Email" defaultChecked />} />
+        <List.Item label="Weekly digest" end={<Switch aria-label="Weekly digest" />} />
       </List.Root>
     </Column>
   );

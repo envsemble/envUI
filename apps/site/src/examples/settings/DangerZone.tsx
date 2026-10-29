@@ -21,7 +21,7 @@ export default function DangerZone() {
         <List.Item
           label="Delete this workspace"
           description="Deletes every project, document and member of Northwind."
-          action={
+          end={
             <Button
               variant="outline"
               tone="danger"

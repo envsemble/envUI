@@ -9,7 +9,6 @@ import {
   type ComponentPropsWithRef,
   type ReactElement,
   type ReactNode,
-  type RefObject,
 } from 'react';
 import { Button } from '../actions/Button.js';
 import { useTheme } from '../foundations/Theme.js';
@@ -20,7 +19,7 @@ import { ResetControlDefaults } from '../internal/ControlDefaults.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { keepsOpen, usePortalContainer } from '../internal/PortalContainerContext.js';
 import { Alert } from './Alert.js';
-import { DialogClose, type DialogOpenChangeDetails } from './Dialog.js';
+import { DialogClose, type DialogFocusTarget, type DialogOpenChangeDetails } from './Dialog.js';
 import {
   DialogActions,
   DialogBackdrop,
@@ -90,10 +89,11 @@ export interface ConfirmDialogProps
   /** What went wrong, shown as a danger Alert above the actions and announced. */
   error?: ReactNode;
   /**
-   * The element to focus when the dialog closes, such as the menu button whose item opened it. By
-   * default focus returns to the trigger, or to the element that had focus when it opened.
+   * The element to focus when the dialog closes, such as the menu button whose item opened it: its
+   * ref, or a function of how the dialog was opened that returns it, as on Dialog. By default focus
+   * returns to the trigger, or to the element that had focus when it opened.
    */
-  finalFocus?: RefObject<HTMLElement | null>;
+  finalFocus?: DialogFocusTarget;
 }
 
 /** Whether a value is a promise or another thenable. */

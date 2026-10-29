@@ -9,6 +9,6 @@
   "v1-structure line 36: Drawer: without destinations, this is 1.0.0-prerelease.0's Drawer, the panel that slides over the page, which is Sheet in 1.0, with the same props and side=\"bottom\" too: rename Drawer and DrawerProps to Sheet and SheetProps by hand. The name Drawer is the navigation drawer's.",
   "v1-structure line 41: LoadingState: LoadingState takes no children: in 1.0 it is a Spinner with showLabel, a spinner with its label. Where the shape of what loads is known, render the content itself with skeleton on its surface, over placeholders(count), instead.",
   "v1-structure line 44: CloseButton: CloseButton was named Close in EnvUIProvider's language, from messages.common.close, which is gone: translate the IconButton's aria-label, Close, as the application translates its own strings.",
-  "v1-structure line 47: ListDetail.Root: Panes sizes are in rem and its divider is a part of its own: add <Panes.Divider label={resizeLabel} /> between Panes.List and Panes.Detail to keep the list resizable, with defaultSize, minSize and maxSize in rem; stackBelow is splitAt, a window class: medium, expanded (the default) or large.",
+  "v1-structure line 47: ListDetail.Root: Panes sizes are in rem and its divider is a part of its own: add <Panes.Divider label={resizeLabel} /> between Panes.List and Panes.Detail to keep the list resizable, with defaultWidth, minWidth and maxWidth in rem; stackBelow is splitAt, a window class: medium, expanded (the default) or large.",
   "v1-stack line 13: StackProps is gone in 1.0: use RowProps or ColumnProps."
 ]

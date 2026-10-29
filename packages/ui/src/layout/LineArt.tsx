@@ -43,7 +43,7 @@ export interface LineArtProps extends Omit<ComponentPropsWithRef<'svg'>, 'childr
   drawing: LineArtDrawing;
   /**
    * Where the drawing sits in its box when the box's shape crops it: at the end, at the start or
-   * in the centre, flipped in right-to-left text, as the drawing itself is. It is cropped from the
+   * in the center, flipped in right-to-left text, as the drawing itself is. It is cropped from the
    * other side, or from both, and always rests on the box's foot, cropped from its top.
    * @default 'end'
    */

@@ -76,7 +76,7 @@ function Files() {
       for (const node of nodes) {
         const open = expanded.has(node.path);
         visible.push({
-          id: node.path,
+          value: node.path,
           depth,
           label: node.name,
           expandable: Boolean(node.children),
@@ -104,11 +104,11 @@ function Files() {
           items={rows}
           value={selected}
           onAction={(item, { preview }) => {
-            if (item.expandable) return setFolder(item.id, !item.expanded);
-            setSelected(item.id);
+            if (item.expandable) return setFolder(item.value, !item.expanded);
+            setSelected(item.value);
             setStatus(`${preview ? 'Previewing' : 'Opened'} ${String(item.label)}`);
           }}
-          onExpandedChange={(item, open) => setFolder(item.id, open)}
+          onExpandedChange={(item, open) => setFolder(item.value, open)}
         />
       </div>
       <Text variant="body-sm" emphasis="muted">

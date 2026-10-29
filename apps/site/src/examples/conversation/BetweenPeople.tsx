@@ -62,7 +62,7 @@ export default function BetweenPeople() {
         aria-label="Message the launch team"
         placeholder="Write a message"
         start={<IconButton variant="text" icon={<AttachFile />} aria-label="Attach files" />}
-        onSubmit={send}
+        onSend={send}
       />
     </Column>
   );

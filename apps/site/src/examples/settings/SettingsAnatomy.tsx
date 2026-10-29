@@ -11,7 +11,7 @@ export default function SettingsAnatomy() {
           <List.Item
             label="Show me in the directory"
             description="Other people at Northwind can find you."
-            action={<Switch aria-label="Show me in the directory" defaultChecked />}
+            end={<Switch aria-label="Show me in the directory" defaultChecked />}
           />
         </List.Root>
       </Column>

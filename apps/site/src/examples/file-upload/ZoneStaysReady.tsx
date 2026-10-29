@@ -39,7 +39,7 @@ export default function ZoneStaysReady() {
 
   return (
     <Column gap={4} style={{ inlineSize: 'min(100%, 24rem)' }}>
-      <DropZone size="sm" multiple label="Add files" onDropAccepted={add} />
+      <DropZone size="sm" multiple label="Add files" onFilesAccepted={add} />
       <List.Root aria-label="Files">
         {uploads.map((upload) => (
           <List.Item

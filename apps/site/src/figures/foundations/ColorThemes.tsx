@@ -8,7 +8,7 @@ import {
   Text,
   Theme,
   type ThemeContrast,
-  type ThemeValue,
+  type ColorScheme,
 } from '@envsemble/envui';
 import { useTimeline } from '../../motion/Motion';
 import { CornerLabel } from './Steps';
@@ -16,7 +16,7 @@ import { Figure } from './Topic';
 import type { FigureWords } from './ColorFigures';
 
 /** The theme and contrast of each sample, in the legend's order. */
-const themes: readonly { theme: ThemeValue; contrast: ThemeContrast }[] = [
+const themes: readonly { theme: ColorScheme; contrast: ThemeContrast }[] = [
   { theme: 'light', contrast: 'standard' },
   { theme: 'light', contrast: 'high' },
   { theme: 'dark', contrast: 'standard' },

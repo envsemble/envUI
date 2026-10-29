@@ -34,7 +34,7 @@ function ReminderButton() {
 
 export default function TopCenter() {
   return (
-    <Toast.Provider defaultPlacement="top-center" visibleLimit={2}>
+    <Toast.Provider defaultPlacement="top-center" limit={2}>
       <ReminderButton />
     </Toast.Provider>
   );

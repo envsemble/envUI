@@ -38,7 +38,7 @@ export default function WithoutUrls() {
             <List.Item
               key={name}
               label={name}
-              action={
+              end={
                 <Button
                   variant="text"
                   aria-label={`Open ${name}`}

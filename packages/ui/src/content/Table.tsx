@@ -17,7 +17,7 @@ import {
 import { classNames } from '../internal/classNames.js';
 import type { RowDensity } from '../foundations/Theme.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
-import { cssLength } from '../internal/cssLength.js';
+import { remLength } from '../internal/cssLength.js';
 import { setRef } from '../internal/setRef.js';
 import { useStackedReport } from '../internal/useStackedReport.js';
 import { ArrowDownward } from '../icons/ArrowDownward.js';
@@ -31,6 +31,7 @@ import { withDisplayName } from '../internal/withDisplayName.js';
 import { ActionElement } from '../internal/ActionElement.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { table as tableMessages } from '../foundations/messages/table.js';
+import type { ResizeDetails } from '../internal/resizeDetails.js';
 import '../styles/Base.css';
 import '../styles/Table.css';
 
@@ -76,8 +77,8 @@ export interface RootProps
   narrowLayout?: 'scroll' | 'stack';
   /**
    * The region width below which a table with narrowLayout="stack" stacks its rows: a CSS length
-   * such as 60rem or 480px, or a number of pixels, such as 600 or "600". Wide tables, such as
-   * seven sortable columns, need more.
+   * such as 60rem or 480px, or a number of rem, such as 40 or "40", as PanelDock's. Wide tables,
+   * such as seven sortable columns, need more.
    */
   stackBelow?: string | number;
   /**
@@ -100,8 +101,12 @@ export interface RootProps
    * with.
    */
   defaultColumnWidths?: readonly number[];
-  /** Called with every column's width when people resize a column. */
-  onColumnWidthsChange?: (widths: number[]) => void;
+  /**
+   * Called with every column's width when people resize a column: while dragging a handle with
+   * committed false, and with committed true as a drag ends, a key moves it or a double click
+   * resets the widths.
+   */
+  onColumnWidthsChange?: (widths: number[], details: ResizeDetails) => void;
   /**
    * Smallest width of each column in percent, in column order, or one value for every column.
    * @default 5
@@ -202,10 +207,11 @@ function Root({
 
   let columns: TableColumns | null = null;
   if (widths) {
-    const change = (next: number[]) => {
-      if (sameWidths(widths, next)) return;
-      if (columnWidths === undefined) setChosen({ key: defaultsKey, widths: next });
-      onColumnWidthsChange?.(next);
+    const change = (next: number[], committed: boolean) => {
+      const same = sameWidths(widths, next);
+      if (same && !committed) return;
+      if (!same && columnWidths === undefined) setChosen({ key: defaultsKey, widths: next });
+      onColumnWidthsChange?.(next, { committed });
     };
     const starting = [defaultColumnWidths, startWidths].find(
       (candidate) => candidate?.length === widths.length,
@@ -217,7 +223,7 @@ function Root({
       resizing,
       setResizing,
       change,
-      reset: () => change(starting ? [...starting] : widths.map(() => 100 / widths.length)),
+      reset: () => change(starting ? [...starting] : widths.map(() => 100 / widths.length), true),
     };
   }
 
@@ -237,7 +243,7 @@ function Root({
       // The container query compares the region with 37.5em, an em of stackBelow / 37.5: in a
       // query, em is the container's own.
       style={
-        stack ? ({ '--env-table-stack-below': cssLength(stackBelow) } as CSSProperties) : undefined
+        stack ? ({ '--env-table-stack-below': remLength(stackBelow) } as CSSProperties) : undefined
       }
     >
       {inSkeleton(

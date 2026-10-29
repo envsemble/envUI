@@ -8,9 +8,9 @@ export default function ResizableDetails() {
     <Panes.Root
       behavior="supporting"
       splitAt="medium"
-      defaultSize={18}
-      minSize={14}
-      maxSize={28}
+      defaultWidth={18}
+      minWidth={14}
+      maxWidth={28}
       persist="example.details-width"
       style={{ blockSize: '14rem' }}
     >

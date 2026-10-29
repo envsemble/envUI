@@ -86,7 +86,10 @@ interface LineOptions {
 }
 
 interface RowOptions extends LineOptions {
-  /** Lets the row run onto more lines when its children don't fit, as a row of actions does. */
+  /**
+   * Lets the row run onto more lines when its children don't fit, as a row of actions does.
+   * @default false
+   */
   wrap?: boolean;
 }
 

@@ -1,7 +1,7 @@
 import githubDarkDimmed from 'shiki/themes/github-dark-dimmed.mjs';
 import githubLightDefault from 'shiki/themes/github-light-default.mjs';
 import type { ThemeRegistration } from 'shiki/core';
-import type { ThemeValue } from '../../foundations/Theme.js';
+import type { ColorScheme } from '../../foundations/Theme.js';
 import {
   codeBackgrounds,
   codeColors,
@@ -18,12 +18,12 @@ import {
 } from './readableColors.js';
 
 /** The standard code themes, as Shiki ships them: github-light-default and the grey github-dark-dimmed. */
-const standard: Record<ThemeValue, ThemeRegistration> = {
+const standard: Record<ColorScheme, ThemeRegistration> = {
   light: githubLightDefault as ThemeRegistration,
   dark: githubDarkDimmed as ThemeRegistration,
 };
 
-let highContrast: Promise<Record<ThemeValue, ThemeRegistration>> | undefined;
+let highContrast: Promise<Record<ColorScheme, ThemeRegistration>> | undefined;
 /**
  * The high-contrast code themes, github-light-high-contrast and github-dark-high-contrast, loaded
  * only once code is shown at high contrast, so that applications without it never download them.
@@ -46,11 +46,11 @@ function loadHighContrast() {
 }
 
 /** The Shiki theme of an app theme and contrast. */
-async function shikiTheme(scheme: ThemeValue, contrast: CodeContrast) {
+async function shikiTheme(scheme: ColorScheme, contrast: CodeContrast) {
   return contrast === 'high' ? (await loadHighContrast())[scheme] : standard[scheme];
 }
 
-const direction = (scheme: ThemeValue): LightnessDirection =>
+const direction = (scheme: ColorScheme): LightnessDirection =>
   scheme === 'light' ? 'darker' : 'lighter';
 
 /** Every text color a theme gives code: its foreground and each token rule's foreground. */
@@ -88,9 +88,9 @@ function withColors(
 }
 
 /** Builds each theme, or what is made of it, once, when it is first asked for. */
-const memo = <Built>(build: (scheme: ThemeValue, contrast: CodeContrast) => Promise<Built>) => {
+const memo = <Built>(build: (scheme: ColorScheme, contrast: CodeContrast) => Promise<Built>) => {
   const built = new Map<string, Promise<Built>>();
-  return (scheme: ThemeValue, contrast: CodeContrast = 'standard') => {
+  return (scheme: ColorScheme, contrast: CodeContrast = 'standard') => {
     const key = `${scheme}-${contrast}`;
     if (!built.has(key))
       built.set(

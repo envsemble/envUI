@@ -10,14 +10,14 @@ export default function Sizes() {
         label="Drop a logo here, or browse"
         description="PNG, JPG or WebP up to 2 MB"
         accept="image/png,image/jpeg,.webp"
-        onDropAccepted={ignore}
+        onFilesAccepted={ignore}
       />
       <DropZone
         size="sm"
         multiple
         label="Attach documents"
         description="Any file, several at once"
-        onDropAccepted={ignore}
+        onFilesAccepted={ignore}
       />
     </Column>
   );

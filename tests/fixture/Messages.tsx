@@ -7,11 +7,11 @@ import {
   MessageList,
   Surface,
   Theme,
-  type ThemeValue,
+  type ColorScheme,
 } from '@envsemble/envui';
 import { ContentCopy } from '@envsemble/envui/icons/ContentCopy';
 
-export function MessagesFixture({ theme }: { theme: ThemeValue }) {
+export function MessagesFixture({ theme }: { theme: ColorScheme }) {
   const [copied, setCopied] = useState(0);
   const [retried, setRetried] = useState(0);
   const [sent, setSent] = useState<string[]>([]);
@@ -68,7 +68,7 @@ export function MessagesFixture({ theme }: { theme: ThemeValue }) {
         </MessageList>
         <Composer
           aria-label={`Reply ${theme}`}
-          onSubmit={(text) => setSent((messages) => [...messages, text])}
+          onSend={(text) => setSent((messages) => [...messages, text])}
         />
       </div>
       <output data-testid={`messages-copied-${theme}`}>{copied}</output>

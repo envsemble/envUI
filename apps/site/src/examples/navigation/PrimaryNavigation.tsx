@@ -1,10 +1,10 @@
 import { useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import {
-  Bar,
-  Drawer,
+  NavigationBar,
+  NavigationDrawer,
   Page,
   PageHeader,
-  Rail,
+  NavigationRail,
   Scaffold,
   Text,
   TopBar,
@@ -49,7 +49,7 @@ export default function PrimaryNavigation() {
       count: unread,
       group: index < destinations.length ? undefined : 'Workspace',
       current: id === current,
-      onSelect: () => go(id),
+      onClick: () => go(id),
     }),
   );
 
@@ -62,9 +62,9 @@ export default function PrimaryNavigation() {
       topBar={<TopBar title="Northwind" />}
       // The one primary navigation, named Main, its current page marked, in each form.
       navigation={{
-        bar: <Bar destinations={items} />,
-        rail: <Rail destinations={items} />,
-        drawer: <Drawer destinations={items} headingLevel={3} />,
+        bar: <NavigationBar destinations={items} />,
+        rail: <NavigationRail destinations={items} />,
+        drawer: <NavigationDrawer destinations={items} headingLevel={3} />,
       }}
     >
       <Page width="md" header={<PageHeader title={page.label} headingLevel={3} />}>

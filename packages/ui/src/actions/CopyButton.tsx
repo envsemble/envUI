@@ -28,7 +28,7 @@ interface CopyButtonBaseProps
   /** The text to copy, or a function that returns it, also as a promise, when pressed. */
   value: string | (() => string | Promise<string>);
   /** Runs once the text is on the clipboard, with that text. */
-  onCopy?: (text: string) => void;
+  onCopied?: (text: string) => void;
   /**
    * Writes the text instead of the browser's Clipboard API, such as through a desktop app's
    * clipboard bridge. A rejected promise shows and announces failedLabel.
@@ -38,14 +38,20 @@ interface CopyButtonBaseProps
   size?: ControlSize;
   /** The icon at rest, ContentCopy by default; a check replaces it once the text is copied. */
   icon?: ReactNode;
-  /** Shown in the tooltip and announced after copying; Copied by default. */
+  /**
+   * Shown in the tooltip and announced after copying.
+   * @default 'Copied', or EnvUIProvider's messages.copy.copied
+   */
   copiedLabel?: string;
-  /** Shown in the tooltip and announced when nothing could be copied; Couldn’t copy by default. */
+  /**
+   * Shown in the tooltip and announced when nothing could be copied.
+   * @default 'Couldn’t copy', or EnvUIProvider's messages.copy.failed
+   */
   failedLabel?: string;
   /**
    * The button's name, also in an icon-only button's tooltip, where it has none of its own: no
-   * aria-label or aria-labelledby, and a label without words, such as an empty string; Copy by
-   * default.
+   * aria-label or aria-labelledby, and a label without words, such as an empty string.
+   * @default 'Copy', or EnvUIProvider's messages.copy.copy
    */
   copyLabel?: string;
 }
@@ -69,9 +75,14 @@ export type CopyButtonProps = CopyButtonBaseProps &
          * aria-label, such as Copy link; a blank one leaves it named by copyLabel.
          */
         children?: boolean | null;
+        /** The icon-only button's name, such as Copy link, which its tooltip shows. */
         'aria-label': string;
       }
-    | { children: CopyButtonLabel; 'aria-label'?: string }
+    | {
+        children: CopyButtonLabel;
+        /** A name in place of the label's words, where they don't say it as wanted. */
+        'aria-label'?: string;
+      }
   );
 
 /** How long the result of a press shows: the check, the tooltip and the announcement. */
@@ -84,7 +95,7 @@ const feedbackDuration = 2_000;
  */
 export function CopyButton({
   value,
-  onCopy,
+  onCopied,
   write,
   variant,
   tone,
@@ -111,7 +122,7 @@ export function CopyButton({
   // Every press shows and announces its result again, also the same result twice in a row.
   const { copy, status, round, copying, waiting, reset } = useCopy({
     write,
-    onCopy,
+    onCopied,
     resetAfter: feedbackDuration,
     fieldClassName: 'env-copy-button-field',
   });

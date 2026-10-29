@@ -30,7 +30,7 @@ export default function OpenFromRow() {
               </Link>
             }
             description={updated}
-            action={
+            end={
               <Menu.Root
                 aria-label={`Actions for ${name}`}
                 trigger={

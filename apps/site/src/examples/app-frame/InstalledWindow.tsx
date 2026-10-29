@@ -1,5 +1,14 @@
 import type { CSSProperties } from 'react';
-import { Drawer, Menu, Menubar, Page, PageHeader, Scaffold, Text, TopBar } from '@envsemble/envui';
+import {
+  NavigationDrawer,
+  Menu,
+  Menubar,
+  Page,
+  PageHeader,
+  Scaffold,
+  Text,
+  TopBar,
+} from '@envsemble/envui';
 import { Description } from '@envsemble/envui/icons/Description';
 import { Home } from '@envsemble/envui/icons/Home';
 
@@ -33,7 +42,7 @@ export default function InstalledWindow() {
       }
       navigation={{
         drawer: (
-          <Drawer
+          <NavigationDrawer
             destinations={[
               { label: 'Home', icon: <Home />, href: '#home', current: true },
               { label: 'Documents', icon: <Description />, href: '#documents' },

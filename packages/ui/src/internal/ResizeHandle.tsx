@@ -13,7 +13,7 @@ export type ResizeHandleProps = ResizeOptions &
     label: string;
     /**
      * Shows a grip, three dots at its middle, in place of the line: for a handle between two
-     * surfaces or on a surface's edge, as Panes.Divider, a side Sheet's and the Drawer's.
+     * surfaces or on a surface's edge, as Panes.Divider, a side Sheet's and the NavigationDrawer's.
      */
     grip?: boolean;
   };

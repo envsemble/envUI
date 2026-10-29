@@ -2,7 +2,7 @@ import {
   Button,
   Page,
   PageHeader,
-  Rail,
+  NavigationRail,
   Scaffold,
   TopBar,
   type Destination,
@@ -24,7 +24,7 @@ export default function DestinationsInTopBar() {
       scroll="body"
       landmarks={false}
       style={{ blockSize: '16rem' }}
-      forms={{ compact: 'rail', medium: 'rail', expanded: 'rail', large: 'rail' }}
+      navigationForms={{ compact: 'rail', medium: 'rail', expanded: 'rail', large: 'rail' }}
       topBar={
         <TopBar
           title="Northwind"
@@ -37,7 +37,12 @@ export default function DestinationsInTopBar() {
         />
       }
       navigation={{
-        rail: <Rail aria-label="Main, destinations in the top bar" destinations={destinations} />,
+        rail: (
+          <NavigationRail
+            aria-label="Main, destinations in the top bar"
+            destinations={destinations}
+          />
+        ),
       }}
     >
       <Page header={<PageHeader title="Projects" headingLevel={3} />} />

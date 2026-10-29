@@ -242,7 +242,6 @@ test('style sheets whose rules tie come in index.css order in every bundle', () 
     ['Button.css', 'PickerPopup.css'],
     ['Button.css', 'RichText.css'],
     ['Button.css', 'Scaffold.css'],
-    ['Button.css', 'Select.css'],
     ['Button.css', 'Toast.css'],
     ['Button.css', 'Toolbar.css'],
     ['ListRow.css', 'Combobox.css'],

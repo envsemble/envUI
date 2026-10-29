@@ -81,7 +81,7 @@ export default function ContextMenuForRows() {
               data-entry={entry.id}
               label={entry.name}
               description={`Edited by ${entry.editor}`}
-              action={
+              end={
                 <Menu.Root
                   aria-label={`Actions for ${entry.name}`}
                   trigger={

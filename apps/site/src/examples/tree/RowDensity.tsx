@@ -11,15 +11,15 @@ interface Mailbox extends TreeItem {
 
 const mailboxes: Mailbox[] = [
   {
-    id: 'inbox',
+    value: 'inbox',
     depth: 0,
     label: 'Inbox',
     icon: <Inbox />,
     end: <Badge count={12} aria-label="12 unread" />,
   },
-  { id: 'clients', depth: 0, label: 'Clients', icon: <Folder />, expandable: true },
+  { value: 'clients', depth: 0, label: 'Clients', icon: <Folder />, expandable: true },
   {
-    id: 'clients/northwind',
+    value: 'clients/northwind',
     parent: 'clients',
     depth: 1,
     label: 'Northwind',
@@ -27,10 +27,16 @@ const mailboxes: Mailbox[] = [
     description: 'Shared with 4',
     end: <Badge count={3} aria-label="3 unread" />,
   },
-  { id: 'clients/example', parent: 'clients', depth: 1, label: 'Example Inc.', icon: <Folder /> },
-  { id: 'sent', depth: 0, label: 'Sent', icon: <Send /> },
   {
-    id: 'archive',
+    value: 'clients/example',
+    parent: 'clients',
+    depth: 1,
+    label: 'Example Inc.',
+    icon: <Folder />,
+  },
+  { value: 'sent', depth: 0, label: 'Sent', icon: <Send /> },
+  {
+    value: 'archive',
     depth: 0,
     label: 'Archive',
     icon: <Archive />,
@@ -58,7 +64,9 @@ export default function RowDensity({ density = 'md' }: Pick<TreeProps<TreeItem>,
         density={density}
         items={rows}
         value={selected}
-        onAction={(row) => (row.expandable ? setClientsOpen(!row.expanded) : setSelected(row.id))}
+        onAction={(row) =>
+          row.expandable ? setClientsOpen(!row.expanded) : setSelected(row.value)
+        }
         onExpandedChange={(_, open) => setClientsOpen(open)}
       />
     </div>

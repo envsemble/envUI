@@ -32,7 +32,7 @@ export default function UploadsAndLinks() {
       defaultValue="The budget and the **launch plan** are attached below."
       accept="image/*,.pdf,.txt"
       onUpload={upload}
-      onRequestLink={pickPage}
+      pickLink={pickPage}
     />
   );
 }

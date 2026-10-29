@@ -4,11 +4,7 @@ import type { CSSProperties, Ref } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { useFieldMetadata } from './internal/useFieldMetadata.js';
 import { TextareaControl, type TextareaControlProps } from './internal/TextareaControl.js';
-import {
-  FieldFrame,
-  type FieldProps,
-  type TextFieldAppearanceProps,
-} from './internal/FieldFrame.js';
+import { FieldFrame, type FieldProps } from './internal/FieldFrame.js';
 
 export interface TextareaProps extends TextareaControlProps, FieldProps {
   /** The native text area, so that a form library can register it and focus it. */
@@ -22,7 +18,7 @@ export interface TextareaProps extends TextareaControlProps, FieldProps {
    * its label resting at the top, so it has no floating variant.
    * @default 'outline'
    */
-  variant?: Exclude<TextFieldAppearanceProps['variant'], 'floating'>;
+  variant?: 'outline' | 'ghost';
   /** Receives the text as people type, after the native onChange. */
   onValueChange?: (value: string) => void;
 }

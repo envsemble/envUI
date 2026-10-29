@@ -1,7 +1,7 @@
 import { Suspense, useState } from 'react';
 import {
   Alert,
-  Bar,
+  NavigationBar,
   Button,
   Column,
   IconButton,
@@ -111,11 +111,11 @@ function DestinationSteps() {
   const destinations: Destination[] = places.map((place) => ({
     ...place,
     current: current === place.label,
-    onSelect: () => setCurrent(place.label),
+    onClick: () => setCurrent(place.label),
   }));
   return (
     <div className="catalogue-icons-bar">
-      <Bar destinations={destinations} />
+      <NavigationBar destinations={destinations} />
     </div>
   );
 }

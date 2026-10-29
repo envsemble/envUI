@@ -69,7 +69,7 @@ export interface DatePickerProps
   /** The latest value, as YYYY-MM-DD or YYYY-MM-DDTHH:mm; later days are unavailable. */
   max?: string;
   /** The time a newly chosen day starts with, as HH:mm; 00:00 by default. */
-  defaultTime?: string;
+  placeholderTime?: string;
   /**
    * With the minute granularity, the minutes between the times the list offers, from 1 to 60. A
    * value between them still shows in the list, in its place.
@@ -81,7 +81,10 @@ export interface DatePickerProps
    * browser's. Dates are Gregorian, also in a locale with a calendar of its own.
    */
   locale?: string;
-  /** The calendar's first day of the week, from 0 for Sunday to 6 for Saturday; see Calendar. */
+  /**
+   * The calendar's first day of the week, from 0 for Sunday to 6 for Saturday.
+   * @default the locale's, or Monday where the browser cannot tell
+   */
   weekStart?: Weekday;
   /**
    * How the field shows the value: Intl.DateTimeFormat options, by default the medium date style
@@ -91,7 +94,10 @@ export interface DatePickerProps
   formatOptions?: Intl.DateTimeFormatOptions;
   /** The name the value is submitted under with a form, as YYYY-MM-DD or YYYY-MM-DDTHH:mm. */
   name?: string;
-  /** A value is needed: an empty field keeps its form from submitting and takes focus. */
+  /**
+   * A value is needed: an empty field keeps its form from submitting and takes focus.
+   * @default false
+   */
   required?: boolean;
   /** The value can be read and focused but not changed. */
   readOnly?: boolean;
@@ -195,7 +201,7 @@ export function DatePicker({
   granularity = 'day',
   min,
   max,
-  defaultTime,
+  placeholderTime,
   minuteStep,
   locale,
   weekStart,
@@ -224,7 +230,7 @@ export function DatePicker({
     disabled,
     readOnly,
   });
-  const defaultMinutes = parseTime(defaultTime) ?? 0;
+  const defaultMinutes = parseTime(placeholderTime) ?? 0;
 
   const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
   const current = parseValue(
@@ -370,7 +376,7 @@ export function DatePicker({
               value={current?.minutes}
               onValueChange={(minutes) => commit({ day: timeDay, minutes })}
               minuteStep={minuteStep}
-              start={defaultTime === undefined ? undefined : defaultMinutes}
+              start={placeholderTime === undefined ? undefined : defaultMinutes}
               min={boundMinutes(minMoment, timeDay)}
               max={boundMinutes(maxMoment, timeDay)}
               locale={locale}

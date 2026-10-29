@@ -395,7 +395,7 @@ test('spreading never changes the group’s box, so a narrow row never wraps it 
     await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
   }
   // A group as wide as its content is exactly the spread row. At rest it gathers at the start of
-  // that room, or at its end with gather="end".
+  // that room, or at its end with align="end".
   const inRow = scope.getByTestId('in-row');
   await inRow.hover();
   const spread = await measure(inRow);

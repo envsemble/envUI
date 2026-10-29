@@ -1,11 +1,11 @@
 import { useState, type CSSProperties, type ReactNode } from 'react';
 import {
-  Bar,
+  NavigationBar,
   Button,
   Checkbox,
   Column,
   Progress,
-  Rail,
+  NavigationRail,
   Row,
   SearchField,
   SegmentedControl,
@@ -16,7 +16,7 @@ import {
   Theme,
   useTheme,
   type Destination,
-  type ThemeValue,
+  type ColorScheme,
 } from '@envsemble/envui';
 import { Group } from '@envsemble/envui/icons/Group';
 import { Luggage } from '@envsemble/envui/icons/Luggage';
@@ -45,7 +45,7 @@ const oklch = (lightness: number, chroma: number, hue: number, alpha?: number) =
  * accent text on it; translucent tinted fills for quiet controls. At high contrast the accent goes
  * a step further from the page, and text and edges keep the theme's own, stronger colors.
  */
-function schemeColors({ hue }: (typeof schemes)[number], theme: ThemeValue, high: boolean) {
+function schemeColors({ hue }: (typeof schemes)[number], theme: ColorScheme, high: boolean) {
   const light = theme === 'light';
   const step = (lightness: number, by: number) => lightness + (light ? -by : by);
   // A fill's hover and press: a step further from the page, or, for the accent, deeper in both
@@ -128,7 +128,7 @@ function SchemeArea({
   children,
 }: {
   scheme: number;
-  theme: ThemeValue;
+  theme: ColorScheme;
   className?: string;
   children: ReactNode;
 }) {
@@ -169,7 +169,7 @@ function SchemeChoice({ names, narrow }: { names: readonly string[]; narrow: boo
   const scheme = useTimeline(schemes.map(() => schemeStep));
   const [answer, setAnswer] = useState('going');
   const [place, setPlace] = useState('trips');
-  const destination = (id: string) => ({ current: place === id, onSelect: () => setPlace(id) });
+  const destination = (id: string) => ({ current: place === id, onClick: () => setPlace(id) });
   const destinations: Destination[] = [
     { label: 'Trips', icon: <Luggage />, ...destination('trips') },
     { label: 'Map', icon: <MapIcon />, ...destination('map') },
@@ -232,9 +232,9 @@ function SchemeChoice({ names, narrow }: { names: readonly string[]; narrow: boo
         )}
         <Tile name="nav">
           {narrow ? (
-            <Bar aria-label="Trip" destinations={destinations} />
+            <NavigationBar aria-label="Trip" destinations={destinations} />
           ) : (
-            <Rail aria-label="Trip" destinations={destinations} />
+            <NavigationRail aria-label="Trip" destinations={destinations} />
           )}
         </Tile>
       </div>

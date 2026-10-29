@@ -119,7 +119,7 @@ A group of controls, as wide as its controls in a Column with `align="start"`:
 
 `skeleton` shows the surface and everything inside it as a skeleton until its content arrives: text becomes bars of its text style's length, and controls filled shapes.
 
-- Render the same components over stand-in items, `items ?? placeholders<Project>(3)`, whose fields are undefined; `isPlaceholder(item)` tells a stand-in by its id.
+- Render the same components over stand-in items, `items ?? placeholders<Project>(3)`, whose fields are undefined; `isPlaceholder(item)` tells a stand-in by its id, and narrows the type, so the other branch reads the item's own fields.
 - A component of the application's own reads `useSkeleton()` to give its skeleton a look of its own, such as a chart's.
 
 ```tsx

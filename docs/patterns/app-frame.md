@@ -1,6 +1,6 @@
 ---
 title: App frame
-summary: Frame an application's screens with a Scaffold, a TopBar and the same destinations as a Bar, a Rail or a Drawer, by the width of the window.
+summary: Frame an application's screens with a Scaffold, a TopBar and the same destinations as a NavigationBar, a NavigationRail or a NavigationDrawer, by the width of the window.
 status: beta
 since: 1.0.0
 intent: Frame the application
@@ -32,9 +32,9 @@ avoidWhen:
 composes:
   - Scaffold
   - TopBar
-  - Bar
-  - Rail
-  - Drawer
+  - NavigationBar
+  - NavigationRail
+  - NavigationDrawer
   - Sheet
   - Panes
   - List
@@ -44,7 +44,7 @@ composes:
   - Menu
   - AvatarButton
   - Avatar
-  - ThemeRadioGroup
+  - ThemeMenuRadioGroup
   - Page
   - PageHeader
   - IconButton
@@ -119,7 +119,7 @@ The app frame is one [Scaffold](../components/scaffold.md) at the application's 
 The navigation takes the form the frame's width calls for: a bar on a phone, a rail on a tablet and a drawer on wider windows.
 
 - With many destinations, or none with icons, a phone shows no bar.
-- A menu button in the top bar then opens the same Drawer in a [Sheet](../components/sheet.md).
+- A menu button in the top bar then opens the same NavigationDrawer in a [Sheet](../components/sheet.md).
 
 ```tsx figure=MenuOnPhones stage=shaded widths="22 44" sweep classes motion
 
@@ -169,9 +169,9 @@ After a destination opens its page, move focus to the body or the page's heading
 Render one Scaffold at the application's root, around the router's outlet.
 
 - Its `topBar` is a TopBar with the application's `title` and, in `actions`, the search IconButton in a Tooltip and the account menu's AvatarButton.
-- Its `navigation` takes `bar`, `rail` and `drawer`, a Bar, a Rail and a Drawer given the same array of destinations, with `current` set from the router.
+- Its `navigation` takes `bar`, `rail` and `drawer`, a NavigationBar, a NavigationRail and a NavigationDrawer given the same array of destinations, with `current` set from the router.
 - The router's page, a Page with its PageHeader, is the Scaffold's children.
-- The Scaffold shows the bar on a `compact` window, the rail on a `medium` one and the drawer from `expanded`, by its own container's width, and `forms` changes the form for a window class; don't choose the form in script from the window's width.
+- The Scaffold shows the bar on a `compact` window, the rail on a `medium` one and the drawer from `expanded`, by its own container's width, and `navigationForms` changes the form for a window class; don't choose the form in script from the window's width.
 
 ```tsx source=AppFrame
 
@@ -179,11 +179,11 @@ Render one Scaffold at the application's root, around the router's outlet.
 
 #### A menu on phones
 
-`forms={{ compact: 'none', medium: 'drawer' }}` shows no navigation on a compact window and the drawer from medium. A menu IconButton in the TopBar's `start` opens a Sheet with `side="start"` holding the same Drawer, which closes the sheet when a destination is chosen.
+`navigationForms={{ compact: 'none', medium: 'drawer' }}` shows no navigation on a compact window and the drawer from medium. A menu IconButton in the TopBar's `start` opens a Sheet with `side="start"` holding the same NavigationDrawer, which closes the sheet when a destination is chosen.
 
 ```tsx
 <Scaffold
-  forms={{ compact: 'none', medium: 'drawer' }}
+  navigationForms={{ compact: 'none', medium: 'drawer' }}
   topBar={
     <TopBar
       title="Guide"
@@ -192,11 +192,11 @@ Render one Scaffold at the application's root, around the router's outlet.
       }
     />
   }
-  navigation={{ drawer: <Drawer aria-label="Chapters" destinations={destinations} /> }}
+  navigation={{ drawer: <NavigationDrawer aria-label="Chapters" destinations={destinations} /> }}
 >
   {page}
   <Sheet side="start" aria-label="Chapters" open={menu} onOpenChange={setMenu}>
-    <Drawer aria-label="Chapters" destinations={destinationsThatCloseTheSheet} />
+    <NavigationDrawer aria-label="Chapters" destinations={destinationsThatCloseTheSheet} />
   </Sheet>
 </Scaffold>
 ```
@@ -233,7 +233,7 @@ Give the Scaffold `topBarSpan="full"`, so its `topBar` runs across the whole win
       }
     />
   }
-  navigation={{ drawer: <Drawer destinations={destinations} /> }}
+  navigation={{ drawer: <NavigationDrawer destinations={destinations} /> }}
 >
   <Page header={<PageHeader title="Home" sticky />}>{content}</Page>
 </Scaffold>

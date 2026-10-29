@@ -12,8 +12,8 @@ import {
   TextField,
   Menu,
   Menubar,
-  Drawer,
-  Rail,
+  NavigationDrawer,
+  NavigationRail,
   type Destination,
   Pagination,
   PanelDock,
@@ -29,7 +29,7 @@ import {
   type ControlSize,
   type RowDensity,
   type ThemeScale,
-  type ThemeValue,
+  type ColorScheme,
   type TreeItem,
 } from '@envsemble/envui';
 import { Add } from '@envsemble/envui/icons/Add';
@@ -260,9 +260,9 @@ function MenuSection() {
 
 function treeRows(): TreeItem[] {
   return [
-    { id: 'src', depth: 0, label: 'src', icon: <Folder />, expandable: true, expanded: true },
+    { value: 'src', depth: 0, label: 'src', icon: <Folder />, expandable: true, expanded: true },
     {
-      id: 'components',
+      value: 'components',
       depth: 1,
       label: 'components',
       icon: <Folder />,
@@ -270,20 +270,26 @@ function treeRows(): TreeItem[] {
       expanded: true,
     },
     ...['Button.tsx', 'Input.tsx', 'Select.tsx', 'Tree.tsx'].map((name) => ({
-      id: `components/${name}`,
+      value: `components/${name}`,
       depth: 2,
       label: name,
       icon: <Description />,
     })),
     {
-      id: 'styles',
+      value: 'styles',
       depth: 1,
       label: 'styles',
       icon: <Folder />,
       expandable: true,
       expanded: false,
     },
-    { id: 'readme', depth: 0, label: 'README.md', icon: <Description />, description: 'Modified' },
+    {
+      value: 'readme',
+      depth: 0,
+      label: 'README.md',
+      icon: <Description />,
+      description: 'Modified',
+    },
   ];
 }
 
@@ -409,16 +415,18 @@ const destinations: Destination[] = [
   { label: 'Settings', icon: <Settings />, href: '#settings' },
 ];
 
-function NavigationDrawer({ label }: { label: string }) {
-  return <Drawer className="density-drawer" aria-label={label} destinations={destinations} />;
+function DensityDrawer({ label }: { label: string }) {
+  return (
+    <NavigationDrawer className="density-drawer" aria-label={label} destinations={destinations} />
+  );
 }
 
 function NavigationSection() {
   return (
     <div className="density-columns">
       <Column title="Drawer, Rail and Breadcrumbs">
-        <NavigationDrawer label="Navigation" />
-        <Rail aria-label="Rail navigation" destinations={destinations} />
+        <DensityDrawer label="Navigation" />
+        <NavigationRail aria-label="Rail navigation" destinations={destinations} />
         <Breadcrumbs
           aria-label="Location"
           items={[
@@ -457,7 +465,7 @@ function DesktopSection() {
       </div>
       <div className="density-app-body">
         <aside className="density-app-side">
-          <NavigationDrawer label="Sections" />
+          <DensityDrawer label="Sections" />
           <FileTree label="Files" />
         </aside>
         <div className="density-app-main">
@@ -582,7 +590,7 @@ const densitySections: Record<DensitySection, () => ReactNode> = {
 };
 
 /** One section in each scale, one above the other. */
-function ScaledSection({ name, theme }: { name: string; theme: ThemeValue }) {
+function ScaledSection({ name, theme }: { name: string; theme: ColorScheme }) {
   const Section = (densitySectionNames as readonly string[]).includes(name)
     ? densitySections[name as DensitySection]
     : undefined;
@@ -612,7 +620,7 @@ export function DensityFixture() {
   const sections: string[] = section
     ? [section]
     : densitySectionNames.filter((name) => name !== 'menu');
-  const themes: ThemeValue[] = theme ? [theme as ThemeValue] : ['light', 'dark'];
+  const themes: ColorScheme[] = theme ? [theme as ColorScheme] : ['light', 'dark'];
   return (
     <div className="density-fixture">
       {themes.map((name) =>

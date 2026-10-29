@@ -85,7 +85,7 @@
       "use": "TopBarProps; TitleBar is gone: a TopBar with titleBar is the window's title bar."
     },
     "AccountMenu": {
-      "use": "AccountMenu is gone: build the account menu from Menu.Root with an AvatarButton trigger, a Menu.Header with the Avatar and the name, and a Menu.Submenu around a ThemeRadioGroup, as the account menu pattern shows."
+      "use": "AccountMenu is gone: build the account menu from Menu.Root with an AvatarButton trigger, a Menu.Header with the Avatar and the name, and a Menu.Submenu around a ThemeMenuRadioGroup, as the account menu pattern shows."
     },
     "AppShellContextValue": {
       "use": "AppShell is gone, with its context: a Scaffold keeps no state, and bodyRef is the element that scrolls the body with scroll=\"body\"."

@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { Composer, IconButton, Surface, Theme, type ThemeValue } from '@envsemble/envui';
+import { Composer, IconButton, Surface, Theme, type ColorScheme } from '@envsemble/envui';
 import { AttachFile } from '@envsemble/envui/icons/AttachFile';
 
-export function ComposerFixture({ theme }: { theme: ThemeValue }) {
+export function ComposerFixture({ theme }: { theme: ColorScheme }) {
   const [draft, setDraft] = useState('');
   const [sent, setSent] = useState<string[]>([]);
   const [running, setRunning] = useState(false);
@@ -20,7 +20,7 @@ export function ComposerFixture({ theme }: { theme: ThemeValue }) {
           placeholder="Ask anything"
           value={draft}
           onValueChange={setDraft}
-          onSubmit={(value) => {
+          onSend={(value) => {
             setSent((messages) => [...messages, value]);
             setDraft('');
             setRunning(true);
@@ -42,8 +42,8 @@ export function ComposerFixture({ theme }: { theme: ThemeValue }) {
           minRows={2}
           maxRows={4}
           start={<IconButton variant="text" icon={<AttachFile />} aria-label="Attach files" />}
-          footer="Attachments up to 10 MB"
-          onSubmit={(value) => setNotes((list) => [...list, value])}
+          description="Attachments up to 10 MB"
+          onSend={(value) => setNotes((list) => [...list, value])}
         />
       </Surface>
       <output data-testid={`composer-notes-${theme}`}>{notes.join(' | ')}</output>

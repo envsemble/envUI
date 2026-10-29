@@ -1,4 +1,4 @@
-import { Button, Tabs, Text } from '@envsemble/envui';
+import { Tabs, Text } from '@envsemble/envui';
 
 const views = ['Summary', 'Files', 'Activity', 'Members', 'Settings'];
 
@@ -9,7 +9,7 @@ export default function ScrollingRail() {
       aria-label="Project views"
       items={views.map((view) => ({
         value: view,
-        button: <Button>{view}</Button>,
+        label: view,
         content: <Text>The project's {view.toLowerCase()}.</Text>,
       }))}
     />

@@ -16,6 +16,10 @@ import {
   type TouchEvent,
 } from 'react';
 import { MenuPopup } from './internal/MenuPopup.js';
+import type {
+  OpenChangeDetails as MenuOpenChangeDetails,
+  OpenChangeReason as MenuOpenChangeReason,
+} from './internal/menuOpenChange.js';
 import { keepsOpen, usePortalContainer } from '../internal/PortalContainerContext.js';
 import { isRightToLeft } from '../internal/direction.js';
 
@@ -32,6 +36,9 @@ const containedMenuParts = {
   Positioner: BaseMenu.Positioner,
   Popup: BaseMenu.Popup,
 };
+
+/** What a context menu's onOpenChange receives beside the requested state: a menu's details. */
+export type ContextMenuOpenChangeDetails = MenuOpenChangeDetails;
 
 export interface ContextMenuPoint {
   /** Distance from the viewport's left edge in pixels, such as a pointer event's clientX. */
@@ -52,12 +59,15 @@ export interface ContextMenuProps {
   content: ReactNode | ((target: Element | null) => ReactNode);
   /** One element that becomes the region; it must accept native props and a ref. */
   children: ReactElement;
-  /** The region keeps the browser's own context menu. */
+  /**
+   * The region keeps the browser's own context menu.
+   * @default false
+   */
   disabled?: boolean;
   /** Controlled visibility, for example to open the menu from another control. */
   open?: boolean;
-  /** Called with the new visibility as the menu opens or closes. */
-  onOpenChange?: (open: boolean) => void;
+  /** Called with the new visibility, and why, as the menu opens or closes. */
+  onOpenChange?: (open: boolean, details: ContextMenuOpenChangeDetails) => void;
   /** Viewport point to open at while controlled; otherwise the menu opens at the pointer. */
   anchorPoint?: ContextMenuPoint;
   /** Class of the menu popup. */
@@ -139,10 +149,10 @@ function WindowContextMenu({
     return node != null && node !== false && node !== '';
   };
 
-  function setOpen(next: boolean) {
+  function setOpen(next: boolean, reason: MenuOpenChangeReason = 'trigger-press') {
     if (!next) keyboardOpenedAt.current = Number.NEGATIVE_INFINITY;
     if (controlledOpen === undefined) setUncontrolledOpen(next);
-    onOpenChange?.(next);
+    onOpenChange?.(next, { reason });
   }
 
   function openAtPointer(event: MouseEvent<Element> & { preventBaseUIHandler?: () => void }) {
@@ -203,7 +213,7 @@ function WindowContextMenu({
       open={open}
       onOpenChange={(next, details) => {
         if (keepsOpen(portal, next, details, region.current)) details.cancel();
-        else setOpen(next);
+        else setOpen(next, details.reason as MenuOpenChangeReason);
       }}
       disabled={disabled}
     >
@@ -265,9 +275,9 @@ function ContainedContextMenu({
     return node != null && node !== false && node !== '';
   };
 
-  function setOpen(next: boolean) {
+  function setOpen(next: boolean, reason: MenuOpenChangeReason = 'trigger-press') {
     if (controlledOpen === undefined) setUncontrolledOpen(next);
-    onOpenChange?.(next);
+    onOpenChange?.(next, { reason });
   }
 
   function openAtPointer(event: MouseEvent<Element>) {
@@ -310,7 +320,7 @@ function ContainedContextMenu({
       modal={false}
       onOpenChange={(next, details) => {
         if (keepsOpen(portal, next, details, region.current)) details.cancel();
-        else setOpen(next);
+        else setOpen(next, details.reason as MenuOpenChangeReason);
       }}
     >
       {regionElement}

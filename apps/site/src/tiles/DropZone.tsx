@@ -30,7 +30,7 @@ export default function DropZoneTile() {
     <DropZone
       label={pending ? 'Uploading report.pdf' : 'Drop files here, or browse'}
       pending={pending}
-      onDropAccepted={() => setPending(true)}
+      onFilesAccepted={() => setPending(true)}
       style={{ inlineSize: '12rem' }}
     />
   );

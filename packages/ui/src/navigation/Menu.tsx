@@ -31,6 +31,7 @@ import { setRef } from '../internal/setRef.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 import { markTriggerOwner } from '../internal/triggerOwner.js';
 import { keyShortcuts, shortcutChords } from '../internal/shortcuts.js';
+import type { OpenChangeDetails, OpenChangeReason } from './internal/menuOpenChange.js';
 import '../styles/Base.css';
 import '../styles/Menu.css';
 
@@ -41,6 +42,8 @@ const menuParts = {
   Popup: BaseMenu.Popup,
 };
 
+export type { OpenChangeDetails, OpenChangeReason } from './internal/menuOpenChange.js';
+
 export interface RootProps
   extends Omit<ComponentPropsWithRef<'div'>, 'children' | 'aria-label' | 'role' | 'onToggle'>,
     SkeletonProps {
@@ -49,8 +52,11 @@ export interface RootProps
    * button semantics and ref, so it must accept native props and a ref.
    */
   trigger: ReactElement;
-  /** Accessible name of the menu, such as Account. */
-  'aria-label': string;
+  /**
+   * Accessible name of the menu, where its trigger's name doesn't say it.
+   * @default the trigger's name, such as Account
+   */
+  'aria-label'?: string;
   /**
    * Menu.Header, Menu.Item, Menu.Group, Menu.RadioGroup, Menu.CheckboxItem, Menu.Submenu and Menu.Separator
    * elements.
@@ -77,8 +83,8 @@ export interface RootProps
    * @default false
    */
   defaultOpen?: boolean;
-  /** Called with the new visibility as the menu opens or closes. */
-  onOpenChange?: (open: boolean) => void;
+  /** Called with the new visibility, and why, as the menu opens or closes. */
+  onOpenChange?: (open: boolean, details: OpenChangeDetails) => void;
   /**
    * Class of the menu popup. ref, style, data attributes and the other native props go to the popup
    * too; the trigger is the element you pass.
@@ -113,7 +119,7 @@ function Root({
       defaultOpen={defaultOpen}
       onOpenChange={(next, details) => {
         if (keepsOpen(portal, next, details, triggerRef.current)) details.cancel();
-        else onOpenChange?.(next);
+        else onOpenChange?.(next, { reason: details.reason as OpenChangeReason });
       }}
       modal={containedModal(portal, true)}
     >
@@ -220,7 +226,7 @@ interface ItemSharedProps extends ItemContentProps {
   disabled?: boolean;
   /**
    * Marks a destination as the page shown now, such as aria-current="page" on the current one of a
-   * Bar's destinations that its More menu holds.
+   * NavigationBar's destinations that its More menu holds.
    */
   'aria-current'?: AriaAttributes['aria-current'];
   /**
@@ -244,7 +250,7 @@ export type ItemProps = ItemSharedProps &
          * Runs as the destination is followed, before the menu closes, such as to record the
          * choice; the link still navigates.
          */
-        onClick?: () => void;
+        onClick?: (event: MouseEvent<HTMLElement>) => void;
         /** Where the destination opens, such as _blank, as on a native link. */
         target?: string;
         /** The destination's relationship to the page, such as noopener, as on a native link. */
@@ -253,7 +259,7 @@ export type ItemProps = ItemSharedProps &
     | {
         href?: undefined;
         /** The action, run when the item is chosen; the menu then closes. */
-        onClick?: () => void;
+        onClick?: (event: MouseEvent<HTMLElement>) => void;
         target?: never;
         rel?: never;
       }
@@ -320,9 +326,11 @@ function Item({
   );
 }
 
+export type SeparatorProps = Omit<ComponentPropsWithRef<'div'>, 'children'>;
+
 /** Separates groups of menu items. */
-function Separator() {
-  return <BaseMenu.Separator className="env-menu-separator" />;
+function Separator({ className, ...props }: SeparatorProps) {
+  return <BaseMenu.Separator {...props} className={classNames('env-menu-separator', className)} />;
 }
 
 export interface SubmenuProps extends Omit<ItemContentProps, 'children' | 'shortcut' | 'end'> {
@@ -345,9 +353,10 @@ export interface SubmenuProps extends Omit<ItemContentProps, 'children' | 'short
    */
   defaultOpen?: boolean;
   /**
-   * Called with the new visibility as the submenu opens or closes, for example to load its items.
+   * Called with the new visibility, and why, as the submenu opens or closes, for example to load
+   * its items.
    */
-  onOpenChange?: (open: boolean) => void;
+  onOpenChange?: (open: boolean, details: OpenChangeDetails) => void;
   /** Class of the submenu popup. */
   className?: string;
   /** The submenu popup's ref. */
@@ -395,7 +404,7 @@ function Submenu({
           return;
         }
         closeReason.current = next ? null : details.reason;
-        onOpenChange?.(next);
+        onOpenChange?.(next, { reason: details.reason as OpenChangeReason });
       }}
     >
       <BaseMenu.SubmenuTrigger
@@ -438,56 +447,66 @@ function Submenu({
   );
 }
 
-export interface GroupProps {
+export interface GroupProps extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
   /** Small heading that names the group for assistive technology too. */
   label: ReactNode;
   /** Items of the group. */
   children: ReactNode;
-  /** Class of the group. */
-  className?: string;
 }
 
 /** A labelled group of related items, with a small heading above its rows. */
-function Group({ label, children, className }: GroupProps) {
+function Group({ label, children, className, ...props }: GroupProps) {
   return (
-    <BaseMenu.Group render={<Grid />} className={classNames('env-menu-group', className)}>
+    <BaseMenu.Group
+      {...props}
+      render={<Grid />}
+      className={classNames('env-menu-group', className)}
+    >
       <BaseMenu.GroupLabel className="env-menu-group-label">{label}</BaseMenu.GroupLabel>
       {children}
     </BaseMenu.Group>
   );
 }
 
-export interface RadioGroupProps {
-  /** Value of the checked item, or null for none. */
-  value: string | null;
+export interface RadioGroupProps
+  extends Omit<ComponentPropsWithRef<'div'>, 'children' | 'defaultValue' | 'onChange'> {
+  /** Value of the checked item, or null for none, for a group the application controls. */
+  value?: string | null;
+  /**
+   * Value of the item an uncontrolled group starts with checked, or null for none.
+   * @default null
+   */
+  defaultValue?: string | null;
   /** Called with the chosen item's value. */
-  onValueChange: (value: string) => void;
+  onValueChange?: (value: string) => void;
   /** Menu.RadioItem elements. */
   children: ReactNode;
   /** Optional heading; the group is then labelled like Menu.Group. */
   label?: ReactNode;
   /** Id of a heading elsewhere in the menu that names the group, in place of label. */
   'aria-labelledby'?: string;
-  /** Class of the group. */
-  className?: string;
 }
 
 /** One choice among several items; the checked item shows a check mark. */
 function RadioGroup({
   value,
+  defaultValue = null,
   onValueChange,
   children,
   label,
   'aria-labelledby': labelledBy,
   className,
+  ...props
 }: RadioGroupProps) {
   return (
     <BaseMenu.RadioGroup
+      {...props}
       render={<Grid />}
       aria-labelledby={labelledBy}
       className={classNames('env-menu-group', className)}
       value={value}
-      onValueChange={(next: string) => onValueChange(next)}
+      defaultValue={defaultValue}
+      onValueChange={(next: string) => onValueChange?.(next)}
     >
       {label != null && (
         <BaseMenu.GroupLabel className="env-menu-group-label">{label}</BaseMenu.GroupLabel>
@@ -552,10 +571,15 @@ function RadioItem({
 }
 
 export interface CheckboxItemProps extends ItemContentProps {
-  /** Whether the option is on; a check mark shows while it is. */
-  checked: boolean;
+  /** Whether the option is on, for an item the application controls; a check mark shows while it is. */
+  checked?: boolean;
+  /**
+   * Whether an uncontrolled item starts on.
+   * @default false
+   */
+  defaultChecked?: boolean;
   /** Called with the new state when the item is toggled. */
-  onCheckedChange: (checked: boolean) => void;
+  onCheckedChange?: (checked: boolean) => void;
   /**
    * The item stays in place, dimmed, but cannot be toggled.
    * @default false
@@ -570,6 +594,7 @@ export interface CheckboxItemProps extends ItemContentProps {
 /** An independent on/off option; a check mark shows while it is on. */
 function CheckboxItem({
   checked,
+  defaultChecked = false,
   onCheckedChange,
   disabled,
   closeOnClick = false,
@@ -583,7 +608,8 @@ function CheckboxItem({
   return (
     <BaseMenu.CheckboxItem
       checked={checked}
-      onCheckedChange={(next: boolean) => onCheckedChange(next)}
+      defaultChecked={defaultChecked}
+      onCheckedChange={(next: boolean) => onCheckedChange?.(next)}
       disabled={disabled}
       closeOnClick={closeOnClick}
       className={classNames('env-menu-item env-menu-choice', className)}

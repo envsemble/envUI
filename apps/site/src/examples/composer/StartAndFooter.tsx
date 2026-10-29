@@ -16,12 +16,12 @@ export default function StartAndFooter() {
           <span>Design review</span>
         </>
       }
-      footer={
+      description={
         comments === 0
           ? 'Files up to 10 MB.'
           : `${comments} ${comments === 1 ? 'comment' : 'comments'} added.`
       }
-      onSubmit={() => setComments((count) => count + 1)}
+      onSend={() => setComments((count) => count + 1)}
       style={{ inlineSize: 'min(100%, 32rem)' }}
     />
   );

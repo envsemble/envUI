@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Drawer, SearchField, type Destination } from '@envsemble/envui';
+import { NavigationDrawer, SearchField, type Destination } from '@envsemble/envui';
 import { Folder } from '@envsemble/envui/icons/Folder';
 
 const projects = [
@@ -21,10 +21,10 @@ export default function SearchInSidebar() {
       icon: <Folder />,
       href: `/projects/${name.toLowerCase().replaceAll(' ', '-')}`,
       current: current === name,
-      onSelect: () => setCurrent(name),
+      onClick: () => setCurrent(name),
     }));
   return (
-    <Drawer
+    <NavigationDrawer
       aria-label="Projects"
       destinations={destinations}
       header={
