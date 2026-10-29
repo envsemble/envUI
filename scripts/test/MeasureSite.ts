@@ -20,9 +20,11 @@
 // - Each page loads cold (Lighthouse clears the cache) and then warm (the same browser, its cache
 //   kept: the page revalidated, hashed files from the cache), --runs times (3 by default); the
 //   median of each number is reported.
-// - Navigation: the catalogue's Button page, loaded and settled, then Checkbox shown as a link
-//   does (history.pushState and a popstate event), and the same in the Docs: the time until the
-//   new page's heading is painted with no loading placeholder in view, and what it fetched.
+// - Navigation: the catalogue's Button page, loaded and settled, then the next page by its Next
+//   link (hovered, then pressed, on a desktop; tapped on a phone), and Checkbox by the address
+//   changing as going back does (history.pushState and a popstate event); the same in the Docs:
+//   the time until the new page's heading is painted with no loading placeholder in view, and
+//   what it fetched.
 //
 // It writes every run's numbers to .cache/site-perf/<label>.json as it goes, and prints the medians
 // as Markdown tables at the end; --report <label> prints them from that file. Another measurement at
@@ -362,10 +364,12 @@ async function lighthouse(path: string, form: Form, warm: boolean): Promise<Numb
 
 /**
  * A client-side navigation from one page to another, in a fresh context with the form's
- * throttling: from the address change to the frame where the new page's heading is shown with no
- * loading placeholder in view, and the bytes fetched until the network settles.
+ * throttling: from the press on the page's Next link, or the address changing as going back does
+ * (`to`), to the frame where another page's heading is shown with no loading placeholder in view,
+ * and the bytes fetched until the network settles. On a desktop the pointer rests on the link for
+ * 300 ms before the press, as a reader's does; on a phone the link is tapped.
  */
-async function navigation(from: string, to: string, title: string, form: Form) {
+async function navigation(from: string, form: Form, to?: string) {
   const browser = await chromium.connectOverCDP(`http://127.0.0.1:${debuggingPort}`);
   const context = await browser.newContext(contextOptions(form));
   const page = await context.newPage();
@@ -395,16 +399,37 @@ async function navigation(from: string, to: string, title: string, form: Form) {
   // The first page's lazy work, such as code highlighting after its figures, has finished.
   await page.waitForTimeout(1000);
   await page.waitForLoadState('networkidle');
+  const title = (await page.locator('h1').first().textContent())?.trim();
+  const link = page.locator('.site-page-navigation a').last();
+  if (!to) {
+    await link.scrollIntoViewIfNeeded();
+    await page.evaluate(() =>
+      addEventListener(
+        'pointerdown',
+        () => ((window as { pressed?: number }).pressed ??= performance.now()),
+        {
+          capture: true,
+        },
+      ),
+    );
+  }
   counting = true;
+  if (!to && form === 'desktop') {
+    await link.hover();
+    await page.waitForTimeout(300);
+    await link.click();
+  } else if (!to) await link.tap();
   const time = await page.evaluate(
     ({ to, title, selector }) =>
       new Promise<number>((done) => {
-        const start = performance.now();
-        history.pushState(null, '', to);
-        dispatchEvent(new PopStateEvent('popstate'));
+        let start = performance.now();
+        if (to) {
+          history.pushState(null, '', to);
+          dispatchEvent(new PopStateEvent('popstate'));
+        } else start = (window as { pressed?: number }).pressed ?? start;
         const shown = () => {
           const heading = document.querySelector('main h1, h1');
-          if (heading?.textContent?.trim() !== title) return false;
+          if (!heading?.textContent?.trim() || heading.textContent.trim() === title) return false;
           return ![...document.querySelectorAll(selector)].some((element) => {
             const box = element.getBoundingClientRect();
             return box.bottom > 0 && box.top < innerHeight && box.width > 0;
@@ -526,7 +551,7 @@ function report({ results, unused, navigations }: Measurement) {
   if (Object.keys(navigations).length) {
     lines.push(
       '',
-      '| Navigation, Button to Checkbox | Painted ms | KB fetched | Requests |',
+      '| Navigation from Button: by its Next link, or the address to Checkbox | Painted ms | KB fetched | Requests |',
       '| --- | --: | --: | --: |',
     );
     for (const [key, list] of Object.entries(navigations))
@@ -626,14 +651,16 @@ async function main() {
     await save();
     if (!args.includes('--no-navigation'))
       for (const form of chosenForms)
-        for (const [key, start, to, title] of [
-          ['catalogue', '/components/button', '/components/checkbox', 'Checkbox'],
-          ['docs', '/docs/components/button', '/docs/components/checkbox', 'Checkbox'],
+        for (const [key, start, to] of [
+          ['catalogue link', '/components/button', undefined],
+          ['docs link', '/docs/components/button', undefined],
+          ['catalogue address', '/components/button', '/components/checkbox'],
+          ['docs address', '/docs/components/button', '/docs/components/checkbox'],
         ] as const) {
           const list = (record.navigations[`${form} ${key}`] = [] as Navigation[]);
           for (let index = 0; index < runs; index++)
             list.push(
-              await retried(() => navigation(start, to, title, form), {
+              await retried(() => navigation(start, form, to), {
                 time: NaN,
                 bytes: NaN,
                 requests: NaN,
