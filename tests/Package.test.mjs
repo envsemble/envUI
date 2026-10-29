@@ -155,7 +155,6 @@ before(
     import * as color from '@envsemble/envui/color';
     import * as themeBootstrap from '@envsemble/envui/theme-bootstrap';
     import { Home } from '@envsemble/envui/icons/Home';
-    import { Home as BarrelHome } from '@envsemble/envui/icons';
     if (typeof document !== 'undefined' || typeof window !== 'undefined') throw new Error('DOM globals must be absent');
     function ThemeProbe() { return h('span', { 'data-originating-theme': ui.useTheme().theme }); }
     const custom = h(ui.Icon, { label: 'Custom star', viewBox: '0 0 8 8' }, h('path', { d: 'M0 0L8 8' }));
@@ -190,8 +189,9 @@ before(
     console.log(JSON.stringify({
       exports: Object.keys(ui), colorExports: Object.keys(color), themeBootstrapExports: Object.keys(themeBootstrap), html,
       defaultIcon: renderToString(h(Home)), filledIcon: renderToString(h(Home, { filled: true, label: 'Home' })),
-      barrelIcon: renderToString(h(BarrelHome)), customIcon: renderToString(custom),
-      module: import.meta.resolve('@envsemble/envui'), iconsModule: import.meta.resolve('@envsemble/envui/icons'),
+      customIcon: renderToString(custom),
+      module: import.meta.resolve('@envsemble/envui'),
+      iconsBarrel: (() => { try { return import.meta.resolve('@envsemble/envui/icons'); } catch { return null; } })(),
       homeModule: import.meta.resolve('@envsemble/envui/icons/Home'),
       reactModule: import.meta.resolve('react'),
       css: import.meta.resolve('@envsemble/envui/styles.css'),
@@ -235,7 +235,8 @@ test('the packed package ships no logos', () => {
 test('a packed consumer resolves compiled public exports and its own React installation', async function () {
   assert.equal((await lstat(installedDirectory)).isSymbolicLink(), false);
   assert.match(ssr.module, /\/node_modules\/@envsemble\/envui\/dist\/index\.js$/);
-  assert.match(ssr.iconsModule, /\/dist\/icons\/index\.js$/);
+  // Icons are imported one by one: there is no barrel of them all.
+  assert.equal(ssr.iconsBarrel, null);
   assert.match(ssr.homeModule, /\/dist\/icons\/Home\.js$/);
   assert.match(ssr.reactModule, /\/consumer\/node_modules\/react\/index\.js$/);
   assert.equal(existsSync(join(installedDirectory, 'src')), false);
@@ -380,7 +381,6 @@ test('installed declarations typecheck a React 19 consumer without source aliase
       EnvUIProvider, Toolbar, Field, RadioGroup, Radio, Select, Combobox, DatePicker, Calendar, Dialog, DialogClose, ToastProvider, useToast,
       type ColorScheme, type ButtonProps, type ButtonGroupProps, type SelectItem, type ComboboxItem, type ToastManager } from '@envsemble/envui';
     import { Home } from '@envsemble/envui/icons/Home';
-    import { Home as BarrelHome } from '@envsemble/envui/icons';
     import '@envsemble/envui/styles.css';
     import { RichText, RichTextEditor, type RichTextEditorHandle, type RichTextReferenceSource } from '@envsemble/envui/rich-text';
     import { ColorPicker, ColorPickerButton, ColorSwatch, type Color, type ColorValue } from '@envsemble/envui/color';
@@ -411,7 +411,7 @@ test('installed declarations typecheck a React 19 consumer without source aliase
       <NavigationDrawer destinations={[{ label: 'Guide', href: '/guide', group: 'Help' }]} footer={<Home />} />
       <Pager.Next {...pagerLinkProps} target="_blank" rel="noopener" />
       <Pager.Previous href="/previous">Previous guide</Pager.Previous>
-      <Icon label="Custom" viewBox="0 0 1 1"><path d="M0 0L1 1" /></Icon><BarrelHome />
+      <Icon label="Custom" viewBox="0 0 1 1"><path d="M0 0L1 1" /></Icon>
       <TextField name="title" label="Title" required ref={createRef<HTMLInputElement>()} />
       <ColorPicker label="Accent color" name="accent" defaultValue="#abcdef" formats={['hex', 'rgb']} alpha ref={createRef<HTMLDivElement>()} onValueChange={(value) => { const typed: string = value; void typed; }} />
       <ColorPickerButton label="Border color" value={colorValue} valueFormat="hsl" swatches={['#abcdef', { color: colorValue, label: 'Current' }]} />
@@ -819,7 +819,6 @@ test('explicit official icons preserve filled geometry and accept custom SVG con
   assert.match(ssr.filledIcon, /aria-label="Home"/);
   assert.doesNotMatch(ssr.filledIcon, /aria-hidden="true"/);
   assert.notEqual(ssr.defaultIcon, ssr.filledIcon);
-  assert.equal(ssr.defaultIcon, ssr.barrelIcon);
   assert.match(ssr.customIcon, /aria-label="Custom star"/);
   assert.ok(
     (await readdir(join(installedDirectory, 'dist/icons'))).length > 100,

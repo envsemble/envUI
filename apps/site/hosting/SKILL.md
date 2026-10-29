@@ -84,7 +84,7 @@ Run the project's type check or build and its lint, then start the app and confi
 - Pin `@envsemble/envui`, its ESLint plugin and its Stylelint config at the same exact version.
 - Don't change the app's existing UI as part of setup.
 - Take envUI's API from the docs and type declarations in `node_modules/@envsemble/envui/`, not from memory.
-- Import icons one by one, from `@envsemble/envui/icons/<Name>`, never from the `@envsemble/envui/icons` barrel.
+- Import icons one by one, from `@envsemble/envui/icons/<Name>`.
 
 ## After setup
 

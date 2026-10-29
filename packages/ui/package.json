@@ -92,12 +92,6 @@
       "envui-source": "./src/generated/tokens.json",
       "default": "./dist/tokens.json"
     },
-    "./icons": {
-      "envui-source": "./src/icons/index.ts",
-      "types": "./dist/icons/index.d.ts",
-      "import": "./dist/icons/index.js",
-      "default": "./dist/icons/index.js"
-    },
     "./icons/*": {
       "envui-source": "./src/icons/*.tsx",
       "types": "./dist/icons/*.d.ts",

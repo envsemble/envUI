@@ -11,7 +11,8 @@
     "verbatimModuleSyntax": true,
     "noEmit": true,
     "allowImportingTsExtensions": true,
-    "customConditions": ["envui-source"]
+    "customConditions": ["envui-source"],
+    "paths": { "envui-icon-list": ["../../packages/ui/src/icons/index.ts"] }
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"]
 }

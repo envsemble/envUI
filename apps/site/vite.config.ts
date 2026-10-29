@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react';
 import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { isAbsolute, relative } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import {
   documentationDirectory,
   examplesDirectory,
@@ -35,6 +36,8 @@ const siteData: Record<string, { read: () => unknown; sources: string[] }> = {
   'virtual:envui-release-notes': { read: readReleaseNotes, sources: releaseNotesSources },
 };
 const resolvedId = (id: string) => `\0${id}`;
+/** The library's generated list of every icon, which only the icon catalogue imports. */
+const iconList = fileURLToPath(new URL('../../packages/ui/src/icons/index.ts', import.meta.url));
 
 /** The files for coding agents at the site's root, with the type each is served as. */
 const agentFileTypes = {
@@ -169,9 +172,11 @@ export default defineConfig(() => {
     resolve: {
       conditions: ['envui-source', 'module', 'browser', 'development|production'],
       dedupe: ['react', 'react-dom'],
+      // The icon catalogue's list of every icon, which the package doesn't export.
+      alias: { 'envui-icon-list': iconList },
     },
-    // The linked catalogue has thousands of modules; serve it as one lazy dependency in dev.
-    optimizeDeps: { include: ['@envsemble/envui/icons'] },
+    // That list has thousands of modules; serve it as one lazy dependency in dev.
+    optimizeDeps: { include: ['envui-icon-list'] },
     build: {
       outDir: '../../dist/site',
       emptyOutDir: true,

@@ -10,7 +10,7 @@ import * as color from '@envsemble/envui/color';
 import * as richText from '@envsemble/envui/rich-text';
 import * as themeBootstrap from '@envsemble/envui/theme-bootstrap';
 import { Home } from '@envsemble/envui/icons/Home';
-import { Search } from '@envsemble/envui/icons';
+import { Search } from '@envsemble/envui/icons/Search';
 import { render } from './Render.mjs';
 
 const clientReference = Symbol.for('react.client.reference');

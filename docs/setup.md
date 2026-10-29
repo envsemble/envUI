@@ -374,7 +374,7 @@ The content, rich-text, diff and color entries need libraries that envUI doesn't
 
 They aren't peer dependencies, since GitHub Packages drops `peerDependenciesMeta`; a missing one fails the build where the entry is imported.
 
-Import each icon by its subpath, such as `import { Add } from '@envsemble/envui/icons/Add'`, never from the `@envsemble/envui/icons` barrel, which makes a bundler read every symbol. See [icons](foundations/icons.md).
+Import each icon by its own path, such as `import { Add } from '@envsemble/envui/icons/Add'`. See [icons](foundations/icons.md).
 
 ### Bundle size
 
