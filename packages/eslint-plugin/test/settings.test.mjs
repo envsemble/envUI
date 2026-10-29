@@ -13,13 +13,13 @@ const fixture = fileURLToPath(new URL('fixtures/app/', import.meta.url));
 const app = resolve(fixture, 'src/App.js');
 
 /**
- * The rules that report `<Menu.Root role="menu">` imported from <source>: none when the source is
- * a module that re-exports envUI, whose Menu.Root owns the role, else `no-html-elements`.
+ * The rules that report `<Table.Root role="table">` imported from <source>: none when the source
+ * is a module that re-exports envUI, whose Table.Root owns the role, else `no-html-elements`.
  */
 function lint(reexportModules, { cwd = fixture, filename = app, source = './ui' } = {}) {
   return new Linter({ cwd })
     .verify(
-      `import { Menu } from '${source}';\nconst menu = <Menu.Root role="menu" />;`,
+      `import { Table } from '${source}';\nconst table = <Table.Root role="table" />;`,
       {
         plugins: { envui: { rules: { 'no-html-elements': rule } } },
         languageOptions: { sourceType: 'module', parserOptions: { ecmaFeatures: { jsx: true } } },

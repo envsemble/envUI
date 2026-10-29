@@ -59,18 +59,18 @@ ruleTester.run('no-html-elements', rule, {
     '<div onClick={() => setOpen(false)} />',
     '<li onClick={select}>One</li>',
     // A widget role on the component it names.
-    '<Menu.Root role="menu" />',
+    '<Tree role="tree" aria-label="Files" items={items} />',
     '<Dialog role="alertdialog" title="Delete?" />',
     '<Tabs role="tablist" items={items} />',
     // An envUI component that renders the role itself; a role on it refines its own.
-    'import { Popover, Menu } from \'@envsemble/envui\'; <><Popover role="dialog" /><Menu.Submenu role="menu" /></>;',
-    'import * as ui from \'@envsemble/envui\'; <><ui.Popover role="dialog" /><ui.Menu.Submenu role="menu" /></>;',
+    'import { Popover, Spinner } from \'@envsemble/envui\'; <><Popover role="dialog" /><Spinner role="progressbar" /></>;',
+    'import * as ui from \'@envsemble/envui\'; <><ui.Popover role="dialog" /><ui.Table.Root role="table" /></>;',
     'import { Popover as Card } from \'@envsemble/envui\'; <Card role="dialog" />;',
     'import { Spinner } from \'@envsemble/envui\'; <Spinner role="progressbar" label="Saving" />;',
     'import { MarkdownEditor } from \'@envsemble/envui/content\'; <MarkdownEditor role="textbox" />;',
     'import { RichTextEditor } from \'@envsemble/envui/rich-text\'; <RichTextEditor role="textbox" />;',
     // Without an import, the full name decides.
-    '<Menu.Submenu role="menu" />',
+    '<Table.Root role="table" />',
     // Roles envUI has no component for, and roles that only make sense inside a container.
     '<div role="region" aria-label="Summary" />',
     '<li role="menuitem">Rename</li>',
@@ -282,17 +282,17 @@ ruleTester.run('no-html-elements', rule, {
     },
     // A part of the namespace that the role names is not the component that renders it.
     {
-      code: 'import { Menu } from \'@envsemble/envui\'; <><Menu.Separator role="menu" /><Menu.Item role="menu" /></>;',
+      code: 'import { Table } from \'@envsemble/envui\'; <><Table.Row role="table" /><Table.Cell role="table" /></>;',
       errors: [
-        uses('Menu.Root', '<Menu.Separator role="menu">'),
-        uses('Menu.Root', '<Menu.Item role="menu">'),
+        uses('Table.Root', '<Table.Row role="table">'),
+        uses('Table.Root', '<Table.Cell role="table">'),
       ],
     },
     {
-      code: '<><Menu.Separator role="menu" /><Menu.Item role="menu" /></>',
+      code: '<><Table.Row role="table" /><Table.Cell role="table" /></>',
       errors: [
-        uses('Menu.Root', '<Menu.Separator role="menu">'),
-        uses('Menu.Root', '<Menu.Item role="menu">'),
+        uses('Table.Root', '<Table.Row role="table">'),
+        uses('Table.Root', '<Table.Cell role="table">'),
       ],
     },
     // Another library's component is not envUI's, whatever its name.
@@ -513,7 +513,7 @@ ruleTester.run('no-html-elements with modules that re-export envUI', rule, {
       filename: page,
     },
     {
-      code: 'import { Popover as Card, Menu } from \'@/components/ui\'; <><Card role="dialog" /><Menu.Submenu role="menu" /></>;',
+      code: 'import { Popover as Card, Table } from \'@/components/ui\'; <><Card role="dialog" /><Table.Root role="table" /></>;',
       settings: reexports,
       filename: page,
     },
