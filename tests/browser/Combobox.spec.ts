@@ -37,7 +37,7 @@ test('typing filters by label and description, ignoring case and accents, and En
   await expect(author).toHaveAttribute('aria-expanded', 'false');
   await expect(author).toHaveAccessibleDescription('The person who answers questions.');
   // The chosen option's avatar sits before its label in the field.
-  await expect(wellOf(author).locator('.env-combobox-value-leading .env-avatar')).toBeVisible();
+  await expect(wellOf(author).locator('.env-combobox-value-icon .env-avatar')).toBeVisible();
 
   await author.fill('SAM');
   const list = page.getByRole('listbox');
@@ -50,7 +50,7 @@ test('typing filters by label and description, ignoring case and accents, and En
   await expect.poll(() => highlighted(page)).toEqual(['Sam Lee']);
   await expect(author).toHaveAttribute('aria-activedescendant', (await sam.getAttribute('id'))!);
   // While the typed text differs from the chosen label, the chosen avatar steps aside.
-  await expect(wellOf(author).locator('.env-combobox-value-leading')).toHaveCount(0);
+  await expect(wellOf(author).locator('.env-combobox-value-icon')).toHaveCount(0);
   await page.keyboard.press('Enter');
   await expect(list).toHaveCount(0);
   await expect(author).toHaveValue('Sam Lee');
@@ -674,12 +674,12 @@ test('Esc clears a closed single field only while it has a value, and never remo
   const author = field(page, 'Author light');
   const changes = page.getByTestId('combobox-author-changes-light');
   // The well keeps room for the clear button only while the button shows.
-  await expect(wellOf(author)).toHaveAttribute('data-actions', '2');
+  await expect(wellOf(author)).toHaveAttribute('data-action-count', '2');
   await author.focus();
   await page.keyboard.press('Escape');
   await expect(author).toHaveValue('');
   await expect(changes).toHaveText('[null]');
-  await expect(wellOf(author)).toHaveAttribute('data-actions', '1');
+  await expect(wellOf(author)).toHaveAttribute('data-action-count', '1');
   // With nothing to clear, Esc reports no change.
   await page.keyboard.press('Escape');
   await page.keyboard.press('Escape');

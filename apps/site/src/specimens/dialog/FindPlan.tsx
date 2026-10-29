@@ -4,8 +4,8 @@ import { usePointer, type PointerStep } from '../../motion/Motion';
 import { MotionStage } from '../../motion/MotionStage';
 import { Renew } from '../../motion/Renew';
 
-const field = '.env-dialog-popup input';
-const roadmap = '.env-dialog-popup .env-list-item:first-child .env-button';
+const field = '.env-dialog input';
+const roadmap = '.env-dialog .env-list-item:first-child .env-button';
 
 /*
  * The pointer opens Find a plan: the dialog opens near the top of the stage, its field alone.

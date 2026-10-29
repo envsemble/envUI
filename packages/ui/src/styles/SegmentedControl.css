@@ -173,8 +173,8 @@
     outline-offset: -4px;
   }
   /* The check shows only on the chosen segment, in place of its icon. */
-  .env-segmented-control-item:not([data-checked]) > .env-segmented-control-item-check,
-  .env-segmented-control-item[data-checked] > .env-icon:not(.env-segmented-control-item-check) {
+  .env-segmented-control-item:not([data-checked]) > .env-segmented-control-item-indicator,
+  .env-segmented-control-item[data-checked] > .env-icon:not(.env-segmented-control-item-indicator) {
     display: none;
   }
   /* Under a coarse pointer the control grows to the touch height, like every control of its row. A

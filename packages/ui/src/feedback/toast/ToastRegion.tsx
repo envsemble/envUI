@@ -15,6 +15,7 @@ import type { ToastPlacement } from './toastTypes.js';
 import { usePortalContainer } from '../../internal/PortalContainerContext.js';
 import { Close } from '../../icons/Close.js';
 import { prefersReducedMotion } from '../../internal/reducedMotion.js';
+import { flag } from '../../internal/flag.js';
 import '../../styles/Base.css';
 import '../../styles/Toast.css';
 
@@ -83,7 +84,7 @@ function PictureNotice({
       data-toast-id={id}
       className="env-toast"
       data-tone={tone}
-      data-limited={limited || undefined}
+      data-limited={flag(limited)}
       data-starting-style=""
       data-ending-style={ending ? '' : undefined}
       role={tone === 'danger' ? 'alert' : 'status'}
@@ -291,7 +292,7 @@ export function ToastRegion({
   if (contained)
     return (
       <BaseToast.Portal container={container}>
-        <Theme {...theme} className="env-toast-portal-theme">
+        <Theme {...theme} className="env-toast-theme">
           <div
             ref={attachViewport}
             className="env-toast-viewport"
@@ -352,7 +353,7 @@ export function ToastRegion({
     );
   return (
     <BaseToast.Portal container={container}>
-      <Theme {...theme} className="env-toast-portal-theme">
+      <Theme {...theme} className="env-toast-theme">
         <BaseToast.Viewport
           ref={attachViewport}
           className="env-toast-viewport"
@@ -397,7 +398,7 @@ export function ToastRegion({
                 className="env-toast"
                 data-tone={entry.tone}
                 swipeDirection={swipeDirection}
-                data-limited={isLimited || undefined}
+                data-limited={flag(isLimited)}
                 inert={isLimited || undefined}
                 // A danger notice interrupts: it is an alert as it appears, outside any polite
                 // region, and stays readable.

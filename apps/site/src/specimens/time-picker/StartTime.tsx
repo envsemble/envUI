@@ -25,7 +25,7 @@ const script: PointerStep[] = [
   { wait: 200 },
   { wheel: 200, duration: 1100 },
   { wait: 700 },
-  { to: row('dayPeriod', '1'), duration: 550 },
+  { to: row('day-period', '1'), duration: 550 },
   { wait: 250 },
   { click: true },
   { wait: 900 },

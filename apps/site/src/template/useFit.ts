@@ -64,7 +64,7 @@ function paints(element: Element, style: CSSStyleDeclaration) {
 
 /**
  * The boxes a preview paints, in the canvas's own px (paints), so what is centred is what shows
- * rather than the boxes that lay it out. A scrim or a positioner over the whole canvas, such as a
+ * rather than the boxes that lay it out. A backdrop or a positioner over the whole canvas, such as a
  * dialog's, counts only for what it holds; what is hidden, transparent or a visually hidden pixel
  * doesn't count.
  */

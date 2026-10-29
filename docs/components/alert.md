@@ -189,7 +189,7 @@ The parts are the container, `env-alert`, the icon, `env-alert-icon`, the title,
 ```tsx
 <Alert
   title="Trial ends in 3 days"
-  style={{ '--env-alert-container': 'var(--env-color-bg-brand-muted)' } as CSSProperties}
+  style={{ '--env-alert-container': 'var(--env-color-bg-primary-muted)' } as CSSProperties}
 />
 ```
 

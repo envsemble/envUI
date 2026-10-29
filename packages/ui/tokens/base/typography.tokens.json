@@ -1,77 +1,110 @@
 {
   "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
   "font": {
-    "family": { "$type": "fontFamily", "$value": ["envUI Geist", "sans-serif"] },
+    "family": {
+      "$description": "envUI's typeface, Geist, which the package ships, falling back to the system's sans-serif.",
+      "$type": "fontFamily",
+      "$value": ["envUI Geist", "sans-serif"]
+    },
     "size": {
       "$type": "dimension",
       "caption": {
         "$description": "Captions, a menu's group labels and other small secondary text.",
         "$value": { "value": 0.75, "unit": "rem" }
       },
-      "body-small": { "$value": { "value": 0.875, "unit": "rem" } },
+      "body-sm": {
+        "$description": "Supporting text: Text's body-sm and caption variants, 14 px in the comfortable scale.",
+        "$value": { "value": 0.875, "unit": "rem" }
+      },
       "label": {
         "$description": "The label of a control, and the text of menu, tree and option rows.",
         "$value": { "value": 0.875, "unit": "rem" }
       },
-      "label-small": {
+      "label-sm": {
         "$description": "A label inside a field at the control height, such as a combobox chip's.",
         "$value": { "value": 0.8125, "unit": "rem" }
       },
-      "body": { "$value": { "value": 0.9375, "unit": "rem" } },
-      "heading-small": { "$value": { "value": 1, "unit": "rem" } },
-      "heading": { "$value": { "value": 1.125, "unit": "rem" } }
+      "body": {
+        "$description": "Running text: Text's body variant and a type role's default, 15 px in the comfortable scale.",
+        "$value": { "value": 0.9375, "unit": "rem" }
+      },
+      "title": {
+        "$description": "A section's heading: Text's title variant, 16 px in the comfortable scale.",
+        "$value": { "value": 1, "unit": "rem" }
+      },
+      "headline": {
+        "$description": "A page's heading: Text's headline variant, 18 px in the comfortable scale.",
+        "$value": { "value": 1.125, "unit": "rem" }
+      }
     },
     "weight": {
       "$type": "fontWeight",
       "$description": "The font weights: regular for body text, medium for headings, labels that lead and emphasis in a row, semibold for the strongest emphasis in a small space, such as today in a calendar. The same in every scale.",
-      "regular": { "$value": 400 },
-      "medium": { "$value": 500 },
-      "semibold": { "$value": 600 }
+      "regular": { "$description": "Regular, 400: running text and most labels.", "$value": 400 },
+      "medium": {
+        "$description": "Medium, 500: headings, labels that lead and emphasis in a row.",
+        "$value": 500
+      },
+      "semibold": {
+        "$description": "Semibold, 600: the strongest emphasis in a small space, such as today in a calendar.",
+        "$value": 600
+      },
+      "body": {
+        "$description": "The weight of running text, which the body type roles take: regular.",
+        "$value": "{font.weight.regular}"
+      }
     }
   },
-  "body": {
-    "$type": "fontWeight",
-    "font-weight": { "$value": "{font.weight.regular}" }
+  "line-height": {
+    "$type": "number",
+    "body": {
+      "$description": "The line height of a theme boundary's text, which an application may set: 1.4 times the font size.",
+      "$value": 1.4
+    }
   },
   "type": {
     "$type": "typography",
     "$description": "Font shorthands for the type roles, as the `font` property takes them: weight, size, line height and family. The line height is in em, so it follows the role's own size.",
-    "h1": {
+    "headline": {
+      "$description": "A page's heading: Text's headline variant, medium.",
       "$extensions": { "com.envsemble.envui": { "lineHeightUnit": "em" } },
       "$value": {
         "fontFamily": "{font.family}",
-        "fontSize": "{font.size.heading}",
+        "fontSize": "{font.size.headline}",
         "fontWeight": "{font.weight.medium}",
         "letterSpacing": { "value": 0, "unit": "rem" },
         "lineHeight": 1.4
       }
     },
-    "h2": {
+    "title": {
+      "$description": "A section's heading: Text's title variant, medium.",
       "$extensions": { "com.envsemble.envui": { "lineHeightUnit": "em" } },
       "$value": {
         "fontFamily": "{font.family}",
-        "fontSize": "{font.size.heading-small}",
+        "fontSize": "{font.size.title}",
         "fontWeight": "{font.weight.medium}",
         "letterSpacing": { "value": 0, "unit": "rem" },
         "lineHeight": 1.4
       }
     },
     "body": {
+      "$description": "Running text: Text's body variant, regular.",
       "$extensions": { "com.envsemble.envui": { "lineHeightUnit": "em" } },
       "$value": {
         "fontFamily": "{font.family}",
         "fontSize": "{font.size.body}",
-        "fontWeight": "{body.font-weight}",
+        "fontWeight": "{font.weight.body}",
         "letterSpacing": { "value": 0, "unit": "rem" },
         "lineHeight": 1.4
       }
     },
-    "body-small": {
+    "body-sm": {
+      "$description": "Supporting text: Text's body-sm and caption variants, regular.",
       "$extensions": { "com.envsemble.envui": { "lineHeightUnit": "em" } },
       "$value": {
         "fontFamily": "{font.family}",
-        "fontSize": "{font.size.body-small}",
-        "fontWeight": "{body.font-weight}",
+        "fontSize": "{font.size.body-sm}",
+        "fontWeight": "{font.weight.body}",
         "letterSpacing": { "value": 0, "unit": "rem" },
         "lineHeight": 1.4
       }

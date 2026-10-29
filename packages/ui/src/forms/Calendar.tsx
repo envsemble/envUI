@@ -234,7 +234,7 @@ export function Calendar({
           }}
         />
         <div
-          className="env-calendar-heading"
+          className="env-calendar-title"
           id={headingId}
           aria-live={daysShown ? 'polite' : undefined}
         >

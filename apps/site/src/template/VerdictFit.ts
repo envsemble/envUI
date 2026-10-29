@@ -9,7 +9,7 @@ import { useLayoutEffect, type RefObject } from 'react';
  * figure that grows for a moment as it plays keeps the scale it reached, rather than drawing
  * itself larger and smaller on every loop. At another stage width it measures afresh.
  *
- * The box covers the whole stage, so a dialog's scrim covers the stage, and as it is drawn with a
+ * The box covers the whole stage, so a dialog's backdrop covers the stage, and as it is drawn with a
  * transform, it is the containing block of what opens in it.
  */
 export function useVerdictFit(

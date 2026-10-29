@@ -92,7 +92,7 @@ test('the outermost theme boundary is the env-window container, and takes its wi
       new RegExp(`\\.${layer} \\{[^}]*position: fixed;[^}]*container: env-window / inline-size;`),
       `${layer} is the env-window container of its surface`,
     );
-  assert.match(sheets['Toast.css'], /\.env-toast-portal-theme \{\s*container-type: normal;/);
+  assert.match(sheets['Toast.css'], /\.env-toast-theme \{\s*container-type: normal;/);
 });
 
 test('no style sheet queries the viewport width', () => {

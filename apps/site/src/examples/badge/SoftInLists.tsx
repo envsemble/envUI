@@ -9,7 +9,7 @@ const projects = [
       </Badge>
     ),
   },
-  { name: 'Pricing page', status: <Badge tone="accent">In review</Badge> },
+  { name: 'Pricing page', status: <Badge tone="primary">In review</Badge> },
   { name: 'Help center', status: <Badge tone="success">Ready</Badge> },
 ];
 

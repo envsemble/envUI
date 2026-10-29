@@ -79,7 +79,7 @@ test.describe('Panes, supporting', () => {
     });
 
   test(
-    'below splitAt it is a modal sheet while open, which Escape, its button and the scrim close',
+    'below splitAt it is a modal sheet while open, which Escape, its button and the backdrop close',
     { tag: '@engines' },
     async ({ page }) => {
       await page.goto(panes('&width=45rem'));
@@ -96,7 +96,7 @@ test.describe('Panes, supporting', () => {
       // From the keyboard, as WebKit focuses no button that a press activates.
       await show.focus();
       await page.keyboard.press('Enter');
-      // Medium: a side sheet at the end, as tall as the panes, over a scrim; a modal dialog that
+      // Medium: a side sheet at the end, as tall as the panes, over a backdrop; a modal dialog that
       // focus moves into, with the rest of the panes inert.
       const sheet = root.getByRole('dialog', { name: 'Details' });
       await expect(sheet).toBeVisible();
@@ -109,7 +109,7 @@ test.describe('Panes, supporting', () => {
       const frame = await box(page.getByTestId('supporting-frame'));
       expect(placed.x + placed.width).toBeCloseTo(frame.x + frame.width - 1, 0);
       expect(placed.height).toBeCloseTo(frame.height - 2, 0);
-      await expect(root.locator('.env-panes-scrim')).toBeVisible();
+      await expect(root.locator('.env-panes-backdrop')).toBeVisible();
       // Tab stays in the sheet: its close button, its content, and round again.
       await page.keyboard.press('Tab');
       await expect(close).toBeFocused();
@@ -123,13 +123,13 @@ test.describe('Panes, supporting', () => {
       await expect(supporting).toBeHidden();
       await expect(show).toBeFocused();
       await expect(main).toHaveJSProperty('inert', false);
-      // Its close button and the scrim close it too.
+      // Its close button and the backdrop close it too.
       await page.keyboard.press('Enter');
       await close.click();
       await expect(supporting).toBeHidden();
       await expect(show).toBeFocused();
       await show.click();
-      await root.locator('.env-panes-scrim').click({ position: { x: 10, y: 10 } });
+      await root.locator('.env-panes-backdrop').click({ position: { x: 10, y: 10 } });
       await expect(supporting).toBeHidden();
       // Compact: a bottom sheet across the width, shorter than the panes.
       await setWidth(page, '30rem');
@@ -148,7 +148,7 @@ test.describe('Panes, supporting', () => {
       await expect(root.getByRole('region', { name: 'Details' })).toBeVisible();
       await expect(close).toBeHidden();
       await expect(main).toHaveJSProperty('inert', false);
-      await expect(root.locator('.env-panes-scrim')).toBeHidden();
+      await expect(root.locator('.env-panes-backdrop')).toBeHidden();
       // The trigger hides while the supporting pane shows beside the main one.
       await expect(show).toBeHidden();
     },
@@ -310,11 +310,11 @@ test.describe('Panes in a Scaffold whose document scrolls', { tag: '@engines' },
         expect(placed.y).toBeCloseTo(0, 0);
         expect(placed.height).toBeCloseTo(view.height, 0);
       }
-      // The scrim covers the window, the top bar included, which is inert with the navigation.
+      // The backdrop covers the window, the top bar included, which is inert with the navigation.
       const top = await box(page.locator('.env-scaffold-top-bar'));
       expect(
         await page.evaluate(
-          ({ x, y }) => document.elementFromPoint(x, y)?.classList.contains('env-panes-scrim'),
+          ({ x, y }) => document.elementFromPoint(x, y)?.classList.contains('env-panes-backdrop'),
           { x: top.x + 4, y: top.y + top.height / 2 },
         ),
       ).toBe(true);

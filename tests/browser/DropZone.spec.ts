@@ -142,22 +142,22 @@ test(
       ['mark.png', 'image/png'],
     ]);
     await zone.dispatchEvent('dragenter', { dataTransfer: transfer });
-    await expect(root).toHaveAttribute('data-dragging', '');
+    await expect(root).toHaveAttribute('data-drag-over', '');
     await expect(zone).toHaveCSS('border-top-style', 'solid');
     await expect(zone).toHaveCSS(
       'border-top-color',
-      await tokenColor(zone, '--env-color-border-accent-emphasis'),
+      await tokenColor(zone, '--env-color-border-primary-emphasis'),
     );
     // Moving over the label inside keeps the state until the files leave the zone.
     const label = zone.locator('.env-drop-zone-label');
     await label.dispatchEvent('dragenter', { dataTransfer: transfer });
     await zone.dispatchEvent('dragleave', { dataTransfer: transfer });
-    await expect(root).toHaveAttribute('data-dragging', '');
+    await expect(root).toHaveAttribute('data-drag-over', '');
     await label.dispatchEvent('dragleave', { dataTransfer: transfer });
-    await expect(root).not.toHaveAttribute('data-dragging');
+    await expect(root).not.toHaveAttribute('data-drag-over');
 
     await drop(zone, transfer);
-    await expect(root).not.toHaveAttribute('data-dragging');
+    await expect(root).not.toHaveAttribute('data-drag-over');
     // Without multiple the zone takes the first matching file and rejects the others.
     await expect(page.getByTestId('taken-light')).toHaveText('logo.webp');
     await expect(page.getByTestId('rejected-light')).toHaveText('notes.txt mark.png');
@@ -183,7 +183,7 @@ test('a pending zone reports that it is busy and a disabled one takes no files',
   await pending.click({ force: true });
   const transfer = await filesTransfer(page, [['logo.png', 'image/png']]);
   await drop(pending, transfer);
-  await expect(scope.locator('.env-drop-zone').nth(2)).not.toHaveAttribute('data-dragging');
+  await expect(scope.locator('.env-drop-zone').nth(2)).not.toHaveAttribute('data-drag-over');
 
   const disabled = scope.getByRole('button', { name: 'Uploads are paused' });
   await expect(disabled).toBeDisabled();

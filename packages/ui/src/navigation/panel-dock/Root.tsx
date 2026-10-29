@@ -42,6 +42,7 @@ import { PanelFrame } from './internal/PanelFrame.js';
 import { PanelTab } from './internal/PanelTab.js';
 import { useDockOverflow } from './internal/useDockOverflow.js';
 import { useStripWheel } from './internal/useStripWheel.js';
+import { flag } from '../../internal/flag.js';
 import '../../styles/Base.css';
 import '../../styles/PanelDock.css';
 
@@ -590,9 +591,9 @@ export function Root<T extends PanelDockPanel>({
       }}
       className={classNames('env-panel-dock', className)}
       style={{ ...style, '--env-panel-dock-stack-below': cssLength(stackBelow) } as CSSProperties}
-      data-stacked={stacked || undefined}
-      data-filled={filled || undefined}
-      data-tabs={hasTabs || undefined}
+      data-stacked={flag(stacked)}
+      data-filled={flag(filled)}
+      data-tabs={flag(hasTabs)}
       data-env-ssr-pending={pending || undefined}
       data-env-ssr-filled={stackedLayout?.filling !== undefined || undefined}
       data-env-ssr-tabs={(stackedLayout && stackedTabs.length > 0) || undefined}
@@ -601,7 +602,7 @@ export function Root<T extends PanelDockPanel>({
         align="end"
         ref={row}
         className="env-panel-dock-row"
-        data-overflowing={overflowing || undefined}
+        data-overflowing={flag(overflowing)}
         onScroll={(event) => {
           atRowEnd.current = isAtRowEnd(event.currentTarget);
         }}

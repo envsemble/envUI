@@ -79,7 +79,7 @@ export function ColumnResizeHandle({
       aria-valuemax={Math.round(max)}
       aria-valuetext={`${Math.round(width)}%`}
       tabIndex={0}
-      className="env-table-column-resize"
+      className="env-table-column-resize-handle"
       data-resizing={resizing === column ? '' : undefined}
       onPointerDown={(event) => {
         if (event.button !== 0) return;

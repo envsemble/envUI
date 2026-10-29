@@ -8,6 +8,7 @@ import { Error as ErrorIcon } from '../icons/Error.js';
 import { MessageStatusLabel } from './internal/MessageStatusLabel.js';
 import { inSkeleton } from '../foundations/internal/inSkeleton.js';
 import { given, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
+import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/Message.css';
 
@@ -102,10 +103,7 @@ export function Message(allProps: MessageProps) {
               {hasMeta && <span className="env-message-meta">{meta}</span>}
             </Row>
           )}
-          <div
-            className="env-message-content"
-            data-text={typeof children === 'string' || undefined}
-          >
+          <div className="env-message-content" data-text={flag(typeof children === 'string')}>
             {children}
           </div>
           {status != null && (

@@ -513,6 +513,44 @@ function checkCustomProperties(list, handwrittenFile) {
 }
 
 /**
+ * The public tokens TokensHandwritten.css declares, from tokens/handwritten.json, as entries of the
+ * token list: each with its value as the style sheet declares it on the theme boundary, with the
+ * tokens it reads resolved in every theme. Fails on a listed token the style sheet doesn't declare.
+ */
+function handwrittenTokens(listFile, cssFile, resolve) {
+  if (!existsSync(listFile)) return [];
+  const listed = JSON.parse(readFileSync(listFile, 'utf8'));
+  const css = existsSync(cssFile)
+    ? readFileSync(cssFile, 'utf8').replace(/\/\*[\s\S]*?\*\//g, '')
+    : '';
+  return Object.entries(listed)
+    .filter(([id]) => !id.startsWith('$'))
+    .map(([id, { type, description }]) => {
+      const name = cssVariable(id);
+      const declared = css
+        .match(new RegExp(`${name}\\s*:\\s*([^;]+);`))?.[1]
+        .replace(/\s+/g, ' ')
+        .trim();
+      if (!declared)
+        throw new Error(
+          `tokens/handwritten.json lists ${id}, but TokensHandwritten.css declares no ${name}.`,
+        );
+      const values = Object.fromEntries(
+        themes.map((theme) => [
+          theme.name,
+          {
+            css: declared,
+            resolved: declared.replace(/var\((--[\w-]+)\)/g, (_, used) =>
+              resolve(theme.name, used),
+            ),
+          },
+        ]),
+      );
+      return { id, cssVariable: name, type, description, handwritten: true, values };
+    });
+}
+
+/**
  * The migration map: every custom property that envUI 0.x or 1.0's development defined and 1.0
  * no longer does, with what replaces it, from the sections of removed-tokens.json:
  *
@@ -608,7 +646,7 @@ export function migrationNames(data, { isToken, properties }) {
  * TokensHandwritten.css can change a few of them under a condition, such as the touch sizes of
  * --control-height and --title-bar-height under a coarse pointer, and those values are not in them.
  */
-function envui({ removedFile, handwrittenFile }) {
+function envui({ removedFile, handwrittenFile, handwrittenList }) {
   return {
     name: 'envui',
     lint: () => ({
@@ -721,6 +759,8 @@ function envui({ removedFile, handwrittenFile }) {
         };
       });
       checkCustomProperties(list, handwrittenFile);
+      list.push(...handwrittenTokens(handwrittenList, handwrittenFile, resolve));
+      list.sort((a, b) => a.id.localeCompare(b.id, 'en', { numeric: true }));
       const header =
         'Generated from packages/ui/tokens by `npm run tokens:build`. Do not edit: change the tokens and rebuild.';
       outputFile(
@@ -868,6 +908,7 @@ export function createConfig({
       envui({
         removedFile: new URL('removed-tokens.json', tokensDirectory),
         handwrittenFile: new URL('styles/TokensHandwritten.css', outDir),
+        handwrittenList: new URL('handwritten.json', tokensDirectory),
       }),
     ],
     lint: {

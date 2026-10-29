@@ -15,19 +15,19 @@
       "$description": "Sticky parts that content scrolls under: a sticky TopBar or PageHeader.",
       "$value": 20
     },
-    "peek": {
-      "$description": "A supporting pane that opens over its main pane as a sheet, and the scrim behind it, above the sticky parts.",
+    "supporting-pane": {
+      "$description": "A supporting pane that opens over its main pane as a sheet, and the backdrop behind it, above the sticky parts.",
       "$value": 30
     },
-    "overlay": {
-      "$description": "The scrim behind a modal layer, which covers the page and the frame.",
+    "backdrop": {
+      "$description": "The backdrop behind a modal layer, which covers the page and the frame.",
       "$value": 90
     },
     "modal": {
-      "$description": "Modal layers over their scrim: dialogs, sheets and the command palette.",
+      "$description": "Modal layers over their backdrop: dialogs, sheets and the command palette.",
       "$value": 100
     },
-    "popover": {
+    "popup": {
       "$description": "Popups anchored to a control, also inside a modal layer: menus, popovers, hover cards, the lists of Select and Combobox, and suggestions.",
       "$value": 110
     },

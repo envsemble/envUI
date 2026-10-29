@@ -1,6 +1,7 @@
 import { cloneElement, isValidElement, type ReactElement, type ReactNode } from 'react';
 import { classNames } from './classNames.js';
 import { DecorativeIcon } from './DecorativeIcon.js';
+import { flag } from './flag.js';
 import '../styles/Base.css';
 import '../styles/ListRow.css';
 
@@ -66,7 +67,7 @@ export function ListRow({
     render as ReactElement<{ className?: string; children?: ReactNode }>,
     {
       className: classNames('env-list-row', className, own.className),
-      'data-indicator': indicator != null || undefined,
+      'data-indicator': flag(indicator != null),
       children,
     } as { className: string; children: ReactNode },
   );

@@ -15,7 +15,7 @@
   }
   .env-loading-bar-indicator {
     block-size: 100%;
-    background: var(--env-color-bg-brand-emphasis);
+    background: var(--env-color-bg-primary-emphasis);
     transform-origin: left center;
     transform: scaleX(0.9);
     transition: transform 10s cubic-bezier(0.1, 0.7, 0.15, 1);

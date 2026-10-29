@@ -13,7 +13,7 @@
     gap: var(--env-space-1);
     min-inline-size: 0;
     color: var(--env-color-fg-muted);
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
   }
   .env-time-list-column {
     position: relative;
@@ -55,14 +55,14 @@
     -webkit-tap-highlight-color: transparent;
     transition: color var(--env-motion-duration-fast) var(--env-motion-ease);
   }
-  .env-time-list-row[data-centred] {
-    background: var(--env-color-bg-brand-emphasis);
+  .env-time-list-row[data-centered] {
+    background: var(--env-color-bg-primary-emphasis);
     color: var(--env-color-fg-on-emphasis);
     font: var(--env-type-body);
     font-weight: var(--env-font-weight-semibold);
   }
   /* The focus ring goes round the wheel's value, in the middle, where the edges' fade doesn't reach. */
-  .env-time-list-column:focus-visible > .env-time-list-row[data-centred] {
+  .env-time-list-column:focus-visible > .env-time-list-row[data-centered] {
     outline: 2px solid var(--env-color-border-focus);
     outline-offset: 1px;
   }
@@ -84,12 +84,12 @@
   /* Forced colors: the system paints no fills, so each wheel's value takes the system's selection
      colors and unavailable rows the disabled color. */
   @media (forced-colors: active) {
-    .env-time-list-row[data-centred] {
+    .env-time-list-row[data-centered] {
       forced-color-adjust: none;
       background-color: Highlight;
       color: HighlightText;
     }
-    .env-time-list-column:focus-visible > .env-time-list-row[data-centred] {
+    .env-time-list-column:focus-visible > .env-time-list-row[data-centered] {
       outline-color: CanvasText;
     }
     .env-time-list-row[data-disabled] {

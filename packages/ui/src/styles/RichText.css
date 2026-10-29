@@ -15,7 +15,7 @@
     /* The editing host takes the control font size: 1 rem on touch screens, where a smaller size on
        the focused element zooms the page. */
     font-size: var(--env-control-font-size);
-    caret-color: var(--env-color-border-accent-emphasis);
+    caret-color: var(--env-color-border-primary-emphasis);
   }
   /* Paragraphs set their own type, so they take the size too. */
   .env-rich-text-document p {
@@ -156,7 +156,7 @@
   /* The suggestions of a trigger, such as @: a list beside the caret, above what the editor sits in,
      a frosted popup as menus are (Popup.css), with their corners and rows. */
   .env-rich-text-suggestions-positioner {
-    z-index: var(--env-z-popover);
+    z-index: var(--env-z-popup);
   }
   .env-rich-text-suggestions {
     box-sizing: border-box;

@@ -31,15 +31,15 @@ html.env-theme > body {
   font: var(--env-type-body);
   /* A unitless line height, so content in another font size keeps lines in proportion to it; set
      --env-line-height-body to change it. */
-  line-height: var(--env-line-height-body, 1.4);
+  line-height: var(--env-line-height-body);
 }
 .env-theme h1 {
   margin: 0;
-  font: var(--env-type-h1);
+  font: var(--env-type-headline);
 }
 .env-theme :is(h2, h3, h4, h5, h6) {
   margin: 0;
-  font: var(--env-type-h2);
+  font: var(--env-type-title);
 }
 .env-theme p {
   margin: 0;

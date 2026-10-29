@@ -35,7 +35,7 @@ test.describe('PortalContainer, contained', () => {
     await expect(layer.getByText('Changes saved.')).toBeVisible();
     for (const selector of ['.env-menu', '.env-tooltip', '.env-toast'])
       expect(await insidePreview(page, selector), selector).toBe(true);
-    expect(await insidePreview(page, '.env-dialog-popup', 'dialog-preview')).toBe(true);
+    expect(await insidePreview(page, '.env-dialog', 'dialog-preview')).toBe(true);
     // No focus moved in, and the page neither hides behind a modal layer nor stops scrolling.
     // Base UI focuses a menu as it opens; waiting past the 500 ms in which a contained popup sends
     // that focus back shows that it stays out.

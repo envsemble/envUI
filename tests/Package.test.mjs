@@ -554,7 +554,7 @@ test('public components import and render on a server with no DOM globals', func
   assert.match(ssr.html, /<span class="env-spinner-label">Loading projects<\/span>/);
   assert.match(
     ssr.html,
-    /class="env-card env-surface"[^>]* data-env-skeleton="" aria-busy="true"[^>]*><div class="env-skeleton-content" inert=""><div class="env-card-header"[^>]*><h3 class="env-text env-card-heading" data-variant="title"><\/h3>/,
+    /class="env-card env-surface"[^>]* data-env-skeleton="" aria-busy="true"[^>]*><div class="env-skeleton-content" inert=""><div class="env-card-header"[^>]*><h3 class="env-text env-card-title" data-variant="title"><\/h3>/,
   );
 });
 
@@ -768,7 +768,7 @@ test('the package includes scoped CSS, local fonts, branding and license notices
     'Map prefers-contrast: more onto the high-contrast themes.',
   );
   assert.ok(
-    /--env-color-bg-brand-emphasis-hover:\s*#[0-9a-f]{3,8}\b/i.test(css),
+    /--env-color-bg-primary-emphasis-hover:\s*#[0-9a-f]{3,8}\b/i.test(css),
     'Hover and pressed colors are precomputed tokens.',
   );
   assert.ok(
@@ -928,7 +928,7 @@ test('a small independent bundle excludes unused icons and Base UI', async funct
   // esbuild bundles the style sheets the modules import, the base first with the layer order. It
   // keeps those of the modules it shakes out too, so the CSS isn't any smaller than styles.css.
   assert.deepEqual(layerOrder(result.css), envLayers);
-  assert.match(result.css, /--env-color-bg-brand-emphasis-hover:/);
+  assert.match(result.css, /--env-color-bg-primary-emphasis-hover:/);
   assert.match(result.css, /\.env-button\s*\{/);
   assert.match(result.css, /@font-face\s*\{\s*font-family:\s*"?envUI Geist/);
 });
@@ -965,7 +965,7 @@ test('a Vite application loads the style sheets of the components it uses, and r
   );
   // The client's CSS: the base, with the layer order first, and Button's, and no other component's.
   assert.deepEqual(layerOrder(result.css), envLayers);
-  assert.match(result.css, /--env-color-bg-brand-emphasis-hover:/);
+  assert.match(result.css, /--env-color-bg-primary-emphasis-hover:/);
   assert.match(result.css, /\.env-button\s*\{/);
   assert.match(result.css, /@font-face\s*\{\s*font-family:\s*"?envUI Geist/);
   for (const other of ['card', 'menu', 'text-field', 'dialog', 'tooltip', 'table', 'toast'])

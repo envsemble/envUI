@@ -2,7 +2,7 @@ import ResizableColumns from '../../examples/table/ResizableColumns';
 import { usePointer, type PointerStep } from '../../motion/Motion';
 import { MotionStage } from '../../motion/MotionStage';
 
-const boundary = '.env-table-column-resize';
+const boundary = '.env-table-column-resize-handle';
 
 /*
  * The pointer drags the boundary after Name toward the end until the plan's whole title shows,

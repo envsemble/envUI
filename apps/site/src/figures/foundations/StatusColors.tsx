@@ -23,20 +23,20 @@ const tones: readonly {
   word: string;
 }[] = [
   { badge: 'neutral', icon: <Archive />, word: 'Archived' },
-  { badge: 'accent', icon: <RadioButtonChecked />, word: 'Current' },
+  { badge: 'primary', icon: <RadioButtonChecked />, word: 'Current' },
   {
     own: {
       soft: {
-        '--env-badge-container': 'var(--env-color-bg-accent-muted)',
-        '--env-badge-content': 'var(--env-color-fg-accent)',
+        '--env-badge-container': 'var(--env-color-bg-primary-muted)',
+        '--env-badge-content': 'var(--env-color-fg-primary)',
       } as CSSProperties,
       solid: {
         '--env-badge-container': 'var(--env-color-bg-info-strong)',
         '--env-badge-content': 'var(--env-color-fg-on-strong)',
       } as CSSProperties,
       outline: {
-        '--env-badge-content': 'var(--env-color-fg-accent)',
-        '--env-badge-outline': 'var(--env-color-border-accent)',
+        '--env-badge-content': 'var(--env-color-fg-primary)',
+        '--env-badge-outline': 'var(--env-color-border-primary)',
       } as CSSProperties,
     },
     icon: <Info />,
@@ -74,7 +74,7 @@ function StatusSteps() {
           <Fragment key={tone.word}>
             {index === 4 && <span className="catalogue-tone-break" />}
             <Badge
-              tone={tone.badge ?? 'accent'}
+              tone={tone.badge ?? 'primary'}
               variant={variant}
               icon={tone.icon}
               style={tone.own?.[variant]}

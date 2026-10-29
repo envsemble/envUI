@@ -23,14 +23,14 @@ const data: CalendarHeatmapDay[] = Array.from({ length: 112 }, (_, index) => {
   };
 });
 
-/** The tones in turn at five steps, then the accent at two and at ten. */
+/** The tones in turn at five steps, then the primary at two and at ten. */
 const looks: { tone: CalendarHeatmapProps['tone']; levels: number; name: string }[] = [
-  { tone: 'accent', levels: 5, name: 'Accent, 5 steps' },
+  { tone: 'primary', levels: 5, name: 'Primary, 5 steps' },
   { tone: 'success', levels: 5, name: 'Success, 5 steps' },
   { tone: 'warning', levels: 5, name: 'Warning, 5 steps' },
   { tone: 'danger', levels: 5, name: 'Danger, 5 steps' },
-  { tone: 'accent', levels: 2, name: 'Accent, 2 steps' },
-  { tone: 'accent', levels: 10, name: 'Accent, 10 steps' },
+  { tone: 'primary', levels: 2, name: 'Primary, 2 steps' },
+  { tone: 'primary', levels: 10, name: 'Primary, 10 steps' },
 ];
 const steps = looks.map(() => 1700);
 

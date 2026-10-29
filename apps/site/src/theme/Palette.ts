@@ -30,7 +30,7 @@ export const colorGroups: [string, [string, string][]][] = [
   [
     'Rows',
     [
-      ['list-item-bg', 'Row background'],
+      ['bg-list-item', 'Row background'],
       ['bg-raised', 'Contrast row background'],
       ['fg-default', 'Row text'],
       ['fg-muted', 'Row details'],
@@ -39,14 +39,14 @@ export const colorGroups: [string, [string, string][]][] = [
   [
     'Buttons',
     [
-      ['bg-brand-emphasis', 'Primary button background'],
+      ['bg-primary-emphasis', 'Primary button background'],
       ['fg-on-emphasis', 'Primary button label'],
       ['bg-neutral-muted', 'Secondary button background'],
       ['fg-control', 'Secondary button label'],
       ['bg-raised', 'Outlined button background'],
-      ['fg-accent', 'Outlined button label'],
+      ['fg-primary', 'Outlined button label'],
       ['border-default', 'Outlined button border'],
-      ['bg-important-strong', 'Important button background'],
+      ['bg-accent-strong', 'Accent button background'],
       ['fg-on-strong', 'Important button label'],
       ['bg-danger-strong', 'Destructive button background'],
       ['fg-on-strong', 'Destructive button label'],
@@ -67,7 +67,7 @@ export const colorGroups: [string, [string, string][]][] = [
       ['bg-raised', 'Direction link background'],
       ['fg-default', 'Direction link title'],
       ['fg-muted', 'Direction link caption'],
-      ['fg-accent', 'Direction link icon'],
+      ['fg-primary', 'Direction link icon'],
       ['border-muted', 'Direction link border'],
     ],
   ],
@@ -80,7 +80,7 @@ export const colorGroups: [string, [string, string][]][] = [
       ['fg-muted', 'Field hint'],
       ['fg-muted', 'Field placeholder'],
       ['border-default', 'Field border'],
-      ['border-accent-emphasis', 'Field active border'],
+      ['border-primary-emphasis', 'Field active border'],
       ['fg-danger', 'Field validation error'],
     ],
   ],
@@ -96,7 +96,7 @@ export const colorGroups: [string, [string, string][]][] = [
   [
     'Radio',
     [
-      ['bg-brand-emphasis', 'Radio selection'],
+      ['bg-primary-emphasis', 'Radio selection'],
       ['bg-muted', 'Radio row background'],
       ['fg-default', 'Radio label'],
       ['fg-muted', 'Radio details'],
@@ -105,7 +105,7 @@ export const colorGroups: [string, [string, string][]][] = [
   [
     'Checkboxes',
     [
-      ['bg-brand-emphasis', 'Checked checkbox background'],
+      ['bg-primary-emphasis', 'Checked checkbox background'],
       ['fg-on-emphasis', 'Checkbox mark'],
       ['fg-muted', 'Unchecked checkbox border'],
       ['fg-default', 'Checkbox label'],
@@ -115,7 +115,7 @@ export const colorGroups: [string, [string, string][]][] = [
     'Switches',
     [
       ['bg-neutral-muted', 'Switch off background'],
-      ['bg-brand-emphasis', 'Switch on background'],
+      ['bg-primary-emphasis', 'Switch on background'],
       ['fg-control', 'Switch off thumb'],
       ['fg-on-emphasis', 'Switch on thumb'],
       ['fg-default', 'Switch label'],
@@ -125,14 +125,14 @@ export const colorGroups: [string, [string, string][]][] = [
     'Feedback',
     [
       ['bg-neutral-muted', 'Info chip background'],
-      ['fg-accent', 'Info chip label'],
+      ['fg-primary', 'Info chip label'],
       ['fg-muted', 'Disclosure text'],
       ['bg-neutral-strong', 'Neutral toast background'],
       ['bg-success-strong', 'Success toast background'],
       ['bg-info-strong', 'Info toast background'],
       ['bg-danger-strong', 'Error toast background'],
       ['fg-on-strong', 'Toast text'],
-      ['bg-overlay', 'Dialog backdrop'],
+      ['bg-backdrop', 'Dialog backdrop'],
     ],
   ],
   [

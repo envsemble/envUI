@@ -90,7 +90,7 @@
      panels beside it; under high contrast the others' edge is already the default border. */
   .env-panel-dock-panel[data-active] {
     z-index: calc(var(--env-z-raised) + 1);
-    border-color: var(--env-color-border-accent-emphasis);
+    border-color: var(--env-color-border-primary-emphasis);
   }
   .env-panel-dock-panel:focus-visible,
   .env-panel-dock-content:focus-visible {
@@ -146,7 +146,7 @@
   /* The top edge resizes an open panel. It reaches a little above the panel, between its rounded
      corners; a short bar shows on hover and takes the focus color with the keyboard and while
      dragging. */
-  .env-panel-dock-resize {
+  .env-panel-dock-resize-handle {
     position: absolute;
     inset-block-start: -0.375rem;
     inset-inline: var(--env-radius-surface);
@@ -156,7 +156,7 @@
     touch-action: none;
     outline: none;
   }
-  .env-panel-dock-resize::after {
+  .env-panel-dock-resize-handle::after {
     content: '';
     position: absolute;
     inset-block-start: 0.5rem;
@@ -170,15 +170,15 @@
       opacity var(--env-motion-duration-fast) var(--env-motion-ease),
       background-color var(--env-motion-duration-fast) var(--env-motion-ease);
   }
-  .env-panel-dock-resize:is(:hover, :focus-visible)::after,
-  .env-panel-dock-panel[data-resizing] > .env-panel-dock-resize::after {
+  .env-panel-dock-resize-handle:is(:hover, :focus-visible)::after,
+  .env-panel-dock-panel[data-resizing] > .env-panel-dock-resize-handle::after {
     opacity: 1;
   }
-  .env-panel-dock-resize:hover::after {
+  .env-panel-dock-resize-handle:hover::after {
     background: var(--env-color-border-muted-hover);
   }
-  .env-panel-dock-resize:focus-visible::after,
-  .env-panel-dock-panel[data-resizing] > .env-panel-dock-resize::after {
+  .env-panel-dock-resize-handle:focus-visible::after,
+  .env-panel-dock-panel[data-resizing] > .env-panel-dock-resize-handle::after {
     background: var(--env-color-border-focus);
   }
   /* While dragging, the panel selects no text and leaves embedded content, such as a frame, alone. */
@@ -220,13 +220,13 @@
   .env-panel-dock-title {
     margin: 0;
     padding-block-start: max(0rem, calc((var(--env-panel-dock-control) - 1.4em) / 2));
-    font: var(--env-type-h1);
+    font: var(--env-type-headline);
     overflow-wrap: break-word;
   }
   .env-panel-dock-meta {
     min-inline-size: 0;
     color: var(--env-color-fg-muted);
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
   }
   .env-panel-dock-actions,
   .env-panel-dock-controls {
@@ -284,7 +284,7 @@
     border-start-end-radius: var(--env-radius-sm);
     background: var(--env-color-bg-popup);
     color: var(--env-color-fg-default);
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
     pointer-events: auto;
   }
   .env-panel-dock-tab-restore {
@@ -329,7 +329,7 @@
     inline-size: 0.5rem;
     block-size: 0.5rem;
     border-radius: 50%;
-    background: var(--env-color-fg-accent);
+    background: var(--env-color-fg-primary);
   }
   /* The close button, an IconButton with a cross, is a small circle beside the restore button; under a coarse
      pointer it takes the touch size, as every button does. */
@@ -428,11 +428,11 @@
       --env-panel-dock-control: max(var(--env-control-height-sm), var(--env-control-height-touch));
     }
     /* A finger reaches the top edge across a larger band, and the bar always shows. */
-    .env-panel-dock-resize {
+    .env-panel-dock-resize-handle {
       inset-block-start: -0.75rem;
       block-size: 1.5rem;
     }
-    .env-panel-dock-resize::after {
+    .env-panel-dock-resize-handle::after {
       inset-block-start: 0.875rem;
       opacity: 1;
     }
@@ -442,7 +442,7 @@
   }
   @media (prefers-reduced-motion: reduce) {
     .env-panel-dock-header,
-    .env-panel-dock-resize::after,
+    .env-panel-dock-resize-handle::after,
     .env-panel-dock-tab-restore {
       transition: none;
     }

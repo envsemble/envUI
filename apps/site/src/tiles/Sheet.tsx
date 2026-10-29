@@ -6,7 +6,7 @@ import { usePointer, type PointerStep } from '../motion/Motion';
 /** Applied, which closes the sheet toward its edge; opened again from its button. */
 const script: PointerStep[] = [
   { wait: 400 },
-  { to: '.env-sheet-popup .env-dialog-actions .env-button', x: 0.4, y: 0.6 },
+  { to: '.env-sheet .env-dialog-actions .env-button', x: 0.4, y: 0.6 },
   { wait: 700 },
   { click: true },
   { wait: 900 },

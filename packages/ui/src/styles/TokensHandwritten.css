@@ -4,19 +4,23 @@
 .env-theme {
   /* The theme boundary's own type and colors: styles, not tokens. */
   font-family: var(--env-font-family);
-  font-weight: var(--env-body-font-weight);
+  font-weight: var(--env-font-weight-body);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   background: var(--env-color-bg-page);
   color: var(--env-color-fg-default);
 
-  /* Lengths a DTCG dimension (px or rem) can't hold: a viewport clamp and the full corner. The full
+  /* Lengths a DTCG dimension (px or rem) can't hold: viewport clamps and the full corner. The full
      corner is capped: half the tallest single-line control, the large height or the touch height,
      whichever is more. Anything one line tall takes rounded ends, as the browser scales down corners
      too large for their box, and anything taller, such as a wrapping button or a field whose chips
      wrap, keeps the same corners and becomes a rounded rectangle rather than a pill. */
   --env-viewport-gutter: clamp(0.75rem, 2vw, 1rem);
+  /* Display text, Text's display variant, grows with the window: medium, 1.75 to 2.75 rem, set
+     tight. A DTCG font size holds no clamp. */
+  --env-type-display: var(--env-font-weight-medium) clamp(1.75rem, 1.25rem + 2.5vw, 2.75rem) / 1.1
+    var(--env-font-family);
   --env-radius-full: calc(max(var(--env-control-height-lg), var(--env-control-height-touch)) / 2);
 }
 

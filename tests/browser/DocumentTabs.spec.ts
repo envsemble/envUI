@@ -23,7 +23,7 @@ test.describe('DocumentTabs', () => {
     await expect(roadmap).toHaveAttribute('data-tab-id', 'plans/roadmap.md');
     await expect(roadmap).toHaveAttribute('aria-controls', 'document-panel-light');
     await expect(decisions).toHaveAttribute('tabindex', '-1');
-    await expect(retrospective).toHaveAttribute('data-preview', 'true');
+    await expect(retrospective).toHaveAttribute('data-preview', '');
     await expect(retrospective.locator('.env-document-tabs-tab-label')).toHaveCSS(
       'font-style',
       'italic',
@@ -34,7 +34,7 @@ test.describe('DocumentTabs', () => {
     await expect(decisions).toHaveAttribute('aria-selected', 'true');
     await retrospective.dblclick();
     await expect.poll(() => lastLog(page)).toBe('pin plans/retrospective.md');
-    await expect(retrospective).toHaveAttribute('data-preview', 'false');
+    await expect(retrospective).not.toHaveAttribute('data-preview');
 
     // Arrow keys move and activate; Home and End reach the ends.
     await decisions.focus();
@@ -327,7 +327,7 @@ test.describe('DocumentTabs', () => {
       }) => {
         await page.goto(`${tabsFixture}&scale=${scale}`);
         expect(await page.evaluate(() => matchMedia('(pointer: coarse)').matches)).toBe(true);
-        const strip = page.locator('.env-document-tabs').first();
+        const strip = page.locator('.env-document-tabs-list').first();
         await expect(
           strip.locator('xpath=ancestor::*[contains(@class, "env-theme")][1]'),
         ).toHaveAttribute('data-env-scale', scale);

@@ -445,7 +445,7 @@ export function optionPieces(
 const technicalPatterns: [kind: string, pattern: RegExp][] = [
   // A custom property or token, such as --env-color-bg-page.
   ['token', /(?<![\w-])--[a-z][\w-]*/gi],
-  // A part's class or a data attribute, such as env-card-heading or data-env-theme.
+  // A part's class or a data attribute, such as env-card-title or data-env-theme.
   ['class name', /(?<![\w-])(?:env|docs|data|aria)-[a-z][\w-]*/g],
   // A hex color, such as #1e1f21.
   ['hex color', /(?<![\w&#])#(?:[\da-f]{8}|[\da-f]{6}|[\da-f]{3,4})(?![\w-])/gi],

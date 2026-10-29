@@ -19,6 +19,6 @@
   }
   .env-popover-title {
     margin: 0;
-    font: var(--env-type-h2);
+    font: var(--env-type-title);
   }
 }

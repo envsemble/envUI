@@ -33,7 +33,7 @@ const commands: { id: string; label: string; icon: ReactNode; end?: ReactNode }[
     id: 'automations',
     label: 'Create an automation',
     icon: <Bolt />,
-    end: <Badge tone="accent">New</Badge>,
+    end: <Badge tone="primary">New</Badge>,
   },
 ];
 

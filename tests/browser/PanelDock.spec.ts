@@ -63,7 +63,7 @@ test.describe('PanelDock', () => {
     const notes = dock.root.getByRole('region', { name: 'Meeting notes' });
     await expect(report).toHaveAttribute('data-panel-id', 'report');
     await expect(report).toHaveAttribute('data-mode', 'open');
-    await expect(notes).toHaveAttribute('data-active', 'true');
+    await expect(notes).toHaveAttribute('data-active', '');
     await expect(report).not.toHaveAttribute('data-active');
     // The active panel is in front.
     expect(await notes.evaluate((element) => getComputedStyle(element).zIndex)).toBe('2');
@@ -113,7 +113,7 @@ test.describe('PanelDock', () => {
     await expect(budget).toHaveAccessibleDescription('Unsaved changes');
     await expect(dock.tabs.locator('li[data-panel-id="budget"]')).toHaveAttribute(
       'data-attention',
-      'true',
+      '',
     );
     await expect(dock.tabs.getByRole('button', { name: 'Close Budget' })).toBeVisible();
     await budget.hover();
@@ -138,7 +138,7 @@ test.describe('PanelDock', () => {
 
     await report.getByRole('button', { name: 'Maximize' }).click();
     await expect(report).toHaveAttribute('data-mode', 'maximized');
-    await expect(dock.root).toHaveAttribute('data-filled', 'true');
+    await expect(dock.root).toHaveAttribute('data-filled', '');
     const filled = await box(report);
     const filledRegion = await box(dock.root);
     expect(filled.x).toBeCloseTo(filledRegion.x, 0);
@@ -160,7 +160,7 @@ test.describe('PanelDock', () => {
     // Pressing inside a panel activates it.
     await report.getByText('Paragraph 1 of Quarterly report.').click();
     await expect.poll(() => lastLog(page)).toBe('activate report');
-    await expect(report).toHaveAttribute('data-active', 'true');
+    await expect(report).toHaveAttribute('data-active', '');
 
     await notes.getByRole('button', { name: 'Close', exact: true }).click();
     await expect.poll(() => logOf(page)).toContain('close notes');
@@ -196,7 +196,7 @@ test.describe('PanelDock', () => {
       await expect(mounts).toHaveText('report:1 notes:1 budget:1');
       await draft.fill('Unsent changes');
       // Focus inside a panel activates it.
-      await expect(report).toHaveAttribute('data-active', 'true');
+      await expect(report).toHaveAttribute('data-active', '');
       await content.evaluate((element) => (element.scrollTop = 120));
       await list.evaluate((element) => (element.scrollTop = 60));
 
@@ -296,7 +296,7 @@ test.describe('PanelDock', () => {
       await page.mouse.move(edge.x + edge.width / 2, edge.y + edge.height / 2);
       await page.mouse.down();
       await page.mouse.move(edge.x + edge.width / 2, edge.y + edge.height / 2 + 100, { steps: 5 });
-      await expect(report).toHaveAttribute('data-resizing', 'true');
+      await expect(report).toHaveAttribute('data-resizing', '');
       await expect.poll(async () => Math.round((await box(report)).height)).toBe(start - 100);
       expect(await lastLog(page)).not.toMatch(/^height/);
       await page.mouse.up();
@@ -388,7 +388,7 @@ test.describe('PanelDock', () => {
     await page.getByRole('button', { name: 'Open document light' }).click();
     const newest = dock.root.getByRole('region', { name: 'Roadmap 1' });
     await expect(newest).toBeVisible();
-    await expect(dock.row).toHaveAttribute('data-overflowing', 'true');
+    await expect(dock.row).toHaveAttribute('data-overflowing', '');
     for (const [panel, width] of [
       [report, 320],
       [notes, 288],
@@ -433,7 +433,7 @@ test.describe('PanelDock', () => {
     const notes = dock.panel('notes');
     await expect(dock.root).not.toHaveAttribute('data-stacked');
     await dock.frame.evaluate((element) => (element.style.inlineSize = '24rem'));
-    await expect(dock.root).toHaveAttribute('data-stacked', 'true');
+    await expect(dock.root).toHaveAttribute('data-stacked', '');
     await expect.poll(() => logOf(page)).toEqual(['stacked true']);
     // The active panel fills the region above the tabs; the other open panel waits as a tab.
     const rootBox = await box(dock.root);
@@ -502,7 +502,7 @@ test.describe('PanelDock', () => {
 
     // A phone stacks the dock without overflowing the page.
     await page.setViewportSize({ width: 360, height: 740 });
-    await expect(dock.root).toHaveAttribute('data-stacked', 'true');
+    await expect(dock.root).toHaveAttribute('data-stacked', '');
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
       true,
     );
@@ -592,7 +592,7 @@ test.describe('PanelDock', () => {
     await page.getByRole('button', { name: 'Open document light' }).click();
     await page.getByRole('button', { name: 'Open document light' }).click();
     const latest = dock.root.getByRole('region', { name: 'Release checklist 2' });
-    await expect(dock.row).toHaveAttribute('data-overflowing', 'true');
+    await expect(dock.row).toHaveAttribute('data-overflowing', '');
     await expect.poll(async () => Math.round((await box(latest)).x - rootBox.x)).toBe(24);
     // Resizing is unchanged: up still grows the panel.
     const handle = dock.panel('report').getByRole('separator', { name: 'Resize Quarterly report' });
@@ -767,7 +767,7 @@ test('a drag ends when the application maximizes its panel or the dock stacks me
     await page.mouse.move(edge.x + edge.width / 2, edge.y + edge.height / 2);
     await page.mouse.down();
     await page.mouse.move(edge.x + edge.width / 2, edge.y + edge.height / 2 + 60, { steps: 3 });
-    await expect(report).toHaveAttribute('data-resizing', 'true');
+    await expect(report).toHaveAttribute('data-resizing', '');
   };
 
   // The application's shortcut maximizes the panel while its edge is held; focus stays in the
@@ -788,7 +788,7 @@ test('a drag ends when the application maximizes its panel or the dock stacks me
   // The dock stacks while the edge is held.
   await dragDown();
   await dock.frame.evaluate((element) => (element.style.inlineSize = '24rem'));
-  await expect(dock.root).toHaveAttribute('data-stacked', 'true');
+  await expect(dock.root).toHaveAttribute('data-stacked', '');
   await expect(report).not.toHaveAttribute('data-resizing');
   await expect(content).toHaveCSS('pointer-events', 'auto');
   await page.mouse.up();
@@ -805,7 +805,7 @@ test('focus outside the dock stays there when the application hides a panel', as
   const report = dock.panel('report');
   // A button that removes itself as it is pressed leaves focus nowhere, without a blur.
   await report.getByRole('button', { name: 'Dismiss tip of Quarterly report light' }).click();
-  await expect(report).toHaveAttribute('data-active', 'true');
+  await expect(report).toHaveAttribute('data-active', '');
   const action = page.getByRole('button', { name: 'Page action light' });
   await action.focus();
   await page.keyboard.press('Alt+KeyM');
@@ -828,7 +828,7 @@ test('focus stays in a panel whose focused edge or Maximize control goes with a 
   const holdsFocus = () => report.evaluate((element) => element.contains(document.activeElement));
   // A maximized panel has no resize handle.
   await report.getByRole('separator', { name: 'Resize Quarterly report' }).focus();
-  await expect(report).toHaveAttribute('data-active', 'true');
+  await expect(report).toHaveAttribute('data-active', '');
   await page.keyboard.press('Alt+KeyX');
   await expect(report).toHaveAttribute('data-mode', 'maximized');
   await expect.poll(holdsFocus).toBe(true);
@@ -839,7 +839,7 @@ test('focus stays in a panel whose focused edge or Maximize control goes with a 
   const maximize = report.getByRole('button', { name: 'Maximize' });
   await maximize.focus();
   await dock.frame.evaluate((element) => (element.style.inlineSize = '24rem'));
-  await expect(dock.root).toHaveAttribute('data-stacked', 'true');
+  await expect(dock.root).toHaveAttribute('data-stacked', '');
   await expect(maximize).toHaveCount(0);
   await expect(report).toBeVisible();
   await expect.poll(holdsFocus).toBe(true);
@@ -1055,7 +1055,7 @@ test('open panels leave the controls of a maximized one in view after the dock s
   await expect(notes).toHaveAttribute('data-mode', 'maximized');
   await expect(handle).toHaveAttribute('aria-valuemax', String(await room()));
   await dock.frame.evaluate((element) => (element.style.inlineSize = '24rem'));
-  await expect(dock.root).toHaveAttribute('data-stacked', 'true');
+  await expect(dock.root).toHaveAttribute('data-stacked', '');
   await dock.frame.evaluate((element) => (element.style.inlineSize = ''));
   await expect(dock.root).not.toHaveAttribute('data-stacked');
   await expect(handle).toHaveAttribute('aria-valuemax', String(await room()));
@@ -1137,7 +1137,7 @@ test('a stacked dock shows the panel of a tab pressed, also without onActivate',
   const passive = page.getByTestId('passive-dock-light');
   const first = passive.locator('section[data-panel-id="first"]');
   const second = passive.locator('section[data-panel-id="second"]');
-  await expect(passive.locator('.env-panel-dock')).toHaveAttribute('data-stacked', 'true');
+  await expect(passive.locator('.env-panel-dock')).toHaveAttribute('data-stacked', '');
   // The active panel shows first; the application never activates another.
   await expect(first).toBeVisible();
   await expect(second).toBeHidden();
@@ -1281,7 +1281,7 @@ test('a panel that opens fills a stacked dock, also after a tab showed another',
   await page.goto(dockFixture);
   const loose = page.getByTestId('loose-dock-light');
   const panel = (id: string) => loose.locator(`section[data-panel-id="${id}"]`);
-  await expect(loose.locator('.env-panel-dock')).toHaveAttribute('data-stacked', 'true');
+  await expect(loose.locator('.env-panel-dock')).toHaveAttribute('data-stacked', '');
   // Without an active panel, the newest fills the dock; a tab shows its own panel instead.
   await expect(panel('why')).toBeVisible();
   await loose.getByRole('button', { name: 'Show Ex light' }).click();
@@ -1311,7 +1311,7 @@ test('a tab pressed while panels sit side by side leaves the newest to fill the 
   await expect(panel('ex')).toHaveAttribute('data-placement', 'row');
   await panel('why').getByRole('textbox', { name: 'Words of Why light' }).click();
   await loose.evaluate((element) => (element.style.inlineSize = ''));
-  await expect(dock).toHaveAttribute('data-stacked', 'true');
+  await expect(dock).toHaveAttribute('data-stacked', '');
   await expect(panel('why')).toBeVisible();
   await expect(panel('ex')).toBeHidden();
 });
@@ -1349,7 +1349,7 @@ test('a dock that minimizes asks for nothing while it stacks, also as it first s
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto(dockFixture);
   const scope = page.getByTestId('stacking-dock-light');
-  await expect(scope.locator('.env-panel-dock')).toHaveAttribute('data-stacked', 'true');
+  await expect(scope.locator('.env-panel-dock')).toHaveAttribute('data-stacked', '');
   await frames(page);
   await expect(page.getByTestId('stacking-log-light')).toHaveText('');
   await expect(scope.locator('section[data-panel-id="three"]')).toBeVisible();
@@ -1371,7 +1371,7 @@ test('a dock that minimizes never takes back the panel people brought back', asy
   // Neither the active panel nor the one brought back makes room: the row scrolls instead.
   await expect(log).toHaveText('beta open');
   await expect.poll(ids).toEqual(['alpha', 'beta']);
-  await expect(row).toHaveAttribute('data-overflowing', 'true');
+  await expect(row).toHaveAttribute('data-overflowing', '');
   // Focus goes with the panel brought back.
   await expect(scope.locator('section[data-panel-id="beta"]')).toBeFocused();
 });
@@ -1381,7 +1381,7 @@ test('a dock that minimizes leaves a lone panel wider than the row in it', async
   await page.goto(dockFixture);
   const scope = page.getByTestId('lone-dock-light');
   const { row, ids } = rowOf(scope);
-  await expect(row).toHaveAttribute('data-overflowing', 'true');
+  await expect(row).toHaveAttribute('data-overflowing', '');
   await frames(page);
   await expect(page.getByTestId('lone-log-light')).toHaveText('');
   expect(await ids()).toEqual(['solo']);
@@ -1395,7 +1395,7 @@ test('a dock that minimizes keeps its panels where minimizing them would not end
   const scope = page.getByTestId('wide-dock-light');
   const { row, ids } = rowOf(scope);
   // The active panel alone is wider than the row, so the others stay and the row scrolls.
-  await expect(row).toHaveAttribute('data-overflowing', 'true');
+  await expect(row).toHaveAttribute('data-overflowing', '');
   await frames(page);
   await expect(page.getByTestId('wide-log-light')).toHaveText('');
   expect(await ids()).toEqual(['draft', 'outline', 'canvas']);
@@ -1413,7 +1413,7 @@ test('a dock that minimizes asks for nothing as the application narrows it until
   // The application's own state narrows the region below stackBelow, as a sidebar opening does,
   // in the same update that renders the dock.
   await page.getByRole('button', { name: 'Narrow squeezed light' }).click();
-  await expect(scope.locator('.env-panel-dock')).toHaveAttribute('data-stacked', 'true');
+  await expect(scope.locator('.env-panel-dock')).toHaveAttribute('data-stacked', '');
   await frames(page);
   await expect(log).toHaveText('');
 });
@@ -1674,7 +1674,7 @@ test(
     // Hydrating reads the same layout: nothing moves, nothing plays an entrance, and the panel the
     // stacked dock leaves out is inert.
     expect(await hydrate()).toEqual([]);
-    await expect(narrow.locator('.env-panel-dock')).toHaveAttribute('data-stacked', 'true');
+    await expect(narrow.locator('.env-panel-dock')).toHaveAttribute('data-stacked', '');
     await expect(narrow.locator('.env-panel-dock')).not.toHaveAttribute('data-env-ssr-pending');
     await expect(wide.locator('.env-panel-dock')).not.toHaveAttribute('data-stacked');
     await expect(panel(narrow, 'report')).toHaveJSProperty('inert', true);

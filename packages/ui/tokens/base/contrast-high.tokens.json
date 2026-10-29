@@ -4,19 +4,6 @@
     "$type": "color",
     "$description": "The light scheme’s high-contrast values: text 70 grades from what it sits on, boundaries and indicators 50. contrast/high.tokens.json points the roles here; color-scheme/dark-contrast-high.tokens.json holds the dark values. Internal: never CSS.",
     "color": {
-      "list-item": {
-        "bg": {
-          "$root": {
-            "$value": "{palette.neutral.0}"
-          },
-          "hover": {
-            "$value": "{palette.gray.4}"
-          },
-          "pressed": {
-            "$value": "{palette.gray.8}"
-          }
-        }
-      },
       "bg": {
         "selected": {
           "$root": {
@@ -155,7 +142,7 @@
             }
           }
         },
-        "brand": {
+        "primary": {
           "emphasis": {
             "$root": {
               "$value": "{palette.blue.75}"
@@ -178,29 +165,6 @@
               "$value": "{palette.blue.84}"
             }
           },
-          "muted": {
-            "$value": {
-              "colorSpace": "oklch",
-              "components": {
-                "$ref": "#/palette/blue/75/$value/components"
-              },
-              "alpha": 0.16
-            }
-          }
-        },
-        "accent": {
-          "emphasis": {
-            "$value": "{palette.blue.80}"
-          },
-          "muted": {
-            "$value": {
-              "colorSpace": "oklch",
-              "components": {
-                "$ref": "#/palette/blue/80/$value/components"
-              },
-              "alpha": 0.08
-            }
-          },
           "subtle": {
             "hover": {
               "$value": {
@@ -220,6 +184,18 @@
                 "alpha": 0.22
               }
             }
+          },
+          "muted": {
+            "$value": {
+              "colorSpace": "oklch",
+              "components": {
+                "$ref": "#/palette/blue/80/$value/components"
+              },
+              "alpha": 0.08
+            }
+          },
+          "solid": {
+            "$value": "{palette.blue.80}"
           }
         },
         "success": {
@@ -373,7 +349,7 @@
             }
           }
         },
-        "important": {
+        "accent": {
           "strong": {
             "$root": {
               "$value": "{palette.purple.75}"
@@ -384,6 +360,38 @@
             "pressed": {
               "$value": "{palette.purple.84}"
             }
+          },
+          "subtle": {
+            "hover": {
+              "$value": {
+                "colorSpace": "oklch",
+                "components": {
+                  "$ref": "#/palette/purple/80/$value/components"
+                },
+                "alpha": 0.14
+              }
+            },
+            "pressed": {
+              "$value": {
+                "colorSpace": "oklch",
+                "components": {
+                  "$ref": "#/palette/purple/80/$value/components"
+                },
+                "alpha": 0.22
+              }
+            }
+          },
+          "muted": {
+            "$value": {
+              "colorSpace": "oklch",
+              "components": {
+                "$ref": "#/palette/purple/80/$value/components"
+              },
+              "alpha": 0.08
+            }
+          },
+          "solid": {
+            "$value": "{palette.purple.80}"
           }
         },
         "recessed": {
@@ -395,6 +403,43 @@
           },
           "pressed": {
             "$value": "{palette.gray.9}"
+          }
+        },
+        "list-item": {
+          "$root": {
+            "$value": "{palette.neutral.0}"
+          },
+          "hover": {
+            "$value": "{palette.gray.4}"
+          },
+          "pressed": {
+            "$value": "{palette.gray.8}"
+          }
+        },
+        "avatar": {
+          "powder": {
+            "$value": "{palette.powder.10}"
+          },
+          "seafoam": {
+            "$value": "{palette.seafoam.10}"
+          },
+          "sage": {
+            "$value": "{palette.sage.10}"
+          },
+          "butter": {
+            "$value": "{palette.butter.10}"
+          },
+          "blush": {
+            "$value": "{palette.blush.10}"
+          },
+          "periwinkle": {
+            "$value": "{palette.periwinkle.10}"
+          },
+          "orchid": {
+            "$value": "{palette.orchid.10}"
+          },
+          "oat": {
+            "$value": "{palette.oat.10}"
           }
         }
       },
@@ -427,8 +472,11 @@
             "$value": "{palette.blue.88}"
           }
         },
-        "accent": {
+        "primary": {
           "$value": "{palette.blue.80}"
+        },
+        "accent": {
+          "$value": "{palette.purple.80}"
         },
         "on-selected": {
           "$value": "{palette.blue.84}"
@@ -447,6 +495,35 @@
         },
         "on-emphasis": {
           "$value": "{palette.neutral.0}"
+        },
+        "rating-star": {
+          "$value": "{palette.amber.80}"
+        },
+        "avatar": {
+          "powder": {
+            "$value": "{palette.powder.80}"
+          },
+          "seafoam": {
+            "$value": "{palette.seafoam.80}"
+          },
+          "sage": {
+            "$value": "{palette.sage.80}"
+          },
+          "butter": {
+            "$value": "{palette.butter.80}"
+          },
+          "blush": {
+            "$value": "{palette.blush.80}"
+          },
+          "periwinkle": {
+            "$value": "{palette.periwinkle.80}"
+          },
+          "orchid": {
+            "$value": "{palette.orchid.80}"
+          },
+          "oat": {
+            "$value": "{palette.oat.80}"
+          }
         }
       },
       "border": {
@@ -472,7 +549,7 @@
             "$value": "{palette.gray.65}"
           }
         },
-        "accent": {
+        "primary": {
           "$root": {
             "$value": {
               "colorSpace": "oklch",
@@ -501,6 +578,15 @@
             "pressed": {
               "$value": "{palette.blue.84}"
             }
+          }
+        },
+        "accent": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": {
+              "$ref": "#/palette/purple/80/$value/components"
+            },
+            "alpha": 0.55
           }
         },
         "danger": {
@@ -597,8 +683,8 @@
         "focus": {
           "$value": "{palette.blue.65}"
         },
-        "scrim": {
-          "$description": "The edge of a dialog against the scrim: 4.5:1 against the gray of the page under the scrim, which only near-black reaches in light.",
+        "backdrop": {
+          "$description": "The edge of a dialog against the backdrop: 4.5:1 against the gray of the page under the backdrop, which only near-black reaches in light.",
           "$value": "{palette.gray.96}"
         },
         "info": {
@@ -614,65 +700,6 @@
             },
             "alpha": 0.55
           }
-        }
-      },
-      "avatar": {
-        "bg": {
-          "powder": {
-            "$value": "{palette.powder.10}"
-          },
-          "seafoam": {
-            "$value": "{palette.seafoam.10}"
-          },
-          "sage": {
-            "$value": "{palette.sage.10}"
-          },
-          "butter": {
-            "$value": "{palette.butter.10}"
-          },
-          "blush": {
-            "$value": "{palette.blush.10}"
-          },
-          "periwinkle": {
-            "$value": "{palette.periwinkle.10}"
-          },
-          "orchid": {
-            "$value": "{palette.orchid.10}"
-          },
-          "oat": {
-            "$value": "{palette.oat.10}"
-          }
-        },
-        "fg": {
-          "powder": {
-            "$value": "{palette.powder.80}"
-          },
-          "seafoam": {
-            "$value": "{palette.seafoam.80}"
-          },
-          "sage": {
-            "$value": "{palette.sage.80}"
-          },
-          "butter": {
-            "$value": "{palette.butter.80}"
-          },
-          "blush": {
-            "$value": "{palette.blush.80}"
-          },
-          "periwinkle": {
-            "$value": "{palette.periwinkle.80}"
-          },
-          "orchid": {
-            "$value": "{palette.orchid.80}"
-          },
-          "oat": {
-            "$value": "{palette.oat.80}"
-          }
-        }
-      },
-      "rating": {
-        "star": {
-          "$value": "{palette.amber.80}"
         }
       }
     }

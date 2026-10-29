@@ -162,7 +162,7 @@ const inside = (
 /** How far the page has scrolled: its main region scrolls, never the window. */
 const pageScroll = (page: Page) => page.evaluate(() => document.querySelector('main')!.scrollTop);
 
-test("a figure's dialog opens live inside its stage, its scrim over the stage alone", async ({
+test("a figure's dialog opens live inside its stage, its backdrop over the stage alone", async ({
   page,
 }) => {
   await page.goto(`${siteDevUrl}/components/dialog`);
@@ -172,13 +172,13 @@ test("a figure's dialog opens live inside its stage, its scrim over the stage al
   const before = (await stage.boundingBox())!;
   const scrolled = await pageScroll(page);
   // The pointer no one sees presses View project, and the dialog opens in the stage.
-  const dialog = stage.locator('.env-dialog-popup');
+  const dialog = stage.locator('.env-dialog');
   await expect(dialog).toBeVisible({ timeout: 4000 });
   const frame = (await stage.boundingBox())!;
   expect(inside((await dialog.boundingBox())!, frame)).toBe(true);
-  const scrim = (await stage.locator('.env-dialog-backdrop').boundingBox())!;
-  expect(Math.abs(scrim.width - frame.width)).toBeLessThan(1.5);
-  expect(Math.abs(scrim.height - frame.height)).toBeLessThan(1.5);
+  const backdrop = (await stage.locator('.env-dialog-backdrop').boundingBox())!;
+  expect(Math.abs(backdrop.width - frame.width)).toBeLessThan(1.5);
+  expect(Math.abs(backdrop.height - frame.height)).toBeLessThan(1.5);
   // The figure keeps its height, the page its place, and the page stays in reach.
   expect(frame.height).toBe(before.height);
   expect(await pageScroll(page)).toBe(scrolled);

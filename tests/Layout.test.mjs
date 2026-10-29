@@ -35,7 +35,7 @@ test('each primitive names its kind, and only the options it is given', () => {
   assert.equal(markup(h(Grid)), '<div data-env-layout="grid"></div>');
   assert.equal(
     markup(h(Row, { gap: 3, align: 'center', justify: 'between', wrap: true, padding: 0 })),
-    '<div data-wrap="true" data-env-layout="row" data-padding="0" data-gap="3" data-align="center" data-justify="between"></div>',
+    '<div data-wrap="" data-env-layout="row" data-padding="0" data-gap="3" data-align="center" data-justify="between"></div>',
   );
   assert.equal(
     markup(h(Column, { name: 'filters', className: 'app-filters' }, 'Text')),

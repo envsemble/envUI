@@ -263,12 +263,12 @@ test.describe('ResizeHandle', () => {
       await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
       await page.mouse.down();
       await page.mouse.move(box.x + box.width / 2 + 50, box.y + box.height / 2, { steps: 5 });
-      await expect(handle).toHaveAttribute('data-dragging', '');
+      await expect(handle).toHaveAttribute('data-resizing', '');
       await expect(handle).toHaveAttribute('aria-valuenow', '250');
       await expect(page.getByTestId('committed-ltr')).toHaveText('200');
       await page.mouse.up();
       await expect(page.getByTestId('committed-ltr')).toHaveText('250');
-      await expect(handle).not.toHaveAttribute('data-dragging');
+      await expect(handle).not.toHaveAttribute('data-resizing');
     },
   );
 });

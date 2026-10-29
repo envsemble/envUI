@@ -96,15 +96,16 @@ A badge takes every status tone, which [Colors & themes](../foundations/colors.m
 ```
 
 1. **Neutral**
-2. **Accent**
-3. **Success**
-4. **Warning**
-5. **Danger**
-6. **Done**
+2. **Primary**
+3. **Accent**
+4. **Success**
+5. **Warning**
+6. **Danger**
+7. **Done**
 
 ### Counts
 
-A count takes the same tones and variants: neutral and soft by default, and solid in the accent tone for a count that needs attention.
+A count takes the same tones and variants: neutral and soft by default, and solid in the primary tone for a count that needs attention.
 
 ## Anatomy
 
@@ -171,7 +172,7 @@ A Badge's label is its `children`, a state, a name or a category in a word or tw
 
 #### Variants and tones
 
-`variant` is `soft`, the default, which tints the background without an edge, in the tone's stronger tint for accent, success, warning and danger, with a semibold label, `solid`, which fills it with the tone, or `outline`, which draws a border. `tone` is `neutral`, the default, `accent`, `success`, `warning`, `danger` or `done`, the purple of completed work.
+`variant` is `soft`, the default, which tints the background without an edge, in the tone's stronger tint for primary, accent, success, warning and danger, with a semibold label, `solid`, which fills it with the tone, or `outline`, which draws a border. `tone` is `neutral`, the default, `primary`, the blue of what is current, `accent`, the purple that stands out, `success`, `warning`, `danger` or `done`, the violet of completed work.
 
 ```tsx
 <Badge tone="success">Ready</Badge>
@@ -188,7 +189,7 @@ A Badge's label is its `children`, a state, a name or a category in a word or tw
   Comments <Badge count={4} />
 </Button>
 <Button>
-  Review requests <Badge count={2} tone="accent" variant="solid" />
+  Review requests <Badge count={2} tone="primary" variant="solid" />
 </Button>
 ```
 
@@ -215,14 +216,14 @@ const destinations: Destination[] = [
 
 ### Composition
 
-The parts are the pill, `env-badge`, its icon, `env-badge > env-icon`, and its label, `env-badge-label`. A count is `env-badge[data-count]`, with `env-badge-count-label` for its `aria-label`; DiffStat has `env-diff-stat-additions` and `env-diff-stat-deletions`. A control, such as a Button, sets the badges, counts and DiffStats inside it through the `--env-badge-*`, `--env-badge-count-*` and `--env-diff-stat-*` properties.
+The parts are the pill, `env-badge`, its icon, `env-badge > env-icon`, and its label, `env-badge-label`. A count is `env-badge[data-count]`, with `env-badge-count-label` for its `aria-label`; DiffStat has `env-diff-stat-additions` and `env-diff-stat-deletions`.
 
 ### Customize
 
 `--env-badge-container`, `--env-badge-content` and `--env-badge-outline` set the colors of one Badge, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
 
 ```tsx
-<Badge style={{ '--env-badge-container': 'var(--env-color-bg-brand-muted)' } as CSSProperties}>
+<Badge style={{ '--env-badge-container': 'var(--env-color-bg-primary-muted)' } as CSSProperties}>
   Beta
 </Badge>
 ```

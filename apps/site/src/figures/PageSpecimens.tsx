@@ -52,11 +52,11 @@ function TypographySpecimen() {
   );
 }
 
-/** The theme's roles: brand, accent and the status colors. */
+/** The theme's roles: primary, accent and the status colors. */
 function ColorsSpecimen() {
   return (
     <Row gap={3} className="catalogue-page-specimen-swatches">
-      {['brand', 'accent', 'success', 'warning', 'danger', 'neutral'].map((role) => (
+      {['primary', 'accent', 'success', 'warning', 'danger', 'neutral'].map((role) => (
         <span key={role} data-role={role} />
       ))}
     </Row>

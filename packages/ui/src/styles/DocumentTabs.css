@@ -2,13 +2,10 @@
   /* Editor tabs for open documents. Inactive tabs are quiet, with state layers on hover; the active tab
      carries the translucent fill and a selection-blue indicator along its bottom edge. Each item lays
      out its tab, a Base UI tab, beside its close button, which isn't nested in the tab. */
-  .env-document-tabs-root {
-    display: contents;
-  }
-  /* The bar holds the strip and the content after it, as tall as a medium control: 2.5rem, and 2rem
+  /* The root holds the strip and the content after it, as tall as a medium control: 2.5rem, and 2rem
      in the compact scale. No line runs under it: the active tab's fill and indicator mark it. It
      takes the width it is given; its tabs never widen a grid or flex parent. */
-  .env-document-tabs-bar {
+  .env-document-tabs {
     /* The close button's size, and the room a tab leaves for it as it scrolls into view. */
     --env-document-tabs-close-size: 1.5rem;
     /* The widest a tab, and the copy of one being dragged, grows. */
@@ -23,7 +20,7 @@
     flex: 0 0 auto;
     padding-inline: var(--env-space-1);
   }
-  .env-document-tabs {
+  .env-document-tabs-list {
     /* How far tabs fade at an edge they run past. */
     --env-document-tabs-fade: 2.5rem;
     box-sizing: border-box;
@@ -41,11 +38,11 @@
        the active tab scrolls into view. */
     scrollbar-width: none;
   }
-  .env-document-tabs::-webkit-scrollbar {
+  .env-document-tabs-list::-webkit-scrollbar {
     display: none;
   }
   /* Tabs that run past an edge fade out toward it, so the strip shows there is more to scroll to. */
-  .env-document-tabs:is([data-fade-left], [data-fade-right]) {
+  .env-document-tabs-list:is([data-fade-left], [data-fade-right]) {
     --env-document-tabs-fade-left: 0rem;
     --env-document-tabs-fade-right: 0rem;
     mask-image: linear-gradient(
@@ -57,20 +54,20 @@
       transparent
     );
   }
-  .env-document-tabs[data-fade-left] {
+  .env-document-tabs-list[data-fade-left] {
     --env-document-tabs-fade-left: var(--env-document-tabs-fade);
   }
-  .env-document-tabs[data-fade-right] {
+  .env-document-tabs-list[data-fade-right] {
     --env-document-tabs-fade-right: var(--env-document-tabs-fade);
   }
   /* While a tab is dragged it stays in place, dimmed, a copy of it follows the pointer, and a line
      between two tabs marks where it will land. */
-  .env-document-tabs[data-reordering],
-  .env-document-tabs[data-reordering] .env-document-tabs-item {
+  .env-document-tabs-list[data-reordering],
+  .env-document-tabs-list[data-reordering] .env-document-tabs-item {
     cursor: grabbing;
   }
   /* Only the dragged tab's contents dim, so a line drawn on its edge keeps its full strength. */
-  .env-document-tabs-item[data-dragging] > * {
+  .env-document-tabs-item[data-moving] > * {
     opacity: 0.5;
   }
   .env-document-tabs-item[data-drop]::before {
@@ -93,7 +90,7 @@
   }
   .env-document-tabs-drag-image {
     position: fixed;
-    z-index: var(--env-z-popover);
+    z-index: var(--env-z-popup);
     display: inline-flex;
     align-items: center;
     gap: var(--env-space-2);
@@ -104,7 +101,7 @@
     border-radius: var(--env-radius-sm);
     background: var(--env-color-bg-popup);
     color: var(--env-color-fg-default);
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
     white-space: nowrap;
     pointer-events: none;
   }
@@ -125,7 +122,7 @@
     border-start-start-radius: var(--env-radius-sm);
     border-start-end-radius: var(--env-radius-sm);
     color: var(--env-color-fg-muted);
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
     white-space: nowrap;
     cursor: pointer;
     user-select: none;
@@ -135,11 +132,11 @@
   }
   /* While a tab is dragged, the pointer passing over the others is not a hover: they keep their
      fills and hide their close buttons. */
-  :where(.env-document-tabs:not([data-reordering])) .env-document-tabs-item:hover {
+  :where(.env-document-tabs-list:not([data-reordering])) .env-document-tabs-item:hover {
     background: var(--env-color-bg-neutral-subtle-hover);
     color: var(--env-color-fg-default);
   }
-  :where(.env-document-tabs:not([data-reordering])) .env-document-tabs-item:active {
+  :where(.env-document-tabs-list:not([data-reordering])) .env-document-tabs-item:active {
     background: var(--env-color-bg-neutral-subtle-pressed);
   }
   .env-document-tabs-item[data-active] {
@@ -195,7 +192,7 @@
   }
   /* A preview tab is replaced by the next previewed document until it is pinned. The bundled Geist has
      no italic face, so the slant is synthesized. */
-  .env-document-tabs-tab[data-preview='true'] .env-document-tabs-tab-label {
+  .env-document-tabs-tab[data-preview] .env-document-tabs-tab-label {
     font-style: italic;
     font-synthesis: style;
     padding-inline-end: 0.125em;
@@ -210,7 +207,7 @@
     visibility: hidden;
   }
   .env-document-tabs-item:is([data-active], :has(:focus-visible)) .env-document-tabs-close,
-  :where(.env-document-tabs:not([data-reordering]))
+  :where(.env-document-tabs-list:not([data-reordering]))
     .env-document-tabs-item:hover
     .env-document-tabs-close {
     visibility: visible;
@@ -218,7 +215,7 @@
   /* Under a coarse pointer the tabs are the touch height, and each close button always shows, as tall
      and wide as its tab. */
   @media (pointer: coarse) {
-    .env-document-tabs-bar {
+    .env-document-tabs {
       --env-document-tabs-close-size: var(--env-control-height-touch);
       block-size: var(--env-control-height-touch);
     }

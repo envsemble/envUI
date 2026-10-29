@@ -418,10 +418,10 @@
         },
         {
           "name": "tone",
-          "type": "'neutral' | 'accent' | 'success' | 'warning' | 'danger' | 'done'",
+          "type": "'neutral' | 'primary' | 'accent' | 'success' | 'warning' | 'danger' | 'done'",
           "required": false,
           "default": "'neutral'",
-          "description": "Meaning of the state; done is the purple of completed work. Neutral by default. A count in the accent tone, solid, draws attention, such as unread messages that need an answer."
+          "description": "Meaning of the state: primary is the blue of what is current, accent the purple that stands out, done the violet of completed work. Neutral by default. A count in the primary tone, solid, draws attention, such as unread messages that need an answer."
         },
         {
           "name": "variant",
@@ -796,10 +796,10 @@
         },
         {
           "name": "tone",
-          "type": "'neutral' | 'accent' | 'success' | 'warning' | 'danger' | 'done'",
+          "type": "'neutral' | 'primary' | 'accent' | 'success' | 'warning' | 'danger' | 'done'",
           "required": false,
-          "default": "'accent'",
-          "description": "The tone the colors are mixed from: accent by default."
+          "default": "'primary'",
+          "description": "The tone the colors are mixed from: primary by default."
         },
         {
           "name": "formatValue",
@@ -2921,19 +2921,19 @@
           "name": "className",
           "type": "string",
           "required": false,
-          "description": "Classes for the strip, the tab list."
+          "description": "Classes for the root element, which holds the strip of tabs and the actions at its end."
         },
         {
           "name": "style",
           "type": "CSSProperties",
           "required": false,
-          "description": "The strip's inline style."
+          "description": "The root element's inline style."
         },
         {
           "name": "ref",
           "type": "Ref<HTMLDivElement>",
           "required": false,
-          "description": "The strip, the tab list element."
+          "description": "The root element, which holds the strip of tabs and the actions at its end."
         }
       ],
       "native": [
@@ -4091,7 +4091,7 @@
           "name": "className",
           "type": "string",
           "required": false,
-          "description": "The field's class, on its root element, beside env-field and env-text-field."
+          "description": "The field's class, on its root element, beside env-field, env-text-field and env-textarea."
         },
         {
           "name": "rows",
@@ -5737,7 +5737,7 @@
           "name": "onOpenChange",
           "type": "(open: boolean) => void",
           "required": false,
-          "description": "Called with false when people close what `open` shows below `splitAt`: Escape, the close button or a press on the scrim closes the supporting sheet, and the back button returns from the detail to the list. Set `open` from it."
+          "description": "Called with false when people close what `open` shows below `splitAt`: Escape, the close button or a press on the backdrop closes the supporting sheet, and the back button returns from the detail to the list. Set `open` from it."
         },
         {
           "name": "closeLabel",
@@ -5821,7 +5821,7 @@
     "Panes.Supporting": {
       "kind": "component",
       "source": "packages/ui/src/layout/Panes.tsx",
-      "description": "The supporting pane, at the end, such as details or filters for the main pane. Below `splitAt` it is a modal sheet over the main pane while `open`: a side sheet in a medium width, a bottom sheet in a compact one. Inside a Scaffold whose document scrolls, the sheet is the window's, as Sheet is: fixed to the window over a scrim, scrolling inside itself while the page stays. As a sheet it is a modal dialog with a close button: everything else on the page is inert, focus moves into it and Tab stays in it, and Escape, the close button or a press on the scrim closes it, which returns focus to where it was. In a contained PortalContainer, such as a preview on a page, the sheet belongs to the container: it is not modal, so the page stays in use and focus stays where it is.",
+      "description": "The supporting pane, at the end, such as details or filters for the main pane. Below `splitAt` it is a modal sheet over the main pane while `open`: a side sheet in a medium width, a bottom sheet in a compact one. Inside a Scaffold whose document scrolls, the sheet is the window's, as Sheet is: fixed to the window over a backdrop, scrolling inside itself while the page stays. As a sheet it is a modal dialog with a close button: everything else on the page is inert, focus moves into it and Tab stays in it, and Escape, the close button or a press on the backdrop closes it, which returns focus to where it was. In a contained PortalContainer, such as a preview on a page, the sheet belongs to the container: it is not modal, so the page stays in use and focus stays where it is.",
       "props": [
         {
           "name": "label",
@@ -6013,7 +6013,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Whether the overlays belong to the container rather than the window, as in a preview of an interface: a modal one neither locks the page's scroll, traps focus nor hides the rest of the page; a dialog takes no focus as it opens; a popup opens on its own side without flipping and sizes to its content; toasts are shown without the page's F6 shortcut; and a press or Esc outside the container and the overlay's trigger doesn't close them, while the trigger and the overlay's own controls do. Make the container a containing block, such as with `contain: layout`, to keep fixed overlays, such as dialogs and their scrims, inside it, and give it or an ancestor `container-type: inline-size`: a popup is at most as wide as that size container, or else as the window. A ContextMenu opens there too, at the pointer or below the focused element, without hiding the page or locking its scroll; a long press doesn't open it. Panes' supporting pane, as a sheet there, isn't modal either: the page stays in use."
+          "description": "Whether the overlays belong to the container rather than the window, as in a preview of an interface: a modal one neither locks the page's scroll, traps focus nor hides the rest of the page; a dialog takes no focus as it opens; a popup opens on its own side without flipping and sizes to its content; toasts are shown without the page's F6 shortcut; and a press or Esc outside the container and the overlay's trigger doesn't close them, while the trigger and the overlay's own controls do. Make the container a containing block, such as with `contain: layout`, to keep fixed overlays, such as dialogs and their backdrops, inside it, and give it or an ancestor `container-type: inline-size`: a popup is at most as wide as that size container, or else as the window. A ContextMenu opens there too, at the pointer or below the focused element, without hiding the page or locking its scroll; a long press doesn't open it. Panes' supporting pane, as a sheet there, isn't modal either: the page stays in use."
         },
         {
           "name": "children",
@@ -8008,7 +8008,7 @@
           "name": "className",
           "type": "string",
           "required": false,
-          "description": "The field's class, on its root element, beside env-field and env-text-field."
+          "description": "The field's class, on its root element, beside env-field, env-text-field and env-textarea."
         },
         {
           "name": "style",

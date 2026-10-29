@@ -244,8 +244,8 @@ test('a typography token builds, with a custom property for each part', async ()
         label: {
           $value: {
             fontFamily: '{font.family}',
-            fontSize: '{font.size.body-small}',
-            fontWeight: '{body.font-weight}',
+            fontSize: '{font.size.body-sm}',
+            fontWeight: '{font.weight.body}',
             lineHeight: 1.4,
             letterSpacing: { value: 0, unit: 'rem' },
           },
@@ -254,7 +254,7 @@ test('a typography token builds, with a custom property for each part', async ()
     },
   });
   const css = await readFile(join(directory, 'src/styles/Tokens.css'), 'utf8');
-  assert.match(css, /--env-text-label-font-size: var\(--env-font-size-body-small\);/);
+  assert.match(css, /--env-text-label-font-size: var\(--env-font-size-body-sm\);/);
   assert.match(css, /--env-text-label: var\(--env-text-label-font-weight\)/);
   const list = JSON.parse(await readFile(join(directory, 'src/generated/tokens.json'), 'utf8'));
   const label = list.tokens.find((token) => token.id === 'text.label');
@@ -285,8 +285,8 @@ const textLabel = (extra = {}) => ({
   $type: 'typography',
   $value: {
     fontFamily: '{font.family}',
-    fontSize: '{font.size.body-small}',
-    fontWeight: '{body.font-weight}',
+    fontSize: '{font.size.body-sm}',
+    fontWeight: '{font.weight.body}',
     lineHeight: 1.4,
     letterSpacing: { value: 0, unit: 'rem' },
     ...extra,

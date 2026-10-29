@@ -409,6 +409,7 @@
             "danger",
             "done",
             "neutral",
+            "primary",
             "success",
             "warning"
           ],
@@ -459,12 +460,16 @@
           "description": "A destination's count, on the icon's top end; 999+ above 999."
         },
         {
-          "class": "env-bar-icon",
+          "class": "env-bar-indicator",
           "description": "The pill around a destination's icon, filled while the destination is current."
         },
         {
           "class": "env-bar-item",
           "description": "A destination: a link or button with its indicator above its label."
+        },
+        {
+          "class": "env-bar-label",
+          "description": "A destination's label, under its indicator, cut short with an ellipsis."
         },
         {
           "class": "env-bar-list",
@@ -473,10 +478,6 @@
         {
           "class": "env-bar-more",
           "description": "The last item past five destinations, which opens the rest in a menu."
-        },
-        {
-          "class": "env-bar-text",
-          "description": "A destination's label, under its indicator, cut short with an ellipsis."
         }
       ],
       "states": [
@@ -491,7 +492,9 @@
         },
         {
           "attribute": "data-current",
-          "values": [],
+          "values": [
+            ""
+          ],
           "parts": [
             "env-bar-item"
           ]
@@ -614,7 +617,7 @@
         {
           "attribute": "data-full-width",
           "values": [
-            "true"
+            ""
           ],
           "parts": [
             "env-button"
@@ -716,7 +719,7 @@
         {
           "attribute": "data-full-width",
           "values": [
-            "true"
+            ""
           ],
           "parts": [
             "env-button-group"
@@ -759,10 +762,6 @@
           "description": "The row with the month and the previous and next buttons."
         },
         {
-          "class": "env-calendar-heading",
-          "description": "The month and year."
-        },
-        {
           "class": "env-calendar-next",
           "description": "The button for the next month."
         },
@@ -773,6 +772,10 @@
         {
           "class": "env-calendar-previous",
           "description": "The button for the previous month."
+        },
+        {
+          "class": "env-calendar-title",
+          "description": "The month and year."
         }
       ],
       "states": [
@@ -879,6 +882,7 @@
             "danger",
             "done",
             "neutral",
+            "primary",
             "success",
             "warning"
           ],
@@ -919,12 +923,12 @@
           "description": "The row with the title and the meta."
         },
         {
-          "class": "env-card-heading",
-          "description": "The title."
-        },
-        {
           "class": "env-card-meta",
           "description": "The short fact at the end of the title row."
+        },
+        {
+          "class": "env-card-title",
+          "description": "The title."
         }
       ],
       "states": [
@@ -944,8 +948,8 @@
             "env-card",
             "env-card-description",
             "env-card-header",
-            "env-card-heading",
-            "env-card-meta"
+            "env-card-meta",
+            "env-card-title"
           ]
         },
         {
@@ -1016,7 +1020,7 @@
           "description": "The box's fill while checked or indeterminate; set, it takes state layers instead of the designed hover and press fills."
         },
         {
-          "property": "--env-checkbox-icon",
+          "property": "--env-checkbox-selected-content",
           "description": "The check mark or dash, and the color of the state layers."
         }
       ]
@@ -1045,15 +1049,15 @@
           "description": "The announcement that the code was copied."
         },
         {
-          "class": "env-code-block-heading",
-          "description": "The block's heading, such as a file name."
+          "class": "env-code-block-header",
+          "description": "The row above the code: its label, such as a file name, and the copy button."
         }
       ],
       "states": [
         {
           "attribute": "data-wrap",
           "values": [
-            "true"
+            ""
           ],
           "parts": [
             "env-code-block"
@@ -1195,7 +1199,7 @@
         {
           "attribute": "data-alpha",
           "values": [
-            "true"
+            ""
           ],
           "parts": [
             "env-color-picker-values"
@@ -1224,7 +1228,7 @@
         {
           "attribute": "data-disabled",
           "values": [
-            "true"
+            ""
           ],
           "parts": [
             "env-color-picker",
@@ -1237,7 +1241,7 @@
         {
           "attribute": "data-dragging",
           "values": [
-            "true"
+            ""
           ],
           "parts": [
             "env-color-picker-thumb"
@@ -1246,7 +1250,7 @@
         {
           "attribute": "data-eye-dropper",
           "values": [
-            "true"
+            ""
           ],
           "parts": [
             "env-color-picker-values"
@@ -1276,7 +1280,7 @@
         {
           "attribute": "data-invalid",
           "values": [
-            "true"
+            ""
           ],
           "parts": [
             "env-color-picker"
@@ -1285,7 +1289,7 @@
         {
           "attribute": "data-readonly",
           "values": [
-            "true"
+            ""
           ],
           "parts": [
             "env-color-picker"
@@ -1294,7 +1298,7 @@
         {
           "attribute": "data-selected",
           "values": [
-            "true"
+            ""
           ],
           "parts": [
             "env-color-picker-swatch"
@@ -1303,7 +1307,7 @@
         {
           "attribute": "data-translucent",
           "values": [
-            "true"
+            ""
           ],
           "parts": [
             "env-color-picker-swatch"
@@ -1396,7 +1400,7 @@
         {
           "attribute": "data-translucent",
           "values": [
-            "true"
+            ""
           ],
           "parts": [
             "env-color-swatch",
@@ -1466,16 +1470,16 @@
           "description": "The label."
         },
         {
-          "class": "env-combobox-leading",
-          "description": "The leading icon of the well."
-        },
-        {
           "class": "env-combobox-list",
           "description": "The list of options."
         },
         {
           "class": "env-combobox-popup",
           "description": "The popup with the options."
+        },
+        {
+          "class": "env-combobox-start",
+          "description": "The icon at the start of the well, or of an option in the popup."
         },
         {
           "class": "env-combobox-status",
@@ -1486,14 +1490,15 @@
           "description": "The button that opens the list."
         },
         {
-          "class": "env-combobox-value-leading",
+          "class": "env-combobox-value-icon",
           "description": "The chosen option's icon in the well."
         }
       ],
       "states": [
         {
-          "attribute": "data-actions",
+          "attribute": "data-action-count",
           "values": [
+            "1",
             "2"
           ],
           "parts": [
@@ -1584,8 +1589,8 @@
           "description": "A group of commands."
         },
         {
-          "class": "env-command-palette-heading",
-          "description": "A group's heading."
+          "class": "env-command-palette-group-label",
+          "description": "A group's label."
         },
         {
           "class": "env-command-palette-hint",
@@ -1620,7 +1625,7 @@
         {
           "attribute": "data-empty",
           "values": [
-            "true"
+            ""
           ],
           "parts": [
             "env-command-palette-status"
@@ -1647,6 +1652,7 @@
         "Icon",
         "Kbd",
         "ListRow",
+        "Overlay",
         "Skeleton",
         "Surface",
         "TextField",
@@ -1686,7 +1692,7 @@
         {
           "attribute": "data-disabled",
           "values": [
-            "true"
+            ""
           ],
           "parts": [
             "env-composer"
@@ -1695,7 +1701,7 @@
         {
           "attribute": "data-running",
           "values": [
-            "true"
+            ""
           ],
           "parts": [
             "env-composer"
@@ -1704,7 +1710,7 @@
         {
           "attribute": "data-start",
           "values": [
-            "true"
+            ""
           ],
           "parts": [
             "env-composer"
@@ -1740,7 +1746,7 @@
       ]
     },
     "ConfirmDialog": {
-      "root": "env-dialog-popup",
+      "root": "env-dialog",
       "source": "packages/ui/src/feedback/ConfirmDialog.tsx",
       "parts": [
         {
@@ -1753,6 +1759,7 @@
         "Alert",
         "Button",
         "Dialog",
+        "Overlay",
         "Skeleton",
         "Surface",
         "Theme"
@@ -1844,8 +1851,8 @@
           "description": "The times beside the calendar."
         },
         {
-          "class": "env-date-picker-time-heading",
-          "description": "The heading of the times."
+          "class": "env-date-picker-time-title",
+          "description": "The title over the times."
         },
         {
           "class": "env-date-picker-trigger",
@@ -1858,7 +1865,7 @@
       ],
       "states": [
         {
-          "attribute": "data-actions",
+          "attribute": "data-action-count",
           "values": [
             "1",
             "2"
@@ -1870,7 +1877,7 @@
         {
           "attribute": "data-label-floating",
           "values": [
-            "true"
+            ""
           ],
           "parts": [
             "env-date-picker-control"
@@ -1960,11 +1967,11 @@
       ]
     },
     "Dialog": {
-      "root": "env-dialog-popup",
+      "root": "env-dialog",
       "source": "packages/ui/src/feedback/Dialog.tsx",
       "parts": [
         {
-          "class": "env-dialog-popup",
+          "class": "env-dialog",
           "description": "The dialog."
         },
         {
@@ -2002,10 +2009,6 @@
         {
           "class": "env-dialog-title",
           "description": "The title."
-        },
-        {
-          "class": "env-overlay-theme",
-          "description": "The theme boundary of a dialog's, a sheet's or the command palette's portal. It has no box, so their scrim and positioner keep their own layers; the positioner is the env-window container."
         }
       ],
       "states": [
@@ -2013,8 +2016,8 @@
           "attribute": "data-ending-style",
           "values": [],
           "parts": [
-            "env-dialog-backdrop",
-            "env-dialog-popup"
+            "env-dialog",
+            "env-dialog-backdrop"
           ]
         },
         {
@@ -2023,7 +2026,7 @@
             ""
           ],
           "parts": [
-            "env-dialog-popup"
+            "env-dialog"
           ]
         },
         {
@@ -2033,7 +2036,7 @@
             "top"
           ],
           "parts": [
-            "env-dialog-popup",
+            "env-dialog",
             "env-dialog-positioner"
           ]
         },
@@ -2041,8 +2044,8 @@
           "attribute": "data-starting-style",
           "values": [],
           "parts": [
-            "env-dialog-backdrop",
-            "env-dialog-popup"
+            "env-dialog",
+            "env-dialog-backdrop"
           ]
         },
         {
@@ -2052,7 +2055,7 @@
             "neutral"
           ],
           "parts": [
-            "env-dialog-popup"
+            "env-dialog"
           ]
         },
         {
@@ -2062,12 +2065,13 @@
             "md"
           ],
           "parts": [
-            "env-dialog-popup"
+            "env-dialog"
           ]
         }
       ],
       "uses": [
         "Button",
+        "Overlay",
         "Skeleton",
         "Surface",
         "Theme"
@@ -2117,11 +2121,7 @@
       "parts": [
         {
           "class": "env-document-tabs",
-          "description": "The tabs of open documents."
-        },
-        {
-          "class": "env-document-tabs-bar",
-          "description": "The bar that holds the tabs."
+          "description": "The root: a bar that holds the strip of tabs and the content after it."
         },
         {
           "class": "env-document-tabs-close",
@@ -2140,8 +2140,8 @@
           "description": "One tab with its close button."
         },
         {
-          "class": "env-document-tabs-root",
-          "description": "The tabs' root element."
+          "class": "env-document-tabs-list",
+          "description": "The tabs of open documents, which scroll sideways."
         },
         {
           "class": "env-document-tabs-tab",
@@ -2155,15 +2155,6 @@
       "states": [
         {
           "attribute": "data-active",
-          "values": [
-            ""
-          ],
-          "parts": [
-            "env-document-tabs-item"
-          ]
-        },
-        {
-          "attribute": "data-dragging",
           "values": [
             ""
           ],
@@ -2187,7 +2178,7 @@
             ""
           ],
           "parts": [
-            "env-document-tabs"
+            "env-document-tabs-list"
           ]
         },
         {
@@ -2196,14 +2187,22 @@
             ""
           ],
           "parts": [
-            "env-document-tabs"
+            "env-document-tabs-list"
+          ]
+        },
+        {
+          "attribute": "data-moving",
+          "values": [
+            "pointer"
+          ],
+          "parts": [
+            "env-document-tabs-item"
           ]
         },
         {
           "attribute": "data-preview",
           "values": [
-            "false",
-            "true"
+            ""
           ],
           "parts": [
             "env-document-tabs-tab"
@@ -2215,7 +2214,7 @@
             ""
           ],
           "parts": [
-            "env-document-tabs"
+            "env-document-tabs-list"
           ]
         },
         {
@@ -2265,12 +2264,12 @@
           "description": "Content below the destinations, at the bottom of the drawer."
         },
         {
-          "class": "env-drawer-header",
-          "description": "Content above the destinations, such as the application's name or a search trigger."
+          "class": "env-drawer-group-label",
+          "description": "A group's label, which names the group's list."
         },
         {
-          "class": "env-drawer-heading",
-          "description": "A group's heading, which names the group's list."
+          "class": "env-drawer-header",
+          "description": "Content above the destinations, such as the application's name or a search trigger."
         },
         {
           "class": "env-drawer-item",
@@ -2407,7 +2406,7 @@
       ],
       "states": [
         {
-          "attribute": "data-dragging",
+          "attribute": "data-drag-over",
           "values": [
             ""
           ],
@@ -2558,7 +2557,7 @@
         {
           "attribute": "data-full-width",
           "values": [
-            "true"
+            ""
           ],
           "parts": [
             "env-icon-button"
@@ -2608,6 +2607,13 @@
         {
           "property": "--env-button-selected-content",
           "description": "The icon and label of a pressed toggle."
+        }
+      ],
+      "properties": [
+        {
+          "property": "--env-icon-button-hit-area",
+          "use": "set",
+          "description": "The size of an icon button's pointer target, which a container sets for the icon buttons in it, such as the touch height under a coarse pointer; unset, the button's own box."
         }
       ]
     },
@@ -2700,6 +2706,13 @@
           "parts": [
             "env-line-art"
           ]
+        }
+      ],
+      "properties": [
+        {
+          "property": "--env-line-art-duration",
+          "use": "set",
+          "description": "How long a drawing's motion takes, on the drawing: ten times the slow motion duration by default, and play half as long again."
         }
       ]
     },
@@ -2802,6 +2815,7 @@
         {
           "attribute": "data-moving",
           "values": [
+            "keyboard",
             "pointer"
           ],
           "parts": [
@@ -2819,7 +2833,9 @@
         },
         {
           "attribute": "data-reordering",
-          "values": [],
+          "values": [
+            ""
+          ],
           "parts": [
             "env-list"
           ]
@@ -2878,10 +2894,6 @@
           "description": "The rendered Markdown."
         },
         {
-          "class": "env-markdown-source",
-          "description": "The Markdown source shown as text."
-        },
-        {
           "class": "env-markdown-table",
           "description": "The region that scrolls a wide table."
         }
@@ -2903,6 +2915,10 @@
         {
           "class": "env-markdown-editor",
           "description": "The Markdown editor."
+        },
+        {
+          "class": "env-markdown-editor-input",
+          "description": "The text area that shows the Markdown source as text."
         },
         {
           "class": "env-markdown-editor-write",
@@ -2953,20 +2969,20 @@
           "description": "One item."
         },
         {
-          "class": "env-menu-item-check",
-          "description": "The place for a chosen item's check."
-        },
-        {
-          "class": "env-menu-item-check-mark",
-          "description": "The check of a chosen item."
-        },
-        {
           "class": "env-menu-item-description",
           "description": "An item's description."
         },
         {
           "class": "env-menu-item-end",
           "description": "The end of an item, for a shortcut or a chevron."
+        },
+        {
+          "class": "env-menu-item-indicator",
+          "description": "The check of a chosen item."
+        },
+        {
+          "class": "env-menu-item-indicator-slot",
+          "description": "The place for a chosen item's check."
         },
         {
           "class": "env-menu-item-label",
@@ -3187,7 +3203,7 @@
         {
           "attribute": "data-text",
           "values": [
-            "true"
+            ""
           ],
           "parts": [
             "env-message-content"
@@ -3225,7 +3241,7 @@
           "description": "The meter."
         },
         {
-          "class": "env-meter-heading",
+          "class": "env-meter-header",
           "description": "The row with the label and the value."
         },
         {
@@ -3264,10 +3280,6 @@
           "description": "The row with the year and the previous and next buttons."
         },
         {
-          "class": "env-month-picker-heading",
-          "description": "The year."
-        },
-        {
           "class": "env-month-picker-month",
           "description": "One month."
         },
@@ -3286,6 +3298,10 @@
         {
           "class": "env-month-picker-previous",
           "description": "The button for the previous year."
+        },
+        {
+          "class": "env-month-picker-title",
+          "description": "The year."
         },
         {
           "class": "env-month-picker-year",
@@ -3341,6 +3357,7 @@
           "attribute": "data-width",
           "values": [
             "full",
+            "lg",
             "md",
             "sm"
           ],
@@ -3550,7 +3567,7 @@
           "description": "An invisible element that measures the dock's room."
         },
         {
-          "class": "env-panel-dock-resize",
+          "class": "env-panel-dock-resize-handle",
           "description": "The handle that resizes the dock."
         },
         {
@@ -3590,7 +3607,7 @@
         {
           "attribute": "data-active",
           "values": [
-            "true"
+            ""
           ],
           "parts": [
             "env-panel-dock-panel"
@@ -3599,7 +3616,7 @@
         {
           "attribute": "data-attention",
           "values": [
-            "true"
+            ""
           ],
           "parts": [
             "env-panel-dock-tab"
@@ -3616,7 +3633,7 @@
         {
           "attribute": "data-filled",
           "values": [
-            "true"
+            ""
           ],
           "parts": [
             "env-panel-dock"
@@ -3637,7 +3654,7 @@
         {
           "attribute": "data-overflowing",
           "values": [
-            "true"
+            ""
           ],
           "parts": [
             "env-panel-dock-row"
@@ -3665,7 +3682,7 @@
         {
           "attribute": "data-resizing",
           "values": [
-            "true"
+            ""
           ],
           "parts": [
             "env-panel-dock-panel"
@@ -3674,7 +3691,7 @@
         {
           "attribute": "data-scrolled",
           "values": [
-            "true"
+            ""
           ],
           "parts": [
             "env-panel-dock-header"
@@ -3683,7 +3700,7 @@
         {
           "attribute": "data-stacked",
           "values": [
-            "true"
+            ""
           ],
           "parts": [
             "env-panel-dock"
@@ -3692,7 +3709,7 @@
         {
           "attribute": "data-tabs",
           "values": [
-            "true"
+            ""
           ],
           "parts": [
             "env-panel-dock"
@@ -3718,6 +3735,10 @@
           "description": "The button back to the list, when one pane shows at a time."
         },
         {
+          "class": "env-panes-backdrop",
+          "description": "The backdrop behind the supporting sheet."
+        },
+        {
           "class": "env-panes-close",
           "description": "The supporting sheet's close button, which shows only while the pane is a sheet."
         },
@@ -3736,10 +3757,6 @@
         {
           "class": "env-panes-main",
           "description": "The main pane of supporting panes."
-        },
-        {
-          "class": "env-panes-scrim",
-          "description": "The scrim behind the supporting sheet."
         },
         {
           "class": "env-panes-supporting",
@@ -3845,7 +3862,7 @@
           "description": "The progress bar."
         },
         {
-          "class": "env-progress-heading",
+          "class": "env-progress-header",
           "description": "The row with the label and the value."
         },
         {
@@ -3880,7 +3897,7 @@
         {
           "attribute": "data-segmented",
           "values": [
-            "true"
+            ""
           ],
           "parts": [
             "env-progress"
@@ -4197,7 +4214,7 @@
         {
           "attribute": "data-disabled",
           "values": [
-            "true"
+            ""
           ],
           "parts": [
             "env-rich-text-editor",
@@ -4207,7 +4224,7 @@
         {
           "attribute": "data-invalid",
           "values": [
-            "true"
+            ""
           ],
           "parts": [
             "env-rich-text-editor-control"
@@ -4216,7 +4233,7 @@
         {
           "attribute": "data-readonly",
           "values": [
-            "true"
+            ""
           ],
           "parts": [
             "env-rich-text-editor"
@@ -4282,18 +4299,6 @@
       ],
       "states": [
         {
-          "attribute": "data-compact",
-          "values": [
-            "bar",
-            "drawer",
-            "none",
-            "rail"
-          ],
-          "parts": [
-            "env-scaffold"
-          ]
-        },
-        {
           "attribute": "data-env-layout",
           "values": [
             "scaffold"
@@ -4310,7 +4315,7 @@
           ]
         },
         {
-          "attribute": "data-expanded",
+          "attribute": "data-navigation-compact",
           "values": [
             "bar",
             "drawer",
@@ -4322,19 +4327,7 @@
           ]
         },
         {
-          "attribute": "data-large",
-          "values": [
-            "bar",
-            "drawer",
-            "none",
-            "rail"
-          ],
-          "parts": [
-            "env-scaffold"
-          ]
-        },
-        {
-          "attribute": "data-medium",
+          "attribute": "data-navigation-expanded",
           "values": [
             "bar",
             "drawer",
@@ -4356,6 +4349,30 @@
             "env-scaffold-bar",
             "env-scaffold-drawer",
             "env-scaffold-rail"
+          ]
+        },
+        {
+          "attribute": "data-navigation-large",
+          "values": [
+            "bar",
+            "drawer",
+            "none",
+            "rail"
+          ],
+          "parts": [
+            "env-scaffold"
+          ]
+        },
+        {
+          "attribute": "data-navigation-medium",
+          "values": [
+            "bar",
+            "drawer",
+            "none",
+            "rail"
+          ],
+          "parts": [
+            "env-scaffold"
           ]
         },
         {
@@ -4390,6 +4407,13 @@
       ],
       "uses": [
         "Button"
+      ],
+      "properties": [
+        {
+          "property": "--env-scaffold-sticky-top",
+          "use": "read",
+          "description": "How far below the window's top sticky content in the body sticks: under the top bar where the document scrolls."
+        }
       ]
     },
     "SegmentedControl": {
@@ -4405,12 +4429,12 @@
           "description": "One segment."
         },
         {
-          "class": "env-segmented-control-item-check",
-          "description": "The check on the chosen segment, in place of its icon."
-        },
-        {
           "class": "env-segmented-control-item-count",
           "description": "A segment's count."
+        },
+        {
+          "class": "env-segmented-control-item-indicator",
+          "description": "The check on the chosen segment, in place of its icon."
         },
         {
           "class": "env-segmented-control-item-label",
@@ -4435,7 +4459,7 @@
         {
           "attribute": "data-full-width",
           "values": [
-            "true"
+            ""
           ],
           "parts": [
             "env-segmented-control"
@@ -4588,11 +4612,11 @@
       ]
     },
     "Sheet": {
-      "root": "env-sheet-popup",
+      "root": "env-sheet",
       "source": "packages/ui/src/feedback/Sheet.tsx",
       "parts": [
         {
-          "class": "env-sheet-popup",
+          "class": "env-sheet",
           "description": "The sheet."
         },
         {
@@ -4617,7 +4641,7 @@
           "attribute": "data-ending-style",
           "values": [],
           "parts": [
-            "env-sheet-popup"
+            "env-sheet"
           ]
         },
         {
@@ -4626,7 +4650,7 @@
             ""
           ],
           "parts": [
-            "env-sheet-popup"
+            "env-sheet"
           ]
         },
         {
@@ -4635,7 +4659,7 @@
             ""
           ],
           "parts": [
-            "env-sheet-popup"
+            "env-sheet"
           ]
         },
         {
@@ -4646,7 +4670,7 @@
             "start"
           ],
           "parts": [
-            "env-sheet-popup",
+            "env-sheet",
             "env-sheet-viewport"
           ]
         },
@@ -4654,21 +4678,21 @@
           "attribute": "data-starting-style",
           "values": [],
           "parts": [
-            "env-sheet-popup"
+            "env-sheet"
           ]
         },
         {
           "attribute": "data-swiping",
           "values": [],
           "parts": [
-            "env-sheet-popup"
+            "env-sheet"
           ]
         },
         {
           "attribute": "data-width",
           "values": [],
           "parts": [
-            "env-sheet-popup"
+            "env-sheet"
           ]
         }
       ],
@@ -4676,6 +4700,7 @@
         "Dialog",
         "Icon",
         "IconButton",
+        "Overlay",
         "ResizeHandle",
         "Skeleton",
         "Surface",
@@ -4695,7 +4720,7 @@
           "description": "The field: the track's tint, which takes the pointer."
         },
         {
-          "class": "env-slider-heading",
+          "class": "env-slider-header",
           "description": "The row of the label and the value, over the track."
         },
         {
@@ -4728,7 +4753,7 @@
           ]
         },
         {
-          "attribute": "data-handle",
+          "attribute": "data-dragging",
           "values": [
             ""
           ],
@@ -4737,7 +4762,7 @@
           ]
         },
         {
-          "attribute": "data-pressed",
+          "attribute": "data-handle",
           "values": [
             ""
           ],
@@ -4791,7 +4816,7 @@
       "parts": [
         {
           "class": "env-spinner",
-          "description": "The spinner, or with data-show-label the status line that holds it and its label."
+          "description": "The spinner, data-label-hidden while its label is hidden, or else the status line that holds it and its label."
         },
         {
           "class": "env-spinner-arc",
@@ -4804,8 +4829,10 @@
       ],
       "states": [
         {
-          "attribute": "data-show-label",
-          "values": [],
+          "attribute": "data-label-hidden",
+          "values": [
+            ""
+          ],
           "parts": [
             "env-spinner"
           ]
@@ -4836,6 +4863,7 @@
         {
           "attribute": "data-background",
           "values": [
+            "default",
             "muted",
             "page",
             "raised",
@@ -4850,7 +4878,8 @@
           "values": [
             "full",
             "none",
-            "sm"
+            "sm",
+            "xl"
           ],
           "parts": [
             "env-surface"
@@ -4945,7 +4974,7 @@
           "description": "A cell's column name, shown when rows stack."
         },
         {
-          "class": "env-table-column-resize",
+          "class": "env-table-column-resize-handle",
           "description": "The handle that resizes a column."
         },
         {
@@ -5034,7 +5063,9 @@
         },
         {
           "attribute": "data-nowrap",
-          "values": [],
+          "values": [
+            ""
+          ],
           "parts": [
             "env-table-cell",
             "env-table-header-cell"
@@ -5042,7 +5073,9 @@
         },
         {
           "attribute": "data-numeric",
-          "values": [],
+          "values": [
+            ""
+          ],
           "parts": [
             "env-table-cell",
             "env-table-header-cell"
@@ -5064,7 +5097,7 @@
           ],
           "parts": [
             "env-table",
-            "env-table-column-resize"
+            "env-table-column-resize-handle"
           ]
         },
         {
@@ -5138,6 +5171,13 @@
           "parts": [
             "env-table-of-contents-link"
           ]
+        }
+      ],
+      "properties": [
+        {
+          "property": "--env-table-of-contents-depth",
+          "use": "read",
+          "description": "An item's level below the top, from 1, which the component sets on each nested item and its indent reads."
         }
       ]
     },
@@ -5264,6 +5304,7 @@
         {
           "attribute": "data-variant",
           "values": [
+            "body",
             "body-sm",
             "caption",
             "display",
@@ -5330,7 +5371,9 @@
         },
         {
           "attribute": "data-end-action",
-          "values": [],
+          "values": [
+            ""
+          ],
           "parts": [
             "env-text-field-control"
           ]
@@ -5344,7 +5387,9 @@
         },
         {
           "attribute": "data-label-floating",
-          "values": [],
+          "values": [
+            ""
+          ],
           "parts": [
             "env-text-field-control"
           ]
@@ -5352,7 +5397,7 @@
         {
           "attribute": "data-label-hidden",
           "values": [
-            "true"
+            ""
           ],
           "parts": [
             "env-text-field"
@@ -5360,7 +5405,9 @@
         },
         {
           "attribute": "data-prefix",
-          "values": [],
+          "values": [
+            ""
+          ],
           "parts": [
             "env-text-field-control"
           ]
@@ -5397,14 +5444,18 @@
         },
         {
           "attribute": "data-start-icon",
-          "values": [],
+          "values": [
+            ""
+          ],
           "parts": [
             "env-text-field-control"
           ]
         },
         {
           "attribute": "data-suffix",
-          "values": [],
+          "values": [
+            ""
+          ],
           "parts": [
             "env-text-field-control"
           ]
@@ -5412,7 +5463,7 @@
         {
           "attribute": "data-tall",
           "values": [
-            "true"
+            ""
           ],
           "parts": [
             "env-text-field"
@@ -5421,7 +5472,9 @@
         {
           "attribute": "data-variant",
           "values": [
-            "ghost"
+            "floating",
+            "ghost",
+            "outline"
           ],
           "parts": [
             "env-text-field-control"
@@ -5452,20 +5505,24 @@
       ]
     },
     "Textarea": {
-      "root": "env-text-field",
+      "root": "env-textarea",
       "source": "packages/ui/src/forms/Textarea.tsx",
       "parts": [
         {
-          "class": "env-textarea-resize-edge",
-          "description": "The edge that resizes the text area."
+          "class": "env-textarea",
+          "description": "The text area's root, beside env-field and env-text-field."
+        },
+        {
+          "class": "env-textarea-resize-handle",
+          "description": "The handle on the text area's bottom edge, which resizes it."
         }
       ],
       "states": [
         {
-          "attribute": "data-dragging",
+          "attribute": "data-resizing",
           "values": [],
           "parts": [
-            "env-textarea-resize-edge"
+            "env-textarea-resize-handle"
           ]
         }
       ],
@@ -5603,16 +5660,16 @@
           "description": "A notification's message."
         },
         {
-          "class": "env-toast-portal-theme",
-          "description": "The theme boundary around the notifications."
-        },
-        {
           "class": "env-toast-queued-count",
           "description": "The count of notifications waiting."
         },
         {
           "class": "env-toast-status-icon",
           "description": "The icon of a notification's tone."
+        },
+        {
+          "class": "env-toast-theme",
+          "description": "The theme boundary around the notifications."
         },
         {
           "class": "env-toast-viewport",
@@ -5639,7 +5696,7 @@
         {
           "attribute": "data-limited",
           "values": [
-            "true"
+            ""
           ],
           "parts": [
             "env-toast"
@@ -5822,6 +5879,18 @@
           "property": "--env-tooltip-outline",
           "description": "The edge."
         }
+      ],
+      "properties": [
+        {
+          "property": "--env-tooltip-opacity",
+          "use": "set",
+          "description": "How much of a tooltip's strong fill covers what is behind it."
+        },
+        {
+          "property": "--env-tooltip-shadow",
+          "use": "set",
+          "description": "The small shadow beside a tooltip; none where it is solid."
+        }
       ]
     },
     "TopBar": {
@@ -5931,15 +6000,6 @@
       ],
       "states": [
         {
-          "attribute": "data-active",
-          "values": [
-            ""
-          ],
-          "parts": [
-            "env-tree-item"
-          ]
-        },
-        {
           "attribute": "data-density",
           "values": [
             "lg",
@@ -5967,6 +6027,15 @@
           ],
           "parts": [
             "env-tree"
+          ]
+        },
+        {
+          "attribute": "data-highlighted",
+          "values": [
+            ""
+          ],
+          "parts": [
+            "env-tree-item"
           ]
         },
         {
@@ -6223,6 +6292,22 @@
         "TopBar"
       ]
     },
+    "Overlay": {
+      "root": null,
+      "parts": [
+        {
+          "class": "env-overlay-theme",
+          "description": "The theme boundary of a dialog's, a sheet's or the command palette's portal. It has no box, so their backdrop and positioner keep their own layers; the positioner is the env-window container."
+        }
+      ],
+      "states": [],
+      "usedBy": [
+        "CommandPalette",
+        "ConfirmDialog",
+        "Dialog",
+        "Sheet"
+      ]
+    },
     "PickerPopup": {
       "root": "env-picker-popup",
       "parts": [
@@ -6303,6 +6388,23 @@
           ]
         }
       ],
+      "properties": [
+        {
+          "property": "--env-popup-opacity",
+          "use": "set",
+          "description": "How much of a frosted popup's fill covers what is behind it."
+        },
+        {
+          "property": "--env-popup-blur",
+          "use": "set",
+          "description": "How much a frosted popup blurs what shows through it."
+        },
+        {
+          "property": "--env-popup-shadow",
+          "use": "set",
+          "description": "The soft shadow a frosted popup, the command palette and a dialog cast; none where they are solid."
+        }
+      ],
       "usedBy": [
         "Breadcrumbs",
         "CalendarHeatmap",
@@ -6358,17 +6460,17 @@
           ]
         },
         {
-          "attribute": "data-dragging",
-          "values": [],
+          "attribute": "data-grip",
+          "values": [
+            ""
+          ],
           "parts": [
             "env-resize-handle"
           ]
         },
         {
-          "attribute": "data-grip",
-          "values": [
-            ""
-          ],
+          "attribute": "data-resizing",
+          "values": [],
           "parts": [
             "env-resize-handle"
           ]
@@ -6446,9 +6548,9 @@
       ],
       "states": [
         {
-          "attribute": "data-centred",
+          "attribute": "data-centered",
           "values": [
-            "true"
+            ""
           ],
           "parts": [
             "env-time-list-row"
@@ -6464,7 +6566,7 @@
         {
           "attribute": "data-disabled",
           "values": [
-            "true"
+            ""
           ],
           "parts": [
             "env-time-list-row"
@@ -6473,7 +6575,7 @@
         {
           "attribute": "data-loop",
           "values": [
-            "true"
+            ""
           ],
           "parts": [
             "env-time-list-column"
@@ -6482,7 +6584,7 @@
         {
           "attribute": "data-part",
           "values": [
-            "dayPeriod",
+            "day-period",
             "hour",
             "minute"
           ],
@@ -6492,7 +6594,9 @@
         },
         {
           "attribute": "data-turning",
-          "values": [],
+          "values": [
+            ""
+          ],
           "parts": [
             "env-time-list-column"
           ]

@@ -38,11 +38,17 @@
       "$description": "The space between a control's icon and its label.",
       "$value": { "value": 0.4375, "unit": "rem" }
     },
-    "font-size": { "$value": "{font.size.body}" }
+    "font-size": {
+      "$description": "The text of a control and of a field's value: the body size, and 1 rem under a coarse pointer, where smaller text makes touch browsers zoom into a focused field.",
+      "$value": "{font.size.body}"
+    }
   },
   "icon": {
     "$type": "dimension",
-    "size-sm": { "$value": "{control.icon-size}" },
+    "size-sm": {
+      "$description": "A small icon, such as inside a control: the control's icon size, 1 rem.",
+      "$value": "{control.icon-size}"
+    },
     "size-md": {
       "$description": "An icon beside body text, such as in a tree or a select trigger.",
       "$value": { "value": 1.125, "unit": "rem" }
@@ -108,7 +114,7 @@
       "$value": { "value": 3.25, "unit": "rem" }
     }
   },
-  "counter-badge": {
+  "badge-count": {
     "$type": "dimension",
     "height": {
       "$description": "The height, and the least width, of a counter badge and a diff stat.",

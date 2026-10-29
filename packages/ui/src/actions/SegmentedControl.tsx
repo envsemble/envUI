@@ -18,6 +18,7 @@ import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { useDirectionScope } from '../internal/useDirection.js';
 import { useFormatters } from '../internal/useFormatters.js';
 import { Check } from '../icons/Check.js';
+import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/SegmentedControl.css';
 
@@ -102,7 +103,7 @@ export function SegmentedControl({
         aria-label={label}
         className={classNames('env-segmented-control', className)}
         data-size={size}
-        data-full-width={fullWidth || undefined}
+        data-full-width={flag(fullWidth)}
       >
         {items.map((item) => (
           <Segment key={item.value} item={item} fullWidth={fullWidth} />
@@ -139,7 +140,7 @@ function Segment({ item, fullWidth }: { item: SegmentedControlItem; fullWidth: b
       className="env-segmented-control-item"
     >
       {/* The chosen segment shows a check, in place of its icon where it has one. */}
-      <span className="env-icon env-segmented-control-item-check" aria-hidden="true">
+      <span className="env-icon env-segmented-control-item-indicator" aria-hidden="true">
         <Check />
       </span>
       {item.icon != null && <DecorativeIcon>{item.icon}</DecorativeIcon>}

@@ -3,7 +3,7 @@ import { usePointer, type PointerStep } from '../../motion/Motion';
 import { MotionStage } from '../../motion/MotionStage';
 
 const row = (index: number) => `.env-list-item:nth-child(${index} of .env-list-item) .env-button`;
-const close = '.env-sheet-popup .env-dialog-heading > .env-button';
+const close = '.env-sheet .env-dialog-heading > .env-button';
 
 /*
  * The pointer opens Mobile release: the sheet slides over with its details while the list stays

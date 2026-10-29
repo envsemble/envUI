@@ -21,6 +21,7 @@ import { ControlDefaults } from '../../internal/ControlDefaults.js';
 import { useMessages } from '../../internal/EnvUIContext.js';
 import { setRef } from '../../internal/setRef.js';
 import { PanelDockPanelContext } from './internal/PanelDockPanelContext.js';
+import { flag } from '../../internal/flag.js';
 import '../../styles/Base.css';
 import '../../styles/PanelDock.css';
 
@@ -96,7 +97,7 @@ export function Header({
       }}
       className={classNames('env-panel-dock-header', className)}
       // Also where the header sits deeper in the content, such as in a form.
-      data-scrolled={panel?.scrolled || undefined}
+      data-scrolled={flag(panel?.scrolled)}
     >
       <Grid className="env-panel-dock-heading">
         {createElement(`h${headingLevel}`, { className: 'env-panel-dock-title' }, title)}

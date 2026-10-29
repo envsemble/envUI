@@ -156,7 +156,7 @@ function ShapesFigure({ legend }: FigureWords) {
           <SearchField label="Search reports" showLabel={false} placeholder="Search reports" />
           <Alert tone="info" title="Two reports need a review" data-catalogue-mark="2" />
           <Row gap={2} align="center" justify="between">
-            <Badge tone="accent">New</Badge>
+            <Badge tone="primary">New</Badge>
             <Button data-catalogue-mark="3">Share</Button>
           </Row>
         </Surface>

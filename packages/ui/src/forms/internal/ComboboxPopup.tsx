@@ -121,7 +121,7 @@ function ComboboxOption<Item extends ComboboxItem>({
           <Check />
         </BaseCombobox.ItemIndicator>
       }
-      icon={startSlot ? <span className="env-combobox-leading">{item.start}</span> : undefined}
+      icon={startSlot ? <span className="env-combobox-start">{item.start}</span> : undefined}
       label={item.label}
       description={
         item.description ? (

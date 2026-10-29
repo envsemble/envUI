@@ -67,7 +67,7 @@ examples:
 
 ```
 
-1. **Dialog** (`env-dialog-popup`)
+1. **Dialog** (`env-dialog`)
 2. **Question** (`env-dialog-title`, `title`)
 3. **Description** (`env-dialog-description`, `description`)
 4. **Cancel** (`env-dialog-actions > env-button:first-child`, `cancelLabel`)
@@ -214,7 +214,7 @@ Without a `trigger`, open it with `open` and `onOpenChange`, which receives the 
 
 ### Customize
 
-A ConfirmDialog is an alert dialog with Dialog's parts: the surface, `env-dialog-popup`, the question, `env-dialog-title`, the description, `env-dialog-description`, and the actions, `env-dialog-actions`, with Cancel first and the confirm button last. The error is an Alert, `env-alert`, above the actions. Its surface looks as [Dialog's](dialog.md#customize) does.
+A ConfirmDialog is an alert dialog with Dialog's parts: the surface, `env-dialog`, the question, `env-dialog-title`, the description, `env-dialog-description`, and the actions, `env-dialog-actions`, with Cancel first and the confirm button last. The error is an Alert, `env-alert`, above the actions. Its surface looks as [Dialog's](dialog.md#customize) does.
 
 ## Changelog
 

@@ -40,7 +40,7 @@
       );
     cursor: text;
   }
-  .env-combobox .env-combobox-control[data-actions='2'] {
+  .env-combobox .env-combobox-control[data-action-count='2'] {
     --env-combobox-actions: 2;
   }
   /* A floating field is as tall as a floating TextField, with small actions. */
@@ -83,28 +83,28 @@
   }
 
   /* Leading content, such as an avatar or an icon, takes the size of its slot wherever it appears. */
-  .env-combobox-leading {
-    --env-combobox-leading-size: 1.5rem;
+  .env-combobox-start {
+    --env-combobox-start-size: 1.5rem;
     flex: 0 0 auto;
     display: grid;
     place-items: center;
-    inline-size: var(--env-combobox-leading-size);
-    block-size: var(--env-combobox-leading-size);
+    inline-size: var(--env-combobox-start-size);
+    block-size: var(--env-combobox-start-size);
     color: var(--env-color-fg-muted);
   }
   /* An avatar of the default size takes the slot's; one given a size keeps it. Between the two in
      specificity, :not(env-none) being one type selector, which every element matches, so neither
      depends on which style sheet a bundler puts first. */
-  :where(.env-combobox-leading) > .env-avatar:not(env-none) {
-    --env-avatar-size: var(--env-combobox-leading-size);
+  :where(.env-combobox-start) > .env-avatar:not(env-none) {
+    --env-avatar-size: var(--env-combobox-start-size);
   }
-  .env-combobox-leading > svg,
-  .env-combobox-leading > .env-icon {
-    inline-size: min(var(--env-control-icon-size), var(--env-combobox-leading-size));
-    block-size: min(var(--env-control-icon-size), var(--env-combobox-leading-size));
+  .env-combobox-start > svg,
+  .env-combobox-start > .env-icon {
+    inline-size: min(var(--env-control-icon-size), var(--env-combobox-start-size));
+    block-size: min(var(--env-control-icon-size), var(--env-combobox-start-size));
   }
-  .env-combobox:not([data-tall]) .env-combobox-value-leading {
-    --env-combobox-leading-size: 1.25rem;
+  .env-combobox:not([data-tall]) .env-combobox-value-icon {
+    --env-combobox-start-size: 1.25rem;
   }
 
   /* Color properties: a chip's colors, which an application sets on the chips through its own CSS,
@@ -131,21 +131,21 @@
     border-radius: var(--env-radius-sm);
     background: var(--env-combobox-chip-container, var(--env-color-bg-neutral-muted));
     color: var(--env-combobox-chip-content, var(--env-color-fg-default));
-    font: var(--env-body-font-weight) var(--env-font-size-label) / 1.25 var(--env-font-family);
+    font: var(--env-font-weight-body) var(--env-font-size-label) / 1.25 var(--env-font-family);
     cursor: default;
     outline: none;
   }
   .env-combobox:not([data-tall]) .env-combobox-chip {
-    font-size: var(--env-font-size-label-small);
+    font-size: var(--env-font-size-label-sm);
   }
   .env-combobox-chip:not(:has(> .env-combobox-chip-remove)) {
     padding-inline-end: var(--env-space-2);
   }
-  .env-combobox-chip:has(> .env-combobox-leading) {
+  .env-combobox-chip:has(> .env-combobox-start) {
     padding-inline-start: 0.1875rem;
   }
-  .env-combobox-chip > .env-combobox-leading {
-    --env-combobox-leading-size: calc(var(--env-combobox-row) - 0.375rem);
+  .env-combobox-chip > .env-combobox-start {
+    --env-combobox-start-size: calc(var(--env-combobox-row) - 0.375rem);
   }
   .env-combobox-chip:focus-visible {
     outline: 0.125rem solid var(--env-color-border-focus);
@@ -208,8 +208,8 @@
   .env-combobox-item[data-selected] {
     font-weight: var(--env-font-weight-medium);
   }
-  .env-combobox-popup .env-combobox-leading {
-    --env-combobox-leading-size: 1.25rem;
+  .env-combobox-popup .env-combobox-start {
+    --env-combobox-start-size: 1.25rem;
   }
   .env-combobox-group-label {
     padding-block: var(--env-popup-padding) calc(0.1 * var(--env-control-height-md));
@@ -227,7 +227,7 @@
     min-block-size: var(--env-control-height-md);
     padding: var(--env-space-1) var(--env-popup-row-padding-inline);
     color: var(--env-color-fg-muted);
-    font: var(--env-body-font-weight) var(--env-font-size-body) / 1.35 var(--env-font-family);
+    font: var(--env-font-weight-body) var(--env-font-size-body) / 1.35 var(--env-font-family);
     overflow-wrap: anywhere;
   }
 

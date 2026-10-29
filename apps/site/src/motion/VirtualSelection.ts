@@ -236,7 +236,7 @@ const copied = [
  * Paints a field's selection over it: a copy of its text, in the field's place and box, whose
  * selected part takes the selection's colours and whose rest is transparent, so the field shows
  * through. A field of the preview's content has it in the preview's overlay layer, first, under
- * what opens there, so a dialog and its scrim cover it as they cover the field (Stage.css hides it
+ * what opens there, so a dialog and its backdrop cover it as they cover the field (Stage.css hides it
  * while a modal one is open, which takes the field's focus); a field in what opens there, such as
  * a dialog, or a preview without that layer, has it in the box the field is placed in. The
  * component's own elements stay as they are.

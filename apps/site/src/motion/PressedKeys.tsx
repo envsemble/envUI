@@ -4,7 +4,7 @@ import { usePreviewLayer } from './Motion';
 
 /**
  * The keys an animated figure's keyboard presses, such as Ctrl+K or Enter, as a key cap in the top
- * start corner of its stage, over what opens there, scrim included, since nothing else shows a key
+ * start corner of its stage, over what opens there, backdrop included, since nothing else shows a key
  * that a pointer no one sees presses. `press` counts the presses, so the cap comes again with each;
  * `keys` null shows none.
  *

@@ -454,7 +454,7 @@ export function Tree<T extends TreeItem>({
               title={item.title}
               className="env-tree-item"
               data-id={item.id}
-              data-active={index === activeIndex ? '' : undefined}
+              data-highlighted={index === activeIndex ? '' : undefined}
               style={
                 {
                   '--env-tree-depth': item.depth,

@@ -59,10 +59,10 @@
     margin-block-start: var(--env-space-6);
   }
   .env-prose h1 {
-    font: var(--env-type-h1);
+    font: var(--env-type-headline);
   }
   .env-prose :where(h2, h3, h4, h5, h6) {
-    font: var(--env-type-h2);
+    font: var(--env-type-title);
   }
   .env-prose p {
     font: var(--env-type-body);
@@ -169,7 +169,7 @@
   .env-prose table {
     inline-size: 100%;
     border-collapse: collapse;
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
     text-align: start;
   }
   /* Words in a cell break only where they would overflow it, so a column keeps room for its longest
@@ -184,7 +184,7 @@
     font-weight: var(--env-font-weight-medium);
   }
   .env-prose .footnotes {
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
     color: var(--env-color-fg-muted);
   }
 }

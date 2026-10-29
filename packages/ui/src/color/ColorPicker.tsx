@@ -26,6 +26,7 @@ import {
   type ColorFormat,
   type ColorValue,
 } from './internal/colorValue.js';
+import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/ColorPicker.css';
 
@@ -234,9 +235,9 @@ export function ColorPicker({
         aria-describedby={describedByIds}
         aria-disabled={disabled || undefined}
         className={classNames('env-color-picker', className)}
-        data-disabled={disabled || undefined}
-        data-readonly={readOnly || undefined}
-        data-invalid={error != null || undefined}
+        data-disabled={flag(disabled)}
+        data-readonly={flag(readOnly)}
+        data-invalid={flag(error != null)}
       >
         {showLabel && (
           <span id={`${id}-label`} className="env-color-picker-label">
@@ -259,8 +260,8 @@ export function ColorPicker({
           <div
             className="env-color-picker-values"
             data-formats="together"
-            data-alpha={alpha || undefined}
-            data-eye-dropper={eyeDropperButton ? true : undefined}
+            data-alpha={flag(alpha)}
+            data-eye-dropper={flag(eyeDropperButton)}
           >
             {formats.map((each, index) => (
               <div
@@ -287,11 +288,7 @@ export function ColorPicker({
             ))}
           </div>
         ) : (
-          <div
-            className="env-color-picker-values"
-            data-format={format}
-            data-alpha={alpha || undefined}
-          >
+          <div className="env-color-picker-values" data-format={format} data-alpha={flag(alpha)}>
             {formats.length > 1 && (
               <div className="env-color-picker-format">
                 <Menu.Root

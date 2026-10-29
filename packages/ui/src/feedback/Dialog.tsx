@@ -217,7 +217,7 @@ export function Dialog({
               <BaseDialog.Popup
                 render={<DialogSurface radius="xl" />}
                 {...popupProps}
-                className={classNames('env-dialog-popup', className)}
+                className={classNames('env-dialog', className)}
                 data-placement={placement}
                 data-width={width}
                 aria-busy={pending || skeleton || undefined}

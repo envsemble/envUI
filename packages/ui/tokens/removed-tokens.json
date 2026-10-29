@@ -1,18 +1,6 @@
 {
   "$comment": "Every custom property that envUI 0.x or 1.0’s development defined and 1.0 no longer does, with what replaces it. prefixed: names that only take the --env- prefix. renamed: names that changed beyond the prefix, to a token (replacement) or a hand-written property (cssVariable); a name of 1.0’s development has the prefix already, and colorPropertyOf names the class of the component whose color property, which doesn't inherit, the cssVariable is, so the codemods report a declaration on a wrapper. aliases: the 0.7 alias tokens, removed with the prefix, each to the token of its role or the value of a fixed color. removed: names with no counterpart, with the token to use instead where there is one, which does not take its place as it is, such as a color token for a state opacity; a name that one token replaces as it is goes in renamed, which the codemods rewrite: every use, and a declaration only where no other name becomes the same token, since a declaration of a name merged into a token with others, such as --control-height-small, would set the token for all of them, so the codemods report it. The token build turns this into src/generated/token-migration.json, the map that the codemods (v1-classes) and the migration guide read.",
   "prefixed": [
-    "--body-font-weight",
-    "--color-bg-accent-emphasis",
-    "--color-bg-accent-muted",
-    "--color-bg-accent-subtle-hover",
-    "--color-bg-accent-subtle-pressed",
-    "--color-bg-brand-emphasis",
-    "--color-bg-brand-emphasis-hover",
-    "--color-bg-brand-emphasis-pressed",
-    "--color-bg-brand-muted",
-    "--color-bg-brand-strong",
-    "--color-bg-brand-strong-hover",
-    "--color-bg-brand-strong-pressed",
     "--color-bg-danger-emphasis",
     "--color-bg-danger-muted",
     "--color-bg-danger-strong",
@@ -26,9 +14,6 @@
     "--color-bg-done-emphasis",
     "--color-bg-done-muted",
     "--color-bg-field",
-    "--color-bg-important-strong",
-    "--color-bg-important-strong-hover",
-    "--color-bg-important-strong-pressed",
     "--color-bg-info-strong",
     "--color-bg-info-strong-hover",
     "--color-bg-info-strong-pressed",
@@ -47,8 +32,6 @@
     "--color-bg-neutral-subtle",
     "--color-bg-neutral-subtle-hover",
     "--color-bg-neutral-subtle-pressed",
-    "--color-bg-overlay",
-    "--color-bg-overlay-muted",
     "--color-bg-page",
     "--color-bg-page-hover",
     "--color-bg-page-pressed",
@@ -72,7 +55,6 @@
     "--color-bg-warning-muted",
     "--color-bg-warning-subtle-hover",
     "--color-bg-warning-subtle-pressed",
-    "--color-border-accent-muted",
     "--color-border-danger-muted",
     "--color-border-danger-strong",
     "--color-border-default",
@@ -87,7 +69,6 @@
     "--color-border-success-muted",
     "--color-border-success-strong",
     "--color-border-warning-muted",
-    "--color-fg-accent",
     "--color-fg-control",
     "--color-fg-danger",
     "--color-fg-default",
@@ -120,12 +101,8 @@
     "--field-floating-height",
     "--font-family",
     "--font-size-body",
-    "--font-size-body-small",
     "--font-size-caption",
-    "--font-size-heading",
-    "--font-size-heading-small",
     "--font-size-label",
-    "--font-size-label-small",
     "--icon-size-lg",
     "--icon-size-md",
     "--icon-size-sm",
@@ -135,7 +112,6 @@
     "--motion-ease",
     "--motion-ease-enter",
     "--motion-ease-exit",
-    "--motion-ease-standard",
     "--radius-row-inner",
     "--radius-row-outer",
     "--radius-row-single",
@@ -166,37 +142,19 @@
     "--type-body-font-size",
     "--type-body-font-weight",
     "--type-body-letter-spacing",
-    "--type-body-line-height",
-    "--type-body-small",
-    "--type-body-small-font-family",
-    "--type-body-small-font-size",
-    "--type-body-small-font-weight",
-    "--type-body-small-letter-spacing",
-    "--type-body-small-line-height",
-    "--type-h1",
-    "--type-h1-font-family",
-    "--type-h1-font-size",
-    "--type-h1-font-weight",
-    "--type-h1-letter-spacing",
-    "--type-h1-line-height",
-    "--type-h2",
-    "--type-h2-font-family",
-    "--type-h2-font-size",
-    "--type-h2-font-weight",
-    "--type-h2-letter-spacing",
-    "--type-h2-line-height"
+    "--type-body-line-height"
   ],
   "renamed": {
     "--color-border-accent": {
-      "replacement": "color.border.accent.emphasis",
+      "replacement": "color.border.primary.emphasis",
       "note": "The solid edge is the tone’s emphasis now, as a solid fill is; the plain name is its translucent edge."
     },
     "--color-border-accent-hover": {
-      "replacement": "color.border.accent.emphasis.hover",
+      "replacement": "color.border.primary.emphasis.hover",
       "note": "The solid edge is the tone’s emphasis now, as a solid fill is; the plain name is its translucent edge."
     },
     "--color-border-accent-pressed": {
-      "replacement": "color.border.accent.emphasis.pressed",
+      "replacement": "color.border.primary.emphasis.pressed",
       "note": "The solid edge is the tone’s emphasis now, as a solid fill is; the plain name is its translucent edge."
     },
     "--color-border-danger": {
@@ -212,7 +170,7 @@
       "note": "The solid edge is the tone’s emphasis now, as a solid fill is; the plain name is its translucent edge."
     },
     "--color-border-accent-emphasis": {
-      "replacement": "color.border.accent",
+      "replacement": "color.border.primary",
       "note": "The translucent edge is the tone’s plain border now, between its muted edge and its solid emphasis."
     },
     "--color-border-danger-emphasis": {
@@ -329,11 +287,11 @@
       "note": "0.7 defined it, but envUI didn't read it; the muted border's pressed state is the role it named."
     },
     "--color-control-blue-hover": {
-      "replacement": "color.bg.brand.strong.hover",
+      "replacement": "color.bg.primary.strong.hover",
       "note": "0.7 defined it, but envUI didn't read it; the brand's strong fill is the role it named."
     },
     "--color-control-blue-pressed": {
-      "replacement": "color.bg.brand.strong.pressed",
+      "replacement": "color.bg.primary.strong.pressed",
       "note": "0.7 defined it, but envUI didn't read it; the brand's strong fill is the role it named."
     },
     "--color-fill-hover": {
@@ -399,45 +357,474 @@
       "note": "An alert's icon color, which its dismiss button takes too, is the public color property --env-alert-icon."
     },
     "--env-color-avatar-bg-teal": {
-      "replacement": "color.avatar.bg.seafoam",
+      "replacement": "color.bg.avatar.seafoam",
       "note": "The avatar hues are named for their colors: teal is seafoam. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-seafoam and --env-color-avatar-figure-seafoam."
     },
     "--env-color-avatar-bg-green": {
-      "replacement": "color.avatar.bg.sage",
+      "replacement": "color.bg.avatar.sage",
       "note": "The avatar hues are named for their colors: green is sage. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-sage and --env-color-avatar-figure-sage."
     },
     "--env-color-avatar-bg-amber": {
-      "replacement": "color.avatar.bg.butter",
+      "replacement": "color.bg.avatar.butter",
       "note": "The avatar hues are named for their colors: amber is butter. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-butter and --env-color-avatar-figure-butter."
     },
     "--env-color-avatar-bg-red": {
-      "replacement": "color.avatar.bg.blush",
+      "replacement": "color.bg.avatar.blush",
       "note": "The avatar hues are named for their colors: red is blush. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-blush and --env-color-avatar-figure-blush."
     },
     "--env-color-avatar-bg-violet": {
-      "replacement": "color.avatar.bg.periwinkle",
+      "replacement": "color.bg.avatar.periwinkle",
       "note": "The avatar hues are named for their colors: violet is periwinkle. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-periwinkle and --env-color-avatar-figure-periwinkle."
     },
     "--env-color-avatar-bg-purple": {
-      "replacement": "color.avatar.bg.orchid",
+      "replacement": "color.bg.avatar.orchid",
       "note": "The avatar hues are named for their colors: purple is orchid. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-orchid and --env-color-avatar-figure-orchid."
     },
     "--env-color-avatar-bg-slate": {
-      "replacement": "color.avatar.bg.oat",
+      "replacement": "color.bg.avatar.oat",
       "note": "The avatar hues are named for their colors: slate is oat. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-oat and --env-color-avatar-figure-oat."
+    },
+    "--color-bg-overlay": {
+      "replacement": "color.bg.backdrop",
+      "note": "The layer behind a modal is the backdrop, as Base UI and the Colors page name it."
+    },
+    "--color-bg-overlay-muted": {
+      "replacement": "color.bg.backdrop.muted",
+      "note": "The layer behind a modal is the backdrop, as Base UI and the Colors page name it."
+    },
+    "--env-color-bg-overlay": {
+      "replacement": "color.bg.backdrop",
+      "note": "The layer behind a modal is the backdrop, as Base UI and the Colors page name it."
+    },
+    "--env-color-bg-overlay-muted": {
+      "replacement": "color.bg.backdrop.muted",
+      "note": "The layer behind a modal is the backdrop, as Base UI and the Colors page name it."
+    },
+    "--env-z-overlay": {
+      "replacement": "z.backdrop",
+      "note": "The layer behind a modal is the backdrop, as Base UI and the Colors page name it."
+    },
+    "--env-z-peek": {
+      "replacement": "z.supporting-pane",
+      "note": "The stacking levels say what they hold: popups, and a supporting pane over its main pane."
+    },
+    "--env-z-popover": {
+      "replacement": "z.popup",
+      "note": "The stacking levels say what they hold: popups, and a supporting pane over its main pane."
+    },
+    "--body-font-weight": {
+      "replacement": "font.weight.body",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--font-size-body-small": {
+      "replacement": "font.size.body-sm",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--font-size-heading": {
+      "replacement": "font.size.headline",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--font-size-heading-small": {
+      "replacement": "font.size.title",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--font-size-label-small": {
+      "replacement": "font.size.label-sm",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--type-body-small": {
+      "replacement": "type.body-sm",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--type-body-small-font-family": {
+      "cssVariable": "--env-type-body-sm-font-family",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--type-body-small-font-size": {
+      "cssVariable": "--env-type-body-sm-font-size",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--type-body-small-font-weight": {
+      "cssVariable": "--env-type-body-sm-font-weight",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--type-body-small-letter-spacing": {
+      "cssVariable": "--env-type-body-sm-letter-spacing",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--type-body-small-line-height": {
+      "cssVariable": "--env-type-body-sm-line-height",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--type-h1": {
+      "replacement": "type.headline",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--type-h1-font-family": {
+      "cssVariable": "--env-type-headline-font-family",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--type-h1-font-size": {
+      "cssVariable": "--env-type-headline-font-size",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--type-h1-font-weight": {
+      "cssVariable": "--env-type-headline-font-weight",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--type-h1-letter-spacing": {
+      "cssVariable": "--env-type-headline-letter-spacing",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--type-h1-line-height": {
+      "cssVariable": "--env-type-headline-line-height",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--type-h2": {
+      "replacement": "type.title",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--type-h2-font-family": {
+      "cssVariable": "--env-type-title-font-family",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--type-h2-font-size": {
+      "cssVariable": "--env-type-title-font-size",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--type-h2-font-weight": {
+      "cssVariable": "--env-type-title-font-weight",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--type-h2-letter-spacing": {
+      "cssVariable": "--env-type-title-letter-spacing",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--type-h2-line-height": {
+      "cssVariable": "--env-type-title-line-height",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-body-font-weight": {
+      "replacement": "font.weight.body",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-font-size-body-small": {
+      "replacement": "font.size.body-sm",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-font-size-heading": {
+      "replacement": "font.size.headline",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-font-size-heading-small": {
+      "replacement": "font.size.title",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-font-size-label-small": {
+      "replacement": "font.size.label-sm",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-body-small": {
+      "replacement": "type.body-sm",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-h1": {
+      "replacement": "type.headline",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-h2": {
+      "replacement": "type.title",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-body-small-font-family": {
+      "cssVariable": "--env-type-body-sm-font-family",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-body-small-font-size": {
+      "cssVariable": "--env-type-body-sm-font-size",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-body-small-font-weight": {
+      "cssVariable": "--env-type-body-sm-font-weight",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-body-small-letter-spacing": {
+      "cssVariable": "--env-type-body-sm-letter-spacing",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-body-small-line-height": {
+      "cssVariable": "--env-type-body-sm-line-height",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-h1-font-family": {
+      "cssVariable": "--env-type-headline-font-family",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-h1-font-size": {
+      "cssVariable": "--env-type-headline-font-size",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-h1-font-weight": {
+      "cssVariable": "--env-type-headline-font-weight",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-h1-letter-spacing": {
+      "cssVariable": "--env-type-headline-letter-spacing",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-h1-line-height": {
+      "cssVariable": "--env-type-headline-line-height",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-h2-font-family": {
+      "cssVariable": "--env-type-title-font-family",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-h2-font-size": {
+      "cssVariable": "--env-type-title-font-size",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-h2-font-weight": {
+      "cssVariable": "--env-type-title-font-weight",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-h2-letter-spacing": {
+      "cssVariable": "--env-type-title-letter-spacing",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-h2-line-height": {
+      "cssVariable": "--env-type-title-line-height",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--motion-ease-standard": {
+      "replacement": "motion.ease",
+      "note": "The standard easing is --env-motion-ease; the alias, the same curve, is gone."
+    },
+    "--env-motion-ease-standard": {
+      "replacement": "motion.ease",
+      "note": "The standard easing is --env-motion-ease; the alias, the same curve, is gone."
+    },
+    "--env-color-avatar-bg": {
+      "replacement": "color.bg.avatar",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-bg-blush": {
+      "replacement": "color.bg.avatar.blush",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-bg-butter": {
+      "replacement": "color.bg.avatar.butter",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-bg-oat": {
+      "replacement": "color.bg.avatar.oat",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-bg-orchid": {
+      "replacement": "color.bg.avatar.orchid",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-bg-periwinkle": {
+      "replacement": "color.bg.avatar.periwinkle",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-bg-powder": {
+      "replacement": "color.bg.avatar.powder",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-bg-sage": {
+      "replacement": "color.bg.avatar.sage",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-bg-seafoam": {
+      "replacement": "color.bg.avatar.seafoam",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-fg": {
+      "replacement": "color.fg.avatar",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-fg-blush": {
+      "replacement": "color.fg.avatar.blush",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-fg-butter": {
+      "replacement": "color.fg.avatar.butter",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-fg-oat": {
+      "replacement": "color.fg.avatar.oat",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-fg-orchid": {
+      "replacement": "color.fg.avatar.orchid",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-fg-periwinkle": {
+      "replacement": "color.fg.avatar.periwinkle",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-fg-powder": {
+      "replacement": "color.fg.avatar.powder",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-fg-sage": {
+      "replacement": "color.fg.avatar.sage",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-fg-seafoam": {
+      "replacement": "color.fg.avatar.seafoam",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-figure": {
+      "replacement": "color.fg.avatar-figure",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-figure-blush": {
+      "replacement": "color.fg.avatar-figure.blush",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-figure-butter": {
+      "replacement": "color.fg.avatar-figure.butter",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-figure-oat": {
+      "replacement": "color.fg.avatar-figure.oat",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-figure-orchid": {
+      "replacement": "color.fg.avatar-figure.orchid",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-figure-periwinkle": {
+      "replacement": "color.fg.avatar-figure.periwinkle",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-figure-powder": {
+      "replacement": "color.fg.avatar-figure.powder",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-figure-sage": {
+      "replacement": "color.fg.avatar-figure.sage",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-figure-seafoam": {
+      "replacement": "color.fg.avatar-figure.seafoam",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-fg-link-on-tint": {
+      "replacement": "color.fg.link-on-muted",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-fg-link-on-tint-hover": {
+      "replacement": "color.fg.link-on-muted.hover",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-fg-link-on-tint-pressed": {
+      "replacement": "color.fg.link-on-muted.pressed",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-list-item-bg": {
+      "replacement": "color.bg.list-item",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-list-item-bg-hover": {
+      "replacement": "color.bg.list-item.hover",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-list-item-bg-pressed": {
+      "replacement": "color.bg.list-item.pressed",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-rating-star": {
+      "replacement": "color.fg.rating-star",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-counter-badge-height": {
+      "replacement": "badge-count.height",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-checkbox-icon": {
+      "cssVariable": "--env-checkbox-selected-content",
+      "colorPropertyOf": "env-checkbox",
+      "note": "The check mark's color is the selected-content role, as on every component."
+    },
+    "--color-bg-accent-emphasis": {
+      "replacement": "color.bg.primary.solid",
+      "note": "The blue roles are primary, and the purple of accent actions is accent."
+    },
+    "--color-bg-accent-muted": {
+      "replacement": "color.bg.primary.muted",
+      "note": "The blue roles are primary, and the purple of accent actions is accent."
+    },
+    "--color-bg-accent-subtle-hover": {
+      "replacement": "color.bg.primary.subtle.hover",
+      "note": "The blue roles are primary, and the purple of accent actions is accent."
+    },
+    "--color-bg-accent-subtle-pressed": {
+      "replacement": "color.bg.primary.subtle.pressed",
+      "note": "The blue roles are primary, and the purple of accent actions is accent."
+    },
+    "--color-bg-brand-emphasis": {
+      "replacement": "color.bg.primary.emphasis",
+      "note": "The blue roles are primary, and the purple of accent actions is accent."
+    },
+    "--color-bg-brand-emphasis-hover": {
+      "replacement": "color.bg.primary.emphasis.hover",
+      "note": "The blue roles are primary, and the purple of accent actions is accent."
+    },
+    "--color-bg-brand-emphasis-pressed": {
+      "replacement": "color.bg.primary.emphasis.pressed",
+      "note": "The blue roles are primary, and the purple of accent actions is accent."
+    },
+    "--color-bg-brand-muted": {
+      "replacement": "color.bg.primary.muted",
+      "note": "The blue roles are primary, and the purple of accent actions is accent."
+    },
+    "--color-bg-brand-strong": {
+      "replacement": "color.bg.primary.strong",
+      "note": "The blue roles are primary, and the purple of accent actions is accent."
+    },
+    "--color-bg-brand-strong-hover": {
+      "replacement": "color.bg.primary.strong.hover",
+      "note": "The blue roles are primary, and the purple of accent actions is accent."
+    },
+    "--color-bg-brand-strong-pressed": {
+      "replacement": "color.bg.primary.strong.pressed",
+      "note": "The blue roles are primary, and the purple of accent actions is accent."
+    },
+    "--color-bg-important-strong": {
+      "replacement": "color.bg.accent.strong",
+      "note": "The blue roles are primary, and the purple of accent actions is accent."
+    },
+    "--color-bg-important-strong-hover": {
+      "replacement": "color.bg.accent.strong.hover",
+      "note": "The blue roles are primary, and the purple of accent actions is accent."
+    },
+    "--color-bg-important-strong-pressed": {
+      "replacement": "color.bg.accent.strong.pressed",
+      "note": "The blue roles are primary, and the purple of accent actions is accent."
+    },
+    "--color-border-accent-muted": {
+      "replacement": "color.border.primary.muted",
+      "note": "The blue roles are primary, and the purple of accent actions is accent."
+    },
+    "--color-fg-accent": {
+      "replacement": "color.fg.primary",
+      "note": "The blue roles are primary, and the purple of accent actions is accent."
     }
   },
   "aliases": {
     "--color-accent": {
-      "replacement": "color.bg.important.strong",
+      "replacement": "color.bg.accent.strong",
       "component": "Important buttons"
     },
     "--color-accent-hover": {
-      "replacement": "color.bg.important.strong.hover",
+      "replacement": "color.bg.accent.strong.hover",
       "component": "Important buttons"
     },
     "--color-accent-pressed": {
-      "replacement": "color.bg.important.strong.pressed",
+      "replacement": "color.bg.accent.strong.pressed",
       "component": "Important buttons"
     },
     "--color-action-strip": {
@@ -445,12 +832,12 @@
       "component": "The action strip of a card"
     },
     "--color-avatar": {
-      "replacement": "color.avatar.bg",
+      "replacement": "color.bg.avatar",
       "component": "Avatars",
       "note": "A system token named for avatars now."
     },
     "--color-avatar-figure": {
-      "replacement": "color.avatar.figure",
+      "replacement": "color.fg.avatar-figure",
       "component": "Avatars",
       "note": "A system token named for avatars now."
     },
@@ -461,11 +848,11 @@
       "replacement": "color.border.muted"
     },
     "--color-calendar-selected": {
-      "replacement": "color.bg.brand.emphasis",
+      "replacement": "color.bg.primary.emphasis",
       "component": "Calendars"
     },
     "--color-calendar-today": {
-      "replacement": "color.border.accent.emphasis",
+      "replacement": "color.border.primary.emphasis",
       "component": "Calendars"
     },
     "--color-canvas": {
@@ -476,7 +863,7 @@
       "component": "Fixed dark page color"
     },
     "--color-checkbox": {
-      "replacement": "color.bg.brand.emphasis",
+      "replacement": "color.bg.primary.emphasis",
       "component": "Checkboxes",
       "note": "Light took the brand’s strong fill, the same color as its emphasis fill there: one role in every theme now."
     },
@@ -485,12 +872,12 @@
       "component": "Checkboxes"
     },
     "--color-checkbox-hover": {
-      "replacement": "color.bg.brand.emphasis.hover",
+      "replacement": "color.bg.primary.emphasis.hover",
       "component": "Checkboxes",
       "note": "Light took the brand’s strong fill, the same color as its emphasis fill there: one role in every theme now."
     },
     "--color-checkbox-pressed": {
-      "replacement": "color.bg.brand.emphasis.pressed",
+      "replacement": "color.bg.primary.emphasis.pressed",
       "component": "Checkboxes",
       "note": "Light took the brand’s strong fill, the same color as its emphasis fill there: one role in every theme now."
     },
@@ -511,11 +898,11 @@
       "component": "Chips"
     },
     "--color-chip-text": {
-      "replacement": "color.fg.accent",
+      "replacement": "color.fg.primary",
       "component": "Chips"
     },
     "--color-control-blue": {
-      "replacement": "color.bg.brand.emphasis",
+      "replacement": "color.bg.primary.emphasis",
       "component": "Spinners, sliders and meters",
       "note": "Light took the brand’s strong fill, the same color as its emphasis fill there: one role in every theme now."
     },
@@ -535,8 +922,8 @@
       "replacement": "color.bg.raised"
     },
     "--color-dialog-overlay": {
-      "replacement": "color.bg.overlay",
-      "note": "0.7's was opaque, #1f1f1f (hsl(0 0% 12.157%) in both themes), and the dialog backdrop made it 55% opaque with --state-dialog-overlay-opacity, which is removed. The role is the scrim itself, 55% opaque: paint it as it is, since a style that applies its own opacity now applies it twice. For the opaque color, write #1f1f1f."
+      "replacement": "color.bg.backdrop",
+      "note": "0.7's was opaque, #1f1f1f (hsl(0 0% 12.157%) in both themes), and the dialog backdrop made it 55% opaque with --state-dialog-overlay-opacity, which is removed. The role is the backdrop itself, 55% opaque: paint it as it is, since a style that applies its own opacity now applies it twice. For the opaque color, write #1f1f1f."
     },
     "--color-direction-link": {
       "replacement": "color.bg.raised",
@@ -555,7 +942,7 @@
       "component": "Pager links"
     },
     "--color-direction-link-icon": {
-      "replacement": "color.fg.accent",
+      "replacement": "color.fg.primary",
       "component": "Pager links"
     },
     "--color-direction-link-label": {
@@ -577,7 +964,7 @@
       "replacement": "color.bg.field"
     },
     "--color-field-active": {
-      "replacement": "color.border.accent.emphasis",
+      "replacement": "color.border.primary.emphasis",
       "component": "Fields"
     },
     "--color-field-border": {
@@ -643,7 +1030,7 @@
       "component": "Navigation items"
     },
     "--color-navigation-quiet": {
-      "replacement": "color.list-item.bg",
+      "replacement": "color.bg.list-item",
       "component": "Navigation items",
       "note": "The quiet navigation item’s rest, which envUI no longer reads; list items have the same fill."
     },
@@ -668,7 +1055,7 @@
       "component": "Important buttons"
     },
     "--color-on-avatar": {
-      "replacement": "color.avatar.fg",
+      "replacement": "color.fg.avatar",
       "component": "Avatars",
       "note": "A system token named for avatars now."
     },
@@ -702,7 +1089,7 @@
       "component": "Select options"
     },
     "--color-on-subtle-action": {
-      "replacement": "color.fg.accent",
+      "replacement": "color.fg.primary",
       "component": "Outlined buttons"
     },
     "--color-on-toast": {
@@ -727,15 +1114,15 @@
       "component": "Popups"
     },
     "--color-primary-action": {
-      "replacement": "color.bg.brand.emphasis",
+      "replacement": "color.bg.primary.emphasis",
       "component": "Primary buttons"
     },
     "--color-primary-action-hover": {
-      "replacement": "color.bg.brand.emphasis.hover",
+      "replacement": "color.bg.primary.emphasis.hover",
       "component": "Primary buttons"
     },
     "--color-primary-action-pressed": {
-      "replacement": "color.bg.brand.emphasis.pressed",
+      "replacement": "color.bg.primary.emphasis.pressed",
       "component": "Primary buttons"
     },
     "--color-quiet-label-hover": {
@@ -747,7 +1134,7 @@
       "component": "Disclosure summaries"
     },
     "--color-radio": {
-      "replacement": "color.bg.brand.emphasis",
+      "replacement": "color.bg.primary.emphasis",
       "component": "Radios"
     },
     "--color-radio-detail": {
@@ -755,11 +1142,11 @@
       "component": "Radios"
     },
     "--color-radio-hover": {
-      "replacement": "color.bg.brand.emphasis.hover",
+      "replacement": "color.bg.primary.emphasis.hover",
       "component": "Radios"
     },
     "--color-radio-pressed": {
-      "replacement": "color.bg.brand.emphasis.pressed",
+      "replacement": "color.bg.primary.emphasis.pressed",
       "component": "Radios"
     },
     "--color-radio-row": {
@@ -779,7 +1166,7 @@
       "component": "Radios"
     },
     "--color-row": {
-      "replacement": "color.list-item.bg",
+      "replacement": "color.bg.list-item",
       "component": "List rows",
       "note": "A system token named for list rows: the default surface in light, the muted one in dark."
     },
@@ -792,12 +1179,12 @@
       "component": "List rows"
     },
     "--color-row-hover": {
-      "replacement": "color.list-item.bg.hover",
+      "replacement": "color.bg.list-item.hover",
       "component": "List rows",
       "note": "A system token named for list rows: the default surface in light, the muted one in dark."
     },
     "--color-row-pressed": {
-      "replacement": "color.list-item.bg.pressed",
+      "replacement": "color.bg.list-item.pressed",
       "component": "List rows",
       "note": "A system token named for list rows: the default surface in light, the muted one in dark."
     },
@@ -913,17 +1300,17 @@
       "component": "Switches"
     },
     "--color-switch-on": {
-      "replacement": "color.bg.brand.emphasis",
+      "replacement": "color.bg.primary.emphasis",
       "component": "Switches",
       "note": "Light took the brand’s strong fill, the same color as its emphasis fill there: one role in every theme now."
     },
     "--color-switch-on-hover": {
-      "replacement": "color.bg.brand.emphasis.hover",
+      "replacement": "color.bg.primary.emphasis.hover",
       "component": "Switches",
       "note": "Light took the brand’s strong fill, the same color as its emphasis fill there: one role in every theme now."
     },
     "--color-switch-on-pressed": {
-      "replacement": "color.bg.brand.emphasis.pressed",
+      "replacement": "color.bg.primary.emphasis.pressed",
       "component": "Switches",
       "note": "Light took the brand’s strong fill, the same color as its emphasis fill there: one role in every theme now."
     },
@@ -969,7 +1356,7 @@
       "component": "Toasts"
     },
     "--color-tone-accent": {
-      "replacement": "color.fg.accent"
+      "replacement": "color.fg.primary"
     },
     "--color-tone-danger": {
       "replacement": "color.fg.danger"
@@ -992,6 +1379,9 @@
     }
   },
   "removed": {
+    "--env-color-skeleton-shine": {
+      "note": "Skeletons pulse rather than shimmer: they paint from the neutral fill and the text color, and no highlight remains."
+    },
     "--env-stack-gap": {
       "note": "Stack is gone: Row and Column take gap as a step of the spacing scale, which they write as data-gap; set gap on your own class instead."
     },
@@ -1083,8 +1473,8 @@
       "note": "Each tone has its tint as a color token: color.bg.{tone}.muted."
     },
     "--state-dialog-overlay-opacity": {
-      "replacement": "color.bg.overlay",
-      "note": "The scrim is a translucent color token now."
+      "replacement": "color.bg.backdrop",
+      "note": "The backdrop is a translucent color token now."
     },
     "--state-fill-opacity": {
       "replacement": "color.bg.neutral.muted",
@@ -1190,28 +1580,28 @@
       "note": "WindowFrame is gone: a TopBar with titleBar keeps clear of the window's controls through --env-top-bar-title-bar-start and -end."
     },
     "--elevation-0-shadow": {
-      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+      "note": "The elevation shadows are gone: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its backdrop as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
     },
     "--elevation-1-shadow": {
-      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+      "note": "The elevation shadows are gone: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its backdrop as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
     },
     "--elevation-2-shadow": {
-      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+      "note": "The elevation shadows are gone: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its backdrop as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
     },
     "--elevation-3-shadow": {
-      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+      "note": "The elevation shadows are gone: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its backdrop as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
     },
     "--env-elevation-0-shadow": {
-      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+      "note": "The elevation shadows are gone: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its backdrop as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
     },
     "--env-elevation-1-shadow": {
-      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+      "note": "The elevation shadows are gone: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its backdrop as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
     },
     "--env-elevation-2-shadow": {
-      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+      "note": "The elevation shadows are gone: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its backdrop as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
     },
     "--env-elevation-3-shadow": {
-      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+      "note": "The elevation shadows are gone: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its backdrop as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
     },
     "--env-toast-fill-hover": {
       "note": "A toast's hover and press fill tokens are gone, not private: set --env-toast-container, and its dismiss button's hover and press become layers of its text color."

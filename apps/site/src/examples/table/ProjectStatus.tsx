@@ -35,7 +35,7 @@ const projects = [
   },
 ] as const;
 
-const tones = { 'In progress': 'accent', Blocked: 'warning', Done: 'done' } as const;
+const tones = { 'In progress': 'primary', Blocked: 'warning', Done: 'done' } as const;
 
 export default function ProjectStatus() {
   return (

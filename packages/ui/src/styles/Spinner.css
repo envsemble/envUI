@@ -6,7 +6,7 @@
     inline-size: 1.5rem;
     block-size: 1.5rem;
     /* The hook --env-spinner-color recolors it, such as to a button's label color. */
-    color: var(--env-spinner-color, var(--env-color-bg-brand-emphasis));
+    color: var(--env-spinner-color, var(--env-color-bg-primary-emphasis));
   }
   .env-spinner:where([data-size='sm']) {
     inline-size: 1rem;
@@ -24,7 +24,7 @@
   }
   /* With its label shown: a status line that centres the spinner and a muted label in its row, for
      loading with no known shape. The arc keeps the size the spinner's own box had. */
-  .env-spinner[data-show-label] {
+  .env-spinner:not([data-label-hidden]) {
     --env-spinner-size: 1.5rem;
     display: flex;
     align-items: center;
@@ -33,19 +33,19 @@
     inline-size: auto;
     block-size: auto;
     color: var(--env-color-fg-muted);
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
   }
-  .env-spinner[data-show-label]:where([data-size='sm']) {
+  .env-spinner:not([data-label-hidden]):where([data-size='sm']) {
     --env-spinner-size: 1rem;
   }
-  .env-spinner[data-show-label]:where([data-size='lg']) {
+  .env-spinner:not([data-label-hidden]):where([data-size='lg']) {
     --env-spinner-size: 3rem;
   }
-  .env-spinner[data-show-label] > svg {
+  .env-spinner:not([data-label-hidden]) > svg {
     flex: 0 0 auto;
     inline-size: var(--env-spinner-size);
     block-size: var(--env-spinner-size);
-    color: var(--env-spinner-color, var(--env-color-bg-brand-emphasis));
+    color: var(--env-spinner-color, var(--env-color-bg-primary-emphasis));
   }
   .env-spinner-arc {
     fill: none;

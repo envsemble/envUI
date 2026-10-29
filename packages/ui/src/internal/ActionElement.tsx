@@ -9,6 +9,7 @@ import {
   type ControlVariant,
 } from './ControlDefaults.js';
 import type { ControlSize } from './controlTypes.js';
+import { flag } from './flag.js';
 
 /**
  * A button's emphasis as Button gives it: its own variant, tone and size, which win, and the
@@ -59,7 +60,7 @@ export function ActionElement({
       'data-variant': variant,
       'data-tone': tone,
       'data-size': emphasis.size ?? defaults.size,
-      'data-underline': (variant === 'text' && emphasis.underline) || undefined,
+      'data-underline': flag(variant === 'text' && emphasis.underline),
     } as unknown as typeof given;
   }
   const props = (

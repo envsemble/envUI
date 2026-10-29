@@ -5,7 +5,7 @@ import { MotionStage } from '../../motion/MotionStage';
 import { WidthSweep } from '../../motion/WidthSweep';
 
 const filters = '.catalogue-width-sweep-frame .env-button[data-variant="secondary"]';
-const show = '.env-sheet-popup .env-button[data-variant="primary"]';
+const show = '.env-sheet .env-button[data-variant="primary"]';
 
 /*
  * At 24 rem the filters are folded into a Filters button beside the search: the pointer opens

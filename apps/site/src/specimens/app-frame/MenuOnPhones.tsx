@@ -22,7 +22,7 @@ const script: PointerStep[] = [
   { wait: 200 },
   { click: true },
   { wait: 900 },
-  { to: chapter(2, '.env-sheet-popup'), x: 0.35, y: 0.5, duration: 550 },
+  { to: chapter(2, '.env-sheet'), x: 0.35, y: 0.5, duration: 550 },
   { wait: 250 },
   { click: true },
   { wait: 400 },

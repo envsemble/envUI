@@ -84,7 +84,7 @@ test('Scaffold renders its regions and forms, which CSS shows by its width', () 
   assert.match(markup, /^<div class="env-scaffold" data-env-layout="scaffold" data-env-name="app"/);
   assert.match(
     markup,
-    /data-compact="bar" data-medium="drawer" data-expanded="drawer" data-large="drawer"/,
+    /data-navigation-compact="bar" data-navigation-medium="drawer" data-navigation-expanded="drawer" data-navigation-large="drawer"/,
   );
   // Skip links first, then the banner, the navigation and the main landmark.
   const order = [
@@ -138,7 +138,7 @@ test('Scaffold shows each form in one range of its own width, with no width medi
     assert.match(
       css,
       new RegExp(
-        `@container env-scaffold \\(${range.replaceAll('.', '\\.')}\\) \\{\\s*\\.env-scaffold\\[data-${windowClass}='bar'\\]`,
+        `@container env-scaffold \\(${range.replaceAll('.', '\\.')}\\) \\{\\s*\\.env-scaffold\\[data-navigation-${windowClass}='bar'\\]`,
       ),
     );
   assert.doesNotMatch(css, /@media[^{]*width/);
@@ -164,7 +164,7 @@ test('Panes renders its behavior, its split and its size for CSS, and the parts 
   const controls = /aria-controls="([^"]+)"/.exec(markup)?.[1];
   assert.ok(controls && markup.includes(`id="${controls}"`), markup);
   assert.match(markup, /role="separator"[^>]*aria-valuetext="20 rem"/);
-  assert.match(markup, /class="env-panes-scrim" aria-hidden="true"/);
+  assert.match(markup, /class="env-panes-backdrop" aria-hidden="true"/);
   const open = renderToString(
     h(
       Panes.Root,
@@ -175,7 +175,7 @@ test('Panes renders its behavior, its split and its size for CSS, and the parts 
   assert.match(open, /data-split-at="large" data-open=""/);
   // The back button is always in the markup; CSS shows it while one pane shows at a time.
   assert.match(open, /class="env-panes-back"/);
-  assert.doesNotMatch(open, /env-panes-scrim/);
+  assert.doesNotMatch(open, /env-panes-backdrop/);
 });
 
 test('Panes decides its arrangement in CSS at the window classes of its own width', () => {

@@ -8,14 +8,14 @@
     inline-size: calc(7 * var(--env-row-height));
     max-inline-size: 100%;
     color: var(--env-color-fg-default);
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
   }
   .env-month-picker-header {
     /* The year buttons, side by side at the end, as the calendar's month buttons. */
     --env-control-height: calc(0.8 * var(--env-control-height-md));
     gap: calc(var(--env-space-1) / 2);
   }
-  .env-month-picker-heading {
+  .env-month-picker-title {
     order: -1;
     flex: 1 1 auto;
     min-inline-size: 0;
@@ -66,11 +66,11 @@
     background: var(--env-color-bg-neutral-muted-pressed);
   }
   .env-month-picker-month[aria-current='date'] > .env-month-picker-month-mark {
-    color: var(--env-color-fg-accent);
+    color: var(--env-color-fg-primary);
     font-weight: var(--env-font-weight-semibold);
   }
   .env-month-picker-month[aria-selected='true'] > .env-month-picker-month-mark {
-    background: var(--env-color-bg-brand-emphasis);
+    background: var(--env-color-bg-primary-emphasis);
     box-shadow: none;
     color: var(--env-color-fg-on-emphasis);
     font-weight: var(--env-font-weight-semibold);

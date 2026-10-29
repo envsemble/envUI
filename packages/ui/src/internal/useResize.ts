@@ -66,7 +66,7 @@ export interface ResizeHandleElementProps {
   'aria-disabled'?: true;
   tabIndex: 0 | -1;
   'data-axis': 'inline' | 'block';
-  'data-dragging'?: '';
+  'data-resizing'?: '';
   onPointerDown(event: ReactPointerEvent<HTMLElement>): void;
   onPointerMove(event: ReactPointerEvent<HTMLElement>): void;
   onPointerUp(event: ReactPointerEvent<HTMLElement>): void;
@@ -247,7 +247,7 @@ export function useResize({
       ...(disabled && { 'aria-disabled': true as const }),
       tabIndex: disabled ? -1 : 0,
       'data-axis': axis,
-      ...(dragging && { 'data-dragging': '' as const }),
+      ...(dragging && { 'data-resizing': '' as const }),
       onPointerDown,
       onPointerMove,
       onPointerUp: end,

@@ -98,7 +98,7 @@ test('Drawer heads each run of a group, and Rail and Bar keep the order without 
   await page.goto(`${fixtureUrl}/?fixture=navigation`);
   const scope = page.getByTestId('navigation-light');
   const drawer = scope.getByRole('navigation', { name: 'Mail drawer' });
-  await expect(drawer.locator('.env-drawer-heading')).toHaveText(['Folders', 'Account']);
+  await expect(drawer.locator('.env-drawer-group-label')).toHaveText(['Folders', 'Account']);
   const folders = drawer.getByRole('list', { name: 'Folders' });
   await expect(folders.getByRole('button')).toHaveText(['Starred', 'Archive']);
   await expect(drawer.getByRole('list', { name: 'Account' }).getByRole('button')).toHaveText([
@@ -135,7 +135,7 @@ test('Bar shows five destinations at most, and opens the rest from More', async 
 
   const bar = scope.getByRole('navigation', { name: 'Many bar' });
   await expect(bar.getByRole('listitem')).toHaveCount(5);
-  await expect(bar.locator('.env-bar-text')).toHaveText([
+  await expect(bar.locator('.env-bar-label')).toHaveText([
     'Home',
     'Inbox',
     'Drafts',
@@ -151,9 +151,9 @@ test('Bar shows five destinations at most, and opens the rest from More', async 
   await expect(more).not.toHaveAttribute('aria-current');
   // Its text is its label, then its count, as its name reads them, with its icon drawn above.
   expect(await more.evaluate((element) => element.textContent)).toBe('More 5');
-  const icon = (await more.locator('.env-bar-icon').boundingBox())!;
+  const icon = (await more.locator('.env-bar-indicator').boundingBox())!;
   expect(icon.y + icon.height).toBeLessThanOrEqual(
-    (await more.locator('.env-bar-text').boundingBox())!.y + 0.5,
+    (await more.locator('.env-bar-label').boundingBox())!.y + 0.5,
   );
   await more.click();
   const menu = page.getByRole('menu', { name: 'More' });
@@ -393,7 +393,7 @@ test.describe('Drawer resizable', () => {
       await page.mouse.move(box.x + box.width / 2, y);
       await page.mouse.down();
       await page.mouse.move(box.x + box.width / 2 - 32, y, { steps: 4 });
-      await expect(handle).toHaveAttribute('data-dragging', '');
+      await expect(handle).toHaveAttribute('data-resizing', '');
       // While dragging, the application hears each width, uncommitted.
       await expect(page.getByTestId('width')).toHaveText('18');
       await expect(page.getByTestId('committed')).toHaveText('');
@@ -403,7 +403,7 @@ test.describe('Drawer resizable', () => {
       await expect(page.getByTestId('width')).toHaveText('24');
       await page.mouse.up();
       await expect(page.getByTestId('committed')).toHaveText('24');
-      await expect(handle).not.toHaveAttribute('data-dragging');
+      await expect(handle).not.toHaveAttribute('data-resizing');
       expect(await widthOf(drawer)).toBeCloseTo(24 * 16, 0);
     },
   );
@@ -416,7 +416,7 @@ test.describe('Drawer resizable', () => {
       const drawer = page.getByRole('navigation', { name: 'Long labels' });
       const item = drawer.getByRole('link', { name: 'Reviews waiting for the whole team' });
       const label = item.locator('.env-drawer-label');
-      const heading = drawer.locator('.env-drawer-heading');
+      const heading = drawer.locator('.env-drawer-group-label');
       const isCut = (element: Locator) =>
         element.evaluate((node) => node.scrollWidth > node.clientWidth);
       const tooltip = page.getByRole('tooltip');

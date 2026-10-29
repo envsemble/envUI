@@ -30,16 +30,16 @@
     --env-alert-title-color: var(--env-alert-content, var(--env-alert-icon-color));
     /* Valid only while the application sets the container or the icon (see Button.css). */
     --env-alert-custom: var(--env-alert-container, var(--env-alert-icon));
-    --env-color-fg-link: var(--env-color-fg-link-on-tint);
-    --env-color-fg-link-hover: var(--env-color-fg-link-on-tint-hover);
-    --env-color-fg-link-pressed: var(--env-color-fg-link-on-tint-pressed);
+    --env-color-fg-link: var(--env-color-fg-link-on-muted);
+    --env-color-fg-link-hover: var(--env-color-fg-link-on-muted-hover);
+    --env-color-fg-link-pressed: var(--env-color-fg-link-on-muted-pressed);
     /* Its tone: the text color of the icon and title, the stronger tint it is filled with, and the
        softer tint, its fill at high contrast. */
-    --env-alert-icon-default: var(--env-color-fg-accent);
-    --env-alert-fill: var(--env-color-bg-accent-subtle-hover);
-    --env-alert-soft-fill: var(--env-color-bg-accent-muted);
-    --env-alert-hover: var(--env-color-bg-accent-subtle-hover);
-    --env-alert-pressed: var(--env-color-bg-accent-subtle-pressed);
+    --env-alert-icon-default: var(--env-color-fg-primary);
+    --env-alert-fill: var(--env-color-bg-primary-subtle-hover);
+    --env-alert-soft-fill: var(--env-color-bg-primary-muted);
+    --env-alert-hover: var(--env-color-bg-primary-subtle-hover);
+    --env-alert-pressed: var(--env-color-bg-primary-subtle-pressed);
     /* A card's corner, a step rounder than a control's and below a surface's. */
     --env-alert-radius: 1.25rem;
     /* The high-contrast fill and edge, valid only under high contrast (see Theme.css). */
@@ -102,7 +102,7 @@
   }
   .env-alert-message {
     color: var(--env-alert-text-color);
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
   }
   .env-alert-action {
     margin-block-start: var(--env-space-2);

@@ -49,7 +49,7 @@
     font: var(--env-type-body);
     /* Coarse pointers take the larger control text, so focusing the field never zooms the page. */
     font-size: var(--env-control-font-size);
-    caret-color: var(--env-color-border-accent-emphasis);
+    caret-color: var(--env-color-border-primary-emphasis);
     resize: none;
     field-sizing: content;
     overflow-y: auto;
@@ -71,7 +71,7 @@
     /* Start content lines up with the field's text above it. */
     padding-inline-start: var(--env-space-4);
     color: var(--env-color-fg-muted);
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
     cursor: default;
   }
   /* A leading icon button reaches into that inset, so its icon, not its round target, lines up. */
@@ -92,12 +92,12 @@
   }
   @media (hover: hover) {
     .env-composer:not([data-disabled]) .env-composer-surface:hover {
-      --env-composer-border: var(--env-color-border-accent-emphasis-hover);
+      --env-composer-border: var(--env-color-border-primary-emphasis-hover);
     }
   }
   /* Focus in the field recolors the outline and doubles its weight; the action has its own ring. */
   .env-composer-surface:has(> .env-composer-input:focus) {
-    --env-composer-border: var(--env-color-border-accent-emphasis);
+    --env-composer-border: var(--env-color-border-primary-emphasis);
     box-shadow: 0 0 0 0.0625rem var(--env-composer-border);
   }
   .env-composer[data-disabled] .env-composer-surface {
@@ -110,7 +110,7 @@
     min-inline-size: 0;
     padding-inline: var(--env-space-5);
     color: var(--env-color-fg-muted);
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
     overflow-wrap: anywhere;
   }
   @media (prefers-reduced-motion: reduce) {

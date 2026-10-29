@@ -68,7 +68,7 @@
       100vw - env(titlebar-area-x, 0px) - env(titlebar-area-width, 100vw) +
         var(--env-top-bar-title-bar-right)
     );
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
     -webkit-app-region: drag;
     app-region: drag;
     -webkit-user-select: none;

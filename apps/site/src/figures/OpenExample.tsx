@@ -41,7 +41,7 @@ const scaleOf = (element: HTMLElement) =>
   (element.offsetWidth && element.getBoundingClientRect().width / element.offsetWidth) || 1;
 
 /**
- * The overlays in the layer: each outermost box that isn't a scrim or a positioner over the whole
+ * The overlays in the layer: each outermost box that isn't a backdrop or a positioner over the whole
  * stage.
  */
 function overlays(layer: HTMLElement) {
@@ -53,7 +53,7 @@ function overlays(layer: HTMLElement) {
     for (const child of element.children) {
       if (!(child instanceof HTMLElement)) continue;
       const box = child.getBoundingClientRect();
-      // A scrim or a positioner is fixed and covers the stage; what it holds is the overlay, even
+      // A backdrop or a positioner is fixed and covers the stage; what it holds is the overlay, even
       // where that fills the stage too, such as a sheet in a narrow figure.
       const covers =
         box.width >= area.width - 1 &&

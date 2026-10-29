@@ -7,7 +7,7 @@
     margin: 0;
     padding: 0;
     list-style: none;
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
   }
   /* On one line, the current page gives way first and ends in an ellipsis; earlier levels keep their
      width. Nothing clips the list, so focus outlines stay whole. */

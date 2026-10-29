@@ -10,23 +10,28 @@
       "cssVariable": "--env-avatar-group-ring",
       "note": "In 0.x, the ring color an application set for an avatar group on a fill that was not an envUI surface."
     },
-    "--body-font-weight": { "kind": "prefixed", "cssVariable": "--env-body-font-weight" },
+    "--body-font-weight": {
+      "kind": "renamed",
+      "token": "font.weight.body",
+      "cssVariable": "--env-font-weight-body",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
     "--color-accent": {
       "kind": "alias",
-      "token": "color.bg.important.strong",
-      "cssVariable": "--env-color-bg-important-strong",
+      "token": "color.bg.accent.strong",
+      "cssVariable": "--env-color-bg-accent-strong",
       "component": "Important buttons"
     },
     "--color-accent-hover": {
       "kind": "alias",
-      "token": "color.bg.important.strong.hover",
-      "cssVariable": "--env-color-bg-important-strong-hover",
+      "token": "color.bg.accent.strong.hover",
+      "cssVariable": "--env-color-bg-accent-strong-hover",
       "component": "Important buttons"
     },
     "--color-accent-pressed": {
       "kind": "alias",
-      "token": "color.bg.important.strong.pressed",
-      "cssVariable": "--env-color-bg-important-strong-pressed",
+      "token": "color.bg.accent.strong.pressed",
+      "cssVariable": "--env-color-bg-accent-strong-pressed",
       "component": "Important buttons"
     },
     "--color-action-strip": {
@@ -37,52 +42,83 @@
     },
     "--color-avatar": {
       "kind": "alias",
-      "token": "color.avatar.bg",
-      "cssVariable": "--env-color-avatar-bg",
+      "token": "color.bg.avatar",
+      "cssVariable": "--env-color-bg-avatar",
       "component": "Avatars",
       "note": "A system token named for avatars now."
     },
     "--color-avatar-figure": {
       "kind": "alias",
-      "token": "color.avatar.figure",
-      "cssVariable": "--env-color-avatar-figure",
+      "token": "color.fg.avatar-figure",
+      "cssVariable": "--env-color-fg-avatar-figure",
       "component": "Avatars",
       "note": "A system token named for avatars now."
     },
     "--color-bg-accent-emphasis": {
-      "kind": "prefixed",
-      "cssVariable": "--env-color-bg-accent-emphasis"
+      "kind": "renamed",
+      "token": "color.bg.primary.solid",
+      "cssVariable": "--env-color-bg-primary-solid",
+      "note": "The blue roles are primary, and the purple of accent actions is accent."
     },
-    "--color-bg-accent-muted": { "kind": "prefixed", "cssVariable": "--env-color-bg-accent-muted" },
+    "--color-bg-accent-muted": {
+      "kind": "renamed",
+      "token": "color.bg.primary.muted",
+      "cssVariable": "--env-color-bg-primary-muted",
+      "note": "The blue roles are primary, and the purple of accent actions is accent."
+    },
     "--color-bg-accent-subtle-hover": {
-      "kind": "prefixed",
-      "cssVariable": "--env-color-bg-accent-subtle-hover"
+      "kind": "renamed",
+      "token": "color.bg.primary.subtle.hover",
+      "cssVariable": "--env-color-bg-primary-subtle-hover",
+      "note": "The blue roles are primary, and the purple of accent actions is accent."
     },
     "--color-bg-accent-subtle-pressed": {
-      "kind": "prefixed",
-      "cssVariable": "--env-color-bg-accent-subtle-pressed"
+      "kind": "renamed",
+      "token": "color.bg.primary.subtle.pressed",
+      "cssVariable": "--env-color-bg-primary-subtle-pressed",
+      "note": "The blue roles are primary, and the purple of accent actions is accent."
     },
     "--color-bg-brand-emphasis": {
-      "kind": "prefixed",
-      "cssVariable": "--env-color-bg-brand-emphasis"
+      "kind": "renamed",
+      "token": "color.bg.primary.emphasis",
+      "cssVariable": "--env-color-bg-primary-emphasis",
+      "note": "The blue roles are primary, and the purple of accent actions is accent."
     },
     "--color-bg-brand-emphasis-hover": {
-      "kind": "prefixed",
-      "cssVariable": "--env-color-bg-brand-emphasis-hover"
+      "kind": "renamed",
+      "token": "color.bg.primary.emphasis.hover",
+      "cssVariable": "--env-color-bg-primary-emphasis-hover",
+      "note": "The blue roles are primary, and the purple of accent actions is accent."
     },
     "--color-bg-brand-emphasis-pressed": {
-      "kind": "prefixed",
-      "cssVariable": "--env-color-bg-brand-emphasis-pressed"
+      "kind": "renamed",
+      "token": "color.bg.primary.emphasis.pressed",
+      "cssVariable": "--env-color-bg-primary-emphasis-pressed",
+      "note": "The blue roles are primary, and the purple of accent actions is accent."
     },
-    "--color-bg-brand-muted": { "kind": "prefixed", "cssVariable": "--env-color-bg-brand-muted" },
-    "--color-bg-brand-strong": { "kind": "prefixed", "cssVariable": "--env-color-bg-brand-strong" },
+    "--color-bg-brand-muted": {
+      "kind": "renamed",
+      "token": "color.bg.primary.muted",
+      "cssVariable": "--env-color-bg-primary-muted",
+      "note": "The blue roles are primary, and the purple of accent actions is accent."
+    },
+    "--color-bg-brand-strong": {
+      "kind": "renamed",
+      "token": "color.bg.primary.strong",
+      "cssVariable": "--env-color-bg-primary-strong",
+      "note": "The blue roles are primary, and the purple of accent actions is accent."
+    },
     "--color-bg-brand-strong-hover": {
-      "kind": "prefixed",
-      "cssVariable": "--env-color-bg-brand-strong-hover"
+      "kind": "renamed",
+      "token": "color.bg.primary.strong.hover",
+      "cssVariable": "--env-color-bg-primary-strong-hover",
+      "note": "The blue roles are primary, and the purple of accent actions is accent."
     },
     "--color-bg-brand-strong-pressed": {
-      "kind": "prefixed",
-      "cssVariable": "--env-color-bg-brand-strong-pressed"
+      "kind": "renamed",
+      "token": "color.bg.primary.strong.pressed",
+      "cssVariable": "--env-color-bg-primary-strong-pressed",
+      "note": "The blue roles are primary, and the purple of accent actions is accent."
     },
     "--color-bg-danger-emphasis": {
       "kind": "prefixed",
@@ -125,16 +161,22 @@
     "--color-bg-done-muted": { "kind": "prefixed", "cssVariable": "--env-color-bg-done-muted" },
     "--color-bg-field": { "kind": "prefixed", "cssVariable": "--env-color-bg-field" },
     "--color-bg-important-strong": {
-      "kind": "prefixed",
-      "cssVariable": "--env-color-bg-important-strong"
+      "kind": "renamed",
+      "token": "color.bg.accent.strong",
+      "cssVariable": "--env-color-bg-accent-strong",
+      "note": "The blue roles are primary, and the purple of accent actions is accent."
     },
     "--color-bg-important-strong-hover": {
-      "kind": "prefixed",
-      "cssVariable": "--env-color-bg-important-strong-hover"
+      "kind": "renamed",
+      "token": "color.bg.accent.strong.hover",
+      "cssVariable": "--env-color-bg-accent-strong-hover",
+      "note": "The blue roles are primary, and the purple of accent actions is accent."
     },
     "--color-bg-important-strong-pressed": {
-      "kind": "prefixed",
-      "cssVariable": "--env-color-bg-important-strong-pressed"
+      "kind": "renamed",
+      "token": "color.bg.accent.strong.pressed",
+      "cssVariable": "--env-color-bg-accent-strong-pressed",
+      "note": "The blue roles are primary, and the purple of accent actions is accent."
     },
     "--color-bg-info-strong": { "kind": "prefixed", "cssVariable": "--env-color-bg-info-strong" },
     "--color-bg-info-strong-hover": {
@@ -199,10 +241,17 @@
       "kind": "prefixed",
       "cssVariable": "--env-color-bg-neutral-subtle-pressed"
     },
-    "--color-bg-overlay": { "kind": "prefixed", "cssVariable": "--env-color-bg-overlay" },
+    "--color-bg-overlay": {
+      "kind": "renamed",
+      "token": "color.bg.backdrop",
+      "cssVariable": "--env-color-bg-backdrop",
+      "note": "The layer behind a modal is the backdrop, as Base UI and the Colors page name it."
+    },
     "--color-bg-overlay-muted": {
-      "kind": "prefixed",
-      "cssVariable": "--env-color-bg-overlay-muted"
+      "kind": "renamed",
+      "token": "color.bg.backdrop.muted",
+      "cssVariable": "--env-color-bg-backdrop-muted",
+      "note": "The layer behind a modal is the backdrop, as Base UI and the Colors page name it."
     },
     "--color-bg-page": { "kind": "prefixed", "cssVariable": "--env-color-bg-page" },
     "--color-bg-page-hover": { "kind": "prefixed", "cssVariable": "--env-color-bg-page-hover" },
@@ -280,30 +329,32 @@
     },
     "--color-border-accent": {
       "kind": "renamed",
-      "token": "color.border.accent.emphasis",
-      "cssVariable": "--env-color-border-accent-emphasis",
+      "token": "color.border.primary.emphasis",
+      "cssVariable": "--env-color-border-primary-emphasis",
       "note": "The solid edge is the tone’s emphasis now, as a solid fill is; the plain name is its translucent edge."
     },
     "--color-border-accent-emphasis": {
       "kind": "renamed",
-      "token": "color.border.accent",
-      "cssVariable": "--env-color-border-accent",
+      "token": "color.border.primary",
+      "cssVariable": "--env-color-border-primary",
       "note": "The translucent edge is the tone’s plain border now, between its muted edge and its solid emphasis."
     },
     "--color-border-accent-hover": {
       "kind": "renamed",
-      "token": "color.border.accent.emphasis.hover",
-      "cssVariable": "--env-color-border-accent-emphasis-hover",
+      "token": "color.border.primary.emphasis.hover",
+      "cssVariable": "--env-color-border-primary-emphasis-hover",
       "note": "The solid edge is the tone’s emphasis now, as a solid fill is; the plain name is its translucent edge."
     },
     "--color-border-accent-muted": {
-      "kind": "prefixed",
-      "cssVariable": "--env-color-border-accent-muted"
+      "kind": "renamed",
+      "token": "color.border.primary.muted",
+      "cssVariable": "--env-color-border-primary-muted",
+      "note": "The blue roles are primary, and the purple of accent actions is accent."
     },
     "--color-border-accent-pressed": {
       "kind": "renamed",
-      "token": "color.border.accent.emphasis.pressed",
-      "cssVariable": "--env-color-border-accent-emphasis-pressed",
+      "token": "color.border.primary.emphasis.pressed",
+      "cssVariable": "--env-color-border-primary-emphasis-pressed",
       "note": "The solid edge is the tone’s emphasis now, as a solid fill is; the plain name is its translucent edge."
     },
     "--color-border-danger": {
@@ -425,14 +476,14 @@
     },
     "--color-calendar-selected": {
       "kind": "alias",
-      "token": "color.bg.brand.emphasis",
-      "cssVariable": "--env-color-bg-brand-emphasis",
+      "token": "color.bg.primary.emphasis",
+      "cssVariable": "--env-color-bg-primary-emphasis",
       "component": "Calendars"
     },
     "--color-calendar-today": {
       "kind": "alias",
-      "token": "color.border.accent.emphasis",
-      "cssVariable": "--env-color-border-accent-emphasis",
+      "token": "color.border.primary.emphasis",
+      "cssVariable": "--env-color-border-primary-emphasis",
       "component": "Calendars"
     },
     "--color-canvas": {
@@ -447,8 +498,8 @@
     },
     "--color-checkbox": {
       "kind": "alias",
-      "token": "color.bg.brand.emphasis",
-      "cssVariable": "--env-color-bg-brand-emphasis",
+      "token": "color.bg.primary.emphasis",
+      "cssVariable": "--env-color-bg-primary-emphasis",
       "component": "Checkboxes",
       "note": "Light took the brand’s strong fill, the same color as its emphasis fill there: one role in every theme now."
     },
@@ -460,15 +511,15 @@
     },
     "--color-checkbox-hover": {
       "kind": "alias",
-      "token": "color.bg.brand.emphasis.hover",
-      "cssVariable": "--env-color-bg-brand-emphasis-hover",
+      "token": "color.bg.primary.emphasis.hover",
+      "cssVariable": "--env-color-bg-primary-emphasis-hover",
       "component": "Checkboxes",
       "note": "Light took the brand’s strong fill, the same color as its emphasis fill there: one role in every theme now."
     },
     "--color-checkbox-pressed": {
       "kind": "alias",
-      "token": "color.bg.brand.emphasis.pressed",
-      "cssVariable": "--env-color-bg-brand-emphasis-pressed",
+      "token": "color.bg.primary.emphasis.pressed",
+      "cssVariable": "--env-color-bg-primary-emphasis-pressed",
       "component": "Checkboxes",
       "note": "Light took the brand’s strong fill, the same color as its emphasis fill there: one role in every theme now."
     },
@@ -498,27 +549,27 @@
     },
     "--color-chip-text": {
       "kind": "alias",
-      "token": "color.fg.accent",
-      "cssVariable": "--env-color-fg-accent",
+      "token": "color.fg.primary",
+      "cssVariable": "--env-color-fg-primary",
       "component": "Chips"
     },
     "--color-control-blue": {
       "kind": "alias",
-      "token": "color.bg.brand.emphasis",
-      "cssVariable": "--env-color-bg-brand-emphasis",
+      "token": "color.bg.primary.emphasis",
+      "cssVariable": "--env-color-bg-primary-emphasis",
       "component": "Spinners, sliders and meters",
       "note": "Light took the brand’s strong fill, the same color as its emphasis fill there: one role in every theme now."
     },
     "--color-control-blue-hover": {
       "kind": "renamed",
-      "token": "color.bg.brand.strong.hover",
-      "cssVariable": "--env-color-bg-brand-strong-hover",
+      "token": "color.bg.primary.strong.hover",
+      "cssVariable": "--env-color-bg-primary-strong-hover",
       "note": "0.7 defined it, but envUI didn't read it; the brand's strong fill is the role it named."
     },
     "--color-control-blue-pressed": {
       "kind": "renamed",
-      "token": "color.bg.brand.strong.pressed",
-      "cssVariable": "--env-color-bg-brand-strong-pressed",
+      "token": "color.bg.primary.strong.pressed",
+      "cssVariable": "--env-color-bg-primary-strong-pressed",
       "note": "0.7 defined it, but envUI didn't read it; the brand's strong fill is the role it named."
     },
     "--color-control-text": {
@@ -552,9 +603,9 @@
     },
     "--color-dialog-overlay": {
       "kind": "alias",
-      "token": "color.bg.overlay",
-      "cssVariable": "--env-color-bg-overlay",
-      "note": "0.7's was opaque, #1f1f1f (hsl(0 0% 12.157%) in both themes), and the dialog backdrop made it 55% opaque with --state-dialog-overlay-opacity, which is removed. The role is the scrim itself, 55% opaque: paint it as it is, since a style that applies its own opacity now applies it twice. For the opaque color, write #1f1f1f."
+      "token": "color.bg.backdrop",
+      "cssVariable": "--env-color-bg-backdrop",
+      "note": "0.7's was opaque, #1f1f1f (hsl(0 0% 12.157%) in both themes), and the dialog backdrop made it 55% opaque with --state-dialog-overlay-opacity, which is removed. The role is the backdrop itself, 55% opaque: paint it as it is, since a style that applies its own opacity now applies it twice. For the opaque color, write #1f1f1f."
     },
     "--color-direction-link": {
       "kind": "alias",
@@ -582,8 +633,8 @@
     },
     "--color-direction-link-icon": {
       "kind": "alias",
-      "token": "color.fg.accent",
-      "cssVariable": "--env-color-fg-accent",
+      "token": "color.fg.primary",
+      "cssVariable": "--env-color-fg-primary",
       "component": "Pager links"
     },
     "--color-direction-link-label": {
@@ -609,7 +660,12 @@
       "cssVariable": "--env-color-fg-muted",
       "component": "Disclosure summaries"
     },
-    "--color-fg-accent": { "kind": "prefixed", "cssVariable": "--env-color-fg-accent" },
+    "--color-fg-accent": {
+      "kind": "renamed",
+      "token": "color.fg.primary",
+      "cssVariable": "--env-color-fg-primary",
+      "note": "The blue roles are primary, and the purple of accent actions is accent."
+    },
     "--color-fg-control": { "kind": "prefixed", "cssVariable": "--env-color-fg-control" },
     "--color-fg-danger": { "kind": "prefixed", "cssVariable": "--env-color-fg-danger" },
     "--color-fg-default": { "kind": "prefixed", "cssVariable": "--env-color-fg-default" },
@@ -635,8 +691,8 @@
     },
     "--color-field-active": {
       "kind": "alias",
-      "token": "color.border.accent.emphasis",
-      "cssVariable": "--env-color-border-accent-emphasis",
+      "token": "color.border.primary.emphasis",
+      "cssVariable": "--env-color-border-primary-emphasis",
       "component": "Fields"
     },
     "--color-field-border": {
@@ -749,8 +805,8 @@
     },
     "--color-navigation-quiet": {
       "kind": "alias",
-      "token": "color.list-item.bg",
-      "cssVariable": "--env-color-list-item-bg",
+      "token": "color.bg.list-item",
+      "cssVariable": "--env-color-bg-list-item",
       "component": "Navigation items",
       "note": "The quiet navigation item’s rest, which envUI no longer reads; list items have the same fill."
     },
@@ -792,8 +848,8 @@
     },
     "--color-on-avatar": {
       "kind": "alias",
-      "token": "color.avatar.fg",
-      "cssVariable": "--env-color-avatar-fg",
+      "token": "color.fg.avatar",
+      "cssVariable": "--env-color-fg-avatar",
       "component": "Avatars",
       "note": "A system token named for avatars now."
     },
@@ -842,8 +898,8 @@
     },
     "--color-on-subtle-action": {
       "kind": "alias",
-      "token": "color.fg.accent",
-      "cssVariable": "--env-color-fg-accent",
+      "token": "color.fg.primary",
+      "cssVariable": "--env-color-fg-primary",
       "component": "Outlined buttons"
     },
     "--color-on-toast": {
@@ -881,20 +937,20 @@
     },
     "--color-primary-action": {
       "kind": "alias",
-      "token": "color.bg.brand.emphasis",
-      "cssVariable": "--env-color-bg-brand-emphasis",
+      "token": "color.bg.primary.emphasis",
+      "cssVariable": "--env-color-bg-primary-emphasis",
       "component": "Primary buttons"
     },
     "--color-primary-action-hover": {
       "kind": "alias",
-      "token": "color.bg.brand.emphasis.hover",
-      "cssVariable": "--env-color-bg-brand-emphasis-hover",
+      "token": "color.bg.primary.emphasis.hover",
+      "cssVariable": "--env-color-bg-primary-emphasis-hover",
       "component": "Primary buttons"
     },
     "--color-primary-action-pressed": {
       "kind": "alias",
-      "token": "color.bg.brand.emphasis.pressed",
-      "cssVariable": "--env-color-bg-brand-emphasis-pressed",
+      "token": "color.bg.primary.emphasis.pressed",
+      "cssVariable": "--env-color-bg-primary-emphasis-pressed",
       "component": "Primary buttons"
     },
     "--color-quiet-label-hover": {
@@ -911,8 +967,8 @@
     },
     "--color-radio": {
       "kind": "alias",
-      "token": "color.bg.brand.emphasis",
-      "cssVariable": "--env-color-bg-brand-emphasis",
+      "token": "color.bg.primary.emphasis",
+      "cssVariable": "--env-color-bg-primary-emphasis",
       "component": "Radios"
     },
     "--color-radio-detail": {
@@ -923,14 +979,14 @@
     },
     "--color-radio-hover": {
       "kind": "alias",
-      "token": "color.bg.brand.emphasis.hover",
-      "cssVariable": "--env-color-bg-brand-emphasis-hover",
+      "token": "color.bg.primary.emphasis.hover",
+      "cssVariable": "--env-color-bg-primary-emphasis-hover",
       "component": "Radios"
     },
     "--color-radio-pressed": {
       "kind": "alias",
-      "token": "color.bg.brand.emphasis.pressed",
-      "cssVariable": "--env-color-bg-brand-emphasis-pressed",
+      "token": "color.bg.primary.emphasis.pressed",
+      "cssVariable": "--env-color-bg-primary-emphasis-pressed",
       "component": "Radios"
     },
     "--color-radio-row": {
@@ -959,8 +1015,8 @@
     },
     "--color-row": {
       "kind": "alias",
-      "token": "color.list-item.bg",
-      "cssVariable": "--env-color-list-item-bg",
+      "token": "color.bg.list-item",
+      "cssVariable": "--env-color-bg-list-item",
       "component": "List rows",
       "note": "A system token named for list rows: the default surface in light, the muted one in dark."
     },
@@ -978,15 +1034,15 @@
     },
     "--color-row-hover": {
       "kind": "alias",
-      "token": "color.list-item.bg.hover",
-      "cssVariable": "--env-color-list-item-bg-hover",
+      "token": "color.bg.list-item.hover",
+      "cssVariable": "--env-color-bg-list-item-hover",
       "component": "List rows",
       "note": "A system token named for list rows: the default surface in light, the muted one in dark."
     },
     "--color-row-pressed": {
       "kind": "alias",
-      "token": "color.list-item.bg.pressed",
-      "cssVariable": "--env-color-list-item-bg-pressed",
+      "token": "color.bg.list-item.pressed",
+      "cssVariable": "--env-color-bg-list-item-pressed",
       "component": "List rows",
       "note": "A system token named for list rows: the default surface in light, the muted one in dark."
     },
@@ -1173,22 +1229,22 @@
     },
     "--color-switch-on": {
       "kind": "alias",
-      "token": "color.bg.brand.emphasis",
-      "cssVariable": "--env-color-bg-brand-emphasis",
+      "token": "color.bg.primary.emphasis",
+      "cssVariable": "--env-color-bg-primary-emphasis",
       "component": "Switches",
       "note": "Light took the brand’s strong fill, the same color as its emphasis fill there: one role in every theme now."
     },
     "--color-switch-on-hover": {
       "kind": "alias",
-      "token": "color.bg.brand.emphasis.hover",
-      "cssVariable": "--env-color-bg-brand-emphasis-hover",
+      "token": "color.bg.primary.emphasis.hover",
+      "cssVariable": "--env-color-bg-primary-emphasis-hover",
       "component": "Switches",
       "note": "Light took the brand’s strong fill, the same color as its emphasis fill there: one role in every theme now."
     },
     "--color-switch-on-pressed": {
       "kind": "alias",
-      "token": "color.bg.brand.emphasis.pressed",
-      "cssVariable": "--env-color-bg-brand-emphasis-pressed",
+      "token": "color.bg.primary.emphasis.pressed",
+      "cssVariable": "--env-color-bg-primary-emphasis-pressed",
       "component": "Switches",
       "note": "Light took the brand’s strong fill, the same color as its emphasis fill there: one role in every theme now."
     },
@@ -1263,8 +1319,8 @@
     },
     "--color-tone-accent": {
       "kind": "alias",
-      "token": "color.fg.accent",
-      "cssVariable": "--env-color-fg-accent"
+      "token": "color.fg.primary",
+      "cssVariable": "--env-color-fg-primary"
     },
     "--color-tone-danger": {
       "kind": "alias",
@@ -1317,22 +1373,22 @@
     "--elevation-0-border": { "kind": "prefixed", "cssVariable": "--env-elevation-0-border" },
     "--elevation-0-shadow": {
       "kind": "removed",
-      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+      "note": "The elevation shadows are gone: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its backdrop as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
     },
     "--elevation-1-border": { "kind": "prefixed", "cssVariable": "--env-elevation-1-border" },
     "--elevation-1-shadow": {
       "kind": "removed",
-      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+      "note": "The elevation shadows are gone: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its backdrop as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
     },
     "--elevation-2-border": { "kind": "prefixed", "cssVariable": "--env-elevation-2-border" },
     "--elevation-2-shadow": {
       "kind": "removed",
-      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+      "note": "The elevation shadows are gone: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its backdrop as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
     },
     "--elevation-3-border": { "kind": "prefixed", "cssVariable": "--env-elevation-3-border" },
     "--elevation-3-shadow": {
       "kind": "removed",
-      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+      "note": "The elevation shadows are gone: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its backdrop as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
     },
     "--env-alert-edge": {
       "kind": "renamed",
@@ -1390,6 +1446,12 @@
       "kind": "removed",
       "note": "TopBar is --env-top-bar-height tall; the Scaffold measures its top bar region and sets --env-scaffold-sticky-top from it."
     },
+    "--env-body-font-weight": {
+      "kind": "renamed",
+      "token": "font.weight.body",
+      "cssVariable": "--env-font-weight-body",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
     "--env-breakpoint-lg": {
       "kind": "removed",
       "note": "The viewport breakpoints are gone: envUI responds to containers at window classes, compact below 37.5 rem, medium from 37.5, expanded from 52.5 and large from 75 rem, as @container env-window (width >= 37.5rem); --env-window-class-medium, -expanded and -large hold the thresholds."
@@ -1406,63 +1468,319 @@
       "kind": "removed",
       "note": "The viewport breakpoints are gone: envUI responds to containers at window classes, compact below 37.5 rem, medium from 37.5, expanded from 52.5 and large from 75 rem, as @container env-window (width >= 37.5rem); --env-window-class-medium, -expanded and -large hold the thresholds."
     },
+    "--env-checkbox-icon": {
+      "kind": "renamed",
+      "cssVariable": "--env-checkbox-selected-content",
+      "colorPropertyOf": "env-checkbox",
+      "note": "The check mark's color is the selected-content role, as on every component."
+    },
+    "--env-color-avatar-bg": {
+      "kind": "renamed",
+      "token": "color.bg.avatar",
+      "cssVariable": "--env-color-bg-avatar",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
     "--env-color-avatar-bg-amber": {
       "kind": "renamed",
-      "token": "color.avatar.bg.butter",
-      "cssVariable": "--env-color-avatar-bg-butter",
+      "token": "color.bg.avatar.butter",
+      "cssVariable": "--env-color-bg-avatar-butter",
       "note": "The avatar hues are named for their colors: amber is butter. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-butter and --env-color-avatar-figure-butter."
+    },
+    "--env-color-avatar-bg-blush": {
+      "kind": "renamed",
+      "token": "color.bg.avatar.blush",
+      "cssVariable": "--env-color-bg-avatar-blush",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-bg-butter": {
+      "kind": "renamed",
+      "token": "color.bg.avatar.butter",
+      "cssVariable": "--env-color-bg-avatar-butter",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
     },
     "--env-color-avatar-bg-green": {
       "kind": "renamed",
-      "token": "color.avatar.bg.sage",
-      "cssVariable": "--env-color-avatar-bg-sage",
+      "token": "color.bg.avatar.sage",
+      "cssVariable": "--env-color-bg-avatar-sage",
       "note": "The avatar hues are named for their colors: green is sage. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-sage and --env-color-avatar-figure-sage."
+    },
+    "--env-color-avatar-bg-oat": {
+      "kind": "renamed",
+      "token": "color.bg.avatar.oat",
+      "cssVariable": "--env-color-bg-avatar-oat",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-bg-orchid": {
+      "kind": "renamed",
+      "token": "color.bg.avatar.orchid",
+      "cssVariable": "--env-color-bg-avatar-orchid",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-bg-periwinkle": {
+      "kind": "renamed",
+      "token": "color.bg.avatar.periwinkle",
+      "cssVariable": "--env-color-bg-avatar-periwinkle",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-bg-powder": {
+      "kind": "renamed",
+      "token": "color.bg.avatar.powder",
+      "cssVariable": "--env-color-bg-avatar-powder",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
     },
     "--env-color-avatar-bg-purple": {
       "kind": "renamed",
-      "token": "color.avatar.bg.orchid",
-      "cssVariable": "--env-color-avatar-bg-orchid",
+      "token": "color.bg.avatar.orchid",
+      "cssVariable": "--env-color-bg-avatar-orchid",
       "note": "The avatar hues are named for their colors: purple is orchid. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-orchid and --env-color-avatar-figure-orchid."
     },
     "--env-color-avatar-bg-red": {
       "kind": "renamed",
-      "token": "color.avatar.bg.blush",
-      "cssVariable": "--env-color-avatar-bg-blush",
+      "token": "color.bg.avatar.blush",
+      "cssVariable": "--env-color-bg-avatar-blush",
       "note": "The avatar hues are named for their colors: red is blush. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-blush and --env-color-avatar-figure-blush."
+    },
+    "--env-color-avatar-bg-sage": {
+      "kind": "renamed",
+      "token": "color.bg.avatar.sage",
+      "cssVariable": "--env-color-bg-avatar-sage",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-bg-seafoam": {
+      "kind": "renamed",
+      "token": "color.bg.avatar.seafoam",
+      "cssVariable": "--env-color-bg-avatar-seafoam",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
     },
     "--env-color-avatar-bg-slate": {
       "kind": "renamed",
-      "token": "color.avatar.bg.oat",
-      "cssVariable": "--env-color-avatar-bg-oat",
+      "token": "color.bg.avatar.oat",
+      "cssVariable": "--env-color-bg-avatar-oat",
       "note": "The avatar hues are named for their colors: slate is oat. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-oat and --env-color-avatar-figure-oat."
     },
     "--env-color-avatar-bg-teal": {
       "kind": "renamed",
-      "token": "color.avatar.bg.seafoam",
-      "cssVariable": "--env-color-avatar-bg-seafoam",
+      "token": "color.bg.avatar.seafoam",
+      "cssVariable": "--env-color-bg-avatar-seafoam",
       "note": "The avatar hues are named for their colors: teal is seafoam. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-seafoam and --env-color-avatar-figure-seafoam."
     },
     "--env-color-avatar-bg-violet": {
       "kind": "renamed",
-      "token": "color.avatar.bg.periwinkle",
-      "cssVariable": "--env-color-avatar-bg-periwinkle",
+      "token": "color.bg.avatar.periwinkle",
+      "cssVariable": "--env-color-bg-avatar-periwinkle",
       "note": "The avatar hues are named for their colors: violet is periwinkle. Its fill now takes initials and a figure in a deep shade of the hue, so a fill an application sets here also sets --env-color-avatar-fg-periwinkle and --env-color-avatar-figure-periwinkle."
+    },
+    "--env-color-avatar-fg": {
+      "kind": "renamed",
+      "token": "color.fg.avatar",
+      "cssVariable": "--env-color-fg-avatar",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-fg-blush": {
+      "kind": "renamed",
+      "token": "color.fg.avatar.blush",
+      "cssVariable": "--env-color-fg-avatar-blush",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-fg-butter": {
+      "kind": "renamed",
+      "token": "color.fg.avatar.butter",
+      "cssVariable": "--env-color-fg-avatar-butter",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-fg-oat": {
+      "kind": "renamed",
+      "token": "color.fg.avatar.oat",
+      "cssVariable": "--env-color-fg-avatar-oat",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-fg-orchid": {
+      "kind": "renamed",
+      "token": "color.fg.avatar.orchid",
+      "cssVariable": "--env-color-fg-avatar-orchid",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-fg-periwinkle": {
+      "kind": "renamed",
+      "token": "color.fg.avatar.periwinkle",
+      "cssVariable": "--env-color-fg-avatar-periwinkle",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-fg-powder": {
+      "kind": "renamed",
+      "token": "color.fg.avatar.powder",
+      "cssVariable": "--env-color-fg-avatar-powder",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-fg-sage": {
+      "kind": "renamed",
+      "token": "color.fg.avatar.sage",
+      "cssVariable": "--env-color-fg-avatar-sage",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-fg-seafoam": {
+      "kind": "renamed",
+      "token": "color.fg.avatar.seafoam",
+      "cssVariable": "--env-color-fg-avatar-seafoam",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-figure": {
+      "kind": "renamed",
+      "token": "color.fg.avatar-figure",
+      "cssVariable": "--env-color-fg-avatar-figure",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-figure-blush": {
+      "kind": "renamed",
+      "token": "color.fg.avatar-figure.blush",
+      "cssVariable": "--env-color-fg-avatar-figure-blush",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-figure-butter": {
+      "kind": "renamed",
+      "token": "color.fg.avatar-figure.butter",
+      "cssVariable": "--env-color-fg-avatar-figure-butter",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-figure-oat": {
+      "kind": "renamed",
+      "token": "color.fg.avatar-figure.oat",
+      "cssVariable": "--env-color-fg-avatar-figure-oat",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-figure-orchid": {
+      "kind": "renamed",
+      "token": "color.fg.avatar-figure.orchid",
+      "cssVariable": "--env-color-fg-avatar-figure-orchid",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-figure-periwinkle": {
+      "kind": "renamed",
+      "token": "color.fg.avatar-figure.periwinkle",
+      "cssVariable": "--env-color-fg-avatar-figure-periwinkle",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-figure-powder": {
+      "kind": "renamed",
+      "token": "color.fg.avatar-figure.powder",
+      "cssVariable": "--env-color-fg-avatar-figure-powder",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-figure-sage": {
+      "kind": "renamed",
+      "token": "color.fg.avatar-figure.sage",
+      "cssVariable": "--env-color-fg-avatar-figure-sage",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-avatar-figure-seafoam": {
+      "kind": "renamed",
+      "token": "color.fg.avatar-figure.seafoam",
+      "cssVariable": "--env-color-fg-avatar-figure-seafoam",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-bg-overlay": {
+      "kind": "renamed",
+      "token": "color.bg.backdrop",
+      "cssVariable": "--env-color-bg-backdrop",
+      "note": "The layer behind a modal is the backdrop, as Base UI and the Colors page name it."
+    },
+    "--env-color-bg-overlay-muted": {
+      "kind": "renamed",
+      "token": "color.bg.backdrop.muted",
+      "cssVariable": "--env-color-bg-backdrop-muted",
+      "note": "The layer behind a modal is the backdrop, as Base UI and the Colors page name it."
+    },
+    "--env-color-fg-link-on-tint": {
+      "kind": "renamed",
+      "token": "color.fg.link-on-muted",
+      "cssVariable": "--env-color-fg-link-on-muted",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-fg-link-on-tint-hover": {
+      "kind": "renamed",
+      "token": "color.fg.link-on-muted.hover",
+      "cssVariable": "--env-color-fg-link-on-muted-hover",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-fg-link-on-tint-pressed": {
+      "kind": "renamed",
+      "token": "color.fg.link-on-muted.pressed",
+      "cssVariable": "--env-color-fg-link-on-muted-pressed",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-list-item-bg": {
+      "kind": "renamed",
+      "token": "color.bg.list-item",
+      "cssVariable": "--env-color-bg-list-item",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-list-item-bg-hover": {
+      "kind": "renamed",
+      "token": "color.bg.list-item.hover",
+      "cssVariable": "--env-color-bg-list-item-hover",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-list-item-bg-pressed": {
+      "kind": "renamed",
+      "token": "color.bg.list-item.pressed",
+      "cssVariable": "--env-color-bg-list-item-pressed",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-rating-star": {
+      "kind": "renamed",
+      "token": "color.fg.rating-star",
+      "cssVariable": "--env-color-fg-rating-star",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
+    },
+    "--env-color-skeleton-shine": {
+      "kind": "removed",
+      "note": "Skeletons pulse rather than shimmer: they paint from the neutral fill and the text color, and no highlight remains."
+    },
+    "--env-counter-badge-height": {
+      "kind": "renamed",
+      "token": "badge-count.height",
+      "cssVariable": "--env-badge-count-height",
+      "note": "Color tokens follow one grammar, --env-color-{bg|fg|border}-{role}: a component that names a color is its role."
     },
     "--env-elevation-0-shadow": {
       "kind": "removed",
-      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+      "note": "The elevation shadows are gone: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its backdrop as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
     },
     "--env-elevation-1-shadow": {
       "kind": "removed",
-      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+      "note": "The elevation shadows are gone: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its backdrop as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
     },
     "--env-elevation-2-shadow": {
       "kind": "removed",
-      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+      "note": "The elevation shadows are gone: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its backdrop as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
     },
     "--env-elevation-3-shadow": {
       "kind": "removed",
-      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+      "note": "The elevation shadows are gone: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its backdrop as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+    },
+    "--env-font-size-body-small": {
+      "kind": "renamed",
+      "token": "font.size.body-sm",
+      "cssVariable": "--env-font-size-body-sm",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-font-size-heading": {
+      "kind": "renamed",
+      "token": "font.size.headline",
+      "cssVariable": "--env-font-size-headline",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-font-size-heading-small": {
+      "kind": "renamed",
+      "token": "font.size.title",
+      "cssVariable": "--env-font-size-title",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-font-size-label-small": {
+      "kind": "renamed",
+      "token": "font.size.label-sm",
+      "cssVariable": "--env-font-size-label-sm",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
     },
     "--env-frame-header-block-size": {
       "kind": "removed",
@@ -1477,6 +1795,12 @@
       "cssVariable": "--env-list-item-container",
       "colorPropertyOf": "env-list-item",
       "note": "A row's fill is the public color property --env-list-item-container, set on the row."
+    },
+    "--env-motion-ease-standard": {
+      "kind": "renamed",
+      "token": "motion.ease",
+      "cssVariable": "--env-motion-ease",
+      "note": "The standard easing is --env-motion-ease; the alias, the same curve, is gone."
     },
     "--env-sidebar-collapsed-width": {
       "kind": "removed",
@@ -1544,6 +1868,99 @@
       "cssVariable": "--env-top-bar-height",
       "note": "TopBar's height."
     },
+    "--env-type-body-small": {
+      "kind": "renamed",
+      "token": "type.body-sm",
+      "cssVariable": "--env-type-body-sm",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-body-small-font-family": {
+      "kind": "renamed",
+      "cssVariable": "--env-type-body-sm-font-family",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-body-small-font-size": {
+      "kind": "renamed",
+      "cssVariable": "--env-type-body-sm-font-size",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-body-small-font-weight": {
+      "kind": "renamed",
+      "cssVariable": "--env-type-body-sm-font-weight",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-body-small-letter-spacing": {
+      "kind": "renamed",
+      "cssVariable": "--env-type-body-sm-letter-spacing",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-body-small-line-height": {
+      "kind": "renamed",
+      "cssVariable": "--env-type-body-sm-line-height",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-h1": {
+      "kind": "renamed",
+      "token": "type.headline",
+      "cssVariable": "--env-type-headline",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-h1-font-family": {
+      "kind": "renamed",
+      "cssVariable": "--env-type-headline-font-family",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-h1-font-size": {
+      "kind": "renamed",
+      "cssVariable": "--env-type-headline-font-size",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-h1-font-weight": {
+      "kind": "renamed",
+      "cssVariable": "--env-type-headline-font-weight",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-h1-letter-spacing": {
+      "kind": "renamed",
+      "cssVariable": "--env-type-headline-letter-spacing",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-h1-line-height": {
+      "kind": "renamed",
+      "cssVariable": "--env-type-headline-line-height",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-h2": {
+      "kind": "renamed",
+      "token": "type.title",
+      "cssVariable": "--env-type-title",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-h2-font-family": {
+      "kind": "renamed",
+      "cssVariable": "--env-type-title-font-family",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-h2-font-size": {
+      "kind": "renamed",
+      "cssVariable": "--env-type-title-font-size",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-h2-font-weight": {
+      "kind": "renamed",
+      "cssVariable": "--env-type-title-font-weight",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-h2-letter-spacing": {
+      "kind": "renamed",
+      "cssVariable": "--env-type-title-letter-spacing",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--env-type-h2-line-height": {
+      "kind": "renamed",
+      "cssVariable": "--env-type-title-line-height",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
     "--env-window-frame-title-bar-end": {
       "kind": "renamed",
       "cssVariable": "--env-top-bar-title-bar-end",
@@ -1562,20 +1979,55 @@
       "cssVariable": "--env-top-bar-title-bar-start",
       "note": "WindowFrame is gone: a TopBar with titleBar keeps clear of the window's controls at the start."
     },
+    "--env-z-overlay": {
+      "kind": "renamed",
+      "token": "z.backdrop",
+      "cssVariable": "--env-z-backdrop",
+      "note": "The layer behind a modal is the backdrop, as Base UI and the Colors page name it."
+    },
+    "--env-z-peek": {
+      "kind": "renamed",
+      "token": "z.supporting-pane",
+      "cssVariable": "--env-z-supporting-pane",
+      "note": "The stacking levels say what they hold: popups, and a supporting pane over its main pane."
+    },
+    "--env-z-popover": {
+      "kind": "renamed",
+      "token": "z.popup",
+      "cssVariable": "--env-z-popup",
+      "note": "The stacking levels say what they hold: popups, and a supporting pane over its main pane."
+    },
     "--field-floating-height": { "kind": "prefixed", "cssVariable": "--env-field-floating-height" },
     "--font-family": { "kind": "prefixed", "cssVariable": "--env-font-family" },
     "--font-family-code": { "kind": "renamed", "cssVariable": "--env-code-font-family" },
     "--font-size-body": { "kind": "prefixed", "cssVariable": "--env-font-size-body" },
-    "--font-size-body-small": { "kind": "prefixed", "cssVariable": "--env-font-size-body-small" },
+    "--font-size-body-small": {
+      "kind": "renamed",
+      "token": "font.size.body-sm",
+      "cssVariable": "--env-font-size-body-sm",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
     "--font-size-caption": { "kind": "prefixed", "cssVariable": "--env-font-size-caption" },
     "--font-size-code": { "kind": "renamed", "cssVariable": "--env-code-font-size" },
-    "--font-size-heading": { "kind": "prefixed", "cssVariable": "--env-font-size-heading" },
+    "--font-size-heading": {
+      "kind": "renamed",
+      "token": "font.size.headline",
+      "cssVariable": "--env-font-size-headline",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
     "--font-size-heading-small": {
-      "kind": "prefixed",
-      "cssVariable": "--env-font-size-heading-small"
+      "kind": "renamed",
+      "token": "font.size.title",
+      "cssVariable": "--env-font-size-title",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
     },
     "--font-size-label": { "kind": "prefixed", "cssVariable": "--env-font-size-label" },
-    "--font-size-label-small": { "kind": "prefixed", "cssVariable": "--env-font-size-label-small" },
+    "--font-size-label-small": {
+      "kind": "renamed",
+      "token": "font.size.label-sm",
+      "cssVariable": "--env-font-size-label-sm",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
     "--icon-button-size": {
       "kind": "renamed",
       "token": "control.height",
@@ -1647,7 +2099,12 @@
     "--motion-ease": { "kind": "prefixed", "cssVariable": "--env-motion-ease" },
     "--motion-ease-enter": { "kind": "prefixed", "cssVariable": "--env-motion-ease-enter" },
     "--motion-ease-exit": { "kind": "prefixed", "cssVariable": "--env-motion-ease-exit" },
-    "--motion-ease-standard": { "kind": "prefixed", "cssVariable": "--env-motion-ease-standard" },
+    "--motion-ease-standard": {
+      "kind": "renamed",
+      "token": "motion.ease",
+      "cssVariable": "--env-motion-ease",
+      "note": "The standard easing is --env-motion-ease; the alias, the same curve, is gone."
+    },
     "--radius-large": {
       "kind": "renamed",
       "token": "radius.lg",
@@ -1687,9 +2144,9 @@
     "--state-card-strip-weight": { "kind": "removed", "note": "Unused." },
     "--state-dialog-overlay-opacity": {
       "kind": "removed",
-      "token": "color.bg.overlay",
-      "cssVariable": "--env-color-bg-overlay",
-      "note": "The scrim is a translucent color token now."
+      "token": "color.bg.backdrop",
+      "cssVariable": "--env-color-bg-backdrop",
+      "note": "The backdrop is a translucent color token now."
     },
     "--state-disabled-opacity": {
       "kind": "prefixed",
@@ -1794,45 +2251,99 @@
       "cssVariable": "--env-type-body-letter-spacing"
     },
     "--type-body-line-height": { "kind": "prefixed", "cssVariable": "--env-type-body-line-height" },
-    "--type-body-small": { "kind": "prefixed", "cssVariable": "--env-type-body-small" },
+    "--type-body-small": {
+      "kind": "renamed",
+      "token": "type.body-sm",
+      "cssVariable": "--env-type-body-sm",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
     "--type-body-small-font-family": {
-      "kind": "prefixed",
-      "cssVariable": "--env-type-body-small-font-family"
+      "kind": "renamed",
+      "cssVariable": "--env-type-body-sm-font-family",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
     },
     "--type-body-small-font-size": {
-      "kind": "prefixed",
-      "cssVariable": "--env-type-body-small-font-size"
+      "kind": "renamed",
+      "cssVariable": "--env-type-body-sm-font-size",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
     },
     "--type-body-small-font-weight": {
-      "kind": "prefixed",
-      "cssVariable": "--env-type-body-small-font-weight"
+      "kind": "renamed",
+      "cssVariable": "--env-type-body-sm-font-weight",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
     },
     "--type-body-small-letter-spacing": {
-      "kind": "prefixed",
-      "cssVariable": "--env-type-body-small-letter-spacing"
+      "kind": "renamed",
+      "cssVariable": "--env-type-body-sm-letter-spacing",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
     },
     "--type-body-small-line-height": {
-      "kind": "prefixed",
-      "cssVariable": "--env-type-body-small-line-height"
+      "kind": "renamed",
+      "cssVariable": "--env-type-body-sm-line-height",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
     },
-    "--type-h1": { "kind": "prefixed", "cssVariable": "--env-type-h1" },
-    "--type-h1-font-family": { "kind": "prefixed", "cssVariable": "--env-type-h1-font-family" },
-    "--type-h1-font-size": { "kind": "prefixed", "cssVariable": "--env-type-h1-font-size" },
-    "--type-h1-font-weight": { "kind": "prefixed", "cssVariable": "--env-type-h1-font-weight" },
+    "--type-h1": {
+      "kind": "renamed",
+      "token": "type.headline",
+      "cssVariable": "--env-type-headline",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--type-h1-font-family": {
+      "kind": "renamed",
+      "cssVariable": "--env-type-headline-font-family",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--type-h1-font-size": {
+      "kind": "renamed",
+      "cssVariable": "--env-type-headline-font-size",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--type-h1-font-weight": {
+      "kind": "renamed",
+      "cssVariable": "--env-type-headline-font-weight",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
     "--type-h1-letter-spacing": {
-      "kind": "prefixed",
-      "cssVariable": "--env-type-h1-letter-spacing"
+      "kind": "renamed",
+      "cssVariable": "--env-type-headline-letter-spacing",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
     },
-    "--type-h1-line-height": { "kind": "prefixed", "cssVariable": "--env-type-h1-line-height" },
-    "--type-h2": { "kind": "prefixed", "cssVariable": "--env-type-h2" },
-    "--type-h2-font-family": { "kind": "prefixed", "cssVariable": "--env-type-h2-font-family" },
-    "--type-h2-font-size": { "kind": "prefixed", "cssVariable": "--env-type-h2-font-size" },
-    "--type-h2-font-weight": { "kind": "prefixed", "cssVariable": "--env-type-h2-font-weight" },
+    "--type-h1-line-height": {
+      "kind": "renamed",
+      "cssVariable": "--env-type-headline-line-height",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--type-h2": {
+      "kind": "renamed",
+      "token": "type.title",
+      "cssVariable": "--env-type-title",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--type-h2-font-family": {
+      "kind": "renamed",
+      "cssVariable": "--env-type-title-font-family",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--type-h2-font-size": {
+      "kind": "renamed",
+      "cssVariable": "--env-type-title-font-size",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
+    "--type-h2-font-weight": {
+      "kind": "renamed",
+      "cssVariable": "--env-type-title-font-weight",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
     "--type-h2-letter-spacing": {
-      "kind": "prefixed",
-      "cssVariable": "--env-type-h2-letter-spacing"
+      "kind": "renamed",
+      "cssVariable": "--env-type-title-letter-spacing",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
     },
-    "--type-h2-line-height": { "kind": "prefixed", "cssVariable": "--env-type-h2-line-height" },
+    "--type-h2-line-height": {
+      "kind": "renamed",
+      "cssVariable": "--env-type-title-line-height",
+      "note": "Typography tokens take the names of Text's variants, and sm as every other scale does."
+    },
     "--viewport-gutter": { "kind": "renamed", "cssVariable": "--env-viewport-gutter" }
   }
 }

@@ -148,7 +148,7 @@
   min-block-size: 0;
 }
 
-/* A picture of the overlay, without the scrim, which would fill the canvas. */
+/* A picture of the overlay, without the backdrop, which would fill the canvas. */
 .catalogue-related-canvas :is(.env-dialog-backdrop, .env-sheet-backdrop) {
   display: none;
 }
@@ -167,7 +167,7 @@
 
 .catalogue-related-line .env-markdown {
   color: var(--env-color-fg-muted);
-  font: var(--env-type-body-small);
+  font: var(--env-type-body-sm);
 }
 
 .catalogue-related-line .env-markdown > * {
@@ -186,11 +186,11 @@
   border-radius: var(--env-radius-lg);
   background: var(--env-color-bg-neutral-emphasis);
 }
-.catalogue-page-specimen-swatches > [data-role='brand'] {
-  background: var(--env-color-bg-brand-emphasis);
+.catalogue-page-specimen-swatches > [data-role='primary'] {
+  background: var(--env-color-bg-primary-emphasis);
 }
 .catalogue-page-specimen-swatches > [data-role='accent'] {
-  background: var(--env-color-bg-accent-emphasis);
+  background: var(--env-color-bg-accent-strong);
 }
 .catalogue-page-specimen-swatches > [data-role='success'] {
   background: var(--env-color-bg-success-emphasis);
@@ -205,7 +205,7 @@
 .catalogue-page-specimen-spacing > span {
   block-size: var(--env-space-3);
   border-radius: var(--env-radius-xs);
-  background: var(--env-color-bg-accent-emphasis);
+  background: var(--env-color-bg-primary-solid);
 }
 .catalogue-page-specimen-spacing > [data-step='1'] {
   inline-size: calc(4 * var(--env-space-1));

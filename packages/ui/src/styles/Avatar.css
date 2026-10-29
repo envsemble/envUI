@@ -23,8 +23,8 @@
     border-radius: 50%;
     /* A tonal pair of the avatar's hue, from data-hue: a soft pastel fill behind initials and a
        figure in a deep shade of the same hue. */
-    --env-avatar-container-default: var(--env-color-avatar-bg);
-    --env-avatar-content-default: var(--env-color-avatar-fg);
+    --env-avatar-container-default: var(--env-color-bg-avatar);
+    --env-avatar-content-default: var(--env-color-fg-avatar);
     --env-avatar-fill: var(--env-avatar-container, var(--env-avatar-container-default));
     --env-avatar-figure-color: var(--env-avatar-content, var(--env-avatar-content-default));
     background: var(--env-avatar-fill);
@@ -49,32 +49,32 @@
     box-shadow: var(--env-avatar-shadow);
   }
   .env-avatar[data-hue='seafoam'] {
-    --env-avatar-container-default: var(--env-color-avatar-bg-seafoam);
-    --env-avatar-content-default: var(--env-color-avatar-fg-seafoam);
+    --env-avatar-container-default: var(--env-color-bg-avatar-seafoam);
+    --env-avatar-content-default: var(--env-color-fg-avatar-seafoam);
   }
   .env-avatar[data-hue='sage'] {
-    --env-avatar-container-default: var(--env-color-avatar-bg-sage);
-    --env-avatar-content-default: var(--env-color-avatar-fg-sage);
+    --env-avatar-container-default: var(--env-color-bg-avatar-sage);
+    --env-avatar-content-default: var(--env-color-fg-avatar-sage);
   }
   .env-avatar[data-hue='butter'] {
-    --env-avatar-container-default: var(--env-color-avatar-bg-butter);
-    --env-avatar-content-default: var(--env-color-avatar-fg-butter);
+    --env-avatar-container-default: var(--env-color-bg-avatar-butter);
+    --env-avatar-content-default: var(--env-color-fg-avatar-butter);
   }
   .env-avatar[data-hue='blush'] {
-    --env-avatar-container-default: var(--env-color-avatar-bg-blush);
-    --env-avatar-content-default: var(--env-color-avatar-fg-blush);
+    --env-avatar-container-default: var(--env-color-bg-avatar-blush);
+    --env-avatar-content-default: var(--env-color-fg-avatar-blush);
   }
   .env-avatar[data-hue='periwinkle'] {
-    --env-avatar-container-default: var(--env-color-avatar-bg-periwinkle);
-    --env-avatar-content-default: var(--env-color-avatar-fg-periwinkle);
+    --env-avatar-container-default: var(--env-color-bg-avatar-periwinkle);
+    --env-avatar-content-default: var(--env-color-fg-avatar-periwinkle);
   }
   .env-avatar[data-hue='orchid'] {
-    --env-avatar-container-default: var(--env-color-avatar-bg-orchid);
-    --env-avatar-content-default: var(--env-color-avatar-fg-orchid);
+    --env-avatar-container-default: var(--env-color-bg-avatar-orchid);
+    --env-avatar-content-default: var(--env-color-fg-avatar-orchid);
   }
   .env-avatar[data-hue='oat'] {
-    --env-avatar-container-default: var(--env-color-avatar-bg-oat);
-    --env-avatar-content-default: var(--env-color-avatar-fg-oat);
+    --env-avatar-container-default: var(--env-color-bg-avatar-oat);
+    --env-avatar-content-default: var(--env-color-fg-avatar-oat);
   }
   .env-avatar[data-size='sm'] {
     --env-avatar-size: 1.5rem;
@@ -98,7 +98,7 @@
     );
     box-shadow:
       0 0 0 2px var(--env-avatar-selected-gap),
-      0 0 0 4px var(--env-color-bg-brand-emphasis);
+      0 0 0 4px var(--env-color-bg-primary-emphasis);
   }
   .env-avatar-check {
     position: absolute;
@@ -111,7 +111,7 @@
     inline-size: max(var(--env-icon-size-sm), calc(var(--env-avatar-size) * 0.36));
     block-size: max(var(--env-icon-size-sm), calc(var(--env-avatar-size) * 0.36));
     border-radius: 50%;
-    background: var(--env-color-bg-brand-emphasis);
+    background: var(--env-color-bg-primary-emphasis);
     color: var(--env-color-fg-on-emphasis);
     box-shadow: 0 0 0 2px var(--env-avatar-selected-gap);
   }

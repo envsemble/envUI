@@ -1,7 +1,7 @@
 import { CodeBlock } from '@envsemble/envui/content';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
-const copy = '.env-code-block-heading .env-icon-button';
+const copy = '.env-code-block-header .env-icon-button';
 
 /** Its copy button pressed: the icon turns to a check and, a few seconds later, back. */
 const script: PointerStep[] = [

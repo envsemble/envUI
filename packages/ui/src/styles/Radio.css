@@ -36,10 +36,10 @@
     padding: 0;
   }
   .env-radio {
-    --env-radio-accent: var(--env-radio-selected, var(--env-color-bg-brand-emphasis));
-    --env-radio-accent-hover: var(--env-radio-selected, var(--env-color-bg-brand-emphasis-hover));
+    --env-radio-accent: var(--env-radio-selected, var(--env-color-bg-primary-emphasis));
+    --env-radio-accent-hover: var(--env-radio-selected, var(--env-color-bg-primary-emphasis-hover));
     /* prettier-ignore */
-    --env-radio-accent-pressed: var(--env-radio-selected, var(--env-color-bg-brand-emphasis-pressed));
+    --env-radio-accent-pressed: var(--env-radio-selected, var(--env-color-bg-primary-emphasis-pressed));
   }
   .env-radio[data-orientation='vertical'] {
     /* With no color property set, the designed fills below apply in every state. The custom fill is
@@ -65,8 +65,8 @@
     min-width: 0;
     padding: var(--env-space-3) var(--env-row-padding-inline);
     background: var(--env-radio-custom-fill, var(--env-color-bg-muted));
-    font: var(--env-type-body-small);
-    font-size: var(--env-font-size-body-small);
+    font: var(--env-type-body-sm);
+    font-size: var(--env-font-size-body-sm);
     color: var(--env-radio-content, var(--env-color-fg-default));
     cursor: pointer;
   }
@@ -104,14 +104,14 @@
     height: 1rem;
     flex: 0 0 auto;
     margin: 0;
-    accent-color: var(--env-radio-accent, var(--env-color-bg-brand-emphasis));
+    accent-color: var(--env-radio-accent, var(--env-color-bg-primary-emphasis));
     cursor: inherit;
   }
   .env-radio-input:hover:not(:disabled) {
-    accent-color: var(--env-radio-accent-hover, var(--env-color-bg-brand-emphasis-hover));
+    accent-color: var(--env-radio-accent-hover, var(--env-color-bg-primary-emphasis-hover));
   }
   .env-radio-input:active:not(:disabled) {
-    accent-color: var(--env-radio-accent-pressed, var(--env-color-bg-brand-emphasis-pressed));
+    accent-color: var(--env-radio-accent-pressed, var(--env-color-bg-primary-emphasis-pressed));
   }
   /* A radio in its label, side by side with the group's others. */
   .env-radio[data-orientation='horizontal'] {
@@ -121,8 +121,8 @@
     display: inline-flex;
     align-items: center;
     gap: var(--env-space-3);
-    font: var(--env-type-body-small);
-    font-size: var(--env-font-size-body-small);
+    font: var(--env-type-body-sm);
+    font-size: var(--env-font-size-body-sm);
     color: var(--env-color-fg-default);
     cursor: pointer;
   }
@@ -150,7 +150,7 @@
   .env-radio-description {
     display: block;
     color: var(--env-color-fg-muted);
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
   }
 
   /* Motion: choice controls settle while they or their label are held, a radio row a little and

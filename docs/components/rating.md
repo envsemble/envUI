@@ -137,9 +137,9 @@ The parts are the number, `env-rating-value`, and the stars, `env-rating-stars`,
 
 ### Customize
 
-`--env-color-rating-star` is the filled stars' gold, a token with a value for each theme and contrast; the empty stars take `--env-color-border-default`.
+`--env-color-fg-rating-star` is the filled stars' gold, a token with a value for each theme and contrast; the empty stars take `--env-color-border-default`.
 
 ## Changelog
 
-- **1.0.0**: The shown number and the name follow the locale, and the name comes from `messages.rating.label`. Empty stars take the boundary color of controls, at least 3:1 against every surface. Filled stars take a clear gold of their own, `--env-color-rating-star`, in place of the warning tone.
+- **1.0.0**: The shown number and the name follow the locale, and the name comes from `messages.rating.label`. Empty stars take the boundary color of controls, at least 3:1 against every surface. Filled stars take a clear gold of their own, `--env-color-fg-rating-star`, in place of the warning tone.
 - **0.7.0**: Rating, with half stars, `max`, `showValue` and `formatLabel`.

@@ -28,6 +28,7 @@ import {
   keepsOpen,
   usePortalContainer,
 } from '../internal/PortalContainerContext.js';
+import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/CommandPalette.css';
 
@@ -332,7 +333,7 @@ export function CommandPalette({
                               render={<Grid />}
                               className="env-command-palette-group"
                             >
-                              <BaseAutocomplete.GroupLabel className="env-command-palette-heading">
+                              <BaseAutocomplete.GroupLabel className="env-command-palette-group-label">
                                 {section.label}
                               </BaseAutocomplete.GroupLabel>
                               <BaseAutocomplete.Collection>
@@ -347,7 +348,7 @@ export function CommandPalette({
                     description are announced, and its icon is decorative. */}
                   <BaseAutocomplete.Status
                     className="env-command-palette-status"
-                    data-empty={empty || undefined}
+                    data-empty={flag(empty)}
                   >
                     {empty ? (
                       <>

@@ -117,11 +117,11 @@ test('missing text renders empty where a skeleton shows a bar, and given slots r
     }),
   );
   assert.match(card, /data-env-skeleton=""/);
-  assert.match(card, /<h3 class="env-text env-card-heading" data-variant="title"><\/h3>/);
+  assert.match(card, /<h3 class="env-text env-card-title" data-variant="title"><\/h3>/);
   assert.match(card, /class="env-text env-card-meta" data-variant="body-sm"><\/span>/);
   assert.match(card, /class="env-text env-card-description"[^>]*><\/p>/);
   // A slot not given at all renders nothing.
-  assert.doesNotMatch(markup(h(Card, null, 'Body')), /env-card-heading|env-card-description/);
+  assert.doesNotMatch(markup(h(Card, null, 'Body')), /env-card-title|env-card-description/);
 
   const row = markup(h(List.Item, { label: item.name, description: item.owner }));
   assert.match(

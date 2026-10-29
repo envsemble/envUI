@@ -2,7 +2,7 @@
   /* A calendar of daily values: weeks as columns, weekdays as rows. Each step mixes the tone into the
      canvas, so higher values stand out more in both themes; empty days use the translucent fill. */
   .env-calendar-heatmap {
-    --env-calendar-heatmap-tone: var(--env-color-fg-accent);
+    --env-calendar-heatmap-tone: var(--env-color-fg-primary);
     --env-calendar-heatmap-cell: 0.75rem;
     --env-calendar-heatmap-gap: 0.1875rem;
     /* As wide as its weeks, so the legend ends with them, and never wider than its container. */
@@ -10,6 +10,9 @@
     max-inline-size: 100%;
     color: var(--env-color-fg-muted);
     font: var(--env-font-weight-regular) 0.75rem / 1 var(--env-font-family);
+  }
+  .env-calendar-heatmap[data-tone='accent'] {
+    --env-calendar-heatmap-tone: var(--env-color-fg-accent);
   }
   .env-calendar-heatmap[data-tone='neutral'] {
     --env-calendar-heatmap-tone: var(--env-color-fg-muted);

@@ -122,7 +122,7 @@ An icon, a heading, a sentence and the one button that starts a feature.
 
 1. **Surface** (`env-card`)
 2. **Header** (`env-card-header`)
-3. **Title** (`env-card-heading`, `title`)
+3. **Title** (`env-card-title`, `title`)
 4. **Meta** (`env-card-meta`, `meta`)
 5. **Description** (`env-card-description`, `description`)
 6. **Content** (`env-card-body > env-text:last-child`, `children`)
@@ -275,7 +275,7 @@ The title is an `h3`; set `headingLevel` to fit the page's outline, and its type
 
 - Lay out the content with Text, Row and Column, one card per subject, never a card inside a card, and put cards side by side in a Grid.
 - A card fills its container's width.
-- The parts are the surface, `env-card`, its header, `env-card-header`, with the title, `env-card-heading`, and the meta, `env-card-meta`; the description, `env-card-description`; the body, `env-card-body`; and the actions, `env-card-footer`.
+- The parts are the surface, `env-card`, its header, `env-card-header`, with the title, `env-card-title`, and the meta, `env-card-meta`; the description, `env-card-description`; the body, `env-card-body`; and the actions, `env-card-footer`.
 - A feature card's parts are envUI's own components inside it: its icon, `env-card env-text > svg`, its heading, `env-card env-text[data-variant='headline']`, its sentence, `env-card env-text[data-variant='body-sm']`, and its action, `env-card env-button`.
 
 ### Customize
@@ -289,7 +289,7 @@ The title is an `h3`; set `headingLevel` to fit the page's outline, and its type
 <Card
   title="Northwind launch"
   padding={6}
-  style={{ '--env-card-container': 'var(--env-color-bg-brand-muted)' } as CSSProperties}
+  style={{ '--env-card-container': 'var(--env-color-bg-primary-muted)' } as CSSProperties}
 />
 ```
 

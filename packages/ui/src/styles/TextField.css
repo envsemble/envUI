@@ -29,18 +29,18 @@
     --env-text-field-text: var(--env-text-field-content, var(--env-color-fg-default));
     --env-text-field-edge: var(--env-text-field-outline, var(--env-color-border-default));
     /* prettier-ignore */
-    --env-text-field-accent: var(--env-text-field-indicator, var(--env-color-border-accent-emphasis));
+    --env-text-field-accent: var(--env-text-field-indicator, var(--env-color-border-primary-emphasis));
     --env-text-field-accent-hover: var(
       --env-text-field-indicator,
-      var(--env-color-border-accent-emphasis-hover)
+      var(--env-color-border-primary-emphasis-hover)
     );
     --env-text-field-accent-pressed: var(
       --env-text-field-indicator,
-      var(--env-color-border-accent-emphasis-pressed)
+      var(--env-color-border-primary-emphasis-pressed)
     );
     /* The floated label while focused: the accent's text color, as it sits on what the field sits
        on, or the indicator an application sets. */
-    --env-text-field-label-accent: var(--env-text-field-indicator, var(--env-color-fg-accent));
+    --env-text-field-label-accent: var(--env-text-field-indicator, var(--env-color-fg-primary));
     --env-field-height: var(--env-control-height);
     /* The color of the field's error and of its invalid control, as on every field. */
     --env-field-error-color: var(--env-color-fg-danger);
@@ -61,15 +61,15 @@
     --env-text-field-border-base: var(--env-text-field-edge, var(--env-color-border-default));
     --env-text-field-interaction-color: var(
       --env-text-field-accent,
-      var(--env-color-border-accent-emphasis)
+      var(--env-color-border-primary-emphasis)
     );
     --env-text-field-interaction-hover: var(
       --env-text-field-accent-hover,
-      var(--env-color-border-accent-emphasis-hover)
+      var(--env-color-border-primary-emphasis-hover)
     );
     --env-text-field-interaction-pressed: var(
       --env-text-field-accent-pressed,
-      var(--env-color-border-accent-emphasis-pressed)
+      var(--env-color-border-primary-emphasis-pressed)
     );
     --env-text-field-border-color: var(--env-text-field-border-base);
     /* Where the label starts, resting and floated, and the height of the notch it cuts. */
@@ -108,7 +108,7 @@
     padding: 0;
     overflow: hidden;
     font: var(--env-type-body);
-    font-size: var(--env-font-size-body-small);
+    font-size: var(--env-font-size-body-sm);
     line-height: 1;
     white-space: nowrap;
     visibility: hidden;
@@ -123,7 +123,7 @@
       --env-text-field-border-color: var(--env-text-field-interaction-hover);
     }
   }
-  .env-text-field-control:is(:active, :has(> .env-textarea-resize-edge[data-dragging])):not(
+  .env-text-field-control:is(:active, :has(> .env-textarea-resize-handle[data-resizing])):not(
       :has(> .env-text-field-input:disabled),
       [data-disabled]
     ) {
@@ -148,7 +148,7 @@
     font: var(--env-type-body);
     /* The control font size is 1 rem on touch screens, where smaller entered text zooms the page. */
     font-size: var(--env-control-font-size);
-    caret-color: var(--env-text-field-accent, var(--env-color-border-accent-emphasis));
+    caret-color: var(--env-text-field-accent, var(--env-color-border-primary-emphasis));
   }
   .env-text-field-input::placeholder {
     color: var(--env-color-fg-muted);
@@ -186,7 +186,7 @@
     inset-block-start: -0.625rem;
     padding-inline: var(--env-space-1);
     margin-inline-start: calc(-1 * var(--env-space-1));
-    font-size: var(--env-font-size-body-small);
+    font-size: var(--env-font-size-body-sm);
   }
   /* The floated label opens the notch in the border behind it, as wide as the label shows. */
   .env-text-field-control:is(
@@ -205,7 +205,7 @@
     color: transparent;
   }
   .env-text-field-control:focus-within > label {
-    color: var(--env-text-field-label-accent, var(--env-color-fg-accent));
+    color: var(--env-text-field-label-accent, var(--env-color-fg-primary));
   }
   /* Ghost fields are only their text and icon at rest: no border or fill. A soft fill
      shows under the pointer and while the field has focus, the icon keeps its quiet color, and the
@@ -275,7 +275,7 @@
   textarea.env-text-field-input[data-sizing='content'][data-rows] {
     min-height: calc(var(--env-textarea-rows) * 1lh + var(--env-space-6));
   }
-  .env-textarea-resize-edge {
+  .env-textarea-resize-handle {
     position: absolute;
     inset-inline: 0;
     inset-block-end: -0.0625rem;
@@ -291,7 +291,7 @@
     user-select: none;
     transition: color var(--env-motion-duration-medium) var(--env-motion-ease);
   }
-  .env-textarea-resize-edge::after {
+  .env-textarea-resize-handle::after {
     content: '';
     position: absolute;
     inset-inline: var(--env-radius-lg);
@@ -303,18 +303,18 @@
   }
   /* Older browsers retain the shared edge when native content sizing is unavailable. */
   @supports (field-sizing: content) {
-    textarea.env-text-field-input[data-sizing='content'] + .env-textarea-resize-edge {
+    textarea.env-text-field-input[data-sizing='content'] + .env-textarea-resize-handle {
       display: none;
     }
   }
-  textarea.env-text-field-input:disabled + .env-textarea-resize-edge {
+  textarea.env-text-field-input:disabled + .env-textarea-resize-handle {
     display: none;
   }
   @media (pointer: coarse) {
-    .env-textarea-resize-edge {
+    .env-textarea-resize-handle {
       block-size: var(--env-control-height-touch);
     }
-    textarea.env-text-field-input:not(:disabled):has(+ .env-textarea-resize-edge) {
+    textarea.env-text-field-input:not(:disabled):has(+ .env-textarea-resize-handle) {
       padding-block-end: var(--env-control-height-touch);
     }
     @supports (field-sizing: content) {
@@ -327,7 +327,7 @@
     .env-text-field-border,
     .env-text-field-border > legend,
     .env-text-field-control > label,
-    .env-textarea-resize-edge {
+    .env-textarea-resize-handle {
       transition: none;
     }
   }
@@ -372,7 +372,7 @@
     padding-inline-end: calc((var(--env-control-height) + var(--env-space-3)));
   }
   .env-text-field-control:focus-within > .env-text-field-start {
-    color: var(--env-text-field-accent, var(--env-color-border-accent-emphasis));
+    color: var(--env-text-field-accent, var(--env-color-border-primary-emphasis));
   }
   /* Search inputs supply their own clear action. */
   .env-text-field-input[type='search']::-webkit-search-cancel-button {

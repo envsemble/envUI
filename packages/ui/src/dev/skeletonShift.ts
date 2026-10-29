@@ -38,7 +38,7 @@ function labelOf(element: Element): string {
   return describeElement(element);
 }
 
-/** The labelled elements from the surface down to this one, such as `env-card > env-card-heading`. */
+/** The labelled elements from the surface down to this one, such as `env-card > env-card-title`. */
 function pathOf(element: Element, surface: Element): string {
   const labels: string[] = [];
   for (let at: Element | null = element; at; at = at.parentElement) {

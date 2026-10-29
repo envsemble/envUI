@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { build } from 'esbuild';
 
 // envUI draws no drop shadows: sheets, toasts and tooltips separate by their fill, their edge and,
-// for modals, the scrim. Rings drawn with box-shadow stay: focus rings and halos
+// for modals, the backdrop. Rings drawn with box-shadow stay: focus rings and halos
 // (no offset, no blur), inset edges and selection bars, and a hairline line one pixel below or
 // beside a box. This test reads the shipped style sheet, dev mode's own and the catalogue's, and
 // rejects every other shadow, also one a custom property carries into box-shadow. The library has
@@ -234,7 +234,7 @@ test('the popups’ shadow is soft, follows the theme, goes where popups are sol
     '.env-command-palette',
     '.env-popup',
     '.env-rich-text-suggestions',
-    '.env-surface.env-dialog-popup',
+    '.env-surface.env-dialog',
   ]);
 });
 

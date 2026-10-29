@@ -206,7 +206,7 @@ test('className and style reach the root, and the textarea keeps its own class',
   await expect(root).toHaveClass(/(^| )env-markdown-editor( |$)/);
   await expect(root).toHaveCSS('max-inline-size', '640px');
   const source = page.getByRole('textbox', { name: 'Required source' });
-  await expect(source).toHaveClass(/(^| )env-markdown-source( |$)/);
+  await expect(source).toHaveClass(/(^| )env-markdown-editor-input( |$)/);
   await expect(source).not.toHaveClass(/required-markdown-editor/);
   expect(await source.evaluate((input) => input.style.maxInlineSize)).toBe('');
 });

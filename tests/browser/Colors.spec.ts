@@ -9,14 +9,14 @@ test.beforeEach(async ({ page }) => {
 /** The token each control paints at rest; its hover and pressed tokens carry `-hover`, `-pressed`. */
 const sources: Record<string, readonly [rest: string, hover: string, pressed: string]> = {
   'button-primary': [
-    '--env-color-bg-brand-emphasis',
-    '--env-color-bg-brand-emphasis-hover',
-    '--env-color-bg-brand-emphasis-pressed',
+    '--env-color-bg-primary-emphasis',
+    '--env-color-bg-primary-emphasis-hover',
+    '--env-color-bg-primary-emphasis-pressed',
   ],
   'button-important': [
-    '--env-color-bg-important-strong',
-    '--env-color-bg-important-strong-hover',
-    '--env-color-bg-important-strong-pressed',
+    '--env-color-bg-accent-strong',
+    '--env-color-bg-accent-strong-hover',
+    '--env-color-bg-accent-strong-pressed',
   ],
   'button-secondary': [
     '--env-color-bg-neutral-muted',
@@ -40,7 +40,7 @@ const sources: Record<string, readonly [rest: string, hover: string, pressed: st
     '--env-color-bg-neutral-muted-pressed',
   ],
   navigation: [
-    '--env-color-list-item-bg',
+    '--env-color-bg-list-item',
     '--env-color-bg-navigation-hover',
     '--env-color-bg-navigation-pressed',
   ],
@@ -167,7 +167,7 @@ test('a nested Theme that overrides the semantic tokens recolors its area alone'
   await page.mouse.up();
   await page.mouse.move(0, 0);
   // Outside the area, the theme's own brand color stays.
-  const brand = await tokenColor(outside, '--env-color-bg-brand-emphasis');
+  const brand = await tokenColor(outside, '--env-color-bg-primary-emphasis');
   expect(brand).not.toBe('rgb(23, 111, 53)');
   await expect(outside).toHaveCSS('background-color', brand);
 });
@@ -248,25 +248,25 @@ test('compositions reuse primitive colors while unrelated roles stay independent
       // A list item's component token is the muted surface in both themes.
       ['--env-color-bg-default', ['pane', 'paneCard']],
       ['--env-color-bg-muted', ['surface', 'card', 'contrastPane', 'radioRow', 'row']],
-      ['--env-color-list-item-bg', ['row']],
+      ['--env-color-bg-list-item', ['row']],
       ['--env-color-bg-neutral-muted', ['secondary', 'icon', 'select', 'selectError', 'chip']],
       ['--env-color-fg-control', ['secondary', 'icon', 'select', 'selectError']],
       ['--env-color-fg-link', ['link', 'textButton']],
-      ['--env-color-bg-brand-emphasis', ['primary', 'radio', 'checkbox', 'switch']],
+      ['--env-color-bg-primary-emphasis', ['primary', 'radio', 'checkbox', 'switch']],
       ['--env-color-fg-on-emphasis', ['primary']],
       // The selected tab is a text tab in the accent's text color, whatever its button's variant.
-      ['--env-color-fg-accent', ['tab']],
+      ['--env-color-fg-primary', ['tab']],
       ['--env-color-bg-selected', ['navigation']],
       // A neutral badge's text is muted, as InfoChip's metadata became a Badge.
       ['--env-color-fg-muted', ['navigationIcon', 'selectHint', 'chip']],
       ['--env-color-bg-raised', ['direction']],
-      ['--env-color-border-accent-emphasis', ['fieldWell']],
+      ['--env-color-border-primary-emphasis', ['fieldWell']],
       ['--env-color-fg-danger', ['fieldError', 'selectError']],
       // The default text color is every part's that sets no other, so it has no case of its own.
       ['--env-color-bg-danger-strong', ['destructive']],
     ] as const;
     for (const [token, targets] of cases) {
-      if (token === '--env-color-border-accent-emphasis')
+      if (token === '--env-color-border-primary-emphasis')
         await page.getByTestId(`${theme}-color-field`).focus();
       const { before, after } = await compareToken(token);
       for (const name of Object.keys(selectors)) {
@@ -275,7 +275,7 @@ test('compositions reuse primitive colors while unrelated roles stay independent
         else
           expect(after[name], `${theme}/${token} must leave ${name} alone`).toEqual(before[name]);
       }
-      if (token === '--env-color-border-accent-emphasis')
+      if (token === '--env-color-border-primary-emphasis')
         await page
           .getByTestId(`${theme}-color-field`)
           .evaluate((input) => (input as HTMLElement).blur());
@@ -293,11 +293,11 @@ test('compositions reuse primitive colors while unrelated roles stay independent
         tab.evaluate((element) => getComputedStyle(element, '::after').backgroundColor);
       const before = await indicator();
       await boundary.evaluate((root) =>
-        (root as HTMLElement).style.setProperty('--env-color-border-accent-emphasis', '#d02780'),
+        (root as HTMLElement).style.setProperty('--env-color-border-primary-emphasis', '#d02780'),
       );
       expect(await indicator()).not.toBe(before);
       await boundary.evaluate((root) =>
-        (root as HTMLElement).style.removeProperty('--env-color-border-accent-emphasis'),
+        (root as HTMLElement).style.removeProperty('--env-color-border-primary-emphasis'),
       );
     }
     const selected = boundary.getByRole('tab', { name: 'Third tab' });

@@ -1,5 +1,6 @@
 import type { ComponentPropsWithRef, CSSProperties, ReactElement, Ref } from 'react';
 import { renderElement } from '../internal/renderElement.js';
+import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/Layout.css';
 
@@ -180,7 +181,7 @@ export function Row<RenderedElement extends HTMLElement = HTMLDivElement>({
   wrap,
   ...props
 }: RowProps<RenderedElement>) {
-  return primitive('row', render, props as AnyPrimitiveProps, { 'data-wrap': wrap || undefined });
+  return primitive('row', render, props as AnyPrimitiveProps, { 'data-wrap': flag(wrap) });
 }
 
 /**

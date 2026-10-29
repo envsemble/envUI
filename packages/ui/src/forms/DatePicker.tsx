@@ -362,7 +362,7 @@ export function DatePicker({
         <Grid gap={3} className="env-date-picker-panes">
           {calendar}
           <Grid gap={2} className="env-date-picker-time">
-            <Row align="center" className="env-date-picker-time-heading" id={timeHeadingId}>
+            <Row align="center" className="env-date-picker-time-title" id={timeHeadingId}>
               {timeLabel ?? messages.time}
             </Row>
             <TimeList

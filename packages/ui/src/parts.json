@@ -1,10 +1,7 @@
 {
-  "$comment": "The hand-written part of the part contract, which scripts/docs/GenerateParts.ts merges into docs/generated/parts.json. descriptions: one line per part class, by component. roots: a component whose root is not env-<its name>. shared: anatomy several components render, by its class prefix. placed: a class that no prefix places, and its group. colors: the color properties of each component, public custom properties registered so they don’t inherit, with what each colors.",
+  "$comment": "The hand-written part of the part contract, which scripts/docs/GenerateParts.ts merges into docs/generated/parts.json. descriptions: one line per part class, by component. roots: a component whose root is not env-<its name>. shared: anatomy several components render, by its class prefix. placed: a class that no prefix places, and its group. colors: the color properties of each component, public custom properties registered so they don’t inherit, with what each colors. properties: the other public custom properties of each component, with whether an application sets it or reads it and what it does; every other custom property a component declares is private.",
   "roots": {
-    "Dialog": "env-dialog-popup",
-    "ConfirmDialog": "env-dialog-popup",
-    "Textarea": "env-text-field",
-    "Sheet": "env-sheet-popup"
+    "ConfirmDialog": "env-dialog"
   },
   "shared": {
     "ConnectedRows": {
@@ -29,6 +26,9 @@
     "LoadingBar": {
       "prefix": "env-loading-bar",
       "root": "env-loading-bar"
+    },
+    "Overlay": {
+      "prefix": "env-overlay"
     },
     "PickerPopup": {
       "prefix": "env-picker-popup",
@@ -55,8 +55,7 @@
     }
   },
   "placed": {
-    "env-connected-row": "ConnectedRows",
-    "env-overlay-theme": "Dialog"
+    "env-connected-row": "ConnectedRows"
   },
   "descriptions": {
     "Accordion": {
@@ -112,8 +111,8 @@
       "env-bar": "The navigation bar: a nav landmark across the bottom of a compact window.",
       "env-bar-list": "The row of destinations, which share the bar's width.",
       "env-bar-item": "A destination: a link or button with its indicator above its label.",
-      "env-bar-icon": "The pill around a destination's icon, filled while the destination is current.",
-      "env-bar-text": "A destination's label, under its indicator, cut short with an ellipsis.",
+      "env-bar-indicator": "The pill around a destination's icon, filled while the destination is current.",
+      "env-bar-label": "A destination's label, under its indicator, cut short with an ellipsis.",
       "env-bar-count": "A destination's count, on the icon's top end; 999+ above 999.",
       "env-bar-more": "The last item past five destinations, which opens the rest in a menu."
     },
@@ -142,7 +141,7 @@
       "env-calendar-day-mark": "The mark under a day, such as today's.",
       "env-calendar-grid": "The grid of days.",
       "env-calendar-header": "The row with the month and the previous and next buttons.",
-      "env-calendar-heading": "The month and year.",
+      "env-calendar-title": "The month and year.",
       "env-calendar-next": "The button for the next month.",
       "env-calendar-pad": "An empty cell before the first day or after the last.",
       "env-calendar-previous": "The button for the previous month."
@@ -167,7 +166,7 @@
       "env-card-description": "The sentence under the title.",
       "env-card-footer": "The strip of actions.",
       "env-card-header": "The row with the title and the meta.",
-      "env-card-heading": "The title.",
+      "env-card-title": "The title.",
       "env-card-meta": "The short fact at the end of the title row."
     },
     "Checkbox": {
@@ -183,7 +182,7 @@
     "CodeBlock": {
       "env-code-block": "The block of code.",
       "env-code-block-copy-status": "The announcement that the code was copied.",
-      "env-code-block-heading": "The block's heading, such as a file name."
+      "env-code-block-header": "The row above the code: its label, such as a file name, and the copy button."
     },
     "CodeDiff": {
       "env-code-diff": "The diff of two versions of code.",
@@ -241,12 +240,12 @@
       "env-combobox-item": "One option.",
       "env-combobox-item-indicator": "The check of a chosen option.",
       "env-combobox-label": "The label.",
-      "env-combobox-leading": "The leading icon of the well.",
+      "env-combobox-start": "The icon at the start of the well, or of an option in the popup.",
       "env-combobox-list": "The list of options.",
       "env-combobox-popup": "The popup with the options.",
       "env-combobox-status": "The announcement of the number of options.",
       "env-combobox-trigger": "The button that opens the list.",
-      "env-combobox-value-leading": "The chosen option's icon in the well."
+      "env-combobox-value-icon": "The chosen option's icon in the well."
     },
     "CommandPalette": {
       "env-command-palette": "The command palette's dialog.",
@@ -256,7 +255,7 @@
       "env-command-palette-footer": "The footer with the keyboard hints.",
       "env-command-palette-footer-content": "The content of the footer.",
       "env-command-palette-group": "A group of commands.",
-      "env-command-palette-heading": "A group's heading.",
+      "env-command-palette-group-label": "A group's label.",
       "env-command-palette-hint": "One keyboard hint.",
       "env-command-palette-input": "The search input.",
       "env-command-palette-item": "One command.",
@@ -303,7 +302,7 @@
       "env-date-picker-placeholder": "The text shown without a date.",
       "env-date-picker-popup": "The picker card with the calendar, also on TimePicker and MonthPicker.",
       "env-date-picker-time": "The times beside the calendar.",
-      "env-date-picker-time-heading": "The heading of the times.",
+      "env-date-picker-time-title": "The title over the times.",
       "env-date-picker-trigger": "The button that opens the calendar.",
       "env-date-picker-value": "The chosen date as text."
     },
@@ -314,7 +313,7 @@
       "env-description-list-value": "A value."
     },
     "Dialog": {
-      "env-dialog-popup": "The dialog.",
+      "env-dialog": "The dialog.",
       "env-dialog-actions": "The row of actions at the bottom.",
       "env-dialog-backdrop": "The backdrop behind a modal dialog.",
       "env-dialog-content": "The dialog's content between the header and the actions.",
@@ -323,8 +322,7 @@
       "env-dialog-heading": "The column with the title and the description.",
       "env-dialog-positioner": "The positioner that centres the dialog.",
       "env-dialog-surface": "The dialog's surface.",
-      "env-dialog-title": "The title.",
-      "env-overlay-theme": "The theme boundary of a dialog's, a sheet's or the command palette's portal. It has no box, so their scrim and positioner keep their own layers; the positioner is the env-window container."
+      "env-dialog-title": "The title."
     },
     "DiffStat": {
       "env-diff-stat": "The count of added and removed lines.",
@@ -337,13 +335,12 @@
       "env-disclosure-panel": "The panel it shows."
     },
     "DocumentTabs": {
-      "env-document-tabs": "The tabs of open documents.",
-      "env-document-tabs-bar": "The bar that holds the tabs.",
+      "env-document-tabs-list": "The tabs of open documents, which scroll sideways.",
       "env-document-tabs-close": "A tab's close button.",
       "env-document-tabs-drag-image": "The image that follows the pointer while a tab is dragged.",
       "env-document-tabs-end": "The actions at the end of the bar.",
       "env-document-tabs-item": "One tab with its close button.",
-      "env-document-tabs-root": "The tabs' root element.",
+      "env-document-tabs": "The root: a bar that holds the strip of tabs and the content after it.",
       "env-document-tabs-tab": "A tab's button.",
       "env-document-tabs-tab-label": "A tab's title."
     },
@@ -420,12 +417,12 @@
     },
     "Markdown": {
       "env-markdown": "The rendered Markdown.",
-      "env-markdown-source": "The Markdown source shown as text.",
       "env-markdown-table": "The region that scrolls a wide table."
     },
     "MarkdownEditor": {
       "env-markdown-editor": "The Markdown editor.",
-      "env-markdown-editor-write": "The text area for writing."
+      "env-markdown-editor-write": "The text area for writing.",
+      "env-markdown-editor-input": "The text area that shows the Markdown source as text."
     },
     "Menu": {
       "env-menu": "The menu's popup.",
@@ -434,8 +431,8 @@
       "env-menu-group-label": "A group's label.",
       "env-menu-header": "The header at the top of the menu.",
       "env-menu-item": "One item.",
-      "env-menu-item-check": "The place for a chosen item's check.",
-      "env-menu-item-check-mark": "The check of a chosen item.",
+      "env-menu-item-indicator-slot": "The place for a chosen item's check.",
+      "env-menu-item-indicator": "The check of a chosen item.",
       "env-menu-item-description": "An item's description.",
       "env-menu-item-end": "The end of an item, for a shortcut or a chevron.",
       "env-menu-item-label": "An item's label.",
@@ -466,7 +463,7 @@
     },
     "Meter": {
       "env-meter": "The meter.",
-      "env-meter-heading": "The row with the label and the value.",
+      "env-meter-header": "The row with the label and the value.",
       "env-meter-indicator": "The filled part of the track.",
       "env-meter-label": "The label.",
       "env-meter-track": "The track.",
@@ -476,7 +473,7 @@
       "env-month-picker": "The month field.",
       "env-month-picker-grid": "The grid of months.",
       "env-month-picker-header": "The row with the year and the previous and next buttons.",
-      "env-month-picker-heading": "The year.",
+      "env-month-picker-title": "The year.",
       "env-month-picker-month": "One month.",
       "env-month-picker-month-mark": "The mark under a month, such as the current one.",
       "env-month-picker-next": "The button for the next year.",
@@ -489,7 +486,7 @@
       "env-drawer-header": "Content above the destinations, such as the application's name or a search trigger.",
       "env-drawer-list": "The list of destinations and groups, which scrolls where the drawer is shorter.",
       "env-drawer-section": "A group: its heading and the list of its destinations.",
-      "env-drawer-heading": "A group's heading, which names the group's list.",
+      "env-drawer-group-label": "A group's label, which names the group's list.",
       "env-drawer-item": "A destination: a link or button as wide as the drawer, with its icon, label and count.",
       "env-drawer-label": "A destination's label.",
       "env-drawer-count": "A destination's count, at the item's end; 999+ above 999.",
@@ -500,6 +497,9 @@
       "env-drawer-children": "The list of a section's nested destinations, indented, hidden until found while closed.",
       "env-drawer-footer": "Content below the destinations, at the bottom of the drawer.",
       "env-drawer-resize-handle": "The handle on a resizable drawer's end edge, a separator that resizes it."
+    },
+    "Overlay": {
+      "env-overlay-theme": "The theme boundary of a dialog's, a sheet's or the command palette's portal. It has no box, so their backdrop and positioner keep their own layers; the positioner is the env-window container."
     },
     "Page": {
       "env-page": "The page: a readable width and the gutter; it never paints.",
@@ -543,7 +543,7 @@
       "env-panel-dock-meta": "A fact beside a panel's title.",
       "env-panel-dock-panel": "One panel.",
       "env-panel-dock-probe": "An invisible element that measures the dock's room.",
-      "env-panel-dock-resize": "The handle that resizes the dock.",
+      "env-panel-dock-resize-handle": "The handle that resizes the dock.",
       "env-panel-dock-row": "The row of open panels.",
       "env-panel-dock-strip": "The strip of minimized panels' tabs.",
       "env-panel-dock-tab": "A minimized panel's tab.",
@@ -562,7 +562,7 @@
       "env-panes-divider": "The gap between the panes, with its grip, that resizes them.",
       "env-panes-back": "The button back to the list, when one pane shows at a time.",
       "env-panes-close": "The supporting sheet's close button, which shows only while the pane is a sheet.",
-      "env-panes-scrim": "The scrim behind the supporting sheet.",
+      "env-panes-backdrop": "The backdrop behind the supporting sheet.",
       "env-panes-trigger": "The button in the main pane that opens the supporting sheet, which hides while the panes sit side by side."
     },
     "PickerPopup": {
@@ -582,7 +582,7 @@
     },
     "Progress": {
       "env-progress": "The progress bar.",
-      "env-progress-heading": "The row with the label and the value.",
+      "env-progress-header": "The row with the label and the value.",
       "env-progress-indicator": "The filled part of the track.",
       "env-progress-label": "The label.",
       "env-progress-segment": "One segment of a segmented bar.",
@@ -652,7 +652,7 @@
     "SegmentedControl": {
       "env-segmented-control": "The segmented control: connected segments in one outline.",
       "env-segmented-control-item": "One segment.",
-      "env-segmented-control-item-check": "The check on the chosen segment, in place of its icon.",
+      "env-segmented-control-item-indicator": "The check on the chosen segment, in place of its icon.",
       "env-segmented-control-item-count": "A segment's count.",
       "env-segmented-control-item-label": "A segment's label."
     },
@@ -667,7 +667,7 @@
       "env-select-trigger": "The button that shows the value and opens the list."
     },
     "Sheet": {
-      "env-sheet-popup": "The sheet.",
+      "env-sheet": "The sheet.",
       "env-sheet-body": "The sheet's content, which scrolls between the heading and the actions.",
       "env-sheet-backdrop": "The backdrop behind a modal sheet.",
       "env-sheet-viewport": "The viewport the sheet slides in from, at its edge.",
@@ -680,7 +680,7 @@
     "Slider": {
       "env-slider": "The slider.",
       "env-slider-control": "The field: the track's tint, which takes the pointer.",
-      "env-slider-heading": "The row of the label and the value, over the track.",
+      "env-slider-header": "The row of the label and the value, over the track.",
       "env-slider-indicator": "The fill from the start to the value.",
       "env-slider-label": "The label, inside at the start.",
       "env-slider-thumb": "The handle: a thin line at the value, under the pointer and on focus.",
@@ -688,7 +688,7 @@
       "env-slider-value": "The value as text."
     },
     "Spinner": {
-      "env-spinner": "The spinner, or with data-show-label the status line that holds it and its label.",
+      "env-spinner": "The spinner, data-label-hidden while its label is hidden, or else the status line that holds it and its label.",
       "env-spinner-arc": "The turning arc.",
       "env-spinner-label": "The label shown beside the spinner, which says what is loading."
     },
@@ -707,7 +707,7 @@
       "env-table-cell": "A cell.",
       "env-table-cell-content": "A cell's content.",
       "env-table-cell-label": "A cell's column name, shown when rows stack.",
-      "env-table-column-resize": "The handle that resizes a column.",
+      "env-table-column-resize-handle": "The handle that resizes a column.",
       "env-table-head": "The head.",
       "env-table-header-cell": "A column header.",
       "env-table-header-label": "A column header's text.",
@@ -745,7 +745,8 @@
       "env-text-field-suffix": "Fixed text after the input."
     },
     "Textarea": {
-      "env-textarea-resize-edge": "The edge that resizes the text area."
+      "env-textarea-resize-handle": "The handle on the text area's bottom edge, which resizes it.",
+      "env-textarea": "The text area's root, beside env-field and env-text-field."
     },
     "Theme": {
       "env-theme": "The theme boundary."
@@ -768,7 +769,7 @@
       "env-toast-announcer": "The announcements of notifications.",
       "env-toast-dismiss": "A notification's dismiss button.",
       "env-toast-message": "A notification's message.",
-      "env-toast-portal-theme": "The theme boundary around the notifications.",
+      "env-toast-theme": "The theme boundary around the notifications.",
       "env-toast-queued-count": "The count of notifications waiting.",
       "env-toast-status-icon": "The icon of a notification's tone.",
       "env-toast-viewport": "The region that holds the notifications."
@@ -841,7 +842,7 @@
     "Checkbox": {
       "--env-checkbox-outline": "The box's edge while unchecked.",
       "--env-checkbox-selected": "The box's fill while checked or indeterminate; set, it takes state layers instead of the designed hover and press fills.",
-      "--env-checkbox-icon": "The check mark or dash, and the color of the state layers."
+      "--env-checkbox-selected-content": "The check mark or dash, and the color of the state layers."
     },
     "ColorPickerButton": {
       "--env-color-picker-button-container": "The fill behind the swatch and the value, transparent by default."
@@ -943,6 +944,56 @@
       "--env-tooltip-container": "The fill.",
       "--env-tooltip-content": "The text and the keys of a shortcut.",
       "--env-tooltip-outline": "The edge."
+    }
+  },
+  "properties": {
+    "IconButton": {
+      "--env-icon-button-hit-area": {
+        "use": "set",
+        "description": "The size of an icon button's pointer target, which a container sets for the icon buttons in it, such as the touch height under a coarse pointer; unset, the button's own box."
+      }
+    },
+    "LineArt": {
+      "--env-line-art-duration": {
+        "use": "set",
+        "description": "How long a drawing's motion takes, on the drawing: ten times the slow motion duration by default, and play half as long again."
+      }
+    },
+    "Popup": {
+      "--env-popup-opacity": {
+        "use": "set",
+        "description": "How much of a frosted popup's fill covers what is behind it."
+      },
+      "--env-popup-blur": {
+        "use": "set",
+        "description": "How much a frosted popup blurs what shows through it."
+      },
+      "--env-popup-shadow": {
+        "use": "set",
+        "description": "The soft shadow a frosted popup, the command palette and a dialog cast; none where they are solid."
+      }
+    },
+    "Scaffold": {
+      "--env-scaffold-sticky-top": {
+        "use": "read",
+        "description": "How far below the window's top sticky content in the body sticks: under the top bar where the document scrolls."
+      }
+    },
+    "TableOfContents": {
+      "--env-table-of-contents-depth": {
+        "use": "read",
+        "description": "An item's level below the top, from 1, which the component sets on each nested item and its indent reads."
+      }
+    },
+    "Tooltip": {
+      "--env-tooltip-opacity": {
+        "use": "set",
+        "description": "How much of a tooltip's strong fill covers what is behind it."
+      },
+      "--env-tooltip-shadow": {
+        "use": "set",
+        "description": "The small shadow beside a tooltip; none where it is solid."
+      }
     }
   }
 }

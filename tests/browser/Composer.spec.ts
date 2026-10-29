@@ -54,7 +54,7 @@ test('Enter submits, Shift+Enter starts a line and the action stops a running re
   await expect(sent).toHaveText('Quarterly report\nSecond line');
   await expect(field).toHaveValue('');
   await expect(field).toBeFocused();
-  await expect(composer).toHaveAttribute('data-running', 'true');
+  await expect(composer).toHaveAttribute('data-running', '');
   const stop = composer.getByRole('button', { name: 'Stop', exact: true });
   await expect(stop).toBeEnabled();
   // The accessible name labels the action; no native tooltip repeats it.

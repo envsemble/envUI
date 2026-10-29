@@ -177,14 +177,14 @@ import { Column, Text } from '@envsemble/envui';
 
 At the default 16 px root, in the comfortable [scale](spacing.md), as its Sizes in each scale lists them; compact takes each a step smaller. Display, headline and title are medium (500), the rest regular (400).
 
-| Variant    | In the catalogue | Size                               | Color                    |
-| ---------- | ---------------- | ---------------------------------- | ------------------------ |
-| `display`  | Display          | 1.75 to 2.75 rem, with the window  | `--env-color-fg-default` |
-| `headline` | Headline         | 1.125 rem, `--env-type-h1`         | `--env-color-fg-default` |
-| `title`    | Title            | 1 rem, `--env-type-h2`             | `--env-color-fg-default` |
-| `body`     | Body             | 0.9375 rem, `--env-type-body`      | `--env-color-fg-default` |
-| `body-sm`  | Small body       | 0.875 rem, `--env-type-body-small` | `--env-color-fg-muted`   |
-| `caption`  | Caption          | 0.875 rem, `--env-type-body-small` | `--env-color-fg-muted`   |
+| Variant    | In the catalogue | Size                                                    | Color                    |
+| ---------- | ---------------- | ------------------------------------------------------- | ------------------------ |
+| `display`  | Display          | 1.75 to 2.75 rem, with the window, `--env-type-display` | `--env-color-fg-default` |
+| `headline` | Headline         | 1.125 rem, `--env-type-headline`                        | `--env-color-fg-default` |
+| `title`    | Title            | 1 rem, `--env-type-title`                               | `--env-color-fg-default` |
+| `body`     | Body             | 0.9375 rem, `--env-type-body`                           | `--env-color-fg-default` |
+| `body-sm`  | Small body       | 0.875 rem, `--env-type-body-sm`                         | `--env-color-fg-muted`   |
+| `caption`  | Caption          | 0.875 rem, `--env-type-body-sm`                         | `--env-color-fg-muted`   |
 
 `emphasis` replaces a variant's color: `default` is `--env-color-fg-default`, and `muted` and `subtle` are both `--env-color-fg-muted` today.
 

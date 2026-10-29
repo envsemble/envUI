@@ -3,10 +3,10 @@
      the value. The track is a quiet tint with no outline, as Material draws it; the indicator reaches
      3:1 against the track and the surface, and the value text says the exact amount. Each emits its own classes, env-meter* and env-progress*; Progress adds the
      indeterminate sweep and segments. */
-  .env-meter-heading,
-  .env-progress-heading {
+  .env-meter-header,
+  .env-progress-header {
     align-items: baseline;
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
   }
   .env-meter-label,
   .env-progress-label {
@@ -30,7 +30,7 @@
   .env-progress-indicator {
     block-size: 100%;
     border-radius: inherit;
-    background: var(--env-color-bg-brand-emphasis);
+    background: var(--env-color-bg-primary-emphasis);
     transition: inline-size var(--env-motion-duration-medium) var(--env-motion-ease);
   }
   .env-progress[data-indeterminate] .env-progress-indicator {
@@ -76,7 +76,7 @@
     inline-size: calc(var(--env-progress-segment-fill, 0) * 100%);
     block-size: 100%;
     border-radius: inherit;
-    background: var(--env-color-bg-brand-emphasis);
+    background: var(--env-color-bg-primary-emphasis);
   }
   @media (prefers-reduced-motion: reduce) {
     .env-meter-indicator,

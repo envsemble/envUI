@@ -5,7 +5,7 @@ import { usePointer, type PointerStep } from '../motion/Motion';
 /** Renamed, which closes the dialog; opened again from its button, which it covers. */
 const script: PointerStep[] = [
   { wait: 400 },
-  { to: '.env-dialog-popup .env-button:last-child', x: 0.4, y: 0.6 },
+  { to: '.env-dialog .env-button:last-child', x: 0.4, y: 0.6 },
   { wait: 700 },
   { click: true },
   { wait: 900 },

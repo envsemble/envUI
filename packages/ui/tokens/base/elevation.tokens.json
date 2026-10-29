@@ -3,6 +3,7 @@
   "elevation": {
     "0": {
       "border": {
+        "$description": "The edge of a level-0 layer, which lies in the page: none.",
         "$type": "color",
         "$value": { "colorSpace": "srgb", "components": [0, 0, 0], "alpha": 0 }
       }
@@ -10,7 +11,7 @@
     "1": {
       "border": {
         "$type": "color",
-        "$description": "The edge of a level-1 layer, the same as every level's: envUI draws no shadows, so the edge and the fill set a floating layer apart.",
+        "$description": "The edge of a level-1 layer, the same as every level's: where a floating layer is solid, the edge and its fill set it apart.",
         "$value": "{palette.gray.25}"
       }
     },
@@ -24,10 +25,10 @@
     "3": {
       "border": {
         "$type": "color",
-        "$description": "The edge of dialogs, sheets and the command palette where they are solid, the same as level 2's; a modal's scrim sets it apart as well. A dialog and the palette otherwise part by their fill and the popups' soft shadow, a sheet by its fill.",
+        "$description": "The edge of dialogs, sheets and the command palette where they are solid, the same as level 2's; a modal's backdrop sets it apart as well. A dialog and the palette otherwise part by their fill and the popups' soft shadow, a sheet by its fill.",
         "$value": "{palette.gray.25}"
       }
     },
-    "$description": "Elevation 0–3: the edge color of each level, for layers that float over the page. A floating layer shows this edge where it is solid, at high contrast, with reduced transparency and under forced colors; elsewhere popups and dialogs part by their fill and a soft shadow, and a modal by its scrim as well. Level 0 is flat; menus, Select lists and popovers take level 2, dialogs and sheets level 3. Levels 1–3 share one edge, clearly visible at about 2:1 against a popup and the page; in high contrast it is the 4.5:1 boundary, and under forced colors the system's."
+    "$description": "Elevation 0–3: the edge color of each level, for layers that float over the page. A floating layer shows this edge where it is solid, at high contrast, with reduced transparency and under forced colors; elsewhere popups and dialogs part by their fill and a soft shadow, and a modal by its backdrop as well. Level 0 is flat; menus, Select lists and popovers take level 2, dialogs and sheets level 3. Levels 1–3 share one edge, clearly visible at about 2:1 against a popup and the page; in high contrast it is the 4.5:1 boundary, and under forced colors the system's."
   }
 }

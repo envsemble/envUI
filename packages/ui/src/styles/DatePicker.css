@@ -38,7 +38,7 @@
     --env-date-picker-action: var(--env-control-height-sm);
     --env-date-picker-end: var(--env-space-2);
   }
-  .env-date-picker .env-date-picker-control[data-actions='2'] {
+  .env-date-picker .env-date-picker-control[data-action-count='2'] {
     --env-date-picker-actions: 2;
   }
   .env-date-picker .env-date-picker-control > .env-date-picker-trigger {
@@ -93,7 +93,7 @@
     block-size: var(--env-control-icon-size);
   }
   .env-date-picker-control:focus-within .env-date-picker-icon {
-    color: var(--env-color-border-accent-emphasis);
+    color: var(--env-color-border-primary-emphasis);
   }
   /* Carries the value for native forms; an invalid required field's message points at the field. */
   .env-date-picker-native {
@@ -125,9 +125,9 @@
   .env-date-picker-time > .env-time-list {
     align-self: center;
   }
-  .env-date-picker-time-heading {
+  .env-date-picker-time-title {
     color: var(--env-color-fg-muted);
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
     font-weight: var(--env-font-weight-medium);
   }
   /* From a medium window up, the time sits beside the calendar, as tall as it, and its heading as
@@ -140,7 +140,7 @@
       block-size: 0;
       min-block-size: 100%;
     }
-    .env-date-picker-time-heading {
+    .env-date-picker-time-title {
       justify-content: center;
       min-block-size: var(--env-control-height-md);
     }

@@ -79,14 +79,14 @@ A medium side sheet takes the whole width of a compact window, and a large one o
 
 ```
 
-1. **Sheet** (`env-sheet-popup`)
+1. **Sheet** (`env-sheet`)
 2. **Title** (`env-dialog-title`, `title`)
 3. **Description** (`env-dialog-description`, `description`)
 4. **Close button** (`env-dialog-heading > env-button`, `closeLabel`)
-5. **Content** (`env-sheet-popup env-checkbox`, `children`)
+5. **Content** (`env-sheet env-checkbox`, `children`)
 6. **Action** (`env-dialog-actions > env-button`, `actions`)
 
-Not shown: the scrim behind a modal sheet, and the handle on a resizable sheet's inner edge.
+Not shown: the backdrop behind a modal sheet, and the handle on a resizable sheet's inner edge.
 
 ## Behaviour
 
@@ -97,7 +97,7 @@ A sheet has a dialog's surface, title, description and actions.
 - On a touch screen a swipe toward its edge closes it too.
 - A mouse or a pen never moves the sheet, and a drag inside it selects text.
 - In a sheet too short for all it holds, its content scrolls between the title and the actions, which stay in view.
-- A sheet is on the navigation's color, so a [Drawer](drawer.md) in it looks as it does at the window's edge; its fill and the scrim set it apart.
+- A sheet is on the navigation's color, so a [Drawer](drawer.md) in it looks as it does at the window's edge; its fill and the backdrop set it apart.
 
 ### Inspector beside the page
 
@@ -236,7 +236,7 @@ The close button is an IconButton named by `closeLabel`, which `closeButton={fal
 
 ### Customize
 
-A Sheet shares Dialog's parts: its heading, `env-dialog-heading`, with the title, `env-dialog-title`, and the close button; the description, `env-dialog-description`; and the actions, `env-dialog-actions`. The panel is `env-sheet-popup`, its content, which scrolls between the heading and the actions, `env-sheet-body`, the scrim behind a modal sheet `env-sheet-backdrop` and the handle on a resizable sheet's inner edge `env-sheet-resize-handle`, the same grip as Panes.Divider's.
+A Sheet shares Dialog's parts: its heading, `env-dialog-heading`, with the title, `env-dialog-title`, and the close button; the description, `env-dialog-description`; and the actions, `env-dialog-actions`. The panel is `env-sheet`, its content, which scrolls between the heading and the actions, `env-sheet-body`, the backdrop behind a modal sheet `env-sheet-backdrop` and the handle on a resizable sheet's inner edge `env-sheet-resize-handle`, the same grip as Panes.Divider's.
 
 ## Changelog
 

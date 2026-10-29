@@ -301,7 +301,7 @@ function Section({
     <Column render={<li />} className="env-drawer-section" align="stretch" gap={1}>
       <Heading
         ref={heading}
-        className="env-drawer-heading"
+        className="env-drawer-group-label"
         id={headingId}
         title={cut ? group : undefined}
       >

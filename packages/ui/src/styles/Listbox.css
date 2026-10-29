@@ -16,7 +16,7 @@
   .env-listbox-empty {
     padding: var(--env-space-2);
     color: var(--env-color-fg-muted);
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
   }
   .env-listbox-empty:empty {
     padding: 0;

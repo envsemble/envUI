@@ -24,6 +24,7 @@ import { edges, gap, Item, Mark } from '../../tiles/Reflow';
 
 /** The tones of the palette, as the Colors page names them. */
 const tones = [
+  { id: 'primary', name: 'Primary' },
   { id: 'accent', name: 'Accent' },
   { id: 'success', name: 'Success' },
   { id: 'warning', name: 'Warning' },
@@ -35,7 +36,7 @@ const tones = [
 const toneStyle = (tone: string) =>
   ({
     '--catalogue-tone-muted': `var(--env-color-bg-${tone}-muted)`,
-    '--catalogue-tone-emphasis': `var(--env-color-bg-${tone}-emphasis)`,
+    '--catalogue-tone-emphasis': `var(--env-color-bg-${tone}-${tone === 'primary' || tone === 'accent' ? 'solid' : 'emphasis'})`,
     '--catalogue-tone-strong':
       tone === 'neutral' ? 'var(--env-color-fg-default)' : `var(--env-color-fg-${tone})`,
   }) as CSSProperties;

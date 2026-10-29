@@ -5,6 +5,7 @@ import { useColorSlider } from '@react-aria/color';
 import { useColorSliderState, type Color, type ColorChannel } from '@react-stately/color';
 import { useLocale } from '@react-aria/i18n';
 import { classNames } from '../../internal/classNames.js';
+import { flag } from '../../internal/flag.js';
 import '../../styles/Base.css';
 import '../../styles/ColorPicker.css';
 
@@ -55,7 +56,7 @@ export function ColorSlider({ channel, value, onChange, onChangeEnd, disabled }:
     <div
       className={classNames('env-color-picker-slider', `env-color-picker-${channel}`)}
       data-channel={channel}
-      data-disabled={disabled || undefined}
+      data-disabled={flag(disabled)}
     >
       <div
         {...trackProps}
@@ -74,7 +75,7 @@ export function ColorSlider({ channel, value, onChange, onChangeEnd, disabled }:
         <div
           {...thumbProps}
           className="env-color-picker-thumb"
-          data-dragging={state.isDragging || undefined}
+          data-dragging={flag(state.isDragging)}
           style={{
             ...thumbProps.style,
             backgroundColor: state.getDisplayColor().toString('css'),

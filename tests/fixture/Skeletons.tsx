@@ -101,7 +101,7 @@ export function SkeletonsFixture() {
           {/* Badges, a label and counts in each variant, are filled shapes in a skeleton. */}
           <Row gap={2}>
             <Badge data-testid="badge-skeleton">Draft</Badge>
-            <Badge count={3} tone="accent" variant="solid" data-testid="count-solid-skeleton" />
+            <Badge count={3} tone="primary" variant="solid" data-testid="count-solid-skeleton" />
             <Badge count={5} variant="outline" data-testid="count-outline-skeleton" />
           </Row>
           <Reader />

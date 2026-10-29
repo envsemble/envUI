@@ -620,7 +620,7 @@ test('figures with open overlays keep them in their stages, inert, and leave the
                   .getBoundingClientRect();
                 const surfaces = [
                   ...room.querySelectorAll(
-                    '.env-popup, .env-dialog-popup, .env-sheet-popup, .env-command-palette, .env-toast',
+                    '.env-popup, .env-dialog, .env-sheet, .env-command-palette, .env-toast',
                   ),
                 ];
                 const name = room.dataset.openExample;

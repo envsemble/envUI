@@ -62,7 +62,7 @@
 .site-figure-caption {
   margin: 0;
   color: var(--env-color-fg-muted);
-  font: var(--env-type-body-small);
+  font: var(--env-type-body-sm);
 }
 
 /* Cells that share a row, and the slot below them where their open code spans the column. */
@@ -296,7 +296,7 @@
   inline-size: calc(var(--catalogue-sweep-width, 0rem) + 2 * var(--env-space-2) + 0.125rem);
   border-inline: 0.0625rem solid var(--env-color-border-muted);
   color: var(--env-color-fg-muted);
-  font: var(--env-type-body-small);
+  font: var(--env-type-body-sm);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }

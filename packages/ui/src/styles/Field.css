@@ -7,14 +7,14 @@
     align-content: start;
     max-inline-size: 100%;
     overflow-wrap: anywhere;
-    font: var(--env-type-body-small);
-    font-size: var(--env-font-size-body-small);
+    font: var(--env-type-body-sm);
+    font-size: var(--env-font-size-body-sm);
     color: var(--env-color-fg-default);
   }
   .env-field-description,
   .env-field-error {
-    font: var(--env-type-body-small);
-    font-size: var(--env-font-size-body-small);
+    font: var(--env-type-body-sm);
+    font-size: var(--env-font-size-body-sm);
   }
   .env-field-description {
     color: var(--env-color-fg-muted);
@@ -63,7 +63,7 @@
     font: var(--env-type-body);
     /* The control font size is 1 rem on touch screens, where smaller entered text zooms the page. */
     font-size: var(--env-control-font-size);
-    caret-color: var(--env-color-border-accent-emphasis);
+    caret-color: var(--env-color-border-primary-emphasis);
     transition: border-color var(--env-motion-duration-medium) var(--env-motion-ease);
   }
   .env-field-control[data-size='sm'] {
@@ -81,12 +81,12 @@
   }
   @media (hover: hover) {
     .env-field-control:hover:not(:disabled, [data-disabled]) {
-      --env-field-control-border: var(--env-color-border-accent-emphasis-hover);
+      --env-field-control-border: var(--env-color-border-primary-emphasis-hover);
     }
   }
   .env-field-control:focus-visible,
   .env-field-control:focus-within {
-    --env-field-control-border: var(--env-color-border-accent-emphasis);
+    --env-field-control-border: var(--env-color-border-primary-emphasis);
   }
   .env-field-control:is([data-invalid], [aria-invalid='true']) {
     --env-field-control-border: var(--env-color-fg-danger);

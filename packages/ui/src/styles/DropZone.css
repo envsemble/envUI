@@ -47,11 +47,11 @@
   }
   .env-drop-zone-description {
     color: var(--env-color-fg-muted);
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
   }
   @media (hover: hover) {
     .env-drop-zone-target:hover:not(:disabled, [aria-disabled='true']) {
-      --env-drop-zone-border: var(--env-color-border-accent-emphasis-hover);
+      --env-drop-zone-border: var(--env-color-border-primary-emphasis-hover);
       background: var(--env-color-bg-neutral-subtle-hover);
     }
   }
@@ -62,13 +62,13 @@
     outline: 0.125rem solid var(--env-color-border-focus);
     outline-offset: 0.125rem;
   }
-  .env-drop-zone[data-dragging] .env-drop-zone-target {
-    --env-drop-zone-border: var(--env-color-border-accent-emphasis);
+  .env-drop-zone[data-drag-over] .env-drop-zone-target {
+    --env-drop-zone-border: var(--env-color-border-primary-emphasis);
     border-style: solid;
     background: var(--env-color-bg-selected);
   }
-  .env-drop-zone[data-dragging] .env-drop-zone-icon {
-    color: var(--env-color-border-accent-emphasis);
+  .env-drop-zone[data-drag-over] .env-drop-zone-icon {
+    color: var(--env-color-border-primary-emphasis);
   }
   .env-drop-zone[data-invalid] .env-drop-zone-target {
     --env-drop-zone-border: var(--env-color-fg-danger);
@@ -98,7 +98,7 @@
     block-size: var(--env-control-icon-size);
   }
   .env-drop-zone[data-size='sm'] .env-drop-zone-label {
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
     font-weight: var(--env-font-weight-medium);
   }
   @media (prefers-reduced-motion: reduce) {
@@ -111,7 +111,7 @@
   /* Forced colors: the system paints no fills or shadows, so a zone that a file is dragged over
      takes the selection color for its edge. */
   @media (forced-colors: active) {
-    .env-drop-zone[data-dragging] .env-drop-zone-target {
+    .env-drop-zone[data-drag-over] .env-drop-zone-target {
       border-color: Highlight;
     }
   }

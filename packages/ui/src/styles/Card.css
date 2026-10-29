@@ -89,7 +89,7 @@
 
   /* A title, meta or description given as undefined, as over a placeholder item, takes no room
      outside a skeleton; in one it is a bar. */
-  .env-card-heading:empty:not([data-env-skeleton] *),
+  .env-card-title:empty:not([data-env-skeleton] *),
   .env-card-meta:empty:not([data-env-skeleton] *),
   .env-card-description:empty:not([data-env-skeleton] *),
   .env-card-header:not(:has(> :not(:empty))):not([data-env-skeleton] *) {
@@ -99,10 +99,10 @@
   /* In a skeleton, the bars take the room the loaded text usually does, so the card keeps its size
      when it loads: the title and the meta share one row, the title's bar giving way to the meta's in
      a narrow card, and the description is one line, as a card's supporting sentence usually is. */
-  .env-card:is([data-env-skeleton], [data-env-skeleton] *) .env-card-heading {
+  .env-card:is([data-env-skeleton], [data-env-skeleton] *) .env-card-title {
     --env-skeleton-length: 9rem;
   }
-  .env-card:is([data-env-skeleton], [data-env-skeleton] *) .env-card-heading:empty {
+  .env-card:is([data-env-skeleton], [data-env-skeleton] *) .env-card-title:empty {
     flex: 1 1 0;
     min-inline-size: 0;
   }

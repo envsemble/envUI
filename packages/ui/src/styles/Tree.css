@@ -17,7 +17,7 @@
     overscroll-behavior: contain;
     scrollbar-width: thin;
     color: var(--env-color-fg-control);
-    font: var(--env-body-font-weight) var(--env-font-size-label) / 1.4 var(--env-font-family);
+    font: var(--env-font-weight-body) var(--env-font-size-label) / 1.4 var(--env-font-family);
     outline: none;
   }
   .env-tree[data-density='xs'] {
@@ -67,7 +67,7 @@
     background: var(--env-color-bg-selected-pressed);
   }
   /* The active row shows the focus ring only while the tree has keyboard focus. */
-  .env-tree[data-focus-visible]:focus .env-tree-item[data-active] {
+  .env-tree[data-focus-visible]:focus .env-tree-item[data-highlighted] {
     outline: 0.125rem solid var(--env-color-border-focus);
     outline-offset: -0.125rem;
   }
@@ -123,7 +123,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     color: var(--env-color-fg-muted);
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
   }
   .env-tree-end {
     flex: 0 0 auto;
@@ -159,7 +159,7 @@
     .env-tree-item[aria-selected='true'] :where(*) {
       color: inherit;
     }
-    .env-tree[data-focus-visible]:focus .env-tree-item[aria-selected='true'][data-active] {
+    .env-tree[data-focus-visible]:focus .env-tree-item[aria-selected='true'][data-highlighted] {
       outline-color: HighlightText;
     }
   }

@@ -152,7 +152,7 @@
     .env-page-header,
     .env-panes,
     [data-env-name='key-figures'],
-    .env-document-tabs,
+    .env-document-tabs-list,
     .env-panel-dock,
     .env-scaffold,
     [data-env-skeleton],
@@ -163,7 +163,7 @@
       .env-page-header,
       .env-panes,
       [data-env-name='key-figures'],
-      .env-document-tabs,
+      .env-document-tabs-list,
       .env-panel-dock,
       .env-scaffold,
       [data-env-skeleton],
@@ -172,10 +172,9 @@
   ),
 /* A Scaffold straight on an animated figure's stage stands in for a window there too. */
 .catalogue-motion-subject > .env-scaffold,
-/* A strip of document tabs lays out its bar straight on the stage, its root being contents. */
+/* A strip of document tabs fills the stage's width. */
 :is(.site-live-example, .site-verdict-fit, .site-anatomy-subject, .catalogue-related-canvas)
-  > .env-document-tabs-root
-  > .env-document-tabs-bar {
+  > .env-document-tabs {
   inline-size: 100%;
 }
 
@@ -373,7 +372,7 @@
 
 /* A figure that shows its overlays open (`open` on its fence): a room as wide as the stage, with
    what opens them in its middle, that grows to hold them. Its padding and height are measured
-   (OpenExample.tsx). Its dialogs, sheets and toasts, and their scrims, are placed on the stage,
+   (OpenExample.tsx). Its dialogs, sheets and toasts, and their backdrops, are placed on the stage,
    which its layout containment makes their containing block, and clips them to its corners.
    The room stacks its overlays below the callouts of an anatomy figure. */
 .catalogue-open-example {
@@ -392,7 +391,7 @@
 }
 
 /* In an anatomy figure the room places them, so they keep clear of the stage's padding, where the
-   callouts go; the scrim, which would fill only the room, is left out. */
+   callouts go; the backdrop, which would fill only the room, is left out. */
 .site-anatomy-subject .catalogue-open-example {
   contain: layout;
 }
@@ -409,9 +408,9 @@
   margin: auto;
 }
 
-/* A command palette in a figure, shown open on its scrim or playing: narrower than the stage and
-   nearer its top than a screen's, so the scrim frames it on every side, as a window frames it. An
-   anatomy figure, which shows no scrim, keeps it as it is. */
+/* A command palette in a figure, shown open on its backdrop or playing: narrower than the stage and
+   nearer its top than a screen's, so the backdrop frames it on every side, as a window frames it. An
+   anatomy figure, which shows no backdrop, keeps it as it is. */
 :is(.site-live-example, .site-verdict-stage)
   .catalogue-open-example
   .env-command-palette-positioner,
@@ -476,7 +475,7 @@
 /* An animated figure (MotionStage.tsx): its subject centred on the stage as an example's is, and
    its pause button at the stage's bottom end, inside its padding, where an example's mark sits.
    Its overlays open in a layer over the whole stage, which its layout containment makes their
-   containing block, so a dialog's scrim covers the stage and a notification sits at its edge; it
+   containing block, so a dialog's backdrop covers the stage and a notification sits at its edge; it
    clips them to its corners. The subject is a stacking context of its own, below the pause
    button, which stays on top of what opens. Nothing in it anchors the page's scrolling: a popup
    placed as it opens would otherwise move the page with it. */
@@ -522,7 +521,7 @@
   box-shadow: none;
 }
 
-/* The keys a figure's keyboard presses (PressedKeys.tsx), over what opens in it, scrim included. */
+/* The keys a figure's keyboard presses (PressedKeys.tsx), over what opens in it, backdrop included. */
 .catalogue-pressed-keys {
   z-index: var(--env-z-tooltip);
 }
@@ -538,7 +537,7 @@
 
 /* A sheet at a figure's end keeps its actions beside the pause button too, rather than under it:
    the room the button takes at the stage's end, less the sheet's own padding. */
-.catalogue-motion-subject .env-sheet-popup[data-side='end'] .env-dialog-actions {
+.catalogue-motion-subject .env-sheet[data-side='end'] .env-dialog-actions {
   padding-inline-end: max(
     0rem,
     2 * var(--env-space-2) + var(--env-control-height-sm) - var(--env-surface-padding, 0rem)
@@ -567,7 +566,7 @@
 }
 
 /* The copy lies over its field, and under what opens over the field, such as a menu or a dialog
-   and its scrim. */
+   and its backdrop. */
 .catalogue-field-selection {
   position: absolute;
   z-index: var(--env-z-raised);
@@ -610,7 +609,7 @@
 .catalogue-density-steps .env-tree-item {
   transition:
     background-color var(--env-motion-duration-fast) var(--env-motion-ease),
-    transform var(--env-motion-duration-medium) var(--env-motion-ease-standard);
+    transform var(--env-motion-duration-medium) var(--env-motion-ease);
 }
 
 @media (prefers-reduced-motion: reduce) {

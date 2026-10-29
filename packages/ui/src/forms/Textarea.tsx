@@ -1,6 +1,7 @@
 'use client';
 
 import type { CSSProperties, Ref } from 'react';
+import { classNames } from '../internal/classNames.js';
 import { useFieldMetadata } from './internal/useFieldMetadata.js';
 import { TextareaControl, type TextareaControlProps } from './internal/TextareaControl.js';
 import {
@@ -12,7 +13,7 @@ import {
 export interface TextareaProps extends TextareaControlProps, FieldProps {
   /** The native text area, so that a form library can register it and focus it. */
   ref?: Ref<HTMLTextAreaElement>;
-  /** The field's class, on its root element, beside env-field and env-text-field. */
+  /** The field's class, on its root element, beside env-field, env-text-field and env-textarea. */
   className?: string;
   /** Styles of the field's root element, such as its width in a row. */
   style?: CSSProperties;
@@ -63,7 +64,7 @@ export function Textarea({
       floatingLabel
       multiline
       variant={variant}
-      className={className}
+      className={classNames('env-textarea', className)}
       style={style}
     >
       <TextareaControl

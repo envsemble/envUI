@@ -36,7 +36,7 @@
     /* The capped full corner: rounded ends at one line, and the same corners, a rounded rectangle,
        when a label wraps onto more lines. */
     border-radius: var(--env-radius-full);
-    font: var(--env-body-font-weight) var(--env-font-size-label) / 1.4 var(--env-font-family);
+    font: var(--env-font-weight-body) var(--env-font-size-label) / 1.4 var(--env-font-family);
     white-space: normal;
     overflow-wrap: anywhere;
     text-align: center;
@@ -125,18 +125,18 @@
      to the designed pairs: primary takes neutral, accent or danger; outline, ghost and text take
      neutral or danger; secondary is neutral. */
   .env-button:where([data-variant='primary']) {
-    --env-button-container-default: var(--env-color-bg-brand-emphasis);
-    background: var(--env-button-custom-fill, var(--env-color-bg-brand-emphasis));
+    --env-button-container-default: var(--env-color-bg-primary-emphasis);
+    background: var(--env-button-custom-fill, var(--env-color-bg-primary-emphasis));
     color: var(--env-button-content, var(--env-color-fg-on-emphasis));
     border: 0;
   }
 
   .env-button:where([data-variant='primary']):hover:not(:disabled):not([aria-disabled='true']) {
-    background: var(--env-button-custom-fill, var(--env-color-bg-brand-emphasis-hover));
+    background: var(--env-button-custom-fill, var(--env-color-bg-primary-emphasis-hover));
   }
 
   .env-button:where([data-variant='primary']):active:not(:disabled):not([aria-disabled='true']) {
-    background: var(--env-button-custom-fill, var(--env-color-bg-brand-emphasis-pressed));
+    background: var(--env-button-custom-fill, var(--env-color-bg-primary-emphasis-pressed));
   }
 
   /* The secondary fill is a translucent layer, so it stays visible on rows, panes and dialogs. */
@@ -159,7 +159,7 @@
      a popup; hover and press lay a state layer over whatever is beneath, as a ghost button does. */
   .env-button:where([data-variant='outline']) {
     background: var(--env-button-custom-fill, transparent);
-    color: var(--env-button-content, var(--env-color-fg-accent));
+    color: var(--env-button-content, var(--env-color-fg-primary));
     border-color: var(--env-button-outline, var(--env-color-border-default));
   }
 
@@ -341,8 +341,8 @@
   /* Accent: a primary button for a rare, consequential action, with square corners; like every
      button it takes the row's control height. */
   .env-button:where([data-variant='primary'][data-tone='accent']) {
-    --env-button-container-default: var(--env-color-bg-important-strong);
-    background: var(--env-button-custom-fill, var(--env-color-bg-important-strong));
+    --env-button-container-default: var(--env-color-bg-accent-strong);
+    background: var(--env-button-custom-fill, var(--env-color-bg-accent-strong));
     color: var(--env-button-content, var(--env-color-fg-on-strong));
     border: 0;
     border-radius: var(--env-radius-sm);
@@ -351,13 +351,13 @@
   .env-button:where([data-variant='primary'][data-tone='accent']):hover:not(:disabled):not(
       [aria-disabled='true']
     ) {
-    background: var(--env-button-custom-fill, var(--env-color-bg-important-strong-hover));
+    background: var(--env-button-custom-fill, var(--env-color-bg-accent-strong-hover));
   }
 
   .env-button:where([data-variant='primary'][data-tone='accent']):active:not(:disabled):not(
       [aria-disabled='true']
     ) {
-    background: var(--env-button-custom-fill, var(--env-color-bg-important-strong-pressed));
+    background: var(--env-button-custom-fill, var(--env-color-bg-accent-strong-pressed));
   }
 
   .env-button:focus-visible {

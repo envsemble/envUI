@@ -3,7 +3,7 @@ import { usePointer, type PointerStep } from '../../motion/Motion';
 import { MotionStage } from '../../motion/MotionStage';
 
 /*
- * The pointer opens the dialog, then presses the scrim beside it, twice: the dialog stays open, as
+ * The pointer opens the dialog, then presses the backdrop beside it, twice: the dialog stays open, as
  * a press outside doesn't close a ConfirmDialog. Cancel closes it.
  */
 const script: PointerStep[] = [

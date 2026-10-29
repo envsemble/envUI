@@ -7,7 +7,7 @@ import { useTimeline } from '../motion/Motion';
 
 /* A piece of work's state as it moves on, each in its tone. */
 const states = [
-  { tone: 'accent', label: 'In review', icon: <RateReview /> },
+  { tone: 'primary', label: 'In review', icon: <RateReview /> },
   { tone: 'success', label: 'Approved', icon: <CheckCircle /> },
   { tone: 'done', label: 'Released', icon: <RocketLaunch /> },
   { tone: 'neutral', label: 'Draft', icon: <EditNote /> },

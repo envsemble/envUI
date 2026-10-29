@@ -1,3 +1,4 @@
 {
-  "env-panel-dock-chip": "env-panel-dock-tab"
+  "env-panel-dock-chip": "env-panel-dock-tab",
+  "env-panel-dock-resize": "env-panel-dock-resize-handle"
 }

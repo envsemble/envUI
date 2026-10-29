@@ -59,14 +59,14 @@
     white-space: pre-wrap;
     overflow-wrap: anywhere;
   }
-  .env-code-block-heading {
+  .env-code-block-header {
     margin-block-end: var(--env-space-3);
   }
-  .env-code-block-heading > span {
+  .env-code-block-header > span {
     min-inline-size: 0;
     max-inline-size: 100%;
     overflow-wrap: anywhere;
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
   }
   .env-code-block-copy-status {
     position: absolute;

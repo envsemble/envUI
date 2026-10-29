@@ -4,7 +4,7 @@ Make envUI the application's own without copying its styles: give one element co
 
 ## Color one element
 
-Each component has a few public color properties on its root. They are named `--env-<component>-<role>`, and set on one instance through `style` or the application's CSS:
+Each component has a few public color properties, named `--env-<component>-<role>`, which the application sets on one instance through `style` or its CSS: on the component's root, or, for a collection's rows and destinations, on each item, as their properties take the item's name, such as `--env-menu-item-container`. They don't inherit, so the menu itself ignores an item's:
 
 ```tsx
 import type { CSSProperties } from 'react';
@@ -40,7 +40,7 @@ The roles are the same across components:
 
 The properties don't inherit: each is registered with `@property` as a property that doesn't inherit, so set them on the element itself, through its `style` or a selector that matches it, such as `.my-toolbar .env-button`. Set on a toolbar, `--env-button-container` colors none of its buttons, and a surface inside a recolored surface keeps its own color.
 
-Each component's page lists its color properties under Anatomy, and `docs/generated/parts.json` lists them with the parts, with what each colors. Like the part classes and state attributes, they are public and versioned. The other custom properties a component declares for itself, such as `--env-card-padding`, stay private.
+Each component's page lists its color properties under Anatomy, and `docs/generated/parts.json` lists them with the parts, with what each colors. Like the part classes and state attributes, they are public and versioned. So are the few other custom properties it lists under `properties`, such as a popup's `--env-popup-opacity`, which an application sets, or Scaffold's `--env-scaffold-sticky-top`, which it reads. The other custom properties a component declares for itself, such as `--env-card-padding`, stay private.
 
 ### Give a field a fill
 
@@ -84,15 +84,15 @@ import { Button, Switch, Theme, useTheme } from '@envsemble/envui';
 
 const green = {
   light: {
-    '--env-color-bg-brand-emphasis': '#176f35',
-    '--env-color-bg-brand-emphasis-hover': '#115a2a',
-    '--env-color-bg-brand-emphasis-pressed': '#0b4520',
+    '--env-color-bg-primary-emphasis': '#176f35',
+    '--env-color-bg-primary-emphasis-hover': '#115a2a',
+    '--env-color-bg-primary-emphasis-pressed': '#0b4520',
     '--env-color-fg-on-emphasis': '#ffffff',
   },
   dark: {
-    '--env-color-bg-brand-emphasis': '#7ad197',
-    '--env-color-bg-brand-emphasis-hover': '#5fbf80',
-    '--env-color-bg-brand-emphasis-pressed': '#45ad69',
+    '--env-color-bg-primary-emphasis': '#7ad197',
+    '--env-color-bg-primary-emphasis-hover': '#5fbf80',
+    '--env-color-bg-primary-emphasis-pressed': '#45ad69',
     '--env-color-fg-on-emphasis': '#1e1f21',
   },
 };

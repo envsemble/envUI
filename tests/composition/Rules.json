@@ -343,7 +343,7 @@
           "forms/internal/markdown/MarkdownPreview.tsx",
           "forms/internal/markdown/useMarkdownEditing.ts"
         ],
-        "classes": ["env-markdown-source"]
+        "classes": ["env-markdown-editor-input"]
       },
       "Editor": {
         "modules": [
@@ -539,10 +539,10 @@
             "env-panes-list",
             "env-panes-detail",
             "env-panes-supporting",
-            "env-panes-scrim"
+            "env-panes-backdrop"
           ],
           "properties": ["z-index", "overflow"],
-          "note": "Where the document scrolls, Panes in the body are as tall as their content, so a Scaffold fixes their supporting sheet and its scrim to the window at the modal layers, as a Sheet is, and lets the panes grow with the page rather than scroll; it never restyles them."
+          "note": "Where the document scrolls, Panes in the body are as tall as their content, so a Scaffold fixes their supporting sheet and its backdrop to the window at the modal layers, as a Sheet is, and lets the panes grow with the page rather than scroll; it never restyles them."
         },
         {
           "stylesheet": "Sheet.css",

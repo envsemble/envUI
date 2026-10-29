@@ -46,7 +46,7 @@
 /* The box the example lays out in, centred as on every stage. On a square it covers the stage,
    its size set to what the example needs (VerdictFit.ts), and is drawn at the scale that fits it
    into the square, from its top left corner; the transform makes it the containing block of what
-   opens in it, so a dialog's scrim covers the square. */
+   opens in it, so a dialog's backdrop covers the square. */
 .site-verdict-fit {
   display: grid;
   place-content: center stretch;

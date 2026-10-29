@@ -72,7 +72,7 @@ export function Meter({
       render={<Grid gap={2} />}
       className={classNames('env-meter', className)}
     >
-      <Row wrap justify="between" gap={3} className="env-meter-heading">
+      <Row wrap justify="between" gap={3} className="env-meter-header">
         <BaseMeter.Label className="env-meter-label">{label}</BaseMeter.Label>
         {valueText != null && <span className="env-meter-value">{valueText}</span>}
       </Row>

@@ -11,7 +11,7 @@ function Ladder() {
       <div data-layer="top-bar-sticky" className="env-top-bar" data-sticky="" />
       <div className="env-panes" data-behavior="supporting" data-open="">
         <div data-layer="panes-supporting-sheet" className="env-panes-supporting" />
-        <div data-layer="panes-scrim" className="env-panes-scrim" />
+        <div data-layer="panes-backdrop" className="env-panes-backdrop" />
       </div>
       <div data-layer="dialog-backdrop" className="env-dialog-backdrop" />
       <div data-layer="dialog-positioner" className="env-dialog-positioner" />
@@ -41,7 +41,7 @@ function Ladder() {
           className="env-panel-dock-panel"
           data-placement="hidden"
         />
-        <div data-layer="panel-dock-resize" className="env-panel-dock-resize" />
+        <div data-layer="panel-dock-resize" className="env-panel-dock-resize-handle" />
         <div data-layer="panel-dock-header" className="env-panel-dock-header" />
         <div data-layer="panel-dock-strip" className="env-panel-dock-strip" />
       </div>
@@ -50,7 +50,7 @@ function Ladder() {
           <div data-layer="table-sticky-header-cell" className="env-table-header-cell" />
         </div>
       </div>
-      <div data-layer="table-column-resize" className="env-table-column-resize" />
+      <div data-layer="table-column-resize" className="env-table-column-resize-handle" />
     </div>
   );
 }

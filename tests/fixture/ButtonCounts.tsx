@@ -37,7 +37,7 @@ export function ButtonCountsFixture({ theme }: { theme: ThemeValue }) {
             value: 'submissions',
             button: (
               <Button>
-                Submissions <Badge count={24} tone="accent" variant="solid" />
+                Submissions <Badge count={24} tone="primary" variant="solid" />
               </Button>
             ),
             content: <Text>Submissions</Text>,

@@ -203,7 +203,7 @@ export function DropZone({
       invalid={error != null || undefined}
       className={classNames('env-drop-zone', className)}
       data-size={size}
-      data-dragging={dragging ? '' : undefined}
+      data-drag-over={dragging ? '' : undefined}
       data-pending={pending ? '' : undefined}
       data-invalid={error != null ? '' : undefined}
       onDragEnter={(event) => {

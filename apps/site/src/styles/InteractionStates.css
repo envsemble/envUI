@@ -1,19 +1,19 @@
 /* Artificial state examples are intentionally private to this application. */
 .catalogue-specimen-area
   .catalogue-force-hover.env-button:where([data-variant='primary'][data-tone='neutral']) {
-  background: var(--env-color-bg-brand-emphasis-hover);
+  background: var(--env-color-bg-primary-emphasis-hover);
 }
 .catalogue-specimen-area
   .catalogue-force-pressed.env-button:where([data-variant='primary'][data-tone='neutral']) {
-  background: var(--env-color-bg-brand-emphasis-pressed);
+  background: var(--env-color-bg-primary-emphasis-pressed);
 }
 .catalogue-specimen-area
   .catalogue-force-hover.env-button:where([data-variant='primary'][data-tone='accent']) {
-  background: var(--env-color-bg-important-strong-hover);
+  background: var(--env-color-bg-accent-strong-hover);
 }
 .catalogue-specimen-area
   .catalogue-force-pressed.env-button:where([data-variant='primary'][data-tone='accent']) {
-  background: var(--env-color-bg-important-strong-pressed);
+  background: var(--env-color-bg-accent-strong-pressed);
 }
 .catalogue-specimen-area
   .catalogue-force-hover.env-button:where([data-variant='primary'][data-tone='danger']) {
@@ -79,10 +79,10 @@
    state's semantic color through its public color property, as an application would set it, so
    none of envUI's private component tokens is copied here. */
 .catalogue-specimen-area .catalogue-force-hover > .env-list-item[data-interactive] {
-  --env-list-item-container: var(--env-color-list-item-bg-hover);
+  --env-list-item-container: var(--env-color-bg-list-item-hover);
 }
 .catalogue-specimen-area .catalogue-force-pressed > .env-list-item[data-interactive] {
-  --env-list-item-container: var(--env-color-list-item-bg-pressed);
+  --env-list-item-container: var(--env-color-bg-list-item-pressed);
 }
 .catalogue-specimen-area .catalogue-force-hover .env-drawer-item {
   --env-drawer-item-container: var(--env-color-bg-navigation-hover);
@@ -91,10 +91,10 @@
   --env-drawer-item-container: var(--env-color-bg-navigation-pressed);
 }
 .catalogue-specimen-area .catalogue-force-hover .env-text-field {
-  --env-text-field-outline: var(--env-color-border-accent-emphasis-hover);
+  --env-text-field-outline: var(--env-color-border-primary-emphasis-hover);
 }
 .catalogue-specimen-area .catalogue-force-pressed .env-text-field {
-  --env-text-field-outline: var(--env-color-border-accent-emphasis-pressed);
+  --env-text-field-outline: var(--env-color-border-primary-emphasis-pressed);
 }
 /* An anatomy figure's AnimatedNumber caught as its value rolls in: the value still below the line,
    cut off where the number's window ends; unfaded, so it doesn't read as muted text. */

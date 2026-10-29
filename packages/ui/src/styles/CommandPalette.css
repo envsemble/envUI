@@ -1,6 +1,6 @@
 @layer env.components {
   /* Quick open: a dialog near the top of the window with a search field over its options. It is a
-     frosted popup over the dialog's scrim (Popup.css), with a solid search pill, and its options take
+     frosted popup over the dialog's backdrop (Popup.css), with a solid search pill, and its options take
      the Select options' shape and colors. */
   .env-command-palette-positioner {
     box-sizing: border-box;
@@ -82,7 +82,7 @@
   .env-command-palette-item + .env-command-palette-group {
     margin-block-start: var(--env-popup-group-gap);
   }
-  .env-command-palette-heading {
+  .env-command-palette-group-label {
     padding: var(--env-popup-padding) var(--env-popup-label-padding-inline)
       calc(0.1 * var(--env-control-height-md));
     color: var(--env-color-fg-muted);
@@ -128,7 +128,7 @@
   .env-command-palette-empty-description {
     max-inline-size: 48ch;
     color: var(--env-color-fg-muted);
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
     text-wrap: pretty;
   }
   /* The footer stands apart from the options by space, its small muted text and its keys, with no
@@ -150,7 +150,7 @@
       calc(0.1 * var(--env-control-height-md));
     gap: var(--env-space-1) var(--env-space-4);
     color: var(--env-color-fg-muted);
-    font: var(--env-body-font-weight) var(--env-font-size-label-small) / 1.35 var(--env-font-family);
+    font: var(--env-font-weight-body) var(--env-font-size-label-sm) / 1.35 var(--env-font-family);
   }
   /* Each hint's keys stand as close to what they do as to one another. */
   .env-command-palette-hint {

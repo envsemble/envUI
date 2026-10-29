@@ -21,7 +21,7 @@ export default function DescriptionListTile() {
     >
       <DescriptionList.Item label="Owner">Sam Lee</DescriptionList.Item>
       <DescriptionList.Item label="Status">
-        <Badge tone={done ? 'done' : 'accent'}>{done ? 'Done' : 'In progress'}</Badge>
+        <Badge tone={done ? 'done' : 'primary'}>{done ? 'Done' : 'In progress'}</Badge>
       </DescriptionList.Item>
       <DescriptionList.Item label="Tasks">
         <AnimatedNumber value={tasks} />

@@ -200,7 +200,7 @@ export function MarkdownEditor({
           {...nativeProps}
           {...metadata}
           ref={attachInput}
-          className="env-markdown-source"
+          className="env-markdown-editor-input"
           rows={rows}
           sizing={sizing}
           disabled={disabled}

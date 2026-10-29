@@ -1,6 +1,6 @@
 @layer env.components {
   /* A read-only rating: the number, then the stars, empty in the control boundary color (3:1 on any
-     surface) and filled in a gold of their own, --env-color-rating-star, set apart from the empty
+     surface) and filled in a gold of their own, --env-color-fg-rating-star, set apart from the empty
      grey; a half star fills its inline-start half, the right one in right-to-left text. */
   .env-rating {
     display: inline-flex;
@@ -29,7 +29,7 @@
     fill: currentColor;
   }
   .env-rating-star[data-fill='full'] {
-    color: var(--env-color-rating-star);
+    color: var(--env-color-fg-rating-star);
   }
   .env-rating-star-half {
     position: absolute;
@@ -37,7 +37,7 @@
     inset-inline-start: 0;
     inline-size: 50%;
     overflow: hidden;
-    color: var(--env-color-rating-star);
+    color: var(--env-color-fg-rating-star);
   }
   .env-rating-star-half svg {
     inline-size: 1.125rem;

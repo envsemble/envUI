@@ -53,11 +53,18 @@
     white-space: nowrap;
     vertical-align: middle;
   }
+  .env-badge[data-tone='primary'] {
+    --env-badge-tone: var(--env-color-fg-primary);
+    --env-badge-tint: var(--env-color-bg-primary-soft);
+    --env-badge-tonal: var(--env-color-bg-primary-subtle-hover);
+    --env-badge-fill: var(--env-color-bg-primary-solid);
+    --env-badge-edge: var(--env-color-border-primary);
+  }
   .env-badge[data-tone='accent'] {
     --env-badge-tone: var(--env-color-fg-accent);
-    --env-badge-tint: var(--env-color-bg-accent-badge);
+    --env-badge-tint: var(--env-color-bg-accent-soft);
     --env-badge-tonal: var(--env-color-bg-accent-subtle-hover);
-    --env-badge-fill: var(--env-color-bg-accent-emphasis);
+    --env-badge-fill: var(--env-color-bg-accent-solid);
     --env-badge-edge: var(--env-color-border-accent);
   }
   .env-badge[data-tone='success'] {
@@ -116,8 +123,8 @@
   .env-badge[data-count] {
     position: relative;
     flex: 0 0 auto;
-    min-inline-size: var(--env-counter-badge-height);
-    block-size: var(--env-counter-badge-height);
+    min-inline-size: var(--env-badge-count-height);
+    block-size: var(--env-badge-count-height);
     justify-content: center;
     padding-block: 0;
     padding-inline: 0.375rem;
@@ -145,7 +152,7 @@
     box-sizing: border-box;
     position: relative;
     flex: 0 0 auto;
-    block-size: var(--env-counter-badge-height);
+    block-size: var(--env-badge-count-height);
     display: inline-flex;
     align-items: center;
     gap: 0.25rem;

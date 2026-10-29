@@ -6,7 +6,7 @@
    faint text-color layer of envUI's inline code rather than a chip, and no lines or boxes. */
 .docs-changelog {
   color: var(--env-color-fg-muted);
-  font: var(--env-type-body-small);
+  font: var(--env-type-body-sm);
 }
 .docs-changelog > * {
   max-inline-size: 48rem;
@@ -66,7 +66,7 @@
 .docs-token-description,
 .docs-prop-required {
   color: var(--env-color-fg-muted);
-  font: var(--env-type-body-small);
+  font: var(--env-type-body-sm);
 }
 .docs-token-description {
   display: block;
@@ -171,7 +171,7 @@
 }
 .docs-agent-prompt-text {
   overflow: hidden;
-  font: var(--env-font-size-body-small) / 1.5 var(--site-code-font-family);
+  font: var(--env-font-size-body-sm) / 1.5 var(--site-code-font-family);
   text-overflow: ellipsis;
   white-space: nowrap;
 }

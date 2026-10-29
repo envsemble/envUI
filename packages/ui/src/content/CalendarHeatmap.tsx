@@ -69,7 +69,7 @@ interface CalendarHeatmapOptions {
   thresholds?: readonly number[];
   /** The first day of each week column: 0 for Sunday (default) or 1 for Monday. */
   weekStart?: 0 | 1;
-  /** The tone the colors are mixed from: accent by default. */
+  /** The tone the colors are mixed from: primary by default. */
   tone?: BadgeTone;
   /**
    * Text for a value.
@@ -137,7 +137,7 @@ export function CalendarHeatmap({
   maxValue,
   thresholds,
   weekStart = 0,
-  tone = 'accent',
+  tone = 'primary',
   formatValue: ownFormatValue,
   formatDate: ownFormatDate,
   formatTooltip,

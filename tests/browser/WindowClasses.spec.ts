@@ -174,18 +174,18 @@ for (const containsLayout of [false, true]) {
           });
           expect(box, selector).toEqual({ x: 0, y: 0, width: 1024, height: 700 });
         }
-        // The scrim is what shows at a corner, over the page, and the dialog over the scrim.
+        // The backdrop is what shows at a corner, over the page, and the dialog over the backdrop.
         const top = await page.evaluate(() => {
           const corner = document.elementFromPoint(4, 4);
           const box = document.querySelector('[role="dialog"]')!.getBoundingClientRect();
           const middle = document.elementFromPoint(box.x + box.width / 2, box.y + box.height / 2);
           return {
-            scrim: corner?.closest('.env-dialog-backdrop') !== null,
+            backdrop: corner?.closest('.env-dialog-backdrop') !== null,
             dialog: middle?.closest('[role="dialog"]') !== null,
           };
         });
-        expect(top).toEqual({ scrim: true, dialog: true });
-        // A press on the scrim reaches it through the overlay's layer, and closes the dialog.
+        expect(top).toEqual({ backdrop: true, dialog: true });
+        // A press on the backdrop reaches it through the overlay's layer, and closes the dialog.
         await page.mouse.click(4, 4);
         await expect(dialog).toBeHidden();
       },
@@ -266,7 +266,7 @@ for (const containsLayout of [false, true]) {
         await open(page, `${fixtureUrl}/?fixture=dialog-variants`, { scroll: false });
         await page.addStyleTag({
           content:
-            '@layer env.components { @container env-window (width >= 37.5rem) { .env-dialog-popup { --window-probe: medium; } } }',
+            '@layer env.components { @container env-window (width >= 37.5rem) { .env-dialog { --window-probe: medium; } } }',
         });
         await page.getByRole('button', { name: 'Open top dialog' }).click();
         const dialog = page.getByRole('dialog', { name: 'Search plans' });

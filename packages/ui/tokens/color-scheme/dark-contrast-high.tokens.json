@@ -4,19 +4,6 @@
     "$type": "color",
     "$description": "The dark scheme’s high-contrast values. Internal: never CSS.",
     "color": {
-      "list-item": {
-        "bg": {
-          "$root": {
-            "$value": "{palette.neutral.82}"
-          },
-          "hover": {
-            "$value": "{palette.neutral.80}"
-          },
-          "pressed": {
-            "$value": "{palette.neutral.75}"
-          }
-        }
-      },
       "bg": {
         "selected": {
           "$root": {
@@ -154,7 +141,7 @@
             }
           }
         },
-        "brand": {
+        "primary": {
           "emphasis": {
             "$root": {
               "$value": "{palette.blue.15}"
@@ -177,29 +164,6 @@
               "$value": "{palette.blue.84}"
             }
           },
-          "muted": {
-            "$value": {
-              "colorSpace": "oklch",
-              "components": {
-                "$ref": "#/palette/blue/15/$value/components"
-              },
-              "alpha": 0.16
-            }
-          }
-        },
-        "accent": {
-          "emphasis": {
-            "$value": "{palette.blue.10}"
-          },
-          "muted": {
-            "$value": {
-              "colorSpace": "oklch",
-              "components": {
-                "$ref": "#/palette/blue/10/$value/components"
-              },
-              "alpha": 0.1
-            }
-          },
           "subtle": {
             "hover": {
               "$value": {
@@ -219,6 +183,18 @@
                 "alpha": 0.22
               }
             }
+          },
+          "muted": {
+            "$value": {
+              "colorSpace": "oklch",
+              "components": {
+                "$ref": "#/palette/blue/10/$value/components"
+              },
+              "alpha": 0.1
+            }
+          },
+          "solid": {
+            "$value": "{palette.blue.10}"
           }
         },
         "success": {
@@ -372,7 +348,7 @@
             }
           }
         },
-        "important": {
+        "accent": {
           "strong": {
             "$root": {
               "$value": "{palette.purple.75}"
@@ -383,6 +359,38 @@
             "pressed": {
               "$value": "{palette.purple.84}"
             }
+          },
+          "subtle": {
+            "hover": {
+              "$value": {
+                "colorSpace": "oklch",
+                "components": {
+                  "$ref": "#/palette/purple/6/$value/components"
+                },
+                "alpha": 0.14
+              }
+            },
+            "pressed": {
+              "$value": {
+                "colorSpace": "oklch",
+                "components": {
+                  "$ref": "#/palette/purple/6/$value/components"
+                },
+                "alpha": 0.22
+              }
+            }
+          },
+          "muted": {
+            "$value": {
+              "colorSpace": "oklch",
+              "components": {
+                "$ref": "#/palette/purple/10/$value/components"
+              },
+              "alpha": 0.1
+            }
+          },
+          "solid": {
+            "$value": "{palette.purple.10}"
           }
         },
         "recessed": {
@@ -394,6 +402,43 @@
           },
           "pressed": {
             "$value": "{palette.neutral.82}"
+          }
+        },
+        "list-item": {
+          "$root": {
+            "$value": "{palette.neutral.82}"
+          },
+          "hover": {
+            "$value": "{palette.neutral.80}"
+          },
+          "pressed": {
+            "$value": "{palette.neutral.75}"
+          }
+        },
+        "avatar": {
+          "powder": {
+            "$value": "{palette.powder.15}"
+          },
+          "seafoam": {
+            "$value": "{palette.seafoam.15}"
+          },
+          "sage": {
+            "$value": "{palette.sage.15}"
+          },
+          "butter": {
+            "$value": "{palette.butter.15}"
+          },
+          "blush": {
+            "$value": "{palette.blush.15}"
+          },
+          "periwinkle": {
+            "$value": "{palette.periwinkle.15}"
+          },
+          "orchid": {
+            "$value": "{palette.orchid.15}"
+          },
+          "oat": {
+            "$value": "{palette.oat.15}"
           }
         }
       },
@@ -426,8 +471,11 @@
             "$value": "{palette.blue.2}"
           }
         },
-        "accent": {
+        "primary": {
           "$value": "{palette.blue.6}"
+        },
+        "accent": {
+          "$value": "{palette.purple.6}"
         },
         "on-selected": {
           "$value": "{palette.blue.10}"
@@ -446,6 +494,35 @@
         },
         "on-emphasis": {
           "$value": "{palette.neutral.96}"
+        },
+        "rating-star": {
+          "$value": "{palette.amber.6}"
+        },
+        "avatar": {
+          "powder": {
+            "$value": "{palette.powder.86}"
+          },
+          "seafoam": {
+            "$value": "{palette.seafoam.86}"
+          },
+          "sage": {
+            "$value": "{palette.sage.86}"
+          },
+          "butter": {
+            "$value": "{palette.butter.86}"
+          },
+          "blush": {
+            "$value": "{palette.blush.86}"
+          },
+          "periwinkle": {
+            "$value": "{palette.periwinkle.86}"
+          },
+          "orchid": {
+            "$value": "{palette.orchid.86}"
+          },
+          "oat": {
+            "$value": "{palette.oat.86}"
+          }
         }
       },
       "border": {
@@ -471,7 +548,7 @@
             "$value": "{palette.neutral.20}"
           }
         },
-        "accent": {
+        "primary": {
           "$root": {
             "$value": {
               "colorSpace": "oklch",
@@ -500,6 +577,15 @@
             "pressed": {
               "$value": "{palette.blue.6}"
             }
+          }
+        },
+        "accent": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": {
+              "$ref": "#/palette/purple/6/$value/components"
+            },
+            "alpha": 0.55
           }
         },
         "danger": {
@@ -596,7 +682,7 @@
         "focus": {
           "$value": "{palette.blue.15}"
         },
-        "scrim": {
+        "backdrop": {
           "$value": "{palette.neutral.30}"
         },
         "info": {
@@ -612,65 +698,6 @@
             },
             "alpha": 0.55
           }
-        }
-      },
-      "avatar": {
-        "bg": {
-          "powder": {
-            "$value": "{palette.powder.15}"
-          },
-          "seafoam": {
-            "$value": "{palette.seafoam.15}"
-          },
-          "sage": {
-            "$value": "{palette.sage.15}"
-          },
-          "butter": {
-            "$value": "{palette.butter.15}"
-          },
-          "blush": {
-            "$value": "{palette.blush.15}"
-          },
-          "periwinkle": {
-            "$value": "{palette.periwinkle.15}"
-          },
-          "orchid": {
-            "$value": "{palette.orchid.15}"
-          },
-          "oat": {
-            "$value": "{palette.oat.15}"
-          }
-        },
-        "fg": {
-          "powder": {
-            "$value": "{palette.powder.86}"
-          },
-          "seafoam": {
-            "$value": "{palette.seafoam.86}"
-          },
-          "sage": {
-            "$value": "{palette.sage.86}"
-          },
-          "butter": {
-            "$value": "{palette.butter.86}"
-          },
-          "blush": {
-            "$value": "{palette.blush.86}"
-          },
-          "periwinkle": {
-            "$value": "{palette.periwinkle.86}"
-          },
-          "orchid": {
-            "$value": "{palette.orchid.86}"
-          },
-          "oat": {
-            "$value": "{palette.oat.86}"
-          }
-        }
-      },
-      "rating": {
-        "star": {
-          "$value": "{palette.amber.6}"
         }
       }
     }

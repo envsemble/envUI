@@ -3,12 +3,24 @@
   "motion": {
     "duration": {
       "$type": "duration",
-      "fast": { "$value": { "value": 0.12, "unit": "s" } },
-      "medium": { "$value": { "value": 0.16, "unit": "s" } },
-      "slow": { "$value": { "value": 0.24, "unit": "s" } }
+      "fast": {
+        "$description": "A small change, such as a state layer or a color under the pointer: 120 ms.",
+        "$value": { "value": 0.12, "unit": "s" }
+      },
+      "medium": {
+        "$description": "A part that opens, moves or fades in, such as a popup or a field's floating label: 160 ms.",
+        "$value": { "value": 0.16, "unit": "s" }
+      },
+      "slow": {
+        "$description": "A larger movement, such as a sheet sliding in or a dialog's backdrop: 240 ms.",
+        "$value": { "value": 0.24, "unit": "s" }
+      }
     },
-    "ease": { "$type": "cubicBezier", "$value": [0.45, 0, 0.2, 1] },
-    "ease-standard": { "$type": "cubicBezier", "$value": "{motion.ease}" },
+    "ease": {
+      "$description": "The standard easing of a change on screen, which speeds up and then settles.",
+      "$type": "cubicBezier",
+      "$value": [0.45, 0, 0.2, 1]
+    },
     "ease-enter": {
       "$type": "cubicBezier",
       "$description": "Elements entering decelerate into place.",

@@ -117,7 +117,7 @@ function pictureOf(type: string, scope: Element) {
   const color = (name: string, fallback: string) => style.getPropertyValue(name).trim() || fallback;
   context.fillStyle = color('--env-color-bg-selected', '#dde3f0');
   context.fillRect(0, 0, 96, 96);
-  context.fillStyle = color('--env-color-bg-brand-emphasis', '#3557c0');
+  context.fillStyle = color('--env-color-bg-primary-emphasis', '#3557c0');
   context.beginPath();
   context.arc(48, 48, 26, 0, 2 * Math.PI);
   context.fill();

@@ -28,339 +28,85 @@ export interface TokenDefinition {
 
 /** Every token, by its DTCG path. */
 export const tokens = {
-  'body.font-weight': {
-    cssVariable: '--env-body-font-weight',
-    type: 'fontWeight',
+  /** The height, and the least width, of a counter badge and a diff stat. */
+  'badge-count.height': {
+    cssVariable: '--env-badge-count-height',
+    type: 'dimension',
     values: {
-      light: '400',
-      dark: '400',
-      'light-high-contrast': '400',
-      'dark-high-contrast': '400',
+      light: '1.25rem',
+      dark: '1.25rem',
+      'light-high-contrast': '1.25rem',
+      'dark-high-contrast': '1.25rem',
     },
+    scales: { compact: '1rem' },
   },
-  /** The default fill, the powder hue: the fill of an avatar whose hue nothing sets. */
-  'color.avatar.bg': {
-    cssVariable: '--env-color-avatar-bg',
-    type: 'color',
-    values: {
-      light: '#c0e2f6',
-      dark: '#afd3e9',
-      'light-high-contrast': '#c0e2f6',
-      'dark-high-contrast': '#afd3e9',
-    },
-  },
-  /** The blush pink pastel fill, one of the hues an avatar takes from its name. */
-  'color.avatar.bg.blush': {
-    cssVariable: '--env-color-avatar-bg-blush',
-    type: 'color',
-    values: {
-      light: '#ffd3d4',
-      dark: '#f3c2c4',
-      'light-high-contrast': '#ffd3d4',
-      'dark-high-contrast': '#f3c2c4',
-    },
-  },
-  /** The butter yellow pastel fill, one of the hues an avatar takes from its name. */
-  'color.avatar.bg.butter': {
-    cssVariable: '--env-color-avatar-bg-butter',
-    type: 'color',
-    values: {
-      light: '#efdca4',
-      dark: '#e1cc95',
-      'light-high-contrast': '#efdca4',
-      'dark-high-contrast': '#e1cc95',
-    },
-  },
-  /** The warm oat pastel fill, one of the hues an avatar takes from its name. */
-  'color.avatar.bg.oat': {
-    cssVariable: '--env-color-avatar-bg-oat',
-    type: 'color',
-    values: {
-      light: '#e7dbce',
-      dark: '#d8ccbf',
-      'light-high-contrast': '#e7dbce',
-      'dark-high-contrast': '#d8ccbf',
-    },
-  },
-  /** The orchid pastel fill, one of the hues an avatar takes from its name. */
-  'color.avatar.bg.orchid': {
-    cssVariable: '--env-color-avatar-bg-orchid',
-    type: 'color',
-    values: {
-      light: '#fad2ec',
-      dark: '#ecc2dd',
-      'light-high-contrast': '#fad2ec',
-      'dark-high-contrast': '#ecc2dd',
-    },
-  },
-  /** The periwinkle pastel fill, one of the hues an avatar takes from its name. */
-  'color.avatar.bg.periwinkle': {
-    cssVariable: '--env-color-avatar-bg-periwinkle',
-    type: 'color',
-    values: {
-      light: '#dadaff',
-      dark: '#cacaf3',
-      'light-high-contrast': '#dadaff',
-      'dark-high-contrast': '#cacaf3',
-    },
-  },
-  /** The powder blue pastel fill, one of the hues an avatar takes from its name. */
-  'color.avatar.bg.powder': {
-    cssVariable: '--env-color-avatar-bg-powder',
-    type: 'color',
-    values: {
-      light: '#c0e2f6',
-      dark: '#afd3e9',
-      'light-high-contrast': '#c0e2f6',
-      'dark-high-contrast': '#afd3e9',
-    },
-  },
-  /** The sage pastel fill, one of the hues an avatar takes from its name. */
-  'color.avatar.bg.sage': {
-    cssVariable: '--env-color-avatar-bg-sage',
-    type: 'color',
-    values: {
-      light: '#cee4c3',
-      dark: '#bed4b3',
-      'light-high-contrast': '#cee4c3',
-      'dark-high-contrast': '#bed4b3',
-    },
-  },
-  /** The seafoam pastel fill, one of the hues an avatar takes from its name. */
-  'color.avatar.bg.seafoam': {
-    cssVariable: '--env-color-avatar-bg-seafoam',
-    type: 'color',
-    values: {
-      light: '#b8e7de',
-      dark: '#a7d7cf',
-      'light-high-contrast': '#b8e7de',
-      'dark-high-contrast': '#a7d7cf',
-    },
-  },
-  /** The default initials, on the powder fill. */
-  'color.avatar.fg': {
-    cssVariable: '--env-color-avatar-fg',
-    type: 'color',
-    values: {
-      light: '#39648d',
-      dark: '#2f5a84',
-      'light-high-contrast': '#0f3b64',
-      'dark-high-contrast': '#002e56',
-    },
-  },
-  /** The initials on the blush fill. */
-  'color.avatar.fg.blush': {
-    cssVariable: '--env-color-avatar-fg-blush',
-    type: 'color',
-    values: {
-      light: '#924c4f',
-      dark: '#894144',
-      'light-high-contrast': '#682227',
-      'dark-high-contrast': '#59131b',
-    },
-  },
-  /** The initials on the butter fill. */
-  'color.avatar.fg.butter': {
-    cssVariable: '--env-color-avatar-fg-butter',
-    type: 'color',
-    values: {
-      light: '#7c5b2a',
-      dark: '#73501f',
-      'light-high-contrast': '#523300',
-      'dark-high-contrast': '#422800',
-    },
-  },
-  /** The initials on the oat fill. */
-  'color.avatar.fg.oat': {
-    cssVariable: '--env-color-avatar-fg-oat',
-    type: 'color',
-    values: {
-      light: '#6e5e51',
-      dark: '#645447',
-      'light-high-contrast': '#46372b',
-      'dark-high-contrast': '#392b1f',
-    },
-  },
-  /** The initials on the orchid fill. */
-  'color.avatar.fg.orchid': {
-    cssVariable: '--env-color-avatar-fg-orchid',
-    type: 'color',
-    values: {
-      light: '#864f70',
-      dark: '#7d4566',
-      'light-high-contrast': '#5d2648',
-      'dark-high-contrast': '#4e193b',
-    },
-  },
-  /** The initials on the periwinkle fill. */
-  'color.avatar.fg.periwinkle': {
-    cssVariable: '--env-color-avatar-fg-periwinkle',
-    type: 'color',
-    values: {
-      light: '#5d5a96',
-      dark: '#54508d',
-      'light-high-contrast': '#38326d',
-      'dark-high-contrast': '#2c255f',
-    },
-  },
-  /** The initials on the powder fill. */
-  'color.avatar.fg.powder': {
-    cssVariable: '--env-color-avatar-fg-powder',
-    type: 'color',
-    values: {
-      light: '#39648d',
-      dark: '#2f5a84',
-      'light-high-contrast': '#0f3b64',
-      'dark-high-contrast': '#002e56',
-    },
-  },
-  /** The initials on the sage fill. */
-  'color.avatar.fg.sage': {
-    cssVariable: '--env-color-avatar-fg-sage',
-    type: 'color',
-    values: {
-      light: '#4d6845',
-      dark: '#425e3b',
-      'light-high-contrast': '#26401f',
-      'dark-high-contrast': '#193312',
-    },
-  },
-  /** The initials on the seafoam fill. */
-  'color.avatar.fg.seafoam': {
-    cssVariable: '--env-color-avatar-fg-seafoam',
-    type: 'color',
-    values: {
-      light: '#266b68',
-      dark: '#16615f',
-      'light-high-contrast': '#004140',
-      'dark-high-contrast': '#003432',
-    },
-  },
-  /** The default figure, on the powder fill. */
-  'color.avatar.figure': {
-    cssVariable: '--env-color-avatar-figure',
-    type: 'color',
-    values: {
-      light: '#39648d',
-      dark: '#2f5a84',
-      'light-high-contrast': '#0f3b64',
-      'dark-high-contrast': '#002e56',
-    },
-  },
-  'color.avatar.figure.blush': {
-    cssVariable: '--env-color-avatar-figure-blush',
-    type: 'color',
-    values: {
-      light: '#924c4f',
-      dark: '#894144',
-      'light-high-contrast': '#682227',
-      'dark-high-contrast': '#59131b',
-    },
-  },
-  'color.avatar.figure.butter': {
-    cssVariable: '--env-color-avatar-figure-butter',
-    type: 'color',
-    values: {
-      light: '#7c5b2a',
-      dark: '#73501f',
-      'light-high-contrast': '#523300',
-      'dark-high-contrast': '#422800',
-    },
-  },
-  'color.avatar.figure.oat': {
-    cssVariable: '--env-color-avatar-figure-oat',
-    type: 'color',
-    values: {
-      light: '#6e5e51',
-      dark: '#645447',
-      'light-high-contrast': '#46372b',
-      'dark-high-contrast': '#392b1f',
-    },
-  },
-  'color.avatar.figure.orchid': {
-    cssVariable: '--env-color-avatar-figure-orchid',
-    type: 'color',
-    values: {
-      light: '#864f70',
-      dark: '#7d4566',
-      'light-high-contrast': '#5d2648',
-      'dark-high-contrast': '#4e193b',
-    },
-  },
-  'color.avatar.figure.periwinkle': {
-    cssVariable: '--env-color-avatar-figure-periwinkle',
-    type: 'color',
-    values: {
-      light: '#5d5a96',
-      dark: '#54508d',
-      'light-high-contrast': '#38326d',
-      'dark-high-contrast': '#2c255f',
-    },
-  },
-  'color.avatar.figure.powder': {
-    cssVariable: '--env-color-avatar-figure-powder',
-    type: 'color',
-    values: {
-      light: '#39648d',
-      dark: '#2f5a84',
-      'light-high-contrast': '#0f3b64',
-      'dark-high-contrast': '#002e56',
-    },
-  },
-  'color.avatar.figure.sage': {
-    cssVariable: '--env-color-avatar-figure-sage',
-    type: 'color',
-    values: {
-      light: '#4d6845',
-      dark: '#425e3b',
-      'light-high-contrast': '#26401f',
-      'dark-high-contrast': '#193312',
-    },
-  },
-  'color.avatar.figure.seafoam': {
-    cssVariable: '--env-color-avatar-figure-seafoam',
-    type: 'color',
-    values: {
-      light: '#266b68',
-      dark: '#16615f',
-      'light-high-contrast': '#004140',
-      'dark-high-contrast': '#003432',
-    },
-  },
-  /** The tint of a soft accent badge. In light it is the accent blue at 5%, fainter than color.bg.accent.muted, so the blue text keeps 4.5:1 over it on list rows and muted surfaces; in dark and at high contrast it is color.bg.accent.muted. */
-  'color.bg.accent.badge': {
-    cssVariable: '--env-color-bg-accent-badge',
-    type: 'color',
-    values: {
-      light: 'rgb(0 92 200 / 0.05)',
-      dark: 'rgb(159 193 248 / 0.14)',
-      'light-high-contrast': 'rgb(0 55 124 / 0.08)',
-      'dark-high-contrast': 'rgb(205 222 252 / 0.1)',
-    },
-  },
-  /** A solid accent fill, such as a solid accent badge; paired with fg.on-emphasis. */
-  'color.bg.accent.emphasis': {
-    cssVariable: '--env-color-bg-accent-emphasis',
-    type: 'color',
-    values: {
-      light: '#005cc8',
-      dark: '#9fc1f8',
-      'light-high-contrast': '#00377c',
-      'dark-high-contrast': '#cddefc',
-    },
-  },
-  /** The translucent accent tint of info alerts, and of soft accent badges in dark and at high contrast; in light they take color.bg.accent.badge. */
+  /** The translucent accent tint of soft accent badges in dark and at high contrast; in light they take color.bg.accent.soft. */
   'color.bg.accent.muted': {
     cssVariable: '--env-color-bg-accent-muted',
     type: 'color',
     values: {
-      light: 'rgb(0 92 200 / 0.12)',
-      dark: 'rgb(159 193 248 / 0.14)',
-      'light-high-contrast': 'rgb(0 55 124 / 0.08)',
-      'dark-high-contrast': 'rgb(205 222 252 / 0.1)',
+      light: 'rgb(142 60 170 / 0.12)',
+      dark: 'rgb(231 168 255 / 0.14)',
+      'light-high-contrast': 'rgb(99 4 125 / 0.08)',
+      'dark-high-contrast': 'rgb(242 210 255 / 0.1)',
     },
   },
-  /** Controls in the accent tone without a fill at rest, such as an alert’s dismiss button: transparent, as color.bg.neutral.subtle is. */
+  /** The tint of a soft accent badge: in light the accent purple at 5%, so the purple text keeps 4.5:1 over it; in dark and at high contrast it is color.bg.accent.muted. */
+  'color.bg.accent.soft': {
+    cssVariable: '--env-color-bg-accent-soft',
+    type: 'color',
+    values: {
+      light: 'rgb(142 60 170 / 0.05)',
+      dark: 'rgb(231 168 255 / 0.14)',
+      'light-high-contrast': 'rgb(99 4 125 / 0.08)',
+      'dark-high-contrast': 'rgb(242 210 255 / 0.1)',
+    },
+  },
+  /** A solid accent fill, such as a solid accent badge; paired with fg.on-emphasis. */
+  'color.bg.accent.solid': {
+    cssVariable: '--env-color-bg-accent-solid',
+    type: 'color',
+    values: {
+      light: '#8e3caa',
+      dark: '#e7a8ff',
+      'light-high-contrast': '#63047d',
+      'dark-high-contrast': '#f2d2ff',
+    },
+  },
+  /** The accent purple of accent actions, such as Button's accent tone, in both themes; paired with fg.on-strong. */
+  'color.bg.accent.strong': {
+    cssVariable: '--env-color-bg-accent-strong',
+    type: 'color',
+    values: {
+      light: '#9948b6',
+      dark: '#9948b6',
+      'light-high-contrast': '#6d1888',
+      'dark-high-contrast': '#6d1888',
+    },
+  },
+  /** An accent action under the pointer. */
+  'color.bg.accent.strong.hover': {
+    cssVariable: '--env-color-bg-accent-strong-hover',
+    type: 'color',
+    values: {
+      light: '#83319f',
+      dark: '#83319f',
+      'light-high-contrast': '#63047d',
+      'dark-high-contrast': '#63047d',
+    },
+  },
+  /** An accent action while pressed. */
+  'color.bg.accent.strong.pressed': {
+    cssVariable: '--env-color-bg-accent-strong-pressed',
+    type: 'color',
+    values: {
+      light: '#6d1888',
+      dark: '#6d1888',
+      'light-high-contrast': '#57006e',
+      'dark-high-contrast': '#57006e',
+    },
+  },
+  /** Controls in the accent tone without a fill at rest: transparent, as color.bg.neutral.subtle is. */
   'color.bg.accent.subtle': {
     cssVariable: '--env-color-bg-accent-subtle',
     type: 'color',
@@ -371,15 +117,15 @@ export const tokens = {
       'dark-high-contrast': 'transparent',
     },
   },
-  /** The state layer of a control without a fill in the accent tone, such as an info alert’s dismiss button, under the pointer: the accent text color at 14%, in every theme and at high contrast. */
+  /** The state layer of a control without a fill in the accent tone under the pointer, and the tonal fill of an accent badge: the accent text color at 14%. */
   'color.bg.accent.subtle.hover': {
     cssVariable: '--env-color-bg-accent-subtle-hover',
     type: 'color',
     values: {
-      light: 'rgb(0 92 200 / 0.14)',
-      dark: 'rgb(159 193 248 / 0.14)',
-      'light-high-contrast': 'rgb(0 55 124 / 0.14)',
-      'dark-high-contrast': 'rgb(224 235 253 / 0.14)',
+      light: 'rgb(142 60 170 / 0.14)',
+      dark: 'rgb(231 168 255 / 0.14)',
+      'light-high-contrast': 'rgb(99 4 125 / 0.14)',
+      'dark-high-contrast': 'rgb(247 228 255 / 0.14)',
     },
   },
   /** The accent state layer while pressed: the accent text color at 22%. */
@@ -387,87 +133,131 @@ export const tokens = {
     cssVariable: '--env-color-bg-accent-subtle-pressed',
     type: 'color',
     values: {
-      light: 'rgb(0 92 200 / 0.22)',
-      dark: 'rgb(159 193 248 / 0.22)',
-      'light-high-contrast': 'rgb(0 55 124 / 0.22)',
-      'dark-high-contrast': 'rgb(224 235 253 / 0.22)',
+      light: 'rgb(142 60 170 / 0.22)',
+      dark: 'rgb(231 168 255 / 0.22)',
+      'light-high-contrast': 'rgb(99 4 125 / 0.22)',
+      'dark-high-contrast': 'rgb(247 228 255 / 0.22)',
     },
   },
-  /** The brand fill of primary actions, chosen radios and the chosen calendar day; paired with fg.on-emphasis. In dark and at high contrast, checked checkboxes, switches that are on, sliders, meters and spinners take it too: a soft blue with dark marks at 4.5:1. */
-  'color.bg.brand.emphasis': {
-    cssVariable: '--env-color-bg-brand-emphasis',
+  /** The default fill, the powder hue: the fill of an avatar whose hue nothing sets. */
+  'color.bg.avatar': {
+    cssVariable: '--env-color-bg-avatar',
     type: 'color',
     values: {
-      light: '#1872e7',
-      dark: '#9fc1f8',
-      'light-high-contrast': '#00408f',
-      'dark-high-contrast': '#b5cffb',
+      light: '#c0e2f6',
+      dark: '#afd3e9',
+      'light-high-contrast': '#c0e2f6',
+      'dark-high-contrast': '#afd3e9',
     },
   },
-  /** A primary action under the pointer. */
-  'color.bg.brand.emphasis.hover': {
-    cssVariable: '--env-color-bg-brand-emphasis-hover',
+  /** The blush pink pastel fill, one of the hues an avatar takes from its name. */
+  'color.bg.avatar.blush': {
+    cssVariable: '--env-color-bg-avatar-blush',
     type: 'color',
     values: {
-      light: '#005cc8',
-      dark: '#75a5f2',
-      'light-high-contrast': '#00377c',
-      'dark-high-contrast': '#cddefc',
+      light: '#ffd3d4',
+      dark: '#f3c2c4',
+      'light-high-contrast': '#ffd3d4',
+      'dark-high-contrast': '#f3c2c4',
     },
   },
-  /** A primary action while pressed. */
-  'color.bg.brand.emphasis.pressed': {
-    cssVariable: '--env-color-bg-brand-emphasis-pressed',
+  /** The butter yellow pastel fill, one of the hues an avatar takes from its name. */
+  'color.bg.avatar.butter': {
+    cssVariable: '--env-color-bg-avatar-butter',
     type: 'color',
     values: {
-      light: '#00408f',
-      dark: '#4b8bec',
-      'light-high-contrast': '#002f6d',
-      'dark-high-contrast': '#e0ebfd',
+      light: '#efdca4',
+      dark: '#e1cc95',
+      'light-high-contrast': '#efdca4',
+      'dark-high-contrast': '#e1cc95',
     },
   },
-  /** The translucent halo of a slider thumb that is dragged: the blue of the thumb at 16%, in every theme and at high contrast. */
-  'color.bg.brand.muted': {
-    cssVariable: '--env-color-bg-brand-muted',
+  /** The warm oat pastel fill, one of the hues an avatar takes from its name. */
+  'color.bg.avatar.oat': {
+    cssVariable: '--env-color-bg-avatar-oat',
     type: 'color',
     values: {
-      light: 'rgb(24 114 231 / 0.16)',
-      dark: 'rgb(159 193 248 / 0.16)',
-      'light-high-contrast': 'rgb(0 64 143 / 0.16)',
-      'dark-high-contrast': 'rgb(181 207 251 / 0.16)',
+      light: '#e7dbce',
+      dark: '#d8ccbf',
+      'light-high-contrast': '#e7dbce',
+      'dark-high-contrast': '#d8ccbf',
     },
   },
-  /** The saturated brand fill of checked checkboxes, switches that are on, sliders, meters and spinners in the light theme at standard contrast, with white marks, the check and the thumb, at 3:1. The dark theme and high contrast put those controls on the emphasis fill instead; in dark this fill, which keeps 3:1 against the surfaces, would put white text below 4.5:1. */
-  'color.bg.brand.strong': {
-    cssVariable: '--env-color-bg-brand-strong',
+  /** The orchid pastel fill, one of the hues an avatar takes from its name. */
+  'color.bg.avatar.orchid': {
+    cssVariable: '--env-color-bg-avatar-orchid',
     type: 'color',
     values: {
-      light: '#1872e7',
-      dark: '#4b8bec',
-      'light-high-contrast': '#00408f',
-      'dark-high-contrast': '#00408f',
+      light: '#fad2ec',
+      dark: '#ecc2dd',
+      'light-high-contrast': '#fad2ec',
+      'dark-high-contrast': '#ecc2dd',
     },
   },
-  /** A checked control under the pointer. */
-  'color.bg.brand.strong.hover': {
-    cssVariable: '--env-color-bg-brand-strong-hover',
+  /** The periwinkle pastel fill, one of the hues an avatar takes from its name. */
+  'color.bg.avatar.periwinkle': {
+    cssVariable: '--env-color-bg-avatar-periwinkle',
     type: 'color',
     values: {
-      light: '#005cc8',
-      dark: '#347eea',
-      'light-high-contrast': '#00377c',
-      'dark-high-contrast': '#00377c',
+      light: '#dadaff',
+      dark: '#cacaf3',
+      'light-high-contrast': '#dadaff',
+      'dark-high-contrast': '#cacaf3',
     },
   },
-  /** A checked control while pressed. */
-  'color.bg.brand.strong.pressed': {
-    cssVariable: '--env-color-bg-brand-strong-pressed',
+  /** The powder blue pastel fill, one of the hues an avatar takes from its name. */
+  'color.bg.avatar.powder': {
+    cssVariable: '--env-color-bg-avatar-powder',
     type: 'color',
     values: {
-      light: '#00408f',
-      dark: '#1872e7',
-      'light-high-contrast': '#002f6d',
-      'dark-high-contrast': '#002f6d',
+      light: '#c0e2f6',
+      dark: '#afd3e9',
+      'light-high-contrast': '#c0e2f6',
+      'dark-high-contrast': '#afd3e9',
+    },
+  },
+  /** The sage pastel fill, one of the hues an avatar takes from its name. */
+  'color.bg.avatar.sage': {
+    cssVariable: '--env-color-bg-avatar-sage',
+    type: 'color',
+    values: {
+      light: '#cee4c3',
+      dark: '#bed4b3',
+      'light-high-contrast': '#cee4c3',
+      'dark-high-contrast': '#bed4b3',
+    },
+  },
+  /** The seafoam pastel fill, one of the hues an avatar takes from its name. */
+  'color.bg.avatar.seafoam': {
+    cssVariable: '--env-color-bg-avatar-seafoam',
+    type: 'color',
+    values: {
+      light: '#b8e7de',
+      dark: '#a7d7cf',
+      'light-high-contrast': '#b8e7de',
+      'dark-high-contrast': '#a7d7cf',
+    },
+  },
+  /** The backdrop behind dialogs and the command palette: the dark page color at 55%. */
+  'color.bg.backdrop': {
+    cssVariable: '--env-color-bg-backdrop',
+    type: 'color',
+    values: {
+      light: 'rgb(31 31 34 / 0.55)',
+      dark: 'rgb(30 31 33 / 0.55)',
+      'light-high-contrast': 'rgb(31 31 34 / 0.55)',
+      'dark-high-contrast': 'rgb(30 31 33 / 0.55)',
+    },
+  },
+  /** The lighter backdrop behind a sheet that leaves the page usable, such as a supporting pane over its main pane: the dark page color at 30%. */
+  'color.bg.backdrop.muted': {
+    cssVariable: '--env-color-bg-backdrop-muted',
+    type: 'color',
+    values: {
+      light: 'rgb(31 31 34 / 0.3)',
+      dark: 'rgb(30 31 33 / 0.3)',
+      'light-high-contrast': 'rgb(31 31 34 / 0.3)',
+      'dark-high-contrast': 'rgb(30 31 33 / 0.3)',
     },
   },
   /** A solid danger fill; paired with fg.on-emphasis. */
@@ -624,39 +414,6 @@ export const tokens = {
       'dark-high-contrast': '#1e1f21',
     },
   },
-  /** The accent purple of important actions in both themes; paired with fg.on-strong. */
-  'color.bg.important.strong': {
-    cssVariable: '--env-color-bg-important-strong',
-    type: 'color',
-    values: {
-      light: '#9948b6',
-      dark: '#9948b6',
-      'light-high-contrast': '#6d1888',
-      'dark-high-contrast': '#6d1888',
-    },
-  },
-  /** An important action under the pointer. */
-  'color.bg.important.strong.hover': {
-    cssVariable: '--env-color-bg-important-strong-hover',
-    type: 'color',
-    values: {
-      light: '#83319f',
-      dark: '#83319f',
-      'light-high-contrast': '#63047d',
-      'dark-high-contrast': '#63047d',
-    },
-  },
-  /** An important action while pressed. */
-  'color.bg.important.strong.pressed': {
-    cssVariable: '--env-color-bg-important-strong-pressed',
-    type: 'color',
-    values: {
-      light: '#6d1888',
-      dark: '#6d1888',
-      'light-high-contrast': '#57006e',
-      'dark-high-contrast': '#57006e',
-    },
-  },
   /** The information fill of toasts in both themes; paired with fg.on-strong. */
   'color.bg.info.strong': {
     cssVariable: '--env-color-bg-info-strong',
@@ -701,6 +458,39 @@ export const tokens = {
       'dark-high-contrast': 'rgb(30 31 33 / 0.5)',
     },
   },
+  /** The fill of a list item: the muted surface in both themes and at high contrast, so items stand apart from the page and from a surface. */
+  'color.bg.list-item': {
+    cssVariable: '--env-color-bg-list-item',
+    type: 'color',
+    values: {
+      light: '#ffffff',
+      dark: '#343638',
+      'light-high-contrast': '#ffffff',
+      'dark-high-contrast': '#343638',
+    },
+  },
+  /** A list item under the pointer. */
+  'color.bg.list-item.hover': {
+    cssVariable: '--env-color-bg-list-item-hover',
+    type: 'color',
+    values: {
+      light: '#f1f1f3',
+      dark: '#424447',
+      'light-high-contrast': '#f1f1f3',
+      'dark-high-contrast': '#383a3d',
+    },
+  },
+  /** A list item while pressed. */
+  'color.bg.list-item.pressed': {
+    cssVariable: '--env-color-bg-list-item-pressed',
+    type: 'color',
+    values: {
+      light: '#e3e3e6',
+      dark: '#4b4d51',
+      'light-high-contrast': '#e3e3e6',
+      'dark-high-contrast': '#424447',
+    },
+  },
   /** The muted surface: Surface background="muted", cards, list and radio rows. Lighter than the default surface in both themes, white in light, so cards stand apart from a pane. */
   'color.bg.muted': {
     cssVariable: '--env-color-bg-muted',
@@ -732,6 +522,17 @@ export const tokens = {
       dark: '#4b4d51',
       'light-high-contrast': '#e3e3e6',
       'dark-high-contrast': '#424447',
+    },
+  },
+  /** A navigation item that isn’t selected, at rest: no fill, over the navigation’s own background. */
+  'color.bg.navigation': {
+    cssVariable: '--env-color-bg-navigation',
+    type: 'color',
+    values: {
+      light: 'transparent',
+      dark: 'transparent',
+      'light-high-contrast': 'transparent',
+      'dark-high-contrast': 'transparent',
     },
   },
   /** A navigation item that isn’t selected, under the pointer: a blue-gray tint in light, deeper than the selection so it doesn’t read as selected; in dark and at high contrast, a gray, since a blue tint there would read as the selection. */
@@ -866,28 +667,6 @@ export const tokens = {
       'dark-high-contrast': 'rgb(232 234 238 / 0.08)',
     },
   },
-  /** The scrim behind dialogs and the command palette: the dark page color at 55%. */
-  'color.bg.overlay': {
-    cssVariable: '--env-color-bg-overlay',
-    type: 'color',
-    values: {
-      light: 'rgb(31 31 34 / 0.55)',
-      dark: 'rgb(30 31 33 / 0.55)',
-      'light-high-contrast': 'rgb(31 31 34 / 0.55)',
-      'dark-high-contrast': 'rgb(30 31 33 / 0.55)',
-    },
-  },
-  /** The lighter scrim behind a sheet that leaves the page usable, such as a supporting pane over its main pane: the dark page color at 30%. */
-  'color.bg.overlay.muted': {
-    cssVariable: '--env-color-bg-overlay-muted',
-    type: 'color',
-    values: {
-      light: 'rgb(31 31 34 / 0.3)',
-      dark: 'rgb(30 31 33 / 0.3)',
-      'light-high-contrast': 'rgb(31 31 34 / 0.3)',
-      'dark-high-contrast': 'rgb(30 31 33 / 0.3)',
-    },
-  },
   /** The page behind all content: the app frame, title bars and Surface background="page". Deeper than the panes and cards on it in both themes, so they part from it. */
   'color.bg.page': {
     cssVariable: '--env-color-bg-page',
@@ -952,6 +731,138 @@ export const tokens = {
       dark: '#4b4d51',
       'light-high-contrast': '#dddddf',
       'dark-high-contrast': '#424447',
+    },
+  },
+  /** The primary fill of primary actions, chosen radios and the chosen calendar day; paired with fg.on-emphasis. In dark and at high contrast, checked checkboxes, switches that are on, sliders, meters and spinners take it too: a soft blue with dark marks at 4.5:1. */
+  'color.bg.primary.emphasis': {
+    cssVariable: '--env-color-bg-primary-emphasis',
+    type: 'color',
+    values: {
+      light: '#1872e7',
+      dark: '#9fc1f8',
+      'light-high-contrast': '#00408f',
+      'dark-high-contrast': '#b5cffb',
+    },
+  },
+  /** A primary action under the pointer. */
+  'color.bg.primary.emphasis.hover': {
+    cssVariable: '--env-color-bg-primary-emphasis-hover',
+    type: 'color',
+    values: {
+      light: '#005cc8',
+      dark: '#75a5f2',
+      'light-high-contrast': '#00377c',
+      'dark-high-contrast': '#cddefc',
+    },
+  },
+  /** A primary action while pressed. */
+  'color.bg.primary.emphasis.pressed': {
+    cssVariable: '--env-color-bg-primary-emphasis-pressed',
+    type: 'color',
+    values: {
+      light: '#00408f',
+      dark: '#4b8bec',
+      'light-high-contrast': '#002f6d',
+      'dark-high-contrast': '#e0ebfd',
+    },
+  },
+  /** The translucent primary tint of info alerts, and of soft primary badges in dark and at high contrast; in light they take color.bg.primary.soft. An application may put a container in it, with links in fg.link-on-muted. */
+  'color.bg.primary.muted': {
+    cssVariable: '--env-color-bg-primary-muted',
+    type: 'color',
+    values: {
+      light: 'rgb(0 92 200 / 0.12)',
+      dark: 'rgb(159 193 248 / 0.14)',
+      'light-high-contrast': 'rgb(0 55 124 / 0.08)',
+      'dark-high-contrast': 'rgb(205 222 252 / 0.1)',
+    },
+  },
+  /** The tint of a soft primary badge. In light it is the primary blue at 5%, fainter than color.bg.primary.muted, so the blue text keeps 4.5:1 over it on list rows and muted surfaces; in dark and at high contrast it is color.bg.primary.muted. */
+  'color.bg.primary.soft': {
+    cssVariable: '--env-color-bg-primary-soft',
+    type: 'color',
+    values: {
+      light: 'rgb(0 92 200 / 0.05)',
+      dark: 'rgb(159 193 248 / 0.14)',
+      'light-high-contrast': 'rgb(0 55 124 / 0.08)',
+      'dark-high-contrast': 'rgb(205 222 252 / 0.1)',
+    },
+  },
+  /** A solid primary fill, such as a solid primary badge or a navigation item's count, a grade deeper than the emphasis fill in light; paired with fg.on-emphasis. */
+  'color.bg.primary.solid': {
+    cssVariable: '--env-color-bg-primary-solid',
+    type: 'color',
+    values: {
+      light: '#005cc8',
+      dark: '#9fc1f8',
+      'light-high-contrast': '#00377c',
+      'dark-high-contrast': '#cddefc',
+    },
+  },
+  /** The saturated primary fill of checked checkboxes, switches that are on, sliders, meters and spinners in the light theme at standard contrast, with white marks, the check and the thumb, at 3:1. The dark theme and high contrast put those controls on the emphasis fill instead; in dark this fill, which keeps 3:1 against the surfaces, would put white text below 4.5:1. */
+  'color.bg.primary.strong': {
+    cssVariable: '--env-color-bg-primary-strong',
+    type: 'color',
+    values: {
+      light: '#1872e7',
+      dark: '#4b8bec',
+      'light-high-contrast': '#00408f',
+      'dark-high-contrast': '#00408f',
+    },
+  },
+  /** A checked control under the pointer. */
+  'color.bg.primary.strong.hover': {
+    cssVariable: '--env-color-bg-primary-strong-hover',
+    type: 'color',
+    values: {
+      light: '#005cc8',
+      dark: '#347eea',
+      'light-high-contrast': '#00377c',
+      'dark-high-contrast': '#00377c',
+    },
+  },
+  /** A checked control while pressed. */
+  'color.bg.primary.strong.pressed': {
+    cssVariable: '--env-color-bg-primary-strong-pressed',
+    type: 'color',
+    values: {
+      light: '#00408f',
+      dark: '#1872e7',
+      'light-high-contrast': '#002f6d',
+      'dark-high-contrast': '#002f6d',
+    },
+  },
+  /** Controls in the primary tone without a fill at rest, such as an alert’s dismiss button: transparent, as color.bg.neutral.subtle is. */
+  'color.bg.primary.subtle': {
+    cssVariable: '--env-color-bg-primary-subtle',
+    type: 'color',
+    values: {
+      light: 'transparent',
+      dark: 'transparent',
+      'light-high-contrast': 'transparent',
+      'dark-high-contrast': 'transparent',
+    },
+  },
+  /** The state layer of a control without a fill in the primary tone, such as an info alert’s dismiss button, under the pointer: the primary text color at 14%, in every theme and at high contrast. */
+  'color.bg.primary.subtle.hover': {
+    cssVariable: '--env-color-bg-primary-subtle-hover',
+    type: 'color',
+    values: {
+      light: 'rgb(0 92 200 / 0.14)',
+      dark: 'rgb(159 193 248 / 0.14)',
+      'light-high-contrast': 'rgb(0 55 124 / 0.14)',
+      'dark-high-contrast': 'rgb(224 235 253 / 0.14)',
+    },
+  },
+  /** The primary state layer while pressed: the primary text color at 22%. */
+  'color.bg.primary.subtle.pressed': {
+    cssVariable: '--env-color-bg-primary-subtle-pressed',
+    type: 'color',
+    values: {
+      light: 'rgb(0 92 200 / 0.22)',
+      dark: 'rgb(159 193 248 / 0.22)',
+      'light-high-contrast': 'rgb(0 55 124 / 0.22)',
+      'dark-high-contrast': 'rgb(224 235 253 / 0.22)',
     },
   },
   /** A raised surface: Surface background="raised", rows on a contrasting surface, outlined buttons. */
@@ -1196,59 +1107,15 @@ export const tokens = {
       'dark-high-contrast': 'rgb(255 232 190 / 0.22)',
     },
   },
-  /** A decorative edge in the accent tone, around an outlined badge: the accent text color at 55%, in every theme and at high contrast. */
+  /** A decorative edge in the accent tone, around an outlined accent badge: the accent text color at 55%. */
   'color.border.accent': {
     cssVariable: '--env-color-border-accent',
     type: 'color',
     values: {
-      light: 'rgb(0 92 200 / 0.55)',
-      dark: 'rgb(159 193 248 / 0.55)',
-      'light-high-contrast': 'rgb(0 55 124 / 0.55)',
-      'dark-high-contrast': 'rgb(224 235 253 / 0.55)',
-    },
-  },
-  /** The active border and label of a focused field, and today’s ring in a calendar. */
-  'color.border.accent.emphasis': {
-    cssVariable: '--env-color-border-accent-emphasis',
-    type: 'color',
-    values: {
-      light: '#1872e7',
-      dark: '#9fc1f8',
-      'light-high-contrast': '#00408f',
-      'dark-high-contrast': '#b5cffb',
-    },
-  },
-  /** An active field border under the pointer. */
-  'color.border.accent.emphasis.hover': {
-    cssVariable: '--env-color-border-accent-emphasis-hover',
-    type: 'color',
-    values: {
-      light: '#005cc8',
-      dark: '#75a5f2',
-      'light-high-contrast': '#00377c',
-      'dark-high-contrast': '#cddefc',
-    },
-  },
-  /** An active field border while pressed. */
-  'color.border.accent.emphasis.pressed': {
-    cssVariable: '--env-color-border-accent-emphasis-pressed',
-    type: 'color',
-    values: {
-      light: '#00408f',
-      dark: '#4b8bec',
-      'light-high-contrast': '#002f6d',
-      'dark-high-contrast': '#e0ebfd',
-    },
-  },
-  /** The faint edge of an info alert: the accent text color at 28%, in every theme and at high contrast. */
-  'color.border.accent.muted': {
-    cssVariable: '--env-color-border-accent-muted',
-    type: 'color',
-    values: {
-      light: 'rgb(0 92 200 / 0.28)',
-      dark: 'rgb(159 193 248 / 0.28)',
-      'light-high-contrast': 'rgb(0 55 124 / 0.28)',
-      'dark-high-contrast': 'rgb(224 235 253 / 0.28)',
+      light: 'rgb(142 60 170 / 0.55)',
+      dark: 'rgb(231 168 255 / 0.55)',
+      'light-high-contrast': 'rgb(99 4 125 / 0.55)',
+      'dark-high-contrast': 'rgb(247 228 255 / 0.55)',
     },
   },
   /** A decorative edge in the danger tone, around an outlined badge and a message that failed to send: the danger text color at 55%, in every theme and at high contrast. */
@@ -1449,6 +1316,61 @@ export const tokens = {
       'dark-high-contrast': '#a1a4a9',
     },
   },
+  /** A decorative edge in the primary tone, around an outlined primary badge: the primary text color at 55%, in every theme and at high contrast. */
+  'color.border.primary': {
+    cssVariable: '--env-color-border-primary',
+    type: 'color',
+    values: {
+      light: 'rgb(0 92 200 / 0.55)',
+      dark: 'rgb(159 193 248 / 0.55)',
+      'light-high-contrast': 'rgb(0 55 124 / 0.55)',
+      'dark-high-contrast': 'rgb(224 235 253 / 0.55)',
+    },
+  },
+  /** The active border and label of a focused field, and today’s ring in a calendar. */
+  'color.border.primary.emphasis': {
+    cssVariable: '--env-color-border-primary-emphasis',
+    type: 'color',
+    values: {
+      light: '#1872e7',
+      dark: '#9fc1f8',
+      'light-high-contrast': '#00408f',
+      'dark-high-contrast': '#b5cffb',
+    },
+  },
+  /** An active field border under the pointer. */
+  'color.border.primary.emphasis.hover': {
+    cssVariable: '--env-color-border-primary-emphasis-hover',
+    type: 'color',
+    values: {
+      light: '#005cc8',
+      dark: '#75a5f2',
+      'light-high-contrast': '#00377c',
+      'dark-high-contrast': '#cddefc',
+    },
+  },
+  /** An active field border while pressed. */
+  'color.border.primary.emphasis.pressed': {
+    cssVariable: '--env-color-border-primary-emphasis-pressed',
+    type: 'color',
+    values: {
+      light: '#00408f',
+      dark: '#4b8bec',
+      'light-high-contrast': '#002f6d',
+      'dark-high-contrast': '#e0ebfd',
+    },
+  },
+  /** The faint edge of an info alert: the primary text color at 28%, in every theme and at high contrast. */
+  'color.border.primary.muted': {
+    cssVariable: '--env-color-border-primary-muted',
+    type: 'color',
+    values: {
+      light: 'rgb(0 92 200 / 0.28)',
+      dark: 'rgb(159 193 248 / 0.28)',
+      'light-high-contrast': 'rgb(0 55 124 / 0.28)',
+      'dark-high-contrast': 'rgb(224 235 253 / 0.28)',
+    },
+  },
   /** A decorative edge in the success tone, around an outlined badge: the success text color at 55%, in every theme and at high contrast. */
   'color.border.success': {
     cssVariable: '--env-color-border-success',
@@ -1504,15 +1426,213 @@ export const tokens = {
       'dark-high-contrast': 'rgb(255 232 190 / 0.28)',
     },
   },
-  /** Accent text and icons: the accent tone, outlined button labels, chips, the icon of a pager link. */
+  /** Accent text and icons: the purple of an accent badge. */
   'color.fg.accent': {
     cssVariable: '--env-color-fg-accent',
     type: 'color',
     values: {
-      light: '#0053b5',
-      dark: '#9fc1f8',
-      'light-high-contrast': '#00377c',
-      'dark-high-contrast': '#e0ebfd',
+      light: '#83319f',
+      dark: '#e7a8ff',
+      'light-high-contrast': '#63047d',
+      'dark-high-contrast': '#f7e4ff',
+    },
+  },
+  /** The default initials, on the powder fill. */
+  'color.fg.avatar': {
+    cssVariable: '--env-color-fg-avatar',
+    type: 'color',
+    values: {
+      light: '#39648d',
+      dark: '#2f5a84',
+      'light-high-contrast': '#0f3b64',
+      'dark-high-contrast': '#002e56',
+    },
+  },
+  /** The default figure, on the powder fill. */
+  'color.fg.avatar-figure': {
+    cssVariable: '--env-color-fg-avatar-figure',
+    type: 'color',
+    values: {
+      light: '#39648d',
+      dark: '#2f5a84',
+      'light-high-contrast': '#0f3b64',
+      'dark-high-contrast': '#002e56',
+    },
+  },
+  /** The default figure on the blush fill, the shade of its initials. */
+  'color.fg.avatar-figure.blush': {
+    cssVariable: '--env-color-fg-avatar-figure-blush',
+    type: 'color',
+    values: {
+      light: '#924c4f',
+      dark: '#894144',
+      'light-high-contrast': '#682227',
+      'dark-high-contrast': '#59131b',
+    },
+  },
+  /** The default figure on the butter fill, the shade of its initials. */
+  'color.fg.avatar-figure.butter': {
+    cssVariable: '--env-color-fg-avatar-figure-butter',
+    type: 'color',
+    values: {
+      light: '#7c5b2a',
+      dark: '#73501f',
+      'light-high-contrast': '#523300',
+      'dark-high-contrast': '#422800',
+    },
+  },
+  /** The default figure on the oat fill, the shade of its initials. */
+  'color.fg.avatar-figure.oat': {
+    cssVariable: '--env-color-fg-avatar-figure-oat',
+    type: 'color',
+    values: {
+      light: '#6e5e51',
+      dark: '#645447',
+      'light-high-contrast': '#46372b',
+      'dark-high-contrast': '#392b1f',
+    },
+  },
+  /** The default figure on the orchid fill, the shade of its initials. */
+  'color.fg.avatar-figure.orchid': {
+    cssVariable: '--env-color-fg-avatar-figure-orchid',
+    type: 'color',
+    values: {
+      light: '#864f70',
+      dark: '#7d4566',
+      'light-high-contrast': '#5d2648',
+      'dark-high-contrast': '#4e193b',
+    },
+  },
+  /** The default figure on the periwinkle fill, the shade of its initials. */
+  'color.fg.avatar-figure.periwinkle': {
+    cssVariable: '--env-color-fg-avatar-figure-periwinkle',
+    type: 'color',
+    values: {
+      light: '#5d5a96',
+      dark: '#54508d',
+      'light-high-contrast': '#38326d',
+      'dark-high-contrast': '#2c255f',
+    },
+  },
+  /** The default figure on the powder fill, the shade of its initials. */
+  'color.fg.avatar-figure.powder': {
+    cssVariable: '--env-color-fg-avatar-figure-powder',
+    type: 'color',
+    values: {
+      light: '#39648d',
+      dark: '#2f5a84',
+      'light-high-contrast': '#0f3b64',
+      'dark-high-contrast': '#002e56',
+    },
+  },
+  /** The default figure on the sage fill, the shade of its initials. */
+  'color.fg.avatar-figure.sage': {
+    cssVariable: '--env-color-fg-avatar-figure-sage',
+    type: 'color',
+    values: {
+      light: '#4d6845',
+      dark: '#425e3b',
+      'light-high-contrast': '#26401f',
+      'dark-high-contrast': '#193312',
+    },
+  },
+  /** The default figure on the seafoam fill, the shade of its initials. */
+  'color.fg.avatar-figure.seafoam': {
+    cssVariable: '--env-color-fg-avatar-figure-seafoam',
+    type: 'color',
+    values: {
+      light: '#266b68',
+      dark: '#16615f',
+      'light-high-contrast': '#004140',
+      'dark-high-contrast': '#003432',
+    },
+  },
+  /** The initials on the blush fill. */
+  'color.fg.avatar.blush': {
+    cssVariable: '--env-color-fg-avatar-blush',
+    type: 'color',
+    values: {
+      light: '#924c4f',
+      dark: '#894144',
+      'light-high-contrast': '#682227',
+      'dark-high-contrast': '#59131b',
+    },
+  },
+  /** The initials on the butter fill. */
+  'color.fg.avatar.butter': {
+    cssVariable: '--env-color-fg-avatar-butter',
+    type: 'color',
+    values: {
+      light: '#7c5b2a',
+      dark: '#73501f',
+      'light-high-contrast': '#523300',
+      'dark-high-contrast': '#422800',
+    },
+  },
+  /** The initials on the oat fill. */
+  'color.fg.avatar.oat': {
+    cssVariable: '--env-color-fg-avatar-oat',
+    type: 'color',
+    values: {
+      light: '#6e5e51',
+      dark: '#645447',
+      'light-high-contrast': '#46372b',
+      'dark-high-contrast': '#392b1f',
+    },
+  },
+  /** The initials on the orchid fill. */
+  'color.fg.avatar.orchid': {
+    cssVariable: '--env-color-fg-avatar-orchid',
+    type: 'color',
+    values: {
+      light: '#864f70',
+      dark: '#7d4566',
+      'light-high-contrast': '#5d2648',
+      'dark-high-contrast': '#4e193b',
+    },
+  },
+  /** The initials on the periwinkle fill. */
+  'color.fg.avatar.periwinkle': {
+    cssVariable: '--env-color-fg-avatar-periwinkle',
+    type: 'color',
+    values: {
+      light: '#5d5a96',
+      dark: '#54508d',
+      'light-high-contrast': '#38326d',
+      'dark-high-contrast': '#2c255f',
+    },
+  },
+  /** The initials on the powder fill. */
+  'color.fg.avatar.powder': {
+    cssVariable: '--env-color-fg-avatar-powder',
+    type: 'color',
+    values: {
+      light: '#39648d',
+      dark: '#2f5a84',
+      'light-high-contrast': '#0f3b64',
+      'dark-high-contrast': '#002e56',
+    },
+  },
+  /** The initials on the sage fill. */
+  'color.fg.avatar.sage': {
+    cssVariable: '--env-color-fg-avatar-sage',
+    type: 'color',
+    values: {
+      light: '#4d6845',
+      dark: '#425e3b',
+      'light-high-contrast': '#26401f',
+      'dark-high-contrast': '#193312',
+    },
+  },
+  /** The initials on the seafoam fill. */
+  'color.fg.avatar.seafoam': {
+    cssVariable: '--env-color-fg-avatar-seafoam',
+    type: 'color',
+    values: {
+      light: '#266b68',
+      dark: '#16615f',
+      'light-high-contrast': '#004140',
+      'dark-high-contrast': '#003432',
     },
   },
   /** The labels of navigation items, secondary buttons and Select options, the values of meters and sliders, and the thumb of a switch that is off. */
@@ -1570,9 +1690,9 @@ export const tokens = {
       'dark-high-contrast': '#e0ebfd',
     },
   },
-  /** Links and text buttons on a tint, where fg.link falls below 4.5:1: inside alerts, on bg.brand-muted, and in list rows and interactive table rows under the pointer or pressed. In light it is a grade darker than fg.link and darkens on hover and press; in dark it is fg.link at rest and lightens on hover and press, where fg.link darkens. Alerts and those rows point fg.link at it; an application puts it on bg.brand-muted. */
-  'color.fg.link-on-tint': {
-    cssVariable: '--env-color-fg-link-on-tint',
+  /** Links and text buttons on a tint, where fg.link falls below 4.5:1: inside alerts, on bg.primary.muted, and in list rows and interactive table rows under the pointer or pressed. In light it is a grade darker than fg.link and darkens on hover and press; in dark it is fg.link at rest and lightens on hover and press, where fg.link darkens. Alerts and those rows point fg.link at it; an application puts it on bg.brand-muted. */
+  'color.fg.link-on-muted': {
+    cssVariable: '--env-color-fg-link-on-muted',
     type: 'color',
     values: {
       light: '#0053b5',
@@ -1582,8 +1702,8 @@ export const tokens = {
     },
   },
   /** A link on a tint under the pointer. */
-  'color.fg.link-on-tint.hover': {
-    cssVariable: '--env-color-fg-link-on-tint-hover',
+  'color.fg.link-on-muted.hover': {
+    cssVariable: '--env-color-fg-link-on-muted-hover',
     type: 'color',
     values: {
       light: '#004aa2',
@@ -1593,8 +1713,8 @@ export const tokens = {
     },
   },
   /** A link on a tint while pressed. */
-  'color.fg.link-on-tint.pressed': {
-    cssVariable: '--env-color-fg-link-on-tint-pressed',
+  'color.fg.link-on-muted.pressed': {
+    cssVariable: '--env-color-fg-link-on-muted-pressed',
     type: 'color',
     values: {
       light: '#00408f',
@@ -1680,7 +1800,7 @@ export const tokens = {
       'dark-high-contrast': '#cddefc',
     },
   },
-  /** White in both themes, on the strong fills: labels at 4.5:1 on the danger, important, neutral, success and information fills, at rest, hovered and pressed; marks at 3:1 on the brand’s strong fill. */
+  /** White in both themes, on the strong fills: labels at 4.5:1 on the danger, accent, neutral, success and information fills, at rest, hovered and pressed; marks at 3:1 on the primary strong fill. */
   'color.fg.on-strong': {
     cssVariable: '--env-color-fg-on-strong',
     type: 'color',
@@ -1689,6 +1809,28 @@ export const tokens = {
       dark: '#ffffff',
       'light-high-contrast': '#ffffff',
       'dark-high-contrast': '#ffffff',
+    },
+  },
+  /** Primary text and icons: the primary tone, outlined button labels, the selected tab, a field's focused label, the icon of a pager link. */
+  'color.fg.primary': {
+    cssVariable: '--env-color-fg-primary',
+    type: 'color',
+    values: {
+      light: '#0053b5',
+      dark: '#9fc1f8',
+      'light-high-contrast': '#00377c',
+      'dark-high-contrast': '#e0ebfd',
+    },
+  },
+  /** The filled stars and the filled half of a half star: a clear gold. */
+  'color.fg.rating-star': {
+    cssVariable: '--env-color-fg-rating-star',
+    type: 'color',
+    values: {
+      light: '#dea846',
+      dark: '#ebb750',
+      'light-high-contrast': '#553200',
+      'dark-high-contrast': '#ffe8be',
     },
   },
   /** Success text and icons. */
@@ -1713,50 +1855,6 @@ export const tokens = {
       'dark-high-contrast': '#ffe8be',
     },
   },
-  /** The fill of a list item: the muted surface in both themes and at high contrast, so items stand apart from the page and from a surface. */
-  'color.list-item.bg': {
-    cssVariable: '--env-color-list-item-bg',
-    type: 'color',
-    values: {
-      light: '#ffffff',
-      dark: '#343638',
-      'light-high-contrast': '#ffffff',
-      'dark-high-contrast': '#343638',
-    },
-  },
-  /** A list item under the pointer. */
-  'color.list-item.bg.hover': {
-    cssVariable: '--env-color-list-item-bg-hover',
-    type: 'color',
-    values: {
-      light: '#f1f1f3',
-      dark: '#424447',
-      'light-high-contrast': '#f1f1f3',
-      'dark-high-contrast': '#383a3d',
-    },
-  },
-  /** A list item while pressed. */
-  'color.list-item.bg.pressed': {
-    cssVariable: '--env-color-list-item-bg-pressed',
-    type: 'color',
-    values: {
-      light: '#e3e3e6',
-      dark: '#4b4d51',
-      'light-high-contrast': '#e3e3e6',
-      'dark-high-contrast': '#424447',
-    },
-  },
-  /** The filled stars and the filled half of a half star: a clear gold. */
-  'color.rating.star': {
-    cssVariable: '--env-color-rating-star',
-    type: 'color',
-    values: {
-      light: '#dea846',
-      dark: '#ebb750',
-      'light-high-contrast': '#553200',
-      'dark-high-contrast': '#ffe8be',
-    },
-  },
   /** The hairline border of controls and fields, which stays 1 px in both scales. */
   'control.border-width': {
     cssVariable: '--env-control-border-width',
@@ -1768,6 +1866,7 @@ export const tokens = {
       'dark-high-contrast': '1px',
     },
   },
+  /** The text of a control and of a field's value: the body size, and 1 rem under a coarse pointer, where smaller text makes touch browsers zoom into a focused field. */
   'control.font-size': {
     cssVariable: '--env-control-font-size',
     type: 'dimension',
@@ -1870,18 +1969,7 @@ export const tokens = {
       'dark-high-contrast': '1.5rem',
     },
   },
-  /** The height, and the least width, of a counter badge and a diff stat. */
-  'counter-badge.height': {
-    cssVariable: '--env-counter-badge-height',
-    type: 'dimension',
-    values: {
-      light: '1.25rem',
-      dark: '1.25rem',
-      'light-high-contrast': '1.25rem',
-      'dark-high-contrast': '1.25rem',
-    },
-    scales: { compact: '1rem' },
-  },
+  /** The edge of a level-0 layer, which lies in the page: none. */
   'elevation.0.border': {
     cssVariable: '--env-elevation-0-border',
     type: 'color',
@@ -1892,7 +1980,7 @@ export const tokens = {
       'dark-high-contrast': 'transparent',
     },
   },
-  /** The edge of a level-1 layer, the same as every level's: envUI draws no shadows, so the edge and the fill set a floating layer apart. */
+  /** The edge of a level-1 layer, the same as every level's: where a floating layer is solid, the edge and its fill set it apart. */
   'elevation.1.border': {
     cssVariable: '--env-elevation-1-border',
     type: 'color',
@@ -1914,7 +2002,7 @@ export const tokens = {
       'dark-high-contrast': '#a1a4a9',
     },
   },
-  /** The edge of dialogs, sheets and the command palette where they are solid, the same as level 2's; a modal's scrim sets it apart as well. A dialog and the palette otherwise part by their fill and the popups' soft shadow, a sheet by its fill. */
+  /** The edge of dialogs, sheets and the command palette where they are solid, the same as level 2's; a modal's backdrop sets it apart as well. A dialog and the palette otherwise part by their fill and the popups' soft shadow, a sheet by its fill. */
   'elevation.3.border': {
     cssVariable: '--env-elevation-3-border',
     type: 'color',
@@ -1937,6 +2025,7 @@ export const tokens = {
     },
     scales: { compact: '2.75rem' },
   },
+  /** envUI's typeface, Geist, which the package ships, falling back to the system's sans-serif. */
   'font.family': {
     cssVariable: '--env-font-family',
     type: 'fontFamily',
@@ -1947,6 +2036,7 @@ export const tokens = {
       'dark-high-contrast': "'envUI Geist', sans-serif",
     },
   },
+  /** Running text: Text's body variant and a type role's default, 15 px in the comfortable scale. */
   'font.size.body': {
     cssVariable: '--env-font-size-body',
     type: 'dimension',
@@ -1958,8 +2048,9 @@ export const tokens = {
     },
     scales: { compact: '0.8125rem' },
   },
-  'font.size.body-small': {
-    cssVariable: '--env-font-size-body-small',
+  /** Supporting text: Text's body-sm and caption variants, 14 px in the comfortable scale. */
+  'font.size.body-sm': {
+    cssVariable: '--env-font-size-body-sm',
     type: 'dimension',
     values: {
       light: '0.875rem',
@@ -1981,8 +2072,9 @@ export const tokens = {
     },
     scales: { compact: '0.6875rem' },
   },
-  'font.size.heading': {
-    cssVariable: '--env-font-size-heading',
+  /** A page's heading: Text's headline variant, 18 px in the comfortable scale. */
+  'font.size.headline': {
+    cssVariable: '--env-font-size-headline',
     type: 'dimension',
     values: {
       light: '1.125rem',
@@ -1991,17 +2083,6 @@ export const tokens = {
       'dark-high-contrast': '1.125rem',
     },
     scales: { compact: '1rem' },
-  },
-  'font.size.heading-small': {
-    cssVariable: '--env-font-size-heading-small',
-    type: 'dimension',
-    values: {
-      light: '1rem',
-      dark: '1rem',
-      'light-high-contrast': '1rem',
-      'dark-high-contrast': '1rem',
-    },
-    scales: { compact: '0.875rem' },
   },
   /** The label of a control, and the text of menu, tree and option rows. */
   'font.size.label': {
@@ -2016,8 +2097,8 @@ export const tokens = {
     scales: { compact: '0.8125rem' },
   },
   /** A label inside a field at the control height, such as a combobox chip's. */
-  'font.size.label-small': {
-    cssVariable: '--env-font-size-label-small',
+  'font.size.label-sm': {
+    cssVariable: '--env-font-size-label-sm',
     type: 'dimension',
     values: {
       light: '0.8125rem',
@@ -2027,6 +2108,30 @@ export const tokens = {
     },
     scales: { compact: '0.75rem' },
   },
+  /** A section's heading: Text's title variant, 16 px in the comfortable scale. */
+  'font.size.title': {
+    cssVariable: '--env-font-size-title',
+    type: 'dimension',
+    values: {
+      light: '1rem',
+      dark: '1rem',
+      'light-high-contrast': '1rem',
+      'dark-high-contrast': '1rem',
+    },
+    scales: { compact: '0.875rem' },
+  },
+  /** The weight of running text, which the body type roles take: regular. */
+  'font.weight.body': {
+    cssVariable: '--env-font-weight-body',
+    type: 'fontWeight',
+    values: {
+      light: '400',
+      dark: '400',
+      'light-high-contrast': '400',
+      'dark-high-contrast': '400',
+    },
+  },
+  /** Medium, 500: headings, labels that lead and emphasis in a row. */
   'font.weight.medium': {
     cssVariable: '--env-font-weight-medium',
     type: 'fontWeight',
@@ -2037,6 +2142,7 @@ export const tokens = {
       'dark-high-contrast': '500',
     },
   },
+  /** Regular, 400: running text and most labels. */
   'font.weight.regular': {
     cssVariable: '--env-font-weight-regular',
     type: 'fontWeight',
@@ -2047,6 +2153,7 @@ export const tokens = {
       'dark-high-contrast': '400',
     },
   },
+  /** Semibold, 600: the strongest emphasis in a small space, such as today in a calendar. */
   'font.weight.semibold': {
     cssVariable: '--env-font-weight-semibold',
     type: 'fontWeight',
@@ -2081,6 +2188,7 @@ export const tokens = {
     },
     scales: { compact: '1rem' },
   },
+  /** A small icon, such as inside a control: the control's icon size, 1 rem. */
   'icon.size-sm': {
     cssVariable: '--env-icon-size-sm',
     type: 'dimension',
@@ -2091,6 +2199,18 @@ export const tokens = {
       'dark-high-contrast': '1rem',
     },
   },
+  /** The line height of a theme boundary's text, which an application may set: 1.4 times the font size. */
+  'line-height.body': {
+    cssVariable: '--env-line-height-body',
+    type: 'number',
+    values: {
+      light: '1.4',
+      dark: '1.4',
+      'light-high-contrast': '1.4',
+      'dark-high-contrast': '1.4',
+    },
+  },
+  /** A small change, such as a state layer or a color under the pointer: 120 ms. */
   'motion.duration.fast': {
     cssVariable: '--env-motion-duration-fast',
     type: 'duration',
@@ -2101,6 +2221,7 @@ export const tokens = {
       'dark-high-contrast': '0.12s',
     },
   },
+  /** A part that opens, moves or fades in, such as a popup or a field's floating label: 160 ms. */
   'motion.duration.medium': {
     cssVariable: '--env-motion-duration-medium',
     type: 'duration',
@@ -2111,6 +2232,7 @@ export const tokens = {
       'dark-high-contrast': '0.16s',
     },
   },
+  /** A larger movement, such as a sheet sliding in or a dialog's backdrop: 240 ms. */
   'motion.duration.slow': {
     cssVariable: '--env-motion-duration-slow',
     type: 'duration',
@@ -2121,6 +2243,7 @@ export const tokens = {
       'dark-high-contrast': '0.24s',
     },
   },
+  /** The standard easing of a change on screen, which speeds up and then settles. */
   'motion.ease': {
     cssVariable: '--env-motion-ease',
     type: 'cubicBezier',
@@ -2153,14 +2276,15 @@ export const tokens = {
       'dark-high-contrast': 'cubic-bezier(0.3, 0, 0.8, 0.15)',
     },
   },
-  'motion.ease-standard': {
-    cssVariable: '--env-motion-ease-standard',
-    type: 'cubicBezier',
+  /** The full corner of a pill, such as a button, a field, a badge or a navigation item: half the tallest single-line control, the large control height or the touch height, whichever is more, so anything taller keeps the same corners and becomes a rounded rectangle. */
+  'radius.full': {
+    cssVariable: '--env-radius-full',
+    type: 'dimension',
     values: {
-      light: 'cubic-bezier(0.45, 0, 0.2, 1)',
-      dark: 'cubic-bezier(0.45, 0, 0.2, 1)',
-      'light-high-contrast': 'cubic-bezier(0.45, 0, 0.2, 1)',
-      'dark-high-contrast': 'cubic-bezier(0.45, 0, 0.2, 1)',
+      light: 'calc(max(3rem, 2.75rem) / 2)',
+      dark: 'calc(max(3rem, 2.75rem) / 2)',
+      'light-high-contrast': 'calc(max(3rem, 2.75rem) / 2)',
+      'dark-high-contrast': 'calc(max(3rem, 2.75rem) / 2)',
     },
   },
   /** Medium corners: fields, tables, alerts and other blocks. */
@@ -2175,6 +2299,7 @@ export const tokens = {
     },
     scales: { compact: '0.75rem' },
   },
+  /** Corners between sm and lg, such as a navigation item's indicator. */
   'radius.md': {
     cssVariable: '--env-radius-md',
     type: 'dimension',
@@ -2186,11 +2311,13 @@ export const tokens = {
     },
     scales: { compact: '0.625rem' },
   },
+  /** Square corners. */
   'radius.none': {
     cssVariable: '--env-radius-none',
     type: 'dimension',
     values: { light: '0', dark: '0', 'light-high-contrast': '0', 'dark-high-contrast': '0' },
   },
+  /** The corners where connected rows meet: small, so the rows read as one block. */
   'radius.row-inner': {
     cssVariable: '--env-radius-row-inner',
     type: 'dimension',
@@ -2201,6 +2328,7 @@ export const tokens = {
       'dark-high-contrast': '0.5rem',
     },
   },
+  /** The outer corners of connected rows, the first row's top and the last row's bottom: a surface's. */
   'radius.row-outer': {
     cssVariable: '--env-radius-row-outer',
     type: 'dimension',
@@ -2211,6 +2339,7 @@ export const tokens = {
       'dark-high-contrast': '1.75rem',
     },
   },
+  /** A row that stands alone, with the outer corners on every side. */
   'radius.row-single': {
     cssVariable: '--env-radius-row-single',
     type: 'dimension',
@@ -2244,6 +2373,7 @@ export const tokens = {
       'dark-high-contrast': '1.75rem',
     },
   },
+  /** The largest corners of the scale. */
   'radius.xl': {
     cssVariable: '--env-radius-xl',
     type: 'dimension',
@@ -2255,6 +2385,7 @@ export const tokens = {
     },
     scales: { compact: '1.375rem' },
   },
+  /** The smallest corners, such as a checkbox's box and a color swatch. */
   'radius.xs': {
     cssVariable: '--env-radius-xs',
     type: 'dimension',
@@ -2349,6 +2480,7 @@ export const tokens = {
     },
     scales: { compact: '1.25rem' },
   },
+  /** Spacing step 1: 4 px, the same in both scales. */
   'space.1': {
     cssVariable: '--env-space-1',
     type: 'dimension',
@@ -2359,6 +2491,7 @@ export const tokens = {
       'dark-high-contrast': '0.25rem',
     },
   },
+  /** Spacing step 2: 8 px in the comfortable scale, 6 px in compact. */
   'space.2': {
     cssVariable: '--env-space-2',
     type: 'dimension',
@@ -2370,6 +2503,7 @@ export const tokens = {
     },
     scales: { compact: '0.375rem' },
   },
+  /** Spacing step 3: 12 px in the comfortable scale, 10 px in compact. */
   'space.3': {
     cssVariable: '--env-space-3',
     type: 'dimension',
@@ -2381,6 +2515,7 @@ export const tokens = {
     },
     scales: { compact: '0.625rem' },
   },
+  /** Spacing step 4: 16 px in the comfortable scale, 12 px in compact. */
   'space.4': {
     cssVariable: '--env-space-4',
     type: 'dimension',
@@ -2392,6 +2527,7 @@ export const tokens = {
     },
     scales: { compact: '0.75rem' },
   },
+  /** Spacing step 5: 24 px in the comfortable scale, 20 px in compact. */
   'space.5': {
     cssVariable: '--env-space-5',
     type: 'dimension',
@@ -2403,6 +2539,7 @@ export const tokens = {
     },
     scales: { compact: '1.25rem' },
   },
+  /** Spacing step 6: 32 px in the comfortable scale, 26 px in compact. */
   'space.6': {
     cssVariable: '--env-space-6',
     type: 'dimension',
@@ -2414,6 +2551,7 @@ export const tokens = {
     },
     scales: { compact: '1.625rem' },
   },
+  /** Spacing step 7: 40 px in the comfortable scale, 32 px in compact. */
   'space.7': {
     cssVariable: '--env-space-7',
     type: 'dimension',
@@ -2425,6 +2563,7 @@ export const tokens = {
     },
     scales: { compact: '2rem' },
   },
+  /** Spacing step 8: 48 px in the comfortable scale, 38 px in compact. */
   'space.8': {
     cssVariable: '--env-space-8',
     type: 'dimension',
@@ -2436,6 +2575,7 @@ export const tokens = {
     },
     scales: { compact: '2.375rem' },
   },
+  /** Spacing step 9: 64 px in the comfortable scale, 52 px in compact. */
   'space.9': {
     cssVariable: '--env-space-9',
     type: 'dimension',
@@ -2447,6 +2587,7 @@ export const tokens = {
     },
     scales: { compact: '3.25rem' },
   },
+  /** The opacity of a disabled control, which keeps its colors: 48%. */
   'state.disabled-opacity': {
     cssVariable: '--env-state-disabled-opacity',
     type: 'number',
@@ -2550,6 +2691,7 @@ export const tokens = {
     },
     scales: { compact: '0.25rem' },
   },
+  /** Running text: Text's body variant, regular. */
   'type.body': {
     cssVariable: '--env-type-body',
     type: 'typography',
@@ -2584,8 +2726,9 @@ export const tokens = {
       },
     },
   },
-  'type.body-small': {
-    cssVariable: '--env-type-body-small',
+  /** Supporting text: Text's body-sm and caption variants, regular. */
+  'type.body-sm': {
+    cssVariable: '--env-type-body-sm',
     type: 'typography',
     values: {
       light: {
@@ -2618,8 +2761,22 @@ export const tokens = {
       },
     },
   },
-  'type.h1': {
-    cssVariable: '--env-type-h1',
+  /** Display text, Text's display variant: medium, 1.75 to 2.75 rem with the window, set tight. */
+  'type.display': {
+    cssVariable: '--env-type-display',
+    type: 'typography',
+    values: {
+      light: "500 clamp(1.75rem, 1.25rem + 2.5vw, 2.75rem) / 1.1 'envUI Geist', sans-serif",
+      dark: "500 clamp(1.75rem, 1.25rem + 2.5vw, 2.75rem) / 1.1 'envUI Geist', sans-serif",
+      'light-high-contrast':
+        "500 clamp(1.75rem, 1.25rem + 2.5vw, 2.75rem) / 1.1 'envUI Geist', sans-serif",
+      'dark-high-contrast':
+        "500 clamp(1.75rem, 1.25rem + 2.5vw, 2.75rem) / 1.1 'envUI Geist', sans-serif",
+    },
+  },
+  /** A page's heading: Text's headline variant, medium. */
+  'type.headline': {
+    cssVariable: '--env-type-headline',
     type: 'typography',
     values: {
       light: {
@@ -2652,8 +2809,9 @@ export const tokens = {
       },
     },
   },
-  'type.h2': {
-    cssVariable: '--env-type-h2',
+  /** A section's heading: Text's title variant, medium. */
+  'type.title': {
+    cssVariable: '--env-type-title',
     type: 'typography',
     values: {
       light: {
@@ -2684,6 +2842,17 @@ export const tokens = {
         'letter-spacing': '0rem',
         'line-height': '1.4em',
       },
+    },
+  },
+  /** The least space between the window's edge and a dialog, the command palette or rich text suggestions: 0.75 to 1 rem, with the window. */
+  'viewport-gutter': {
+    cssVariable: '--env-viewport-gutter',
+    type: 'dimension',
+    values: {
+      light: 'clamp(0.75rem, 2vw, 1rem)',
+      dark: 'clamp(0.75rem, 2vw, 1rem)',
+      'light-high-contrast': 'clamp(0.75rem, 2vw, 1rem)',
+      'dark-high-contrast': 'clamp(0.75rem, 2vw, 1rem)',
     },
   },
   /** 52.5 rem: where expanded starts, such as a tablet held sideways. */
@@ -2719,13 +2888,19 @@ export const tokens = {
       'dark-high-contrast': '37.5rem',
     },
   },
+  /** The backdrop behind a modal layer, which covers the page and the frame. */
+  'z.backdrop': {
+    cssVariable: '--env-z-backdrop',
+    type: 'number',
+    values: { light: '90', dark: '90', 'light-high-contrast': '90', 'dark-high-contrast': '90' },
+  },
   /** The flow of a page or a component; a part drawn behind its siblings takes calc(var(--env-z-base) - 1). */
   'z.base': {
     cssVariable: '--env-z-base',
     type: 'number',
     values: { light: '0', dark: '0', 'light-high-contrast': '0', 'dark-high-contrast': '0' },
   },
-  /** Modal layers over their scrim: dialogs, sheets and the command palette. */
+  /** Modal layers over their backdrop: dialogs, sheets and the command palette. */
   'z.modal': {
     cssVariable: '--env-z-modal',
     type: 'number',
@@ -2736,21 +2911,9 @@ export const tokens = {
       'dark-high-contrast': '100',
     },
   },
-  /** The scrim behind a modal layer, which covers the page and the frame. */
-  'z.overlay': {
-    cssVariable: '--env-z-overlay',
-    type: 'number',
-    values: { light: '90', dark: '90', 'light-high-contrast': '90', 'dark-high-contrast': '90' },
-  },
-  /** A supporting pane that opens over its main pane as a sheet, and the scrim behind it, above the sticky parts. */
-  'z.peek': {
-    cssVariable: '--env-z-peek',
-    type: 'number',
-    values: { light: '30', dark: '30', 'light-high-contrast': '30', 'dark-high-contrast': '30' },
-  },
   /** Popups anchored to a control, also inside a modal layer: menus, popovers, hover cards, the lists of Select and Combobox, and suggestions. */
-  'z.popover': {
-    cssVariable: '--env-z-popover',
+  'z.popup': {
+    cssVariable: '--env-z-popup',
     type: 'number',
     values: {
       light: '110',
@@ -2770,6 +2933,12 @@ export const tokens = {
     cssVariable: '--env-z-sticky',
     type: 'number',
     values: { light: '20', dark: '20', 'light-high-contrast': '20', 'dark-high-contrast': '20' },
+  },
+  /** A supporting pane that opens over its main pane as a sheet, and the backdrop behind it, above the sticky parts. */
+  'z.supporting-pane': {
+    cssVariable: '--env-z-supporting-pane',
+    type: 'number',
+    values: { light: '30', dark: '30', 'light-high-contrast': '30', 'dark-high-contrast': '30' },
   },
   /** Notifications, above the popups and modal layers they report on. */
   'z.toast': {

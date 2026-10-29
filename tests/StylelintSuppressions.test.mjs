@@ -107,7 +107,7 @@ test('no style sheet sets a literal z-index', async () => {
   assert.deepEqual(
     literal,
     [],
-    ['Take z-index from a stacking token, such as var(--env-z-popover):', ...literal].join('\n'),
+    ['Take z-index from a stacking token, such as var(--env-z-popup):', ...literal].join('\n'),
   );
 });
 
