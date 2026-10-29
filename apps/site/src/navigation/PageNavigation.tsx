@@ -12,22 +12,17 @@ export function PageNavigation({ page }: { page: RoutePage }) {
   const previous = pages[index - 1];
   const next = pages[index + 1];
   return (
-    <Pager.Root
-      className="site-page-navigation"
-      previous={
-        previous && {
-          href: routeHref(previous.path),
-          children: previous.title,
-          icon: <ArrowBack />,
-        }
-      }
-      next={
-        next && {
-          href: routeHref(next.path),
-          children: next.title,
-          icon: <ArrowForward />,
-        }
-      }
-    />
+    <Pager.Root className="site-page-navigation">
+      {previous && (
+        <Pager.Previous href={routeHref(previous.path)} icon={<ArrowBack />}>
+          {previous.title}
+        </Pager.Previous>
+      )}
+      {next && (
+        <Pager.Next href={routeHref(next.path)} icon={<ArrowForward />}>
+          {next.title}
+        </Pager.Next>
+      )}
+    </Pager.Root>
   );
 }

@@ -40,11 +40,9 @@ export default function PagerTile() {
     },
   });
   return (
-    <Pager.Root
-      aria-label="Guide pages"
-      style={{ inlineSize: '11rem' }}
-      previous={link(page - 1, <ArrowBack />)}
-      next={link(page + 1, <ArrowForward />)}
-    />
+    <Pager.Root aria-label="Guide pages" style={{ inlineSize: '11rem' }}>
+      <Pager.Previous {...link(page - 1, <ArrowBack />)} />
+      <Pager.Next {...link(page + 1, <ArrowForward />)} />
+    </Pager.Root>
   );
 }

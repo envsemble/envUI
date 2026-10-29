@@ -7,17 +7,15 @@ import { EnvUIProvider, Pager } from '@envsemble/envui';
 export function PagersFixture() {
   return (
     <div data-testid="pagers">
-      <Pager.Root
-        aria-label="Mixed pager"
-        previous={{ href: '#introduction', children: 'Introduction' }}
-      >
+      <Pager.Root aria-label="Mixed pager">
+        <Pager.Previous href="#introduction">Introduction</Pager.Previous>
         <Pager.Next href="#setup">Setup</Pager.Next>
       </Pager.Root>
       <EnvUIProvider messages={{ pager: { label: 'Seiten', previous: 'Zurück', next: 'Weiter' } }}>
-        <Pager.Root
-          previous={{ href: '#introduction', children: 'Einführung' }}
-          next={{ href: '#setup', children: 'Einrichtung' }}
-        />
+        <Pager.Root>
+          <Pager.Previous href="#introduction">Einführung</Pager.Previous>
+          <Pager.Next href="#setup">Einrichtung</Pager.Next>
+        </Pager.Root>
       </EnvUIProvider>
     </div>
   );

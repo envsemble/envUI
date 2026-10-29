@@ -5321,25 +5321,13 @@
     "Pager.Root": {
       "kind": "component",
       "source": "packages/ui/src/navigation/Pager.tsx",
-      "description": "A centered pair of previous and next destinations in a navigation landmark, from the previous and next props or from Pager.Previous and Pager.Next children; either one can be left out, and without any it renders nothing.",
+      "description": "A centered pair of previous and next destinations in a navigation landmark, its Pager.Previous and Pager.Next children; either one can be left out, and without any it renders nothing.",
       "props": [
-        {
-          "name": "previous",
-          "type": "PreviousProps | null",
-          "required": false,
-          "description": "The destination before this page, as the props of Pager.Previous; leave it out, or pass null, on the first page of a sequence."
-        },
-        {
-          "name": "next",
-          "type": "NextProps | null",
-          "required": false,
-          "description": "The destination after this page, as the props of Pager.Next; leave it out, or pass null, on the last page of a sequence."
-        },
         {
           "name": "children",
           "type": "ReactNode",
           "required": false,
-          "description": "Pager.Previous and Pager.Next, instead of the previous and next props or beside one of them: they render between the previous prop's link and the next prop's, so the links keep their order."
+          "description": "Pager.Previous and Pager.Next, in that order; leave one out on the first or the last page of a sequence."
         },
         {
           "name": "aria-label",

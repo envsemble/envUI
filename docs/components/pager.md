@@ -114,24 +114,25 @@ Use the title as the page's heading reads it. Leave Next or Back out of it: the 
 ### Usage
 
 ```tsx
-<Pager.Root
-  previous={{ href: '/guide/projects', children: 'Create a project', icon: <ArrowBack /> }}
-  next={{ href: '/guide/team', children: 'Invite your team', icon: <ArrowForward /> }}
-/>
+<Pager.Root>
+  <Pager.Previous href="/guide/projects" icon={<ArrowBack />}>
+    Create a project
+  </Pager.Previous>
+  <Pager.Next href="/guide/team" icon={<ArrowForward />}>
+    Invite your team
+  </Pager.Next>
+</Pager.Root>
 ```
 
-`previous` and `next` each take the props of their link: an `href`, which renders through the router link from `LinkProvider`, the destination's title as `children`, and an optional decorative `icon`, such as ArrowBack before the previous title and ArrowForward after the next. On the first or last page, leave one out or pass `null`. `aria-label` names the landmark where a page has several.
+Pager.Previous and Pager.Next each take an `href`, which renders through the router link from `LinkProvider`, the destination's title as `children`, and an optional decorative `icon`, such as ArrowBack before the previous title and ArrowForward after the next. On the first or last page, leave one out. `aria-label` names the landmark where a page has several.
 
 #### The links alone
 
 ```tsx
-<Pager.Root>
-  <Pager.Previous href="/guide/projects">Create a project</Pager.Previous>
-  <Pager.Next href="/guide/team">Invite your team</Pager.Next>
-</Pager.Root>
+<Pager.Next href="/guide/team">Invite your team</Pager.Next>
 ```
 
-Pager.Previous and Pager.Next, as children of Pager.Root, make the same pair, and also stand alone. They render between the `previous` prop's link and the `next` prop's, but don't mix the props and the parts in one pager. Each link's `rel` is `prev` or `next` by default.
+Pager.Previous and Pager.Next also stand alone, outside Pager.Root, such as one link at the end of an article. Each link's `rel` is `prev` or `next` by default.
 
 ### Composition
 
@@ -139,6 +140,7 @@ The pager is the `nav` landmark `env-pager`; each link is `env-pager-link-previo
 
 ## Changelog
 
+- **1.0.0-prerelease.5**: Pager.Root takes its links as Pager.Previous and Pager.Next children alone: the `previous` and `next` props are gone.
 - **1.0.0**: `DirectionLinks` is `Pager.Root`, and `DirectionLink` is `Pager.Previous` or `Pager.Next`, which no longer take `direction`. Pager.Root also accepts the two parts as children. `DirectionLinkProps` and `DirectionLinksDestination` are `Pager.LinkProps`, the classes are `env-pager` and `env-pager-link-*`, and the page is `pager`. The direction labels and the landmark's name come from `messages.pager`, and children render between the `previous` and `next` props' links instead of after both.
 - **0.4.0**: Links settle slightly while pressed.
 - **0.2.0**: Destinations render through the `LinkProvider`'s link component.
