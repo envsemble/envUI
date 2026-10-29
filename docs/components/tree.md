@@ -181,6 +181,7 @@ Keep buttons, links and fields out of rows: their actions go in the context menu
   <Tree
     aria-label="Build logs"
     items={rows}
+    onAction={(row) => setSelected(row.value)}
     onExpandedChange={(row, open) => toggle(row.value, open)}
   />
 </div>

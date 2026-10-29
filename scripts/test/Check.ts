@@ -191,6 +191,7 @@ if (scope.generated.has('docs'))
       ),
     ),
     task('docs:check pages', node('scripts/docs/GenerateDocumentation.ts', '--check')),
+    task('docs:check snippets', node('scripts/docs/CheckSnippets.ts')),
   );
 if (scope.generated.has('icons'))
   staticTasks.push(task('icons:check', node('scripts/build/GenerateIcons.ts', '--check')));

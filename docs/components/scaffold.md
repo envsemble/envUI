@@ -201,7 +201,11 @@ A button that narrows the navigation sets `navigationForms={{ expanded: 'rail', 
       title="Northwind"
     />
   }
-  navigation={{ bar: <NavigationBar … />, rail: <NavigationRail … />, drawer: <NavigationDrawer … /> }}
+  navigation={{
+    bar: <NavigationBar aria-label="Sections" destinations={destinations} />,
+    rail: <NavigationRail aria-label="Sections" destinations={destinations} />,
+    drawer: <NavigationDrawer aria-label="Sections" destinations={destinations} />,
+  }}
 >
   …
 </Scaffold>

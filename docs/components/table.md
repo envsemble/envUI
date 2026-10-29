@@ -239,6 +239,8 @@ The application sorts the rows. `onSortChange` on a header cell makes it a sort 
 
 ```tsx
 <Table.Root aria-label="Files" resizableColumns defaultColumnWidths={[40, 25, 20, 15]}>
+  …
+</Table.Root>
 ```
 
 #### Sticky header and loading
@@ -251,8 +253,13 @@ The application sorts the rows. `onSortChange` on a header cell makes it a sort 
 
 ```tsx
 <Table.Root aria-label="Invoices" narrowLayout="stack" onStackedChange={setStacked}>
-  …
-  <Table.Cell label="Due">{due}</Table.Cell>
+  <Table.Body>
+    <Table.Row>
+      <Table.Cell>{invoice.number}</Table.Cell>
+      <Table.Cell label="Due">{invoice.due}</Table.Cell>
+    </Table.Row>
+  </Table.Body>
+</Table.Root>
 ```
 
 ### Composition

@@ -168,8 +168,8 @@ A MessageList holds the conversation, oldest first, and each Message in it takes
     )
   }
 >
-  {'Northwind Hall
-12 Harbour Street'}
+  {`Northwind Hall
+12 Harbour Street`}
 </Message>
 ```
 
