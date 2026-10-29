@@ -206,7 +206,7 @@ if (import.meta.env.DEV) {
 | Option     | Default | What it does                                                                       |
 | ---------- | ------- | ---------------------------------------------------------------------------------- |
 | `root`     | found   | The element the 3D view and the inspector show, or a selector; the readout's root. |
-| `parts`    | fetched | The parts' descriptions, `docs/generated/parts.json`'s content or a URL to it.     |
+| `parts`    | fetched | The parts' descriptions, `@envsemble/envui/parts.json`'s content or a URL to it.   |
 | `button`   | `true`  | Show the Dev mode button in the corner, which opens dev mode in a new tab.         |
 | `shortcut` | `true`  | Open dev mode in a new tab with <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>D</kbd>.      |
 | `open`     | `false` | Open the 3D view and the inspector over this page at once, as `open()` does.       |
@@ -228,7 +228,7 @@ In dev mode's own tab, the one with `envui-dev` in its address, dev mode is open
 Dev mode fetches `parts.json` from beside its own module. Where the bundler moves the package's files, as Vite's dependency optimizer does, hand the data in yourself, or the inspector shows no descriptions:
 
 ```ts
-import parts from './parts.json'; // a copy of docs/generated/parts.json
+import parts from '@envsemble/envui/parts.json';
 
 installDevMode({ parts });
 ```

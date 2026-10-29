@@ -86,6 +86,12 @@
       "envui-source": "./src/styles/index.css",
       "default": "./dist/styles.css"
     },
+    "./parts.json": "./docs/generated/parts.json",
+    "./props.json": "./docs/generated/props.json",
+    "./tokens.json": {
+      "envui-source": "./src/generated/tokens.json",
+      "default": "./dist/tokens.json"
+    },
     "./icons": {
       "envui-source": "./src/icons/index.ts",
       "types": "./dist/icons/index.d.ts",

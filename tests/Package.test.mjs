@@ -810,6 +810,15 @@ test('the package includes scoped CSS, local fonts, branding and license notices
       `Missing packaged guidance: ${filename}`,
     );
   }
+  // The contract data resolves by name, so an application never keeps a copy of it.
+  const parts = JSON.parse(await readFile(consumerRequire.resolve('@envsemble/envui/parts.json')));
+  assert.ok(parts.components.Button, 'parts.json lists the components');
+  const props = JSON.parse(await readFile(consumerRequire.resolve('@envsemble/envui/props.json')));
+  assert.ok(props.exports.Button, 'props.json lists the exports');
+  const tokens = JSON.parse(
+    await readFile(consumerRequire.resolve('@envsemble/envui/tokens.json')),
+  );
+  assert.ok(tokens.tokens.length > 100, 'tokens.json lists the tokens');
   // The agent tooling of the prereleases is gone: agents read docs/, and the site serves the setup
   // skill and llms.txt.
   for (const removed of ['bin', 'skills', 'manifest.json', 'llms.txt', 'llms-full.txt'])
