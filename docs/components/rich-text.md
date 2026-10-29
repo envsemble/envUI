@@ -224,7 +224,7 @@ Each source has its `trigger`, a `label` and a `search` lookup, which receives t
 
 #### Attachments and links
 
-`onUpload` adds Attach files to the toolbar and uploads each chosen file, returning where it lives, `null` to skip it, or a promise of either; `accept` and `multiple` set what it offers. `onRequestLink` replaces the link dialog with the application's picker, returning the link or `null`.
+`onUpload` adds Attach files to the toolbar and uploads each chosen file, returning where it lives, `null` to skip it, or a promise of either; `accept` and `multiple` set what it offers. `pickLink` replaces the link dialog with the application's picker, returning the link or `null`.
 
 #### Commands from outside
 
@@ -264,6 +264,7 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 
 ## Changelog
 
+- **1.0.0-prerelease.5**: `onRequestLink` is `pickLink`: it supplies the link rather than reporting an event.
 - **1.0.0-prerelease.5**: `ref` reaches the root element, and `editorRef` gives the Tiptap editor.
 - **1.0.0-prerelease.5**: Suggestions are frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge, and is solid with its edge at high contrast and with reduced transparency, with the rows of Select's list.
 - **1.0.0-prerelease.3**: A task's row in RichText is as tall as in the editor. The suggestions keep the active option in view as the arrow keys move past the list's edge, and close as focus leaves the editor rather than on any press on the page.

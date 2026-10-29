@@ -177,9 +177,7 @@ export interface RichTextEditorProps
    * the built-in dialog. Return the link, null to cancel, or a promise of either. A selection
    * becomes a link to its href; at the caret, the label is inserted as the link's text.
    */
-  onRequestLink?: (
-    request: MarkdownLinkRequest,
-  ) => MarkdownLink | null | Promise<MarkdownLink | null>;
+  pickLink?: (request: MarkdownLinkRequest) => MarkdownLink | null | Promise<MarkdownLink | null>;
   /**
    * Uploads a file people chose with Attach files, which shows in the toolbar only with this.
    * Return where it lives as an attachment, null to skip it, or a promise of either; the signal

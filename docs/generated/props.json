@@ -4072,7 +4072,7 @@
           "description": "Options of the Markdown that renders the preview: headingOffset, renderLink and codeCopyable."
         },
         {
-          "name": "onRequestLink",
+          "name": "pickLink",
           "type": "(request: MarkdownLinkRequest) => MarkdownLink | null | Promise<MarkdownLink | null>",
           "required": false,
           "description": "Optional application picker. Return null to cancel; otherwise return an ordinary link."
@@ -6487,7 +6487,7 @@
           "description": "Typing / opens a menu of block commands: true offers heading, the lists, quote, code block and table; an array adds the application's commands after them. A / reference source can't be used beside it."
         },
         {
-          "name": "onRequestLink",
+          "name": "pickLink",
           "type": "(request: MarkdownLinkRequest) => MarkdownLink | null | Promise<MarkdownLink | null>",
           "required": false,
           "description": "Opens the application's own link picker for Insert link, with the selected text, instead of the built-in dialog. Return the link, null to cancel, or a promise of either. A selection becomes a link to its href; at the caret, the label is inserted as the link's text."

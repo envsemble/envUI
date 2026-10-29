@@ -62,7 +62,7 @@ export function RichTextEditor({
   renderReference,
   onReferenceClick,
   onLinkClick,
-  onRequestLink,
+  pickLink,
   onUpload,
   accept,
   multiple = true,
@@ -358,7 +358,7 @@ export function RichTextEditor({
       }
     };
     setStatus('');
-    if (!onRequestLink) {
+    if (!pickLink) {
       setLinkRequest({ selectedText, insert });
       return;
     }
@@ -367,7 +367,7 @@ export function RichTextEditor({
     pending.current = controller;
     setBusy(true);
     void Promise.resolve()
-      .then(() => onRequestLink({ selectedText }))
+      .then(() => pickLink({ selectedText }))
       .then((link) => {
         if (!controller.signal.aborted && link) insert(link);
       })
