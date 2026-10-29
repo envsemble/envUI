@@ -10,7 +10,7 @@ import { Renew } from '../../motion/Renew';
  */
 const track = '[data-resize-track]';
 const at = (width: number) => (width - 0.375) / 18;
-const install = '.env-drawer-item[href="/guide/install"]';
+const install = '.env-navigation-drawer-item[href="/guide/install"]';
 
 /*
  * The pointer drags the drawer's end edge from 17.5 rem to its narrowest, 15 rem: labels that no

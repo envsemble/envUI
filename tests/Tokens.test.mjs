@@ -652,7 +652,7 @@ test("a property another component's style sheet declares is defined only for it
   // The same element, an ancestor the selector names, or a class the element always carries.
   for (const css of [
     '.env-other.env-foo:hover { margin: var(--other); }',
-    '.env-other > .env-bar .env-foo { margin: var(--other); }',
+    '.env-other > .env-navigation-bar .env-foo { margin: var(--other); }',
   ])
     assert.deepEqual(undefinedReadsOf(css, { styleSheets }), [], css);
   assert.deepEqual(
@@ -664,9 +664,12 @@ test("a property another component's style sheet declares is defined only for it
   );
   // A sibling is no ancestor, and each selector of a list must see it.
   assert.deepEqual(
-    undefinedReadsOf('.env-other + .env-foo, .env-other .env-bar { margin: var(--other); }', {
-      styleSheets,
-    }),
+    undefinedReadsOf(
+      '.env-other + .env-foo, .env-other .env-navigation-bar { margin: var(--other); }',
+      {
+        styleSheets,
+      },
+    ),
     ['--other in Foo.css: .env-other + .env-foo'],
   );
 });

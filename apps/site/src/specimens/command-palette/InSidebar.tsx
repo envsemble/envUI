@@ -15,7 +15,7 @@ const modifier = applePlatform ? 'Meta' : 'Control';
  */
 const script: PointerStep[] = [
   { wait: 500 },
-  { to: '.env-drawer-header .env-button', x: 0.4, y: 0.6 },
+  { to: '.env-navigation-drawer-header .env-button', x: 0.4, y: 0.6 },
   { wait: 400 },
   { click: true },
   // Off the palette, which opens over the sidebar, so no option shows the pointer's hover.
@@ -25,9 +25,9 @@ const script: PointerStep[] = [
   { key: 'Escape', on: input },
   { wait: 1300 },
   { cue: 'shortcut' },
-  { keyDown: modifier, on: '.env-drawer' },
-  { key: 'k', on: '.env-drawer' },
-  { keyUp: modifier, on: '.env-drawer' },
+  { keyDown: modifier, on: '.env-navigation-drawer' },
+  { key: 'k', on: '.env-navigation-drawer' },
+  { keyUp: modifier, on: '.env-navigation-drawer' },
   { wait: 1600 },
   { cue: 'escape' },
   { key: 'Escape', on: input },
@@ -58,7 +58,9 @@ function Opening() {
     if (!held || event.key.toLowerCase() !== 'k') return;
     event.preventDefault();
     event.stopPropagation();
-    root.current?.querySelector<HTMLButtonElement>('.env-drawer-header .env-button')?.click();
+    root.current
+      ?.querySelector<HTMLButtonElement>('.env-navigation-drawer-header .env-button')
+      ?.click();
   };
   return (
     <div ref={root} onKeyDown={onKeyDown}>

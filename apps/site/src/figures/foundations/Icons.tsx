@@ -73,7 +73,8 @@ function FollowTextFigure() {
 }
 
 /** A destination of the bar, by its place from 1. */
-const destination = (index: number) => `.env-bar-list > li:nth-child(${index}) > .env-bar-item`;
+const destination = (index: number) =>
+  `.env-navigation-bar-list > li:nth-child(${index}) > .env-navigation-bar-item`;
 
 /**
  * The pointer taps across the destinations and back to the first: each one it selects fills its

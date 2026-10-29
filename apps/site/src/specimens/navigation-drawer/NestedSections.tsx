@@ -4,7 +4,8 @@ import { usePointer, type PointerStep } from '../../motion/Motion';
 import { MotionStage } from '../../motion/MotionStage';
 import { Renew } from '../../motion/Renew';
 
-const toggle = (section: string) => `.env-drawer-toggle[aria-label="${section} contents"]`;
+const toggle = (section: string) =>
+  `.env-navigation-drawer-toggle[aria-label="${section} contents"]`;
 
 /*
  * Projects is open, as it holds the current page. The pointer opens Reports by its chevron, and

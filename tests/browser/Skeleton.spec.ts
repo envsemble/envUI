@@ -357,9 +357,9 @@ test('navigation as a skeleton: icons are shapes, labels bars, no current fill',
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await open(page);
   for (const [id, label] of [
-    ['drawer', 'env-drawer-label'],
-    ['rail', 'env-rail-label'],
-    ['bar', 'env-bar-label'],
+    ['drawer', 'env-navigation-drawer-label'],
+    ['rail', 'env-navigation-rail-label'],
+    ['bar', 'env-navigation-bar-label'],
   ]) {
     const nav = page.getByTestId(id);
     await expect(nav).toHaveAttribute('aria-busy', 'true');

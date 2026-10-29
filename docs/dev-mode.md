@@ -70,12 +70,12 @@ root div · 40×30rem · medium · window 89.19×50.56rem · 1rem = 16px
 scaffold "env-scaffold" · 40×30rem · medium · container env-scaffold (queried at 37.5, 52.5, 75rem) · grid · columns 2 = 5 | 35rem · rows 3 = 3.25 | 26.75 | 0rem · holds div.env-scaffold-rail: scrolls (everything fits) · holds div.env-scaffold-body: scrolls (content 35×34.81rem, at 0,0rem)
   row "env-top-bar" · 35×3.25rem · compact · flex row · align center · gap 0.75rem · padding 0 1rem
     row "env-top-bar-actions" · 2.5×2.5rem · compact · flex row · align center · gap 0.5rem
-  column "env-drawer" · hidden: inside div.env-scaffold-drawer, which is display: none (5 nodes inside)
-  column "env-rail" · 5×30rem · compact · flex column · align center · gap 1rem · padding 0.75 0rem
-    column "env-rail-list" · 5×16.63rem · compact · flex column · gap 0.25rem · scrolls (everything fits)
-      column "env-rail-item" · 5×4rem · compact · flex column · align center · gap 0.25rem · padding 0.25 0.25 0.5 0.25rem
-      … and 3 more like "env-rail-item" ("env-rail-item", "env-rail-item", "env-rail-item")
-  row "env-bar-list" · hidden: inside div.env-scaffold-bar, which is display: none (4 nodes inside)
+  column "env-navigation-drawer" · hidden: inside div.env-scaffold-drawer, which is display: none (5 nodes inside)
+  column "env-navigation-rail" · 5×30rem · compact · flex column · align center · gap 1rem · padding 0.75 0rem
+    column "env-navigation-rail-list" · 5×16.63rem · compact · flex column · gap 0.25rem · scrolls (everything fits)
+      column "env-navigation-rail-item" · 5×4rem · compact · flex column · align center · gap 0.25rem · padding 0.25 0.25 0.5 0.25rem
+      … and 3 more like "env-navigation-rail-item" ("env-navigation-rail-item", "env-navigation-rail-item", "env-navigation-rail-item")
+  row "env-navigation-bar-list" · hidden: inside div.env-scaffold-bar, which is display: none (4 nodes inside)
   page "env-page" · 35×34.81rem · compact · container env-page (queried at 37.5rem) · block · padding 2 1.5 3 1.5rem
     column "env-page-header" · 32×5.06rem · compact · container env-page-header (queried at 37.5rem) · flex column · gap 0.75rem
       row "env-page-header-row" · 32×5.06rem · compact · flex row wrap · align start · gap 1rem

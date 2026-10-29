@@ -5,7 +5,8 @@ import { Send } from '@envsemble/envui/icons/Send';
 import { Star } from '@envsemble/envui/icons/Star';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
-const item = (index: number) => `.env-drawer-list > li:nth-child(${index}) > .env-drawer-item`;
+const item = (index: number) =>
+  `.env-navigation-drawer-list > li:nth-child(${index}) > .env-navigation-drawer-item`;
 
 /** Starred chosen, then Sent, the current destination moving with each, and Inbox again. */
 const script: PointerStep[] = [

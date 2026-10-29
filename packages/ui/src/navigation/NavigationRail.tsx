@@ -18,10 +18,10 @@ import '../styles/NavigationRail.css';
 
 /** The part classes of the rail's destinations. */
 const railClasses: DestinationClasses = {
-  item: 'env-rail-item',
-  indicator: 'env-rail-indicator',
-  label: 'env-rail-label',
-  count: 'env-rail-count',
+  item: 'env-navigation-rail-item',
+  indicator: 'env-navigation-rail-indicator',
+  label: 'env-navigation-rail-label',
+  count: 'env-navigation-rail-count',
 };
 
 export interface NavigationRailProps
@@ -81,7 +81,7 @@ export function NavigationRail({
       aria-label={label ?? (labelledBy === undefined ? messages.label : undefined)}
       aria-labelledby={labelledBy}
       {...skeletonAttributes(skeleton)}
-      className={classNames('env-rail', className)}
+      className={classNames('env-navigation-rail', className)}
       data-background={backgroundAttribute(background)}
       align="center"
       gap={4}
@@ -90,11 +90,11 @@ export function NavigationRail({
         skeleton,
         <>
           {header != null && (
-            <Column className="env-rail-header" align="center" gap={2}>
+            <Column className="env-navigation-rail-header" align="center" gap={2}>
               {header}
             </Column>
           )}
-          <Column render={<ul />} className="env-rail-list" align="stretch" gap={1}>
+          <Column render={<ul />} className="env-navigation-rail-list" align="stretch" gap={1}>
             {destinations.map((destination) => (
               <li key={destinationKey(destination)}>
                 <DestinationItem classes={railClasses} destination={destination} topLevel />
@@ -102,7 +102,7 @@ export function NavigationRail({
             ))}
           </Column>
           {footer != null && (
-            <Column className="env-rail-footer" align="center" gap={2}>
+            <Column className="env-navigation-rail-footer" align="center" gap={2}>
               {footer}
             </Column>
           )}

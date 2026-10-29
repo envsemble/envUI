@@ -66,9 +66,13 @@ const sources: Record<string, readonly [rest: string, hover: string, pressed: st
 /** A control of the color fixture by its name: the drawer's items by whether they are current. */
 function colorControl(page: import('@playwright/test').Page, theme: string, name: string) {
   if (name === 'navigation')
-    return page.getByTestId(`${theme}-navigation`).locator('.env-drawer-item:not([data-current])');
+    return page
+      .getByTestId(`${theme}-navigation`)
+      .locator('.env-navigation-drawer-item:not([data-current])');
   if (name === 'navigation-selected')
-    return page.getByTestId(`${theme}-navigation`).locator('.env-drawer-item[data-current]');
+    return page
+      .getByTestId(`${theme}-navigation`)
+      .locator('.env-navigation-drawer-item[data-current]');
   return page.getByTestId(`${theme}-${name}`);
 }
 
@@ -194,8 +198,8 @@ test('compositions reuse primitive colors while unrelated roles stay independent
       tab: `[data-testid="${theme}-color-tabs"] [role="tab"][aria-selected="true"]`,
       link: `[data-testid="${theme}-color-link"]`,
       textButton: `[data-testid="${theme}-color-text-button"]`,
-      navigation: `[data-testid="${theme}-navigation"] .env-drawer-item[data-current]`,
-      navigationIcon: `[data-testid="${theme}-navigation"] .env-drawer-item:not([data-current]) .env-icon`,
+      navigation: `[data-testid="${theme}-navigation"] .env-navigation-drawer-item[data-current]`,
+      navigationIcon: `[data-testid="${theme}-navigation"] .env-navigation-drawer-item:not([data-current]) .env-icon`,
       direction: `[data-testid="${theme}-color-direction"]`,
       field: `[data-testid="${theme}-color-field"]`,
       // A field has no fill of its own; its border is the fieldset over its edge.

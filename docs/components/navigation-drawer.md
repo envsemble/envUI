@@ -113,46 +113,46 @@ A drawer's destinations can go without icons, such as the sections of a guide; t
 
 ```
 
-1. **NavigationDrawer** (`env-drawer`)
-2. **Header** (`env-drawer-header`, `header`)
-3. **Item** (`env-drawer-item`)
-4. **Label** (`env-drawer-label`)
-5. **Count** (`env-drawer-count`, `count`)
-6. **Group** (`env-drawer-section`, `group`)
-7. **Heading** (`env-drawer-group-label`)
-8. **Footer** (`env-drawer-footer`, `footer`)
+1. **NavigationDrawer** (`env-navigation-drawer`)
+2. **Header** (`env-navigation-drawer-header`, `header`)
+3. **Item** (`env-navigation-drawer-item`)
+4. **Label** (`env-navigation-drawer-label`)
+5. **Count** (`env-navigation-drawer-count`, `count`)
+6. **Group** (`env-navigation-drawer-section`, `group`)
+7. **Heading** (`env-navigation-drawer-group-label`)
+8. **Footer** (`env-navigation-drawer-footer`, `footer`)
 
 ```tsx figure=RailAnatomy stage=shaded
 
 ```
 
-1. **NavigationRail** (`env-rail`)
-2. **Header** (`env-rail-header`, `header`)
-3. **Item** (`env-rail-item`)
-4. **Indicator** (`env-rail-indicator`)
-5. **Count** (`env-rail-count`, `count`)
-6. **Label** (`env-rail-label`)
-7. **Footer** (`env-rail-footer`, `footer`)
+1. **NavigationRail** (`env-navigation-rail`)
+2. **Header** (`env-navigation-rail-header`, `header`)
+3. **Item** (`env-navigation-rail-item`)
+4. **Indicator** (`env-navigation-rail-indicator`)
+5. **Count** (`env-navigation-rail-count`, `count`)
+6. **Label** (`env-navigation-rail-label`)
+7. **Footer** (`env-navigation-rail-footer`, `footer`)
 
 ```tsx figure=BarAnatomy stage=shaded enlarge
 
 ```
 
-1. **NavigationBar** (`env-bar`)
-2. **Item** (`env-bar li:nth-child(2) > env-bar-item`)
-3. **Indicator** (`env-bar-indicator`)
-4. **Count** (`env-bar-count`, `count`)
-5. **Label** (`env-bar-label`)
+1. **NavigationBar** (`env-navigation-bar`)
+2. **Item** (`env-navigation-bar li:nth-child(2) > env-navigation-bar-item`)
+3. **Indicator** (`env-navigation-bar-indicator`)
+4. **Count** (`env-navigation-bar-count`, `count`)
+5. **Label** (`env-navigation-bar-label`)
 
 ```tsx figure=SectionAnatomy stage=shaded
 
 ```
 
-1. **Section** (`env-drawer-branch`)
-2. **Item** (`env-drawer-branch-row > env-drawer-item`)
-3. **Section button** (`env-drawer-toggle`)
-4. **Chevron** (`env-drawer-toggle > env-drawer-chevron`)
-5. **Nested destinations** (`env-drawer-children`)
+1. **Section** (`env-navigation-drawer-branch`)
+2. **Item** (`env-navigation-drawer-branch-row > env-navigation-drawer-item`)
+3. **Section button** (`env-navigation-drawer-toggle`)
+4. **Chevron** (`env-navigation-drawer-toggle > env-navigation-drawer-chevron`)
+5. **Nested destinations** (`env-navigation-drawer-children`)
 
 ## Behaviour
 
@@ -340,15 +340,15 @@ A heading cut short takes no focus, so it gives its full text as its `title`. Ke
 
 ### Composition
 
-The parts the anatomy doesn't show: a section's row, `env-drawer-branch-row`, and the handle on a resizable drawer's end edge, `env-drawer-resize-handle`, the same grip as Panes.Divider's; the rail's list of destinations, `env-rail-list`, which scrolls where the rail is shorter; the bar's row of destinations, `env-bar-list`, and More, `env-bar-more`. The current item of each has `data-current`, a section's button `aria-expanded`, and a form on the page's background `data-background="page"`.
+The parts the anatomy doesn't show: a section's row, `env-navigation-drawer-branch-row`, and the handle on a resizable drawer's end edge, `env-navigation-drawer-resize-handle`, the same grip as Panes.Divider's; the rail's list of destinations, `env-navigation-rail-list`, which scrolls where the rail is shorter; the bar's row of destinations, `env-navigation-bar-list`, and More, `env-navigation-bar-more`. The current item of each has `data-current`, a section's button `aria-expanded`, and a form on the page's background `data-background="page"`.
 
 ### Customize
 
-`--env-drawer-item-container`, `--env-drawer-item-content`, `--env-drawer-item-icon`, `--env-drawer-item-selected` and `--env-drawer-item-selected-content` color one NavigationDrawer's items, through `style` or CSS: their fill, their label, their icon, and the current item's fill and its label and icon. NavigationRail takes `--env-rail-item-container`, `--env-rail-item-content`, `--env-rail-item-icon`, `--env-rail-item-selected` and `--env-rail-item-selected-content`, and NavigationBar `--env-bar-item-container`, `--env-bar-item-content`, `--env-bar-item-icon`, `--env-bar-item-selected` and `--env-bar-item-selected-content`. Hover, focus and press follow them; with none set, each keeps its own colors.
+`--env-navigation-drawer-item-container`, `--env-navigation-drawer-item-content`, `--env-navigation-drawer-item-icon`, `--env-navigation-drawer-item-selected` and `--env-navigation-drawer-item-selected-content` color one NavigationDrawer's items, through `style` or CSS: their fill, their label, their icon, and the current item's fill and its label and icon. NavigationRail takes `--env-navigation-rail-item-container`, `--env-navigation-rail-item-content`, `--env-navigation-rail-item-icon`, `--env-navigation-rail-item-selected` and `--env-navigation-rail-item-selected-content`, and NavigationBar `--env-navigation-bar-item-container`, `--env-navigation-bar-item-content`, `--env-navigation-bar-item-icon`, `--env-navigation-bar-item-selected` and `--env-navigation-bar-item-selected-content`. Hover, focus and press follow them; with none set, each keeps its own colors.
 
 ## Changelog
 
-- **1.0.0-prerelease.5**: Bar, Rail and Drawer are NavigationBar, NavigationRail and NavigationDrawer, with their props types and `NavigationDrawerDestination`, after Material's names, so they don't read as an overlay drawer or any bar; the page is `navigation-drawer`. Their part classes are unchanged.
+- **1.0.0-prerelease.5**: Bar, Rail and Drawer are NavigationBar, NavigationRail and NavigationDrawer, with their props types and `NavigationDrawerDestination`, after Material's names, so they don't read as an overlay drawer or any bar; the page is `navigation-drawer`. Their part classes and color properties take the same names: `env-bar-*`, `env-rail-*` and `env-drawer-*` are `env-navigation-bar-*`, `env-navigation-rail-*` and `env-navigation-drawer-*`. NavigationBar names its parts as NavigationRail does, `-indicator` and `-label` where they were `-icon` and `-text`, and a group's label is `env-navigation-drawer-group-label`, as in Menu, where it was `env-drawer-heading`.
 - **1.0.0-prerelease.5**: A destination runs `onClick(event)`, as a link or a button does, where it ran `onSelect()`, and takes an optional `id`, which names its section in `expanded` in every language.
 - **1.0.0-prerelease.5**: A Sheet is on the navigation's background, `--env-color-bg-default`, so a NavigationDrawer or a NavigationRail in the sheet of a narrow window keeps its color. A destination's `badge` shows a short word at the end of its NavigationDrawer item, such as New.
 - **1.0.0-prerelease.4**: A destination's `children` nest under it: Drawer shows them indented, in a section that opens and closes with a chevron, open while it holds the current destination, whose links stay in the page, hidden until found. A section without `href` or `onSelect` is only its heading. `expanded`, `defaultExpanded` and `onExpandedChange` keep the open sections. Rail and Bar show the top level, and mark a destination whose section holds the current one.

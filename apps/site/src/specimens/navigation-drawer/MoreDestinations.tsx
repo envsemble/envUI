@@ -2,7 +2,7 @@ import MoreDestinations from '../../examples/navigation-drawer/MoreDestinations'
 import { usePointer, type PointerStep } from '../../motion/Motion';
 import { MotionStage } from '../../motion/MotionStage';
 
-const place = (index: number) => `.env-bar-list > li:nth-child(${index}) > *`;
+const place = (index: number) => `.env-navigation-bar-list > li:nth-child(${index}) > *`;
 
 /*
  * Inbox is current. The pointer presses More: its menu opens with the other three destinations,

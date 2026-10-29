@@ -56,7 +56,7 @@ body {
 }
 .catalogue-rail {
   /* Wide enough for its longest label, Components, on one line. */
-  --env-rail-width: 6rem;
+  --env-navigation-rail-width: 6rem;
   flex: none;
   padding-block: var(--env-space-4);
   overflow-y: auto;
@@ -90,10 +90,10 @@ body {
    top of the drawer, as wide as its content and centred in the drawer. Their first items start
    level too: the rail's list is its gap (space 4) and the header's space 2 below the header, so
    the drawer's, whose gap is space 3, takes the difference below its header. */
-.catalogue-rail .env-rail-header {
+.catalogue-rail .env-navigation-rail-header {
   margin-block-end: var(--env-space-2);
 }
-.site-sidebar > .env-drawer-header {
+.site-sidebar > .env-navigation-drawer-header {
   align-items: center;
   margin-block-end: calc(var(--env-space-4) + var(--env-space-2) - var(--env-space-3));
 }

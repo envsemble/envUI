@@ -29,10 +29,10 @@ const barLimit = 5;
 
 /** The part classes of the bar's destinations. */
 const barClasses: DestinationClasses = {
-  item: 'env-bar-item',
-  indicator: 'env-bar-indicator',
-  label: 'env-bar-label',
-  count: 'env-bar-count',
+  item: 'env-navigation-bar-item',
+  indicator: 'env-navigation-bar-indicator',
+  label: 'env-navigation-bar-label',
+  count: 'env-navigation-bar-count',
 };
 
 export interface NavigationBarProps
@@ -100,12 +100,12 @@ export function NavigationBar({
       aria-label={label ?? (labelledBy === undefined ? messages.label : undefined)}
       aria-labelledby={labelledBy}
       {...skeletonAttributes(skeleton)}
-      className={classNames('env-bar', className)}
+      className={classNames('env-navigation-bar', className)}
       data-background={backgroundAttribute(background)}
     >
       {inSkeleton(
         skeleton,
-        <Row render={<ul />} className="env-bar-list">
+        <Row render={<ul />} className="env-navigation-bar-list">
           {shown.map((destination) => (
             <li key={destinationKey(destination)}>
               <DestinationItem classes={barClasses} destination={destination} topLevel />
@@ -119,20 +119,20 @@ export function NavigationBar({
                 trigger={
                   <Column
                     render={<ActionElement />}
-                    className="env-bar-item env-bar-more"
+                    className="env-navigation-bar-item env-navigation-bar-more"
                     {...moreState}
                     align="center"
                     gap={1}
                   >
                     {/* The label, then the count, as the name reads them. */}
-                    <span className="env-bar-label">{messages.more}</span>
+                    <span className="env-navigation-bar-label">{messages.more}</span>
                     {restShown !== undefined && ' '}
-                    <span className="env-bar-indicator">
+                    <span className="env-navigation-bar-indicator">
                       <DecorativeIcon>
                         <MoreHoriz />
                       </DecorativeIcon>
                       {restShown !== undefined && (
-                        <span className="env-bar-count" aria-hidden="true">
+                        <span className="env-navigation-bar-count" aria-hidden="true">
                           {restShown}
                         </span>
                       )}

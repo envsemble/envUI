@@ -77,7 +77,7 @@ function useCurrentInView() {
   const element = useRef<HTMLDivElement>(null);
   useEffect(() => {
     element.current
-      ?.querySelector('.env-drawer [aria-current="page"]')
+      ?.querySelector('.env-navigation-drawer [aria-current="page"]')
       ?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
   }, []);
   return element;

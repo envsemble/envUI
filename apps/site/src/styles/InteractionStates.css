@@ -84,11 +84,11 @@
 .catalogue-specimen-area .catalogue-force-pressed > .env-list-item[data-interactive] {
   --env-list-item-container: var(--env-color-bg-list-item-pressed);
 }
-.catalogue-specimen-area .catalogue-force-hover .env-drawer-item {
-  --env-drawer-item-container: var(--env-color-bg-navigation-hover);
+.catalogue-specimen-area .catalogue-force-hover .env-navigation-drawer-item {
+  --env-navigation-drawer-item-container: var(--env-color-bg-navigation-hover);
 }
-.catalogue-specimen-area .catalogue-force-pressed .env-drawer-item {
-  --env-drawer-item-container: var(--env-color-bg-navigation-pressed);
+.catalogue-specimen-area .catalogue-force-pressed .env-navigation-drawer-item {
+  --env-navigation-drawer-item-container: var(--env-color-bg-navigation-pressed);
 }
 .catalogue-specimen-area .catalogue-force-hover .env-text-field {
   --env-text-field-outline: var(--env-color-border-primary-emphasis-hover);

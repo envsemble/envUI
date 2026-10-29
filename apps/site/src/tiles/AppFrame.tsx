@@ -14,7 +14,8 @@ import { Group } from '@envsemble/envui/icons/Group';
 import { Home } from '@envsemble/envui/icons/Home';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
-const item = (index: number) => `.env-rail-list > li:nth-child(${index}) .env-rail-item`;
+const item = (index: number) =>
+  `.env-navigation-rail-list > li:nth-child(${index}) .env-navigation-rail-item`;
 
 /** Projects chosen, then Team, the page following each, and Home again: the frame stays. */
 const script: PointerStep[] = [

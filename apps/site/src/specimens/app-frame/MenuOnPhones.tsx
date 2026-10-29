@@ -7,7 +7,7 @@ import { keepLinksInPlace } from '../../figures/LiveExample';
 
 const menu = '[aria-label="Open the chapters"]';
 const chapter = (index: number, where: string) =>
-  `${where} .env-drawer-list > li:nth-child(${index}) > .env-drawer-item`;
+  `${where} .env-navigation-drawer-list > li:nth-child(${index}) > .env-navigation-drawer-item`;
 
 /*
  * At 22 rem the pointer taps the menu button: the sheet with the chapters slides in, it picks

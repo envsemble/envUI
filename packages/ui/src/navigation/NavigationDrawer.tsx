@@ -39,9 +39,9 @@ import '../styles/NavigationDrawer.css';
 
 /** The part classes of the drawer's destinations: a row of icon, label and count. */
 const drawerClasses: DestinationClasses = {
-  item: 'env-drawer-item',
-  label: 'env-drawer-label',
-  count: 'env-drawer-count',
+  item: 'env-navigation-drawer-item',
+  label: 'env-navigation-drawer-label',
+  count: 'env-navigation-drawer-count',
 };
 
 export interface NavigationDrawerProps
@@ -205,7 +205,7 @@ function DrawerControl({
 
 /** A section's chevron, which points down, and up while the section is open. */
 const chevron = (
-  <span className="env-icon env-drawer-chevron" aria-hidden="true">
+  <span className="env-icon env-navigation-drawer-chevron" aria-hidden="true">
     <ChevronRight />
   </span>
 );
@@ -234,7 +234,7 @@ function DrawerBranch({
       open={state.expanded.has(key)}
       onOpenChange={(open) => state.setExpanded(key, open)}
       render={<li />}
-      className="env-drawer-branch"
+      className="env-navigation-drawer-branch"
     >
       {heading ? (
         <DrawerControl
@@ -244,17 +244,21 @@ function DrawerBranch({
           as={(item) => <Collapsible.Trigger render={item} />}
         />
       ) : (
-        <div className="env-drawer-branch-row">
+        <div className="env-navigation-drawer-branch-row">
           <DrawerControl destination={destination} oneLine={state.oneLine} />
           <Collapsible.Trigger
-            className="env-drawer-toggle"
+            className="env-navigation-drawer-toggle"
             aria-label={messages.contents({ label: destination.label })}
           >
             {chevron}
           </Collapsible.Trigger>
         </div>
       )}
-      <Collapsible.Panel hiddenUntilFound render={<ul />} className="env-drawer-children">
+      <Collapsible.Panel
+        hiddenUntilFound
+        render={<ul />}
+        className="env-navigation-drawer-children"
+      >
         {nested.map((child) => (
           <DrawerItem key={destinationKey(child)} destination={child} state={state} />
         ))}
@@ -302,10 +306,10 @@ function Section({
   const cut = useCut(heading, state.oneLine);
   const Heading = `h${level}` as const;
   return (
-    <Column render={<li />} className="env-drawer-section" align="stretch" gap={1}>
+    <Column render={<li />} className="env-navigation-drawer-section" align="stretch" gap={1}>
       <Heading
         ref={heading}
-        className="env-drawer-group-label"
+        className="env-navigation-drawer-group-label"
         id={headingId}
         title={cut ? group : undefined}
       >
@@ -437,13 +441,13 @@ export function NavigationDrawer({
       aria-label={label ?? (labelledBy === undefined ? messages.label : undefined)}
       aria-labelledby={labelledBy}
       {...skeletonAttributes(skeleton)}
-      className={classNames('env-drawer', className)}
+      className={classNames('env-navigation-drawer', className)}
       style={
         resizable
           ? ({
-              '--env-drawer-width': `${resize.width}rem`,
-              '--env-drawer-min-width': `${resize.handleProps.min}rem`,
-              '--env-drawer-max-width': `${resize.handleProps.max}rem`,
+              '--env-navigation-drawer-width': `${resize.width}rem`,
+              '--env-navigation-drawer-min-width': `${resize.handleProps.min}rem`,
+              '--env-navigation-drawer-max-width': `${resize.handleProps.max}rem`,
               ...style,
             } as CSSProperties)
           : style
@@ -457,11 +461,11 @@ export function NavigationDrawer({
         skeleton,
         <>
           {header != null && (
-            <Column className="env-drawer-header" gap={2}>
+            <Column className="env-navigation-drawer-header" gap={2}>
               {header}
             </Column>
           )}
-          <Column render={<ul />} className="env-drawer-list" align="stretch" gap={1}>
+          <Column render={<ul />} className="env-navigation-drawer-list" align="stretch" gap={1}>
             {destinationSections(destinations).map((section, index) =>
               section.group === undefined ? (
                 section.items.map((destination) => (
@@ -483,7 +487,7 @@ export function NavigationDrawer({
             )}
           </Column>
           {footer != null && (
-            <Column className="env-drawer-footer" gap={2}>
+            <Column className="env-navigation-drawer-footer" gap={2}>
               {footer}
             </Column>
           )}
@@ -494,7 +498,7 @@ export function NavigationDrawer({
           {...resize.handleProps}
           label={resizeLabel ?? messages.resize}
           grip
-          className="env-drawer-resize-handle"
+          className="env-navigation-drawer-resize-handle"
         />
       )}
     </Column>

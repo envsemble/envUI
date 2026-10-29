@@ -101,7 +101,7 @@ An installed app that draws its own title bar runs it across the whole window, a
 1. **Top bar** (`env-top-bar`)
 2. **Search** (`env-top-bar-actions > env-icon-button`)
 3. **Account menu** (`env-avatar-button`)
-4. **Navigation** (`env-rail`)
+4. **Navigation** (`env-navigation-rail`)
 5. **Page header** (`env-page-header`)
 6. **Page** (`env-page`)
 
@@ -241,7 +241,7 @@ Give the Scaffold `topBarSpan="full"`, so its `topBar` runs across the whole win
 
 ### Composition
 
-The parts are the top bar, `env-top-bar`, the search button, `env-top-bar-actions > env-icon-button`, the account menu's `env-avatar-button`, the rail, `env-rail`, and the page, `env-page`, with its `env-page-header`. Search opens a [CommandPalette](../components/command-palette.md#opening-it-the-button-and-the-shortcut), and the account menu is the [account and organizations](account-and-organizations.md) pattern. In an installed app's window, the title bar is the Scaffold's `env-top-bar`, its menubar `env-menubar` and its title `env-top-bar-title`, above the body, `env-scaffold-body`.
+The parts are the top bar, `env-top-bar`, the search button, `env-top-bar-actions > env-icon-button`, the account menu's `env-avatar-button`, the rail, `env-navigation-rail`, and the page, `env-page`, with its `env-page-header`. Search opens a [CommandPalette](../components/command-palette.md#opening-it-the-button-and-the-shortcut), and the account menu is the [account and organizations](account-and-organizations.md) pattern. In an installed app's window, the title bar is the Scaffold's `env-top-bar`, its menubar `env-menubar` and its title `env-top-bar-title`, above the body, `env-scaffold-body`.
 
 ## Changelog
 

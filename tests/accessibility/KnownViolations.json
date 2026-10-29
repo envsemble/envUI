@@ -10,7 +10,7 @@
   "components/drawer": {
     "light": {
       "landmark-unique": {
-        "article :: nav.env-drawer": 1
+        "article :: nav.env-navigation-drawer": 1
       }
     }
   },
@@ -31,7 +31,7 @@
   "patterns/app-frame": {
     "light": {
       "landmark-unique": {
-        "article :: nav.env-bar": 1
+        "article :: nav.env-navigation-bar": 1
       }
     }
   },

@@ -363,9 +363,9 @@
       },
       "Breadcrumbs": {},
       "DocumentTabs": {},
-      "NavigationBar": { "classes": ["env-bar"] },
-      "NavigationDrawer": { "classes": ["env-drawer"] },
-      "NavigationRail": { "classes": ["env-rail"] },
+      "NavigationBar": { "classes": ["env-navigation-bar"] },
+      "NavigationDrawer": { "classes": ["env-navigation-drawer"] },
+      "NavigationRail": { "classes": ["env-navigation-rail"] },
       "Menu": {
         "modules": ["navigation/ContextMenu.tsx", "navigation/internal/MenuPopup.tsx"]
       },

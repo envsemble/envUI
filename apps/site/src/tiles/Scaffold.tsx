@@ -14,7 +14,8 @@ import { Inbox } from '@envsemble/envui/icons/Inbox';
 import { Search } from '@envsemble/envui/icons/Search';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
-const item = (index: number) => `.env-rail-list > li:nth-child(${index}) .env-rail-item`;
+const item = (index: number) =>
+  `.env-navigation-rail-list > li:nth-child(${index}) .env-navigation-rail-item`;
 
 /** Inbox chosen in the rail, and Home again: the body follows, and the frame stays. */
 const script: PointerStep[] = [
