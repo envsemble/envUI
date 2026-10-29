@@ -132,6 +132,11 @@ export function ExampleSource({ page, name }: { page: string; name: string }) {
 export function ExampleCode({ page, name }: { page: string; name: string }) {
   const slot = useContext(CodeSlot);
   const [open, setOpen] = useState(false);
+  // The code renders once its disclosure first opens, not with the page: a page has many figures,
+  // and each one's file and highlighting would load with it. A pointer over the summary starts
+  // loading the file.
+  const [opened, setOpened] = useState(false);
+  const preload = () => void sourceOf(examplePath(page, name)).catch(() => {});
   const code = <ExampleSource page={page} name={name} />;
   const title = (
     <>
@@ -140,8 +145,15 @@ export function ExampleCode({ page, name }: { page: string; name: string }) {
   );
   if (!slot)
     return (
-      <Disclosure title={title} className="site-live-example-code">
-        {code}
+      <Disclosure
+        title={title}
+        className="site-live-example-code"
+        onPointerEnter={preload}
+        onToggle={(event) => {
+          if (event.currentTarget.open) setOpened(true);
+        }}
+      >
+        {opened && code}
       </Disclosure>
     );
   return (
@@ -150,6 +162,7 @@ export function ExampleCode({ page, name }: { page: string; name: string }) {
         title={title}
         open={open}
         onOpenChange={setOpen}
+        onPointerEnter={preload}
         className="site-live-example-code"
         data-slotted=""
       />
