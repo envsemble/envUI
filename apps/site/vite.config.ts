@@ -111,6 +111,34 @@ export default defineConfig(() => {
         },
       },
       {
+        // The page's content (generated/pages/<id>.json, PageContent.ts) loads beside the site's
+        // script rather than once that has arrived and run: a script in index.html preloads the
+        // file of the page the address names by its last segment, such as button for
+        // /components/button and /docs/components/button. A segment that names no page, such as
+        // components, preloads nothing.
+        name: 'envui-content-preload',
+        apply: 'build',
+        transformIndexHtml: {
+          order: 'post',
+          handler: (_html, { bundle }) => {
+            const files: Record<string, string> = {};
+            for (const file of Object.values(bundle ?? {})) {
+              const page =
+                file.type === 'chunk' &&
+                /[\\/]generated[\\/]pages[\\/]([\w-]+)\.json$/.exec(file.facadeModuleId ?? '')?.[1];
+              if (page) files[page] = file.fileName;
+            }
+            return [
+              {
+                tag: 'script',
+                children: `(function(){var f=${JSON.stringify(files)}[location.pathname.split('/').filter(Boolean).pop()];if(f){var l=document.createElement('link');l.rel='modulepreload';l.href='/'+f;document.head.appendChild(l)}})();`,
+                injectTo: 'head' as const,
+              },
+            ];
+          },
+        },
+      },
+      {
         // The text's font loads with the page rather than once the style sheets that name it have
         // arrived, so the text shows in it from the first paint more often.
         name: 'envui-font-preload',
