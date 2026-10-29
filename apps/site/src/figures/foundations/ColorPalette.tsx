@@ -131,30 +131,36 @@ export function ColorPalette() {
       .createElement('canvas')
       .getContext('2d', { willReadFrequently: true })!;
     const measuredColors: Record<string, MeasuredColor> = {};
-    context.fillStyle = computedStyle.getPropertyValue('--env-color-bg-page');
+    const pageColor = computedStyle.getPropertyValue('--env-color-bg-page');
+    context.fillStyle = pageColor;
     context.fillRect(0, 0, 1, 1);
     const page = [...context.getImageData(0, 0, 1, 1).data].slice(0, 3);
-    colorGroups.forEach(([, tokens]) =>
-      tokens.forEach(([token]) => {
+    // Every token's probe goes in before any is read, so the page's styles are worked out once
+    // rather than once a token: each read after a change to the page restyles all of it.
+    const probes = colorGroups.flatMap(([, tokens]) =>
+      tokens.map(([token]) => {
         const probe = document.createElement('span');
         probe.style.color = `var(${colorVariable(token)})`;
         probe.hidden = true;
         paletteElement.current!.append(probe);
-        // Translucent colors, such as the neutral fill, are measured as painted on the page.
-        context.fillStyle = computedStyle.getPropertyValue('--env-color-bg-page');
-        context.fillRect(0, 0, 1, 1);
-        context.fillStyle = getComputedStyle(probe).color;
-        context.fillRect(0, 0, 1, 1);
-        const rgb = [...context.getImageData(0, 0, 1, 1).data].slice(0, 3);
-        probe.remove();
-        measuredColors[token] = {
-          css: computedStyle.getPropertyValue(colorVariable(token)).trim(),
-          hex: '#' + rgb.map((channel) => channel.toString(16).padStart(2, '0')).join(''),
-          ink: inkFor(rgb, target),
-          edge: contrast(rgb, page) < 1.02,
-        };
+        return { token, probe };
       }),
     );
+    for (const { token, probe } of probes) {
+      // Translucent colors, such as the neutral fill, are measured as painted on the page.
+      context.fillStyle = pageColor;
+      context.fillRect(0, 0, 1, 1);
+      context.fillStyle = getComputedStyle(probe).color;
+      context.fillRect(0, 0, 1, 1);
+      const rgb = [...context.getImageData(0, 0, 1, 1).data].slice(0, 3);
+      measuredColors[token] = {
+        css: computedStyle.getPropertyValue(colorVariable(token)).trim(),
+        hex: '#' + rgb.map((channel) => channel.toString(16).padStart(2, '0')).join(''),
+        ink: inkFor(rgb, target),
+        edge: contrast(rgb, page) < 1.02,
+      };
+    }
+    for (const { probe } of probes) probe.remove();
     setColorValues(measuredColors);
   }, [theme, themeContrast, systemContrast, palettes]);
   return (
