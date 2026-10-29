@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button, CommandPalette, type CommandPaletteItem } from '@envsemble/envui';
-import { Description } from '@envsemble/envui/icons/Description';
-import { Search } from '@envsemble/envui/icons/Search';
+import { IconDescription } from '@envsemble/envui/icons/Description';
+import { IconSearch } from '@envsemble/envui/icons/Search';
 
 const documents = ['Roadmap.md', 'Pricing research.md', 'Launch checklist.md', 'Budget.md'];
 
@@ -16,11 +16,11 @@ export default function EmptyUntilTyped() {
   const items: CommandPaletteItem[] = names.map((name) => ({
     id: name,
     label: name,
-    icon: <Description />,
+    icon: <IconDescription />,
   }));
   return (
     <>
-      <Button variant="secondary" startIcon={<Search />} onClick={() => setOpen(true)}>
+      <Button variant="secondary" startIcon={<IconSearch />} onClick={() => setOpen(true)}>
         Go to document
       </Button>
       <CommandPalette

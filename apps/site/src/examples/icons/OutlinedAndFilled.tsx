@@ -1,17 +1,17 @@
 import { useState } from 'react';
 import { NavigationBar, type Destination } from '@envsemble/envui';
-import { Home } from '@envsemble/envui/icons/Home';
-import { Inbox } from '@envsemble/envui/icons/Inbox';
-import { Person } from '@envsemble/envui/icons/Person';
-import { Settings } from '@envsemble/envui/icons/Settings';
-import { Star } from '@envsemble/envui/icons/Star';
+import { IconHome } from '@envsemble/envui/icons/Home';
+import { IconInbox } from '@envsemble/envui/icons/Inbox';
+import { IconPerson } from '@envsemble/envui/icons/Person';
+import { IconSettings } from '@envsemble/envui/icons/Settings';
+import { IconStar } from '@envsemble/envui/icons/Star';
 
 const places = [
-  { label: 'Home', icon: <Home /> },
-  { label: 'Inbox', icon: <Inbox /> },
-  { label: 'Saved', icon: <Star /> },
-  { label: 'Profile', icon: <Person /> },
-  { label: 'Settings', icon: <Settings /> },
+  { label: 'Home', icon: <IconHome /> },
+  { label: 'Inbox', icon: <IconInbox /> },
+  { label: 'Saved', icon: <IconStar /> },
+  { label: 'Profile', icon: <IconPerson /> },
+  { label: 'Settings', icon: <IconSettings /> },
 ];
 
 // Pass the outlined icons: the bar fills the icon of the place that is selected.

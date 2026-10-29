@@ -1,5 +1,5 @@
 import { Link, Text } from '@envsemble/envui';
-import { ArrowForward } from '@envsemble/envui/icons/ArrowForward';
+import { IconArrowForward } from '@envsemble/envui/icons/ArrowForward';
 import { routeHref } from '../navigation/Address';
 import { pagesOf } from '../navigation/SiteRoutes';
 import { glancePictures } from '../figures/foundations/Glance';
@@ -33,7 +33,7 @@ export function FoundationCatalogue() {
           >
             <Text render={<h2 />} variant="body-sm" className="catalogue-foundation-pane-name">
               {page.title}
-              <ArrowForward aria-hidden="true" className="catalogue-foundation-pane-arrow" />
+              <IconArrowForward aria-hidden="true" className="catalogue-foundation-pane-arrow" />
             </Text>
             <div className="catalogue-foundation-pane-picture">
               <Picture />

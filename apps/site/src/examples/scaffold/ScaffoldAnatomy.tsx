@@ -8,13 +8,13 @@ import {
   TopBar,
   type Destination,
 } from '@envsemble/envui';
-import { Home } from '@envsemble/envui/icons/Home';
-import { Inbox } from '@envsemble/envui/icons/Inbox';
-import { Search } from '@envsemble/envui/icons/Search';
+import { IconHome } from '@envsemble/envui/icons/Home';
+import { IconInbox } from '@envsemble/envui/icons/Inbox';
+import { IconSearch } from '@envsemble/envui/icons/Search';
 
 const destinations: Destination[] = [
-  { label: 'Home', icon: <Home />, href: '/home' },
-  { label: 'Inbox', icon: <Inbox />, href: '/inbox', current: true },
+  { label: 'Home', icon: <IconHome />, href: '/home' },
+  { label: 'Inbox', icon: <IconInbox />, href: '/inbox', current: true },
 ];
 
 export default function ScaffoldAnatomy() {
@@ -26,7 +26,10 @@ export default function ScaffoldAnatomy() {
       style={{ blockSize: '16rem' }}
       navigationForms={{ compact: 'rail', medium: 'rail', expanded: 'rail', large: 'rail' }}
       topBar={
-        <TopBar title="Northwind" actions={<IconButton icon={<Search />} aria-label="Search" />} />
+        <TopBar
+          title="Northwind"
+          actions={<IconButton icon={<IconSearch />} aria-label="Search" />}
+        />
       }
       navigation={{ rail: <NavigationRail destinations={destinations} /> }}
     >

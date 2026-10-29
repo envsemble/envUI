@@ -1,8 +1,8 @@
 import { IconButton, Menu } from '@envsemble/envui';
-import { Download } from '@envsemble/envui/icons/Download';
-import { Edit } from '@envsemble/envui/icons/Edit';
-import { MoreVert } from '@envsemble/envui/icons/MoreVert';
-import { Share } from '@envsemble/envui/icons/Share';
+import { IconDownload } from '@envsemble/envui/icons/Download';
+import { IconEdit } from '@envsemble/envui/icons/Edit';
+import { IconMoreVert } from '@envsemble/envui/icons/MoreVert';
+import { IconShare } from '@envsemble/envui/icons/Share';
 
 export default function DisabledWithReason() {
   return (
@@ -10,11 +10,11 @@ export default function DisabledWithReason() {
       // Shown open in the docs; without defaultOpen, it opens from its trigger.
       defaultOpen
       aria-label="Report actions"
-      trigger={<IconButton icon={<MoreVert />} aria-label="More actions" />}
+      trigger={<IconButton icon={<IconMoreVert />} aria-label="More actions" />}
     >
-      <Menu.Item icon={<Edit />}>Rename</Menu.Item>
-      <Menu.Item icon={<Share />}>Share</Menu.Item>
-      <Menu.Item icon={<Download />} description="Available once the report is final" disabled>
+      <Menu.Item icon={<IconEdit />}>Rename</Menu.Item>
+      <Menu.Item icon={<IconShare />}>Share</Menu.Item>
+      <Menu.Item icon={<IconDownload />} description="Available once the report is final" disabled>
         Download PDF
       </Menu.Item>
     </Menu.Root>

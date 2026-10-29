@@ -11,10 +11,10 @@ import {
   TopBar,
   type Destination,
 } from '@envsemble/envui';
-import { Category } from '@envsemble/envui/icons/Category';
-import { Home } from '@envsemble/envui/icons/Home';
-import { Inbox } from '@envsemble/envui/icons/Inbox';
-import { Search } from '@envsemble/envui/icons/Search';
+import { IconCategory } from '@envsemble/envui/icons/Category';
+import { IconHome } from '@envsemble/envui/icons/Home';
+import { IconInbox } from '@envsemble/envui/icons/Inbox';
+import { IconSearch } from '@envsemble/envui/icons/Search';
 
 /** Stands in for the window: a Scaffold fills its container, the window's height by default. */
 const preview: CSSProperties = { blockSize: '22rem' };
@@ -48,9 +48,9 @@ export default function NavigationForms() {
   const [current, setCurrent] = useState('Home');
   // One array of destinations, which each navigation form takes.
   const destinations: Destination[] = [
-    { label: 'Home', icon: <Home /> },
-    { label: 'Inbox', icon: <Inbox />, count: 3 },
-    { label: 'Projects', icon: <Category /> },
+    { label: 'Home', icon: <IconHome /> },
+    { label: 'Inbox', icon: <IconInbox />, count: 3 },
+    { label: 'Projects', icon: <IconCategory /> },
   ].map((destination) => ({
     ...destination,
     current: destination.label === current,
@@ -64,7 +64,10 @@ export default function NavigationForms() {
       landmarks={false}
       style={preview}
       topBar={
-        <TopBar title="Northwind" actions={<IconButton icon={<Search />} aria-label="Search" />} />
+        <TopBar
+          title="Northwind"
+          actions={<IconButton icon={<IconSearch />} aria-label="Search" />}
+        />
       }
       navigation={{
         bar: <NavigationBar destinations={destinations} />,

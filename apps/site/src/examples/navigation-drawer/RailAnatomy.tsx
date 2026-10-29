@@ -1,11 +1,11 @@
 import { Avatar, IconButton, NavigationRail, type Destination } from '@envsemble/envui';
-import { Edit } from '@envsemble/envui/icons/Edit';
-import { Folder } from '@envsemble/envui/icons/Folder';
-import { Inbox } from '@envsemble/envui/icons/Inbox';
+import { IconEdit } from '@envsemble/envui/icons/Edit';
+import { IconFolder } from '@envsemble/envui/icons/Folder';
+import { IconInbox } from '@envsemble/envui/icons/Inbox';
 
 const destinations: Destination[] = [
-  { label: 'Inbox', icon: <Inbox />, href: '/inbox', count: 4, current: true },
-  { label: 'Projects', icon: <Folder />, href: '/projects' },
+  { label: 'Inbox', icon: <IconInbox />, href: '/inbox', count: 4, current: true },
+  { label: 'Projects', icon: <IconFolder />, href: '/projects' },
 ];
 
 export default function RailAnatomy() {
@@ -13,7 +13,7 @@ export default function RailAnatomy() {
     <div style={{ blockSize: '20rem' }}>
       <NavigationRail
         destinations={destinations}
-        header={<IconButton variant="primary" icon={<Edit />} aria-label="New message" />}
+        header={<IconButton variant="primary" icon={<IconEdit />} aria-label="New message" />}
         footer={<Avatar name="Alex Morgan" size="sm" />}
       />
     </div>

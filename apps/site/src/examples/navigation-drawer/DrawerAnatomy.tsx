@@ -1,12 +1,12 @@
 import { Avatar, NavigationDrawer, Row, Text, type Destination } from '@envsemble/envui';
-import { Inbox } from '@envsemble/envui/icons/Inbox';
-import { Label } from '@envsemble/envui/icons/Label';
-import { Star } from '@envsemble/envui/icons/Star';
+import { IconInbox } from '@envsemble/envui/icons/Inbox';
+import { IconLabel } from '@envsemble/envui/icons/Label';
+import { IconStar } from '@envsemble/envui/icons/Star';
 
 const destinations: Destination[] = [
-  { label: 'Inbox', icon: <Inbox />, href: '/inbox', count: 12, current: true },
-  { label: 'Starred', icon: <Star />, href: '/starred', group: 'Folders' },
-  { label: 'Labels', icon: <Label />, href: '/labels', group: 'Folders' },
+  { label: 'Inbox', icon: <IconInbox />, href: '/inbox', count: 12, current: true },
+  { label: 'Starred', icon: <IconStar />, href: '/starred', group: 'Folders' },
+  { label: 'Labels', icon: <IconLabel />, href: '/labels', group: 'Folders' },
 ];
 
 export default function DrawerAnatomy() {

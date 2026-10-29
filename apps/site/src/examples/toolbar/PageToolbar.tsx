@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button, PageHeader, SearchField, SegmentedControl, Row } from '@envsemble/envui';
-import { Add } from '@envsemble/envui/icons/Add';
+import { IconAdd } from '@envsemble/envui/icons/Add';
 
 export default function PageToolbar() {
   const [status, setStatus] = useState('open');
@@ -26,7 +26,7 @@ export default function PageToolbar() {
               ]}
             />
           </Row>
-          <Button startIcon={<Add />}>New task</Button>
+          <Button startIcon={<IconAdd />}>New task</Button>
         </Row>
       }
     />

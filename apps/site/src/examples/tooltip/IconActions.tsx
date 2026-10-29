@@ -1,12 +1,12 @@
 import { IconButton, Tooltip, Row } from '@envsemble/envui';
-import { Download } from '@envsemble/envui/icons/Download';
-import { Refresh } from '@envsemble/envui/icons/Refresh';
-import { Share } from '@envsemble/envui/icons/Share';
+import { IconDownload } from '@envsemble/envui/icons/Download';
+import { IconRefresh } from '@envsemble/envui/icons/Refresh';
+import { IconShare } from '@envsemble/envui/icons/Share';
 
 const actions = [
-  { label: 'Refresh members', icon: <Refresh /> },
-  { label: 'Download as CSV', icon: <Download /> },
-  { label: 'Share list', icon: <Share /> },
+  { label: 'Refresh members', icon: <IconRefresh /> },
+  { label: 'Download as CSV', icon: <IconDownload /> },
+  { label: 'Share list', icon: <IconShare /> },
 ];
 
 export default function IconActions() {

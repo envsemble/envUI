@@ -12,8 +12,8 @@ import {
   Toolbar,
   useToast,
 } from '@envsemble/envui';
-import { Archive } from '@envsemble/envui/icons/Archive';
-import { Delete } from '@envsemble/envui/icons/Delete';
+import { IconArchive } from '@envsemble/envui/icons/Archive';
+import { IconDelete } from '@envsemble/envui/icons/Delete';
 
 /** "1 project", "3 projects": the count belongs in every label of an action on the selection. */
 const projectCount = (count: number) => (count === 1 ? '1 project' : `${count} projects`);
@@ -86,12 +86,12 @@ function Projects() {
             {/* Only icon buttons, so one tab stop with the arrow keys between them. */}
             <Toolbar.Root aria-label="Selected projects">
               <Toolbar.Button
-                icon={<Archive />}
+                icon={<IconArchive />}
                 label={`Archive ${projectCount(selected.length)}`}
                 onClick={archive}
               />
               <Toolbar.Button
-                icon={<Delete />}
+                icon={<IconDelete />}
                 label={`Delete ${projectCount(selected.length)}…`}
                 onClick={(event) => {
                   returnFocus.current = event.currentTarget;

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Badge, Button, List, PageHeader, Column, Tabs, Text } from '@envsemble/envui';
-import { Settings } from '@envsemble/envui/icons/Settings';
+import { IconSettings } from '@envsemble/envui/icons/Settings';
 
 export default function ViewsOfOneThing() {
   const [view, setView] = useState<string | null>('overview');
@@ -14,7 +14,7 @@ export default function ViewsOfOneThing() {
           // Settings is another page, so it is a link, not a tab.
           <Button
             variant="secondary"
-            startIcon={<Settings />}
+            startIcon={<IconSettings />}
             href="/projects/website-refresh/settings"
           >
             Project settings

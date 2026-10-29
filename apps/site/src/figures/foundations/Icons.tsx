@@ -10,15 +10,15 @@ import {
   type ControlSize,
   type Destination,
 } from '@envsemble/envui';
-import { Add } from '@envsemble/envui/icons/Add';
-import { Delete } from '@envsemble/envui/icons/Delete';
-import { Edit } from '@envsemble/envui/icons/Edit';
-import { Home } from '@envsemble/envui/icons/Home';
-import { Inbox } from '@envsemble/envui/icons/Inbox';
-import { MoreVert } from '@envsemble/envui/icons/MoreVert';
-import { Person } from '@envsemble/envui/icons/Person';
-import { Settings } from '@envsemble/envui/icons/Settings';
-import { Star } from '@envsemble/envui/icons/Star';
+import { IconAdd } from '@envsemble/envui/icons/Add';
+import { IconDelete } from '@envsemble/envui/icons/Delete';
+import { IconEdit } from '@envsemble/envui/icons/Edit';
+import { IconHome } from '@envsemble/envui/icons/Home';
+import { IconInbox } from '@envsemble/envui/icons/Inbox';
+import { IconMoreVert } from '@envsemble/envui/icons/MoreVert';
+import { IconPerson } from '@envsemble/envui/icons/Person';
+import { IconSettings } from '@envsemble/envui/icons/Settings';
+import { IconStar } from '@envsemble/envui/icons/Star';
 import { usePointer, useTimeline, type PointerStep } from '../../motion/Motion';
 import { LoadBoundary, lazyPart } from '../../template/LoadBoundary';
 import { Loading } from '../../template/Loading';
@@ -48,16 +48,16 @@ function FollowTextSteps() {
   return (
     <Column gap={4} align="center" className="catalogue-icons-sample">
       <Row gap={2} wrap justify="center" align="center" className="catalogue-icons-buttons">
-        <Button size={size} startIcon={<Add />}>
+        <Button size={size} startIcon={<IconAdd />}>
           New report
         </Button>
-        <Button size={size} variant="secondary" startIcon={<Edit />}>
+        <Button size={size} variant="secondary" startIcon={<IconEdit />}>
           Rename
         </Button>
-        <Button size={size} variant="ghost" tone="danger" startIcon={<Delete />}>
+        <Button size={size} variant="ghost" tone="danger" startIcon={<IconDelete />}>
           Delete
         </Button>
-        <IconButton size={size} variant="ghost" icon={<MoreVert />} aria-label="More" />
+        <IconButton size={size} variant="ghost" icon={<IconMoreVert />} aria-label="More" />
       </Row>
       <Alert tone={tone} title={title} className="catalogue-icons-alert" />
     </Column>
@@ -98,11 +98,11 @@ const destinationsScript: PointerStep[] = [
 ];
 
 const places = [
-  { label: 'Home', icon: <Home /> },
-  { label: 'Inbox', icon: <Inbox /> },
-  { label: 'Saved', icon: <Star /> },
-  { label: 'Profile', icon: <Person /> },
-  { label: 'Settings', icon: <Settings /> },
+  { label: 'Home', icon: <IconHome /> },
+  { label: 'Inbox', icon: <IconInbox /> },
+  { label: 'Saved', icon: <IconStar /> },
+  { label: 'Profile', icon: <IconPerson /> },
+  { label: 'Settings', icon: <IconSettings /> },
 ] as const;
 
 /** A bar of five destinations, the selected one with its icon filled, used by the pointer. */

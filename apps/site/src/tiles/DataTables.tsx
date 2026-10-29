@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Checkbox, Column, Link, Row, Table, Text, Toolbar } from '@envsemble/envui';
-import { Archive } from '@envsemble/envui/icons/Archive';
-import { Delete } from '@envsemble/envui/icons/Delete';
+import { IconArchive } from '@envsemble/envui/icons/Archive';
+import { IconDelete } from '@envsemble/envui/icons/Delete';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
 const projects = [
@@ -53,8 +53,8 @@ export default function DataTablesTile() {
       <Row align="center" gap={3}>
         <Text>{selected.length} selected</Text>
         <Toolbar.Root aria-label="Selected projects">
-          <Toolbar.Button icon={<Archive />} label={`Archive ${count(selected.length)}`} />
-          <Toolbar.Button icon={<Delete />} label={`Delete ${count(selected.length)}…`} />
+          <Toolbar.Button icon={<IconArchive />} label={`Archive ${count(selected.length)}`} />
+          <Toolbar.Button icon={<IconDelete />} label={`Delete ${count(selected.length)}…`} />
         </Toolbar.Root>
       </Row>
       <Table.Root aria-label="Projects" defaultColumnWidths={[14, 60, 26]}>

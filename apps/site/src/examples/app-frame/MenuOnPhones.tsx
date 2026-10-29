@@ -12,7 +12,7 @@ import {
   windowClasses,
   type NavigationDrawerDestination,
 } from '@envsemble/envui';
-import { Menu } from '@envsemble/envui/icons/Menu';
+import { IconMenu } from '@envsemble/envui/icons/Menu';
 
 /** Stands in for the window: a Scaffold fills its container, the window's height by default. */
 const preview: CSSProperties = { blockSize: '20rem' };
@@ -61,7 +61,7 @@ export default function MenuOnPhones() {
           start={
             compact && (
               <IconButton
-                icon={<Menu />}
+                icon={<IconMenu />}
                 aria-label="Open the chapters"
                 variant="ghost"
                 onClick={() => setMenu(true)}

@@ -1,5 +1,5 @@
 import { Column, TextField } from '@envsemble/envui';
-import { Search } from '@envsemble/envui/icons/Search';
+import { IconSearch } from '@envsemble/envui/icons/Search';
 
 export default function Variants() {
   return (
@@ -12,7 +12,7 @@ export default function Variants() {
         showLabel={false}
         label="Find projects"
         placeholder="Find projects"
-        startIcon={<Search />}
+        startIcon={<IconSearch />}
       />
     </Column>
   );

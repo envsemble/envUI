@@ -1,17 +1,17 @@
 import type { ComponentType, CSSProperties } from 'react';
 import { Column, Kbd, Row, Text, type TextVariant } from '@envsemble/envui';
-import { CalendarMonth } from '@envsemble/envui/icons/CalendarMonth';
-import { Delete } from '@envsemble/envui/icons/Delete';
-import { Edit } from '@envsemble/envui/icons/Edit';
-import { Folder } from '@envsemble/envui/icons/Folder';
-import { Home } from '@envsemble/envui/icons/Home';
-import { Inbox } from '@envsemble/envui/icons/Inbox';
-import { Mail } from '@envsemble/envui/icons/Mail';
-import { Person } from '@envsemble/envui/icons/Person';
-import { Search } from '@envsemble/envui/icons/Search';
-import { Settings } from '@envsemble/envui/icons/Settings';
-import { Share } from '@envsemble/envui/icons/Share';
-import { Star } from '@envsemble/envui/icons/Star';
+import { IconCalendarMonth } from '@envsemble/envui/icons/CalendarMonth';
+import { IconDelete } from '@envsemble/envui/icons/Delete';
+import { IconEdit } from '@envsemble/envui/icons/Edit';
+import { IconFolder } from '@envsemble/envui/icons/Folder';
+import { IconHome } from '@envsemble/envui/icons/Home';
+import { IconInbox } from '@envsemble/envui/icons/Inbox';
+import { IconMail } from '@envsemble/envui/icons/Mail';
+import { IconPerson } from '@envsemble/envui/icons/Person';
+import { IconSearch } from '@envsemble/envui/icons/Search';
+import { IconSettings } from '@envsemble/envui/icons/Settings';
+import { IconShare } from '@envsemble/envui/icons/Share';
+import { IconStar } from '@envsemble/envui/icons/Star';
 import { edges, gap, Item, Mark } from '../../tiles/Reflow';
 
 /*
@@ -167,18 +167,18 @@ function ResponsivePicture() {
 }
 
 const icons = [
-  Home,
-  Search,
-  Inbox,
-  Star,
-  Person,
-  Settings,
-  Folder,
-  Mail,
-  CalendarMonth,
-  Edit,
-  Share,
-  Delete,
+  IconHome,
+  IconSearch,
+  IconInbox,
+  IconStar,
+  IconPerson,
+  IconSettings,
+  IconFolder,
+  IconMail,
+  IconCalendarMonth,
+  IconEdit,
+  IconShare,
+  IconDelete,
 ];
 
 /** A grid of icons, outlined, with one selected and filled, as navigation fills its current place. */
@@ -186,8 +186,8 @@ function IconsPicture() {
   return (
     <div className="catalogue-glance catalogue-glance-icons" aria-hidden="true">
       {icons.map((Icon, index) => (
-        <span key={index} data-selected={Icon === Star || undefined}>
-          <Icon filled={Icon === Star} />
+        <span key={index} data-selected={Icon === IconStar || undefined}>
+          <Icon filled={Icon === IconStar} />
         </span>
       ))}
     </div>

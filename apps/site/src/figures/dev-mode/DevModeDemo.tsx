@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Button, Column, Row, Text, Theme, useTheme } from '@envsemble/envui';
-import { ViewInAr } from '@envsemble/envui/icons/ViewInAr';
+import { IconViewInAr } from '@envsemble/envui/icons/ViewInAr';
 import type { DevModeHandle } from '@envsemble/envui/dev';
 import { keepLinksInPlace } from '../LiveExample';
 import { DemoApp } from './DemoApp';
@@ -40,7 +40,7 @@ export function DevModeDemo() {
       <Row>
         <Button
           variant="primary"
-          startIcon={<ViewInAr />}
+          startIcon={<IconViewInAr />}
           // Once dev mode is in, the button opens it again after it was closed.
           pending={started && !devMode && !failed}
           onClick={() => (devMode ? devMode.open() : setStarted(true))}

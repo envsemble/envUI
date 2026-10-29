@@ -1,6 +1,6 @@
 import { useId } from 'react';
 import { Badge, Column, Grid, Surface, Text } from '@envsemble/envui';
-import { TrendingUp } from '@envsemble/envui/icons/TrendingUp';
+import { IconTrendingUp } from '@envsemble/envui/icons/TrendingUp';
 
 export default function OnAPane() {
   const headingId = useId();
@@ -41,7 +41,7 @@ export default function OnAPane() {
           <Text variant="headline" style={{ fontVariantNumeric: 'tabular-nums' }}>
             18
           </Text>
-          <Badge tone="success" icon={<TrendingUp />}>
+          <Badge tone="success" icon={<IconTrendingUp />}>
             +5 today
           </Badge>
         </Column>

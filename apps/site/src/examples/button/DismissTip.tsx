@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button, Column, IconButton, Row, Surface, Text } from '@envsemble/envui';
-import { Close } from '@envsemble/envui/icons/Close';
+import { IconClose } from '@envsemble/envui/icons/Close';
 
 export default function DismissTip() {
   const [open, setOpen] = useState(true);
@@ -22,7 +22,7 @@ export default function DismissTip() {
         </Column>
         <IconButton
           variant="ghost"
-          icon={<Close />}
+          icon={<IconClose />}
           aria-label="Dismiss tip"
           onClick={() => setOpen(false)}
         />

@@ -18,9 +18,9 @@ import {
   type Destination,
   type ColorScheme,
 } from '@envsemble/envui';
-import { Group } from '@envsemble/envui/icons/Group';
-import { Luggage } from '@envsemble/envui/icons/Luggage';
-import { Map as MapIcon } from '@envsemble/envui/icons/Map';
+import { IconGroup } from '@envsemble/envui/icons/Group';
+import { IconLuggage } from '@envsemble/envui/icons/Luggage';
+import { IconMap } from '@envsemble/envui/icons/Map';
 import { useTimeline } from '../../motion/Motion';
 import { CornerLabel } from './Steps';
 import { Figure } from './Topic';
@@ -171,9 +171,9 @@ function SchemeChoice({ names, narrow }: { names: readonly string[]; narrow: boo
   const [place, setPlace] = useState('trips');
   const destination = (id: string) => ({ current: place === id, onClick: () => setPlace(id) });
   const destinations: Destination[] = [
-    { label: 'Trips', icon: <Luggage />, ...destination('trips') },
-    { label: 'Map', icon: <MapIcon />, ...destination('map') },
-    { label: 'Friends', icon: <Group />, count: 2, ...destination('friends') },
+    { label: 'Trips', icon: <IconLuggage />, ...destination('trips') },
+    { label: 'Map', icon: <IconMap />, ...destination('map') },
+    { label: 'Friends', icon: <IconGroup />, count: 2, ...destination('friends') },
   ];
   return (
     <SchemeArea scheme={scheme} theme={page.theme} className="catalogue-scheme-canvas">

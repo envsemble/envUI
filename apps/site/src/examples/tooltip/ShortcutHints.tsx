@@ -1,12 +1,12 @@
 import { IconButton, Tooltip, Row } from '@envsemble/envui';
-import { FormatBold } from '@envsemble/envui/icons/FormatBold';
-import { FormatItalic } from '@envsemble/envui/icons/FormatItalic';
-import { FormatUnderlined } from '@envsemble/envui/icons/FormatUnderlined';
+import { IconFormatBold } from '@envsemble/envui/icons/FormatBold';
+import { IconFormatItalic } from '@envsemble/envui/icons/FormatItalic';
+import { IconFormatUnderlined } from '@envsemble/envui/icons/FormatUnderlined';
 
 const formats = [
-  { label: 'Bold', shortcut: 'Ctrl+B', keys: 'Control+B', icon: <FormatBold /> },
-  { label: 'Italic', shortcut: 'Ctrl+I', keys: 'Control+I', icon: <FormatItalic /> },
-  { label: 'Underline', shortcut: 'Ctrl+U', keys: 'Control+U', icon: <FormatUnderlined /> },
+  { label: 'Bold', shortcut: 'Ctrl+B', keys: 'Control+B', icon: <IconFormatBold /> },
+  { label: 'Italic', shortcut: 'Ctrl+I', keys: 'Control+I', icon: <IconFormatItalic /> },
+  { label: 'Underline', shortcut: 'Ctrl+U', keys: 'Control+U', icon: <IconFormatUnderlined /> },
 ];
 
 export default function ShortcutHints() {

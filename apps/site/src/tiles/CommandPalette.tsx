@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { CommandPalette, type CommandPaletteItem } from '@envsemble/envui';
-import { NoteAdd } from '@envsemble/envui/icons/NoteAdd';
-import { PersonAdd } from '@envsemble/envui/icons/PersonAdd';
-import { Settings } from '@envsemble/envui/icons/Settings';
+import { IconNoteAdd } from '@envsemble/envui/icons/NoteAdd';
+import { IconPersonAdd } from '@envsemble/envui/icons/PersonAdd';
+import { IconSettings } from '@envsemble/envui/icons/Settings';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
 const items: CommandPaletteItem[] = [
-  { id: 'new', label: 'New document', icon: <NoteAdd /> },
-  { id: 'invite', label: 'Invite people', icon: <PersonAdd /> },
-  { id: 'settings', label: 'Open settings', icon: <Settings /> },
+  { id: 'new', label: 'New document', icon: <IconNoteAdd /> },
+  { id: 'invite', label: 'Invite people', icon: <IconPersonAdd /> },
+  { id: 'settings', label: 'Open settings', icon: <IconSettings /> },
 ];
 
 const input = '.env-command-palette-input';

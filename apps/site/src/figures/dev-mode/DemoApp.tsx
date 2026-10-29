@@ -15,10 +15,10 @@ import {
   TopBar,
   type Destination,
 } from '@envsemble/envui';
-import { Category } from '@envsemble/envui/icons/Category';
-import { Group } from '@envsemble/envui/icons/Group';
-import { Home } from '@envsemble/envui/icons/Home';
-import { Settings } from '@envsemble/envui/icons/Settings';
+import { IconCategory } from '@envsemble/envui/icons/Category';
+import { IconGroup } from '@envsemble/envui/icons/Group';
+import { IconHome } from '@envsemble/envui/icons/Home';
+import { IconSettings } from '@envsemble/envui/icons/Settings';
 
 /** Stands in for the window: a Scaffold fills its container, the window's height by default. */
 const preview: CSSProperties = { blockSize: '30rem' };
@@ -77,10 +77,10 @@ export function DemoApp({ fixedColumns = false }: { fixedColumns?: boolean }) {
 }
 
 const places = [
-  { label: 'Home', href: '/', icon: <Home /> },
-  { label: 'Projects', href: '/projects', icon: <Category /> },
-  { label: 'Team', href: '/team', icon: <Group /> },
-  { label: 'Settings', href: '/settings', icon: <Settings /> },
+  { label: 'Home', href: '/', icon: <IconHome /> },
+  { label: 'Projects', href: '/projects', icon: <IconCategory /> },
+  { label: 'Team', href: '/team', icon: <IconGroup /> },
+  { label: 'Settings', href: '/settings', icon: <IconSettings /> },
 ];
 
 const projects = [

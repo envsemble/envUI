@@ -10,7 +10,7 @@ import {
   type RefObject,
 } from 'react';
 import { Column, Link, Text, Theme, useTheme } from '@envsemble/envui';
-import { Article } from '@envsemble/envui/icons/Article';
+import { IconArticle } from '@envsemble/envui/icons/Article';
 import type { DocumentationMetadata } from '../shared/DocumentationTypes';
 import { Documentation } from '../pages/Documentation';
 import { useAutoplay } from '../motion/Autoplay';
@@ -97,7 +97,7 @@ export function TilePreview({
       data-playing={plays ? '' : undefined}
     >
       {!preview ? (
-        <Article className="catalogue-related-placeholder" aria-hidden />
+        <IconArticle className="catalogue-related-placeholder" aria-hidden />
       ) : (
         shown && (
           <div

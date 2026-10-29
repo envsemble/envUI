@@ -1,5 +1,5 @@
 import { Badge, Breadcrumbs, Grid, IconButton, Surface } from '@envsemble/envui';
-import { MoreVert } from '@envsemble/envui/icons/MoreVert';
+import { IconMoreVert } from '@envsemble/envui/icons/MoreVert';
 
 export default function OneLine() {
   return (
@@ -21,7 +21,7 @@ export default function OneLine() {
         ]}
       />
       <Badge tone="success">Published</Badge>
-      <IconButton variant="text" size="sm" icon={<MoreVert />} aria-label="More actions" />
+      <IconButton variant="text" size="sm" icon={<IconMoreVert />} aria-label="More actions" />
     </Surface>
   );
 }

@@ -1,9 +1,9 @@
 import { AvatarButton, IconButton, TopBar } from '@envsemble/envui';
-import { Download } from '@envsemble/envui/icons/Download';
-import { Notifications } from '@envsemble/envui/icons/Notifications';
-import { Search } from '@envsemble/envui/icons/Search';
-import { Settings } from '@envsemble/envui/icons/Settings';
-import { Share } from '@envsemble/envui/icons/Share';
+import { IconDownload } from '@envsemble/envui/icons/Download';
+import { IconNotifications } from '@envsemble/envui/icons/Notifications';
+import { IconSearch } from '@envsemble/envui/icons/Search';
+import { IconSettings } from '@envsemble/envui/icons/Settings';
+import { IconShare } from '@envsemble/envui/icons/Share';
 
 export default function ManyActions() {
   return (
@@ -13,11 +13,11 @@ export default function ManyActions() {
       style={{ inlineSize: 'min(100%, 22rem)' }}
       actions={
         <>
-          <IconButton icon={<Search />} aria-label="Search" variant="ghost" />
-          <IconButton icon={<Share />} aria-label="Share" variant="ghost" />
-          <IconButton icon={<Download />} aria-label="Download" variant="ghost" />
-          <IconButton icon={<Notifications />} aria-label="Notifications" variant="ghost" />
-          <IconButton icon={<Settings />} aria-label="Settings" variant="ghost" />
+          <IconButton icon={<IconSearch />} aria-label="Search" variant="ghost" />
+          <IconButton icon={<IconShare />} aria-label="Share" variant="ghost" />
+          <IconButton icon={<IconDownload />} aria-label="Download" variant="ghost" />
+          <IconButton icon={<IconNotifications />} aria-label="Notifications" variant="ghost" />
+          <IconButton icon={<IconSettings />} aria-label="Settings" variant="ghost" />
           <AvatarButton name="Alex Morgan" />
         </>
       }

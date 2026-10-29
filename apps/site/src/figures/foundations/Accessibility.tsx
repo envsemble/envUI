@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 import { Button, Checkbox, Column, IconButton, Kbd, Row, TextField } from '@envsemble/envui';
-import { MoreVert } from '@envsemble/envui/icons/MoreVert';
+import { IconMoreVert } from '@envsemble/envui/icons/MoreVert';
 import { usePointer, type PointerStep } from '../../motion/Motion';
 import type { FoundationFigure } from './FoundationFigures';
 import { CornerLabel } from './Steps';
@@ -105,7 +105,7 @@ function KeyboardSteps() {
         <TextField label="Report title" defaultValue="Quarterly report" />
         <Checkbox label="Share with the team" checked={shared} onCheckedChange={setShared} />
         <Row gap={2} justify="end" align="center">
-          <IconButton variant="ghost" icon={<MoreVert />} aria-label="More options" />
+          <IconButton variant="ghost" icon={<IconMoreVert />} aria-label="More options" />
           <Button variant="secondary">Cancel</Button>
           <Button>Save</Button>
         </Row>

@@ -1,7 +1,7 @@
 import type { CSSProperties } from 'react';
 import { NavigationDrawer, Page, PageHeader, Scaffold, Text, TopBar } from '@envsemble/envui';
-import { Home } from '@envsemble/envui/icons/Home';
-import { Settings } from '@envsemble/envui/icons/Settings';
+import { IconHome } from '@envsemble/envui/icons/Home';
+import { IconSettings } from '@envsemble/envui/icons/Settings';
 
 /** Stands in for the window: a Scaffold fills its container, the window's height by default. */
 const preview: CSSProperties = { blockSize: '18rem' };
@@ -21,8 +21,8 @@ export default function ChooseForms() {
           <NavigationDrawer
             aria-label="Settings"
             destinations={[
-              { label: 'General', icon: <Home />, href: '#general', current: true },
-              { label: 'Advanced', icon: <Settings />, href: '#advanced' },
+              { label: 'General', icon: <IconHome />, href: '#general', current: true },
+              { label: 'Advanced', icon: <IconSettings />, href: '#advanced' },
             ]}
           />
         ),

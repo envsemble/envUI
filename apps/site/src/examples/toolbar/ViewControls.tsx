@@ -1,7 +1,7 @@
 import { Surface, Toolbar } from '@envsemble/envui';
-import { Help } from '@envsemble/envui/icons/Help';
-import { ZoomIn } from '@envsemble/envui/icons/ZoomIn';
-import { ZoomOut } from '@envsemble/envui/icons/ZoomOut';
+import { IconHelp } from '@envsemble/envui/icons/Help';
+import { IconZoomIn } from '@envsemble/envui/icons/ZoomIn';
+import { IconZoomOut } from '@envsemble/envui/icons/ZoomOut';
 
 export default function ViewControls() {
   return (
@@ -13,10 +13,10 @@ export default function ViewControls() {
       render={<Toolbar.Root aria-label="Diagram view" size="sm" tooltipDelay={0} />}
       style={{ inlineSize: 'fit-content' }}
     >
-      <Toolbar.Button icon={<ZoomOut />} label="Zoom out" shortcut="Ctrl+-" />
-      <Toolbar.Button icon={<ZoomIn />} label="Zoom in" shortcut="Ctrl+=" />
+      <Toolbar.Button icon={<IconZoomOut />} label="Zoom out" shortcut="Ctrl+-" />
+      <Toolbar.Button icon={<IconZoomIn />} label="Zoom in" shortcut="Ctrl+=" />
       <Toolbar.Separator />
-      <Toolbar.Link href="/help/diagrams" icon={<Help />} label="Diagram help" />
+      <Toolbar.Link href="/help/diagrams" icon={<IconHelp />} label="Diagram help" />
     </Surface>
   );
 }

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { IconButton, Link, List, Column, Menu, Text } from '@envsemble/envui';
-import { MoreHoriz } from '@envsemble/envui/icons/MoreHoriz';
+import { IconMoreHoriz } from '@envsemble/envui/icons/MoreHoriz';
 
 const plans = [
   { id: 'roadmap', name: 'Roadmap', updated: 'Updated today by Sam Lee' },
@@ -36,7 +36,7 @@ export default function OpenFromRow() {
                 trigger={
                   <IconButton
                     variant="text"
-                    icon={<MoreHoriz />}
+                    icon={<IconMoreHoriz />}
                     aria-label={`More actions for ${name}`}
                     // The row's other controls stay above the link that covers the row.
                     style={{ position: 'relative' }}

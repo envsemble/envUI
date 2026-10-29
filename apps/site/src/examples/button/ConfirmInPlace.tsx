@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Button, ConfirmButton, List, Column } from '@envsemble/envui';
-import { Delete } from '@envsemble/envui/icons/Delete';
+import { IconDelete } from '@envsemble/envui/icons/Delete';
 
 const people = ['Alex Morgan', 'Sam Lee', 'Priya Shah'];
 
@@ -71,7 +71,7 @@ export default function ConfirmInPlace() {
               </Button>
             ) : (
               <ConfirmButton
-                icon={<Delete />}
+                icon={<IconDelete />}
                 aria-label="Delete draft"
                 confirmLabel="Delete draft"
                 onConfirm={() => setDraft(true)}

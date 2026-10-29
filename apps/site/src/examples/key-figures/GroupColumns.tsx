@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { Badge, Column, Grid, Row, Surface, Text, type BadgeTone } from '@envsemble/envui';
-import { TrendingFlat } from '@envsemble/envui/icons/TrendingFlat';
-import { TrendingUp } from '@envsemble/envui/icons/TrendingUp';
+import { IconTrendingFlat } from '@envsemble/envui/icons/TrendingFlat';
+import { IconTrendingUp } from '@envsemble/envui/icons/TrendingUp';
 
 /** A labelled figure, with how it changed in words and over what period. */
 function KeyFigure({
@@ -54,19 +54,19 @@ export default function GroupColumns() {
       <KeyFigure
         label="Active projects"
         value="128"
-        trend={{ icon: <TrendingUp />, label: '+12%', tone: 'success' }}
+        trend={{ icon: <IconTrendingUp />, label: '+12%', tone: 'success' }}
         description="Last 30 days"
       />
       <KeyFigure
         label="Tasks done"
         value="1,284"
-        trend={{ icon: <TrendingUp />, label: '+86', tone: 'success' }}
+        trend={{ icon: <IconTrendingUp />, label: '+86', tone: 'success' }}
         description="This week"
       />
       <KeyFigure
         label="Lead time"
         value="2.5 days"
-        trend={{ icon: <TrendingFlat />, label: 'No change', tone: 'neutral' }}
+        trend={{ icon: <IconTrendingFlat />, label: 'No change', tone: 'neutral' }}
         description="Median"
       />
     </Surface>

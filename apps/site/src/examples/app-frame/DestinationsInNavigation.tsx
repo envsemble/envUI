@@ -7,14 +7,14 @@ import {
   TopBar,
   type Destination,
 } from '@envsemble/envui';
-import { Category } from '@envsemble/envui/icons/Category';
-import { Group } from '@envsemble/envui/icons/Group';
-import { Home } from '@envsemble/envui/icons/Home';
+import { IconCategory } from '@envsemble/envui/icons/Category';
+import { IconGroup } from '@envsemble/envui/icons/Group';
+import { IconHome } from '@envsemble/envui/icons/Home';
 
 const destinations: Destination[] = [
-  { label: 'Home', icon: <Home />, href: '/' },
-  { label: 'Projects', icon: <Category />, href: '/projects', current: true },
-  { label: 'Team', icon: <Group />, href: '/team' },
+  { label: 'Home', icon: <IconHome />, href: '/' },
+  { label: 'Projects', icon: <IconCategory />, href: '/projects', current: true },
+  { label: 'Team', icon: <IconGroup />, href: '/team' },
 ];
 
 export default function DestinationsInNavigation() {

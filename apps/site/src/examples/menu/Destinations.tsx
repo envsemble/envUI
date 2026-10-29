@@ -1,9 +1,9 @@
 import { Button, Menu } from '@envsemble/envui';
-import { ExpandMore } from '@envsemble/envui/icons/ExpandMore';
-import { Feedback } from '@envsemble/envui/icons/Feedback';
-import { Keyboard } from '@envsemble/envui/icons/Keyboard';
-import { MenuBook } from '@envsemble/envui/icons/MenuBook';
-import { OpenInNew } from '@envsemble/envui/icons/OpenInNew';
+import { IconExpandMore } from '@envsemble/envui/icons/ExpandMore';
+import { IconFeedback } from '@envsemble/envui/icons/Feedback';
+import { IconKeyboard } from '@envsemble/envui/icons/Keyboard';
+import { IconMenuBook } from '@envsemble/envui/icons/MenuBook';
+import { IconOpenInNew } from '@envsemble/envui/icons/OpenInNew';
 
 export default function Destinations() {
   return (
@@ -13,28 +13,28 @@ export default function Destinations() {
       // Shown open in the docs; without defaultOpen, it opens from its trigger.
       defaultOpen
       trigger={
-        <Button variant="secondary" endIcon={<ExpandMore />}>
+        <Button variant="secondary" endIcon={<IconExpandMore />}>
           Help
         </Button>
       }
     >
-      <Menu.Item href="/help/guide" icon={<MenuBook />}>
+      <Menu.Item href="/help/guide" icon={<IconMenuBook />}>
         User guide
       </Menu.Item>
-      <Menu.Item href="/help/shortcuts" icon={<Keyboard />} shortcut="Ctrl+/">
+      <Menu.Item href="/help/shortcuts" icon={<IconKeyboard />} shortcut="Ctrl+/">
         Keyboard shortcuts
       </Menu.Item>
       <Menu.Item
         href="https://status.example.com"
         target="_blank"
         rel="noopener noreferrer"
-        icon={<OpenInNew />}
+        icon={<IconOpenInNew />}
         description="Opens in a new tab"
       >
         Service status
       </Menu.Item>
       <Menu.Separator />
-      <Menu.Item icon={<Feedback />}>Send feedback</Menu.Item>
+      <Menu.Item icon={<IconFeedback />}>Send feedback</Menu.Item>
     </Menu.Root>
   );
 }

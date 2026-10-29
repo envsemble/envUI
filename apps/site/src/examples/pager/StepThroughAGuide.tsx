@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Pager, Column, Text } from '@envsemble/envui';
-import { ArrowBack } from '@envsemble/envui/icons/ArrowBack';
-import { ArrowForward } from '@envsemble/envui/icons/ArrowForward';
+import { IconArrowBack } from '@envsemble/envui/icons/ArrowBack';
+import { IconArrowForward } from '@envsemble/envui/icons/ArrowForward';
 
 const pages = [
   { href: '/guide/overview', title: 'Overview' },
@@ -24,14 +24,18 @@ export default function StepThroughAGuide() {
         {previous && (
           <Pager.Previous
             href={previous.href}
-            icon={<ArrowBack />}
+            icon={<IconArrowBack />}
             onClick={() => setIndex(index - 1)}
           >
             {previous.title}
           </Pager.Previous>
         )}
         {next && (
-          <Pager.Next href={next.href} icon={<ArrowForward />} onClick={() => setIndex(index + 1)}>
+          <Pager.Next
+            href={next.href}
+            icon={<IconArrowForward />}
+            onClick={() => setIndex(index + 1)}
+          >
             {next.title}
           </Pager.Next>
         )}

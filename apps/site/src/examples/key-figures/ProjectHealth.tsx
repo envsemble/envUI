@@ -10,9 +10,9 @@ import {
   Text,
   type BadgeTone,
 } from '@envsemble/envui';
-import { Add } from '@envsemble/envui/icons/Add';
-import { TrendingFlat } from '@envsemble/envui/icons/TrendingFlat';
-import { TrendingUp } from '@envsemble/envui/icons/TrendingUp';
+import { IconAdd } from '@envsemble/envui/icons/Add';
+import { IconTrendingFlat } from '@envsemble/envui/icons/TrendingFlat';
+import { IconTrendingUp } from '@envsemble/envui/icons/TrendingUp';
 
 /** A labelled figure, with how it changed in words and over what period. */
 function KeyFigure({
@@ -76,26 +76,26 @@ export default function ProjectHealth() {
         <KeyFigure
           label="Active projects"
           value={<AnimatedNumber value={projects} />}
-          trend={{ icon: <TrendingUp />, label: `+${change}%`, tone: 'success' }}
+          trend={{ icon: <IconTrendingUp />, label: `+${change}%`, tone: 'success' }}
           description="Last 30 days"
         />
         <KeyFigure
           label="Tasks done"
           value="1,284"
-          trend={{ icon: <TrendingUp />, label: '+86', tone: 'success' }}
+          trend={{ icon: <IconTrendingUp />, label: '+86', tone: 'success' }}
           description="This week"
         />
         <KeyFigure
           label="Lead time"
           value="2.5 days"
-          trend={{ icon: <TrendingFlat />, label: 'No change', tone: 'neutral' }}
+          trend={{ icon: <IconTrendingFlat />, label: 'No change', tone: 'neutral' }}
           description="Median"
         />
       </Surface>
       <Row wrap align="center" gap={4}>
         <Button
           variant="secondary"
-          startIcon={<Add />}
+          startIcon={<IconAdd />}
           onClick={() => setProjects((count) => count + 1)}
         >
           Add a project

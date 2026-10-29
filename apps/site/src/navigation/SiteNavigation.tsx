@@ -10,10 +10,10 @@ import {
   type Destination,
   type NavigationDrawerDestination,
 } from '@envsemble/envui';
-import { Home } from '@envsemble/envui/icons/Home';
-import { Widgets } from '@envsemble/envui/icons/Widgets';
-import { Pattern } from '@envsemble/envui/icons/Pattern';
-import { Palette } from '@envsemble/envui/icons/Palette';
+import { IconHome } from '@envsemble/envui/icons/Home';
+import { IconWidgets } from '@envsemble/envui/icons/Widgets';
+import { IconPattern } from '@envsemble/envui/icons/Pattern';
+import { IconPalette } from '@envsemble/envui/icons/Palette';
 import { version } from '../../../../packages/ui/package.json';
 import { EnvUIDocsLogo } from '../brand/EnvUIDocsLogo';
 import { EnvUILogo } from '../brand/EnvUILogo';
@@ -36,11 +36,11 @@ import { docsRoute, homeRoute, routeHref } from './Address';
 import { otherPart } from './OtherPart';
 
 /** The icon of each of the catalogue's destinations in its rail. */
-const sectionIcons: Record<CatalogueSection, typeof Home> = {
-  Overview: Home,
-  Foundations: Palette,
-  Components: Widgets,
-  Patterns: Pattern,
+const sectionIcons: Record<CatalogueSection, typeof IconHome> = {
+  Overview: IconHome,
+  Foundations: IconPalette,
+  Components: IconWidgets,
+  Patterns: IconPattern,
 };
 
 /** The catalogue's destinations, for its rail: each opens its first page. */

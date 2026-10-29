@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { IconButton, Select, Column, Row, Surface, Text } from '@envsemble/envui';
-import { ZoomIn } from '@envsemble/envui/icons/ZoomIn';
-import { ZoomOut } from '@envsemble/envui/icons/ZoomOut';
+import { IconZoomIn } from '@envsemble/envui/icons/ZoomIn';
+import { IconZoomOut } from '@envsemble/envui/icons/ZoomOut';
 
 const zoomLevels = ['50', '75', '100', '150', '200'];
 const zoomOptions = zoomLevels.map((value) => ({ value, label: `${value}%` }));
@@ -34,7 +34,7 @@ export default function SmallToolbar() {
         <IconButton
           variant="text"
           size="sm"
-          icon={<ZoomOut />}
+          icon={<IconZoomOut />}
           aria-label="Zoom out"
           onClick={() => step(-1)}
         />
@@ -48,7 +48,7 @@ export default function SmallToolbar() {
         <IconButton
           variant="text"
           size="sm"
-          icon={<ZoomIn />}
+          icon={<IconZoomIn />}
           aria-label="Zoom in"
           onClick={() => step(1)}
         />

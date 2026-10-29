@@ -1,19 +1,19 @@
 import { useState } from 'react';
 import { Toolbar } from '@envsemble/envui';
-import { FormatBold } from '@envsemble/envui/icons/FormatBold';
-import { FormatItalic } from '@envsemble/envui/icons/FormatItalic';
+import { IconFormatBold } from '@envsemble/envui/icons/FormatBold';
+import { IconFormatItalic } from '@envsemble/envui/icons/FormatItalic';
 
 export default function SameIconPressed() {
   const [bold, setBold] = useState(true);
   return (
     <Toolbar.Root aria-label="Text style">
       <Toolbar.Button
-        icon={<FormatBold />}
+        icon={<IconFormatBold />}
         label="Bold"
         pressed={bold}
         onClick={() => setBold((current) => !current)}
       />
-      <Toolbar.Button icon={<FormatItalic />} label="Italic" />
+      <Toolbar.Button icon={<IconFormatItalic />} label="Italic" />
     </Toolbar.Root>
   );
 }

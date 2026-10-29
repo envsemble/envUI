@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { DocumentTabs, IconButton, type DocumentTabsItem } from '@envsemble/envui';
-import { Add } from '@envsemble/envui/icons/Add';
-import { Description } from '@envsemble/envui/icons/Description';
+import { IconAdd } from '@envsemble/envui/icons/Add';
+import { IconDescription } from '@envsemble/envui/icons/Description';
 
 const documents: DocumentTabsItem[] = [
-  { value: 'roadmap.md', label: 'Roadmap.md', icon: <Description /> },
-  { value: 'budget.md', label: 'Budget.md', icon: <Description /> },
+  { value: 'roadmap.md', label: 'Roadmap.md', icon: <IconDescription /> },
+  { value: 'budget.md', label: 'Budget.md', icon: <IconDescription /> },
 ];
 
 export default function DocumentTabsAnatomy() {
@@ -23,7 +23,7 @@ export default function DocumentTabsAnatomy() {
           setTabs(remaining);
           if (id === value) setValue(remaining[0]?.value ?? null);
         }}
-        end={<IconButton icon={<Add />} aria-label="New document" variant="ghost" size="sm" />}
+        end={<IconButton icon={<IconAdd />} aria-label="New document" variant="ghost" size="sm" />}
       />
     </div>
   );

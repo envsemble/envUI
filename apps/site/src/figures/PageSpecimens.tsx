@@ -1,12 +1,12 @@
 import type { ComponentType } from 'react';
 import { Avatar, Button, Card, Column, Row, Text, TextField } from '@envsemble/envui';
-import { Add } from '@envsemble/envui/icons/Add';
-import { Favorite } from '@envsemble/envui/icons/Favorite';
-import { Folder } from '@envsemble/envui/icons/Folder';
-import { Home } from '@envsemble/envui/icons/Home';
-import { Person } from '@envsemble/envui/icons/Person';
-import { Search } from '@envsemble/envui/icons/Search';
-import { Settings } from '@envsemble/envui/icons/Settings';
+import { IconAdd } from '@envsemble/envui/icons/Add';
+import { IconFavorite } from '@envsemble/envui/icons/Favorite';
+import { IconFolder } from '@envsemble/envui/icons/Folder';
+import { IconHome } from '@envsemble/envui/icons/Home';
+import { IconPerson } from '@envsemble/envui/icons/Person';
+import { IconSearch } from '@envsemble/envui/icons/Search';
+import { IconSettings } from '@envsemble/envui/icons/Settings';
 
 /*
  * A small, characteristic specimen of each foundation, for a Related tile that points to a page
@@ -19,12 +19,12 @@ import { Settings } from '@envsemble/envui/icons/Settings';
 function IconsSpecimen() {
   return (
     <Row gap={5} align="center" className="catalogue-page-specimen-icons">
-      <Home filled width="2.5rem" height="2.5rem" />
-      <Search width="2.5rem" height="2.5rem" />
-      <Folder width="2.5rem" height="2.5rem" />
-      <Favorite filled width="2.5rem" height="2.5rem" />
-      <Person width="2.5rem" height="2.5rem" />
-      <Settings width="2.5rem" height="2.5rem" />
+      <IconHome filled width="2.5rem" height="2.5rem" />
+      <IconSearch width="2.5rem" height="2.5rem" />
+      <IconFolder width="2.5rem" height="2.5rem" />
+      <IconFavorite filled width="2.5rem" height="2.5rem" />
+      <IconPerson width="2.5rem" height="2.5rem" />
+      <IconSettings width="2.5rem" height="2.5rem" />
     </Row>
   );
 }
@@ -133,7 +133,7 @@ function AccessibilitySpecimen() {
   return (
     <Column gap={4} align="start">
       <TextField label="Email" defaultValue="alex.morgan@example.com" />
-      <Button startIcon={<Add />} className="catalogue-page-specimen-focus">
+      <Button startIcon={<IconAdd />} className="catalogue-page-specimen-focus">
         Add member
       </Button>
     </Column>

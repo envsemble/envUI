@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { SegmentedControl } from '@envsemble/envui';
-import { ViewList } from '@envsemble/envui/icons/ViewList';
-import { ViewModule } from '@envsemble/envui/icons/ViewModule';
+import { IconViewList } from '@envsemble/envui/icons/ViewList';
+import { IconViewModule } from '@envsemble/envui/icons/ViewModule';
 import { Example, Specimen, SpecimenGrid } from '../../figures/Example';
 import { usePointer, type PointerStep } from '../../motion/Motion';
 import { MotionStage } from '../../motion/MotionStage';
@@ -63,8 +63,8 @@ function Choosing() {
           value={layout}
           onValueChange={setLayout}
           items={[
-            { value: 'list', label: 'List', icon: <ViewList /> },
-            { value: 'board', label: 'Board', icon: <ViewModule /> },
+            { value: 'list', label: 'List', icon: <IconViewList /> },
+            { value: 'board', label: 'Board', icon: <IconViewModule /> },
           ]}
         />
       </Specimen>

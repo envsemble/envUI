@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button, CommandPalette, type CommandPaletteItem } from '@envsemble/envui';
-import { Description } from '@envsemble/envui/icons/Description';
-import { Search } from '@envsemble/envui/icons/Search';
+import { IconDescription } from '@envsemble/envui/icons/Description';
+import { IconSearch } from '@envsemble/envui/icons/Search';
 
 const documents = ['Roadmap.md', 'Pricing research.md', 'Launch checklist.md', 'Budget.md'];
 // Nothing opened yet in this workspace, so there are no recent documents to show.
@@ -13,10 +13,10 @@ export default function TypeToSearch() {
   const [query, setQuery] = useState('');
   const items = documents
     .filter((name) => name.toLowerCase().includes(query.trim().toLowerCase()))
-    .map((name) => ({ id: name, label: name, icon: <Description /> }));
+    .map((name) => ({ id: name, label: name, icon: <IconDescription /> }));
   return (
     <>
-      <Button variant="secondary" startIcon={<Search />} onClick={() => setOpen(true)}>
+      <Button variant="secondary" startIcon={<IconSearch />} onClick={() => setOpen(true)}>
         Go to document
       </Button>
       <CommandPalette

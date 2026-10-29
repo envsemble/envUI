@@ -11,20 +11,20 @@ import {
   TopBar,
   type Destination,
 } from '@envsemble/envui';
-import { Category } from '@envsemble/envui/icons/Category';
-import { Group } from '@envsemble/envui/icons/Group';
-import { LeftPanelClose } from '@envsemble/envui/icons/LeftPanelClose';
-import { LeftPanelOpen } from '@envsemble/envui/icons/LeftPanelOpen';
-import { Settings } from '@envsemble/envui/icons/Settings';
+import { IconCategory } from '@envsemble/envui/icons/Category';
+import { IconGroup } from '@envsemble/envui/icons/Group';
+import { IconLeftPanelClose } from '@envsemble/envui/icons/LeftPanelClose';
+import { IconLeftPanelOpen } from '@envsemble/envui/icons/LeftPanelOpen';
+import { IconSettings } from '@envsemble/envui/icons/Settings';
 
 /** Stands in for the window: a Scaffold fills its container, the window's height by default. */
 const preview: CSSProperties = { blockSize: '22rem' };
 const storageKey = 'navigation-narrow';
 
 const destinations: Destination[] = [
-  { label: 'Projects', icon: <Category />, href: '#projects', current: true },
-  { label: 'Members', icon: <Group />, href: '#members' },
-  { label: 'Settings', icon: <Settings />, href: '#settings' },
+  { label: 'Projects', icon: <IconCategory />, href: '#projects', current: true },
+  { label: 'Members', icon: <IconGroup />, href: '#members' },
+  { label: 'Settings', icon: <IconSettings />, href: '#settings' },
 ];
 
 export default function NarrowNavigation() {
@@ -48,7 +48,7 @@ export default function NarrowNavigation() {
         <TopBar
           start={
             <IconButton
-              icon={narrow ? <LeftPanelOpen /> : <LeftPanelClose />}
+              icon={narrow ? <IconLeftPanelOpen /> : <IconLeftPanelClose />}
               aria-label={narrow ? 'Show full navigation' : 'Narrow navigation'}
               onClick={toggle}
             />

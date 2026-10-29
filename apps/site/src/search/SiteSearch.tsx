@@ -5,14 +5,14 @@ import {
   type CommandPaletteItem,
   type CommandPaletteProps,
 } from '@envsemble/envui';
-import { Widgets } from '@envsemble/envui/icons/Widgets';
-import { Extension } from '@envsemble/envui/icons/Extension';
-import { DataObject } from '@envsemble/envui/icons/DataObject';
-import { Palette } from '@envsemble/envui/icons/Palette';
-import { Category } from '@envsemble/envui/icons/Category';
-import { Pattern } from '@envsemble/envui/icons/Pattern';
-import { Article } from '@envsemble/envui/icons/Article';
-import { Error as ErrorIcon } from '@envsemble/envui/icons/Error';
+import { IconWidgets } from '@envsemble/envui/icons/Widgets';
+import { IconExtension } from '@envsemble/envui/icons/Extension';
+import { IconDataObject } from '@envsemble/envui/icons/DataObject';
+import { IconPalette } from '@envsemble/envui/icons/Palette';
+import { IconCategory } from '@envsemble/envui/icons/Category';
+import { IconPattern } from '@envsemble/envui/icons/Pattern';
+import { IconArticle } from '@envsemble/envui/icons/Article';
+import { IconError } from '@envsemble/envui/icons/Error';
 import { counterpartOf, findPage, routeOfDocument, type RoutePage } from '../navigation/SiteRoutes';
 import { otherPart } from '../navigation/OtherPart';
 import { navigate, routeHref } from '../navigation/Address';
@@ -54,24 +54,24 @@ const groups: Record<SearchResult['kind'], string> = {
   token: 'Tokens',
 };
 const icons: Record<SearchResult['kind'], ReactNode> = {
-  component: <Widgets />,
-  export: <Extension />,
-  foundation: <Category />,
-  pattern: <Pattern />,
-  guide: <Article />,
-  page: <Article />,
-  prop: <DataObject />,
-  token: <Palette />,
+  component: <IconWidgets />,
+  export: <IconExtension />,
+  foundation: <IconCategory />,
+  pattern: <IconPattern />,
+  guide: <IconArticle />,
+  page: <IconArticle />,
+  prop: <IconDataObject />,
+  token: <IconPalette />,
 };
 /** The name of each part of the site, which a result's description starts with. */
 const areas: Record<SearchResult['area'], string> = { catalogue: 'Catalogue', docs: 'Docs' };
 
 /** What the empty query finds: the start of either part, and the setup guide. */
 const suggestedRoutes = [
-  { route: 'docs/setup', icon: <Article /> },
-  { route: 'components', icon: <Widgets /> },
-  { route: 'patterns', icon: <Pattern /> },
-  { route: 'docs/tokens', icon: <Palette /> },
+  { route: 'docs/setup', icon: <IconArticle /> },
+  { route: 'components', icon: <IconWidgets /> },
+  { route: 'patterns', icon: <IconPattern /> },
+  { route: 'docs/tokens', icon: <IconPalette /> },
 ];
 
 /**
@@ -191,7 +191,7 @@ export function SiteSearch({
     empty = { emptyIcon: null, emptyLabel: <Loading what="search" />, emptyDescription: null };
   else if (index.status === 'failed')
     empty = {
-      emptyIcon: <ErrorIcon />,
+      emptyIcon: <IconError />,
       emptyLabel: 'Search could not load',
       emptyDescription: canRetryLoad ? (
         <Button

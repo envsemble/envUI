@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { Button, IconButton, Menu, Column, Row, Text, Tooltip } from '@envsemble/envui';
-import { Archive } from '@envsemble/envui/icons/Archive';
-import { Download } from '@envsemble/envui/icons/Download';
-import { Edit } from '@envsemble/envui/icons/Edit';
-import { FileCopy } from '@envsemble/envui/icons/FileCopy';
-import { Link as LinkIcon } from '@envsemble/envui/icons/Link';
-import { MoreVert } from '@envsemble/envui/icons/MoreVert';
-import { Share } from '@envsemble/envui/icons/Share';
+import { IconArchive } from '@envsemble/envui/icons/Archive';
+import { IconDownload } from '@envsemble/envui/icons/Download';
+import { IconEdit } from '@envsemble/envui/icons/Edit';
+import { IconFileCopy } from '@envsemble/envui/icons/FileCopy';
+import { IconLink } from '@envsemble/envui/icons/Link';
+import { IconMoreVert } from '@envsemble/envui/icons/MoreVert';
+import { IconShare } from '@envsemble/envui/icons/Share';
 
 export default function OverflowActions() {
   const [status, setStatus] = useState('');
@@ -18,10 +18,14 @@ export default function OverflowActions() {
         </Text>
         {/* The two actions people take most stay visible; the rest wait in one menu. */}
         <Row wrap align="center" gap={2}>
-          <Button variant="secondary" startIcon={<Share />} href="/documents/launch-brief/share">
+          <Button
+            variant="secondary"
+            startIcon={<IconShare />}
+            href="/documents/launch-brief/share"
+          >
             Share
           </Button>
-          <Button startIcon={<Edit />} href="/documents/launch-brief/edit">
+          <Button startIcon={<IconEdit />} href="/documents/launch-brief/edit">
             Edit
           </Button>
           <Menu.Root
@@ -29,16 +33,19 @@ export default function OverflowActions() {
             trigger={
               // The Tooltip names the icon-only trigger and passes the menu's props on to it.
               <Tooltip content="More actions">
-                <IconButton variant="ghost" icon={<MoreVert />} aria-label="More actions" />
+                <IconButton variant="ghost" icon={<IconMoreVert />} aria-label="More actions" />
               </Tooltip>
             }
           >
             {/* The application does each item's work; the example reports it in the status. */}
-            <Menu.Item icon={<FileCopy />} onClick={() => setStatus('Launch brief duplicated.')}>
+            <Menu.Item
+              icon={<IconFileCopy />}
+              onClick={() => setStatus('Launch brief duplicated.')}
+            >
               Duplicate
             </Menu.Item>
             <Menu.Item
-              icon={<LinkIcon />}
+              icon={<IconLink />}
               onClick={() =>
                 navigator.clipboard
                   .writeText(new URL('/documents/launch-brief', location.origin).href)
@@ -51,13 +58,13 @@ export default function OverflowActions() {
               Copy link
             </Menu.Item>
             <Menu.Item
-              icon={<Download />}
+              icon={<IconDownload />}
               onClick={() => setStatus('Launch brief exported as launch-brief.pdf.')}
             >
               Export as PDF
             </Menu.Item>
             <Menu.Separator />
-            <Menu.Item icon={<Archive />} onClick={() => setStatus('Launch brief archived.')}>
+            <Menu.Item icon={<IconArchive />} onClick={() => setStatus('Launch brief archived.')}>
               Archive
             </Menu.Item>
           </Menu.Root>

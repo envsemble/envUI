@@ -1,19 +1,19 @@
 import { useState } from 'react';
 import { CommandPalette, Kbd, type CommandPaletteItem } from '@envsemble/envui';
-import { NoteAdd } from '@envsemble/envui/icons/NoteAdd';
-import { PersonAdd } from '@envsemble/envui/icons/PersonAdd';
-import { Settings } from '@envsemble/envui/icons/Settings';
+import { IconNoteAdd } from '@envsemble/envui/icons/NoteAdd';
+import { IconPersonAdd } from '@envsemble/envui/icons/PersonAdd';
+import { IconSettings } from '@envsemble/envui/icons/Settings';
 
 const items: CommandPaletteItem[] = [
   {
     id: 'new',
     label: 'New document',
-    icon: <NoteAdd />,
+    icon: <IconNoteAdd />,
     end: <Kbd keys={['Ctrl', 'N']} />,
     group: 'Commands',
   },
-  { id: 'invite', label: 'Invite people', icon: <PersonAdd />, group: 'Commands' },
-  { id: 'settings', label: 'Open settings', icon: <Settings />, group: 'Commands' },
+  { id: 'invite', label: 'Invite people', icon: <IconPersonAdd />, group: 'Commands' },
+  { id: 'settings', label: 'Open settings', icon: <IconSettings />, group: 'Commands' },
 ];
 
 export default function CommandPaletteAnatomy() {

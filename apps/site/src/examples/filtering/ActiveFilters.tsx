@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { Button, List, Menu, Column, Row, Text } from '@envsemble/envui';
-import { Add } from '@envsemble/envui/icons/Add';
-import { Close } from '@envsemble/envui/icons/Close';
-import { SearchOff } from '@envsemble/envui/icons/SearchOff';
+import { IconAdd } from '@envsemble/envui/icons/Add';
+import { IconClose } from '@envsemble/envui/icons/Close';
+import { IconSearchOff } from '@envsemble/envui/icons/SearchOff';
 
 const taskCount = (count: number) => (count === 1 ? '1 task' : `${count} tasks`);
 
@@ -53,7 +53,7 @@ export default function ActiveFilters() {
               key={filter.id}
               variant="secondary"
               size="sm"
-              endIcon={<Close />}
+              endIcon={<IconClose />}
               aria-label={`Remove filter ${filter.label}`}
               onClick={() => remove(filter.id)}
             >
@@ -64,7 +64,7 @@ export default function ActiveFilters() {
         <Menu.Root
           aria-label="Filters"
           trigger={
-            <Button variant="text" size="sm" startIcon={<Add />}>
+            <Button variant="text" size="sm" startIcon={<IconAdd />}>
               Add filter
             </Button>
           }
@@ -102,7 +102,7 @@ export default function ActiveFilters() {
       ) : (
         <Column gap={4} padding={5}>
           <Text render={<span />} emphasis="muted">
-            <SearchOff width="1.5rem" height="1.5rem" />
+            <IconSearchOff width="1.5rem" height="1.5rem" />
           </Text>
           <Column gap={2}>
             <Text render={<h4 />} variant="title">

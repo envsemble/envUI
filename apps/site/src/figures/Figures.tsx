@@ -8,9 +8,9 @@ import {
   type ReactNode,
 } from 'react';
 import { Column, Theme, useTheme } from '@envsemble/envui';
-import { Check } from '@envsemble/envui/icons/Check';
-import { Close } from '@envsemble/envui/icons/Close';
-import { Warning } from '@envsemble/envui/icons/Warning';
+import { IconCheck } from '@envsemble/envui/icons/Check';
+import { IconClose } from '@envsemble/envui/icons/Close';
+import { IconWarning } from '@envsemble/envui/icons/Warning';
 import type {
   DocumentationBlock,
   DocumentationSection,
@@ -55,9 +55,9 @@ function FoundationFigure({ page, block }: { page: Document; block: FoundationBl
 
 /** The bar under a do, a don't or a caution: its word and its icon. */
 const verdicts = {
-  do: { label: 'Do', icon: <Check /> },
-  dont: { label: 'Don’t', icon: <Close /> },
-  caution: { label: 'Caution', icon: <Warning /> },
+  do: { label: 'Do', icon: <IconCheck /> },
+  dont: { label: 'Don’t', icon: <IconClose /> },
+  caution: { label: 'Caution', icon: <IconWarning /> },
 };
 
 /**

@@ -1,8 +1,8 @@
 import { useId } from 'react';
 import { Button, Column, Menu, Text } from '@envsemble/envui';
-import { Add } from '@envsemble/envui/icons/Add';
-import { Groups3 } from '@envsemble/envui/icons/Groups3';
-import { UnfoldMore } from '@envsemble/envui/icons/UnfoldMore';
+import { IconAdd } from '@envsemble/envui/icons/Add';
+import { IconGroups3 } from '@envsemble/envui/icons/Groups3';
+import { IconUnfoldMore } from '@envsemble/envui/icons/UnfoldMore';
 
 export default function OrganizationSwitcherAnatomy() {
   const headingId = useId();
@@ -12,14 +12,14 @@ export default function OrganizationSwitcherAnatomy() {
       align="start"
       defaultOpen
       trigger={
-        <Button variant="secondary" endIcon={<UnfoldMore />}>
+        <Button variant="secondary" endIcon={<IconUnfoldMore />}>
           Northwind Labs
         </Button>
       }
     >
       <Menu.Header>
         <Column align="center" gap={2} padding={3}>
-          <Groups3 width="2rem" height="2rem" />
+          <IconGroups3 width="2rem" height="2rem" />
           <Text variant="headline" id={headingId}>
             Organizations
           </Text>
@@ -34,7 +34,7 @@ export default function OrganizationSwitcherAnatomy() {
         </Menu.RadioItem>
       </Menu.RadioGroup>
       <Menu.Separator />
-      <Menu.Item icon={<Add />}>Create organization</Menu.Item>
+      <Menu.Item icon={<IconAdd />}>Create organization</Menu.Item>
     </Menu.Root>
   );
 }

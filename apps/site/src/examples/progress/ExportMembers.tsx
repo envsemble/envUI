@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Button, Progress, Column, Row, Text } from '@envsemble/envui';
-import { Download } from '@envsemble/envui/icons/Download';
+import { IconDownload } from '@envsemble/envui/icons/Download';
 
 type Export = { phase: 'idle' | 'preparing' | 'exporting' | 'done'; percent: number };
 
@@ -31,7 +31,7 @@ export default function ExportMembers() {
       <Row wrap align="center" gap={4}>
         <Button
           variant="secondary"
-          startIcon={<Download />}
+          startIcon={<IconDownload />}
           pending={running}
           onClick={() => setState({ phase: 'preparing', percent: 0 })}
         >

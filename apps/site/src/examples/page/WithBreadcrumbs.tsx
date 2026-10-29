@@ -1,5 +1,5 @@
 import { Badge, Breadcrumbs, Button, PageHeader } from '@envsemble/envui';
-import { Share } from '@envsemble/envui/icons/Share';
+import { IconShare } from '@envsemble/envui/icons/Share';
 
 export default function WithBreadcrumbs() {
   return (
@@ -21,7 +21,7 @@ export default function WithBreadcrumbs() {
       meta={<Badge tone="success">On track</Badge>}
       actions={
         <>
-          <Button variant="secondary" startIcon={<Share />}>
+          <Button variant="secondary" startIcon={<IconShare />}>
             Share
           </Button>
           <Button>New task</Button>

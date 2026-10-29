@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Avatar, IconButton, List } from '@envsemble/envui';
-import { MoreHoriz } from '@envsemble/envui/icons/MoreHoriz';
+import { IconMoreHoriz } from '@envsemble/envui/icons/MoreHoriz';
 
 export default function ListAnatomy() {
   const [people, setPeople] = useState(['Priya Shah', 'Sam Lee']);
@@ -23,7 +23,7 @@ export default function ListAnatomy() {
           start={<Avatar name={name} size="sm" />}
           label={name}
           description="10 minutes"
-          end={<IconButton icon={<MoreHoriz />} aria-label={`More actions for ${name}`} />}
+          end={<IconButton icon={<IconMoreHoriz />} aria-label={`More actions for ${name}`} />}
         />
       ))}
     </List.Root>

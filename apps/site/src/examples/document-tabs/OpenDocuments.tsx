@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { Button, DocumentTabs, Surface, Text, type DocumentTabsItem } from '@envsemble/envui';
-import { Description } from '@envsemble/envui/icons/Description';
+import { IconDescription } from '@envsemble/envui/icons/Description';
 
 const documents: DocumentTabsItem[] = [
   { value: 'plans/roadmap.md', label: 'Roadmap.md' },
   { value: 'plans/decisions.md', label: 'Decisions.md' },
   { value: 'research/interviews.md', label: 'Interviews.md', preview: true },
   { value: 'releases/october.md', label: 'October release notes and follow-ups.md' },
-].map((tab) => ({ ...tab, icon: <Description />, tooltip: tab.value }));
+].map((tab) => ({ ...tab, icon: <IconDescription />, tooltip: tab.value }));
 
 /** The panel below the strip, which the application renders. */
 const panel = { minBlockSize: '8rem', padding: '1.5rem' } as const;

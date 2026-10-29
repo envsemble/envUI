@@ -9,7 +9,7 @@ import {
   ToastProvider,
   useToast,
 } from '@envsemble/envui';
-import { Send } from '@envsemble/envui/icons/Send';
+import { IconSend } from '@envsemble/envui/icons/Send';
 
 const isEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
 
@@ -74,7 +74,7 @@ function InviteForm() {
         <Select label="Role" name="role" defaultValue="editor" items={roles} />
         <Row wrap gap={3}>
           {/* The button shows the work while it runs; the toast says how it ended. */}
-          <Button type="submit" startIcon={<Send />} pending={sending}>
+          <Button type="submit" startIcon={<IconSend />} pending={sending}>
             Send invitation
           </Button>
         </Row>

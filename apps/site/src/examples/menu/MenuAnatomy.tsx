@@ -1,8 +1,8 @@
 import { IconButton, Menu } from '@envsemble/envui';
-import { Delete } from '@envsemble/envui/icons/Delete';
-import { Download } from '@envsemble/envui/icons/Download';
-import { Edit } from '@envsemble/envui/icons/Edit';
-import { MoreVert } from '@envsemble/envui/icons/MoreVert';
+import { IconDelete } from '@envsemble/envui/icons/Delete';
+import { IconDownload } from '@envsemble/envui/icons/Download';
+import { IconEdit } from '@envsemble/envui/icons/Edit';
+import { IconMoreVert } from '@envsemble/envui/icons/MoreVert';
 
 export default function MenuAnatomy() {
   return (
@@ -11,18 +11,18 @@ export default function MenuAnatomy() {
       align="start"
       // Shown open in the docs; without defaultOpen, it opens from its trigger.
       defaultOpen
-      trigger={<IconButton icon={<MoreVert />} aria-label="More actions" />}
+      trigger={<IconButton icon={<IconMoreVert />} aria-label="More actions" />}
     >
       <Menu.Group label="Report">
-        <Menu.Item icon={<Edit />} shortcut="F2">
+        <Menu.Item icon={<IconEdit />} shortcut="F2">
           Rename
         </Menu.Item>
-        <Menu.Item icon={<Download />} description="Once the report is final" disabled>
+        <Menu.Item icon={<IconDownload />} description="Once the report is final" disabled>
           Download PDF
         </Menu.Item>
       </Menu.Group>
       <Menu.Separator />
-      <Menu.Item icon={<Delete />} shortcut="Del">
+      <Menu.Item icon={<IconDelete />} shortcut="Del">
         Delete
       </Menu.Item>
     </Menu.Root>

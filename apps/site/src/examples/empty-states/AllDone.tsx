@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Button, List, Column, Text } from '@envsemble/envui';
-import { TaskAlt } from '@envsemble/envui/icons/TaskAlt';
+import { IconTaskAlt } from '@envsemble/envui/icons/TaskAlt';
 
 export default function AllDone() {
   const [reviews, setReviews] = useState(initialReviews);
@@ -52,7 +52,7 @@ export default function AllDone() {
         // A cleared queue states the fact and what comes next: no celebration, and no action.
         <Column gap={4} padding={5}>
           <Text render={<span />} emphasis="muted">
-            <TaskAlt width="1.5rem" height="1.5rem" />
+            <IconTaskAlt width="1.5rem" height="1.5rem" />
           </Text>
           <Column gap={2}>
             <Text render={<h4 />} variant="title">

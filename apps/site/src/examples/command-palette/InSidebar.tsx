@@ -10,18 +10,18 @@ import {
   type Destination,
   useModifierKey,
 } from '@envsemble/envui';
-import { Description } from '@envsemble/envui/icons/Description';
-import { FolderOpen } from '@envsemble/envui/icons/FolderOpen';
-import { Group } from '@envsemble/envui/icons/Group';
-import { Home } from '@envsemble/envui/icons/Home';
-import { Search } from '@envsemble/envui/icons/Search';
+import { IconDescription } from '@envsemble/envui/icons/Description';
+import { IconFolderOpen } from '@envsemble/envui/icons/FolderOpen';
+import { IconGroup } from '@envsemble/envui/icons/Group';
+import { IconHome } from '@envsemble/envui/icons/Home';
+import { IconSearch } from '@envsemble/envui/icons/Search';
 
 const documents = ['Roadmap', 'Launch checklist', 'Pricing research', 'Interview notes'];
 
 const destinations: Destination[] = [
-  { label: 'Home', icon: <Home />, href: '/', current: true },
-  { label: 'Projects', icon: <FolderOpen />, href: '/projects' },
-  { label: 'People', icon: <Group />, href: '/people' },
+  { label: 'Home', icon: <IconHome />, href: '/', current: true },
+  { label: 'Projects', icon: <IconFolderOpen />, href: '/projects' },
+  { label: 'People', icon: <IconGroup />, href: '/people' },
 ];
 
 export default function InSidebar() {
@@ -33,7 +33,7 @@ export default function InSidebar() {
     () =>
       documents
         .filter((name) => name.toLowerCase().includes(query.toLowerCase()))
-        .map((name) => ({ id: name, label: name, icon: <Description /> })),
+        .map((name) => ({ id: name, label: name, icon: <IconDescription /> })),
     [query],
   );
   return (
@@ -45,7 +45,7 @@ export default function InSidebar() {
           <Button
             variant="secondary"
             fullWidth
-            startIcon={<Search />}
+            startIcon={<IconSearch />}
             // The keys show the shortcut, which aria-keyshortcuts announces.
             end={<Kbd keys={[modifier.label, 'K']} aria-hidden />}
             aria-keyshortcuts={`${modifier.key}+K`}

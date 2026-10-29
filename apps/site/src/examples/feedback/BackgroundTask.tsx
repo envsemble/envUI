@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Button, Link, Column, Row, Text, ToastProvider, useToast } from '@envsemble/envui';
-import { Download } from '@envsemble/envui/icons/Download';
+import { IconDownload } from '@envsemble/envui/icons/Download';
 
 const file = 'quarterly-report.csv';
 
@@ -35,7 +35,7 @@ function ExportReport() {
     <Column gap={4} align="start">
       <Button
         variant="secondary"
-        startIcon={<Download />}
+        startIcon={<IconDownload />}
         pending={state === 'running'}
         onClick={start}
       >

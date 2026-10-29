@@ -15,8 +15,8 @@ import {
   windowClasses,
   Badge,
 } from '@envsemble/envui';
-import { FilterList } from '@envsemble/envui/icons/FilterList';
-import { SearchOff } from '@envsemble/envui/icons/SearchOff';
+import { IconFilterList } from '@envsemble/envui/icons/FilterList';
+import { IconSearchOff } from '@envsemble/envui/icons/SearchOff';
 
 const projectCount = (count: number) => (count === 1 ? '1 project' : `${count} projects`);
 
@@ -90,7 +90,7 @@ export default function NarrowFilters() {
         ) : (
           <Sheet
             trigger={
-              <Button variant="secondary" size="sm" startIcon={<FilterList />}>
+              <Button variant="secondary" size="sm" startIcon={<IconFilterList />}>
                 Filters
                 {applied > 0 && <Badge count={applied} aria-label={`${applied} in use`} />}
               </Button>
@@ -146,7 +146,7 @@ export default function NarrowFilters() {
       ) : (
         <Column gap={4} padding={5}>
           <Text render={<span />} emphasis="muted">
-            <SearchOff width="1.5rem" height="1.5rem" />
+            <IconSearchOff width="1.5rem" height="1.5rem" />
           </Text>
           <Column gap={2}>
             <Text render={<h4 />} variant="title">

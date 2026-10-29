@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Button, List, Column, Row, Surface, Text } from '@envsemble/envui';
-import { Add } from '@envsemble/envui/icons/Add';
-import { FolderOpen } from '@envsemble/envui/icons/FolderOpen';
+import { IconAdd } from '@envsemble/envui/icons/Add';
+import { IconFolderOpen } from '@envsemble/envui/icons/FolderOpen';
 
 export default function FirstUse() {
   const [projects, setProjects] = useState<string[]>([]);
@@ -34,7 +34,7 @@ export default function FirstUse() {
         </Text>
         {/* The page's own action appears with the first project; until then the state offers it. */}
         {projects.length > 0 && (
-          <Button size="sm" startIcon={<Add />} onClick={create}>
+          <Button size="sm" startIcon={<IconAdd />} onClick={create}>
             Create project
           </Button>
         )}
@@ -62,7 +62,7 @@ export default function FirstUse() {
             style={{ textAlign: 'center' }}
           >
             <Text render={<span />} emphasis="muted">
-              <FolderOpen width="2.5rem" height="2.5rem" />
+              <IconFolderOpen width="2.5rem" height="2.5rem" />
             </Text>
             <Column gap={2} align="center" style={{ maxInlineSize: '30rem' }}>
               <Text render={<h4 />} variant="title">
@@ -72,7 +72,7 @@ export default function FirstUse() {
                 A project brings its documents, tasks and people together in one place.
               </Text>
             </Column>
-            <Button startIcon={<Add />} onClick={create}>
+            <Button startIcon={<IconAdd />} onClick={create}>
               Create project
             </Button>
           </Column>

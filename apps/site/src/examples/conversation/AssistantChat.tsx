@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Button, Column, Composer, CopyButton, Grid, Message, MessageList } from '@envsemble/envui';
 import { Markdown } from '@envsemble/envui/content';
-import { ArrowDownward } from '@envsemble/envui/icons/ArrowDownward';
+import { IconArrowDownward } from '@envsemble/envui/icons/ArrowDownward';
 
 interface Entry {
   id: number;
@@ -137,7 +137,7 @@ export default function AssistantChat() {
           <Button
             variant="outline"
             size="sm"
-            startIcon={<ArrowDownward />}
+            startIcon={<IconArrowDownward />}
             onClick={jumpToLatest}
             style={{
               // Over the log, whose list items are positioned and would otherwise paint above it.

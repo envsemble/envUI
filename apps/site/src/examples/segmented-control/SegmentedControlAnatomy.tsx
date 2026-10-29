@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { SegmentedControl } from '@envsemble/envui';
-import { ViewList } from '@envsemble/envui/icons/ViewList';
-import { ViewModule } from '@envsemble/envui/icons/ViewModule';
+import { IconViewList } from '@envsemble/envui/icons/ViewList';
+import { IconViewModule } from '@envsemble/envui/icons/ViewModule';
 
 export default function SegmentedControlAnatomy() {
   const [value, setValue] = useState('list');
@@ -12,8 +12,8 @@ export default function SegmentedControlAnatomy() {
       value={value}
       onValueChange={setValue}
       items={[
-        { value: 'list', label: 'List', icon: <ViewList />, count: 12 },
-        { value: 'board', label: 'Board', icon: <ViewModule />, count: 4 },
+        { value: 'list', label: 'List', icon: <IconViewList />, count: 12 },
+        { value: 'board', label: 'Board', icon: <IconViewModule />, count: 4 },
       ]}
     />
   );

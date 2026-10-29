@@ -1,5 +1,5 @@
 import { Button, Card, Column, Row, Text } from '@envsemble/envui';
-import { UploadFile } from '@envsemble/envui/icons/UploadFile';
+import { IconUploadFile } from '@envsemble/envui/icons/UploadFile';
 
 export default function ImportPlans() {
   return (
@@ -8,7 +8,7 @@ export default function ImportPlans() {
           card is too narrow for both. */}
       <Row wrap align="center" gap={4}>
         <Text render={<span />} emphasis="muted">
-          <UploadFile width="1.5rem" height="1.5rem" />
+          <IconUploadFile width="1.5rem" height="1.5rem" />
         </Text>
         <Column gap={1} style={{ flex: '1 1 16rem' }}>
           <Text render={<h3 />} variant="headline">

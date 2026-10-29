@@ -10,13 +10,13 @@ import {
   TopBar,
   type Destination,
 } from '@envsemble/envui';
-import { Category } from '@envsemble/envui/icons/Category';
-import { Home } from '@envsemble/envui/icons/Home';
-import { Search } from '@envsemble/envui/icons/Search';
+import { IconCategory } from '@envsemble/envui/icons/Category';
+import { IconHome } from '@envsemble/envui/icons/Home';
+import { IconSearch } from '@envsemble/envui/icons/Search';
 
 const destinations: Destination[] = [
-  { label: 'Home', icon: <Home />, href: '/' },
-  { label: 'Projects', icon: <Category />, href: '/projects', current: true },
+  { label: 'Home', icon: <IconHome />, href: '/' },
+  { label: 'Projects', icon: <IconCategory />, href: '/projects', current: true },
 ];
 
 export default function AppFrameAnatomy() {
@@ -33,7 +33,7 @@ export default function AppFrameAnatomy() {
           actions={
             <>
               <Tooltip content="Search" side="bottom">
-                <IconButton variant="ghost" icon={<Search />} aria-label="Search" />
+                <IconButton variant="ghost" icon={<IconSearch />} aria-label="Search" />
               </Tooltip>
               <AvatarButton name="Alex Morgan" />
             </>

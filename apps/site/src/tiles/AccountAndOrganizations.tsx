@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { AvatarButton, Button, Menu, TopBar } from '@envsemble/envui';
-import { UnfoldMore } from '@envsemble/envui/icons/UnfoldMore';
+import { IconUnfoldMore } from '@envsemble/envui/icons/UnfoldMore';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
 const organizations = [
@@ -63,7 +63,7 @@ export default function AccountAndOrganizationsTile() {
           open={open}
           onOpenChange={setOpen}
           trigger={
-            <Button variant="secondary" endIcon={<UnfoldMore />}>
+            <Button variant="secondary" endIcon={<IconUnfoldMore />}>
               {active?.label}
             </Button>
           }

@@ -9,8 +9,8 @@ import {
   Text,
   TopBar,
 } from '@envsemble/envui';
-import { Description } from '@envsemble/envui/icons/Description';
-import { Home } from '@envsemble/envui/icons/Home';
+import { IconDescription } from '@envsemble/envui/icons/Description';
+import { IconHome } from '@envsemble/envui/icons/Home';
 
 /** Stands in for the window: a Scaffold fills its container, the window's height by default. */
 const preview: CSSProperties = { blockSize: '18rem' };
@@ -44,8 +44,8 @@ export default function InstalledWindow() {
         drawer: (
           <NavigationDrawer
             destinations={[
-              { label: 'Home', icon: <Home />, href: '#home', current: true },
-              { label: 'Documents', icon: <Description />, href: '#documents' },
+              { label: 'Home', icon: <IconHome />, href: '#home', current: true },
+              { label: 'Documents', icon: <IconDescription />, href: '#documents' },
             ]}
           />
         ),

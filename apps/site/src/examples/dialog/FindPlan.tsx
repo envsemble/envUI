@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button, Dialog, List, SearchField, Column, Text } from '@envsemble/envui';
-import { Search } from '@envsemble/envui/icons/Search';
+import { IconSearch } from '@envsemble/envui/icons/Search';
 
 const plans = [
   { name: 'Launch plan', owner: 'Priya Shah' },
@@ -27,7 +27,7 @@ export default function FindPlan() {
         }}
         placement="top"
         trigger={
-          <Button variant="secondary" startIcon={<Search />}>
+          <Button variant="secondary" startIcon={<IconSearch />}>
             Find a plan
           </Button>
         }

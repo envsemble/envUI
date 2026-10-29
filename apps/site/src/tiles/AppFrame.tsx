@@ -9,9 +9,9 @@ import {
   TopBar,
   type Destination,
 } from '@envsemble/envui';
-import { Category } from '@envsemble/envui/icons/Category';
-import { Group } from '@envsemble/envui/icons/Group';
-import { Home } from '@envsemble/envui/icons/Home';
+import { IconCategory } from '@envsemble/envui/icons/Category';
+import { IconGroup } from '@envsemble/envui/icons/Group';
+import { IconHome } from '@envsemble/envui/icons/Home';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
 const item = (index: number) =>
@@ -37,9 +37,9 @@ const script: PointerStep[] = [
 ];
 
 const places = [
-  { label: 'Home', icon: <Home />, line: 'Welcome back.' },
-  { label: 'Projects', icon: <Category />, line: '4 active.' },
-  { label: 'Team', icon: <Group />, line: '6 people.' },
+  { label: 'Home', icon: <IconHome />, line: 'Welcome back.' },
+  { label: 'Projects', icon: <IconCategory />, line: '4 active.' },
+  { label: 'Team', icon: <IconGroup />, line: '6 people.' },
 ];
 
 /** An application's frame: the top bar, the rail of its places, and the page of the current one. */

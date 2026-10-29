@@ -1,12 +1,12 @@
 import { Fragment, type CSSProperties, type ReactNode } from 'react';
 import { Badge, type BadgeTone, type BadgeVariant } from '@envsemble/envui';
-import { Archive } from '@envsemble/envui/icons/Archive';
-import { CheckCircle } from '@envsemble/envui/icons/CheckCircle';
-import { Error as ErrorIcon } from '@envsemble/envui/icons/Error';
-import { Info } from '@envsemble/envui/icons/Info';
-import { RadioButtonChecked } from '@envsemble/envui/icons/RadioButtonChecked';
-import { TaskAlt } from '@envsemble/envui/icons/TaskAlt';
-import { Warning } from '@envsemble/envui/icons/Warning';
+import { IconArchive } from '@envsemble/envui/icons/Archive';
+import { IconCheckCircle } from '@envsemble/envui/icons/CheckCircle';
+import { IconError } from '@envsemble/envui/icons/Error';
+import { IconInfo } from '@envsemble/envui/icons/Info';
+import { IconRadioButtonChecked } from '@envsemble/envui/icons/RadioButtonChecked';
+import { IconTaskAlt } from '@envsemble/envui/icons/TaskAlt';
+import { IconWarning } from '@envsemble/envui/icons/Warning';
 import { useTimeline } from '../../motion/Motion';
 import { CornerLabel } from './Steps';
 import { Figure } from './Topic';
@@ -22,8 +22,8 @@ const tones: readonly {
   icon: ReactNode;
   word: string;
 }[] = [
-  { badge: 'neutral', icon: <Archive />, word: 'Archived' },
-  { badge: 'primary', icon: <RadioButtonChecked />, word: 'Current' },
+  { badge: 'neutral', icon: <IconArchive />, word: 'Archived' },
+  { badge: 'primary', icon: <IconRadioButtonChecked />, word: 'Current' },
   {
     own: {
       soft: {
@@ -39,13 +39,13 @@ const tones: readonly {
         '--env-badge-outline': 'var(--env-color-border-primary)',
       } as CSSProperties,
     },
-    icon: <Info />,
+    icon: <IconInfo />,
     word: 'Tip',
   },
-  { badge: 'success', icon: <CheckCircle />, word: 'Ready' },
-  { badge: 'warning', icon: <Warning />, word: 'Due soon' },
-  { badge: 'danger', icon: <ErrorIcon />, word: 'Failed' },
-  { badge: 'done', icon: <TaskAlt />, word: 'Completed' },
+  { badge: 'success', icon: <IconCheckCircle />, word: 'Ready' },
+  { badge: 'warning', icon: <IconWarning />, word: 'Due soon' },
+  { badge: 'danger', icon: <IconError />, word: 'Failed' },
+  { badge: 'done', icon: <IconTaskAlt />, word: 'Completed' },
 ];
 
 /** Badge's variants, each with its name in the corner, in the order the figure shows them. */

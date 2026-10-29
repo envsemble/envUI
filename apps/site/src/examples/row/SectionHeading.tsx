@@ -1,5 +1,5 @@
 import { Badge, Button, Row, Text } from '@envsemble/envui';
-import { Add } from '@envsemble/envui/icons/Add';
+import { IconAdd } from '@envsemble/envui/icons/Add';
 
 export default function SectionHeading() {
   return (
@@ -12,7 +12,7 @@ export default function SectionHeading() {
         </Text>
         <Badge>12</Badge>
       </Row>
-      <Button variant="secondary" size="sm" startIcon={<Add />}>
+      <Button variant="secondary" size="sm" startIcon={<IconAdd />}>
         Invite people
       </Button>
     </Row>

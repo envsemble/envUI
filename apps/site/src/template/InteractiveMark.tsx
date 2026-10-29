@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 import { Tooltip } from '@envsemble/envui';
-import { TouchApp } from '@envsemble/envui/icons/TouchApp';
+import { IconTouchApp } from '@envsemble/envui/icons/TouchApp';
 
 /** What the mark says, as its name and its tooltip alike. */
 export const interactiveLabel = 'Interactive: try it';
@@ -58,7 +58,7 @@ export function InteractiveMark({ enabled = true }: { enabled?: boolean }) {
             aria-label={interactiveLabel}
             tabIndex={0}
           >
-            <TouchApp />
+            <IconTouchApp />
           </span>
         </Tooltip>
       )}

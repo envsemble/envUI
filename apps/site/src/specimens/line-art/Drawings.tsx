@@ -20,10 +20,10 @@ import {
   type LineArtDrawing,
   type LineArtMotion,
 } from '@envsemble/envui';
-import { Draw } from '@envsemble/envui/icons/Draw';
-import { InkEraser } from '@envsemble/envui/icons/InkEraser';
-import { PlayArrow } from '@envsemble/envui/icons/PlayArrow';
-import { Repeat } from '@envsemble/envui/icons/Repeat';
+import { IconDraw } from '@envsemble/envui/icons/Draw';
+import { IconInkEraser } from '@envsemble/envui/icons/InkEraser';
+import { IconPlayArrow } from '@envsemble/envui/icons/PlayArrow';
+import { IconRepeat } from '@envsemble/envui/icons/Repeat';
 import { SpecimenGrid, SpecimenHeadingLevel } from '../../figures/Example';
 
 /** Each drawing's name, as people say it. */
@@ -133,10 +133,10 @@ const row: CSSProperties = {
 
 /** The motions people can play on a card, each a button of its toolbar. */
 const motions: { motion: LineArtMotion; label: string; icon: ReactNode }[] = [
-  { motion: 'appear', label: 'Appear', icon: <Draw /> },
-  { motion: 'disappear', label: 'Disappear', icon: <InkEraser /> },
-  { motion: 'loop', label: 'Loop', icon: <Repeat /> },
-  { motion: 'play', label: 'Play', icon: <PlayArrow /> },
+  { motion: 'appear', label: 'Appear', icon: <IconDraw /> },
+  { motion: 'disappear', label: 'Disappear', icon: <IconInkEraser /> },
+  { motion: 'loop', label: 'Loop', icon: <IconRepeat /> },
+  { motion: 'play', label: 'Play', icon: <IconPlayArrow /> },
 ];
 
 /**

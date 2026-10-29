@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react';
 import { Button, Column, Page, Scaffold, Text, TopBar } from '@envsemble/envui';
-import { Lock } from '@envsemble/envui/icons/Lock';
-import { SearchOff } from '@envsemble/envui/icons/SearchOff';
-import { WifiOff } from '@envsemble/envui/icons/WifiOff';
+import { IconLock } from '@envsemble/envui/icons/Lock';
+import { IconSearchOff } from '@envsemble/envui/icons/SearchOff';
+import { IconWifiOff } from '@envsemble/envui/icons/WifiOff';
 import { useTimeline } from '../../motion/Motion';
 import { MotionStage } from '../../motion/MotionStage';
 import { Renew } from '../../motion/Renew';
@@ -10,19 +10,19 @@ import { Renew } from '../../motion/Renew';
 /** The three reasons a whole page can't show, each with its own way on. */
 const cases: { icon: ReactNode; title: string; text: string; action: string }[] = [
   {
-    icon: <SearchOff width="2.5rem" height="2.5rem" />,
+    icon: <IconSearchOff width="2.5rem" height="2.5rem" />,
     title: 'Page not found',
     text: 'The address may be mistyped, or the page may have moved. Check it, or go back to Home.',
     action: 'Go to Home',
   },
   {
-    icon: <Lock width="2.5rem" height="2.5rem" />,
+    icon: <IconLock width="2.5rem" height="2.5rem" />,
     title: 'You don’t have access to this page',
     text: 'Ask Priya Shah, its owner, for access to see it.',
     action: 'Request access',
   },
   {
-    icon: <WifiOff width="2.5rem" height="2.5rem" />,
+    icon: <IconWifiOff width="2.5rem" height="2.5rem" />,
     title: 'You’re offline',
     text: 'Your work is safe. Check your connection and try again.',
     action: 'Try again',

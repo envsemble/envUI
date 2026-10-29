@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Tree, type TreeItem, Badge } from '@envsemble/envui';
-import { Description } from '@envsemble/envui/icons/Description';
-import { FolderOpen } from '@envsemble/envui/icons/FolderOpen';
+import { IconDescription } from '@envsemble/envui/icons/Description';
+import { IconFolderOpen } from '@envsemble/envui/icons/FolderOpen';
 
 const rowsFor = (open: boolean): TreeItem[] =>
   [
@@ -9,7 +9,7 @@ const rowsFor = (open: boolean): TreeItem[] =>
       value: 'design',
       depth: 0,
       label: 'Design',
-      icon: <FolderOpen />,
+      icon: <IconFolderOpen />,
       expandable: true,
       expanded: open,
       end: <Badge count={2} aria-label="2 unread" />,
@@ -18,7 +18,7 @@ const rowsFor = (open: boolean): TreeItem[] =>
       value: 'design/brand.md',
       depth: 1,
       label: 'Brand.md',
-      icon: <Description />,
+      icon: <IconDescription />,
       description: 'Draft',
     },
   ].filter((row) => open || row.depth === 0);

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button, PageHeader, SearchField, SegmentedControl, Row } from '@envsemble/envui';
-import { Add } from '@envsemble/envui/icons/Add';
+import { IconAdd } from '@envsemble/envui/icons/Add';
 
 export default function WithToolbar() {
   const [view, setView] = useState('list');
@@ -10,7 +10,7 @@ export default function WithToolbar() {
       headingLevel={3}
       title="People"
       controlSize="sm"
-      actions={<Button startIcon={<Add />}>Invite</Button>}
+      actions={<Button startIcon={<IconAdd />}>Invite</Button>}
       toolbar={
         // Not a Toolbar: the field keeps its arrow keys and every control is a tab stop.
         <Row wrap align="center" justify="between" gap={3}>

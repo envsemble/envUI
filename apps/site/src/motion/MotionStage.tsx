@@ -8,8 +8,8 @@ import {
   type RefObject,
 } from 'react';
 import { IconButton, Tooltip } from '@envsemble/envui';
-import { Pause } from '@envsemble/envui/icons/Pause';
-import { PlayArrow } from '@envsemble/envui/icons/PlayArrow';
+import { IconPause } from '@envsemble/envui/icons/Pause';
+import { IconPlayArrow } from '@envsemble/envui/icons/PlayArrow';
 import type { StageFill } from '../shared/DocumentationTypes';
 import { useVerdictFit } from '../template/VerdictFit';
 import { useDisplaySettings } from '../theme/DisplaySettings';
@@ -115,7 +115,7 @@ export function MotionStage({
         <IconButton
           size="sm"
           className="catalogue-motion-pause"
-          icon={paused ? <PlayArrow /> : <Pause />}
+          icon={paused ? <IconPlayArrow /> : <IconPause />}
           aria-label={action}
           onClick={() => setOwn({ paused: !paused, over: motionPaused })}
         />

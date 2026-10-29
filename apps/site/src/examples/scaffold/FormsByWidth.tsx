@@ -10,17 +10,17 @@ import {
   TopBar,
   type Destination,
 } from '@envsemble/envui';
-import { Category } from '@envsemble/envui/icons/Category';
-import { Home } from '@envsemble/envui/icons/Home';
-import { Inbox } from '@envsemble/envui/icons/Inbox';
+import { IconCategory } from '@envsemble/envui/icons/Category';
+import { IconHome } from '@envsemble/envui/icons/Home';
+import { IconInbox } from '@envsemble/envui/icons/Inbox';
 
 export default function FormsByWidth() {
   const [current, setCurrent] = useState('Inbox');
   // One array of destinations, which each navigation form takes.
   const destinations: Destination[] = [
-    { label: 'Home', icon: <Home /> },
-    { label: 'Inbox', icon: <Inbox />, count: 3 },
-    { label: 'Projects', icon: <Category /> },
+    { label: 'Home', icon: <IconHome /> },
+    { label: 'Inbox', icon: <IconInbox />, count: 3 },
+    { label: 'Projects', icon: <IconCategory /> },
   ].map((destination) => ({
     ...destination,
     current: destination.label === current,

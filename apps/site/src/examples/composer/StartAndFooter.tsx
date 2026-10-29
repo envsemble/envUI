@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Composer, IconButton } from '@envsemble/envui';
-import { AttachFile } from '@envsemble/envui/icons/AttachFile';
+import { IconAttachFile } from '@envsemble/envui/icons/AttachFile';
 
 export default function StartAndFooter() {
   const [comments, setComments] = useState(0);
@@ -12,7 +12,7 @@ export default function StartAndFooter() {
       maxRows={6}
       start={
         <>
-          <IconButton variant="text" icon={<AttachFile />} aria-label="Attach files" />
+          <IconButton variant="text" icon={<IconAttachFile />} aria-label="Attach files" />
           <span>Design review</span>
         </>
       }

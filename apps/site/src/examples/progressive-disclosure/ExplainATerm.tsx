@@ -1,5 +1,5 @@
 import { IconButton, Link, Popover, Column, Row, Text, Tooltip } from '@envsemble/envui';
-import { Help } from '@envsemble/envui/icons/Help';
+import { IconHelp } from '@envsemble/envui/icons/Help';
 
 export default function ExplainATerm() {
   return (
@@ -19,7 +19,7 @@ export default function ExplainATerm() {
               <IconButton
                 variant="text"
                 size="sm"
-                icon={<Help />}
+                icon={<IconHelp />}
                 aria-label="About billable hours"
               />
             </Tooltip>

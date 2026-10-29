@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Button, Menu, Column, Text } from '@envsemble/envui';
-import { Download } from '@envsemble/envui/icons/Download';
-import { Link } from '@envsemble/envui/icons/Link';
-import { Send } from '@envsemble/envui/icons/Send';
-import { Share } from '@envsemble/envui/icons/Share';
+import { IconDownload } from '@envsemble/envui/icons/Download';
+import { IconLink } from '@envsemble/envui/icons/Link';
+import { IconSend } from '@envsemble/envui/icons/Send';
+import { IconShare } from '@envsemble/envui/icons/Share';
 
 const people = ['Alex Morgan', 'Sam Lee', 'Priya Shah'];
 const formats = ['PDF', 'Word document', 'Markdown'];
@@ -16,22 +16,22 @@ export default function Submenus() {
         aria-label="Share"
         align="start"
         trigger={
-          <Button variant="secondary" startIcon={<Share />}>
+          <Button variant="secondary" startIcon={<IconShare />}>
             Share
           </Button>
         }
       >
-        <Menu.Item icon={<Link />} onClick={() => setLastAction('Copied the link')}>
+        <Menu.Item icon={<IconLink />} onClick={() => setLastAction('Copied the link')}>
           Copy link
         </Menu.Item>
-        <Menu.Submenu label="Send to" icon={<Send />}>
+        <Menu.Submenu label="Send to" icon={<IconSend />}>
           {people.map((person) => (
             <Menu.Item key={person} onClick={() => setLastAction(`Sent to ${person}`)}>
               {person}
             </Menu.Item>
           ))}
         </Menu.Submenu>
-        <Menu.Submenu label="Export as" icon={<Download />}>
+        <Menu.Submenu label="Export as" icon={<IconDownload />}>
           {formats.map((format) => (
             <Menu.Item key={format} onClick={() => setLastAction(`Exported as ${format}`)}>
               {format}

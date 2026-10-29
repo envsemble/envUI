@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Button, Column, Surface, Text } from '@envsemble/envui';
-import { Lock } from '@envsemble/envui/icons/Lock';
+import { IconLock } from '@envsemble/envui/icons/Lock';
 
 export default function NoAccess() {
   const [requested, setRequested] = useState(false);
@@ -27,7 +27,7 @@ export default function NoAccess() {
         {/* Centred in the room the documents would take, with a larger icon. */}
         <Column gap={4} padding={5} align="center" justify="center" style={{ textAlign: 'center' }}>
           <Text render={<span />} emphasis="muted">
-            <Lock width="2.5rem" height="2.5rem" />
+            <IconLock width="2.5rem" height="2.5rem" />
           </Text>
           <Column gap={2} align="center" style={{ maxInlineSize: '30rem' }}>
             <Text render={<h4 />} variant="title">

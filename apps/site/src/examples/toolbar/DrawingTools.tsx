@@ -1,15 +1,15 @@
 import { useState } from 'react';
 import { Toolbar } from '@envsemble/envui';
-import { Draw } from '@envsemble/envui/icons/Draw';
-import { PanTool } from '@envsemble/envui/icons/PanTool';
-import { Rectangle } from '@envsemble/envui/icons/Rectangle';
-import { TextFields } from '@envsemble/envui/icons/TextFields';
+import { IconDraw } from '@envsemble/envui/icons/Draw';
+import { IconPanTool } from '@envsemble/envui/icons/PanTool';
+import { IconRectangle } from '@envsemble/envui/icons/Rectangle';
+import { IconTextFields } from '@envsemble/envui/icons/TextFields';
 
 const tools = [
-  { id: 'pan', label: 'Pan', icon: <PanTool />, shortcut: 'H' },
-  { id: 'draw', label: 'Draw', icon: <Draw />, shortcut: 'P' },
-  { id: 'shape', label: 'Rectangle', icon: <Rectangle />, shortcut: 'R' },
-  { id: 'text', label: 'Text', icon: <TextFields />, shortcut: 'T' },
+  { id: 'pan', label: 'Pan', icon: <IconPanTool />, shortcut: 'H' },
+  { id: 'draw', label: 'Draw', icon: <IconDraw />, shortcut: 'P' },
+  { id: 'shape', label: 'Rectangle', icon: <IconRectangle />, shortcut: 'R' },
+  { id: 'text', label: 'Text', icon: <IconTextFields />, shortcut: 'T' },
 ];
 
 export default function DrawingTools() {

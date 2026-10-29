@@ -1,6 +1,6 @@
 import { AvatarButton, Menu, TopBar } from '@envsemble/envui';
-import { Logout } from '@envsemble/envui/icons/Logout';
-import { ManageAccounts } from '@envsemble/envui/icons/ManageAccounts';
+import { IconLogout } from '@envsemble/envui/icons/Logout';
+import { IconManageAccounts } from '@envsemble/envui/icons/ManageAccounts';
 
 export default function AvatarTrigger() {
   return (
@@ -13,11 +13,11 @@ export default function AvatarTrigger() {
           align="end"
           trigger={<AvatarButton name="Alex Morgan" description="alex.morgan@example.com" />}
         >
-          <Menu.Item href="/account" icon={<ManageAccounts />}>
+          <Menu.Item href="/account" icon={<IconManageAccounts />}>
             Account settings
           </Menu.Item>
           <Menu.Separator />
-          <Menu.Item icon={<Logout />}>Sign out</Menu.Item>
+          <Menu.Item icon={<IconLogout />}>Sign out</Menu.Item>
         </Menu.Root>
       }
     />

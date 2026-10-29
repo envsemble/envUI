@@ -1,9 +1,9 @@
 import { useRef, useState } from 'react';
 import { Menu, Menubar, Column, Surface, Text, Textarea } from '@envsemble/envui';
-import { ContentCopy } from '@envsemble/envui/icons/ContentCopy';
-import { History } from '@envsemble/envui/icons/History';
-import { NoteAdd } from '@envsemble/envui/icons/NoteAdd';
-import { Save } from '@envsemble/envui/icons/Save';
+import { IconContentCopy } from '@envsemble/envui/icons/ContentCopy';
+import { IconHistory } from '@envsemble/envui/icons/History';
+import { IconNoteAdd } from '@envsemble/envui/icons/NoteAdd';
+import { IconSave } from '@envsemble/envui/icons/Save';
 
 const recent = ['Roadmap', 'Interview notes', 'Launch checklist'];
 
@@ -25,13 +25,13 @@ export default function NotesMenubar() {
           <Menubar.Root aria-label="Notes menu" accessKeys>
             <Menubar.Menu label="File" accessKey="F">
               <Menu.Item
-                icon={<NoteAdd />}
+                icon={<IconNoteAdd />}
                 shortcut="Ctrl+N"
                 onClick={() => setLastCommand('New note')}
               >
                 New note
               </Menu.Item>
-              <Menu.Submenu label="Open recent" icon={<History />}>
+              <Menu.Submenu label="Open recent" icon={<IconHistory />}>
                 {recent.map((name) => (
                   <Menu.Item key={name} onClick={() => setLastCommand(`Opened ${name}`)}>
                     {name}
@@ -39,7 +39,11 @@ export default function NotesMenubar() {
                 ))}
               </Menu.Submenu>
               <Menu.Separator />
-              <Menu.Item icon={<Save />} shortcut="Ctrl+S" onClick={() => setLastCommand('Saved')}>
+              <Menu.Item
+                icon={<IconSave />}
+                shortcut="Ctrl+S"
+                onClick={() => setLastCommand('Saved')}
+              >
                 Save
               </Menu.Item>
             </Menubar.Menu>
@@ -51,7 +55,7 @@ export default function NotesMenubar() {
               }}
             >
               <Menu.Item
-                icon={<ContentCopy />}
+                icon={<IconContentCopy />}
                 shortcut="Ctrl+C"
                 onClick={() => {
                   const target = field();

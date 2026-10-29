@@ -1,5 +1,5 @@
 import { Button, Popover, Column, Text } from '@envsemble/envui';
-import { Info } from '@envsemble/envui/icons/Info';
+import { IconInfo } from '@envsemble/envui/icons/Info';
 
 export default function DocumentDetails() {
   return (
@@ -9,7 +9,7 @@ export default function DocumentDetails() {
         defaultOpen
         title="Launch plan.md"
         trigger={
-          <Button variant="secondary" startIcon={<Info />}>
+          <Button variant="secondary" startIcon={<IconInfo />}>
             Details
           </Button>
         }

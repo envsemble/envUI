@@ -1,22 +1,22 @@
 import { Button, IconButton, type ButtonProps, type IconButtonProps } from '@envsemble/envui';
-import { Check } from '@envsemble/envui/icons/Check';
-import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
-import { Close } from '@envsemble/envui/icons/Close';
-import { Delete } from '@envsemble/envui/icons/Delete';
-import { Settings } from '@envsemble/envui/icons/Settings';
+import { IconCheck } from '@envsemble/envui/icons/Check';
+import { IconChevronRight } from '@envsemble/envui/icons/ChevronRight';
+import { IconClose } from '@envsemble/envui/icons/Close';
+import { IconDelete } from '@envsemble/envui/icons/Delete';
+import { IconSettings } from '@envsemble/envui/icons/Settings';
 
 /** Every designed pair of variant and tone, with the label the state matrix shows. */
 export const buttonVariants = [
-  { variant: 'primary', tone: 'neutral', label: 'Continue', icon: ChevronRight },
-  { variant: 'primary', tone: 'accent', label: 'Confirm', icon: Check },
-  { variant: 'primary', tone: 'danger', label: 'Delete', icon: Delete },
-  { variant: 'secondary', tone: 'neutral', label: 'Cancel', icon: Close },
-  { variant: 'outline', tone: 'neutral', label: 'Manage', icon: Settings },
-  { variant: 'outline', tone: 'danger', label: 'Remove', icon: Delete },
-  { variant: 'ghost', tone: 'neutral', label: 'Settings', icon: Settings },
-  { variant: 'ghost', tone: 'danger', label: 'Discard', icon: Delete },
-  { variant: 'text', tone: 'neutral', label: 'Learn more', icon: ChevronRight },
-  { variant: 'text', tone: 'danger', label: 'Leave', icon: Close },
+  { variant: 'primary', tone: 'neutral', label: 'Continue', icon: IconChevronRight },
+  { variant: 'primary', tone: 'accent', label: 'Confirm', icon: IconCheck },
+  { variant: 'primary', tone: 'danger', label: 'Delete', icon: IconDelete },
+  { variant: 'secondary', tone: 'neutral', label: 'Cancel', icon: IconClose },
+  { variant: 'outline', tone: 'neutral', label: 'Manage', icon: IconSettings },
+  { variant: 'outline', tone: 'danger', label: 'Remove', icon: IconDelete },
+  { variant: 'ghost', tone: 'neutral', label: 'Settings', icon: IconSettings },
+  { variant: 'ghost', tone: 'danger', label: 'Discard', icon: IconDelete },
+  { variant: 'text', tone: 'neutral', label: 'Learn more', icon: IconChevronRight },
+  { variant: 'text', tone: 'danger', label: 'Leave', icon: IconClose },
 ] as const;
 
 /** A value in words, as the catalogue names it: capitalised. */

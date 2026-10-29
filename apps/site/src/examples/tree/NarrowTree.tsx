@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Tree, type TreeItem } from '@envsemble/envui';
-import { Description } from '@envsemble/envui/icons/Description';
-import { FolderOpen } from '@envsemble/envui/icons/FolderOpen';
+import { IconDescription } from '@envsemble/envui/icons/Description';
+import { IconFolderOpen } from '@envsemble/envui/icons/FolderOpen';
 
 const rowsFor = (open: boolean): TreeItem[] =>
   [
@@ -9,7 +9,7 @@ const rowsFor = (open: boolean): TreeItem[] =>
       value: 'eng',
       depth: 0,
       label: 'Engineering',
-      icon: <FolderOpen />,
+      icon: <IconFolderOpen />,
       expandable: true,
       expanded: open,
     },
@@ -17,14 +17,14 @@ const rowsFor = (open: boolean): TreeItem[] =>
       value: 'eng/checklist.md',
       depth: 1,
       label: 'Release checklist.md',
-      icon: <Description />,
+      icon: <IconDescription />,
       description: 'Shared',
     },
     {
       value: 'eng/roadmap.md',
       depth: 1,
       label: 'Roadmap.md',
-      icon: <Description />,
+      icon: <IconDescription />,
       description: 'Draft',
     },
   ].filter((row) => open || row.depth === 0);

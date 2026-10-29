@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { DocumentTabs, IconButton, Surface, Text, type DocumentTabsItem } from '@envsemble/envui';
-import { Add } from '@envsemble/envui/icons/Add';
+import { IconAdd } from '@envsemble/envui/icons/Add';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
 const documents: DocumentTabsItem[] = ['Plan.md', 'Notes.md'].map((label) => ({
@@ -65,7 +65,7 @@ export default function DocumentTabsTile() {
         }}
         end={
           <IconButton
-            icon={<Add />}
+            icon={<IconAdd />}
             aria-label="New document"
             variant="ghost"
             size="sm"

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button, Popover, Column, Row, Text, TextField } from '@envsemble/envui';
-import { Edit } from '@envsemble/envui/icons/Edit';
+import { IconEdit } from '@envsemble/envui/icons/Edit';
 
 export default function RenameInPlace() {
   const [name, setName] = useState('Launch plan.md');
@@ -11,7 +11,7 @@ export default function RenameInPlace() {
         aria-label="Rename document"
         width="lg"
         trigger={
-          <Button variant="secondary" startIcon={<Edit />}>
+          <Button variant="secondary" startIcon={<IconEdit />}>
             Rename
           </Button>
         }

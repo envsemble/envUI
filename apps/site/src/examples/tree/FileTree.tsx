@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react';
 import { Tree, type TreeItem } from '@envsemble/envui';
-import { Description } from '@envsemble/envui/icons/Description';
-import { Folder } from '@envsemble/envui/icons/Folder';
-import { FolderOpen } from '@envsemble/envui/icons/FolderOpen';
+import { IconDescription } from '@envsemble/envui/icons/Description';
+import { IconFolder } from '@envsemble/envui/icons/Folder';
+import { IconFolderOpen } from '@envsemble/envui/icons/FolderOpen';
 
 interface FileNode {
   path: string;
@@ -61,7 +61,7 @@ export default function FileTree() {
           label: node.name,
           expandable: Boolean(node.children),
           expanded: open,
-          icon: node.children ? open ? <FolderOpen /> : <Folder /> : <Description />,
+          icon: node.children ? open ? <IconFolderOpen /> : <IconFolder /> : <IconDescription />,
           tooltip: node.path,
         });
         if (node.children && open) visit(node.children, depth + 1);

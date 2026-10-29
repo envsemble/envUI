@@ -9,9 +9,9 @@ import {
   TopBar,
   type Destination,
 } from '@envsemble/envui';
-import { Home } from '@envsemble/envui/icons/Home';
-import { Inbox } from '@envsemble/envui/icons/Inbox';
-import { Search } from '@envsemble/envui/icons/Search';
+import { IconHome } from '@envsemble/envui/icons/Home';
+import { IconInbox } from '@envsemble/envui/icons/Inbox';
+import { IconSearch } from '@envsemble/envui/icons/Search';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
 const item = (index: number) =>
@@ -33,8 +33,8 @@ const script: PointerStep[] = [
 ];
 
 const places = [
-  { label: 'Home', icon: <Home />, line: 'Welcome back.' },
-  { label: 'Inbox', icon: <Inbox />, line: '3 new messages.' },
+  { label: 'Home', icon: <IconHome />, line: 'Welcome back.' },
+  { label: 'Inbox', icon: <IconInbox />, line: '3 new messages.' },
 ];
 
 /** An application's frame: the rail at the start, the top bar and the page beside it. */
@@ -54,7 +54,10 @@ export default function ScaffoldTile() {
       navigationForms={{ compact: 'rail', medium: 'rail', expanded: 'rail', large: 'rail' }}
       style={{ inlineSize: '16rem', blockSize: '10.5rem' }}
       topBar={
-        <TopBar title="Northwind" actions={<IconButton icon={<Search />} aria-label="Search" />} />
+        <TopBar
+          title="Northwind"
+          actions={<IconButton icon={<IconSearch />} aria-label="Search" />}
+        />
       }
       navigation={{ rail: <NavigationRail destinations={destinations} /> }}
     >

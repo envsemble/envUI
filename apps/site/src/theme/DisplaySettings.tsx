@@ -9,9 +9,9 @@ import {
   type ThemeContrast,
   type ThemeScale,
 } from '@envsemble/envui';
-import { Pause } from '@envsemble/envui/icons/Pause';
-import { PlayArrow } from '@envsemble/envui/icons/PlayArrow';
-import { Tune } from '@envsemble/envui/icons/Tune';
+import { IconPause } from '@envsemble/envui/icons/Pause';
+import { IconPlayArrow } from '@envsemble/envui/icons/PlayArrow';
+import { IconTune } from '@envsemble/envui/icons/Tune';
 import { displayStorageKeys } from './DisplayStorage';
 
 const contrasts: readonly ThemeContrast[] = ['system', 'standard', 'high'];
@@ -157,10 +157,10 @@ export function DisplayMenu({ iconOnly = false }: { iconOnly?: boolean }) {
         iconOnly ? (
           // The Tooltip passes the menu button's props and ref on to the IconButton.
           <Tooltip content="Display">
-            <IconButton variant="ghost" icon={<Tune />} aria-label="Display" />
+            <IconButton variant="ghost" icon={<IconTune />} aria-label="Display" />
           </Tooltip>
         ) : (
-          <Button variant="ghost" startIcon={<Tune />}>
+          <Button variant="ghost" startIcon={<IconTune />}>
             Display
           </Button>
         )
@@ -211,7 +211,7 @@ export function MotionButton() {
     <Tooltip content={label} side="inline-end">
       <IconButton
         variant="ghost"
-        icon={motionPaused ? <PlayArrow /> : <Pause />}
+        icon={motionPaused ? <IconPlayArrow /> : <IconPause />}
         aria-label={label}
         onClick={() => setMotionPaused(!motionPaused)}
       />

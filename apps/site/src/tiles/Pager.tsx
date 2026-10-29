@@ -1,7 +1,7 @@
 import { useState, type MouseEvent, type ReactNode } from 'react';
 import { Pager } from '@envsemble/envui';
-import { ArrowBack } from '@envsemble/envui/icons/ArrowBack';
-import { ArrowForward } from '@envsemble/envui/icons/ArrowForward';
+import { IconArrowBack } from '@envsemble/envui/icons/ArrowBack';
+import { IconArrowForward } from '@envsemble/envui/icons/ArrowForward';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
 const pages = ['Overview', 'Install', 'Configure', 'Deploy', 'Monitor'];
@@ -41,8 +41,8 @@ export default function PagerTile() {
   });
   return (
     <Pager.Root aria-label="Guide pages" style={{ inlineSize: '11rem' }}>
-      <Pager.Previous {...link(page - 1, <ArrowBack />)} />
-      <Pager.Next {...link(page + 1, <ArrowForward />)} />
+      <Pager.Previous {...link(page - 1, <IconArrowBack />)} />
+      <Pager.Next {...link(page + 1, <IconArrowForward />)} />
     </Pager.Root>
   );
 }

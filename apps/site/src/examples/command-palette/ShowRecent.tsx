@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { Button, CommandPalette, type CommandPaletteItem } from '@envsemble/envui';
-import { Description } from '@envsemble/envui/icons/Description';
-import { Search } from '@envsemble/envui/icons/Search';
+import { IconDescription } from '@envsemble/envui/icons/Description';
+import { IconSearch } from '@envsemble/envui/icons/Search';
 
 const documents = ['Roadmap.md', 'Pricing research.md', 'Launch checklist.md', 'Budget.md'];
 
 const item = (name: string, group: string): CommandPaletteItem => ({
   id: name,
   label: name,
-  icon: <Description />,
+  icon: <IconDescription />,
   group,
 });
 // Until people type, the recent documents show, as a group of their own.
@@ -23,7 +23,7 @@ export default function ShowRecent() {
     .map((name) => item(name, 'Documents'));
   return (
     <>
-      <Button variant="secondary" startIcon={<Search />} onClick={() => setOpen(true)}>
+      <Button variant="secondary" startIcon={<IconSearch />} onClick={() => setOpen(true)}>
         Go to document
       </Button>
       <CommandPalette

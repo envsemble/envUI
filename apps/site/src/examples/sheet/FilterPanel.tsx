@@ -10,7 +10,7 @@ import {
   Text,
   Sheet,
 } from '@envsemble/envui';
-import { FilterList } from '@envsemble/envui/icons/FilterList';
+import { IconFilterList } from '@envsemble/envui/icons/FilterList';
 
 const projects = [
   { name: 'Northwind launch', status: 'active', owner: 'Priya Shah' },
@@ -41,7 +41,7 @@ export default function FilterPanel() {
         // Shown open in the docs; without defaultOpen, it opens from its trigger.
         defaultOpen
         trigger={
-          <Button variant="secondary" startIcon={<FilterList />}>
+          <Button variant="secondary" startIcon={<IconFilterList />}>
             Filters
           </Button>
         }

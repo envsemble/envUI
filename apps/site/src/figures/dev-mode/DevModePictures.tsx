@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react';
 import { Column, IconButton, Surface, Text, useTheme } from '@envsemble/envui';
-import { ViewInAr } from '@envsemble/envui/icons/ViewInAr';
+import { IconViewInAr } from '@envsemble/envui/icons/ViewInAr';
 import { Figure } from '../foundations/Topic';
 // Pictures of the real dev mode at work on the demo application, captured by
 // scripts/docs/CaptureDevModeImage.ts (npm run docs:dev-mode-image) in each theme.
@@ -148,7 +148,7 @@ export function DevModeButtonPicture() {
         </Text>
         <IconButton
           variant="secondary"
-          icon={<ViewInAr />}
+          icon={<IconViewInAr />}
           aria-label="Dev mode"
           className="docs-dev-mode-button"
         />

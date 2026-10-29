@@ -1,12 +1,12 @@
 import { Button, Column, Tabs, Text } from '@envsemble/envui';
-import { Lock } from '@envsemble/envui/icons/Lock';
-import { Notifications } from '@envsemble/envui/icons/Notifications';
-import { Person } from '@envsemble/envui/icons/Person';
+import { IconLock } from '@envsemble/envui/icons/Lock';
+import { IconNotifications } from '@envsemble/envui/icons/Notifications';
+import { IconPerson } from '@envsemble/envui/icons/Person';
 
 const sections = [
-  { value: 'profile', label: 'Profile', icon: Person, text: 'Alex Morgan, alex@example.com' },
-  { value: 'notifications', label: 'Notifications', icon: Notifications, text: 'E-mail daily' },
-  { value: 'security', label: 'Security', icon: Lock, text: 'Two-step sign-in is on.' },
+  { value: 'profile', label: 'Profile', icon: IconPerson, text: 'Alex Morgan, alex@example.com' },
+  { value: 'notifications', label: 'Notifications', icon: IconNotifications, text: 'E-mail daily' },
+  { value: 'security', label: 'Security', icon: IconLock, text: 'Two-step sign-in is on.' },
 ];
 
 export default function VerticalList() {

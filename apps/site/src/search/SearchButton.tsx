@@ -1,5 +1,5 @@
 import { Button, IconButton, Kbd, Row, Tooltip } from '@envsemble/envui';
-import { Search } from '@envsemble/envui/icons/Search';
+import { IconSearch } from '@envsemble/envui/icons/Search';
 import { applePlatform, commandKey } from './SearchShortcut';
 
 /** The keys of the search shortcut, as the button shows them, and as aria-keyshortcuts names them. */
@@ -33,7 +33,7 @@ export function SearchButton({
       >
         <IconButton
           variant="ghost"
-          icon={<Search />}
+          icon={<IconSearch />}
           aria-label="Search"
           aria-keyshortcuts={ariaKeyShortcuts}
           onClick={onClick}
@@ -44,7 +44,7 @@ export function SearchButton({
   return (
     <Button
       variant="secondary"
-      startIcon={<Search />}
+      startIcon={<IconSearch />}
       end={<Kbd keys={keys} aria-hidden />}
       aria-keyshortcuts={ariaKeyShortcuts}
       onClick={onClick}

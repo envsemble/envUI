@@ -1,5 +1,5 @@
 import { Button, Column, PageHeader, SearchField, Text } from '@envsemble/envui';
-import { SearchOff } from '@envsemble/envui/icons/SearchOff';
+import { IconSearchOff } from '@envsemble/envui/icons/SearchOff';
 
 export default function EmptyStatesAnatomy() {
   return (
@@ -12,7 +12,7 @@ export default function EmptyStatesAnatomy() {
       />
       <Column gap={4} padding={5}>
         <Text render={<span />} emphasis="muted">
-          <SearchOff width="1.5rem" height="1.5rem" />
+          <IconSearchOff width="1.5rem" height="1.5rem" />
         </Text>
         <Column gap={2}>
           <Text render={<h4 />} variant="title">

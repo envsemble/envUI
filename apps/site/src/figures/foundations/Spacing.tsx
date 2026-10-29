@@ -22,8 +22,8 @@ import {
   type RowDensity,
   type ThemeScale,
 } from '@envsemble/envui';
-import { MoreVert } from '@envsemble/envui/icons/MoreVert';
-import { Add } from '@envsemble/envui/icons/Add';
+import { IconMoreVert } from '@envsemble/envui/icons/MoreVert';
+import { IconAdd } from '@envsemble/envui/icons/Add';
 import { useState } from 'react';
 import type { FoundationFigure } from './FoundationFigures';
 import { MarkedSubject } from './Marks';
@@ -119,8 +119,8 @@ function AlignFigure() {
               { value: 'board', label: 'Board' },
             ]}
           />
-          <IconButton variant="secondary" icon={<MoreVert />} aria-label="More" />
-          <Button startIcon={<Add />}>New report</Button>
+          <IconButton variant="secondary" icon={<IconMoreVert />} aria-label="More" />
+          <Button startIcon={<IconAdd />}>New report</Button>
         </Row>
       </MarkedSubject>
     </Figure>

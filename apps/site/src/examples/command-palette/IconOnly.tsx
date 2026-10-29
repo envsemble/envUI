@@ -9,7 +9,7 @@ import {
   Tooltip,
   useModifierKey,
 } from '@envsemble/envui';
-import { Search } from '@envsemble/envui/icons/Search';
+import { IconSearch } from '@envsemble/envui/icons/Search';
 
 export default function IconOnly() {
   const modifier = useModifierKey();
@@ -32,7 +32,7 @@ export default function IconOnly() {
           >
             <IconButton
               variant="ghost"
-              icon={<Search />}
+              icon={<IconSearch />}
               aria-label="Search"
               aria-keyshortcuts={`${modifier.key}+K`}
               onClick={() => setSearches((count) => count + 1)}

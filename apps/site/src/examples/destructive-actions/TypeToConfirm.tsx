@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { Button, ConfirmDialog, Column, Text, TextField } from '@envsemble/envui';
-import { Delete } from '@envsemble/envui/icons/Delete';
+import { IconDelete } from '@envsemble/envui/icons/Delete';
 
 const project = { name: 'Data migration', documents: 128, tasks: 46 };
 
@@ -17,7 +17,7 @@ export default function TypeToConfirm() {
       <Button
         variant="outline"
         tone="danger"
-        startIcon={<Delete />}
+        startIcon={<IconDelete />}
         onClick={() => {
           setTyped('');
           setError(undefined);

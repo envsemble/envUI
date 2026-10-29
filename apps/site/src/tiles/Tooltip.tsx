@@ -1,7 +1,7 @@
 import { IconButton, Row, Tooltip } from '@envsemble/envui';
-import { Download } from '@envsemble/envui/icons/Download';
-import { Refresh } from '@envsemble/envui/icons/Refresh';
-import { Share } from '@envsemble/envui/icons/Share';
+import { IconDownload } from '@envsemble/envui/icons/Download';
+import { IconRefresh } from '@envsemble/envui/icons/Refresh';
+import { IconShare } from '@envsemble/envui/icons/Share';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
 const button = (index: number) => `.env-icon-button:nth-child(${index} of .env-icon-button)`;
@@ -20,9 +20,9 @@ const script: PointerStep[] = [
 ];
 
 const actions = [
-  { label: 'Refresh', icon: <Refresh /> },
-  { label: 'Download', icon: <Download /> },
-  { label: 'Share', icon: <Share /> },
+  { label: 'Refresh', icon: <IconRefresh /> },
+  { label: 'Download', icon: <IconDownload /> },
+  { label: 'Share', icon: <IconShare /> },
 ];
 
 /** Icon buttons, the middle one's tooltip open above it. */

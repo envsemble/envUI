@@ -1,8 +1,8 @@
 import { useId, useState } from 'react';
 import { Button, Column, Menu, Text } from '@envsemble/envui';
-import { Add } from '@envsemble/envui/icons/Add';
-import { Groups3 } from '@envsemble/envui/icons/Groups3';
-import { UnfoldMore } from '@envsemble/envui/icons/UnfoldMore';
+import { IconAdd } from '@envsemble/envui/icons/Add';
+import { IconGroups3 } from '@envsemble/envui/icons/Groups3';
+import { IconUnfoldMore } from '@envsemble/envui/icons/UnfoldMore';
 
 const organizations = [
   { id: 'northwind', label: 'Northwind Labs', role: 'Admin' },
@@ -23,7 +23,7 @@ export default function SwitchOrganization() {
         align="start"
         trigger={
           // The trigger names the active organization.
-          <Button variant="secondary" endIcon={<UnfoldMore />}>
+          <Button variant="secondary" endIcon={<IconUnfoldMore />}>
             {active?.label}
           </Button>
         }
@@ -31,7 +31,7 @@ export default function SwitchOrganization() {
         {/* The first row: the groups icon above the heading that names the organizations. */}
         <Menu.Header>
           <Column align="center" gap={2} padding={3}>
-            <Groups3 width="2rem" height="2rem" />
+            <IconGroups3 width="2rem" height="2rem" />
             <Text variant="headline" id={headingId}>
               Organizations
             </Text>
@@ -52,7 +52,7 @@ export default function SwitchOrganization() {
           ))}
         </Menu.RadioGroup>
         <Menu.Separator />
-        <Menu.Item icon={<Add />} onClick={() => setMessage('Create organization chosen')}>
+        <Menu.Item icon={<IconAdd />} onClick={() => setMessage('Create organization chosen')}>
           Create organization
         </Menu.Item>
       </Menu.Root>

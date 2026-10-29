@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { Button, ToastProvider, useToast } from '@envsemble/envui';
-import { Send } from '@envsemble/envui/icons/Send';
+import { IconSend } from '@envsemble/envui/icons/Send';
 
 const people = [
   { name: 'Alex Morgan', email: 'alex.morgan@example.com' },
@@ -26,7 +26,7 @@ function ReminderButton() {
     );
   };
   return (
-    <Button variant="secondary" startIcon={<Send />} onClick={remind}>
+    <Button variant="secondary" startIcon={<IconSend />} onClick={remind}>
       Send reminder
     </Button>
   );

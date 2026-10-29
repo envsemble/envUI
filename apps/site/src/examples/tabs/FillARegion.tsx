@@ -1,6 +1,6 @@
 import { Column, Row, Surface, Tabs, Text } from '@envsemble/envui';
 import type { ReactNode } from 'react';
-import { ArrowForward } from '@envsemble/envui/icons/ArrowForward';
+import { IconArrowForward } from '@envsemble/envui/icons/ArrowForward';
 
 const steps = ['Draft', 'Review', 'Publish'];
 
@@ -18,7 +18,7 @@ function Diagram() {
     <Row gap={2} align="center">
       {steps.map((step, index) => (
         <Row key={step} gap={2} align="center">
-          {index > 0 && <ArrowForward />}
+          {index > 0 && <IconArrowForward />}
           <Surface background="default" padding={3} radius="sm">
             <Text>{step}</Text>
           </Surface>

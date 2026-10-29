@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Button, Menu } from '@envsemble/envui';
-import { ContentCopy } from '@envsemble/envui/icons/ContentCopy';
-import { Delete } from '@envsemble/envui/icons/Delete';
-import { Edit } from '@envsemble/envui/icons/Edit';
-import { ExpandMore } from '@envsemble/envui/icons/ExpandMore';
+import { IconContentCopy } from '@envsemble/envui/icons/ContentCopy';
+import { IconDelete } from '@envsemble/envui/icons/Delete';
+import { IconEdit } from '@envsemble/envui/icons/Edit';
+import { IconExpandMore } from '@envsemble/envui/icons/ExpandMore';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
 const item = (index: number) => `.env-menu-item:nth-child(${index} of .env-menu-item)`;
@@ -40,14 +40,14 @@ export default function MenuTile() {
       open={open}
       onOpenChange={setOpen}
       trigger={
-        <Button variant="secondary" endIcon={<ExpandMore />}>
+        <Button variant="secondary" endIcon={<IconExpandMore />}>
           Actions
         </Button>
       }
     >
-      <Menu.Item icon={<Edit />}>Rename</Menu.Item>
-      <Menu.Item icon={<ContentCopy />}>Duplicate</Menu.Item>
-      <Menu.Item icon={<Delete />}>Delete</Menu.Item>
+      <Menu.Item icon={<IconEdit />}>Rename</Menu.Item>
+      <Menu.Item icon={<IconContentCopy />}>Duplicate</Menu.Item>
+      <Menu.Item icon={<IconDelete />}>Delete</Menu.Item>
     </Menu.Root>
   );
 }

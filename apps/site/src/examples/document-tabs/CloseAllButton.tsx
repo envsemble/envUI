@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { DocumentTabs, IconButton, Tooltip, type DocumentTabsItem } from '@envsemble/envui';
-import { Add } from '@envsemble/envui/icons/Add';
-import { TabClose } from '@envsemble/envui/icons/TabClose';
+import { IconAdd } from '@envsemble/envui/icons/Add';
+import { IconTabClose } from '@envsemble/envui/icons/TabClose';
 
 const first: DocumentTabsItem[] = [
   { value: 'roadmap', label: 'Roadmap.md' },
@@ -45,7 +45,7 @@ export default function CloseAllButton() {
             <IconButton
               variant="ghost"
               size="sm"
-              icon={<Add />}
+              icon={<IconAdd />}
               aria-label="New document"
               onClick={open}
             />
@@ -54,7 +54,7 @@ export default function CloseAllButton() {
             <IconButton
               variant="ghost"
               size="sm"
-              icon={<TabClose />}
+              icon={<IconTabClose />}
               aria-label="Close all tabs"
               disabled={tabs.length === 0}
               onClick={closeAll}

@@ -12,11 +12,11 @@ import {
   Column,
   Text,
 } from '@envsemble/envui';
-import { Add } from '@envsemble/envui/icons/Add';
-import { Delete } from '@envsemble/envui/icons/Delete';
-import { FileCopy } from '@envsemble/envui/icons/FileCopy';
-import { FolderOpen } from '@envsemble/envui/icons/FolderOpen';
-import { MoreVert } from '@envsemble/envui/icons/MoreVert';
+import { IconAdd } from '@envsemble/envui/icons/Add';
+import { IconDelete } from '@envsemble/envui/icons/Delete';
+import { IconFileCopy } from '@envsemble/envui/icons/FileCopy';
+import { IconFolderOpen } from '@envsemble/envui/icons/FolderOpen';
+import { IconMoreVert } from '@envsemble/envui/icons/MoreVert';
 
 interface Project {
   id: string;
@@ -55,7 +55,7 @@ export default function RowActions() {
       {projects.length === 0 ? (
         <Column gap={4} padding={5}>
           <Text render={<span />} emphasis="muted">
-            <FolderOpen width="1.5rem" height="1.5rem" />
+            <IconFolderOpen width="1.5rem" height="1.5rem" />
           </Text>
           <Column gap={2}>
             <Text render={<h4 />} variant="title">
@@ -67,7 +67,7 @@ export default function RowActions() {
           </Column>
           <Button
             ref={createButton}
-            startIcon={<Add />}
+            startIcon={<IconAdd />}
             onClick={() => setProjects([{ ...initialProjects[0], id: crypto.randomUUID() }])}
           >
             Create project
@@ -104,14 +104,14 @@ export default function RowActions() {
                       <Tooltip content="More actions">
                         <IconButton
                           variant="ghost"
-                          icon={<MoreVert />}
+                          icon={<IconMoreVert />}
                           aria-label={`More actions for ${project.name}`}
                         />
                       </Tooltip>
                     }
                   >
                     <Menu.Item
-                      icon={<FileCopy />}
+                      icon={<IconFileCopy />}
                       onClick={() =>
                         setProjects((current) => [
                           ...current.slice(0, index + 1),
@@ -126,7 +126,7 @@ export default function RowActions() {
                     {/* envUI has no danger menu item yet: the label names the consequence, and the
                       ellipsis says a confirmation follows. */}
                     <Menu.Item
-                      icon={<Delete />}
+                      icon={<IconDelete />}
                       onClick={() => {
                         returnFocus.current = menuButtons()[index] ?? null;
                         setTarget(project);

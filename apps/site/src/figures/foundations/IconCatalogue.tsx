@@ -8,36 +8,37 @@ import * as symbols from 'envui-icon-list';
 import { Example } from '../Example';
 
 const normalizeName = (name: string) => name.toLowerCase().replace(/[\s_-]/g, '');
+/** An icon's module, its name without the prefix: IconAdd is icons/Add, Icon10k icons/10k. */
+const moduleName = (name: string) => name.replace(/^Icon/, '');
 const displayName = (name: string) =>
-  name
-    .replace(/^Icon(?=\d)/, '')
+  moduleName(name)
     .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
     .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2');
 const commonNames = [
-  'Search',
-  'Home',
-  'Menu',
-  'Close',
-  'Settings',
-  'CheckCircle',
-  'Favorite',
-  'Add',
-  'Delete',
-  'ArrowBack',
-  'Star',
-  'ChevronRight',
-  'ArrowForward',
-  'MoreVert',
-  'Check',
-  'Info',
-  'Warning',
-  'Error',
-  'Download',
-  'Upload',
-  'Edit',
-  'Folder',
-  'Person',
-  'Help',
+  'IconSearch',
+  'IconHome',
+  'IconMenu',
+  'IconClose',
+  'IconSettings',
+  'IconCheckCircle',
+  'IconFavorite',
+  'IconAdd',
+  'IconDelete',
+  'IconArrowBack',
+  'IconStar',
+  'IconChevronRight',
+  'IconArrowForward',
+  'IconMoreVert',
+  'IconCheck',
+  'IconInfo',
+  'IconWarning',
+  'IconError',
+  'IconDownload',
+  'IconUpload',
+  'IconEdit',
+  'IconFolder',
+  'IconPerson',
+  'IconHelp',
 ];
 const commonOrder = new Map(commonNames.map((name, index) => [name, index]));
 const catalogue = Object.entries(symbols)
@@ -68,7 +69,7 @@ function IconDetails({ name, filled }: { name: keyof typeof symbols; filled: boo
       <Text variant="caption">Inherits the surrounding text color.</Text>
       {/* The code to use it, as under every example. */}
       <CodeBlock language="tsx" label="React import" copyable>
-        {`import { ${name} } from '@envsemble/envui/icons/${name}';
+        {`import { ${name} } from '@envsemble/envui/icons/${moduleName(name)}';
 
 <${name}${filled ? ' filled' : ''} />`}
       </CodeBlock>

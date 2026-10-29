@@ -7,7 +7,7 @@ import {
   ToastProvider,
   useToast,
 } from '@envsemble/envui';
-import { Send } from '@envsemble/envui/icons/Send';
+import { IconSend } from '@envsemble/envui/icons/Send';
 import { usePointer, usePreviewLayer, type PointerStep } from '../motion/Motion';
 
 /** The invitation sent: the button works a moment, and a notification says how it went. */
@@ -36,7 +36,7 @@ function Invite() {
   return (
     <Column gap={4} style={{ inlineSize: '14rem' }}>
       <TextField label="Email address" defaultValue="jordan.kim@example.com" />
-      <Button startIcon={<Send />} pending={sending} onClick={() => setSending(true)}>
+      <Button startIcon={<IconSend />} pending={sending} onClick={() => setSending(true)}>
         Send invitation
       </Button>
     </Column>

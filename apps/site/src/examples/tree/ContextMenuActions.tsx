@@ -1,10 +1,10 @@
 import { useMemo, useState } from 'react';
 import { IconButton, Menu, Column, Tree, type TreeItem } from '@envsemble/envui';
-import { Delete } from '@envsemble/envui/icons/Delete';
-import { Description } from '@envsemble/envui/icons/Description';
-import { FileCopy } from '@envsemble/envui/icons/FileCopy';
-import { Folder } from '@envsemble/envui/icons/Folder';
-import { NoteAdd } from '@envsemble/envui/icons/NoteAdd';
+import { IconDelete } from '@envsemble/envui/icons/Delete';
+import { IconDescription } from '@envsemble/envui/icons/Description';
+import { IconFileCopy } from '@envsemble/envui/icons/FileCopy';
+import { IconFolder } from '@envsemble/envui/icons/Folder';
+import { IconNoteAdd } from '@envsemble/envui/icons/NoteAdd';
 
 interface Entry {
   id: string;
@@ -48,7 +48,7 @@ export default function ContextMenuActions() {
           label: entry.name,
           expandable: entry.folder,
           expanded: open,
-          icon: entry.folder ? <Folder /> : <Description />,
+          icon: entry.folder ? <IconFolder /> : <IconDescription />,
         });
         if (entry.folder && open) visit(entry.id, depth + 1);
       }
@@ -90,13 +90,13 @@ export default function ContextMenuActions() {
       <div style={{ display: 'flex', gap: '0.25rem' }}>
         <IconButton
           variant="ghost"
-          icon={<NoteAdd />}
+          icon={<IconNoteAdd />}
           aria-label="New document"
           onClick={() => create(null)}
         />
         <IconButton
           variant="ghost"
-          icon={<Delete />}
+          icon={<IconDelete />}
           aria-label="Delete the selected document"
           disabled={selected === null}
           onClick={() => selected && remove(selected)}
@@ -117,21 +117,21 @@ export default function ContextMenuActions() {
             row ? (
               <>
                 {row.expandable ? (
-                  <Menu.Item icon={<NoteAdd />} onClick={() => create(row.value)}>
+                  <Menu.Item icon={<IconNoteAdd />} onClick={() => create(row.value)}>
                     New document here
                   </Menu.Item>
                 ) : (
-                  <Menu.Item icon={<FileCopy />} onClick={() => duplicate(row.value)}>
+                  <Menu.Item icon={<IconFileCopy />} onClick={() => duplicate(row.value)}>
                     Duplicate
                   </Menu.Item>
                 )}
                 <Menu.Separator />
-                <Menu.Item icon={<Delete />} onClick={() => remove(row.value)}>
+                <Menu.Item icon={<IconDelete />} onClick={() => remove(row.value)}>
                   Delete
                 </Menu.Item>
               </>
             ) : (
-              <Menu.Item icon={<NoteAdd />} onClick={() => create(null)}>
+              <Menu.Item icon={<IconNoteAdd />} onClick={() => create(null)}>
                 New document
               </Menu.Item>
             )

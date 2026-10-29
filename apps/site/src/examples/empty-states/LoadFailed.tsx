@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Alert, Button, Column, Row, Table, Text, placeholders } from '@envsemble/envui';
-import { Upload } from '@envsemble/envui/icons/Upload';
+import { IconUpload } from '@envsemble/envui/icons/Upload';
 
 export default function LoadFailed() {
   const [state, setState] = useState<'failed' | 'loading' | 'loaded'>('failed');
@@ -23,7 +23,7 @@ export default function LoadFailed() {
         <Text render={<h3 ref={heading} tabIndex={-1} />} variant="title">
           Documents
         </Text>
-        <Button variant="secondary" size="sm" startIcon={<Upload />} href="/documents/upload">
+        <Button variant="secondary" size="sm" startIcon={<IconUpload />} href="/documents/upload">
           Upload document
         </Button>
       </Row>

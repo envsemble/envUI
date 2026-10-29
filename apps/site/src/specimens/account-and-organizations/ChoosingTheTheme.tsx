@@ -14,9 +14,9 @@ import {
   useTheme,
   type ColorScheme,
 } from '@envsemble/envui';
-import { Logout } from '@envsemble/envui/icons/Logout';
-import { ManageAccounts } from '@envsemble/envui/icons/ManageAccounts';
-import { Palette } from '@envsemble/envui/icons/Palette';
+import { IconLogout } from '@envsemble/envui/icons/Logout';
+import { IconManageAccounts } from '@envsemble/envui/icons/ManageAccounts';
+import { IconPalette } from '@envsemble/envui/icons/Palette';
 import { usePointer, type PointerStep } from '../../motion/Motion';
 import { MotionStage } from '../../motion/MotionStage';
 
@@ -101,17 +101,17 @@ function Choosing() {
                       </Text>
                     </Column>
                   </Menu.Header>
-                  <Menu.Item href="/account" icon={<ManageAccounts />}>
+                  <Menu.Item href="/account" icon={<IconManageAccounts />}>
                     Account settings
                   </Menu.Item>
-                  <Menu.Submenu label="Theme" icon={<Palette />}>
+                  <Menu.Submenu label="Theme" icon={<IconPalette />}>
                     <ThemeMenuRadioGroup
                       value={theme}
                       onValueChange={(next) => setTheme(next === 'dark' ? 'dark' : 'light')}
                     />
                   </Menu.Submenu>
                   <Menu.Separator />
-                  <Menu.Item icon={<Logout />}>Sign out</Menu.Item>
+                  <Menu.Item icon={<IconLogout />}>Sign out</Menu.Item>
                 </Menu.Root>
               }
             />

@@ -1,7 +1,7 @@
 import { Card, Column, Text } from '@envsemble/envui';
-import { Widgets } from '@envsemble/envui/icons/Widgets';
-import { Pattern } from '@envsemble/envui/icons/Pattern';
-import { Palette } from '@envsemble/envui/icons/Palette';
+import { IconWidgets } from '@envsemble/envui/icons/Widgets';
+import { IconPattern } from '@envsemble/envui/icons/Pattern';
+import { IconPalette } from '@envsemble/envui/icons/Palette';
 import { version } from '../../../../packages/ui/package.json';
 import { EnvUILogo } from '../brand/EnvUILogo';
 import { routeHref } from '../navigation/Address';
@@ -16,19 +16,19 @@ const destinations = [
   {
     title: 'Foundations',
     route: sectionHome('Foundations').path,
-    icon: Palette,
+    icon: IconPalette,
     text: 'What every screen built with envUI shares, and the words to ask for it.',
   },
   {
     title: 'Components',
     route: 'components',
-    icon: Widgets,
+    icon: IconWidgets,
     text: 'The pieces a screen is made of: what each looks like and when to use it.',
   },
   {
     title: 'Patterns',
     route: 'patterns',
-    icon: Pattern,
+    icon: IconPattern,
     text: 'Components put together for what people do, such as filling in a form.',
   },
 ] as const;

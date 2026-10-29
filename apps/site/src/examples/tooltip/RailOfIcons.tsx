@@ -1,14 +1,14 @@
 import { IconButton, Column, Tooltip } from '@envsemble/envui';
-import { Folder } from '@envsemble/envui/icons/Folder';
-import { History } from '@envsemble/envui/icons/History';
-import { Search } from '@envsemble/envui/icons/Search';
-import { Settings } from '@envsemble/envui/icons/Settings';
+import { IconFolder } from '@envsemble/envui/icons/Folder';
+import { IconHistory } from '@envsemble/envui/icons/History';
+import { IconSearch } from '@envsemble/envui/icons/Search';
+import { IconSettings } from '@envsemble/envui/icons/Settings';
 
 const tools = [
-  { label: 'Show files', icon: <Folder /> },
-  { label: 'Search files', icon: <Search /> },
-  { label: 'Show history', icon: <History /> },
-  { label: 'Open settings', icon: <Settings /> },
+  { label: 'Show files', icon: <IconFolder /> },
+  { label: 'Search files', icon: <IconSearch /> },
+  { label: 'Show history', icon: <IconHistory /> },
+  { label: 'Open settings', icon: <IconSettings /> },
 ];
 
 export default function RailOfIcons() {

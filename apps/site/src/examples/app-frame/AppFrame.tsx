@@ -20,15 +20,15 @@ import {
   type CommandPaletteItem,
   type Destination,
 } from '@envsemble/envui';
-import { Category } from '@envsemble/envui/icons/Category';
-import { Description } from '@envsemble/envui/icons/Description';
-import { Group } from '@envsemble/envui/icons/Group';
-import { Home } from '@envsemble/envui/icons/Home';
-import { Logout } from '@envsemble/envui/icons/Logout';
-import { ManageAccounts } from '@envsemble/envui/icons/ManageAccounts';
-import { Palette } from '@envsemble/envui/icons/Palette';
-import { Search } from '@envsemble/envui/icons/Search';
-import { Settings } from '@envsemble/envui/icons/Settings';
+import { IconCategory } from '@envsemble/envui/icons/Category';
+import { IconDescription } from '@envsemble/envui/icons/Description';
+import { IconGroup } from '@envsemble/envui/icons/Group';
+import { IconHome } from '@envsemble/envui/icons/Home';
+import { IconLogout } from '@envsemble/envui/icons/Logout';
+import { IconManageAccounts } from '@envsemble/envui/icons/ManageAccounts';
+import { IconPalette } from '@envsemble/envui/icons/Palette';
+import { IconSearch } from '@envsemble/envui/icons/Search';
+import { IconSettings } from '@envsemble/envui/icons/Settings';
 
 /** Stands in for the window: a Scaffold fills its container, the window's height by default. */
 const preview: CSSProperties = { blockSize: '28rem' };
@@ -79,14 +79,14 @@ export default function AppFrame() {
           </Text>
         </Column>
       </Menu.Header>
-      <Menu.Item href="/account" icon={<ManageAccounts />}>
+      <Menu.Item href="/account" icon={<IconManageAccounts />}>
         Account settings
       </Menu.Item>
-      <Menu.Submenu label="Theme" icon={<Palette />}>
+      <Menu.Submenu label="Theme" icon={<IconPalette />}>
         <ThemeMenuRadioGroup />
       </Menu.Submenu>
       <Menu.Separator />
-      <Menu.Item icon={<Logout />}>Sign out</Menu.Item>
+      <Menu.Item icon={<IconLogout />}>Sign out</Menu.Item>
     </Menu.Root>
   );
 
@@ -103,7 +103,7 @@ export default function AppFrame() {
               <Tooltip content="Search" side="bottom">
                 <IconButton
                   variant="ghost"
-                  icon={<Search />}
+                  icon={<IconSearch />}
                   aria-label="Search"
                   onClick={() => setSearching(true)}
                 />
@@ -154,35 +154,35 @@ const places = [
   {
     label: 'Home',
     href: '/',
-    icon: <Home />,
+    icon: <IconHome />,
     lead: 'Good morning, Alex. Here is what you opened lately.',
     items: ['Quarterly report', 'Website refresh', 'Launch brief'],
   },
   {
     label: 'Projects',
     href: '/projects',
-    icon: <Category />,
+    icon: <IconCategory />,
     lead: 'Three projects are in progress.',
     items: ['Website refresh', 'Mobile release', 'Data migration'],
   },
   {
     label: 'Documents',
     href: '/documents',
-    icon: <Description />,
+    icon: <IconDescription />,
     lead: 'Shared with you this week.',
     items: ['Launch brief', 'Budget 2026', 'Meeting notes'],
   },
   {
     label: 'Team',
     href: '/team',
-    icon: <Group />,
+    icon: <IconGroup />,
     lead: 'Six people work in Northwind.',
     items: ['Priya Shah', 'Sam Lee', 'Jordan Kim'],
   },
   {
     label: 'Settings',
     href: '/settings',
-    icon: <Settings />,
+    icon: <IconSettings />,
     group: 'Workspace',
     lead: 'Settings for the whole workspace.',
     items: ['General', 'Members', 'Billing'],

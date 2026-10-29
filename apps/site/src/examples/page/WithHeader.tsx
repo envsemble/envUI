@@ -1,5 +1,5 @@
 import { Button, Card, Page, PageHeader, Column, Text } from '@envsemble/envui';
-import { Add } from '@envsemble/envui/icons/Add';
+import { IconAdd } from '@envsemble/envui/icons/Add';
 
 const projects = [
   { name: 'Northwind launch', owner: 'Alex Morgan' },
@@ -16,7 +16,7 @@ export default function WithHeader() {
           headingLevel={3}
           title="Projects"
           description="Everything your team is working on."
-          actions={<Button startIcon={<Add />}>New project</Button>}
+          actions={<Button startIcon={<IconAdd />}>New project</Button>}
         />
       }
     >

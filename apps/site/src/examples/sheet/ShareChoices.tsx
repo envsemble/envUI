@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button, Column, Sheet, Text } from '@envsemble/envui';
-import { Share } from '@envsemble/envui/icons/Share';
+import { IconShare } from '@envsemble/envui/icons/Share';
 
 const choices = ['Copy link', 'Email', 'Download PDF'];
 
@@ -16,7 +16,7 @@ export default function ShareChoices() {
         open={open}
         onOpenChange={setOpen}
         trigger={
-          <Button variant="secondary" startIcon={<Share />}>
+          <Button variant="secondary" startIcon={<IconShare />}>
             Share
           </Button>
         }

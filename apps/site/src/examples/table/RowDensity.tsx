@@ -8,7 +8,7 @@ import {
   Table,
   type RowDensity as Density,
 } from '@envsemble/envui';
-import { MoreVert } from '@envsemble/envui/icons/MoreVert';
+import { IconMoreVert } from '@envsemble/envui/icons/MoreVert';
 
 const reports = [
   { id: 'q1', name: 'First quarter review', owner: 'Priya Shah', pages: 18 },
@@ -58,7 +58,7 @@ export default function RowDensity() {
                   <Button variant="text">Open</Button>
                   <IconButton
                     variant="ghost"
-                    icon={<MoreVert />}
+                    icon={<IconMoreVert />}
                     aria-label={`More for ${report.name}`}
                   />
                 </Row>

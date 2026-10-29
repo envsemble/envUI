@@ -7,12 +7,12 @@ import {
   TopBar,
   type Destination,
 } from '@envsemble/envui';
-import { Description } from '@envsemble/envui/icons/Description';
-import { Folder } from '@envsemble/envui/icons/Folder';
+import { IconDescription } from '@envsemble/envui/icons/Description';
+import { IconFolder } from '@envsemble/envui/icons/Folder';
 
 const destinations: Destination[] = [
-  { label: 'Documents', icon: <Description />, href: '/documents', current: true },
-  { label: 'Shared', icon: <Folder />, href: '/shared' },
+  { label: 'Documents', icon: <IconDescription />, href: '/documents', current: true },
+  { label: 'Shared', icon: <IconFolder />, href: '/shared' },
 ];
 
 export default function TopBarOnThePage() {

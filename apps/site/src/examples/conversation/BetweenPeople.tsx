@@ -7,7 +7,7 @@ import {
   MessageList,
   type MessageStatus,
 } from '@envsemble/envui';
-import { AttachFile } from '@envsemble/envui/icons/AttachFile';
+import { IconAttachFile } from '@envsemble/envui/icons/AttachFile';
 
 interface Entry {
   id: number;
@@ -61,7 +61,7 @@ export default function BetweenPeople() {
       <Composer
         aria-label="Message the launch team"
         placeholder="Write a message"
-        start={<IconButton variant="text" icon={<AttachFile />} aria-label="Attach files" />}
+        start={<IconButton variant="text" icon={<IconAttachFile />} aria-label="Attach files" />}
         onSend={send}
       />
     </Column>

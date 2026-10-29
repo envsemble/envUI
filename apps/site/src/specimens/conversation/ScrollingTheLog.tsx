@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Button, Column, Composer, Grid, Message, MessageList } from '@envsemble/envui';
 import { Markdown } from '@envsemble/envui/content';
-import { ArrowDownward } from '@envsemble/envui/icons/ArrowDownward';
+import { IconArrowDownward } from '@envsemble/envui/icons/ArrowDownward';
 import { usePointer, type PointerStep } from '../../motion/Motion';
 import { MotionStage } from '../../motion/MotionStage';
 import { Renew } from '../../motion/Renew';
@@ -96,7 +96,7 @@ function Log({ replying }: { replying: boolean }) {
           <Button
             variant="outline"
             size="sm"
-            startIcon={<ArrowDownward />}
+            startIcon={<IconArrowDownward />}
             onClick={() =>
               log.current?.scrollTo({ top: log.current.scrollHeight, behavior: 'smooth' })
             }

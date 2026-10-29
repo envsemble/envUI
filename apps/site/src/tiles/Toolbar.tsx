@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Toolbar } from '@envsemble/envui';
-import { FormatBold } from '@envsemble/envui/icons/FormatBold';
-import { FormatItalic } from '@envsemble/envui/icons/FormatItalic';
-import { FormatListBulleted } from '@envsemble/envui/icons/FormatListBulleted';
-import { Undo } from '@envsemble/envui/icons/Undo';
+import { IconFormatBold } from '@envsemble/envui/icons/FormatBold';
+import { IconFormatItalic } from '@envsemble/envui/icons/FormatItalic';
+import { IconFormatListBulleted } from '@envsemble/envui/icons/FormatListBulleted';
+import { IconUndo } from '@envsemble/envui/icons/Undo';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
 const button = (label: string) => `.env-toolbar-button[aria-label="${label}"]`;
@@ -43,21 +43,21 @@ export default function ToolbarTile() {
     <Toolbar.Root aria-label="Formatting">
       <Toolbar.Group aria-label="Text style">
         <Toolbar.Button
-          icon={<FormatBold />}
+          icon={<IconFormatBold />}
           label="Bold"
           pressed={bold}
           onClick={() => setBold((on) => !on)}
         />
         <Toolbar.Button
-          icon={<FormatItalic />}
+          icon={<IconFormatItalic />}
           label="Italic"
           pressed={italic}
           onClick={() => setItalic((on) => !on)}
         />
       </Toolbar.Group>
       <Toolbar.Separator />
-      <Toolbar.Button icon={<FormatListBulleted />} label="Bulleted list" />
-      <Toolbar.Button icon={<Undo />} label="Undo" />
+      <Toolbar.Button icon={<IconFormatListBulleted />} label="Bulleted list" />
+      <Toolbar.Button icon={<IconUndo />} label="Undo" />
     </Toolbar.Root>
   );
 }

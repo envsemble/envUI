@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { ConfirmDialog, IconButton, Menu } from '@envsemble/envui';
-import { Delete } from '@envsemble/envui/icons/Delete';
-import { MoreVert } from '@envsemble/envui/icons/MoreVert';
+import { IconDelete } from '@envsemble/envui/icons/Delete';
+import { IconMoreVert } from '@envsemble/envui/icons/MoreVert';
 
 export default function FromMenu() {
   const [open, setOpen] = useState(false);
@@ -10,9 +10,9 @@ export default function FromMenu() {
     <>
       <Menu.Root
         aria-label="Project actions"
-        trigger={<IconButton ref={menuButton} icon={<MoreVert />} aria-label="More actions" />}
+        trigger={<IconButton ref={menuButton} icon={<IconMoreVert />} aria-label="More actions" />}
       >
-        <Menu.Item icon={<Delete />} onClick={() => setOpen(true)}>
+        <Menu.Item icon={<IconDelete />} onClick={() => setOpen(true)}>
           Delete project…
         </Menu.Item>
       </Menu.Root>

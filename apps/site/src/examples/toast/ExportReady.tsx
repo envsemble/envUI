@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button, ToastProvider, useToast } from '@envsemble/envui';
-import { Download } from '@envsemble/envui/icons/Download';
+import { IconDownload } from '@envsemble/envui/icons/Download';
 
 function ExportButton() {
   const toast = useToast();
@@ -27,7 +27,7 @@ function ExportButton() {
   return (
     <Button
       variant="secondary"
-      startIcon={<Download />}
+      startIcon={<IconDownload />}
       pending={exporting}
       onClick={exportMembers}
     >

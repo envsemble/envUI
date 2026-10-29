@@ -1,9 +1,9 @@
 import { useMemo, useState } from 'react';
 import { Tree, type TreeItem, type TreeProps, Badge } from '@envsemble/envui';
-import { Archive } from '@envsemble/envui/icons/Archive';
-import { Folder } from '@envsemble/envui/icons/Folder';
-import { Inbox } from '@envsemble/envui/icons/Inbox';
-import { Send } from '@envsemble/envui/icons/Send';
+import { IconArchive } from '@envsemble/envui/icons/Archive';
+import { IconFolder } from '@envsemble/envui/icons/Folder';
+import { IconInbox } from '@envsemble/envui/icons/Inbox';
+import { IconSend } from '@envsemble/envui/icons/Send';
 
 interface Mailbox extends TreeItem {
   parent?: string;
@@ -14,16 +14,16 @@ const mailboxes: Mailbox[] = [
     value: 'inbox',
     depth: 0,
     label: 'Inbox',
-    icon: <Inbox />,
+    icon: <IconInbox />,
     end: <Badge count={12} aria-label="12 unread" />,
   },
-  { value: 'clients', depth: 0, label: 'Clients', icon: <Folder />, expandable: true },
+  { value: 'clients', depth: 0, label: 'Clients', icon: <IconFolder />, expandable: true },
   {
     value: 'clients/northwind',
     parent: 'clients',
     depth: 1,
     label: 'Northwind',
-    icon: <Folder />,
+    icon: <IconFolder />,
     description: 'Shared with 4',
     end: <Badge count={3} aria-label="3 unread" />,
   },
@@ -32,14 +32,14 @@ const mailboxes: Mailbox[] = [
     parent: 'clients',
     depth: 1,
     label: 'Example Inc.',
-    icon: <Folder />,
+    icon: <IconFolder />,
   },
-  { value: 'sent', depth: 0, label: 'Sent', icon: <Send /> },
+  { value: 'sent', depth: 0, label: 'Sent', icon: <IconSend /> },
   {
     value: 'archive',
     depth: 0,
     label: 'Archive',
-    icon: <Archive />,
+    icon: <IconArchive />,
     description: 'Offline',
     disabled: true,
   },

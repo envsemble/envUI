@@ -1,21 +1,21 @@
 import { Button, Combobox, Surface, type ComboboxGroup, Row } from '@envsemble/envui';
-import { Description } from '@envsemble/envui/icons/Description';
-import { Folder } from '@envsemble/envui/icons/Folder';
+import { IconDescription } from '@envsemble/envui/icons/Description';
+import { IconFolder } from '@envsemble/envui/icons/Folder';
 
 const documents: ComboboxGroup[] = [
   {
     label: 'Recent',
     items: [
-      { value: 'quarterly-report', label: 'Quarterly report', start: <Description /> },
-      { value: 'release-notes', label: 'Release notes', start: <Description /> },
-      { value: 'design-review', label: 'Design review', start: <Description /> },
+      { value: 'quarterly-report', label: 'Quarterly report', start: <IconDescription /> },
+      { value: 'release-notes', label: 'Release notes', start: <IconDescription /> },
+      { value: 'design-review', label: 'Design review', start: <IconDescription /> },
     ],
   },
   {
     label: 'Folders',
     items: [
-      { value: 'research/interviews', label: 'research/interviews', start: <Folder /> },
-      { value: 'research/surveys', label: 'research/surveys', start: <Folder /> },
+      { value: 'research/interviews', label: 'research/interviews', start: <IconFolder /> },
+      { value: 'research/surveys', label: 'research/surveys', start: <IconFolder /> },
     ],
   },
 ];

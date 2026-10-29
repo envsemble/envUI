@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Button, SegmentedControl, Column, Row, Surface } from '@envsemble/envui';
-import { Add } from '@envsemble/envui/icons/Add';
-import { ViewList } from '@envsemble/envui/icons/ViewList';
-import { ViewModule } from '@envsemble/envui/icons/ViewModule';
-import { ViewTimeline } from '@envsemble/envui/icons/ViewTimeline';
+import { IconAdd } from '@envsemble/envui/icons/Add';
+import { IconViewList } from '@envsemble/envui/icons/ViewList';
+import { IconViewModule } from '@envsemble/envui/icons/ViewModule';
+import { IconViewTimeline } from '@envsemble/envui/icons/ViewTimeline';
 
 export default function SmallToolbar() {
   const [layout, setLayout] = useState('list');
@@ -24,13 +24,13 @@ export default function SmallToolbar() {
           value={layout}
           onValueChange={setLayout}
           items={[
-            { value: 'list', label: 'List', icon: <ViewList /> },
-            { value: 'board', label: 'Board', icon: <ViewModule /> },
+            { value: 'list', label: 'List', icon: <IconViewList /> },
+            { value: 'board', label: 'Board', icon: <IconViewModule /> },
             // Not available yet for this workspace.
-            { value: 'timeline', label: 'Timeline', icon: <ViewTimeline />, disabled: true },
+            { value: 'timeline', label: 'Timeline', icon: <IconViewTimeline />, disabled: true },
           ]}
         />
-        <Button variant="secondary" size="sm" startIcon={<Add />}>
+        <Button variant="secondary" size="sm" startIcon={<IconAdd />}>
           New project
         </Button>
       </Surface>

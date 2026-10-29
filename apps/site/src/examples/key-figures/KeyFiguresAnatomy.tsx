@@ -1,5 +1,5 @@
 import { Badge, Column, Grid, Row, Surface, Text } from '@envsemble/envui';
-import { TrendingDown } from '@envsemble/envui/icons/TrendingDown';
+import { IconTrendingDown } from '@envsemble/envui/icons/TrendingDown';
 
 export default function KeyFiguresAnatomy() {
   return (
@@ -22,7 +22,7 @@ export default function KeyFiguresAnatomy() {
           2.5 days
         </Text>
         <Row wrap align="center" gap={2}>
-          <Badge tone="success" icon={<TrendingDown />}>
+          <Badge tone="success" icon={<IconTrendingDown />}>
             0.5 days faster
           </Badge>
           <Text render={<span />} variant="body-sm" emphasis="muted">

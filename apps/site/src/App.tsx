@@ -11,7 +11,7 @@ import {
   Text,
   Tooltip,
 } from '@envsemble/envui';
-import { Menu as MenuIcon } from '@envsemble/envui/icons/Menu';
+import { IconMenu } from '@envsemble/envui/icons/Menu';
 import { findPage, type Area, type RoutePage } from './navigation/SiteRoutes';
 import { PageBoundary } from './layout/PageBoundary';
 import { PageHeader } from './layout/PageHeader';
@@ -238,7 +238,7 @@ function Shell() {
         <div className="site-compact-controls-bar">
           <Tooltip content="Open navigation">
             <IconButton
-              icon={<MenuIcon />}
+              icon={<IconMenu />}
               aria-label="Open navigation"
               variant="ghost"
               onClick={() => setNavigationOpen(true)}

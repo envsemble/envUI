@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button, List, PortalContainer, ToastProvider, useToast } from '@envsemble/envui';
-import { Archive } from '@envsemble/envui/icons/Archive';
+import { IconArchive } from '@envsemble/envui/icons/Archive';
 import { usePointer, usePreviewLayer, type PointerStep } from '../motion/Motion';
 
 const projects = ['Launch plan', 'Annual report', 'Press kit'];
@@ -49,7 +49,7 @@ function Projects() {
               <Button
                 variant="secondary"
                 size="sm"
-                startIcon={<Archive />}
+                startIcon={<IconArchive />}
                 aria-label={`Archive ${name}`}
                 onClick={() => archive(name)}
               >

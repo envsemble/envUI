@@ -7,7 +7,7 @@ import {
   type PanelDockMode,
   type PanelDockPanel,
 } from '@envsemble/envui';
-import { Chat } from '@envsemble/envui/icons/Chat';
+import { IconChat } from '@envsemble/envui/icons/Chat';
 
 const lastMessages: Record<string, string> = {
   sam: 'Sam Lee: The slides are ready for review.',
@@ -16,8 +16,8 @@ const lastMessages: Record<string, string> = {
 
 export default function NarrowRegion() {
   const [panels, setPanels] = useState<PanelDockPanel[]>([
-    { id: 'sam', title: 'Sam Lee', mode: 'open', icon: <Chat /> },
-    { id: 'priya', title: 'Priya Shah', mode: 'open', icon: <Chat />, active: true },
+    { id: 'sam', title: 'Sam Lee', mode: 'open', icon: <IconChat /> },
+    { id: 'priya', title: 'Priya Shah', mode: 'open', icon: <IconChat />, active: true },
   ]);
   const [stacked, setStacked] = useState(false);
   const update = (change: (panel: PanelDockPanel) => PanelDockPanel) =>

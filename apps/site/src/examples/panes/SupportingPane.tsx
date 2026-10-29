@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Column, DescriptionList, Panes, Text } from '@envsemble/envui';
-import { Info } from '@envsemble/envui/icons/Info';
+import { IconInfo } from '@envsemble/envui/icons/Info';
 
 export default function SupportingPane() {
   const [open, setOpen] = useState(false);
@@ -19,7 +19,7 @@ export default function SupportingPane() {
             Quarterly report
           </Text>
           <Text>Revenue grew in every region, led by the new subscriptions.</Text>
-          <Panes.Trigger variant="secondary" startIcon={<Info />}>
+          <Panes.Trigger variant="secondary" startIcon={<IconInfo />}>
             Details
           </Panes.Trigger>
         </Column>

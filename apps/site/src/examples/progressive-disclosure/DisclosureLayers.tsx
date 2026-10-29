@@ -8,7 +8,7 @@ import {
   Row,
   TextField,
 } from '@envsemble/envui';
-import { MoreVert } from '@envsemble/envui/icons/MoreVert';
+import { IconMoreVert } from '@envsemble/envui/icons/MoreVert';
 
 export default function DisclosureLayers() {
   return (
@@ -21,7 +21,7 @@ export default function DisclosureLayers() {
         <Button variant="primary">Export</Button>
         <Menu.Root
           aria-label="More actions"
-          trigger={<IconButton icon={<MoreVert />} aria-label="More actions" />}
+          trigger={<IconButton icon={<IconMoreVert />} aria-label="More actions" />}
         >
           <Menu.Item>Schedule export</Menu.Item>
         </Menu.Root>

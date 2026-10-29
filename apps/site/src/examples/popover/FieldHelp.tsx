@@ -1,5 +1,5 @@
 import { IconButton, Popover, Text, Row } from '@envsemble/envui';
-import { Help } from '@envsemble/envui/icons/Help';
+import { IconHelp } from '@envsemble/envui/icons/Help';
 
 export default function FieldHelp() {
   return (
@@ -13,7 +13,9 @@ export default function FieldHelp() {
         // a phone too.
         side="bottom"
         align="end"
-        trigger={<IconButton variant="text" icon={<Help />} aria-label="About billing periods" />}
+        trigger={
+          <IconButton variant="text" icon={<IconHelp />} aria-label="About billing periods" />
+        }
       >
         <Text>
           Northwind is billed on the first day of each period for the members it has that day.

@@ -10,19 +10,19 @@ import {
   TopBar,
   type Destination,
 } from '@envsemble/envui';
-import { Folder } from '@envsemble/envui/icons/Folder';
-import { Home } from '@envsemble/envui/icons/Home';
-import { Inbox } from '@envsemble/envui/icons/Inbox';
-import { Settings } from '@envsemble/envui/icons/Settings';
+import { IconFolder } from '@envsemble/envui/icons/Folder';
+import { IconHome } from '@envsemble/envui/icons/Home';
+import { IconInbox } from '@envsemble/envui/icons/Inbox';
+import { IconSettings } from '@envsemble/envui/icons/Settings';
 
 export default function OneListThreeForms() {
   const [current, setCurrent] = useState('Inbox');
   // One array, passed to each form; Scaffold shows the one that suits its width.
   const destinations: Destination[] = [
-    { label: 'Home', icon: <Home /> },
-    { label: 'Inbox', icon: <Inbox />, count: 4 },
-    { label: 'Projects', icon: <Folder />, group: 'Work' },
-    { label: 'Settings', icon: <Settings />, group: 'Account' },
+    { label: 'Home', icon: <IconHome /> },
+    { label: 'Inbox', icon: <IconInbox />, count: 4 },
+    { label: 'Projects', icon: <IconFolder />, group: 'Work' },
+    { label: 'Settings', icon: <IconSettings />, group: 'Account' },
   ].map((destination) => ({
     ...destination,
     current: destination.label === current,

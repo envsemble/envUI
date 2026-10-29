@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Button, CommandPalette, Column, Text, type CommandPaletteItem } from '@envsemble/envui';
-import { Description } from '@envsemble/envui/icons/Description';
-import { Search } from '@envsemble/envui/icons/Search';
+import { IconDescription } from '@envsemble/envui/icons/Description';
+import { IconSearch } from '@envsemble/envui/icons/Search';
 
 const documents = [
   { name: 'Roadmap.md', folder: 'Plans', recent: true },
@@ -28,14 +28,14 @@ export default function GoToDocument() {
         id: `${document.folder}/${document.name}`,
         label: document.name,
         description: document.folder,
-        icon: <Description />,
+        icon: <IconDescription />,
         group: !query && document.recent ? 'Recently opened' : 'Documents',
       }));
   }, [query]);
 
   return (
     <Column gap={3} align="center">
-      <Button variant="secondary" startIcon={<Search />} onClick={() => setOpen(true)}>
+      <Button variant="secondary" startIcon={<IconSearch />} onClick={() => setOpen(true)}>
         Go to document
       </Button>
       <CommandPalette

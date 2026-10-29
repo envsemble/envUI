@@ -1,6 +1,6 @@
 import { AvatarButton, IconButton, TopBar } from '@envsemble/envui';
-import { Notifications } from '@envsemble/envui/icons/Notifications';
-import { Search } from '@envsemble/envui/icons/Search';
+import { IconNotifications } from '@envsemble/envui/icons/Notifications';
+import { IconSearch } from '@envsemble/envui/icons/Search';
 
 export default function FewActions() {
   return (
@@ -9,8 +9,8 @@ export default function FewActions() {
       style={{ inlineSize: 'min(100%, 22rem)' }}
       actions={
         <>
-          <IconButton icon={<Search />} aria-label="Search" variant="ghost" />
-          <IconButton icon={<Notifications />} aria-label="Notifications" variant="ghost" />
+          <IconButton icon={<IconSearch />} aria-label="Search" variant="ghost" />
+          <IconButton icon={<IconNotifications />} aria-label="Notifications" variant="ghost" />
           <AvatarButton name="Alex Morgan" />
         </>
       }

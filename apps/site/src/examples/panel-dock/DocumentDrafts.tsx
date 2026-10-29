@@ -12,10 +12,10 @@ import {
   type PanelDockMode,
   type PanelDockPanel,
 } from '@envsemble/envui';
-import { ContentCopy } from '@envsemble/envui/icons/ContentCopy';
-import { Description } from '@envsemble/envui/icons/Description';
-import { MoreVert } from '@envsemble/envui/icons/MoreVert';
-import { Share } from '@envsemble/envui/icons/Share';
+import { IconContentCopy } from '@envsemble/envui/icons/ContentCopy';
+import { IconDescription } from '@envsemble/envui/icons/Description';
+import { IconMoreVert } from '@envsemble/envui/icons/MoreVert';
+import { IconShare } from '@envsemble/envui/icons/Share';
 
 interface Document {
   id: string;
@@ -72,7 +72,7 @@ function panelFor(document: Document, mode: PanelDockMode, active = false): Docu
     active,
     // The application keeps each panel's height, in pixels; this one leaves the buttons in view.
     height: 20,
-    icon: <Description />,
+    icon: <IconDescription />,
     tooltip: `${document.title} · ${document.editor}`,
     document,
   };
@@ -99,10 +99,10 @@ function DocumentWindow({
         actions={
           <Menu.Root
             aria-label={`${document.title} actions`}
-            trigger={<IconButton icon={<MoreVert />} aria-label="More actions" />}
+            trigger={<IconButton icon={<IconMoreVert />} aria-label="More actions" />}
           >
-            <Menu.Item icon={<Share />}>Share</Menu.Item>
-            <Menu.Item icon={<ContentCopy />}>Make a copy</Menu.Item>
+            <Menu.Item icon={<IconShare />}>Share</Menu.Item>
+            <Menu.Item icon={<IconContentCopy />}>Make a copy</Menu.Item>
           </Menu.Root>
         }
       />
@@ -167,7 +167,7 @@ export default function DocumentDrafts() {
             <Button
               key={document.id}
               variant="secondary"
-              startIcon={<Description />}
+              startIcon={<IconDescription />}
               onClick={() => open(document)}
             >
               {document.label ?? document.title}

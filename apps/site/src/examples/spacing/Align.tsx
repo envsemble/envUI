@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button, IconButton, Row, SearchField, SegmentedControl, Select } from '@envsemble/envui';
-import { Add } from '@envsemble/envui/icons/Add';
-import { MoreVert } from '@envsemble/envui/icons/MoreVert';
+import { IconAdd } from '@envsemble/envui/icons/Add';
+import { IconMoreVert } from '@envsemble/envui/icons/MoreVert';
 
 // Controls of one size are as tall as each other, so the row lines up on its own.
 export default function Align() {
@@ -26,8 +26,8 @@ export default function Align() {
           { value: 'board', label: 'Board' },
         ]}
       />
-      <IconButton variant="secondary" icon={<MoreVert />} aria-label="More" />
-      <Button startIcon={<Add />}>New report</Button>
+      <IconButton variant="secondary" icon={<IconMoreVert />} aria-label="More" />
+      <Button startIcon={<IconAdd />}>New report</Button>
     </Row>
   );
 }

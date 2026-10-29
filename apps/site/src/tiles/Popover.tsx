@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button, Popover, Text } from '@envsemble/envui';
-import { Info } from '@envsemble/envui/icons/Info';
+import { IconInfo } from '@envsemble/envui/icons/Info';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
 const trigger = '.env-button[aria-haspopup]';
@@ -31,7 +31,7 @@ export default function PopoverTile() {
       onOpenChange={setOpen}
       title="Billing period"
       trigger={
-        <Button variant="secondary" startIcon={<Info />}>
+        <Button variant="secondary" startIcon={<IconInfo />}>
           Billing
         </Button>
       }

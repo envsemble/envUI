@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { ContextMenu, IconButton, List, Menu, Surface } from '@envsemble/envui';
-import { Add } from '@envsemble/envui/icons/Add';
-import { Delete } from '@envsemble/envui/icons/Delete';
-import { FileCopy } from '@envsemble/envui/icons/FileCopy';
-import { MoreVert } from '@envsemble/envui/icons/MoreVert';
+import { IconAdd } from '@envsemble/envui/icons/Add';
+import { IconDelete } from '@envsemble/envui/icons/Delete';
+import { IconFileCopy } from '@envsemble/envui/icons/FileCopy';
+import { IconMoreVert } from '@envsemble/envui/icons/MoreVert';
 
 interface Entry {
   id: string;
@@ -42,14 +42,14 @@ export default function ContextMenuForRows() {
   const actionsFor = (entry: Entry) => (
     <>
       <Menu.Item
-        icon={<FileCopy />}
+        icon={<IconFileCopy />}
         shortcut="Ctrl+D"
         onClick={() => add({ ...entry, name: `${entry.name} (copy)` })}
       >
         Duplicate
       </Menu.Item>
       <Menu.Separator />
-      <Menu.Item icon={<Delete />} shortcut="Del" onClick={() => remove(entry)}>
+      <Menu.Item icon={<IconDelete />} shortcut="Del" onClick={() => remove(entry)}>
         Delete
       </Menu.Item>
     </>
@@ -65,7 +65,7 @@ export default function ContextMenuForRows() {
           actionsFor(entry)
         ) : (
           <Menu.Item
-            icon={<Add />}
+            icon={<IconAdd />}
             onClick={() => add({ name: 'Untitled document', editor: 'Alex Morgan' })}
           >
             New document
@@ -87,7 +87,7 @@ export default function ContextMenuForRows() {
                   trigger={
                     <IconButton
                       variant="ghost"
-                      icon={<MoreVert />}
+                      icon={<IconMoreVert />}
                       aria-label={`More actions for ${entry.name}`}
                     />
                   }

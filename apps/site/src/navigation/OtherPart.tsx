@@ -1,6 +1,6 @@
 import { Button } from '@envsemble/envui';
-import { Code } from '@envsemble/envui/icons/Code';
-import { MenuBook } from '@envsemble/envui/icons/MenuBook';
+import { IconCode } from '@envsemble/envui/icons/Code';
+import { IconMenuBook } from '@envsemble/envui/icons/MenuBook';
 import { routeHref } from './Address';
 import { counterpartOf, type Area, type RoutePage } from './SiteRoutes';
 
@@ -9,7 +9,9 @@ import { counterpartOf, type Area, type RoutePage } from './SiteRoutes';
  * and the catalogue from the Docs.
  */
 export function otherPart(area: Area) {
-  return area === 'docs' ? { label: 'Catalogue', Icon: MenuBook } : { label: 'Docs', Icon: Code };
+  return area === 'docs'
+    ? { label: 'Catalogue', Icon: IconMenuBook }
+    : { label: 'Docs', Icon: IconCode };
 }
 
 /**

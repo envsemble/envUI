@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button, Column, List, SearchField, Text } from '@envsemble/envui';
-import { SearchOff } from '@envsemble/envui/icons/SearchOff';
+import { IconSearchOff } from '@envsemble/envui/icons/SearchOff';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
 const projects = ['Northwind launch', 'Annual report', 'Pricing research'];
@@ -43,7 +43,7 @@ export default function EmptyStatesTile() {
       ) : (
         <Column gap={3} align="center">
           <Text render={<span />} emphasis="muted">
-            <SearchOff width="1.5rem" height="1.5rem" />
+            <IconSearchOff width="1.5rem" height="1.5rem" />
           </Text>
           <Text render={<span />} variant="title">
             No matching projects

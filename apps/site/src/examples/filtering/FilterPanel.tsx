@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { Button, Checkbox, List, Popover, Column, Row, Text, Badge } from '@envsemble/envui';
-import { FilterList } from '@envsemble/envui/icons/FilterList';
-import { SearchOff } from '@envsemble/envui/icons/SearchOff';
+import { IconFilterList } from '@envsemble/envui/icons/FilterList';
+import { IconSearchOff } from '@envsemble/envui/icons/SearchOff';
 
 const documentCount = (count: number) => (count === 1 ? '1 document' : `${count} documents`);
 
@@ -27,7 +27,7 @@ export default function FilterPanel() {
           title="Filter documents"
           align="start"
           trigger={
-            <Button variant="secondary" size="sm" startIcon={<FilterList />}>
+            <Button variant="secondary" size="sm" startIcon={<IconFilterList />}>
               Filters
               {/* The count of filters in use; its label says what the number counts. */}
               {applied > 0 && <Badge count={applied} aria-label={`${applied} in use`} />}
@@ -100,7 +100,7 @@ export default function FilterPanel() {
       ) : (
         <Column gap={4} padding={5}>
           <Text render={<span />} emphasis="muted">
-            <SearchOff width="1.5rem" height="1.5rem" />
+            <IconSearchOff width="1.5rem" height="1.5rem" />
           </Text>
           <Column gap={2}>
             <Text render={<h4 />} variant="title">

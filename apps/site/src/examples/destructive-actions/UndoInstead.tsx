@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Button, List, ToastProvider, useToast } from '@envsemble/envui';
-import { Archive } from '@envsemble/envui/icons/Archive';
+import { IconArchive } from '@envsemble/envui/icons/Archive';
 
 function Projects() {
   const toast = useToast();
@@ -46,7 +46,7 @@ function Projects() {
             <Button
               variant="secondary"
               size="sm"
-              startIcon={<Archive />}
+              startIcon={<IconArchive />}
               aria-label={`Archive ${project}`}
               onClick={() => archive(project)}
             >

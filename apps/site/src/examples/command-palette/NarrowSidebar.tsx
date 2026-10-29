@@ -1,5 +1,5 @@
 import { Button, Kbd, useModifierKey } from '@envsemble/envui';
-import { Search } from '@envsemble/envui/icons/Search';
+import { IconSearch } from '@envsemble/envui/icons/Search';
 
 export default function NarrowSidebar() {
   const modifier = useModifierKey();
@@ -7,7 +7,7 @@ export default function NarrowSidebar() {
     <Button
       variant="secondary"
       fullWidth
-      startIcon={<Search />}
+      startIcon={<IconSearch />}
       end={<Kbd keys={[modifier.label, 'K']} aria-hidden />}
       aria-keyshortcuts={`${modifier.key}+K`}
     >

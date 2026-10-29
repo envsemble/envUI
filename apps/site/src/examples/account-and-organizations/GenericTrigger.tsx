@@ -1,7 +1,7 @@
 import { IconButton, Menu, TopBar } from '@envsemble/envui';
-import { AccountCircle } from '@envsemble/envui/icons/AccountCircle';
-import { Logout } from '@envsemble/envui/icons/Logout';
-import { ManageAccounts } from '@envsemble/envui/icons/ManageAccounts';
+import { IconAccountCircle } from '@envsemble/envui/icons/AccountCircle';
+import { IconLogout } from '@envsemble/envui/icons/Logout';
+import { IconManageAccounts } from '@envsemble/envui/icons/ManageAccounts';
 
 export default function GenericTrigger() {
   return (
@@ -12,13 +12,13 @@ export default function GenericTrigger() {
         <Menu.Root
           aria-label="Account"
           align="end"
-          trigger={<IconButton icon={<AccountCircle />} aria-label="My account" />}
+          trigger={<IconButton icon={<IconAccountCircle />} aria-label="My account" />}
         >
-          <Menu.Item href="/account" icon={<ManageAccounts />}>
+          <Menu.Item href="/account" icon={<IconManageAccounts />}>
             Account settings
           </Menu.Item>
           <Menu.Separator />
-          <Menu.Item icon={<Logout />}>Sign out</Menu.Item>
+          <Menu.Item icon={<IconLogout />}>Sign out</Menu.Item>
         </Menu.Root>
       }
     />

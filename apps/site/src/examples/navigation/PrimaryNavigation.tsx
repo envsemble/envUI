@@ -10,13 +10,13 @@ import {
   TopBar,
   type Destination,
 } from '@envsemble/envui';
-import { Category } from '@envsemble/envui/icons/Category';
-import { Description } from '@envsemble/envui/icons/Description';
-import { Group } from '@envsemble/envui/icons/Group';
-import { Home } from '@envsemble/envui/icons/Home';
-import { Inbox } from '@envsemble/envui/icons/Inbox';
-import { ManageAccounts } from '@envsemble/envui/icons/ManageAccounts';
-import { Settings } from '@envsemble/envui/icons/Settings';
+import { IconCategory } from '@envsemble/envui/icons/Category';
+import { IconDescription } from '@envsemble/envui/icons/Description';
+import { IconGroup } from '@envsemble/envui/icons/Group';
+import { IconHome } from '@envsemble/envui/icons/Home';
+import { IconInbox } from '@envsemble/envui/icons/Inbox';
+import { IconManageAccounts } from '@envsemble/envui/icons/ManageAccounts';
+import { IconSettings } from '@envsemble/envui/icons/Settings';
 
 /**
  * Stands in for the window. An application renders its Scaffold at its root, as tall as the window;
@@ -88,14 +88,14 @@ const destinations: Place[] = [
     id: 'home',
     label: 'Home',
     href: '/',
-    icon: <Home />,
+    icon: <IconHome />,
     description: 'What changed in your projects since you last looked.',
   },
   {
     id: 'inbox',
     label: 'Inbox',
     href: '/inbox',
-    icon: <Inbox />,
+    icon: <IconInbox />,
     description: 'Comments and requests that wait for you.',
     unread: 3,
   },
@@ -103,14 +103,14 @@ const destinations: Place[] = [
     id: 'projects',
     label: 'Projects',
     href: '/projects',
-    icon: <Category />,
+    icon: <IconCategory />,
     description: 'Website refresh, Quarterly report and four more projects.',
   },
   {
     id: 'documents',
     label: 'Documents',
     href: '/documents',
-    icon: <Description />,
+    icon: <IconDescription />,
     description: 'Every document in the workspace, newest first.',
   },
 ];
@@ -120,21 +120,21 @@ const workspace: Place[] = [
     id: 'team',
     label: 'Team',
     href: '/team',
-    icon: <Group />,
+    icon: <IconGroup />,
     description: 'Alex Morgan, Sam Lee, Priya Shah and the rest of Northwind.',
   },
   {
     id: 'members',
     label: 'Members',
     href: '/settings/members',
-    icon: <ManageAccounts />,
+    icon: <IconManageAccounts />,
     description: 'Who can sign in to Northwind, and what each person can do.',
   },
   {
     id: 'settings',
     label: 'Settings',
     href: '/settings',
-    icon: <Settings />,
+    icon: <IconSettings />,
     description: 'The workspace’s name, its notifications and its appearance.',
   },
 ];

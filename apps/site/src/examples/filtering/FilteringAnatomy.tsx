@@ -8,7 +8,7 @@ import {
   Text,
   Badge,
 } from '@envsemble/envui';
-import { FilterList } from '@envsemble/envui/icons/FilterList';
+import { IconFilterList } from '@envsemble/envui/icons/FilterList';
 
 const statuses = [
   { value: 'any', label: 'Any status' },
@@ -32,7 +32,7 @@ export default function FilteringAnatomy() {
               items={statuses}
               defaultValue="active"
             />
-            <Button variant="secondary" size="sm" startIcon={<FilterList />}>
+            <Button variant="secondary" size="sm" startIcon={<IconFilterList />}>
               Filters <Badge count={2} aria-label="2 in use" />
             </Button>
           </Row>

@@ -1,5 +1,5 @@
 import { Box, Button, Kbd, useModifierKey } from '@envsemble/envui';
-import { Search } from '@envsemble/envui/icons/Search';
+import { IconSearch } from '@envsemble/envui/icons/Search';
 
 export default function TypingLabel() {
   const modifier = useModifierKey();
@@ -9,7 +9,7 @@ export default function TypingLabel() {
       <Button
         variant="secondary"
         fullWidth
-        startIcon={<Search />}
+        startIcon={<IconSearch />}
         end={<Kbd keys={[modifier.label, 'K']} aria-hidden />}
         aria-keyshortcuts={`${modifier.key}+K`}
       >

@@ -1,5 +1,5 @@
 import { IconButton, Menu, Menubar, TopBar } from '@envsemble/envui';
-import { Share } from '@envsemble/envui/icons/Share';
+import { IconShare } from '@envsemble/envui/icons/Share';
 
 export default function TitleBar() {
   return (
@@ -18,7 +18,7 @@ export default function TitleBar() {
           </Menubar.Menu>
         </Menubar.Root>
       }
-      actions={<IconButton icon={<Share />} aria-label="Share" />}
+      actions={<IconButton icon={<IconShare />} aria-label="Share" />}
     />
   );
 }

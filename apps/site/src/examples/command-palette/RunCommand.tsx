@@ -8,31 +8,31 @@ import {
   Text,
   type CommandPaletteItem,
 } from '@envsemble/envui';
-import { Bolt } from '@envsemble/envui/icons/Bolt';
-import { DarkMode } from '@envsemble/envui/icons/DarkMode';
-import { NoteAdd } from '@envsemble/envui/icons/NoteAdd';
-import { PersonAdd } from '@envsemble/envui/icons/PersonAdd';
-import { Settings } from '@envsemble/envui/icons/Settings';
+import { IconBolt } from '@envsemble/envui/icons/Bolt';
+import { IconDarkMode } from '@envsemble/envui/icons/DarkMode';
+import { IconNoteAdd } from '@envsemble/envui/icons/NoteAdd';
+import { IconPersonAdd } from '@envsemble/envui/icons/PersonAdd';
+import { IconSettings } from '@envsemble/envui/icons/Settings';
 
 const commands: { id: string; label: string; icon: ReactNode; end?: ReactNode }[] = [
-  { id: 'new', label: 'New document', icon: <NoteAdd />, end: <Kbd keys={['Ctrl', 'N']} /> },
-  { id: 'invite', label: 'Invite people', icon: <PersonAdd /> },
+  { id: 'new', label: 'New document', icon: <IconNoteAdd />, end: <Kbd keys={['Ctrl', 'N']} /> },
+  { id: 'invite', label: 'Invite people', icon: <IconPersonAdd /> },
   {
     id: 'theme',
     label: 'Switch theme',
-    icon: <DarkMode />,
+    icon: <IconDarkMode />,
     end: <Kbd keys={['Ctrl', 'J']} />,
   },
   {
     id: 'settings',
     label: 'Open settings',
-    icon: <Settings />,
+    icon: <IconSettings />,
     end: <Kbd keys={['Ctrl', ',']} />,
   },
   {
     id: 'automations',
     label: 'Create an automation',
-    icon: <Bolt />,
+    icon: <IconBolt />,
     end: <Badge tone="primary">New</Badge>,
   },
 ];

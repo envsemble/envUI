@@ -1,5 +1,5 @@
 import { Badge, Card, Column, Row, Text } from '@envsemble/envui';
-import { TrendingDown } from '@envsemble/envui/icons/TrendingDown';
+import { IconTrendingDown } from '@envsemble/envui/icons/TrendingDown';
 
 export default function InACard() {
   return (
@@ -13,7 +13,7 @@ export default function InACard() {
           €12,800
         </Text>
         <Row wrap align="center" gap={2}>
-          <Badge tone="success" icon={<TrendingDown />}>
+          <Badge tone="success" icon={<IconTrendingDown />}>
             3 fewer than last month
           </Badge>
           <Text render={<span />} variant="body-sm" emphasis="muted">

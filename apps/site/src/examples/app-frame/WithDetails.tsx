@@ -10,8 +10,8 @@ import {
   TopBar,
   type Destination,
 } from '@envsemble/envui';
-import { Description } from '@envsemble/envui/icons/Description';
-import { Home } from '@envsemble/envui/icons/Home';
+import { IconDescription } from '@envsemble/envui/icons/Description';
+import { IconHome } from '@envsemble/envui/icons/Home';
 
 /** Stands in for the window: a Scaffold fills its container, the window's height by default. */
 const preview: CSSProperties = { blockSize: '20rem' };
@@ -19,8 +19,8 @@ const preview: CSSProperties = { blockSize: '20rem' };
 export default function WithDetails() {
   const [details, setDetails] = useState(false);
   const destinations: Destination[] = [
-    { label: 'Home', icon: <Home />, href: '/' },
-    { label: 'Documents', icon: <Description />, href: '/documents', current: true },
+    { label: 'Home', icon: <IconHome />, href: '/' },
+    { label: 'Documents', icon: <IconDescription />, href: '/documents', current: true },
   ];
   return (
     // Side content that is not navigation goes in a supporting pane in the body: Panes fill the

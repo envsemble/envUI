@@ -1,12 +1,12 @@
 import { NavigationBar, type Destination } from '@envsemble/envui';
-import { Folder } from '@envsemble/envui/icons/Folder';
-import { Home } from '@envsemble/envui/icons/Home';
-import { Inbox } from '@envsemble/envui/icons/Inbox';
+import { IconFolder } from '@envsemble/envui/icons/Folder';
+import { IconHome } from '@envsemble/envui/icons/Home';
+import { IconInbox } from '@envsemble/envui/icons/Inbox';
 
 const destinations: Destination[] = [
-  { label: 'Inbox', icon: <Inbox />, href: '/inbox', count: 4, current: true },
-  { label: 'Home', icon: <Home />, href: '/home' },
-  { label: 'Projects', icon: <Folder />, href: '/projects' },
+  { label: 'Inbox', icon: <IconInbox />, href: '/inbox', count: 4, current: true },
+  { label: 'Home', icon: <IconHome />, href: '/home' },
+  { label: 'Projects', icon: <IconFolder />, href: '/projects' },
 ];
 
 export default function BarAnatomy() {

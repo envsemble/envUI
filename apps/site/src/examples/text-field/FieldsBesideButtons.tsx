@@ -1,5 +1,5 @@
 import { Button, Column, Grid, SearchField, TextField } from '@envsemble/envui';
-import { Mail } from '@envsemble/envui/icons/Mail';
+import { IconMail } from '@envsemble/envui/icons/Mail';
 
 export default function FieldsBesideButtons() {
   return (
@@ -10,7 +10,7 @@ export default function FieldsBesideButtons() {
           label="Invite by e-mail"
           type="email"
           placeholder="name@example.com"
-          startIcon={<Mail />}
+          startIcon={<IconMail />}
         />
         <Button>Invite</Button>
       </Grid>

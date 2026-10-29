@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { NavigationDrawer, Text, type Destination } from '@envsemble/envui';
-import { Inbox } from '@envsemble/envui/icons/Inbox';
-import { Send } from '@envsemble/envui/icons/Send';
-import { Star } from '@envsemble/envui/icons/Star';
+import { IconInbox } from '@envsemble/envui/icons/Inbox';
+import { IconSend } from '@envsemble/envui/icons/Send';
+import { IconStar } from '@envsemble/envui/icons/Star';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
 const item = (index: number) =>
@@ -36,9 +36,9 @@ export default function DrawerTile() {
     onClick: () => setCurrent(id),
   });
   const destinations: Destination[] = [
-    { label: 'Inbox', icon: <Inbox />, count: 12, ...destination('inbox') },
-    { label: 'Starred', icon: <Star />, ...destination('starred') },
-    { label: 'Sent', icon: <Send />, ...destination('sent') },
+    { label: 'Inbox', icon: <IconInbox />, count: 12, ...destination('inbox') },
+    { label: 'Starred', icon: <IconStar />, ...destination('starred') },
+    { label: 'Sent', icon: <IconSend />, ...destination('sent') },
   ];
   return (
     <NavigationDrawer

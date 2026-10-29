@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button, Menu, Row, Text } from '@envsemble/envui';
-import { Visibility } from '@envsemble/envui/icons/Visibility';
+import { IconVisibility } from '@envsemble/envui/icons/Visibility';
 
 const sortLabels: Record<string, string> = {
   name: 'name',
@@ -19,7 +19,7 @@ export default function Choices() {
         aria-label="View options"
         align="start"
         trigger={
-          <Button variant="secondary" startIcon={<Visibility />}>
+          <Button variant="secondary" startIcon={<IconVisibility />}>
             View
           </Button>
         }

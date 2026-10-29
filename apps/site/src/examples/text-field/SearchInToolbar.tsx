@@ -1,7 +1,7 @@
 import { IconButton, Row, SearchField } from '@envsemble/envui';
-import { FilterList } from '@envsemble/envui/icons/FilterList';
-import { GridView } from '@envsemble/envui/icons/GridView';
-import { Sort } from '@envsemble/envui/icons/Sort';
+import { IconFilterList } from '@envsemble/envui/icons/FilterList';
+import { IconGridView } from '@envsemble/envui/icons/GridView';
+import { IconSort } from '@envsemble/envui/icons/Sort';
 
 export default function SearchInToolbar() {
   return (
@@ -13,9 +13,9 @@ export default function SearchInToolbar() {
         placeholder="Search files"
         style={{ flex: '1 1 auto' }}
       />
-      <IconButton variant="ghost" icon={<FilterList />} aria-label="Filter" />
-      <IconButton variant="ghost" icon={<Sort />} aria-label="Sort" />
-      <IconButton variant="ghost" icon={<GridView />} aria-label="Show as grid" />
+      <IconButton variant="ghost" icon={<IconFilterList />} aria-label="Filter" />
+      <IconButton variant="ghost" icon={<IconSort />} aria-label="Sort" />
+      <IconButton variant="ghost" icon={<IconGridView />} aria-label="Show as grid" />
     </Row>
   );
 }

@@ -9,8 +9,8 @@ import {
   Surface,
   Text,
 } from '@envsemble/envui';
-import { TrendingDown } from '@envsemble/envui/icons/TrendingDown';
-import { TrendingUp } from '@envsemble/envui/icons/TrendingUp';
+import { IconTrendingDown } from '@envsemble/envui/icons/TrendingDown';
+import { IconTrendingUp } from '@envsemble/envui/icons/TrendingUp';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
 const periods = {
@@ -66,7 +66,7 @@ export default function KeyFiguresTile() {
               />
             </Text>
             <Row>
-              <Badge tone="success" icon={<TrendingDown />}>
+              <Badge tone="success" icon={<IconTrendingDown />}>
                 {`${figures.faster} faster`}
               </Badge>
             </Row>
@@ -79,7 +79,7 @@ export default function KeyFiguresTile() {
               <AnimatedNumber value={figures.done} />
             </Text>
             <Row>
-              <Badge tone="primary" icon={<TrendingUp />}>
+              <Badge tone="primary" icon={<IconTrendingUp />}>
                 {`${figures.more} more`}
               </Badge>
             </Row>
