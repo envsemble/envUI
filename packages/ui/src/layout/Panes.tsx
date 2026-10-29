@@ -39,10 +39,10 @@ import '../styles/Panes.css';
  * How Panes behaves below `splitAt`: supporting, a main pane with a supporting pane that becomes a
  * sheet over it; list-detail, a list and the chosen item's detail, one at a time.
  */
-export type PanesBehavior = 'supporting' | 'list-detail';
+export type Behavior = 'supporting' | 'list-detail';
 
 /** The window class of Panes' own width from which its panes sit side by side. */
-export type PanesSplitAt = 'medium' | 'expanded' | 'large';
+export type SplitAt = 'medium' | 'expanded' | 'large';
 
 /**
  * Why Panes asks to open or close what `open` shows below `splitAt`: Escape, the supporting
@@ -68,14 +68,14 @@ export interface RootProps extends Omit<ComponentPropsWithRef<'div'>, 'children'
    * Panes.List and Panes.Detail, such as messages and the one chosen; below `splitAt` one shows at a
    * time, the detail while `open`, with a back button to the list.
    */
-  behavior: PanesBehavior;
+  behavior: Behavior;
   /**
    * The window class of the Panes' own width from which the panes sit side by side: medium
    * (37.5 rem), expanded (52.5 rem) or large (75 rem). Narrower, they behave as `behavior` says. CSS
    * decides it, so the server's markup is right before any script runs.
    * @default 'expanded'
    */
-  splitAt?: PanesSplitAt;
+  splitAt?: SplitAt;
   /**
    * Below `splitAt`: whether the supporting sheet is open, or the detail shows instead of the
    * list, for Panes the application controls with onOpenChange, such as a list-detail that opens
@@ -193,7 +193,7 @@ export interface DividerProps
 }
 
 interface PanesContextValue {
-  behavior: PanesBehavior;
+  behavior: Behavior;
   open: boolean;
   close: (reason: OpenChangeReason) => void;
   /** Opens the supporting pane, or the detail. */

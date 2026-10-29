@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Panes, Surface, Text, type PanesSplitAt } from '@envsemble/envui';
+import { Button, Panes, Surface, Text } from '@envsemble/envui';
 
 const params = () => new URLSearchParams(location.search);
 
@@ -14,7 +14,7 @@ const projects = ['Northwind launch', 'Website refresh', 'Annual report'];
  */
 export function PanesFixture() {
   const query = params();
-  const splitAt = (query.get('split') ?? undefined) as PanesSplitAt | undefined;
+  const splitAt = (query.get('split') ?? undefined) as Panes.SplitAt | undefined;
   const divider = query.get('divider') !== 'none';
   const [width, setWidth] = useState(query.get('width') ?? '60rem');
   const [open, setOpen] = useState(false);
