@@ -876,7 +876,7 @@ test('a small independent bundle excludes unused icons and Base UI', async funct
     const output = result.outputFiles.find((file) => file.path.endsWith('.js'));
     const css = result.outputFiles.find((file) => file.path.endsWith('.css'));
     const meta = Object.entries(result.metafile.outputs).find(([path]) => path.endsWith('consumer.js'))[1];
-    console.log(JSON.stringify({ code: output.text, bytes: output.contents.length, css: css.text,
+    console.log(JSON.stringify({ code: output.text, css: css.text,
       emittedInputs: Object.entries(meta.inputs).filter(([, value]) => value.bytesInOutput > 0).map(([path]) => path.replaceAll('\\\\', '/')) }));
   `,
   );
@@ -887,10 +887,7 @@ test('a small independent bundle excludes unused icons and Base UI', async funct
     `Unexpected icons in consumer bundle: ${iconInputs.join(', ')}`,
   );
   assert.match(iconInputs[0], /\/Home\.js$/);
-  // Button keeps a label's words and a number in one run of text (textRuns), about 1.3 kB. Without
-  // code splitting, esbuild wraps the base style sheet's import in a stub, as a module loaded on
-  // demand imports it too, about 0.3 kB.
-  assert.ok(result.bytes < 13000, `Small consumer unexpectedly emitted ${result.bytes} bytes.`);
+  // Its size is held by tests/SizeBudgets.test.mjs (Theme + Button + Icon, minified).
   assert.doesNotMatch(result.code, /@base-ui\/react|CheckCircle|ChevronRight|Warning/);
   assert.ok(
     result.emittedInputs.every(
