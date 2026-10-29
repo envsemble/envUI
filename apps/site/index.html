@@ -8,13 +8,11 @@
       content="envUI: reusable React components, design foundations and paired light/dark previews for envsemble products."
     />
     <title>envUI</title>
-    <link rel="icon" type="image/x-icon" href="/envUI-favicon.ico" />
-    <link
-      rel="icon"
-      type="image/x-icon"
-      href="/envUI-favicon-white.ico"
-      media="(prefers-color-scheme: dark)"
-    />
+    <!-- The SVG follows the color scheme. The ICO is for browsers without SVG favicons; its sizes
+         keep the others on the SVG (scripts/build/GenerateFavicons.ts draws both PNG icons). -->
+    <link rel="icon" href="/envUI-favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/envUI-favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/envUI-apple-touch-icon.png" />
   </head>
   <body>
     <div id="root"></div>
