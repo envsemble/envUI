@@ -68,11 +68,9 @@ test('a skeleton is one busy region with inert content, draws text as bars and s
   expect(await style(page, '[data-testid="raw"]', '-webkit-text-fill-color')).toBe(
     'rgba(0, 0, 0, 0)',
   );
-  // A control is a filled shape of the skeleton's paint: its fill with a soft highlight across it,
-  // laid out on the window so it crosses every skeleton as one, and its own rounded corners.
+  // A control is a filled shape of the skeleton's paint, with its own rounded corners.
   const button = '[data-testid="projects"] .env-button';
   expect(await style(page, button, 'background-image')).toMatch(/^linear-gradient\(/);
-  expect(await style(page, button, 'background-attachment')).toBe('fixed');
   expect(Number.parseFloat(await style(page, button, 'border-top-left-radius'))).toBeGreaterThan(0);
   // What a shape holds, such as an avatar's initials, isn't drawn.
   expect(await style(page, '[data-testid="owner-row"] .env-avatar *', 'visibility')).toBe('hidden');
@@ -148,22 +146,52 @@ test('a skeleton is one busy region with inert content, draws text as bars and s
   expect(await style(page, heading, 'display')).toBe('none');
 });
 
-test('the shimmer runs in step across the page, and stays still with reduced motion', async ({
+test('the pulse runs in step across the page, slower with reduced motion, and still in forced colors', async ({
   page,
 }) => {
   await open(page);
-  const animations = () =>
+  const pulses = () =>
     page.evaluate(() =>
       document
         .getAnimations()
-        .filter((animation) => (animation as CSSAnimation).animationName === 'env-skeleton-shimmer')
-        .map((animation) => animation.startTime),
+        .filter((animation) =>
+          (animation as CSSAnimation).animationName?.startsWith('env-skeleton-pulse'),
+        )
+        .map((animation) => ({
+          name: (animation as CSSAnimation).animationName,
+          start: animation.startTime,
+          duration: animation.effect?.getComputedTiming().duration,
+        })),
     );
-  // The surface over placeholders and the card that is a skeleton itself, started at once.
-  await expect.poll(async () => (await animations()).length).toBeGreaterThanOrEqual(2);
-  expect(new Set(await animations())).toEqual(new Set([0]));
+  const kinds = async () =>
+    [...new Set((await pulses()).map(({ name, duration }) => `${name} ${duration}`))].sort();
+  /** The root's pulse and its bar's paint at a point of the breath, the animation held there. */
+  const at = (fraction: number) =>
+    page.getByTestId('card-skeleton').evaluate((root, share) => {
+      const animation = root
+        .getAnimations()
+        .find((item) => (item as CSSAnimation).animationName?.startsWith('env-skeleton-pulse'))!;
+      animation.pause();
+      animation.currentTime = Number(animation.effect!.getComputedTiming().duration) * share;
+      const result = {
+        pulse: getComputedStyle(root).getPropertyValue('--env-skeleton-pulse'),
+        paint: getComputedStyle(root.querySelector('.env-card-description')!, '::before')
+          .backgroundImage,
+      };
+      animation.play();
+      return result;
+    }, fraction);
+  // The surface over placeholders and the card that is a skeleton itself, started at once: a breath
+  // of 1.8 s, from the strong tone to the faint one and back.
+  await expect.poll(async () => (await pulses()).length).toBeGreaterThanOrEqual(2);
+  expect(new Set((await pulses()).map(({ start }) => start))).toEqual(new Set([0]));
+  expect(await kinds()).toEqual(['env-skeleton-pulse 1800']);
+  const strong = await at(0);
+  const faint = await at(0.5);
+  expect([strong.pulse, faint.pulse]).toEqual(['0', '1']);
+  expect(faint.paint).not.toBe(strong.paint);
   // A control's shape takes the paint as it is: no transition of its own starts again on every
-  // frame of the sweep and lags behind it.
+  // frame of the pulse and lags behind it.
   expect(
     await page.evaluate(
       () =>
@@ -176,8 +204,13 @@ test('the shimmer runs in step across the page, and stays still with reduced mot
           ).length,
     ),
   ).toBe(0);
+  // Reduced motion: slower, and half as deep, a change of tone only.
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await expect.poll(async () => (await animations()).length).toBe(0);
+  await expect.poll(kinds).toEqual(['env-skeleton-pulse-reduced 3200']);
+  expect((await at(0.5)).pulse).toBe('0.5');
+  // Forced colors: the bars stand still in the system gray.
+  await page.emulateMedia({ forcedColors: 'active', reducedMotion: 'no-preference' });
+  await expect.poll(async () => (await pulses()).length).toBe(0);
 });
 
 test(
@@ -347,7 +380,7 @@ test('in forced colors, bars and shapes stay visible in the system gray', async 
   await page.emulateMedia({ forcedColors: 'active', reducedMotion: 'reduce' });
   await open(page);
   const heading = '[data-testid="project-card"] .env-card-heading';
-  // The paint is the system gray throughout, the highlight included.
+  // The paint is the system gray, and the surfaces carry no tint.
   const bar = await style(page, heading, 'background-image', '::before');
   expect(bar).toMatch(/^linear-gradient/);
   expect(bar).not.toContain('rgba(0, 0, 0, 0)');
@@ -356,9 +389,11 @@ test('in forced colors, bars and shapes stay visible in the system gray', async 
   expect(layer).toMatch(/^linear-gradient/);
   expect(layer).not.toContain('rgba(0, 0, 0, 0)');
   expect(await style(page, '[data-testid="projects"] .env-avatar', 'background-image')).toBe(bar);
+  expect(await style(page, '[data-testid="projects"]', 'background-image')).toBe('none');
+  expect(await style(page, '[data-testid="nested-card"]', 'background-image')).toBe('none');
 });
 
-test('text that is there draws as rounded bars over its line boxes, which shimmer with the rest', async ({
+test('text that is there draws as rounded bars over its line boxes, which pulse with the rest', async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -394,7 +429,7 @@ test('text that is there draws as rounded bars over its line boxes, which shimme
   expect(after.mask).toContain('data:image/svg+xml');
   expect(after.paint).toMatch(/^linear-gradient/);
   expect(after.position).toBe('absolute');
-  // The surface itself carries the highlight over its fill.
+  // The surface itself carries the tint over its fill.
   expect(await style(page, '[data-testid="projects"]', 'background-image')).toMatch(
     /linear-gradient/,
   );

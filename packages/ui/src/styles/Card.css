@@ -153,9 +153,8 @@
     }
   }
 
-  /* In a skeleton, a card carries the skeleton's highlight over its fill (Skeleton.css). */
+  /* In a skeleton, a card carries the skeleton's tint over its fill (Skeleton.css). */
   [data-env-skeleton] .env-card {
-    background-image: var(--env-skeleton-glow);
-    background-attachment: fixed;
+    background-image: var(--env-skeleton-overlay);
   }
 }

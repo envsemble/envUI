@@ -113,4 +113,9 @@
     --env-skeleton-placeholder: inline-block;
     --env-skeleton-length: 14rem;
   }
+  /* An accordion has no fill of its own, so as a skeleton it carries no tint (Skeleton.css): it
+     would show a box that isn't there. */
+  .env-accordion[data-env-skeleton]:not(env-none) {
+    background-image: none;
+  }
 }

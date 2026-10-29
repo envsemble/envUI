@@ -125,13 +125,13 @@ export function TilePreview({
   );
 }
 
-/** Whether an animation loops for ever, as a skeleton's shimmer or a spinner's turn does. */
+/** Whether an animation loops for ever, as a skeleton's pulse or a spinner's turn does. */
 const loops = (animation: Animation) =>
   animation.effect?.getComputedTiming().iterations === Infinity;
 
 /**
  * Holds a resting tile still: the animations in it that loop for ever, such as a skeleton's
- * shimmer, pause until it plays, also those that start while it rests. An entrance, which ends,
+ * pulse, pause until it plays, also those that start while it rests. An entrance, which ends,
  * runs on, so nothing is left halfway in.
  */
 function useStillAtRest(canvas: HTMLElement | null, resting: boolean) {

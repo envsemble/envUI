@@ -12,40 +12,66 @@
      default length for its text style, on as many lines as the style usually takes, in the parts that
      turn it on in their own style sheets. Bars and shapes take envUI's corners: a bar a small radius,
      and a shape its component's own, such as a chip's, an avatar's round one or a card's surface
-     radius. A soft highlight sweeps across every bar and shape, and fainter across the skeleton's own
-     surfaces, in step across the page. A component
-     whose generic look isn't right, such as a chart's, gives its own in its style sheet.
+     radius. Bars and shapes pulse, between a strong tone and a faint one, and the skeleton's own
+     surfaces with them, fainter, in step across the page. A component whose generic look isn't
+     right, such as a chart's, gives its own in its style sheet.
 
      These rules win their ties with the components' rules: last in styles.css, they did by order. A
      bundler may put this style sheet before a component's, which its module imports later, so each
      rule takes one type selector more, :not(env-none), which every element matches. It wins those
      ties whatever the order, and still loses to a rule that outweighs it by more, as before. */
 
-  /* Where the highlight is, along the window's width. The root animates it, and everything inside
-     inherits the paint it sets. */
-  @property --env-skeleton-sweep {
-    syntax: '<percentage>';
+  /* How deep the pulse goes in each theme: the strong tone mixes the fill toward the text color by
+     --env-skeleton-deepen, the faint one fades it by --env-skeleton-fade, and the skeleton's own
+     surfaces take the text color by up to --env-skeleton-tint. Dark goes deeper, as a lighter step
+     shows less there. Set on every theme boundary, so the nearest one decides. */
+  .env-theme {
+    --env-skeleton-deepen: 11%;
+    --env-skeleton-fade: 45%;
+    --env-skeleton-tint: 7%;
+  }
+  .env-theme[data-env-theme='dark'] {
+    --env-skeleton-deepen: 14%;
+    --env-skeleton-tint: 9%;
+  }
+
+  /* Where the pulse is, from the strong tone (0) to the faint one (1). The root animates it, and
+     everything inside inherits the paint it sets. Registered, so it interpolates; its keyframes are
+     plain numbers, as Firefox doesn't interpolate a registered property between keyframes that use
+     var(). */
+  @property --env-skeleton-pulse {
+    syntax: '<number>';
     inherits: true;
-    initial-value: -50%;
+    initial-value: 0;
   }
 
   [data-env-skeleton]:not(env-none) {
-    /* Out of sight at rest; the animation below moves it across. */
-    --env-skeleton-sweep: -50%;
+    --env-skeleton-pulse: 0;
     --env-skeleton-fill: var(--env-color-bg-neutral-muted-hover);
-    --env-skeleton-shine: var(--env-color-skeleton-shine);
-    /* The plain fill, for what can only take a color: the line through text. */
-    --env-skeleton-color: var(--env-skeleton-fill);
-    /* The paint of every bar and shape: the fill with a soft highlight across it. It is laid out on
-       the window rather than on each shape, so the highlight crosses every skeleton on the page as
-       one, wherever they are. */
-    --env-skeleton-paint: linear-gradient(
-        100deg,
-        var(--env-skeleton-fill) calc(var(--env-skeleton-sweep) - 20%),
-        var(--env-skeleton-shine) var(--env-skeleton-sweep),
-        var(--env-skeleton-fill) calc(var(--env-skeleton-sweep) + 20%)
-      )
-      fixed;
+    /* The two tones of a bar: the fill a little toward the text color, darker in light and lighter
+       in dark, and the fill faded toward the surface. The surfaces' tint carries a quarter of the
+       change, so the bars take three quarters of the depth: bar and surface together change about
+       as much as a bar alone would, and the bars keep their contrast against their surface. */
+    --env-skeleton-strong: color-mix(
+      in oklab,
+      var(--env-skeleton-fill),
+      var(--env-color-fg-default) calc(var(--env-skeleton-deepen) * 0.75)
+    );
+    --env-skeleton-faint: color-mix(
+      in srgb,
+      var(--env-skeleton-fill),
+      transparent calc(var(--env-skeleton-fade) * 0.75)
+    );
+    /* The tone of every bar and shape at this point of the pulse. */
+    --env-skeleton-tone: color-mix(
+      in oklab,
+      var(--env-skeleton-strong),
+      var(--env-skeleton-faint) calc(var(--env-skeleton-pulse) * 100%)
+    );
+    /* The tone, for what can only take a color: the line through text. */
+    --env-skeleton-color: var(--env-skeleton-tone);
+    /* The paint of every bar and shape. */
+    --env-skeleton-paint: linear-gradient(var(--env-skeleton-tone) 0 0);
     /* A bar: a rectangle with small rounded corners, as tall as a line's letters, in the middle of
        its line. It sizes to its mask tile, so the corners stay the same at any length. Its namespace is
        escaped: it is no address the style sheet loads. */
@@ -53,20 +79,22 @@
     /* A bar over text that is there: a rectangle with the same small rounded corners, which fills
        its mask tile. */
     --env-skeleton-rect: url("data:image/svg+xml,%3Csvg xmlns='http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Crect width='100%25' height='100%25' rx='4'/%3E%3C/svg%3E");
-    /* The soft highlight that sweeps across the skeleton's own surfaces, such as a card or a row, so
-       the whole skeleton shimmers as one. */
-    --env-skeleton-glow: linear-gradient(
-      100deg,
-      transparent calc(var(--env-skeleton-sweep) - 20%),
-      color-mix(in srgb, var(--env-skeleton-shine) 35%, transparent) var(--env-skeleton-sweep),
-      transparent calc(var(--env-skeleton-sweep) + 20%)
+    /* A tint of the text color over the skeleton's own surfaces, such as a card or a row, strongest
+       with the bars' strong tone, so the whole skeleton pulses as one. */
+    --env-skeleton-overlay: linear-gradient(
+      color-mix(
+          in srgb,
+          var(--env-color-fg-default)
+            calc((1 - var(--env-skeleton-pulse)) * var(--env-skeleton-tint)),
+          transparent
+        )
+        0 0
     );
     /* Whether an element is a filled shape, whose text isn't drawn; the shapes set it. */
     --env-skeleton-shape: 0;
-    /* The skeleton's own surface carries the highlight too, over its fill; cards, surfaces and rows
-       inside it take it in their own style sheets. */
-    background-image: var(--env-skeleton-glow);
-    background-attachment: fixed;
+    /* The skeleton's own surface carries the tint over its fill; cards, surfaces, rows and table
+       headers inside it take it in their own style sheets. */
+    background-image: var(--env-skeleton-overlay);
     /* The length of missing text whose part sets none. */
     --env-skeleton-text-length: 10rem;
     /* Text is never drawn: a line through it as thick as its letters stands for it. The line goes on
@@ -75,6 +103,8 @@
     text-decoration: line-through var(--env-skeleton-color);
     text-decoration-thickness: 0.8em;
     text-decoration-skip-ink: none;
+    /* The pulse (Motion, below). */
+    animation: env-skeleton-pulse 1.8s ease-in-out infinite;
   }
   /* Text that is there, once the script has measured it (skeletonText.ts): no line through it, but a
      rounded bar over each of its line boxes, all drawn by one layer over the content in the skeleton's
@@ -149,7 +179,7 @@
     box-shadow: none;
     background: var(--env-skeleton-paint);
     /* The shape takes the paint as it is: the control's own color transition would start again on
-       every frame of the sweep and lag behind it. */
+       every frame of the pulse and lag behind it. */
     transition: none;
     /* A loaded image moves out of its box, which keeps its size. */
     object-fit: none;
@@ -207,29 +237,45 @@
     mask-composite: intersect, add, add;
   }
 
-  /* Motion: the highlight sweeps across the window and rests a moment before the next, every
-     skeleton's in step, as the component aligns their start. With a reduced-motion preference it
-     stays out of sight, and the bars and shapes keep their fill. */
-  @media (prefers-reduced-motion: no-preference) {
-    [data-env-skeleton]:not(env-none) {
-      animation: env-skeleton-shimmer 2s linear infinite;
+  /* Motion: the tone breathes from strong to faint and back, 1.8 s a breath, every skeleton's in
+     step, as the component aligns their start. With a reduced-motion preference it breathes half as
+     deep and slower: only the tone changes, nothing moves. */
+  @keyframes env-skeleton-pulse {
+    0%,
+    100% {
+      --env-skeleton-pulse: 0;
+    }
+    50% {
+      --env-skeleton-pulse: 1;
     }
   }
-  @keyframes env-skeleton-shimmer {
-    0% {
-      --env-skeleton-sweep: -50%;
-    }
-    70%,
+  @keyframes env-skeleton-pulse-reduced {
+    0%,
     100% {
-      --env-skeleton-sweep: 150%;
+      --env-skeleton-pulse: 0;
     }
+    50% {
+      --env-skeleton-pulse: 0.5;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-env-skeleton]:not(env-none) {
+      animation: env-skeleton-pulse-reduced 3.2s ease-in-out infinite;
+    }
+  }
+  /* A popup, dialog or sheet that is a skeleton stops pulsing as it closes: it is removed once its
+     animations finish, which a pulse never does. */
+  [data-env-skeleton]:not(env-none)[data-ending-style] {
+    animation: none;
   }
 
-  /* Forced colors: the bars and shapes take the system's gray text color. */
+  /* Forced colors: the bars and shapes take the system's gray text color and stand still, and the
+     surfaces keep the system's colors. */
   @media (forced-colors: active) {
     [data-env-skeleton]:not(env-none) {
-      --env-skeleton-fill: GrayText;
-      --env-skeleton-shine: GrayText;
+      --env-skeleton-tone: GrayText;
+      --env-skeleton-overlay: none;
+      animation: none;
     }
   }
 }

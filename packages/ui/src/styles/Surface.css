@@ -67,9 +67,8 @@
     --env-surface-radius: 0rem;
   }
 
-  /* In a skeleton, a surface carries the skeleton's highlight over its fill (Skeleton.css). */
+  /* In a skeleton, a surface carries the skeleton's tint over its fill (Skeleton.css). */
   [data-env-skeleton] .env-surface {
-    background-image: var(--env-skeleton-glow);
-    background-attachment: fixed;
+    background-image: var(--env-skeleton-overlay);
   }
 }
