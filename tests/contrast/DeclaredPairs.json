@@ -3790,6 +3790,13 @@
         "high": 7
       }
     },
+    "--env-color-fg-muted-hover on --env-color-bg-navigation-hover": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
     "--env-color-fg-muted-hover on --env-color-bg-page": {
       "kind": "text",
       "minimum": {
@@ -3805,6 +3812,13 @@
       }
     },
     "--env-color-fg-muted-pressed on --env-color-bg-default": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-muted-pressed on --env-color-bg-navigation-pressed": {
       "kind": "text",
       "minimum": {
         "standard": 4.5,
@@ -3938,6 +3952,13 @@
       }
     },
     "--env-color-fg-on-selected on --env-color-fg-default": {
+      "kind": "distinct",
+      "minimum": {
+        "standard": 0.03,
+        "high": 0.04
+      }
+    },
+    "--env-color-fg-on-selected on --env-color-fg-muted": {
       "kind": "distinct",
       "minimum": {
         "standard": 0.03,

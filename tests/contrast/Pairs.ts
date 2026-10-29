@@ -718,6 +718,31 @@ const registry: readonly ContrastPair[] = merged([
     [navigationHover, navigationPressed],
     'Navigation icons on hover and press',
   ),
+  ...text(
+    '--env-color-fg-default',
+    [surface, page],
+    "A navigation drawer's group headings, on the drawer's fill and on the page",
+  ),
+  ...text(
+    '--env-color-fg-muted',
+    [surface, page],
+    "A navigation drawer's items, under its headings, on the drawer's fill and on the page",
+  ),
+  ...text(
+    '--env-color-fg-muted-hover',
+    [navigationHover],
+    "A navigation drawer's item under the pointer",
+  ),
+  ...text(
+    '--env-color-fg-muted-pressed',
+    [navigationPressed],
+    "A navigation drawer's item pressed",
+  ),
+  ...distinct(
+    '--env-color-fg-on-selected',
+    ['--env-color-fg-muted'],
+    'The current item of a navigation drawer against its other items',
+  ),
   ...nonText('--env-color-fg-on-selected', [[fill, page]], 'The bar of the active document tab'),
 
   // Selection must not be mistaken for the other items around it, at rest or under the pointer, and
