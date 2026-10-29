@@ -32,6 +32,7 @@ import {
   type DrawerDestination,
 } from './internal/Destinations.js';
 import { backgroundAttribute, type NavigationBackground } from './internal/background.js';
+import type { ResizeDetails } from '../internal/resizeDetails.js';
 import '../styles/Base.css';
 import '../styles/Drawer.css';
 
@@ -115,7 +116,7 @@ export interface DrawerProps extends Omit<ComponentPropsWithRef<'nav'>, 'childre
    * and with committed true as a drag ends, a key moves the handle or a double click resets it.
    * Store the committed width to keep it, and pass it back as `width`.
    */
-  onWidthChange?: (width: number, details: { committed: boolean }) => void;
+  onWidthChange?: (width: number, details: ResizeDetails) => void;
   /**
    * The smallest width of a `resizable` drawer, in rem.
    * @default 15

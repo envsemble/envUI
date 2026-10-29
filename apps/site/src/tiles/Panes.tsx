@@ -38,8 +38,8 @@ export default function PanesTile() {
     <Panes.Root
       behavior="list-detail"
       splitAt="medium"
-      defaultSize={17}
-      minSize={12}
+      defaultWidth={17}
+      minWidth={12}
       style={{ inlineSize: '38rem', blockSize: '27rem' }}
     >
       <Panes.List label="Inbox">

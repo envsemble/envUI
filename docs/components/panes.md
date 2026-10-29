@@ -27,7 +27,7 @@ avoidWhen:
     use: Page
 components:
   - Panes
-  - readPanesSize
+  - readPanesWidth
 examples:
   SupportingPane:
     role: overview
@@ -161,8 +161,8 @@ The application's navigation goes in the [Scaffold](scaffold.md), not in a suppo
 Panes.Root takes a `behavior`: `supporting` holds Panes.Main and Panes.Supporting, such as a document and its details, and `list-detail` holds Panes.List and Panes.Detail, such as messages and the one chosen, each pair with an optional Panes.Divider between them.
 
 - Below `splitAt`, the supporting pane is a modal sheet over the main one while `open`, and a list-detail shows the detail instead of the list while `open`.
-- The application keeps `open`, setting it as an item is chosen or the sheet's button is pressed.
-- `onOpenChange` receives `false` as people close it: <kbd>Esc</kbd>, the close button or a press on the scrim close the sheet, and the back button returns to the list.
+- Left uncontrolled, with `defaultOpen`, Panes.Trigger opens the sheet and people close it; a list-detail application keeps `open` itself, setting it as an item is chosen.
+- `onOpenChange` receives the new state and why: `true` with `trigger-press`, and `false` as people close it, with `escape-key`, `close-press`, `outside-press` for the scrim, or `back-press` for the back button that returns to the list.
 
 ```tsx source=SupportingPane
 
@@ -198,22 +198,22 @@ Panes.Supporting and Panes.List take a `label`, which names their region; on Pan
 
 #### Resizable
 
-Panes.Divider, named by its `label`, Resize panes by default, resizes the supporting pane or the list, by pointer and the arrow keys; a double click returns it to `defaultSize`, 22.5 rem by default.
+Panes.Divider, named by its `label`, Resize panes by default, resizes the supporting pane or the list, by pointer and the arrow keys; a double click returns it to `defaultWidth`, 22.5 rem by default.
 
-- It stays between `minSize` and `maxSize`, 16 and 40 rem by default, and never leaves the other pane less than 16 rem.
+- It stays between `minWidth` and `maxWidth`, 16 and 40 rem by default, and never leaves the other pane less than 16 rem.
 - The arrow keys move it 1 rem, 5 rem with <kbd>Shift</kbd>, and <kbd>Page Up</kbd> and <kbd>Page Down</kbd> 5 rem.
-- `size` and `onSizeChange`, which receives each width in rem and `committed` once a drag ends or a key moves it, let the application control it.
+- `width` and `onWidthChange`, which receives each width in rem and `committed` once a drag ends or a key moves it, as Sheet's do, let the application control it.
 - The divider is the gap between two surfaces: give each pane a Surface as tall as the pane, with `min-block-size: 100%`, and where the detail shows alone, its surface fills the room below the back button.
 - Panes keeps the same gap without a divider.
 
-`persist` keeps the width people choose in a cookie of that name. Read it on the server with `readPanesSize(cookieHeader, key)` and pass it as `persistedSize`, so nothing moves as the page hydrates.
+`persist` keeps the width people choose in a cookie of that name. Read it on the server with `readPanesWidth(cookieHeader, key)` and pass it as `persistedWidth`, so nothing moves as the page hydrates.
 
 ```tsx
 <Panes.Root
   behavior="supporting"
-  defaultSize={18}
-  minSize={14}
-  maxSize={28}
+  defaultWidth={18}
+  minWidth={14}
+  maxWidth={28}
   persist="details-width"
 >
   <Panes.Main label="Canvas">…</Panes.Main>
@@ -228,5 +228,6 @@ The parts are the root, `env-panes`, with `data-behavior`, `data-split-at` and `
 
 ## Changelog
 
+- **1.0.0-prerelease.5**: The resized pane's `size`, `defaultSize`, `onSizeChange`, `minSize`, `maxSize` and `persistedSize` are `width`, `defaultWidth`, `onWidthChange`, `minWidth`, `maxWidth` and `persistedWidth`, as on Sheet, and `readPanesSize` is `readPanesWidth`. `defaultOpen` leaves the open state to Panes, and `onOpenChange` receives why. The part props are `Panes.MainProps`, `Panes.DetailProps` and `Panes.ListProps`.
 - **1.0.0-prerelease.5**: The supporting sheet is on a Sheet's fill, `--env-color-bg-default`, rather than `--env-color-bg-raised`, which differ only at high contrast in the light theme.
 - **1.0.0**: Panes, which replaces SplitPane and ListDetail: the supporting and list-detail behaviors, `splitAt` at a window class, a divider in rem, and Panes.Trigger, which opens the supporting sheet.

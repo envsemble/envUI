@@ -7,7 +7,7 @@ export default function PanesAnatomy() {
     <Panes.Root
       behavior="list-detail"
       splitAt="medium"
-      defaultSize={16}
+      defaultWidth={16}
       style={{ blockSize: '12rem' }}
     >
       <Panes.List label="Inbox">

@@ -4,6 +4,7 @@ import { useCallback, useRef, useState, type MouseEvent } from 'react';
 import type { ResizeHandleProps } from './ResizeHandle.js';
 import { useFormatters } from './useFormatters.js';
 import { remPixels, roundToHundredth } from './lengths.js';
+import type { ResizeDetails } from './resizeDetails.js';
 
 /** A number that is finite, else undefined. */
 const finite = (value: number | undefined) =>
@@ -29,7 +30,7 @@ interface Options {
   defaultWidth: number;
   minWidth: number;
   maxWidth: number;
-  onWidthChange: ((width: number, details: { committed: boolean }) => void) | undefined;
+  onWidthChange: ((width: number, details: ResizeDetails) => void) | undefined;
   /** The largest width the room around it allows, in rem, read as a drag starts or a key moves. */
   room: (handle: HTMLElement) => number;
   /** Whether the width grows as the handle moves toward the inline start: a region at the end. */

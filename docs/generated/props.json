@@ -3028,7 +3028,7 @@
         },
         {
           "name": "onWidthChange",
-          "type": "(width: number, details: { committed: boolean }) => void",
+          "type": "(width: number, details: ResizeDetails) => void",
           "required": false,
           "description": "Receives each new width of a `resizable` drawer, in rem: while dragging with committed false, and with committed true as a drag ends, a key moves the handle or a double click resets it. Store the committed width to keep it, and pass it back as `width`."
         },
@@ -5681,7 +5681,7 @@
           "name": "label",
           "type": "string",
           "required": true,
-          "description": "Names the pane's region, such as Details or Projects."
+          "description": "Names the pane's region, such as Projects."
         }
       ],
       "native": [
@@ -5732,14 +5732,20 @@
           "name": "open",
           "type": "boolean",
           "required": false,
+          "description": "Below `splitAt`: whether the supporting sheet is open, or the detail shows instead of the list, for Panes the application controls with onOpenChange, such as a list-detail that opens the detail as an item is chosen. Side by side, both panes show whatever it is."
+        },
+        {
+          "name": "defaultOpen",
+          "type": "boolean",
+          "required": false,
           "default": "false",
-          "description": "Below `splitAt`: whether the supporting sheet is open, or the detail shows instead of the list. Side by side, both panes show whatever it is. The application keeps it, as it knows when an item is chosen or the sheet's button pressed."
+          "description": "Whether uncontrolled Panes start with the supporting sheet open, or the detail shown, below `splitAt`. Panes.Trigger opens the sheet, and Escape, the close button, the scrim and the back button close what shows."
         },
         {
           "name": "onOpenChange",
-          "type": "(open: boolean) => void",
+          "type": "(open: boolean, details: OpenChangeDetails) => void",
           "required": false,
-          "description": "Called with false when people close what `open` shows below `splitAt`: Escape, the close button or a press on the scrim closes the supporting sheet, and the back button returns from the detail to the list. Set `open` from it."
+          "description": "Called with the new state, and why: true when Panes.Trigger opens the supporting sheet, and false when people close what `open` shows below `splitAt`: Escape, the close button or a press on the scrim closes the supporting sheet, and the back button returns from the detail to the list."
         },
         {
           "name": "closeLabel",
@@ -5756,33 +5762,33 @@
           "description": "The back button's label in a list-detail's detail, below `splitAt`. Name where it goes, such as All projects."
         },
         {
-          "name": "size",
+          "name": "width",
           "type": "number",
           "required": false,
-          "description": "The resized pane's width in rem, for Panes the application controls with onSizeChange: the supporting pane, or the list. It applies while the panes sit side by side."
+          "description": "The resized pane's width in rem, for Panes the application controls with onWidthChange: the supporting pane, or the list. It applies while the panes sit side by side."
         },
         {
-          "name": "defaultSize",
+          "name": "defaultWidth",
           "type": "number",
           "required": false,
           "default": "22.5",
           "description": "The resized pane's width in rem until people choose one with Panes.Divider, or one is kept under `persist`, and the width a double click on the divider returns it to."
         },
         {
-          "name": "onSizeChange",
-          "type": "(size: number, details: { committed: boolean }) => void",
+          "name": "onWidthChange",
+          "type": "(width: number, details: ResizeDetails) => void",
           "required": false,
           "description": "Receives each new width of the resized pane, in rem: while dragging the divider with committed false, and with committed true as a drag ends, a key moves it or a double click resets it."
         },
         {
-          "name": "minSize",
+          "name": "minWidth",
           "type": "number",
           "required": false,
           "default": "16",
           "description": "The resized pane's smallest width, in rem."
         },
         {
-          "name": "maxSize",
+          "name": "maxWidth",
           "type": "number",
           "required": false,
           "default": "40",
@@ -5792,13 +5798,13 @@
           "name": "persist",
           "type": "string",
           "required": false,
-          "description": "Keeps the width people choose in a cookie of this name, for Panes the application doesn't control; a double click on the divider forgets it and returns to `defaultSize`. Read it on the server with `readPanesSize(cookieHeader, key)` and pass it as `persistedSize`, so the server's markup has it and nothing moves as the page hydrates. Without that, the kept width applies after the first render."
+          "description": "Keeps the width people choose in a cookie of this name, for Panes the application doesn't control; a double click on the divider forgets it and returns to `defaultWidth`. Read it on the server with `readPanesWidth(cookieHeader, key)` and pass it as `persistedWidth`, so the server's markup has it and nothing moves as the page hydrates. Without that, the kept width applies after the first render."
         },
         {
-          "name": "persistedSize",
+          "name": "persistedWidth",
           "type": "number",
           "required": false,
-          "description": "The width kept under `persist`, in rem, as the server read it from the request's cookies with `readPanesSize`: the first render uses it, on the server and in the browser alike."
+          "description": "The width kept under `persist`, in rem, as the server read it from the request's cookies with `readPanesWidth`: the first render uses it, on the server and in the browser alike."
         },
         {
           "name": "name",
@@ -5829,7 +5835,7 @@
           "name": "label",
           "type": "string",
           "required": true,
-          "description": "Names the pane's region, such as Details or Projects."
+          "description": "Names the pane's region, such as Details."
         },
         {
           "name": "skeleton",
@@ -7108,7 +7114,7 @@
         },
         {
           "name": "onWidthChange",
-          "type": "(width: number, details: { committed: boolean }) => void",
+          "type": "(width: number, details: ResizeDetails) => void",
           "required": false,
           "description": "Receives each new width of a `resizable` side sheet, in rem: while dragging with committed false, and with committed true as a drag ends, a key moves the handle or a double click resets it. Store the committed width to keep it, and pass it back as `width`."
         },
@@ -7650,9 +7656,9 @@
         },
         {
           "name": "onColumnWidthsChange",
-          "type": "(widths: number[]) => void",
+          "type": "(widths: number[], details: ResizeDetails) => void",
           "required": false,
-          "description": "Called with every column's width when people resize a column."
+          "description": "Called with every column's width when people resize a column: while dragging a handle with committed false, and with committed true as a drag ends, a key moves it or a double click resets the widths."
         },
         {
           "name": "minColumnWidths",
@@ -8980,10 +8986,10 @@
         "@envsemble/envui"
       ]
     },
-    "readPanesSize": {
+    "readPanesWidth": {
       "kind": "function",
       "source": "packages/ui/src/layout/panesSize.ts",
-      "description": "The width Panes keeps under its `persist` key, read from a Cookie header, such as the request's on the server, or from `document.cookie`. Render Panes.Root with it as `persistedSize`, on the server and in the browser alike, so the server's markup has the width people chose and nothing moves as the page hydrates: <Panes.Root persist=\"inbox\" persistedSize={readPanesSize(cookieHeader, 'inbox')}> Returns undefined where no width is kept under the key.",
+      "description": "The width Panes keeps under its `persist` key, read from a Cookie header, such as the request's on the server, or from `document.cookie`. Render Panes.Root with it as `persistedWidth`, on the server and in the browser alike, so the server's markup has the width people chose and nothing moves as the page hydrates: <Panes.Root persist=\"inbox\" persistedWidth={readPanesWidth(cookieHeader, 'inbox')}> Returns undefined where no width is kept under the key.",
       "signature": "(cookies: string | null | undefined, key: string): number | undefined",
       "entries": [
         "@envsemble/envui"

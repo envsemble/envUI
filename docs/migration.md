@@ -353,7 +353,7 @@ SplitView (0.6), and SplitPane and ListDetail (1.0.0-prerelease.0), are gone: [P
 | `ListDetail.List`, `ListDetail.Detail`                         | `Panes.List`, `Panes.Detail`                                                                            |
 | ListDetail's handle, always there                              | `<Panes.Divider label="Resize project list" />` between the list and the detail, where it should resize |
 | `stackBelow="44rem"`                                           | `splitAt`: `medium` (37.5 rem), `expanded` (52.5 rem, the default) or `large` (75 rem)                  |
-| `defaultListSize`, `minListSize`, `maxListSize` in %           | `defaultSize`, `minSize`, `maxSize` in rem: 22.5, 16 and 40 by default                                  |
+| `defaultListSize`, `minListSize`, `maxListSize` in %           | `defaultWidth`, `minWidth`, `maxWidth` in rem: 22.5, 16 and 40 by default                               |
 | `resizeLabel`                                                  | `label` on Panes.Divider                                                                                |
 | SplitPane, SplitView: two panes and a handle                   | By hand: `behavior="supporting"`, `Panes.Main`, an optional `Panes.Divider` and `Panes.Supporting`      |
 | `onStackedChange`                                              | None: CSS decides; open the supporting pane from a button in the main pane                              |
@@ -371,7 +371,7 @@ Before and after, a document with its details beside it:
 
 // Now: in less room the details are a sheet the button opens.
 const [open, setOpen] = useState(false);
-<Panes.Root behavior="supporting" open={open} onOpenChange={setOpen} defaultSize={20}>
+<Panes.Root behavior="supporting" open={open} onOpenChange={setOpen} defaultWidth={20}>
   <Panes.Main label="Document">
     <Button onClick={() => setOpen(true)}>Details</Button>
     {document}
@@ -381,7 +381,7 @@ const [open, setOpen] = useState(false);
 </Panes.Root>;
 ```
 
-- `size` and `onSizeChange` are the resized pane's width in rem, the supporting pane or the list, and `onSizeChange` receives `{ committed }`; `persist` keeps the width as before, under a new value, so a stored percentage is read as rem once: clear it, or use another key.
+- `width` and `onWidthChange` are the resized pane's width in rem, the supporting pane or the list, and `onWidthChange` receives `{ committed }`; `persist` keeps the width as before, under a new value, so a stored percentage is read as rem once: clear it, or use another key.
 - The exports that go: `SplitView` and `SplitViewProps`, `SplitPane` and `ListDetail`, each with its parts; `v1-names` reports SplitView, SplitPane and ListDetail where they are used.
 - A vertical split pane has no counterpart: lay two regions out one under the other with a Column, each with its own height.
 - In style sheets, `v1-classes` renames `.env-split-view`, `.env-split-pane` and `.env-list-detail` to `.env-panes`, their dividers to `.env-panes-divider` and ListDetail's parts to `.env-panes-list`, `-detail` and `-back`, and reports a generic pane, which is `.env-panes-main`, `-supporting`, `-list` or `-detail` now, the probe SplitPane measured and the states Panes no longer sets, such as `[data-stacked]` and `[data-detail-shown]`: Panes sets `data-behavior`, `data-split-at` and `data-open`.
@@ -1127,9 +1127,9 @@ Removed, with what to use instead:
 | `--env-sidebar-inset`                 | —                                       | Sidebar is gone: the navigation forms, Bar, Rail and Drawer, keep their own insets.                                                                                                                                                                                                                  |
 | `--env-sidebar-width`                 | —                                       | AppShell and Sidebar are gone: the navigation forms, Bar, Rail and Drawer, size themselves; side content goes in a Panes supporting pane.                                                                                                                                                            |
 | `--env-split-pane-handle`             | —                                       | SplitPane is gone: Panes.Divider, env-panes-divider, is the divider that resizes the panes.                                                                                                                                                                                                          |
-| `--env-split-pane-size`               | —                                       | SplitPane is gone: Panes takes the resized pane's size in rem, as size or defaultSize on Panes.Root.                                                                                                                                                                                                 |
+| `--env-split-pane-size`               | —                                       | SplitPane is gone: Panes takes the resized pane's width in rem, as width or defaultWidth on Panes.Root.                                                                                                                                                                                              |
 | `--env-split-view-gutter`             | —                                       | SplitView is gone: Panes has no gutter; Panes.Divider has a width of its own.                                                                                                                                                                                                                        |
-| `--env-split-view-size`               | —                                       | SplitView is gone: Panes takes the resized pane's size in rem, as size or defaultSize on Panes.Root.                                                                                                                                                                                                 |
+| `--env-split-view-size`               | —                                       | SplitView is gone: Panes takes the resized pane's width in rem, as width or defaultWidth on Panes.Root.                                                                                                                                                                                              |
 | `--env-stack-gap`                     | —                                       | Stack is gone: Row and Column take gap as a step of the spacing scale, which they write as data-gap; set gap on your own class instead.                                                                                                                                                              |
 | `--env-toast-fill-hover`              | —                                       | A toast's hover and press fill tokens are gone, not private: set --env-toast-container, and its dismiss button's hover and press become layers of its text color.                                                                                                                                    |
 | `--env-toast-fill-pressed`            | —                                       | A toast's hover and press fill tokens are gone, not private: set --env-toast-container, and its dismiss button's hover and press become layers of its text color.                                                                                                                                    |
@@ -1173,19 +1173,21 @@ Every other name only takes the prefix, `--body-font-weight` as `--env-body-font
 
 An application written for a 1.0 prerelease follows these renames by hand: the names are new in the prereleases, so no codemod rewrites them, and TypeScript points at each one.
 
-| Before                                      | Now                                                                            |
-| ------------------------------------------- | ------------------------------------------------------------------------------ |
-| A destination's `onSelect: () => void`      | `onClick(event)`, as on a link or a button                                     |
-| DropZone `onDropAccepted`, `onDropRejected` | `onFilesAccepted`, `onFilesRejected`: they run for browsed files too           |
-| CommandPalette `defaultItems`               | `suggestedItems`                                                               |
-| `CommandPaletteActionOptions`               | `CommandPaletteActionDetails`, as every callback's extra argument is named     |
-| List.Item `selected`                        | `current`: it marks the current row with `aria-current`                        |
-| ColorPicker and ColorPickerButton `copy`    | `copyable`, as on CodeBlock                                                    |
-| AvatarGroup `gather`                        | `align`                                                                        |
-| Scaffold `forms`, `NavigationForm`          | `navigationForms`, `ScaffoldNavigationForm`                                    |
-| `resolveNavigationForms`                    | Removed: Scaffold works the forms out itself                                   |
-| Scaffold `skipLabel`, `skipNavigationLabel` | `skipToContentLabel`, `skipToNavigationLabel`, after their messages            |
-| `ThemeRadioGroup`, `ThemeRadioGroupProps`   | `ThemeMenuRadioGroup`, `ThemeMenuRadioGroupProps`: it works only inside a menu |
+| Before                                                                                                   | Now                                                                                                               |
+| -------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| A destination's `onSelect: () => void`                                                                   | `onClick(event)`, as on a link or a button                                                                        |
+| DropZone `onDropAccepted`, `onDropRejected`                                                              | `onFilesAccepted`, `onFilesRejected`: they run for browsed files too                                              |
+| CommandPalette `defaultItems`                                                                            | `suggestedItems`                                                                                                  |
+| `CommandPaletteActionOptions`                                                                            | `CommandPaletteActionDetails`, as every callback's extra argument is named                                        |
+| List.Item `selected`                                                                                     | `current`: it marks the current row with `aria-current`                                                           |
+| ColorPicker and ColorPickerButton `copy`                                                                 | `copyable`, as on CodeBlock                                                                                       |
+| AvatarGroup `gather`                                                                                     | `align`                                                                                                           |
+| Scaffold `forms`, `NavigationForm`                                                                       | `navigationForms`, `ScaffoldNavigationForm`                                                                       |
+| `resolveNavigationForms`                                                                                 | Removed: Scaffold works the forms out itself                                                                      |
+| Scaffold `skipLabel`, `skipNavigationLabel`                                                              | `skipToContentLabel`, `skipToNavigationLabel`, after their messages                                               |
+| `ThemeRadioGroup`, `ThemeRadioGroupProps`                                                                | `ThemeMenuRadioGroup`, `ThemeMenuRadioGroupProps`: it works only inside a menu                                    |
+| Panes.Root `size`, `defaultSize`, `onSizeChange`, `minSize`, `maxSize`, `persistedSize`, `readPanesSize` | `width`, `defaultWidth`, `onWidthChange`, `minWidth`, `maxWidth`, `persistedWidth`, `readPanesWidth`, as on Sheet |
+| `Panes.PaneProps`, `Panes.NamedPaneProps`                                                                | `Panes.MainProps` and `Panes.DetailProps`, `Panes.ListProps`                                                      |
 
 ## Migrate by responsibility
 

@@ -1504,7 +1504,7 @@
     },
     "--env-split-pane-size": {
       "kind": "removed",
-      "note": "SplitPane is gone: Panes takes the resized pane's size in rem, as size or defaultSize on Panes.Root."
+      "note": "SplitPane is gone: Panes takes the resized pane's width in rem, as width or defaultWidth on Panes.Root."
     },
     "--env-split-view-gutter": {
       "kind": "removed",
@@ -1512,7 +1512,7 @@
     },
     "--env-split-view-size": {
       "kind": "removed",
-      "note": "SplitView is gone: Panes takes the resized pane's size in rem, as size or defaultSize on Panes.Root."
+      "note": "SplitView is gone: Panes takes the resized pane's width in rem, as width or defaultWidth on Panes.Root."
     },
     "--env-stack-gap": {
       "kind": "removed",

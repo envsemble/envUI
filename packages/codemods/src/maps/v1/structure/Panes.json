@@ -21,7 +21,7 @@
           "add": {
             "behavior": "list-detail"
           },
-          "report": "Panes sizes are in rem and its divider is a part of its own: add <Panes.Divider label={resizeLabel} /> between Panes.List and Panes.Detail to keep the list resizable, with defaultSize, minSize and maxSize in rem; stackBelow is splitAt, a window class: medium, expanded (the default) or large."
+          "report": "Panes sizes are in rem and its divider is a part of its own: add <Panes.Divider label={resizeLabel} /> between Panes.List and Panes.Detail to keep the list resizable, with defaultWidth, minWidth and maxWidth in rem; stackBelow is splitAt, a window class: medium, expanded (the default) or large."
         }
       ]
     },

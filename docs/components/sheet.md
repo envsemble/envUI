@@ -210,7 +210,7 @@ With `modal={false}` the page stays usable beside the sheet. `disablePointerDism
 With `resizable`, people resize a side sheet by its inner edge, between `minWidth` and `maxWidth`, 16 and 60 rem by default, and never past the window.
 
 - The arrow keys on the handle resize it 1 rem, 5 rem with <kbd>Shift</kbd>.
-- It starts at `defaultWidth`; `width` and `onWidthChange` let the application keep the width, as a number of rem.
+- It starts at `defaultWidth`; `width` and `onWidthChange` let the application keep the width, as a number of rem; `onWidthChange` receives a `ResizeDetails`, `{ committed }`.
 - A CSS length as `width`, such as `min(30rem, 90%)`, is ignored then, with a warning while developing.
 - `resizeLabel` names the handle.
 

@@ -149,7 +149,7 @@ test('Panes renders its behavior, its split and its size for CSS, and the parts 
   const markup = renderToString(
     h(
       Panes.Root,
-      { behavior: 'supporting', name: 'doc', defaultSize: 20 },
+      { behavior: 'supporting', name: 'doc', defaultWidth: 20 },
       h(Panes.Main, { label: 'Document' }, 'Main'),
       h(Panes.Divider),
       h(Panes.Supporting, { label: 'Details' }, 'Side'),
