@@ -206,6 +206,7 @@ test('a part that moves to another group, or a value list that becomes free-form
 
 test('data-env-ssr-* attributes are private, and the contract leaves them out', () => {
   assert.equal(isPrivateState('data-env-ssr-placement'), true);
+  assert.equal(isPrivateState('data-env-theme-switching'), true);
   assert.equal(isPrivateState('data-stacked'), false);
   // PanelDock sets and styles them until it reads its layout; its public states stay.
   const dock = component('PanelDock');
