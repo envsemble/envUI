@@ -61,7 +61,7 @@ export function CalendarHeatmapFixture({ theme }: { theme: ThemeValue }) {
           levels={3}
           maxValue={8}
           tone="success"
-          formatTooltip={(day) => `${day.label ?? `${day.value} deployments`} on ${day.date}`}
+          renderTooltip={(day) => `${day.label ?? `${day.value} deployments`} on ${day.date}`}
           monthLabels={[
             'Jan',
             'Feb',

@@ -14,7 +14,7 @@ export default function CustomTooltip() {
       data={data}
       tone="warning"
       formatValue={reviews}
-      formatTooltip={({ date, value }) => (
+      renderTooltip={({ date, value }) => (
         // The tooltip's own text color and type; the day's accessible name stays date and value.
         <>
           <strong>{reviews(value)}</strong>

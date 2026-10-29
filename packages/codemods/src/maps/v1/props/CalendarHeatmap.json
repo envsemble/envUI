@@ -1,0 +1,10 @@
+{
+  "@envsemble/envui": {
+    "CalendarHeatmap": {
+      "formatTooltip": {
+        "to": "renderTooltip",
+        "report": "Heatmap's formatTooltip is CalendarHeatmap's renderTooltip in 1.0: it returns content, as render callbacks do, while format callbacks return text."
+      }
+    }
+  }
+}

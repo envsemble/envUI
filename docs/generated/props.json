@@ -816,7 +816,7 @@
           "description": "Text for a day's date, in its accessible name and the default tooltip."
         },
         {
-          "name": "formatTooltip",
+          "name": "renderTooltip",
           "type": "(day: CalendarHeatmapCell) => ReactNode",
           "required": false,
           "description": "Tooltip content for a day; the date and value by default."

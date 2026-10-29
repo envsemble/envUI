@@ -85,7 +85,7 @@ interface CalendarHeatmapOptions {
    */
   formatDate?: (date: string) => string;
   /** Tooltip content for a day; the date and value by default. */
-  formatTooltip?: (day: CalendarHeatmapCell) => ReactNode;
+  renderTooltip?: (day: CalendarHeatmapCell) => ReactNode;
   /**
    * Twelve month names above the weeks, from January.
    * @default the locale's short month names, from Intl
@@ -143,7 +143,7 @@ export function CalendarHeatmap({
   tone = 'accent',
   formatValue: ownFormatValue,
   formatDate: ownFormatDate,
-  formatTooltip,
+  renderTooltip,
   monthLabels: ownMonthLabels,
   weekdayLabels: ownWeekdayLabels,
   lessLabel: ownLessLabel,
@@ -480,8 +480,8 @@ export function CalendarHeatmap({
           }}
           content={
             shown &&
-            (formatTooltip
-              ? formatTooltip({
+            (renderTooltip
+              ? renderTooltip({
                   date: shown.date,
                   value: shown.value,
                   label: shown.label,
