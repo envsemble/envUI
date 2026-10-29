@@ -222,6 +222,16 @@ export default defineConfig(() => {
       target: 'es2022',
       // The token reference reads the authored HSL channels from CSS.
       cssMinify: false,
+      rolldownOptions: {
+        output: {
+          codeSplitting: {
+            // What the site starts with is one file, with one style sheet, rather than a file for
+            // each set of its modules that parts of pages loaded later share: over a hundred, most
+            // under 2 kB, each a request of its own, and smaller to compress.
+            groups: [{ name: 'site', tags: ['$initial'] }],
+          },
+        },
+      },
     },
   };
 });
