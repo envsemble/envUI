@@ -3,6 +3,7 @@
 import { Collapsible } from '@base-ui/react/collapsible';
 import { Tooltip as BaseTooltip } from '@base-ui/react/tooltip';
 import {
+  useCallback,
   useEffect,
   useId,
   useLayoutEffect,
@@ -375,14 +376,19 @@ function useExpanded(
     if (keys.some((key) => !open.includes(key))) change?.(joined(open, keys));
   }, [controlled, pathKey]);
   const set = useMemo(() => new Set(shown), [shown]);
-  return {
-    expanded: set,
-    setExpanded: (key, open) => {
-      const next = open ? joined(shown, [key]) : shown.filter((each) => each !== key);
-      if (!controlled) setOwn(next);
-      onExpandedChange?.(next);
-    },
-  };
+  // One function across renders, reading the latest open sections, so a render that changes
+  // neither, such as one for each move of a resize, leaves the destinations as they are.
+  const latestSet = useRef({ shown, controlled, onExpandedChange });
+  useLayoutEffect(() => {
+    latestSet.current = { shown, controlled, onExpandedChange };
+  });
+  const setExpanded = useCallback((key: string, open: boolean) => {
+    const { shown: current, controlled: kept, onExpandedChange: change } = latestSet.current;
+    const next = open ? joined(current, [key]) : current.filter((each) => each !== key);
+    if (!kept) setOwn(next);
+    change?.(next);
+  }, []);
+  return { expanded: set, setExpanded };
 }
 
 /** No open sections, the default of `defaultExpanded`, kept as one array across renders. */
@@ -422,8 +428,41 @@ export function NavigationDrawer({
   ...props
 }: NavigationDrawerProps) {
   const messages = useNavigationMessages();
-  const sections = useExpanded(destinations, expandedProp, defaultExpanded, onExpandedChange);
-  const state: DrawerState = { oneLine: resizable, ...sections };
+  const { expanded, setExpanded } = useExpanded(
+    destinations,
+    expandedProp,
+    defaultExpanded,
+    onExpandedChange,
+  );
+  // The destinations render again only as they, the open sections or the heading level change, not
+  // as the drawer's width does: a resize renders the drawer and its handle on each move, and a
+  // long list of destinations, each with its tooltip, would make it lag.
+  const list = useMemo(() => {
+    const state: DrawerState = { oneLine: resizable, expanded, setExpanded };
+    return (
+      <Column render={<ul />} className="env-navigation-drawer-list" align="stretch" gap={1}>
+        {destinationSections(destinations).map((section, index) =>
+          section.group === undefined ? (
+            section.items.map((destination) => (
+              <DrawerItem
+                key={destinationKey(destination)}
+                destination={destination}
+                state={state}
+              />
+            ))
+          ) : (
+            <Section
+              key={`${index}-${section.group}`}
+              group={section.group}
+              items={section.items}
+              level={headingLevel}
+              state={state}
+            />
+          ),
+        )}
+      </Column>
+    );
+  }, [destinations, resizable, expanded, setExpanded, headingLevel]);
   const resize = useResizableWidth({
     width: controlledWidth,
     defaultWidth,
@@ -465,27 +504,7 @@ export function NavigationDrawer({
               {header}
             </Column>
           )}
-          <Column render={<ul />} className="env-navigation-drawer-list" align="stretch" gap={1}>
-            {destinationSections(destinations).map((section, index) =>
-              section.group === undefined ? (
-                section.items.map((destination) => (
-                  <DrawerItem
-                    key={destinationKey(destination)}
-                    destination={destination}
-                    state={state}
-                  />
-                ))
-              ) : (
-                <Section
-                  key={`${index}-${section.group}`}
-                  group={section.group}
-                  items={section.items}
-                  level={headingLevel}
-                  state={state}
-                />
-              ),
-            )}
-          </Column>
+          {list}
           {footer != null && (
             <Column className="env-navigation-drawer-footer" gap={2}>
               {footer}
