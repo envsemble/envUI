@@ -189,7 +189,7 @@ export function PanelFrame({
           {...handleProps}
           aria-label={resizeLabel}
           aria-controls={frameId}
-          className="env-panel-dock-resize"
+          className="env-panel-dock-resize-handle"
         />
       )}
       {/* Pressing the content focuses it, so the keyboard scrolls it; it is not a tab stop of its

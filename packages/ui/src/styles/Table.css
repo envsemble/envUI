@@ -226,7 +226,7 @@
   }
   /* The resize handle straddles nothing: it sits inside the end of its header cell, with a line on
      the column boundary while it is hovered, focused or dragged. */
-  .env-table-column-resize {
+  .env-table-column-resize-handle {
     position: absolute;
     inset-block: 0;
     inset-inline-end: 0;
@@ -236,7 +236,7 @@
     touch-action: none;
     outline: none;
   }
-  .env-table-column-resize::after {
+  .env-table-column-resize-handle::after {
     content: '';
     position: absolute;
     inset-block: var(--env-space-2);
@@ -246,13 +246,13 @@
     background: transparent;
     transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
   }
-  .env-table-head .env-table-row:hover .env-table-column-resize::after {
+  .env-table-head .env-table-row:hover .env-table-column-resize-handle::after {
     background: var(--env-color-border-muted);
   }
-  .env-table-column-resize:hover::after {
+  .env-table-column-resize-handle:hover::after {
     background: var(--env-color-border-muted-hover);
   }
-  .env-table-column-resize:is(:focus-visible, [data-resizing])::after {
+  .env-table-column-resize-handle:is(:focus-visible, [data-resizing])::after {
     inset-block: 0;
     inline-size: 0.1875rem;
     background: var(--env-color-border-focus);
@@ -264,7 +264,7 @@
     user-select: none;
   }
   @media (pointer: coarse) {
-    .env-table-column-resize {
+    .env-table-column-resize-handle {
       inline-size: var(--env-space-5);
     }
     /* A sortable header is a button, at least the touch height in every scale and row density. */
@@ -275,7 +275,7 @@
   @media (prefers-reduced-motion: reduce) {
     .env-table-row[data-interactive],
     .env-table-sort-button,
-    .env-table-column-resize::after {
+    .env-table-column-resize-handle::after {
       transition: none;
     }
   }
@@ -332,7 +332,7 @@
       display: block;
       flex: 1 1 auto;
     }
-    .env-table-region[data-narrow-layout='stack'] .env-table-column-resize {
+    .env-table-region[data-narrow-layout='stack'] .env-table-column-resize-handle {
       display: none;
     }
     /* The labels share a column as wide as the longest one, up to 10 rem, so the values line up and keep

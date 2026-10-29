@@ -3536,7 +3536,7 @@
           "description": "An invisible element that measures the dock's room."
         },
         {
-          "class": "env-panel-dock-resize",
+          "class": "env-panel-dock-resize-handle",
           "description": "The handle that resizes the dock."
         },
         {
@@ -4931,7 +4931,7 @@
           "description": "A cell's column name, shown when rows stack."
         },
         {
-          "class": "env-table-column-resize",
+          "class": "env-table-column-resize-handle",
           "description": "The handle that resizes a column."
         },
         {
@@ -5050,7 +5050,7 @@
           ],
           "parts": [
             "env-table",
-            "env-table-column-resize"
+            "env-table-column-resize-handle"
           ]
         },
         {
@@ -5442,8 +5442,8 @@
       "source": "packages/ui/src/forms/Textarea.tsx",
       "parts": [
         {
-          "class": "env-textarea-resize-edge",
-          "description": "The edge that resizes the text area."
+          "class": "env-textarea-resize-handle",
+          "description": "The handle on the text area's bottom edge, which resizes it."
         }
       ],
       "states": [
@@ -5451,7 +5451,7 @@
           "attribute": "data-dragging",
           "values": [],
           "parts": [
-            "env-textarea-resize-edge"
+            "env-textarea-resize-handle"
           ]
         }
       ],

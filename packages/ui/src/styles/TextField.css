@@ -123,7 +123,7 @@
       --env-text-field-border-color: var(--env-text-field-interaction-hover);
     }
   }
-  .env-text-field-control:is(:active, :has(> .env-textarea-resize-edge[data-dragging])):not(
+  .env-text-field-control:is(:active, :has(> .env-textarea-resize-handle[data-dragging])):not(
       :has(> .env-text-field-input:disabled),
       [data-disabled]
     ) {
@@ -275,7 +275,7 @@
   textarea.env-text-field-input[data-sizing='content'][data-rows] {
     min-height: calc(var(--env-textarea-rows) * 1lh + var(--env-space-6));
   }
-  .env-textarea-resize-edge {
+  .env-textarea-resize-handle {
     position: absolute;
     inset-inline: 0;
     inset-block-end: -0.0625rem;
@@ -291,7 +291,7 @@
     user-select: none;
     transition: color var(--env-motion-duration-medium) var(--env-motion-ease);
   }
-  .env-textarea-resize-edge::after {
+  .env-textarea-resize-handle::after {
     content: '';
     position: absolute;
     inset-inline: var(--env-radius-lg);
@@ -303,18 +303,18 @@
   }
   /* Older browsers retain the shared edge when native content sizing is unavailable. */
   @supports (field-sizing: content) {
-    textarea.env-text-field-input[data-sizing='content'] + .env-textarea-resize-edge {
+    textarea.env-text-field-input[data-sizing='content'] + .env-textarea-resize-handle {
       display: none;
     }
   }
-  textarea.env-text-field-input:disabled + .env-textarea-resize-edge {
+  textarea.env-text-field-input:disabled + .env-textarea-resize-handle {
     display: none;
   }
   @media (pointer: coarse) {
-    .env-textarea-resize-edge {
+    .env-textarea-resize-handle {
       block-size: var(--env-control-height-touch);
     }
-    textarea.env-text-field-input:not(:disabled):has(+ .env-textarea-resize-edge) {
+    textarea.env-text-field-input:not(:disabled):has(+ .env-textarea-resize-handle) {
       padding-block-end: var(--env-control-height-touch);
     }
     @supports (field-sizing: content) {
@@ -327,7 +327,7 @@
     .env-text-field-border,
     .env-text-field-border > legend,
     .env-text-field-control > label,
-    .env-textarea-resize-edge {
+    .env-textarea-resize-handle {
       transition: none;
     }
   }

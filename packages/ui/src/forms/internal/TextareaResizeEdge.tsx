@@ -134,7 +134,7 @@ export function TextareaResizeEdge({
         if (event.key === 'End' && !bounded) return;
         handleProps.onKeyDown(event);
       }}
-      className="env-textarea-resize-edge"
+      className="env-textarea-resize-handle"
       aria-label={messages.resize}
       aria-controls={inputId}
       aria-description={messages.resizeDescription}

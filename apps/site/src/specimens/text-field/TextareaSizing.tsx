@@ -4,7 +4,7 @@ import { usePointer, type PointerStep } from '../../motion/Motion';
 import { MotionStage } from '../../motion/MotionStage';
 import { Renew } from '../../motion/Renew';
 
-const edge = '.env-textarea-resize-edge';
+const edge = '.env-textarea-resize-handle';
 const reply = 'textarea[name="reply"]';
 // The room the fields grow into, which stays where it is as they grow: the pointer drags by it.
 const room = '[data-catalogue-sizing-room]';

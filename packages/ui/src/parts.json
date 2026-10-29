@@ -543,7 +543,7 @@
       "env-panel-dock-meta": "A fact beside a panel's title.",
       "env-panel-dock-panel": "One panel.",
       "env-panel-dock-probe": "An invisible element that measures the dock's room.",
-      "env-panel-dock-resize": "The handle that resizes the dock.",
+      "env-panel-dock-resize-handle": "The handle that resizes the dock.",
       "env-panel-dock-row": "The row of open panels.",
       "env-panel-dock-strip": "The strip of minimized panels' tabs.",
       "env-panel-dock-tab": "A minimized panel's tab.",
@@ -707,7 +707,7 @@
       "env-table-cell": "A cell.",
       "env-table-cell-content": "A cell's content.",
       "env-table-cell-label": "A cell's column name, shown when rows stack.",
-      "env-table-column-resize": "The handle that resizes a column.",
+      "env-table-column-resize-handle": "The handle that resizes a column.",
       "env-table-head": "The head.",
       "env-table-header-cell": "A column header.",
       "env-table-header-label": "A column header's text.",
@@ -745,7 +745,7 @@
       "env-text-field-suffix": "Fixed text after the input."
     },
     "Textarea": {
-      "env-textarea-resize-edge": "The edge that resizes the text area."
+      "env-textarea-resize-handle": "The handle on the text area's bottom edge, which resizes it."
     },
     "Theme": {
       "env-theme": "The theme boundary."
