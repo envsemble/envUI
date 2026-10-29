@@ -153,8 +153,10 @@
     }
   }
 
-  /* In a skeleton, a card carries the skeleton's tint over its fill (Skeleton.css). */
-  [data-env-skeleton] .env-card {
+  /* In a skeleton, a card carries the skeleton's tint over its fill (Skeleton.css), and so does its
+     action strip over its own. */
+  [data-env-skeleton] .env-card,
+  .env-card[data-actions]:is([data-env-skeleton], [data-env-skeleton] *) .env-card-footer {
     background-image: var(--env-skeleton-overlay);
   }
 }
