@@ -178,8 +178,8 @@ export function HydrationApp() {
         <DocumentTabs
           aria-label="Hydrated tabs"
           items={[
-            { id: 'one', label: 'One.md' },
-            { id: 'two', label: 'Two.md' },
+            { value: 'one', label: 'One.md' },
+            { value: 'two', label: 'Two.md' },
           ]}
           value={tab}
           onValueChange={setTab}

@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { DocumentTabs, IconButton, Surface, Text, type DocumentTab } from '@envsemble/envui';
+import { DocumentTabs, IconButton, Surface, Text, type DocumentTabsItem } from '@envsemble/envui';
 import { Add } from '@envsemble/envui/icons/Add';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
-const documents: DocumentTab[] = ['Plan.md', 'Notes.md'].map((label) => ({
-  id: label,
+const documents: DocumentTabsItem[] = ['Plan.md', 'Notes.md'].map((label) => ({
+  value: label,
   label,
 }));
 
@@ -47,7 +47,7 @@ const script: PointerStep[] = [
 /** Two open documents, Plan.md shown, over the start of its page. */
 export default function DocumentTabsTile() {
   const [tabs, setTabs] = useState(documents);
-  const [value, setValue] = useState<string | null>(documents[0]!.id);
+  const [value, setValue] = useState<string | null>(documents[0]!.value);
   usePointer(script);
   return (
     <Surface background="default" padding={0} style={{ inlineSize: '16.5rem' }}>
@@ -57,10 +57,11 @@ export default function DocumentTabsTile() {
         value={value}
         onValueChange={setValue}
         onClose={(id) => {
-          const index = tabs.findIndex((item) => item.id === id);
-          const remaining = tabs.filter((item) => item.id !== id);
+          const index = tabs.findIndex((item) => item.value === id);
+          const remaining = tabs.filter((item) => item.value !== id);
           setTabs(remaining);
-          if (id === value) setValue(remaining[Math.min(index, remaining.length - 1)]?.id ?? null);
+          if (id === value)
+            setValue(remaining[Math.min(index, remaining.length - 1)]?.value ?? null);
         }}
         end={
           <IconButton
@@ -72,7 +73,7 @@ export default function DocumentTabsTile() {
               const missing = documents.find((item) => !tabs.includes(item));
               if (!missing) return;
               setTabs([...tabs, missing]);
-              setValue(missing.id);
+              setValue(missing.value);
             }}
           />
         }

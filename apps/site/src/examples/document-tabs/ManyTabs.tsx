@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { DocumentTabs, type DocumentTab } from '@envsemble/envui';
+import { DocumentTabs, type DocumentTabsItem } from '@envsemble/envui';
 
 const names = [
   'Overview',
@@ -14,8 +14,8 @@ const names = [
 ];
 
 export default function ManyTabs() {
-  const [tabs, setTabs] = useState<DocumentTab[]>(
-    names.map((name) => ({ id: name.toLowerCase(), label: `${name}.md` })),
+  const [tabs, setTabs] = useState<DocumentTabsItem[]>(
+    names.map((name) => ({ value: name.toLowerCase(), label: `${name}.md` })),
   );
   const [value, setValue] = useState<string | null>('budget');
   return (
@@ -27,13 +27,13 @@ export default function ManyTabs() {
       value={value}
       onValueChange={setValue}
       onReorder={(ids) =>
-        setTabs((current) => ids.map((id) => current.find((tab) => tab.id === id)!))
+        setTabs((current) => ids.map((id) => current.find((tab) => tab.value === id)!))
       }
       onClose={(id) => {
-        const index = tabs.findIndex((tab) => tab.id === id);
-        const remaining = tabs.filter((tab) => tab.id !== id);
+        const index = tabs.findIndex((tab) => tab.value === id);
+        const remaining = tabs.filter((tab) => tab.value !== id);
         setTabs(remaining);
-        if (id === value) setValue(remaining[Math.min(index, remaining.length - 1)]?.id ?? null);
+        if (id === value) setValue(remaining[Math.min(index, remaining.length - 1)]?.value ?? null);
       }}
     />
   );

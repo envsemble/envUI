@@ -10,21 +10,21 @@ import {
   Tabs,
   Text,
   Theme,
-  type DocumentTab,
+  type DocumentTabsItem,
   type ColorScheme,
   Badge,
 } from '@envsemble/envui';
 import { Description } from '@envsemble/envui/icons/Description';
 
-const initialTabs: DocumentTab[] = [
-  { id: 'plans/roadmap.md', label: 'Roadmap.md' },
-  { id: 'plans/decisions.md', label: 'Decisions.md' },
-  { id: 'plans/retrospective.md', label: 'Retrospective.md', preview: true },
+const initialTabs: DocumentTabsItem[] = [
+  { value: 'plans/roadmap.md', label: 'Roadmap.md' },
+  { value: 'plans/decisions.md', label: 'Decisions.md' },
+  { value: 'plans/retrospective.md', label: 'Retrospective.md', preview: true },
   ...Array.from({ length: 7 }, (_, index) => ({
-    id: `notes/note-${index + 1}.md`,
+    value: `notes/note-${index + 1}.md`,
     label: `A rather long note title number ${index + 1}.md`,
   })),
-].map((tab) => ({ ...tab, icon: <Description />, title: tab.id }));
+].map((tab) => ({ ...tab, icon: <Description />, tooltip: tab.value }));
 
 export function DocumentTabsFixture({ theme }: { theme: ColorScheme }) {
   const [tabs, setTabs] = useState(initialTabs);
@@ -32,10 +32,10 @@ export function DocumentTabsFixture({ theme }: { theme: ColorScheme }) {
   const [log, setLog] = useState<string[]>([]);
   const record = (entry: string) => setLog((current) => [...current.slice(-4), entry]);
   const close = (id: string) => {
-    const index = tabs.findIndex((tab) => tab.id === id);
-    const remaining = tabs.filter((tab) => tab.id !== id);
+    const index = tabs.findIndex((tab) => tab.value === id);
+    const remaining = tabs.filter((tab) => tab.value !== id);
     setTabs(remaining);
-    if (id === value) setValue(remaining[Math.min(index, remaining.length - 1)]?.id ?? null);
+    if (id === value) setValue(remaining[Math.min(index, remaining.length - 1)]?.value ?? null);
     record(`close ${id}`);
   };
   return (
@@ -64,7 +64,7 @@ export function DocumentTabsFixture({ theme }: { theme: ColorScheme }) {
           onClose={close}
           onPin={(id) => {
             setTabs((current) =>
-              current.map((tab) => (tab.id === id ? { ...tab, preview: false } : tab)),
+              current.map((tab) => (tab.value === id ? { ...tab, preview: false } : tab)),
             );
             record(`pin ${id}`);
           }}
@@ -291,7 +291,7 @@ export function ScrollingTabsFixture() {
 
 /** An overflowing DocumentTabs strip in right-to-left text, mounted with ?fixture=rtl-document-tabs. */
 export function RtlDocumentTabsFixture() {
-  const [value, setValue] = useState<string | null>(initialTabs[0]!.id);
+  const [value, setValue] = useState<string | null>(initialTabs[0]!.value);
   return (
     <div dir="rtl" style={{ inlineSize: '30rem' }}>
       <DocumentTabs
@@ -323,7 +323,7 @@ export function DocumentTabsRerenderFixture() {
     <div>
       <DocumentTabs
         aria-label="Re-rendered documents"
-        items={tabs.map((id) => ({ id, label: `${id}.md` }))}
+        items={tabs.map((id) => ({ value: id, label: `${id}.md` }))}
         value={value}
         onValueChange={setValue}
         onClose={(id) => {

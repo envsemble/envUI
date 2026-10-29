@@ -534,7 +534,7 @@
       "props": [
         {
           "name": "items",
-          "type": "readonly BreadcrumbItem[]",
+          "type": "readonly BreadcrumbsItem[]",
           "required": true,
           "description": "From the top level to the current page, which is last."
         },
@@ -2836,11 +2836,11 @@
     "DocumentTabs": {
       "kind": "component",
       "source": "packages/ui/src/navigation/DocumentTabs.tsx",
-      "description": "Editor-style closable tabs for open documents; the application renders the active document.",
+      "description": "Editor-style closable tabs for open documents; the application renders the active document. className, style, ref and the other native props go to the strip, the tab list.",
       "props": [
         {
           "name": "items",
-          "type": "readonly DocumentTab[]",
+          "type": "readonly DocumentTabsItem[]",
           "required": true,
           "description": "The open documents, in tab order."
         },
@@ -2852,9 +2852,9 @@
         },
         {
           "name": "onValueChange",
-          "type": "(id: string) => void",
+          "type": "(value: string) => void",
           "required": true,
-          "description": "Called when a tab is clicked or reached with the arrow keys, Home or End."
+          "description": "Called with the tab's value when it is clicked or reached with the arrow keys, Home or End."
         },
         {
           "name": "onClose",
@@ -2872,7 +2872,7 @@
           "name": "onReorder",
           "type": "(ids: string[]) => void",
           "required": false,
-          "description": "Called with every tab's id in the new order when a tab is dragged to another place with a mouse or pen, or moved with Move left or Move right in its context menu, which also reach the keyboard and touch. Without it, the tabs keep their order."
+          "description": "Called with every tab's value in the new order when a tab is dragged to another place with a mouse or pen, or moved with Move left or Move right in its context menu, which also reach the keyboard and touch. Without it, the tabs keep their order."
         },
         {
           "name": "end",
@@ -2918,24 +2918,6 @@
           "required": false,
           "default": "'Tab actions', or EnvUIProvider's messages.documentTabs.actions",
           "description": "Accessible name of the context menu."
-        },
-        {
-          "name": "className",
-          "type": "string",
-          "required": false,
-          "description": "Classes for the strip, the tab list."
-        },
-        {
-          "name": "style",
-          "type": "CSSProperties",
-          "required": false,
-          "description": "The strip's inline style."
-        },
-        {
-          "name": "ref",
-          "type": "Ref<HTMLDivElement>",
-          "required": false,
-          "description": "The strip, the tab list element."
         }
       ],
       "native": [

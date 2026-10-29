@@ -191,8 +191,8 @@ function Page() {
         onValueChange={noop}
         onClose={noop}
         items={[
-          { id: 'a', label: 'Active.md' },
-          { id: 'b', label: 'Other.md' },
+          { value: 'a', label: 'Active.md' },
+          { value: 'b', label: 'Other.md' },
         ]}
       />
       <Rating value={3} />

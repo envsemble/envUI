@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { DocumentTabs, IconButton, Tooltip, type DocumentTab } from '@envsemble/envui';
+import { DocumentTabs, IconButton, Tooltip, type DocumentTabsItem } from '@envsemble/envui';
 import { Add } from '@envsemble/envui/icons/Add';
 import { TabClose } from '@envsemble/envui/icons/TabClose';
 
-const first: DocumentTab[] = [
-  { id: 'roadmap', label: 'Roadmap.md' },
-  { id: 'decisions', label: 'Decisions.md' },
-  { id: 'interviews', label: 'Interviews.md' },
+const first: DocumentTabsItem[] = [
+  { value: 'roadmap', label: 'Roadmap.md' },
+  { value: 'decisions', label: 'Decisions.md' },
+  { value: 'interviews', label: 'Interviews.md' },
 ];
 
 export default function CloseAllButton() {
@@ -15,9 +15,9 @@ export default function CloseAllButton() {
   const [count, setCount] = useState(1);
 
   const open = () => {
-    const tab = { id: `untitled-${count}`, label: `Untitled ${count}.md` };
+    const tab = { value: `untitled-${count}`, label: `Untitled ${count}.md` };
     setTabs((current) => [...current, tab]);
-    setValue(tab.id);
+    setValue(tab.value);
     setCount((next) => next + 1);
   };
   const closeAll = () => {
@@ -32,10 +32,10 @@ export default function CloseAllButton() {
       value={value}
       onValueChange={setValue}
       onClose={(id) => {
-        const index = tabs.findIndex((tab) => tab.id === id);
-        const remaining = tabs.filter((tab) => tab.id !== id);
+        const index = tabs.findIndex((tab) => tab.value === id);
+        const remaining = tabs.filter((tab) => tab.value !== id);
         setTabs(remaining);
-        if (id === value) setValue(remaining[Math.min(index, remaining.length - 1)]?.id ?? null);
+        if (id === value) setValue(remaining[Math.min(index, remaining.length - 1)]?.value ?? null);
       }}
       onCloseAll={closeAll}
       // The application's own buttons, after the tabs and on their hairline.
