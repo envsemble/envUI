@@ -4,10 +4,11 @@
 // after a change on one machine, not a pass/fail test.
 //
 //   node scripts/test/MeasureSite.ts [--runs <n>] [--only <pages>] [--forms <forms>]
-//     [--no-build] [--no-navigation] [--label <name>] [--serve] [--serve]
+//     [--no-build] [--site <dir>] [--no-navigation] [--label <name>] [--serve] [--report <label>]
 //
-// It builds the site (`npm run build:site`; --no-build serves the last build) and serves dist/site
-// as Cloudflare does: `wrangler dev` runs the Worker and the asset server, with their brotli and
+// It builds the site (`npm run build:site`; --no-build serves the last build, --site <dir> another
+// build, such as a copy of the last one kept to compare with) and serves dist/site as Cloudflare
+// does: `wrangler dev` runs the Worker and the asset server, with their brotli and
 // the cache headers of _headers and Worker.mjs, and an HTTP/2 proxy over TLS in front of it on
 // ENVUI_SITE_PERF_PORT (9095 by default) gives the browser the multiplexed connection the hosted
 // site has, with a self-signed certificate (made with openssl into .cache/site-perf) that Chromium
@@ -23,7 +24,9 @@
 //   does (history.pushState and a popstate event), and the same in the Docs: the time until the
 //   new page's heading is painted with no loading placeholder in view, and what it fetched.
 //
-// It prints a Markdown table and writes every run's numbers to .cache/site-perf/<label>.json.
+// It writes every run's numbers to .cache/site-perf/<label>.json as it goes, and prints the medians
+// as Markdown tables at the end; --report <label> prints them from that file. Another measurement at
+// the same time takes another ENVUI_SITE_PERF_PORT, such as 9105, which uses the next two as well.
 import { spawn, spawnSync, type ChildProcess } from 'node:child_process';
 import { X509Certificate, createHash } from 'node:crypto';
 import { existsSync } from 'node:fs';
@@ -89,6 +92,8 @@ const chosenForms = (option('--forms') ?? forms.join(',')).split(',') as Form[];
 for (const form of chosenForms)
   if (!forms.includes(form)) throw new Error(`Unknown form ${form}: ${forms.join(', ')}.`);
 const label = option('--label') ?? new Date().toISOString().replace(/[:.]/g, '-');
+/** The build served: dist/site, or --site's. */
+const site = resolve(root, option('--site') ?? 'dist/site');
 
 const median = (values: number[]) => {
   const sorted = values.filter((value) => Number.isFinite(value)).sort((a, b) => a - b);
@@ -235,6 +240,11 @@ function startWrangler() {
       '127.0.0.1',
       '--log-level',
       'warn',
+      '--assets',
+      site,
+      // Its own state, so measurements on other ports run beside it.
+      '--persist-to',
+      resolve(cache, `wrangler-${port}`),
     ]),
     { cwd: root, stdio: 'ignore', shell: true },
   );
@@ -468,8 +478,84 @@ async function coverage(path: string, form: Form) {
 const fixed = (value: number, digits = 0) => (Number.isFinite(value) ? value.toFixed(digits) : '–');
 const kb = (value: number) => fixed(value / 1024, 0);
 
+type Navigation = { time: number; bytes: number; requests: number };
+/** Every run's numbers, as the measurement goes and as .cache/site-perf/<label>.json keeps them. */
+interface Measurement {
+  label: string;
+  runs: number;
+  lighthouse: string;
+  site: string;
+  results: Record<string, Record<string, { cold: Numbers[]; warm: Numbers[] }>>;
+  unused: Record<string, Awaited<ReturnType<typeof coverage>>>;
+  navigations: Record<string, Navigation[]>;
+}
+
+/** The medians of a record, as Markdown tables. */
+function report({ results, unused, navigations }: Measurement) {
+  const medians = (list: Numbers[]) =>
+    Object.fromEntries(
+      Object.keys(list[0] ?? {}).map((key) => [
+        key,
+        median(list.map((item) => item[key as keyof Numbers])),
+      ]),
+    ) as Numbers;
+  const lines = [
+    '| Form | Page | Cache | LCP | FCP | TBT | CLS | SI | Total KB | JS KB | CSS KB | Font KB | Image KB | Other KB | Requests | Chain | JS exec | Long tasks | Main thread | Script | Style, layout | Paint | Other work |',
+    '| --- | --- | --- | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: |',
+  ];
+  for (const [form, byPage] of Object.entries(results))
+    for (const [name, states] of Object.entries(byPage))
+      for (const [state, list] of Object.entries(states)) {
+        if (!list.length) continue;
+        const n = medians(list);
+        lines.push(
+          `| ${form} | ${pages[name]?.title ?? name} | ${state} | ${fixed(n.lcp)} | ${fixed(n.fcp)} | ${fixed(n.tbt)} | ${fixed(n.cls, 3)} | ${fixed(n.speedIndex)} | ${kb(n.totalBytes)} | ${kb(n.jsBytes)} | ${kb(n.cssBytes)} | ${kb(n.fontBytes)} | ${kb(n.imageBytes)} | ${kb(n.otherBytes)} | ${fixed(n.requests)} | ${fixed(n.chainDepth)} | ${fixed(n.jsExecution)} | ${fixed(n.longTasks)} | ${fixed(n.mainThread)} | ${fixed(n.scriptEvaluation + n.scriptParsing)} | ${fixed(n.styleLayout)} | ${fixed(n.paintCompositeRender)} | ${fixed(n.otherWork + n.garbageCollection + n.parseHTML)} |`,
+        );
+      }
+  if (Object.keys(unused).length) {
+    lines.push(
+      '',
+      '| Page | JS loaded KB | JS unused KB | CSS loaded KB | CSS unused KB |',
+      '| --- | --: | --: | --: | --: |',
+    );
+    for (const [name, n] of Object.entries(unused))
+      lines.push(
+        `| ${pages[name]?.title ?? name} | ${kb(n.jsTotal)} | ${kb(n.jsUnused)} | ${kb(n.cssTotal)} | ${kb(n.cssUnused)} |`,
+      );
+  }
+  if (Object.keys(navigations).length) {
+    lines.push(
+      '',
+      '| Navigation, Button to Checkbox | Painted ms | KB fetched | Requests |',
+      '| --- | --: | --: | --: |',
+    );
+    for (const [key, list] of Object.entries(navigations))
+      lines.push(
+        `| ${key} | ${fixed(median(list.map((item) => item.time)))} | ${kb(median(list.map((item) => item.bytes)))} | ${fixed(median(list.map((item) => item.requests)))} |`,
+      );
+  }
+  return `${lines.join('\n')}\n\nTimes in ms; sizes transferred (compressed), coverage's as served.`;
+}
+
+/** Runs a step again once where it fails, such as a Lighthouse run that timed out; else NaN. */
+async function retried<T>(step: () => Promise<T>, failed: T): Promise<T> {
+  for (let attempt = 0; attempt < 2; attempt++)
+    try {
+      return await step();
+    } catch (error) {
+      process.stderr.write(`${String(error).slice(0, 300)}\n`);
+    }
+  return failed;
+}
+
 async function main() {
-  if (!args.includes('--no-build')) await run(['npm', 'run', 'build:site']);
+  const file = resolve(cache, `${label}.json`);
+  const from = option('--report');
+  if (from) {
+    console.log(report(JSON.parse(await readFile(resolve(cache, `${from}.json`), 'utf8'))));
+    return;
+  }
+  if (!args.includes('--no-build') && !option('--site')) await run(['npm', 'run', 'build:site']);
   const wrangler = startWrangler();
   const { server, spki } = await startProxy();
   const profile = join(tmpdir(), `envui-site-perf-profile-${process.pid}`);
@@ -480,6 +566,9 @@ async function main() {
       `--remote-debugging-port=${debuggingPort}`,
       `--user-data-dir=${profile}`,
       `--ignore-certificate-errors-spki-list=${spki}`,
+      // Chromium's own extensions' service workers break Playwright's connection over CDP.
+      '--disable-extensions',
+      '--disable-component-extensions-with-background-pages',
       '--no-first-run',
       '--no-default-browser-check',
       'about:blank',
@@ -499,109 +588,62 @@ async function main() {
     await waitFor(`http://127.0.0.1:${wranglerPort}/`);
     await waitFor(`http://127.0.0.1:${debuggingPort}/json/version`);
     if (args.includes('--serve')) {
-      console.log(`Serving ${origin}, Chromium's DevTools on port ${debuggingPort}; Ctrl+C stops.`);
+      console.log(`Serving ${site} at ${origin}, Chromium's DevTools on port ${debuggingPort}.`);
       await new Promise(() => {});
     }
-    // A first load, not counted, so the server and the browser have started.
-    await coverage(pages[only[0]!]!.path, 'desktop');
-    const results: Record<string, Record<string, { cold: Numbers[]; warm: Numbers[] }>> = {};
-    for (const form of chosenForms)
-      for (const name of only) {
-        const entry = { cold: [] as Numbers[], warm: [] as Numbers[] };
-        (results[form] ??= {})[name] = entry;
-        for (let index = 0; index < runs; index++) {
-          entry.cold.push(await lighthouse(pages[name]!.path, form, false));
-          entry.warm.push(await lighthouse(pages[name]!.path, form, true));
-          process.stderr.write(`${form} ${name} ${index + 1}/${runs}\n`);
-        }
-      }
-    const unused: Record<string, Awaited<ReturnType<typeof coverage>>> = {};
-    for (const name of only) unused[name] = await coverage(pages[name]!.path, 'desktop');
-    const navigations: Record<string, { time: number; bytes: number; requests: number }[]> = {};
-    if (!args.includes('--no-navigation'))
-      for (const form of chosenForms)
-        for (const [key, from, to, title] of [
-          ['catalogue', '/components/button', '/components/checkbox', 'Checkbox'],
-          ['docs', '/docs/components/button', '/docs/components/checkbox', 'Checkbox'],
-        ] as const) {
-          const list = (navigations[`${form} ${key}`] = [] as (typeof navigations)[string]);
-          for (let index = 0; index < runs; index++)
-            list.push(await navigation(from, to, title, form));
-          process.stderr.write(`${form} navigation ${key}\n`);
-        }
-
-    const medians = (list: Numbers[]) =>
-      Object.fromEntries(
-        Object.keys(list[0]!).map((key) => [
-          key,
-          median(list.map((item) => item[key as keyof Numbers])),
-        ]),
-      ) as Numbers;
-    const summary = Object.fromEntries(
-      Object.entries(results).map(([form, byPage]) => [
-        form,
-        Object.fromEntries(
-          Object.entries(byPage).map(([name, { cold, warm }]) => [
-            name,
-            { cold: medians(cold), warm: medians(warm) },
-          ]),
-        ),
-      ]),
-    );
-    const navigationSummary = Object.fromEntries(
-      Object.entries(navigations).map(([key, list]) => [
-        key,
-        {
-          time: median(list.map((item) => item.time)),
-          bytes: median(list.map((item) => item.bytes)),
-          requests: median(list.map((item) => item.requests)),
-        },
-      ]),
-    );
-    await mkdir(cache, { recursive: true });
-    const file = resolve(cache, `${label}.json`);
-    const record = {
+    const record: Measurement = {
       label,
       runs,
       lighthouse: lighthouseVersion,
-      summary,
-      unused,
-      navigationSummary,
+      site,
+      results: {},
+      unused: {},
+      navigations: {},
     };
-    await writeFile(file, `${JSON.stringify({ ...record, results, navigations }, null, 2)}\n`);
-
-    const lines = [
-      '| Form | Page | Cache | LCP | FCP | TBT | CLS | SI | Total KB | JS KB | CSS KB | Font KB | Image KB | Other KB | Requests | Chain | JS exec | Long tasks | Main thread | Script | Style, layout | Paint | Other work |',
-      '| --- | --- | --- | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: |',
-    ];
-    for (const [form, byPage] of Object.entries(summary))
-      for (const [name, states] of Object.entries(byPage))
-        for (const [state, n] of Object.entries(states))
-          lines.push(
-            `| ${form} | ${pages[name]!.title} | ${state} | ${fixed(n.lcp)} | ${fixed(n.fcp)} | ${fixed(n.tbt)} | ${fixed(n.cls, 3)} | ${fixed(n.speedIndex)} | ${kb(n.totalBytes)} | ${kb(n.jsBytes)} | ${kb(n.cssBytes)} | ${kb(n.fontBytes)} | ${kb(n.imageBytes)} | ${kb(n.otherBytes)} | ${fixed(n.requests)} | ${fixed(n.chainDepth)} | ${fixed(n.jsExecution)} | ${fixed(n.longTasks)} | ${fixed(n.mainThread)} | ${fixed(n.scriptEvaluation + n.scriptParsing)} | ${fixed(n.styleLayout)} | ${fixed(n.paintCompositeRender)} | ${fixed(n.otherWork + n.garbageCollection + n.parseHTML)} |`,
-          );
-    lines.push(
-      '',
-      '| Page | JS loaded KB | JS unused KB | CSS loaded KB | CSS unused KB |',
-      '| --- | --: | --: | --: | --: |',
-    );
-    for (const [name, n] of Object.entries(unused))
-      lines.push(
-        `| ${pages[name]!.title} | ${kb(n.jsTotal)} | ${kb(n.jsUnused)} | ${kb(n.cssTotal)} | ${kb(n.cssUnused)} |`,
-      );
-    if (Object.keys(navigationSummary).length) {
-      lines.push(
-        '',
-        '| Navigation, Button to Checkbox | Painted ms | KB fetched | Requests |',
-        '| --- | --: | --: | --: |',
-      );
-      for (const [key, n] of Object.entries(navigationSummary))
-        lines.push(`| ${key} | ${fixed(n.time)} | ${kb(n.bytes)} | ${fixed(n.requests)} |`);
+    // Every run is kept as it ends, so a measurement that stops keeps what it measured.
+    await mkdir(cache, { recursive: true });
+    const save = () => writeFile(file, `${JSON.stringify(record, null, 2)}\n`);
+    // A first load, not counted, so the server and the browser have started.
+    await retried(() => coverage(pages[only[0]!]!.path, 'desktop'), undefined);
+    const failed = numbers({ audits: {} });
+    const nothing = Object.fromEntries(Object.keys(failed).map((key) => [key, NaN])) as Numbers;
+    for (const form of chosenForms)
+      for (const name of only) {
+        const entry = { cold: [] as Numbers[], warm: [] as Numbers[] };
+        (record.results[form] ??= {})[name] = entry;
+        for (let index = 0; index < runs; index++) {
+          const path = pages[name]!.path;
+          entry.cold.push(await retried(() => lighthouse(path, form, false), nothing));
+          entry.warm.push(await retried(() => lighthouse(path, form, true), nothing));
+          await save();
+          process.stderr.write(`${form} ${name} ${index + 1}/${runs}\n`);
+        }
+      }
+    for (const name of only) {
+      const unused = await retried(() => coverage(pages[name]!.path, 'desktop'), undefined);
+      if (unused) record.unused[name] = unused;
     }
-    console.log(lines.join('\n'));
-    console.log(
-      `\nTimes in ms; sizes transferred (compressed), coverage's as served. Every run: ${file}`,
-    );
+    await save();
+    if (!args.includes('--no-navigation'))
+      for (const form of chosenForms)
+        for (const [key, start, to, title] of [
+          ['catalogue', '/components/button', '/components/checkbox', 'Checkbox'],
+          ['docs', '/docs/components/button', '/docs/components/checkbox', 'Checkbox'],
+        ] as const) {
+          const list = (record.navigations[`${form} ${key}`] = [] as Navigation[]);
+          for (let index = 0; index < runs; index++)
+            list.push(
+              await retried(() => navigation(start, to, title, form), {
+                time: NaN,
+                bytes: NaN,
+                requests: NaN,
+              }),
+            );
+          await save();
+          process.stderr.write(`${form} navigation ${key}\n`);
+        }
+    console.log(report(record));
+    console.log(`Every run: ${file}`);
   } finally {
     cleanUp();
     await rm(profile, { recursive: true, force: true }).catch(() => {});
