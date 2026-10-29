@@ -388,7 +388,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
     const props = {
       ...boxProps,
       className: `${boxProps.className} env-combobox-control`,
-      'data-actions': clearShown ? '2' : '1',
+      'data-action-count': clearShown ? '2' : '1',
     };
     if (!isMultiple) return <BaseCombobox.InputGroup {...props} />;
     // Chips and the text input share the well, so Backspace and the arrow keys reach the chips.

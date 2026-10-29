@@ -38,7 +38,7 @@
     --env-date-picker-action: var(--env-control-height-sm);
     --env-date-picker-end: var(--env-space-2);
   }
-  .env-date-picker .env-date-picker-control[data-actions='2'] {
+  .env-date-picker .env-date-picker-control[data-action-count='2'] {
     --env-date-picker-actions: 2;
   }
   .env-date-picker .env-date-picker-control > .env-date-picker-trigger {

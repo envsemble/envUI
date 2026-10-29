@@ -385,7 +385,7 @@ export function TimeWheel({
       aria-valuemax={entries[count - 1]?.value}
       aria-valuetext={entry?.label}
       className="env-time-list-column"
-      data-part={part}
+      data-part={part === 'dayPeriod' ? 'day-period' : part}
       data-value={entry?.value}
       data-loop={loop || undefined}
       onKeyDown={handleKeyDown}

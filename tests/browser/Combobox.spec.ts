@@ -674,12 +674,12 @@ test('Esc clears a closed single field only while it has a value, and never remo
   const author = field(page, 'Author light');
   const changes = page.getByTestId('combobox-author-changes-light');
   // The well keeps room for the clear button only while the button shows.
-  await expect(wellOf(author)).toHaveAttribute('data-actions', '2');
+  await expect(wellOf(author)).toHaveAttribute('data-action-count', '2');
   await author.focus();
   await page.keyboard.press('Escape');
   await expect(author).toHaveValue('');
   await expect(changes).toHaveText('[null]');
-  await expect(wellOf(author)).toHaveAttribute('data-actions', '1');
+  await expect(wellOf(author)).toHaveAttribute('data-action-count', '1');
   // With nothing to clear, Esc reports no change.
   await page.keyboard.press('Escape');
   await page.keyboard.press('Escape');

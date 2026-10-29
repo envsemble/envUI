@@ -40,7 +40,7 @@
       );
     cursor: text;
   }
-  .env-combobox .env-combobox-control[data-actions='2'] {
+  .env-combobox .env-combobox-control[data-action-count='2'] {
     --env-combobox-actions: 2;
   }
   /* A floating field is as tall as a floating TextField, with small actions. */

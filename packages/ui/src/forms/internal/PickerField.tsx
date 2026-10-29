@@ -223,7 +223,7 @@ export function PickerField({
         ref={controlRef}
         className={`${boxProps.className} env-date-picker-control`}
         data-label-floating={labelFloats || undefined}
-        data-actions={showClear ? '2' : '1'}
+        data-action-count={showClear ? '2' : '1'}
       />
     );
   }

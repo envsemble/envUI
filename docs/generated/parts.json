@@ -1485,7 +1485,7 @@
       ],
       "states": [
         {
-          "attribute": "data-actions",
+          "attribute": "data-action-count",
           "values": [
             "2"
           ],
@@ -1853,7 +1853,7 @@
       ],
       "states": [
         {
-          "attribute": "data-actions",
+          "attribute": "data-action-count",
           "values": [
             "1",
             "2"
@@ -6484,7 +6484,7 @@
         {
           "attribute": "data-part",
           "values": [
-            "dayPeriod",
+            "day-period",
             "hour",
             "minute"
           ],
