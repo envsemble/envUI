@@ -1,5 +1,11 @@
 import type { AnyExtension, Editor } from '@tiptap/core';
-import type { ComponentPropsWithoutRef, MouseEvent, ReactNode, Ref } from 'react';
+import type {
+  ComponentPropsWithoutRef,
+  ComponentPropsWithRef,
+  MouseEvent,
+  ReactNode,
+  Ref,
+} from 'react';
 import type { FieldProps, FieldVariant } from '../forms/internal/FieldFrame.js';
 import type { MarkdownLink, MarkdownLinkRequest } from '../forms/MarkdownEditor.js';
 
@@ -116,9 +122,9 @@ export interface RichTextEditorHandle {
 export interface RichTextEditorProps
   extends RichTextRenderOptions,
     FieldProps,
-    Omit<ComponentPropsWithoutRef<'div'>, 'defaultValue' | 'onChange' | 'children'> {
-  /** Gives the Tiptap editor, as ref.current.editor, for commands. */
-  ref?: Ref<RichTextEditorHandle>;
+    Omit<ComponentPropsWithRef<'div'>, 'defaultValue' | 'onChange' | 'children'> {
+  /** Gives the Tiptap editor, as editorRef.current.editor, for commands. */
+  editorRef?: Ref<RichTextEditorHandle>;
   /**
    * The Markdown of a controlled editor; update it from onValueChange. A new value from outside,
    * such as another draft, replaces the document and keeps the caret where it can.

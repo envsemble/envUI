@@ -128,7 +128,7 @@ export function RichTextEditingFixture() {
             }}
           >
             <RichTextEditor
-              ref={editorHandle}
+              editorRef={editorHandle}
               label="Rich source"
               defaultValue="alpha"
               name="richSource"

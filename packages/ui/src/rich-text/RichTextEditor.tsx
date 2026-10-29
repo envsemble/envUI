@@ -40,11 +40,13 @@ const noCommands: readonly RichTextCommand[] = [];
 /**
  * A labelled editor for formatted text that people edit as it looks, built on Tiptap, with a
  * formatting toolbar, references typed with a trigger such as @, optional slash commands and
- * attachments; its value is Markdown. ref.editor gives the Tiptap editor for commands. Its words
+ * attachments; its value is Markdown. ref reaches the root element, and editorRef.current.editor
+ * gives the Tiptap editor for commands. Its words
  * come from EnvUIProvider's messages: richText, editor and linkDialog.
  */
 export function RichTextEditor({
   ref,
+  editorRef,
   value,
   defaultValue = '',
   onValueChange,
@@ -229,7 +231,7 @@ export function RichTextEditor({
           }
         : null,
   });
-  useImperativeHandle(ref, () => ({ editor }), [editor]);
+  useImperativeHandle(editorRef, () => ({ editor }), [editor]);
   const describedByIds = metadata['aria-describedby'];
   const invalidState = metadata['aria-invalid'];
   useLayoutEffect(() => {
@@ -444,6 +446,7 @@ export function RichTextEditor({
   return (
     <div
       {...props}
+      ref={ref}
       className={classNames('env-rich-text-editor', className)}
       data-disabled={disabled || undefined}
       data-readonly={readOnly || undefined}

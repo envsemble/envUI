@@ -6409,10 +6409,10 @@
       "description": "A labelled editor for formatted text that people edit as it looks, built on Tiptap, with a formatting toolbar, references typed with a trigger such as",
       "props": [
         {
-          "name": "ref",
+          "name": "editorRef",
           "type": "Ref<RichTextEditorHandle>",
           "required": false,
-          "description": "Gives the Tiptap editor, as ref.current.editor, for commands."
+          "description": "Gives the Tiptap editor, as editorRef.current.editor, for commands."
         },
         {
           "name": "value",
