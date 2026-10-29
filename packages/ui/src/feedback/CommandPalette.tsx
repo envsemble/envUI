@@ -81,7 +81,7 @@ export interface CommandPaletteProps
    * Shown in place of items while the search field is empty, such as recent documents or
    * suggested pages under a group heading; options like any other.
    */
-  defaultItems?: readonly CommandPaletteItem[];
+  suggestedItems?: readonly CommandPaletteItem[];
   /** Enter or a press on an option; Ctrl or Cmd sets modifier. */
   onAction: (item: CommandPaletteItem, options: CommandPaletteActionOptions) => void;
   /**
@@ -149,7 +149,7 @@ export function CommandPalette({
   inputValue,
   onInputValueChange,
   items: results,
-  defaultItems,
+  suggestedItems,
   onAction,
   closeOnAction = true,
   placeholder,
@@ -171,7 +171,7 @@ export function CommandPalette({
   const list = useRef<HTMLDivElement>(null);
   const query = inputValue.trim();
   // Until people type, the default items, where there are any, show in place of the results.
-  const items = query === '' && defaultItems ? defaultItems : results;
+  const items = query === '' && suggestedItems ? suggestedItems : results;
   const sections = sectionsOf(items);
   const grouped = sections.some((section) => section.label !== undefined);
   // With no options, the empty state invites a search before people type, and says what to try

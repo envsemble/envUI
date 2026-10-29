@@ -201,8 +201,8 @@ Ask for the palette's states in these words.
 
 | Words            | In code                                                                                       | Use for                                                        |
 | ---------------- | --------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
-| Suggestions      | `defaultItems`, with a `group` such as Suggested                                              | Options shown before people type.                              |
-| Recent items     | `defaultItems`, with a `group` such as Recently opened                                        | The items people opened last, before they type.                |
+| Suggestions      | `suggestedItems`, with a `group` such as Suggested                                            | Options shown before people type.                              |
+| Recent items     | `suggestedItems`, with a `group` such as Recently opened                                      | The items people opened last, before they type.                |
 | Type to search   | The empty state with an empty query: `emptyDescription`, `messages.commandPalette.emptyQuery` | Inviting a search, and what it finds, with nothing to suggest. |
 | No results       | `emptyLabel`, `emptyDescription`, `messages.commandPalette.empty` and `emptyHint`             | Saying that the text found nothing, and what to try.           |
 | Without the icon | `emptyIcon={null}`                                                                            | An empty state of words alone, such as one that loads.         |
@@ -219,7 +219,7 @@ The application owns the items and what choosing one does.
 - `onAction` runs the chosen item, and `closeOnAction`, true by default, closes the palette after it.
 - `aria-label` names the dialog, its search field and its list.
 - `placeholder` shows in the empty field.
-- `defaultItems` show in place of `items` while the field is empty, and the empty state in place of the list when there are no options.
+- `suggestedItems` show in place of `items` while the field is empty, and the empty state in place of the list when there are no options.
 
 ```tsx source=GoToDocument
 
@@ -237,7 +237,7 @@ Each CommandPaletteItem has an `id` and a `label`, with `textValue` for a label 
 
 #### Suggestions and the empty state
 
-`defaultItems` show while the field is empty, or holds only spaces, in place of `items`, such as recent documents or suggested pages with a `group` heading; they are options like any other, highlighted, chosen with <kbd>Enter</kbd> or <kbd>Ctrl</kbd>+<kbd>Enter</kbd> and passed to `onAction`.
+`suggestedItems` show while the field is empty, or holds only spaces, in place of `items`, such as recent documents or suggested pages with a `group` heading; they are options like any other, highlighted, chosen with <kbd>Enter</kbd> or <kbd>Ctrl</kbd>+<kbd>Enter</kbd> and passed to `onAction`.
 
 With no options, the empty state shows in place of the list: an icon on a muted circle, a title and a quieter description, as the polite status.
 
@@ -255,7 +255,7 @@ const typed = query.trim() !== '';
   onInputValueChange={setQuery}
   items={matches}
   // Recent documents, each with group: 'Recently opened'.
-  defaultItems={recent}
+  suggestedItems={recent}
   emptyLabel={typed ? 'No matching documents' : undefined}
   emptyDescription={typed ? undefined : 'Find a document by its name or folder.'}
   {...props}
@@ -367,6 +367,7 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 
 ## Changelog
 
+- **1.0.0-prerelease.5**: `defaultItems` is `suggestedItems`: `default` names an uncontrolled starting value everywhere else.
 - **1.0.0-prerelease.5**: The palette is frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge, and is solid with its edge at high contrast and with reduced transparency. Its search is a large ghost TextField, opaque on the neutral fill with no outline, whose edge returns at high contrast; its headings are small and muted, its rows and keys are the popup lists', the keys side by side with the + read but not shown, and its hints are in the small label size. Its options take the text color rather than the controls', lie one under the next with no space between them, and its headings sit a little ahead of the rows.
 - **1.0.0-prerelease.4**: An empty state with an icon, a title and a description, which tells an invitation before people type from no results; `emptyDescription`, `emptyIcon` and `messages.commandPalette.emptyQuery` and `emptyHint`. `defaultItems` show before people type.
 - **1.0.0-prerelease.3**: The search trigger pattern is part of this page, as the button and the shortcut that open the palette; the pattern's address opens it.

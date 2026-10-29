@@ -1173,6 +1173,7 @@ An application written for a 1.0 prerelease follows these renames by hand: the n
 | ------------------------------------------- | -------------------------------------------------------------------- |
 | A destination's `onSelect: () => void`      | `onClick(event)`, as on a link or a button                           |
 | DropZone `onDropAccepted`, `onDropRejected` | `onFilesAccepted`, `onFilesRejected`: they run for browsed files too |
+| CommandPalette `defaultItems`               | `suggestedItems`                                                     |
 
 ## Migrate by responsibility
 

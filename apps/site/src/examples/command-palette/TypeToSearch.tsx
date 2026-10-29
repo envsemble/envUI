@@ -30,7 +30,7 @@ export default function TypeToSearch() {
         inputValue={query}
         onInputValueChange={setQuery}
         items={items}
-        defaultItems={recent}
+        suggestedItems={recent}
         onAction={() => {}}
         // Before people type, the invitation says what the palette finds.
         emptyDescription={query.trim() ? undefined : 'Find a document by its name or folder.'}

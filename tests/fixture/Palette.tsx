@@ -140,7 +140,7 @@ export function CommandPaletteEmptyFixture() {
       </EnvUIProvider>
       <EmptyPalette
         name="Go to page"
-        defaultItems={suggested}
+        suggestedItems={suggested}
         emptyLabel="No matching pages"
         emptyDescription="Try a page's name, such as Billing."
         emptyIcon={null}

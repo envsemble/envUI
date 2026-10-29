@@ -1727,7 +1727,7 @@
           "description": "Filtered and ranked by the application, in display order."
         },
         {
-          "name": "defaultItems",
+          "name": "suggestedItems",
           "type": "readonly CommandPaletteItem[]",
           "required": false,
           "description": "Shown in place of items while the search field is empty, such as recent documents or suggested pages under a group heading; options like any other."
