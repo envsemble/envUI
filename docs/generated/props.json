@@ -1005,6 +1005,12 @@
           "description": "The text beside the box, which names the checkbox; pressing it toggles the checkbox."
         },
         {
+          "name": "description",
+          "type": "ReactNode",
+          "required": false,
+          "description": "A short, muted line under the label, such as what the option changes. It is part of the checkbox's label, so it is read with its name."
+        },
+        {
           "name": "checked",
           "type": "boolean | 'mixed'",
           "required": false,
@@ -6153,9 +6159,9 @@
         },
         {
           "name": "value",
-          "type": "string",
+          "type": "string | null",
           "required": false,
-          "description": "The value of the chosen option in a controlled group; update it from onValueChange."
+          "description": "The value of the chosen option in a controlled group, or null for none; update it from onValueChange."
         },
         {
           "name": "defaultValue",
@@ -6168,6 +6174,18 @@
           "type": "(value: string) => void",
           "required": false,
           "description": "Receives the value of the option people choose."
+        },
+        {
+          "name": "description",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Lasting guidance under the options, such as what the choice changes, linked to the group as its description."
+        },
+        {
+          "name": "error",
+          "type": "ReactNode",
+          "required": false,
+          "description": "A message under the options that says how to correct the choice, such as for a required group left empty; it joins the group's description, after the description."
         },
         {
           "name": "name",
@@ -6843,13 +6861,20 @@
         {
           "name": "value",
           "type": "string",
-          "required": true,
-          "description": "The chosen item's value. The control is always controlled: update it from onValueChange."
+          "required": false,
+          "description": "The chosen item's value, for a control the application keeps; update it from onValueChange."
+        },
+        {
+          "name": "defaultValue",
+          "type": "string",
+          "required": false,
+          "default": "the first item's value",
+          "description": "The item an uncontrolled control starts with chosen."
         },
         {
           "name": "onValueChange",
           "type": "(value: string) => void",
-          "required": true,
+          "required": false,
           "description": "Receives the value of the item people choose, by pressing it or with the arrow keys."
         },
         {
@@ -7198,6 +7223,12 @@
           "description": "Lasting guidance under the slider, such as what the value applies to, linked to the slider as its description."
         },
         {
+          "name": "error",
+          "type": "ReactNode",
+          "required": false,
+          "description": "A message under the slider that says how to correct the value; it joins the slider's description, after the description."
+        },
+        {
           "name": "value",
           "type": "number",
           "required": false,
@@ -7409,6 +7440,12 @@
           "type": "ReactNode",
           "required": false,
           "description": "The setting the switch turns on or off, such as Show completed tasks, beside the track. It names the switch, stays the same in both states, and pressing it toggles the switch too. Without it, name the switch with aria-label or aria-labelledby."
+        },
+        {
+          "name": "description",
+          "type": "ReactNode",
+          "required": false,
+          "description": "A short, muted line under the label, such as what the option changes. It is part of the switch's label, so it is read with its name."
         },
         {
           "name": "checked",

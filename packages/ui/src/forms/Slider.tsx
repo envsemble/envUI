@@ -37,6 +37,11 @@ export interface SliderProps
    * its description.
    */
   description?: ReactNode;
+  /**
+   * A message under the slider that says how to correct the value; it joins the slider's
+   * description, after the description.
+   */
+  error?: ReactNode;
   /** The value of a controlled slider; update it from onValueChange. */
   value?: number;
   /**
@@ -100,6 +105,7 @@ export interface SliderProps
 export function Slider({
   label,
   description,
+  error,
   value,
   defaultValue,
   onValueChange,
@@ -228,7 +234,11 @@ export function Slider({
   // Faint ticks mark the steps, or, where they are many, the large steps, so they never crowd.
   const ticks = tickCount(min, max, step, largeStep);
   const describedByIds =
-    [describedBy, description != null ? fieldMessageIds(id).description : undefined]
+    [
+      describedBy,
+      description != null ? fieldMessageIds(id).description : undefined,
+      error != null ? fieldMessageIds(id).error : undefined,
+    ]
       .filter(Boolean)
       .join(' ') || undefined;
   return (
@@ -267,7 +277,7 @@ export function Slider({
         name={name}
         form={form}
       >
-        <FieldFrame id={id} description={description}>
+        <FieldFrame id={id} description={description} error={error}>
           <BaseSlider.Control
             ref={control}
             className="env-slider-control"

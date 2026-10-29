@@ -26,6 +26,11 @@ export interface CheckboxProps extends CheckedProps<CheckboxState> {
   /** The text beside the box, which names the checkbox; pressing it toggles the checkbox. */
   label?: ReactNode;
   /**
+   * A short, muted line under the label, such as what the option changes. It is part of the
+   * checkbox's label, so it is read with its name.
+   */
+  description?: ReactNode;
+  /**
    * Whether the box is checked, unchecked or "mixed", for a parent whose children are partly
    * chosen. With `onCheckedChange` it controls the checkbox.
    */
@@ -40,6 +45,7 @@ export interface CheckboxProps extends CheckedProps<CheckboxState> {
 export function Checkbox({
   ref,
   label,
+  description,
   checked,
   defaultChecked = false,
   onCheckedChange,
@@ -74,7 +80,12 @@ export function Checkbox({
           <Check />
         </span>
       </span>
-      {label != null && <span className="env-checkbox-label">{label}</span>}
+      {label != null && (
+        <span className="env-checkbox-label">
+          {label}
+          {description != null && <small className="env-checkbox-description">{description}</small>}
+        </span>
+      )}
     </label>
   );
 }

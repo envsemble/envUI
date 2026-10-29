@@ -175,6 +175,7 @@
       "env-checkbox-box": "The box that shows the state.",
       "env-checkbox-indicator": "The check or dash inside the box.",
       "env-checkbox-input": "The native input.",
+      "env-checkbox-description": "The muted line under the label.",
       "env-checkbox-label": "The label."
     },
     "Code": {
@@ -698,6 +699,7 @@
     "Switch": {
       "env-switch": "The switch with its label.",
       "env-switch-input": "The native input.",
+      "env-switch-description": "The muted line under the label.",
       "env-switch-label": "The label."
     },
     "Table": {

@@ -12,7 +12,9 @@ import { classNames } from '../internal/classNames.js';
 import { Grid, Row } from '../foundations/Layout.js';
 import { setRef } from '../internal/setRef.js';
 import { subscribeFormReset } from './internal/subscribeFormReset.js';
+import { fieldMessageIds } from './internal/useFieldMetadata.js';
 import '../styles/Base.css';
+import '../styles/Field.css';
 import '../styles/Radio.css';
 import '../styles/ConnectedRows.css';
 
@@ -37,8 +39,11 @@ export interface RadioGroupProps extends FieldsetHTMLAttributes<HTMLFieldSetElem
    * names the group for assistive technology; without it, use aria-label or aria-labelledby.
    */
   label?: ReactNode;
-  /** The value of the chosen option in a controlled group; update it from onValueChange. */
-  value?: string;
+  /**
+   * The value of the chosen option in a controlled group, or null for none; update it from
+   * onValueChange.
+   */
+  value?: string | null;
   /**
    * The value of the option an uncontrolled group starts with; a native form reset returns to it.
    * Without value or defaultValue, no option is chosen until people choose one.
@@ -46,6 +51,16 @@ export interface RadioGroupProps extends FieldsetHTMLAttributes<HTMLFieldSetElem
   defaultValue?: string;
   /** Receives the value of the option people choose. */
   onValueChange?: (value: string) => void;
+  /**
+   * Lasting guidance under the options, such as what the choice changes, linked to the group as its
+   * description.
+   */
+  description?: ReactNode;
+  /**
+   * A message under the options that says how to correct the choice, such as for a required group
+   * left empty; it joins the group's description, after the description.
+   */
+  error?: ReactNode;
   /**
    * The name every radio of the group submits its value under. Set it in a form; without it the
    * group takes a unique generated name, so its radios still work as one group.
@@ -71,9 +86,11 @@ export interface RadioGroupProps extends FieldsetHTMLAttributes<HTMLFieldSetElem
 export function RadioGroup({
   ref,
   label,
-  value,
+  value: controlledValue,
   defaultValue,
   onValueChange,
+  description,
+  error,
   name: suppliedName,
   required = false,
   disabled = false,
@@ -86,24 +103,36 @@ export function RadioGroup({
   const name = suppliedName ?? id;
   const fieldsetRef = useRef<HTMLFieldSetElement>(null);
   const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
-  const selectedValue = value ?? uncontrolledValue;
+  // null is none while controlled, as undefined leaves the group to itself.
+  const value = controlledValue === null ? undefined : controlledValue;
+  const controlled = controlledValue !== undefined;
+  const selectedValue = controlled ? value : uncontrolledValue;
+  const ids = fieldMessageIds(id);
+  const describedBy =
+    [
+      props['aria-describedby'],
+      description != null ? ids.description : undefined,
+      error != null ? ids.error : undefined,
+    ]
+      .filter(Boolean)
+      .join(' ') || undefined;
   useEffect(
     function subscribeToFormReset() {
       const fieldset = fieldsetRef.current;
       const form = fieldset?.form;
       if (!fieldset || !form) return;
       return subscribeFormReset(form, function applyReset() {
-        const resetValue = value ?? defaultValue;
-        if (value === undefined) setUncontrolledValue(resetValue);
+        const resetValue = controlled ? value : defaultValue;
+        if (!controlled) setUncontrolledValue(resetValue);
         for (const input of fieldset.querySelectorAll<HTMLInputElement>('input[type="radio"]')) {
           if (input.name === name) input.checked = input.value === resetValue;
         }
       });
     },
-    [value, defaultValue, name, props.form],
+    [controlled, value, defaultValue, name, props.form],
   );
   function select(nextValue: string) {
-    if (value === undefined) setUncontrolledValue(nextValue);
+    if (!controlled) setUncontrolledValue(nextValue);
     onValueChange?.(nextValue);
   }
   const fieldset = (
@@ -114,6 +143,7 @@ export function RadioGroup({
         setRef(ref, node);
       }}
       disabled={disabled}
+      aria-describedby={describedBy}
       data-orientation={orientation}
       className={classNames(
         'env-radio-group',
@@ -126,6 +156,16 @@ export function RadioGroup({
     <>
       {label != null && <legend>{label}</legend>}
       {children}
+      {description != null && (
+        <small id={ids.description} className="env-field-description">
+          {description}
+        </small>
+      )}
+      {error != null && (
+        <div id={ids.error} className="env-field-error">
+          {error}
+        </div>
+      )}
     </>
   );
   return (

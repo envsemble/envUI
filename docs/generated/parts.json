@@ -983,6 +983,10 @@
           "description": "The box that shows the state."
         },
         {
+          "class": "env-checkbox-description",
+          "description": "The muted line under the label."
+        },
+        {
           "class": "env-checkbox-indicator",
           "description": "The check or dash inside the box."
         },
@@ -3904,7 +3908,8 @@
         }
       ],
       "uses": [
-        "ConnectedRows"
+        "ConnectedRows",
+        "Field"
       ],
       "colors": [
         {
@@ -3943,7 +3948,8 @@
         }
       ],
       "uses": [
-        "ConnectedRows"
+        "ConnectedRows",
+        "Field"
       ]
     },
     "Rail": {
@@ -4868,6 +4874,10 @@
         {
           "class": "env-switch",
           "description": "The switch with its label."
+        },
+        {
+          "class": "env-switch-description",
+          "description": "The muted line under the label."
         },
         {
           "class": "env-switch-input",

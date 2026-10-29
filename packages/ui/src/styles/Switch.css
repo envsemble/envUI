@@ -188,4 +188,11 @@
       background-color: Canvas;
     }
   }
+
+  /* A description under the label, muted, as a radio's is. */
+  .env-switch-description {
+    display: block;
+    color: var(--env-color-fg-muted);
+    font: var(--env-type-body-small);
+  }
 }

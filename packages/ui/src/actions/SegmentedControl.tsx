@@ -45,10 +45,15 @@ export interface SegmentedControlProps
   > {
   /** The items, two to five, in the order they show. */
   items: readonly SegmentedControlItem[];
-  /** The chosen item's value. The control is always controlled: update it from onValueChange. */
-  value: string;
+  /** The chosen item's value, for a control the application keeps; update it from onValueChange. */
+  value?: string;
+  /**
+   * The item an uncontrolled control starts with chosen.
+   * @default the first item's value
+   */
+  defaultValue?: string;
   /** Receives the value of the item people choose, by pressing it or with the arrow keys. */
-  onValueChange: (value: string) => void;
+  onValueChange?: (value: string) => void;
   /** The group's accessible name, such as Work items; the control has no visible label. */
   'aria-label': string;
   /**
@@ -75,6 +80,7 @@ export interface SegmentedControlProps
 export function SegmentedControl({
   items,
   value,
+  defaultValue = items[0]?.value,
   onValueChange,
   'aria-label': label,
   size,
@@ -97,7 +103,8 @@ export function SegmentedControl({
           onFocus?.(event);
         }}
         value={value}
-        onValueChange={(next) => onValueChange(next as string)}
+        defaultValue={defaultValue}
+        onValueChange={(next) => onValueChange?.(next as string)}
         disabled={disabled}
         aria-label={label}
         className={classNames('env-segmented-control', className)}
