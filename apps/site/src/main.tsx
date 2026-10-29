@@ -4,9 +4,14 @@ import App from './App';
 // cascade layers that the site's style sheets build on.
 import './styles/index.css';
 import { PaletteCustomizationProvider } from './theme/PaletteCustomization';
+import { SidebarLabels } from './review/SidebarLabels';
 
 createRoot(document.getElementById('root')!).render(
-  <PaletteCustomizationProvider>
-    <App />
-  </PaletteCustomizationProvider>,
+  location.pathname.replace(/\/+$/, '') === '/sidebar-labels' ? (
+    <SidebarLabels />
+  ) : (
+    <PaletteCustomizationProvider>
+      <App />
+    </PaletteCustomizationProvider>
+  ),
 );

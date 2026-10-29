@@ -1,0 +1,66 @@
+/* The review page for the drawer's group headings (SidebarLabels.tsx). Each option is scoped to
+   its column; the library's NavigationDrawer.css is unchanged. Typography and space only. */
+.site-labels-row {
+  padding: var(--env-space-5);
+  background: var(--env-color-bg-page);
+  color: var(--env-color-fg-default);
+}
+.site-labels-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 16rem);
+  gap: var(--env-space-5);
+  margin-block-start: var(--env-space-3);
+}
+.site-labels-option {
+  display: flex;
+  flex-direction: column;
+  gap: var(--env-space-1);
+}
+.site-labels-drawer {
+  block-size: 40rem;
+  margin-block-start: var(--env-space-2);
+  padding: var(--env-space-4) var(--env-space-3);
+}
+
+/* A, overline: a small uppercase label, tracked, in the muted color. */
+.site-labels-option[data-option='a'] .env-navigation-drawer-group-label {
+  padding-block: var(--env-space-2) var(--env-space-1);
+  font: var(--env-font-weight-medium) var(--env-font-size-caption) / 1.4 var(--env-font-family);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* B, strong label: the label semibold in the text color, the items quieter in the muted color. */
+.site-labels-option[data-option='b'] .env-navigation-drawer-group-label {
+  color: var(--env-color-fg-default);
+  font: var(--env-font-weight-semibold) var(--env-font-size-body-sm) / 1.4 var(--env-font-family);
+}
+.site-labels-option[data-option='b'] .env-navigation-drawer-item:not([data-current]) {
+  color: var(--env-color-fg-muted);
+}
+
+/* C, air above: a smaller muted label, each group well apart from the one before it. */
+.site-labels-option[data-option='c'] .env-navigation-drawer-section:not(:first-child) {
+  margin-block-start: var(--env-space-6);
+}
+.site-labels-option[data-option='c'] .env-navigation-drawer-group-label {
+  padding-block: 0 var(--env-space-1);
+  font: var(--env-font-weight-medium) var(--env-font-size-caption) / 1.4 var(--env-font-family);
+}
+
+/* D, heading: a label a step larger than the items, medium, in the text color, slightly tightened,
+   with more space above each group. */
+.site-labels-option[data-option='d'] .env-navigation-drawer-section:not(:first-child) {
+  margin-block-start: var(--env-space-5);
+}
+.site-labels-option[data-option='d'] .env-navigation-drawer-group-label {
+  padding-block: var(--env-space-1);
+  color: var(--env-color-fg-default);
+  font: var(--env-font-weight-medium) var(--env-font-size-title) / 1.4 var(--env-font-family);
+  letter-spacing: -0.01em;
+}
+
+/* Each option's note takes two lines, so the drawers start level. */
+.site-labels-option > p:last-of-type {
+  min-block-size: 2.5rem;
+}
