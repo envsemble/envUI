@@ -21,24 +21,20 @@ function Provider({ children, defaultPlacement = 'bottom-end', limit = 3 }: Toas
   if (!toastPlacements.includes(defaultPlacement))
     throw new RangeError('Unsupported toast placement.');
   return (
-    <ManagedToastRegions defaultPlacement={defaultPlacement} visibleLimit={limit}>
+    <ManagedToastRegions defaultPlacement={defaultPlacement} limit={limit}>
       {children}
     </ManagedToastRegions>
   );
 }
 
-function ManagedToastRegions({
-  children,
-  defaultPlacement,
-  visibleLimit,
-}: Required<ToastProviderProps>) {
+function ManagedToastRegions({ children, defaultPlacement, limit }: Required<ToastProviderProps>) {
   const controller = useToastController(defaultPlacement);
   return (
     <ToastManagerContext value={controller.manager}>
       {children}
       {toastPlacements.map((placement) => (
         <BaseToast.Provider key={placement} timeout={0} limit={Number.MAX_SAFE_INTEGER}>
-          <ToastRegion placement={placement} controller={controller} visibleLimit={visibleLimit} />
+          <ToastRegion placement={placement} controller={controller} visibleLimit={limit} />
         </BaseToast.Provider>
       ))}
     </ToastManagerContext>
