@@ -8,7 +8,7 @@ A pattern page (`docs/patterns/<id>.md`) says how envUI's components combine for
 ---
 title: Settings
 summary: Let people change how the application works for them, and see each change apply. # One sentence.
-status: beta # experimental, beta, stable or deprecated.
+status: beta # alpha, beta, stable or deprecated.
 since: 1.0.0 # A released version, or the next.
 intent: Enter and change data # Patterns only: one of the intents below.
 aliases: [preferences, options, notification settings] # At least one.

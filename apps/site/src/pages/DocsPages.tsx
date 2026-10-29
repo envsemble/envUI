@@ -137,7 +137,11 @@ export function GuidePage({ page }: { page: RoutePage }) {
         trail={docsTrail(page)}
         description={page.summary}
         kind="docs"
-        meta={<OtherPartButton page={page} />}
+        meta={
+          <MetadataBadges metadata={{ status: page.document?.status }}>
+            <OtherPartButton page={page} />
+          </MetadataBadges>
+        }
       />
       <Column gap={7} className="site-article">
         <GuideDocument document={page.document!} />

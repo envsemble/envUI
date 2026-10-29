@@ -51,10 +51,11 @@ export const componentGroups = [
   'Overlays',
   'App frame & layout',
 ];
-export const statuses = ['experimental', 'beta', 'stable', 'deprecated'];
+/** A page's or an export's status, a ladder from alpha to stable, then deprecated. */
+export const statuses = ['alpha', 'beta', 'stable', 'deprecated'];
 /**
  * The status of an export a guide or foundations page documents, such as EnvUIProvider or
- * useContainerSize, unless the page's `statuses` gives it another.
+ * useContainerSize, unless the page's `statuses` gives it another, or a guide's `status`.
  */
 export const guideExportStatus = 'stable';
 /** What people are doing, in order: a pattern page's intent groups it in the catalogue and agents. */
@@ -324,7 +325,13 @@ export const pageSchemas: Record<string, FrontmatterSchema> = {
   },
   foundation: foundationFrontmatter,
 };
-export const otherFrontmatter = new Set(['components', 'aliases', 'exportAliases', 'statuses']);
+export const otherFrontmatter = new Set([
+  'status',
+  'components',
+  'aliases',
+  'exportAliases',
+  'statuses',
+]);
 /** A page whose slug cannot follow its title until the component it documents is merged. */
 export const slugExceptions = new Set(['chips']);
 

@@ -47,7 +47,7 @@ export function validateFrontmatter(frontmatter, path, { kind, versions }) {
     for (const key of Object.keys(frontmatter))
       if (!otherFrontmatter.has(key))
         problems.push(
-          `${key} is not allowed here; only components, aliases, exportAliases and statuses are`,
+          `${key} is not allowed here; only status, components, aliases, exportAliases and statuses are`,
         );
   }
   if (!schema && 'exportAliases' in frontmatter) {
@@ -164,9 +164,11 @@ export function validateFrontmatter(frontmatter, path, { kind, versions }) {
             problems.push(`${key} names ${name}, which components does not list`);
           if (!statuses.includes(status))
             problems.push(`${key} of ${name} must be one of ${statuses.join(', ')}`);
-          else if (status === (schema ? frontmatter.status : guideExportStatus))
+          else if (
+            status === (schema ? frontmatter.status : (frontmatter.status ?? guideExportStatus))
+          )
             problems.push(
-              schema
+              schema || frontmatter.status
                 ? `${key} of ${name} repeats the page's status; leave it out`
                 : `${key} of ${name} repeats the default status of a guide's exports, ${guideExportStatus}; leave it out`,
             );

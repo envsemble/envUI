@@ -167,12 +167,15 @@ export interface DocumentationSection {
   anchors?: string[];
 }
 
+/** A page's or an export's status: alpha, beta, stable or deprecated. */
+export type DocumentationStatus = 'alpha' | 'beta' | 'stable' | 'deprecated';
+
 /** A component or pattern page's frontmatter beyond its title, summary and category. */
 export interface DocumentationMetadata {
   /** A component's or a pattern's; a foundation has none. */
-  status?: 'experimental' | 'beta' | 'stable' | 'deprecated';
+  status?: DocumentationStatus;
   /** The status of an export that differs from the page's. */
-  statuses?: Record<string, 'experimental' | 'beta' | 'stable' | 'deprecated'>;
+  statuses?: Record<string, DocumentationStatus>;
   since?: string;
   aliases: string[];
   useWhen: string[];
@@ -198,6 +201,8 @@ export interface DocumentationEntry {
   metadata?: DocumentationMetadata;
   /** The exports a guide documents, such as LinkProvider on setup's. */
   components?: string[];
+  /** A guide's status, where it has one, such as alpha. */
+  status?: DocumentationStatus;
   /**
    * The sections of a component, pattern or foundation page, in the one-file structure; absent on
    * guides.

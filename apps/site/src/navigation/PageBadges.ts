@@ -1,5 +1,5 @@
 /*
- * The small badge beside a page's name in the Docs' navigation: Deprecated or Experimental, which
+ * The small badge beside a page's name in the Docs' navigation: Deprecated or Alpha, which
  * a reader must not miss, else New while the page came in the current minor release. One badge a
  * page, the first that applies. Beta has none here: it stays on the page, as so many pages are
  * beta that the navigation would be a column of them. Kept free of imports, so the unit tests
@@ -7,14 +7,14 @@
  */
 
 /** A page's status, from its frontmatter. */
-export type PageStatus = 'experimental' | 'beta' | 'stable' | 'deprecated';
+export type PageStatus = 'alpha' | 'beta' | 'stable' | 'deprecated';
 
 /**
  * The tone of each status's Badge, the same wherever a status shows: under a page's title and
  * beside its name in the navigation.
  */
 export const statusTones = {
-  experimental: 'warning',
+  alpha: 'warning',
   beta: 'neutral',
   stable: 'success',
   deprecated: 'danger',
@@ -25,7 +25,7 @@ const newTone = 'accent';
 
 /** The badge a page shows: its words and the tone of envUI's Badge. */
 export interface PageBadge {
-  label: 'Deprecated' | 'Experimental' | 'New';
+  label: 'Deprecated' | 'Alpha' | 'New';
   tone: (typeof statusTones)[PageStatus] | typeof newTone;
 }
 
@@ -48,7 +48,7 @@ export function pageBadge(
   version: string,
 ): PageBadge | undefined {
   if (status === 'deprecated') return { label: 'Deprecated', tone: statusTones.deprecated };
-  if (status === 'experimental') return { label: 'Experimental', tone: statusTones.experimental };
+  if (status === 'alpha') return { label: 'Alpha', tone: statusTones.alpha };
   if (isNew(since, version)) return { label: 'New', tone: newTone };
   return undefined;
 }

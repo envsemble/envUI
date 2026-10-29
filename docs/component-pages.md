@@ -54,7 +54,7 @@ A page opens with YAML frontmatter. The build validates it and fails on an unkno
 ---
 title: TextField # The component's name; the file is its kebab case.
 summary: A labelled single-line text input with a description and an error. # One sentence.
-status: beta # experimental, beta, stable or deprecated.
+status: beta # alpha, beta, stable or deprecated.
 statuses: # Optional: the exports whose status differs from the page's.
   SearchField: stable
 since: 1.0.0 # The release that added the component, under any earlier name: a released version, or the next.
@@ -87,7 +87,7 @@ examples: # Each example file once, by its name, with its role and, where it has
 - **`statuses`** gives an export listed in `components` a status other than the page's, such as a beta editor on a page whose renderer is stable; the catalogue shows it beside the page's.
 - **`avoidWhen`** is the page's one list of related components and pages, its **Related** section: each entry names an export in `use` or an indexed page in `see`, never both, with a line saying when to pick it instead. The catalogue links it to the page that documents it, and agents read it as "need this, use that". Name each export or page once, and not both an export and its page; the build fails on a relation named twice. An entry may name a member of the page's own family, such as Textarea on the TextField page. Relate only what a reader might pick instead: a page that is only used alongside, such as Accessibility or Icons, is linked from the sentence that needs it, if anywhere.
 - **`components`** lists a family's members, such as IconButton on the button page, and the page documents them in its sections. A namespace, such as `Menu`, covers all its parts; list the namespace, never a part such as `Menu.Item`.
-- **Guides**, the pages at the top of `docs/`, may list the exports they document with only `components`, `aliases`, `exportAliases` and `statuses`. `exportAliases` maps an export listed in `components` to the words people search for it by, such as `ThemeToggle: [theme switcher]` on the setup page, for exports without a component page of their own. The exports a guide documents are `stable`; `statuses` gives one another status, such as `useContainerSize: beta`.
+- **Guides**, the pages at the top of `docs/`, may take only `status`, `components`, `aliases`, `exportAliases` and `statuses`. A guide's `status`, such as `alpha` on Dev mode, shows under its title and beside its name in the Docs' navigation. `exportAliases` maps an export listed in `components` to the words people search for it by, such as `ThemeToggle: [theme switcher]` on the setup page, for exports without a component page of their own. The exports a guide documents take its status, else `stable`; `statuses` gives one another, such as `useContainerSize: beta`.
 
 Register the page in [the index](index.md) under its group, with only its title and path: `- [TextField](components/text-field.md)`. The index orders the pages; the summary comes from the frontmatter.
 

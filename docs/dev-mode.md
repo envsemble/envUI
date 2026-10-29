@@ -1,4 +1,5 @@
 ---
+status: alpha
 components:
   - installDevMode
 aliases:

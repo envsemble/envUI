@@ -19,8 +19,7 @@ const app = resolve(fixture, 'src/App.js');
 function lint(reexportModules, { cwd = fixture, filename = app, source = './ui' } = {}) {
   return new Linter({ cwd })
     .verify(
-      `import { Menu } from '${source}';
-const menu = <Menu.Root role="menu" />;`,
+      `import { Menu } from '${source}';\nconst menu = <Menu.Root role="menu" />;`,
       {
         plugins: { envui: { rules: { 'no-html-elements': rule } } },
         languageOptions: { sourceType: 'module', parserOptions: { ecmaFeatures: { jsx: true } } },

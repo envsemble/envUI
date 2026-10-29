@@ -1205,7 +1205,7 @@ ${long}
   assert.ok(long.length > paragraphLength);
 });
 
-test("a guide's statuses and exportAliases name only the exports it lists", async () => {
+test("a guide's status, statuses and exportAliases hold, and name only the exports it lists", async () => {
   const cache = resolve('.cache');
   await mkdir(cache, { recursive: true });
   const directory = await mkdtemp(join(cache, 'guide-'));
@@ -1225,6 +1225,22 @@ test("a guide's statuses and exportAliases name only the exports it lists", asyn
       source.replace('exportAliases:\n', 'exportAliases:\n  Button:\n    - push\n'),
     );
     assert.throws(read, /exportAliases names Button, which components does not list/);
+    // A guide may carry a status of the ladder, which its exports take, so one that says so
+    // repeats the guide's.
+    const withStatus = (status, text = source) => `---\nstatus: ${status}\n${text.slice(4)}`;
+    await writeFile(setup, withStatus('experimental'));
+    assert.throws(read, /status must be one of alpha, beta, stable, deprecated/);
+    await writeFile(
+      setup,
+      withStatus(
+        'alpha',
+        source.replace(/^statuses:.*\n(?: {2}.*\n)*/m, 'statuses:\n  LinkProvider: alpha\n'),
+      ),
+    );
+    assert.throws(read, /statuses of LinkProvider repeats the page's status/);
+    await writeFile(setup, withStatus('alpha'));
+    const guide = read().find((document) => document.path === 'setup.md');
+    assert.equal(guide.frontmatter.status, 'alpha');
   } finally {
     await rm(directory, { recursive: true, force: true });
   }

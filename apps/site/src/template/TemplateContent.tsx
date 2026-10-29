@@ -20,7 +20,7 @@ export function MetadataBadges({
   plain = false,
   children,
 }: {
-  metadata: DocumentationMetadata;
+  metadata: Pick<DocumentationMetadata, 'status' | 'statuses' | 'since'>;
   /** Leave out the statuses of exports that are code, such as a hook, as the catalogue does. */
   plain?: boolean;
   children?: ReactNode;

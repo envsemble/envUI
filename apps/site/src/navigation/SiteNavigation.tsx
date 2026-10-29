@@ -84,11 +84,13 @@ function useCurrentInView() {
 }
 
 /**
- * The badge after a page's name in the Docs' navigation, such as Experimental or New, from its
- * frontmatter and the package's version (PageBadges.ts); nothing for most pages.
+ * The badge after a page's name in the Docs' navigation, such as Alpha or New, from its
+ * frontmatter, a guide's status included, and the package's version (PageBadges.ts); nothing for
+ * most pages.
  */
 function PageBadgeOf({ page }: { page: RoutePage }) {
-  const metadata = page.document?.metadata;
+  const document = page.document;
+  const metadata = document?.metadata ?? (document?.status && { status: document.status });
   const badge = metadata && pageBadge(metadata, version);
   return badge ? <Badge tone={badge.tone}>{badge.label}</Badge> : null;
 }

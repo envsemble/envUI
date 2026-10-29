@@ -68,9 +68,13 @@ export function generateDocumentation() {
     const kind = pageKindOf(document.path);
     if (!frontmatter) return entry;
     // A guide names the exports it documents, such as LinkProvider, so a page that relates to one
-    // links to it.
+    // links to it, and may carry a status, such as alpha.
     if (!sections)
-      return frontmatter.components ? { ...entry, components: frontmatter.components } : entry;
+      return {
+        ...entry,
+        ...(frontmatter.status && { status: frontmatter.status }),
+        ...(frontmatter.components && { components: frontmatter.components }),
+      };
     const metadata = {
       ...(frontmatter.status && { status: frontmatter.status }),
       ...(frontmatter.since && { since: frontmatter.since }),
