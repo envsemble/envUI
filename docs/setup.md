@@ -103,7 +103,7 @@ Each component's module imports its own style sheet, after the base every compon
 
 - **Without a bundler**, import `@envsemble/envui/styles.css` once, in the client entry: it holds every component's styles. Don't import it as well as the components' own: the styles would load twice.
 - **In Node**, as when a server renders or tests run without a bundler, the same modules load without their CSS: the package's style sheet imports resolve to an empty module under the `node` condition, and only a bundler, which sets the `module` condition, loads the CSS. Server-rendered pages get their CSS from the client bundle, or from the framework that collects it, as Next.js does.
-- **What a bundle keeps.** Vite and webpack keep the style sheets of the modules they keep. esbuild, Rollup's CSS plugins and Next.js with Turbopack, where a server component imports from envUI, keep those of every module the import reaches, about all of `styles.css`. Next.js with webpack keeps only what the page uses when `experimental.optimizePackageImports` lists `@envsemble/envui`.
+- **Next.js** with webpack keeps only the style sheets a page uses when `experimental.optimizePackageImports` lists `@envsemble/envui`.
 
 ### Theme preference
 
@@ -262,33 +262,6 @@ export function RouterLinks({ children }: { children: ReactNode }) {
 }
 ```
 
-### The current page and focus
-
-The application marks the current destination `current` in the array it passes to Bar, Rail or Drawer, from the router's location; a destination stays current on the pages under it.
-
-```tsx recipe
-import { useLocation } from 'react-router';
-import { Drawer } from '@envsemble/envui';
-import { Folder } from '@envsemble/envui/icons/Folder';
-import { Group } from '@envsemble/envui/icons/Group';
-
-export function ProjectNavigation() {
-  const { pathname } = useLocation();
-  const current = (path: string) => pathname === path || pathname.startsWith(`${path}/`);
-  return (
-    <Drawer
-      aria-label="Projects"
-      destinations={[
-        { label: 'Projects', icon: <Folder />, href: '/projects', current: current('/projects') },
-        { label: 'People', icon: <Group />, href: '/people', current: current('/people') },
-      ]}
-    />
-  );
-}
-```
-
-After a navigation, move focus to the new page's `main` or `h1`, with `tabIndex={-1}`, and `preventScroll` where the page restores its own scroll; otherwise screen readers hear nothing of it. A link that only changes a view in place, such as a tab or a filter, keeps focus.
-
 ## Locale, strings and direction
 
 envUI works without setup in English, in the runtime's locale and in each element's direction. To translate or format for its people, an application wraps itself or a region in `EnvUIProvider`, here in a client component, where `t` is its translation function:
@@ -404,18 +377,7 @@ Import each icon by its subpath, such as `import { Add } from '@envsemble/envui/
 
 ### Bundle size
 
-The modules have no side effects, so bundlers keep only what the application uses, with one difference in namespaces: Vite, on Rolldown, keeps the parts the application renders, and esbuild every part of a namespace it uses, at most the namespace's size. Measured on envUI 1.0, minified, envUI's own code only:
-
-| Application renders                    | esbuild | Vite (Rolldown) |
-| -------------------------------------- | ------: | --------------: |
-| `Table.Cell` alone                     |  9.1 KB |          1.4 KB |
-| `Table.Root`, `Body`, `Row` and `Cell` |  9.2 KB |          5.3 KB |
-| `Menu.Item` alone                      |  7.7 KB |          3.8 KB |
-| `Menu.Root` with a `Menu.Item`         |  9.2 KB |          7.4 KB |
-| `Pager.Next`                           |  1.5 KB |          1.6 KB |
-| `Badge`, which is no namespace's part  |  0.6 KB |          0.9 KB |
-
-Gzipped, `Table.Cell` alone is 3.7 KB with esbuild and 0.6 KB with Vite.
+The modules have no side effects, so a bundler keeps only what the application uses; Vite keeps only the parts of a namespace the application renders.
 
 ## Lint rules
 
