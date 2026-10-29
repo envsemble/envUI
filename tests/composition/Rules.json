@@ -32,7 +32,7 @@
       "dev.ts": "entries",
       "icons/index.ts": "entries",
       "Icon.tsx": "foundations",
-      "MaterialSymbolState.tsx": "foundations",
+      "SymbolIconState.tsx": "foundations",
       "navigation/LinkProvider.tsx": "foundations",
       "foundations/ThemePreference.tsx": "composites",
       "foundations/ThemeToggle.tsx": "composites",

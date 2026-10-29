@@ -2,10 +2,10 @@
 // Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../Icon.js';
+import { useSymbolIconFill } from '../SymbolIconState.js';
 
-export function ScanDelete({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
+export function IconScanDelete({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
   return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M600-600h120L520-800v120q0 33 23.5 56.5T600-600Zm120 417-56 55q-11 11-27.5 11.5T608-128q-11-11-11-28t11-28l56-56-56-56q-11-11-11-28t11-28q11-11 28-11t28 11l56 56 56-56q11-11 27.5-11.5T832-352q11 11 11 28t-11 28l-55 56 55 56q11 11 11.5 27.5T832-128q-11 11-28 11t-28-11l-56-55ZM240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h287q16 0 30.5 6t25.5 17l194 194q11 11 17 25.5t6 30.5v109q0 12-9.5 19t-21.5 4q-59-13-117 4t-102 61q-32 32-51 75.5T480-241q0 29 7 58t21 55q9 17 1 32.5T484-80H240Z" /> : <path d="M240-800v200-200 640-9.5 9.5-640Zm0 720q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h287q16 0 30.5 6t25.5 17l194 194q11 11 17 25.5t6 30.5v111q0 17-11.5 28.5T760-456q-17 0-28.5-11.5T720-496v-104H600q-33 0-56.5-23.5T520-680v-120H240v640h248q17 0 28.5 11.5T528-120q0 17-11.5 28.5T488-80H240Zm480-103-56 55q-11 11-27.5 11.5T608-128q-11-11-11-28t11-28l56-56-56-56q-11-11-11-28t11-28q11-11 28-11t28 11l56 56 56-56q11-11 27.5-11.5T832-352q11 11 11 28t-11 28l-55 56 55 56q11 11 11.5 27.5T832-128q-11 11-28 11t-28-11l-56-55Z" />}</Icon>;
 }

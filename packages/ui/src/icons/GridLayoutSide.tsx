@@ -2,10 +2,10 @@
 // Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../Icon.js';
+import { useSymbolIconFill } from '../SymbolIconState.js';
 
-export function GridLayoutSide({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
+export function IconGridLayoutSide({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
   return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M840-120v-720 720Zm-640 0h240q33 0 56.5-23.5T520-200v-560q0-33-23.5-56.5T440-840H200q-33 0-56.5 23.5T120-760v560q0 33 23.5 56.5T200-120Zm640-80v-560q0-33-23.5-56.5T760-840h-80q-33 0-56.5 23.5T600-760v560q0 33 23.5 56.5T680-120h80q33 0 56.5-23.5T840-200Z" /> : <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h320v-560H200v560Zm560 0v-560H600v560h160Z" />}</Icon>;
 }

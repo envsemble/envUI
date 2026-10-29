@@ -2,13 +2,13 @@
 // Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../Icon.js';
+import { useSymbolIconFill } from '../SymbolIconState.js';
 
 /** The path both styles start with. */
 const start = "M280-40q-33 0-56.5-23.5T200-120v-720q0-33 23.5-56.5T280-920h400q33 0 56.5 23.5T760-840v124q18 7 29 22t11 34v80q0 19-11 34t-29 22v404q0 33-23.5 56.5T680-40H280Zm";
 
-export function MobileCancel({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
+export function IconMobileCancel({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
   return <Icon viewBox="0 -960 960 960" {...props}><path d={filled ? start + "200-383 65 65q11 11 27.5 11t28.5-11q12-12 12-28.5T601-415l-65-65 66-65q12-12 12-28t-12-28q-12-12-28.5-12T545-601l-65 65-66-66q-12-12-28-11.5T358-601q-11 12-11.5 28t11.5 28l65 65-65 66q-11 11-11.5 27.5T358-358q11 11 28 11t28-11l66-65Z" : start + "0-80h400v-720H280v720Zm0 0v-720 720Zm200-304 66 66q11 11 28 11t28-11q11-11 11-28t-11-28l-66-66 66-66q11-11 11-28t-11-28q-11-11-28-11t-28 11l-66 66-66-66q-11-11-28-11t-28 11q-11 11-11 28t11 28l66 66-66 66q-11 11-11 28t11 28q11 11 28 11t28-11l66-66Z"} /></Icon>;
 }

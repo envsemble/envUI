@@ -2,10 +2,10 @@
 // Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../Icon.js';
+import { useSymbolIconFill } from '../SymbolIconState.js';
 
-export function GarageCheck({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
+export function IconGarageCheck({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
   return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="m692-210-41-41q-6-6-15-6t-15 6q-6 6-6 15t6 15l43 43q12 12 28 12t28-12l99-99q6-6 6-15t-6-15q-6-6-15-6t-15 6l-97 97ZM306-580l28-80h292l28 80H306Zm54 180q17 0 28.5-11.5T400-440q0-17-11.5-28.5T360-480q-17 0-28.5 11.5T320-440q0 17 11.5 28.5T360-400Zm360-40q83 0 141.5 58.5T920-240q0 83-58.5 141.5T720-40q-83 0-141.5-58.5T520-240q0-83 58.5-141.5T720-440ZM160-80q-33 0-56.5-23.5T80-160v-640q0-33 23.5-56.5T160-880h640q33 0 56.5 23.5T880-800v272q0 20-17 29.5t-35 .5q-17-7-33.5-12t-34.5-7l-66-191q-5-14-16.5-23t-25.5-9H308q-14 0-25.5 9T266-708l-62 179q-2 6-3 12.5t-1 13.5v251q0 14 9 23t23 9h16q14 0 23-9t9-23v-48h167q-3 14-5 29t-2 31q0 30 6.5 58t17.5 54q8 17-1.5 32.5T436-80H160Z" /> : <path d="M160-160v-640 292-12 360Zm40-356v264q0 14 9 23t23 9h16q14 0 23-9t9-23v-48h127q20 0 29.5-12.5T446-340q0-15-9.5-27.5T407-380H280v-120h425q20 0 32-16t6-36l-49-156q-5-14-16.5-23t-25.5-9H308q-14 0-25.5 9T266-708l-66 192Zm106-64 28-80h292l28 80H306Zm54 180q17 0 28.5-11.5T400-440q0-17-11.5-28.5T360-480q-17 0-28.5 11.5T320-440q0 17 11.5 28.5T360-400Zm332 190-41-41q-6-6-15-6t-15 6q-6 6-6 15t6 15l43 43q12 12 28 12t28-12l99-99q6-6 6-15t-6-15q-6-6-15-6t-15 6l-97 97Zm28-230q83 0 141.5 58.5T920-240q0 83-58.5 141.5T720-40q-83 0-141.5-58.5T520-240q0-83 58.5-141.5T720-440ZM160-80q-33 0-56.5-23.5T80-160v-640q0-33 23.5-56.5T160-880h640q33 0 56.5 23.5T880-800v252q0 17-11.5 28.5T840-508q-17 0-28.5-11.5T800-548v-252H160v640h271q17 0 28.5 11.5T471-120q0 17-11.5 28.5T431-80H160Z" />}</Icon>;
 }

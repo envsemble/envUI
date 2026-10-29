@@ -34,12 +34,12 @@ if (
 ) {
   throw new Error('Official Material Symbols license hash mismatch');
 }
-function toComponentName(name) {
-  const pascal = name
+/** The module's name, the symbol's in PascalCase, such as `Add` or `10k`. */
+function toModuleName(name) {
+  return name
     .split('_')
     .map((word) => word[0].toUpperCase() + word.slice(1))
     .join('');
-  return /^\d/.test(pascal) ? 'Icon' + pascal : pascal;
 }
 async function readVerifiedGeometry(variant) {
   const bytes = await readFile(resolve(packageRoot, variant.source));
@@ -82,12 +82,10 @@ function renderIconModule(name, unfilled, filled) {
   const identicalViewBox = unfilled.viewBox === filled.viewBox;
   const hasFillVariant = !identicalPaths || !identicalViewBox;
   const fillImport = hasFillVariant
-    ? "import { useMaterialSymbolFill } from '../MaterialSymbolState.js';\n"
+    ? "import { useSymbolIconFill } from '../SymbolIconState.js';\n"
     : '';
   const fillParameter = hasFillVariant ? 'requestedFill' : '_filled = false';
-  const fillState = hasFillVariant
-    ? '  const filled = useMaterialSymbolFill(requestedFill);\n'
-    : '';
+  const fillState = hasFillVariant ? '  const filled = useSymbolIconFill(requestedFill);\n' : '';
   const viewBox = identicalViewBox
     ? JSON.stringify(unfilled.viewBox)
     : `{filled ? ${JSON.stringify(filled.viewBox)} : ${JSON.stringify(unfilled.viewBox)}}`;
@@ -108,46 +106,48 @@ function renderIconModule(name, unfilled, filled) {
   // An icon that follows the selection's fill reads it from context, so it is a client module for
   // React Server Components; one without a filled variant renders on the server.
   const directive = hasFillVariant ? "'use client';\n\n" : '';
-  return `// Generated from Google Material Symbols (${manifest.upstream.revision}); Apache-2.0.\n// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.\n${directive}import { Icon, type MaterialSymbolProps } from '../Icon.js';\n${fillImport}${sharedDeclaration}\nexport function ${name}({ filled: ${fillParameter}, ...props }: MaterialSymbolProps) {\n${fillState}  return <Icon viewBox=${viewBox} {...props}>${paths}</Icon>;\n}\n`;
+  return `// Generated from Google Material Symbols (${manifest.upstream.revision}); Apache-2.0.\n// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.\n${directive}import { Icon, type SymbolIconProps } from '../Icon.js';\n${fillImport}${sharedDeclaration}\nexport function ${name}({ filled: ${fillParameter}, ...props }: SymbolIconProps) {\n${fillState}  return <Icon viewBox=${viewBox} {...props}>${paths}</Icon>;\n}\n`;
 }
 
+// Every icon exports its module's name with the Icon prefix, `IconAdd` from icons/Add, so no icon
+// shares its name with a component, such as Link or Menu.
 const generatedFiles = new Set(['index.ts', 'Typography.tsx']);
-const componentNames = new Set();
+const moduleNames = new Set();
 const iconEntries = manifest.icons.map((icon) => {
-  const name = toComponentName(icon.name);
-  if (componentNames.has(name)) throw new Error(`Component name collision: ${name}`);
-  componentNames.add(name);
-  generatedFiles.add(name + '.tsx');
-  return { name, icon };
+  const module = toModuleName(icon.name);
+  if (moduleNames.has(module)) throw new Error(`Icon name collision: ${module}`);
+  moduleNames.add(module);
+  generatedFiles.add(module + '.tsx');
+  return { module, name: 'Icon' + module, icon };
 });
 
 // Bound I/O concurrency; export order still follows the manifest's preflight above.
 let nextIconIndex = 0;
 async function generateIconModules() {
   while (nextIconIndex < iconEntries.length) {
-    const { name, icon } = iconEntries[nextIconIndex++];
+    const { module, name, icon } = iconEntries[nextIconIndex++];
     const [unfilled, filled] = await Promise.all([
       readVerifiedGeometry(icon.variants['0']),
       readVerifiedGeometry(icon.variants['1']),
     ]);
     await writeModule(
-      resolve(outputDirectory, name + '.tsx'),
+      resolve(outputDirectory, module + '.tsx'),
       renderIconModule(name, unfilled, filled),
     );
   }
 }
 await Promise.all(Array.from({ length: 8 }, () => generateIconModules()));
-if (!componentNames.has('TextFields'))
+if (!moduleNames.has('TextFields'))
   throw new Error('Typography alias requires official text_fields');
 await writeModule(
   resolve(outputDirectory, 'Typography.tsx'),
-  "// Friendly alias for the official text_fields symbol.\nimport type { MaterialSymbolProps } from '../Icon.js';\nimport { TextFields } from './TextFields.js';\n\nexport function Typography(props: MaterialSymbolProps) {\n  return <TextFields {...props} />;\n}\n",
+  "// Friendly alias for the official text_fields symbol.\nimport type { SymbolIconProps } from '../Icon.js';\nimport { IconTextFields } from './TextFields.js';\n\nexport function IconTypography(props: SymbolIconProps) {\n  return <IconTextFields {...props} />;\n}\n",
 );
 await writeModule(
   resolve(outputDirectory, 'index.ts'),
   '// Generated by scripts/build/GenerateIcons.ts, with the icon modules beside it. Do not edit.\n' +
-    [...componentNames].map((name) => `export { ${name} } from './${name}.js';`).join('\n') +
-    "\nexport { Typography } from './Typography.js';\nexport type { MaterialSymbolProps } from '../Icon.js';\n",
+    iconEntries.map(({ module, name }) => `export { ${name} } from './${module}.js';`).join('\n') +
+    "\nexport { IconTypography } from './Typography.js';\nexport type { SymbolIconProps } from '../Icon.js';\n",
 );
 // Remove only obsolete generated modules. Leave independently authored files alone.
 for (const file of await readdir(outputDirectory)) {

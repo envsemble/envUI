@@ -2,13 +2,13 @@
 // Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../Icon.js';
+import { useSymbolIconFill } from '../SymbolIconState.js';
 
 /** The path both styles start with. */
 const start = "M480-260q34 0 64-12.5t56-35.5q9-8 9-21t-9-21q-9-8-21.5-8t-22.5 8q-17 13-36 21t-40 8q-21 0-40-8t-36-21q-10-8-22.5-8t-21.5 8q-9 8-9 21t9 21q26 22 56 35t64 13Zm0 180q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z";
 
-export function SentimentCalm({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
+export function IconSentimentCalm({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
   return <Icon viewBox="0 -960 960 960" {...props}><path d={filled ? start + "M340-480q34 0 60-22t40-54q5-11-1.5-21T420-590q-11-3-22 2.5T382-571q-7 13-17.5 22t-24.5 9q-14 0-25-9.5T298-572q-5-11-16-16t-22-2q-12 3-18.5 12.5T240-557q14 32 39.5 54.5T340-480Zm280 0q34 0 60-22t40-54q5-11-1.5-21T700-590q-11-3-22 2.5T662-571q-7 13-17.5 22t-24.5 9q-14 0-25-9.5T578-572q-5-11-16-16t-22-2q-12 3-18.5 12.5T520-557q14 32 39.5 54.5T620-480Z" : start + "m0-400Zm0 320q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93ZM340-480q32 0 57.5-20t39.5-49q5-13 .5-25.5T420-590q-11-3-22 2.5T382-571q-7 13-17.5 22t-24.5 9q-14 0-25-9.5T298-572q-5-11-16-16t-22-2q-13 3-17.5 15.5T244-549q12 30 38 49.5t58 19.5Zm280 0q32 0 57.5-20t39.5-49q5-13 .5-25.5T700-590q-11-3-22 2.5T662-571q-7 13-17.5 22t-24.5 9q-14 0-25-9.5T578-572q-5-11-16-16t-22-2q-13 3-17.5 15.5T524-549q12 30 38 49.5t58 19.5Z"} /></Icon>;
 }

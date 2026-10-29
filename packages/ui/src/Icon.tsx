@@ -5,7 +5,7 @@ export interface IconProps extends SVGProps<SVGSVGElement> {
   label?: string;
 }
 
-export interface MaterialSymbolProps extends Omit<IconProps, 'children'> {
+export interface SymbolIconProps extends Omit<IconProps, 'children'> {
   /** Select fill=1 geometry outside selection controls; navigation and tabs own their icon fill. */
   filled?: boolean;
 }

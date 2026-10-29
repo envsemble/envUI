@@ -2,13 +2,13 @@
 // Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../Icon.js';
+import { useSymbolIconFill } from '../SymbolIconState.js';
 
 /** The path both styles start with. */
 const start = "M419-80q-28 0-52.5-12T325-126L124-381q-8-9-7-21.5t9-20.5q20-21 48-25t52 11l74 45v-328q0-17 11.5-28.5T340-760q17 0 29 11.5t12 28.5v";
 
-export function TouchLong({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
+export function IconTouchLong({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
   return <Icon viewBox="0 -960 960 960" {...props}><path d={filled ? start + "200h299q50 0 85 35t35 85v160q0 66-47 113T640-80H419Zm-79-740q-42 0-71 29t-29 71v136q0 12-11 17.5t-20-2.5q-32-28-50.5-67T140-720q0-83 58.5-141.5T340-920q83 0 141.5 58.5T540-720q0 45-18 83.5T472-570q-9 8-20 3t-11-18v-135q0-42-30-71t-71-29Z" : start + "400q0 23-20.5 34.5T320-286l-36-22 104 133q6 7 14 11t17 4h221q33 0 56.5-23.5T720-240v-160q0-17-11.5-28.5T680-440H501q-17 0-28.5-11.5T461-480q0-17 11.5-28.5T501-520h179q50 0 85 35t35 85v160q0 66-47 113T640-80H419Zm83-260ZM340-820q-42 0-71 29t-29 71v136q0 12-11 17.5t-20-2.5q-32-28-50.5-67T140-720q0-83 58.5-141.5T340-920q83 0 141.5 58.5T540-720q0 45-18 83.5T472-570q-9 8-20 3t-11-18v-135q0-42-30-71t-71-29Z"} /></Icon>;
 }

@@ -2,10 +2,10 @@
 // Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../Icon.js';
+import { useSymbolIconFill } from '../SymbolIconState.js';
 
-export function LocalShippingSpark({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
+export function IconLocalShippingSpark({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
   return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M220-560q-6 0-8-6-16-61-60.5-105.5T46-732q-6-2-6-8 0-7 6-8 61-16 105.5-60.5T212-914q2-6 8-6t8 6q16 61 60.5 105.5T394-748q6 1 6 8 0 6-6 8-61 16-105.5 60.5T228-566q-1 6-8 6Zm48.5 308.5Q280-263 280-280t-11.5-28.5Q257-320 240-320t-28.5 11.5Q200-297 200-280t11.5 28.5Q223-240 240-240t28.5-11.5Zm480 0Q760-263 760-280t-11.5-28.5Q737-320 720-320t-28.5 11.5Q680-297 680-280t11.5 28.5Q703-240 720-240t28.5-11.5ZM680-440h170l-90-120h-80v120ZM155-195q-35-35-35-85H80q-17 0-28.5-11.5T40-320v-174q0-17 16-25.5t31 2.5q30 18 64 27.5t69 9.5q54 0 101-21t82-56q43-43 62.5-98.5T478-770q-2-12 6-21t19-9h137q17 0 28.5 11.5T680-760v120h80q19 0 36 8.5t28 23.5l80 107q8 11 12 23t4 25v133q0 17-11.5 28.5T880-280h-40q0 50-35 85t-85 35q-50 0-85-35t-35-85H360q0 50-35 85t-85 35q-50 0-85-35Z" /> : <path d="M360-540Zm-91.5 288.5Q280-263 280-280t-11.5-28.5Q257-320 240-320t-28.5 11.5Q200-297 200-280t11.5 28.5Q223-240 240-240t28.5-11.5Zm480 0Q760-263 760-280t-11.5-28.5Q737-320 720-320t-28.5 11.5Q680-297 680-280t11.5 28.5Q703-240 720-240t28.5-11.5ZM680-440h170l-90-120h-80v120ZM155-195q-35-35-35-85H80q-17 0-28.5-11.5T40-320v-193q0-17 11.5-28.5T80-553q17 0 28.5 11.5T120-513v153h32q17-18 39-29t49-11q27 0 49 11t39 29h272v-360h-84q-16 0-27-10.5T476-757q-2-17 10.5-30t29.5-13h124q17 0 28.5 11.5T680-760v120h80q19 0 36 8.5t28 23.5l80 107q8 11 12 23t4 25v133q0 17-11.5 28.5T880-280h-40q0 50-35 85t-85 35q-50 0-85-35t-35-85H360q0 50-35 85t-85 35q-50 0-85-35Zm65-365q-6 0-8-6-16-61-60.5-105.5T46-732q-6-2-6-8t6-8q61-15 105.5-60T212-914q2-6 8-6t8 6q16 61 60.5 105.5T394-748q6 1 6 8 0 6-6 8-61 16-105.5 60.5T228-566q-1 6-8 6Z" />}</Icon>;
 }

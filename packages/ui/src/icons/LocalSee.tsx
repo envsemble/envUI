@@ -2,10 +2,10 @@
 // Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../Icon.js';
+import { useSymbolIconFill } from '../SymbolIconState.js';
 
-export function LocalSee({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
+export function IconLocalSee({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
   return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="m720-656-49 37q-6 5-12 .5t-4-11.5l19-61-52-41q-5-5-2.5-11.5t9.5-6.5h62l19-60q2-7 10-7t10 7l19 60h62q7 0 9.5 6.5T818-732l-52 41 19 61q2 7-4 11.5t-12-.5l-49-37ZM480-300q-42 0-71-29t-29-71q0-42 29-71t71-29h2q22 31 46.5 60t50.5 56q-5 36-33 60t-66 24ZM160-80q-33 0-56.5-23.5T80-160v-480q0-33 23.5-56.5T160-720h126l50-54q10-11 20.5-16.5T378-798q12-2 20 7.5t6 22.5q-2 12-3 24t-1 24q0 38 10 74t27 71q-60 14-98.5 62.5T300-400q0 75 52.5 127.5T480-220q54 0 97.5-28.5T643-323l24 22q11 10 25 15t28 5q14 0 28-5t25-15q11-9 21-18l20-18q20-17 43-7.5t23 35.5v149q0 33-23.5 56.5T800-80H160Zm560-294q8 0 14.5-3t12.5-8q66-61 139.5-146T960-714q0-113-72.5-179.5T720-960q-95 0-167.5 66.5T480-714q0 98 73.5 183T693-385q6 5 12.5 8t14.5 3Z" /> : <path d="M480-400ZM160-80q-33 0-56.5-23.5T80-160v-480q0-33 23.5-56.5T160-720h126l61-67q6-6 13.5-9t15.5-3q26 0 37 23.5t-7 43.5l-60 66q-11 13-26.5 19.5T287-640H160v480h640v-160q0-17 11.5-28.5T840-360q17 0 28.5 11.5T880-320v160q0 33-23.5 56.5T800-80H160Zm320-140q42 0 78.5-18t62.5-50q11-14 10-30.5T617-346q-14-11-30.5-9.5T560-340q-14 19-35 29.5T480-300q-42 0-71-29t-29-71q0-14 3.5-27.5T395-453q8-12 17.5-21.5T435-490q14-8 18.5-23.5T450-543q-8-14-24.5-19t-30.5 3q-22 12-39 29.5T326-492q-13 20-19.5 43.5T300-400q0 75 52.5 127.5T480-220Zm240-740q-95 0-167.5 66.5T480-714q0 98 73.5 183T693-385q6 5 12.5 7.5T720-375q8 0 15-2.5t12-7.5q66-61 139.5-146T960-714q0-113-72.5-179.5T720-960Zm0 493q-104-98-132-158t-28-89q0-81 50.5-123.5T720-880q59 0 109.5 42.5T880-714q0 29-28 89T720-467Zm0-207Zm-74 74 28-91-74-59h91l29-90 29 90h91l-74 59 28 91-74-56-74 56Z" />}</Icon>;
 }

@@ -2,13 +2,13 @@
 // Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../Icon.js';
+import { useSymbolIconFill } from '../SymbolIconState.js';
 
 /** The path both styles start with. */
 const start = "M480-680q-66 0-113 47t-47 113q0 66 47 113t113 47q66 0 113-47t47-113q0-66-47-113t-113-47Zm0 240q-33 0-56.5-23.5T400-520q0-33 23.5-56.5T480-600q33 0 56.5 23.5T560-520q0 33-23.5 56.5T480-440Zm160 160q17 0 28.5-11.5T680-320q0-17-11.5-28.5T640-360q-17 0-28.5 11.5T600-320q0 17 11.5 28.5T640-280ZM160-160v-520q0-83 58.5-141.5T360-880h240q83 0 141.5 58.5T800-680v520q0 33-23.5 56.5T720-80H240q-33 0-56.5-23.5T160-160Zm";
 
-export function AssistantDevice({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
+export function IconAssistantDevice({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
   return <Icon viewBox="0 -960 960 960" {...props}><path d={filled ? start + "120 0h400q17 0 28.5-11.5T720-200q0-17-11.5-28.5T680-240H280q-17 0-28.5 11.5T240-200q0 17 11.5 28.5T280-160Z" : start + "80-80h480v-440q0-50-35-85t-85-35H360q-50 0-85 35t-35 85v440Zm40 0h440-480 40Zm-40 0h480-480Z"} /></Icon>;
 }

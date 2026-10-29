@@ -2,10 +2,10 @@
 // Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../Icon.js';
+import { useSymbolIconFill } from '../SymbolIconState.js';
 
-export function BathBedrock({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
+export function IconBathBedrock({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
   return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M281-712q-26-32-35-57.5t-5-55.5q4-30 15-44t31-11q18 2 27 16t6 35q-2 17 5 34t25 39q24 29 33.5 55.5T390-646q-3 26-15 38t-31 10q-17-2-26-14t-5-28q3-14-4.5-31T281-712Zm161 3q-26-32-35.5-57t-5.5-55q4-30 15.5-44t31.5-11q18 2 27 15.5t6 34.5q-2 17 4.5 34t24.5 39q24 29 33.5 55.5T550-643q-3 26-14.5 38.5T505-594q-17-2-26.5-14.5T473-637q3-14-4-31t-27-41Zm162 0q-26-32-35.5-57t-5.5-55q4-30 15.5-44t31.5-11q18 2 27 15.5t6 34.5q-2 17 4.5 34t24.5 39q24 29 33.5 55.5T712-643q-3 26-14.5 38.5T667-594q-17-2-26.5-14.5T635-637q3-14-4-31t-27-41ZM400-240q-17 0-28.5-11.5T360-280v-160q0-33 23.5-56.5T440-520h280q66 0 113 47t47 113v80q0 17-11.5 28.5T840-240H400Zm440 120H120q-17 0-28.5-11.5T80-160q0-17 11.5-28.5T120-200h720q17 0 28.5 11.5T880-160q0 17-11.5 28.5T840-120ZM200-240q-50 0-85-35t-35-85q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35Z" /> : <path d="M279-716q-21-25-29.5-51t-8.5-64q0-23 10.5-36t29.5-13q18 0 28.5 13t10.5 36q0 22 7 39t23 36q22 26 31 52.5t9 62.5q0 19-10.5 30T350-600q-17 0-27.5-11T312-641q0-20-7-36t-26-39Zm160 0q-21-25-29.5-51t-8.5-64q0-23 10.5-36t29.5-13q18 0 28.5 13t10.5 36q0 22 7 39t23 36q22 26 31 52.5t9 62.5q0 19-10.5 30T510-600q-17 0-27.5-11T472-641q0-20-7-36t-26-39Zm162 0q-21-25-29.5-51t-8.5-64q0-23 10.5-36t29.5-13q18 0 28.5 13t10.5 36q0 22 7 39t23 36q22 26 31 52.5t9 62.5q0 19-10.5 30T672-600q-17 0-27.5-11T634-641q0-20-7-36t-26-39ZM400-240q-17 0-28.5-11.5T360-280v-160q0-33 23.5-56.5T440-520h280q66 0 113 47t47 113v80q0 17-11.5 28.5T840-240H400Zm40-200v120-120Zm400 320H120q-17 0-28.5-11.5T80-160q0-17 11.5-28.5T120-200h720q17 0 28.5 11.5T880-160q0 17-11.5 28.5T840-120ZM200-240q-50 0-85-35t-35-85q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35Zm0-80q17 0 28.5-11.5T240-360q0-17-11.5-28.5T200-400q-17 0-28.5 11.5T160-360q0 17 11.5 28.5T200-320Zm240 0h360v-40q0-33-23.5-56.5T720-440H440v120Zm-240-40Z" />}</Icon>;
 }

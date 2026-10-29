@@ -122,7 +122,7 @@ const manifest = {
     fill: [0, 1],
   },
   naming:
-    'Snake case becomes PascalCase; numeric leading names receive the Icon prefix. Typography is an alias for TextFields.',
+    'Snake case becomes PascalCase, the module of icons/<Name>, which exports Icon<Name>: icons/Add exports IconAdd and icons/10k exports Icon10k. Typography is an alias for TextFields.',
   license: {
     source: 'licenses/Material-Symbols-LICENSE.txt',
     upstreamPath: 'LICENSE',

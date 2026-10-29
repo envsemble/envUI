@@ -2,13 +2,13 @@
 // Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../Icon.js';
+import { useSymbolIconFill } from '../SymbolIconState.js';
 
 /** The path both styles start with. */
 const start = "M423-257 257-423q-12-12-18-27t-6-30q0-15 6-30t18-27l166-166q12-12 27-18t30-6q15 0 30 6t27 18l166 166q12 12 18 27t6 30q0 15-6 30t-18 27L537-257q-12 12-27 18t-30 6q-15 0-30-6t-27-18Z";
 
-export function Stat0({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
+export function IconStat0({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
   return <Icon viewBox="0 -960 960 960" {...props}><path d={filled ? start : start + "m57-57 166-166-166-166-166 166 166 166Zm0-166Z"} /></Icon>;
 }

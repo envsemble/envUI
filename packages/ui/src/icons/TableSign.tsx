@@ -2,10 +2,10 @@
 // Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../Icon.js';
+import { useSymbolIconFill } from '../SymbolIconState.js';
 
-export function TableSign({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
+export function IconTableSign({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
   return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M240-80q-17 0-28.5-11.5T200-120q0-17 11.5-28.5T240-160h200v-110q-18-11-29-29t-11-41q0-33 23-56.5t57-23.5q33 0 56.5 23.5T560-340q0 23-11 40.5T520-271v111h200q17 0 28.5 11.5T760-120q0 17-11.5 28.5T720-80H240Zm400-560q17 0 28.5-11.5T680-680q0-17-11.5-28.5T640-720H320q-17 0-28.5 11.5T280-680q0 17 11.5 28.5T320-640h320ZM200-320q-33 0-56.5-23.5T120-400v-400q0-33 23.5-56.5T200-880h560q33 0 56.5 23.5T840-800v400q0 33-23.5 56.5T760-320h-92q-12 0-20-9t-8-21q-2-27-12.5-51T600-445q-9-11-20-19.5T557-480h83q17 0 28.5-11.5T680-520q0-17-11.5-28.5T640-560H320q-17 0-28.5 11.5T280-520q0 17 11.5 28.5T320-480h82q-12 7-23 15t-20 19q-17 20-27 44.5T320-350q-1 12-8.5 21t-19.5 9h-92Z" /> : <path d="M480-600ZM200-320q-33 0-56.5-23.5T120-400v-400q0-33 23.5-56.5T200-880h560q33 0 56.5 23.5T840-800v400q0 33-23.5 56.5T760-320h-92q-17 0-28.5-11.5T628-360q0-17 11.5-28.5T668-400h92v-400H200v400h92q17 0 28 11.5t11 28.5q0 17-11.5 28.5T291-320h-91Zm40 240q-17 0-28.5-11.5T200-120q0-17 11.5-28.5T240-160h200v-110q-18-11-29-29t-11-41q0-33 23-56.5t57-23.5q33 0 56.5 23.5T560-340q0 23-11 40.5T520-271v111h200q17 0 28.5 11.5T760-120q0 17-11.5 28.5T720-80H240Zm440-440q0-17-11.5-28.5T640-560H320q-17 0-28.5 11.5T280-520q0 17 11.5 28.5T320-480h320q17 0 28.5-11.5T680-520Zm0-160q0-17-11.5-28.5T640-720H320q-17 0-28.5 11.5T280-680q0 17 11.5 28.5T320-640h320q17 0 28.5-11.5T680-680Z" />}</Icon>;
 }

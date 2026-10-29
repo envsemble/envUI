@@ -2,10 +2,10 @@
 // Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../Icon.js';
+import { useSymbolIconFill } from '../SymbolIconState.js';
 
-export function BloodPressure({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
+export function IconBloodPressure({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
   return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M765-337q6-6 6-14t-6-14q-6-6-14-6t-14 6l-63 62q-6 6-6 14.5t6 14.5q6 6 14.5 6t14.5-6l62-63ZM680-80q-83 0-141.5-58.5T480-280q0-83 58.5-141.5T680-480q83 0 141.5 58.5T880-280q0 83-58.5 141.5T680-80ZM80-520v-200q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v184q0 17-16 25t-31-3q-34-23-72.5-34.5T680-560q-38 0-72.5 9.5T542-524l-66-134q-5-10-15-15t-21-5q-11 0-21 5t-15 15L280-409l-45-89q-5-10-14.5-16t-20.5-6H80Zm80 360q-33 0-56.5-23.5T80-240v-200h95l69 138q5 11 14.5 16.5T280-280q11 0 20.5-5.5T315-302l125-248 38 76q-36 38-57 87.5T400-280q0 18 2.5 36.5T410-207q5 17-5.5 32T377-160H160Z" /> : <path d="M80-640v-80q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v180q0 17-11.5 28.5T840-500q-17 0-28.5-11.5T800-540v-180H160v80q0 17-11.5 28.5T120-600q-17 0-28.5-11.5T80-640Zm200 360q-11 0-21-5.5T244-302l-68-138h-55q-17 0-28.5-11.5T81-480q0-17 11.5-28.5T121-520h80q11 0 20.5 6t14.5 16l44 88 124-248q5-10 15-15t21-5q11 0 21 5t15 15l67 134q-18 11-34.5 23T478-474l-38-76-124 248q-5 11-15 16.5t-21 5.5ZM160-160q-33 0-56.5-23.5T80-240v-80q0-17 11.5-28.5T120-360q17 0 28.5 11.5T160-320v80h215q17 0 28.5 11.5T415-200q0 17-11.5 28.5T375-160H160Zm320-320ZM680-80q-83 0-141.5-58.5T480-280q0-83 58.5-141.5T680-480q83 0 141.5 58.5T880-280q0 83-58.5 141.5T680-80Zm85-257q6-6 6-14t-6-14q-6-6-14-6t-14 6l-63 62q-6 6-6 14.5t6 14.5q6 6 14.5 6t14.5-6l62-63Z" />}</Icon>;
 }

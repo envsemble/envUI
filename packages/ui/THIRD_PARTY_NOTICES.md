@@ -14,9 +14,10 @@ the upstream catalogue tree hash. Source SVGs are retained unchanged in the
 repository at `src/assets/material-symbols-rounded`; generated adapters add React props,
 relative dimensions, accessible SVG defaults, and `currentColor`.
 
-`Typography` is an envUI alias for the official `text_fields` symbol.
-Numeric leading upstream names receive an `Icon` prefix in their React export,
-for example `10k` becomes `Icon10k`. Other snake case names become PascalCase.
+Snake case upstream names become the PascalCase name of their module, and their
+React export takes an `Icon` prefix: `add` becomes `IconAdd` in `icons/Add`, and
+`10k` becomes `Icon10k` in `icons/10k`. `IconTypography` is an envUI alias for the
+official `text_fields` symbol.
 
 Generation uses verified local files and requires no network.
 Maintainers deliberately run `node scripts/build/SyncIcons.ts --revision <full SHA>`

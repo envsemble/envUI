@@ -2,10 +2,10 @@
 // Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../Icon.js';
+import { useSymbolIconFill } from '../SymbolIconState.js';
 
-export function DesktopAccessDisabled({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
+export function IconDesktopAccessDisabled({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
   return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M127-833v112l-71-71q-11-11-11-28t11-28q11-11 28-11t28 11l736 736q11 11 11 28t-11 28q-11 11-28 11t-28-11L608-240h-48v80h40q17 0 28.5 11.5T640-120q0 17-11.5 28.5T600-80H360q-17 0-28.5-11.5T320-120q0-17 11.5-28.5T360-160h40v-80H160q-33 0-56.5-23.5T80-320v-440q0-37 23.5-55l23.5-18Zm753 73v469q0 14-7 23t-18 14q-11 5-22 3.5T812-262L302-772q-10-10-11.5-21t3.5-22q5-11 14-18t23-7h469q33 0 56.5 23.5T880-760Z" /> : <path d="m127-833 73 73h-40v440h368L56-792q-11-11-11-28t11-28q11-11 28-11t28 11l736 736q11 11 11 28t-11 28q-11 11-28 11t-28-11L608-240h-48v80h40q17 0 28.5 11.5T640-120q0 17-11.5 28.5T600-80H360q-17 0-28.5-11.5T320-120q0-17 11.5-28.5T360-160h40v-80H160q-33 0-56.5-23.5T80-320v-440q0-37 23.5-55l23.5-18Zm753 73v420q0 20-12.5 30T840-300q-15 0-27.5-10.5T800-341v-419H360q-20 0-30-12.5T320-800q0-15 10-27.5t30-12.5h440q33 0 56.5 23.5T880-760ZM557-517Zm-213 13Z" />}</Icon>;
 }

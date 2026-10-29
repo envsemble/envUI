@@ -2,13 +2,13 @@
 // Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../Icon.js';
+import { useSymbolIconFill } from '../SymbolIconState.js';
 
 /** The path both styles start with. */
 const start = "M280-40q-33 0-56.5-23.5T200-120v-720q0-33 23.5-56.5T280-920h400q33 0 56.5 23.5T760-840v124q18 7 29 22t11 34v80q0 19-11 34t-29 22v404q0 33-23.5 56.5T680-40H280Zm";
 
-export function MobileQuestion({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
+export function IconMobileQuestion({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
   return <Icon viewBox="0 -960 960 960" {...props}><path d={filled ? start + "200-240q17 0 29.5-12.5T522-322q0-17-12.5-29.5T480-364q-17 0-29.5 12.5T438-322q0 17 12.5 29.5T480-280Zm-91-307q11 6 22.5 3.5T431-597q8-12 21.5-18.5T480-622q21 0 37.5 13t16.5 33q0 17-10.5 31T500-518q-19 17-34 37t-15 45q0 12 8.5 20t20.5 8q12 0 20.5-8.5T511-437q3-18 15.5-31t25.5-26q17-17 29.5-38t12.5-46q0-47-33-74.5T480-680q-30 0-56.5 14.5T380-625q-7 10-4 21.5t13 16.5Z" : start + "0-80h400v-720H280v720Zm0 0v-720 720Zm200-160q17 0 29.5-12.5T522-322q0-17-12.5-29.5T480-364q-17 0-29.5 12.5T438-322q0 17 12.5 29.5T480-280Zm-91-307q11 6 22.5 3.5T431-597q8-12 21.5-18.5T480-622q21 0 37.5 13t16.5 33q0 17-10.5 31T500-518q-19 17-34 37t-15 45q0 12 8.5 20t20.5 8q12 0 20.5-8.5T511-437q3-18 15.5-31t25.5-26q17-17 29.5-38t12.5-46q0-47-33-74.5T480-680q-30 0-56.5 14.5T380-625q-7 10-4 21.5t13 16.5Z"} /></Icon>;
 }

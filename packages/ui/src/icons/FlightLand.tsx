@@ -1,7 +1,7 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
 // Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
+import { Icon, type SymbolIconProps } from '../Icon.js';
 
-export function FlightLand({ filled: _filled = false, ...props }: MaterialSymbolProps) {
+export function IconFlightLand({ filled: _filled = false, ...props }: SymbolIconProps) {
   return <Icon viewBox="0 -960 960 960" {...props}><path d="M754-324 149-492q-13-4-21-14t-8-24v-155q0-13 10.5-20.5T153-709l15 5q6 2 10 6t6 10l24 72 192 54v-273q0-17 13.5-28t30.5-6l17 4q9 2 15.5 8.5T486-841l104 331 200 56q23 6 36.5 24.5T840-388q0 33-27 53t-59 11ZM160-120q-17 0-28.5-11.5T120-160q0-17 11.5-28.5T160-200h640q17 0 28.5 11.5T840-160q0 17-11.5 28.5T800-120H160Z" /></Icon>;
 }

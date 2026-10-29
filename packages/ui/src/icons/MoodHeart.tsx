@@ -2,10 +2,10 @@
 // Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../Icon.js';
+import { useSymbolIconFill } from '../SymbolIconState.js';
 
-export function MoodHeart({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
+export function IconMoodHeart({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
   return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M340-520q25 0 42.5-17.5T400-580q0-25-17.5-42.5T340-640q-25 0-42.5 17.5T280-580q0 25 17.5 42.5T340-520Zm416-352q20-20 36.5-34t45.5-14q37 0 59.5 25.5T920-837q0 15-6 30t-18 27L784-668q-12 12-28 12t-28-12L616-780q-13-13-18.5-28t-5.5-30q0-32 23-57t59-25q28 0 44 13t38 35ZM480-260q58 0 107.5-27.5T666-364q7-11-.5-23.5T644-400H316q-14 0-21.5 12.5T294-364q29 49 79 76.5T480-260Zm0 180q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q10 0 19.5.5T519-878q-5 17-7.5 34.5T509-807q0 53 20.5 98.5T585-629q-11 8-18 21t-7 28q0 25 17.5 42.5T620-520q23 0 39.5-15t19.5-37q18 6 37.5 9t39.5 3q29 0 57-7t53-19q7 26 10.5 52t3.5 54q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z" /> : <path d="M620-520q25 0 42.5-17.5T680-580q0-25-17.5-42.5T620-640q-25 0-42.5 17.5T560-580q0 25 17.5 42.5T620-520Zm-280 0q25 0 42.5-17.5T400-580q0-25-17.5-42.5T340-640q-25 0-42.5 17.5T280-580q0 25 17.5 42.5T340-520ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-84 31.5-157T198-764q55-54 128-85t155-31q16 0 25.5 12.5T514-838q-2 17-14 27t-29 11q-35 1-68.5 9.5T337-766q-79 40-128 116t-49 170q0 133 93.5 226.5T480-160q99 0 178-54t116-140q18-41 24-84t-1-87q-2-17 6-30.5t24-18.5q16-5 30 2t17 23q10 59 3 118.5T846-317q-47 106-144.5 171.5T480-80Zm0-400Zm276-392q20-20 36.5-34t45.5-14q37 0 59.5 25.5T920-837q0 15-6 30t-18 27L784-668q-12 12-28 12t-28-12L616-780q-13-13-18.5-28t-5.5-30q0-32 23-57t59-25q28 0 44 13t38 35ZM480-260q58 0 107.5-27.5T666-364q7-11-.5-23.5T644-400H316q-14 0-21.5 12.5T294-364q29 49 79 76.5T480-260Z" />}</Icon>;
 }
