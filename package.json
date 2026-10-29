@@ -51,7 +51,8 @@
     "changeset": "changeset",
     "changeset:version": "changeset version && npm install --package-lock-only --ignore-scripts",
     "docs:dev-mode-image": "node scripts/docs/CaptureDevModeImage.ts",
-    "docs:readme-images": "node scripts/docs/CaptureReadmeImages.ts"
+    "docs:readme-images": "node scripts/docs/CaptureReadmeImages.ts",
+    "site:part-sizes": "node scripts/site/RecordPartSizes.ts"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.14.0",
