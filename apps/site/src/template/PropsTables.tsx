@@ -5,6 +5,7 @@ import type { ExportEntry, PropEntry } from '../shared/DocumentationTypes';
 import type { Documentation } from '../pages/PageModel';
 // The ids search leads to, as the search index writes them.
 import { exportSection, propSection } from '../shared/SearchAnchors';
+import { useSectionOutline } from './SectionOutline';
 
 /** The same sentences as the packaged Markdown's Props section (scripts/docs/GenerateDocumentation.ts). */
 function nativeSentence(elements: string[]) {
@@ -101,12 +102,18 @@ function PropDefault({ prop }: { prop: PropEntry }) {
 }
 
 function ExportProps({ name, entry }: { name: string; entry: ExportEntry }) {
+  // Waiting its turn to show, an export's props are its heading alone (SectionOutline).
+  const outline = useSectionOutline();
   if (entry.kind === 'namespace') return null;
+  const heading = (
+    <Text render={<h3 />} variant="title" id={exportSection(name)}>
+      <PlainCode>{name}</PlainCode>
+    </Text>
+  );
+  if (outline) return heading;
   return (
     <Column render={<section />} gap={4} aria-labelledby={exportSection(name)}>
-      <Text render={<h3 />} variant="title" id={exportSection(name)}>
-        <PlainCode>{name}</PlainCode>
-      </Text>
+      {heading}
       {entry.description && <Text>{entry.description}</Text>}
       {entry.kind === 'function' ? (
         <Text>

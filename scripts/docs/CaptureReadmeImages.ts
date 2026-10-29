@@ -28,7 +28,9 @@ try {
     for (const { part, page } of pictures) {
       await context.goto(`${site}/${page}`, { waitUntil: 'networkidle' });
       await context.locator('.site-page-banner').waitFor();
-      // Every part of the page has loaded: no skeleton of one is left (template/Loading.tsx).
+      // Every section has rendered and every part of it loaded: no outline of a section is left
+      // (template/SectionOutline.ts), nor a skeleton of a part (template/Loading.tsx).
+      await context.locator('[data-site-pending]').first().waitFor({ state: 'detached' });
       await context.locator('.site-loading').first().waitFor({ state: 'detached' });
       // The fonts and every entrance settle before the picture is taken; an animation that runs
       // forever, or is cancelled as the page settles, isn't waited for.

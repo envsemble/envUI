@@ -34,9 +34,16 @@
 /* While its later sections are still to show (TemplateContent.tsx), the page is a window tall at
    least, so what follows it, such as its Next link, starts below the window rather than moving
    down as they arrive. */
-.site-section-groups[aria-busy] {
+.site-section-groups[aria-busy],
+.docs-api[aria-busy] {
   min-block-size: 100dvh;
   align-content: start;
+}
+
+/* A section still to show is its outline (SectionOutline.ts): its headings, which the page's
+   contents list from the start, hidden in its place until it renders. */
+[data-site-pending] {
+  visibility: hidden;
 }
 
 .site-section-groups .site-section-group {

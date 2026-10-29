@@ -31,6 +31,7 @@ import {
   type FoundationFigure as Figure,
 } from './foundations/FoundationFigures';
 import { FigureCode } from './foundations/Topic';
+import { pendingAttribute, useSectionOutline } from '../template/SectionOutline';
 import { useVerdictFit } from '../template/VerdictFit';
 
 type ExampleBlock = Extract<DocumentationBlock, { kind: 'example' }>;
@@ -175,6 +176,8 @@ function Figure({
   block: FigureBlock;
   options?: OptionTable;
 }) {
+  // A section waiting its turn to show renders its headings alone (SectionOutline).
+  if (useSectionOutline()) return null;
   if (block.kind === 'figure') return <FoundationFigure page={page} block={block} />;
   if (block.role === 'do' || block.role === 'dont' || block.role === 'caution')
     return (
@@ -337,6 +340,7 @@ export function FigureSection({
     };
   });
   const groups = groupFigures(blocks, useFoundationFigures(page.id));
+  const outline = useSectionOutline();
   /** Subsections of text shown beside the figure at an index of groups. */
   const beside = new Map<number, string>();
   const content: ReactNode[] = lead && !leadAfter ? [<Fragment key="lead">{lead}</Fragment>] : [];
@@ -431,20 +435,24 @@ export function FigureSection({
       content.push(
         <Figure key={index} page={page} block={group} options={options.get(group.name)} />,
       );
-    else if (group.kind === 'specimen')
+    else if (group.kind === 'specimen' && !outline)
       content.push(<Specimen key={index} page={page.id} name={group.name} headingLevel={3} />);
   });
   showLead();
   // The changelog is its Markdown alone.
   if (section.id === 'changelog')
     return (
-      <section data-section={section.id}>
+      <section data-section={section.id} {...pendingAttribute(outline)}>
         <Documentation markdown={title} path={page.path} />
         {content}
       </section>
     );
   return (
-    <section className="site-figure-section" data-section={section.id}>
+    <section
+      className="site-figure-section"
+      data-section={section.id}
+      {...pendingAttribute(outline)}
+    >
       <div className="site-figure-section-heading">
         <Documentation markdown={title} path={page.path} />
       </div>

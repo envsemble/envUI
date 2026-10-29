@@ -259,6 +259,9 @@ async function settle(page: Page) {
   // A skeleton of the site's (.site-loading, template/Loading.tsx) marks a part that is still
   // loading: an example, its code, a specimen, a demo, the icon list, the token reference or the
   // changelog. A tile's (.catalogue-tile-loading) waits for the tile to come into view instead.
+  // A section still to show is its outline (data-site-pending, template/SectionOutline.ts) until
+  // it renders, with the skeletons of its parts.
+  await page.locator('[data-site-pending]').first().waitFor({ state: 'detached' });
   await page.locator('.site-loading').first().waitFor({ state: 'detached' });
   await page.evaluate(() => document.fonts.ready);
   await finishAnimations(page);

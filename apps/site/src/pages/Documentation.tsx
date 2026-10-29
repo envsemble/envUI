@@ -6,6 +6,7 @@ import { groupedPages, routeOfDocument } from '../navigation/SiteRoutes';
 import { inDocs, routeHref } from '../navigation/Address';
 import { currentRoute } from '../navigation/useSiteRoute';
 import { headingSlugger } from '../shared/SearchAnchors';
+import { headingsOnly, useSectionOutline } from '../template/SectionOutline';
 
 /** The current route scrolled to `section`, keeping its other parameters. */
 function sectionOfCurrentRoute(section: string) {
@@ -168,10 +169,13 @@ const rehypePlugins = [headingIds];
 export function Documentation(
   props: ({ document: Document } | { markdown: string; path: string }) & { className?: string },
 ) {
-  const [markdown, path] =
+  const [written, path] =
     'document' in props
       ? [props.document.markdown ?? '', props.document.path]
       : [props.markdown, props.path];
+  // A section waiting its turn to show renders its headings alone (SectionOutline).
+  const outline = useSectionOutline();
+  const markdown = outline ? headingsOnly(written) : written;
   const guidance = useContext(GuidanceLists);
   const plugins = useMemo(
     () => (guidance ? [headingIds, componentNames(path)] : rehypePlugins),

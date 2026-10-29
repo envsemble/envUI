@@ -21,6 +21,7 @@ import { PageSpecimen } from '../figures/PageSpecimens';
 import { alternativesOf, type Alternative, type Preview } from './RelatedPages';
 import { TileSkeleton } from './Loading';
 import { useFit } from './useFit';
+import { pendingAttribute, useSectionOutline } from './SectionOutline';
 
 /**
  * Keeps a tile that fails to render to itself: it shows nothing, and the gallery around it its
@@ -244,13 +245,21 @@ function Tiles({ alternatives, path }: { alternatives: Alternative[]; path: stri
  */
 export function Related({ metadata, path }: { metadata: DocumentationMetadata; path: string }) {
   const alternatives = alternativesOf(metadata);
+  // Waiting its turn to show, it renders its heading alone (SectionOutline).
+  const outline = useSectionOutline();
   if (!alternatives.length) return null;
   return (
-    <Column render={<section />} gap={4} className="catalogue-related" data-section="related">
+    <Column
+      render={<section />}
+      gap={4}
+      className="catalogue-related"
+      data-section="related"
+      {...pendingAttribute(outline)}
+    >
       <Text render={<h2 />} variant="headline" id="related">
         Related
       </Text>
-      <Tiles alternatives={alternatives} path={path} />
+      {!outline && <Tiles alternatives={alternatives} path={path} />}
     </Column>
   );
 }

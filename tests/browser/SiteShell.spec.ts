@@ -409,6 +409,42 @@ test("a catalogue page's contents list none of its figures' headings, a do and d
   expect(inFigures).toEqual([]);
 });
 
+test("a page's contents are whole from its first render, while its later sections are outlines", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  // The contents in the first frame that paints a page's heading; scripts/test/CheckContents.ts
+  // checks every page the same way, with the parts held back.
+  await page.addInitScript(() => {
+    const take = () => {
+      if (!document.querySelector('.site-page-column h1')) return requestAnimationFrame(take);
+      (globalThis as { firstContents?: string[] }).firstContents = [
+        ...document.querySelectorAll('.site-contents-list a'),
+      ].map((link) => `${link.getAttribute('href')} ${link.textContent}`);
+      // The sections after the first are still to show.
+      (globalThis as { pending?: number }).pending =
+        document.querySelectorAll('[data-site-pending]').length;
+    };
+    requestAnimationFrame(take);
+  });
+  for (const path of ['/components/button', '/docs/components/button']) {
+    await page.goto(`${siteDevUrl}${path}`);
+    const first = await page
+      .waitForFunction(() => (globalThis as { firstContents?: string[] }).firstContents)
+      .then((handle) => handle.jsonValue());
+    expect(await page.evaluate(() => (globalThis as { pending?: number }).pending)).toBeGreaterThan(
+      0,
+    );
+    await expect(page.locator('[data-site-pending], .site-loading')).toHaveCount(0);
+    const loaded = await page
+      .locator('.site-contents-list a')
+      .evaluateAll((links) =>
+        links.map((link) => `${link.getAttribute('href')} ${link.textContent}`),
+      );
+    expect(first).toEqual(loaded);
+  }
+});
+
 test('the theme in the Display menu switches the whole page and keeps the canvas full height', async ({
   page,
 }) => {

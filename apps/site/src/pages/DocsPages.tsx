@@ -22,6 +22,7 @@ import { MetadataBadges, PageChangelog, TemplateContent } from '../template/Temp
 import type { Documentation as Document } from './PageModel';
 import { useDocument } from './PageContent';
 import { useRevealed } from '../template/useRevealed';
+import { pendingAttribute, SectionOutline, useSectionOutline } from '../template/SectionOutline';
 import { Documentation } from './Documentation';
 import { GuideDocument } from './GuideDocument';
 import { LoadedPart } from './LoadedPart';
@@ -287,9 +288,15 @@ function PartNames({ components }: { components: readonly string[] }) {
     const parts = partsOf(name);
     return parts ? [{ name, parts }] : [];
   });
+  const outline = useSectionOutline();
   if (!entries.length) return null;
   return (
-    <Column render={<section />} gap={5} aria-labelledby="part-names">
+    <Column
+      render={<section />}
+      gap={5}
+      aria-labelledby="part-names"
+      {...pendingAttribute(outline)}
+    >
       <Text render={<h2 />} variant="headline" id="part-names">
         Part names
       </Text>
@@ -297,32 +304,33 @@ function PartNames({ components }: { components: readonly string[] }) {
         Each part&apos;s class and state attributes are public and versioned, for an
         application&apos;s CSS to style.
       </Text>
-      {entries.map(({ name, parts }) => (
-        <Column key={name} gap={3}>
-          {entries.length > 1 && (
-            <Text render={<h3 />} variant="title">
-              <Code>{name}</Code>
-            </Text>
-          )}
-          <DescriptionList.Root className="docs-parts">
-            {parts.parts.map((part) => (
-              <DescriptionList.Item key={part.class} label={<Code>{part.class}</Code>}>
-                {part.description}
-              </DescriptionList.Item>
-            ))}
-            {parts.states.map((state) => (
-              <DescriptionList.Item key={state.attribute} label={<Code>{state.attribute}</Code>}>
-                <StateValues values={state.values} />
-                {state.parts.length > 1 || state.parts[0] !== parts.root ? (
-                  <Text render={<span />} emphasis="muted">
-                    {` on ${state.parts.join(', ')}`}
-                  </Text>
-                ) : null}
-              </DescriptionList.Item>
-            ))}
-          </DescriptionList.Root>
-        </Column>
-      ))}
+      {!outline &&
+        entries.map(({ name, parts }) => (
+          <Column key={name} gap={3}>
+            {entries.length > 1 && (
+              <Text render={<h3 />} variant="title">
+                <Code>{name}</Code>
+              </Text>
+            )}
+            <DescriptionList.Root className="docs-parts">
+              {parts.parts.map((part) => (
+                <DescriptionList.Item key={part.class} label={<Code>{part.class}</Code>}>
+                  {part.description}
+                </DescriptionList.Item>
+              ))}
+              {parts.states.map((state) => (
+                <DescriptionList.Item key={state.attribute} label={<Code>{state.attribute}</Code>}>
+                  <StateValues values={state.values} />
+                  {state.parts.length > 1 || state.parts[0] !== parts.root ? (
+                    <Text render={<span />} emphasis="muted">
+                      {` on ${state.parts.join(', ')}`}
+                    </Text>
+                  ) : null}
+                </DescriptionList.Item>
+              ))}
+            </DescriptionList.Root>
+          </Column>
+        ))}
     </Column>
   );
 }
@@ -334,9 +342,16 @@ function PartNames({ components }: { components: readonly string[] }) {
  */
 function Provides({ document, title, id }: { document: Document; title: string; id: string }) {
   const { envui, app } = providesOf(document.sections ?? []);
+  const outline = useSectionOutline();
   if (!envui && !app) return null;
   return (
-    <Column render={<section />} gap={5} aria-labelledby={id} className="docs-provides">
+    <Column
+      render={<section />}
+      gap={5}
+      aria-labelledby={id}
+      className="docs-provides"
+      {...pendingAttribute(outline)}
+    >
       <Text render={<h2 />} variant="headline" id={id}>
         {title}
       </Text>
@@ -437,9 +452,15 @@ function WordsInCode({ document }: { document: Document }) {
       .map((block) => (block.kind === 'markdown' ? block.markdown : ''))
       .join('\n'),
   );
+  const outline = useSectionOutline();
   if (!markdown) return null;
   return (
-    <Column render={<section />} gap={5} aria-labelledby="words-in-code">
+    <Column
+      render={<section />}
+      gap={5}
+      aria-labelledby="words-in-code"
+      {...pendingAttribute(outline)}
+    >
       <Text render={<h2 />} variant="headline" id="words-in-code">
         Words in code
       </Text>
@@ -454,9 +475,15 @@ function ColorProperties({ components }: { components: readonly string[] }) {
     const colors = partsOf(name)?.colors ?? [];
     return colors.length ? [{ name, colors }] : [];
   });
+  const outline = useSectionOutline();
   if (!entries.length) return null;
   return (
-    <Column render={<section />} gap={5} aria-labelledby="color-properties">
+    <Column
+      render={<section />}
+      gap={5}
+      aria-labelledby="color-properties"
+      {...pendingAttribute(outline)}
+    >
       <Text render={<h2 />} variant="headline" id="color-properties">
         Color properties
       </Text>
@@ -464,22 +491,40 @@ function ColorProperties({ components }: { components: readonly string[] }) {
         Each sets a color of one instance, through <Code>style</Code> or CSS; its hover, focus and
         press follow it. They are public and versioned.
       </Text>
-      {entries.map(({ name, colors }) => (
-        <Column key={name} gap={3}>
-          {entries.length > 1 && (
-            <Text render={<h3 />} variant="title">
-              <Code>{name}</Code>
-            </Text>
-          )}
-          <DescriptionList.Root className="docs-parts">
-            {colors.map((color) => (
-              <DescriptionList.Item key={color.property} label={<Code>{color.property}</Code>}>
-                {color.description}
-              </DescriptionList.Item>
-            ))}
-          </DescriptionList.Root>
-        </Column>
-      ))}
+      {!outline &&
+        entries.map(({ name, colors }) => (
+          <Column key={name} gap={3}>
+            {entries.length > 1 && (
+              <Text render={<h3 />} variant="title">
+                <Code>{name}</Code>
+              </Text>
+            )}
+            <DescriptionList.Root className="docs-parts">
+              {colors.map((color) => (
+                <DescriptionList.Item key={color.property} label={<Code>{color.property}</Code>}>
+                  {color.description}
+                </DescriptionList.Item>
+              ))}
+            </DescriptionList.Root>
+          </Column>
+        ))}
+    </Column>
+  );
+}
+
+/** Every export's props, generated from their types, under Props. */
+function PropsSection({ document }: { document: Document }) {
+  return (
+    <Column
+      render={<section />}
+      gap={5}
+      aria-labelledby="props"
+      {...pendingAttribute(useSectionOutline())}
+    >
+      <Text render={<h2 />} variant="headline" id="props">
+        Props
+      </Text>
+      <PropsTables document={document} />
     </Column>
   );
 }
@@ -487,9 +532,10 @@ function ColorProperties({ components }: { components: readonly string[] }) {
 /** The built-in strings a page's exports show, each a key of EnvUIProvider's `messages`. */
 function Strings({ document }: { document: Document }) {
   const strings = document.strings ?? [];
+  const outline = useSectionOutline();
   if (!strings.length) return null;
   return (
-    <Column render={<section />} gap={5} aria-labelledby="strings">
+    <Column render={<section />} gap={5} aria-labelledby="strings" {...pendingAttribute(outline)}>
       <Text render={<h2 />} variant="headline" id="strings">
         Strings
       </Text>
@@ -497,16 +543,18 @@ function Strings({ document }: { document: Document }) {
         EnvUIProvider&apos;s <Code>messages</Code> overrides each, and a component&apos;s own label
         prop wins over it.
       </Text>
-      <DescriptionList.Root className="docs-parts">
-        {strings.map((string) => (
-          <DescriptionList.Item
-            key={`${string.namespace}.${string.key}`}
-            label={<Code>{`messages.${string.namespace}.${string.key}`}</Code>}
-          >
-            <Code>{string.value}</Code> {string.description}
-          </DescriptionList.Item>
-        ))}
-      </DescriptionList.Root>
+      {!outline && (
+        <DescriptionList.Root className="docs-parts">
+          {strings.map((string) => (
+            <DescriptionList.Item
+              key={`${string.namespace}.${string.key}`}
+              label={<Code>{`messages.${string.namespace}.${string.key}`}</Code>}
+            >
+              <Code>{string.value}</Code> {string.description}
+            </DescriptionList.Item>
+          ))}
+        </DescriptionList.Root>
+      )}
     </Column>
   );
 }
@@ -535,14 +583,7 @@ export function DocsReferencePage({ page }: { page: RoutePage }) {
         cataloguePage && (
           <Provides key="provides" document={document} title="Accessibility" id="provides" />
         ),
-        !pattern && (
-          <Column key="props" render={<section />} gap={5} aria-labelledby="props">
-            <Text render={<h2 />} variant="headline" id="props">
-              Props
-            </Text>
-            <PropsTables document={document} />
-          </Column>
-        ),
+        !pattern && <PropsSection key="props" document={document} />,
         <PartNames key="parts" components={metadata?.components ?? []} />,
         <ColorProperties key="colors" components={metadata?.components ?? []} />,
         <Strings key="strings" document={document} />,
@@ -571,7 +612,9 @@ export function DocsReferencePage({ page }: { page: RoutePage }) {
       {!cataloguePage && <TemplateContent document={document} provides related={false} />}
       <Column gap={8} className="site-article docs-api" aria-busy={revealed < 2 || undefined}>
         {guide}
-        {revealed === 2 && parts}
+        {/* Until then, the reference is its outline, its headings hidden in place, which the
+            page's contents list from the start (SectionOutline). */}
+        <SectionOutline value={revealed < 2}>{parts}</SectionOutline>
       </Column>
     </>
   );

@@ -9,6 +9,7 @@ import { docsOnlySections } from '../shared/CatalogueContent';
 import { Related } from './Related';
 import { WhenToUse } from './WhenToUse';
 import { useRevealed } from './useRevealed';
+import { pendingAttribute, SectionOutline, useSectionOutline } from './SectionOutline';
 import { subscribeToAddress } from '../navigation/Address';
 import { statusTones } from '../navigation/PageBadges';
 
@@ -98,7 +99,8 @@ function groupSections(sections: readonly DocumentationSection[]) {
  * Sections in the page's order, in their three groups, far apart, then, with `related`, Related;
  * Compose and the changelog are on the page in the Docs. A group without sections is left out. The
  * sections after the first render one after another as the page paints (useRevealed), Related last;
- * it is busy until they all have.
+ * meanwhile each is its outline, its headings hidden in its place (SectionOutline), so the page's
+ * contents are whole from the start, and the page is busy until they all have.
  */
 function Sections({
   page,
@@ -136,7 +138,6 @@ function Sections({
     () => page.metadata && <Related metadata={page.metadata} path={page.path} />,
     [page],
   );
-  const end = revealed > shown.length && relatedElement;
   const groups = groupSections(shown);
   // The sections before each group, to count the group's revealed ones.
   const before = groups.map((_, index) =>
@@ -144,16 +145,21 @@ function Sections({
   );
   return (
     <div className="site-section-groups" aria-busy={revealed < total || undefined}>
-      {groups.map((group, index) => {
-        const visible = group.slice(0, Math.max(0, revealed - before[index]!));
-        return visible.length ? (
+      {groups.map((group, index) =>
+        group.length ? (
           <div key={index} className="site-article site-template site-figures site-section-group">
-            {visible.map((section) => elements.get(section.id))}
+            {group.map((section, at) => (
+              <SectionOutline key={section.id} value={before[index]! + at >= revealed}>
+                {elements.get(section.id)}
+              </SectionOutline>
+            ))}
           </div>
-        ) : null;
-      })}
-      {end && (
-        <div className="site-article site-template site-figures site-section-group">{end}</div>
+        ) : null,
+      )}
+      {withRelated && relatedElement && (
+        <div className="site-article site-template site-figures site-section-group">
+          <SectionOutline value={revealed <= shown.length}>{relatedElement}</SectionOutline>
+        </div>
       )}
     </div>
   );
@@ -216,6 +222,8 @@ const namesChangelog = () => location.hash === '#changelog';
  * changed in it, in small muted type.
  */
 export function PageChangelog({ document }: { document: Document }) {
+  // Waiting its turn to show, it is its heading alone (SectionOutline).
+  const outline = useSectionOutline();
   const [open, setOpen] = useState(namesChangelog);
   useEffect(
     () =>
@@ -237,6 +245,7 @@ export function PageChangelog({ document }: { document: Document }) {
       className="docs-changelog"
       data-section={changelog.id}
       aria-labelledby="changelog"
+      {...pendingAttribute(outline)}
     >
       <Disclosure
         open={open}
@@ -247,7 +256,7 @@ export function PageChangelog({ document }: { document: Document }) {
           </Text>
         }
       >
-        {entries ? (
+        {outline ? null : entries ? (
           <DescriptionList.Root className="docs-changelog-entries">
             {entries.map(({ version, text }, index) => (
               <DescriptionList.Item key={`${index}-${version}`} label={version}>
