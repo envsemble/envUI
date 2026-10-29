@@ -68,17 +68,17 @@ The token names in the messages come from [`data/tokens.json`](data/tokens.json)
 
 `declaration-property-value-allowed-list` allows `z-index` only as `auto`, a global keyword such as `inherit`, or a custom property (`var(--…)`, also inside `calc()`); the list is exported as `stackingValues`. Take the layer from envUI's stacking tokens, so the application's layers keep one order with envUI's own, lowest first:
 
-| Token              | Value | For                                                                        |
-| ------------------ | ----- | -------------------------------------------------------------------------- |
-| `--env-z-base`     | 0     | The flow of a page or a component                                          |
-| `--env-z-raised`   | 1     | A part over its siblings, such as a sticky table header                    |
-| `--env-z-sticky`   | 20    | The frame's sticky and fixed parts: the app header and the sidebar columns |
-| `--env-z-peek`     | 30    | A collapsed sidebar that opens over the content                            |
-| `--env-z-backdrop` | 90    | The backdrop behind a modal layer                                          |
-| `--env-z-modal`    | 100   | Dialogs, drawers and the command palette                                   |
-| `--env-z-popover`  | 110   | Menus, popovers and the lists of selects and comboboxes                    |
-| `--env-z-toast`    | 120   | Notifications                                                              |
-| `--env-z-tooltip`  | 130   | Tooltips                                                                   |
+| Token                     | Value | For                                                                        |
+| ------------------------- | ----- | -------------------------------------------------------------------------- |
+| `--env-z-base`            | 0     | The flow of a page or a component                                          |
+| `--env-z-raised`          | 1     | A part over its siblings, such as a sticky table header                    |
+| `--env-z-sticky`          | 20    | The frame's sticky and fixed parts: the app header and the sidebar columns |
+| `--env-z-supporting-pane` | 30    | A collapsed sidebar that opens over the content                            |
+| `--env-z-backdrop`        | 90    | The backdrop behind a modal layer                                          |
+| `--env-z-modal`           | 100   | Dialogs, drawers and the command palette                                   |
+| `--env-z-popup`           | 110   | Menus, popovers and the lists of selects and comboboxes                    |
+| `--env-z-toast`           | 120   | Notifications                                                              |
+| `--env-z-tooltip`         | 130   | Tooltips                                                                   |
 
 A step between two levels takes `calc()`, such as `calc(var(--env-z-sticky) + 1)` for a header above its sidebar, and an application's own layer can keep its name in a custom property of its own that reads a token, such as `--app-z-header: var(--env-z-sticky)`. The message names the tokens of the installed release. This rule takes one list of options.
 

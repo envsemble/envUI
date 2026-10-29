@@ -18,7 +18,7 @@
     inherits: false;
   }
   .env-menu-positioner {
-    z-index: var(--env-z-popover);
+    z-index: var(--env-z-popup);
     outline: none;
   }
   .env-menu {

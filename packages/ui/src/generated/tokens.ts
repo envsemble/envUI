@@ -2753,15 +2753,9 @@ export const tokens = {
       'dark-high-contrast': '100',
     },
   },
-  /** A supporting pane that opens over its main pane as a sheet, and the backdrop behind it, above the sticky parts. */
-  'z.peek': {
-    cssVariable: '--env-z-peek',
-    type: 'number',
-    values: { light: '30', dark: '30', 'light-high-contrast': '30', 'dark-high-contrast': '30' },
-  },
   /** Popups anchored to a control, also inside a modal layer: menus, popovers, hover cards, the lists of Select and Combobox, and suggestions. */
-  'z.popover': {
-    cssVariable: '--env-z-popover',
+  'z.popup': {
+    cssVariable: '--env-z-popup',
     type: 'number',
     values: {
       light: '110',
@@ -2781,6 +2775,12 @@ export const tokens = {
     cssVariable: '--env-z-sticky',
     type: 'number',
     values: { light: '20', dark: '20', 'light-high-contrast': '20', 'dark-high-contrast': '20' },
+  },
+  /** A supporting pane that opens over its main pane as a sheet, and the backdrop behind it, above the sticky parts. */
+  'z.supporting-pane': {
+    cssVariable: '--env-z-supporting-pane',
+    type: 'number',
+    values: { light: '30', dark: '30', 'light-high-contrast': '30', 'dark-high-contrast': '30' },
   },
   /** Notifications, above the popups and modal layers they report on. */
   'z.toast': {

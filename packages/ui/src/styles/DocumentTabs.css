@@ -90,7 +90,7 @@
   }
   .env-document-tabs-drag-image {
     position: fixed;
-    z-index: var(--env-z-popover);
+    z-index: var(--env-z-popup);
     display: inline-flex;
     align-items: center;
     gap: var(--env-space-2);

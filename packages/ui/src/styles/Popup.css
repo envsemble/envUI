@@ -111,7 +111,7 @@
   }
   .env-popup-positioner {
     /* The layer popups float on; an owner may raise its own. */
-    --env-popup-layer: var(--env-z-popover);
+    --env-popup-layer: var(--env-z-popup);
     z-index: var(--env-popup-layer);
     outline: none;
   }

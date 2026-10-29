@@ -1587,6 +1587,18 @@
       "cssVariable": "--env-z-backdrop",
       "note": "The layer behind a modal is the backdrop, as Base UI and the Colors page name it."
     },
+    "--env-z-peek": {
+      "kind": "renamed",
+      "token": "z.supporting-pane",
+      "cssVariable": "--env-z-supporting-pane",
+      "note": "The stacking levels say what they hold: popups, and a supporting pane over its main pane."
+    },
+    "--env-z-popover": {
+      "kind": "renamed",
+      "token": "z.popup",
+      "cssVariable": "--env-z-popup",
+      "note": "The stacking levels say what they hold: popups, and a supporting pane over its main pane."
+    },
     "--field-floating-height": { "kind": "prefixed", "cssVariable": "--env-field-floating-height" },
     "--font-family": { "kind": "prefixed", "cssVariable": "--env-font-family" },
     "--font-family-code": { "kind": "renamed", "cssVariable": "--env-code-font-family" },

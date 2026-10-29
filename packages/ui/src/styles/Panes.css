@@ -85,7 +85,7 @@
     position: absolute;
     inset-inline: 0;
     inset-block: auto 0;
-    z-index: var(--env-z-peek);
+    z-index: var(--env-z-supporting-pane);
     display: none;
     max-block-size: 85%;
     border: var(--env-control-border-width) solid var(--env-panes-sheet-edge, transparent);
@@ -114,7 +114,7 @@
   .env-panes[data-behavior='supporting'][data-open] > .env-panes-backdrop {
     position: absolute;
     inset: 0;
-    z-index: calc(var(--env-z-peek) - 1);
+    z-index: calc(var(--env-z-supporting-pane) - 1);
     display: block;
     background: var(--env-color-bg-backdrop-muted);
   }

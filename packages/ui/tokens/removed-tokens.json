@@ -443,6 +443,14 @@
     "--env-z-overlay": {
       "replacement": "z.backdrop",
       "note": "The layer behind a modal is the backdrop, as Base UI and the Colors page name it."
+    },
+    "--env-z-peek": {
+      "replacement": "z.supporting-pane",
+      "note": "The stacking levels say what they hold: popups, and a supporting pane over its main pane."
+    },
+    "--env-z-popover": {
+      "replacement": "z.popup",
+      "note": "The stacking levels say what they hold: popups, and a supporting pane over its main pane."
     }
   },
   "aliases": {
