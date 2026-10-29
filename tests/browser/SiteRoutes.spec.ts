@@ -34,9 +34,11 @@ test('the addresses of the views before the catalogue and the Docs split open th
     'overview/components': 'overview',
     'overview/components?section=components-actions': 'components?section=components-actions',
     'overview/get-started': 'docs/setup',
-    'overview/get-started?skill=migrate&section=local-development': 'docs/agent-tooling',
-    // The agent skills' page went with the skills.
-    'docs/agent-skills': 'docs/agent-tooling',
+    'overview/get-started?skill=migrate&section=local-development':
+      'docs/setup?section=coding-agents',
+    // The agent skills' page went with the skills, and the guide for agents into setup.
+    'docs/agent-skills': 'docs/setup?section=coding-agents',
+    'docs/agent-tooling': 'docs/setup?section=coding-agents',
     // The agent benchmark went, and its page opens the overview.
     benchmark: 'overview',
     'get-started/migration': 'docs/migration',

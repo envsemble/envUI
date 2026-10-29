@@ -47,6 +47,13 @@ aliases:
   - quick start
   - get started
   - getting started
+  - agents
+  - coding agents
+  - AI agents
+  - AGENTS.md
+  - SKILL.md
+  - setup skill
+  - lint rules
 ---
 
 # Install and set up
@@ -70,6 +77,8 @@ Locally, `NODE_AUTH_TOKEN` is a classic GitHub token with `read:packages`; in Gi
 ```sh
 npm install --save-exact @envsemble/envui@<version>
 ```
+
+Upgrade `@envsemble/envui` and the [lint packages](#lint-rules) together, to the same exact version.
 
 ## Connect styles and theme
 
@@ -408,13 +417,14 @@ The modules have no side effects, so bundlers keep only what the application use
 
 Gzipped, `Table.Cell` alone is 3.7 KB with esbuild and 0.6 KB with Vite.
 
+## Lint rules
+
+[`@envsemble/eslint-plugin-envui`](https://github.com/envsemble/envUI/tree/main/packages/eslint-plugin) and [`@envsemble/stylelint-config-envui`](https://github.com/envsemble/envUI/tree/main/packages/stylelint-config) report hand-built controls and raw colors, naming the envUI component or token to use, so people and agents see them as they edit and check. Install them at envUI's version; each one's README says how to turn it on:
+
+```sh
+npm install --save-dev --save-exact @envsemble/eslint-plugin-envui@<version> @envsemble/stylelint-config-envui@<version>
+```
+
 ## Coding agents
 
-A coding agent can do this setup with you: give it the prompt `Set up envUI in my app: envui.envsemble.com/SKILL.md`. It also adds a short pointer to these docs to the project's `AGENTS.md` and turns on envUI's lint rules, each of which you may skip. [For agents](agent-tooling.md) describes it.
-
-## Related workflows
-
-- [Documentation index](index.md)
-- [For agents](agent-tooling.md)
-- [Migration](migration.md)
-- [Local development](local-development.md)
+A coding agent can do this setup with you, following [the setup skill](https://envui.envsemble.com/SKILL.md) the site hosts: it shows its plan and waits for your yes, adds a pointer to these docs to the project's `AGENTS.md` and turns on the lint rules.

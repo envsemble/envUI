@@ -100,9 +100,7 @@ export function DocsHome({ page }: { page: RoutePage }) {
             Set up with your agent
           </Text>
           <Text render={<p />} className="docs-agent-setup-text">
-            Paste this into your coding agent. It shows you a short checklist, then installs envUI
-            with its styles and theme, points your AGENTS.md to envUI's docs and turns on its lint
-            rules. You can skip any step.
+            Paste this into your coding agent: it shows you its plan and waits for your yes.
           </Text>
           <Surface
             background="muted"

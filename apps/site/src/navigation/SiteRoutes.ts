@@ -211,7 +211,7 @@ const guideLabels: Record<string, string> = {
  * The guides that get an application going, in the Docs' Get started group; every other guide of
  * the index's Setup and workflows, such as customizing colors or dev mode, is in Guides.
  */
-const startGuides = new Set(['setup', 'migration', 'agent-tooling']);
+const startGuides = new Set(['setup', 'migration']);
 
 const guidePage = (document: Documentation): RoutePage => ({
   path: `docs/${document.id}`,
@@ -478,8 +478,9 @@ export function routeOfDocument(
     // The codemods are gone: their page opens the migration guide.
     codemods: 'docs/migration',
     'full-changelog': 'docs/changelog',
-    // The agent skills are gone; the guide for agents says what replaced them.
-    'agent-skills': 'docs/agent-tooling',
+    // The agent skills are gone, and so is the guide for agents: setup leads to the skill.
+    'agent-skills': 'docs/setup?section=coding-agents',
+    'agent-tooling': 'docs/setup?section=coding-agents',
     // Pages merged into others.
     'customizing-colors': 'docs/customizing',
     composition: 'docs/customizing',
@@ -561,7 +562,8 @@ export function normalizeRoute(route: string): string {
       search.delete('section');
       return routeOfDocument(shown) ?? docsRoute;
     }
-    if (search.has('skill') || section === 'local-development') return 'docs/agent-tooling';
+    if (search.has('skill') || section === 'local-development')
+      return 'docs/setup?section=coding-agents';
     if (section === 'documentation') return docsRoute;
     if (section === 'setup') search.delete('section');
     return `docs/setup${rest()}`;
@@ -571,8 +573,10 @@ export function normalizeRoute(route: string): string {
   const guide = /^get-started\/(.+)$/.exec(originalPath)?.[1];
   if (guide) return routeOfDocument(guide, { section: section ?? undefined }) ?? docsRoute;
   if (/^contributing(?:\/|$)/.test(originalPath)) return homeRoute;
-  // The agent skills' page is gone with the skills: the guide for agents replaces them.
-  if (originalPath === 'docs/agent-skills') return 'docs/agent-tooling';
+  // The agent skills' page is gone with the skills, and so is the guide for agents: setup's
+  // section on coding agents leads to the skill.
+  if (originalPath === 'docs/agent-skills' || originalPath === 'docs/agent-tooling')
+    return 'docs/setup?section=coding-agents';
   // The codemods are gone: their page opens the migration guide.
   if (originalPath === 'docs/codemods') return `docs/migration${rest()}`;
   // The agent benchmark is gone: its page opens the overview.

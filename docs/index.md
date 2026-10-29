@@ -2,6 +2,14 @@
 
 Read only the pages the task needs; each entry says what it is for. For a screen, read its pattern first, under Patterns at the end, then the pages of the components it names.
 
+| Path in `node_modules/@envsemble/envui/` | What it holds                                                          |
+| ---------------------------------------- | ---------------------------------------------------------------------- |
+| `docs/`                                  | These pages, with their examples and props filled in.                  |
+| `docs/examples/<page>/<Name>.tsx`        | Every example as a file an application can copy.                       |
+| `docs/generated/props.json`              | The props of every export, from the TypeScript declarations.           |
+| `docs/generated/parts.json`              | Every component's part classes, state attributes and color properties. |
+| `dist/**/*.d.ts`                         | The type declarations, the exact API.                                  |
+
 Every component, pattern and foundation page reads in one order: its frontmatter, with what it is for, what to use instead and its `examples`, each file with its role and caption; then Variants (Options on a foundation), Anatomy, Behaviour, Rules, Accessibility and Words to use, each block a short lead and its rules; then `## Compose`, its code: imports, usage, composition and customizing. Accessibility's **You provide** lists what the application must add, and **Props** lists envUI's own props; every component also takes its element's native props, such as `ref`, `className` and `aria-*`. Every example is a file in `examples/<page>/<Name>.tsx`. The TypeScript declarations hold the exact types.
 
 ## Setup and workflows
@@ -9,7 +17,6 @@ Every component, pattern and foundation page reads in one order: its frontmatter
 - [Install and set up](setup.md) — Registry access, styles, themes and public entry points.
 - [Move an app to envUI](migration.md) — Bring an application with a UI of its own onto envUI a slice at a time, keeping what it does.
 - [Customize and extend](customizing.md) — Give one element colors of its own or recolor an area, compose components into the application's own, and style their parts.
-- [For agents](agent-tooling.md) — Set envUI up with a coding agent from one prompt, and point it to the docs in the package.
 - [Writing](writing.md) — The words of an interface built with envUI: voice, capitalisation, action words, numbers and dates, and wording ready for translation.
 - [Dev mode](dev-mode.md) — Check a page's layout while developing: the readout and its problems for agents, at any width, and a 3D view with an inspector for people.
 - [Develop envUI locally](local-development.md) — Link a checkout while co-developing a consuming application.

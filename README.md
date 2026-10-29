@@ -12,7 +12,7 @@
 
 envUI brings consistent themes, composition and interaction to React applications: from a button or a native form to dialogs, notifications and rich text. It ships as a private ESM package with TypeScript declarations, local fonts, icons and documentation that people and coding agents read alike.
 
-[Set up](docs/setup.md) · [For agents](docs/agent-tooling.md) · [Move an app to envUI](docs/migration.md) · [Dev mode](docs/dev-mode.md) · [Changelog](packages/ui/CHANGELOG.md)
+[Set up](docs/setup.md) · [Move an app to envUI](docs/migration.md) · [Dev mode](docs/dev-mode.md) · [Changelog](packages/ui/CHANGELOG.md)
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/readme/catalogue-dark.png">
@@ -101,14 +101,6 @@ export function ProjectForm() {
 | `@envsemble/envui/styles.css` | Every style, without a bundler      |
 
 ## Working with agents
-
-Coding agents get the same documentation as people. Give one this prompt to set envUI up in an application:
-
-```text
-Set up envUI in my app: envui.envsemble.com/SKILL.md
-```
-
-It follows the setup skill the site hosts: after a short checklist, it installs envUI with its styles and theme, adds a few lines to the project's `AGENTS.md` that point agents to the docs in the package, and turns on the ESLint and Stylelint rules (`@envsemble/eslint-plugin-envui`, `@envsemble/stylelint-config-envui`), which flag hand-built controls and raw colors. [For agents](docs/agent-tooling.md) describes it.
 
 Documentation ships under `node_modules/@envsemble/envui/docs/`. Each component, pattern and foundation is one Markdown page, the same file the catalogue and the Docs are built from: what it is, its variants, anatomy and behaviour, its rules, accessibility and words to use, then how to compose it in code, with its props and part names generated from the public TypeScript declarations. The example files are in `docs/examples/`, and every export’s props in `docs/generated/props.json`. Edit the maintained pages under `docs/`, as [the component page guide](https://github.com/envsemble/envUI/blob/main/docs/component-pages.md) describes, and improve the relevant page as integrations reveal gaps.
 

@@ -1,6 +1,6 @@
 # envUI: notes for agents
 
-This file is for agents working on envUI itself. It stays in the repository and is not packaged; agents that build with envUI read the docs the package ships, as `docs/agent-tooling.md` describes.
+This file is for agents working on envUI itself. It stays in the repository and is not packaged; agents that build with envUI read the docs the package ships.
 
 ## Testing: three tiers, never the full suite every turn
 
