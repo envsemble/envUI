@@ -456,8 +456,12 @@ export class VirtualPointer {
       captured.dispatchEvent(new PointerEvent('lostpointercapture', { pointerId: this.id }));
     }
     // A click goes to the nearest element the press and the release share; the secondary button
-    // asked for its context menu as it went down.
-    const shared = button === 0 && this.pressed.find((element) => this.over.includes(element));
+    // asked for its context menu as it went down. None goes to an element the page has taken away,
+    // such as as it leaves for another: a link would still follow its address, outside the figure
+    // that keeps its links in place.
+    const shared =
+      button === 0 &&
+      this.pressed.find((element) => element.isConnected && this.over.includes(element));
     if (shared) {
       const point = this.at ?? { x: 0, y: 0 };
       // A second click on the same element soon after the first is a double click, as a mouse's.
