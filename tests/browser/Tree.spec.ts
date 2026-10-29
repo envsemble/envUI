@@ -235,7 +235,7 @@ test('a tree renders a tall pane of rows before it measures, and fills its viewp
     page,
     `import {createElement as h} from 'react';
     import {Tree} from '@envsemble/envui';
-    const items = Array.from({length: 100}, (_, index) => ({id: 'n' + index, depth: 0,
+    const items = Array.from({length: 100}, (_, index) => ({value: 'n' + index, depth: 0,
       label: 'Node ' + index}));
     export const element = h('div', {style: {blockSize: '20rem', display: 'grid'}},
       h(Tree, {'aria-label': 'Files', items}));`,
