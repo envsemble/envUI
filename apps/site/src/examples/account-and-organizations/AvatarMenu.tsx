@@ -4,7 +4,7 @@ import {
   Column,
   Menu,
   Text,
-  ThemeRadioGroup,
+  ThemeMenuRadioGroup,
   TopBar,
 } from '@envsemble/envui';
 import { Logout } from '@envsemble/envui/icons/Logout';
@@ -39,7 +39,7 @@ export default function AvatarMenu() {
             Account settings
           </Menu.Item>
           <Menu.Submenu label="Theme" icon={<Palette />}>
-            <ThemeRadioGroup />
+            <ThemeMenuRadioGroup />
           </Menu.Submenu>
           <Menu.Separator />
           <Menu.Item icon={<Logout />}>Sign out</Menu.Item>

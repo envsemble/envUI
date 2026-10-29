@@ -104,7 +104,7 @@ export {
   type ThemeBootstrapOptions,
   type ThemePreference,
 } from './foundations/themeBootstrap.js';
-export * from './foundations/ThemeRadioGroup.js';
+export * from './foundations/ThemeMenuRadioGroup.js';
 export * as Menu from './navigation/Menu.js';
 export * from './navigation/ContextMenu.js';
 export * as Menubar from './navigation/Menubar.js';

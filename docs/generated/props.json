@@ -8101,6 +8101,50 @@
         "@envsemble/envui"
       ]
     },
+    "ThemeMenuRadioGroup": {
+      "kind": "component",
+      "source": "packages/ui/src/foundations/ThemeMenuRadioGroup.tsx",
+      "description": "The theme choice for a Menu: System, Light and Dark as radio items. Inside a ThemePreferenceProvider it shows and stores the provider's preference; value and onValueChange connect it to a theme the application stores itself.",
+      "props": [
+        {
+          "name": "value",
+          "type": "'light' | 'dark' | 'system'",
+          "required": false,
+          "default": "the nearest ThemePreferenceProvider's preference",
+          "description": "The chosen preference: system, light or dark."
+        },
+        {
+          "name": "onValueChange",
+          "type": "(value: ThemePreference) => void",
+          "required": false,
+          "default": "the nearest ThemePreferenceProvider's setPreference, which stores the choice",
+          "description": "Called with the preference chosen, for an application that stores the theme itself."
+        },
+        {
+          "name": "label",
+          "type": "ReactNode",
+          "required": false,
+          "description": "A small heading above the choices, which names the group. Leave it out inside a submenu, which its row already names."
+        },
+        {
+          "name": "aria-labelledby",
+          "type": "string",
+          "required": false,
+          "description": "Id of a heading elsewhere in the menu that names the group, in place of label."
+        },
+        {
+          "name": "closeOnClick",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Close the menu after a choice. Off by default, so people see the theme change with the menu still open."
+        }
+      ],
+      "native": [],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
     "ThemePreferenceProvider": {
       "kind": "component",
       "source": "packages/ui/src/foundations/ThemePreference.tsx",
@@ -8150,50 +8194,6 @@
           "type": "string",
           "required": false,
           "description": "Class name for the Theme boundary around the children."
-        }
-      ],
-      "native": [],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
-    "ThemeRadioGroup": {
-      "kind": "component",
-      "source": "packages/ui/src/foundations/ThemeRadioGroup.tsx",
-      "description": "The theme choice for a Menu: System, Light and Dark as radio items. Inside a ThemePreferenceProvider it shows and stores the provider's preference; value and onValueChange connect it to a theme the application stores itself.",
-      "props": [
-        {
-          "name": "value",
-          "type": "'light' | 'dark' | 'system'",
-          "required": false,
-          "default": "the nearest ThemePreferenceProvider's preference",
-          "description": "The chosen preference: system, light or dark."
-        },
-        {
-          "name": "onValueChange",
-          "type": "(value: ThemePreference) => void",
-          "required": false,
-          "default": "the nearest ThemePreferenceProvider's setPreference, which stores the choice",
-          "description": "Called with the preference chosen, for an application that stores the theme itself."
-        },
-        {
-          "name": "label",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A small heading above the choices, which names the group. Leave it out inside a submenu, which its row already names."
-        },
-        {
-          "name": "aria-labelledby",
-          "type": "string",
-          "required": false,
-          "description": "Id of a heading elsewhere in the menu that names the group, in place of label."
-        },
-        {
-          "name": "closeOnClick",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "Close the menu after a choice. Off by default, so people see the theme change with the menu still open."
         }
       ],
       "native": [],

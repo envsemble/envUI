@@ -44,7 +44,7 @@ composes:
   - Menu
   - AvatarButton
   - Avatar
-  - ThemeRadioGroup
+  - ThemeMenuRadioGroup
   - Page
   - PageHeader
   - IconButton

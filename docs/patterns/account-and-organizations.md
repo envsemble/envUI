@@ -37,7 +37,7 @@ composes:
   - Row
   - Column
   - Text
-  - ThemeRadioGroup
+  - ThemeMenuRadioGroup
   - TopBar
 examples:
   AvatarMenu:
@@ -173,7 +173,7 @@ A `Menu.Root` named `aria-label="Account"`, with `align="end"`, takes as its `tr
 
 #### The theme
 
-A ThemeRadioGroup inside the Theme `Menu.Submenu` applies the choice at once and keeps the menu open; the nearest ThemePreferenceProvider stores it.
+A ThemeMenuRadioGroup inside the Theme `Menu.Submenu` applies the choice at once and keeps the menu open; the nearest ThemePreferenceProvider stores it.
 
 #### Organizations in the account menu
 

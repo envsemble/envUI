@@ -36,7 +36,7 @@
       "navigation/LinkProvider.tsx": "foundations",
       "foundations/ThemePreference.tsx": "composites",
       "foundations/ThemeToggle.tsx": "composites",
-      "foundations/ThemeRadioGroup.tsx": "composites",
+      "foundations/ThemeMenuRadioGroup.tsx": "composites",
       "navigation/panel-dock/internal/PanelDockPanelContext.ts": "shell",
       "actions/AvatarButton.tsx": "composites",
       "actions/Button.tsx": "composites",

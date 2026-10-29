@@ -14,7 +14,7 @@ import {
   Rail,
   Scaffold,
   Text,
-  ThemeRadioGroup,
+  ThemeMenuRadioGroup,
   Tooltip,
   TopBar,
   type CommandPaletteItem,
@@ -83,7 +83,7 @@ export default function AppFrame() {
         Account settings
       </Menu.Item>
       <Menu.Submenu label="Theme" icon={<Palette />}>
-        <ThemeRadioGroup />
+        <ThemeMenuRadioGroup />
       </Menu.Submenu>
       <Menu.Separator />
       <Menu.Item icon={<Logout />}>Sign out</Menu.Item>

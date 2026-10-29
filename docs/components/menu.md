@@ -40,7 +40,7 @@ avoidWhen:
 components:
   - Menu
   - ContextMenu
-  - ThemeRadioGroup
+  - ThemeMenuRadioGroup
 examples:
   IconsAndShortcuts:
     role: overview
@@ -253,7 +253,7 @@ Menu.Header holds the context at the top, such as the signed-in person's avatar,
 - Menu.Group puts items under its `label`; Menu.Separator splits sets without one.
 - Menu.RadioGroup holds Menu.RadioItems, each with a `value`, and takes `value`, `onValueChange` and a `label`, or `aria-labelledby`; a radio item closes the menu unless `closeOnClick={false}`.
 - Menu.CheckboxItem takes `checked` and `onCheckedChange`, and keeps the menu open unless `closeOnClick`.
-- ThemeRadioGroup is the theme choice as radio items, from the nearest ThemePreferenceProvider, or from `value` and `onValueChange`; it keeps the menu open so people see the theme change.
+- ThemeMenuRadioGroup is the theme choice as radio items, from the nearest ThemePreferenceProvider, or from `value` and `onValueChange`; it keeps the menu open so people see the theme change.
 - Menu.Submenu is a row with its `label` that opens its children beside it; `open`, `defaultOpen` and `onOpenChange` suit loading its items as it opens.
 
 ```tsx
@@ -268,7 +268,7 @@ Menu.Header holds the context at the top, such as the signed-in person's avatar,
     </Menu.CheckboxItem>
   </Menu.Group>
   <Menu.Submenu label="Theme">
-    <ThemeRadioGroup />
+    <ThemeMenuRadioGroup />
   </Menu.Submenu>
 </Menu.Root>
 ```
@@ -300,8 +300,9 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 
 ## Changelog
 
+- **1.0.0-prerelease.5**: ThemeRadioGroup is ThemeMenuRadioGroup, with `ThemeMenuRadioGroupProps`: it works only inside a menu.
 - **1.0.0-prerelease.5**: Menus are frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge, and is solid with its edge at high contrast and with reduced transparency. Rows are the md control height in body text, in a menu with 1.25 rem corners; separators and groups part by space, with no hairline, and shortcut keys are muted chips with no edge, side by side with the + read but not shown. A chosen radio item takes the selection's fill and text as well as its check mark. Group labels sit 10 px from the menu's edge, a little ahead of the rows' icons and text, rather than in line with the labels.
-- **1.0.0**: ThemeRadioGroup, the theme choice for any menu. The parts are members of the `Menu` namespace: `Menu` is `Menu.Root`, and `MenuItem`, `MenuHeader`, `MenuSeparator`, `MenuGroup`, `MenuRadioGroup`, `MenuRadioItem`, `MenuCheckboxItem` and `MenuSubmenu` are `Menu.Item`, `Menu.Header`, `Menu.Separator`, `Menu.Group`, `Menu.RadioGroup`, `Menu.RadioItem`, `Menu.CheckboxItem` and `Menu.Submenu`. Menus have one anatomy at the scale's row height: `density` and the `MenuDensity` type are gone. `OrganizationMenu`, OrganizationSwitcher in 1.0.0-prerelease.0, is the organization switcher pattern, built from Menu.Root, Menu.RadioGroup and Menu.RadioItem. ContextMenu keeps its name, and a `content` function that returns `null` leaves the menu closed on that element. Menu.Item's `trailing` is `end`. A Menu.Item with `href` closes the menu as it is followed and takes an `onClick`, which runs as it is followed, and a disabled one renders no link. Every menu's popup is the shared popup surface, which takes the direction at its trigger, and Menu.Root takes `side="inline-start"` and `"inline-end"` and passes `ref`, `style` and native props to its popup.
+- **1.0.0**: ThemeMenuRadioGroup, the theme choice for any menu. The parts are members of the `Menu` namespace: `Menu` is `Menu.Root`, and `MenuItem`, `MenuHeader`, `MenuSeparator`, `MenuGroup`, `MenuRadioGroup`, `MenuRadioItem`, `MenuCheckboxItem` and `MenuSubmenu` are `Menu.Item`, `Menu.Header`, `Menu.Separator`, `Menu.Group`, `Menu.RadioGroup`, `Menu.RadioItem`, `Menu.CheckboxItem` and `Menu.Submenu`. Menus have one anatomy at the scale's row height: `density` and the `MenuDensity` type are gone. `OrganizationMenu`, OrganizationSwitcher in 1.0.0-prerelease.0, is the organization switcher pattern, built from Menu.Root, Menu.RadioGroup and Menu.RadioItem. ContextMenu keeps its name, and a `content` function that returns `null` leaves the menu closed on that element. Menu.Item's `trailing` is `end`. A Menu.Item with `href` closes the menu as it is followed and takes an `onClick`, which runs as it is followed, and a disabled one renders no link. Every menu's popup is the shared popup surface, which takes the direction at its trigger, and Menu.Root takes `side="inline-start"` and `"inline-end"` and passes `ref`, `style` and native props to its popup.
 - **0.5.0**: ContextMenu; `description`, `shortcut` and `trailing` on items; MenuGroup, MenuRadioGroup, MenuRadioItem and MenuCheckboxItem; `density="compact"` on Menu and ContextMenu; MenuSubmenu.
 - **0.4.0**: OrganizationMenu's `detail` for each organization, and its trigger is a secondary Button with up and down arrows. Menu items keep 1.5 rem inline padding, and hover and press shift 6 and 10 points of lightness.
 - **0.3.0**: Menu, MenuHeader, MenuItem for actions and destinations, MenuSeparator, and OrganizationMenu; menus grow from their trigger.

@@ -4,7 +4,7 @@ import {
   IconButton,
   Menu,
   ThemePreferenceProvider,
-  ThemeRadioGroup,
+  ThemeMenuRadioGroup,
   Tooltip,
   type ThemeContrast,
   type ThemeScale,
@@ -166,7 +166,7 @@ export function DisplayMenu({ iconOnly = false }: { iconOnly?: boolean }) {
         )
       }
     >
-      <ThemeRadioGroup label="Theme" />
+      <ThemeMenuRadioGroup label="Theme" />
       <Menu.Separator />
       <Menu.RadioGroup
         label="Contrast"

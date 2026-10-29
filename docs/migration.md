@@ -180,7 +180,7 @@ Now:
 
 - **The exports that go**: `AppShell` with its parts and `AppShellProps`, `AppShellSkeleton` and `AppShellSkeletonProps`, `Sidebar` with its parts, `SidebarTrigger` and `SidebarTriggerProps`, `useSidebar`, `useAppShell`, `readAppShellCookie`, and the types `AppShellState`, `PerSide`, `PersistOptions`, `SidebarSide`, `SidebarSnapshot`, `FrameStateProps`, `SidebarChangeReason`, `AppShellContextValue` and `SidebarApi`. `v1-names` reports each one where it is used.
 - **Scrolling**: the document scrolls by default, with the top bar, the bar and the rail or drawer kept in view, and sticky content in the body under the top bar at `--env-scaffold-sticky-top`. `scroll="body"` scrolls the body alone, for a preview, an embedded frame or a window with its own title bar; read and restore its scroll position on `bodyRef`.
-- **AccountMenu** is gone, with AccountMenu.ThemeSubmenu and AccountMenu.OrganizationSubmenu; the [account and organizations](patterns/account-and-organizations.md) pattern builds it from Menu, AvatarButton and Avatar, with a `Menu.Submenu` around a ThemeRadioGroup for the theme. `v1-names` reports it, and `v1-classes` its `env-account-menu-*` classes:
+- **AccountMenu** is gone, with AccountMenu.ThemeSubmenu and AccountMenu.OrganizationSubmenu; the [account and organizations](patterns/account-and-organizations.md) pattern builds it from Menu, AvatarButton and Avatar, with a `Menu.Submenu` around a ThemeMenuRadioGroup for the theme. `v1-names` reports it, and `v1-classes` its `env-account-menu-*` classes:
 
   ```tsx
   // Before
@@ -198,7 +198,7 @@ Now:
       <Avatar name="Ada Lovelace" />
     </Menu.Header>
     <Menu.Submenu label="Theme">
-      <ThemeRadioGroup />
+      <ThemeMenuRadioGroup />
     </Menu.Submenu>
     <Menu.Item>Sign out</Menu.Item>
   </Menu.Root>;
@@ -1172,18 +1172,19 @@ Every other name only takes the prefix, `--body-font-weight` as `--env-body-font
 
 An application written for a 1.0 prerelease follows these renames by hand: the names are new in the prereleases, so no codemod rewrites them, and TypeScript points at each one.
 
-| Before                                      | Now                                                                        |
-| ------------------------------------------- | -------------------------------------------------------------------------- |
-| A destination's `onSelect: () => void`      | `onClick(event)`, as on a link or a button                                 |
-| DropZone `onDropAccepted`, `onDropRejected` | `onFilesAccepted`, `onFilesRejected`: they run for browsed files too       |
-| CommandPalette `defaultItems`               | `suggestedItems`                                                           |
-| `CommandPaletteActionOptions`               | `CommandPaletteActionDetails`, as every callback's extra argument is named |
-| List.Item `selected`                        | `current`: it marks the current row with `aria-current`                    |
-| ColorPicker and ColorPickerButton `copy`    | `copyable`, as on CodeBlock                                                |
-| AvatarGroup `gather`                        | `align`                                                                    |
-| Scaffold `forms`, `NavigationForm`          | `navigationForms`, `ScaffoldNavigationForm`                                |
-| `resolveNavigationForms`                    | Removed: Scaffold works the forms out itself                               |
-| Scaffold `skipLabel`, `skipNavigationLabel` | `skipToContentLabel`, `skipToNavigationLabel`, after their messages        |
+| Before                                      | Now                                                                            |
+| ------------------------------------------- | ------------------------------------------------------------------------------ |
+| A destination's `onSelect: () => void`      | `onClick(event)`, as on a link or a button                                     |
+| DropZone `onDropAccepted`, `onDropRejected` | `onFilesAccepted`, `onFilesRejected`: they run for browsed files too           |
+| CommandPalette `defaultItems`               | `suggestedItems`                                                               |
+| `CommandPaletteActionOptions`               | `CommandPaletteActionDetails`, as every callback's extra argument is named     |
+| List.Item `selected`                        | `current`: it marks the current row with `aria-current`                        |
+| ColorPicker and ColorPickerButton `copy`    | `copyable`, as on CodeBlock                                                    |
+| AvatarGroup `gather`                        | `align`                                                                        |
+| Scaffold `forms`, `NavigationForm`          | `navigationForms`, `ScaffoldNavigationForm`                                    |
+| `resolveNavigationForms`                    | Removed: Scaffold works the forms out itself                                   |
+| Scaffold `skipLabel`, `skipNavigationLabel` | `skipToContentLabel`, `skipToNavigationLabel`, after their messages            |
+| `ThemeRadioGroup`, `ThemeRadioGroupProps`   | `ThemeMenuRadioGroup`, `ThemeMenuRadioGroupProps`: it works only inside a menu |
 
 ## Migrate by responsibility
 

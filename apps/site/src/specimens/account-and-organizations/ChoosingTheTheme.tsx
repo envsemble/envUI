@@ -9,7 +9,7 @@ import {
   Scaffold,
   Text,
   Theme,
-  ThemeRadioGroup,
+  ThemeMenuRadioGroup,
   TopBar,
   useTheme,
   type ThemeValue,
@@ -105,7 +105,7 @@ function Choosing() {
                     Account settings
                   </Menu.Item>
                   <Menu.Submenu label="Theme" icon={<Palette />}>
-                    <ThemeRadioGroup
+                    <ThemeMenuRadioGroup
                       value={theme}
                       onValueChange={(next) => setTheme(next === 'dark' ? 'dark' : 'light')}
                     />

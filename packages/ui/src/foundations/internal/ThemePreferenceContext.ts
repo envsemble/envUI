@@ -16,6 +16,6 @@ export interface ThemePreferenceValue {
 
 /**
  * The nearest ThemePreferenceProvider's preference, or null outside one. ThemePreferenceProvider
- * provides it; components that work with or without a provider, such as ThemeRadioGroup, read it.
+ * provides it; components that work with or without a provider, such as ThemeMenuRadioGroup, read it.
  */
 export const ThemePreferenceContext = createContext<ThemePreferenceValue | null>(null);

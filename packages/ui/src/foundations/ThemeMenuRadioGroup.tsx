@@ -10,7 +10,7 @@ import { Computer } from '../icons/Computer.js';
 import { DarkMode } from '../icons/DarkMode.js';
 import { LightMode } from '../icons/LightMode.js';
 
-export interface ThemeRadioGroupProps {
+export interface ThemeMenuRadioGroupProps {
   /**
    * The chosen preference: system, light or dark.
    * @default the nearest ThemePreferenceProvider's preference
@@ -47,20 +47,20 @@ const choices = [
  * ThemePreferenceProvider it shows and stores the provider's preference; value and onValueChange
  * connect it to a theme the application stores itself.
  */
-export function ThemeRadioGroup({
+export function ThemeMenuRadioGroup({
   value,
   onValueChange,
   label,
   'aria-labelledby': labelledBy,
   closeOnClick = false,
-}: ThemeRadioGroupProps) {
+}: ThemeMenuRadioGroupProps) {
   const provider = useContext(ThemePreferenceContext);
   const messages = useMessages('themeToggle', themeToggle);
   const current = value ?? provider?.preference;
   const change = onValueChange ?? provider?.setPreference;
   if (current === undefined || !change)
     throw new Error(
-      'ThemeRadioGroup needs a ThemePreferenceProvider around it, or value and onValueChange.',
+      'ThemeMenuRadioGroup needs a ThemePreferenceProvider around it, or value and onValueChange.',
     );
   return (
     <Menu.RadioGroup
