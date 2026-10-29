@@ -501,8 +501,8 @@ function RadioGroup({
 function CheckIndicator({ kind }: { kind: 'radio' | 'checkbox' }) {
   const Indicator = kind === 'radio' ? BaseMenu.RadioItemIndicator : BaseMenu.CheckboxItemIndicator;
   return (
-    <span className="env-menu-item-check" aria-hidden="true">
-      <Indicator className="env-icon env-menu-item-check-mark">
+    <span className="env-menu-item-indicator-slot" aria-hidden="true">
+      <Indicator className="env-icon env-menu-item-indicator">
         <Check />
       </Indicator>
     </span>

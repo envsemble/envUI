@@ -35,10 +35,10 @@
     border-radius: var(--env-popup-radius);
   }
   /* Labels line up across rows: once a row has a leading check mark or icon, the others keep its place. */
-  .env-menu:has(.env-menu-item > :is(.env-menu-item-check, .env-icon):first-child) {
+  .env-menu:has(.env-menu-item > :is(.env-menu-item-indicator-slot, .env-icon):first-child) {
     --env-menu-leading: var(--env-menu-slot);
   }
-  .env-menu:has(.env-menu-item > .env-menu-item-check + .env-icon) {
+  .env-menu:has(.env-menu-item > .env-menu-item-indicator-slot + .env-icon) {
     --env-menu-leading: calc(2 * var(--env-menu-slot));
   }
   .env-menu-header,
@@ -86,12 +86,12 @@
     color: var(--env-menu-item-content, var(--env-color-fg-default));
     transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
   }
-  .env-menu-item:has(> :is(.env-menu-item-check, .env-icon):first-child) {
+  .env-menu-item:has(> :is(.env-menu-item-indicator-slot, .env-icon):first-child) {
     padding-inline-start: calc(
       var(--env-popup-row-padding-inline) + var(--env-menu-leading) - var(--env-menu-slot)
     );
   }
-  .env-menu-item:has(> .env-menu-item-check + .env-icon) {
+  .env-menu-item:has(> .env-menu-item-indicator-slot + .env-icon) {
     padding-inline-start: calc(
       var(--env-popup-row-padding-inline) + var(--env-menu-leading) - 2 * var(--env-menu-slot)
     );
@@ -158,14 +158,14 @@
     white-space: nowrap;
   }
   /* Radio and checkbox items keep a check-mark slot, so their labels align whether checked or not. */
-  .env-menu-item-check {
+  .env-menu-item-indicator-slot {
     inline-size: var(--env-control-icon-size);
     block-size: var(--env-control-icon-size);
     flex: 0 0 auto;
     display: grid;
     place-items: center;
   }
-  .env-menu-item .env-menu-item-check-mark {
+  .env-menu-item .env-menu-item-indicator {
     color: var(--env-color-bg-brand-emphasis);
   }
   .env-menu-choice[data-checked] .env-menu-item-label {
@@ -179,7 +179,7 @@
     background: var(--env-menu-item-custom-fill, var(--env-color-bg-selected));
     color: var(--env-menu-item-content, var(--env-color-fg-on-selected));
   }
-  .env-menu-choice[role='menuitemradio'][data-checked] .env-menu-item-check-mark {
+  .env-menu-choice[role='menuitemradio'][data-checked] .env-menu-item-indicator {
     color: var(--env-menu-item-content, var(--env-color-fg-on-selected));
   }
   /* A row that opened a submenu stays highlighted while the submenu is open. */

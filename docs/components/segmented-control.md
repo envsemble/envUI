@@ -62,8 +62,8 @@ Small, medium and large, the control heights of the [scale](../foundations/spaci
 
 1. **Outline** (`env-segmented-control`)
 2. **Segment** (`env-segmented-control-item`)
-3. **Check** (`env-segmented-control-item-check`)
-4. **Icon** (`env-segmented-control-item[data-unchecked] > env-icon:not(env-segmented-control-item-check)`, `icon`)
+3. **Check** (`env-segmented-control-item-indicator`)
+4. **Icon** (`env-segmented-control-item[data-unchecked] > env-icon:not(env-segmented-control-item-indicator)`, `icon`)
 5. **Label** (`env-segmented-control-item-label`, `label`)
 6. **Count** (`env-segmented-control-item-count`, `count`)
 
@@ -148,7 +148,7 @@ It is always controlled: set `value` and update it from `onValueChange`. `items`
 
 ### Composition
 
-The outline, `env-segmented-control`, carries `data-size` and `data-full-width`; each segment, `env-segmented-control-item`, `data-checked` while chosen and `data-disabled`. The check, `env-segmented-control-item-check`, takes the chosen segment's icon's place.
+The outline, `env-segmented-control`, carries `data-size` and `data-full-width`; each segment, `env-segmented-control-item`, `data-checked` while chosen and `data-disabled`. The check, `env-segmented-control-item-indicator`, takes the chosen segment's icon's place.
 
 ### Customize
 

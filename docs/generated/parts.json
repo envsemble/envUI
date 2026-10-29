@@ -2939,20 +2939,20 @@
           "description": "One item."
         },
         {
-          "class": "env-menu-item-check",
-          "description": "The place for a chosen item's check."
-        },
-        {
-          "class": "env-menu-item-check-mark",
-          "description": "The check of a chosen item."
-        },
-        {
           "class": "env-menu-item-description",
           "description": "An item's description."
         },
         {
           "class": "env-menu-item-end",
           "description": "The end of an item, for a shortcut or a chevron."
+        },
+        {
+          "class": "env-menu-item-indicator",
+          "description": "The check of a chosen item."
+        },
+        {
+          "class": "env-menu-item-indicator-slot",
+          "description": "The place for a chosen item's check."
         },
         {
           "class": "env-menu-item-label",
@@ -4391,12 +4391,12 @@
           "description": "One segment."
         },
         {
-          "class": "env-segmented-control-item-check",
-          "description": "The check on the chosen segment, in place of its icon."
-        },
-        {
           "class": "env-segmented-control-item-count",
           "description": "A segment's count."
+        },
+        {
+          "class": "env-segmented-control-item-indicator",
+          "description": "The check on the chosen segment, in place of its icon."
         },
         {
           "class": "env-segmented-control-item-label",

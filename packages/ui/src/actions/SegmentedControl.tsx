@@ -139,7 +139,7 @@ function Segment({ item, fullWidth }: { item: SegmentedControlItem; fullWidth: b
       className="env-segmented-control-item"
     >
       {/* The chosen segment shows a check, in place of its icon where it has one. */}
-      <span className="env-icon env-segmented-control-item-check" aria-hidden="true">
+      <span className="env-icon env-segmented-control-item-indicator" aria-hidden="true">
         <Check />
       </span>
       {item.icon != null && <DecorativeIcon>{item.icon}</DecorativeIcon>}

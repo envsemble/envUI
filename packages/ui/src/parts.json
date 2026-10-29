@@ -434,8 +434,8 @@
       "env-menu-group-label": "A group's label.",
       "env-menu-header": "The header at the top of the menu.",
       "env-menu-item": "One item.",
-      "env-menu-item-check": "The place for a chosen item's check.",
-      "env-menu-item-check-mark": "The check of a chosen item.",
+      "env-menu-item-indicator-slot": "The place for a chosen item's check.",
+      "env-menu-item-indicator": "The check of a chosen item.",
       "env-menu-item-description": "An item's description.",
       "env-menu-item-end": "The end of an item, for a shortcut or a chevron.",
       "env-menu-item-label": "An item's label.",
@@ -652,7 +652,7 @@
     "SegmentedControl": {
       "env-segmented-control": "The segmented control: connected segments in one outline.",
       "env-segmented-control-item": "One segment.",
-      "env-segmented-control-item-check": "The check on the chosen segment, in place of its icon.",
+      "env-segmented-control-item-indicator": "The check on the chosen segment, in place of its icon.",
       "env-segmented-control-item-count": "A segment's count.",
       "env-segmented-control-item-label": "A segment's label."
     },
