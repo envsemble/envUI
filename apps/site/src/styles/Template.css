@@ -31,6 +31,14 @@
   padding-block-end: 3rem;
 }
 
+/* While its later sections are still to show (TemplateContent.tsx), the page is a window tall at
+   least, so what follows it, such as its Next link, starts below the window rather than moving
+   down as they arrive. */
+.site-section-groups[aria-busy] {
+  min-block-size: 100dvh;
+  align-content: start;
+}
+
 .site-section-groups .site-section-group {
   display: grid;
   grid-template-columns: minmax(0, 1fr);

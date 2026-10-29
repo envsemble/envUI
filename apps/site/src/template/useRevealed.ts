@@ -1,9 +1,10 @@
-import { startTransition, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 /**
- * How many of a long page's `total` parts show: the first at once, then one more after each paint,
- * as a transition. Its start shows sooner, and each part commits in a task of its own rather than
- * the whole page in one, so the page answers input meanwhile. An address that names a place on the
+ * How many of a long page's `total` parts show: the first at once, then one more after each paint.
+ * Its start shows sooner, and each part renders in a task of its own rather than the whole page in
+ * one, so the page answers input meanwhile. Not as a transition, which a figure playing its motion
+ * would keep interrupting. An address that names a place on the
  * page, such as ?section=accessibility or #changelog, shows every part at once, so the place is
  * where the page scrolls it to.
  */
@@ -16,7 +17,7 @@ export function useRevealed(total: number) {
     let timeout = 0;
     // After the frame that paints the parts shown so far.
     const frame = requestAnimationFrame(() => {
-      timeout = window.setTimeout(() => startTransition(() => setRevealed((count) => count + 1)));
+      timeout = window.setTimeout(() => setRevealed((count) => count + 1));
     });
     return () => {
       cancelAnimationFrame(frame);
