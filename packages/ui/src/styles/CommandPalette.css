@@ -57,6 +57,12 @@
     );
     flex: 0 0 auto;
   }
+  /* While it holds the caret, the search shows the focus ring inside its edge, as every focused
+     control does. */
+  .env-command-palette-search > .env-text-field-control:focus-within {
+    outline: 2px solid var(--env-color-border-focus);
+    outline-offset: -2px;
+  }
   .env-command-palette-list {
     /* The options' offset parent, so the highlight scrolls into view by their offsets. */
     position: relative;
