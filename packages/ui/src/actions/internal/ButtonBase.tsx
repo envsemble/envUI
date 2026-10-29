@@ -5,6 +5,7 @@ import { ActionElement, type ActionElementProps } from '../../internal/ActionEle
 import { SpinnerArc } from '../../feedback/internal/SpinnerArc.js';
 import { textRuns } from '../../internal/textRuns.js';
 import type { ButtonAppearanceProps, ButtonVariant } from '../Button.js';
+import { flag } from '../../internal/flag.js';
 import '../../styles/Base.css';
 import '../../styles/Button.css';
 
@@ -62,7 +63,7 @@ export function ButtonBase({
         size,
         underline,
       }}
-      data-full-width={fullWidth || undefined}
+      data-full-width={flag(fullWidth)}
       className={classNames('env-button', iconOnly && 'env-icon-button', className)}
     >
       {pending ? (

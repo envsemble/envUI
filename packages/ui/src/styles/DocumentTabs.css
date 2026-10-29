@@ -192,7 +192,7 @@
   }
   /* A preview tab is replaced by the next previewed document until it is pinned. The bundled Geist has
      no italic face, so the slant is synthesized. */
-  .env-document-tabs-tab[data-preview='true'] .env-document-tabs-tab-label {
+  .env-document-tabs-tab[data-preview] .env-document-tabs-tab-label {
     font-style: italic;
     font-synthesis: style;
     padding-inline-end: 0.125em;

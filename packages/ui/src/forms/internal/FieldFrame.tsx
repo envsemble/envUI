@@ -14,6 +14,7 @@ import { ControlDefaults } from '../../internal/ControlDefaults.js';
 import { classNames } from '../../internal/classNames.js';
 import type { ControlSize } from '../../foundations/Theme.js';
 import { fieldMessageIds } from './useFieldMetadata.js';
+import { flag } from '../../internal/flag.js';
 import '../../styles/Base.css';
 import '../../styles/TextField.css';
 
@@ -183,17 +184,17 @@ export function FieldFrame({
       style={style}
       invalid={error != null || undefined}
       data-size={floatingLabel ? size : undefined}
-      data-tall={(floatingLabel && isTallField(variant, multiline)) || undefined}
-      data-label-hidden={(floatingLabel && !isLabelShown({ showLabel })) || undefined}
+      data-tall={flag(floatingLabel && isTallField(variant, multiline))}
+      data-label-hidden={flag(floatingLabel && !isLabelShown({ showLabel }))}
     >
       {floatingLabel ? (
         renderControlBox({
           className: 'env-text-field-control',
           'data-variant': variant,
-          'data-start-icon': startIcon != null || undefined,
-          'data-end-action': endAction != null || undefined,
-          'data-prefix': prefix != null || undefined,
-          'data-suffix': suffix != null || undefined,
+          'data-start-icon': flag(startIcon != null),
+          'data-end-action': flag(endAction != null),
+          'data-prefix': flag(prefix != null),
+          'data-suffix': flag(suffix != null),
           children: (
             <>
               {/* The border, drawn over the control's own, which stays transparent. A floated label

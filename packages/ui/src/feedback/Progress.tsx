@@ -7,6 +7,7 @@ import { Grid, Row } from '../foundations/Layout.js';
 import { useLocale, useMessages } from '../internal/EnvUIContext.js';
 import { common } from '../foundations/messages/common.js';
 import type { RangeBarProps } from './Meter.js';
+import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/Meter.css';
 
@@ -56,7 +57,7 @@ export function Progress({
       {...(spoken !== undefined && { 'aria-valuetext': spoken })}
       render={<Grid gap={2} />}
       className={classNames('env-progress', className)}
-      data-segmented={steps !== undefined || undefined}
+      data-segmented={flag(steps !== undefined)}
     >
       <Row wrap justify="between" gap={3} className="env-progress-header">
         <BaseProgress.Label className="env-progress-label">{label}</BaseProgress.Label>

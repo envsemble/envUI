@@ -24,6 +24,7 @@ import { documentTabs } from '../foundations/messages/documentTabs.js';
 import { ContextMenu } from './ContextMenu.js';
 import * as Menu from './Menu.js';
 import { isRightToLeft } from '../internal/direction.js';
+import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/DocumentTabs.css';
 
@@ -403,7 +404,7 @@ export function DocumentTabs({
               title={item.title ?? item.label}
               tabIndex={item.id === focusable ? 0 : -1}
               data-tab-id={item.id}
-              data-preview={item.preview ? 'true' : 'false'}
+              data-preview={flag(item.preview)}
               onDoubleClick={() => onPin?.(item.id)}
               onKeyDown={(event: KeyboardEvent<HTMLElement>) => onTabKeyDown(event, item.id)}
             >

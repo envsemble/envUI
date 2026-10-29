@@ -9,6 +9,7 @@ import { DecorativeIcon } from '../../../internal/DecorativeIcon.js';
 import { Row } from '../../../foundations/Layout.js';
 import type { PanelDockPanel } from '../Root.js';
 import { useEntrance } from './useEntrance.js';
+import { flag } from '../../../internal/flag.js';
 import '../../../styles/Base.css';
 import '../../../styles/PanelDock.css';
 
@@ -61,7 +62,7 @@ export function PanelTab({
           data-panel-id={panel.id}
           data-mode={panel.mode}
           data-env-ssr-tab-in={tabIn}
-          data-attention={attention || undefined}
+          data-attention={flag(attention)}
         />
       }
     >

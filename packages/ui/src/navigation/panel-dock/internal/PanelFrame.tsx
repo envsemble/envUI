@@ -20,6 +20,7 @@ import {
 import { pixels, type HeightBounds, type Placement } from './dockLayout.js';
 import type { PanelDockPanel } from '../Root.js';
 import { useEntrance } from './useEntrance.js';
+import { flag } from '../../../internal/flag.js';
 import '../../../styles/Base.css';
 import '../../../styles/PanelDock.css';
 
@@ -167,8 +168,8 @@ export function PanelFrame({
           data-mode={mode}
           data-placement={placement}
           data-env-ssr-placement={stackedPlacement}
-          data-active={panel.active || undefined}
-          data-resizing={preview !== undefined || undefined}
+          data-active={flag(panel.active)}
+          data-resizing={flag(preview !== undefined)}
           style={
             {
               '--env-panel-dock-panel-width': pixels(panel.preferredWidth),

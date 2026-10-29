@@ -22,6 +22,7 @@ import { FieldFrame, type FieldControlBoxProps, type FieldProps } from './FieldF
 import { PickerPopup, type PickerName } from './PickerPopup.js';
 import { subscribeFormReset } from './subscribeFormReset.js';
 import { useFieldMetadata } from './useFieldMetadata.js';
+import { flag } from '../../internal/flag.js';
 import '../../styles/Base.css';
 import '../../styles/DatePicker.css';
 
@@ -222,7 +223,7 @@ export function PickerField({
         {...boxProps}
         ref={controlRef}
         className={`${boxProps.className} env-date-picker-control`}
-        data-label-floating={labelFloats || undefined}
+        data-label-floating={flag(labelFloats)}
         data-action-count={showClear ? '2' : '1'}
       />
     );

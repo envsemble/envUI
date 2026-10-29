@@ -18,6 +18,7 @@ import { DirectedToolbarRoot } from './internal/DirectedToolbarRoot.js';
 import { keyShortcuts, shortcutChords } from '../internal/shortcuts.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 import type { ControlSize } from '../foundations/Theme.js';
+import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/Toolbar.css';
 
@@ -224,7 +225,7 @@ function ToolbarButton({
             'aria-label': label,
             'aria-pressed': pressed,
             'aria-keyshortcuts': keyShortcuts(chords),
-            'data-pressed': pressed || undefined,
+            'data-pressed': flag(pressed),
             className: classNames('env-toolbar-button', className),
           } as IconButtonProps)}
         />

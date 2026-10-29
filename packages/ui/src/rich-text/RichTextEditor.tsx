@@ -29,6 +29,7 @@ import {
 import { RichTextRenderingContext } from './internal/Reference.js';
 import { safeRichTextUrl } from './internal/referenceAttributes.js';
 import type { RichTextCommand, RichTextEditorProps, RichTextSlashCommand } from './types.js';
+import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/Prose.css';
 import '../styles/RichText.css';
@@ -437,16 +438,16 @@ export function RichTextEditor({
     <div
       {...box}
       className={classNames(box.className, 'env-rich-text-editor-control')}
-      data-invalid={invalidState === true || invalidState === 'true' || undefined}
-      data-disabled={disabled || undefined}
+      data-invalid={flag(invalidState === true || invalidState === 'true')}
+      data-disabled={flag(disabled)}
     />
   );
   return (
     <div
       {...props}
       className={classNames('env-rich-text-editor', className)}
-      data-disabled={disabled || undefined}
-      data-readonly={readOnly || undefined}
+      data-disabled={flag(disabled)}
+      data-readonly={flag(readOnly)}
     >
       <FieldFrame
         id={metadata.id}

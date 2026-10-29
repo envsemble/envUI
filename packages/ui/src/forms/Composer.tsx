@@ -23,6 +23,7 @@ import { useMessages } from '../internal/EnvUIContext.js';
 import { composer as composerMessages } from '../foundations/messages/composer.js';
 import { subscribeFormReset } from './internal/subscribeFormReset.js';
 import { TextareaControl } from './internal/TextareaControl.js';
+import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/Composer.css';
 
@@ -243,9 +244,9 @@ export function Composer({
           ...style,
         } as CSSProperties
       }
-      data-running={running || undefined}
-      data-disabled={disabled || undefined}
-      data-start={start != null || undefined}
+      data-running={flag(running)}
+      data-disabled={flag(disabled)}
+      data-start={flag(start != null)}
     >
       <div
         className="env-composer-surface"

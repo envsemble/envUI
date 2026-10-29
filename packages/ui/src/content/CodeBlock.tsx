@@ -14,6 +14,7 @@ import { codeThemeStyle } from './internal/codeColors.js';
 import { useCodeContrast } from './internal/useCodeContrast.js';
 import { useCodeHighlighting } from './internal/useCodeHighlighting.js';
 import { tokenStyle } from './internal/codeTokenStyle.js';
+import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/Code.css';
 
@@ -72,7 +73,7 @@ export function CodeBlock({
     <div
       {...props}
       className={classNames('env-code-block', className)}
-      data-wrap={wrap || undefined}
+      data-wrap={flag(wrap)}
       style={{ ...codeThemeStyle(theme), ...style }}
     >
       {(label || copyable) && (

@@ -4,6 +4,7 @@ import { useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent } from
 import { matchTyped } from '../../internal/calendarDays.js';
 import { prefersReducedMotion } from '../../internal/reducedMotion.js';
 import { isRightToLeft } from '../../internal/direction.js';
+import { flag } from '../../internal/flag.js';
 import '../../styles/Base.css';
 import '../../styles/TimeList.css';
 
@@ -387,7 +388,7 @@ export function TimeWheel({
       className="env-time-list-column"
       data-part={part === 'dayPeriod' ? 'day-period' : part}
       data-value={entry?.value}
-      data-loop={loop || undefined}
+      data-loop={flag(loop)}
       onKeyDown={handleKeyDown}
       onScroll={handleScroll}
       onScrollEnd={settle}
@@ -411,8 +412,8 @@ export function TimeWheel({
               aria-hidden="true"
               className="env-time-list-row"
               data-value={item.value}
-              data-centered={rowIndex === centred || undefined}
-              data-disabled={item.disabled || undefined}
+              data-centered={flag(rowIndex === centred)}
+              data-disabled={flag(item.disabled)}
               onClick={() => {
                 if (!item.disabled) scrollToRow(rowIndex, true);
               }}
