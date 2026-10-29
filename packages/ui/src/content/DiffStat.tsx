@@ -39,8 +39,8 @@ export function DiffStat({
     : messages.label({
         additions,
         deletions,
-        added: number.format(additions),
-        removed: number.format(deletions),
+        additionsText: number.format(additions),
+        deletionsText: number.format(deletions),
       });
   return (
     <span {...props} className={classNames('env-diff-stat', className)}>

@@ -7,6 +7,7 @@ import { Badge } from '../../content/Badge.js';
 import { Theme, useTheme } from '../../foundations/Theme.js';
 import { toast as toastMessages } from '../../foundations/messages/toast.js';
 import { useMessages } from '../../internal/EnvUIContext.js';
+import { useFormatters } from '../../internal/useFormatters.js';
 import { useDirection } from '../../internal/useDirection.js';
 import { ToastBody } from './ToastBody.js';
 import type { ToastController } from './useToastController.js';
@@ -127,6 +128,7 @@ export function ToastRegion({
   const theme = useTheme();
   const { container, contained } = usePortalContainer();
   const messages = useMessages('toast', toastMessages);
+  const number = useFormatters().number();
   const viewport = useRef<HTMLDivElement | null>(null);
   const positions = useRef(new Map<string, number>());
   const limited = limitedIds(toastStore.toasts, visibleLimit);
@@ -137,6 +139,10 @@ export function ToastRegion({
     direction === 'rtl' ? 'left' : 'right',
   ];
   const hiddenCount = limited.size;
+  const hiddenLabel =
+    hiddenCount > 0
+      ? messages.hidden({ count: hiddenCount, countText: number.format(hiddenCount) })
+      : undefined;
   // The notices of a picture that have left; Base UI's own notices leave by themselves.
   const [gone, setGone] = useState<ReadonlySet<string>>(() => new Set());
   const leave = useCallback((id: string) => setGone((current) => new Set(current).add(id)), []);
@@ -305,7 +311,7 @@ export function ToastRegion({
                 className="env-toast-queued-count"
                 data-toast-id="queued"
                 count={`+${hiddenCount}`}
-                aria-label={messages.hidden({ count: hiddenCount })}
+                aria-label={hiddenLabel}
               />
             )}
             {toastStore.toasts
@@ -383,7 +389,7 @@ export function ToastRegion({
               data-toast-id="queued"
               role="status"
               count={`+${hiddenCount}`}
-              aria-label={messages.hidden({ count: hiddenCount })}
+              aria-label={hiddenLabel}
             />
           )}
           {toastStore.toasts.map((toast) => {

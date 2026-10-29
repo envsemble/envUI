@@ -16,6 +16,7 @@ import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { ListRow } from '../internal/ListRow.js';
 import { FieldFrame } from '../forms/internal/FieldFrame.js';
 import { useLocale, useMessages } from '../internal/EnvUIContext.js';
+import { useFormatters } from '../internal/useFormatters.js';
 import { commandPalette } from '../foundations/messages/commandPalette.js';
 import { useTheme } from '../foundations/Theme.js';
 import { Search } from '../icons/Search.js';
@@ -176,6 +177,7 @@ export function CommandPalette({
   const portal = usePortalContainer();
   const locale = useLocale();
   const messages = useMessages('commandPalette', commandPalette);
+  const number = useFormatters().number();
   const input = useRef<HTMLInputElement>(null);
   const searchId = useId();
   const highlighted = useRef<{ item?: CommandPaletteItem; index: number }>({ index: -1 });
@@ -378,7 +380,10 @@ export function CommandPalette({
                         )}
                       </>
                     ) : (
-                      messages.results({ count: items.length })
+                      messages.results({
+                        count: items.length,
+                        countText: number.format(items.length),
+                      })
                     )}
                   </BaseAutocomplete.Status>
                 </BaseAutocomplete.Root>

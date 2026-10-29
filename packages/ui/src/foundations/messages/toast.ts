@@ -9,9 +9,12 @@ export const toast = {
   regionBottomEnd: 'Notifications',
   /** Names the notifications at the top center. */
   regionTopCenter: 'Top notifications',
-  /** The count of notifications waiting behind the shown ones. */
-  hidden: ({ count }: { count: number }) =>
-    `${count} older ${plural(count, 'notification', 'notifications')} hidden`,
+  /**
+   * The count of notifications waiting behind the shown ones; `countText` is the count in the
+   * locale's digits.
+   */
+  hidden: ({ count, countText }: { count: number; countText: string }) =>
+    `${countText} older ${plural(count, 'notification', 'notifications')} hidden`,
   /** A notification's dismiss button. */
   dismiss: 'Dismiss notification',
 };

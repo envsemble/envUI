@@ -6,21 +6,21 @@ import { plural } from './plural.js';
  */
 export const diffStat = {
   /**
-   * Names the counts, such as 12 added lines and 3 removed lines; `added` and `removed` are the
-   * counts in the locale's digits.
+   * Names the counts, such as 12 added lines and 3 removed lines; `additionsText` and
+   * `deletionsText` are the counts in the locale's digits.
    */
   label: ({
     additions,
     deletions,
-    added,
-    removed,
+    additionsText,
+    deletionsText,
   }: {
     additions: number;
     deletions: number;
-    added: string;
-    removed: string;
+    additionsText: string;
+    deletionsText: string;
   }) =>
-    `${added} added ${plural(additions, 'line', 'lines')} and ${removed} removed ${plural(deletions, 'line', 'lines')}`,
+    `${additionsText} added ${plural(additions, 'line', 'lines')} and ${deletionsText} removed ${plural(deletions, 'line', 'lines')}`,
 };
 
 export type DiffStatMessages = typeof diffStat;

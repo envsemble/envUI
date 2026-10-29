@@ -130,13 +130,13 @@ export function AvatarGroup({
     formatters.list({ type: 'unit', style: 'short' }).format(items);
   const formatMore =
     ownFormatMore ??
-    ((count: number) => messages.more({ count, number: formatters.number().format(count) }));
+    ((count: number) => messages.more({ count, countText: formatters.number().format(count) }));
   const formatLabel =
     ownFormatLabel ??
     ((count: number, names: readonly string[]) =>
       messages.label({
         count,
-        number: formatters.number().format(count),
+        countText: formatters.number().format(count),
         names: list(names),
       }));
   // A total or max that is no count, such as NaN from missing data, an endless total or a max of
