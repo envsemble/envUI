@@ -14,8 +14,8 @@ import {
 } from 'react';
 import { useFormStatus } from 'react-dom';
 import { IconButton } from '../actions/Button.js';
-import { ArrowUpward } from '../icons/ArrowUpward.js';
-import { Stop } from '../icons/Stop.js';
+import { IconArrowUpward } from '../icons/ArrowUpward.js';
+import { IconStop } from '../icons/Stop.js';
 import { classNames } from '../internal/classNames.js';
 import { Grid, Row } from '../foundations/Layout.js';
 import { setRef } from '../internal/setRef.js';
@@ -291,7 +291,7 @@ export function Composer({
         <IconButton
           variant="primary"
           className="env-composer-action"
-          icon={running ? <Stop filled /> : <ArrowUpward />}
+          icon={running ? <IconStop filled /> : <IconArrowUpward />}
           aria-label={actionLabel}
           disabled={!running && disabled}
           aria-disabled={unavailable || undefined}

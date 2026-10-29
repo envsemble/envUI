@@ -18,7 +18,7 @@ import {
 } from 'react';
 import { Button, IconButton, type ButtonAppearanceProps } from '../actions/Button.js';
 import { panes } from '../foundations/messages/panes.js';
-import { ArrowBack } from '../icons/ArrowBack.js';
+import { IconArrowBack } from '../icons/ArrowBack.js';
 import { classNames } from '../internal/classNames.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { usePortalContainer } from '../internal/PortalContainerContext.js';
@@ -30,7 +30,7 @@ import { inSkeleton } from '../foundations/internal/inSkeleton.js';
 import { skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import { readPanesWidth, writePanesWidth } from './panesSize.js';
 import type { ResizeDetails } from '../internal/resizeDetails.js';
-import { Close } from '../icons/Close.js';
+import { IconClose } from '../icons/Close.js';
 import { remPixels, roundToHundredth } from '../internal/lengths.js';
 import '../styles/Base.css';
 import '../styles/Panes.css';
@@ -522,7 +522,7 @@ function Supporting({
       <div className="env-panes-close">
         <IconButton
           variant="ghost"
-          icon={<Close />}
+          icon={<IconClose />}
           aria-label={closeLabel ?? messages.close}
           onClick={() => close('close-press')}
         />
@@ -609,7 +609,7 @@ function Detail({ label, className, children, ref, ...props }: DetailProps) {
         <Button
           ref={back}
           variant="text"
-          startIcon={<ArrowBack />}
+          startIcon={<IconArrowBack />}
           onClick={() => close('back-press')}
         >
           {backLabel ?? messages.back}

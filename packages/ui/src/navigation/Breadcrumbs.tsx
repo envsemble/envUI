@@ -13,7 +13,7 @@ import {
 } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { Row } from '../foundations/Layout.js';
-import { ChevronRight } from '../icons/ChevronRight.js';
+import { IconChevronRight } from '../icons/ChevronRight.js';
 import { ActionElement } from '../internal/ActionElement.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { breadcrumbs } from '../foundations/messages/breadcrumbs.js';
@@ -149,7 +149,7 @@ export function Breadcrumbs({
               <Crumb item={item} current={current} />
               {!current && (
                 <span className="env-icon env-breadcrumbs-separator" aria-hidden="true">
-                  <ChevronRight />
+                  <IconChevronRight />
                 </span>
               )}
             </Row>

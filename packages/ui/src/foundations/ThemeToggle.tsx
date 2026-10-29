@@ -4,8 +4,8 @@ import { classNames } from '../internal/classNames.js';
 import { IconButton, type IconButtonProps } from '../actions/Button.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { themePreference } from './messages/themePreference.js';
-import { DarkMode } from '../icons/DarkMode.js';
-import { LightMode } from '../icons/LightMode.js';
+import { IconDarkMode } from '../icons/DarkMode.js';
+import { IconLightMode } from '../icons/LightMode.js';
 import { useThemePreference } from './ThemePreference.js';
 import '../styles/Base.css';
 import '../styles/ThemeToggle.css';
@@ -39,7 +39,7 @@ export function ThemeToggle({
     <IconButton
       {...(props as IconButtonProps)}
       className={classNames('env-theme-toggle', className)}
-      icon={theme === 'light' ? <DarkMode /> : <LightMode />}
+      icon={theme === 'light' ? <IconDarkMode /> : <IconLightMode />}
       aria-label={label}
       title={title ?? label}
       onClick={toggleTheme}

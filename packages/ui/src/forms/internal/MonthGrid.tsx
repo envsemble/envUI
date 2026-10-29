@@ -3,8 +3,8 @@
 import { useId, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
 import { Grid, Row } from '../../foundations/Layout.js';
 import { IconButton } from '../../actions/Button.js';
-import { ChevronLeft } from '../../icons/ChevronLeft.js';
-import { ChevronRight } from '../../icons/ChevronRight.js';
+import { IconChevronLeft } from '../../icons/ChevronLeft.js';
+import { IconChevronRight } from '../../icons/ChevronRight.js';
 import {
   clampMonth,
   dateFormat,
@@ -131,7 +131,7 @@ export function MonthGrid({
       <Row align="center" gap={1} className="env-month-picker-header">
         <IconButton
           variant="ghost"
-          icon={<ChevronLeft />}
+          icon={<IconChevronLeft />}
           aria-label={previousYearLabel}
           title={previousYearLabel}
           // Unavailable rather than disabled, so focus stays on the button at the earliest year.
@@ -146,7 +146,7 @@ export function MonthGrid({
         </div>
         <IconButton
           variant="ghost"
-          icon={<ChevronRight />}
+          icon={<IconChevronRight />}
           aria-label={nextYearLabel}
           title={nextYearLabel}
           aria-disabled={!nextAvailable || undefined}

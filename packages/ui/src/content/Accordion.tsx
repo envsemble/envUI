@@ -2,8 +2,8 @@
 
 import { Accordion as BaseAccordion } from '@base-ui/react/accordion';
 import { createContext, useContext, type ComponentPropsWithRef, type ReactNode } from 'react';
-import { Add } from '../icons/Add.js';
-import { Remove } from '../icons/Remove.js';
+import { IconAdd } from '../icons/Add.js';
+import { IconRemove } from '../icons/Remove.js';
 import { classNames } from '../internal/classNames.js';
 import { inSkeleton } from '../foundations/internal/inSkeleton.js';
 import { given, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
@@ -140,8 +140,8 @@ function Item(allProps: ItemProps) {
         <BaseAccordion.Trigger className="env-accordion-trigger" data-interactive="">
           {/* A plus while closed, a minus while open: two icons, one shown, never a turned one. */}
           <span className="env-accordion-indicator" aria-hidden="true">
-            <Add />
-            <Remove />
+            <IconAdd />
+            <IconRemove />
           </span>
           {hasTitle && <span className="env-accordion-label">{title}</span>}
         </BaseAccordion.Trigger>

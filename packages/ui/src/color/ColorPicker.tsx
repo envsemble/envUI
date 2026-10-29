@@ -12,10 +12,10 @@ import type { Color } from '@react-stately/color';
 import { CopyButton } from '../actions/CopyButton.js';
 import { Button, IconButton } from '../actions/Button.js';
 import * as Menu from '../navigation/Menu.js';
-import { ExpandMore } from '../icons/ExpandMore.js';
+import { IconExpandMore } from '../icons/ExpandMore.js';
 import { Tooltip } from '../feedback/Tooltip.js';
 import { colorPicker as colorPickerMessages } from '../foundations/messages/colorPicker.js';
-import { Colorize } from '../icons/Colorize.js';
+import { IconColorize } from '../icons/Colorize.js';
 import { classNames } from '../internal/classNames.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { setRef } from '../internal/setRef.js';
@@ -144,7 +144,7 @@ export function ColorPicker({
       <IconButton
         variant="ghost"
         size="sm"
-        icon={<Colorize />}
+        icon={<IconColorize />}
         aria-label={messages.eyeDropper}
         className="env-color-picker-eye-dropper"
         onClick={async () => {
@@ -236,7 +236,7 @@ export function ColorPicker({
                     <Button
                       variant="ghost"
                       size="sm"
-                      endIcon={<ExpandMore />}
+                      endIcon={<IconExpandMore />}
                       disabled={disabled}
                       aria-label={messages.formatButton({ format: messages[format] })}
                     >

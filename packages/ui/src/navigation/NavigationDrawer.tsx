@@ -16,7 +16,7 @@ import {
   type RefObject,
 } from 'react';
 import { Column } from '../foundations/Layout.js';
-import { ChevronRight } from '../icons/ChevronRight.js';
+import { IconChevronRight } from '../icons/ChevronRight.js';
 import { TooltipPopup, tooltipDelay } from '../internal/TooltipPopup.js';
 import { classNames } from '../internal/classNames.js';
 import { ResizeHandle } from '../internal/ResizeHandle.js';
@@ -206,7 +206,7 @@ function DrawerControl({
 /** A section's chevron, which points down, and up while the section is open. */
 const chevron = (
   <span className="env-icon env-navigation-drawer-chevron" aria-hidden="true">
-    <ChevronRight />
+    <IconChevronRight />
   </span>
 );
 

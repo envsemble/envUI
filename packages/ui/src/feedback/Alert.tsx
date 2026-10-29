@@ -5,10 +5,10 @@ import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { AlertDismiss } from './internal/AlertDismiss.js';
 import { inSkeleton } from '../foundations/internal/inSkeleton.js';
 import { given, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
-import { CheckCircle } from '../icons/CheckCircle.js';
-import { Error as ErrorIcon } from '../icons/Error.js';
-import { Info } from '../icons/Info.js';
-import { Warning } from '../icons/Warning.js';
+import { IconCheckCircle } from '../icons/CheckCircle.js';
+import { IconError } from '../icons/Error.js';
+import { IconInfo } from '../icons/Info.js';
+import { IconWarning } from '../icons/Warning.js';
 import '../styles/Base.css';
 import '../styles/Alert.css';
 
@@ -48,10 +48,10 @@ export interface AlertProps
 }
 
 const toneIcons: Record<AlertTone, ReactNode> = {
-  info: <Info />,
-  success: <CheckCircle />,
-  warning: <Warning />,
-  danger: <ErrorIcon />,
+  info: <IconInfo />,
+  success: <IconCheckCircle />,
+  warning: <IconWarning />,
+  danger: <IconError />,
 };
 
 /**

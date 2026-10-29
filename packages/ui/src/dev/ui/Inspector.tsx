@@ -13,9 +13,9 @@ import * as DescriptionList from '../../content/DescriptionList.js';
 import { Column, Grid, Row } from '../../foundations/Layout.js';
 import { Surface } from '../../foundations/Surface.js';
 import { Text } from '../../foundations/Text.js';
-import { Contrast } from '../../icons/Contrast.js';
-import { DarkMode } from '../../icons/DarkMode.js';
-import { LightMode } from '../../icons/LightMode.js';
+import { IconContrast } from '../../icons/Contrast.js';
+import { IconDarkMode } from '../../icons/DarkMode.js';
+import { IconLightMode } from '../../icons/LightMode.js';
 import { ResizeHandle } from '../../internal/ResizeHandle.js';
 import { useResizableWidth } from '../../internal/useResizableWidth.js';
 import { remPixels } from '../../internal/lengths.js';
@@ -172,9 +172,9 @@ export const NodeTree = memo(function NodeTree({
 });
 
 const themeIcons: Record<EditorTheme['theme'], ReactNode> = {
-  page: <Contrast />,
-  light: <LightMode />,
-  dark: <DarkMode />,
+  page: <IconContrast />,
+  light: <IconLightMode />,
+  dark: <IconDarkMode />,
 };
 
 /** The theme of dev mode's own UI: the page's, light or dark, with or without high contrast. */
@@ -201,13 +201,13 @@ function EditorThemeMenu({
         value={value.theme}
         onValueChange={(theme) => onChange({ ...value, theme: theme as EditorTheme['theme'] })}
       >
-        <Menu.RadioItem value="page" icon={<Contrast />} description="As the page is now">
+        <Menu.RadioItem value="page" icon={<IconContrast />} description="As the page is now">
           Same as the page
         </Menu.RadioItem>
-        <Menu.RadioItem value="light" icon={<LightMode />}>
+        <Menu.RadioItem value="light" icon={<IconLightMode />}>
           Light
         </Menu.RadioItem>
-        <Menu.RadioItem value="dark" icon={<DarkMode />}>
+        <Menu.RadioItem value="dark" icon={<IconDarkMode />}>
           Dark
         </Menu.RadioItem>
       </Menu.RadioGroup>

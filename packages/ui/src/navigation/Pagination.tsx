@@ -4,8 +4,8 @@ import { useEffect, useState, type ComponentPropsWithRef, type ReactNode } from 
 import type { ControlSize } from '../foundations/Theme.js';
 import { IconButton, type ButtonVariant } from '../actions/Button.js';
 import { Tooltip } from '../feedback/Tooltip.js';
-import { ChevronLeft } from '../icons/ChevronLeft.js';
-import { ChevronRight } from '../icons/ChevronRight.js';
+import { IconChevronLeft } from '../icons/ChevronLeft.js';
+import { IconChevronRight } from '../icons/ChevronRight.js';
 import { classNames } from '../internal/classNames.js';
 import { Row } from '../foundations/Layout.js';
 import { useMessages } from '../internal/EnvUIContext.js';
@@ -162,7 +162,7 @@ export function Pagination({
     return (
       <Tooltip content={name}>
         <IconButton
-          icon={direction === 'previous' ? <ChevronLeft /> : <ChevronRight />}
+          icon={direction === 'previous' ? <IconChevronLeft /> : <IconChevronRight />}
           aria-label={name}
           variant={variant}
           pending={loading}

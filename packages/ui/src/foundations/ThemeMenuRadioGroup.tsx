@@ -6,9 +6,9 @@ import { useMessages } from '../internal/EnvUIContext.js';
 import { themePreference } from './messages/themePreference.js';
 import { ThemePreferenceContext } from './internal/ThemePreferenceContext.js';
 import type { ThemePreference } from './themeBootstrap.js';
-import { Computer } from '../icons/Computer.js';
-import { DarkMode } from '../icons/DarkMode.js';
-import { LightMode } from '../icons/LightMode.js';
+import { IconComputer } from '../icons/Computer.js';
+import { IconDarkMode } from '../icons/DarkMode.js';
+import { IconLightMode } from '../icons/LightMode.js';
 
 export interface ThemeMenuRadioGroupProps {
   /**
@@ -37,9 +37,9 @@ export interface ThemeMenuRadioGroupProps {
 }
 
 const choices = [
-  { value: 'system', icon: <Computer /> },
-  { value: 'light', icon: <LightMode /> },
-  { value: 'dark', icon: <DarkMode /> },
+  { value: 'system', icon: <IconComputer /> },
+  { value: 'light', icon: <IconLightMode /> },
+  { value: 'dark', icon: <IconDarkMode /> },
 ] as const satisfies readonly { value: ThemePreference; icon: ReactNode }[];
 
 /**

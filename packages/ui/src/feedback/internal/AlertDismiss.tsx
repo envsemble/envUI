@@ -1,7 +1,7 @@
 'use client';
 
 import { IconButton } from '../../actions/Button.js';
-import { Close } from '../../icons/Close.js';
+import { IconClose } from '../../icons/Close.js';
 import { useMessages } from '../../internal/EnvUIContext.js';
 import { alert } from '../../foundations/messages/alert.js';
 import '../../styles/Base.css';
@@ -18,7 +18,7 @@ export function AlertDismiss({ label, onDismiss }: { label?: string; onDismiss: 
     <IconButton
       variant="ghost"
       size="sm"
-      icon={<Close />}
+      icon={<IconClose />}
       aria-label={name}
       title={name}
       className="env-alert-dismiss"

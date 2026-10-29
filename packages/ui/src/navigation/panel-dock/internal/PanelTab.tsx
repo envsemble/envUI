@@ -2,7 +2,7 @@
 
 import { useId, useRef } from 'react';
 import { IconButton } from '../../../actions/Button.js';
-import { Close } from '../../../icons/Close.js';
+import { IconClose } from '../../../icons/Close.js';
 import { Tooltip } from '../../../feedback/Tooltip.js';
 import { ActionElement } from '../../../internal/ActionElement.js';
 import { DecorativeIcon } from '../../../internal/DecorativeIcon.js';
@@ -69,7 +69,7 @@ export function PanelTab({
       {panel.tooltip != null ? <Tooltip content={panel.tooltip}>{restore}</Tooltip> : restore}
       <IconButton
         variant="ghost"
-        icon={<Close />}
+        icon={<IconClose />}
         className="env-panel-dock-tab-close"
         aria-label={closeLabel(label)}
         onClick={onClose}

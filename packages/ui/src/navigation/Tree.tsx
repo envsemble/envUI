@@ -20,7 +20,7 @@ import { typeaheadTimeout } from '../internal/typeahead.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { tree as treeMessages } from '../foundations/messages/tree.js';
 import type { RowDensity } from '../foundations/Theme.js';
-import { ChevronRight } from '../icons/ChevronRight.js';
+import { IconChevronRight } from '../icons/ChevronRight.js';
 import { ContextMenu } from './ContextMenu.js';
 import { remPixels } from '../internal/lengths.js';
 import { isRightToLeft } from '../internal/direction.js';
@@ -480,7 +480,7 @@ export function Tree<Item extends TreeItem>({
               >
                 {item.expandable && (
                   <span className="env-icon">
-                    <ChevronRight />
+                    <IconChevronRight />
                   </span>
                 )}
               </span>

@@ -12,8 +12,8 @@ import {
 import type { IconButtonEmphasisProps } from './Button.js';
 import { ButtonBase, type ButtonBaseProps } from './internal/ButtonBase.js';
 import { TooltipNestingContext, TooltipPopup, tooltipDelay } from '../internal/TooltipPopup.js';
-import { Check } from '../icons/Check.js';
-import { ContentCopy } from '../icons/ContentCopy.js';
+import { IconCheck } from '../icons/Check.js';
+import { IconContentCopy } from '../icons/ContentCopy.js';
 import { classNames } from '../internal/classNames.js';
 import { useButtonEmphasis } from '../internal/ControlDefaults.js';
 import { useCopy } from '../internal/useCopy.js';
@@ -148,7 +148,7 @@ export function CopyButton({
   const tooltip = feedback ?? (iconOnly ? name : undefined);
   // The last text stays in the closing tooltip while it fades out.
   if (tooltip) shownText.current = tooltip;
-  const symbol = result?.copied ? <Check /> : (icon ?? <ContentCopy />);
+  const symbol = result?.copied ? <IconCheck /> : (icon ?? <IconContentCopy />);
   const shared = {
     ...props,
     ...emphasis,

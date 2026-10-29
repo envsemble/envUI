@@ -15,7 +15,7 @@ import {
 } from 'react';
 import { IconButton } from '../actions/Button.js';
 import { Column } from '../foundations/Layout.js';
-import { Close } from '../icons/Close.js';
+import { IconClose } from '../icons/Close.js';
 import { classNames } from '../internal/classNames.js';
 import { markTriggerOwner } from '../internal/triggerOwner.js';
 import { setRef } from '../internal/setRef.js';
@@ -371,7 +371,7 @@ export function Sheet({
                           render={
                             <IconButton
                               variant="ghost"
-                              icon={<Close />}
+                              icon={<IconClose />}
                               aria-label={ownCloseLabel ?? messages.close}
                               disabled={pending}
                             />

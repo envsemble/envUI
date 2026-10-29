@@ -2,8 +2,8 @@
 
 import { Fragment, useEffect, useRef, type ComponentPropsWithRef } from 'react';
 import { IconButton } from '../actions/Button.js';
-import { ContentCopy } from '../icons/ContentCopy.js';
-import { Check } from '../icons/Check.js';
+import { IconContentCopy } from '../icons/ContentCopy.js';
+import { IconCheck } from '../icons/Check.js';
 import { useTheme } from '../foundations/Theme.js';
 import { codeBlock as codeBlockMessages } from '../foundations/messages/codeBlock.js';
 import { classNames } from '../internal/classNames.js';
@@ -82,7 +82,7 @@ export function CodeBlock({
           {copyable && (
             <IconButton
               variant="ghost"
-              icon={status === 'copied' ? <Check /> : <ContentCopy />}
+              icon={status === 'copied' ? <IconCheck /> : <IconContentCopy />}
               aria-label={status === 'copied' ? messages.copied : messages.copy}
               onClick={(event) => void copySource(event.currentTarget)}
             />

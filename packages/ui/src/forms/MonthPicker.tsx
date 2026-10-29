@@ -5,7 +5,7 @@ import { useMessages } from '../internal/EnvUIContext.js';
 import { useResolvedLocale } from '../internal/useFormatters.js';
 import { monthPicker as monthPickerMessages } from '../foundations/messages/monthPicker.js';
 import { Button } from '../actions/Button.js';
-import { CalendarMonth } from '../icons/CalendarMonth.js';
+import { IconCalendarMonth } from '../icons/CalendarMonth.js';
 import { MonthGrid, monthGridActive } from './internal/MonthGrid.js';
 import { PickerField, usePickerOpen, type PickerFieldProps } from './internal/PickerField.js';
 import {
@@ -142,7 +142,7 @@ export function MonthPicker({
       {...fieldProps}
       serialized={serialized}
       display={display}
-      icon={<CalendarMonth />}
+      icon={<IconCalendarMonth />}
       rootClassName="env-date-picker env-month-picker"
       popupClassName="env-month-picker-popup"
       initialFocus={monthGridActive}

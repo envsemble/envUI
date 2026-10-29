@@ -21,8 +21,8 @@ import {
   keepsOpen,
   usePortalContainer,
 } from '../internal/PortalContainerContext.js';
-import { Check } from '../icons/Check.js';
-import { ChevronRight } from '../icons/ChevronRight.js';
+import { IconCheck } from '../icons/Check.js';
+import { IconChevronRight } from '../icons/ChevronRight.js';
 import { Kbd } from '../content/Kbd.js';
 import { useLinkComponent } from '../internal/LinkComponentContext.js';
 import type { SkeletonProps } from '../internal/skeleton.js';
@@ -416,7 +416,7 @@ function Submenu({
       >
         {content}
         <span className="env-icon env-menu-submenu-chevron" aria-hidden="true">
-          <ChevronRight />
+          <IconChevronRight />
         </span>
       </BaseMenu.SubmenuTrigger>
       <MenuPopup
@@ -522,7 +522,7 @@ function CheckIndicator({ kind }: { kind: 'radio' | 'checkbox' }) {
   return (
     <span className="env-menu-item-indicator-slot" aria-hidden="true">
       <Indicator className="env-icon env-menu-item-indicator">
-        <Check />
+        <IconCheck />
       </Indicator>
     </span>
   );

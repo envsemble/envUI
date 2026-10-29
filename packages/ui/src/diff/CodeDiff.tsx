@@ -22,10 +22,10 @@ import { useCodeContrast } from '../content/internal/useCodeContrast.js';
 import { Column } from '../foundations/Layout.js';
 import { Text } from '../foundations/Text.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
-import { Error as ErrorIcon } from '../icons/Error.js';
+import { IconError } from '../icons/Error.js';
 import { useTheme } from '../foundations/Theme.js';
 import { Spinner } from '../feedback/Spinner.js';
-import { Refresh } from '../icons/Refresh.js';
+import { IconRefresh } from '../icons/Refresh.js';
 import { codeDiff as codeDiffMessages } from '../foundations/messages/codeDiff.js';
 import { classNames } from '../internal/classNames.js';
 import { useMessages } from '../internal/EnvUIContext.js';
@@ -242,7 +242,7 @@ export function CodeDiff({
         <Column role="alert" gap={4} className="env-code-diff-failed">
           <span className="env-code-diff-failed-icon">
             <DecorativeIcon>
-              <ErrorIcon />
+              <IconError />
             </DecorativeIcon>
           </span>
           <Column gap={2}>
@@ -253,7 +253,7 @@ export function CodeDiff({
           </Column>
           <Button
             variant="secondary"
-            startIcon={<Refresh />}
+            startIcon={<IconRefresh />}
             onClick={() => {
               setFailed(false);
               setAttempt((current) => current + 1);

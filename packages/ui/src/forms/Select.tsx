@@ -12,8 +12,8 @@ import {
 import { Select as BaseSelect } from '@base-ui/react/select';
 import { useFieldMetadata } from './internal/useFieldMetadata.js';
 import { type ControlSize } from '../foundations/Theme.js';
-import { ChevronRight } from '../icons/ChevronRight.js';
-import { Check } from '../icons/Check.js';
+import { IconChevronRight } from '../icons/ChevronRight.js';
+import { IconCheck } from '../icons/Check.js';
 import {
   FieldFrame,
   type FieldProps,
@@ -289,7 +289,7 @@ export function Select({
         </BaseSelect.Trigger>
         <span className="env-text-field-end env-select-end" aria-hidden="true">
           <span className="env-icon env-select-icon">
-            <ChevronRight />
+            <IconChevronRight />
           </span>
         </span>
         <PopupSurface
@@ -311,7 +311,7 @@ export function Select({
                 // A check mark shows the selected option; the slot keeps the labels aligned.
                 indicator={
                   <BaseSelect.ItemIndicator className="env-icon env-select-item-indicator">
-                    <Check />
+                    <IconCheck />
                   </BaseSelect.ItemIndicator>
                 }
                 label={<BaseSelect.ItemText>{item.label}</BaseSelect.ItemText>}

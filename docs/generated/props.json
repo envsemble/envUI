@@ -571,7 +571,7 @@
           "name": "startIcon",
           "type": "ReactNode",
           "required": false,
-          "description": "A decorative icon before the label, such as an Add icon."
+          "description": "A decorative icon before the label, such as IconAdd."
         },
         {
           "name": "endIcon",
@@ -1918,7 +1918,7 @@
           "name": "startIcon",
           "type": "ReactNode",
           "required": false,
-          "description": "A decorative icon before the label, such as an Add icon."
+          "description": "A decorative icon before the label, such as IconAdd."
         },
         {
           "name": "endIcon",
@@ -2717,7 +2717,7 @@
           "name": "startIcon",
           "type": "ReactNode",
           "required": false,
-          "description": "A decorative icon before the label, such as an Add icon."
+          "description": "A decorative icon before the label, such as IconAdd."
         },
         {
           "name": "endIcon",
@@ -5964,7 +5964,7 @@
           "name": "startIcon",
           "type": "ReactNode",
           "required": false,
-          "description": "A decorative icon before the label, such as an Add icon."
+          "description": "A decorative icon before the label, such as IconAdd."
         },
         {
           "name": "endIcon",

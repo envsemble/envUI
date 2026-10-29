@@ -19,8 +19,8 @@ import { useLocale, useMessages } from '../internal/EnvUIContext.js';
 import { useFormatters } from '../internal/useFormatters.js';
 import { commandPalette } from '../foundations/messages/commandPalette.js';
 import { useTheme } from '../foundations/Theme.js';
-import { Search } from '../icons/Search.js';
-import { SearchOff } from '../icons/SearchOff.js';
+import { IconSearch } from '../icons/Search.js';
+import { IconSearchOff } from '../icons/SearchOff.js';
 import { Kbd } from '../content/Kbd.js';
 import { DialogBackdrop, OverlayTheme } from './internal/DialogParts.js';
 import type { DialogOpenChangeReason } from './Dialog.js';
@@ -191,7 +191,7 @@ export function CommandPalette({
   // when the text finds nothing.
   const empty = items.length === 0;
   const typed = query !== '';
-  const icon = emptyIcon === undefined ? typed ? <SearchOff /> : <Search /> : emptyIcon;
+  const icon = emptyIcon === undefined ? typed ? <IconSearchOff /> : <IconSearch /> : emptyIcon;
   const title = emptyLabel ?? (typed ? messages.empty : messages.emptyQuery);
   const description =
     emptyDescription === undefined
@@ -308,7 +308,7 @@ export function CommandPalette({
                     floatingLabel
                     variant="ghost"
                     size="lg"
-                    startIcon={<Search />}
+                    startIcon={<IconSearch />}
                     className="env-command-palette-search"
                   >
                     <BaseAutocomplete.Input

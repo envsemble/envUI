@@ -18,7 +18,7 @@ import { keepsOpen, usePortalContainer } from '../../internal/PortalContainerCon
 import { type ControlSize } from '../../foundations/Theme.js';
 import type { PopoverOpenChangeReason } from '../../feedback/Popover.js';
 import { IconButton } from '../../actions/Button.js';
-import { Close } from '../../icons/Close.js';
+import { IconClose } from '../../icons/Close.js';
 import { FieldFrame, type FieldControlBoxProps, type FieldProps } from './FieldFrame.js';
 import { PickerPopup, type PickerName } from './PickerPopup.js';
 import { subscribeFormReset } from './subscribeFormReset.js';
@@ -325,7 +325,7 @@ export function PickerField({
           {showClear && (
             <IconButton
               variant="ghost"
-              icon={<Close />}
+              icon={<IconClose />}
               aria-label={clearLabel}
               title={clearLabel}
               className="env-date-picker-clear"

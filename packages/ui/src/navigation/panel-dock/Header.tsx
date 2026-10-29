@@ -11,10 +11,10 @@ import {
 import { IconButton } from '../../actions/Button.js';
 import { Tooltip } from '../../feedback/Tooltip.js';
 import { panelDock as panelDockMessages } from '../../foundations/messages/panelDock.js';
-import { CloseFullscreen } from '../../icons/CloseFullscreen.js';
-import { Minimize } from '../../icons/Minimize.js';
-import { Close } from '../../icons/Close.js';
-import { OpenInFull } from '../../icons/OpenInFull.js';
+import { IconCloseFullscreen } from '../../icons/CloseFullscreen.js';
+import { IconMinimize } from '../../icons/Minimize.js';
+import { IconClose } from '../../icons/Close.js';
+import { IconOpenInFull } from '../../icons/OpenInFull.js';
 import { classNames } from '../../internal/classNames.js';
 import { Grid, Row } from '../../foundations/Layout.js';
 import { ControlDefaults } from '../../internal/ControlDefaults.js';
@@ -129,21 +129,21 @@ function WindowControls() {
     <Row align="center" className="env-panel-dock-controls">
       <WindowControl
         label={messages.minimize}
-        icon={<Minimize />}
+        icon={<IconMinimize />}
         onClick={() => panel.changeMode('minimized')}
       />
       {!panel.stacked && (
         <WindowControl
           control="maximize"
           label={maximized ? messages.restore : messages.maximize}
-          icon={maximized ? <CloseFullscreen /> : <OpenInFull />}
+          icon={maximized ? <IconCloseFullscreen /> : <IconOpenInFull />}
           onClick={() => panel.changeMode(maximized ? 'open' : 'maximized')}
         />
       )}
       <Tooltip content={messages.closeWindow}>
         <IconButton
           variant="ghost"
-          icon={<Close />}
+          icon={<IconClose />}
           aria-label={messages.closeWindow}
           onClick={panel.close}
         />

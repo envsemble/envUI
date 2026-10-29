@@ -7,7 +7,7 @@ import { PopupSurface } from '../../internal/PopupSurface.js';
 import { ListRow } from '../../internal/ListRow.js';
 import { Column, Grid } from '../../foundations/Layout.js';
 import { Spinner } from '../../feedback/Spinner.js';
-import { Check } from '../../icons/Check.js';
+import { IconCheck } from '../../icons/Check.js';
 import type { ComboboxGroup, ComboboxItem } from '../Combobox.js';
 import { isGroup } from './comboboxItems.js';
 import '../../styles/Base.css';
@@ -118,7 +118,7 @@ function ComboboxOption<Item extends ComboboxItem>({
       className="env-combobox-item"
       indicator={
         <BaseCombobox.ItemIndicator className="env-icon env-combobox-item-indicator">
-          <Check />
+          <IconCheck />
         </BaseCombobox.ItemIndicator>
       }
       icon={startSlot ? <span className="env-combobox-start">{item.start}</span> : undefined}

@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Search } from '../icons/Search.js';
-import { Close } from '../icons/Close.js';
+import { IconSearch } from '../icons/Search.js';
+import { IconClose } from '../icons/Close.js';
 import { IconButton } from '../actions/Button.js';
 import { setRef } from '../internal/setRef.js';
 import { useMessages } from '../internal/EnvUIContext.js';
@@ -99,12 +99,12 @@ export function SearchField({
           update('');
         }
       }}
-      startIcon={<Search />}
+      startIcon={<IconSearch />}
       endAction={
         query ? (
           <IconButton
             variant="ghost"
-            icon={<Close />}
+            icon={<IconClose />}
             aria-label={clearName}
             title={clearName}
             disabled={disabled}

@@ -20,9 +20,9 @@ import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { remLength } from '../internal/cssLength.js';
 import { setRef } from '../internal/setRef.js';
 import { useStackedReport } from '../internal/useStackedReport.js';
-import { ArrowDownward } from '../icons/ArrowDownward.js';
-import { ArrowUpward } from '../icons/ArrowUpward.js';
-import { UnfoldMore } from '../icons/UnfoldMore.js';
+import { IconArrowDownward } from '../icons/ArrowDownward.js';
+import { IconArrowUpward } from '../icons/ArrowUpward.js';
+import { IconUnfoldMore } from '../icons/UnfoldMore.js';
 import { columnMinimums, sameWidths } from './internal/tableColumns.js';
 import { ColumnResizeHandle, type TableColumns } from './internal/ColumnResizeHandle.js';
 import { inSkeleton } from '../foundations/internal/inSkeleton.js';
@@ -422,9 +422,9 @@ function useColumnIndex(cell: RefObject<HTMLTableCellElement | null>, enabled: b
 }
 
 const sortIcons = {
-  ascending: <ArrowUpward />,
-  descending: <ArrowDownward />,
-  none: <UnfoldMore />,
+  ascending: <IconArrowUpward />,
+  descending: <IconArrowDownward />,
+  none: <IconUnfoldMore />,
 };
 
 /**

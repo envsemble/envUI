@@ -14,7 +14,7 @@ import type { ToastController } from './useToastController.js';
 import type { ToastEntry } from './toastInternals.js';
 import type { ToastPlacement } from './toastTypes.js';
 import { usePortalContainer } from '../../internal/PortalContainerContext.js';
-import { Close } from '../../icons/Close.js';
+import { IconClose } from '../../icons/Close.js';
 import { prefersReducedMotion } from '../../internal/reducedMotion.js';
 import { flag } from '../../internal/flag.js';
 import '../../styles/Base.css';
@@ -342,7 +342,7 @@ export function ToastRegion({
                         entry.dismissible !== false && (
                           <IconButton
                             variant="ghost"
-                            icon={<Close />}
+                            icon={<IconClose />}
                             className="env-toast-dismiss"
                             aria-label={messages.dismiss}
                             onClick={() => toastStore.close(toast.id)}
@@ -442,7 +442,7 @@ export function ToastRegion({
                         render={
                           <IconButton
                             variant="ghost"
-                            icon={<Close />}
+                            icon={<IconClose />}
                             className="env-toast-dismiss"
                             aria-label={messages.dismiss}
                           />

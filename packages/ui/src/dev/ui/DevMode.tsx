@@ -11,7 +11,7 @@ import { Tooltip } from '../../feedback/Tooltip.js';
 import { Row } from '../../foundations/Layout.js';
 import { PortalContainer } from '../../foundations/PortalContainer.js';
 import { Theme, type ColorScheme } from '../../foundations/Theme.js';
-import { ViewInAr } from '../../icons/ViewInAr.js';
+import { IconViewInAr } from '../../icons/ViewInAr.js';
 import { resizeRoot } from '../api.js';
 import { resolveRoot } from '../measure.js';
 import { Inspector, NodeTree } from './Inspector.js';
@@ -117,7 +117,7 @@ export function DevMode({ controller }: { controller: DevModeController }) {
             <IconButton
               className="env-dev-toggle"
               variant="secondary"
-              icon={<ViewInAr />}
+              icon={<IconViewInAr />}
               aria-label="Dev mode"
               aria-keyshortcuts={controller.shortcut ?? undefined}
               onClick={() => controller.openInNewTab()}

@@ -25,8 +25,8 @@ import {
 import { type ControlSize } from '../foundations/Theme.js';
 import { combobox as comboboxMessages } from '../foundations/messages/combobox.js';
 import { IconButton } from '../actions/Button.js';
-import { ChevronRight } from '../icons/ChevronRight.js';
-import { Close } from '../icons/Close.js';
+import { IconChevronRight } from '../icons/ChevronRight.js';
+import { IconClose } from '../icons/Close.js';
 import {
   FieldFrame,
   isLabelShown,
@@ -497,7 +497,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
                       render={
                         <IconButton
                           variant="ghost"
-                          icon={<Close />}
+                          icon={<IconClose />}
                           aria-label={removeName(text)}
                         />
                       }
@@ -541,7 +541,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
                 render={
                   <IconButton
                     variant="ghost"
-                    icon={<Close />}
+                    icon={<IconClose />}
                     aria-label={clearName}
                     title={clearName}
                   />
@@ -562,7 +562,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
                 <IconButton
                   {...triggerProps}
                   variant="ghost"
-                  icon={<ChevronRight />}
+                  icon={<IconChevronRight />}
                   {...({ 'aria-label': label != null ? undefined : ariaLabel } as {
                     'aria-label': string;
                   })}

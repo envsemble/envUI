@@ -5,7 +5,7 @@ import { Extension } from '@tiptap/core';
 import { EditorContent, useEditor, useEditorState } from '@tiptap/react';
 import { Suggestion, exitSuggestion } from '@tiptap/suggestion';
 import * as Toolbar from '../actions/Toolbar.js';
-import { AttachFile } from '../icons/AttachFile.js';
+import { IconAttachFile } from '../icons/AttachFile.js';
 import { editor as editorMessages } from '../foundations/messages/editor.js';
 import { linkDialog as linkDialogMessages } from '../foundations/messages/linkDialog.js';
 import { richText as richTextMessages } from '../foundations/messages/richText.js';
@@ -482,7 +482,7 @@ export function RichTextEditor({
           >
             {onUpload && (
               <Toolbar.Button
-                icon={<AttachFile />}
+                icon={<IconAttachFile />}
                 label={messages.attach}
                 onMouseDown={keepEditorFocus}
                 onClick={() => input.current?.click()}

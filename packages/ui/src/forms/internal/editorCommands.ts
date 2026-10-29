@@ -1,18 +1,18 @@
 import type { ComponentType } from 'react';
-import type { MaterialSymbolProps } from '../../Icon.js';
+import type { SymbolIconProps } from '../../Icon.js';
 import type { EditorMessages } from '../../foundations/messages/editor.js';
-import { Checklist } from '../../icons/Checklist.js';
-import { Code } from '../../icons/Code.js';
-import { CodeBlocks } from '../../icons/CodeBlocks.js';
-import { FormatBold } from '../../icons/FormatBold.js';
-import { FormatItalic } from '../../icons/FormatItalic.js';
-import { FormatListBulleted } from '../../icons/FormatListBulleted.js';
-import { FormatListNumbered } from '../../icons/FormatListNumbered.js';
-import { FormatQuote } from '../../icons/FormatQuote.js';
-import { FormatStrikethrough } from '../../icons/FormatStrikethrough.js';
-import { Link } from '../../icons/Link.js';
-import { Table } from '../../icons/Table.js';
-import { Title } from '../../icons/Title.js';
+import { IconChecklist } from '../../icons/Checklist.js';
+import { IconCode } from '../../icons/Code.js';
+import { IconCodeBlocks } from '../../icons/CodeBlocks.js';
+import { IconFormatBold } from '../../icons/FormatBold.js';
+import { IconFormatItalic } from '../../icons/FormatItalic.js';
+import { IconFormatListBulleted } from '../../icons/FormatListBulleted.js';
+import { IconFormatListNumbered } from '../../icons/FormatListNumbered.js';
+import { IconFormatQuote } from '../../icons/FormatQuote.js';
+import { IconFormatStrikethrough } from '../../icons/FormatStrikethrough.js';
+import { IconLink } from '../../icons/Link.js';
+import { IconTable } from '../../icons/Table.js';
+import { IconTitle } from '../../icons/Title.js';
 
 /** A formatting command of MarkdownEditor's or RichTextEditor's toolbar. */
 export type EditorCommand =
@@ -31,7 +31,7 @@ export type EditorCommand =
 
 /** What a toolbar shows for a command: its icon, and the key of its name in messages.editor. */
 export interface EditorCommandInfo {
-  icon: ComponentType<MaterialSymbolProps>;
+  icon: ComponentType<SymbolIconProps>;
   message: keyof EditorMessages;
 }
 
@@ -40,18 +40,18 @@ export interface EditorCommandInfo {
  * names come from EnvUIProvider's messages.editor.
  */
 export const editorCommands: Readonly<Record<EditorCommand, EditorCommandInfo>> = {
-  heading: { icon: Title, message: 'heading' },
-  bold: { icon: FormatBold, message: 'bold' },
-  italic: { icon: FormatItalic, message: 'italic' },
-  strike: { icon: FormatStrikethrough, message: 'strike' },
-  'bullet-list': { icon: FormatListBulleted, message: 'bulletList' },
-  'numbered-list': { icon: FormatListNumbered, message: 'numberedList' },
-  'task-list': { icon: Checklist, message: 'taskList' },
-  quote: { icon: FormatQuote, message: 'quote' },
-  'inline-code': { icon: Code, message: 'inlineCode' },
-  'code-block': { icon: CodeBlocks, message: 'codeBlock' },
-  link: { icon: Link, message: 'link' },
-  table: { icon: Table, message: 'table' },
+  heading: { icon: IconTitle, message: 'heading' },
+  bold: { icon: IconFormatBold, message: 'bold' },
+  italic: { icon: IconFormatItalic, message: 'italic' },
+  strike: { icon: IconFormatStrikethrough, message: 'strike' },
+  'bullet-list': { icon: IconFormatListBulleted, message: 'bulletList' },
+  'numbered-list': { icon: IconFormatListNumbered, message: 'numberedList' },
+  'task-list': { icon: IconChecklist, message: 'taskList' },
+  quote: { icon: IconFormatQuote, message: 'quote' },
+  'inline-code': { icon: IconCode, message: 'inlineCode' },
+  'code-block': { icon: IconCodeBlocks, message: 'codeBlock' },
+  link: { icon: IconLink, message: 'link' },
+  table: { icon: IconTable, message: 'table' },
 };
 
 /**

@@ -8,7 +8,7 @@ import {
   type CheckedProps,
   type CheckboxState,
 } from './internal/useCheckedInput.js';
-import { Check } from '../icons/Check.js';
+import { IconCheck } from '../icons/Check.js';
 import '../styles/Base.css';
 import '../styles/Checkbox.css';
 
@@ -77,7 +77,7 @@ export function Checkbox({
           onChange={handleChange}
         />
         <span className="env-checkbox-indicator env-icon" aria-hidden="true">
-          <Check />
+          <IconCheck />
         </span>
       </span>
       {label != null && (

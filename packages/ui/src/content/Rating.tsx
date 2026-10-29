@@ -5,7 +5,7 @@ import { classNames } from '../internal/classNames.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { useFormatters } from '../internal/useFormatters.js';
 import { rating as ratingMessages } from '../foundations/messages/rating.js';
-import { Star } from '../icons/Star.js';
+import { IconStar } from '../icons/Star.js';
 import '../styles/Base.css';
 import '../styles/Rating.css';
 
@@ -74,10 +74,10 @@ export function Rating({
               key={index}
               data-fill={fill === 1 ? 'full' : fill > 0 ? 'half' : undefined}
             >
-              <Star filled />
+              <IconStar filled />
               {fill > 0 && fill < 1 && (
                 <span className="env-rating-star-half">
-                  <Star filled />
+                  <IconStar filled />
                 </span>
               )}
             </span>

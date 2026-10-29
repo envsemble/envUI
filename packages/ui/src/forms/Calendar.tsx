@@ -16,8 +16,8 @@ import { useMessages } from '../internal/EnvUIContext.js';
 import { useResolvedLocale } from '../internal/useFormatters.js';
 import { calendar as calendarMessages } from '../foundations/messages/calendar.js';
 import { IconButton } from '../actions/Button.js';
-import { ChevronLeft } from '../icons/ChevronLeft.js';
-import { ChevronRight } from '../icons/ChevronRight.js';
+import { IconChevronLeft } from '../icons/ChevronLeft.js';
+import { IconChevronRight } from '../icons/ChevronRight.js';
 import {
   addMonths,
   clampDay,
@@ -223,7 +223,7 @@ export function Calendar({
       <Row align="center" gap={1} className="env-calendar-header">
         <IconButton
           variant="ghost"
-          icon={<ChevronLeft />}
+          icon={<IconChevronLeft />}
           aria-label={previousName}
           title={previousName}
           // Unavailable rather than disabled, so focus stays on the button at the earliest month.
@@ -242,7 +242,7 @@ export function Calendar({
         </div>
         <IconButton
           variant="ghost"
-          icon={<ChevronRight />}
+          icon={<IconChevronRight />}
           aria-label={nextName}
           title={nextName}
           aria-disabled={!nextAvailable || undefined}

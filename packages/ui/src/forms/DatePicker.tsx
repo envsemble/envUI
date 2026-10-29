@@ -14,8 +14,8 @@ import { type ControlSize } from '../foundations/Theme.js';
 import { datePicker as datePickerMessages } from '../foundations/messages/datePicker.js';
 import { Button } from '../actions/Button.js';
 import { Grid, Row } from '../foundations/Layout.js';
-import { CalendarClock } from '../icons/CalendarClock.js';
-import { CalendarMonth } from '../icons/CalendarMonth.js';
+import { IconCalendarClock } from '../icons/CalendarClock.js';
+import { IconCalendarMonth } from '../icons/CalendarMonth.js';
 import { Calendar, calendarActiveDay } from './Calendar.js';
 import { type FieldProps } from './internal/FieldFrame.js';
 import {
@@ -335,7 +335,7 @@ export function DatePicker({
       {...fieldProps}
       serialized={serialized}
       display={display}
-      icon={withTime ? <CalendarClock /> : <CalendarMonth />}
+      icon={withTime ? <IconCalendarClock /> : <IconCalendarMonth />}
       rootClassName="env-date-picker"
       initialFocus={calendarActiveDay}
       popupStart={

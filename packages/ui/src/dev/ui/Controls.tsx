@@ -6,10 +6,10 @@ import { IconButton } from '../../actions/Button.js';
 import { Tooltip } from '../../feedback/Tooltip.js';
 import type { TooltipSide } from '../../internal/TooltipPopup.js';
 import type { ControlSize } from '../../foundations/Theme.js';
-import { LeftPanelClose } from '../../icons/LeftPanelClose.js';
-import { LeftPanelOpen } from '../../icons/LeftPanelOpen.js';
-import { RightPanelClose } from '../../icons/RightPanelClose.js';
-import { RightPanelOpen } from '../../icons/RightPanelOpen.js';
+import { IconLeftPanelClose } from '../../icons/LeftPanelClose.js';
+import { IconLeftPanelOpen } from '../../icons/LeftPanelOpen.js';
+import { IconRightPanelClose } from '../../icons/RightPanelClose.js';
+import { IconRightPanelOpen } from '../../icons/RightPanelOpen.js';
 
 /** No wait before an icon button's tooltip: its name is all it shows, so it shows at once. */
 export const instant = 0;
@@ -78,14 +78,14 @@ export function SidebarToggle({
       icon={
         start ? (
           shown ? (
-            <LeftPanelClose />
+            <IconLeftPanelClose />
           ) : (
-            <LeftPanelOpen />
+            <IconLeftPanelOpen />
           )
         ) : shown ? (
-          <RightPanelClose />
+          <IconRightPanelClose />
         ) : (
-          <RightPanelOpen />
+          <IconRightPanelOpen />
         )
       }
       side={start ? 'inline-end' : 'inline-start'}

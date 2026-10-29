@@ -13,7 +13,7 @@ import {
   type ReactNode,
 } from 'react';
 import { IconButton } from '../actions/Button.js';
-import { Close } from '../icons/Close.js';
+import { IconClose } from '../icons/Close.js';
 import { classNames } from '../internal/classNames.js';
 import { Row } from '../foundations/Layout.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
@@ -413,7 +413,7 @@ export function DocumentTabs({
             </BaseTabs.Tab>
             <IconButton
               variant="ghost"
-              icon={<Close />}
+              icon={<IconClose />}
               aria-label={closeName(item.label)}
               aria-hidden
               tabIndex={-1}

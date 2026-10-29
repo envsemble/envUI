@@ -18,7 +18,7 @@ import { ActionElement } from '../internal/ActionElement.js';
 import { FileInput } from '../internal/FileInput.js';
 import { setRef } from '../internal/setRef.js';
 import { Spinner } from '../feedback/Spinner.js';
-import { CloudUpload } from '../icons/CloudUpload.js';
+import { IconCloudUpload } from '../icons/CloudUpload.js';
 import * as Field from './Field.js';
 import { acceptsFile } from './internal/acceptsFile.js';
 import { subscribeFormReset } from './internal/subscribeFormReset.js';
@@ -184,7 +184,7 @@ export function DropZone({
         {pending ? (
           <Spinner size={size === 'sm' ? 'sm' : 'md'} />
         ) : (
-          <DecorativeIcon>{icon ?? <CloudUpload />}</DecorativeIcon>
+          <DecorativeIcon>{icon ?? <IconCloudUpload />}</DecorativeIcon>
         )}
       </span>
       <Grid render={<span />} gap={size === 'sm' ? 0 : 1} className="env-drop-zone-text">

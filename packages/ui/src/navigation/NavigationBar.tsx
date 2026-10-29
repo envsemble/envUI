@@ -8,7 +8,7 @@ import { inSkeleton } from '../foundations/internal/inSkeleton.js';
 import { skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import { ActionElement } from '../internal/ActionElement.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
-import { MoreHoriz } from '../icons/MoreHoriz.js';
+import { IconMoreHoriz } from '../icons/MoreHoriz.js';
 import * as Menu from './Menu.js';
 import {
   countedName,
@@ -129,7 +129,7 @@ export function NavigationBar({
                     {restShown !== undefined && ' '}
                     <span className="env-navigation-bar-indicator">
                       <DecorativeIcon>
-                        <MoreHoriz />
+                        <IconMoreHoriz />
                       </DecorativeIcon>
                       {restShown !== undefined && (
                         <span className="env-navigation-bar-count" aria-hidden="true">

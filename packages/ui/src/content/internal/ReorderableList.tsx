@@ -14,7 +14,7 @@ import {
 import { createPortal } from 'react-dom';
 import { IconButton } from '../../actions/Button.js';
 import { list as listMessages } from '../../foundations/messages/list.js';
-import { DragIndicator } from '../../icons/DragIndicator.js';
+import { IconDragIndicator } from '../../icons/DragIndicator.js';
 import { classNames } from '../../internal/classNames.js';
 import { Grid } from '../../foundations/Layout.js';
 import { useMessages } from '../../internal/EnvUIContext.js';
@@ -184,7 +184,7 @@ export function ListReorderHandle({ textValue }: { textValue?: string }) {
       ref={button}
       variant="ghost"
       size="sm"
-      icon={<DragIndicator />}
+      icon={<IconDragIndicator />}
       aria-label={messages.reorder({ label: text })}
       aria-describedby={instructions}
       // Whether the row is lifted; the reorder sets it as the row lifts and drops.

@@ -82,7 +82,7 @@ export type ButtonAppearanceProps = ButtonEmphasisProps & {
    * @default false
    */
   fullWidth?: boolean;
-  /** A decorative icon before the label, such as an Add icon. */
+  /** A decorative icon before the label, such as IconAdd. */
   startIcon?: ReactNode;
   /** A decorative icon after the label, such as a ChevronRight for a next step. */
   endIcon?: ReactNode;

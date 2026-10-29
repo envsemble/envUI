@@ -2,7 +2,7 @@
 
 import { Field as BaseField } from '@base-ui/react/field';
 import { createContext, useContext, type ComponentProps, type ReactNode } from 'react';
-import { Error as ErrorIcon } from '../icons/Error.js';
+import { IconError } from '../icons/Error.js';
 import { classNames } from '../internal/classNames.js';
 import { Grid, Row } from '../foundations/Layout.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
@@ -108,7 +108,7 @@ function FieldError({ className, children, match, ...props }: ErrorProps) {
       // The message, the children or the browser's, follows the icon.
       render={({ children: message, ...errorProps }) => (
         <Row align="start" gap={2} {...errorProps}>
-          <ErrorIcon aria-hidden="true" focusable="false" />
+          <IconError aria-hidden="true" focusable="false" />
           <span>{message}</span>
         </Row>
       )}

@@ -3,7 +3,7 @@
 import { Avatar as BaseAvatar } from '@base-ui/react/avatar';
 import type { ComponentPropsWithRef } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { Check } from '../icons/Check.js';
+import { IconCheck } from '../icons/Check.js';
 import { useResolvedLocale } from '../internal/useFormatters.js';
 import '../styles/Base.css';
 import '../styles/Avatar.css';
@@ -150,7 +150,7 @@ export function Avatar({
       </BaseAvatar.Fallback>
       {selected && (
         <span className="env-avatar-check" aria-hidden="true">
-          <Check />
+          <IconCheck />
         </span>
       )}
     </BaseAvatar.Root>
