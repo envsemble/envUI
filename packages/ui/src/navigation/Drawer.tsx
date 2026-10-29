@@ -53,8 +53,8 @@ export interface DrawerProps extends Omit<ComponentPropsWithRef<'nav'>, 'childre
   destinations: readonly DrawerDestination[];
   /**
    * The open sections, for a drawer whose sections the application keeps open, such as for the
-   * next visit: each a destination with `children`, named by its `href`, or its label where it has
-   * none. Update it from onExpandedChange. Leave it out for the drawer to keep its own.
+   * next visit: each a destination with `children`, named by its `id`, else its `href`, else its
+   * label. Update it from onExpandedChange. Leave it out for the drawer to keep its own.
    */
   expanded?: readonly string[];
   /**

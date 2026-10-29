@@ -11,6 +11,12 @@ import { navigation, type NavigationMessages } from '../../foundations/messages/
 /** What every destination has, whichever navigation form shows it. */
 interface DestinationFields {
   /**
+   * A stable key for the destination, which names a Drawer section in `expanded` and keys its
+   * element; its `href`, or else its label, by default. Give one to a section whose label is
+   * translated, so the open sections keep their names in every language.
+   */
+  id?: string;
+  /**
    * The destination's name, such as Inbox: a short noun in sentence case, unique in the list. Bar
    * and Rail show it under the icon, so keep it to one or two short words there.
    */
@@ -136,9 +142,9 @@ export function destinationSections<Item extends { group?: string }>(
   return sections;
 }
 
-/** A destination's React key: its address, else its label, which the list keeps unique. */
+/** A destination's key: its id, else its address, else its label, which the list keeps unique. */
 export const destinationKey = (destination: DrawerDestination) =>
-  destination.href ?? destination.label;
+  destination.id ?? destination.href ?? destination.label;
 
 /** Whether a destination nested under these, at any depth, is the current one. */
 export function holdsCurrent(children: readonly DrawerDestination[] | undefined): boolean {

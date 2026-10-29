@@ -299,7 +299,7 @@ const projects: DrawerDestination = {
 
 A destination's `children` nest under it, at any depth. A section with `href` or `onClick` is a destination itself, with a button at its end that opens and closes it; one with neither is only its heading, a button that does. Drawer reads `group` at the top level only. In Rail and Bar, a destination whose `children` hold the current one takes the current fill and reports `aria-current="true"`, so give the top level an `href` where the same array goes to them.
 
-The sections that hold the current destination open as it becomes current; the drawer keeps the rest as people open and close them, from `defaultExpanded`. To keep them yourself, such as for the next visit, pass `expanded` and update it from `onExpandedChange`, which also asks to open the sections of a new current destination. Both name a section by its `href`, or its label where it has none, so keep those labels unique.
+The sections that hold the current destination open as it becomes current; the drawer keeps the rest as people open and close them, from `defaultExpanded`. To keep them yourself, such as for the next visit, pass `expanded` and update it from `onExpandedChange`, which also asks to open the sections of a new current destination. Both name a section by its `id`, else its `href`, else its label: give a section whose label is translated an `id`, so its name stays the same in every language.
 
 ```tsx
 const [expanded, setExpanded] = useState<string[]>([]);
@@ -340,6 +340,7 @@ The parts the anatomy doesn't show: a section's row, `env-drawer-branch-row`, an
 
 ## Changelog
 
+- **1.0.0-prerelease.5**: A destination runs `onClick(event)`, as a link or a button does, where it ran `onSelect()`, and takes an optional `id`, which names its section in `expanded` in every language.
 - **1.0.0-prerelease.5**: A Sheet is on the navigation's background, `--env-color-bg-default`, so a Drawer or a Rail in the sheet of a narrow window keeps its color.
 - **1.0.0-prerelease.4**: A destination's `children` nest under it: Drawer shows them indented, in a section that opens and closes with a chevron, open while it holds the current destination, whose links stay in the page, hidden until found. A section without `href` or `onSelect` is only its heading. `expanded`, `defaultExpanded` and `onExpandedChange` keep the open sections. Rail and Bar show the top level, and mark a destination whose section holds the current one.
 - **1.0.0-prerelease.3**: A resizable Drawer keeps each label and group heading on one line as it narrows: one that doesn't fit ends in an ellipsis, a label cut short shows in full in a tooltip, and a heading cut short gives its full text as its title. Bar and Rail are documented on this page, `drawer`, which their pages' addresses open.
