@@ -30,7 +30,9 @@ import '../styles/Base.css';
 import '../styles/MarkdownEditor.css';
 
 export type { MarkdownCommand, MarkdownLink } from './internal/markdown/markdownFormatting.js';
+/** What pickLink receives when people ask for a link. */
 export interface MarkdownLinkRequest {
+  /** The text selected at the time, which the link will wrap; empty without a selection. */
   selectedText: string;
 }
 /** The commands of MarkdownEditor's toolbar, in order: every one it offers. */

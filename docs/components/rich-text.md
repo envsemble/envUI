@@ -224,7 +224,7 @@ Each source has its `trigger`, a `label` and a `search` lookup, which receives t
 
 #### Attachments and links
 
-`onUpload` adds Attach files to the toolbar and uploads each chosen file, returning where it lives, `null` to skip it, or a promise of either; `accept` and `multiple` set what it offers. `pickLink` replaces the link dialog with the application's picker, returning the link or `null`.
+`onUpload` adds Attach files to the toolbar and uploads each chosen file, returning where it lives, `null` to skip it, or a promise of either; `accept` and `multiple` set what it offers. `pickLink` replaces the link dialog with the application's picker: it receives a `MarkdownLinkRequest` and returns a `MarkdownLink` or `null`, types `@envsemble/envui/rich-text` exports.
 
 #### Commands from outside
 
