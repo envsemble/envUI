@@ -57,6 +57,7 @@ interface PartsEntry {
   uses?: string[];
   usedBy?: string[];
   colors?: { property: string; description: string }[];
+  properties?: { property: string; use: 'set' | 'read'; description: string }[];
 }
 
 /** docs/generated/parts.json: the part contract. */
@@ -571,6 +572,26 @@ export function buildParts({
     }
   }
 
+  // The public custom properties that are neither tokens nor color properties: knobs an
+  // application sets, such as a popup's opacity, or values it reads, such as Scaffold's sticky top.
+  const properties = source.properties ?? {};
+  const styleText = readdirSync(stylesDirectory)
+    .filter((name) => name.endsWith('.css'))
+    .map((name) => readFileSync(resolve(stylesDirectory, name), 'utf8'))
+    .join('\n');
+  for (const [group, list] of Object.entries<Record<string, { use: string; description: string }>>(
+    properties,
+  ))
+    for (const [property, { use, description }] of Object.entries(list)) {
+      if (!new RegExp(`${property}(?![\\w-])`).test(styleText))
+        problems.push(`${group}: its property ${property} is in none of the style sheets`);
+      if (use !== 'set' && use !== 'read')
+        problems.push(
+          `${group}: ${property} needs a use, set or read, in packages/ui/src/parts.json`,
+        );
+      if (typeof description !== 'string' || !description.trim())
+        problems.push(`${group}: ${property} has no description in packages/ui/src/parts.json`);
+    }
   const descriptions = source.descriptions ?? {};
   const colors = source.colors ?? {};
   const registered = readColorProperties();
@@ -647,11 +668,21 @@ export function buildParts({
           description,
         })),
       }),
+      ...(properties[group.name] && {
+        properties: Object.entries<{ use: 'set' | 'read'; description: string }>(
+          properties[group.name],
+        ).map(([property, { use, description }]) => ({ property, use, description })),
+      }),
     };
     (group.shared ? output.shared : output.components)[group.name] = entry;
   }
   for (const [name, entry] of Object.entries(output.shared))
     entry.usedBy = [...(usedBy.get(name) ?? [])].sort(byText);
+  for (const name of Object.keys(properties))
+    if (!(name in output.components) && !(name in output.shared))
+      problems.push(
+        `packages/ui/src/parts.json lists properties of ${name}, which is no component`,
+      );
   for (const name of Object.keys(colors))
     if (!(name in output.components))
       problems.push(`packages/ui/src/parts.json lists colors of ${name}, which is no component`);
@@ -689,7 +720,7 @@ function contractNames(parts: PartsContract | undefined) {
     for (const [group, entry] of Object.entries(parts?.[kind] ?? {})) {
       for (const part of entry.parts)
         names.set(`${group}: .${part.class}`, { name: part.class, part: part.class });
-      for (const { property } of entry.colors ?? [])
+      for (const { property } of [...(entry.colors ?? []), ...(entry.properties ?? [])])
         names.set(`${group}: ${property}`, { name: property, color: property });
       for (const state of entry.states) {
         const carried = { name: state.attribute, attribute: state.attribute, parts: state.parts };
@@ -713,7 +744,8 @@ function contractClasses(parts: PartsContract | undefined) {
   for (const kind of ['components', 'shared'] as const)
     for (const entry of Object.values(parts?.[kind] ?? {})) {
       for (const part of entry.parts) classes.add(part.class);
-      for (const { property } of entry.colors ?? []) colors.add(property);
+      for (const { property } of [...(entry.colors ?? []), ...(entry.properties ?? [])])
+        colors.add(property);
       for (const state of entry.states)
         for (const part of state.parts ?? []) {
           const key = `${part} ${state.attribute}`;

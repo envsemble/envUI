@@ -1,5 +1,5 @@
 {
-  "$comment": "The hand-written part of the part contract, which scripts/docs/GenerateParts.ts merges into docs/generated/parts.json. descriptions: one line per part class, by component. roots: a component whose root is not env-<its name>. shared: anatomy several components render, by its class prefix. placed: a class that no prefix places, and its group. colors: the color properties of each component, public custom properties registered so they don’t inherit, with what each colors.",
+  "$comment": "The hand-written part of the part contract, which scripts/docs/GenerateParts.ts merges into docs/generated/parts.json. descriptions: one line per part class, by component. roots: a component whose root is not env-<its name>. shared: anatomy several components render, by its class prefix. placed: a class that no prefix places, and its group. colors: the color properties of each component, public custom properties registered so they don’t inherit, with what each colors. properties: the other public custom properties of each component, with whether an application sets it or reads it and what it does; every other custom property a component declares is private.",
   "roots": {
     "ConfirmDialog": "env-dialog"
   },
@@ -944,6 +944,56 @@
       "--env-tooltip-container": "The fill.",
       "--env-tooltip-content": "The text and the keys of a shortcut.",
       "--env-tooltip-outline": "The edge."
+    }
+  },
+  "properties": {
+    "IconButton": {
+      "--env-icon-button-hit-area": {
+        "use": "set",
+        "description": "The size of an icon button's pointer target, which a container sets for the icon buttons in it, such as the touch height under a coarse pointer; unset, the button's own box."
+      }
+    },
+    "LineArt": {
+      "--env-line-art-duration": {
+        "use": "set",
+        "description": "How long a drawing's motion takes, on the drawing: ten times the slow motion duration by default, and play half as long again."
+      }
+    },
+    "Popup": {
+      "--env-popup-opacity": {
+        "use": "set",
+        "description": "How much of a frosted popup's fill covers what is behind it."
+      },
+      "--env-popup-blur": {
+        "use": "set",
+        "description": "How much a frosted popup blurs what shows through it."
+      },
+      "--env-popup-shadow": {
+        "use": "set",
+        "description": "The soft shadow a frosted popup, the command palette and a dialog cast; none where they are solid."
+      }
+    },
+    "Scaffold": {
+      "--env-scaffold-sticky-top": {
+        "use": "read",
+        "description": "How far below the window's top sticky content in the body sticks: under the top bar where the document scrolls."
+      }
+    },
+    "TableOfContents": {
+      "--env-table-of-contents-depth": {
+        "use": "read",
+        "description": "An item's level below the top, from 1, which the component sets on each nested item and its indent reads."
+      }
+    },
+    "Tooltip": {
+      "--env-tooltip-opacity": {
+        "use": "set",
+        "description": "How much of a tooltip's strong fill covers what is behind it."
+      },
+      "--env-tooltip-shadow": {
+        "use": "set",
+        "description": "The small shadow beside a tooltip; none where it is solid."
+      }
     }
   }
 }

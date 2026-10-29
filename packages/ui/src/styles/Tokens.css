@@ -196,6 +196,7 @@
   --env-icon-size-lg: 1.25rem;
   --env-icon-size-md: 1.125rem;
   --env-icon-size-sm: var(--env-control-icon-size);
+  --env-line-height-body: 1.4;
   --env-motion-duration-fast: 0.12s;
   --env-motion-duration-medium: 0.16s;
   --env-motion-duration-slow: 0.24s;

@@ -2599,6 +2599,13 @@
           "property": "--env-button-selected-content",
           "description": "The icon and label of a pressed toggle."
         }
+      ],
+      "properties": [
+        {
+          "property": "--env-icon-button-hit-area",
+          "use": "set",
+          "description": "The size of an icon button's pointer target, which a container sets for the icon buttons in it, such as the touch height under a coarse pointer; unset, the button's own box."
+        }
       ]
     },
     "Kbd": {
@@ -2690,6 +2697,13 @@
           "parts": [
             "env-line-art"
           ]
+        }
+      ],
+      "properties": [
+        {
+          "property": "--env-line-art-duration",
+          "use": "set",
+          "description": "How long a drawing's motion takes, on the drawing: ten times the slow motion duration by default, and play half as long again."
         }
       ]
     },
@@ -4377,6 +4391,13 @@
       ],
       "uses": [
         "Button"
+      ],
+      "properties": [
+        {
+          "property": "--env-scaffold-sticky-top",
+          "use": "read",
+          "description": "How far below the window's top sticky content in the body sticks: under the top bar where the document scrolls."
+        }
       ]
     },
     "SegmentedControl": {
@@ -5135,6 +5156,13 @@
             "env-table-of-contents-link"
           ]
         }
+      ],
+      "properties": [
+        {
+          "property": "--env-table-of-contents-depth",
+          "use": "read",
+          "description": "An item's level below the top, from 1, which the component sets on each nested item and its indent reads."
+        }
       ]
     },
     "Tabs": {
@@ -5835,6 +5863,18 @@
           "property": "--env-tooltip-outline",
           "description": "The edge."
         }
+      ],
+      "properties": [
+        {
+          "property": "--env-tooltip-opacity",
+          "use": "set",
+          "description": "How much of a tooltip's strong fill covers what is behind it."
+        },
+        {
+          "property": "--env-tooltip-shadow",
+          "use": "set",
+          "description": "The small shadow beside a tooltip; none where it is solid."
+        }
       ]
     },
     "TopBar": {
@@ -6330,6 +6370,23 @@
           "parts": [
             "env-popup"
           ]
+        }
+      ],
+      "properties": [
+        {
+          "property": "--env-popup-opacity",
+          "use": "set",
+          "description": "How much of a frosted popup's fill covers what is behind it."
+        },
+        {
+          "property": "--env-popup-blur",
+          "use": "set",
+          "description": "How much a frosted popup blurs what shows through it."
+        },
+        {
+          "property": "--env-popup-shadow",
+          "use": "set",
+          "description": "The soft shadow a frosted popup, the command palette and a dialog cast; none where they are solid."
         }
       ],
       "usedBy": [

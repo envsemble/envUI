@@ -1,0 +1,15 @@
+{
+  "$comment": "The public tokens that DTCG 2025.10 can't hold, which src/styles/TokensHandwritten.css declares on every theme boundary: a length from a viewport clamp or a calculation, and a font shorthand that grows with the window. The token build lists each in src/generated/tokens.json with handwritten: true, its value as TokensHandwritten.css declares it, and fails when the style sheet doesn't declare it.",
+  "radius.full": {
+    "type": "dimension",
+    "description": "The full corner of a pill, such as a button, a field, a badge or a navigation item: half the tallest single-line control, the large control height or the touch height, whichever is more, so anything taller keeps the same corners and becomes a rounded rectangle."
+  },
+  "viewport-gutter": {
+    "type": "dimension",
+    "description": "The least space between the window's edge and a dialog, the command palette or rich text suggestions: 0.75 to 1 rem, with the window."
+  },
+  "type.display": {
+    "type": "typography",
+    "description": "Display text, Text's display variant: medium, 1.75 to 2.75 rem with the window, set tight."
+  }
+}

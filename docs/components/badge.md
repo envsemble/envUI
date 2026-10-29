@@ -215,7 +215,7 @@ const destinations: Destination[] = [
 
 ### Composition
 
-The parts are the pill, `env-badge`, its icon, `env-badge > env-icon`, and its label, `env-badge-label`. A count is `env-badge[data-count]`, with `env-badge-count-label` for its `aria-label`; DiffStat has `env-diff-stat-additions` and `env-diff-stat-deletions`. A control, such as a Button, sets the badges, counts and DiffStats inside it through the `--env-badge-*`, `--env-badge-count-*` and `--env-diff-stat-*` properties.
+The parts are the pill, `env-badge`, its icon, `env-badge > env-icon`, and its label, `env-badge-label`. A count is `env-badge[data-count]`, with `env-badge-count-label` for its `aria-label`; DiffStat has `env-diff-stat-additions` and `env-diff-stat-deletions`.
 
 ### Customize
 

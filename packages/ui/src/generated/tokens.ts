@@ -2133,6 +2133,17 @@ export const tokens = {
       'dark-high-contrast': '1rem',
     },
   },
+  /** The line height of a theme boundary's text, which an application may set: 1.4 times the font size. */
+  'line-height.body': {
+    cssVariable: '--env-line-height-body',
+    type: 'number',
+    values: {
+      light: '1.4',
+      dark: '1.4',
+      'light-high-contrast': '1.4',
+      'dark-high-contrast': '1.4',
+    },
+  },
   /** A small change, such as a state layer or a color under the pointer: 120 ms. */
   'motion.duration.fast': {
     cssVariable: '--env-motion-duration-fast',
@@ -2197,6 +2208,17 @@ export const tokens = {
       dark: 'cubic-bezier(0.3, 0, 0.8, 0.15)',
       'light-high-contrast': 'cubic-bezier(0.3, 0, 0.8, 0.15)',
       'dark-high-contrast': 'cubic-bezier(0.3, 0, 0.8, 0.15)',
+    },
+  },
+  /** The full corner of a pill, such as a button, a field, a badge or a navigation item: half the tallest single-line control, the large control height or the touch height, whichever is more, so anything taller keeps the same corners and becomes a rounded rectangle. */
+  'radius.full': {
+    cssVariable: '--env-radius-full',
+    type: 'dimension',
+    values: {
+      light: 'calc(max(3rem, 2.75rem) / 2)',
+      dark: 'calc(max(3rem, 2.75rem) / 2)',
+      'light-high-contrast': 'calc(max(3rem, 2.75rem) / 2)',
+      'dark-high-contrast': 'calc(max(3rem, 2.75rem) / 2)',
     },
   },
   /** Medium corners: fields, tables, alerts and other blocks. */
@@ -2673,6 +2695,19 @@ export const tokens = {
       },
     },
   },
+  /** Display text, Text's display variant: medium, 1.75 to 2.75 rem with the window, set tight. */
+  'type.display': {
+    cssVariable: '--env-type-display',
+    type: 'typography',
+    values: {
+      light: "500 clamp(1.75rem, 1.25rem + 2.5vw, 2.75rem) / 1.1 'envUI Geist', sans-serif",
+      dark: "500 clamp(1.75rem, 1.25rem + 2.5vw, 2.75rem) / 1.1 'envUI Geist', sans-serif",
+      'light-high-contrast':
+        "500 clamp(1.75rem, 1.25rem + 2.5vw, 2.75rem) / 1.1 'envUI Geist', sans-serif",
+      'dark-high-contrast':
+        "500 clamp(1.75rem, 1.25rem + 2.5vw, 2.75rem) / 1.1 'envUI Geist', sans-serif",
+    },
+  },
   /** A page's heading: Text's headline variant, medium. */
   'type.headline': {
     cssVariable: '--env-type-headline',
@@ -2741,6 +2776,17 @@ export const tokens = {
         'letter-spacing': '0rem',
         'line-height': '1.4em',
       },
+    },
+  },
+  /** The least space between the window's edge and a dialog, the command palette or rich text suggestions: 0.75 to 1 rem, with the window. */
+  'viewport-gutter': {
+    cssVariable: '--env-viewport-gutter',
+    type: 'dimension',
+    values: {
+      light: 'clamp(0.75rem, 2vw, 1rem)',
+      dark: 'clamp(0.75rem, 2vw, 1rem)',
+      'light-high-contrast': 'clamp(0.75rem, 2vw, 1rem)',
+      'dark-high-contrast': 'clamp(0.75rem, 2vw, 1rem)',
     },
   },
   /** 52.5 rem: where expanded starts, such as a tablet held sideways. */

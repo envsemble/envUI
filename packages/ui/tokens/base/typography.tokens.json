@@ -55,6 +55,13 @@
       }
     }
   },
+  "line-height": {
+    "$type": "number",
+    "body": {
+      "$description": "The line height of a theme boundary's text, which an application may set: 1.4 times the font size.",
+      "$value": 1.4
+    }
+  },
   "type": {
     "$type": "typography",
     "$description": "Font shorthands for the type roles, as the `font` property takes them: weight, size, line height and family. The line height is in em, so it follows the role's own size.",

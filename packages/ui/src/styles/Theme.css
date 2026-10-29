@@ -31,7 +31,7 @@ html.env-theme > body {
   font: var(--env-type-body);
   /* A unitless line height, so content in another font size keeps lines in proportion to it; set
      --env-line-height-body to change it. */
-  line-height: var(--env-line-height-body, 1.4);
+  line-height: var(--env-line-height-body);
 }
 .env-theme h1 {
   margin: 0;
