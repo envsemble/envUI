@@ -21,20 +21,6 @@
      rule takes one type selector more, :not(env-none), which every element matches. It wins those
      ties whatever the order, and still loses to a rule that outweighs it by more, as before. */
 
-  /* How deep the pulse goes in each theme: the strong tone mixes the fill toward the text color by
-     --env-skeleton-deepen, the faint one fades it by --env-skeleton-fade, and the skeleton's own
-     surfaces take the text color by up to --env-skeleton-tint. Dark goes deeper, as a lighter step
-     shows less there. Set on every theme boundary, so the nearest one decides. */
-  .env-theme {
-    --env-skeleton-deepen: 11%;
-    --env-skeleton-fade: 45%;
-    --env-skeleton-tint: 7%;
-  }
-  .env-theme[data-env-theme='dark'] {
-    --env-skeleton-deepen: 14%;
-    --env-skeleton-tint: 9%;
-  }
-
   /* Where the pulse is, from the strong tone (0) to the faint one (1). The root animates it, and
      everything inside inherits the paint it sets. Registered, so it interpolates; its keyframes are
      plain numbers, as Firefox doesn't interpolate a registered property between keyframes that use
@@ -49,18 +35,19 @@
     --env-skeleton-pulse: 0;
     --env-skeleton-fill: var(--env-color-bg-neutral-muted-hover);
     /* The two tones of a bar: the fill a little toward the text color, darker in light and lighter
-       in dark, and the fill faded toward the surface. The surfaces' tint carries a quarter of the
-       change, so the bars take three quarters of the depth: bar and surface together change about
-       as much as a bar alone would, and the bars keep their contrast against their surface. */
-    --env-skeleton-strong: color-mix(
-      in oklab,
-      var(--env-skeleton-fill),
-      var(--env-color-fg-default) calc(var(--env-skeleton-deepen) * 0.75)
+       in dark, and the fill faded toward the surface. Dark goes deeper, 14 % to light's 11 %, as a
+       lighter step shows less there; light-dark() follows the nearest theme's color scheme. The
+       surfaces' tint carries a quarter of the change, so the bars take three quarters of the
+       depth: bar and surface together change about as much as a bar alone would, and the bars keep
+       their contrast against their surface. */
+    --env-skeleton-strong: light-dark(
+      color-mix(in oklab, var(--env-skeleton-fill), var(--env-color-fg-default) calc(11% * 0.75)),
+      color-mix(in oklab, var(--env-skeleton-fill), var(--env-color-fg-default) calc(14% * 0.75))
     );
     --env-skeleton-faint: color-mix(
       in srgb,
       var(--env-skeleton-fill),
-      transparent calc(var(--env-skeleton-fade) * 0.75)
+      transparent calc(45% * 0.75)
     );
     /* The tone of every bar and shape at this point of the pulse. */
     --env-skeleton-tone: color-mix(
@@ -80,13 +67,19 @@
        its mask tile. */
     --env-skeleton-rect: url("data:image/svg+xml,%3Csvg xmlns='http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Crect width='100%25' height='100%25' rx='4'/%3E%3C/svg%3E");
     /* A tint of the text color over the skeleton's own surfaces, such as a card or a row, strongest
-       with the bars' strong tone, so the whole skeleton pulses as one. */
+       with the bars' strong tone, so the whole skeleton pulses as one: 7 % in light, 9 % in dark. */
     --env-skeleton-overlay: linear-gradient(
-      color-mix(
-          in srgb,
-          var(--env-color-fg-default)
-            calc((1 - var(--env-skeleton-pulse)) * var(--env-skeleton-tint)),
-          transparent
+      light-dark(
+          color-mix(
+            in srgb,
+            var(--env-color-fg-default) calc((1 - var(--env-skeleton-pulse)) * 7%),
+            transparent
+          ),
+          color-mix(
+            in srgb,
+            var(--env-color-fg-default) calc((1 - var(--env-skeleton-pulse)) * 9%),
+            transparent
+          )
         )
         0 0
     );
