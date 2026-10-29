@@ -170,7 +170,7 @@ CalendarHeatmap takes `data`, one entry per day with its `date`, as YYYY-MM-DD, 
 
 #### Languages
 
-EnvUIProvider's `locale` names the months, weekdays and dates, through `Intl`, and `messages.calendarHeatmap` writes the legend's Less and More; `monthLabels`, `weekdayLabels`, `lessLabel` and `moreLabel` set them for one heatmap. Weeks start on the locale's first day, as on Calendar; `weekStart` sets another, from `0` for Sunday to `6` for Saturday, such as `weekStart={1}` for Monday.
+EnvUIProvider's `locale` names the months, weekdays and dates, through `Intl`; `monthLabels`, `weekdayLabels`, `lessLabel` and `moreLabel` set them for one heatmap. Weeks start on the locale's first day, as on Calendar; `weekStart` sets another, from `0` for Sunday to `6` for Saturday, such as `weekStart={1}` for Monday.
 
 ```tsx
 <EnvUIProvider messages={{ calendarHeatmap: { less: 'Quieter', more: 'Busier' } }}>

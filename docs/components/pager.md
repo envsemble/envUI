@@ -100,7 +100,7 @@ Use the title as the page's heading reads it. Leave Next or Back out of it: the 
 
 ### envUI provides
 
-- A `nav` landmark named Previous and next content, from `messages.pager`.
+- A `nav` landmark named Previous and next content.
 - Native links with `rel="prev"` and `rel="next"`, named with their direction, such as Up next Invite your team.
 - Links at least 2.75 rem tall, and decorative icons hidden.
 
@@ -136,7 +136,7 @@ Pager.Previous and Pager.Next also stand alone, outside Pager.Root, such as one 
 
 ### Composition
 
-The pager is the `nav` landmark `env-pager`; each link is `env-pager-link-previous` or `env-pager-link-next`. The direction labels and the landmark's name come from EnvUIProvider's `messages.pager`.
+The pager is the `nav` landmark `env-pager`; each link is `env-pager-link-previous` or `env-pager-link-next`.
 
 ## Changelog
 

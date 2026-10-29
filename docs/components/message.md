@@ -153,7 +153,7 @@ A MessageList holds the conversation, oldest first, and each Message in it takes
 
 #### Actions and status
 
-`actions` holds small actions below the message, such as Copy or Try again: buttons without a variant or size of their own are small ghost buttons. `status` is `sending`, with a spinner and Sending, or `failed`, with an error icon and Not sent; `statusLabel` replaces the words, which otherwise come from EnvUIProvider's `messages.message`.
+`actions` holds small actions below the message, such as Copy or Try again: buttons without a variant or size of their own are small ghost buttons. `status` is `sending`, with a spinner and Sending, or `failed`, with an error icon and Not sent; `statusLabel` replaces the words.
 
 ```tsx
 <Message

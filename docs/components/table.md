@@ -203,7 +203,6 @@ Start each row with the cell that identifies it, which titles the row when rows 
 - A `caption` or an `aria-label` for every table.
 - The sorting, the selection control and the row actions, named for the row they act on.
 - A `label` on every cell after the first in a stacking table.
-- The sort and resize words in the page's language, through `messages.table`.
 
 ## Compose
 

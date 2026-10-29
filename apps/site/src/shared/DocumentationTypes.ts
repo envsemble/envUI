@@ -210,4 +210,14 @@ export interface DocumentationEntry {
   sections?: DocumentationSection[];
   /** The exports a component page documents, with namespaces expanded to their parts. */
   props?: Record<string, ExportEntry>;
+  /** The built-in strings the page's exports show, which EnvUIProvider's `messages` overrides. */
+  strings?: DocumentationString[];
+}
+
+/** One of envUI's built-in strings: its namespace and key, its English default and what it names. */
+export interface DocumentationString {
+  namespace: string;
+  key: string;
+  value: string;
+  description: string;
 }

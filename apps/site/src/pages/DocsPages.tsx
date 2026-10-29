@@ -467,6 +467,33 @@ function ColorProperties({ components }: { components: readonly string[] }) {
   );
 }
 
+/** The built-in strings a page's exports show, each a key of EnvUIProvider's `messages`. */
+function Strings({ document }: { document: Document }) {
+  const strings = document.strings ?? [];
+  if (!strings.length) return null;
+  return (
+    <Column render={<section />} gap={5} aria-labelledby="strings">
+      <Text render={<h2 />} variant="headline" id="strings">
+        Strings
+      </Text>
+      <Text emphasis="muted">
+        EnvUIProvider&apos;s <Code>messages</Code> overrides each, and a component&apos;s own label
+        prop wins over it.
+      </Text>
+      <DescriptionList.Root className="docs-parts">
+        {strings.map((string) => (
+          <DescriptionList.Item
+            key={`${string.namespace}.${string.key}`}
+            label={<Code>{`messages.${string.namespace}.${string.key}`}</Code>}
+          >
+            <Code>{string.value}</Code> {string.description}
+          </DescriptionList.Item>
+        ))}
+      </DescriptionList.Root>
+    </Column>
+  );
+}
+
 /**
  * A component's or a pattern's page in the Docs, its guide to using it in code, which complements
  * its page in the catalogue rather than repeating it: how to import it, its common uses, how its
@@ -513,6 +540,7 @@ export function DocsReferencePage({ page }: { page: RoutePage }) {
         )}
         <PartNames components={metadata?.components ?? []} />
         <ColorProperties components={metadata?.components ?? []} />
+        <Strings document={document} />
         <PageChangelog document={document} />
       </Column>
     </>

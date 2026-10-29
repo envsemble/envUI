@@ -142,7 +142,6 @@ A tab holds its icon, its name and its close button, and no other controls.
 ### You provide
 
 - An `aria-label` for the strip, and the `tabpanel` with `panelId`, named after the active document.
-- The labels in the application's language, through `messages.documentTabs`.
 
 ## Compose
 
@@ -172,7 +171,7 @@ Each tab opens a context menu with Close on right click, long press, the <kbd>Me
 
 ### Composition
 
-`closeLabel`, a function of the tab's label, `closeAllLabel` and `contextMenuLabel` name the close actions and the menu, from EnvUIProvider's `messages.documentTabs` by default. `className`, `style`, `ref` and the other native props reach the root, `env-document-tabs`, the bar that holds the strip and the end content. Each item, `env-document-tabs-item`, lays out its tab beside its close button, an IconButton with a cross hidden from assistive technology.
+`closeLabel`, a function of the tab's label, `closeAllLabel` and `contextMenuLabel` name the close actions and the menu. `className`, `style`, `ref` and the other native props reach the root, `env-document-tabs`, the bar that holds the strip and the end content. Each item, `env-document-tabs-item`, lays out its tab beside its close button, an IconButton with a cross hidden from assistive technology.
 
 ## Changelog
 

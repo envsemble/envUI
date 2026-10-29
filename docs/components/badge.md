@@ -153,7 +153,7 @@ Show 99+ beyond two digits, and give the full count in the count's name for assi
 
 - The label as text, read in place; the icon hidden.
 - A count's `aria-label` read instead of its number.
-- A DiffStat named once, such as 12 added lines and 3 removed lines, from `messages.diffStat.label` or `formatLabel`.
+- A DiffStat named once, such as 12 added lines and 3 removed lines, or from `formatLabel`.
 
 ### You provide
 
@@ -195,7 +195,7 @@ A Badge's label is its `children`, a state, a name or a category in a word or tw
 
 #### DiffStat
 
-DiffStat shows `additions` as +12 in the success tone and `deletions` as −3 in the danger tone, in the locale's digits. It is named once for assistive technology, such as 12 added lines and 3 removed lines, from EnvUIProvider's `messages.diffStat.label` or its own `formatLabel`.
+DiffStat shows `additions` as +12 in the success tone and `deletions` as −3 in the danger tone, in the locale's digits. It is named once for assistive technology, such as 12 added lines and 3 removed lines,, or from its own `formatLabel`.
 
 ```tsx
 <DiffStat additions={12} deletions={3} />

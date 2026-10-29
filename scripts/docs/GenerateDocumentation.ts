@@ -24,6 +24,7 @@ import { writeSearchIndex } from '../site/SearchIndex.ts';
 import { documentationDirectory, generatedFile, pageKindOf, readProps } from './Schema.ts';
 import { readDocumentation } from './Reader.ts';
 import { documentedExports } from './Compiler.ts';
+import { readMessages, stringsOf } from './Messages.ts';
 
 export {
   codeSubsections,
@@ -60,6 +61,7 @@ export {
 export function generateDocumentation() {
   const props = readProps();
   const documents = readDocumentation(documentationDirectory, { props });
+  const messages = readMessages();
   const entries = documents.map((document) => {
     const { yaml: _yaml, frontmatter, sections, ...entry } = document;
     const kind = pageKindOf(document.path);
@@ -103,6 +105,9 @@ export function generateDocumentation() {
             name,
             props!.exports[name],
           ]),
+        ),
+        strings: stringsOf(frontmatter.components ?? [], messages).flatMap(
+          (entry) => entry.strings,
         ),
       }),
     };

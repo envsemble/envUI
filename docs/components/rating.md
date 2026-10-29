@@ -102,7 +102,6 @@ Keep to one scale on a page, so ratings compare at a glance.
 ### You provide
 
 - Text that says whose rating it is.
-- `messages.rating.label` in the page's language.
 - A separate input, such as a RadioGroup, where people give a rating.
 
 ## Compose
@@ -117,7 +116,7 @@ A Rating shows `value`, from 0 to `max`, such as 4.5, rounded to the nearest hal
 
 #### Name and language
 
-The stars are one image, named such as 4.5 out of 5 stars, from EnvUIProvider's `messages.rating.label`, or `formatLabel` for one rating, which receives the shown value and the number of stars. The number from `showValue` is hidden from assistive technology, since the name says it.
+The stars are one image, named such as 4.5 out of 5 stars, or by `formatLabel` for one rating, which receives the shown value and the number of stars. The number from `showValue` is hidden from assistive technology, since the name says it.
 
 ```tsx
 const messages = {

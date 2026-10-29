@@ -170,7 +170,7 @@ One task per dialog, closed by its built-in button.
 
 A Dialog opens from its `trigger`, such as a Button, and holds its `title`, which names it, a `description`, its content as `children`, and its own `actions`, after the built-in close button, with the primary action last.
 
-- `closeLabel` names the close button, Close by default from EnvUIProvider's `messages.dialog.close`, or Cancel for a decision.
+- `closeLabel` names the close button; name it Cancel for a decision.
 - Leave it uncontrolled, or control it with `open` and `onOpenChange`, which receives the requested state and why: the trigger, <kbd>Esc</kbd>, an outside press, the close button or a DialogClose.
 - `defaultOpen` opens it on the first render.
 

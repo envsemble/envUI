@@ -118,7 +118,6 @@ Show the total once it is known. Hide Pagination where the items fit on one page
 
 - An `aria-label` that names what it pages through, where a page has several navigation landmarks.
 - `pending` while a page loads, and the page itself.
-- The strings in the application's language, through `messages.pagination`.
 
 ## Compose
 
@@ -136,7 +135,7 @@ Show the total once it is known. Hide Pagination where the items fit on one page
 
 #### Strings
 
-EnvUIProvider's `messages.pagination` sets the names, `label`, `previous` and `next`, and the `range` for every pager inside it, and its `locale` formats the numbers. `aria-label`, `previousLabel`, `nextLabel` and `formatRange` set them for one pager: `formatRange` receives the first and last item shown, the total, the page and the page count.
+EnvUIProvider's `locale` formats the numbers. `aria-label`, `previousLabel`, `nextLabel` and `formatRange` set the names and the range for one pager: `formatRange` receives the first and last item shown, the total, the page and the page count.
 
 ```tsx
 const messages = {

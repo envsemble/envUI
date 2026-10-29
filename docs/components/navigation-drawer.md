@@ -253,7 +253,7 @@ Keep a resizable drawer on its own background, so its handle is the edge of a su
 - A `nav` landmark named Main, of native links and buttons, with `aria-current="page"` on the current one.
 - A count in its destination's name, such as Inbox, 12 new.
 - The drawer's group headings at `headingLevel`, each naming its group's list.
-- A section's button, with `aria-expanded` and the list it opens in `aria-controls`: the section's own item where it has no page, else a button at the end of its link, named with `messages.navigation.contents`, such as Projects contents. A closed section keeps its links in the page, hidden until found, so search engines follow them and find in page opens the section. The sections that hold the current destination open, and the expand animation and the chevron's flip stop under reduced motion.
+- A section's button, with `aria-expanded` and the list it opens in `aria-controls`: the section's own item where it has no page, else a button at the end of its link, named such as Projects contents. A closed section keeps its links in the page, hidden until found, so search engines follow them and find in page opens the section. The sections that hold the current destination open, and the expand animation and the chevron's flip stop under reduced motion.
 - The bar's More as a menu button, named with its counts and whether it holds the current page.
 - Items at least 2.75 rem tall in the bar, and a 2.75 rem touch target in the drawer on coarse pointers.
 - With `resizable`, a focusable separator on the drawer's end edge, named Resize navigation, with its width as its value.
@@ -262,7 +262,7 @@ Keep a resizable drawer on its own background, so its handle is the edge of a su
 
 - `current` from the router, on the nested destination itself where the page is in a section, and the routing behind `href` through `LinkProvider`.
 - An `aria-label` on each navigation landmark when a page has more than one.
-- Unique labels, and `messages.navigation` in the application's language.
+- Unique labels.
 - Names for the controls in the header and the footer.
 
 ## Compose
@@ -324,7 +324,7 @@ A NavigationRail's `header` holds the main action or a button that opens the nav
 <NavigationBar background="page" aria-label="Project" destinations={destinations} />
 ```
 
-`background` is `default`, the navigation's fill, the same as TopBar's, or `page`, the page's background. `aria-label` names the landmark, Main by default from EnvUIProvider's `messages.navigation`; give each navigation landmark of a page its own.
+`background` is `default`, the navigation's fill, the same as TopBar's, or `page`, the page's background. `aria-label` names the landmark; give each navigation landmark of a page its own.
 
 #### Resizable
 

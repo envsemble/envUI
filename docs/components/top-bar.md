@@ -136,7 +136,7 @@ Put it in a Scaffold's top bar region, which is the banner landmark.
 
 #### Page progress
 
-`loading` shows a thin bar along the bottom edge while the next page loads, after a short delay so quick loads never flash it. `loadingLabel` names it, Loading page by default, from EnvUIProvider's `messages.topBar`.
+`loading` shows a thin bar along the bottom edge while the next page loads, after a short delay so quick loads never flash it. `loadingLabel` names it.
 
 ```tsx
 // True while the next page loads from the server.

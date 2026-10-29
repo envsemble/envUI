@@ -173,7 +173,7 @@ Panes.Root takes a `behavior`: `supporting` holds Panes.Main and Panes.Supportin
 Panes.Supporting and Panes.List take a `label`, which names their region; on Panes.Main and Panes.Detail it is optional, and makes the pane a region landmark, for the panes of a page's main layout.
 
 - Panes.Trigger is a Button, `primary` by default, that opens the supporting sheet and hides while the panes sit side by side.
-- `closeLabel` names the sheet's close button, Close by default, and `backLabel` the back button, Back by default, from EnvUIProvider's `messages.panes`; name where it goes, such as Inbox.
+- `closeLabel` names the sheet's close button, and `backLabel` the back button: name where it goes, such as Inbox.
 - Set `aria-current` on the list's current row.
 
 ```tsx

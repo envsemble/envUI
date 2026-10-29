@@ -195,7 +195,6 @@ Where the color carries text, check its contrast and say what is wrong under the
 
 - A group named by `label`, with the area, sliders and fields named after their channels, such as Hue and Alpha, in the EnvUIProvider's language.
 - Value texts that say each channel and the color's name, such as dark vibrant blue.
-- Names for the format menu, the channels' letters, copy, the eyedropper and the swatches from EnvUIProvider's `messages.colorPicker`.
 - A ColorSwatch alone named by its color's description; beside its value or label, the sample is hidden from assistive technology.
 
 ### You provide

@@ -144,7 +144,6 @@ Activate a panel when it opens, and keep at most one maximized.
 - A positioned container with a height, and `inert` on the content beneath while a panel fills the region.
 - A PanelDock.Header with a title in each panel.
 - `attention` text for a tab's dot, and a `tooltip` where labels truncate.
-- The names in the page's language, through `messages.panelDock`.
 
 ## Compose
 
@@ -215,7 +214,7 @@ Below `stackBelow`, 40 rem of the dock's own width, a CSS length or a number of 
 Put the dock in a positioned container with a height, or directly in a Scaffold's body.
 
 - Set `inert` on the content beneath while a panel is maximized.
-- `minimizedLabel`, `openLabel`, `closeLabel` and `resizeLabel` name the list of tabs, a tab's buttons and the resize handles for one dock, from EnvUIProvider's `messages.panelDock` by default.
+- `minimizedLabel`, `openLabel`, `closeLabel` and `resizeLabel` name the list of tabs, a tab's buttons and the resize handles for one dock.
 
 The parts are the dock, `env-panel-dock`; each panel, `env-panel-dock-panel`, with its resize handle, `env-panel-dock-resize-handle`, its header, `env-panel-dock-header`, which holds the title, `env-panel-dock-title`, the meta, `env-panel-dock-meta`, the actions, `env-panel-dock-actions`, and the window controls, `env-panel-dock-controls`, and its content, `env-panel-dock-content`; and the tabs, `env-panel-dock-tab`, in the strip, `env-panel-dock-strip`. The dock has `data-tabs` while it shows tabs.
 

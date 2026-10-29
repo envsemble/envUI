@@ -134,7 +134,7 @@ Pair the trail with the main navigation: it never replaces it.
 
 ### envUI provides
 
-- A `nav` landmark named Breadcrumb, from `messages.breadcrumbs`, around an ordered list.
+- A `nav` landmark named Breadcrumb around an ordered list.
 - `aria-current="page"` on the last level, which is never a link.
 - Separators hidden from assistive technology, and full labels for those cut short.
 
@@ -170,7 +170,7 @@ Give levels `onClick` where the application has no URLs. Pressing one makes it t
 
 ### Composition
 
-The landmark is named Breadcrumb, from EnvUIProvider's `messages.breadcrumbs`; `aria-label` tells two trails on a page apart. Pair it with the main navigation, such as a NavigationDrawer. Each level sits in an item, `env-breadcrumbs-item`. The chevrons mirror in right-to-left text.
+The landmark is named Breadcrumb; `aria-label` tells two trails on a page apart. Pair it with the main navigation, such as a NavigationDrawer. Each level sits in an item, `env-breadcrumbs-item`. The chevrons mirror in right-to-left text.
 
 ## Changelog
 

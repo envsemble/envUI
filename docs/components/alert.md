@@ -176,7 +176,7 @@ Info and success alerts take the `status` role and are read politely. `announce`
 
 #### Dismiss
 
-`onDismiss` shows a dismiss button that calls it; the application removes the alert, and moves focus, such as to the control the alert concerned. Offer it only where the message can safely be hidden. `dismissLabel` names the button, Dismiss by default or EnvUIProvider's `messages.alert.dismiss`, and is also its tooltip.
+`onDismiss` shows a dismiss button that calls it; the application removes the alert, and moves focus, such as to the control the alert concerned. Offer it only where the message can safely be hidden. `dismissLabel` names the button, and is also its tooltip.
 
 ### Composition
 

@@ -126,7 +126,7 @@ Use the headings' own words, or a short name a reader would find on the page. Ke
 
 ### envUI provides
 
-- A `nav` landmark named On this page, from `messages.tableOfContents`, around nested ordered lists of links.
+- A `nav` landmark named On this page around nested ordered lists of links.
 - `aria-current="location"` on the link of the section the reader is in.
 - Links that scroll smoothly, or at once where reduced motion is preferred, add the section to the address and move focus to it, so reading and the keyboard go on from there.
 - A shape hidden from assistive technology, which reads the current link instead; in forced colors it takes the system's text color, its width still marking the place.
@@ -171,7 +171,7 @@ The current section is the last one whose start, less its scroll margin, has pas
 
 ### Composition
 
-The landmark is `env-table-of-contents`, around `env-table-of-contents-body`, which holds the list. Each level is an ordered list, `env-table-of-contents-list`, of items, `env-table-of-contents-item`, each a link with its level below it, indented by the depth the component sets on it, `--env-table-of-contents-depth`. Links before the current one carry `data-passed`, and the sections after it are quieter. Its name comes from EnvUIProvider's `messages.tableOfContents`.
+The landmark is `env-table-of-contents`, around `env-table-of-contents-body`, which holds the list. Each level is an ordered list, `env-table-of-contents-list`, of items, `env-table-of-contents-item`, each a link with its level below it, indented by the depth the component sets on it, `--env-table-of-contents-depth`. Links before the current one carry `data-passed`, and the sections after it are quieter.
 
 The reader's place is `env-table-of-contents-wave`, an SVG hidden from assistive technology in the body's start column, `--env-space-5` wide at its fullest, and a tenth of that elsewhere. The component draws its outline every frame the place moves, without rendering again, from the links' layout positions.
 

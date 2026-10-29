@@ -1297,7 +1297,10 @@ test('a page ships the whole file, in its order, with code once', () => {
     'Props',
     'Part names',
     'Color properties',
+    'Strings',
   ]);
+  // Its strings are generated from envUI's messages, ConfirmButton's among them.
+  assert.match(button, /^\| `messages\.confirmButton\.[a-z]\w*` \| /m);
   // The generated lists are the page's one list of its parts and color properties.
   assert.ok(hasLine(button, '- `env-button`: The button.'));
   assert.match(button, /^- `--env-button-container`: /m);
@@ -1346,4 +1349,20 @@ test("the contributor guides' relative links reach files, and headings, that exi
     });
   }
   assert.deepEqual(broken, []);
+});
+
+test("every namespace of envUI's strings but the shared one shows on a component's page", async () => {
+  const { readMessages } = await import('../scripts/docs/Messages.ts');
+  const documented = new Set(
+    readDocumentation().flatMap((document) => document.frontmatter?.components ?? []),
+  );
+  for (const { namespace, components, strings } of readMessages()) {
+    assert.ok(strings.length, `${namespace} has strings`);
+    for (const string of strings) assert.ok(string.description, `${namespace}.${string.key}`);
+    if (namespace === 'common') continue;
+    assert.ok(
+      components.some((name) => documented.has(name)),
+      `${namespace} names no documented export: ${components.join(', ')}`,
+    );
+  }
 });

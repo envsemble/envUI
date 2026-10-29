@@ -161,7 +161,6 @@ Keep blocks short, and link to the whole file.
 
 - A `label` on each block where a page has several.
 - Text around a diff that says what changed.
-- Translated words through EnvUIProvider's `messages.codeBlock` and `messages.codeDiff`.
 
 ## Compose
 

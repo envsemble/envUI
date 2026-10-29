@@ -182,7 +182,6 @@ Show only as many people in a group as fit without wrapping, and use AvatarButto
 
 - The name beside a decorative avatar, or `named`.
 - An `aria-label` on an AvatarButton that says what it opens.
-- `messages.avatarGroup` in the application's language.
 
 ## Compose
 
@@ -223,7 +222,7 @@ AvatarGroup takes `people`, each with a `name` and an optional `src`, `fallback`
 - At rest the avatars pile up, each a little off the line and turned, with the count chip at the bottom of the pile.
 - The group always keeps the room its spread takes, so spreading never moves what is around it; `align="end"` piles a group at the end of that room, for a group that ends a row, such as a list row's action.
 - With reduced motion it spreads at once.
-- `formatMore` and `formatLabel`, or `messages.avatarGroup`, set its words.
+- `formatMore` and `formatLabel` set its words.
 
 ```tsx
 <AvatarGroup people={members} max={3} total={12} align="end" />

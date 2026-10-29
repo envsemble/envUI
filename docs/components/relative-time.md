@@ -124,7 +124,7 @@ RelativeTime's `value` is the moment: a Date, milliseconds since 1970 or a date 
 
 #### Formats and languages
 
-`format` is `long`, the default, `short` or `narrow`, in the locale's own wording from `Intl.RelativeTimeFormat`. `locale` sets the language as a BCP 47 tag, such as `de` for vor 3 Stunden, or a list of them; without it, EnvUIProvider's `locale`, else the browser's. `nowLabel` is the text for a moment less than 45 seconds away, by default just now, or now for a coming one, which EnvUIProvider's `messages.relativeTime.now` can set.
+`format` is `long`, the default, `short` or `narrow`, in the locale's own wording from `Intl.RelativeTimeFormat`. `locale` sets the language as a BCP 47 tag, such as `de` for vor 3 Stunden, or a list of them; without it, EnvUIProvider's `locale`, else the browser's. `nowLabel` is the text for a moment less than 45 seconds away.
 
 ```tsx
 <RelativeTime value={updatedAt} format="short" locale="de" />

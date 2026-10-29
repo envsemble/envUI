@@ -10,6 +10,7 @@ import {
   type PropsFile,
 } from './Schema.ts';
 import { cell, fenceFor } from './Validation.ts';
+import { readMessages, renderStrings, type MessageNamespace } from './Messages.ts';
 
 /** How the package names a do, a don't or a caution figure in a run of figures. */
 const verdictWords: Record<string, string> = { do: 'do', dont: "don't", caution: 'caution' };
@@ -288,8 +289,14 @@ export function compileDocument(
   {
     props,
     parts,
+    messages,
     examples = examplesDirectory,
-  }: { props?: PropsFile; parts?: PartsFile; examples?: string } = {},
+  }: {
+    props?: PropsFile;
+    parts?: PartsFile;
+    messages?: MessageNamespace[];
+    examples?: string;
+  } = {},
 ): string {
   const title = `# ${document.title}\n\n`;
   if (document.id === 'index') {
@@ -306,6 +313,7 @@ export function compileDocument(
     const propsSection = [
       props && components ? renderProps(components, props) : '',
       parts && components ? renderParts(components, parts) : '',
+      messages && components ? renderStrings(components, messages) : '',
     ]
       .filter(Boolean)
       .join('\n');
@@ -323,13 +331,22 @@ export function compileDocumentation(
   {
     props = readProps(directory),
     parts = readParts(directory),
+    messages = readMessages(),
     examples = examplesDirectory,
-  }: { props?: PropsFile; parts?: PartsFile; examples?: string } = {},
+  }: {
+    props?: PropsFile;
+    parts?: PartsFile;
+    messages?: MessageNamespace[];
+    examples?: string;
+  } = {},
 ): Map<string, string> {
   const documents = readDocumentation(directory, { props, examples });
   const files = new Map<string, string>();
   for (const document of documents)
-    files.set(document.path, compileDocument(document, documents, { props, parts, examples }));
+    files.set(
+      document.path,
+      compileDocument(document, documents, { props, parts, messages, examples }),
+    );
   for (const document of documents)
     for (const section of document.sections ?? [])
       for (const block of section.blocks)
