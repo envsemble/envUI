@@ -51,7 +51,7 @@ export default function AppFrame() {
     icon,
     group,
     current: href === current,
-    onSelect: () => setCurrent(href),
+    onClick: () => setCurrent(href),
   }));
   const page = places.find((place) => place.href === current) ?? places[0];
 

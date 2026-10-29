@@ -28,7 +28,7 @@ interface CopyButtonBaseProps
   /** The text to copy, or a function that returns it, also as a promise, when pressed. */
   value: string | (() => string | Promise<string>);
   /** Runs once the text is on the clipboard, with that text. */
-  onCopy?: (text: string) => void;
+  onCopied?: (text: string) => void;
   /**
    * Writes the text instead of the browser's Clipboard API, such as through a desktop app's
    * clipboard bridge. A rejected promise shows and announces failedLabel.
@@ -84,7 +84,7 @@ const feedbackDuration = 2_000;
  */
 export function CopyButton({
   value,
-  onCopy,
+  onCopied,
   write,
   variant,
   tone,
@@ -111,7 +111,7 @@ export function CopyButton({
   // Every press shows and announces its result again, also the same result twice in a row.
   const { copy, status, round, copying, waiting, reset } = useCopy({
     write,
-    onCopy,
+    onCopied,
     resetAfter: feedbackDuration,
     fieldClassName: 'env-copy-button-field',
   });

@@ -20,7 +20,7 @@ export function ComposerFixture({ theme }: { theme: ThemeValue }) {
           placeholder="Ask anything"
           value={draft}
           onValueChange={setDraft}
-          onSubmit={(value) => {
+          onSend={(value) => {
             setSent((messages) => [...messages, value]);
             setDraft('');
             setRunning(true);
@@ -43,7 +43,7 @@ export function ComposerFixture({ theme }: { theme: ThemeValue }) {
           maxRows={4}
           start={<IconButton variant="text" icon={<AttachFile />} aria-label="Attach files" />}
           footer="Attachments up to 10 MB"
-          onSubmit={(value) => setNotes((list) => [...list, value])}
+          onSend={(value) => setNotes((list) => [...list, value])}
         />
       </Surface>
       <output data-testid={`composer-notes-${theme}`}>{notes.join(' | ')}</output>

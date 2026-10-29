@@ -49,7 +49,7 @@ export function catalogueDestinations(current: string | undefined, onChoose?: ()
       href: routeHref(sectionHome(section).path),
       icon: <Icon />,
       current: section === current,
-      onSelect: onChoose,
+      onClick: onChoose,
     };
   });
 }
@@ -65,7 +65,7 @@ export function pageDestinations(
     label: page.label ?? page.title,
     href: routeHref(page.path),
     current: page.path === currentPath,
-    onSelect: onChoose,
+    onClick: onChoose,
   }));
 }
 
@@ -92,7 +92,7 @@ export function docsDestinations(currentPath: string, onChoose?: () => void): Dr
     label: page.label ?? page.title,
     href: routeHref(page.path),
     current: page.path === currentPath,
-    onSelect: onChoose,
+    onClick: onChoose,
   });
   const lone = (section: DocsGroup) =>
     !section.groups.length &&

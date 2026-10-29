@@ -42,7 +42,7 @@ export default function MenuOnPhones() {
       label: chapter,
       href: `#${chapter.toLowerCase().replace(/\s+/g, '-')}`,
       current: chapter === current,
-      onSelect: () => {
+      onClick: () => {
         setCurrent(chapter);
         if (inSheet) setMenu(false);
       },

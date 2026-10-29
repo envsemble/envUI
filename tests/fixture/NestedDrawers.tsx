@@ -59,7 +59,7 @@ function destinationsOf(pages: Page[], current: string, choose: (href: string) =
       group: page.group,
       href,
       current: href === current,
-      onSelect: () => choose(href),
+      onClick: () => choose(href),
       children,
     };
   });

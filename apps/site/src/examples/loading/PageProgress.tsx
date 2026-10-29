@@ -58,7 +58,7 @@ export default function PageProgress() {
     href,
     icon,
     current: id === shown,
-    onSelect: () => open(id),
+    onClick: () => open(id),
   }));
   return (
     <Scaffold

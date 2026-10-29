@@ -14,7 +14,7 @@ export default function AppDestinations() {
   const destination = (href: string) => ({
     href,
     current: current === href,
-    onSelect: () => setCurrent(href),
+    onClick: () => setCurrent(href),
   });
   const destinations: Destination[] = [
     { label: 'Home', icon: <Home />, ...destination('/home') },

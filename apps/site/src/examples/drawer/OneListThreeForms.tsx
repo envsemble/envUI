@@ -26,7 +26,7 @@ export default function OneListThreeForms() {
   ].map((destination) => ({
     ...destination,
     current: destination.label === current,
-    onSelect: () => setCurrent(destination.label),
+    onClick: () => setCurrent(destination.label),
   }));
   return (
     // A preview: the body scrolls in a frame 22 rem tall, instead of the window.

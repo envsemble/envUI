@@ -59,7 +59,7 @@ export default function NestedSections() {
         href,
         children: nested,
         current: current === href,
-        onSelect: () => setCurrent(href),
+        onClick: () => setCurrent(href),
       };
     });
   // The sections that hold the current page start open; the others open with their chevrons.

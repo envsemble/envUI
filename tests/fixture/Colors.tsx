@@ -59,12 +59,12 @@ export function ColorControls({ theme }: { theme: ThemeValue }) {
         aria-label={`${theme} navigation`}
         data-testid={`${theme}-navigation`}
         destinations={[
-          { label: `${theme} navigation`, icon: <Home />, onSelect: () => {} },
+          { label: `${theme} navigation`, icon: <Home />, onClick: () => {} },
           {
             label: `${theme} selected navigation`,
             icon: <Home />,
             current: true,
-            onSelect: () => {},
+            onClick: () => {},
           },
         ]}
       />

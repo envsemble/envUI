@@ -1,6 +1,6 @@
 'use client';
 
-import type { HTMLAttributes, ReactNode, Ref } from 'react';
+import type { HTMLAttributes, MouseEvent, ReactNode, Ref } from 'react';
 import { ActionElement } from '../../internal/ActionElement.js';
 import { Column, Row } from '../../foundations/Layout.js';
 import { DecorativeIcon } from '../../internal/DecorativeIcon.js';
@@ -34,7 +34,7 @@ interface DestinationFields {
   current?: boolean;
 }
 
-/** How a destination is reached: a link, or a button that runs onSelect. */
+/** How a destination is reached: a link, or a button that runs onClick. */
 type DestinationTarget =
   | {
       /**
@@ -42,13 +42,16 @@ type DestinationTarget =
        * component, so the application's router follows it.
        */
       href: string;
-      /** Runs as the link is followed, such as to close a sheet the navigation sits in. */
-      onSelect?: () => void;
+      /**
+       * Runs as the link is followed, such as to close a sheet the navigation sits in;
+       * event.preventDefault() keeps the link from being followed.
+       */
+      onClick?: (event: MouseEvent<HTMLElement>) => void;
     }
   | {
       href?: undefined;
       /** Shows the destination, for a view that changes without an address: the item is a button. */
-      onSelect: () => void;
+      onClick: (event: MouseEvent<HTMLElement>) => void;
     };
 
 /** The destinations nested under a destination, which Drawer shows as a section that opens. */
@@ -89,7 +92,7 @@ export type DrawerDestination = DestinationFields & {
     | (DestinationTarget & NestedDestinations)
     | {
         href?: undefined;
-        onSelect?: undefined;
+        onClick?: undefined;
         /**
          * The destinations under this one, which has no address of its own: it is only the
          * heading of its section, a button that opens and closes it.
@@ -163,7 +166,7 @@ export const useNavigationMessages = () => useMessages('navigation', navigation)
 
 /**
  * One destination's control: a link with href, through the LinkProvider's link component, or a
- * button that runs onSelect, or that only opens and closes the destinations under it. The current one reports aria-current="page" and fills its icon; one
+ * button that runs onClick, or that only opens and closes the destinations under it. The current one reports aria-current="page" and fills its icon; one
  * with a count is named with it, such as Inbox, 3 new. Bar and Rail put the icon in an indicator,
  * with the count on it, above the label; Drawer puts the icon, the label and the count in a row.
  */
@@ -191,7 +194,7 @@ export function DestinationItem({
   ref?: Ref<HTMLElement>;
 }) {
   const messages = useNavigationMessages();
-  const { label, icon, count, current = false, href, onSelect } = destination;
+  const { label, icon, count, current = false, href, onClick } = destination;
   const inside = topLevel && !current && holdsCurrent(destination.children);
   const marked = current || inside;
   const shown = shownCount(count);
@@ -207,12 +210,12 @@ export function DestinationItem({
       {shown}
     </span>
   );
-  // A section's heading has no onSelect, and takes the click of the trigger that renders it.
+  // A section's heading has no onClick, and takes the click of the trigger that renders it.
   const control =
     href !== undefined ? (
-      <ActionElement href={href} onClick={onSelect} />
-    ) : onSelect !== undefined ? (
-      <ActionElement onClick={onSelect} />
+      <ActionElement href={href} onClick={onClick} />
+    ) : onClick !== undefined ? (
+      <ActionElement onClick={onClick} />
     ) : (
       <ActionElement />
     );

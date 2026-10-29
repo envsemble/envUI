@@ -278,7 +278,7 @@ const destinations: Destination[] = [
 <Drawer destinations={destinations} header={<Text>Northwind</Text>} footer={account} />;
 ```
 
-Drawer, Rail and Bar take `destinations`, one array of `Destination`s, each with its `label`, an `icon`, a `count` and a `group`. With `href`, a destination is a native link, through the router link from `LinkProvider`, and `onSelect` runs as it is followed; with `onSelect` alone it is a button, for a view without an address. Set `current` on one destination, from the router: a press doesn't select one by itself. `header` and `footer` hold content above and below the destinations of a Drawer or a Rail. Scaffold shows the form that fits its width, at the window's start or, for the bar, at its bottom.
+Drawer, Rail and Bar take `destinations`, one array of `Destination`s, each with its `label`, an `icon`, a `count` and a `group`. With `href`, a destination is a native link, through the router link from `LinkProvider`, and `onClick(event)` runs as it is followed; with `onClick` alone it is a button, for a view without an address. Set `current` on one destination, from the router: a press doesn't select one by itself. `header` and `footer` hold content above and below the destinations of a Drawer or a Rail. Scaffold shows the form that fits its width, at the window's start or, for the bar, at its bottom.
 
 #### One list, three forms
 
@@ -297,7 +297,7 @@ const projects: DrawerDestination = {
 };
 ```
 
-A destination's `children` nest under it, at any depth. A section with `href` or `onSelect` is a destination itself, with a button at its end that opens and closes it; one with neither is only its heading, a button that does. Drawer reads `group` at the top level only. In Rail and Bar, a destination whose `children` hold the current one takes the current fill and reports `aria-current="true"`, so give the top level an `href` where the same array goes to them.
+A destination's `children` nest under it, at any depth. A section with `href` or `onClick` is a destination itself, with a button at its end that opens and closes it; one with neither is only its heading, a button that does. Drawer reads `group` at the top level only. In Rail and Bar, a destination whose `children` hold the current one takes the current fill and reports `aria-current="true"`, so give the top level an `href` where the same array goes to them.
 
 The sections that hold the current destination open as it becomes current; the drawer keeps the rest as people open and close them, from `defaultExpanded`. To keep them yourself, such as for the next visit, pass `expanded` and update it from `onExpandedChange`, which also asks to open the sections of a new current destination. Both name a section by its `href`, or its label where it has none, so keep those labels unique.
 

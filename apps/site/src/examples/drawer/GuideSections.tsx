@@ -15,7 +15,7 @@ export default function GuideSections() {
   const destinations: DrawerDestination[] = pages.map((page) => ({
     ...page,
     current: current === page.href,
-    onSelect: () => setCurrent(page.href),
+    onClick: () => setCurrent(page.href),
   }));
   return <Drawer aria-label="Help" destinations={destinations} />;
 }

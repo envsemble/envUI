@@ -1,0 +1,10 @@
+{
+  "@envsemble/envui": {
+    "Composer": {
+      "onSubmit": {
+        "to": "onSend",
+        "report": "Composer's onSubmit is onSend in 1.0, as its sendLabel names the button; onSubmit is the native submit event again."
+      }
+    }
+  }
+}

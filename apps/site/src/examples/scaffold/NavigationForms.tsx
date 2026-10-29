@@ -54,7 +54,7 @@ export default function NavigationForms() {
   ].map((destination) => ({
     ...destination,
     current: destination.label === current,
-    onSelect: () => setCurrent(destination.label),
+    onClick: () => setCurrent(destination.label),
   }));
   return (
     // The Scaffold shows the form for its own width: the bar in a compact width, the rail in a

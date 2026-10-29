@@ -44,7 +44,7 @@ export default function ScaffoldTile() {
     label,
     icon,
     current: label === current,
-    onSelect: () => setCurrent(label),
+    onClick: () => setCurrent(label),
   }));
   return (
     <Scaffold

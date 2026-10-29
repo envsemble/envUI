@@ -33,7 +33,7 @@ export function DemoApp({ fixedColumns = false }: { fixedColumns?: boolean }) {
   const destinations: Destination[] = places.map((place) => ({
     ...place,
     current: place.href === current,
-    onSelect: () => setCurrent(place.href),
+    onClick: () => setCurrent(place.href),
   }));
   return (
     <Scaffold

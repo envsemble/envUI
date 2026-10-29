@@ -23,7 +23,7 @@ export default function MoreDestinations() {
   ].map((destination) => ({
     ...destination,
     current: destination.label === current,
-    onSelect: () => setCurrent(destination.label),
+    onClick: () => setCurrent(destination.label),
   }));
   return (
     // As wide as a phone.

@@ -49,7 +49,7 @@ export default function PrimaryNavigation() {
       count: unread,
       group: index < destinations.length ? undefined : 'Workspace',
       current: id === current,
-      onSelect: () => go(id),
+      onClick: () => go(id),
     }),
   );
 

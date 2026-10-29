@@ -21,7 +21,7 @@ export default function SearchInSidebar() {
       icon: <Folder />,
       href: `/projects/${name.toLowerCase().replaceAll(' ', '-')}`,
       current: current === name,
-      onSelect: () => setCurrent(name),
+      onClick: () => setCurrent(name),
     }));
   return (
     <Drawer

@@ -32,7 +32,7 @@ function useDestinations(start: string) {
   const [current, setCurrent] = useState(start);
   const select = (label: string) => ({
     current: current === label,
-    onSelect: () => setCurrent(label),
+    onClick: () => setCurrent(label),
   });
   return { current, select };
 }

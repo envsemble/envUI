@@ -169,7 +169,7 @@ function SchemeChoice({ names, narrow }: { names: readonly string[]; narrow: boo
   const scheme = useTimeline(schemes.map(() => schemeStep));
   const [answer, setAnswer] = useState('going');
   const [place, setPlace] = useState('trips');
-  const destination = (id: string) => ({ current: place === id, onSelect: () => setPlace(id) });
+  const destination = (id: string) => ({ current: place === id, onClick: () => setPlace(id) });
   const destinations: Destination[] = [
     { label: 'Trips', icon: <Luggage />, ...destination('trips') },
     { label: 'Map', icon: <MapIcon />, ...destination('map') },

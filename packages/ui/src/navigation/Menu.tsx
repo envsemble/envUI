@@ -244,7 +244,7 @@ export type ItemProps = ItemSharedProps &
          * Runs as the destination is followed, before the menu closes, such as to record the
          * choice; the link still navigates.
          */
-        onClick?: () => void;
+        onClick?: (event: MouseEvent<HTMLElement>) => void;
         /** Where the destination opens, such as _blank, as on a native link. */
         target?: string;
         /** The destination's relationship to the page, such as noopener, as on a native link. */
@@ -253,7 +253,7 @@ export type ItemProps = ItemSharedProps &
     | {
         href?: undefined;
         /** The action, run when the item is chosen; the menu then closes. */
-        onClick?: () => void;
+        onClick?: (event: MouseEvent<HTMLElement>) => void;
         target?: never;
         rel?: never;
       }

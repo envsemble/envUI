@@ -224,7 +224,7 @@ function DrawerBranch({
 }) {
   const messages = useNavigationMessages();
   const key = destinationKey(destination);
-  const heading = destination.href === undefined && destination.onSelect === undefined;
+  const heading = destination.href === undefined && destination.onClick === undefined;
   return (
     <Collapsible.Root
       open={state.expanded.has(key)}

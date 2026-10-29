@@ -10,7 +10,7 @@ export default function ComposerAnatomy() {
       placeholder="Add a comment"
       start={<IconButton variant="text" icon={<AttachFile />} aria-label="Attach files" />}
       footer="Files up to 10 MB."
-      onSubmit={send}
+      onSend={send}
       style={{ inlineSize: 'min(100%, 28rem)' }}
     />
   );

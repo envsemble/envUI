@@ -20,7 +20,7 @@ export default function OutlinedAndFilled() {
   const destinations: Destination[] = places.map((place) => ({
     ...place,
     current: current === place.label,
-    onSelect: () => setCurrent(place.label),
+    onClick: () => setCurrent(place.label),
   }));
   return <Bar aria-label="Main" destinations={destinations} />;
 }

@@ -68,7 +68,7 @@ export function MessagesFixture({ theme }: { theme: ThemeValue }) {
         </MessageList>
         <Composer
           aria-label={`Reply ${theme}`}
-          onSubmit={(text) => setSent((messages) => [...messages, text])}
+          onSend={(text) => setSent((messages) => [...messages, text])}
         />
       </div>
       <output data-testid={`messages-copied-${theme}`}>{copied}</output>

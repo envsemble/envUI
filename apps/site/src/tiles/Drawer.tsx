@@ -32,7 +32,7 @@ export default function DrawerTile() {
   usePointer(script);
   const destination = (id: string) => ({
     current: current === id,
-    onSelect: () => setCurrent(id),
+    onClick: () => setCurrent(id),
   });
   const destinations: Destination[] = [
     { label: 'Inbox', icon: <Inbox />, count: 12, ...destination('inbox') },

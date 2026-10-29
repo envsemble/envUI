@@ -233,7 +233,7 @@ export function HydrationApp() {
           aria-label="Hydrated composer"
           value={draft}
           onValueChange={setDraft}
-          onSubmit={(value) => {
+          onSend={(value) => {
             setMessage(value);
             setDraft('');
           }}

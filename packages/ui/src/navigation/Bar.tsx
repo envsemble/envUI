@@ -158,14 +158,14 @@ export function Bar({
                     <Menu.Item
                       key={destinationKey(destination)}
                       {...shared}
-                      onClick={destination.onSelect}
+                      onClick={destination.onClick}
                     />
                   ) : (
                     <Menu.Item
                       key={destinationKey(destination)}
                       {...shared}
                       href={destination.href}
-                      onClick={destination.onSelect}
+                      onClick={destination.onClick}
                     />
                   );
                 })}

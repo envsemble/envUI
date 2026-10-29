@@ -177,7 +177,7 @@ After a page opens, from a destination, a trail level or a search result, focus 
 
 ### Usage
 
-Build one array of destinations, each with its `label`, `icon` and `href`, `current` on the place shown, and optionally a `count`, a `group` and an `onSelect`.
+Build one array of destinations, each with its `label`, `icon` and `href`, `current` on the place shown, and optionally a `count`, a `group` and an `onClick`.
 
 - Give the same array to a Bar, a Rail and a Drawer, in the Scaffold's `navigation` as `bar`, `rail` and `drawer`.
 - Render every `href` through the router's link with `LinkProvider`.

@@ -23,7 +23,7 @@ export default function PendingSend() {
         aria-label="Reply to Priya Shah"
         placeholder="Write a reply"
         pending={sending}
-        onSubmit={send}
+        onSend={send}
         footer={sending ? 'Sending…' : 'Replies go to the whole thread.'}
       />
       <Text variant="caption" emphasis="muted" role="status">
