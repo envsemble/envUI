@@ -1,6 +1,5 @@
 import type { Formatters } from '../../internal/useFormatters.js';
 import { dayParts, formatDay, parseDay } from '../../internal/calendarDays.js';
-import { day as dayMilliseconds } from '../../internal/durations.js';
 import type { CalendarHeatmapCell, CalendarHeatmapDay } from '../CalendarHeatmap.js';
 
 /** The locale's short month names, from January, and weekday names, from Sunday. */
