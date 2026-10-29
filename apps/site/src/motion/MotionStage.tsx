@@ -142,10 +142,22 @@ function useTallest(stage: RefObject<HTMLDivElement | null>, height: string | un
     // The tallest the stage has needed so far, its border box.
     let tallest = 0;
     let held = own;
-    /** The stage's border box without the hold, measured at once and the hold put back. */
+    /**
+     * The stage's border box without the hold, measured at once and the hold put back. It is
+     * measured at its own height, not stretched to its row's: stages side by side, as an
+     * overview's, would otherwise each measure the other's hold and hold each other up, a little
+     * higher every time where a browser rounds up, without end. Its width stays as it is: in a
+     * column of flex items, `align-self` sets the width, and a stage at its content's width would
+     * wrap its text and measure far too tall.
+     */
     const needed = () => {
+      const { alignSelf, inlineSize } = element.style;
+      element.style.inlineSize = `${element.getBoundingClientRect().width}px`;
       element.style.minBlockSize = own;
+      element.style.alignSelf = 'start';
       const box = element.getBoundingClientRect().height;
+      element.style.alignSelf = alignSelf;
+      element.style.inlineSize = inlineSize;
       element.style.minBlockSize = held;
       return box;
     };

@@ -461,3 +461,36 @@ test("a drag across text selects whole words, in a field and in content, and kee
   expect(result.kept).toBe(true);
   expect(result.cleared).toBe(0);
 });
+
+test(
+  "an animated figure's stage holds its own height: stages side by side don't hold each other up, and a stage in a column isn't measured at its content's width",
+  { tag: '@engines' },
+  async ({ page }) => {
+    const heights = () =>
+      page
+        .locator('.catalogue-motion-stage')
+        .evaluateAll((stages) =>
+          stages.map((stage) => [
+            Math.round(stage.getBoundingClientRect().height),
+            Math.round(
+              stage.querySelector('.catalogue-motion-subject')?.getBoundingClientRect().height ?? 0,
+            ),
+          ]),
+        );
+    // RelativeTime's overview: two stages in one row, wide enough to sit side by side, which used
+    // to climb each other's height in Firefox, a little every frame.
+    await page.setViewportSize({ width: 1600, height: 1000 });
+    await page.goto(`${siteDevUrl}/components/relative-time`);
+    await expect(page.locator('.catalogue-motion-stage').first()).toBeVisible();
+    await page.waitForTimeout(1500);
+    const before = await heights();
+    await page.waitForTimeout(1500);
+    expect(await heights()).toEqual(before);
+    for (const [stage] of before) expect(stage).toBeLessThan(400);
+    // Alert's figures sit in a column: each stage stays about as tall as what it shows.
+    await page.goto(`${siteDevUrl}/components/alert`);
+    await expect(page.locator('.catalogue-motion-stage').first()).toBeVisible();
+    await page.waitForTimeout(2000);
+    for (const [stage, subject] of await heights()) expect(stage).toBeLessThan(subject + 200);
+  },
+);
