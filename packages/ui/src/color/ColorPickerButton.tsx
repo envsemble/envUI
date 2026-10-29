@@ -7,7 +7,8 @@ import { colorPicker as colorPickerMessages } from '../foundations/messages/colo
 import type { PopupSide } from '../internal/PopupSurface.js';
 import { classNames } from '../internal/classNames.js';
 import { useMessages } from '../internal/EnvUIContext.js';
-import { ColorPicker, type ColorPickerValueProps } from './ColorPicker.js';
+import { ColorPicker } from './ColorPicker.js';
+import type { ColorPickerValueProps } from './internal/colorPickerValueProps.js';
 import { ColorSwatch } from './ColorSwatch.js';
 import { ColorLocale, displayColor } from './internal/ColorLocale.js';
 import { ColorChangeContext } from './internal/colorChange.js';

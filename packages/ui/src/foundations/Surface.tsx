@@ -21,7 +21,7 @@ export type SurfaceBackground = 'default' | 'muted' | 'page' | 'raised' | 'reces
  */
 export type SurfaceRadius = 'xl' | 'sm' | 'full' | 'none';
 
-export interface SurfaceAppearanceProps extends SkeletonProps {
+interface SurfaceAppearanceProps extends SkeletonProps {
   /**
    * The fill: default, the background of panes and side regions; muted, the background of rows;
    * page, the page background; raised, a block that stands out on a pane; or recessed, a well on
