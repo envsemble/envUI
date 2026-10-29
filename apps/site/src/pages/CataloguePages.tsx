@@ -8,6 +8,7 @@ import { Catalogue } from './Catalogue';
 import { FoundationCatalogue } from './FoundationCatalogue';
 import { PatternCatalogue } from './PatternCatalogue';
 import { Documentation } from './Documentation';
+import { useDocument } from './PageModel';
 
 /**
  * A component's page in the catalogue: what it looks like and when to use it, in live figures
@@ -15,7 +16,7 @@ import { Documentation } from './Documentation';
  * its props, part names and changelog.
  */
 export function ComponentPage({ page }: { page: RoutePage }) {
-  const document = page.document!;
+  const document = useDocument(page.document!);
   return (
     <>
       <PageHeader
@@ -41,7 +42,7 @@ export function ComponentPage({ page }: { page: RoutePage }) {
  * the Docs.
  */
 export function PatternPage({ page }: { page: RoutePage }) {
-  const document = page.document!;
+  const document = useDocument(page.document!);
   return (
     <>
       <PageHeader
@@ -78,7 +79,7 @@ const iconsCredit = [
  * words. Its page in the Docs, which Docs opens, holds the tokens and code behind them.
  */
 export function FoundationPage({ page }: { page: RoutePage }) {
-  const document = page.document!;
+  const document = useDocument(page.document!);
   return (
     <>
       <PageHeader

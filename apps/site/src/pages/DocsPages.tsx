@@ -14,15 +14,14 @@ import { routeHref } from '../navigation/Address';
 import { OtherPartButton } from '../navigation/OtherPart';
 import { lazyPart } from '../template/LoadBoundary';
 import { ExampleSource } from '../figures/LiveExample';
-import { partsOf } from '../template/Parts';
+import { useParts } from '../template/Parts';
 import { providesOf } from '../template/Provides';
 import { PropsTables } from '../template/PropsTables';
 import { MetadataBadges, PageChangelog, TemplateContent } from '../template/TemplateContent';
-import type { Documentation as Document } from './PageModel';
+import { useDocument, type Documentation as Document } from './PageModel';
 import { Documentation } from './Documentation';
 import { GuideDocument } from './GuideDocument';
 import { LoadedPart } from './LoadedPart';
-import { ColorPalette } from '../figures/foundations/ColorPalette';
 import { SpecimenHeadingLevel } from '../figures/Example';
 import { ReleaseNotes } from './ReleaseNotes';
 import { codeColumns, subsections } from '../shared/CatalogueContent';
@@ -33,6 +32,13 @@ const tokenReference = lazyPart(
   () => import('./TokenReference'),
   (module) => module.TokenReference,
   'src/pages/TokenReference.tsx',
+);
+
+/** The palette's swatches, with their color picker, which load with the page that shows them. */
+const colorPalette = lazyPart(
+  () => import('../figures/foundations/ColorPalette'),
+  (module) => module.ColorPalette,
+  'src/figures/foundations/ColorPalette.tsx',
 );
 
 /** What people paste into a coding agent to set envUI up: the skill the site serves at /SKILL.md. */
@@ -128,6 +134,7 @@ export function DocsHome({ page }: { page: RoutePage }) {
 
 /** A guide of docs/, such as setup or migration, with its live demos in place. */
 export function GuidePage({ page }: { page: RoutePage }) {
+  const document = useDocument(page.document!);
   return (
     <>
       <PageHeader
@@ -142,7 +149,7 @@ export function GuidePage({ page }: { page: RoutePage }) {
         }
       />
       <Column gap={7} className="site-article">
-        <GuideDocument document={page.document!} />
+        <GuideDocument document={document} />
       </Column>
     </>
   );
@@ -218,7 +225,7 @@ function PaletteSection() {
         another color: the whole catalogue follows, in this theme only, until you reload.
       </Text>
       <SpecimenHeadingLevel value={3}>
-        <ColorPalette />
+        <LoadedPart part={colorPalette} what="palette" />
       </SpecimenHeadingLevel>
     </Column>
   );
@@ -230,7 +237,7 @@ function PaletteSection() {
  * provide. No Related.
  */
 export function FoundationGuidePage({ page }: { page: RoutePage }) {
-  const document = page.document!;
+  const document = useDocument(page.document!);
   return (
     <>
       <PageHeader
@@ -266,8 +273,9 @@ function StateValues({ values }: { values: readonly string[] }) {
 
 /** The part names and state attributes of the exports a page documents, as simple lists. */
 function PartNames({ components }: { components: readonly string[] }) {
+  const file = useParts();
   const entries = components.flatMap((name) => {
-    const parts = partsOf(name);
+    const parts = file.of(name);
     return parts ? [{ name, parts }] : [];
   });
   if (!entries.length) return null;
@@ -433,8 +441,9 @@ function WordsInCode({ document }: { document: Document }) {
 
 /** The color properties of the exports a page documents, from docs/generated/parts.json. */
 function ColorProperties({ components }: { components: readonly string[] }) {
+  const parts = useParts();
   const entries = components.flatMap((name) => {
-    const colors = partsOf(name)?.colors ?? [];
+    const colors = parts.of(name)?.colors ?? [];
     return colors.length ? [{ name, colors }] : [];
   });
   if (!entries.length) return null;
@@ -504,7 +513,7 @@ function Strings({ document }: { document: Document }) {
  * page, as "Build your own field".
  */
 export function DocsReferencePage({ page }: { page: RoutePage }) {
-  const document = page.document!;
+  const document = useDocument(page.document!);
   const cataloguePage = pagesOf('catalogue').find((entry) => entry.document?.id === document.id);
   const metadata = document.metadata;
   const pattern = cataloguePage?.kind === 'pattern';

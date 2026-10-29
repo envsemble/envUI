@@ -1,6 +1,7 @@
 /**
- * The shape of the generated documentation data (generated/Documentation.ts), written by
- * scripts/docs/GenerateDocumentation.ts from docs/ and docs/generated/props.json.
+ * The shape of the generated documentation data, written by scripts/docs/GenerateDocumentation.ts
+ * from docs/ and docs/generated/props.json: every page's summary (generated/Documentation.ts) and
+ * each page's content (generated/pages/<id>.json).
  */
 
 /** One prop of a component, as scripts/docs/ExtractProps.ts reads it from the TypeScript source. */
@@ -189,20 +190,47 @@ export interface DocumentationMetadata {
   composes?: string[];
 }
 
-export interface DocumentationEntry {
+/** An example figure a section places, as a page's tile and the layout check pick one. */
+export type ExampleOutline = Pick<
+  Extract<DocumentationBlock, { kind: 'example' }>,
+  'name' | 'heading' | 'role' | 'widths' | 'open' | 'stage'
+>;
+
+/** A section of a page as the site knows it before the page loads. */
+export interface SectionOutline {
+  id: TemplateSectionId;
+  /** The ids of the section's headings, as the catalogue renders them, numbered across the page. */
+  anchors: string[];
+  examples: ExampleOutline[];
+}
+
+/**
+ * What the site knows of every page from its start (generated/Documentation.ts): enough for the
+ * navigation, the galleries' tiles, Related and the routes. A page's content loads with the page
+ * (DocumentationEntry, generated/pages/<id>.json).
+ */
+export interface DocumentationSummary {
   id: string;
   title: string;
   group: string;
   path: string;
   summary: string;
   related: string[];
-  /** The page's Markdown after its title. */
-  markdown: string;
-  metadata?: DocumentationMetadata;
+  /** The page's metadata but its lists for the page itself, when to use it and its aliases. */
+  metadata?: Omit<DocumentationMetadata, 'aliases' | 'useWhen' | 'avoidWhen'>;
   /** The exports a guide documents, such as LinkProvider on setup's. */
   components?: string[];
   /** A guide's status, where it has one, such as alpha. */
   status?: DocumentationStatus;
+  /** The sections of a component, pattern or foundation page, outlined; absent on guides. */
+  outline?: SectionOutline[];
+}
+
+/** A page with its content, which loads with the page. */
+export interface DocumentationEntry extends Omit<DocumentationSummary, 'outline' | 'metadata'> {
+  metadata?: DocumentationMetadata;
+  /** A guide's Markdown after its title; the other pages show their sections. */
+  markdown?: string;
   /**
    * The sections of a component, pattern or foundation page, in the one-file structure; absent on
    * guides.

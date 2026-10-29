@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { startTransition, useEffect, useState } from 'react';
 import { normalizeRoute } from './SiteRoutes';
 import { oldHashRoute, replaceAddress, subscribeToAddress, writtenRoute } from './Address';
 
@@ -21,7 +21,10 @@ function correctAddress() {
   if (written) replaceAddress(normalizeRoute(written));
 }
 
-/** The current route, from the address's path. */
+/**
+ * The current route, from the address's path. A new route renders as a transition: the page shown
+ * stays until the next one's content has loaded (useDocument), rather than blanking meanwhile.
+ */
 export function useSiteRoute() {
   // An old hash address is redirected before the first render, which reads the path.
   const [route, setRoute] = useState(() => {
@@ -34,7 +37,7 @@ export function useSiteRoute() {
     setRoute(readRoute());
     return subscribeToAddress(() => {
       correctAddress();
-      setRoute(readRoute());
+      startTransition(() => setRoute(readRoute()));
     });
   }, []);
   return route;

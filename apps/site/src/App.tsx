@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { Suspense, useEffect, useRef, useState, type ReactNode } from 'react';
 import {
   Column,
   EnvUIProvider,
@@ -253,7 +253,9 @@ function Shell() {
           <div className="site-page-grid" data-contents={contents || undefined}>
             <div className="site-page-column">
               <PageBoundary title={page?.title ?? 'Page not found'} route={route}>
-                {content}
+                {/* A page's content loads with it (useDocument): on the first page, nothing shows
+                    in its place meanwhile; a route change keeps the page shown until it's there. */}
+                <Suspense fallback={null}>{content}</Suspense>
               </PageBoundary>
               {page && <PageNavigation page={page} />}
             </div>
