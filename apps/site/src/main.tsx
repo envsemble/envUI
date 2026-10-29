@@ -17,3 +17,10 @@ void preloadPage(findPage(currentRoute().split('?')[0]!)).then(() =>
     </PaletteCustomizationProvider>,
   ),
 );
+
+// Those modules serve the start alone: a change to them, such as the documentation's while
+// developing, updates the pages that use them in place rather than loading the site again.
+import.meta.hot?.accept(
+  ['./navigation/SiteRoutes', './navigation/useSiteRoute', './pages/PreloadPage'],
+  () => {},
+);
