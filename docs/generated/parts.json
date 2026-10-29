@@ -484,7 +484,9 @@
         },
         {
           "attribute": "data-current",
-          "values": [],
+          "values": [
+            ""
+          ],
           "parts": [
             "env-bar-item"
           ]
@@ -1487,6 +1489,7 @@
         {
           "attribute": "data-action-count",
           "values": [
+            "1",
             "2"
           ],
           "parts": [
@@ -2782,6 +2785,7 @@
         {
           "attribute": "data-moving",
           "values": [
+            "keyboard",
             "pointer"
           ],
           "parts": [
@@ -2799,7 +2803,9 @@
         },
         {
           "attribute": "data-reordering",
-          "values": [],
+          "values": [
+            ""
+          ],
           "parts": [
             "env-list"
           ]
@@ -3321,6 +3327,7 @@
           "attribute": "data-width",
           "values": [
             "full",
+            "lg",
             "md",
             "sm"
           ],
@@ -4786,7 +4793,9 @@
       "states": [
         {
           "attribute": "data-label-hidden",
-          "values": [],
+          "values": [
+            ""
+          ],
           "parts": [
             "env-spinner"
           ]
@@ -4817,6 +4826,7 @@
         {
           "attribute": "data-background",
           "values": [
+            "default",
             "muted",
             "page",
             "raised",
@@ -4831,7 +4841,8 @@
           "values": [
             "full",
             "none",
-            "sm"
+            "sm",
+            "xl"
           ],
           "parts": [
             "env-surface"
@@ -5015,7 +5026,9 @@
         },
         {
           "attribute": "data-nowrap",
-          "values": [],
+          "values": [
+            ""
+          ],
           "parts": [
             "env-table-cell",
             "env-table-header-cell"
@@ -5023,7 +5036,9 @@
         },
         {
           "attribute": "data-numeric",
-          "values": [],
+          "values": [
+            ""
+          ],
           "parts": [
             "env-table-cell",
             "env-table-header-cell"
@@ -5245,6 +5260,7 @@
         {
           "attribute": "data-variant",
           "values": [
+            "body",
             "body-sm",
             "caption",
             "display",
@@ -5311,7 +5327,9 @@
         },
         {
           "attribute": "data-end-action",
-          "values": [],
+          "values": [
+            ""
+          ],
           "parts": [
             "env-text-field-control"
           ]
@@ -5325,7 +5343,9 @@
         },
         {
           "attribute": "data-label-floating",
-          "values": [],
+          "values": [
+            ""
+          ],
           "parts": [
             "env-text-field-control"
           ]
@@ -5341,7 +5361,9 @@
         },
         {
           "attribute": "data-prefix",
-          "values": [],
+          "values": [
+            ""
+          ],
           "parts": [
             "env-text-field-control"
           ]
@@ -5378,14 +5400,18 @@
         },
         {
           "attribute": "data-start-icon",
-          "values": [],
+          "values": [
+            ""
+          ],
           "parts": [
             "env-text-field-control"
           ]
         },
         {
           "attribute": "data-suffix",
-          "values": [],
+          "values": [
+            ""
+          ],
           "parts": [
             "env-text-field-control"
           ]
@@ -5402,7 +5428,9 @@
         {
           "attribute": "data-variant",
           "values": [
-            "ghost"
+            "floating",
+            "ghost",
+            "outline"
           ],
           "parts": [
             "env-text-field-control"
@@ -6493,7 +6521,9 @@
         },
         {
           "attribute": "data-turning",
-          "values": [],
+          "values": [
+            ""
+          ],
           "parts": [
             "env-time-list-column"
           ]

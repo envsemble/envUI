@@ -16,7 +16,8 @@
 //   property, a variable named for a class), with `env-x-${value}` expanded over the value's type;
 // - the state attributes: `data-*` attributes set in JSX on an element with a part class, their
 //   values from the attribute's type, and the `[data-*]` selectors that the style sheets
-//   (src/styles) put on a part class, with the values they compare;
+//   (src/styles) put on a part class, with the values they compare; their values completed from
+//   what the component's modules write in objects of props and an element's dataset;
 //   attributes named data-env-ssr-* are private and left out: server markup carries them only until
 //   a component reads its layout in the browser; so is data-env-theme-switching, which a theme
 //   switch sets on the themed root for a frame;
@@ -149,6 +150,29 @@ function readSource() {
   };
   const classesOnElement = new Map<Node, Set<string>>();
   const statesOnElement = new Map<Node, StateRecord[]>();
+  // Every data attribute each file writes, with its values, wherever it writes it: on an element of
+  // another component, in an object of props, or through an element's dataset. They complete the
+  // values of a state its parts take, such as a variant set through a component's props.
+  const written = new Map<string, Map<string, Set<string> | undefined>>();
+  // The same, written through an element's dataset alone, which only the element's own code does.
+  const writtenToDataset = new Map<string, Map<string, Set<string> | undefined>>();
+  const write = (
+    path: string,
+    attribute: string,
+    values: Set<string> | undefined,
+    into = written,
+  ) => {
+    if (!attribute.startsWith('data-') || isPrivateState(attribute)) return;
+    const byAttribute = into.get(path) ?? new Map<string, Set<string> | undefined>();
+    const known = byAttribute.get(attribute);
+    byAttribute.set(
+      attribute,
+      byAttribute.has(attribute) && (known === undefined || values === undefined)
+        ? undefined
+        : new Set([...(known ?? []), ...(values ?? [])]),
+    );
+    into.set(path, byAttribute);
+  };
   // The elements whose class name reads a variable, by the variable's declaration, such as
   // `const className = 'env-x'` before `<span className={className}>`.
   const elementsOfVariable = new Map<Node, Set<Node>>();
@@ -190,6 +214,29 @@ function readSource() {
           list.push({ attribute: name, values: attributeValues(node), path });
           statesOnElement.set(element, list);
         }
+        if (name.startsWith('data-')) write(path, name, attributeValues(node));
+      } else if (Node.isPropertyAssignment(node) && Node.isStringLiteral(node.getNameNode())) {
+        // `{ 'data-variant': variant }`, props spread onto an element or passed to a component.
+        const initializer = node.getInitializer();
+        if (initializer)
+          write(
+            path,
+            node.getNameNode().getText().slice(1, -1),
+            literalValues(initializer.getType()),
+          );
+      } else if (Node.isBinaryExpression(node) && node.getOperatorToken().getText() === '=') {
+        // `row.dataset.moving = mode`.
+        const left = node.getLeft();
+        if (
+          Node.isPropertyAccessExpression(left) &&
+          /\.dataset$/.test(left.getExpression().getText())
+        )
+          write(
+            path,
+            `data-${kebab(left.getName())}`,
+            literalValues(node.getRight().getType()),
+            writtenToDataset,
+          );
       } else if (Node.isCallExpression(node) && node.getExpression().getText() === 'classNames')
         anchors.push(...node.getArguments());
       else if (Node.isPropertyAssignment(node) && isClassName(node.getName()))
@@ -292,7 +339,7 @@ function readSource() {
         })),
     ]),
   );
-  return { classes, states, imports, renders, warnings };
+  return { classes, states, imports, renders, warnings, written, writtenToDataset };
 }
 
 /** The values a JSX data attribute takes: its literal, or the string values of its type. */
@@ -406,7 +453,15 @@ export function buildParts({
   source = readPartsSource(),
   props = JSON.parse(readFileSync(propsFile, 'utf8')),
 }: { source?: PartsSource; props?: PropsFile } = {}) {
-  const { classes, states: sourceStates, imports, renders, warnings } = readSource();
+  const {
+    classes,
+    states: sourceStates,
+    imports,
+    renders,
+    warnings,
+    written,
+    writtenToDataset,
+  } = readSource();
   const styleStates = readStyles();
   const problems = [...warnings];
 
@@ -492,6 +547,29 @@ export function buildParts({
     }
     return found;
   };
+
+  // A state's values, completed from what the group's code writes: its own module and the modules
+  // its classes occur in, which set its attributes on its parts, and, through an element's dataset,
+  // the internal modules it imports, such as List's reordering. An internal module that renders
+  // several components' elements, such as the one under Button and Link, writes values that may be
+  // another's, so it counts only where the group's classes occur in it.
+  for (const group of groups.values()) {
+    const states = groupStates.get(group.name);
+    if (!states) continue;
+    const own = new Set([
+      ...(group.source ? [group.source] : []),
+      ...(members.get(group.name) ?? []).flatMap((name) => [...classes.get(name)!.files]),
+    ]);
+    const imported = group.source ? reachable(group.source) : own;
+    for (const [attribute, entry] of states) {
+      if (entry.free) continue;
+      const found = [
+        ...[...own].map((file) => written.get(file)?.get(attribute)),
+        ...[...imported].map((file) => writtenToDataset.get(file)?.get(attribute)),
+      ];
+      for (const values of found) if (values) for (const value of values) entry.values.add(value);
+    }
+  }
 
   const descriptions = source.descriptions ?? {};
   const colors = source.colors ?? {};
