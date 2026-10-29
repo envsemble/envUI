@@ -9,6 +9,7 @@ import {
 } from 'react';
 import { useEnvUI, type Direction } from './EnvUIContext.js';
 import { computedDirection } from './direction.js';
+import { typeaheadTimeout } from './typeahead.js';
 
 export interface RovingOptions<Item> {
   /** The items, in the order they are laid out. */
@@ -42,9 +43,6 @@ export interface RovingOptions<Item> {
   /** How many items Page Up and Page Down move; 10 by default, lists only. */
   pageSize?: number;
 }
-
-/** How long typed letters keep adding up for typeahead, in milliseconds. */
-const typeaheadTimeout = 500;
 
 /**
  * The index the keyboard moves to from `index`, or undefined for a key it ignores. Disabled items

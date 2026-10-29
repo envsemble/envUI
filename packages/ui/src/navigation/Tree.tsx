@@ -16,6 +16,7 @@ import {
 } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { setRef } from '../internal/setRef.js';
+import { typeaheadTimeout } from '../internal/typeahead.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { tree as treeMessages } from '../foundations/messages/tree.js';
 import type { RowDensity } from '../foundations/Theme.js';
@@ -129,8 +130,6 @@ const overscan = 8;
  * many as a tall pane shows, so the first paint is already full and measuring only adds rows.
  */
 const unmeasuredRows = 24;
-/** How long typed letters keep adding up for typeahead, in milliseconds. */
-const typeaheadTimeout = 600;
 /** Each density's row height in rem in the comfortable scale, until a row can be measured. */
 const rowRem: Record<RowDensity, number> = { xs: 1.5, sm: 1.75, md: 2.25, lg: 2.75 };
 

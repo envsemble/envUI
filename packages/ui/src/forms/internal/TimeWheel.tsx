@@ -2,6 +2,7 @@
 
 import { useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { matchTyped } from '../../internal/calendarDays.js';
+import { typeaheadTimeout } from '../../internal/typeahead.js';
 import { prefersReducedMotion } from '../../internal/reducedMotion.js';
 import { isRightToLeft } from '../../internal/direction.js';
 import { flag } from '../../internal/flag.js';
@@ -22,8 +23,6 @@ export interface Entry {
   keys: string[];
 }
 
-/** How long typed keys keep adding up for typeahead, in milliseconds. */
-const typeaheadTimeout = 1000;
 /** Page Up and Page Down step this many entries. */
 const pageRows = 5;
 
