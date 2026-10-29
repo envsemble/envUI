@@ -19,7 +19,6 @@ import { navigate, routeHref } from '../navigation/Address';
 import { canRetryLoad, reloadModule, reloadPage } from '../template/LoadBoundary';
 import type { SearchResult } from './SearchIndex';
 import { commandKey } from './SearchShortcut';
-import { Loading } from '../template/Loading';
 
 /** The search index's module, by its path in the site app, as module-files.json names it. */
 const indexModule = 'src/search/SearchIndex.ts';
@@ -184,11 +183,10 @@ export function SiteSearch({
     [results],
   );
   const suggestions = useMemo(() => suggestionsFor(page), [page]);
-  // Before people type, the suggestions show. A query shows, while the index loads, the loading
-  // state; after it fails, why, with the way on; and when it finds nothing, what search finds.
+  // Before people type, the suggestions show. While the index loads, the palette says so; after it
+  // fails, why, with the way on; and when a query finds nothing, what search finds.
   let empty: Pick<CommandPaletteProps, 'emptyIcon' | 'emptyLabel' | 'emptyDescription'>;
-  if (index.status === 'loading')
-    empty = { emptyIcon: null, emptyLabel: <Loading what="search" />, emptyDescription: null };
+  if (index.status === 'loading') empty = {};
   else if (index.status === 'failed')
     empty = {
       emptyIcon: <IconError />,
@@ -223,6 +221,8 @@ export function SiteSearch({
       onInputValueChange={setQuery}
       items={items}
       suggestedItems={suggestions}
+      loading={index.status === 'loading'}
+      loadingLabel="Loading search"
       {...empty}
       hints={[
         { keys: ['Enter'], label: 'Open' },

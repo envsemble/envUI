@@ -261,6 +261,33 @@ test.describe('CommandPalette', () => {
     await expect(translated.getByRole('status')).toHaveText('Nic nenalezeno Pro „xyz“ nic není.');
   });
 
+  test('while results load, the palette says so, and results already shown stay, busy', async ({
+    page,
+  }) => {
+    await page.goto(paletteFixture);
+    const root = page.getByTestId('palette-empty');
+    await root.getByRole('button', { name: 'Open Search the server' }).click();
+    const dialog = page.getByRole('dialog', { name: 'Search the server' });
+    const status = dialog.getByRole('status');
+    const icon = dialog.locator('.env-command-palette-empty-icon');
+    const field = dialog.locator('.env-command-palette-search');
+    // With nothing to show yet, the empty state says the results are on their way, beside a
+    // spinner hidden from assistive technology, and only the words are announced.
+    await expect(status).toHaveText('Searching…');
+    await expect(icon.locator('.env-spinner')).toHaveAttribute('aria-hidden', 'true');
+    await expect(field.locator('.env-spinner')).toHaveCount(0);
+    await dialog.getByRole('combobox').fill('xyz');
+    await expect(status).toHaveText('Searching…');
+    // Results already found stay, marked busy, with the loading words announced in place of the
+    // count, and the search field's icon turns into a spinner.
+    await dialog.getByRole('combobox').fill('bill');
+    await expect(dialog.getByRole('option', { name: 'Billing' })).toBeVisible();
+    await expect(dialog.getByRole('listbox')).toHaveAttribute('aria-busy', 'true');
+    await expect(status).toHaveText('Searching…');
+    await expect(icon).toHaveCount(0);
+    await expect(field.locator('.env-spinner')).toHaveCount(1);
+  });
+
   test('default items show until people type, and choose like results', async ({ page }) => {
     await page.goto(paletteFixture);
     const root = page.getByTestId('palette-empty');

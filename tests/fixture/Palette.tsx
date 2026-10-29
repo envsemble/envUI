@@ -120,8 +120,8 @@ function EmptyPalette({
 
 /**
  * The empty states: the defaults before people type and when nothing matches, the same in another
- * language from EnvUIProvider's messages, and default items with the application's own words and
- * no icon.
+ * language from EnvUIProvider's messages, default items with the application's own words and
+ * no icon, and a palette whose results are always on their way.
  */
 export function CommandPaletteEmptyFixture() {
   return (
@@ -145,6 +145,7 @@ export function CommandPaletteEmptyFixture() {
         emptyDescription="Try a page's name, such as Billing."
         emptyIcon={null}
       />
+      <EmptyPalette name="Search the server" loading />
     </div>
   );
 }

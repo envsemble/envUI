@@ -1731,6 +1731,20 @@
           "description": "Shown in the empty search field, such as \"Search documents by name or folder\"."
         },
         {
+          "name": "loading",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "The results are on their way, such as from a server. With none to show yet, the empty state says loadingLabel beside a spinner; results already shown stay, marked busy, and the search field's icon turns into a spinner."
+        },
+        {
+          "name": "loadingLabel",
+          "type": "ReactNode",
+          "required": false,
+          "default": "'Searching…', or EnvUIProvider's messages.commandPalette.loading",
+          "description": "Shown and announced while loading."
+        },
+        {
           "name": "emptyLabel",
           "type": "ReactNode",
           "required": false,

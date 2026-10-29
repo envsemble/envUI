@@ -12,6 +12,8 @@ export const commandPalette = {
   /** Under that title: what found nothing, and what to try, such as Nothing matches “roadmap”. */
   emptyHint: ({ query }: { query: string }) =>
     `Nothing matches “${query}”. Check the spelling or try other words.`,
+  /** The empty state's title while results are on their way, and what is announced meanwhile. */
+  loading: 'Searching…',
   /** Announced as the results change, such as 3 results; `countText` is the count in the locale's digits. */
   results: ({ count, countText }: { count: number; countText: string }) =>
     `${countText} ${plural(count, 'result', 'results')}`,
