@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { Composer, IconButton, Surface, Theme, type ThemeValue } from '@envsemble/envui';
+import { Composer, IconButton, Surface, Theme, type ColorScheme } from '@envsemble/envui';
 import { AttachFile } from '@envsemble/envui/icons/AttachFile';
 
-export function ComposerFixture({ theme }: { theme: ThemeValue }) {
+export function ComposerFixture({ theme }: { theme: ColorScheme }) {
   const [draft, setDraft] = useState('');
   const [sent, setSent] = useState<string[]>([]);
   const [running, setRunning] = useState(false);

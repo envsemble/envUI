@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { IconButton, TextField, SearchField, Theme, type ThemeValue } from '@envsemble/envui';
+import { IconButton, TextField, SearchField, Theme, type ColorScheme } from '@envsemble/envui';
 import { ContentCopy } from '@envsemble/envui/icons/ContentCopy';
 import { Sell } from '@envsemble/envui/icons/Sell';
 
-export function AffixesFixture({ theme }: { theme: ThemeValue }) {
+export function AffixesFixture({ theme }: { theme: ColorScheme }) {
   const [submitted, setSubmitted] = useState('');
   return (
     <Theme theme={theme} data-testid={`affixes-${theme}`} className="fixture-section">

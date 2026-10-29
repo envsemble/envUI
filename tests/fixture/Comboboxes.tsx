@@ -8,7 +8,7 @@ import {
   Theme,
   type ComboboxGroup,
   type ComboboxItem,
-  type ThemeValue,
+  type ColorScheme,
 } from '@envsemble/envui';
 import { Description } from '@envsemble/envui/icons/Description';
 import { Folder } from '@envsemble/envui/icons/Folder';
@@ -67,7 +67,7 @@ const tags: ComboboxItem[] = [
   'Testing',
 ].map((label) => ({ value: label.toLowerCase(), label }));
 
-function ServerSearch({ theme }: { theme: ThemeValue }) {
+function ServerSearch({ theme }: { theme: ColorScheme }) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<ComboboxItem[]>([]);
   const [loading, setLoading] = useState(false);
@@ -114,7 +114,7 @@ function ServerSearch({ theme }: { theme: ThemeValue }) {
   );
 }
 
-export function ComboboxFixture({ theme }: { theme: ThemeValue }) {
+export function ComboboxFixture({ theme }: { theme: ColorScheme }) {
   const [submitted, setSubmitted] = useState('');
   const [authorChanges, setAuthorChanges] = useState<(string | null)[]>([]);
   const [owner, setOwner] = useState<string | null>('riley-chen');

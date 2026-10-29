@@ -11,7 +11,7 @@ import {
   Text,
   Theme,
   type DocumentTab,
-  type ThemeValue,
+  type ColorScheme,
   Badge,
 } from '@envsemble/envui';
 import { Description } from '@envsemble/envui/icons/Description';
@@ -26,7 +26,7 @@ const initialTabs: DocumentTab[] = [
   })),
 ].map((tab) => ({ ...tab, icon: <Description />, title: tab.id }));
 
-export function DocumentTabsFixture({ theme }: { theme: ThemeValue }) {
+export function DocumentTabsFixture({ theme }: { theme: ColorScheme }) {
   const [tabs, setTabs] = useState(initialTabs);
   const [value, setValue] = useState<string | null>('plans/roadmap.md');
   const [log, setLog] = useState<string[]>([]);
@@ -97,7 +97,7 @@ const fillViews = ['Canvas', 'Outline', 'History'];
  * Filling Tabs that keep their inactive panels mounted: one with a nested Tabs in its first panel,
  * and a vertical one whose list sits beside a heading through renderList.
  */
-export function FillTabsFixture({ theme }: { theme: ThemeValue }) {
+export function FillTabsFixture({ theme }: { theme: ColorScheme }) {
   const items = (nested: boolean) =>
     fillViews.map((view, index) => ({
       value: view.toLowerCase(),
@@ -165,7 +165,7 @@ const tabStateVariants = ['primary', 'secondary', 'outlined', 'important'] as co
  * Tabs built from each kind of button used as a tab, in both scales on the canvas: the first tab is
  * selected and the second is not.
  */
-export function TabStatesFixture({ theme }: { theme: ThemeValue }) {
+export function TabStatesFixture({ theme }: { theme: ColorScheme }) {
   return (
     <Theme theme={theme} data-testid={`tab-states-${theme}`} className="fixture-section">
       {(['comfortable', 'compact'] as const).map((scale) => (
@@ -188,7 +188,7 @@ export function TabStatesFixture({ theme }: { theme: ThemeValue }) {
 }
 
 /** Compact tabs with a counter in a compact bar, mounted with ?fixture=compact-tabs. */
-export function CompactTabsFixture({ theme }: { theme: ThemeValue }) {
+export function CompactTabsFixture({ theme }: { theme: ColorScheme }) {
   return (
     <Theme theme={theme} data-testid={`compact-tabs-${theme}`} className="fixture-section">
       <Surface

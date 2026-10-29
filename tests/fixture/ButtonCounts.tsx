@@ -7,7 +7,7 @@ import {
   Tabs,
   Text,
   Theme,
-  type ThemeValue,
+  type ColorScheme,
   Row,
 } from '@envsemble/envui';
 
@@ -23,7 +23,7 @@ const emphasis = {
 const variants = ['primary', 'secondary', 'outlined', 'text', 'important'] as const;
 
 /** Counts, badges and numbers inside buttons and tabs, mounted with ?fixture=button-counts. */
-export function ButtonCountsFixture({ theme }: { theme: ThemeValue }) {
+export function ButtonCountsFixture({ theme }: { theme: ColorScheme }) {
   const [tab, setTab] = useState('submissions');
   const [view, setView] = useState('editor');
   return (

@@ -18,7 +18,7 @@ import {
   Checkbox,
   Switch,
   Badge,
-  type ThemeValue,
+  type ColorScheme,
 } from '@envsemble/envui';
 import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 import { Home } from '@envsemble/envui/icons/Home';
@@ -34,7 +34,7 @@ const emphasis = {
   text: { variant: 'text' },
 } as const;
 
-export function ColorControls({ theme }: { theme: ThemeValue }) {
+export function ColorControls({ theme }: { theme: ColorScheme }) {
   const variants: readonly (keyof typeof emphasis)[] = [
     'primary',
     'secondary',

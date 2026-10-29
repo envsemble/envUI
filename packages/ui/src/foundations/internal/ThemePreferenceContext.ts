@@ -1,14 +1,14 @@
 'use client';
 
 import { createContext } from 'react';
-import type { ThemeValue } from '../Theme.js';
+import type { ColorScheme } from '../Theme.js';
 import type { ThemePreference } from '../themeBootstrap.js';
 
 export interface ThemePreferenceValue {
   /** The stored choice. */
   preference: ThemePreference;
   /** The theme in use after resolving "system". */
-  theme: ThemeValue;
+  theme: ColorScheme;
   setPreference: (preference: ThemePreference) => void;
   /** Store the opposite of the current theme. */
   toggleTheme: () => void;

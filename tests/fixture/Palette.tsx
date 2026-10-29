@@ -6,14 +6,14 @@ import {
   Theme,
   type CommandPaletteItem,
   type CommandPaletteProps,
-  type ThemeValue,
+  type ColorScheme,
 } from '@envsemble/envui';
 import { Description } from '@envsemble/envui/icons/Description';
 
 const recent = ['Roadmap.md', 'Decisions.md'];
 const documents = Array.from({ length: 60 }, (_, index) => `Document ${index + 1}.md`);
 
-export function CommandPaletteFixture({ theme }: { theme: ThemeValue }) {
+export function CommandPaletteFixture({ theme }: { theme: ColorScheme }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [log, setLog] = useState('');

@@ -7,11 +7,11 @@ import {
   Surface,
   Theme,
   Tooltip,
-  type ThemeValue,
+  type ColorScheme,
 } from '@envsemble/envui';
 import { Settings } from '@envsemble/envui/icons/Settings';
 
-export function CopyButtonsFixture({ theme }: { theme: ThemeValue }) {
+export function CopyButtonsFixture({ theme }: { theme: ColorScheme }) {
   const [copied, setCopied] = useState('');
   const [presses, setPresses] = useState(0);
   const [bridged, setBridged] = useState('');

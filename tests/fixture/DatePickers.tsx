@@ -7,10 +7,10 @@ import {
   Row,
   Surface,
   Theme,
-  type ThemeValue,
+  type ColorScheme,
 } from '@envsemble/envui';
 
-export function DatePickerFixture({ theme }: { theme: ThemeValue }) {
+export function DatePickerFixture({ theme }: { theme: ColorScheme }) {
   const [submitted, setSubmitted] = useState('');
   const [due, setDue] = useState<string | null>('2026-10-20');
   const [changes, setChanges] = useState<(string | null)[]>([]);

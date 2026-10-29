@@ -18,7 +18,7 @@ import {
   Theme,
   type PanelDockMode,
   type PanelDockPanel,
-  type ThemeValue,
+  type ColorScheme,
 } from '@envsemble/envui';
 import { Description } from '@envsemble/envui/icons/Description';
 import { Edit } from '@envsemble/envui/icons/Edit';
@@ -52,7 +52,7 @@ const initialPanels: FixturePanel[] = [
 const extraTitles = ['Roadmap', 'Release checklist', 'Interview notes', 'Design review'];
 
 /** Panels over a page in a positioned frame, with the application's own state and shortcuts. */
-export function PanelDockFixture({ theme }: { theme: ThemeValue }) {
+export function PanelDockFixture({ theme }: { theme: ColorScheme }) {
   const [panels, setPanels] = useState(initialPanels);
   const [stacked, setStacked] = useState(false);
   const [log, setLog] = useState<string[]>([]);
@@ -192,7 +192,7 @@ export function PanelDockFixture({ theme }: { theme: ThemeValue }) {
  * The other docks, each with its own state, apart from the main dock's updates, which render none
  * of them again.
  */
-const OtherDocks = memo(function OtherDocks({ theme }: { theme: ThemeValue }) {
+const OtherDocks = memo(function OtherDocks({ theme }: { theme: ColorScheme }) {
   return (
     <>
       <PassiveDock theme={theme} />
@@ -343,7 +343,7 @@ function MinimizingDock({
   opensNotes = false,
 }: {
   name: string;
-  theme: ThemeValue;
+  theme: ColorScheme;
   initial: PanelDockPanel[];
   /** Whether the application activates the panels people press or bring back. */
   activates?: boolean;
@@ -489,7 +489,7 @@ function TranslatedDock() {
   );
 }
 
-function PassiveDock({ theme }: { theme: ThemeValue }) {
+function PassiveDock({ theme }: { theme: ColorScheme }) {
   const [panels, setPanels] = useState<PanelDockPanel[]>([
     { id: 'first', title: `First note ${theme}`, mode: 'open', active: true },
     { id: 'second', title: `Second note ${theme}`, mode: 'open' },
@@ -543,7 +543,7 @@ function PassiveDock({ theme }: { theme: ThemeValue }) {
  * A narrow dock whose application neither marks a panel active nor activates one: the newest panel
  * fills it, and a tab shows its own panel.
  */
-function LooseDock({ theme }: { theme: ThemeValue }) {
+function LooseDock({ theme }: { theme: ColorScheme }) {
   const [panels, setPanels] = useState<PanelDockPanel[]>([
     { id: 'ex', title: `Ex ${theme}`, mode: 'open' },
     { id: 'why', title: `Why ${theme}`, mode: 'open' },
@@ -598,7 +598,7 @@ function DocumentWindow({
   onMount,
 }: {
   panel: FixturePanel;
-  theme: ThemeValue;
+  theme: ColorScheme;
   onMount: (change: number) => void;
 }) {
   const [draft, setDraft] = useState('');

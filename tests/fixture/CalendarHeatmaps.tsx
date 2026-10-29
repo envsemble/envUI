@@ -7,7 +7,7 @@ import {
   Surface,
   Theme,
   type CalendarHeatmapDay,
-  type ThemeValue,
+  type ColorScheme,
 } from '@envsemble/envui';
 
 /** A deterministic year of activity, so the fixture renders the same days everywhere. */
@@ -22,7 +22,7 @@ function activity(end: string, days: number, seed: number): CalendarHeatmapDay[]
 
 const year = activity('2026-10-10', 365, 3);
 
-export function CalendarHeatmapFixture({ theme }: { theme: ThemeValue }) {
+export function CalendarHeatmapFixture({ theme }: { theme: ColorScheme }) {
   const [data, setData] = useState(year);
   return (
     <Theme theme={theme} data-testid={`calendar-heatmap-${theme}`} className="fixture-section">

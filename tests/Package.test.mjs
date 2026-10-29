@@ -405,7 +405,7 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     import { createRef } from 'react';
     import { Theme, Button, ButtonGroup, ConfirmButton, IconButton, Bar, Rail, Drawer, Pager, Icon, TextField, Textarea, Checkbox, Switch, Row, Column,
       EnvUIProvider, Toolbar, Field, RadioGroup, Radio, Select, Combobox, DatePicker, Calendar, Dialog, DialogClose, Toast, useToast,
-      type ThemeValue, type ButtonProps, type ButtonGroupProps, type SelectItem, type ComboboxItem, type ToastManager } from '@envsemble/envui';
+      type ColorScheme, type ButtonProps, type ButtonGroupProps, type SelectItem, type ComboboxItem, type ToastManager } from '@envsemble/envui';
     import { Home } from '@envsemble/envui/icons/Home';
     import { Home as BarrelHome } from '@envsemble/envui/icons';
     import '@envsemble/envui/styles.css';
@@ -419,7 +419,7 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     const pagerLinkProps: Pager.LinkProps = { href: '/guide', children: 'Read the guide', ref: createRef<HTMLAnchorElement>(), icon: <Home /> };
     const options: SelectItem[] = [{ value: 'one', label: 'One' }];
     const people: ComboboxItem[] = [{ value: 'first', label: 'First person', description: 'first@example.com', start: <Home /> }];
-    const theme: ThemeValue = 'dark';
+    const theme: ColorScheme = 'dark';
     const referenceSources: RichTextReferenceSource[] = [{ char: '@', items: async ({ query, signal }) => signal.aborted ? [] : [{ id: query, label: query }] }];
     const richTextConsumer = <><RichTextEditor ref={createRef<RichTextEditorHandle>()} value="Notes" references={referenceSources} onValueChange={markdown => { const typed: string = markdown; void typed; }} onUpload={async (file, { signal }) => signal.aborted ? null : ({ url: '/uploads/example', label: file.name, id: 'stable-file-id', kind: 'file' })} /><RichText onReferenceClick={(reference, event) => { event.preventDefault(); void reference.id; }}>Notes</RichText></>;
     void richTextConsumer;

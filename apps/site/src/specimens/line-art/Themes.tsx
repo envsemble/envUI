@@ -1,7 +1,7 @@
-import { LineArt, Surface, Theme, type ThemeContrast, type ThemeValue } from '@envsemble/envui';
+import { LineArt, Surface, Theme, type ThemeContrast, type ColorScheme } from '@envsemble/envui';
 import { Example, Specimen, SpecimenGrid } from '../../figures/Example';
 
-const themes: { title: string; theme: ThemeValue; contrast: ThemeContrast }[] = [
+const themes: { title: string; theme: ColorScheme; contrast: ThemeContrast }[] = [
   { title: 'Light', theme: 'light', contrast: 'standard' },
   { title: 'Dark', theme: 'dark', contrast: 'standard' },
   { title: 'Light, high contrast', theme: 'light', contrast: 'high' },

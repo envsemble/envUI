@@ -12,7 +12,7 @@ import {
   Text,
   Theme,
   type LinkComponentProps,
-  type ThemeValue,
+  type ColorScheme,
 } from '@envsemble/envui';
 import { Description } from '@envsemble/envui/icons/Description';
 import { MoreHoriz } from '@envsemble/envui/icons/MoreHoriz';
@@ -47,7 +47,7 @@ function RecordingLink({ href, onClick, ...props }: LinkComponentProps) {
   );
 }
 
-export function DataDisplayFixture({ theme }: { theme: ThemeValue }) {
+export function DataDisplayFixture({ theme }: { theme: ColorScheme }) {
   const [crumb, setCrumb] = useState('');
   const [rowResult, setRowResult] = useState('');
   return (

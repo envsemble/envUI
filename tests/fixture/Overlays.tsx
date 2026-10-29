@@ -10,11 +10,11 @@ import {
   Column,
   Text,
   Theme,
-  type ThemeValue,
+  type ColorScheme,
   Sheet,
 } from '@envsemble/envui';
 
-export function AlertsFixture({ theme }: { theme: ThemeValue }) {
+export function AlertsFixture({ theme }: { theme: ColorScheme }) {
   const [dismissed, setDismissed] = useState(false);
   const [failed, setFailed] = useState(false);
   return (
@@ -44,7 +44,7 @@ export function AlertsFixture({ theme }: { theme: ThemeValue }) {
   );
 }
 
-export function PopoverFixture({ theme }: { theme: ThemeValue }) {
+export function PopoverFixture({ theme }: { theme: ColorScheme }) {
   const [saved, setSaved] = useState('');
   return (
     <Theme theme={theme} data-testid={`popover-${theme}`} className="fixture-section">
@@ -118,7 +118,7 @@ export function DialogVariantsFixture() {
   );
 }
 
-export function HoverCardFixture({ theme }: { theme: ThemeValue }) {
+export function HoverCardFixture({ theme }: { theme: ColorScheme }) {
   const [changes, setChanges] = useState<string[]>([]);
   return (
     <Theme theme={theme} data-testid={`hover-card-${theme}`} className="fixture-section">

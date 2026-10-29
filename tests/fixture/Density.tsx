@@ -29,7 +29,7 @@ import {
   type ControlSize,
   type RowDensity,
   type ThemeScale,
-  type ThemeValue,
+  type ColorScheme,
   type TreeItem,
 } from '@envsemble/envui';
 import { Add } from '@envsemble/envui/icons/Add';
@@ -582,7 +582,7 @@ const densitySections: Record<DensitySection, () => ReactNode> = {
 };
 
 /** One section in each scale, one above the other. */
-function ScaledSection({ name, theme }: { name: string; theme: ThemeValue }) {
+function ScaledSection({ name, theme }: { name: string; theme: ColorScheme }) {
   const Section = (densitySectionNames as readonly string[]).includes(name)
     ? densitySections[name as DensitySection]
     : undefined;
@@ -612,7 +612,7 @@ export function DensityFixture() {
   const sections: string[] = section
     ? [section]
     : densitySectionNames.filter((name) => name !== 'menu');
-  const themes: ThemeValue[] = theme ? [theme as ThemeValue] : ['light', 'dark'];
+  const themes: ColorScheme[] = theme ? [theme as ColorScheme] : ['light', 'dark'];
   return (
     <div className="density-fixture">
       {themes.map((name) =>

@@ -13,7 +13,7 @@ import {
   type ReactNode,
 } from 'react';
 import { outsideTheme } from './internal/outsideTheme.js';
-import { Theme, useTheme, type ThemeContrast, type ThemeScale, type ThemeValue } from './Theme.js';
+import { Theme, useTheme, type ThemeContrast, type ThemeScale, type ColorScheme } from './Theme.js';
 import {
   contrastSourceAttribute,
   defaultThemeStorageKey,
@@ -163,7 +163,7 @@ const onServer = () => undefined;
 /** On the root while a provider switches the page's colors: nothing transitions (Theme.css). */
 const switchingAttribute = 'data-env-theme-switching';
 
-function readSystemTheme(): ThemeValue {
+function readSystemTheme(): ColorScheme {
   return typeof window !== 'undefined' && window.matchMedia?.(systemDarkQuery).matches
     ? 'dark'
     : 'light';
@@ -194,12 +194,12 @@ export function ThemePreferenceProvider({
       ? defaultPreference
       : readStoredPreference(storageKey, defaultPreference),
   );
-  const [systemTheme, setSystemTheme] = useState<ThemeValue>(() =>
+  const [systemTheme, setSystemTheme] = useState<ColorScheme>(() =>
     typeof document !== 'undefined' && document.documentElement.dataset.envTheme === 'dark'
       ? 'dark'
       : readSystemTheme(),
   );
-  const theme: ThemeValue = preference === 'system' ? systemTheme : preference;
+  const theme: ColorScheme = preference === 'system' ? systemTheme : preference;
   const [provider] = useState(() => Symbol('ThemePreferenceProvider'));
 
   useEffect(() => {

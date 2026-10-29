@@ -240,6 +240,7 @@
         "use": "Text renders another element through render, such as render={<h2 />}."
       },
       "TextTone": { "to": ["TextEmphasis"] },
+      "ThemeValue": { "to": ["ColorScheme"] },
       "TitleBar": {
         "to": [],
         "use": "TitleBar is gone: <TopBar titleBar start={…} title={…} actions={…} />, with its end content in actions."

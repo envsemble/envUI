@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, ContextMenu, Menu, Theme, type ThemeValue } from '@envsemble/envui';
+import { Button, ContextMenu, Menu, Theme, type ColorScheme } from '@envsemble/envui';
 import { Edit } from '@envsemble/envui/icons/Edit';
 import { Delete } from '@envsemble/envui/icons/Delete';
 import { Add } from '@envsemble/envui/icons/Add';
@@ -7,7 +7,7 @@ import { History } from '@envsemble/envui/icons/History';
 
 const documents = ['Alpha', 'Beta', 'Gamma'];
 
-export function MenusFixture({ theme }: { theme: ThemeValue }) {
+export function MenusFixture({ theme }: { theme: ColorScheme }) {
   const [log, setLog] = useState('');
   const [sort, setSort] = useState('name');
   const [hidden, setHidden] = useState(false);

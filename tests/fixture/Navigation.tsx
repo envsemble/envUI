@@ -10,7 +10,7 @@ import {
   Theme,
   TopBar,
   type Destination,
-  type ThemeValue,
+  type ColorScheme,
 } from '@envsemble/envui';
 import { Archive } from '@envsemble/envui/icons/Archive';
 import { Delete } from '@envsemble/envui/icons/Delete';
@@ -41,7 +41,7 @@ function useDestinations(start: string) {
  * Bar, Rail and Drawer over the same destinations, in both themes, mounted with
  * ?fixture=navigation: icon fill, counts, groups, the Bar's More menu, landmark names and routing.
  */
-export function NavigationFixture({ theme }: { theme: ThemeValue }) {
+export function NavigationFixture({ theme }: { theme: ColorScheme }) {
   const icons = useDestinations('Home');
   const mail = useDestinations('Inbox');
   const many = useDestinations('Labels');

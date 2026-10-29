@@ -9,7 +9,7 @@ import {
   Table,
   Text,
   Theme,
-  type ThemeValue,
+  type ColorScheme,
 } from '@envsemble/envui';
 import { MoreVert } from '@envsemble/envui/icons/MoreVert';
 import { Event } from '@envsemble/envui/icons/Event';
@@ -36,7 +36,7 @@ function compare(key: SortKey) {
     key === 'reviews' ? first.reviews - second.reviews : first.title.localeCompare(second.title);
 }
 
-export function TablesFixture({ theme }: { theme: ThemeValue }) {
+export function TablesFixture({ theme }: { theme: ColorScheme }) {
   const [sort, setSort] = useState<{ key: SortKey; direction: 'ascending' | 'descending' }>();
   const [selected, setSelected] = useState(['tokens']);
   const [widths, setWidths] = useState([40, 30, 15, 15]);

@@ -16,7 +16,7 @@ import {
   Theme,
   useTheme,
   type Destination,
-  type ThemeValue,
+  type ColorScheme,
 } from '@envsemble/envui';
 import { Group } from '@envsemble/envui/icons/Group';
 import { Luggage } from '@envsemble/envui/icons/Luggage';
@@ -45,7 +45,7 @@ const oklch = (lightness: number, chroma: number, hue: number, alpha?: number) =
  * accent text on it; translucent tinted fills for quiet controls. At high contrast the accent goes
  * a step further from the page, and text and edges keep the theme's own, stronger colors.
  */
-function schemeColors({ hue }: (typeof schemes)[number], theme: ThemeValue, high: boolean) {
+function schemeColors({ hue }: (typeof schemes)[number], theme: ColorScheme, high: boolean) {
   const light = theme === 'light';
   const step = (lightness: number, by: number) => lightness + (light ? -by : by);
   // A fill's hover and press: a step further from the page, or, for the accent, deeper in both
@@ -128,7 +128,7 @@ function SchemeArea({
   children,
 }: {
   scheme: number;
-  theme: ThemeValue;
+  theme: ColorScheme;
   className?: string;
   children: ReactNode;
 }) {

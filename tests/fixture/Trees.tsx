@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Menu, Theme, Tree, type ThemeValue, type TreeItem } from '@envsemble/envui';
+import { Menu, Theme, Tree, type ColorScheme, type TreeItem } from '@envsemble/envui';
 import { Description } from '@envsemble/envui/icons/Description';
 import { Folder } from '@envsemble/envui/icons/Folder';
 
@@ -56,7 +56,7 @@ function flatten(nodes: FileNode[], expanded: Set<string>, depth = 0, rows: File
   return rows;
 }
 
-export function TreeFixture({ theme }: { theme: ThemeValue }) {
+export function TreeFixture({ theme }: { theme: ColorScheme }) {
   const files = useMemo(sampleFiles, []);
   const [expanded, setExpanded] = useState(() => new Set(['folder-1', 'folder-2']));
   const [selectedId, setSelectedId] = useState<string | null>(null);

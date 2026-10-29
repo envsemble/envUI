@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, DropZone, Text, Theme, type ThemeValue } from '@envsemble/envui';
+import { Button, DropZone, Text, Theme, type ColorScheme } from '@envsemble/envui';
 
 const names = (files: File[]) => files.map((file) => file.name).join(' ');
 
@@ -7,7 +7,7 @@ const names = (files: File[]) => files.map((file) => file.name).join(' ');
  * An image chosen in a drop zone, shown with actions to replace or remove it; its form submits the
  * image the application keeps.
  */
-function AvatarPicker({ theme }: { theme: ThemeValue }) {
+function AvatarPicker({ theme }: { theme: ColorScheme }) {
   const picker = useRef<HTMLInputElement>(null);
   const [avatar, setAvatar] = useState<File | null>(null);
   const [preview, setPreview] = useState<string>();
@@ -59,7 +59,7 @@ function AvatarPicker({ theme }: { theme: ThemeValue }) {
   );
 }
 
-export function DropZonesFixture({ theme }: { theme: ThemeValue }) {
+export function DropZonesFixture({ theme }: { theme: ColorScheme }) {
   const [taken, setTaken] = useState('');
   const [rejected, setRejected] = useState('');
   const [documents, setDocuments] = useState('');

@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { EnvUIProvider, SegmentedControl, Theme, type ThemeValue } from '@envsemble/envui';
+import { EnvUIProvider, SegmentedControl, Theme, type ColorScheme } from '@envsemble/envui';
 import { ViewList } from '@envsemble/envui/icons/ViewList';
 
-export function SegmentedControlFixture({ theme }: { theme: ThemeValue }) {
+export function SegmentedControlFixture({ theme }: { theme: ColorScheme }) {
   const [view, setView] = useState('open');
   const [layout, setLayout] = useState('list');
   const [assigned, setAssigned] = useState('mine');
