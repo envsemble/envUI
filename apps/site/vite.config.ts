@@ -26,6 +26,7 @@ import { checkoutMarker } from '../../scripts/test/CheckoutMarker.ts';
 import { resetClosedConnections } from '../../scripts/test/ServerSockets.ts';
 import { readReleaseNotes, releaseNotesSources } from '../../scripts/site/ReleaseNotes.ts';
 import { siteAgentFiles } from '../../scripts/site/SiteAgentFiles.ts';
+import { withoutComments } from '../../scripts/site/CssComments.ts';
 
 /**
  * Data the site's pages read from the repository when the site app builds or serves, as
@@ -95,6 +96,18 @@ export default defineConfig(() => {
                 }</script>`,
             );
           },
+        },
+      },
+      {
+        // The style sheets ship without their comments, which are about half their size. Their
+        // rules and values stay as written, as cssMinify is off for the token reference.
+        name: 'envui-css-comments',
+        apply: 'build',
+        enforce: 'post',
+        generateBundle(_options, bundle) {
+          for (const file of Object.values(bundle))
+            if (file.type === 'asset' && file.fileName.endsWith('.css'))
+              file.source = withoutComments(String(file.source));
         },
       },
       // Rebuilds Tokens.css from packages/ui/tokens on every token edit; Vite hot-reloads it.
