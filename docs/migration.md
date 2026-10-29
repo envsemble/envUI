@@ -1189,6 +1189,7 @@ An application written for a 1.0 prerelease follows these renames by hand: the n
 | `ThemeRadioGroup`, `ThemeRadioGroupProps`                                                                | `ThemeMenuRadioGroup`, `ThemeMenuRadioGroupProps`: it works only inside a menu                                    |
 | Panes.Root `size`, `defaultSize`, `onSizeChange`, `minSize`, `maxSize`, `persistedSize`, `readPanesSize` | `width`, `defaultWidth`, `onWidthChange`, `minWidth`, `maxWidth`, `persistedWidth`, `readPanesWidth`, as on Sheet |
 | `Panes.PaneProps`, `Panes.NamedPaneProps`                                                                | `Panes.MainProps` and `Panes.DetailProps`, `Panes.ListProps`                                                      |
+| `AccordionHeadingLevel`, `CardHeadingLevel`, `TableOfContentsHeadingLevel`                               | `HeadingLevel`, 1 to 6; Accordion takes 2 to 6                                                                    |
 
 ## Migrate by responsibility
 

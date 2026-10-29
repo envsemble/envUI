@@ -106,6 +106,7 @@ export {
   type ThemePreference,
 } from './foundations/themeBootstrap.js';
 export * from './foundations/ThemeMenuRadioGroup.js';
+export type { HeadingLevel } from './foundations/headingLevel.js';
 export * as Menu from './navigation/Menu.js';
 export * from './navigation/ContextMenu.js';
 export * as Menubar from './navigation/Menubar.js';

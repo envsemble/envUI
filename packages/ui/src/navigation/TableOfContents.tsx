@@ -36,13 +36,11 @@ import {
   type WaveLayout,
 } from './internal/contentsWave.js';
 import { prefersReducedMotion, reducedMotionQuery } from '../internal/reducedMotion.js';
+import type { HeadingLevel } from '../foundations/headingLevel.js';
 import '../styles/Base.css';
 import '../styles/TableOfContents.css';
 
 export type { TableOfContentsItem } from './internal/contentsOutline.js';
-
-/** A heading level, h1 to h6. */
-export type TableOfContentsHeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
 
 export interface TableOfContentsProps extends Omit<ComponentPropsWithRef<'nav'>, 'children'> {
   /**
@@ -61,7 +59,7 @@ export interface TableOfContentsProps extends Omit<ComponentPropsWithRef<'nav'>,
    * level. A heading without an id gets one from its words.
    * @default [2, 3]
    */
-  levels?: readonly TableOfContentsHeadingLevel[];
+  levels?: readonly HeadingLevel[];
   /** Leaves out the headings it returns false for, without `items`, such as an example's own. */
   filter?: (heading: HTMLElement) => boolean;
   /**
@@ -73,7 +71,7 @@ export interface TableOfContentsProps extends Omit<ComponentPropsWithRef<'nav'>,
   className?: string;
 }
 
-const defaultLevels: readonly TableOfContentsHeadingLevel[] = [2, 3];
+const defaultLevels: readonly HeadingLevel[] = [2, 3];
 
 /** How long scrolling must pause before a scroll that a link started counts as finished. */
 const settleDelay = 150;
@@ -96,7 +94,7 @@ function headingText(heading: HTMLElement): string {
 /** Reads the headings in a container, giving those without an id one from their words. */
 function readHeadings(
   container: HTMLElement,
-  levels: readonly TableOfContentsHeadingLevel[],
+  levels: readonly HeadingLevel[],
   filter: ((heading: HTMLElement) => boolean) | undefined,
   own: Element | null,
 ): HeadingEntry[] {
@@ -276,10 +274,7 @@ export function TableOfContents({
     if (givenItems) return;
     const element = resolveContainer(container);
     if (!element) return;
-    const headingLevels = levelKey
-      .split(',')
-      .filter(Boolean)
-      .map(Number) as TableOfContentsHeadingLevel[];
+    const headingLevels = levelKey.split(',').filter(Boolean).map(Number) as HeadingLevel[];
     let last = '';
     const read = () => {
       const next = outline(readHeadings(element, headingLevels, filterRef.current, root.current));

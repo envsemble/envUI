@@ -8,13 +8,13 @@ import { classNames } from '../internal/classNames.js';
 import { inSkeleton } from '../foundations/internal/inSkeleton.js';
 import { given, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
+import type { HeadingLevel } from '../foundations/headingLevel.js';
 import '../styles/Base.css';
 import '../styles/Accordion.css';
 
 /** The level of an accordion's headings, from h2 to h6. */
-export type AccordionHeadingLevel = 2 | 3 | 4 | 5 | 6;
 
-const HeadingLevelContext = createContext<AccordionHeadingLevel>(3);
+const HeadingLevelContext = createContext<Exclude<HeadingLevel, 1>>(3);
 
 export interface RootProps
   extends Omit<ComponentPropsWithRef<'div'>, 'defaultValue' | 'onChange'>,
@@ -42,7 +42,7 @@ export interface RootProps
    * The level of each item's heading, for the page's outline; they look the same at every level.
    * @default 3
    */
-  headingLevel?: AccordionHeadingLevel;
+  headingLevel?: Exclude<HeadingLevel, 1>;
   /** Every item ignores presses and can't be focused. */
   disabled?: boolean;
   /**

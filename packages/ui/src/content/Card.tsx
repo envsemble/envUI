@@ -11,6 +11,7 @@ import { Column, Row, type SpaceStep } from '../foundations/Layout.js';
 import { Surface } from '../foundations/Surface.js';
 import { ActionElement, type ActionElementProps } from '../internal/ActionElement.js';
 import { given, type SkeletonProps } from '../internal/skeleton.js';
+import type { HeadingLevel } from '../foundations/headingLevel.js';
 import '../styles/Base.css';
 import '../styles/Card.css';
 
@@ -21,7 +22,6 @@ import '../styles/Card.css';
 export type CardBackground = 'muted' | 'default' | 'page';
 
 /** The level of a card's heading, from h1 to h6. */
-export type CardHeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
 
 interface CardSurfaceProps extends SkeletonProps {
   /**
@@ -51,7 +51,7 @@ interface CardContentOptions {
    * The title's heading level, for the page's outline; the type stays the title type.
    * @default 3
    */
-  headingLevel?: CardHeadingLevel;
+  headingLevel?: HeadingLevel;
   /** A short fact at the end of the title row, such as when the card was updated. */
   meta?: ReactNode;
   /** A sentence under the title, in muted text. */

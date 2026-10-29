@@ -33,6 +33,7 @@ import {
 } from './internal/Destinations.js';
 import { backgroundAttribute, type NavigationBackground } from './internal/background.js';
 import type { ResizeDetails } from '../internal/resizeDetails.js';
+import type { HeadingLevel } from '../foundations/headingLevel.js';
 import '../styles/Base.css';
 import '../styles/Drawer.css';
 
@@ -76,7 +77,7 @@ export interface DrawerProps extends Omit<ComponentPropsWithRef<'nav'>, 'childre
    * one below the heading the drawer sits under, such as 3 in a drawer under an h2.
    * @default 2
    */
-  headingLevel?: 2 | 3 | 4 | 5 | 6;
+  headingLevel?: Exclude<HeadingLevel, 1>;
   /**
    * The drawer's background, named as Surface's and Card's: default, the navigation's background,
    * the default surface color, as a plain rectangle; page, the page's background, so it sits on the
@@ -291,7 +292,7 @@ function Section({
 }: {
   group: string;
   items: DrawerDestination[];
-  level: 2 | 3 | 4 | 5 | 6;
+  level: Exclude<HeadingLevel, 1>;
   state: DrawerState;
 }) {
   const headingId = useId();
