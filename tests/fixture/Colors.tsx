@@ -20,8 +20,8 @@ import {
   Badge,
   type ColorScheme,
 } from '@envsemble/envui';
-import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
-import { Home } from '@envsemble/envui/icons/Home';
+import { IconChevronRight } from '@envsemble/envui/icons/ChevronRight';
+import { IconHome } from '@envsemble/envui/icons/Home';
 import { planOptions } from './SelectOptions.js';
 
 /** The 1.0 emphasis of each 0.7 variant, which the samples are still named by. */
@@ -51,7 +51,7 @@ export function ColorControls({ theme }: { theme: ColorScheme }) {
         </Button>
       ))}
       <IconButton
-        icon={<ChevronRight />}
+        icon={<IconChevronRight />}
         aria-label={`${theme} chevron`}
         data-testid={`${theme}-icon-button`}
       />
@@ -59,10 +59,10 @@ export function ColorControls({ theme }: { theme: ColorScheme }) {
         aria-label={`${theme} navigation`}
         data-testid={`${theme}-navigation`}
         destinations={[
-          { label: `${theme} navigation`, icon: <Home />, onClick: () => {} },
+          { label: `${theme} navigation`, icon: <IconHome />, onClick: () => {} },
           {
             label: `${theme} selected navigation`,
-            icon: <Home />,
+            icon: <IconHome />,
             current: true,
             onClick: () => {},
           },
@@ -109,7 +109,7 @@ export function ColorControls({ theme }: { theme: ColorScheme }) {
             {
               value: 'ghost',
               button: (
-                <Button variant="ghost" startIcon={<Home />}>
+                <Button variant="ghost" startIcon={<IconHome />}>
                   Third tab
                 </Button>
               ),

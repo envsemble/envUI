@@ -14,9 +14,9 @@ import {
   type LinkComponentProps,
   type ColorScheme,
 } from '@envsemble/envui';
-import { Description } from '@envsemble/envui/icons/Description';
-import { MoreHoriz } from '@envsemble/envui/icons/MoreHoriz';
-import { MoreVert } from '@envsemble/envui/icons/MoreVert';
+import { IconDescription } from '@envsemble/envui/icons/Description';
+import { IconMoreHoriz } from '@envsemble/envui/icons/MoreHoriz';
+import { IconMoreVert } from '@envsemble/envui/icons/MoreVert';
 
 /** A trail too long for its narrow frame: the current page cannot fit beside the earlier levels. */
 const narrowTrail = [
@@ -99,7 +99,7 @@ export function DataDisplayFixture({ theme }: { theme: ColorScheme }) {
             ]}
           />
           <Badge tone="success">Published</Badge>
-          <IconButton size="sm" icon={<MoreVert />} aria-label="More actions" />
+          <IconButton size="sm" icon={<IconMoreVert />} aria-label="More actions" />
         </Surface>
       </LinkProvider>
       <output data-testid={`breadcrumb-result-${theme}`}>{crumb}</output>
@@ -145,7 +145,7 @@ export function DataDisplayFixture({ theme }: { theme: ColorScheme }) {
           className="fixture-open-row"
           label={
             <span className="fixture-row-title">
-              <Description />
+              <IconDescription />
               <Link
                 href="#roadmap"
                 underline={false}
@@ -164,7 +164,7 @@ export function DataDisplayFixture({ theme }: { theme: ColorScheme }) {
           end={
             <IconButton
               variant="text"
-              icon={<MoreHoriz />}
+              icon={<IconMoreHoriz />}
               aria-label="More actions"
               className="fixture-row-action"
               onClick={() => setRowResult('more actions')}

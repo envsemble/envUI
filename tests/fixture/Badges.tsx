@@ -8,7 +8,7 @@ import {
   type BadgeTone,
   type ColorScheme,
 } from '@envsemble/envui';
-import { Inbox } from '@envsemble/envui/icons/Inbox';
+import { IconInbox } from '@envsemble/envui/icons/Inbox';
 
 const tones: BadgeTone[] = ['neutral', 'primary', 'accent', 'success', 'warning', 'danger', 'done'];
 
@@ -48,11 +48,11 @@ export function BadgesFixture({ theme }: { theme: ColorScheme }) {
       ))}
       <NavigationDrawer
         aria-label={`Badges ${theme}`}
-        destinations={[{ label: 'Inbox', icon: <Inbox />, href: '#inbox', count: 12 }]}
+        destinations={[{ label: 'Inbox', icon: <IconInbox />, href: '#inbox', count: 12 }]}
       />
       <NavigationRail
         aria-label={`Badges rail ${theme}`}
-        destinations={[{ label: 'Inbox', icon: <Inbox />, href: '#inbox', count: 12 }]}
+        destinations={[{ label: 'Inbox', icon: <IconInbox />, href: '#inbox', count: 12 }]}
       />
     </Theme>
   );

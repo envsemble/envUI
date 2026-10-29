@@ -12,7 +12,7 @@ import {
   TextField,
   IconButton,
 } from '@envsemble/envui';
-import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
+import { IconChevronRight } from '@envsemble/envui/icons/ChevronRight';
 
 export function LayoutFixture() {
   const [cardActivations, setCardActivations] = useState(0);
@@ -51,7 +51,7 @@ export function LayoutFixture() {
               A long label that fills the row and squeezes what sits beside it
             </span>
             <span className="fixture-shrink-slot">
-              <IconButton icon={<ChevronRight />} aria-label={`Squeezed next ${theme}`} />
+              <IconButton icon={<IconChevronRight />} aria-label={`Squeezed next ${theme}`} />
             </span>
           </div>
           <Column gap={2} data-testid="stacked-actions" style={{ maxInlineSize: '20rem' }}>
@@ -59,7 +59,7 @@ export function LayoutFixture() {
             <Button variant="secondary" fullWidth>
               Cancel
             </Button>
-            <IconButton icon={<ChevronRight />} aria-label={`Stacked next ${theme}`} />
+            <IconButton icon={<IconChevronRight />} aria-label={`Stacked next ${theme}`} />
           </Column>
           <Card
             render={<article />}

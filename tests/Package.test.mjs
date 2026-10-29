@@ -154,16 +154,16 @@ before(
     import * as ui from '@envsemble/envui';
     import * as color from '@envsemble/envui/color';
     import * as themeBootstrap from '@envsemble/envui/theme-bootstrap';
-    import { Home } from '@envsemble/envui/icons/Home';
+    import { IconHome } from '@envsemble/envui/icons/Home';
     if (typeof document !== 'undefined' || typeof window !== 'undefined') throw new Error('DOM globals must be absent');
     function ThemeProbe() { return h('span', { 'data-originating-theme': ui.useTheme().theme }); }
     const custom = h(ui.Icon, { label: 'Custom star', viewBox: '0 0 8 8' }, h('path', { d: 'M0 0L8 8' }));
     const html = renderToString(h(ui.Theme, { theme: 'dark' },
       h(ThemeProbe),
-      h(ui.Button, { startIcon: h(Home) }, 'Create'),
+      h(ui.Button, { startIcon: h(IconHome) }, 'Create'),
       h(ui.IconButton, { icon: custom, 'aria-label': 'Open item' }),
       h(ui.ButtonGroup, { orientation: 'vertical', 'aria-label': 'Connected actions' },
-        h(ui.Button, { startIcon: h(Home) }, 'Continue'),
+        h(ui.Button, { startIcon: h(IconHome) }, 'Continue'),
         h(ui.IconButton, { icon: custom, 'aria-label': 'Settings' }),
         h(ui.Button, { variant: 'primary', tone: 'accent', href: '/confirm' }, 'Confirm')),
       h(ui.Pager.Previous, { href: '/previous-guide' }, 'Earlier guide'),
@@ -188,7 +188,7 @@ before(
     ));
     console.log(JSON.stringify({
       exports: Object.keys(ui), colorExports: Object.keys(color), themeBootstrapExports: Object.keys(themeBootstrap), html,
-      defaultIcon: renderToString(h(Home)), filledIcon: renderToString(h(Home, { filled: true, label: 'Home' })),
+      defaultIcon: renderToString(h(IconHome)), filledIcon: renderToString(h(IconHome, { filled: true, label: 'Home' })),
       customIcon: renderToString(custom),
       module: import.meta.resolve('@envsemble/envui'),
       iconsBarrel: (() => { try { return import.meta.resolve('@envsemble/envui/icons'); } catch { return null; } })(),
@@ -380,35 +380,35 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     import { Theme, Button, ButtonGroup, ConfirmButton, IconButton, NavigationBar, NavigationRail, NavigationDrawer, Pager, Icon, TextField, Textarea, Checkbox, Switch, Row, Column,
       EnvUIProvider, Toolbar, Field, RadioGroup, Radio, Select, Combobox, DatePicker, Calendar, Dialog, DialogClose, ToastProvider, useToast,
       type ColorScheme, type ButtonProps, type ButtonGroupProps, type SelectItem, type ComboboxItem, type ToastManager } from '@envsemble/envui';
-    import { Home } from '@envsemble/envui/icons/Home';
+    import { IconHome } from '@envsemble/envui/icons/Home';
     import '@envsemble/envui/styles.css';
     import { RichText, RichTextEditor, type RichTextEditorHandle, type RichTextReferenceSource } from '@envsemble/envui/rich-text';
     import { ColorPicker, ColorPickerButton, ColorSwatch, type Color, type ColorValue } from '@envsemble/envui/color';
     const colorValue: ColorValue = 'hsl(256, 34%, 48%)';
     const advanced = (color: Color): ColorValue => color.withChannelValue('alpha', 0.5);
     void advanced;
-    const buttonProps: ButtonProps = { variant: 'primary', tone: 'accent', ref: createRef<HTMLButtonElement>(), startIcon: <Home /> };
+    const buttonProps: ButtonProps = { variant: 'primary', tone: 'accent', ref: createRef<HTMLButtonElement>(), startIcon: <IconHome /> };
     const buttonGroupProps: ButtonGroupProps = { orientation: 'vertical', ref: createRef<HTMLDivElement>(), 'aria-label': 'Actions' };
-    const pagerLinkProps: Pager.LinkProps = { href: '/guide', children: 'Read the guide', ref: createRef<HTMLAnchorElement>(), icon: <Home /> };
+    const pagerLinkProps: Pager.LinkProps = { href: '/guide', children: 'Read the guide', ref: createRef<HTMLAnchorElement>(), icon: <IconHome /> };
     const options: SelectItem[] = [{ value: 'one', label: 'One' }];
-    const people: ComboboxItem[] = [{ value: 'first', label: 'First person', description: 'first@example.com', start: <Home /> }];
+    const people: ComboboxItem[] = [{ value: 'first', label: 'First person', description: 'first@example.com', start: <IconHome /> }];
     const theme: ColorScheme = 'dark';
     const referenceSources: RichTextReferenceSource[] = [{ trigger: '@', search: async ({ query, signal }) => signal.aborted ? [] : [{ id: query, label: query }] }];
     const richTextConsumer = <><RichTextEditor editorRef={createRef<RichTextEditorHandle>()} value="Notes" references={referenceSources} onValueChange={markdown => { const typed: string = markdown; void typed; }} onUpload={async (file, { signal }) => signal.aborted ? null : ({ url: '/uploads/example', label: file.name, id: 'stable-file-id', kind: 'file' })} /><RichText onReferenceClick={(reference, event) => { event.preventDefault(); void reference.id; }}>Notes</RichText></>;
     void richTextConsumer;
     function NotificationAction() { const manager: ToastManager = useToast(); return <Button onClick={() => manager.show({ message: 'Saved' })}>Save</Button>; }
     export const consumer = <Theme theme={theme} ref={createRef<HTMLDivElement>()}>
-      <Button {...buttonProps}>Create</Button><IconButton aria-label="Open" icon={<Home filled />} />
-      <ConfirmButton variant="ghost" icon={<Home />} aria-label="Remove" confirmLabel="Remove" onConfirm={() => undefined} />
-      <ButtonGroup {...buttonGroupProps}><Button href="/">Home</Button><IconButton aria-label="Options" icon={<Home />} /><Button variant="primary" tone="accent">Confirm</Button></ButtonGroup>
+      <Button {...buttonProps}>Create</Button><IconButton aria-label="Open" icon={<IconHome filled />} />
+      <ConfirmButton variant="ghost" icon={<IconHome />} aria-label="Remove" confirmLabel="Remove" onConfirm={() => undefined} />
+      <ButtonGroup {...buttonGroupProps}><Button href="/">Home</Button><IconButton aria-label="Options" icon={<IconHome />} /><Button variant="primary" tone="accent">Confirm</Button></ButtonGroup>
       <Column gap={3} ref={createRef<HTMLDivElement>()}><TextField label="First" /><TextField label="Second" /></Column>
       <Row wrap justify="end" ref={createRef<HTMLDivElement>()}><Button fullWidth>Save</Button><Button variant="outline" tone="danger">Cancel</Button></Row>
-      <EnvUIProvider locale="de-CH" dir="ltr" messages={{ combobox: { clear: 'Leeren' }, toast: { hidden: ({ count }) => count + ' hidden' } }}><IconButton ref={createRef<HTMLButtonElement>()} aria-label="Schließen" icon={<Home />} /></EnvUIProvider>
-      <Toolbar.Root aria-label="Formatting"><Toolbar.Button icon={<Home />} label="Home" pressed shortcut="Ctrl+H" /><Toolbar.Separator /><Toolbar.Link href="/" icon={<Home />} label="Home" /></Toolbar.Root>
+      <EnvUIProvider locale="de-CH" dir="ltr" messages={{ combobox: { clear: 'Leeren' }, toast: { hidden: ({ count }) => count + ' hidden' } }}><IconButton ref={createRef<HTMLButtonElement>()} aria-label="Schließen" icon={<IconHome />} /></EnvUIProvider>
+      <Toolbar.Root aria-label="Formatting"><Toolbar.Button icon={<IconHome />} label="Home" pressed shortcut="Ctrl+H" /><Toolbar.Separator /><Toolbar.Link href="/" icon={<IconHome />} label="Home" /></Toolbar.Root>
       <Field.Root name="project" invalid><Field.Label>Project</Field.Label><Field.Control size="sm" /><Field.Description>Shown to everyone</Field.Description><Field.Error>Enter a name</Field.Error></Field.Root>
-      <NavigationBar ref={createRef<HTMLElement>()} destinations={[{ label: 'Home', icon: <Home />, href: '/', current: true }, { label: 'View', icon: <Home />, onClick: () => undefined, count: 2 }]} />
-      <NavigationRail aria-label="Places" destinations={[{ label: 'Home', icon: <Home />, href: '/' }]} header={<Home />} />
-      <NavigationDrawer destinations={[{ label: 'Guide', href: '/guide', group: 'Help' }]} footer={<Home />} />
+      <NavigationBar ref={createRef<HTMLElement>()} destinations={[{ label: 'Home', icon: <IconHome />, href: '/', current: true }, { label: 'View', icon: <IconHome />, onClick: () => undefined, count: 2 }]} />
+      <NavigationRail aria-label="Places" destinations={[{ label: 'Home', icon: <IconHome />, href: '/' }]} header={<IconHome />} />
+      <NavigationDrawer destinations={[{ label: 'Guide', href: '/guide', group: 'Help' }]} footer={<IconHome />} />
       <Pager.Next {...pagerLinkProps} target="_blank" rel="noopener" />
       <Pager.Previous href="/previous">Previous guide</Pager.Previous>
       <Icon label="Custom" viewBox="0 0 1 1"><path d="M0 0L1 1" /></Icon>
@@ -428,7 +428,7 @@ test('installed declarations typecheck a React 19 consumer without source aliase
       <ToastProvider><NotificationAction /></ToastProvider>
     </Theme>;
     // @ts-expect-error Icon-only actions require an accessible name.
-    const unnamedIconButton = <IconButton icon={<Home />} />;
+    const unnamedIconButton = <IconButton icon={<IconHome />} />;
     // @ts-expect-error The theme boundary has only the two owned themes.
     const unknownTheme = <Theme theme="system" />;
     // @ts-expect-error Button variants are the explicit public contract.
@@ -867,7 +867,7 @@ test('a small independent bundle excludes unused icons and Base UI', async funct
     `
     import { build } from 'esbuild';
     const result = await build({
-      stdin: { contents: "export { Theme, Button, Icon } from '@envsemble/envui'; export { Home } from '@envsemble/envui/icons/Home';", resolveDir: process.cwd(), sourcefile: 'consumer.js' },
+      stdin: { contents: "export { Theme, Button, Icon } from '@envsemble/envui'; export { IconHome } from '@envsemble/envui/icons/Home';", resolveDir: process.cwd(), sourcefile: 'consumer.js' },
       bundle: true, write: false, format: 'esm', platform: 'browser', treeShaking: true,
       outfile: 'consumer.js', metafile: true, logLevel: 'silent',
       loader: { '.woff2': 'file', '.svg': 'file' },

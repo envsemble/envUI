@@ -8,7 +8,7 @@ import {
   type CommandPaletteProps,
   type ColorScheme,
 } from '@envsemble/envui';
-import { Description } from '@envsemble/envui/icons/Description';
+import { IconDescription } from '@envsemble/envui/icons/Description';
 
 const recent = ['Roadmap.md', 'Decisions.md'];
 const documents = Array.from({ length: 60 }, (_, index) => `Document ${index + 1}.md`);
@@ -24,14 +24,14 @@ export function CommandPaletteFixture({ theme }: { theme: ColorScheme }) {
         id: `recent/${name}`,
         label: name,
         description: 'plans',
-        icon: <Description />,
+        icon: <IconDescription />,
         group: 'Recently opened',
       })),
       ...documents.filter(match).map((name) => ({
         id: `documents/${name}`,
         label: name,
         description: 'documents',
-        icon: <Description />,
+        icon: <IconDescription />,
         group: 'Documents',
       })),
     ];

@@ -10,9 +10,9 @@ import {
   Text,
   Toolbar,
 } from '@envsemble/envui';
-import { FormatBold } from '@envsemble/envui/icons/FormatBold';
-import { FormatItalic } from '@envsemble/envui/icons/FormatItalic';
-import { FormatUnderlined } from '@envsemble/envui/icons/FormatUnderlined';
+import { IconFormatBold } from '@envsemble/envui/icons/FormatBold';
+import { IconFormatItalic } from '@envsemble/envui/icons/FormatItalic';
+import { IconFormatUnderlined } from '@envsemble/envui/icons/FormatUnderlined';
 // Internal primitives, which envUI's own components build on: the fixture mounts them directly.
 import { ResizeHandle } from '../../packages/ui/src/internal/ResizeHandle.js';
 import { useRovingFocus } from '../../packages/ui/src/internal/useRovingFocus.js';
@@ -53,9 +53,9 @@ function DirectedControls() {
         ))}
       </div>
       <Toolbar.Root aria-label="Formatting">
-        <Toolbar.Button icon={<FormatBold />} label="Bold" />
-        <Toolbar.Button icon={<FormatItalic />} label="Italic" />
-        <Toolbar.Button icon={<FormatUnderlined />} label="Underline" />
+        <Toolbar.Button icon={<IconFormatBold />} label="Bold" />
+        <Toolbar.Button icon={<IconFormatItalic />} label="Italic" />
+        <Toolbar.Button icon={<IconFormatUnderlined />} label="Underline" />
       </Toolbar.Root>
       <SegmentedControl
         aria-label="View"
@@ -102,16 +102,16 @@ export function DirectionFixture() {
       {/* The test switches this region's dir while focus stays in its toolbar. */}
       <div dir="ltr" data-testid="direction-switch">
         <Toolbar.Root aria-label="Switching">
-          <Toolbar.Button icon={<FormatBold />} label="First" />
-          <Toolbar.Button icon={<FormatItalic />} label="Second" />
-          <Toolbar.Button icon={<FormatUnderlined />} label="Third" />
+          <Toolbar.Button icon={<IconFormatBold />} label="First" />
+          <Toolbar.Button icon={<IconFormatItalic />} label="Second" />
+          <Toolbar.Button icon={<IconFormatUnderlined />} label="Third" />
         </Toolbar.Root>
       </div>
       {/* Only the toolbar's own keyboard takes its direction: the parts inside keep theirs. */}
       <div dir="rtl" data-testid="direction-nested">
         <BaseDirectionProbe testId="base-direction-outside" />
         <Toolbar.Root aria-label="Nested">
-          <Toolbar.Button icon={<FormatBold />} label="Nested bold" />
+          <Toolbar.Button icon={<IconFormatBold />} label="Nested bold" />
           <BaseDirectionProbe testId="base-direction-inside" />
         </Toolbar.Root>
       </div>

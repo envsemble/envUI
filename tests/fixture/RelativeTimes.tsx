@@ -10,7 +10,7 @@ import {
   formatRelativeTime,
   type ColorScheme,
 } from '@envsemble/envui';
-import { Settings } from '@envsemble/envui/icons/Settings';
+import { IconSettings } from '@envsemble/envui/icons/Settings';
 
 const second = 1_000;
 const minute = 60 * second;
@@ -87,7 +87,7 @@ export function RelativeTimesFixture({ theme }: { theme: ColorScheme }) {
       >
         <span className="fixture-shrink-label">Quarterly report</span>
         <RelativeTime data-testid="toolbar-time" format="narrow" value={openedAt - 3 * hour} />
-        <IconButton size="sm" icon={<Settings />} aria-label="Report settings" />
+        <IconButton size="sm" icon={<IconSettings />} aria-label="Report settings" />
       </Surface>
       <p className="fixture-narrow-time" data-testid="narrow-frame">
         Updated <RelativeTime data-testid="narrow-time" value={openedAt - 3 * hour} />

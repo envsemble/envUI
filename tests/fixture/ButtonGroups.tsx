@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Button, ButtonGroup, IconButton, Column, Theme, type ColorScheme } from '@envsemble/envui';
-import { Add } from '@envsemble/envui/icons/Add';
-import { Check } from '@envsemble/envui/icons/Check';
-import { ExpandMore } from '@envsemble/envui/icons/ExpandMore';
-import { Settings } from '@envsemble/envui/icons/Settings';
+import { IconAdd } from '@envsemble/envui/icons/Add';
+import { IconCheck } from '@envsemble/envui/icons/Check';
+import { IconExpandMore } from '@envsemble/envui/icons/ExpandMore';
+import { IconSettings } from '@envsemble/envui/icons/Settings';
 
 export function ButtonGroupsFixture({ theme }: { theme: ColorScheme }) {
   const [activations, setActivations] = useState(0);
@@ -20,25 +20,25 @@ export function ButtonGroupsFixture({ theme }: { theme: ColorScheme }) {
             data-testid={orientation}
           >
             <Button onClick={() => setActivations((value) => value + 1)}>Continue</Button>
-            <IconButton variant="primary" tone="accent" icon={<Check />} aria-label="Confirm" />
-            <IconButton icon={<Settings />} aria-label="Settings" />
-            <Button href="#group-destination" variant="outline" startIcon={<Settings />}>
+            <IconButton variant="primary" tone="accent" icon={<IconCheck />} aria-label="Confirm" />
+            <IconButton icon={<IconSettings />} aria-label="Settings" />
+            <Button href="#group-destination" variant="outline" startIcon={<IconSettings />}>
               Manage
             </Button>
-            <Button variant="primary" tone="danger" endIcon={<Check />}>
+            <Button variant="primary" tone="danger" endIcon={<IconCheck />}>
               Delete
             </Button>
           </ButtonGroup>
         ))}
         <ButtonGroup data-testid="important-end">
-          <IconButton variant="primary" tone="accent" icon={<Check />} aria-label="Approve" />
+          <IconButton variant="primary" tone="accent" icon={<IconCheck />} aria-label="Approve" />
           <Button variant="secondary">Cancel</Button>
         </ButtonGroup>
         <ButtonGroup orientation="vertical" data-testid="important-top">
           <Button variant="primary" tone="accent">
             Confirm
           </Button>
-          <IconButton icon={<Settings />} aria-label="Options" />
+          <IconButton icon={<IconSettings />} aria-label="Options" />
         </ButtonGroup>
         <ButtonGroup data-testid="single">
           <Button>Only action</Button>
@@ -47,7 +47,7 @@ export function ButtonGroupsFixture({ theme }: { theme: ColorScheme }) {
           <IconButton
             variant="primary"
             tone="accent"
-            icon={<Check />}
+            icon={<IconCheck />}
             aria-label="Only confirmation"
           />
         </ButtonGroup>
@@ -55,7 +55,7 @@ export function ButtonGroupsFixture({ theme }: { theme: ColorScheme }) {
           {ends && <Button>First</Button>}
           <Button hidden>Hidden before</Button>
           <>
-            <IconButton icon={<Settings />} aria-label="Remaining action" />
+            <IconButton icon={<IconSettings />} aria-label="Remaining action" />
             {null}
           </>
           <Button hidden>Hidden after</Button>
@@ -88,17 +88,21 @@ export function ButtonGroupsFixture({ theme }: { theme: ColorScheme }) {
         {/* Groups that fill a sidebar. */}
         <div className="fixture-sidebar" data-testid="sidebar">
           <ButtonGroup fullWidth aria-label="Start a document">
-            <Button startIcon={<Add />}>New document</Button>
-            <IconButton variant="primary" icon={<ExpandMore />} aria-label="More ways to start" />
+            <Button startIcon={<IconAdd />}>New document</Button>
+            <IconButton
+              variant="primary"
+              icon={<IconExpandMore />}
+              aria-label="More ways to start"
+            />
           </ButtonGroup>
           <ButtonGroup fullWidth orientation="vertical" aria-label="Sidebar actions">
             <Button variant="secondary">Import</Button>
             <Button variant="secondary">Export</Button>
           </ButtonGroup>
           <ButtonGroup fullWidth aria-label="Sidebar tools">
-            <IconButton icon={<Settings />} aria-label="Sidebar settings" />
-            <IconButton icon={<Check />} aria-label="Mark all done" />
-            <IconButton icon={<Add />} aria-label="Add a list" />
+            <IconButton icon={<IconSettings />} aria-label="Sidebar settings" />
+            <IconButton icon={<IconCheck />} aria-label="Mark all done" />
+            <IconButton icon={<IconAdd />} aria-label="Add a list" />
           </ButtonGroup>
         </div>
       </Column>

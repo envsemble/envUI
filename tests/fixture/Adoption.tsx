@@ -23,10 +23,10 @@ import {
   Column,
   Text,
 } from '@envsemble/envui';
-import { Error as ErrorIcon } from '@envsemble/envui/icons/Error';
-import { Logout } from '@envsemble/envui/icons/Logout';
-import { Delete } from '@envsemble/envui/icons/Delete';
-import { Search } from '@envsemble/envui/icons/Search';
+import { IconError } from '@envsemble/envui/icons/Error';
+import { IconLogout } from '@envsemble/envui/icons/Logout';
+import { IconDelete } from '@envsemble/envui/icons/Delete';
+import { IconSearch } from '@envsemble/envui/icons/Search';
 
 /** Stands in for a router link: it records client navigation instead of loading a page. */
 function RecordingLink({ href, onClick, ...props }: LinkComponentProps) {
@@ -112,7 +112,7 @@ export function AdoptionFixture() {
               Account settings
             </Menu.Item>
             <Menu.Separator />
-            <Menu.Item icon={<Logout />} onClick={() => setAction('Signed out')}>
+            <Menu.Item icon={<IconLogout />} onClick={() => setAction('Signed out')}>
               Sign out
             </Menu.Item>
           </Menu.Root>
@@ -134,7 +134,7 @@ export function AdoptionFixture() {
             <Button
               variant="secondary"
               fullWidth
-              startIcon={<Search />}
+              startIcon={<IconSearch />}
               end={<Kbd keys={['Ctrl', 'K']} aria-hidden />}
               aria-keyshortcuts="Control+K"
               data-testid="end-button"
@@ -152,7 +152,7 @@ export function AdoptionFixture() {
             Remove
           </ConfirmButton>
           <ConfirmButton
-            icon={<Delete />}
+            icon={<IconDelete />}
             aria-label="Remove Morgan"
             confirmLabel="Remove"
             armedDuration={800}
@@ -186,7 +186,7 @@ export function AdoptionFixture() {
             />
           </List.Root>
           <Column role="alert" gap={4} padding={5}>
-            <ErrorIcon
+            <IconError
               width="1.5rem"
               height="1.5rem"
               style={{ color: 'var(--env-color-fg-danger)' }}

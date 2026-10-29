@@ -311,9 +311,9 @@ ruleTester.run('no-html-elements', rule, {
       code: 'import { Surface as Dialog } from \'@envsemble/envui\'; <Dialog role="dialog" />;',
       errors: [uses('Dialog', '<Dialog role="dialog">')],
     },
-    // envUI's icons are not its components.
+    // envUI's icons are not its components, whatever their local name.
     {
-      code: 'import { Button } from \'@envsemble/envui/icons\'; <Button role="button" />;',
+      code: 'import { IconSmartButton as Button } from \'@envsemble/envui/icons/SmartButton\'; <Button role="button" />;',
       errors: [
         uses('Button', '<Button role="button">', {
           alternatives: icon,

@@ -14,7 +14,7 @@ import {
   type ColorScheme,
   Badge,
 } from '@envsemble/envui';
-import { Description } from '@envsemble/envui/icons/Description';
+import { IconDescription } from '@envsemble/envui/icons/Description';
 
 const initialTabs: DocumentTabsItem[] = [
   { value: 'plans/roadmap.md', label: 'Roadmap.md' },
@@ -24,7 +24,7 @@ const initialTabs: DocumentTabsItem[] = [
     value: `notes/note-${index + 1}.md`,
     label: `A rather long note title number ${index + 1}.md`,
   })),
-].map((tab) => ({ ...tab, icon: <Description />, tooltip: tab.value }));
+].map((tab) => ({ ...tab, icon: <IconDescription />, tooltip: tab.value }));
 
 export function DocumentTabsFixture({ theme }: { theme: ColorScheme }) {
   const [tabs, setTabs] = useState(initialTabs);

@@ -14,7 +14,7 @@ import {
   Tooltip,
   useToast,
 } from '@envsemble/envui';
-import { Refresh } from '@envsemble/envui/icons/Refresh';
+import { IconRefresh } from '@envsemble/envui/icons/Refresh';
 
 /** A toast shown as the preview mounts, kept until it is dismissed. */
 function SavedNotice() {
@@ -76,7 +76,7 @@ export function PortalContainersFixture() {
               <Menu.Item>Delete</Menu.Item>
             </Menu.Root>
             <Tooltip content="Refresh members" defaultOpen>
-              <IconButton icon={<Refresh />} aria-label="Refresh members" />
+              <IconButton icon={<IconRefresh />} aria-label="Refresh members" />
             </Tooltip>
             <SavedNotice />
             <NotifyButton />

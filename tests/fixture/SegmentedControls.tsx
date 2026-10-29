@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { EnvUIProvider, SegmentedControl, Theme, type ColorScheme } from '@envsemble/envui';
-import { ViewList } from '@envsemble/envui/icons/ViewList';
+import { IconViewList } from '@envsemble/envui/icons/ViewList';
 
 export function SegmentedControlFixture({ theme }: { theme: ColorScheme }) {
   const [view, setView] = useState('open');
@@ -26,7 +26,7 @@ export function SegmentedControlFixture({ theme }: { theme: ColorScheme }) {
         value={layout}
         onValueChange={setLayout}
         items={[
-          { value: 'list', label: 'List', icon: <ViewList /> },
+          { value: 'list', label: 'List', icon: <IconViewList /> },
           { value: 'board', label: 'Board' },
         ]}
       />

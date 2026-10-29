@@ -16,7 +16,7 @@ await build({
     contents: [
       "export { HoverCard } from './packages/ui/src/feedback/HoverCard.tsx';",
       "export { Text } from './packages/ui/src/foundations/Text.tsx';",
-      "export { Info } from './packages/ui/src/icons/Info.tsx';",
+      "export { IconInfo } from './packages/ui/src/icons/Info.tsx';",
     ].join('\n'),
     resolveDir: repository,
     loader: 'ts',
@@ -31,7 +31,7 @@ await build({
   outfile: output,
   logLevel: 'error',
 });
-const { HoverCard, Text, Info } = await import(pathToFileURL(output).href);
+const { HoverCard, Text, IconInfo } = await import(pathToFileURL(output).href);
 
 /** Renders a HoverCard with a trigger, and returns its markup and the warnings it gave. */
 function render(trigger) {
@@ -52,7 +52,7 @@ test('Text that holds text takes the dotted underline', () => {
 });
 
 test('Text that holds only an icon takes no underline', () => {
-  const { markup } = render(h(Text, { render: h('span'), tabIndex: 0 }, h(Info)));
+  const { markup } = render(h(Text, { render: h('span'), tabIndex: 0 }, h(IconInfo)));
   assert.ok(markup.includes('<svg'), markup);
   assert.ok(!underlined(markup), markup);
 });

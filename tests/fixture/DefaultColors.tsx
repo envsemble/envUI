@@ -34,17 +34,17 @@ import {
   useToast,
   type Destination,
 } from '@envsemble/envui';
-import { FormatBold } from '@envsemble/envui/icons/FormatBold';
-import { FormatItalic } from '@envsemble/envui/icons/FormatItalic';
-import { Home } from '@envsemble/envui/icons/Home';
-import { Inbox } from '@envsemble/envui/icons/Inbox';
-import { Settings } from '@envsemble/envui/icons/Settings';
+import { IconFormatBold } from '@envsemble/envui/icons/FormatBold';
+import { IconFormatItalic } from '@envsemble/envui/icons/FormatItalic';
+import { IconHome } from '@envsemble/envui/icons/Home';
+import { IconInbox } from '@envsemble/envui/icons/Inbox';
+import { IconSettings } from '@envsemble/envui/icons/Settings';
 import { planOptions } from './SelectOptions.js';
 
 const destinations: Destination[] = [
-  { label: 'Home', icon: <Home />, href: '#home', current: true },
-  { label: 'Inbox', icon: <Inbox />, href: '#inbox', count: 3 },
-  { label: 'Settings', icon: <Settings />, href: '#settings' },
+  { label: 'Home', icon: <IconHome />, href: '#home', current: true },
+  { label: 'Inbox', icon: <IconInbox />, href: '#inbox', count: 3 },
+  { label: 'Settings', icon: <IconSettings />, href: '#settings' },
 ];
 
 /** Toasts in a few tones, one with an action, kept until the page closes. */
@@ -89,14 +89,19 @@ export function DefaultColors() {
           <Button variant="text" tone="danger">
             Text danger
           </Button>
-          <IconButton icon={<Settings />} aria-label="Secondary icon" />
-          <IconButton variant="ghost" icon={<Settings />} aria-label="Ghost icon" />
-          <IconButton variant="text" icon={<Settings />} aria-label="Text icon" />
-          <IconButton variant="text" tone="danger" icon={<Settings />} aria-label="Danger icon" />
+          <IconButton icon={<IconSettings />} aria-label="Secondary icon" />
+          <IconButton variant="ghost" icon={<IconSettings />} aria-label="Ghost icon" />
+          <IconButton variant="text" icon={<IconSettings />} aria-label="Text icon" />
+          <IconButton
+            variant="text"
+            tone="danger"
+            icon={<IconSettings />}
+            aria-label="Danger icon"
+          />
         </Row>
         <Toolbar.Root aria-label="Formatting">
-          <Toolbar.Button icon={<FormatBold />} label="Bold" pressed />
-          <Toolbar.Button icon={<FormatItalic />} label="Italic" pressed={false} />
+          <Toolbar.Button icon={<IconFormatBold />} label="Bold" pressed />
+          <Toolbar.Button icon={<IconFormatItalic />} label="Italic" pressed={false} />
         </Toolbar.Root>
         <Surface background="muted" padding={3}>
           <Card href="#card">Interactive card</Card>
@@ -126,7 +131,7 @@ export function DefaultColors() {
           />
         </List.Root>
         <Menu.Root aria-label="Actions" defaultOpen trigger={<Button>Actions</Button>}>
-          <Menu.Item icon={<Settings />}>Preferences</Menu.Item>
+          <Menu.Item icon={<IconSettings />}>Preferences</Menu.Item>
           <Menu.Item>Rename</Menu.Item>
         </Menu.Root>
         <NavigationDrawer aria-label="Drawer destinations" destinations={destinations} />

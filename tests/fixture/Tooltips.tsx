@@ -10,14 +10,14 @@ import {
   Text,
   Tooltip,
 } from '@envsemble/envui';
-import { Archive } from '@envsemble/envui/icons/Archive';
-import { ContentCopy } from '@envsemble/envui/icons/ContentCopy';
-import { ArrowForward } from '@envsemble/envui/icons/ArrowForward';
-import { Delete } from '@envsemble/envui/icons/Delete';
-import { FilterList } from '@envsemble/envui/icons/FilterList';
-import { MoreVert } from '@envsemble/envui/icons/MoreVert';
-import { Pin } from '@envsemble/envui/icons/Pin';
-import { Save } from '@envsemble/envui/icons/Save';
+import { IconArchive } from '@envsemble/envui/icons/Archive';
+import { IconContentCopy } from '@envsemble/envui/icons/ContentCopy';
+import { IconArrowForward } from '@envsemble/envui/icons/ArrowForward';
+import { IconDelete } from '@envsemble/envui/icons/Delete';
+import { IconFilterList } from '@envsemble/envui/icons/FilterList';
+import { IconMoreVert } from '@envsemble/envui/icons/MoreVert';
+import { IconPin } from '@envsemble/envui/icons/Pin';
+import { IconSave } from '@envsemble/envui/icons/Save';
 
 /** A control of the application's own with a `trigger` prop, which a Tooltip doesn't move onto. */
 function BadgeButton({
@@ -67,14 +67,14 @@ export function TooltipsFixture() {
         side="bottom"
         align="start"
       >
-        <IconButton icon={<FilterList />} aria-label="Filter tour" />
+        <IconButton icon={<IconFilterList />} aria-label="Filter tour" />
       </Tooltip>
       <output data-testid="tour-reasons">{tourReasons.join(', ')}</output>
       <Tooltip content="Moves it out of the list" delay={0}>
-        <IconButton icon={<Archive />} aria-label="Archive" />
+        <IconButton icon={<IconArchive />} aria-label="Archive" />
       </Tooltip>
       <Tooltip content="Delete" delay={0}>
-        <IconButton icon={<Delete />} aria-label="Delete" />
+        <IconButton icon={<IconDelete />} aria-label="Delete" />
       </Tooltip>
       <Tooltip content="No seats left" delay={0}>
         <Button disabled={!seats}>Invite member</Button>
@@ -98,7 +98,7 @@ export function TooltipsFixture() {
       {/* Its name and tooltip turn to Copied together, with C, while the tooltip is open. */}
       <Tooltip content={copied ? 'Copied' : 'Copy link'} delay={0}>
         <IconButton
-          icon={<ContentCopy />}
+          icon={<IconContentCopy />}
           aria-label={copied ? 'Copied' : 'Copy link'}
           onKeyDown={(event) => {
             if (event.key === 'c') setCopied(true);
@@ -113,7 +113,7 @@ export function TooltipsFixture() {
       </Tooltip>
       {/* A disabled toggle: its wrapper stands in as a button and keeps its pressed state. */}
       <Tooltip content="Only owners pin items" delay={0}>
-        <IconButton icon={<Pin />} aria-label="Pin" aria-pressed={pinned} disabled />
+        <IconButton icon={<IconPin />} aria-label="Pin" aria-pressed={pinned} disabled />
       </Tooltip>
       <Button variant="secondary" onClick={() => setPinned((current) => !current)}>
         Toggle pinned
@@ -131,12 +131,12 @@ export function TooltipsFixture() {
           </>
         }
       >
-        <IconButton icon={<Save />} aria-label="Save" />
+        <IconButton icon={<IconSave />} aria-label="Save" />
       </Tooltip>
       {/* In right-to-left text, the end of the line is on the left. */}
       <div dir="rtl" className="fixture-actions">
         <Tooltip content="Next step" side="inline-end" delay={0}>
-          <IconButton icon={<ArrowForward />} aria-label="Forward" />
+          <IconButton icon={<IconArrowForward />} aria-label="Forward" />
         </Tooltip>
         <Popover
           side="inline-end"
@@ -159,7 +159,7 @@ export function TooltipsFixture() {
       </span>
       <Tooltip content="Gives the file a new name" delay={0}>
         <Button variant="secondary" aria-labelledby="fixture-rename-label">
-          <Archive />
+          <IconArchive />
         </Button>
       </Tooltip>
       <section className="fixture-actions" data-testid="overlay-triggers">
@@ -169,7 +169,7 @@ export function TooltipsFixture() {
           trigger={
             <Tooltip content="More actions" delay={0}>
               <IconButton
-                icon={<MoreVert />}
+                icon={<IconMoreVert />}
                 aria-label="More actions"
                 onClick={() => setPresses((count) => count + 1)}
               />
@@ -184,7 +184,7 @@ export function TooltipsFixture() {
           <Popover
             title="Filters"
             onOpenChange={(open) => open && setPopoverOpens((count) => count + 1)}
-            trigger={<IconButton icon={<FilterList />} aria-label="Filters" />}
+            trigger={<IconButton icon={<IconFilterList />} aria-label="Filters" />}
           >
             <Button variant="secondary">Only open items</Button>
           </Popover>

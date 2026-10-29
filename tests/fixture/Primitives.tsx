@@ -17,12 +17,12 @@ import {
   Toolbar,
   useLocale,
 } from '@envsemble/envui';
-import { FormatBold } from '@envsemble/envui/icons/FormatBold';
-import { FormatItalic } from '@envsemble/envui/icons/FormatItalic';
-import { FormatUnderlined } from '@envsemble/envui/icons/FormatUnderlined';
-import { Help } from '@envsemble/envui/icons/Help';
-import { Undo } from '@envsemble/envui/icons/Undo';
-import { Settings } from '@envsemble/envui/icons/Settings';
+import { IconFormatBold } from '@envsemble/envui/icons/FormatBold';
+import { IconFormatItalic } from '@envsemble/envui/icons/FormatItalic';
+import { IconFormatUnderlined } from '@envsemble/envui/icons/FormatUnderlined';
+import { IconHelp } from '@envsemble/envui/icons/Help';
+import { IconUndo } from '@envsemble/envui/icons/Undo';
+import { IconSettings } from '@envsemble/envui/icons/Settings';
 // Internal primitives, which only envUI's own components use: the fixture mounts them directly.
 import { PopupSurface } from '../../packages/ui/src/internal/PopupSurface.js';
 import { ListRow } from '../../packages/ui/src/internal/ListRow.js';
@@ -41,44 +41,48 @@ function ToolbarSample() {
       <Toolbar.Root aria-label="Formatting">
         <Toolbar.Group aria-label="Text style">
           <Toolbar.Button
-            icon={<FormatBold />}
+            icon={<IconFormatBold />}
             label="Bold"
             shortcut="Ctrl+B"
             pressed={bold}
             onClick={() => setBold((current) => !current)}
           />
           <Toolbar.Button
-            icon={<FormatItalic />}
+            icon={<IconFormatItalic />}
             label="Italic"
             onClick={() => setPressed((current) => [...current, 'italic'])}
           />
-          <Toolbar.Button icon={<FormatUnderlined />} label="Underline" disabled />
+          <Toolbar.Button icon={<IconFormatUnderlined />} label="Underline" disabled />
         </Toolbar.Group>
         <Toolbar.Separator />
-        <Toolbar.Button icon={<Undo />} label="Undo" />
-        <IconButton icon={<Settings />} aria-label="Toolbar settings" data-testid="app-button" />
-        <Toolbar.Link href="#help" icon={<Help />} label="Help" />
+        <Toolbar.Button icon={<IconUndo />} label="Undo" />
+        <IconButton
+          icon={<IconSettings />}
+          aria-label="Toolbar settings"
+          data-testid="app-button"
+        />
+        <Toolbar.Link href="#help" icon={<IconHelp />} label="Help" />
       </Toolbar.Root>
       <button type="button">After toolbar</button>
       <Toolbar.Root aria-label="Disabled toolbar" disabled>
-        <Toolbar.Button icon={<FormatBold />} label="Highlight" shortcut="Ctrl+Shift+B" />
+        <Toolbar.Button icon={<IconFormatBold />} label="Highlight" shortcut="Ctrl+Shift+B" />
       </Toolbar.Root>
       {/* Disabled while busy, as an editor's toolbar is while it saves. */}
       <Toolbar.Root aria-label="Partly disabled" disabled={busy}>
-        <Toolbar.Button icon={<Undo />} label="Redo" shortcut="Ctrl+K Ctrl+Z" />
-        <Toolbar.Button icon={<FormatBold />} label="Strong emphasis" shortcut="⌘B" />
+        <Toolbar.Button icon={<IconUndo />} label="Redo" shortcut="Ctrl+K Ctrl+Z" />
+        <Toolbar.Button icon={<IconFormatBold />} label="Strong emphasis" shortcut="⌘B" />
         <Toolbar.Group aria-label="Group" disabled={busy}>
-          <Toolbar.Button icon={<FormatItalic />} label="Clear formatting" />
+          <Toolbar.Button icon={<IconFormatItalic />} label="Clear formatting" />
         </Toolbar.Group>
       </Toolbar.Root>
       <Toolbar.Root aria-label="Group only">
         <Toolbar.Group aria-label="Busy group" disabled={busy}>
-          <Toolbar.Button icon={<FormatUnderlined />} label="Strike through" />
+          <Toolbar.Button icon={<IconFormatUnderlined />} label="Strike through" />
         </Toolbar.Group>
       </Toolbar.Root>
       <Toolbar.Root aria-label="Instant names" tooltipDelay={0}>
-        <Toolbar.Button icon={<FormatBold />} label="Instant button" />
-        <Toolbar.Link href="#help" icon={<Help />} label="Instant link" />
+        <Toolbar.Button icon={<IconFormatBold />} label="Instant button" />
+        <Toolbar.Link href="#help" icon={<IconHelp />} label="Instant link" />
       </Toolbar.Root>
       <button type="button" onClick={() => setBusy((current) => !current)}>
         Toggle busy
@@ -125,7 +129,7 @@ function EmphasisSample() {
         endAction={
           <Popover
             title="Link options"
-            trigger={<IconButton icon={<Settings />} aria-label="Link options" />}
+            trigger={<IconButton icon={<IconSettings />} aria-label="Link options" />}
           >
             <Button data-testid="field-popover-button">Shorten link</Button>
           </Popover>
@@ -164,7 +168,7 @@ function RefCleanupSample() {
       </button>
       {mounted && (
         <Toolbar.Root aria-label="Ref toolbar" ref={ref}>
-          <Toolbar.Button icon={<FormatBold />} label="Ref quote" />
+          <Toolbar.Button icon={<IconFormatBold />} label="Ref quote" />
         </Toolbar.Root>
       )}
       <output data-testid="ref-log">{log.join(',')}</output>
@@ -353,7 +357,7 @@ function ListRowSample() {
       >
         <ListRow
           render={<BaseMenu.Item />}
-          icon={<Settings />}
+          icon={<IconSettings />}
           label="Settings"
           description="Account and workspace"
           shortcut="Ctrl+,"

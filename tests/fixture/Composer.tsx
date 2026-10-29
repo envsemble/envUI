@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Composer, IconButton, Surface, Theme, type ColorScheme } from '@envsemble/envui';
-import { AttachFile } from '@envsemble/envui/icons/AttachFile';
+import { IconAttachFile } from '@envsemble/envui/icons/AttachFile';
 
 export function ComposerFixture({ theme }: { theme: ColorScheme }) {
   const [draft, setDraft] = useState('');
@@ -41,7 +41,7 @@ export function ComposerFixture({ theme }: { theme: ColorScheme }) {
           defaultValue="Draft note"
           minRows={2}
           maxRows={4}
-          start={<IconButton variant="text" icon={<AttachFile />} aria-label="Attach files" />}
+          start={<IconButton variant="text" icon={<IconAttachFile />} aria-label="Attach files" />}
           description="Attachments up to 10 MB"
           onSend={(value) => setNotes((list) => [...list, value])}
         />

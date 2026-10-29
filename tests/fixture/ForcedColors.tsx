@@ -29,9 +29,9 @@ import {
   Toolbar,
   type ButtonProps,
 } from '@envsemble/envui';
-import { Close } from '@envsemble/envui/icons/Close';
-import { Home } from '@envsemble/envui/icons/Home';
-import { Inbox } from '@envsemble/envui/icons/Inbox';
+import { IconClose } from '@envsemble/envui/icons/Close';
+import { IconHome } from '@envsemble/envui/icons/Home';
+import { IconInbox } from '@envsemble/envui/icons/Inbox';
 import '@envsemble/envui/styles.css';
 // Internal: the lists of times and months the pickers open, shown here without their popups.
 import { TimeList } from '../../packages/ui/src/forms/internal/TimeList.js';
@@ -74,9 +74,9 @@ function Page() {
             data-testid={`variant-${name}`}
           />
         ))}
-        <IconButton icon={<Close />} aria-label="Close" data-testid="variant-icon" />
+        <IconButton icon={<IconClose />} aria-label="Close" data-testid="variant-icon" />
         <IconButton
-          icon={<Close />}
+          icon={<IconClose />}
           aria-label="Close"
           variant="text"
           data-testid="variant-icon-text"
@@ -102,15 +102,15 @@ function Page() {
       <NavigationDrawer
         aria-label="Places"
         destinations={[
-          { label: 'Home', icon: <Home />, href: '#home', current: true },
-          { label: 'Inbox', icon: <Inbox />, href: '#inbox', count: 3 },
+          { label: 'Home', icon: <IconHome />, href: '#home', current: true },
+          { label: 'Inbox', icon: <IconInbox />, href: '#inbox', count: 3 },
         ]}
       />
       <NavigationRail
         aria-label="Rail places"
         destinations={[
-          { label: 'Home', icon: <Home />, href: '#home', current: true },
-          { label: 'Inbox', icon: <Inbox />, href: '#inbox', count: 3 },
+          { label: 'Home', icon: <IconHome />, href: '#home', current: true },
+          { label: 'Inbox', icon: <IconInbox />, href: '#inbox', count: 3 },
         ]}
       />
       <div style={{ display: 'flex', gap: '1rem' }}>
@@ -124,8 +124,13 @@ function Page() {
         <Radio value="solo" label="Solo" />
       </RadioGroup>
       <Toolbar.Root aria-label="Formatting">
-        <Toolbar.Button icon={<Close />} label="Pressed" pressed data-testid="toolbar-pressed" />
-        <Toolbar.Button icon={<Close />} label="Released" data-testid="toolbar-released" />
+        <Toolbar.Button
+          icon={<IconClose />}
+          label="Pressed"
+          pressed
+          data-testid="toolbar-pressed"
+        />
+        <Toolbar.Button icon={<IconClose />} label="Released" data-testid="toolbar-released" />
       </Toolbar.Root>
       <Field.Root invalid>
         <Field.Label>Invalid field part</Field.Label>

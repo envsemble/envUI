@@ -10,7 +10,7 @@ import {
   Theme,
   type ColorScheme,
 } from '@envsemble/envui';
-import { Settings } from '@envsemble/envui/icons/Settings';
+import { IconSettings } from '@envsemble/envui/icons/Settings';
 
 const people = [
   { id: 'alex', name: 'Alex Morgan' },
@@ -140,7 +140,7 @@ export function AvatarGroupsFixture({ theme }: { theme: ColorScheme }) {
           onPersonClick={() => undefined}
         />
         <AvatarGroup data-testid="toolbar-small" people={people} max={2} size="sm" />
-        <IconButton size="sm" icon={<Settings />} aria-label="Report settings" />
+        <IconButton size="sm" icon={<IconSettings />} aria-label="Report settings" />
       </Surface>
       <div className="fixture-shrink-row" data-testid="narrow">
         <span className="fixture-shrink-label">A long title that needs more room</span>

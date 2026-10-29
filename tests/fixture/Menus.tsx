@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Button, ContextMenu, Menu, Theme, type ColorScheme } from '@envsemble/envui';
-import { Edit } from '@envsemble/envui/icons/Edit';
-import { Delete } from '@envsemble/envui/icons/Delete';
-import { Add } from '@envsemble/envui/icons/Add';
-import { History } from '@envsemble/envui/icons/History';
+import { IconEdit } from '@envsemble/envui/icons/Edit';
+import { IconDelete } from '@envsemble/envui/icons/Delete';
+import { IconAdd } from '@envsemble/envui/icons/Add';
+import { IconHistory } from '@envsemble/envui/icons/History';
 
 const documents = ['Alpha', 'Beta', 'Gamma'];
 
@@ -32,7 +32,7 @@ export function MenusFixture({ theme }: { theme: ColorScheme }) {
           const name = target?.closest<HTMLElement>('[data-document]')?.dataset.document;
           return name ? (
             <>
-              <Menu.Item icon={<Edit />} shortcut="F2" onClick={() => setLog(`Rename ${name}`)}>
+              <Menu.Item icon={<IconEdit />} shortcut="F2" onClick={() => setLog(`Rename ${name}`)}>
                 Rename {name}
               </Menu.Item>
               <Menu.Item
@@ -42,7 +42,7 @@ export function MenusFixture({ theme }: { theme: ColorScheme }) {
                 Open to the side
               </Menu.Item>
               <Menu.Separator />
-              <Menu.Item icon={<Delete />} onClick={() => setLog(`Delete ${name}`)}>
+              <Menu.Item icon={<IconDelete />} onClick={() => setLog(`Delete ${name}`)}>
                 Delete
               </Menu.Item>
             </>
@@ -102,7 +102,11 @@ export function MenusFixture({ theme }: { theme: ColorScheme }) {
         trigger={<Button variant="secondary">Compact options</Button>}
       >
         <Menu.Group label="Document">
-          <Menu.Item icon={<Add />} shortcut="Ctrl+Shift+N" onClick={() => setLog('New window')}>
+          <Menu.Item
+            icon={<IconAdd />}
+            shortcut="Ctrl+Shift+N"
+            onClick={() => setLog('New window')}
+          >
             New window
           </Menu.Item>
           <Menu.Item shortcut="Ctrl+S" onClick={() => setLog('Save')}>
@@ -111,7 +115,7 @@ export function MenusFixture({ theme }: { theme: ColorScheme }) {
         </Menu.Group>
         <Menu.Submenu
           label="Open recent"
-          icon={<History />}
+          icon={<IconHistory />}
           onOpenChange={(open) => {
             if (open) setRecentLoads((count) => count + 1);
           }}

@@ -9,7 +9,7 @@ import {
   Tooltip,
   type ColorScheme,
 } from '@envsemble/envui';
-import { Settings } from '@envsemble/envui/icons/Settings';
+import { IconSettings } from '@envsemble/envui/icons/Settings';
 
 export function CopyButtonsFixture({ theme }: { theme: ColorScheme }) {
   const [copied, setCopied] = useState('');
@@ -80,7 +80,7 @@ export function CopyButtonsFixture({ theme }: { theme: ColorScheme }) {
           value="RPT-2041"
           aria-label={`Copy report ID ${theme}`}
         />
-        <IconButton size="sm" icon={<Settings />} aria-label="Report settings" />
+        <IconButton size="sm" icon={<IconSettings />} aria-label="Report settings" />
       </Surface>
       <div className="fixture-toolbar" data-testid="sizes">
         <CopyButton value="Standard" aria-label="Copy standard" />

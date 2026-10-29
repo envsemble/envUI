@@ -6,9 +6,9 @@ import {
   type Destination,
   type NavigationDrawerDestination,
 } from '@envsemble/envui';
-import { Home } from '@envsemble/envui/icons/Home';
-import { MenuBook } from '@envsemble/envui/icons/MenuBook';
-import { Settings } from '@envsemble/envui/icons/Settings';
+import { IconHome } from '@envsemble/envui/icons/Home';
+import { IconMenuBook } from '@envsemble/envui/icons/MenuBook';
+import { IconSettings } from '@envsemble/envui/icons/Settings';
 
 /** A guide's pages, some nested under others, two levels deep; a section without href is a heading. */
 interface Page {
@@ -82,14 +82,14 @@ export function NestedDrawersFixture() {
   const [controlledCurrent, setControlledCurrent] = useState('#overview');
   const [expanded, setExpanded] = useState<string[]>([]);
   const top: Destination[] = [
-    { label: 'Home', icon: <Home />, href: '#home' },
+    { label: 'Home', icon: <IconHome />, href: '#home' },
     {
       label: 'Guide',
-      icon: <MenuBook />,
+      icon: <IconMenuBook />,
       href: '#guide',
       children: [{ label: 'Passkeys', href: '#passkeys', current: true }],
     },
-    { label: 'Settings', icon: <Settings />, href: '#settings' },
+    { label: 'Settings', icon: <IconSettings />, href: '#settings' },
   ];
   return (
     <div className="fixture-section" style={{ display: 'flex', gap: '1rem', alignItems: 'start' }}>

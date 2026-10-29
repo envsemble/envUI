@@ -28,8 +28,8 @@ function ownersOf(entry) {
 }
 
 /**
- * The envUI entry points that export components. The others export icons, assets and a script, whose
- * names, such as the `Button` icon, are not components.
+ * The envUI entry points that export components. The others export icons, assets and a script,
+ * which are not components whatever their local name.
  */
 const componentEntryPoints = new Set([
   '@envsemble/envui',

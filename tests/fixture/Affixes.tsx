@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { IconButton, TextField, SearchField, Theme, type ColorScheme } from '@envsemble/envui';
-import { ContentCopy } from '@envsemble/envui/icons/ContentCopy';
-import { Sell } from '@envsemble/envui/icons/Sell';
+import { IconContentCopy } from '@envsemble/envui/icons/ContentCopy';
+import { IconSell } from '@envsemble/envui/icons/Sell';
 
 export function AffixesFixture({ theme }: { theme: ColorScheme }) {
   const [submitted, setSubmitted] = useState('');
@@ -30,8 +30,10 @@ export function AffixesFixture({ theme }: { theme: ColorScheme }) {
           placeholder="0.00"
           prefix="€"
           suffix="per month"
-          startIcon={<Sell />}
-          endAction={<IconButton variant="text" icon={<ContentCopy />} aria-label="Copy price" />}
+          startIcon={<IconSell />}
+          endAction={
+            <IconButton variant="text" icon={<IconContentCopy />} aria-label="Copy price" />
+          }
         />
         <TextField showLabel label="Share" name="share" suffix="%" defaultValue="40" />
         <TextField
@@ -64,7 +66,7 @@ export function AffixesFixture({ theme }: { theme: ColorScheme }) {
       {/* Right to left, with and without a start icon: the notch follows the floated label. */}
       <div dir="rtl">
         <TextField label="Street" name="street" />
-        <TextField label="City" name="city" startIcon={<Sell />} />
+        <TextField label="City" name="city" startIcon={<IconSell />} />
       </div>
     </Theme>
   );

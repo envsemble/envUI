@@ -20,15 +20,15 @@ import {
   type PanelDockPanel,
   type ColorScheme,
 } from '@envsemble/envui';
-import { Description } from '@envsemble/envui/icons/Description';
-import { Edit } from '@envsemble/envui/icons/Edit';
-import { MoreVert } from '@envsemble/envui/icons/MoreVert';
+import { IconDescription } from '@envsemble/envui/icons/Description';
+import { IconEdit } from '@envsemble/envui/icons/Edit';
+import { IconMoreVert } from '@envsemble/envui/icons/MoreVert';
 
 /** A panel with a chat, whose messages the application adds, and which it can rewind to the start. */
 type FixturePanel = PanelDockPanel & { messages?: number; rewinds?: number };
 
 const initialPanels: FixturePanel[] = [
-  { id: 'report', title: 'Quarterly report', mode: 'open', icon: <Description />, messages: 8 },
+  { id: 'report', title: 'Quarterly report', mode: 'open', icon: <IconDescription />, messages: 8 },
   {
     id: 'notes',
     title: 'Meeting notes',
@@ -480,7 +480,7 @@ function TranslatedDock() {
             <PanelDock.Header
               title={panel.title}
               controls={panel.id !== 'notizen'}
-              actions={<IconButton icon={<Edit />} aria-label={`${panel.title} bearbeiten`} />}
+              actions={<IconButton icon={<IconEdit />} aria-label={`${panel.title} bearbeiten`} />}
             />
           )}
         </PanelDock.Root>
@@ -628,12 +628,12 @@ function DocumentWindow({
         meta={`Edited by Alex Morgan · ${theme}`}
         actions={
           <>
-            <IconButton icon={<Edit />} aria-label={`Edit ${panel.title} ${theme}`} />
+            <IconButton icon={<IconEdit />} aria-label={`Edit ${panel.title} ${theme}`} />
             <Menu.Root
               aria-label={`${panel.title} actions ${theme}`}
               trigger={
                 <IconButton
-                  icon={<MoreVert />}
+                  icon={<IconMoreVert />}
                   aria-label={`More actions for ${panel.title} ${theme}`}
                 />
               }

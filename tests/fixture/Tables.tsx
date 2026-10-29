@@ -11,9 +11,9 @@ import {
   Theme,
   type ColorScheme,
 } from '@envsemble/envui';
-import { MoreVert } from '@envsemble/envui/icons/MoreVert';
-import { Event } from '@envsemble/envui/icons/Event';
-import { PriorityHigh } from '@envsemble/envui/icons/PriorityHigh';
+import { IconMoreVert } from '@envsemble/envui/icons/MoreVert';
+import { IconEvent } from '@envsemble/envui/icons/Event';
+import { IconPriorityHigh } from '@envsemble/envui/icons/PriorityHigh';
 
 const reports = [
   { id: 'quarterly', title: 'Quarterly report', owner: 'Aurora', reviews: 12, status: 'Ready' },
@@ -181,7 +181,7 @@ export function TablesFixture({ theme }: { theme: ColorScheme }) {
               <Button variant="text">Open</Button>
               <IconButton
                 variant="text"
-                icon={<MoreVert />}
+                icon={<IconMoreVert />}
                 aria-label={`More for the report ${theme}`}
               />
             </Table.Cell>
@@ -348,10 +348,10 @@ export function TablesFixture({ theme }: { theme: ColorScheme }) {
                 setPrioritySort((current) => (current === 'ascending' ? 'descending' : 'ascending'))
               }
             >
-              <PriorityHigh />
+              <IconPriorityHigh />
             </Table.HeaderCell>
             <Table.HeaderCell aria-labelledby={`due-date-${theme}`} onSortChange={() => undefined}>
-              <Event />
+              <IconEvent />
             </Table.HeaderCell>
             <Table.HeaderCell>Report</Table.HeaderCell>
           </Table.Row>

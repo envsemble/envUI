@@ -10,8 +10,8 @@ import {
   type ComboboxItem,
   type ColorScheme,
 } from '@envsemble/envui';
-import { Description } from '@envsemble/envui/icons/Description';
-import { Folder } from '@envsemble/envui/icons/Folder';
+import { IconDescription } from '@envsemble/envui/icons/Description';
+import { IconFolder } from '@envsemble/envui/icons/Folder';
 
 const names = [
   'Alex Morgan',
@@ -44,16 +44,16 @@ const documents: ComboboxGroup[] = [
   {
     label: 'Recent',
     items: [
-      { value: 'quarterly-report', label: 'Quarterly report', start: <Description /> },
-      { value: 'release-notes', label: 'Release notes', start: <Description /> },
+      { value: 'quarterly-report', label: 'Quarterly report', start: <IconDescription /> },
+      { value: 'release-notes', label: 'Release notes', start: <IconDescription /> },
     ],
   },
   {
     label: 'Folders',
     items: [
-      { value: 'design-system/tokens', label: 'design-system/tokens', start: <Folder /> },
-      { value: 'design-system/icons', label: 'design-system/icons', start: <Folder /> },
-      { value: 'research/interviews', label: 'research/interviews', start: <Folder /> },
+      { value: 'design-system/tokens', label: 'design-system/tokens', start: <IconFolder /> },
+      { value: 'design-system/icons', label: 'design-system/icons', start: <IconFolder /> },
+      { value: 'research/interviews', label: 'research/interviews', start: <IconFolder /> },
     ],
   },
 ];

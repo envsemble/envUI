@@ -28,7 +28,7 @@ import {
   Spinner,
 } from '@envsemble/envui';
 import { installDevMode } from '@envsemble/envui/dev';
-import { Folder } from '@envsemble/envui/icons/Folder';
+import { IconFolder } from '@envsemble/envui/icons/Folder';
 
 interface Project {
   id: string;
@@ -65,7 +65,7 @@ const projects: Project[] = [
 /** Destinations over placeholder items: an empty label, and an icon of their kind. */
 const destinations = placeholders<{ label: string }>(3).map((destination) => ({
   label: destination.label ?? '',
-  icon: <Folder />,
+  icon: <IconFolder />,
   href: `#${destination.id}`,
 }));
 

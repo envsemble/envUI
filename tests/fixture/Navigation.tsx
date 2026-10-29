@@ -13,15 +13,15 @@ import {
   type Destination,
   type ColorScheme,
 } from '@envsemble/envui';
-import { Archive } from '@envsemble/envui/icons/Archive';
-import { Delete } from '@envsemble/envui/icons/Delete';
-import { Drafts } from '@envsemble/envui/icons/Drafts';
-import { Home } from '@envsemble/envui/icons/Home';
-import { Inbox } from '@envsemble/envui/icons/Inbox';
-import { Label } from '@envsemble/envui/icons/Label';
-import { Send } from '@envsemble/envui/icons/Send';
-import { Settings } from '@envsemble/envui/icons/Settings';
-import { Star } from '@envsemble/envui/icons/Star';
+import { IconArchive } from '@envsemble/envui/icons/Archive';
+import { IconDelete } from '@envsemble/envui/icons/Delete';
+import { IconDrafts } from '@envsemble/envui/icons/Drafts';
+import { IconHome } from '@envsemble/envui/icons/Home';
+import { IconInbox } from '@envsemble/envui/icons/Inbox';
+import { IconLabel } from '@envsemble/envui/icons/Label';
+import { IconSend } from '@envsemble/envui/icons/Send';
+import { IconSettings } from '@envsemble/envui/icons/Settings';
+import { IconStar } from '@envsemble/envui/icons/Star';
 
 /** A router's link: it marks the anchors it renders, so a test sees that destinations use it. */
 function RouterLink(props: ComponentPropsWithRef<'a'> & { href: string }) {
@@ -47,13 +47,13 @@ export function NavigationFixture({ theme }: { theme: ColorScheme }) {
   const mail = useDestinations('Inbox');
   const many = useDestinations('Labels');
   const iconDestinations: Destination[] = [
-    { label: 'Home', icon: <Home />, ...icons.select('Home') },
+    { label: 'Home', icon: <IconHome />, ...icons.select('Home') },
     {
       label: 'Settings',
       // A Material Symbol inside the application's own wrapper fills too.
       icon: (
         <span>
-          <Settings />
+          <IconSettings />
         </span>
       ),
       ...icons.select('Settings'),
@@ -69,25 +69,25 @@ export function NavigationFixture({ theme }: { theme: ColorScheme }) {
     },
   ];
   const mailDestinations: Destination[] = [
-    { label: 'Inbox', icon: <Inbox />, count: 3, ...mail.select('Inbox') },
-    { label: 'Drafts', icon: <Drafts />, count: 0, ...mail.select('Drafts') },
-    { label: 'Sent', icon: <Send />, count: 1200, ...mail.select('Sent') },
-    { label: 'Starred', icon: <Star />, group: 'Folders', ...mail.select('Starred') },
-    { label: 'Archive', icon: <Archive />, group: 'Folders', ...mail.select('Archive') },
-    { label: 'Settings', icon: <Settings />, group: 'Account', ...mail.select('Settings') },
+    { label: 'Inbox', icon: <IconInbox />, count: 3, ...mail.select('Inbox') },
+    { label: 'Drafts', icon: <IconDrafts />, count: 0, ...mail.select('Drafts') },
+    { label: 'Sent', icon: <IconSend />, count: 1200, ...mail.select('Sent') },
+    { label: 'Starred', icon: <IconStar />, group: 'Folders', ...mail.select('Starred') },
+    { label: 'Archive', icon: <IconArchive />, group: 'Folders', ...mail.select('Archive') },
+    { label: 'Settings', icon: <IconSettings />, group: 'Account', ...mail.select('Settings') },
   ];
   const manyDestinations: Destination[] = [
-    { label: 'Home', icon: <Home />, href: '#home' },
-    { label: 'Inbox', icon: <Inbox />, href: '#inbox', count: 2 },
-    { label: 'Drafts', icon: <Drafts />, href: '#drafts' },
-    { label: 'Sent', icon: <Send />, href: '#sent' },
-    { label: 'Labels', icon: <Label />, count: 4, ...many.select('Labels') },
-    { label: 'Archive', icon: <Archive />, href: '#archive', count: 1 },
-    { label: 'Trash', icon: <Delete />, href: '#trash' },
+    { label: 'Home', icon: <IconHome />, href: '#home' },
+    { label: 'Inbox', icon: <IconInbox />, href: '#inbox', count: 2 },
+    { label: 'Drafts', icon: <IconDrafts />, href: '#drafts' },
+    { label: 'Sent', icon: <IconSend />, href: '#sent' },
+    { label: 'Labels', icon: <IconLabel />, count: 4, ...many.select('Labels') },
+    { label: 'Archive', icon: <IconArchive />, href: '#archive', count: 1 },
+    { label: 'Trash', icon: <IconDelete />, href: '#trash' },
   ];
   const linked: Destination[] = [
-    { label: 'Home', icon: <Home />, href: '#home', current: true },
-    { label: 'Inbox', icon: <Inbox />, href: '#inbox' },
+    { label: 'Home', icon: <IconHome />, href: '#home', current: true },
+    { label: 'Inbox', icon: <IconInbox />, href: '#inbox' },
   ];
   return (
     <Theme theme={theme} data-testid={`navigation-${theme}`} className="fixture-section">

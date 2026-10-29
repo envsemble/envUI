@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Menu, Theme, Tree, type ColorScheme, type TreeItem } from '@envsemble/envui';
-import { Description } from '@envsemble/envui/icons/Description';
-import { Folder } from '@envsemble/envui/icons/Folder';
+import { IconDescription } from '@envsemble/envui/icons/Description';
+import { IconFolder } from '@envsemble/envui/icons/Folder';
 
 interface FileNode {
   id: string;
@@ -46,7 +46,7 @@ function flatten(nodes: FileNode[], expanded: Set<string>, depth = 0, rows: File
       expandable: Boolean(node.children),
       expanded: node.children ? isOpen : undefined,
       label: node.name,
-      icon: node.children ? <Folder /> : <Description />,
+      icon: node.children ? <IconFolder /> : <IconDescription />,
       description: node.id === 'folder-1/doc-4.md' ? 'In progress' : undefined,
       tooltip: node.id,
       disabled: node.id === 'folder-1/doc-6.md',

@@ -9,7 +9,7 @@ import {
   Theme,
   type ColorScheme,
 } from '@envsemble/envui';
-import { ContentCopy } from '@envsemble/envui/icons/ContentCopy';
+import { IconContentCopy } from '@envsemble/envui/icons/ContentCopy';
 
 export function MessagesFixture({ theme }: { theme: ColorScheme }) {
   const [copied, setCopied] = useState(0);
@@ -31,7 +31,7 @@ export function MessagesFixture({ theme }: { theme: ColorScheme }) {
             actions={
               <IconButton
                 variant="text"
-                icon={<ContentCopy />}
+                icon={<IconContentCopy />}
                 aria-label="Copy answer"
                 onClick={() => setCopied((count) => count + 1)}
               />
@@ -110,7 +110,7 @@ export function MessagesFixture({ theme }: { theme: ColorScheme }) {
             author="Sam Lee"
             actions={
               <>
-                <IconButton icon={<ContentCopy />} aria-label={`Copy note ${theme}`} />
+                <IconButton icon={<IconContentCopy />} aria-label={`Copy note ${theme}`} />
                 <Button>Reply</Button>
               </>
             }
