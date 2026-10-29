@@ -146,7 +146,7 @@ const cards: {
         <CardHeader
           title="Website refresh"
           note="Due 12 March"
-          end={<Badge tone="accent">In review</Badge>}
+          end={<Badge tone="primary">In review</Badge>}
         />
         <Column gap={4} className="catalogue-fan-body">
           <Progress label="Tasks" value={18} max={24} valueText="18 of 24" />

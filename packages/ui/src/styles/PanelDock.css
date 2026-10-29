@@ -90,7 +90,7 @@
      panels beside it; under high contrast the others' edge is already the default border. */
   .env-panel-dock-panel[data-active] {
     z-index: calc(var(--env-z-raised) + 1);
-    border-color: var(--env-color-border-accent-emphasis);
+    border-color: var(--env-color-border-primary-emphasis);
   }
   .env-panel-dock-panel:focus-visible,
   .env-panel-dock-content:focus-visible {
@@ -329,7 +329,7 @@
     inline-size: 0.5rem;
     block-size: 0.5rem;
     border-radius: 50%;
-    background: var(--env-color-fg-accent);
+    background: var(--env-color-fg-primary);
   }
   /* The close button, an IconButton with a cross, is a small circle beside the restore button; under a coarse
      pointer it takes the touch size, as every button does. */

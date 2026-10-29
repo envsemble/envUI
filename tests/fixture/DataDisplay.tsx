@@ -127,7 +127,7 @@ export function DataDisplayFixture({ theme }: { theme: ThemeValue }) {
                 <Table.Cell nowrap>{plan.owner}</Table.Cell>
                 <Table.Cell numeric>{plan.decisions}</Table.Cell>
                 <Table.Cell>
-                  <Badge tone={plan.status === 'Blocked' ? 'warning' : 'accent'}>
+                  <Badge tone={plan.status === 'Blocked' ? 'warning' : 'primary'}>
                     {plan.status}
                   </Badge>
                 </Table.Cell>

@@ -40,40 +40,73 @@ export const tokens = {
     },
     scales: { compact: '1rem' },
   },
-  /** The tint of a soft accent badge. In light it is the accent blue at 5%, fainter than color.bg.accent.muted, so the blue text keeps 4.5:1 over it on list rows and muted surfaces; in dark and at high contrast it is color.bg.accent.muted. */
-  'color.bg.accent.badge': {
-    cssVariable: '--env-color-bg-accent-badge',
-    type: 'color',
-    values: {
-      light: 'rgb(0 92 200 / 0.05)',
-      dark: 'rgb(159 193 248 / 0.14)',
-      'light-high-contrast': 'rgb(0 55 124 / 0.08)',
-      'dark-high-contrast': 'rgb(205 222 252 / 0.1)',
-    },
-  },
-  /** A solid accent fill, such as a solid accent badge; paired with fg.on-emphasis. */
-  'color.bg.accent.emphasis': {
-    cssVariable: '--env-color-bg-accent-emphasis',
-    type: 'color',
-    values: {
-      light: '#005cc8',
-      dark: '#9fc1f8',
-      'light-high-contrast': '#00377c',
-      'dark-high-contrast': '#cddefc',
-    },
-  },
-  /** The translucent accent tint of info alerts, and of soft accent badges in dark and at high contrast; in light they take color.bg.accent.badge. */
+  /** The translucent accent tint of soft accent badges in dark and at high contrast; in light they take color.bg.accent.soft. */
   'color.bg.accent.muted': {
     cssVariable: '--env-color-bg-accent-muted',
     type: 'color',
     values: {
-      light: 'rgb(0 92 200 / 0.12)',
-      dark: 'rgb(159 193 248 / 0.14)',
-      'light-high-contrast': 'rgb(0 55 124 / 0.08)',
-      'dark-high-contrast': 'rgb(205 222 252 / 0.1)',
+      light: 'rgb(142 60 170 / 0.12)',
+      dark: 'rgb(231 168 255 / 0.14)',
+      'light-high-contrast': 'rgb(99 4 125 / 0.08)',
+      'dark-high-contrast': 'rgb(242 210 255 / 0.1)',
     },
   },
-  /** Controls in the accent tone without a fill at rest, such as an alert’s dismiss button: transparent, as color.bg.neutral.subtle is. */
+  /** The tint of a soft accent badge: in light the accent purple at 5%, so the purple text keeps 4.5:1 over it; in dark and at high contrast it is color.bg.accent.muted. */
+  'color.bg.accent.soft': {
+    cssVariable: '--env-color-bg-accent-soft',
+    type: 'color',
+    values: {
+      light: 'rgb(142 60 170 / 0.05)',
+      dark: 'rgb(231 168 255 / 0.14)',
+      'light-high-contrast': 'rgb(99 4 125 / 0.08)',
+      'dark-high-contrast': 'rgb(242 210 255 / 0.1)',
+    },
+  },
+  /** A solid accent fill, such as a solid accent badge; paired with fg.on-emphasis. */
+  'color.bg.accent.solid': {
+    cssVariable: '--env-color-bg-accent-solid',
+    type: 'color',
+    values: {
+      light: '#8e3caa',
+      dark: '#e7a8ff',
+      'light-high-contrast': '#63047d',
+      'dark-high-contrast': '#f2d2ff',
+    },
+  },
+  /** The accent purple of accent actions, such as Button's accent tone, in both themes; paired with fg.on-strong. */
+  'color.bg.accent.strong': {
+    cssVariable: '--env-color-bg-accent-strong',
+    type: 'color',
+    values: {
+      light: '#9948b6',
+      dark: '#9948b6',
+      'light-high-contrast': '#6d1888',
+      'dark-high-contrast': '#6d1888',
+    },
+  },
+  /** An accent action under the pointer. */
+  'color.bg.accent.strong.hover': {
+    cssVariable: '--env-color-bg-accent-strong-hover',
+    type: 'color',
+    values: {
+      light: '#83319f',
+      dark: '#83319f',
+      'light-high-contrast': '#63047d',
+      'dark-high-contrast': '#63047d',
+    },
+  },
+  /** An accent action while pressed. */
+  'color.bg.accent.strong.pressed': {
+    cssVariable: '--env-color-bg-accent-strong-pressed',
+    type: 'color',
+    values: {
+      light: '#6d1888',
+      dark: '#6d1888',
+      'light-high-contrast': '#57006e',
+      'dark-high-contrast': '#57006e',
+    },
+  },
+  /** Controls in the accent tone without a fill at rest: transparent, as color.bg.neutral.subtle is. */
   'color.bg.accent.subtle': {
     cssVariable: '--env-color-bg-accent-subtle',
     type: 'color',
@@ -84,15 +117,15 @@ export const tokens = {
       'dark-high-contrast': 'transparent',
     },
   },
-  /** The state layer of a control without a fill in the accent tone, such as an info alert’s dismiss button, under the pointer: the accent text color at 14%, in every theme and at high contrast. */
+  /** The state layer of a control without a fill in the accent tone under the pointer, and the tonal fill of an accent badge: the accent text color at 14%. */
   'color.bg.accent.subtle.hover': {
     cssVariable: '--env-color-bg-accent-subtle-hover',
     type: 'color',
     values: {
-      light: 'rgb(0 92 200 / 0.14)',
-      dark: 'rgb(159 193 248 / 0.14)',
-      'light-high-contrast': 'rgb(0 55 124 / 0.14)',
-      'dark-high-contrast': 'rgb(224 235 253 / 0.14)',
+      light: 'rgb(142 60 170 / 0.14)',
+      dark: 'rgb(231 168 255 / 0.14)',
+      'light-high-contrast': 'rgb(99 4 125 / 0.14)',
+      'dark-high-contrast': 'rgb(247 228 255 / 0.14)',
     },
   },
   /** The accent state layer while pressed: the accent text color at 22%. */
@@ -100,10 +133,10 @@ export const tokens = {
     cssVariable: '--env-color-bg-accent-subtle-pressed',
     type: 'color',
     values: {
-      light: 'rgb(0 92 200 / 0.22)',
-      dark: 'rgb(159 193 248 / 0.22)',
-      'light-high-contrast': 'rgb(0 55 124 / 0.22)',
-      'dark-high-contrast': 'rgb(224 235 253 / 0.22)',
+      light: 'rgb(142 60 170 / 0.22)',
+      dark: 'rgb(231 168 255 / 0.22)',
+      'light-high-contrast': 'rgb(99 4 125 / 0.22)',
+      'dark-high-contrast': 'rgb(247 228 255 / 0.22)',
     },
   },
   /** The default fill, the powder hue: the fill of an avatar whose hue nothing sets. */
@@ -225,83 +258,6 @@ export const tokens = {
       dark: 'rgb(30 31 33 / 0.3)',
       'light-high-contrast': 'rgb(31 31 34 / 0.3)',
       'dark-high-contrast': 'rgb(30 31 33 / 0.3)',
-    },
-  },
-  /** The brand fill of primary actions, chosen radios and the chosen calendar day; paired with fg.on-emphasis. In dark and at high contrast, checked checkboxes, switches that are on, sliders, meters and spinners take it too: a soft blue with dark marks at 4.5:1. */
-  'color.bg.brand.emphasis': {
-    cssVariable: '--env-color-bg-brand-emphasis',
-    type: 'color',
-    values: {
-      light: '#1872e7',
-      dark: '#9fc1f8',
-      'light-high-contrast': '#00408f',
-      'dark-high-contrast': '#b5cffb',
-    },
-  },
-  /** A primary action under the pointer. */
-  'color.bg.brand.emphasis.hover': {
-    cssVariable: '--env-color-bg-brand-emphasis-hover',
-    type: 'color',
-    values: {
-      light: '#005cc8',
-      dark: '#75a5f2',
-      'light-high-contrast': '#00377c',
-      'dark-high-contrast': '#cddefc',
-    },
-  },
-  /** A primary action while pressed. */
-  'color.bg.brand.emphasis.pressed': {
-    cssVariable: '--env-color-bg-brand-emphasis-pressed',
-    type: 'color',
-    values: {
-      light: '#00408f',
-      dark: '#4b8bec',
-      'light-high-contrast': '#002f6d',
-      'dark-high-contrast': '#e0ebfd',
-    },
-  },
-  /** The translucent halo of a slider thumb that is dragged: the blue of the thumb at 16%, in every theme and at high contrast. */
-  'color.bg.brand.muted': {
-    cssVariable: '--env-color-bg-brand-muted',
-    type: 'color',
-    values: {
-      light: 'rgb(24 114 231 / 0.16)',
-      dark: 'rgb(159 193 248 / 0.16)',
-      'light-high-contrast': 'rgb(0 64 143 / 0.16)',
-      'dark-high-contrast': 'rgb(181 207 251 / 0.16)',
-    },
-  },
-  /** The saturated brand fill of checked checkboxes, switches that are on, sliders, meters and spinners in the light theme at standard contrast, with white marks, the check and the thumb, at 3:1. The dark theme and high contrast put those controls on the emphasis fill instead; in dark this fill, which keeps 3:1 against the surfaces, would put white text below 4.5:1. */
-  'color.bg.brand.strong': {
-    cssVariable: '--env-color-bg-brand-strong',
-    type: 'color',
-    values: {
-      light: '#1872e7',
-      dark: '#4b8bec',
-      'light-high-contrast': '#00408f',
-      'dark-high-contrast': '#00408f',
-    },
-  },
-  /** A checked control under the pointer. */
-  'color.bg.brand.strong.hover': {
-    cssVariable: '--env-color-bg-brand-strong-hover',
-    type: 'color',
-    values: {
-      light: '#005cc8',
-      dark: '#347eea',
-      'light-high-contrast': '#00377c',
-      'dark-high-contrast': '#00377c',
-    },
-  },
-  /** A checked control while pressed. */
-  'color.bg.brand.strong.pressed': {
-    cssVariable: '--env-color-bg-brand-strong-pressed',
-    type: 'color',
-    values: {
-      light: '#00408f',
-      dark: '#1872e7',
-      'light-high-contrast': '#002f6d',
-      'dark-high-contrast': '#002f6d',
     },
   },
   /** A solid danger fill; paired with fg.on-emphasis. */
@@ -456,39 +412,6 @@ export const tokens = {
       dark: '#1e1f21',
       'light-high-contrast': '#ffffff',
       'dark-high-contrast': '#1e1f21',
-    },
-  },
-  /** The accent purple of important actions in both themes; paired with fg.on-strong. */
-  'color.bg.important.strong': {
-    cssVariable: '--env-color-bg-important-strong',
-    type: 'color',
-    values: {
-      light: '#9948b6',
-      dark: '#9948b6',
-      'light-high-contrast': '#6d1888',
-      'dark-high-contrast': '#6d1888',
-    },
-  },
-  /** An important action under the pointer. */
-  'color.bg.important.strong.hover': {
-    cssVariable: '--env-color-bg-important-strong-hover',
-    type: 'color',
-    values: {
-      light: '#83319f',
-      dark: '#83319f',
-      'light-high-contrast': '#63047d',
-      'dark-high-contrast': '#63047d',
-    },
-  },
-  /** An important action while pressed. */
-  'color.bg.important.strong.pressed': {
-    cssVariable: '--env-color-bg-important-strong-pressed',
-    type: 'color',
-    values: {
-      light: '#6d1888',
-      dark: '#6d1888',
-      'light-high-contrast': '#57006e',
-      'dark-high-contrast': '#57006e',
     },
   },
   /** The information fill of toasts in both themes; paired with fg.on-strong. */
@@ -810,6 +733,138 @@ export const tokens = {
       'dark-high-contrast': '#424447',
     },
   },
+  /** The primary fill of primary actions, chosen radios and the chosen calendar day; paired with fg.on-emphasis. In dark and at high contrast, checked checkboxes, switches that are on, sliders, meters and spinners take it too: a soft blue with dark marks at 4.5:1. */
+  'color.bg.primary.emphasis': {
+    cssVariable: '--env-color-bg-primary-emphasis',
+    type: 'color',
+    values: {
+      light: '#1872e7',
+      dark: '#9fc1f8',
+      'light-high-contrast': '#00408f',
+      'dark-high-contrast': '#b5cffb',
+    },
+  },
+  /** A primary action under the pointer. */
+  'color.bg.primary.emphasis.hover': {
+    cssVariable: '--env-color-bg-primary-emphasis-hover',
+    type: 'color',
+    values: {
+      light: '#005cc8',
+      dark: '#75a5f2',
+      'light-high-contrast': '#00377c',
+      'dark-high-contrast': '#cddefc',
+    },
+  },
+  /** A primary action while pressed. */
+  'color.bg.primary.emphasis.pressed': {
+    cssVariable: '--env-color-bg-primary-emphasis-pressed',
+    type: 'color',
+    values: {
+      light: '#00408f',
+      dark: '#4b8bec',
+      'light-high-contrast': '#002f6d',
+      'dark-high-contrast': '#e0ebfd',
+    },
+  },
+  /** The translucent primary tint of info alerts, and of soft primary badges in dark and at high contrast; in light they take color.bg.primary.soft. An application may put a container in it, with links in fg.link-on-muted. */
+  'color.bg.primary.muted': {
+    cssVariable: '--env-color-bg-primary-muted',
+    type: 'color',
+    values: {
+      light: 'rgb(0 92 200 / 0.12)',
+      dark: 'rgb(159 193 248 / 0.14)',
+      'light-high-contrast': 'rgb(0 55 124 / 0.08)',
+      'dark-high-contrast': 'rgb(205 222 252 / 0.1)',
+    },
+  },
+  /** The tint of a soft primary badge. In light it is the primary blue at 5%, fainter than color.bg.primary.muted, so the blue text keeps 4.5:1 over it on list rows and muted surfaces; in dark and at high contrast it is color.bg.primary.muted. */
+  'color.bg.primary.soft': {
+    cssVariable: '--env-color-bg-primary-soft',
+    type: 'color',
+    values: {
+      light: 'rgb(0 92 200 / 0.05)',
+      dark: 'rgb(159 193 248 / 0.14)',
+      'light-high-contrast': 'rgb(0 55 124 / 0.08)',
+      'dark-high-contrast': 'rgb(205 222 252 / 0.1)',
+    },
+  },
+  /** A solid primary fill, such as a solid primary badge or a navigation item's count, a grade deeper than the emphasis fill in light; paired with fg.on-emphasis. */
+  'color.bg.primary.solid': {
+    cssVariable: '--env-color-bg-primary-solid',
+    type: 'color',
+    values: {
+      light: '#005cc8',
+      dark: '#9fc1f8',
+      'light-high-contrast': '#00377c',
+      'dark-high-contrast': '#cddefc',
+    },
+  },
+  /** The saturated primary fill of checked checkboxes, switches that are on, sliders, meters and spinners in the light theme at standard contrast, with white marks, the check and the thumb, at 3:1. The dark theme and high contrast put those controls on the emphasis fill instead; in dark this fill, which keeps 3:1 against the surfaces, would put white text below 4.5:1. */
+  'color.bg.primary.strong': {
+    cssVariable: '--env-color-bg-primary-strong',
+    type: 'color',
+    values: {
+      light: '#1872e7',
+      dark: '#4b8bec',
+      'light-high-contrast': '#00408f',
+      'dark-high-contrast': '#00408f',
+    },
+  },
+  /** A checked control under the pointer. */
+  'color.bg.primary.strong.hover': {
+    cssVariable: '--env-color-bg-primary-strong-hover',
+    type: 'color',
+    values: {
+      light: '#005cc8',
+      dark: '#347eea',
+      'light-high-contrast': '#00377c',
+      'dark-high-contrast': '#00377c',
+    },
+  },
+  /** A checked control while pressed. */
+  'color.bg.primary.strong.pressed': {
+    cssVariable: '--env-color-bg-primary-strong-pressed',
+    type: 'color',
+    values: {
+      light: '#00408f',
+      dark: '#1872e7',
+      'light-high-contrast': '#002f6d',
+      'dark-high-contrast': '#002f6d',
+    },
+  },
+  /** Controls in the primary tone without a fill at rest, such as an alert’s dismiss button: transparent, as color.bg.neutral.subtle is. */
+  'color.bg.primary.subtle': {
+    cssVariable: '--env-color-bg-primary-subtle',
+    type: 'color',
+    values: {
+      light: 'transparent',
+      dark: 'transparent',
+      'light-high-contrast': 'transparent',
+      'dark-high-contrast': 'transparent',
+    },
+  },
+  /** The state layer of a control without a fill in the primary tone, such as an info alert’s dismiss button, under the pointer: the primary text color at 14%, in every theme and at high contrast. */
+  'color.bg.primary.subtle.hover': {
+    cssVariable: '--env-color-bg-primary-subtle-hover',
+    type: 'color',
+    values: {
+      light: 'rgb(0 92 200 / 0.14)',
+      dark: 'rgb(159 193 248 / 0.14)',
+      'light-high-contrast': 'rgb(0 55 124 / 0.14)',
+      'dark-high-contrast': 'rgb(224 235 253 / 0.14)',
+    },
+  },
+  /** The primary state layer while pressed: the primary text color at 22%. */
+  'color.bg.primary.subtle.pressed': {
+    cssVariable: '--env-color-bg-primary-subtle-pressed',
+    type: 'color',
+    values: {
+      light: 'rgb(0 92 200 / 0.22)',
+      dark: 'rgb(159 193 248 / 0.22)',
+      'light-high-contrast': 'rgb(0 55 124 / 0.22)',
+      'dark-high-contrast': 'rgb(224 235 253 / 0.22)',
+    },
+  },
   /** A raised surface: Surface background="raised", rows on a contrasting surface, outlined buttons. */
   'color.bg.raised': {
     cssVariable: '--env-color-bg-raised',
@@ -1063,59 +1118,15 @@ export const tokens = {
       'dark-high-contrast': 'rgb(255 232 190 / 0.22)',
     },
   },
-  /** A decorative edge in the accent tone, around an outlined badge: the accent text color at 55%, in every theme and at high contrast. */
+  /** A decorative edge in the accent tone, around an outlined accent badge: the accent text color at 55%. */
   'color.border.accent': {
     cssVariable: '--env-color-border-accent',
     type: 'color',
     values: {
-      light: 'rgb(0 92 200 / 0.55)',
-      dark: 'rgb(159 193 248 / 0.55)',
-      'light-high-contrast': 'rgb(0 55 124 / 0.55)',
-      'dark-high-contrast': 'rgb(224 235 253 / 0.55)',
-    },
-  },
-  /** The active border and label of a focused field, and today’s ring in a calendar. */
-  'color.border.accent.emphasis': {
-    cssVariable: '--env-color-border-accent-emphasis',
-    type: 'color',
-    values: {
-      light: '#1872e7',
-      dark: '#9fc1f8',
-      'light-high-contrast': '#00408f',
-      'dark-high-contrast': '#b5cffb',
-    },
-  },
-  /** An active field border under the pointer. */
-  'color.border.accent.emphasis.hover': {
-    cssVariable: '--env-color-border-accent-emphasis-hover',
-    type: 'color',
-    values: {
-      light: '#005cc8',
-      dark: '#75a5f2',
-      'light-high-contrast': '#00377c',
-      'dark-high-contrast': '#cddefc',
-    },
-  },
-  /** An active field border while pressed. */
-  'color.border.accent.emphasis.pressed': {
-    cssVariable: '--env-color-border-accent-emphasis-pressed',
-    type: 'color',
-    values: {
-      light: '#00408f',
-      dark: '#4b8bec',
-      'light-high-contrast': '#002f6d',
-      'dark-high-contrast': '#e0ebfd',
-    },
-  },
-  /** The faint edge of an info alert: the accent text color at 28%, in every theme and at high contrast. */
-  'color.border.accent.muted': {
-    cssVariable: '--env-color-border-accent-muted',
-    type: 'color',
-    values: {
-      light: 'rgb(0 92 200 / 0.28)',
-      dark: 'rgb(159 193 248 / 0.28)',
-      'light-high-contrast': 'rgb(0 55 124 / 0.28)',
-      'dark-high-contrast': 'rgb(224 235 253 / 0.28)',
+      light: 'rgb(142 60 170 / 0.55)',
+      dark: 'rgb(231 168 255 / 0.55)',
+      'light-high-contrast': 'rgb(99 4 125 / 0.55)',
+      'dark-high-contrast': 'rgb(247 228 255 / 0.55)',
     },
   },
   /** A decorative edge in the danger tone, around an outlined badge and a message that failed to send: the danger text color at 55%, in every theme and at high contrast. */
@@ -1316,6 +1327,61 @@ export const tokens = {
       'dark-high-contrast': '#a1a4a9',
     },
   },
+  /** A decorative edge in the primary tone, around an outlined primary badge: the primary text color at 55%, in every theme and at high contrast. */
+  'color.border.primary': {
+    cssVariable: '--env-color-border-primary',
+    type: 'color',
+    values: {
+      light: 'rgb(0 92 200 / 0.55)',
+      dark: 'rgb(159 193 248 / 0.55)',
+      'light-high-contrast': 'rgb(0 55 124 / 0.55)',
+      'dark-high-contrast': 'rgb(224 235 253 / 0.55)',
+    },
+  },
+  /** The active border and label of a focused field, and today’s ring in a calendar. */
+  'color.border.primary.emphasis': {
+    cssVariable: '--env-color-border-primary-emphasis',
+    type: 'color',
+    values: {
+      light: '#1872e7',
+      dark: '#9fc1f8',
+      'light-high-contrast': '#00408f',
+      'dark-high-contrast': '#b5cffb',
+    },
+  },
+  /** An active field border under the pointer. */
+  'color.border.primary.emphasis.hover': {
+    cssVariable: '--env-color-border-primary-emphasis-hover',
+    type: 'color',
+    values: {
+      light: '#005cc8',
+      dark: '#75a5f2',
+      'light-high-contrast': '#00377c',
+      'dark-high-contrast': '#cddefc',
+    },
+  },
+  /** An active field border while pressed. */
+  'color.border.primary.emphasis.pressed': {
+    cssVariable: '--env-color-border-primary-emphasis-pressed',
+    type: 'color',
+    values: {
+      light: '#00408f',
+      dark: '#4b8bec',
+      'light-high-contrast': '#002f6d',
+      'dark-high-contrast': '#e0ebfd',
+    },
+  },
+  /** The faint edge of an info alert: the primary text color at 28%, in every theme and at high contrast. */
+  'color.border.primary.muted': {
+    cssVariable: '--env-color-border-primary-muted',
+    type: 'color',
+    values: {
+      light: 'rgb(0 92 200 / 0.28)',
+      dark: 'rgb(159 193 248 / 0.28)',
+      'light-high-contrast': 'rgb(0 55 124 / 0.28)',
+      'dark-high-contrast': 'rgb(224 235 253 / 0.28)',
+    },
+  },
   /** A decorative edge in the success tone, around an outlined badge: the success text color at 55%, in every theme and at high contrast. */
   'color.border.success': {
     cssVariable: '--env-color-border-success',
@@ -1371,15 +1437,15 @@ export const tokens = {
       'dark-high-contrast': 'rgb(255 232 190 / 0.28)',
     },
   },
-  /** Accent text and icons: the accent tone, outlined button labels, chips, the icon of a pager link. */
+  /** Accent text and icons: the purple of an accent badge. */
   'color.fg.accent': {
     cssVariable: '--env-color-fg-accent',
     type: 'color',
     values: {
-      light: '#0053b5',
-      dark: '#9fc1f8',
-      'light-high-contrast': '#00377c',
-      'dark-high-contrast': '#e0ebfd',
+      light: '#83319f',
+      dark: '#e7a8ff',
+      'light-high-contrast': '#63047d',
+      'dark-high-contrast': '#f7e4ff',
     },
   },
   /** The default initials, on the powder fill. */
@@ -1635,7 +1701,7 @@ export const tokens = {
       'dark-high-contrast': '#e0ebfd',
     },
   },
-  /** Links and text buttons on a tint, where fg.link falls below 4.5:1: inside alerts, on bg.brand-muted, and in list rows and interactive table rows under the pointer or pressed. In light it is a grade darker than fg.link and darkens on hover and press; in dark it is fg.link at rest and lightens on hover and press, where fg.link darkens. Alerts and those rows point fg.link at it; an application puts it on bg.brand-muted. */
+  /** Links and text buttons on a tint, where fg.link falls below 4.5:1: inside alerts, on bg.primary.muted, and in list rows and interactive table rows under the pointer or pressed. In light it is a grade darker than fg.link and darkens on hover and press; in dark it is fg.link at rest and lightens on hover and press, where fg.link darkens. Alerts and those rows point fg.link at it; an application puts it on bg.brand-muted. */
   'color.fg.link-on-muted': {
     cssVariable: '--env-color-fg-link-on-muted',
     type: 'color',
@@ -1745,7 +1811,7 @@ export const tokens = {
       'dark-high-contrast': '#cddefc',
     },
   },
-  /** White in both themes, on the strong fills: labels at 4.5:1 on the danger, important, neutral, success and information fills, at rest, hovered and pressed; marks at 3:1 on the brand’s strong fill. */
+  /** White in both themes, on the strong fills: labels at 4.5:1 on the danger, accent, neutral, success and information fills, at rest, hovered and pressed; marks at 3:1 on the primary strong fill. */
   'color.fg.on-strong': {
     cssVariable: '--env-color-fg-on-strong',
     type: 'color',
@@ -1754,6 +1820,17 @@ export const tokens = {
       dark: '#ffffff',
       'light-high-contrast': '#ffffff',
       'dark-high-contrast': '#ffffff',
+    },
+  },
+  /** Primary text and icons: the primary tone, outlined button labels, the selected tab, a field's focused label, the icon of a pager link. */
+  'color.fg.primary': {
+    cssVariable: '--env-color-fg-primary',
+    type: 'color',
+    values: {
+      light: '#0053b5',
+      dark: '#9fc1f8',
+      'light-high-contrast': '#00377c',
+      'dark-high-contrast': '#e0ebfd',
     },
   },
   /** The filled stars and the filled half of a half star: a clear gold. */

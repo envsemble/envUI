@@ -166,7 +166,7 @@
     place-items: center;
   }
   .env-menu-item .env-menu-item-indicator {
-    color: var(--env-color-bg-brand-emphasis);
+    color: var(--env-color-bg-primary-emphasis);
   }
   .env-menu-choice[data-checked] .env-menu-item-label {
     font-weight: var(--env-font-weight-medium);

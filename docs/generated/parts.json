@@ -402,6 +402,7 @@
             "danger",
             "done",
             "neutral",
+            "primary",
             "success",
             "warning"
           ],
@@ -874,6 +875,7 @@
             "danger",
             "done",
             "neutral",
+            "primary",
             "success",
             "warning"
           ],

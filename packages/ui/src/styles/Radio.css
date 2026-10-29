@@ -36,10 +36,10 @@
     padding: 0;
   }
   .env-radio {
-    --env-radio-accent: var(--env-radio-selected, var(--env-color-bg-brand-emphasis));
-    --env-radio-accent-hover: var(--env-radio-selected, var(--env-color-bg-brand-emphasis-hover));
+    --env-radio-accent: var(--env-radio-selected, var(--env-color-bg-primary-emphasis));
+    --env-radio-accent-hover: var(--env-radio-selected, var(--env-color-bg-primary-emphasis-hover));
     /* prettier-ignore */
-    --env-radio-accent-pressed: var(--env-radio-selected, var(--env-color-bg-brand-emphasis-pressed));
+    --env-radio-accent-pressed: var(--env-radio-selected, var(--env-color-bg-primary-emphasis-pressed));
   }
   .env-radio[data-orientation='vertical'] {
     /* With no color property set, the designed fills below apply in every state. The custom fill is
@@ -104,14 +104,14 @@
     height: 1rem;
     flex: 0 0 auto;
     margin: 0;
-    accent-color: var(--env-radio-accent, var(--env-color-bg-brand-emphasis));
+    accent-color: var(--env-radio-accent, var(--env-color-bg-primary-emphasis));
     cursor: inherit;
   }
   .env-radio-input:hover:not(:disabled) {
-    accent-color: var(--env-radio-accent-hover, var(--env-color-bg-brand-emphasis-hover));
+    accent-color: var(--env-radio-accent-hover, var(--env-color-bg-primary-emphasis-hover));
   }
   .env-radio-input:active:not(:disabled) {
-    accent-color: var(--env-radio-accent-pressed, var(--env-color-bg-brand-emphasis-pressed));
+    accent-color: var(--env-radio-accent-pressed, var(--env-color-bg-primary-emphasis-pressed));
   }
   /* A radio in its label, side by side with the group's others. */
   .env-radio[data-orientation='horizontal'] {

@@ -56,7 +56,7 @@
     transition: color var(--env-motion-duration-fast) var(--env-motion-ease);
   }
   .env-time-list-row[data-centered] {
-    background: var(--env-color-bg-brand-emphasis);
+    background: var(--env-color-bg-primary-emphasis);
     color: var(--env-color-fg-on-emphasis);
     font: var(--env-type-body);
     font-weight: var(--env-font-weight-semibold);

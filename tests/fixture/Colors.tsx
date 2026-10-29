@@ -189,9 +189,9 @@ export function ColorOverrides() {
         data-testid="override-area"
         style={
           {
-            '--env-color-bg-brand-emphasis': '#176f35',
-            '--env-color-bg-brand-emphasis-hover': '#115a2a',
-            '--env-color-bg-brand-emphasis-pressed': '#0b4520',
+            '--env-color-bg-primary-emphasis': '#176f35',
+            '--env-color-bg-primary-emphasis-hover': '#115a2a',
+            '--env-color-bg-primary-emphasis-pressed': '#0b4520',
           } as CSSProperties
         }
       >

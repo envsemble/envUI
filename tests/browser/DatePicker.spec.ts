@@ -69,7 +69,7 @@ test('the field shows its value in the locale and the calendar follows the date 
     const mark = (date: string) =>
       card.querySelector(`[data-date="${date}"] > .env-calendar-day-mark`)!;
     const probe = document.createElement('div');
-    probe.style.color = 'var(--env-color-fg-accent)';
+    probe.style.color = 'var(--env-color-fg-primary)';
     card.append(probe);
     const accent = getComputedStyle(probe).color;
     probe.remove();

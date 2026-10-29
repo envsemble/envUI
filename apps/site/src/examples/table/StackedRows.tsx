@@ -27,7 +27,7 @@ const orders = [
   },
 ] as const;
 
-const tones = { Shipped: 'accent', Processing: 'warning', Delivered: 'success' } as const;
+const tones = { Shipped: 'primary', Processing: 'warning', Delivered: 'success' } as const;
 
 export default function StackedRows() {
   return (

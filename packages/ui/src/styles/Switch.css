@@ -40,7 +40,7 @@
     --env-switch-on-gate: color-mix(
       in srgb,
       var(--env-switch-selected-content) 0%,
-      var(--env-color-bg-brand-emphasis)
+      var(--env-color-bg-primary-emphasis)
     );
     --env-switch-on-base: var(--env-switch-selected, var(--env-switch-on-gate));
     min-inline-size: 0;
@@ -113,7 +113,7 @@
     transition: transform var(--env-motion-duration-fast) var(--env-motion-ease);
   }
   .env-switch-input:checked {
-    background: var(--env-switch-on-fill, var(--env-color-bg-brand-emphasis));
+    background: var(--env-switch-on-fill, var(--env-color-bg-primary-emphasis));
     box-shadow: none;
   }
   .env-switch-input:checked::before {
@@ -133,10 +133,10 @@
     background: var(--env-switch-off-fill, var(--env-color-bg-neutral-muted-pressed));
   }
   .env-switch-input:checked:hover:not(:disabled) {
-    background: var(--env-switch-on-fill, var(--env-color-bg-brand-emphasis-hover));
+    background: var(--env-switch-on-fill, var(--env-color-bg-primary-emphasis-hover));
   }
   .env-switch-input:checked:active:not(:disabled) {
-    background: var(--env-switch-on-fill, var(--env-color-bg-brand-emphasis-pressed));
+    background: var(--env-switch-on-fill, var(--env-color-bg-primary-emphasis-pressed));
   }
   .env-switch-input:focus-visible {
     outline: 0.125rem solid var(--env-color-border-focus);

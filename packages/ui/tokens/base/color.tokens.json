@@ -228,10 +228,10 @@
           }
         }
       },
-      "brand": {
+      "primary": {
         "emphasis": {
           "$root": {
-            "$description": "The brand fill of primary actions, chosen radios and the chosen calendar day; paired with fg.on-emphasis. In dark and at high contrast, checked checkboxes, switches that are on, sliders, meters and spinners take it too: a soft blue with dark marks at 4.5:1.",
+            "$description": "The primary fill of primary actions, chosen radios and the chosen calendar day; paired with fg.on-emphasis. In dark and at high contrast, checked checkboxes, switches that are on, sliders, meters and spinners take it too: a soft blue with dark marks at 4.5:1.",
             "$value": "{palette.blue.50}"
           },
           "hover": {
@@ -243,19 +243,9 @@
             "$value": "{palette.blue.75}"
           }
         },
-        "muted": {
-          "$description": "The translucent halo of a slider thumb that is dragged: the blue of the thumb at 16%, in every theme and at high contrast.",
-          "$value": {
-            "colorSpace": "oklch",
-            "components": {
-              "$ref": "#/palette/blue/50/$value/components"
-            },
-            "alpha": 0.16
-          }
-        },
         "strong": {
           "$root": {
-            "$description": "The saturated brand fill of checked checkboxes, switches that are on, sliders, meters and spinners in the light theme at standard contrast, with white marks, the check and the thumb, at 3:1. The dark theme and high contrast put those controls on the emphasis fill instead; in dark this fill, which keeps 3:1 against the surfaces, would put white text below 4.5:1.",
+            "$description": "The saturated primary fill of checked checkboxes, switches that are on, sliders, meters and spinners in the light theme at standard contrast, with white marks, the check and the thumb, at 3:1. The dark theme and high contrast put those controls on the emphasis fill instead; in dark this fill, which keeps 3:1 against the surfaces, would put white text below 4.5:1.",
             "$value": "{palette.blue.50}"
           },
           "hover": {
@@ -266,36 +256,10 @@
             "$description": "A checked control while pressed.",
             "$value": "{palette.blue.75}"
           }
-        }
-      },
-      "accent": {
-        "emphasis": {
-          "$description": "A solid accent fill, such as a solid accent badge; paired with fg.on-emphasis.",
-          "$value": "{palette.blue.60}"
-        },
-        "muted": {
-          "$description": "The translucent accent tint of info alerts, and of soft accent badges in dark and at high contrast; in light they take color.bg.accent.badge.",
-          "$value": {
-            "colorSpace": "oklch",
-            "components": {
-              "$ref": "#/palette/blue/60/$value/components"
-            },
-            "alpha": 0.12
-          }
-        },
-        "badge": {
-          "$description": "The tint of a soft accent badge. In light it is the accent blue at 5%, fainter than color.bg.accent.muted, so the blue text keeps 4.5:1 over it on list rows and muted surfaces; in dark and at high contrast it is color.bg.accent.muted.",
-          "$value": {
-            "colorSpace": "oklch",
-            "components": {
-              "$ref": "#/palette/blue/60/$value/components"
-            },
-            "alpha": 0.05
-          }
         },
         "subtle": {
           "$root": {
-            "$description": "Controls in the accent tone without a fill at rest, such as an alert’s dismiss button: transparent, as color.bg.neutral.subtle is.",
+            "$description": "Controls in the primary tone without a fill at rest, such as an alert’s dismiss button: transparent, as color.bg.neutral.subtle is.",
             "$value": {
               "colorSpace": "srgb",
               "components": [0, 0, 0],
@@ -303,7 +267,7 @@
             }
           },
           "hover": {
-            "$description": "The state layer of a control without a fill in the accent tone, such as an info alert’s dismiss button, under the pointer: the accent text color at 14%, in every theme and at high contrast.",
+            "$description": "The state layer of a control without a fill in the primary tone, such as an info alert’s dismiss button, under the pointer: the primary text color at 14%, in every theme and at high contrast.",
             "$value": {
               "colorSpace": "oklch",
               "components": {
@@ -313,7 +277,7 @@
             }
           },
           "pressed": {
-            "$description": "The accent state layer while pressed: the accent text color at 22%.",
+            "$description": "The primary state layer while pressed: the primary text color at 22%.",
             "$value": {
               "colorSpace": "oklch",
               "components": {
@@ -322,6 +286,30 @@
               "alpha": 0.22
             }
           }
+        },
+        "muted": {
+          "$description": "The translucent primary tint of info alerts, and of soft primary badges in dark and at high contrast; in light they take color.bg.primary.soft. An application may put a container in it, with links in fg.link-on-muted.",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": {
+              "$ref": "#/palette/blue/60/$value/components"
+            },
+            "alpha": 0.12
+          }
+        },
+        "soft": {
+          "$description": "The tint of a soft primary badge. In light it is the primary blue at 5%, fainter than color.bg.primary.muted, so the blue text keeps 4.5:1 over it on list rows and muted surfaces; in dark and at high contrast it is color.bg.primary.muted.",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": {
+              "$ref": "#/palette/blue/60/$value/components"
+            },
+            "alpha": 0.05
+          }
+        },
+        "solid": {
+          "$description": "A solid primary fill, such as a solid primary badge or a navigation item's count, a grade deeper than the emphasis fill in light; paired with fg.on-emphasis.",
+          "$value": "{palette.blue.60}"
         }
       },
       "success": {
@@ -522,20 +510,74 @@
           }
         }
       },
-      "important": {
+      "accent": {
         "strong": {
           "$root": {
-            "$description": "The accent purple of important actions in both themes; paired with fg.on-strong.",
+            "$description": "The accent purple of accent actions, such as Button's accent tone, in both themes; paired with fg.on-strong.",
             "$value": "{palette.purple.55}"
           },
           "hover": {
-            "$description": "An important action under the pointer.",
+            "$description": "An accent action under the pointer.",
             "$value": "{palette.purple.65}"
           },
           "pressed": {
-            "$description": "An important action while pressed.",
+            "$description": "An accent action while pressed.",
             "$value": "{palette.purple.75}"
           }
+        },
+        "subtle": {
+          "$root": {
+            "$description": "Controls in the accent tone without a fill at rest: transparent, as color.bg.neutral.subtle is.",
+            "$value": {
+              "colorSpace": "srgb",
+              "components": [0, 0, 0],
+              "alpha": 0
+            }
+          },
+          "hover": {
+            "$value": {
+              "colorSpace": "oklch",
+              "components": {
+                "$ref": "#/palette/purple/60/$value/components"
+              },
+              "alpha": 0.14
+            },
+            "$description": "The state layer of a control without a fill in the accent tone under the pointer, and the tonal fill of an accent badge: the accent text color at 14%."
+          },
+          "pressed": {
+            "$value": {
+              "colorSpace": "oklch",
+              "components": {
+                "$ref": "#/palette/purple/60/$value/components"
+              },
+              "alpha": 0.22
+            },
+            "$description": "The accent state layer while pressed: the accent text color at 22%."
+          }
+        },
+        "muted": {
+          "$description": "The translucent accent tint of soft accent badges in dark and at high contrast; in light they take color.bg.accent.soft.",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": {
+              "$ref": "#/palette/purple/60/$value/components"
+            },
+            "alpha": 0.12
+          }
+        },
+        "soft": {
+          "$description": "The tint of a soft accent badge: in light the accent purple at 5%, so the purple text keeps 4.5:1 over it; in dark and at high contrast it is color.bg.accent.muted.",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": {
+              "$ref": "#/palette/purple/60/$value/components"
+            },
+            "alpha": 0.05
+          }
+        },
+        "solid": {
+          "$description": "A solid accent fill, such as a solid accent badge; paired with fg.on-emphasis.",
+          "$value": "{palette.purple.60}"
         }
       },
       "inset": {
@@ -707,9 +749,13 @@
           "$value": "{palette.blue.75}"
         }
       },
-      "accent": {
-        "$description": "Accent text and icons: the accent tone, outlined button labels, chips, the icon of a pager link.",
+      "primary": {
+        "$description": "Primary text and icons: the primary tone, outlined button labels, the selected tab, a field's focused label, the icon of a pager link.",
         "$value": "{palette.blue.65}"
+      },
+      "accent": {
+        "$description": "Accent text and icons: the purple of an accent badge.",
+        "$value": "{palette.purple.65}"
       },
       "on-selected": {
         "$description": "Text and indicators on bg.selected and its states.",
@@ -736,12 +782,12 @@
         "$value": "{palette.neutral.0}"
       },
       "on-strong": {
-        "$description": "White in both themes, on the strong fills: labels at 4.5:1 on the danger, important, neutral, success and information fills, at rest, hovered and pressed; marks at 3:1 on the brand’s strong fill.",
+        "$description": "White in both themes, on the strong fills: labels at 4.5:1 on the danger, accent, neutral, success and information fills, at rest, hovered and pressed; marks at 3:1 on the primary strong fill.",
         "$value": "{palette.neutral.0}"
       },
       "link-on-muted": {
         "$root": {
-          "$description": "Links and text buttons on a tint, where fg.link falls below 4.5:1: inside alerts, on bg.brand-muted, and in list rows and interactive table rows under the pointer or pressed. In light it is a grade darker than fg.link and darkens on hover and press; in dark it is fg.link at rest and lightens on hover and press, where fg.link darkens. Alerts and those rows point fg.link at it; an application puts it on bg.brand-muted.",
+          "$description": "Links and text buttons on a tint, where fg.link falls below 4.5:1: inside alerts, on bg.primary.muted, and in list rows and interactive table rows under the pointer or pressed. In light it is a grade darker than fg.link and darkens on hover and press; in dark it is fg.link at rest and lightens on hover and press, where fg.link darkens. Alerts and those rows point fg.link at it; an application puts it on bg.brand-muted.",
           "$value": "{palette.blue.65}"
         },
         "hover": {
@@ -960,9 +1006,9 @@
           "$value": "{palette.gray.30}"
         }
       },
-      "accent": {
+      "primary": {
         "$root": {
-          "$description": "A decorative edge in the accent tone, around an outlined badge: the accent text color at 55%, in every theme and at high contrast.",
+          "$description": "A decorative edge in the primary tone, around an outlined primary badge: the primary text color at 55%, in every theme and at high contrast.",
           "$value": {
             "colorSpace": "oklch",
             "components": {
@@ -972,7 +1018,7 @@
           }
         },
         "muted": {
-          "$description": "The faint edge of an info alert: the accent text color at 28%, in every theme and at high contrast.",
+          "$description": "The faint edge of an info alert: the primary text color at 28%, in every theme and at high contrast.",
           "$value": {
             "colorSpace": "oklch",
             "components": {
@@ -994,6 +1040,16 @@
             "$description": "An active field border while pressed.",
             "$value": "{palette.blue.75}"
           }
+        }
+      },
+      "accent": {
+        "$description": "A decorative edge in the accent tone, around an outlined accent badge: the accent text color at 55%.",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": {
+            "$ref": "#/palette/purple/60/$value/components"
+          },
+          "alpha": 0.55
         }
       },
       "danger": {

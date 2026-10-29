@@ -515,7 +515,7 @@ test('explicit thresholds color days of 0, and two levels color their only step 
       return [...context.getImageData(0, 0, 1, 1).data.slice(0, 3)];
     };
     const probe = document.createElement('span');
-    probe.style.color = 'var(--env-color-fg-accent)';
+    probe.style.color = 'var(--env-color-fg-primary)';
     element.closest('.env-calendar-heatmap')!.append(probe);
     const tone = paint(getComputedStyle(probe).color);
     probe.remove();

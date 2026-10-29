@@ -10,7 +10,7 @@ export default function CountsInButtons() {
         Changes <DiffStat additions={12} deletions={3} />
       </Button>
       <Button>
-        Review requests <Badge count={2} tone="accent" variant="solid" />
+        Review requests <Badge count={2} tone="primary" variant="solid" />
       </Button>
     </Row>
   );

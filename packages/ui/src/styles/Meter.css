@@ -30,7 +30,7 @@
   .env-progress-indicator {
     block-size: 100%;
     border-radius: inherit;
-    background: var(--env-color-bg-brand-emphasis);
+    background: var(--env-color-bg-primary-emphasis);
     transition: inline-size var(--env-motion-duration-medium) var(--env-motion-ease);
   }
   .env-progress[data-indeterminate] .env-progress-indicator {
@@ -76,7 +76,7 @@
     inline-size: calc(var(--env-progress-segment-fill, 0) * 100%);
     block-size: 100%;
     border-radius: inherit;
-    background: var(--env-color-bg-brand-emphasis);
+    background: var(--env-color-bg-primary-emphasis);
   }
   @media (prefers-reduced-motion: reduce) {
     .env-meter-indicator,

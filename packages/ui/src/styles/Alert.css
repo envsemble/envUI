@@ -35,11 +35,11 @@
     --env-color-fg-link-pressed: var(--env-color-fg-link-on-muted-pressed);
     /* Its tone: the text color of the icon and title, the stronger tint it is filled with, and the
        softer tint, its fill at high contrast. */
-    --env-alert-icon-default: var(--env-color-fg-accent);
-    --env-alert-fill: var(--env-color-bg-accent-subtle-hover);
-    --env-alert-soft-fill: var(--env-color-bg-accent-muted);
-    --env-alert-hover: var(--env-color-bg-accent-subtle-hover);
-    --env-alert-pressed: var(--env-color-bg-accent-subtle-pressed);
+    --env-alert-icon-default: var(--env-color-fg-primary);
+    --env-alert-fill: var(--env-color-bg-primary-subtle-hover);
+    --env-alert-soft-fill: var(--env-color-bg-primary-muted);
+    --env-alert-hover: var(--env-color-bg-primary-subtle-hover);
+    --env-alert-pressed: var(--env-color-bg-primary-subtle-pressed);
     /* A card's corner, a step rounder than a control's and below a surface's. */
     --env-alert-radius: 1.25rem;
     /* The high-contrast fill and edge, valid only under high contrast (see Theme.css). */

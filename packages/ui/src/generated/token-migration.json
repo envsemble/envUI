@@ -18,20 +18,20 @@
     },
     "--color-accent": {
       "kind": "alias",
-      "token": "color.bg.important.strong",
-      "cssVariable": "--env-color-bg-important-strong",
+      "token": "color.bg.accent.strong",
+      "cssVariable": "--env-color-bg-accent-strong",
       "component": "Important buttons"
     },
     "--color-accent-hover": {
       "kind": "alias",
-      "token": "color.bg.important.strong.hover",
-      "cssVariable": "--env-color-bg-important-strong-hover",
+      "token": "color.bg.accent.strong.hover",
+      "cssVariable": "--env-color-bg-accent-strong-hover",
       "component": "Important buttons"
     },
     "--color-accent-pressed": {
       "kind": "alias",
-      "token": "color.bg.important.strong.pressed",
-      "cssVariable": "--env-color-bg-important-strong-pressed",
+      "token": "color.bg.accent.strong.pressed",
+      "cssVariable": "--env-color-bg-accent-strong-pressed",
       "component": "Important buttons"
     },
     "--color-action-strip": {
@@ -55,39 +55,70 @@
       "note": "A system token named for avatars now."
     },
     "--color-bg-accent-emphasis": {
-      "kind": "prefixed",
-      "cssVariable": "--env-color-bg-accent-emphasis"
+      "kind": "renamed",
+      "token": "color.bg.primary.solid",
+      "cssVariable": "--env-color-bg-primary-solid",
+      "note": "The blue roles are primary, and the purple of accent actions is accent."
     },
-    "--color-bg-accent-muted": { "kind": "prefixed", "cssVariable": "--env-color-bg-accent-muted" },
+    "--color-bg-accent-muted": {
+      "kind": "renamed",
+      "token": "color.bg.primary.muted",
+      "cssVariable": "--env-color-bg-primary-muted",
+      "note": "The blue roles are primary, and the purple of accent actions is accent."
+    },
     "--color-bg-accent-subtle-hover": {
-      "kind": "prefixed",
-      "cssVariable": "--env-color-bg-accent-subtle-hover"
+      "kind": "renamed",
+      "token": "color.bg.primary.subtle.hover",
+      "cssVariable": "--env-color-bg-primary-subtle-hover",
+      "note": "The blue roles are primary, and the purple of accent actions is accent."
     },
     "--color-bg-accent-subtle-pressed": {
-      "kind": "prefixed",
-      "cssVariable": "--env-color-bg-accent-subtle-pressed"
+      "kind": "renamed",
+      "token": "color.bg.primary.subtle.pressed",
+      "cssVariable": "--env-color-bg-primary-subtle-pressed",
+      "note": "The blue roles are primary, and the purple of accent actions is accent."
     },
     "--color-bg-brand-emphasis": {
-      "kind": "prefixed",
-      "cssVariable": "--env-color-bg-brand-emphasis"
+      "kind": "renamed",
+      "token": "color.bg.primary.emphasis",
+      "cssVariable": "--env-color-bg-primary-emphasis",
+      "note": "The blue roles are primary, and the purple of accent actions is accent."
     },
     "--color-bg-brand-emphasis-hover": {
-      "kind": "prefixed",
-      "cssVariable": "--env-color-bg-brand-emphasis-hover"
+      "kind": "renamed",
+      "token": "color.bg.primary.emphasis.hover",
+      "cssVariable": "--env-color-bg-primary-emphasis-hover",
+      "note": "The blue roles are primary, and the purple of accent actions is accent."
     },
     "--color-bg-brand-emphasis-pressed": {
-      "kind": "prefixed",
-      "cssVariable": "--env-color-bg-brand-emphasis-pressed"
+      "kind": "renamed",
+      "token": "color.bg.primary.emphasis.pressed",
+      "cssVariable": "--env-color-bg-primary-emphasis-pressed",
+      "note": "The blue roles are primary, and the purple of accent actions is accent."
     },
-    "--color-bg-brand-muted": { "kind": "prefixed", "cssVariable": "--env-color-bg-brand-muted" },
-    "--color-bg-brand-strong": { "kind": "prefixed", "cssVariable": "--env-color-bg-brand-strong" },
+    "--color-bg-brand-muted": {
+      "kind": "renamed",
+      "token": "color.bg.primary.muted",
+      "cssVariable": "--env-color-bg-primary-muted",
+      "note": "The blue roles are primary, and the purple of accent actions is accent."
+    },
+    "--color-bg-brand-strong": {
+      "kind": "renamed",
+      "token": "color.bg.primary.strong",
+      "cssVariable": "--env-color-bg-primary-strong",
+      "note": "The blue roles are primary, and the purple of accent actions is accent."
+    },
     "--color-bg-brand-strong-hover": {
-      "kind": "prefixed",
-      "cssVariable": "--env-color-bg-brand-strong-hover"
+      "kind": "renamed",
+      "token": "color.bg.primary.strong.hover",
+      "cssVariable": "--env-color-bg-primary-strong-hover",
+      "note": "The blue roles are primary, and the purple of accent actions is accent."
     },
     "--color-bg-brand-strong-pressed": {
-      "kind": "prefixed",
-      "cssVariable": "--env-color-bg-brand-strong-pressed"
+      "kind": "renamed",
+      "token": "color.bg.primary.strong.pressed",
+      "cssVariable": "--env-color-bg-primary-strong-pressed",
+      "note": "The blue roles are primary, and the purple of accent actions is accent."
     },
     "--color-bg-danger-emphasis": {
       "kind": "prefixed",
@@ -130,16 +161,22 @@
     "--color-bg-done-muted": { "kind": "prefixed", "cssVariable": "--env-color-bg-done-muted" },
     "--color-bg-field": { "kind": "prefixed", "cssVariable": "--env-color-bg-field" },
     "--color-bg-important-strong": {
-      "kind": "prefixed",
-      "cssVariable": "--env-color-bg-important-strong"
+      "kind": "renamed",
+      "token": "color.bg.accent.strong",
+      "cssVariable": "--env-color-bg-accent-strong",
+      "note": "The blue roles are primary, and the purple of accent actions is accent."
     },
     "--color-bg-important-strong-hover": {
-      "kind": "prefixed",
-      "cssVariable": "--env-color-bg-important-strong-hover"
+      "kind": "renamed",
+      "token": "color.bg.accent.strong.hover",
+      "cssVariable": "--env-color-bg-accent-strong-hover",
+      "note": "The blue roles are primary, and the purple of accent actions is accent."
     },
     "--color-bg-important-strong-pressed": {
-      "kind": "prefixed",
-      "cssVariable": "--env-color-bg-important-strong-pressed"
+      "kind": "renamed",
+      "token": "color.bg.accent.strong.pressed",
+      "cssVariable": "--env-color-bg-accent-strong-pressed",
+      "note": "The blue roles are primary, and the purple of accent actions is accent."
     },
     "--color-bg-info-strong": { "kind": "prefixed", "cssVariable": "--env-color-bg-info-strong" },
     "--color-bg-info-strong-hover": {
@@ -292,30 +329,32 @@
     },
     "--color-border-accent": {
       "kind": "renamed",
-      "token": "color.border.accent.emphasis",
-      "cssVariable": "--env-color-border-accent-emphasis",
+      "token": "color.border.primary.emphasis",
+      "cssVariable": "--env-color-border-primary-emphasis",
       "note": "The solid edge is the tone’s emphasis now, as a solid fill is; the plain name is its translucent edge."
     },
     "--color-border-accent-emphasis": {
       "kind": "renamed",
-      "token": "color.border.accent",
-      "cssVariable": "--env-color-border-accent",
+      "token": "color.border.primary",
+      "cssVariable": "--env-color-border-primary",
       "note": "The translucent edge is the tone’s plain border now, between its muted edge and its solid emphasis."
     },
     "--color-border-accent-hover": {
       "kind": "renamed",
-      "token": "color.border.accent.emphasis.hover",
-      "cssVariable": "--env-color-border-accent-emphasis-hover",
+      "token": "color.border.primary.emphasis.hover",
+      "cssVariable": "--env-color-border-primary-emphasis-hover",
       "note": "The solid edge is the tone’s emphasis now, as a solid fill is; the plain name is its translucent edge."
     },
     "--color-border-accent-muted": {
-      "kind": "prefixed",
-      "cssVariable": "--env-color-border-accent-muted"
+      "kind": "renamed",
+      "token": "color.border.primary.muted",
+      "cssVariable": "--env-color-border-primary-muted",
+      "note": "The blue roles are primary, and the purple of accent actions is accent."
     },
     "--color-border-accent-pressed": {
       "kind": "renamed",
-      "token": "color.border.accent.emphasis.pressed",
-      "cssVariable": "--env-color-border-accent-emphasis-pressed",
+      "token": "color.border.primary.emphasis.pressed",
+      "cssVariable": "--env-color-border-primary-emphasis-pressed",
       "note": "The solid edge is the tone’s emphasis now, as a solid fill is; the plain name is its translucent edge."
     },
     "--color-border-danger": {
@@ -437,14 +476,14 @@
     },
     "--color-calendar-selected": {
       "kind": "alias",
-      "token": "color.bg.brand.emphasis",
-      "cssVariable": "--env-color-bg-brand-emphasis",
+      "token": "color.bg.primary.emphasis",
+      "cssVariable": "--env-color-bg-primary-emphasis",
       "component": "Calendars"
     },
     "--color-calendar-today": {
       "kind": "alias",
-      "token": "color.border.accent.emphasis",
-      "cssVariable": "--env-color-border-accent-emphasis",
+      "token": "color.border.primary.emphasis",
+      "cssVariable": "--env-color-border-primary-emphasis",
       "component": "Calendars"
     },
     "--color-canvas": {
@@ -459,8 +498,8 @@
     },
     "--color-checkbox": {
       "kind": "alias",
-      "token": "color.bg.brand.emphasis",
-      "cssVariable": "--env-color-bg-brand-emphasis",
+      "token": "color.bg.primary.emphasis",
+      "cssVariable": "--env-color-bg-primary-emphasis",
       "component": "Checkboxes",
       "note": "Light took the brand’s strong fill, the same color as its emphasis fill there: one role in every theme now."
     },
@@ -472,15 +511,15 @@
     },
     "--color-checkbox-hover": {
       "kind": "alias",
-      "token": "color.bg.brand.emphasis.hover",
-      "cssVariable": "--env-color-bg-brand-emphasis-hover",
+      "token": "color.bg.primary.emphasis.hover",
+      "cssVariable": "--env-color-bg-primary-emphasis-hover",
       "component": "Checkboxes",
       "note": "Light took the brand’s strong fill, the same color as its emphasis fill there: one role in every theme now."
     },
     "--color-checkbox-pressed": {
       "kind": "alias",
-      "token": "color.bg.brand.emphasis.pressed",
-      "cssVariable": "--env-color-bg-brand-emphasis-pressed",
+      "token": "color.bg.primary.emphasis.pressed",
+      "cssVariable": "--env-color-bg-primary-emphasis-pressed",
       "component": "Checkboxes",
       "note": "Light took the brand’s strong fill, the same color as its emphasis fill there: one role in every theme now."
     },
@@ -510,27 +549,27 @@
     },
     "--color-chip-text": {
       "kind": "alias",
-      "token": "color.fg.accent",
-      "cssVariable": "--env-color-fg-accent",
+      "token": "color.fg.primary",
+      "cssVariable": "--env-color-fg-primary",
       "component": "Chips"
     },
     "--color-control-blue": {
       "kind": "alias",
-      "token": "color.bg.brand.emphasis",
-      "cssVariable": "--env-color-bg-brand-emphasis",
+      "token": "color.bg.primary.emphasis",
+      "cssVariable": "--env-color-bg-primary-emphasis",
       "component": "Spinners, sliders and meters",
       "note": "Light took the brand’s strong fill, the same color as its emphasis fill there: one role in every theme now."
     },
     "--color-control-blue-hover": {
       "kind": "renamed",
-      "token": "color.bg.brand.strong.hover",
-      "cssVariable": "--env-color-bg-brand-strong-hover",
+      "token": "color.bg.primary.strong.hover",
+      "cssVariable": "--env-color-bg-primary-strong-hover",
       "note": "0.7 defined it, but envUI didn't read it; the brand's strong fill is the role it named."
     },
     "--color-control-blue-pressed": {
       "kind": "renamed",
-      "token": "color.bg.brand.strong.pressed",
-      "cssVariable": "--env-color-bg-brand-strong-pressed",
+      "token": "color.bg.primary.strong.pressed",
+      "cssVariable": "--env-color-bg-primary-strong-pressed",
       "note": "0.7 defined it, but envUI didn't read it; the brand's strong fill is the role it named."
     },
     "--color-control-text": {
@@ -594,8 +633,8 @@
     },
     "--color-direction-link-icon": {
       "kind": "alias",
-      "token": "color.fg.accent",
-      "cssVariable": "--env-color-fg-accent",
+      "token": "color.fg.primary",
+      "cssVariable": "--env-color-fg-primary",
       "component": "Pager links"
     },
     "--color-direction-link-label": {
@@ -621,7 +660,12 @@
       "cssVariable": "--env-color-fg-muted",
       "component": "Disclosure summaries"
     },
-    "--color-fg-accent": { "kind": "prefixed", "cssVariable": "--env-color-fg-accent" },
+    "--color-fg-accent": {
+      "kind": "renamed",
+      "token": "color.fg.primary",
+      "cssVariable": "--env-color-fg-primary",
+      "note": "The blue roles are primary, and the purple of accent actions is accent."
+    },
     "--color-fg-control": { "kind": "prefixed", "cssVariable": "--env-color-fg-control" },
     "--color-fg-danger": { "kind": "prefixed", "cssVariable": "--env-color-fg-danger" },
     "--color-fg-default": { "kind": "prefixed", "cssVariable": "--env-color-fg-default" },
@@ -647,8 +691,8 @@
     },
     "--color-field-active": {
       "kind": "alias",
-      "token": "color.border.accent.emphasis",
-      "cssVariable": "--env-color-border-accent-emphasis",
+      "token": "color.border.primary.emphasis",
+      "cssVariable": "--env-color-border-primary-emphasis",
       "component": "Fields"
     },
     "--color-field-border": {
@@ -854,8 +898,8 @@
     },
     "--color-on-subtle-action": {
       "kind": "alias",
-      "token": "color.fg.accent",
-      "cssVariable": "--env-color-fg-accent",
+      "token": "color.fg.primary",
+      "cssVariable": "--env-color-fg-primary",
       "component": "Outlined buttons"
     },
     "--color-on-toast": {
@@ -893,20 +937,20 @@
     },
     "--color-primary-action": {
       "kind": "alias",
-      "token": "color.bg.brand.emphasis",
-      "cssVariable": "--env-color-bg-brand-emphasis",
+      "token": "color.bg.primary.emphasis",
+      "cssVariable": "--env-color-bg-primary-emphasis",
       "component": "Primary buttons"
     },
     "--color-primary-action-hover": {
       "kind": "alias",
-      "token": "color.bg.brand.emphasis.hover",
-      "cssVariable": "--env-color-bg-brand-emphasis-hover",
+      "token": "color.bg.primary.emphasis.hover",
+      "cssVariable": "--env-color-bg-primary-emphasis-hover",
       "component": "Primary buttons"
     },
     "--color-primary-action-pressed": {
       "kind": "alias",
-      "token": "color.bg.brand.emphasis.pressed",
-      "cssVariable": "--env-color-bg-brand-emphasis-pressed",
+      "token": "color.bg.primary.emphasis.pressed",
+      "cssVariable": "--env-color-bg-primary-emphasis-pressed",
       "component": "Primary buttons"
     },
     "--color-quiet-label-hover": {
@@ -923,8 +967,8 @@
     },
     "--color-radio": {
       "kind": "alias",
-      "token": "color.bg.brand.emphasis",
-      "cssVariable": "--env-color-bg-brand-emphasis",
+      "token": "color.bg.primary.emphasis",
+      "cssVariable": "--env-color-bg-primary-emphasis",
       "component": "Radios"
     },
     "--color-radio-detail": {
@@ -935,14 +979,14 @@
     },
     "--color-radio-hover": {
       "kind": "alias",
-      "token": "color.bg.brand.emphasis.hover",
-      "cssVariable": "--env-color-bg-brand-emphasis-hover",
+      "token": "color.bg.primary.emphasis.hover",
+      "cssVariable": "--env-color-bg-primary-emphasis-hover",
       "component": "Radios"
     },
     "--color-radio-pressed": {
       "kind": "alias",
-      "token": "color.bg.brand.emphasis.pressed",
-      "cssVariable": "--env-color-bg-brand-emphasis-pressed",
+      "token": "color.bg.primary.emphasis.pressed",
+      "cssVariable": "--env-color-bg-primary-emphasis-pressed",
       "component": "Radios"
     },
     "--color-radio-row": {
@@ -1185,22 +1229,22 @@
     },
     "--color-switch-on": {
       "kind": "alias",
-      "token": "color.bg.brand.emphasis",
-      "cssVariable": "--env-color-bg-brand-emphasis",
+      "token": "color.bg.primary.emphasis",
+      "cssVariable": "--env-color-bg-primary-emphasis",
       "component": "Switches",
       "note": "Light took the brand’s strong fill, the same color as its emphasis fill there: one role in every theme now."
     },
     "--color-switch-on-hover": {
       "kind": "alias",
-      "token": "color.bg.brand.emphasis.hover",
-      "cssVariable": "--env-color-bg-brand-emphasis-hover",
+      "token": "color.bg.primary.emphasis.hover",
+      "cssVariable": "--env-color-bg-primary-emphasis-hover",
       "component": "Switches",
       "note": "Light took the brand’s strong fill, the same color as its emphasis fill there: one role in every theme now."
     },
     "--color-switch-on-pressed": {
       "kind": "alias",
-      "token": "color.bg.brand.emphasis.pressed",
-      "cssVariable": "--env-color-bg-brand-emphasis-pressed",
+      "token": "color.bg.primary.emphasis.pressed",
+      "cssVariable": "--env-color-bg-primary-emphasis-pressed",
       "component": "Switches",
       "note": "Light took the brand’s strong fill, the same color as its emphasis fill there: one role in every theme now."
     },
@@ -1275,8 +1319,8 @@
     },
     "--color-tone-accent": {
       "kind": "alias",
-      "token": "color.fg.accent",
-      "cssVariable": "--env-color-fg-accent"
+      "token": "color.fg.primary",
+      "cssVariable": "--env-color-fg-primary"
     },
     "--color-tone-danger": {
       "kind": "alias",

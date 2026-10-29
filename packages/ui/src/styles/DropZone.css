@@ -51,7 +51,7 @@
   }
   @media (hover: hover) {
     .env-drop-zone-target:hover:not(:disabled, [aria-disabled='true']) {
-      --env-drop-zone-border: var(--env-color-border-accent-emphasis-hover);
+      --env-drop-zone-border: var(--env-color-border-primary-emphasis-hover);
       background: var(--env-color-bg-neutral-subtle-hover);
     }
   }
@@ -63,12 +63,12 @@
     outline-offset: 0.125rem;
   }
   .env-drop-zone[data-drag-over] .env-drop-zone-target {
-    --env-drop-zone-border: var(--env-color-border-accent-emphasis);
+    --env-drop-zone-border: var(--env-color-border-primary-emphasis);
     border-style: solid;
     background: var(--env-color-bg-selected);
   }
   .env-drop-zone[data-drag-over] .env-drop-zone-icon {
-    color: var(--env-color-border-accent-emphasis);
+    color: var(--env-color-border-primary-emphasis);
   }
   .env-drop-zone[data-invalid] .env-drop-zone-target {
     --env-drop-zone-border: var(--env-color-fg-danger);

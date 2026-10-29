@@ -10,7 +10,7 @@ import {
 } from '@envsemble/envui';
 import { Inbox } from '@envsemble/envui/icons/Inbox';
 
-const tones: BadgeTone[] = ['neutral', 'accent', 'success', 'warning', 'danger', 'done'];
+const tones: BadgeTone[] = ['neutral', 'primary', 'accent', 'success', 'warning', 'danger', 'done'];
 
 export function BadgesFixture({ theme }: { theme: ThemeValue }) {
   return (

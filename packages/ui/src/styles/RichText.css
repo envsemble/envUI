@@ -15,7 +15,7 @@
     /* The editing host takes the control font size: 1 rem on touch screens, where a smaller size on
        the focused element zooms the page. */
     font-size: var(--env-control-font-size);
-    caret-color: var(--env-color-border-accent-emphasis);
+    caret-color: var(--env-color-border-primary-emphasis);
   }
   /* Paragraphs set their own type, so they take the size too. */
   .env-rich-text-document p {

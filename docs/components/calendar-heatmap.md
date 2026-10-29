@@ -40,7 +40,7 @@ examples:
 
 ### Tones
 
-A heatmap is drawn in one tone, the accent by default, or any status tone, which [Colors & themes](../foundations/colors.md) describes.
+A heatmap is drawn in one tone, the primary by default, or any status tone, which [Colors & themes](../foundations/colors.md) describes.
 
 ### Color steps
 
@@ -139,7 +139,7 @@ CalendarHeatmap takes `data`, one entry per day with its `date`, as YYYY-MM-DD, 
 
 #### Tones and color steps
 
-`tone` is `accent`, the default, `success`, `warning`, `danger`, `done` or `neutral`: the tone the colors are mixed from. `levels` sets the color steps, the empty one included, from 2 to 10, and 5 by default; `maxValue` sets the value that takes the strongest color, the largest value shown by default.
+`tone` is `primary`, the default, `accent`, `success`, `warning`, `danger`, `done` or `neutral`: the tone the colors are mixed from. `levels` sets the color steps, the empty one included, from 2 to 10, and 5 by default; `maxValue` sets the value that takes the strongest color, the largest value shown by default.
 
 #### Color by rank
 

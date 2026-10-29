@@ -93,7 +93,7 @@
     block-size: var(--env-control-icon-size);
   }
   .env-date-picker-control:focus-within .env-date-picker-icon {
-    color: var(--env-color-border-accent-emphasis);
+    color: var(--env-color-border-primary-emphasis);
   }
   /* Carries the value for native forms; an invalid required field's message points at the field. */
   .env-date-picker-native {

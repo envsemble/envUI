@@ -275,7 +275,7 @@ const typed = query.trim() !== '';
   onInputValueChange={setQuery}
   items={[
     { id: 'new', label: 'New document', icon: <NoteAdd />, end: <Kbd keys={['Ctrl', 'N']} /> },
-    { id: 'automations', label: 'Create an automation', end: <Badge tone="accent">New</Badge> },
+    { id: 'automations', label: 'Create an automation', end: <Badge tone="primary">New</Badge> },
   ]}
   onAction={(item, { modifier }) => run(item.id, { beside: modifier })}
   hints={[{ keys: ['Enter'], label: 'Run' }]}

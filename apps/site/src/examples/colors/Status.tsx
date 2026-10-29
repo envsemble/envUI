@@ -13,7 +13,7 @@ export default function Status() {
       <Badge tone="neutral" icon={<Archive />}>
         Archived
       </Badge>
-      <Badge tone="accent" icon={<RadioButtonChecked />}>
+      <Badge tone="primary" icon={<RadioButtonChecked />}>
         Current
       </Badge>
       <Badge tone="success" icon={<CheckCircle />}>

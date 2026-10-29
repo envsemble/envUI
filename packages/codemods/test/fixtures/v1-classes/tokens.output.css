@@ -21,8 +21,8 @@
 
 /* Names that changed beyond the prefix during 1.0. */
 .members-page .member-badge {
-  border: 1px solid var(--env-color-border-accent);
-  outline-color: var(--env-color-border-accent-emphasis);
+  border: 1px solid var(--env-color-border-primary);
+  outline-color: var(--env-color-border-primary-emphasis);
   border-radius: var(--env-radius-sm) var(--env-radius-full);
 }
 

@@ -79,7 +79,7 @@ export default function KeyFiguresTile() {
               <AnimatedNumber value={figures.done} />
             </Text>
             <Row>
-              <Badge tone="accent" icon={<TrendingUp />}>
+              <Badge tone="primary" icon={<TrendingUp />}>
                 {`${figures.more} more`}
               </Badge>
             </Row>

@@ -289,7 +289,7 @@ The title is an `h3`; set `headingLevel` to fit the page's outline, and its type
 <Card
   title="Northwind launch"
   padding={6}
-  style={{ '--env-card-container': 'var(--env-color-bg-brand-muted)' } as CSSProperties}
+  style={{ '--env-card-container': 'var(--env-color-bg-primary-muted)' } as CSSProperties}
 />
 ```
 

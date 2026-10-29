@@ -26,7 +26,7 @@
     --env-checkbox-selected-content-gate: color-mix(
       in srgb,
       var(--env-checkbox-selected-content) 0%,
-      var(--env-color-bg-brand-emphasis)
+      var(--env-color-bg-primary-emphasis)
     );
     --env-checkbox-custom-base: var(
       --env-checkbox-selected,
@@ -121,7 +121,7 @@
   }
   .env-checkbox-input:is(:checked, :indeterminate) {
     border-color: transparent;
-    background: var(--env-checkbox-custom-fill, var(--env-color-bg-brand-emphasis));
+    background: var(--env-checkbox-custom-fill, var(--env-color-bg-primary-emphasis));
   }
   .env-checkbox-input:checked + .env-checkbox-indicator {
     visibility: visible;
@@ -149,11 +149,11 @@
     border-color: var(--env-checkbox-edge-pressed, var(--env-color-fg-muted-pressed));
   }
   .env-checkbox-input:is(:checked, :indeterminate):hover:not(:disabled) {
-    background: var(--env-checkbox-custom-fill, var(--env-color-bg-brand-emphasis-hover));
+    background: var(--env-checkbox-custom-fill, var(--env-color-bg-primary-emphasis-hover));
     border-color: transparent;
   }
   .env-checkbox-input:is(:checked, :indeterminate):active:not(:disabled) {
-    background: var(--env-checkbox-custom-fill, var(--env-color-bg-brand-emphasis-pressed));
+    background: var(--env-checkbox-custom-fill, var(--env-color-bg-primary-emphasis-pressed));
     border-color: transparent;
   }
   .env-checkbox-input:focus-visible {

@@ -146,10 +146,10 @@
   max-inline-size: 100%;
 }
 .catalogue-marked-space {
-  fill: color-mix(in oklch, var(--env-color-fg-accent) 30%, transparent);
+  fill: color-mix(in oklch, var(--env-color-fg-primary) 30%, transparent);
 }
 .site-anatomy-lines .catalogue-marked-guide {
-  stroke: var(--env-color-fg-accent);
+  stroke: var(--env-color-fg-primary);
   stroke-dasharray: 4 3;
 }
 .catalogue-spacing-subject {
@@ -556,7 +556,7 @@
   position: absolute;
   inset-block: 0;
   inset-inline-start: 53ch;
-  border-inline-start: 0.0625rem dashed var(--env-color-fg-accent);
+  border-inline-start: 0.0625rem dashed var(--env-color-fg-primary);
 }
 
 /* Larger text, narrower class: a profile in a frame of one width, at each text size, in the

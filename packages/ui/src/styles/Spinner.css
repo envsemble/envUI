@@ -6,7 +6,7 @@
     inline-size: 1.5rem;
     block-size: 1.5rem;
     /* The hook --env-spinner-color recolors it, such as to a button's label color. */
-    color: var(--env-spinner-color, var(--env-color-bg-brand-emphasis));
+    color: var(--env-spinner-color, var(--env-color-bg-primary-emphasis));
   }
   .env-spinner:where([data-size='sm']) {
     inline-size: 1rem;
@@ -45,7 +45,7 @@
     flex: 0 0 auto;
     inline-size: var(--env-spinner-size);
     block-size: var(--env-spinner-size);
-    color: var(--env-spinner-color, var(--env-color-bg-brand-emphasis));
+    color: var(--env-spinner-color, var(--env-color-bg-primary-emphasis));
   }
   .env-spinner-arc {
     fill: none;

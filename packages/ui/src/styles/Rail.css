@@ -146,7 +146,7 @@
     justify-content: center;
     padding-inline: var(--env-space-1);
     border-radius: var(--env-radius-full);
-    background: var(--env-color-bg-accent-emphasis);
+    background: var(--env-color-bg-primary-solid);
     color: var(--env-color-fg-on-emphasis);
     font: var(--env-font-weight-medium) var(--env-font-size-caption) / 1 var(--env-font-family);
     font-variant-numeric: tabular-nums;

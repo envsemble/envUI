@@ -201,7 +201,7 @@
   }
   .env-color-picker-field:focus-within {
     background: var(--env-color-bg-neutral-muted);
-    box-shadow: inset 0 0 0 var(--env-control-border-width) var(--env-color-border-accent-emphasis);
+    box-shadow: inset 0 0 0 var(--env-control-border-width) var(--env-color-border-primary-emphasis);
   }
   .env-color-picker-field-label {
     flex-shrink: 0;
@@ -223,7 +223,7 @@
     color: var(--env-color-fg-default);
     font: inherit;
     font-variant-numeric: tabular-nums;
-    caret-color: var(--env-color-border-accent-emphasis);
+    caret-color: var(--env-color-border-primary-emphasis);
   }
   .env-color-picker-field:has(:disabled) {
     opacity: var(--env-state-disabled-opacity);
@@ -323,11 +323,11 @@
   }
   @media (hover: hover) {
     .env-color-picker-button:hover:not(:disabled) {
-      --env-color-picker-button-border: var(--env-color-border-accent-emphasis-hover);
+      --env-color-picker-button-border: var(--env-color-border-primary-emphasis-hover);
     }
   }
   .env-color-picker-button[aria-expanded='true'] {
-    --env-color-picker-button-border: var(--env-color-border-accent-emphasis);
+    --env-color-picker-button-border: var(--env-color-border-primary-emphasis);
   }
   .env-color-picker-button:focus-visible {
     outline: 2px solid var(--env-color-border-focus);

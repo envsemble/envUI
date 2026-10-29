@@ -110,50 +110,45 @@
           }
         }
       },
-      "brand": {
+      "primary": {
         "emphasis": {
           "$root": {
-            "$value": "{contrast-high.color.bg.brand.emphasis}"
+            "$value": "{contrast-high.color.bg.primary.emphasis}"
           },
           "hover": {
-            "$value": "{contrast-high.color.bg.brand.emphasis.hover}"
+            "$value": "{contrast-high.color.bg.primary.emphasis.hover}"
           },
           "pressed": {
-            "$value": "{contrast-high.color.bg.brand.emphasis.pressed}"
+            "$value": "{contrast-high.color.bg.primary.emphasis.pressed}"
           }
         },
         "strong": {
           "$root": {
-            "$value": "{contrast-high.color.bg.brand.strong}"
+            "$value": "{contrast-high.color.bg.primary.strong}"
           },
           "hover": {
-            "$value": "{contrast-high.color.bg.brand.strong.hover}"
+            "$value": "{contrast-high.color.bg.primary.strong.hover}"
           },
           "pressed": {
-            "$value": "{contrast-high.color.bg.brand.strong.pressed}"
+            "$value": "{contrast-high.color.bg.primary.strong.pressed}"
           }
-        },
-        "muted": {
-          "$value": "{contrast-high.color.bg.brand.muted}"
-        }
-      },
-      "accent": {
-        "emphasis": {
-          "$value": "{contrast-high.color.bg.accent.emphasis}"
-        },
-        "muted": {
-          "$value": "{contrast-high.color.bg.accent.muted}"
-        },
-        "badge": {
-          "$value": "{contrast-high.color.bg.accent.muted}"
         },
         "subtle": {
           "hover": {
-            "$value": "{contrast-high.color.bg.accent.subtle.hover}"
+            "$value": "{contrast-high.color.bg.primary.subtle.hover}"
           },
           "pressed": {
-            "$value": "{contrast-high.color.bg.accent.subtle.pressed}"
+            "$value": "{contrast-high.color.bg.primary.subtle.pressed}"
           }
+        },
+        "muted": {
+          "$value": "{contrast-high.color.bg.primary.muted}"
+        },
+        "soft": {
+          "$value": "{contrast-high.color.bg.primary.muted}"
+        },
+        "solid": {
+          "$value": "{contrast-high.color.bg.primary.solid}"
         }
       },
       "success": {
@@ -247,17 +242,34 @@
           }
         }
       },
-      "important": {
+      "accent": {
         "strong": {
           "$root": {
-            "$value": "{contrast-high.color.bg.important.strong}"
+            "$value": "{contrast-high.color.bg.accent.strong}"
           },
           "hover": {
-            "$value": "{contrast-high.color.bg.important.strong.hover}"
+            "$value": "{contrast-high.color.bg.accent.strong.hover}"
           },
           "pressed": {
-            "$value": "{contrast-high.color.bg.important.strong.pressed}"
+            "$value": "{contrast-high.color.bg.accent.strong.pressed}"
           }
+        },
+        "subtle": {
+          "hover": {
+            "$value": "{contrast-high.color.bg.accent.subtle.hover}"
+          },
+          "pressed": {
+            "$value": "{contrast-high.color.bg.accent.subtle.pressed}"
+          }
+        },
+        "muted": {
+          "$value": "{contrast-high.color.bg.accent.muted}"
+        },
+        "soft": {
+          "$value": "{contrast-high.color.bg.accent.muted}"
+        },
+        "solid": {
+          "$value": "{contrast-high.color.bg.accent.solid}"
         }
       },
       "recessed": {
@@ -337,6 +349,9 @@
         "pressed": {
           "$value": "{contrast-high.color.fg.link.pressed}"
         }
+      },
+      "primary": {
+        "$value": "{contrast-high.color.fg.primary}"
       },
       "accent": {
         "$value": "{contrast-high.color.fg.accent}"
@@ -423,24 +438,27 @@
           "$value": "{contrast-high.color.border.muted.pressed}"
         }
       },
-      "accent": {
+      "primary": {
         "$root": {
-          "$value": "{contrast-high.color.border.accent}"
+          "$value": "{contrast-high.color.border.primary}"
         },
         "muted": {
-          "$value": "{contrast-high.color.border.accent.muted}"
+          "$value": "{contrast-high.color.border.primary.muted}"
         },
         "emphasis": {
           "$root": {
-            "$value": "{contrast-high.color.border.accent.emphasis}"
+            "$value": "{contrast-high.color.border.primary.emphasis}"
           },
           "hover": {
-            "$value": "{contrast-high.color.border.accent.emphasis.hover}"
+            "$value": "{contrast-high.color.border.primary.emphasis.hover}"
           },
           "pressed": {
-            "$value": "{contrast-high.color.border.accent.emphasis.pressed}"
+            "$value": "{contrast-high.color.border.primary.emphasis.pressed}"
           }
         }
+      },
+      "accent": {
+        "$value": "{contrast-high.color.border.accent}"
       },
       "danger": {
         "$root": {

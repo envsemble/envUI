@@ -11,7 +11,7 @@ aliases:
 avoidWhen:
   - text: A plain pane in the surface colors.
     use: Surface
-  - text: The main action in the accent, or a danger action.
+  - text: The main action in the primary color, or a danger action.
     use: Button
   - text: Navigation whose selected place takes the selected color.
     use: Drawer
@@ -59,7 +59,7 @@ Each part of a screen takes a role, never a color of its own; the theme gives ev
 3. **Filled card**
 4. **Text**
 5. **Supporting text**
-6. **Accent**
+6. **Primary**
 
 ### Every role in this theme
 
@@ -71,8 +71,8 @@ A status shows its text, soft fill and solid fill. The Display menu switches the
 
 1. **Surfaces**: Page, Recessed surface, Surface, Filled surface, Raised surface, Field, Backdrop.
 2. **Text and lines**: Text, Supporting text, Link, Edges, Hairlines, Focus ring.
-3. **Actions and selection**: Accent, On the accent, Quiet action, Important, Selected, On the selected.
-4. **Status**: Neutral, Accent, Success, Warning, Danger, Done.
+3. **Actions and selection**: Primary, On the primary, Quiet action, Accent, Selected, On the selected.
+4. **Status**: Neutral, Primary, Accent, Success, Warning, Danger, Done.
 
 ### What each color means
 
@@ -102,13 +102,13 @@ A tone always comes with words or an icon, so nobody has to tell colors apart.
 
 Ask an agent for color in these words; envUI turns each into a role.
 
-| Words              | In code                                                                                                                                                                                                                                                                                                               | Use for                                            |
-| ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
-| A quieter surface  | `background="page"` on a Surface or Card, so it parts from the page by space rather than a fill                                                                                                                                                                                                                       | A panel that draws less attention.                 |
-| Success or warning | `tone` on Badge, Alert, Toast, Button and the components that take one: Badge takes neutral, accent, success, warning, danger and done; Alert info, success, warning and danger; Toast neutral, info, success and danger; Button neutral, accent and danger. In your own CSS, `--env-color-fg-{tone}` and their tints | How something stands, such as saved or failed.     |
-| Its own color      | The component's color properties, such as `--env-button-container`; most components have them, listed on each one's page in the Docs under Color properties; see [Customize and extend](../customizing.md)                                                                                                            | One element in a color the roles don’t give.       |
-| A dark area        | A nested `<Theme theme="dark">`, or `light` on a dark page                                                                                                                                                                                                                                                            | One part of a page in the other theme.             |
-| High contrast      | `contrast="high"` on Theme, or `system`, the default, which follows the reader's system                                                                                                                                                                                                                               | Stronger text and edges, for people who need them. |
+| Words              | In code                                                                                                                                                                                                                                                                                                                        | Use for                                            |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------- |
+| A quieter surface  | `background="page"` on a Surface or Card, so it parts from the page by space rather than a fill                                                                                                                                                                                                                                | A panel that draws less attention.                 |
+| Success or warning | `tone` on Badge, Alert, Toast, Button and the components that take one: Badge takes neutral, primary, accent, success, warning, danger and done; Alert info, success, warning and danger; Toast neutral, info, success and danger; Button neutral, accent and danger. In your own CSS, `--env-color-fg-{tone}` and their tints | How something stands, such as saved or failed.     |
+| Its own color      | The component's color properties, such as `--env-button-container`; most components have them, listed on each one's page in the Docs under Color properties; see [Customize and extend](../customizing.md)                                                                                                                     | One element in a color the roles don’t give.       |
+| A dark area        | A nested `<Theme theme="dark">`, or `light` on a dark page                                                                                                                                                                                                                                                                     | One part of a page in the other theme.             |
+| High contrast      | `contrast="high"` on Theme, or `system`, the default, which follows the reader's system                                                                                                                                                                                                                                        | Stronger text and edges, for people who need them. |
 
 ## Compose
 
@@ -151,7 +151,7 @@ The Design tokens page of the Docs lists every value in each theme, and this gui
 - **Filled card**: `--env-color-bg-muted`: a group inside a surface, a Card's fill, `background="muted"`, list rows and tab rails, lighter than the surface: white in light.
 - **Text**: `--env-color-fg-default`, Text's default, for headings and the main words.
 - **Supporting text**: `--env-color-fg-muted`: `emphasis="muted"` on Text, details, captions, hints and icons.
-- **Accent**: `--env-color-bg-brand-emphasis`, the main action's fill; `--env-color-fg-accent` and `fg-link` in text, such as links and what is selected.
+- **Primary**: `--env-color-bg-primary-emphasis`, the main action's fill; `--env-color-fg-primary` and `fg-link` in text, such as links and what is selected.
 - **Edges**: `--env-color-border-default`, the outline of fields and outline buttons, which have no fill.
 - **Selected**: `--env-color-bg-selected` with `--env-color-fg-on-selected`.
 
@@ -162,7 +162,8 @@ Status icons, short status text and badges share these tokens, at least 4.5:1 on
 | Token                            | Meaning                                                             |
 | -------------------------------- | ------------------------------------------------------------------- |
 | `--env-color-fg-muted`           | Neutral: no particular state, such as archived, and most actions    |
-| `--env-color-fg-accent`          | Accent: what is current or highlighted                              |
+| `--env-color-fg-primary`         | Primary: what is current or highlighted                             |
+| `--env-color-fg-accent`          | Accent: what stands out, in purple, such as a featured item         |
 | `--env-color-bg-info-strong`     | Info, an info toast's fill: something to know, neither good nor bad |
 | `--env-color-fg-success`         | Success: healthy, ready or saved                                    |
 | `--env-color-fg-warning`         | Warning: needs attention soon                                       |
@@ -211,6 +212,6 @@ The colors come from an internal palette of eleven hues, and the pastel hues of 
 
 ### Customize
 
-Each component has public color properties, such as `--env-button-container`, for colors of its own on one instance. A nested `<Theme>` whose `style` sets the semantic tokens for each theme, such as `--env-color-bg-brand-emphasis` with its hover and pressed tokens, gives an area a color scheme of its own, such as a brand's. [Customize and extend](../customizing.md#recolor-an-area) describes both.
+Each component has public color properties, such as `--env-button-container`, for colors of its own on one instance. A nested `<Theme>` whose `style` sets the semantic tokens for each theme, such as `--env-color-bg-primary-emphasis` with its hover and pressed tokens, gives an area a color scheme of its own, such as a brand's. [Customize and extend](../customizing.md#recolor-an-area) describes both.
 
 TypeScript declarations provide the complete public API.

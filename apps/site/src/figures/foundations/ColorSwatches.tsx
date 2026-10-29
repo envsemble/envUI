@@ -3,7 +3,7 @@ import { Text } from '@envsemble/envui';
 import type { FigureWords } from './ColorFigures';
 
 /**
- * The colors of each role, in four groups, seven surfaces and six of each other kind, in the
+ * The colors of each role, in four groups: seven surfaces, six text and line roles, six actions and seven statuses, in the
  * legend's order: each group is a legend entry, its name the group's and its text the names of its
  * roles, separated by commas. A status shows its three colors in one swatch: its text, its soft fill
  * and its solid fill.
@@ -27,16 +27,17 @@ const roleGroups: readonly (readonly (readonly string[])[])[] = [
     ['border-focus'],
   ],
   [
-    ['bg-brand-emphasis'],
+    ['bg-primary-emphasis'],
     ['fg-on-emphasis'],
     ['bg-neutral-muted'],
-    ['bg-important-strong'],
+    ['bg-accent-strong'],
     ['bg-selected'],
     ['fg-on-selected'],
   ],
   [
     ['fg-muted', 'bg-neutral-muted', 'bg-neutral-emphasis'],
-    ['fg-accent', 'bg-accent-badge', 'bg-accent-emphasis'],
+    ['fg-primary', 'bg-primary-soft', 'bg-primary-solid'],
+    ['fg-accent', 'bg-accent-soft', 'bg-accent-solid'],
     ['fg-success', 'bg-success-muted', 'bg-success-emphasis'],
     ['fg-warning', 'bg-warning-muted', 'bg-warning-emphasis'],
     ['fg-danger', 'bg-danger-muted', 'bg-danger-emphasis'],

@@ -7,7 +7,7 @@ import { useHighContrast, useNarrow, type FigureWords } from './ColorFigures';
 
 /**
  * The color of each role, in the legend's order: the page, a surface, a filled card, text,
- * supporting text and the accent.
+ * supporting text and the primary color.
  */
 const roleColors: readonly string[] = [
   'bg-page',
@@ -15,7 +15,7 @@ const roleColors: readonly string[] = [
   'bg-muted',
   'fg-default',
   'fg-muted',
-  'bg-brand-emphasis',
+  'bg-primary-emphasis',
 ];
 
 /**
@@ -61,7 +61,7 @@ function Swatch({ color }: { color: string | undefined }) {
 
 /**
  * A small screen with a callout on each part that takes a role: the page, a surface on it, a
- * filled card inside, text, supporting text and the accent. Each callout ends in a swatch of the
+ * filled card inside, text, supporting text and the primary color. Each callout ends in a swatch of the
  * role's color in the reader's theme and the role's name, in one column at the screen's end, so a
  * part, its color and its name read as one, with no legend below.
  */

@@ -58,7 +58,7 @@
   /* The indicator, a chosen option's check mark, ends the row, after its label and any end content. */
   .env-list-row-indicator {
     order: 1;
-    color: var(--env-color-bg-brand-emphasis);
+    color: var(--env-color-bg-primary-emphasis);
   }
   .env-list-row[data-selected] .env-list-row-indicator {
     color: var(--env-color-fg-on-selected);

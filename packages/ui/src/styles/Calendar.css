@@ -79,11 +79,11 @@
     background: var(--env-color-bg-neutral-muted-pressed);
   }
   .env-calendar-day[aria-current='date'] > .env-calendar-day-mark {
-    color: var(--env-color-fg-accent);
+    color: var(--env-color-fg-primary);
     font-weight: var(--env-font-weight-semibold);
   }
   .env-calendar-day[aria-selected='true'] > .env-calendar-day-mark {
-    background: var(--env-color-bg-brand-emphasis);
+    background: var(--env-color-bg-primary-emphasis);
     box-shadow: none;
     color: var(--env-color-fg-on-emphasis);
     font-weight: var(--env-font-weight-semibold);

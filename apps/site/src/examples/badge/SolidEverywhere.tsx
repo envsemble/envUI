@@ -12,7 +12,7 @@ const projects = [
   {
     name: 'Pricing page',
     status: (
-      <Badge tone="accent" variant="solid">
+      <Badge tone="primary" variant="solid">
         In review
       </Badge>
     ),

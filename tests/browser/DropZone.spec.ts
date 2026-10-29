@@ -146,7 +146,7 @@ test(
     await expect(zone).toHaveCSS('border-top-style', 'solid');
     await expect(zone).toHaveCSS(
       'border-top-color',
-      await tokenColor(zone, '--env-color-border-accent-emphasis'),
+      await tokenColor(zone, '--env-color-border-primary-emphasis'),
     );
     // Moving over the label inside keeps the state until the files leave the zone.
     const label = zone.locator('.env-drop-zone-label');

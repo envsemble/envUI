@@ -98,7 +98,7 @@
     );
     box-shadow:
       0 0 0 2px var(--env-avatar-selected-gap),
-      0 0 0 4px var(--env-color-bg-brand-emphasis);
+      0 0 0 4px var(--env-color-bg-primary-emphasis);
   }
   .env-avatar-check {
     position: absolute;
@@ -111,7 +111,7 @@
     inline-size: max(var(--env-icon-size-sm), calc(var(--env-avatar-size) * 0.36));
     block-size: max(var(--env-icon-size-sm), calc(var(--env-avatar-size) * 0.36));
     border-radius: 50%;
-    background: var(--env-color-bg-brand-emphasis);
+    background: var(--env-color-bg-primary-emphasis);
     color: var(--env-color-fg-on-emphasis);
     box-shadow: 0 0 0 2px var(--env-avatar-selected-gap);
   }

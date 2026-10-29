@@ -84,15 +84,15 @@ import { Button, Switch, Theme, useTheme } from '@envsemble/envui';
 
 const green = {
   light: {
-    '--env-color-bg-brand-emphasis': '#176f35',
-    '--env-color-bg-brand-emphasis-hover': '#115a2a',
-    '--env-color-bg-brand-emphasis-pressed': '#0b4520',
+    '--env-color-bg-primary-emphasis': '#176f35',
+    '--env-color-bg-primary-emphasis-hover': '#115a2a',
+    '--env-color-bg-primary-emphasis-pressed': '#0b4520',
     '--env-color-fg-on-emphasis': '#ffffff',
   },
   dark: {
-    '--env-color-bg-brand-emphasis': '#7ad197',
-    '--env-color-bg-brand-emphasis-hover': '#5fbf80',
-    '--env-color-bg-brand-emphasis-pressed': '#45ad69',
+    '--env-color-bg-primary-emphasis': '#7ad197',
+    '--env-color-bg-primary-emphasis-hover': '#5fbf80',
+    '--env-color-bg-primary-emphasis-pressed': '#45ad69',
     '--env-color-fg-on-emphasis': '#1e1f21',
   },
 };

@@ -18,7 +18,7 @@ export function motifOf(id: string | undefined): Motif | undefined {
 const piece = (n: number, values: Record<string, string | number> = {}) =>
   ({ '--catalogue-motif-place': n, ...values }) as CSSProperties;
 
-const tones = ['accent', 'success', 'warning', 'danger', 'done', 'neutral'] as const;
+const tones = ['primary', 'success', 'warning', 'danger', 'done', 'neutral'] as const;
 
 /** A fan of color chips, one for each tone of the palette, from its muted fill to its text. */
 function Swatches() {
@@ -29,7 +29,7 @@ function Swatches() {
       style={piece(n, {
         '--catalogue-motif-turn': `${(n - (tones.length - 1) / 2) * 13}deg`,
         '--catalogue-tone-muted': `var(--env-color-bg-${tone}-muted)`,
-        '--catalogue-tone-emphasis': `var(--env-color-bg-${tone}-emphasis)`,
+        '--catalogue-tone-emphasis': `var(--env-color-bg-${tone}-${tone === 'primary' ? 'solid' : 'emphasis'})`,
         '--catalogue-tone-strong':
           tone === 'neutral' ? 'var(--env-color-fg-default)' : `var(--env-color-fg-${tone})`,
       })}
