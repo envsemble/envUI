@@ -15,6 +15,7 @@ aliases:
   - skeleton
   - skeleton screen
   - shimmer
+  - pulse
 useWhen:
   - A page, a region or a result that takes a noticeable while
   - Work with a measurable end, such as an upload
@@ -136,12 +137,13 @@ Show the skeleton only once a load takes a noticeable moment, so quick loads nev
 
 <!-- specimen: WhenItShows -->
 
-### Highlight
+### Pulse
 
-A soft highlight sweeps across every bar and shape, in step across the page.
+Every bar and shape breathes between a stronger and a fainter tone, in step across the page.
 
-- It sweeps more faintly across the skeleton's own surfaces, such as a card or a row.
-- It keeps still for people who ask for reduced motion.
+- The skeleton's own surfaces, such as a card or a row, pulse with them, more faintly.
+- For people who ask for reduced motion it breathes slower and shallower: only the tone changes.
+- In forced colors the bars stand still in the system's gray.
 
 ## Rules
 

@@ -92,7 +92,7 @@ import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 | You provide    | Labels and icon action names, headings, reading order, validation messages and recovery actions                                            |
 | Focus          | Text fields recolor their border; other controls take the shared 0.125 rem ring                                                            |
 | Contrast       | The contrast gate measures every pair a component paints in all four themes: 4.5:1 for text, 3:1 for boundaries, 7:1 at high contrast      |
-| Reduced motion | `prefers-reduced-motion` keeps only opacity changes; spinners turn slowly                                                                  |
+| Reduced motion | `prefers-reduced-motion` keeps only opacity changes; spinners turn and skeletons pulse slowly                                              |
 | Forced colors  | States a fill or shadow carried take system colors, such as Highlight and GrayText; swatches and heatmaps keep theirs                      |
 | Touch          | Under a coarse pointer, controls and rows grow to at least 44 px; as Touch on [Spacing & density](spacing.md) says                         |
 | Motion tokens  | `--env-motion-duration-fast`, `--env-motion-duration-medium` and `--env-motion-ease`, for the application's own transitions                |
