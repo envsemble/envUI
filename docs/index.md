@@ -10,7 +10,7 @@ Read only the pages the task needs; each entry says what it is for. For a screen
 | `docs/generated/parts.json`              | Every component's part classes, state attributes and color properties. |
 | `dist/**/*.d.ts`                         | The type declarations, the exact API.                                  |
 
-Every component, pattern and foundation page reads in one order: its frontmatter, with what it is for, what to use instead and its `examples`, each file with its role and caption; then Variants (Options on a foundation), Anatomy, Behaviour, Rules, Accessibility and Words to use, each block a short lead and its rules; then `## Compose`, its code: imports, usage, composition and customizing. Accessibility's **You provide** lists what the application must add, and **Props** lists envUI's own props; every component also takes its element's native props, such as `ref`, `className` and `aria-*`. Every example is a file in `examples/<page>/<Name>.tsx`. The TypeScript declarations hold the exact types.
+On a page, Compose holds the code, and Accessibility's **You provide** what the application must add; **Props** lists envUI's own props, and every component also takes its element's native props, such as `ref`, `className` and `aria-*`.
 
 ## Setup and workflows
 
