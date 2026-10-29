@@ -110,7 +110,7 @@ export default {
       description:
         "Warn on flex and grid layout in inline styles, which envUI's Row, Column and Grid provide",
       recommended: true,
-      url: documentationUrl('no-hand-rolled-layout'),
+      url: documentationUrl('no-inline-layout'),
     },
     schema: [],
     messages: {

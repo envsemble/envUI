@@ -25,7 +25,7 @@ test('the plugin names itself and turns every rule on in the recommended config,
     Object.keys(plugin.rules).map((name) => `envui/${name}`),
   );
   for (const [rule, severity] of Object.entries(recommended.rules))
-    assert.equal(severity, rule === 'envui/no-hand-rolled-layout' ? 'warn' : 'error', rule);
+    assert.equal(severity, rule === 'envui/no-inline-layout' ? 'warn' : 'error', rule);
 });
 
 test('the mapping table has unique entries that name envUI 1.0 components', () => {

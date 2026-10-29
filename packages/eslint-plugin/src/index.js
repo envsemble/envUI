@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
-import noHandRolledLayout from './rules/no-hand-rolled-layout.js';
 import noHtmlElements from './rules/no-html-elements.js';
+import noInlineLayout from './rules/no-inline-layout.js';
 import noRawColors from './rules/no-raw-colors.js';
 
 const { name, version } = JSON.parse(
@@ -11,8 +11,8 @@ const { name, version } = JSON.parse(
 const plugin = {
   meta: { name, version, namespace: 'envui' },
   rules: {
-    'no-hand-rolled-layout': noHandRolledLayout,
     'no-html-elements': noHtmlElements,
+    'no-inline-layout': noInlineLayout,
     'no-raw-colors': noRawColors,
   },
   configs: {},
@@ -24,9 +24,9 @@ plugin.configs.recommended = {
   plugins: { envui: plugin },
   languageOptions: { parserOptions: { ecmaFeatures: { jsx: true } } },
   rules: {
-    // A warning: plain CSS layout stays allowed where a primitive can't do what it needs.
-    'envui/no-hand-rolled-layout': 'warn',
     'envui/no-html-elements': 'error',
+    // A warning: plain CSS layout stays allowed where a primitive can't do what it needs.
+    'envui/no-inline-layout': 'warn',
     'envui/no-raw-colors': 'error',
   },
 };

@@ -24,7 +24,7 @@ import envui from '@envsemble/eslint-plugin-envui';
 export default defineConfig(envui.configs.recommended);
 ```
 
-`configs.recommended` turns on every rule for JavaScript and TypeScript files (`**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts}`) and enables JSX: each as an error, except [no-hand-rolled-layout](#no-hand-rolled-layout), a warning. TypeScript files need a parser such as typescript-eslint's, set up as usual; the rules need no type information. To pick rules yourself, register the plugin and configure them:
+`configs.recommended` turns on every rule for JavaScript and TypeScript files (`**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts}`) and enables JSX: each as an error, except [no-inline-layout](#no-inline-layout), a warning. TypeScript files need a parser such as typescript-eslint's, set up as usual; the rules need no type information. To pick rules yourself, register the plugin and configure them:
 
 ```js
 export default defineConfig({
@@ -72,13 +72,13 @@ export default defineConfig(envui.configs.recommended, {
 
 ## Rules
 
-| Rule                                            | Reports                                                         |
-| ----------------------------------------------- | --------------------------------------------------------------- |
-| [no-hand-rolled-layout](#no-hand-rolled-layout) | Flex and grid layout in inline styles, a warning                |
-| [no-html-elements](#no-html-elements)           | Raw elements and widget roles that envUI provides as components |
-| [no-raw-colors](#no-raw-colors)                 | Literal colors in inline styles                                 |
+| Rule                                  | Reports                                                         |
+| ------------------------------------- | --------------------------------------------------------------- |
+| [no-inline-layout](#no-inline-layout) | Flex and grid layout in inline styles, a warning                |
+| [no-html-elements](#no-html-elements) | Raw elements and widget roles that envUI provides as components |
+| [no-raw-colors](#no-raw-colors)       | Literal colors in inline styles                                 |
 
-### no-hand-rolled-layout
+### no-inline-layout
 
 Warns on `display: flex`, `inline-flex`, `grid` and `inline-grid` in JSX `style` objects, and names the layout primitive to use instead: Row for a flex row, Column for a flex column (`flexDirection: 'column'` or `'column-reverse'`), Row or Column when the direction is computed, and Grid for a grid. The primitives take envUI's spacing steps for their gap and padding, and show up as named nodes in dev mode:
 
@@ -89,7 +89,7 @@ Inline `display: flex` lays out a row by hand: use envUI's Row instead, import {
 It is a warning, not an error, in `configs.recommended`: plain CSS stays allowed where a primitive can't do what the layout needs. Disable it on that line and say why:
 
 ```tsx
-// eslint-disable-next-line envui/no-hand-rolled-layout -- a subgrid lines the rows up with the header
+// eslint-disable-next-line envui/no-inline-layout -- a subgrid lines the rows up with the header
 <div style={{ display: 'grid', gridTemplateColumns: 'subgrid' }} />
 ```
 

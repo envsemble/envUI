@@ -65,8 +65,8 @@ test('the package ships the plugin, its data and its documentation, and nothing 
     'src/data/elements.json',
     'src/data/tokens.json',
     'src/index.js',
-    'src/rules/no-hand-rolled-layout.js',
     'src/rules/no-html-elements.js',
+    'src/rules/no-inline-layout.js',
     'src/rules/no-raw-colors.js',
     'src/tokens.js',
     'src/utilities.js',
@@ -95,7 +95,7 @@ test('an application lints with the installed recommended config', async () => {
   );
   assert.deepEqual(rules, [
     'envui/no-raw-colors',
-    'envui/no-hand-rolled-layout',
+    'envui/no-inline-layout',
     'envui/no-html-elements',
   ]);
 });

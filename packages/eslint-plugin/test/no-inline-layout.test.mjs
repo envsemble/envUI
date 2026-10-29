@@ -1,9 +1,9 @@
-import rule from '../src/rules/no-hand-rolled-layout.js';
+import rule from '../src/rules/no-inline-layout.js';
 import { ruleTester, typeScriptRuleTester } from './RuleTester.mjs';
 
 const layout = (messageId, display) => ({ messageId, data: { display } });
 
-ruleTester.run('no-hand-rolled-layout', rule, {
+ruleTester.run('no-inline-layout', rule, {
   valid: [
     // Displays that don't lay out a row, a column or a grid.
     '<div style={{ display: "none" }} />',
@@ -147,7 +147,7 @@ const direction = 'column';
   ],
 });
 
-typeScriptRuleTester.run('no-hand-rolled-layout in TypeScript', rule, {
+typeScriptRuleTester.run('no-inline-layout in TypeScript', rule, {
   valid: ['<div style={{ display: "block" } as const} />'],
   invalid: [
     {
