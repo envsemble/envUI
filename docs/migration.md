@@ -1166,10 +1166,13 @@ Every other name only takes the prefix, `--body-font-weight` as `--env-body-font
 
 The codemods rewrite 0.x names. A name that only a 1.0 prerelease had is renamed by hand, as listed here; the changelog gives each change's reason.
 
-| In a 1.0 prerelease                | Now                                                           |
-| ---------------------------------- | ------------------------------------------------------------- |
-| `env-bar-icon`, `env-bar-text`     | `env-bar-indicator`, `env-bar-label`, as Rail names them      |
-| `env-segmented-control-item-check` | `env-segmented-control-item-indicator`, as in Select and Menu |
+| In a 1.0 prerelease                                                            | Now                                                                                                                                   |
+| ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `env-bar-icon`, `env-bar-text`                                                 | `env-bar-indicator`, `env-bar-label`, as Rail names them                                                                              |
+| `env-segmented-control-item-check`                                             | `env-segmented-control-item-indicator`, as in Select and Menu                                                                         |
+| `env-card-heading`, `env-month-picker-heading`, `env-date-picker-time-heading` | `env-card-title`, `env-month-picker-title`, `env-date-picker-time-title`: `-heading` names only a column of a title and a description |
+| `env-meter-heading`, `env-progress-heading`                                    | `env-meter-header`, `env-progress-header`, the row of the label and the value                                                         |
+| `env-drawer-heading`                                                           | `env-drawer-group-label`, as in Menu                                                                                                  |
 
 ## Migrate by responsibility
 

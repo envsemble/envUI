@@ -82,7 +82,7 @@
   .env-command-palette-item + .env-command-palette-group {
     margin-block-start: var(--env-popup-group-gap);
   }
-  .env-command-palette-heading {
+  .env-command-palette-group-label {
     padding: var(--env-popup-padding) var(--env-popup-label-padding-inline)
       calc(0.1 * var(--env-control-height-md));
     color: var(--env-color-fg-muted);

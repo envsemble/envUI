@@ -79,7 +79,7 @@ test('Drawer heads each run of a group, and Rail and Bar keep the order without 
   await page.goto(`${fixtureUrl}/?fixture=navigation`);
   const scope = page.getByTestId('navigation-light');
   const drawer = scope.getByRole('navigation', { name: 'Mail drawer' });
-  await expect(drawer.locator('.env-drawer-heading')).toHaveText(['Folders', 'Account']);
+  await expect(drawer.locator('.env-drawer-group-label')).toHaveText(['Folders', 'Account']);
   const folders = drawer.getByRole('list', { name: 'Folders' });
   await expect(folders.getByRole('button')).toHaveText(['Starred', 'Archive']);
   await expect(drawer.getByRole('list', { name: 'Account' }).getByRole('button')).toHaveText([
@@ -397,7 +397,7 @@ test.describe('Drawer resizable', () => {
       const drawer = page.getByRole('navigation', { name: 'Long labels' });
       const item = drawer.getByRole('link', { name: 'Reviews waiting for the whole team' });
       const label = item.locator('.env-drawer-label');
-      const heading = drawer.locator('.env-drawer-heading');
+      const heading = drawer.locator('.env-drawer-group-label');
       const isCut = (element: Locator) =>
         element.evaluate((node) => node.scrollWidth > node.clientWidth);
       const tooltip = page.getByRole('tooltip');

@@ -119,7 +119,7 @@ A drawer's destinations can go without icons, such as the sections of a guide; t
 4. **Label** (`env-drawer-label`)
 5. **Count** (`env-drawer-count`, `count`)
 6. **Group** (`env-drawer-section`, `group`)
-7. **Heading** (`env-drawer-heading`)
+7. **Heading** (`env-drawer-group-label`)
 8. **Footer** (`env-drawer-footer`, `footer`)
 
 ```tsx figure=RailAnatomy stage=shaded

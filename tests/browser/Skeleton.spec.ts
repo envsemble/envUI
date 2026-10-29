@@ -78,7 +78,7 @@ test('a skeleton is one busy region with inert content, draws text as bars and s
   expect(await style(page, '[data-testid="owner-row"] .env-avatar *', 'visibility')).toBe('hidden');
 
   // Missing text over placeholder items is a bar of its text style's default length.
-  const heading = '[data-testid="project-card"] .env-card-heading';
+  const heading = '[data-testid="project-card"] .env-card-title';
   await expect(page.locator(heading).first()).toBeEmpty();
   expect(await style(page, heading, 'display', '::before')).toBe('inline-block');
   // A bar has small rounded corners on every line: its mask is a rounded rectangle per line.
@@ -346,7 +346,7 @@ test('right to left, the bars start at the right', async ({ page }) => {
 test('in forced colors, bars and shapes stay visible in the system gray', async ({ page }) => {
   await page.emulateMedia({ forcedColors: 'active', reducedMotion: 'reduce' });
   await open(page);
-  const heading = '[data-testid="project-card"] .env-card-heading';
+  const heading = '[data-testid="project-card"] .env-card-title';
   // The paint is the system gray throughout, the highlight included.
   const bar = await style(page, heading, 'background-image', '::before');
   expect(bar).toMatch(/^linear-gradient/);

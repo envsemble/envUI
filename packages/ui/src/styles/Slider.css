@@ -196,7 +196,7 @@
     );
   }
   /* The label and the value, over the track, the fill and the handle, in the field's padding. */
-  .env-slider-heading {
+  .env-slider-header {
     position: relative;
     grid-area: slider;
     z-index: var(--env-z-raised);
@@ -205,7 +205,7 @@
   }
   /* The label, in the text color, as muted text would lose its contrast on the fill; cut short where
      the slider is narrow. */
-  .env-slider-heading > .env-slider-label {
+  .env-slider-header > .env-slider-label {
     min-inline-size: 0;
     overflow: hidden;
     color: var(--env-slider-content, var(--env-color-fg-default));
@@ -213,7 +213,7 @@
     text-overflow: ellipsis;
   }
   /* The value, as entered text, with numbers of one width so it doesn't shift as it changes. */
-  .env-slider-heading > .env-slider-value {
+  .env-slider-header > .env-slider-value {
     flex: 0 0 auto;
     font-weight: var(--env-font-weight-medium);
     color: var(--env-slider-content, var(--env-color-fg-default));
@@ -221,16 +221,16 @@
   }
   /* The label and the value undo the stretch, so their text keeps its shape and size: each scaled
      back from its outer side, which travels with the end of the field it sits at. */
-  .env-slider-heading > .env-slider-label,
-  .env-slider-heading > .env-slider-value {
+  .env-slider-header > .env-slider-label,
+  .env-slider-header > .env-slider-value {
     scale: calc(1 / (1 + var(--env-slider-stretch))) calc(1 / (1 - var(--env-slider-stretch) / 2));
   }
-  .env-slider-heading > .env-slider-label,
-  .env-slider-heading > .env-slider-value:dir(rtl) {
+  .env-slider-header > .env-slider-label,
+  .env-slider-header > .env-slider-value:dir(rtl) {
     transform-origin: left center;
   }
-  .env-slider-heading > .env-slider-value,
-  .env-slider-heading > .env-slider-label:dir(rtl) {
+  .env-slider-header > .env-slider-value,
+  .env-slider-header > .env-slider-label:dir(rtl) {
     transform-origin: right center;
   }
   /* The handle shows where Slider marks it, under a hovering pointer, while pressed and with keyboard
@@ -272,8 +272,8 @@
     }
     /* Under reduced motion the slider never stretches; Slider doesn't set the stretch either. */
     .env-slider-control,
-    .env-slider-heading > .env-slider-label,
-    .env-slider-heading > .env-slider-value {
+    .env-slider-header > .env-slider-label,
+    .env-slider-header > .env-slider-value {
       scale: none;
     }
   }

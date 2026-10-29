@@ -244,7 +244,7 @@ test("every label and heading of the catalogue's and the Docs' drawers fits on o
     await expect(drawer.locator('.env-drawer-item').first()).toBeVisible();
     // The drawer keeps each on one line, cut short where it doesn't fit: none may be cut.
     const cut = await drawer
-      .locator('.env-drawer-label, .env-drawer-heading')
+      .locator('.env-drawer-label, .env-drawer-group-label')
       .evaluateAll((elements) =>
         elements
           .filter((element) => element.scrollWidth > element.clientWidth)

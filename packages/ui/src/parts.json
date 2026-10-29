@@ -142,7 +142,7 @@
       "env-calendar-day-mark": "The mark under a day, such as today's.",
       "env-calendar-grid": "The grid of days.",
       "env-calendar-header": "The row with the month and the previous and next buttons.",
-      "env-calendar-heading": "The month and year.",
+      "env-calendar-title": "The month and year.",
       "env-calendar-next": "The button for the next month.",
       "env-calendar-pad": "An empty cell before the first day or after the last.",
       "env-calendar-previous": "The button for the previous month."
@@ -167,7 +167,7 @@
       "env-card-description": "The sentence under the title.",
       "env-card-footer": "The strip of actions.",
       "env-card-header": "The row with the title and the meta.",
-      "env-card-heading": "The title.",
+      "env-card-title": "The title.",
       "env-card-meta": "The short fact at the end of the title row."
     },
     "Checkbox": {
@@ -183,7 +183,7 @@
     "CodeBlock": {
       "env-code-block": "The block of code.",
       "env-code-block-copy-status": "The announcement that the code was copied.",
-      "env-code-block-heading": "The block's heading, such as a file name."
+      "env-code-block-header": "The row above the code: its label, such as a file name, and the copy button."
     },
     "CodeDiff": {
       "env-code-diff": "The diff of two versions of code.",
@@ -256,7 +256,7 @@
       "env-command-palette-footer": "The footer with the keyboard hints.",
       "env-command-palette-footer-content": "The content of the footer.",
       "env-command-palette-group": "A group of commands.",
-      "env-command-palette-heading": "A group's heading.",
+      "env-command-palette-group-label": "A group's label.",
       "env-command-palette-hint": "One keyboard hint.",
       "env-command-palette-input": "The search input.",
       "env-command-palette-item": "One command.",
@@ -303,7 +303,7 @@
       "env-date-picker-placeholder": "The text shown without a date.",
       "env-date-picker-popup": "The picker card with the calendar, also on TimePicker and MonthPicker.",
       "env-date-picker-time": "The times beside the calendar.",
-      "env-date-picker-time-heading": "The heading of the times.",
+      "env-date-picker-time-title": "The title over the times.",
       "env-date-picker-trigger": "The button that opens the calendar.",
       "env-date-picker-value": "The chosen date as text."
     },
@@ -466,7 +466,7 @@
     },
     "Meter": {
       "env-meter": "The meter.",
-      "env-meter-heading": "The row with the label and the value.",
+      "env-meter-header": "The row with the label and the value.",
       "env-meter-indicator": "The filled part of the track.",
       "env-meter-label": "The label.",
       "env-meter-track": "The track.",
@@ -476,7 +476,7 @@
       "env-month-picker": "The month field.",
       "env-month-picker-grid": "The grid of months.",
       "env-month-picker-header": "The row with the year and the previous and next buttons.",
-      "env-month-picker-heading": "The year.",
+      "env-month-picker-title": "The year.",
       "env-month-picker-month": "One month.",
       "env-month-picker-month-mark": "The mark under a month, such as the current one.",
       "env-month-picker-next": "The button for the next year.",
@@ -489,7 +489,7 @@
       "env-drawer-header": "Content above the destinations, such as the application's name or a search trigger.",
       "env-drawer-list": "The list of destinations and groups, which scrolls where the drawer is shorter.",
       "env-drawer-section": "A group: its heading and the list of its destinations.",
-      "env-drawer-heading": "A group's heading, which names the group's list.",
+      "env-drawer-group-label": "A group's label, which names the group's list.",
       "env-drawer-item": "A destination: a link or button as wide as the drawer, with its icon, label and count.",
       "env-drawer-label": "A destination's label.",
       "env-drawer-count": "A destination's count, at the item's end; 999+ above 999.",
@@ -582,7 +582,7 @@
     },
     "Progress": {
       "env-progress": "The progress bar.",
-      "env-progress-heading": "The row with the label and the value.",
+      "env-progress-header": "The row with the label and the value.",
       "env-progress-indicator": "The filled part of the track.",
       "env-progress-label": "The label.",
       "env-progress-segment": "One segment of a segmented bar.",
@@ -680,7 +680,7 @@
     "Slider": {
       "env-slider": "The slider.",
       "env-slider-control": "The field: the track's tint, which takes the pointer.",
-      "env-slider-heading": "The row of the label and the value, over the track.",
+      "env-slider-header": "The row of the label and the value, over the track.",
       "env-slider-indicator": "The fill from the start to the value.",
       "env-slider-label": "The label, inside at the start.",
       "env-slider-thumb": "The handle: a thin line at the value, under the pointer and on focus.",

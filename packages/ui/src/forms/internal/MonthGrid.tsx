@@ -141,7 +141,7 @@ export function MonthGrid({
             if (previousAvailable) moveTo(active - 12, false);
           }}
         />
-        <div className="env-month-picker-heading" id={headingId} aria-live="polite">
+        <div className="env-month-picker-title" id={headingId} aria-live="polite">
           {formats.year.format(toUtcDate(monthFirstDay(first)))}
         </div>
         <IconButton

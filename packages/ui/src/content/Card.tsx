@@ -175,7 +175,7 @@ function ContentCardLayout({
   const level = headingLevel ?? 3;
   const Heading = `h${level}` as const;
   const headingText = hasTitle && (
-    <Text render={<Heading />} variant="title" className="env-card-heading">
+    <Text render={<Heading />} variant="title" className="env-card-title">
       {title}
     </Text>
   );

@@ -332,7 +332,7 @@ export function CommandPalette({
                               render={<Grid />}
                               className="env-command-palette-group"
                             >
-                              <BaseAutocomplete.GroupLabel className="env-command-palette-heading">
+                              <BaseAutocomplete.GroupLabel className="env-command-palette-group-label">
                                 {section.label}
                               </BaseAutocomplete.GroupLabel>
                               <BaseAutocomplete.Collection>

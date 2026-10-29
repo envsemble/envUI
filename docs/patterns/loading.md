@@ -121,7 +121,7 @@ The [top bar](../components/top-bar.md)'s progress bar shows the next page is on
 ```
 
 1. **Busy root** (`env-card`)
-2. **Title bar** (`env-card-heading`)
+2. **Title bar** (`env-card-title`)
 3. **Meta bar** (`env-card-meta`)
 4. **Description bars** (`env-card-description`)
 5. **Action shape** (`env-card-footer`)

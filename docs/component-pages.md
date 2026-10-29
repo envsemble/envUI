@@ -269,12 +269,12 @@ An ordered list right after an anatomy figure is its legend. Each item starts wi
 ```
 
 1. **Surface** (`env-card`)
-2. **Title** (`env-card-heading`, `title`)
+2. **Title** (`env-card-title`, `title`)
 3. **Footer** (`env-card-footer`)
 ````
 
 - The first code span that starts with `env-` is the part; a second code span may name the prop that fills it. Start each item with the part's name in bold, which the build checks, and write nothing after the parentheses.
-- A part reference is a class name such as `env-card-heading`, or a selector of class names written without their dot, such as `env-button > env-icon:first-child` for a button's start icon. `::text` at the end points at the element's own text rather than its box, such as `env-button::text` for a label that has no element of its own.
+- A part reference is a class name such as `env-card-title`, or a selector of class names written without their dot, such as `env-button > env-icon:first-child` for a button's start icon. `::text` at the end points at the element's own text rather than its box, such as `env-button::text` for a label that has no element of its own.
 - A figure without a list numbers every part `parts.json` lists for the page's component, or for the one `of="Name"` names, each shown by its description there.
 - `docs/generated/parts.json` is generated from the library: under `components`, each component by its export name, with its `root` class, its `parts` (`class` and `description`) and its `states` (`attribute`, `values` and the `parts` that carry it); under `shared`, the groups of parts several components share, such as `ConnectedRows`. Read a component's entry there before writing its legend.
 - The build fails on a legend class that neither packages/ui's CSS nor `parts.json` has, and on a figure without a legend whose component has no parts there. A part the example doesn't render leaves its number off the figure, which the catalogue's browser test that counts every anatomy figure's callouts catches.

@@ -15,7 +15,7 @@
     gap: calc(var(--env-space-1) / 2);
   }
   /* The month's name leads the header, a little in from the edge, with both buttons after it. */
-  .env-calendar-heading {
+  .env-calendar-title {
     order: -1;
     flex: 1 1 auto;
     min-inline-size: 0;

@@ -224,7 +224,7 @@ test('a slider is a field: as tall as the fields, with their corners, its label 
   // The text never dims: the handle and the fill's end fade under it instead, as the tests of the
   // states below show.
   for (const part of [
-    slider.locator('.env-slider-heading'),
+    slider.locator('.env-slider-header'),
     slider.locator('.env-slider-label'),
     value,
   ]) {

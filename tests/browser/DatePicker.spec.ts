@@ -77,7 +77,7 @@ test('the field shows its value in the locale and the calendar follows the date 
     const [first, second] = [mark('2026-10-13'), mark('2026-10-14')].map((day) =>
       day.getBoundingClientRect(),
     );
-    const heading = card.querySelector('.env-calendar-heading')!.getBoundingClientRect();
+    const heading = card.querySelector('.env-calendar-title')!.getBoundingClientRect();
     const previous = card.querySelector('.env-calendar-previous')!.getBoundingClientRect();
     return {
       todayColor: today.color === accent,

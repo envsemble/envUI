@@ -56,7 +56,7 @@
     margin-block-end: var(--env-space-3);
   }
   /* A group's heading lines up with its destinations' icons and labels. */
-  .env-drawer-heading {
+  .env-drawer-group-label {
     display: block;
     margin: 0;
     padding: var(--env-space-1) var(--env-space-3);
@@ -78,7 +78,7 @@
   /* A resizable drawer keeps each label and heading on one line, so its items keep their height as
      people narrow it: what doesn't fit ends in an ellipsis, a label cut short shows in full in a
      tooltip and a heading in its title (Drawer.tsx). */
-  .env-drawer[data-resizable] :is(.env-drawer-label, .env-drawer-heading) {
+  .env-drawer[data-resizable] :is(.env-drawer-label, .env-drawer-group-label) {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;

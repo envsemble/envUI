@@ -76,7 +76,7 @@ export function CodeBlock({
       style={{ ...codeThemeStyle(theme), ...style }}
     >
       {(label || copyable) && (
-        <Row wrap align="center" justify="between" gap={4} className="env-code-block-heading">
+        <Row wrap align="center" justify="between" gap={4} className="env-code-block-header">
           <span>{label ?? language ?? messages.title}</span>
           {copyable && (
             <IconButton

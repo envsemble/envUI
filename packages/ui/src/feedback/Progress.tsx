@@ -58,7 +58,7 @@ export function Progress({
       className={classNames('env-progress', className)}
       data-segmented={steps !== undefined || undefined}
     >
-      <Row wrap justify="between" gap={3} className="env-progress-heading">
+      <Row wrap justify="between" gap={3} className="env-progress-header">
         <BaseProgress.Label className="env-progress-label">{label}</BaseProgress.Label>
         {valueText != null && <span className="env-progress-value">{valueText}</span>}
       </Row>

@@ -301,7 +301,7 @@ export function Slider({
             </BaseSlider.Track>
             {/* The label and the value sit over the track, the fill and the handle, inside the
                 slider, in the type of a field's text, always at full strength. */}
-            <Row align="center" justify="between" gap={3} className="env-slider-heading">
+            <Row align="center" justify="between" gap={3} className="env-slider-header">
               <BaseSlider.Label className="env-slider-label" render={<Text render={<div />} />}>
                 {label}
               </BaseSlider.Label>

@@ -752,10 +752,6 @@
           "description": "The row with the month and the previous and next buttons."
         },
         {
-          "class": "env-calendar-heading",
-          "description": "The month and year."
-        },
-        {
           "class": "env-calendar-next",
           "description": "The button for the next month."
         },
@@ -766,6 +762,10 @@
         {
           "class": "env-calendar-previous",
           "description": "The button for the previous month."
+        },
+        {
+          "class": "env-calendar-title",
+          "description": "The month and year."
         }
       ],
       "states": [
@@ -912,12 +912,12 @@
           "description": "The row with the title and the meta."
         },
         {
-          "class": "env-card-heading",
-          "description": "The title."
-        },
-        {
           "class": "env-card-meta",
           "description": "The short fact at the end of the title row."
+        },
+        {
+          "class": "env-card-title",
+          "description": "The title."
         }
       ],
       "states": [
@@ -937,8 +937,8 @@
             "env-card",
             "env-card-description",
             "env-card-header",
-            "env-card-heading",
-            "env-card-meta"
+            "env-card-meta",
+            "env-card-title"
           ]
         },
         {
@@ -1038,8 +1038,8 @@
           "description": "The announcement that the code was copied."
         },
         {
-          "class": "env-code-block-heading",
-          "description": "The block's heading, such as a file name."
+          "class": "env-code-block-header",
+          "description": "The row above the code: its label, such as a file name, and the copy button."
         }
       ],
       "states": [
@@ -1577,8 +1577,8 @@
           "description": "A group of commands."
         },
         {
-          "class": "env-command-palette-heading",
-          "description": "A group's heading."
+          "class": "env-command-palette-group-label",
+          "description": "A group's label."
         },
         {
           "class": "env-command-palette-hint",
@@ -1837,8 +1837,8 @@
           "description": "The times beside the calendar."
         },
         {
-          "class": "env-date-picker-time-heading",
-          "description": "The heading of the times."
+          "class": "env-date-picker-time-title",
+          "description": "The title over the times."
         },
         {
           "class": "env-date-picker-trigger",
@@ -2258,12 +2258,12 @@
           "description": "Content below the destinations, at the bottom of the drawer."
         },
         {
-          "class": "env-drawer-header",
-          "description": "Content above the destinations, such as the application's name or a search trigger."
+          "class": "env-drawer-group-label",
+          "description": "A group's label, which names the group's list."
         },
         {
-          "class": "env-drawer-heading",
-          "description": "A group's heading, which names the group's list."
+          "class": "env-drawer-header",
+          "description": "Content above the destinations, such as the application's name or a search trigger."
         },
         {
           "class": "env-drawer-item",
@@ -3211,7 +3211,7 @@
           "description": "The meter."
         },
         {
-          "class": "env-meter-heading",
+          "class": "env-meter-header",
           "description": "The row with the label and the value."
         },
         {
@@ -3250,10 +3250,6 @@
           "description": "The row with the year and the previous and next buttons."
         },
         {
-          "class": "env-month-picker-heading",
-          "description": "The year."
-        },
-        {
           "class": "env-month-picker-month",
           "description": "One month."
         },
@@ -3272,6 +3268,10 @@
         {
           "class": "env-month-picker-previous",
           "description": "The button for the previous year."
+        },
+        {
+          "class": "env-month-picker-title",
+          "description": "The year."
         },
         {
           "class": "env-month-picker-year",
@@ -3831,7 +3831,7 @@
           "description": "The progress bar."
         },
         {
-          "class": "env-progress-heading",
+          "class": "env-progress-header",
           "description": "The row with the label and the value."
         },
         {
@@ -4681,7 +4681,7 @@
           "description": "The field: the track's tint, which takes the pointer."
         },
         {
-          "class": "env-slider-heading",
+          "class": "env-slider-header",
           "description": "The row of the label and the value, over the track."
         },
         {

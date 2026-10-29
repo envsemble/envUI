@@ -465,7 +465,7 @@ test("an option table after a variants figure names the figure's variants", () =
 test('technical text is found in words, and plain words are left alone', () => {
   const kinds = (text) => technicalText(text).map(({ kind }) => kind);
   assert.deepEqual(kinds('Use --env-color-bg-page here'), ['token']);
-  assert.deepEqual(kinds('The env-card-heading part'), ['class name']);
+  assert.deepEqual(kinds('The env-card-title part'), ['class name']);
   assert.deepEqual(kinds('#1e1f21 or #fff'), ['hex color', 'hex color']);
   assert.deepEqual(kinds('0.25 rem, 32px and 150ms'), ['length', 'length', 'length']);
   assert.deepEqual(kinds('A 50% radius'), ['percentage']);

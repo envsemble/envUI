@@ -125,7 +125,7 @@
   .env-date-picker-time > .env-time-list {
     align-self: center;
   }
-  .env-date-picker-time-heading {
+  .env-date-picker-time-title {
     color: var(--env-color-fg-muted);
     font: var(--env-type-body-small);
     font-weight: var(--env-font-weight-medium);
@@ -140,7 +140,7 @@
       block-size: 0;
       min-block-size: 100%;
     }
-    .env-date-picker-time-heading {
+    .env-date-picker-time-title {
       justify-content: center;
       min-block-size: var(--env-control-height-md);
     }

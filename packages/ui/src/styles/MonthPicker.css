@@ -15,7 +15,7 @@
     --env-control-height: calc(0.8 * var(--env-control-height-md));
     gap: calc(var(--env-space-1) / 2);
   }
-  .env-month-picker-heading {
+  .env-month-picker-title {
     order: -1;
     flex: 1 1 auto;
     min-inline-size: 0;
