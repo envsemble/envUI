@@ -27,7 +27,7 @@ import '../styles/Base.css';
 import '../styles/Slider.css';
 
 export interface SliderProps
-  extends Omit<ComponentPropsWithRef<'div'>, 'defaultValue' | 'onChange' | 'children'> {
+  extends Omit<ComponentPropsWithRef<'div'>, 'defaultValue' | 'onChange' | 'children' | 'ref'> {
   /**
    * The value's name, inside the slider at its start, such as Opacity. It names the slider.
    */
@@ -81,8 +81,12 @@ export interface SliderProps
   name?: string;
   /** The id of a form the slider belongs to when it sits outside of it. */
   form?: string;
-  /** The native range input, for example to focus it. */
-  inputRef?: Ref<HTMLInputElement>;
+  /**
+   * The native range input, which holds the value and takes focus, as a field's ref reaches its
+   * input: for example to focus it, or for a form library to register it. className, style and
+   * the other native props go to the root.
+   */
+  ref?: Ref<HTMLInputElement>;
 }
 
 /**
@@ -109,7 +113,6 @@ export function Slider({
   disabled = false,
   name,
   form,
-  inputRef,
   className,
   ref,
   onFocus,
@@ -118,7 +121,7 @@ export function Slider({
   ...props
 }: SliderProps) {
   // The arrow keys follow the text direction: Base UI reads it from its DirectionProvider.
-  const scope = useDirectionScope(ref);
+  const scope = useDirectionScope<HTMLDivElement>();
   const id = useId();
   const providedLocale = useLocale();
   const input = useRef<HTMLInputElement>(null);
@@ -291,7 +294,7 @@ export function Slider({
                 className="env-slider-thumb"
                 inputRef={(node: HTMLInputElement | null) => {
                   input.current = node;
-                  setRef(inputRef, node);
+                  setRef(ref, node);
                 }}
                 aria-describedby={describedByIds}
                 getAriaValueText={(formatted, number) =>

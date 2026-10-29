@@ -198,7 +198,7 @@ While `pending`, a spinner replaces the icon, the zone reports `aria-busy` and t
 
 #### In a form
 
-With `name`, a native form submits the last files the zone took, dropped ones too, and a reset clears them; `new FormData(form).getAll('attachments')` reads them, with an empty entry when there are none. `files` hands the zone the files the application keeps, such as after a Remove, and replaces the ones it took. `form` names a form the zone sits outside of, and `inputRef` reaches the native file input, to open the picker from a Replace button.
+With `name`, a native form submits the last files the zone took, dropped ones too, and a reset clears them; `new FormData(form).getAll('attachments')` reads them, with an empty entry when there are none. `files` hands the zone the files the application keeps, such as after a Remove, and replaces the ones it took. `form` names a form the zone sits outside of, and `inputRef` reaches the native file input, to open the picker from a Replace button. `ref` reaches the zone itself: unlike a field's input, the file input holds no value a form library could register.
 
 ```tsx
 <form onSubmit={send}>

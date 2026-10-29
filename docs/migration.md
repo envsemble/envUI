@@ -442,7 +442,7 @@ Fields take a `description` under them and the field variants, and choice contro
 | Select `options`, `SelectOption`                                                                              | `items`, `SelectItem`                                                                        |
 | DatePicker `withTime`                                                                                         | `granularity="minute"`; without it, `"day"`, the default                                     |
 | DatePicker `doneLabel`, `messages.datePicker.done`                                                            | Removed: the calendar has no Done button and closes as a date-only one does                  |
-| Slider `onValueCommit`                                                                                        | `onValueCommitted`                                                                           |
+| Slider `onValueCommit`, `inputRef`                                                                            | `onValueCommitted`, `ref`: a Slider's `ref` reached its root                                 |
 | Composer `onSubmit`                                                                                           | `onSend`: `onSubmit` is the native submit event's name                                       |
 | Composer `footer`                                                                                             | `description`, as on a field                                                                 |
 | DropZone `onFiles`, `onReject`                                                                                | `onDropAccepted`, `onDropRejected`                                                           |

@@ -77,7 +77,11 @@ export interface DropZoneProps
   files?: readonly File[];
   /** The id of a form the zone belongs to when it is outside of it. */
   form?: string;
-  /** The native file input that opens the file picker, for example from a Replace button. */
+  /**
+   * The native file input that opens the file picker, for example from a Replace button. The zone
+   * holds no value a form library could register, as a field's input does, so ref reaches the zone
+   * itself, the drop target, and this ref the picker.
+   */
   inputRef?: Ref<HTMLInputElement>;
 }
 

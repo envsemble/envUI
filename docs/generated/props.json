@@ -3165,7 +3165,7 @@
           "name": "inputRef",
           "type": "Ref<HTMLInputElement>",
           "required": false,
-          "description": "The native file input that opens the file picker, for example from a Replace button."
+          "description": "The native file input that opens the file picker, for example from a Replace button. The zone holds no value a form library could register, as a field's input does, so ref reaches the zone itself, the drop target, and this ref the picker."
         }
       ],
       "native": [
@@ -7283,10 +7283,10 @@
           "description": "The id of a form the slider belongs to when it sits outside of it."
         },
         {
-          "name": "inputRef",
+          "name": "ref",
           "type": "Ref<HTMLInputElement>",
           "required": false,
-          "description": "The native range input, for example to focus it."
+          "description": "The native range input, which holds the value and takes focus, as a field's ref reaches its input: for example to focus it, or for a form library to register it. className, style and the other native props go to the root."
         }
       ],
       "native": [
