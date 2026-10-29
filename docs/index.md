@@ -6,7 +6,7 @@ Every component, pattern and foundation page reads in one order: its frontmatter
 
 ## Setup and workflows
 
-- [Install the private package](setup.md) — Registry access, styles, themes and public entry points.
+- [Install and set up](setup.md) — Registry access, styles, themes and public entry points.
 - [Migrate an interface to envUI](migration.md) — Replace existing UI while preserving application behavior.
 - [Customize and extend](customizing.md) — Give one element colors of its own or recolor an area, compose components into the application's own, and style their parts.
 - [For agents](agent-tooling.md) — Set envUI up with a coding agent from one prompt, and point it to the docs in the package.

@@ -78,8 +78,8 @@ function HomeSection({ section, home }: { section: DocsGroup; home: RoutePage })
 
 /**
  * The Docs' home: what they are, said once in its summary, the prompt that sets envUI up with a
- * coding agent, and each section's pages in short lists, by their groups, as the navigation has
- * them.
+ * coding agent or the guide to setting it up by hand, and each section's pages in short lists, by
+ * their groups, as the navigation has them.
  */
 export function DocsHome({ page }: { page: RoutePage }) {
   return (
@@ -117,6 +117,9 @@ export function DocsHome({ page }: { page: RoutePage }) {
             </Text>
             <CopyButton value={setupPrompt} variant="ghost" size="sm" aria-label="Copy prompt" />
           </Surface>
+          <Text render={<p />} emphasis="muted" className="docs-setup-by-hand">
+            Or set it up by hand: <Link href={routeHref('docs/setup')}>Install and set up</Link>
+          </Text>
         </Column>
         {docsTree.map((section) => (
           <HomeSection key={section.id} section={section} home={page} />

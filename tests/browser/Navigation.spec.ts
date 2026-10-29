@@ -73,6 +73,25 @@ test('a count shows on its destination, capped at 999+, and its name says it', a
   }
 });
 
+test("a Drawer destination's badge follows its label at the item's end, and names it with the label", async ({
+  page,
+}) => {
+  await page.goto(`${fixtureUrl}/?fixture=navigation`);
+  const nav = page
+    .getByTestId('navigation-light')
+    .getByRole('navigation', { name: 'Badged drawer' });
+  const reports = nav.getByRole('link', { name: 'Reports New', exact: true });
+  const label = (await reports.locator('.env-drawer-label').boundingBox())!;
+  const badge = (await reports.locator('.env-badge').boundingBox())!;
+  const item = (await reports.boundingBox())!;
+  // After the label, at the item's end, with the item's padding after it.
+  expect(badge.x).toBeGreaterThanOrEqual(label.x + label.width);
+  expect(item.x + item.width - (badge.x + badge.width)).toBeLessThan(24);
+  // With a count, the label and the count name the item, and the badge stands before the count.
+  const archive = nav.getByRole('link', { name: 'Archive, 2 new', exact: true });
+  expect(await archive.evaluate((element) => element.textContent)).toBe('ArchiveBeta 2');
+});
+
 test('Drawer heads each run of a group, and Rail and Bar keep the order without headings', async ({
   page,
 }) => {
