@@ -20,15 +20,16 @@ test('a page shows one badge, Deprecated or Experimental before New, and none fo
   assert.equal(pageBadge({ status: 'beta', since: '1.0.0' }, '1.1.0'), undefined);
   assert.deepEqual(pageBadge({ status: 'beta', since: '1.1.0' }, '1.1.0'), {
     label: 'New',
-    tone: 'success',
+    tone: 'accent',
   });
   assert.equal(pageBadge({ status: 'stable', since: '1.1.0' }, '1.1.0')?.label, 'New');
-  assert.equal(
-    pageBadge({ status: 'experimental', since: '1.1.0' }, '1.1.0')?.label,
-    'Experimental',
-  );
+  // A status takes the same tone as under the page's title.
+  assert.deepEqual(pageBadge({ status: 'experimental', since: '1.1.0' }, '1.1.0'), {
+    label: 'Experimental',
+    tone: 'warning',
+  });
   assert.deepEqual(pageBadge({ status: 'deprecated' }, '1.1.0'), {
     label: 'Deprecated',
-    tone: 'warning',
+    tone: 'danger',
   });
 });

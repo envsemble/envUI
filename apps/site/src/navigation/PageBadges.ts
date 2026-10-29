@@ -9,10 +9,24 @@
 /** A page's status, from its frontmatter. */
 export type PageStatus = 'experimental' | 'beta' | 'stable' | 'deprecated';
 
+/**
+ * The tone of each status's Badge, the same wherever a status shows: under a page's title and
+ * beside its name in the navigation.
+ */
+export const statusTones = {
+  experimental: 'warning',
+  beta: 'neutral',
+  stable: 'success',
+  deprecated: 'danger',
+} as const satisfies Record<PageStatus, string>;
+
+/** The tone of New, which only the navigation shows: none of the statuses' tones. */
+const newTone = 'accent';
+
 /** The badge a page shows: its words and the tone of envUI's Badge. */
 export interface PageBadge {
   label: 'Deprecated' | 'Experimental' | 'New';
-  tone: 'warning' | 'accent' | 'success';
+  tone: (typeof statusTones)[PageStatus] | typeof newTone;
 }
 
 /** A version's major and minor numbers, such as 1.1 for 1.1.0 or 1.1.0-prerelease.2. */
@@ -33,8 +47,8 @@ export function pageBadge(
   { status, since }: { status?: PageStatus; since?: string },
   version: string,
 ): PageBadge | undefined {
-  if (status === 'deprecated') return { label: 'Deprecated', tone: 'warning' };
-  if (status === 'experimental') return { label: 'Experimental', tone: 'accent' };
-  if (isNew(since, version)) return { label: 'New', tone: 'success' };
+  if (status === 'deprecated') return { label: 'Deprecated', tone: statusTones.deprecated };
+  if (status === 'experimental') return { label: 'Experimental', tone: statusTones.experimental };
+  if (isNew(since, version)) return { label: 'New', tone: newTone };
   return undefined;
 }
