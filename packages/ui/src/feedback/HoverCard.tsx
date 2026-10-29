@@ -80,8 +80,11 @@ export interface HoverCardProps
    */
   defaultOpen?: boolean;
   /** Called with the new state, and why, when hover, focus or Esc opens or closes the card. */
-  onOpenChange?: (open: boolean, details: PopoverOpenChangeDetails) => void;
+  onOpenChange?: (open: boolean, details: HoverCardOpenChangeDetails) => void;
 }
+
+/** What a hover card's onOpenChange receives beside the requested state: a popover's details. */
+export type HoverCardOpenChangeDetails = PopoverOpenChangeDetails;
 
 function isFocusVisible(element: Element) {
   try {

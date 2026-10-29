@@ -1698,9 +1698,9 @@
         },
         {
           "name": "onOpenChange",
-          "type": "(open: boolean) => void",
+          "type": "(open: boolean, details: CommandPaletteOpenChangeDetails) => void",
           "required": true,
-          "description": "Called with false when Esc, a press on the backdrop or a choice closes the palette."
+          "description": "Called with false, and why, when Esc, a press on the backdrop or a choice closes the palette."
         },
         {
           "name": "aria-label",
@@ -3626,7 +3626,7 @@
         },
         {
           "name": "onOpenChange",
-          "type": "(open: boolean, details: PopoverOpenChangeDetails) => void",
+          "type": "(open: boolean, details: HoverCardOpenChangeDetails) => void",
           "required": false,
           "description": "Called with the new state, and why, when hover, focus or Esc opens or closes the card."
         },

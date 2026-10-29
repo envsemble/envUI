@@ -214,7 +214,7 @@ Ask for the palette's states in these words.
 The application owns the items and what choosing one does.
 
 - `open` opens the palette, such as from a shortcut and from a visible control.
-- `onOpenChange` receives false when <kbd>Esc</kbd>, a press on the backdrop or a choice closes it.
+- `onOpenChange` receives false when <kbd>Esc</kbd>, a press on the backdrop or a choice closes it, and why, as a dialog's does: `escape-key`, `outside-press`, or `item-press` for a choice.
 - The application filters and ranks the `items` itself, from the text in `inputValue` and `onInputValueChange`, and clears that text as the palette closes.
 - `onAction` runs the chosen item, and `closeOnAction`, true by default, closes the palette after it.
 - `aria-label` names the dialog, its search field and its list.
@@ -367,6 +367,7 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 
 ## Changelog
 
+- **1.0.0-prerelease.5**: `onOpenChange` receives why the palette closes, `CommandPaletteOpenChangeDetails`, as a dialog's does.
 - **1.0.0-prerelease.5**: `defaultItems` is `suggestedItems`: `default` names an uncontrolled starting value everywhere else.
 - **1.0.0-prerelease.5**: The palette is frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge, and is solid with its edge at high contrast and with reduced transparency. Its search is a large ghost TextField, opaque on the neutral fill with no outline, whose edge returns at high contrast; its headings are small and muted, its rows and keys are the popup lists', the keys side by side with the + read but not shown, and its hints are in the small label size. Its options take the text color rather than the controls', lie one under the next with no space between them, and its headings sit a little ahead of the rows.
 - **1.0.0-prerelease.4**: An empty state with an icon, a title and a description, which tells an invitation before people type from no results; `emptyDescription`, `emptyIcon` and `messages.commandPalette.emptyQuery` and `emptyHint`. `defaultItems` show before people type.

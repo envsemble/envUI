@@ -22,6 +22,7 @@ import { Search } from '../icons/Search.js';
 import { SearchOff } from '../icons/SearchOff.js';
 import { Kbd } from '../content/Kbd.js';
 import { DialogBackdrop, OverlayTheme } from './internal/DialogParts.js';
+import type { DialogOpenChangeReason } from './Dialog.js';
 import { ResetControlDefaults } from '../internal/ControlDefaults.js';
 import {
   containedModal,
@@ -63,12 +64,21 @@ export interface CommandPaletteActionDetails {
   modifier: boolean;
 }
 
+/** What CommandPalette's onOpenChange receives beside the requested state. */
+export interface CommandPaletteOpenChangeDetails {
+  /**
+   * Why the palette asks to close: a dialog's reasons, such as escape-key or outside-press, or
+   * item-press when a chosen option closes it under closeOnAction.
+   */
+  reason: DialogOpenChangeReason | 'item-press';
+}
+
 export interface CommandPaletteProps
   extends Omit<ComponentPropsWithRef<'div'>, 'children' | 'defaultValue' | 'onChange'> {
   /** Whether the palette is open; the application opens it, such as from a shortcut. */
   open: boolean;
-  /** Called with false when Esc, a press on the backdrop or a choice closes the palette. */
-  onOpenChange: (open: boolean) => void;
+  /** Called with false, and why, when Esc, a press on the backdrop or a choice closes the palette. */
+  onOpenChange: (open: boolean, details: CommandPaletteOpenChangeDetails) => void;
   /** Accessible name of the dialog, the search field and the list. */
   'aria-label': string;
   /** The text in the search field. */
@@ -190,7 +200,7 @@ export function CommandPalette({
   function act(item: CommandPaletteItem, modifier: boolean) {
     if (item.disabled) return;
     onAction(item, { modifier });
-    if (closeOnAction) onOpenChange(false);
+    if (closeOnAction) onOpenChange(false, { reason: 'item-press' });
   }
 
   /** Options that fit in the list's height, for Page Up and Page Down. */
@@ -252,7 +262,7 @@ export function CommandPalette({
           eventDetails.cancel();
           return;
         }
-        onOpenChange(next);
+        onOpenChange(next, { reason: eventDetails.reason as DialogOpenChangeReason });
       }}
       modal={containedModal(portal, true)}
     >
