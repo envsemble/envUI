@@ -18,8 +18,8 @@ export interface SpinnerArcProps extends ComponentPropsWithRef<'span'> {
 export function SpinnerArc({ size = 'md', className, children, ...props }: SpinnerArcProps) {
   return (
     <span
-      data-label-hidden={children == null ? '' : undefined}
       {...props}
+      data-label-hidden={children == null ? '' : undefined}
       className={classNames('env-spinner', className)}
       data-size={size}
     >

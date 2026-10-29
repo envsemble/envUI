@@ -131,7 +131,7 @@ test.describe('CommandPalette', () => {
           fill: [style.backgroundImage.startsWith('linear-gradient'), style.backgroundColor],
           placeholder: getComputedStyle(field, '::placeholder').color,
           edge: getComputedStyle(border).borderTopColor,
-          ring: style.outlineStyle,
+          ring: getComputedStyle(element.closest('.env-command-palette-search')!).outlineStyle,
         };
       });
     const focused = await look();

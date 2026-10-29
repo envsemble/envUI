@@ -58,8 +58,9 @@
     flex: 0 0 auto;
   }
   /* While it holds the caret, the search shows the focus ring inside its edge, as every focused
-     control does. */
-  .env-command-palette-search > .env-text-field-control:focus-within {
+     control does: drawn by the search itself, a pill as its field is, at the field's own box. */
+  .env-command-palette-search:focus-within {
+    border-radius: var(--env-radius-full);
     outline: 2px solid var(--env-color-border-focus);
     outline-offset: -2px;
   }
