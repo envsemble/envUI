@@ -338,10 +338,10 @@ export function Scaffold({
       data-env-name={name}
       data-top-bar-span={topBarSpan}
       data-scroll={scroll}
-      data-compact={resolved.compact}
-      data-medium={resolved.medium}
-      data-expanded={resolved.expanded}
-      data-large={resolved.large}
+      data-navigation-compact={resolved.compact}
+      data-navigation-medium={resolved.medium}
+      data-navigation-expanded={resolved.expanded}
+      data-navigation-large={resolved.large}
     >
       {landmarks && (
         <div className="env-scaffold-skip-links">

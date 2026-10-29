@@ -2,8 +2,8 @@
   /* Scaffold: an application screen's invisible structure. Its root is the env-scaffold container and
      a grid that never paints: the navigation column at the start, the top bar, the body and the bar
      row at the bottom. Its regions respond to its width at the window classes, compact first, and
-     show the navigation form data-compact, data-medium, data-expanded or data-large names; a column
-     or a row with nothing in it takes no room. Every edge is logical, so it mirrors in right-to-left
+     show the navigation form that data-navigation-compact, -medium, -expanded or -large names; a
+     column or a row with nothing in it takes no room. Every edge is logical, so it mirrors in right-to-left
      text.
 
      data-scroll says what scrolls. document, the default: the page, as on any website, so a phone
@@ -198,54 +198,62 @@
      bar below it, and the skip link to the navigation hides where no form shows. Ranges, so exactly
      one window class applies at any width. */
   @container env-scaffold (width < 37.5rem) {
-    .env-scaffold[data-compact='bar'] > .env-scaffold-navigation > .env-scaffold-bar,
-    .env-scaffold[data-compact='rail'] > .env-scaffold-navigation > .env-scaffold-rail,
-    .env-scaffold[data-compact='drawer'] > .env-scaffold-navigation > .env-scaffold-drawer {
+    .env-scaffold[data-navigation-compact='bar'] > .env-scaffold-navigation > .env-scaffold-bar,
+    .env-scaffold[data-navigation-compact='rail'] > .env-scaffold-navigation > .env-scaffold-rail,
+    .env-scaffold[data-navigation-compact='drawer']
+      > .env-scaffold-navigation
+      > .env-scaffold-drawer {
       display: block;
     }
-    .env-scaffold[data-compact='bar'] > .env-scaffold-body {
+    .env-scaffold[data-navigation-compact='bar'] > .env-scaffold-body {
       padding-block-end: 0;
     }
-    .env-scaffold[data-compact='none'] .env-scaffold-skip-link[data-skip='navigation'] {
+    .env-scaffold[data-navigation-compact='none'] .env-scaffold-skip-link[data-skip='navigation'] {
       display: none;
     }
   }
   @container env-scaffold (37.5rem <= width < 52.5rem) {
-    .env-scaffold[data-medium='bar'] > .env-scaffold-navigation > .env-scaffold-bar,
-    .env-scaffold[data-medium='rail'] > .env-scaffold-navigation > .env-scaffold-rail,
-    .env-scaffold[data-medium='drawer'] > .env-scaffold-navigation > .env-scaffold-drawer {
+    .env-scaffold[data-navigation-medium='bar'] > .env-scaffold-navigation > .env-scaffold-bar,
+    .env-scaffold[data-navigation-medium='rail'] > .env-scaffold-navigation > .env-scaffold-rail,
+    .env-scaffold[data-navigation-medium='drawer']
+      > .env-scaffold-navigation
+      > .env-scaffold-drawer {
       display: block;
     }
-    .env-scaffold[data-medium='bar'] > .env-scaffold-body {
+    .env-scaffold[data-navigation-medium='bar'] > .env-scaffold-body {
       padding-block-end: 0;
     }
-    .env-scaffold[data-medium='none'] .env-scaffold-skip-link[data-skip='navigation'] {
+    .env-scaffold[data-navigation-medium='none'] .env-scaffold-skip-link[data-skip='navigation'] {
       display: none;
     }
   }
   @container env-scaffold (52.5rem <= width < 75rem) {
-    .env-scaffold[data-expanded='bar'] > .env-scaffold-navigation > .env-scaffold-bar,
-    .env-scaffold[data-expanded='rail'] > .env-scaffold-navigation > .env-scaffold-rail,
-    .env-scaffold[data-expanded='drawer'] > .env-scaffold-navigation > .env-scaffold-drawer {
+    .env-scaffold[data-navigation-expanded='bar'] > .env-scaffold-navigation > .env-scaffold-bar,
+    .env-scaffold[data-navigation-expanded='rail'] > .env-scaffold-navigation > .env-scaffold-rail,
+    .env-scaffold[data-navigation-expanded='drawer']
+      > .env-scaffold-navigation
+      > .env-scaffold-drawer {
       display: block;
     }
-    .env-scaffold[data-expanded='bar'] > .env-scaffold-body {
+    .env-scaffold[data-navigation-expanded='bar'] > .env-scaffold-body {
       padding-block-end: 0;
     }
-    .env-scaffold[data-expanded='none'] .env-scaffold-skip-link[data-skip='navigation'] {
+    .env-scaffold[data-navigation-expanded='none'] .env-scaffold-skip-link[data-skip='navigation'] {
       display: none;
     }
   }
   @container env-scaffold (width >= 75rem) {
-    .env-scaffold[data-large='bar'] > .env-scaffold-navigation > .env-scaffold-bar,
-    .env-scaffold[data-large='rail'] > .env-scaffold-navigation > .env-scaffold-rail,
-    .env-scaffold[data-large='drawer'] > .env-scaffold-navigation > .env-scaffold-drawer {
+    .env-scaffold[data-navigation-large='bar'] > .env-scaffold-navigation > .env-scaffold-bar,
+    .env-scaffold[data-navigation-large='rail'] > .env-scaffold-navigation > .env-scaffold-rail,
+    .env-scaffold[data-navigation-large='drawer']
+      > .env-scaffold-navigation
+      > .env-scaffold-drawer {
       display: block;
     }
-    .env-scaffold[data-large='bar'] > .env-scaffold-body {
+    .env-scaffold[data-navigation-large='bar'] > .env-scaffold-body {
       padding-block-end: 0;
     }
-    .env-scaffold[data-large='none'] .env-scaffold-skip-link[data-skip='navigation'] {
+    .env-scaffold[data-navigation-large='none'] .env-scaffold-skip-link[data-skip='navigation'] {
       display: none;
     }
   }

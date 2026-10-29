@@ -84,7 +84,7 @@ test('Scaffold renders its regions and forms, which CSS shows by its width', () 
   assert.match(markup, /^<div class="env-scaffold" data-env-layout="scaffold" data-env-name="app"/);
   assert.match(
     markup,
-    /data-compact="bar" data-medium="drawer" data-expanded="drawer" data-large="drawer"/,
+    /data-navigation-compact="bar" data-navigation-medium="drawer" data-navigation-expanded="drawer" data-navigation-large="drawer"/,
   );
   // Skip links first, then the banner, the navigation and the main landmark.
   const order = [
@@ -138,7 +138,7 @@ test('Scaffold shows each form in one range of its own width, with no width medi
     assert.match(
       css,
       new RegExp(
-        `@container env-scaffold \\(${range.replaceAll('.', '\\.')}\\) \\{\\s*\\.env-scaffold\\[data-${windowClass}='bar'\\]`,
+        `@container env-scaffold \\(${range.replaceAll('.', '\\.')}\\) \\{\\s*\\.env-scaffold\\[data-navigation-${windowClass}='bar'\\]`,
       ),
     );
   assert.doesNotMatch(css, /@media[^{]*width/);

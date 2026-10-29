@@ -4263,18 +4263,6 @@
       ],
       "states": [
         {
-          "attribute": "data-compact",
-          "values": [
-            "bar",
-            "drawer",
-            "none",
-            "rail"
-          ],
-          "parts": [
-            "env-scaffold"
-          ]
-        },
-        {
           "attribute": "data-env-layout",
           "values": [
             "scaffold"
@@ -4291,7 +4279,7 @@
           ]
         },
         {
-          "attribute": "data-expanded",
+          "attribute": "data-navigation-compact",
           "values": [
             "bar",
             "drawer",
@@ -4303,19 +4291,7 @@
           ]
         },
         {
-          "attribute": "data-large",
-          "values": [
-            "bar",
-            "drawer",
-            "none",
-            "rail"
-          ],
-          "parts": [
-            "env-scaffold"
-          ]
-        },
-        {
-          "attribute": "data-medium",
+          "attribute": "data-navigation-expanded",
           "values": [
             "bar",
             "drawer",
@@ -4337,6 +4313,30 @@
             "env-scaffold-bar",
             "env-scaffold-drawer",
             "env-scaffold-rail"
+          ]
+        },
+        {
+          "attribute": "data-navigation-large",
+          "values": [
+            "bar",
+            "drawer",
+            "none",
+            "rail"
+          ],
+          "parts": [
+            "env-scaffold"
+          ]
+        },
+        {
+          "attribute": "data-navigation-medium",
+          "values": [
+            "bar",
+            "drawer",
+            "none",
+            "rail"
+          ],
+          "parts": [
+            "env-scaffold"
           ]
         },
         {
