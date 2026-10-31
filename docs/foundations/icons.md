@@ -61,7 +61,7 @@ An icon beside a label adds nothing for a screen reader, so it stays silent.
 
 - An icon that stands alone, such as a button that is only an icon, gets a name of its own.
 
-### The application's own icons and logos
+### Logos and own icons
 
 envUI comes with no logos. Show the application's logo, and an icon envUI doesn't have, with [Graphic](../components/graphic.md): it takes the same sizes and slots as envUI's icons.
 
