@@ -35,6 +35,8 @@ function subject(ruleId, message) {
       /^Inline `display: ([\w-]+)` lays out (a row or a column|a row|a column|a grid)/,
     'envui/no-html-elements': /^Use envUI's (\S+) instead of (.+?)(?:, or |: import)/,
     'envui/no-raw-colors': /^Raw color (.+) in an inline style/,
+    'envui/no-raw-graphics':
+      /^(Use envUI's Graphic instead of a raw <img>|A raw <svg [^>]*>|Graphic needs alt|A margin on a Graphic|Use envUI's icons instead of [^:]+)/,
   };
   const match = message.match(patterns[ruleId]);
   if (!match) return message;

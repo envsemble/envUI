@@ -1,4 +1,4 @@
-import { documentationUrl, jsxName, resolveVariable, walk } from '../utilities.js';
+import { documentationUrl, jsxName, propertyName, resolveVariable, walk } from '../utilities.js';
 
 /** The display values that lay out a row, a column or a grid by hand, and the primitive for each. */
 const layoutDisplays = new Map([
@@ -7,16 +7,6 @@ const layoutDisplays = new Map([
   ['grid', 'grid'],
   ['inline-grid', 'grid'],
 ]);
-
-/** The name a style object's property sets: `display`, `flexDirection` or `flex-direction`. */
-function propertyName(property) {
-  const { key } = property;
-  if (!property.computed && key.type === 'Identifier') return key.name;
-  if (key.type === 'Literal') return String(key.value);
-  if (key.type === 'TemplateLiteral' && key.expressions.length === 0)
-    return key.quasis[0].value.cooked;
-  return undefined;
-}
 
 /**
  * The static strings a style value can take, each with its node: a string literal, a template

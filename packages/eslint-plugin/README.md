@@ -1,6 +1,6 @@
 # @envsemble/eslint-plugin-envui
 
-ESLint rules for applications built with envUI. They report what envUI already provides but the code builds by hand: raw buttons, fields, dialogs, tables and menus, flex and grid layout in inline styles, and literal colors in inline styles. Every message names the envUI component or token to use and how to import it.
+ESLint rules for applications built with envUI. They report what envUI already provides but the code builds by hand: raw buttons, fields, dialogs, tables and menus, flex and grid layout in inline styles, literal colors in inline styles, and raw images and other icon packages. Every message names the envUI component or token to use and how to import it.
 
 Lint output reaches people and coding agents in their usual edit-and-check loop, so it works even when nobody has read the documentation first. The [Stylelint config](../stylelint-config/README.md) does the same for style sheets.
 
@@ -67,16 +67,17 @@ export default defineConfig(envui.configs.recommended, {
 
 - A path names the module's file. Write it absolute, from the configuration's own folder, with `path.resolve(import.meta.dirname, 'src/ui')`, so it names the same file wherever ESLint runs: from the application's folder, a monorepo's root or an editor. A relative entry, such as `'./src/ui'`, also works, but is read from ESLint's working directory (`cwd`), which changes with where ESLint runs. Either must name an existing module, the file itself, with a script extension (`.ts`, `.tsx`, `.js` and the like) or as its `/index`; an entry that names none is a configuration error, rather than matching nothing, that gives the path it looked for and, for a relative entry, the working directory. A relative import matches when it resolves to that module from the file that writes it, with or without the extension or `/index`, through symbolic links, and on Windows whatever the case of the drive letter or path: in `src/pages/Home.tsx`, `'../ui'`, `'../ui.ts'` and `'../ui/index'` match `src/ui`, and `'./ui'`, which is `src/pages/ui`, does not.
 - Any other entry, an alias such as `'@/components/ui'` or a package, matches an import that writes it exactly, in any file: `'@/components/ui/index'` is a different spelling. List each spelling the application writes.
-- [no-html-elements](#no-html-elements) counts a name imported from a listed module as the envUI component it is exported as: `<Dialog role="alertdialog">` with `Dialog` from `'./ui'` passes.
+- [no-html-elements](#no-html-elements) counts a name imported from a listed module as the envUI component it is exported as: `<Dialog role="alertdialog">` with `Dialog` from `'./ui'` passes. [no-raw-graphics](#no-raw-graphics) counts a `Graphic` imported from one as envUI's.
 - List only modules that keep envUI's names: a component of the application's own exported under an envUI name would count as envUI's.
 
 ## Rules
 
-| Rule                                  | Reports                                                         |
-| ------------------------------------- | --------------------------------------------------------------- |
-| [no-inline-layout](#no-inline-layout) | Flex and grid layout in inline styles, a warning                |
-| [no-html-elements](#no-html-elements) | Raw elements and widget roles that envUI provides as components |
-| [no-raw-colors](#no-raw-colors)       | Literal colors in inline styles                                 |
+| Rule                                  | Reports                                                                                      |
+| ------------------------------------- | -------------------------------------------------------------------------------------------- |
+| [no-inline-layout](#no-inline-layout) | Flex and grid layout in inline styles, a warning                                             |
+| [no-html-elements](#no-html-elements) | Raw elements and widget roles that envUI provides as components                              |
+| [no-raw-colors](#no-raw-colors)       | Literal colors in inline styles                                                              |
+| [no-raw-graphics](#no-raw-graphics)   | Raw images, fixed-size SVGs, other icon packages, and a Graphic without alt or with a margin |
 
 ### no-inline-layout
 
@@ -204,6 +205,57 @@ Raw color #fff in an inline style: use an envUI color token instead, such as var
 The token names come from [`src/data/tokens.json`](src/data/tokens.json). Before every pack, `scripts/SyncTokens.mjs` rewrites it from the library's generated token list (`packages/ui/src/generated/tokens.json` in the envUI repository), so a release names the tokens of the same envUI release, and the tests fail when a message or this README names a token that does not exist.
 
 Values that depend on state, spread objects and custom properties are checked too, including an inline override of envUI's own tokens. A template literal is read as one value, each expression standing for a literal channel: `` `rgb(${r} 0 0)` `` is reported, as is the `#fff` in `` `url('${a}') #fff` ``, and the strings in its expressions are checked on their own. A `#` followed by an expression is a hex color built from it, as in `` `#${hex}` `` or `` `#fff${alpha}` ``, also in a custom property, except inside `url()` and CSS strings, where `` `url(#${id})` `` refers to an element. Strings joined with `+` are read as one value the same way, so `'#' + hex` is a hex color built from `hex`. Calls are read through, their callee and their arguments alike: `darken('#123456', 0.1)`, `'#fff'.toUpperCase()`, `mergeStyles(base, { color: 'red' })` and `useMemo(() => ({ color: '#fff' }), [])` are reported. Strings that only choose a style rather than spell it are not read: a member's key, as in ``styles[`#${id}`]`` or ``theme[`#${id}`]``, and the arguments of a DOM lookup by selector or id, `querySelector`, `querySelectorAll`, `closest`, `matches` and `getElementById`, as in ``pick(document.querySelector(`#${id} .x`))``. A relative color derived from a token, `hsl(from var(--env-color-fg-link) h s calc(l - 10))`, and `color-mix()` of tokens pass. So does a function whose channels all come from custom properties, each channel a `var()` whose fallback, if any, is `var()`s too, whose own fallbacks are `var()`s in turn, as in `rgb(var(--…, var(--…, var(--…))))`, up to eight levels of fallbacks deep, where the [Stylelint config](../stylelint-config/README.md) stops too, with or without an alpha after the `/` or as the last of two or four comma-separated arguments that is a literal number or percentage, or one `var()` whose fallbacks are `var()`s as a channel's are, `rgb(var(--…) / 50%)` and `rgba(var(--…), var(--…))` alike, and one `var()` that holds all three channels, `rgb(var(--…))`. Any other channel, such as `calc(255)`, `none` or a fallback such as `var(--…, 255 0 0)`, makes the color raw, as does any other alpha, such as `none` or `calc(1 - var(--…))`, and so do fallbacks nested nine levels deep or more. `currentColor`, `transparent`, `url()` references and colors inside CSS strings, such as `content: '"rgb(1 2 3)"'`, pass. Style sheets are the [Stylelint config](../stylelint-config/README.md)'s concern. The rule has no options.
+
+### no-raw-graphics
+
+Reports pictures that skip envUI's Graphic, the component for an application's own logos, icons and pictures, and envUI's icons:
+
+- a raw `<img>`, whose size comes from the file rather than envUI's steps:
+
+  ```text
+  Use envUI's Graphic instead of a raw <img>: import { Graphic } from '@envsemble/envui'. Its size comes from envUI's steps, not the file's: <Graphic src={logo} alt="Acme" size="md" />.
+  ```
+
+- a raw `<svg>` with a fixed `width`, `height` or `fill`, a static value such as `width="24"`, `height="2rem"` or `fill="#1a73e8"`; the message names the attributes it found:
+
+  ```text
+  A raw <svg width="24" height="24"> takes its size from the file: pass it to an icon slot, such as Button's startIcon, or wrap it in envUI's <Graphic alt="">: import { Graphic } from '@envsemble/envui'.
+  ```
+
+- an import from another icon package, `lucide-react`, `react-icons`, `@heroicons/react`, `@mui/icons-material`, `@tabler/icons-react`, `@phosphor-icons/react` or `phosphor-react`, or a path inside one, such as `react-icons/fa`, by `import`, `export … from`, `require()`, `import()` with a literal and TypeScript's `import … = require()`:
+
+  ```text
+  Use envUI's icons instead of lucide-react: import { IconSearch } from '@envsemble/envui/icons/Search'. For the app's own icons and logos, use Graphic: import { Graphic } from '@envsemble/envui'.
+  ```
+
+- a `<Graphic>` without `alt`:
+
+  ```text
+  Graphic needs alt: what the picture says, such as the company's name, or alt="" when the text beside it says it already.
+  ```
+
+- a margin on a `<Graphic>`, any `margin*` property of an object literal in its `style`, such as `marginInlineStart` or `'margin-left'`, which makes up for empty edges inside the file:
+
+  ```text
+  A margin on a Graphic makes up for the file's empty edges: trim the file once with npx envui-graphic <file>, and drop the margin.
+  ```
+
+A `Graphic` counts as envUI's when it is imported from `@envsemble/envui` or a module listed in [`reexportModules`](#settings), under any local name or through a namespace, or, when nothing in the file declares it, by its written name. Another library's or the application's own `Graphic` is not checked.
+
+What passes:
+
+- an svg whose size follows the text or its container and whose fill is the text color, as envUI's own icons write it, `width="1em" height="1em" fill="currentColor"`: sizes in `em`, `ex`, `ch`, `cap`, `ic`, `lh` or `%`, `auto` and `inherit`, and fills `currentColor`, `none`, `inherit` and `transparent`. A custom icon component written so is fine; one with `width="24" height="24"` is reported, even when it spreads props after them;
+- an svg with `width="0" height="0"`, which only holds definitions, such as gradients or filters, and one whose attributes are computed, as in `width={size}`;
+- an svg in an icon slot, a prop named `icon` or ending in `Icon`, such as `startIcon={<svg width="24" …>}`, whose slot sizes it, and one that is the child of a Graphic, `<Graphic alt=""><svg …></Graphic>`;
+- an `<img>` or svg that a part renders in place of its own element, through the `render` prop, as [no-html-elements](#no-html-elements) skips it: `<Avatar.Image render={<img … />} />`;
+- type-only imports, such as `import type { LucideProps } from 'lucide-react'`, which render nothing;
+- a Graphic that spreads props, which may supply `alt`, and a `style` that isn't an object literal, such as `style={styles.logo}`.
+
+Options:
+
+| Option  | Default | Meaning                                                                                                                                               |
+| ------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `allow` | `[]`    | Icon packages to allow, by the names above, such as `react-icons` for `react-icons/si` and its other paths. An unknown name is a configuration error. |
 
 ## Development
 

@@ -68,6 +68,7 @@ test('the package ships the plugin, its data and its documentation, and nothing 
     'src/rules/no-html-elements.js',
     'src/rules/no-inline-layout.js',
     'src/rules/no-raw-colors.js',
+    'src/rules/no-raw-graphics.js',
     'src/tokens.js',
     'src/utilities.js',
   ]);
@@ -83,7 +84,7 @@ test('an application lints with the installed recommended config', async () => {
     import { createRequire } from 'node:module';
     const location = createRequire(import.meta.url).resolve('@envsemble/eslint-plugin-envui');
     const code = "import { Alert } from '@envsemble/envui';\\n" +
-      "export const App = () => <form style={{ color: '#000', display: 'grid' }}><button /></form>;";
+      "export const App = () => <form style={{ color: '#000', display: 'grid' }}><button /><img src='logo.png' alt='' /></form>;";
     const messages = new Linter().verify(code, [envui.configs.recommended], 'App.jsx');
     console.log(JSON.stringify({ location, rules: messages.map((message) => message.ruleId ?? message.message) }));
   `,
@@ -97,5 +98,6 @@ test('an application lints with the installed recommended config', async () => {
     'envui/no-raw-colors',
     'envui/no-inline-layout',
     'envui/no-html-elements',
+    'envui/no-raw-graphics',
   ]);
 });

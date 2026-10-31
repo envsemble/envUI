@@ -96,6 +96,41 @@ export function resolveVariable(sourceCode, node, name) {
   return undefined;
 }
 
+/**
+ * What a JSX element name stands for when its first name is imported: the import's source, and
+ * the name that module exports, `Popover` for `<Popover>` or `<P>` imported as `Popover as P`,
+ * `Menu.Submenu` for `<Menu.Submenu>` or `<ui.Menu.Submenu>`. `name` is undefined for an import
+ * that names no export, such as a default import. `{}` for a local, and undefined for a name that
+ * nothing in the file declares.
+ */
+export function importedComponent(sourceCode, name) {
+  const members = [];
+  let root = name;
+  for (; root.type === 'JSXMemberExpression'; root = root.object)
+    members.unshift(root.property.name);
+  if (root.type !== 'JSXIdentifier') return undefined;
+  const variable = resolveVariable(sourceCode, root, root.name);
+  if (!variable?.defs.length) return undefined;
+  const definition = variable.defs.find((candidate) => candidate.type === 'ImportBinding');
+  if (!definition) return {};
+  const source = definition.parent.source?.value;
+  if (definition.node.type === 'ImportNamespaceSpecifier')
+    return { source, name: members.join('.') };
+  if (definition.node.type === 'ImportSpecifier')
+    return { source, name: [moduleExportName(definition.node.imported), ...members].join('.') };
+  return { source, name: undefined };
+}
+
+/** The name a style object's property sets: `display`, `backgroundColor` or `--accent`. */
+export function propertyName(property) {
+  const { key } = property;
+  if (!property.computed && key.type === 'Identifier') return key.name;
+  if (key.type === 'Literal') return String(key.value);
+  if (key.type === 'TemplateLiteral' && key.expressions.length === 0)
+    return key.quasis[0].value.cooked;
+  return undefined;
+}
+
 /** Whether a node is a function: a declaration, an expression or an arrow function. */
 export function isFunction(node) {
   return (

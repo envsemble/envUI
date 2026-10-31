@@ -1,5 +1,5 @@
 import { colorTokenSuggestion } from '../tokens.js';
-import { documentationUrl, jsxName, walk } from '../utilities.js';
+import { documentationUrl, jsxName, propertyName, walk } from '../utilities.js';
 
 /** The CSS named colors (CSS Color 4), besides transparent and currentcolor. */
 const namedColors = new Set(
@@ -172,16 +172,6 @@ function rawColors(text, property) {
     for (const [word] of value.matchAll(/(?<![\w-])[a-z]+(?![\w(-])/gi))
       if (namedColors.has(word.toLowerCase())) found.push(word);
   return found.map((color) => color.replaceAll(expressionStandIn, `\${…}`));
-}
-
-/** The name a style object's property sets: `color`, `backgroundColor` or `--accent`. */
-function propertyName(property) {
-  const { key } = property;
-  if (!property.computed && key.type === 'Identifier') return key.name;
-  if (key.type === 'Literal') return String(key.value);
-  if (key.type === 'TemplateLiteral' && key.expressions.length === 0)
-    return key.quasis[0].value.cooked;
-  return undefined;
 }
 
 const isStringLiteral = (node) => node.type === 'Literal' && typeof node.value === 'string';

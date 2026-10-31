@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import noHtmlElements from './rules/no-html-elements.js';
 import noInlineLayout from './rules/no-inline-layout.js';
 import noRawColors from './rules/no-raw-colors.js';
+import noRawGraphics from './rules/no-raw-graphics.js';
 
 const { name, version } = JSON.parse(
   readFileSync(new URL('../package.json', import.meta.url), 'utf8'),
@@ -14,6 +15,7 @@ const plugin = {
     'no-html-elements': noHtmlElements,
     'no-inline-layout': noInlineLayout,
     'no-raw-colors': noRawColors,
+    'no-raw-graphics': noRawGraphics,
   },
   configs: {},
 };
@@ -28,6 +30,7 @@ plugin.configs.recommended = {
     // A warning: plain CSS layout stays allowed where a primitive can't do what it needs.
     'envui/no-inline-layout': 'warn',
     'envui/no-raw-colors': 'error',
+    'envui/no-raw-graphics': 'error',
   },
 };
 
