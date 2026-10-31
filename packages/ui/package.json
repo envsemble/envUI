@@ -20,7 +20,11 @@
     "url": "git+https://github.com/envsemble/envUI.git",
     "directory": "packages/ui"
   },
+  "bin": {
+    "envui-graphic": "./bin/envui-graphic.js"
+  },
   "files": [
+    "bin",
     "dist",
     "README.md",
     "docs",

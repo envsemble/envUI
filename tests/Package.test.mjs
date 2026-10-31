@@ -794,12 +794,22 @@ test('the package includes scoped CSS, local fonts, branding and license notices
   assert.ok(tokens.tokens.length > 100, 'tokens.json lists the tokens');
   // The agent tooling of the prereleases is gone: agents read docs/, and the site serves the setup
   // skill and llms.txt.
-  for (const removed of ['bin', 'skills', 'manifest.json', 'llms.txt', 'llms-full.txt'])
+  for (const removed of ['skills', 'manifest.json', 'llms.txt', 'llms-full.txt'])
     assert.equal(existsSync(join(installedDirectory, removed)), false, removed);
   const installedManifest = JSON.parse(
     await readFile(join(installedDirectory, 'package.json'), 'utf8'),
   );
-  assert.equal(installedManifest.bin, undefined);
+  // The one command is envui-graphic, which trims a picture's empty edges; it loads sharp only
+  // when it runs, so an application without sharp installs and runs envUI as before, and the
+  // command says what to install.
+  assert.deepEqual(installedManifest.bin, { 'envui-graphic': './bin/envui-graphic.js' });
+  const graphicBin = join(installedDirectory, 'bin/envui-graphic.js');
+  assert.match(run(graphicBin, ['--help']), /^Usage: npx envui-graphic <file>/);
+  await writeFile(join(consumerDirectory, 'logo.png'), '');
+  assert.throws(
+    () => run(graphicBin, ['logo.png']),
+    /envui-graphic needs sharp to read pictures, and the project has none/,
+  );
   assert.match(
     await readFile(join(installedDirectory, 'licenses/Runtime-Dependencies-LICENSE.txt'), 'utf8'),
     /@base-ui\/react@1\.8\.0/,
