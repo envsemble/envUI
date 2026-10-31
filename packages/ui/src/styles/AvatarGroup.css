@@ -12,7 +12,7 @@
      place, which the component sets as --env-avatar-group-before, -after, -count-before and
      -count-after. */
   .env-avatar-group {
-    --env-avatar-group-size: 2rem;
+    --env-avatar-group-size: var(--env-picture-size-md);
     /* Spread, the gap between avatars; at rest, how far each avatar starts after the one under it,
        and how far the count lies under the last avatar. */
     --env-avatar-group-gap: calc(var(--env-avatar-group-size) * 0.15);
@@ -46,13 +46,13 @@
     isolation: isolate;
   }
   .env-avatar-group[data-size='sm'] {
-    --env-avatar-group-size: 1.5rem;
+    --env-avatar-group-size: var(--env-picture-size-sm);
   }
   .env-avatar-group[data-size='lg'] {
-    --env-avatar-group-size: 3rem;
+    --env-avatar-group-size: var(--env-picture-size-lg);
   }
   .env-avatar-group[data-size='xl'] {
-    --env-avatar-group-size: 5.5rem;
+    --env-avatar-group-size: var(--env-picture-size-xl);
   }
   .env-avatar-group[data-align='end'] {
     --env-avatar-group-gather: 1;

@@ -209,6 +209,10 @@
   --env-motion-ease: cubic-bezier(0.45, 0, 0.2, 1);
   --env-motion-ease-enter: cubic-bezier(0.05, 0.7, 0.1, 1);
   --env-motion-ease-exit: cubic-bezier(0.3, 0, 0.8, 0.15);
+  --env-picture-size-lg: 3rem;
+  --env-picture-size-md: 2rem;
+  --env-picture-size-sm: 1.5rem;
+  --env-picture-size-xl: 5.5rem;
   --env-radius-lg: 1rem;
   --env-radius-md: 0.75rem;
   --env-radius-none: 0;

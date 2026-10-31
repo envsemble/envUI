@@ -13,7 +13,7 @@
 
   /* Avatars, tooltips and bars reuse the shared palette and corner scale. */
   .env-avatar {
-    --env-avatar-size: 2rem;
+    --env-avatar-size: var(--env-picture-size-md);
     position: relative;
     display: inline-grid;
     place-items: center;
@@ -77,13 +77,13 @@
     --env-avatar-content-default: var(--env-color-fg-avatar-oat);
   }
   .env-avatar[data-size='sm'] {
-    --env-avatar-size: 1.5rem;
+    --env-avatar-size: var(--env-picture-size-sm);
   }
   .env-avatar[data-size='lg'] {
-    --env-avatar-size: 3rem;
+    --env-avatar-size: var(--env-picture-size-lg);
   }
   .env-avatar[data-size='xl'] {
-    --env-avatar-size: 5.5rem;
+    --env-avatar-size: var(--env-picture-size-xl);
   }
   .env-avatar-fallback {
     display: contents;

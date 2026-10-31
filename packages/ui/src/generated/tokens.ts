@@ -2276,6 +2276,50 @@ export const tokens = {
       'dark-high-contrast': 'cubic-bezier(0.3, 0, 0.8, 0.15)',
     },
   },
+  /** A picture beside a name with a second line, such as an account header. */
+  'picture.size-lg': {
+    cssVariable: '--env-picture-size-lg',
+    type: 'dimension',
+    values: {
+      light: '3rem',
+      dark: '3rem',
+      'light-high-contrast': '3rem',
+      'dark-high-contrast': '3rem',
+    },
+  },
+  /** A picture beside a name in a list, a comment or a toolbar: an avatar's default size. */
+  'picture.size-md': {
+    cssVariable: '--env-picture-size-md',
+    type: 'dimension',
+    values: {
+      light: '2rem',
+      dark: '2rem',
+      'light-high-contrast': '2rem',
+      'dark-high-contrast': '2rem',
+    },
+  },
+  /** A small picture, beside compact text such as a combobox option or the application's name in a top bar. */
+  'picture.size-sm': {
+    cssVariable: '--env-picture-size-sm',
+    type: 'dimension',
+    values: {
+      light: '1.5rem',
+      dark: '1.5rem',
+      'light-high-contrast': '1.5rem',
+      'dark-high-contrast': '1.5rem',
+    },
+  },
+  /** The largest picture, such as on a profile page or a sign-in screen. */
+  'picture.size-xl': {
+    cssVariable: '--env-picture-size-xl',
+    type: 'dimension',
+    values: {
+      light: '5.5rem',
+      dark: '5.5rem',
+      'light-high-contrast': '5.5rem',
+      'dark-high-contrast': '5.5rem',
+    },
+  },
   /** The full corner of a pill, such as a button, a field, a badge or a navigation item: half the tallest single-line control, the large control height or the touch height, whichever is more, so anything taller keeps the same corners and becomes a rounded rectangle. */
   'radius.full': {
     cssVariable: '--env-radius-full',
