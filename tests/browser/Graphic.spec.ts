@@ -13,12 +13,7 @@ async function length(page: Page, value: string) {
   }, value);
 }
 
-/** An element's box, and whether its center is the center of another's. */
-async function box(locator: Locator) {
-  const found = await locator.boundingBox();
-  expect(found).not.toBeNull();
-  return found!;
-}
+/** Whether one box is the size of another and centered on it. */
 function expectSameBox(
   inner: { x: number; y: number; width: number; height: number },
   outer: typeof inner,
@@ -29,6 +24,27 @@ function expectSameBox(
   expect(Math.abs(inner.y + inner.height / 2 - (outer.y + outer.height / 2))).toBeLessThan(0.5);
 }
 
+/**
+ * The boxes of an element and of the first element a selector finds inside it, measured together,
+ * so nothing moves between the two, such as text as its face loads.
+ */
+async function boxes(outer: Locator, selector: string) {
+  return outer.evaluate((element, css) => {
+    const rect = (node: Element) => {
+      const { x, y, width, height } = node.getBoundingClientRect();
+      return { x, y, width, height };
+    };
+    return [rect(element), rect(element.querySelector(css)!)] as const;
+  }, selector);
+}
+
+/** An element's box. */
+async function box(locator: Locator) {
+  const found = await locator.boundingBox();
+  expect(found).not.toBeNull();
+  return found!;
+}
+
 test.beforeEach(async ({ page }) => {
   await page.goto(`${fixtureUrl}/?fixture=graphics`);
   await expect(page.getByTestId('graphics')).toBeVisible();
@@ -37,6 +53,7 @@ test.beforeEach(async ({ page }) => {
   await page.waitForFunction(() =>
     [...document.querySelectorAll('img')].every((image) => image.complete),
   );
+  await page.evaluate(() => document.fonts.ready);
 });
 
 test("a graphic is its step's size whatever the file, with the picture contained and centered in it", async ({
@@ -53,12 +70,12 @@ test("a graphic is its step's size whatever the file, with the picture contained
     const expected = await length(page, value);
     for (const kind of ['png', 'svg-file', 'svg']) {
       const graphic = page.getByTestId(`${kind}-${size}`);
-      const outer = await box(graphic);
+      const [outer, inner] = await boxes(graphic, ':scope > *');
       expect(Math.abs(outer.width - expected), `${kind} ${size}`).toBeLessThan(0.5);
       expect(Math.abs(outer.height - expected), `${kind} ${size}`).toBeLessThan(0.5);
       // The img or svg fills the box, and object-fit or the viewBox contains the picture in it.
+      expectSameBox(inner, outer);
       const picture = graphic.locator(':scope > *');
-      expectSameBox(await box(picture), outer);
       expect(await picture.evaluate((element) => getComputedStyle(element).objectFit)).toBe(
         'contain',
       );
@@ -79,10 +96,11 @@ test('the text step is the size of the text around it, and fill takes its contai
   expect(Math.abs(text.width - fontSize)).toBeLessThan(0.5);
   expect(Math.abs(text.height - fontSize)).toBeLessThan(0.5);
 
-  const container = await box(page.getByTestId('graphic-fill-box'));
-  const fill = page.getByTestId('png-fill');
-  expectSameBox(await box(fill), container);
-  expectSameBox(await box(fill.locator('img')), container);
+  const container = page.getByTestId('graphic-fill-box');
+  const [area, fill] = await boxes(container, '.env-graphic');
+  expectSameBox(fill, area);
+  const [, image] = await boxes(container, '.env-graphic > img');
+  expectSameBox(image, area);
 });
 
 test('a graphic keeps its own colors, and tint="text" paints it in the text color', async ({
@@ -127,11 +145,10 @@ test("an icon slot sizes any child to the slot's icon size: an img, an svg or a 
 }) => {
   const icon = await length(page, 'var(--env-control-icon-size)');
   for (const testId of ['button-img', 'button-graphic', 'button-svg']) {
-    const slot = page.getByTestId(testId).locator('.env-icon');
-    const outer = await box(slot);
+    const [outer, inner] = await boxes(page.getByTestId(testId).locator('.env-icon'), ':scope > *');
     expect(Math.abs(outer.width - icon), testId).toBeLessThan(0.5);
     expect(Math.abs(outer.height - icon), testId).toBeLessThan(0.5);
-    expectSameBox(await box(slot.locator(':scope > *')), outer);
+    expectSameBox(inner, outer);
   }
   // A list row's start isn't an icon slot, but an icon or a picture in it takes a leading icon's
   // size there.
