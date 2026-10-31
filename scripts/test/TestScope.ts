@@ -82,6 +82,8 @@ export const aliases: Record<string, string[]> = {
   DensitySections: ['Scale'],
   MessageStrings: ['Messages'],
   Avatar: ['AvatarGroup'],
+  // The icon wrapper sizes whatever every icon slot holds, a Graphic's included.
+  Icon: ['Graphic', 'Button', 'IconButton', 'Skeleton'],
   Calendar: ['DatePicker'],
   calendarDays: ['DatePicker', 'TimePicker', 'MonthPicker', 'CalendarHeatmap'],
   PickerField: ['DatePicker', 'TimePicker', 'MonthPicker', 'PickerPopup'],

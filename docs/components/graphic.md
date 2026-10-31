@@ -178,7 +178,7 @@ import logo from './logo.svg';
 <Graphic src={logo} alt="Northwind" size="md" />
 <Button startIcon={<Graphic src={logo} alt="" />}>Sign in with Northwind</Button>
 <Graphic alt="" tint="text">
-  <IconPipeline />
+  <PipelineIcon />
 </Graphic>
 ```
 

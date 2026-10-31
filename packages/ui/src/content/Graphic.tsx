@@ -39,8 +39,11 @@ interface GraphicBaseProps
 
 /** A graphic from a file. */
 interface GraphicFileProps extends GraphicBaseProps {
-  /** The file's URL, such as an imported PNG, WebP, JPEG or SVG. */
-  src: string;
+  /**
+   * The file's URL, such as an imported PNG, WebP, JPEG or SVG. While it is undefined, such as
+   * before a chosen file is read, the box stays empty at its size.
+   */
+  src: string | undefined;
   children?: never;
 }
 
@@ -72,7 +75,7 @@ export function Graphic({
   ...props
 }: GraphicProps) {
   let picture: ReactNode = children;
-  if (src != null)
+  if (src !== undefined)
     picture =
       tint === 'text' ? (
         <span className="env-graphic-mask" style={{ maskImage: cssUrl(src) }} />

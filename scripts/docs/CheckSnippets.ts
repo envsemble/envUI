@@ -178,7 +178,13 @@ const browserAPIs = new Set([
  * component that is neither declared nor exported by envUI is reported, since it may be one envUI
  * renamed.
  */
-export const applicationComponents = new Set(['App', 'Summary', 'Activity', 'Volume']);
+export const applicationComponents = new Set([
+  'App',
+  'Summary',
+  'Activity',
+  'Volume',
+  'PipelineIcon',
+]);
 
 /** Whether an identifier names a component as a tag, or the namespace of one, such as <Foo.Bar>. */
 function isComponentTag(node: ts.Node): boolean {
