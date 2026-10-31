@@ -15,7 +15,7 @@ export const tokenGroups: { title: string; prefixes: string[]; component?: boole
   { title: 'Corners', prefixes: ['radius'] },
   {
     title: 'Sizes',
-    prefixes: ['control', 'field', 'row', 'tree', 'icon', 'title-bar', 'topbar'],
+    prefixes: ['control', 'field', 'row', 'tree', 'icon', 'picture', 'title-bar', 'topbar'],
   },
   { title: 'Motion', prefixes: ['motion'] },
   { title: 'States', prefixes: ['state'] },
