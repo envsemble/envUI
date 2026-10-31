@@ -16,6 +16,7 @@ export default function AppLogo() {
     <TopBar
       start={<Graphic src={logo} alt="" size="sm" />}
       title="Northwind"
+      style={{ inlineSize: '100%' }}
       actions={<AvatarButton name="Alex Morgan" />}
     />
   );

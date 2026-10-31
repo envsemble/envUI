@@ -188,7 +188,7 @@ import logo from './logo.svg';
 
 #### Trim a file once
 
-`npx envui-graphic <file>` crops a PNG, WebP or JPEG to its visible content, its transparent or one-color border, and fits an SVG's `viewBox` to its drawing. It writes the trimmed file next to the original, or into `--out <dir>`, and prints the Graphic to use. It needs `sharp` for PNG, WebP and JPEG: `npm install --save-dev sharp`.
+`npx envui-graphic <file>` crops a PNG, WebP or JPEG to its visible content, its transparent or one-color border, and fits an SVG's `viewBox` to its drawing. It writes the trimmed file next to the original, or into `--out <dir>`, and prints the Graphic to use. It reads the files with `sharp`, which envUI doesn't install: add it with `npm install --save-dev sharp`.
 
 ```sh
 npx envui-graphic src/assets/logo.png
