@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, DropZone, Column, Row, Text } from '@envsemble/envui';
+import { Button, DropZone, Column, Graphic, Row, Text } from '@envsemble/envui';
 
 const twoMegabytes = 2 * 1024 * 1024;
 
@@ -49,7 +49,7 @@ export default function LogoUpload() {
       />
       {logo && (
         <Row wrap align="center" gap={4}>
-          <img src={preview} alt="" width={48} height={48} style={{ borderRadius: '0.5rem' }} />
+          <Graphic src={preview} alt="" size="lg" />
           <Text render={<span />}>{logo.name}</Text>
           {/* Replace opens the zone's file picker while the zone is hidden. */}
           <Button variant="secondary" onClick={() => picker.current?.click()}>

@@ -74,6 +74,7 @@ On a page, Compose holds the code, and Accessibility's **You provide** what the 
 - [DescriptionList](components/description-list.md)
 - [Badge](components/badge.md)
 - [Avatar](components/avatar.md)
+- [Graphic](components/graphic.md)
 - [Meter](components/meter.md)
 - [Rating](components/rating.md)
 - [CalendarHeatmap](components/calendar-heatmap.md)

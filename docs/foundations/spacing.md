@@ -252,19 +252,20 @@ The catalogue shows four kinds of corner; small marks are a fifth, for code. The
 
 At the default 16 px root; every value is a token in rem.
 
-| Token                                                          | Comfortable           | Compact               |
-| -------------------------------------------------------------- | --------------------- | --------------------- |
-| `--env-control-height-sm` / `-md` / `-lg`                      | 32 / 40 / 48          | 26 / 32 / 38          |
-| `--env-row-height` (menu, Select and Combobox rows)            | 36                    | 28                    |
-| `--env-row-padding-block-xs` / `-sm` / `-md` / `-lg`           | 2 / 4 / 8 / 12        | 2 / 3 / 4 / 6         |
-| `--env-space-1` … `--env-space-9`                              | 4, 8, 12, 16, 24 … 64 | 4, 6, 10, 12, 20 … 52 |
-| `--env-font-size-caption` / `-body-small` / `-label`           | 12 / 14 / 14          | 11 / 12 / 13          |
-| `--env-font-size-body` / `-heading-small` / `-heading`         | 15 / 16 / 18          | 13 / 14 / 16          |
-| `--env-icon-size-sm` / `-md` / `-lg`                           | 16 / 18 / 20          | 16 / 16 / 18          |
-| `--env-radius-sm` / `--env-radius-lg` / `--env-radius-surface` | 8 / 16 / 28           | 6 / 12 / 22           |
-| `--env-field-floating-height`                                  | 56                    | 44                    |
-| `--env-top-bar-height` / `--env-title-bar-height`              | 52 / 40               | 42 / 32               |
-| `--env-control-target-min` / `--env-control-height-touch`      | 24 / 44               | 24 / 44               |
+| Token                                                             | Comfortable           | Compact               |
+| ----------------------------------------------------------------- | --------------------- | --------------------- |
+| `--env-control-height-sm` / `-md` / `-lg`                         | 32 / 40 / 48          | 26 / 32 / 38          |
+| `--env-row-height` (menu, Select and Combobox rows)               | 36                    | 28                    |
+| `--env-row-padding-block-xs` / `-sm` / `-md` / `-lg`              | 2 / 4 / 8 / 12        | 2 / 3 / 4 / 6         |
+| `--env-space-1` … `--env-space-9`                                 | 4, 8, 12, 16, 24 … 64 | 4, 6, 10, 12, 20 … 52 |
+| `--env-font-size-caption` / `-body-small` / `-label`              | 12 / 14 / 14          | 11 / 12 / 13          |
+| `--env-font-size-body` / `-heading-small` / `-heading`            | 15 / 16 / 18          | 13 / 14 / 16          |
+| `--env-icon-size-sm` / `-md` / `-lg`                              | 16 / 18 / 20          | 16 / 16 / 18          |
+| `--env-picture-size-sm` / `-md` / `-lg` / `-xl` (Avatar, Graphic) | 24 / 32 / 48 / 88     | 24 / 32 / 48 / 88     |
+| `--env-radius-sm` / `--env-radius-lg` / `--env-radius-surface`    | 8 / 16 / 28           | 6 / 12 / 22           |
+| `--env-field-floating-height`                                     | 56                    | 44                    |
+| `--env-top-bar-height` / `--env-title-bar-height`                 | 52 / 40               | 42 / 32               |
+| `--env-control-target-min` / `--env-control-height-touch`         | 24 / 44               | 24 / 44               |
 
 #### Touch
 

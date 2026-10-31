@@ -85,6 +85,7 @@ Run the project's type check or build and its lint, then start the app and confi
 - Don't change the app's existing UI as part of setup.
 - Take envUI's API from the docs and type declarations in `node_modules/@envsemble/envui/`, not from memory.
 - Import icons one by one: `Icon<Name>` from `@envsemble/envui/icons/<Name>`, such as `IconAdd` from `@envsemble/envui/icons/Add`.
+- Show the app's own logos, icons and pictures with `Graphic`, never a raw `<img>` or `<svg>`, and trim a new file once with `npx envui-graphic <file>`.
 
 ## After setup
 
