@@ -434,12 +434,17 @@ test("neighbouring catalogue pages' banners show different drawings, each page a
   );
 });
 
-test('the Icons page credits Material Symbols with their license, and the footer does not', async ({
+test('the Icons page credits Material Symbols with their license at its top, and the footer does not', async ({
   page,
 }) => {
   await page.goto(`${siteDevUrl}/foundations/icons`);
-  const credit = page.locator('.catalogue-icons-credit');
-  await expect(credit.getByRole('heading', { name: 'Where the icons come from' })).toBeVisible();
+  const credit = page.locator('.catalogue-icons-credit .env-alert');
+  await expect(credit).toHaveAttribute('data-tone', 'info');
+  await expect(credit).toContainText("envUI doesn't draw icons of its own");
+  // Under the banner, before the page's first section.
+  const first = page.locator('.site-section-group').first();
+  const [creditBox, firstBox] = [await credit.boundingBox(), await first.boundingBox()];
+  expect(creditBox!.y).toBeLessThan(firstBox!.y);
   await expect(credit.getByRole('link', { name: 'Material Symbols' })).toHaveAttribute(
     'href',
     'https://m3.material.io/styles/icons',

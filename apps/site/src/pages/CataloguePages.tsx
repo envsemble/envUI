@@ -1,4 +1,4 @@
-import { Column } from '@envsemble/envui';
+import { Alert, Column, Link } from '@envsemble/envui';
 import { PageHeader } from '../layout/PageHeader';
 import { catalogueTrail } from '../navigation/CatalogueTrail';
 import type { RoutePage } from '../navigation/SiteRoutes';
@@ -7,7 +7,6 @@ import { MetadataBadges, TemplateContent } from '../template/TemplateContent';
 import { Catalogue } from './Catalogue';
 import { FoundationCatalogue } from './FoundationCatalogue';
 import { PatternCatalogue } from './PatternCatalogue';
-import { Documentation } from './Documentation';
 import { useDocument } from './PageContent';
 
 /**
@@ -64,15 +63,23 @@ export function PatternPage({ page }: { page: RoutePage }) {
 }
 
 /**
- * The credit for the icons, under the Icons page's list: where they come from and their license,
- * linked. It is on this page alone. The package carries the license and its notice
- * (packages/ui/THIRD_PARTY_NOTICES.md).
+ * The credit for the icons, at the top of the Icons page, on this page alone: envUI draws no icons
+ * of its own, and uses Material Design's, under their license. The package carries the license and
+ * its notice (packages/ui/THIRD_PARTY_NOTICES.md).
  */
-const iconsCredit = [
-  '## Where the icons come from',
-  '',
-  "envUI's icons are [Material Symbols](https://m3.material.io/styles/icons), from Material Design, in their Rounded style. They are free to use under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0), and the package includes the license.",
-].join('\n');
+function IconsCredit() {
+  return (
+    <div className="site-article catalogue-icons-credit">
+      <Alert title="The icons are Material Design's">
+        envUI doesn't draw icons of its own: it uses{' '}
+        <Link href="https://m3.material.io/styles/icons">Material Symbols</Link>, from Material
+        Design, in their Rounded style. They are free to use under the{' '}
+        <Link href="https://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0</Link>, and the
+        package includes the license.
+      </Alert>
+    </div>
+  );
+}
 
 /**
  * A foundation's page in the catalogue: how envUI handles its subject, in pictures and plain
@@ -89,13 +96,9 @@ export function FoundationPage({ page }: { page: RoutePage }) {
         subject={document.id}
         meta={<OtherPartButton page={page} />}
       />
+      {document.id === 'icons' && <IconsCredit />}
       {/* A foundation is its Markdown, with its figures in place. */}
       <TemplateContent document={document} related={false} />
-      {document.id === 'icons' && (
-        <Column gap={4} className="site-article catalogue-foundation-notes catalogue-icons-credit">
-          <Documentation markdown={iconsCredit} path={document.path} />
-        </Column>
-      )}
     </>
   );
 }
