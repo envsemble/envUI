@@ -2285,11 +2285,11 @@
       "parts": [
         {
           "class": "env-graphic",
-          "description": "The box at the graphic's size, which contains and centres the picture."
+          "description": "The box at the graphic's size, which contains and centers the picture, or which it covers."
         },
         {
           "class": "env-graphic-image",
-          "description": "A file's picture in its own colours."
+          "description": "A file's picture in its own colors."
         },
         {
           "class": "env-graphic-mask",
@@ -2297,6 +2297,24 @@
         }
       ],
       "states": [
+        {
+          "attribute": "data-aspect",
+          "values": [
+            ""
+          ],
+          "parts": [
+            "env-graphic"
+          ]
+        },
+        {
+          "attribute": "data-fit",
+          "values": [
+            "cover"
+          ],
+          "parts": [
+            "env-graphic"
+          ]
+        },
         {
           "attribute": "data-size",
           "values": [

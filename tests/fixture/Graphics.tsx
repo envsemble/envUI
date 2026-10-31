@@ -1,4 +1,13 @@
-import { Button, Graphic, List, Text, type GraphicSize } from '@envsemble/envui';
+import {
+  Button,
+  Graphic,
+  List,
+  PageHeader,
+  Text,
+  TopBar,
+  type GraphicSize,
+} from '@envsemble/envui';
+import { IconFolder } from '@envsemble/envui/icons/Folder';
 
 // Pictures whose files are wider than tall and far larger than any step, so a box that took its
 // size from the file would show it: a 96 by 48 px PNG and a 192 by 96 px SVG.
@@ -46,6 +55,15 @@ export function GraphicsFixture() {
       <div data-testid="graphic-fill-box" style={{ inlineSize: '14rem', blockSize: '6rem' }}>
         <Graphic src={png} alt="" size="fill" data-testid="png-fill" />
       </div>
+      {/* A container with no height of its own: fill takes its width and its height from the
+          aspect, or a square for a file in the text color. */}
+      <div data-testid="graphic-fill-auto" style={{ inlineSize: '16rem' }}>
+        <Graphic src={png} alt="" size="fill" aspect="16/9" fit="cover" data-testid="fill-aspect" />
+        <div>
+          <Graphic src={svg} alt="" size="fill" tint="text" data-testid="fill-mask" />
+        </div>
+      </div>
+      <Graphic src={png} alt="" size="lg" aspect="4/3" fit="cover" data-testid="step-aspect" />
       <div style={{ color: 'rgb(200, 0, 0)' }}>
         <Graphic alt="Acme" size="md" data-testid="own-colors">
           <IconPipeline />
@@ -54,6 +72,14 @@ export function GraphicsFixture() {
           <IconPipeline />
         </Graphic>
         <Graphic src={svg} alt="Acme" size="md" tint="text" data-testid="tint-file" />
+        <Graphic alt="" size="md" tint="text" data-testid="tint-masked">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <mask id="fixture-graphic-mask">
+              <rect width="24" height="24" fill="#fff" />
+            </mask>
+            <rect width="24" height="24" fill="#000" mask="url(#fixture-graphic-mask)" />
+          </svg>
+        </Graphic>
       </div>
       <div>
         <Graphic src={png} alt="Acme" size="md" data-testid="named" />
@@ -94,6 +120,16 @@ export function GraphicsFixture() {
           data-testid="list-graphic"
         />
       </List.Root>
+      <TopBar
+        title="Acme"
+        start={<Graphic src={png} alt="" data-testid="top-bar-graphic" />}
+        data-testid="top-bar"
+      />
+      <TopBar title="Folders" start={<IconFolder />} data-testid="top-bar-symbol" />
+      <PageHeader
+        title="Acme"
+        start={<Graphic src={png} alt="" data-testid="page-header-graphic" />}
+      />
     </section>
   );
 }

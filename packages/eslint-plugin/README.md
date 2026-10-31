@@ -213,7 +213,7 @@ Reports pictures that skip envUI's Graphic, the component for an application's o
 - a raw `<img>`, whose size comes from the file rather than envUI's steps:
 
   ```text
-  Use envUI's Graphic instead of a raw <img>: import { Graphic } from '@envsemble/envui'. Its size comes from envUI's steps, not the file's: <Graphic src={logo} alt="Acme" size="md" />.
+  Use envUI's Graphic instead of a raw <img>: import { Graphic } from '@envsemble/envui'. Its size comes from envUI's steps, not the file's: <Graphic src={logo} alt="Acme" size="md" />, or for a photo <Graphic src={photo} alt="…" size="fill" aspect="16/9" fit="cover" />.
   ```
 
 - a raw `<svg>` with a fixed `width`, `height` or `fill`, a static value such as `width="24"`, `height="2rem"` or `fill="#1a73e8"`; the message names the attributes it found:
@@ -221,6 +221,14 @@ Reports pictures that skip envUI's Graphic, the component for an application's o
   ```text
   A raw <svg width="24" height="24"> takes its size from the file: pass it to an icon slot, such as Button's startIcon, or wrap it in envUI's <Graphic alt="">: import { Graphic } from '@envsemble/envui'.
   ```
+
+  A component's own svg, one that spreads the props it is given, as in `<svg width="24" height="24" {...props}>`, or the root that a function component, a function whose name or variable is capitalized, returns, is fixed where it is written instead:
+
+  ```text
+  A component's <svg width="24" height="24"> takes its size from the file: write width="1em" height="1em", or leave them out, so it follows its slot or the text.
+  ```
+
+  For a fixed `fill`, it says to write `fill="currentColor"`, so it takes the text color.
 
 - an import from another icon package, `lucide-react`, `react-icons`, `@heroicons/react`, `@mui/icons-material`, `@tabler/icons-react`, `@phosphor-icons/react` or `phosphor-react`, or a path inside one, such as `react-icons/fa`, by `import`, `export … from`, `require()`, `import()` with a literal and TypeScript's `import … = require()`:
 
@@ -234,7 +242,7 @@ Reports pictures that skip envUI's Graphic, the component for an application's o
   Graphic needs alt: what the picture says, such as the company's name, or alt="" when the text beside it says it already.
   ```
 
-- a margin on a `<Graphic>`, any `margin*` property of an object literal in its `style`, such as `marginInlineStart` or `'margin-left'`, which makes up for empty edges inside the file:
+- a margin on a `<Graphic>`, any `margin*` property of an object literal in its `style`, such as `marginInlineStart` or `'margin-left'`, which makes up for empty edges inside the file; a margin of zero, such as `margin: 0` or `'0px'`, passes:
 
   ```text
   A margin on a Graphic makes up for the file's empty edges: trim the file once with npx envui-graphic <file>, and drop the margin.
@@ -244,9 +252,10 @@ A `Graphic` counts as envUI's when it is imported from `@envsemble/envui` or a m
 
 What passes:
 
-- an svg whose size follows the text or its container and whose fill is the text color, as envUI's own icons write it, `width="1em" height="1em" fill="currentColor"`: sizes in `em`, `ex`, `ch`, `cap`, `ic`, `lh` or `%`, `auto` and `inherit`, and fills `currentColor`, `none`, `inherit` and `transparent`. A custom icon component written so is fine; one with `width="24" height="24"` is reported, even when it spreads props after them;
+- an svg whose size follows the text or its container and whose fill is the text color, as envUI's own icons write it, `width="1em" height="1em" fill="currentColor"`: sizes in `em`, `ex`, `ch`, `cap`, `ic`, `lh` or `%`, `auto` and `inherit`, and fills `currentColor`, `none`, `inherit` and `transparent`. A custom icon component written that way passes;
 - an svg with `width="0" height="0"`, which only holds definitions, such as gradients or filters, and one whose attributes are computed, as in `width={size}`;
-- an svg in an icon slot, a prop named `icon` or ending in `Icon`, such as `startIcon={<svg width="24" …>}`, whose slot sizes it, and one that is the child of a Graphic, `<Graphic alt=""><svg …></Graphic>`;
+- an svg in an icon slot, whose slot sizes it: a prop or an object's property named `icon`, `start` or ending in `Icon`, such as `startIcon={<svg width="24" …>}`, List.Item's `start`, or `icon: <svg …>` in an array of destinations;
+- an svg that is the child of a Graphic, directly or through a condition: `<Graphic alt=""><svg …></Graphic>`, `<Graphic alt="">{dark ? <svg …> : <svg …>}</Graphic>` or `{show && <svg …>}`;
 - an `<img>` or svg that a part renders in place of its own element, through the `render` prop, as [no-html-elements](#no-html-elements) skips it: `<Avatar.Image render={<img … />} />`;
 - type-only imports, such as `import type { LucideProps } from 'lucide-react'`, which render nothing;
 - a Graphic that spreads props, which may supply `alt`, and a `style` that isn't an object literal, such as `style={styles.logo}`.

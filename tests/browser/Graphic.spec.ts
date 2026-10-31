@@ -103,6 +103,55 @@ test('the text step is the size of the text around it, and fill takes its contai
   expectSameBox(image, area);
 });
 
+test('fill is a block that takes its height from an aspect, and a step with an aspect is wider', async ({
+  page,
+}) => {
+  const width = await length(page, '16rem');
+  const [, aspect] = await boxes(
+    page.getByTestId('graphic-fill-auto'),
+    '[data-testid="fill-aspect"]',
+  );
+  expect(Math.abs(aspect.width - width)).toBeLessThan(0.5);
+  expect(Math.abs(aspect.height - (width * 9) / 16)).toBeLessThan(0.5);
+  expect(
+    await page.getByTestId('fill-aspect').evaluate((element) => getComputedStyle(element).display),
+  ).toBe('grid');
+  expect(
+    await page
+      .getByTestId('fill-aspect')
+      .locator('img')
+      .evaluate((element) => getComputedStyle(element).objectFit),
+  ).toBe('cover');
+  // A file in the text color has no shape of its own to give, so it is square, never 0 tall.
+  const [, mask] = await boxes(page.getByTestId('fill-mask'), '.env-graphic-mask');
+  expect(Math.abs(mask.width - width)).toBeLessThan(0.5);
+  expect(Math.abs(mask.height - width)).toBeLessThan(0.5);
+  const step = await box(page.getByTestId('step-aspect'));
+  const lg = await length(page, 'var(--env-picture-size-lg)');
+  expect(Math.abs(step.height - lg)).toBeLessThan(0.5);
+  expect(Math.abs(step.width - (lg * 4) / 3)).toBeLessThan(0.5);
+});
+
+test("TopBar's and PageHeader's start give a graphic a picture's size, and leave envUI's symbols be", async ({
+  page,
+}) => {
+  for (const [testId, token] of [
+    ['top-bar-graphic', 'var(--env-picture-size-sm)'],
+    ['page-header-graphic', 'var(--env-picture-size-md)'],
+  ] as const) {
+    const expected = await length(page, token);
+    const graphic = await box(page.getByTestId(testId));
+    expect(Math.abs(graphic.width - expected), testId).toBeLessThan(0.5);
+    expect(Math.abs(graphic.height - expected), testId).toBeLessThan(0.5);
+  }
+  const symbol = page.getByTestId('top-bar-symbol').locator('.env-top-bar-start > svg');
+  const [size, fontSize] = await symbol.evaluate((element) => [
+    element.getBoundingClientRect().width,
+    parseFloat(getComputedStyle(element).fontSize),
+  ]);
+  expect(Math.abs(size - fontSize)).toBeLessThan(0.5);
+});
+
 test('a graphic keeps its own colors, and tint="text" paints it in the text color', async ({
   page,
 }) => {
@@ -113,6 +162,16 @@ test('a graphic keeps its own colors, and tint="text" paints it in the text colo
       .evaluate((element) => getComputedStyle(element).fill);
   expect(await fillOf('own-colors')).toBe('rgb(0, 0, 0)');
   expect(await fillOf('tint-svg')).toBe('rgb(200, 0, 0)');
+  // What only shapes a picture, such as a mask, keeps its own paint.
+  const masked = page.getByTestId('tint-masked');
+  expect(
+    await masked.locator('mask rect').evaluate((element) => getComputedStyle(element).fill),
+  ).toBe('rgb(255, 255, 255)');
+  expect(
+    await masked
+      .locator(':scope > svg > rect')
+      .evaluate((element) => getComputedStyle(element).fill),
+  ).toBe('rgb(200, 0, 0)');
   const mask = page.getByTestId('tint-file').locator('.env-graphic-mask');
   await expect(page.getByTestId('tint-file').locator('img')).toHaveCount(0);
   const painted = await mask.evaluate((element) => {

@@ -36,9 +36,26 @@
   .env-graphic[data-size='xl'] {
     --env-graphic-size: var(--env-picture-size-xl);
   }
+  /* Fill is a block of its container's width, and of its height where the container has a
+     definite one; where it has none, the height comes from the aspect, or from an img's own shape. A
+     file in the text color has no shape of its own to give, so without an aspect it is square. */
   .env-graphic[data-size='fill'] {
+    display: grid;
     inline-size: 100%;
     block-size: 100%;
+    vertical-align: top;
+  }
+  .env-graphic[data-size='fill']:has(> .env-graphic-mask) {
+    aspect-ratio: 1;
+  }
+  /* An aspect, set as the box's aspect-ratio: a step's size is its height and the width follows; a
+     fill's width is the container's and the height follows. */
+  .env-graphic[data-aspect] {
+    inline-size: auto;
+  }
+  .env-graphic[data-size='fill'][data-aspect] {
+    inline-size: 100%;
+    block-size: auto;
   }
   .env-graphic > * {
     display: block;
@@ -46,20 +63,32 @@
     block-size: 100%;
     object-fit: contain;
   }
+  /* Cover fills the whole box and crops what overflows, for a photo or a screenshot. */
+  .env-graphic[data-fit='cover'] > * {
+    object-fit: cover;
+  }
+  .env-graphic[data-fit='cover'] > .env-graphic-mask {
+    mask-size: cover;
+  }
   /* Its own colors: an SVG without colors of its own draws in the SVG default, black, rather than
      the fill an icon slot around it passes down. */
   .env-graphic:not([data-tint]) {
     fill: initial;
     stroke: initial;
   }
-  /* In the text color: an SVG's painted shapes take currentColor; a file is painted through a mask
-     of its shape. */
+  /* In the text color: an SVG's painted shapes take currentColor, but not what only shapes or
+     paints them, such as a mask, a clip path or a pattern; a file is painted through a mask of its
+     shape. */
   .env-graphic[data-tint='text'] > svg:not([fill='none']),
-  .env-graphic[data-tint='text'] > svg [fill]:not([fill='none']) {
+  .env-graphic[data-tint='text']
+    > svg
+    [fill]:not([fill='none'], :is(defs, mask, clipPath, pattern, marker, symbol) *) {
     fill: currentColor;
   }
   .env-graphic[data-tint='text'] > svg[stroke]:not([stroke='none']),
-  .env-graphic[data-tint='text'] > svg [stroke]:not([stroke='none']) {
+  .env-graphic[data-tint='text']
+    > svg
+    [stroke]:not([stroke='none'], :is(defs, mask, clipPath, pattern, marker, symbol) *) {
     stroke: currentColor;
   }
   .env-graphic-mask {

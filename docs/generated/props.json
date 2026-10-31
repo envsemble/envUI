@@ -3363,7 +3363,7 @@
     "Graphic": {
       "kind": "component",
       "source": "packages/ui/src/content/Graphic.tsx",
-      "description": "An application's own logo, icon or picture, from a file or an SVG component, at one of envUI's sizes: contained and centered in its box, never stretched, and never at the file's own size.",
+      "description": "An application's own logo, icon or picture, from a file or an SVG component, at one of envUI's sizes: contained and centered in its box, or covering it for a photo, never stretched, and never at the file's own size.",
       "props": [
         {
           "name": "src",
@@ -3388,7 +3388,20 @@
           "type": "'text' | 'icon' | 'sm' | 'md' | 'lg' | 'xl' | 'fill'",
           "required": false,
           "default": "'icon'",
-          "description": "The box the picture is contained and centered in: `text` 1 em, in a line of text; `icon` the icon size of the slot it sits in, such as a button's, else a control's 1 rem; `sm` 1.5 rem, `md` 2 rem, `lg` 3 rem and `xl` 5.5 rem, Avatar's sizes; `fill` the whole of its container. Its size never comes from the file."
+          "description": "The box the picture is contained and centered in: `text` 1 em, in a line of text; `icon` the icon size of the slot it sits in, such as a button's, else a control's 1 rem; `sm` 1.5 rem, `md` 2 rem, `lg` 3 rem and `xl` 5.5 rem, Avatar's sizes; `fill` a block of its container's width, and of its height where the container has a definite one. Its size never comes from the file."
+        },
+        {
+          "name": "aspect",
+          "type": "string | number",
+          "required": false,
+          "description": "The box's shape as a ratio of width to height, such as `\"16/9\"` or `1.5`, for a photo, a screenshot or a thumbnail: a step's size is then its height, and a fill takes its height from its width, so it needs no height from its container. Without it the box is square, or a fill the container's box."
+        },
+        {
+          "name": "fit",
+          "type": "'contain' | 'cover'",
+          "required": false,
+          "default": "'contain'",
+          "description": "`contain` shows the whole picture inside the box; `cover` fills the box and crops what overflows, for a photo or a screenshot. It applies to a file; an SVG component is contained."
         },
         {
           "name": "tint",
@@ -3556,7 +3569,7 @@
     "Icon": {
       "kind": "component",
       "source": "packages/ui/src/Icon.tsx",
-      "description": "Shared SVG defaults; custom icons may supply their own viewBox and children.",
+      "description": "The SVG that envUI's symbols render: 1 em, `currentColor`, and hidden from assistive technology unless labelled. An application's own icons and logos go in Graphic, as a file or an SVG component inside it.",
       "props": [
         {
           "name": "label",

@@ -5,7 +5,9 @@
 // sharp, which envUI doesn't install: the application adds it as a dev dependency to run this.
 
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { createRequire } from 'node:module';
 import { basename, dirname, extname, join, relative, resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
 
 const usage = `Usage: npx envui-graphic <file>... [--out <dir>]
 
@@ -39,15 +41,40 @@ export function parseArguments(args) {
   return { help: false, files, out };
 }
 
-/** sharp, loaded only when a file needs it, with what to do when the application lacks it. */
-async function loadSharp() {
-  try {
-    return (await import('sharp')).default;
-  } catch {
+/**
+ * Where sharp is: the project's own, from the folder the command runs in, else one this package
+ * can reach, such as beside it in a workspace. Undefined when neither finds it.
+ */
+function findSharp(directory) {
+  const finders = [
+    () => pathToFileURL(createRequire(join(directory, 'package.json')).resolve('sharp')).href,
+    () => import.meta.resolve('sharp'),
+  ];
+  for (const find of finders) {
+    try {
+      return find();
+    } catch {
+      // Not there; try the next.
+    }
+  }
+  return undefined;
+}
+
+/**
+ * sharp, loaded only when the command runs. Without it, the command says what to install; when it
+ * is there but fails to load, such as a native binary for another platform, it says why.
+ */
+export async function loadSharp(directory = process.cwd()) {
+  const url = findSharp(directory);
+  if (!url)
     throw new UsageError(
       'envui-graphic needs sharp to read pictures, and the project has none. Install it as a dev ' +
         'dependency, such as npm install --save-dev sharp, then run envui-graphic again.',
     );
+  try {
+    return (await import(url)).default;
+  } catch (error) {
+    throw new UsageError(`envui-graphic found sharp but couldn't load it: ${error.message}`);
   }
 }
 
@@ -125,18 +152,41 @@ function paintedBounds(data, width, height) {
 }
 
 /**
+ * Where an SVG's root element starts and ends, and its tag: the first <svg> outside comments,
+ * CDATA sections, the doctype and processing instructions, which are blanked out before searching,
+ * so their text keeps its place. An attribute's quoted value may hold a >.
+ */
+export function rootTag(source) {
+  const blanked = source.replace(
+    /<!--[\s\S]*?-->|<!\[CDATA\[[\s\S]*?\]\]>|<!DOCTYPE(?:[^[>]|\[[\s\S]*?\])*>|<\?[\s\S]*?\?>/gi,
+    (text) => ' '.repeat(text.length),
+  );
+  const match = /<svg\b(?:[^>"']|"[^"]*"|'[^']*')*>/i.exec(blanked);
+  if (!match) return undefined;
+  const start = match.index;
+  const end = start + match[0].length;
+  return { start, end, tag: source.slice(start, end) };
+}
+
+/** The source with its root tag replaced by another. */
+const withRoot = (source, root, tag) => source.slice(0, root.start) + tag + source.slice(root.end);
+
+/**
  * An SVG with its viewBox fitted to its drawing: it is rendered with its viewBox's longest side at
  * 4096 px, and the box of its painted pixels is mapped back to the viewBox's units, so the fit is
- * within about 1/4096 of the picture, strokes, transforms and filters included. A width and a height on the root are removed, since a Graphic gives the size.
+ * within about 1/4096 of the picture, strokes, transforms and filters included. A width and a
+ * height on the root are removed, since a Graphic gives the size.
  */
 export async function trimSvg(source, sharp) {
-  const root = source.match(/<svg\b[^>]*>/i)?.[0];
-  if (!root) throw new UsageError('it has no <svg> element.');
+  const found = rootTag(source);
+  if (!found) throw new UsageError('it has no <svg> element.');
+  const root = found.tag;
   const [x, y, width, height] = viewBoxOf(root);
   const scale = measureSize / Math.max(width, height);
   const pixels = { width: Math.ceil(width * scale), height: Math.ceil(height * scale) };
-  const measured = source.replace(
-    root,
+  const measured = withRoot(
+    source,
+    found,
     withAttributes(root, {
       viewBox: [x, y, width, height].join(' '),
       width: pixels.width,
@@ -169,22 +219,30 @@ export async function trimSvg(source, sharp) {
   });
   return {
     unchanged,
-    output: Buffer.from(source.replace(root, trimmedRoot)),
+    output: Buffer.from(withRoot(source, found, trimmedRoot)),
     before: `viewBox ${[x, y, width, height].map(format).join(' ')}`,
     after: `viewBox ${fitted.map(format).join(' ')}`,
   };
 }
 
+/** The quality a JPEG or WebP is written at again after cropping, which sharp can't read back. */
+export const reencodeQuality = 95;
+
 /**
  * A PNG, WebP or JPEG cropped to its visible content: sharp's trim, which takes away a border of
- * the top-left pixel's color, transparent or not, in the same format.
+ * the top-left pixel's color, transparent or not, in the same format, with its metadata, its
+ * orientation and color profile included. A PNG stays lossless; a JPEG or WebP is encoded again,
+ * at quality 95, and says so.
  */
 export async function trimRaster(source, sharp) {
-  const image = sharp(source);
-  const { width, height } = await image.metadata();
-  const { data, info } = await sharp(source).trim().toBuffer({ resolveWithObject: true });
+  const { width, height, format } = await sharp(source).metadata();
+  let image = sharp(source).trim().keepMetadata();
+  if (format === 'jpeg') image = image.jpeg({ quality: reencodeQuality });
+  if (format === 'webp') image = image.webp({ quality: reencodeQuality });
+  const { data, info } = await image.toBuffer({ resolveWithObject: true });
   return {
     unchanged: info.width === width && info.height === height,
+    reencoded: format === 'jpeg' || format === 'webp',
     output: data,
     before: `${width} × ${height} px`,
     after: `${info.width} × ${info.height} px`,
@@ -204,11 +262,16 @@ export function importName(file) {
   return /^[A-Za-z]/.test(name) ? name : `image${name[0]?.toUpperCase() ?? ''}${name.slice(1)}`;
 }
 
-/** Where a trimmed file goes: into --out under its own name, else beside it as <name>-trimmed. */
+/**
+ * Where a trimmed file goes: into --out under its own name, else beside it as <name>-trimmed. It
+ * never replaces the file itself: where --out is the file's own folder, it takes the suffix too.
+ */
 export function outputPath(file, out) {
-  if (out) return join(out, basename(file));
   const extension = extname(file);
-  return join(dirname(file), `${basename(file, extension)}-trimmed${extension}`);
+  const suffixed = `${basename(file, extension)}-trimmed${extension}`;
+  if (!out) return join(dirname(file), suffixed);
+  const target = join(out, basename(file));
+  return resolve(target) === resolve(file) ? join(out, suffixed) : target;
 }
 
 /** The lines that tell how to show a file with Graphic. */
@@ -253,6 +316,10 @@ async function trimFile(file, out, sharp) {
   await mkdir(resolve(dirname(target)), { recursive: true });
   await writeFile(resolve(target), result.output);
   console.log(`Trimmed ${file}, ${result.before}, to ${result.after}: ${target}. Show it with:`);
+  if (result.reencoded)
+    console.log(
+      `  (encoded again at quality ${reencodeQuality}; keep the original where its exact pixels matter)`,
+    );
   console.log(graphicLines(target).join('\n'));
 }
 

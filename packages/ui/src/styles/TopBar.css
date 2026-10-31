@@ -23,11 +23,15 @@
   .env-top-bar-actions {
     flex: 0 0 auto;
   }
-  /* The application's mark, given as its own svg or img, takes a small picture's size, contained in
-     that box whatever its file's size. */
-  .env-top-bar-start > :is(svg, img) {
-    inline-size: var(--env-picture-size-sm);
-    block-size: var(--env-picture-size-sm);
+  /* The application's mark takes a small picture's size: a Graphic of the icon size, and an svg or
+     img of its own, contained in that box whatever its file's size. An svg that follows the text,
+     such as one of envUI's symbols, and the icon buttons, which set their own, keep their sizes. */
+  .env-top-bar-start {
+    --env-icon-size: var(--env-picture-size-sm);
+  }
+  .env-top-bar-start > :is(img, svg:not([width='1em'])) {
+    inline-size: var(--env-icon-size);
+    block-size: var(--env-icon-size);
     object-fit: contain;
   }
   /* The title takes the room left and truncates first. */

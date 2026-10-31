@@ -28,14 +28,17 @@
   .env-page-header[data-sticky][data-scrolled] {
     background-color: var(--env-color-bg-muted);
   }
+  /* A picture before the title takes an avatar's size: a Graphic of the icon size, and an svg or
+     img of the application's own, contained in that box whatever its file's size. An svg that
+     follows the text, such as one of envUI's symbols, and the icon buttons, which set their own,
+     keep their sizes. */
   .env-page-header-start {
     flex: none;
+    --env-icon-size: var(--env-picture-size-md);
   }
-  /* A picture given as the application's own svg or img takes an avatar's size, contained in that
-     box whatever its file's size. */
-  .env-page-header-start > :is(svg, img) {
-    inline-size: var(--env-picture-size-md);
-    block-size: var(--env-picture-size-md);
+  .env-page-header-start > :is(img, svg:not([width='1em'])) {
+    inline-size: var(--env-icon-size);
+    block-size: var(--env-icon-size);
     object-fit: contain;
   }
   .env-page-header-heading {

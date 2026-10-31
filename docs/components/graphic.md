@@ -18,7 +18,7 @@ aliases:
 useWhen:
   - The application's or a company's logo, such as beside the application's name or in a sign-in button
   - An icon of the application's own, where envUI has none for it
-  - A picture or an illustration from a file, such as in an empty state
+  - A picture from a file, such as an empty state's illustration, a photo or a screenshot's thumbnail
 avoidWhen:
   - text: An icon envUI already has, among its thousands of symbols.
     see: icons
@@ -36,6 +36,9 @@ examples:
   Sizes: variants
   InText: example
   FillBox: example
+  PhotoThumbnails:
+    role: example
+    caption: A photo covering a box of its own shape, at full width and as a list row's thumbnail.
   Colors: example
   OwnIcons: example
   ListIcons: example
@@ -82,6 +85,17 @@ A graphic in a sentence or a heading takes the size of its text and sits on the 
 A graphic can fill a box of the layout's own, such as an empty state's picture area, contained in it whatever the box's shape.
 
 ```tsx figure=FillBox
+
+```
+
+### Photos and screenshots
+
+A photo or a screenshot can cover a box of its own shape instead, cropped at its edges rather than shown whole with space beside it.
+
+- Give the box the shape of the pictures it shows, such as wide for screenshots.
+- Keep logos and icons whole: crop only a picture whose edges can go.
+
+```tsx figure=PhotoThumbnails
 
 ```
 
@@ -158,13 +172,14 @@ Choose a size of the place, not of the file: the slot's icon, or the size of the
 
 ## Words to use
 
-| Words                 | In code                                                               | Use for                                                          |
-| --------------------- | --------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| Our logo              | `Graphic` with the logo file in `src` and the company's name in `alt` | The application's or a company's logo, at one of envUI's sizes.  |
-| Our own icon          | `Graphic` with the icon's SVG component as children, in an icon slot  | An icon envUI doesn't have, beside envUI's own.                  |
-| As large as an avatar | `size="sm"`, `"md"`, `"lg"` or `"xl"`                                 | A logo the size of the avatars or the text around it.            |
-| In the text color     | `tint="text"`                                                         | A one-color mark that follows the theme and the button it is in. |
-| Trim the logo         | `npx envui-graphic <file>`                                            | A file with empty space around its drawing.                      |
+| Words                  | In code                                                               | Use for                                                          |
+| ---------------------- | --------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| Our logo               | `Graphic` with the logo file in `src` and the company's name in `alt` | The application's or a company's logo, at one of envUI's sizes.  |
+| Our own icon           | `Graphic` with the icon's SVG component as children, in an icon slot  | An icon envUI doesn't have, beside envUI's own.                  |
+| A photo or a thumbnail | `size="fill"` or a step, with `aspect="16/9"` and `fit="cover"`       | A photo or a screenshot that covers a box of its shape.          |
+| As large as an avatar  | `size="sm"`, `"md"`, `"lg"` or `"xl"`                                 | A logo the size of the avatars or the text around it.            |
+| In the text color      | `tint="text"`                                                         | A one-color mark that follows the theme and the button it is in. |
+| Trim the logo          | `npx envui-graphic <file>`                                            | A file with empty space around its drawing.                      |
 
 ## Compose
 
@@ -182,8 +197,10 @@ import logo from './logo.svg';
 </Graphic>
 ```
 
-- `size="icon"`, the default, reads `--env-icon-size`, which an icon slot sets, else `--env-control-icon-size`; `text` sits a little below the middle of the line, as an icon in text does; `fill` is 100% of its container both ways.
-- The picture is an `img` with `object-fit: contain`, or the SVG at 100% of the box, in a grid of fixed tracks, so its size never comes from the file. An SVG component needs a `viewBox`; its `width` and `height` don't count.
+- `size="icon"`, the default, reads `--env-icon-size`, which an icon slot sets, else `--env-control-icon-size`; `text` sits a little below the middle of the line, as an icon in text does.
+- `size="fill"` is a block as wide as its container, and as tall where the container has a definite height; otherwise an `img` takes its own shape's height, and a file in the text color is square.
+- `aspect`, such as `"16/9"`, sets the box's `aspect-ratio`: a step is then its height, and a fill takes its height from its width, so it needs no height from its container. `fit="cover"` covers the box and crops a file's picture, for a photo or a screenshot.
+- The picture is an `img` with `object-fit: contain`, or `cover`, or the SVG at 100% of the box, in a grid of fixed tracks, so its size never comes from the file. An SVG component needs a `viewBox`; its `width` and `height` don't count.
 - `tint="text"` paints an SVG component's filled and stroked shapes in `currentColor`, and a file through a CSS mask of its shape. A file from another origin needs CORS for the mask.
 
 #### Trim a file once
@@ -196,7 +213,7 @@ npx envui-graphic src/assets/logo.png
 
 ### Composition
 
-Every icon slot, the `env-icon` wrapper of Button, IconButton, Menu, navigation, Tabs, Badge, fields and list rows, sizes and centers any child, an `img`, an `svg` or a Graphic, to its `--env-icon-size`. List.Item's and Combobox's `start` give an application's own `svg` or `img` the icon size too, and TopBar's and PageHeader's `start` a small and a medium picture's.
+Every icon slot, the `env-icon` wrapper of Button, IconButton, Menu, navigation, Tabs, Badge, fields and list rows, sizes and centers any child, an `img`, an `svg` or a Graphic, to its `--env-icon-size`. List.Item's and Combobox's `start` give an application's own `svg` or `img` the icon size too, and List.Item's an envUI symbol as well. TopBar's and PageHeader's `start` set a small and a medium picture's size, for a Graphic of the icon size and an `svg` or `img` alike, while an `svg` that follows the text, such as an envUI symbol, keeps its size.
 
 ### Customize
 

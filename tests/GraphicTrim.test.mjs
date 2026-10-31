@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
 import { readFile, mkdtemp, rm, cp } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -10,6 +11,7 @@ import {
   importName,
   outputPath,
   parseArguments,
+  rootTag,
   trimRaster,
   trimSvg,
 } from '../packages/ui/bin/trimGraphic.js';
@@ -68,6 +70,22 @@ test("an SVG's bounds count its strokes and transforms, and a trimmed SVG stays 
   assert.equal(again.unchanged, true);
 });
 
+test('the root element is found past comments, CDATA and the doctype that mention <svg>', async () => {
+  const source = [
+    '<?xml version="1.0"?>',
+    `<!DOCTYPE svg [ <!ENTITY a "<svg viewBox='0 0 1 1'>"> ]>`,
+    '<!-- exported from <svg viewBox="0 0 9 9"> -->',
+    '<svg xmlns="http://www.w3.org/2000/svg" data-note="a > b" viewBox="0 0 120 120">',
+    '<style><![CDATA[ /* <svg viewBox="0 0 5 5"> */ ]]></style>',
+    '<rect x="28" y="28" width="64" height="64"/></svg>',
+  ].join('\n');
+  assert.match(rootTag(source).tag, /data-note="a > b" viewBox="0 0 120 120">$/);
+  const svg = (await trimSvg(source, sharp)).output.toString('utf8');
+  assertClose(viewBox(svg.slice(rootTag(svg).start)), [28, 28, 64, 64], 0.05, 'the real root');
+  // The comment keeps what it said.
+  assert.ok(svg.includes('<!-- exported from <svg viewBox="0 0 9 9"> -->'));
+});
+
 test('an SVG that draws nothing, or has no size, is refused with the reason', async () => {
   await assert.rejects(
     trimSvg('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"></svg>', sharp),
@@ -99,6 +117,18 @@ test('a PNG loses its transparent border, and a JPEG and a WebP their white one'
   }
 });
 
+test('a cropped JPEG keeps its orientation and metadata, and is said to be encoded again', async () => {
+  const turned = await sharp(await readFile(join(fixtures, 'white-border.jpg')))
+    .withMetadata({ orientation: 6 })
+    .jpeg()
+    .toBuffer();
+  const trimmed = await trimRaster(turned, sharp);
+  assert.equal(trimmed.reencoded, true);
+  assert.equal((await sharp(trimmed.output).metadata()).orientation, 6);
+  const png = await trimRaster(await readFile(join(fixtures, 'padded-logo.png')), sharp);
+  assert.equal(png.reencoded, false);
+});
+
 test('the command writes the trimmed file beside the original or into --out, and prints the Graphic', () => {
   const run = (...args) =>
     execFileSync(process.execPath, [bin, ...args], { cwd: scratch, encoding: 'utf8' });
@@ -110,6 +140,11 @@ test('the command writes the trimmed file beside the original or into --out, and
   assert.match(out, /import paddedLogo from '\.\/assets\/padded-logo\.svg'/);
   assert.match(run('assets/padded-logo.svg'), /has no empty edges to trim/);
   assert.throws(() => run('notes.txt'), /trims PNG, WebP, JPEG and SVG files/);
+  run('padded-logo.png', '--out', '.');
+  assert.deepEqual(
+    readFileSync(join(scratch, 'padded-logo.png')),
+    readFileSync(join(fixtures, 'padded-logo.png')),
+  );
 });
 
 test('the command reads its arguments and names files for an import', () => {
@@ -124,4 +159,6 @@ test('the command reads its arguments and names files for an import', () => {
   assert.equal(importName('2024-mark.svg'), 'image2024Mark');
   assert.equal(outputPath(join('a', 'logo.svg')), join('a', 'logo-trimmed.svg'));
   assert.equal(outputPath('logo.svg', 'out'), join('out', 'logo.svg'));
+  // --out naming the file's own folder never replaces the file.
+  assert.equal(outputPath(join('a', 'logo.svg'), 'a'), join('a', 'logo-trimmed.svg'));
 });
