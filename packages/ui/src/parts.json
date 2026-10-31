@@ -358,6 +358,11 @@
       "env-field-error": "The error message.",
       "env-field-label": "The label."
     },
+    "Graphic": {
+      "env-graphic": "The box at the graphic's size, which contains and centres the picture.",
+      "env-graphic-image": "A file's picture in its own colours.",
+      "env-graphic-mask": "A file's shape painted in the text colour."
+    },
     "HoverCard": {
       "env-hover-card": "The card that opens on hover."
     },

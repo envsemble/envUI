@@ -2279,6 +2279,50 @@
         "Icon"
       ]
     },
+    "Graphic": {
+      "root": "env-graphic",
+      "source": "packages/ui/src/content/Graphic.tsx",
+      "parts": [
+        {
+          "class": "env-graphic",
+          "description": "The box at the graphic's size, which contains and centres the picture."
+        },
+        {
+          "class": "env-graphic-image",
+          "description": "A file's picture in its own colours."
+        },
+        {
+          "class": "env-graphic-mask",
+          "description": "A file's shape painted in the text colour."
+        }
+      ],
+      "states": [
+        {
+          "attribute": "data-size",
+          "values": [
+            "fill",
+            "icon",
+            "lg",
+            "md",
+            "sm",
+            "text",
+            "xl"
+          ],
+          "parts": [
+            "env-graphic"
+          ]
+        },
+        {
+          "attribute": "data-tint",
+          "values": [
+            "text"
+          ],
+          "parts": [
+            "env-graphic"
+          ]
+        }
+      ]
+    },
     "HoverCard": {
       "root": "env-hover-card",
       "source": "packages/ui/src/feedback/HoverCard.tsx",

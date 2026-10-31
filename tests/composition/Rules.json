@@ -59,6 +59,7 @@
       "content/CodeBlock.tsx": "composites",
       "content/DescriptionList.tsx": "base",
       "content/DiffStat.tsx": "base",
+      "content/Graphic.tsx": "base",
       "content/Disclosure.tsx": "base",
       "content/Kbd.tsx": "base",
       "content/List.tsx": "composites",

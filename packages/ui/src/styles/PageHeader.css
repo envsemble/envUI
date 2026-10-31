@@ -31,6 +31,13 @@
   .env-page-header-start {
     flex: none;
   }
+  /* A picture given as the application's own svg or img takes an avatar's size, contained in that
+     box whatever its file's size. */
+  .env-page-header-start > :is(svg, img) {
+    inline-size: var(--env-picture-size-md);
+    block-size: var(--env-picture-size-md);
+    object-fit: contain;
+  }
   .env-page-header-heading {
     flex: 1 1 auto;
   }

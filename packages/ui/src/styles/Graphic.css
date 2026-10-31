@@ -1,0 +1,84 @@
+@layer env.components {
+  /* An application's own picture: a logo, an icon or an illustration, from a file or an SVG
+     component. Its box is one of envUI's sizes and never the file's; the picture is contained and
+     centered in it. The fixed tracks give the picture a definite box, so an img's 100% is the box's,
+     not the file's. */
+  .env-graphic {
+    /* By default, the icon size of the slot it sits in, such as a button's, else a control's. */
+    --env-graphic-size: var(--env-icon-size, var(--env-control-icon-size));
+    display: inline-grid;
+    grid-template: minmax(0, 1fr) / minmax(0, 1fr);
+    place-items: center;
+    flex: none;
+    box-sizing: border-box;
+    inline-size: var(--env-graphic-size);
+    block-size: var(--env-graphic-size);
+    vertical-align: middle;
+  }
+  /* The text step is the text's own size, centered on its lowercase letters as an icon in a line of
+     text sits. */
+  .env-graphic[data-size='text'] {
+    /* stylelint-disable-next-line unit-disallowed-list -- the step follows the text's own size */
+    --env-graphic-size: 1em;
+    /* stylelint-disable-next-line unit-disallowed-list -- an offset that follows the text's size */
+    vertical-align: -0.125em;
+  }
+  /* Avatar's sizes, from the same tokens. */
+  .env-graphic[data-size='sm'] {
+    --env-graphic-size: var(--env-picture-size-sm);
+  }
+  .env-graphic[data-size='md'] {
+    --env-graphic-size: var(--env-picture-size-md);
+  }
+  .env-graphic[data-size='lg'] {
+    --env-graphic-size: var(--env-picture-size-lg);
+  }
+  .env-graphic[data-size='xl'] {
+    --env-graphic-size: var(--env-picture-size-xl);
+  }
+  .env-graphic[data-size='fill'] {
+    inline-size: 100%;
+    block-size: 100%;
+  }
+  .env-graphic > * {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: contain;
+  }
+  /* Its own colors: an SVG without colors of its own draws in the SVG default, black, rather than
+     the fill an icon slot around it passes down. */
+  .env-graphic:not([data-tint]) {
+    fill: initial;
+    stroke: initial;
+  }
+  /* In the text color: an SVG's painted shapes take currentColor; a file is painted through a mask
+     of its shape. */
+  .env-graphic[data-tint='text'] > svg:not([fill='none']),
+  .env-graphic[data-tint='text'] > svg [fill]:not([fill='none']) {
+    fill: currentColor;
+  }
+  .env-graphic[data-tint='text'] > svg[stroke]:not([stroke='none']),
+  .env-graphic[data-tint='text'] > svg [stroke]:not([stroke='none']) {
+    stroke: currentColor;
+  }
+  .env-graphic-mask {
+    /* The text color, also under forced colors, where a fill would become the canvas. */
+    forced-color-adjust: none;
+    background-color: currentColor;
+    mask-position: center;
+    mask-size: contain;
+    mask-repeat: no-repeat;
+  }
+
+  /* In a skeleton, a graphic is a filled square of its size, as an icon is. */
+  [data-env-skeleton] .env-graphic {
+    forced-color-adjust: none;
+    border-radius: var(--env-radius-sm);
+    --env-skeleton-shape: 1;
+    background: var(--env-skeleton-paint);
+  }
+  [data-env-skeleton] .env-graphic * {
+    visibility: hidden;
+  }
+}

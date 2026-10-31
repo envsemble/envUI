@@ -37,6 +37,7 @@ import {
 import { CommandPaletteEmptyFixture, CommandPaletteFixture } from './Palette.js';
 import { SegmentedControlFixture } from './SegmentedControls.js';
 import { BadgesFixture } from './Badges.js';
+import { GraphicsFixture } from './Graphics.js';
 import {
   DialogVariantsFixture,
   HoverCardFixture,
@@ -253,6 +254,7 @@ export default function App() {
               <BadgesFixture theme="dark" />
             </>
           )}
+          {includes('graphics') && <GraphicsFixture />}
           {includes('alerts') && (
             <>
               <AlertsFixture theme="light" />

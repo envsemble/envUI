@@ -3360,6 +3360,51 @@
         "@envsemble/envui"
       ]
     },
+    "Graphic": {
+      "kind": "component",
+      "source": "packages/ui/src/content/Graphic.tsx",
+      "description": "An application's own logo, icon or picture, from a file or an SVG component, at one of envUI's sizes: contained and centered in its box, never stretched, and never at the file's own size.",
+      "props": [
+        {
+          "name": "src",
+          "type": "string",
+          "required": false,
+          "description": "The file's URL, such as an imported PNG, WebP, JPEG or SVG."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "description": "An SVG, such as the application's own icon component, with a viewBox."
+        },
+        {
+          "name": "alt",
+          "type": "string",
+          "required": true,
+          "description": "What the picture says, such as the company's name for its logo: it names the graphic as an image. `\"\"` when the text beside it already says it, such as a logo before the name: the graphic is decorative and hidden from assistive technology."
+        },
+        {
+          "name": "size",
+          "type": "'text' | 'icon' | 'sm' | 'md' | 'lg' | 'xl' | 'fill'",
+          "required": false,
+          "default": "'icon'",
+          "description": "The box the picture is contained and centered in: `text` 1 em, in a line of text; `icon` the icon size of the slot it sits in, such as a button's, else a control's 1 rem; `sm` 1.5 rem, `md` 2 rem, `lg` 3 rem and `xl` 5.5 rem, Avatar's sizes; `fill` the whole of its container. Its size never comes from the file."
+        },
+        {
+          "name": "tint",
+          "type": "'own' | 'text'",
+          "required": false,
+          "default": "'own'",
+          "description": "`own` keeps the picture's colors; `text` paints a one-color picture in the text color, so it follows the theme and the state of the control it sits in. A file in the text color is drawn through a CSS mask, which needs a file from another origin to be served with CORS."
+        }
+      ],
+      "native": [
+        "span"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
     "Grid": {
       "kind": "component",
       "source": "packages/ui/src/foundations/Layout.tsx",

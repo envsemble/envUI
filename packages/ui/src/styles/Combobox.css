@@ -91,6 +91,7 @@
     inline-size: var(--env-combobox-start-size);
     block-size: var(--env-combobox-start-size);
     color: var(--env-color-fg-muted);
+    --env-icon-size: min(var(--env-control-icon-size), var(--env-combobox-start-size));
   }
   /* An avatar of the default size takes the slot's; one given a size keeps it. Between the two in
      specificity, :not(env-none) being one type selector, which every element matches, so neither
@@ -98,10 +99,14 @@
   :where(.env-combobox-start) > .env-avatar:not(env-none) {
     --env-avatar-size: var(--env-combobox-start-size);
   }
-  .env-combobox-start > svg,
+  /* An icon takes the control's icon size, or the slot's where that is smaller (--env-icon-size, set
+     above): one of envUI's, a Graphic of the icon size, or an svg or img of the application's own,
+     contained in that box whatever its file's size. */
+  .env-combobox-start > :is(svg, img),
   .env-combobox-start > .env-icon {
-    inline-size: min(var(--env-control-icon-size), var(--env-combobox-start-size));
-    block-size: min(var(--env-control-icon-size), var(--env-combobox-start-size));
+    inline-size: var(--env-icon-size);
+    block-size: var(--env-icon-size);
+    object-fit: contain;
   }
   .env-combobox:not([data-tall]) .env-combobox-value-icon {
     --env-combobox-start-size: 1.25rem;

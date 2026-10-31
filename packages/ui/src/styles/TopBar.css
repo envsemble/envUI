@@ -23,6 +23,13 @@
   .env-top-bar-actions {
     flex: 0 0 auto;
   }
+  /* The application's mark, given as its own svg or img, takes a small picture's size, contained in
+     that box whatever its file's size. */
+  .env-top-bar-start > :is(svg, img) {
+    inline-size: var(--env-picture-size-sm);
+    block-size: var(--env-picture-size-sm);
+    object-fit: contain;
+  }
   /* The title takes the room left and truncates first. */
   .env-top-bar-title {
     flex: 1 1 auto;

@@ -87,6 +87,7 @@ export * from './feedback/Meter.js';
 export * from './feedback/Progress.js';
 export * from './content/Avatar.js';
 export * from './content/AvatarGroup.js';
+export * from './content/Graphic.js';
 export * from './content/AnimatedNumber.js';
 export * from './content/RelativeTime.js';
 // Plain functions that a server component calls come from modules that are not client modules.

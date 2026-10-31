@@ -83,6 +83,15 @@
     position: relative;
     z-index: var(--env-z-raised);
     flex: 0 0 auto;
+    /* An icon or a picture in it takes the size of a leading icon in a large row: a Graphic of the
+       icon size, and an svg or img of the application's own, contained in that box whatever its
+       file's size. */
+    --env-icon-size: var(--env-icon-size-lg);
+  }
+  .env-list-item-start > :is(svg, img) {
+    inline-size: var(--env-icon-size);
+    block-size: var(--env-icon-size);
+    object-fit: contain;
   }
   /* The handle, ahead of the label, reaches in toward the row's corner rather than the text. */
   .env-list-item-start > .env-list-item-handle {
