@@ -1,6 +1,11 @@
 import { createContext, useContext, useMemo } from 'react';
-import { Link } from '@envsemble/envui';
-import { Markdown, type MarkdownLinkProps, type MarkdownProps } from '@envsemble/envui/content';
+import { CopyButton, Link } from '@envsemble/envui';
+import {
+  CodeBlock,
+  Markdown,
+  type MarkdownLinkProps,
+  type MarkdownProps,
+} from '@envsemble/envui/content';
 import { documents, type Documentation as Document } from './PageModel';
 import { groupedPages, routeOfDocument } from '../navigation/SiteRoutes';
 import { inDocs, routeHref } from '../navigation/Address';
@@ -162,6 +167,47 @@ const componentNames =
 
 const rehypePlugins = [headingIds];
 
+/** The languages most of the site's code is in, which its blocks don't name. */
+const usualLanguages = new Set(['tsx', 'ts', 'jsx', 'js']);
+
+/** Code that is imports alone, such as a page's Import, which wraps rather than scrolling. */
+const importsOnly = /^(?:\s*import [^;]+;)+\s*$/;
+
+/**
+ * The site's code blocks: the code alone, with its copy button in the block's top end corner
+ * rather than on a heading row of its own, and the language named beside the button only where it
+ * isn't the usual TypeScript and JSX, such as sh or css (SiteText.css). An import, too long for a
+ * narrow page, wraps whole into view.
+ */
+const elements: NonNullable<MarkdownProps['components']> = {
+  pre: function SiteCodeBlock({ node, children }) {
+    const code = node?.children.find(
+      (child) => child.type === 'element' && child.tagName === 'code',
+    );
+    if (!code || code.type !== 'element') return <pre>{children}</pre>;
+    const source = code.children
+      .map((child) => (child.type === 'text' ? child.value : ''))
+      .join('');
+    const language = String(code.properties.className ?? '').match(/language-([^,\s]+)/)?.[1];
+    const named = language && !usualLanguages.has(language) ? language : undefined;
+    return (
+      <div className="site-code-block" data-language={named}>
+        <CodeBlock language={language} wrap={importsOnly.test(source)}>
+          {source}
+        </CodeBlock>
+        <div className="site-code-block-corner">
+          {named && (
+            <span className="site-code-block-language" aria-hidden="true">
+              {named}
+            </span>
+          )}
+          <CopyButton value={source} variant="ghost" size="sm" aria-label="Copy code" />
+        </div>
+      </div>
+    );
+  },
+};
+
 /** Text with its HTML entities, such as &amp;, as the characters they stand for. */
 function decodeEntities(text: string) {
   const element = document.createElement('textarea');
@@ -223,7 +269,7 @@ export function Documentation(
   if (outline) return <OutlineHeadings markdown={markdown} />;
   return (
     <Markdown
-      codeCopyable
+      components={elements}
       className={
         [guidance && 'site-guidance', props.className].filter(Boolean).join(' ') || undefined
       }

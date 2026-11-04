@@ -196,9 +196,14 @@ export const codeSubsections = [
 ];
 export const sourcePattern = /^tsx\s+source=(\S+)\s*$/;
 
+/** The longest import of several names kept on one line, in characters. */
+const importWidth = 60;
+
 /**
  * The generated start of "## Compose": how to import what the page documents or, on a pattern
- * page, what it composes, from the entries props.json gives each export.
+ * page, what it composes, from the entries props.json gives each export. An import of several names
+ * that would run past importWidth puts one name to a line, so the whole of it reads in the Docs'
+ * column without scrolling.
  */
 export function importMarkdown(names: readonly string[], props: PropsFile | undefined): string {
   const byEntry = new Map<string, string[]>();
@@ -210,7 +215,7 @@ export function importMarkdown(names: readonly string[], props: PropsFile | unde
   const lines = [...byEntry].map(([entry, list]) => {
     const sorted = [...list].sort((a, b) => a.localeCompare(b, 'en'));
     const single = `import { ${sorted.join(', ')} } from '${entry}';`;
-    return single.length <= 100
+    return single.length <= importWidth || sorted.length === 1
       ? single
       : `import {\n${sorted.map((name) => `  ${name},`).join('\n')}\n} from '${entry}';`;
   });
