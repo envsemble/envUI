@@ -275,6 +275,47 @@ test('near either end the edge runs on into the round end, with no step to a sec
     assert.ok(Math.abs(radii[0] * 2 - edge[0]) < 0.05, `the start at ${place}`);
     assert.ok(Math.abs(radii[1] * 2 - edge.at(-1)) < 0.05, `the end at ${place}`);
   }
-  // On the last entry, the end is as round as the shape is full.
-  assert.ok(Math.abs(ends(wavePath(layout, 11, [])).radii[1] - 16) < 0.1);
+});
+
+test('at the first and last entries the bulge stays whole: smaller, near the entry, tapering before the end', () => {
+  // Spaced as on the site: the box leaves room above the first entry and below the last.
+  const anchors = Array.from({ length: 12 }, (_, index) => 30 + index * 27.5);
+  const layout = { anchors, top: 0, bottom: anchors.at(-1) + 30, full: 24 };
+  const edge = (path) =>
+    [...path.matchAll(/L([\d.]+) ([\d.]+)/g)].map((m) => [Number(m[1]), Number(m[2])]);
+  const radii = (path) => [...path.matchAll(/A([\d.]+)/g)].map((m) => Number(m[1]));
+  const middle = Math.max(...edge(wavePath(layout, 5, [])).map(([x]) => x));
+  for (const [place, end] of [
+    [0, 0],
+    [11, 1],
+  ]) {
+    const path = wavePath(layout, place, []);
+    const points = edge(path);
+    const widest = Math.max(...points.map(([x]) => x));
+    const run = points.filter(([x]) => x > widest - 0.5).map(([, y]) => y);
+    // Its fullest beside the entry, a little toward the middle at most, and most of its width.
+    assert.ok(
+      Math.abs((Math.min(...run) + Math.max(...run)) / 2 - anchors[place]) < 8,
+      `at ${place}`,
+    );
+    assert.ok(widest > middle * 0.7 && widest < middle, `the width at ${place}`);
+    // It tapers to the thin stroke before the end, which stays a small round tip, not a cap.
+    const outer = end === 0 ? points[0] : points.at(-1);
+    assert.ok(outer[0] < 24 * waveThin * 1.5, `the taper at ${place}`);
+    assert.ok(radii(path)[end] < 24 * waveThin, `the round end at ${place}`);
+  }
+  // The same under the pointer: the swell at the last entry tapers before the end too.
+  const hovered = wavePath(
+    layout,
+    3,
+    anchors.map((_, index) => (index === 11 ? 1 : 0)),
+  );
+  assert.ok(radii(hovered)[1] < 24 * waveThin);
+  // As the bulge moves into the end, it shrinks smoothly, without a jump.
+  let before = middle;
+  for (let place = 2; place >= 0; place -= 0.05) {
+    const widest = Math.max(...edge(wavePath(layout, place, [])).map(([x]) => x));
+    assert.ok(Math.abs(widest - before) < 1, `a jump at ${place}`);
+    before = widest;
+  }
 });

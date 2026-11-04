@@ -217,12 +217,13 @@ function measureWave(body: HTMLElement, shape: SVGSVGElement): WaveLayout | null
   const anchors = Array.from(links, (link) => link.offsetTop + link.offsetHeight / 2);
   const first = links[0]!;
   const last = links[links.length - 1]!;
-  const inset = (link: HTMLElement, side: 'paddingTop' | 'paddingBottom') =>
-    parseFloat(getComputedStyle(link)[side]) || 0;
+  // The shape runs past the first and last entries into the room the box leaves around them, where
+  // the bulge tapers whole when the reader is at either end.
+  const room = getComputedStyle(body);
   return {
     anchors,
-    top: first.offsetTop + inset(first, 'paddingTop'),
-    bottom: last.offsetTop + last.offsetHeight - inset(last, 'paddingBottom'),
+    top: first.offsetTop - (parseFloat(room.paddingTop) || 0),
+    bottom: last.offsetTop + last.offsetHeight + (parseFloat(room.paddingBottom) || 0),
     full: parseFloat(getComputedStyle(shape).width) || 0,
   };
 }
