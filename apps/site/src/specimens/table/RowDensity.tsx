@@ -33,7 +33,13 @@ const script: PointerStep[] = [
 
 function Choosing() {
   usePointer(script);
-  return <RowDensity />;
+  // Below the control, the room the rows still grow into (Examples.css), so the figure keeps one
+  // height and the page never moves as they do.
+  return (
+    <div className="catalogue-row-density">
+      <RowDensity />
+    </div>
+  );
 }
 
 /** The reports at each density, chosen by a pointer no one sees. */
