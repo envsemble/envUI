@@ -217,6 +217,8 @@ Table's parts are the native table elements, inside a focusable region. Name eve
 
 `density` on Table.Root changes only the cells' padding; controls in cells take the small height.
 
+A Link in a cell, such as the name that opens a row, takes the cell's text color, so a column of names doesn't read as a column of blue; its underline shows under the pointer and with keyboard focus. A secondary line under a cell's text, `<Text variant="caption">`, keeps to one line and ends in an ellipsis where its column is narrower; give it a `title` with the full text when that can happen.
+
 #### Sorting
 
 The application sorts the rows. `onSortChange` on a header cell makes it a sort button, called with the order pressing asks for, and `sortDirection` shows the current order on every sortable header:
@@ -269,7 +271,7 @@ Parts the anatomy doesn't show: a column's resize handle, `env-table-column-resi
 
 ## Changelog
 
-- **1.0.0-prerelease.6**: Links and times repeat down the rows, so a Link in a table shows its underline only under the pointer and with keyboard focus, keeping its link color, and a RelativeTime its dotted line; a selected row's links stay underlined.
+- **1.0.0-prerelease.6**: Links and times repeat down the rows, so a Link in a table takes the cell's text color and shows its underline only under the pointer and with keyboard focus, and a RelativeTime its dotted line; a selected row's links stay underlined. A secondary line keeps to one line, ending in an ellipsis. A skeleton's sortable headers are bars, as the others are.
 - **1.0.0-prerelease.5**: A number for `stackBelow` is a number of rem, as on PanelDock, where it was pixels.
 - **1.0.0-prerelease.5**: `onColumnWidthsChange` receives `{ committed }` beside the widths, as the other resize callbacks do.
 - **1.0.0**: The parts are members of the `Table` namespace: `Table` is `Table.Root`, and `TableHead`, `TableBody`, `TableRow`, `TableHeaderCell` and `TableCell` are `Table.Head`, `Table.Body`, `Table.Row`, `Table.HeaderCell` and `Table.Cell`; `TableSortDirection` is `Table.SortDirection`. The page is `table`, after the component. Table.HeaderCell's `onSort` is `onSortChange`, called with the order pressing asks for. A table named by `aria-labelledby` names its scroll region too, which was left unnamed. The sort and resize words come from `messages.table`. A column's resize handle, `env-table-column-resize`, is `env-table-column-resize-handle`, as every resize handle is named.

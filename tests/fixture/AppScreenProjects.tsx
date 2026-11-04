@@ -404,7 +404,7 @@ function ProjectsTable({ onOpen, openId }: { onOpen: (id: string) => void; openI
                     >
                       {project.name}
                     </Link>
-                    <Text variant="caption" emphasis="muted">
+                    <Text variant="caption" emphasis="muted" title={project.repository}>
                       {project.repository}
                     </Text>
                   </Column>

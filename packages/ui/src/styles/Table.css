@@ -34,8 +34,8 @@
       var(--env-space-4);
     --env-control-height: var(--env-control-height-sm);
     /* Links and times repeat down the rows, so the lines that mark them wait for the pointer or
-       keyboard focus: a Link keeps its link color and shows its underline then, and a RelativeTime
-       its dotted line. A selected row's links stay underlined. */
+       keyboard focus: a Link shows its underline then, and a RelativeTime its dotted line. A
+       selected row's links stay underlined. */
     --env-button-rest-underline: none;
     --env-hover-detail-rest-color: transparent;
     inline-size: 100%;
@@ -136,6 +136,25 @@
   .env-table-cell > .env-text:where([data-variant='caption']),
   .env-table-cell-content > .env-text:where([data-variant='caption']) {
     margin-block-start: 0.125rem;
+  }
+  /* It keeps to one line, so the rows stay even: what doesn't fit its column ends in an ellipsis
+     rather than wrapping, such as a repository's slug at a hyphen. It still widens its column as
+     far as its longest word, as wrapped text would, so a table with room shows it whole. */
+  .env-table-cell .env-text:where([data-variant='caption']) {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    overflow: hidden;
+  }
+  /* A link in a cell, a Link or a text button that is a link, such as the name that opens a row, is
+     set in the cell's text color: repeated down a column, the link blue would make it a solid colored
+     column. Its underline still shows under the pointer and with keyboard focus, and its focus ring
+     as everywhere. Text buttons that aren't links keep the link colors, as nothing else marks them. */
+  .env-table-cell a[href][data-variant='text'] {
+    --env-color-fg-link: currentColor;
+    --env-color-fg-link-hover: currentColor;
+    --env-color-fg-link-pressed: currentColor;
   }
   .env-table-row[data-interactive] {
     transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
@@ -450,9 +469,10 @@
 
   /* A region with more to scroll sideways fades at the edge it scrolls toward, its frame included, so
      a column cut short reads as more to see rather than the table's end; scrolled to an end, that
-     edge is whole again. A region with nothing to scroll has no scroll timeline and never fades, nor
-     does one with keyboard focus, whose ring the fade would cover. The fades' widths are private and
-     change in steps, just past each end. */
+     edge is whole again. The fade is narrow, about a cell's padding, so it marks the edge without
+     dimming the column it cuts. A region with nothing to scroll has no scroll timeline and never
+     fades, nor does one with keyboard focus, whose ring the fade would cover. The fades' widths are
+     private and change in steps, just past each end. */
   @supports (animation-timeline: scroll()) {
     .env-table-region:not(:focus-visible) {
       /* No fade, until the region's scroll timeline sets one. */
@@ -472,15 +492,15 @@
   @keyframes env-table-edge-fade {
     0% {
       --env-table-fade-start: 0;
-      --env-table-fade-end: 2rem;
+      --env-table-fade-end: 0.75rem;
     }
     5%,
     95% {
-      --env-table-fade-start: 2rem;
-      --env-table-fade-end: 2rem;
+      --env-table-fade-start: 0.75rem;
+      --env-table-fade-end: 0.75rem;
     }
     100% {
-      --env-table-fade-start: 2rem;
+      --env-table-fade-start: 0.75rem;
       --env-table-fade-end: 0;
     }
   }
@@ -491,6 +511,18 @@
     background-image:
       var(--env-skeleton-overlay),
       linear-gradient(var(--env-color-bg-neutral-muted), var(--env-color-bg-neutral-muted));
+  }
+  /* A sortable header's button isn't a shape, as other buttons are in a skeleton: its label is a bar,
+     as every header's is, and its arrow isn't drawn. */
+  [data-env-skeleton]:not(env-none) .env-table-head .env-table-sort-button {
+    --env-skeleton-shape: 0;
+    background: transparent;
+  }
+  [data-env-skeleton]:not(env-none) .env-table-head .env-table-sort-button > * {
+    visibility: visible;
+  }
+  [data-env-skeleton]:not(env-none) .env-table-head .env-table-sort-button > .env-icon {
+    visibility: hidden;
   }
   /* In a skeleton, an empty cell, as over a placeholder row, is a bar of about a value's length. */
   [data-env-skeleton] .env-table-cell {
