@@ -150,12 +150,12 @@ The catalogue lays a page out; the page decides only what sits together:
 
 A figure is an [example file](#examples) listed in the frontmatter and placed with an empty fence that names it, ` ```tsx figure=Name `, anywhere but Compose and the changelog. Its role and caption come from the frontmatter; its framing from attributes after the name, written as `name="value"`, and flags, such as `open`, as their name alone. A value can't hold a double quote, so quote with ' or “ ”.
 
-| Role                    | Shows                                                                                                   | Attributes on its fence                                                |
-| ----------------------- | ------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| `example`               | The example, live on the stage, with its caption below.                                                 | `widths`, `sweep`, `classes`, `fit`, `open`, `stage`, `wide`, `motion` |
-| `do`, `dont`, `caution` | The example on a square stage joined to a green Do, red Don't or amber Caution bar, and its rule below. | `open`, `stage`, `wide`, `motion`                                      |
-| `anatomy`               | The example on the stage, with numbered callouts on its parts and the legend below.                     | `of`, `open`, `stage`, `enlarge`, `width`, `specimen`                  |
-| `variants`              | The example on the stage, each variant's name in plain text beside or under it, and the legend below.   | `stage`                                                                |
+| Role                    | Shows                                                                                                                                                              | Attributes on its fence                                                |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------- |
+| `example`               | The example, live on the stage, with its caption below.                                                                                                            | `widths`, `sweep`, `classes`, `fit`, `open`, `stage`, `wide`, `motion` |
+| `do`, `dont`, `caution` | The example on a stage as tall as it, square where it shows open or plays, over a strip that says Do, Don't or Caution in green, red or amber, and its rule below. | `open`, `stage`, `wide`, `motion`                                      |
+| `anatomy`               | The example on the stage, with numbered callouts on its parts and the legend below.                                                                                | `of`, `open`, `stage`, `enlarge`, `width`, `specimen`                  |
+| `variants`              | The example on the stage, each variant's name in plain text beside or under it, and the legend below.                                                              | `stage`                                                                |
 
 Every figure sits on the catalogue's recessed stage, in the theme, contrast and scale the reader chose, with a closed Code toggle under it holding the file's source. Keep example lines within the formatter's 100 characters, and a caption to one sentence.
 
@@ -179,7 +179,7 @@ An Adapting to width figure sweeps instead: `widths="30 16" sweep` moves one fra
 
 ### Do and don't pairs
 
-List a `do` and a `dont` example and place them one after the other, so they sit side by side on small square stages. A do or a don't may stand alone where only one side is worth a picture.
+List a `do` and a `dont` example and place them one after the other, so they sit side by side on small stages. A do or a don't may stand alone where only one side is worth a picture.
 
 - **Only what a picture shows best.** Picture a real, tempting mistake and its fix; say a rule no picture shows in a titled block.
 - **The same situation**, so the only difference is the point: the same dialog's actions with one primary button and with three.
@@ -214,7 +214,7 @@ An ordered list right after an anatomy figure is its legend: each item the part'
 
 A variants figure names each variant with a callout rather than labels inside the example. An ordered list right after it names them, each item the name in bold, in the order the example shows them; each names the example's next item, or what a part reference after it selects, such as ``**Ghost** (`env-text-field[data-variant='ghost']`)``. Write a long run, such as six tones, one under another.
 
-Variants, tones, sizes, sides and layouts are written as an option table: the first column names each option in words, the last, headed **Use for**, says what it is for, and a column headed **In code**, which only the Docs and agents read, gives its props. The catalogue shows the table as a legend; right after a variants figure's list, it is that figure's legend.
+Variants, tones, sizes, sides and layouts are written as an option table: the first column names each option in words, the last, headed **Use for**, says what it is for, and a column headed **In code**, which only the Docs and agents read, gives its props. The catalogue shows the table as a legend; right after a variants figure's list, it is that figure's legend, or, where the variants stand one under another and there is room, what each is for stands beside it.
 
 ````md
 ```tsx figure=Variants

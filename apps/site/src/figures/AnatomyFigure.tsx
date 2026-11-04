@@ -1,4 +1,13 @@
-import { useCallback, useId, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
+import {
+  useCallback,
+  useId,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+} from 'react';
 import { Theme, useTheme } from '@envsemble/envui';
 import type { AnatomyLegendItem, StageFill } from '../shared/DocumentationTypes';
 import { Documentation } from '../pages/Documentation';
@@ -111,10 +120,16 @@ function AnatomyStage({
   variants,
   width,
   onOrder,
+  uses,
+  onBeside,
 }: {
   page: string;
   name: string;
   legend: AnatomyLegendItem[];
+  /** In a variants figure, what each legend item's variant is for, in lines (measureVariants). */
+  uses?: (string[] | undefined)[];
+  /** Hears whether what each variant is for shows beside it. */
+  onBeside?: (beside: boolean) => void;
   /**
    * Hears the legend's items in the order the callouts number them, and those the legend names
    * alone, such as a field around its control.
@@ -152,7 +167,7 @@ function AnatomyStage({
         // Open overlays take the room they need; they are never small.
         if (!open && !variants) enlarge(subjectElement, enlarged);
         const measured = variants
-          ? { ...measureVariants(stageElement, subjectElement, legend, labels), whole: [] }
+          ? { ...measureVariants(stageElement, subjectElement, legend, labels, uses), whole: [] }
           : { ...measure(stageElement, subjectElement, legend), room: undefined };
         const next = measured.callouts;
         setCallouts((current) =>
@@ -163,10 +178,15 @@ function AnatomyStage({
             next.map(({ index }) => index),
             measured.whole,
           );
+        if (variants) onBeside?.('beside' in measured && Boolean(measured.beside));
         const needed = measured.room;
         if (needed)
           setRoom((current) =>
-            current.start === needed.start && current.bottom === needed.bottom ? current : needed,
+            current.start === needed.start &&
+            current.bottom === needed.bottom &&
+            current.end === needed.end
+              ? current
+              : needed,
           );
       });
     };
@@ -196,7 +216,7 @@ function AnatomyStage({
       subjectElement.removeEventListener('animationend', update);
       subjectElement.removeEventListener('transitionend', update);
     };
-  }, [legend, open, enlarged, variants, onOrder]);
+  }, [legend, open, enlarged, variants, onOrder, uses, onBeside]);
   const example = specimen ? (
     <SpecimenRender page={page} name={name} onStage />
   ) : (
@@ -221,6 +241,7 @@ function AnatomyStage({
           variants
             ? {
                 paddingInlineStart: room.start || undefined,
+                paddingInlineEnd: room.end || undefined,
                 paddingBlockEnd: room.bottom || undefined,
               }
             : undefined
@@ -275,9 +296,39 @@ function AnatomyStage({
           {label ?? number}
         </span>
       ))}
+      {callouts.map(
+        ({ number, use }) =>
+          use && (
+            <span
+              key={`use-${number}`}
+              className="catalogue-variant-use"
+              data-side={use.side}
+              aria-hidden="true"
+              style={{ left: use.x, top: use.y, inlineSize: use.width }}
+            >
+              {use.lines.map((line) => (
+                <span key={line}>{line}</span>
+              ))}
+            </span>
+          ),
+      )}
     </Theme>
   );
 }
+
+/** Markdown as plain text, as a variant's use shows it beside its item: its words, without marks. */
+const plain = (markdown: string) =>
+  markdown
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+    .replace(/[*_`]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+/**
+ * The most columns a legend of `count` parts takes: rows as even as they can be, three to a row
+ * at most, so no part is left alone on a row, such as two by two for four and three by two for six.
+ */
+const legendColumns = (count: number) => Math.ceil(count / Math.ceil(count / 3));
 
 /**
  * A legend item as the figure shows it: the part's name alone, such as Label, in plain words; its
@@ -347,6 +398,26 @@ export function AnatomyFigure({
     setOrder((current) => (current.join() === next.join() ? current : next));
     setWhole((current) => (current.join() === nextWhole.join() ? current : nextWhole));
   }, []);
+  // What each variant is for, from the option table, which shows beside its item where it fits,
+  // and as the legend below it where it doesn't.
+  const uses = useMemo(
+    () =>
+      variants && options
+        ? items.map((item) => {
+            const option = options.options.find((entry) => entry.name === item.label);
+            return (
+              option && [
+                plain(option.use),
+                ...option.details
+                  .filter((detail) => detail.markdown)
+                  .map((detail) => `${detail.title}: ${plain(detail.markdown)}`),
+              ]
+            );
+          })
+        : undefined,
+    [variants, options, items],
+  );
+  const [beside, setBeside] = useState(false);
   const ordered = [
     ...order.filter((index) => index < items.length),
     ...items
@@ -366,10 +437,21 @@ export function AnatomyFigure({
         variants={variants}
         width={width}
         onOrder={onOrder}
+        uses={uses}
+        onBeside={setBeside}
       />
       <figcaption className="site-anatomy-caption">
         {caption && <p className="site-figure-caption">{caption}</p>}
-        {variants && options && <OptionLegend table={options} path={`components/${page}.md`} />}
+        {/* Shown beside the items, the option table is read, not seen, once. */}
+        {variants &&
+          options &&
+          (beside ? (
+            <div className="site-visually-hidden">
+              <OptionLegend table={options} path={`components/${page}.md`} />
+            </div>
+          ) : (
+            <OptionLegend table={options} path={`components/${page}.md`} />
+          ))}
         {variants && !options && (
           <ul className="site-visually-hidden">
             {items.map((item, index) => (
@@ -378,7 +460,10 @@ export function AnatomyFigure({
           </ul>
         )}
         {!variants && items.length > 0 && (
-          <ol className="site-anatomy-legend">
+          <ol
+            className="site-anatomy-legend"
+            style={{ '--site-anatomy-columns': legendColumns(ordered.length) } as CSSProperties}
+          >
             {ordered.map((index, rank) => (
               <li key={`${index}-${items[index]!.part}`}>
                 <span className="site-anatomy-number" aria-hidden="true">
