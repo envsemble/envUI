@@ -58,8 +58,9 @@ test('the hosted build opens every page of the catalogue and the Docs without ne
         path,
       ).toBe(0);
   }
-  // A deep link loads its page, in the Docs too.
+  // A deep link loads its page, in the Docs too, and the setup guide's old address its home.
   await page.goto(`${siteUrl}/docs/setup`);
+  await expect(page).toHaveURL(`${siteUrl}/docs`);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Install and set up');
   await expect(page.locator('.env-code-block').first()).toContainText('@envsemble:registry');
   // The files for coding agents are at the root, as text rather than the page.

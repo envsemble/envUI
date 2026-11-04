@@ -33,20 +33,22 @@ test('the addresses of the views before the catalogue and the Docs split open th
     'docs/customizing-colors': 'docs/customizing',
     'overview/components': 'overview',
     'overview/components?section=components-actions': 'components?section=components-actions',
-    'overview/get-started': 'docs/setup',
-    'overview/get-started?skill=migrate&section=local-development':
-      'docs/setup?section=coding-agents',
+    'overview/get-started': 'docs',
+    'overview/get-started?skill=migrate&section=local-development': 'docs?section=coding-agents',
     // The agent skills' page went with the skills, and the guide for agents into setup.
-    'docs/agent-skills': 'docs/setup?section=coding-agents',
-    'docs/agent-tooling': 'docs/setup?section=coding-agents',
+    'docs/agent-skills': 'docs?section=coding-agents',
+    'docs/agent-tooling': 'docs?section=coding-agents',
+    // The setup guide is the Docs' home.
+    'docs/setup': 'docs',
+    'docs/setup?section=install-a-release': 'docs?section=install-a-release',
     // The codemods went, and developing envUI locally is a contributor's guide now.
     'docs/codemods': 'docs/migration',
     'docs/local-development': 'docs',
     // The agent benchmark went, and its page opens the overview.
     benchmark: 'overview',
     'get-started/migration': 'docs/migration',
-    // The catalogue's Get started page is the setup guide.
-    'get-started': 'docs/setup',
+    // The catalogue's Get started page is the setup guide, the Docs' home.
+    'get-started': 'docs',
     'contributing/library-development': 'overview',
     // The catalogue's changelog is the Docs' now, with its release notes.
     changelog: 'docs/changelog',
@@ -105,7 +107,6 @@ test("each page of a subject leads to its page in the other part, and a page wit
   // A page of the Docs alone, such as a guide, the changelog or Field's, leads to the Overview.
   for (const path of [
     'docs',
-    'docs/setup',
     // Dev mode is the Docs' alone: its page in the catalogue folded into its guide.
     'docs/dev-mode',
     'docs/changelog',
@@ -155,6 +156,9 @@ test("the Docs' navigation is a tree of sections and groups, and each page's tra
   expect(trail('docs/foundations/spacing')).toEqual(['Docs', 'Foundations', 'Spacing & density']);
   // A section that is one page of its name is left out.
   expect(trail('docs/changelog')).toEqual(['Docs', 'Changelog']);
+  // The home is the setup guide, where Docs leads nowhere.
+  expect(trail('docs')).toEqual(['Docs', 'Get started', 'Install and set up']);
+  expect(docsTrail(findPage('docs')!)[0]!.route).toBeUndefined();
   // Docs leads to their home; the section and group, which the navigation lists, lead nowhere.
   expect(docsTrail(findPage('docs/components/button')!).map(({ route }) => route)).toEqual([
     'docs',

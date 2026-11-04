@@ -145,11 +145,9 @@
   font-family: var(--site-code-font-family);
   font-size: 0.85em;
 }
-/* The Docs home's setup prompt, from the start of the page's column as the banner above it is: a
-   compact pill of the agents' marks, the prompt in monospace and a ghost copy button. */
-.docs-agent-setup {
-  padding-block-end: var(--env-space-7);
-}
+/* The setup prompt at the top of the Docs' home, from the start of the page's column as the banner
+   above it is: a compact pill of the agents' marks, the prompt in monospace and a ghost copy
+   button. */
 .docs-agent-setup > * {
   margin: 0;
 }
@@ -162,10 +160,6 @@
   margin-block-start: var(--env-space-2);
   padding-inline-start: var(--env-space-3);
   border-radius: var(--env-radius-full);
-}
-/* The way to set envUI up by hand, under the prompt. */
-.docs-agent-setup > .docs-setup-by-hand {
-  margin-block-start: var(--env-space-2);
 }
 .docs-agent-prompt-text {
   overflow: hidden;

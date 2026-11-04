@@ -28,7 +28,6 @@ import {
 import {
   DocsReferencePage,
   ChangelogDocsPage,
-  DocsHome,
   FoundationGuidePage,
   GuidePage,
   TokensPage,
@@ -69,7 +68,6 @@ const pageContent: Record<RoutePage['kind'], (props: { page: RoutePage }) => Rea
   component: ComponentPage,
   pattern: PatternPage,
   foundation: FoundationPage,
-  'docs-home': DocsHome,
   guide: GuidePage,
   'docs-changelog': ChangelogDocsPage,
   tokens: TokensPage,
@@ -81,7 +79,7 @@ const pageContent: Record<RoutePage['kind'], (props: { page: RoutePage }) => Rea
 function documentTitle(page: RoutePage | undefined, area: Area) {
   const site = area === 'docs' ? 'envUI Docs' : 'envUI';
   if (!page) return `Page not found · ${site}`;
-  if (page.kind === 'home' || page.kind === 'docs-home') return site;
+  if (page.kind === 'home' || page.path === docsRoute) return site;
   return `${page.title} · ${site}`;
 }
 
@@ -106,13 +104,12 @@ const contentsHeading = (heading: HTMLElement) =>
   );
 
 /**
- * The pages without contents beside them: the two homes, the catalogue's overview, a hero and a fan
- * of cards rather than sections, and the Docs' home, an index of them; and the catalogue's index
- * pages, galleries of tiles whose groups the drawer lists already, which take the width instead.
+ * The pages without contents beside them: the catalogue's overview, a hero and a fan of cards
+ * rather than sections, and its index pages, galleries of tiles whose groups the drawer lists
+ * already, which take the width instead.
  */
 const pagesWithoutContents = new Set<RoutePage['kind']>([
   'home',
-  'docs-home',
   'foundations',
   'components',
   'patterns',

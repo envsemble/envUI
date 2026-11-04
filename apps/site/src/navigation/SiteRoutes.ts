@@ -31,7 +31,6 @@ export type PageKind =
   | 'patterns'
   | 'pattern'
   | 'foundation'
-  | 'docs-home'
   | 'guide'
   | 'docs-changelog'
   | 'tokens'
@@ -192,21 +191,18 @@ const cataloguePages: RoutePage[] = [
   ),
 ];
 
-/** The shorter names of guides in the Docs' navigation. */
-const guideLabels: Record<string, string> = {
-  setup: 'Install and set up',
-};
-
 /**
  * The guides that get an application going, in the Docs' Get started group; every other guide of
  * the index's Setup and workflows, such as customizing colors or dev mode, is in Guides.
  */
 const startGuides = new Set(['setup', 'migration']);
 
+/** The guide the Docs open on, at their home: installing and setting envUI up. */
+const homeGuide = 'setup';
+
 const guidePage = (document: DocumentSummary): RoutePage => ({
-  path: `docs/${document.id}`,
+  path: document.id === homeGuide ? docsRoute : `docs/${document.id}`,
   title: document.title,
-  label: guideLabels[document.id],
   area: 'docs',
   section: startGuides.has(document.id) ? 'Get started' : 'Guides',
   kind: 'guide',
@@ -214,7 +210,7 @@ const guidePage = (document: DocumentSummary): RoutePage => ({
   document,
 });
 
-/** The Docs' pages for getting started, in reading order. */
+/** The Docs' pages for getting started, in reading order: the first, setup, is their home. */
 const startPages: RoutePage[] = guideDocuments
   .filter((document) => startGuides.has(document.id))
   .map(guidePage);
@@ -227,16 +223,6 @@ const guidePages: RoutePage[] = guideDocuments
 const field = componentDocuments.find((document) => docsOnlyComponents.has(document.id));
 
 const docsPages: RoutePage[] = [
-  {
-    path: docsRoute,
-    title: 'envUI Docs',
-    label: 'Introduction',
-    area: 'docs',
-    section: 'Get started',
-    kind: 'docs-home',
-    summary:
-      'How to build with envUI in code: setup, guides, tokens, and every component and pattern with its props. The catalogue shows what each looks like and when to use it.',
-  },
   ...startPages,
   ...guidePages,
   ...(field
@@ -416,11 +402,13 @@ export interface TrailStep {
  * The trail from the Docs' home down to a page of the Docs, for its breadcrumbs: Docs, leading to
  * their home, its section and its group, which say where the page is and lead nowhere, as the
  * navigation beside the page lists their pages, then the page itself, such as Docs / Components /
- * Actions / Button. A section named as its one page, such as Changelog, is left out.
+ * Actions / Button. A section named as its one page, such as Changelog, is left out, and on the
+ * home Docs leads nowhere either, as the page is their home.
  */
 export function docsTrail(page: RoutePage): TrailStep[] {
-  const steps: TrailStep[] = [{ label: 'Docs', route: docsRoute }];
-  if (page.kind === 'docs-home') return steps;
+  const steps: TrailStep[] = [
+    { label: 'Docs', route: page.path === docsRoute ? undefined : docsRoute },
+  ];
   const section = docsTree.find((entry) => entry.label === page.section);
   if (section && section.label !== page.title) steps.push({ label: section.label });
   const group = section?.groups.find((entry) => entry.label === page.group);
@@ -455,7 +443,7 @@ export function routeOfDocument(
   if (id === 'index' || id === docsRoute) return `${docsRoute}${query}`;
   if (id === 'overview') return homeRoute;
   const own: Record<string, string> = {
-    'get-started': 'docs/setup',
+    'get-started': docsRoute,
     foundations: 'foundations',
     components: 'components',
     patterns: 'patterns',
@@ -467,8 +455,8 @@ export function routeOfDocument(
     codemods: 'docs/migration',
     'full-changelog': 'docs/changelog',
     // The agent skills are gone, and so is the guide for agents: setup leads to the skill.
-    'agent-skills': 'docs/setup?section=coding-agents',
-    'agent-tooling': 'docs/setup?section=coding-agents',
+    'agent-skills': `${docsRoute}?section=coding-agents`,
+    'agent-tooling': `${docsRoute}?section=coding-agents`,
     // Pages merged into others.
     'customizing-colors': 'docs/customizing',
     composition: 'docs/customizing',
@@ -551,10 +539,10 @@ export function normalizeRoute(route: string): string {
       return routeOfDocument(shown) ?? docsRoute;
     }
     if (search.has('skill') || section === 'local-development')
-      return 'docs/setup?section=coding-agents';
+      return `${docsRoute}?section=coding-agents`;
     if (section === 'documentation') return docsRoute;
     if (section === 'setup') search.delete('section');
-    return `docs/setup${rest()}`;
+    return `${docsRoute}${rest()}`;
   }
   if (/^overview\//.test(originalPath)) return `${homeRoute}${rest()}`;
   // The guides of Get started moved to the Docs, and the contributing pages are gone.
@@ -564,7 +552,9 @@ export function normalizeRoute(route: string): string {
   // The agent skills' page is gone with the skills, and so is the guide for agents: setup's
   // section on coding agents leads to the skill.
   if (originalPath === 'docs/agent-skills' || originalPath === 'docs/agent-tooling')
-    return 'docs/setup?section=coding-agents';
+    return `${docsRoute}?section=coding-agents`;
+  // The setup guide is the Docs' home, which its Introduction was before.
+  if (originalPath === 'docs/setup') return `${docsRoute}${rest()}`;
   // The codemods are gone: their page opens the migration guide.
   if (originalPath === 'docs/codemods') return `docs/migration${rest()}`;
   // Developing envUI locally is a contributor's guide now, in the repository.

@@ -117,15 +117,3 @@
   container-type: size;
   pointer-events: none;
 }
-
-/* The Docs' home shows the envUI Docs lockup as its title, with room before the summary. */
-.docs-page-banner-logo {
-  margin: 0 0 var(--env-space-4);
-  line-height: 0;
-}
-.docs-page-banner-logo > img {
-  display: block;
-  block-size: clamp(1.75rem, calc(1rem + 2.5cqi), 2.75rem);
-  inline-size: auto;
-  max-inline-size: 100%;
-}

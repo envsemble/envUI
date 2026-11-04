@@ -16,7 +16,7 @@ import { IconError } from '@envsemble/envui/icons/Error';
 import { IconExpandMore } from '@envsemble/envui/icons/ExpandMore';
 import { counterpartOf, findPage, routeOfDocument, type RoutePage } from '../navigation/SiteRoutes';
 import { otherPart } from '../navigation/OtherPart';
-import { navigate, routeHref } from '../navigation/Address';
+import { docsRoute, navigate, routeHref } from '../navigation/Address';
 import { canRetryLoad, reloadModule, reloadPage } from '../template/LoadBoundary';
 import type { SearchResult } from './SearchIndex';
 import { commandKey } from './SearchShortcut';
@@ -71,7 +71,7 @@ const areas: Record<SearchResult['area'], string> = { catalogue: 'Catalogue', do
 
 /** What the empty query finds: the start of either part, and the setup guide. */
 const suggestedRoutes = [
-  { route: 'docs/setup', icon: <IconArticle /> },
+  { route: docsRoute, icon: <IconArticle /> },
   { route: 'components', icon: <IconWidgets /> },
   { route: 'patterns', icon: <IconPattern /> },
   { route: 'docs/tokens', icon: <IconPalette /> },

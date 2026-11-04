@@ -5,7 +5,7 @@ import { IconPattern } from '@envsemble/envui/icons/Pattern';
 import { IconPalette } from '@envsemble/envui/icons/Palette';
 import { version } from '../../../../packages/ui/package.json';
 import { EnvUILogo } from '../brand/EnvUILogo';
-import { routeHref } from '../navigation/Address';
+import { docsRoute, routeHref } from '../navigation/Address';
 import { pagesOf, sectionHome } from '../navigation/SiteRoutes';
 import { OverviewFan } from './OverviewFan';
 
@@ -61,7 +61,7 @@ export function Overview() {
           {/* The one way in, to setting envUI up, beside quiet facts: the package's version, read
               from packages/ui/package.json, and how much the catalogue shows. */}
           <Row gap={5} align="center" justify="center" wrap className="catalogue-overview-start">
-            <Button href={routeHref('docs/setup')} endIcon={<IconArrowForward />}>
+            <Button href={routeHref(docsRoute)} endIcon={<IconArrowForward />}>
               Get started
             </Button>
             <Text variant="caption" emphasis="muted" className="catalogue-overview-facts">
