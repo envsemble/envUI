@@ -155,7 +155,7 @@ const date = new Intl.DateTimeFormat(undefined, { dateStyle: 'long' }).format(se
 
 ### Composition
 
-RelativeTime is a native `<time>`, `env-relative-time`, whose `dateTime` holds the exact moment, with the quiet dotted underline, `env-hover-detail`, that marks text with more on hover.
+RelativeTime is a native `<time>`, `env-relative-time`, whose `dateTime` holds the exact moment, with the quiet dotted underline, `env-hover-detail`, that marks text with more on hover; in a Table it shows only under the pointer and with keyboard focus.
 
 ## Changelog
 

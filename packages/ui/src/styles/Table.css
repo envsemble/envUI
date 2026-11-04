@@ -160,6 +160,15 @@
   .env-table-row[aria-selected='true'][data-interactive]:is(:hover, :focus-within) {
     background: var(--env-color-bg-selected-hover);
   }
+  /* Links and times repeat down a table's rows, so the lines that mark them wait for the pointer or
+     keyboard focus: a Link keeps its link color and shows its underline then, and a RelativeTime its
+     dotted line. A selected row's links stay underlined, below. */
+  .env-table .env-link[data-underline]:not(:hover, :focus-visible) {
+    text-decoration-line: none;
+  }
+  .env-table .env-relative-time.env-hover-detail:not(:hover, :focus-visible) {
+    background-image: none;
+  }
   /* There links share the selection's text color with the row's own text, so a link that looks like
      one, a Link without its underline or a text button that is a link, is underlined to stay apart
      from it, as color alone may not tell them apart. Links styled as buttons keep their look. */
