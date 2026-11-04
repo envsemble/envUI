@@ -51,13 +51,15 @@ const colorPalette = lazyPart(
 /** What people paste into a coding agent to set envUI up: the skill the site serves at /SKILL.md. */
 export const setupPrompt = 'Set up envUI in my app: envui.envsemble.com/SKILL.md';
 
-/** A group's pages, one link to each, in a short list. */
+/** A group's pages, one quiet link to each, in a short list. */
 function PageLinks({ pages }: { pages: readonly RoutePage[] }) {
   return (
     <ul className="docs-link-list">
       {pages.map((entry) => (
         <li key={entry.path}>
-          <Link href={routeHref(entry.path)}>{entry.label ?? entry.title}</Link>
+          <Link href={routeHref(entry.path)} underline={false}>
+            {entry.label ?? entry.title}
+          </Link>
         </li>
       ))}
     </ul>

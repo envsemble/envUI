@@ -3,10 +3,8 @@ import {
   Badge,
   Button,
   NavigationDrawer,
-  IconButton,
   Link,
   NavigationRail,
-  Tooltip,
   type Destination,
   type NavigationDrawerDestination,
 } from '@envsemble/envui';
@@ -72,13 +70,22 @@ export function pageDestinations(
   }));
 }
 
-/** Scrolls the current page's link into view as the navigation mounts, as on a page deep in it. */
+/**
+ * Scrolls the drawer's list as the navigation mounts so the current page's link shows, as on a page
+ * deep in it: a third of the way down the list, with the pages before it above, rather than at its
+ * foot under a link cut short at its top. A link already in view leaves the list where it is.
+ */
 function useCurrentInView() {
   const element = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    element.current
-      ?.querySelector('.env-navigation-drawer [aria-current="page"]')
-      ?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    const link = element.current?.querySelector<HTMLElement>(
+      '.env-navigation-drawer [aria-current="page"]',
+    );
+    const list = link?.closest<HTMLElement>('.env-navigation-drawer-list');
+    if (!link || !list) return;
+    const top = link.getBoundingClientRect().top - list.getBoundingClientRect().top;
+    if (top >= 0 && top + link.offsetHeight <= list.clientHeight) return;
+    list.scrollTop += top - list.clientHeight / 3;
   }, []);
   return element;
 }
@@ -292,8 +299,8 @@ export function DocsNavigation({
  * The page's own controls at its top end, quiet ghost buttons that stay in the corner as the page
  * scrolls, on a small pill of the page's color: the other part, the Docs from the catalogue and
  * the catalogue from the Docs, at the page of the same subject there (otherPartRoute), and the
- * Display menu, where the theme, contrast and scale are. Below an expanded window they are icon
- * buttons with tooltips.
+ * Display menu, where the theme, contrast and scale are. Below an expanded window the other part
+ * keeps its name, without its icon, and Display is an icon button with a tooltip.
  */
 export function PageActions({ page, area }: { page?: RoutePage; area: Area }) {
   const { label, Icon } = otherPart(area);
@@ -308,9 +315,9 @@ export function PageActions({ page, area }: { page?: RoutePage; area: Area }) {
           <DisplayMenu />
         </span>
         <span className="site-narrow-only">
-          <Tooltip content={label}>
-            <IconButton variant="ghost" href={href} icon={<Icon />} aria-label={label} />
-          </Tooltip>
+          <Button variant="ghost" href={href}>
+            {label}
+          </Button>
           <DisplayMenu iconOnly />
         </span>
       </div>

@@ -15,10 +15,11 @@
 .catalogue-fan-stack {
   --catalogue-fan-card-width: 15rem;
   --catalogue-fan-card-height: 14rem;
-  /* The fan's angle from one card to the next, and how far below the cards it turns. */
-  --catalogue-fan-step: 4deg;
+  /* The fan's angle from one card to the next, and how far below the cards it turns: each card
+     covers no more of the one behind it than its edge, so no label behind is cut short. */
+  --catalogue-fan-step: 4.6deg;
   --catalogue-fan-pivot: 150rem;
-  --catalogue-fan-width: 57rem;
+  --catalogue-fan-width: 64rem;
   --catalogue-fan-height: 21rem;
   --catalogue-fan-scale: 1;
   position: relative;
@@ -54,14 +55,19 @@
 }
 
 /* A narrower page draws the fan smaller, then keeps its front three cards. */
-@container (width < 58rem) {
+@container (width < 65rem) {
+  .catalogue-fan-stack {
+    --catalogue-fan-scale: 0.94;
+  }
+}
+@container (width < 60rem) {
   .catalogue-fan-stack {
     --catalogue-fan-scale: 0.8;
   }
 }
 @container (width < 46rem) {
   .catalogue-fan-stack {
-    --catalogue-fan-width: 37rem;
+    --catalogue-fan-width: 40rem;
     --catalogue-fan-scale: 0.95;
   }
   .catalogue-fan-card {

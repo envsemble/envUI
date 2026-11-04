@@ -100,6 +100,31 @@ body {
 .site-drawer-search {
   max-inline-size: 100%;
 }
+/* Once the drawer's list scrolls, its top edge fades, so a page's link passing under search reads as
+   scrolled away rather than cut short; at the top of the list nothing fades. In a browser without
+   scroll-driven animations the list scrolls as it is. */
+@property --site-drawer-fade {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0rem;
+}
+@keyframes site-drawer-fade {
+  to {
+    --site-drawer-fade: var(--env-space-6);
+  }
+}
+@supports (animation-timeline: scroll()) {
+  .site-sidebar .env-navigation-drawer-list {
+    mask-image: linear-gradient(
+      to bottom,
+      transparent,
+      var(--env-color-fg-default) var(--site-drawer-fade)
+    );
+    animation: site-drawer-fade linear both;
+    animation-range: 0 var(--env-space-6);
+    animation-timeline: scroll(self);
+  }
+}
 .docs-drawer-top {
   display: flex;
   align-items: center;
@@ -124,7 +149,8 @@ body {
 /* The other area and the Display menu: ghost buttons at the page's top end that stay in the corner
    as the page scrolls. Their row sticks to the body's top and lets the page show through; the
    buttons sit on a small pill of the page's color, so content scrolling beneath doesn't run into
-   them. Below an expanded window they are icon buttons, across from the menu button and search. */
+   them. Below an expanded window the other part keeps its name and Display is an icon button,
+   across from the menu button and search. */
 .site-page-actions {
   position: sticky;
   z-index: var(--env-z-sticky);
@@ -189,14 +215,14 @@ body {
   min-block-size: 100%;
 }
 /* The page, and its contents beside it, in the catalogue and the Docs alike but on their homes: a
-   column at the page's end, as wide as its longest label needs, so each section stays on one line,
-   from 13rem up to 22rem, on a pane wide enough for it beside a readable page; the page's banner
-   and sections take the rest, so a banner is as wide in the catalogue as in the Docs. The contents
-   stay in view below the corner's controls as the page scrolls, and scroll on their own where they
-   are taller than the window. A narrower pane leaves them out, as the page's own headings say as
-   much. The pager stays at the foot of a short page. */
+   column of one width at the page's end, the same on every page, so the page's column ends at the
+   same place wherever the reader goes; a long label wraps. It shows on a pane wide enough for it
+   beside a readable page; the page's banner and sections take the rest, so a banner is as wide in
+   the catalogue as in the Docs. The contents stay in view below the corner's controls as the page
+   scrolls, and scroll on their own where they are taller than the window. A narrower pane leaves
+   them out, as the page's own headings say as much. The pager stays at the foot of a short page. */
 .site-page-layout {
-  --site-contents-width: 22rem;
+  --site-contents-width: 16rem;
   /* Below the corner's controls: their row's padding and the pill's height, with room. */
   --site-contents-top: 4.5rem;
   container: site-page-layout / inline-size;
@@ -221,15 +247,16 @@ body {
 @container site-page-layout (width >= 56rem) {
   .site-page-grid[data-contents] {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    inline-size: min(100%, var(--site-content-width) + var(--site-contents-width));
+    grid-template-columns: minmax(0, 1fr) calc(var(--site-contents-width) + var(--site-gutter));
+    inline-size: min(
+      100%,
+      var(--site-content-width) + var(--site-contents-width) + var(--site-gutter)
+    );
     margin-inline: auto;
   }
   .site-page-grid[data-contents] > .site-contents {
     display: block;
-    inline-size: max-content;
-    min-inline-size: 13rem;
-    max-inline-size: var(--site-contents-width);
+    min-inline-size: 0;
     padding-inline-end: var(--site-gutter);
   }
 }
@@ -260,7 +287,7 @@ body {
 .site-page-header {
   container: site-page-header / inline-size;
   padding-block: var(--env-space-5) var(--env-space-4);
-  margin-block-end: var(--env-space-8);
+  margin-block-end: var(--env-space-7);
 }
 .site-page-banner,
 .catalogue-overview-hero {
@@ -293,7 +320,8 @@ body {
   isolation: isolate;
   overflow: hidden;
   container-type: inline-size;
-  padding-block: clamp(2.5rem, 5vw, 4rem);
+  /* Snug, so a page's first figure starts close below it. */
+  padding-block: clamp(1.75rem, 3.5vw, 2.75rem);
 }
 .site-page-banner-content {
   position: relative;
