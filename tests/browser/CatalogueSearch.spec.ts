@@ -261,6 +261,7 @@ test.describe('hosted build', () => {
     await rail.getByRole('link', { name: 'Components', exact: true }).click();
     await expect(page).toHaveURL(`${siteUrl}/components`);
     const navigation = page.getByRole('navigation', { name: 'Components' });
+    await navigation.getByRole('button', { name: 'Overlays', exact: true }).click();
     await navigation.getByRole('link', { name: 'Dialog', exact: true }).click();
     await expect(page).toHaveURL(`${siteUrl}/components/dialog`);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Dialog');
@@ -369,10 +370,9 @@ test('a token found in search opens the token reference in the Docs', async ({ p
     .getByRole('navigation', { name: 'Catalogue' })
     .getByRole('link', { name: 'Patterns', exact: true })
     .click();
-  await page
-    .getByRole('navigation', { name: 'Patterns' })
-    .getByRole('link', { name: 'Loading', exact: true })
-    .click();
+  const patterns = page.getByRole('navigation', { name: 'Patterns' });
+  await patterns.getByRole('button', { name: 'Keep people informed', exact: true }).click();
+  await patterns.getByRole('link', { name: 'Loading', exact: true }).click();
   await expect(page).toHaveURL(`${siteDevUrl}/patterns/loading`);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Loading');
 });

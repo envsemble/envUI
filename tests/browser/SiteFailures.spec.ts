@@ -195,9 +195,9 @@ test('an example that fails to render says so in place, and the rest of the page
   // And the navigation still leads elsewhere.
   await page
     .getByRole('navigation', { name: 'Components' })
-    .getByRole('link', { name: 'Badge', exact: true })
+    .getByRole('link', { name: 'Link', exact: true })
     .click();
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Badge');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Link');
 });
 
 test('a page that fails to render says so, and the navigation leads to the others', async ({

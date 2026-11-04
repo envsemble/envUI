@@ -73,19 +73,34 @@ const sectionPages = (section: CatalogueSection) =>
 export const drawerless = (page: RoutePage | undefined) =>
   sectionPages(catalogueSectionOf(page)).length === 1;
 
-/** The pages of one of the catalogue's destinations, for its drawer. */
+/**
+ * The pages of one of the catalogue's destinations, for its drawer: its pages of no group, such as
+ * All components, then each group, such as a kind of component or a pattern's intent, as a section
+ * of its pages that opens and closes, open while it holds the current page, as in the Docs.
+ */
 export function pageDestinations(
   pages: readonly RoutePage[],
   currentPath: string,
   onChoose?: () => void,
 ): NavigationDrawerDestination[] {
-  return pages.map((page) => ({
-    group: page.group,
+  const link = (page: RoutePage): NavigationDrawerDestination => ({
     label: page.label ?? page.title,
     href: routeHref(page.path),
     current: page.path === currentPath,
     onClick: onChoose,
-  }));
+  });
+  const groups = new Map<string, RoutePage[]>();
+  for (const page of pages)
+    if (page.group) groups.set(page.group, [...(groups.get(page.group) ?? []), page]);
+  return [
+    ...pages.filter((page) => !page.group).map(link),
+    ...[...groups].map(
+      ([label, members]): NavigationDrawerDestination => ({
+        label,
+        children: members.map(link),
+      }),
+    ),
+  ];
 }
 
 /**
