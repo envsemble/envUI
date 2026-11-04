@@ -159,7 +159,7 @@ test.describe('search', () => {
     await expect(field(page)).toHaveValue('date');
   });
 
-  test('finds a page once, in the catalogue, the Docs a step from it', async ({ page }) => {
+  test('finds a page once, and opens it in the part the reader is in', async ({ page }) => {
     await openCatalogue(page, `${siteDevUrl}/docs`);
     await search(page, 'colors and themes');
     await expect(option(page, 'page:colors')).toContainText('Foundations');
@@ -168,8 +168,14 @@ test.describe('search', () => {
     await field(page).fill('button');
     await expect(option(page, 'page:button')).toContainText('Actions');
     await page.keyboard.press('Enter');
+    // From the Docs, a page found opens in the Docs; from the catalogue, in the catalogue.
+    await expect(page).toHaveURL(`${siteDevUrl}/docs/components/button`);
+    await expect(page.getByRole('navigation', { name: 'Docs' })).toBeVisible();
+    await openCatalogue(page, `${siteDevUrl}/components`);
+    await search(page, 'button');
+    await expect(option(page, 'page:button')).toBeVisible();
+    await page.keyboard.press('Enter');
     await expect(page).toHaveURL(`${siteDevUrl}/components/button`);
-    await expect(page.getByRole('navigation', { name: 'Catalogue' })).toBeVisible();
   });
 
   test('a link to a heading opens the page that shows it', async ({ page }) => {
