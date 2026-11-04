@@ -18,6 +18,8 @@ export interface SearchResult {
   view?: string;
   /** The id of its element on the page. */
   section?: string;
+  /** Whether the query matched what it is called, its name, aliases or keywords, not only its text. */
+  named: boolean;
 }
 
 const index = MiniSearch.loadJSON(serializedIndex, indexOptions);
@@ -27,7 +29,7 @@ export function searchDocumentation(query: string, limit: number): SearchResult[
   return index
     .search(query, queryOptionsFor(query))
     .slice(0, limit)
-    .map(({ id, kind, title, detail, page, area, view, section }) => ({
+    .map(({ id, kind, title, detail, page, area, view, section, match }) => ({
       id,
       kind,
       title,
@@ -36,5 +38,6 @@ export function searchDocumentation(query: string, limit: number): SearchResult[
       area,
       view,
       section,
+      named: Object.values(match).some((fields) => fields.some((field) => field !== 'text')),
     }));
 }

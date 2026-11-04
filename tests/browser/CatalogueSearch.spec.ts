@@ -72,8 +72,9 @@ test.describe('search', () => {
       await page.keyboard.press('Escape');
       await expect(dialog(page)).toBeHidden();
 
+      // The Overview has no drawer, and search at the page's top start.
       const button = page
-        .locator('.site-sidebar')
+        .locator('.site-page-search')
         .getByRole('button', { name: /^Search/ })
         .first();
       await expect(button).toHaveAttribute('aria-keyshortcuts', keys.named);
@@ -131,6 +132,16 @@ test.describe('search', () => {
     await expect(page.locator('[id="props-Button-startIcon"]')).toBeInViewport();
     // Focus goes to the row, so reading and the keyboard go on from it.
     await expect(page.locator('[id="props-Button-startIcon"]')).toBeFocused();
+  });
+
+  test('lists what a query names before what only mentions it in its text', async ({ page }) => {
+    await openCatalogue(page, `${siteDevUrl}/`);
+    await search(page, 'date');
+    const groups = dialog(page).getByRole('group');
+    await expect(groups.first()).toContainText('DatePicker');
+    await expect(groups.last()).toHaveAccessibleName('Mentions');
+    await expect(groups.last().locator('[data-item-id="page:table"]')).toBeVisible();
+    await expect(dialog(page).getByRole('group', { name: 'Props' })).toContainText('startDate');
   });
 
   test('finds pages of the catalogue and of the Docs, each named by its part', async ({ page }) => {

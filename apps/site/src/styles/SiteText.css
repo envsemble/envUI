@@ -78,3 +78,31 @@
 :where(.site-figures .env-markdown) > p + ul {
   margin-block-start: var(--env-space-2);
 }
+
+/* A code block in a page's Markdown (Documentation.tsx): the code alone, snug, with its copy
+   button in the top end corner and, for a language other than the usual TypeScript and JSX, its
+   name beside the button. The code keeps clear of the corner. */
+.site-code-block {
+  --site-code-corner: calc(var(--env-control-height-sm) + var(--env-space-2));
+  position: relative;
+  min-inline-size: 0;
+}
+.site-code-block[data-language] {
+  --site-code-corner: calc(var(--env-control-height-sm) + var(--env-space-2) + 3rem);
+}
+.site-code-block > .env-code-block {
+  padding: var(--env-space-4) calc(var(--site-code-corner) + var(--env-space-2)) var(--env-space-4)
+    var(--env-space-4);
+}
+.site-code-block-corner {
+  position: absolute;
+  inset-block-start: var(--env-space-2);
+  inset-inline-end: var(--env-space-2);
+  display: flex;
+  align-items: center;
+  gap: var(--env-space-1);
+}
+.site-code-block-language {
+  color: var(--env-code-foreground);
+  font: var(--env-code-font-size) / 1 var(--site-code-font-family);
+}

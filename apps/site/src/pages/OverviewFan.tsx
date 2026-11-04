@@ -1,6 +1,5 @@
 import type { CSSProperties, ReactNode } from 'react';
 import {
-  AnimatedNumber,
   AvatarGroup,
   Badge,
   Card,
@@ -50,13 +49,14 @@ function CardNote({ children }: { children: ReactNode }) {
 
 /**
  * The cards in the hand, from the back to the front, each a small moment of an application built
- * with envUI. `place` is the card's place in the fan, from the middle; on a narrow page the back two
- * go and the rest take `narrowPlace`.
+ * with envUI. `place` is the card's place in the fan, from the middle; on a narrower page the first
+ * goes and the rest take `narrowPlace`, and on a narrow one only those with a `compactPlace` stay.
  */
 const cards: {
   id: string;
   place: number;
   narrowPlace?: number;
+  compactPlace?: number;
   /** A slight turn and lift of its own, in degrees and rem: the fan stays an arch, laid by hand. */
   tilt: number;
   lift: number;
@@ -64,8 +64,8 @@ const cards: {
 }[] = [
   {
     id: 'checklist',
-    place: -2,
-    tilt: 0.6,
+    place: -1.5,
+    tilt: 0.1,
     lift: 0.25,
     content: (
       <>
@@ -80,8 +80,9 @@ const cards: {
   },
   {
     id: 'notifications',
-    place: -1,
-    tilt: -0.4,
+    place: -0.5,
+    narrowPlace: -1,
+    tilt: -0.1,
     lift: -0.15,
     content: (
       <>
@@ -95,10 +96,11 @@ const cards: {
   },
   {
     id: 'storage',
-    place: 0,
-    tilt: 0.3,
+    place: 0.5,
+    narrowPlace: 0,
+    compactPlace: -0.5,
+    tilt: 0.1,
     lift: 0.1,
-    narrowPlace: -1,
     content: (
       <>
         <CardHeader title="Storage" note="Northwind team" />
@@ -116,31 +118,12 @@ const cards: {
     ),
   },
   {
-    id: 'figure',
-    place: 1,
-    tilt: -0.6,
-    lift: -0.2,
-    narrowPlace: 0,
-    content: (
-      <>
-        <CardHeader title="Tasks completed" note="Since 1 January" />
-        <Column gap={1} className="catalogue-fan-body">
-          <span className="catalogue-fan-figure">
-            <AnimatedNumber value={1280} />
-          </span>
-          <Text variant="caption" render={<span />} className="catalogue-fan-trend">
-            +12% from last year
-          </Text>
-        </Column>
-      </>
-    ),
-  },
-  {
     id: 'project',
-    place: 2,
-    tilt: 0.4,
-    lift: 0.2,
+    place: 1.5,
     narrowPlace: 1,
+    compactPlace: 0.5,
+    tilt: -0.1,
+    lift: 0.2,
     content: (
       <>
         <CardHeader
@@ -159,7 +142,7 @@ const cards: {
 
 /**
  * The Overview's fan of cards, under its banner: a hand of cards fanned evenly from one point below
- * them, each a few live components. It is a still picture: hidden from assistive technology, and
+ * them, each a few live components, spread so none covers what another shows. It is a still picture: hidden from assistive technology, and
  * its components inert.
  */
 export function OverviewFan() {
@@ -172,10 +155,12 @@ export function OverviewFan() {
             className="catalogue-fan-card"
             padding={5}
             data-narrow={card.narrowPlace === undefined ? 'hidden' : undefined}
+            data-compact={card.compactPlace === undefined ? 'hidden' : undefined}
             style={
               {
                 '--catalogue-fan-place': card.place,
                 '--catalogue-fan-narrow-place': card.narrowPlace ?? 0,
+                '--catalogue-fan-compact-place': card.compactPlace ?? 0,
                 '--catalogue-fan-tilt': `${card.tilt}deg`,
                 '--catalogue-fan-lift': `${card.lift}rem`,
               } as CSSProperties

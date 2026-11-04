@@ -31,6 +31,15 @@
   font-size: clamp(2.5rem, calc(1.5rem + 3cqi), 3.25rem);
 }
 
+/* In a narrow banner, the trail is the page's parent alone, a link back up: the title under it
+   names the page, and the levels above it would cut the trail short mid-word. */
+@container site-page-header (width < 36rem) {
+  .site-page-banner-breadcrumbs .env-breadcrumbs-item:not(:nth-last-child(2)),
+  .site-page-banner-breadcrumbs .env-breadcrumbs-separator {
+    display: none;
+  }
+}
+
 /* A trail given as a line rather than breadcrumbs, such as a missing page's, is set in monospace. */
 .site-banner .catalogue-page-banner-breadcrumb {
   font-family: var(--site-code-font-family);
@@ -52,13 +61,22 @@
 }
 
 /* The banner's picture (CatalogueBannerLines.tsx, DocsBannerLines.tsx): a LineArt drawing in a box
-   at the banner's end, cropped from its start where the banner is narrow. */
+   at the banner's end, cropped from its start where the banner is narrow. Its start fades out, as
+   a motif's does (BannerMotifs.css), so where a long title or description reaches over it, the
+   text stands on the plain fill. */
 .catalogue-banner-lines,
 .docs-banner-lines {
+  /* An opaque color for the fade's mask, which reads only its alpha. */
+  --site-banner-lines-opaque: var(--env-color-fg-default);
   position: absolute;
   inset-block: 0;
   inset-inline-end: 0;
   inline-size: min(48%, 42rem);
+  mask-image: linear-gradient(to right, transparent 25%, var(--site-banner-lines-opaque) 70%);
+}
+.catalogue-banner-lines:dir(rtl),
+.docs-banner-lines:dir(rtl) {
+  mask-image: linear-gradient(to left, transparent 25%, var(--site-banner-lines-opaque) 70%);
 }
 
 /* In a narrow pane, where the text spans the banner, the drawing would run under the text and

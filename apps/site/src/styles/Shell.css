@@ -185,6 +185,26 @@ body {
     display: contents;
   }
 }
+/* A wide window's page with no drawer beside the rail, such as Overview, has search at its top
+   start, level with the page's actions across from it: a row of no height that sticks to the
+   body's top, as the compact controls below do. */
+.site-page-search {
+  position: sticky;
+  z-index: var(--env-z-sticky);
+  inset-block-start: 0;
+  display: none;
+  block-size: 0;
+}
+.site-page-search-button {
+  position: absolute;
+  inset-block-start: calc(var(--env-space-3) + var(--env-space-1));
+  inset-inline-start: calc(var(--env-space-4) + var(--env-space-1));
+}
+@container env-scaffold (width >= 52.5rem) {
+  .site-page-search {
+    display: block;
+  }
+}
 /* Below an expanded window, where the navigation is in a sheet, the menu button and search float
    as a small pill at the page's top start: a row of no height that sticks to the body's top, so
    the page starts below the pill and scrolls beneath it. */
@@ -214,7 +234,7 @@ body {
   flex-direction: column;
   min-block-size: 100%;
 }
-/* The page, and its contents beside it, in the catalogue and the Docs alike but on their homes: a
+/* The page, and its contents beside it, in the catalogue and the Docs alike, but on their homes and the catalogue's index pages: a
    column of one width at the page's end, the same on every page, so the page's column ends at the
    same place wherever the reader goes; a long label wraps. It shows on a pane wide enough for it
    beside a readable page; the page's banner and sections take the rest, so a banner is as wide in
