@@ -6,6 +6,8 @@
      own padding, so their labels line up with the body's edge, inside the card's inset. */
   .env-picker-popup {
     --env-control-height: var(--env-control-height-sm);
+    /* A calendar's day, as Calendar.css sizes it. */
+    --env-picker-popup-day: var(--env-row-height);
     align-content: start;
     inline-size: auto;
     max-inline-size: var(--available-width, calc(100vw - 2rem));
@@ -13,6 +15,32 @@
   }
   .env-picker-popup-body {
     min-inline-size: 0;
+  }
+  /* A calendar alone, its days touching, keeps its width: beside a field a little wider than it, up
+     to 1 rem, the card takes the field's width, so it ends with the field, and the calendar sits in
+     the middle of it. A calendar always shows six weeks, so its height holds from month to month;
+     the weeks a month leaves empty already set the footer apart, so it follows them closely. */
+  .env-picker-popup:has(> .env-picker-popup-body > .env-calendar) {
+    min-inline-size: min(
+      var(--anchor-width, 0%),
+      calc(
+        7 * var(--env-picker-popup-day) + 2 *
+          (var(--env-popup-panel-padding) + var(--env-control-border-width)) + 2 *
+          var(--env-space-2)
+      ),
+      var(--available-width, 100vw)
+    );
+  }
+  .env-picker-popup-body:has(> .env-calendar) {
+    justify-items: center;
+  }
+  @media (pointer: coarse) {
+    .env-picker-popup {
+      --env-picker-popup-day: var(--env-control-height-touch);
+    }
+  }
+  .env-picker-popup:has(.env-calendar) {
+    row-gap: var(--env-space-1);
   }
   /* Each action keeps its label on one line, as Today, Now and Clear are short: where the card is too
      narrow for them side by side, the row wraps whole buttons rather than the words inside one. */

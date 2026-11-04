@@ -45,12 +45,6 @@ type ConfirmButtonBaseProps = Omit<ButtonAppearanceProps, 'variant' | 'tone'> &
  */
 type ConfirmButtonEmphasisProps<RestingTone extends ButtonTone> =
   | {
-      /**
-       * The resting appearance; armed, the button is always variant="primary" tone="danger".
-       * Without it, the container's variant, such as ghost in a toolbar, and else outline, or
-       * secondary for an icon-only button, like IconButton.
-       * @default 'outline', or 'secondary' with icon
-       */
       variant?: undefined;
       /**
        * The resting meaning, as Button's: neutral, or danger on a primary, outline, ghost or text
@@ -59,7 +53,16 @@ type ConfirmButtonEmphasisProps<RestingTone extends ButtonTone> =
        */
       tone?: RestingTone;
     }
-  | { variant: ButtonVariant; tone?: 'neutral' }
+  | {
+      /**
+       * The resting appearance; armed, the button is always variant="primary" tone="danger".
+       * Without it, the container's variant, such as ghost in a toolbar, and else outline, or
+       * secondary for an icon-only button, like IconButton.
+       * @default 'outline', or 'secondary' with icon
+       */
+      variant: ButtonVariant;
+      tone?: 'neutral';
+    }
   | { variant: 'primary' | 'outline' | 'ghost' | 'text'; tone?: 'neutral' | 'danger' }
   | { variant: 'primary'; tone?: ButtonTone };
 

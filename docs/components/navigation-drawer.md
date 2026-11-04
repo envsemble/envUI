@@ -344,6 +344,7 @@ The parts the anatomy doesn't show: a section's row, `env-navigation-drawer-bran
 
 ## Changelog
 
+- **1.0.0-prerelease.6**: A NavigationRail item's keyboard focus ring circles its pill indicator, 2 px out, rather than the whole item.
 - **1.0.0-prerelease.5**: Bar, Rail and Drawer are NavigationBar, NavigationRail and NavigationDrawer, with their props types and `NavigationDrawerDestination`, after Material's names, so they don't read as an overlay drawer or any bar; the page is `navigation-drawer`. Their part classes and color properties take the same names: `env-bar-*`, `env-rail-*` and `env-drawer-*` are `env-navigation-bar-*`, `env-navigation-rail-*` and `env-navigation-drawer-*`. NavigationBar names its parts as NavigationRail does, `-indicator` and `-label` where they were `-icon` and `-text`, and a group's label is `env-navigation-drawer-group-label`, as in Menu, where it was `env-drawer-heading`.
 - **1.0.0-prerelease.5**: A destination runs `onClick(event)`, as a link or a button does, where it ran `onSelect()`, and takes an optional `id`, which names its section in `expanded` in every language.
 - **1.0.0-prerelease.5**: A Sheet is on the navigation's background, `--env-color-bg-default`, so a NavigationDrawer or a NavigationRail in the sheet of a narrow window keeps its color. A destination's `badge` shows a short word at the end of its NavigationDrawer item, such as New.

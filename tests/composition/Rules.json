@@ -557,6 +557,12 @@
           "classes": ["env-icon-button"],
           "properties": ["background", "border-radius"],
           "note": "An icon button in the default secondary variant that holds a swatch alone, read with :has(), is a rounded square with no fill at rest, so no round fill clashes with the square sample; it keeps Button's custom fill and its state fills on hover, focus and press."
+        },
+        {
+          "stylesheet": "PickerPopup.css",
+          "classes": ["env-calendar"],
+          "properties": ["row-gap", "justify-items"],
+          "note": "The picker card reads whether its body is a calendar alone, with :has(), to size itself, place the calendar and set the gap above its footer; it never styles the calendar."
         }
       ]
     }

@@ -504,7 +504,9 @@
      currentColor, so they follow every variant, tone, state and color property: text in it takes the
      label's color, which holds 4.5:1 on every fill, and keys are drawn as everywhere else, in the
      label's color: a faint fill of it at 10% with an edge 5% stronger, as Kbd.css draws keys from the
-     text color, and the + between them at 80%, which holds 3:1 (Kbd.css's hooks). */
+     text color (Kbd.css's hooks). The keys of a combination stand side by side, the + between them
+     read but not shown, as in menus, popup lists and tooltips; its color, at 80%, holds 3:1 where an
+     application shows it again. */
   .env-button-end {
     display: inline-flex;
     flex: 0 0 auto;
@@ -516,6 +518,8 @@
     --env-kbd-border: color-mix(in srgb, currentColor 5%, transparent);
     /* contrast: button-end-separator */
     --env-kbd-separator-fg: color-mix(in srgb, currentColor 80%, transparent);
+    --env-kbd-separator-padding-inline: calc(0.0375 * var(--env-control-height-md));
+    --env-kbd-separator-font: 0 / 1 var(--env-font-family);
   }
   /* Transparent rather than hidden, so the label stays the button's accessible name. */
   .env-button[data-pending] > .env-button-content {

@@ -1983,7 +1983,8 @@
           "name": "variant",
           "type": "'primary' | 'secondary' | 'outline' | 'ghost' | 'text'",
           "required": false,
-          "description": ""
+          "default": "'outline', or 'secondary' with icon",
+          "description": "The resting appearance; armed, the button is always variant=\"primary\" tone=\"danger\". Without it, the container's variant, such as ghost in a toolbar, and else outline, or secondary for an icon-only button, like IconButton."
         },
         {
           "name": "tone",
