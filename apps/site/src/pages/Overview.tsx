@@ -56,7 +56,7 @@ export function Overview() {
             <EnvUILogo className="catalogue-overview-logo" />
           </Text>
           <Text variant="display" className="catalogue-overview-lede">
-            A React design system for clear, accessible interfaces.
+            A React design system for dense B2B SaaS and AI developer tools.
           </Text>
           {/* The one way in, to setting envUI up, beside quiet facts: the package's version, read
               from packages/ui/package.json, and how much the catalogue shows. */}
