@@ -159,11 +159,6 @@
       "count": 1
     }
   },
-  "packages/ui/src/styles/Popover.css": {
-    "declaration-property-unit-disallowed-list": {
-      "count": 3
-    }
-  },
   "packages/ui/src/styles/Rating.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 4

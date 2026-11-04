@@ -45,7 +45,7 @@ examples:
 
 ### Widths
 
-A popover is as wide as its content, up to its width.
+A popover is as wide as its content, within its width's range.
 
 | Width  | Use for                                  |
 | ------ | ---------------------------------------- |
@@ -185,7 +185,7 @@ Leave it uncontrolled, with `defaultOpen` to start open, or control it with `ope
 
 #### Width, side and alignment
 
-`width` is `md`, 20 rem and the default, or `lg`, 28 rem: the widest the popover grows, as wide as its content from 12 rem up, and narrower to fit the window. `side` is `bottom`, the default, `top`, `left`, `right`, or `inline-start` and `inline-end`, which follow the text direction; it flips to the other side without room. `align` is `start`, `center`, the default, or `end`.
+`width` sets how wide the popover grows with its content: `md`, the default, from 12 rem up to 20 rem, or `lg`, from 20 rem up to 28 rem; it narrows to fit the window. `side` is `bottom`, the default, `top`, `left`, `right`, or `inline-start` and `inline-end`, which follow the text direction; it flips to the other side without room. `align` is `start`, `center`, the default, or `end`.
 
 ```tsx
 <Popover
