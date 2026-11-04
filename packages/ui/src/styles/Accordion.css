@@ -40,7 +40,8 @@
   /* Hover and press lay the shared state layer over the heading, inset from the hairlines by its
      inline padding, which the panel's content matches. */
   .env-accordion-trigger:not([data-disabled]):hover {
-    background: var(--env-color-bg-neutral-subtle-hover);
+    /* The lighter layer of a ghost button with a label, so a press stands apart from it. */
+    background: color-mix(in srgb, var(--env-color-bg-neutral-subtle-hover) 70%, transparent);
   }
   .env-accordion-trigger:not([data-disabled]):active {
     background: var(--env-color-bg-neutral-subtle-pressed);

@@ -45,7 +45,8 @@
     outline-offset: 0.125rem;
   }
   .env-disclosure > summary:hover {
-    background: var(--env-color-bg-neutral-subtle-hover);
+    /* The lighter layer of a ghost button with a label, so a press stands apart from it. */
+    background: color-mix(in srgb, var(--env-color-bg-neutral-subtle-hover) 70%, transparent);
     color: var(--env-color-fg-muted-hover);
   }
   .env-disclosure > summary:active {
