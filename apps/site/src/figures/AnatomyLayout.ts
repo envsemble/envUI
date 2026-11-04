@@ -438,11 +438,15 @@ function inReadingOrder(callouts: Callout[], rtl: boolean) {
 /** The room, in px, a variants figure's names take beside its items: on the start side or above. */
 export interface Room {
   start: number;
-  top: number;
+  bottom: number;
 }
 
+/** How far a variant's name stands off its item, in px, and the height of its line of text. */
+const nameGap = 16;
+const nameHeight = 20;
+
 /**
- * The names' widths in px, as their callouts draw them, measured off-screen in the stage, or kept in
+ * The names' widths in px, as the figure sets them, measured off-screen in the stage, or kept in
  * `known` from an earlier measure: a name's width follows the root's font size and the fonts, not
  * the stage's width, and placing a probe in the stage restyles the whole example, which every
  * frame of a resize made it lag. Those still to measure are all placed before any is read, so the
@@ -455,7 +459,7 @@ function labelWidths(stage: HTMLElement, texts: string[], known: Map<string, num
   if (missing.length) {
     const probes = missing.map((text) => {
       const probe = document.createElement('span');
-      probe.className = 'site-anatomy-badge catalogue-variant-label';
+      probe.className = 'catalogue-variant-label';
       probe.style.visibility = 'hidden';
       probe.textContent = text;
       return probe;
@@ -470,10 +474,10 @@ function labelWidths(stage: HTMLElement, texts: string[], known: Map<string, num
 }
 
 /**
- * Places a callout with each variant's name on the item it labels: the item a legend item's part
- * names, or else the example's items in the legend's order. Items one under another take their
- * names on the start side, items side by side above them, each with a line to its item and its box
- * outlined. Returns the room the names need, which the subject keeps free.
+ * Places each variant's name by the item it names: the item a legend item's part names, or else the
+ * example's items in the legend's order. Items one under another take their names on the start
+ * side, items side by side under them: plain text, with no line or outline, as a picture's labels
+ * are. Returns the room the names need, which the subject keeps free.
  */
 export function measureVariants(
   stage: HTMLElement,
@@ -506,8 +510,7 @@ export function measureVariants(
     const box = element && boxOf(element, false, origin);
     return box ? [{ number: index + 1, box, label: item.label ?? '' }] : [];
   });
-  if (!found.length) return { callouts: [], room: { start: 0, top: 0 } };
-  const labelled = labelBoxes(subject, origin);
+  if (!found.length) return { callouts: [], room: { start: 0, bottom: 0 } };
   const widths = labelWidths(
     stage,
     found.map(({ label }) => label),
@@ -519,10 +522,6 @@ export function measureVariants(
     right: Math.max(...found.map(({ box }) => box.right)),
     bottom: Math.max(...found.map(({ box }) => box.bottom)),
   };
-  const outline = (part: Box) => {
-    const box = fenced(part);
-    return { x: box.left, y: box.top, width: box.right - box.left, height: box.bottom - box.top };
-  };
   // One under another where no two items share a line.
   const sorted = [...found].sort((a, b) => a.box.top - b.box.top);
   const stacked = sorted.every(
@@ -532,20 +531,12 @@ export function measureVariants(
     const side: Side = rtl ? 'right' : 'left';
     const callouts = found.map(({ number, box, label }) => {
       const y = (box.top + box.bottom) / 2;
-      return {
-        number,
-        index: number - 1,
-        label,
-        side,
-        badge: { x: side === 'left' ? outer.left - reach : outer.right + reach, y },
-        anchor: { x: side === 'left' ? box.left - fencePadding : box.right + fencePadding, y },
-        box: outline(box),
-        gaps: gapsIn(box, labelled),
-      };
+      const x = side === 'left' ? outer.left - nameGap : outer.right + nameGap;
+      return { number, index: number - 1, label, side, badge: { x, y }, anchor: { x, y } };
     });
-    return { callouts, room: { start: Math.ceil(Math.max(...widths) + reach + 8), top: 0 } };
+    return { callouts, room: { start: Math.ceil(Math.max(...widths) + nameGap), bottom: 0 } };
   }
-  // Side by side: the names above, spread so that none overlaps the next.
+  // Side by side: the names under them, spread so that none overlaps the next.
   const order = found
     .map((_, index) => index)
     .sort((a, b) => found[a].box.left - found[b].box.left);
@@ -553,24 +544,22 @@ export function measureVariants(
   for (let rank = 1; rank < order.length; rank++)
     centres[rank] = Math.max(
       centres[rank],
-      centres[rank - 1] + (widths[order[rank - 1]] + widths[order[rank]]) / 2 + 6,
+      centres[rank - 1] + (widths[order[rank - 1]] + widths[order[rank]]) / 2 + 12,
     );
   const callouts = order.map((index, rank) => {
-    const { number, box, label } = found[index];
-    const x = centres[rank];
+    const { number, label } = found[index];
+    const point = { x: centres[rank], y: outer.bottom + nameGap / 2 };
     return {
       number,
       index: number - 1,
       label,
-      side: 'top' as const,
-      badge: { x, y: outer.top - reach },
-      anchor: { x: Math.min(Math.max(x, box.left + 2), box.right - 2), y: box.top - fencePadding },
-      box: outline(box),
-      gaps: gapsIn(box, labelled),
+      side: 'bottom' as const,
+      badge: point,
+      anchor: point,
     };
   });
   return {
     callouts: callouts.sort((a, b) => a.number - b.number),
-    room: { start: 0, top: Math.ceil(badgeSize + reach) },
+    room: { start: 0, bottom: Math.ceil(nameHeight + nameGap / 2) },
   };
 }

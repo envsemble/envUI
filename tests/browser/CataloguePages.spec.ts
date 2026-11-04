@@ -164,7 +164,7 @@ test('a component page shows plain sections, equal cells and the parts of its an
   await expect.poll(tileStages).toEqual({ widths: 1, heights: 1, fitted: 5 });
   // The anatomy numbers each part of the live button beside the part it names, in the theme the
   // reader has chosen alone, and keeps them there as the page narrows and the theme changes.
-  // The variants figure names each variant with a callout on the start side of its item.
+  // The variants figure names each variant in plain text on the start side of its item.
   const variantNames = page.locator('.catalogue-variants .catalogue-variant-label');
   await variantNames.first().scrollIntoViewIfNeeded();
   await expect(variantNames).toHaveText([
