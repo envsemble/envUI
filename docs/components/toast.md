@@ -101,7 +101,7 @@ Its timer pauses while the pointer rests on it or it has focus.
 
 ### Over a modal
 
-While a modal Dialog, Sheet, ConfirmDialog or CommandPalette is open, notifications wait: those showing step back, and new ones are held, until it closes, so none covers the modal's actions. Each then shows, and is announced, for its full duration.
+While a modal, such as a Dialog or a Sheet, is open, notifications wait until it closes, so none covers its actions. Each then shows, and is announced, for its full duration.
 
 ### Undo
 
