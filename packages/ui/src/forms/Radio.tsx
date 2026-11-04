@@ -8,12 +8,14 @@ import type {
   ReactNode,
   Ref,
 } from 'react';
+import { IconError } from '../icons/Error.js';
 import { classNames } from '../internal/classNames.js';
 import { Grid, Row } from '../foundations/Layout.js';
 import { setRef } from '../internal/setRef.js';
 import { subscribeFormReset } from './internal/subscribeFormReset.js';
 import { fieldMessageIds } from './internal/useFieldMetadata.js';
 import '../styles/Base.css';
+import '../styles/Field.css';
 import '../styles/Radio.css';
 import '../styles/ConnectedRows.css';
 
@@ -160,10 +162,17 @@ export function RadioGroup({
           {description}
         </small>
       )}
+      {/* The error looks as every field's does, the error icon before the message. */}
       {error != null && (
-        <div id={ids.error} className="env-radio-group-error">
-          {error}
-        </div>
+        <Row
+          align="start"
+          gap={2}
+          id={ids.error}
+          className="env-field-error env-radio-group-error"
+        >
+          <IconError aria-hidden="true" focusable="false" />
+          <span>{error}</span>
+        </Row>
       )}
     </>
   );

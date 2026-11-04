@@ -180,7 +180,7 @@
 
   /* Forced colors: the system paints no fills or shadows, so checked boxes and switches take the
      system’s selection colors, a switch draws its track and thumb in system colors, and a chosen
-     radio row is outlined; the radio itself is the system’s. */
+     radio row is outlined; Radio.css draws a radio's. */
   @media (forced-colors: active) {
     .env-checkbox-input:is(:checked, :indeterminate) {
       border-color: Highlight;
