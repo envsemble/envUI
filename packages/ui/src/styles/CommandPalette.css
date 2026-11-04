@@ -46,6 +46,17 @@
      with a fill of its own: solid in every state, the neutral fill over the popup's own color, so what
      shows through the palette never reaches the text typed in it. It is always focused, so its
      placeholder stays, and its edge returns on a solid palette. Its icon lines up with the options'. */
+  /* The search, and under a coarse pointer the close button after it. */
+  .env-command-palette-header {
+    flex: 0 0 auto;
+  }
+  .env-command-palette-header > .env-command-palette-search {
+    flex: 1 1 auto;
+    min-inline-size: 0;
+  }
+  .env-command-palette-header > .env-command-palette-close {
+    display: none;
+  }
   .env-command-palette-search {
     --env-text-field-ghost-solid:
       linear-gradient(var(--env-color-bg-neutral-muted), var(--env-color-bg-neutral-muted)),
@@ -180,9 +191,20 @@
   .env-command-palette-footer-content {
     min-inline-size: 0;
   }
+  /* Under a coarse pointer, where there is often no keyboard, the palette shows no keys: the
+     shortcuts in its options and the key hints of its footer, which then shows only the
+     application's own content, if any. With no Esc to close it, a close button follows the search. */
   @media (pointer: coarse) {
     .env-command-palette-item {
       min-block-size: var(--env-control-height-touch);
+    }
+    .env-command-palette-item .env-list-row-end :is(.env-kbd, .env-kbd-combination),
+    .env-command-palette-hint,
+    .env-command-palette-footer:not(:has(.env-command-palette-footer-content)) {
+      display: none;
+    }
+    .env-command-palette-header > .env-command-palette-close {
+      display: inline-flex;
     }
   }
 

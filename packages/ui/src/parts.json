@@ -244,6 +244,7 @@
     },
     "CommandPalette": {
       "env-command-palette": "The command palette's dialog.",
+      "env-command-palette-close": "The close button after the search, shown under a coarse pointer.",
       "env-command-palette-empty-description": "The empty state's quieter text under its title.",
       "env-command-palette-empty-icon": "The empty state's icon on its circle.",
       "env-command-palette-empty-title": "The empty state's title.",
@@ -251,6 +252,7 @@
       "env-command-palette-footer-content": "The content of the footer.",
       "env-command-palette-group": "A group of commands.",
       "env-command-palette-group-label": "A group's label.",
+      "env-command-palette-header": "The row of the search field and the close button.",
       "env-command-palette-hint": "One keyboard hint.",
       "env-command-palette-input": "The search input.",
       "env-command-palette-item": "One command.",

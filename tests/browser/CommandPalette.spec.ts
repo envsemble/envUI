@@ -35,6 +35,8 @@ test.describe('CommandPalette', () => {
     await page.keyboard.press('Enter');
     const dialog = page.getByRole('dialog', { name: 'Go to document' });
     await expect(dialog).toBeVisible();
+    // A fine pointer has Esc: the palette shows no close button of its own.
+    await expect(dialog.getByRole('button', { name: 'Close' })).toBeHidden();
     await expect(dialog.locator('xpath=ancestor::*[@data-env-theme][1]')).toHaveAttribute(
       'data-env-theme',
       'light',
@@ -331,5 +333,26 @@ test.describe('CommandPalette', () => {
     await page.keyboard.press('Enter');
     await expect(root.getByTestId('log-Go to page')).toHaveText('open suggested/Home');
     await expect(dialog).toBeHidden();
+  });
+});
+
+test.describe('CommandPalette on a coarse pointer', () => {
+  test.use({ hasTouch: true });
+
+  test('shows no keys, and a close button follows the search', async ({ page }) => {
+    await page.goto(paletteFixture);
+    expect(await page.evaluate(() => matchMedia('(pointer: coarse)').matches)).toBe(true);
+    for (const theme of ['light', 'dark']) {
+      await page.getByRole('button', { name: `Quick open ${theme}` }).click();
+      const dialog = page.getByRole('dialog', { name: 'Go to document' });
+      await expect(dialog).toBeVisible();
+      // The key hints go, and with them a footer that holds nothing else.
+      await expect(dialog.locator('.env-command-palette-hint').first()).toBeHidden();
+      const footer = dialog.locator('.env-command-palette-footer');
+      if (theme === 'light') await expect(footer).toBeHidden();
+      else await expect(footer.locator('.env-command-palette-footer-content')).toBeVisible();
+      await dialog.getByRole('button', { name: 'Close' }).click();
+      await expect(dialog).toBeHidden();
+    }
   });
 });

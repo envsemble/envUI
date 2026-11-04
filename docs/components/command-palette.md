@@ -183,6 +183,7 @@ Name commands with a verb and what they act on, such as Invite people.
 ### envUI provides
 
 - A modal dialog named by `aria-label`, with focus in its search field, kept inside and returned on close.
+- Under a coarse pointer, such as a phone's, a close button after the search field in place of <kbd>Esc</kbd>, and no keys: neither the items' shortcuts nor the key hints show.
 - The field as a `combobox` over a `listbox`, with the highlighted option as its active descendant.
 - A polite count of results as they change.
 - The empty state's title and description in that same polite status, with its icon hidden from assistive technology.
@@ -357,7 +358,7 @@ In a narrow header, the button is an IconButton with `variant="ghost"`, `aria-la
 
 ### Composition
 
-The palette is `env-command-palette`: its search field, `env-command-palette-search`, a large ghost [TextField](text-field.md) kept solid on the frosted palette, with its input, `env-command-palette-input`, the group headings, `env-command-palette-group-label`, the items, `env-command-palette-item`, the key hints in `env-command-palette-footer`, and the empty state, `env-command-palette-status` with `data-empty`: its icon, `env-command-palette-empty-icon`, title, `env-command-palette-empty-title`, and description, `env-command-palette-empty-description`. `className`, `style`, `ref` and data attributes reach the surface.
+The palette is `env-command-palette`: its search field, `env-command-palette-search`, a large ghost [TextField](text-field.md) kept solid on the frosted palette, with its input, `env-command-palette-input`, and the close button shown under a coarse pointer, `env-command-palette-close`, in `env-command-palette-header`, the group headings, `env-command-palette-group-label`, the items, `env-command-palette-item`, the key hints in `env-command-palette-footer`, and the empty state, `env-command-palette-status` with `data-empty`: its icon, `env-command-palette-empty-icon`, title, `env-command-palette-empty-title`, and description, `env-command-palette-empty-description`. `className`, `style`, `ref` and data attributes reach the surface.
 
 The button that opens it is Button's: `env-button`, its icon, `env-button > env-icon`, its label, and the keys in its end slot, `env-button-end`. The icon-only button is an `env-icon-button` in a tooltip.
 
@@ -367,6 +368,7 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 
 ## Changelog
 
+- **1.0.0-prerelease.6**: Under a coarse pointer the palette hides the keys, the shortcuts in its items and the key hints of its footer, and shows a close button after the search field, `env-command-palette-close`, for touch screens with no <kbd>Esc</kbd>; the two share a row, `env-command-palette-header`.
 - **1.0.0-prerelease.5**: `onOpenChange` receives why the palette closes, `CommandPaletteOpenChangeDetails`, as a dialog's does.
 - **1.0.0-prerelease.5**: `defaultItems` is `suggestedItems`: `default` names an uncontrolled starting value everywhere else.
 - **1.0.0-prerelease.5**: The palette is frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge but a faint hairline in dark, and is solid with its edge at high contrast and with reduced transparency. Its search is a large ghost TextField, opaque on the neutral fill with no outline, whose edge returns at high contrast; its headings are small and muted, its rows and keys are the popup lists', the keys side by side with the + read but not shown, and its hints are in the small label size. Its options take the text color rather than the controls', lie one under the next with no space between them, and its headings sit a little ahead of the rows.

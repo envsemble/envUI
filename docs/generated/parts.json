@@ -1474,6 +1474,10 @@
           "description": "The command palette's dialog."
         },
         {
+          "class": "env-command-palette-close",
+          "description": "The close button after the search, shown under a coarse pointer."
+        },
+        {
           "class": "env-command-palette-empty-description",
           "description": "The empty state's quieter text under its title."
         },
@@ -1500,6 +1504,10 @@
         {
           "class": "env-command-palette-group-label",
           "description": "A group's label."
+        },
+        {
+          "class": "env-command-palette-header",
+          "description": "The row of the search field and the close button."
         },
         {
           "class": "env-command-palette-hint",
@@ -1559,6 +1567,7 @@
         "Dialog",
         "Field",
         "Icon",
+        "IconButton",
         "Kbd",
         "ListRow",
         "Overlay",
@@ -4790,6 +4799,7 @@
         }
       ],
       "uses": [
+        "Button",
         "Dialog",
         "Icon",
         "IconButton",

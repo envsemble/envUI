@@ -21,6 +21,9 @@ import { commandPalette } from '../foundations/messages/commandPalette.js';
 import { useTheme } from '../foundations/Theme.js';
 import { IconSearch } from '../icons/Search.js';
 import { IconSearchOff } from '../icons/SearchOff.js';
+import { IconClose } from '../icons/Close.js';
+import { IconButton } from '../actions/Button.js';
+import { dialog } from '../foundations/messages/dialog.js';
 import { Kbd } from '../content/Kbd.js';
 import { Spinner } from './Spinner.js';
 import { DialogBackdrop, OverlayTheme } from './internal/DialogParts.js';
@@ -192,6 +195,7 @@ export function CommandPalette({
   const portal = usePortalContainer();
   const locale = useLocale();
   const messages = useMessages('commandPalette', commandPalette);
+  const dialogMessages = useMessages('dialog', dialog);
   const number = useFormatters().number();
   const input = useRef<HTMLInputElement>(null);
   const searchId = useId();
@@ -331,27 +335,40 @@ export function CommandPalette({
                   }}
                 >
                   {/* The search is a ghost TextField's frame around Autocomplete's input, kept
-                    solid on the frosted palette (CommandPalette.css). */}
-                  <FieldFrame
-                    id={searchId}
-                    floatingLabel
-                    variant="ghost"
-                    size="lg"
-                    startIcon={loading && !empty ? <Spinner size="sm" /> : <IconSearch />}
-                    className="env-command-palette-search"
-                  >
-                    <BaseAutocomplete.Input
-                      ref={input}
+                    solid on the frosted palette (CommandPalette.css). Under a coarse pointer, where
+                    there is no Esc, a close button follows it; elsewhere it doesn't show. */}
+                  <Row align="center" gap={2} className="env-command-palette-header">
+                    <FieldFrame
                       id={searchId}
-                      className="env-text-field-input env-command-palette-input"
-                      aria-label={label}
-                      autoComplete="off"
-                      autoCorrect="off"
-                      spellCheck={false}
-                      placeholder={placeholder}
-                      onKeyDown={onKeyDown}
+                      floatingLabel
+                      variant="ghost"
+                      size="lg"
+                      startIcon={loading && !empty ? <Spinner size="sm" /> : <IconSearch />}
+                      className="env-command-palette-search"
+                    >
+                      <BaseAutocomplete.Input
+                        ref={input}
+                        id={searchId}
+                        className="env-text-field-input env-command-palette-input"
+                        aria-label={label}
+                        autoComplete="off"
+                        autoCorrect="off"
+                        spellCheck={false}
+                        placeholder={placeholder}
+                        onKeyDown={onKeyDown}
+                      />
+                    </FieldFrame>
+                    <BaseDialog.Close
+                      render={
+                        <IconButton
+                          variant="ghost"
+                          icon={<IconClose />}
+                          aria-label={dialogMessages.close}
+                          className="env-command-palette-close"
+                        />
+                      }
                     />
-                  </FieldFrame>
+                  </Row>
                   <BaseAutocomplete.List
                     ref={list}
                     render={<Grid />}
