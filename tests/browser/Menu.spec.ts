@@ -122,7 +122,10 @@ test.describe('Menus', () => {
       return menu;
     };
     let menu = await open();
-    const [popup, card] = await tokenColors(menu, ['--env-color-bg-popup', '--env-color-bg-raised']);
+    const [popup, card] = await tokenColors(menu, [
+      '--env-color-bg-popup',
+      '--env-color-bg-raised',
+    ]);
     expect(popup).toBe('rgb(52, 54, 56)');
     expect(popup).not.toBe(card);
     expect((await popupSurface(menu)).background).toBe(
