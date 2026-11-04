@@ -12,15 +12,16 @@
     overflow-wrap: break-word;
     pointer-events: auto;
   }
-  /* A dialog follows the popups' rules (Popup.css): their fill, their soft shadow and no edge, and its
-     header, content and actions part by space. Unlike a popup it isn't frosted: over its backdrop, what
-     shows through would only grey the dialog and smudge it with the shapes the backdrop dims. Where
-     popups are solid, at high contrast, with reduced transparency and under forced colors, it has no
-     shadow and its elevation edge returns. What it holds takes the fill as the color beneath it. */
+  /* A dialog follows the popups' rules (Popup.css): their fill, their soft shadow, no edge in light
+     and their faint hairline in dark, and its header, content and actions part by space. Unlike a
+     popup it isn't frosted: over its backdrop, what shows through would only grey the dialog and smudge
+     it with the shapes the backdrop dims. Where popups are solid, at high contrast, with reduced
+     transparency and under forced colors, it has no shadow and its elevation edge returns. What it
+     holds takes the fill as the color beneath it. */
   .env-surface.env-dialog {
     --env-surface-color: var(--env-popup-fill);
     --env-dialog-edge: var(--env-popup-solid) var(--env-elevation-3-border);
-    border-color: var(--env-dialog-edge, transparent);
+    border-color: var(--env-dialog-edge, var(--env-popup-frosted-edge, transparent));
     box-shadow: var(--env-popup-shadow);
   }
   .env-dialog {

@@ -25,8 +25,8 @@
   --env-color-bg-avatar-powder: #c0e2f6;
   --env-color-bg-avatar-sage: #cee4c3;
   --env-color-bg-avatar-seafoam: #b8e7de;
-  --env-color-bg-backdrop: rgb(31 31 34 / 0.55);
-  --env-color-bg-backdrop-muted: rgb(31 31 34 / 0.3);
+  --env-color-bg-backdrop: rgb(31 31 34 / 0.32);
+  --env-color-bg-backdrop-muted: rgb(31 31 34 / 0.2);
   --env-color-bg-danger-emphasis: #b72b20;
   --env-color-bg-danger-muted: rgb(183 43 32 / 0.12);
   --env-color-bg-danger-strong: #b72b20;
@@ -305,8 +305,8 @@
   --env-color-bg-avatar-powder: #afd3e9;
   --env-color-bg-avatar-sage: #bed4b3;
   --env-color-bg-avatar-seafoam: #a7d7cf;
-  --env-color-bg-backdrop: rgb(30 31 33 / 0.55);
-  --env-color-bg-backdrop-muted: rgb(30 31 33 / 0.3);
+  --env-color-bg-backdrop: rgb(0 0 0 / 0.5);
+  --env-color-bg-backdrop-muted: rgb(0 0 0 / 0.3);
   --env-color-bg-danger-emphasis: #f8aca6;
   --env-color-bg-danger-muted: rgb(206 94 83 / 0.18);
   --env-color-bg-danger-subtle-hover: rgb(206 94 83 / 0.22);

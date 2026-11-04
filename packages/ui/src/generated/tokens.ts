@@ -238,26 +238,26 @@ export const tokens = {
       'dark-high-contrast': '#a7d7cf',
     },
   },
-  /** The backdrop behind dialogs and the command palette: the dark page color at 55%. */
+  /** The backdrop behind dialogs and the command palette: the dark page color at 32% in light, which sets the page back without turning it gray, and black at 50% in dark, where the page color would not darken it. */
   'color.bg.backdrop': {
     cssVariable: '--env-color-bg-backdrop',
     type: 'color',
     values: {
-      light: 'rgb(31 31 34 / 0.55)',
-      dark: 'rgb(30 31 33 / 0.55)',
-      'light-high-contrast': 'rgb(31 31 34 / 0.55)',
-      'dark-high-contrast': 'rgb(30 31 33 / 0.55)',
+      light: 'rgb(31 31 34 / 0.32)',
+      dark: 'rgb(0 0 0 / 0.5)',
+      'light-high-contrast': 'rgb(31 31 34 / 0.32)',
+      'dark-high-contrast': 'rgb(0 0 0 / 0.5)',
     },
   },
-  /** The lighter backdrop behind a sheet that leaves the page usable, such as a supporting pane over its main pane: the dark page color at 30%. */
+  /** The lighter backdrop behind a sheet that leaves the page usable, such as a supporting pane over its main pane: the dark page color at 20% in light and black at 30% in dark. */
   'color.bg.backdrop.muted': {
     cssVariable: '--env-color-bg-backdrop-muted',
     type: 'color',
     values: {
-      light: 'rgb(31 31 34 / 0.3)',
-      dark: 'rgb(30 31 33 / 0.3)',
-      'light-high-contrast': 'rgb(31 31 34 / 0.3)',
-      'dark-high-contrast': 'rgb(30 31 33 / 0.3)',
+      light: 'rgb(31 31 34 / 0.2)',
+      dark: 'rgb(0 0 0 / 0.3)',
+      'light-high-contrast': 'rgb(31 31 34 / 0.2)',
+      'dark-high-contrast': 'rgb(0 0 0 / 0.3)',
     },
   },
   /** A solid danger fill; paired with fg.on-emphasis. */

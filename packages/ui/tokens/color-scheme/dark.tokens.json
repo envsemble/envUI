@@ -78,16 +78,16 @@
           "$value": {
             "colorSpace": "oklch",
             "components": {
-              "$ref": "#/palette/neutral/92/$value/components"
+              "$ref": "#/palette/neutral/100/$value/components"
             },
-            "alpha": 0.55
+            "alpha": 0.5
           }
         },
         "muted": {
           "$value": {
             "colorSpace": "oklch",
             "components": {
-              "$ref": "#/palette/neutral/92/$value/components"
+              "$ref": "#/palette/neutral/100/$value/components"
             },
             "alpha": 0.3
           }

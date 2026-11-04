@@ -240,7 +240,7 @@ Keep one task per dialog: show a field's error on the field rather than in a sec
 
 The parts are the surface, `env-dialog`, its heading, `env-dialog-heading`, with the title, `env-dialog-title`, the description, `env-dialog-description`, and the actions, `env-dialog-actions`, which start with the close button. The backdrop behind a modal dialog is `env-dialog-backdrop`.
 
-The surface takes the popups' color and their shadow, `--env-popup-shadow`, as [Popover](popover.md#customize) describes, with no edge. It stays solid over the backdrop, so `--env-popup-opacity` and `--env-popup-blur` don't reach it. At high contrast, with reduced transparency and under forced colors it has no shadow and its level-3 elevation edge returns.
+The surface takes the popups' color and their shadow, `--env-popup-shadow`, as [Popover](popover.md#customize) describes, with no edge in light and their faint hairline in dark. It stays solid over the backdrop, so `--env-popup-opacity` and `--env-popup-blur` don't reach it. At high contrast, with reduced transparency and under forced colors it has no shadow and its level-3 elevation edge returns.
 
 ## Changelog
 

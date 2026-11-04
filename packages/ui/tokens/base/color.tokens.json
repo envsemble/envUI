@@ -94,23 +94,23 @@
       },
       "backdrop": {
         "$root": {
-          "$description": "The backdrop behind dialogs and the command palette: the dark page color at 55%.",
+          "$description": "The backdrop behind dialogs and the command palette: the dark page color at 32% in light, which sets the page back without turning it gray, and black at 50% in dark, where the page color would not darken it.",
           "$value": {
             "colorSpace": "oklch",
             "components": {
               "$ref": "#/palette/gray/92/$value/components"
             },
-            "alpha": 0.55
+            "alpha": 0.32
           }
         },
         "muted": {
-          "$description": "The lighter backdrop behind a sheet that leaves the page usable, such as a supporting pane over its main pane: the dark page color at 30%.",
+          "$description": "The lighter backdrop behind a sheet that leaves the page usable, such as a supporting pane over its main pane: the dark page color at 20% in light and black at 30% in dark.",
           "$value": {
             "colorSpace": "oklch",
             "components": {
               "$ref": "#/palette/gray/92/$value/components"
             },
-            "alpha": 0.3
+            "alpha": 0.2
           }
         }
       },
