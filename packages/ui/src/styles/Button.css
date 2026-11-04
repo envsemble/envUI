@@ -316,54 +316,27 @@
     overflow-wrap: inherit;
   }
 
-  /* The primaries in other tones follow the default one's grades: in light, a strong fill with white
-     text; in dark, the tone's light emphasis fill with dark text, as the default primary is there, so
-     a destructive or rare action is never louder than the main one beside it. Hover and press in dark
-     lay the text color over the fill, a step deeper each, as the default primary's grades deepen.
-     light-dark() follows the nearest theme's color scheme. */
-  .env-button:where([data-variant='primary']):where([data-tone='danger'], [data-tone='accent']) {
-    --env-button-tone-hover: light-dark(
-      var(--env-button-tone-strong-hover),
-      color-mix(in srgb, var(--env-button-tone-emphasis), var(--env-color-fg-on-emphasis) 14%)
-    );
-    --env-button-tone-pressed: light-dark(
-      var(--env-button-tone-strong-pressed),
-      color-mix(in srgb, var(--env-button-tone-emphasis), var(--env-color-fg-on-emphasis) 26%)
-    );
-    --env-button-tone-fill: light-dark(
-      var(--env-button-tone-strong),
-      var(--env-button-tone-emphasis)
-    );
-    --env-button-container-default: var(--env-button-tone-fill);
-    background: var(--env-button-custom-fill, var(--env-button-tone-fill));
-    color: var(
-      --env-button-content,
-      light-dark(var(--env-color-fg-on-strong), var(--env-color-fg-on-emphasis))
-    );
+  /* Danger: a primary button takes the danger emphasis fill, as every primary takes its tone's:
+     saturated with white labels in light, soft with dark labels in dark, so a destructive action is
+     never louder than the main one beside it. Outline, ghost and text buttons take the danger color,
+     which stays on hover and press, over the variant's own fill or state layer. */
+  .env-button:where([data-variant='primary'][data-tone='danger']) {
+    --env-button-container-default: var(--env-color-bg-danger-emphasis);
+    background: var(--env-button-custom-fill, var(--env-color-bg-danger-emphasis));
+    color: var(--env-button-content, var(--env-color-fg-on-emphasis));
     border: 0;
   }
 
-  .env-button:where([data-variant='primary']):where(
-      [data-tone='danger'],
-      [data-tone='accent']
-    ):hover:not(:disabled):not([aria-disabled='true']) {
-    background: var(--env-button-custom-fill, var(--env-button-tone-hover));
+  .env-button:where([data-variant='primary'][data-tone='danger']):hover:not(:disabled):not(
+      [aria-disabled='true']
+    ) {
+    background: var(--env-button-custom-fill, var(--env-color-bg-danger-emphasis-hover));
   }
 
-  .env-button:where([data-variant='primary']):where(
-      [data-tone='danger'],
-      [data-tone='accent']
-    ):active:not(:disabled):not([aria-disabled='true']) {
-    background: var(--env-button-custom-fill, var(--env-button-tone-pressed));
-  }
-
-  /* Danger: a primary button takes the danger fills; outline, ghost and text buttons take the danger
-     color, which stays on hover and press, over the variant's own fill or state layer. */
-  .env-button:where([data-variant='primary'][data-tone='danger']) {
-    --env-button-tone-strong: var(--env-color-bg-danger-strong);
-    --env-button-tone-strong-hover: var(--env-color-bg-danger-strong-hover);
-    --env-button-tone-strong-pressed: var(--env-color-bg-danger-strong-pressed);
-    --env-button-tone-emphasis: var(--env-color-bg-danger-emphasis);
+  .env-button:where([data-variant='primary'][data-tone='danger']):active:not(:disabled):not(
+      [aria-disabled='true']
+    ) {
+    background: var(--env-button-custom-fill, var(--env-color-bg-danger-emphasis-pressed));
   }
 
   .env-button:where([data-variant='outline'][data-tone='danger']) {
@@ -396,14 +369,26 @@
     color: var(--env-button-content, var(--env-color-fg-danger));
   }
 
-  /* Accent: a primary button for a rare, consequential action, with square corners; like every
-     button it takes the row's control height. */
+  /* Accent: a primary button for a rare, consequential action, on the accent emphasis fill, with
+     square corners; like every button it takes the row's control height. */
   .env-button:where([data-variant='primary'][data-tone='accent']) {
-    --env-button-tone-strong: var(--env-color-bg-accent-strong);
-    --env-button-tone-strong-hover: var(--env-color-bg-accent-strong-hover);
-    --env-button-tone-strong-pressed: var(--env-color-bg-accent-strong-pressed);
-    --env-button-tone-emphasis: var(--env-color-bg-accent-solid);
+    --env-button-container-default: var(--env-color-bg-accent-emphasis);
+    background: var(--env-button-custom-fill, var(--env-color-bg-accent-emphasis));
+    color: var(--env-button-content, var(--env-color-fg-on-emphasis));
+    border: 0;
     border-radius: var(--env-radius-sm);
+  }
+
+  .env-button:where([data-variant='primary'][data-tone='accent']):hover:not(:disabled):not(
+      [aria-disabled='true']
+    ) {
+    background: var(--env-button-custom-fill, var(--env-color-bg-accent-emphasis-hover));
+  }
+
+  .env-button:where([data-variant='primary'][data-tone='accent']):active:not(:disabled):not(
+      [aria-disabled='true']
+    ) {
+    background: var(--env-button-custom-fill, var(--env-color-bg-accent-emphasis-pressed));
   }
 
   .env-button:focus-visible {

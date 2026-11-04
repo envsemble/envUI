@@ -420,8 +420,18 @@
       },
       "danger": {
         "emphasis": {
-          "$description": "A solid danger fill; paired with fg.on-emphasis.",
-          "$value": "{palette.red.60}"
+          "$root": {
+            "$description": "A solid danger fill, such as a solid danger badge, and the fill of destructive primary actions, as the primary emphasis fill is of the main one: saturated with white labels in light, soft with dark labels in dark; paired with fg.on-emphasis.",
+            "$value": "{palette.red.60}"
+          },
+          "hover": {
+            "$description": "A destructive primary action under the pointer.",
+            "$value": "{palette.red.50}"
+          },
+          "pressed": {
+            "$description": "A destructive primary action while pressed.",
+            "$value": "{palette.red.55}"
+          }
         },
         "muted": {
           "$description": "The translucent danger tint of badges and alerts.",
@@ -481,14 +491,14 @@
       "done": {
         "emphasis": {
           "$description": "A solid done fill; paired with fg.on-emphasis.",
-          "$value": "{palette.periwinkle.60}"
+          "$value": "{palette.cyan.60}"
         },
         "muted": {
           "$description": "The translucent done tint of badges.",
           "$value": {
             "colorSpace": "oklch",
             "components": {
-              "$ref": "#/palette/periwinkle/60/$value/components"
+              "$ref": "#/palette/cyan/60/$value/components"
             },
             "alpha": 0.12
           }
@@ -511,6 +521,20 @@
         }
       },
       "accent": {
+        "emphasis": {
+          "$root": {
+            "$description": "The fill of accent primary actions, as the primary emphasis fill is of the main one: saturated with white labels in light, soft with dark labels in dark; paired with fg.on-emphasis.",
+            "$value": "{palette.purple.55}"
+          },
+          "hover": {
+            "$description": "An accent primary action under the pointer.",
+            "$value": "{palette.purple.65}"
+          },
+          "pressed": {
+            "$description": "An accent primary action while pressed.",
+            "$value": "{palette.purple.75}"
+          }
+        },
         "strong": {
           "$root": {
             "$description": "The accent purple of accent actions, such as Button's accent tone, in both themes; paired with fg.on-strong.",
@@ -766,7 +790,7 @@
       },
       "done": {
         "$description": "Done text and icons.",
-        "$value": "{palette.periwinkle.65}"
+        "$value": "{palette.cyan.65}"
       },
       "on-emphasis": {
         "$description": "Text and icons on the emphasis fills: white in light, dark in dark.",
@@ -1162,7 +1186,7 @@
         "$value": {
           "colorSpace": "oklch",
           "components": {
-            "$ref": "#/palette/periwinkle/60/$value/components"
+            "$ref": "#/palette/cyan/60/$value/components"
           },
           "alpha": 0.55
         }

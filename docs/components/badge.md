@@ -172,7 +172,7 @@ A Badge's label is its `children`, a state, a name or a category in a word or tw
 
 #### Variants and tones
 
-`variant` is `soft`, the default, which tints the background without an edge, in the tone's stronger tint for primary, accent, success, warning and danger, with a semibold label, `solid`, which fills it with the tone, or `outline`, which draws a border. `tone` is `neutral`, the default, `primary`, the blue of what is current, `accent`, the purple that stands out, `success`, `warning`, `danger` or `done`, the quiet indigo of completed work, apart from the accent's purple.
+`variant` is `soft`, the default, which tints the background without an edge, in the tone's stronger tint for primary, accent, success, warning and danger, with a semibold label, `solid`, which fills it with the tone, or `outline`, which draws a border. `tone` is `neutral`, the default, `primary`, the blue of what is current, `accent`, the purple that stands out, `success`, `warning`, `danger` or `done`, the cyan of completed work, a hue of its own apart from the accent's purple.
 
 ```tsx
 <Badge tone="success">Ready</Badge>

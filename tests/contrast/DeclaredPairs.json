@@ -3937,6 +3937,27 @@
         "high": 7
       }
     },
+    "--env-color-fg-on-emphasis on --env-color-bg-accent-emphasis": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-on-emphasis on --env-color-bg-accent-emphasis-hover": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-on-emphasis on --env-color-bg-accent-emphasis-pressed": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
     "--env-color-fg-on-emphasis on --env-color-bg-accent-solid": {
       "kind": "text",
       "minimum": {
@@ -3945,6 +3966,20 @@
       }
     },
     "--env-color-fg-on-emphasis on --env-color-bg-danger-emphasis": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-on-emphasis on --env-color-bg-danger-emphasis-hover": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-on-emphasis on --env-color-bg-danger-emphasis-pressed": {
       "kind": "text",
       "minimum": {
         "standard": 4.5,
@@ -5052,6 +5087,20 @@
         "high": 3
       }
     },
+    "badge-outline-primary on --env-color-bg-accent-emphasis": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 1.5,
+        "high": 3
+      }
+    },
+    "badge-outline-primary on --env-color-bg-danger-emphasis": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 1.5,
+        "high": 3
+      }
+    },
     "badge-outline-primary on --env-color-bg-primary-emphasis": {
       "kind": "non-text",
       "minimum": {
@@ -5354,6 +5403,48 @@
       }
     },
     "button-end-separator-muted on --env-color-bg-recessed": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 3,
+        "high": 4.5
+      }
+    },
+    "button-end-separator-on-emphasis on --env-color-bg-accent-emphasis": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 3,
+        "high": 4.5
+      }
+    },
+    "button-end-separator-on-emphasis on --env-color-bg-accent-emphasis-hover": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 3,
+        "high": 4.5
+      }
+    },
+    "button-end-separator-on-emphasis on --env-color-bg-accent-emphasis-pressed": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 3,
+        "high": 4.5
+      }
+    },
+    "button-end-separator-on-emphasis on --env-color-bg-danger-emphasis": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 3,
+        "high": 4.5
+      }
+    },
+    "button-end-separator-on-emphasis on --env-color-bg-danger-emphasis-hover": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 3,
+        "high": 4.5
+      }
+    },
+    "button-end-separator-on-emphasis on --env-color-bg-danger-emphasis-pressed": {
       "kind": "non-text",
       "minimum": {
         "standard": 3,
@@ -6420,7 +6511,6 @@
     "--env-color-fg-muted on catalogue-canvas",
     "--env-color-fg-muted-hover on catalogue-canvas",
     "--env-color-fg-muted-pressed on catalogue-canvas",
-    "--env-color-fg-on-emphasis on --env-color-bg-accent-emphasis",
     "--env-color-fg-on-emphasis on --env-color-bg-brand-emphasis",
     "--env-color-fg-on-emphasis on --env-color-bg-brand-emphasis-hover",
     "--env-color-fg-on-emphasis on --env-color-bg-brand-emphasis-pressed",

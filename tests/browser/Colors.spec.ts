@@ -14,9 +14,9 @@ const sources: Record<string, readonly [rest: string, hover: string, pressed: st
     '--env-color-bg-primary-emphasis-pressed',
   ],
   'button-important': [
-    '--env-color-bg-accent-strong',
-    '--env-color-bg-accent-strong-hover',
-    '--env-color-bg-accent-strong-pressed',
+    '--env-color-bg-accent-emphasis',
+    '--env-color-bg-accent-emphasis-hover',
+    '--env-color-bg-accent-emphasis-pressed',
   ],
   'button-secondary': [
     '--env-color-bg-neutral-muted',
@@ -30,9 +30,9 @@ const sources: Record<string, readonly [rest: string, hover: string, pressed: st
     '--env-color-bg-neutral-subtle-pressed',
   ],
   'button-destructive': [
-    '--env-color-bg-danger-strong',
-    '--env-color-bg-danger-strong-hover',
-    '--env-color-bg-danger-strong-pressed',
+    '--env-color-bg-danger-emphasis',
+    '--env-color-bg-danger-emphasis-hover',
+    '--env-color-bg-danger-emphasis-pressed',
   ],
   'icon-button': [
     '--env-color-bg-neutral-muted',
@@ -257,7 +257,8 @@ test('compositions reuse primitive colors while unrelated roles stay independent
       ['--env-color-bg-neutral-muted', ['secondary', 'icon', 'chip']],
       ['--env-color-fg-link', ['link', 'textButton']],
       ['--env-color-bg-primary-emphasis', ['primary', 'radio', 'checkbox', 'switch']],
-      ['--env-color-fg-on-emphasis', ['primary']],
+      // Every primary, the destructive one too, takes its tone's emphasis fill and its label color.
+      ['--env-color-fg-on-emphasis', ['primary', 'destructive']],
       // The selected tab is a text tab in the accent's text color, whatever its button's variant.
       ['--env-color-fg-primary', ['tab']],
       ['--env-color-bg-selected', ['navigation']],
@@ -268,7 +269,7 @@ test('compositions reuse primitive colors while unrelated roles stay independent
       ['--env-color-fg-danger', ['fieldError', 'selectError']],
       // The default text color is every part's that sets no other, a secondary button's label
       // among them, so it has no case of its own.
-      ['--env-color-bg-danger-strong', ['destructive']],
+      ['--env-color-bg-danger-emphasis', ['destructive']],
     ] as const;
     for (const [token, targets] of cases) {
       if (token === '--env-color-border-primary-emphasis')

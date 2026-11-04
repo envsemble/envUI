@@ -19,7 +19,7 @@ export type BadgeVariant = 'soft' | 'solid' | 'outline';
 interface BadgeAppearanceProps extends Omit<ComponentPropsWithRef<'span'>, 'children'> {
   /**
    * Meaning of the state: primary is the blue of what is current, accent the purple that stands
-   * out, done the quiet indigo of completed work. Neutral by default. A count in the primary tone, solid,
+   * out, done the cyan of completed work. Neutral by default. A count in the primary tone, solid,
    * draws attention, such as unread messages that need an answer.
    */
   tone?: BadgeTone;
