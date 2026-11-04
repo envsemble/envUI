@@ -115,7 +115,6 @@
     border: var(--env-control-border-width) solid var(--env-color-fg-muted);
     border-radius: 50%;
     background: transparent;
-    accent-color: var(--env-radio-accent, var(--env-color-bg-primary-emphasis));
     cursor: inherit;
   }
   .env-radio-input::before {

@@ -135,9 +135,6 @@
       flex-wrap: wrap;
       justify-content: center;
     }
-    .env-date-picker-panes > .env-calendar {
-      flex: 0 0 auto;
-    }
     .env-date-picker-time {
       flex: 1 0 auto;
     }

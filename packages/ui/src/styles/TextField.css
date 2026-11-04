@@ -496,13 +496,19 @@
      floated label above it: with a visible label, the value, its prefix, suffix and start icon sit a
      little below the middle, up to 3 px in the shortest field and not at all from 2.25 rem up. The
      field keeps its height, and its end actions stay in the middle. */
-  .env-text-field:not([data-tall], [data-label-hidden]) {
+  .env-text-field:not([data-tall], [data-label-hidden]) .env-text-field-control:has(> label) {
     --env-text-field-value-shift: clamp(0rem, (2.25rem - var(--env-field-height)) / 2, 0.1875rem);
   }
-  .env-text-field:not([data-tall], [data-label-hidden])
-    .env-text-field-control:has(> label)
-    > :not(label, .env-text-field-border, .env-text-field-end) {
-    translate: 0 var(--env-text-field-value-shift);
+  /* Moved by relative offsets, which, unlike a transform, keep the parts in the field's stacking
+     context, so a control's hit areas, such as those of a combobox's chips, still reach past them.
+     The start icon is placed absolutely, so it moves by its own transform. */
+  .env-text-field-control
+    > :is(.env-text-field-input, .env-text-field-prefix, .env-text-field-suffix) {
+    position: relative;
+    inset-block-start: var(--env-text-field-value-shift, 0);
+  }
+  .env-text-field-control > .env-text-field-start {
+    translate: 0 var(--env-text-field-value-shift, 0);
   }
   /* The label rests at the vertical center and floats into the outline like a tall field's, without
      reserving space above the field, so the field still lines up with adjacent buttons. */

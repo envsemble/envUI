@@ -62,6 +62,12 @@
       field-sizing: content;
     }
   }
+  /* The chips and the value's leading content sit as far below the middle as the input does in a
+     short field with a visible label (TextField.css). */
+  .env-combobox .env-combobox-control > :is(.env-combobox-chip, .env-combobox-start) {
+    position: relative;
+    inset-block-start: var(--env-text-field-value-shift, 0);
+  }
   .env-combobox .env-combobox-control > .env-combobox-input:read-only {
     cursor: default;
   }
