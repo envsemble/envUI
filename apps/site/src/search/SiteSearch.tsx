@@ -13,6 +13,7 @@ import { IconCategory } from '@envsemble/envui/icons/Category';
 import { IconPattern } from '@envsemble/envui/icons/Pattern';
 import { IconArticle } from '@envsemble/envui/icons/Article';
 import { IconError } from '@envsemble/envui/icons/Error';
+import { IconExpandMore } from '@envsemble/envui/icons/ExpandMore';
 import { counterpartOf, findPage, routeOfDocument, type RoutePage } from '../navigation/SiteRoutes';
 import { otherPart } from '../navigation/OtherPart';
 import { navigate, routeHref } from '../navigation/Address';
@@ -62,7 +63,10 @@ const icons: Record<SearchResult['kind'], ReactNode> = {
   prop: <IconDataObject />,
   token: <IconPalette />,
 };
-/** The name of each part of the site, which a result's description starts with. */
+/**
+ * The name of each part of the site, which a suggestion's description starts with, and a result's
+ * where another result shown has the same name.
+ */
 const areas: Record<SearchResult['area'], string> = { catalogue: 'Catalogue', docs: 'Docs' };
 
 /** What the empty query finds: the start of either part, and the setup guide. */
@@ -113,6 +117,16 @@ function suggestionsFor(page: RoutePage | undefined): CommandPaletteItem[] {
 const resultLimit = 60;
 const groupLimit = 8;
 
+/**
+ * The reference groups, long lists of like names, show their first few, then a row that shows the
+ * rest of the group in place.
+ */
+const shortGroups = new Set(['Props', 'Tokens']);
+const shortLimit = 3;
+
+/** The id of the row that shows the rest of a short group. */
+const moreId = (group: string) => `more:${group}`;
+
 /** The group of results that only mention the query in their text, after those it names. */
 const mentions = 'Mentions';
 
@@ -120,25 +134,63 @@ const mentions = 'Mentions';
 const groupOf = (result: SearchResult, named: boolean) =>
   named && !result.named ? mentions : groups[result.kind];
 
+/** What a group shows: its results, and how many more it holds. */
+interface Group {
+  name: string;
+  results: SearchResult[];
+  hidden: number;
+}
+
+const noGroups: ReadonlySet<string> = new Set();
+
 /**
  * Results grouped by what they find, groups in the order of their best result. Within a group,
  * results keep their order, best first. Where the query names some results, by their names,
  * aliases or keywords, those come first, and results that only mention it in their text follow
- * them in a group of their own, so "date" lists DatePicker and the date props before Table.
+ * them in a group of their own, so "date" lists DatePicker and the date props before Table. The
+ * props of the components it finds come before other props, so "date" lists DatePicker's own
+ * first, and a short group shows its first few until it is expanded.
  */
-function groupResults(results: readonly SearchResult[]) {
+function groupResults(results: readonly SearchResult[], expanded: ReadonlySet<string>): Group[] {
   const named = results.some((result) => result.named);
-  const grouped = new Map<string, SearchResult[]>();
+  // The components and exports the query names, best first: their props come first, in that order.
+  const found = results
+    .filter(({ kind, named }) => named && (kind === 'component' || kind === 'export'))
+    .map(({ title }) => title);
+  const rankOf = ({ kind, owner }: SearchResult) => {
+    const rank =
+      kind === 'prop'
+        ? found.findIndex((title) => title === owner || title === owner.split('.')[0])
+        : -1;
+    return rank === -1 ? found.length : rank;
+  };
   const ordered = named
     ? [...results.filter((result) => result.named), ...results.filter((result) => !result.named)]
     : results;
-  for (const result of ordered) {
+  const grouped = new Map<string, SearchResult[]>();
+  // Sorting is stable, so results of one rank keep their order.
+  for (const result of [...ordered].sort((a, b) => rankOf(a) - rankOf(b))) {
     const group = groupOf(result, named);
-    const members = grouped.get(group) ?? [];
-    if (members.length < groupLimit) members.push(result);
-    grouped.set(group, members);
+    grouped.set(group, [...(grouped.get(group) ?? []), result]);
   }
-  return [...grouped.values()].flat();
+  // The groups in the order of their best result.
+  const order = new Set(ordered.map((result) => groupOf(result, named)));
+  return [...order].map((name) => {
+    const members = grouped.get(name)!;
+    const limit = !shortGroups.has(name)
+      ? groupLimit
+      : expanded.has(name)
+        ? members.length
+        : shortLimit;
+    // A short group of one more than it shows shows that one rather than a row for it.
+    const shown =
+      shortGroups.has(name) && members.length === limit + 1 ? members : members.slice(0, limit);
+    return {
+      name,
+      results: shown,
+      hidden: shortGroups.has(name) ? members.length - shown.length : 0,
+    };
+  });
 }
 
 type IndexState =
@@ -148,9 +200,8 @@ type IndexState =
 
 /**
  * Searches the catalogue and the Docs in envUI's CommandPalette: components by their names and aliases,
- * their props, the tokens and the foundations, patterns and guides, each result saying which area
- * it is in. A result opens its page, and the prop or token on it; with Ctrl or ⌘ held, in a new
- * tab. Before people type, it suggests a few pages, the current page's counterpart first.
+ * their props, the tokens and the foundations, patterns and guides, each page once. A result opens
+ * its page, and the prop or token on it; with Ctrl or ⌘ held, in a new tab. Before people type, it suggests a few pages, the current page's counterpart first.
  */
 export function SiteSearch({
   open,
@@ -163,6 +214,9 @@ export function SiteSearch({
   page: RoutePage | undefined;
 }) {
   const [query, setQuery] = useState('');
+  // The short groups shown whole, for the query they were expanded for.
+  const [expanded, setExpanded] = useState({ query: '', groups: noGroups });
+  const expandedGroups = expanded.query === query ? expanded.groups : noGroups;
   const [index, setIndex] = useState<IndexState>({ status: 'loading' });
   const [attempt, setAttempt] = useState(0);
   useEffect(() => {
@@ -176,24 +230,44 @@ export function SiteSearch({
       current = false;
     };
   }, [open, index.status, attempt]);
-  const results = useMemo(
+  const grouped = useMemo(
     () =>
       index.status === 'ready' && query.trim()
-        ? groupResults(index.search(query, resultLimit))
+        ? groupResults(index.search(query, resultLimit), expandedGroups)
         : [],
-    [index, query],
+    [index, query, expandedGroups],
   );
+  const results = useMemo(() => grouped.flatMap((group) => group.results), [grouped]);
   const items = useMemo<CommandPaletteItem[]>(() => {
-    const named = results.some((result) => result.named);
-    return results.map((result) => ({
-      id: result.id,
-      label: result.title,
-      // Which part the result is in, the catalogue or the Docs, then what it is.
-      description: `${areas[result.area]} · ${result.detail}`,
-      icon: icons[result.kind],
-      group: groupOf(result, named),
-    }));
-  }, [results]);
+    // What a result is, after the part it is in, the catalogue or the Docs, only where another
+    // result shown would otherwise read the same.
+    const reads = ({ title, detail }: SearchResult) => `${title} · ${detail}`;
+    const readings = new Map<string, number>();
+    for (const result of results)
+      readings.set(reads(result), (readings.get(reads(result)) ?? 0) + 1);
+    return grouped.flatMap(({ name, results: members, hidden }) => [
+      ...members.map((result) => ({
+        id: result.id,
+        label: result.title,
+        description:
+          readings.get(reads(result))! > 1
+            ? `${areas[result.area]} · ${result.detail}`
+            : result.detail,
+        icon: icons[result.kind],
+        group: name,
+      })),
+      ...(hidden > 0
+        ? [
+            {
+              id: moreId(name),
+              label: `${hidden} more ${name.toLowerCase()}`,
+              icon: <IconExpandMore />,
+              group: name,
+            },
+          ]
+        : []),
+    ]);
+  }, [grouped, results]);
   const suggestions = useMemo(() => suggestionsFor(page), [page]);
   // Before people type, the suggestions show. While the index loads, the palette says so; after it
   // fails, why, with the way on; and when a query finds nothing, what search finds.
@@ -228,6 +302,7 @@ export function SiteSearch({
       open={open}
       onOpenChange={onOpenChange}
       aria-label="Search envUI"
+      className="site-search"
       placeholder="Search components, props and tokens"
       inputValue={query}
       onInputValueChange={setQuery}
@@ -241,13 +316,22 @@ export function SiteSearch({
         { keys: [commandKey, 'Enter'], label: 'Open in a new tab' },
         { keys: ['Esc'], label: 'Close' },
       ]}
+      // A result closes the palette as it opens; the row that shows the rest of a group keeps it
+      // open.
+      closeOnAction={false}
       onAction={(item, { modifier }) => {
+        const more = grouped.find(({ name }) => item.id === moreId(name));
+        if (more) {
+          setExpanded({ query, groups: new Set([...expandedGroups, more.name]) });
+          return;
+        }
         const result = results.find(({ id }) => id === item.id);
         // A suggestion's id is its route.
         const route = result
           ? routeOfDocument(result.page, { view: result.view, section: result.section })
           : suggestions.find(({ id }) => id === item.id)?.id;
         if (!route) return;
+        onOpenChange(false);
         if (modifier) window.open(new URL(routeHref(route), location.href).href, '_blank');
         // A route the address names already shows its place again and focuses it, as a fresh
         // navigation does; the palette, which then no longer holds focus, leaves it there.

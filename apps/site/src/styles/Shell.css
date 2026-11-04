@@ -170,6 +170,16 @@ body {
 .site-sheet-close {
   flex: none;
 }
+/* Search (SiteSearch.tsx) opens over pages of strong color, such as a banner's picture or a
+   figure: its frosted fill covers nearly all of what is behind, so the blur of that color doesn't
+   smear through its results. Where popups are solid, it is too. */
+.site-search {
+  background: color-mix(
+    in srgb,
+    var(--env-popup-fill) max(var(--env-popup-opacity), 98%),
+    transparent
+  );
+}
 /* The search shortcut's keys show for a keyboard alone: a touch screen has none to press. */
 @media (pointer: coarse) {
   .site-search-keys {
@@ -190,7 +200,7 @@ body {
    as the page scrolls. Their row sticks to the body's top and lets the page show through; the
    buttons sit on a small pill of the page's color, so content scrolling beneath doesn't run into
    them. Below an expanded window the other part keeps its name and Display is an icon button,
-   across from the menu button and search. */
+   at the end of the bar the menu button and search start (.site-compact-controls). */
 .site-page-actions {
   position: sticky;
   z-index: var(--env-z-sticky);
@@ -245,9 +255,11 @@ body {
     display: block;
   }
 }
-/* Below an expanded window, where the navigation is in a sheet, the menu button and search float
-   as a small pill at the page's top start: a row of no height that sticks to the body's top, so
-   the page starts below the pill and scrolls beneath it. */
+/* Below an expanded window, where the navigation is in a sheet, the menu button, the wordmark and
+   search start one bar across the top of the page, in the page's color, which the other area and
+   Display end (.site-page-actions, whose pill sits on it): a row of no height that sticks to the
+   body's top, so the page starts below the bar and scrolls beneath it, hidden from the bar's top
+   to the foot of its controls. */
 .site-compact-controls {
   position: sticky;
   z-index: var(--env-z-sticky);
@@ -256,12 +268,13 @@ body {
 }
 .site-compact-controls-bar {
   position: absolute;
-  inset-block-start: var(--env-space-2);
-  inset-inline-start: var(--env-space-3);
+  inset-block-start: 0;
+  inset-inline: 0;
   display: flex;
   gap: var(--env-space-1);
-  padding: var(--env-space-1);
-  border-radius: var(--env-radius-full);
+  /* Level with the page's actions: their row's padding and their pill's. */
+  padding: calc(var(--env-space-3) + var(--env-space-1)) var(--env-space-4) var(--env-space-2)
+    calc(var(--env-space-3) + var(--env-space-1));
   background: var(--env-color-bg-page);
 }
 /* The wordmark between them, as small as at the top of the Docs' drawer. */
@@ -292,7 +305,7 @@ body {
    scrolls, and scroll on their own where they are taller than the window. A narrower pane leaves
    them out, as the page's own headings say as much. The pager stays at the foot of a short page. */
 .site-page-layout {
-  --site-contents-width: 16rem;
+  --site-contents-width: 13rem;
   /* Below the corner's controls: their row's padding and the pill's height, with room. */
   --site-contents-top: 4.5rem;
   container: site-page-layout / inline-size;
@@ -420,25 +433,21 @@ body {
   padding: var(--env-space-6) var(--site-gutter) var(--env-space-8);
   margin-top: auto;
 }
-/* The foot of every page, set apart from the page by space alone: the wordmark, the catalogue's
-   destinations in columns, as many as fit and wrapping onto more rows in a narrow page. Its links are quiet text that comes forward when hovered. */
+/* The foot of every page, set apart from the page by space alone: one compact row, the wordmark
+   and the version at its start, a few links at its end. Its links are quiet text that comes
+   forward when hovered. */
 .site-footer {
-  container: site-footer / inline-size;
   background: var(--env-color-bg-default);
 }
 .site-footer-inner {
   inline-size: min(100%, var(--site-content-width));
   margin-inline: auto;
-  padding: var(--env-space-7) var(--site-gutter) var(--env-space-8);
+  padding: var(--env-space-6) var(--site-gutter);
 }
 .site-footer-brand {
   display: block;
   flex: none;
   inline-size: 4.5rem;
-}
-.site-footer-columns {
-  flex: 1;
-  min-inline-size: 0;
 }
 .site-footer-brand svg {
   display: block;
@@ -446,9 +455,9 @@ body {
   block-size: auto;
   color: var(--env-color-fg-default);
 }
-.site-footer .site-footer-title {
+.site-footer-version {
   margin: 0;
-  font-weight: var(--env-font-weight-medium);
+  font-variant-numeric: tabular-nums;
 }
 .site-footer-links {
   margin: 0;
@@ -463,28 +472,6 @@ body {
   color: var(--env-color-fg-default);
   text-decoration: underline;
   text-underline-offset: 0.2em;
-}
-/* The four columns sit in one row beside the wordmark where they fit. Narrower, the wordmark moves
-   above them, and they keep one row, then pair up two to a row, so none is left on a row of its
-   own. */
-@container site-footer (width >= 37.5rem) {
-  .site-footer-columns {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-}
-@container site-footer (width < 66rem) {
-  .site-footer-main {
-    flex-direction: column;
-  }
-  .site-footer-columns {
-    align-self: stretch;
-  }
-}
-@container site-footer (width < 46rem) {
-  .site-footer-columns {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: var(--env-space-5);
-  }
 }
 /* A section that a route scrolls to, such as a prop's row, stops below the sticky controls at the
    page's top, as a figure's section does (Figures.css). An example's own sections keep the margins

@@ -75,7 +75,7 @@ Locally, `NODE_AUTH_TOKEN` is a classic GitHub token with `read:packages`; in Gi
 ## Install a release
 
 ```sh
-npm install --save-exact @envsemble/envui@<version>
+npm install --save-exact @envsemble/envui@{{version}}
 ```
 
 Upgrade `@envsemble/envui` and the [lint packages](#lint-rules) together, to the same exact version.
@@ -385,7 +385,7 @@ The modules have no side effects, so a bundler keeps only what the application u
 [`@envsemble/eslint-plugin-envui`](https://github.com/envsemble/envUI/tree/main/packages/eslint-plugin) and [`@envsemble/stylelint-config-envui`](https://github.com/envsemble/envUI/tree/main/packages/stylelint-config) report hand-built controls and raw colors, naming the envUI component or token to use, so people and agents see them as they edit and check. Install them at envUI's version; each one's README says how to turn it on:
 
 ```sh
-npm install --save-dev --save-exact @envsemble/eslint-plugin-envui@<version> @envsemble/stylelint-config-envui@<version>
+npm install --save-dev --save-exact @envsemble/eslint-plugin-envui@{{version}} @envsemble/stylelint-config-envui@{{version}}
 ```
 
 ## Coding agents

@@ -115,6 +115,7 @@ The docs are mainly visual. Let the figures teach, and write a lead and a few ru
 - **Show, then say little.** Cut every sentence a figure already shows, such as what a variant looks like. Text beside a figure says what the figure can't, such as the rule it illustrates.
 - **Say each thing once.** Each kind of information has one place, in the table below. A rule doesn't repeat a `useWhen` or `avoidWhen` entry either.
 - **Leave out what is generated.** Each prop's values and defaults are in Props, and what the code does for itself, such as an exact delay, needs no sentence unless a reader chooses it.
+- **Write envUI's version as `{{version}}`.** The Docs, the packaged docs and the setup skill fill in the package's version as they build, so a command such as the install runs as people copy it.
 
 | Information                                   | Its one place                                                                                                  |
 | --------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |

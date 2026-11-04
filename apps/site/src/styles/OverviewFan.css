@@ -8,7 +8,8 @@
   container-type: inline-size;
   display: grid;
   place-items: center;
-  padding: var(--env-space-9) var(--site-gutter);
+  /* Close under the hero's call to action, which it illustrates, and with room before Explore. */
+  padding: var(--env-space-5) var(--site-gutter) var(--env-space-9);
   /* The fan never widens the page. */
   overflow-x: clip;
 }

@@ -1,6 +1,6 @@
 /**
  * The site's search and navigation: search in envUI's CommandPalette, opened with ⌘K or Ctrl+K,
- * which finds pages of the catalogue and the Docs and names the part of each; path routes in the hosted
+ * which finds pages of the catalogue and the Docs, each page once; path routes in the hosted
  * build, served through the hosted Worker script, with deep links into both areas, refreshes and
  * the redirects from old hash addresses. tests/SearchIndex.test.mjs checks that every result leads to a section.
  */
@@ -123,8 +123,9 @@ test.describe('search', () => {
     await search(page, 'start icon');
     const result = option(page, 'prop:Button.startIcon');
     await expect(result).toBeVisible();
-    // A result says which area it is in.
-    await expect(result).toContainText('Docs · Button prop');
+    // A result says what it is; the part it is in only where another result shown shares its name.
+    await expect(result).toContainText('Button prop');
+    await expect(result).not.toContainText('Docs ·');
     await expect(dialog(page).getByRole('group', { name: 'Props' })).toBeVisible();
     await result.click();
     await expect(page).toHaveURL(`${siteDevUrl}/docs/components/button#props-Button-startIcon`);
@@ -141,18 +142,27 @@ test.describe('search', () => {
     await expect(groups.first()).toContainText('DatePicker');
     await expect(groups.last()).toHaveAccessibleName('Mentions');
     await expect(groups.last().locator('[data-item-id="page:table"]')).toBeVisible();
-    await expect(dialog(page).getByRole('group', { name: 'Props' })).toContainText('startDate');
+    // The props of the component found come first, a few of them, then a row that shows the rest
+    // in place and keeps search open.
+    const props = dialog(page).getByRole('group', { name: 'Props' });
+    const more = props.locator('[data-item-id="more:Props"]');
+    await expect(props.getByRole('option')).toHaveCount(4);
+    await expect(props.getByRole('option').first()).toContainText('DatePicker prop');
+    await expect(props).not.toContainText('startDate');
+    await more.click();
+    await expect(more).toHaveCount(0);
+    await expect(props).toContainText('startDate');
+    await expect(field(page)).toHaveValue('date');
   });
 
-  test('finds pages of the catalogue and of the Docs, each named by its part', async ({ page }) => {
+  test('finds a page once, in the catalogue, the Docs a step from it', async ({ page }) => {
     await openCatalogue(page, `${siteDevUrl}/docs`);
     await search(page, 'colors and themes');
-    await expect(option(page, 'page:colors')).toContainText('Catalogue · Foundations');
-    await expect(option(page, 'guide:colors')).toContainText('Docs · Foundation guide');
-    await option(page, 'guide:colors').click();
-    await expect(page).toHaveURL(`${siteDevUrl}/docs/foundations/colors`);
-    await search(page, 'button');
-    await expect(option(page, 'page:button')).toContainText('Catalogue · Actions');
+    await expect(option(page, 'page:colors')).toContainText('Foundations');
+    await expect(option(page, 'page:colors')).not.toContainText('Catalogue ·');
+    await expect(dialog(page).getByRole('option', { name: /^Colors & themes/ })).toHaveCount(1);
+    await field(page).fill('button');
+    await expect(option(page, 'page:button')).toContainText('Actions');
     await page.keyboard.press('Enter');
     await expect(page).toHaveURL(`${siteDevUrl}/components/button`);
     await expect(page.getByRole('navigation', { name: 'Catalogue' })).toBeVisible();
@@ -345,7 +355,7 @@ test('a token found in search opens the token reference in the Docs', async ({ p
   await openCatalogue(page, `${siteDevUrl}/`);
   await search(page, 'fg muted');
   await expect.poll(() => highlighted(page)).toBe('token:color.fg.muted');
-  await expect(option(page, 'token:color.fg.muted')).toContainText('Docs · color token');
+  await expect(option(page, 'token:color.fg.muted')).toContainText('color token');
   await page.keyboard.press('Enter');
   await expect(page).toHaveURL(`${siteDevUrl}/docs/tokens#token-env-color-fg-muted`);
   await expect(page.locator('#token-env-color-fg-muted')).toBeInViewport();
