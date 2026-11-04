@@ -198,13 +198,14 @@ test('an icon-only ConfirmButton is round at rest and names the consequence when
   await expect(button).toHaveAccessibleName('Remove Morgan');
   await expect(button).toHaveClass(/env-icon-button/);
   await expect(button).toHaveAttribute('data-variant', 'secondary');
+  // The adoption fixture takes the default scale, compact under the fine pointer of the tests.
   const rest = (await button.boundingBox())!;
-  expect(rest.width).toBeCloseTo(40, 0);
-  expect(rest.height).toBeCloseTo(40, 0);
+  expect(rest.width).toBeCloseTo(32, 0);
+  expect(rest.height).toBeCloseTo(32, 0);
   // Round like IconButton: the corners take at least half the height.
   expect(
     await button.evaluate((element) => parseFloat(getComputedStyle(element).borderTopLeftRadius)),
-  ).toBeGreaterThanOrEqual(20);
+  ).toBeGreaterThanOrEqual(16);
 
   // Keyboard arming keeps focus on the button while it grows to name the consequence.
   await button.focus();

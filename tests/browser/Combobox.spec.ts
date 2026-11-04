@@ -529,7 +529,22 @@ test('in right-to-left text the arrow keys follow the reading direction to the c
 test('disabled and read-only fields keep their value', async ({ page }) => {
   const disabled = field(page, 'Disabled light');
   await expect(disabled).toBeDisabled();
-  await expect(wellOf(disabled)).toHaveCSS('opacity', '0.48');
+  // A disabled field doesn't fade as a whole: its value, chevron and label take the disabled text
+  // color.
+  await expect(wellOf(disabled)).toHaveCSS('opacity', '1');
+  const colors = await wellOf(disabled).evaluate((control) => {
+    const probe = document.createElement('span');
+    probe.style.color = 'var(--env-color-fg-disabled)';
+    control.append(probe);
+    const parts = ['.env-combobox-input', '.env-combobox-trigger', '.env-combobox-label'];
+    const result = [
+      ...parts.map((part) => getComputedStyle(control.querySelector(part)!).color),
+      getComputedStyle(probe).color,
+    ];
+    probe.remove();
+    return result;
+  });
+  expect(new Set(colors).size).toBe(1);
   const readOnly = field(page, 'Read only light');
   await expect(readOnly).toHaveAttribute('readonly', '');
   // The input reports the read-only state; its chips are no widgets, so they carry none.
