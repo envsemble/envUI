@@ -259,6 +259,7 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 
 ## Changelog
 
+- **1.0.0-prerelease.6**: With a time, the wheels move under the calendar where the card has no room for them beside it, rather than running past its edge.
 - **1.0.0-prerelease.6**: The `floating` variant and the `variant` prop are gone: the field is outlined, and takes `size="lg"` in a long form on a page. The field takes a text area's rounded corners rather than round ends, still as tall as a button.
 - **1.0.0-prerelease.6**: The calendar card takes the width of a field a little wider than it, up to 1 rem, so it ends with the field, and Today and Clear follow the calendar's six weeks closely.
 - **1.0.0-prerelease.5**: `defaultTime` is `placeholderTime`, as React Aria names it: `default` names an uncontrolled starting value elsewhere.
