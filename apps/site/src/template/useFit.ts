@@ -153,6 +153,8 @@ export function useFit(
   whole: boolean,
   tile: boolean,
   playing: boolean,
+  /** Whether it is drawn at its own size, cropped by its stage rather than drawn smaller. */
+  ownSize = false,
 ) {
   const playingNow = useRef(playing);
   const refit = useRef<(() => void) | null>(null);
@@ -228,13 +230,19 @@ export function useFit(
         width / canvasElement.offsetWidth,
         height / canvasElement.offsetHeight,
       );
-      const scale = tile
-        ? windowScale
-        : Math.min(whole ? windowScale : 1, width / (right - left), height / (bottom - top));
+      const scale = ownSize
+        ? 1
+        : tile
+          ? windowScale
+          : Math.min(whole ? windowScale : 1, width / (right - left), height / (bottom - top));
       // A tile in place eases to where it is fitted next; anything else is placed at once.
       const eases = tile && canvasElement.dataset.fitted !== undefined && !still.matches;
       let toX = ((left + right) / 2) * scale;
       let toY = ((top + bottom) / 2) * scale;
+      // Drawn at its own size, what is larger than the stage shows from its start, as a window
+      // onto it, cut off at its end rather than at both.
+      if (ownSize && right - left > width) toX = left + width / 2;
+      if (ownSize && bottom - top > height) toY = top + height / 2;
       if (tile && playingNow.current && view.scale === scale) {
         toX = contain(view.toX, left * scale, right * scale, stageElement.clientWidth / 2 - inset);
         toY = contain(view.toY, top * scale, bottom * scale, stageElement.clientHeight / 2 - inset);
@@ -321,7 +329,7 @@ export function useFit(
       resize.disconnect();
       refit.current = null;
     };
-  }, [stage, canvas, on, whole, tile]);
+  }, [stage, canvas, on, whole, tile, ownSize]);
 }
 
 /** How far ahead of a stage's edge a tile's view keeps what it shows, once it has to move. */

@@ -51,6 +51,7 @@ export function TilePreview({
   playing = false,
   className = 'catalogue-related-stage',
   whole = false,
+  ownSize: atOwnSize = false,
 }: {
   preview?: Preview;
   near: boolean;
@@ -59,6 +60,12 @@ export function TilePreview({
   className?: string;
   /** Whether the window it lays out in counts whole as it is fitted, as a gallery's does. */
   whole?: boolean;
+  /**
+   * Whether it is drawn at its own size, cropped by its stage, as the components' gallery draws
+   * every component at one scale; a drawing, whose window is smaller than the tiles' (Tiles.ts),
+   * is drawn larger still.
+   */
+  ownSize?: boolean;
 }) {
   const Composition = preview?.composition;
   const theme = useTheme();
@@ -85,7 +92,9 @@ export function TilePreview({
       <ExampleRender page={preview.page} name={preview.name} fallback={null} />
     ));
   const tile = Boolean(preview?.tile);
-  useFit(stage, canvas, shown, whole || tile, tile, plays);
+  const drawing = Boolean(preview?.window && preview.window.width < 14);
+  const ownSize = atOwnSize && !drawing;
+  useFit(stage, canvas, shown, whole || tile, tile, plays, ownSize);
   useStillAtRest(canvasElement, tile && !plays);
   return (
     <Theme
@@ -109,6 +118,7 @@ export function TilePreview({
             }}
             className="catalogue-related-canvas"
             data-tile={preview.tile ? '' : undefined}
+            data-own-size={ownSize ? '' : undefined}
             style={
               preview.window &&
               ({

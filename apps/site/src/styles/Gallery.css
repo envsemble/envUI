@@ -67,3 +67,18 @@
   outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: 0.125rem;
 }
+
+/* Drawn at its own size, a component lays out as wide as the stage's room, less the fit's inset,
+   so what it opens stays in view, and at least as tall as its tile's window, so what opens below
+   it has the room it was written for. What is larger, such as a calendar, is cut off at its end. */
+.catalogue-gallery-stage.catalogue-gallery-stage > .catalogue-related-canvas[data-own-size] {
+  inline-size: calc(100% - 2rem);
+  block-size: max(100% - 2rem, var(--catalogue-tile-height, 10.5rem));
+  min-block-size: 0;
+}
+
+/* A command palette leaves the window's gutter beside it; drawn at its own size in a gallery's
+   tile, it takes the tile's width, as a phone's window would leave it. */
+.catalogue-related-canvas[data-own-size] .env-command-palette {
+  inline-size: 100%;
+}
