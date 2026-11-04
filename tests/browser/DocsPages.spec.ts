@@ -3,7 +3,7 @@ import { siteDevUrl } from './helpers/Servers';
 import { chooseScheme } from './helpers/CatalogueThemes';
 import { readReleaseNotes } from '../../scripts/site/ReleaseNotes.ts';
 import { renderLlmsText, renderSkill } from '../../scripts/site/SiteAgentFiles.ts';
-import { allPages, pagesOf } from '../../apps/site/src/navigation/SiteRoutes';
+import { pagesOf } from '../../apps/site/src/navigation/SiteRoutes';
 import { version, goTo } from './helpers/SiteSpecHelpers';
 
 test('a guide in the Docs renders shared Markdown and follows relative links', async ({ page }) => {
@@ -24,7 +24,10 @@ test('a guide in the Docs renders shared Markdown and follows relative links', a
   // A guide opens on a page of its own in the Docs, current in their navigation, with its status
   // under its title and beside its name.
   await page.goto(`${siteDevUrl}/docs`);
-  await page.locator('.site-article').getByRole('link', { name: 'Dev mode', exact: true }).click();
+  await page
+    .getByRole('navigation', { name: 'Docs' })
+    .getByRole('link', { name: /^Dev mode/ })
+    .click();
   await expect(page).toHaveURL(/\/docs\/dev-mode$/);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Dev mode');
   await expect(page.locator('.site-article')).toContainText('installDevMode');
@@ -79,21 +82,11 @@ test("a page's guide in the Docs complements its page in the catalogue, and Fiel
 }) => {
   // Each pattern's guide in the Docs lists what the application and envUI provide, as plain lists
   // under Accessibility. The address of the page that once listed them all opens the Docs' home,
-  // whose Patterns list links every pattern's guide.
+  // whose navigation lists every page; the home itself repeats none of it.
   await page.goto(`${siteDevUrl}/docs/patterns`);
   await expect(page).toHaveURL(/\/docs$/);
-  const guides = page
-    .locator('.site-article section', {
-      has: page.getByRole('heading', { name: 'Patterns', exact: true }),
-    })
-    .getByRole('link');
-  await expect(guides).toHaveText(
-    allPages
-      .filter((entry) => entry.area === 'docs' && entry.section === 'Patterns')
-      .map((entry) => entry.title),
-  );
-  await guides.getByText('Form layout and validation', { exact: true }).click();
-  await expect(page).toHaveURL(/\/docs\/patterns\/forms$/);
+  await expect(page.locator('.site-article').getByRole('link')).toHaveText(['Install and set up']);
+  await page.goto(`${siteDevUrl}/docs/patterns/forms`);
   // The Docs show the developer part alone: Compose, what envUI and the application provide,
   // which the catalogue leaves out, and the changelog. None of the catalogue's sections, its
   // figures or Related.
@@ -204,7 +197,10 @@ test('a page of the Docs has breadcrumbs, a tree of the Docs open at its section
   await expect(page.locator('[id="props-Button-variant"]')).toBeFocused();
   const banner = page.locator('.site-page-header');
   const trail = banner.getByRole('navigation', { name: 'Breadcrumb' });
-  await expect(trail.getByRole('link')).toHaveText(['Docs', 'Components', 'Actions']);
+  // The section and the group, which the navigation lists, say where the page is and lead nowhere.
+  await expect(trail.getByRole('link')).toHaveText(['Docs']);
+  await expect(trail).toContainText('Components');
+  await expect(trail).toContainText('Actions');
   await expect(trail.locator('[aria-current="page"]')).toHaveText('Button');
   await expect(banner.getByRole('link', { name: 'Catalogue', exact: true })).toHaveAttribute(
     'href',
@@ -241,11 +237,9 @@ test('a page of the Docs has breadcrumbs, a tree of the Docs open at its section
   await expect(page).toHaveURL(`${siteDevUrl}/docs/components/button#usage`);
   await expect(page.locator('#usage')).toBeFocused();
   await expect(contents.locator('[aria-current="location"]')).toHaveText('Usage');
-  // A breadcrumb leads to its heading on the Docs' home.
-  await trail.getByRole('link', { name: 'Actions', exact: true }).click();
-  await expect(page).toHaveURL(`${siteDevUrl}/docs#components-actions`);
-  await expect(page.getByRole('heading', { name: 'Actions', level: 3 })).toBeFocused();
-  // The home is an index of the Docs, with no contents beside it.
+  // Docs, the trail's link, leads to their home, which has no contents beside it.
+  await trail.getByRole('link', { name: 'Docs', exact: true }).click();
+  await expect(page).toHaveURL(`${siteDevUrl}/docs`);
   await expect(contents).toHaveCount(0);
   // A narrower window leaves the contents out.
   await page.goto(`${siteDevUrl}/docs/setup`);

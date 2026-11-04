@@ -2,12 +2,14 @@ import { useEffect, useRef, useState, type ComponentProps } from 'react';
 import {
   Badge,
   Button,
+  IconButton,
   NavigationDrawer,
   Link,
   NavigationRail,
   type Destination,
   type NavigationDrawerDestination,
 } from '@envsemble/envui';
+import { IconClose } from '@envsemble/envui/icons/Close';
 import { IconHome } from '@envsemble/envui/icons/Home';
 import { IconWidgets } from '@envsemble/envui/icons/Widgets';
 import { IconPattern } from '@envsemble/envui/icons/Pattern';
@@ -227,10 +229,12 @@ interface NavigationProps {
   onChoose?: () => void;
   /** Opens search. */
   onSearch: () => void;
+  /** Closes the sheet the navigation sits in, from its button on the wordmark's row. */
+  onClose?: () => void;
 }
 
 /** The envUI wordmark, which leads to the area's home, and the envUI Docs lockup in the Docs. */
-function Brand({ area }: { area: Area }) {
+export function Brand({ area }: { area: Area }) {
   return (
     <Link
       href={routeHref(area === 'docs' ? docsRoute : homeRoute)}
@@ -240,6 +244,20 @@ function Brand({ area }: { area: Area }) {
     >
       {area === 'docs' ? <EnvUIDocsLogo className="docs-brand-docs" /> : <EnvUILogo />}
     </Link>
+  );
+}
+
+/** The sheet's close button, at the end of the navigation's first row, the wordmark's. */
+function CloseSheet({ onClose }: { onClose?: () => void }) {
+  if (!onClose) return null;
+  return (
+    <IconButton
+      variant="ghost"
+      icon={<IconClose />}
+      aria-label="Close navigation"
+      onClick={onClose}
+      className="site-sheet-close"
+    />
   );
 }
 
@@ -258,6 +276,7 @@ export function CatalogueNavigation({
   inSheet = false,
   onChoose,
   onSearch,
+  onClose,
 }: NavigationProps) {
   const element = useCurrentInView();
   const section = catalogueSectionOf(page);
@@ -277,7 +296,16 @@ export function CatalogueNavigation({
           inSheet={inSheet}
           aria-label={section}
           className="site-sidebar"
-          header={<SearchButton onClick={onSearch} className="site-drawer-search" />}
+          header={
+            onClose ? (
+              <div className="site-drawer-top">
+                <SearchButton onClick={onSearch} className="site-drawer-search" />
+                <CloseSheet onClose={onClose} />
+              </div>
+            ) : (
+              <SearchButton onClick={onSearch} className="site-drawer-search" />
+            )
+          }
           destinations={pageDestinations(pages, routePath, onChoose)}
         />
       )}
@@ -287,13 +315,15 @@ export function CatalogueNavigation({
 
 /**
  * The Docs' navigation: a NavigationDrawer of every page of the Docs, as a tree of their sections and groups
- * (docsDestinations), with the wordmark and search side by side at its top.
+ * (docsDestinations), with the wordmark and search side by side at its top, or in the sheet, which
+ * is narrower, the wordmark and the sheet's close button, and search under them.
  */
 export function DocsNavigation({
   routePath,
   inSheet = false,
   onChoose,
   onSearch,
+  onClose,
 }: NavigationProps) {
   const element = useCurrentInView();
   return (
@@ -305,7 +335,14 @@ export function DocsNavigation({
         className="site-sidebar"
         header={
           <div className="docs-drawer-top">
-            <Brand area="docs" />
+            {onClose ? (
+              <div className="site-drawer-top">
+                <Brand area="docs" />
+                <CloseSheet onClose={onClose} />
+              </div>
+            ) : (
+              <Brand area="docs" />
+            )}
             <SearchButton onClick={onSearch} className="site-drawer-search" />
           </div>
         }

@@ -10,7 +10,7 @@
    galleries, and the site's own cards, the catalogue's only shadows, by request. Its color follows the card's own, `--catalogue-card-fill`: a shade of it,
    darker, and stronger the darker the card, so a dark card casts a dark shadow and a light card a
    light one. Each card sets its fill below, and the shadow is declared on the card itself, so it
-   reads that card's fill. The Docs' outlined banner casts none. */
+   reads that card's fill. */
 .site-live-example,
 .site-verdict-stage,
 .site-anatomy-stage,
@@ -19,7 +19,7 @@
 .site-foundation-stage[data-figure='example'],
 .site-figures :is(.catalogue-specimen-grid, .catalogue-matrix-scroll),
 .catalogue-fan-card,
-.site-page-banner[data-banner='catalogue'],
+.site-page-banner,
 .catalogue-explore-grid > .env-card,
 .site-page-navigation .env-pager-link,
 .catalogue-role-swatch {
@@ -105,10 +105,10 @@
   box-shadow: var(--catalogue-card-shadow-raised);
 }
 
-/* The site's own cards lift off the page as its canvases do, each by its own fill: a catalogue
-   page's banner, and the Overview's cards; the pager at a page's foot, smaller, half as
-   much. */
-.site-page-banner[data-banner='catalogue'],
+/* The site's own cards lift off the page as its canvases do, each by its own fill: a page's
+   banner, the catalogue's and the Docs' alike, and the Overview's cards; the pager at a page's
+   foot, smaller, half as much. */
+.site-page-banner,
 .catalogue-explore-grid > .env-card {
   --catalogue-card-fill: var(--env-surface-color);
   box-shadow: var(--catalogue-card-shadow);

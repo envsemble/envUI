@@ -2,7 +2,7 @@ import { Column, Grid, Link, Row, Text } from '@envsemble/envui';
 import { EnvUILogo } from '../brand/EnvUILogo';
 import { componentGroupId, componentGroups } from '../pages/PageModel';
 import { docsRoute, homeRoute, routeHref } from '../navigation/Address';
-import { routeOfDocument } from '../navigation/SiteRoutes';
+import { catalogueSections, pagesOf, sectionHome } from '../navigation/SiteRoutes';
 
 const repository = 'https://github.com/envsemble/envUI';
 
@@ -11,21 +11,30 @@ interface FooterLink {
   href: string;
 }
 
-/** Links to pages of docs/ by id, with the shorter label a footer column fits; missing pages drop. */
-function pagesById(entries: [id: string, label: string][]): FooterLink[] {
-  return entries.flatMap(([id, label]) => {
-    const route = routeOfDocument(id);
-    return route ? [{ label, href: routeHref(route) }] : [];
-  });
-}
-
+/**
+ * The footer's columns, each link once: the catalogue's destinations, the foundations by their
+ * names, the components by their groups, and the Docs' guides with the source.
+ */
 const columns: { title: string; links: FooterLink[] }[] = [
   {
-    title: 'Overview',
-    links: [
-      { label: 'Introduction', href: routeHref(homeRoute) },
-      { label: 'Source', href: repository },
-    ],
+    title: 'Catalogue',
+    links: catalogueSections.map((section) => ({
+      label: section,
+      href: routeHref(sectionHome(section).path),
+    })),
+  },
+  {
+    title: 'Foundations',
+    links: pagesOf('catalogue')
+      .filter((page) => page.kind === 'foundation')
+      .map((page) => ({ label: page.label ?? page.title, href: routeHref(page.path) })),
+  },
+  {
+    title: 'Components',
+    links: componentGroups.map((group) => ({
+      label: group,
+      href: routeHref(`components?${new URLSearchParams({ section: componentGroupId(group) })}`),
+    })),
   },
   {
     title: 'Docs',
@@ -36,42 +45,15 @@ const columns: { title: string; links: FooterLink[] }[] = [
       { label: 'Customize', href: routeHref('docs/customizing') },
       { label: 'Design tokens', href: routeHref('docs/tokens') },
       { label: 'Changelog', href: routeHref('docs/changelog') },
+      { label: 'Source', href: repository },
     ],
-  },
-  {
-    title: 'Foundations',
-    links: pagesById([
-      ['colors', 'Colors & themes'],
-      ['typography', 'Typography'],
-      ['spacing', 'Spacing & density'],
-      ['responsive', 'Adapting to width'],
-      ['accessibility', 'Accessibility'],
-    ]),
-  },
-  {
-    title: 'Components',
-    links: componentGroups.map((group) => ({
-      label: group,
-      href: routeHref(`components?${new URLSearchParams({ section: componentGroupId(group) })}`),
-    })),
-  },
-  {
-    title: 'Patterns',
-    links: pagesById([
-      ['forms', 'Form layout'],
-      ['settings', 'Settings'],
-      ['navigation', 'Navigation'],
-      ['loading', 'Loading'],
-      ['empty-states', 'Empty states'],
-      ['data-tables', 'Data tables'],
-    ]),
   },
 ];
 
 /**
  * The foot of every page of the catalogue and the Docs, on the navigation's pane color: the wordmark in
- * a column of its own, then the main destinations of both in columns that wrap onto more rows in a
- * narrow page. Its links are quiet text until hovered. The credit for the icons is on the Icons page.
+ * a column of its own, then the main destinations of both in four columns, two to a row in a narrow
+ * page. Its links are quiet text until hovered. The credit for the icons is on the Icons page.
  */
 export function PageFooter() {
   return (

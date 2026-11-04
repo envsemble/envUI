@@ -57,15 +57,13 @@ const cards: {
   place: number;
   narrowPlace?: number;
   compactPlace?: number;
-  /** A slight turn and lift of its own, in degrees and rem: the fan stays an arch, laid by hand. */
-  tilt: number;
+  /** A slight lift of its own, in rem, so the fan looks laid by hand rather than ruled. */
   lift: number;
   content: ReactNode;
 }[] = [
   {
     id: 'checklist',
     place: -1.5,
-    tilt: 0.1,
     lift: 0.25,
     content: (
       <>
@@ -82,7 +80,6 @@ const cards: {
     id: 'notifications',
     place: -0.5,
     narrowPlace: -1,
-    tilt: -0.1,
     lift: -0.15,
     content: (
       <>
@@ -99,7 +96,6 @@ const cards: {
     place: 0.5,
     narrowPlace: 0,
     compactPlace: -0.5,
-    tilt: 0.1,
     lift: 0.1,
     content: (
       <>
@@ -122,7 +118,6 @@ const cards: {
     place: 1.5,
     narrowPlace: 1,
     compactPlace: 0.5,
-    tilt: -0.1,
     lift: 0.2,
     content: (
       <>
@@ -161,7 +156,6 @@ export function OverviewFan() {
                 '--catalogue-fan-place': card.place,
                 '--catalogue-fan-narrow-place': card.narrowPlace ?? 0,
                 '--catalogue-fan-compact-place': card.compactPlace ?? 0,
-                '--catalogue-fan-tilt': `${card.tilt}deg`,
                 '--catalogue-fan-lift': `${card.lift}rem`,
               } as CSSProperties
             }

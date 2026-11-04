@@ -1,18 +1,21 @@
-/* The banners of the catalogue and the Docs (PageHeader.tsx). Every page's banner reads from the
-   start like a document, under its breadcrumbs, with a picture hidden from assistive technology at
-   its end: the envUI mark's circle and pill (BannerShapes.tsx). A page of the Docs, the developer
-   reference, is on the page's own color inside an edge, its shapes drawn as outlines, as on a plan;
-   a page of the catalogue is on a fill, its shapes filled, or, on the few pages with one, a motif
-   drawn from what the page shows (BannerMotif.tsx, BannerMotifs.css). No shadows. The banner's
-   width, which the home page's hero shares, is in Shell.css. */
+/* The banners of the catalogue and the Docs (PageHeader.tsx), one card in both: every page's banner
+   reads from the start like a document, under its breadcrumbs, on the default surface's fill with
+   no edge, lifted off the page by the site's card shadow (Stage.css), with a LineArt drawing hidden
+   from assistive technology at its end, or, on the few catalogue pages with one, a motif drawn from
+   what the page shows (BannerMotif.tsx, BannerMotifs.css). The banner's width, which the home
+   page's hero shares, is in Shell.css. */
 .site-banner > :not(.site-banner-shapes, .catalogue-banner-motif) {
   position: relative;
   z-index: var(--env-z-raised);
 }
 
-/* Every banner: the text from the start, between the same margins, at the same sizes. */
+/* Every banner: the text from the start, between the same margins, at the same sizes, on the
+   default surface's fill with no edge. Its text, badges and buttons keep their contrast there as on
+   any default surface (`surface` in tests/contrast/Pairs.ts), in every theme. */
 .site-banner {
   padding-inline: clamp(var(--env-space-6), 6cqi, var(--env-space-9));
+  border: 0;
+  background: var(--env-color-bg-default);
 }
 
 .site-banner
@@ -44,20 +47,6 @@
 .site-banner .catalogue-page-banner-breadcrumb {
   font-family: var(--site-code-font-family);
   letter-spacing: 0;
-}
-
-/* The Docs: on the page's color inside an edge, with a still LineArt drawing, and no shadow. */
-.site-banner:is([data-banner='docs'], [data-banner='docs-home']) {
-  border: 0.0625rem solid var(--env-color-border-muted);
-  background: var(--env-color-bg-page);
-}
-
-/* The catalogue: on the default surface's fill with no edge. Its text, badges and buttons keep
-   their contrast there as on any default surface (`surface` in tests/contrast/Pairs.ts), in every
-   theme. */
-.site-banner[data-banner='catalogue'] {
-  border: 0;
-  background: var(--env-color-bg-default);
 }
 
 /* The banner's picture (CatalogueBannerLines.tsx, DocsBannerLines.tsx): a LineArt drawing in a box

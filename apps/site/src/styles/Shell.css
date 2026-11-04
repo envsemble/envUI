@@ -100,6 +100,21 @@ body {
 .site-drawer-search {
   max-inline-size: 100%;
 }
+/* The drawer's resize grip shows where it is wanted: while the pointer is on the drawer's end edge,
+   while the handle has keyboard focus and while it drags. The edge keeps its resize cursor, so the
+   pointer finds it, and Tab reaches the handle as before. */
+.site-sidebar > .env-navigation-drawer-resize-handle::after {
+  opacity: 0;
+}
+.site-sidebar
+  > .env-navigation-drawer-resize-handle:is(:hover, :focus-visible, [data-resizing])::after {
+  opacity: 1;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .site-sidebar > .env-navigation-drawer-resize-handle::after {
+    transition: opacity var(--env-motion-duration-fast) var(--env-motion-ease);
+  }
+}
 /* Once the drawer's list scrolls, its top edge fades, so a page's link passing under search reads as
    scrolled away rather than cut short; at the top of the list nothing fades. In a browser without
    scroll-driven animations the list scrolls as it is. */
@@ -135,6 +150,31 @@ body {
 }
 .docs-drawer-top .site-drawer-search {
   flex: none;
+}
+/* In the sheet, the first row ends in the sheet's close button: after search in the catalogue's
+   drawer, beside the rail's wordmark, and after the wordmark in the Docs', with search under them. */
+.site-drawer-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--env-space-2);
+  align-self: stretch;
+  min-inline-size: 0;
+}
+.site-drawer-top > .site-drawer-search {
+  min-inline-size: 0;
+}
+.docs-drawer-top > .site-drawer-top {
+  flex: 1 0 100%;
+}
+.site-sheet-close {
+  flex: none;
+}
+/* The search shortcut's keys show for a keyboard alone: a touch screen has none to press. */
+@media (pointer: coarse) {
+  .site-search-keys {
+    display: none;
+  }
 }
 .docs-drawer-top .site-brand {
   flex: none;
@@ -223,6 +263,16 @@ body {
   padding: var(--env-space-1);
   border-radius: var(--env-radius-full);
   background: var(--env-color-bg-page);
+}
+/* The wordmark between them, as small as at the top of the Docs' drawer. */
+.site-compact-controls-bar > .site-brand {
+  padding-inline: var(--env-space-2);
+}
+.site-compact-controls-bar > .site-brand svg {
+  inline-size: 4rem;
+}
+.site-compact-controls-bar .docs-brand-docs {
+  block-size: 0.768rem;
 }
 @container env-scaffold (width >= 52.5rem) {
   .site-compact-controls {
@@ -356,9 +406,11 @@ body {
   letter-spacing: -0.035em;
   text-wrap: balance;
 }
+/* The description fills the banner's text column, whatever its width, its last line kept from
+   standing alone. */
 .site-page-banner-description {
-  max-inline-size: 42ch;
-  text-wrap: balance;
+  max-inline-size: 100%;
+  text-wrap: pretty;
 }
 .site-page-navigation {
   padding: var(--env-space-6) var(--site-gutter) var(--env-space-8);
@@ -408,12 +460,12 @@ body {
   text-decoration: underline;
   text-underline-offset: 0.2em;
 }
-/* The five columns sit in one row beside the wordmark where they fit. Narrower, the wordmark moves
-   above them, and they keep one row, then go three and two, then pair up two to a row in a compact
-   page, so none is left on a row of its own. */
+/* The four columns sit in one row beside the wordmark where they fit. Narrower, the wordmark moves
+   above them, and they keep one row, then pair up two to a row, so none is left on a row of its
+   own. */
 @container site-footer (width >= 37.5rem) {
   .site-footer-columns {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 @container site-footer (width < 66rem) {
@@ -424,23 +476,23 @@ body {
     align-self: stretch;
   }
 }
-@container site-footer (37.5rem <= width < 54rem) {
+@container site-footer (width < 46rem) {
   .site-footer-columns {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-@container site-footer (width < 37.5rem) {
-  .site-footer-main {
-    flex-direction: column;
-  }
-  .site-footer-columns {
-    align-self: stretch;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     column-gap: var(--env-space-5);
   }
 }
-/* A section that a route scrolls to, such as a prop's row, stays clear of the window's top edge.
-   An example's own sections keep the margins it gives them, such as below its sticky header. */
+/* A section that a route scrolls to, such as a prop's row, stops below the sticky controls at the
+   page's top, as a figure's section does (Figures.css). An example's own sections keep the margins
+   it gives them, such as below its sticky header. */
 .site-main [id]:not(.site-live-example *) {
-  scroll-margin-block-start: var(--env-space-6);
+  scroll-margin-block-start: var(--env-space-9);
+}
+/* A heading or row that a route focuses, so reading and the keyboard go on from it (Address.ts),
+   takes focus from script alone and shows no ring: the reader didn't move focus there. */
+.site-page-column
+  [id][tabindex='-1']:focus:not(
+    :where(.site-live-example, .catalogue-open-example, .site-verdict-stage, .site-anatomy-stage) *
+  ) {
+  outline: none;
 }

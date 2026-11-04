@@ -7,10 +7,10 @@ import { CatalogueBannerLines } from './CatalogueBannerLines';
 import { DocsBannerLines } from './DocsBannerLines';
 
 /**
- * The kinds of banner, each read from the start like a document, under its breadcrumbs, the envUI
- * mark's shapes at its end (Banners.css): a page's of the catalogue on a fill, its shapes filled,
- * or for the few with one a motif drawn from what the page shows (BannerMotif.tsx); and a page's
- * of the Docs, the developer reference, on the page's color inside an edge, its shapes in outline.
+ * The kinds of banner, one card that reads from the start like a document, under its breadcrumbs,
+ * with a LineArt drawing at its end (Banners.css): a catalogue page's drawing draws itself in, or
+ * for the few with one is a motif drawn from what the page shows (BannerMotif.tsx); a Docs page's
+ * is the same drawing, still, and the Docs' home has the envUI Docs lockup as its title.
  */
 export type BannerKind = 'catalogue' | 'docs-home' | 'docs';
 
@@ -49,12 +49,7 @@ export function PageHeader({
   const motif = kind === 'catalogue' ? motifOf(subject) : undefined;
   return (
     <header className="site-page-header">
-      <Card
-        background="default"
-        padding={6}
-        className="site-page-banner site-banner"
-        data-banner={kind}
-      >
+      <Card background="default" padding={6} className="site-page-banner site-banner">
         {motif ? (
           <BannerMotif motif={motif} />
         ) : kind === 'catalogue' ? (
@@ -71,7 +66,10 @@ export function PageHeader({
                   // One line in a narrow banner too: the page's own name, the title below, is cut
                   // short first.
                   wrap={false}
-                  items={trail.map(({ label, route }) => ({ label, href: routeHref(route) }))}
+                  items={trail.map(({ label, route }) => ({
+                    label,
+                    href: route === undefined ? undefined : routeHref(route),
+                  }))}
                 />
               ) : (
                 breadcrumb && (

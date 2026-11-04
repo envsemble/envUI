@@ -75,7 +75,7 @@ export function TokenTable({
       aria-labelledby={`tokens-${title}`}
       style={size && { blockSize: `${size[1]}rem` }}
     >
-      <Text render={<h2 />} variant="title" id={`tokens-${title}`}>
+      <Text render={<h2 />} variant="title" className="site-section-title" id={`tokens-${title}`}>
         {title}
       </Text>
       {loading ? (

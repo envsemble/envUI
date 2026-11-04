@@ -15,7 +15,12 @@ import {
   searchDocuments,
   unlistedPages,
 } from '../scripts/site/SearchIndex.ts';
-import { indexOptions, queryOptionsFor, tokenize } from '../apps/site/src/shared/SearchTerms.ts';
+import {
+  indexOptions,
+  queryOptionsFor,
+  searchIndex,
+  tokenize,
+} from '../apps/site/src/shared/SearchTerms.ts';
 
 const props = readProps();
 const documents = readDocumentation(undefined, { props });
@@ -24,8 +29,7 @@ const records = searchDocuments({ documents, props, tokens });
 const serialized = buildSearchIndex({ documents, props, tokens });
 const index = MiniSearch.loadJSON(serialized, indexOptions);
 const best = (query, count = 1) =>
-  index
-    .search(query, queryOptionsFor(query))
+  searchIndex(index, query)
     .slice(0, count)
     .map(({ id }) => id);
 
@@ -134,6 +138,16 @@ test('a page an alias names ranks above the props of that name', () => {
   // A name that starts with the query ranks above a page that only lists it as an alias.
   assert.deepEqual(best('date'), ['page:date-picker']);
   assert.deepEqual(best('time'), ['page:time-picker']);
+});
+
+test('words that name no result together find the pages whose title holds one first', () => {
+  // Button's page never says primary, and the Navigation pattern matches both words by its
+  // aliases and keywords alone: the page named Button comes first.
+  assert.deepEqual(best('primary button'), ['page:button']);
+  // Words that name a result together keep every word: an alias, a prop by its export, a name's start.
+  assert.deepEqual(best('error message'), ['page:field']);
+  assert.deepEqual(best('button variant'), ['prop:Button.variant']);
+  assert.deepEqual(best('date pi'), ['page:date-picker']);
 });
 
 test('a result names the page it opens', () => {

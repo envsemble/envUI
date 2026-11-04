@@ -2,7 +2,7 @@ import MiniSearch from 'minisearch';
 // Written by scripts/site/SearchIndex.ts when the documentation is generated; read as text, which
 // MiniSearch parses on load.
 import serializedIndex from '../generated/SearchIndex.json?raw';
-import { indexOptions, queryOptionsFor } from '../shared/SearchTerms';
+import { indexOptions, searchIndex } from '../shared/SearchTerms';
 
 /** What a search finds, as scripts/site/SearchIndex.ts describes it. */
 export interface SearchResult {
@@ -26,8 +26,7 @@ const index = MiniSearch.loadJSON(serializedIndex, indexOptions);
 
 /** The best matches of a query, best first. */
 export function searchDocumentation(query: string, limit: number): SearchResult[] {
-  return index
-    .search(query, queryOptionsFor(query))
+  return searchIndex(index, query)
     .slice(0, limit)
     .map(({ id, kind, title, detail, page, area, view, section, match }) => ({
       id,

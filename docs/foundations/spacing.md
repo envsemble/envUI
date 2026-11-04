@@ -53,7 +53,7 @@ examples:
 
 How dense the whole app is, how tight the rows of a table are, and the corners that say what each thing is.
 
-### Comfortable or compact
+### Scale
 
 The whole of envUI comes in two scales. Compact makes every control, text, corner and space a step smaller at once, so a dense tool stays in proportion. An app uses one scale throughout.
 
