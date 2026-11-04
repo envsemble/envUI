@@ -280,22 +280,8 @@
     transition-timing-function: var(--env-motion-ease);
   }
 
-  /* A ghost button with a label lays a lighter layer on hover, so it never reads as a secondary
-     button at rest, and a press lays a stronger one; an icon-only one keeps the full layer, as its
-     small circle needs. */
-  .env-button:where([data-variant='ghost']:not(.env-icon-button)) {
-    --env-button-ghost-hover: color-mix(
-      in srgb,
-      var(--env-color-bg-neutral-subtle-hover) 70%,
-      transparent
-    );
-  }
-
   .env-button:where([data-variant='ghost']):hover:not(:disabled):not([aria-disabled='true']) {
-    background: var(
-      --env-button-custom-fill,
-      var(--env-button-ghost-hover, var(--env-color-bg-neutral-subtle-hover))
-    );
+    background: var(--env-button-custom-fill, var(--env-color-bg-neutral-subtle-hover));
     color: var(--env-button-content, var(--env-color-fg-default));
   }
 

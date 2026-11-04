@@ -705,8 +705,8 @@ export const tokens = {
     cssVariable: '--env-color-bg-neutral-subtle-hover',
     type: 'color',
     values: {
-      light: 'rgb(31 31 34 / 0.08)',
-      dark: 'rgb(232 234 238 / 0.08)',
+      light: 'rgb(31 31 34 / 0.05)',
+      dark: 'rgb(232 234 238 / 0.06)',
       'light-high-contrast': 'rgb(31 31 34 / 0.06)',
       'dark-high-contrast': 'rgb(232 234 238 / 0.06)',
     },
@@ -716,8 +716,8 @@ export const tokens = {
     cssVariable: '--env-color-bg-neutral-subtle-pressed',
     type: 'color',
     values: {
-      light: 'rgb(31 31 34 / 0.16)',
-      dark: 'rgb(232 234 238 / 0.16)',
+      light: 'rgb(31 31 34 / 0.12)',
+      dark: 'rgb(232 234 238 / 0.12)',
       'light-high-contrast': 'rgb(31 31 34 / 0.08)',
       'dark-high-contrast': 'rgb(232 234 238 / 0.08)',
     },

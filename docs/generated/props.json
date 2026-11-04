@@ -7039,7 +7039,7 @@
           "name": "items",
           "type": "readonly SelectItem[]",
           "required": true,
-          "description": "The options of the list, in order, each with a value, a label and whether it is disabled."
+          "description": "The options of the list, in order, each with a value, a label, an optional description and whether it is disabled."
         },
         {
           "name": "value",

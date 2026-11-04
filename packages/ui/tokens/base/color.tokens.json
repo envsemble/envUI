@@ -195,7 +195,7 @@
               "components": {
                 "$ref": "#/palette/gray/92/$value/components"
               },
-              "alpha": 0.08
+              "alpha": 0.05
             }
           },
           "pressed": {
@@ -205,7 +205,7 @@
               "components": {
                 "$ref": "#/palette/gray/92/$value/components"
               },
-              "alpha": 0.16
+              "alpha": 0.12
             }
           }
         },
