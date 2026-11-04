@@ -100,6 +100,21 @@ body {
 .site-drawer-search {
   max-inline-size: 100%;
 }
+/* The drawer's resize grip shows where it is wanted: while the pointer is on the drawer's end edge,
+   while the handle has keyboard focus and while it drags. The edge keeps its resize cursor, so the
+   pointer finds it, and Tab reaches the handle as before. */
+.site-sidebar > .env-navigation-drawer-resize-handle::after {
+  opacity: 0;
+}
+.site-sidebar
+  > .env-navigation-drawer-resize-handle:is(:hover, :focus-visible, [data-resizing])::after {
+  opacity: 1;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .site-sidebar > .env-navigation-drawer-resize-handle::after {
+    transition: opacity var(--env-motion-duration-fast) var(--env-motion-ease);
+  }
+}
 /* Once the drawer's list scrolls, its top edge fades, so a page's link passing under search reads as
    scrolled away rather than cut short; at the top of the list nothing fades. In a browser without
    scroll-driven animations the list scrolls as it is. */
