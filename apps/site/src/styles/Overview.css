@@ -58,25 +58,34 @@
   letter-spacing: -0.03em;
   text-wrap: balance;
 }
-/* The version, then the counts, a middle dot between each; in a narrow hero the counts go under
-   the version, each line whole. */
+/* The install command beside Get started: code on the cards' fill, with its copy button at its
+   end; where it doesn't fit, it breaks onto a second line. */
+.catalogue-overview-install {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--env-space-1);
+  max-inline-size: 100%;
+  padding-block: var(--env-space-1);
+  padding-inline: var(--env-space-4) var(--env-space-1);
+  border-radius: var(--env-radius-full);
+  background: var(--env-color-bg-default);
+  text-align: start;
+}
+.catalogue-overview-install code {
+  min-inline-size: 0;
+  font-family: var(--site-code-font-family);
+  font-size: var(--env-font-size-caption);
+  overflow-wrap: anywhere;
+}
+/* The counts, a middle dot between each, each whole. */
 .catalogue-overview-facts {
   margin: 0;
   font-variant-numeric: tabular-nums;
 }
-.catalogue-overview-version,
-.catalogue-overview-counts > * {
+.catalogue-overview-facts > * {
   white-space: nowrap;
 }
-:is(.catalogue-overview-counts, .catalogue-overview-counts > * + *)::before {
+.catalogue-overview-facts > * + *::before {
   margin-inline: var(--env-space-2);
   content: '·';
-}
-@container site-page-header (width < 30rem) {
-  .catalogue-overview-counts {
-    display: block;
-  }
-  .catalogue-overview-counts::before {
-    content: none;
-  }
 }

@@ -1,9 +1,9 @@
-import { Button, Card, Column, Row, Text } from '@envsemble/envui';
+import { Button, Card, Column, CopyButton, Row, Text } from '@envsemble/envui';
 import { IconArrowForward } from '@envsemble/envui/icons/ArrowForward';
 import { IconWidgets } from '@envsemble/envui/icons/Widgets';
 import { IconPattern } from '@envsemble/envui/icons/Pattern';
 import { IconPalette } from '@envsemble/envui/icons/Palette';
-import { version } from '../../../../packages/ui/package.json';
+import { name, version } from '../../../../packages/ui/package.json';
 import { EnvUILogo } from '../brand/EnvUILogo';
 import { docsRoute, routeHref } from '../navigation/Address';
 import { pagesOf, sectionHome } from '../navigation/SiteRoutes';
@@ -44,6 +44,12 @@ const counts = (['component', 'pattern', 'foundation'] as const).map((kind) => (
 }));
 
 /**
+ * The command that installs envUI, as docs/setup.md gives it: the package's name and version, read
+ * from packages/ui/package.json, pinned exactly.
+ */
+const install = `npm install --save-exact ${name}@${version}`;
+
+/**
  * The catalogue's home: what envUI is, the way to setting it up, a hand of cards built with it, and
  * the way to its foundations, components and patterns.
  */
@@ -58,23 +64,26 @@ export function Overview() {
           <Text variant="display" className="catalogue-overview-lede">
             A React design system for dense B2B SaaS and AI developer tools.
           </Text>
-          {/* The one way in, to setting envUI up, beside quiet facts: the package's version, read
-              from packages/ui/package.json, and how much the catalogue shows. */}
-          <Row gap={5} align="center" justify="center" wrap className="catalogue-overview-start">
-            <Button href={routeHref(docsRoute)} endIcon={<IconArrowForward />}>
-              Get started
-            </Button>
-            <Text variant="caption" emphasis="muted" className="catalogue-overview-facts">
-              <span className="catalogue-overview-version">v{version}</span>
-              <span className="catalogue-overview-counts">
-                {counts.map(({ kind, count }) => (
-                  <span key={kind}>
-                    {count} {kind}s
-                  </span>
-                ))}
+          {/* The one way in, to setting envUI up, beside the command that installs it, which names
+              the version; under them, quiet, how much the catalogue shows. */}
+          <Column gap={4} align="center">
+            <Row gap={4} align="center" justify="center" wrap className="catalogue-overview-start">
+              <Button href={routeHref(docsRoute)} endIcon={<IconArrowForward />}>
+                Get started
+              </Button>
+              <span className="catalogue-overview-install">
+                <code>{install}</code>
+                <CopyButton value={install} variant="ghost" aria-label="Copy install command" />
               </span>
+            </Row>
+            <Text variant="caption" emphasis="muted" className="catalogue-overview-facts">
+              {counts.map(({ kind, count }) => (
+                <span key={kind}>
+                  {count} {kind}s
+                </span>
+              ))}
             </Text>
-          </Row>
+          </Column>
         </Column>
       </header>
       <OverviewFan />
