@@ -1,5 +1,6 @@
 /* The Overview's fan of cards (OverviewFan.tsx): under the banner, with plenty of the page around
-   it, a still hand of cards fanned evenly from one point far below them. Each card meets the one
+   it, a still hand of cards fanned evenly from one point far below them, each turned 2 degrees at
+   most, so its text stays crisp, and the outer ones hanging lower, so the hand keeps its arch. Each card meets the one
    before it at its padding only, so none covers what another shows. The cards are envUI's own, on
    the site's card shadow (Stage.css), as the banner and the Overview's cards are. On a narrower
    page the fan keeps three cards, then two, and is drawn smaller in between. */
@@ -16,9 +17,12 @@
   --catalogue-fan-card-width: 15rem;
   --catalogue-fan-card-height: 14rem;
   /* The fan's angle from one card to the next, and how far below the cards it turns: at the cards'
-     foot, where they come closest, neighbours overlap by less than a card's padding. */
-  --catalogue-fan-step: 5.8deg;
-  --catalogue-fan-pivot: 150rem;
+     foot, where they come closest, neighbours overlap by less than a card's padding. So slight a
+     turn would draw the cards in a line: each hangs lower by the square of its place, times the
+     sag, as on a tighter arch. */
+  --catalogue-fan-step: 1.3deg;
+  --catalogue-fan-pivot: 625rem;
+  --catalogue-fan-sag: 0.7rem;
   --catalogue-fan-width: 64rem;
   --catalogue-fan-height: 18rem;
   --catalogue-fan-scale: 1;
@@ -34,9 +38,9 @@
   scale: var(--catalogue-fan-scale);
 }
 
-/* Each card turns about the one point below the fan by its place's angle, then by a little turn
-   and lift of its own, so the fan looks laid by hand rather than ruled. A stronger shadow than a
-   canvas's sets each card off the one behind it. */
+/* Each card turns about the one point below the fan by its place's angle, hangs by its sag and
+   lifts a little of its own, so the fan looks laid by hand rather than ruled. A stronger shadow than
+   a canvas's sets each card off the one behind it. */
 .catalogue-fan-card {
   --catalogue-fan-at: var(--catalogue-fan-place);
   position: absolute;
@@ -48,10 +52,12 @@
   block-size: var(--catalogue-fan-card-height);
   overflow: hidden;
   transform-origin: 50% calc(100% + var(--catalogue-fan-pivot));
-  rotate: calc(
-    var(--catalogue-fan-at) * var(--catalogue-fan-step) + var(--catalogue-fan-tilt, 0deg)
-  );
-  translate: 0 var(--catalogue-fan-lift, 0);
+  rotate: calc(var(--catalogue-fan-at) * var(--catalogue-fan-step));
+  translate: 0
+    calc(
+      var(--catalogue-fan-lift, 0rem) + var(--catalogue-fan-at) * var(--catalogue-fan-at) *
+        var(--catalogue-fan-sag)
+    );
 }
 
 /* A narrower page draws the fan smaller, keeps its front three cards, then its front two. */
