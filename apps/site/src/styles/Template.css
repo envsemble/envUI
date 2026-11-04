@@ -66,12 +66,6 @@
   row-gap: var(--env-space-9);
 }
 
-.site-example > h2,
-.catalogue-related > h2 {
-  font: var(--env-font-weight-medium) 1.75rem / 1.25 var(--env-font-family);
-  letter-spacing: -0.015em;
-}
-
 /* A component named at an item's end follows it after a muted middle dot, in the muted color too
    where it isn't a link. */
 .catalogue-list-name-dot,

@@ -207,13 +207,13 @@ export function ChangelogDocsPage({ page }: { page: RoutePage }) {
       />
       <Column gap={8} className="site-article">
         <Column gap={6} render={<section aria-labelledby="highlights" />}>
-          <Text render={<h2 id="highlights" />} variant="headline">
+          <Text render={<h2 id="highlights" />} variant="title" className="site-section-title">
             Highlights
           </Text>
           <ReleaseNotes />
         </Column>
         <Column gap={6} render={<section aria-labelledby="every-change" />}>
-          <Text render={<h2 id="every-change" />} variant="headline">
+          <Text render={<h2 id="every-change" />} variant="title" className="site-section-title">
             Every change
           </Text>
           <LoadedPart part={changelog} what="changelog" placeholder={<ChangelogSkeleton />} />
@@ -230,7 +230,7 @@ export function ChangelogDocsPage({ page }: { page: RoutePage }) {
 function PaletteSection() {
   return (
     <Column render={<section />} gap={5} aria-labelledby="palette">
-      <Text render={<h2 />} variant="headline" id="palette">
+      <Text render={<h2 />} variant="title" className="site-section-title" id="palette">
         Try the palette
       </Text>
       <Text emphasis="muted">
@@ -299,7 +299,7 @@ function PartNames({ components }: { components: readonly string[] }) {
       aria-labelledby="part-names"
       {...pendingAttribute(outline)}
     >
-      <Text render={<h2 />} variant="headline" id="part-names">
+      <Text render={<h2 />} variant="title" className="site-section-title" id="part-names">
         Part names
       </Text>
       <Text emphasis="muted">
@@ -354,7 +354,7 @@ function Provides({ document, title, id }: { document: Document; title: string; 
       className="docs-provides"
       {...pendingAttribute(outline)}
     >
-      <Text render={<h2 />} variant="headline" id={id}>
+      <Text render={<h2 />} variant="title" className="site-section-title" id={id}>
         {title}
       </Text>
       {app && (
@@ -423,7 +423,7 @@ function CodeGuide({ document }: { document: Document }) {
     const id = headingSlug(title);
     return (
       <Column key={title} render={<section />} gap={5} aria-labelledby={id} className="docs-guide">
-        <Text render={<h2 />} variant="headline" id={id}>
+        <Text render={<h2 />} variant="title" className="site-section-title" id={id}>
           {title}
         </Text>
         {content.map((part, index) =>
@@ -463,7 +463,7 @@ function WordsInCode({ document }: { document: Document }) {
       aria-labelledby="words-in-code"
       {...pendingAttribute(outline)}
     >
-      <Text render={<h2 />} variant="headline" id="words-in-code">
+      <Text render={<h2 />} variant="title" className="site-section-title" id="words-in-code">
         Words in code
       </Text>
       <Documentation markdown={markdown} path={document.path} />
@@ -486,7 +486,7 @@ function ColorProperties({ components }: { components: readonly string[] }) {
       aria-labelledby="color-properties"
       {...pendingAttribute(outline)}
     >
-      <Text render={<h2 />} variant="headline" id="color-properties">
+      <Text render={<h2 />} variant="title" className="site-section-title" id="color-properties">
         Color properties
       </Text>
       <Text emphasis="muted">
@@ -523,7 +523,7 @@ function PropsSection({ document }: { document: Document }) {
       aria-labelledby="props"
       {...pendingAttribute(useSectionOutline())}
     >
-      <Text render={<h2 />} variant="headline" id="props">
+      <Text render={<h2 />} variant="title" className="site-section-title" id="props">
         Props
       </Text>
       <PropsTables document={document} />
@@ -538,7 +538,7 @@ function Strings({ document }: { document: Document }) {
   if (!strings.length) return null;
   return (
     <Column render={<section />} gap={5} aria-labelledby="strings" {...pendingAttribute(outline)}>
-      <Text render={<h2 />} variant="headline" id="strings">
+      <Text render={<h2 />} variant="title" className="site-section-title" id="strings">
         Strings
       </Text>
       <Text emphasis="muted">

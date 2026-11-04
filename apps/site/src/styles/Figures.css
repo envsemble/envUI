@@ -23,8 +23,6 @@
 
 .site-figure-section-heading h2 {
   margin: 0;
-  font: var(--env-font-weight-medium) 1.75rem / 1.25 var(--env-font-family);
-  letter-spacing: -0.015em;
 }
 
 /* A heading sits close to what it heads. */

@@ -19,6 +19,23 @@
   text-wrap: pretty;
 }
 
+/* A section's title, the page's h2, one style in the catalogue and the Docs alike: a component's
+   sections and a foundation's figures, a Docs page's Import or Props, a guide's sections. Below it,
+   an h3 is the title style everywhere, Markdown's and the Docs' own, so the two levels stand
+   clearly apart. */
+.site-section-title,
+.site-figure-section-heading h2,
+.site-example > h2,
+.catalogue-related > h2,
+.site-article > .env-markdown > h2 {
+  font: var(--env-font-weight-medium) 1.75rem / 1.25 var(--env-font-family);
+  letter-spacing: -0.015em;
+}
+/* A guide's sections, one stream of Markdown, stand apart as a page's do. */
+.site-article > .env-markdown > h2:not(:first-child) {
+  margin-block-start: var(--env-space-9);
+}
+
 /* A lead: the one or two sentences that open a section, a step larger than the text below it. */
 .site-lead,
 :where(.site-lead) > p {
