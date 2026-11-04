@@ -251,7 +251,9 @@ test("every label and heading of the catalogue's and the Docs' drawers fits on o
 }) => {
   // A fresh page has no width stored, so each drawer starts at its default width.
   await page.setViewportSize({ width: 1440, height: 1000 });
-  for (const path of [...catalogueSections.map((section) => sectionHome(section).path), 'docs']) {
+  // The Overview, a destination of one page, has no drawer.
+  const sections = catalogueSections.filter((section) => section !== 'Overview');
+  for (const path of [...sections.map((section) => sectionHome(section).path), 'docs']) {
     await page.goto(`${siteDevUrl}/${path}`);
     const drawer = page.locator('.site-sidebar');
     await expect(drawer.locator('.env-navigation-drawer-item').first()).toBeVisible();
@@ -381,6 +383,9 @@ test("a catalogue page has its contents beside it from 56rem, in the Docs' colum
   await goTo(page, '/');
   await expect(page.locator('.catalogue-overview-hero')).toBeVisible();
   await expect(contents).toHaveCount(0);
+  await expect(page.locator('.site-sidebar')).toHaveCount(0);
+  await expect(page.getByRole('navigation', { name: 'Catalogue' })).toBeVisible();
+  await expect(page.locator('.site-page-navigation')).toHaveCount(0);
   // A pane narrower than 56rem leaves them out, as in the Docs.
   await goTo(page, '/patterns/forms');
   await expect(contents).toBeVisible();

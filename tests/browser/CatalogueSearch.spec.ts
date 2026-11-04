@@ -72,8 +72,9 @@ test.describe('search', () => {
       await page.keyboard.press('Escape');
       await expect(dialog(page)).toBeHidden();
 
+      // The Overview has no drawer, and search at the page's top start.
       const button = page
-        .locator('.site-sidebar')
+        .locator('.site-page-search')
         .getByRole('button', { name: /^Search/ })
         .first();
       await expect(button).toHaveAttribute('aria-keyshortcuts', keys.named);

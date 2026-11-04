@@ -33,7 +33,12 @@ import {
   GuidePage,
   TokensPage,
 } from './pages/DocsPages';
-import { DocsNavigation, PageActions, CatalogueNavigation } from './navigation/SiteNavigation';
+import {
+  DocsNavigation,
+  PageActions,
+  CatalogueNavigation,
+  drawerless,
+} from './navigation/SiteNavigation';
 import { PageNavigation } from './navigation/PageNavigation';
 import { RouterLink } from './navigation/RouterLink';
 import {
@@ -266,6 +271,13 @@ function Shell() {
         </div>
       </div>
       <div className="site-main">
+        {/* A wide window's page without the drawer, where search would be, has search at its top
+            start, level with the page's actions. */}
+        {area === 'catalogue' && drawerless(page) && (
+          <div className="site-page-search">
+            <SearchButton onClick={openSearch} className="site-page-search-button" />
+          </div>
+        )}
         <PageActions page={page} area={area} />
         <div className="site-page-layout">
           <div className="site-page-grid" data-contents={contents || undefined}>

@@ -55,6 +55,22 @@ export function catalogueDestinations(current: string | undefined, onChoose?: ()
   });
 }
 
+/** The catalogue's destination a page is in, Overview for one outside the catalogue. */
+export function catalogueSectionOf(page: RoutePage | undefined): CatalogueSection {
+  return (page?.area === 'catalogue' ? page.section : 'Overview') as CatalogueSection;
+}
+
+/** The pages of one of the catalogue's destinations, in its drawer. */
+const sectionPages = (section: CatalogueSection) =>
+  pagesOf('catalogue').filter((entry) => entry.section === section);
+
+/**
+ * Whether the catalogue shows a page beside its rail alone, without the drawer: a wide window's
+ * on a destination of one page, such as Overview, where the drawer would list that page alone.
+ */
+export const drawerless = (page: RoutePage | undefined) =>
+  sectionPages(catalogueSectionOf(page)).length === 1;
+
 /** The pages of one of the catalogue's destinations, for its drawer. */
 export function pageDestinations(
   pages: readonly RoutePage[],
@@ -231,8 +247,10 @@ function Brand({ area }: { area: Area }) {
  * The catalogue's navigation, one pane: a NavigationRail of its destinations, Overview, Foundations,
  * Components and Patterns, under the envUI wordmark, beside a NavigationDrawer of the chosen
  * destination's pages under search, both on the navigation's background with no seam or line
- * between them. A rail item opens its destination's first page; in the sheet of a narrower window
- * it leaves the sheet open, so a page can be chosen.
+ * between them. A destination of one page, such as Overview, has no drawer in a wide window: the
+ * rail stands alone, the page takes the width, and search is at the page's top start (App.tsx).
+ * A rail item opens its destination's first page; in the sheet of a narrower window it leaves the
+ * sheet open, so a page can be chosen.
  */
 export function CatalogueNavigation({
   page,
@@ -242,8 +260,8 @@ export function CatalogueNavigation({
   onSearch,
 }: NavigationProps) {
   const element = useCurrentInView();
-  const section = (page?.area === 'catalogue' ? page.section : 'Overview') as CatalogueSection;
-  const pages = pagesOf('catalogue').filter((entry) => entry.section === section);
+  const section = catalogueSectionOf(page);
+  const pages = sectionPages(section);
   return (
     <div ref={element} className="site-navigation" data-in-sheet={inSheet || undefined}>
       <NavigationRail
@@ -253,14 +271,16 @@ export function CatalogueNavigation({
         footer={<MotionButton />}
         destinations={catalogueDestinations(page?.area === 'catalogue' ? section : undefined)}
       />
-      <SiteDrawer
-        area="catalogue"
-        inSheet={inSheet}
-        aria-label={section}
-        className="site-sidebar"
-        header={<SearchButton onClick={onSearch} className="site-drawer-search" />}
-        destinations={pageDestinations(pages, routePath, onChoose)}
-      />
+      {(inSheet || pages.length > 1) && (
+        <SiteDrawer
+          area="catalogue"
+          inSheet={inSheet}
+          aria-label={section}
+          className="site-sidebar"
+          header={<SearchButton onClick={onSearch} className="site-drawer-search" />}
+          destinations={pageDestinations(pages, routePath, onChoose)}
+        />
+      )}
     </div>
   );
 }
