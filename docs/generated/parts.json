@@ -5709,7 +5709,8 @@
           "attribute": "data-env-scale",
           "values": [
             "comfortable",
-            "compact"
+            "compact",
+            "system"
           ],
           "parts": [
             "env-theme"

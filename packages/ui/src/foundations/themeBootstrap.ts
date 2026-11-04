@@ -19,10 +19,11 @@ export interface ThemeBootstrapOptions {
    */
   contrast?: ThemeContrast;
   /**
-   * The application's scale, as ThemePreferenceProvider's `scale`: `compact` is written to the root
-   * as `data-env-scale` before the first paint, so a compact app does not load at the comfortable
-   * size. `comfortable`, the default, writes nothing. The script marks what it writes with
-   * `data-env-scale-source="envui:compact"`, as it marks the contrast, so a ThemePreferenceProvider
+   * The application's scale, as ThemePreferenceProvider's `scale`: `compact` or `comfortable` is
+   * written to the root as `data-env-scale` before the first paint, so the app does not load at
+   * another size. `system`, the default, writes nothing: the stylesheet takes compact under a fine
+   * pointer and comfortable on touch. The script marks what it writes with `data-env-scale-source`,
+   * `envui:compact` or `envui:comfortable`, as it marks the contrast, so a ThemePreferenceProvider
    * replaces or removes it as its own while the page has left it unchanged.
    */
   scale?: ThemeScale;
@@ -55,15 +56,15 @@ export function createThemeBootstrapScript({
   storageKey = defaultThemeStorageKey,
   defaultPreference = 'system',
   contrast = 'system',
-  scale = 'comfortable',
+  scale = 'system',
 }: ThemeBootstrapOptions = {}) {
   const writeContrast =
     contrast === 'high' || contrast === 'standard'
       ? `r.setAttribute("data-env-contrast",${JSON.stringify(contrast)});r.setAttribute(${JSON.stringify(contrastSourceAttribute)},${JSON.stringify(ownContrastSource(contrast))});`
       : '';
   const writeScale =
-    scale === 'compact'
-      ? `r.setAttribute("data-env-scale","compact");r.setAttribute(${JSON.stringify(scaleSourceAttribute)},${JSON.stringify(ownScaleSource('compact'))});`
+    scale === 'compact' || scale === 'comfortable'
+      ? `r.setAttribute("data-env-scale",${JSON.stringify(scale)});r.setAttribute(${JSON.stringify(scaleSourceAttribute)},${JSON.stringify(ownScaleSource(scale))});`
       : '';
   return `(function(){var r=document.documentElement,t="light";try{var p=localStorage.getItem(${JSON.stringify(storageKey)});if(p!=="light"&&p!=="dark"&&p!=="system")p=${JSON.stringify(defaultPreference)};t=p==="system"?(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"):p}catch(e){}r.classList.add("env-theme");r.setAttribute("data-env-theme",t);${writeContrast}${writeScale}r.style.colorScheme=t})();`;
 }

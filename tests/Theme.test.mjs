@@ -99,9 +99,14 @@ test('a Theme writes its scale, which nested Themes inherit, and a data-env-scal
   function Inner() {
     return h('output', null, useTheme().scale);
   }
+  // Outside any Theme the scale is system: the stylesheet takes compact under a fine pointer.
   const plain = render(h(Theme, { theme: 'light' }, h(Inner))).markup;
-  assert.match(plain, /data-env-scale="comfortable"/);
-  assert.match(plain, /<output>comfortable<\/output>/);
+  assert.match(plain, /data-env-scale="system"/);
+  assert.match(plain, /<output>system<\/output>/);
+  const comfortable = render(
+    h(Theme, { theme: 'light', scale: 'comfortable' }, h(Theme, { theme: 'dark' }, h(Inner))),
+  ).markup;
+  assert.equal(comfortable.match(/data-env-scale="comfortable"/g)?.length, 2);
   const nested = render(
     h(Theme, { theme: 'light', scale: 'compact' }, h(Theme, { theme: 'dark' }, h(Inner))),
   ).markup;
@@ -111,6 +116,10 @@ test('a Theme writes its scale, which nested Themes inherit, and a data-env-scal
     h(Theme, { theme: 'light', 'data-env-scale': 'compact' }, h(Inner)),
   ).markup;
   assert.match(attribute, /<output>compact<\/output>/);
+  const systemAttribute = render(
+    h(Theme, { theme: 'light', 'data-env-scale': 'system' }, h(Inner)),
+  ).markup;
+  assert.match(systemAttribute, /<output>system<\/output>/);
   const prop = render(
     h(Theme, { theme: 'light', scale: 'comfortable', 'data-env-scale': 'compact' }, h(Inner)),
   ).markup;

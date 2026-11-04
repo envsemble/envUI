@@ -156,9 +156,11 @@ export default function App() {
   if (fixture === 'theme-contrast-nested') return <ThemeContrastNestedFixture />;
   if (fixture === 'theme-release') return <ThemeReleaseFixture />;
   const Standalone = fixture === null ? undefined : standaloneFixtures[fixture];
-  // ?scale=compact puts the fixture in the compact scale, unless its own Themes set a scale.
+  // The fixture is comfortable whatever the pointer, so a spec measures the same sizes in every
+  // browser; ?scale=compact or ?scale=system puts it in that scale, unless its own Themes set one.
+  const requestedScale = new URLSearchParams(location.search).get('scale');
   const scale =
-    new URLSearchParams(location.search).get('scale') === 'compact' ? 'compact' : undefined;
+    requestedScale === 'compact' || requestedScale === 'system' ? requestedScale : 'comfortable';
   if (Standalone)
     return (
       <Theme theme="light" scale={scale}>

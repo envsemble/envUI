@@ -139,7 +139,7 @@ function ThemeLabel() {
 | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Theme theme             | Required: light or dark; scopes the tokens and provides the theme to React                                                                                   |
 | Theme contrast          | `high`; `standard`, even when the system asks for more; or `system`, the default, which follows `prefers-contrast: more`; inherited from the enclosing Theme |
-| Theme scale             | comfortable or compact, the app's [scale](spacing.md); inherited from the enclosing Theme                                                                    |
+| Theme scale             | system, comfortable or compact, the app's [scale](spacing.md); inherited from the enclosing Theme                                                            |
 | useTheme()              | `{ theme, contrast, scale }` of the nearest Theme, also across envUI's portals                                                                               |
 | ThemePreferenceProvider | Stores the preference, follows the system and other windows, and themes the document root; see [setup](../setup.md)                                          |
 | useThemePreference()    | A `ThemePreferenceValue`: `preference` (light, dark or system), the resolved `theme`, `setPreference` and `toggleTheme`                                      |

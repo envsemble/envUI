@@ -59,13 +59,13 @@ export interface ThemePreferenceProviderProps {
    */
   contrast?: ThemeContrast;
   /**
-   * The app scale, comfortable or compact for a desktop productivity app, as on Theme: of the Theme
-   * boundary around the children, and, marked as envUI's own, of the document root with
-   * applyToDocument. Without it, the boundary takes the scale of an enclosing Theme; outside any, a
-   * provider applying to the document gives its boundary a scale the page set on the root, so the
-   * application, the page and its portals share it, and otherwise comfortable. The root keeps a
-   * scale the page set but drops one that envUI wrote and the page left unchanged. Pass the same
-   * scale to createThemeBootstrapScript so the root has it before the first paint.
+   * The app scale, comfortable, compact or `system` (compact under a fine pointer, comfortable on
+   * touch), as on Theme: of the Theme boundary around the children, and, marked as envUI's own, of
+   * the document root with applyToDocument. Without it, the boundary takes the scale of an enclosing
+   * Theme; outside any, a provider applying to the document gives its boundary a scale the page set
+   * on the root, so the application, the page and its portals share it, and otherwise `system`. The
+   * root keeps a scale the page set but drops one that envUI wrote and the page left unchanged. Pass
+   * the same scale to createThemeBootstrapScript so the root has it before the first paint.
    */
   scale?: ThemeScale;
   /** Class name for the Theme boundary around the children. */
@@ -147,7 +147,7 @@ function subscribeToRoot(change: () => void) {
 function readPageScale(): ThemeScale | undefined {
   const root = document.documentElement;
   const scale = root.dataset.envScale;
-  if (scale !== 'comfortable' && scale !== 'compact') return undefined;
+  if (scale !== 'comfortable' && scale !== 'compact' && scale !== 'system') return undefined;
   return root.getAttribute(scaleSourceAttribute) === ownScaleSource(scale) ? undefined : scale;
 }
 
@@ -185,13 +185,13 @@ export function ThemePreferenceProvider({
   const inherited = useTheme();
   // Outside any Theme, a provider that applies to the document gives its boundary the scale and
   // contrast the page set on the root, which the page and other libraries' portals already show,
-  // rather than comfortable and system. It never writes them back as its own.
+  // rather than system. It never writes them back as its own.
   const fromPage = applyToDocument && inherited === outsideTheme;
   const pageScale = useSyncExternalStore(subscribeToRoot, readPageScale, onServer);
   const pageContrast = useSyncExternalStore(subscribeToRoot, readPageContrast, onServer);
   const appliedContrast = ownContrast ?? inherited.contrast;
   const contrast = ownContrast ?? (fromPage ? (pageContrast ?? 'system') : inherited.contrast);
-  const scale = ownScale ?? (fromPage ? (pageScale ?? 'comfortable') : inherited.scale);
+  const scale = ownScale ?? (fromPage ? (pageScale ?? 'system') : inherited.scale);
   const [preference, setPreferenceState] = useState<ThemePreference>(() =>
     typeof window === 'undefined'
       ? defaultPreference

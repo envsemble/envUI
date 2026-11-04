@@ -59,10 +59,12 @@ test('an unknown contrast writes nothing, as system does', () => {
   assert.doesNotMatch(createThemeBootstrapScript({ contrast: 'more' }), /data-env-contrast/);
 });
 
-test('the bootstrap script writes a compact scale before the first paint, and nothing else', () => {
-  const root = bootstrap(createThemeBootstrapScript({ scale: 'compact' }));
-  assert.equal(root.attributes['data-env-scale'], 'compact');
-  assert.equal(root.attributes['data-env-scale-source'], 'envui:compact');
-  for (const options of [{}, { scale: 'comfortable' }])
+test('the bootstrap script writes a compact or comfortable scale before the first paint, and nothing for system', () => {
+  for (const scale of ['compact', 'comfortable']) {
+    const root = bootstrap(createThemeBootstrapScript({ scale }));
+    assert.equal(root.attributes['data-env-scale'], scale);
+    assert.equal(root.attributes['data-env-scale-source'], `envui:${scale}`);
+  }
+  for (const options of [{}, { scale: 'system' }])
     assert.doesNotMatch(createThemeBootstrapScript(options), /data-env-scale/);
 });
