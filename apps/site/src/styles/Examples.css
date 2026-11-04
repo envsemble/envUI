@@ -159,3 +159,21 @@
 .catalogue-motion-subject .catalogue-appearance-area {
   background: none;
 }
+
+/* Table's Density motion (specimens/table/RowDensity.tsx): room below the control for what the five
+   rows, the header's included, still grow by up to Large, two paddings each, so the figure keeps one
+   height as the density changes. */
+.catalogue-row-density {
+  --site-row-padding: var(--env-row-padding-block-md);
+  inline-size: 100%;
+  padding-block-end: calc(10 * (var(--env-row-padding-block-lg) - var(--site-row-padding)));
+}
+.catalogue-row-density:has(.env-table[data-density='xs']) {
+  --site-row-padding: var(--env-row-padding-block-xs);
+}
+.catalogue-row-density:has(.env-table[data-density='sm']) {
+  --site-row-padding: var(--env-row-padding-block-sm);
+}
+.catalogue-row-density:has(.env-table[data-density='lg']) {
+  --site-row-padding: var(--env-row-padding-block-lg);
+}

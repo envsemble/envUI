@@ -89,6 +89,7 @@ Register the page in [the index](../docs/index.md) under its group, with only it
 
 - **The catalogue** shows the sections up to Words to use in three groups: what it is (Overview to Behaviour); its Rules, opening with Use it when, from `useWhen`, and on a pattern Built from; then Accessibility, Words to use and Related. It leaves out Compose, the changelog, the two lists of what is provided and every column headed In code.
 - **The Docs** show Compose, the two lists under Accessibility, the In code column as Words in code, and the generated Props, Part names and Color properties, with the changelog collapsed. [Field](../docs/components/field.md), which has no page in the catalogue, shows its whole page there.
+- **The switch** under a page's title, Design and Code, moves between its two pages, the catalogue's and the Docs', at the section the reader is in where the other page has it too, and otherwise at its top. A heading both pages show, such as a pattern's `### Sending`, keeps its place.
 - **The package** keeps the whole file: each example's entry on one line, a run of figures as one line that names them, an anatomy or variants figure as its legend or option table, and Compose with the props after it.
 
 ## Plain language in the catalogue
@@ -98,7 +99,7 @@ The catalogue is for people looking at envUI, often not developers, who then ask
 - **No inline code.** Name no props, values, part classes, tokens or container names. Say what matters in plain words: "the ghost variant", "a sheet from the bottom". Component names, such as SearchField, are names, not code.
 - **No technical values.** No hex colors, lengths, durations, percentages or contrast ratios, in text, captions, specimen titles, swatches and legends alike. Say what the value does, such as "the most space, between sections", and put the value in Compose.
 - **Options in words.** A table of variants, tones, sides or sizes names each option as people see it, such as Outline or From the bottom.
-- **No links into the Docs.** The catalogue reaches the Docs only through a page's Docs button. Link component, pattern and foundation pages, and say a point of a Docs page without the link; Compose, the changelog and the two lists of what is provided may link anywhere.
+- **No links into the Docs.** The catalogue reaches the Docs only through a page's Code switch. Link component, pattern and foundation pages, and say a point of a Docs page without the link; Compose, the changelog and the two lists of what is provided may link anywhere.
 
 ## Text in titled blocks
 

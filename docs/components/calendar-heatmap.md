@@ -1,6 +1,6 @@
 ---
 title: CalendarHeatmap
-summary: A calendar grid that shades each day by its value, with a tooltip and keyboard access for every day.
+summary: A calendar grid that shades each day by its value.
 status: stable
 since: 1.0.0
 category: Data display

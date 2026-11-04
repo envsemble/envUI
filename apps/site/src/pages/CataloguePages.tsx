@@ -2,7 +2,7 @@ import { Alert, Column, Link } from '@envsemble/envui';
 import { PageHeader } from '../layout/PageHeader';
 import { catalogueTrail } from '../navigation/CatalogueTrail';
 import type { RoutePage } from '../navigation/SiteRoutes';
-import { OtherPartButton } from '../navigation/OtherPart';
+import { PartSwitch } from '../navigation/OtherPart';
 import { MetadataBadges, TemplateContent } from '../template/TemplateContent';
 import { Catalogue } from './Catalogue';
 import { FoundationCatalogue } from './FoundationCatalogue';
@@ -26,7 +26,7 @@ export function ComponentPage({ page }: { page: RoutePage }) {
         meta={
           document.metadata && (
             <MetadataBadges metadata={document.metadata} plain>
-              <OtherPartButton page={page} />
+              <PartSwitch page={page} />
             </MetadataBadges>
           )
         }
@@ -52,7 +52,7 @@ export function PatternPage({ page }: { page: RoutePage }) {
         meta={
           document.metadata && (
             <MetadataBadges metadata={document.metadata} plain>
-              <OtherPartButton page={page} />
+              <PartSwitch page={page} />
             </MetadataBadges>
           )
         }
@@ -94,7 +94,7 @@ export function FoundationPage({ page }: { page: RoutePage }) {
         trail={catalogueTrail(page)}
         description={page.summary}
         subject={document.id}
-        meta={<OtherPartButton page={page} />}
+        meta={<PartSwitch page={page} />}
       />
       {document.id === 'icons' && <IconsCredit />}
       {/* A foundation is its Markdown, with its figures in place. */}

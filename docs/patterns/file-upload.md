@@ -88,7 +88,7 @@ Each file uploads as soon as it is added, in its own row of a [list](../componen
 - Once the file is up, the bar gives way to its size.
 - A line under the list counts the files that are up and those that failed.
 
-### Files that don't fit
+### Rejected files
 
 A file of the wrong kind or too large never joins the list. The zone says which file and why, and takes the others.
 
@@ -96,7 +96,7 @@ A file of the wrong kind or too large never joins the list. The zone says which 
 
 ```
 
-### When an upload fails
+### Failed uploads
 
 The file keeps its row, with what went wrong and Try again, which starts it over. The other files go on uploading.
 
@@ -104,7 +104,7 @@ The file keeps its row, with what went wrong and Try again, which starts it over
 
 ```
 
-### Remove with undo
+### Removing files
 
 Remove takes the file out of the list at once and stops its upload, and a [toast](../components/toast.md) offers Undo, as [destructive actions](destructive-actions.md) describe.
 
@@ -193,7 +193,7 @@ function upload(file: File, onProgress: (sent: number) => void, signal: AbortSig
 }
 ```
 
-#### Files that don't fit
+#### Rejected files
 
 `accept` turns away other kinds of file, which go to `onFilesRejected`; check the size of those `onFilesAccepted` receives. Name the file and the reason in `error`. A drop of both kinds calls `onFilesRejected`, then `onFilesAccepted`, so keep the first message through the second, as the TurnedAway example does.
 
@@ -209,7 +209,7 @@ function upload(file: File, onProgress: (sent: number) => void, signal: AbortSig
 />
 ```
 
-#### When an upload fails
+#### Failed uploads
 
 Mark the upload failed and keep it in the list, with the reason in `description` and a Try again Button that starts it again from nothing. Try again leaves as it is pressed, so move focus to Remove in the same row through its `ref`, as the FailedUpload example does.
 
@@ -224,7 +224,7 @@ Mark the upload failed and keep it in the list, with the reason in `description`
 </Row>
 ```
 
-#### Remove with undo
+#### Removing files
 
 Abort the upload, take the entry out of the list and show a toast through `useToast().show`, with `action: { label: 'Undo', onClick }`, as the RemoveWithUndo example does.
 

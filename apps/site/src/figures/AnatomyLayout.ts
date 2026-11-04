@@ -45,12 +45,12 @@ interface Box {
 /** How far outside the component a callout's badge sits, and the badges' diameter, in px. */
 const reach = 28;
 const badgeSize = 24;
-/** The least distance between two badges' centres on one side. */
-const spacing = badgeSize + 4;
+/** The least distance between two badges' centres on one side, so neighbours never touch. */
+const spacing = badgeSize + 12;
 /** How far below its top the root's callout points, at most: past a large corner's curve. */
 const rootInset = 32;
 /** How far a part's box stands off the part, in px, so it never runs through its text. */
-const fencePadding = 3;
+const fencePadding = 4;
 
 /** A part's box grown by the fence's padding on every side. */
 const fenced = (box: Box): Box => ({
@@ -298,6 +298,7 @@ export function measure(
           {
             number: index + 1,
             element,
+            text,
             box,
             corners: cornersOf(drawn, text, box),
             inline: followsText(element),
@@ -386,18 +387,20 @@ export function measure(
     return along && avoid.left >= box.right - 1;
   };
   // The root fills the component, or holds every other part, as a field holds its label floated
-  // above its own box.
-  const isRoot = (box: Box, element?: Element) =>
+  // above its own box. A part that is the text of an element, such as a button's label, is never
+  // the root, though its element holds the others.
+  const isRoot = (box: Box, element?: Element, text = false) =>
     (box.left - outer.left < 1 &&
       box.top - outer.top < 1 &&
       outer.right - box.right < 1 &&
       outer.bottom - box.bottom < 1) ||
     (element !== undefined &&
+      !text &&
       found.length > 1 &&
       found.every((other) => other.element === element || element.contains(other.element)));
   // Parts that all fill the component, such as a number and its value, would crowd its start:
   // their callouts sit above and below it instead, in turn.
-  const roots = found.filter(({ box, element }) => isRoot(box, element)).length;
+  const roots = found.filter(({ box, element, text }) => isRoot(box, element, text)).length;
   const inside = (outerBox: Box, innerBox: Box) =>
     innerBox.left >= outerBox.left - 0.5 &&
     innerBox.right <= outerBox.right + 0.5 &&
@@ -423,7 +426,7 @@ export function measure(
             : other.right > box.right + 0.5,
     );
     const across = (other: Box): [number, number] =>
-      vertical ? [other.left - 6, other.right + 6] : [other.top - 6, other.bottom + 6];
+      vertical ? [other.left - 10, other.right + 10] : [other.top - 10, other.bottom + 10];
     const [start, end] = vertical ? [box.left, box.right] : [box.top, box.bottom];
     const middle = (start + end) / 2;
     const low = Math.min(start + 4, middle);
@@ -442,11 +445,11 @@ export function measure(
     return candidates[0] ?? null;
   };
   let stacked = 0;
-  const placed = found.map(({ number, element, box, corners, inline, edge, region }) => {
-    const root = isRoot(box, element);
+  const placed = found.map(({ number, element, text, box, corners, inline, edge, region }) => {
+    const root = isRoot(box, element, text);
     if (root && roots > 1) {
       const side: Side = stacked++ % 2 ? 'bottom' : 'top';
-      return { number, box, corners, root, side, at: null, edge, region };
+      return { number, box, corners, root, side, at: null, edge, region, options: [] };
     }
     // The nearest side whose line reaches out clear of the other parts, with the sides above and
     // below preferred by a few pixels.
@@ -490,8 +493,35 @@ export function measure(
       at: root ? null : clearAt(side, box),
       edge,
       region,
+      options: distances,
     };
   });
+  // One side for each of two parts where one holds the other, such as a select's trigger and its
+  // value: their lines would run side by side, the inner one bent across the outer one's edge.
+  // The outer part moves to its nearest other side that is clear, holds neither and lies just past
+  // its edge, so its line crosses nothing else of the component, such as a list's other rows.
+  const nested = (a: Box, b: Box) => inside(a, b) || inside(b, a);
+  for (const item of placed) {
+    if (item.root) continue;
+    const shares = placed.some(
+      (other) =>
+        other !== item && !other.root && other.side === item.side && inside(item.box, other.box),
+    );
+    if (!shares) continue;
+    const next = item.options
+      .filter(
+        ([side, distance]) =>
+          side !== item.side &&
+          distance < 16 &&
+          !placed.some(
+            (other) => other !== item && other.side === side && nested(item.box, other.box),
+          ),
+      )
+      .sort((a, b) => a[1] - b[1])[0];
+    if (!next) continue;
+    item.side = next[0];
+    item.at = clearAt(next[0], item.box);
+  }
   const callouts: Callout[] = [];
   for (const side of ['top', 'bottom', 'left', 'right'] as const) {
     const items = placed.filter((item) => item.side === side);

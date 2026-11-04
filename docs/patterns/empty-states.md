@@ -1,6 +1,6 @@
 ---
 title: Empty states
-summary: Show what a region holds when it has nothing to show, tell first use from no results, done and failed, and offer the one way on.
+summary: Show what a region holds when it has nothing to show, and the one way on.
 status: beta
 since: 1.0.0
 intent: Keep people informed

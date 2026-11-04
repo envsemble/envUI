@@ -1,6 +1,6 @@
 ---
 title: AnimatedNumber
-summary: A number in text that rolls to its new value when it changes, so a count updated elsewhere is noticed.
+summary: A number that rolls to its new value, so a change made elsewhere is noticed.
 status: stable
 since: 1.0.0
 category: Data display

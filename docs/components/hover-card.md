@@ -1,6 +1,6 @@
 ---
 title: HoverCard
-summary: A card of supplementary details that opens beside a link on hover and keyboard focus, like a link preview.
+summary: A card of supplementary details that opens beside a link, like a link preview.
 status: stable
 since: 1.0.0
 category: Overlays
@@ -75,7 +75,7 @@ The pointer can move from the trigger onto the card without closing it, and focu
 
 <!-- specimen: HoverAndFocus -->
 
-### Text with more details
+### Text triggers
 
 Text that isn't a link can open a card too, with the dotted underline and the focus a [tooltip on text](tooltip.md#text) takes.
 
@@ -85,15 +85,15 @@ Text that isn't a link can open a card too, with the dotted underline and the fo
 
 ## Rules
 
-### Details that are also elsewhere
+### Supplementary details
 
 Keep the details supplementary: the page the link leads to has them too.
 
-### Nothing to press
+### Interactive content
 
 No links, buttons or fields in the card: the keyboard and touch can't reach them.
 
-### No tooltip as well
+### Tooltips
 
 No [Tooltip](tooltip.md) around a hover card or as its trigger; put what it would say in the card.
 

@@ -1,6 +1,6 @@
 ---
 title: Destructive actions
-summary: Let people delete, remove or archive with as little friction as is safe, and undo or confirm by what is at stake.
+summary: Let people delete, remove or archive with as little friction as is safe.
 status: beta
 since: 1.0.0
 intent: Enter and change data
@@ -74,7 +74,7 @@ The count is in the button, the question and the confirm button: "Delete 2 docum
 
 ## Behaviour
 
-### Undo instead of asking
+### Undo
 
 Archiving happens at once, and a [toast](../components/toast.md) offers Undo, which puts the item back where it was.
 

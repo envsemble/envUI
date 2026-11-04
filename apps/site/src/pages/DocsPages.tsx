@@ -5,7 +5,7 @@ import { AgentLogos } from '../brand/AgentLogos';
 import { PageHeader } from '../layout/PageHeader';
 import { docsTrail, pagesOf, type RoutePage } from '../navigation/SiteRoutes';
 import { docsRoute } from '../navigation/Address';
-import { OtherPartButton } from '../navigation/OtherPart';
+import { PartSwitch } from '../navigation/OtherPart';
 import { lazyPart } from '../template/LoadBoundary';
 import { ExampleSource } from '../figures/LiveExample';
 import { partsOf } from '../template/Parts';
@@ -103,7 +103,7 @@ export function GuidePage({ page }: { page: RoutePage }) {
         kind="docs"
         meta={
           <MetadataBadges metadata={{ status: page.document?.status }}>
-            <OtherPartButton page={page} />
+            <PartSwitch page={page} />
           </MetadataBadges>
         }
       />
@@ -209,7 +209,7 @@ export function FoundationGuidePage({ page }: { page: RoutePage }) {
         kind="docs"
         trail={docsTrail(page)}
         description={page.summary}
-        meta={<OtherPartButton page={page} />}
+        meta={<PartSwitch page={page} />}
       />
       <Column gap={8} className="site-article docs-api">
         <CodeGuide document={document} />
@@ -556,7 +556,7 @@ export function DocsReferencePage({ page }: { page: RoutePage }) {
         meta={
           metadata && (
             <MetadataBadges metadata={metadata}>
-              <OtherPartButton page={page} />
+              <PartSwitch page={page} />
             </MetadataBadges>
           )
         }

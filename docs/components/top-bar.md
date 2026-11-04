@@ -1,6 +1,6 @@
 ---
 title: TopBar
-summary: The bar at the top of an application or a screen, with start content, a title that truncates first and actions, which can stick, show page progress or be the window's title bar.
+summary: The bar at the top of an application or a screen, with its title and actions.
 status: beta
 since: 1.0.0
 category: App frame & layout
@@ -95,7 +95,7 @@ The bar goes in a [Scaffold](scaffold.md)'s top bar region, the screen's banner,
 
 ```
 
-### What goes where
+### Layout
 
 The title names the application or the section.
 

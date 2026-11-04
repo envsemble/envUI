@@ -1,7 +1,6 @@
 ---
 title: RichText
-summary: Formatted text people edit as it looks, saved as Markdown with references, and shown again
-  read-only.
+summary: Formatted text people edit as it looks, saved as Markdown.
 status: alpha
 since: 1.0.0
 category: Forms & selection

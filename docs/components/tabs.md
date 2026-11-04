@@ -1,6 +1,6 @@
 ---
 title: Tabs
-summary: Switches between panels of related content in one place, from a row of text tabs.
+summary: Switches between panels of related content in one place.
 status: stable
 since: 1.0.0
 category: Navigation

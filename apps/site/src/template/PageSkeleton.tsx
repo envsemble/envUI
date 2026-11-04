@@ -2,7 +2,7 @@ import { Column, Text } from '@envsemble/envui';
 import { PageHeader } from '../layout/PageHeader';
 import { catalogueTrail } from '../navigation/CatalogueTrail';
 import { docsTrail, type RoutePage } from '../navigation/SiteRoutes';
-import { OtherPartButton } from '../navigation/OtherPart';
+import { PartSwitch } from '../navigation/OtherPart';
 import { PartSkeleton, placeholderText, recordedSize } from './Loading';
 import { MetadataBadges } from './TemplateContent';
 
@@ -98,7 +98,7 @@ export function PageSkeleton({ page }: { page: RoutePage }) {
             metadata={page.document?.metadata ?? { status: page.document?.status }}
             plain={!docs}
           >
-            <OtherPartButton page={page} />
+            <PartSwitch page={page} />
           </MetadataBadges>
         }
       />

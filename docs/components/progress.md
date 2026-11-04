@@ -1,6 +1,6 @@
 ---
 title: Progress
-summary: How much of a task is done, such as an upload, as a labelled bar, or that it runs while the amount is unknown.
+summary: How much of a task is done, or that it runs while the amount is unknown.
 status: beta
 since: 1.0.0
 category: Feedback

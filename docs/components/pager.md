@@ -1,6 +1,6 @@
 ---
 title: Pager
-summary: Previous and next links between the pages of an ordered sequence, such as a guide, centered at the end of the content.
+summary: Previous and next links between the pages of an ordered sequence, such as a guide.
 status: beta
 since: 1.0.0
 category: Navigation

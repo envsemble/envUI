@@ -1,6 +1,6 @@
 ---
 title: Alert
-summary: An inline message about a page or a section, in an info, success, warning or danger tone, with an optional action and dismiss button.
+summary: An inline message about a page or a section, with an optional action.
 status: stable
 since: 1.0.0
 category: Feedback

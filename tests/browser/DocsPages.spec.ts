@@ -208,9 +208,13 @@ test('a page of the Docs has breadcrumbs, a tree of the Docs open at its section
   await expect(trail).toContainText('Components');
   await expect(trail).toContainText('Actions');
   await expect(trail.locator('[aria-current="page"]')).toHaveText('Button');
-  await expect(banner.getByRole('link', { name: 'Catalogue', exact: true })).toHaveAttribute(
+  await expect(banner.getByRole('link', { name: 'Design', exact: true })).toHaveAttribute(
     'href',
     '/components/button',
+  );
+  await expect(banner.getByRole('link', { name: 'Code', exact: true })).toHaveAttribute(
+    'aria-current',
+    'page',
   );
   await expect(
     page.locator('.site-page-actions').getByRole('link', { name: 'Catalogue', exact: true }),

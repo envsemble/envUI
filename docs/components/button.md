@@ -1,6 +1,6 @@
 ---
 title: Button
-summary: Starts an action, or goes to a destination as a link, alone, icon-only, confirmed in place, copying a value or connected in a group.
+summary: Starts an action, or goes to a destination as a link.
 status: stable
 since: 1.0.0
 category: Actions
@@ -64,6 +64,7 @@ examples:
     caption: Beside others like it, each button names what it removes.
   ButtonAnatomy: anatomy
   Variants: variants
+  PrimaryTones: example
   QuietToolbar: example
   ButtonLinks: example
   PendingAction: example
@@ -90,18 +91,22 @@ examples:
 5. **Text**
 6. **Primary, accent**
 
-| Variant         | Tones                           | Use for                                                                   |
-| --------------- | ------------------------------- | ------------------------------------------------------------------------- |
-| Primary         | Neutral, the brand blue; danger | The main action of a group. One per group.                                |
-| Secondary       | Neutral                         | Other actions.                                                            |
-| Outline         | Neutral, danger                 | Other actions on panes, dialogs and rows.                                 |
-| Ghost           | Neutral, danger                 | An application's chrome, such as a toolbar.                               |
-| Text            | Neutral, danger                 | A link-like action, underlined where needed.                              |
-| Primary, accent | Accent                          | The main action, where it must stand apart from the brand blue around it. |
+| Variant         | Tones                            | Use for                                                                   |
+| --------------- | -------------------------------- | ------------------------------------------------------------------------- |
+| Primary         | Neutral (the brand blue), danger | The main action of a group. One per group.                                |
+| Secondary       | Neutral                          | Other actions.                                                            |
+| Outline         | Neutral, danger                  | Other actions on panes, dialogs and rows.                                 |
+| Ghost           | Neutral, danger                  | An application's chrome, such as a toolbar.                               |
+| Text            | Neutral, danger                  | A link-like action, underlined where needed.                              |
+| Primary, accent | Accent                           | The main action, where it must stand apart from the brand blue around it. |
 
 ### Primary tones
 
 Every primary takes the same grade of its tone: a saturated fill with white text in light, and a soft fill with dark text in dark, so a danger or accent button is never louder than the main one beside it.
+
+```tsx figure=PrimaryTones
+
+```
 
 ### In a toolbar
 

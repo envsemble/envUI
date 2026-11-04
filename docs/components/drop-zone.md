@@ -1,6 +1,6 @@
 ---
 title: DropZone
-summary: An area that takes dropped files and opens the file picker when pressed; the application handles and shows the files.
+summary: An area that takes dropped files and opens the file picker when pressed.
 status: stable
 since: 1.0.0
 category: Forms & selection

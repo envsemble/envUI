@@ -1,6 +1,6 @@
 ---
 title: ColorPicker
-summary: A compact color picker with hex, RGB and HSL, optional alpha, copy, an eyedropper and preset swatches; a button that opens it in a popover; and a color swatch that shows a color in a format.
+summary: Chooses a color, in the formats people work in.
 status: stable
 since: 1.0.0
 category: Forms & selection

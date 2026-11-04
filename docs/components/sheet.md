@@ -1,6 +1,6 @@
 ---
 title: Sheet
-summary: A panel that slides in over the page from the end, the start or the bottom edge of the window, for filters, details, an inspector or a short set of choices.
+summary: A panel that slides in over the page from an edge of the window.
 status: beta
 since: 1.0.0
 category: Overlays

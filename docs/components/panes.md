@@ -1,6 +1,6 @@
 ---
 title: Panes
-summary: Two panes side by side, after Material's pane layouts, a main pane with a supporting one or a list and its detail, that make the most of less room.
+summary: Two panes side by side, such as a list and its detail.
 status: beta
 since: 1.0.0
 category: App frame & layout

@@ -1,6 +1,6 @@
 ---
 title: Toast
-summary: Brief feedback after an action, such as Changes saved, at the edge of the window, announced and dismissed after a few seconds or by people.
+summary: Brief feedback after an action, at the edge of the window.
 status: stable
 since: 1.0.0
 category: Feedback
@@ -95,11 +95,11 @@ Not shown: the count of hidden notifications.
 
 ## Behaviour
 
-### How long it stays
+### Duration
 
 Its timer pauses while the pointer rests on it or it has focus.
 
-### Undo an action
+### Undo
 
 A notification with an action stays until its action has run or people dismiss it.
 
@@ -107,7 +107,7 @@ A notification with an action stays until its action has run or people dismiss i
 
 ```
 
-### Try again after an error
+### Retry
 
 A danger notification stays until it is dismissed, and is announced at once.
 
@@ -115,7 +115,7 @@ A danger notification stays until it is dismissed, and is announced at once.
 
 ```
 
-### Work that finished elsewhere
+### Background work
 
 A notification can stay until people dismiss it.
 

@@ -1,6 +1,6 @@
 ---
 title: TableOfContents
-summary: The page's sections as links, nested by level, with the section the reader is in marked as they scroll.
+summary: The page's sections as links, with the one the reader is in marked.
 status: beta
 since: 1.0.0
 category: Navigation
