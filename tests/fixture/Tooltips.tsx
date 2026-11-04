@@ -133,9 +133,8 @@ export function TooltipsFixture() {
       >
         <IconButton icon={<IconSave />} aria-label="Save" />
       </Tooltip>
-      {/* In right-to-left text, the end of the line is on the left, with room there for the
-          popover wherever the row wraps. */}
-      <div dir="rtl" className="fixture-actions" style={{ paddingInlineEnd: '16rem' }}>
+      {/* In right-to-left text, the end of the line is on the left. */}
+      <div dir="rtl" className="fixture-actions">
         <Tooltip content="Next step" side="inline-end" delay={0}>
           <IconButton icon={<IconArrowForward />} aria-label="Forward" />
         </Tooltip>
