@@ -1,6 +1,6 @@
 ---
 title: Slider
-summary: A value in a known range, chosen by pressing or dragging along a field, or with the keyboard.
+summary: A value in a known range, chosen by dragging or with the keyboard.
 status: stable
 since: 1.0.0
 category: Forms & selection
@@ -90,7 +90,7 @@ Reached with the keyboard, the slider shows its focus ring and the handle at the
 
 <!-- specimen: WithTheKeyboard -->
 
-### Save once a change is complete
+### Saving
 
 The value follows the pointer as it moves, and is reported once more when the pointer lets go or after a key. Save it then.
 
@@ -176,7 +176,7 @@ Show the value with its unit, such as 30 minutes; the same text is announced.
 
 Leave it uncontrolled, with `defaultValue`, the minimum by default, or control it with `value` and `onValueChange`, which receives the value as often as the handle moves. `formatValue` formats the value with its unit, as it shows at the end and is announced; without it, the number shows in the `locale`, EnvUIProvider's by default. `description` goes under it, and `error` says how to correct the value.
 
-#### Save once a change is complete
+#### Saving
 
 `onValueCommitted` reports the value once a change is complete: when the pointer is released or the track pressed, and after each key. Save from it.
 

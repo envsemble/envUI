@@ -1,7 +1,6 @@
 ---
 title: RelativeTime
-summary: A moment as text relative to now, such as 3 hours ago, kept current, with the date and time
-  in a tooltip.
+summary: A moment as text relative to now, such as 3 hours ago, kept current.
 status: stable
 since: 1.0.0
 category: Data display

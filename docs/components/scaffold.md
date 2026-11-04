@@ -1,6 +1,6 @@
 ---
 title: Scaffold
-summary: The invisible frame of an application's screen, around its top bar, its navigation and the page.
+summary: The frame of an application's screen, around its top bar, its navigation and the page.
 status: beta
 since: 1.0.0
 category: App frame & layout
@@ -60,7 +60,7 @@ Scaffold shows the [navigation](navigation-drawer.md) that fits its own width: t
 
 ```
 
-### A button that narrows the navigation
+### Narrowing the navigation
 
 A button can narrow the navigation to a strip of icons by asking for the rail in place of the drawer, and the application keeps the choice.
 
@@ -121,7 +121,7 @@ The Scaffold follows its own width, not the window's.
 
 Scaffold paints nothing itself: what goes in its top bar, its navigation and its body does.
 
-### One for the whole application
+### One per application
 
 One Scaffold sits at the application's root and stays as the pages change.
 
@@ -182,7 +182,7 @@ Render one Scaffold at the application's root, around the router's outlet, and k
 </Scaffold>
 ```
 
-#### A button that narrows the navigation
+#### Narrowing the navigation
 
 A button that narrows the navigation sets `navigationForms={{ expanded: 'rail', large: 'rail' }}`, and the application keeps the choice, such as in `localStorage`.
 

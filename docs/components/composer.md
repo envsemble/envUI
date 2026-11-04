@@ -1,6 +1,6 @@
 ---
 title: Composer
-summary: The message field of a conversation, which grows with its text and sends with Enter, with a send button that stops a running reply.
+summary: The message field of a conversation, which grows with its text.
 status: stable
 since: 1.0.0
 category: Text & content

@@ -1,6 +1,6 @@
 ---
 title: Card
-summary: A rounded surface that groups content about one subject, as a content card with a title and actions, or one link or button.
+summary: A rounded surface that groups content about one subject.
 status: stable
 since: 1.0.0
 category: App frame & layout

@@ -1,6 +1,6 @@
 ---
 title: Filtering and search
-summary: Let people narrow a list or a table to what they want, see how many items match, and undo it in one step.
+summary: Let people narrow a list or a table to what they want, and undo it in one step.
 status: beta
 since: 1.0.0
 intent: Work with lists and tables
@@ -97,7 +97,7 @@ A search and a few filters sit in the [PageHeader](../components/page.md)'s tool
 
 ## Behaviour
 
-### Keep the state in the address
+### State in the address
 
 Write the query and the filters into the address through the router, so a reload, the back button and a shared link show the same results.
 
@@ -121,7 +121,7 @@ Each choice filters at once, and a count says how many match.
 
 ```
 
-### Apply only when slow
+### Apply button
 
 Keep an Apply button only for a slow or costly query, and say what it shows: "Show 12 projects".
 

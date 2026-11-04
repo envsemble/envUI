@@ -1,7 +1,6 @@
 ---
 title: Table
-summary: 'Semantic data tables on a rounded surface: sorting, resizable columns, selected rows and
-  stacked rows in narrow containers.'
+summary: Records in rows and columns, which people can sort and select.
 status: stable
 since: 1.0.0
 category: Data display
@@ -171,11 +170,11 @@ Name each state in words, such as in a Badge, never by color alone.
 
 Name every table, with a caption above it or by a heading just before it.
 
-### Not a spreadsheet
+### Editing
 
 A table has no editing cell by cell and no moving between cells with the arrow keys.
 
-### The first cell
+### Row titles
 
 Start each row with the cell that identifies it, which titles the row when rows stack.
 

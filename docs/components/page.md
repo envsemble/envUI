@@ -1,6 +1,6 @@
 ---
 title: Page
-summary: The invisible column a page's content sits in, at a readable width, under its header with the page's title and actions.
+summary: The column a page's content sits in, under its title and actions.
 status: beta
 since: 1.0.0
 category: App frame & layout

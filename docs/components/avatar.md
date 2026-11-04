@@ -1,6 +1,6 @@
 ---
 title: Avatar
-summary: A round picture of a person or organization, with the default person picture or initials as fallback, as a button, or piled in a group.
+summary: The picture of a person or an organization, alone or in a group.
 status: stable
 since: 1.0.0
 category: Data display

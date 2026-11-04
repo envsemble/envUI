@@ -1,6 +1,6 @@
 ---
 title: Code
-summary: Inline code in text, highlighted code blocks with a copy button, and the changes between two versions of a file.
+summary: Code in text and in blocks, and the changes between two versions of a file.
 status: stable
 since: 1.0.0
 category: Text & content

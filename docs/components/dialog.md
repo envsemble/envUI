@@ -1,6 +1,6 @@
 ---
 title: Dialog
-summary: A focused task over the page, as a centered modal or a modal near the top of the window, with shared focus and dismissal.
+summary: A focused task over the page.
 status: stable
 since: 1.0.0
 category: Overlays
@@ -113,7 +113,7 @@ While its work runs, nothing closes the dialog and its close button is disabled.
 
 ```
 
-### More actions that close
+### Closing actions
 
 Other buttons can close the dialog after doing their own work, such as Don’t save.
 
@@ -199,7 +199,7 @@ A Dialog opens from its `trigger`, such as a Button, and holds its `title`, whic
 </Dialog>
 ```
 
-#### More actions that close
+#### Closing actions
 
 An action closes the dialog only where it is a DialogClose, a Button that closes it after its own `onClick`, or where it sets `open` to `false`. DialogClose takes Button's props and is `secondary` by default.
 

@@ -1,6 +1,6 @@
 ---
 title: Badge
-summary: Small static pills that name a state in its tone or a piece of metadata, show a count, or the size of a change.
+summary: A small static label for a state, a count or a piece of metadata.
 status: stable
 since: 1.0.0
 category: Data display

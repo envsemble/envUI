@@ -1,6 +1,6 @@
 ---
 title: Kbd
-summary: Key caps that show a key, or keys pressed together joined by plus, in text, hints and menus.
+summary: Key caps that show a key, or keys pressed together.
 status: stable
 since: 1.0.0
 category: Text & content
@@ -68,7 +68,7 @@ Show the keys people really press.
 
 ```
 
-### Real shortcuts only
+### Shortcuts
 
 Show only shortcuts the application handles.
 

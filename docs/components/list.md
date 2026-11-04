@@ -1,6 +1,6 @@
 ---
 title: List
-summary: A vertical list of connected rows, each with a title, a detail and an action, that can open what it names, show the current one and be put in order.
+summary: A vertical list of connected rows, each with a title, a detail and an action.
 status: stable
 since: 1.0.0
 category: Data display

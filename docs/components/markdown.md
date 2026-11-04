@@ -1,6 +1,6 @@
 ---
 title: Markdown
-summary: Renders a Markdown string in envUI's typography and code, and MarkdownEditor writes one with a toolbar and a preview.
+summary: Shows a Markdown string in envUI's typography, and MarkdownEditor writes one.
 status: stable
 statuses:
   MarkdownEditor: beta

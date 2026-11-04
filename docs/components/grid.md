@@ -1,6 +1,6 @@
 ---
 title: Grid
-summary: Grid lays out content in columns, a set number, a template or as many as fit, with even gaps.
+summary: Lays out content in columns with even gaps.
 status: beta
 since: 1.0.0
 category: App frame & layout

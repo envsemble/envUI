@@ -1,6 +1,6 @@
 ---
 title: Data tables
-summary: Show many records in rows and columns that people can sort, page through, select and act on, also on narrow screens.
+summary: Show many records in rows and columns that people can sort, select and act on.
 status: beta
 since: 1.0.0
 intent: Work with lists and tables

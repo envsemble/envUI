@@ -1,6 +1,6 @@
 ---
 title: Menubar
-summary: A desktop-style menubar of menus, such as File, Edit and View, with shortcuts, submenus and access keys.
+summary: A desktop-style bar of menus, such as File, Edit and View.
 status: stable
 since: 1.0.0
 category: Actions

@@ -113,7 +113,7 @@ Labels stay short, and an option that needs explaining says so in its descriptio
 
 Choose a default where one option suits most people, and none where people must decide.
 
-### Nothing to press inside
+### Controls in options
 
 Keep links and buttons out of labels and descriptions: pressing anywhere on an option chooses it.
 

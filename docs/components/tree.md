@@ -108,7 +108,7 @@ Rows keep one line: the description gives way first, then the label ends with an
 
 A row is one item of the hierarchy, and its actions live outside it.
 
-### Nothing to press in rows
+### Controls in rows
 
 Keep buttons, links and fields out of rows: their actions go in the context menu and a toolbar.
 

@@ -1,6 +1,6 @@
 ---
 title: Select
-summary: One choice from a list that stays collapsed until opened, in an outlined field with a label, description and error.
+summary: One choice from a list that stays collapsed until opened.
 status: stable
 since: 1.0.0
 category: Forms & selection
@@ -126,7 +126,7 @@ Choose a default where one option suits most people. A placeholder makes everyon
 
 Order options naturally, such as by frequency, or alphabetically where there is no order.
 
-### Choosing does nothing else
+### Side effects
 
 Choosing an option sets a value: it never moves to another page or runs a destructive action.
 

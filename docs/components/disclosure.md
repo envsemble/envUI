@@ -1,6 +1,6 @@
 ---
 title: Disclosure
-summary: A one-line summary that shows and hides optional details below it, on the native details element.
+summary: A one-line summary that shows and hides optional details below it.
 status: stable
 since: 1.0.0
 category: Text & content

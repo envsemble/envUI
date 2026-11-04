@@ -1,6 +1,6 @@
 ---
 title: Pagination
-summary: The range of items shown with previous and next page buttons, small enough for a toolbar.
+summary: Previous and next page buttons, with the range of items shown.
 status: stable
 since: 1.0.0
 category: Navigation

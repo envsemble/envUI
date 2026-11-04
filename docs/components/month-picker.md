@@ -1,6 +1,6 @@
 ---
 title: MonthPicker
-summary: A field that opens a year of months to choose a month, such as a billing or reporting period.
+summary: A field that opens a year of months to choose a month.
 status: beta
 since: 1.0.0
 category: Forms & selection

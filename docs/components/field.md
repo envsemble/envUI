@@ -1,6 +1,6 @@
 ---
 title: Field
-summary: The parts of a labelled form field, a label, a control, a description and an error, for a control envUI has no field for.
+summary: The label, description and error around a control envUI has no field for.
 status: beta
 since: 1.0.0
 category: Forms & selection

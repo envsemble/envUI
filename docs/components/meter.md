@@ -1,6 +1,6 @@
 ---
 title: Meter
-summary: A measurement within a known range, such as the seats assigned of a plan or the storage used of a quota, as a labelled bar.
+summary: A measurement within a known range, such as the storage used of a quota.
 status: stable
 since: 1.0.0
 category: Data display

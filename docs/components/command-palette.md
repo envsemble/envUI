@@ -1,6 +1,6 @@
 ---
 title: CommandPalette
-summary: A quick-open dialog near the top of the window that finds a document, a page, a person or a command by name.
+summary: A quick-open dialog that finds a document, a page, a person or a command by name.
 status: stable
 since: 1.0.0
 category: Actions
@@ -109,7 +109,7 @@ Search is an icon button named Search, with its label and keys in a [Tooltip](to
 
 ## Behaviour
 
-### Before people type, and when nothing matches
+### Suggestions and no matches
 
 Suggestions show until people type, such as recent items, and choose like any result.
 

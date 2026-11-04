@@ -1,7 +1,6 @@
 ---
 title: Message
-summary: 'Conversation entries in a log: compact bubbles for your own messages, full-width content
-  from others.'
+summary: The entries of a conversation, your own as bubbles and others at full width.
 status: stable
 since: 1.0.0
 category: Text & content
