@@ -38,10 +38,12 @@ html.env-theme > body {
 .env-theme h1 {
   margin: 0;
   font: var(--env-type-headline);
+  letter-spacing: var(--env-type-headline-letter-spacing);
 }
 .env-theme :is(h2, h3, h4, h5, h6) {
   margin: 0;
   font: var(--env-type-title);
+  letter-spacing: var(--env-type-title-letter-spacing);
 }
 .env-theme p {
   margin: 0;

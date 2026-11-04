@@ -180,8 +180,8 @@ At the default 16 px root, in the comfortable [scale](spacing.md), as its Sizes 
 | Variant    | In the catalogue | Size                                                    | Color                    |
 | ---------- | ---------------- | ------------------------------------------------------- | ------------------------ |
 | `display`  | Display          | 1.75 to 2.75 rem, with the window, `--env-type-display` | `--env-color-fg-default` |
-| `headline` | Headline         | 1.125 rem, `--env-type-headline`                        | `--env-color-fg-default` |
-| `title`    | Title            | 1 rem, `--env-type-title`                               | `--env-color-fg-default` |
+| `headline` | Headline         | 1.375 rem, `--env-type-headline`                        | `--env-color-fg-default` |
+| `title`    | Title            | 1.125 rem, `--env-type-title`                           | `--env-color-fg-default` |
 | `body`     | Body             | 0.9375 rem, `--env-type-body`                           | `--env-color-fg-default` |
 | `body-sm`  | Small body       | 0.875 rem, `--env-type-body-sm`                         | `--env-color-fg-muted`   |
 | `caption`  | Caption          | 0.875 rem, `--env-type-body-sm`                         | `--env-color-fg-muted`   |

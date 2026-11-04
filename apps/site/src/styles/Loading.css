@@ -56,7 +56,7 @@
 }
 .site-page-skeleton-lead {
   max-inline-size: min(100%, 53ch);
-  font: var(--env-font-weight-regular) var(--env-font-size-headline) / 1.5 var(--env-font-family);
+  font: var(--env-font-weight-regular) var(--env-font-size-title) / 1.5 var(--env-font-family);
 }
 .site-page-skeleton .site-banner-shapes {
   visibility: hidden;

@@ -2072,17 +2072,17 @@ export const tokens = {
     },
     scales: { compact: '0.6875rem' },
   },
-  /** A page's heading: Text's headline variant, 18 px in the comfortable scale. */
+  /** A page's heading: Text's headline variant, 22 px in the comfortable scale: a clear step above a section's title. */
   'font.size.headline': {
     cssVariable: '--env-font-size-headline',
     type: 'dimension',
     values: {
-      light: '1.125rem',
-      dark: '1.125rem',
-      'light-high-contrast': '1.125rem',
-      'dark-high-contrast': '1.125rem',
+      light: '1.375rem',
+      dark: '1.375rem',
+      'light-high-contrast': '1.375rem',
+      'dark-high-contrast': '1.375rem',
     },
-    scales: { compact: '1rem' },
+    scales: { compact: '1.25rem' },
   },
   /** The label of a control, and the text of menu, tree and option rows. */
   'font.size.label': {
@@ -2108,17 +2108,17 @@ export const tokens = {
     },
     scales: { compact: '0.75rem' },
   },
-  /** A section's heading: Text's title variant, 16 px in the comfortable scale. */
+  /** A section's heading: Text's title variant, 18 px in the comfortable scale: a step above body text in size as well as weight. */
   'font.size.title': {
     cssVariable: '--env-font-size-title',
     type: 'dimension',
     values: {
-      light: '1rem',
-      dark: '1rem',
-      'light-high-contrast': '1rem',
-      'dark-high-contrast': '1rem',
+      light: '1.125rem',
+      dark: '1.125rem',
+      'light-high-contrast': '1.125rem',
+      'dark-high-contrast': '1.125rem',
     },
-    scales: { compact: '0.875rem' },
+    scales: { compact: '1rem' },
   },
   /** The weight of running text, which the body type roles take: regular. */
   'font.weight.body': {
@@ -2818,73 +2818,73 @@ export const tokens = {
         "500 clamp(1.75rem, 1.25rem + 2.5vw, 2.75rem) / 1.1 'envUI Geist', sans-serif",
     },
   },
-  /** A page's heading: Text's headline variant, medium. */
+  /** A page's heading: Text's headline variant, medium, its lines tighter than body text's and its letters a touch closer, as larger type wants. */
   'type.headline': {
     cssVariable: '--env-type-headline',
     type: 'typography',
     values: {
       light: {
         'font-family': "'envUI Geist', sans-serif",
-        'font-size': '1.125rem',
+        'font-size': '1.375rem',
         'font-weight': '500',
-        'letter-spacing': '0rem',
-        'line-height': '1.4em',
+        'letter-spacing': '-0.0125rem',
+        'line-height': '1.3em',
       },
       dark: {
         'font-family': "'envUI Geist', sans-serif",
-        'font-size': '1.125rem',
+        'font-size': '1.375rem',
         'font-weight': '500',
-        'letter-spacing': '0rem',
-        'line-height': '1.4em',
+        'letter-spacing': '-0.0125rem',
+        'line-height': '1.3em',
       },
       'light-high-contrast': {
         'font-family': "'envUI Geist', sans-serif",
-        'font-size': '1.125rem',
+        'font-size': '1.375rem',
         'font-weight': '500',
-        'letter-spacing': '0rem',
-        'line-height': '1.4em',
+        'letter-spacing': '-0.0125rem',
+        'line-height': '1.3em',
       },
       'dark-high-contrast': {
         'font-family': "'envUI Geist', sans-serif",
-        'font-size': '1.125rem',
+        'font-size': '1.375rem',
         'font-weight': '500',
-        'letter-spacing': '0rem',
-        'line-height': '1.4em',
+        'letter-spacing': '-0.0125rem',
+        'line-height': '1.3em',
       },
     },
   },
-  /** A section's heading: Text's title variant, medium. */
+  /** A section's heading: Text's title variant, medium, its lines a little tighter than body text's and its letters a touch closer. */
   'type.title': {
     cssVariable: '--env-type-title',
     type: 'typography',
     values: {
       light: {
         'font-family': "'envUI Geist', sans-serif",
-        'font-size': '1rem',
+        'font-size': '1.125rem',
         'font-weight': '500',
-        'letter-spacing': '0rem',
-        'line-height': '1.4em',
+        'letter-spacing': '-0.00625rem',
+        'line-height': '1.35em',
       },
       dark: {
         'font-family': "'envUI Geist', sans-serif",
-        'font-size': '1rem',
+        'font-size': '1.125rem',
         'font-weight': '500',
-        'letter-spacing': '0rem',
-        'line-height': '1.4em',
+        'letter-spacing': '-0.00625rem',
+        'line-height': '1.35em',
       },
       'light-high-contrast': {
         'font-family': "'envUI Geist', sans-serif",
-        'font-size': '1rem',
+        'font-size': '1.125rem',
         'font-weight': '500',
-        'letter-spacing': '0rem',
-        'line-height': '1.4em',
+        'letter-spacing': '-0.00625rem',
+        'line-height': '1.35em',
       },
       'dark-high-contrast': {
         'font-family': "'envUI Geist', sans-serif",
-        'font-size': '1rem',
+        'font-size': '1.125rem',
         'font-weight': '500',
-        'letter-spacing': '0rem',
-        'line-height': '1.4em',
+        'letter-spacing': '-0.00625rem',
+        'line-height': '1.35em',
       },
     },
   },

@@ -48,7 +48,7 @@
      the server's markup, the height is reckoned from the rows it has, a title line, then its
      breadcrumbs, description, toolbar and, in a compact page, actions under the title. */
   .env-page:has(> .env-page-header[data-sticky]) {
-    --env-page-sticky-title: max(1.4 * var(--env-font-size-headline), var(--env-control-height));
+    --env-page-sticky-title: max(1.3 * var(--env-font-size-headline), var(--env-control-height));
     --env-page-sticky-small-line: calc(1.4 * var(--env-type-body-sm-font-size));
     --env-page-sticky-breadcrumbs: 0rem;
     --env-page-sticky-description: 0rem;

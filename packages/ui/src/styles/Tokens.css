@@ -191,10 +191,10 @@
   --env-font-size-body: 0.9375rem;
   --env-font-size-body-sm: 0.875rem;
   --env-font-size-caption: 0.75rem;
-  --env-font-size-headline: 1.125rem;
+  --env-font-size-headline: 1.375rem;
   --env-font-size-label: 0.875rem;
   --env-font-size-label-sm: 0.8125rem;
-  --env-font-size-title: 1rem;
+  --env-font-size-title: 1.125rem;
   --env-font-weight-body: var(--env-font-weight-regular);
   --env-font-weight-medium: 500;
   --env-font-weight-regular: 400;
@@ -267,15 +267,15 @@
   --env-type-headline-font-family: var(--env-font-family);
   --env-type-headline-font-size: var(--env-font-size-headline);
   --env-type-headline-font-weight: var(--env-font-weight-medium);
-  --env-type-headline-letter-spacing: 0rem;
-  --env-type-headline-line-height: 1.4em;
+  --env-type-headline-letter-spacing: -0.0125rem;
+  --env-type-headline-line-height: 1.3em;
   --env-type-title: var(--env-type-title-font-weight) var(--env-type-title-font-size) /
     var(--env-type-title-line-height) var(--env-type-title-font-family);
   --env-type-title-font-family: var(--env-font-family);
   --env-type-title-font-size: var(--env-font-size-title);
   --env-type-title-font-weight: var(--env-font-weight-medium);
-  --env-type-title-letter-spacing: 0rem;
-  --env-type-title-line-height: 1.4em;
+  --env-type-title-letter-spacing: -0.00625rem;
+  --env-type-title-line-height: 1.35em;
   --env-window-class-expanded: 52.5rem;
   --env-window-class-large: 75rem;
   --env-window-class-medium: 37.5rem;
@@ -928,10 +928,10 @@
   --env-font-size-body: 0.8125rem;
   --env-font-size-body-sm: 0.75rem;
   --env-font-size-caption: 0.6875rem;
-  --env-font-size-headline: 1rem;
+  --env-font-size-headline: 1.25rem;
   --env-font-size-label: 0.8125rem;
   --env-font-size-label-sm: 0.75rem;
-  --env-font-size-title: 0.875rem;
+  --env-font-size-title: 1rem;
   --env-icon-size-lg: 1.125rem;
   --env-icon-size-md: 1rem;
   --env-radius-lg: 0.75rem;

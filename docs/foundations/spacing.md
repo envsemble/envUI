@@ -258,8 +258,8 @@ At the default 16 px root; every value is a token in rem.
 | `--env-row-height` (menu, Select and Combobox rows)               | 36                    | 28                    |
 | `--env-row-padding-block-xs` / `-sm` / `-md` / `-lg`              | 2 / 4 / 8 / 12        | 2 / 3 / 4 / 6         |
 | `--env-space-1` … `--env-space-9`                                 | 4, 8, 12, 16, 24 … 64 | 4, 6, 10, 12, 20 … 52 |
-| `--env-font-size-caption` / `-body-small` / `-label`              | 12 / 14 / 14          | 11 / 12 / 13          |
-| `--env-font-size-body` / `-heading-small` / `-heading`            | 15 / 16 / 18          | 13 / 14 / 16          |
+| `--env-font-size-caption` / `-body-sm` / `-label`                 | 12 / 14 / 14          | 11 / 12 / 13          |
+| `--env-font-size-body` / `-title` / `-headline`                   | 15 / 18 / 22          | 13 / 16 / 20          |
 | `--env-icon-size-sm` / `-md` / `-lg`                              | 16 / 18 / 20          | 16 / 16 / 18          |
 | `--env-picture-size-sm` / `-md` / `-lg` / `-xl` (Avatar, Graphic) | 24 / 32 / 48 / 88     | 24 / 32 / 48 / 88     |
 | `--env-radius-sm` / `--env-radius-lg` / `--env-radius-surface`    | 8 / 16 / 28           | 6 / 12 / 22           |

@@ -41,6 +41,7 @@
   }
   .env-pager-link-title {
     font: var(--env-type-title);
+    letter-spacing: var(--env-type-title-letter-spacing);
   }
   .env-pager-link .env-icon {
     inline-size: 1.25rem;
