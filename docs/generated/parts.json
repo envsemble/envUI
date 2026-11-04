@@ -4096,7 +4096,6 @@
       ],
       "uses": [
         "ConnectedRows",
-        "Field",
         "Icon"
       ],
       "colors": [
@@ -4145,7 +4144,6 @@
       ],
       "uses": [
         "ConnectedRows",
-        "Field",
         "Icon"
       ]
     },

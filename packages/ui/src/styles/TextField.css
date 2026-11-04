@@ -74,10 +74,7 @@
       --env-text-field-accent,
       var(--env-color-border-primary-emphasis)
     );
-    --env-text-field-interaction-hover: var(
-      --env-text-field-edge-hover,
-      var(--env-color-fg-muted)
-    );
+    --env-text-field-interaction-hover: var(--env-text-field-edge-hover, var(--env-color-fg-muted));
     --env-text-field-interaction-pressed: var(
       --env-text-field-accent-pressed,
       var(--env-color-border-primary-emphasis-pressed)
@@ -348,7 +345,8 @@
      less. */
   textarea.env-text-field-input[data-rows] {
     --env-textarea-rows-height: calc(var(--env-textarea-rows) * 1lh + 2 * var(--env-space-4));
-    min-height: min(7.5rem, var(--env-textarea-rows-height));
+    --env-textarea-rows-least: min(7.5rem, var(--env-textarea-rows-height));
+    min-height: var(--env-textarea-rows-least);
   }
   textarea.env-text-field-input[data-sizing='content'][data-rows] {
     min-height: var(--env-textarea-rows-height);
@@ -370,12 +368,14 @@
   /* The grip: a short muted bar in the middle of the bottom edge, just inside the frame, so it reads
      as something to drag rather than as a second edge. */
   .env-textarea-resize-handle::after {
+    --env-textarea-grip-width: 2rem;
+    --env-textarea-grip-height: 0.1875rem;
     content: '';
     position: absolute;
-    inset-inline-start: calc(50% - 1rem);
+    inset-inline-start: calc(50% - var(--env-textarea-grip-width) / 2);
     inset-block-end: var(--env-space-1);
-    inline-size: 2rem;
-    block-size: 0.1875rem;
+    inline-size: var(--env-textarea-grip-width);
+    block-size: var(--env-textarea-grip-height);
     border-radius: var(--env-radius-full);
     background: var(--env-color-fg-muted);
     pointer-events: none;

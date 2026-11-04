@@ -24,8 +24,6 @@
     }
   }
   .env-radio-group {
-    /* The color of the group's error, as on every field (Field.css). */
-    --env-field-error-color: var(--env-color-fg-danger);
     overflow-wrap: break-word;
     gap: 0.125rem;
     margin: 0;
@@ -121,11 +119,14 @@
     cursor: inherit;
   }
   .env-radio-input::before {
+    /* The dot, and the ring of the mark color around it, inside the disc. */
+    --env-radio-dot: 0.375rem;
+    --env-radio-dot-ring: 0.125rem;
     content: '';
     box-sizing: content-box;
-    width: 0.375rem;
-    height: 0.375rem;
-    border: 0.125rem solid var(--env-color-fg-on-emphasis);
+    width: var(--env-radio-dot);
+    height: var(--env-radio-dot);
+    border: var(--env-radio-dot-ring) solid var(--env-color-fg-on-emphasis);
     border-radius: 50%;
     background: var(--env-radio-accent, var(--env-color-bg-primary-emphasis));
     visibility: hidden;
@@ -199,8 +200,15 @@
   .env-radio-group-description {
     color: var(--env-color-fg-muted);
   }
+  /* The error, as a field's (Field.css): the error icon before the message, in the error color. */
   .env-radio-group-error {
-    color: var(--env-field-error-color);
+    color: var(--env-color-fg-danger);
+  }
+  .env-radio-group-error > svg {
+    flex-shrink: 0;
+    width: var(--env-control-icon-size);
+    height: var(--env-control-icon-size);
+    margin-block-start: calc(var(--env-space-1) / 2);
   }
   .env-radio-description {
     display: block;
