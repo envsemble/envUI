@@ -506,13 +506,14 @@ test('a Related tile of a page without an example shows its specimen', async ({ 
   await expect(page.locator('.catalogue-related-placeholder')).toHaveCount(0);
 });
 
-test('every tile of the galleries is fitted: components at one scale, a scene whole on its stage', async ({
+test('every tile of the galleries is fitted: components at one scale, a scene at a legible one', async ({
   page,
 }) => {
   // A tile's example loads as it nears the viewport and comes into its canvas after the fit has
   // started to watch it; each must still be fitted. Components show at one scale, their own size
-  // where the stage has room, cut off by it where they are larger; a pattern's scene, or a
-  // drawing, shows what it holds inside its stage.
+  // where the stage has room, cut off by it where they are larger; a pattern's scene at a
+  // legible scale, cut off by its stage where it is larger; a drawing shows what it holds inside
+  // its stage.
   const tiles = page.locator('.catalogue-gallery-tile');
   const unfitted = () =>
     tiles.evaluateAll((items) => {
@@ -596,6 +597,8 @@ test('every tile of the galleries is fitted: components at one scale, a scene wh
         if (!shown.length) return [`${name}: empty`];
         if (canvas.hasAttribute('data-own-size'))
           return scaleOf(canvas) === one && Number(one) <= 1 ? [] : [`${name}: not at one scale`];
+        if (canvas.parentElement?.classList.contains('catalogue-related-crop'))
+          return Number(scaleOf(canvas)) >= 0.79 ? [] : [`${name}: too small to read`];
         const outside =
           Math.min(...shown.map((box) => box.left)) < stage.left - 1 ||
           Math.min(...shown.map((box) => box.top)) < stage.top - 1 ||

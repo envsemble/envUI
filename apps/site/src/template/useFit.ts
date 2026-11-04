@@ -9,6 +9,9 @@ const leastOwnWidth = 14;
 /** The most a page's own tile is enlarged: written for its small window, it is drawn large. */
 const most = 2;
 
+/** The least a pattern's scene is drawn at in a gallery, so its words stay legible. */
+const legibleScale = 0.8;
+
 /** Whether a color paints anything: not transparent, nor of no alpha. */
 const opaque = (color: string) =>
   color !== 'transparent' && !/rgba\([^)]*,\s*0\)$/.test(color) && !/\/\s*0\)$/.test(color);
@@ -158,6 +161,11 @@ export function useFit(
   playing: boolean,
   /** Whether it is drawn at its own size, cropped by its stage rather than drawn smaller. */
   ownSize = false,
+  /**
+   * Whether it is drawn no smaller than a legible scale, as a pattern's scene in a gallery is,
+   * centred on what it paints and cropped by its stage where it is larger.
+   */
+  legible = false,
 ) {
   const playingNow = useRef(playing);
   const refit = useRef<(() => void) | null>(null);
@@ -242,9 +250,11 @@ export function useFit(
             width /
               (leastOwnWidth * parseFloat(getComputedStyle(document.documentElement).fontSize)),
           )
-        : tile
-          ? windowScale
-          : Math.min(whole ? windowScale : 1, width / (right - left), height / (bottom - top));
+        : legible
+          ? Math.max(legibleScale, Math.min(1, windowScale))
+          : tile
+            ? windowScale
+            : Math.min(whole ? windowScale : 1, width / (right - left), height / (bottom - top));
       // A tile in place eases to where it is fitted next; anything else is placed at once.
       const eases = tile && canvasElement.dataset.fitted !== undefined && !still.matches;
       let toX = ((left + right) / 2) * scale;
@@ -255,12 +265,19 @@ export function useFit(
       const across = (right - left) * scale;
       const down = (bottom - top) * scale;
       if (ownSize && across > width) toX = left * scale + width / 2;
-      if (ownSize && down > height) toY = top * scale + height / 2;
-      if (ownSize) {
-        const cut = [down > height + inset ? 'bottom' : '', across > width + inset ? 'end' : '']
-          .filter(Boolean)
-          .join(' ');
-        if (cut) canvasElement.dataset.cut = cut;
+      // A scene drawn at a legible scale shows from its top too, where it starts, such as a search
+      // above the results it filters, and stays centred across.
+      if ((ownSize || legible) && down > height) toY = top * scale + height / 2;
+      // Drawn at a legible scale, a scene wider than the stage is cut off on both sides, fading
+      // out there too.
+      if (ownSize || legible) {
+        const cut = [
+          down > height + inset ? 'bottom' : '',
+          !legible && across > width + inset ? 'end' : '',
+          legible && across > stageElement.clientWidth ? 'start end' : '',
+        ];
+        const sides = cut.filter(Boolean).join(' ');
+        if (sides) canvasElement.dataset.cut = sides;
         else delete canvasElement.dataset.cut;
       }
       if (tile && playingNow.current && view.scale === scale) {
@@ -349,7 +366,7 @@ export function useFit(
       resize.disconnect();
       refit.current = null;
     };
-  }, [stage, canvas, on, whole, tile, ownSize]);
+  }, [stage, canvas, on, whole, tile, ownSize, legible]);
 }
 
 /** How far ahead of a stage's edge a tile's view keeps what it shows, once it has to move. */

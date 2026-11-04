@@ -42,8 +42,10 @@ function GalleryTile({ page, level }: { page: RoutePage; level: 2 | 3 }) {
         playing={playing || autoplay}
         className="catalogue-related-stage catalogue-gallery-stage"
         whole
-        // Components show at their own size, one scale for all; a pattern's scene is fitted.
+        // Components show at their own size, one scale for all; a pattern's scene at a legible
+        // scale, cropped to its middle.
         ownSize={page.section === 'Components'}
+        legible={page.kind === 'pattern'}
       />
       {/* The name is the link; it stretches over the picture, so the whole tile leads to the page. */}
       <Text
@@ -59,6 +61,11 @@ function GalleryTile({ page, level }: { page: RoutePage; level: 2 | 3 }) {
     </li>
   );
 }
+
+/** Marks a group of patterns, whose scenes need more room than a component's tile, one to a row
+ * on a phone (Gallery.css). */
+const scenes = (group: GalleryGroup) =>
+  group.pages.every((page) => page.kind === 'pattern') ? '' : undefined;
 
 /**
  * A gallery of pages, such as every component or every pattern: by group, a tile for each page
@@ -79,14 +86,14 @@ export function Gallery({ groups }: { groups: GalleryGroup[] }) {
             >
               {group.title}
             </Text>
-            <ul className="catalogue-gallery-grid">
+            <ul className="catalogue-gallery-grid" data-scenes={scenes(group)}>
               {group.pages.map((page) => (
                 <GalleryTile key={page.path} page={page} level={3} />
               ))}
             </ul>
           </Column>
         ) : (
-          <ul className="catalogue-gallery-grid" key={group.id}>
+          <ul className="catalogue-gallery-grid" key={group.id} data-scenes={scenes(group)}>
             {group.pages.map((page) => (
               <GalleryTile key={page.path} page={page} level={2} />
             ))}
