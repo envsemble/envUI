@@ -39,9 +39,13 @@
 }
 .catalogue-specimen-area .catalogue-force-hover.env-button:where([data-variant='text']) {
   color: var(--env-color-fg-link-hover);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
 }
 .catalogue-specimen-area .catalogue-force-pressed.env-button:where([data-variant='text']) {
   color: var(--env-color-fg-link-pressed);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
 }
 /* The danger pairs of outline and text buttons. */
 .catalogue-specimen-area
@@ -68,7 +72,8 @@
 }
 /* Ghost buttons, which the Colors page's interaction states show. */
 .catalogue-specimen-area .catalogue-force-hover.env-button:where([data-variant='ghost']) {
-  background: var(--env-color-bg-neutral-subtle-hover);
+  /* A labelled ghost button's lighter layer, as Button.css draws it. */
+  background: color-mix(in srgb, var(--env-color-bg-neutral-subtle-hover) 70%, transparent);
   color: var(--env-color-fg-default);
 }
 .catalogue-specimen-area .catalogue-force-pressed.env-button:where([data-variant='ghost']) {

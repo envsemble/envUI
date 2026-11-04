@@ -584,8 +584,8 @@ export const tokens = {
     cssVariable: '--env-color-bg-neutral-muted-hover',
     type: 'color',
     values: {
-      light: 'rgb(31 31 34 / 0.17)',
-      dark: 'rgb(232 234 238 / 0.2)',
+      light: 'rgb(31 31 34 / 0.16)',
+      dark: 'rgb(232 234 238 / 0.18)',
       'light-high-contrast': 'rgb(31 31 34 / 0.17)',
       'dark-high-contrast': 'rgb(232 234 238 / 0.12)',
     },
@@ -595,7 +595,7 @@ export const tokens = {
     cssVariable: '--env-color-bg-neutral-muted-pressed',
     type: 'color',
     values: {
-      light: 'rgb(31 31 34 / 0.25)',
+      light: 'rgb(31 31 34 / 0.26)',
       dark: 'rgb(232 234 238 / 0.28)',
       'light-high-contrast': 'rgb(31 31 34 / 0.25)',
       'dark-high-contrast': 'rgb(232 234 238 / 0.15)',
@@ -661,8 +661,8 @@ export const tokens = {
     cssVariable: '--env-color-bg-neutral-subtle-pressed',
     type: 'color',
     values: {
-      light: 'rgb(31 31 34 / 0.1)',
-      dark: 'rgb(232 234 238 / 0.1)',
+      light: 'rgb(31 31 34 / 0.12)',
+      dark: 'rgb(232 234 238 / 0.12)',
       'light-high-contrast': 'rgb(31 31 34 / 0.08)',
       'dark-high-contrast': 'rgb(232 234 238 / 0.08)',
     },
