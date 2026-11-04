@@ -165,7 +165,7 @@
               "components": {
                 "$ref": "#/palette/gray/92/$value/components"
               },
-              "alpha": 0.16
+              "alpha": 0.18
             }
           },
           "pressed": {
@@ -240,7 +240,7 @@
           },
           "pressed": {
             "$description": "A primary action while pressed.",
-            "$value": "{palette.blue.75}"
+            "$value": "{palette.blue.70}"
           }
         },
         "strong": {
@@ -254,7 +254,7 @@
           },
           "pressed": {
             "$description": "A checked control while pressed.",
-            "$value": "{palette.blue.75}"
+            "$value": "{palette.blue.70}"
           }
         },
         "subtle": {

@@ -189,7 +189,7 @@ A Menu.Item runs its `onClick` and takes:
 - a `shortcut`, such as `Ctrl+D`, shown as Kbd keys and announced as `aria-keyshortcuts`;
 - `end` content, such as a Badge, which is part of its name; a count there shows as its figures alone, without a pill, apart from the shortcut's keys;
 - `tone="danger"` for a destructive action, such as Delete, whose label and icon take the danger color while its row highlights as any other's;
-- `disabled`, which keeps it in place with `aria-disabled`, its label and icon dimmed and its description still readable, to say why.
+- `disabled`, which keeps it in place with `aria-disabled`, its icon dimmed and its label muted, still above its description, which stays readable to say why.
 
 ```tsx source=IconsAndShortcuts
 

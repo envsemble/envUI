@@ -96,7 +96,7 @@ Small, medium and large, the control heights of the [scale](../foundations/spaci
 While nothing is chosen, the trigger shows a placeholder.
 
 - People can't clear a choice, only make another.
-- An option can be unavailable, so it can't be chosen.
+- An option can be unavailable, so it can't be chosen; its label is muted, and a description under it can say why.
 
 <!-- specimen: States -->
 
@@ -166,14 +166,19 @@ Choosing an option sets a value: it never moves to another page or runs a destru
   items={[
     { value: 'team', label: 'Team' },
     { value: 'private', label: 'Private' },
-    { value: 'public', label: 'Public', disabled: true },
+    {
+      value: 'public',
+      label: 'Public',
+      description: 'Turned off by your administrator',
+      disabled: true,
+    },
   ]}
   value={visibility}
   onValueChange={setVisibility}
 />
 ```
 
-Each item has a `value`, a `label` and `disabled` where it can't be chosen. Control it with `value` and `onValueChange`, or leave it uncontrolled with `defaultValue`; with neither, nothing is chosen and the trigger shows `placeholder`. `label`, `description` and `error` work as on TextField.
+Each item has a `value`, a `label`, optionally a muted `description` under the label in the list, read as the option's description, and `disabled` where it can't be chosen. Control it with `value` and `onValueChange`, or leave it uncontrolled with `defaultValue`; with neither, nothing is chosen and the trigger shows `placeholder`. `label`, `description` and `error` work as on TextField.
 
 #### In a form
 

@@ -186,7 +186,7 @@ A search field's clear button and <kbd>Esc</kbd> empty the query.
 
 ### Textarea sizing
 
-A text area keeps its height and scrolls, and people resize it by its bottom edge, by dragging or with the arrow keys. It can grow with its text instead.
+A text area keeps its height and scrolls, and people resize it by its bottom edge, by dragging or with the arrow keys; the edge shows its grip under the pointer and while the field has focus. It can grow with its text instead.
 
 ```tsx figure=TextareaSizing motion
 
