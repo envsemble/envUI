@@ -271,15 +271,15 @@ export const tokens = {
       'dark-high-contrast': '#a7d7cf',
     },
   },
-  /** The backdrop behind dialogs and the command palette: the dark page color at 32% in light, which sets the page back without turning it gray, and black at 50% in dark, where the page color would not darken it. */
+  /** The backdrop behind dialogs and the command palette: the dark page color at 32% in light, which sets the page back without turning it gray, and black at 70% in dark, where the page color would not darken it and less would barely dim the dark page. */
   'color.bg.backdrop': {
     cssVariable: '--env-color-bg-backdrop',
     type: 'color',
     values: {
       light: 'rgb(31 31 34 / 0.32)',
-      dark: 'rgb(0 0 0 / 0.5)',
+      dark: 'rgb(0 0 0 / 0.7)',
       'light-high-contrast': 'rgb(31 31 34 / 0.32)',
-      'dark-high-contrast': 'rgb(0 0 0 / 0.5)',
+      'dark-high-contrast': 'rgb(0 0 0 / 0.7)',
     },
   },
   /** The lighter backdrop behind a sheet that leaves the page usable, such as a supporting pane over its main pane: the dark page color at 20% in light and black at 30% in dark. */

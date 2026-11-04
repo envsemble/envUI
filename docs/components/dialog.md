@@ -244,5 +244,6 @@ The surface takes the popups' color and their shadow, `--env-popup-shadow`, as [
 
 ## Changelog
 
+- **1.0.0-prerelease.6**: In dark, the backdrop is black at 70 %, rather than 50 %, so it sets the dark page back as clearly as the light backdrop does.
 - **1.0.0-prerelease.5**: Dialogs take the popups' color and soft shadow, with no outline edge, and stay solid over the scrim; at high contrast and with reduced transparency the shadow goes and the edge returns.
 - **1.0.0**: `width` (`md` or `lg`) for `size`; the side panel, `placement="right"`, is [Sheet](../components/sheet.md); `onOpenChange` reports the reason; `initialFocus` and `finalFocus` take functions too; the surface's class is `env-dialog`. The page is `dialog`, after the component.

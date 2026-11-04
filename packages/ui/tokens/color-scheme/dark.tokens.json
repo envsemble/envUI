@@ -80,7 +80,7 @@
             "components": {
               "$ref": "#/palette/neutral/100/$value/components"
             },
-            "alpha": 0.5
+            "alpha": 0.7
           }
         },
         "muted": {

@@ -94,7 +94,7 @@
       },
       "backdrop": {
         "$root": {
-          "$description": "The backdrop behind dialogs and the command palette: the dark page color at 32% in light, which sets the page back without turning it gray, and black at 50% in dark, where the page color would not darken it.",
+          "$description": "The backdrop behind dialogs and the command palette: the dark page color at 32% in light, which sets the page back without turning it gray, and black at 70% in dark, where the page color would not darken it and less would barely dim the dark page.",
           "$value": {
             "colorSpace": "oklch",
             "components": {
