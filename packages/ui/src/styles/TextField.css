@@ -418,14 +418,20 @@
   .env-text-field-input[type='search']::-webkit-search-cancel-button {
     appearance: none;
   }
-  /* Fields share the button height and rounded ends so they line up with buttons in a row. The capped
-     full corner keeps the corners of a field that grows taller, as a combobox whose chips wrap, and
-     makes it a rounded rectangle. */
+  /* Fields share the button height so they line up with buttons in a row, and a text area's rounded
+     rectangle rather than a pill: its large corner, no more than a third of the field's height, so a
+     small field still reads as a rectangle. A field that grows taller, as a combobox whose chips
+     wrap, keeps the same corners. A ghost field keeps the round ends of the ghost buttons it sits
+     among, as its fill shows only under the pointer and while focused. */
   .env-text-field:not([data-tall]) .env-text-field-control {
-    --env-text-field-corner: min(var(--env-radius-full), var(--env-field-height) / 2);
+    --env-text-field-corner: min(var(--env-radius-lg), var(--env-field-height) / 3);
     box-sizing: border-box;
     display: flex;
     min-height: var(--env-field-height);
+    border-radius: var(--env-text-field-corner);
+  }
+  .env-text-field:not([data-tall]) .env-text-field-control[data-variant='ghost'] {
+    --env-text-field-corner: min(var(--env-radius-full), var(--env-field-height) / 2);
     border-radius: var(--env-radius-full);
   }
   .env-text-field:not([data-tall]) .env-text-field-input {

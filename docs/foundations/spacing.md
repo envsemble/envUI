@@ -91,8 +91,8 @@ The roundness of a corner tells you what you are looking at: a surface that hold
 ```
 
 1. **Surfaces**: Panes, cards and dialogs have the largest, softest corners.
-2. **Inside a surface**: Rows, messages and tables sit inside with smaller corners, so they nest neatly.
-3. **Fully rounded**: Buttons, fields, badges and switches have round ends: things you act on or read at a glance.
+2. **Inside a surface**: Rows, messages, tables and fields sit inside with smaller corners, so they nest neatly.
+3. **Fully rounded**: Buttons, badges and switches have round ends: things you act on or read at a glance.
 4. **Circles**: Pictures of people and buttons that are only an icon are round.
 
 ## Behaviour
@@ -103,7 +103,7 @@ On a touchscreen, controls and rows grow to a size a finger can hit, in either s
 
 ### Tall things keep sensible corners
 
-A button one line tall has round ends. When its label wraps, or a field fills with people, the same corners make a rounded rectangle instead of a stretched pill.
+A button one line tall has round ends. When its label wraps, the same corners make a rounded rectangle instead of a stretched pill. A field is a rounded rectangle already, and keeps its corners as it fills with people.
 
 ```tsx figure=Tall
 
@@ -215,7 +215,7 @@ Within a scale, `size` picks one of three control heights for a deliberate local
 - The parent owns gaps, through Row, Column and Grid; each component owns its padding. Text has no outer margins.
 - Use relative units; let text wrap and controls grow with their content. In your own grids, `minmax(0, 1fr)` tracks, `min-inline-size: 0` on flex children and `max-inline-size: 100%` on media.
 - Choose Surface for a plain pane and Card for a content surface, and keep their corners.
-- Use `--env-radius-full` where a pill is meant, never `50%` or `9999px`: one line tall it draws round ends, and an element that grows taller, such as a wrapping button or a field whose chips wrap, keeps the same corners. `50%` is only for parts that are always square, such as avatars and round icon buttons.
+- Use `--env-radius-full` where a pill is meant, never `50%` or `9999px`: one line tall it draws round ends, and an element that grows taller, such as a wrapping button, keeps the same corners. `50%` is only for parts that are always square, such as avatars and round icon buttons.
 - **One scale per app or window**, on the root Theme or ThemePreferenceProvider. Leave it at `system` for a tool used with a mouse and on touch; set `comfortable` for a website with room to breathe, or `compact` for a dense tool on touch too. A fixed scale, rendered on the server, goes to the provider and to `createThemeBootstrapScript` too, so the first paint has it.
 - **Another scale only at a Theme boundary around a whole region**, such as a docked inspector: `<Theme {...useTheme()} scale="compact">`.
 - **Rows match:** a button beside a field takes its size, and a table's toolbar follows its rows.
@@ -226,28 +226,28 @@ Within a scale, `size` picks one of three control heights for a deliberate local
 
 Inside a Theme these tokens follow the theme, its scale and the reader's text size. Their values in each scale are under [Sizes in each scale](#sizes-in-each-scale), and every value is on the Design tokens page of the Docs.
 
-| Token                                                             | Holds                                                                                                                                                                    |
-| ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `--env-space-1` … `--env-space-9`                                 | The spacing scale                                                                                                                                                        |
-| `--env-radius-xs`                                                 | 0.25 rem: small marks, checkboxes and color swatches                                                                                                                     |
-| `--env-radius-sm`                                                 | Inner rows, important actions, toasts and thumbnails                                                                                                                     |
-| `--env-radius-lg`                                                 | Text fields, tables and drop zones                                                                                                                                       |
-| `--env-radius-surface`                                            | Panes, cards and the outside of a row group                                                                                                                              |
-| `--env-radius-full`                                               | Rounded ends: buttons, fields, navigation items, badges; half the tallest single-line control, 1.5 rem at most, so a taller element is a rounded rectangle, never a pill |
-| `--env-control-height`, `--env-control-height-sm` / `-md` / `-lg` | Control heights, to line up with                                                                                                                                         |
-| `--env-control-icon-size`                                         | 1 rem: the icon inside controls                                                                                                                                          |
+| Token                                                             | Holds                                                                                                                                                            |
+| ----------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--env-space-1` … `--env-space-9`                                 | The spacing scale                                                                                                                                                |
+| `--env-radius-xs`                                                 | 0.25 rem: small marks, checkboxes and color swatches                                                                                                             |
+| `--env-radius-sm`                                                 | Inner rows, important actions, toasts and thumbnails                                                                                                             |
+| `--env-radius-lg`                                                 | Fields, text areas, tables and drop zones; a single-line field's corner is no more than a third of its height                                                    |
+| `--env-radius-surface`                                            | Panes, cards and the outside of a row group                                                                                                                      |
+| `--env-radius-full`                                               | Rounded ends: buttons, ghost fields, navigation items, badges; half the tallest single-line control, 1.5 rem at most, so a taller element is a rounded rectangle |
+| `--env-control-height`, `--env-control-height-sm` / `-md` / `-lg` | Control heights, to line up with                                                                                                                                 |
+| `--env-control-icon-size`                                         | 1 rem: the icon inside controls                                                                                                                                  |
 
 #### Corners by what they are
 
 The catalogue shows four kinds of corner; small marks are a fifth, for code. Their tokens:
 
-| In the catalogue | Token and where it is used                                                                                                              |
-| ---------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| Surfaces         | `--env-radius-surface`: panes, cards, dialogs, popups and the outside of a row group                                                    |
-| Inside a surface | `--env-radius-lg` for alerts, tables, text areas and drop zones; `--env-radius-sm` for list rows, menu items, tabs, toasts and tooltips |
-| Fully rounded    | `--env-radius-full`: buttons, single-line fields, badges, switches, segmented controls and navigation items                             |
-| Circles          | `50%`: avatars and icon buttons, which are always square                                                                                |
-| Small marks      | `--env-radius-xs`: checkboxes and color swatches, which read as boxes                                                                   |
+| In the catalogue | Token and where it is used                                                                                                                      |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| Surfaces         | `--env-radius-surface`: panes, cards, dialogs, popups and the outside of a row group                                                            |
+| Inside a surface | `--env-radius-lg` for alerts, fields, tables, text areas and drop zones; `--env-radius-sm` for list rows, menu items, tabs, toasts and tooltips |
+| Fully rounded    | `--env-radius-full`: buttons, ghost fields, badges, switches, segmented controls and navigation items                                           |
+| Circles          | `50%`: avatars and icon buttons, which are always square                                                                                        |
+| Small marks      | `--env-radius-xs`: checkboxes and color swatches, which read as boxes                                                                           |
 
 #### Sizes in each scale
 
