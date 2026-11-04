@@ -324,13 +324,13 @@
         },
         "done": {
           "emphasis": {
-            "$value": "{palette.violet.80}"
+            "$value": "{palette.periwinkle.80}"
           },
           "muted": {
             "$value": {
               "colorSpace": "oklch",
               "components": {
-                "$ref": "#/palette/violet/80/$value/components"
+                "$ref": "#/palette/periwinkle/80/$value/components"
               },
               "alpha": 0.08
             }
@@ -491,7 +491,7 @@
           "$value": "{palette.red.80}"
         },
         "done": {
-          "$value": "{palette.violet.80}"
+          "$value": "{palette.periwinkle.80}"
         },
         "on-emphasis": {
           "$value": "{palette.neutral.0}"
@@ -696,7 +696,7 @@
           "$value": {
             "colorSpace": "oklch",
             "components": {
-              "$ref": "#/palette/violet/80/$value/components"
+              "$ref": "#/palette/periwinkle/80/$value/components"
             },
             "alpha": 0.55
           }

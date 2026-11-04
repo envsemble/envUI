@@ -481,14 +481,14 @@
       "done": {
         "emphasis": {
           "$description": "A solid done fill; paired with fg.on-emphasis.",
-          "$value": "{palette.violet.60}"
+          "$value": "{palette.periwinkle.60}"
         },
         "muted": {
           "$description": "The translucent done tint of badges.",
           "$value": {
             "colorSpace": "oklch",
             "components": {
-              "$ref": "#/palette/violet/60/$value/components"
+              "$ref": "#/palette/periwinkle/60/$value/components"
             },
             "alpha": 0.12
           }
@@ -766,7 +766,7 @@
       },
       "done": {
         "$description": "Done text and icons.",
-        "$value": "{palette.violet.65}"
+        "$value": "{palette.periwinkle.65}"
       },
       "on-emphasis": {
         "$description": "Text and icons on the emphasis fills: white in light, dark in dark.",
@@ -1162,7 +1162,7 @@
         "$value": {
           "colorSpace": "oklch",
           "components": {
-            "$ref": "#/palette/violet/60/$value/components"
+            "$ref": "#/palette/periwinkle/60/$value/components"
           },
           "alpha": 0.55
         }

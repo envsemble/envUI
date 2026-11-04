@@ -386,10 +386,10 @@ export const tokens = {
     cssVariable: '--env-color-bg-done-emphasis',
     type: 'color',
     values: {
-      light: '#7a3fc8',
-      dark: '#d2b2f7',
-      'light-high-contrast': '#53009a',
-      'dark-high-contrast': '#e8d6ff',
+      light: '#5d5a96',
+      dark: '#bcbbe6',
+      'light-high-contrast': '#38326d',
+      'dark-high-contrast': '#dadaff',
     },
   },
   /** The translucent done tint of badges. */
@@ -397,10 +397,10 @@ export const tokens = {
     cssVariable: '--env-color-bg-done-muted',
     type: 'color',
     values: {
-      light: 'rgb(122 63 200 / 0.12)',
-      dark: 'rgb(210 178 247 / 0.17)',
-      'light-high-contrast': 'rgb(83 0 154 / 0.08)',
-      'dark-high-contrast': 'rgb(232 214 255 / 0.1)',
+      light: 'rgb(93 90 150 / 0.12)',
+      dark: 'rgb(188 187 230 / 0.17)',
+      'light-high-contrast': 'rgb(56 50 109 / 0.08)',
+      'dark-high-contrast': 'rgb(218 218 255 / 0.1)',
     },
   },
   /** A well that keeps a fill of its own, such as the color picker's value button and code and references in rich text. Text fields have none: they take the background of what they sit on. */
@@ -1222,10 +1222,10 @@ export const tokens = {
     cssVariable: '--env-color-border-done',
     type: 'color',
     values: {
-      light: 'rgb(122 63 200 / 0.55)',
-      dark: 'rgb(210 178 247 / 0.55)',
-      'light-high-contrast': 'rgb(83 0 154 / 0.55)',
-      'dark-high-contrast': 'rgb(241 230 255 / 0.55)',
+      light: 'rgb(93 90 150 / 0.55)',
+      dark: 'rgb(188 187 230 / 0.55)',
+      'light-high-contrast': 'rgb(56 50 109 / 0.55)',
+      'dark-high-contrast': 'rgb(232 233 255 / 0.55)',
     },
   },
   /** Focus rings: at least 3:1 against what they are drawn on. */
@@ -1673,10 +1673,10 @@ export const tokens = {
     cssVariable: '--env-color-fg-done',
     type: 'color',
     values: {
-      light: '#7032bf',
-      dark: '#d2b2f7',
-      'light-high-contrast': '#53009a',
-      'dark-high-contrast': '#f1e6ff',
+      light: '#54508d',
+      dark: '#bcbbe6',
+      'light-high-contrast': '#38326d',
+      'dark-high-contrast': '#e8e9ff',
     },
   },
   /** Links and text buttons: at least 4.5:1 on every surface and row. */
