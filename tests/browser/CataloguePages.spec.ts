@@ -511,17 +511,24 @@ test('a Related tile of a page without an example shows its specimen', async ({ 
   await expect(page.locator('.catalogue-related-placeholder')).toHaveCount(0);
 });
 
-test('every tile of the galleries is fitted: a component at its own size, a scene whole on its stage', async ({
+test('every tile of the galleries is fitted: components at one scale, a scene whole on its stage', async ({
   page,
 }) => {
   // A tile's example loads as it nears the viewport and comes into its canvas after the fit has
-  // started to watch it; each must still be fitted. A component shows at its own size, one scale
-  // for them all, cut off by its stage where it is larger; a pattern's scene, or a drawing, shows
-  // what it holds inside its stage.
+  // started to watch it; each must still be fitted. Components show at one scale, their own size
+  // where the stage has room, cut off by it where they are larger; a pattern's scene, or a
+  // drawing, shows what it holds inside its stage.
   const tiles = page.locator('.catalogue-gallery-tile');
   const unfitted = () =>
-    tiles.evaluateAll((items) =>
-      items.flatMap((tile) => {
+    tiles.evaluateAll((items) => {
+      // The one scale every component's tile is drawn at: its own size where the stage has
+      // room for the tiles' window, else smaller.
+      const scaleOf = (canvas: Element | null) =>
+        (canvas as HTMLElement | null)?.style.transform.match(/scale\(([^)]+)\)/)?.[1];
+      const one = items
+        .map((tile) => scaleOf(tile.querySelector('[data-own-size][data-fitted]')))
+        .find(Boolean);
+      return items.flatMap((tile) => {
         const name = tile.querySelector('.catalogue-gallery-name')?.textContent ?? '';
         const stage = tile.querySelector('.catalogue-related-stage')!.getBoundingClientRect();
         const canvas = tile.querySelector<HTMLElement>('.catalogue-related-canvas[data-fitted]');
@@ -593,15 +600,15 @@ test('every tile of the galleries is fitted: a component at its own size, a scen
           .filter((box) => box.width < window.width - 1 || box.height < window.height - 1);
         if (!shown.length) return [`${name}: empty`];
         if (canvas.hasAttribute('data-own-size'))
-          return /scale\(1\)/.test(canvas.style.transform) ? [] : [`${name}: not at its own size`];
+          return scaleOf(canvas) === one && Number(one) <= 1 ? [] : [`${name}: not at one scale`];
         const outside =
           Math.min(...shown.map((box) => box.left)) < stage.left - 1 ||
           Math.min(...shown.map((box) => box.top)) < stage.top - 1 ||
           Math.max(...shown.map((box) => box.right)) > stage.right + 1 ||
           Math.max(...shown.map((box) => box.bottom)) > stage.bottom + 1;
         return outside ? [`${name}: clipped`] : [];
-      }),
-    );
+      });
+    });
   for (const route of ['/components', '/patterns']) {
     await page.goto(`${siteDevUrl}${route}`);
     await expect(tiles.first()).toBeVisible();

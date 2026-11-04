@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Button, Menu } from '@envsemble/envui';
-import { IconContentCopy } from '@envsemble/envui/icons/ContentCopy';
 import { IconDelete } from '@envsemble/envui/icons/Delete';
 import { IconEdit } from '@envsemble/envui/icons/Edit';
 import { IconExpandMore } from '@envsemble/envui/icons/ExpandMore';
@@ -14,10 +13,8 @@ const script: PointerStep[] = [
   { to: item(1) },
   { wait: 400 },
   { to: item(2), duration: 300 },
-  { wait: 400 },
-  { to: item(3), duration: 300 },
-  { wait: 400 },
-  { to: item(1), duration: 450 },
+  { wait: 500 },
+  { to: item(1), duration: 300 },
   { wait: 250 },
   { click: true },
   { wait: 800 },
@@ -29,7 +26,7 @@ const script: PointerStep[] = [
   { wait: 400 },
 ];
 
-/** A menu, open below its button. */
+/** A menu, open below its button: two items, so it shows whole in a gallery's tile. */
 export default function MenuTile() {
   const [open, setOpen] = useState(true);
   usePointer(script, { onRest: () => setOpen(true) });
@@ -46,7 +43,6 @@ export default function MenuTile() {
       }
     >
       <Menu.Item icon={<IconEdit />}>Rename</Menu.Item>
-      <Menu.Item icon={<IconContentCopy />}>Duplicate</Menu.Item>
       <Menu.Item icon={<IconDelete />}>Delete</Menu.Item>
     </Menu.Root>
   );

@@ -2,13 +2,11 @@ import { useState } from 'react';
 import { CommandPalette, type CommandPaletteItem } from '@envsemble/envui';
 import { IconNoteAdd } from '@envsemble/envui/icons/NoteAdd';
 import { IconPersonAdd } from '@envsemble/envui/icons/PersonAdd';
-import { IconSettings } from '@envsemble/envui/icons/Settings';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
 const items: CommandPaletteItem[] = [
   { id: 'new', label: 'New document', icon: <IconNoteAdd /> },
   { id: 'invite', label: 'Invite people', icon: <IconPersonAdd /> },
-  { id: 'settings', label: 'Open settings', icon: <IconSettings /> },
 ];
 
 const input = '.env-command-palette-input';
@@ -22,7 +20,7 @@ const script: PointerStep[] = [
   { wait: 900 },
 ];
 
-/** A command palette, open on its commands. */
+/** A command palette, open on two commands, with a short placeholder, to show whole in a tile. */
 export default function CommandPaletteTile() {
   const [query, setQuery] = useState('');
   usePointer(script, { onRest: () => setQuery('') });
@@ -31,7 +29,7 @@ export default function CommandPaletteTile() {
       open
       onOpenChange={() => {}}
       aria-label="Run a command"
-      placeholder="Search commands"
+      placeholder="Search"
       inputValue={query}
       onInputValueChange={setQuery}
       items={items.filter((item) => String(item.label).toLowerCase().includes(query.toLowerCase()))}

@@ -3,6 +3,9 @@ import { useLayoutEffect, useRef, type RefObject } from 'react';
 /** The least room, in px, between a preview and its stage's edges. */
 const inset = 16;
 
+/** The least width, in rem, a component drawn at its own size lays out at: the tiles' window. */
+const leastOwnWidth = 14;
+
 /** The most a page's own tile is enlarged: written for its small window, it is drawn large. */
 const most = 2;
 
@@ -230,8 +233,15 @@ export function useFit(
         width / canvasElement.offsetWidth,
         height / canvasElement.offsetHeight,
       );
+      // At its own size, unless the stage is narrower than the least width a component lays out
+      // at (Gallery.css), as four to a row or two on a phone: then drawn smaller, by one scale
+      // for every tile, as every stage is as wide.
       const scale = ownSize
-        ? 1
+        ? Math.min(
+            1,
+            width /
+              (leastOwnWidth * parseFloat(getComputedStyle(document.documentElement).fontSize)),
+          )
         : tile
           ? windowScale
           : Math.min(whole ? windowScale : 1, width / (right - left), height / (bottom - top));
@@ -240,9 +250,19 @@ export function useFit(
       let toX = ((left + right) / 2) * scale;
       let toY = ((top + bottom) / 2) * scale;
       // Drawn at its own size, what is larger than the stage shows from its start, as a window
-      // onto it, cut off at its end rather than at both.
-      if (ownSize && right - left > width) toX = left + width / 2;
-      if (ownSize && bottom - top > height) toY = top + height / 2;
+      // onto it, and what reaches past the stage's own edge, beyond the inset, is cut off there
+      // and fades out (`data-cut`, Gallery.css).
+      const across = (right - left) * scale;
+      const down = (bottom - top) * scale;
+      if (ownSize && across > width) toX = left * scale + width / 2;
+      if (ownSize && down > height) toY = top * scale + height / 2;
+      if (ownSize) {
+        const cut = [down > height + inset ? 'bottom' : '', across > width + inset ? 'end' : '']
+          .filter(Boolean)
+          .join(' ');
+        if (cut) canvasElement.dataset.cut = cut;
+        else delete canvasElement.dataset.cut;
+      }
       if (tile && playingNow.current && view.scale === scale) {
         toX = contain(view.toX, left * scale, right * scale, stageElement.clientWidth / 2 - inset);
         toY = contain(view.toY, top * scale, bottom * scale, stageElement.clientHeight / 2 - inset);

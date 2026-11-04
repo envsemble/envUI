@@ -74,16 +74,65 @@
 }
 
 /* Drawn at its own size, a component lays out as wide as the stage's room, less the fit's inset,
-   so what it opens stays in view, and at least as tall as its tile's window, so what opens below
-   it has the room it was written for. What is larger, such as a calendar, is cut off at its end. */
-.catalogue-gallery-stage.catalogue-gallery-stage > .catalogue-related-canvas[data-own-size] {
-  inline-size: calc(100% - 2rem);
+   so what it opens stays in view, but never narrower than the tiles' window, 14 rem, which a
+   narrower stage draws smaller, by one scale for every tile (useFit.ts); and at least as tall as
+   its tile's window, so what opens below it has the room it was written for. What is larger,
+   such as a calendar, is cut off at its end. */
+.catalogue-gallery-stage.catalogue-gallery-stage .catalogue-related-canvas[data-own-size] {
+  inline-size: max(100% - 2rem, 14rem);
   block-size: max(100% - 2rem, var(--catalogue-tile-height, 10.5rem));
   min-block-size: 0;
 }
 
-/* A command palette leaves the window's gutter beside it; drawn at its own size in a gallery's
-   tile, it takes the tile's width, as a phone's window would leave it. */
+/* A command palette and a notification leave the window's gutter beside them; drawn at their
+   own size in a gallery's tile, they take the tile's width, as the stage's inset is their gutter. */
 .catalogue-related-canvas[data-own-size] .env-command-palette {
   inline-size: 100%;
+}
+
+.catalogue-related-canvas[data-own-size] .env-toast-viewport {
+  inset-inline-end: 0;
+  max-inline-size: 100%;
+}
+
+/* The box of a component drawn at its own size, as large as the stage (Related.tsx): what is cut
+   off at its bottom or its end fades out over the last stretch, rather than ending in a slice
+   through a line, and the stage's fill, which shades under the pointer, shows through. */
+.catalogue-related-crop {
+  --catalogue-crop-fade: 1.75rem;
+  /* Any opaque color: the mask reads only its alpha. */
+  --catalogue-crop-opaque: var(--env-color-fg-default);
+  position: absolute;
+  inset: 0;
+}
+
+.catalogue-related-crop:has(> [data-cut~='bottom']) {
+  mask-image: linear-gradient(
+    to bottom,
+    var(--catalogue-crop-opaque) calc(100% - var(--catalogue-crop-fade)),
+    transparent
+  );
+}
+
+.catalogue-related-crop:has(> [data-cut~='end']) {
+  mask-image: linear-gradient(
+    to right,
+    var(--catalogue-crop-opaque) calc(100% - var(--catalogue-crop-fade)),
+    transparent
+  );
+}
+
+.catalogue-related-crop:has(> [data-cut~='bottom'][data-cut~='end']) {
+  mask-image:
+    linear-gradient(
+      to bottom,
+      var(--catalogue-crop-opaque) calc(100% - var(--catalogue-crop-fade)),
+      transparent
+    ),
+    linear-gradient(
+      to right,
+      var(--catalogue-crop-opaque) calc(100% - var(--catalogue-crop-fade)),
+      transparent
+    );
+  mask-composite: intersect;
 }

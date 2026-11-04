@@ -110,7 +110,9 @@ export function TilePreview({
       {!preview ? (
         <IconArticle className="catalogue-related-placeholder" aria-hidden />
       ) : (
-        shown && (
+        shown &&
+        crop(
+          ownSize,
           <div
             ref={(element) => {
               canvas.current = element;
@@ -130,7 +132,7 @@ export function TilePreview({
             aria-hidden
           >
             {preview.open ? <PreviewOverlays>{subject}</PreviewOverlays> : subject}
-          </div>
+          </div>,
         )
       )}
       {/* After the canvas, which hides it once the picture is fitted (Related.css). Only as the
@@ -140,6 +142,14 @@ export function TilePreview({
     </Theme>
   );
 }
+
+/**
+ * A canvas drawn at its own size, in a box the stage's size that fades out what is cut off at its
+ * bottom and its end (Gallery.css): a mask on the box rather than on the canvas, whose own box
+ * doesn't hold what opens past it, and not on the stage, whose fill stays whole.
+ */
+const crop = (ownSize: boolean, canvas: ReactNode) =>
+  ownSize ? <div className="catalogue-related-crop">{canvas}</div> : canvas;
 
 /** Whether an animation loops for ever, as a skeleton's pulse or a spinner's turn does. */
 const loops = (animation: Animation) =>

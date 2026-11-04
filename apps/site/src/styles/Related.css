@@ -276,6 +276,7 @@
 .catalogue-tile-loading:not([data-shown]) {
   opacity: 0;
 }
-.catalogue-related-canvas[data-fitted] ~ .catalogue-tile-loading {
+.catalogue-related-canvas[data-fitted] ~ .catalogue-tile-loading,
+.catalogue-related-crop:has(> .catalogue-related-canvas[data-fitted]) ~ .catalogue-tile-loading {
   display: none;
 }

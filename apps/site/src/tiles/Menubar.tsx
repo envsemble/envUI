@@ -22,7 +22,7 @@ const script: PointerStep[] = [
 
 type Open = 'file' | 'edit' | 'view' | null;
 
-/** An application's menu bar, its File menu open. */
+/** An application's menu bar, its File menu open: two items to a menu, to show whole in a tile. */
 export default function MenubarTile() {
   const [open, setOpen] = useState<Open>('file');
   usePointer(script, { onRest: () => setOpen('file') });
@@ -36,12 +36,10 @@ export default function MenubarTile() {
       <Menubar.Menu label="File" {...opens('file')}>
         <Menu.Item shortcut="Ctrl+N">New</Menu.Item>
         <Menu.Item shortcut="Ctrl+O">Open…</Menu.Item>
-        <Menu.Item shortcut="Ctrl+S">Save</Menu.Item>
       </Menubar.Menu>
       <Menubar.Menu label="Edit" {...opens('edit')}>
         <Menu.Item shortcut="Ctrl+Z">Undo</Menu.Item>
         <Menu.Item shortcut="Ctrl+C">Copy</Menu.Item>
-        <Menu.Item shortcut="Ctrl+V">Paste</Menu.Item>
       </Menubar.Menu>
       <Menubar.Menu label="View" {...opens('view')}>
         <Menu.Item shortcut="Ctrl++">Zoom in</Menu.Item>

@@ -21,7 +21,7 @@ const script: PointerStep[] = [
 ];
 
 /**
- * A notification of an archived project, with Undo, and an invitation sent, as cued. Stopped, it
+ * A notification of an archived project, short enough to show whole in a gallery's tile, with Undo, and an invitation sent, as cued. Stopped, it
  * dismisses the invitation rather than being drawn anew, which would bring the first in again.
  */
 function Notices() {
@@ -43,7 +43,7 @@ function Notices() {
   });
   useEffect(() => {
     const id = toast.show({
-      message: 'Project archived.',
+      message: 'Archived.',
       action: { label: 'Undo', onClick: () => {} },
     });
     return () => toast.dismiss(id);
