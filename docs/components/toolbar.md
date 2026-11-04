@@ -109,7 +109,7 @@ A toolbar holds icon commands for one subject, each named after its action.
 
 ```
 
-### Another way to each action
+### Other ways in
 
 Offer the important actions in a menu or a shortcut too.
 

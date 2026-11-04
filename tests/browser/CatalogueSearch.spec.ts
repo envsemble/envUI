@@ -282,7 +282,7 @@ test.describe('hosted build', () => {
     );
     await page
       .locator('.site-page-header')
-      .getByRole('link', { name: 'Docs', exact: true })
+      .getByRole('link', { name: 'Code', exact: true })
       .click();
     await expect(page).toHaveURL(`${siteUrl}/docs/components/dialog`);
     // The switch at the top end leads back to the same subject in the catalogue.

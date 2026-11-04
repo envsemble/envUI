@@ -62,7 +62,7 @@
   ) {
   color: var(--env-color-fg-danger);
 }
-.catalogue-specimen-area .catalogue-force-focus {
+.catalogue-specimen-area .catalogue-force-focus.env-button {
   outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: 0.125rem;
 }
@@ -95,11 +95,22 @@
 .catalogue-specimen-area .catalogue-force-pressed .env-navigation-drawer-item {
   --env-navigation-drawer-item-container: var(--env-color-bg-navigation-pressed);
 }
-.catalogue-specimen-area .catalogue-force-hover .env-text-field {
+.catalogue-specimen-area .catalogue-force-hover.env-text-field {
   --env-text-field-outline: var(--env-color-border-primary-emphasis-hover);
 }
-.catalogue-specimen-area .catalogue-force-pressed .env-text-field {
+.catalogue-specimen-area .catalogue-force-pressed.env-text-field {
   --env-text-field-outline: var(--env-color-border-primary-emphasis-pressed);
+}
+/* TextField's States: a field as while it has focus, as TextField.css draws it: the edge in the
+   accent at twice its width, and the floated label in the accent's text color. */
+.catalogue-specimen-area .catalogue-force-focus.env-text-field {
+  --env-text-field-outline: var(--env-color-border-primary-emphasis);
+}
+.catalogue-specimen-area .catalogue-force-focus .env-text-field-control {
+  --env-text-field-frame: calc(2 * var(--env-control-border-width));
+}
+.catalogue-specimen-area .catalogue-force-focus .env-text-field-control > label {
+  color: var(--env-color-fg-primary);
 }
 /* An anatomy figure's AnimatedNumber caught as its value rolls in: the value still below the line,
    cut off where the number's window ends; unfaded, so it doesn't read as muted text. */

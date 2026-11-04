@@ -1,6 +1,6 @@
 ---
 title: Key figures
-summary: Show the few labelled figures that sum up a view, such as a dashboard's, with how each changed and over what period.
+summary: Show the few labelled figures that sum up a view, and how each changed.
 status: beta
 since: 1.0.0
 intent: Keep people informed

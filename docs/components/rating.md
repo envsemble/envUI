@@ -1,6 +1,6 @@
 ---
 title: Rating
-summary: A read-only rating as stars filled in half steps, named once for assistive technology.
+summary: A read-only rating, as stars.
 status: stable
 since: 1.0.0
 category: Data display

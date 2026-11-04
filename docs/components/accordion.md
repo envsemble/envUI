@@ -1,6 +1,6 @@
 ---
 title: Accordion
-summary: A list of sections separated by full-width hairlines, each a heading with a plus or minus that shows and hides its panel.
+summary: Stacked sections that each show and hide their content under a heading.
 status: beta
 since: 1.0.0
 category: Text & content
@@ -70,7 +70,7 @@ The application can open a section itself, such as from a help button elsewhere 
 
 Don't put an accordion inside another; show the next level inside the panel as a list.
 
-### Nothing hidden that people need
+### Required content
 
 Keep what people need to finish a task out of closed sections.
 

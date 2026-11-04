@@ -336,7 +336,16 @@ body {
 .site-contents {
   display: none;
 }
+/* Where the contents don't fit beside the page, the banner has them under it, closed
+   (CompactContents), as wide as the banner. */
+.site-compact-contents {
+  inline-size: calc(min(100cqi, var(--site-content-width)) - 2 * var(--site-gutter));
+  margin: var(--env-space-4) auto 0;
+}
 @container site-page-layout (width >= 56rem) {
+  .site-page-grid[data-contents] .site-compact-contents {
+    display: none;
+  }
   .site-page-grid[data-contents] {
     display: grid;
     grid-template-columns: minmax(0, 1fr) calc(var(--site-contents-width) + var(--site-gutter));

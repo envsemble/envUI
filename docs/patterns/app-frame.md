@@ -1,6 +1,6 @@
 ---
 title: App frame
-summary: Frame an application's screens with a Scaffold, a TopBar and the same destinations as a NavigationBar, a NavigationRail or a NavigationDrawer, by the width of the window.
+summary: Frame an application's screens and their navigation by the width of the window.
 status: beta
 since: 1.0.0
 intent: Frame the application

@@ -18,7 +18,7 @@ const reports = [
 ];
 const densities: readonly Density[] = ['xs', 'sm', 'md', 'lg'];
 const names: Record<Density, string> = {
-  xs: 'Extra small',
+  xs: 'X-small',
   sm: 'Small',
   md: 'Medium',
   lg: 'Large',
@@ -28,15 +28,6 @@ export default function RowDensity() {
   const [density, setDensity] = useState<Density>('sm');
   return (
     <Column gap={3}>
-      <Row wrap align="center" gap={4}>
-        <SegmentedControl
-          aria-label="Row density"
-          size="sm"
-          value={density}
-          onValueChange={(value) => setDensity(densities.find((each) => each === value) ?? 'md')}
-          items={densities.map((value) => ({ value, label: names[value] }))}
-        />
-      </Row>
       <Table.Root aria-label="Reports" density={density}>
         <Table.Head>
           <Table.Row>
@@ -52,9 +43,9 @@ export default function RowDensity() {
               <Table.Cell nowrap>{report.name}</Table.Cell>
               <Table.Cell nowrap>{report.owner}</Table.Cell>
               <Table.Cell numeric>{report.pages}</Table.Cell>
-              <Table.Cell align="end">
+              <Table.Cell align="end" nowrap>
                 {/* Buttons in the cells take the small control height at every density. */}
-                <Row wrap align="center" gap={4} justify="end">
+                <Row align="center" gap={4} justify="end">
                   <Button variant="text">Open</Button>
                   <IconButton
                     variant="ghost"
@@ -67,6 +58,14 @@ export default function RowDensity() {
           ))}
         </Table.Body>
       </Table.Root>
+      {/* Below the rows, so it moves with them rather than leaving room for the tallest. */}
+      <SegmentedControl
+        aria-label="Row density"
+        size="sm"
+        value={density}
+        onValueChange={(value) => setDensity(densities.find((each) => each === value) ?? 'md')}
+        items={densities.map((value) => ({ value, label: names[value] }))}
+      />
     </Column>
   );
 }

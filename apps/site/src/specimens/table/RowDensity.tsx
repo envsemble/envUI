@@ -1,6 +1,6 @@
 import RowDensity from '../../examples/table/RowDensity';
 import { usePointer, type PointerStep } from '../../motion/Motion';
-import { MotionStage, roomFor } from '../../motion/MotionStage';
+import { MotionStage } from '../../motion/MotionStage';
 
 const option = (index: number) =>
   `.env-segmented-control-item:nth-child(${index} of .env-segmented-control-item)`;
@@ -33,16 +33,10 @@ const script: PointerStep[] = [
 
 function Choosing() {
   usePointer(script);
-  // In room for the largest rows, so the control above them stays where it is.
+  // Below the control, the room the rows still grow into (Examples.css), so the figure keeps one
+  // height and the page never moves as they do.
   return (
-    <div
-      style={{
-        minBlockSize: roomFor(22.5, 34.5, 29),
-        inlineSize: '100%',
-        display: 'grid',
-        alignContent: 'start',
-      }}
-    >
+    <div className="catalogue-row-density">
       <RowDensity />
     </div>
   );

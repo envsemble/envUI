@@ -74,10 +74,11 @@
   }
 }
 
-/* A trail given as a line rather than breadcrumbs, such as a missing page's, is set in monospace. */
+/* A trail given as a line rather than breadcrumbs, such as a missing page's, is set as a trail's
+   earlier level is (Breadcrumbs.css): small and muted. */
 .site-banner .catalogue-page-banner-breadcrumb {
-  font-family: var(--site-code-font-family);
-  letter-spacing: 0;
+  font: var(--env-type-body-sm);
+  color: var(--env-color-fg-muted);
 }
 
 /* The banner's picture (CatalogueBannerLines.tsx, DocsBannerLines.tsx): a LineArt drawing in a box

@@ -1,6 +1,6 @@
 ---
 title: Checkbox
-summary: A native checkbox with its label, for a choice people turn on or off on its own, with a mixed state for a group's parent.
+summary: A choice people turn on or off on its own.
 status: stable
 since: 1.0.0
 category: Forms & selection

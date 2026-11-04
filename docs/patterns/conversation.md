@@ -117,7 +117,7 @@ Stop keeps what has arrived, marked as stopped, with Try again beside it. People
 
 ```
 
-### When a send fails
+### Failed sends
 
 The message stays in the log where it was written, marked as not sent, with Try again beside it.
 
@@ -149,7 +149,7 @@ A conversation shows what happens to a reply in the log itself, where people are
 
 ```
 
-### When a reply fails
+### Failed replies
 
 Say so in the log, in the reply's place, keep any part that arrived, and offer Try again. A notice that comes and goes is easy to miss, and leaves a gap in the conversation.
 

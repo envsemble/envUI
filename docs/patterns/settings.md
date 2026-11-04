@@ -102,7 +102,7 @@ The last section, apart from the rest, holds what deletes or ends the account or
 
 ## Behaviour
 
-### What says it changed
+### Confirmation
 
 A switch shows its own state, so most changes need no message. A [toast](../components/toast.md) says only what people can't see on the page, such as becoming visible in a directory.
 

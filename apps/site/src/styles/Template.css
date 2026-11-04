@@ -7,6 +7,15 @@
   gap: var(--env-space-4);
 }
 
+/* The banner's Design and Code switch (OtherPart.tsx): links drawn as a small segmented control,
+   without a link's underline. */
+.site-part-switch {
+  display: flex;
+}
+.site-part-switch .env-segmented-control-item {
+  text-decoration: none;
+}
+
 /* Specimens inside an article share its gutter instead of adding their own, and the page's
    background: only their canvas is filled. */
 .site-article .catalogue-specimen-area {

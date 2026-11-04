@@ -1,6 +1,6 @@
 ---
 title: DocumentTabs
-summary: Editor-style tabs for open documents, which people switch, close, pin and close all.
+summary: Editor-style tabs for the documents people have open.
 status: stable
 since: 1.0.0
 category: Navigation
@@ -109,7 +109,7 @@ A tab names its document, and closing one never loses work.
 
 ```
 
-### When a tab closes
+### Closing the active tab
 
 Activate a neighbor when the active tab closes.
 

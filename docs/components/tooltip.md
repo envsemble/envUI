@@ -1,6 +1,6 @@
 ---
 title: Tooltip
-summary: A short label beside a control on hover and keyboard focus, such as an icon-only button's name or why a control is disabled.
+summary: A short label beside a control on hover and keyboard focus.
 status: stable
 since: 1.0.0
 category: Overlays
@@ -115,7 +115,7 @@ A tooltip adds a name or a hint to something people can focus, and never holds t
 
 ```
 
-### Something to focus
+### Trigger
 
 A tooltip belongs to something people can focus, such as a button, never to an icon alone.
 

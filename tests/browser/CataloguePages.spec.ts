@@ -92,11 +92,19 @@ test('a component page shows plain sections, equal cells and the parts of its an
   expect(new Set((await codeGaps()).map(({ gap }) => gap)).size).toBe(1);
   await page.goto(`${siteDevUrl}/components/button`);
   // One page of sections, with no views; the props are on its page in the Docs, which the banner's
-  // Docs opens.
+  // Design and Code switch opens, Design marked as the page shown.
   await expect(page.locator('.site-page-header').getByRole('tab')).toHaveCount(0);
-  await expect(
-    page.locator('.site-page-header').getByRole('link', { name: 'Docs', exact: true }),
-  ).toHaveAttribute('href', '/docs/components/button');
+  const partSwitch = page
+    .locator('.site-page-header')
+    .getByRole('navigation', { name: 'Design or code' });
+  await expect(partSwitch.getByRole('link', { name: 'Code', exact: true })).toHaveAttribute(
+    'href',
+    '/docs/components/button',
+  );
+  await expect(partSwitch.getByRole('link', { name: 'Design', exact: true })).toHaveAttribute(
+    'aria-current',
+    'page',
+  );
   // Ordinary headings in the fixed order, and no questions.
   // The one-file structure's sections, which every kind of page shares.
   await expect(page.locator('.site-figure-section-heading h2')).toHaveText([

@@ -1,6 +1,6 @@
 ---
 title: NavigationDrawer
-summary: An application's main destinations, as a drawer with group headings, counts and sections that open and close on wider windows, a rail on tablets or a bar on phones.
+summary: An application's main destinations, in a drawer, a rail or a bar by the window's width.
 status: beta
 since: 1.0.0
 category: Navigation

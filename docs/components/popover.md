@@ -1,6 +1,6 @@
 ---
 title: Popover
-summary: A floating panel beside its trigger for details or a small form; Esc or a press outside closes it.
+summary: A floating panel beside its trigger, for details or a small form.
 status: stable
 since: 1.0.0
 category: Overlays

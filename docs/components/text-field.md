@@ -1,6 +1,6 @@
 ---
 title: TextField
-summary: Single-line inputs, search fields and multiline textareas share labels, guidance and states.
+summary: A field for entering text, on one line or several.
 status: stable
 since: 1.0.0
 category: Forms & selection
@@ -59,6 +59,7 @@ examples:
   SearchInToolbar: example
   FieldsBesideButtons: example
   PrefixAndSuffix: example
+  IconAndEndAction: example
   TextFieldAnatomy: anatomy
   Validation: example
   TextareaSizing: example
@@ -136,6 +137,10 @@ An icon at the start only decorates the field.
 - The end can hold a control, such as a button that shows the password.
 - That control takes a quiet look to sit inside the field.
 
+```tsx figure=IconAndEndAction
+
+```
+
 ## Anatomy
 
 ```tsx figure=TextFieldAnatomy
@@ -158,8 +163,6 @@ Not shown: the suffix, the error and a text area's resize edge.
 ### States
 
 The label rests in an empty field and floats into the outline on focus or with a value. Focus draws the outline in the accent, twice as thick.
-
-<!-- specimen: LabelFloats -->
 
 <!-- specimen: States -->
 

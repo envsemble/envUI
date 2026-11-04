@@ -1,6 +1,6 @@
 ---
 title: Notifications and feedback
-summary: Tell people what happened, what state things are in and what needs them, in the place and at the volume each message deserves.
+summary: Tell people what happened, in the place and at the volume each message deserves.
 status: beta
 since: 1.0.0
 intent: Keep people informed

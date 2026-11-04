@@ -1,6 +1,6 @@
 ---
 title: ConfirmDialog
-summary: An alert dialog that asks people to confirm an action whose consequence needs a sentence, and waits for the action to finish.
+summary: Asks people to confirm an action whose consequence needs a sentence.
 status: beta
 since: 1.0.0
 category: Overlays
