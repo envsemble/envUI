@@ -126,7 +126,12 @@ test('code that fails to load is asked for once, not on every render', async ({ 
   });
   await page.route(source, (route) => route.abort());
   await page.goto(`${siteDevUrl}/components/button`);
-  // The first figure's code shows open right under it.
+  await page
+    .locator('.site-live-example-entry')
+    .first()
+    .locator('.site-live-example-code summary')
+    .click();
+  // The first figure's code opens right under it.
   const entry = page.getByRole('region', { name: 'Code, CreateProject.tsx', exact: true });
   await expect(entry.getByText('The code could not load')).toBeVisible();
   // The example beside it is not loaded again.
@@ -189,7 +194,11 @@ test('an example that fails to render says so in place, and the rest of the page
   // The other examples and the example's code render.
   const toolbar = page.getByRole('group', { name: 'In a toolbar example', exact: true });
   await expect(toolbar.getByRole('button').first()).toBeVisible();
-  // Its code shows open under it.
+  await page
+    .locator('.site-live-example-entry')
+    .first()
+    .locator('.site-live-example-code summary')
+    .click();
   const entry = page.getByRole('region', { name: 'Code, CreateProject.tsx', exact: true });
   await expect(entry.getByText('CreateProject.tsx', { exact: true })).toBeVisible();
   // And the navigation still leads elsewhere.
