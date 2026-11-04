@@ -96,6 +96,14 @@
       var(--env-popup-row-padding-inline) + var(--env-menu-leading) - 2 * var(--env-menu-slot)
     );
   }
+  /* The check marks keep one column across the menu: where other rows hold a check mark and an icon,
+     a row with a check mark alone keeps it at the start and leaves the icon's place empty. */
+  .env-menu-item:has(> .env-menu-item-indicator-slot:first-child) {
+    padding-inline-start: var(--env-popup-row-padding-inline);
+  }
+  .env-menu-item > .env-menu-item-indicator-slot:first-child:not(:has(+ .env-icon)) {
+    margin-inline-end: calc(var(--env-menu-leading) - var(--env-menu-slot));
+  }
   .env-menu-item .env-icon {
     inline-size: var(--env-control-icon-size);
     block-size: var(--env-control-icon-size);

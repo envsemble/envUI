@@ -529,6 +529,17 @@ test("a menu takes its trigger's name, and keeps its own choices from their defa
     'true',
   );
   await expect(page.getByTestId('density-separator-light')).toHaveClass(/env-menu-separator/);
+  // One column of check marks and one of labels, though one row holds an icon too and the others
+  // don't.
+  const starts = (selector: string) =>
+    menu
+      .locator(selector)
+      .evaluateAll((elements) => elements.map((element) => element.getBoundingClientRect().left));
+  const checks = await starts('.env-menu-item-indicator-slot');
+  const labels = await starts('.env-menu-item-label');
+  expect(checks).toHaveLength(3);
+  expect(new Set(checks).size).toBe(1);
+  expect(new Set(labels).size).toBe(1);
   await menu.getByRole('menuitemradio', { name: 'Tight' }).click();
   await page.getByTestId('menus-light').getByRole('button', { name: 'Density' }).click();
   await expect(
