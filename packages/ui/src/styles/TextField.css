@@ -336,9 +336,15 @@
     field-sizing: content;
     min-height: max(7.5rem, calc(var(--env-textarea-rows, 2) * 1lh + var(--env-space-6)));
   }
-  /* Given rows, a growing field starts at that many lines, also when that is less than 7.5 rem. */
+  /* Given rows, a field starts that many lines tall, also when that is less than 7.5 rem: a growing
+     one shrinks back to them, and a fixed one resizes down to them or to 7.5 rem, whichever is
+     less. */
+  textarea.env-text-field-input[data-rows] {
+    --env-textarea-rows-height: calc(var(--env-textarea-rows) * 1lh + 2 * var(--env-space-4));
+    min-height: min(7.5rem, var(--env-textarea-rows-height));
+  }
   textarea.env-text-field-input[data-sizing='content'][data-rows] {
-    min-height: calc(var(--env-textarea-rows) * 1lh + var(--env-space-6));
+    min-height: var(--env-textarea-rows-height);
   }
   .env-textarea-resize-handle {
     position: absolute;
@@ -350,20 +356,21 @@
     border: 0;
     outline: none;
     background: transparent;
-    color: var(--env-text-field-border-color);
     cursor: ns-resize;
     touch-action: none;
     user-select: none;
-    transition: color var(--env-motion-duration-medium) var(--env-motion-ease);
   }
+  /* The grip: a short muted bar in the middle of the bottom edge, just inside the frame, so it reads
+     as something to drag rather than as a second edge. */
   .env-textarea-resize-handle::after {
     content: '';
     position: absolute;
-    inset-inline: var(--env-radius-lg);
-    inset-block-end: 0;
-    block-size: 0.125rem;
+    inset-inline-start: calc(50% - 1rem);
+    inset-block-end: var(--env-space-1);
+    inline-size: 2rem;
+    block-size: 0.1875rem;
     border-radius: var(--env-radius-full);
-    background: currentColor;
+    background: var(--env-color-fg-muted);
     pointer-events: none;
     opacity: 0;
     transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);

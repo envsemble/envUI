@@ -21,9 +21,9 @@ export interface TextareaControlProps extends TextareaHTMLAttributes<HTMLTextAre
    */
   sizing?: 'fixed' | 'content';
   /**
-   * The lines the field shows: with fixed sizing, its height in rows, at least 7.5 rem; with
-   * content sizing, the lines it starts at and shrinks back to, also under 7.5 rem. Without rows,
-   * both start at 7.5 rem.
+   * The lines the field shows: with fixed sizing, its height in rows, which resizes down to them or
+   * to 7.5 rem, whichever is less; with content sizing, the lines it starts at and shrinks back to.
+   * Without rows, both start at 7.5 rem.
    */
   rows?: number;
 }
@@ -57,10 +57,10 @@ export function TextareaControl({
     return (
       <textarea {...props} ref={attachInput} rows={rows} style={style} className={className} />
     );
-  // Native content sizing ignores rows, so preserve it as the minimum line count in CSS. Without
-  // rows a growing field starts at the shared 7.5 rem; with rows, at that many lines.
+  // Native content sizing ignores rows, and the shared 7.5 rem minimum would outgrow a few, so
+  // rows are the minimum line count in CSS. Without rows a field starts at the shared 7.5 rem.
   const sizingStyle =
-    sizing === 'content'
+    sizing === 'content' || rows !== undefined
       ? ({ '--env-textarea-rows': rows ?? 2, ...style } as CSSProperties)
       : style;
   return (
@@ -70,7 +70,7 @@ export function TextareaControl({
         ref={attachInput}
         rows={rows ?? 2}
         data-sizing={sizing}
-        data-rows={sizing === 'content' && rows !== undefined ? '' : undefined}
+        data-rows={rows !== undefined ? '' : undefined}
         style={sizingStyle}
         className={classNames('env-text-field-input', className)}
       />

@@ -4009,7 +4009,7 @@
           "type": "number",
           "required": false,
           "default": "8",
-          "description": "The lines the field shows: with fixed sizing, its height in rows, at least 7.5 rem; with content sizing, the lines it starts at and shrinks back to, also under 7.5 rem. Without rows, both start at 7.5 rem."
+          "description": "The lines the field shows: with fixed sizing, its height in rows, which resizes down to them or to 7.5 rem, whichever is less; with content sizing, the lines it starts at and shrinks back to. Without rows, both start at 7.5 rem."
         },
         {
           "name": "description",
@@ -8179,7 +8179,7 @@
           "name": "rows",
           "type": "number",
           "required": false,
-          "description": "The lines the field shows: with fixed sizing, its height in rows, at least 7.5 rem; with content sizing, the lines it starts at and shrinks back to, also under 7.5 rem. Without rows, both start at 7.5 rem."
+          "description": "The lines the field shows: with fixed sizing, its height in rows, which resizes down to them or to 7.5 rem, whichever is less; with content sizing, the lines it starts at and shrinks back to. Without rows, both start at 7.5 rem."
         },
         {
           "name": "label",
