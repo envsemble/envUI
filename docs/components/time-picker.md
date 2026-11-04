@@ -28,7 +28,7 @@ components:
 examples:
   StartTime:
     role: overview
-    motion: true
+    open: true
     caption: Where people write AM and PM, a third wheel holds them.
   Variants: variants
   TimePickerAnatomy: anatomy

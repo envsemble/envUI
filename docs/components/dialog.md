@@ -36,7 +36,7 @@ components:
 examples:
   ProjectDetails:
     role: overview
-    motion: true
+    open: true
   FindPlan: example
   ReviewChanges: example
   DialogAnatomy: anatomy

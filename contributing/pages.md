@@ -77,7 +77,7 @@ examples: # Each example file once, by its name, with its role and, where it has
 
 - **`status`** is a ladder, `alpha`, `beta`, `stable`, then `deprecated`. The catalogue and the Docs show it under the title, and alpha and deprecated beside the page's name in the Docs' navigation too.
 - **`examples`** lists each example once. Its role is `overview`, shown side by side at the top of the page and never placed in the body; `example`; `variants` and `anatomy`, with the legend that follows them; or `do`, `dont` and `caution`, whose caption is their rule and so required.
-- **An overview's framing.** Nothing places an overview, so its entry says how it is framed: `open: true` shows its overlays open, as on [HoverCard](../docs/components/hover-card.md), `stage: shaded` the deeper stage of a whole window, as on [Scaffold](../docs/components/scaffold.md), `wide: true` a row of its own, as on [Markdown](../docs/components/markdown.md), and `motion: true` plays it. Other roles take them on their fence.
+- **An overview's framing.** Nothing places an overview, so its entry says how it is framed: `open: true` shows its overlays open, as on [HoverCard](../docs/components/hover-card.md), which an overlay's overview takes: the component at rest, open and live, so people see it at a glance and can use it, its overlay pressed open from its trigger where the example doesn't open it itself; `stage: shaded` the deeper stage of a whole window, as on [Scaffold](../docs/components/scaffold.md), `wide: true` a row of its own, as on [Markdown](../docs/components/markdown.md), and `motion: true` plays it. Other roles take them on their fence.
 - **`statuses`** gives an export listed in `components` a status other than the page's, such as a beta editor on a page whose renderer is stable.
 - **`avoidWhen`** is the page's one list of related components and pages, its **Related** section: each entry names an export in `use` or an indexed page in `see`, never both, with a line saying when to pick it instead. Name each export or page once. Relate only what a reader might pick instead: a page that is only used alongside, such as Accessibility or Icons, is linked from the sentence that needs it.
 - **`components`** lists a family's members, such as IconButton on the button page. A namespace, such as `Menu`, covers all its parts; list the namespace, never a part such as `Menu.Item`.
@@ -154,12 +154,12 @@ A figure is an [example file](#examples) listed in the frontmatter and placed wi
 | `example`               | The example, live on the stage, with its caption below.                                                 | `widths`, `sweep`, `classes`, `fit`, `open`, `stage`, `wide`, `motion` |
 | `do`, `dont`, `caution` | The example on a square stage joined to a green Do, red Don't or amber Caution bar, and its rule below. | `open`, `stage`, `wide`, `motion`                                      |
 | `anatomy`               | The example on the stage, with numbered callouts on its parts and the legend below.                     | `of`, `open`, `stage`, `enlarge`, `width`, `specimen`                  |
-| `variants`              | The example on the stage, with a callout naming each variant, and the legend below.                     | `stage`                                                                |
+| `variants`              | The example on the stage, each variant's name in plain text beside or under it, and the legend below.   | `stage`                                                                |
 
 Every figure sits on the catalogue's recessed stage, in the theme, contrast and scale the reader chose, with a closed Code toggle under it holding the file's source. Keep example lines within the formatter's 100 characters, and a caption to one sentence.
 
 - **`stage=shaded`** is for a figure of a whole window, such as a Scaffold, whose edges must show: in light it makes the stage a shade deeper than the window's page. Don't draw a frame around the subject instead.
-- **`open`** shows a figure's popup, menu, tooltip, dialog, sheet or toast open, as a picture, rendered into the stage and inert. The example opens it itself, with `defaultOpen` or an `open` state that starts true, and says so in a comment. Use it where the point is in the open overlay; a figure whose point is the trigger stays closed.
+- **`open`** shows a figure's popup, menu, tooltip, dialog, sheet or toast open, as a picture, rendered into the stage and inert; an overview's is live instead. The example opens it itself, with `defaultOpen` or an `open` state that starts true, and says so in a comment. Use it where the point is in the open overlay; a figure whose point is the trigger stays closed.
 
 ### Examples at several widths
 

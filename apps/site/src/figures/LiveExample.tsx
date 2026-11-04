@@ -283,7 +283,8 @@ function WidthBox({ width, children }: { width: number; children: ReactNode }) {
  * one frame whose width sweeps between them (`classes` names their window classes, `fit` draws it
  * smaller where it must to reach the widest), and with `caption`, a sentence below it. With
  * `motion`, the stage plays it: its animated specimen of the same name, which uses the example as a
- * person would, takes the stage's place, above its caption and code.
+ * person would, takes the stage's place, above its caption and code. With `open` and `live`, as an
+ * overview's, it rests with its overlay open, and people can use it.
  */
 export function LiveExample({
   page,
@@ -295,6 +296,7 @@ export function LiveExample({
   classes = false,
   fit = false,
   open = false,
+  live = false,
   stage,
   motion = false,
 }: {
@@ -311,6 +313,8 @@ export function LiveExample({
   fit?: boolean;
   /** Whether the example's overlays are shown open, as a picture. */
   open?: boolean;
+  /** Whether, shown open, it is live rather than a picture, as a page's overview is. */
+  live?: boolean;
   /** The stage's fill, where the page's would hide the subject. */
   stage?: StageFill;
   /** Whether its animated specimen plays it in place of the live stage. */
@@ -318,7 +322,7 @@ export function LiveExample({
 }) {
   const theme = useTheme();
   const render = open ? (
-    <OpenExample name={name}>
+    <OpenExample name={name} live={live}>
       <ExampleRender page={page} name={name} />
     </OpenExample>
   ) : (
@@ -378,7 +382,9 @@ export function LiveExample({
           container="env-window"
           gap={0}
           role="group"
-          aria-label={open ? `${title} example, shown open as a picture` : `${title} example`}
+          aria-label={
+            open && !live ? `${title} example, shown open as a picture` : `${title} example`
+          }
           className="site-live-example"
           data-example={name}
           data-stage={stage}

@@ -38,7 +38,7 @@ components:
 examples:
   ChooseOwner:
     role: overview
-    motion: true
+    open: true
   Variants: variants
   ComboboxAnatomy: anatomy
   ComboboxListAnatomy: anatomy
@@ -97,6 +97,12 @@ Not shown: the control, which holds the chips, the input and the buttons, and ta
 A read-only field can be focused and its list browsed, but its value can't change.
 
 <!-- specimen: States -->
+
+### Typing to filter
+
+The list narrows as people type, and the whole list opens again from the field's button.
+
+<!-- specimen: ChooseOwner -->
 
 ### Several reviewers
 

@@ -21,7 +21,9 @@ avoidWhen:
 components:
   - MonthPicker
 examples:
-  ReportMonth: overview
+  ReportMonth:
+    role: overview
+    open: true
   Variants: variants
   MonthPickerAnatomy: anatomy
   MonthPickerPopupAnatomy: anatomy

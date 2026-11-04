@@ -30,7 +30,7 @@ components:
 examples:
   IconActions:
     role: overview
-    motion: true
+    open: true
   RailOfIcons:
     role: example
     caption: Beside a rail of icons, toward the content.

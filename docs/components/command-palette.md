@@ -43,7 +43,7 @@ components:
 examples:
   GoToDocument:
     role: overview
-    motion: true
+    open: true
   RunCommand: example
   InSidebar: example
   IconOnly: example

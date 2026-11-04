@@ -267,15 +267,94 @@ function keepScrollingInOpenExamples() {
 keepScrollingInOpenExamples();
 
 /**
+ * What opens an example's overlay: its trigger, which names the popup it opens, or else, as for a
+ * palette a plain button opens, its first button.
+ */
+const triggerOf = (room: HTMLElement) =>
+  room.querySelector<HTMLElement>('[aria-haspopup]:not([aria-expanded="true"])') ??
+  room.querySelector<HTMLElement>('button:not(:disabled)');
+
+/**
+ * Opens a live example's overlay as a press on its trigger would, without taking focus: the
+ * events a pointer's press sends, in order, at the trigger's middle.
+ */
+function press(trigger: HTMLElement) {
+  const box = trigger.getBoundingClientRect();
+  const init = {
+    bubbles: true,
+    cancelable: true,
+    composed: true,
+    clientX: box.left + box.width / 2,
+    clientY: box.top + box.height / 2,
+    view: window,
+  };
+  const pointer = { ...init, pointerId: 1, pointerType: 'mouse', isPrimary: true, button: 0 };
+  trigger.dispatchEvent(new PointerEvent('pointerdown', { ...pointer, buttons: 1 }));
+  trigger.dispatchEvent(new MouseEvent('mousedown', { ...init, buttons: 1, detail: 1 }));
+  trigger.dispatchEvent(new PointerEvent('pointerup', pointer));
+  trigger.dispatchEvent(new MouseEvent('mouseup', { ...init, detail: 1 }));
+  trigger.dispatchEvent(new MouseEvent('click', { ...init, detail: 1 }));
+}
+
+/**
+ * Opens a live example's overlay once, as it first renders, where the example doesn't open it
+ * itself: pressed open, its trigger stays what it is in the code, closed until used.
+ */
+function useOpenOnce(room: HTMLElement | null, layer: HTMLElement | null, live: boolean) {
+  useLayoutEffect(() => {
+    if (!live || !room || !layer) return;
+    let frame = 0;
+    let done = false;
+    const attempt = () => {
+      if (done) return;
+      // The example may still be loading, or open its overlay itself, such as with defaultOpen.
+      if (layer.childElementCount && overlays(layer).length) return finish();
+      const trigger = triggerOf(room);
+      if (!trigger) return;
+      // A frame later, once the example has laid out, so its popup is placed beside it.
+      frame = requestAnimationFrame(() => {
+        if (done) return;
+        if (!overlays(layer).length) press(trigger);
+        finish();
+      });
+    };
+    const changes = new MutationObserver(attempt);
+    const finish = () => {
+      done = true;
+      changes.disconnect();
+    };
+    changes.observe(room, { childList: true, subtree: true });
+    attempt();
+    return () => {
+      cancelAnimationFrame(frame);
+      finish();
+    };
+  }, [room, layer, live]);
+}
+
+/**
  * An example shown with its overlays open, as a picture: its dialogs, menus, tooltips and toasts
  * render into a layer of the figure through envUI's PortalContainer, contained, so they neither
  * lock the page's scroll, take focus nor close when the reader presses elsewhere, and sit inside
  * the stage, centred with what opens them. The example opens them itself, such as with
- * `defaultOpen`. The whole is inert: a picture people read, not a control they use.
+ * `defaultOpen`. The whole is inert: a picture people read, not a control they use. A `live` one,
+ * a page's overview, is the component at rest open, which people can use: it isn't inert, and
+ * where the example doesn't open its overlay itself, it is pressed open once as it first renders.
  */
-export function OpenExample({ name, children }: { name: string; children: ReactNode }) {
+export function OpenExample({
+  name,
+  live = false,
+  children,
+}: {
+  name: string;
+  /** Whether people can use it, its overlay pressed open where the example doesn't open it. */
+  live?: boolean;
+  children: ReactNode;
+}) {
   const room = useRef<HTMLDivElement>(null);
+  const [roomElement, setRoomElement] = useState<HTMLDivElement | null>(null);
   const [layer, setLayer] = useState<HTMLDivElement | null>(null);
+  useOpenOnce(roomElement, layer, live);
   useLayoutEffect(() => {
     const roomElement = room.current;
     if (!roomElement || !layer) return;
@@ -302,7 +381,16 @@ export function OpenExample({ name, children }: { name: string; children: ReactN
     };
   }, [layer]);
   return (
-    <div ref={room} className="catalogue-open-example" data-open-example={name} inert>
+    <div
+      ref={(element) => {
+        room.current = element;
+        setRoomElement(element);
+      }}
+      className="catalogue-open-example"
+      data-open-example={name}
+      data-live={live ? '' : undefined}
+      inert={!live}
+    >
       <PortalContainer container={layer} contained>
         {children}
       </PortalContainer>

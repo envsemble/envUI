@@ -29,7 +29,7 @@ components:
 examples:
   DeleteProject:
     role: overview
-    motion: true
+    open: true
   ArchiveProject: example
   ConfirmDialogAnatomy: anatomy
   AsyncWithError: example

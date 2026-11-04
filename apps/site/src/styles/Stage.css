@@ -479,6 +479,11 @@
   pointer-events: none;
 }
 
+/* A live room's overlays, an overview's, take the pointer, as in an application. */
+.catalogue-open-example[data-live] > .catalogue-overlay-layer > * {
+  pointer-events: auto;
+}
+
 /* A picture: the overlays are shown in place, without the motion that brings them in. A page's own
    tile and an animated figure, which play, keep their motion. */
 :not(.catalogue-related-canvas[data-tile], .catalogue-motion-subject) > .catalogue-overlay-layer * {

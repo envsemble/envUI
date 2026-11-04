@@ -44,7 +44,7 @@ components:
 examples:
   IconsAndShortcuts:
     role: overview
-    motion: true
+    open: true
   ContextMenuForRows: example
   GroupsAndSeparators: example
   Choices: example
