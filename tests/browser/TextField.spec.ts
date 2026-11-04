@@ -178,7 +178,7 @@ test('a long prefix is cut short so the value keeps its room', async ({ page }) 
   expect(narrow.width).toBeGreaterThanOrEqual(95);
 });
 
-test('a quiet field is only its text at rest, takes a soft fill on hover and focus, and clears its placeholder once focused', async ({
+test('a quiet field is only its text at rest, takes a soft fill on hover and the accent frame on focus, and clears its placeholder once focused', async ({
   page,
 }) => {
   await open(page, affixes);
@@ -208,7 +208,9 @@ test('a quiet field is only its text at rest, takes a soft fill on hover and foc
     await field.focus();
     await page.mouse.move(0, 0);
     await expect.poll(async () => (await look()).placeholder).toBe('rgba(0, 0, 0, 0)');
-    expect((await look()).fill).not.toBe('rgba(0, 0, 0, 0)');
+    // Focus reads as on an outline field: the accent frame, not the fill of the pointer.
+    await expect.poll(async () => (await look()).fill).toBe('rgba(0, 0, 0, 0)');
+    expect((await look()).border).not.toBe('rgba(0, 0, 0, 0)');
     await field.blur();
   }
 });

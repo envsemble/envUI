@@ -942,14 +942,14 @@
     "TextField": {
       "--env-text-field-container": "The well behind the entered text.",
       "--env-text-field-content": "The entered text.",
-      "--env-text-field-outline": "The edge at rest.",
-      "--env-text-field-indicator": "The edge under the pointer, pressed and focused, the caret and the floating label while focused."
+      "--env-text-field-outline": "The edge at rest, which darkens toward the text under the pointer.",
+      "--env-text-field-indicator": "The edge while pressed and focused, the caret and the floating label while focused."
     },
     "Textarea": {
       "--env-text-field-container": "The well behind the entered text.",
       "--env-text-field-content": "The entered text.",
-      "--env-text-field-outline": "The edge at rest.",
-      "--env-text-field-indicator": "The edge under the pointer, pressed and focused, the caret and the floating label while focused."
+      "--env-text-field-outline": "The edge at rest, which darkens toward the text under the pointer.",
+      "--env-text-field-indicator": "The edge while pressed and focused, the caret and the floating label while focused."
     },
     "ToastProvider": {
       "--env-toast-container": "The fill, in place of the tone; set, the dismiss button's states are state layers over it.",

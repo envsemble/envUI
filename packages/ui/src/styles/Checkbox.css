@@ -140,13 +140,17 @@
     height: 0.125rem;
     background: currentColor;
   }
+  /* Under the pointer and while pressed, an unchecked box darkens its edge and takes the neutral
+     state layer, as a radio and a ghost button do. */
   .env-checkbox-input:hover:not(:disabled) {
     --env-checkbox-layer: calc(var(--env-state-hover-opacity) * 100%);
     border-color: var(--env-checkbox-edge-hover, var(--env-color-fg-muted-hover));
+    background: var(--env-color-bg-neutral-muted);
   }
   .env-checkbox-input:active:not(:disabled) {
     --env-checkbox-layer: calc(var(--env-state-pressed-opacity) * 100%);
     border-color: var(--env-checkbox-edge-pressed, var(--env-color-fg-muted-pressed));
+    background: var(--env-color-bg-neutral-muted-hover);
   }
   .env-checkbox-input:is(:checked, :indeterminate):hover:not(:disabled) {
     background: var(--env-checkbox-custom-fill, var(--env-color-bg-primary-emphasis-hover));
@@ -180,7 +184,7 @@
 
   /* Forced colors: the system paints no fills or shadows, so checked boxes and switches take the
      system’s selection colors, a switch draws its track and thumb in system colors, and a chosen
-     radio row is outlined; the radio itself is the system’s. */
+     radio row is outlined; Radio.css draws a radio's. */
   @media (forced-colors: active) {
     .env-checkbox-input:is(:checked, :indeterminate) {
       border-color: Highlight;

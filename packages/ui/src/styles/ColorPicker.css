@@ -324,7 +324,7 @@
   }
   @media (hover: hover) {
     .env-color-picker-button:hover:not(:disabled) {
-      --env-color-picker-button-border: var(--env-color-border-primary-emphasis-hover);
+      --env-color-picker-button-border: var(--env-color-fg-muted);
     }
   }
   .env-color-picker-button[aria-expanded='true'] {

@@ -79,9 +79,11 @@
     color: var(--env-color-fg-muted);
     opacity: 1;
   }
+  /* Under the pointer the edge darkens to the muted text color, as a text field's does; the accent
+     shows focus alone. */
   @media (hover: hover) {
     .env-field-control:hover:not(:disabled, [data-disabled], [readonly]) {
-      --env-field-control-border: var(--env-color-border-primary-emphasis-hover);
+      --env-field-control-border: var(--env-color-fg-muted);
     }
   }
   /* Read-only: the value keeps its full contrast while the edge quiets to the muted one and doesn't

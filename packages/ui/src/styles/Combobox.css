@@ -51,6 +51,23 @@
     border-radius: 0;
     text-overflow: ellipsis;
   }
+  /* Beside chips, the input is as wide as its text, and takes what the chips leave of the row: it
+     moves to a row of its own only once its text no longer fits there, so the field grows only as
+     the chips and the text wrap. Where the engine can't size an input to its text, it keeps room
+     for a few letters. */
+  @supports (field-sizing: content) {
+    .env-combobox .env-combobox-control:has(> .env-combobox-chip) > .env-combobox-input {
+      flex: 1 1 auto;
+      min-inline-size: var(--env-space-2);
+      field-sizing: content;
+    }
+  }
+  /* The chips and the value's leading content sit as far below the middle as the input does in a
+     short field with a visible label (TextField.css). */
+  .env-combobox .env-combobox-control > :is(.env-combobox-chip, .env-combobox-start) {
+    position: relative;
+    inset-block-start: var(--env-text-field-value-shift, 0);
+  }
   .env-combobox .env-combobox-control > .env-combobox-input:read-only {
     cursor: default;
   }

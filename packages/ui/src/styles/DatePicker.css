@@ -126,14 +126,17 @@
     font-weight: var(--env-font-weight-medium);
   }
   /* From a medium window up, the time sits beside the calendar, as tall as it, and its heading as
-     tall as the calendar's month heading, so the first time lines up with the weekday names. */
+     tall as the calendar's month heading, so the first time lines up with the weekday names. Where
+     the card has too little room beside the trigger for both, the time moves under the calendar
+     rather than running past the card's edge, its wheels whole. */
   @container env-window (width >= 37.5rem) {
     .env-date-picker-panes {
-      grid-template-columns: auto auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
     }
     .env-date-picker-time {
-      block-size: 0;
-      min-block-size: 100%;
+      flex: 1 0 auto;
     }
     .env-date-picker-time-title {
       justify-content: center;

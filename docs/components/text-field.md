@@ -98,13 +98,13 @@ examples:
 
 An outline field has no fill of its own: it takes the background of what it sits on, such as a card or a dialog. Its label rests inside it and floats into the edge, which opens behind it.
 
-- It is as tall as a button of its size, so the two line up in a row.
+- It is as tall as a button of its size, so the two line up in a row; stacked in a Column or a Grid, it keeps a little room above it for its floated label.
 - A field on its own on a page, or in a long form, takes the large size.
 - It can be given a fill of its own where it needs one.
 
 ### Ghost
 
-A ghost field has no edge: it is its icon and words until the pointer rests on it or it has focus, when its fill shows.
+A ghost field has no edge: it is its icon and words until the pointer rests on it, when its fill shows. Focus draws the accent edge an outline field takes.
 
 - Its placeholder clears once it has focus.
 - An invalid ghost field shows a red edge.
@@ -162,7 +162,7 @@ Not shown: the suffix, the error and a text area's resize edge.
 
 ### States
 
-The label rests in an empty field and floats into the outline on focus or with a value. Focus draws the outline in the accent, twice as thick.
+The label rests in an empty field and floats into the outline on focus or with a value. Under the pointer the outline darkens; focus alone draws it in the accent, twice as thick.
 
 <!-- specimen: States -->
 

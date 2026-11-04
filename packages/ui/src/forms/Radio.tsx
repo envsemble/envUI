@@ -8,6 +8,7 @@ import type {
   ReactNode,
   Ref,
 } from 'react';
+import { IconError } from '../icons/Error.js';
 import { classNames } from '../internal/classNames.js';
 import { Grid, Row } from '../foundations/Layout.js';
 import { setRef } from '../internal/setRef.js';
@@ -160,10 +161,13 @@ export function RadioGroup({
           {description}
         </small>
       )}
+      {/* The error looks as a field's does, the error icon before the message (Radio.css); a
+          fieldset has no Field.Root for Field.Error to join. */}
       {error != null && (
-        <div id={ids.error} className="env-radio-group-error">
-          {error}
-        </div>
+        <Row align="start" gap={2} id={ids.error} className="env-radio-group-error">
+          <IconError aria-hidden="true" focusable="false" />
+          <span>{error}</span>
+        </Row>
       )}
     </>
   );

@@ -4095,7 +4095,8 @@
         }
       ],
       "uses": [
-        "ConnectedRows"
+        "ConnectedRows",
+        "Icon"
       ],
       "colors": [
         {
@@ -4142,7 +4143,8 @@
         }
       ],
       "uses": [
-        "ConnectedRows"
+        "ConnectedRows",
+        "Icon"
       ]
     },
     "Rating": {
@@ -5605,11 +5607,11 @@
         },
         {
           "property": "--env-text-field-outline",
-          "description": "The edge at rest."
+          "description": "The edge at rest, which darkens toward the text under the pointer."
         },
         {
           "property": "--env-text-field-indicator",
-          "description": "The edge under the pointer, pressed and focused, the caret and the floating label while focused."
+          "description": "The edge while pressed and focused, the caret and the floating label while focused."
         }
       ]
     },
@@ -5651,11 +5653,11 @@
         },
         {
           "property": "--env-text-field-outline",
-          "description": "The edge at rest."
+          "description": "The edge at rest, which darkens toward the text under the pointer."
         },
         {
           "property": "--env-text-field-indicator",
-          "description": "The edge under the pointer, pressed and focused, the caret and the floating label while focused."
+          "description": "The edge while pressed and focused, the caret and the floating label while focused."
         }
       ]
     },

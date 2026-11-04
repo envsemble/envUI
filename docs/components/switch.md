@@ -157,6 +157,7 @@ The root, `env-switch`, is the label around the track, `env-switch-input`, and t
 
 ## Changelog
 
+- **1.0.0-prerelease.6**: A switch that is off darkens its ring under the pointer and while pressed, as its track deepens.
 - **1.0.0-prerelease.5**: `description`, a muted line under the label.
 - **1.0.0**: `className` and `style` style the root, `env-switch`, rather than the input, which keeps `ref` and the other native props. `env-choice-control` is `env-switch` and `env-switch-control` `env-switch-input`.
 - **1.0.0**: The track of a switch that is off has a 3:1 boundary, and switches in the dark theme reach 3:1 on every surface.

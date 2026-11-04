@@ -256,16 +256,25 @@ function stateOf(page: Page) {
   };
 }
 
-/** Expects the slider at rest: its text and fill only, with no handle, ticks or fade. */
+/**
+ * Expects the slider at rest: its text, its fill and a quiet handle, gone where it sits under the
+ * text, with no ticks or fade.
+ */
 async function expectRest(state: ReturnType<typeof stateOf>) {
   await expect(state.control).not.toHaveAttribute('data-handle');
   await expect(state.control).not.toHaveAttribute('data-ruler');
-  await expect(state.thumb).toHaveCSS('opacity', '0');
+  await expect
+    .poll(async () => {
+      const veil = await state.veil();
+      const opacity = Number(await state.thumb.evaluate((e) => getComputedStyle(e).opacity));
+      return (veil === '0' || veil === '1') && Math.abs(opacity - 0.4 * (1 - Number(veil))) < 0.01;
+    })
+    .toBe(true);
   await expect.poll(state.ticks).toBe('0');
   await expect.poll(state.fillEnd).toBe('0');
 }
 
-test('at rest a slider shows its text and fill only, with no handle, ticks or fade', async ({
+test('at rest a slider shows its text, its fill and a quiet handle, with no ticks or fade', async ({
   page,
 }) => {
   const state = stateOf(page);

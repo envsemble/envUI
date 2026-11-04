@@ -60,6 +60,8 @@ const alwaysSquare = new Set([
   'packages/ui/src/styles/ColorPicker.css .env-color-picker-thumb',
   'packages/ui/src/styles/DropZone.css .env-drop-zone-icon',
   'packages/ui/src/styles/PanelDock.css .env-panel-dock-tab-attention',
+  'packages/ui/src/styles/Radio.css .env-radio-input',
+  'packages/ui/src/styles/Radio.css .env-radio-input::before',
   'packages/ui/src/styles/Switch.css .env-switch-input::before',
 ]);
 

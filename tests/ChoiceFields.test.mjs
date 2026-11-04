@@ -36,7 +36,13 @@ const { RadioGroup, Radio, Checkbox, Switch, Slider } = await import(pathToFileU
 const describedText = (markup, element) => {
   const ids = new RegExp(`<${element}[^>]*aria-describedby="([^"]+)"`).exec(markup)?.[1];
   assert.ok(ids, `the ${element} is described`);
-  return ids.split(' ').map((id) => new RegExp(`id="${id}"[^>]*>([^<]*)<`).exec(markup)?.[1]);
+  // The text of each describing element, past an icon before it, such as an error's.
+  return ids
+    .split(' ')
+    .map(
+      (id) =>
+        new RegExp(`id="${id}"[^>]*>(?:<svg.*?</svg>)?(?:<span[^>]*>)?([^<]*)<`).exec(markup)?.[1],
+    );
 };
 
 test('a radio group is described by its description and its error, in that order', () => {

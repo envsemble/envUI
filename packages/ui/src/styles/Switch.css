@@ -124,12 +124,16 @@
   .env-switch-input:checked:dir(rtl)::before {
     transform: translateX(-100%);
   }
+  /* Under the pointer and while pressed, a switch that is off deepens its track by the neutral state
+     layer's steps and darkens its ring to the muted text color, as a checkbox's edge does. */
   .env-switch-input:hover:not(:disabled) {
     --env-switch-layer: calc(var(--env-state-hover-opacity) * 100%);
+    --env-switch-ring: var(--env-switch-outline, var(--env-color-fg-muted));
     background: var(--env-switch-off-fill, var(--env-color-bg-neutral-muted-hover));
   }
   .env-switch-input:active:not(:disabled) {
     --env-switch-layer: calc(var(--env-state-pressed-opacity) * 100%);
+    --env-switch-ring: var(--env-switch-outline, var(--env-color-fg-muted-hover));
     background: var(--env-switch-off-fill, var(--env-color-bg-neutral-muted-pressed));
   }
   .env-switch-input:checked:hover:not(:disabled) {

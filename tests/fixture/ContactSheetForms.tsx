@@ -545,7 +545,7 @@ function Pickers() {
             </Stage>
           </Cell>
           <Cell caption="Open, minute granularity">
-            <Stage height="30rem" width="21rem">
+            <Stage height="30rem" width="29rem">
               <DatePicker
                 label="Starts"
                 locale="en-GB"

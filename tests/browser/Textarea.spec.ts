@@ -24,17 +24,17 @@ test(
     await expect.poll(() => height(one)).toBeCloseTo(await linesHigh(one, 2), 0);
     await one.fill('');
     await expect.poll(() => height(one)).toBeCloseTo(await linesHigh(one, 1), 0);
-    // Without rows, growing and fixed fields keep the shared 7.5 rem start.
+    // Without rows, a growing field keeps the shared 7.5 rem start; a fixed one given rows is that
+    // many lines tall, under it.
     expect(await height(page.getByRole('textbox', { name: 'Default lines', exact: true }))).toBe(
       120,
     );
-    expect(await height(page.getByRole('textbox', { name: 'Two fixed lines', exact: true }))).toBe(
-      120,
-    );
+    const two = page.getByRole('textbox', { name: 'Two fixed lines', exact: true });
+    expect(await height(two)).toBeCloseTo(await linesHigh(two, 2), 0);
   },
 );
 
-test('a ghost textarea shows no border or fill at rest, and a soft fill while focused', async ({
+test('a ghost textarea shows no border or fill at rest, and the accent frame while focused', async ({
   page,
 }) => {
   await page.goto(`${fixtureUrl}/?fixture=forms`);
@@ -47,9 +47,11 @@ test('a ghost textarea shows no border or fill at rest, and a soft fill while fo
   );
   await expect(control).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
   await field.focus();
-  await expect
-    .poll(() => control.evaluate((element) => getComputedStyle(element).backgroundColor))
-    .not.toBe('rgba(0, 0, 0, 0)');
+  await expect(control.locator(':scope > .env-text-field-border')).not.toHaveCSS(
+    'border-top-color',
+    'rgba(0, 0, 0, 0)',
+  );
+  await expect(control).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
 });
 
 test('the resize edge is a named separator that the arrow keys and Home move', async ({ page }) => {
