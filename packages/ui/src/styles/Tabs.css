@@ -49,6 +49,20 @@
        from its own start rather than from a positioned ancestor's, and starts with it in view. */
     position: relative;
   }
+  /* A horizontal rail lines its first label up with the content below it: it reaches back before
+     its container's edge by the first tab's inline padding, a button's or a text button's slimmer
+     one, so only that tab's hover fill and focus ring lie in the gutter. Each tab keeps its own box,
+     so no two overlap. */
+  .env-tabs-list:not([data-orientation='vertical']) {
+    --env-tabs-lead: var(--env-space-3);
+    margin-inline-start: calc(-1 * var(--env-tabs-lead));
+    max-inline-size: calc(100% + var(--env-tabs-lead));
+  }
+  .env-tabs-list:not([data-orientation='vertical']):has(
+      > .env-tabs-tab:first-child[data-variant='text']
+    ) {
+    --env-tabs-lead: var(--env-space-1);
+  }
   /* The rail has no fill of its own: the tabs sit on what the Tabs sit on. */
   .env-tabs-list.env-surface {
     --env-surface-color: var(--env-tabs-rail-color, transparent);
