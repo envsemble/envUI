@@ -56,10 +56,11 @@ const verdicts = {
 };
 
 /**
- * A do, don't or caution figure: the live example on a square stage with a green Do, red Don't or
- * amber Caution bar, a caution being acceptable with care rather than a mistake, and its one
- * sentence below, and the example's code under it. The example is drawn smaller where it
- * needs more room than the square (useVerdictFit). With `motion`, its animated specimen of the same
+ * A do, don't or caution figure: the live example on its stage with a quiet strip under it, Do in
+ * green, Don't in red or Caution in amber, a caution being acceptable with care rather than a
+ * mistake, and its one sentence below, and the example's code under it. The stage is as tall as
+ * the example, or square where the example shows open or playing, and the example is drawn smaller
+ * where it needs more room than the stage's width (useVerdictFit). With `motion`, its animated specimen of the same
  * name plays it on the stage. A `wide` figure, whose point is a change across the column's width,
  * keeps a stage as wide as the column and as tall as its example. A foundation page's preview
  * passes its sample as `children` instead, which has no code of its own.
@@ -94,13 +95,16 @@ export function VerdictFigure({
   const id = useId();
   const stageRef = useRef<HTMLDivElement>(null);
   const box = useRef<HTMLDivElement>(null);
-  useVerdictFit(stageRef, box, !wide && !(motion && page));
+  // A figure that shows its example open or playing keeps a square, the room what opens in it
+  // needs; any other is as tall as its example.
+  const shape = wide ? 'wide' : open || motion ? 'square' : 'fit';
+  useVerdictFit(stageRef, box, !wide && !(motion && page), shape === 'fit' ? 'fit' : 'square');
   return (
     // Named by its bar and its sentence, each read once.
     <figure
       className="site-verdict"
       data-verdict={verdict}
-      data-shape={wide ? 'wide' : 'square'}
+      data-shape={shape}
       aria-labelledby={`${id}-verdict ${id}-caption`}
     >
       {/* The stage and the bar are two connected rows: envUI's connected-row parts give the outer
@@ -133,14 +137,7 @@ export function VerdictFigure({
             </div>
           </Column>
         )}
-        {/* A caution's bar is a dark island in either theme: the dark theme's bright warning fill,
-            with its dark text, where light's is a deep brown. */}
-        <Theme
-          {...theme}
-          theme={verdict === 'caution' ? 'dark' : theme.theme}
-          className="site-verdict-bar env-connected-row"
-          id={`${id}-verdict`}
-        >
+        <Theme {...theme} className="site-verdict-bar env-connected-row" id={`${id}-verdict`}>
           {icon}
           <span>{label}</span>
         </Theme>

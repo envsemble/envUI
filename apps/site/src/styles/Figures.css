@@ -4,7 +4,7 @@
    sub-topic clearly from the next, and one section far from the next, which the article's gap
    sets (Template.css). */
 .site-figures {
-  /* The largest a do or don't figure's square is drawn (Verdicts.css). */
+  /* The widest a do or don't figure is drawn (Verdicts.css). */
   --site-verdict-size: 23rem;
   container-type: inline-size;
 }
@@ -107,19 +107,19 @@
   }
 }
 
-/* A run of do and don't squares: side by side from a narrower column than other figures, as a
-   square needs less room, in columns no wider than a square, from the column's start, so a pair
-   stays close together however wide the column is. */
+/* A run of do and don't figures: side by side from a narrower column than other figures, as
+   they need less room, in columns no wider than one, from the column's start, so a pair stays
+   close together however wide the column is. */
 @container (width >= 32rem) {
   .site-figure-run:is([data-count='2'], [data-count='4'], [data-count='6'], [data-count='8']):not(
-      :has(> :not(.site-verdict[data-shape='square']))
+      :has(> :not(.site-verdict:not([data-shape='wide'])))
     ) {
     grid-template-columns: repeat(2, minmax(0, var(--site-verdict-size)));
   }
 }
 
 @container (width >= 48rem) {
-  .site-figure-run[data-count='3']:not(:has(> :not(.site-verdict[data-shape='square']))) {
+  .site-figure-run[data-count='3']:not(:has(> :not(.site-verdict:not([data-shape='wide'])))) {
     grid-template-columns: repeat(3, minmax(0, var(--site-verdict-size)));
   }
 }

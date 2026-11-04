@@ -138,6 +138,31 @@
   translate: -50% 0;
 }
 
+/* What a variant is for, beside its item on the other side from its name, where every item's fits
+   (AnatomyLayout.ts): its sentence, and under it any detail the option table adds, such as its
+   tones. */
+.catalogue-variant-use {
+  position: absolute;
+  box-sizing: content-box;
+  color: var(--env-color-fg-muted);
+  font: var(--env-type-body-sm);
+  text-align: start;
+  text-wrap: pretty;
+  pointer-events: none;
+}
+
+.catalogue-variant-use > span {
+  display: block;
+}
+
+.catalogue-variant-use[data-side='right'] {
+  translate: 0 -50%;
+}
+
+.catalogue-variant-use[data-side='left'] {
+  translate: -100% -50%;
+}
+
 .site-anatomy-caption {
   display: grid;
   gap: var(--env-space-6);
@@ -155,9 +180,25 @@
 
 .site-anatomy-legend {
   display: grid;
-  /* Two or three columns, as most names are a word or two, close enough to read as one list. */
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr));
-  gap: var(--env-space-3) var(--env-space-6);
+  --site-anatomy-gap: var(--env-space-6);
+  /* As many columns as make even rows, `--site-anatomy-columns` (AnatomyFigure.tsx), such as two
+     by two for four parts, or fewer where they don't fit, as most names are a word or two, close
+     enough to read as one list. */
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(
+      min(
+        100%,
+        max(
+          12rem,
+          (100% - (var(--site-anatomy-columns, 3) - 1) * var(--site-anatomy-gap)) /
+            var(--site-anatomy-columns, 3)
+        )
+      ),
+      1fr
+    )
+  );
+  gap: var(--env-space-3) var(--site-anatomy-gap);
   margin: 0;
   padding: 0;
   list-style: none;

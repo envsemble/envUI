@@ -129,8 +129,9 @@ export function Specimen({
   const level = useContext(PartHeadingLevel) ?? ((specimenLevel + 1) as 3 | 4);
   const Heading = `h${level}` as const;
   return (
-    <Column render={<section />} gap={3} className="catalogue-specimen">
-      <Text render={<Heading />} variant="title">
+    <Column render={<section />} gap={2} className="catalogue-specimen">
+      {/* A small muted label, as the state matrix names its rows, quieter than the section's heading. */}
+      <Text render={<Heading />} variant="body-sm">
         {title}
       </Text>
       {children}

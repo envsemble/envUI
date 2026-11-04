@@ -16,6 +16,12 @@ export interface Callout {
   /** A variants figure's callout: the variant's name, and the side of its item it sits on. */
   label?: string;
   side?: Side;
+  /**
+   * In a variants figure whose items stand one under another, what the variant is for, beside its
+   * item on the other side from its name, where every item's fits (measureVariants): its lines,
+   * and where they start.
+   */
+  use?: { lines: string[]; width: number; x: number; y: number; side: Side };
   badge: { x: number; y: number };
   anchor: { x: number; y: number };
   /**
@@ -577,11 +583,16 @@ function inReadingOrder(callouts: Callout[], rtl: boolean) {
 export interface Room {
   start: number;
   bottom: number;
+  end?: number;
 }
 
 /** How far a variant's name stands off its item, in px, and the height of its line of text. */
 const nameGap = 16;
 const nameHeight = 20;
+
+/** The most and the least room, in rem, what a variant is for takes beside its item. */
+const useMeasure = 28;
+const useLeast = 12;
 
 /**
  * The names' widths in px, as the figure sets them, measured off-screen in the stage, or kept in
@@ -612,6 +623,43 @@ function labelWidths(stage: HTMLElement, texts: string[], known: Map<string, num
 }
 
 /**
+ * The sizes in px of what each variant is for, as the figure sets them, each wrapped at `room`,
+ * measured as the names are (labelWidths).
+ */
+function sizesOfUses(
+  stage: HTMLElement,
+  uses: string[][],
+  room: number,
+  known: Map<string, number>,
+) {
+  const rem = getComputedStyle(document.documentElement).fontSize;
+  const keyOf = (lines: string[], axis: string) => `${rem} ${room} ${axis} ${lines.join('|')}`;
+  const missing = uses.filter((lines) => !known.has(keyOf(lines, 'width')));
+  if (missing.length) {
+    const probes = missing.map((lines) => {
+      const probe = document.createElement('span');
+      probe.className = 'catalogue-variant-use';
+      probe.style.visibility = 'hidden';
+      probe.style.maxInlineSize = `${room}px`;
+      for (const line of lines)
+        probe.append(Object.assign(document.createElement('span'), { textContent: line }));
+      return probe;
+    });
+    stage.append(...probes);
+    probes.forEach((probe, index) => {
+      const box = probe.getBoundingClientRect();
+      known.set(keyOf(missing[index]!, 'width'), Math.ceil(box.width));
+      known.set(keyOf(missing[index]!, 'height'), box.height);
+    });
+    for (const probe of probes) probe.remove();
+  }
+  return uses.map((lines) => ({
+    width: known.get(keyOf(lines, 'width'))!,
+    height: known.get(keyOf(lines, 'height'))!,
+  }));
+}
+
+/**
  * Places each variant's name by the item it names: the item a legend item's part names, or else the
  * example's items in the legend's order. Items one under another take their names on the start
  * side, items side by side under them: plain text, with no line or outline, as a picture's labels
@@ -623,7 +671,9 @@ export function measureVariants(
   legend: AnatomyLegendItem[],
   /** The names' widths measured before, which the caller keeps until the fonts change. */
   labels: Map<string, number> = new Map(),
-): { callouts: Callout[]; room: Room } {
+  /** What each legend item's variant is for, in lines, from the option table after the figure. */
+  uses?: (string[] | undefined)[],
+): { callouts: Callout[]; room: Room; beside?: boolean } {
   const origin = stage.getBoundingClientRect();
   const rtl = getComputedStyle(stage).direction === 'rtl';
   // The example's items: the children of its root, or of the wrapper the root holds alone, that
@@ -667,12 +717,49 @@ export function measureVariants(
   );
   if (stacked) {
     const side: Side = rtl ? 'right' : 'left';
-    const callouts = found.map(({ number, box, label }) => {
+    const start = Math.ceil(Math.max(...widths) + nameGap);
+    // What each variant is for goes beside its item, on the other side, where every item has one
+    // and each fits the room between its item's line and the next, and the stage's width.
+    const lines = found.map(({ number }) => uses?.[number - 1]);
+    const style = getComputedStyle(stage);
+    const inner =
+      stage.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+    const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
+    // The room beside the items, at most a readable measure.
+    const across = Math.floor(
+      Math.min(useMeasure * rem, inner - start - (outer.right - outer.left) - nameGap),
+    );
+    const sizes =
+      across >= useLeast * rem && lines.every((entry) => entry?.length)
+        ? sizesOfUses(stage, lines as string[][], across, labels)
+        : undefined;
+    // Each centred on its item's line, clear of the next one's.
+    const rows = sorted.map((item) => ({
+      centre: (item.box.top + item.box.bottom) / 2,
+      height: sizes?.[found.indexOf(item)]?.height ?? 0,
+    }));
+    const clear = rows.every(
+      (row, index) =>
+        index === 0 ||
+        row.centre - rows[index - 1]!.centre >= (row.height + rows[index - 1]!.height) / 2 + 4,
+    );
+    const end = sizes && Math.ceil(Math.max(...sizes.map(({ width }) => width)) + nameGap);
+    const beside = sizes !== undefined && end !== undefined && clear;
+    const callouts = found.map(({ number, box, label }, index) => {
       const y = (box.top + box.bottom) / 2;
       const x = side === 'left' ? outer.left - nameGap : outer.right + nameGap;
-      return { number, index: number - 1, label, side, badge: { x, y }, anchor: { x, y } };
+      const use = beside
+        ? {
+            lines: lines[index]!,
+            width: sizes![index]!.width,
+            x: side === 'left' ? outer.right + nameGap : outer.left - nameGap,
+            y,
+            side: side === 'left' ? ('right' as const) : ('left' as const),
+          }
+        : undefined;
+      return { number, index: number - 1, label, side, badge: { x, y }, anchor: { x, y }, use };
     });
-    return { callouts, room: { start: Math.ceil(Math.max(...widths) + nameGap), bottom: 0 } };
+    return { callouts, room: { start, bottom: 0, end: beside ? end : 0 }, beside };
   }
   // Side by side: the names under them, spread so that none overlaps the next.
   const order = found

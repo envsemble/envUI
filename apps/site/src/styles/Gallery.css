@@ -2,11 +2,15 @@
    live picture on the recessed canvas every example sits on, inert, with its name under it: a
    component at its own size, a pattern's scene scaled to fit. Tiles are of one size, so the
    pictures line up in rows. */
-/* The groups stand well apart, about half a tile, so each reads as a section of its own. */
+/* The groups stand well apart, about half a tile, so each reads as a section of its own; on a
+   phone, where the tiles are low, by less (below). */
 .catalogue-gallery {
-  row-gap: calc(var(--env-space-9) * 2.5);
   text-align: start;
   container: catalogue-gallery / inline-size;
+}
+
+.catalogue-gallery > * + * {
+  margin-block-start: calc(var(--env-space-9) * 2.5);
 }
 
 .catalogue-gallery-grid {
@@ -38,13 +42,18 @@
   max-block-size: none;
 }
 
-/* On a phone, components two to a row on lower stages, so the gallery stays short: each at its
-   own size, as on a wide page, and what is larger than the stage cut off at its end and its foot,
-   such as a popup under its trigger, the trigger and the top of the popup in view. A pattern's
-   scene keeps its taller tile, one to a row. */
+/* On a phone, components two to a row on lower stages, so the gallery stays short: each drawn as
+   small as fits its stage's width, but no smaller than 0.7 of its own size (useFit.ts), laid out
+   as wide as the stage shows at that scale; what is larger still is cut off at its end and its
+   foot, fading out, such as a popup under its trigger, the trigger and the top of the popup in
+   view. A pattern's scene keeps its taller tile, one to a row. */
 @container catalogue-gallery (width < 27.25rem) {
+  .catalogue-gallery > * + * {
+    margin-block-start: var(--env-space-9);
+  }
   .catalogue-gallery-grid:not([data-scenes]) {
     --catalogue-own-least: 0rem;
+    --catalogue-own-floor: 0.7;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     row-gap: var(--env-space-5);
     column-gap: var(--env-space-4);
@@ -58,6 +67,11 @@
   }
   .catalogue-gallery-grid:not([data-scenes]) .catalogue-related-crop {
     clip-path: inset(0 round var(--env-radius-surface));
+  }
+  .catalogue-gallery-grid:not([data-scenes])
+    .catalogue-gallery-stage.catalogue-gallery-stage
+    .catalogue-related-canvas[data-own-size] {
+    inline-size: min(14rem, (100% - 2rem) / var(--catalogue-own-floor));
   }
 }
 

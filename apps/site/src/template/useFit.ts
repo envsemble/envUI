@@ -240,12 +240,17 @@ export function useFit(
       );
       // At its own size, unless the stage is narrower than the least width it is drawn whole at,
       // `--catalogue-own-least` (Gallery.css), as four to a row: then drawn smaller, by one scale
-      // for every tile, as every stage is as wide. On a phone, none: what is wider is cut off.
+      // for every tile, as every stage is as wide. On a phone, each is drawn as small as fits its
+      // stage's width, but no smaller than `--catalogue-own-floor`: what is wider still is cut off.
+      const canvasStyle = getComputedStyle(canvasElement);
       const least =
-        parseFloat(getComputedStyle(canvasElement).getPropertyValue('--catalogue-own-least')) *
+        parseFloat(canvasStyle.getPropertyValue('--catalogue-own-least')) *
         parseFloat(getComputedStyle(document.documentElement).fontSize);
+      const floor = parseFloat(canvasStyle.getPropertyValue('--catalogue-own-floor'));
       const scale = ownSize
-        ? Math.min(1, width / least)
+        ? floor > 0
+          ? Math.max(floor, Math.min(1, width / (right - left)))
+          : Math.min(1, width / least)
         : legible
           ? Math.max(legibleScale, Math.min(1, windowScale))
           : tile

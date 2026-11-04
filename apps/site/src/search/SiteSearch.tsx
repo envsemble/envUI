@@ -113,6 +113,17 @@ function suggestionsFor(page: RoutePage | undefined): CommandPaletteItem[] {
   return suggestions;
 }
 
+/**
+ * Where a result found as a whole page opens: in the part the reader is in, the Docs or the
+ * catalogue, where that part has a page of the subject. A result at a place on a page, such as a
+ * prop's row, opens where that place is.
+ */
+function inReadersPart(route: string | undefined, page: RoutePage | undefined) {
+  const target = route && !route.includes('?') ? findPage(route) : undefined;
+  if (!page || !target || target.area === page.area) return route;
+  return counterpartOf(target) ?? route;
+}
+
 /** Results considered, and shown in each group. */
 const resultLimit = 60;
 const groupLimit = 8;
@@ -206,7 +217,7 @@ type IndexState =
 /**
  * Searches the catalogue and the Docs in envUI's CommandPalette: components by their names and aliases,
  * their props, the tokens and the foundations, patterns and guides, each page once. A result opens
- * its page, and the prop or token on it; with Ctrl or ⌘ held, in a new tab. Before people type, it suggests a few pages, the current page's counterpart first.
+ * its page, in the part the reader is in where both show it, and the prop or token on it; with Ctrl or ⌘ held, in a new tab. Before people type, it suggests a few pages, the current page's counterpart first.
  */
 export function SiteSearch({
   open,
@@ -333,7 +344,10 @@ export function SiteSearch({
         const result = results.find(({ id }) => id === item.id);
         // A suggestion's id is its route.
         const route = result
-          ? routeOfDocument(result.page, { view: result.view, section: result.section })
+          ? inReadersPart(
+              routeOfDocument(result.page, { view: result.view, section: result.section }),
+              page,
+            )
           : suggestions.find(({ id }) => id === item.id)?.id;
         if (!route) return;
         onOpenChange(false);
