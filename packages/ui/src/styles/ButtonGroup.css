@@ -18,8 +18,11 @@
     outline-offset: -0.125rem;
   }
 
+  /* Connected buttons can't move to a line of their own, so in a narrow group a label may break inside
+     a long word rather than push the group past its container. */
   .env-button-group > .env-button {
     block-size: auto;
+    overflow-wrap: anywhere;
   }
 
   .env-button-group
