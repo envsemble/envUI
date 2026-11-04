@@ -14,6 +14,7 @@ import { CardsFixture } from './Cards.js';
 import { ColorPickerFixture } from './ColorPicker.js';
 import { MarkdownEditingFixture, MarkdownExtensionsFixture } from './MarkdownEditors.js';
 import { AdoptionFixture } from './Adoption.js';
+import { AppScreenFixture } from './AppScreen.js';
 import { ScaffoldFixture, ScrollKeysFixture } from './Scaffolds.js';
 import { ScaffoldPanesFixture } from './ScaffoldPanes.js';
 import { PanesFixture } from './Panes.js';
@@ -149,6 +150,9 @@ export default function App() {
   // Root theming changes the host document, so adoption mounts on its own, at the top of the page
   // like an application's provider.
   if (fixture === 'adoption') return <AdoptionFixture />;
+  // Product screens for review theme the document root through their own provider, as an
+  // application does.
+  if (fixture === 'app-screen') return <AppScreenFixture />;
   // The contrast boundaries test the default outside any Theme, and the provider themes the root.
   if (fixture === 'theme-contrast') return <ThemeContrastFixture />;
   if (fixture === 'theme-contrast-provider') return <ThemeContrastProviderFixture />;
