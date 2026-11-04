@@ -7,6 +7,8 @@ import { Column, Grid, Row } from '../../foundations/Layout.js';
 import { Surface, type SurfaceProps } from '../../foundations/Surface.js';
 import { Theme, type ThemeProps } from '../../foundations/Theme.js';
 import { SkeletonScope } from '../../foundations/SkeletonScope.js';
+import { usePortalContainer } from '../../internal/PortalContainerContext.js';
+import { useModalPresence } from './useModalPresence.js';
 import '../../styles/Base.css';
 import '../../styles/Dialog.css';
 
@@ -25,8 +27,12 @@ export function OverlayTheme({ className, ...props }: ThemeProps) {
   return <Theme {...props} className={classNames('env-overlay-theme', className)} />;
 }
 
-/** The backdrop behind a modal surface, which fades in and out. */
+/**
+ * The backdrop behind a modal surface, which fades in and out. While it is mounted the surface counts
+ * as open in its portal container, so toasts there wait until it has closed.
+ */
 export function DialogBackdrop({ className }: { className?: string }) {
+  useModalPresence(usePortalContainer().container);
   return <BaseDialog.Backdrop className={classNames('env-dialog-backdrop', className)} />;
 }
 

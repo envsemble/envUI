@@ -401,3 +401,27 @@ test.describe('on a coarse pointer', () => {
       await expect(dismiss).toHaveCSS('height', '44px');
     });
 });
+
+test('notices wait while a modal dialog is open and then show for their full duration', async ({
+  page,
+}) => {
+  await page.getByTestId('toast-neutral').click();
+  await expect(notice(page, 'Neutral notice')).toBeVisible();
+  await page.getByTestId('toast-dialog').click();
+  // The notice that was showing steps back, and one shown from the dialog waits too.
+  await expect(notice(page, 'Neutral notice')).toBeHidden();
+  await page.getByTestId('toast-from-dialog').click();
+  await expect(notice(page, 'Notice from a dialog')).toBeHidden();
+  await expect(page.locator('.env-toast-announcer').first()).not.toContainText(
+    'Notice from a dialog',
+  );
+  await expect(page.locator('.env-toast-queued-count')).toHaveCount(0);
+  // Past the default 5 s, nothing has left while it waited.
+  await page.clock.fastForward(6_000);
+  await page.getByTestId('toast-dialog-close').click();
+  await expect(notice(page, 'Neutral notice')).toBeVisible();
+  await expect(notice(page, 'Notice from a dialog')).toBeVisible();
+  await expect(page.locator('.env-toast-announcer').first()).toContainText('Notice from a dialog');
+  await page.clock.fastForward(6_000);
+  await expect(notice(page, 'Notice from a dialog')).toHaveCount(0);
+});
