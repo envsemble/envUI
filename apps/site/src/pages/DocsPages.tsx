@@ -9,7 +9,6 @@ import { routeHref } from '../navigation/Address';
 import { OtherPartButton } from '../navigation/OtherPart';
 import { lazyPart } from '../template/LoadBoundary';
 import { ExampleSource } from '../figures/LiveExample';
-import { OverviewFigure } from '../figures/Figures';
 import { partsOf } from '../template/Parts';
 import { providesOf } from '../template/Provides';
 import { PropsTables } from '../template/PropsTables';
@@ -518,10 +517,10 @@ function Strings({ document }: { document: Document }) {
  * its page in the catalogue rather than repeating it: how to import it, its common uses, how its
  * parts compose and how to customize it, from the page's Compose; what the
  * application and envUI provide, which the catalogue leaves out; then, as reference, its props,
- * part names and color properties, and its changelog. A component's opens with its catalogue's
- * first overview figure, the component itself; no other figures of the catalogue, and no
- * Related. Field, which has no page in the catalogue, shows its whole page here, on the
- * page, as "Build your own field".
+ * part names and color properties, and its changelog. It shows none of the catalogue's figures,
+ * whose Overview shows the component with its code, and no Related: the page goes from its header
+ * to Import and Usage. Field, which has no page in the catalogue, shows its whole page here, on
+ * the page, as "Build your own field".
  */
 export function DocsReferencePage({ page }: { page: RoutePage }) {
   const document = useDocument(page.document!);
@@ -566,9 +565,6 @@ export function DocsReferencePage({ page }: { page: RoutePage }) {
           application provide in place. */}
       {!cataloguePage && <TemplateContent document={document} provides related={false} />}
       <Column gap={8} className="site-article docs-api" aria-busy={revealed < 2 || undefined}>
-        {/* A component, shown first, as its catalogue's Overview shows it, so the code below has
-            something to point at. */}
-        {cataloguePage && !pattern && <OverviewFigure page={document} />}
         {guide}
         {/* Until then, the reference is its outline, its headings hidden in place, which the
             page's contents list from the start (SectionOutline). */}

@@ -115,8 +115,11 @@ function AnatomyStage({
   page: string;
   name: string;
   legend: AnatomyLegendItem[];
-  /** Hears the legend's items in the order the callouts number them. */
-  onOrder: (order: number[]) => void;
+  /**
+   * Hears the legend's items in the order the callouts number them, and those the legend names
+   * alone, such as a field around its control.
+   */
+  onOrder: (order: number[], whole: number[]) => void;
   open: boolean;
   /** Whether the subject shows half as large again, though it isn't small. */
   enlarged: boolean;
@@ -149,13 +152,17 @@ function AnatomyStage({
         // Open overlays take the room they need; they are never small.
         if (!open && !variants) enlarge(subjectElement, enlarged);
         const measured = variants
-          ? measureVariants(stageElement, subjectElement, legend, labels)
-          : { callouts: measure(stageElement, subjectElement, legend), room: undefined };
+          ? { ...measureVariants(stageElement, subjectElement, legend, labels), whole: [] }
+          : { ...measure(stageElement, subjectElement, legend), room: undefined };
         const next = measured.callouts;
         setCallouts((current) =>
           JSON.stringify(current) === JSON.stringify(next) ? current : next,
         );
-        if (!variants) onOrder(next.map(({ index }) => index));
+        if (!variants)
+          onOrder(
+            next.map(({ index }) => index),
+            measured.whole,
+          );
         const needed = measured.room;
         if (needed)
           setRoom((current) =>
@@ -285,7 +292,8 @@ function legendText(item: AnatomyLegendItem) {
 
 /**
  * An anatomy figure: the live component in the reader's theme, a numbered callout on each part its
- * legend names, by class name, and the legend of part names, with the example's code below. A
+ * legend names, by class name, but one the figure shows whole, such as a field around its control,
+ * which the legend names alone, and the legend of part names, with the example's code below. A
  * variants figure names each variant in plain text beside or under it instead, and
  * shows the option table after it as its legend, each name followed by what it is for; without
  * one, its names are for assistive technology alone.
@@ -331,16 +339,21 @@ export function AnatomyFigure({
 }) {
   const [items] = useState(() => (legend?.length ? legend : legendOf(of ?? '')));
   // The legend in the callouts' order, which follows the figure as it is read; the items the
-  // figure shows no callout for after them.
+  // figure shows no callout for after them, those it names alone, such as a field around its
+  // control, unnumbered.
   const [order, setOrder] = useState<number[]>([]);
-  const onOrder = useCallback(
-    (next: number[]) => setOrder((current) => (current.join() === next.join() ? current : next)),
-    [],
-  );
+  const [whole, setWhole] = useState<number[]>([]);
+  const onOrder = useCallback((next: number[], nextWhole: number[]) => {
+    setOrder((current) => (current.join() === next.join() ? current : next));
+    setWhole((current) => (current.join() === nextWhole.join() ? current : nextWhole));
+  }, []);
   const ordered = [
     ...order.filter((index) => index < items.length),
-    ...items.map((_, index) => index).filter((index) => !order.includes(index)),
+    ...items
+      .map((_, index) => index)
+      .filter((index) => !order.includes(index) && !whole.includes(index)),
   ];
+  const named = whole.filter((index) => index < items.length && !order.includes(index));
   return (
     <figure className={variants ? 'catalogue-variants' : 'site-anatomy'} aria-label={title}>
       <AnatomyStage
@@ -372,6 +385,16 @@ export function AnatomyFigure({
                 <span className="site-anatomy-number" aria-hidden="true">
                   {rank + 1}
                 </span>
+                <Documentation
+                  markdown={legendText(items[index]!)}
+                  path={`components/${page}.md`}
+                />
+              </li>
+            ))}
+            {/* A part the figure shows whole, with no callout, by name alone. */}
+            {named.map((index) => (
+              <li key={`${index}-${items[index]!.part}`} data-whole="">
+                <span className="site-anatomy-number" aria-hidden="true" />
                 <Documentation
                   markdown={legendText(items[index]!)}
                   path={`components/${page}.md`}

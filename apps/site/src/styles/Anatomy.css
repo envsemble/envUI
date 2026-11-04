@@ -86,9 +86,9 @@
   stroke-width: 3px;
 }
 
-/* A callout's tag and the legend's number: quiet, a light tint of the text color over the canvas
-   or the page, so the component stays the loudest thing in the figure. Its edge, transparent,
-   shows where forced colors drop the tint. */
+/* A callout's tag and the legend's number: quiet, envUI's blue on a light tint of it, so the eye
+   finds the numbers and the component stays the loudest thing in the figure. Its edge,
+   transparent, shows where forced colors drop the tint. */
 .site-anatomy-badge,
 .site-anatomy-number {
   display: grid;
@@ -98,12 +98,8 @@
   block-size: 1.5rem;
   border: 1px solid transparent;
   border-radius: var(--env-radius-lg);
-  background: color-mix(
-    in oklch,
-    var(--env-color-fg-default) 10%,
-    var(--catalogue-card-fill, var(--env-color-bg-page))
-  );
-  color: var(--env-color-fg-default);
+  background: var(--env-color-bg-primary-soft);
+  color: var(--env-color-fg-primary);
   font: var(--env-type-body-sm);
   font-weight: var(--env-font-weight-medium);
   font-variant-numeric: tabular-nums;
@@ -162,6 +158,12 @@
 
 .site-anatomy-legend p {
   margin: 0;
+}
+
+/* A part the figure shows whole, such as a field around its control, named without a number: its
+   number's place stays, empty, so the names line up. */
+.site-anatomy-legend > li[data-whole] > .site-anatomy-number {
+  background: none;
 }
 
 /* An option table in the catalogue, such as a component's variants or sizes: a legend laid out

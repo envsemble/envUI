@@ -9,7 +9,7 @@ import type {
   StageFill,
 } from '../shared/DocumentationTypes';
 import { Documentation } from '../pages/Documentation';
-import type { Documentation as Document } from '../pages/PageModel';
+import { componentGroups, type Documentation as Document } from '../pages/PageModel';
 import { AnatomyFigure } from './AnatomyFigure';
 import { ExampleCode, ExampleRender, keepLinksInPlace, LiveExample } from './LiveExample';
 import { OpenExample } from './OpenExample';
@@ -162,12 +162,15 @@ function Figure({
   block,
   options,
   live = false,
+  codeOpen = false,
 }: {
   page: Document;
   block: FigureBlock;
   options?: OptionTable;
   /** Whether a figure shown open is live, as the Overview's are: the component, open, to use. */
   live?: boolean;
+  /** Whether its code starts open, as a component's first overview example's does. */
+  codeOpen?: boolean;
 }) {
   // A section waiting its turn to show renders its headings alone (SectionOutline).
   if (useSectionOutline()) return null;
@@ -217,19 +220,9 @@ function Figure({
       live={live}
       stage={block.stage}
       motion={block.motion}
+      codeOpen={codeOpen}
     />
   );
-}
-
-/**
- * A page's first overview figure, the component at a glance, as its Overview shows it: what a
- * component's page in the Docs shows above its code.
- */
-export function OverviewFigure({ page }: { page: Document }) {
-  const block = page.sections
-    ?.find((section) => section.id === 'overview')
-    ?.blocks.find((item): item is ExampleBlock => item.kind === 'example');
-  return block ? <Figure page={page} block={block} live /> : null;
 }
 
 /**
@@ -331,6 +324,20 @@ export function FigureSection({
   const groups = groupFigures(blocks, useFoundationFigures(page.id));
   // The Overview's figures shown open are the components at rest, open, which people can use.
   const live = section.id === 'overview';
+  // A component's first overview example shows its code open, right under it; the rest fold theirs.
+  const codeOpen =
+    live && componentGroups.some((group) => group === page.group)
+      ? section.blocks.find((block): block is ExampleBlock => block.kind === 'example')?.name
+      : undefined;
+  const figure = (block: FigureBlock, key?: string | number) => (
+    <Figure
+      key={key}
+      page={page}
+      block={block}
+      live={live}
+      codeOpen={block.kind === 'example' && block.name === codeOpen}
+    />
+  );
   const outline = useSectionOutline();
   /** Subsections of text shown beside the figure at an index of groups. */
   const beside = new Map<number, string>();
@@ -358,13 +365,13 @@ export function FigureSection({
           <div>
             <Documentation markdown={text} path={page.path} />
           </div>
-          <Figure page={page} block={group[0]} live={live} />
+          {figure(group[0])}
         </div>,
       );
     else if (Array.isArray(group))
       content.push(
         group.length === 1 ? (
-          <Figure key={index} page={page} block={group[0]} live={live} />
+          figure(group[0], index)
         ) : (
           <div
             key={index}
@@ -374,9 +381,7 @@ export function FigureSection({
               group.every((block) => block.kind === 'example' && block.role) || undefined
             }
           >
-            {group.map((block) => (
-              <Figure key={block.name} page={page} block={block} live={live} />
-            ))}
+            {group.map((block) => figure(block, block.name))}
           </div>
         ),
       );
@@ -430,6 +435,7 @@ export function FigureSection({
           block={group}
           options={options.get(group.name)}
           live={live}
+          codeOpen={group.kind === 'example' && group.name === codeOpen}
         />,
       );
     else if (group.kind === 'specimen' && !outline)

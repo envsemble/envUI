@@ -19,7 +19,7 @@ export default function States() {
             error="Use lowercase letters and hyphens."
           />
         </Specimen>
-        <Specimen title="Read only">
+        <Specimen title="Read-only">
           <TextField label="Project ID" defaultValue="PRJ-2041" readOnly />
         </Specimen>
         <Specimen title="Disabled">
