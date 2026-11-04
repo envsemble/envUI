@@ -211,14 +211,17 @@
     outline: 2px solid var(--env-menu-item-ring, transparent);
     outline-offset: -2px;
   }
-  /* An unavailable item dims its label, icon, end and shortcut; its description, which often says
-     why it is unavailable, keeps the muted text color, so it stays readable. */
+  /* An unavailable item dims its icon, end and shortcut, and its label takes the muted text color,
+     so it still sits above its description, which often says why it is unavailable and keeps the
+     muted color and its smaller size, readable. */
   .env-menu-item:is([data-disabled], [aria-disabled='true']) {
     cursor: default;
   }
-  .env-menu-item:is([data-disabled], [aria-disabled='true']) > :not(.env-menu-item-text),
-  .env-menu-item:is([data-disabled], [aria-disabled='true']) .env-menu-item-label {
+  .env-menu-item:is([data-disabled], [aria-disabled='true']) > :not(.env-menu-item-text) {
     opacity: var(--env-state-disabled-opacity);
+  }
+  .env-menu-item:is([data-disabled], [aria-disabled='true']) .env-menu-item-label {
+    color: var(--env-color-fg-muted);
   }
   /* A separator is space as tall as the gap between groups, with no line: popups have no hairlines. */
   .env-menu-separator {

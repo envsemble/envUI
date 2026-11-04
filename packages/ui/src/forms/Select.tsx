@@ -2,6 +2,7 @@
 
 import {
   useEffect,
+  useId,
   useRef,
   useState,
   type ButtonHTMLAttributes,
@@ -40,6 +41,8 @@ export interface SelectItem {
   value: string;
   /** The option's name in the list and, once chosen, on the trigger; typing it jumps to the option. */
   label: string;
+  /** A muted second line under the label in the list, such as why the option is unavailable. */
+  description?: string;
   /** Show the option but don't let people choose it; the keyboard can still highlight it. */
   disabled?: boolean;
 }
@@ -62,7 +65,10 @@ export interface SelectProps
   className?: string;
   /** Styles of the field's root element. */
   style?: CSSProperties;
-  /** The options of the list, in order, each with a value, a label and whether it is disabled. */
+  /**
+   * The options of the list, in order, each with a value, a label, an optional description and
+   * whether it is disabled.
+   */
   items: readonly SelectItem[];
   /**
    * The chosen option's value in a controlled select, or null for none, which shows the
@@ -128,6 +134,39 @@ const popupParts = {
   Positioner: SelectPositioner,
   Popup: BaseSelect.Popup,
 };
+
+/** An option row: a check mark slot, the label and its description. */
+function SelectOption({ item }: { item: SelectItem }) {
+  const descriptionId = useId();
+  return (
+    <ListRow
+      render={
+        <BaseSelect.Item
+          value={item.value}
+          label={item.label}
+          disabled={item.disabled}
+          aria-describedby={item.description ? descriptionId : undefined}
+        />
+      }
+      className="env-select-item"
+      // A check mark shows the selected option; the slot keeps the labels aligned.
+      indicator={
+        <BaseSelect.ItemIndicator className="env-icon env-select-item-indicator">
+          <IconCheck />
+        </BaseSelect.ItemIndicator>
+      }
+      label={<BaseSelect.ItemText>{item.label}</BaseSelect.ItemText>}
+      description={
+        item.description ? (
+          // Announced through aria-describedby rather than as part of the option's name.
+          <span id={descriptionId} aria-hidden="true">
+            {item.description}
+          </span>
+        ) : undefined
+      }
+    />
+  );
+}
 
 /**
  * One choice from a list that stays collapsed until opened: an outlined field, as TextField is,
@@ -303,20 +342,7 @@ export function Select({
         >
           <BaseSelect.List ref={listRef} render={<Grid />} className="env-select-list">
             {items.map((item) => (
-              <ListRow
-                key={item.value}
-                render={
-                  <BaseSelect.Item value={item.value} label={item.label} disabled={item.disabled} />
-                }
-                className="env-select-item"
-                // A check mark shows the selected option; the slot keeps the labels aligned.
-                indicator={
-                  <BaseSelect.ItemIndicator className="env-icon env-select-item-indicator">
-                    <IconCheck />
-                  </BaseSelect.ItemIndicator>
-                }
-                label={<BaseSelect.ItemText>{item.label}</BaseSelect.ItemText>}
-              />
+              <SelectOption key={item.value} item={item} />
             ))}
           </BaseSelect.List>
         </PopupSurface>
