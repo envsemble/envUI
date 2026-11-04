@@ -319,7 +319,7 @@ The galleries and Related show each page by a tile: `apps/site/src/tiles/<Page>.
 
 - **The component alone, large and centred**, with as little else as it needs to be recognised.
 - **A still that is its animation's first frame.** On hover or focus it plays a short script of the component in use, and on a touch screen the tile nearest the middle plays once scrolling settles. The script ends where it began.
-- **Its window** is 10 by 7.5 rem; a component that needs another takes one in `tileWindows` (`apps/site/src/tiles/Tiles.ts`).
+- **Its window** is 14 by 10.5 rem, the same for every tile, so components show at one scale; only a component too large for it takes a larger one in `tileWindows` (`apps/site/src/tiles/Tiles.ts`).
 - **A still with a popup open** keeps it in state and puts it back with `usePointer`'s `onRest`.
 
 ## Pattern pages

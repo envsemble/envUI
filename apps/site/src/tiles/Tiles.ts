@@ -19,9 +19,10 @@ const pascal = (id: string) =>
   id.replace(/(^|-)([a-z\d])/g, (_, __: string, letter: string) => letter.toUpperCase());
 
 /**
- * The windows of the tiles whose component doesn't suit the tiles' 10 by 7.5 rem, by page id: a
- * larger one, drawn smaller, for a component too wide or tall, such as a toolbar or a menu open
- * below its button; a smaller one, drawn larger, for a small one, such as a key.
+ * The windows of the tiles whose component doesn't fit the tiles' 14 by 10.5 rem, by page id: a
+ * larger one, drawn smaller, such as a calendar's. Every other tile shares the one window, so
+ * components show at one scale across the galleries, about their own size; only the drawings of
+ * the layout pages take a smaller one, drawn larger, as a drawing has no size of its own.
  */
 export const tileWindows: Readonly<Record<string, { width: number; height: number }>> = {
   toast: { width: 16, height: 12 },
@@ -30,49 +31,27 @@ export const tileWindows: Readonly<Record<string, { width: number; height: numbe
   scaffold: { width: 17, height: 12.75 },
   panes: { width: 40, height: 30 },
   'panel-dock': { width: 17, height: 12.75 },
-  kbd: { width: 7, height: 5.25 },
   // The layout drawings, each drawn about as large as LineArt's, whose lines they share.
+  'line-art': { width: 10, height: 7.5 },
   box: { width: 9.4, height: 7.05 },
   row: { width: 8.4, height: 6.3 },
   column: { width: 9.5, height: 7.125 },
   grid: { width: 8.8, height: 6.6 },
-  markdown: { width: 6, height: 4.5 },
-  message: { width: 12, height: 9 },
-  code: { width: 12, height: 9 },
-  composer: { width: 12, height: 9 },
   accordion: { width: 15, height: 11.25 },
-  alert: { width: 14, height: 10.5 },
   'navigation-drawer': { width: 17, height: 12.75 },
   tabs: { width: 15, height: 11.25 },
   breadcrumbs: { width: 15, height: 11.25 },
-  pager: { width: 14, height: 10.5 },
-  pagination: { width: 13, height: 9.75 },
-  tree: { width: 13, height: 9.75 },
-  'table-of-contents': { width: 11, height: 8.25 },
   'document-tabs': { width: 18, height: 13.5 },
   dialog: { width: 20, height: 15 },
   'confirm-dialog': { width: 16, height: 12 },
   sheet: { width: 20, height: 15 },
-  popover: { width: 14, height: 10.5 },
-  'hover-card': { width: 14, height: 10.5 },
-  toolbar: { width: 12, height: 9 },
-  menu: { width: 14, height: 10.5 },
-  combobox: { width: 14, height: 10.5 },
-  'segmented-control': { width: 12, height: 9 },
-  menubar: { width: 14, height: 10.5 },
   'command-palette': { width: 20, height: 15 },
   'date-picker': { width: 20, height: 15 },
   'time-picker': { width: 24, height: 18 },
   'month-picker': { width: 27, height: 20.25 },
   'color-picker': { width: 22, height: 16.5 },
-  'drop-zone': { width: 14, height: 10.5 },
-  'rich-text': { width: 11.5, height: 8.625 },
   table: { width: 16, height: 12 },
   list: { width: 16, height: 12 },
-  'calendar-heatmap': { width: 13, height: 9.75 },
-  'relative-time': { width: 12, height: 9 },
-  badge: { width: 8, height: 6 },
-  rating: { width: 9, height: 6.75 },
   'key-figures': { width: 18, height: 13.5 },
   loading: { width: 17, height: 12.75 },
   'empty-states': { width: 18, height: 13.5 },
