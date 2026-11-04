@@ -170,6 +170,16 @@ body {
 .site-sheet-close {
   flex: none;
 }
+/* Search (SiteSearch.tsx) opens over pages of strong color, such as a banner's picture or a
+   figure: its frosted fill covers nearly all of what is behind, so the blur of that color doesn't
+   smear through its results. Where popups are solid, it is too. */
+.site-search {
+  background: color-mix(
+    in srgb,
+    var(--env-popup-fill) max(var(--env-popup-opacity), 98%),
+    transparent
+  );
+}
 /* The search shortcut's keys show for a keyboard alone: a touch screen has none to press. */
 @media (pointer: coarse) {
   .site-search-keys {

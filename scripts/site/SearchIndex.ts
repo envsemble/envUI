@@ -251,21 +251,8 @@ export function searchDocuments({
       page: document.id,
       area: kind === 'guide' || docsOnlyPages.has(document.id) ? 'docs' : 'catalogue',
     });
-    // A foundation's written guidance is its guide in the Docs, beside its page in the catalogue.
-    if (kind === 'foundation')
-      results.push({
-        id: `guide:${document.id}`,
-        kind: 'guide',
-        title: document.title,
-        detail: 'Foundation guide',
-        aliases: '',
-        keywords: '',
-        owner: '',
-        text: document.summary,
-        page: document.id,
-        area: 'docs',
-        view: 'usage',
-      });
+    // A page the catalogue and the Docs both show, such as a foundation's, is one result: its page in
+    // the catalogue, whose Docs button opens the other.
   }
   const pages = new Set(
     results.filter(({ id }) => id.startsWith('page:')).map(({ title }) => title),
@@ -360,8 +347,6 @@ export function buildSearchIndex({ documents, props, tokens = readTokens() }: Se
  * its name too (color.fg.muted), a color by its role words too (fg muted). A query that is one of them ranks the document first.
  */
 function withNames(document: SearchDocument) {
-  // A foundation's guide in the Docs shares its page's title; the page in the catalogue takes the name.
-  if (document.id.startsWith('guide:')) return { ...document, names: [] };
   const parted = !['export', 'prop', 'token'].includes(document.kind);
   const names = [
     // A prop's name alone is no whole name of it: many exports share it, such as variant.

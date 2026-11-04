@@ -210,7 +210,6 @@ test('a result names its area: the catalogue, or the Docs for the reference', ()
   assert.equal(area('page:button'), 'catalogue');
   assert.equal(area('page:loading'), 'catalogue');
   assert.equal(area('page:colors'), 'catalogue');
-  assert.equal(area('guide:colors'), 'docs');
   assert.equal(area('page:field'), 'docs');
   assert.equal(area('page:setup'), 'docs');
   // Dev mode is the Docs' alone: its page on the Site folded into its guide.
@@ -224,9 +223,9 @@ test('a result names its area: the catalogue, or the Docs for the reference', ()
   const inDocs = new Set(['docs', 'tokens', 'full-changelog']);
   for (const { page, area: where } of standalonePages)
     assert.equal(where, inDocs.has(page) ? 'docs' : 'catalogue', page);
-  // A foundation's page in the catalogue ranks above its guide in the Docs.
+  // A foundation is one result, its page in the catalogue, whose Docs button opens its guide.
   assert.deepEqual(best('colors and themes'), ['page:colors']);
-  assert.ok(best('colors and themes', 3).includes('guide:colors'));
+  assert.ok(!records.some(({ id }) => id.startsWith('guide:')));
 });
 
 test('a pattern or template names its kind, and what it composes finds it', () => {

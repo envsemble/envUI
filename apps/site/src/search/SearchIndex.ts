@@ -9,6 +9,8 @@ export interface SearchResult {
   id: string;
   kind: 'component' | 'export' | 'prop' | 'token' | 'foundation' | 'pattern' | 'guide' | 'page';
   title: string;
+  /** The export a prop belongs to, such as Button or Table.Root; empty for anything else. */
+  owner: string;
   detail: string;
   /** The document id of the page it is on, such as button, or a site page's, such as tokens. */
   page: string;
@@ -28,10 +30,11 @@ const index = MiniSearch.loadJSON(serializedIndex, indexOptions);
 export function searchDocumentation(query: string, limit: number): SearchResult[] {
   return searchIndex(index, query)
     .slice(0, limit)
-    .map(({ id, kind, title, detail, page, area, view, section, match }) => ({
+    .map(({ id, kind, title, owner, detail, page, area, view, section, match }) => ({
       id,
       kind,
       title,
+      owner: owner ?? '',
       detail,
       page,
       area,
