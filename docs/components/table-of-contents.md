@@ -73,7 +73,7 @@ Not shown: the sections passed, their labels as quiet as those still to come.
 
 ### The reader's place
 
-One shape down the side of the list bulges beside the section the reader is in, in one quiet color.
+One shape down the side of the list bulges beside the section the reader is in, in a quiet tint of the primary color.
 
 - It travels to the next section with a little give: it stretches as it goes and settles with a short wobble, then stays still.
 - It moves at once, without the wobble, where reduced motion is preferred.
@@ -181,5 +181,6 @@ The reader's place is `env-table-of-contents-wave`, an SVG hidden from assistive
 
 ## Changelog
 
+- **1.0.0-prerelease.6**: The reader's place takes a quiet tint of the primary color rather than gray; its shape and motion are unchanged.
 - **1.0.0-prerelease.5**: The reader's place is one shape down the side of the list instead of a dash before each section, in one color: straight along the list's start and bulging broadly toward the labels beside the current section, thin a few sections away. It moves on a spring, stretching as it travels and settling with a short wobble, at once under reduced motion. The labels sit a little further in. Inside a transformed or zoomed container, the current section is measured in the scrolling area's own pixels.
 - **1.0.0**: TableOfContents: the page's headings or sections of your own, nested, with the current section marked as the reader scrolls.
