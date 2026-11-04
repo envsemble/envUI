@@ -129,9 +129,9 @@ test('the foundation and pattern pages show no technical text, in their words or
         await expect(
           page.locator('.site-anatomy-badge, .catalogue-marked-names > li').first(),
         ).toBeVisible();
-      // Docs opens the foundation's page in the Docs, as it does for a component.
+      // Code opens the foundation's page in the Docs, as it does for a component.
       await expect(
-        page.locator('.site-page-header').getByRole('link', { name: 'Docs', exact: true }),
+        page.locator('.site-page-header').getByRole('link', { name: 'Code', exact: true }),
       ).toHaveAttribute('href', `/docs/${path}`);
     } else await expect(page.locator('.site-when').first()).toBeVisible();
     expect(technicalOf(await catalogueWords(page)), `${path} shows technical text`).toEqual([]);

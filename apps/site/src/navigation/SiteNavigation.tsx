@@ -33,7 +33,7 @@ import {
   type CatalogueSection,
 } from './SiteRoutes';
 import { docsRoute, homeRoute, routeHref } from './Address';
-import { otherPart } from './OtherPart';
+import { keepSection, otherPart } from './OtherPart';
 
 /** The icon of each of the catalogue's destinations in its rail. */
 const sectionIcons: Record<CatalogueSection, typeof IconHome> = {
@@ -370,7 +370,8 @@ export function DocsNavigation({
  * The page's own controls at its top end, quiet ghost buttons that stay in the corner as the page
  * scrolls, on a small pill of the page's color: the other part, the Docs from the catalogue and
  * the catalogue from the Docs, at the page of the same subject there (otherPartRoute), and the
- * Display menu, where the theme, contrast, scale and motion are. Below an expanded window the other part
+ * Display menu, where the theme, contrast, scale and motion are. The other part keeps the reader's
+ * section where its page has it too (keepSection). Below an expanded window the other part
  * keeps its name, without its icon, and Display is an icon button with a tooltip.
  */
 export function PageActions({ page, area }: { page?: RoutePage; area: Area }) {
@@ -380,13 +381,13 @@ export function PageActions({ page, area }: { page?: RoutePage; area: Area }) {
     <div className="site-page-actions">
       <div className="site-page-actions-bar">
         <span className="site-wide-only">
-          <Button variant="ghost" href={href} startIcon={<Icon />}>
+          <Button variant="ghost" href={href} startIcon={<Icon />} onClick={keepSection}>
             {label}
           </Button>
           <DisplayMenu />
         </span>
         <span className="site-narrow-only">
-          <Button variant="ghost" href={href}>
+          <Button variant="ghost" href={href} onClick={keepSection}>
             {label}
           </Button>
           <DisplayMenu iconOnly />

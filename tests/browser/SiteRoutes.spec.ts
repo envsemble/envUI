@@ -223,6 +223,32 @@ test("the pager and the drawer open a page at its top, and a section's address a
   await expect(heading).toBeInViewport();
 });
 
+test("the Design and Code switch keeps the reader's section where the other page has it, else opens at the top", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  const body = page.locator('#site-main');
+  const partSwitch = page.getByRole('navigation', { name: 'Design or code' });
+  // A section both pages of the pattern have, named by the address, as a contents link writes it.
+  await page.goto(`${siteDevUrl}/docs/patterns/forms#sending`);
+  await partSwitch.getByRole('link', { name: 'Design', exact: true }).click();
+  await expect(page).toHaveURL(`${siteDevUrl}/patterns/forms#sending`);
+  await expect(page.locator('#sending')).toBeInViewport();
+  // The corner's way to the other part keeps it too, from where the reader has scrolled to.
+  await page.goto(`${siteDevUrl}/patterns/forms`);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Form layout and validation');
+  await page.locator('#error-summary').evaluate((heading) => heading.scrollIntoView());
+  await page.locator('.site-page-actions').getByRole('link', { name: 'Docs', exact: true }).click();
+  await expect(page).toHaveURL(`${siteDevUrl}/docs/patterns/forms#error-summary`);
+  await expect(page.locator('#error-summary')).toBeInViewport();
+  // A section the other page doesn't have, such as the props, opens it at its top.
+  await goTo(page, '/docs/components/button#props');
+  await partSwitch.getByRole('link', { name: 'Design', exact: true }).click();
+  await expect(page).toHaveURL(`${siteDevUrl}/components/button`);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
+  expect(await body.evaluate((element) => element.scrollTop)).toBe(0);
+});
+
 test(
   'paths support direct links, old hash links and back/forward navigation',
   { tag: '@engines' },
@@ -232,9 +258,9 @@ test(
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Select');
     await expect(page).toHaveURL(/\/docs\/components\/select$/);
     const banner = page.locator('.site-page-header');
-    await banner.getByRole('link', { name: 'Catalogue', exact: true }).click();
+    await banner.getByRole('link', { name: 'Design', exact: true }).click();
     await expect(page).toHaveURL(/\/components\/select$/);
-    await banner.getByRole('link', { name: 'Docs', exact: true }).click();
+    await banner.getByRole('link', { name: 'Code', exact: true }).click();
     await expect(page).toHaveURL(/\/docs\/components\/select$/);
     await page.goBack();
     await expect(page).toHaveURL(/\/components\/select$/);

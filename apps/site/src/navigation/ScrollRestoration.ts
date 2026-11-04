@@ -47,6 +47,25 @@ function anchorOf(main: HTMLElement): Pick<Kept, 'anchor' | 'offset'> {
   return found ? { anchor: found.id, offset: found.getBoundingClientRect().top - top } : {};
 }
 
+/**
+ * The section the reader is in: the last heading or props' row at or above the top quarter of the
+ * body, by its id; none at the page's top, where its banner shows.
+ */
+export function readingAnchor(): string | undefined {
+  const main = body();
+  if (!main || main.scrollTop <= 0) return undefined;
+  const { top, height } = main.getBoundingClientRect();
+  let found: string | undefined;
+  for (const element of main.querySelectorAll<HTMLElement>(anchors)) {
+    if (element.getBoundingClientRect().top > top + height / 4) break;
+    found = element.id;
+  }
+  return found;
+}
+
+/** Whether an element is one that holds the reader's place, a heading or a props' row. */
+export const isAnchor = (element: Element | null) => element?.matches(anchors) ?? false;
+
 /** Writes the body's scroll into the current entry, keeping its other state and its address. */
 export function saveScroll() {
   const main = body();
