@@ -132,16 +132,13 @@
     font: var(--env-font-weight-body) var(--env-font-size-label-sm) / 1.35 var(--env-font-family);
     overflow-wrap: break-word;
   }
+  /* A count at the end, a Badge with one, is its figures alone, in its tone's color, without the
+     pill, through Badge's count hooks, so it can't be taken for a shortcut's key chips. */
   .env-menu-item-end {
     flex: 0 0 auto;
     display: inline-flex;
     align-items: center;
     gap: var(--env-space-1);
-  }
-  /* A count at the end, a Badge with one, is plain muted text in tabular figures, through Badge's
-     count hooks, so it can't be taken for a shortcut's key chips. */
-  .env-menu-item-end {
-    --env-badge-count-fg: var(--env-color-fg-muted);
     --env-badge-count-bg: transparent;
     --env-badge-count-border: none;
   }
@@ -166,7 +163,6 @@
   .env-menu-item:is([data-highlighted], [data-popup-open])
     :is(.env-menu-item-end, .env-menu-item-shortcut) {
     --env-kbd-fg: var(--env-color-fg-default);
-    --env-badge-count-fg: var(--env-color-fg-default);
   }
   .env-menu-item-shortcut {
     flex: 0 0 auto;
