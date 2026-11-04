@@ -406,27 +406,25 @@ export const docsTree: DocsGroup[] = (() => {
   return sections;
 })();
 
-/** One level of a page's trail: its name, and the route it leads to. */
+/** One level of a page's trail: its name, and the route it leads to, where it leads to one. */
 export interface TrailStep {
   label: string;
-  route: string;
+  route?: string;
 }
 
 /**
- * The trail from the Docs' home down to a page of the Docs, for its breadcrumbs: Docs, its section
- * and its group, each leading to its heading on the Docs' home, then the page itself, such as
- * Docs / Components / Actions / Button. A section named as its one page, such as Changelog, is left
- * out.
+ * The trail from the Docs' home down to a page of the Docs, for its breadcrumbs: Docs, leading to
+ * their home, its section and its group, which say where the page is and lead nowhere, as the
+ * navigation beside the page lists their pages, then the page itself, such as Docs / Components /
+ * Actions / Button. A section named as its one page, such as Changelog, is left out.
  */
 export function docsTrail(page: RoutePage): TrailStep[] {
   const steps: TrailStep[] = [{ label: 'Docs', route: docsRoute }];
   if (page.kind === 'docs-home') return steps;
   const section = docsTree.find((entry) => entry.label === page.section);
-  const atHeading = (id: string) => `${docsRoute}?${new URLSearchParams({ section: id })}`;
-  if (section && section.label !== page.title)
-    steps.push({ label: section.label, route: atHeading(section.id) });
+  if (section && section.label !== page.title) steps.push({ label: section.label });
   const group = section?.groups.find((entry) => entry.label === page.group);
-  if (group) steps.push({ label: group.label, route: atHeading(group.id) });
+  if (group) steps.push({ label: group.label });
   steps.push({ label: page.title, route: page.path });
   return steps;
 }

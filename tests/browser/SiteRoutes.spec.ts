@@ -155,11 +155,11 @@ test("the Docs' navigation is a tree of sections and groups, and each page's tra
   expect(trail('docs/foundations/spacing')).toEqual(['Docs', 'Foundations', 'Spacing & density']);
   // A section that is one page of its name is left out.
   expect(trail('docs/changelog')).toEqual(['Docs', 'Changelog']);
-  // Each step leads to its heading on the Docs' home.
+  // Docs leads to their home; the section and group, which the navigation lists, lead nowhere.
   expect(docsTrail(findPage('docs/components/button')!).map(({ route }) => route)).toEqual([
     'docs',
-    'docs?section=components',
-    'docs?section=components-actions',
+    undefined,
+    undefined,
     'docs/components/button',
   ]);
 });

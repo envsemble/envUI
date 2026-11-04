@@ -4,13 +4,7 @@ import { Code } from '@envsemble/envui/content';
 import { AgentLogos } from '../brand/AgentLogos';
 import { EnvUIDocsLogo } from '../brand/EnvUIDocsLogo';
 import { PageHeader } from '../layout/PageHeader';
-import {
-  docsTrail,
-  docsTree,
-  pagesOf,
-  type DocsGroup,
-  type RoutePage,
-} from '../navigation/SiteRoutes';
+import { docsTrail, pagesOf, type RoutePage } from '../navigation/SiteRoutes';
 import { routeHref } from '../navigation/Address';
 import { OtherPartButton } from '../navigation/OtherPart';
 import { lazyPart } from '../template/LoadBoundary';
@@ -51,49 +45,9 @@ const colorPalette = lazyPart(
 /** What people paste into a coding agent to set envUI up: the skill the site serves at /SKILL.md. */
 export const setupPrompt = 'Set up envUI in my app: envui.envsemble.com/SKILL.md';
 
-/** A group's pages, one quiet link to each, in a short list. */
-function PageLinks({ pages }: { pages: readonly RoutePage[] }) {
-  return (
-    <ul className="docs-link-list">
-      {pages.map((entry) => (
-        <li key={entry.path}>
-          <Link href={routeHref(entry.path)} underline={false}>
-            {entry.label ?? entry.title}
-          </Link>
-        </li>
-      ))}
-    </ul>
-  );
-}
-
 /**
- * A section of the Docs' home, as their navigation has it: its pages, then its groups, each under
- * a heading of its own, which a page's breadcrumbs lead to.
- */
-function HomeSection({ section, home }: { section: DocsGroup; home: RoutePage }) {
-  const pages = section.pages.filter((entry) => entry !== home);
-  return (
-    <Column render={<section aria-labelledby={section.id} />} gap={4}>
-      <Text render={<h2 id={section.id} />} variant="title">
-        {section.label}
-      </Text>
-      {pages.length > 0 && <PageLinks pages={pages} />}
-      {section.groups.map((group) => (
-        <Column key={group.id} render={<section aria-labelledby={group.id} />} gap={2}>
-          <Text render={<h3 id={group.id} />} variant="body-sm" emphasis="muted">
-            {group.label}
-          </Text>
-          <PageLinks pages={group.pages} />
-        </Column>
-      ))}
-    </Column>
-  );
-}
-
-/**
- * The Docs' home: what they are, said once in its summary, the prompt that sets envUI up with a
- * coding agent or the guide to setting it up by hand, and each section's pages in short lists, by
- * their groups, as the navigation has them.
+ * The Docs' home: what they are, said once in its summary, and the prompt that sets envUI up with a
+ * coding agent or the guide to setting it up by hand. The navigation beside it lists the pages.
  */
 export function DocsHome({ page }: { page: RoutePage }) {
   return (
@@ -108,10 +62,10 @@ export function DocsHome({ page }: { page: RoutePage }) {
         <Column
           render={<section aria-labelledby="agent-setup" />}
           gap={3}
-          align="center"
+          align="start"
           className="docs-agent-setup"
         >
-          <Text render={<h2 id="agent-setup" />} variant="title">
+          <Text render={<h2 id="agent-setup" />} variant="title" className="site-section-title">
             Set up with your agent
           </Text>
           <Text render={<p />} className="docs-agent-setup-text">
@@ -133,9 +87,6 @@ export function DocsHome({ page }: { page: RoutePage }) {
             Or set it up by hand: <Link href={routeHref('docs/setup')}>Install and set up</Link>
           </Text>
         </Column>
-        {docsTree.map((section) => (
-          <HomeSection key={section.id} section={section} home={page} />
-        ))}
       </Column>
     </>
   );
