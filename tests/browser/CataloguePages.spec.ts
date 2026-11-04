@@ -140,15 +140,6 @@ test('a component page shows plain sections, equal cells and the parts of its an
     'ButtonGroup',
   ]);
   await expect(page.locator('.site-when a')).toHaveCount(0);
-  // A live example carries the touch mark, named as its tooltip says; a picture, such as the
-  // anatomy figure, has none.
-  await expect(
-    page
-      .locator('[data-section="overview"] .site-live-example')
-      .first()
-      .getByRole('img', { name: 'Interactive: try it' }),
-  ).toBeVisible();
-  await expect(page.locator('.site-anatomy .site-interactive-mark')).toHaveCount(0);
   // Related, at the end, has a tile for each alternative, of one size, each a picture of it,
   // inert and fitted to its stage, once the section nears the viewport.
   await expect(page.locator('[data-section="usage"] .catalogue-related-tile')).toHaveCount(0);

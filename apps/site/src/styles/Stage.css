@@ -460,43 +460,8 @@
   animation: none;
 }
 
-/* The mark of a stage whose example can be used (InteractiveMark.tsx), such as a live example: a
-   small touch icon in the muted text color at the stage's bottom end, inside its padding, so it
-   never covers what the stage shows. A picture, such as an anatomy figure, has none. */
-:is(
-  .site-live-example,
-  .site-verdict-stage,
-  .catalogue-specimen-grid,
-  .catalogue-matrix-scroll,
-  .site-foundation-stage
-):has(> .site-interactive-mark) {
-  position: relative;
-}
-
-.site-interactive-mark {
-  position: absolute;
-  inset-block-end: var(--env-space-2);
-  inset-inline-end: var(--env-space-2);
-  display: grid;
-  place-items: center;
-  inline-size: var(--env-space-5);
-  block-size: var(--env-space-5);
-  border-radius: var(--env-radius-full);
-  color: var(--env-color-fg-muted);
-}
-
-.site-interactive-mark > svg {
-  inline-size: var(--env-icon-size-sm);
-  block-size: var(--env-icon-size-sm);
-}
-
-.site-interactive-mark:focus-visible {
-  outline: 0.125rem solid var(--env-color-border-focus);
-  outline-offset: 1px;
-}
-
 /* An animated figure (MotionStage.tsx): its subject centred on the stage as an example's is, and
-   its pause button at the stage's bottom end, inside its padding, where an example's mark sits.
+   its pause button at the stage's bottom end, inside its padding.
    Its overlays open in a layer over the whole stage, which its layout containment makes their
    containing block, so a dialog's backdrop covers the stage and a notification sits at its edge; it
    clips them to its corners. The subject is a stacking context of its own, below the pause
@@ -533,6 +498,19 @@
   inline-size: var(--env-button-height);
   inset-block-end: var(--env-space-2);
   inset-inline-end: var(--env-space-2);
+}
+
+/* The pause button stays out of sight until the reader reaches for the figure: it shows while the
+   pointer is over the stage or the keyboard is on the button, and always where there is no hover,
+   as on a phone. The sidebar's pause stops every figure at once. */
+@media (hover: hover) {
+  .catalogue-motion-pause {
+    transition: opacity var(--env-motion-duration-fast) var(--env-motion-ease);
+  }
+
+  .catalogue-motion-stage:not(:hover, :focus-within) .catalogue-motion-pause {
+    opacity: 0;
+  }
 }
 
 /* A grid of specimens that plays, such as states the pointer goes through: the figure's stage is

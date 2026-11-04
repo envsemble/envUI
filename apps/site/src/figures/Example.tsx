@@ -1,6 +1,5 @@
 import { createContext, useContext, type ReactNode } from 'react';
 import { Column, Text, type SpaceStep } from '@envsemble/envui';
-import { InteractiveMark } from '../template/InteractiveMark';
 
 /**
  * The level of a specimen's title: 2 where the specimen is a section of its own, 3 where it sits in
@@ -21,21 +20,11 @@ const PartHeadingLevel = createContext<2 | 3 | 4 | null>(null);
  */
 export const ExampleStage = createContext(false);
 
-/**
- * Whether a SpecimenGrid or MatrixScroll is a component's specimen on its own stage, as a page's
- * specimen is (figures/Specimen.tsx); one inside it, or in a foundation's figure, is not.
- */
-export const SpecimenStage = createContext(false);
-
-/**
- * A foundation's figure that shows envUI at work, on its stage, marked as interactive where
- * something in it can be used.
- */
+/** A foundation's figure that shows envUI at work, on its stage. */
 function FoundationStage({ children }: { children: ReactNode }) {
   return (
     <div className="site-foundation-stage" data-figure="example">
       {children}
-      <InteractiveMark />
     </div>
   );
 }
@@ -120,11 +109,9 @@ export function SpecimenGrid({
   /** small: a run of small pictures, such as drawings, four across, or two where four don't fit. */
   size?: 'small' | 'compact' | 'field' | 'card' | 'wide';
 }) {
-  const staged = useContext(SpecimenStage);
   return (
     <div className="catalogue-specimen-grid" data-size={size}>
-      <SpecimenStage value={false}>{children}</SpecimenStage>
-      <InteractiveMark enabled={staged} />
+      {children}
     </div>
   );
 }
@@ -165,7 +152,6 @@ export function MatrixScroll({
   className?: string;
   children: ReactNode;
 }) {
-  const staged = useContext(SpecimenStage);
   return (
     <div
       className={['catalogue-matrix-scroll', className].filter(Boolean).join(' ')}
@@ -173,8 +159,7 @@ export function MatrixScroll({
       role="region"
       aria-label={label}
     >
-      <SpecimenStage value={false}>{children}</SpecimenStage>
-      <InteractiveMark enabled={staged} />
+      {children}
     </div>
   );
 }

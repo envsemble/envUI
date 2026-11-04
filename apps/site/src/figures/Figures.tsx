@@ -15,7 +15,6 @@ import { ExampleCode, ExampleRender, keepLinksInPlace, LiveExample } from './Liv
 import { OpenExample } from './OpenExample';
 import { SiteMarkdown } from '../template/OptionLegend';
 import { optionPieces, type OptionTable } from '../shared/CatalogueContent';
-import { InteractiveMark } from '../template/InteractiveMark';
 import { Specimen, SpecimenRender } from './Specimen';
 import { VerdictMotion } from '../motion/MotionStage';
 import {
@@ -132,7 +131,6 @@ export function VerdictFigure({
                 <ExampleRender page={page} name={name ?? ''} />
               )}
             </div>
-            <InteractiveMark enabled={!open} />
           </Column>
         )}
         {/* A caution's bar is a dark island in either theme: the dark theme's bright warning fill,

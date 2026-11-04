@@ -14,7 +14,6 @@ import { CodeBlock } from '@envsemble/envui/content';
 import type { StageFill } from '../shared/DocumentationTypes';
 import { LoadBoundary, loadModule, reloadModule } from '../template/LoadBoundary';
 import { OpenExample } from './OpenExample';
-import { InteractiveMark } from '../template/InteractiveMark';
 import { CodeSkeleton, exampleLines, StageSkeleton } from '../template/Loading';
 import { MotionStage } from '../motion/MotionStage';
 import { WidthSweep } from '../motion/WidthSweep';
@@ -366,7 +365,6 @@ export function LiveExample({
                 role="group"
               >
                 <WidthBox width={width}>{render}</WidthBox>
-                <InteractiveMark enabled={!open} />
               </Column>
               <Text render={<figcaption />} variant="caption" emphasis="muted">
                 {width} rem wide
@@ -387,7 +385,6 @@ export function LiveExample({
           {...keepLinksInPlace}
         >
           {render}
-          <InteractiveMark enabled={!open} />
         </Column>
       )}
       {caption && (
