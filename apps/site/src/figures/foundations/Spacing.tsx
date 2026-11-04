@@ -129,7 +129,7 @@ function AlignFigure() {
 
 /**
  * One small screen with the four kinds of corner on it, each numbered: its surface, an alert
- * inside it, the round ends of a field and a button, and a person's circle.
+ * inside it, the round ends of a button, and a person's circle.
  */
 function ShapesFigure({ legend }: FigureWords) {
   return (

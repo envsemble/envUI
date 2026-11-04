@@ -15,7 +15,7 @@ import { displayStorageKeys } from './DisplayStorage';
 
 const themes: readonly ThemePreference[] = ['system', 'light', 'dark'];
 const contrasts: readonly ThemeContrast[] = ['system', 'standard', 'high'];
-const scales: readonly ThemeScale[] = ['comfortable', 'compact'];
+const scales: readonly ThemeScale[] = ['system', 'comfortable', 'compact'];
 const motions = ['playing', 'paused'] as const;
 
 function readStored<T extends string>(key: string, values: readonly T[], fallback: T): T {
@@ -37,8 +37,8 @@ function store(key: string, value: string) {
 }
 
 /**
- * The scale the address asks for with ?scale=compact or ?scale=comfortable, to review a page at
- * that scale without changing the stored setting.
+ * The scale the address asks for with ?scale=compact, ?scale=comfortable or ?scale=system, to
+ * review a page at that scale without changing the stored setting.
  */
 function requestedScale(): ThemeScale | undefined {
   if (typeof location === 'undefined') return undefined;
@@ -86,7 +86,7 @@ export function DisplaySettingsProvider({
     readStored(displayStorageKeys.contrast, contrasts, 'system'),
   );
   const [scale, setScaleState] = useState(
-    () => requestedScale() ?? readStored(displayStorageKeys.scale, scales, 'comfortable'),
+    () => requestedScale() ?? readStored(displayStorageKeys.scale, scales, 'system'),
   );
   const [motion, setMotionState] = useState(initialMotion);
   useEffect(() => {
@@ -94,7 +94,7 @@ export function DisplaySettingsProvider({
       if (event.key === displayStorageKeys.contrast)
         setContrastState(readStored(displayStorageKeys.contrast, contrasts, 'system'));
       if (event.key === displayStorageKeys.scale)
-        setScaleState(readStored(displayStorageKeys.scale, scales, 'comfortable'));
+        setScaleState(readStored(displayStorageKeys.scale, scales, 'system'));
       if (event.key === displayStorageKeys.motion) setMotionState(initialMotion());
     };
     addEventListener('storage', onStorage);
@@ -207,6 +207,9 @@ export function DisplayMenu({ iconOnly = false }: { iconOnly?: boolean }) {
         value={scale}
         onValueChange={(next) => setScale(scales.find((value) => value === next)!)}
       >
+        <Menu.RadioItem value="system" closeOnClick={false}>
+          System
+        </Menu.RadioItem>
         <Menu.RadioItem value="comfortable" closeOnClick={false}>
           Comfortable
         </Menu.RadioItem>

@@ -25,7 +25,7 @@ export default function RenameInPlace() {
             }}
           >
             <Column gap={4}>
-              <TextField variant="floating" label="Name" name="name" defaultValue={name} required />
+              <TextField label="Name" name="name" defaultValue={name} required />
               <Row wrap align="center" gap={4} justify="end">
                 <Button variant="secondary" onClick={close}>
                   Cancel

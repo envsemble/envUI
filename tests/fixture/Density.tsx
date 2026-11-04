@@ -173,13 +173,6 @@ function FormSection() {
         </Row>
       </div>
       <div className="density-band">
-        <Row label='The floating variant: TextField · Combobox · DatePicker variant="floating"'>
-          <TextField variant="floating" label="Name" defaultValue="Quarterly report" />
-          <Combobox variant="floating" label="Owner" items={owners} />
-          <DatePicker variant="floating" label="Due" />
-        </Row>
-      </div>
-      <div className="density-band">
         <Row label="No size: Checkbox · Switch · Badge · Button important · IconButton">
           <Checkbox label="Notify" defaultChecked />
           <Switch label="Sync" defaultChecked />

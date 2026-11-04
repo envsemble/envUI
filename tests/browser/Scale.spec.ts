@@ -135,6 +135,30 @@ test('tree rows are as tall as their density in each scale, and menu rows the md
     .toEqual({ comfortable: 40, compact: 32 });
 });
 
+/**
+ * The system scale, the default, is the stylesheet's choice: compact under a fine pointer and
+ * comfortable on touch, while a comfortable or compact boundary inside it keeps its own.
+ */
+for (const touch of [false, true])
+  test(`the system scale is ${touch ? 'comfortable on a coarse' : 'compact on a fine'} pointer, and an explicit scale inside it wins @engines`, async ({
+    browser,
+  }) => {
+    const context = await browser.newContext({ hasTouch: touch });
+    const page = await context.newPage();
+    await page.goto(`${fixtureUrl}/?fixture=density&section=sizes&scale=system`);
+    expect(await page.evaluate(() => matchMedia('(pointer: fine)').matches)).toBe(!touch);
+    const rowHeight = (locator: Locator) =>
+      locator.evaluate((element) => getComputedStyle(element).getPropertyValue('--env-row-height'));
+    const outer = page.locator('#root > .env-theme');
+    await expect(outer).toHaveAttribute('data-env-scale', 'system');
+    expect(await rowHeight(outer)).toBe(touch ? '2.25rem' : '1.75rem');
+    for (const scale of densityScales)
+      expect(await rowHeight(page.locator(`[data-density-scale="${scale}"]`).first()), scale).toBe(
+        scale === 'compact' ? '1.75rem' : '2.25rem',
+      );
+    await context.close();
+  });
+
 test('each scale writes data-env-scale on its boundary, and nested Themes and popups keep it', async ({
   page,
 }) => {

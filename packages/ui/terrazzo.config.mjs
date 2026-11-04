@@ -44,7 +44,9 @@ const semantic = (id) => /^color\.(bg|fg|border)\./.test(id);
  * The app scales, each a context of the resolver's scale modifier. Comfortable is the base set;
  * every other scale builds as a rule of its own, `.env-theme[data-env-scale='compact']`, which
  * declares only the tokens it changes. Scales change sizes, never colors, so they combine with every
- * theme.
+ * theme. Compact is also the `system` scale, the default, where the primary pointer is fine: every
+ * boundary but a comfortable one takes it under `pointer: fine`, as high contrast applies under
+ * `prefers-contrast: more`, so the server and the first paint agree without measuring anything.
  */
 export const scales = [
   { name: 'comfortable', input: { scale: 'comfortable' } },
@@ -52,6 +54,10 @@ export const scales = [
     name: 'compact',
     input: { scale: 'compact' },
     selector: ".env-theme[data-env-scale='compact']",
+    media: {
+      query: '(pointer: fine)',
+      selector: ".env-theme:not([data-env-scale='comfortable'])",
+    },
   },
 ];
 
@@ -787,7 +793,10 @@ export function createConfig({
                   // Only the sizes the scale changes; colors come from the theme rules above.
                   input: scale.input,
                   include: scaleTokens[scale.name],
-                  prepare: (contents) => block(scale.selector, contents),
+                  prepare: (contents) =>
+                    scale.media
+                      ? `${block(scale.selector, contents)}\n@media ${scale.media.query} {\n  ${block(scale.media.selector, contents)}\n}`
+                      : block(scale.selector, contents),
                 })),
             ],
           }),

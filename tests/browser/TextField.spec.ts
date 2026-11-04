@@ -159,7 +159,7 @@ test('compact fields hold a prefix and suffix between the icon and the end actio
   const handle = scope.getByRole('textbox', { name: 'Handle', exact: true });
   const handlePrefix = (await affix(handle, 'prefix').boundingBox())!;
   const handleWell = (await handle.locator('xpath=..').boundingBox())!;
-  // A floating field's prefix starts at its well's edge, its padding inside it, as an outline field's.
+  // A large field's prefix starts at its well's edge, its padding inside it, as a medium field's.
   expect(Math.abs(handlePrefix.x - handleWell.x)).toBeLessThanOrEqual(1);
 });
 
@@ -304,7 +304,7 @@ test('an outline field has no fill of its own, and its floated label cuts a notc
     (await border.locator('legend').boundingBox())!,
   ];
   expect(Math.abs(labelBox.x - notchBox.x)).toBeLessThanOrEqual(1);
-  // The notch starts where the pill's curve has all but flattened, within a quarter rem of its end,
+  // The notch starts where the corner's curve has all but flattened, within a quarter rem of its end,
   // so the edge doesn't end in a hook.
   const controlBox = (await control.boundingBox())!;
   const radius = Math.min(

@@ -5,7 +5,6 @@ export default function MonthPickerPopupAnatomy() {
   return (
     <MonthPicker
       label="Report month"
-      variant="floating"
       defaultValue="2026-10"
       defaultOpen
       style={{ inlineSize: 'min(100%, 16rem)' }}

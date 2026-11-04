@@ -222,12 +222,12 @@ Variants, tones, sizes, sides and layouts are written as an option table: the fi
 ```
 
 1. **Outline**
-2. **Floating**
+2. **Ghost**
 
-| Variant  | Use for                                             |
-| -------- | --------------------------------------------------- |
-| Outline  | In forms, dialogs, panes and toolbars. The default. |
-| Floating | A long form on a page.                              |
+| Variant | Use for                                                 |
+| ------- | ------------------------------------------------------- |
+| Outline | In forms, dialogs, panes and toolbars. The default.     |
+| Ghost   | A search in an application's chrome, such as a sidebar. |
 ````
 
 - **Names are tags**: a few words of plain text, named once, with no link, image or HTML. After a variants figure, they are the figure's names, in its order.
@@ -243,7 +243,7 @@ Everything the plain sections leave out goes in `## Compose`, after Words to use
 
 ### Usage
 
-`variant` is `outline`, the default, `floating` or `ghost`.
+`variant` is `outline`, the default, or `ghost`.
 
 ```tsx source=Variants
 
@@ -273,7 +273,7 @@ An example is a file in `apps/site/src/examples/<page>/<Name>.tsx`: a small, def
 - Keep it small: the stage centres it at its own width. Give the root a width where it should be wider, such as `inlineSize: '100%'`; a root that is a size container fills the stage.
 - Name the file after what it shows, such as `ConfirmInPlace.tsx`.
 - Start its own headings at level 3: `headingLevel={3}` on a component that renders an `h2`, and `h3` or lower for others.
-- A field on its own, such as a search above a list, takes `variant="floating"`.
+- A field on its own, such as a search above a list, takes `size="lg"`.
 
 Every example is listed in its page's frontmatter and placed once, but an overview; Compose may also show any of them as code. The fence stays empty: the catalogue renders the file live, and the package ships it in `docs/examples/`.
 

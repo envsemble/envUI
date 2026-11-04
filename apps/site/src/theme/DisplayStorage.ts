@@ -47,9 +47,10 @@ export function createStorageMigrationScript() {
  * An inline script for the document head that applies the stored contrast and scale to the root
  * before the site loads, as createThemeBootstrapScript does the theme, so a compact or
  * high-contrast reader does not see the page change as it starts. ?scale= in the address wins over
- * the stored scale, as in DisplaySettingsProvider. It writes the attributes and source markers that
- * ThemePreferenceProvider writes, data-env-contrast-source="envui:high" and
- * data-env-scale-source="envui:compact", so the provider takes them as its own once it mounts.
+ * the stored scale, as in DisplaySettingsProvider; the system scale, the default, writes nothing. It
+ * writes the attributes and source markers that ThemePreferenceProvider writes,
+ * data-env-contrast-source="envui:high" and data-env-scale-source="envui:compact", so the provider
+ * takes them as its own once it mounts.
  */
 export function createDisplayBootstrapScript() {
   const contrastKey = JSON.stringify(displayStorageKeys.contrast);
@@ -58,6 +59,6 @@ export function createDisplayBootstrapScript() {
   const scaleSource = JSON.stringify(scaleSourceAttribute);
   // The markers' values, envui:high, as ownContrastSource and ownScaleSource write them.
   const contrastMark = JSON.stringify(ownContrastSource(''));
-  const compactMark = JSON.stringify(ownScaleSource('compact'));
-  return `(function(){var r=document.documentElement;try{var c=localStorage.getItem(${contrastKey}),q=new URLSearchParams(location.search).get("scale"),s=q==="compact"||q==="comfortable"?q:localStorage.getItem(${scaleKey});if(c==="high"||c==="standard"){r.setAttribute("data-env-contrast",c);r.setAttribute(${contrastSource},${contrastMark}+c)}if(s==="compact"){r.setAttribute("data-env-scale","compact");r.setAttribute(${scaleSource},${compactMark})}}catch(e){}})();`;
+  const scaleMark = JSON.stringify(ownScaleSource(''));
+  return `(function(){var r=document.documentElement;try{var c=localStorage.getItem(${contrastKey}),q=new URLSearchParams(location.search).get("scale"),s=q==="compact"||q==="comfortable"||q==="system"?q:localStorage.getItem(${scaleKey});if(c==="high"||c==="standard"){r.setAttribute("data-env-contrast",c);r.setAttribute(${contrastSource},${contrastMark}+c)}if(s==="compact"||s==="comfortable"){r.setAttribute("data-env-scale",s);r.setAttribute(${scaleSource},${scaleMark}+s)}}catch(e){}})();`;
 }

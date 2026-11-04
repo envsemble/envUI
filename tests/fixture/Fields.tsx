@@ -24,13 +24,9 @@ import { dialogOptions } from './SelectOptions.js';
 function Fields() {
   const fields: [string, ReactNode][] = [
     ['text-field', <TextField label="Name" defaultValue="Sam Lee" />],
-    ['floating', <TextField variant="floating" label="Floating" defaultValue="Sam Lee" />],
     ['textarea', <Textarea label="Note" defaultValue="Ship on Friday." />],
     ['search-field', <SearchField label="Search" />],
-    [
-      'select',
-      <Select label="Plan" items={dialogOptions} variant="outline" defaultValue="aurora" />,
-    ],
+    ['select', <Select label="Plan" items={dialogOptions} defaultValue="aurora" />],
     ['combobox', <Combobox label="Owner" items={people} />],
     ['date-picker', <DatePicker label="Publish on" defaultValue="2026-10-20" />],
     ['time-picker', <TimePicker label="Starts at" defaultValue="09:30" />],

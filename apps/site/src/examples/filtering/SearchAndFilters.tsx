@@ -61,7 +61,6 @@ export default function SearchAndFilters() {
             <Select
               aria-label="Status"
               size="sm"
-              variant="outline"
               items={statuses}
               value={status}
               onValueChange={setStatus}
@@ -69,7 +68,6 @@ export default function SearchAndFilters() {
             <Select
               aria-label="Owner"
               size="sm"
-              variant="outline"
               items={owners}
               value={owner}
               onValueChange={setOwner}

@@ -35,7 +35,6 @@ examples:
   ProjectVisibility:
     role: overview
     open: true
-  TriggerStyles: variants
   SmallToolbar:
     role: example
     caption: A small select beside small buttons in a toolbar.
@@ -47,18 +46,6 @@ examples:
 # Select
 
 ## Variants
-
-```tsx figure=TriggerStyles
-
-```
-
-1. **Outline**
-2. **Floating**
-
-| Variant  | Use for                                                    |
-| -------- | ---------------------------------------------------------- |
-| Outline  | A select anywhere, as every field. The default.            |
-| Floating | A select in a long form on a page, beside floating fields. |
 
 ### Sizes
 
@@ -196,9 +183,9 @@ With `name`, a hidden input submits the chosen value, and a form reset restores 
 
 Where a row's title names the select, give the select that name as its `aria-label`; it is then as wide as its longest option.
 
-#### Variants and sizes
+#### Sizes
 
-`variant` is a field's: `outline`, the default, or `floating`, taller, with its label resting inside and floating into the outline. `size` is `sm`, `md` or `lg`; without it, the field takes its container's control height. `showLabel={false}` keeps the label for assistive technology only, as on a TextField, and the field fits its longest option.
+`size` is `sm`, `md` or `lg`; without it, the field takes its container's control height. `showLabel={false}` keeps the label for assistive technology only, as on a TextField, and the field fits its longest option.
 
 ### Composition
 
@@ -210,6 +197,7 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 
 ## Changelog
 
+- **1.0.0-prerelease.6**: The `floating` variant and the `variant` prop are gone: the field is outlined, and takes `size="lg"` in a long form on a page. The field takes a text area's rounded corners rather than round ends, still as tall as a button.
 - **1.0.0-prerelease.6**: The open list is at least as wide as the field; when options have descriptions it keeps to the field's width and the descriptions wrap, rather than running past the field's end.
 - **1.0.0-prerelease.5**: Select is an outlined field, as TextField and DatePicker are, with the label inside: `variant` is `outline`, the default, or `floating`, where it was a Button's `secondary` or `outline`. Without a visible label it fits its longest option. It takes `open`, `onOpenChange`, `readOnly` and `showLabel`.
 - **1.0.0-prerelease.5**: The open list is frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge but a faint hairline in dark, and is solid with its edge at high contrast and with reduced transparency. Options are the md control height in body text, the highlighted one, under the pointer or the keyboard, takes the neutral fill with no focus ring, and the chosen one shows its check mark. The list opens 8 px clear of the trigger at every scale and size. Its options lie one under the next with no space between them. The chosen option's check mark ends its row, after the label. The outline trigger has no fill at rest, as an outline button has none.

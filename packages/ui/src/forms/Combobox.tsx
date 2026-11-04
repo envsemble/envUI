@@ -114,12 +114,6 @@ interface ComboboxSharedProps<Item extends ComboboxItem>
    */
   emptyLabel?: ReactNode;
   /**
-   * The field's look, as TextField's: outline, at the control height, or floating, 3.5 rem tall
-   * with room for its label, for long forms on a page.
-   * @default 'outline'
-   */
-  variant?: 'outline' | 'floating';
-  /**
    * The field's height, as on every control: sm, md or lg in the current scale. Without it, the
    * field takes the control height of its container, md unless the container sets another. The
    * popup's rows take the row height of the scale.
@@ -203,7 +197,6 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
     loading = false,
     loadingLabel,
     emptyLabel,
-    variant = 'outline',
     size,
     showLabel,
     clearable = false,
@@ -462,7 +455,6 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
           description={description}
           error={error}
           floatingLabel
-          variant={variant}
           size={size}
           showLabel={showLabel}
           className={className ? `env-combobox ${className}` : 'env-combobox'}

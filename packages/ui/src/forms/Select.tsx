@@ -109,17 +109,10 @@ export interface SelectProps
   /** A hint for the browser's autofill, such as country, set on the hidden input. */
   autoComplete?: string;
   /**
-   * The field's look, as on every field: outline, with a thin border, at the control height; or
-   * floating, an outlined field 3.5 rem tall whose label rests inside and floats into the outline,
-   * for long forms on a page. A select without a visible label, such as in a toolbar, is as wide as
-   * its longest option.
-   * @default 'outline'
-   */
-  variant?: 'outline' | 'floating';
-  /**
    * The field's height, as on every control: sm, md or lg in the current scale. Without it, the
-   * field takes the control height of its container, md unless the container sets another. A
-   * floating field has its own height. The popup's rows take the row height of the scale.
+   * field takes the control height of its container, md unless the container sets another. The
+   * popup's rows take the row height of the scale. A select without a visible label, such as in a
+   * toolbar, is as wide as its longest option.
    */
   size?: ControlSize;
 }
@@ -193,7 +186,6 @@ export function Select({
   'aria-invalid': invalid,
   placeholder,
   autoComplete,
-  variant = 'outline',
   size,
   showLabel,
   form,
@@ -291,7 +283,6 @@ export function Select({
         description={description}
         error={error}
         floatingLabel
-        variant={variant}
         size={size}
         showLabel={showLabel}
         className={classNames('env-select', className)}

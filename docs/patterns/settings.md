@@ -75,7 +75,7 @@ Settings that only make sense together wait for a Save button.
 
 ### Appearance
 
-The theme applies at once. The [scale](../foundations/spacing.md), comfortable or compact, is one for the whole application: it never changes for one page or one section.
+The theme applies at once. The [scale](../foundations/spacing.md), system, comfortable or compact, is one for the whole application: it never changes for one page or one section.
 
 ```tsx figure=AppearanceChoice motion
 
@@ -185,7 +185,7 @@ A section that saves together is a `form` with `noValidate` and an `onSubmit`, o
 
 #### Appearance
 
-`useThemePreference()` returns the `preference`, `system`, `light` or `dark`, and `setPreference`, which applies it to the whole page at once through the root ThemePreferenceProvider. The scale, `comfortable` or `compact`, is stored by the application and passed to the root provider's `scale`, never to one page or section.
+`useThemePreference()` returns the `preference`, `system`, `light` or `dark`, and `setPreference`, which applies it to the whole page at once through the root ThemePreferenceProvider. The scale, `system`, `comfortable` or `compact`, is stored by the application and passed to the root provider's `scale`, never to one page or section.
 
 ```tsx
 <RadioGroup label="Theme" name="theme" value={preference} onValueChange={setPreference}>

@@ -36,13 +36,7 @@ export function AffixesFixture({ theme }: { theme: ColorScheme }) {
           }
         />
         <TextField showLabel label="Share" name="share" suffix="%" defaultValue="40" />
-        <TextField
-          variant="floating"
-          label="Handle"
-          name="handle"
-          prefix="@"
-          defaultValue="aurora"
-        />
+        <TextField size="lg" label="Handle" name="handle" prefix="@" defaultValue="aurora" />
         <SearchField variant="ghost" label="Find projects" placeholder="Find projects" />
         <TextField label="Quota" name="quota" suffix="GB" defaultValue="12" disabled />
         <TextField

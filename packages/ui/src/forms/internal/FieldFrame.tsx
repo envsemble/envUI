@@ -42,16 +42,15 @@ export interface FieldProps {
 }
 
 /** A field's look. */
-export type FieldVariant = 'outline' | 'floating' | 'ghost';
+export type FieldVariant = 'outline' | 'ghost';
 
 export interface TextFieldAppearanceProps {
   /**
-   * The field's look: outline, with a thin border, at the control height; floating, an outlined
-   * field 3.5 rem tall whose label rests inside and floats into the outline, for long forms on a
-   * page; or ghost, only its text and start icon at rest, with a soft fill under the pointer and
-   * while focused and a placeholder that clears on focus, for a search at the top of a sidebar or a
-   * list. Outline and floating fields have no fill of their own: they take the background of what
-   * they sit on.
+   * The field's look: outline, with a thin border, at the control height, whose label rests inside
+   * and floats into the outline; or ghost, only its text and start icon at rest, with a soft fill
+   * under the pointer and while focused and a placeholder that clears on focus, for a search at the
+   * top of a sidebar or a list. An outline field has no fill of its own: it takes the background of
+   * what it sits on.
    * @default 'outline'
    */
   variant?: FieldVariant;
@@ -61,7 +60,7 @@ export interface FieldSizeProps {
   /**
    * The height, as on every control: sm, md or lg in the current scale. Without it, the field takes
    * the control height of its container, md unless the container sets another, as a table cell
-   * does. A button beside a field takes the field's size. A floating field has its own height.
+   * does. A button beside a field takes the field's size.
    */
   size?: ControlSize;
 }
@@ -123,11 +122,6 @@ export function isLabelShown({ showLabel }: TextFieldDecorationProps) {
   return showLabel ?? true;
 }
 
-/** Whether a field is tall: its label sits above the value rather than at the control height. */
-function isTallField(variant: TextFieldAppearanceProps['variant'], multiline = false) {
-  return multiline || variant === 'floating';
-}
-
 /** The control box as a plain element; composed controls render it through their own primitive. */
 function renderPlainControlBox(props: FieldControlBoxProps) {
   return <div {...props} />;
@@ -184,7 +178,7 @@ export function FieldFrame({
       style={style}
       invalid={error != null || undefined}
       data-size={floatingLabel ? size : undefined}
-      data-tall={flag(floatingLabel && isTallField(variant, multiline))}
+      data-tall={flag(floatingLabel && multiline)}
       data-label-hidden={flag(floatingLabel && !isLabelShown({ showLabel }))}
     >
       {floatingLabel ? (

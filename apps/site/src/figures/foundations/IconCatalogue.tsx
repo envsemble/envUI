@@ -95,7 +95,7 @@ export function IconCatalogue() {
     <Example size="collection">
       <div className="catalogue-icon-toolbar">
         <SearchField
-          variant="floating"
+          size="lg"
           label="Search icons"
           showLabel
           value={query}

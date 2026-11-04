@@ -204,12 +204,12 @@ test('a provider without a scale gives the application the scale the page set on
   await expect(boundary).toHaveAttribute('data-env-scale', 'comfortable');
 });
 
-test('a provider without a scale keeps comfortable where envUI wrote the root scale', async ({
+test('a provider without a scale takes system where envUI wrote the root scale', async ({
   page,
 }) => {
   await withRoot(page, 'data-env-scale="compact" data-env-scale-source="envui:compact"');
   await expect(page.locator('html')).not.toHaveAttribute('data-env-scale');
-  await expect(page.locator('.fixture-adoption')).toHaveAttribute('data-env-scale', 'comfortable');
+  await expect(page.locator('.fixture-adoption')).toHaveAttribute('data-env-scale', 'system');
 });
 
 for (const contrast of ['high', 'standard'] as const)

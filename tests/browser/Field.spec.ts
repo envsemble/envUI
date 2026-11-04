@@ -17,7 +17,7 @@ const content = [
 test('fields and editors take the background of what they sit on', async ({ page }) => {
   await page.goto(fixture);
   // Every field and editor has rendered, the editors included.
-  await expect(page.locator('[data-field]')).toHaveCount(2 * 4 * 14);
+  await expect(page.locator('[data-field]')).toHaveCount(2 * 4 * 13);
   await expect(page.locator('.env-rich-text-editor-content [contenteditable]')).toHaveCount(8);
   const painted = await page.evaluate((content) => {
     const found: string[] = [];

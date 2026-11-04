@@ -7,7 +7,6 @@ export default function ReportMonth() {
     <div style={{ inlineSize: 'min(100%, 16rem)' }}>
       <MonthPicker
         label="Report month"
-        variant="floating"
         description="The month the report covers."
         value={month}
         onValueChange={setMonth}

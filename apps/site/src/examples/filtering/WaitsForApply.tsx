@@ -20,7 +20,6 @@ export default function WaitsForApply() {
         <Select
           aria-label="Status"
           size="sm"
-          variant="outline"
           items={statuses}
           value={status}
           onValueChange={setStatus}

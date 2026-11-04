@@ -72,7 +72,6 @@ export default function NarrowFilters() {
               aria-label="Status"
               style={{ flexShrink: 0 }}
               size="sm"
-              variant="outline"
               items={statuses}
               value={status}
               onValueChange={(value) => setStatus(value ?? 'any')}
@@ -81,7 +80,6 @@ export default function NarrowFilters() {
               aria-label="Owner"
               style={{ flexShrink: 0 }}
               size="sm"
-              variant="outline"
               items={owners}
               value={owner}
               onValueChange={setOwner}
@@ -123,13 +121,7 @@ export default function NarrowFilters() {
                   <Radio key={option.value} value={option.value} label={option.label} />
                 ))}
               </RadioGroup>
-              <Select
-                variant="outline"
-                label="Owner"
-                items={owners}
-                value={owner}
-                onValueChange={setOwner}
-              />
+              <Select label="Owner" items={owners} value={owner} onValueChange={setOwner} />
             </Column>
           </Sheet>
         )}

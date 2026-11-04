@@ -471,27 +471,27 @@ test('narrow containers wrap chips within the field, and the popup fits a phone'
       chip.getBoundingClientRect(),
     );
     const style = getComputedStyle(element);
-    // The capped full corner: half the tallest single-line control.
+    // A field's corner: the large corner, no more than a third of the single-line field's height.
     const probe = document.createElement('div');
-    probe.style.blockSize = 'var(--env-radius-full)';
+    probe.style.blockSize = 'min(var(--env-radius-lg), var(--env-field-height) / 3)';
     element.append(probe);
-    const full = probe.getBoundingClientRect().height;
+    const corner = probe.getBoundingClientRect().height;
     probe.remove();
     return {
       box: { left: box.left, right: box.right, height: box.height },
       rows: new Set(items.map((item) => Math.round(item.top))).size,
       inside: items.every((item) => item.left >= box.left && item.right <= box.right),
       radius: Number.parseFloat(style.borderTopLeftRadius),
-      full,
+      corner,
     };
   });
   const container = (await narrow.boundingBox())!;
   expect(layout.box.right - layout.box.left).toBeLessThanOrEqual(container.width + 1);
   expect(layout.rows).toBeGreaterThan(1);
   expect(layout.inside).toBe(true);
-  // A wrapped field keeps the capped full corner rather than becoming a pill.
+  // A wrapped field keeps a single-line field's corners rather than becoming a pill.
   expect(layout.box.height).toBeGreaterThan(32);
-  expect(layout.radius).toBeCloseTo(layout.full, 0);
+  expect(layout.radius).toBeCloseTo(layout.corner, 0);
   expect(layout.radius).toBeLessThan(layout.box.height / 2 - 4);
 
   await page.setViewportSize({ width: 390, height: 700 });

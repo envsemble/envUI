@@ -1549,13 +1549,6 @@
           "description": "Shown in the popup when no option matches."
         },
         {
-          "name": "variant",
-          "type": "'outline' | 'floating'",
-          "required": false,
-          "default": "'outline'",
-          "description": "The field's look, as TextField's: outline, at the control height, or floating, 3.5 rem tall with room for its label, for long forms on a page."
-        },
-        {
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
@@ -2380,13 +2373,6 @@
           "type": "string",
           "required": false,
           "description": "Shown while the field is empty and its label floats or is hidden."
-        },
-        {
-          "name": "variant",
-          "type": "'outline' | 'floating'",
-          "required": false,
-          "default": "'outline'",
-          "description": "The field's look, as TextField's: outline, at the control height, or floating, 3.5 rem tall with room for its label, for long forms on a page."
         },
         {
           "name": "size",
@@ -4036,7 +4022,7 @@
           "type": "'outline' | 'ghost'",
           "required": false,
           "default": "'outline'",
-          "description": "The field's look, as TextField's: outline or ghost. A text area is always tall, with its label resting at the top, so it has no floating variant."
+          "description": "The field's look, as TextField's: outline or ghost. A text area is always tall, with its label resting at the top."
         },
         {
           "name": "error",
@@ -4974,13 +4960,6 @@
           "type": "string",
           "required": false,
           "description": "Shown while the field is empty and its label floats or is hidden."
-        },
-        {
-          "name": "variant",
-          "type": "'outline' | 'floating'",
-          "required": false,
-          "default": "'outline'",
-          "description": "The field's look, as TextField's: outline, at the control height, or floating, 3.5 rem tall with room for its label, for long forms on a page."
         },
         {
           "name": "size",
@@ -6623,10 +6602,10 @@
         },
         {
           "name": "variant",
-          "type": "Exclude<FieldVariant, 'floating'>",
+          "type": "'outline' | 'ghost'",
           "required": false,
           "default": "'outline'",
-          "description": "The document's look, as a text area's: outline, in a bordered box on what it sits on; or ghost, only its text at rest, with a soft fill under the pointer and while it has focus. The document is always tall, with its label above it, so it has no floating variant."
+          "description": "The document's look, as a text area's: outline, in a bordered box on what it sits on; or ghost, only its text at rest, with a soft fill under the pointer and while it has focus. The document is always tall, with its label above it."
         },
         {
           "name": "extensions",
@@ -6914,7 +6893,7 @@
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another, as a table cell does. A button beside a field takes the field's size. A floating field has its own height."
+          "description": "The height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another, as a table cell does. A button beside a field takes the field's size."
         },
         {
           "name": "description",
@@ -6924,10 +6903,10 @@
         },
         {
           "name": "variant",
-          "type": "'outline' | 'floating' | 'ghost'",
+          "type": "'outline' | 'ghost'",
           "required": false,
           "default": "'outline'",
-          "description": "The field's look: outline, with a thin border, at the control height; floating, an outlined field 3.5 rem tall whose label rests inside and floats into the outline, for long forms on a page; or ghost, only its text and start icon at rest, with a soft fill under the pointer and while focused and a placeholder that clears on focus, for a search at the top of a sidebar or a list. Outline and floating fields have no fill of their own: they take the background of what they sit on."
+          "description": "The field's look: outline, with a thin border, at the control height, whose label rests inside and floats into the outline; or ghost, only its text and start icon at rest, with a soft fill under the pointer and while focused and a placeholder that clears on focus, for a search at the top of a sidebar or a list. An outline field has no fill of its own: it takes the background of what it sits on."
         },
         {
           "name": "error",
@@ -7112,17 +7091,10 @@
           "description": "A hint for the browser's autofill, such as country, set on the hidden input."
         },
         {
-          "name": "variant",
-          "type": "'outline' | 'floating'",
-          "required": false,
-          "default": "'outline'",
-          "description": "The field's look, as on every field: outline, with a thin border, at the control height; or floating, an outlined field 3.5 rem tall whose label rests inside and floats into the outline, for long forms on a page. A select without a visible label, such as in a toolbar, is as wide as its longest option."
-        },
-        {
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The field's height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another. A floating field has its own height. The popup's rows take the row height of the scale."
+          "description": "The field's height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another. The popup's rows take the row height of the scale. A select without a visible label, such as in a toolbar, is as wide as its longest option."
         },
         {
           "name": "label",
@@ -8064,7 +8036,7 @@
     "TextField": {
       "kind": "component",
       "source": "packages/ui/src/forms/TextField.tsx",
-      "description": "A labelled single-line text input: a native input with a floating label, a description and an error, at the control height in an outline or ghost look, or taller as the floating variant, with an optional start icon, end action, prefix and suffix.",
+      "description": "A labelled single-line text input: a native input with a floating label, a description and an error, at the control height in an outline or ghost look, with an optional start icon, end action, prefix and suffix.",
       "props": [
         {
           "name": "ref",
@@ -8110,10 +8082,10 @@
         },
         {
           "name": "variant",
-          "type": "'outline' | 'floating' | 'ghost'",
+          "type": "'outline' | 'ghost'",
           "required": false,
           "default": "'outline'",
-          "description": "The field's look: outline, with a thin border, at the control height; floating, an outlined field 3.5 rem tall whose label rests inside and floats into the outline, for long forms on a page; or ghost, only its text and start icon at rest, with a soft fill under the pointer and while focused and a placeholder that clears on focus, for a search at the top of a sidebar or a list. Outline and floating fields have no fill of their own: they take the background of what they sit on."
+          "description": "The field's look: outline, with a thin border, at the control height, whose label rests inside and floats into the outline; or ghost, only its text and start icon at rest, with a soft fill under the pointer and while focused and a placeholder that clears on focus, for a search at the top of a sidebar or a list. An outline field has no fill of its own: it takes the background of what it sits on."
         },
         {
           "name": "startIcon",
@@ -8138,7 +8110,7 @@
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another, as a table cell does. A button beside a field takes the field's size. A floating field has its own height."
+          "description": "The height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another, as a table cell does. A button beside a field takes the field's size."
         },
         {
           "name": "prefix",
@@ -8188,7 +8160,7 @@
           "type": "'outline' | 'ghost'",
           "required": false,
           "default": "'outline'",
-          "description": "The field's look, as TextField's: outline or ghost. A text area is always tall, with its label resting at the top, so it has no floating variant."
+          "description": "The field's look, as TextField's: outline or ghost. A text area is always tall, with its label resting at the top."
         },
         {
           "name": "onValueChange",
@@ -8254,9 +8226,9 @@
         },
         {
           "name": "scale",
-          "type": "'comfortable' | 'compact'",
+          "type": "'comfortable' | 'compact' | 'system'",
           "required": false,
-          "description": "The app scale of everything inside: comfortable, or compact for a desktop productivity app. Use one scale per app or window, and another only on a Theme around a whole region, such as a docked inspector. Defaults to the scale of the enclosing Theme, and to comfortable outside any. It wins over a `data-env-scale` attribute passed to the Theme."
+          "description": "The app scale of everything inside: comfortable, compact, or `system`, which is compact under a fine pointer and comfortable on touch, chosen by the stylesheet. Use one scale per app or window, and another only on a Theme around a whole region, such as a docked inspector. Defaults to the scale of the enclosing Theme, and to `system` outside any. It wins over a `data-env-scale` attribute passed to the Theme."
         }
       ],
       "native": [
@@ -8350,9 +8322,9 @@
         },
         {
           "name": "scale",
-          "type": "'comfortable' | 'compact'",
+          "type": "'comfortable' | 'compact' | 'system'",
           "required": false,
-          "description": "The app scale, comfortable or compact for a desktop productivity app, as on Theme: of the Theme boundary around the children, and, marked as envUI's own, of the document root with applyToDocument. Without it, the boundary takes the scale of an enclosing Theme; outside any, a provider applying to the document gives its boundary a scale the page set on the root, so the application, the page and its portals share it, and otherwise comfortable. The root keeps a scale the page set but drops one that envUI wrote and the page left unchanged. Pass the same scale to createThemeBootstrapScript so the root has it before the first paint."
+          "description": "The app scale, comfortable, compact or `system` (compact under a fine pointer, comfortable on touch), as on Theme: of the Theme boundary around the children, and, marked as envUI's own, of the document root with applyToDocument. Without it, the boundary takes the scale of an enclosing Theme; outside any, a provider applying to the document gives its boundary a scale the page set on the root, so the application, the page and its portals share it, and otherwise `system`. The root keeps a scale the page set but drops one that envUI wrote and the page left unchanged. Pass the same scale to createThemeBootstrapScript so the root has it before the first paint."
         },
         {
           "name": "className",
@@ -8525,13 +8497,6 @@
           "type": "string",
           "required": false,
           "description": "Shown while the field is empty and its label floats or is hidden."
-        },
-        {
-          "name": "variant",
-          "type": "'outline' | 'floating'",
-          "required": false,
-          "default": "'outline'",
-          "description": "The field's look, as TextField's: outline, at the control height, or floating, 3.5 rem tall with room for its label, for long forms on a page."
         },
         {
           "name": "size",
@@ -9175,7 +9140,7 @@
     "useTheme": {
       "kind": "function",
       "source": "packages/ui/src/foundations/Theme.tsx",
-      "description": "The theme of the nearest Theme, including across React portals: its color scheme, contrast and scale. A portal of the application's own takes it with `<Theme {...useTheme()}>`. A contrast of `system` leaves the choice to the stylesheet, which reads `prefers-contrast: more`.",
+      "description": "The theme of the nearest Theme, including across React portals: its color scheme, contrast and scale. A portal of the application's own takes it with `<Theme {...useTheme()}>`. A contrast of `system` leaves the choice to the stylesheet, which reads `prefers-contrast: more`, as a scale of `system` leaves it to `pointer: fine`.",
       "signature": "(): ThemeContextValue",
       "entries": [
         "@envsemble/envui"

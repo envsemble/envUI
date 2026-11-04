@@ -181,7 +181,7 @@ function SchemeChoice({ names, narrow }: { names: readonly string[]; narrow: boo
       <div className="catalogue-scheme-tiles" data-narrow={narrow || undefined}>
         <Tile name="form">
           <Column gap={4}>
-            <TextField variant="floating" label="Trip name" defaultValue="Spring in Lisbon" />
+            <TextField label="Trip name" defaultValue="Spring in Lisbon" />
             <Column gap={2}>
               <Checkbox label="Share with travelers" defaultChecked />
               <Checkbox label="Save maps offline" />
@@ -227,7 +227,7 @@ function SchemeChoice({ names, narrow }: { names: readonly string[]; narrow: boo
         {/* A phone leaves the search out, as it shows the navigation as a bar. */}
         {!narrow && (
           <Tile name="search">
-            <SearchField variant="floating" label="Search photos" placeholder="Search" />
+            <SearchField label="Search photos" placeholder="Search" />
           </Tile>
         )}
         <Tile name="nav">

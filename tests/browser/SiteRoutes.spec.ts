@@ -318,5 +318,9 @@ test('a page the history shows before it has loaded is a skeleton of its shape, 
   for (const route of held) await route.continue();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Table');
   await expect(skeleton).toHaveCount(0);
-  await expect.poll(() => page.locator('#site-main').evaluate((main) => main.scrollTop)).toBe(3000);
+  // Back at 3000, give or take what figures above it settle by once they have measured, which
+  // scroll anchoring keeps in view: this entry kept no heading to hold, as one the site writes does.
+  await expect
+    .poll(() => page.locator('#site-main').evaluate((main) => Math.abs(main.scrollTop - 3000)))
+    .toBeLessThan(48);
 });

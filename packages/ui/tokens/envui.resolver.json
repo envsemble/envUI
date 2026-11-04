@@ -43,7 +43,7 @@
       "default": "standard"
     },
     "scale": {
-      "description": "The app scale. Comfortable is the base set; compact is about 0.8 of it in geometry and one step down in type, with a 1 rem icon floor and fixed borders and focus rings. Built as [data-env-scale='compact'], which Theme writes from its scale prop on every boundary.",
+      "description": "The app scale. Comfortable is the base set; compact is about 0.8 of it in geometry and one step down in type, with a 1 rem icon floor and fixed borders and focus rings. Built as [data-env-scale='compact'], which Theme writes from its scale prop on every boundary, and under pointer: fine for every boundary but a comfortable one, so the system scale, the default, is compact on desktop.",
       "contexts": {
         "comfortable": [],
         "compact": [{ "$ref": "./scale/compact.tokens.json" }]

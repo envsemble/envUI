@@ -193,11 +193,11 @@ export interface RichTextEditorProps
   multiple?: boolean;
   /**
    * The document's look, as a text area's: outline, in a bordered box on what it sits on; or ghost,
-   * only its text at rest, with a soft fill under the pointer and while it has focus. The document is always
-   * tall, with its label above it, so it has no floating variant.
+   * only its text at rest, with a soft fill under the pointer and while it has focus. The document is
+   * always tall, with its label above it.
    * @default 'outline'
    */
-  variant?: Exclude<FieldVariant, 'floating'>;
+  variant?: FieldVariant;
 }
 export interface RichTextProps
   extends RichTextRenderOptions,

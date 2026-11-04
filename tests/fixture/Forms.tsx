@@ -156,7 +156,7 @@ export function FormsFixture() {
       <output data-testid="compact-values">{JSON.stringify(compactValues)}</output>
       <Surface padding={4} data-testid="select-pane">
         <Select label="Pane sort" items={planOptions} defaultValue="starter" />
-        <Select variant="floating" label="Pane role" items={dialogOptions} defaultValue="aurora" />
+        <Select label="Pane role" items={dialogOptions} defaultValue="aurora" />
         <Select aria-label="Pane filter" items={planOptions} defaultValue="starter" />
       </Surface>
       <div data-testid="growing-textareas" className="fixture-actions">

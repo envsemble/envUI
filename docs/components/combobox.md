@@ -39,7 +39,6 @@ examples:
   ChooseOwner:
     role: overview
     open: true
-  Variants: variants
   ComboboxAnatomy: anatomy
   ComboboxListAnatomy: anatomy
   Reviewers: example
@@ -50,20 +49,6 @@ examples:
 ---
 
 # Combobox
-
-## Variants
-
-```tsx figure=Variants
-
-```
-
-1. **Outline**
-2. **Floating**
-
-| Variant  | Use for                                                 |
-| -------- | ------------------------------------------------------- |
-| Outline  | In forms, dialogs and toolbars. The default.            |
-| Floating | A long form on a page, as TextField's floating variant. |
 
 ## Anatomy
 
@@ -259,9 +244,7 @@ By default the list shows the options whose label or description contains the ty
 />
 ```
 
-#### Variants and sizes
-
-`variant` is `outline`, the default, or `floating`, 3.5 rem tall with room for its label.
+#### Sizes
 
 - `size` is `sm`, `md` or `lg`; without it, the field takes its container's control height.
 - With `showLabel={false}`, a `placeholder` and an `aria-label` name it.
@@ -286,5 +269,6 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 
 ## Changelog
 
+- **1.0.0-prerelease.6**: The `floating` variant and the `variant` prop are gone: the field is outlined, and takes `size="lg"` in a long form on a page. The field takes a text area's rounded corners rather than round ends, still as tall as a button.
 - **1.0.0-prerelease.5**: The popup is frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge but a faint hairline in dark, and is solid with its edge at high contrast and with reduced transparency. Options are the md control height in body text, chosen ones show their check mark, and groups part by space. Group labels sit a little ahead of the rows, and options lie one under the next with no space between them. A chosen option's check mark ends its row, after the label.
 - **1.0.0**: `hint` is `description` and `variant="outlined"` is `variant="outline"`. `className` and `style` style the field's root rather than the input, which takes `ref`. Read-only chips no longer carry `aria-readonly`, which the input reports. The popup is the shared popup and the options its rows, and a chip's remove button is an IconButton with a cross: `env-combobox-well` is `env-combobox-control`, `env-combobox-option` `env-combobox-item` and `env-combobox-check` `env-combobox-item-indicator`, and the icons at the start, `env-combobox-leading` and `env-combobox-value-leading`, are `env-combobox-start` and `env-combobox-value-icon`, as other components name their start slots. The loading, empty, clear and remove labels come from EnvUIProvider's `messages`. An option's `leading` content is `start`, as on List.Item.

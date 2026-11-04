@@ -13,10 +13,6 @@
     "size-md": { "$value": { "value": 1, "unit": "rem" } },
     "size-lg": { "$value": { "value": 1.125, "unit": "rem" } }
   },
-  "field": {
-    "$type": "dimension",
-    "floating-height": { "$value": { "value": 2.75, "unit": "rem" } }
-  },
   "row": {
     "$type": "dimension",
     "height": { "$value": { "value": 1.75, "unit": "rem" } },

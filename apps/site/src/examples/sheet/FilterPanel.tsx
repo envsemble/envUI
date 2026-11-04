@@ -77,7 +77,6 @@ export default function FilterPanel() {
             <Radio value="done" label="Done" />
           </RadioGroup>
           <Select
-            variant="outline"
             label="Owner"
             items={owners}
             value={owner}

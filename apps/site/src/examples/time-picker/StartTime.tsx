@@ -6,7 +6,6 @@ export default function StartTime() {
   return (
     <div style={{ inlineSize: 'min(100%, 16rem)' }}>
       <TimePicker
-        variant="floating"
         label="Starts at"
         description="When the workshop begins."
         // On a 12-hour clock, as people write it in the United States.

@@ -155,4 +155,5 @@ The parts are the root, `env-field`, the label, `env-field-label`, the control, 
 
 ## Changelog
 
+- **1.0.0-prerelease.6**: Field.Control takes a text field's rounded corners rather than round ends.
 - **1.0.0**: Field, on Base UI's Field.

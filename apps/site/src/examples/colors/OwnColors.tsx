@@ -49,7 +49,7 @@ export default function OwnColors() {
   return (
     <LavenderArea>
       <Surface background="default" padding={5} radius="xl" render={<Column gap={4} />}>
-        <TextField variant="floating" label="Trip name" defaultValue="Spring in Lisbon" />
+        <TextField label="Trip name" defaultValue="Spring in Lisbon" />
         <Checkbox label="Share with travelers" defaultChecked />
         <Switch label="Save maps offline" defaultChecked />
         <Row gap={2} justify="end">

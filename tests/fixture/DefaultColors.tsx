@@ -161,12 +161,7 @@ export function DefaultColors() {
         <TextField label="Invalid" error="Required" />
         <Textarea label="Notes" defaultValue="Notes" />
         <Select label="Plan" items={planOptions} defaultValue="starter" />
-        <Select
-          label="Floating plan"
-          variant="floating"
-          items={planOptions}
-          defaultValue="starter"
-        />
+        <Select label="Large plan" size="lg" items={planOptions} defaultValue="starter" />
         <Checkbox label="Checked" defaultChecked />
         <Checkbox label="Unchecked" />
         <RadioGroup orientation="vertical" defaultValue="a">

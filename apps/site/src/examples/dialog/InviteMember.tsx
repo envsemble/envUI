@@ -73,7 +73,6 @@ export default function InviteMember() {
               }}
             />
             <Select
-              variant="outline"
               label="Role"
               name="role"
               description="Admins also manage members and billing."
