@@ -346,7 +346,7 @@ test('a component page groups its sections into three, all on the page', async (
   await expect.poll(columns).toEqual({ columns: 1, tops: 6 });
 });
 
-test("the overview's hero says what envUI is and shows the package's version, leaving the way on to the navigation", async ({
+test("the overview's hero says what envUI is, leads to setting it up and shows the package's version", async ({
   page,
 }) => {
   await page.goto(`${siteDevUrl}/`);
@@ -358,8 +358,12 @@ test("the overview's hero says what envUI is and shows the package's version, le
   await expect(hero.locator('.catalogue-overview-facts')).toContainText(
     `${componentDocuments.filter(({ id }) => id !== 'field').length} components`,
   );
-  // The sidebar, the Docs link above and the Explore cards lead on; the hero repeats none of them.
-  await expect(hero.getByRole('link')).toHaveCount(0);
+  // One way on of its own, to setting envUI up; the sidebar and the Explore cards lead elsewhere.
+  await expect(hero.getByRole('link')).toHaveText(['Get started']);
+  await expect(hero.getByRole('link', { name: 'Get started' })).toHaveAttribute(
+    'href',
+    '/docs/setup',
+  );
 });
 
 test("a catalogue page's banner reads from the start under its breadcrumbs, its picture hidden", async ({

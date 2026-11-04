@@ -1,4 +1,5 @@
-import { Card, Column, Text } from '@envsemble/envui';
+import { Button, Card, Column, Row, Text } from '@envsemble/envui';
+import { IconArrowForward } from '@envsemble/envui/icons/ArrowForward';
 import { IconWidgets } from '@envsemble/envui/icons/Widgets';
 import { IconPattern } from '@envsemble/envui/icons/Pattern';
 import { IconPalette } from '@envsemble/envui/icons/Palette';
@@ -43,9 +44,8 @@ const counts = (['component', 'pattern', 'foundation'] as const).map((kind) => (
 }));
 
 /**
- * The catalogue's home: what envUI is, a hand of cards built with it, and the way to its
- * foundations, components and patterns. The hero leads nowhere itself: the navigation beside and
- * above it, and the Explore cards, do.
+ * The catalogue's home: what envUI is, the way to setting it up, a hand of cards built with it, and
+ * the way to its foundations, components and patterns.
  */
 export function Overview() {
   return (
@@ -58,18 +58,23 @@ export function Overview() {
           <Text variant="display" className="catalogue-overview-lede">
             A React design system for clear, accessible interfaces.
           </Text>
-          {/* Quiet facts under it: the package's version, read from packages/ui/package.json, and
-              how much the catalogue shows. */}
-          <Text variant="caption" emphasis="muted" className="catalogue-overview-facts">
-            <span className="catalogue-overview-version">v{version}</span>
-            <span className="catalogue-overview-counts">
-              {counts.map(({ kind, count }) => (
-                <span key={kind}>
-                  {count} {kind}s
-                </span>
-              ))}
-            </span>
-          </Text>
+          {/* The one way in, to setting envUI up, beside quiet facts: the package's version, read
+              from packages/ui/package.json, and how much the catalogue shows. */}
+          <Row gap={5} align="center" justify="center" wrap className="catalogue-overview-start">
+            <Button href={routeHref('docs/setup')} endIcon={<IconArrowForward />}>
+              Get started
+            </Button>
+            <Text variant="caption" emphasis="muted" className="catalogue-overview-facts">
+              <span className="catalogue-overview-version">v{version}</span>
+              <span className="catalogue-overview-counts">
+                {counts.map(({ kind, count }) => (
+                  <span key={kind}>
+                    {count} {kind}s
+                  </span>
+                ))}
+              </span>
+            </Text>
+          </Row>
         </Column>
       </header>
       <OverviewFan />
