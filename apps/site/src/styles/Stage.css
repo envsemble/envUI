@@ -655,3 +655,9 @@
     transition: none;
   }
 }
+
+/* A figure whose room is for what opens below what it shows, such as a select's list: what it
+   shows sits at the stage's top, so the room is where the list opens (`top` on MotionStage). */
+.catalogue-motion-stage[data-top] {
+  align-content: start;
+}

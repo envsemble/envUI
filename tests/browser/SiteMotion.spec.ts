@@ -146,7 +146,7 @@ test("the Toast tile's notices stack in place: the first glides from where it wa
 /** An animated figure on a page, by the words its pause button's name starts with. */
 const figure = (page: Page, words: string) =>
   page.locator('.catalogue-motion-stage', {
-    has: page.getByRole('button', { name: new RegExp(`^Pause ${words}`) }),
+    has: page.getByRole('button', { name: new RegExp(`^(Pause|Play) ${words}`) }),
   });
 
 /** Whether a box lies inside another, to a pixel. */
@@ -185,6 +185,53 @@ test("a figure's dialog opens live inside its stage, its backdrop over the stage
   await expect(page.locator('.site-contents')).not.toHaveAttribute('aria-hidden', 'true');
   // It closes again as the pointer presses Close.
   await expect(dialog).toHaveCount(0, { timeout: 5000 });
+});
+
+test('a click on an animated figure hands its example to the reader, the click going on to it', async ({
+  page,
+}) => {
+  await page.goto(`${siteDevUrl}/components/select`);
+  const stage = figure(page, 'typing in the open list');
+  await expect(page.locator('.site-loading')).toHaveCount(0);
+  await stage.scrollIntoViewIfNeeded();
+  // A recording at first, which the keyboard reaches as one stop.
+  await expect(stage).toHaveAttribute('tabindex', '0');
+  // The reader's click on its field, which lands on the stage, the recording being inert: the
+  // playback stops, and the list opens for the reader.
+  await stage.locator('.env-select-trigger').click({ force: true });
+  await expect(stage).toHaveAttribute('data-live', '');
+  await expect(stage.locator('.catalogue-motion-subject')).not.toHaveAttribute('inert');
+  // It opens as in an application, not in the stage; the anatomy figure shows another, open.
+  const option = page
+    .locator('.env-select-popup:not(.site-anatomy *)')
+    .getByRole('option', { name: 'Private' });
+  await expect(option).toBeVisible();
+  await option.click();
+  await expect(stage.locator('.env-select-trigger')).toContainText('Private');
+  // Its play button plays the recording again, from its start.
+  await stage.getByRole('button', { name: /^Play / }).click();
+  await expect(stage).not.toHaveAttribute('data-live');
+  await expect(stage.locator('.catalogue-motion-subject')).toHaveAttribute('inert');
+});
+
+test('the keyboard reaching an animated figure takes it over, and leaving it untouched plays it again', async ({
+  page,
+}) => {
+  await page.goto(`${siteDevUrl}/components/select`);
+  const stage = figure(page, 'typing in the open list');
+  await expect(page.locator('.site-loading')).toHaveCount(0);
+  await stage.scrollIntoViewIfNeeded();
+  await expect(stage).toHaveAttribute('tabindex', '0');
+  // Focus that arrives by the keyboard, here back from its pause button, moves on into the
+  // example, live.
+  await stage.getByRole('button', { name: /^Pause / }).focus();
+  await page.keyboard.press('Shift+Tab');
+  await expect(stage).toHaveAttribute('data-live', '');
+  await expect(stage.locator('.env-select-trigger')).toBeFocused();
+  // Past the play button and out, untouched: the recording plays again.
+  await page.keyboard.press('Tab');
+  await page.keyboard.press('Tab');
+  await expect(stage).not.toHaveAttribute('data-live');
 });
 
 test("a figure's right click opens its context menu inside the stage, and the page stays", async ({
