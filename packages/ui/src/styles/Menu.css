@@ -211,9 +211,9 @@
     outline: 2px solid var(--env-menu-item-ring, transparent);
     outline-offset: -2px;
   }
-  /* An unavailable item dims its icon, end and shortcut, and its label takes the muted text color,
-     so it still sits above its description, which often says why it is unavailable and keeps the
-     muted color and its smaller size, readable. */
+  /* An unavailable item dims its icon, end and shortcut, and its label takes the disabled text
+     color, as a disabled button's does, so it reads as unavailable rather than as explanatory text;
+     its description, which often says why, keeps the muted color and its smaller size, readable. */
   .env-menu-item:is([data-disabled], [aria-disabled='true']) {
     cursor: default;
   }
@@ -221,7 +221,7 @@
     opacity: var(--env-state-disabled-opacity);
   }
   .env-menu-item:is([data-disabled], [aria-disabled='true']) .env-menu-item-label {
-    color: var(--env-color-fg-muted);
+    color: var(--env-color-fg-disabled);
   }
   /* A separator is space as tall as the gap between groups, with no line: popups have no hairlines. */
   .env-menu-separator {
