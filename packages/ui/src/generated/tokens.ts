@@ -277,7 +277,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: 'rgb(183 43 32 / 0.12)',
-      dark: 'rgb(248 172 166 / 0.14)',
+      dark: 'rgb(206 94 83 / 0.18)',
       'light-high-contrast': 'rgb(122 2 0 / 0.08)',
       'dark-high-contrast': 'rgb(255 211 207 / 0.1)',
     },
@@ -332,7 +332,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: 'rgb(183 43 32 / 0.14)',
-      dark: 'rgb(248 172 166 / 0.17)',
+      dark: 'rgb(206 94 83 / 0.22)',
       'light-high-contrast': 'rgb(122 2 0 / 0.14)',
       'dark-high-contrast': 'rgb(255 228 226 / 0.14)',
     },
@@ -343,7 +343,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: 'rgb(183 43 32 / 0.22)',
-      dark: 'rgb(248 172 166 / 0.25)',
+      dark: 'rgb(206 94 83 / 0.3)',
       'light-high-contrast': 'rgb(122 2 0 / 0.22)',
       'dark-high-contrast': 'rgb(255 228 226 / 0.22)',
     },
@@ -772,7 +772,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: 'rgb(0 92 200 / 0.12)',
-      dark: 'rgb(159 193 248 / 0.14)',
+      dark: 'rgb(52 126 234 / 0.16)',
       'light-high-contrast': 'rgb(0 55 124 / 0.08)',
       'dark-high-contrast': 'rgb(205 222 252 / 0.1)',
     },
@@ -783,7 +783,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: 'rgb(0 92 200 / 0.05)',
-      dark: 'rgb(159 193 248 / 0.14)',
+      dark: 'rgb(52 126 234 / 0.16)',
       'light-high-contrast': 'rgb(0 55 124 / 0.08)',
       'dark-high-contrast': 'rgb(205 222 252 / 0.1)',
     },
@@ -849,7 +849,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: 'rgb(0 92 200 / 0.14)',
-      dark: 'rgb(159 193 248 / 0.17)',
+      dark: 'rgb(52 126 234 / 0.2)',
       'light-high-contrast': 'rgb(0 55 124 / 0.14)',
       'dark-high-contrast': 'rgb(224 235 253 / 0.14)',
     },
@@ -860,7 +860,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: 'rgb(0 92 200 / 0.22)',
-      dark: 'rgb(159 193 248 / 0.25)',
+      dark: 'rgb(52 126 234 / 0.28)',
       'light-high-contrast': 'rgb(0 55 124 / 0.22)',
       'dark-high-contrast': 'rgb(224 235 253 / 0.22)',
     },
@@ -981,7 +981,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: 'rgb(23 111 53 / 0.12)',
-      dark: 'rgb(122 209 151 / 0.14)',
+      dark: 'rgb(60 144 86 / 0.18)',
       'light-high-contrast': 'rgb(0 68 26 / 0.08)',
       'dark-high-contrast': 'rgb(152 240 181 / 0.1)',
     },
@@ -1036,7 +1036,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: 'rgb(23 111 53 / 0.14)',
-      dark: 'rgb(122 209 151 / 0.17)',
+      dark: 'rgb(60 144 86 / 0.22)',
       'light-high-contrast': 'rgb(0 68 26 / 0.14)',
       'dark-high-contrast': 'rgb(165 253 193 / 0.14)',
     },
@@ -1047,7 +1047,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: 'rgb(23 111 53 / 0.22)',
-      dark: 'rgb(122 209 151 / 0.25)',
+      dark: 'rgb(60 144 86 / 0.3)',
       'light-high-contrast': 'rgb(0 68 26 / 0.22)',
       'dark-high-contrast': 'rgb(165 253 193 / 0.22)',
     },
@@ -1069,7 +1069,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: 'rgb(255 208 120 / 0.24)',
-      dark: 'rgb(235 183 80 / 0.14)',
+      dark: 'rgb(160 106 24 / 0.2)',
       'light-high-contrast': 'rgb(255 208 120 / 0.24)',
       'dark-high-contrast': 'rgb(255 216 144 / 0.1)',
     },
@@ -1091,7 +1091,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: 'rgb(255 208 120 / 0.36)',
-      dark: 'rgb(235 183 80 / 0.17)',
+      dark: 'rgb(160 106 24 / 0.26)',
       'light-high-contrast': 'rgb(255 208 120 / 0.36)',
       'dark-high-contrast': 'rgb(255 232 190 / 0.14)',
     },
@@ -1102,7 +1102,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: 'rgb(255 208 120 / 0.5)',
-      dark: 'rgb(235 183 80 / 0.25)',
+      dark: 'rgb(160 106 24 / 0.36)',
       'light-high-contrast': 'rgb(255 208 120 / 0.5)',
       'dark-high-contrast': 'rgb(255 232 190 / 0.22)',
     },

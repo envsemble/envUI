@@ -226,18 +226,18 @@
             "$value": {
               "colorSpace": "oklch",
               "components": {
-                "$ref": "#/palette/blue/20/$value/components"
+                "$ref": "#/palette/blue/45/$value/components"
               },
-              "alpha": 0.17
+              "alpha": 0.2
             }
           },
           "pressed": {
             "$value": {
               "colorSpace": "oklch",
               "components": {
-                "$ref": "#/palette/blue/20/$value/components"
+                "$ref": "#/palette/blue/45/$value/components"
               },
-              "alpha": 0.25
+              "alpha": 0.28
             }
           }
         },
@@ -245,9 +245,9 @@
           "$value": {
             "colorSpace": "oklch",
             "components": {
-              "$ref": "#/palette/blue/20/$value/components"
+              "$ref": "#/palette/blue/45/$value/components"
             },
-            "alpha": 0.14
+            "alpha": 0.16
           }
         },
         "soft": {
@@ -265,9 +265,9 @@
           "$value": {
             "colorSpace": "oklch",
             "components": {
-              "$ref": "#/palette/green/20/$value/components"
+              "$ref": "#/palette/green/45/$value/components"
             },
-            "alpha": 0.14
+            "alpha": 0.18
           }
         },
         "subtle": {
@@ -282,18 +282,18 @@
             "$value": {
               "colorSpace": "oklch",
               "components": {
-                "$ref": "#/palette/green/20/$value/components"
+                "$ref": "#/palette/green/45/$value/components"
               },
-              "alpha": 0.17
+              "alpha": 0.22
             }
           },
           "pressed": {
             "$value": {
               "colorSpace": "oklch",
               "components": {
-                "$ref": "#/palette/green/20/$value/components"
+                "$ref": "#/palette/green/45/$value/components"
               },
-              "alpha": 0.25
+              "alpha": 0.3
             }
           }
         },
@@ -317,9 +317,9 @@
           "$value": {
             "colorSpace": "oklch",
             "components": {
-              "$ref": "#/palette/amber/20/$value/components"
+              "$ref": "#/palette/amber/50/$value/components"
             },
-            "alpha": 0.14
+            "alpha": 0.2
           }
         },
         "subtle": {
@@ -334,18 +334,18 @@
             "$value": {
               "colorSpace": "oklch",
               "components": {
-                "$ref": "#/palette/amber/20/$value/components"
+                "$ref": "#/palette/amber/50/$value/components"
               },
-              "alpha": 0.17
+              "alpha": 0.26
             }
           },
           "pressed": {
             "$value": {
               "colorSpace": "oklch",
               "components": {
-                "$ref": "#/palette/amber/20/$value/components"
+                "$ref": "#/palette/amber/50/$value/components"
               },
-              "alpha": 0.25
+              "alpha": 0.36
             }
           }
         }
@@ -358,9 +358,9 @@
           "$value": {
             "colorSpace": "oklch",
             "components": {
-              "$ref": "#/palette/red/20/$value/components"
+              "$ref": "#/palette/red/45/$value/components"
             },
-            "alpha": 0.14
+            "alpha": 0.18
           }
         },
         "subtle": {
@@ -375,18 +375,18 @@
             "$value": {
               "colorSpace": "oklch",
               "components": {
-                "$ref": "#/palette/red/20/$value/components"
+                "$ref": "#/palette/red/45/$value/components"
               },
-              "alpha": 0.17
+              "alpha": 0.22
             }
           },
           "pressed": {
             "$value": {
               "colorSpace": "oklch",
               "components": {
-                "$ref": "#/palette/red/20/$value/components"
+                "$ref": "#/palette/red/45/$value/components"
               },
-              "alpha": 0.25
+              "alpha": 0.3
             }
           }
         },
