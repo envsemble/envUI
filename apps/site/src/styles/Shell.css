@@ -305,7 +305,7 @@ body {
    scrolls, and scroll on their own where they are taller than the window. A narrower pane leaves
    them out, as the page's own headings say as much. The pager stays at the foot of a short page. */
 .site-page-layout {
-  --site-contents-width: 16rem;
+  --site-contents-width: 13rem;
   /* Below the corner's controls: their row's padding and the pill's height, with room. */
   --site-contents-top: 4.5rem;
   container: site-page-layout / inline-size;
