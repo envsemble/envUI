@@ -3,9 +3,6 @@ import { useLayoutEffect, useRef, type RefObject } from 'react';
 /** The least room, in px, between a preview and its stage's edges. */
 const inset = 16;
 
-/** The least width, in rem, a component drawn at its own size lays out at: the tiles' window. */
-const leastOwnWidth = 14;
-
 /** The most a page's own tile is enlarged: written for its small window, it is drawn large. */
 const most = 2;
 
@@ -241,15 +238,14 @@ export function useFit(
         width / canvasElement.offsetWidth,
         height / canvasElement.offsetHeight,
       );
-      // At its own size, unless the stage is narrower than the least width a component lays out
-      // at (Gallery.css), as four to a row or two on a phone: then drawn smaller, by one scale
-      // for every tile, as every stage is as wide.
+      // At its own size, unless the stage is narrower than the least width it is drawn whole at,
+      // `--catalogue-own-least` (Gallery.css), as four to a row: then drawn smaller, by one scale
+      // for every tile, as every stage is as wide. On a phone, none: what is wider is cut off.
+      const least =
+        parseFloat(getComputedStyle(canvasElement).getPropertyValue('--catalogue-own-least')) *
+        parseFloat(getComputedStyle(document.documentElement).fontSize);
       const scale = ownSize
-        ? Math.min(
-            1,
-            width /
-              (leastOwnWidth * parseFloat(getComputedStyle(document.documentElement).fontSize)),
-          )
+        ? Math.min(1, width / least)
         : legible
           ? Math.max(legibleScale, Math.min(1, windowScale))
           : tile
@@ -264,7 +260,13 @@ export function useFit(
       // and fades out (`data-cut`, Gallery.css).
       const across = (right - left) * scale;
       const down = (bottom - top) * scale;
-      if (ownSize && across > width) toX = left * scale + width / 2;
+      // It starts at the component's own start, rather than its popups': a popup shifts to stay
+      // in the window, and a view that followed it would shift it again.
+      if (ownSize && across > width) {
+        const own = boxes.filter(({ element }) => !element.closest('.catalogue-overlay-layer'));
+        const start = own.length ? Math.min(...own.map(({ box }) => box.left)) : left;
+        toX = start * scale + width / 2;
+      }
       // A scene drawn at a legible scale shows from its top too, where it starts, such as a search
       // above the results it filters, and stays centred across.
       if ((ownSize || legible) && down > height) toY = top * scale + height / 2;

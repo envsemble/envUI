@@ -18,7 +18,7 @@ import { build } from 'esbuild';
 // custom properties of envUI that are shadows, and no token is one. The catalogue has
 // one exception, by request: the very faint shadow its example canvases, tiles and its own cards
 // take, `--catalogue-card-shadow`, and half of it for a small card, `--catalogue-card-shadow-subtle`, and a stronger one for cards laid over one another,
-// `--catalogue-card-shadow-raised`
+// `--catalogue-card-shadow-raised`, and the canvases' own, `--catalogue-card-shadow-recessed`, gone in the dark themes
 // (Stage.css), a device of the documentation that envUI never ships.
 
 const root = fileURLToPath(new URL('../', import.meta.url));
@@ -174,6 +174,7 @@ test('no envUI style sheet draws a drop shadow but the avatars’, the popups’
         '--catalogue-card-shadow',
         '--catalogue-card-shadow-subtle',
         '--catalogue-card-shadow-raised',
+        '--catalogue-card-shadow-recessed',
       ],
     }),
     [],

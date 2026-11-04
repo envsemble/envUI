@@ -31,7 +31,9 @@ avoidWhen:
 components:
   - Table
 examples:
-  ProjectStatus: overview
+  ProjectStatus:
+    role: overview
+    stage: shaded
   RowDensity: example
   NumericColumns: example
   TableAnatomy: anatomy

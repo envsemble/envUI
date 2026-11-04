@@ -9,7 +9,7 @@ import type {
   StageFill,
 } from '../shared/DocumentationTypes';
 import { Documentation } from '../pages/Documentation';
-import { componentGroups, type Documentation as Document } from '../pages/PageModel';
+import type { Documentation as Document } from '../pages/PageModel';
 import { AnatomyFigure } from './AnatomyFigure';
 import { ExampleCode, ExampleRender, keepLinksInPlace, LiveExample } from './LiveExample';
 import { OpenExample } from './OpenExample';
@@ -162,15 +162,12 @@ function Figure({
   block,
   options,
   live = false,
-  codeOpen = false,
 }: {
   page: Document;
   block: FigureBlock;
   options?: OptionTable;
   /** Whether a figure shown open is live, as the Overview's are: the component, open, to use. */
   live?: boolean;
-  /** Whether its code starts open, as a component's first overview example's does. */
-  codeOpen?: boolean;
 }) {
   // A section waiting its turn to show renders its headings alone (SectionOutline).
   if (useSectionOutline()) return null;
@@ -220,7 +217,6 @@ function Figure({
       live={live}
       stage={block.stage}
       motion={block.motion}
-      codeOpen={codeOpen}
     />
   );
 }
@@ -324,19 +320,8 @@ export function FigureSection({
   const groups = groupFigures(blocks, useFoundationFigures(page.id));
   // The Overview's figures shown open are the components at rest, open, which people can use.
   const live = section.id === 'overview';
-  // A component's first overview example shows its code open, right under it; the rest fold theirs.
-  const codeOpen =
-    live && componentGroups.some((group) => group === page.group)
-      ? section.blocks.find((block): block is ExampleBlock => block.kind === 'example')?.name
-      : undefined;
   const figure = (block: FigureBlock, key?: string | number) => (
-    <Figure
-      key={key}
-      page={page}
-      block={block}
-      live={live}
-      codeOpen={block.kind === 'example' && block.name === codeOpen}
-    />
+    <Figure key={key} page={page} block={block} live={live} />
   );
   const outline = useSectionOutline();
   /** Subsections of text shown beside the figure at an index of groups. */
@@ -435,7 +420,6 @@ export function FigureSection({
           block={group}
           options={options.get(group.name)}
           live={live}
-          codeOpen={group.kind === 'example' && group.name === codeOpen}
         />,
       );
     else if (group.kind === 'specimen' && !outline)

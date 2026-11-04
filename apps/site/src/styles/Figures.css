@@ -243,20 +243,14 @@
   background: var(--env-color-border-muted);
 }
 
-/* Code soft-wraps where the content column is narrower than a 100-character line, rather than
-   scrolling sideways; examples are formatted to that width. */
-@container (width < 60rem) {
-  .site-example-source pre {
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
-  }
+/* An example's open code lines up with its stage, edge to edge and with the stage's corners, so
+   the two read as one figure. Code never wraps: a line wider than the column scrolls sideways. */
+.site-live-example-code > .env-disclosure-panel {
+  margin-inline: 0;
 }
 
-@media (width < 48rem) {
-  .site-example-source pre {
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
-  }
+.site-example-source.env-code-block {
+  border-radius: var(--env-radius-surface);
 }
 
 /* Text for assistive technology alone, such as the file a Code disclosure shows. */
