@@ -28,6 +28,17 @@ const allowed = new Set([
   "Table.css .env-table-region[data-narrow-layout='stack'] .env-table-head:focus-within",
 ]);
 
+/**
+ * Declarations that read a custom property a state sets without moving anything, by style sheet,
+ * selector and property, with the reason. The fieldset that draws a field's frame lies over the
+ * control, absolutely positioned, and takes no room: the wider frame of a focused field grows
+ * inward from the same outer edge, and the notch keeps its place, through its offsets.
+ */
+const allowedReads = new Set([
+  'TextField.css .env-text-field-border { inset-block }',
+  'TextField.css .env-text-field-border { padding-inline }',
+]);
+
 const isState = (selector) =>
   /:(?:hover|focus-within)\b/.test(selector.replace(/:not\([^)]*\)/g, ''));
 const sheets = readdirSync(styles).filter(
@@ -71,8 +82,9 @@ test('no custom property set on hover or with focus inside reaches a layout prop
       });
     }
     sheet.walkDecls((declaration) => {
-      if (layout.test(declaration.prop) && reads(declaration.value))
-        found.push(`${file} ${declaration.parent.selector} { ${declaration.prop} }`);
+      const name = `${file} ${declaration.parent.selector} { ${declaration.prop} }`;
+      if (layout.test(declaration.prop) && reads(declaration.value) && !allowedReads.has(name))
+        found.push(name);
     });
   }
   assert.deepEqual(found, []);

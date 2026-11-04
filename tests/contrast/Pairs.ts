@@ -410,6 +410,18 @@ const registry: readonly ContrastPair[] = merged([
     'Button variant="important"',
   ),
   ...text(
+    '--env-color-fg-on-emphasis',
+    [
+      '--env-color-bg-danger-emphasis',
+      '--env-color-bg-danger-emphasis-hover',
+      '--env-color-bg-danger-emphasis-pressed',
+      '--env-color-bg-accent-emphasis',
+      '--env-color-bg-accent-emphasis-hover',
+      '--env-color-bg-accent-emphasis-pressed',
+    ],
+    'Primary buttons in the danger and accent tones, at rest, hovered and pressed',
+  ),
+  ...text(
     '--env-color-fg-default',
     [
       [layerHover, page],
@@ -609,6 +621,11 @@ const registry: readonly ContrastPair[] = merged([
       '--env-color-fg-muted',
       [[fill, frosted, behind]],
       'A highlighted row’s description and icon, and keys as chips at rest',
+    ),
+    ...text(
+      '--env-color-fg-danger',
+      [[fill, frosted, behind]],
+      'A destructive menu item’s label and icon on its highlighted row',
     ),
     ...text(
       '--env-color-fg-default',
@@ -1057,8 +1074,12 @@ const registry: readonly ContrastPair[] = merged([
   ),
   ...nonText(
     'badge-outline-primary',
-    ['--env-color-bg-primary-emphasis'],
-    'The outline of a badge or counter on a primary button',
+    [
+      '--env-color-bg-primary-emphasis',
+      '--env-color-bg-danger-emphasis',
+      '--env-color-bg-accent-emphasis',
+    ],
+    'The outline of a badge or counter on a primary button, in any tone',
     {
       minimum: { standard: 1.5, high: 3 },
       rationale:
@@ -1083,6 +1104,12 @@ const registry: readonly ContrastPair[] = merged([
     '--env-color-bg-primary-emphasis',
     '--env-color-bg-primary-emphasis-hover',
     '--env-color-bg-primary-emphasis-pressed',
+    '--env-color-bg-danger-emphasis',
+    '--env-color-bg-danger-emphasis-hover',
+    '--env-color-bg-danger-emphasis-pressed',
+    '--env-color-bg-accent-emphasis',
+    '--env-color-bg-accent-emphasis-hover',
+    '--env-color-bg-accent-emphasis-pressed',
   ]),
   ...buttonEndSeparator('control', [
     [fill, page],

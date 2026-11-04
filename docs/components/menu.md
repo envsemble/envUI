@@ -187,8 +187,9 @@ A Menu.Item runs its `onClick` and takes:
 - a decorative `icon`;
 - a muted `description`, read as its description;
 - a `shortcut`, such as `Ctrl+D`, shown as Kbd keys and announced as `aria-keyshortcuts`;
-- `end` content, such as a Badge, which is part of its name;
-- `disabled`, which keeps it in place, dimmed, with `aria-disabled`.
+- `end` content, such as a Badge, which is part of its name; a count there shows as its figures alone, without a pill, apart from the shortcut's keys;
+- `tone="danger"` for a destructive action, such as Delete, whose label and icon take the danger color while its row highlights as any other's;
+- `disabled`, which keeps it in place with `aria-disabled`, its label and icon dimmed and its description still readable, to say why.
 
 ```tsx source=IconsAndShortcuts
 
@@ -290,7 +291,7 @@ With `href`, a Menu.Item is a link, through the link component of `LinkProvider`
 
 ### Composition
 
-The parts are the popup, `env-menu`, and its positioner, `env-menu-positioner`; the header, `env-menu-header`; a group, `env-menu-group`, with its label, `env-menu-group-label`; each item, `env-menu-item`, with `data-highlighted` and `data-disabled`, its label and description in `env-menu-item-text`, `env-menu-item-label` and `env-menu-item-description`, and its end, `env-menu-item-end`, with the shortcut, `env-menu-item-shortcut`; a radio or checkbox item, `env-menu-choice`, with `data-checked` and its check in `env-menu-item-indicator-slot` and `env-menu-item-indicator`; a submenu's row, `env-menu-submenu-trigger`, with its chevron, `env-menu-submenu-chevron`; and the separator, `env-menu-separator`.
+The parts are the popup, `env-menu`, and its positioner, `env-menu-positioner`; the header, `env-menu-header`; a group, `env-menu-group`, with its label, `env-menu-group-label`; each item, `env-menu-item`, with `data-highlighted`, `data-disabled` and `data-tone`, its label and description in `env-menu-item-text`, `env-menu-item-label` and `env-menu-item-description`, and its end, `env-menu-item-end`, with the shortcut, `env-menu-item-shortcut`; a radio or checkbox item, `env-menu-choice`, with `data-checked` and its check in `env-menu-item-indicator-slot` and `env-menu-item-indicator`; a submenu's row, `env-menu-submenu-trigger`, with its chevron, `env-menu-submenu-chevron`; and the separator, `env-menu-separator`.
 
 ### Customize
 

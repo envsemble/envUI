@@ -78,16 +78,16 @@
           "$value": {
             "colorSpace": "oklch",
             "components": {
-              "$ref": "#/palette/neutral/92/$value/components"
+              "$ref": "#/palette/neutral/100/$value/components"
             },
-            "alpha": 0.55
+            "alpha": 0.5
           }
         },
         "muted": {
           "$value": {
             "colorSpace": "oklch",
             "components": {
-              "$ref": "#/palette/neutral/92/$value/components"
+              "$ref": "#/palette/neutral/100/$value/components"
             },
             "alpha": 0.3
           }
@@ -352,7 +352,15 @@
       },
       "danger": {
         "emphasis": {
-          "$value": "{palette.red.20}"
+          "$root": {
+            "$value": "{palette.red.20}"
+          },
+          "hover": {
+            "$value": "{palette.red.30}"
+          },
+          "pressed": {
+            "$value": "{palette.red.40}"
+          }
         },
         "muted": {
           "$value": {
@@ -404,13 +412,13 @@
       },
       "done": {
         "emphasis": {
-          "$value": "{palette.violet.20}"
+          "$value": "{palette.cyan.20}"
         },
         "muted": {
           "$value": {
             "colorSpace": "oklch",
             "components": {
-              "$ref": "#/palette/violet/20/$value/components"
+              "$ref": "#/palette/cyan/20/$value/components"
             },
             "alpha": 0.17
           }
@@ -430,6 +438,17 @@
         }
       },
       "accent": {
+        "emphasis": {
+          "$root": {
+            "$value": "{palette.purple.20}"
+          },
+          "hover": {
+            "$value": "{palette.purple.30}"
+          },
+          "pressed": {
+            "$value": "{palette.purple.40}"
+          }
+        },
         "strong": {
           "$root": {
             "$value": "{palette.purple.55}"
@@ -582,7 +601,7 @@
         "$value": "{palette.red.20}"
       },
       "done": {
-        "$value": "{palette.violet.20}"
+        "$value": "{palette.cyan.20}"
       },
       "on-emphasis": {
         "$value": "{palette.neutral.92}"
@@ -829,7 +848,7 @@
         "$value": {
           "colorSpace": "oklch",
           "components": {
-            "$ref": "#/palette/violet/20/$value/components"
+            "$ref": "#/palette/cyan/20/$value/components"
           },
           "alpha": 0.55
         }

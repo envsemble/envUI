@@ -279,7 +279,15 @@
         },
         "danger": {
           "emphasis": {
-            "$value": "{palette.red.80}"
+            "$root": {
+              "$value": "{palette.red.80}"
+            },
+            "hover": {
+              "$value": "{palette.red.84}"
+            },
+            "pressed": {
+              "$value": "{palette.red.88}"
+            }
           },
           "muted": {
             "$value": {
@@ -324,13 +332,13 @@
         },
         "done": {
           "emphasis": {
-            "$value": "{palette.violet.80}"
+            "$value": "{palette.cyan.80}"
           },
           "muted": {
             "$value": {
               "colorSpace": "oklch",
               "components": {
-                "$ref": "#/palette/violet/80/$value/components"
+                "$ref": "#/palette/cyan/80/$value/components"
               },
               "alpha": 0.08
             }
@@ -350,6 +358,17 @@
           }
         },
         "accent": {
+          "emphasis": {
+            "$root": {
+              "$value": "{palette.purple.75}"
+            },
+            "hover": {
+              "$value": "{palette.purple.80}"
+            },
+            "pressed": {
+              "$value": "{palette.purple.84}"
+            }
+          },
           "strong": {
             "$root": {
               "$value": "{palette.purple.75}"
@@ -491,7 +510,7 @@
           "$value": "{palette.red.80}"
         },
         "done": {
-          "$value": "{palette.violet.80}"
+          "$value": "{palette.cyan.80}"
         },
         "on-emphasis": {
           "$value": "{palette.neutral.0}"
@@ -696,7 +715,7 @@
           "$value": {
             "colorSpace": "oklch",
             "components": {
-              "$ref": "#/palette/violet/80/$value/components"
+              "$ref": "#/palette/cyan/80/$value/components"
             },
             "alpha": 0.55
           }

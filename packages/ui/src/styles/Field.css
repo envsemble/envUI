@@ -80,13 +80,21 @@
     opacity: 1;
   }
   @media (hover: hover) {
-    .env-field-control:hover:not(:disabled, [data-disabled]) {
+    .env-field-control:hover:not(:disabled, [data-disabled], [readonly]) {
       --env-field-control-border: var(--env-color-border-primary-emphasis-hover);
     }
   }
+  /* Read-only: the value keeps its full contrast while the edge quiets to the muted one and doesn't
+     answer the pointer, as TextField's does. */
+  .env-field-control[readonly] {
+    --env-field-control-border: var(--env-color-border-muted);
+  }
+  /* Focus draws the edge in the accent at twice its width, the second hairline inside it, so
+     nothing moves. */
   .env-field-control:focus-visible,
   .env-field-control:focus-within {
     --env-field-control-border: var(--env-color-border-primary-emphasis);
+    box-shadow: inset 0 0 0 var(--env-control-border-width) var(--env-field-control-border);
   }
   .env-field-control:is([data-invalid], [aria-invalid='true']) {
     --env-field-control-border: var(--env-color-fg-danger);

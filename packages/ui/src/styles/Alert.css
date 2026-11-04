@@ -66,9 +66,14 @@
     --env-alert-hover: var(--env-color-bg-success-subtle-hover);
     --env-alert-pressed: var(--env-color-bg-success-subtle-pressed);
   }
+  /* In dark the warning rests on its softer tint: on the stronger one, its amber title and icon
+     sank into a brown. light-dark() follows the nearest theme's color scheme. */
   .env-alert[data-tone='warning'] {
     --env-alert-icon-default: var(--env-color-fg-warning);
-    --env-alert-fill: var(--env-color-bg-warning-subtle-hover);
+    --env-alert-fill: light-dark(
+      var(--env-color-bg-warning-subtle-hover),
+      var(--env-color-bg-warning-muted)
+    );
     --env-alert-soft-fill: var(--env-color-bg-warning-muted);
     --env-alert-hover: var(--env-color-bg-warning-subtle-hover);
     --env-alert-pressed: var(--env-color-bg-warning-subtle-pressed);
@@ -107,8 +112,8 @@
   /* A secondary button among the actions stands clear of the tint, through the neutral fills it
      reads, where the translucent neutral fill would sink into it: in a light scheme it takes a card's
      solid fill, with its hover and press; in a dark one, where that fill is darker than the tint, the
-     tone's deeper tint lifted by the text color, a step more on hover and on press. light-dark()
-     follows the nearest theme's color scheme. */
+     tone's deeper tint lifted by the text color, a step more on hover and on press. A warning's
+     action takes a lift of the text color alone, as the amber tint turned tan under its label. */
   .env-alert-action {
     --env-color-bg-neutral-muted: light-dark(
       var(--env-color-bg-muted),
@@ -123,6 +128,20 @@
       color-mix(in srgb, var(--env-alert-pressed), var(--env-color-fg-default) 28%)
     );
     margin-block-start: var(--env-space-2);
+  }
+  .env-alert[data-tone='warning'] .env-alert-action {
+    --env-color-bg-neutral-muted: light-dark(
+      var(--env-color-bg-muted),
+      color-mix(in srgb, var(--env-color-fg-default) 16%, transparent)
+    );
+    --env-color-bg-neutral-muted-hover: light-dark(
+      var(--env-color-bg-muted-hover),
+      color-mix(in srgb, var(--env-color-fg-default) 22%, transparent)
+    );
+    --env-color-bg-neutral-muted-pressed: light-dark(
+      var(--env-color-bg-muted-pressed),
+      color-mix(in srgb, var(--env-color-fg-default) 30%, transparent)
+    );
   }
   /* The dismiss button is a small IconButton circle with a cross in the alert's tone, centered on the first line.
      Under a coarse pointer it grows to the touch height, as every button does. Alert.css comes after

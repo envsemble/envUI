@@ -59,8 +59,12 @@
     text-align: start;
     cursor: pointer;
   }
-  .env-select .env-select-control > .env-select-trigger:disabled {
+  .env-select .env-select-control > .env-select-trigger:is(:disabled, [aria-readonly='true']) {
     cursor: default;
+  }
+  /* A read-only select opens nothing, so it shows no chevron; the value keeps its place. */
+  .env-select-control:has(> .env-select-trigger[aria-readonly='true']) > .env-select-end {
+    visibility: hidden;
   }
   .env-select-trigger > *,
   .env-select-sizer > * {

@@ -159,7 +159,7 @@ Not shown: the suffix, the error and a text area's resize edge.
 
 ### States
 
-The label rests in an empty field and floats into the outline on focus or with a value.
+The label rests in an empty field and floats into the outline on focus or with a value. Focus draws the outline in the accent, twice as thick.
 
 <!-- specimen: LabelFloats -->
 
@@ -220,7 +220,7 @@ Say what kind of value each field takes, such as an e-mail address, so the brows
 
 ### Read-only values
 
-Show a value people can't change as read-only, so they can still focus and copy it. A disabled field can't be focused, copied or submitted.
+Show a value people can't change as read-only, so they can still focus and copy it. Its outline is quieter and doesn't answer the pointer, while the value stays as dark as any other. A disabled field can't be focused, copied or submitted.
 
 ### Labels
 

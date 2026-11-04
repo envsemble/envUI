@@ -40,6 +40,39 @@ export const tokens = {
     },
     scales: { compact: '1rem' },
   },
+  /** The fill of accent primary actions, as the primary emphasis fill is of the main one: saturated with white labels in light, soft with dark labels in dark; paired with fg.on-emphasis. */
+  'color.bg.accent.emphasis': {
+    cssVariable: '--env-color-bg-accent-emphasis',
+    type: 'color',
+    values: {
+      light: '#9948b6',
+      dark: '#e7a8ff',
+      'light-high-contrast': '#6d1888',
+      'dark-high-contrast': '#f2d2ff',
+    },
+  },
+  /** An accent primary action under the pointer. */
+  'color.bg.accent.emphasis.hover': {
+    cssVariable: '--env-color-bg-accent-emphasis-hover',
+    type: 'color',
+    values: {
+      light: '#83319f',
+      dark: '#d683f5',
+      'light-high-contrast': '#63047d',
+      'dark-high-contrast': '#f7e4ff',
+    },
+  },
+  /** An accent primary action while pressed. */
+  'color.bg.accent.emphasis.pressed': {
+    cssVariable: '--env-color-bg-accent-emphasis-pressed',
+    type: 'color',
+    values: {
+      light: '#6d1888',
+      dark: '#bc6ada',
+      'light-high-contrast': '#57006e',
+      'dark-high-contrast': '#faedff',
+    },
+  },
   /** The translucent accent tint of soft accent badges in dark and at high contrast; in light they take color.bg.accent.soft. */
   'color.bg.accent.muted': {
     cssVariable: '--env-color-bg-accent-muted',
@@ -238,29 +271,29 @@ export const tokens = {
       'dark-high-contrast': '#a7d7cf',
     },
   },
-  /** The backdrop behind dialogs and the command palette: the dark page color at 55%. */
+  /** The backdrop behind dialogs and the command palette: the dark page color at 32% in light, which sets the page back without turning it gray, and black at 50% in dark, where the page color would not darken it. */
   'color.bg.backdrop': {
     cssVariable: '--env-color-bg-backdrop',
     type: 'color',
     values: {
-      light: 'rgb(31 31 34 / 0.55)',
-      dark: 'rgb(30 31 33 / 0.55)',
-      'light-high-contrast': 'rgb(31 31 34 / 0.55)',
-      'dark-high-contrast': 'rgb(30 31 33 / 0.55)',
+      light: 'rgb(31 31 34 / 0.32)',
+      dark: 'rgb(0 0 0 / 0.5)',
+      'light-high-contrast': 'rgb(31 31 34 / 0.32)',
+      'dark-high-contrast': 'rgb(0 0 0 / 0.5)',
     },
   },
-  /** The lighter backdrop behind a sheet that leaves the page usable, such as a supporting pane over its main pane: the dark page color at 30%. */
+  /** The lighter backdrop behind a sheet that leaves the page usable, such as a supporting pane over its main pane: the dark page color at 20% in light and black at 30% in dark. */
   'color.bg.backdrop.muted': {
     cssVariable: '--env-color-bg-backdrop-muted',
     type: 'color',
     values: {
-      light: 'rgb(31 31 34 / 0.3)',
-      dark: 'rgb(30 31 33 / 0.3)',
-      'light-high-contrast': 'rgb(31 31 34 / 0.3)',
-      'dark-high-contrast': 'rgb(30 31 33 / 0.3)',
+      light: 'rgb(31 31 34 / 0.2)',
+      dark: 'rgb(0 0 0 / 0.3)',
+      'light-high-contrast': 'rgb(31 31 34 / 0.2)',
+      'dark-high-contrast': 'rgb(0 0 0 / 0.3)',
     },
   },
-  /** A solid danger fill; paired with fg.on-emphasis. */
+  /** A solid danger fill, such as a solid danger badge, and the fill of destructive primary actions, as the primary emphasis fill is of the main one: saturated with white labels in light, soft with dark labels in dark; paired with fg.on-emphasis. */
   'color.bg.danger.emphasis': {
     cssVariable: '--env-color-bg-danger-emphasis',
     type: 'color',
@@ -269,6 +302,28 @@ export const tokens = {
       dark: '#f8aca6',
       'light-high-contrast': '#7a0200',
       'dark-high-contrast': '#ffd3cf',
+    },
+  },
+  /** A destructive primary action under the pointer. */
+  'color.bg.danger.emphasis.hover': {
+    cssVariable: '--env-color-bg-danger-emphasis-hover',
+    type: 'color',
+    values: {
+      light: '#c64e43',
+      dark: '#e68c84',
+      'light-high-contrast': '#6b0100',
+      'dark-high-contrast': '#ffe4e2',
+    },
+  },
+  /** A destructive primary action while pressed. */
+  'color.bg.danger.emphasis.pressed': {
+    cssVariable: '--env-color-bg-danger-emphasis-pressed',
+    type: 'color',
+    values: {
+      light: '#bf3e33',
+      dark: '#d66d63',
+      'light-high-contrast': '#5a0100',
+      'dark-high-contrast': '#ffedeb',
     },
   },
   /** The translucent danger tint of badges and alerts. */
@@ -386,10 +441,10 @@ export const tokens = {
     cssVariable: '--env-color-bg-done-emphasis',
     type: 'color',
     values: {
-      light: '#7a3fc8',
-      dark: '#d2b2f7',
-      'light-high-contrast': '#53009a',
-      'dark-high-contrast': '#e8d6ff',
+      light: '#076a7c',
+      dark: '#81cbd7',
+      'light-high-contrast': '#00404c',
+      'dark-high-contrast': '#a0e9f4',
     },
   },
   /** The translucent done tint of badges. */
@@ -397,10 +452,10 @@ export const tokens = {
     cssVariable: '--env-color-bg-done-muted',
     type: 'color',
     values: {
-      light: 'rgb(122 63 200 / 0.12)',
-      dark: 'rgb(210 178 247 / 0.17)',
-      'light-high-contrast': 'rgb(83 0 154 / 0.08)',
-      'dark-high-contrast': 'rgb(232 214 255 / 0.1)',
+      light: 'rgb(7 106 124 / 0.12)',
+      dark: 'rgb(129 203 215 / 0.17)',
+      'light-high-contrast': 'rgb(0 64 76 / 0.08)',
+      'dark-high-contrast': 'rgb(160 233 244 / 0.1)',
     },
   },
   /** A well that keeps a fill of its own, such as the color picker's value button and code and references in rich text. Text fields have none: they take the background of what they sit on. */
@@ -1222,10 +1277,10 @@ export const tokens = {
     cssVariable: '--env-color-border-done',
     type: 'color',
     values: {
-      light: 'rgb(122 63 200 / 0.55)',
-      dark: 'rgb(210 178 247 / 0.55)',
-      'light-high-contrast': 'rgb(83 0 154 / 0.55)',
-      'dark-high-contrast': 'rgb(241 230 255 / 0.55)',
+      light: 'rgb(7 106 124 / 0.55)',
+      dark: 'rgb(129 203 215 / 0.55)',
+      'light-high-contrast': 'rgb(0 64 76 / 0.55)',
+      'dark-high-contrast': 'rgb(181 245 255 / 0.55)',
     },
   },
   /** Focus rings: at least 3:1 against what they are drawn on. */
@@ -1673,10 +1728,10 @@ export const tokens = {
     cssVariable: '--env-color-fg-done',
     type: 'color',
     values: {
-      light: '#7032bf',
-      dark: '#d2b2f7',
-      'light-high-contrast': '#53009a',
-      'dark-high-contrast': '#f1e6ff',
+      light: '#006071',
+      dark: '#81cbd7',
+      'light-high-contrast': '#00404c',
+      'dark-high-contrast': '#b5f5ff',
     },
   },
   /** Links and text buttons: at least 4.5:1 on every surface and row. */
@@ -2002,12 +2057,12 @@ export const tokens = {
       'dark-high-contrast': '#a1a4a9',
     },
   },
-  /** The edge of dialogs, sheets and the command palette where they are solid, the same as level 2's; a modal's backdrop sets it apart as well. A dialog and the palette otherwise part by their fill and the popups' soft shadow, a sheet by its fill. */
+  /** The edge of dialogs, sheets and the command palette where they are solid: in light the default border's gray, a step stronger than level 2's, as the light backdrop dims the page to about level 2's gray; in dark the same as level 2's. A dialog and the palette otherwise part by their fill and the popups' soft shadow, a sheet by its fill. */
   'elevation.3.border': {
     cssVariable: '--env-elevation-3-border',
     type: 'color',
     values: {
-      light: '#b1b1b4',
+      light: '#808083',
       dark: '#686b70',
       'light-high-contrast': '#131315',
       'dark-high-contrast': '#a1a4a9',

@@ -423,7 +423,7 @@
           "type": "'neutral' | 'primary' | 'accent' | 'success' | 'warning' | 'danger' | 'done'",
           "required": false,
           "default": "'neutral'",
-          "description": "Meaning of the state: primary is the blue of what is current, accent the purple that stands out, done the violet of completed work. Neutral by default. A count in the primary tone, solid, draws attention, such as unread messages that need an answer."
+          "description": "Meaning of the state: primary is the blue of what is current, accent the purple that stands out, done the cyan of completed work. Neutral by default. A count in the primary tone, solid, draws attention, such as unread messages that need an answer."
         },
         {
           "name": "variant",
@@ -4206,6 +4206,13 @@
       "source": "packages/ui/src/navigation/Menu.tsx",
       "description": "One action (onClick) or destination (href) in a Menu. Destinations use the LinkProvider's link and close the menu as they are followed.",
       "props": [
+        {
+          "name": "tone",
+          "type": "'neutral' | 'danger'",
+          "required": false,
+          "default": "'neutral'",
+          "description": "The item's tone: danger marks a destructive action, such as Delete, its label and icon in the danger color; its row highlights as any other's."
+        },
         {
           "name": "disabled",
           "type": "boolean",

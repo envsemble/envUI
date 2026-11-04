@@ -197,7 +197,7 @@ Where a row's title names the select, give the select that name as its `aria-lab
 
 ### Composition
 
-The field is `env-field` with `env-select`, a text field's frame: its well, `env-select-control`, holds the trigger, `env-select-trigger`, with the chosen option's label, `env-select-value`, the label and the chevron, `env-select-icon`. The open list is the shared popup, with its list, `env-select-list`, and its options are the popup's rows. `className` and `style` reach the field's root, and `ref` the trigger. `defaultOpen` opens the list on the first render, `open` and `onOpenChange`, which receives why, control it, and `readOnly` shows the choice without opening the list.
+The field is `env-field` with `env-select`, a text field's frame: its well, `env-select-control`, holds the trigger, `env-select-trigger`, with the chosen option's label, `env-select-value`, the label and the chevron, `env-select-icon`. The open list is the shared popup, with its list, `env-select-list`, and its options are the popup's rows. `className` and `style` reach the field's root, and `ref` the trigger. `defaultOpen` opens the list on the first render, `open` and `onOpenChange`, which receives why, control it, and `readOnly` shows the choice in a quieter outline, without its chevron, and doesn't open the list.
 
 ### Customize
 

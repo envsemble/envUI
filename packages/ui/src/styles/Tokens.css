@@ -7,6 +7,9 @@
 .env-theme {
   color-scheme: light;
   --env-badge-count-height: 1.25rem;
+  --env-color-bg-accent-emphasis: #9948b6;
+  --env-color-bg-accent-emphasis-hover: #83319f;
+  --env-color-bg-accent-emphasis-pressed: #6d1888;
   --env-color-bg-accent-muted: rgb(142 60 170 / 0.12);
   --env-color-bg-accent-soft: rgb(142 60 170 / 0.05);
   --env-color-bg-accent-solid: #8e3caa;
@@ -25,9 +28,11 @@
   --env-color-bg-avatar-powder: #c0e2f6;
   --env-color-bg-avatar-sage: #cee4c3;
   --env-color-bg-avatar-seafoam: #b8e7de;
-  --env-color-bg-backdrop: rgb(31 31 34 / 0.55);
-  --env-color-bg-backdrop-muted: rgb(31 31 34 / 0.3);
+  --env-color-bg-backdrop: rgb(31 31 34 / 0.32);
+  --env-color-bg-backdrop-muted: rgb(31 31 34 / 0.2);
   --env-color-bg-danger-emphasis: #b72b20;
+  --env-color-bg-danger-emphasis-hover: #c64e43;
+  --env-color-bg-danger-emphasis-pressed: #bf3e33;
   --env-color-bg-danger-muted: rgb(183 43 32 / 0.12);
   --env-color-bg-danger-strong: #b72b20;
   --env-color-bg-danger-strong-hover: #c64e43;
@@ -38,8 +43,8 @@
   --env-color-bg-default: #f4f4f6;
   --env-color-bg-default-hover: #e7e7e9;
   --env-color-bg-default-pressed: #dddddf;
-  --env-color-bg-done-emphasis: #7a3fc8;
-  --env-color-bg-done-muted: rgb(122 63 200 / 0.12);
+  --env-color-bg-done-emphasis: #076a7c;
+  --env-color-bg-done-muted: rgb(7 106 124 / 0.12);
   --env-color-bg-field: #ffffff;
   --env-color-bg-info-strong: #2c61a6;
   --env-color-bg-info-strong-hover: #376cb2;
@@ -114,7 +119,7 @@
   --env-color-border-default: #808083;
   --env-color-border-default-hover: #757578;
   --env-color-border-default-pressed: #6b6b6e;
-  --env-color-border-done: rgb(122 63 200 / 0.55);
+  --env-color-border-done: rgb(7 106 124 / 0.55);
   --env-color-border-focus: #0366da;
   --env-color-border-info-strong: #174d90;
   --env-color-border-media: rgb(0 0 0 / 0.05);
@@ -155,7 +160,7 @@
   --env-color-fg-control: #434346;
   --env-color-fg-danger: #ac190f;
   --env-color-fg-default: #1f1f22;
-  --env-color-fg-done: #7032bf;
+  --env-color-fg-done: #006071;
   --env-color-fg-link: #0053b5;
   --env-color-fg-link-hover: #004aa2;
   --env-color-fg-link-on-muted: #0053b5;
@@ -185,7 +190,7 @@
   --env-elevation-0-border: transparent;
   --env-elevation-1-border: #b1b1b4;
   --env-elevation-2-border: #b1b1b4;
-  --env-elevation-3-border: #b1b1b4;
+  --env-elevation-3-border: #808083;
   --env-field-floating-height: 3.5rem;
   --env-font-family: 'envUI Geist', sans-serif;
   --env-font-size-body: 0.9375rem;
@@ -292,6 +297,9 @@
 
 .env-theme[data-env-theme='dark'] {
   color-scheme: dark;
+  --env-color-bg-accent-emphasis: #e7a8ff;
+  --env-color-bg-accent-emphasis-hover: #d683f5;
+  --env-color-bg-accent-emphasis-pressed: #bc6ada;
   --env-color-bg-accent-muted: rgb(231 168 255 / 0.14);
   --env-color-bg-accent-soft: var(--env-color-bg-accent-muted);
   --env-color-bg-accent-solid: #e7a8ff;
@@ -305,17 +313,19 @@
   --env-color-bg-avatar-powder: #afd3e9;
   --env-color-bg-avatar-sage: #bed4b3;
   --env-color-bg-avatar-seafoam: #a7d7cf;
-  --env-color-bg-backdrop: rgb(30 31 33 / 0.55);
-  --env-color-bg-backdrop-muted: rgb(30 31 33 / 0.3);
+  --env-color-bg-backdrop: rgb(0 0 0 / 0.5);
+  --env-color-bg-backdrop-muted: rgb(0 0 0 / 0.3);
   --env-color-bg-danger-emphasis: #f8aca6;
+  --env-color-bg-danger-emphasis-hover: #e68c84;
+  --env-color-bg-danger-emphasis-pressed: #d66d63;
   --env-color-bg-danger-muted: rgb(206 94 83 / 0.18);
   --env-color-bg-danger-subtle-hover: rgb(206 94 83 / 0.22);
   --env-color-bg-danger-subtle-pressed: rgb(206 94 83 / 0.3);
   --env-color-bg-default: #28292b;
   --env-color-bg-default-hover: #383a3d;
   --env-color-bg-default-pressed: #424447;
-  --env-color-bg-done-emphasis: #d2b2f7;
-  --env-color-bg-done-muted: rgb(210 178 247 / 0.17);
+  --env-color-bg-done-emphasis: #81cbd7;
+  --env-color-bg-done-muted: rgb(129 203 215 / 0.17);
   --env-color-bg-field: #1e1f21;
   --env-color-bg-inset: rgb(30 31 33 / 0.5);
   --env-color-bg-muted: #343638;
@@ -376,7 +386,7 @@
   --env-color-border-default: #898c91;
   --env-color-border-default-hover: #95989c;
   --env-color-border-default-pressed: #a1a4a9;
-  --env-color-border-done: rgb(210 178 247 / 0.55);
+  --env-color-border-done: rgb(129 203 215 / 0.55);
   --env-color-border-focus: #9fc1f8;
   --env-color-border-info-strong: var(--env-elevation-2-border);
   --env-color-border-muted: #5d6166;
@@ -406,7 +416,7 @@
   --env-color-fg-control: #e8eaee;
   --env-color-fg-danger: #f8aca6;
   --env-color-fg-default: #e8eaee;
-  --env-color-fg-done: #d2b2f7;
+  --env-color-fg-done: #81cbd7;
   --env-color-fg-link: #9fc1f8;
   --env-color-fg-link-hover: #8ab3f5;
   --env-color-fg-link-on-muted: #9fc1f8;
@@ -429,6 +439,9 @@
 }
 
 .env-theme[data-env-contrast='high'] {
+  --env-color-bg-accent-emphasis: #6d1888;
+  --env-color-bg-accent-emphasis-hover: #63047d;
+  --env-color-bg-accent-emphasis-pressed: #57006e;
   --env-color-bg-accent-muted: rgb(99 4 125 / 0.08);
   --env-color-bg-accent-soft: rgb(99 4 125 / 0.08);
   --env-color-bg-accent-solid: #63047d;
@@ -438,6 +451,8 @@
   --env-color-bg-accent-subtle-hover: rgb(99 4 125 / 0.14);
   --env-color-bg-accent-subtle-pressed: rgb(99 4 125 / 0.22);
   --env-color-bg-danger-emphasis: #7a0200;
+  --env-color-bg-danger-emphasis-hover: #6b0100;
+  --env-color-bg-danger-emphasis-pressed: #5a0100;
   --env-color-bg-danger-muted: rgb(122 2 0 / 0.08);
   --env-color-bg-danger-strong: #8d0200;
   --env-color-bg-danger-strong-hover: #7a0200;
@@ -447,8 +462,8 @@
   --env-color-bg-default: #f8f8fa;
   --env-color-bg-default-hover: #eaeaec;
   --env-color-bg-default-pressed: #e0e0e2;
-  --env-color-bg-done-emphasis: #53009a;
-  --env-color-bg-done-muted: rgb(83 0 154 / 0.08);
+  --env-color-bg-done-emphasis: #00404c;
+  --env-color-bg-done-muted: rgb(0 64 76 / 0.08);
   --env-color-bg-info-strong: #094285;
   --env-color-bg-info-strong-hover: #003878;
   --env-color-bg-info-strong-pressed: #003068;
@@ -505,7 +520,7 @@
   --env-color-border-default: #6b6b6e;
   --env-color-border-default-hover: #616164;
   --env-color-border-default-pressed: #57575a;
-  --env-color-border-done: rgb(83 0 154 / 0.55);
+  --env-color-border-done: rgb(0 64 76 / 0.55);
   --env-color-border-focus: #0053b5;
   --env-color-border-info-strong: #003068;
   --env-color-border-muted: #6b6b6e;
@@ -534,7 +549,7 @@
   --env-color-fg-control: #29292c;
   --env-color-fg-danger: #7a0200;
   --env-color-fg-default: #131315;
-  --env-color-fg-done: #53009a;
+  --env-color-fg-done: #00404c;
   --env-color-fg-link: #00377c;
   --env-color-fg-link-hover: #002f6d;
   --env-color-fg-link-on-muted: #00377c;
@@ -558,6 +573,9 @@
 }
 @media (prefers-contrast: more) {
   .env-theme:not([data-env-contrast='standard']) {
+    --env-color-bg-accent-emphasis: #6d1888;
+    --env-color-bg-accent-emphasis-hover: #63047d;
+    --env-color-bg-accent-emphasis-pressed: #57006e;
     --env-color-bg-accent-muted: rgb(99 4 125 / 0.08);
     --env-color-bg-accent-soft: rgb(99 4 125 / 0.08);
     --env-color-bg-accent-solid: #63047d;
@@ -567,6 +585,8 @@
     --env-color-bg-accent-subtle-hover: rgb(99 4 125 / 0.14);
     --env-color-bg-accent-subtle-pressed: rgb(99 4 125 / 0.22);
     --env-color-bg-danger-emphasis: #7a0200;
+    --env-color-bg-danger-emphasis-hover: #6b0100;
+    --env-color-bg-danger-emphasis-pressed: #5a0100;
     --env-color-bg-danger-muted: rgb(122 2 0 / 0.08);
     --env-color-bg-danger-strong: #8d0200;
     --env-color-bg-danger-strong-hover: #7a0200;
@@ -576,8 +596,8 @@
     --env-color-bg-default: #f8f8fa;
     --env-color-bg-default-hover: #eaeaec;
     --env-color-bg-default-pressed: #e0e0e2;
-    --env-color-bg-done-emphasis: #53009a;
-    --env-color-bg-done-muted: rgb(83 0 154 / 0.08);
+    --env-color-bg-done-emphasis: #00404c;
+    --env-color-bg-done-muted: rgb(0 64 76 / 0.08);
     --env-color-bg-info-strong: #094285;
     --env-color-bg-info-strong-hover: #003878;
     --env-color-bg-info-strong-pressed: #003068;
@@ -634,7 +654,7 @@
     --env-color-border-default: #6b6b6e;
     --env-color-border-default-hover: #616164;
     --env-color-border-default-pressed: #57575a;
-    --env-color-border-done: rgb(83 0 154 / 0.55);
+    --env-color-border-done: rgb(0 64 76 / 0.55);
     --env-color-border-focus: #0053b5;
     --env-color-border-info-strong: #003068;
     --env-color-border-muted: #6b6b6e;
@@ -663,7 +683,7 @@
     --env-color-fg-control: #29292c;
     --env-color-fg-danger: #7a0200;
     --env-color-fg-default: #131315;
-    --env-color-fg-done: #53009a;
+    --env-color-fg-done: #00404c;
     --env-color-fg-link: #00377c;
     --env-color-fg-link-hover: #002f6d;
     --env-color-fg-link-on-muted: #00377c;
@@ -688,20 +708,25 @@
 }
 
 .env-theme[data-env-theme='dark'][data-env-contrast='high'] {
+  --env-color-bg-accent-emphasis: #f2d2ff;
+  --env-color-bg-accent-emphasis-hover: #f7e4ff;
+  --env-color-bg-accent-emphasis-pressed: #faedff;
   --env-color-bg-accent-muted: rgb(242 210 255 / 0.1);
   --env-color-bg-accent-soft: rgb(242 210 255 / 0.1);
   --env-color-bg-accent-solid: #f2d2ff;
   --env-color-bg-accent-subtle-hover: rgb(247 228 255 / 0.14);
   --env-color-bg-accent-subtle-pressed: rgb(247 228 255 / 0.22);
   --env-color-bg-danger-emphasis: #ffd3cf;
+  --env-color-bg-danger-emphasis-hover: #ffe4e2;
+  --env-color-bg-danger-emphasis-pressed: #ffedeb;
   --env-color-bg-danger-muted: rgb(255 211 207 / 0.1);
   --env-color-bg-danger-subtle-hover: rgb(255 228 226 / 0.14);
   --env-color-bg-danger-subtle-pressed: rgb(255 228 226 / 0.22);
   --env-color-bg-default: #28292b;
   --env-color-bg-default-hover: #303234;
   --env-color-bg-default-pressed: #383a3d;
-  --env-color-bg-done-emphasis: #e8d6ff;
-  --env-color-bg-done-muted: rgb(232 214 255 / 0.1);
+  --env-color-bg-done-emphasis: #a0e9f4;
+  --env-color-bg-done-muted: rgb(160 233 244 / 0.1);
   --env-color-bg-list-item: #343638;
   --env-color-bg-list-item-hover: #383a3d;
   --env-color-bg-list-item-pressed: #424447;
@@ -755,7 +780,7 @@
   --env-color-border-default: #a1a4a9;
   --env-color-border-default-hover: #afb1b6;
   --env-color-border-default-pressed: #bdbfc3;
-  --env-color-border-done: rgb(241 230 255 / 0.55);
+  --env-color-border-done: rgb(181 245 255 / 0.55);
   --env-color-border-focus: #b5cffb;
   --env-color-border-info-strong: #a1a4a9;
   --env-color-border-muted: #a1a4a9;
@@ -785,7 +810,7 @@
   --env-color-fg-control: #eff1f5;
   --env-color-fg-danger: #ffe4e2;
   --env-color-fg-default: #f6f8fc;
-  --env-color-fg-done: #f1e6ff;
+  --env-color-fg-done: #b5f5ff;
   --env-color-fg-link: #e0ebfd;
   --env-color-fg-link-hover: #eaf2ff;
   --env-color-fg-link-on-muted: #e0ebfd;
@@ -805,20 +830,25 @@
 }
 @media (prefers-contrast: more) {
   .env-theme[data-env-theme='dark']:not([data-env-contrast='standard']) {
+    --env-color-bg-accent-emphasis: #f2d2ff;
+    --env-color-bg-accent-emphasis-hover: #f7e4ff;
+    --env-color-bg-accent-emphasis-pressed: #faedff;
     --env-color-bg-accent-muted: rgb(242 210 255 / 0.1);
     --env-color-bg-accent-soft: rgb(242 210 255 / 0.1);
     --env-color-bg-accent-solid: #f2d2ff;
     --env-color-bg-accent-subtle-hover: rgb(247 228 255 / 0.14);
     --env-color-bg-accent-subtle-pressed: rgb(247 228 255 / 0.22);
     --env-color-bg-danger-emphasis: #ffd3cf;
+    --env-color-bg-danger-emphasis-hover: #ffe4e2;
+    --env-color-bg-danger-emphasis-pressed: #ffedeb;
     --env-color-bg-danger-muted: rgb(255 211 207 / 0.1);
     --env-color-bg-danger-subtle-hover: rgb(255 228 226 / 0.14);
     --env-color-bg-danger-subtle-pressed: rgb(255 228 226 / 0.22);
     --env-color-bg-default: #28292b;
     --env-color-bg-default-hover: #303234;
     --env-color-bg-default-pressed: #383a3d;
-    --env-color-bg-done-emphasis: #e8d6ff;
-    --env-color-bg-done-muted: rgb(232 214 255 / 0.1);
+    --env-color-bg-done-emphasis: #a0e9f4;
+    --env-color-bg-done-muted: rgb(160 233 244 / 0.1);
     --env-color-bg-list-item: #343638;
     --env-color-bg-list-item-hover: #383a3d;
     --env-color-bg-list-item-pressed: #424447;
@@ -872,7 +902,7 @@
     --env-color-border-default: #a1a4a9;
     --env-color-border-default-hover: #afb1b6;
     --env-color-border-default-pressed: #bdbfc3;
-    --env-color-border-done: rgb(241 230 255 / 0.55);
+    --env-color-border-done: rgb(181 245 255 / 0.55);
     --env-color-border-focus: #b5cffb;
     --env-color-border-info-strong: #a1a4a9;
     --env-color-border-muted: #a1a4a9;
@@ -902,7 +932,7 @@
     --env-color-fg-control: #eff1f5;
     --env-color-fg-danger: #ffe4e2;
     --env-color-fg-default: #f6f8fc;
-    --env-color-fg-done: #f1e6ff;
+    --env-color-fg-done: #b5f5ff;
     --env-color-fg-link: #e0ebfd;
     --env-color-fg-link-hover: #eaf2ff;
     --env-color-fg-link-on-muted: #e0ebfd;

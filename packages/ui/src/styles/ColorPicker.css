@@ -195,13 +195,14 @@
       box-shadow var(--env-motion-duration-fast) var(--env-motion-ease);
   }
   @media (hover: hover) {
-    .env-color-picker-field:hover:not(:has(:disabled)) {
+    .env-color-picker-field:hover:not(:has(:disabled, [readonly])) {
       background: var(--env-color-bg-neutral-muted);
     }
   }
   .env-color-picker-field:focus-within {
     background: var(--env-color-bg-neutral-muted);
-    box-shadow: inset 0 0 0 var(--env-control-border-width) var(--env-color-border-primary-emphasis);
+    box-shadow: inset 0 0 0 calc(2 * var(--env-control-border-width))
+      var(--env-color-border-primary-emphasis);
   }
   .env-color-picker-field-label {
     flex-shrink: 0;

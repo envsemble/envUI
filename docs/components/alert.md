@@ -148,7 +148,7 @@ An Alert takes its `tone`, a short `title`, the message as `children`, and `acti
 
 #### Tones
 
-`tone` is `info`, the default, `success`, `warning` or `danger`, for an error or a failure; a toast has `neutral` instead of `warning`, since a warning stays on the page, here. It sets the fill, the tone's stronger tint, and the color of the title and the icon. An alert has no edge, except at high contrast, where it takes the tone's softer tint and an edge in the border color.
+`tone` is `info`, the default, `success`, `warning` or `danger`, for an error or a failure; a toast has `neutral` instead of `warning`, since a warning stays on the page, here. It sets the fill, the tone's stronger tint, or a warning's softer one in dark, and the color of the title and the icon. An alert has no edge, except at high contrast, where it takes the tone's softer tint and an edge in the border color.
 
 ```tsx
 <Alert title="Sync paused">Changes are saved on this device until you reconnect.</Alert>

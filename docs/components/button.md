@@ -103,6 +103,10 @@ examples:
 | Text            | Neutral, danger                 | A link-like action, underlined where needed.                              |
 | Primary, accent | Accent                          | The main action, where it must stand apart from the brand blue around it. |
 
+### Primary tones
+
+Every primary takes the same grade of its tone: a saturated fill with white text in light, and a soft fill with dark text in dark, so a danger or accent button is never louder than the main one beside it.
+
 ### In a toolbar
 
 A button without a variant of its own takes its container's, such as ghost in a toolbar.

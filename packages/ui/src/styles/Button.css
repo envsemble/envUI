@@ -316,25 +316,27 @@
     overflow-wrap: inherit;
   }
 
-  /* Danger: a primary button takes the strong danger fill; outline, ghost and text buttons take the
-     danger color, which stays on hover and press, over the variant's own fill or state layer. */
+  /* Danger: a primary button takes the danger emphasis fill, as every primary takes its tone's:
+     saturated with white labels in light, soft with dark labels in dark, so a destructive action is
+     never louder than the main one beside it. Outline, ghost and text buttons take the danger color,
+     which stays on hover and press, over the variant's own fill or state layer. */
   .env-button:where([data-variant='primary'][data-tone='danger']) {
-    --env-button-container-default: var(--env-color-bg-danger-strong);
-    background: var(--env-button-custom-fill, var(--env-color-bg-danger-strong));
-    color: var(--env-button-content, var(--env-color-fg-on-strong));
+    --env-button-container-default: var(--env-color-bg-danger-emphasis);
+    background: var(--env-button-custom-fill, var(--env-color-bg-danger-emphasis));
+    color: var(--env-button-content, var(--env-color-fg-on-emphasis));
     border: 0;
   }
 
   .env-button:where([data-variant='primary'][data-tone='danger']):hover:not(:disabled):not(
       [aria-disabled='true']
     ) {
-    background: var(--env-button-custom-fill, var(--env-color-bg-danger-strong-hover));
+    background: var(--env-button-custom-fill, var(--env-color-bg-danger-emphasis-hover));
   }
 
   .env-button:where([data-variant='primary'][data-tone='danger']):active:not(:disabled):not(
       [aria-disabled='true']
     ) {
-    background: var(--env-button-custom-fill, var(--env-color-bg-danger-strong-pressed));
+    background: var(--env-button-custom-fill, var(--env-color-bg-danger-emphasis-pressed));
   }
 
   .env-button:where([data-variant='outline'][data-tone='danger']) {
@@ -367,12 +369,12 @@
     color: var(--env-button-content, var(--env-color-fg-danger));
   }
 
-  /* Accent: a primary button for a rare, consequential action, with square corners; like every
-     button it takes the row's control height. */
+  /* Accent: a primary button for a rare, consequential action, on the accent emphasis fill, with
+     square corners; like every button it takes the row's control height. */
   .env-button:where([data-variant='primary'][data-tone='accent']) {
-    --env-button-container-default: var(--env-color-bg-accent-strong);
-    background: var(--env-button-custom-fill, var(--env-color-bg-accent-strong));
-    color: var(--env-button-content, var(--env-color-fg-on-strong));
+    --env-button-container-default: var(--env-color-bg-accent-emphasis);
+    background: var(--env-button-custom-fill, var(--env-color-bg-accent-emphasis));
+    color: var(--env-button-content, var(--env-color-fg-on-emphasis));
     border: 0;
     border-radius: var(--env-radius-sm);
   }
@@ -380,13 +382,13 @@
   .env-button:where([data-variant='primary'][data-tone='accent']):hover:not(:disabled):not(
       [aria-disabled='true']
     ) {
-    background: var(--env-button-custom-fill, var(--env-color-bg-accent-strong-hover));
+    background: var(--env-button-custom-fill, var(--env-color-bg-accent-emphasis-hover));
   }
 
   .env-button:where([data-variant='primary'][data-tone='accent']):active:not(:disabled):not(
       [aria-disabled='true']
     ) {
-    background: var(--env-button-custom-fill, var(--env-color-bg-accent-strong-pressed));
+    background: var(--env-button-custom-fill, var(--env-color-bg-accent-emphasis-pressed));
   }
 
   .env-button:focus-visible {
@@ -550,11 +552,11 @@
 
   /* Badges in a button, such as a tab with a count, through Badge.css's hooks. A badge takes the
      button's text color as an outlined pill. A badge with a count or a diff stat keeps its own filled pill,
-     except on the solid primary fills, neutral and accent, where that pill can't keep its contrast:
-     there it is an outlined pill in the text color too. The outline is the label color at 55%, which
+     except on the solid primary fills, where that pill can't keep its contrast: there it is an
+     outlined pill in the text color too. The outline is the label color at 55%, which
      only the button knows; the contrast gate measures it on each fill as a derived color
      (tests/contrast/Pairs.ts). The hooks every button sets for its badges are in its first rule. */
-  .env-button:is([data-variant='primary']:where(:not([data-tone='danger']))) {
+  .env-button:is([data-variant='primary']) {
     --env-badge-count-fg: currentColor;
     --env-badge-count-bg: transparent;
     --env-badge-count-border: 0.0625rem solid color-mix(in srgb, currentColor 55%, transparent);
@@ -565,7 +567,7 @@
   /* On a button's own fill, which already adds up with a tab rail's, a diff stat's pill leans halfway
      back toward the canvas instead of adding another fill. It looks about as it does on the canvas,
      and its tones keep their 4.5:1 contrast in both themes. */
-  .env-button:not([data-variant='primary']:where(:not([data-tone='danger']))) {
+  .env-button:not([data-variant='primary']) {
     --env-diff-stat-bg: var(--env-color-bg-inset);
   }
 

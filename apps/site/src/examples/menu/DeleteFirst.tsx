@@ -12,7 +12,9 @@ export default function DeleteFirst() {
       trigger={<IconButton icon={<IconMoreVert />} aria-label="More actions" />}
     >
       {/* Wrong: Delete is the first item the keyboard highlights. */}
-      <Menu.Item icon={<IconDelete />}>Delete</Menu.Item>
+      <Menu.Item icon={<IconDelete />} tone="danger">
+        Delete
+      </Menu.Item>
       <Menu.Item icon={<IconFileCopy />}>Duplicate</Menu.Item>
       <Menu.Item icon={<IconShare />}>Share</Menu.Item>
       <Menu.Item icon={<IconEdit />}>Rename</Menu.Item>

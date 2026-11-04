@@ -92,6 +92,17 @@ export function ColorControls({ theme }: { theme: ColorScheme }) {
           aria-label={`${theme} color isolation tabs`}
           data-testid={`${theme}-color-tabs`}
           items={[
+            // The tabs whose fills the color specs measure aren't first: the first tab of a rail
+            // draws its fill on a shape that reaches back over the rail's leading padding.
+            {
+              value: 'ghost',
+              button: (
+                <Button variant="ghost" startIcon={<IconHome />}>
+                  Third tab
+                </Button>
+              ),
+              content: 'Third panel',
+            },
             {
               value: 'primary',
               button: <Button data-testid={`${theme}-tab-primary`}>First tab</Button>,
@@ -105,15 +116,6 @@ export function ColorControls({ theme }: { theme: ColorScheme }) {
                 </Button>
               ),
               content: 'Second panel',
-            },
-            {
-              value: 'ghost',
-              button: (
-                <Button variant="ghost" startIcon={<IconHome />}>
-                  Third tab
-                </Button>
-              ),
-              content: 'Third panel',
             },
             {
               value: 'unavailable',

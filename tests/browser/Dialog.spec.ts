@@ -274,7 +274,9 @@ test('a dark dialog takes the popup color, a step above the cards', async ({ pag
   const look = await surface(dialog);
   expect(look.background).toBe(fill);
   expect(fill).not.toBe(card);
-  expect(look.border).toMatch(/rgba\(0, 0, 0, 0\)$/);
+  // In dark the popups' faint hairline edge sets it apart from the darkened page.
+  expect(look.border).toMatch(/^1px solid /);
+  expect(look.border).not.toMatch(/rgba\(0, 0, 0, 0\)$/);
   expect(look.shadow).not.toBe('none');
 });
 

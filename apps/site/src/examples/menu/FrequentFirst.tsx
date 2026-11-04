@@ -15,7 +15,9 @@ export default function FrequentFirst() {
       <Menu.Item icon={<IconEdit />}>Rename</Menu.Item>
       <Menu.Item icon={<IconFileCopy />}>Duplicate</Menu.Item>
       <Menu.Separator />
-      <Menu.Item icon={<IconDelete />}>Delete</Menu.Item>
+      <Menu.Item icon={<IconDelete />} tone="danger">
+        Delete
+      </Menu.Item>
     </Menu.Root>
   );
 }

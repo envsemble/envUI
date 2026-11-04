@@ -178,7 +178,7 @@ Each `TabsItem` has its `value`, its `label` and an optional `icon`, or a `butto
 
 #### Size, orientation and fill
 
-`size` is `sm`, `md` or `lg`, the default, whose tabs are as tall as medium buttons. `orientation` is `horizontal`, the default, or `vertical`, a column moved through with <kbd>↑</kbd> and <kbd>↓</kbd>; the panels stay below the list either way, so lay the Tabs out as a row through `style` to put a vertical list beside them, as the VerticalList example does. With `fill`, the selected panel takes the height left below the list; give the Tabs a height, for example as a flex child.
+`size` is `sm`, `md` or `lg`, the default, whose tabs are as tall as medium buttons. `orientation` is `horizontal`, the default, or `vertical`, a column moved through with <kbd>↑</kbd> and <kbd>↓</kbd>; the panels stay below the list either way, so lay the Tabs out as a row through `style` to put a vertical list beside them, as the VerticalList example does. With `fill`, the selected panel takes the height left below the list; give the Tabs a height, for example as a flex child. A horizontal list lines its first label up with the content's edge, so the first tab's padding, where its hover fill shows, reaches into the space before it; leave that room where the Tabs sit flush against an edge that clips.
 
 #### A layout of your own
 
