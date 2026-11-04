@@ -1,7 +1,5 @@
 @layer env.components {
-  /* Tables sit on a rounded surface, set apart by its fill rather than an edge, with hairlines between
-     the rows, and scroll sideways within their region. On a card of the same fill the table is the
-     card's content, with no frame of its own. */
+  /* Tables sit on a rounded surface with subtle row dividers and scroll sideways within their region. */
   .env-table-region {
     --env-table-surface: var(--env-color-bg-raised);
     /* Absolutely positioned content, such as visually hidden text in a cell, stays in the region and
@@ -11,6 +9,7 @@
     min-inline-size: 0;
     max-inline-size: 100%;
     overflow-x: auto;
+    border: 0.0625rem solid var(--env-color-border-muted);
     border-radius: var(--env-radius-lg);
     background: var(--env-table-surface);
     scrollbar-width: thin;
@@ -55,7 +54,6 @@
     caption-side: top;
     color: var(--env-color-fg-default);
     font: var(--env-type-title);
-    letter-spacing: var(--env-type-title-letter-spacing);
     text-align: start;
   }
   .env-table-header-cell,
@@ -64,11 +62,11 @@
     text-align: start;
     vertical-align: middle;
   }
-  /* The header row sits on the table's own surface, its labels in the quieter color, set off from the
-     rows by a hairline under it. The surface keeps it opaque, so a sticky header covers scrolled
-     rows, and the hairline, on its cells, stays under it. */
   .env-table-header-cell {
-    background: var(--env-table-surface);
+    /* The fill over the surface keeps the header opaque, so a sticky header covers scrolled rows. */
+    background:
+      linear-gradient(var(--env-color-bg-neutral-muted), var(--env-color-bg-neutral-muted)),
+      var(--env-table-surface);
     color: var(--env-color-fg-muted);
     font: var(--env-type-body-sm);
     font-weight: var(--env-font-weight-medium);
@@ -79,10 +77,7 @@
     inset-block-start: 0;
     z-index: var(--env-z-raised);
   }
-  .env-table-head .env-table-header-cell {
-    border-block-end: 0.0625rem solid var(--env-color-border-muted);
-  }
-  /* Rows are separated by hairlines; the first body row meets the header's. */
+  /* Rows are separated by hairlines; the first body row meets the header without one. */
   .env-table-body > .env-table-row + .env-table-row > :is(.env-table-cell, .env-table-header-cell) {
     border-block-start: 0.0625rem solid var(--env-color-border-muted);
   }
@@ -191,10 +186,10 @@
   }
   /* The focus ring follows the surface's outer corners in the first and last header cells. */
   .env-table-head .env-table-row:first-child > :first-child .env-table-sort-button {
-    border-start-start-radius: var(--env-radius-lg);
+    border-start-start-radius: calc(var(--env-radius-lg) - 0.0625rem);
   }
   .env-table-head .env-table-row:first-child > :last-child .env-table-sort-button {
-    border-start-end-radius: var(--env-radius-lg);
+    border-start-end-radius: calc(var(--env-radius-lg) - 0.0625rem);
   }
   .env-table-sort-button .env-icon {
     color: var(--env-color-fg-muted);
@@ -408,10 +403,12 @@
     }
   }
 
-  /* In a skeleton, the header's cells carry the skeleton's tint over the surface, as the region does
+  /* In a skeleton, the header's cells carry the skeleton's tint over their fill, as the region does
      over its own (Skeleton.css). */
   [data-env-skeleton] .env-table-head .env-table-header-cell {
-    background-image: var(--env-skeleton-overlay);
+    background-image:
+      var(--env-skeleton-overlay),
+      linear-gradient(var(--env-color-bg-neutral-muted), var(--env-color-bg-neutral-muted));
   }
   /* In a skeleton, an empty cell, as over a placeholder row, is a bar of about a value's length. */
   [data-env-skeleton] .env-table-cell {
