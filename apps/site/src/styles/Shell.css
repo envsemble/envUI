@@ -264,6 +264,16 @@ body {
   border-radius: var(--env-radius-full);
   background: var(--env-color-bg-page);
 }
+/* The wordmark between them, as small as at the top of the Docs' drawer. */
+.site-compact-controls-bar > .site-brand {
+  padding-inline: var(--env-space-2);
+}
+.site-compact-controls-bar > .site-brand svg {
+  inline-size: 4rem;
+}
+.site-compact-controls-bar .docs-brand-docs {
+  block-size: 0.768rem;
+}
 @container env-scaffold (width >= 52.5rem) {
   .site-compact-controls {
     display: none;
