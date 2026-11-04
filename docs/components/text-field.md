@@ -97,10 +97,11 @@ examples:
 
 ### Outline and floating
 
-Outline and floating fields have no fill of their own: they take the background of what they sit on, such as a card, a sheet or a dialog.
+Both have no fill of their own: they take the background of what they sit on, such as a card or a dialog. Their label floats into the edge, which opens behind it. They differ in height.
 
-- A floated label opens the border behind it.
-- A field can be given a fill of its own where it needs one.
+- An outline field is as tall as a button of its size, so the two line up in a row.
+- A floating field is taller, with room for its label above the value.
+- Either can be given a fill of its own where it needs one.
 
 ### Ghost
 

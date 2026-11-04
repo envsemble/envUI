@@ -290,6 +290,14 @@ test('an outline field has no fill of its own, and its floated label cuts a notc
     (await border.locator('legend').boundingBox())!,
   ];
   expect(Math.abs(labelBox.x - notchBox.x)).toBeLessThanOrEqual(1);
+  // The notch starts where the pill's curve has all but flattened, within a quarter rem of its end,
+  // so the edge doesn't end in a hook.
+  const controlBox = (await control.boundingBox())!;
+  const radius = Math.min(
+    parseFloat(await control.evaluate((element) => getComputedStyle(element).borderTopLeftRadius)),
+    controlBox.height / 2,
+  );
+  expect(notchBox.x - controlBox.x).toBeGreaterThanOrEqual(radius - 4);
 });
 
 test('right to left, the floated label cuts its notch under itself, with a start icon too', async ({

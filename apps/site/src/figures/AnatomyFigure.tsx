@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
+import { useId, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { Theme, useTheme } from '@envsemble/envui';
 import type { AnatomyLegendItem, StageFill } from '../shared/DocumentationTypes';
 import { Documentation } from '../pages/Documentation';
@@ -126,6 +126,8 @@ function AnatomyStage({
   width?: number;
 }) {
   const theme = useTheme();
+  // An id for the outlines' masks that a url() reference takes as it is.
+  const maskId = `anatomy${useId().replace(/[^\w-]/g, '')}`;
   const stage = useRef<HTMLDivElement>(null);
   const subject = useRef<HTMLDivElement>(null);
   const [callouts, setCallouts] = useState<Callout[]>([]);
@@ -216,19 +218,31 @@ function AnatomyStage({
         {width ? <FitFrame width={width}>{render}</FitFrame> : render}
       </div>
       <svg className="site-anatomy-lines" aria-hidden="true">
-        {callouts.map(({ number, badge, anchor, box }) => (
+        {callouts.map(({ number, badge, anchor, box, gaps }) => (
           <g key={number}>
-            {box &&
-              ['site-anatomy-box-rim', 'site-anatomy-box'].map((className) => (
-                <rect
-                  key={className}
-                  className={className}
-                  x={box.x}
-                  y={box.y}
-                  width={box.width}
-                  height={box.height}
-                />
-              ))}
+            {/* The outline gives way across a label it runs through, such as a floated label. */}
+            {gaps && (
+              <mask id={`${maskId}-${number}`} maskUnits="userSpaceOnUse">
+                <rect x="0" y="0" width="100%" height="100%" fill="white" />
+                {gaps.map((gap, index) => (
+                  <rect key={index} {...gap} fill="black" />
+                ))}
+              </mask>
+            )}
+            {box && (
+              <g mask={gaps && `url(#${maskId}-${number})`}>
+                {['site-anatomy-box-rim', 'site-anatomy-box'].map((className) => (
+                  <rect
+                    key={className}
+                    className={className}
+                    x={box.x}
+                    y={box.y}
+                    width={box.width}
+                    height={box.height}
+                  />
+                ))}
+              </g>
+            )}
             <line x1={badge.x} y1={badge.y} x2={anchor.x} y2={anchor.y} />
             <circle cx={anchor.x} cy={anchor.y} r={3} />
           </g>
