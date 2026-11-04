@@ -205,7 +205,7 @@ test('pressable avatars are buttons and links named after each person, with name
   await expect(page.locator('body')).toHaveAttribute('data-avatar-navigated-to', '/people/sam');
 });
 
-test('nothing rings the avatars or the count, which cast a faint shadow, and a chosen avatar’s gap takes the surface color', async ({
+test('nothing rings the avatars, which cast a faint shadow, and a chosen avatar’s gap takes the surface color', async ({
   page,
 }) => {
   await page.goto(fixture);
@@ -222,14 +222,12 @@ test('nothing rings the avatars or the count, which cast a faint shadow, and a c
           return {
             group: group.getAttribute('data-testid'),
             // Each casts one faint shadow, 1px down and 2px soft, and no ring.
-            ringed: [...group.querySelectorAll('.env-avatar:not([data-selected])')]
-              .concat([...group.querySelectorAll('.env-avatar-group-overflow')])
-              .some(
-                (element) =>
-                  !/^(?:rgba?|color|oklch|hsla?)\([^)]*\) 0px 1px 2px 0px$/.test(
-                    getComputedStyle(element).boxShadow,
-                  ),
-              ),
+            ringed: [...group.querySelectorAll('.env-avatar:not([data-selected])')].some(
+              (element) =>
+                !/^(?:rgba?|color|oklch|hsla?)\([^)]*\) 0px 1px 2px 0px$/.test(
+                  getComputedStyle(element).boxShadow,
+                ),
+            ),
             // The chosen look: the gap in the surface color, then the accent ring.
             gap: chosen
               ? getComputedStyle(chosen).boxShadow.match(
@@ -537,7 +535,7 @@ test('a group lines up with small controls in a toolbar', async ({ page }) => {
   }
 });
 
-test('a chosen avatar keeps its check over the next one, and the count is a rounded square', async ({
+test('a chosen avatar keeps its check over the next one, and the count is a flat circle', async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -554,33 +552,31 @@ test('a chosen avatar keeps its check over the next one, and the count is a roun
     return element.contains(target);
   });
   expect(onTop).toBe(true);
-  // The count is a rounded square as tall as the avatars, its corners from the corner scale: the
-  // extra large step at the extra large size, the small one at the standard size.
-  const corners = (locator: Locator, token: string) =>
-    locator.evaluate((element, token) => {
-      const probe = document.createElement('div');
-      probe.style.borderRadius = `var(${token})`;
-      element.append(probe);
-      const expected = getComputedStyle(probe).borderStartStartRadius;
-      probe.remove();
+  // The count is a circle as tall as the avatars, with no shadow: a pill that a larger count widens.
+  const shape = (locator: Locator) =>
+    locator.evaluate((element) => {
+      const style = getComputedStyle(element);
       return {
-        radius: getComputedStyle(element).borderStartStartRadius,
-        expected,
+        round:
+          Number.parseFloat(style.borderStartStartRadius) >=
+          (element as HTMLElement).offsetHeight / 2,
         height: (element as HTMLElement).offsetHeight,
+        shadow: style.boxShadow,
       };
-    }, token);
-  const xl = await corners(group.locator('.env-avatar-group-overflow'), '--env-radius-xl');
-  expect(xl.radius).toBe(xl.expected);
-  expect(xl.height).toBe(88);
-  expect(Number.parseFloat(xl.radius)).toBeLessThan(xl.height / 2);
-  const md = await corners(
-    page
-      .getByTestId('avatar-groups-light')
-      .getByTestId('decorative')
-      .locator('.env-avatar-group-overflow'),
-    '--env-radius-sm',
-  );
-  expect(md).toEqual({ radius: md.expected, expected: md.expected, height: 32 });
+    });
+  expect(await shape(group.locator('.env-avatar-group-overflow'))).toEqual({
+    round: true,
+    height: 88,
+    shadow: 'none',
+  });
+  expect(
+    await shape(
+      page
+        .getByTestId('avatar-groups-light')
+        .getByTestId('decorative')
+        .locator('.env-avatar-group-overflow'),
+    ),
+  ).toEqual({ round: true, height: 32, shadow: 'none' });
 });
 
 test('the count is set as initials are, in a neutral fill, and comes in front with keyboard focus', async ({

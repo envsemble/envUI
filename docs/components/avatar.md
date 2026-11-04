@@ -109,11 +109,11 @@ The name chooses one of eight pastel colors, the same on every page.
 
 ### A group as a pile
 
-AvatarGroup rests as a compact pile, like stacked cards, with the count of the rest in a rounded square.
+AvatarGroup rests as a compact pile, like stacked cards, with the count of the rest in a circle.
 
 - Hovering, tapping or focusing it spreads the avatars along a gentle arch, so each one shows.
 - It keeps the room its spread takes, so nothing around it moves.
-- A faint shadow under each avatar and under the count parts each from the one it lies on.
+- A faint shadow under each avatar parts it from the one it lies on; the count lies flat at the bottom.
 
 ```tsx figure=ProjectMembers motion
 
@@ -220,7 +220,7 @@ Avatar takes the person's or organization's `name`, a picture in `src`, and `fal
 
 AvatarGroup takes `people`, each with a `name` and an optional `src`, `fallback`, `id` and `selected`. `max` sets how many show, and the count chip counts the rest; `total` counts people beyond a preview list.
 
-- At rest the avatars pile up, each a little off the line and turned, with the count chip at the bottom of the pile.
+- At rest the avatars pile up, each a little off the line and turned, with the count chip at the bottom of the pile. A group of initials piles looser, so two letters stay whole under the next avatar, and rests upright and in line, as does a small group.
 - The group always keeps the room its spread takes, so spreading never moves what is around it; `align="end"` piles a group at the end of that room, for a group that ends a row, such as a list row's action.
 - With reduced motion it spreads at once.
 - `formatMore` and `formatLabel` set its words.
@@ -249,7 +249,7 @@ The group is `env-avatar-group`, with an `env-avatar` for each person, an `env-a
 
 ### Customize
 
-Its color properties take the place of its hue. The hues are tokens, `--env-color-bg-avatar-{hue}`, `--env-color-fg-avatar-{hue}` and `--env-color-fg-avatar-figure-{hue}`, and the powder hue is also the unsuffixed `--env-color-bg-avatar`, `--env-color-fg-avatar` and `--env-color-fg-avatar-figure`. That faint shadow is 1 px down and 2 px soft; under forced colors there is none, and `box-shadow: none` on `.env-avatar` and `.env-avatar-group-overflow` removes it.
+Its color properties take the place of its hue. The hues are tokens, `--env-color-bg-avatar-{hue}`, `--env-color-fg-avatar-{hue}` and `--env-color-fg-avatar-figure-{hue}`, and the powder hue is also the unsuffixed `--env-color-bg-avatar`, `--env-color-fg-avatar` and `--env-color-fg-avatar-figure`. That faint shadow is 1 px down and 2 px soft; under forced colors there is none, and `box-shadow: none` on `.env-avatar` removes it.
 
 ## Changelog
 

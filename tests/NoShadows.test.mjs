@@ -10,7 +10,7 @@ import { build } from 'esbuild';
 // (no offset, no blur), inset edges and selection bars, and a hairline line one pixel below or
 // beside a box. This test reads the shipped style sheet, dev mode's own and the catalogue's, and
 // rejects every other shadow, also one a custom property carries into box-shadow. The library has
-// two exceptions, by request: the faint, small shadow under an avatar and an avatar group's count,
+// two exceptions, by request: the faint, small shadow under an avatar,
 // `--env-avatar-shadow` (Avatar.css), so stacked avatars part from one another; and the soft shadow
 // of the frosted popups, `--env-popup-shadow` (Popup.css), which keeps a translucent popup's edge
 // where it crosses an area of its own color, gone wherever the popup is solid; dialogs, which take
@@ -158,7 +158,7 @@ function problems(sheets, { allowed = [] } = {}) {
 }
 
 /**
- * The library's drop shadows: under avatars and an avatar group's count, under frosted popups and
+ * The library's drop shadows: under avatars, under frosted popups and
  * tooltips, and under a segmented control's chosen segment.
  */
 const avatarShadow = '--env-avatar-shadow';
@@ -272,7 +272,7 @@ test('the avatars’ shadow is small, faint and follows the surface below', asyn
         .map(([, value]) => value.replace(/\s+/g, ' ')),
     ),
   ];
-  // Avatar.css and AvatarGroup.css, for the count, declare the same shadow.
+  // Avatar.css declares it; the count of a group is flat.
   assert.equal(values.length, 1, 'one shadow');
   const [value] = values;
   // A single layer, 1px down and blurred 2px, with no spread.
@@ -284,13 +284,13 @@ test('the avatars’ shadow is small, faint and follows the surface below', asyn
     rest[0],
     /^oklch\(\s*from var\(--env-avatar-group-ring-color, var\(--env-surface-color, var\(--env-color-bg-page\)\)\)/,
   );
-  // Only an avatar and the count use it.
+  // Only an avatar uses it.
   const users = [
     ...css
       .replace(/\/\*[\s\S]*?\*\//g, '')
       .matchAll(/([^{}]+)\{[^}]*box-shadow:\s*var\(--env-avatar-shadow\)/g),
   ].map(([, selector]) => selector.trim().replace(/\s+/g, ' '));
-  assert.deepEqual(users, ['.env-avatar', '.env-avatar-group-overflow']);
+  assert.deepEqual(users, ['.env-avatar']);
 });
 
 test('the chosen segment’s shadow is small, follows the theme, gives way at high contrast and stays on it', async () => {

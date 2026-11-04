@@ -54,6 +54,11 @@
   .env-avatar-group[data-size='xl'] {
     --env-avatar-group-size: var(--env-picture-size-xl);
   }
+  /* Initials center in their circle, so a pile of them is looser, each avatar four fifths
+     uncovered, so two letters stay whole under the next avatar. */
+  .env-avatar-group:has(.env-avatar-fallback-initials) {
+    --env-avatar-group-pitch: calc(var(--env-avatar-group-size) * 0.8);
+  }
   .env-avatar-group[data-align='end'] {
     --env-avatar-group-gather: 1;
   }
@@ -162,7 +167,9 @@
         var(--env-avatar-group-inline)
     );
   }
-  /* At rest, small offsets that vary by place, so the avatars read as a pile rather than a row. */
+  /* At rest, small offsets that vary by place, so the avatars read as a pile rather than a row. A
+     group of initials, or a small one, as in a table's row, rests upright and in line, below, so
+     letters never lean and a dense row stays calm. */
   .env-avatar-group > :nth-child(3n + 1) {
     --env-avatar-group-rest-lift: calc(var(--env-avatar-group-size) * -0.04);
     --env-avatar-group-rest-turn: -6deg;
@@ -176,6 +183,11 @@
     --env-avatar-group-nudge: calc(var(--env-avatar-group-size) * -0.02);
     --env-avatar-group-rest-lift: calc(var(--env-avatar-group-size) * -0.01);
     --env-avatar-group-rest-turn: -2deg;
+  }
+  .env-avatar-group:is([data-size='sm'], :has(.env-avatar-fallback-initials)) > * {
+    --env-avatar-group-nudge: 0rem;
+    --env-avatar-group-rest-lift: 0rem;
+    --env-avatar-group-rest-turn: 0deg;
   }
   /* The count lies at the bottom of the pile, under the last avatar, and shows past its end, by the
      pile's tuck alone. */
@@ -247,12 +259,11 @@
     outline-offset: 0.125rem;
   }
 
-  /* The count of the rest: a rounded square the size of the avatars, at the bottom of the pile, set
-     as an avatar's initials are, in the same weight, size and spacing, in a neutral fill with the
-     default text color, as a neutral count is. A larger count widens it into a rounded rectangle. Its
-     corners come from the corner scale, a step for each avatar size. It lies under the avatars, over
-     the surface alone, so the fill can stay translucent. At rest its figures center in the part the
-     last avatar leaves uncovered. */
+  /* The count of the rest: a circle the size of the avatars, at the bottom of the pile, set as an
+     avatar's initials are, in the same weight, size and spacing, in a neutral fill with the default
+     text color, as a neutral count is. A larger count widens it into a pill. It is flat: it lies
+     under the avatars, over the surface alone, so the fill can stay translucent. At rest its figures
+     center in the part the last avatar leaves uncovered. */
   .env-avatar-group-overflow {
     box-sizing: border-box;
     display: inline-grid;
@@ -260,7 +271,8 @@
     min-inline-size: var(--env-avatar-group-size);
     block-size: var(--env-avatar-group-size);
     padding-inline: calc(var(--env-avatar-group-size) / 6);
-    border-radius: var(--env-radius-sm);
+    /* Half its height, as the avatars round: the capped full corner would square the larger sizes. */
+    border-radius: calc(var(--env-avatar-group-size) / 2);
     background: var(--env-color-bg-neutral-muted);
     color: var(--env-color-fg-default);
     font: var(--env-font-weight-semibold) calc(var(--env-avatar-group-size) * 0.38) / 1
@@ -270,19 +282,6 @@
     white-space: nowrap;
     cursor: default;
     user-select: none;
-    /* The avatars' faint shadow, as Avatar.css casts it, so the count parts from the surface too. */
-    --env-avatar-shadow: 0 1px 2px
-      oklch(
-        from var(--env-avatar-group-ring-color, var(--env-surface-color, var(--env-color-bg-page)))
-          calc(l * 0.3) calc(c * 0.5) h / calc(0.26 - l * 0.15)
-      );
-    box-shadow: var(--env-avatar-shadow);
-  }
-  .env-avatar-group[data-size='lg'] > .env-avatar-group-overflow {
-    border-radius: var(--env-radius-md);
-  }
-  .env-avatar-group[data-size='xl'] > .env-avatar-group-overflow {
-    border-radius: var(--env-radius-xl);
   }
   .env-avatar-group-overflow > span {
     translate: calc(
