@@ -139,11 +139,12 @@
     background: var(--env-button-custom-fill, var(--env-color-bg-primary-emphasis-pressed));
   }
 
-  /* The secondary fill is a translucent layer, so it stays visible on rows, panes and dialogs. */
+  /* The secondary fill is a translucent layer, so it stays visible on rows, panes and dialogs. Its
+     label is in the text color, so on a grey or tinted surface it still reads as available. */
   .env-button:where([data-variant='secondary']) {
     --env-button-container-default: var(--env-color-bg-neutral-muted);
     background: var(--env-button-custom-fill, var(--env-color-bg-neutral-muted));
-    color: var(--env-button-content, var(--env-color-fg-control));
+    color: var(--env-button-content, var(--env-color-fg-default));
     border: 0;
   }
 
@@ -384,6 +385,22 @@
   .env-button:is(:disabled, [aria-disabled='true']) {
     opacity: var(--env-state-disabled-opacity);
     cursor: default;
+  }
+  /* An unavailable button reads as unavailable rather than as a lighter brand color: a primary one,
+     in any tone, takes the secondary's neutral fill and label, and an outline or a labelled text one
+     the neutral label and edge. A pending one keeps its colors. */
+  .env-button:where([data-variant='primary']):is(:disabled, [aria-disabled='true']):not(
+      [data-pending]
+    ) {
+    background: var(--env-button-custom-fill, var(--env-color-bg-neutral-muted));
+    color: var(--env-button-content, var(--env-color-fg-default));
+  }
+  .env-button:where([data-variant='outline'], [data-variant='text']:not(.env-icon-button)):is(
+      :disabled,
+      [aria-disabled='true']
+    ):not([data-pending]) {
+    border-color: var(--env-button-outline, var(--env-color-border-default));
+    color: var(--env-button-content, var(--env-color-fg-default));
   }
 
   /* fullWidth: a labelled button fills its container, such as a narrow form's stacked actions. */

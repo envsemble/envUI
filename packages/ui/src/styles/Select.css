@@ -132,8 +132,7 @@
   }
 
   /* The open list is the menus' frosted popup, with their corners and rows that highlight on hover
-     and keyboard focus, where the selection's fill, a check mark and a heavier label show the chosen
-     option. */
+     and keyboard focus, where a check mark and a heavier label show the chosen option. */
   .env-select-popup {
     width: max-content;
     min-width: min(var(--anchor-width), var(--available-width));
@@ -162,10 +161,13 @@
   .env-select-item[data-selected] {
     font-weight: var(--env-font-weight-medium);
   }
-  /* Highlight includes pointer interaction; only keyboard focus needs a ring. */
+  /* The highlight is the keyboard's focus too, so an option draws no ring of its own, except at
+     high contrast, where every boundary is strong, and under forced colors, where the system paints
+     the highlight (below). The ring is valid only at high contrast (see Theme.css). */
   .env-select-item:focus-visible {
-    outline: 0.125rem solid var(--env-color-border-focus);
-    outline-offset: -0.125rem;
+    --env-select-item-ring: var(--env-theme-high-contrast) var(--env-color-border-focus);
+    outline: 2px solid var(--env-select-item-ring, transparent);
+    outline-offset: -2px;
   }
   .env-select-item[data-disabled] {
     pointer-events: none;
@@ -192,6 +194,10 @@
      and fades as every unavailable item does: GrayText on Highlight would not read. An invalid
      select takes the field's own forced-colors edge. */
   @media (forced-colors: active) {
+    .env-select-item:focus-visible {
+      outline: 2px solid CanvasText;
+      outline-offset: -2px;
+    }
     .env-select-item[data-highlighted]:focus-visible,
     .env-select-item[data-highlighted] :focus-visible {
       outline-color: HighlightText;

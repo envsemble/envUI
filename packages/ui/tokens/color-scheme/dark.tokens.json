@@ -228,7 +228,7 @@
               "components": {
                 "$ref": "#/palette/blue/20/$value/components"
               },
-              "alpha": 0.14
+              "alpha": 0.17
             }
           },
           "pressed": {
@@ -237,7 +237,7 @@
               "components": {
                 "$ref": "#/palette/blue/20/$value/components"
               },
-              "alpha": 0.22
+              "alpha": 0.25
             }
           }
         },
@@ -284,7 +284,7 @@
               "components": {
                 "$ref": "#/palette/green/20/$value/components"
               },
-              "alpha": 0.14
+              "alpha": 0.17
             }
           },
           "pressed": {
@@ -293,7 +293,7 @@
               "components": {
                 "$ref": "#/palette/green/20/$value/components"
               },
-              "alpha": 0.22
+              "alpha": 0.25
             }
           }
         },
@@ -336,7 +336,7 @@
               "components": {
                 "$ref": "#/palette/amber/20/$value/components"
               },
-              "alpha": 0.14
+              "alpha": 0.17
             }
           },
           "pressed": {
@@ -345,7 +345,7 @@
               "components": {
                 "$ref": "#/palette/amber/20/$value/components"
               },
-              "alpha": 0.22
+              "alpha": 0.25
             }
           }
         }
@@ -377,7 +377,7 @@
               "components": {
                 "$ref": "#/palette/red/20/$value/components"
               },
-              "alpha": 0.14
+              "alpha": 0.17
             }
           },
           "pressed": {
@@ -386,7 +386,7 @@
               "components": {
                 "$ref": "#/palette/red/20/$value/components"
               },
-              "alpha": 0.22
+              "alpha": 0.25
             }
           }
         },
@@ -412,7 +412,7 @@
             "components": {
               "$ref": "#/palette/violet/20/$value/components"
             },
-            "alpha": 0.14
+            "alpha": 0.17
           }
         }
       },
@@ -455,7 +455,7 @@
               "components": {
                 "$ref": "#/palette/purple/20/$value/components"
               },
-              "alpha": 0.14
+              "alpha": 0.17
             }
           },
           "pressed": {
@@ -464,7 +464,7 @@
               "components": {
                 "$ref": "#/palette/purple/20/$value/components"
               },
-              "alpha": 0.22
+              "alpha": 0.25
             }
           }
         },

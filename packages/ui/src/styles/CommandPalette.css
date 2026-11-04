@@ -26,7 +26,8 @@
     max-block-size: 100%;
     /* An inset that keeps the rows' corners concentric with the palette's. */
     padding: calc(var(--env-radius-surface) - var(--env-popup-row-radius));
-    border: var(--env-control-border-width) solid var(--env-command-palette-edge, transparent);
+    border: var(--env-control-border-width) solid
+      var(--env-command-palette-edge, var(--env-popup-frosted-edge, transparent));
     border-radius: var(--env-radius-surface);
     background: color-mix(in srgb, var(--env-popup-fill) var(--env-popup-opacity), transparent);
     box-shadow: var(--env-popup-shadow);

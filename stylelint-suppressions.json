@@ -127,7 +127,7 @@
   },
   "packages/ui/src/styles/Menu.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 5
+      "count": 3
     }
   },
   "packages/ui/src/styles/Menubar.css": {
@@ -176,7 +176,7 @@
   },
   "packages/ui/src/styles/Select.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 3
+      "count": 1
     }
   },
   "packages/ui/src/styles/Table.css": {

@@ -255,7 +255,6 @@ test('compositions reuse primitive colors while unrelated roles stay independent
       ['--env-color-bg-muted', ['surface', 'card', 'contrastPane', 'radioRow', 'row']],
       ['--env-color-bg-list-item', ['row']],
       ['--env-color-bg-neutral-muted', ['secondary', 'icon', 'chip']],
-      ['--env-color-fg-control', ['secondary', 'icon']],
       ['--env-color-fg-link', ['link', 'textButton']],
       ['--env-color-bg-primary-emphasis', ['primary', 'radio', 'checkbox', 'switch']],
       ['--env-color-fg-on-emphasis', ['primary']],
@@ -267,7 +266,8 @@ test('compositions reuse primitive colors while unrelated roles stay independent
       ['--env-color-bg-raised', ['direction']],
       ['--env-color-border-primary-emphasis', ['fieldWell']],
       ['--env-color-fg-danger', ['fieldError', 'selectError']],
-      // The default text color is every part's that sets no other, so it has no case of its own.
+      // The default text color is every part's that sets no other, a secondary button's label
+      // among them, so it has no case of its own.
       ['--env-color-bg-danger-strong', ['destructive']],
     ] as const;
     for (const [token, targets] of cases) {

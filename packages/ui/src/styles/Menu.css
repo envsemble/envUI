@@ -171,17 +171,6 @@
   .env-menu-choice[data-checked] .env-menu-item-label {
     font-weight: var(--env-font-weight-medium);
   }
-  /* The chosen row of a radio group takes the selection's fill and text, its check mark and icon in
-     the same color, as a Select's chosen option does; under the pointer and pressed, the selection's
-     own steps. */
-  .env-menu-choice[role='menuitemradio'][data-checked] {
-    --env-menu-item-icon-color: var(--env-menu-item-icon, var(--env-color-fg-on-selected));
-    background: var(--env-menu-item-custom-fill, var(--env-color-bg-selected));
-    color: var(--env-menu-item-content, var(--env-color-fg-on-selected));
-  }
-  .env-menu-choice[role='menuitemradio'][data-checked] .env-menu-item-indicator {
-    color: var(--env-menu-item-content, var(--env-color-fg-on-selected));
-  }
   /* A row that opened a submenu stays highlighted while the submenu is open. */
   .env-menu-item:is([data-highlighted], [data-popup-open]) {
     --env-menu-item-layer: calc(var(--env-state-hover-opacity) * 100%);
@@ -191,19 +180,18 @@
   .env-menu-submenu-chevron:dir(rtl) {
     transform: scaleX(-1);
   }
-  .env-menu-choice[role='menuitemradio'][data-checked]:is([data-highlighted], [data-popup-open]) {
-    background: var(--env-menu-item-custom-fill, var(--env-color-bg-selected-hover));
-  }
   .env-menu-item:active {
     --env-menu-item-layer: calc(var(--env-state-pressed-opacity) * 100%);
     background: var(--env-menu-item-custom-fill, var(--env-color-bg-neutral-muted-pressed));
   }
-  .env-menu-choice[role='menuitemradio'][data-checked]:active {
-    background: var(--env-menu-item-custom-fill, var(--env-color-bg-selected-pressed));
-  }
+  /* The highlight is the keyboard's focus too, so an item draws no ring of its own: one mark for
+     where the keyboard is, the fill, and one for what is chosen, the check mark. At high contrast,
+     where every boundary is strong, and under forced colors, where the system paints the highlight
+     (below), the ring returns; the high-contrast one is valid only there (see Theme.css). */
   .env-menu-item:focus-visible {
-    outline: 0.125rem solid var(--env-color-border-focus);
-    outline-offset: -0.125rem;
+    --env-menu-item-ring: var(--env-theme-high-contrast) var(--env-color-border-focus);
+    outline: 2px solid var(--env-menu-item-ring, transparent);
+    outline-offset: -2px;
   }
   .env-menu-item:is([data-disabled], [aria-disabled='true']) {
     opacity: var(--env-state-disabled-opacity);
@@ -254,6 +242,10 @@
     }
     .env-menu-item[data-disabled] {
       color: GrayText;
+    }
+    .env-menu-item:focus-visible {
+      outline: 2px solid CanvasText;
+      outline-offset: -2px;
     }
     .env-menu-item:is([data-highlighted], [data-popup-open]):focus-visible,
     .env-menu-item:is([data-highlighted], [data-popup-open]) :focus-visible {

@@ -113,11 +113,14 @@ function isDisabled(item: TabsItem) {
   return Boolean(item.disabled || item.button?.props.disabled);
 }
 
-/** The item's control: its own button, or a text button with its label and icon. */
+/**
+ * The item's control: its own button, or a ghost button with its label and icon, which keeps a
+ * button's inline padding, so neighbouring tabs stay apart. The tab takes a text tab's look either way.
+ */
 function buttonOf(item: TabsItem): ReactElement<ComponentPropsWithRef<'button'>> {
   return (
     item.button ?? (
-      <Button variant="text" startIcon={item.icon}>
+      <Button variant="ghost" startIcon={item.icon}>
         {item.label}
       </Button>
     )

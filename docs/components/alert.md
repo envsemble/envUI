@@ -140,7 +140,7 @@ Remove an alert once it no longer applies. Let people dismiss it only where the 
 
 ### Usage
 
-An Alert takes its `tone`, a short `title`, the message as `children`, and `actions` below the message, such as a Button or a Link. Put it above the content it concerns, and remove it once it no longer applies.
+An Alert takes its `tone`, a short `title`, the message as `children`, and `actions` below the message, such as a Button or a Link; a secondary Button there takes the tone's deeper tint, so it reads on the alert. Put it above the content it concerns, and remove it once it no longer applies.
 
 ```tsx source=BlockedRelease
 

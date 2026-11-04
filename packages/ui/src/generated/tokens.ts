@@ -123,7 +123,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: 'rgb(142 60 170 / 0.14)',
-      dark: 'rgb(231 168 255 / 0.14)',
+      dark: 'rgb(231 168 255 / 0.17)',
       'light-high-contrast': 'rgb(99 4 125 / 0.14)',
       'dark-high-contrast': 'rgb(247 228 255 / 0.14)',
     },
@@ -134,7 +134,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: 'rgb(142 60 170 / 0.22)',
-      dark: 'rgb(231 168 255 / 0.22)',
+      dark: 'rgb(231 168 255 / 0.25)',
       'light-high-contrast': 'rgb(99 4 125 / 0.22)',
       'dark-high-contrast': 'rgb(247 228 255 / 0.22)',
     },
@@ -332,7 +332,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: 'rgb(183 43 32 / 0.14)',
-      dark: 'rgb(248 172 166 / 0.14)',
+      dark: 'rgb(248 172 166 / 0.17)',
       'light-high-contrast': 'rgb(122 2 0 / 0.14)',
       'dark-high-contrast': 'rgb(255 228 226 / 0.14)',
     },
@@ -343,7 +343,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: 'rgb(183 43 32 / 0.22)',
-      dark: 'rgb(248 172 166 / 0.22)',
+      dark: 'rgb(248 172 166 / 0.25)',
       'light-high-contrast': 'rgb(122 2 0 / 0.22)',
       'dark-high-contrast': 'rgb(255 228 226 / 0.22)',
     },
@@ -398,7 +398,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: 'rgb(122 63 200 / 0.12)',
-      dark: 'rgb(210 178 247 / 0.14)',
+      dark: 'rgb(210 178 247 / 0.17)',
       'light-high-contrast': 'rgb(83 0 154 / 0.08)',
       'dark-high-contrast': 'rgb(232 214 255 / 0.1)',
     },
@@ -849,7 +849,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: 'rgb(0 92 200 / 0.14)',
-      dark: 'rgb(159 193 248 / 0.14)',
+      dark: 'rgb(159 193 248 / 0.17)',
       'light-high-contrast': 'rgb(0 55 124 / 0.14)',
       'dark-high-contrast': 'rgb(224 235 253 / 0.14)',
     },
@@ -860,7 +860,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: 'rgb(0 92 200 / 0.22)',
-      dark: 'rgb(159 193 248 / 0.22)',
+      dark: 'rgb(159 193 248 / 0.25)',
       'light-high-contrast': 'rgb(0 55 124 / 0.22)',
       'dark-high-contrast': 'rgb(224 235 253 / 0.22)',
     },
@@ -1036,7 +1036,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: 'rgb(23 111 53 / 0.14)',
-      dark: 'rgb(122 209 151 / 0.14)',
+      dark: 'rgb(122 209 151 / 0.17)',
       'light-high-contrast': 'rgb(0 68 26 / 0.14)',
       'dark-high-contrast': 'rgb(165 253 193 / 0.14)',
     },
@@ -1047,7 +1047,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: 'rgb(23 111 53 / 0.22)',
-      dark: 'rgb(122 209 151 / 0.22)',
+      dark: 'rgb(122 209 151 / 0.25)',
       'light-high-contrast': 'rgb(0 68 26 / 0.22)',
       'dark-high-contrast': 'rgb(165 253 193 / 0.22)',
     },
@@ -1063,14 +1063,14 @@ export const tokens = {
       'dark-high-contrast': '#ffd890',
     },
   },
-  /** The translucent warning tint of badges and alerts. */
+  /** The translucent warning tint of badges and alerts: a clean light amber rather than the warning text color, which would turn a light surface tan. */
   'color.bg.warning.muted': {
     cssVariable: '--env-color-bg-warning-muted',
     type: 'color',
     values: {
-      light: 'rgb(138 85 4 / 0.12)',
+      light: 'rgb(255 208 120 / 0.24)',
       dark: 'rgb(235 183 80 / 0.14)',
-      'light-high-contrast': 'rgb(85 50 0 / 0.08)',
+      'light-high-contrast': 'rgb(255 208 120 / 0.24)',
       'dark-high-contrast': 'rgb(255 216 144 / 0.1)',
     },
   },
@@ -1085,25 +1085,25 @@ export const tokens = {
       'dark-high-contrast': 'transparent',
     },
   },
-  /** The state layer of a control without a fill in the warning tone, such as a warning alert’s dismiss button, under the pointer: the warning text color at 14%, in every theme and at high contrast. */
+  /** The stronger warning tint, which fills a warning alert and a soft badge and lies under a control without a fill in the warning tone, such as a warning alert’s dismiss button, under the pointer: a light amber at 36% in light, at either contrast, so a light surface takes a clean amber rather than tan; the warning text color at 17% in dark, and 14% at high contrast. */
   'color.bg.warning.subtle.hover': {
     cssVariable: '--env-color-bg-warning-subtle-hover',
     type: 'color',
     values: {
-      light: 'rgb(138 85 4 / 0.14)',
-      dark: 'rgb(235 183 80 / 0.14)',
-      'light-high-contrast': 'rgb(85 50 0 / 0.14)',
+      light: 'rgb(255 208 120 / 0.36)',
+      dark: 'rgb(235 183 80 / 0.17)',
+      'light-high-contrast': 'rgb(255 208 120 / 0.36)',
       'dark-high-contrast': 'rgb(255 232 190 / 0.14)',
     },
   },
-  /** The warning state layer while pressed: the warning text color at 22%. */
+  /** The warning state layer while pressed: the light amber at 50% in light, at either contrast; the warning text color at 25% in dark, and 22% at high contrast. */
   'color.bg.warning.subtle.pressed': {
     cssVariable: '--env-color-bg-warning-subtle-pressed',
     type: 'color',
     values: {
-      light: 'rgb(138 85 4 / 0.22)',
-      dark: 'rgb(235 183 80 / 0.22)',
-      'light-high-contrast': 'rgb(85 50 0 / 0.22)',
+      light: 'rgb(255 208 120 / 0.5)',
+      dark: 'rgb(235 183 80 / 0.25)',
+      'light-high-contrast': 'rgb(255 208 120 / 0.5)',
       'dark-high-contrast': 'rgb(255 232 190 / 0.22)',
     },
   },

@@ -5,7 +5,9 @@
      sizes of its data-width. */
   /* Frosted popups: a popup's fill lets a little of what is behind it through, blurred so that it
      turns into soft color and never reads through the rows, and a soft shadow keeps its edge where it
-     crosses an area of its own color; there is no outline. These are the popups' own properties,
+     crosses an area of its own color; in light there is no outline. In dark, where the shadow barely
+     shows on a dark page, a hairline of the text color (--env-popup-frosted-edge, private) keeps the
+     popup's edge over a stage or a card of its own shade. These are the popups' own properties,
      which an application may set on a theme: how much of the fill covers what is behind
      (--env-popup-opacity), the blur (--env-popup-blur) and the shadow (--env-popup-shadow), envUI's
      second drop shadow after the avatars'. The fill (--env-popup-fill, private) is the popup color,
@@ -35,6 +37,7 @@
      * value or nothing.
      */
     --env-popup-solid: initial;
+    --env-popup-frosted-edge: transparent;
     /* The geometry popups share, following the scale as the md control height does (2.5 rem, 2 rem
        compact): the inset of their rows, the rows' corners and, concentric with them, the popup's,
        and the space between groups. */
@@ -52,6 +55,7 @@
   }
   .env-theme[data-env-theme='dark'] {
     --env-popup-fill: var(--env-color-bg-default);
+    --env-popup-frosted-edge: oklch(from var(--env-color-fg-default) l c h / 0.12);
     --env-popup-opacity: 90%;
     /* In dark a deeper shade of the page, stronger, as a light shadow would not show. */
     --env-popup-shadow: 0 12px 32px -10px
@@ -117,12 +121,13 @@
   }
   .env-popup {
     --env-popup-border: var(--env-popup-edge-color);
-    /* The edge of a solid popup; frosted, it has none. */
+    /* The edge of a solid popup; frosted, the hairline of dark, or none. */
     --env-popup-edge: var(--env-popup-solid) var(--env-popup-border);
     box-sizing: border-box;
     max-block-size: var(--available-height, 80vh);
     overflow-y: auto;
-    border: var(--env-control-border-width) solid var(--env-popup-edge, transparent);
+    border: var(--env-control-border-width) solid
+      var(--env-popup-edge, var(--env-popup-frosted-edge, transparent));
     border-radius: var(--env-radius-surface);
     background: color-mix(in srgb, var(--env-popup-fill) var(--env-popup-opacity), transparent);
     box-shadow: var(--env-popup-shadow);

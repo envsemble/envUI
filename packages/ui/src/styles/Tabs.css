@@ -86,7 +86,16 @@
   .env-tabs-list[data-size='sm'] > .env-tabs-tab {
     padding-block: 0;
   }
+  .env-tabs-list > .env-tabs-tab[data-variant='text'] {
+    --env-tabs-tab-padding: var(--env-space-1);
+    margin-inline: 0;
+    max-inline-size: 100%;
+  }
+  /* The indicator spans the label, inside the tab's inline padding: a button's, or a text button's
+     slimmer one. A text button of the application's own takes no margin back here, which would let
+     neighbouring tabs overlap and their labels run together. */
   .env-tabs-list > .env-tabs-tab {
+    --env-tabs-tab-padding: var(--env-space-3);
     position: relative;
     flex-shrink: 0;
     border-radius: var(--env-radius-sm);
@@ -99,8 +108,10 @@
   /* Every tab is a text tab, whatever its button's variant: no fill or edge of its own, its label
      muted. Under the pointer and pressed a state layer shows; with the application's colors, the
      layer is their label's, a quarter stronger than Button's, as a muted label is lighter than the
-     text color. The states are named so these rules outweigh the button's own. */
+     text color. The states, unavailable included, are named so these rules outweigh the button's
+     own. */
   .env-tabs-list > .env-tabs-tab,
+  .env-tabs-list > .env-tabs-tab:is(:disabled, [aria-disabled='true']),
   .env-tabs-list
     > .env-tabs-tab:is(:hover, :active, :focus-visible):not(:disabled):not([aria-disabled='true']) {
     /* Valid only in a state while the application sets the tabs' colors (see Button.css). */
@@ -132,7 +143,7 @@
   .env-tabs-list > .env-tabs-tab[data-active]::after {
     content: '';
     position: absolute;
-    inset-inline: var(--env-space-2);
+    inset-inline: var(--env-tabs-tab-padding);
     inset-block-end: 0;
     block-size: var(--env-tabs-indicator-size);
     border-start-start-radius: var(--env-tabs-indicator-size);

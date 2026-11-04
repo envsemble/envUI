@@ -166,7 +166,8 @@
     overflow: auto;
     /* The edge of a solid list; frosted, it has none. */
     --env-rich-text-suggestions-edge: var(--env-popup-solid) var(--env-popup-edge-color);
-    border: var(--env-control-border-width) solid var(--env-rich-text-suggestions-edge, transparent);
+    border: var(--env-control-border-width) solid
+      var(--env-rich-text-suggestions-edge, var(--env-popup-frosted-edge, transparent));
     border-radius: var(--env-popup-radius);
     background: color-mix(in srgb, var(--env-popup-fill) var(--env-popup-opacity), transparent);
     box-shadow: var(--env-popup-shadow);

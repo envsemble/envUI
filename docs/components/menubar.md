@@ -171,5 +171,5 @@ Its menus are frosted, as every popup is: `--env-popup-opacity`, `--env-popup-bl
 
 ## Changelog
 
-- **1.0.0-prerelease.5**: A Menubar's menus are frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge, and is solid with its edge at high contrast and with reduced transparency, with Menu's new rows.
+- **1.0.0-prerelease.5**: A Menubar's menus are frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge but a faint hairline in dark, and is solid with its edge at high contrast and with reduced transparency, with Menu's new rows.
 - **1.0.0**: The parts are members of the `Menubar` namespace: `Menubar` is `Menubar.Root`, `MenubarMenu` is `Menubar.Menu`, and `MenubarMenuOpenChangeDetails` is `Menubar.MenuOpenChangeDetails`. Menubar.Menu's popup is the shared popup surface and takes `ref` and `style`; the arrow keys between menus follow the text direction.
