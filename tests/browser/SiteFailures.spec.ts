@@ -131,7 +131,7 @@ test('code that fails to load is asked for once, not on every render', async ({ 
     .first()
     .locator('.site-live-example-code summary')
     .click();
-  // The first figure shares its row, so its code opens below the row.
+  // The first figure's code opens right under it.
   const entry = page.getByRole('region', { name: 'Code, CreateProject.tsx', exact: true });
   await expect(entry.getByText('The code could not load')).toBeVisible();
   // The example beside it is not loaded again.

@@ -17,7 +17,7 @@ async function catalogueWords(page: Page) {
   await expect(page.locator('.site-section-groups[aria-busy]')).toHaveCount(0);
   return page.locator('.site-main').evaluate((main) => {
     const skipped =
-      '.site-live-example-code, .site-code-slot, pre, .env-code-block, .site-live-example, .site-verdict-stage, .site-anatomy-subject, .catalogue-related-stage, .catalogue-open-example, [hidden], .catalogue-banner-motif';
+      '.site-live-example-code, pre, .env-code-block, .site-live-example, .site-verdict-stage, .site-anatomy-subject, .catalogue-related-stage, .catalogue-open-example, [hidden], .catalogue-banner-motif';
     const words: string[] = [];
     const walker = document.createTreeWalker(main, NodeFilter.SHOW_TEXT);
     for (let node = walker.nextNode(); node; node = walker.nextNode())
@@ -197,7 +197,7 @@ test("the catalogue's text keeps a readable measure, and opens each section with
         ...document.querySelectorAll<HTMLElement>(
           '.site-lead, .catalogue-supporting, .site-figures .env-markdown > p',
         ),
-      ].filter((element) => !element.closest('[data-figure], .site-shared-row'));
+      ].filter((element) => !element.closest('[data-figure], .site-figure-run, .site-figure-split'));
       const long = text.flatMap((element) => {
         const lines = Math.round(
           element.getBoundingClientRect().height / parseFloat(getComputedStyle(element).lineHeight),

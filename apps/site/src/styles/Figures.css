@@ -38,7 +38,7 @@
   > .env-markdown
   + :is(
     .site-live-example-entry,
-    .site-shared-row:not(:has(> .site-figure-split)),
+    .site-figure-run,
     .site-anatomy,
     .catalogue-variants,
     .site-verdict,
@@ -63,29 +63,6 @@
   margin: 0;
   color: var(--env-color-fg-muted);
   font: var(--env-type-body-sm);
-}
-
-/* Cells that share a row, and the slot below them where their open code spans the column. */
-.site-shared-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  min-inline-size: 0;
-}
-
-.site-code-slot {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--env-space-4);
-  min-inline-size: 0;
-}
-
-.site-code-slot:not(:empty) {
-  margin-block-start: var(--env-space-4);
-}
-
-/* A slotted disclosure is only the toggle; its code shows in the slot. */
-.site-live-example-code[data-slotted] > .env-disclosure-panel {
-  display: none;
 }
 
 /* Figures side by side are cells of one size: equal widths, and each figure's stage, caption and
