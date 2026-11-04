@@ -67,7 +67,7 @@
   --env-color-bg-neutral-strong-hover: #616164;
   --env-color-bg-neutral-strong-pressed: #757578;
   --env-color-bg-neutral-subtle: transparent;
-  --env-color-bg-neutral-subtle-hover: rgb(31 31 34 / 0.05);
+  --env-color-bg-neutral-subtle-hover: rgb(31 31 34 / 0.08);
   --env-color-bg-neutral-subtle-pressed: rgb(31 31 34 / 0.12);
   --env-color-bg-page: #eaeaec;
   --env-color-bg-page-hover: #dddddf;
@@ -340,7 +340,7 @@
   --env-color-bg-neutral-strong: #424447;
   --env-color-bg-neutral-strong-hover: #5d6166;
   --env-color-bg-neutral-strong-pressed: #72767b;
-  --env-color-bg-neutral-subtle-hover: rgb(232 234 238 / 0.06);
+  --env-color-bg-neutral-subtle-hover: rgb(232 234 238 / 0.08);
   --env-color-bg-neutral-subtle-pressed: rgb(232 234 238 / 0.12);
   --env-color-bg-page: #1e1f21;
   --env-color-bg-page-hover: #2c2d30;

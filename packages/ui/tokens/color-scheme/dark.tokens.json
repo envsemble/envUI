@@ -163,7 +163,7 @@
               "components": {
                 "$ref": "#/palette/neutral/6/$value/components"
               },
-              "alpha": 0.06
+              "alpha": 0.08
             }
           },
           "pressed": {

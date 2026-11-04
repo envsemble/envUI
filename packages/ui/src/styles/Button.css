@@ -271,6 +271,7 @@
      to the text color over a state layer on hover and press, as a docked panel's window controls do;
      there is no fill or border. */
   .env-button:where([data-variant='ghost']) {
+    --env-button-ghost-layer: var(--env-color-bg-neutral-subtle-hover);
     border: 0;
     background: var(--env-button-custom-fill, transparent);
     color: var(--env-button-content, var(--env-color-fg-muted));
@@ -280,14 +281,34 @@
     transition-timing-function: var(--env-motion-ease);
   }
 
+  /* Hover lays the state layer and a press lays it twice, an even step further; its label stays the
+     text color, which reads on both. A ghost button with a label lays a lighter layer, so it never
+     reads as a secondary button at rest; an icon-only one keeps the full layer, as its small circle
+     needs. In the danger tone, whose label is red, a press lays the pressed layer instead. */
+  .env-button:where([data-variant='ghost']:not(.env-icon-button)) {
+    --env-button-ghost-layer: color-mix(
+      in srgb,
+      var(--env-color-bg-neutral-subtle-hover) 70%,
+      transparent
+    );
+  }
+
   .env-button:where([data-variant='ghost']):hover:not(:disabled):not([aria-disabled='true']) {
-    background: var(--env-button-custom-fill, var(--env-color-bg-neutral-subtle-hover));
+    background: var(--env-button-custom-fill, var(--env-button-ghost-layer));
     color: var(--env-button-content, var(--env-color-fg-default));
   }
 
   .env-button:where([data-variant='ghost']):active:not(:disabled):not([aria-disabled='true']) {
-    background: var(--env-button-custom-fill, var(--env-color-bg-neutral-subtle-pressed));
+    background: var(
+      --env-button-custom-fill,
+      linear-gradient(var(--env-button-ghost-layer) 0 0) var(--env-button-ghost-layer)
+    );
     color: var(--env-button-content, var(--env-color-fg-default));
+  }
+  .env-button:where([data-variant='ghost'][data-tone='danger']):active:not(:disabled):not(
+      [aria-disabled='true']
+    ) {
+    background: var(--env-button-custom-fill, var(--env-color-bg-neutral-subtle-pressed));
   }
 
   .env-link {
