@@ -1,9 +1,7 @@
 import {
-  createContext,
   lazy,
   Suspense,
   use,
-  useContext,
   useLayoutEffect,
   useRef,
   useState,
@@ -11,13 +9,11 @@ import {
   type MouseEvent,
   type ReactNode,
 } from 'react';
-import { createPortal } from 'react-dom';
 import { Disclosure, Column, Text, Theme, useTheme } from '@envsemble/envui';
 import { CodeBlock } from '@envsemble/envui/content';
 import type { StageFill } from '../shared/DocumentationTypes';
 import { LoadBoundary, loadModule, reloadModule } from '../template/LoadBoundary';
 import { OpenExample } from './OpenExample';
-import { InteractiveMark } from '../template/InteractiveMark';
 import { CodeSkeleton, exampleLines, StageSkeleton } from '../template/Loading';
 import { MotionStage } from '../motion/MotionStage';
 import { WidthSweep } from '../motion/WidthSweep';
@@ -98,13 +94,6 @@ function Source({ path, name }: { path: string; name: string }) {
 }
 
 /**
- * Where the open code of a figure that sits in a narrower cell, beside another figure or beside
- * text, is shown: a slot across the whole content column below the cells, so code never scrolls
- * sideways in a cell. Without a slot, the code opens in its own disclosure.
- */
-export const CodeSlot = createContext<HTMLElement | null>(null);
-
-/**
  * An example's source as an open code block with a copy button, loaded with the page that shows it:
  * the code of a page's guide in the Docs, which shows an example file as code.
  */
@@ -132,52 +121,39 @@ export function ExampleSource({ page, name }: { page: string; name: string }) {
   );
 }
 
-/** An example's source in a Code disclosure, with a copy button; a template preview shows it too. */
+/**
+ * An example's source in a disclosure right under its figure, Show code until it opens and Hide code
+ * while it is, with a copy button once open; a template preview shows it too.
+ */
 export function ExampleCode({ page, name }: { page: string; name: string }) {
-  const slot = useContext(CodeSlot);
   const [open, setOpen] = useState(false);
   // The code renders once its disclosure first opens, not with the page: a page has many figures,
   // and each one's file and highlighting would load with it. A pointer over the summary starts
   // loading the file.
   const [opened, setOpened] = useState(false);
   const preload = () => void sourceOf(examplePath(page, name)).catch(() => {});
-  const code = <ExampleSource page={page} name={name} />;
-  const title = (
-    <>
-      Code<span className="site-visually-hidden">, {name}.tsx</span>
-    </>
-  );
-  if (!slot)
-    return (
-      <Disclosure
-        title={title}
-        className="site-live-example-code"
-        onPointerEnter={preload}
-        onToggle={(event) => {
-          if (event.currentTarget.open) setOpened(true);
-        }}
-      >
-        {opened && code}
-      </Disclosure>
-    );
   return (
-    <>
-      <Disclosure
-        title={title}
-        open={open}
-        onOpenChange={setOpen}
-        onPointerEnter={preload}
-        className="site-live-example-code"
-        data-slotted=""
-      />
-      {open &&
-        createPortal(
-          <section className="catalogue-code-panel" aria-label={`Code, ${name}.tsx`}>
-            {code}
-          </section>,
-          slot,
-        )}
-    </>
+    <Disclosure
+      title={
+        <>
+          {open ? 'Hide code' : 'Show code'}
+          <span className="site-visually-hidden">, {name}.tsx</span>
+        </>
+      }
+      open={open}
+      onOpenChange={(next) => {
+        setOpen(next);
+        if (next) setOpened(true);
+      }}
+      onPointerEnter={preload}
+      className="site-live-example-code"
+    >
+      {opened && (
+        <section aria-label={`Code, ${name}.tsx`}>
+          <ExampleSource page={page} name={name} />
+        </section>
+      )}
+    </Disclosure>
   );
 }
 
@@ -389,7 +365,6 @@ export function LiveExample({
                 role="group"
               >
                 <WidthBox width={width}>{render}</WidthBox>
-                <InteractiveMark enabled={!open} />
               </Column>
               <Text render={<figcaption />} variant="caption" emphasis="muted">
                 {width} rem wide
@@ -410,7 +385,6 @@ export function LiveExample({
           {...keepLinksInPlace}
         >
           {render}
-          <InteractiveMark enabled={!open} />
         </Column>
       )}
       {caption && (

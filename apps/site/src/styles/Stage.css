@@ -80,6 +80,26 @@
   box-shadow: var(--catalogue-card-shadow);
 }
 
+/* In the dark themes the recessed surface is a shade deeper than the page, which would sink the
+   canvas below it: there the canvas rises a step above the page instead, as it does in the light
+   ones, on the raised surface. */
+:is(
+  .site-live-example,
+  .site-verdict-stage,
+  .site-anatomy-stage,
+  .site-loading-stage,
+  .catalogue-related-stage,
+  .site-foundation-stage[data-figure='example'],
+  .catalogue-fan-card
+):is([data-env-theme='dark'], [data-env-theme='dark'] *),
+.site-figures
+  :is(.catalogue-specimen-grid, .catalogue-matrix-scroll):is(
+    [data-env-theme='dark'],
+    [data-env-theme='dark'] *
+  ) {
+  --catalogue-card-fill: var(--env-color-bg-raised);
+}
+
 /* The cards of the Overview's fan lie over one another: each takes the stronger shadow. */
 .catalogue-fan-card {
   box-shadow: var(--catalogue-card-shadow-raised);
@@ -283,6 +303,32 @@
   column-gap: var(--catalogue-specimen-gap);
 }
 
+/* Three specimens, such as a control's three sizes, never leave one alone on a row either: three
+   across where they fit, else one column. */
+.site-figures
+  .catalogue-specimen-grid:not([data-size='small']):has(
+    > .catalogue-specimen:nth-child(3 of .catalogue-specimen):nth-last-child(
+        1 of .catalogue-specimen
+      )
+  ) {
+  --catalogue-specimen-gap: var(--env-space-6);
+  --catalogue-specimen-three: calc(
+    3 * var(--catalogue-specimen-min) + 2 * var(--catalogue-specimen-gap)
+  );
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(
+      clamp(
+        calc(100% / 3 - 2 * var(--catalogue-specimen-gap) / 3 - 0.01rem),
+        (var(--catalogue-specimen-three) - 100%) * 999,
+        100%
+      ),
+      1fr
+    )
+  );
+  column-gap: var(--catalogue-specimen-gap);
+}
+
 /* Small pictures, such as LineArt's drawings: four across, or two where four don't fit, so a run
    of four, eight or sixteen never leaves one alone on a row. A title that wraps keeps the
    pictures of its row in line, below the titles. */
@@ -440,43 +486,8 @@
   animation: none;
 }
 
-/* The mark of a stage whose example can be used (InteractiveMark.tsx), such as a live example: a
-   small touch icon in the muted text color at the stage's bottom end, inside its padding, so it
-   never covers what the stage shows. A picture, such as an anatomy figure, has none. */
-:is(
-  .site-live-example,
-  .site-verdict-stage,
-  .catalogue-specimen-grid,
-  .catalogue-matrix-scroll,
-  .site-foundation-stage
-):has(> .site-interactive-mark) {
-  position: relative;
-}
-
-.site-interactive-mark {
-  position: absolute;
-  inset-block-end: var(--env-space-2);
-  inset-inline-end: var(--env-space-2);
-  display: grid;
-  place-items: center;
-  inline-size: var(--env-space-5);
-  block-size: var(--env-space-5);
-  border-radius: var(--env-radius-full);
-  color: var(--env-color-fg-muted);
-}
-
-.site-interactive-mark > svg {
-  inline-size: var(--env-icon-size-sm);
-  block-size: var(--env-icon-size-sm);
-}
-
-.site-interactive-mark:focus-visible {
-  outline: 0.125rem solid var(--env-color-border-focus);
-  outline-offset: 1px;
-}
-
 /* An animated figure (MotionStage.tsx): its subject centred on the stage as an example's is, and
-   its pause button at the stage's bottom end, inside its padding, where an example's mark sits.
+   its pause button at the stage's bottom end, inside its padding.
    Its overlays open in a layer over the whole stage, which its layout containment makes their
    containing block, so a dialog's backdrop covers the stage and a notification sits at its edge; it
    clips them to its corners. The subject is a stacking context of its own, below the pause
@@ -515,6 +526,19 @@
   inset-inline-end: var(--env-space-2);
 }
 
+/* The pause button stays out of sight until the reader reaches for the figure: it shows while the
+   pointer is over the stage or the keyboard is on the button, and always where there is no hover,
+   as on a phone. The sidebar's pause stops every figure at once. */
+@media (hover: hover) {
+  .catalogue-motion-pause {
+    transition: opacity var(--env-motion-duration-fast) var(--env-motion-ease);
+  }
+
+  .catalogue-motion-stage:not(:hover, :focus-within) .catalogue-motion-pause {
+    opacity: 0;
+  }
+}
+
 /* A grid of specimens that plays, such as states the pointer goes through: the figure's stage is
    its canvas, so it has none of its own, and it spans the stage as a still grid does. */
 .site-figures .catalogue-motion-subject :is(.catalogue-specimen-grid, .catalogue-matrix-scroll) {
@@ -522,6 +546,17 @@
   padding: 0;
   background: none;
   box-shadow: none;
+}
+
+/* A field's description lies under the list or calendar that opens below the field, and would
+   peek past the popup's rounded corner: a figure that plays, or shows a field open, gives the
+   popup that room while it is open. */
+:is(
+    .catalogue-motion-subject,
+    :is(.site-live-example, .site-verdict-stage) .catalogue-open-example
+  ):has(.env-select-popup, .env-combobox-popup, .env-picker-popup)
+  .env-field-description {
+  visibility: hidden;
 }
 
 /* The keys a figure's keyboard presses (PressedKeys.tsx), over what opens in it, backdrop included. */

@@ -1,12 +1,4 @@
-import {
-  Fragment,
-  useId,
-  useMemo,
-  useRef,
-  useState,
-  type ComponentPropsWithoutRef,
-  type ReactNode,
-} from 'react';
+import { Fragment, useId, useMemo, useRef, type ReactNode } from 'react';
 import { Column, Theme, useTheme } from '@envsemble/envui';
 import { IconCheck } from '@envsemble/envui/icons/Check';
 import { IconClose } from '@envsemble/envui/icons/Close';
@@ -19,11 +11,10 @@ import type {
 import { Documentation } from '../pages/Documentation';
 import type { Documentation as Document } from '../pages/PageModel';
 import { AnatomyFigure } from './AnatomyFigure';
-import { CodeSlot, ExampleCode, ExampleRender, keepLinksInPlace, LiveExample } from './LiveExample';
+import { ExampleCode, ExampleRender, keepLinksInPlace, LiveExample } from './LiveExample';
 import { OpenExample } from './OpenExample';
 import { SiteMarkdown } from '../template/OptionLegend';
 import { optionPieces, type OptionTable } from '../shared/CatalogueContent';
-import { InteractiveMark } from '../template/InteractiveMark';
 import { Specimen, SpecimenRender } from './Specimen';
 import { VerdictMotion } from '../motion/MotionStage';
 import {
@@ -140,7 +131,6 @@ export function VerdictFigure({
                 <ExampleRender page={page} name={name ?? ''} />
               )}
             </div>
-            <InteractiveMark enabled={!open} />
           </Column>
         )}
         {/* A caution's bar is a dark island in either theme: the dark theme's bright warning fill,
@@ -283,22 +273,6 @@ function groupFigures(blocks: DocumentationBlock[], figures: Record<string, Figu
 }
 
 /**
- * Cells that share a row, figures side by side or a subsection beside its figure, and below them a
- * slot across the whole content column where their open code shows.
- */
-function SharedRow(props: ComponentPropsWithoutRef<'div'>) {
-  const [slot, setSlot] = useState<HTMLDivElement | null>(null);
-  return (
-    <div className="site-shared-row">
-      <CodeSlot value={slot}>
-        <div {...props} />
-      </CodeSlot>
-      <div ref={setSlot} className="site-code-slot" />
-    </div>
-  );
-}
-
-/**
  * One section of a page: its heading, then its content in the order it is
  * written, with figures that follow each other side by side and a subsection beside its one
  * figure. `lead` comes right after the heading, before the authored content, or with `leadAfter`
@@ -320,8 +294,8 @@ export function FigureSection({
   const first = blocks[0];
   const [title, ...intro] = first?.kind === 'markdown' ? first.markdown.split('\n') : [''];
   if (first?.kind === 'markdown') blocks[0] = { kind: 'markdown', markdown: intro.join('\n') };
-  // An option table right after a variants figure is the figure's legend: each variant's name in
-  // the tag its callout shows, followed by what it is for.
+  // An option table right after a variants figure is the figure's legend: each variant's name,
+  // which its callout tags, followed by what it is for.
   const options = new Map<string, OptionTable>();
   blocks.forEach((block, index) => {
     const next = blocks[index + 1];
@@ -363,19 +337,19 @@ export function FigureSection({
     const text = beside.get(index);
     if (Array.isArray(group) && text !== undefined)
       content.push(
-        <SharedRow key={index} className="site-figure-split">
+        <div key={index} className="site-figure-split">
           <div>
             <Documentation markdown={text} path={page.path} />
           </div>
           <Figure page={page} block={group[0]} />
-        </SharedRow>,
+        </div>,
       );
     else if (Array.isArray(group))
       content.push(
         group.length === 1 ? (
           <Figure key={index} page={page} block={group[0]} />
         ) : (
-          <SharedRow
+          <div
             key={index}
             className="site-figure-run"
             data-count={group.length}
@@ -386,7 +360,7 @@ export function FigureSection({
             {group.map((block) => (
               <Figure key={block.name} page={page} block={block} />
             ))}
-          </SharedRow>
+          </div>
         ),
       );
     else if (group.kind === 'markdown') {

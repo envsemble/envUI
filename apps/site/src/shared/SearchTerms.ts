@@ -80,6 +80,10 @@ const ownNames = (title: string) => [
   nameKey(title.replace(/(\p{Ll})(\p{Lu})/gu, '$1 $2')),
 ];
 
+/** Whether a title starts with the query, its words run together: DatePicker with "date" or "date pi". */
+const startsName = (title: string, key: string) =>
+  nameKey(title).replaceAll(' ', '').startsWith(key.replaceAll(' ', ''));
+
 /**
  * How a query matches: every word must match, as the start of a word as people type, and longer
  * words also with a typo. Names count most, then the export a prop belongs to, aliases and other
@@ -104,6 +108,9 @@ export function queryOptionsFor(query: string): SearchOptions {
       // the Toast page's useToast or the Button page's copy button.
       if (!stored?.owner && ownNames(stored?.title ?? '').includes(key))
         return kind * exactBoost * 3;
+      // A name that starts with the query, as DatePicker does "date", counts as much as an alias
+      // the query is, so a page named for it comes before one that only lists it, RelativeTime.
+      if (!stored?.owner && startsName(stored?.title ?? '', key)) return kind * exactBoost;
       // The query is another of the result's whole names: an alias, or Button.variant.
       if (stored?.names?.includes(key)) return kind * exactBoost;
       // Many exports share a prop's name, such as variant, so it counts less on its own, and

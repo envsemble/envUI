@@ -495,7 +495,7 @@ test.describe('catalogue', () => {
           if (!(await example.count())) continue;
           const file =
             (await example.getAttribute('data-example')) ??
-            /Code, (\w+)\.tsx/.exec(
+            /code, (\w+)\.tsx/i.exec(
               (await example
                 .locator('xpath=..')
                 .locator(':scope > .site-live-example-code summary')

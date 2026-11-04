@@ -16,12 +16,9 @@ export default function Sizes() {
       <SpecimenGrid size="compact">
         {sizes.map(({ size, title, caption }) => (
           <Specimen key={size} title={title} caption={caption}>
-            <Row wrap align="center" gap={4}>
+            <Row wrap align="center" gap={3}>
               <Button size={size} startIcon={<IconAdd />}>
                 New
-              </Button>
-              <Button size={size} variant="secondary">
-                Cancel
               </Button>
               <IconButton size={size} icon={<IconEdit />} aria-label="Edit" />
             </Row>

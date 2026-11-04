@@ -5,7 +5,12 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { examplesDirectory } from '../docs/GenerateDocumentation.ts';
-import { groupOf, themes, tokenGroups } from '../../apps/site/src/pages/TokenGroups.ts';
+import {
+  groupOf,
+  themes,
+  tokenGroups,
+  tokenValueText,
+} from '../../apps/site/src/pages/TokenGroups.ts';
 
 const changelogFile = fileURLToPath(new URL('../../packages/ui/CHANGELOG.md', import.meta.url));
 const tokensFile = fileURLToPath(
@@ -77,14 +82,7 @@ export const changelogOutlineSources = [changelogFile];
 
 /** The length of a token's value as the reference shows it. */
 function valueLength(value: { resolved?: unknown } | undefined, color: boolean) {
-  const resolved = value?.resolved;
-  if (resolved === undefined) return 1;
-  const text =
-    typeof resolved === 'string'
-      ? resolved
-      : Object.entries(resolved as Record<string, unknown>)
-          .map(([property, part]) => `${property}: ${part}`)
-          .join('; ');
+  const text = tokenValueText(value?.resolved);
   // A color's swatch takes about two characters' room before it.
   return text.length + (color ? 2 : 0);
 }

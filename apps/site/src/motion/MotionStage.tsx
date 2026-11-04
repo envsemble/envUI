@@ -24,7 +24,8 @@ export const VerdictMotion = createContext<false | 'square' | 'wide'>(false);
 /**
  * The stage of an animated figure on a page, such as a slider stretching past its ends: the live
  * component on the recessed canvas, playing its timeline (useTimeline) in a loop while it is in
- * view, and a small pause button in its bottom end corner. The sidebar's pause pauses every
+ * view, and a small pause button in its bottom end corner, shown as the pointer or the keyboard
+ * reaches the figure (Stage.css). The sidebar's pause pauses every
  * figure; a figure's own button overrides it for that figure, until the sidebar's changes or the
  * page does. Paused, a figure holds where it is. What it shows is a picture, inert, so the button
  * is all a reader can use in it. `foundation` sets it on a foundation figure's stage rather than

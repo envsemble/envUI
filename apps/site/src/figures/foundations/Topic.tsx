@@ -1,6 +1,5 @@
 import { createContext, useContext, type ReactNode } from 'react';
 import { Column, Text } from '@envsemble/envui';
-import { InteractiveMark } from '../../template/InteractiveMark';
 import { ExampleCode } from '../LiveExample';
 import { MotionStage } from '../../motion/MotionStage';
 
@@ -122,7 +121,6 @@ export function Figure({
           data-figure="example"
         >
           {children}
-          <InteractiveMark />
         </div>
       )}
       {(legend || caption) && (

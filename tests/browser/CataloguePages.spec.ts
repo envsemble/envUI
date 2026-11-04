@@ -27,10 +27,10 @@ test('live examples keep links in place, show their source, and specimens show f
     .getByRole('link', { name: 'Read help', exact: true })
     .click({ modifiers: ['Control'] });
   expect(page.url()).toBe(address);
-  // Every example shows the source of its file, ready to copy. A figure that shares its row opens
-  // its code below the row, across the whole content column.
+  // Every example shows the source of its file, ready to copy, right under its own figure, also
+  // one that shares its row with others.
   await page
-    .locator('[data-example="ButtonLinks"] ~ details summary', { hasText: 'Code' })
+    .locator('[data-example="ButtonLinks"] ~ details summary', { hasText: 'Show code' })
     .first()
     .click();
   const code = page.getByRole('region', { name: 'Code, ButtonLinks.tsx', exact: true });
@@ -38,11 +38,16 @@ test('live examples keep links in place, show their source, and specimens show f
     'export default function ButtonLinks',
   );
   await expect(code.getByRole('button', { name: 'Copy code', exact: true })).toBeVisible();
-  const widths = await code.evaluate((panel) => ({
-    panel: Math.round(panel.getBoundingClientRect().width),
-    column: Math.round(panel.closest('.site-figure-section')!.getBoundingClientRect().width),
-  }));
-  expect(widths.panel).toBe(widths.column);
+  await expect(
+    page.locator('[data-example="ButtonLinks"] ~ details summary').first(),
+  ).toContainText('Hide code');
+  const gap = await code.evaluate((panel) => {
+    const figure = panel.closest('.site-live-example-entry')!;
+    const stage = figure.querySelector('[data-example="ButtonLinks"]')!.getBoundingClientRect();
+    return Math.round(panel.getBoundingClientRect().top - stage.bottom);
+  });
+  expect(gap).toBeGreaterThanOrEqual(0);
+  expect(gap).toBeLessThan(120);
   // Catalogue-only specimens, such as the forced interaction states, sit in the section they
   // illustrate.
   await expect(page.getByRole('region', { name: 'Button interaction states' })).toBeVisible();
@@ -110,7 +115,7 @@ test('a component page shows plain sections, equal cells and the parts of its an
   // Do and don't figures carry their verdict and one sentence, with the code below.
   const verdict = page.getByRole('figure', { name: /^Do One primary button per group/ });
   await expect(verdict.locator('.site-verdict-bar')).toHaveText('Do');
-  await expect(verdict.locator('details summary')).toHaveText('Code, OnePrimaryAction.tsx');
+  await expect(verdict.locator('details summary')).toHaveText('Show code, OnePrimaryAction.tsx');
   // Its stage and its bar are connected rows: large outer corners, small inner ones.
   const corners = await verdict.evaluate((figure) => {
     const stage = getComputedStyle(figure.querySelector('.site-verdict-stage')!);
@@ -135,15 +140,6 @@ test('a component page shows plain sections, equal cells and the parts of its an
     'ButtonGroup',
   ]);
   await expect(page.locator('.site-when a')).toHaveCount(0);
-  // A live example carries the touch mark, named as its tooltip says; a picture, such as the
-  // anatomy figure, has none.
-  await expect(
-    page
-      .locator('[data-section="overview"] .site-live-example')
-      .first()
-      .getByRole('img', { name: 'Interactive: try it' }),
-  ).toBeVisible();
-  await expect(page.locator('.site-anatomy .site-interactive-mark')).toHaveCount(0);
   // Related, at the end, has a tile for each alternative, of one size, each a picture of it,
   // inert and fitted to its stage, once the section nears the viewport.
   await expect(page.locator('[data-section="usage"] .catalogue-related-tile')).toHaveCount(0);

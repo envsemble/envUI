@@ -1,5 +1,5 @@
 import { lazy, Suspense, use, useState, type ComponentType } from 'react';
-import { SpecimenHeadingLevel, SpecimenStage } from './Example';
+import { SpecimenHeadingLevel } from './Example';
 import { SpecimenArea } from './SpecimenArea';
 import { LoadBoundary, loadModule, reloadModule } from '../template/LoadBoundary';
 import { StageSkeleton } from '../template/Loading';
@@ -79,9 +79,7 @@ export function Specimen({
   return (
     <SpecimenHeadingLevel value={headingLevel}>
       <SpecimenArea specimen={name}>
-        <SpecimenStage value>
-          <SpecimenRender page={page} name={name} />
-        </SpecimenStage>
+        <SpecimenRender page={page} name={name} />
       </SpecimenArea>
     </SpecimenHeadingLevel>
   );

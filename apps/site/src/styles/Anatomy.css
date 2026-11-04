@@ -63,8 +63,8 @@
 }
 
 .site-anatomy-lines circle {
-  fill: var(--env-color-bg-page);
-  stroke: var(--env-color-fg-default);
+  fill: var(--catalogue-card-fill, var(--env-color-bg-page));
+  stroke: var(--env-color-fg-muted);
   stroke-width: 1px;
 }
 
@@ -85,18 +85,26 @@
   stroke: var(--catalogue-card-fill, var(--env-color-bg-recessed));
 }
 
+/* A callout's tag and the legend's number: quiet, a light tint of the text color over the canvas
+   or the page, so the component stays the loudest thing in the figure. Its edge, transparent,
+   shows where forced colors drop the tint. */
 .site-anatomy-badge,
-.site-anatomy-number,
-.catalogue-option-tag {
+.site-anatomy-number {
   display: grid;
   place-items: center;
+  box-sizing: border-box;
   inline-size: 1.5rem;
   block-size: 1.5rem;
+  border: 1px solid transparent;
   border-radius: var(--env-radius-lg);
-  background: var(--env-color-fg-default);
-  color: var(--env-color-bg-page);
+  background: color-mix(
+    in oklch,
+    var(--env-color-fg-default) 10%,
+    var(--catalogue-card-fill, var(--env-color-bg-page))
+  );
+  color: var(--env-color-fg-default);
   font: var(--env-type-body-sm);
-  font-weight: var(--env-font-weight-semibold);
+  font-weight: var(--env-font-weight-medium);
   font-variant-numeric: tabular-nums;
 }
 
@@ -107,10 +115,8 @@
 }
 
 /* A variants figure's callouts: each variant's name in place of a number, on the start side of
-   items one under another, or above items side by side (AnatomyFigure.tsx), and the same tags in
-   an option legend. */
-.catalogue-variant-label,
-.catalogue-option-tag {
+   items one under another, or above items side by side (AnatomyFigure.tsx). */
+.catalogue-variant-label {
   inline-size: auto;
   padding-inline: var(--env-space-3);
   white-space: nowrap;
@@ -155,9 +161,10 @@
 }
 
 /* An option table in the catalogue, such as a component's variants or sizes: a legend laid out
-   as an anatomy figure's is, each option's name in the tag a variants figure's callouts use, followed by
-   what it is for (OptionLegend.tsx). The tags of a column share its widest tag's width, so what
-   each option is for starts on one line down the column; two columns where they fit. */
+   as an anatomy figure's is, each option's name followed by what it is for (OptionLegend.tsx). The
+   name is plain text, as a variants figure's callouts already tag each variant. The names of a
+   column share its widest name's width, so what each option is for starts on one line down the
+   column; two columns where they fit. */
 .catalogue-option-legend {
   display: grid;
   grid-template-columns: max-content minmax(0, 1fr);
@@ -178,14 +185,13 @@
 .catalogue-option > dt {
   display: grid;
   justify-items: start;
+  font-weight: var(--env-font-weight-medium);
 }
 
 .catalogue-option > dd {
   display: grid;
   gap: var(--env-space-1);
   margin: 0;
-  /* The text's first line sits on the tag's centre line. */
-  padding-block-start: calc((1.5rem - 1lh) / 2);
 }
 
 .catalogue-option > dd p {

@@ -131,6 +131,9 @@ test('a page an alias names ranks above the props of that name', () => {
   assert.ok(best('button group', 2).includes('export:ButtonGroup'));
   // A five-letter word with a typo still finds it.
   assert.deepEqual(best('buton'), ['page:button']);
+  // A name that starts with the query ranks above a page that only lists it as an alias.
+  assert.deepEqual(best('date'), ['page:date-picker']);
+  assert.deepEqual(best('time'), ['page:time-picker']);
 });
 
 test('a result names the page it opens', () => {
