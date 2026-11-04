@@ -124,6 +124,11 @@
      carries it in :where(), so the rules keep the specificity application styles meet. Tones apply
      to the designed pairs: primary takes neutral, accent or danger; outline, ghost and text take
      neutral or danger; secondary is neutral. */
+  /* A filled button's label is medium, so its few words hold their own on the fill; an outline,
+     ghost or text button's stays regular, as quiet as the text around it. */
+  .env-button:where([data-variant='primary'], [data-variant='secondary']) {
+    font-weight: var(--env-font-weight-medium);
+  }
   .env-button:where([data-variant='primary']) {
     --env-button-container-default: var(--env-color-bg-primary-emphasis);
     background: var(--env-button-custom-fill, var(--env-color-bg-primary-emphasis));
