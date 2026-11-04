@@ -366,7 +366,6 @@ function ProjectsTable({ onOpen, openId }: { onOpen: (id: string) => void; openI
             <Table.HeaderCell>Status</Table.HeaderCell>
             <Table.HeaderCell>Owner</Table.HeaderCell>
             <Table.HeaderCell>Members</Table.HeaderCell>
-            <Table.HeaderCell>Environment</Table.HeaderCell>
             <Table.HeaderCell
               numeric
               sortDirection={direction('issues')}
@@ -425,9 +424,6 @@ function ProjectsTable({ onOpen, openId }: { onOpen: (id: string) => void; openI
                   max={3}
                   people={project.members.map((name) => ({ name, fallback: 'initials' }))}
                 />
-              </Table.Cell>
-              <Table.Cell label="Environment" nowrap>
-                {project.environment}
               </Table.Cell>
               <Table.Cell label="Issues" numeric>
                 {project.issues}
