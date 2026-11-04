@@ -9,7 +9,10 @@ import { openerBox } from './OpenExample';
 
 /** A callout's number, where it sits and the part it points at, in the stage's coordinates. */
 export interface Callout {
+  /** Its number, in the order the figure is read: by rows, from the top, each from the start. */
   number: number;
+  /** The legend item it calls out, from 0. */
+  index: number;
   /** A variants figure's callout: the variant's name, and the side of its item it sits on. */
   label?: string;
   side?: Side;
@@ -50,10 +53,31 @@ const fenced = (box: Box): Box => ({
 /** The corners of a part's dashed box, which is square. */
 const square: Corners = { topLeft: 0, topRight: 0, bottomLeft: 0, bottomRight: 0 };
 
+/**
+ * Whether an element is only text, such as a label or a description, with no fill or edge of its
+ * own: its box is then its text's, as an outline around the whole box would run through what lies
+ * beside the text, such as a field's prefix under its floated label.
+ */
+function holdsText(element: Element) {
+  if (!element.textContent?.trim()) return false;
+  const style = getComputedStyle(element);
+  if (parseFloat(style.borderTopWidth) || parseFloat(style.borderBottomWidth)) return false;
+  if (!/[,/]\s*0\)$|^transparent$/.test(style.backgroundColor)) return false;
+  return [...element.children].every((child) =>
+    getComputedStyle(child).display.startsWith('inline'),
+  );
+}
+
 /** The box of a part, or of its own text, relative to the stage. */
 function boxOf(element: Element, text: boolean, origin: DOMRect): Box | undefined {
   let rects: DOMRect[] = [element.getBoundingClientRect()];
-  if (text) {
+  if (!text && holdsText(element)) {
+    const range = document.createRange();
+    range.selectNodeContents(element);
+    const own = range.getBoundingClientRect();
+    // A field's text, such as a textarea's, lays out no nodes of its own: its box stays.
+    if (own.width && own.height) rects = [own];
+  } else if (text) {
     rects = [];
     for (const node of element.childNodes)
       if (node.nodeType === Node.TEXT_NODE && node.textContent?.trim()) {
@@ -185,6 +209,7 @@ export function measure(stage: HTMLElement, subject: HTMLElement, legend: Anatom
       ? [
           {
             number: index + 1,
+            element,
             box,
             corners: cornersOf(element, text, box),
             inline: followsText(element),
@@ -226,22 +251,71 @@ export function measure(stage: HTMLElement, subject: HTMLElement, legend: Anatom
     if (side === 'left') return along && avoid.right <= box.left + 1;
     return along && avoid.left >= box.right - 1;
   };
-  const isRoot = (box: Box) =>
-    box.left - outer.left < 1 &&
-    box.top - outer.top < 1 &&
-    outer.right - box.right < 1 &&
-    outer.bottom - box.bottom < 1;
+  // The root fills the component, or holds every other part, as a field holds its label floated
+  // above its own box.
+  const isRoot = (box: Box, element?: Element) =>
+    (box.left - outer.left < 1 &&
+      box.top - outer.top < 1 &&
+      outer.right - box.right < 1 &&
+      outer.bottom - box.bottom < 1) ||
+    (element !== undefined &&
+      found.length > 1 &&
+      found.every((other) => other.element === element || element.contains(other.element)));
   // Parts that all fill the component, such as a number and its value, would crowd its start:
   // their callouts sit above and below it instead, in turn.
-  const roots = found.filter(({ box }) => isRoot(box)).length;
+  const roots = found.filter(({ box, element }) => isRoot(box, element)).length;
+  const inside = (outerBox: Box, innerBox: Box) =>
+    innerBox.left >= outerBox.left - 0.5 &&
+    innerBox.right <= outerBox.right + 0.5 &&
+    innerBox.top >= outerBox.top - 0.5 &&
+    innerBox.bottom <= outerBox.bottom + 0.5;
+  /**
+   * Where along a side a straight line from the part reaches out past the others, nearest its
+   * middle: clear of the parts and labels on the way, but those around it or inside it, which its
+   * line crosses whatever it does. Null where every line from it would cross one.
+   */
+  const clearAt = (side: Side, box: Box) => {
+    const vertical = side === 'top' || side === 'bottom';
+    const others = [...found.map((other) => other.box), ...labelled].filter(
+      (other) => !inside(other, box) && !inside(box, other),
+    );
+    const inWay = others.filter((other) =>
+      side === 'top'
+        ? other.top < box.top - 0.5
+        : side === 'bottom'
+          ? other.bottom > box.bottom + 0.5
+          : side === 'left'
+            ? other.left < box.left - 0.5
+            : other.right > box.right + 0.5,
+    );
+    const across = (other: Box): [number, number] =>
+      vertical ? [other.left - 6, other.right + 6] : [other.top - 6, other.bottom + 6];
+    const [start, end] = vertical ? [box.left, box.right] : [box.top, box.bottom];
+    const middle = (start + end) / 2;
+    const low = Math.min(start + 4, middle);
+    const high = Math.max(end - 4, middle);
+    const spans = inWay
+      .filter((other) =>
+        vertical
+          ? other.left < box.right && other.right > box.left
+          : other.top < box.bottom && other.bottom > box.top,
+      )
+      .map(across);
+    const candidates = [middle, ...spans.flat()]
+      .filter((at) => at >= low && at <= high)
+      .filter((at) => spans.every(([from, to]) => at <= from || at >= to))
+      .sort((a, b) => Math.abs(a - middle) - Math.abs(b - middle));
+    return candidates[0] ?? null;
+  };
   let stacked = 0;
-  const placed = found.map(({ number, box, corners, inline }) => {
-    const root = isRoot(box);
+  const placed = found.map(({ number, element, box, corners, inline }) => {
+    const root = isRoot(box, element);
     if (root && roots > 1) {
       const side: Side = stacked++ % 2 ? 'bottom' : 'top';
-      return { number, box, corners, root, side };
+      return { number, box, corners, root, side, at: null };
     }
-    // The nearest side, with the sides above and below preferred by a few pixels.
+    // The nearest side whose line reaches out clear of the other parts, with the sides above and
+    // below preferred by a few pixels.
     const distances = (
       [
         ['top', box.top - reachOuter.top],
@@ -249,9 +323,14 @@ export function measure(stage: HTMLElement, subject: HTMLElement, legend: Anatom
         ['left', box.left - reachOuter.left + 6],
         ['right', reachOuter.right - box.right + 6],
       ] as [Side, number][]
-    ).filter(
-      ([side], _, all) => !blocked(side, box) || all.every(([other]) => blocked(other, box)),
-    );
+    )
+      .filter(
+        ([side], _, all) => !blocked(side, box) || all.every(([other]) => blocked(other, box)),
+      )
+      .map(([side, distance]): [Side, number] => [
+        side,
+        distance + (root || clearAt(side, box) !== null ? 0 : 1000),
+      ]);
     // A root that follows text, such as a time in a sentence, takes its callout above it, clear of
     // the words before it.
     let side: Side = root
@@ -263,19 +342,19 @@ export function measure(stage: HTMLElement, subject: HTMLElement, legend: Anatom
       : distances.reduce((best, entry) => (entry[1] < best[1] ? entry : best))[0];
     // A part that holds others called out, as a strip holds its tabs, sits below them where it is
     // as near below as above, so the callouts of a row of parts don't all crowd its top.
-    const holds = found.some(
-      (other) =>
-        other.number !== number &&
-        other.box.left >= box.left - 0.5 &&
-        other.box.right <= box.right + 0.5 &&
-        other.box.top >= box.top - 0.5 &&
-        other.box.bottom <= box.bottom + 0.5,
-    );
+    const holds = found.some((other) => other.number !== number && inside(box, other.box));
     const below = distances.find(([name]) => name === 'bottom');
     const above = distances.find(([name]) => name === 'top');
     if (side === 'top' && !root && holds && below && above && Math.abs(below[1] - above[1]) < 1)
       side = 'bottom';
-    return { number, box, corners, root: root && !inline, side };
+    return {
+      number,
+      box,
+      corners,
+      root: root && !inline,
+      side,
+      at: root ? null : clearAt(side, box),
+    };
   });
   const callouts: Callout[] = [];
   for (const side of ['top', 'bottom', 'left', 'right'] as const) {
@@ -288,10 +367,10 @@ export function measure(stage: HTMLElement, subject: HTMLElement, legend: Anatom
     // halfway down, where a tall component's own parts, such as a card's content, take theirs.
     const parts = items.filter(({ root }) => !root).map(({ box }) => centre(box));
     const along = spread(
-      items.map(({ box, root }) =>
+      items.map(({ box, root, at }) =>
         root && !vertical
           ? Math.min(centre(box), box.top + rootInset, Math.min(...parts) - spacing)
-          : centre(box),
+          : (at ?? centre(box)),
       ),
       badgeSize / 2 + 2,
       extent - badgeSize / 2 - 2,
@@ -326,6 +405,7 @@ export function measure(stage: HTMLElement, subject: HTMLElement, legend: Anatom
               : { x: box.right - cornerInset(y - box.top, height, topRight, bottomRight), y };
       callouts.push({
         number,
+        index: number - 1,
         badge,
         anchor,
         box: root
@@ -335,7 +415,24 @@ export function measure(stage: HTMLElement, subject: HTMLElement, legend: Anatom
       });
     });
   }
-  return callouts.sort((a, b) => a.number - b.number);
+  return inReadingOrder(callouts, rtl);
+}
+
+/**
+ * Numbers the callouts in the order the figure is read: by rows of badges from the top, and along
+ * each row from the start, so the numbers go round the component rather than jump about it.
+ */
+function inReadingOrder(callouts: Callout[], rtl: boolean) {
+  const rows: Callout[][] = [];
+  for (const callout of [...callouts].sort((a, b) => a.badge.y - b.badge.y)) {
+    const row = rows.at(-1);
+    if (row && callout.badge.y - row[0]!.badge.y < badgeSize / 2) row.push(callout);
+    else rows.push([callout]);
+  }
+  const ordered = rows.flatMap((row) =>
+    row.sort((a, b) => (rtl ? b.badge.x - a.badge.x : a.badge.x - b.badge.x)),
+  );
+  return ordered.map((callout, rank) => ({ ...callout, number: rank + 1 }));
 }
 
 /** The room, in px, a variants figure's names take beside its items: on the start side or above. */
@@ -437,6 +534,7 @@ export function measureVariants(
       const y = (box.top + box.bottom) / 2;
       return {
         number,
+        index: number - 1,
         label,
         side,
         badge: { x: side === 'left' ? outer.left - reach : outer.right + reach, y },
@@ -462,6 +560,7 @@ export function measureVariants(
     const x = centres[rank];
     return {
       number,
+      index: number - 1,
       label,
       side: 'top' as const,
       badge: { x, y: outer.top - reach },

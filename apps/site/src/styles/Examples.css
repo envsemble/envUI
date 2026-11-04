@@ -68,14 +68,12 @@
   max-inline-size: 65ch;
 }
 .catalogue-matrix-scroll {
-  overflow-x: auto;
   max-width: 100%;
   border-radius: var(--env-radius-sm);
 }
 .catalogue-matrix {
   width: 100%;
   border-collapse: collapse;
-  min-width: 42rem;
   text-align: left;
 }
 .catalogue-matrix th {
@@ -83,7 +81,9 @@
   color: var(--env-color-fg-muted);
   font-weight: var(--env-font-weight-regular);
   padding: 0.5rem 0.75rem 1rem;
-  white-space: nowrap;
+  /* A name breaks between words alone, and a cell's content not at all: what doesn't fit its
+     column runs past it, and the matrix stacks instead (MatrixScroll in Example.tsx). */
+  overflow-wrap: normal;
 }
 .catalogue-matrix tbody th {
   text-transform: capitalize;
@@ -91,6 +91,50 @@
 }
 .catalogue-matrix td {
   padding: 1rem 0.75rem;
+  white-space: nowrap;
+}
+
+/* A matrix whose columns don't fit, as on a phone (MatrixScroll in Example.tsx): a block for each
+   row, its name over its cells listed down, each cell after its column's name. */
+.site-figures .catalogue-matrix-scroll[data-stacked] :is(.catalogue-matrix, tbody) {
+  display: grid;
+  gap: var(--env-space-6);
+}
+
+.site-figures .catalogue-matrix-scroll[data-stacked] thead {
+  display: none;
+}
+
+.site-figures .catalogue-matrix-scroll[data-stacked] tr {
+  display: grid;
+  grid-template-columns: minmax(0, 8rem) minmax(0, 1fr);
+  align-items: center;
+  gap: var(--env-space-3) var(--env-space-4);
+}
+
+.site-figures .catalogue-matrix-scroll[data-stacked] tbody th {
+  grid-column: 1 / -1;
+  inline-size: auto;
+  padding: 0;
+  text-align: start;
+  color: var(--env-color-fg-default);
+  font-weight: var(--env-font-weight-medium);
+}
+
+.site-figures .catalogue-matrix-scroll[data-stacked] td {
+  display: contents;
+}
+
+.site-figures .catalogue-matrix-scroll[data-stacked] td::before {
+  color: var(--env-color-fg-muted);
+  font: var(--env-type-body-sm);
+  text-align: start;
+  content: attr(data-catalogue-label);
+}
+
+.site-figures .catalogue-matrix-scroll[data-stacked] td > * {
+  justify-self: start;
+  margin: 0;
 }
 
 /* An editor in a run of states: as wide as its cell, its text at the start as in a form, and three

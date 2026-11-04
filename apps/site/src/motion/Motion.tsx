@@ -51,6 +51,8 @@ const PlaybackContext = createContext<
   PlaybackValue & {
     /** Takes over going back to the still, from drawing the preview anew; returns the release. */
     claimRest?: () => () => void;
+    /** Counts a timeline that sets the preview's props while it is there; returns the release. */
+    countTimeline?: () => () => void;
   }
 >({ playing: false, rest: 'start', root: null });
 
@@ -63,8 +65,11 @@ export function Playback({
   playing,
   rest,
   root,
+  countTimeline,
   children,
 }: PlaybackValue & {
+  /** Counts the timelines in it, whose figure is a recording the reader can't take over. */
+  countTimeline?: () => () => void;
   children: ReactNode;
 }) {
   const [round, setRound] = useState(0);
@@ -82,7 +87,7 @@ export function Playback({
     if (!playing && rest === 'start' && !claims.current) setRound(round + 1);
   }
   return (
-    <PlaybackContext value={{ playing, rest, root, claimRest }}>
+    <PlaybackContext value={{ playing, rest, root, claimRest, countTimeline }}>
       <Fragment key={round}>{children}</Fragment>
     </PlaybackContext>
   );
@@ -127,6 +132,11 @@ export function PreviewOverlays({ children }: { children: ReactNode }) {
   );
 }
 
+/** Counts a timeline in its preview's while it is there. */
+function useCounted(countTimeline: (() => () => void) | undefined) {
+  useEffect(() => countTimeline?.(), [countTimeline]);
+}
+
 /**
  * The step a looping animation is at, from 0, the still: each step lasts its duration, in ms, and
  * the last leads back to the first, so an animation is a list of what changes at each step. It
@@ -137,7 +147,8 @@ export function PreviewOverlays({ children }: { children: ReactNode }) {
  *     return <Toast ... />;
  */
 export function useTimeline(durations: readonly number[]) {
-  const { playing, rest } = use(PlaybackContext);
+  const { playing, rest, countTimeline } = use(PlaybackContext);
+  useCounted(countTimeline);
   const [step, setStep] = useState(0);
   // Whether it has yet to leave its still since it started playing: it leaves it at once.
   const fresh = useRef(true);
@@ -197,7 +208,8 @@ function joinClock(clock: string, from: number) {
  *     const step = useSharedTimeline('reply', [1100, 140, 140, 2600]);
  */
 export function useSharedTimeline(clock: string, durations: readonly number[]) {
-  const { playing, rest } = use(PlaybackContext);
+  const { playing, rest, countTimeline } = use(PlaybackContext);
+  useCounted(countTimeline);
   const [step, setStep] = useState(0);
   if (!playing && rest === 'start' && step !== 0) setStep(0);
   const paced = durations.map((duration) => duration * waitPace).join(' ');

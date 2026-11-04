@@ -167,16 +167,29 @@ test('a component page shows plain sections, equal cells and the parts of its an
   // The variants figure names each variant with a callout on the start side of its item.
   const variantNames = page.locator('.catalogue-variants .catalogue-variant-label');
   await variantNames.first().scrollIntoViewIfNeeded();
-  await expect(variantNames).toHaveText(['Primary', 'Secondary', 'Outline', 'Ghost', 'Text']);
+  await expect(variantNames).toHaveText([
+    'Primary',
+    'Secondary',
+    'Outline',
+    'Ghost',
+    'Text',
+    'Primary, accent',
+  ]);
   await expect(variantNames.first()).toHaveAttribute('data-side', 'left');
   const stages = page.locator('.site-anatomy .site-anatomy-stage');
   await expect(stages).toHaveCount(1);
   const placement = () =>
     stages.evaluate((stage) => {
       // Until the example and its badges render, there is nothing to place: poll again.
+      // The icon's number is the one its legend entry has: the callouts number the parts in the
+      // order the figure is read.
       const iconElement = stage.querySelector('.env-button > .env-icon');
+      const entry = [
+        ...(stage.closest('figure')?.querySelectorAll('.site-anatomy-legend > li') ?? []),
+      ].find((item) => item.textContent?.includes('Start icon'));
+      const number = entry?.querySelector('.site-anatomy-number')?.textContent;
       const badgeElement = [...stage.querySelectorAll('.site-anatomy-badge')].find(
-        (item) => item.textContent === '2',
+        (item) => item.textContent === number,
       );
       if (!iconElement || !badgeElement) return null;
       const icon = iconElement.getBoundingClientRect();
@@ -498,11 +511,13 @@ test('a Related tile of a page without an example shows its specimen', async ({ 
   await expect(page.locator('.catalogue-related-placeholder')).toHaveCount(0);
 });
 
-test('every tile of the galleries of components and patterns is fitted, shown whole on its stage', async ({
+test('every tile of the galleries is fitted: a component at its own size, a scene whole on its stage', async ({
   page,
 }) => {
   // A tile's example loads as it nears the viewport and comes into its canvas after the fit has
-  // started to watch it; each must still be fitted, and show what it holds inside its stage.
+  // started to watch it; each must still be fitted. A component shows at its own size, one scale
+  // for them all, cut off by its stage where it is larger; a pattern's scene, or a drawing, shows
+  // what it holds inside its stage.
   const tiles = page.locator('.catalogue-gallery-tile');
   const unfitted = () =>
     tiles.evaluateAll((items) =>
@@ -577,6 +592,8 @@ test('every tile of the galleries of components and patterns is fitted, shown wh
           .filter((box) => box.width > scale && box.height > scale)
           .filter((box) => box.width < window.width - 1 || box.height < window.height - 1);
         if (!shown.length) return [`${name}: empty`];
+        if (canvas.hasAttribute('data-own-size'))
+          return /scale\(1\)/.test(canvas.style.transform) ? [] : [`${name}: not at its own size`];
         const outside =
           Math.min(...shown.map((box) => box.left)) < stage.left - 1 ||
           Math.min(...shown.map((box) => box.top)) < stage.top - 1 ||

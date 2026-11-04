@@ -1,4 +1,4 @@
-import { useId, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
+import { useCallback, useId, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { Theme, useTheme } from '@envsemble/envui';
 import type { AnatomyLegendItem, StageFill } from '../shared/DocumentationTypes';
 import { Documentation } from '../pages/Documentation';
@@ -110,10 +110,13 @@ function AnatomyStage({
   stage: fill,
   variants,
   width,
+  onOrder,
 }: {
   page: string;
   name: string;
   legend: AnatomyLegendItem[];
+  /** Hears the legend's items in the order the callouts number them. */
+  onOrder: (order: number[]) => void;
   open: boolean;
   /** Whether the subject shows half as large again, though it isn't small. */
   enlarged: boolean;
@@ -152,6 +155,7 @@ function AnatomyStage({
         setCallouts((current) =>
           JSON.stringify(current) === JSON.stringify(next) ? current : next,
         );
+        if (!variants) onOrder(next.map(({ index }) => index));
         const needed = measured.room;
         if (needed)
           setRoom((current) =>
@@ -185,7 +189,7 @@ function AnatomyStage({
       subjectElement.removeEventListener('animationend', update);
       subjectElement.removeEventListener('transitionend', update);
     };
-  }, [legend, open, enlarged, variants]);
+  }, [legend, open, enlarged, variants, onOrder]);
   const example = specimen ? (
     <SpecimenRender page={page} name={name} onStage />
   ) : (
@@ -326,6 +330,17 @@ export function AnatomyFigure({
   width?: number;
 }) {
   const [items] = useState(() => (legend?.length ? legend : legendOf(of ?? '')));
+  // The legend in the callouts' order, which follows the figure as it is read; the items the
+  // figure shows no callout for after them.
+  const [order, setOrder] = useState<number[]>([]);
+  const onOrder = useCallback(
+    (next: number[]) => setOrder((current) => (current.join() === next.join() ? current : next)),
+    [],
+  );
+  const ordered = [
+    ...order.filter((index) => index < items.length),
+    ...items.map((_, index) => index).filter((index) => !order.includes(index)),
+  ];
   return (
     <figure className={variants ? 'catalogue-variants' : 'site-anatomy'} aria-label={title}>
       <AnatomyStage
@@ -338,6 +353,7 @@ export function AnatomyFigure({
         stage={stage}
         variants={variants}
         width={width}
+        onOrder={onOrder}
       />
       <figcaption className="site-anatomy-caption">
         {caption && <p className="site-figure-caption">{caption}</p>}
@@ -351,12 +367,15 @@ export function AnatomyFigure({
         )}
         {!variants && items.length > 0 && (
           <ol className="site-anatomy-legend">
-            {items.map((item, index) => (
-              <li key={`${index}-${item.part}`}>
+            {ordered.map((index, rank) => (
+              <li key={`${index}-${items[index]!.part}`}>
                 <span className="site-anatomy-number" aria-hidden="true">
-                  {index + 1}
+                  {rank + 1}
                 </span>
-                <Documentation markdown={legendText(item)} path={`components/${page}.md`} />
+                <Documentation
+                  markdown={legendText(items[index]!)}
+                  path={`components/${page}.md`}
+                />
               </li>
             ))}
           </ol>

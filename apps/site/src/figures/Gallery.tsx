@@ -42,6 +42,8 @@ function GalleryTile({ page, level }: { page: RoutePage; level: 2 | 3 }) {
         playing={playing || autoplay}
         className="catalogue-related-stage catalogue-gallery-stage"
         whole
+        // Components show at their own size, one scale for all; a pattern's scene is fitted.
+        ownSize={page.section === 'Components'}
       />
       {/* The name is the link; it stretches over the picture, so the whole tile leads to the page. */}
       <Text

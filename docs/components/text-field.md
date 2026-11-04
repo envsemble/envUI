@@ -165,6 +165,8 @@ The label rests in an empty field and floats into the outline on focus or with a
 
 <!-- specimen: States -->
 
+<!-- specimen: FloatingStates -->
+
 ### Show an error
 
 An error marks the field invalid and shows under its description. Say how to correct the value.

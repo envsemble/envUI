@@ -1,4 +1,4 @@
-import { createContext, useContext, type ReactNode } from 'react';
+import { createContext, useContext, useLayoutEffect, useRef, type ReactNode } from 'react';
 import { Column, Text, type SpaceStep } from '@envsemble/envui';
 
 /**
@@ -140,7 +140,9 @@ export function Specimen({
 }
 
 /**
- * A matrix of states that scrolls sideways where it is wider than the page, by keyboard too. As a
+ * A matrix of states, such as each variant in each state, as a table. Where its columns don't fit
+ * the page, as on a phone, it lays out one block to a row instead, the row's name over its cells
+ * listed down, each named after its column (Examples.css), rather than cut off at the side. As a
  * component's specimen it is an example on the recessed canvas, as SpecimenGrid is.
  */
 export function MatrixScroll({
@@ -152,10 +154,40 @@ export function MatrixScroll({
   className?: string;
   children: ReactNode;
 }) {
+  const area = useRef<HTMLDivElement>(null);
+  // Set on the element alone, as it is measured: `data-stacked` where the columns don't fit.
+  useLayoutEffect(() => {
+    const element = area.current;
+    const table = element?.querySelector('table');
+    if (!element || !table) return;
+    // Each cell named after its column, for the blocks.
+    const titles = [...table.querySelectorAll('thead th')].map((cell) => cell.textContent ?? '');
+    for (const row of table.querySelectorAll('tbody tr'))
+      [...row.children].forEach((cell, index) => {
+        if (cell.tagName === 'TD') cell.setAttribute('data-catalogue-label', titles[index] ?? '');
+      });
+    // Laid out as a table, whether a cell's content runs past its column.
+    const stack = () => {
+      element.removeAttribute('data-stacked');
+      const cells = [...table.querySelectorAll<HTMLElement>('th, td')];
+      if (cells.some((cell) => cell.scrollWidth > cell.clientWidth + 1))
+        element.setAttribute('data-stacked', '');
+    };
+    let width = -1;
+    const observer = new ResizeObserver(([entry]) => {
+      const next = entry?.contentRect.width ?? 0;
+      if (Math.abs(next - width) < 0.5) return;
+      width = next;
+      stack();
+    });
+    observer.observe(element);
+    void document.fonts?.ready.then(stack);
+    return () => observer.disconnect();
+  }, []);
   return (
     <div
+      ref={area}
       className={['catalogue-matrix-scroll', className].filter(Boolean).join(' ')}
-      tabIndex={0}
       role="region"
       aria-label={label}
     >

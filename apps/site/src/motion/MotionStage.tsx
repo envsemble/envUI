@@ -4,9 +4,13 @@ import {
   useEffect,
   useRef,
   useState,
+  type FocusEvent,
+  type KeyboardEvent,
+  type MouseEvent,
   type ReactNode,
   type RefObject,
 } from 'react';
+import { flushSync } from 'react-dom';
 import { IconButton, Tooltip } from '@envsemble/envui';
 import { IconPause } from '@envsemble/envui/icons/Pause';
 import { IconPlayArrow } from '@envsemble/envui/icons/PlayArrow';
@@ -14,6 +18,34 @@ import type { StageFill } from '../shared/DocumentationTypes';
 import { useVerdictFit } from '../template/VerdictFit';
 import { useDisplaySettings } from '../theme/DisplaySettings';
 import { Playback, PreviewOverlays, useInView } from './Motion';
+
+/** What the reader can operate in a figure: a stage with none of it stays a recording. */
+const operable =
+  'a[href], button:not(:disabled), input:not(:disabled, [type="hidden"]), select:not(:disabled), textarea:not(:disabled), [contenteditable="true"], [tabindex]:not([tabindex="-1"])';
+
+/** The press a reader's first click on a recording meant, sent to what is under it once live. */
+function pressAt(x: number, y: number, subject: HTMLElement) {
+  const target = document.elementFromPoint(x, y);
+  if (!target || !subject.contains(target)) return;
+  const init = {
+    bubbles: true,
+    cancelable: true,
+    composed: true,
+    clientX: x,
+    clientY: y,
+    view: window,
+  };
+  const pointer = { ...init, pointerId: 1, pointerType: 'mouse', isPrimary: true, button: 0 };
+  target.dispatchEvent(new PointerEvent('pointerdown', { ...pointer, buttons: 1 }));
+  const down = target.dispatchEvent(
+    new MouseEvent('mousedown', { ...init, buttons: 1, detail: 1 }),
+  );
+  const focusable = target.closest<HTMLElement>(operable);
+  if (down && focusable && subject.contains(focusable)) focusable.focus({ preventScroll: true });
+  target.dispatchEvent(new PointerEvent('pointerup', pointer));
+  target.dispatchEvent(new MouseEvent('mouseup', { ...init, detail: 1 }));
+  target.dispatchEvent(new MouseEvent('click', { ...init, detail: 1 }));
+}
 
 /**
  * Whether an animated figure plays a do or don't figure's example: its stage is then that figure's
@@ -27,13 +59,20 @@ export const VerdictMotion = createContext<false | 'square' | 'wide'>(false);
  * view, and a small pause button in its bottom end corner, shown as the pointer or the keyboard
  * reaches the figure (Stage.css). The sidebar's pause pauses every
  * figure; a figure's own button overrides it for that figure, until the sidebar's changes or the
- * page does. Paused, a figure holds where it is. What it shows is a picture, inert, so the button
- * is all a reader can use in it. `foundation` sets it on a foundation figure's stage rather than
- * an example's, with `className` for that figure's own layout, and `stage` is the fill an
- * example's fence gives it.
+ * page does. Paused, a figure holds where it is. `foundation` sets it on a foundation figure's
+ * stage rather than an example's, with `className` for that figure's own layout, and `stage` is
+ * the fill an example's fence gives it; `top` places what it shows at the stage's top, where the
+ * room the stage keeps is for what opens below it, such as a select's list.
  *
- * Its overlays, such as a menu, a dialog or a tooltip, open live inside the stage, as a tile's do
- * (PreviewOverlays): a dialog's backdrop covers the stage, not the page, and nothing leaves it.
+ * While it plays, what it shows is a recording, inert. A figure the pointer no one sees plays is
+ * the example itself, so the reader can take it over: a click on the stage, or the keyboard
+ * reaching it, stops the playback, puts the example back at its start and hands it to the reader,
+ * live, the click going on to what it was on. Its overlays then open as they do in an application.
+ * The play button plays it again; the keyboard leaving it untouched does too. A figure whose
+ * timeline sets its props, or with nothing to operate, stays a recording.
+ *
+ * Playing, its overlays, such as a menu, a dialog or a tooltip, open inside the stage, as a tile's
+ * do (PreviewOverlays): a dialog's backdrop covers the stage, not the page, and nothing leaves it.
  * `height`, a CSS length, keeps the stage as tall as what opens in it from the start, so the
  * figure keeps one height as it plays. Whatever the figure, the stage keeps the tallest height it
  * has reached at its width (useTallest), so a figure that grows for a moment as it plays never
@@ -46,6 +85,7 @@ export function MotionStage({
   foundation = false,
   className,
   stage: fill,
+  top = false,
 }: {
   label: string;
   height?: string;
@@ -53,6 +93,7 @@ export function MotionStage({
   foundation?: boolean;
   className?: string;
   stage?: StageFill;
+  top?: boolean;
 }) {
   const { motionPaused } = useDisplaySettings();
   const verdict = use(VerdictMotion);
@@ -61,6 +102,27 @@ export function MotionStage({
   const stage = useRef<HTMLDivElement>(null);
   const [subject, setSubject] = useState<HTMLDivElement | null>(null);
   const inView = useInView(stage);
+  // Whether the reader has the example, and whether they did anything with it.
+  const [live, setLive] = useState(false);
+  const touched = useRef(false);
+  const timelines = useRef(0);
+  const [countTimeline] = useState(() => () => {
+    timelines.current++;
+    return () => {
+      timelines.current--;
+    };
+  });
+  // Whether the reader can take it over: something to operate, and no timeline setting its props.
+  const [takeable, setTakeable] = useState(false);
+  useEffect(() => {
+    if (!subject || live) return;
+    const check = () =>
+      setTakeable(timelines.current === 0 && Boolean(subject.querySelector(operable)));
+    check();
+    // An example that loads late settles a moment after.
+    const timer = setTimeout(check, 1000);
+    return () => clearTimeout(timer);
+  }, [subject, live]);
   // On a do or don't figure's square, the subject keeps its tallest height in a box drawn smaller
   // where it needs more room than the square (useVerdictFit), rather than the stage growing.
   const square = verdict === 'square';
@@ -68,8 +130,68 @@ export function MotionStage({
   const tallest = useRef<HTMLDivElement>(null);
   useVerdictFit(stage, box, square);
   useTallest(square ? tallest : stage, height);
-  const paused = own && own.over === motionPaused ? own.paused : motionPaused;
+  const paused = live || (own && own.over === motionPaused ? own.paused : motionPaused);
   const action = paused ? `Play ${label}` : `Pause ${label}`;
+  const goLive = () => {
+    touched.current = false;
+    flushSync(() => setLive(true));
+  };
+  const onPause = (event: { target: EventTarget }) =>
+    event.target instanceof Element && Boolean(event.target.closest('.catalogue-motion-pause'));
+  const recordingHandlers = takeable &&
+    !live && {
+      // A click on the recording, by mouse or by touch, reaches the stage, its content being
+      // inert: the example goes live and the click goes on to what is there.
+      onClick: (event: MouseEvent) => {
+        if (onPause(event) || !event.nativeEvent.isTrusted || !subject) return;
+        goLive();
+        touched.current = true;
+        pressAt(event.clientX, event.clientY, subject);
+      },
+      // The keyboard on the stage: the example goes live and focus moves into it, to its last
+      // stop where the keyboard came back from after it.
+      onFocus: (event: FocusEvent) => {
+        const element = stage.current;
+        if (event.target !== element || !element.matches(':focus-visible') || !subject) return;
+        const back =
+          event.relatedTarget instanceof Node &&
+          Boolean(element.compareDocumentPosition(event.relatedTarget) & 4);
+        goLive();
+        const stops = [...subject.querySelectorAll<HTMLElement>(operable)].filter(
+          (stop) => stop.tabIndex >= 0 && stop.getClientRects().length > 0,
+        );
+        (back ? stops.at(-1) : stops[0])?.focus();
+      },
+    };
+  const liveHandlers = live && {
+    onPointerDown: (event: { target: EventTarget }) => {
+      if (!onPause(event)) touched.current = true;
+    },
+    onKeyDown: (event: KeyboardEvent) => {
+      if (!['Tab', 'Shift'].includes(event.key) && !onPause(event)) touched.current = true;
+    },
+    // The keyboard leaving an example it did nothing with: the recording plays again.
+    onBlur: (event: FocusEvent) => {
+      const next = event.relatedTarget;
+      if (touched.current || (next instanceof Node && stage.current?.contains(next))) return;
+      setLive(false);
+    },
+  };
+  // Live, the example at its start, as the reader would find it in an application.
+  const content = live ? (
+    <Playback key="live" playing={false} rest="start" root={subject}>
+      {children}
+    </Playback>
+  ) : (
+    <Playback playing={inView && !paused} rest="hold" root={subject} countTimeline={countTimeline}>
+      <PreviewOverlays>{children}</PreviewOverlays>
+    </Playback>
+  );
+  const subjectProps = {
+    inert: !live,
+    'aria-hidden': live ? undefined : true,
+    className: 'catalogue-motion-subject',
+  };
   return (
     <div
       ref={stage}
@@ -86,7 +208,12 @@ export function MotionStage({
         .join(' ')}
       data-figure={foundation ? 'example' : undefined}
       data-stage={fill}
+      data-live={live ? '' : undefined}
+      data-top={top ? '' : undefined}
       style={height && !square ? { minBlockSize: height } : undefined}
+      {...(takeable && !live && { tabIndex: 0, role: 'group', 'aria-label': `${label}, try it` })}
+      {...recordingHandlers}
+      {...liveHandlers}
     >
       {square ? (
         <div ref={box} className="site-verdict-fit">
@@ -95,21 +222,15 @@ export function MotionStage({
               tallest.current = element;
               setSubject(element);
             }}
-            inert
-            aria-hidden
-            className="catalogue-motion-subject"
+            {...subjectProps}
             style={height ? { minBlockSize: height } : undefined}
           >
-            <Playback playing={inView && !paused} rest="hold" root={subject}>
-              <PreviewOverlays>{children}</PreviewOverlays>
-            </Playback>
+            {content}
           </div>
         </div>
       ) : (
-        <div ref={setSubject} inert aria-hidden className="catalogue-motion-subject">
-          <Playback playing={inView && !paused} rest="hold" root={subject}>
-            <PreviewOverlays>{children}</PreviewOverlays>
-          </Playback>
+        <div ref={setSubject} {...subjectProps}>
+          {content}
         </div>
       )}
       <Tooltip content={action}>
@@ -118,7 +239,12 @@ export function MotionStage({
           className="catalogue-motion-pause"
           icon={paused ? <IconPlayArrow /> : <IconPause />}
           aria-label={action}
-          onClick={() => setOwn({ paused: !paused, over: motionPaused })}
+          onClick={() => {
+            if (live) {
+              setLive(false);
+              setOwn({ paused: false, over: motionPaused });
+            } else setOwn({ paused: !paused, over: motionPaused });
+          }}
         />
       </Tooltip>
     </div>

@@ -307,8 +307,9 @@ The visual baseline captures a page's specimens, or its first example when it ha
 Where a section is about a change, such as a slider stretching past its ends or a reply arriving, a specimen plays it: the live component on a `MotionStage` (`apps/site/src/motion/MotionStage.tsx`), driven by a script of a pointer no one sees (`usePointer`) or by steps of its props (`useTimeline`), both in `apps/site/src/motion/Motion.tsx`.
 
 - **The component's own behaviour.** The pointer hovers, presses, drags, types and uses keys as a person would, so the component shows its own states; change props only where no person could.
-- **It loops**, ending where it began, at one height, so the page never moves; give `MotionStage` a `height` that holds what opens, or `roomFor` where wrapped rows grow it.
-- **Overlays open live in the stage**, contained: a dialog's backdrop covers the stage, not the page.
+- **It loops**, ending where it began, at one height, so the page never moves; give `MotionStage` a `height` that holds what opens, or `roomFor` where wrapped rows grow it, and `top` where that room is for what opens below the control, such as a select's list.
+- **Overlays open in the stage** while it plays, contained: a dialog's backdrop covers the stage, not the page.
+- **The reader can take it over.** A click on a figure the pointer plays, or the keyboard reaching it, stops it and hands the reader the example at its start, live, its overlays opening as in an application; its play button plays it again. A figure driven by `useTimeline` stays a recording, so a page whose component people operate keeps an example or a pointer-played figure.
 - **In place of an example**: an example the catalogue plays takes `motion`, on its fence or as `motion: true` in an overview's entry, and its specimen of the same name imports it and plays it. The figure keeps the example's caption and code; the Docs and the package keep the example.
 - **Pairs in step**: a do and a don't that play one sequence take their steps from `useSharedTimeline`, or `usePointer` with the same `clock`.
 - `PointerStep` in `Motion.tsx` lists what the pointer can do, `PressedKeys` shows the keys it presses, and `Renew` redraws an example a loop can't put back.

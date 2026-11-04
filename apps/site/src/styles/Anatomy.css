@@ -141,9 +141,9 @@
 
 .site-anatomy-legend {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 21rem), 1fr));
-  /* Room between the entries, so each name and its explanation read as one item. */
-  gap: var(--env-space-5) var(--env-space-8);
+  /* Two or three columns, as most names are a word or two, close enough to read as one list. */
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr));
+  gap: var(--env-space-3) var(--env-space-6);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -153,7 +153,7 @@
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   align-items: start;
-  gap: var(--env-space-4);
+  gap: var(--env-space-3);
 }
 
 .site-anatomy-legend p {
