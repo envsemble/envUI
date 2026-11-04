@@ -203,9 +203,15 @@
     margin-inline: 0;
   }
 
+  /* A container where links repeat, such as a table, can set --env-button-rest-underline to none:
+     the underline then shows only under the pointer and with keyboard focus. */
   .env-button:where([data-variant='text'])[data-underline] {
     text-decoration: underline;
+    text-decoration-line: var(--env-button-rest-underline, underline);
     text-underline-offset: 0.15em;
+  }
+  .env-button:where([data-variant='text'])[data-underline]:focus-visible {
+    text-decoration-line: underline;
   }
 
   /* Under the pointer a text button's label is underlined, as a link's is, and darkens a step; a
@@ -434,9 +440,10 @@
     ):not([data-pending]) {
     background: color-mix(in srgb, var(--env-color-bg-neutral-muted) 50%, transparent);
   }
-  .env-button:where([data-variant='outline']):is(:disabled, [aria-disabled='true']):not(
-      [data-pending]
-    ) {
+  .env-button:where([data-variant='outline'], [data-variant='text']:not(.env-icon-button)):is(
+      :disabled,
+      [aria-disabled='true']
+    ):not([data-pending]) {
     border-color: var(--env-color-border-muted);
   }
 

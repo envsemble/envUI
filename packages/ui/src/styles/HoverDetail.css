@@ -21,6 +21,15 @@
     background-repeat: round no-repeat;
     cursor: default;
   }
+  /* A container where such text repeats, such as a table, can set --env-hover-detail-rest-color to
+     transparent: the dots then show only under the pointer and with keyboard focus. */
+  :where(.env-hover-detail:not(:hover, :focus-visible)) {
+    background-image: radial-gradient(
+      circle closest-side,
+      var(--env-hover-detail-rest-color, var(--env-color-fg-muted)) 70%,
+      transparent 100%
+    );
+  }
   /* Forced colors drop drawn backgrounds, so the system's own dotted underline stands in. */
   @media (forced-colors: active) {
     :where(.env-hover-detail) {
