@@ -126,8 +126,11 @@ test(
     await (await rowFromMiddle(hours, 2)).click();
     await expect(start).toHaveText('11:30');
     await expect(hours.locator('[data-centered]')).toHaveText('11');
-    // Turning the wheel by a row moves the value by one; it loops on past the hour.
+    // Turning the wheel by a row moves the value by one. Minutes every 15 are fewer than the rows
+    // the wheel shows, so it shows each once and ends at 45 rather than looping; the keys still
+    // wrap around.
     const minutes = wheel(dialog, 'Minutes');
+    await expect(minutes.locator('.env-time-list-row')).toHaveCount(4);
     await minutes.hover();
     const row = await minutes
       .locator('[data-centered]')
@@ -135,6 +138,10 @@ test(
     await page.mouse.wheel(0, row);
     await expect(start).toHaveText('11:45');
     await page.mouse.wheel(0, row);
+    await expect(minutes.locator('[data-centered]')).toHaveText('45');
+    await expect(start).toHaveText('11:45');
+    await minutes.focus();
+    await page.keyboard.press('ArrowDown');
     await expect(start).toHaveText('11:00');
     await expect(minutes.locator('[data-centered]')).toHaveText('00');
   },
@@ -303,8 +310,8 @@ test(
     await expect(start).toHaveText('09:45');
     await expect(minutes.locator('[data-centered]')).toHaveText('45');
     // Notches in quick succession turn on together, a row each, and settle once.
-    await page.mouse.wheel(0, 100);
-    await page.mouse.wheel(0, 100);
+    await page.mouse.wheel(0, -100);
+    await page.mouse.wheel(0, -100);
     await expect(start).toHaveText('09:15');
     await expect(minutes).not.toHaveAttribute('data-turning');
     await wheel(dialog, 'Hours').hover();

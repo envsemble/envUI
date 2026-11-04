@@ -28,6 +28,12 @@
     height: 0;
     pointer-events: none;
   }
+  /* Saved text keeps its spaces and line breaks as the editor shows them: a single newline, a soft
+     break, starts a new line in both, and runs of spaces stay. */
+  .env-rich-text {
+    overflow-wrap: break-word;
+    white-space: break-spaces;
+  }
   .env-rich-text :where(ul[data-type='taskList']),
   .env-rich-text-document :where(ul[data-type='taskList']) {
     list-style: none;

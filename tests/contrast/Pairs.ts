@@ -104,6 +104,8 @@ const popupFill = 'popup-fill';
 const worstBackdrop = 'popup-worst-backdrop';
 // A tooltip's frosted fill, a key chip on it and the worst behind it (Tooltip.css).
 const tooltipFrosted = 'tooltip-frosted';
+// A slider's fill as it is drawn, a step stronger in light than in dark (Slider.css).
+const sliderFill = 'slider-fill';
 // A text field's prefix and suffix (TextField.css).
 const textFieldAffix = 'text-field-affix';
 // A segmented control's thumb, the chosen segment on its track (SegmentedControl.css).
@@ -341,7 +343,7 @@ const registry: readonly ContrastPair[] = merged([
       '--env-color-bg-primary-emphasis-hover',
       '--env-color-bg-primary-emphasis-pressed',
     ],
-    'Primary buttons, the chosen calendar day, the check of a checked checkbox and the thumb of a switch that is on',
+    'Primary buttons, the chosen calendar day and time, the check of a checked checkbox and the thumb of a switch that is on',
   ),
   ...text(
     '--env-color-fg-control',
@@ -1076,7 +1078,7 @@ const registry: readonly ContrastPair[] = merged([
     'Spinners, and meter indicators on their track',
   ),
   // Slider: a field whose track is the neutral fill, with a stronger fill from the start to the
-  // value; the label, the value and the handle sit on both.
+  // value; the label, the value and the handle sit on both. The fill is this tint in dark.
   ...text(
     '--env-color-fg-default',
     [
@@ -1098,6 +1100,29 @@ const registry: readonly ContrastPair[] = merged([
       [fill, popup],
     ],
     'The fill of a slider against its track',
+  ),
+  // The slider's fill as it is drawn (Slider.css): a step stronger in light than in dark.
+  ...text(
+    '--env-color-fg-default',
+    [
+      [sliderFill, fill, page],
+      [sliderFill, fill, surface],
+      [sliderFill, fill, muted],
+      [sliderFill, fill, raised],
+      [sliderFill, fill, popup],
+    ],
+    'The label, the value and the handle of a slider on its fill as drawn, a step stronger in light',
+  ),
+  ...different(
+    sliderFill,
+    [
+      [fill, page],
+      [fill, surface],
+      [fill, muted],
+      [fill, raised],
+      [fill, popup],
+    ],
+    'The fill of a slider as drawn against its track, a step stronger in light',
   ),
   ...nonText(
     '--env-color-bg-primary-emphasis',
@@ -3035,6 +3060,7 @@ export const derived: Readonly<Record<string, string>> = {
   // A tooltip's frosted fill and a key chip on it, a share of its light text (Tooltip.css), and
   // the worst behind it: white under its light text, in light and in dark.
   'tooltip-frosted': tooltipFill,
+  'slider-fill': markedColor('packages/ui/src/styles/Slider.css', 'slider-fill'),
   'tooltip-key': ofLabel(tooltipKeyFill, '--env-color-fg-on-strong'),
   'tooltip-worst-backdrop': '#fff',
   // A text field's prefix and suffix, a share of muted text (TextField.css).
