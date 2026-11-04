@@ -334,7 +334,7 @@ test('a stacking table lists its rows as blocks in a narrow container and keeps 
     const first = (await rows.nth(0).boundingBox())!;
     const second = (await rows.nth(1).boundingBox())!;
     expect(second.y).toBeGreaterThanOrEqual(first.y + first.height - 1);
-    expect(first.width).toBeCloseTo((await frame.boundingBox())!.width - 2, 0);
+    expect(first.width).toBeCloseTo((await frame.boundingBox())!.width, 0);
     // The selected row keeps its colors as a block.
     await expect(table.getByRole('row', { name: /design-system\/tokens/ })).toHaveCSS(
       'box-shadow',
