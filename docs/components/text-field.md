@@ -106,6 +106,7 @@ An outline field has no fill of its own: it takes the background of what it sits
 
 A ghost field has no edge: it is its icon and words until the pointer rests on it, when its fill shows. Focus draws the accent edge an outline field takes.
 
+- Keep it to toolbars, an application's chrome and palettes: in a form, its value at rest reads as static text, so a form's fields are outline.
 - Its placeholder clears once it has focus.
 - An invalid ghost field shows a red edge.
 - The [CommandPalette](command-palette.md)'s search is a large ghost field that keeps its fill.

@@ -87,6 +87,10 @@ An error shows once people have had a chance to answer, and adds to the descript
 
 Keep the description while the error shows: the error adds to it.
 
+### Beside envUI's fields
+
+Field is the low-level building block, its label above the control, while TextField, Select, the pickers and the other form fields take the notched label in their edge. Build a form's fields from those, and keep Field for a control they don't cover, so one form doesn't mix the two labels.
+
 ## Accessibility
 
 ### Keyboard
