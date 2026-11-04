@@ -57,7 +57,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#83319f',
-      dark: '#e193ff',
+      dark: '#d683f5',
       'light-high-contrast': '#63047d',
       'dark-high-contrast': '#f7e4ff',
     },
@@ -68,7 +68,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#6d1888',
-      dark: '#d683f5',
+      dark: '#bc6ada',
       'light-high-contrast': '#57006e',
       'dark-high-contrast': '#faedff',
     },
@@ -271,15 +271,15 @@ export const tokens = {
       'dark-high-contrast': '#a7d7cf',
     },
   },
-  /** The backdrop behind dialogs and the command palette: the dark page color at 32% in light, which sets the page back without turning it gray, and black at 50% in dark, where the page color would not darken it. */
+  /** The backdrop behind dialogs and the command palette: the dark page color at 32% in light, which sets the page back without turning it gray, and black at 70% in dark, where the page color would not darken it and less would barely dim the dark page. */
   'color.bg.backdrop': {
     cssVariable: '--env-color-bg-backdrop',
     type: 'color',
     values: {
       light: 'rgb(31 31 34 / 0.32)',
-      dark: 'rgb(0 0 0 / 0.5)',
+      dark: 'rgb(0 0 0 / 0.7)',
       'light-high-contrast': 'rgb(31 31 34 / 0.32)',
-      'dark-high-contrast': 'rgb(0 0 0 / 0.5)',
+      'dark-high-contrast': 'rgb(0 0 0 / 0.7)',
     },
   },
   /** The lighter backdrop behind a sheet that leaves the page usable, such as a supporting pane over its main pane: the dark page color at 20% in light and black at 30% in dark. */
@@ -304,24 +304,24 @@ export const tokens = {
       'dark-high-contrast': '#ffd3cf',
     },
   },
-  /** A destructive primary action under the pointer. */
+  /** A destructive primary action under the pointer: a grade darker, as every primary steps. */
   'color.bg.danger.emphasis.hover': {
     cssVariable: '--env-color-bg-danger-emphasis-hover',
     type: 'color',
     values: {
-      light: '#c64e43',
-      dark: '#ee9c95',
+      light: '#9f0300',
+      dark: '#e68c84',
       'light-high-contrast': '#6b0100',
       'dark-high-contrast': '#ffe4e2',
     },
   },
-  /** A destructive primary action while pressed. */
+  /** A destructive primary action while pressed: a grade past its hover. */
   'color.bg.danger.emphasis.pressed': {
     cssVariable: '--env-color-bg-danger-emphasis-pressed',
     type: 'color',
     values: {
-      light: '#bf3e33',
-      dark: '#e68c84',
+      light: '#7a0200',
+      dark: '#d66d63',
       'light-high-contrast': '#5a0100',
       'dark-high-contrast': '#ffedeb',
     },
@@ -337,7 +337,7 @@ export const tokens = {
       'dark-high-contrast': 'rgb(255 211 207 / 0.1)',
     },
   },
-  /** The danger fill of destructive actions and error toasts in both themes; paired with fg.on-strong. */
+  /** The danger fill of error toasts in both themes; paired with fg.on-strong. */
   'color.bg.danger.strong': {
     cssVariable: '--env-color-bg-danger-strong',
     type: 'color',
@@ -348,7 +348,7 @@ export const tokens = {
       'dark-high-contrast': '#8d0200',
     },
   },
-  /** A destructive action under the pointer: lighter, as in 0.7, at the lightest grade that keeps white labels at 4.5:1. */
+  /** A control on the error toast, its action or dismiss button, under the pointer: lighter, as on every toast, at the lightest grade that keeps white labels at 4.5:1. */
   'color.bg.danger.strong.hover': {
     cssVariable: '--env-color-bg-danger-strong-hover',
     type: 'color',
@@ -359,7 +359,7 @@ export const tokens = {
       'dark-high-contrast': '#7a0200',
     },
   },
-  /** A destructive action while pressed. It can’t lighten further without its white label falling below 4.5:1, so it settles halfway back. */
+  /** A control on the error toast while pressed. It can’t lighten further without its white label falling below 4.5:1, so it settles halfway back. */
   'color.bg.danger.strong.pressed': {
     cssVariable: '--env-color-bg-danger-strong-pressed',
     type: 'color',
@@ -805,7 +805,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#005cc8',
-      dark: '#8ab3f5',
+      dark: '#75a5f2',
       'light-high-contrast': '#00377c',
       'dark-high-contrast': '#cddefc',
     },
@@ -816,7 +816,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#004aa2',
-      dark: '#75a5f2',
+      dark: '#4b8bec',
       'light-high-contrast': '#002f6d',
       'dark-high-contrast': '#e0ebfd',
     },
@@ -1052,7 +1052,7 @@ export const tokens = {
       'dark-high-contrast': '#004e37',
     },
   },
-  /** A control on the success toast, its dismiss button, under the pointer. Its white label keeps 4.5:1. */
+  /** A control on the success toast, its action or dismiss button, under the pointer. Its white label keeps 4.5:1. */
   'color.bg.success.strong.hover': {
     cssVariable: '--env-color-bg-success-strong-hover',
     type: 'color',
@@ -1195,24 +1195,24 @@ export const tokens = {
       'dark-high-contrast': '#ffe4e2',
     },
   },
-  /** An invalid field border under the pointer. */
+  /** An invalid field border, and a destructive outline button's edge, under the pointer: darker, as the active field border steps. */
   'color.border.danger.emphasis.hover': {
     cssVariable: '--env-color-border-danger-emphasis-hover',
     type: 'color',
     values: {
-      light: '#c64e43',
-      dark: '#ee9c95',
+      light: '#9f0300',
+      dark: '#e68c84',
       'light-high-contrast': '#6b0100',
       'dark-high-contrast': '#ffedeb',
     },
   },
-  /** An invalid field border while pressed. */
+  /** An invalid field border, and a destructive outline button's edge, while pressed. */
   'color.border.danger.emphasis.pressed': {
     cssVariable: '--env-color-border-danger-emphasis-pressed',
     type: 'color',
     values: {
-      light: '#ce5e53',
-      dark: '#e68c84',
+      light: '#7a0200',
+      dark: '#d66d63',
       'light-high-contrast': '#5a0100',
       'dark-high-contrast': '#fff6f5',
     },

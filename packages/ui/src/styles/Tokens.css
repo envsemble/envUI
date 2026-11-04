@@ -31,8 +31,8 @@
   --env-color-bg-backdrop: rgb(31 31 34 / 0.32);
   --env-color-bg-backdrop-muted: rgb(31 31 34 / 0.2);
   --env-color-bg-danger-emphasis: #b72b20;
-  --env-color-bg-danger-emphasis-hover: #c64e43;
-  --env-color-bg-danger-emphasis-pressed: #bf3e33;
+  --env-color-bg-danger-emphasis-hover: #9f0300;
+  --env-color-bg-danger-emphasis-pressed: #7a0200;
   --env-color-bg-danger-muted: rgb(183 43 32 / 0.12);
   --env-color-bg-danger-strong: #b72b20;
   --env-color-bg-danger-strong-hover: #c64e43;
@@ -112,8 +112,8 @@
   --env-color-border-accent: rgb(142 60 170 / 0.55);
   --env-color-border-danger: rgb(183 43 32 / 0.55);
   --env-color-border-danger-emphasis: #b72b20;
-  --env-color-border-danger-emphasis-hover: #c64e43;
-  --env-color-border-danger-emphasis-pressed: #ce5e53;
+  --env-color-border-danger-emphasis-hover: #9f0300;
+  --env-color-border-danger-emphasis-pressed: #7a0200;
   --env-color-border-danger-muted: rgb(183 43 32 / 0.28);
   --env-color-border-danger-strong: #9f0300;
   --env-color-border-default: #808083;
@@ -298,8 +298,8 @@
 .env-theme[data-env-theme='dark'] {
   color-scheme: dark;
   --env-color-bg-accent-emphasis: #e7a8ff;
-  --env-color-bg-accent-emphasis-hover: #e193ff;
-  --env-color-bg-accent-emphasis-pressed: #d683f5;
+  --env-color-bg-accent-emphasis-hover: #d683f5;
+  --env-color-bg-accent-emphasis-pressed: #bc6ada;
   --env-color-bg-accent-muted: rgb(231 168 255 / 0.14);
   --env-color-bg-accent-soft: var(--env-color-bg-accent-muted);
   --env-color-bg-accent-solid: #e7a8ff;
@@ -313,11 +313,11 @@
   --env-color-bg-avatar-powder: #afd3e9;
   --env-color-bg-avatar-sage: #bed4b3;
   --env-color-bg-avatar-seafoam: #a7d7cf;
-  --env-color-bg-backdrop: rgb(0 0 0 / 0.5);
+  --env-color-bg-backdrop: rgb(0 0 0 / 0.7);
   --env-color-bg-backdrop-muted: rgb(0 0 0 / 0.3);
   --env-color-bg-danger-emphasis: #f8aca6;
-  --env-color-bg-danger-emphasis-hover: #ee9c95;
-  --env-color-bg-danger-emphasis-pressed: #e68c84;
+  --env-color-bg-danger-emphasis-hover: #e68c84;
+  --env-color-bg-danger-emphasis-pressed: #d66d63;
   --env-color-bg-danger-muted: rgb(206 94 83 / 0.18);
   --env-color-bg-danger-subtle-hover: rgb(206 94 83 / 0.22);
   --env-color-bg-danger-subtle-pressed: rgb(206 94 83 / 0.3);
@@ -349,8 +349,8 @@
   --env-color-bg-popup-hover: #424447;
   --env-color-bg-popup-pressed: #4b4d51;
   --env-color-bg-primary-emphasis: #9fc1f8;
-  --env-color-bg-primary-emphasis-hover: #8ab3f5;
-  --env-color-bg-primary-emphasis-pressed: #75a5f2;
+  --env-color-bg-primary-emphasis-hover: #75a5f2;
+  --env-color-bg-primary-emphasis-pressed: #4b8bec;
   --env-color-bg-primary-muted: rgb(52 126 234 / 0.16);
   --env-color-bg-primary-soft: var(--env-color-bg-primary-muted);
   --env-color-bg-primary-solid: #9fc1f8;
@@ -379,8 +379,8 @@
   --env-color-border-accent: rgb(231 168 255 / 0.55);
   --env-color-border-danger: rgb(248 172 166 / 0.55);
   --env-color-border-danger-emphasis: #f8aca6;
-  --env-color-border-danger-emphasis-hover: #ee9c95;
-  --env-color-border-danger-emphasis-pressed: #e68c84;
+  --env-color-border-danger-emphasis-hover: #e68c84;
+  --env-color-border-danger-emphasis-pressed: #d66d63;
   --env-color-border-danger-muted: rgb(248 172 166 / 0.28);
   --env-color-border-danger-strong: var(--env-elevation-2-border);
   --env-color-border-default: #898c91;

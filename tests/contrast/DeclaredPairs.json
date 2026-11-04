@@ -2244,6 +2244,32 @@
         "high": 7
       }
     },
+    "--env-color-fg-default on --env-color-bg-danger-subtle-hover over --env-color-bg-danger-muted over --env-color-bg-page": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-default on --env-color-bg-danger-subtle-hover over --env-color-bg-danger-muted over --env-color-bg-recessed": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-default on --env-color-bg-danger-subtle-hover over --env-color-bg-danger-subtle-hover over --env-color-bg-page": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5
+      }
+    },
+    "--env-color-fg-default on --env-color-bg-danger-subtle-hover over --env-color-bg-danger-subtle-hover over --env-color-bg-recessed": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5
+      }
+    },
     "--env-color-fg-default on --env-color-bg-danger-subtle-hover over --env-color-bg-default": {
       "kind": "text",
       "minimum": {
@@ -2263,6 +2289,32 @@
       }
     },
     "--env-color-fg-default on --env-color-bg-danger-subtle-hover over --env-color-bg-recessed": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5
+      }
+    },
+    "--env-color-fg-default on --env-color-bg-danger-subtle-pressed over --env-color-bg-danger-muted over --env-color-bg-page": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 4.5
+      }
+    },
+    "--env-color-fg-default on --env-color-bg-danger-subtle-pressed over --env-color-bg-danger-muted over --env-color-bg-recessed": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 4.5
+      }
+    },
+    "--env-color-fg-default on --env-color-bg-danger-subtle-pressed over --env-color-bg-danger-subtle-hover over --env-color-bg-page": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5
+      }
+    },
+    "--env-color-fg-default on --env-color-bg-danger-subtle-pressed over --env-color-bg-danger-subtle-hover over --env-color-bg-recessed": {
       "kind": "text",
       "minimum": {
         "standard": 4.5
@@ -2699,7 +2751,59 @@
         "standard": 4.5
       }
     },
+    "--env-color-fg-default on --env-color-bg-primary-subtle-hover over --env-color-bg-primary-muted over --env-color-bg-page": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-default on --env-color-bg-primary-subtle-hover over --env-color-bg-primary-muted over --env-color-bg-recessed": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-default on --env-color-bg-primary-subtle-hover over --env-color-bg-primary-subtle-hover over --env-color-bg-page": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5
+      }
+    },
+    "--env-color-fg-default on --env-color-bg-primary-subtle-hover over --env-color-bg-primary-subtle-hover over --env-color-bg-recessed": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5
+      }
+    },
     "--env-color-fg-default on --env-color-bg-primary-subtle-hover over --env-color-bg-recessed": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5
+      }
+    },
+    "--env-color-fg-default on --env-color-bg-primary-subtle-pressed over --env-color-bg-primary-muted over --env-color-bg-page": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 4.5
+      }
+    },
+    "--env-color-fg-default on --env-color-bg-primary-subtle-pressed over --env-color-bg-primary-muted over --env-color-bg-recessed": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 4.5
+      }
+    },
+    "--env-color-fg-default on --env-color-bg-primary-subtle-pressed over --env-color-bg-primary-subtle-hover over --env-color-bg-page": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5
+      }
+    },
+    "--env-color-fg-default on --env-color-bg-primary-subtle-pressed over --env-color-bg-primary-subtle-hover over --env-color-bg-recessed": {
       "kind": "text",
       "minimum": {
         "standard": 4.5
@@ -2813,6 +2917,58 @@
         "standard": 4.5
       }
     },
+    "--env-color-fg-default on --env-color-bg-success-subtle-hover over --env-color-bg-success-muted over --env-color-bg-page": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-default on --env-color-bg-success-subtle-hover over --env-color-bg-success-muted over --env-color-bg-recessed": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-default on --env-color-bg-success-subtle-hover over --env-color-bg-success-subtle-hover over --env-color-bg-page": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5
+      }
+    },
+    "--env-color-fg-default on --env-color-bg-success-subtle-hover over --env-color-bg-success-subtle-hover over --env-color-bg-recessed": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5
+      }
+    },
+    "--env-color-fg-default on --env-color-bg-success-subtle-pressed over --env-color-bg-success-muted over --env-color-bg-page": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 4.5
+      }
+    },
+    "--env-color-fg-default on --env-color-bg-success-subtle-pressed over --env-color-bg-success-muted over --env-color-bg-recessed": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 4.5
+      }
+    },
+    "--env-color-fg-default on --env-color-bg-success-subtle-pressed over --env-color-bg-success-subtle-hover over --env-color-bg-page": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5
+      }
+    },
+    "--env-color-fg-default on --env-color-bg-success-subtle-pressed over --env-color-bg-success-subtle-hover over --env-color-bg-recessed": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5
+      }
+    },
     "--env-color-fg-default on --env-color-bg-warning-muted over --env-color-bg-muted": {
       "kind": "text",
       "minimum": {
@@ -2853,6 +3009,58 @@
       }
     },
     "--env-color-fg-default on --env-color-bg-warning-subtle-hover over --env-color-bg-recessed": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5
+      }
+    },
+    "--env-color-fg-default on --env-color-bg-warning-subtle-hover over --env-color-bg-warning-muted over --env-color-bg-page": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-default on --env-color-bg-warning-subtle-hover over --env-color-bg-warning-muted over --env-color-bg-recessed": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-default on --env-color-bg-warning-subtle-hover over --env-color-bg-warning-subtle-hover over --env-color-bg-page": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5
+      }
+    },
+    "--env-color-fg-default on --env-color-bg-warning-subtle-hover over --env-color-bg-warning-subtle-hover over --env-color-bg-recessed": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5
+      }
+    },
+    "--env-color-fg-default on --env-color-bg-warning-subtle-pressed over --env-color-bg-warning-muted over --env-color-bg-page": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 4.5
+      }
+    },
+    "--env-color-fg-default on --env-color-bg-warning-subtle-pressed over --env-color-bg-warning-muted over --env-color-bg-recessed": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 4.5
+      }
+    },
+    "--env-color-fg-default on --env-color-bg-warning-subtle-pressed over --env-color-bg-warning-subtle-hover over --env-color-bg-page": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5
+      }
+    },
+    "--env-color-fg-default on --env-color-bg-warning-subtle-pressed over --env-color-bg-warning-subtle-hover over --env-color-bg-recessed": {
       "kind": "text",
       "minimum": {
         "standard": 4.5
@@ -6340,17 +6548,51 @@
     "--env-color-fg-default on --env-color-bg-accent-muted over --env-color-bg-page",
     "--env-color-fg-default on --env-color-bg-accent-muted over --env-color-bg-recessed",
     "--env-color-fg-default on --env-color-bg-accent-muted over catalogue-canvas",
+    "--env-color-fg-default on --env-color-bg-accent-subtle-hover over --env-color-bg-accent-muted over --env-color-bg-page",
+    "--env-color-fg-default on --env-color-bg-accent-subtle-hover over --env-color-bg-accent-muted over --env-color-bg-recessed",
+    "--env-color-fg-default on --env-color-bg-accent-subtle-hover over --env-color-bg-accent-muted over catalogue-canvas",
+    "--env-color-fg-default on --env-color-bg-accent-subtle-hover over --env-color-bg-accent-subtle-hover over --env-color-bg-page",
+    "--env-color-fg-default on --env-color-bg-accent-subtle-hover over --env-color-bg-accent-subtle-hover over --env-color-bg-recessed",
+    "--env-color-fg-default on --env-color-bg-accent-subtle-hover over --env-color-bg-accent-subtle-hover over catalogue-canvas",
+    "--env-color-fg-default on --env-color-bg-accent-subtle-hover over --env-color-bg-brand-muted over --env-color-bg-page",
+    "--env-color-fg-default on --env-color-bg-accent-subtle-hover over --env-color-bg-brand-muted over --env-color-bg-recessed",
+    "--env-color-fg-default on --env-color-bg-accent-subtle-hover over --env-color-bg-brand-muted over catalogue-canvas",
     "--env-color-fg-default on --env-color-bg-accent-subtle-hover over --env-color-bg-default",
     "--env-color-fg-default on --env-color-bg-accent-subtle-hover over --env-color-bg-muted",
     "--env-color-fg-default on --env-color-bg-accent-subtle-hover over --env-color-bg-page",
+    "--env-color-fg-default on --env-color-bg-accent-subtle-hover over --env-color-bg-primary-muted over --env-color-bg-page",
+    "--env-color-fg-default on --env-color-bg-accent-subtle-hover over --env-color-bg-primary-muted over --env-color-bg-recessed",
+    "--env-color-fg-default on --env-color-bg-accent-subtle-hover over --env-color-bg-primary-muted over catalogue-canvas",
+    "--env-color-fg-default on --env-color-bg-accent-subtle-hover over --env-color-bg-primary-subtle-hover over --env-color-bg-page",
+    "--env-color-fg-default on --env-color-bg-accent-subtle-hover over --env-color-bg-primary-subtle-hover over --env-color-bg-recessed",
+    "--env-color-fg-default on --env-color-bg-accent-subtle-hover over --env-color-bg-primary-subtle-hover over catalogue-canvas",
     "--env-color-fg-default on --env-color-bg-accent-subtle-hover over --env-color-bg-recessed",
     "--env-color-fg-default on --env-color-bg-accent-subtle-hover over catalogue-canvas",
+    "--env-color-fg-default on --env-color-bg-accent-subtle-pressed over --env-color-bg-accent-muted over --env-color-bg-page",
+    "--env-color-fg-default on --env-color-bg-accent-subtle-pressed over --env-color-bg-accent-muted over --env-color-bg-recessed",
+    "--env-color-fg-default on --env-color-bg-accent-subtle-pressed over --env-color-bg-accent-muted over catalogue-canvas",
+    "--env-color-fg-default on --env-color-bg-accent-subtle-pressed over --env-color-bg-accent-subtle-hover over --env-color-bg-page",
+    "--env-color-fg-default on --env-color-bg-accent-subtle-pressed over --env-color-bg-accent-subtle-hover over --env-color-bg-recessed",
+    "--env-color-fg-default on --env-color-bg-accent-subtle-pressed over --env-color-bg-accent-subtle-hover over catalogue-canvas",
+    "--env-color-fg-default on --env-color-bg-accent-subtle-pressed over --env-color-bg-brand-muted over --env-color-bg-page",
+    "--env-color-fg-default on --env-color-bg-accent-subtle-pressed over --env-color-bg-brand-muted over --env-color-bg-recessed",
+    "--env-color-fg-default on --env-color-bg-accent-subtle-pressed over --env-color-bg-brand-muted over catalogue-canvas",
+    "--env-color-fg-default on --env-color-bg-accent-subtle-pressed over --env-color-bg-primary-muted over --env-color-bg-page",
+    "--env-color-fg-default on --env-color-bg-accent-subtle-pressed over --env-color-bg-primary-muted over --env-color-bg-recessed",
+    "--env-color-fg-default on --env-color-bg-accent-subtle-pressed over --env-color-bg-primary-muted over catalogue-canvas",
+    "--env-color-fg-default on --env-color-bg-accent-subtle-pressed over --env-color-bg-primary-subtle-hover over --env-color-bg-page",
+    "--env-color-fg-default on --env-color-bg-accent-subtle-pressed over --env-color-bg-primary-subtle-hover over --env-color-bg-recessed",
+    "--env-color-fg-default on --env-color-bg-accent-subtle-pressed over --env-color-bg-primary-subtle-hover over catalogue-canvas",
     "--env-color-fg-default on --env-color-bg-brand-muted over --env-color-bg-muted",
     "--env-color-fg-default on --env-color-bg-brand-muted over --env-color-bg-page",
     "--env-color-fg-default on --env-color-bg-brand-muted over --env-color-bg-recessed",
     "--env-color-fg-default on --env-color-bg-brand-muted over catalogue-canvas",
     "--env-color-fg-default on --env-color-bg-danger-muted over catalogue-canvas",
+    "--env-color-fg-default on --env-color-bg-danger-subtle-hover over --env-color-bg-danger-muted over catalogue-canvas",
+    "--env-color-fg-default on --env-color-bg-danger-subtle-hover over --env-color-bg-danger-subtle-hover over catalogue-canvas",
     "--env-color-fg-default on --env-color-bg-danger-subtle-hover over catalogue-canvas",
+    "--env-color-fg-default on --env-color-bg-danger-subtle-pressed over --env-color-bg-danger-muted over catalogue-canvas",
+    "--env-color-fg-default on --env-color-bg-danger-subtle-pressed over --env-color-bg-danger-subtle-hover over catalogue-canvas",
     "--env-color-fg-default on --env-color-bg-neutral-muted over --env-color-bg-neutral-muted over popup-frosted over catalogue-canvas",
     "--env-color-fg-default on --env-color-bg-neutral-muted over catalogue-canvas",
     "--env-color-fg-default on --env-color-bg-neutral-muted over popup-frosted over catalogue-canvas",
@@ -6362,11 +6604,41 @@
     "--env-color-fg-default on --env-color-bg-neutral-subtle-pressed over --env-color-bg-neutral-muted over catalogue-canvas",
     "--env-color-fg-default on --env-color-bg-neutral-subtle-pressed over catalogue-canvas",
     "--env-color-fg-default on --env-color-bg-primary-muted over catalogue-canvas",
+    "--env-color-fg-default on --env-color-bg-primary-subtle-hover over --env-color-bg-accent-muted over --env-color-bg-page",
+    "--env-color-fg-default on --env-color-bg-primary-subtle-hover over --env-color-bg-accent-muted over --env-color-bg-recessed",
+    "--env-color-fg-default on --env-color-bg-primary-subtle-hover over --env-color-bg-accent-muted over catalogue-canvas",
+    "--env-color-fg-default on --env-color-bg-primary-subtle-hover over --env-color-bg-accent-subtle-hover over --env-color-bg-page",
+    "--env-color-fg-default on --env-color-bg-primary-subtle-hover over --env-color-bg-accent-subtle-hover over --env-color-bg-recessed",
+    "--env-color-fg-default on --env-color-bg-primary-subtle-hover over --env-color-bg-accent-subtle-hover over catalogue-canvas",
+    "--env-color-fg-default on --env-color-bg-primary-subtle-hover over --env-color-bg-brand-muted over --env-color-bg-page",
+    "--env-color-fg-default on --env-color-bg-primary-subtle-hover over --env-color-bg-brand-muted over --env-color-bg-recessed",
+    "--env-color-fg-default on --env-color-bg-primary-subtle-hover over --env-color-bg-brand-muted over catalogue-canvas",
+    "--env-color-fg-default on --env-color-bg-primary-subtle-hover over --env-color-bg-primary-muted over catalogue-canvas",
+    "--env-color-fg-default on --env-color-bg-primary-subtle-hover over --env-color-bg-primary-subtle-hover over catalogue-canvas",
     "--env-color-fg-default on --env-color-bg-primary-subtle-hover over catalogue-canvas",
+    "--env-color-fg-default on --env-color-bg-primary-subtle-pressed over --env-color-bg-accent-muted over --env-color-bg-page",
+    "--env-color-fg-default on --env-color-bg-primary-subtle-pressed over --env-color-bg-accent-muted over --env-color-bg-recessed",
+    "--env-color-fg-default on --env-color-bg-primary-subtle-pressed over --env-color-bg-accent-muted over catalogue-canvas",
+    "--env-color-fg-default on --env-color-bg-primary-subtle-pressed over --env-color-bg-accent-subtle-hover over --env-color-bg-page",
+    "--env-color-fg-default on --env-color-bg-primary-subtle-pressed over --env-color-bg-accent-subtle-hover over --env-color-bg-recessed",
+    "--env-color-fg-default on --env-color-bg-primary-subtle-pressed over --env-color-bg-accent-subtle-hover over catalogue-canvas",
+    "--env-color-fg-default on --env-color-bg-primary-subtle-pressed over --env-color-bg-brand-muted over --env-color-bg-page",
+    "--env-color-fg-default on --env-color-bg-primary-subtle-pressed over --env-color-bg-brand-muted over --env-color-bg-recessed",
+    "--env-color-fg-default on --env-color-bg-primary-subtle-pressed over --env-color-bg-brand-muted over catalogue-canvas",
+    "--env-color-fg-default on --env-color-bg-primary-subtle-pressed over --env-color-bg-primary-muted over catalogue-canvas",
+    "--env-color-fg-default on --env-color-bg-primary-subtle-pressed over --env-color-bg-primary-subtle-hover over catalogue-canvas",
     "--env-color-fg-default on --env-color-bg-success-muted over catalogue-canvas",
+    "--env-color-fg-default on --env-color-bg-success-subtle-hover over --env-color-bg-success-muted over catalogue-canvas",
+    "--env-color-fg-default on --env-color-bg-success-subtle-hover over --env-color-bg-success-subtle-hover over catalogue-canvas",
     "--env-color-fg-default on --env-color-bg-success-subtle-hover over catalogue-canvas",
+    "--env-color-fg-default on --env-color-bg-success-subtle-pressed over --env-color-bg-success-muted over catalogue-canvas",
+    "--env-color-fg-default on --env-color-bg-success-subtle-pressed over --env-color-bg-success-subtle-hover over catalogue-canvas",
     "--env-color-fg-default on --env-color-bg-warning-muted over catalogue-canvas",
+    "--env-color-fg-default on --env-color-bg-warning-subtle-hover over --env-color-bg-warning-muted over catalogue-canvas",
+    "--env-color-fg-default on --env-color-bg-warning-subtle-hover over --env-color-bg-warning-subtle-hover over catalogue-canvas",
     "--env-color-fg-default on --env-color-bg-warning-subtle-hover over catalogue-canvas",
+    "--env-color-fg-default on --env-color-bg-warning-subtle-pressed over --env-color-bg-warning-muted over catalogue-canvas",
+    "--env-color-fg-default on --env-color-bg-warning-subtle-pressed over --env-color-bg-warning-subtle-hover over catalogue-canvas",
     "--env-color-fg-default on --env-color-list-item-bg",
     "--env-color-fg-default on --env-color-list-item-bg-hover",
     "--env-color-fg-default on --env-color-list-item-bg-pressed",

@@ -40,11 +40,16 @@ export function ButtonBase({
   children,
   ...props
 }: ButtonBaseProps) {
+  const spinner = <SpinnerArc size="sm" aria-hidden className="env-button-spinner" />;
+  // While pending, a start icon gives its place to the spinner; without one, the spinner stands
+  // before the label, which keeps its place (Button.css). Either way it stays out of the subdued
+  // content, in the label's own color.
+  const pendingIcon = pending && !iconOnly && startIcon != null;
   const content = iconOnly ? (
     <DecorativeIcon>{icon}</DecorativeIcon>
   ) : (
     <>
-      {startIcon != null && <DecorativeIcon>{startIcon}</DecorativeIcon>}
+      {startIcon != null && !pendingIcon && <DecorativeIcon>{startIcon}</DecorativeIcon>}
       {/* Words and a number in their line, such as Show 12 tasks, stay one line of text, which the
           button's gap would otherwise space out. */}
       {textRuns(children, 'env-button-text')}
@@ -68,8 +73,9 @@ export function ButtonBase({
     >
       {pending ? (
         <>
+          {pendingIcon ? <DecorativeIcon>{spinner}</DecorativeIcon> : !iconOnly && spinner}
           <span className="env-button-content">{content}</span>
-          <SpinnerArc size="sm" aria-hidden className="env-button-spinner" />
+          {iconOnly && spinner}
         </>
       ) : (
         content

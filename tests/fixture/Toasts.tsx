@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Button, ToastProvider, useToast } from '@envsemble/envui';
+import { Button, Dialog, DialogClose, ToastProvider, useToast } from '@envsemble/envui';
 
 export function ToastTriggers() {
   const toast = useToast();
@@ -96,6 +96,21 @@ export function ToastTriggers() {
         >
           Queue action notices
         </Button>
+        <Dialog
+          title="Notice from a dialog"
+          trigger={<Button data-testid="toast-dialog">Open a dialog</Button>}
+          actions={
+            <>
+              <DialogClose data-testid="toast-dialog-close">Close dialog</DialogClose>
+              <Button
+                data-testid="toast-from-dialog"
+                onClick={() => toast.show({ message: 'Notice from a dialog', tone: 'success' })}
+              >
+                Show a notice
+              </Button>
+            </>
+          }
+        />
         <Button data-testid="toast-clear" variant="secondary" onClick={toast.clear}>
           Clear managed notices
         </Button>

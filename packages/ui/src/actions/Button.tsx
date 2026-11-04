@@ -95,8 +95,9 @@ export type ButtonAppearanceProps = ButtonEmphasisProps & {
    */
   end?: ReactNode;
   /**
-   * Work started by this button is running: a spinner replaces the content without changing the
-   * button's size, and the button reports busy and ignores activation until pending ends.
+   * Work started by this button is running: the label stays, subdued, with a small spinner before
+   * it, in a start icon's place where there is one, and the button reports busy and ignores
+   * activation until pending ends.
    * @default false
    */
   pending?: boolean;

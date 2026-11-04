@@ -99,6 +99,10 @@ Not shown: the count of hidden notifications.
 
 Its timer pauses while the pointer rests on it or it has focus.
 
+### Over a modal
+
+While a modal, such as a Dialog or a Sheet, is open, notifications wait until it closes, so none covers its actions. Each then shows, and is announced, for its full duration.
+
 ### Undo
 
 A notification with an action stays until its action has run or people dismiss it.
@@ -188,7 +192,7 @@ toast.show({ tone: 'danger', message: 'Changes couldn’t be saved.' });
 `action` is one button, with its `label` and its `onClick`; the notification stays until it is dismissed, so call `dismiss` with the id `show` returned once the action has run.
 
 - `duration` is how long it stays, in milliseconds: 5000 by default, or `Infinity` for danger notifications and those with an action.
-- It counts only while the notification is visible, pauses on hover and keyboard focus, and starts again in full when it returns from behind the count.
+- It counts only while the notification is visible, pauses on hover and keyboard focus, and starts again in full when it returns from behind the count or from behind a modal.
 - `Infinity` or `0` keeps it until it is dismissed, and a negative number throws a `RangeError`.
 - `dismissible={false}` leaves out the dismiss button; it still closes after its duration, with <kbd>Esc</kbd> while focused and with `dismiss`.
 
@@ -226,6 +230,7 @@ A Toast draws an edge only at high contrast, unless its outline color sets one, 
 
 ## Changelog
 
+- **1.0.0-prerelease.6**: The action is an outline button in the notification's own text color, with its edge in that color and the dismiss button's hover and press fills, rather than a blue primary button on the tone's fill. Notifications wait while a modal is open in the same container and show once it closes, rather than covering its actions.
 - **1.0.0-prerelease.5**: 16 px from its start edge to its icon or message, and 10 px between its parts.
 - **1.0.0**: No edge outside high contrast, where the tone's edge bounds it, and an alert's corners, 1.25 rem. The notifications' theme boundary, `env-toast-portal-theme`, is `env-toast-theme`, as Popup's is `env-popup-theme`.
 - **1.0.0**: `limit` for `visibleLimit`, as Base UI names it. `tone` for `variant`, with `danger` for `error`, and `ToastTone`; `bottom-end` for `bottom-right`, which follows the text direction, with the top-center stack centered in either direction; the region names, hidden count and dismiss button come from the provider's messages; danger notifications are alerts at once and always shown; the dismiss button is an IconButton with a cross; the manual `Toast` is gone.

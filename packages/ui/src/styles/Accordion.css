@@ -24,7 +24,7 @@
     gap: var(--env-accordion-gap);
     inline-size: 100%;
     padding-block: var(--env-space-4);
-    padding-inline: 0;
+    padding-inline: var(--env-space-2);
     border: 0;
     border-radius: var(--env-radius-sm);
     background: none;
@@ -35,12 +35,22 @@
     overflow-wrap: break-word;
     cursor: pointer;
     outline: none;
+    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
   }
-  /* The ring stands clear outside the heading, so it never touches the indicator or the title, which
-     sit at the heading's edges. */
+  /* Hover and press lay the shared state layer over the heading, inset from the hairlines by its
+     inline padding, which the panel's content matches. */
+  .env-accordion-trigger:not([data-disabled]):hover {
+    /* The lighter layer of a ghost button with a label, so a press stands apart from it. */
+    background: color-mix(in srgb, var(--env-color-bg-neutral-subtle-hover) 70%, transparent);
+  }
+  .env-accordion-trigger:not([data-disabled]):active {
+    background: var(--env-color-bg-neutral-subtle-pressed);
+  }
+  /* The ring traces the heading's state layer, whose padding keeps it clear of the indicator and the
+     title. */
   .env-accordion-trigger:focus-visible {
     outline: 2px solid var(--env-color-border-focus);
-    outline-offset: 4px;
+    outline-offset: 0;
   }
   .env-accordion-trigger[data-disabled] {
     opacity: var(--env-state-disabled-opacity);
@@ -83,7 +93,10 @@
   }
   .env-accordion-content {
     padding-block-end: var(--env-space-4);
-    padding-inline-start: calc(var(--env-accordion-indicator-size) + var(--env-accordion-gap));
+    padding-inline: calc(
+        var(--env-space-2) + var(--env-accordion-indicator-size) + var(--env-accordion-gap)
+      )
+      var(--env-space-2);
     color: var(--env-color-fg-muted);
     font: var(--env-type-body);
     overflow-wrap: break-word;
@@ -102,6 +115,7 @@
     }
   }
   @media (prefers-reduced-motion: reduce) {
+    .env-accordion-trigger,
     .env-accordion-panel,
     .env-accordion-indicator {
       transition: none;

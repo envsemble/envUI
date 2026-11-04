@@ -110,7 +110,7 @@ test('a text button alone in a box as wide as its content keeps its words in a l
   expect(lines).toBe(1);
 });
 
-test('a pending button keeps its size and name, reports busy and ignores presses', async ({
+test('a pending button keeps its label and name, reports busy and ignores presses', async ({
   page,
   browserName,
 }) => {
@@ -118,10 +118,11 @@ test('a pending button keeps its size and name, reports busy and ignores presses
   const button = page.getByTestId('pending-button');
   await expect(button).toHaveAttribute('aria-busy', 'true');
   await expect(button.locator('.env-spinner')).toBeVisible();
-  await expect(button.locator('.env-button-content')).toHaveCSS('color', 'rgba(0, 0, 0, 0)');
-  // The spinner turns in the label's color, which holds its contrast on the fill, as an arc alone
-  // rather than a labelled status line.
+  // The label stays, subdued, while the spinner turns in the label's full color, which holds its
+  // contrast on the fill, as an arc alone rather than a labelled status line.
+  await expect(button.locator('.env-button-content')).toHaveText('Save changes');
   const color = await button.evaluate((element) => getComputedStyle(element).color);
+  await expect(button.locator('.env-button-content')).not.toHaveCSS('color', color);
   await expect(button.locator('.env-spinner')).toHaveCSS('color', color);
   await expect(button.locator('.env-spinner')).toHaveAttribute('data-label-hidden', '');
   await button.click({ force: true });

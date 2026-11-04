@@ -131,4 +131,5 @@ The parts are the accordion, `env-accordion`; each item, `env-accordion-item`, w
 
 ## Changelog
 
+- **1.0.0-prerelease.6**: A heading lays the shared state layer on hover and press, inset from the hairlines, with its focus ring tracing it; the title and panel sit 8 px in from the hairlines to match.
 - **1.0.0**: Accordion.

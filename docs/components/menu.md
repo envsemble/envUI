@@ -189,7 +189,7 @@ A Menu.Item runs its `onClick` and takes:
 - a `shortcut`, such as `Ctrl+D`, shown as Kbd keys and announced as `aria-keyshortcuts`;
 - `end` content, such as a Badge, which is part of its name; a count there shows as its figures alone, without a pill, apart from the shortcut's keys;
 - `tone="danger"` for a destructive action, such as Delete, whose label and icon take the danger color while its row highlights as any other's;
-- `disabled`, which keeps it in place with `aria-disabled`, its icon dimmed and its label muted, still above its description, which stays readable to say why.
+- `disabled`, which keeps it in place with `aria-disabled`, its icon dimmed and its label in the disabled text color, apart from its description, which stays muted and readable to say why.
 
 ```tsx source=IconsAndShortcuts
 
@@ -299,6 +299,7 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 
 ## Changelog
 
+- **1.0.0-prerelease.6**: A disabled item's label takes the disabled text color, `--env-color-fg-disabled`, rather than the muted color its description has, so unavailable and explanatory text no longer look alike.
 - **1.0.0-prerelease.5**: Menu.Root's `aria-label` is optional: the menu takes its trigger's name. Menu.RadioGroup takes `defaultValue` and Menu.CheckboxItem `defaultChecked`, for choices the menu keeps; Menu.Separator, Menu.Group and Menu.RadioGroup pass their native props on. `onOpenChange` of Menu.Root, Menu.Submenu and ContextMenu receives why.
 - **1.0.0-prerelease.5**: ThemeRadioGroup is ThemeMenuRadioGroup, with `ThemeMenuRadioGroupProps`: it works only inside a menu.
 - **1.0.0-prerelease.5**: Menus are frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge but a faint hairline in dark, and is solid with its edge at high contrast and with reduced transparency. Rows are the md control height in body text, in a menu with 1.25 rem corners; separators and groups part by space, with no hairline, and shortcut keys are muted chips with no edge, side by side with the + read but not shown. The highlighted row, under the pointer or the keyboard, takes the neutral fill with no focus ring, and a chosen radio item shows its check mark alone. Group labels sit 10 px from the menu's edge, a little ahead of the rows' icons and text, rather than in line with the labels.

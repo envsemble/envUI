@@ -14,6 +14,7 @@ import type { ToastController } from './useToastController.js';
 import type { ToastEntry } from './toastInternals.js';
 import type { ToastPlacement } from './toastTypes.js';
 import { usePortalContainer } from '../../internal/PortalContainerContext.js';
+import { useModalOpen } from '../internal/useModalPresence.js';
 import { IconClose } from '../../icons/Close.js';
 import { prefersReducedMotion } from '../../internal/reducedMotion.js';
 import { flag } from '../../internal/flag.js';
@@ -131,14 +132,20 @@ export function ToastRegion({
   const number = useFormatters().number();
   const viewport = useRef<HTMLDivElement | null>(null);
   const positions = useRef(new Map<string, number>());
-  const limited = limitedIds(toastStore.toasts, visibleLimit);
+  // While a modal surface is open in the same container, every notice waits, hidden and paused as
+  // the ones past the limit are, and shows for its full duration once the last one has closed: over
+  // the modal it would cover its actions, and the page around a modal can't be reached.
+  const held = useModalOpen(container);
+  const limited = held
+    ? new Set(toastStore.toasts.map((toast) => toast.id))
+    : limitedIds(toastStore.toasts, visibleLimit);
   // A swipe toward the end of the line dismisses, so it is to the left in right-to-left text.
   const [direction] = useDirection(viewport, toastStore.toasts.length);
   const swipeDirection: ('down' | 'left' | 'right')[] = [
     'down',
     direction === 'rtl' ? 'left' : 'right',
   ];
-  const hiddenCount = limited.size;
+  const hiddenCount = held ? 0 : limited.size;
   const hiddenLabel =
     hiddenCount > 0
       ? messages.hidden({ count: hiddenCount, countText: number.format(hiddenCount) })
@@ -163,7 +170,14 @@ export function ToastRegion({
     controller.setVisibleNotifications(placement, visibleIds);
     // The limited set follows from the toasts and the limit, which the dependencies cover.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [controller, placement, toastStore.toasts, visibleLimit]);
+  }, [controller, placement, toastStore.toasts, visibleLimit, held]);
+  // The notices that showed while no modal was open: the status reads them as they arrive, and one
+  // that arrives while a modal is open is read once it shows.
+  const [shown, setShown] = useState<ReadonlySet<string>>(() => new Set());
+  useLayoutEffect(() => {
+    if (held || toastStore.toasts.every((toast) => shown.has(toast.id))) return;
+    setShown(new Set(toastStore.toasts.map((toast) => toast.id)));
+  }, [held, shown, toastStore.toasts]);
   const hiddenIds = useRef(new Set<string>());
   // While notices move, appear or leave they may reach past the stack's box for a moment. A stack
   // that fits stops scrolling then, so no scrollbar flashes and nothing shifts sideways; a stack
@@ -288,7 +302,7 @@ export function ToastRegion({
     positions.current = next;
     hiddenIds.current = hidden;
     settle();
-  }, [toastStore.toasts, hiddenCount, placement, settle]);
+  }, [toastStore.toasts, hiddenCount, held, placement, settle]);
   const regionLabel =
     placement === 'bottom-end' ? messages.regionBottomEnd : messages.regionTopCenter;
   // In a contained PortalContainer the notices are a picture of the region, part of the container:
@@ -333,7 +347,11 @@ export function ToastRegion({
                       message={<div className="env-toast-message">{entry.message}</div>}
                       action={
                         entry.action && (
-                          <Button className="env-toast-action" onClick={entry.action.onClick}>
+                          <Button
+                            variant="outline"
+                            className="env-toast-action"
+                            onClick={entry.action.onClick}
+                          >
                             {entry.action.label}
                           </Button>
                         )
@@ -428,7 +446,11 @@ export function ToastRegion({
                     entry.action && (
                       <BaseToast.Action
                         render={
-                          <Button className="env-toast-action" onClick={entry.action.onClick} />
+                          <Button
+                            variant="outline"
+                            className="env-toast-action"
+                            onClick={entry.action.onClick}
+                          />
                         }
                       >
                         {entry.action.label}
@@ -458,7 +480,12 @@ export function ToastRegion({
         {/* The ordinary notices, read politely as they arrive; a danger notice is an alert. */}
         <div className="env-toast-announcer" role="status" aria-live="polite" aria-atomic="false">
           {toastStore.toasts
-            .filter((toast) => toast.data?.tone !== 'danger' && toast.transitionStatus !== 'ending')
+            .filter(
+              (toast) =>
+                toast.data?.tone !== 'danger' &&
+                toast.transitionStatus !== 'ending' &&
+                (!held || shown.has(toast.id)),
+            )
             .map((toast) => (
               <div key={toast.id}>{toast.data!.message}</div>
             ))}
