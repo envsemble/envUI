@@ -98,7 +98,7 @@ const layerPressed = '--env-color-bg-neutral-subtle-pressed';
 const navigationHover = '--env-color-bg-navigation-hover';
 const navigationPressed = '--env-color-bg-navigation-pressed';
 // A frosted popup's fill, translucent (derived below), and the worst that can be behind it; and the
-// fill itself, opaque: the popup color in light and the default surface in dark (Popup.css).
+// fill itself, opaque: the popup color (Popup.css).
 const frosted = 'popup-frosted';
 const popupFill = 'popup-fill';
 const worstBackdrop = 'popup-worst-backdrop';
