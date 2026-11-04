@@ -222,6 +222,17 @@ function Figure({
 }
 
 /**
+ * A page's first overview figure, the component at a glance, as its Overview shows it: what a
+ * component's page in the Docs shows above its code.
+ */
+export function OverviewFigure({ page }: { page: Document }) {
+  const block = page.sections
+    ?.find((section) => section.id === 'overview')
+    ?.blocks.find((item): item is ExampleBlock => item.kind === 'example');
+  return block ? <Figure page={page} block={block} live /> : null;
+}
+
+/**
  * Markdown cut before its last `###` subsection, when that subsection is text a figure can sit
  * beside: no table, no fence, and not only a list.
  */
