@@ -19,6 +19,15 @@
     cursor: pointer;
     width: fit-content;
     max-width: 100%;
+    /* Hover and press lay the shared state layer in a small rounded rectangle, the corners of a
+       link's and an accordion heading's ring, a little past the words on each side; the margin
+       takes that back, so the summary lines up with the text around it. */
+    margin-inline: calc(-1 * var(--env-space-1));
+    padding-inline: var(--env-space-1);
+    border-radius: var(--env-radius-sm);
+    transition:
+      background-color var(--env-motion-duration-fast) var(--env-motion-ease),
+      color var(--env-motion-duration-fast) var(--env-motion-ease);
   }
   .env-disclosure > summary::-webkit-details-marker {
     display: none;
@@ -33,13 +42,20 @@
   }
   .env-disclosure > summary:focus-visible {
     outline: 0.125rem solid var(--env-color-border-focus);
-    outline-offset: 0.25rem;
+    outline-offset: 0.125rem;
   }
   .env-disclosure > summary:hover {
+    background: var(--env-color-bg-neutral-subtle-hover);
     color: var(--env-color-fg-muted-hover);
   }
   .env-disclosure > summary:active {
+    background: var(--env-color-bg-neutral-subtle-pressed);
     color: var(--env-color-fg-muted-pressed);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .env-disclosure > summary {
+      transition: none;
+    }
   }
   @media (pointer: coarse) {
     .env-disclosure > summary {
