@@ -200,7 +200,7 @@ body {
    as the page scrolls. Their row sticks to the body's top and lets the page show through; the
    buttons sit on a small pill of the page's color, so content scrolling beneath doesn't run into
    them. Below an expanded window the other part keeps its name and Display is an icon button,
-   across from the menu button and search. */
+   at the end of the bar the menu button and search start (.site-compact-controls). */
 .site-page-actions {
   position: sticky;
   z-index: var(--env-z-sticky);
