@@ -2002,12 +2002,12 @@ export const tokens = {
       'dark-high-contrast': '#a1a4a9',
     },
   },
-  /** The edge of dialogs, sheets and the command palette where they are solid, the same as level 2's; a modal's backdrop sets it apart as well. A dialog and the palette otherwise part by their fill and the popups' soft shadow, a sheet by its fill. */
+  /** The edge of dialogs, sheets and the command palette where they are solid: in light the default border's gray, a step stronger than level 2's, as the light backdrop dims the page to about level 2's gray; in dark the same as level 2's. A dialog and the palette otherwise part by their fill and the popups' soft shadow, a sheet by its fill. */
   'elevation.3.border': {
     cssVariable: '--env-elevation-3-border',
     type: 'color',
     values: {
-      light: '#b1b1b4',
+      light: '#808083',
       dark: '#686b70',
       'light-high-contrast': '#131315',
       'dark-high-contrast': '#a1a4a9',
