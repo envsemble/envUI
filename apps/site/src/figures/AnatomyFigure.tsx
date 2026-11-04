@@ -269,8 +269,8 @@ function legendText(item: AnatomyLegendItem) {
  * An anatomy figure: the live component in the reader's theme, a numbered callout on each part its
  * legend names, by class name, and the legend of part names, with the example's code below. A
  * variants figure names each variant on its callout instead, as anatomy figures number parts, and
- * shows the option table after it as its legend, each name in its callout's tag followed by what it
- * is for; without one, its names are for assistive technology alone.
+ * shows the option table after it as its legend, each name followed by what it is for; without
+ * one, its names are for assistive technology alone.
  */
 export function AnatomyFigure({
   page,

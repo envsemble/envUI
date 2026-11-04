@@ -34,6 +34,19 @@ const badgeSize = 24;
 const spacing = badgeSize + 4;
 /** How far below its top the root's callout points, at most: past a large corner's curve. */
 const rootInset = 32;
+/** How far a part's dashed box stands off the part, in px, so it never runs through its text. */
+const fencePadding = 3;
+
+/** A part's box grown by the fence's padding on every side. */
+const fenced = (box: Box): Box => ({
+  left: box.left - fencePadding,
+  top: box.top - fencePadding,
+  right: box.right + fencePadding,
+  bottom: box.bottom + fencePadding,
+});
+
+/** The corners of a part's dashed box, which is square. */
+const square: Corners = { topLeft: 0, topRight: 0, bottomLeft: 0, bottomRight: 0 };
 
 /** The box of a part, or of its own text, relative to the stage. */
 function boxOf(element: Element, text: boolean, origin: DOMRect): Box | undefined {
@@ -243,8 +256,11 @@ export function measure(stage: HTMLElement, subject: HTMLElement, legend: Anatom
       badgeSize / 2 + 2,
       extent - badgeSize / 2 - 2,
     );
-    items.forEach(({ number, box, corners, root }, index) => {
+    items.forEach(({ number, box: part, corners: partCorners, root }, index) => {
       const at = along[index];
+      // A part other than the root is outlined, a little off it: its line ends on the outline.
+      const box = root ? part : fenced(part);
+      const corners = root ? partCorners : square;
       const clamp = (value: number, low: number, high: number) =>
         Math.min(Math.max(value, low + 2), Math.max(high - 2, low + 2));
       const badge =
@@ -364,12 +380,10 @@ export function measureVariants(
     right: Math.max(...found.map(({ box }) => box.right)),
     bottom: Math.max(...found.map(({ box }) => box.bottom)),
   };
-  const outline = (box: Box) => ({
-    x: box.left,
-    y: box.top,
-    width: box.right - box.left,
-    height: box.bottom - box.top,
-  });
+  const outline = (part: Box) => {
+    const box = fenced(part);
+    return { x: box.left, y: box.top, width: box.right - box.left, height: box.bottom - box.top };
+  };
   // One under another where no two items share a line.
   const sorted = [...found].sort((a, b) => a.box.top - b.box.top);
   const stacked = sorted.every(
@@ -384,7 +398,7 @@ export function measureVariants(
         label,
         side,
         badge: { x: side === 'left' ? outer.left - reach : outer.right + reach, y },
-        anchor: { x: side === 'left' ? box.left : box.right, y },
+        anchor: { x: side === 'left' ? box.left - fencePadding : box.right + fencePadding, y },
         box: outline(box),
       };
     });
@@ -408,7 +422,7 @@ export function measureVariants(
       label,
       side: 'top' as const,
       badge: { x, y: outer.top - reach },
-      anchor: { x: Math.min(Math.max(x, box.left + 2), box.right - 2), y: box.top },
+      anchor: { x: Math.min(Math.max(x, box.left + 2), box.right - 2), y: box.top - fencePadding },
       box: outline(box),
     };
   });

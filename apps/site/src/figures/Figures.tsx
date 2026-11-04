@@ -294,8 +294,8 @@ export function FigureSection({
   const first = blocks[0];
   const [title, ...intro] = first?.kind === 'markdown' ? first.markdown.split('\n') : [''];
   if (first?.kind === 'markdown') blocks[0] = { kind: 'markdown', markdown: intro.join('\n') };
-  // An option table right after a variants figure is the figure's legend: each variant's name in
-  // the tag its callout shows, followed by what it is for.
+  // An option table right after a variants figure is the figure's legend: each variant's name,
+  // which its callout tags, followed by what it is for.
   const options = new Map<string, OptionTable>();
   blocks.forEach((block, index) => {
     const next = blocks[index + 1];
