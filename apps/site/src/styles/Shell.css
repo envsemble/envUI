@@ -260,7 +260,7 @@ body {
 .site-page-header {
   container: site-page-header / inline-size;
   padding-block: var(--env-space-5) var(--env-space-4);
-  margin-block-end: var(--env-space-8);
+  margin-block-end: var(--env-space-7);
 }
 .site-page-banner,
 .catalogue-overview-hero {
@@ -293,7 +293,8 @@ body {
   isolation: isolate;
   overflow: hidden;
   container-type: inline-size;
-  padding-block: clamp(2.5rem, 5vw, 4rem);
+  /* Snug, so a page's first figure starts close below it. */
+  padding-block: clamp(1.75rem, 3.5vw, 2.75rem);
 }
 .site-page-banner-content {
   position: relative;

@@ -68,6 +68,9 @@ export function PageHeader({
               {trail ? (
                 <Breadcrumbs
                   className="site-page-banner-breadcrumbs"
+                  // One line in a narrow banner too: the page's own name, the title below, is cut
+                  // short first.
+                  wrap={false}
                   items={trail.map(({ label, route }) => ({ label, href: routeHref(route) }))}
                 />
               ) : (
