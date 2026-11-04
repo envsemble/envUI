@@ -46,8 +46,18 @@
        keeps this far from the rounded edge, so the corner never cuts it short. */
     --env-slider-handle-inset: calc(var(--env-slider-height) / 4);
     --env-slider-track: var(--env-slider-container, var(--env-color-bg-neutral-muted));
-    --env-slider-fill: var(--env-slider-indicator, var(--env-color-bg-neutral-subtle-pressed));
+    /* The fill is a step stronger than the track's tint in light, so it reads at a glance; in dark
+       the tint a step lighter already does, and a stronger one would take the text's contrast.
+       light-dark() follows the nearest theme's color scheme. */
+    /* contrast: slider-fill */
+    --env-slider-fill-default: light-dark(
+      var(--env-color-bg-neutral-muted-hover),
+      var(--env-color-bg-neutral-subtle-pressed)
+    );
+    --env-slider-fill: var(--env-slider-indicator, var(--env-slider-fill-default));
     --env-slider-ink: var(--env-slider-content, var(--env-color-fg-default));
+    /* The color of the field's error and of its invalid control, as on every field. */
+    --env-field-error-color: var(--env-color-fg-danger);
     min-inline-size: 0;
   }
   /* The control is the field: the pressable track, with the label and the value over it. */
@@ -144,8 +154,9 @@
     block-size: 55%;
     border-radius: var(--env-radius-full);
     background: var(--env-slider-ink, var(--env-color-fg-default));
-    /* At rest, quiet, and gone where it passes under the label or the value. */
-    opacity: calc(0.4 * (1 - var(--env-slider-veil)));
+    /* At rest, quieter than in use but clearly there, and gone where it passes under the label or
+       the value. */
+    opacity: calc(0.7 * (1 - var(--env-slider-veil)));
     transform: translateX(
       calc(
         var(--env-slider-thumb-side) *
@@ -250,6 +261,17 @@
     outline: 2px solid var(--env-color-border-focus);
     outline-offset: 2px;
   }
+  /* An invalid slider (data-invalid) takes the error color's edge, as every invalid field
+     does: a hairline inside its rounded edge, so nothing moves; its focus ring takes the error color
+     too. */
+  .env-slider-control[data-invalid] {
+    outline: var(--env-control-border-width) solid var(--env-field-error-color);
+    outline-offset: calc(-1 * var(--env-control-border-width));
+  }
+  .env-slider-control[data-invalid]:has(:focus-visible) {
+    outline: 2px solid var(--env-field-error-color);
+    outline-offset: 2px;
+  }
   /* Disabled, the slider fades, at the opacity of every disabled control; the group says it is
      disabled (aria-disabled), so the faded label and value read as part of an inactive control. */
   .env-slider[data-disabled] .env-slider-control {
@@ -299,6 +321,9 @@
     }
     .env-slider[data-disabled] .env-slider-indicator {
       box-shadow: inset 0 -4px GrayText;
+    }
+    .env-slider-control[data-invalid] {
+      outline-style: dashed;
     }
   }
 }

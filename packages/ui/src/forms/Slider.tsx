@@ -14,6 +14,7 @@ import {
   type Ref,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
+import { flag } from '../internal/flag.js';
 import { Row } from '../foundations/Layout.js';
 import { Text } from '../foundations/Text.js';
 import { setRef } from '../internal/setRef.js';
@@ -38,8 +39,9 @@ export interface SliderProps
    */
   description?: ReactNode;
   /**
-   * A message under the slider that says how to correct the value; it joins the slider's
-   * description, after the description.
+   * A message under the slider that says how to correct the value. While it is set, the slider is
+   * invalid (aria-invalid), with the error color's edge, and the message joins its description,
+   * after the description.
    */
   error?: ReactNode;
   /** The value of a controlled slider; update it from onValueChange. */
@@ -231,6 +233,16 @@ export function Slider({
       observer.observe(text);
     return () => observer.disconnect();
   }, []);
+  // With an error the range input is invalid. Base UI marks it only from a field around the slider's
+  // root, and the frame here sits inside it, so the slider marks it itself.
+  const invalid = error != null;
+  useLayoutEffect(
+    function markInvalid() {
+      if (invalid) input.current?.setAttribute('aria-invalid', 'true');
+      else input.current?.removeAttribute('aria-invalid');
+    },
+    [invalid],
+  );
   // Faint ticks mark the steps, or, where they are many, the large steps, so they never crowd.
   const ticks = tickCount(min, max, step, largeStep);
   const describedByIds =
@@ -284,6 +296,7 @@ export function Slider({
             data-dragging={pressed && !disabled ? '' : undefined}
             data-handle={reveal.handle ? '' : undefined}
             data-ruler={reveal.ruler ? '' : undefined}
+            data-invalid={flag(invalid)}
             onPointerDown={(event) => {
               setKeyboard(false);
               if (!disabled && event.button === 0) setPressed(true);

@@ -7327,7 +7327,7 @@
           "name": "error",
           "type": "ReactNode",
           "required": false,
-          "description": "A message under the slider that says how to correct the value; it joins the slider's description, after the description."
+          "description": "A message under the slider that says how to correct the value. While it is set, the slider is invalid (aria-invalid), with the error color's edge, and the message joins its description, after the description."
         },
         {
           "name": "value",

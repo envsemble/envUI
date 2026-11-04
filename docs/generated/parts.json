@@ -4864,6 +4864,15 @@
           ]
         },
         {
+          "attribute": "data-invalid",
+          "values": [
+            ""
+          ],
+          "parts": [
+            "env-slider-control"
+          ]
+        },
+        {
           "attribute": "data-ruler",
           "values": [
             ""

@@ -267,7 +267,7 @@ async function expectRest(state: ReturnType<typeof stateOf>) {
     .poll(async () => {
       const veil = await state.veil();
       const opacity = Number(await state.thumb.evaluate((e) => getComputedStyle(e).opacity));
-      return (veil === '0' || veil === '1') && Math.abs(opacity - 0.4 * (1 - Number(veil))) < 0.01;
+      return (veil === '0' || veil === '1') && Math.abs(opacity - 0.7 * (1 - Number(veil))) < 0.01;
     })
     .toBe(true);
   await expect.poll(state.ticks).toBe('0');

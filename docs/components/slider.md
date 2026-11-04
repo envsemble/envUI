@@ -112,6 +112,10 @@ A disabled slider is dimmed: it can't be focused or moved, and forms leave it ou
 
 - Its description says who sets the value.
 
+### Invalid
+
+An invalid slider takes the error color's edge, as every invalid field does, with its error under it.
+
 ### Adapting to width
 
 A slider fills its container.
@@ -153,7 +157,7 @@ Show the value with its unit, such as 30 minutes; the same text is announced.
 
 - A native range input in Base UI's slider, named by its label.
 - The formatted value as `aria-valuetext`, such as 40%.
-- The description linked to the input, a focus ring around the whole field, and the touch height on touch screens, where the whole field takes the finger.
+- The description and the error linked to the input, `aria-invalid` while it has an error, a focus ring around the whole field, and the touch height on touch screens, where the whole field takes the finger.
 
 ### You provide
 
@@ -208,11 +212,13 @@ The field marks what it shows besides its text and fill:
 - `data-handle` while the handle shows, under a hovering or pressing pointer and with keyboard focus.
 - `data-ruler` while the ticks do, under a hovering or pressing pointer.
 - `data-dragging` while the pointer presses it and drags the value.
+- `data-invalid` while it has an `error`.
 - A release clears them until the pointer leaves and comes back.
 
 ## Changelog
 
-- **1.0.0-prerelease.6**: A quiet handle marks the value at rest, so the slider no longer reads as a meter; it shows in full under the pointer and with keyboard focus.
+- **1.0.0-prerelease.6**: A handle marks the value at rest, clear though quieter than in use, and in light the fill is a step stronger, so the slider no longer reads as a meter; the handle shows in full under the pointer and with keyboard focus.
+- **1.0.0-prerelease.6**: An invalid slider, one with an `error`, takes the error color's edge; its control marks `data-invalid` and its range input is `aria-invalid`.
 - **1.0.0-prerelease.5**: `error`, as on a field.
 - **1.0.0-prerelease.2**: Slider is a field: as tall as the fields and with their corners, its label inside at the start, its value at the end in the text style of a field, with numbers of one width and a fill from the start, with a thin handle and faint ticks under the pointer and on focus, both fading where they pass under the text. The track has no outline. `--env-slider-indicator` colors the fill alone, and `--env-slider-content` the label, value, handle and ticks.
 - **1.0.0**: `onValueCommit` is `onValueCommitted`, as Base UI names it, `hint` is `description`, and `inputRef` is `ref`, which reaches the native range input as a field's does, while the root takes `className`, `style` and the other native props. The value is formatted in EnvUIProvider's `locale`, or the one Slider takes. The row of the label and the value, `env-slider-heading`, is `env-slider-header`.
