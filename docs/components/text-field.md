@@ -51,7 +51,7 @@ components:
 examples:
   ProjectName:
     role: overview
-    caption: 'Outline: a short value on one line, with a label, a description and an error.'
+    caption: 'Outline: a short value on one line, with a label and a description.'
   SearchInSidebar:
     role: overview
     caption: 'Ghost: a search atop a sidebar, only its icon and words until it is used.'
@@ -164,8 +164,6 @@ The label rests in an empty field and floats into the outline on focus or with a
 <!-- specimen: LabelFloats -->
 
 <!-- specimen: States -->
-
-<!-- specimen: FloatingStates -->
 
 ### Show an error
 

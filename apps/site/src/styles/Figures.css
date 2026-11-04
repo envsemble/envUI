@@ -65,44 +65,26 @@
   font: var(--env-type-body-sm);
 }
 
-/* Figures side by side are cells of one size: equal widths, and each figure's stage, caption and
-   code lined up across the row on rows of their own, so the stages match the tallest. */
+/* Figures side by side are cells of one width, each as tall as its own figure, from the top of
+   the row: a stage stretched to a taller neighbour's height left a small control floating in empty
+   room. */
 /* A run is one column until all its figures fit side by side, so no row is left with an orphan:
    two to a row from 38 rem for an even run, such as do and don't pairs, three from 58 rem for a run
    of three. */
 .site-figure-run {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
+  align-items: start;
   gap: var(--env-space-7) var(--env-space-6);
   min-inline-size: 0;
 }
 
 .site-figure-run > * {
   display: grid;
-  grid-row: span 3;
-  grid-template-rows: subgrid;
+  align-content: start;
   row-gap: var(--env-space-2);
   min-inline-size: 0;
   margin: 0;
-}
-
-.site-figure-run > * > :first-child {
-  grid-row: 1;
-}
-
-.site-figure-run > * > :last-child {
-  grid-row: 3;
-}
-
-/* A figure without a caption, in a run still one column, has no caption row to line up with: its
-   code follows its stage, with no empty band between them. Side by side (below), it keeps the row,
-   so its code lines up with its neighbours'. */
-.site-figure-run > .site-live-example-entry:not(:has(> .site-figure-caption)) {
-  grid-row: span 2;
-}
-
-.site-figure-run > .site-live-example-entry:not(:has(> .site-figure-caption)) > :last-child {
-  grid-row: 2;
 }
 
 /* A subsection's text beside its one figure. */
@@ -119,32 +101,11 @@
   .site-figure-run:is([data-count='2'], [data-count='4'], [data-count='6'], [data-count='8']) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-
-  .site-figure-run:is([data-count='2'], [data-count='4'], [data-count='6'], [data-count='8'])
-    > .site-live-example-entry:not(:has(> .site-figure-caption)) {
-    grid-row: span 3;
-  }
-
-  .site-figure-run:is([data-count='2'], [data-count='4'], [data-count='6'], [data-count='8'])
-    > .site-live-example-entry:not(:has(> .site-figure-caption))
-    > :last-child {
-    grid-row: 3;
-  }
 }
 
 @container (width >= 58rem) {
   .site-figure-run[data-count='3'] {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .site-figure-run[data-count='3'] > .site-live-example-entry:not(:has(> .site-figure-caption)) {
-    grid-row: span 3;
-  }
-
-  .site-figure-run[data-count='3']
-    > .site-live-example-entry:not(:has(> .site-figure-caption))
-    > :last-child {
-    grid-row: 3;
   }
 }
 

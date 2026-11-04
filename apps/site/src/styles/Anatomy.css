@@ -68,8 +68,9 @@
   stroke-width: 1px;
 }
 
-/* A part's box, dashed, over a line in the canvas's color, which fills its gaps, so it still shows
-   on a part of a strong fill, such as a notification's, and is unchanged on the canvas. */
+/* A part's box: a faint hairline with softened corners, over a line in the canvas's color, so it
+   still shows on a part of a strong fill, such as a notification's, and is unchanged on the canvas.
+   It marks where the part is without reading as an outline of the component's own. */
 .site-anatomy-box,
 .site-anatomy-box-rim {
   fill: none;
@@ -77,12 +78,12 @@
 }
 
 .site-anatomy-box {
-  stroke: var(--env-color-fg-muted);
-  stroke-dasharray: 3 2;
+  stroke: color-mix(in oklch, var(--env-color-fg-muted) 60%, transparent);
 }
 
 .site-anatomy-box-rim {
   stroke: var(--catalogue-card-fill, var(--env-color-bg-recessed));
+  stroke-width: 3px;
 }
 
 /* A callout's tag and the legend's number: quiet, a light tint of the text color over the canvas

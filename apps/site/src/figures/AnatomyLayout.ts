@@ -39,7 +39,7 @@ const badgeSize = 24;
 const spacing = badgeSize + 4;
 /** How far below its top the root's callout points, at most: past a large corner's curve. */
 const rootInset = 32;
-/** How far a part's dashed box stands off the part, in px, so it never runs through its text. */
+/** How far a part's box stands off the part, in px, so it never runs through its text. */
 const fencePadding = 3;
 
 /** A part's box grown by the fence's padding on every side. */
@@ -50,7 +50,7 @@ const fenced = (box: Box): Box => ({
   bottom: box.bottom + fencePadding,
 });
 
-/** The corners of a part's dashed box, which is square. */
+/** The corners of a part's box, which is square. */
 const square: Corners = { topLeft: 0, topRight: 0, bottomLeft: 0, bottomRight: 0 };
 
 /**
@@ -106,7 +106,7 @@ function labelBoxes(subject: Element, origin: DOMRect): Box[] {
 
 /**
  * Where a part's outline gives way: across the labels its edge runs through, such as a field's
- * label floated into its outline, which the dashed line would otherwise strike through. A label
+ * label floated into its outline, which the outline would otherwise strike through. A label
  * wholly inside the box, or the part itself, leaves the outline whole.
  */
 function gapsIn(box: Box, labels: Box[]) {

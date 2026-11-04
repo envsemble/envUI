@@ -76,8 +76,8 @@ test('a component page shows plain sections, equal cells and the parts of its an
     'Accessibility',
   ]);
   await expect(page.locator('.site-figures .env-message')).toHaveCount(0);
-  // Figures that share a row are cells of one size: equal widths, and stages as tall as the
-  // tallest, once their examples have loaded.
+  // Figures that share a row are cells of one width, from the top of the row, each stage as tall
+  // as its own figure: a stage stretched to a taller neighbour's left a lone control floating.
   await expect(page.locator('[data-section="overview"] .site-loading')).toHaveCount(0);
   const cells = () =>
     page
@@ -90,12 +90,12 @@ test('a component page shows plain sections, equal cells and the parts of its an
         return {
           count: stages.length,
           widths: new Set(stages.map((box) => Math.round(box.width))).size,
-          heights: new Set(stages.map((box) => Math.round(box.height))).size,
+          tops: new Set(stages.map((box) => Math.round(box.top))).size,
+          heights: new Set(stages.map((box) => Math.round(box.height))).size > 1,
         };
       });
-  await expect.poll(cells).toEqual({ count: 3, widths: 1, heights: 1 });
-  // The first figure has no caption; side by side, its code lines up with its neighbours', and in
-  // one column it follows its stage as closely as a caption follows theirs, with no empty band.
+  await expect.poll(cells).toEqual({ count: 3, widths: 1, tops: 1, heights: true });
+  // Each figure's caption or code follows its stage closely, with no empty band.
   const codeGaps = () =>
     page
       .locator('[data-section="overview"] .site-figure-run')
@@ -103,15 +103,10 @@ test('a component page shows plain sections, equal cells and the parts of its an
       .evaluate((run) =>
         [...run.children].map((figure) => {
           const [stage, next] = [...figure.children].map((child) => child.getBoundingClientRect());
-          const code = figure.lastElementChild!.getBoundingClientRect();
-          return {
-            top: Math.round(code.top - run.getBoundingClientRect().top),
-            gap: Math.round(next.top - stage.bottom),
-          };
+          return { gap: Math.round(next.top - stage.bottom) };
         }),
       );
-  const sideBySide = await codeGaps();
-  expect(new Set(sideBySide.map(({ top }) => top)).size).toBe(1);
+  expect(new Set((await codeGaps()).map(({ gap }) => gap)).size).toBe(1);
   // Do and don't figures carry their verdict and one sentence, with the code below.
   const verdict = page.getByRole('figure', { name: /^Do One primary button per group/ });
   await expect(verdict.locator('.site-verdict-bar')).toHaveText('Do');

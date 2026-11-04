@@ -46,7 +46,6 @@ function Focusing() {
       <PressedKeys keys={tabs ? ['Tab'] : null} press={tabs} />
       <Renew round={round}>
         <TextField
-          variant="floating"
           label="Project name"
           name="project"
           autoComplete="off"

@@ -245,6 +245,7 @@ function AnatomyStage({
                       y={box.y}
                       width={box.width}
                       height={box.height}
+                      rx={3}
                     />
                   ))}
                 </g>
