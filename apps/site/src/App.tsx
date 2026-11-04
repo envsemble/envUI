@@ -100,16 +100,22 @@ const contentsHeading = (heading: HTMLElement) =>
   );
 
 /**
- * The index pages of the catalogue, a gallery of tiles under group headings: their contents list
- * the groups alone, as a tile's name heads a tile rather than a section of the page.
+ * The pages without contents beside them: the two homes, the catalogue's overview, a hero and a fan
+ * of cards rather than sections, and the Docs' home, an index of them; and the catalogue's index
+ * pages, galleries of tiles whose groups the drawer lists already, which take the width instead.
  */
-const indexKinds = new Set<RoutePage['kind']>(['foundations', 'components', 'patterns']);
+const pagesWithoutContents = new Set<RoutePage['kind']>([
+  'home',
+  'docs-home',
+  'foundations',
+  'components',
+  'patterns',
+]);
 
 /**
  * The page's contents beside it, in the catalogue and the Docs alike, on a window wide enough for
  * a column of them: its h2 and h3 headings, such as a component's rules under Rules or each
- * export's props under Props, or on an index page its groups, with the section the reader is in
- * marked. A link writes the section's fragment to the address, the same as a search result or a
+ * export's props under Props, with the section the reader is in marked. A link writes the section's fragment to the address, the same as a search result or a
  * copied address names it, and the route follows without scrolling again.
  */
 function PageContents({ page }: { page: RoutePage }) {
@@ -119,7 +125,6 @@ function PageContents({ page }: { page: RoutePage }) {
         key={page.path}
         className="site-contents-list"
         container=".site-page-column"
-        levels={indexKinds.has(page.kind) ? [2] : undefined}
         filter={contentsHeading}
         onClick={(event) => {
           if (event.defaultPrevented && (event.target as Element).closest('a[href^="#"]'))
@@ -151,9 +156,7 @@ function Shell() {
   const page = findPage(routePath);
   const area: Area = page?.area ?? (inDocs(routePath) ? 'docs' : 'catalogue');
   const title = documentTitle(page, area);
-  // Every page lists its contents beside it but the two homes: the catalogue's overview, a hero
-  // and a fan of cards rather than sections, and the Docs' home, an index of them.
-  const contents = page && page.kind !== 'home' && page.kind !== 'docs-home';
+  const contents = page && !pagesWithoutContents.has(page.kind);
   useEffect(() => {
     // ⌘K, or Ctrl+K, opens search from anywhere, text fields included, and closes it again; an
     // editor that handles the keys itself, such as for a link, keeps them.

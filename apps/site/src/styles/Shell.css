@@ -214,7 +214,7 @@ body {
   flex-direction: column;
   min-block-size: 100%;
 }
-/* The page, and its contents beside it, in the catalogue and the Docs alike but on their homes: a
+/* The page, and its contents beside it, in the catalogue and the Docs alike, but on their homes and the catalogue's index pages: a
    column of one width at the page's end, the same on every page, so the page's column ends at the
    same place wherever the reader goes; a long label wraps. It shows on a pane wide enough for it
    beside a readable page; the page's banner and sections take the rest, so a banner is as wide in

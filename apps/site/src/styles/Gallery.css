@@ -9,7 +9,11 @@
 
 .catalogue-gallery-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+  /* Four to a row on a wide page, and never fewer than two on a narrow one. */
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(min((100% - var(--env-space-5)) / 2, 13rem), 1fr)
+  );
   gap: var(--env-space-7) var(--env-space-5);
   margin: 0;
   padding: 0;

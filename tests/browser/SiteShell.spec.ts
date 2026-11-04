@@ -8,7 +8,6 @@ import {
   sectionHome,
   catalogueSections,
 } from '../../apps/site/src/navigation/SiteRoutes';
-import { componentGroups } from '../../apps/site/src/pages/PageModel';
 import { displayStorageKeys } from '../../apps/site/src/theme/DisplayStorage';
 import { goTo } from './helpers/SiteSpecHelpers';
 
@@ -374,11 +373,11 @@ test("a catalogue page has its contents beside it from 56rem, in the Docs' colum
     for (const key of Object.keys(catalogue) as (keyof typeof catalogue)[])
       expect(docs[key], key).toBeCloseTo(catalogue[key], 1);
   }).toPass();
-  // The index pages list their groups alone, not every tile; the overview has no contents.
+  // The index pages, whose groups the drawer lists, have no contents, and their galleries take the
+  // width; nor has the overview, which has no drawer either, and no pager: its cards lead on.
   await goTo(page, '/components');
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Components');
-  await expect.poll(topLevel).toEqual(componentGroups);
-  await expect(contents.locator('li li')).toHaveCount(0);
+  await expect(contents).toHaveCount(0);
   await goTo(page, '/');
   await expect(page.locator('.catalogue-overview-hero')).toBeVisible();
   await expect(contents).toHaveCount(0);
