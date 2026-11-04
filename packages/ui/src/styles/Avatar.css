@@ -29,14 +29,17 @@
     --env-avatar-figure-color: var(--env-avatar-content, var(--env-avatar-content-default));
     background: var(--env-avatar-fill);
     color: var(--env-avatar-content, var(--env-avatar-content-default));
-    /* Initials at 0.38 of the avatar, at least 0.6875 rem so they stay legible; below 1.5 rem, too
-       small for them, the avatar is a disc of its color alone. */
+    /* Initials at 0.38 of the avatar, at least the caption size so they stay legible; smaller than
+       sm, too small for them, the avatar is a disc of its color alone. */
     font: var(--env-font-weight-semibold)
       min(
-        max(0.6875rem, calc(var(--env-avatar-size) * 0.38)),
-        max(0rem, calc((var(--env-avatar-size) - 1.4375rem) * 1000))
-      )
-      / 1 var(--env-font-family);
+        max(var(--env-font-size-caption), calc(var(--env-avatar-size) * 0.38)),
+        max(
+          calc(0 * var(--env-avatar-size)),
+          calc((var(--env-avatar-size) - 0.96 * var(--env-picture-size-sm)) * 1000)
+        )
+      ) /
+      1 var(--env-font-family);
     letter-spacing: 0.01em;
     user-select: none;
     /* A faint, small drop shadow under an avatar, and under an avatar group's count

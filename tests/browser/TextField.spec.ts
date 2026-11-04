@@ -105,7 +105,21 @@ test('a suffix follows the value and keeps the hint and error in the description
   const quota = scope.getByRole('textbox', { name: 'Quota' });
   await expect(quota).toBeDisabled();
   await expect(affix(quota, 'suffix')).toBeVisible();
-  await expect(quota.locator('xpath=..')).toHaveCSS('opacity', '0.48');
+  // A disabled field doesn't fade as a whole: its value and suffix take the disabled text color.
+  await expect(quota.locator('xpath=..')).toHaveCSS('opacity', '1');
+  const colors = await quota.locator('xpath=..').evaluate((control) => {
+    const probe = document.createElement('span');
+    probe.style.color = 'var(--env-color-fg-disabled)';
+    control.append(probe);
+    const result = [
+      getComputedStyle(control.querySelector('.env-text-field-input')!).color,
+      getComputedStyle(control.querySelector('.env-text-field-suffix')!).color,
+      getComputedStyle(probe).color,
+    ];
+    probe.remove();
+    return result;
+  });
+  expect(new Set(colors).size).toBe(1);
   // Pressing the suffix of a disabled field leaves focus where it is.
   await affix(quota, 'suffix').click();
   await expect(quota).not.toBeFocused();

@@ -4,7 +4,7 @@
     align-items: stretch;
     /* A hairline between the buttons and small inner corners, so the row reads as one control with
        pill ends rather than separate buttons side by side. */
-    gap: 1px;
+    gap: var(--env-control-border-width);
     inline-size: fit-content;
     max-inline-size: 100%;
     min-inline-size: 0;
@@ -62,11 +62,11 @@
   /* Outline buttons share one edge where they meet, rather than showing two edges a hairline apart. */
   .env-button-group[data-orientation='horizontal']
     > .env-button[data-variant='outline']:not(:nth-child(1 of .env-button:not([hidden]))) {
-    margin-inline-start: -2px;
+    margin-inline-start: calc(-2 * var(--env-control-border-width));
   }
   .env-button-group[data-orientation='vertical']
     > .env-button[data-variant='outline']:not(:nth-child(1 of .env-button:not([hidden]))) {
-    margin-block-start: -2px;
+    margin-block-start: calc(-2 * var(--env-control-border-width));
   }
 
   /* fullWidth fills the container: in a row, labelled buttons share the room the icon-only ones
