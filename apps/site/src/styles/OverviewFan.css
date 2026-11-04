@@ -127,3 +127,15 @@
   line-height: 1.1;
   white-space: nowrap;
 }
+
+/* An agent run's step: its state's icon in the state's color, done in success, under way in the
+   primary blue. */
+.catalogue-fan-step {
+  color: var(--env-color-fg-muted);
+}
+.catalogue-fan-step[data-state='done'] {
+  color: var(--env-color-fg-success);
+}
+.catalogue-fan-step[data-state='running'] {
+  color: var(--env-color-fg-primary);
+}
