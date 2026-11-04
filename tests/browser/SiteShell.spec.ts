@@ -345,7 +345,7 @@ test("a catalogue page has its contents beside it from 56rem, in the Docs' colum
   // The banner, the page's column and the contents beside it are laid out as in the Docs: the
   // banner is its column less the gutters, level with the top of the contents, and the contents
   // take the rest of the pane, so a banner is as wide as the Docs' wherever the pane and the
-  // contents, which fit their longest label, are as wide.
+  // contents, which are one width on every page, are as wide.
   const layout = () =>
     page.evaluate(() => {
       const box = (selector: string) => document.querySelector(selector)!.getBoundingClientRect();

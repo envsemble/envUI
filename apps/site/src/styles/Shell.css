@@ -189,14 +189,14 @@ body {
   min-block-size: 100%;
 }
 /* The page, and its contents beside it, in the catalogue and the Docs alike but on their homes: a
-   column at the page's end, as wide as its longest label needs, so each section stays on one line,
-   from 13rem up to 22rem, on a pane wide enough for it beside a readable page; the page's banner
-   and sections take the rest, so a banner is as wide in the catalogue as in the Docs. The contents
-   stay in view below the corner's controls as the page scrolls, and scroll on their own where they
-   are taller than the window. A narrower pane leaves them out, as the page's own headings say as
-   much. The pager stays at the foot of a short page. */
+   column of one width at the page's end, the same on every page, so the page's column ends at the
+   same place wherever the reader goes; a long label wraps. It shows on a pane wide enough for it
+   beside a readable page; the page's banner and sections take the rest, so a banner is as wide in
+   the catalogue as in the Docs. The contents stay in view below the corner's controls as the page
+   scrolls, and scroll on their own where they are taller than the window. A narrower pane leaves
+   them out, as the page's own headings say as much. The pager stays at the foot of a short page. */
 .site-page-layout {
-  --site-contents-width: 22rem;
+  --site-contents-width: 16rem;
   /* Below the corner's controls: their row's padding and the pill's height, with room. */
   --site-contents-top: 4.5rem;
   container: site-page-layout / inline-size;
@@ -221,15 +221,16 @@ body {
 @container site-page-layout (width >= 56rem) {
   .site-page-grid[data-contents] {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    inline-size: min(100%, var(--site-content-width) + var(--site-contents-width));
+    grid-template-columns: minmax(0, 1fr) calc(var(--site-contents-width) + var(--site-gutter));
+    inline-size: min(
+      100%,
+      var(--site-content-width) + var(--site-contents-width) + var(--site-gutter)
+    );
     margin-inline: auto;
   }
   .site-page-grid[data-contents] > .site-contents {
     display: block;
-    inline-size: max-content;
-    min-inline-size: 13rem;
-    max-inline-size: var(--site-contents-width);
+    min-inline-size: 0;
     padding-inline-end: var(--site-gutter);
   }
 }
