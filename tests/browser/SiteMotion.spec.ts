@@ -201,9 +201,10 @@ test('a click on an animated figure hands its example to the reader, the click g
   await stage.locator('.env-select-trigger').click({ force: true });
   await expect(stage).toHaveAttribute('data-live', '');
   await expect(stage.locator('.catalogue-motion-subject')).not.toHaveAttribute('inert');
-  // It opens as in an application, not in the stage; the anatomy figure shows another, open.
+  // It opens as in an application, not in the stage; the overview and the anatomy figure show
+  // others, open.
   const option = page
-    .locator('.env-select-popup:not(.site-anatomy *)')
+    .locator('.env-select-popup:not(.site-anatomy *, [data-section="overview"] *)')
     .getByRole('option', { name: 'Private' });
   await expect(option).toBeVisible();
   await option.click();

@@ -267,6 +267,23 @@ function keepScrollingInOpenExamples() {
 keepScrollingInOpenExamples();
 
 /**
+ * Keeps a live example's focus to itself until the reader reaches for it. An overlay pressed open
+ * as the page loads, such as a select's list, moves focus to its chosen item as an opened list
+ * does, which would take focus from the page, and scroll it, wherever the reader was; until a
+ * pointer or the keyboard reaches the example (`data-touched`), a call to focus an element in it
+ * does nothing.
+ */
+function keepFocusOutOfUntouchedExamples() {
+  if (typeof HTMLElement === 'undefined') return;
+  const native = HTMLElement.prototype.focus;
+  HTMLElement.prototype.focus = function (this: HTMLElement, options?: FocusOptions) {
+    if (this.closest('.catalogue-open-example[data-live]:not([data-touched])')) return;
+    native.call(this, options);
+  };
+}
+keepFocusOutOfUntouchedExamples();
+
+/**
  * What opens an example's overlay: its trigger, which names the popup it opens, or else, as for a
  * palette a plain button opens, its first button.
  */
@@ -355,6 +372,18 @@ export function OpenExample({
   const [roomElement, setRoomElement] = useState<HTMLDivElement | null>(null);
   const [layer, setLayer] = useState<HTMLDivElement | null>(null);
   useOpenOnce(roomElement, layer, live);
+  // The reader reaching for it, by a pointer or the keyboard, lets it take focus from then on.
+  useLayoutEffect(() => {
+    if (!live || !roomElement) return;
+    const touch = (event: Event) => {
+      if (event.isTrusted) roomElement.dataset.touched = '';
+    };
+    const kinds = ['pointerdown', 'keydown', 'focusin'] as const;
+    for (const kind of kinds) roomElement.addEventListener(kind, touch, true);
+    return () => {
+      for (const kind of kinds) roomElement.removeEventListener(kind, touch, true);
+    };
+  }, [live, roomElement]);
   useLayoutEffect(() => {
     const roomElement = room.current;
     if (!roomElement || !layer) return;
