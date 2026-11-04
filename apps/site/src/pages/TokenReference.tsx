@@ -5,21 +5,11 @@ import { PlainCode } from '../template/SimpleTable';
 import tokenList from '../../../../packages/ui/src/generated/tokens.json';
 // The ids search leads to, as the search index writes them.
 import { tokenSection } from '../shared/SearchAnchors';
-import { groupOf, themes, tokenGroups } from './TokenGroups';
+import { groupOf, themes, tokenGroups, tokenValueText } from './TokenGroups';
 import { TokenIntro, TokenName, TokenTable } from './TokenTables';
 
 type Token = (typeof tokenList.tokens)[number];
 type TokenValue = Token['values']['light'];
-
-const valueText = (value: TokenValue | undefined) => {
-  const resolved = value?.resolved;
-  if (resolved === undefined) return '—';
-  return typeof resolved === 'string'
-    ? resolved
-    : Object.entries(resolved)
-        .map(([property, part]) => `${property}: ${part}`)
-        .join('; ');
-};
 
 /** One value in plain monospace, with a small swatch of the color for a color token. */
 function Value({ token, value }: { token: Token; value?: TokenValue }) {
@@ -27,7 +17,7 @@ function Value({ token, value }: { token: Token; value?: TokenValue }) {
   return (
     <span className="docs-token-value">
       {color && <ColorSwatch color={value.resolved as string} />}
-      <PlainCode>{valueText(value)}</PlainCode>
+      <PlainCode>{tokenValueText(value?.resolved)}</PlainCode>
     </span>
   );
 }

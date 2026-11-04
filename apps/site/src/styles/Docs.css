@@ -55,6 +55,10 @@
 .docs-simple-table td {
   vertical-align: top;
 }
+/* Each column's name starts where its values do, rather than centred over them. */
+.docs-simple-table th {
+  text-align: start;
+}
 .docs-plain-code {
   font-family: var(--site-code-font-family);
   font-size: 0.9em;
@@ -76,6 +80,10 @@
   display: inline-flex;
   align-items: baseline;
   gap: var(--env-space-2);
+}
+/* A color, a short hex value, keeps to one line beside its swatch. */
+.docs-token-value:has(> .env-color-swatch) {
+  white-space: nowrap;
 }
 .docs-token-value .env-color-swatch {
   flex: none;
