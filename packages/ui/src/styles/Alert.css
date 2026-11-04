@@ -104,7 +104,21 @@
     color: var(--env-alert-text-color);
     font: var(--env-type-body-sm);
   }
+  /* A secondary button among the actions takes the tone's deeper tint, through the neutral fills
+     it reads, on which it reads as part of the alert and as available, where the neutral fill would
+     vanish on the tint; hover and press darken it a step with the text color. */
   .env-alert-action {
+    --env-color-bg-neutral-muted: var(--env-alert-pressed);
+    --env-color-bg-neutral-muted-hover: color-mix(
+      in srgb,
+      var(--env-alert-pressed),
+      var(--env-color-fg-default) 8%
+    );
+    --env-color-bg-neutral-muted-pressed: color-mix(
+      in srgb,
+      var(--env-alert-pressed),
+      var(--env-color-fg-default) 14%
+    );
     margin-block-start: var(--env-space-2);
   }
   /* The dismiss button is a small IconButton circle with a cross in the alert's tone, centered on the first line.
