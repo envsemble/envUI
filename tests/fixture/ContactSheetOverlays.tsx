@@ -24,12 +24,8 @@ const dialogStage = { height: '20rem', width: '33rem' } as const;
 const sheetStage = { height: '18rem', width: '48rem' } as const;
 
 function Dialogs() {
-  const actions = (
-    <>
-      <DialogClose variant="outline">Cancel</DialogClose>
-      <Button>Rename</Button>
-    </>
-  );
+  // A decision: the built-in close button is the Cancel, and the primary action comes last.
+  const actions = <Button>Rename</Button>;
   return (
     <Section name="Dialog and DialogClose">
       <Strip>
@@ -39,6 +35,7 @@ function Dialogs() {
               defaultOpen
               title="Rename project"
               description="Everyone sees the new name."
+              closeLabel="Cancel"
               actions={actions}
             >
               <TextField label="Name" defaultValue="Northwind launch" />
@@ -47,21 +44,40 @@ function Dialogs() {
         </Cell>
         <Cell caption="Top, lg">
           <Stage height="22rem" width="48rem">
-            <Dialog defaultOpen placement="top" width="lg" title="Invite people" actions={actions}>
+            <Dialog
+              defaultOpen
+              placement="top"
+              width="lg"
+              title="Invite people"
+              closeLabel="Cancel"
+              actions={<Button>Send invitations</Button>}
+            >
               <Text>Invitations expire after seven days.</Text>
             </Dialog>
           </Stage>
         </Cell>
         <Cell caption="Pending">
           <Stage {...dialogStage}>
-            <Dialog defaultOpen pending title="Rename project" actions={actions}>
+            <Dialog
+              defaultOpen
+              pending
+              title="Rename project"
+              closeLabel="Cancel"
+              actions={actions}
+            >
               <TextField label="Name" defaultValue="Northwind launch" />
             </Dialog>
           </Stage>
         </Cell>
         <Cell caption="Skeleton">
           <Stage {...dialogStage}>
-            <Dialog defaultOpen skeleton title="Rename project" actions={actions}>
+            <Dialog
+              defaultOpen
+              skeleton
+              title="Rename project"
+              closeLabel="Cancel"
+              actions={actions}
+            >
               <TextField label="Name" defaultValue="Northwind launch" />
             </Dialog>
           </Stage>

@@ -244,14 +244,19 @@ test('dialogs take the popups’ fill and shadow with no edge, solid over the ba
   await page.goto(`${fixtureUrl}/?fixture=palette`);
   await page.getByRole('button', { name: 'Quick open light' }).focus();
   await page.keyboard.press('Enter');
-  expect(await surface(page.getByRole('dialog', { name: 'Go to document' }))).toEqual(popover);
+  // The palette is frosted as a popover is, in a surface's larger corner, as a dialog's.
+  const palette = await surface(page.getByRole('dialog', { name: 'Go to document' }));
+  expect({ ...palette, radius: popover.radius }).toEqual(popover);
+  expect(parseFloat(popover.radius)).toBeLessThan(parseFloat(palette.radius));
 
-  // A dialog: the popup color, solid, with the popups' shadow and corners and no visible edge.
+  // A dialog: the popup color, solid, with the popups' shadow, a surface's corners and no visible
+  // edge.
   await page.goto(`${fixtureUrl}/?fixture=dialog-variants`);
   await page.getByRole('button', { name: 'Open wide dialog' }).click();
   const dialog = await surface(page.getByRole('dialog', { name: 'Wide details' }));
   expect(dialog).toEqual({
     ...popover,
+    radius: palette.radius,
     background: await token(page, '--env-color-bg-popup'),
     filter: 'none',
   });
@@ -363,11 +368,16 @@ test('a pending Dialog cannot be dismissed until the work finishes', async ({ pa
   await page.getByRole('button', { name: 'Open pending dialog' }).click();
   const dialog = page.getByRole('dialog', { name: 'Save project' });
   await dialog.getByRole('button', { name: 'Toggle pending' }).click();
+  // The built-in close button and a DialogClose turn off, and the last action shows the work.
   await expect(dialog.getByRole('button', { name: 'Cancel' })).toBeDisabled();
+  await expect(dialog.getByRole('button', { name: 'Discard' })).toBeDisabled();
+  await expect(dialog.getByRole('button', { name: 'Save' })).toHaveAttribute('aria-busy', 'true');
   await page.keyboard.press('Escape');
   await page.mouse.click(5, 5);
   await expect(dialog).toBeVisible();
   await dialog.getByRole('button', { name: 'Toggle pending' }).click();
+  await expect(dialog.getByRole('button', { name: 'Discard' })).toBeEnabled();
+  await expect(dialog.getByRole('button', { name: 'Save' })).not.toHaveAttribute('aria-busy');
   await dialog.getByRole('button', { name: 'Cancel' }).click();
   await expect(dialog).toHaveCount(0);
 });

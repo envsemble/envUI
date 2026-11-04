@@ -6,6 +6,7 @@ import {
   Button,
   ConfirmButton,
   Dialog,
+  DialogClose,
   Kbd,
   List,
   TextField,
@@ -85,7 +86,15 @@ export function AdoptionFixture() {
             title="Save project"
             closeLabel="Cancel"
             pending={pending}
-            actions={<Button onClick={() => setPending((value) => !value)}>Toggle pending</Button>}
+            actions={
+              <>
+                <Button variant="outline" onClick={() => setPending((value) => !value)}>
+                  Toggle pending
+                </Button>
+                <DialogClose>Discard</DialogClose>
+                <Button>Save</Button>
+              </>
+            }
           >
             <SearchField label="Search inside dialog" defaultValue="draft" />
           </Dialog>

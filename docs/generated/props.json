@@ -2604,7 +2604,7 @@
           "name": "actions",
           "type": "ReactNode",
           "required": false,
-          "description": "The dialog's own actions, after the built-in close button, with the primary action last. They close the dialog only where they are DialogClose or set open to false."
+          "description": "The dialog's own actions, after the built-in close button, with the primary action last. They close the dialog only where they are DialogClose or set open to false. While the dialog is pending, the last one shows it, where it is a Button that sets no pending of its own."
         },
         {
           "name": "closeLabel",
@@ -2658,7 +2658,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Work started from the dialog is in progress. Escape, outside presses and the close buttons cannot dismiss it until pending returns to false. The built-in close button is disabled and the dialog reports busy; a DialogClose stays enabled and runs its onClick, so disable it too. Set pending on the action that started the work as well."
+          "description": "Work started from the dialog is in progress. Escape, outside presses and the close buttons cannot dismiss it until pending returns to false: the built-in close button and every DialogClose inside are disabled, the primary action, the last of actions, shows it pending, and the dialog reports busy."
         },
         {
           "name": "skeleton",
@@ -2678,7 +2678,7 @@
     "DialogClose": {
       "kind": "component",
       "source": "packages/ui/src/feedback/Dialog.tsx",
-      "description": "A button inside a Dialog or a Sheet that closes it after its own onClick, for an action other than the built-in close button, such as Don't save or Done. It takes Button's props and is secondary by default.",
+      "description": "A button inside a Dialog or a Sheet that closes it after its own onClick, for an action other than the built-in close button, such as Don't save or Done. It takes Button's props and is secondary by default, and is disabled while the dialog or sheet is pending.",
       "props": [
         {
           "name": "variant",
@@ -7194,7 +7194,7 @@
           "name": "actions",
           "type": "ReactNode",
           "required": false,
-          "description": "Actions at the end of the content, such as Apply, with the primary action last."
+          "description": "Actions at the end of the content, such as Apply, with the primary action last. While the sheet is pending, the last one shows it, where it is a Button that sets no pending of its own."
         },
         {
           "name": "closeButton",
@@ -7289,7 +7289,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Work started from the sheet is in progress: Escape, outside presses, swipes and the close button cannot dismiss it until pending returns to false, and the sheet reports busy."
+          "description": "Work started from the sheet is in progress: Escape, outside presses, swipes and the close button cannot dismiss it until pending returns to false. The close button and every DialogClose inside are disabled, the primary action, the last of actions, shows it pending, and the sheet reports busy."
         },
         {
           "name": "skeleton",

@@ -105,7 +105,7 @@ A dialog's actions end with the primary one, after a built-in close button.
 
 ### Pending work
 
-While its work runs, nothing closes the dialog and its close button is disabled.
+While its work runs, nothing closes the dialog: its close buttons are disabled, and its primary action shows the work running.
 
 - Submit a form from its primary action, so <kbd>Enter</kbd> in a field submits it too.
 
@@ -180,7 +180,7 @@ A Dialog opens from its `trigger`, such as a Button, and holds its `title`, whic
 
 #### Pending work
 
-`pending` keeps <kbd>Esc</kbd>, outside presses and the close buttons from dismissing the dialog until it returns to `false`, and disables the built-in close button. Put a `<form>` in `children` and make the primary action its submit button, through the `form` attribute, so <kbd>Enter</kbd> in a field submits it too.
+`pending` keeps <kbd>Esc</kbd>, outside presses and the close buttons from dismissing the dialog until it returns to `false`. It disables the built-in close button and every DialogClose inside, and the last action, the primary one, shows it pending where it is a Button that sets no `pending` of its own. Put a `<form>` in `children` and make the primary action its submit button, through the `form` attribute, so <kbd>Enter</kbd> in a field submits it too.
 
 ```tsx
 <Dialog
@@ -188,7 +188,7 @@ A Dialog opens from its `trigger`, such as a Button, and holds its `title`, whic
   closeLabel="Cancel"
   pending={saving}
   actions={
-    <Button type="submit" form={formId} pending={saving}>
+    <Button type="submit" form={formId}>
       Save name
     </Button>
   }
@@ -244,6 +244,7 @@ The surface takes the popups' color and their shadow, `--env-popup-shadow`, as [
 
 ## Changelog
 
+- **1.0.0-prerelease.6**: While a dialog is `pending`, every DialogClose inside is disabled as the built-in close button is, and its last action, where it is a Button that sets no `pending` of its own, shows it pending, so `pending` need not be set on each.
 - **1.0.0-prerelease.6**: In dark, the backdrop is black at 70 %, rather than 50 %, so it sets the dark page back as clearly as the light backdrop does.
 - **1.0.0-prerelease.5**: Dialogs take the popups' color and soft shadow, with no outline edge, and stay solid over the scrim; at high contrast and with reduced transparency the shadow goes and the edge returns.
 - **1.0.0**: `width` (`md` or `lg`) for `size`; the side panel, `placement="right"`, is [Sheet](../components/sheet.md); `onOpenChange` reports the reason; `initialFocus` and `finalFocus` take functions too; the surface's class is `env-dialog`. The page is `dialog`, after the component.

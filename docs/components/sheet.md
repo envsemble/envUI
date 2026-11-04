@@ -228,7 +228,7 @@ With `resizable`, people resize a side sheet by its inner edge, between `minWidt
 
 #### Pending work
 
-While `pending`, <kbd>Esc</kbd>, presses outside, swipes and the close button can't dismiss the sheet, so work started from it finishes first.
+While `pending`, <kbd>Esc</kbd>, presses outside, swipes and the close button can't dismiss the sheet, so work started from it finishes first. The close button and every DialogClose inside are disabled, and the last action, where it is a Button that sets no `pending` of its own, shows it pending.
 
 ### Composition
 
@@ -240,6 +240,7 @@ A Sheet shares Dialog's parts: its heading, `env-dialog-heading`, with the title
 
 ## Changelog
 
+- **1.0.0-prerelease.6**: While a sheet is `pending`, every DialogClose inside is disabled as its close button is, and its last action, where it is a Button that sets no `pending` of its own, shows it pending.
 - **1.0.0-prerelease.5**: A Sheet has no edge line: its fill and its scrim set it apart, and its edge returns at high contrast. A side sheet keeps its actions at its foot, however little its body holds.
 - **1.0.0-prerelease.5**: A Sheet is on the navigation's background, `--env-color-bg-default`, rather than the popup's, in every theme, so navigation that opens in it in a narrow window keeps its color.
 - **1.0.0-prerelease.2**: With `resizable`, people resize a side sheet by its inner edge, between `minWidth` and `maxWidth`, from `defaultWidth`; `width` takes a number of rem, which `onWidthChange` keeps. The handle is `env-sheet-resize-handle`, the same grip as Panes.Divider's. Only a finger swipes a sheet closed; a mouse or a pen no longer moves it.
