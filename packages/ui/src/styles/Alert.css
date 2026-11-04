@@ -155,7 +155,10 @@
     );
     --env-color-border-default-pressed: var(--env-alert-title-color);
     --env-color-bg-neutral-subtle-hover: var(--env-alert-custom-hover, var(--env-alert-hover));
-    --env-color-bg-neutral-subtle-pressed: var(--env-alert-custom-pressed, var(--env-alert-pressed));
+    --env-color-bg-neutral-subtle-pressed: var(
+      --env-alert-custom-pressed,
+      var(--env-alert-pressed)
+    );
     margin-block-start: var(--env-space-2);
   }
   .env-alert[data-tone='warning'] .env-alert-action {

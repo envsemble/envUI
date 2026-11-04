@@ -590,7 +590,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Work started by this button is running: a spinner replaces the content without changing the button's size, and the button reports busy and ignores activation until pending ends."
+          "description": "Work started by this button is running: the label stays, subdued, with a small spinner before it, in a start icon's place where there is one, and the button reports busy and ignores activation until pending ends."
         },
         {
           "name": "disabled",
@@ -1938,7 +1938,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Work started by this button is running: a spinner replaces the content without changing the button's size, and the button reports busy and ignores activation until pending ends."
+          "description": "Work started by this button is running: the label stays, subdued, with a small spinner before it, in a start icon's place where there is one, and the button reports busy and ignores activation until pending ends."
         },
         {
           "name": "aria-label",
@@ -2737,7 +2737,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Work started by this button is running: a spinner replaces the content without changing the button's size, and the button reports busy and ignores activation until pending ends."
+          "description": "Work started by this button is running: the label stays, subdued, with a small spinner before it, in a start icon's place where there is one, and the button reports busy and ignores activation until pending ends."
         }
       ],
       "native": [
@@ -6042,7 +6042,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Work started by this button is running: a spinner replaces the content without changing the button's size, and the button reports busy and ignores activation until pending ends."
+          "description": "Work started by this button is running: the label stays, subdued, with a small spinner before it, in a start icon's place where there is one, and the button reports busy and ignores activation until pending ends."
         }
       ],
       "native": [

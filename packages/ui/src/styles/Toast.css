@@ -135,9 +135,10 @@
     background: var(--env-button-custom-fill, var(--env-toast-dismiss-pressed));
     border-color: var(--env-button-outline, var(--env-toast-text));
   }
+  /* Its focus ring is in the toast's text color, as the dismiss button's is: the blue one would sink
+     into the information toast. */
   .env-toast-action:focus-visible {
-    outline: 0.125rem solid currentColor;
-    outline-offset: 0.125rem;
+    outline-color: currentColor;
   }
   /* The dismiss button is an IconButton with a cross on the notice's strong fill: the fill's text color, with the
      fill's own hover and press steps, or state layers on a container the application set. Toast.css comes after Button.css, so at equal specificity
