@@ -266,7 +266,7 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 
 - **1.0.0-prerelease.5**: `onRequestLink` is `pickLink`: it supplies the link rather than reporting an event.
 - **1.0.0-prerelease.5**: `ref` reaches the root element, and `editorRef` gives the Tiptap editor.
-- **1.0.0-prerelease.5**: Suggestions are frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge, and is solid with its edge at high contrast and with reduced transparency, with the rows of Select's list.
+- **1.0.0-prerelease.5**: Suggestions are frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge but a faint hairline in dark, and is solid with its edge at high contrast and with reduced transparency, with the rows of Select's list.
 - **1.0.0-prerelease.3**: A task's row in RichText is as tall as in the editor. The suggestions keep the active option in view as the arrow keys move past the list's edge, and close as focus leaves the editor rather than on any press on the page.
 - **1.0.0-prerelease.2**: The `underline` variant is gone, for the default outline.
 - **1.0.0**: A reference source's `char` is `trigger` and its `items` lookup is `search`, and a reference's `char` is `trigger`; The Markdown saved before keeps working.

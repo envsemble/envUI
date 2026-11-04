@@ -206,12 +206,12 @@ Every popup, a popover, a menu, a Select's or a Combobox's list, a picker, a hov
 - `--env-popup-blur`, 1.375 rem, the blur of what shows through, with a little more saturation.
 - `--env-popup-shadow`, a soft shadow in the text's color in light and a deeper shade of the page in dark: with the avatars', envUI's only shadow.
 
-At high contrast, with reduced transparency and under forced colors popups are solid, with their elevation edge and no blur or shadow; at high contrast the edge is a modal's, `--env-elevation-3-border`, the strongest. Tooltips are frosted too, at `--env-tooltip-opacity` with a smaller `--env-tooltip-shadow`, as [Tooltip](tooltip.md#customize) describes.
+In dark a faint hairline of the text color keeps a frosted popup's edge, where its shadow barely shows. At high contrast, with reduced transparency and under forced colors popups are solid, with their elevation edge and no blur or shadow; at high contrast the edge is a modal's, `--env-elevation-3-border`, the strongest. Tooltips are frosted too, at `--env-tooltip-opacity` with a smaller `--env-tooltip-shadow`, as [Tooltip](tooltip.md#customize) describes.
 
 `className`, `style`, `ref` and data attributes reach the surface, `env-popover`, which has `data-width="lg"` when large and renders on PopupSurface in the trigger's text direction and theme. Its title is `env-popover-title`.
 
 ## Changelog
 
-- **1.0.0-prerelease.5**: Popovers are frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge, and is solid with its edge at high contrast and with reduced transparency: `--env-popup-opacity`, `--env-popup-blur` and `--env-popup-shadow`. Its inset is a panel's, as wide as a popup row's corner: 14 px, 11.2 px at the compact scale.
+- **1.0.0-prerelease.5**: Popovers are frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge but a faint hairline in dark, and is solid with its edge at high contrast and with reduced transparency: `--env-popup-opacity`, `--env-popup-blur` and `--env-popup-shadow`. Its inset is a panel's, as wide as a popup row's corner: 14 px, 11.2 px at the compact scale.
 - **1.0.0**: `width` is `md` or `lg`, the widest the popover grows as it sizes to its content; `side` takes `inline-start` and `inline-end`; `className`, `style`, `ref` and data attributes reach the surface, which renders on PopupSurface in the trigger's text direction.
 - **1.0.0**: Popovers take the level-2 elevation edge, with no shadow.

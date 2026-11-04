@@ -188,5 +188,5 @@ The parts are the group, `env-radio-group`, with `data-orientation` and its lege
 ## Changelog
 
 - **1.0.0-prerelease.5**: RadioGroup takes `description` and `error`, as a field does, and a controlled `value` of `null` chooses none.
-- **1.0.0-prerelease.5**: The chosen row of a group in rows takes the selection's fill and text, as a selected list row and Select's chosen option do, rather than the hover fill.
+- **1.0.0-prerelease.5**: The chosen row of a group in rows takes the selection's fill and text, as a selected list row does, rather than the hover fill.
 - **1.0.0**: RadioGroup's `variant` is `orientation`: `inline` is `horizontal` and `rows` is `vertical`; Radio's `detail` is `description`. `className` and `style` style a Radio's root rather than the input, which keeps `ref` and the other native props. A focused radio shows the focus ring. The classes follow the component: `env-radio-options` is `env-radio-group` with `[data-orientation]`, `env-radio-option` and the inline label are `env-radio`, `env-radio-control` is `env-radio-input` and `env-radio-detail` `env-radio-description`.

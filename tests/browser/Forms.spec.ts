@@ -443,7 +443,7 @@ test('a small Select has a small trigger, and its popup has the menus anatomy wi
   await expect(starter).toBeFocused();
   for (const option of [starter, team])
     expect((await option.boundingBox())!.height).toBeCloseTo(40, 0);
-  // The selection's fill and a check mark show the selected option, and labels stay aligned.
+  // A check mark shows the selected option, and labels stay aligned.
   await expect(starter.locator('.env-select-item-indicator svg')).toBeVisible();
   await expect(team.locator('.env-select-item-indicator svg')).toHaveCount(0);
   const textStart = (option: typeof starter) =>
@@ -458,18 +458,17 @@ test('a small Select has a small trigger, and its popup has the menus anatomy wi
   expect(ends).toBe(true);
   await page.keyboard.press('ArrowDown');
   await expect(team).toBeFocused();
-  // The highlight fades out as rows' highlights do, leaving the selection's fill.
-  const [selectedFill] = await starter.evaluate((element) => {
-    const probe = document.createElement('div');
-    probe.style.backgroundColor = 'var(--env-color-bg-selected)';
-    element.append(probe);
-    const color = getComputedStyle(probe).backgroundColor;
-    probe.remove();
-    return [color];
-  });
+  // The highlight moves to the option the keyboard is on, a fill with no ring of its own, and
+  // fades from the chosen one, which keeps only its check mark.
   await expect
     .poll(() => starter.evaluate((element) => getComputedStyle(element).backgroundColor))
-    .toBe(selectedFill);
+    .toBe('rgba(0, 0, 0, 0)');
+  expect(await team.evaluate((element) => getComputedStyle(element).outlineColor)).toBe(
+    'rgba(0, 0, 0, 0)',
+  );
+  await expect
+    .poll(() => team.evaluate((element) => getComputedStyle(element).backgroundColor))
+    .not.toBe('rgba(0, 0, 0, 0)');
   await page.keyboard.press('Enter');
   await expect(list).toHaveCount(0);
   await expect(compact).toHaveText('Team');

@@ -1,8 +1,9 @@
 @layer env.components {
   /* Time list: a time of day on wheels side by side, hours, minutes and on a 12-hour clock the day's
      halves, in the popups of DatePicker and TimePicker. Each wheel shows an odd number of rows and
-     snaps a row to its middle. The middle rows, side by side, read as one line: each has the solid
-     fill of a chosen calendar day and the regular body type, while the rows above and below are
+     snaps a row to its middle. The middle rows, side by side, read as one line: each has the
+     selection's tint, quieter than the chosen calendar day's solid fill beside it, and the body type
+     in medium, while the rows above and below are
      smaller, dimmer and fade towards the edges. Coarse pointers get touch-tall rows. */
   .env-time-list {
     --env-time-list-row: var(--env-control-height-md);
@@ -56,10 +57,10 @@
     transition: color var(--env-motion-duration-fast) var(--env-motion-ease);
   }
   .env-time-list-row[data-centered] {
-    background: var(--env-color-bg-primary-emphasis);
-    color: var(--env-color-fg-on-emphasis);
+    background: var(--env-color-bg-selected);
+    color: var(--env-color-fg-on-selected);
     font: var(--env-type-body);
-    font-weight: var(--env-font-weight-semibold);
+    font-weight: var(--env-font-weight-medium);
   }
   /* The focus ring goes round the wheel's value, in the middle, where the edges' fade doesn't reach. */
   .env-time-list-column:focus-visible > .env-time-list-row[data-centered] {
