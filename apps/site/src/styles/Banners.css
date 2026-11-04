@@ -31,6 +31,15 @@
   font-size: clamp(2.5rem, calc(1.5rem + 3cqi), 3.25rem);
 }
 
+/* In a narrow banner, the trail is the page's parent alone, a link back up: the title under it
+   names the page, and the levels above it would cut the trail short mid-word. */
+@container site-page-header (width < 36rem) {
+  .site-page-banner-breadcrumbs .env-breadcrumbs-item:not(:nth-last-child(2)),
+  .site-page-banner-breadcrumbs .env-breadcrumbs-separator {
+    display: none;
+  }
+}
+
 /* A trail given as a line rather than breadcrumbs, such as a missing page's, is set in monospace. */
 .site-banner .catalogue-page-banner-breadcrumb {
   font-family: var(--site-code-font-family);
