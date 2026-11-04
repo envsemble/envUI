@@ -49,19 +49,26 @@
        from its own start rather than from a positioned ancestor's, and starts with it in view. */
     position: relative;
   }
-  /* A horizontal rail lines its first label up with the content below it: it reaches back before
-     its container's edge by the first tab's inline padding, a button's or a text button's slimmer
-     one, so only that tab's hover fill and focus ring lie in the gutter. Each tab keeps its own box,
-     so no two overlap. */
+  /* A horizontal rail lines its first label up with the content below it. It reaches back before
+     its container's edge by a tab's inline padding, a button's or a text button's slimmer one, and
+     holds that much as leading padding of its own, which takes no presses; its first tab gives up its
+     leading padding, so its label starts at the content's edge, and draws its fill and focus ring
+     back over the rail's padding (below). So no tab's hit area reaches over what lies before the
+     rail, and none overlaps the next. */
   .env-tabs-list:not([data-orientation='vertical']) {
     --env-tabs-lead: var(--env-space-3);
     margin-inline-start: calc(-1 * var(--env-tabs-lead));
+    padding-inline-start: calc(var(--env-tabs-inset) + var(--env-tabs-lead));
     max-inline-size: calc(100% + var(--env-tabs-lead));
+    pointer-events: none;
   }
   .env-tabs-list:not([data-orientation='vertical']):has(
       > .env-tabs-tab:first-child[data-variant='text']
     ) {
     --env-tabs-lead: var(--env-space-1);
+  }
+  .env-tabs-list:not([data-orientation='vertical']) > * {
+    pointer-events: auto;
   }
   /* The rail has no fill of its own: the tabs sit on what the Tabs sit on. */
   .env-tabs-list.env-surface {
@@ -140,11 +147,16 @@
     color: var(--env-tabs-label-color, var(--env-color-fg-muted));
   }
   .env-tabs-list > .env-tabs-tab:hover:not(:disabled):not([aria-disabled='true']) {
-    background: var(--env-tabs-tab-custom-fill, var(--env-color-bg-neutral-subtle-hover));
+    --env-tabs-tab-fill: var(--env-tabs-tab-custom-fill, var(--env-color-bg-neutral-subtle-hover));
+    background: var(--env-tabs-tab-fill);
   }
   .env-tabs-list > .env-tabs-tab:active:not(:disabled):not([aria-disabled='true']) {
     --env-button-layer: calc(var(--env-state-pressed-opacity) * 100%);
-    background: var(--env-tabs-tab-custom-fill, var(--env-color-bg-neutral-subtle-pressed));
+    --env-tabs-tab-fill: var(
+      --env-tabs-tab-custom-fill,
+      var(--env-color-bg-neutral-subtle-pressed)
+    );
+    background: var(--env-tabs-tab-fill);
   }
   /* The selected tab: its label in the accent's text color, with the indicator under it. */
   .env-tabs-list > .env-tabs-tab[data-active],
@@ -182,6 +194,40 @@
   .env-tabs-list > .env-tabs-tab:focus-visible {
     outline: 2px solid var(--env-color-border-focus);
     outline-offset: -2px;
+  }
+  /* The first tab of a horizontal rail, its label at the content's edge: its fill and focus ring are
+     drawn a tab's padding wider, back over the rail's leading padding, by a shape under its label
+     that takes no presses. */
+  .env-tabs-list:not([data-orientation='vertical']) > .env-tabs-tab:first-child {
+    isolation: isolate;
+    padding-inline-start: 0;
+  }
+  .env-tabs-list:not([data-orientation='vertical'])
+    > .env-tabs-tab:first-child:is(:hover, :active, :focus-visible):not(:disabled):not(
+      [aria-disabled='true']
+    ) {
+    outline-color: transparent;
+    background: transparent;
+  }
+  .env-tabs-list:not([data-orientation='vertical']) > .env-tabs-tab:first-child::before {
+    content: '';
+    position: absolute;
+    z-index: calc(var(--env-z-base) - var(--env-z-raised));
+    inset-block: 0;
+    inset-inline: calc(-1 * var(--env-tabs-lead)) 0;
+    border-radius: inherit;
+    background: var(--env-tabs-tab-fill, transparent);
+    pointer-events: none;
+    transition: background-color var(--env-motion-duration-medium) var(--env-motion-ease);
+  }
+  .env-tabs-list:not([data-orientation='vertical'])
+    > .env-tabs-tab:first-child:focus-visible::before {
+    outline: 2px solid var(--env-color-border-focus);
+    outline-offset: -2px;
+  }
+  .env-tabs-list:not([data-orientation='vertical'])
+    > .env-tabs-tab:first-child[data-active]::after {
+    inset-inline-start: 0;
   }
   .env-tabs-panels {
     position: relative;
@@ -233,6 +279,7 @@
   }
   @media (prefers-reduced-motion: reduce) {
     .env-tabs-list > .env-tabs-tab,
+    .env-tabs-list > .env-tabs-tab::before,
     .env-tabs-panel {
       transition: none;
     }
