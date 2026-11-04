@@ -5,6 +5,7 @@ import type { TrailStep } from '../navigation/SiteRoutes';
 import { BannerMotif, motifOf } from './BannerMotif';
 import { CatalogueBannerLines } from './CatalogueBannerLines';
 import { DocsBannerLines } from './DocsBannerLines';
+import { CompactContents } from './PageContents';
 
 /**
  * The kinds of banner, one card that reads from the start like a document, under its breadcrumbs,
@@ -90,6 +91,7 @@ export function PageHeader({
           {children}
         </Column>
       </Card>
+      <CompactContents />
     </header>
   );
 }
