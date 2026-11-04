@@ -455,7 +455,10 @@
     align-self: center;
     min-inline-size: 0;
     overflow: hidden;
-    color: var(--env-color-fg-muted);
+    /* Quieter than muted text, so the value reads apart from its prefix or suffix, and still 4.5:1
+       on the field and on the surfaces a ghost field sits on. */
+    /* contrast: text-field-affix */
+    color: color-mix(in srgb, var(--env-color-fg-muted) 85%, transparent);
     font: var(--env-type-body);
     font-size: var(--env-control-font-size);
     white-space: nowrap;

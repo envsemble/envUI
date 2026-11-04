@@ -257,20 +257,23 @@ test('dialogs take the popups’ fill and shadow with no edge, solid over the ba
   });
 });
 
-test('a dark dialog takes the dark popups’ fill, the default surface', async ({ page }) => {
+test('a dark dialog takes the popup color, a step above the cards', async ({ page }) => {
   await page.goto(`${fixtureUrl}/?fixture=forms`);
   await page.getByRole('button', { name: 'Open dark dialog', exact: true }).click();
   const dialog = page.getByRole('dialog', { name: 'Dark theme dialog', exact: true });
-  const fill = await dialog.evaluate((element) => {
+  const [fill, card] = await dialog.evaluate((element) => {
     const probe = document.createElement('div');
-    probe.style.background = 'var(--env-color-bg-default)';
     element.append(probe);
-    const color = getComputedStyle(probe).backgroundColor;
+    const colors = ['--env-color-bg-popup', '--env-color-bg-raised'].map((name) => {
+      probe.style.background = `var(${name})`;
+      return getComputedStyle(probe).backgroundColor;
+    });
     probe.remove();
-    return color;
+    return colors;
   });
   const look = await surface(dialog);
   expect(look.background).toBe(fill);
+  expect(fill).not.toBe(card);
   expect(look.border).toMatch(/rgba\(0, 0, 0, 0\)$/);
   expect(look.shadow).not.toBe('none');
 });

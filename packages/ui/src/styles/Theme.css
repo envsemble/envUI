@@ -2,7 +2,9 @@
    does an application's CSS outside cascade layers, whatever its specificity. */
 .env-theme {
   min-inline-size: 0;
-  overflow-wrap: anywhere;
+  /* A word longer than its line breaks where it would overflow, and only there: a column, a cell or
+     a button still keeps room for its longest word, so short words never break inside. */
+  overflow-wrap: break-word;
   /* Standard contrast until a rule below says otherwise (see the switch at the end). */
   --env-theme-high-contrast: initial;
 }

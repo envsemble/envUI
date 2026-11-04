@@ -5408,6 +5408,48 @@
         "standard": 0.03,
         "high": 0.04
       }
+    },
+    "text-field-affix on --env-color-bg-default": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "text-field-affix on --env-color-bg-field": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "text-field-affix on --env-color-bg-muted": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "text-field-affix on --env-color-bg-page": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "text-field-affix on --env-color-bg-raised": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "text-field-affix on --env-color-bg-recessed": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
     }
   },
   "dropped": [
@@ -6498,7 +6540,8 @@
     "button-end-separator-on-strong on --env-color-bg-important-strong-hover",
     "button-end-separator-on-strong on --env-color-bg-important-strong-pressed",
     "heatmap-accent-lowest on --color-bg-neutral-muted over --color-bg-page",
-    "heatmap-accent-lowest on --env-color-bg-neutral-muted over catalogue-canvas"
+    "heatmap-accent-lowest on --env-color-bg-neutral-muted over catalogue-canvas",
+    "text-field-affix on catalogue-canvas"
   ],
   "relaxed": []
 }

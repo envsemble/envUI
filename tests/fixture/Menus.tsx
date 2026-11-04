@@ -157,7 +157,10 @@ export function MenusFixture({ theme }: { theme: ColorScheme }) {
           <Menu.RadioItem value="tight">Tight</Menu.RadioItem>
         </Menu.RadioGroup>
         <Menu.Separator data-testid={`density-separator-${theme}`} />
-        <Menu.CheckboxItem defaultChecked>Show icons</Menu.CheckboxItem>
+        {/* A check mark and an icon, beside rows with a check mark alone. */}
+        <Menu.CheckboxItem defaultChecked icon={<IconHistory />}>
+          Show icons
+        </Menu.CheckboxItem>
       </Menu.Root>
       {/* A compact region: its context menu and submenus open at the compact scale. */}
       <Theme theme={theme} scale="compact" data-testid={`compact-region-${theme}`}>

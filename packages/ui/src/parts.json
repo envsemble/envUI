@@ -734,11 +734,11 @@
     },
     "TableOfContents": {
       "env-table-of-contents": "The navigation of the page's sections.",
-      "env-table-of-contents-body": "Around the list and the shape beside it.",
+      "env-table-of-contents-body": "Around the list and the mark beside it.",
       "env-table-of-contents-item": "One section, with the sections nested in it.",
       "env-table-of-contents-link": "A section's link.",
       "env-table-of-contents-list": "A level of sections.",
-      "env-table-of-contents-wave": "The shape down the side of the list that marks the reader's place, widest beside it."
+      "env-table-of-contents-wave": "The mark down the side of the list: a track, and a pill beside the reader's place."
     },
     "Tabs": {
       "env-tabs": "The tabs.",

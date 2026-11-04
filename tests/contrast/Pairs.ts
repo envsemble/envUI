@@ -98,12 +98,14 @@ const layerPressed = '--env-color-bg-neutral-subtle-pressed';
 const navigationHover = '--env-color-bg-navigation-hover';
 const navigationPressed = '--env-color-bg-navigation-pressed';
 // A frosted popup's fill, translucent (derived below), and the worst that can be behind it; and the
-// fill itself, opaque: the popup color in light and the default surface in dark (Popup.css).
+// fill itself, opaque: the popup color (Popup.css).
 const frosted = 'popup-frosted';
 const popupFill = 'popup-fill';
 const worstBackdrop = 'popup-worst-backdrop';
 // A tooltip's frosted fill, a key chip on it and the worst behind it (Tooltip.css).
 const tooltipFrosted = 'tooltip-frosted';
+// A text field's prefix and suffix (TextField.css).
+const textFieldAffix = 'text-field-affix';
 const tooltipKey = 'tooltip-key';
 const tooltipWorstBackdrop = 'tooltip-worst-backdrop';
 const frostedOverWorst = [
@@ -443,10 +445,11 @@ const registry: readonly ContrastPair[] = merged([
 
   // Fields.
   ...text('--env-color-fg-default', [field]),
+  ...text('--env-color-fg-muted', [field], 'Labels, placeholders and icons in the field'),
   ...text(
-    '--env-color-fg-muted',
-    [field],
-    'Labels, prefixes, suffixes, placeholders and icons in the field',
+    textFieldAffix,
+    [field, page, surface, muted, raised],
+    'A prefix or a suffix, quieter than the value, in a field and in a ghost field on any surface',
   ),
   ...text('--env-color-border-primary-emphasis', [field], 'The label of a focused field'),
   ...text('--env-color-fg-danger', [field], 'The label and message of an invalid field'),
@@ -2964,6 +2967,8 @@ export const derived: Readonly<Record<string, string>> = {
   'tooltip-frosted': tooltipFill,
   'tooltip-key': ofLabel(tooltipKeyFill, '--env-color-fg-on-strong'),
   'tooltip-worst-backdrop': '#fff',
+  // A text field's prefix and suffix, a share of muted text (TextField.css).
+  'text-field-affix': markedColor('packages/ui/src/styles/TextField.css', 'text-field-affix'),
 };
 
 /** The CSS color a name in a pair stands for. */

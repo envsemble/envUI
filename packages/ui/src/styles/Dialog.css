@@ -9,7 +9,7 @@
     max-height: 100%;
     overflow-y: auto;
     overscroll-behavior: contain;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
     pointer-events: auto;
   }
   /* A dialog follows the popups' rules (Popup.css): their fill, their soft shadow and no edge, and its
@@ -46,7 +46,7 @@
   }
   .env-dialog-title {
     min-inline-size: 0;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
     font: var(--env-type-headline);
   }
   .env-dialog-description {

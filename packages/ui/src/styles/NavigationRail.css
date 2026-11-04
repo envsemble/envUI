@@ -141,7 +141,7 @@
   }
   .env-navigation-rail-label {
     max-inline-size: 100%;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
   }
   /* The count, on the icon's top end, in the pill of an accent count badge. */
   .env-navigation-rail-count {

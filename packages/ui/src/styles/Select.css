@@ -155,7 +155,7 @@
   }
   .env-select-item {
     white-space: normal;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
     text-align: start;
   }
   .env-select-item[data-selected] {

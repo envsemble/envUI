@@ -18,7 +18,6 @@ import { useMessages } from '../internal/EnvUIContext.js';
 import { tableOfContents } from '../foundations/messages/tableOfContents.js';
 import {
   currentSection,
-  readingPosition,
   flatten,
   outline,
   slug,
@@ -28,10 +27,10 @@ import {
   type TableOfContentsItem,
 } from './internal/contentsOutline.js';
 import {
+  markPath,
   springAtRest,
   springStep,
-  wavePath,
-  wavePlace,
+  trackPath,
   type Spring,
   type WaveLayout,
 } from './internal/contentsWave.js';
@@ -199,32 +198,29 @@ function List({ items, current, passed, depth, onNavigate }: ListProps) {
 }
 
 /**
- * The springs the shape moves on, in radians a second: its place, quick and barely past its
- * mark; its stretch and lean, a little looser, so it wobbles once as it lands; and the swell under
- * the pointer, which pops a little past its size.
+ * The springs the mark moves on, in radians a second: its place, quick, and how far it draws out
+ * behind as it travels, a little slower. Neither overshoots, so the pill lands on its entry and
+ * stays.
  */
-const placeSpring = { frequency: 20, damping: 0.7 };
-const shapeSpring = { frequency: 18, damping: 0.55, inertia: 1.3 };
-const hoverSpring = { frequency: 26, damping: 0.55 };
+const placeSpring = { frequency: 22, damping: 1 };
+const trailSpring = { frequency: 18, damping: 1 };
 
 /**
- * Where the entries sit beside the shape, in layout pixels from the top of the list's box, which
- * holds the shape and is the links' offset parent, so a transform or zoom around it changes nothing.
+ * Where each entry's text sits beside the mark, in layout pixels from the top of the list's box,
+ * which holds the mark and is the links' offset parent, so a transform or zoom around it changes
+ * nothing.
  */
 function measureWave(body: HTMLElement, shape: SVGSVGElement): WaveLayout | null {
   const links = body.querySelectorAll<HTMLElement>('.env-table-of-contents-link');
   if (links.length === 0) return null;
-  const anchors = Array.from(links, (link) => link.offsetTop + link.offsetHeight / 2);
-  const first = links[0]!;
-  const last = links[links.length - 1]!;
-  const inset = (link: HTMLElement, side: 'paddingTop' | 'paddingBottom') =>
-    parseFloat(getComputedStyle(link)[side]) || 0;
-  return {
-    anchors,
-    top: first.offsetTop + inset(first, 'paddingTop'),
-    bottom: last.offsetTop + last.offsetHeight - inset(last, 'paddingBottom'),
-    full: parseFloat(getComputedStyle(shape).width) || 0,
-  };
+  const entries = Array.from(links, (link) => {
+    const style = getComputedStyle(link);
+    return {
+      top: link.offsetTop + (parseFloat(style.paddingTop) || 0),
+      bottom: link.offsetTop + link.offsetHeight - (parseFloat(style.paddingBottom) || 0),
+    };
+  });
+  return { entries, full: parseFloat(getComputedStyle(shape).width) || 0 };
 }
 
 /**
@@ -310,7 +306,7 @@ export function TableOfContents({
     };
   }, [givenItems, container, levelKey]);
 
-  // The current section, from where the area that holds the sections has scrolled, and the shape
+  // The current section, from where the area that holds the sections has scrolled, and the mark
   // beside the list that marks the reader's place.
   useEffect(() => {
     if (ids === '') {
@@ -323,21 +319,16 @@ export function TableOfContents({
     const reducedMotion = reducedMotionQuery();
     let frame = 0;
 
-    // The shape: drawn every frame the reader's place moves, by writing its outline directly,
-    // without rendering the list again. The drawn place follows the measured one on a spring, so a
-    // mouse wheel's steps and a chosen section's jump travel rather than jump, and two more springs
-    // follow its motion: the bulge stretches and leans back as it travels, and wobbles once as it
-    // lands. No frame is drawn once all three rest. At once, without the wobble, where reduced
-    // motion is preferred.
+    // The mark: drawn every frame the reader's place moves, by writing its outline directly,
+    // without rendering the list again. The drawn place follows the current entry on a spring, so
+    // a jump to a section far away travels rather than jumps, and a second spring draws the pill
+    // out behind it with its speed. No frame is drawn once both rest. At once where reduced motion
+    // is preferred.
     let layout: WaveLayout | null = null;
     let target: number | null = null;
     const place: Spring = { value: 0, velocity: 0 };
     let placed = false;
-    const lean: Spring = { value: 0, velocity: 0 };
-    const stretch: Spring = { value: 0, velocity: 0 };
-    // How far each entry's swell under the pointer has grown, and the entry under it.
-    let hovers: Spring[] = [];
-    let hovered = -1;
+    const trail: Spring = { value: 0, velocity: 0 };
     let drawFrame = 0;
     let drawn = 0;
     const rest = (spring: Spring, value: number) => {
@@ -347,15 +338,12 @@ export function TableOfContents({
     const draw = (now: number) => {
       drawFrame = 0;
       const body = root.current;
-      const path = shape.current?.querySelector('path');
-      if (!body || !shape.current || !path) return;
+      const [track, mark] = shape.current?.querySelectorAll('path') ?? [];
+      if (!body || !shape.current || !track || !mark) return;
       if (!layout) {
         layout = measureWave(body, shape.current);
         if (!layout) return;
-        hovers = layout.anchors.map((_, index) => ({
-          value: index === hovered ? 1 : 0,
-          velocity: 0,
-        }));
+        track.setAttribute('d', trackPath(layout));
       }
       const instant = reducedMotion?.matches ?? false;
       // A frame's time since the last drawn, in seconds, or a frame's at the start of a move.
@@ -366,75 +354,30 @@ export function TableOfContents({
         // The first place, or none, or reduced motion: drawn where it is, at rest.
         placed = target !== null;
         rest(place, target ?? 0);
-        rest(lean, 0);
-        rest(stretch, 0);
+        rest(trail, 0);
       } else {
-        const before = place.velocity;
         springStep(place, target, placeSpring.frequency, placeSpring.damping, elapsed);
-        // The bulge, in entries a second: stretched out by its speed, and carried like a jelly,
-        // lagging behind as it sets off and running on past as it slows, before it springs back.
-        const speed = place.velocity;
-        const surge = elapsed > 0 ? Math.max(-400, Math.min(400, (speed - before) / elapsed)) : 0;
-        const leanTarget = Math.max(-0.4, Math.min(0.4, speed * 0.03));
-        const stretchTarget = Math.min(0.7, Math.abs(speed) * 0.05);
-        springStep(lean, leanTarget, shapeSpring.frequency, shapeSpring.damping, elapsed, {
-          push: surge * shapeSpring.inertia,
-        });
-        springStep(stretch, stretchTarget, shapeSpring.frequency, shapeSpring.damping, elapsed);
-        if (
-          springAtRest(place, target, 0.002) &&
-          springAtRest(lean, leanTarget, 0.002) &&
-          springAtRest(stretch, stretchTarget, 0.002)
-        ) {
+        // Drawn out behind by its speed, in entries a second, a little and never far.
+        const trailTarget = Math.max(-0.6, Math.min(0.6, place.velocity * 0.03));
+        springStep(trail, trailTarget, trailSpring.frequency, trailSpring.damping, elapsed);
+        if (springAtRest(place, target, 0.002) && springAtRest(trail, trailTarget, 0.002)) {
           rest(place, target);
-          rest(lean, 0);
-          rest(stretch, 0);
+          rest(trail, 0);
         } else moving = true;
       }
-      hovers.forEach((swell, index) => {
-        const goal = index === hovered ? 1 : 0;
-        if (instant) rest(swell, goal);
-        else springStep(swell, goal, hoverSpring.frequency, hoverSpring.damping, elapsed);
-        if (springAtRest(swell, goal, 0.005)) rest(swell, goal);
-        else moving = true;
-      });
-      path.setAttribute(
-        'd',
-        wavePath(
-          layout,
-          placed ? place.value : null,
-          hovers.map((swell) => Math.max(0, swell.value)),
-          { lean: lean.value, stretch: stretch.value },
-        ),
-      );
+      mark.setAttribute('d', markPath(layout, placed ? place.value : null, trail.value));
       if (moving) drawFrame = requestAnimationFrame(draw);
       else drawn = 0;
     };
-    const redraw = () => {
-      if (drawFrame === 0) drawFrame = requestAnimationFrame(draw);
-    };
-    const wave = (position: number | null) => {
-      target = position === null ? null : wavePlace(position);
+    const wave = (index: number | null) => {
+      target = index;
       cancelAnimationFrame(drawFrame);
       draw(performance.now());
     };
     const remeasure = () => {
       layout = null;
-      redraw();
+      if (drawFrame === 0) drawFrame = requestAnimationFrame(draw);
     };
-    // The entry under a mouse swells the shape a little, as a brush pressed there.
-    const hover = (index: number) => {
-      if (hovered === index) return;
-      hovered = index;
-      redraw();
-    };
-    const onPointerOver = (event: PointerEvent) => {
-      if (event.pointerType !== 'mouse') return;
-      const link = event.target instanceof Element ? event.target.closest('a') : null;
-      const links = root.current?.querySelectorAll('.env-table-of-contents-link');
-      hover(link && links ? Array.prototype.indexOf.call(links, link) : -1);
-    };
-    const onPointerLeave = () => hover(-1);
 
     const update = () => {
       frame = 0;
@@ -476,16 +419,13 @@ export function TableOfContents({
         range: scrolling.scrollHeight - scrolling.clientHeight,
       };
       let next = currentSection(sections, view);
-      let position = readingPosition(sections, view);
-      if (choice) {
+      if (choice && next && sectionIds.indexOf(next) > sectionIds.indexOf(choice.id)) {
         // On the way to a chosen section, the marks never pass it, though the page may scroll on
         // to its end, where a later section would be current.
-        const chosenIndex = sectionIds.indexOf(choice.id);
-        if (position > chosenIndex) position = chosenIndex;
-        if (next && sectionIds.indexOf(next) > chosenIndex) next = choice.id;
+        next = choice.id;
       }
       setCurrent(next);
-      wave(position);
+      wave(next === undefined ? null : sectionIds.indexOf(next));
     };
     const schedule = () => {
       if (frame === 0) frame = requestAnimationFrame(update);
@@ -517,8 +457,6 @@ export function TableOfContents({
     const body = root.current;
     const reshapes = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(remeasure);
     if (body) reshapes?.observe(body);
-    body?.addEventListener('pointerover', onPointerOver);
-    body?.addEventListener('pointerleave', onPointerLeave);
     return () => {
       cancelAnimationFrame(frame);
       cancelAnimationFrame(drawFrame);
@@ -526,8 +464,6 @@ export function TableOfContents({
       window.removeEventListener('resize', onResize);
       resizes?.disconnect();
       reshapes?.disconnect();
-      body?.removeEventListener('pointerover', onPointerOver);
-      body?.removeEventListener('pointerleave', onPointerLeave);
     };
   }, [ids, settleLater]);
 
@@ -573,13 +509,14 @@ export function TableOfContents({
       hidden={items.length === 0 ? true : props.hidden}
     >
       <div className="env-table-of-contents-body" ref={root}>
-        {/* The reader's place: one shape down the list, drawn by the effect above. */}
+        {/* The reader's place: a pill on a track down the list, drawn by the effect above. */}
         <svg
           className="env-table-of-contents-wave"
           ref={shape}
           aria-hidden="true"
           focusable="false"
         >
+          <path />
           <path />
         </svg>
         <List items={items} current={current} passed={passed} depth={0} onNavigate={navigate} />

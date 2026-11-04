@@ -33,7 +33,7 @@
     gap: var(--env-space-1);
     min-inline-size: 0;
     flex: 1 1 auto;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
   }
   .env-pager-link-label {
     color: var(--env-color-fg-muted);

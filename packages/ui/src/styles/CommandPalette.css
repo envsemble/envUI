@@ -122,7 +122,7 @@
     padding: var(--env-space-7) var(--env-space-4) var(--env-space-5);
     color: var(--env-color-fg-default);
     text-align: center;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
   }
   .env-command-palette-empty-icon {
     --env-command-palette-empty-icon-size: 1.5rem;

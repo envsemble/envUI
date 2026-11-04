@@ -22,7 +22,7 @@
     color: var(--env-color-fg-default);
     font: var(--env-type-body);
     text-align: center;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
     cursor: pointer;
     transition:
       border-color var(--env-motion-duration-medium) var(--env-motion-ease),

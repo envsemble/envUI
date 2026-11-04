@@ -5252,7 +5252,7 @@
         },
         {
           "class": "env-table-of-contents-body",
-          "description": "Around the list and the shape beside it."
+          "description": "Around the list and the mark beside it."
         },
         {
           "class": "env-table-of-contents-item",
@@ -5268,7 +5268,7 @@
         },
         {
           "class": "env-table-of-contents-wave",
-          "description": "The shape down the side of the list that marks the reader's place, widest beside it."
+          "description": "The mark down the side of the list: a track, and a pill beside the reader's place."
         }
       ],
       "states": [

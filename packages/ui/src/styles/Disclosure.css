@@ -2,7 +2,7 @@
   .env-disclosure {
     min-inline-size: 0;
     max-inline-size: 100%;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
     margin: 0;
     padding: 0;
     border: 0;
@@ -16,9 +16,6 @@
     gap: 0.5rem;
     list-style: none;
     white-space: normal;
-    /* Not anywhere: Firefox sizes the fit-content summary from its min-content width, which anywhere
-       shrinks to one letter, and a one-word title such as Code would break. */
-    overflow-wrap: break-word;
     cursor: pointer;
     width: fit-content;
     max-width: 100%;

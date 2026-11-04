@@ -4,6 +4,24 @@ import { fixtureUrl } from './helpers/Servers';
 
 const tooltips = `${fixtureUrl}/?fixture=tooltips`;
 
+// Wide enough that the fixture's first row holds every trigger up to the right-to-left ones, so a
+// popover has room at their end, and the menu and popover triggers below sit under no text.
+test.use({ viewport: { width: 1360, height: 720 } });
+
+/**
+ * Opens the fixture once its web fonts are in, the medium weight of the buttons' labels included:
+ * a font that arrives later moves the triggers from under the pointer, as on a busy machine.
+ */
+async function openTooltips(page: Page) {
+  await page.goto(tooltips);
+  await page.evaluate(async () => {
+    // Loaded by name, so the wait holds even before the fixture has rendered any text.
+    await document.fonts.load('1em "envUI Geist"');
+    await document.fonts.load('500 1em "envUI Geist"');
+    await document.fonts.ready;
+  });
+}
+
 const adoption = `${fixtureUrl}/?fixture=adoption`;
 
 /** The axe violations of the menu and popover triggers and whatever popup is open. */
@@ -19,7 +37,7 @@ test.describe('Tooltip', () => {
   test('a controlled tooltip opens from the application, lines up by align and says why it closes', async ({
     page,
   }) => {
-    await page.goto(tooltips);
+    await openTooltips(page);
     const control = page.getByRole('button', { name: 'Filter tour' });
     await page.getByRole('button', { name: 'Tour step' }).click();
     const tooltip = page.getByRole('tooltip');
@@ -37,7 +55,7 @@ test.describe('Tooltip', () => {
   test('describes a named control while open, and adds nothing that repeats its name', async ({
     page,
   }) => {
-    await page.goto(tooltips);
+    await openTooltips(page);
     const archive = page.getByRole('button', { name: 'Archive', exact: true });
     await expect(archive).not.toHaveAttribute('aria-describedby');
     await archive.hover();
@@ -65,7 +83,7 @@ test.describe('Tooltip', () => {
   test('reads the name as assistive technology does, and follows it while open', async ({
     page,
   }) => {
-    await page.goto(tooltips);
+    await openTooltips(page);
     // Text hidden from assistive technology is no part of the name the tooltip repeats.
     const exportButton = page.getByRole('button', { name: 'Export', exact: true });
     await exportButton.hover();
@@ -88,7 +106,7 @@ test.describe('Tooltip', () => {
   test("a disabled control's stand-in isn't read again on each render of the page", async ({
     page,
   }) => {
-    await page.goto(tooltips);
+    await openTooltips(page);
     await expect(page.getByRole('button', { name: 'Pin', exact: true })).toHaveAttribute(
       'aria-pressed',
       'true',
@@ -131,7 +149,7 @@ test.describe('Tooltip', () => {
   test('a disabled control is one named, disabled tab stop that opens its tooltip', async ({
     page,
   }) => {
-    await page.goto(tooltips);
+    await openTooltips(page);
     const invite = page.getByRole('button', { name: 'Invite member' });
     // One control for assistive technology: the wrapper, which carries the name and the state.
     await expect(invite).toHaveCount(1);
@@ -160,7 +178,7 @@ test.describe('Tooltip', () => {
   test('a disabled control named by mixed content keeps its name, with no render loop', async ({
     page,
   }) => {
-    await page.goto(tooltips);
+    await openTooltips(page);
     // The stand-in hides the control it names; the name, read from the hidden control, stays.
     const archiveAll = page.getByRole('button', { name: 'Archive all B', exact: true });
     await expect(archiveAll).toHaveClass('env-tooltip-disabled-target');
@@ -186,7 +204,7 @@ test.describe('Tooltip', () => {
   test('a hidden label that aria-labelledby references directly names the control', async ({
     page,
   }) => {
-    await page.goto(tooltips);
+    await openTooltips(page);
     const rename = page.getByRole('button', { name: 'Rename file', exact: true });
     await rename.hover();
     await expect(page.getByRole('tooltip')).toHaveText('Gives the file a new name');
@@ -196,7 +214,7 @@ test.describe('Tooltip', () => {
   test('a disabled control keeps valid ARIA: a toggle keeps its state, a checkbox its own role', async ({
     page,
   }) => {
-    await page.goto(tooltips);
+    await openTooltips(page);
     // A disabled toggle's wrapper stands in as the button, pressed, and follows its state.
     const pin = page.getByRole('button', { name: 'Pin', exact: true });
     await expect(pin).toHaveCount(1);
@@ -230,7 +248,7 @@ test.describe('Tooltip', () => {
     'in right-to-left text, inline-end opens tooltips and popovers to the left of the trigger',
     { tag: '@engines' },
     async ({ page }) => {
-      await page.goto(tooltips);
+      await openTooltips(page);
       const forward = page.getByRole('button', { name: 'Forward' });
       await forward.hover();
       const tooltip = page.getByRole('tooltip');
@@ -260,7 +278,7 @@ test.describe('Tooltip', () => {
   test('a tooltip is frosted with flat key chips, and solid with its edge at high contrast', async ({
     page,
   }) => {
-    await page.goto(tooltips);
+    await openTooltips(page);
     const open = async () => {
       await page.getByRole('button', { name: 'Save' }).hover();
       // popupClassName reaches the popup.
@@ -352,7 +370,7 @@ test.describe('Tooltip', () => {
     page,
   }) => {
     await page.clock.install();
-    await page.goto(tooltips);
+    await openTooltips(page);
     const more = page.getByRole('button', { name: 'More actions' });
     const menu = page.getByRole('menu', { name: 'Row actions' });
     const tooltip = page.getByRole('tooltip');
@@ -421,7 +439,7 @@ test.describe('Tooltip', () => {
     page,
   }) => {
     await page.clock.install();
-    await page.goto(tooltips);
+    await openTooltips(page);
     const filters = page.getByRole('button', { name: 'Filters' });
     const popover = page.getByRole('dialog', { name: 'Filters' });
     const tooltip = page.getByRole('tooltip');
@@ -479,7 +497,7 @@ test.describe('Tooltip', () => {
   test('once a click outside closes the popover and moves focus away, focus on its trigger opens the tooltip', async ({
     page,
   }) => {
-    await page.goto(tooltips);
+    await openTooltips(page);
     const filters = page.getByRole('button', { name: 'Filters' });
     const archive = page.getByRole('button', { name: 'Archive', exact: true });
     await filters.click();
@@ -515,7 +533,7 @@ test.describe('Tooltip', () => {
   test("describes a control of the application's own that takes a trigger prop", async ({
     page,
   }) => {
-    await page.goto(tooltips);
+    await openTooltips(page);
     const badge = page.getByRole('button', { name: 'Badge button' });
     await badge.hover();
     await expect(page.getByRole('tooltip')).toHaveText('Shows the badge');
@@ -564,7 +582,7 @@ test.describe('Tooltip', () => {
 
   test('a tooltip stays open while the pointer moves onto it', async ({ page }) => {
     await page.clock.install();
-    await page.goto(tooltips);
+    await openTooltips(page);
     const item = page.getByRole('button', { name: 'Archive', exact: true });
     const tooltip = page.locator('.env-tooltip');
     await item.hover();
@@ -587,7 +605,7 @@ test.describe('Tooltip', () => {
       { tag: '@engines' },
       async ({ page }) => {
         await page.clock.install();
-        await page.goto(tooltips);
+        await openTooltips(page);
         const tooltip = page.getByRole('tooltip');
         await page.getByRole('button', { name: 'More actions' }).tap();
         await expect(page.getByRole('menu', { name: 'Row actions' })).toBeVisible();
@@ -609,7 +627,7 @@ test.describe('Tooltip', () => {
 });
 
 test('a text trigger takes a quiet dotted underline, a button trigger none', async ({ page }) => {
-  await page.goto(tooltips);
+  await openTooltips(page);
   const text = page.getByTestId('tooltip-text-trigger');
   await expect(text).toHaveClass(/\benv-hover-detail\b/);
   const style = await text.evaluate((element) => {

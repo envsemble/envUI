@@ -4,7 +4,7 @@
   .env-message-list {
     align-content: start;
     max-inline-size: 100%;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
   }
   .env-message {
     justify-items: start;

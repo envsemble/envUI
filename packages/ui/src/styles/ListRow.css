@@ -63,13 +63,13 @@
   }
   .env-list-row-label {
     min-inline-size: 0;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
   }
   .env-list-row-description {
     min-inline-size: 0;
     color: var(--env-color-fg-muted);
     font: var(--env-font-weight-body) var(--env-font-size-label-sm) / 1.35 var(--env-font-family);
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
   }
   .env-list-row-end,
   .env-list-row-shortcut {

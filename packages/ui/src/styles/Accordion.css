@@ -32,7 +32,7 @@
     font: var(--env-type-body);
     font-weight: var(--env-font-weight-medium);
     text-align: start;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
     cursor: pointer;
     outline: none;
   }
@@ -86,7 +86,7 @@
     padding-inline-start: calc(var(--env-accordion-indicator-size) + var(--env-accordion-gap));
     color: var(--env-color-fg-muted);
     font: var(--env-type-body);
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
   }
   .env-accordion-content > :where(p:not(.env-text)) {
     margin: 0;

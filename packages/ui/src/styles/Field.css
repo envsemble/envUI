@@ -6,7 +6,7 @@
     --env-field-error-color: var(--env-color-fg-danger);
     align-content: start;
     max-inline-size: 100%;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
     font: var(--env-type-body-sm);
     font-size: var(--env-font-size-body-sm);
     color: var(--env-color-fg-default);
