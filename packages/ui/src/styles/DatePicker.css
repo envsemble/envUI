@@ -51,10 +51,9 @@
     text-align: start;
     cursor: pointer;
   }
-  .env-date-picker .env-date-picker-control > .env-date-picker-trigger:is(
-      :disabled,
-      [aria-readonly='true']
-    ) {
+  .env-date-picker
+    .env-date-picker-control
+    > .env-date-picker-trigger:is(:disabled, [aria-readonly='true']) {
     cursor: default;
   }
   .env-date-picker-value,
