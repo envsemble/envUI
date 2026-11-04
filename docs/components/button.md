@@ -92,14 +92,15 @@ examples:
 3. **Outline**
 4. **Ghost**
 5. **Text**
+6. **Primary, accent**
 
-| Variant   | Tones                   | Use for                                      |
-| --------- | ----------------------- | -------------------------------------------- |
-| Primary   | Neutral, accent, danger | The main action of a group. One per group.   |
-| Secondary | Neutral                 | Other actions.                               |
-| Outline   | Neutral, danger         | Other actions on panes, dialogs and rows.    |
-| Ghost     | Neutral, danger         | An application's chrome, such as a toolbar.  |
-| Text      | Neutral, danger         | A link-like action, underlined where needed. |
+| Variant   | Tones                                   | Use for                                      |
+| --------- | --------------------------------------- | -------------------------------------------- |
+| Primary   | Neutral, the brand blue; accent; danger | The main action of a group. One per group.   |
+| Secondary | Neutral                                 | Other actions.                               |
+| Outline   | Neutral, danger                         | Other actions on panes, dialogs and rows.    |
+| Ghost     | Neutral, danger                         | An application's chrome, such as a toolbar.  |
+| Text      | Neutral, danger                         | A link-like action, underlined where needed. |
 
 ### In a toolbar
 
