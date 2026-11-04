@@ -9,11 +9,19 @@
   z-index: var(--env-z-raised);
 }
 
+/* The banner's inline padding, as a length its text measures the picture by (below). */
+@property --site-banner-padding {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 0rem;
+}
+
 /* Every banner: the text from the start, between the same margins, at the same sizes, on the
    default surface's fill with no edge. Its text, badges and buttons keep their contrast there as on
    any default surface (`surface` in tests/contrast/Pairs.ts), in every theme. */
 .site-banner {
-  padding-inline: clamp(var(--env-space-6), 6cqi, var(--env-space-9));
+  --site-banner-padding: clamp(var(--env-space-6), 6cqi, var(--env-space-9));
+  padding-inline: var(--site-banner-padding);
   border: 0;
   background: var(--env-color-bg-default);
 }
@@ -25,13 +33,36 @@
   text-align: start;
 }
 
-/* The text keeps clear of the picture at the end. */
-.site-banner .site-page-banner-heading {
-  max-inline-size: min(100%, 44rem);
+/* The text column ends where the picture at the banner's end starts to show, at every width:
+   the title, description and facts wrap before it rather than cross it. The column is the
+   banner's content and its end padding, less the part of the picture that shows (--site-banner-
+   art, below), measured in the banner's own width (cqi here is the banner's content box). The
+   trail above the title is short and stays on one line. Without a picture, the text fills the
+   banner. */
+.site-banner .site-page-banner-content {
+  --site-banner-text: calc(100cqi + var(--site-banner-padding) - var(--site-banner-art, 0rem));
+}
+
+.site-banner .site-page-banner-heading > :not(:first-child),
+.site-banner .site-page-banner-heading > :first-child > :not(.site-page-banner-breadcrumbs) {
+  max-inline-size: var(--site-banner-text);
 }
 
 .site-banner .site-page-banner-title {
+  max-inline-size: min(22ch, var(--site-banner-text));
   font-size: clamp(2.5rem, calc(1.5rem + 3cqi), 3.25rem);
+}
+
+/* How much of the banner's end the picture shows on: a drawing's box (below) less its start, where
+   its fade has hardly begun; the palette's fan (BannerMotifs.css), which starts near its stage's
+   start, all but a sliver of its stage. Both boxes are a share of the banner's padding box. */
+@container site-page-header (width >= 44rem) {
+  .site-banner-shapes ~ .site-page-banner-content {
+    --site-banner-art: calc(0.7 * min(0.48 * (100cqi + 2 * var(--site-banner-padding)), 42rem));
+  }
+  .catalogue-banner-motif ~ .site-page-banner-content {
+    --site-banner-art: calc(0.9 * min(0.54 * (100cqi + 2 * var(--site-banner-padding)), 40rem));
+  }
 }
 
 /* In a narrow banner, the trail is the page's parent alone, a link back up: the title under it
