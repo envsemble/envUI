@@ -104,20 +104,23 @@
     color: var(--env-alert-text-color);
     font: var(--env-type-body-sm);
   }
-  /* A secondary button among the actions takes the tone's deeper tint, through the neutral fills
-     it reads, on which it reads as part of the alert and as available, where the neutral fill would
-     vanish on the tint; hover and press darken it a step with the text color. */
+  /* A secondary button among the actions stands clear of the tint, through the neutral fills it
+     reads, where the translucent neutral fill would sink into it: in a light scheme it takes a card's
+     solid fill, with its hover and press; in a dark one, where that fill is darker than the tint, the
+     tone's deeper tint lifted by the text color, a step more on hover and on press. light-dark()
+     follows the nearest theme's color scheme. */
   .env-alert-action {
-    --env-color-bg-neutral-muted: var(--env-alert-pressed);
-    --env-color-bg-neutral-muted-hover: color-mix(
-      in srgb,
-      var(--env-alert-pressed),
-      var(--env-color-fg-default) 8%
+    --env-color-bg-neutral-muted: light-dark(
+      var(--env-color-bg-muted),
+      color-mix(in srgb, var(--env-alert-pressed), var(--env-color-fg-default) 12%)
     );
-    --env-color-bg-neutral-muted-pressed: color-mix(
-      in srgb,
-      var(--env-alert-pressed),
-      var(--env-color-fg-default) 14%
+    --env-color-bg-neutral-muted-hover: light-dark(
+      var(--env-color-bg-muted-hover),
+      color-mix(in srgb, var(--env-alert-pressed), var(--env-color-fg-default) 20%)
+    );
+    --env-color-bg-neutral-muted-pressed: light-dark(
+      var(--env-color-bg-muted-pressed),
+      color-mix(in srgb, var(--env-alert-pressed), var(--env-color-fg-default) 28%)
     );
     margin-block-start: var(--env-space-2);
   }

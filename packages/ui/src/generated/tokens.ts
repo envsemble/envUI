@@ -277,7 +277,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: 'rgb(183 43 32 / 0.12)',
-      dark: 'rgb(248 172 166 / 0.14)',
+      dark: 'rgb(206 94 83 / 0.18)',
       'light-high-contrast': 'rgb(122 2 0 / 0.08)',
       'dark-high-contrast': 'rgb(255 211 207 / 0.1)',
     },
@@ -332,7 +332,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: 'rgb(183 43 32 / 0.14)',
-      dark: 'rgb(248 172 166 / 0.17)',
+      dark: 'rgb(206 94 83 / 0.22)',
       'light-high-contrast': 'rgb(122 2 0 / 0.14)',
       'dark-high-contrast': 'rgb(255 228 226 / 0.14)',
     },
@@ -343,7 +343,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: 'rgb(183 43 32 / 0.22)',
-      dark: 'rgb(248 172 166 / 0.25)',
+      dark: 'rgb(206 94 83 / 0.3)',
       'light-high-contrast': 'rgb(122 2 0 / 0.22)',
       'dark-high-contrast': 'rgb(255 228 226 / 0.22)',
     },
@@ -584,8 +584,8 @@ export const tokens = {
     cssVariable: '--env-color-bg-neutral-muted-hover',
     type: 'color',
     values: {
-      light: 'rgb(31 31 34 / 0.17)',
-      dark: 'rgb(232 234 238 / 0.2)',
+      light: 'rgb(31 31 34 / 0.16)',
+      dark: 'rgb(232 234 238 / 0.18)',
       'light-high-contrast': 'rgb(31 31 34 / 0.17)',
       'dark-high-contrast': 'rgb(232 234 238 / 0.12)',
     },
@@ -595,7 +595,7 @@ export const tokens = {
     cssVariable: '--env-color-bg-neutral-muted-pressed',
     type: 'color',
     values: {
-      light: 'rgb(31 31 34 / 0.25)',
+      light: 'rgb(31 31 34 / 0.26)',
       dark: 'rgb(232 234 238 / 0.28)',
       'light-high-contrast': 'rgb(31 31 34 / 0.25)',
       'dark-high-contrast': 'rgb(232 234 238 / 0.15)',
@@ -661,8 +661,8 @@ export const tokens = {
     cssVariable: '--env-color-bg-neutral-subtle-pressed',
     type: 'color',
     values: {
-      light: 'rgb(31 31 34 / 0.1)',
-      dark: 'rgb(232 234 238 / 0.1)',
+      light: 'rgb(31 31 34 / 0.12)',
+      dark: 'rgb(232 234 238 / 0.12)',
       'light-high-contrast': 'rgb(31 31 34 / 0.08)',
       'dark-high-contrast': 'rgb(232 234 238 / 0.08)',
     },
@@ -772,7 +772,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: 'rgb(0 92 200 / 0.12)',
-      dark: 'rgb(159 193 248 / 0.14)',
+      dark: 'rgb(52 126 234 / 0.16)',
       'light-high-contrast': 'rgb(0 55 124 / 0.08)',
       'dark-high-contrast': 'rgb(205 222 252 / 0.1)',
     },
@@ -783,7 +783,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: 'rgb(0 92 200 / 0.05)',
-      dark: 'rgb(159 193 248 / 0.14)',
+      dark: 'rgb(52 126 234 / 0.16)',
       'light-high-contrast': 'rgb(0 55 124 / 0.08)',
       'dark-high-contrast': 'rgb(205 222 252 / 0.1)',
     },
@@ -849,7 +849,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: 'rgb(0 92 200 / 0.14)',
-      dark: 'rgb(159 193 248 / 0.17)',
+      dark: 'rgb(52 126 234 / 0.2)',
       'light-high-contrast': 'rgb(0 55 124 / 0.14)',
       'dark-high-contrast': 'rgb(224 235 253 / 0.14)',
     },
@@ -860,7 +860,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: 'rgb(0 92 200 / 0.22)',
-      dark: 'rgb(159 193 248 / 0.25)',
+      dark: 'rgb(52 126 234 / 0.28)',
       'light-high-contrast': 'rgb(0 55 124 / 0.22)',
       'dark-high-contrast': 'rgb(224 235 253 / 0.22)',
     },
@@ -981,7 +981,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: 'rgb(23 111 53 / 0.12)',
-      dark: 'rgb(122 209 151 / 0.14)',
+      dark: 'rgb(60 144 86 / 0.18)',
       'light-high-contrast': 'rgb(0 68 26 / 0.08)',
       'dark-high-contrast': 'rgb(152 240 181 / 0.1)',
     },
@@ -1036,7 +1036,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: 'rgb(23 111 53 / 0.14)',
-      dark: 'rgb(122 209 151 / 0.17)',
+      dark: 'rgb(60 144 86 / 0.22)',
       'light-high-contrast': 'rgb(0 68 26 / 0.14)',
       'dark-high-contrast': 'rgb(165 253 193 / 0.14)',
     },
@@ -1047,7 +1047,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: 'rgb(23 111 53 / 0.22)',
-      dark: 'rgb(122 209 151 / 0.25)',
+      dark: 'rgb(60 144 86 / 0.3)',
       'light-high-contrast': 'rgb(0 68 26 / 0.22)',
       'dark-high-contrast': 'rgb(165 253 193 / 0.22)',
     },
@@ -1069,7 +1069,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: 'rgb(255 208 120 / 0.24)',
-      dark: 'rgb(235 183 80 / 0.14)',
+      dark: 'rgb(160 106 24 / 0.2)',
       'light-high-contrast': 'rgb(255 208 120 / 0.24)',
       'dark-high-contrast': 'rgb(255 216 144 / 0.1)',
     },
@@ -1091,7 +1091,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: 'rgb(255 208 120 / 0.36)',
-      dark: 'rgb(235 183 80 / 0.17)',
+      dark: 'rgb(160 106 24 / 0.26)',
       'light-high-contrast': 'rgb(255 208 120 / 0.36)',
       'dark-high-contrast': 'rgb(255 232 190 / 0.14)',
     },
@@ -1102,7 +1102,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: 'rgb(255 208 120 / 0.5)',
-      dark: 'rgb(235 183 80 / 0.25)',
+      dark: 'rgb(160 106 24 / 0.36)',
       'light-high-contrast': 'rgb(255 208 120 / 0.5)',
       'dark-high-contrast': 'rgb(255 232 190 / 0.22)',
     },
@@ -2072,17 +2072,17 @@ export const tokens = {
     },
     scales: { compact: '0.6875rem' },
   },
-  /** A page's heading: Text's headline variant, 18 px in the comfortable scale. */
+  /** A page's heading: Text's headline variant, 22 px in the comfortable scale: a clear step above a section's title. */
   'font.size.headline': {
     cssVariable: '--env-font-size-headline',
     type: 'dimension',
     values: {
-      light: '1.125rem',
-      dark: '1.125rem',
-      'light-high-contrast': '1.125rem',
-      'dark-high-contrast': '1.125rem',
+      light: '1.375rem',
+      dark: '1.375rem',
+      'light-high-contrast': '1.375rem',
+      'dark-high-contrast': '1.375rem',
     },
-    scales: { compact: '1rem' },
+    scales: { compact: '1.25rem' },
   },
   /** The label of a control, and the text of menu, tree and option rows. */
   'font.size.label': {
@@ -2108,17 +2108,17 @@ export const tokens = {
     },
     scales: { compact: '0.75rem' },
   },
-  /** A section's heading: Text's title variant, 16 px in the comfortable scale. */
+  /** A section's heading: Text's title variant, 18 px in the comfortable scale: a step above body text in size as well as weight. */
   'font.size.title': {
     cssVariable: '--env-font-size-title',
     type: 'dimension',
     values: {
-      light: '1rem',
-      dark: '1rem',
-      'light-high-contrast': '1rem',
-      'dark-high-contrast': '1rem',
+      light: '1.125rem',
+      dark: '1.125rem',
+      'light-high-contrast': '1.125rem',
+      'dark-high-contrast': '1.125rem',
     },
-    scales: { compact: '0.875rem' },
+    scales: { compact: '1rem' },
   },
   /** The weight of running text, which the body type roles take: regular. */
   'font.weight.body': {
@@ -2818,73 +2818,73 @@ export const tokens = {
         "500 clamp(1.75rem, 1.25rem + 2.5vw, 2.75rem) / 1.1 'envUI Geist', sans-serif",
     },
   },
-  /** A page's heading: Text's headline variant, medium. */
+  /** A page's heading: Text's headline variant, medium, its lines tighter than body text's and its letters a touch closer, as larger type wants. */
   'type.headline': {
     cssVariable: '--env-type-headline',
     type: 'typography',
     values: {
       light: {
         'font-family': "'envUI Geist', sans-serif",
-        'font-size': '1.125rem',
+        'font-size': '1.375rem',
         'font-weight': '500',
-        'letter-spacing': '0rem',
-        'line-height': '1.4em',
+        'letter-spacing': '-0.0125rem',
+        'line-height': '1.3em',
       },
       dark: {
         'font-family': "'envUI Geist', sans-serif",
-        'font-size': '1.125rem',
+        'font-size': '1.375rem',
         'font-weight': '500',
-        'letter-spacing': '0rem',
-        'line-height': '1.4em',
+        'letter-spacing': '-0.0125rem',
+        'line-height': '1.3em',
       },
       'light-high-contrast': {
         'font-family': "'envUI Geist', sans-serif",
-        'font-size': '1.125rem',
+        'font-size': '1.375rem',
         'font-weight': '500',
-        'letter-spacing': '0rem',
-        'line-height': '1.4em',
+        'letter-spacing': '-0.0125rem',
+        'line-height': '1.3em',
       },
       'dark-high-contrast': {
         'font-family': "'envUI Geist', sans-serif",
-        'font-size': '1.125rem',
+        'font-size': '1.375rem',
         'font-weight': '500',
-        'letter-spacing': '0rem',
-        'line-height': '1.4em',
+        'letter-spacing': '-0.0125rem',
+        'line-height': '1.3em',
       },
     },
   },
-  /** A section's heading: Text's title variant, medium. */
+  /** A section's heading: Text's title variant, medium, its lines a little tighter than body text's and its letters a touch closer. */
   'type.title': {
     cssVariable: '--env-type-title',
     type: 'typography',
     values: {
       light: {
         'font-family': "'envUI Geist', sans-serif",
-        'font-size': '1rem',
+        'font-size': '1.125rem',
         'font-weight': '500',
-        'letter-spacing': '0rem',
-        'line-height': '1.4em',
+        'letter-spacing': '-0.00625rem',
+        'line-height': '1.35em',
       },
       dark: {
         'font-family': "'envUI Geist', sans-serif",
-        'font-size': '1rem',
+        'font-size': '1.125rem',
         'font-weight': '500',
-        'letter-spacing': '0rem',
-        'line-height': '1.4em',
+        'letter-spacing': '-0.00625rem',
+        'line-height': '1.35em',
       },
       'light-high-contrast': {
         'font-family': "'envUI Geist', sans-serif",
-        'font-size': '1rem',
+        'font-size': '1.125rem',
         'font-weight': '500',
-        'letter-spacing': '0rem',
-        'line-height': '1.4em',
+        'letter-spacing': '-0.00625rem',
+        'line-height': '1.35em',
       },
       'dark-high-contrast': {
         'font-family': "'envUI Geist', sans-serif",
-        'font-size': '1rem',
+        'font-size': '1.125rem',
         'font-weight': '500',
-        'letter-spacing': '0rem',
-        'line-height': '1.4em',
+        'letter-spacing': '-0.00625rem',
+        'line-height': '1.35em',
       },
     },
   },

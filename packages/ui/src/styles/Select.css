@@ -73,8 +73,19 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+  /* An option's row adds more to its label than the field does, the popup's and the row's insets and
+     the check mark's slot against the field's insets and chevron, so the hidden labels take the
+     difference too: a field that fits its options is then as wide as its open list, whose edges line
+     up with the field's. */
   .env-select-sizer {
+    --env-select-sizer-room: max(
+      0rem,
+      2 * var(--env-popup-padding) + 2 * var(--env-popup-row-padding-inline) +
+        var(--env-popup-row-gap) + var(--env-control-icon-size) -
+        (var(--env-space-4) + var(--env-select-end) + var(--env-select-action) + var(--env-space-1))
+    );
     display: grid;
+    padding-inline-end: var(--env-select-sizer-room);
     block-size: 0;
     overflow: hidden;
     visibility: hidden;

@@ -431,8 +431,11 @@ test('a small Select has a small trigger, and its popup has the menus anatomy wi
   expect(surface.border).toBeGreaterThanOrEqual(1);
   expect(surface.radius).toBeCloseTo(20, 0);
   expect(surface.padding).toBeCloseTo(6, 0);
-  // It opens 8 px clear of its trigger, as every popup does, whatever the trigger's size.
-  const [triggerBox, popupBox] = [(await compact.boundingBox())!, (await popup.boundingBox())!];
+  // It opens 8 px clear of the outlined field, as every popup does, whatever the field's size, and
+  // lines up with the field's edges, to the pixel the positioner rounds to.
+  const [triggerBox, popupBox] = [(await well(compact))!, (await popup.boundingBox())!];
+  expect(Math.abs(popupBox.x - triggerBox.x)).toBeLessThan(1);
+  expect(Math.abs(popupBox.x + popupBox.width - (triggerBox.x + triggerBox.width))).toBeLessThan(1);
   const gap =
     popupBox.y > triggerBox.y
       ? popupBox.y - (triggerBox.y + triggerBox.height)

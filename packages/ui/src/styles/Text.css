@@ -15,9 +15,11 @@
   }
   .env-text:where([data-variant='headline']) {
     font: var(--env-type-headline);
+    letter-spacing: var(--env-type-headline-letter-spacing);
   }
   .env-text:where([data-variant='title']) {
     font: var(--env-type-title);
+    letter-spacing: var(--env-type-title-letter-spacing);
   }
   .env-text:where([data-variant='body-sm']) {
     font: var(--env-type-body-sm);

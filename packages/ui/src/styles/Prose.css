@@ -60,9 +60,11 @@
   }
   .env-prose h1 {
     font: var(--env-type-headline);
+    letter-spacing: var(--env-type-headline-letter-spacing);
   }
   .env-prose :where(h2, h3, h4, h5, h6) {
     font: var(--env-type-title);
+    letter-spacing: var(--env-type-title-letter-spacing);
   }
   .env-prose p {
     font: var(--env-type-body);

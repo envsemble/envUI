@@ -219,8 +219,12 @@
   /* The first line of the title lines up with the small controls beside it. */
   .env-panel-dock-title {
     margin: 0;
-    padding-block-start: max(0rem, calc((var(--env-panel-dock-control) - 1.4em) / 2));
+    padding-block-start: max(
+      0rem,
+      calc((var(--env-panel-dock-control) - var(--env-type-headline-line-height)) / 2)
+    );
     font: var(--env-type-headline);
+    letter-spacing: var(--env-type-headline-letter-spacing);
     overflow-wrap: break-word;
   }
   .env-panel-dock-meta {

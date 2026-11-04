@@ -20,5 +20,6 @@
   .env-popover-title {
     margin: 0;
     font: var(--env-type-title);
+    letter-spacing: var(--env-type-title-letter-spacing);
   }
 }

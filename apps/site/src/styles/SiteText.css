@@ -39,7 +39,7 @@
 /* A lead: the one or two sentences that open a section, a step larger than the text below it. */
 .site-lead,
 :where(.site-lead) > p {
-  font: var(--env-font-weight-regular) var(--env-font-size-headline) / 1.5 var(--env-font-family);
+  font: var(--env-font-weight-regular) var(--env-font-size-title) / 1.5 var(--env-font-family);
   color: var(--env-color-fg-default);
 }
 

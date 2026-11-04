@@ -64,8 +64,8 @@
       "label": { "$value": { "value": 0.8125, "unit": "rem" } },
       "label-sm": { "$value": { "value": 0.75, "unit": "rem" } },
       "body": { "$value": { "value": 0.8125, "unit": "rem" } },
-      "title": { "$value": { "value": 0.875, "unit": "rem" } },
-      "headline": { "$value": { "value": 1, "unit": "rem" } }
+      "title": { "$value": { "value": 1, "unit": "rem" } },
+      "headline": { "$value": { "value": 1.25, "unit": "rem" } }
     }
   },
   "radius": {
