@@ -570,7 +570,7 @@
     );
   }
   .env-button[data-pending][data-variant='text']:not(.env-icon-button):has(> .env-button-spinner) {
-    padding-inline: max(0rem, calc(var(--env-space-1) - var(--env-button-spinner-lean)));
+    padding-inline: 0;
   }
   .env-button[data-pending] > .env-button-spinner {
     margin-inline-end: calc(var(--env-space-1) - var(--env-control-gap));

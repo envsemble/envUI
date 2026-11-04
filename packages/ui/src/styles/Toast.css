@@ -117,11 +117,9 @@
     max-inline-size: 50%;
     white-space: normal;
     overflow-wrap: break-word;
-  }
-  /* The action is an outline Button drawn in the toast's own ink, its label in the toast's text color
-     and its edge that color at 55%, so no second accent competes with the tone's fill; hover and press
-     take the dismiss button's fills. A button's own color properties still win. */
-  .env-toast .env-toast-action {
+    /* The action is an outline Button drawn in the toast's own ink, its label in the toast's text
+       color and its edge that color at 55%, so no second accent competes with the tone's fill; hover
+       and press take the dismiss button's fills. A button's own color properties still win. */
     color: var(--env-button-content, var(--env-toast-text));
     border-color: var(
       --env-button-outline,
