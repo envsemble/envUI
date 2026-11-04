@@ -98,7 +98,7 @@ examples:
 
 An outline field has no fill of its own: it takes the background of what it sits on, such as a card or a dialog. Its label rests inside it and floats into the edge, which opens behind it.
 
-- It is as tall as a button of its size, so the two line up in a row.
+- It is as tall as a button of its size, so the two line up in a row; stacked in a Column or a Grid, it keeps a little room above it for its floated label.
 - A field on its own on a page, or in a long form, takes the large size.
 - It can be given a fill of its own where it needs one.
 

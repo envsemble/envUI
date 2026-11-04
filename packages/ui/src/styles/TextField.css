@@ -61,6 +61,13 @@
   .env-text-field[data-tall]:not([data-label-hidden]):has(> .env-text-field-control > label) {
     padding-block-start: var(--env-space-2);
   }
+  /* A single-line field reserves no room above it, so it lines up with buttons in a row. Stacked in
+     a Column or a Grid, as a form's fields are, it keeps a little for its floated label, so the
+     label doesn't crowd the field above. */
+  :where([data-env-layout='column'], [data-env-layout='grid'])
+    > .env-text-field:not([data-tall], [data-label-hidden]):has(> .env-text-field-control > label) {
+    padding-block-start: var(--env-space-1);
+  }
   .env-text-field-control {
     --env-text-field-border-base: var(--env-text-field-edge, var(--env-color-border-default));
     --env-text-field-interaction-color: var(
@@ -484,6 +491,18 @@
       var(--env-space-1),
       calc((var(--env-field-height) - 2 * var(--env-control-border-width) - 1lh) / 2)
     );
+  }
+  /* A short field, as a small one or one at the compact scale, would set its value almost on the
+     floated label above it: with a visible label, the value, its prefix, suffix and start icon sit a
+     little below the middle, up to 3 px in the shortest field and not at all from 2.25 rem up. The
+     field keeps its height, and its end actions stay in the middle. */
+  .env-text-field:not([data-tall], [data-label-hidden]) {
+    --env-text-field-value-shift: clamp(0rem, (2.25rem - var(--env-field-height)) / 2, 0.1875rem);
+  }
+  .env-text-field:not([data-tall], [data-label-hidden])
+    .env-text-field-control:has(> label)
+    > :not(label, .env-text-field-border, .env-text-field-end) {
+    translate: 0 var(--env-text-field-value-shift);
   }
   /* The label rests at the vertical center and floats into the outline like a tall field's, without
      reserving space above the field, so the field still lines up with adjacent buttons. */
