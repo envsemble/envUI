@@ -91,6 +91,7 @@ import { ListsFixture } from './Lists.js';
 import { DevModeFixture } from './DevMode.js';
 import { SkeletonsFixture } from './Skeletons.js';
 import { LayoutCheckFixture } from './LayoutCheck.js';
+import { ContactSheetFixture } from './ContactSheet.js';
 import {
   ThemeContrastFixture,
   ThemeContrastNestedFixture,
@@ -140,6 +141,7 @@ const standaloneFixtures: Record<string, () => ReactNode> = {
   'layout-check': LayoutCheckFixture,
   skeletons: SkeletonsFixture,
   accordions: AccordionsFixture,
+  'contact-sheet': ContactSheetFixture,
 };
 
 export default function App() {
