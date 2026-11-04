@@ -192,6 +192,9 @@ body {
     display: none;
   }
 }
+.site-navigation[data-in-sheet] .site-search-keys {
+  display: none;
+}
 .docs-drawer-top .site-brand {
   flex: none;
   padding-inline-start: var(--env-space-2);
