@@ -4,9 +4,10 @@ import {
   IconButton,
   Menu,
   ThemePreferenceProvider,
-  ThemeMenuRadioGroup,
   Tooltip,
+  useThemePreference,
   type ThemeContrast,
+  type ThemePreference,
   type ThemeScale,
 } from '@envsemble/envui';
 import { IconPause } from '@envsemble/envui/icons/Pause';
@@ -14,6 +15,7 @@ import { IconPlayArrow } from '@envsemble/envui/icons/PlayArrow';
 import { IconTune } from '@envsemble/envui/icons/Tune';
 import { displayStorageKeys } from './DisplayStorage';
 
+const themes: readonly ThemePreference[] = ['system', 'light', 'dark'];
 const contrasts: readonly ThemeContrast[] = ['system', 'standard', 'high'];
 const scales: readonly ThemeScale[] = ['comfortable', 'compact'];
 const motions = ['playing', 'paused'] as const;
@@ -142,12 +144,13 @@ export function useDisplaySettings() {
 }
 
 /**
- * The Display menu: the theme, the contrast and the scale, each stored as it is chosen. iconOnly
- * shows its trigger as an icon, in a narrow window. It opens below its trigger, at the page's top
- * end.
+ * The Display menu: the theme, the contrast and the scale, each stored as it is chosen, three groups
+ * of plain choices alike. iconOnly shows its trigger as an icon, in a narrow window. It opens below
+ * its trigger, at the page's top end.
  */
 export function DisplayMenu({ iconOnly = false }: { iconOnly?: boolean }) {
   const { contrast, setContrast, scale, setScale } = useDisplaySettings();
+  const { preference, setPreference } = useThemePreference();
   return (
     <Menu.Root
       aria-label="Display"
@@ -166,7 +169,21 @@ export function DisplayMenu({ iconOnly = false }: { iconOnly?: boolean }) {
         )
       }
     >
-      <ThemeMenuRadioGroup label="Theme" />
+      <Menu.RadioGroup
+        label="Theme"
+        value={preference}
+        onValueChange={(next) => setPreference(themes.find((value) => value === next)!)}
+      >
+        <Menu.RadioItem value="system" closeOnClick={false}>
+          System
+        </Menu.RadioItem>
+        <Menu.RadioItem value="light" closeOnClick={false}>
+          Light
+        </Menu.RadioItem>
+        <Menu.RadioItem value="dark" closeOnClick={false}>
+          Dark
+        </Menu.RadioItem>
+      </Menu.RadioGroup>
       <Menu.Separator />
       <Menu.RadioGroup
         label="Contrast"
