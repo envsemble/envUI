@@ -16,6 +16,21 @@ export const generatedFile = fileURLToPath(
 );
 const changelogFile = fileURLToPath(new URL('../../packages/ui/CHANGELOG.md', import.meta.url));
 const changesetDirectory = fileURLToPath(new URL('../../.changeset/', import.meta.url));
+const libraryPackageFile = fileURLToPath(
+  new URL('../../packages/ui/package.json', import.meta.url),
+);
+
+/** The version of @envsemble/envui, from its package.json. */
+export const libraryVersion = (): string =>
+  JSON.parse(readFileSync(libraryPackageFile, 'utf8')).version;
+
+/**
+ * Text with the version of @envsemble/envui in place of `{{version}}`: a page of docs/ that installs
+ * envUI writes its command with it, so the command people copy from the Docs or the packaged docs
+ * runs as it is, and the hosted setup skill does the same (scripts/site/SiteAgentFiles.ts).
+ */
+export const withLibraryVersion = (text: string, version = libraryVersion()) =>
+  text.replaceAll('{{version}}', version);
 
 /** The index's component groups; a component page's category is one of them. */
 export const componentGroups = [

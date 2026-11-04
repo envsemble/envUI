@@ -19,6 +19,7 @@ import {
   specimensDirectory,
   splitFrontmatter,
   withImport,
+  withLibraryVersion,
   type Frontmatter,
   type PropsFile,
 } from './Schema.ts';
@@ -99,8 +100,10 @@ export function readDocumentation(
     partNames?: PartNames;
   } = {},
 ): DocumentRecord[] {
-  // Pages saved with CRLF line endings read as LF, as Git checks them out.
-  const read = (file: string) => readFileSync(file, 'utf8').replace(/\r\n?/g, '\n');
+  // Pages saved with CRLF line endings read as LF, as Git checks them out, and with the library's
+  // version in place of {{version}}, such as in the install command.
+  const read = (file: string) =>
+    withLibraryVersion(readFileSync(file, 'utf8').replace(/\r\n?/g, '\n'));
   const index = read(resolve(directory, 'index.md'));
   const documents: DocumentRecord[] = [
     {
