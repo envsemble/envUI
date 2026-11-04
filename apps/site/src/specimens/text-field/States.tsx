@@ -1,13 +1,32 @@
 import { TextField } from '@envsemble/envui';
 import { Example, Specimen, SpecimenGrid } from '../../figures/Example';
 
-/** Empty, filled, invalid, read-only and disabled outline fields, side by side. */
+/**
+ * An outline field in each state, side by side: empty, under the pointer and focused as the
+ * catalogue forces them (InteractionStates.css), filled, invalid, read-only and disabled.
+ */
 export default function States() {
   return (
     <Example size="collection">
       <SpecimenGrid size="compact">
         <Specimen title="Empty">
           <TextField label="Project name" placeholder="Enter a name" />
+        </Specimen>
+        <Specimen title="Hover">
+          <TextField
+            label="Project name"
+            placeholder="Enter a name"
+            className="catalogue-force-hover"
+            inert
+          />
+        </Specimen>
+        <Specimen title="Focus">
+          <TextField
+            label="Project name"
+            defaultValue="Northwind"
+            className="catalogue-force-focus"
+            inert
+          />
         </Specimen>
         <Specimen title="Filled">
           <TextField label="Project name" defaultValue="Northwind launch" />

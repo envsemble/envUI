@@ -161,8 +161,6 @@ Not shown: the suffix, the error and a text area's resize edge.
 
 The label rests in an empty field and floats into the outline on focus or with a value. Focus draws the outline in the accent, twice as thick.
 
-<!-- specimen: LabelFloats -->
-
 <!-- specimen: States -->
 
 ### Show an error
