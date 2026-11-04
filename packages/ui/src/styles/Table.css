@@ -50,11 +50,36 @@
     --env-table-row-padding: var(--env-row-padding-block-lg);
   }
   .env-table-caption {
-    padding: var(--env-space-3) var(--env-space-4) var(--env-space-1);
+    padding: 0 0 var(--env-space-2);
     caption-side: top;
     color: var(--env-color-fg-default);
     font: var(--env-type-title);
     text-align: start;
+  }
+  /* A captioned table names itself above its frame, as a heading over its rows, rather than as a
+     second header inside it: the frame and surface move from the region to the table, whose border
+     box leaves its caption out. The corner cells round with it. */
+  .env-table-region:has(> .env-table > .env-table-caption) {
+    border: 0;
+    border-radius: 0;
+    background: none;
+  }
+  .env-table:has(> .env-table-caption) {
+    border: var(--env-control-border-width) solid var(--env-color-border-muted);
+    border-radius: var(--env-radius-lg);
+    background: var(--env-table-surface);
+  }
+  .env-table:has(> .env-table-caption) .env-table-head > .env-table-row:first-child > :first-child {
+    border-start-start-radius: calc(var(--env-radius-lg) - var(--env-control-border-width));
+  }
+  .env-table:has(> .env-table-caption) .env-table-head > .env-table-row:first-child > :last-child {
+    border-start-end-radius: calc(var(--env-radius-lg) - var(--env-control-border-width));
+  }
+  .env-table:has(> .env-table-caption) > :last-child > .env-table-row:last-child > :first-child {
+    border-end-start-radius: calc(var(--env-radius-lg) - var(--env-control-border-width));
+  }
+  .env-table:has(> .env-table-caption) > :last-child > .env-table-row:last-child > :last-child {
+    border-end-end-radius: calc(var(--env-radius-lg) - var(--env-control-border-width));
   }
   .env-table-header-cell,
   .env-table-cell {
@@ -289,6 +314,21 @@
      always the container, so the stacked layout is written for widths below it. */
   .env-table-cell-label {
     display: none;
+  }
+  /* Stacked, a captioned table keeps its caption above the frame: the body carries the frame. */
+  @container env-table (width < 37.5em) {
+    .env-table-region[data-narrow-layout='stack'] .env-table:has(> .env-table-caption) {
+      border: 0;
+      background: none;
+    }
+    .env-table-region[data-narrow-layout='stack']
+      .env-table:has(> .env-table-caption)
+      > .env-table-body {
+      overflow: clip;
+      border: var(--env-control-border-width) solid var(--env-color-border-muted);
+      border-radius: var(--env-radius-lg);
+      background: var(--env-table-surface);
+    }
   }
   .env-table-region[data-narrow-layout='stack'] {
     container: env-table / inline-size;
