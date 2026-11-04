@@ -95,7 +95,7 @@ Not shown: the suggestions and the status.
 
 ### Show saved content
 
-RichText shows saved text again as it was written, also on a server, and opens its references and links through the application.
+RichText shows saved text again as it was written, also on a server, and opens its references and links through the application. A single newline in the Markdown starts a new line, as in the editor.
 
 ```tsx figure=SavedContent
 
@@ -263,6 +263,7 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 
 ## Changelog
 
+- **1.0.0-prerelease.6**: RichText keeps a line break within a paragraph, a single newline in the Markdown, and runs of spaces, as the editor shows them, rather than joining the lines.
 - **1.0.0-prerelease.6**: A disabled editor no longer fades as a whole: its document takes `--env-color-fg-disabled` and its outline the muted border, as a disabled TextField does.
 - **1.0.0-prerelease.5**: `onRequestLink` is `pickLink`: it supplies the link rather than reporting an event.
 - **1.0.0-prerelease.5**: `ref` reaches the root element, and `editorRef` gives the Tiptap editor.
