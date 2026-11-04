@@ -72,6 +72,8 @@
       var(--env-color-border-primary-emphasis-pressed)
     );
     --env-text-field-border-color: var(--env-text-field-border-base);
+    /* The width of the frame as drawn: the control's border, twice that while focused. */
+    --env-text-field-frame: var(--env-control-border-width);
     /* Where the label rests, and the height of the notch it cuts once it floats. */
     --env-text-field-label-start: var(--env-space-4);
     --env-text-field-notch: var(--env-space-2);
@@ -92,17 +94,25 @@
   /* The field has no fill of its own, so the line behind its floated label can't be hidden under a
      fill: the border is a fieldset over the control's border box, and the legend, a hidden copy of
      the label as long as the floated label, cuts a notch in it where the label sits. The legend's
-     middle sits on the border, so the fieldset starts half a notch higher. */
+     middle sits on the border, so the fieldset starts half a notch higher. A wider frame, as while
+     focused, grows inward from the same outer edge, and the notch keeps its place, so nothing moves. */
   .env-text-field-border {
     position: absolute;
     inset-inline: calc(-1 * var(--env-control-border-width));
-    inset-block: calc(-0.5 * (var(--env-text-field-notch) + var(--env-control-border-width)))
+    inset-block: calc(
+        -0.5 * (var(--env-text-field-notch) - var(--env-text-field-frame)) -
+          var(--env-control-border-width)
+      )
       calc(-1 * var(--env-control-border-width));
     min-inline-size: 0;
     margin: 0;
     padding-block: 0;
-    padding-inline: var(--env-text-field-notch-start) var(--env-space-2);
-    border: var(--env-control-border-width) solid var(--env-text-field-border-color);
+    padding-inline: calc(
+        var(--env-text-field-notch-start) - var(--env-text-field-frame) +
+          var(--env-control-border-width)
+      )
+      var(--env-space-2);
+    border: var(--env-text-field-frame) solid var(--env-text-field-border-color);
     border-radius: inherit;
     pointer-events: none;
     transition: border-color var(--env-motion-duration-medium) var(--env-motion-ease);
@@ -136,8 +146,12 @@
     ) {
     --env-text-field-border-color: var(--env-text-field-interaction-pressed);
   }
+  /* Focus draws the frame in the accent at twice its width, all the way round the notch. */
   .env-text-field-control:focus-within {
     --env-text-field-border-color: var(--env-text-field-interaction-color);
+  }
+  .env-text-field-control:focus-within:not([data-variant='ghost']) {
+    --env-text-field-frame: calc(2 * var(--env-control-border-width));
   }
   .env-text-field-input {
     box-sizing: border-box;
@@ -250,6 +264,15 @@
     )
     > .env-text-field-border {
     border-color: var(--env-text-field-ghost-edge, transparent);
+  }
+  /* Read-only: the value keeps its full contrast and the label its place, while the frame quiets to
+     the muted edge and doesn't answer the pointer, so the field reads as one to look at rather than
+     to fill in. Focus still draws the accent frame. Inputs mark it with readonly, the fields whose
+     control is a button with aria-readonly. */
+  .env-text-field-control:has(> .env-text-field-input:is([readonly], [aria-readonly='true'])) {
+    --env-text-field-border-base: var(--env-color-border-muted);
+    --env-text-field-interaction-hover: var(--env-color-border-muted);
+    --env-text-field-interaction-pressed: var(--env-color-border-muted);
   }
   /* Invalid controls recolor their existing border. */
   .env-text-field-control:is(:has(> .env-text-field-input[aria-invalid='true']), [data-invalid]) {
