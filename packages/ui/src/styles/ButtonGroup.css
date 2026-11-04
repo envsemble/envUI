@@ -2,7 +2,9 @@
   .env-button-group {
     display: inline-flex;
     align-items: stretch;
-    gap: 0.125rem;
+    /* A hairline between the buttons and small inner corners, so the row reads as one control with
+       pill ends rather than separate buttons side by side. */
+    gap: 1px;
     inline-size: fit-content;
     max-inline-size: 100%;
     min-inline-size: 0;
@@ -43,18 +45,28 @@
 
   .env-button-group[data-orientation='horizontal']
     > .env-button:not(:nth-child(1 of .env-button:not([hidden]))) {
-    border-start-start-radius: var(--env-radius-row-inner);
-    border-end-start-radius: var(--env-radius-row-inner);
+    border-start-start-radius: var(--env-radius-xs);
+    border-end-start-radius: var(--env-radius-xs);
   }
 
   .env-button-group[data-orientation='horizontal']
     > .env-button:not(:nth-last-child(1 of .env-button:not([hidden]))) {
-    border-start-end-radius: var(--env-radius-row-inner);
-    border-end-end-radius: var(--env-radius-row-inner);
+    border-start-end-radius: var(--env-radius-xs);
+    border-end-end-radius: var(--env-radius-xs);
   }
 
   .env-button-group[data-orientation='vertical'] {
     flex-direction: column;
+  }
+
+  /* Outline buttons share one edge where they meet, rather than showing two edges a hairline apart. */
+  .env-button-group[data-orientation='horizontal']
+    > .env-button[data-variant='outline']:not(:nth-child(1 of .env-button:not([hidden]))) {
+    margin-inline-start: -2px;
+  }
+  .env-button-group[data-orientation='vertical']
+    > .env-button[data-variant='outline']:not(:nth-child(1 of .env-button:not([hidden]))) {
+    margin-block-start: -2px;
   }
 
   /* fullWidth fills the container: in a row, labelled buttons share the room the icon-only ones
@@ -83,13 +95,13 @@
 
   .env-button-group[data-orientation='vertical']
     > .env-button:not(:nth-child(1 of .env-button:not([hidden]))) {
-    border-start-start-radius: var(--env-radius-row-inner);
-    border-start-end-radius: var(--env-radius-row-inner);
+    border-start-start-radius: var(--env-radius-xs);
+    border-start-end-radius: var(--env-radius-xs);
   }
 
   .env-button-group[data-orientation='vertical']
     > .env-button:not(:nth-last-child(1 of .env-button:not([hidden]))) {
-    border-end-start-radius: var(--env-radius-row-inner);
-    border-end-end-radius: var(--env-radius-row-inner);
+    border-end-start-radius: var(--env-radius-xs);
+    border-end-end-radius: var(--env-radius-xs);
   }
 }
