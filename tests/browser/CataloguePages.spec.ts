@@ -56,28 +56,11 @@ test('live examples keep links in place, show their source, and specimens show f
 test('a component page shows plain sections, equal cells and the parts of its anatomy', async ({
   page,
 }) => {
-  // Wide enough for the overview's three figures to share a row beside the page's contents.
+  // Wide enough for an overview's three figures to share a row beside the page's contents.
   await page.setViewportSize({ width: 1920, height: 900 });
-  await page.goto(`${siteDevUrl}/components/button`);
-  // One page of sections, with no views; the props are on its page in the Docs, which the banner's
-  // Docs opens.
-  await expect(page.locator('.site-page-header').getByRole('tab')).toHaveCount(0);
-  await expect(
-    page.locator('.site-page-header').getByRole('link', { name: 'Docs', exact: true }),
-  ).toHaveAttribute('href', '/docs/components/button');
-  // Ordinary headings in the fixed order, and no questions.
-  // The one-file structure's sections, which every kind of page shares.
-  await expect(page.locator('.site-figure-section-heading h2')).toHaveText([
-    'Overview',
-    'Variants',
-    'Anatomy',
-    'Behaviour',
-    'Rules',
-    'Accessibility',
-  ]);
-  await expect(page.locator('.site-figures .env-message')).toHaveCount(0);
   // Figures that share a row are cells of one width, from the top of the row, each stage as tall
   // as its own figure: a stage stretched to a taller neighbour's left a lone control floating.
+  await page.goto(`${siteDevUrl}/components/badge`);
   await expect(page.locator('[data-section="overview"] .site-loading')).toHaveCount(0);
   const cells = () =>
     page
@@ -107,6 +90,24 @@ test('a component page shows plain sections, equal cells and the parts of its an
         }),
       );
   expect(new Set((await codeGaps()).map(({ gap }) => gap)).size).toBe(1);
+  await page.goto(`${siteDevUrl}/components/button`);
+  // One page of sections, with no views; the props are on its page in the Docs, which the banner's
+  // Docs opens.
+  await expect(page.locator('.site-page-header').getByRole('tab')).toHaveCount(0);
+  await expect(
+    page.locator('.site-page-header').getByRole('link', { name: 'Docs', exact: true }),
+  ).toHaveAttribute('href', '/docs/components/button');
+  // Ordinary headings in the fixed order, and no questions.
+  // The one-file structure's sections, which every kind of page shares.
+  await expect(page.locator('.site-figure-section-heading h2')).toHaveText([
+    'Overview',
+    'Variants',
+    'Anatomy',
+    'Behaviour',
+    'Rules',
+    'Accessibility',
+  ]);
+  await expect(page.locator('.site-figures .env-message')).toHaveCount(0);
   // Do and don't figures carry their verdict and one sentence, with the code below.
   const verdict = page.getByRole('figure', { name: /^Do One primary button per group/ });
   await expect(verdict.locator('.site-verdict-bar')).toHaveText('Do');
@@ -201,9 +202,12 @@ test('a component page shows plain sections, equal cells and the parts of its an
   await expect.poll(placement).toEqual({ badges: 4, aligned: true, theme: 'dark' });
   await page.setViewportSize({ width: 420, height: 800 });
   await expect.poll(placement).toEqual({ badges: 4, aligned: true, theme: 'dark' });
+  await expect(page.locator('.site-anatomy-legend > li')).toHaveCount(4);
+  // One to a row, each figure's caption or code follows its stage as closely.
+  await page.goto(`${siteDevUrl}/components/badge`);
+  await expect(page.locator('[data-section="overview"] .site-loading')).toHaveCount(0);
   const column = await codeGaps();
   expect(new Set(column.map(({ gap }) => gap)).size).toBe(1);
-  await expect(page.locator('.site-anatomy-legend > li')).toHaveCount(4);
 });
 
 test('every anatomy figure numbers each part its legend names', async ({ page }) => {

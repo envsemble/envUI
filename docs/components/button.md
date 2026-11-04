@@ -43,12 +43,8 @@ components:
   - ButtonGroup
 examples:
   CreateProject: overview
-  Icons:
-    role: overview
-    caption: 'IconButton: an icon alone, with a name for assistive technology.'
-  ConnectedButtons:
-    role: overview
-    caption: 'ButtonGroup: related buttons joined in a row or a column.'
+  Icons: example
+  ConnectedButtons: example
   OnePrimaryAction:
     role: do
     caption: One primary button per group, at the end of its actions.
@@ -120,6 +116,22 @@ A button without a variant of its own takes its container's, such as ghost in a 
 A button can go to a page instead of acting; [Link](link.md) says when a destination takes a button's shape.
 
 ```tsx figure=ButtonLinks
+
+```
+
+### Icons
+
+A button takes an icon at its start or its end; an IconButton shows an icon alone, with a name for assistive technology.
+
+```tsx figure=Icons
+
+```
+
+### Groups
+
+A ButtonGroup joins related buttons in a row or a column.
+
+```tsx figure=ConnectedButtons
 
 ```
 
