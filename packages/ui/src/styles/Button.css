@@ -495,7 +495,9 @@
     }
   }
 
-  /* Pending: the transparent label keeps the button's size and name while a spinner shows the work. */
+  /* Pending: the label stays, subdued, with a small spinner beside it, and the button keeps its name.
+     The spinner takes a start icon's place, or stands before the label; an icon button's takes the
+     icon's place. */
   .env-button[data-pending] {
     /* The spinner takes the label's color through its hook. */
     --env-spinner-color: currentColor;
@@ -530,11 +532,15 @@
     --env-kbd-separator-padding-inline: calc(0.0375 * var(--env-control-height-md));
     --env-kbd-separator-font: 0 / 1 var(--env-font-family);
   }
-  /* Transparent rather than hidden, so the label stays the button's accessible name. */
-  .env-button[data-pending] > .env-button-content {
+  /* The label, subdued, while the spinner keeps the label's color; an icon button's icon is
+     transparent rather than hidden, so the button keeps its accessible name. */
+  .env-button[data-pending]:not(.env-icon-button) > .env-button-content {
+    color: color-mix(in srgb, currentColor 60%, transparent);
+  }
+  .env-button[data-pending].env-icon-button > .env-button-content {
     color: transparent;
   }
-  .env-button[data-pending] > .env-button-content > * {
+  .env-button[data-pending].env-icon-button > .env-button-content > * {
     opacity: 0;
   }
   /* ConfirmButton announces its armed state from a visually hidden status beside the button. */
@@ -547,7 +553,29 @@
     clip-path: inset(50%);
     white-space: nowrap;
   }
-  .env-button-spinner {
+  /* In a start icon's place the spinner is as large as the icon, and the button keeps its width.
+     Without one it is smaller and closer to the label than an icon, and the padding at each side
+     gives up half its footprint, down to the small spacing, so the button grows by a few pixels at
+     most rather than crowding its label against its ends. */
+  .env-button .env-button-spinner {
+    inline-size: var(--env-button-spinner-size, var(--env-icon-size));
+    block-size: var(--env-button-spinner-size, var(--env-icon-size));
+  }
+  .env-button[data-pending]:not(.env-icon-button):has(> .env-button-spinner) {
+    --env-button-spinner-size: 0.75rem;
+    --env-button-spinner-lean: calc((var(--env-button-spinner-size) + var(--env-space-1)) / 2);
+    padding-inline: max(
+      var(--env-space-2),
+      calc(var(--env-space-3) - var(--env-button-spinner-lean))
+    );
+  }
+  .env-button[data-pending][data-variant='text']:not(.env-icon-button):has(> .env-button-spinner) {
+    padding-inline: max(0rem, calc(var(--env-space-1) - var(--env-button-spinner-lean)));
+  }
+  .env-button[data-pending] > .env-button-spinner {
+    margin-inline-end: calc(var(--env-space-1) - var(--env-control-gap));
+  }
+  .env-button.env-icon-button > .env-button-spinner {
     position: absolute;
     inset: 0;
     margin: auto;

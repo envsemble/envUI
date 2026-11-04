@@ -172,7 +172,7 @@ Hover, press, keyboard focus and disabled, for each variant.
 
 ### Pending work
 
-While its work runs, a spinner replaces the content at the same size, and presses do nothing.
+While its work runs, the label stays, subdued, with a small spinner before it, in the start icon's place where there is one, and presses do nothing. An icon button's spinner takes the icon's place.
 
 ```tsx figure=PendingAction motion
 
@@ -328,6 +328,8 @@ A wrapper of your own that passes a variant and a tone on types them as Button d
 
 ## Changelog
 
+- **1.0.0-prerelease.6**: A pending button keeps its label, subdued, with a small spinner before it, in the start icon's place where there is one, rather than a spinner alone over a hidden label; a button without a start icon grows by at most 8 px.
+- **1.0.0-prerelease.6**: In light, a danger primary darkens on hover and press as the default and accent primaries do; in dark, the soft primaries deepen by a clearer, even step.
 - **1.0.0-prerelease.6**: A disabled button no longer fades as a whole: its label and icon take `--env-color-fg-disabled`, a filled one half the secondary's neutral fill and an outline one the muted edge, so it stays readable, also in dark.
 - **1.0.0-prerelease.6**: An accent primary is a pill like every other button, rather than having square corners.
 - **1.0.0-prerelease.6**: A ButtonGroup's buttons meet with a hairline between them and small inner corners, so the group reads as one control with pill ends; outline buttons in a group share their edge.
