@@ -1,7 +1,7 @@
 @layer env.components {
   /* Drawer, the navigation drawer: a column of destinations on the navigation's background, a plain
-     rectangle, each a pill as wide as the drawer with its icon, label and count, under the headings
-     of their groups. It keeps its header and footer in view and scrolls its list. Every placement is
+     rectangle, each a rounded rectangle as wide as the drawer with its icon, label and count, under
+     the headings of their groups. It keeps its header and footer in view and scrolls its list. Every placement is
      logical, so it follows the text direction. */
   .env-navigation-drawer {
     /* The drawer is as wide as its longest destination, within these bounds. */
@@ -178,8 +178,8 @@
     margin: 0;
     padding: var(--env-space-1) var(--env-space-3);
     border: 0;
-    /* The capped full corner, so a label that wraps keeps the corners. */
-    border-radius: var(--env-radius-full);
+    /* The indicator's medium corner, as on the rail's and the bar's. */
+    border-radius: var(--env-radius-md);
     background: var(--env-navigation-drawer-item-custom-fill, transparent);
     /* Muted, under the group headings in the text color; a section's heading is an item too. */
     color: var(--env-navigation-drawer-item-content, var(--env-color-fg-muted));

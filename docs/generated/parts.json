@@ -3182,7 +3182,7 @@
         },
         {
           "class": "env-navigation-bar-indicator",
-          "description": "The pill around a destination's icon, filled while the destination is current."
+          "description": "The rounded rectangle around a destination's icon, filled while the destination is current."
         },
         {
           "class": "env-navigation-bar-item",
@@ -3237,7 +3237,7 @@
       "colors": [
         {
           "property": "--env-navigation-bar-item-container",
-          "description": "The pill around the icon at rest; set, it takes state layers instead of the navigation's designed hover and press fills."
+          "description": "The indicator around the icon at rest; set, it takes state layers instead of the navigation's designed hover and press fills."
         },
         {
           "property": "--env-navigation-bar-item-content",
@@ -3249,7 +3249,7 @@
         },
         {
           "property": "--env-navigation-bar-item-selected",
-          "description": "The pill around the icon of the current destination."
+          "description": "The indicator around the icon of the current destination."
         },
         {
           "property": "--env-navigation-bar-item-selected-content",
@@ -3423,7 +3423,7 @@
         },
         {
           "class": "env-navigation-rail-indicator",
-          "description": "The pill around a destination's icon, filled while the destination is current."
+          "description": "The rounded rectangle around a destination's icon, filled while the destination is current."
         },
         {
           "class": "env-navigation-rail-item",
@@ -3470,7 +3470,7 @@
       "colors": [
         {
           "property": "--env-navigation-rail-item-container",
-          "description": "The pill around the icon at rest; set, it takes state layers instead of the navigation's designed hover and press fills."
+          "description": "The indicator around the icon at rest; set, it takes state layers instead of the navigation's designed hover and press fills."
         },
         {
           "property": "--env-navigation-rail-item-content",
@@ -3482,7 +3482,7 @@
         },
         {
           "property": "--env-navigation-rail-item-selected",
-          "description": "The pill around the icon of the current destination."
+          "description": "The indicator around the icon of the current destination."
         },
         {
           "property": "--env-navigation-rail-item-selected-content",

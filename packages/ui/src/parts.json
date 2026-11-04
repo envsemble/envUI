@@ -485,7 +485,7 @@
       "env-navigation-bar": "The navigation bar: a nav landmark across the bottom of a compact window.",
       "env-navigation-bar-list": "The row of destinations, which share the bar's width.",
       "env-navigation-bar-item": "A destination: a link or button with its indicator above its label.",
-      "env-navigation-bar-indicator": "The pill around a destination's icon, filled while the destination is current.",
+      "env-navigation-bar-indicator": "The rounded rectangle around a destination's icon, filled while the destination is current.",
       "env-navigation-bar-label": "A destination's label, under its indicator, cut short with an ellipsis.",
       "env-navigation-bar-count": "A destination's count, on the icon's top end; 999+ above 999.",
       "env-navigation-bar-more": "The last item past five destinations, which opens the rest in a menu."
@@ -512,7 +512,7 @@
       "env-navigation-rail-header": "Content above the destinations, such as a button that opens the drawer or the main action.",
       "env-navigation-rail-list": "The list of destinations, one under another, which scrolls where the rail is shorter.",
       "env-navigation-rail-item": "A destination: a link or button with its indicator above its label.",
-      "env-navigation-rail-indicator": "The pill around a destination's icon, filled while the destination is current.",
+      "env-navigation-rail-indicator": "The rounded rectangle around a destination's icon, filled while the destination is current.",
       "env-navigation-rail-label": "A destination's short label, under its indicator.",
       "env-navigation-rail-count": "A destination's count, on the icon's top end; 999+ above 999.",
       "env-navigation-rail-footer": "Content at the bottom of the rail, such as the account's button."
@@ -880,10 +880,10 @@
       "--env-menu-item-icon": "The leading icon."
     },
     "NavigationBar": {
-      "--env-navigation-bar-item-container": "The pill around the icon at rest; set, it takes state layers instead of the navigation's designed hover and press fills.",
+      "--env-navigation-bar-item-container": "The indicator around the icon at rest; set, it takes state layers instead of the navigation's designed hover and press fills.",
       "--env-navigation-bar-item-content": "The label, and the color of the state layers.",
       "--env-navigation-bar-item-icon": "The icon of a destination that is not current.",
-      "--env-navigation-bar-item-selected": "The pill around the icon of the current destination.",
+      "--env-navigation-bar-item-selected": "The indicator around the icon of the current destination.",
       "--env-navigation-bar-item-selected-content": "The icon of the current destination."
     },
     "NavigationDrawer": {
@@ -894,10 +894,10 @@
       "--env-navigation-drawer-item-selected-content": "The label and icon of the current destination."
     },
     "NavigationRail": {
-      "--env-navigation-rail-item-container": "The pill around the icon at rest; set, it takes state layers instead of the navigation's designed hover and press fills.",
+      "--env-navigation-rail-item-container": "The indicator around the icon at rest; set, it takes state layers instead of the navigation's designed hover and press fills.",
       "--env-navigation-rail-item-content": "The label, and the color of the state layers.",
       "--env-navigation-rail-item-icon": "The icon of a destination that is not current.",
-      "--env-navigation-rail-item-selected": "The pill around the icon of the current destination.",
+      "--env-navigation-rail-item-selected": "The indicator around the icon of the current destination.",
       "--env-navigation-rail-item-selected-content": "The icon of the current destination."
     },
     "Radio": {
