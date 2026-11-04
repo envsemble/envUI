@@ -1,7 +1,8 @@
 // How envUI's documentation search reads text: shared by the index the build writes
 // (SearchIndex.ts) and the catalogue that loads and queries it, so both split and fold words alike.
 // It runs in Node and in the browser, so it imports nothing but types.
-import type { Options, SearchOptions } from 'minisearch';
+import type MiniSearch from 'minisearch';
+import type { Options, SearchOptions, SearchResult } from 'minisearch';
 
 /** The fields of a search document that are indexed, by weight at query time. */
 export const searchFields: string[] = ['title', 'owner', 'aliases', 'keywords', 'text'];
@@ -120,4 +121,43 @@ export function queryOptionsFor(query: string): SearchOptions {
     },
     bm25: { k: 1.2, b: 0.3, d: 0.5 },
   };
+}
+
+/** The kinds of result that are a page, which a query names by its title. */
+const pageKinds = new Set(['component', 'pattern', 'foundation', 'guide', 'page']);
+
+/** Whether a query's word matched a result's title. */
+const titleMatched = (result: SearchResult) =>
+  Object.values(result.match).some((fields) => fields.includes('title'));
+
+/**
+ * Whether a query names a result: the query is one of its whole names, such as an alias, or every
+ * word of it starts a word of the result's name or its owner's, as "date pi" does DatePicker's and
+ * "button variant" Button.variant's.
+ */
+function named(result: SearchResult, words: readonly string[], key: string) {
+  if ((result.names as readonly string[] | undefined)?.includes(key)) return true;
+  const own = tokenize(`${result.title ?? ''} ${result.owner ?? ''}`).map(processTerm);
+  return words.every((word) => own.some((term) => term.startsWith(word)));
+}
+
+/**
+ * Searches the index with a query: every word must match (queryOptionsFor). Where a query of
+ * several words names no result that way, as "primary button" names none, finding the Navigation
+ * pattern by its aliases but not Button, whose page never says primary, the pages and exports whose
+ * title holds any of its words come first, best first, then what matched every word.
+ */
+export function searchIndex(index: MiniSearch, query: string): SearchResult[] {
+  const options = queryOptionsFor(query);
+  const strict = index.search(query, options);
+  const words = tokenize(query).map(processTerm);
+  const key = nameKey(query);
+  if (words.length < 2 || strict.some((result) => named(result, words, key))) return strict;
+  const titled = index
+    .search(query, { ...options, combineWith: 'OR' })
+    .filter(
+      (result) => (pageKinds.has(result.kind) || result.kind === 'export') && titleMatched(result),
+    );
+  const first = new Set(titled.map(({ id }) => id));
+  return [...titled, ...strict.filter(({ id }) => !first.has(id))];
 }
