@@ -376,14 +376,13 @@
     color: var(--env-button-content, var(--env-color-fg-danger));
   }
 
-  /* Accent: a primary button for a rare, consequential action, on the accent emphasis fill, with
-     square corners; like every button it takes the row's control height. */
+  /* Accent: a primary button for a rare, consequential action, on the accent emphasis fill; a pill
+     like every button, at the row's control height. */
   .env-button:where([data-variant='primary'][data-tone='accent']) {
     --env-button-container-default: var(--env-color-bg-accent-emphasis);
     background: var(--env-button-custom-fill, var(--env-color-bg-accent-emphasis));
     color: var(--env-button-content, var(--env-color-fg-on-emphasis));
     border: 0;
-    border-radius: var(--env-radius-sm);
   }
 
   .env-button:where([data-variant='primary'][data-tone='accent']):hover:not(:disabled):not(

@@ -23,7 +23,7 @@
   }
 
   .env-button-group
-    > .env-button:not([data-variant='primary']:where([data-tone='accent'])):not(
+    > .env-button:not(
       :where(
         :nth-child(1 of .env-button:not([hidden])):nth-last-child(1 of .env-button:not([hidden]))
       )
