@@ -174,9 +174,15 @@ test('a component page shows plain sections, equal cells and the parts of its an
   const placement = () =>
     stages.evaluate((stage) => {
       // Until the example and its badges render, there is nothing to place: poll again.
+      // The icon's number is the one its legend entry has: the callouts number the parts in the
+      // order the figure is read.
       const iconElement = stage.querySelector('.env-button > .env-icon');
+      const entry = [
+        ...(stage.closest('figure')?.querySelectorAll('.site-anatomy-legend > li') ?? []),
+      ].find((item) => item.textContent?.includes('Start icon'));
+      const number = entry?.querySelector('.site-anatomy-number')?.textContent;
       const badgeElement = [...stage.querySelectorAll('.site-anatomy-badge')].find(
-        (item) => item.textContent === '2',
+        (item) => item.textContent === number,
       );
       if (!iconElement || !badgeElement) return null;
       const icon = iconElement.getBoundingClientRect();
