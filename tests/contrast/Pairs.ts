@@ -106,6 +106,10 @@ const worstBackdrop = 'popup-worst-backdrop';
 const tooltipFrosted = 'tooltip-frosted';
 // A text field's prefix and suffix (TextField.css).
 const textFieldAffix = 'text-field-affix';
+// A segmented control's thumb, the chosen segment on its track (SegmentedControl.css).
+const segmentThumb = 'segmented-control-thumb';
+/** The surfaces a segmented control's track sits on, each with the track's fill over it. */
+const segmentTracks = [page, surface, muted, raised].map((below) => [fill, below] as const);
 const tooltipKey = 'tooltip-key';
 const tooltipWorstBackdrop = 'tooltip-worst-backdrop';
 const frostedOverWorst = [
@@ -745,6 +749,17 @@ const registry: readonly ContrastPair[] = merged([
       [fill, fill, surface],
     ],
     'The active tab of a secondary tab rail',
+  ),
+  ...text(
+    '--env-color-fg-default',
+    segmentTracks.map((track) => [segmentThumb, ...track]),
+    'The chosen segment’s label and count on its thumb',
+  ),
+  ...different(segmentThumb, segmentTracks, 'The chosen segment’s thumb against its track'),
+  ...focus(
+    '--env-color-border-focus',
+    segmentTracks.map((track) => [segmentThumb, ...track]),
+    'The inset ring of the chosen segment, on its thumb',
   ),
   ...text(
     '--env-color-fg-control',
@@ -2996,6 +3011,11 @@ export const derived: Readonly<Record<string, string>> = {
   'tooltip-worst-backdrop': '#fff',
   // A text field's prefix and suffix, a share of muted text (TextField.css).
   'text-field-affix': markedColor('packages/ui/src/styles/TextField.css', 'text-field-affix'),
+  // A segmented control's thumb (SegmentedControl.css).
+  'segmented-control-thumb': markedColor(
+    'packages/ui/src/styles/SegmentedControl.css',
+    'segmented-control-thumb',
+  ),
 };
 
 /** The CSS color a name in a pair stands for. */

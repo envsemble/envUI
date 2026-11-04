@@ -1,4 +1,3 @@
-import { IconCheck } from '@envsemble/envui/icons/Check';
 import { IconCode } from '@envsemble/envui/icons/Code';
 import { IconMenuBook } from '@envsemble/envui/icons/MenuBook';
 import { replaceAddress, revealSection, routeHref } from './Address';
@@ -95,9 +94,6 @@ export function PartSwitch({ page }: { page: RoutePage }) {
                 if (!current) keepSection();
               }}
             >
-              <span className="env-icon env-segmented-control-item-indicator" aria-hidden="true">
-                <IconCheck />
-              </span>
               <span className="env-segmented-control-item-label">{label}</span>
             </RouterLink>
           );

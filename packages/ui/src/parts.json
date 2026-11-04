@@ -661,9 +661,8 @@
       "env-scaffold-body": "The body, the main region, which scrolls."
     },
     "SegmentedControl": {
-      "env-segmented-control": "The segmented control: connected segments in one outline.",
-      "env-segmented-control-item": "One segment.",
-      "env-segmented-control-item-indicator": "The check on the chosen segment, in place of its icon.",
+      "env-segmented-control": "The segmented control: the track the segments sit in.",
+      "env-segmented-control-item": "One segment; the chosen one rises on a raised thumb.",
       "env-segmented-control-item-count": "A segment's count.",
       "env-segmented-control-item-label": "A segment's label."
     },
@@ -906,10 +905,10 @@
       "--env-radio-selected": "The dot and ring of the chosen option."
     },
     "SegmentedControl": {
-      "--env-segmented-control-container": "The fill behind the options, transparent by default.",
-      "--env-segmented-control-outline": "The outline around and between the segments.",
+      "--env-segmented-control-container": "The track behind the options, the neutral fill by default.",
+      "--env-segmented-control-outline": "An outline around the track, none by default.",
       "--env-segmented-control-content": "The labels of the options not chosen, and the color of their state layers.",
-      "--env-segmented-control-selected": "The chosen option's fill; set, it takes state layers instead of the designed hover and press fills.",
+      "--env-segmented-control-selected": "The chosen option's thumb; set, it takes state layers instead of the designed hover and press fills.",
       "--env-segmented-control-selected-content": "The chosen option's label."
     },
     "Select": {

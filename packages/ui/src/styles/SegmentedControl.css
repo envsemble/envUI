@@ -1,8 +1,8 @@
 @layer env.components {
-  /* A segmented control picks a value, after Material's segmented buttons: connected segments in one
-     outline, the chosen one in the selected fill with a check before its label. Tabs, which switch
-     panels, look different on purpose. The control is as tall as a control of its size, or of its
-     container's. */
+  /* A segmented control picks a value: its segments sit in a recessed track, and the chosen one rises
+     out of it on a raised thumb with a soft shadow. Tabs, which switch panels,
+     keep their indicator under the selected tab, so the two read differently. The control is as
+     tall as a control of its size, or of its container's. */
   .env-segmented-control[data-size='sm'] {
     --env-control-height: var(--env-control-height-sm);
   }
@@ -13,11 +13,11 @@
     --env-control-height: var(--env-control-height-lg);
   }
   /* Color properties: a segmented control's colors, which an application sets on one control through
-     style or its own CSS: container the segments' fill, transparent by default, content the labels of
-     the other options, outline the outline around and between the segments, selected and
-     selected-content the chosen option. They don't inherit; the control passes them on to its
-     options. With none set, the options keep their designed fills in every state; with them, hover
-     and press are state layers of an option's label color (see Button.css). */
+     style or its own CSS: container the track, the neutral fill by default, content the labels of
+     the other options, outline an outline around the track, none by default, and selected and
+     selected-content the chosen option's thumb and label. They don't inherit; the control passes
+     them on to its options. With none set, the options keep their designed fills in every state;
+     with them, hover and press are state layers of an option's label color (see Button.css). */
   @property --env-segmented-control-container {
     syntax: '*';
     inherits: false;
@@ -41,7 +41,7 @@
   .env-segmented-control {
     --env-segmented-control-option-color: var(
       --env-segmented-control-content,
-      var(--env-color-fg-default)
+      var(--env-color-fg-muted)
     );
     --env-segmented-control-option-hover-color: var(
       --env-segmented-control-content,
@@ -49,21 +49,25 @@
     );
     --env-segmented-control-selected-color: var(
       --env-segmented-control-selected-content,
-      var(--env-color-fg-on-selected)
-    );
-    --env-segmented-control-edge: var(
-      --env-segmented-control-outline,
-      var(--env-color-border-default)
+      var(--env-color-fg-default)
     );
     /* Valid only while the application sets the colors of the options or of the chosen one. */
     --env-segmented-control-custom: var(
       --env-segmented-control-container,
       var(--env-segmented-control-content)
     );
+    /* The chosen segment's thumb: in light the muted surface, white; in dark a layer of the neutral
+       fill over the track's, so it is a step lighter than the track on every surface. light-dark()
+       follows the nearest theme's color scheme. */
+    /* contrast: segmented-control-thumb */
+    --env-segmented-control-thumb: light-dark(
+      var(--env-color-bg-muted),
+      var(--env-color-bg-neutral-muted)
+    );
     --env-segmented-control-selected-gate: color-mix(
       in srgb,
       var(--env-segmented-control-selected-content) 0%,
-      var(--env-color-bg-selected)
+      var(--env-segmented-control-thumb)
     );
     --env-segmented-control-custom-selected: var(
       --env-segmented-control-selected,
@@ -72,35 +76,51 @@
     /* The height the control draws at: the control height, or the touch height under a coarse
        pointer. */
     --env-segmented-control-height: var(--env-control-height);
+    /* The track's inset around the segments and the space between them. The inset gives way in a
+       control so small that a segment would be under 24 px. */
+    --env-segmented-control-inset: clamp(
+      0rem,
+      (var(--env-segmented-control-height) - 1.5rem) / 2,
+      0.1875rem
+    );
+    --env-segmented-control-gap: 0.125rem;
     box-sizing: border-box;
     inline-size: fit-content;
     max-inline-size: 100%;
     min-inline-size: 0;
     display: inline-flex;
     align-items: stretch;
+    gap: var(--env-segmented-control-gap);
     min-block-size: var(--env-segmented-control-height);
-    /* The outline is drawn over the segments, inside the control's edge, so the segments fill its
-       whole height and the chosen one's fill never covers it. */
-    outline: var(--env-control-border-width) solid
-      var(--env-segmented-control-edge, var(--env-color-border-default));
+    padding: var(--env-segmented-control-inset);
+    /* No outline unless the application sets one, drawn inside the track's edge. */
+    outline: var(--env-control-border-width) solid var(--env-segmented-control-outline, transparent);
     outline-offset: calc(-1 * var(--env-control-border-width));
     /* The capped full corner, so a control whose labels wrap keeps its corners. */
     border-radius: var(--env-radius-full);
-    background: var(--env-segmented-control-container, transparent);
-    /* Long labels stay reachable in narrow containers; the rounded ends clip the segments' fills. */
+    background: var(--env-segmented-control-container, var(--env-color-bg-neutral-muted));
+    /* Long labels stay reachable in narrow containers. */
     overflow-x: auto;
     scrollbar-width: none;
   }
   .env-segmented-control-item {
     box-sizing: border-box;
     flex: 0 0 auto;
-    min-block-size: var(--env-segmented-control-height);
+    /* As tall as the track inside its inset. */
+    min-block-size: calc(
+      var(--env-segmented-control-height) - 2 * var(--env-segmented-control-inset)
+    );
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: var(--env-space-2);
     /* The block padding gives way where a line and the padding would outgrow the segment. */
-    padding: min(var(--env-space-1), calc((var(--env-segmented-control-height) - 1lh) / 2))
+    padding: min(
+        var(--env-space-1),
+        calc(
+          (var(--env-segmented-control-height) - 2 * var(--env-segmented-control-inset) - 1lh) / 2
+        )
+      )
       var(--env-space-4);
     --env-segmented-control-layer: initial;
     --env-segmented-control-custom-fill: color-mix(
@@ -117,22 +137,41 @@
       --env-segmented-control-selected-layered,
       var(--env-segmented-control-custom-selected)
     );
+    /* The chosen segment's thumb: a soft shadow under it and a hairline of the text color around it,
+       derived from the theme's colors, so the shadow is faint on a light page and deeper on a dark
+       one. At high contrast an edge at 4.5:1 replaces both (see Theme.css). */
+    --env-segmented-control-high-contrast-edge: var(--env-theme-high-contrast) inset 0 0 0
+      var(--env-control-border-width) var(--env-color-border-default);
+    --env-segmented-control-shadow: var(
+      --env-segmented-control-high-contrast-edge,
+      0 1px 2px oklch(from var(--env-color-bg-page) calc(l * 0.25) c h / calc(0.62 - l * 0.48)),
+      0 0 0 0.5px oklch(from var(--env-color-fg-default) l c h / 0.08)
+    );
+    position: relative;
     border: 0;
-    border-inline-start: var(--env-control-border-width) solid transparent;
-    border-radius: 0;
+    border-radius: var(--env-radius-full);
     background: transparent;
-    color: var(--env-segmented-control-option-color, var(--env-color-fg-default));
+    color: var(--env-segmented-control-option-color, var(--env-color-fg-muted));
     font: var(--env-font-weight-medium) var(--env-font-size-label) / 1.4 var(--env-font-family);
     white-space: nowrap;
     cursor: pointer;
     transition:
       background-color var(--env-motion-duration-fast) var(--env-motion-ease),
-      color var(--env-motion-duration-fast) var(--env-motion-ease);
+      color var(--env-motion-duration-fast) var(--env-motion-ease),
+      box-shadow var(--env-motion-duration-fast) var(--env-motion-ease);
   }
-  /* The outline between two segments. Every segment takes the line's width, the first a clear one,
-     so segments that share a width evenly stay equal. */
-  .env-segmented-control-item ~ .env-segmented-control-item {
-    border-inline-start-color: var(--env-segmented-control-edge, var(--env-color-border-default));
+  /* A press anywhere across the track's height lands on a segment, in its inset and between two. */
+  .env-segmented-control-item::before {
+    content: '';
+    position: absolute;
+    inset-block: calc(-1 * var(--env-segmented-control-inset));
+    inset-inline: calc(var(--env-segmented-control-gap) / -2);
+  }
+  .env-segmented-control-item:first-child::before {
+    inset-inline-start: calc(-1 * var(--env-segmented-control-inset));
+  }
+  .env-segmented-control-item:last-child::before {
+    inset-inline-end: calc(-1 * var(--env-segmented-control-inset));
   }
   .env-segmented-control[data-size='sm'] .env-segmented-control-item {
     padding-inline: var(--env-space-3);
@@ -157,25 +196,17 @@
     /* prettier-ignore */
     background: var(--env-segmented-control-custom-fill, var(--env-color-bg-neutral-subtle-pressed));
   }
+  /* The chosen segment rises on its thumb, which stays as it is under the pointer, as it is chosen
+     already. */
   .env-segmented-control-item[data-checked] {
-    background: var(--env-segmented-control-selected-fill, var(--env-color-bg-selected));
-    color: var(--env-segmented-control-selected-color, var(--env-color-fg-on-selected));
+    background: var(--env-segmented-control-selected-fill, var(--env-segmented-control-thumb));
+    color: var(--env-segmented-control-selected-color, var(--env-color-fg-default));
+    box-shadow: var(--env-segmented-control-shadow);
   }
-  .env-segmented-control-item[data-checked]:hover:not([data-disabled]) {
-    background: var(--env-segmented-control-selected-fill, var(--env-color-bg-selected-hover));
-  }
-  .env-segmented-control-item[data-checked]:active:not([data-disabled]) {
-    background: var(--env-segmented-control-selected-fill, var(--env-color-bg-selected-pressed));
-  }
-  /* The ring is drawn inside the segment, as the control clips what reaches past its outline. */
+  /* The ring follows the segment's edge, inside it, as the track clips what reaches past it. */
   .env-segmented-control-item:focus-visible {
     outline: 2px solid var(--env-color-border-focus);
-    outline-offset: -4px;
-  }
-  /* The check shows only on the chosen segment, in place of its icon. */
-  .env-segmented-control-item:not([data-checked]) > .env-segmented-control-item-indicator,
-  .env-segmented-control-item[data-checked] > .env-icon:not(.env-segmented-control-item-indicator) {
-    display: none;
+    outline-offset: -2px;
   }
   /* Under a coarse pointer the control grows to the touch height, like every control of its row. A
      segment is at least as wide, unless the control shares out a full width. */
@@ -200,8 +231,8 @@
     font-size: 0.8125em;
     font-variant-numeric: tabular-nums;
   }
-  /* An unchosen item's count is muted text on what the control sits on, which keeps 4.5:1 (the
-     contrast gate measures it); a chosen one takes the selected label's color. */
+  /* An unchosen item's count is muted text on the track, which keeps 4.5:1 (the contrast gate
+     measures it); a chosen one takes the chosen label's color. */
   .env-segmented-control-item:not([data-checked]) > .env-segmented-control-item-count {
     color: var(--env-color-fg-muted);
   }
@@ -241,9 +272,12 @@
     }
   }
 
-  /* Forced colors: the system paints no fills or shadows, so the chosen segment takes the system’s
-     selection colors. */
+  /* Forced colors: the system paints no fills or shadows, so an outline marks the track and the
+     chosen segment takes the system’s selection colors. */
   @media (forced-colors: active) {
+    .env-segmented-control {
+      outline-color: CanvasText;
+    }
     .env-segmented-control-item[data-checked] {
       forced-color-adjust: none;
       background-color: Highlight;

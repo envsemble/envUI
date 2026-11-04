@@ -4501,19 +4501,15 @@
       "parts": [
         {
           "class": "env-segmented-control",
-          "description": "The segmented control: connected segments in one outline."
+          "description": "The segmented control: the track the segments sit in."
         },
         {
           "class": "env-segmented-control-item",
-          "description": "One segment."
+          "description": "One segment; the chosen one rises on a raised thumb."
         },
         {
           "class": "env-segmented-control-item-count",
           "description": "A segment's count."
-        },
-        {
-          "class": "env-segmented-control-item-indicator",
-          "description": "The check on the chosen segment, in place of its icon."
         },
         {
           "class": "env-segmented-control-item-label",
@@ -4566,11 +4562,11 @@
       "colors": [
         {
           "property": "--env-segmented-control-container",
-          "description": "The fill behind the options, transparent by default."
+          "description": "The track behind the options, the neutral fill by default."
         },
         {
           "property": "--env-segmented-control-outline",
-          "description": "The outline around and between the segments."
+          "description": "An outline around the track, none by default."
         },
         {
           "property": "--env-segmented-control-content",
@@ -4578,7 +4574,7 @@
         },
         {
           "property": "--env-segmented-control-selected",
-          "description": "The chosen option's fill; set, it takes state layers instead of the designed hover and press fills."
+          "description": "The chosen option's thumb; set, it takes state layers instead of the designed hover and press fills."
         },
         {
           "property": "--env-segmented-control-selected-content",

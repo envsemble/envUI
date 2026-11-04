@@ -6931,7 +6931,7 @@
     "SegmentedControl": {
       "kind": "component",
       "source": "packages/ui/src/actions/SegmentedControl.tsx",
-      "description": "One choice among a few items, such as views or filters of the same content, as connected outlined segments after Material's segmented buttons: the chosen one takes the selected fill and a check. A radio group, with one tab stop and arrow keys.",
+      "description": "One choice among a few items, such as views or filters of the same content: segments in a recessed track, the chosen one raised on a thumb. A radio group, with one tab stop and arrow keys.",
       "props": [
         {
           "name": "items",

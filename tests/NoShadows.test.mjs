@@ -14,7 +14,9 @@ import { build } from 'esbuild';
 // `--env-avatar-shadow` (Avatar.css), so stacked avatars part from one another; and the soft shadow
 // of the frosted popups, `--env-popup-shadow` (Popup.css), which keeps a translucent popup's edge
 // where it crosses an area of its own color, gone wherever the popup is solid; dialogs, which take
-// the popups' fill, cast it too. They are the only
+// the popups' fill, cast it too; and the soft shadow under a segmented control's chosen segment,
+// `--env-segmented-control-shadow` (SegmentedControl.css), the raised thumb that rises out of its
+// track, which an edge replaces at high contrast. They are the only
 // custom properties of envUI that are shadows, and no token is one. The catalogue has
 // one exception, by request: the very faint shadow its example canvases, tiles and its own cards
 // take, `--catalogue-card-shadow`, and half of it for a small card, `--catalogue-card-shadow-subtle`, and a stronger one for cards laid over one another,
@@ -155,13 +157,18 @@ function problems(sheets, { allowed = [] } = {}) {
   return [...new Set(found)];
 }
 
-/** The library's drop shadows: under avatars and an avatar group's count, and under frosted popups and tooltips. */
+/**
+ * The library's drop shadows: under avatars and an avatar group's count, under frosted popups and
+ * tooltips, and under a segmented control's chosen segment.
+ */
 const avatarShadow = '--env-avatar-shadow';
 const popupShadow = '--env-popup-shadow';
 const tooltipShadow = '--env-tooltip-shadow';
+const segmentShadow = '--env-segmented-control-shadow';
+const libraryShadows = [avatarShadow, popupShadow, tooltipShadow, segmentShadow];
 
-test('no envUI style sheet draws a drop shadow but the avatars’, the popups’ and the tooltips’; rings stay', async () => {
-  const library = { allowed: [avatarShadow, popupShadow, tooltipShadow] };
+test('no envUI style sheet draws a drop shadow but the avatars’, the popups’, the tooltips’ and the chosen segment’s; rings stay', async () => {
+  const library = { allowed: libraryShadows };
   assert.deepEqual(problems([await shipped()], library), [], 'The shipped style sheet');
   assert.deepEqual(
     problems([await shipped(), await devMode()], library),
@@ -182,12 +189,12 @@ test('no envUI style sheet draws a drop shadow but the avatars’, the popups’
   );
 });
 
-test('no token or custom property is a shadow but the avatars’, the popups’ and the tooltips’', async () => {
+test('no token or custom property is a shadow but the avatars’, the popups’, the tooltips’ and the chosen segment’s', async () => {
   const css = await shipped();
   const shadows = declarations(css)
     .map(([property]) => property)
     .filter((property) => /^--env-.*shadow$/.test(property));
-  assert.deepEqual([...new Set(shadows)].sort(), [avatarShadow, popupShadow, tooltipShadow].sort());
+  assert.deepEqual([...new Set(shadows)].sort(), [...libraryShadows].sort());
 });
 
 /** The values a frosted shadow takes: one in light, one in dark, and none where it is solid. */
@@ -284,6 +291,36 @@ test('the avatars’ shadow is small, faint and follows the surface below', asyn
       .matchAll(/([^{}]+)\{[^}]*box-shadow:\s*var\(--env-avatar-shadow\)/g),
   ].map(([, selector]) => selector.trim().replace(/\s+/g, ' '));
   assert.deepEqual(users, ['.env-avatar', '.env-avatar-group-overflow']);
+});
+
+test('the chosen segment’s shadow is small, follows the theme, gives way at high contrast and stays on it', async () => {
+  const css = await shipped();
+  const values = [
+    ...new Set(
+      declarations(css)
+        .filter(([property]) => property === segmentShadow)
+        .map(([, value]) => value.replace(/\s+/g, ' ')),
+    ),
+  ];
+  assert.equal(values.length, 1, 'one declaration');
+  // The high-contrast edge first, then the shadow and a hairline ring as its fallback.
+  const [edge, ...layers] = split(values[0].replace(/^var\(|\)$/g, ''), /,/);
+  assert.equal(edge, '--env-segmented-control-high-contrast-edge');
+  assert.equal(layers.length, 2, 'a shadow and a hairline');
+  const [drop, ring] = layers.map((layer) => split(layer, /\s/));
+  // 1px down, blurred 2px, with no spread, in a color derived from a token.
+  assert.deepEqual(drop.slice(0, 3), ['0', '1px', '2px']);
+  assert.equal(drop.length, 4, 'no spread, one color');
+  assert.match(drop[3], /^oklch\(from var\(--env-color-[\w-]+\) /);
+  // The hairline is a ring, with no offset or blur.
+  assert.deepEqual(ring.slice(0, 3), ['0', '0', '0']);
+  assert.equal(dropShadow(layers[1]), null);
+  // The edge is valid only under high contrast (Theme.css's switch), and an inset ring.
+  const [edgeValue] = declarations(css)
+    .filter(([property]) => property === '--env-segmented-control-high-contrast-edge')
+    .map(([, value]) => value.replace(/\s+/g, ' '));
+  assert.match(edgeValue, /^var\(--env-theme-high-contrast\) inset 0 0 0 /);
+  assert.deepEqual(usersOf(css, segmentShadow), ['.env-segmented-control-item[data-checked]']);
 });
 
 test('the check tells drop shadows from rings', () => {

@@ -20,22 +20,23 @@ test('segmented controls choose one option with the pointer and arrow keys', asy
         .getByRole('radio', { name: 'Alle 1.200' }),
     ).toBeVisible();
 
-    // Connected outlined segments: one outline around them and a line between two. The chosen one
-    // takes the selected fill and shows a check, which the others don't.
-    const fill = await open.evaluate((element) => {
+    // Segments in a recessed track, with no outline and no lines between them; the chosen one rises
+    // on a raised thumb with a shadow, and no check marks it.
+    const thumb = await open.evaluate((element) => {
       const probe = document.createElement('span');
-      probe.style.backgroundColor = 'var(--env-color-bg-selected)';
+      probe.style.backgroundColor = 'var(--env-segmented-control-thumb)';
       element.append(probe);
       const color = getComputedStyle(probe).backgroundColor;
       probe.remove();
       return color;
     });
-    await expect(open).toHaveCSS('background-color', fill);
-    await expect(open.locator('.env-segmented-control-item-indicator')).toBeVisible();
-    await expect(blocked.locator('.env-segmented-control-item-indicator')).toBeHidden();
-    await expect(group).toHaveCSS('outline-style', 'solid');
-    await expect(open).toHaveCSS('border-inline-start-color', 'rgba(0, 0, 0, 0)');
-    await expect(blocked).not.toHaveCSS('border-inline-start-color', 'rgba(0, 0, 0, 0)');
+    await expect(open).toHaveCSS('background-color', thumb);
+    await expect(open).not.toHaveCSS('box-shadow', 'none');
+    await expect(blocked).toHaveCSS('box-shadow', 'none');
+    await expect(group.locator('.env-segmented-control-item-indicator')).toHaveCount(0);
+    await expect(group).toHaveCSS('outline-color', 'rgba(0, 0, 0, 0)');
+    await expect(group).not.toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+    await expect(blocked).toHaveCSS('border-inline-start-width', '0px');
     await expect(blocked).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
 
     await blocked.click();

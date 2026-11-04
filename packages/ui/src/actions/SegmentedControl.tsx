@@ -17,7 +17,6 @@ import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { useDirectionScope } from '../internal/useDirection.js';
 import { useFormatters } from '../internal/useFormatters.js';
-import { IconCheck } from '../icons/Check.js';
 import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/SegmentedControl.css';
@@ -74,9 +73,8 @@ export interface SegmentedControlProps
 }
 
 /**
- * One choice among a few items, such as views or filters of the same content, as connected outlined
- * segments after Material's segmented buttons: the chosen one takes the selected fill and a check.
- * A radio group, with one tab stop and arrow keys.
+ * One choice among a few items, such as views or filters of the same content: segments in a
+ * recessed track, the chosen one raised on a thumb. A radio group, with one tab stop and arrow keys.
  */
 export function SegmentedControl({
   items,
@@ -146,10 +144,6 @@ function Segment({ item, fullWidth }: { item: SegmentedControlItem; fullWidth: b
       render={<button type="button" />}
       className="env-segmented-control-item"
     >
-      {/* The chosen segment shows a check, in place of its icon where it has one. */}
-      <span className="env-icon env-segmented-control-item-indicator" aria-hidden="true">
-        <IconCheck />
-      </span>
       {item.icon != null && <DecorativeIcon>{item.icon}</DecorativeIcon>}
       <span ref={labelRef} className="env-segmented-control-item-label">
         {item.label}
