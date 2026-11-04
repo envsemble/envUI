@@ -1,8 +1,8 @@
 /* The Overview's fan of cards (OverviewFan.tsx): under the banner, with plenty of the page around
-   it, a still hand of cards fanned evenly from one point far below them, each overlapping the one
-   before it. The cards are envUI's own, on the site's card shadow (Stage.css), as the banner and
-   the Overview's cards are. On a narrower page the whole fan is drawn smaller, and on a narrow one
-   the back two cards go. */
+   it, a still hand of cards fanned evenly from one point far below them. Each card meets the one
+   before it at its padding only, so none covers what another shows. The cards are envUI's own, on
+   the site's card shadow (Stage.css), as the banner and the Overview's cards are. On a narrower
+   page the fan keeps three cards, then two, and is drawn smaller in between. */
 .catalogue-fan {
   container-type: inline-size;
   display: grid;
@@ -15,12 +15,12 @@
 .catalogue-fan-stack {
   --catalogue-fan-card-width: 15rem;
   --catalogue-fan-card-height: 14rem;
-  /* The fan's angle from one card to the next, and how far below the cards it turns: each card
-     covers no more of the one behind it than its edge, so no label behind is cut short. */
-  --catalogue-fan-step: 4.6deg;
+  /* The fan's angle from one card to the next, and how far below the cards it turns: at the cards'
+     foot, where they come closest, neighbours overlap by less than a card's padding. */
+  --catalogue-fan-step: 5.8deg;
   --catalogue-fan-pivot: 150rem;
   --catalogue-fan-width: 64rem;
-  --catalogue-fan-height: 21rem;
+  --catalogue-fan-height: 18rem;
   --catalogue-fan-scale: 1;
   position: relative;
   inline-size: var(--catalogue-fan-width);
@@ -54,21 +54,17 @@
   translate: 0 var(--catalogue-fan-lift, 0);
 }
 
-/* A narrower page draws the fan smaller, then keeps its front three cards. */
-@container (width < 65rem) {
+/* A narrower page draws the fan smaller, keeps its front three cards, then its front two. */
+@container (width < 64rem) {
   .catalogue-fan-stack {
-    --catalogue-fan-scale: 0.94;
+    --catalogue-fan-scale: 0.9;
   }
 }
-@container (width < 60rem) {
+@container (width < 58rem) {
   .catalogue-fan-stack {
-    --catalogue-fan-scale: 0.8;
-  }
-}
-@container (width < 46rem) {
-  .catalogue-fan-stack {
-    --catalogue-fan-width: 40rem;
-    --catalogue-fan-scale: 0.95;
+    --catalogue-fan-width: 49rem;
+    --catalogue-fan-height: 16rem;
+    --catalogue-fan-scale: 1;
   }
   .catalogue-fan-card {
     --catalogue-fan-at: var(--catalogue-fan-narrow-place);
@@ -77,15 +73,32 @@
     display: none;
   }
 }
-@container (width < 38rem) {
+@container (width < 49rem) {
   .catalogue-fan-stack {
-    --catalogue-fan-scale: 0.75;
+    --catalogue-fan-scale: 0.8;
   }
 }
-@container (width < 30rem) {
+@container (width < 40rem) {
   .catalogue-fan-stack {
-    --catalogue-fan-height: 18rem;
-    --catalogue-fan-scale: 0.58;
+    --catalogue-fan-width: 32rem;
+    --catalogue-fan-height: 15rem;
+    --catalogue-fan-scale: 1;
+  }
+  .catalogue-fan-card {
+    --catalogue-fan-at: var(--catalogue-fan-compact-place);
+  }
+  .catalogue-fan-card[data-compact='hidden'] {
+    display: none;
+  }
+}
+@container (width < 32rem) {
+  .catalogue-fan-stack {
+    --catalogue-fan-scale: 0.7;
+  }
+}
+@container (width < 21rem) {
+  .catalogue-fan-stack {
+    --catalogue-fan-scale: 0.6;
   }
 }
 
@@ -106,8 +119,4 @@
   letter-spacing: -0.02em;
   line-height: 1.1;
   white-space: nowrap;
-}
-
-.catalogue-fan-trend {
-  color: var(--env-color-fg-success);
 }
