@@ -57,7 +57,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#83319f',
-      dark: '#d683f5',
+      dark: '#e193ff',
       'light-high-contrast': '#63047d',
       'dark-high-contrast': '#f7e4ff',
     },
@@ -68,7 +68,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#6d1888',
-      dark: '#bc6ada',
+      dark: '#d683f5',
       'light-high-contrast': '#57006e',
       'dark-high-contrast': '#faedff',
     },
@@ -310,7 +310,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#c64e43',
-      dark: '#e68c84',
+      dark: '#ee9c95',
       'light-high-contrast': '#6b0100',
       'dark-high-contrast': '#ffe4e2',
     },
@@ -321,7 +321,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#bf3e33',
-      dark: '#d66d63',
+      dark: '#e68c84',
       'light-high-contrast': '#5a0100',
       'dark-high-contrast': '#ffedeb',
     },
@@ -590,23 +590,23 @@ export const tokens = {
       'dark-high-contrast': 'transparent',
     },
   },
-  /** A navigation item that isn’t selected, under the pointer: a blue-gray tint in light, deeper than the selection so it doesn’t read as selected; in dark and at high contrast, a gray, since a blue tint there would read as the selection. */
+  /** A navigation item that isn’t selected, under the pointer: a cool gray in every theme, a step quieter than the selection, so the hovered item never reads as the current one. */
   'color.bg.navigation.hover': {
     cssVariable: '--env-color-bg-navigation-hover',
     type: 'color',
     values: {
-      light: '#cbd8ea',
+      light: '#dfe1e5',
       dark: '#424447',
       'light-high-contrast': '#d4d4d6',
       'dark-high-contrast': '#383a3d',
     },
   },
-  /** A navigation item that isn’t selected, while pressed. Its label and an inset focus ring keep their minimums on it, which puts it one grade deeper than the hover in light. */
+  /** A navigation item that isn’t selected, while pressed: two grades deeper than the hover in light. Its label and an inset focus ring keep their minimums on it. */
   'color.bg.navigation.pressed': {
     cssVariable: '--env-color-bg-navigation-pressed',
     type: 'color',
     values: {
-      light: '#c7d5e8',
+      light: '#d8dade',
       dark: '#4b4d51',
       'light-high-contrast': '#ceced0',
       'dark-high-contrast': '#424447',
@@ -805,7 +805,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#005cc8',
-      dark: '#75a5f2',
+      dark: '#8ab3f5',
       'light-high-contrast': '#00377c',
       'dark-high-contrast': '#cddefc',
     },
@@ -816,7 +816,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#004aa2',
-      dark: '#4b8bec',
+      dark: '#75a5f2',
       'light-high-contrast': '#002f6d',
       'dark-high-contrast': '#e0ebfd',
     },
@@ -1201,7 +1201,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#c64e43',
-      dark: '#e68c84',
+      dark: '#ee9c95',
       'light-high-contrast': '#6b0100',
       'dark-high-contrast': '#ffedeb',
     },
@@ -1212,7 +1212,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#ce5e53',
-      dark: '#d66d63',
+      dark: '#e68c84',
       'light-high-contrast': '#5a0100',
       'dark-high-contrast': '#fff6f5',
     },
@@ -1399,7 +1399,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#005cc8',
-      dark: '#75a5f2',
+      dark: '#8ab3f5',
       'light-high-contrast': '#00377c',
       'dark-high-contrast': '#cddefc',
     },
@@ -1410,7 +1410,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#00408f',
-      dark: '#4b8bec',
+      dark: '#75a5f2',
       'light-high-contrast': '#002f6d',
       'dark-high-contrast': '#e0ebfd',
     },

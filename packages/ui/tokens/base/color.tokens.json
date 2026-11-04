@@ -138,12 +138,12 @@
           }
         },
         "hover": {
-          "$description": "A navigation item that isn’t selected, under the pointer: a blue-gray tint in light, deeper than the selection so it doesn’t read as selected; in dark and at high contrast, a gray, since a blue tint there would read as the selection.",
-          "$value": "{palette.slate.12}"
+          "$description": "A navigation item that isn’t selected, under the pointer: a cool gray in every theme, a step quieter than the selection, so the hovered item never reads as the current one.",
+          "$value": "{palette.neutral.9}"
         },
         "pressed": {
-          "$description": "A navigation item that isn’t selected, while pressed. Its label and an inset focus ring keep their minimums on it, which puts it one grade deeper than the hover in light.",
-          "$value": "{palette.slate.13}"
+          "$description": "A navigation item that isn’t selected, while pressed: two grades deeper than the hover in light. Its label and an inset focus ring keep their minimums on it.",
+          "$value": "{palette.neutral.11}"
         }
       },
       "neutral": {
