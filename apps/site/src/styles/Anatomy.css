@@ -98,7 +98,11 @@
   block-size: 1.5rem;
   border: 1px solid transparent;
   border-radius: var(--env-radius-lg);
-  background: var(--env-color-bg-primary-soft);
+  /* The tint over the canvas's own color, opaque, so a leader line ends at its edge rather than
+     showing through the digit. */
+  background:
+    linear-gradient(var(--env-color-bg-primary-soft), var(--env-color-bg-primary-soft)),
+    var(--catalogue-card-fill, var(--env-color-bg-page));
   color: var(--env-color-fg-primary);
   font: var(--env-type-body-sm);
   font-weight: var(--env-font-weight-medium);
@@ -139,6 +143,16 @@
   gap: var(--env-space-6);
 }
 
+/* A caption with nothing to show, such as a variants figure's names for assistive technology
+   alone, takes no row, so the figure's code follows its stage as closely as another figure's. */
+.site-anatomy-caption:not(:has(> :not(.site-visually-hidden))) {
+  display: contents;
+}
+
+.site-anatomy-caption:not(:has(> :not(.site-visually-hidden))) + .site-live-example-code {
+  margin-block-start: calc(var(--env-space-2) - var(--env-space-6));
+}
+
 .site-anatomy-legend {
   display: grid;
   /* Two or three columns, as most names are a word or two, close enough to read as one list. */
@@ -158,12 +172,6 @@
 
 .site-anatomy-legend p {
   margin: 0;
-}
-
-/* A part the figure shows whole, such as a field around its control, named without a number: its
-   number's place stays, empty, so the names line up. */
-.site-anatomy-legend > li[data-whole] > .site-anatomy-number {
-  background: none;
 }
 
 /* An option table in the catalogue, such as a component's variants or sizes: a legend laid out

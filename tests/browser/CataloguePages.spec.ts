@@ -210,7 +210,7 @@ test('every anatomy figure numbers each part its legend names', async ({ page })
   // It visits every component and pattern page, whose examples load as each opens.
   test.slow();
   // A legend part the example doesn't render would leave its number off the figure. A part the
-  // figure shows whole, such as a field around its control, is named in the legend alone.
+  // figure shows whole, such as a field around its control, takes neither.
   const pages = figurePages.map((document) => ({
     id: document.id,
     route: document.route,
@@ -233,9 +233,7 @@ test('every anatomy figure numbers each part its legend names', async ({ page })
           () =>
             figure.evaluate((element) => {
               const badges = element.querySelectorAll('.site-anatomy-stage .site-anatomy-badge');
-              const numbered = element.querySelectorAll(
-                '.site-anatomy-legend > li:not([data-whole])',
-              );
+              const numbered = element.querySelectorAll('.site-anatomy-legend > li');
               return badges.length > 0 && badges.length === numbered.length;
             }),
           { message: `${id} numbers every part` },
