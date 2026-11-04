@@ -104,7 +104,7 @@ An outline field has no fill of its own: it takes the background of what it sits
 
 ### Ghost
 
-A ghost field has no edge: it is its icon and words until the pointer rests on it or it has focus, when its fill shows.
+A ghost field has no edge: it is its icon and words until the pointer rests on it, when its fill shows. Focus draws the accent edge an outline field takes.
 
 - Its placeholder clears once it has focus.
 - An invalid ghost field shows a red edge.
@@ -162,7 +162,7 @@ Not shown: the suffix, the error and a text area's resize edge.
 
 ### States
 
-The label rests in an empty field and floats into the outline on focus or with a value. Focus draws the outline in the accent, twice as thick.
+The label rests in an empty field and floats into the outline on focus or with a value. Under the pointer the outline darkens; focus alone draws it in the accent, twice as thick.
 
 <!-- specimen: States -->
 

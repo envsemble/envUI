@@ -2,9 +2,10 @@
   /* Color properties: a field's colors, which an application sets on one TextField or Textarea
      through style or its own CSS: container its well, which is transparent by default, so the field
      takes the background of what it sits on, content the entered text, outline its edge at
-     rest and indicator its edge under the pointer, pressed and focused, with the caret and the
-     floating label while focused. They don't inherit; the field passes them on to its parts. An
-     invalid field keeps the error color. */
+     rest and indicator its edge while pressed and focused, with the caret and the floating label
+     while focused. Under the pointer the edge darkens toward the text, so the accent shows focus
+     alone. They don't inherit; the field passes them on to its parts. An invalid field keeps the
+     error color. */
   @property --env-text-field-container {
     syntax: '*';
     inherits: false;
@@ -30,9 +31,12 @@
     --env-text-field-edge: var(--env-text-field-outline, var(--env-color-border-default));
     /* prettier-ignore */
     --env-text-field-accent: var(--env-text-field-indicator, var(--env-color-border-primary-emphasis));
-    --env-text-field-accent-hover: var(
-      --env-text-field-indicator,
-      var(--env-color-border-primary-emphasis-hover)
+    /* Under the pointer the edge darkens, from its rest color most of the way to the text's: the
+       muted text color with the designed ones, so the accent stays for focus. */
+    --env-text-field-edge-hover: color-mix(
+      in srgb,
+      var(--env-text-field-edge) 40%,
+      var(--env-text-field-text)
     );
     --env-text-field-accent-pressed: var(
       --env-text-field-indicator,
@@ -64,8 +68,8 @@
       var(--env-color-border-primary-emphasis)
     );
     --env-text-field-interaction-hover: var(
-      --env-text-field-accent-hover,
-      var(--env-color-border-primary-emphasis-hover)
+      --env-text-field-edge-hover,
+      var(--env-color-fg-muted)
     );
     --env-text-field-interaction-pressed: var(
       --env-text-field-accent-pressed,
@@ -146,12 +150,14 @@
     ) {
     --env-text-field-border-color: var(--env-text-field-interaction-pressed);
   }
-  /* Focus draws the frame in the accent at twice its width, all the way round the notch. */
+  /* Focus draws the frame in the accent at twice its width, all the way round the notch, in every
+     variant: a ghost field too, whose frame shows only while it has focus. */
   .env-text-field-control:focus-within {
     --env-text-field-border-color: var(--env-text-field-interaction-color);
-  }
-  .env-text-field-control:focus-within:not([data-variant='ghost']) {
-    --env-text-field-frame: calc(2 * var(--env-control-border-width));
+    --env-text-field-frame: var(
+      --env-text-field-ghost-focus-frame,
+      calc(2 * var(--env-control-border-width))
+    );
   }
   .env-text-field-input {
     box-sizing: border-box;
@@ -229,13 +235,16 @@
   .env-text-field-control:focus-within > label {
     color: var(--env-text-field-label-accent, var(--env-color-fg-primary));
   }
-  /* Ghost fields are only their text and icon at rest: no border or fill. A soft fill
-     shows under the pointer and while the field has focus, the icon keeps its quiet color, and the
-     placeholder clears once the field has focus. An invalid ghost field shows its red border.
-     The command palette's search is a ghost field that sets private properties (CommandPalette.css):
-     --env-text-field-ghost-solid, a fill it keeps in every state; --env-text-field-ghost-placeholder,
-     its placeholder's color while focused; --env-text-field-ghost-edge, an edge; and, as any field
-     may, --env-text-field-start-inset, where its start icon sits. */
+  /* Ghost fields are only their text and icon at rest: no border or fill. A soft fill shows under
+     the pointer, and focus draws the outline field's accent frame, so focus reads the same in every
+     variant; the icon keeps its quiet color, and the placeholder clears once the field has focus. An
+     invalid ghost field shows its red border. The command palette's search is a ghost field that
+     sets private properties (CommandPalette.css): --env-text-field-ghost-solid, a fill it keeps in
+     every state; --env-text-field-ghost-placeholder, its placeholder's color while focused;
+     --env-text-field-ghost-edge, an edge; --env-text-field-ghost-focus-edge and
+     --env-text-field-ghost-focus-frame, the color and width of its frame while focused, as it draws a
+     focus ring of its own; and, as any field may, --env-text-field-start-inset, where its start icon
+     sits. */
   .env-text-field-control[data-variant='ghost'] {
     background: var(--env-text-field-ghost-solid, transparent);
     transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
@@ -248,9 +257,6 @@
       background: var(--env-text-field-ghost-solid, var(--env-color-bg-neutral-muted));
     }
   }
-  .env-text-field-control[data-variant='ghost']:focus-within {
-    background: var(--env-text-field-ghost-solid, var(--env-color-bg-neutral-muted));
-  }
   .env-text-field-control[data-variant='ghost']:focus-within > .env-text-field-start {
     color: var(--env-color-fg-muted);
   }
@@ -259,10 +265,21 @@
   }
   .env-text-field-control[data-variant='ghost']:not(
       :has(> .env-text-field-input[aria-invalid='true']),
-      [data-invalid]
+      [data-invalid],
+      :focus-within
     )
     > .env-text-field-border {
     border-color: var(--env-text-field-ghost-edge, transparent);
+  }
+  .env-text-field-control[data-variant='ghost']:focus-within:not(
+      :has(> .env-text-field-input[aria-invalid='true']),
+      [data-invalid]
+    )
+    > .env-text-field-border {
+    border-color: var(
+      --env-text-field-ghost-edge,
+      var(--env-text-field-ghost-focus-edge, var(--env-text-field-border-color))
+    );
   }
   /* Read-only: the value keeps its full contrast and the label its place, while the frame quiets to
      the muted edge and doesn't answer the pointer, so the field reads as one to look at rather than

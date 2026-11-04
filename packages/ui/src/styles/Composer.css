@@ -92,7 +92,7 @@
   }
   @media (hover: hover) {
     .env-composer:not([data-disabled]) .env-composer-surface:hover {
-      --env-composer-border: var(--env-color-border-primary-emphasis-hover);
+      --env-composer-border: var(--env-color-fg-muted);
     }
   }
   /* Focus in the field recolors the outline and doubles its weight; the action has its own ring. */

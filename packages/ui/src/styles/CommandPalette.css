@@ -52,6 +52,9 @@
       var(--env-popup-fill);
     --env-text-field-ghost-placeholder: var(--env-color-fg-muted);
     --env-text-field-ghost-edge: var(--env-popup-solid) var(--env-color-border-default);
+    /* Its focus is its own ring, below, so the field's focus frame stays a hairline in its edge. */
+    --env-text-field-ghost-focus-edge: transparent;
+    --env-text-field-ghost-focus-frame: var(--env-control-border-width);
     /* Where the options' icons sit, inside the control's border. */
     --env-text-field-start-inset: calc(
       var(--env-popup-row-padding-inline) - var(--env-control-border-width)
