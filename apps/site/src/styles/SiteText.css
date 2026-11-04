@@ -28,8 +28,47 @@
 .site-example > h2,
 .catalogue-related > h2,
 .site-article > .env-markdown > h2 {
-  font: var(--env-font-weight-medium) 1.75rem / 1.25 var(--env-font-family);
-  letter-spacing: -0.015em;
+  /* Well below the banner's title, which names the page, and well above an h3's title style. */
+  font: var(--env-font-weight-medium) 1.5rem / 1.25 var(--env-font-family);
+  letter-spacing: -0.0125em;
+}
+/* A Docs section's title sits as close to what it heads as a catalogue section's does (Figures.css). */
+.docs-guide > .site-section-title + * {
+  margin-block-start: calc(var(--env-space-4) - var(--env-space-5));
+}
+
+/* Reading text: the paragraphs and lists of a page's Markdown and the text beside its figures, a
+   step larger than the compact scale's body text, which suits a dense control rather than a page
+   read through, with room between the lines. The comfortable scale's body text is that size
+   already. Text inside a figure, which shows envUI itself, and the small notes of a changelog keep
+   envUI's sizes. */
+.site-app {
+  --site-prose-size: max(var(--env-font-size-body), 0.875rem);
+  --site-prose-leading: 1.6;
+}
+.site-page-column
+  .env-prose:not(
+    :where(
+        .site-live-example,
+        .site-verdict-stage,
+        .site-anatomy-stage,
+        .site-foundation-stage,
+        .catalogue-related-stage,
+        .docs-changelog
+      )
+      *
+  ),
+.catalogue-supporting,
+.docs-api p.env-text:not(:where(table, .docs-changelog) *) {
+  --env-type-body: var(--env-font-weight-body) var(--site-prose-size) / var(--site-prose-leading)
+    var(--env-font-family);
+  font-size: var(--site-prose-size);
+  line-height: var(--site-prose-leading);
+}
+/* A banner's description, under the page's large title, is a lead: a step above reading text. */
+.site-page-banner-description {
+  font-size: var(--env-font-size-title);
+  line-height: 1.45;
 }
 /* A guide's sections, one stream of Markdown, stand apart as a page's do. */
 .site-article > .env-markdown > h2:not(:first-child) {
@@ -47,7 +86,7 @@
    subsection's heading, in body text in the quieter color, with room between its lines. */
 .catalogue-supporting,
 :where(.site-figures .env-markdown:not(.site-lead)) > p {
-  line-height: 1.5;
+  line-height: var(--site-prose-leading);
   color: var(--env-color-fg-muted);
 }
 
@@ -89,7 +128,7 @@
   --env-prose-list-marker-size: calc(var(--env-space-4) + var(--env-space-1));
   --env-prose-list-marker-gap: var(--env-space-2);
   --env-prose-list-mark-color: var(--env-color-fg-muted);
-  line-height: 1.5;
+  line-height: var(--site-prose-leading);
   color: var(--env-color-fg-muted);
 }
 :where(.site-figures .env-markdown) > p + ul {
@@ -107,7 +146,10 @@
 .site-code-block[data-language] {
   --site-code-corner: calc(var(--env-control-height-sm) + var(--env-space-2) + 3rem);
 }
+/* It stands on the recessed surface the example stages do, so it parts from the page by its fill,
+   as a figure does; high contrast keeps the code theme's own. */
 .site-code-block > .env-code-block {
+  background: var(--env-code-background-now, var(--env-color-bg-recessed));
   padding: var(--env-space-4) calc(var(--site-code-corner) + var(--env-space-2)) var(--env-space-4)
     var(--env-space-4);
 }
@@ -122,4 +164,42 @@
 .site-code-block-language {
   color: var(--env-code-foreground);
   font: var(--env-code-font-size) / 1 var(--site-code-font-family);
+}
+
+/* Code wider than its block scrolls sideways (Figures.css): while more of it lies beyond the end
+   edge, the lines fade out there, so a line cut short reads as going on rather than ending
+   mid-word, and the fade is gone once the end is in view. Code that fits, and a browser without
+   scroll-driven animations, shows no fade. */
+@property --site-code-fade {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0rem;
+}
+@keyframes site-code-fade {
+  from {
+    --site-code-fade: var(--env-space-7);
+  }
+  to {
+    --site-code-fade: 0rem;
+  }
+}
+@supports (animation-timeline: scroll()) {
+  :is(.site-code-block, .site-example-source) pre:not(:focus-visible) {
+    mask-image: linear-gradient(
+      to left,
+      transparent,
+      var(--env-color-fg-default) var(--site-code-fade)
+    );
+    animation: site-code-fade linear both;
+    animation-timeline: scroll(self inline);
+    /* Whole until the end is near, then gone as it comes into view. */
+    animation-range: calc(100% - var(--env-space-7)) 100%;
+  }
+  :is(.site-code-block, .site-example-source) pre:dir(rtl):not(:focus-visible) {
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      var(--env-color-fg-default) var(--site-code-fade)
+    );
+  }
 }

@@ -9,6 +9,10 @@ body {
 .site-app {
   --site-content-width: 72rem;
   --site-gutter: clamp(0.75rem, 3vw, 3rem);
+  /* The catalogue's rail, and where search starts in a wide window: one place in every part, past
+     the rail in the catalogue and past the wordmark in the Docs, so it never moves between them. */
+  --site-rail-width: 6rem;
+  --site-search-start: 9.375rem;
   /* The monospace of code, which the Docs also set their banners' trails in. */
   --site-code-font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
   min-height: 100dvh;
@@ -56,7 +60,7 @@ body {
 }
 .catalogue-rail {
   /* Wide enough for its longest label, Components, on one line. */
-  --env-navigation-rail-width: 6rem;
+  --env-navigation-rail-width: var(--site-rail-width);
   flex: none;
   padding-block: var(--env-space-4);
   overflow-y: auto;
@@ -99,6 +103,29 @@ body {
 }
 .site-drawer-search {
   max-inline-size: 100%;
+}
+/* In a wide window, search keeps its one place (--site-search-start) rather than centring in the
+   drawer, which the reader resizes; a drawer too narrow for it there takes it back towards its
+   start. In the Docs, the wordmark takes the room up to it, or less where the drawer is narrow. */
+.site-navigation:not([data-in-sheet])
+  .catalogue-rail
+  + .site-sidebar
+  > .env-navigation-drawer-header {
+  align-items: flex-start;
+}
+.site-navigation:not([data-in-sheet]) .catalogue-rail + .site-sidebar .site-drawer-search {
+  margin-inline-start: max(
+    0rem,
+    min(var(--site-search-start) - var(--site-rail-width) - var(--env-space-3), 100% - 9.5rem)
+  );
+}
+.site-navigation:not([data-in-sheet]) .docs-drawer-top {
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  gap: 0;
+}
+.site-navigation:not([data-in-sheet]) .docs-drawer-top > .site-brand {
+  flex: 0 1 calc(var(--site-search-start) - var(--env-space-3));
 }
 /* The drawer's resize grip shows where it is wanted: while the pointer is on the drawer's end edge,
    while the handle has keyboard focus and while it drags. The edge keeps its resize cursor, so the
@@ -256,8 +283,9 @@ body {
 }
 .site-page-search-button {
   position: absolute;
-  inset-block-start: calc(var(--env-space-3) + var(--env-space-1));
-  inset-inline-start: calc(var(--env-space-4) + var(--env-space-1));
+  /* Level with search at the top of a drawer: the drawer's top padding. */
+  inset-block-start: var(--env-space-4);
+  inset-inline-start: calc(var(--site-search-start) - var(--site-rail-width));
 }
 @container env-scaffold (width >= 52.5rem) {
   .site-page-search {
@@ -392,7 +420,7 @@ body {
 .site-page-header {
   container: site-page-header / inline-size;
   padding-block: var(--env-space-5) var(--env-space-2);
-  margin-block-end: var(--env-space-5);
+  margin-block-end: var(--env-space-4);
 }
 .site-page-banner,
 .catalogue-overview-hero {
@@ -426,7 +454,7 @@ body {
   overflow: hidden;
   container-type: inline-size;
   /* Snug, so a page's first figure starts close below it. */
-  padding-block: clamp(1.5rem, 2.5vw, 2rem);
+  padding-block: clamp(1.25rem, 2vw, 1.5rem);
 }
 .site-page-banner-content {
   position: relative;
