@@ -30,13 +30,13 @@
 }
 
 /* A page is parts, not one stream. A component or pattern page groups its sections into three
-   larger ones (TemplateContent.tsx), which stand far apart, twice the largest step of the spacing
-   scale; the sections within a group sit closer, the largest step, and what is inside a section
-   closer still (Figures.css). */
+   larger ones (TemplateContent.tsx); every section, in a group or starting one, stands the same
+   section gap from the one before (Shell.css), and what is inside a section sits closer
+   (Figures.css). */
 .site-section-groups {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  row-gap: calc(var(--env-space-9) * 2);
+  row-gap: var(--site-section-gap);
   padding-block-end: 3rem;
 }
 
@@ -59,20 +59,20 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   align-content: start;
-  row-gap: var(--env-space-9);
+  row-gap: var(--site-section-gap);
   padding-block-end: 0;
 }
 
 /* The same on a foundation's page, whose sections are its figures, each under its h2, and on a
    component's page in the Docs. */
 .site-example:has(> h2) {
-  margin-block-end: calc(var(--env-space-9) * 2);
+  margin-block-end: var(--site-section-gap);
 }
 
 /* A page in the Docs is a guide in several sections, from Import to the changelog: as far apart as
-   the sections of a group in the catalogue. */
+   the sections in the catalogue. */
 .docs-api.docs-api {
-  row-gap: var(--env-space-9);
+  row-gap: var(--site-section-gap);
 }
 
 /* A component named at an item's end follows it after a muted middle dot, in the muted color too

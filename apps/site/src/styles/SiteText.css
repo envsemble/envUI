@@ -72,7 +72,7 @@
 }
 /* A guide's sections, one stream of Markdown, stand apart as a page's do. */
 .site-article > .env-markdown > h2:not(:first-child) {
-  margin-block-start: var(--env-space-9);
+  margin-block-start: var(--site-section-gap);
 }
 
 /* A lead: the one or two sentences that open a section, a step larger than the text below it. */

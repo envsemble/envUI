@@ -9,6 +9,9 @@ body {
 .site-app {
   --site-content-width: 72rem;
   --site-gutter: clamp(0.75rem, 3vw, 3rem);
+  /* The space above every section's h2, the first one under the banner included: one rhythm for
+     a page's sections in the catalogue and the Docs alike (Template.css, SiteText.css). */
+  --site-section-gap: var(--env-space-9);
   /* The catalogue's rail, and where search starts in a wide window: one place in every part, past
      the rail in the catalogue and past the wordmark in the Docs, so it never moves between them. */
   --site-rail-width: 6rem;
@@ -420,7 +423,8 @@ body {
 .site-page-header {
   container: site-page-header / inline-size;
   padding-block: var(--env-space-5) var(--env-space-2);
-  margin-block-end: var(--env-space-4);
+  /* The page's first section sits as far below the banner as each section below the one before. */
+  margin-block-end: calc(var(--site-section-gap) - var(--env-space-2));
 }
 .site-page-banner,
 .catalogue-overview-hero {
