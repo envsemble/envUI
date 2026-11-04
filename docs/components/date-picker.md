@@ -263,6 +263,7 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 
 ## Changelog
 
+- **1.0.0-prerelease.6**: The calendar card takes the width of a field a little wider than it, up to 1 rem, so it ends with the field, and Today and Clear follow the calendar's six weeks closely.
 - **1.0.0-prerelease.5**: `defaultTime` is `placeholderTime`, as React Aria names it: `default` names an uncontrolled starting value elsewhere.
 - **1.0.0-prerelease.5**: The calendar popup is frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge but a faint hairline in dark, and is solid with its edge at high contrast and with reduced transparency. Its inset is a panel's, as wide as a popup row's corner: 14 px, 11.2 px at the compact scale. The calendar leads with the month's name, its buttons side by side at the end; the days of a week touch, a row height wide; today is in the accent color rather than ringed, and a day under the pointer takes the neutral fill.
 - **1.0.0**: The field keeps its minimum width, 12 rem, in a container sized to its content, such as an inline-flex toolbar, rather than growing after the container measured it and pushing its neighbours onto another row; in a narrower container it still takes the container's width. The calendar's month and year, `env-calendar-heading`, are `env-calendar-title`.
