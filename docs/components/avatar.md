@@ -88,6 +88,7 @@ The name chooses one of eight pastel colors, the same on every page.
 
 - An organization can take another of them as its own.
 - Each is a soft fill with the initials or the figure in a deep shade of the same hue.
+- Initials stay large enough to read; an avatar smaller than the small size, such as one sized to a dense row, shows its color alone.
 - The colors only tell people apart.
 
 <!-- specimen: Hues -->
@@ -252,6 +253,7 @@ Its color properties take the place of its hue. The hues are tokens, `--env-colo
 
 ## Changelog
 
+- **1.0.0-prerelease.6**: Initials stay legible at small sizes, at least the caption size; below `sm`, an avatar with initials is a disc of its color alone.
 - **1.0.0-prerelease.5**: AvatarGroup's `gather` is `align`, as Row and Popover name the inline axis, and its `data-gather` attribute is `data-align`.
 - **1.0.0-prerelease.5**: An avatar and AvatarGroup's count cast a faint, small shadow in a deeper shade of the surface below, so the avatars of a group part from one another.
 - **1.0.0-prerelease.3**: AvatarGroup rests as a compact pile, like stacked cards, which is one pointer target: hover, a tap or keyboard focus spreads it, and its avatars take presses only once spread, in place of a looser rest that kept 1.5 rem of each pressable avatar uncovered. A tap spreads a group on touch screens too, marked with `data-spread`. The count is a rounded square the size of the avatars, at the bottom of the pile.

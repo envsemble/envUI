@@ -95,7 +95,7 @@ export const hues = {
   },
   slate: {
     description:
-      'The low-chroma blue-gray of quiet tints: the dark theme’s selection and the light theme’s navigation hover. Seeded from 0.7’s light navigation hover and press and its dark selected option.',
+      'The low-chroma blue-gray of quiet tints: the dark theme’s selection. Seeded from 0.7’s light navigation hover and press and its dark selected option.',
     seeds: ['#ccd9ea', '#a7bfdc', '#364863'],
   },
   steel: {

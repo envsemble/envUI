@@ -476,6 +476,9 @@
             "$value": "{palette.neutral.2}"
           }
         },
+        "disabled": {
+          "$value": "{palette.neutral.30}"
+        },
         "control": {
           "$value": "{palette.neutral.4}"
         },

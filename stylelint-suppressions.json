@@ -21,7 +21,7 @@
   },
   "packages/ui/src/styles/ButtonGroup.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 2
+      "count": 1
     }
   },
   "packages/ui/src/styles/Calendar.css": {

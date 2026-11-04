@@ -285,8 +285,25 @@
     > label {
     color: var(--env-field-error-color);
   }
+  /* Disabled: the label, value, affixes and icons take the disabled text color, and the outline
+     quiets to the muted border, more than the text, rather than the whole field fading. */
   .env-text-field-control:is(:has(> .env-text-field-input:disabled), [data-disabled]) {
-    opacity: var(--env-state-disabled-opacity);
+    --env-text-field-border-base: var(--env-color-border-muted);
+    --env-button-text-icon-color: var(--env-color-fg-disabled);
+  }
+  .env-text-field-control:is(:has(> .env-text-field-input:disabled), [data-disabled])
+    > :is(
+      label,
+      .env-text-field-input,
+      .env-text-field-prefix,
+      .env-text-field-suffix,
+      .env-text-field-start,
+      .env-text-field-end
+    ) {
+    color: var(--env-color-fg-disabled);
+  }
+  .env-text-field-input:disabled::placeholder {
+    color: var(--env-color-fg-disabled);
   }
   .env-text-field-input:disabled,
   .env-text-field-control:is(:has(> .env-text-field-input:disabled), [data-disabled]) > label {

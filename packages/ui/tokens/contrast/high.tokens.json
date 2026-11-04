@@ -355,6 +355,9 @@
           "$value": "{contrast-high.color.fg.muted.pressed}"
         }
       },
+      "disabled": {
+        "$value": "{contrast-high.color.fg.disabled}"
+      },
       "control": {
         "$value": "{contrast-high.color.fg.control}"
       },

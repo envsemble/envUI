@@ -33,6 +33,11 @@
     --env-table-cell-padding: calc(var(--env-table-row-padding) + var(--env-space-1))
       var(--env-space-4);
     --env-control-height: var(--env-control-height-sm);
+    /* Links and times repeat down the rows, so the lines that mark them wait for the pointer or
+       keyboard focus: a Link keeps its link color and shows its underline then, and a RelativeTime
+       its dotted line. A selected row's links stay underlined. */
+    --env-button-rest-underline: none;
+    --env-hover-detail-rest-color: transparent;
     inline-size: 100%;
     border-collapse: separate;
     border-spacing: 0;

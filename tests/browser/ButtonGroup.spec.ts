@@ -18,7 +18,7 @@ async function geometry(group: Locator) {
             y: rect.y,
             width: rect.width,
             height: rect.height,
-            important: button.matches("[data-variant='primary'][data-tone='accent']"),
+            outline: button.matches("[data-variant='outline']"),
             icon: button.classList.contains('env-icon-button'),
             corners: [
               style.borderStartStartRadius,
@@ -46,11 +46,13 @@ test('mixed buttons connect in rows and columns with variant outer corners', asy
         const group = scope.getByTestId(orientation);
         await expect(group).toHaveAttribute('role', 'group');
         const { root, gap, buttons } = await geometry(group);
-        expect(gap).toBeCloseTo(root * 0.125);
+        // A hairline apart; an outline button shares its edge with the one before it.
+        expect(gap).toBe(1);
         expect(buttons).toHaveLength(5);
         buttons.forEach((button, index) => {
-          const outer = root * (button.important ? 0.5 : 1.25);
-          const inner = root * 0.5;
+          const outer = root * 1.25;
+          const inner = root * 0.25;
+          const spacing = button.outline ? -1 : gap;
           const first = index === 0;
           const last = index === buttons.length - 1;
           expect(button.corners).toEqual(
@@ -72,24 +74,25 @@ test('mixed buttons connect in rows and columns with variant outer corners', asy
           if (orientation === 'horizontal') {
             expect(button.y).toBeCloseTo(buttons[0].y);
             expect(button.height).toBeCloseTo(buttons[0].height);
-            if (previous) expect(button.x - previous.x - previous.width).toBeCloseTo(gap, 0);
+            if (previous) expect(button.x - previous.x - previous.width).toBeCloseTo(spacing, 0);
             if (button.icon) expect(button.width).toBeCloseTo(button.height, 0);
           } else {
             expect(button.x).toBeCloseTo(buttons[0].x);
             expect(button.width).toBeCloseTo(buttons[0].width);
-            if (previous) expect(button.y - previous.y - previous.height).toBeCloseTo(gap, 0);
+            if (previous) expect(button.y - previous.y - previous.height).toBeCloseTo(spacing, 0);
           }
         });
       }
+      // An accent primary is a pill like every other button.
       expect((await geometry(scope.getByTestId('important-end'))).buttons[0].corners).toEqual([
-        8, 8, 8, 8,
+        20, 4, 20, 4,
       ]);
       expect((await geometry(scope.getByTestId('important-top'))).buttons[0].corners).toEqual([
-        8, 8, 8, 8,
+        20, 20, 4, 4,
       ]);
       const scaled = await geometry(scope.getByTestId('scaled'));
       // Large buttons keep pill ends at their own height.
-      expect(scaled.buttons[0].corners).toEqual([24, 8, 24, 8]);
+      expect(scaled.buttons[0].corners).toEqual([24, 4, 24, 4]);
     }
   }
 });
@@ -105,9 +108,10 @@ test('single, hidden and removed buttons retain normal corners and RTL follows t
   expect((await geometry(scope.getByTestId('single'))).buttons[0].corners).toEqual(
     Array(4).fill(standaloneRadius),
   );
-  expect((await geometry(scope.getByTestId('single-important'))).buttons[0].corners).toEqual([
-    8, 8, 8, 8,
-  ]);
+  // A lone accent icon button keeps its round corners.
+  expect((await geometry(scope.getByTestId('single-important'))).buttons[0].corners).toEqual(
+    Array(4).fill(standaloneRadius),
+  );
   await scope.getByRole('button', { name: 'Toggle end buttons' }).click();
   const dynamic = await geometry(scope.getByTestId('dynamic'));
   expect(dynamic.buttons).toHaveLength(1);
@@ -116,7 +120,7 @@ test('single, hidden and removed buttons retain normal corners and RTL follows t
     scope.getByRole('button', { name: 'Hidden before', includeHidden: true }),
   ).toBeHidden();
   await scope.getByRole('button', { name: 'Toggle end buttons' }).click();
-  expect((await geometry(scope.getByTestId('dynamic'))).buttons[0].corners).toEqual([20, 8, 20, 8]);
+  expect((await geometry(scope.getByTestId('dynamic'))).buttons[0].corners).toEqual([20, 4, 20, 4]);
   const row = scope.getByTestId('horizontal');
   await row.evaluate((element) => element.setAttribute('dir', 'rtl'));
   const rtl = await geometry(row);
@@ -127,7 +131,7 @@ test('single, hidden and removed buttons retain normal corners and RTL follows t
   );
   await expect(row.getByRole('button', { name: 'Continue' })).toHaveCSS(
     'border-top-left-radius',
-    '8px',
+    '4px',
   );
 });
 
@@ -177,13 +181,13 @@ test('narrow groups wrap labels and scale their shared corners with text size', 
       'Continue with this workspace configuration';
   });
   const result = await geometry(row);
-  expect(result.buttons[0].corners).toEqual([30, 12, 30, 12]);
+  expect(result.buttons[0].corners).toEqual([30, 6, 30, 6]);
   expect(result.buttons[0].height).toBeGreaterThan(60);
   result.buttons.forEach((button) => expect(button.height).toBeCloseTo(result.buttons[0].height));
   const overflow = await row.evaluate((element) => element.scrollWidth - element.clientWidth);
   expect(overflow, JSON.stringify(result)).toBeLessThanOrEqual(1);
   const column = await geometry(scope.getByTestId('vertical'));
-  expect(column.buttons[0].corners).toEqual([30, 30, 12, 12]);
+  expect(column.buttons[0].corners).toEqual([30, 30, 6, 6]);
 });
 
 test('a full-width group fills its container, where its labelled button takes the room', async ({
@@ -209,7 +213,7 @@ test('a full-width group fills its container, where its labelled button takes th
     ]);
     expect(more.width).toBeCloseTo(40, 0);
     expect(more.height).toBeCloseTo(create.height, 0);
-    expect(create.width + more.width + 2).toBeCloseTo(rowBox.width, 0);
+    expect(create.width + more.width + 1).toBeCloseTo(rowBox.width, 0);
     for (const button of await column.getByRole('button').all())
       expect((await box(button)).width).toBeCloseTo(columnBox.width, 0);
     // Icon-only buttons alone share the row evenly.
@@ -218,7 +222,7 @@ test('a full-width group fills its container, where its labelled button takes th
       .getByRole('button')
       .evaluateAll((buttons) => buttons.map((button) => button.getBoundingClientRect().width));
     expect(Math.max(...widths) - Math.min(...widths)).toBeLessThan(1);
-    expect(widths.reduce((sum, width) => sum + width, 0) + 2 * (widths.length - 1)).toBeCloseTo(
+    expect(widths.reduce((sum, width) => sum + width, 0) + (widths.length - 1)).toBeCloseTo(
       (await box(tools)).width,
       0,
     );

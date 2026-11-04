@@ -138,12 +138,12 @@
           }
         },
         "hover": {
-          "$description": "A navigation item that isn’t selected, under the pointer: a blue-gray tint in light, deeper than the selection so it doesn’t read as selected; in dark and at high contrast, a gray, since a blue tint there would read as the selection.",
-          "$value": "{palette.slate.12}"
+          "$description": "A navigation item that isn’t selected, under the pointer: a cool gray in every theme, a step quieter than the selection, so the hovered item never reads as the current one.",
+          "$value": "{palette.neutral.9}"
         },
         "pressed": {
-          "$description": "A navigation item that isn’t selected, while pressed. Its label and an inset focus ring keep their minimums on it, which puts it one grade deeper than the hover in light.",
-          "$value": "{palette.slate.13}"
+          "$description": "A navigation item that isn’t selected, while pressed: two grades deeper than the hover in light. Its label and an inset focus ring keep their minimums on it.",
+          "$value": "{palette.neutral.11}"
         }
       },
       "neutral": {
@@ -745,6 +745,10 @@
           "$description": "Muted text while pressed.",
           "$value": "{palette.gray.80}"
         }
+      },
+      "disabled": {
+        "$description": "The label, value and icon of a control that is disabled: quieter than muted text yet still readable, so a disabled control reads as unavailable rather than missing; its fill or outline quiets more. Disabled controls are exempt from the contrast minimums.",
+        "$value": "{palette.gray.45}"
       },
       "control": {
         "$description": "The labels of navigation items, secondary buttons and Select options, the values of meters and sliders, and the thumb of a switch that is off.",

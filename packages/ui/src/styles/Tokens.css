@@ -57,8 +57,8 @@
   --env-color-bg-muted-hover: #f1f1f3;
   --env-color-bg-muted-pressed: #e3e3e6;
   --env-color-bg-navigation: transparent;
-  --env-color-bg-navigation-hover: #cbd8ea;
-  --env-color-bg-navigation-pressed: #c7d5e8;
+  --env-color-bg-navigation-hover: #dfe1e5;
+  --env-color-bg-navigation-pressed: #d8dade;
   --env-color-bg-neutral-emphasis: #616164;
   --env-color-bg-neutral-muted: rgb(31 31 34 / 0.1);
   --env-color-bg-neutral-muted-hover: rgb(31 31 34 / 0.18);
@@ -160,6 +160,7 @@
   --env-color-fg-control: #434346;
   --env-color-fg-danger: #ac190f;
   --env-color-fg-default: #1f1f22;
+  --env-color-fg-disabled: #808083;
   --env-color-fg-done: #006071;
   --env-color-fg-link: #0053b5;
   --env-color-fg-link-hover: #004aa2;
@@ -298,8 +299,8 @@
 .env-theme[data-env-theme='dark'] {
   color-scheme: dark;
   --env-color-bg-accent-emphasis: #e7a8ff;
-  --env-color-bg-accent-emphasis-hover: #d683f5;
-  --env-color-bg-accent-emphasis-pressed: #bc6ada;
+  --env-color-bg-accent-emphasis-hover: #e193ff;
+  --env-color-bg-accent-emphasis-pressed: #d683f5;
   --env-color-bg-accent-muted: rgb(231 168 255 / 0.14);
   --env-color-bg-accent-soft: var(--env-color-bg-accent-muted);
   --env-color-bg-accent-solid: #e7a8ff;
@@ -316,8 +317,8 @@
   --env-color-bg-backdrop: rgb(0 0 0 / 0.5);
   --env-color-bg-backdrop-muted: rgb(0 0 0 / 0.3);
   --env-color-bg-danger-emphasis: #f8aca6;
-  --env-color-bg-danger-emphasis-hover: #e68c84;
-  --env-color-bg-danger-emphasis-pressed: #d66d63;
+  --env-color-bg-danger-emphasis-hover: #ee9c95;
+  --env-color-bg-danger-emphasis-pressed: #e68c84;
   --env-color-bg-danger-muted: rgb(206 94 83 / 0.18);
   --env-color-bg-danger-subtle-hover: rgb(206 94 83 / 0.22);
   --env-color-bg-danger-subtle-pressed: rgb(206 94 83 / 0.3);
@@ -349,8 +350,8 @@
   --env-color-bg-popup-hover: #424447;
   --env-color-bg-popup-pressed: #4b4d51;
   --env-color-bg-primary-emphasis: #9fc1f8;
-  --env-color-bg-primary-emphasis-hover: #75a5f2;
-  --env-color-bg-primary-emphasis-pressed: #4b8bec;
+  --env-color-bg-primary-emphasis-hover: #8ab3f5;
+  --env-color-bg-primary-emphasis-pressed: #75a5f2;
   --env-color-bg-primary-muted: rgb(52 126 234 / 0.16);
   --env-color-bg-primary-soft: var(--env-color-bg-primary-muted);
   --env-color-bg-primary-solid: #9fc1f8;
@@ -379,8 +380,8 @@
   --env-color-border-accent: rgb(231 168 255 / 0.55);
   --env-color-border-danger: rgb(248 172 166 / 0.55);
   --env-color-border-danger-emphasis: #f8aca6;
-  --env-color-border-danger-emphasis-hover: #e68c84;
-  --env-color-border-danger-emphasis-pressed: #d66d63;
+  --env-color-border-danger-emphasis-hover: #ee9c95;
+  --env-color-border-danger-emphasis-pressed: #e68c84;
   --env-color-border-danger-muted: rgb(248 172 166 / 0.28);
   --env-color-border-danger-strong: var(--env-elevation-2-border);
   --env-color-border-default: #898c91;
@@ -396,8 +397,8 @@
   --env-color-border-neutral-strong: var(--env-elevation-2-border);
   --env-color-border-primary: rgb(159 193 248 / 0.55);
   --env-color-border-primary-emphasis: #9fc1f8;
-  --env-color-border-primary-emphasis-hover: #75a5f2;
-  --env-color-border-primary-emphasis-pressed: #4b8bec;
+  --env-color-border-primary-emphasis-hover: #8ab3f5;
+  --env-color-border-primary-emphasis-pressed: #75a5f2;
   --env-color-border-primary-muted: rgb(159 193 248 / 0.28);
   --env-color-border-success: rgb(122 209 151 / 0.55);
   --env-color-border-success-muted: rgb(122 209 151 / 0.28);
@@ -416,6 +417,7 @@
   --env-color-fg-control: #e8eaee;
   --env-color-fg-danger: #f8aca6;
   --env-color-fg-default: #e8eaee;
+  --env-color-fg-disabled: #898c91;
   --env-color-fg-done: #81cbd7;
   --env-color-fg-link: #9fc1f8;
   --env-color-fg-link-hover: #8ab3f5;
@@ -549,6 +551,7 @@
   --env-color-fg-control: #29292c;
   --env-color-fg-danger: #7a0200;
   --env-color-fg-default: #131315;
+  --env-color-fg-disabled: #57575a;
   --env-color-fg-done: #00404c;
   --env-color-fg-link: #00377c;
   --env-color-fg-link-hover: #002f6d;
@@ -683,6 +686,7 @@
     --env-color-fg-control: #29292c;
     --env-color-fg-danger: #7a0200;
     --env-color-fg-default: #131315;
+    --env-color-fg-disabled: #57575a;
     --env-color-fg-done: #00404c;
     --env-color-fg-link: #00377c;
     --env-color-fg-link-hover: #002f6d;
@@ -810,6 +814,7 @@
   --env-color-fg-control: #eff1f5;
   --env-color-fg-danger: #ffe4e2;
   --env-color-fg-default: #f6f8fc;
+  --env-color-fg-disabled: #a1a4a9;
   --env-color-fg-done: #b5f5ff;
   --env-color-fg-link: #e0ebfd;
   --env-color-fg-link-hover: #eaf2ff;
@@ -932,6 +937,7 @@
     --env-color-fg-control: #eff1f5;
     --env-color-fg-danger: #ffe4e2;
     --env-color-fg-default: #f6f8fc;
+    --env-color-fg-disabled: #a1a4a9;
     --env-color-fg-done: #b5f5ff;
     --env-color-fg-link: #e0ebfd;
     --env-color-fg-link-hover: #eaf2ff;

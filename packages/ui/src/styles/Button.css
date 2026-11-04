@@ -203,9 +203,15 @@
     margin-inline: 0;
   }
 
+  /* A container where links repeat, such as a table, can set --env-button-rest-underline to none:
+     the underline then shows only under the pointer and with keyboard focus. */
   .env-button:where([data-variant='text'])[data-underline] {
     text-decoration: underline;
+    text-decoration-line: var(--env-button-rest-underline, underline);
     text-underline-offset: 0.15em;
+  }
+  .env-button:where([data-variant='text'])[data-underline]:focus-visible {
+    text-decoration-line: underline;
   }
 
   /* Under the pointer a text button's label is underlined, as a link's is, and darkens a step; a
@@ -376,14 +382,13 @@
     color: var(--env-button-content, var(--env-color-fg-danger));
   }
 
-  /* Accent: a primary button for a rare, consequential action, on the accent emphasis fill, with
-     square corners; like every button it takes the row's control height. */
+  /* Accent: a primary button for a rare, consequential action, on the accent emphasis fill; a pill
+     like every button, at the row's control height. */
   .env-button:where([data-variant='primary'][data-tone='accent']) {
     --env-button-container-default: var(--env-color-bg-accent-emphasis);
     background: var(--env-button-custom-fill, var(--env-color-bg-accent-emphasis));
     color: var(--env-button-content, var(--env-color-fg-on-emphasis));
     border: 0;
-    border-radius: var(--env-radius-sm);
   }
 
   .env-button:where([data-variant='primary'][data-tone='accent']):hover:not(:disabled):not(
@@ -420,24 +425,26 @@
   }
 
   .env-button:is(:disabled, [aria-disabled='true']) {
-    opacity: var(--env-state-disabled-opacity);
     cursor: default;
   }
-  /* An unavailable button reads as unavailable rather than as a lighter brand color: a primary one,
-     in any tone, takes the secondary's neutral fill and label, and an outline or a labelled text one
-     the neutral label and edge. A pending one keeps its colors. */
-  .env-button:where([data-variant='primary']):is(:disabled, [aria-disabled='true']):not(
-      [data-pending]
-    ) {
-    background: var(--env-button-custom-fill, var(--env-color-bg-neutral-muted));
-    color: var(--env-button-content, var(--env-color-fg-default));
+  /* An unavailable button reads as unavailable rather than as a lighter brand color, without the
+     whole button fading: its label and icon take the disabled text color, and its shape quiets more
+     than the label: a primary or secondary one, in any tone, takes half the secondary's neutral
+     fill, and an outline one the muted edge. A pending one keeps its colors. */
+  .env-button:is(:disabled, [aria-disabled='true']):not([data-pending]) {
+    color: var(--env-color-fg-disabled);
+  }
+  .env-button:where([data-variant='primary'], [data-variant='secondary']):is(
+      :disabled,
+      [aria-disabled='true']
+    ):not([data-pending]) {
+    background: color-mix(in srgb, var(--env-color-bg-neutral-muted) 50%, transparent);
   }
   .env-button:where([data-variant='outline'], [data-variant='text']:not(.env-icon-button)):is(
       :disabled,
       [aria-disabled='true']
     ):not([data-pending]) {
-    border-color: var(--env-button-outline, var(--env-color-border-default));
-    color: var(--env-button-content, var(--env-color-fg-default));
+    border-color: var(--env-color-border-muted);
   }
 
   /* fullWidth: a labelled button fills its container, such as a narrow form's stacked actions. */

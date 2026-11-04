@@ -909,7 +909,7 @@
       "98": {
         "$value": { "colorSpace": "oklch", "components": [0.1502, 0.0507, 259], "hex": "#010a20" }
       },
-      "$description": "The low-chroma blue-gray of quiet tints: the dark theme’s selection and the light theme’s navigation hover. Seeded from 0.7’s light navigation hover and press and its dark selected option."
+      "$description": "The low-chroma blue-gray of quiet tints: the dark theme’s selection. Seeded from 0.7’s light navigation hover and press and its dark selected option."
     },
     "steel": {
       "2": {
