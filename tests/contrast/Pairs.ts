@@ -611,6 +611,11 @@ const registry: readonly ContrastPair[] = merged([
       'A highlighted row’s description and icon, and keys as chips at rest',
     ),
     ...text(
+      '--env-color-fg-danger',
+      [[fill, frosted, behind]],
+      'A destructive menu item’s label and icon on its highlighted row',
+    ),
+    ...text(
       '--env-color-fg-default',
       [[fill, fill, frosted, behind]],
       'Key chips on a highlighted row',

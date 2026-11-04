@@ -41,7 +41,12 @@ export default function IconsAndShortcuts() {
           Download PDF
         </Menu.Item>
         <Menu.Separator />
-        <Menu.Item icon={<IconDelete />} shortcut="Del" onClick={() => setLastAction('Delete')}>
+        <Menu.Item
+          icon={<IconDelete />}
+          tone="danger"
+          shortcut="Del"
+          onClick={() => setLastAction('Delete')}
+        >
           Delete
         </Menu.Item>
       </Menu.Root>

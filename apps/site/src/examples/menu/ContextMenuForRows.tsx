@@ -49,7 +49,7 @@ export default function ContextMenuForRows() {
         Duplicate
       </Menu.Item>
       <Menu.Separator />
-      <Menu.Item icon={<IconDelete />} shortcut="Del" onClick={() => remove(entry)}>
+      <Menu.Item icon={<IconDelete />} tone="danger" shortcut="Del" onClick={() => remove(entry)}>
         Delete
       </Menu.Item>
     </>

@@ -109,6 +109,12 @@
     block-size: var(--env-control-icon-size);
     color: var(--env-menu-item-icon-color, var(--env-color-fg-muted));
   }
+  /* A destructive item, tone="danger": its label and icon take the danger color, while its row
+     highlights as any other's and its description and shortcut stay muted. */
+  .env-menu-item[data-tone='danger'] {
+    --env-menu-item-icon-color: var(--env-menu-item-icon, var(--env-color-fg-danger));
+    color: var(--env-menu-item-content, var(--env-color-fg-danger));
+  }
   /* The label and its optional muted description share the flexible column; end content and the
      shortcut hint sit at the end. */
   .env-menu-item-text {
@@ -132,6 +138,13 @@
     align-items: center;
     gap: var(--env-space-1);
   }
+  /* A count at the end, a Badge with one, is plain muted text in tabular figures, through Badge's
+     count hooks, so it can't be taken for a shortcut's key chips. */
+  .env-menu-item-end {
+    --env-badge-count-fg: var(--env-color-fg-muted);
+    --env-badge-count-bg: transparent;
+    --env-badge-count-border: none;
+  }
   /* Shortcut keys are small muted chips on the neutral fill, with no edge, muted like the hint they
      are, a little apart, the + between the keys of a combination read but not shown: the menu sets
      Kbd's custom properties on its own element. */
@@ -153,6 +166,7 @@
   .env-menu-item:is([data-highlighted], [data-popup-open])
     :is(.env-menu-item-end, .env-menu-item-shortcut) {
     --env-kbd-fg: var(--env-color-fg-default);
+    --env-badge-count-fg: var(--env-color-fg-default);
   }
   .env-menu-item-shortcut {
     flex: 0 0 auto;
@@ -201,9 +215,14 @@
     outline: 2px solid var(--env-menu-item-ring, transparent);
     outline-offset: -2px;
   }
+  /* An unavailable item dims its label, icon, end and shortcut; its description, which often says
+     why it is unavailable, keeps the muted text color, so it stays readable. */
   .env-menu-item:is([data-disabled], [aria-disabled='true']) {
-    opacity: var(--env-state-disabled-opacity);
     cursor: default;
+  }
+  .env-menu-item:is([data-disabled], [aria-disabled='true']) > :not(.env-menu-item-text),
+  .env-menu-item:is([data-disabled], [aria-disabled='true']) .env-menu-item-label {
+    opacity: var(--env-state-disabled-opacity);
   }
   /* A separator is space as tall as the gap between groups, with no line: popups have no hairlines. */
   .env-menu-separator {

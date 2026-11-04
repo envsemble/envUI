@@ -2006,6 +2006,34 @@
         "high": 7
       }
     },
+    "--env-color-fg-danger on --env-color-bg-neutral-muted over popup-frosted over --env-color-bg-default": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-danger on --env-color-bg-neutral-muted over popup-frosted over --env-color-bg-muted": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-danger on --env-color-bg-neutral-muted over popup-frosted over --env-color-bg-page": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-danger on --env-color-bg-neutral-muted over popup-frosted over --env-color-bg-recessed": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
     "--env-color-fg-danger on --env-color-bg-neutral-subtle-hover over --env-color-bg-default": {
       "kind": "text",
       "minimum": {
@@ -6106,6 +6134,7 @@
     "--env-color-fg-danger on --env-color-bg-danger-subtle-pressed over --env-color-bg-danger-subtle-hover over catalogue-canvas",
     "--env-color-fg-danger on --env-color-bg-neutral-muted over --env-color-list-item-bg",
     "--env-color-fg-danger on --env-color-bg-neutral-muted over catalogue-canvas",
+    "--env-color-fg-danger on --env-color-bg-neutral-muted over popup-frosted over catalogue-canvas",
     "--env-color-fg-danger on --env-color-bg-neutral-subtle-hover over catalogue-canvas",
     "--env-color-fg-danger on --env-color-bg-neutral-subtle-pressed over catalogue-canvas",
     "--env-color-fg-danger on --env-color-list-item-bg",

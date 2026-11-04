@@ -219,6 +219,12 @@ function useMenuItemContent(
 
 interface ItemSharedProps extends ItemContentProps {
   /**
+   * The item's tone: danger marks a destructive action, such as Delete, its label and icon in the
+   * danger color; its row highlights as any other's.
+   * @default 'neutral'
+   */
+  tone?: 'neutral' | 'danger';
+  /**
    * The item is unavailable: it stays in place, dimmed, and reports aria-disabled; its action does
    * not run, and a destination has no link to follow.
    * @default false
@@ -278,6 +284,7 @@ function Item({
   description,
   shortcut,
   end,
+  tone = 'neutral',
   disabled,
   'aria-current': ariaCurrent,
   'aria-label': ariaLabel,
@@ -304,6 +311,7 @@ function Item({
         // The link component comes from LinkProvider and keeps its identity between renders.
         // eslint-disable-next-line react-hooks/static-components
         render={<LinkComponent href={props.href} target={props.target} rel={props.rel} />}
+        data-tone={tone}
         aria-current={ariaCurrent}
         aria-label={ariaLabel}
         {...accessibility}
@@ -317,6 +325,7 @@ function Item({
       className={itemClassName}
       disabled={disabled}
       onClick={props.href === undefined ? props.onClick : preventActivation}
+      data-tone={tone}
       aria-current={ariaCurrent}
       aria-label={ariaLabel}
       {...accessibility}
