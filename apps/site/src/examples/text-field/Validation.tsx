@@ -5,8 +5,9 @@ const handlePattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const handleError = 'Use only lowercase letters, numbers and hyphens, such as northwind-launch.';
 
 export default function Validation() {
-  const [handle, setHandle] = useState('');
-  const [error, setError] = useState<string>();
+  // As people left it: a handle that doesn't fit, and its error.
+  const [handle, setHandle] = useState('Northwind Launch');
+  const [error, setError] = useState<string | undefined>(handleError);
   return (
     // As wide as a form column.
     <Column gap={4} style={{ inlineSize: 'min(100%, 24rem)' }}>
