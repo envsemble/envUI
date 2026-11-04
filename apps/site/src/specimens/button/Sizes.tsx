@@ -1,36 +1,33 @@
-import { Button, Column, IconButton, Row, Text, type ControlSize } from '@envsemble/envui';
+import { Button, IconButton, Row, type ControlSize } from '@envsemble/envui';
 import { IconAdd } from '@envsemble/envui/icons/Add';
 import { IconEdit } from '@envsemble/envui/icons/Edit';
-import { Example } from '../../figures/Example';
+import { Example, Specimen, SpecimenGrid } from '../../figures/Example';
 
-const sizes: readonly { size: ControlSize; name: string }[] = [
-  { size: 'sm', name: 'Small' },
-  { size: 'md', name: 'Medium, the default' },
-  { size: 'lg', name: 'Large' },
+const sizes: readonly { size: ControlSize; title: string; caption?: string }[] = [
+  { size: 'sm', title: 'Small' },
+  { size: 'md', title: 'Medium', caption: 'The default' },
+  { size: 'lg', title: 'Large' },
 ];
 
 /**
- * The three sizes of Button and IconButton, which every control of a size shares: in one row, on
- * one line, each size's name under it.
+ * The three sizes of Button and IconButton, which every control of a size shares: on the stage
+ * every specimen sits on, each size named over its pair.
  */
 export default function Sizes() {
   return (
-    <Example>
-      <Row wrap align="end" justify="center" gap={8}>
-        {sizes.map(({ size, name }) => (
-          <Column key={size} align="center" gap={3}>
+    <Example size="collection">
+      <SpecimenGrid size="compact">
+        {sizes.map(({ size, title, caption }) => (
+          <Specimen key={size} title={title} caption={caption}>
             <Row align="center" gap={3}>
               <Button size={size} startIcon={<IconAdd />}>
                 New
               </Button>
               <IconButton size={size} icon={<IconEdit />} aria-label="Edit" />
             </Row>
-            <Text variant="body-sm" emphasis="muted">
-              {name}
-            </Text>
-          </Column>
+          </Specimen>
         ))}
-      </Row>
+      </SpecimenGrid>
     </Example>
   );
 }

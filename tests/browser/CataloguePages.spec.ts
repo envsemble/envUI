@@ -368,15 +368,19 @@ test('a component page groups its sections into three, all on the page', async (
   await expect.poll(columns).toEqual({ columns: 1, tops: 6 });
 });
 
-test("the overview's hero says what envUI is, leads to setting it up and shows the package's version", async ({
+test("the overview's hero says what envUI is, leads to setting it up and gives the install command", async ({
   page,
 }) => {
   await page.goto(`${siteDevUrl}/`);
   const hero = page.locator('.catalogue-overview-hero');
   await expect(hero.getByRole('heading', { level: 1 })).toHaveAccessibleName('envUI');
   await expect(hero.locator('.catalogue-overview-lede')).toContainText('A React design system');
-  // The version is packages/ui/package.json's, as quiet text, beside the catalogue's counts.
-  await expect(hero.locator('.catalogue-overview-version')).toHaveText(`v${version}`);
+  // The install command names packages/ui/package.json's version, as docs/setup.md does, and
+  // copies; the catalogue's counts sit under it.
+  await expect(hero.locator('.catalogue-overview-install code')).toHaveText(
+    `npm install --save-exact @envsemble/envui@${version}`,
+  );
+  await expect(hero.getByRole('button', { name: 'Copy install command' })).toBeVisible();
   await expect(hero.locator('.catalogue-overview-facts')).toContainText(
     `${componentDocuments.filter(({ id }) => id !== 'field').length} components`,
   );

@@ -53,7 +53,7 @@ const services = [
  * The cards in the hand, from the back to the front, each a small moment of a B2B or AI product
  * built with envUI. `place` is the card's place in the fan, from the middle; on a narrower page the
  * first goes and the rest take `narrowPlace`, and on a narrow one only those with a `compactPlace`
- * stay.
+ * stay: the agent's run and the services' status, the richer two that still read on a phone.
  */
 const cards: {
   id: string;
@@ -98,6 +98,7 @@ const cards: {
     id: 'agent-run',
     place: -0.5,
     narrowPlace: -1,
+    compactPlace: -0.5,
     lift: -0.15,
     content: (
       <>
@@ -114,7 +115,6 @@ const cards: {
     id: 'usage',
     place: 0.5,
     narrowPlace: 0,
-    compactPlace: -0.5,
     lift: 0.1,
     content: (
       <>

@@ -72,7 +72,7 @@
 }
 /* A guide's sections, one stream of Markdown, stand apart as a page's do. */
 .site-article > .env-markdown > h2:not(:first-child) {
-  margin-block-start: var(--env-space-9);
+  margin-block-start: var(--site-section-gap);
 }
 
 /* A lead: the one or two sentences that open a section, a step larger than the text below it. */
@@ -167,9 +167,10 @@
 }
 
 /* Code wider than its block scrolls sideways (Figures.css): while more of it lies beyond the end
-   edge, the lines fade out there, so a line cut short reads as going on rather than ending
-   mid-word, and the fade is gone once the end is in view. Code that fits, and a browser without
-   scroll-driven animations, shows no fade. */
+   edge, the lines fade out there, over a few characters, so a line cut short reads clearly as
+   going on rather than ending mid-word, and the fade is gone once the end is in view. The same in
+   the Docs' blocks, such as a page's Usage, and in an example's code opened under its figure.
+   Code that fits, and a browser without scroll-driven animations, shows no fade. */
 @property --site-code-fade {
   syntax: '<length>';
   inherits: false;
@@ -177,7 +178,7 @@
 }
 @keyframes site-code-fade {
   from {
-    --site-code-fade: var(--env-space-7);
+    --site-code-fade: var(--env-space-9);
   }
   to {
     --site-code-fade: 0rem;
@@ -193,7 +194,7 @@
     animation: site-code-fade linear both;
     animation-timeline: scroll(self inline);
     /* Whole until the end is near, then gone as it comes into view. */
-    animation-range: calc(100% - var(--env-space-7)) 100%;
+    animation-range: calc(100% - var(--env-space-9)) 100%;
   }
   :is(.site-code-block, .site-example-source) pre:dir(rtl):not(:focus-visible) {
     mask-image: linear-gradient(
