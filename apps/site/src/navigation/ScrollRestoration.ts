@@ -128,8 +128,11 @@ export function restoreScroll(main: HTMLElement): (() => void) | undefined {
     clearTimeout(timeout);
     for (const event of interruptions) removeEventListener(event, stop, true);
   };
+  // A place kept as a scroll alone, with no heading to hold, waits for the figures above it to
+  // load too, as they change the page's height.
   const ready = () =>
     !main.querySelector('.site-page-skeleton') &&
+    (kept.anchor !== undefined || !main.querySelector('.site-loading')) &&
     (main.scrollHeight - main.clientHeight >= kept.top ||
       !main.querySelector('.site-section-groups[aria-busy], .docs-api[aria-busy]'));
   const attempt = () => {

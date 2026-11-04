@@ -237,6 +237,7 @@ test("the Design and Code switch keeps the reader's section where the other page
   // The corner's way to the other part keeps it too, from where the reader has scrolled to.
   await page.goto(`${siteDevUrl}/patterns/forms`);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Form layout and validation');
+  await expect(page.locator('.site-section-groups[aria-busy]')).toHaveCount(0);
   await page.locator('#error-summary').evaluate((heading) => heading.scrollIntoView());
   await page.locator('.site-page-actions').getByRole('link', { name: 'Docs', exact: true }).click();
   await expect(page).toHaveURL(`${siteDevUrl}/docs/patterns/forms#error-summary`);
