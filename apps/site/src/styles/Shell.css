@@ -151,6 +151,31 @@ body {
 .docs-drawer-top .site-drawer-search {
   flex: none;
 }
+/* In the sheet, the first row ends in the sheet's close button: after search in the catalogue's
+   drawer, beside the rail's wordmark, and after the wordmark in the Docs', with search under them. */
+.site-drawer-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--env-space-2);
+  align-self: stretch;
+  min-inline-size: 0;
+}
+.site-drawer-top > .site-drawer-search {
+  min-inline-size: 0;
+}
+.docs-drawer-top > .site-drawer-top {
+  flex: 1 0 100%;
+}
+.site-sheet-close {
+  flex: none;
+}
+/* The search shortcut's keys show for a keyboard alone: a touch screen has none to press. */
+@media (pointer: coarse) {
+  .site-search-keys {
+    display: none;
+  }
+}
 .docs-drawer-top .site-brand {
   flex: none;
   padding-inline-start: var(--env-space-2);
@@ -371,9 +396,11 @@ body {
   letter-spacing: -0.035em;
   text-wrap: balance;
 }
+/* The description fills the banner's text column, whatever its width, its last line kept from
+   standing alone. */
 .site-page-banner-description {
-  max-inline-size: 42ch;
-  text-wrap: balance;
+  max-inline-size: 100%;
+  text-wrap: pretty;
 }
 .site-page-navigation {
   padding: var(--env-space-6) var(--site-gutter) var(--env-space-8);

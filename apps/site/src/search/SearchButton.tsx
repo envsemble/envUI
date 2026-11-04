@@ -45,7 +45,8 @@ export function SearchButton({
     <Button
       variant="secondary"
       startIcon={<IconSearch />}
-      end={<Kbd keys={keys} aria-hidden />}
+      // The keys show for a keyboard alone: a touch screen has none (Shell.css).
+      end={<Kbd keys={keys} aria-hidden className="site-search-keys" />}
       aria-keyshortcuts={ariaKeyShortcuts}
       onClick={onClick}
       className={className}

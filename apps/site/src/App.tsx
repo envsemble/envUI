@@ -34,6 +34,7 @@ import {
   TokensPage,
 } from './pages/DocsPages';
 import {
+  Brand,
   DocsNavigation,
   PageActions,
   CatalogueNavigation,
@@ -231,6 +232,7 @@ function Shell() {
             setNavigationOpen(false);
           }
         : undefined,
+      onClose: inSheet ? () => setNavigationOpen(false) : undefined,
       // Search from the sheet closes it first.
       onSearch: inSheet
         ? () => {
@@ -255,8 +257,8 @@ function Shell() {
       navigationForms={{ compact: 'none', medium: 'none' }}
       navigation={{ drawer: navigation(false) }}
     >
-      {/* Below an expanded window, where the navigation is in a sheet, a small pill of the menu
-          and search floats at the page's top start. */}
+      {/* Below an expanded window, where the navigation is in a sheet, a small pill of the menu,
+          the wordmark and search floats at the page's top start. */}
       <div className="site-compact-controls">
         <div className="site-compact-controls-bar">
           <Tooltip content="Open navigation">
@@ -267,6 +269,7 @@ function Shell() {
               onClick={() => setNavigationOpen(true)}
             />
           </Tooltip>
+          <Brand area={area} />
           <SearchButton iconOnly onClick={openSearch} />
         </div>
       </div>
@@ -308,6 +311,8 @@ function Shell() {
         side="start"
         aria-label={area === 'docs' ? 'Docs' : 'Catalogue'}
         width={area === 'docs' ? 'min(18rem, 100%)' : 'min(22rem, 100%)'}
+        // Its close button is on the navigation's first row, beside the wordmark.
+        closeButton={false}
         open={navigationOpen}
         onOpenChange={(open) => {
           if (open) choseDestination.current = false;

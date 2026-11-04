@@ -115,7 +115,7 @@ test('single previews retain state when the theme changes', async ({ page }) => 
     await expect(navigationTrigger, by).toBeFocused();
   }
   await navigationTrigger.click();
-  await mobileNavigation.getByRole('button', { name: 'Close', exact: true }).click();
+  await mobileNavigation.getByRole('button', { name: 'Close navigation', exact: true }).click();
   await expect(mobileNavigation).toHaveCount(0);
   await expect(navigationTrigger).toBeFocused();
   await navigationTrigger.click();
@@ -198,13 +198,15 @@ test('the navigation holds the wordmark and search, the page the other area and 
     // The theme is in the Display menu alone.
     await expect(page.getByRole('button', { name: /^Switch to/ })).toHaveCount(0);
 
-    // A narrow window shows the menu button and search at the page's top start, and the other area
-    // and Display as icon buttons at its top end.
+    // A narrow window shows the menu button, the wordmark and search at the page's top start, and
+    // the other area and Display as icon buttons at its top end.
     await page.setViewportSize({ width: 390, height: 844 });
     const menu = page.getByRole('button', { name: 'Open navigation', exact: true });
+    const compact = page.locator('.site-compact-controls');
     for (const [control, start] of [
       [menu, true],
-      [page.locator('.site-compact-controls').getByRole('button', { name: /^Search/ }), true],
+      [compact.getByRole('link', { name: /^envUI( Docs)? home$/ }), true],
+      [compact.getByRole('button', { name: /^Search/ }), true],
       [actions.getByRole('link', { name: other, exact: true }), false],
       [actions.getByRole('button', { name: 'Display', exact: true }), false],
     ] as const) {
@@ -219,7 +221,16 @@ test('the navigation holds the wordmark and search, the page the other area and 
       name: address.startsWith('/docs') ? 'Docs' : 'Catalogue',
     });
     await expect(sheet.getByRole('button', { name: /^Search/ })).toBeInViewport();
-    await page.keyboard.press('Escape');
+    // The sheet's close button ends the wordmark's row rather than standing on a row of its own.
+    const close = sheet.getByRole('button', { name: 'Close navigation', exact: true });
+    const sheetMark = sheet.getByRole('link', { name: /^envUI( Docs)? home$/ });
+    const [closeBox, markBox] = await Promise.all([close.boundingBox(), sheetMark.boundingBox()]);
+    expect(
+      Math.abs(closeBox!.y + closeBox!.height / 2 - (markBox!.y + markBox!.height / 2)),
+      address,
+    ).toBeLessThan(4);
+    await close.click();
+    await expect(sheet).toHaveCount(0);
   }
 });
 
