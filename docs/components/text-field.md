@@ -86,22 +86,20 @@ examples:
 ```
 
 1. **Outline**
-2. **Floating**
-3. **Ghost**
+2. **Ghost**
 
-| Variant  | Use for                                                                                                    |
-| -------- | ---------------------------------------------------------------------------------------------------------- |
-| Outline  | In forms, dialogs, panes and toolbars. The default.                                                        |
-| Floating | A long form on a page, or a field on its own, such as a search above what it filters. Not for a text area. |
-| Ghost    | A search in an application's chrome: atop a sidebar, among quiet buttons in a toolbar, or in a palette.    |
+| Variant | Use for                                                                                                 |
+| ------- | ------------------------------------------------------------------------------------------------------- |
+| Outline | In forms, dialogs, panes and toolbars, and a field on its own on a page. The default.                   |
+| Ghost   | A search in an application's chrome: atop a sidebar, among quiet buttons in a toolbar, or in a palette. |
 
-### Outline and floating
+### Outline
 
-Both have no fill of their own: they take the background of what they sit on, such as a card or a dialog. Their label floats into the edge, which opens behind it. They differ in height.
+An outline field has no fill of its own: it takes the background of what it sits on, such as a card or a dialog. Its label rests inside it and floats into the edge, which opens behind it.
 
-- An outline field is as tall as a button of its size, so the two line up in a row.
-- A floating field is taller, with room for its label above the value.
-- Either can be given a fill of its own where it needs one.
+- It is as tall as a button of its size, so the two line up in a row.
+- A field on its own on a page, or in a long form, takes the large size.
+- It can be given a fill of its own where it needs one.
 
 ### Ghost
 
@@ -283,12 +281,12 @@ A TextField is a native `<input>` with its `label`, `description` and `error`. G
 #### Variants and sizes
 
 ```tsx
-<TextField variant="floating" label="Owner" name="owner" />
+<TextField size="lg" label="Owner" name="owner" />
 <TextField variant="ghost" label="Find projects" showLabel={false} startIcon={<IconSearch />} />
 <TextField size="sm" label="Filter" name="filter" />
 ```
 
-`variant` is `outline`, the default, `floating` or `ghost`; Textarea takes `outline` or `ghost`. `size` is `sm`, `md` or `lg`; without it, a field takes its container's. `showLabel={false}` keeps the label for assistive technology only.
+`variant` is `outline`, the default, or `ghost`, as on Textarea. `size` is `sm`, `md` or `lg`; without it, a field takes its container's. `showLabel={false}` keeps the label for assistive technology only.
 
 #### Prefix, suffix, icon and end action
 
@@ -314,6 +312,7 @@ A field fills its container's width, so set the width on the container, or on th
 
 ## Changelog
 
+- **1.0.0-prerelease.6**: The `floating` variant is gone: a field on its own or in a long form on a page takes `outline`, the default, with `size="lg"`.
 - **1.0.0-prerelease.2**: The `underline` variant, which `plain` became in the earlier prereleases, is gone from TextField, SearchField and Textarea, for the default outline. Outline and floating fields have no fill of their own.
 - **1.0.0**: `hint` is `description`, and the variants are `outline`, `floating` and `ghost`: `outlined` is `outline` and `quiet` is `ghost`, and `plain` is gone, for the default outline. `className` and `style` style the field's root rather than the input; `ref` and the other native props still reach the input. TextField and Textarea take `onValueChange`. The frame is Field's parts, and the classes follow: `env-text-input` is `env-text-field-input`, `env-text-field-well` `env-text-field-control`, `env-form-field` `env-field` and `env-field-hint` `env-field-description`. A button in `endAction` takes the ghost variant where it sets none. Textarea's resize edge is a `separator`, and its labels and the clear label come from EnvUIProvider's `messages`. Textarea's resize edge, `env-textarea-resize-edge`, is `env-textarea-resize-handle`, as every resize handle is named.
 - **1.0.0**: `Input` is `TextField`, with the same props, behaviour and look; the page is `text-field`.

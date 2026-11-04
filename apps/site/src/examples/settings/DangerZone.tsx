@@ -63,7 +63,6 @@ export default function DangerZone() {
       >
         <TextField
           ref={field}
-          variant="floating"
           label="Workspace name"
           description={`Enter ${workspace} to confirm.`}
           autoComplete="off"

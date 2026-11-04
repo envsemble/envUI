@@ -25,13 +25,7 @@ export default function FilteringAnatomy() {
         toolbar={
           <Row wrap align="center" gap={3}>
             <SearchField label="Search projects" size="sm" defaultValue="web" />
-            <Select
-              aria-label="Status"
-              size="sm"
-              variant="outline"
-              items={statuses}
-              defaultValue="active"
-            />
+            <Select aria-label="Status" size="sm" items={statuses} defaultValue="active" />
             <Button variant="secondary" size="sm" startIcon={<IconFilterList />}>
               Filters <Badge count={2} aria-label="2 in use" />
             </Button>

@@ -2068,18 +2068,6 @@ export const tokens = {
       'dark-high-contrast': '#a1a4a9',
     },
   },
-  /** The height of a text field's floating variant, whose label rests inside the field and floats into its outline. Other fields take the control height. */
-  'field.floating-height': {
-    cssVariable: '--env-field-floating-height',
-    type: 'dimension',
-    values: {
-      light: '3.5rem',
-      dark: '3.5rem',
-      'light-high-contrast': '3.5rem',
-      'dark-high-contrast': '3.5rem',
-    },
-    scales: { compact: '2.75rem' },
-  },
   /** envUI's typeface, Geist, which the package ships, falling back to the system's sans-serif. */
   'font.family': {
     cssVariable: '--env-font-family',

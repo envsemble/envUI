@@ -78,13 +78,6 @@
       "$value": { "value": 5.5, "unit": "rem" }
     }
   },
-  "field": {
-    "$type": "dimension",
-    "floating-height": {
-      "$description": "The height of a text field's floating variant, whose label rests inside the field and floats into its outline. Other fields take the control height.",
-      "$value": { "value": 3.5, "unit": "rem" }
-    }
-  },
   "row": {
     "$type": "dimension",
     "height": {

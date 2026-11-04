@@ -41,7 +41,6 @@ export default function RenameProject() {
       >
         <form id={formId} onSubmit={save}>
           <TextField
-            variant="floating"
             label="Project name"
             value={draft}
             readOnly={saving}

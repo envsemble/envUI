@@ -191,7 +191,6 @@
   --env-elevation-1-border: #b1b1b4;
   --env-elevation-2-border: #b1b1b4;
   --env-elevation-3-border: #808083;
-  --env-field-floating-height: 3.5rem;
   --env-font-family: 'envUI Geist', sans-serif;
   --env-font-size-body: 0.9375rem;
   --env-font-size-body-sm: 0.875rem;
@@ -958,7 +957,6 @@
   --env-control-height-lg: 2.375rem;
   --env-control-height-md: 2rem;
   --env-control-height-sm: 1.625rem;
-  --env-field-floating-height: 2.75rem;
   --env-font-size-body: 0.8125rem;
   --env-font-size-body-sm: 0.75rem;
   --env-font-size-caption: 0.6875rem;
@@ -1000,7 +998,6 @@
     --env-control-height-lg: 2.375rem;
     --env-control-height-md: 2rem;
     --env-control-height-sm: 1.625rem;
-    --env-field-floating-height: 2.75rem;
     --env-font-size-body: 0.8125rem;
     --env-font-size-body-sm: 0.75rem;
     --env-font-size-caption: 0.6875rem;

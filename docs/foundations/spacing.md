@@ -264,7 +264,6 @@ At the default 16 px root; every value is a token in rem.
 | `--env-icon-size-sm` / `-md` / `-lg`                              | 16 / 18 / 20          | 16 / 16 / 18          |
 | `--env-picture-size-sm` / `-md` / `-lg` / `-xl` (Avatar, Graphic) | 24 / 32 / 48 / 88     | 24 / 32 / 48 / 88     |
 | `--env-radius-sm` / `--env-radius-lg` / `--env-radius-surface`    | 8 / 16 / 28           | 6 / 12 / 22           |
-| `--env-field-floating-height`                                     | 56                    | 44                    |
 | `--env-top-bar-height` / `--env-title-bar-height`                 | 52 / 40               | 42 / 32               |
 | `--env-control-target-min` / `--env-control-height-touch`         | 24 / 44               | 24 / 44               |
 

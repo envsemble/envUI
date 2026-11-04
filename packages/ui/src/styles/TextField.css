@@ -23,7 +23,7 @@
   }
 
   /* A field takes the control height of its size, or of its container where it sets none. A tall
-     field (the floating variant and text areas) keeps room above it for its label. */
+     field, a text area, keeps room above it for its label. */
   .env-text-field {
     --env-text-field-well: var(--env-text-field-container, transparent);
     --env-text-field-text: var(--env-text-field-content, var(--env-color-fg-default));
@@ -158,7 +158,6 @@
     display: block;
     width: 100%;
     min-width: 0;
-    min-height: var(--env-field-floating-height);
     margin: 0;
     padding: var(--env-space-4);
     border: 0;

@@ -43,15 +43,6 @@
   .env-combobox .env-combobox-control[data-action-count='2'] {
     --env-combobox-actions: 2;
   }
-  /* A floating field is as tall as a floating TextField, with small actions. */
-  .env-combobox[data-tall] .env-combobox-control {
-    --env-combobox-row: 1.5rem;
-    --env-combobox-action: var(--env-control-height-sm);
-    --env-combobox-end: var(--env-space-2);
-    border-radius: var(--env-radius-lg);
-    padding-block: calc((var(--env-field-floating-height) - var(--env-combobox-row)) / 2);
-    padding-inline-start: var(--env-space-4);
-  }
   .env-combobox .env-combobox-control > .env-combobox-input {
     flex: 1 1 4rem;
     inline-size: auto;
@@ -63,10 +54,6 @@
   }
   .env-combobox .env-combobox-control > .env-combobox-input:read-only {
     cursor: default;
-  }
-  /* Actions are ghost icon buttons inside the field, the small control height in a floating field. */
-  .env-combobox[data-tall] .env-combobox-end {
-    --env-control-height: var(--env-control-height-sm);
   }
   /* The chevron points down, and up while the popup is open, flipping over as Select's does rather
      than turning through pointing sideways. */
@@ -108,7 +95,7 @@
     block-size: var(--env-icon-size);
     object-fit: contain;
   }
-  .env-combobox:not([data-tall]) .env-combobox-value-icon {
+  .env-combobox .env-combobox-value-icon {
     --env-combobox-start-size: 1.25rem;
   }
 
@@ -140,7 +127,7 @@
     cursor: default;
     outline: none;
   }
-  .env-combobox:not([data-tall]) .env-combobox-chip {
+  .env-combobox .env-combobox-chip {
     font-size: var(--env-font-size-label-sm);
   }
   .env-combobox-chip:not(:has(> .env-combobox-chip-remove)) {

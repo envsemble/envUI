@@ -155,7 +155,7 @@ function IconCatalogueSkeleton() {
     <PartSkeleton what="icons">
       <Example size="collection">
         <div className="catalogue-icon-toolbar">
-          <SearchField variant="floating" label="Search icons" showLabel />
+          <SearchField size="lg" label="Search icons" showLabel />
           <Switch label="Filled icons" />
         </div>
         <ul className="catalogue-icon-catalogue">

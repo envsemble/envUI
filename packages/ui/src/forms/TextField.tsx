@@ -12,7 +12,7 @@ import {
   type TextFieldDecorationProps,
 } from './internal/FieldFrame.js';
 
-/** A text field's look: outline, floating or ghost. */
+/** A text field's look: outline or ghost. */
 export type { FieldVariant as TextFieldVariant } from './internal/FieldFrame.js';
 import '../styles/Base.css';
 import '../styles/TextField.css';
@@ -38,7 +38,8 @@ export interface TextFieldProps
 
 /**
  * A labelled single-line text input: a native input with a floating label, a description and an
- * error, at the control height in an outline or ghost look, or taller as the floating variant, with an optional start icon, end action, prefix and suffix.
+ * error, at the control height in an outline or ghost look, with an optional start icon, end
+ * action, prefix and suffix.
  */
 export function TextField({
   ref,

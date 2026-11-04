@@ -36,18 +36,14 @@
 
   /* Select: an outlined field, as TextField is, whose control is a button that shows the chosen
      option and opens the shared popup (PopupSurface) with a list of rows (ListRow), its chevron at
-     the end where Combobox's is. The chevron is as tall as the field's own icon buttons: the small
-     control height in a floating field, a little less than the field elsewhere. */
+     the end where Combobox's is. The chevron is as tall as the field's own icon buttons, a little
+     less than the field. */
   .env-select .env-select-control {
     --env-select-action: max(
       var(--env-control-target-min),
       calc(var(--env-field-height) - var(--env-space-2))
     );
     --env-select-end: var(--env-space-1);
-  }
-  .env-select[data-tall] .env-select-control {
-    --env-select-action: var(--env-control-height-sm);
-    --env-select-end: var(--env-space-2);
   }
   /* The trigger holds the value and, in the same cell, the hidden labels of every option, so it is
      as wide as the longest. */

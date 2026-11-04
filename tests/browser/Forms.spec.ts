@@ -324,11 +324,7 @@ test('a Select is an outlined field, and the open list stands apart from a pane'
   const filter = page.getByRole('combobox', { name: 'Pane filter', exact: true });
   expect(field.box.width).toBeGreaterThan(paneBox!.width / 2);
   expect((await filter.boundingBox())!.width).toBeLessThan(paneBox!.width / 2);
-  // The floating variant is taller.
   const role = page.getByRole('combobox', { name: 'Pane role', exact: true });
-  expect((await role.boundingBox())!.height).toBeGreaterThan(
-    (await outlined.boundingBox())!.height,
-  );
 
   await role.click();
   await expect(page.getByRole('option', { name: 'Boreal', exact: true })).toBeVisible();

@@ -14,8 +14,8 @@ export interface TextareaProps extends TextareaControlProps, FieldProps {
   /** Styles of the field's root element, such as its width in a row. */
   style?: CSSProperties;
   /**
-   * The field's look, as TextField's: outline or ghost. A text area is always tall, with
-   * its label resting at the top, so it has no floating variant.
+   * The field's look, as TextField's: outline or ghost. A text area is always tall, with its label
+   * resting at the top.
    * @default 'outline'
    */
   variant?: 'outline' | 'ghost';

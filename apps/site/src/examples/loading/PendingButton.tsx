@@ -21,7 +21,7 @@ export default function PendingButton() {
       }}
     >
       <Column gap={4} align="start">
-        <TextField variant="floating" label="Project name" value={name} onValueChange={setName} />
+        <TextField label="Project name" value={name} onValueChange={setName} />
         {/* The button that started the work shows it; the rest of the form stays as it is. */}
         <Button type="submit" pending={saving}>
           Save changes

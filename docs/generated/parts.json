@@ -1441,13 +1441,6 @@
           "parts": [
             "env-combobox-item"
           ]
-        },
-        {
-          "attribute": "data-tall",
-          "values": [],
-          "parts": [
-            "env-combobox"
-          ]
         }
       ],
       "uses": [
@@ -1802,13 +1795,6 @@
         },
         {
           "attribute": "data-label-hidden",
-          "values": [],
-          "parts": [
-            "env-date-picker"
-          ]
-        },
-        {
-          "attribute": "data-tall",
           "values": [],
           "parts": [
             "env-date-picker"
@@ -4694,13 +4680,6 @@
           "parts": [
             "env-select-item"
           ]
-        },
-        {
-          "attribute": "data-tall",
-          "values": [],
-          "parts": [
-            "env-select"
-          ]
         }
       ],
       "uses": [
@@ -5607,7 +5586,6 @@
         {
           "attribute": "data-variant",
           "values": [
-            "floating",
             "ghost",
             "outline"
           ],

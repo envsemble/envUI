@@ -51,7 +51,6 @@ export default function NoResults() {
             <Select
               aria-label="Status"
               size="sm"
-              variant="outline"
               items={statuses}
               value={status}
               onValueChange={setStatus}
