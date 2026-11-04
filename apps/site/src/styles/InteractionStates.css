@@ -1,4 +1,5 @@
-/* Artificial state examples are intentionally private to this application. */
+/* Artificial state examples are intentionally private to this application. The accent and danger
+   primaries read the fills Button.css works out for their state in each scheme. */
 .catalogue-specimen-area
   .catalogue-force-hover.env-button:where([data-variant='primary'][data-tone='neutral']) {
   background: var(--env-color-bg-primary-emphasis-hover);
@@ -9,19 +10,19 @@
 }
 .catalogue-specimen-area
   .catalogue-force-hover.env-button:where([data-variant='primary'][data-tone='accent']) {
-  background: var(--env-color-bg-accent-strong-hover);
+  background: var(--env-button-tone-hover);
 }
 .catalogue-specimen-area
   .catalogue-force-pressed.env-button:where([data-variant='primary'][data-tone='accent']) {
-  background: var(--env-color-bg-accent-strong-pressed);
+  background: var(--env-button-tone-pressed);
 }
 .catalogue-specimen-area
   .catalogue-force-hover.env-button:where([data-variant='primary'][data-tone='danger']) {
-  background: var(--env-color-bg-danger-strong-hover);
+  background: var(--env-button-tone-hover);
 }
 .catalogue-specimen-area
   .catalogue-force-pressed.env-button:where([data-variant='primary'][data-tone='danger']) {
-  background: var(--env-color-bg-danger-strong-pressed);
+  background: var(--env-button-tone-pressed);
 }
 .catalogue-specimen-area .catalogue-force-hover.env-button:where([data-variant='secondary']) {
   background: var(--env-color-bg-neutral-muted-hover);

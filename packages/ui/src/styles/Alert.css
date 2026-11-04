@@ -33,8 +33,9 @@
     --env-color-fg-link: var(--env-color-fg-link-on-muted);
     --env-color-fg-link-hover: var(--env-color-fg-link-on-muted-hover);
     --env-color-fg-link-pressed: var(--env-color-fg-link-on-muted-pressed);
-    /* Its tone: the text color of the icon and title, the stronger tint it is filled with, and the
-       softer tint, its fill at high contrast. */
+    /* Its tone: the text color of the icon and title, the stronger tint it is filled with in light,
+       and the softer tint, its fill in dark, where the stronger one turned the tone muddy under the
+       tone's title, and at high contrast. light-dark() follows the nearest theme's color scheme. */
     --env-alert-icon-default: var(--env-color-fg-primary);
     --env-alert-fill: var(--env-color-bg-primary-subtle-hover);
     --env-alert-soft-fill: var(--env-color-bg-primary-muted);
@@ -53,7 +54,10 @@
     border-radius: var(--env-alert-radius);
     background: var(
       --env-alert-container,
-      var(--env-alert-high-contrast-fill, var(--env-alert-fill))
+      var(
+        --env-alert-high-contrast-fill,
+        light-dark(var(--env-alert-fill), var(--env-alert-soft-fill))
+      )
     );
     color: var(--env-alert-text-color);
     font: var(--env-type-body);
@@ -106,21 +110,21 @@
   }
   /* A secondary button among the actions stands clear of the tint, through the neutral fills it
      reads, where the translucent neutral fill would sink into it: in a light scheme it takes a card's
-     solid fill, with its hover and press; in a dark one, where that fill is darker than the tint, the
-     tone's deeper tint lifted by the text color, a step more on hover and on press. light-dark()
-     follows the nearest theme's color scheme. */
+     solid fill, with its hover and press; in a dark one, where that fill is darker than the tint, a
+     neutral lift of the text color over the tint, a step more on hover and on press, so only the icon
+     and the title carry the tone. */
   .env-alert-action {
     --env-color-bg-neutral-muted: light-dark(
       var(--env-color-bg-muted),
-      color-mix(in srgb, var(--env-alert-pressed), var(--env-color-fg-default) 12%)
+      color-mix(in srgb, var(--env-color-fg-default) 16%, transparent)
     );
     --env-color-bg-neutral-muted-hover: light-dark(
       var(--env-color-bg-muted-hover),
-      color-mix(in srgb, var(--env-alert-pressed), var(--env-color-fg-default) 20%)
+      color-mix(in srgb, var(--env-color-fg-default) 22%, transparent)
     );
     --env-color-bg-neutral-muted-pressed: light-dark(
       var(--env-color-bg-muted-pressed),
-      color-mix(in srgb, var(--env-alert-pressed), var(--env-color-fg-default) 28%)
+      color-mix(in srgb, var(--env-color-fg-default) 30%, transparent)
     );
     margin-block-start: var(--env-space-2);
   }
