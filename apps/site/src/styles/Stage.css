@@ -23,11 +23,15 @@
 .catalogue-explore-grid > .env-card,
 .site-page-navigation .env-pager-link,
 .catalogue-role-swatch {
-  --catalogue-card-shadow: 0 0.5rem 1.5rem
-    oklch(
-      from var(--catalogue-card-fill, var(--env-color-bg-page)) calc(l * 0.45) calc(c * 0.5) h /
-        calc(0.14 - l * 0.087)
-    );
+  --catalogue-card-shadow-color: oklch(
+    from var(--catalogue-card-fill, var(--env-color-bg-page)) calc(l * 0.45) calc(c * 0.5) h /
+      calc(0.14 - l * 0.087)
+  );
+  --catalogue-card-shadow: 0 0.5rem 1.5rem var(--catalogue-card-shadow-color);
+  /* A recessed canvas's: the same in the light themes; in the dark ones the canvas is a well,
+     deeper than the page, and a well casts no shadow. */
+  --catalogue-card-shadow-recessed: 0 0.5rem 1.5rem
+    light-dark(var(--catalogue-card-shadow-color), transparent);
   /* Stronger, for cards laid over one another, such as the Overview's fan of cards. */
   --catalogue-card-shadow-raised: 0 0.75rem 2rem
     oklch(
@@ -76,13 +80,19 @@
 .catalogue-fan-card {
   --catalogue-card-fill: var(--env-color-bg-recessed);
   background-color: var(--catalogue-card-fill);
-  /* Every canvas, an example's, a tile's or a card's, lifts off the page a little. */
-  box-shadow: var(--catalogue-card-shadow);
+  /* Every canvas, an example's, a tile's or a card's, lifts off the page a little in the light
+     themes. */
+  box-shadow: var(--catalogue-card-shadow-recessed);
 }
 
-/* The cards of the Overview's fan lie over one another: each takes the stronger shadow. */
+/* The cards of the Overview's fan lie over one another: each takes the stronger shadow. They are
+   cards rather than stages, so in the dark themes they rise on the raised surface, lighter than the
+   page, rather than sinking into it. */
 .catalogue-fan-card {
   box-shadow: var(--catalogue-card-shadow-raised);
+}
+[data-env-theme='dark'] .catalogue-fan-card {
+  --catalogue-card-fill: var(--env-color-bg-raised);
 }
 
 /* The site's own cards lift off the page as its canvases do, each by its own fill: a page's
