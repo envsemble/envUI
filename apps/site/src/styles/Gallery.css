@@ -6,25 +6,18 @@
 .catalogue-gallery {
   row-gap: calc(var(--env-space-9) * 2.5);
   text-align: start;
+  container: catalogue-gallery / inline-size;
 }
 
 .catalogue-gallery-grid {
   display: grid;
-  /* Four to a row on a wide page, and never fewer than two on a narrow one. */
-  grid-template-columns: repeat(
-    auto-fill,
-    minmax(min((100% - var(--env-space-5)) / 2, 13rem), 1fr)
-  );
+  /* Four to a row on a wide page, and one to a row on a phone, where two would draw each
+     component too small to read. */
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
   gap: var(--env-space-7) var(--env-space-5);
   margin: 0;
   padding: 0;
   list-style: none;
-}
-
-/* Patterns' scenes, drawn at a legible scale, go one to a row where two would crop away their
-   words, as on a phone. */
-.catalogue-gallery-grid[data-scenes] {
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
 }
 
 .catalogue-gallery-tile {
@@ -42,6 +35,14 @@
 .catalogue-gallery-stage.catalogue-gallery-stage {
   aspect-ratio: 4 / 3;
   max-block-size: none;
+}
+
+/* One to a row, as on a phone, a component's tile is wide and low: the component at its own size,
+   as on a wide page, with the room its window needs above and below it. */
+@container catalogue-gallery (width < 27.25rem) {
+  .catalogue-gallery-grid:not([data-scenes]) .catalogue-gallery-stage.catalogue-gallery-stage {
+    aspect-ratio: 16 / 9;
+  }
 }
 
 .catalogue-gallery-stage .catalogue-related-canvas,

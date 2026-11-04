@@ -62,8 +62,8 @@ function GalleryTile({ page, level }: { page: RoutePage; level: 2 | 3 }) {
   );
 }
 
-/** Marks a group of patterns, whose scenes need more room than a component's tile, one to a row
- * on a phone (Gallery.css). */
+/** Marks a group of patterns, whose scenes keep their taller tile one to a row, as on a phone,
+ * where a component's is wide and low (Gallery.css). */
 const scenes = (group: GalleryGroup) =>
   group.pages.every((page) => page.kind === 'pattern') ? '' : undefined;
 
