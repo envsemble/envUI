@@ -310,5 +310,15 @@
     .env-tabs-list > .env-tabs-tab[data-active]:focus-visible {
       outline-color: CanvasText;
     }
+    /* The lined-up first tab draws its ring on a shape under its label; with no fills to line up,
+       the tab draws the system's ring itself. */
+    .env-tabs-list:not([data-orientation='vertical'])
+      > .env-tabs-tab:first-child:focus-visible:not(:disabled):not([aria-disabled='true']) {
+      outline-color: CanvasText;
+    }
+    .env-tabs-list:not([data-orientation='vertical'])
+      > .env-tabs-tab:first-child:focus-visible::before {
+      outline: 0;
+    }
   }
 }
