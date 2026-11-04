@@ -123,14 +123,23 @@ export function ExampleSource({ page, name }: { page: string; name: string }) {
 
 /**
  * An example's source in a disclosure right under its figure, Show code until it opens and Hide code
- * while it is, with a copy button once open; a template preview shows it too.
+ * while it is, with a copy button once open; a template preview shows it too. With `defaultOpen`,
+ * as a component's first overview example, it starts open, the code right under the component.
  */
-export function ExampleCode({ page, name }: { page: string; name: string }) {
-  const [open, setOpen] = useState(false);
+export function ExampleCode({
+  page,
+  name,
+  defaultOpen = false,
+}: {
+  page: string;
+  name: string;
+  defaultOpen?: boolean;
+}) {
+  const [open, setOpen] = useState(defaultOpen);
   // The code renders once its disclosure first opens, not with the page: a page has many figures,
   // and each one's file and highlighting would load with it. A pointer over the summary starts
   // loading the file.
-  const [opened, setOpened] = useState(false);
+  const [opened, setOpened] = useState(defaultOpen);
   const preload = () => void sourceOf(examplePath(page, name)).catch(() => {});
   return (
     <Disclosure
@@ -284,7 +293,8 @@ function WidthBox({ width, children }: { width: number; children: ReactNode }) {
  * smaller where it must to reach the widest), and with `caption`, a sentence below it. With
  * `motion`, the stage plays it: its animated specimen of the same name, which uses the example as a
  * person would, takes the stage's place, above its caption and code. With `open` and `live`, as an
- * overview's, it rests with its overlay open, and people can use it.
+ * overview's, it rests with its overlay open, and people can use it. With `codeOpen`, its code
+ * starts open.
  */
 export function LiveExample({
   page,
@@ -299,6 +309,7 @@ export function LiveExample({
   live = false,
   stage,
   motion = false,
+  codeOpen = false,
 }: {
   page: string;
   name: string;
@@ -319,6 +330,8 @@ export function LiveExample({
   stage?: StageFill;
   /** Whether its animated specimen plays it in place of the live stage. */
   motion?: boolean;
+  /** Whether its code starts open, as a component's first overview example's does. */
+  codeOpen?: boolean;
 }) {
   const theme = useTheme();
   const render = open ? (
@@ -398,7 +411,7 @@ export function LiveExample({
           {caption}
         </Text>
       )}
-      <ExampleCode page={page} name={name} />
+      <ExampleCode page={page} name={name} defaultOpen={codeOpen} />
     </Column>
   );
 }
