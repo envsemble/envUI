@@ -150,6 +150,12 @@
     text-decoration: none;
     box-decoration-break: clone;
   }
+  /* Disabled, the document doesn't fade with its box: its text and references take the disabled text
+     color, as a disabled text field's value does, and the box quiets its outline. */
+  .env-rich-text-editor-control[data-disabled]
+    :is(.env-rich-text-document, .env-rich-text-reference) {
+    color: var(--env-color-fg-disabled);
+  }
   .env-rich-text-reference:focus-visible {
     outline: 0.125rem solid var(--env-color-border-focus);
   }

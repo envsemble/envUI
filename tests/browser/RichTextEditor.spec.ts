@@ -636,9 +636,15 @@ test('the document takes the field look: border, variants, error and a disabled 
     'border-top-color',
     await color('--env-color-fg-danger'),
   );
-  // Disabled, the document dims, and its label keeps the text color.
+  // Disabled, the document takes the disabled text color rather than the box fading, and its label
+  // keeps the text color.
   const disabled = scope.getByRole('textbox', { name: 'Disabled notes' });
-  await expect(box('Disabled notes')).toHaveCSS('opacity', /^0\.\d+$/);
+  await expect(box('Disabled notes')).toHaveCSS('opacity', '1');
+  await expect(disabled).toHaveCSS('color', await color('--env-color-fg-disabled'));
+  await expect(disabled.getByText('Locked')).toHaveCSS(
+    'color',
+    await color('--env-color-fg-disabled'),
+  );
   const label = scope.getByText('Disabled notes', { exact: true });
   await expect(label).toHaveCSS('color', await color('--env-color-fg-default'));
   expect(
