@@ -197,7 +197,9 @@ test("the catalogue's text keeps a readable measure, and opens each section with
         ...document.querySelectorAll<HTMLElement>(
           '.site-lead, .catalogue-supporting, .site-figures .env-markdown > p',
         ),
-      ].filter((element) => !element.closest('[data-figure], .site-figure-run, .site-figure-split'));
+      ].filter(
+        (element) => !element.closest('[data-figure], .site-figure-run, .site-figure-split'),
+      );
       const long = text.flatMap((element) => {
         const lines = Math.round(
           element.getBoundingClientRect().height / parseFloat(getComputedStyle(element).lineHeight),
