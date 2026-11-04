@@ -239,7 +239,7 @@ export function useFit(
         height / canvasElement.offsetHeight,
       );
       // At its own size, unless the stage is narrower than the least width it is drawn whole at,
-      // `--catalogue-own-least` (Gallery.css), as four to a row: then drawn smaller, by one scale
+      // `--catalogue-own-least` (Gallery.css), as five to a row: then drawn smaller, by one scale
       // for every tile, as every stage is as wide. On a phone, each is drawn as small as fits its
       // stage's width, but no smaller than `--catalogue-own-floor`: what is wider still is cut off.
       const canvasStyle = getComputedStyle(canvasElement);
