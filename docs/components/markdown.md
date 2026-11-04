@@ -235,6 +235,7 @@ The editor's root is `env-markdown-editor`, with the tabs, `env-tabs-list`, the 
 
 ## Changelog
 
+- **1.0.0-prerelease.6**: A table's header cells line up at the start, over their columns' text, rather than in the middle.
 - **1.0.0-prerelease.5**: `onRequestLink` is `pickLink`: it supplies the link rather than reporting an event.
 - **1.0.0-prerelease.2**: MarkdownEditor's `underline` variant, which `plain` became in the earlier prereleases, is gone, for the default outline.
 - **1.0.0**: Code in Markdown takes the new code themes, as Code and CodeBlock do. MarkdownEditor takes Textarea's `description` instead of `hint`, and its variants `outline` and `ghost`: `outlined` is `outline` and `quiet` is `ghost`, and `plain` is gone, for the default outline. `className` and `style` style the root, `env-markdown-editor`, rather than the textarea; `ref` and the other native props still reach the textarea. Its toolbar is a Toolbar, with tooltips instead of native titles, and its words come from EnvUIProvider's `messages`, as do Markdown's table and task names. Markdown's root carries `env-prose` beside `env-markdown`. Markdown is stable; MarkdownEditor stays beta. The editor's source text area, `env-markdown-source`, is `env-markdown-editor-input`, a MarkdownEditor part as `env-text-field-input` is a TextField's.

@@ -184,6 +184,7 @@
   }
   .env-prose th {
     font-weight: var(--env-font-weight-medium);
+    text-align: start;
   }
   .env-prose .footnotes {
     font: var(--env-type-body-sm);
