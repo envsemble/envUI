@@ -136,3 +136,21 @@ export function currentSection(
   });
   return current;
 }
+
+/**
+ * Where the reader is, as a fractional section index: the current section's index plus how far
+ * the area has scrolled from reaching it towards reaching the next, from 0 to 1. It moves on
+ * continuously as the page scrolls, for marks that follow the reader smoothly.
+ */
+export function readingPosition(sections: readonly SectionPosition[], view: ScrollView): number {
+  if (sections.length === 0) return 0;
+  const reached = reachedAt(sections, view);
+  let index = 0;
+  reached.forEach((at, each) => {
+    if (at <= view.scrolled + 1) index = each;
+  });
+  const from = reached[index]!;
+  const to = reached[index + 1];
+  if (to === undefined || to <= from) return index;
+  return index + Math.min(1, Math.max(0, (view.scrolled - from) / (to - from)));
+}

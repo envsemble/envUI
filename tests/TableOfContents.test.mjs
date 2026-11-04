@@ -1,5 +1,5 @@
 // TableOfContents: the outline it builds from headings, the current section it finds from where
-// the page has scrolled, the mark of the reader's place and the springs it moves on, and
+// the page has scrolled, the shape that marks the reader's place and the springs it moves on, and
 // its server markup, which lists the sections given as items and marks none until the page
 // hydrates.
 import { test } from 'node:test';
@@ -42,12 +42,13 @@ const {
   slug,
   uniqueId,
   currentSection,
+  swellAt,
   springStep,
   springAtRest,
-  markExtent,
-  markPath,
-  trackPath,
-  trackShare,
+  waveReach,
+  wavePath,
+  wavePlace,
+  waveThin,
 } = await import(pathToFileURL(output).href);
 
 test('headings nest under the last heading above them of a lower level', () => {
@@ -174,47 +175,42 @@ test('without items, the server renders the landmark hidden, named in the provid
   assert.doesNotMatch(markup, /<a /);
 });
 
-// Four entries, the third on two lines.
-const layout = {
-  entries: [
-    { top: 4, bottom: 24 },
-    { top: 32, bottom: 52 },
-    { top: 60, bottom: 100 },
-    { top: 108, bottom: 128 },
-  ],
-  full: 6,
-};
-
-test("at rest the pill runs beside the current entry's text, the same above and below", () => {
-  assert.deepEqual(markExtent(layout, 0), { top: 4, bottom: 24 });
-  assert.deepEqual(markExtent(layout, 2), { top: 60, bottom: 100 });
-  // On its way, in proportion between two entries.
-  assert.deepEqual(markExtent(layout, 1.5), { top: 46, bottom: 76 });
-  // Never past the list.
-  assert.deepEqual(markExtent(layout, 7), { top: 108, bottom: 128 });
-  // Drawn out behind it as it travels, down or up, but not past the list.
-  const spacing = (128 - 4) / 4;
-  assert.deepEqual(markExtent(layout, 2, 0.5), { top: 60 - spacing / 2, bottom: 100 });
-  assert.deepEqual(markExtent(layout, 2, -0.5), { top: 60, bottom: 100 + spacing / 2 });
-  assert.deepEqual(markExtent(layout, 0, 0.5), { top: 4, bottom: 24 });
+test('the shape stays on the current entry, then glides on to the next as it nears', () => {
+  assert.equal(wavePlace(2), 2);
+  assert.equal(wavePlace(2.4), 2);
+  assert.equal(wavePlace(2.75), 2.5);
+  assert.ok(wavePlace(2.9) > 2.8 && wavePlace(2.9) < 3);
+  assert.equal(wavePlace(3), 3);
 });
 
-test('the pill and the track are rounded and centred in their column, the track the whole list', () => {
-  // The pill as wide as the column, with four round corners.
-  assert.equal(
-    markPath(layout, 2),
-    'M3 60H3A3 3 0 0 1 6 63V97A3 3 0 0 1 3 100H3A3 3 0 0 1 0 97V63A3 3 0 0 1 3 60Z',
-  );
-  // The track a third as wide, centred under it, from the first entry's text to the last one's.
-  assert.equal(trackShare, 1 / 3);
-  assert.equal(
-    trackPath(layout),
-    'M3 4H3A1 1 0 0 1 4 5V127A1 1 0 0 1 3 128H3A1 1 0 0 1 2 127V5A1 1 0 0 1 3 4Z',
-  );
-  // No place, no pill; no entries, neither.
-  assert.equal(markPath(layout, null), '');
-  assert.equal(trackPath({ entries: [], full: 6 }), '');
-  assert.equal(markPath({ entries: [], full: 6 }, 0), '');
+test("the shape swells at the reader's place, half 0.9 entries away, and none two and a half away", () => {
+  assert.equal(swellAt(4, 4, []), 1);
+  assert.ok(Math.abs(swellAt(4.9, 4, []) - 0.5) < 0.01);
+  assert.ok(swellAt(4.5, 4, []) > 0.85);
+  assert.ok(swellAt(6, 4, []) < 0.02);
+  assert.equal(swellAt(6.5, 4, []), 0);
+  assert.equal(swellAt(0, 4, []), 0);
+  // The entry under the pointer swells it a little, by how far its swell has grown.
+  assert.ok(swellAt(0, 4, [1]) > 0.3 && swellAt(0, 4, [1]) < 0.5);
+  assert.ok(swellAt(0, 4, [0.5]) < swellAt(0, 4, [1]));
+  assert.equal(swellAt(0, null, []), 0);
+  // In a short list, the bulge is shorter, so the thin stroke still shows.
+  assert.equal(waveReach(12), 1);
+  assert.equal(waveReach(3), 0.85);
+  assert.ok(swellAt(4.9, 4, [], undefined, 0.85) < swellAt(4.9, 4, []));
+});
+
+test('moving, the bulge leans back and stretches; landing, it squashes a little past its fullest', () => {
+  const lean = { lean: 0.5, stretch: 0 };
+  // Moving down, its upper side is drawn out and its lower side drawn in.
+  assert.ok(swellAt(2.5, 4, [], lean) > swellAt(2.5, 4, []));
+  assert.ok(swellAt(5.5, 4, [], lean) < swellAt(5.5, 4, []));
+  // Stretched, taller and thinner; squashed, shorter and fuller, never more than 8% past.
+  const stretched = { lean: 0, stretch: 0.6 };
+  assert.ok(swellAt(4, 4, [], stretched) < 1);
+  assert.ok(swellAt(6, 4, [], stretched) > swellAt(6, 4, []));
+  const squashed = { lean: 0, stretch: -1 };
+  assert.ok(swellAt(4, 4, [], squashed) > 1 && swellAt(4, 4, [], squashed) <= 1.05);
 });
 
 test('a spring overshoots a little when underdamped, never when critically damped, and rests', () => {
@@ -238,4 +234,47 @@ test('a spring overshoots a little when underdamped, never when critically dampe
   springStep(long, 1, 20, 0.7, 0.048);
   for (let frame = 0; frame < 3; frame += 1) springStep(short, 1, 20, 0.7, 0.016);
   assert.ok(Math.abs(long.value - short.value) < 0.01);
+  // A push, such as its carrier slowing, moves it off its target.
+  const pushed = { value: 0, velocity: 0 };
+  springStep(pushed, 0, 18, 0.4, 0.05, { push: -100 });
+  assert.ok(pushed.value < 0);
+});
+
+test("the shape's outline is straight at its start, widest beside the reader's place, with round ends", () => {
+  const layout = { anchors: [10, 40, 70, 100, 130, 160], top: 4, bottom: 166, full: 12 };
+  const path = wavePath(layout, 2, []);
+  const edge = [...path.matchAll(/L([\d.]+) ([\d.]+)/g)].map((m) => [Number(m[1]), Number(m[2])]);
+  const widest = Math.max(...edge.map(([x]) => x));
+  assert.equal(widest, 12);
+  // Its fullest is a short run, round at the top, centred beside the place.
+  const run = edge.filter(([x]) => x === widest).map(([, y]) => y);
+  assert.ok(Math.abs((Math.min(...run) + Math.max(...run)) / 2 - 70) <= 1);
+  // Three entries away, as thin as it gets: a tenth of its fullest.
+  assert.ok(Math.abs(Math.min(...edge.map(([x]) => x)) - 12 * waveThin) < 0.01);
+  // It starts and ends at the box's start: the closing edge is straight down it.
+  assert.match(path, /^M0 [\d.]+A[^L]*L.*A[\d. ]+ 0 0 1 0 [\d.]+Z$/);
+  assert.equal((path.match(/A/g) ?? []).length, 2);
+  assert.equal(wavePath({ ...layout, anchors: [] }, 0, []), '');
+});
+
+test('near either end the edge runs on into the round end, with no step to a second peak', () => {
+  const anchors = Array.from({ length: 12 }, (_, index) => 20 + index * 41);
+  const layout = { anchors, top: 8, bottom: anchors.at(-1) + 12, full: 32 };
+  const ends = (path) => {
+    const edge = [...path.matchAll(/L([\d.]+) ([\d.]+)/g)].map((m) => Number(m[1]));
+    const radii = [...path.matchAll(/A([\d.]+)/g)].map((m) => Number(m[1]));
+    return { edge, radii };
+  };
+  // The bulge just short of either end, and on the end entry itself.
+  for (const place of [0, 0.3, 0.6, 10.4, 10.7, 11]) {
+    const { edge, radii } = ends(wavePath(layout, place, []));
+    // Points two pixels apart never jump in width: the shape's own slope, at most.
+    for (let index = 1; index < edge.length; index += 1)
+      assert.ok(Math.abs(edge[index] - edge[index - 1]) < 2, `a step of the edge at ${place}`);
+    // Each round end is as wide as the edge where it starts.
+    assert.ok(Math.abs(radii[0] * 2 - edge[0]) < 0.05, `the start at ${place}`);
+    assert.ok(Math.abs(radii[1] * 2 - edge.at(-1)) < 0.05, `the end at ${place}`);
+  }
+  // On the last entry, the end is as round as the shape is full.
+  assert.ok(Math.abs(ends(wavePath(layout, 11, [])).radii[1] - 16) < 0.1);
 });
