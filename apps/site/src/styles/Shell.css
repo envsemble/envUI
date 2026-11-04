@@ -255,9 +255,11 @@ body {
     display: block;
   }
 }
-/* Below an expanded window, where the navigation is in a sheet, the menu button and search float
-   as a small pill at the page's top start: a row of no height that sticks to the body's top, so
-   the page starts below the pill and scrolls beneath it. */
+/* Below an expanded window, where the navigation is in a sheet, the menu button, the wordmark and
+   search start one bar across the top of the page, in the page's color, which the other area and
+   Display end (.site-page-actions, whose pill sits on it): a row of no height that sticks to the
+   body's top, so the page starts below the bar and scrolls beneath it, hidden from the bar's top
+   to the foot of its controls. */
 .site-compact-controls {
   position: sticky;
   z-index: var(--env-z-sticky);
@@ -266,12 +268,13 @@ body {
 }
 .site-compact-controls-bar {
   position: absolute;
-  inset-block-start: var(--env-space-2);
-  inset-inline-start: var(--env-space-3);
+  inset-block-start: 0;
+  inset-inline: 0;
   display: flex;
   gap: var(--env-space-1);
-  padding: var(--env-space-1);
-  border-radius: var(--env-radius-full);
+  /* Level with the page's actions: their row's padding and their pill's. */
+  padding: calc(var(--env-space-3) + var(--env-space-1)) var(--env-space-4) var(--env-space-2)
+    calc(var(--env-space-3) + var(--env-space-1));
   background: var(--env-color-bg-page);
 }
 /* The wordmark between them, as small as at the top of the Docs' drawer. */
