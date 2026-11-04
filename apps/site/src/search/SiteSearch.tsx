@@ -113,14 +113,27 @@ function suggestionsFor(page: RoutePage | undefined): CommandPaletteItem[] {
 const resultLimit = 60;
 const groupLimit = 8;
 
+/** The group of results that only mention the query in their text, after those it names. */
+const mentions = 'Mentions';
+
+/** The group a result is shown in. */
+const groupOf = (result: SearchResult, named: boolean) =>
+  named && !result.named ? mentions : groups[result.kind];
+
 /**
  * Results grouped by what they find, groups in the order of their best result. Within a group,
- * results keep their order, best first.
+ * results keep their order, best first. Where the query names some results, by their names,
+ * aliases or keywords, those come first, and results that only mention it in their text follow
+ * them in a group of their own, so "date" lists DatePicker and the date props before Table.
  */
 function groupResults(results: readonly SearchResult[]) {
+  const named = results.some((result) => result.named);
   const grouped = new Map<string, SearchResult[]>();
-  for (const result of results) {
-    const group = groups[result.kind];
+  const ordered = named
+    ? [...results.filter((result) => result.named), ...results.filter((result) => !result.named)]
+    : results;
+  for (const result of ordered) {
+    const group = groupOf(result, named);
     const members = grouped.get(group) ?? [];
     if (members.length < groupLimit) members.push(result);
     grouped.set(group, members);
@@ -170,18 +183,17 @@ export function SiteSearch({
         : [],
     [index, query],
   );
-  const items = useMemo<CommandPaletteItem[]>(
-    () =>
-      results.map((result) => ({
-        id: result.id,
-        label: result.title,
-        // Which part the result is in, the catalogue or the Docs, then what it is.
-        description: `${areas[result.area]} · ${result.detail}`,
-        icon: icons[result.kind],
-        group: groups[result.kind],
-      })),
-    [results],
-  );
+  const items = useMemo<CommandPaletteItem[]>(() => {
+    const named = results.some((result) => result.named);
+    return results.map((result) => ({
+      id: result.id,
+      label: result.title,
+      // Which part the result is in, the catalogue or the Docs, then what it is.
+      description: `${areas[result.area]} · ${result.detail}`,
+      icon: icons[result.kind],
+      group: groupOf(result, named),
+    }));
+  }, [results]);
   const suggestions = useMemo(() => suggestionsFor(page), [page]);
   // Before people type, the suggestions show. While the index loads, the palette says so; after it
   // fails, why, with the way on; and when a query finds nothing, what search finds.

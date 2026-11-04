@@ -134,6 +134,16 @@ test.describe('search', () => {
     await expect(page.locator('[id="props-Button-startIcon"]')).toBeFocused();
   });
 
+  test('lists what a query names before what only mentions it in its text', async ({ page }) => {
+    await openCatalogue(page, `${siteDevUrl}/`);
+    await search(page, 'date');
+    const groups = dialog(page).getByRole('group');
+    await expect(groups.first()).toContainText('DatePicker');
+    await expect(groups.last()).toHaveAccessibleName('Mentions');
+    await expect(groups.last().locator('[data-item-id="page:table"]')).toBeVisible();
+    await expect(dialog(page).getByRole('group', { name: 'Props' })).toContainText('startDate');
+  });
+
   test('finds pages of the catalogue and of the Docs, each named by its part', async ({ page }) => {
     await openCatalogue(page, `${siteDevUrl}/docs`);
     await search(page, 'colors and themes');
