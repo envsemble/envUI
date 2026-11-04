@@ -80,6 +80,26 @@
   box-shadow: var(--catalogue-card-shadow);
 }
 
+/* In the dark themes the recessed surface is a shade deeper than the page, which would sink the
+   canvas below it: there the canvas rises a step above the page instead, as it does in the light
+   ones, on the raised surface. */
+:is(
+  .site-live-example,
+  .site-verdict-stage,
+  .site-anatomy-stage,
+  .site-loading-stage,
+  .catalogue-related-stage,
+  .site-foundation-stage[data-figure='example'],
+  .catalogue-fan-card
+):is([data-env-theme='dark'], [data-env-theme='dark'] *),
+.site-figures
+  :is(.catalogue-specimen-grid, .catalogue-matrix-scroll):is(
+    [data-env-theme='dark'],
+    [data-env-theme='dark'] *
+  ) {
+  --catalogue-card-fill: var(--env-color-bg-raised);
+}
+
 /* The cards of the Overview's fan lie over one another: each takes the stronger shadow. */
 .catalogue-fan-card {
   box-shadow: var(--catalogue-card-shadow-raised);
