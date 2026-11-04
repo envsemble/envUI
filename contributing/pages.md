@@ -27,7 +27,7 @@ After the YAML frontmatter and the `# Title`, a page has these `##` sections in 
 
 | Section                            | Required                       | Holds                                                                                                                                         |
 | ---------------------------------- | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| Overview                           | generated                      | The frontmatter's overview examples, side by side; don't write it.                                                                            |
+| Overview                           | generated                      | The frontmatter's overview examples, side by side, the first also atop a component's page in the Docs; don't write it.                        |
 | Variants (Options on a foundation) |                                | The variants figure and its option table, then the options in titled blocks, each beside its figure.                                          |
 | Anatomy                            |                                | The anatomy figure and its legend, and one sentence naming the parts the figure can't show.                                                   |
 | Behaviour                          |                                | States and what it does on its own, such as pending work or dismissing, in titled blocks, ending with `### Adapting to width`.                |
