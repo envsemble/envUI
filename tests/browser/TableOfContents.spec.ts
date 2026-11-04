@@ -4,29 +4,42 @@ import { fixtureUrl } from './helpers/Servers';
 const url = `${fixtureUrl}/?fixture=table-of-contents`;
 const current = (contents: Locator) => contents.locator('[aria-current="location"]');
 
-/** The shape's width beside each entry's middle, in px, from the points its outline fills. */
-const widths = (contents: Locator) =>
-  contents.locator('svg').evaluate((svg) => {
-    const path = svg.querySelector('path')!;
-    const full = parseFloat(getComputedStyle(svg).width);
-    return Array.from(
-      svg.parentElement!.querySelectorAll<HTMLElement>('.env-table-of-contents-link'),
-      (link) => {
-        const y = link.offsetTop + link.offsetHeight / 2;
-        let filled = 0;
-        for (let x = 0.125; x < full; x += 0.25) {
-          if (path.isPointInFill(new DOMPoint(x, y))) filled += 0.25;
-        }
-        return filled;
-      },
-    );
-  });
+/** Computed colors of theme tokens, read beside an element so they resolve in its theme. */
+const tokenColors = (locator: Locator, tokens: string[]) =>
+  locator.evaluate((element, names) => {
+    const probe = document.createElement('div');
+    element.append(probe);
+    const colors = names.map((name) => {
+      probe.style.backgroundColor = `var(${name})`;
+      return getComputedStyle(probe).backgroundColor;
+    });
+    probe.remove();
+    return colors;
+  }, tokens);
 
-/** The entry the shape is widest beside. */
-const widest = async (contents: Locator) => {
-  const each = await widths(contents);
-  return each.indexOf(Math.max(...each));
-};
+/**
+ * The pill's top, bottom and width, in px from the top of the list's box, and the entry whose text
+ * it runs beside: the one whose middle it is nearest to centred on.
+ */
+const mark = (contents: Locator) =>
+  contents.locator('svg').evaluate((svg) => {
+    const [track, pill] = svg.querySelectorAll('path');
+    const box = pill!.getBBox();
+    const rail = track!.getBBox();
+    const middle = box.y + box.height / 2;
+    const links = Array.from(
+      svg.parentElement!.querySelectorAll<HTMLElement>('.env-table-of-contents-link'),
+    );
+    const offsets = links.map((link) => Math.abs(link.offsetTop + link.offsetHeight / 2 - middle));
+    return {
+      top: box.y,
+      bottom: box.y + box.height,
+      width: box.width,
+      track: { x: rail.x, y: rail.y, width: rail.width, height: rail.height },
+      beside: offsets.indexOf(Math.min(...offsets)),
+      off: Math.min(...offsets),
+    };
+  });
 
 test('lists the headings of its container, nested by level, with ids from their words', async ({
   page,
@@ -88,12 +101,15 @@ test(
       .locator('.env-table-of-contents-link')
       .evaluateAll((links) => new Set(links.map((link) => getComputedStyle(link).fontWeight)).size);
     expect(weights).toBe(1);
-    // Passed sections and the current one read in the text color; only those still to come are
-    // quieter.
+    // Passed sections read in the text color and the current one in the link color, the same
+    // as a link's; those still to come are quieter.
     const color = (link: Locator) => link.evaluate((element) => getComputedStyle(element).color);
-    expect(await color(contents.locator('[data-passed]').first())).toBe(
-      await color(current(contents)),
-    );
+    const [text, link] = await tokenColors(contents, [
+      '--env-color-fg-default',
+      '--env-color-fg-link',
+    ]);
+    expect(await color(contents.locator('[data-passed]').first())).toBe(text);
+    expect(await color(current(contents))).toBe(link);
   },
 );
 
@@ -161,24 +177,22 @@ test('a smooth scroll to a section moves the marks through the sections on the w
     .evaluateAll((links) => links.map((link) => link.textContent ?? ''));
   await contents.getByRole('link', { name: 'Short end' }).click();
   // Sampled every frame until the page stops scrolling: the current section only ever moves on,
-  // in reading order, the shape's widest point with it, never back up, and the chosen one is
-  // current once it rests.
+  // in reading order, the pill with it, never back up, and the chosen one is current once it
+  // rests.
   const [seen, peaks] = await page.evaluate(
     () =>
       new Promise<[string[], number[]]>((resolve) => {
         const labels: string[] = [];
         const peaks: number[] = [];
-        const path = document.querySelector('.env-table-of-contents path')!;
+        const pill = document.querySelector('.env-table-of-contents path:last-child')!;
         let last = -1;
         let still = 0;
         const sample = () => {
           const label = document.querySelector('[aria-current="location"]')?.textContent ?? '';
           if (labels.at(-1) !== label) labels.push(label);
-          // The right edge's widest point, from the outline's first half.
-          const points = [...(path.getAttribute('d') ?? '').matchAll(/L([\d.]+) ([\d.]+)/g)];
-          const edge = points.slice(0, points.length / 2).map((point) => [+point[1]!, +point[2]!]);
-          const widest = Math.max(...edge.map(([x]) => x!));
-          peaks.push(edge.find(([x]) => x === widest)?.[1] ?? 0);
+          // The pill's middle.
+          const box = (pill as SVGPathElement).getBBox();
+          peaks.push(box.y + box.height / 2);
           still = window.scrollY === last ? still + 1 : 0;
           last = window.scrollY;
           if (still > 30) resolve([labels, peaks]);
@@ -189,13 +203,13 @@ test('a smooth scroll to a section moves the marks through the sections on the w
   );
   const indexes = seen.map((label) => order.indexOf(label));
   expect(indexes).toEqual([...indexes].sort((x, y) => x - y));
-  // Within the two pixels the outline is drawn at.
+  // Within a pixel or two of rounding.
   const back = peaks.filter((peak, index) => index > 0 && peak < peaks[index - 1]! - 2);
   expect(back).toEqual([]);
   expect(peaks.at(-1)).toBeGreaterThan(peaks[0]!);
   await expect(contents.locator('[aria-current="location"]')).toHaveText('Short end');
   // Once it has landed, it rests: no motion of its own while nothing moves.
-  const outline = () => contents.locator('path').getAttribute('d');
+  const outline = () => contents.locator('path').last().getAttribute('d');
   await expect
     .poll(async () => {
       const first = await outline();
@@ -203,43 +217,46 @@ test('a smooth scroll to a section moves the marks through the sections on the w
       return first === (await outline());
     })
     .toBe(true);
-  // Still after longer than a landing's wobble lasts, about 400 ms.
+  // Still after longer than a landing lasts, about 400 ms.
   const rested = await outline();
   await page.evaluate(() => new Promise((done) => setTimeout(done, 400)));
   expect(await outline()).toBe(rested);
 });
 
 test(
-  "one shape beside the list swells at the reader's place, and a little under the pointer",
+  "a pill on a track beside the list marks the reader's place, and its label takes the link color",
   { tag: '@engines' },
   async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto(url);
     const contents = page.getByRole('navigation', { name: 'On this page' });
-    // Widest beside the current section, at the top of the page the first, running thin away
-    // from it; at once under reduced motion.
-    await expect.poll(() => widest(contents)).toBe(0);
+    // Beside the current section, at the top of the page the first, centred on its label and as
+    // tall as it; at once under reduced motion.
+    await expect.poll(async () => (await mark(contents)).beside).toBe(0);
     await page
       .locator('#configure')
       .evaluate((heading) => heading.scrollIntoView({ block: 'start' }));
     await expect(current(contents)).toHaveText('Configure');
-    await expect.poll(() => widest(contents)).toBe(2);
-    const each = await widths(contents);
-    expect(each[2]).toBeGreaterThan(each[5]! * 3);
-    expect(each[1]).toBeGreaterThan(each[0]!);
-    // The entry under the pointer swells it a little, less than the reader's place.
-    await contents.getByRole('link', { name: 'Last' }).hover();
-    await expect.poll(async () => (await widths(contents))[5]).toBeGreaterThan(each[5]! * 1.5);
-    expect((await widths(contents))[5]).toBeLessThan(each[2]!);
-    // One shape in one color, without a track or a fill: the labels alone tell the sections
-    // passed from those still to come.
-    await expect(contents.locator('svg path')).toHaveCount(1);
-    await expect(contents.locator('svg linearGradient, svg stop')).toHaveCount(0);
-    // Drawn by script, which assistive technology doesn't read.
+    await expect.poll(async () => (await mark(contents)).beside).toBe(2);
+    const { top, bottom, width, track, off } = await mark(contents);
+    expect(off).toBeLessThan(1);
+    const label = await current(contents).evaluate((link) => {
+      const style = getComputedStyle(link);
+      return link.offsetHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom);
+    });
+    expect(Math.abs(bottom - top - label)).toBeLessThan(1);
+    // The track runs the list's length, narrower than the pill and centred under it.
+    expect(track.width).toBeLessThan(width);
+    expect(track.y).toBeLessThanOrEqual(top);
+    expect(track.y + track.height).toBeGreaterThan(bottom);
+    expect(Math.abs(track.x + track.width / 2 - width / 2)).toBeLessThan(0.5);
+    // Two paths, the track and the pill, drawn by script, which assistive technology doesn't
+    // read.
+    await expect(contents.locator('svg path')).toHaveCount(2);
     await expect(contents.locator('svg')).toHaveAttribute('aria-hidden', 'true');
-    // In forced colors, the shape in the system's text color.
-    const shape = contents.locator('path');
-    const fill = () => shape.evaluate((path) => getComputedStyle(path).fill);
+    // In forced colors, the pill in the system's selection color.
+    const pill = contents.locator('path').last();
+    const fill = () => pill.evaluate((path) => getComputedStyle(path).fill);
     const before = await fill();
     await page.emulateMedia({ forcedColors: 'active' });
     expect(await fill()).not.toBe(before);

@@ -1,14 +1,14 @@
 @layer env.components {
   /* TableOfContents: the page's sections as small links, nested by indent, with the reader's place
-     marked by one shape down the list beside them, like a brush stroke in one quiet color: a broad
-     bulge at the current section, running thin a few sections away; the labels of the passed and
-     current sections in the text color, never bolder, so no label rewraps as the reader moves, and
-     those still to come quieter. */
+     marked beside them by a pill in the primary color on a quiet track down the list, as tall as
+     the current section's label, which takes the link color; the labels of the passed sections in
+     the text color, and those still to come quieter. None turns bolder, so no label rewraps as the
+     reader moves. */
   .env-table-of-contents {
-    /* How far each level sits in from the one above it, and the shape's width at its fullest, which
-       is also its column's. */
+    /* How far each level sits in from the one above it, and the pill's width, which is also its
+       column's. */
     --env-table-of-contents-indent: var(--env-space-3);
-    --env-table-of-contents-stroke: var(--env-space-5);
+    --env-table-of-contents-stroke: 0.375rem;
     min-inline-size: 0;
     font: var(--env-type-body-sm);
   }
@@ -31,7 +31,7 @@
     );
     display: block;
     padding-block: var(--env-space-1);
-    /* Room before the label for the shape's column and a gap after it. */
+    /* Room before the label for the mark's column and a gap after it. */
     padding-inline: calc(
         var(--env-space-1) + var(--env-table-of-contents-stroke) + var(--env-space-3) +
           var(--env-table-of-contents-inset)
@@ -48,10 +48,10 @@
     outline-offset: -2px;
   }
 
-  /* The shape, in the column at the list's start, the same beside every level, from the first
-     label's top to the last one's bottom, straight along the column's start and bulging toward its
-     end, never past the gap before the labels. The component draws its outline every frame the
-     reader's place moves. The section under the pointer swells it a little. */
+  /* The mark, in the column at the list's start, the same beside every level: the track from the
+     first label's top to the last one's bottom, a third of the column wide, and the pill as wide as
+     the column, both centred in it. The component draws their outlines every frame the reader's
+     place moves. */
   .env-table-of-contents-wave {
     position: absolute;
     inset-block: 0;
@@ -61,15 +61,13 @@
     overflow: visible;
     pointer-events: none;
   }
-  .env-table-of-contents-wave path {
+  .env-table-of-contents-wave path:first-child {
     fill: var(--env-color-bg-neutral-muted);
   }
-  /* In right-to-left text, the straight edge is at the start, on the right. */
-  .env-table-of-contents-wave:dir(rtl) {
-    scale: -1 1;
+  .env-table-of-contents-wave path:last-child {
+    fill: var(--env-color-bg-primary-emphasis);
   }
-  .env-table-of-contents .env-table-of-contents-link[data-passed],
-  .env-table-of-contents .env-table-of-contents-link[aria-current='location'] {
+  .env-table-of-contents .env-table-of-contents-link[data-passed] {
     color: var(--env-color-fg-default);
   }
   /* The sections still to come, quieter than muted text yet still 4.5:1 on the page and on a
@@ -90,16 +88,20 @@
     }
   }
   .env-table-of-contents .env-table-of-contents-link[aria-current='location'] {
-    color: var(--env-color-fg-default);
+    color: var(--env-color-fg-link);
   }
   /* The section under the pointer takes muted text's hover color, a quiet gray between the passed
-     sections' and those to come, whichever it is: after every rule above, which it outranks. */
-  .env-table-of-contents .env-table-of-contents-link:hover:is(*, [data-passed], [aria-current]) {
+     sections' and those to come, and the current one the link's hover color: after every rule
+     above, which they outrank. */
+  .env-table-of-contents .env-table-of-contents-link:hover:is(*, [data-passed]) {
     color: var(--env-color-fg-muted-hover);
   }
+  .env-table-of-contents .env-table-of-contents-link[aria-current='location']:hover {
+    color: var(--env-color-fg-link-hover);
+  }
 
-  /* Forced colors: the system paints the links, so the current one takes its selection color, and
-     the shape its text color, its width still marking the place. */
+  /* Forced colors: the system paints the links, so the current one takes its selection color, as
+     the pill does, and the track the system's quiet gray. */
   @media (forced-colors: active) {
     .env-table-of-contents-link[aria-current='location'] {
       forced-color-adjust: none;
@@ -108,8 +110,11 @@
     .env-table-of-contents-wave {
       forced-color-adjust: none;
     }
-    .env-table-of-contents-wave path {
-      fill: CanvasText;
+    .env-table-of-contents-wave path:first-child {
+      fill: GrayText;
+    }
+    .env-table-of-contents-wave path:last-child {
+      fill: Highlight;
     }
   }
 }
