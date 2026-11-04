@@ -445,8 +445,17 @@ body {
     column-gap: var(--env-space-5);
   }
 }
-/* A section that a route scrolls to, such as a prop's row, stays clear of the window's top edge.
-   An example's own sections keep the margins it gives them, such as below its sticky header. */
+/* A section that a route scrolls to, such as a prop's row, stops below the sticky controls at the
+   page's top, as a figure's section does (Figures.css). An example's own sections keep the margins
+   it gives them, such as below its sticky header. */
 .site-main [id]:not(.site-live-example *) {
-  scroll-margin-block-start: var(--env-space-6);
+  scroll-margin-block-start: var(--env-space-9);
+}
+/* A heading or row that a route focuses, so reading and the keyboard go on from it (Address.ts),
+   takes focus from script alone and shows no ring: the reader didn't move focus there. */
+.site-page-column
+  [id][tabindex='-1']:focus:not(
+    :where(.site-live-example, .catalogue-open-example, .site-verdict-stage, .site-anatomy-stage) *
+  ) {
+  outline: none;
 }
