@@ -161,10 +161,13 @@ function Figure({
   page,
   block,
   options,
+  live = false,
 }: {
   page: Document;
   block: FigureBlock;
   options?: OptionTable;
+  /** Whether a figure shown open is live, as the Overview's are: the component, open, to use. */
+  live?: boolean;
 }) {
   // A section waiting its turn to show renders its headings alone (SectionOutline).
   if (useSectionOutline()) return null;
@@ -211,10 +214,22 @@ function Figure({
       classes={block.classes}
       fit={block.fit}
       open={block.open}
+      live={live}
       stage={block.stage}
       motion={block.motion}
     />
   );
+}
+
+/**
+ * A page's first overview figure, the component at a glance, as its Overview shows it: what a
+ * component's page in the Docs shows above its code.
+ */
+export function OverviewFigure({ page }: { page: Document }) {
+  const block = page.sections
+    ?.find((section) => section.id === 'overview')
+    ?.blocks.find((item): item is ExampleBlock => item.kind === 'example');
+  return block ? <Figure page={page} block={block} live /> : null;
 }
 
 /**
@@ -314,6 +329,8 @@ export function FigureSection({
     };
   });
   const groups = groupFigures(blocks, useFoundationFigures(page.id));
+  // The Overview's figures shown open are the components at rest, open, which people can use.
+  const live = section.id === 'overview';
   const outline = useSectionOutline();
   /** Subsections of text shown beside the figure at an index of groups. */
   const beside = new Map<number, string>();
@@ -341,13 +358,13 @@ export function FigureSection({
           <div>
             <Documentation markdown={text} path={page.path} />
           </div>
-          <Figure page={page} block={group[0]} />
+          <Figure page={page} block={group[0]} live={live} />
         </div>,
       );
     else if (Array.isArray(group))
       content.push(
         group.length === 1 ? (
-          <Figure key={index} page={page} block={group[0]} />
+          <Figure key={index} page={page} block={group[0]} live={live} />
         ) : (
           <div
             key={index}
@@ -358,7 +375,7 @@ export function FigureSection({
             }
           >
             {group.map((block) => (
-              <Figure key={block.name} page={page} block={block} />
+              <Figure key={block.name} page={page} block={block} live={live} />
             ))}
           </div>
         ),
@@ -407,7 +424,13 @@ export function FigureSection({
       } else if (text.trim()) content.push(markdown(index, text));
     } else if (group.kind === 'example' || group.kind === 'figure')
       content.push(
-        <Figure key={index} page={page} block={group} options={options.get(group.name)} />,
+        <Figure
+          key={index}
+          page={page}
+          block={group}
+          options={options.get(group.name)}
+          live={live}
+        />,
       );
     else if (group.kind === 'specimen' && !outline)
       content.push(<Specimen key={index} page={page.id} name={group.name} headingLevel={3} />);

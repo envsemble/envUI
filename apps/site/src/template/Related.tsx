@@ -52,6 +52,7 @@ export function TilePreview({
   className = 'catalogue-related-stage',
   whole = false,
   ownSize: atOwnSize = false,
+  legible = false,
 }: {
   preview?: Preview;
   near: boolean;
@@ -66,6 +67,11 @@ export function TilePreview({
    * is drawn larger still.
    */
   ownSize?: boolean;
+  /**
+   * Whether it is drawn no smaller than a legible scale, cropped by its stage, as the patterns'
+   * gallery draws each scene, so its words can be read.
+   */
+  legible?: boolean;
 }) {
   const Composition = preview?.composition;
   const theme = useTheme();
@@ -94,7 +100,7 @@ export function TilePreview({
   const tile = Boolean(preview?.tile);
   const drawing = Boolean(preview?.window && preview.window.width < 14);
   const ownSize = atOwnSize && !drawing;
-  useFit(stage, canvas, shown, whole || tile, tile, plays, ownSize);
+  useFit(stage, canvas, shown, whole || tile, tile, plays, ownSize, legible);
   useStillAtRest(canvasElement, tile && !plays);
   return (
     <Theme
@@ -112,7 +118,7 @@ export function TilePreview({
       ) : (
         shown &&
         crop(
-          ownSize,
+          ownSize || legible,
           <div
             ref={(element) => {
               canvas.current = element;

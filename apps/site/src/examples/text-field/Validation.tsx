@@ -12,7 +12,6 @@ export default function Validation() {
     // As wide as a form column.
     <Column gap={4} style={{ inlineSize: 'min(100%, 24rem)' }}>
       <TextField
-        variant="floating"
         label="Project handle"
         name="handle"
         prefix="example.com/"

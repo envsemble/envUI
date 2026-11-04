@@ -21,6 +21,12 @@
   list-style: none;
 }
 
+/* Patterns' scenes, drawn at a legible scale, go one to a row where two would crop away their
+   words, as on a phone. */
+.catalogue-gallery-grid[data-scenes] {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+}
+
 .catalogue-gallery-tile {
   position: relative;
   display: grid;
@@ -95,43 +101,52 @@
   max-inline-size: 100%;
 }
 
-/* The box of a component drawn at its own size, as large as the stage (Related.tsx): what is cut
-   off at its bottom or its end fades out over the last stretch, rather than ending in a slice
-   through a line, and the stage's fill, which shades under the pointer, shows through. */
+/* The box of a component drawn at its own size, or a pattern's scene at a legible scale, as large
+   as the stage (Related.tsx): what is cut off at an edge, the bottom and the end for a component, any
+   side for a scene centred on what it paints, fades out over the last stretch, rather than ending in
+   a slice through a line, and the stage's fill, which shades under the pointer, shows through. */
 .catalogue-related-crop {
   --catalogue-crop-fade: 1.75rem;
   /* Any opaque color: the mask reads only its alpha. */
   --catalogue-crop-opaque: var(--env-color-fg-default);
+  --catalogue-crop-top: 0rem;
+  --catalogue-crop-bottom: 0rem;
+  --catalogue-crop-start: 0rem;
+  --catalogue-crop-end: 0rem;
   position: absolute;
   inset: 0;
 }
 
+.catalogue-related-crop:has(> [data-cut~='top']) {
+  --catalogue-crop-top: var(--catalogue-crop-fade);
+}
+
 .catalogue-related-crop:has(> [data-cut~='bottom']) {
-  mask-image: linear-gradient(
-    to bottom,
-    var(--catalogue-crop-opaque) calc(100% - var(--catalogue-crop-fade)),
-    transparent
-  );
+  --catalogue-crop-bottom: var(--catalogue-crop-fade);
+}
+
+.catalogue-related-crop:has(> [data-cut~='start']) {
+  --catalogue-crop-start: var(--catalogue-crop-fade);
 }
 
 .catalogue-related-crop:has(> [data-cut~='end']) {
-  mask-image: linear-gradient(
-    to right,
-    var(--catalogue-crop-opaque) calc(100% - var(--catalogue-crop-fade)),
-    transparent
-  );
+  --catalogue-crop-end: var(--catalogue-crop-fade);
 }
 
-.catalogue-related-crop:has(> [data-cut~='bottom'][data-cut~='end']) {
+.catalogue-related-crop:has(> [data-cut]) {
   mask-image:
     linear-gradient(
       to bottom,
-      var(--catalogue-crop-opaque) calc(100% - var(--catalogue-crop-fade)),
+      transparent,
+      var(--catalogue-crop-opaque) var(--catalogue-crop-top),
+      var(--catalogue-crop-opaque) calc(100% - var(--catalogue-crop-bottom)),
       transparent
     ),
     linear-gradient(
       to right,
-      var(--catalogue-crop-opaque) calc(100% - var(--catalogue-crop-fade)),
+      transparent,
+      var(--catalogue-crop-opaque) var(--catalogue-crop-start),
+      var(--catalogue-crop-opaque) calc(100% - var(--catalogue-crop-end)),
       transparent
     );
   mask-composite: intersect;

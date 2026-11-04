@@ -166,12 +166,12 @@ test("a figure's dialog opens live inside its stage, its backdrop over the stage
   page,
 }) => {
   await page.goto(`${siteDevUrl}/components/dialog`);
-  const stage = figure(page, 'the dialog opening');
+  const stage = figure(page, 'the large dialog opening');
   await expect(page.locator('.site-loading')).toHaveCount(0);
   await stage.scrollIntoViewIfNeeded();
   const before = (await stage.boundingBox())!;
   const scrolled = await pageScroll(page);
-  // The pointer no one sees presses View project, and the dialog opens in the stage.
+  // The pointer no one sees presses Review changes, and the dialog opens in the stage.
   const dialog = stage.locator('.env-dialog');
   await expect(dialog).toBeVisible({ timeout: 4000 });
   const frame = (await stage.boundingBox())!;
@@ -183,7 +183,7 @@ test("a figure's dialog opens live inside its stage, its backdrop over the stage
   expect(frame.height).toBe(before.height);
   expect(await pageScroll(page)).toBe(scrolled);
   await expect(page.locator('.site-contents')).not.toHaveAttribute('aria-hidden', 'true');
-  // It closes again as the pointer presses Close.
+  // It closes again as the pointer presses Mark as reviewed.
   await expect(dialog).toHaveCount(0, { timeout: 5000 });
 });
 
@@ -201,9 +201,10 @@ test('a click on an animated figure hands its example to the reader, the click g
   await stage.locator('.env-select-trigger').click({ force: true });
   await expect(stage).toHaveAttribute('data-live', '');
   await expect(stage.locator('.catalogue-motion-subject')).not.toHaveAttribute('inert');
-  // It opens as in an application, not in the stage; the anatomy figure shows another, open.
+  // It opens as in an application, not in the stage; the overview and the anatomy figure show
+  // others, open.
   const option = page
-    .locator('.env-select-popup:not(.site-anatomy *)')
+    .locator('.env-select-popup:not(.site-anatomy *, [data-section="overview"] *)')
     .getByRole('option', { name: 'Private' });
   await expect(option).toBeVisible();
   await option.click();

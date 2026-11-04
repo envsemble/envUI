@@ -45,7 +45,6 @@ function Searching() {
     <>
       <PressedKeys keys={escapes ? ['Esc'] : null} press={escapes} />
       <SearchField
-        variant="floating"
         label="Search members"
         placeholder="Search by name or e-mail"
         style={{ inlineSize: 'min(100%, 20rem)' }}

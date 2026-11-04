@@ -34,7 +34,7 @@ components:
 examples:
   ProjectVisibility:
     role: overview
-    motion: true
+    open: true
   TriggerStyles: variants
   SmallToolbar:
     role: example
@@ -99,6 +99,12 @@ While nothing is chosen, the trigger shows a placeholder.
 - An option can be unavailable, so it can't be chosen.
 
 <!-- specimen: States -->
+
+### Typing in the open list
+
+Typing an option's first letters in the open list highlights it, and <kbd>Enter</kbd> chooses it.
+
+<!-- specimen: ProjectVisibility -->
 
 ### In list rows
 

@@ -125,6 +125,22 @@ test("a page's guide in the Docs complements its page in the catalogue, and Fiel
   await expect(page.locator('.docs-changelog')).toHaveCount(1);
   await expect(page.locator('[data-section="overview"]')).toHaveCount(1);
   await expect(page.locator('.catalogue-related')).toHaveCount(0);
+  // A component's guide opens with the component itself: its catalogue's first overview figure,
+  // above Import, and no other figure.
+  await page.goto(`${siteDevUrl}/docs/components/button`);
+  const shown = page.locator('.docs-api > .site-live-example-entry');
+  await expect(shown).toHaveCount(1);
+  await expect(shown.getByRole('button', { name: 'Create project' })).toBeVisible();
+  expect(
+    await shown.evaluate(
+      (figure) =>
+        !!(
+          figure.compareDocumentPosition(document.getElementById('import')!) &
+          Node.DOCUMENT_POSITION_FOLLOWING
+        ),
+    ),
+  ).toBe(true);
+  await expect(page.locator('.site-figure-section, .catalogue-related')).toHaveCount(0);
 });
 
 test("a page's changelog in the Docs is collapsed, and a link to it opens it", async ({ page }) => {

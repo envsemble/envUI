@@ -32,7 +32,7 @@ export default function SmallToolbar() {
           Northwind launch plan
         </Text>
         <IconButton
-          variant="text"
+          variant="ghost"
           size="sm"
           icon={<IconZoomOut />}
           aria-label="Zoom out"
@@ -46,7 +46,7 @@ export default function SmallToolbar() {
           onValueChange={setZoom}
         />
         <IconButton
-          variant="text"
+          variant="ghost"
           size="sm"
           icon={<IconZoomIn />}
           aria-label="Zoom in"

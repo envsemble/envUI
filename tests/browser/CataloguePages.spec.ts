@@ -76,8 +76,8 @@ test('a component page shows plain sections, equal cells and the parts of its an
     'Accessibility',
   ]);
   await expect(page.locator('.site-figures .env-message')).toHaveCount(0);
-  // Figures that share a row are cells of one size: equal widths, and stages as tall as the
-  // tallest, once their examples have loaded.
+  // Figures that share a row are cells of one width, from the top of the row, each stage as tall
+  // as its own figure: a stage stretched to a taller neighbour's left a lone control floating.
   await expect(page.locator('[data-section="overview"] .site-loading')).toHaveCount(0);
   const cells = () =>
     page
@@ -90,12 +90,12 @@ test('a component page shows plain sections, equal cells and the parts of its an
         return {
           count: stages.length,
           widths: new Set(stages.map((box) => Math.round(box.width))).size,
-          heights: new Set(stages.map((box) => Math.round(box.height))).size,
+          tops: new Set(stages.map((box) => Math.round(box.top))).size,
+          heights: new Set(stages.map((box) => Math.round(box.height))).size > 1,
         };
       });
-  await expect.poll(cells).toEqual({ count: 3, widths: 1, heights: 1 });
-  // The first figure has no caption; side by side, its code lines up with its neighbours', and in
-  // one column it follows its stage as closely as a caption follows theirs, with no empty band.
+  await expect.poll(cells).toEqual({ count: 3, widths: 1, tops: 1, heights: true });
+  // Each figure's caption or code follows its stage closely, with no empty band.
   const codeGaps = () =>
     page
       .locator('[data-section="overview"] .site-figure-run')
@@ -103,15 +103,10 @@ test('a component page shows plain sections, equal cells and the parts of its an
       .evaluate((run) =>
         [...run.children].map((figure) => {
           const [stage, next] = [...figure.children].map((child) => child.getBoundingClientRect());
-          const code = figure.lastElementChild!.getBoundingClientRect();
-          return {
-            top: Math.round(code.top - run.getBoundingClientRect().top),
-            gap: Math.round(next.top - stage.bottom),
-          };
+          return { gap: Math.round(next.top - stage.bottom) };
         }),
       );
-  const sideBySide = await codeGaps();
-  expect(new Set(sideBySide.map(({ top }) => top)).size).toBe(1);
+  expect(new Set((await codeGaps()).map(({ gap }) => gap)).size).toBe(1);
   // Do and don't figures carry their verdict and one sentence, with the code below.
   const verdict = page.getByRole('figure', { name: /^Do One primary button per group/ });
   await expect(verdict.locator('.site-verdict-bar')).toHaveText('Do');
@@ -164,7 +159,7 @@ test('a component page shows plain sections, equal cells and the parts of its an
   await expect.poll(tileStages).toEqual({ widths: 1, heights: 1, fitted: 5 });
   // The anatomy numbers each part of the live button beside the part it names, in the theme the
   // reader has chosen alone, and keeps them there as the page narrows and the theme changes.
-  // The variants figure names each variant with a callout on the start side of its item.
+  // The variants figure names each variant in plain text on the start side of its item.
   const variantNames = page.locator('.catalogue-variants .catalogue-variant-label');
   await variantNames.first().scrollIntoViewIfNeeded();
   await expect(variantNames).toHaveText([
@@ -511,13 +506,14 @@ test('a Related tile of a page without an example shows its specimen', async ({ 
   await expect(page.locator('.catalogue-related-placeholder')).toHaveCount(0);
 });
 
-test('every tile of the galleries is fitted: components at one scale, a scene whole on its stage', async ({
+test('every tile of the galleries is fitted: components at one scale, a scene at a legible one', async ({
   page,
 }) => {
   // A tile's example loads as it nears the viewport and comes into its canvas after the fit has
   // started to watch it; each must still be fitted. Components show at one scale, their own size
-  // where the stage has room, cut off by it where they are larger; a pattern's scene, or a
-  // drawing, shows what it holds inside its stage.
+  // where the stage has room, cut off by it where they are larger; a pattern's scene at a
+  // legible scale, cut off by its stage where it is larger; a drawing shows what it holds inside
+  // its stage.
   const tiles = page.locator('.catalogue-gallery-tile');
   const unfitted = () =>
     tiles.evaluateAll((items) => {
@@ -601,6 +597,8 @@ test('every tile of the galleries is fitted: components at one scale, a scene wh
         if (!shown.length) return [`${name}: empty`];
         if (canvas.hasAttribute('data-own-size'))
           return scaleOf(canvas) === one && Number(one) <= 1 ? [] : [`${name}: not at one scale`];
+        if (canvas.parentElement?.classList.contains('catalogue-related-crop'))
+          return Number(scaleOf(canvas)) >= 0.79 ? [] : [`${name}: too small to read`];
         const outside =
           Math.min(...shown.map((box) => box.left)) < stage.left - 1 ||
           Math.min(...shown.map((box) => box.top)) < stage.top - 1 ||
@@ -619,7 +617,7 @@ test('every tile of the galleries is fitted: components at one scale, a scene wh
   }
 });
 
-test('figures with open overlays keep them in their stages, inert, and leave the page alone', async ({
+test('figures with open overlays keep them in their stages, overviews live and others inert, and leave the page alone', async ({
   page,
 }) => {
   test.slow();
@@ -635,7 +633,8 @@ test('figures with open overlays keep them in their stages, inert, and leave the
     const rooms = page.locator('.catalogue-open-example');
     await expect(rooms.first()).toBeVisible();
     await expect(page.locator('.site-loading')).toHaveCount(0);
-    // Every open figure shows an overlay, inside its stage, and is a picture: inert.
+    // Every open figure shows an overlay, inside its stage. The Overview's is the component at
+    // rest, open, which people can use; any other is a picture: inert.
     await expect
       .poll(
         () =>
@@ -651,7 +650,9 @@ test('figures with open overlays keep them in their stages, inert, and leave the
                   ),
                 ];
                 const name = room.dataset.openExample;
-                if (!room.inert) return [`${name} is not inert`];
+                const overview = !!room.closest('[data-section="overview"]');
+                if (overview && room.inert) return [`${name}, an overview, is inert`];
+                if (!overview && !room.inert) return [`${name} is not inert`];
                 if (!surfaces.length) return [`${name} shows no overlay`];
                 return surfaces
                   .map((surface) => surface.getBoundingClientRect())
@@ -687,6 +688,26 @@ test('figures with open overlays keep them in their stages, inert, and leave the
   await page.mouse.move(700, 400);
   await page.mouse.wheel(0, 600);
   await expect.poll(() => scroller.evaluate((element) => element.scrollTop)).not.toBe(before);
+});
+
+test("an overlay's overview rests open, and people can close it and open it again", async ({
+  page,
+}) => {
+  await page.goto(`${siteDevUrl}/components/dialog`);
+  const room = page.locator('[data-section="overview"] .catalogue-open-example').first();
+  const dialog = room.locator('.env-dialog');
+  // Open as the page loads, without taking focus.
+  await expect(dialog).toBeVisible();
+  expect(await page.evaluate(() => document.activeElement === document.body)).toBe(true);
+  await dialog.getByRole('button', { name: 'Close', exact: true }).click();
+  await expect(dialog).toHaveCount(0);
+  await room.getByRole('button', { name: 'View project', exact: true }).click();
+  await expect(dialog).toBeVisible();
+  // A select's list takes the pointer too, and its choice sticks.
+  await page.goto(`${siteDevUrl}/components/select`);
+  const select = page.locator('[data-section="overview"] .catalogue-open-example').first();
+  await select.getByRole('option', { name: 'Private', exact: true }).click();
+  await expect(select.locator('.env-select-trigger')).toContainText('Private');
 });
 
 test("F6 passes the figures' notifications by, to the browser @engines", async ({ page }) => {

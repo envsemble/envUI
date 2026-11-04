@@ -1,7 +1,7 @@
 import { TextField } from '@envsemble/envui';
 import { Example, Specimen, SpecimenGrid } from '../../figures/Example';
 
-/** Empty, filled, invalid and disabled outline fields, side by side. */
+/** Empty, filled, invalid, read-only and disabled outline fields, side by side. */
 export default function States() {
   return (
     <Example size="collection">
@@ -18,6 +18,9 @@ export default function States() {
             defaultValue="Northwind Launch"
             error="Use lowercase letters and hyphens."
           />
+        </Specimen>
+        <Specimen title="Read only">
+          <TextField label="Project ID" defaultValue="PRJ-2041" readOnly />
         </Specimen>
         <Specimen title="Disabled">
           <TextField label="Project name" defaultValue="Northwind launch" disabled />

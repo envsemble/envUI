@@ -36,7 +36,7 @@ components:
 examples:
   PublishDate:
     role: overview
-    motion: true
+    open: true
   PlanningCalendar:
     role: overview
     caption: 'Calendar: the month the field opens.'

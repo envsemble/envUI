@@ -134,7 +134,7 @@ function AnatomyStage({
   const stage = useRef<HTMLDivElement>(null);
   const subject = useRef<HTMLDivElement>(null);
   const [callouts, setCallouts] = useState<Callout[]>([]);
-  const [room, setRoom] = useState<Room>({ start: 0, top: 0 });
+  const [room, setRoom] = useState<Room>({ start: 0, bottom: 0 });
   useLayoutEffect(() => {
     const stageElement = stage.current;
     const subjectElement = subject.current;
@@ -159,7 +159,7 @@ function AnatomyStage({
         const needed = measured.room;
         if (needed)
           setRoom((current) =>
-            current.start === needed.start && current.top === needed.top ? current : needed,
+            current.start === needed.start && current.bottom === needed.bottom ? current : needed,
           );
       });
     };
@@ -205,7 +205,7 @@ function AnatomyStage({
       data-stage={fill}
     >
       {/* A picture of the parts: the live component neither takes focus nor changes under it. A
-          variants figure keeps room beside its items for their names. */}
+          variants figure keeps room beside or under its items for their names. */}
       <div
         ref={subject}
         className="site-anatomy-subject"
@@ -214,52 +214,52 @@ function AnatomyStage({
           variants
             ? {
                 paddingInlineStart: room.start || undefined,
-                paddingBlockStart: room.top || undefined,
+                paddingBlockEnd: room.bottom || undefined,
               }
             : undefined
         }
       >
         {width ? <FitFrame width={width}>{render}</FitFrame> : render}
       </div>
-      <svg className="site-anatomy-lines" aria-hidden="true">
-        {callouts.map(({ number, badge, anchor, box, gaps }) => (
-          <g key={number}>
-            {/* The outline gives way across a label it runs through, such as a floated label. */}
-            {gaps && (
-              <mask id={`${maskId}-${number}`} maskUnits="userSpaceOnUse">
-                <rect x="0" y="0" width="100%" height="100%" fill="white" />
-                {gaps.map((gap, index) => (
-                  <rect key={index} {...gap} fill="black" />
-                ))}
-              </mask>
-            )}
-            {box && (
-              <g mask={gaps && `url(#${maskId}-${number})`}>
-                {['site-anatomy-box-rim', 'site-anatomy-box'].map((className) => (
-                  <rect
-                    key={className}
-                    className={className}
-                    x={box.x}
-                    y={box.y}
-                    width={box.width}
-                    height={box.height}
-                  />
-                ))}
-              </g>
-            )}
-            <line x1={badge.x} y1={badge.y} x2={anchor.x} y2={anchor.y} />
-            <circle cx={anchor.x} cy={anchor.y} r={3} />
-          </g>
-        ))}
-      </svg>
+      {/* A variants figure's names are plain text by their items, with no lines or outlines. */}
+      {!variants && (
+        <svg className="site-anatomy-lines" aria-hidden="true">
+          {callouts.map(({ number, badge, anchor, box, gaps }) => (
+            <g key={number}>
+              {/* The outline gives way across a label it runs through, such as a floated label. */}
+              {gaps && (
+                <mask id={`${maskId}-${number}`} maskUnits="userSpaceOnUse">
+                  <rect x="0" y="0" width="100%" height="100%" fill="white" />
+                  {gaps.map((gap, index) => (
+                    <rect key={index} {...gap} fill="black" />
+                  ))}
+                </mask>
+              )}
+              {box && (
+                <g mask={gaps && `url(#${maskId}-${number})`}>
+                  {['site-anatomy-box-rim', 'site-anatomy-box'].map((className) => (
+                    <rect
+                      key={className}
+                      className={className}
+                      x={box.x}
+                      y={box.y}
+                      width={box.width}
+                      height={box.height}
+                      rx={3}
+                    />
+                  ))}
+                </g>
+              )}
+              <line x1={badge.x} y1={badge.y} x2={anchor.x} y2={anchor.y} />
+              <circle cx={anchor.x} cy={anchor.y} r={3} />
+            </g>
+          ))}
+        </svg>
+      )}
       {callouts.map(({ number, badge, label, side }) => (
         <span
           key={number}
-          className={
-            label === undefined
-              ? 'site-anatomy-badge'
-              : 'site-anatomy-badge catalogue-variant-label'
-          }
+          className={label === undefined ? 'site-anatomy-badge' : 'catalogue-variant-label'}
           data-side={side}
           aria-hidden="true"
           // Measured in physical coordinates, in either direction.
@@ -286,7 +286,7 @@ function legendText(item: AnatomyLegendItem) {
 /**
  * An anatomy figure: the live component in the reader's theme, a numbered callout on each part its
  * legend names, by class name, and the legend of part names, with the example's code below. A
- * variants figure names each variant on its callout instead, as anatomy figures number parts, and
+ * variants figure names each variant in plain text beside or under it instead, and
  * shows the option table after it as its legend, each name followed by what it is for; without
  * one, its names are for assistive technology alone.
  */
@@ -322,7 +322,7 @@ export function AnatomyFigure({
   specimen?: boolean;
   /** The stage's fill, where the page's would hide the subject. */
   stage?: StageFill;
-  /** A variants figure: a callout with each variant's name on the example's items. */
+  /** A variants figure: each variant's name by the example's items. */
   variants?: boolean;
   /** A variants figure's option table, shown as its legend. */
   options?: OptionTable;
