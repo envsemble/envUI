@@ -297,6 +297,7 @@ export function Select({
           side="bottom"
           align="start"
           trigger={controlRef}
+          anchor={controlRef}
           className="env-select-popup"
           layout={<Grid padding={1} />}
         >
