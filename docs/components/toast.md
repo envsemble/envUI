@@ -230,6 +230,7 @@ A Toast draws an edge only at high contrast, unless its outline color sets one, 
 
 ## Changelog
 
+- **1.0.0-prerelease.6**: A toast takes the large corner of the radius scale, `--env-radius-lg`, as an alert does, rather than a fixed 1.25 rem.
 - **1.0.0-prerelease.6**: The action is an outline button in the notification's own text color, with its edge in that color and the dismiss button's hover and press fills, rather than a blue primary button on the tone's fill. Notifications wait while a modal is open in the same container and show once it closes, rather than covering its actions.
 - **1.0.0-prerelease.5**: 16 px from its start edge to its icon or message, and 10 px between its parts.
 - **1.0.0**: No edge outside high contrast, where the tone's edge bounds it, and an alert's corners, 1.25 rem. The notifications' theme boundary, `env-toast-portal-theme`, is `env-toast-theme`, as Popup's is `env-popup-theme`.

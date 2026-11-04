@@ -1,5 +1,6 @@
 'use client';
 
+import { useContext } from 'react';
 import type { ComponentPropsWithRef, ReactElement, ReactNode, RefObject } from 'react';
 import { Dialog as BaseDialog } from '@base-ui/react/dialog';
 import { classNames } from '../internal/classNames.js';
@@ -14,9 +15,11 @@ import {
   DialogBackdrop,
   DialogContent,
   DialogHeader,
+  DialogPendingContext,
   DialogSurface,
   OverlayTheme,
 } from './internal/DialogParts.js';
+import { withPendingAction } from './internal/DialogPendingAction.js';
 import { ResetControlDefaults } from '../internal/ControlDefaults.js';
 import {
   containedModal,
@@ -88,7 +91,8 @@ export interface DialogProps
   children?: ReactNode;
   /**
    * The dialog's own actions, after the built-in close button, with the primary action last. They
-   * close the dialog only where they are DialogClose or set open to false.
+   * close the dialog only where they are DialogClose or set open to false. While the dialog is
+   * pending, the last one shows it, where it is a Button that sets no pending of its own.
    */
   actions?: ReactNode;
   /**
@@ -135,9 +139,9 @@ export interface DialogProps
   finalFocus?: DialogFocusTarget;
   /**
    * Work started from the dialog is in progress. Escape, outside presses and the close buttons
-   * cannot dismiss it until pending returns to false. The built-in close button is disabled and
-   * the dialog reports busy; a DialogClose stays enabled and runs its onClick, so disable it too.
-   * Set pending on the action that started the work as well.
+   * cannot dismiss it until pending returns to false: the built-in close button and every
+   * DialogClose inside are disabled, the primary action, the last of actions, shows it pending, and
+   * the dialog reports busy.
    * @default false
    */
   pending?: boolean;
@@ -155,11 +159,15 @@ export type DialogCloseProps = {
 /**
  * A button inside a Dialog or a Sheet that closes it after its own onClick, for an action other
  * than the built-in close button, such as Don't save or Done. It takes Button's props and is
- * secondary by default.
+ * secondary by default, and is disabled while the dialog or sheet is pending.
  */
-export function DialogClose({ variant = 'secondary', ref, ...props }: DialogCloseProps) {
+export function DialogClose({ variant = 'secondary', ref, disabled, ...props }: DialogCloseProps) {
+  const pending = useContext(DialogPendingContext);
   return (
-    <BaseDialog.Close ref={ref} render={<Button {...({ ...props, variant } as ButtonProps)} />} />
+    <BaseDialog.Close
+      ref={ref}
+      render={<Button {...({ ...props, variant, disabled: disabled || pending } as ButtonProps)} />}
+    />
   );
 }
 
@@ -225,14 +233,16 @@ export function Dialog({
                 initialFocus={portal.contained ? false : initialFocus}
                 finalFocus={portal.contained ? false : finalFocus}
               >
-                <DialogContent skeleton={skeleton}>
-                  <DialogHeader title={title} description={description} />
-                  {children}
-                  <DialogActions>
-                    <DialogClose disabled={pending}>{closeLabel}</DialogClose>
-                    {actions}
-                  </DialogActions>
-                </DialogContent>
+                <DialogPendingContext.Provider value={pending}>
+                  <DialogContent skeleton={skeleton}>
+                    <DialogHeader title={title} description={description} />
+                    {children}
+                    <DialogActions>
+                      <DialogClose>{closeLabel}</DialogClose>
+                      {withPendingAction(actions, pending)}
+                    </DialogActions>
+                  </DialogContent>
+                </DialogPendingContext.Provider>
               </BaseDialog.Popup>
             </div>
           </ResetControlDefaults>

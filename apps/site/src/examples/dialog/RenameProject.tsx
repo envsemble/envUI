@@ -34,7 +34,7 @@ export default function RenameProject() {
         closeLabel="Cancel"
         pending={saving}
         actions={
-          <Button type="submit" form={formId} pending={saving}>
+          <Button type="submit" form={formId}>
             Save name
           </Button>
         }

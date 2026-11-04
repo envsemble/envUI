@@ -1,7 +1,7 @@
 'use client';
 
 import { Dialog as BaseDialog } from '@base-ui/react/dialog';
-import type { ComponentPropsWithRef, ReactNode } from 'react';
+import { createContext, type ComponentPropsWithRef, type ReactNode } from 'react';
 import { classNames } from '../../internal/classNames.js';
 import { Column, Grid, Row } from '../../foundations/Layout.js';
 import { Surface, type SurfaceProps } from '../../foundations/Surface.js';
@@ -86,6 +86,12 @@ export function DialogHeader({
     </Grid>
   );
 }
+
+/**
+ * Whether the work a dialog or a sheet started is pending, which its DialogClose buttons read to
+ * turn off, as the built-in close button does.
+ */
+export const DialogPendingContext = createContext(false);
 
 /** The row of a dialog's actions at its end, with the primary action last. */
 export function DialogActions({ children, ...props }: ComponentPropsWithRef<'div'>) {

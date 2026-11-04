@@ -18,7 +18,7 @@
     margin: 0;
     padding: var(--env-space-3) var(--env-space-4);
     border: 0.0625rem solid var(--env-color-border-muted);
-    border-radius: var(--env-radius-sm);
+    border-radius: var(--env-radius-lg);
     background: var(--env-color-bg-raised);
     color: var(--env-color-fg-default);
     font: var(--env-type-body);

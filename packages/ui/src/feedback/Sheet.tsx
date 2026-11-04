@@ -32,9 +32,11 @@ import {
   DialogBackdrop,
   DialogContent,
   DialogHeader,
+  DialogPendingContext,
   DialogSurface,
   OverlayTheme,
 } from './internal/DialogParts.js';
+import { withPendingAction } from './internal/DialogPendingAction.js';
 import { ResetControlDefaults } from '../internal/ControlDefaults.js';
 import { ResizeHandle } from '../internal/ResizeHandle.js';
 import { useResizableWidth, widthInRem } from '../internal/useResizableWidth.js';
@@ -90,7 +92,10 @@ export interface SheetProps
   description?: ReactNode;
   /** The content under the heading, such as filters, details or choices. It scrolls. */
   children?: ReactNode;
-  /** Actions at the end of the content, such as Apply, with the primary action last. */
+  /**
+   * Actions at the end of the content, such as Apply, with the primary action last. While the sheet
+   * is pending, the last one shows it, where it is a Button that sets no pending of its own.
+   */
   actions?: ReactNode;
   /**
    * Whether the sheet shows its close button, an IconButton with a cross at the end of the heading. Leave it
@@ -177,7 +182,9 @@ export interface SheetProps
   finalFocus?: DialogFocusTarget;
   /**
    * Work started from the sheet is in progress: Escape, outside presses, swipes and the close
-   * button cannot dismiss it until pending returns to false, and the sheet reports busy.
+   * button cannot dismiss it until pending returns to false. The close button and every DialogClose
+   * inside are disabled, the primary action, the last of actions, shows it pending, and the sheet
+   * reports busy.
    * @default false
    */
   pending?: boolean;
@@ -361,46 +368,50 @@ export function Sheet({
                 initialFocus={portal.contained ? false : (initialFocus ?? defaultFocus)}
                 finalFocus={portal.contained ? false : finalFocus}
               >
-                <DialogContent skeleton={skeleton}>
-                  <DialogHeader
-                    title={title}
-                    description={description}
-                    close={
-                      closeButton ? (
-                        <BaseDrawer.Close
-                          render={
-                            <IconButton
-                              variant="ghost"
-                              icon={<IconClose />}
-                              aria-label={ownCloseLabel ?? messages.close}
-                              disabled={pending}
-                            />
-                          }
-                        />
-                      ) : undefined
-                    }
-                  />
-                  {/* The body scrolls on its own, so the heading and the actions stay in view in
-                      a sheet too short for all it holds. */}
-                  {children != null && (
-                    <Column gap={5} className="env-sheet-body">
-                      {children}
-                    </Column>
-                  )}
-                  {actions != null && <DialogActions>{actions}</DialogActions>}
-                  {resizable && (
-                    // On the content, which runs the sheet's full height, so the handle stays as
-                    // tall as the sheet; the handle reaches out to the edge.
-                    // A drag on it resizes rather than swipes the sheet closed, by touch too.
-                    <ResizeHandle
-                      {...resize.handleProps}
-                      label={resizeLabel ?? messages.resize}
-                      grip
-                      className="env-sheet-resize-handle"
-                      {...noSwipe}
+                <DialogPendingContext.Provider value={pending}>
+                  <DialogContent skeleton={skeleton}>
+                    <DialogHeader
+                      title={title}
+                      description={description}
+                      close={
+                        closeButton ? (
+                          <BaseDrawer.Close
+                            render={
+                              <IconButton
+                                variant="ghost"
+                                icon={<IconClose />}
+                                aria-label={ownCloseLabel ?? messages.close}
+                                disabled={pending}
+                              />
+                            }
+                          />
+                        ) : undefined
+                      }
                     />
-                  )}
-                </DialogContent>
+                    {/* The body scrolls on its own, so the heading and the actions stay in view in
+                      a sheet too short for all it holds. */}
+                    {children != null && (
+                      <Column gap={5} className="env-sheet-body">
+                        {children}
+                      </Column>
+                    )}
+                    {actions != null && (
+                      <DialogActions>{withPendingAction(actions, pending)}</DialogActions>
+                    )}
+                    {resizable && (
+                      // On the content, which runs the sheet's full height, so the handle stays as
+                      // tall as the sheet; the handle reaches out to the edge.
+                      // A drag on it resizes rather than swipes the sheet closed, by touch too.
+                      <ResizeHandle
+                        {...resize.handleProps}
+                        label={resizeLabel ?? messages.resize}
+                        grip
+                        className="env-sheet-resize-handle"
+                        {...noSwipe}
+                      />
+                    )}
+                  </DialogContent>
+                </DialogPendingContext.Provider>
               </BaseDrawer.Popup>
             </BaseDrawer.Viewport>
           </ResetControlDefaults>

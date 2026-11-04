@@ -75,6 +75,7 @@
       "feedback/ConfirmDialog.tsx": "composites",
       "feedback/Dialog.tsx": "composites",
       "feedback/Sheet.tsx": "composites",
+      "feedback/internal/DialogPendingAction.tsx": "composites",
       "feedback/HoverCard.tsx": "base",
       "feedback/Meter.tsx": "base",
       "feedback/Progress.tsx": "base",
@@ -290,7 +291,11 @@
         "modules": ["forms/internal/ComboboxPopup.tsx", "forms/internal/comboboxItems.ts"]
       },
       "Dialog": {
-        "modules": ["feedback/internal/DialogParts.tsx", "feedback/ConfirmDialog.tsx"],
+        "modules": [
+          "feedback/internal/DialogParts.tsx",
+          "feedback/internal/DialogPendingAction.tsx",
+          "feedback/ConfirmDialog.tsx"
+        ],
         "classes": ["env-overlay-theme"]
       },
       "Progress": {
@@ -499,6 +504,11 @@
           "classes": ["env-button"],
           "properties": ["white-space", "overflow-wrap"],
           "note": "The actions in the picker card's footer under a date, month or time, such as Today, Now and Clear, keep their labels on one line, so a row too narrow for them wraps whole buttons rather than the words inside one."
+        },
+        {
+          "stylesheet": "CommandPalette.css",
+          "classes": ["env-list-row-end", "env-kbd", "env-kbd-combination"],
+          "note": "Under a coarse pointer, where there is often no keyboard, the palette leaves out the shortcut keys at the end of its items."
         },
         {
           "stylesheet": "Code.css",

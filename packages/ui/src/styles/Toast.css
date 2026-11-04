@@ -50,11 +50,11 @@
     min-width: 0;
     min-height: 3rem;
     /* Toasts float over everything at elevation 2, as menus do, set apart by their strong fill, with
-       no shadow and no edge, in an alert's card corner. At high contrast each tone's edge bounds it:
+       no shadow and no edge, in an alert's corner, the large one of the radius scale. At high contrast each tone's edge bounds it:
        on a light page its fill a step darker rather than the light popup edge, which would ring it
        like a halo; in dark the popup edge. Under forced colors the edge, transparent otherwise, is what
        the system paints. An edge the application sets is drawn at every contrast. */
-    --env-toast-radius: 1.25rem;
+    --env-toast-radius: var(--env-radius-lg);
     --env-toast-high-contrast-edge: var(--env-theme-high-contrast)
       var(--env-toast-outline-default, var(--env-color-border-neutral-strong));
     border: 1px solid var(--env-toast-outline, var(--env-toast-high-contrast-edge, transparent));
