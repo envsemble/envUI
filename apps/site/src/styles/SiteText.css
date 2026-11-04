@@ -28,8 +28,47 @@
 .site-example > h2,
 .catalogue-related > h2,
 .site-article > .env-markdown > h2 {
-  font: var(--env-font-weight-medium) 1.75rem / 1.25 var(--env-font-family);
-  letter-spacing: -0.015em;
+  /* Well below the banner's title, which names the page, and well above an h3's title style. */
+  font: var(--env-font-weight-medium) 1.5rem / 1.25 var(--env-font-family);
+  letter-spacing: -0.0125em;
+}
+/* A Docs section's title sits as close to what it heads as a catalogue section's does (Figures.css). */
+.docs-guide > .site-section-title + * {
+  margin-block-start: calc(var(--env-space-4) - var(--env-space-5));
+}
+
+/* Reading text: the paragraphs and lists of a page's Markdown and the text beside its figures, a
+   step larger than the compact scale's body text, which suits a dense control rather than a page
+   read through, with room between the lines. The comfortable scale's body text is that size
+   already. Text inside a figure, which shows envUI itself, and the small notes of a changelog keep
+   envUI's sizes. */
+.site-app {
+  --site-prose-size: max(var(--env-font-size-body), 0.875rem);
+  --site-prose-leading: 1.6;
+}
+.site-page-column
+  .env-prose:not(
+    :where(
+        .site-live-example,
+        .site-verdict-stage,
+        .site-anatomy-stage,
+        .site-foundation-stage,
+        .catalogue-related-stage,
+        .docs-changelog
+      )
+      *
+  ),
+.catalogue-supporting,
+.docs-api p.env-text:not(:where(table, .docs-changelog) *) {
+  --env-type-body: var(--env-font-weight-body) var(--site-prose-size) / var(--site-prose-leading)
+    var(--env-font-family);
+  font-size: var(--site-prose-size);
+  line-height: var(--site-prose-leading);
+}
+/* A banner's description, under the page's large title, is a lead: a step above reading text. */
+.site-page-banner-description {
+  font-size: var(--env-font-size-title);
+  line-height: 1.45;
 }
 /* A guide's sections, one stream of Markdown, stand apart as a page's do. */
 .site-article > .env-markdown > h2:not(:first-child) {
@@ -47,7 +86,7 @@
    subsection's heading, in body text in the quieter color, with room between its lines. */
 .catalogue-supporting,
 :where(.site-figures .env-markdown:not(.site-lead)) > p {
-  line-height: 1.5;
+  line-height: var(--site-prose-leading);
   color: var(--env-color-fg-muted);
 }
 
@@ -89,7 +128,7 @@
   --env-prose-list-marker-size: calc(var(--env-space-4) + var(--env-space-1));
   --env-prose-list-marker-gap: var(--env-space-2);
   --env-prose-list-mark-color: var(--env-color-fg-muted);
-  line-height: 1.5;
+  line-height: var(--site-prose-leading);
   color: var(--env-color-fg-muted);
 }
 :where(.site-figures .env-markdown) > p + ul {
@@ -123,3 +162,4 @@
   color: var(--env-code-foreground);
   font: var(--env-code-font-size) / 1 var(--site-code-font-family);
 }
+
