@@ -146,6 +146,11 @@
     box-shadow: none;
     color: var(--env-tabs-label-color, var(--env-color-fg-muted));
   }
+  /* An unavailable tab takes the disabled text color, as an unavailable button does, and no state
+     layer, so it reads apart from the muted labels of the tabs that are there. */
+  .env-tabs-list > .env-tabs-tab:is(:disabled, [aria-disabled='true']) {
+    color: var(--env-color-fg-disabled);
+  }
   .env-tabs-list > .env-tabs-tab:hover:not(:disabled):not([aria-disabled='true']) {
     --env-tabs-tab-fill: var(--env-tabs-tab-custom-fill, var(--env-color-bg-neutral-subtle-hover));
     background: var(--env-tabs-tab-fill);

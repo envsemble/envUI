@@ -272,13 +272,11 @@
     .env-navigation-rail-indicator {
     background: transparent;
   }
-  [data-env-skeleton] .env-navigation-rail-count {
-    forced-color-adjust: none;
-    border-color: transparent;
-    --env-skeleton-shape: 1;
-    background: var(--env-skeleton-paint);
-  }
-  [data-env-skeleton] .env-navigation-rail-count * {
+  /* A count's badge lies over the icon, so a skeleton leaves it out: one shape for each
+     destination, and its label's bar. */
+  .env-navigation-rail:is([data-env-skeleton], [data-env-skeleton] *)
+    .env-navigation-rail-item
+    .env-navigation-rail-count {
     visibility: hidden;
   }
   /* A destination whose label is loading, given as an empty string, is a bar of a label's length. */

@@ -464,6 +464,11 @@
   [data-env-skeleton] .env-navigation-drawer-count * {
     visibility: hidden;
   }
+  /* A section's toggle isn't drawn, so its row is the destination's icon, its bar and its count. */
+  .env-navigation-drawer:is([data-env-skeleton], [data-env-skeleton] *)
+    .env-navigation-drawer-toggle {
+    visibility: hidden;
+  }
   /* A destination whose label is loading, given as an empty string, is a bar of a label's length. */
   .env-navigation-drawer:is([data-env-skeleton], [data-env-skeleton] *)
     .env-navigation-drawer-label {

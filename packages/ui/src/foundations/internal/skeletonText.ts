@@ -124,16 +124,26 @@ interface Bar {
   gap: number;
 }
 
-/** The part of a rectangle that the element's clipping ancestors, up to the root, leave visible. */
-function visibleSpan(element: Element, root: HTMLElement, left: number, right: number) {
+/** The part of a rectangle that the element's clipping ancestors, up to the root, leave visible,
+    across and down: a closed section, kept in the page at no height, clips its text away. */
+function visibleRect(element: Element, root: HTMLElement, rect: DOMRect) {
+  let { left, right, top, bottom } = rect;
   for (let at: Element | null = element; at && at !== root; at = at.parentElement) {
     const style = getComputedStyle(at);
-    if (style.overflowX === 'visible') continue;
+    const clipsX = style.overflowX !== 'visible';
+    const clipsY = style.overflowY !== 'visible';
+    if (!clipsX && !clipsY) continue;
     const box = at.getBoundingClientRect();
-    left = Math.max(left, box.left);
-    right = Math.min(right, box.right);
+    if (clipsX) {
+      left = Math.max(left, box.left);
+      right = Math.min(right, box.right);
+    }
+    if (clipsY) {
+      top = Math.max(top, box.top);
+      bottom = Math.min(bottom, box.bottom);
+    }
   }
-  return [left, right] as const;
+  return { left, right, top, bottom };
 }
 
 /** Measures the root's text and sets the bars it draws. */
@@ -159,8 +169,8 @@ function draw(root: HTMLElement) {
     range.selectNodeContents(text);
     for (const rect of range.getClientRects()) {
       if (rect.width < 1 || rect.height < 1) continue;
-      const [left, right] = visibleSpan(parent, root, rect.left, rect.right);
-      if (right - left < 1) continue;
+      const { left, right, top, bottom } = visibleRect(parent, root, rect);
+      if (right - left < 1 || bottom - top < 1) continue;
       const height = Math.min(rect.height, fontSize * barHeight);
       bars.push({
         x: left - originX,

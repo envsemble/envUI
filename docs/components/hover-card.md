@@ -39,7 +39,7 @@ examples:
 
 ### Widths
 
-The card is as wide as its content, up to its width, and narrows to fit the window.
+The card is as wide as its content, within its width's range, and narrows to fit the window.
 
 | Width  | Use for                                                         |
 | ------ | --------------------------------------------------------------- |
@@ -144,7 +144,7 @@ A trigger that is text rather than a link, such as a span or Text that holds tex
 
 #### Width and placement
 
-`width` is the widest the card grows: `md`, 20 rem and the default, or `lg`, 28 rem. It is as wide as its content from 12 rem up, and narrows to fit the window. `side` is `bottom`, the default, `top`, `left`, `right`, or `inline-start` and `inline-end`, which follow the text direction; `align` is `center`, the default, `start` or `end`.
+`width` sets how wide the card grows with its content: `md`, the default, from 12 rem up to 20 rem, or `lg`, from 20 rem up to 28 rem. It narrows to fit the window. `side` is `bottom`, the default, `top`, `left`, `right`, or `inline-start` and `inline-end`, which follow the text direction; `align` is `center`, the default, `start` or `end`.
 
 ```tsx
 <HoverCard
