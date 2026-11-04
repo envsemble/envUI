@@ -164,10 +164,12 @@
   }
 
   /* Outline: just an edge, with no fill at rest, so it reads the same on the page, a pane, a card or
-     a popup; hover and press lay a state layer over whatever is beneath, as a ghost button does. */
+     a popup; hover and press lay a state layer over whatever is beneath, as a ghost button does. Its
+     label is in the text color, so beside a primary button it reads as the other choice rather than
+     a second blue action; the link blue is the text variant's. */
   .env-button:where([data-variant='outline']) {
     background: var(--env-button-custom-fill, transparent);
-    color: var(--env-button-content, var(--env-color-fg-primary));
+    color: var(--env-button-content, var(--env-color-fg-default));
     border-color: var(--env-button-outline, var(--env-color-border-default));
   }
 
@@ -292,7 +294,7 @@
   /* Hover lays the state layer and a press lays it twice, an even step further; its label stays the
      text color, which reads on both. A ghost button with a label lays a lighter layer, so it never
      reads as a secondary button at rest; an icon-only one keeps the full layer, as its small circle
-     needs. In the danger tone, whose label is red, a press lays the pressed layer instead. */
+     needs. The danger tone lays its own tint (below). */
   .env-button:where([data-variant='ghost']:not(.env-icon-button)) {
     --env-button-ghost-layer: color-mix(
       in srgb,
@@ -312,11 +314,6 @@
       linear-gradient(var(--env-button-ghost-layer) 0 0) var(--env-button-ghost-layer)
     );
     color: var(--env-button-content, var(--env-color-fg-default));
-  }
-  .env-button:where([data-variant='ghost'][data-tone='danger']):active:not(:disabled):not(
-      [aria-disabled='true']
-    ) {
-    background: var(--env-button-custom-fill, var(--env-color-bg-neutral-subtle-pressed));
   }
 
   .env-link {
@@ -382,6 +379,37 @@
       :active
     ):not(:disabled):not([aria-disabled='true']) {
     color: var(--env-button-content, var(--env-color-fg-danger));
+  }
+
+  /* Their state layers are a faint tint of the danger color rather than the neutral grey, so the
+     whole button stays the destructive one under the pointer: on hover the tone's hover layer at
+     60 %, and on press the full layer, which the contrast gate measures under the danger label. */
+  .env-button:where([data-tone='danger']) {
+    --env-button-danger-layer: color-mix(
+      in srgb,
+      var(--env-color-bg-danger-subtle-hover) 60%,
+      transparent
+    );
+  }
+  .env-button:where([data-tone='danger'][data-variant='ghost']) {
+    --env-button-ghost-layer: var(--env-button-danger-layer);
+  }
+  .env-button:where([data-tone='danger'][data-variant='outline']):hover:not(:disabled):not(
+      [aria-disabled='true']
+    ),
+  .env-button:where([data-tone='danger'][data-variant='text']).env-icon-button:hover:not(
+      :disabled
+    ):not([aria-disabled='true']) {
+    background: var(--env-button-custom-fill, var(--env-button-danger-layer));
+  }
+  .env-button:where([data-tone='danger']):where(
+      [data-variant='ghost'],
+      [data-variant='outline']
+    ):active:not(:disabled):not([aria-disabled='true']),
+  .env-button:where([data-tone='danger'][data-variant='text']).env-icon-button:active:not(
+      :disabled
+    ):not([aria-disabled='true']) {
+    background: var(--env-button-custom-fill, var(--env-color-bg-danger-subtle-hover));
   }
 
   /* Accent: a primary button for a rare, consequential action, on the accent emphasis fill; a pill

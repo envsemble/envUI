@@ -91,14 +91,20 @@ examples:
 5. **Text**
 6. **Primary, accent**
 
-| Variant         | Tones                            | Use for                                                                   |
-| --------------- | -------------------------------- | ------------------------------------------------------------------------- |
-| Primary         | Neutral (the brand blue), danger | The main action of a group. One per group.                                |
-| Secondary       | Neutral                          | Other actions.                                                            |
-| Outline         | Neutral, danger                  | Other actions on panes, dialogs and rows.                                 |
-| Ghost           | Neutral, danger                  | An application's chrome, such as a toolbar.                               |
-| Text            | Neutral, danger                  | A link-like action, underlined where needed.                              |
-| Primary, accent | Accent                           | The main action, where it must stand apart from the brand blue around it. |
+| Variant         | Tones           | Use for                                                                   |
+| --------------- | --------------- | ------------------------------------------------------------------------- |
+| Primary         | Neutral, danger | The main action of a group. One per group.                                |
+| Secondary       | Neutral         | Other actions.                                                            |
+| Outline         | Neutral, danger | Other actions on panes, dialogs and rows.                                 |
+| Ghost           | Neutral, danger | An application's chrome, such as a toolbar.                               |
+| Text            | Neutral, danger | A link-like action, underlined where needed.                              |
+| Primary, accent | Accent          | The main action, where it must stand apart from the brand blue around it. |
+
+### Tones
+
+The neutral tone is the variant's own color: a primary's brand blue fill, a text button's link blue and a text color for the others, so only the main action and links are blue.
+
+The danger tone colors the label, or a primary's fill, and tints the state layers of the quiet variants.
 
 ### Primary tones
 
@@ -328,6 +334,7 @@ A wrapper of your own that passes a variant and a tone on types them as Button d
 
 ## Changelog
 
+- **1.0.0-prerelease.6**: An outline button's label and icon take the text color, `--env-color-fg-default`, rather than the brand blue, so beside a primary button it reads as the other choice; a text button keeps the link blue. Ghost, outline and text icon buttons in the danger tone lay a faint tint of the danger color on hover and press, from `--env-color-bg-danger-subtle-hover`, rather than the neutral grey.
 - **1.0.0-prerelease.6**: A pending button keeps its label, subdued, with a small spinner before it, in the start icon's place where there is one, rather than a spinner alone over a hidden label; a button without a start icon grows by at most 8 px.
 - **1.0.0-prerelease.6**: In light, a danger primary darkens on hover and press as the default and accent primaries do; in dark, the soft primaries deepen by a clearer, even step.
 - **1.0.0-prerelease.6**: A disabled button no longer fades as a whole: its label and icon take `--env-color-fg-disabled`, a filled one half the secondary's neutral fill and an outline one the muted edge, so it stays readable, also in dark.
