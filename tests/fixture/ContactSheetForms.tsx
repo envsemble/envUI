@@ -551,6 +551,7 @@ function Pickers() {
                 locale="en-GB"
                 granularity="minute"
                 defaultValue="2026-11-20T09:30"
+                clearable
                 defaultOpen
               />
             </Stage>

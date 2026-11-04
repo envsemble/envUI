@@ -38,6 +38,9 @@ interface TimeWheelProps {
   onSideways: (direction: -1 | 1) => void;
 }
 
+/** The rows a wheel shows, --env-time-list-rows in TimeList.css. */
+const shownRows = 5;
+
 /** How many times a looping wheel repeats its entries: enough rows to scroll on in both ways. */
 function copiesOf(count: number) {
   return Math.max(5, 2 * Math.ceil(30 / count) + 1);
@@ -70,7 +73,8 @@ const turnEasing = 90;
 /**
  * One column of a time list: a spinbutton drawn as a wheel whose middle row is its value. Hours and
  * minutes loop endlessly, their entries repeated with the scroll position moved back to the middle
- * copy near either end; the day periods don't. The row that settles in the middle as scrolling
+ * copy near either end; the day periods don't, nor minutes with fewer values than the wheel shows
+ * rows, such as every 15 minutes, which would show a value twice. The keys still wrap around them. The row that settles in the middle as scrolling
  * ends is chosen, and an unavailable one gives way to the nearest available. A mouse wheel turns it
  * a row a notch, easing into place, rather than as far as a page would scroll.
  */
@@ -93,8 +97,10 @@ export function TimeWheel({
   const turn = useRef<{ position: number; frame: number; time: number } | null>(null);
   // A touchpad's scrolling not yet turned into a whole row, in pixels.
   const wheelRest = useRef(0);
-  const loop = part !== 'dayPeriod';
   const count = entries.length;
+  // Hours and minutes wrap around under the keys; they loop on the wheel where they fill it.
+  const wraps = part !== 'dayPeriod';
+  const loop = wraps && count >= shownRows;
   const copies = loop ? copiesOf(count) : 1;
   const middleCopy = Math.floor(copies / 2);
   const currentIndex = Math.max(
@@ -321,9 +327,9 @@ export function TimeWheel({
 
   function step(index: number, direction: 1 | -1) {
     let next = index;
-    if (loop) next = ((next % count) + count) % count;
+    if (wraps) next = ((next % count) + count) % count;
     else next = Math.min(Math.max(next, 0), count - 1);
-    const available = nearestAvailable(entries, next, loop, direction);
+    const available = nearestAvailable(entries, next, wraps, direction);
     if (available !== -1 && available !== currentIndex) onChoose(entries[available]!.value);
   }
 
@@ -366,7 +372,7 @@ export function TimeWheel({
     const move = moves[event.key];
     if (!move) return;
     event.preventDefault();
-    // Hours and minutes wrap around; Page keys stop at the ends of a column that doesn't loop.
+    // Hours and minutes wrap around; Page keys stop at the ends of the day periods.
     step(move[0], move[1]);
   }
 
