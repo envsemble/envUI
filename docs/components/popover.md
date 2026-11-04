@@ -212,6 +212,7 @@ In dark a faint hairline of the text color keeps a frosted popup's edge, where i
 
 ## Changelog
 
+- **1.0.0-prerelease.6**: A popover's corners are the popups' own, concentric with their rows and half the md control height, 20 px and 16 px at the compact scale, rather than a surface's 28 px and 22 px; dialogs and sheets keep a surface's.
 - **1.0.0-prerelease.5**: Popovers are frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge but a faint hairline in dark, and is solid with its edge at high contrast and with reduced transparency: `--env-popup-opacity`, `--env-popup-blur` and `--env-popup-shadow`. Its inset is a panel's, as wide as a popup row's corner: 14 px, 11.2 px at the compact scale.
 - **1.0.0**: `width` is `md` or `lg`, the widest the popover grows as it sizes to its content; `side` takes `inline-start` and `inline-end`; `className`, `style`, `ref` and data attributes reach the surface, which renders on PopupSurface in the trigger's text direction.
 - **1.0.0**: Popovers take the level-2 elevation edge, with no shadow.

@@ -127,7 +127,9 @@
     overflow-y: auto;
     border: var(--env-control-border-width) solid
       var(--env-popup-edge, var(--env-popup-frosted-edge, transparent));
-    border-radius: var(--env-radius-surface);
+    /* The popups' own corner, concentric with their rows and a step rounder than the fields and
+       buttons that open them; dialogs and sheets keep the surface's larger one. */
+    border-radius: var(--env-popup-radius);
     background: color-mix(in srgb, var(--env-popup-fill) var(--env-popup-opacity), transparent);
     box-shadow: var(--env-popup-shadow);
     -webkit-backdrop-filter: blur(var(--env-popup-blur)) saturate(1.4);
