@@ -38,7 +38,9 @@
     border-radius: var(--env-radius-full);
     font: var(--env-font-weight-body) var(--env-font-size-label) / 1.4 var(--env-font-family);
     white-space: normal;
-    overflow-wrap: break-word;
+    /* A container whose buttons can't wrap onto a line of their own (ButtonGroup) sets
+       --env-button-overflow-wrap to anywhere. */
+    overflow-wrap: var(--env-button-overflow-wrap, break-word);
     text-align: center;
     text-decoration: none;
     max-inline-size: 100%;
