@@ -10,9 +10,9 @@ import { DocsBannerLines } from './DocsBannerLines';
  * The kinds of banner, one card that reads from the start like a document, under its breadcrumbs,
  * with a LineArt drawing at its end (Banners.css): a catalogue page's drawing draws itself in, or
  * for the few with one is a motif drawn from what the page shows (BannerMotif.tsx); a Docs page's
- * is the same drawing, still, and the Docs' home has the envUI Docs lockup as its title.
+ * is the same drawing, still.
  */
-export type BannerKind = 'catalogue' | 'docs-home' | 'docs';
+export type BannerKind = 'catalogue' | 'docs';
 
 /** Documentation banner composed from the library's card, text and layout primitives. */
 export function PageHeader({
@@ -22,7 +22,6 @@ export function PageHeader({
   description,
   meta,
   subject,
-  logo,
   children,
   actions,
   kind = 'catalogue',
@@ -40,8 +39,6 @@ export function PageHeader({
   meta?: ReactNode;
   /** The id of what a catalogue page shows, which gives the few that have one their motif. */
   subject?: string;
-  /** Artwork shown as the title, such as a lockup; the title stays its accessible name. */
-  logo?: ReactNode;
   children?: ReactNode;
   actions?: ReactNode;
   kind?: BannerKind;
@@ -78,15 +75,9 @@ export function PageHeader({
                   </Text>
                 )
               )}
-              {logo ? (
-                <Text render={<h1 />} aria-label={title} className="docs-page-banner-logo">
-                  {logo}
-                </Text>
-              ) : (
-                <Text render={<h1 />} variant="headline" className="site-page-banner-title">
-                  {title}
-                </Text>
-              )}
+              <Text render={<h1 />} variant="headline" className="site-page-banner-title">
+                {title}
+              </Text>
               {description && (
                 <Text emphasis="muted" className="site-page-banner-description">
                   {description}

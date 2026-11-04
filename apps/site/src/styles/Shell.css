@@ -180,11 +180,20 @@ body {
     transparent
   );
 }
-/* The search shortcut's keys show for a keyboard alone: a touch screen has none to press. */
+/* The results end a little apart from the footer of keys under them. */
+.site-search .env-command-palette-footer {
+  margin-block-start: var(--env-space-2);
+}
+/* The search shortcut's keys show for a keyboard alone, on a window wide enough to hold them: a
+   touch screen has none to press, and in the navigation's sheet of a narrower window they would
+   crowd the wordmark and the close button on search's row. */
 @media (pointer: coarse) {
   .site-search-keys {
     display: none;
   }
+}
+.site-navigation[data-in-sheet] .site-search-keys {
+  display: none;
 }
 .docs-drawer-top .site-brand {
   flex: none;
@@ -373,8 +382,8 @@ body {
    whole pane. The header spans the pane, so its width is the container's. */
 .site-page-header {
   container: site-page-header / inline-size;
-  padding-block: var(--env-space-5) var(--env-space-4);
-  margin-block-end: var(--env-space-7);
+  padding-block: var(--env-space-5) var(--env-space-2);
+  margin-block-end: var(--env-space-5);
 }
 .site-page-banner,
 .catalogue-overview-hero {
@@ -408,7 +417,7 @@ body {
   overflow: hidden;
   container-type: inline-size;
   /* Snug, so a page's first figure starts close below it. */
-  padding-block: clamp(1.75rem, 3.5vw, 2.75rem);
+  padding-block: clamp(1.5rem, 2.5vw, 2rem);
 }
 .site-page-banner-content {
   position: relative;

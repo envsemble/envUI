@@ -18,7 +18,7 @@ import { version } from '../../../../packages/ui/package.json';
 import { EnvUIDocsLogo } from '../brand/EnvUIDocsLogo';
 import { EnvUILogo } from '../brand/EnvUILogo';
 import { SearchButton } from '../search/SearchButton';
-import { DisplayMenu, MotionButton } from '../theme/DisplaySettings';
+import { DisplayMenu } from '../theme/DisplaySettings';
 import { drawerWidthKey } from '../theme/DisplayStorage';
 import { pageBadge } from './PageBadges';
 import {
@@ -73,19 +73,34 @@ const sectionPages = (section: CatalogueSection) =>
 export const drawerless = (page: RoutePage | undefined) =>
   sectionPages(catalogueSectionOf(page)).length === 1;
 
-/** The pages of one of the catalogue's destinations, for its drawer. */
+/**
+ * The pages of one of the catalogue's destinations, for its drawer: its pages of no group, such as
+ * All components, then each group, such as a kind of component or a pattern's intent, as a section
+ * of its pages that opens and closes, open while it holds the current page, as in the Docs.
+ */
 export function pageDestinations(
   pages: readonly RoutePage[],
   currentPath: string,
   onChoose?: () => void,
 ): NavigationDrawerDestination[] {
-  return pages.map((page) => ({
-    group: page.group,
+  const link = (page: RoutePage): NavigationDrawerDestination => ({
     label: page.label ?? page.title,
     href: routeHref(page.path),
     current: page.path === currentPath,
     onClick: onChoose,
-  }));
+  });
+  const groups = new Map<string, RoutePage[]>();
+  for (const page of pages)
+    if (page.group) groups.set(page.group, [...(groups.get(page.group) ?? []), page]);
+  return [
+    ...pages.filter((page) => !page.group).map(link),
+    ...[...groups].map(
+      ([label, members]): NavigationDrawerDestination => ({
+        label,
+        children: members.map(link),
+      }),
+    ),
+  ];
 }
 
 /**
@@ -287,7 +302,6 @@ export function CatalogueNavigation({
         aria-label="Catalogue"
         className="catalogue-rail"
         header={<Brand area="catalogue" />}
-        footer={<MotionButton />}
         destinations={catalogueDestinations(page?.area === 'catalogue' ? section : undefined)}
       />
       {(inSheet || pages.length > 1) && (
@@ -356,7 +370,7 @@ export function DocsNavigation({
  * The page's own controls at its top end, quiet ghost buttons that stay in the corner as the page
  * scrolls, on a small pill of the page's color: the other part, the Docs from the catalogue and
  * the catalogue from the Docs, at the page of the same subject there (otherPartRoute), and the
- * Display menu, where the theme, contrast and scale are. Below an expanded window the other part
+ * Display menu, where the theme, contrast, scale and motion are. Below an expanded window the other part
  * keeps its name, without its icon, and Display is an icon button with a tooltip.
  */
 export function PageActions({ page, area }: { page?: RoutePage; area: Area }) {

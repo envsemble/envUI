@@ -6,9 +6,17 @@ import { displayStorageKeys } from '../../apps/site/src/theme/DisplayStorage';
  * The site's animations (apps/site/src/motion/Motion.tsx): a tile plays its own preview while
  * the pointer is on it and rests at its still, the animation's first step, once it leaves; an
  * animated figure on a page plays by itself, with a pause button that holds it where it is; the
- * sidebar's button pauses them all, is stored, and is what a reader who prefers reduced motion
+ * Display menu's Motion pauses them all, is stored, and is what a reader who prefers reduced motion
  * starts with.
  */
+
+/** The Display menu's Motion choice, Play or Pause, opening the menu to reach it. */
+async function motionChoice(page: Page, name: 'Play' | 'Pause') {
+  const menu = page.getByRole('menu', { name: 'Display' });
+  if (!(await menu.isVisible()))
+    await page.locator('.site-page-actions').getByRole('button', { name: 'Display' }).click();
+  return menu.getByRole('group', { name: 'Motion' }).getByRole('menuitemradio', { name });
+}
 
 const tile = (page: Page, name: string) =>
   page.locator('.catalogue-gallery-tile', { has: page.getByRole('link', { name, exact: true }) });
@@ -65,23 +73,24 @@ test('an animated figure plays by itself, and its pause button holds it where it
   await expect.poll(() => figureValue(page), { timeout: 4000 }).not.toBe(held);
 });
 
-test("the sidebar's pause pauses every animation and is kept, and a figure's own button overrides it", async ({
+test("the Display menu's Motion pauses every animation and is kept, and a figure's own button overrides it", async ({
   page,
 }) => {
   await page.goto(`${siteDevUrl}/components/slider`);
   const stage = sliderFigure(page);
   await stage.scrollIntoViewIfNeeded();
-  await page.getByRole('button', { name: 'Pause animations' }).click();
+  await (await motionChoice(page, 'Pause')).click();
+  await page.keyboard.press('Escape');
   expect(await page.evaluate((key) => localStorage.getItem(key), displayStorageKeys.motion)).toBe(
     'paused',
   );
   const held = await figureValue(page);
   await page.waitForTimeout(2500);
   expect(await figureValue(page)).toBe(held);
-  // The figure's own button plays it, though the sidebar's pauses the rest.
+  // The figure's own button plays it, though the menu's Motion pauses the rest.
   await stage.getByRole('button', { name: /^Play / }).click();
   await expect.poll(() => figureValue(page), { timeout: 4000 }).not.toBe(held);
-  // A tile stays at its still under the pointer while the sidebar's pause holds.
+  // A tile stays at its still under the pointer while the menu's Pause holds.
   await page.goto(`${siteDevUrl}/components`);
   const switchTile = tile(page, 'Switch');
   await switchTile.scrollIntoViewIfNeeded();
@@ -89,7 +98,7 @@ test("the sidebar's pause pauses every animation and is kept, and a figure's own
   await switchTile.hover();
   await page.waitForTimeout(1500);
   expect(await switchOn(switchTile)).toBe(false);
-  await expect(page.getByRole('button', { name: 'Play animations' })).toBeVisible();
+  await expect(await motionChoice(page, 'Pause')).toBeChecked();
 });
 
 test('a reader who prefers reduced motion starts with every animation paused', async ({
@@ -100,7 +109,8 @@ test('a reader who prefers reduced motion starts with every animation paused', a
   await page.goto(`${siteDevUrl}/components/slider`);
   const stage = sliderFigure(page);
   await stage.scrollIntoViewIfNeeded();
-  await expect(page.getByRole('button', { name: 'Play animations' })).toBeVisible();
+  await expect(await motionChoice(page, 'Pause')).toBeChecked();
+  await page.keyboard.press('Escape');
   await page.waitForTimeout(1500);
   expect(await figureValue(page)).toBe('30');
   await context.close();

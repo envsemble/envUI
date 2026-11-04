@@ -6,7 +6,7 @@ import { useDisplaySettings } from '../theme/DisplaySettings';
  * read as a feed: once scrolling settles, the tile nearest the middle of the viewport that is
  * mostly in view plays, and the one before it goes back to its still, as when the pointer leaves
  * it. One plays at a time on the whole page, the galleries' tiles and Related's alike. Nothing
- * plays by itself where the sidebar paused the animations or reduced motion is preferred.
+ * plays by itself where the Display menu paused the animations or reduced motion is preferred.
  */
 
 /** A device without hover: a touch screen. A mouse, at any width, keeps hover and focus. */

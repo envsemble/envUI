@@ -1,11 +1,10 @@
 import { useMemo } from 'react';
-import { Column, CopyButton, DescriptionList, Link, Row, Surface, Text } from '@envsemble/envui';
+import { Column, CopyButton, DescriptionList, Row, Surface, Text } from '@envsemble/envui';
 import { Code } from '@envsemble/envui/content';
 import { AgentLogos } from '../brand/AgentLogos';
-import { EnvUIDocsLogo } from '../brand/EnvUIDocsLogo';
 import { PageHeader } from '../layout/PageHeader';
 import { docsTrail, pagesOf, type RoutePage } from '../navigation/SiteRoutes';
-import { routeHref } from '../navigation/Address';
+import { docsRoute } from '../navigation/Address';
 import { OtherPartButton } from '../navigation/OtherPart';
 import { lazyPart } from '../template/LoadBoundary';
 import { ExampleSource } from '../figures/LiveExample';
@@ -46,53 +45,43 @@ const colorPalette = lazyPart(
 export const setupPrompt = 'Set up envUI in my app: envui.envsemble.com/SKILL.md';
 
 /**
- * The Docs' home: what they are, said once in its summary, and the prompt that sets envUI up with a
- * coding agent or the guide to setting it up by hand. The navigation beside it lists the pages.
+ * The prompt that sets envUI up with a coding agent, at the top of the Docs' home, the setup guide,
+ * whose sections set it up by hand.
  */
-export function DocsHome({ page }: { page: RoutePage }) {
+function AgentSetup() {
   return (
-    <>
-      <PageHeader
-        title={page.title}
-        logo={<EnvUIDocsLogo />}
-        description={page.summary}
-        kind="docs-home"
-      />
-      <Column gap={7} className="site-article">
-        <Column
-          render={<section aria-labelledby="agent-setup" />}
-          gap={3}
-          align="start"
-          className="docs-agent-setup"
-        >
-          <Text render={<h2 id="agent-setup" />} variant="title" className="site-section-title">
-            Set up with your agent
-          </Text>
-          <Text render={<p />} className="docs-agent-setup-text">
-            Paste this into your coding agent: it shows you its plan and waits for your yes.
-          </Text>
-          <Surface
-            background="muted"
-            padding={1}
-            render={<Row gap={3} align="center" />}
-            className="docs-agent-prompt"
-          >
-            <AgentLogos className="docs-agent-logos" />
-            <Text render={<code />} className="docs-agent-prompt-text">
-              {setupPrompt}
-            </Text>
-            <CopyButton value={setupPrompt} variant="ghost" size="sm" aria-label="Copy prompt" />
-          </Surface>
-          <Text render={<p />} emphasis="muted" className="docs-setup-by-hand">
-            Or set it up by hand: <Link href={routeHref('docs/setup')}>Install and set up</Link>
-          </Text>
-        </Column>
-      </Column>
-    </>
+    <Column
+      render={<section aria-labelledby="agent-setup" />}
+      gap={3}
+      align="start"
+      className="docs-agent-setup"
+    >
+      <Text render={<h2 id="agent-setup" />} variant="title" className="site-section-title">
+        Set up with your agent
+      </Text>
+      <Text render={<p />} className="docs-agent-setup-text">
+        Paste this into your coding agent, or follow the steps below by hand.
+      </Text>
+      <Surface
+        background="muted"
+        padding={1}
+        render={<Row gap={3} align="center" />}
+        className="docs-agent-prompt"
+      >
+        <AgentLogos className="docs-agent-logos" />
+        <Text render={<code />} className="docs-agent-prompt-text">
+          {setupPrompt}
+        </Text>
+        <CopyButton value={setupPrompt} variant="ghost" size="sm" aria-label="Copy prompt" />
+      </Surface>
+    </Column>
   );
 }
 
-/** A guide of docs/, such as setup or migration, with its live demos in place. */
+/**
+ * A guide of docs/, such as migration, with its live demos in place. The setup guide is the Docs'
+ * home, with the prompt that sets envUI up with a coding agent at its top.
+ */
 export function GuidePage({ page }: { page: RoutePage }) {
   const document = useDocument(page.document!);
   return (
@@ -109,6 +98,7 @@ export function GuidePage({ page }: { page: RoutePage }) {
         }
       />
       <Column gap={7} className="site-article">
+        {page.path === docsRoute && <AgentSetup />}
         <GuideDocument document={document} />
       </Column>
     </>

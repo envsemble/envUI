@@ -82,10 +82,10 @@ test("a page's guide in the Docs complements its page in the catalogue, and Fiel
 }) => {
   // Each pattern's guide in the Docs lists what the application and envUI provide, as plain lists
   // under Accessibility. The address of the page that once listed them all opens the Docs' home,
-  // whose navigation lists every page; the home itself repeats none of it.
+  // the setup guide, whose navigation lists every page.
   await page.goto(`${siteDevUrl}/docs/patterns`);
   await expect(page).toHaveURL(/\/docs$/);
-  await expect(page.locator('.site-article').getByRole('link')).toHaveText(['Install and set up']);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Install and set up');
   await page.goto(`${siteDevUrl}/docs/patterns/forms`);
   // The Docs show the developer part alone: Compose, what envUI and the application provide,
   // which the catalogue leaves out, and the changelog. None of the catalogue's sections, its
@@ -170,7 +170,7 @@ test('the props in the Docs link each source file at the revision the site was b
   );
 });
 
-test("the Docs' home gives a prompt to copy that sets envUI up through the skill the site serves", async ({
+test("the Docs' home is the setup guide, a prompt to copy that sets envUI up through the skill the site serves at its top", async ({
   page,
   context,
 }) => {
@@ -181,11 +181,9 @@ test("the Docs' home gives a prompt to copy that sets envUI up through the skill
   await expect(setup).toContainText(prompt);
   await setup.getByRole('button', { name: 'Copy prompt' }).click();
   await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toBe(prompt);
-  // Under it, the guide for setting envUI up by hand.
-  await expect(setup.getByRole('link', { name: 'Install and set up' })).toHaveAttribute(
-    'href',
-    '/docs/setup',
-  );
+  // Under it, the guide for setting envUI up by hand, from installing it.
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Install and set up');
+  await expect(page.locator('#install-a-release')).toBeVisible();
   // The development server serves the skill and llms.txt as the build writes them.
   const skill = await page.request.get(`${siteDevUrl}/SKILL.md`);
   expect(skill.headers()['content-type']).toBe('text/markdown; charset=utf-8');
@@ -245,13 +243,11 @@ test('a page of the Docs has breadcrumbs, a tree of the Docs open at its section
   await expect(page).toHaveURL(`${siteDevUrl}/docs/components/button#usage`);
   await expect(page.locator('#usage')).toBeFocused();
   await expect(contents.locator('[aria-current="location"]')).toHaveText('Usage');
-  // Docs, the trail's link, leads to their home, which has no contents beside it.
+  // Docs, the trail's link, leads to their home, the setup guide, with its contents beside it.
   await trail.getByRole('link', { name: 'Docs', exact: true }).click();
   await expect(page).toHaveURL(`${siteDevUrl}/docs`);
-  await expect(contents).toHaveCount(0);
-  // A narrower window leaves the contents out.
-  await page.goto(`${siteDevUrl}/docs/setup`);
   await expect(contents).toBeVisible();
+  // A narrower window leaves the contents out.
   await page.setViewportSize({ width: 1024, height: 900 });
   await expect(contents).toBeHidden();
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
@@ -265,8 +261,7 @@ test('every page of the Docs lists its own sections beside it, each once, at add
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto(`${siteDevUrl}/docs`);
   const contents = page.getByRole('navigation', { name: 'On this page' });
-  for (const { path, title, kind } of pagesOf('docs')) {
-    if (kind === 'docs-home') continue;
+  for (const { path, title } of pagesOf('docs')) {
     await goTo(page, `/${path}`);
     await expect(page.getByRole('heading', { level: 1 }), path).toHaveAccessibleName(title);
     await expect(page.locator('.site-page-column .site-loading'), path).toHaveCount(0);

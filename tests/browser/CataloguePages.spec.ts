@@ -370,10 +370,7 @@ test("the overview's hero says what envUI is, leads to setting it up and shows t
   );
   // One way on of its own, to setting envUI up; the sidebar and the Explore cards lead elsewhere.
   await expect(hero.getByRole('link')).toHaveText(['Get started']);
-  await expect(hero.getByRole('link', { name: 'Get started' })).toHaveAttribute(
-    'href',
-    '/docs/setup',
-  );
+  await expect(hero.getByRole('link', { name: 'Get started' })).toHaveAttribute('href', '/docs');
 });
 
 test("a catalogue page's banner reads from the start under its breadcrumbs, its picture hidden", async ({

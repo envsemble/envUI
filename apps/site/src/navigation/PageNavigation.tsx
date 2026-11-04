@@ -34,8 +34,7 @@ function usePreloadNeighbours(previous: RoutePage | undefined, next: RoutePage |
 
 /**
  * The previous and next pages of the page's part, the catalogue or the Docs, in reading order,
- * which load once the page is idle. The homes show none: the catalogue's Explore cards lead on,
- * and the Docs' home leads to setting up, the page after it, in its own text.
+ * which load once the page is idle. The catalogue's home shows none: its Explore cards lead on.
  */
 export function PageNavigation({ page }: { page: RoutePage }) {
   const pages = pagesOf(page.area);
@@ -43,7 +42,7 @@ export function PageNavigation({ page }: { page: RoutePage }) {
   const previous = index === -1 ? undefined : pages[index - 1];
   const next = index === -1 ? undefined : pages[index + 1];
   usePreloadNeighbours(previous, next);
-  if (index === -1 || page.kind === 'home' || page.kind === 'docs-home') return null;
+  if (index === -1 || page.kind === 'home') return null;
   return (
     <Pager.Root className="site-page-navigation">
       {previous && (

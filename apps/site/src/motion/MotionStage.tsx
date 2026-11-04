@@ -57,8 +57,8 @@ export const VerdictMotion = createContext<false | 'square' | 'wide'>(false);
  * The stage of an animated figure on a page, such as a slider stretching past its ends: the live
  * component on the recessed canvas, playing its timeline (useTimeline) in a loop while it is in
  * view, and a small pause button in its bottom end corner, shown as the pointer or the keyboard
- * reaches the figure (Stage.css). The sidebar's pause pauses every
- * figure; a figure's own button overrides it for that figure, until the sidebar's changes or the
+ * reaches the figure (Stage.css). The Display menu's Motion pauses every
+ * figure; a figure's own button overrides it for that figure, until the menu's changes or the
  * page does. Paused, a figure holds where it is. `foundation` sets it on a foundation figure's
  * stage rather than an example's, with `className` for that figure's own layout, and `stage` is
  * the fill an example's fence gives it; `top` places what it shows at the stage's top, where the
@@ -97,7 +97,7 @@ export function MotionStage({
 }) {
   const { motionPaused } = useDisplaySettings();
   const verdict = use(VerdictMotion);
-  // The figure's own choice, and the sidebar's at the time, which it overrides only while that holds.
+  // The figure's own choice, and the Display menu's at the time, which it overrides only while that holds.
   const [own, setOwn] = useState<{ paused: boolean; over: boolean } | null>(null);
   const stage = useRef<HTMLDivElement>(null);
   const [subject, setSubject] = useState<HTMLDivElement | null>(null);

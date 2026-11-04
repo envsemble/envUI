@@ -58,8 +58,9 @@ test('the hosted build opens every page of the catalogue and the Docs without ne
         path,
       ).toBe(0);
   }
-  // A deep link loads its page, in the Docs too.
+  // A deep link loads its page, in the Docs too, and the setup guide's old address its home.
   await page.goto(`${siteUrl}/docs/setup`);
+  await expect(page).toHaveURL(`${siteUrl}/docs`);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Install and set up');
   await expect(page.locator('.env-code-block').first()).toContainText('@envsemble:registry');
   // The files for coding agents are at the root, as text rather than the page.
@@ -268,6 +269,9 @@ test("every label and heading of the catalogue's and the Docs' drawers fits on o
     await page.goto(`${siteDevUrl}/${path}`);
     const drawer = page.locator('.site-sidebar');
     await expect(drawer.locator('.env-navigation-drawer-item').first()).toBeVisible();
+    // Every section open, so the labels of each one's pages are measured too.
+    const closed = drawer.locator('button[aria-expanded="false"]');
+    while ((await closed.count()) > 0) await closed.first().click();
     // The drawer keeps each on one line, cut short where it doesn't fit: none may be cut.
     const cut = await drawer
       .locator('.env-navigation-drawer-label, .env-navigation-drawer-group-label')
@@ -298,6 +302,12 @@ test('the navigation shows the current page, and focus moves to the page only on
   // The first page loaded leaves focus at the start of the document.
   const main = page.getByRole('main');
   await expect(main).not.toBeFocused();
+  // The drawer's groups open and close as the Docs' do: the current page's open, the others closed
+  // until the reader opens one.
+  const actions = navigation.getByRole('button', { name: 'Actions', exact: true });
+  await expect(actions).toHaveAttribute('aria-expanded', 'false');
+  await expect(navigation.getByRole('link', { name: 'Button', exact: true })).toBeHidden();
+  await actions.click();
   await navigation.getByRole('link', { name: 'Button', exact: true }).click();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
   await expect(main).toBeFocused();

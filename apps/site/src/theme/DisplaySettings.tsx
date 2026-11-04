@@ -10,8 +10,6 @@ import {
   type ThemePreference,
   type ThemeScale,
 } from '@envsemble/envui';
-import { IconPause } from '@envsemble/envui/icons/Pause';
-import { IconPlayArrow } from '@envsemble/envui/icons/PlayArrow';
 import { IconTune } from '@envsemble/envui/icons/Tune';
 import { displayStorageKeys } from './DisplayStorage';
 
@@ -71,8 +69,8 @@ interface DisplaySettingsValue {
 const DisplaySettingsContext = createContext<DisplaySettingsValue | null>(null);
 
 /**
- * The site's theme, contrast and scale, as the reader chose them in the Display menu, and whether
- * its animations are paused, as they chose with the sidebar's pause button: stored in localStorage,
+ * The site's theme, contrast and scale, and whether its animations play, as the reader chose them
+ * in the Display menu: stored in localStorage,
  * the theme by ThemePreferenceProvider and the others here, and kept in step with the site's other
  * windows. The theme follows the system until the reader picks one, the contrast follows
  * `prefers-contrast` until then, and the animations start paused where reduced motion is preferred.
@@ -144,12 +142,15 @@ export function useDisplaySettings() {
 }
 
 /**
- * The Display menu: the theme, the contrast and the scale, each stored as it is chosen, three groups
- * of plain choices alike. iconOnly shows its trigger as an icon, in a narrow window. It opens below
- * its trigger, at the page's top end.
+ * The Display menu: the theme, the contrast, the scale and the motion, each stored as it is chosen,
+ * four groups of plain choices alike. Motion pauses every animation of the site, the tiles' and the
+ * figures', on every page, or plays them again; a figure's own button overrides it for that figure
+ * (MotionStage.tsx). iconOnly shows its trigger as an icon, in a narrow window. It opens below its
+ * trigger, at the page's top end.
  */
 export function DisplayMenu({ iconOnly = false }: { iconOnly?: boolean }) {
-  const { contrast, setContrast, scale, setScale } = useDisplaySettings();
+  const { contrast, setContrast, scale, setScale, motionPaused, setMotionPaused } =
+    useDisplaySettings();
   const { preference, setPreference } = useThemePreference();
   return (
     <Menu.Root
@@ -213,25 +214,19 @@ export function DisplayMenu({ iconOnly = false }: { iconOnly?: boolean }) {
           Compact
         </Menu.RadioItem>
       </Menu.RadioGroup>
+      <Menu.Separator />
+      <Menu.RadioGroup
+        label="Motion"
+        value={motionPaused ? 'paused' : 'playing'}
+        onValueChange={(next) => setMotionPaused(next === 'paused')}
+      >
+        <Menu.RadioItem value="playing" closeOnClick={false}>
+          Play
+        </Menu.RadioItem>
+        <Menu.RadioItem value="paused" closeOnClick={false}>
+          Pause
+        </Menu.RadioItem>
+      </Menu.RadioGroup>
     </Menu.Root>
-  );
-}
-
-/**
- * The sidebar's pause button: pauses every animation of the site, the tiles' and the figures', or
- * plays them again. A figure's own button overrides it for that figure (MotionStage.tsx).
- */
-export function MotionButton() {
-  const { motionPaused, setMotionPaused } = useDisplaySettings();
-  const label = motionPaused ? 'Play animations' : 'Pause animations';
-  return (
-    <Tooltip content={label} side="inline-end">
-      <IconButton
-        variant="ghost"
-        icon={motionPaused ? <IconPlayArrow /> : <IconPause />}
-        aria-label={label}
-        onClick={() => setMotionPaused(!motionPaused)}
-      />
-    </Tooltip>
   );
 }

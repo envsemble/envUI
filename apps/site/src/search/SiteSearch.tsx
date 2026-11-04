@@ -16,7 +16,7 @@ import { IconError } from '@envsemble/envui/icons/Error';
 import { IconExpandMore } from '@envsemble/envui/icons/ExpandMore';
 import { counterpartOf, findPage, routeOfDocument, type RoutePage } from '../navigation/SiteRoutes';
 import { otherPart } from '../navigation/OtherPart';
-import { navigate, routeHref } from '../navigation/Address';
+import { docsRoute, navigate, routeHref } from '../navigation/Address';
 import { canRetryLoad, reloadModule, reloadPage } from '../template/LoadBoundary';
 import type { SearchResult } from './SearchIndex';
 import { commandKey } from './SearchShortcut';
@@ -71,7 +71,7 @@ const areas: Record<SearchResult['area'], string> = { catalogue: 'Catalogue', do
 
 /** What the empty query finds: the start of either part, and the setup guide. */
 const suggestedRoutes = [
-  { route: 'docs/setup', icon: <IconArticle /> },
+  { route: docsRoute, icon: <IconArticle /> },
   { route: 'components', icon: <IconWidgets /> },
   { route: 'patterns', icon: <IconPattern /> },
   { route: 'docs/tokens', icon: <IconPalette /> },
@@ -128,7 +128,7 @@ const shortLimit = 3;
 const moreId = (group: string) => `more:${group}`;
 
 /** The group of results that only mention the query in their text, after those it names. */
-const mentions = 'Mentions';
+const mentions = 'Also mentioned in';
 
 /** The group a result is shown in. */
 const groupOf = (result: SearchResult, named: boolean) =>
@@ -144,7 +144,8 @@ interface Group {
 const noGroups: ReadonlySet<string> = new Set();
 
 /**
- * Results grouped by what they find, groups in the order of their best result. Within a group,
+ * Results grouped by what they find: the pages, components, foundations, patterns and guides, then
+ * the reference groups, props and tokens, each in the order of its best result. Within a group,
  * results keep their order, best first. Where the query names some results, by their names,
  * aliases or keywords, those come first, and results that only mention it in their text follow
  * them in a group of their own, so "date" lists DatePicker and the date props before Table. The
@@ -173,9 +174,13 @@ function groupResults(results: readonly SearchResult[], expanded: ReadonlySet<st
     const group = groupOf(result, named);
     grouped.set(group, [...(grouped.get(group) ?? []), result]);
   }
-  // The groups in the order of their best result.
-  const order = new Set(ordered.map((result) => groupOf(result, named)));
-  return [...order].map((name) => {
+  // The groups in the order of their best result, the pages' before the reference groups and those
+  // before the results that only mention the query.
+  const tier = (name: string) => (name === mentions ? 2 : shortGroups.has(name) ? 1 : 0);
+  const order = [...new Set(ordered.map((result) => groupOf(result, named)))].sort(
+    (a, b) => tier(a) - tier(b),
+  );
+  return order.map((name) => {
     const members = grouped.get(name)!;
     const limit = !shortGroups.has(name)
       ? groupLimit
