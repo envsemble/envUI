@@ -16,8 +16,8 @@ import { useMessages } from '../internal/EnvUIContext.js';
 import { useResolvedLocale } from '../internal/useFormatters.js';
 import { calendar as calendarMessages } from '../foundations/messages/calendar.js';
 import { IconButton } from '../actions/Button.js';
-import { ChevronLeft } from '../icons/ChevronLeft.js';
-import { ChevronRight } from '../icons/ChevronRight.js';
+import { IconChevronLeft } from '../icons/ChevronLeft.js';
+import { IconChevronRight } from '../icons/ChevronRight.js';
 import {
   addMonths,
   clampDay,
@@ -30,9 +30,12 @@ import {
   parseDay,
   toUtcDate,
   type Weekday,
-} from './internal/CalendarDays.js';
+} from '../internal/calendarDays.js';
+import { isRightToLeft } from '../internal/direction.js';
+import '../styles/Base.css';
+import '../styles/Calendar.css';
 
-export type { Weekday } from './internal/CalendarDays.js';
+export type { Weekday } from '../internal/calendarDays.js';
 
 export interface CalendarProps
   extends Omit<ComponentPropsWithRef<'div'>, 'defaultValue' | 'onChange' | 'children'> {
@@ -47,8 +50,8 @@ export interface CalendarProps
   /** The latest day that can be chosen, as YYYY-MM-DD; later days are unavailable. */
   max?: string;
   /**
-   * The first day of each week, from 0 for Sunday to 6 for Saturday: by default the locale's, or
-   * Monday where the browser cannot tell.
+   * The first day of each week, from 0 for Sunday to 6 for Saturday.
+   * @default the locale's, or Monday where the browser cannot tell
    */
   weekStart?: Weekday;
   /**
@@ -174,7 +177,7 @@ export function Calendar({
 
   function handleKeyDown(event: KeyboardEvent<HTMLTableElement>) {
     if (event.altKey || event.ctrlKey || event.metaKey) return;
-    const rtl = getComputedStyle(event.currentTarget).direction === 'rtl';
+    const rtl = isRightToLeft(event.currentTarget);
     const column = (dayParts(active).weekday - firstWeekday + 7) % 7;
     const moves: Record<string, number> = {
       ArrowLeft: active + (rtl ? 1 : -1),
@@ -220,7 +223,7 @@ export function Calendar({
       <Row align="center" gap={1} className="env-calendar-header">
         <IconButton
           variant="ghost"
-          icon={<ChevronLeft />}
+          icon={<IconChevronLeft />}
           aria-label={previousName}
           title={previousName}
           // Unavailable rather than disabled, so focus stays on the button at the earliest month.
@@ -231,7 +234,7 @@ export function Calendar({
           }}
         />
         <div
-          className="env-calendar-heading"
+          className="env-calendar-title"
           id={headingId}
           aria-live={daysShown ? 'polite' : undefined}
         >
@@ -239,7 +242,7 @@ export function Calendar({
         </div>
         <IconButton
           variant="ghost"
-          icon={<ChevronRight />}
+          icon={<IconChevronRight />}
           aria-label={nextName}
           title={nextName}
           aria-disabled={!nextAvailable || undefined}

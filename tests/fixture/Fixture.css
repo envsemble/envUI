@@ -481,10 +481,25 @@ body:has(.density-fixture) {
 body:has(.fixture-layout-check) {
   margin: 0;
 }
-.docs-live-example.fixture-layout-check {
+.site-live-example.fixture-layout-check {
   min-block-size: 0;
   padding: 0;
   border: 0;
   background: none;
   box-shadow: none;
+}
+/* With &theme=: the stage as the catalogue draws it, in a column of a catalogue page's width, on a
+   page of that theme. */
+body:has(.fixture-layout-check-page) {
+  margin: 0;
+}
+.fixture-layout-check-page {
+  box-sizing: border-box;
+  min-block-size: 100vh;
+  padding: 2.5rem;
+  background: var(--env-color-bg-page);
+}
+.fixture-layout-check-page > .site-live-example {
+  max-inline-size: 40rem;
+  margin-inline: auto;
 }

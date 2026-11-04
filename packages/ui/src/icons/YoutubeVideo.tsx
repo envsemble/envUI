@@ -1,11 +1,14 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
-// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
+// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../Icon.js';
+import { useSymbolIconFill } from '../SymbolIconState.js';
 
-export function YoutubeVideo({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
-  return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M480-200q-71 0-133-2-53-2-104.5-5.5T168-217q-26-7-45-26t-26-45q-6-23-9.5-56T82-407q-2-36-2-73t2-73q2-30 5.5-63t9.5-56q7-26 26-45t45-26q23-6 74.5-9.5T347-758q62-2 133-2l40 .5q40 .5 92.5 2t104.5 5q52 3.5 75 9.5 26 7 45 26t26 45q6 23 9.5 56t5.5 63q2 36 2 73t-2 73q-2 30-5.5 63t-9.5 56q-7 26-26 45t-45 26q-23 6-75 9.5t-104.5 5q-52.5 1.5-92.5 2l-40 .5Zm98-297-148-86q-10-6-20 .5T400-565v170q0 11 10 17.5t20 .5l148-86q10-6 10-17t-10-17Z" /> : <path d="M480-200q-71 0-133-2-53-2-104.5-5.5T168-217q-26-7-45-26t-26-45q-6-23-9.5-56T82-407q-2-36-2-73t2-73q2-30 5.5-63t9.5-56q7-26 26-45t45-26q23-6 74.5-9.5T347-758q62-2 133-2l40 .5q40 .5 92.5 2t104.5 5q52 3.5 75 9.5 26 7 45 26t26 45q6 23 9.5 56t5.5 63q2 36 2 73t-2 73q-2 30-5.5 63t-9.5 56q-7 26-26 45t-45 26q-23 6-75 9.5t-104.5 5q-52.5 1.5-92.5 2l-40 .5Zm0-80q87 0 177.5-3.5T772-294q5-2 8.5-5.5t5.5-8.5q8-29 11-83t3-89q0-35-3-89t-11-83q-2-5-5.5-8.5T772-666q-24-7-114.5-10.5T480-680q-87 0-177.5 3.5T188-666q-5 2-8.5 5.5T174-652q-8 29-11 83t-3 89q0 35 3 89t11 83q2 5 5.5 8.5t8.5 5.5q24 7 114.5 10.5T480-280Zm98-217-148-86q-10-6-20 .5T400-565v170q0 11 10 17.5t20 .5l148-86q10-6 10-17t-10-17Zm-98 17Z" />}</Icon>;
+/** The path both styles start with. */
+const start = "M480-200q-71 0-133-2-53-2-104.5-5.5T168-217q-26-7-45-26t-26-45q-6-23-9.5-56T82-407q-2-36-2-73t2-73q2-30 5.5-63t9.5-56q7-26 26-45t45-26q23-6 74.5-9.5T347-758q62-2 133-2l40 .5q40 .5 92.5 2t104.5 5q52 3.5 75 9.5 26 7 45 26t26 45q6 23 9.5 56t5.5 63q2 36 2 73t-2 73q-2 30-5.5 63t-9.5 56q-7 26-26 45t-45 26q-23 6-75 9.5t-104.5 5q-52.5 1.5-92.5 2l-40 .5Zm";
+
+export function IconYoutubeVideo({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
+  return <Icon viewBox="0 -960 960 960" {...props}><path d={filled ? start + "98-297-148-86q-10-6-20 .5T400-565v170q0 11 10 17.5t20 .5l148-86q10-6 10-17t-10-17Z" : start + "0-80q87 0 177.5-3.5T772-294q5-2 8.5-5.5t5.5-8.5q8-29 11-83t3-89q0-35-3-89t-11-83q-2-5-5.5-8.5T772-666q-24-7-114.5-10.5T480-680q-87 0-177.5 3.5T188-666q-5 2-8.5 5.5T174-652q-8 29-11 83t-3 89q0 35 3 89t11 83q2 5 5.5 8.5t8.5 5.5q24 7 114.5 10.5T480-280Zm98-217-148-86q-10-6-20 .5T400-565v170q0 11 10 17.5t20 .5l148-86q10-6 10-17t-10-17Zm-98 17Z"} /></Icon>;
 }

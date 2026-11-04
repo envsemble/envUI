@@ -1,18 +1,15 @@
 'use client';
 
 import type { CSSProperties, Ref } from 'react';
+import { classNames } from '../internal/classNames.js';
 import { useFieldMetadata } from './internal/useFieldMetadata.js';
 import { TextareaControl, type TextareaControlProps } from './internal/TextareaControl.js';
-import {
-  FieldFrame,
-  type FieldProps,
-  type TextFieldAppearanceProps,
-} from './internal/FieldFrame.js';
+import { FieldFrame, type FieldProps } from './internal/FieldFrame.js';
 
 export interface TextareaProps extends TextareaControlProps, FieldProps {
   /** The native text area, so that a form library can register it and focus it. */
   ref?: Ref<HTMLTextAreaElement>;
-  /** The field's class, on its root element, beside env-field and env-text-field. */
+  /** The field's class, on its root element, beside env-field, env-text-field and env-textarea. */
   className?: string;
   /** Styles of the field's root element, such as its width in a row. */
   style?: CSSProperties;
@@ -21,7 +18,7 @@ export interface TextareaProps extends TextareaControlProps, FieldProps {
    * its label resting at the top, so it has no floating variant.
    * @default 'outline'
    */
-  variant?: Exclude<TextFieldAppearanceProps['variant'], 'floating'>;
+  variant?: 'outline' | 'ghost';
   /** Receives the text as people type, after the native onChange. */
   onValueChange?: (value: string) => void;
 }
@@ -63,7 +60,7 @@ export function Textarea({
       floatingLabel
       multiline
       variant={variant}
-      className={className}
+      className={classNames('env-textarea', className)}
       style={style}
     >
       <TextareaControl

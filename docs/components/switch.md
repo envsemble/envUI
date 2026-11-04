@@ -2,7 +2,7 @@
 title: Switch
 summary: An on/off setting that takes effect as soon as it changes.
 status: stable
-since: 0.1.0
+since: 1.0.0
 category: Forms & selection
 aliases:
   - toggle
@@ -69,7 +69,7 @@ The setting applies as soon as the switch changes, with no Save button.
 
 - When saving it fails, the switch goes back, with a message that says what went wrong.
 
-```tsx figure=ShowCompleted
+```tsx figure=ShowCompleted motion
 
 ```
 
@@ -85,7 +85,7 @@ In a row, the row's title names the switch, and its detail describes it.
 
 The label wraps beside the track.
 
-```tsx figure=LongLabel widths="14 30"
+```tsx figure=LongLabel widths="30 14" sweep
 
 ```
 
@@ -93,11 +93,11 @@ The label wraps beside the track.
 
 Name the setting in a short phrase, so that on means yes.
 
-```tsx figure=SameLabel
+```tsx figure=SameLabel motion
 
 ```
 
-```tsx figure=StateInLabel
+```tsx figure=StateInLabel motion
 
 ```
 
@@ -136,7 +136,7 @@ A disabled switch keeps its setting from changing.
 <Switch label="Show completed tasks" checked={showCompleted} onCheckedChange={setShowCompleted} />
 ```
 
-A Switch is a native checkbox with `role="switch"`, named by its `label`. Apply the setting from `onCheckedChange`, which receives the new state; control it with `checked`, or leave it uncontrolled with `defaultChecked`, which a form reset restores. When saving fails, set it back. `name` and the other native props reach the input.
+A Switch is a native checkbox with `role="switch"`, named by its `label`; an optional `description` is a short muted line under it, read with its name. Apply the setting from `onCheckedChange`, which receives the new state; control it with `checked`, or leave it uncontrolled with `defaultChecked`, which a form reset restores. When saving fails, set it back. `name` and the other native props reach the input.
 
 #### Disabled
 
@@ -155,13 +155,8 @@ In a List row, the row's title names the switch through `aria-labelledby`, and i
 
 The root, `env-switch`, is the label around the track, `env-switch-input`, and the text, `env-switch-label`. `className` and `style` reach the root, and `ref` and the other native props the input.
 
-### Customize
-
-`--env-switch-container`, `--env-switch-content`, `--env-switch-outline`, `--env-switch-selected` and `--env-switch-selected-content` color one Switch, through `style` or CSS; hover, focus and press follow them.
-
 ## Changelog
 
+- **1.0.0-prerelease.5**: `description`, a muted line under the label.
 - **1.0.0**: `className` and `style` style the root, `env-switch`, rather than the input, which keeps `ref` and the other native props. `env-choice-control` is `env-switch` and `env-switch-control` `env-switch-input`.
 - **1.0.0**: The track of a switch that is off has a 3:1 boundary, and switches in the dark theme reach 3:1 on every surface.
-- **0.4.0**: A switch shrinks slightly while it or its label is pressed. The off track uses the shared fill, so switches on rows stand apart from their surface.
-- **0.1.0**: Switch.

@@ -1,7 +1,7 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 
 import { test, expect, type Page } from '@playwright/test';
-import { fixtureUrl } from './Servers';
+import { fixtureUrl } from './helpers/Servers';
 import {
   cssColor,
   dropped,
@@ -190,7 +190,7 @@ test.describe('contrast', { tag: '@contrast' }, () => {
       const scoped = pair.contrast !== undefined || pair.minimum !== undefined;
       if (scoped && !pair.rationale?.trim())
         problems.push(
-          `${name} is measured only at high contrast or below its kind's minimum: give it a rationale that says why WCAG doesn't require more.`,
+          `${name} is measured at one contrast only or below its kind's minimum: give it a rationale that says why WCAG doesn't require more.`,
         );
       if (!scoped && pair.rationale)
         problems.push(`${name} has a rationale but no scope or minimum: move it to its note.`);
@@ -832,7 +832,7 @@ test.describe('contrast', { tag: '@contrast' }, () => {
   for (const theme of themes) {
     test(`every pair meets its minimum in the ${theme.name} theme`, async ({ page }, testInfo) => {
       if (theme.media) await page.emulateMedia(theme.media);
-      await page.goto(`${fixtureUrl}/contrast.html`);
+      await page.goto(`${fixtureUrl}/Contrast.html`);
       await page.waitForSelector('body[data-styles-ready]', { state: 'attached' });
       const measured = pairs.filter((pair) => !pair.contrast || pair.contrast === theme.contrast);
       const names = [...new Set(measured.flatMap((pair) => [pair.fg, ...pair.bg]))];
@@ -863,7 +863,7 @@ test.describe('contrast', { tag: '@contrast' }, () => {
   test('prefers-contrast: more applies the high-contrast themes unless a boundary opts out', async ({
     page,
   }) => {
-    await page.goto(`${fixtureUrl}/contrast.html`);
+    await page.goto(`${fixtureUrl}/Contrast.html`);
     await page.waitForSelector('body[data-styles-ready]', { state: 'attached' });
     // Every token, of every type, not only the colors the pairs name.
     const names = tokenList.tokens.map((token) => token.cssVariable);

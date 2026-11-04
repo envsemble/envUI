@@ -24,6 +24,9 @@ import { Link } from '../actions/Link.js';
 import { Code } from './Code.js';
 import { CodeBlock } from './CodeBlock.js';
 import { Kbd } from './Kbd.js';
+import '../styles/Base.css';
+import '../styles/Prose.css';
+import '../styles/Markdown.css';
 
 export interface MarkdownLinkProps extends ComponentPropsWithoutRef<'a'> {
   href: string;

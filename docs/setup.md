@@ -47,13 +47,22 @@ aliases:
   - quick start
   - get started
   - getting started
+  - agents
+  - coding agents
+  - AI agents
+  - AGENTS.md
+  - SKILL.md
+  - setup skill
+  - lint rules
 ---
 
-# Install the private package
+# Install and set up
 
-envUI is a private package of React components and design tokens for React and React DOM 19. Install an exact version and read the docs shipped with it.
+envUI is a package of React components and design tokens for React and React DOM 19. Install an exact version and read the docs shipped with it.
 
 ## Registry access
+
+envUI is published to GitHub Packages for now, so npm needs its registry and a token:
 
 ```ini
 # Project .npmrc
@@ -69,23 +78,32 @@ Locally, `NODE_AUTH_TOKEN` is a classic GitHub token with `read:packages`; in Gi
 npm install --save-exact @envsemble/envui@<version>
 ```
 
+Upgrade `@envsemble/envui` and the [lint packages](#lint-rules) together, to the same exact version.
+
 ## Connect styles and theme
 
 ```tsx
 import { Theme, Button } from '@envsemble/envui';
-import { Add } from '@envsemble/envui/icons/Add';
-import '@envsemble/envui/styles.css';
+import { IconAdd } from '@envsemble/envui/icons/Add';
 
 export function App() {
   return (
     <Theme theme="light">
-      <Button startIcon={<Add />}>Create item</Button>
+      <Button startIcon={<IconAdd />}>Create item</Button>
     </Theme>
   );
 }
 ```
 
-Import `@envsemble/envui/styles.css` once, in the client entry, and put the UI inside `Theme`: a theme attribute on the document alone gives no React context. The styles include Inter and sit in the `env` cascade layer, so the application's CSS outside layers overrides them without `!important`. Declare the order once, such as `@layer reset, env, app;`, with resets and element rules in a layer before `env`: an element rule outside layers, such as `button { border: 0 }`, restyles envUI's components too. [Cascade layers](migration.md#cascade-layers) shows how to override a token per theme, and [colors and themes](foundations/colors.md) nested themes, portals and high contrast.
+Put the UI inside `Theme`: a theme attribute on the document alone gives no React context. The styles include Geist and sit in the `env` cascade layer: [cascade layers](customizing.md#cascade-layers) says how the application's CSS and resets take their place around it, and [colors and themes](foundations/colors.md) covers nested themes, portals and high contrast.
+
+### Styles come with the components
+
+Each component's module imports its own style sheet, after the base every component shares: the layer order, the tokens, the theme and the font. A bundler that loads CSS from dependencies, such as Vite, Next.js, webpack with a CSS loader or esbuild, puts in the page what the application's modules import, so the page loads the CSS of the components it uses.
+
+- **Without a bundler**, import `@envsemble/envui/styles.css` once, in the client entry: it holds every component's styles. Don't import it as well as the components' own: the styles would load twice.
+- **In Node**, as when a server renders or tests run without a bundler, the same modules load without their CSS: the package's style sheet imports resolve to an empty module under the `node` condition, and only a bundler, which sets the `module` condition, loads the CSS. Server-rendered pages get their CSS from the client bundle, or from the framework that collects it, as Next.js does.
+- **Next.js** with webpack keeps only the style sheets a page uses when `experimental.optimizePackageImports` lists `@envsemble/envui`.
 
 ### Theme preference
 
@@ -131,7 +149,7 @@ Where the application's contrast is fixed, pass it to both, `contrast: 'high'` t
 
 ## Connect your router
 
-Destinations in envUI render native anchors: Button and Link with `href`, Bar, Rail and Drawer destinations, Card, Pager, Breadcrumbs and Menu.Item. Register the router's link once with `LinkProvider`, around the application, so they navigate on the client. The component gets native anchor props with a string `href`, and renders an anchor with them and the ref:
+Destinations in envUI render native anchors: Button and Link with `href`, NavigationBar, NavigationRail and NavigationDrawer destinations, Card, Pager, Breadcrumbs and Menu.Item. Register the router's link once with `LinkProvider`, around the application, so they navigate on the client. The component gets native anchor props with a string `href`, and renders an anchor with them and the ref:
 
 ```tsx
 <LinkProvider component={RouterLink}>{app}</LinkProvider>
@@ -244,33 +262,6 @@ export function RouterLinks({ children }: { children: ReactNode }) {
 }
 ```
 
-### The current page and focus
-
-The application marks the current destination `current` in the array it passes to Bar, Rail or Drawer, from the router's location; a destination stays current on the pages under it.
-
-```tsx recipe
-import { useLocation } from 'react-router';
-import { Drawer } from '@envsemble/envui';
-import { Folder } from '@envsemble/envui/icons/Folder';
-import { Group } from '@envsemble/envui/icons/Group';
-
-export function ProjectNavigation() {
-  const { pathname } = useLocation();
-  const current = (path: string) => pathname === path || pathname.startsWith(`${path}/`);
-  return (
-    <Drawer
-      aria-label="Projects"
-      destinations={[
-        { label: 'Projects', icon: <Folder />, href: '/projects', current: current('/projects') },
-        { label: 'People', icon: <Group />, href: '/people', current: current('/people') },
-      ]}
-    />
-  );
-}
-```
-
-After a navigation, move focus to the new page's `main` or `h1`, with `tabIndex={-1}`, and `preventScroll` where the page restores its own scroll; otherwise screen readers hear nothing of it. A link that only changes a view in place, such as a tab or a filter, keeps focus.
-
 ## Locale, strings and direction
 
 envUI works without setup in English, in the runtime's locale and in each element's direction. To translate or format for its people, an application wraps itself or a region in `EnvUIProvider`, here in a client component, where `t` is its translation function:
@@ -286,7 +277,8 @@ export function Localized({ children }: { children: ReactNode }) {
     <EnvUIProvider
       locale="de-CH"
       messages={{
-        common: { clear: 'Leeren', loading: 'Wird geladen' },
+        common: { loading: 'Wird geladen' },
+        combobox: { clear: 'Leeren' },
         toast: { hidden: ({ count }) => t('notifications.hidden', { count }) },
       }}
       dir="ltr"
@@ -343,14 +335,14 @@ A server component passes a client component only serializable values, no functi
 ## Public entry points
 
 - `@envsemble/envui` for ordinary UI.
-- `@envsemble/envui/icons/Name` for individual official symbols.
+- `@envsemble/envui/icons/<Name>` for individual official symbols, each `Icon<Name>`.
 - `@envsemble/envui/content` when the feature needs code or Markdown.
 - `@envsemble/envui/diff` when the feature shows code diffs.
 - `@envsemble/envui/rich-text` when the feature needs formatted editing or rendering.
 - `@envsemble/envui/color` when the feature chooses or shows colors: [ColorPicker, ColorPickerButton and ColorSwatch](components/color-picker.md).
 - `@envsemble/envui/messages` for `defaultMessages`, envUI's English strings by namespace, for applications that extract or translate them.
 - `@envsemble/envui/dev` for [dev mode](dev-mode.md), in development only: load it with a dynamic `import()` behind a development check, so production builds contain none of it.
-- `@envsemble/envui/assets/*` for raw assets, such as the Inter font file.
+- `@envsemble/envui/assets/*` for raw assets, such as the Geist font file.
 
 The content, rich-text, diff and color entries need libraries that envUI doesn't list as dependencies, so an application that uses only the main entry never installs them. One that imports an entry installs its libraries, in these versions or later ones of the same major:
 
@@ -382,30 +374,20 @@ The content, rich-text, diff and color entries need libraries that envUI doesn't
 
 They aren't peer dependencies, since GitHub Packages drops `peerDependenciesMeta`; a missing one fails the build where the entry is imported.
 
-Import each icon by its subpath, such as `import { Add } from '@envsemble/envui/icons/Add'`, never from the `@envsemble/envui/icons` barrel, which makes a bundler read every symbol. See [icons](foundations/icons.md).
+Import each icon by its own path, such as `import { IconAdd } from '@envsemble/envui/icons/Add'`. See [icons](foundations/icons.md).
 
 ### Bundle size
 
-The modules have no side effects, so bundlers keep only what the application uses, with one difference in namespaces: Vite, on Rolldown, keeps the parts the application renders, and esbuild every part of a namespace it uses, at most the namespace's size. Measured on envUI 1.0, minified, envUI's own code only:
+The modules have no side effects, so a bundler keeps only what the application uses; Vite keeps only the parts of a namespace the application renders.
 
-| Application renders                    | esbuild | Vite (Rolldown) |
-| -------------------------------------- | ------: | --------------: |
-| `Table.Cell` alone                     |  9.1 KB |          1.4 KB |
-| `Table.Root`, `Body`, `Row` and `Cell` |  9.2 KB |          5.3 KB |
-| `Menu.Item` alone                      |  7.7 KB |          3.8 KB |
-| `Menu.Root` with a `Menu.Item`         |  9.2 KB |          7.4 KB |
-| `Pager.Next`                           |  1.5 KB |          1.6 KB |
-| `Badge`, which is no namespace's part  |  0.6 KB |          0.9 KB |
+## Lint rules
 
-Gzipped, `Table.Cell` alone is 3.7 KB with esbuild and 0.6 KB with Vite.
+[`@envsemble/eslint-plugin-envui`](https://github.com/envsemble/envUI/tree/main/packages/eslint-plugin) and [`@envsemble/stylelint-config-envui`](https://github.com/envsemble/envUI/tree/main/packages/stylelint-config) report hand-built controls and raw colors, naming the envUI component or token to use, so people and agents see them as they edit and check. Install them at envUI's version; each one's README says how to turn it on:
+
+```sh
+npm install --save-dev --save-exact @envsemble/eslint-plugin-envui@<version> @envsemble/stylelint-config-envui@<version>
+```
 
 ## Coding agents
 
-A coding agent can do this setup with you: give it the prompt `Set up envUI in my app: envui.envsemble.com/SKILL.md`. It also adds a short pointer to these docs to the project's `AGENTS.md` and turns on envUI's lint rules, each of which you may skip. [For agents](agent-tooling.md) describes it.
-
-## Related workflows
-
-- [Documentation index](index.md)
-- [For agents](agent-tooling.md)
-- [Migration](migration.md)
-- [Local development](local-development.md)
+A coding agent can do this setup with you, following [the setup skill](https://envui.envsemble.com/SKILL.md) the site hosts: it shows its plan and waits for your yes, adds a pointer to these docs to the project's `AGENTS.md` and turns on the lint rules.

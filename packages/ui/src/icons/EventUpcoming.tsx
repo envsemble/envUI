@@ -1,11 +1,14 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
-// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
+// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../Icon.js';
+import { useSymbolIconFill } from '../SymbolIconState.js';
 
-export function EventUpcoming({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
-  return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M760-80H640q-17 0-28.5-11.5T600-120q0-17 11.5-28.5T640-160h120v-400H200v120q0 17-11.5 28.5T160-400q-17 0-28.5-11.5T120-440v-280q0-33 23.5-56.5T200-800h40v-40q0-17 11.5-28.5T280-880q17 0 28.5 11.5T320-840v40h320v-40q0-17 11.5-28.5T680-880q17 0 28.5 11.5T720-840v40h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80Zm-393-80H80q-17 0-28.5-11.5T40-200q0-17 11.5-28.5T80-240h287l-75-76q-11-11-11.5-27.5T292-372q11-11 28-11t28 11l144 144q12 12 12 28t-12 28L348-28q-11 11-27.5 11.5T292-28q-11-11-11-28t11-28l75-76Z" /> : <path d="M760-80H640q-17 0-28.5-11.5T600-120q0-17 11.5-28.5T640-160h120v-400H200v120q0 17-11.5 28.5T160-400q-17 0-28.5-11.5T120-440v-280q0-33 23.5-56.5T200-800h40v-40q0-17 11.5-28.5T280-880q17 0 28.5 11.5T320-840v40h320v-40q0-17 11.5-28.5T680-880q17 0 28.5 11.5T720-840v40h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80Zm-393-80H80q-17 0-28.5-11.5T40-200q0-17 11.5-28.5T80-240h287l-75-76q-11-11-11.5-27.5T292-372q11-11 28-11t28 11l144 144q12 12 12 28t-12 28L348-28q-11 11-27.5 11.5T292-28q-11-11-11-28t11-28l75-76ZM200-640h560v-80H200v80Zm0 0v-80 80Z" />}</Icon>;
+/** The path both styles start with. */
+const start = "M760-80H640q-17 0-28.5-11.5T600-120q0-17 11.5-28.5T640-160h120v-400H200v120q0 17-11.5 28.5T160-400q-17 0-28.5-11.5T120-440v-280q0-33 23.5-56.5T200-800h40v-40q0-17 11.5-28.5T280-880q17 0 28.5 11.5T320-840v40h320v-40q0-17 11.5-28.5T680-880q17 0 28.5 11.5T720-840v40h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80Zm-393-80H80q-17 0-28.5-11.5T40-200q0-17 11.5-28.5T80-240h287l-75-76q-11-11-11.5-27.5T292-372q11-11 28-11t28 11l144 144q12 12 12 28t-12 28L348-28q-11 11-27.5 11.5T292-28q-11-11-11-28t11-28l75-76Z";
+
+export function IconEventUpcoming({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
+  return <Icon viewBox="0 -960 960 960" {...props}><path d={filled ? start : start + "M200-640h560v-80H200v80Zm0 0v-80 80Z"} /></Icon>;
 }

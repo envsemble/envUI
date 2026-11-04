@@ -1,343 +1,354 @@
-/* Avatar groups: a pile of avatars at rest, stacked like cards, each a little off the line and
-   turned, with the count of the rest at the bottom of the pile, peeking out past its end. The whole
-   pile is one thing: hovering it, a tap on it or keyboard focus inside it spreads the avatars apart
-   along a gentle arch, and only spread is each avatar a target of its own. Nothing rings them: each
-   avatar's own hairline edge keeps it apart from the one it lies on.
+@layer env.components {
+  /* Avatar groups: a pile of avatars at rest, stacked like cards, each a little off the line and
+     turned, with the count of the rest at the bottom of the pile, peeking out past its end. The whole
+     pile is one thing: hovering it, a tap on it or keyboard focus inside it spreads the avatars apart
+     along a gentle arch, and only spread is each avatar a target of its own. Nothing rings them: each
+     avatar's own hairline edge keeps it apart from the one it lies on.
 
-   The group's box is always the spread row, and resting and spreading only move the items, by
-   translate and rotate, within it: spreading never changes the group's size, so it can't push what
-   is around it, wrap the row it sits in, or move out from under the pointer and bunch again. At rest
-   the items gather toward the start of that room, or its end with data-gather="end", each by its
-   place, which the component sets as --env-avatar-group-before, -after, -count-before and
-   -count-after. */
-.env-avatar-group {
-  --env-avatar-group-size: 2rem;
-  /* Spread, the gap between avatars; at rest, how far each avatar starts after the one under it,
-     and how far the count lies under the last avatar. */
-  --env-avatar-group-gap: calc(var(--env-avatar-group-size) * 0.15);
-  --env-avatar-group-pitch: calc(var(--env-avatar-group-size) * 0.34);
-  --env-avatar-group-tuck: calc(var(--env-avatar-group-size) * 0.25);
-  /* The room each avatar takes in the spread row: its size, or a pressable avatar's touch target. */
-  --env-avatar-group-slot: var(--env-avatar-group-size);
-  /* 0 at rest, 1 spread. */
-  --env-avatar-group-spread: 0;
-  /* Where the items gather at rest: 0 at the start, 1 at the end. */
-  --env-avatar-group-gather: 0;
-  /* The inline direction: mirrored in right-to-left text, for the gathering and the turns. */
-  --env-avatar-group-inline: 1;
-  /* How long the pile stays one target once it starts to spread: until the avatars are in place. */
-  --env-avatar-group-settle: 0s;
-  /* The color of the surface below, for the gap in a chosen avatar's ring: the envUI surface the
-     group sits on, or the canvas; --env-avatar-group-ring sets it for any other surface, such as a
-     row. */
-  --env-avatar-group-ring-color: var(
-    --env-avatar-group-ring,
-    var(--env-surface-color, var(--env-color-bg-page))
-  );
-  position: relative;
-  box-sizing: border-box;
-  display: inline-flex;
-  flex: 0 0 auto;
-  flex-wrap: nowrap;
-  align-items: center;
-  vertical-align: middle;
-  /* The group's own stacking context, so the count can lie under its avatars. */
-  isolation: isolate;
-}
-.env-avatar-group[data-size='sm'] {
-  --env-avatar-group-size: 1.5rem;
-}
-.env-avatar-group[data-size='lg'] {
-  --env-avatar-group-size: 3rem;
-}
-.env-avatar-group[data-size='xl'] {
-  --env-avatar-group-size: 5.5rem;
-}
-.env-avatar-group[data-gather='end'] {
-  --env-avatar-group-gather: 1;
-}
-.env-avatar-group:dir(rtl) {
-  --env-avatar-group-inline: -1;
-}
-/* Spread: under a pointer that hovers, after a tap, which the component marks with data-spread, or
-   with keyboard focus inside, so the keyboard reaches each avatar and the count in its place. A
-   click focuses without a focus ring, so it leaves the group to bunch when the pointer leaves. */
-@media (hover: hover) {
-  .env-avatar-group:hover {
+     The group's box is always the spread row, and resting and spreading only move the items, by
+     translate and rotate, within it: spreading never changes the group's size, so it can't push what
+     is around it, wrap the row it sits in, or move out from under the pointer and bunch again. At rest
+     the items gather toward the start of that room, or its end with data-align="end", each by its
+     place, which the component sets as --env-avatar-group-before, -after, -count-before and
+     -count-after. */
+  .env-avatar-group {
+    --env-avatar-group-size: var(--env-picture-size-md);
+    /* Spread, the gap between avatars; at rest, how far each avatar starts after the one under it,
+       and how far the count lies under the last avatar. */
+    --env-avatar-group-gap: calc(var(--env-avatar-group-size) * 0.15);
+    --env-avatar-group-pitch: calc(var(--env-avatar-group-size) * 0.6);
+    --env-avatar-group-tuck: calc(var(--env-avatar-group-size) * 0.25);
+    /* The room each avatar takes in the spread row: its size, or a pressable avatar's touch target. */
+    --env-avatar-group-slot: var(--env-avatar-group-size);
+    /* 0 at rest, 1 spread. */
+    --env-avatar-group-spread: 0;
+    /* Where the items gather at rest: 0 at the start, 1 at the end. */
+    --env-avatar-group-gather: 0;
+    /* The inline direction: mirrored in right-to-left text, for the gathering and the turns. */
+    --env-avatar-group-inline: 1;
+    /* How long the pile stays one target once it starts to spread: until the avatars are in place. */
+    --env-avatar-group-settle: 0s;
+    /* The color of the surface below, for the gap in a chosen avatar's ring: the envUI surface the
+       group sits on, or the canvas; --env-avatar-group-ring sets it for any other surface, such as a
+       row. */
+    --env-avatar-group-ring-color: var(
+      --env-avatar-group-ring,
+      var(--env-surface-color, var(--env-color-bg-page))
+    );
+    position: relative;
+    box-sizing: border-box;
+    display: inline-flex;
+    flex: 0 0 auto;
+    flex-wrap: nowrap;
+    align-items: center;
+    vertical-align: middle;
+    /* The group's own stacking context, so the count can lie under its avatars. */
+    isolation: isolate;
+  }
+  .env-avatar-group[data-size='sm'] {
+    --env-avatar-group-size: var(--env-picture-size-sm);
+  }
+  .env-avatar-group[data-size='lg'] {
+    --env-avatar-group-size: var(--env-picture-size-lg);
+  }
+  .env-avatar-group[data-size='xl'] {
+    --env-avatar-group-size: var(--env-picture-size-xl);
+  }
+  .env-avatar-group[data-align='end'] {
+    --env-avatar-group-gather: 1;
+  }
+  .env-avatar-group:dir(rtl) {
+    --env-avatar-group-inline: -1;
+  }
+  /* Spread: under a pointer that hovers, after a tap, which the component marks with data-spread, or
+     with keyboard focus inside, so the keyboard reaches each avatar and the count in its place. A
+     click focuses without a focus ring, so it leaves the group to bunch when the pointer leaves. */
+  @media (hover: hover) {
+    .env-avatar-group:hover {
+      --env-avatar-group-spread: 1;
+    }
+  }
+  .env-avatar-group:is([data-spread], :has(:focus-visible)) {
     --env-avatar-group-spread: 1;
   }
-}
-.env-avatar-group:is([data-spread], :has(:focus-visible)) {
-  --env-avatar-group-spread: 1;
-}
 
-/* The pile is one target: a cover over the whole group catches the pointer while it rests, so no
-   avatar under another can be pressed or hovered, and the pointer spreads the group instead. Once
-   the group has spread and the avatars are in place, the cover goes and each avatar is a target of
-   its own; it comes back at once as the group bunches. It reaches a little past the box, for the
-   turned avatars' edges. */
-.env-avatar-group::before {
-  content: '';
-  position: absolute;
-  inset: calc(var(--env-avatar-group-size) * -0.06);
-  z-index: calc(var(--env-z-raised) + 1);
-}
-@media (hover: hover) {
-  .env-avatar-group:hover::before {
+  /* The pile is one target: a cover over the whole group catches the pointer while it rests, so no
+     avatar under another can be pressed or hovered, and the pointer spreads the group instead. Once
+     the group has spread and the avatars are in place, the cover goes and each avatar is a target of
+     its own; it comes back at once as the group bunches. It reaches a little past the box, for the
+     turned avatars' edges. */
+  .env-avatar-group::before {
+    content: '';
+    position: absolute;
+    inset: calc(var(--env-avatar-group-size) * -0.06);
+    z-index: calc(var(--env-z-raised) + 1);
+  }
+  @media (hover: hover) {
+    .env-avatar-group:hover::before {
+      visibility: hidden;
+      transition: visibility 0s linear var(--env-avatar-group-settle);
+    }
+  }
+  .env-avatar-group:is([data-spread], :has(:focus-visible))::before {
     visibility: hidden;
     transition: visibility 0s linear var(--env-avatar-group-settle);
   }
-}
-.env-avatar-group:is([data-spread], :has(:focus-visible))::before {
-  visibility: hidden;
-  transition: visibility 0s linear var(--env-avatar-group-settle);
-}
-/* Nor do the piled avatars and the count take the pointer themselves, below, so nothing, a
-   browser's hit test or a checker's, counts them as targets that cover each other; spread, they do. */
-@media (hover: hover) {
-  .env-avatar-group:hover > * {
+  /* Nor do the piled avatars and the count take the pointer themselves, below, so nothing, a
+     browser's hit test or a checker's, counts them as targets that cover each other; spread, they do. */
+  @media (hover: hover) {
+    .env-avatar-group:hover > * {
+      pointer-events: auto;
+    }
+  }
+  .env-avatar-group:is([data-spread], :has(:focus-visible)) > * {
     pointer-events: auto;
   }
-}
-.env-avatar-group:is([data-spread], :has(:focus-visible)) > * {
-  pointer-events: auto;
-}
 
-.env-avatar-group > * {
-  --env-avatar-group-pad: 0rem;
-  /* At rest: each item's small offsets, which vary by its place, below. */
-  --env-avatar-group-nudge: 0rem;
-  --env-avatar-group-rest-lift: 0rem;
-  --env-avatar-group-rest-turn: 0deg;
-  /* Spread: its place on the arch, below. */
-  --env-avatar-group-arc-lift: 0rem;
-  --env-avatar-group-arc-turn: 0deg;
-  /* At rest each item moves from its place in the spread row by a step, a slot and its gap less the
-     pile's pitch, for each avatar between it and the end the items gather toward, and by a smaller
-     step for the count, which tucks only a little under the last avatar, so its figures stay clear. */
-  --env-avatar-group-step: calc(
-    var(--env-avatar-group-slot) + var(--env-avatar-group-gap) - var(--env-avatar-group-pitch)
-  );
-  --env-avatar-group-count-step: calc(
-    (var(--env-avatar-group-slot) - var(--env-avatar-group-size)) / 2 +
-      var(--env-avatar-group-gap) + var(--env-avatar-group-tuck)
-  );
-  --env-avatar-group-shift: calc(
-    var(--env-avatar-group-gather) *
-      (
-        var(--env-avatar-group-after, 0) * var(--env-avatar-group-step) +
-          var(--env-avatar-group-count-after, 0) * var(--env-avatar-group-count-step)
-      ) -
-      (1 - var(--env-avatar-group-gather)) *
-      (
-        var(--env-avatar-group-before, 0) * var(--env-avatar-group-step) +
-          var(--env-avatar-group-count-before, 0) * var(--env-avatar-group-count-step)
-      )
-  );
-  position: relative;
-  flex: 0 0 auto;
-  margin-inline: var(--env-avatar-group-pad);
-  /* Piled, the pointer reaches the group alone. */
-  pointer-events: none;
-  translate: calc(
-      (var(--env-avatar-group-shift) + var(--env-avatar-group-nudge)) *
-        (1 - var(--env-avatar-group-spread)) * var(--env-avatar-group-inline)
-    )
-    calc(
-      var(--env-avatar-group-rest-lift) * (1 - var(--env-avatar-group-spread)) +
-        var(--env-avatar-group-arc-lift) * var(--env-avatar-group-spread)
+  .env-avatar-group > * {
+    --env-avatar-group-padding: 0rem;
+    /* At rest: each item's small offsets, which vary by its place, below. */
+    --env-avatar-group-nudge: 0rem;
+    --env-avatar-group-rest-lift: 0rem;
+    --env-avatar-group-rest-turn: 0deg;
+    /* Spread: its place on the arch, below. */
+    --env-avatar-group-arc-lift: 0rem;
+    --env-avatar-group-arc-turn: 0deg;
+    /* At rest each item moves from its place in the spread row by a step, a slot and its gap less the
+       pile's pitch, for each avatar between it and the end the items gather toward, and by a smaller
+       step for the count, which tucks only a little under the last avatar, so its figures stay clear. */
+    --env-avatar-group-step: calc(
+      var(--env-avatar-group-slot) + var(--env-avatar-group-gap) - var(--env-avatar-group-pitch)
     );
-}
-.env-avatar-group > * + * {
-  margin-inline-start: calc(var(--env-avatar-group-gap) + var(--env-avatar-group-pad));
-}
-/* The avatars turn; the count stays upright, so its figures never lean like italics. */
-.env-avatar-group > :not(.env-avatar-group-overflow) {
-  rotate: calc(
-    (
-        var(--env-avatar-group-rest-turn) * (1 - var(--env-avatar-group-spread)) +
-          var(--env-avatar-group-arc-turn) * var(--env-avatar-group-spread)
-      ) *
-      var(--env-avatar-group-inline)
-  );
-}
-/* At rest, small offsets that vary by place, so the avatars read as a pile rather than a row. */
-.env-avatar-group > :nth-child(3n + 1) {
-  --env-avatar-group-rest-lift: calc(var(--env-avatar-group-size) * -0.04);
-  --env-avatar-group-rest-turn: -6deg;
-}
-.env-avatar-group > :nth-child(3n + 2) {
-  --env-avatar-group-nudge: calc(var(--env-avatar-group-size) * 0.03);
-  --env-avatar-group-rest-lift: calc(var(--env-avatar-group-size) * 0.05);
-  --env-avatar-group-rest-turn: 5deg;
-}
-.env-avatar-group > :nth-child(3n) {
-  --env-avatar-group-nudge: calc(var(--env-avatar-group-size) * -0.02);
-  --env-avatar-group-rest-lift: calc(var(--env-avatar-group-size) * -0.01);
-  --env-avatar-group-rest-turn: -2deg;
-}
-/* The count lies at the bottom of the pile, under the last avatar, and shows past its end, by the
-   pile's tuck alone. */
-.env-avatar-group > .env-avatar-group-overflow {
-  --env-avatar-group-nudge: 0rem;
-  z-index: calc(-1 * var(--env-z-raised));
-}
-/* Spread: each item in its place in the row, with gaps, along an arch, the middle highest and the
-   ends a little lower and turned out. */
-.env-avatar-group > :is(:nth-child(2), :nth-last-child(2)) {
-  --env-avatar-group-arc-lift: calc(var(--env-avatar-group-size) * 0.05);
-}
-.env-avatar-group > :nth-child(2) {
-  --env-avatar-group-arc-turn: -3deg;
-}
-.env-avatar-group > :nth-last-child(2) {
-  --env-avatar-group-arc-turn: 3deg;
-}
-.env-avatar-group > :is(:first-child, :last-child) {
-  --env-avatar-group-arc-lift: calc(var(--env-avatar-group-size) * 0.14);
-}
-.env-avatar-group > :first-child {
-  --env-avatar-group-arc-turn: -8deg;
-}
-.env-avatar-group > :last-child {
-  --env-avatar-group-arc-turn: 8deg;
-}
-.env-avatar-group > :only-child {
-  --env-avatar-group-arc-lift: 0rem;
-  --env-avatar-group-arc-turn: 0deg;
-}
-/* A pressable avatar: a button or link the size of the picture, with a state layer over it. */
-.env-avatar-group-item {
-  display: inline-flex;
-  margin-block: 0;
-  padding: 0;
-  border: 0;
-  border-radius: 50%;
-  background: none;
-  color: inherit;
-  text-decoration: none;
-  cursor: pointer;
-}
-.env-avatar-group-item::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
-}
-.env-avatar-group-item:hover::after {
-  background: var(--env-color-bg-neutral-subtle-hover);
-}
-.env-avatar-group-item:active::after {
-  background: var(--env-color-bg-neutral-subtle-pressed);
-}
-/* The avatar under the pointer or keyboard focus comes in front of its neighbours, as does the
-   count with keyboard focus, and so does a chosen one, whose check would otherwise sit under the next avatar: each avatar's turn and lift
-   keep what it draws, the check included, in its own stacking context. */
-.env-avatar-group > .env-avatar-group-item:is(:hover, :focus-visible),
-.env-avatar-group > .env-avatar-group-overflow:focus-visible,
-.env-avatar-group > :is([data-selected], :has([data-selected])) {
-  z-index: var(--env-z-raised);
-}
-.env-avatar-group-item:focus-visible,
-.env-avatar-group-overflow:focus-visible {
-  outline: 0.125rem solid var(--env-color-border-focus);
-  outline-offset: 0.125rem;
-}
-
-/* The count of the rest: a rounded square the size of the avatars, at the bottom of the pile, set
-   as an avatar's initials are, in the same weight, size and spacing, in a neutral fill with the
-   default text color, as a neutral count is. A larger count widens it into a rounded rectangle. Its
-   corners come from the corner scale, a step for each avatar size. It lies under the avatars, over
-   the surface alone, so the fill can stay translucent. At rest its figures center in the part the
-   last avatar leaves uncovered. */
-.env-avatar-group-overflow {
-  box-sizing: border-box;
-  display: inline-grid;
-  place-items: center;
-  min-inline-size: var(--env-avatar-group-size);
-  block-size: var(--env-avatar-group-size);
-  padding-inline: calc(var(--env-avatar-group-size) / 6);
-  border-radius: var(--env-radius-sm);
-  background: var(--env-color-bg-neutral-muted);
-  color: var(--env-color-fg-default);
-  font: var(--env-font-weight-semibold) calc(var(--env-avatar-group-size) * 0.38) / 1
-    var(--env-font-family);
-  letter-spacing: 0.01em;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-  cursor: default;
-  user-select: none;
-}
-.env-avatar-group[data-size='lg'] > .env-avatar-group-overflow {
-  border-radius: var(--env-radius-md);
-}
-.env-avatar-group[data-size='xl'] > .env-avatar-group-overflow {
-  border-radius: var(--env-radius-xl);
-}
-.env-avatar-group-overflow > span {
-  translate: calc(
-    var(--env-avatar-group-tuck) / 2 * (1 - var(--env-avatar-group-spread)) *
-      var(--env-avatar-group-inline)
-  );
-}
-.env-avatar-group-tooltip {
-  display: grid;
-}
-
-/* On touch screens each pressable avatar is a target of at least the touch height, its picture in
-   the middle; spread, the targets sit side by side, with the gap only where the pictures would
-   otherwise touch, and every avatar of such a group takes a slot of that width, so the pile and the
-   count keep their places. The state layer stays the picture's circle. */
-@media (pointer: coarse) {
-  .env-avatar-group[data-interactive] {
-    --env-avatar-group-slot: max(var(--env-avatar-group-size), var(--env-control-height-touch));
-    --env-avatar-group-gap: max(
-      0rem,
+    --env-avatar-group-count-step: calc(
+      (var(--env-avatar-group-slot) - var(--env-avatar-group-size)) / 2 +
+        var(--env-avatar-group-gap) + var(--env-avatar-group-tuck)
+    );
+    --env-avatar-group-shift: calc(
+      var(--env-avatar-group-gather) *
+        (
+          var(--env-avatar-group-after, 0) * var(--env-avatar-group-step) +
+            var(--env-avatar-group-count-after, 0) * var(--env-avatar-group-count-step)
+        ) -
+        (1 - var(--env-avatar-group-gather)) *
+        (
+          var(--env-avatar-group-before, 0) * var(--env-avatar-group-step) +
+            var(--env-avatar-group-count-before, 0) * var(--env-avatar-group-count-step)
+        )
+    );
+    position: relative;
+    flex: 0 0 auto;
+    margin-inline: var(--env-avatar-group-padding);
+    /* Piled, the pointer reaches the group alone. */
+    pointer-events: none;
+    translate: calc(
+        (var(--env-avatar-group-shift) + var(--env-avatar-group-nudge)) *
+          (1 - var(--env-avatar-group-spread)) * var(--env-avatar-group-inline)
+      )
       calc(
-        var(--env-avatar-group-size) * 0.15 - var(--env-avatar-group-slot) +
-          var(--env-avatar-group-size)
-      )
+        var(--env-avatar-group-rest-lift) * (1 - var(--env-avatar-group-spread)) +
+          var(--env-avatar-group-arc-lift) * var(--env-avatar-group-spread)
+      );
+  }
+  .env-avatar-group > * + * {
+    margin-inline-start: calc(var(--env-avatar-group-gap) + var(--env-avatar-group-padding));
+  }
+  /* The avatars turn; the count stays upright, so its figures never lean like italics. */
+  .env-avatar-group > :not(.env-avatar-group-overflow) {
+    rotate: calc(
+      (
+          var(--env-avatar-group-rest-turn) * (1 - var(--env-avatar-group-spread)) +
+            var(--env-avatar-group-arc-turn) * var(--env-avatar-group-spread)
+        ) *
+        var(--env-avatar-group-inline)
     );
   }
-  .env-avatar-group[data-interactive] > :not(.env-avatar-group-item, .env-avatar-group-overflow) {
-    --env-avatar-group-pad: calc((var(--env-avatar-group-slot) - var(--env-avatar-group-size)) / 2);
+  /* At rest, small offsets that vary by place, so the avatars read as a pile rather than a row. */
+  .env-avatar-group > :nth-child(3n + 1) {
+    --env-avatar-group-rest-lift: calc(var(--env-avatar-group-size) * -0.04);
+    --env-avatar-group-rest-turn: -6deg;
   }
+  .env-avatar-group > :nth-child(3n + 2) {
+    --env-avatar-group-nudge: calc(var(--env-avatar-group-size) * 0.03);
+    --env-avatar-group-rest-lift: calc(var(--env-avatar-group-size) * 0.05);
+    --env-avatar-group-rest-turn: 5deg;
+  }
+  .env-avatar-group > :nth-child(3n) {
+    --env-avatar-group-nudge: calc(var(--env-avatar-group-size) * -0.02);
+    --env-avatar-group-rest-lift: calc(var(--env-avatar-group-size) * -0.01);
+    --env-avatar-group-rest-turn: -2deg;
+  }
+  /* The count lies at the bottom of the pile, under the last avatar, and shows past its end, by the
+     pile's tuck alone. */
+  .env-avatar-group > .env-avatar-group-overflow {
+    --env-avatar-group-nudge: 0rem;
+    z-index: calc(-1 * var(--env-z-raised));
+  }
+  /* Spread: each item in its place in the row, with gaps, along an arch, the middle highest and the
+     ends a little lower and turned out. */
+  .env-avatar-group > :is(:nth-child(2), :nth-last-child(2)) {
+    --env-avatar-group-arc-lift: calc(var(--env-avatar-group-size) * 0.05);
+  }
+  .env-avatar-group > :nth-child(2) {
+    --env-avatar-group-arc-turn: -3deg;
+  }
+  .env-avatar-group > :nth-last-child(2) {
+    --env-avatar-group-arc-turn: 3deg;
+  }
+  .env-avatar-group > :is(:first-child, :last-child) {
+    --env-avatar-group-arc-lift: calc(var(--env-avatar-group-size) * 0.14);
+  }
+  .env-avatar-group > :first-child {
+    --env-avatar-group-arc-turn: -8deg;
+  }
+  .env-avatar-group > :last-child {
+    --env-avatar-group-arc-turn: 8deg;
+  }
+  .env-avatar-group > :only-child {
+    --env-avatar-group-arc-lift: 0rem;
+    --env-avatar-group-arc-turn: 0deg;
+  }
+  /* A pressable avatar: a button or link the size of the picture, with a state layer over it. */
   .env-avatar-group-item {
-    justify-content: center;
-    align-items: center;
-    min-inline-size: var(--env-control-height-touch);
-    min-block-size: var(--env-control-height-touch);
+    display: inline-flex;
+    margin-block: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
   }
   .env-avatar-group-item::after {
-    inset: calc((100% - var(--env-avatar-group-size)) / 2);
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
   }
-}
-@media (prefers-reduced-motion: no-preference) {
-  .env-avatar-group-item {
-    transition: transform var(--env-motion-duration-fast) var(--env-motion-ease);
+  .env-avatar-group-item:hover::after {
+    background: var(--env-color-bg-neutral-subtle-hover);
   }
-  .env-avatar-group-item:active {
-    transform: scale(0.97);
+  .env-avatar-group-item:active::after {
+    background: var(--env-color-bg-neutral-subtle-pressed);
   }
-}
-@media (prefers-reduced-motion: reduce) {
-  .env-avatar-group-item::after {
-    transition: none;
+  /* The avatar under the pointer or keyboard focus comes in front of its neighbours, as does the
+     count with keyboard focus, and so does a chosen one, whose check would otherwise sit under the next avatar: each avatar's turn and lift
+     keep what it draws, the check included, in its own stacking context. */
+  .env-avatar-group > .env-avatar-group-item:is(:hover, :focus-visible),
+  .env-avatar-group > .env-avatar-group-overflow:focus-visible,
+  .env-avatar-group > :is([data-selected], :has([data-selected])) {
+    z-index: var(--env-z-raised);
   }
-}
-/* Motion: the group spreads and bunches with the medium duration, after a pressable avatar's own
-   press, and stays one target until the spread ends; with a reduced-motion preference it changes at
-   once. Only transforms move. */
-@media (prefers-reduced-motion: no-preference) {
-  .env-avatar-group {
-    --env-avatar-group-settle: var(--env-motion-duration-medium);
+  .env-avatar-group-item:focus-visible,
+  .env-avatar-group-overflow:focus-visible {
+    outline: 0.125rem solid var(--env-color-border-focus);
+    outline-offset: 0.125rem;
   }
-  .env-avatar-group > *,
+
+  /* The count of the rest: a rounded square the size of the avatars, at the bottom of the pile, set
+     as an avatar's initials are, in the same weight, size and spacing, in a neutral fill with the
+     default text color, as a neutral count is. A larger count widens it into a rounded rectangle. Its
+     corners come from the corner scale, a step for each avatar size. It lies under the avatars, over
+     the surface alone, so the fill can stay translucent. At rest its figures center in the part the
+     last avatar leaves uncovered. */
+  .env-avatar-group-overflow {
+    box-sizing: border-box;
+    display: inline-grid;
+    place-items: center;
+    min-inline-size: var(--env-avatar-group-size);
+    block-size: var(--env-avatar-group-size);
+    padding-inline: calc(var(--env-avatar-group-size) / 6);
+    border-radius: var(--env-radius-sm);
+    background: var(--env-color-bg-neutral-muted);
+    color: var(--env-color-fg-default);
+    font: var(--env-font-weight-semibold) calc(var(--env-avatar-group-size) * 0.38) / 1
+      var(--env-font-family);
+    letter-spacing: 0.01em;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    cursor: default;
+    user-select: none;
+    /* The avatars' faint shadow, as Avatar.css casts it, so the count parts from the surface too. */
+    --env-avatar-shadow: 0 1px 2px
+      oklch(
+        from var(--env-avatar-group-ring-color, var(--env-surface-color, var(--env-color-bg-page)))
+          calc(l * 0.3) calc(c * 0.5) h / calc(0.26 - l * 0.15)
+      );
+    box-shadow: var(--env-avatar-shadow);
+  }
+  .env-avatar-group[data-size='lg'] > .env-avatar-group-overflow {
+    border-radius: var(--env-radius-md);
+  }
+  .env-avatar-group[data-size='xl'] > .env-avatar-group-overflow {
+    border-radius: var(--env-radius-xl);
+  }
   .env-avatar-group-overflow > span {
-    transition-property: translate, rotate, transform;
-    transition-duration: var(--env-motion-duration-medium);
-    transition-timing-function: var(--env-motion-ease);
+    translate: calc(
+      var(--env-avatar-group-tuck) / 2 * (1 - var(--env-avatar-group-spread)) *
+        var(--env-avatar-group-inline)
+    );
+  }
+  .env-avatar-group-tooltip {
+    display: grid;
+  }
+
+  /* On touch screens each pressable avatar is a target of at least the touch height, its picture in
+     the middle; spread, the targets sit side by side, with the gap only where the pictures would
+     otherwise touch, and every avatar of such a group takes a slot of that width, so the pile and the
+     count keep their places. The state layer stays the picture's circle. */
+  @media (pointer: coarse) {
+    .env-avatar-group[data-interactive] {
+      --env-avatar-group-slot: max(var(--env-avatar-group-size), var(--env-control-height-touch));
+      --env-avatar-group-gap: max(
+        0rem,
+        calc(
+          var(--env-avatar-group-size) * 0.15 - var(--env-avatar-group-slot) +
+            var(--env-avatar-group-size)
+        )
+      );
+    }
+    .env-avatar-group[data-interactive] > :not(.env-avatar-group-item, .env-avatar-group-overflow) {
+      --env-avatar-group-padding: calc(
+        (var(--env-avatar-group-slot) - var(--env-avatar-group-size)) / 2
+      );
+    }
+    .env-avatar-group-item {
+      justify-content: center;
+      align-items: center;
+      min-inline-size: var(--env-control-height-touch);
+      min-block-size: var(--env-control-height-touch);
+    }
+    .env-avatar-group-item::after {
+      inset: calc((100% - var(--env-avatar-group-size)) / 2);
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .env-avatar-group-item {
+      transition: transform var(--env-motion-duration-fast) var(--env-motion-ease);
+    }
+    .env-avatar-group-item:active {
+      transform: scale(0.97);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .env-avatar-group-item::after {
+      transition: none;
+    }
+  }
+  /* Motion: the group spreads and bunches with the medium duration, after a pressable avatar's own
+     press, and stays one target until the spread ends; with a reduced-motion preference it changes at
+     once. Only transforms move. */
+  @media (prefers-reduced-motion: no-preference) {
+    .env-avatar-group {
+      --env-avatar-group-settle: var(--env-motion-duration-medium);
+    }
+    .env-avatar-group > *,
+    .env-avatar-group-overflow > span {
+      transition-property: translate, rotate, transform;
+      transition-duration: var(--env-motion-duration-medium);
+      transition-timing-function: var(--env-motion-ease);
+    }
   }
 }

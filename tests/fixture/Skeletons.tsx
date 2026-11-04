@@ -4,20 +4,20 @@ import {
   AnimatedNumber,
   Avatar,
   Badge,
-  Bar,
+  NavigationBar,
   Button,
   Card,
   Checkbox,
   Column,
   Dialog,
-  Drawer,
+  NavigationDrawer,
   Grid,
   Kbd,
   List,
   Menu,
   Message,
   Popover,
-  Rail,
+  NavigationRail,
   Row,
   Surface,
   Table,
@@ -28,7 +28,7 @@ import {
   Spinner,
 } from '@envsemble/envui';
 import { installDevMode } from '@envsemble/envui/dev';
-import { Folder } from '@envsemble/envui/icons/Folder';
+import { IconFolder } from '@envsemble/envui/icons/Folder';
 
 interface Project {
   id: string;
@@ -65,7 +65,7 @@ const projects: Project[] = [
 /** Destinations over placeholder items: an empty label, and an icon of their kind. */
 const destinations = placeholders<{ label: string }>(3).map((destination) => ({
   label: destination.label ?? '',
-  icon: <Folder />,
+  icon: <IconFolder />,
   href: `#${destination.id}`,
 }));
 
@@ -101,7 +101,7 @@ export function SkeletonsFixture() {
           {/* Badges, a label and counts in each variant, are filled shapes in a skeleton. */}
           <Row gap={2}>
             <Badge data-testid="badge-skeleton">Draft</Badge>
-            <Badge count={3} tone="accent" variant="solid" data-testid="count-solid-skeleton" />
+            <Badge count={3} tone="primary" variant="solid" data-testid="count-solid-skeleton" />
             <Badge count={5} variant="outline" data-testid="count-outline-skeleton" />
           </Row>
           <Reader />
@@ -237,9 +237,9 @@ export function SkeletonsFixture() {
       </List.Root>
 
       {/* Navigation whose destinations are loading: bars and icon shapes. */}
-      <Drawer skeleton data-testid="drawer" destinations={destinations} />
-      <Rail skeleton data-testid="rail" destinations={destinations} />
-      <Bar skeleton data-testid="bar" destinations={destinations} />
+      <NavigationDrawer skeleton data-testid="drawer" destinations={destinations} />
+      <NavigationRail skeleton data-testid="rail" destinations={destinations} />
+      <NavigationBar skeleton data-testid="bar" destinations={destinations} />
 
       {/* The same content loaded, which the shift check toggles. */}
       <Surface data-testid="loaded" background="muted" padding={4}>

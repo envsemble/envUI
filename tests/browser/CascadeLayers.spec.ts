@@ -1,18 +1,18 @@
 import { readFileSync } from 'node:fs';
 import { expect, test, type Page } from '@playwright/test';
-import { fixtureUrl } from './Servers';
+import { fixtureUrl } from './helpers/Servers';
 
 const adoption = `${fixtureUrl}/?fixture=adoption`;
 
 /**
  * The boundary between an application's CSS and envUI's. envUI's style sheet puts every rule in a cascade layer of env, so an application's CSS outside
- * cascade layers overrides it without !important or a heavier selector. tests/fixture/layers.css is
+ * cascade layers overrides it without !important or a heavier selector. tests/fixture/CascadeLayers.css is
  * such an application style sheet: each of its rules is less specific than envUI's rule for the
  * same element and state.
  */
 
 async function openLayers(page: Page) {
-  await page.goto(`${fixtureUrl}/layers.html`);
+  await page.goto(`${fixtureUrl}/CascadeLayers.html`);
   await page.waitForSelector('body[data-styles-ready] .env-button', { state: 'attached' });
 }
 
@@ -76,12 +76,12 @@ test(
 );
 
 test(
-  'the migration guide’s per-theme token override applies in each theme and contrast',
+  'the customizing guide’s per-theme token override applies in each theme and contrast',
   { tag: '@engines' },
   async ({ page }) => {
     await openLayers(page);
-    // The example in docs/migration.md, as written, so the guide can't drift from the cascade.
-    const guide = readFileSync('docs/migration.md', 'utf8');
+    // The example in docs/customizing.md, as written, so the guide can't drift from the cascade.
+    const guide = readFileSync('docs/customizing.md', 'utf8');
     const example = [...guide.matchAll(/```css\n([\s\S]*?)```/g)]
       .map(([, css]) => css)
       .find((css) => css.includes('--env-color-fg-link') && css.includes('prefers-contrast'));
@@ -151,7 +151,7 @@ test(
       return { fontSize, fontFamily };
     });
     expect(portal.fontSize).toBe('15px');
-    expect(portal.fontFamily).toContain('envUI Inter');
+    expect(portal.fontFamily).toContain('envUI Geist');
     await page.getByRole('button', { name: 'Open pending dialog' }).click();
     const dialog = page.getByRole('dialog', { name: 'Save project' });
     await expect(dialog).toHaveCSS('font-size', '15px');
@@ -196,7 +196,7 @@ test(
     // Inside the provider's boundary, text, paragraphs and a Theme around content keep envUI's type,
     // and so do the components and the popups, each in a boundary of its own.
     for (const element of [...inside, page.getByTestId('router-button')]) {
-      await expect(element).toHaveCSS('font-family', /envUI Inter/);
+      await expect(element).toHaveCSS('font-family', /envUI Geist/);
       await expect(element).not.toHaveCSS('font-size', '18px');
     }
     for (const element of inside) {
@@ -206,11 +206,11 @@ test(
     await page.getByRole('button', { name: 'Assign seat' }).hover();
     const tooltip = page.locator('.env-tooltip');
     await expect(tooltip).toHaveText('All seats are assigned');
-    await expect(tooltip).toHaveCSS('font-family', /envUI Inter/);
+    await expect(tooltip).toHaveCSS('font-family', /envUI Geist/);
     await page.mouse.move(0, 0);
     await page.getByRole('button', { name: 'Open pending dialog' }).click();
     const dialog = page.getByRole('dialog', { name: 'Save project' });
-    await expect(dialog).toHaveCSS('font-family', /envUI Inter/);
+    await expect(dialog).toHaveCSS('font-family', /envUI Geist/);
     await expect(dialog).toHaveCSS('font-size', '15px');
     // envUI's font tokens change its typeface wherever it applies.
     await page.evaluate(() => {
@@ -256,7 +256,7 @@ test(
       const css = getComputedStyle(element);
       return { family: css.fontFamily, margin: css.marginBlockStart };
     });
-    expect(host.family).not.toContain('envUI Inter');
+    expect(host.family).not.toContain('envUI Geist');
     expect(host.margin).not.toBe('0px');
     const control = page.getByTestId('light-button-primary');
     const before = await control.boundingBox();

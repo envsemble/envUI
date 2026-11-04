@@ -5,6 +5,8 @@ import { classNames } from '../internal/classNames.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { useFormatters } from '../internal/useFormatters.js';
 import { diffStat as diffStatMessages } from '../foundations/messages/diffStat.js';
+import '../styles/Base.css';
+import '../styles/Badge.css';
 
 export interface DiffStatProps extends Omit<ComponentPropsWithRef<'span'>, 'children'> {
   /** Lines or items added, shown as +12 in the success tone, in the locale's digits. */
@@ -37,8 +39,8 @@ export function DiffStat({
     : messages.label({
         additions,
         deletions,
-        added: number.format(additions),
-        removed: number.format(deletions),
+        additionsText: number.format(additions),
+        deletionsText: number.format(deletions),
       });
   return (
     <span {...props} className={classNames('env-diff-stat', className)}>

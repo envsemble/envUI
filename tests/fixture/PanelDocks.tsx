@@ -18,26 +18,26 @@ import {
   Theme,
   type PanelDockMode,
   type PanelDockPanel,
-  type ThemeValue,
+  type ColorScheme,
 } from '@envsemble/envui';
-import { Description } from '@envsemble/envui/icons/Description';
-import { Edit } from '@envsemble/envui/icons/Edit';
-import { MoreVert } from '@envsemble/envui/icons/MoreVert';
+import { IconDescription } from '@envsemble/envui/icons/Description';
+import { IconEdit } from '@envsemble/envui/icons/Edit';
+import { IconMoreVert } from '@envsemble/envui/icons/MoreVert';
 
 /** A panel with a chat, whose messages the application adds, and which it can rewind to the start. */
 type FixturePanel = PanelDockPanel & { messages?: number; rewinds?: number };
 
 const initialPanels: FixturePanel[] = [
-  { id: 'report', title: 'Quarterly report', mode: 'open', icon: <Description />, messages: 8 },
+  { id: 'report', title: 'Quarterly report', mode: 'open', icon: <IconDescription />, messages: 8 },
   {
     id: 'notes',
     title: 'Meeting notes',
     mode: 'open',
     active: true,
-    preferredWidth: 448,
-    minWidth: 288,
-    minHeight: 200,
-    maxHeight: 400,
+    preferredWidth: 28,
+    minWidth: 18,
+    minHeight: 12.5,
+    maxHeight: 25,
   },
   {
     id: 'budget',
@@ -52,7 +52,7 @@ const initialPanels: FixturePanel[] = [
 const extraTitles = ['Roadmap', 'Release checklist', 'Interview notes', 'Design review'];
 
 /** Panels over a page in a positioned frame, with the application's own state and shortcuts. */
-export function PanelDockFixture({ theme }: { theme: ThemeValue }) {
+export function PanelDockFixture({ theme }: { theme: ColorScheme }) {
   const [panels, setPanels] = useState(initialPanels);
   const [stacked, setStacked] = useState(false);
   const [log, setLog] = useState<string[]>([]);
@@ -192,7 +192,7 @@ export function PanelDockFixture({ theme }: { theme: ThemeValue }) {
  * The other docks, each with its own state, apart from the main dock's updates, which render none
  * of them again.
  */
-const OtherDocks = memo(function OtherDocks({ theme }: { theme: ThemeValue }) {
+const OtherDocks = memo(function OtherDocks({ theme }: { theme: ColorScheme }) {
   return (
     <>
       <PassiveDock theme={theme} />
@@ -225,7 +225,7 @@ const OtherDocks = memo(function OtherDocks({ theme }: { theme: ThemeValue }) {
             name="lone"
             theme={theme}
             className="fixture-dock-single"
-            initial={[{ id: 'solo', title: 'Solo', mode: 'open', minWidth: 720 }]}
+            initial={[{ id: 'solo', title: 'Solo', mode: 'open', minWidth: 45 }]}
           />
           {/* The active panel alone is wider than the row. */}
           <MinimizingDock
@@ -235,7 +235,7 @@ const OtherDocks = memo(function OtherDocks({ theme }: { theme: ThemeValue }) {
             initial={[
               { id: 'draft', title: 'Draft', mode: 'open' },
               { id: 'outline', title: 'Outline', mode: 'open' },
-              { id: 'canvas', title: 'Canvas', mode: 'open', active: true, minWidth: 720 },
+              { id: 'canvas', title: 'Canvas', mode: 'open', active: true, minWidth: 45 },
             ]}
             activates
           />
@@ -343,7 +343,7 @@ function MinimizingDock({
   opensNotes = false,
 }: {
   name: string;
-  theme: ThemeValue;
+  theme: ColorScheme;
   initial: PanelDockPanel[];
   /** Whether the application activates the panels people press or bring back. */
   activates?: boolean;
@@ -446,10 +446,10 @@ const germanDock = {
     minimize: 'Minimieren',
     maximize: 'Maximieren',
     restore: 'Wiederherstellen',
-    close: 'Schließen',
-    hidden: 'Ausgeblendete Bereiche',
-    show: ({ label }: { label: string }) => `${label} anzeigen`,
-    closePanel: ({ label }: { label: string }) => `${label} schließen`,
+    closeWindow: 'Schließen',
+    minimized: 'Ausgeblendete Bereiche',
+    open: ({ label }: { label: string }) => `${label} anzeigen`,
+    close: ({ label }: { label: string }) => `${label} schließen`,
     resize: ({ label }: { label: string }) => `Größe von ${label} ändern`,
   },
 };
@@ -480,7 +480,7 @@ function TranslatedDock() {
             <PanelDock.Header
               title={panel.title}
               controls={panel.id !== 'notizen'}
-              actions={<IconButton icon={<Edit />} aria-label={`${panel.title} bearbeiten`} />}
+              actions={<IconButton icon={<IconEdit />} aria-label={`${panel.title} bearbeiten`} />}
             />
           )}
         </PanelDock.Root>
@@ -489,7 +489,7 @@ function TranslatedDock() {
   );
 }
 
-function PassiveDock({ theme }: { theme: ThemeValue }) {
+function PassiveDock({ theme }: { theme: ColorScheme }) {
   const [panels, setPanels] = useState<PanelDockPanel[]>([
     { id: 'first', title: `First note ${theme}`, mode: 'open', active: true },
     { id: 'second', title: `Second note ${theme}`, mode: 'open' },
@@ -543,7 +543,7 @@ function PassiveDock({ theme }: { theme: ThemeValue }) {
  * A narrow dock whose application neither marks a panel active nor activates one: the newest panel
  * fills it, and a tab shows its own panel.
  */
-function LooseDock({ theme }: { theme: ThemeValue }) {
+function LooseDock({ theme }: { theme: ColorScheme }) {
   const [panels, setPanels] = useState<PanelDockPanel[]>([
     { id: 'ex', title: `Ex ${theme}`, mode: 'open' },
     { id: 'why', title: `Why ${theme}`, mode: 'open' },
@@ -598,7 +598,7 @@ function DocumentWindow({
   onMount,
 }: {
   panel: FixturePanel;
-  theme: ThemeValue;
+  theme: ColorScheme;
   onMount: (change: number) => void;
 }) {
   const [draft, setDraft] = useState('');
@@ -628,12 +628,12 @@ function DocumentWindow({
         meta={`Edited by Alex Morgan · ${theme}`}
         actions={
           <>
-            <IconButton icon={<Edit />} aria-label={`Edit ${panel.title} ${theme}`} />
+            <IconButton icon={<IconEdit />} aria-label={`Edit ${panel.title} ${theme}`} />
             <Menu.Root
               aria-label={`${panel.title} actions ${theme}`}
               trigger={
                 <IconButton
-                  icon={<MoreVert />}
+                  icon={<IconMoreVert />}
                   aria-label={`More actions for ${panel.title} ${theme}`}
                 />
               }

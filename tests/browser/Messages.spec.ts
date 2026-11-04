@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { fixtureUrl } from './Servers';
+import { fixtureUrl } from './helpers/Servers';
 import { defaultMessages } from '../../packages/ui/src/foundations/messages/defaultMessages';
 
 // The pseudo-locale check: tests/fixture/MessageStrings.tsx renders the components whose strings come
@@ -24,7 +24,7 @@ test('no English default is left under a provider that sets every message', asyn
     1,
   );
   // CopyButton shows its result in a tooltip.
-  await root.getByRole('button', { name: '⟦copy.copy⟧' }).hover();
+  await root.getByRole('button', { name: '⟦copyButton.copy⟧' }).hover();
   const found = await page.evaluate(() => {
     const texts: string[] = [];
     const attributes = ['aria-label', 'aria-description', 'title', 'placeholder', 'aria-valuetext'];
@@ -42,12 +42,12 @@ test('no English default is left under a provider that sets every message', asyn
   const left = found.filter((text) => englishDefaults.has(text));
   expect(left).toEqual([]);
   expect(found).toContain('⟦dialog.close⟧');
-  expect(found).toContain('⟦themeToggle.toDark⟧');
+  expect(found).toContain('⟦themePreference.toDark⟧');
   for (const key of [
     'searchField.clear',
     'textarea.resize',
     'textarea.resizeDescription',
-    'common.clear',
+    'combobox.clear',
     'combobox.remove',
     'datePicker.clear',
     'timePicker.clear',
@@ -63,10 +63,10 @@ test('no English default is left under a provider that sets every message', asyn
     'colorPicker.button',
     'panelDock.minimize',
     'panelDock.maximize',
+    'panelDock.closeWindow',
+    'panelDock.minimized',
+    'panelDock.open',
     'panelDock.close',
-    'panelDock.hidden',
-    'panelDock.show',
-    'panelDock.closePanel',
     'panelDock.resize',
     'codeBlock.title',
     'codeBlock.copy',
@@ -138,7 +138,7 @@ test('the app parts take their names, labels and announcements from the provider
 test('messages written inline keep the context while they stay the same', async ({ page }) => {
   await page.goto(`${fixtureUrl}/?fixture=message-strings`);
   const probe = page.getByTestId('inline-probe');
-  await expect(probe).toHaveText('⟦inline.clear⟧');
+  await expect(probe).toHaveText('⟦inline.loading⟧');
   // The count is written in an effect, after the first paint.
   await expect(probe).toHaveAttribute('data-renders', /^\d+$/);
   const before = await probe.getAttribute('data-renders');

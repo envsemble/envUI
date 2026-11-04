@@ -2,8 +2,8 @@
 title: RichText
 summary: Formatted text people edit as it looks, saved as Markdown with references, and shown again
   read-only.
-status: experimental
-since: 0.1.0
+status: alpha
+since: 1.0.0
 category: Forms & selection
 aliases:
   - RichTextEditor
@@ -40,7 +40,9 @@ components:
   - RichTextEditor
   - createRichTextExtensions
 examples:
-  EditAndPreview: overview
+  EditAndPreview:
+    role: overview
+    motion: true
   RichTextAnatomy: anatomy
   SavedContent: example
   References: example
@@ -73,6 +75,8 @@ The toolbar shows the commands the content needs, in order, or none.
 - Undo and Redo, and Attach files, follow in groups of their own.
 - Formatting on at the caret, such as bold, shows as a pressed toggle.
 
+<!-- specimen: ToolbarState -->
+
 ## Anatomy
 
 ```tsx figure=RichTextAnatomy
@@ -102,7 +106,7 @@ RichText shows saved text again as it was written, also on a server, and opens i
 
 Typing a source's trigger, such as @, opens its suggestions, and the reference stays linked to what it names.
 
-```tsx figure=References
+```tsx figure=References motion
 
 ```
 
@@ -110,7 +114,7 @@ Typing a source's trigger, such as @, opens its suggestions, and the reference s
 
 Typing / offers blocks, such as headings and lists, then the application's own commands.
 
-```tsx figure=SlashCommands
+```tsx figure=SlashCommands motion
 
 ```
 
@@ -209,25 +213,25 @@ RichText renders the Markdown in its `children`, also on a server. Pass it the e
 ```tsx
 // At module scope, so the sources stay the same between renders.
 const references: RichTextReferenceSource[] = [
-  { char: '@', label: 'People', items: searchPeople },
-  { char: '#', label: 'Topics', items: searchTopics },
+  { trigger: '@', label: 'People', search: searchPeople },
+  { trigger: '#', label: 'Topics', search: searchTopics },
 ];
 
 <RichTextEditor label="Comment" references={references} slashCommands />;
 ```
 
-Each source has its `char`, a `label` and an `items` lookup, which receives the `query` and a `signal` that aborts when it changes. The Markdown keeps each reference's ID. `slashCommands` is `true` for heading, the lists, quote, code block and table, or an array that adds the application's commands after them. Keep `references`, `extensions` and `slashCommands` the same between renders: a new array starts a new session and loses undo.
+Each source has its `trigger`, a `label` and a `search` lookup, which receives the `query` and a `signal` that aborts when it changes. The Markdown keeps each reference's ID. `slashCommands` is `true` for heading, the lists, quote, code block and table, or an array that adds the application's commands after them. Keep `references`, `extensions` and `slashCommands` the same between renders: a new array starts a new session and loses undo.
 
 #### Attachments and links
 
-`onUpload` adds Attach files to the toolbar and uploads each chosen file, returning where it lives, `null` to skip it, or a promise of either; `accept` and `multiple` set what it offers. `onRequestLink` replaces the link dialog with the application's picker, returning the link or `null`.
+`onUpload` adds Attach files to the toolbar and uploads each chosen file, returning where it lives, `null` to skip it, or a promise of either; `accept` and `multiple` set what it offers. `pickLink` replaces the link dialog with the application's picker: it receives a `MarkdownLinkRequest` and returns a `MarkdownLink` or `null`, types `@envsemble/envui/rich-text` exports.
 
 #### Commands from outside
 
 ```tsx
 const editorRef = useRef<RichTextEditorHandle>(null);
 
-<RichTextEditor ref={editorRef} label="Reply" />
+<RichTextEditor editorRef={editorRef} label="Reply" />
 <Button
   onClick={() =>
     editorRef.current?.editor?.chain().focus('end').insertContent(' — Alex Morgan').run()
@@ -237,7 +241,7 @@ const editorRef = useRef<RichTextEditorHandle>(null);
 </Button>
 ```
 
-`ref.current.editor` is the Tiptap editor, so the application can change the document with its commands.
+`editorRef.current.editor` is the Tiptap editor, and `ref` reaches the root element, so the application can change the document with its commands.
 
 #### In a form
 
@@ -254,11 +258,17 @@ With `name`, a native form submits the Markdown through a hidden input, and `for
 
 `extensions` adds Tiptap extensions to the schema the editor and RichText share, such as a custom mark, which must parse and write Markdown; pass the same ones to both. `createRichTextExtensions` returns that shared set, with `options.extensions` after it, for another Tiptap integration that needs the same schema. The toolbar is the Toolbar MarkdownEditor shares; the suggestions are `env-rich-text-suggestions`, and the status `env-editor-status`.
 
+### Customize
+
+Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blur` and `--env-popup-shadow`, set on a theme, change it, as [Popover](popover.md#customize) describes.
+
 ## Changelog
 
-- **1.0.0-prerelease.2**: The `underline` variant is gone; the `v1-props` codemod drops it for the default outline.
-- **1.0.0**: RichTextEditor takes the field vocabulary: `description` instead of `hint`, and the variants `outline`, `underline` and `ghost` instead of `outlined`, `plain` and `quiet`, which drew as outlined; the `v1-props` codemod writes them. The document sits in the field's box, with its border, its states and a disabled field whose label stays readable, and task items show envUI's checkboxes beside their text. The toolbar is the Toolbar MarkdownEditor shares, with tooltips, the link dialog is the shared one, and every word comes from EnvUIProvider's `messages`. Suggestions are rows of a listbox in the editor, above a Dialog it sits in, and close as focus leaves; a controlled editor raises no `flushSync` warning. The `./rich-text` entry is experimental.
+- **1.0.0-prerelease.5**: `onRequestLink` is `pickLink`: it supplies the link rather than reporting an event.
+- **1.0.0-prerelease.5**: `ref` reaches the root element, and `editorRef` gives the Tiptap editor.
+- **1.0.0-prerelease.5**: Suggestions are frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge, and is solid with its edge at high contrast and with reduced transparency, with the rows of Select's list.
+- **1.0.0-prerelease.3**: A task's row in RichText is as tall as in the editor. The suggestions keep the active option in view as the arrow keys move past the list's edge, and close as focus leaves the editor rather than on any press on the page.
+- **1.0.0-prerelease.2**: The `underline` variant is gone, for the default outline.
+- **1.0.0**: A reference source's `char` is `trigger` and its `items` lookup is `search`, and a reference's `char` is `trigger`; The Markdown saved before keeps working.
+- **1.0.0**: RichTextEditor takes the field vocabulary: `description` instead of `hint`, and the variants `outline`, `underline` and `ghost` instead of `outlined`, `plain` and `quiet`, which drew as outlined. The document sits in the field's box, with its border, its states and a disabled field whose label stays readable, and task items show envUI's checkboxes beside their text. The toolbar is the Toolbar MarkdownEditor shares, with tooltips, the link dialog is the shared one, and every word comes from EnvUIProvider's `messages`. Suggestions are rows of a listbox in the editor, above a Dialog it sits in, and close as focus leaves; a controlled editor raises no `flushSync` warning. The `./rich-text` entry is alpha.
 - **1.0.0**: Tiptap, marked, Shiki and the Pierre themes are no longer peer dependencies; applications that import the rich-text entry install them, as [Setup](../setup.md#public-entry-points) lists.
-- **0.5.0**: Text in the document takes the control font size, 1 rem on touch screens, so focusing it doesn't zoom the page.
-- **0.2.0**: Tiptap and marked are optional peer dependencies, installed by applications that import the rich-text entry.
-- **0.1.0**: RichTextEditor, RichText and `createRichTextExtensions` in `@envsemble/envui/rich-text`, built on Tiptap, with Markdown values, references and slash commands.

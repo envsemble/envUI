@@ -2,6 +2,7 @@
 
 import {
   createContext,
+  memo,
   useCallback,
   useContext,
   useId,
@@ -10,44 +11,29 @@ import {
   useState,
   type ComponentPropsWithRef,
   type CSSProperties,
-  type PointerEvent as ReactPointerEvent,
   type ReactNode,
   type RefObject,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
 import type { RowDensity } from '../foundations/Theme.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
-import { cssLength } from '../internal/cssLength.js';
+import { remLength } from '../internal/cssLength.js';
 import { setRef } from '../internal/setRef.js';
 import { useStackedReport } from '../internal/useStackedReport.js';
-import { ArrowDownward } from '../icons/ArrowDownward.js';
-import { ArrowUpward } from '../icons/ArrowUpward.js';
-import { UnfoldMore } from '../icons/UnfoldMore.js';
-import {
-  columnBounds,
-  columnMinimums,
-  columnResizeLargeStep,
-  columnResizeStep,
-  resizeColumns,
-  sameWidths,
-} from './internal/TableColumns.js';
-import { inSkeleton } from '../foundations/inSkeleton.js';
+import { IconArrowDownward } from '../icons/ArrowDownward.js';
+import { IconArrowUpward } from '../icons/ArrowUpward.js';
+import { IconUnfoldMore } from '../icons/UnfoldMore.js';
+import { columnMinimums, sameWidths } from './internal/tableColumns.js';
+import { ColumnResizeHandle, type TableColumns } from './internal/ColumnResizeHandle.js';
+import { inSkeleton } from '../foundations/internal/inSkeleton.js';
 import { skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 import { ActionElement } from '../internal/ActionElement.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { table as tableMessages } from '../foundations/messages/table.js';
-
-interface TableColumns {
-  widths: readonly number[];
-  minimums: readonly number[];
-  resizable: boolean;
-  /** The column whose resize handle is being dragged. */
-  resizing: number | null;
-  setResizing: (column: number | null) => void;
-  change: (widths: number[]) => void;
-  reset: () => void;
-}
+import type { ResizeDetails } from '../internal/resizeDetails.js';
+import '../styles/Base.css';
+import '../styles/Table.css';
 
 /** A table that stacks its rows names the role of each part, since display changes can drop them. */
 const TableStackContext = createContext(false);
@@ -91,8 +77,8 @@ export interface RootProps
   narrowLayout?: 'scroll' | 'stack';
   /**
    * The region width below which a table with narrowLayout="stack" stacks its rows: a CSS length
-   * such as 60rem or 480px, or a number of pixels, such as 600 or "600". Wide tables, such as
-   * seven sortable columns, need more.
+   * such as 60rem or 480px, or a number of rem, such as 40 or "40", as PanelDock's. Wide tables,
+   * such as seven sortable columns, need more.
    */
   stackBelow?: string | number;
   /**
@@ -115,8 +101,12 @@ export interface RootProps
    * with.
    */
   defaultColumnWidths?: readonly number[];
-  /** Called with every column's width when people resize a column. */
-  onColumnWidthsChange?: (widths: number[]) => void;
+  /**
+   * Called with every column's width when people resize a column: while dragging a handle with
+   * committed false, and with committed true as a drag ends, a key moves it or a double click
+   * resets the widths.
+   */
+  onColumnWidthsChange?: (widths: number[], details: ResizeDetails) => void;
   /**
    * Smallest width of each column in percent, in column order, or one value for every column.
    * @default 5
@@ -169,6 +159,12 @@ function useStacked(
 }
 
 /**
+ * The region width below which a stacking table stacks. Not a window class: the region measures its
+ * own width, often narrower than the window's, and a wide table sets more with stackBelow.
+ */
+const defaultStackBelow = '36rem';
+
+/**
  * A semantic data table on a rounded surface, in a focusable region that scrolls sideways when the
  * columns do not fit.
  */
@@ -179,7 +175,7 @@ function Root({
   stickyHeader = false,
   regionClassName,
   narrowLayout = 'scroll',
-  stackBelow = '36rem',
+  stackBelow = defaultStackBelow,
   onStackedChange,
   columnWidths,
   defaultColumnWidths,
@@ -211,10 +207,11 @@ function Root({
 
   let columns: TableColumns | null = null;
   if (widths) {
-    const change = (next: number[]) => {
-      if (sameWidths(widths, next)) return;
-      if (columnWidths === undefined) setChosen({ key: defaultsKey, widths: next });
-      onColumnWidthsChange?.(next);
+    const change = (next: number[], committed: boolean) => {
+      const same = sameWidths(widths, next);
+      if (same && !committed) return;
+      if (!same && columnWidths === undefined) setChosen({ key: defaultsKey, widths: next });
+      onColumnWidthsChange?.(next, { committed });
     };
     const starting = [defaultColumnWidths, startWidths].find(
       (candidate) => candidate?.length === widths.length,
@@ -226,7 +223,7 @@ function Root({
       resizing,
       setResizing,
       change,
-      reset: () => change(starting ? [...starting] : widths.map(() => 100 / widths.length)),
+      reset: () => change(starting ? [...starting] : widths.map(() => 100 / widths.length), true),
     };
   }
 
@@ -246,7 +243,7 @@ function Root({
       // The container query compares the region with 37.5em, an em of stackBelow / 37.5: in a
       // query, em is the container's own.
       style={
-        stack ? ({ '--env-table-stack-below': cssLength(stackBelow) } as CSSProperties) : undefined
+        stack ? ({ '--env-table-stack-below': remLength(stackBelow) } as CSSProperties) : undefined
       }
     >
       {inSkeleton(
@@ -425,9 +422,9 @@ function useColumnIndex(cell: RefObject<HTMLTableCellElement | null>, enabled: b
 }
 
 const sortIcons = {
-  ascending: <ArrowUpward />,
-  descending: <ArrowDownward />,
-  none: <UnfoldMore />,
+  ascending: <IconArrowUpward />,
+  descending: <IconArrowDownward />,
+  none: <IconUnfoldMore />,
 };
 
 /**
@@ -532,108 +529,6 @@ function HeaderCell({
   );
 }
 
-function inlineDirection(element: Element) {
-  return getComputedStyle(element).direction === 'rtl' ? -1 : 1;
-}
-
-/** A separator at the inline end of a header cell that moves the boundary to the next column. */
-function ColumnResizeHandle({
-  column,
-  columns,
-  label,
-  labelledBy,
-}: {
-  column: number;
-  columns: TableColumns;
-  label?: string;
-  labelledBy: string;
-}) {
-  const { widths, minimums, change, reset, resizing, setResizing } = columns;
-  const drag = useRef<{
-    pointerId: number;
-    startX: number;
-    tableWidth: number;
-    widths: readonly number[];
-    direction: number;
-  } | null>(null);
-  const width = widths[column]!;
-  const { min, max } = columnBounds(widths, minimums, column);
-
-  function dragTo(event: ReactPointerEvent<HTMLDivElement>) {
-    const current = drag.current!;
-    const delta = ((event.clientX - current.startX) * current.direction * 100) / current.tableWidth;
-    change(resizeColumns(current.widths, minimums, column, delta));
-  }
-
-  function finish(event: ReactPointerEvent<HTMLDivElement>) {
-    const current = drag.current;
-    if (!current || current.pointerId !== event.pointerId) return;
-    if (event.type === 'pointerup') dragTo(event);
-    // A cancelled drag, such as one the browser took over for scrolling, returns to where it began.
-    else change([...current.widths]);
-    drag.current = null;
-    setResizing(null);
-    if (event.currentTarget.hasPointerCapture(event.pointerId))
-      event.currentTarget.releasePointerCapture(event.pointerId);
-  }
-
-  return (
-    <div
-      role="separator"
-      aria-orientation="vertical"
-      aria-label={label}
-      aria-labelledby={label === undefined ? labelledBy : undefined}
-      aria-valuenow={Math.round(width)}
-      aria-valuemin={Math.round(min)}
-      aria-valuemax={Math.round(max)}
-      aria-valuetext={`${Math.round(width)}%`}
-      tabIndex={0}
-      className="env-table-column-resize"
-      data-resizing={resizing === column ? '' : undefined}
-      onPointerDown={(event) => {
-        if (event.button !== 0) return;
-        const tableWidth = event.currentTarget.closest('table')?.getBoundingClientRect().width;
-        if (!tableWidth) return;
-        // Dragging selects no text and leaves focus where it is.
-        event.preventDefault();
-        event.currentTarget.setPointerCapture(event.pointerId);
-        drag.current = {
-          pointerId: event.pointerId,
-          startX: event.clientX,
-          tableWidth,
-          widths,
-          direction: inlineDirection(event.currentTarget),
-        };
-        setResizing(column);
-      }}
-      onPointerMove={(event) => {
-        if (drag.current?.pointerId === event.pointerId) dragTo(event);
-      }}
-      onPointerUp={finish}
-      onPointerCancel={finish}
-      onLostPointerCapture={(event) => {
-        if (drag.current?.pointerId !== event.pointerId) return;
-        drag.current = null;
-        setResizing(null);
-      }}
-      onDoubleClick={reset}
-      onKeyDown={(event) => {
-        if (event.altKey || event.ctrlKey || event.metaKey) return;
-        const step = event.shiftKey ? columnResizeLargeStep : columnResizeStep;
-        const direction = inlineDirection(event.currentTarget);
-        let next: number;
-        if (event.key === 'ArrowRight') next = Math.round(width + step * direction);
-        else if (event.key === 'ArrowLeft') next = Math.round(width - step * direction);
-        else if (event.key === 'Home') next = min;
-        else if (event.key === 'End') next = max;
-        else return;
-        event.preventDefault();
-        change(resizeColumns(widths, minimums, column, next - width));
-      }}
-    />
-  );
-}
-
 export interface CellProps extends Omit<ComponentPropsWithRef<'td'>, 'align'>, TableCellLayout {
   /**
    * The column's name, shown before the value while a table with narrowLayout="stack" stacks its
@@ -675,7 +570,9 @@ const HeadPart = /* @__PURE__ */ withDisplayName(Head, 'Table.Head');
 const BodyPart = /* @__PURE__ */ withDisplayName(Body, 'Table.Body');
 const RowPart = /* @__PURE__ */ withDisplayName(Row, 'Table.Row');
 const HeaderCellPart = /* @__PURE__ */ withDisplayName(HeaderCell, 'Table.HeaderCell');
-const CellPart = /* @__PURE__ */ withDisplayName(Cell, 'Table.Cell');
+// A cell whose props are unchanged, such as one holding text, renders nothing again when its row
+// does: an application that renders its rows anew changes only the cells whose values changed.
+const CellPart = /* @__PURE__ */ withDisplayName(/* @__PURE__ */ memo(Cell), 'Table.Cell');
 export {
   RootPart as Root,
   HeadPart as Head,

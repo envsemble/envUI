@@ -4,7 +4,7 @@ summary: Renders a Markdown string in envUI's typography and code, and MarkdownE
 status: stable
 statuses:
   MarkdownEditor: beta
-since: 0.1.0
+since: 1.0.0
 category: Text & content
 aliases:
   - MD
@@ -33,14 +33,17 @@ components:
   - Markdown
   - MarkdownEditor
 examples:
-  ProjectNote: overview
+  WriteNote: overview
   EditDescription:
     role: overview
-    caption: 'MarkdownEditor: a text area with a formatting toolbar, undo and redo, and a Preview tab that shows the text as it will read.'
+    caption: 'MarkdownEditor: a toolbar, and a preview of the text.'
+    motion: true
+    wide: true
   LinkPicker: example
   MarkdownEditorAnatomy: anatomy
   OpenInPanel: example
   CustomElements: example
+  ProjectNote: example
 ---
 
 # Markdown
@@ -56,11 +59,13 @@ An editor keeps its height for a long document, or grows with its text for a sho
 | Fixed height        | A long document: the source keeps its height. The default. |
 | Grows with its text | A short description.                                       |
 
+<!-- specimen: EditorSizing -->
+
 ### Toolbar
 
 The toolbar holds the actions the text needs, as [RichText](rich-text.md#toolbar)'s does, and can offer a link picker of the application's own.
 
-```tsx figure=LinkPicker
+```tsx figure=LinkPicker motion
 
 ```
 
@@ -73,7 +78,7 @@ The toolbar holds the actions the text needs, as [RichText](rich-text.md#toolbar
 1. **Editor** (`env-markdown-editor`)
 2. **Tabs** (`env-tabs-list`, `preview`)
 3. **Toolbar** (`env-editor-toolbar`, `toolbar`)
-4. **Source** (`env-markdown-source`)
+4. **Source** (`env-markdown-editor-input`)
 5. **Description** (`env-field-description`, `description`)
 
 A rendered document is a single part, in which each table scrolls in a region of its own.
@@ -86,11 +91,15 @@ Common Markdown with tables, strikethrough, task lists, automatic links and foot
 
 - Raw HTML is ignored, except keys, which render as Kbd.
 
+```tsx figure=ProjectNote
+
+```
+
 ### Links
 
 Links can open the application's own way, such as in a panel, while clicks with a modifier key stay the browser's.
 
-```tsx figure=OpenInPanel
+```tsx figure=OpenInPanel motion
 
 ```
 
@@ -134,7 +143,7 @@ On Apple keyboards, <kbd>Cmd</kbd> replaces <kbd>Ctrl</kbd>.
 ### You provide
 
 - A `label` for MarkdownEditor.
-- Alternative text for images, and link text that names its destination.
+- Link text that names its destination.
 - Translated words through EnvUIProvider's `messages`.
 
 ## Compose
@@ -206,28 +215,26 @@ MarkdownEditor is a Textarea with a toolbar and Write and Preview tabs.
 
 #### Toolbar and link picker
 
-`toolbar` lists the actions, of `heading`, `bold`, `italic`, `inline-code`, `bullet-list`, `numbered-list`, `quote`, `code-block` and `link`, shown in that order, grouped by kind; undo and redo come with a visible toolbar, and `toolbar={false}` hides it. `onRequestLink` opens the application's own link picker: it receives the `selectedText` and returns a MarkdownLink, `{ label, href }`, or `null` to cancel, also as a promise.
+`toolbar` lists the actions, of `heading`, `bold`, `italic`, `inline-code`, `bullet-list`, `numbered-list`, `quote`, `code-block` and `link`, shown in that order, grouped by kind; undo and redo come with a visible toolbar, and `toolbar={false}` hides it. `pickLink` opens the application's own link picker: it receives the `selectedText` and returns a MarkdownLink, `{ label, href }`, or `null` to cancel, also as a promise.
 
 ```tsx
 <MarkdownEditor
   label="Notes"
   toolbar={['bold', 'italic', 'link']}
-  onRequestLink={({ selectedText }) => pickDocument(selectedText)}
+  pickLink={({ selectedText }) => pickDocument(selectedText)}
 />
 ```
 
 ### Customize
 
-The editor's root is `env-markdown-editor`, with the tabs, `env-tabs-list`, the toolbar, a Toolbar in `env-editor-toolbar`, the source, `env-markdown-source`, and the description, `env-field-description`.
+The editor's root is `env-markdown-editor`, with the tabs, `env-tabs-list`, the toolbar, a Toolbar in `env-editor-toolbar`, the source, `env-markdown-editor-input`, and the description, `env-field-description`.
 
 - `className` and `style` reach the root, and `ref` and the other native props the textarea.
 - A rendered document is `env-markdown`, with `env-prose`, and a table in it scrolls in `env-markdown-table`.
-- Lists in it take envUI's list markers: a plain small dot in the text color, or the item's number in the muted text color, with a small muted ring or a letter one level in.
+- Lists in it take envUI's list markers: a small spark, four points with curved sides, in the text color, or the item's number in the muted text color, with a smaller muted spark or a letter one level in.
 
 ## Changelog
 
-- **1.0.0-prerelease.2**: MarkdownEditor's `underline` variant, which `plain` became in the earlier prereleases, is gone; the `v1-props` codemod drops `underline` and `plain` for the default outline.
-- **1.0.0**: Code in Markdown takes the new code themes, as Code and CodeBlock do. MarkdownEditor takes Textarea's `description` instead of `hint`, and its variants `outline` and `ghost`: `outlined` is `outline` and `quiet` is `ghost`, which the `v1-props` codemod writes, and it drops `plain` for the default outline. `className` and `style` style the root, `env-markdown-editor`, rather than the textarea; `ref` and the other native props still reach the textarea. Its toolbar is a Toolbar, with tooltips instead of native titles, and its words come from EnvUIProvider's `messages`, as do Markdown's table and task names. Markdown's root carries `env-prose` beside `env-markdown`. Markdown is stable; MarkdownEditor stays beta.
-- **0.7.0**: Code in Markdown takes the code theme of the app theme; `inlineCode` is removed.
-- **0.5.0**: `components`, `remarkPlugins` and `rehypePlugins`; raw HTML is dropped before any rehype plugin runs, except keys written as `<kbd>`, which render as Kbd.
-- **0.1.0**: Markdown and MarkdownEditor.
+- **1.0.0-prerelease.5**: `onRequestLink` is `pickLink`: it supplies the link rather than reporting an event.
+- **1.0.0-prerelease.2**: MarkdownEditor's `underline` variant, which `plain` became in the earlier prereleases, is gone, for the default outline.
+- **1.0.0**: Code in Markdown takes the new code themes, as Code and CodeBlock do. MarkdownEditor takes Textarea's `description` instead of `hint`, and its variants `outline` and `ghost`: `outlined` is `outline` and `quiet` is `ghost`, and `plain` is gone, for the default outline. `className` and `style` style the root, `env-markdown-editor`, rather than the textarea; `ref` and the other native props still reach the textarea. Its toolbar is a Toolbar, with tooltips instead of native titles, and its words come from EnvUIProvider's `messages`, as do Markdown's table and task names. Markdown's root carries `env-prose` beside `env-markdown`. Markdown is stable; MarkdownEditor stays beta. The editor's source text area, `env-markdown-source`, is `env-markdown-editor-input`, a MarkdownEditor part as `env-text-field-input` is a TextField's.

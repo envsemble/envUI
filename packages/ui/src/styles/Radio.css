@@ -1,166 +1,195 @@
-/* Color properties: an option's colors, which an application sets on one Radio through style or its
-   own CSS: selected the chosen dot and ring, and, for a vertical group's rows, container the row
-   and content its label. They don't inherit. With a container or content color of the
-   application's, a row's hover and press are state layers of its label color (see Button.css). */
-@property --env-radio-container {
-  syntax: '*';
-  inherits: false;
-}
-@property --env-radio-content {
-  syntax: '*';
-  inherits: false;
-}
-@property --env-radio-selected {
-  syntax: '*';
-  inherits: false;
-}
-
-/* RadioGroup: a fieldset of Radio options, side by side (horizontal) or as connected selectable rows
-   (vertical). A Radio is its native input inside its label. */
-@media (pointer: coarse) {
-  .env-radio {
-    min-height: var(--env-control-height-touch);
+@layer env.components {
+  /* Color properties: an option's colors, which an application sets on one Radio through style or its
+     own CSS: selected the chosen dot and ring, and, for a vertical group's rows, container the row
+     and content its label. They don't inherit. With a container or content color of the
+     application's, a row's hover and press are state layers of its label color (see Button.css). */
+  @property --env-radio-container {
+    syntax: '*';
+    inherits: false;
   }
-}
-.env-radio-group {
-  overflow-wrap: anywhere;
-  gap: 0.125rem;
-  margin: 0;
-  padding: 0;
-  border: 0;
-}
-.env-radio-group legend {
-  max-inline-size: 100%;
-  margin-block-end: var(--env-space-4);
-  padding: 0;
-}
-.env-radio {
-  --env-radio-accent: var(--env-radio-selected, var(--env-color-bg-brand-emphasis));
-  --env-radio-accent-hover: var(--env-radio-selected, var(--env-color-bg-brand-emphasis-hover));
-  --env-radio-accent-pressed: var(--env-radio-selected, var(--env-color-bg-brand-emphasis-pressed));
-}
-.env-radio[data-orientation='vertical'] {
-  /* With no color property set, the designed fills below apply in every state. The custom fill is
-     valid only while the application sets the container or the content (see Button.css), and
-     then hover, focus and press lay the content color over the container. */
-  --env-radio-layer: initial;
-  --env-radio-content-gate: color-mix(
-    in srgb,
-    var(--env-radio-content) 0%,
-    var(--env-color-bg-muted)
-  );
-  --env-radio-custom-base: var(--env-radio-container, var(--env-radio-content-gate));
-  --env-radio-custom-layered: color-mix(
-    in srgb,
-    var(--env-radio-custom-base),
-    currentColor var(--env-radio-layer)
-  );
-  --env-radio-custom-fill: var(--env-radio-custom-layered, var(--env-radio-custom-base));
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--env-space-3);
-  min-width: 0;
-  padding: var(--env-space-3) var(--env-row-padding-inline);
-  background: var(--env-radio-custom-fill, var(--env-color-bg-muted));
-  font: var(--env-type-body-small);
-  font-size: var(--env-font-size-body-small);
-  color: var(--env-radio-content, var(--env-color-fg-default));
-  cursor: pointer;
-}
-.env-radio > span {
-  min-inline-size: 0;
-}
-.env-radio[data-orientation='vertical']:has(input:checked),
-.env-radio[data-orientation='vertical']:hover:not(:has(input:disabled)) {
-  --env-radio-layer: calc(var(--env-state-hover-opacity) * 100%);
-  background: var(--env-radio-custom-fill, var(--env-color-bg-muted-hover));
-}
-.env-radio[data-orientation='vertical']:active:not(:has(input:disabled)) {
-  --env-radio-layer: calc(var(--env-state-pressed-opacity) * 100%);
-  background: var(--env-radio-custom-fill, var(--env-color-bg-muted-pressed));
-}
-.env-radio[data-orientation='vertical']:has(input:focus-visible) {
-  outline: 0.125rem solid var(--env-color-border-focus);
-  outline-offset: -0.125rem;
-}
-.env-radio-input {
-  width: 1rem;
-  height: 1rem;
-  flex: 0 0 auto;
-  margin: 0;
-  accent-color: var(--env-radio-accent, var(--env-color-bg-brand-emphasis));
-  cursor: inherit;
-}
-.env-radio-input:hover:not(:disabled) {
-  accent-color: var(--env-radio-accent-hover, var(--env-color-bg-brand-emphasis-hover));
-}
-.env-radio-input:active:not(:disabled) {
-  accent-color: var(--env-radio-accent-pressed, var(--env-color-bg-brand-emphasis-pressed));
-}
-/* A radio in its label, side by side with the group's others. */
-.env-radio[data-orientation='horizontal'] {
-  min-inline-size: 0;
-  max-inline-size: 100%;
-  overflow-wrap: anywhere;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--env-space-3);
-  font: var(--env-type-body-small);
-  font-size: var(--env-font-size-body-small);
-  color: var(--env-color-fg-default);
-  cursor: pointer;
-}
-/* Keyboard focus rings the radio itself; a row rings the whole row. */
-/* The ring's width and offset are hairlines, which don't scale with the text. */
-.env-radio[data-orientation='horizontal'] > .env-radio-input:focus-visible {
-  outline: 2px solid var(--env-color-border-focus);
-  outline-offset: 2px;
-}
-.env-radio:has(input:disabled) {
-  cursor: default;
-}
-/* A disabled control fades with its label, at the opacity of every disabled control. The row of a
-   row radio keeps its surface, so the group's shape stays whole. */
-.env-radio:has(input:disabled) > * {
-  opacity: var(--env-state-disabled-opacity);
-}
+  @property --env-radio-content {
+    syntax: '*';
+    inherits: false;
+  }
+  @property --env-radio-selected {
+    syntax: '*';
+    inherits: false;
+  }
 
-.env-radio-group[data-orientation='horizontal'] {
-  gap: var(--env-space-4) var(--env-space-6);
-}
-.env-radio-group[data-orientation='horizontal'] legend {
-  flex-basis: 100%;
-}
-.env-radio-description {
-  display: block;
-  color: var(--env-color-fg-muted);
-  font: var(--env-type-body-small);
-}
-
-/* Motion: choice controls settle while they or their label are held, a radio row a little and
-   the control more; a check mark settles into size. Only without a reduced-motion preference. */
-@media (prefers-reduced-motion: no-preference) {
-  .env-radio[data-orientation='vertical'],
-  .env-radio-input {
-    transition-property: background-color, color, border-color, transform;
-    transition-duration: var(--env-motion-duration-fast);
-    transition-timing-function: var(--env-motion-ease);
+  /* RadioGroup: a fieldset of Radio options, side by side (horizontal) or as connected selectable rows
+     (vertical). A Radio is its native input inside its label. */
+  @media (pointer: coarse) {
+    .env-radio {
+      min-height: var(--env-control-height-touch);
+    }
+  }
+  .env-radio-group {
+    overflow-wrap: anywhere;
+    gap: 0.125rem;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  .env-radio-group legend {
+    max-inline-size: 100%;
+    margin-block-end: var(--env-space-4);
+    padding: 0;
+  }
+  .env-radio {
+    --env-radio-accent: var(--env-radio-selected, var(--env-color-bg-primary-emphasis));
+    --env-radio-accent-hover: var(--env-radio-selected, var(--env-color-bg-primary-emphasis-hover));
+    /* prettier-ignore */
+    --env-radio-accent-pressed: var(--env-radio-selected, var(--env-color-bg-primary-emphasis-pressed));
+  }
+  .env-radio[data-orientation='vertical'] {
+    /* With no color property set, the designed fills below apply in every state. The custom fill is
+       valid only while the application sets the container or the content (see Button.css), and
+       then hover, focus and press lay the content color over the container. */
+    --env-radio-layer: initial;
+    --env-radio-content-gate: color-mix(
+      in srgb,
+      var(--env-radio-content) 0%,
+      var(--env-color-bg-muted)
+    );
+    --env-radio-custom-base: var(--env-radio-container, var(--env-radio-content-gate));
+    --env-radio-custom-layered: color-mix(
+      in srgb,
+      var(--env-radio-custom-base),
+      currentColor var(--env-radio-layer)
+    );
+    --env-radio-custom-fill: var(--env-radio-custom-layered, var(--env-radio-custom-base));
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--env-space-3);
+    min-width: 0;
+    padding: var(--env-space-3) var(--env-row-padding-inline);
+    background: var(--env-radio-custom-fill, var(--env-color-bg-muted));
+    font: var(--env-type-body-sm);
+    font-size: var(--env-font-size-body-sm);
+    color: var(--env-radio-content, var(--env-color-fg-default));
+    cursor: pointer;
+  }
+  .env-radio > span {
+    min-inline-size: 0;
+  }
+  .env-radio[data-orientation='vertical']:hover:not(:has(input:disabled)) {
+    --env-radio-layer: calc(var(--env-state-hover-opacity) * 100%);
+    background: var(--env-radio-custom-fill, var(--env-color-bg-muted-hover));
   }
   .env-radio[data-orientation='vertical']:active:not(:has(input:disabled)) {
-    transform: scale(0.99);
+    --env-radio-layer: calc(var(--env-state-pressed-opacity) * 100%);
+    background: var(--env-radio-custom-fill, var(--env-color-bg-muted-pressed));
   }
-  .env-radio[data-orientation='horizontal']:active:not(:has(input:disabled)) .env-radio-input {
-    transform: scale(0.9);
-  }
-}
-@media (forced-colors: active) {
+  /* The chosen row takes the selection's fill and text, as a selected list row and Select's chosen
+     option do, with their hover and pressed fills; its description stays muted. With a color
+     property of the application's, it keeps the hover layer at rest. */
   .env-radio[data-orientation='vertical']:has(input:checked) {
-    outline: 2px solid Highlight;
-    outline-offset: -2px;
+    --env-radio-layer: calc(var(--env-state-hover-opacity) * 100%);
+    background: var(--env-radio-custom-fill, var(--env-color-bg-selected));
+    color: var(--env-radio-content, var(--env-color-fg-on-selected));
+  }
+  .env-radio[data-orientation='vertical']:has(input:checked):hover:not(:has(input:disabled)) {
+    background: var(--env-radio-custom-fill, var(--env-color-bg-selected-hover));
+  }
+  .env-radio[data-orientation='vertical']:has(input:checked):active:not(:has(input:disabled)) {
+    background: var(--env-radio-custom-fill, var(--env-color-bg-selected-pressed));
   }
   .env-radio[data-orientation='vertical']:has(input:focus-visible) {
-    outline: 2px solid CanvasText;
+    outline: 0.125rem solid var(--env-color-border-focus);
+    outline-offset: -0.125rem;
+  }
+  .env-radio-input {
+    width: 1rem;
+    height: 1rem;
+    flex: 0 0 auto;
+    margin: 0;
+    accent-color: var(--env-radio-accent, var(--env-color-bg-primary-emphasis));
+    cursor: inherit;
+  }
+  .env-radio-input:hover:not(:disabled) {
+    accent-color: var(--env-radio-accent-hover, var(--env-color-bg-primary-emphasis-hover));
+  }
+  .env-radio-input:active:not(:disabled) {
+    accent-color: var(--env-radio-accent-pressed, var(--env-color-bg-primary-emphasis-pressed));
+  }
+  /* A radio in its label, side by side with the group's others. */
+  .env-radio[data-orientation='horizontal'] {
+    min-inline-size: 0;
+    max-inline-size: 100%;
+    overflow-wrap: anywhere;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--env-space-3);
+    font: var(--env-type-body-sm);
+    font-size: var(--env-font-size-body-sm);
+    color: var(--env-color-fg-default);
+    cursor: pointer;
+  }
+  /* Keyboard focus rings the radio itself; a row rings the whole row. */
+  /* The ring's width and offset are hairlines, which don't scale with the text. */
+  .env-radio[data-orientation='horizontal'] > .env-radio-input:focus-visible {
+    outline: 2px solid var(--env-color-border-focus);
     outline-offset: 2px;
+  }
+  .env-radio:has(input:disabled) {
+    cursor: default;
+  }
+  /* A disabled control fades with its label, at the opacity of every disabled control. The row of a
+     row radio keeps its surface, so the group's shape stays whole. */
+  .env-radio:has(input:disabled) > * {
+    opacity: var(--env-state-disabled-opacity);
+  }
+
+  .env-radio-group[data-orientation='horizontal'] {
+    gap: var(--env-space-4) var(--env-space-6);
+  }
+  .env-radio-group[data-orientation='horizontal'] legend,
+  .env-radio-group[data-orientation='horizontal'] > .env-radio-group-description,
+  .env-radio-group[data-orientation='horizontal'] > .env-radio-group-error {
+    flex-basis: 100%;
+  }
+  /* The group's description and error, as a field's are. */
+  .env-radio-group-description,
+  .env-radio-group-error {
+    font: var(--env-type-body-sm);
+  }
+  .env-radio-group-description {
+    color: var(--env-color-fg-muted);
+  }
+  .env-radio-group-error {
+    color: var(--env-color-fg-danger);
+  }
+  .env-radio-description {
+    display: block;
+    color: var(--env-color-fg-muted);
+    font: var(--env-type-body-sm);
+  }
+
+  /* Motion: choice controls settle while they or their label are held, a radio row a little and
+     the control more; a check mark settles into size. Only without a reduced-motion preference. */
+  @media (prefers-reduced-motion: no-preference) {
+    .env-radio[data-orientation='vertical'],
+    .env-radio-input {
+      transition-property: background-color, color, border-color, transform;
+      transition-duration: var(--env-motion-duration-fast);
+      transition-timing-function: var(--env-motion-ease);
+    }
+    .env-radio[data-orientation='vertical']:active:not(:has(input:disabled)) {
+      transform: scale(0.99);
+    }
+    .env-radio[data-orientation='horizontal']:active:not(:has(input:disabled)) .env-radio-input {
+      transform: scale(0.9);
+    }
+  }
+  @media (forced-colors: active) {
+    .env-radio[data-orientation='vertical']:has(input:checked) {
+      outline: 2px solid Highlight;
+      outline-offset: -2px;
+    }
+    .env-radio[data-orientation='vertical']:has(input:focus-visible) {
+      outline: 2px solid CanvasText;
+      outline-offset: 2px;
+    }
   }
 }

@@ -18,6 +18,8 @@ await build({
     loader: 'ts',
   },
   bundle: true,
+  // The style sheets the modules import are the browser's concern.
+  loader: { '.css': 'empty' },
   platform: 'node',
   format: 'esm',
   packages: 'external',
@@ -48,10 +50,10 @@ test('a badge with count is a compact count, the number alone its name', () => {
 
 test("a count's aria-label is read in place of the number, which is hidden", () => {
   const markup = renderToStaticMarkup(
-    h(Badge, { count: '99+', 'aria-label': '120 unread', tone: 'accent', variant: 'solid' }),
+    h(Badge, { count: '99+', 'aria-label': '120 unread', tone: 'primary', variant: 'solid' }),
   );
   assert.doesNotMatch(markup, /aria-label/);
-  assert.match(markup, /data-tone="accent" data-variant="solid" data-count=""/);
+  assert.match(markup, /data-tone="primary" data-variant="solid" data-count=""/);
   assert.match(markup, /<span class="env-badge-label" aria-hidden="true">99\+<\/span>/);
   assert.match(markup, /<span class="env-badge-count-label">120 unread<\/span>/);
 });

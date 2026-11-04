@@ -1,6 +1,6 @@
 import { test, expect, type Browser, type Locator, type Page } from '@playwright/test';
-import { chevronTips, expectVerticalFlip, slowChevron } from './Chevron';
-import { fixtureUrl } from './Servers';
+import { chevronTips, expectVerticalFlip, slowChevron } from './helpers/Chevron';
+import { fixtureUrl } from './helpers/Servers';
 
 const comboboxFixture = `${fixtureUrl}/?fixture=combobox`;
 
@@ -37,7 +37,7 @@ test('typing filters by label and description, ignoring case and accents, and En
   await expect(author).toHaveAttribute('aria-expanded', 'false');
   await expect(author).toHaveAccessibleDescription('The person who answers questions.');
   // The chosen option's avatar sits before its label in the field.
-  await expect(wellOf(author).locator('.env-combobox-value-leading .env-avatar')).toBeVisible();
+  await expect(wellOf(author).locator('.env-combobox-value-icon .env-avatar')).toBeVisible();
 
   await author.fill('SAM');
   const list = page.getByRole('listbox');
@@ -50,7 +50,7 @@ test('typing filters by label and description, ignoring case and accents, and En
   await expect.poll(() => highlighted(page)).toEqual(['Sam Lee']);
   await expect(author).toHaveAttribute('aria-activedescendant', (await sam.getAttribute('id'))!);
   // While the typed text differs from the chosen label, the chosen avatar steps aside.
-  await expect(wellOf(author).locator('.env-combobox-value-leading')).toHaveCount(0);
+  await expect(wellOf(author).locator('.env-combobox-value-icon')).toHaveCount(0);
   await page.keyboard.press('Enter');
   await expect(list).toHaveCount(0);
   await expect(author).toHaveValue('Sam Lee');
@@ -144,6 +144,22 @@ test(
     await expect(owner).not.toHaveValue('X');
   },
 );
+
+test('the list opens 8 px clear of the field, at its start edge', async ({ page }) => {
+  const owner = field(page, 'Owner light');
+  await wellOf(owner).locator('.env-combobox-trigger').click();
+  const popup = page.locator('.env-combobox-popup[data-open]');
+  await expect(popup).toBeVisible();
+  await popup.evaluate((element) =>
+    Promise.allSettled(element.getAnimations().map(({ finished }) => finished)),
+  );
+  const well = (await wellOf(owner).boundingBox())!;
+  const box = (await popup.boundingBox())!;
+  // Below the field, or above it where the window has no room below.
+  const gap = box.y > well.y ? box.y - (well.y + well.height) : well.y - (box.y + box.height);
+  expect(gap).toBeCloseTo(8, 0);
+  expect(box.x).toBeCloseTo(well.x, 0);
+});
 
 test('the chevron flips as the popup opens and closes, never pointing sideways', async ({
   page,
@@ -395,10 +411,11 @@ test('small fields line up with small buttons and open the one popup', async ({ 
         option: option.getBoundingClientRect().height,
       };
     });
-    expect(geometry.radius).toBeCloseTo(12, 0);
-    expect(geometry.padding).toBeCloseTo(4, 0);
-    // Options with a description take two lines; the row is at least the row height, 2.25 rem.
-    expect(geometry.option).toBeGreaterThanOrEqual(36);
+    // The frosted popup's corners, concentric with its rows through its inset (Popup.css).
+    expect(geometry.radius).toBeCloseTo(20, 0);
+    expect(geometry.padding).toBeCloseTo(6, 0);
+    // Options with a description take two lines; the row is at least the md control height, 2.5 rem.
+    expect(geometry.option).toBeGreaterThanOrEqual(40);
     await page.keyboard.press('Escape');
     await labels.click();
     const option = page.getByRole('option', { name: 'Accessibility', exact: true });
@@ -409,7 +426,7 @@ test('small fields line up with small buttons and open the one popup', async ({ 
       await Promise.allSettled(element.getAnimations().map(({ finished }) => finished));
       return element.querySelector('[aria-selected="true"]')!.getBoundingClientRect().height;
     });
-    expect(height).toBeCloseTo(36, 0);
+    expect(height).toBeCloseTo(40, 0);
     await page.keyboard.press('Escape');
   }
 });
@@ -559,6 +576,8 @@ test('touch screens give fields, chips and options the touch height', async ({
   await expect(owner).toHaveCSS('font-size', '16px');
   const chip = wellOf(field(page, 'Compact labels light')).locator('.env-combobox-chip').first();
   expect((await chip.boundingBox())!.height).toBeCloseTo(28, 0);
+  // Wrapped rows of chips lie a small step apart, as for a mouse, not a touch height apart.
+  await expect(wellOf(field(page, 'Compact labels light'))).toHaveCSS('row-gap', '8px');
   await owner.tap();
   const option = page.getByRole('option', { name: 'Sam Lee', exact: true });
   await expect(option).toBeVisible();
@@ -577,7 +596,7 @@ test('touch screens give fields, chips and options the touch height', async ({
   await page.context().close();
 });
 
-test("touch screens give every chip's remove button a hit area of the touch size", async ({
+test("touch screens give every chip's remove button a hit area as tall as a row and its gap", async ({
   browser,
 }) => {
   const page = await openOnTouchScreen(browser);
@@ -615,8 +634,9 @@ test("touch screens give every chip's remove button a hit area of the touch size
     }
     return results;
   });
-  // Measured in half pixels, so a hit area of 44 px can measure 43.
-  expect(areas.filter(({ width, height }) => width < 43 || height < 43)).toEqual([]);
+  // A 28 px row and its 8 px gap: hit areas of rows above and below meet without overlapping, so
+  // each reaches its full size. Measured in half pixels, so 36 px can measure 35.
+  expect(areas.filter(({ width, height }) => width < 35 || height < 35)).toEqual([]);
   await page.context().close();
 });
 
@@ -654,12 +674,12 @@ test('Esc clears a closed single field only while it has a value, and never remo
   const author = field(page, 'Author light');
   const changes = page.getByTestId('combobox-author-changes-light');
   // The well keeps room for the clear button only while the button shows.
-  await expect(wellOf(author)).toHaveAttribute('data-actions', '2');
+  await expect(wellOf(author)).toHaveAttribute('data-action-count', '2');
   await author.focus();
   await page.keyboard.press('Escape');
   await expect(author).toHaveValue('');
   await expect(changes).toHaveText('[null]');
-  await expect(wellOf(author)).toHaveAttribute('data-actions', '1');
+  await expect(wellOf(author)).toHaveAttribute('data-action-count', '1');
   // With nothing to clear, Esc reports no change.
   await page.keyboard.press('Escape');
   await page.keyboard.press('Escape');

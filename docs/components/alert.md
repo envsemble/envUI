@@ -2,7 +2,7 @@
 title: Alert
 summary: An inline message about a page or a section, in an info, success, warning or danger tone, with an optional action and dismiss button.
 status: stable
-since: 0.5.0
+since: 1.0.0
 category: Feedback
 aliases:
   - Notice
@@ -21,7 +21,7 @@ useWhen:
   - A warning before people act in a section, such as storage almost full
 avoidWhen:
   - text: Brief feedback after an action, such as Saved or Invitation sent.
-    use: Toast
+    use: ToastProvider
   - text: A region without content yet, such as an empty list or no search results.
     see: empty-states
   - text: An error about one field, shown on the field.
@@ -84,7 +84,7 @@ An alert can take another icon in place of its tone's, or none at all.
 2. **Icon** (`env-alert-icon`, `icon`)
 3. **Title** (`env-alert-title`, `title`)
 4. **Message** (`env-alert-message`, `children`)
-5. **Action** (`env-alert-action`, `action`)
+5. **Actions** (`env-alert-action`, `actions`)
 6. **Dismiss button** (`env-alert-dismiss`, `onDismiss`)
 
 ## Behaviour
@@ -93,7 +93,7 @@ An alert can take another icon in place of its tone's, or none at all.
 
 A warning or a danger alert that appears because of something people just did, such as a save that failed, can be read out at once. Info and success alerts are always read politely, without interrupting.
 
-```tsx figure=SaveFailed
+```tsx figure=SaveFailed motion
 
 ```
 
@@ -112,6 +112,8 @@ An alert sits above the content it concerns.
 ### Removing an alert
 
 Remove an alert once it no longer applies. Let people dismiss it only where the message can safely be hidden.
+
+<!-- specimen: RemovingAlerts -->
 
 ## Accessibility
 
@@ -138,7 +140,7 @@ Remove an alert once it no longer applies. Let people dismiss it only where the 
 
 ### Usage
 
-An Alert takes its `tone`, a short `title`, the message as `children`, and an `action` below the message, such as a Button or a Link. Put it above the content it concerns, and remove it once it no longer applies.
+An Alert takes its `tone`, a short `title`, the message as `children`, and `actions` below the message, such as a Button or a Link. Put it above the content it concerns, and remove it once it no longer applies.
 
 ```tsx source=BlockedRelease
 
@@ -146,7 +148,7 @@ An Alert takes its `tone`, a short `title`, the message as `children`, and an `a
 
 #### Tones
 
-`tone` is `info`, the default, `success`, `warning` or `danger`, for an error or a failure. It sets the tint, the border and the icon.
+`tone` is `info`, the default, `success`, `warning` or `danger`, for an error or a failure; a toast has `neutral` instead of `warning`, since a warning stays on the page, here. It sets the fill, the tone's stronger tint, and the color of the title and the icon. An alert has no edge, except at high contrast, where it takes the tone's softer tint and an edge in the border color.
 
 ```tsx
 <Alert title="Sync paused">Changes are saved on this device until you reconnect.</Alert>
@@ -165,16 +167,16 @@ Info and success alerts take the `status` role and are read politely. `announce`
 
 #### Icon
 
-`icon` replaces the tone's icon, and `icon={false}` leaves it out.
+`icon` replaces the tone's icon, and `null` or `false` leaves it out.
 
 ```tsx
-<Alert icon={<Construction />} title="Maintenance on Saturday">…</Alert>
+<Alert icon={<IconConstruction />} title="Maintenance on Saturday">…</Alert>
 <Alert tone="success" icon={false}>Priya Shah accepted the invitation.</Alert>
 ```
 
 #### Dismiss
 
-`onDismiss` shows a dismiss button that calls it; the application removes the alert, and moves focus, such as to the control the alert concerned. Offer it only where the message can safely be hidden. `dismissLabel` names the button, Dismiss by default or EnvUIProvider's `messages.alert.dismiss`, and is also its tooltip.
+`onDismiss` shows a dismiss button that calls it; the application removes the alert, and moves focus, such as to the control the alert concerned. Offer it only where the message can safely be hidden. `dismissLabel` names the button, and is also its tooltip.
 
 ### Composition
 
@@ -182,17 +184,11 @@ The parts are the container, `env-alert`, the icon, `env-alert-icon`, the title,
 
 ### Customize
 
-`--env-alert-container`, `--env-alert-content`, `--env-alert-outline` and `--env-alert-icon` set the colors of one Alert, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
-
-```tsx
-<Alert
-  title="Trial ends in 3 days"
-  style={{ '--env-alert-container': 'var(--env-color-bg-brand-muted)' } as CSSProperties}
-/>
-```
+An Alert draws an edge only at high contrast, unless its outline color sets one, and its title takes the icon's color while its text takes the tone's.
 
 ## Changelog
 
-- **1.0.0**: `tone="danger"` for `error`; the dismiss button is an IconButton with a cross, named Dismiss in the provider's language.
+- **1.0.0-prerelease.5**: A card's inset, 14 px above and below and 16 px at the sides; the title is semibold in the body size, 2 px above the message, which takes the small body size.
+- **1.0.0**: No edge outside high contrast: the tone's stronger tint fills it, the title takes the tone's color as the icon does, and its corners are a card's, 1.25 rem. At high contrast it keeps the softer tint with an edge in the border color.
+- **1.0.0**: `actions` for `action`, as on Card and Dialog. `tone="danger"` for `error`; the dismiss button is an IconButton with a cross, named Dismiss in the provider's language.
 - **1.0.0**: `Notice` is `Alert`, with `AlertTone` and the `env-alert-*` classes; the page is `alert`.
-- **0.5.0**: Notice, an inline banner in four tones with an action, a round dismiss button in its tone and `announce`.

@@ -1,6 +1,6 @@
 import { test, expect, type Page } from '@playwright/test';
-import { fixtureUrl } from './Servers';
-import { openServerMarkup } from './ServerMarkup';
+import { fixtureUrl } from './helpers/Servers';
+import { openServerMarkup } from './helpers/ServerMarkup';
 
 const treeFixture = `${fixtureUrl}/?fixture=tree`;
 
@@ -71,7 +71,7 @@ test.describe('Tree', () => {
     await expect.poll(() => activeRowId(page)).toBe('folder-1');
     // The active row shows a focus ring only with keyboard focus.
     const ring = () =>
-      tree.locator('[data-active]').evaluate((row) => getComputedStyle(row).outlineStyle);
+      tree.locator('[data-highlighted]').evaluate((row) => getComputedStyle(row).outlineStyle);
     await page.keyboard.press('ArrowDown');
     await expect.poll(() => activeRowId(page)).toBe('folder-1/nested');
     await expect.poll(ring).toBe('solid');
@@ -115,7 +115,7 @@ test.describe('Tree', () => {
     await expect.poll(() => activeRowId(page)).toBe('folder-2');
     await page.keyboard.press('f');
     await expect.poll(() => activeRowId(page)).toBe('folder-3');
-    await page.clock.runFor(700);
+    await page.clock.runFor(800);
     await page.keyboard.type('doc 1');
     await expect.poll(() => activeRowId(page)).toBe('folder-2/doc-1.md');
 
@@ -235,7 +235,7 @@ test('a tree renders a tall pane of rows before it measures, and fills its viewp
     page,
     `import {createElement as h} from 'react';
     import {Tree} from '@envsemble/envui';
-    const items = Array.from({length: 100}, (_, index) => ({id: 'n' + index, depth: 0,
+    const items = Array.from({length: 100}, (_, index) => ({value: 'n' + index, depth: 0,
       label: 'Node ' + index}));
     export const element = h('div', {style: {blockSize: '20rem', display: 'grid'}},
       h(Tree, {'aria-label': 'Files', items}));`,

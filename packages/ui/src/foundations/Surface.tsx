@@ -5,13 +5,15 @@ import { useRender } from '@base-ui/react/use-render';
 import { classNames } from '../internal/classNames.js';
 import { skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import type { SpaceStep } from './Layout.js';
-import { inSkeleton } from './inSkeleton.js';
+import { inSkeleton } from './internal/inSkeleton.js';
+import '../styles/Base.css';
 
 /**
  * A surface's fill: default, the background of panes and side regions; muted, the background of
- * rows; page, the page behind everything; raised, a block that stands out on a pane.
+ * rows; page, the page behind everything; raised, a block that stands out on a pane; recessed, a
+ * well on the page: a shade deeper than it in dark, and lighter than it and the panes in light.
  */
-export type SurfaceBackground = 'default' | 'muted' | 'page' | 'raised';
+export type SurfaceBackground = 'default' | 'muted' | 'page' | 'raised' | 'recessed';
 
 /**
  * A surface's corner radius, named after the radius tokens: xl, the 1.75 rem corners of panes; sm,
@@ -19,10 +21,12 @@ export type SurfaceBackground = 'default' | 'muted' | 'page' | 'raised';
  */
 export type SurfaceRadius = 'xl' | 'sm' | 'full' | 'none';
 
-export interface SurfaceAppearanceProps extends SkeletonProps {
+interface SurfaceAppearanceProps extends SkeletonProps {
   /**
    * The fill: default, the background of panes and side regions; muted, the background of rows;
-   * page, the page background; or raised, a block that stands out on a pane.
+   * page, the page background; raised, a block that stands out on a pane; or recessed, a well on
+   * the page that what it holds rises out of: a shade deeper than it in dark, and lighter than it
+   * and the panes in light.
    * @default 'default'
    */
   background?: SurfaceBackground;
@@ -61,7 +65,7 @@ export type SurfaceProps<RenderedElement extends HTMLElement = HTMLDivElement> =
 
 /**
  * A container with a background, an inset and corners, but no layout of its own: spacing between
- * its children, alignment and behaviour come from what it holds, such as a Column. Card and other
+ * its children, alignment and behavior come from what it holds, such as a Column. Card and other
  * containers build on it.
  */
 export function Surface<RenderedElement extends HTMLElement = HTMLDivElement>({

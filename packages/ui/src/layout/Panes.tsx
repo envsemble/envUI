@@ -18,26 +18,48 @@ import {
 } from 'react';
 import { Button, IconButton, type ButtonAppearanceProps } from '../actions/Button.js';
 import { panes } from '../foundations/messages/panes.js';
-import { ArrowBack } from '../icons/ArrowBack.js';
+import { IconArrowBack } from '../icons/ArrowBack.js';
 import { classNames } from '../internal/classNames.js';
 import { useMessages } from '../internal/EnvUIContext.js';
+import { usePortalContainer } from '../internal/PortalContainerContext.js';
 import { ResizeHandle } from '../internal/ResizeHandle.js';
 import { setRef } from '../internal/setRef.js';
 import { useFormatters } from '../internal/useFormatters.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
-import { inSkeleton } from '../foundations/inSkeleton.js';
+import { inSkeleton } from '../foundations/internal/inSkeleton.js';
 import { skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
-import { readPanesSize, writePanesSize } from './panesSize.js';
-import { Close } from '../icons/Close.js';
+import { readPanesWidth, writePanesWidth } from './panesSize.js';
+import type { ResizeDetails } from '../internal/resizeDetails.js';
+import { IconClose } from '../icons/Close.js';
+import { remPixels, roundToHundredth } from '../internal/lengths.js';
+import '../styles/Base.css';
+import '../styles/Panes.css';
 
 /**
  * How Panes behaves below `splitAt`: supporting, a main pane with a supporting pane that becomes a
  * sheet over it; list-detail, a list and the chosen item's detail, one at a time.
  */
-export type PanesBehavior = 'supporting' | 'list-detail';
+export type Behavior = 'supporting' | 'list-detail';
 
 /** The window class of Panes' own width from which its panes sit side by side. */
-export type PanesSplitAt = 'medium' | 'expanded' | 'large';
+export type SplitAt = 'medium' | 'expanded' | 'large';
+
+/**
+ * Why Panes asks to open or close what `open` shows below `splitAt`: Escape, the supporting
+ * sheet's close button, a press on its backdrop, the detail's back button, or Panes.Trigger.
+ */
+export type OpenChangeReason =
+  | 'escape-key'
+  | 'close-press'
+  | 'outside-press'
+  | 'back-press'
+  | 'trigger-press';
+
+/** What Panes.Root's onOpenChange receives beside the requested state. */
+export interface OpenChangeDetails {
+  /** Why it asks to open or close. */
+  reason: OpenChangeReason;
+}
 
 export interface RootProps extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
   /**
@@ -46,27 +68,34 @@ export interface RootProps extends Omit<ComponentPropsWithRef<'div'>, 'children'
    * Panes.List and Panes.Detail, such as messages and the one chosen; below `splitAt` one shows at a
    * time, the detail while `open`, with a back button to the list.
    */
-  behavior: PanesBehavior;
+  behavior: Behavior;
   /**
    * The window class of the Panes' own width from which the panes sit side by side: medium
    * (37.5 rem), expanded (52.5 rem) or large (75 rem). Narrower, they behave as `behavior` says. CSS
    * decides it, so the server's markup is right before any script runs.
    * @default 'expanded'
    */
-  splitAt?: PanesSplitAt;
+  splitAt?: SplitAt;
   /**
    * Below `splitAt`: whether the supporting sheet is open, or the detail shows instead of the
-   * list. Side by side, both panes show whatever it is. The application keeps it, as it knows when
-   * an item is chosen or the sheet's button pressed.
-   * @default false
+   * list, for Panes the application controls with onOpenChange, such as a list-detail that opens
+   * the detail as an item is chosen. Side by side, both panes show whatever it is.
    */
   open?: boolean;
   /**
-   * Called with false when people close what `open` shows below `splitAt`: Escape, the close
-   * button or a press on the scrim closes the supporting sheet, and the back button returns from
-   * the detail to the list. Set `open` from it.
+   * Whether uncontrolled Panes start with the supporting sheet open, or the detail shown, below
+   * `splitAt`. Panes.Trigger opens the sheet, and Escape, the close button, the backdrop and the
+   * back button close what shows.
+   * @default false
    */
-  onOpenChange?: (open: boolean) => void;
+  defaultOpen?: boolean;
+  /**
+   * Called with the new state, and why: true when Panes.Trigger opens the supporting sheet, and
+   * false when people close what `open` shows below `splitAt`: Escape, the close button or a press
+   * on the backdrop closes the supporting sheet, and the back button returns from the detail to the
+   * list.
+   */
+  onOpenChange?: (open: boolean, details: OpenChangeDetails) => void;
   /**
    * The name of the supporting sheet's close button, which shows only while the pane is a sheet.
    * @default 'Close', or EnvUIProvider's messages.panes.close
@@ -79,44 +108,44 @@ export interface RootProps extends Omit<ComponentPropsWithRef<'div'>, 'children'
    */
   backLabel?: string;
   /**
-   * The resized pane's width in rem, for Panes the application controls with onSizeChange: the
+   * The resized pane's width in rem, for Panes the application controls with onWidthChange: the
    * supporting pane, or the list. It applies while the panes sit side by side.
    */
-  size?: number;
+  width?: number;
   /**
    * The resized pane's width in rem until people choose one with Panes.Divider, or one is kept
    * under `persist`, and the width a double click on the divider returns it to.
    * @default 22.5
    */
-  defaultSize?: number;
+  defaultWidth?: number;
   /**
    * Receives each new width of the resized pane, in rem: while dragging the divider with committed
    * false, and with committed true as a drag ends, a key moves it or a double click resets it.
    */
-  onSizeChange?: (size: number, details: { committed: boolean }) => void;
+  onWidthChange?: (width: number, details: ResizeDetails) => void;
   /**
    * The resized pane's smallest width, in rem.
    * @default 16
    */
-  minSize?: number;
+  minWidth?: number;
   /**
    * The resized pane's largest width, in rem. It never leaves the other pane less than 16 rem.
    * @default 40
    */
-  maxSize?: number;
+  maxWidth?: number;
   /**
    * Keeps the width people choose in a cookie of this name, for Panes the application doesn't
-   * control; a double click on the divider forgets it and returns to `defaultSize`. Read it on the
-   * server with `readPanesSize(cookieHeader, key)` and pass it as `persistedSize`, so the server's
+   * control; a double click on the divider forgets it and returns to `defaultWidth`. Read it on the
+   * server with `readPanesWidth(cookieHeader, key)` and pass it as `persistedWidth`, so the server's
    * markup has it and nothing moves as the page hydrates. Without that, the kept width applies
    * after the first render.
    */
   persist?: string;
   /**
    * The width kept under `persist`, in rem, as the server read it from the request's cookies with
-   * `readPanesSize`: the first render uses it, on the server and in the browser alike.
+   * `readPanesWidth`: the first render uses it, on the server and in the browser alike.
    */
-  persistedSize?: number;
+  persistedWidth?: number;
   /**
    * A name for this node, such as "inbox", which dev mode and the docs show; it renders as
    * `data-env-name`.
@@ -129,7 +158,7 @@ export interface RootProps extends Omit<ComponentPropsWithRef<'div'>, 'children'
   children: ReactNode;
 }
 
-export interface PaneProps extends ComponentPropsWithRef<'div'> {
+export interface MainProps extends ComponentPropsWithRef<'div'> {
   /**
    * Names the pane, which makes it a region landmark that people can jump to, such as Documents.
    * Name the panes of a page's main layout; leave small panes unnamed.
@@ -137,8 +166,11 @@ export interface PaneProps extends ComponentPropsWithRef<'div'> {
   label?: string;
 }
 
-export interface NamedPaneProps extends ComponentPropsWithRef<'div'> {
-  /** Names the pane's region, such as Details or Projects. */
+/** Panes.Detail's props: Panes.Main's, with its optional name. */
+export type DetailProps = MainProps;
+
+export interface ListProps extends ComponentPropsWithRef<'div'> {
+  /** Names the pane's region, such as Projects. */
   label: string;
 }
 
@@ -146,7 +178,10 @@ export interface NamedPaneProps extends ComponentPropsWithRef<'div'> {
  * The supporting pane: named, and a skeleton while what it holds loads. It stays busy and keeps
  * focus, as a sheet must, while its content is the skeleton, and inert.
  */
-export interface SupportingProps extends NamedPaneProps, SkeletonProps {}
+export interface SupportingProps extends ComponentPropsWithRef<'div'>, SkeletonProps {
+  /** Names the pane's region, such as Details. */
+  label: string;
+}
 
 export interface DividerProps
   extends Omit<ComponentPropsWithRef<'div'>, 'children' | 'aria-label' | 'onChange'> {
@@ -158,9 +193,9 @@ export interface DividerProps
 }
 
 interface PanesContextValue {
-  behavior: PanesBehavior;
+  behavior: Behavior;
   open: boolean;
-  close: () => void;
+  close: (reason: OpenChangeReason) => void;
   /** Opens the supporting pane, or the detail. */
   show: () => void;
   backLabel: string | undefined;
@@ -184,7 +219,6 @@ function usePanes(part: string) {
 }
 
 /** Sizes are kept to a hundredth of a rem. */
-const round = (value: number) => Math.round(value * 100) / 100;
 
 /** Whether an element shows, as CSS decided: it has a box. */
 const shows = (element: HTMLElement | null) => element !== null && element.offsetParent !== null;
@@ -193,11 +227,10 @@ const shows = (element: HTMLElement | null) => element !== null && element.offse
 function roomFor(divider: HTMLElement) {
   const root = divider.parentElement;
   if (!root) return Infinity;
-  const rem =
-    Number.parseFloat(getComputedStyle(divider.ownerDocument.documentElement).fontSize) || 16;
+  const rem = remPixels(divider);
   const other =
     Number.parseFloat(getComputedStyle(root).getPropertyValue('--env-panes-other-min')) || 16;
-  return round((root.clientWidth - divider.offsetWidth) / rem - other);
+  return roundToHundredth((root.clientWidth - divider.offsetWidth) / rem - other);
 }
 
 /** What Tab reaches inside an element, in order. */
@@ -219,17 +252,18 @@ const tabbables = (element: HTMLElement) =>
 function Root({
   behavior,
   splitAt = 'expanded',
-  open = false,
+  open: controlledOpen,
+  defaultOpen = false,
   onOpenChange,
   backLabel,
   closeLabel,
-  size: controlledSize,
-  defaultSize = 22.5,
-  onSizeChange,
-  minSize = 16,
-  maxSize = 40,
+  width: controlledSize,
+  defaultWidth: defaultSize = 22.5,
+  onWidthChange: onSizeChange,
+  minWidth: minSize = 16,
+  maxWidth: maxSize = 40,
   persist,
-  persistedSize,
+  persistedWidth: persistedSize,
   name,
   className,
   style,
@@ -239,7 +273,7 @@ function Root({
   const min = Math.max(0, minSize);
   const max = Math.max(min, maxSize);
   const clamp = useCallback(
-    (value: number) => round(Math.min(max, Math.max(min, value))),
+    (value: number) => roundToHundredth(Math.min(max, Math.max(min, value))),
     [min, max],
   );
   // A size chosen by resizing or read from the cookie, or 'default' once a double click forgot it;
@@ -250,7 +284,7 @@ function Root({
       (chosenSize === 'default' ? defaultSize : (chosenSize ?? persistedSize ?? defaultSize)),
   );
   useLayoutEffect(() => {
-    const kept = persist ? readPanesSize(document.cookie, persist) : undefined;
+    const kept = persist ? readPanesWidth(document.cookie, persist) : undefined;
     if (kept !== undefined) setChosenSize(kept);
   }, [persist]);
 
@@ -261,7 +295,7 @@ function Root({
     const value = current.clamp(next);
     if (current.controlledSize === undefined) {
       setChosenSize(value);
-      if (committed && current.persist) writePanesSize(current.persist, value);
+      if (committed && current.persist) writePanesWidth(current.persist, value);
     }
     if (committed || value !== current.size) current.onSizeChange?.(value, { committed });
   }, []);
@@ -271,15 +305,21 @@ function Root({
     if (current.controlledSize === undefined) {
       // The default, also where the width the server read came from the cookie just forgotten.
       setChosenSize('default');
-      if (current.persist) writePanesSize(current.persist, undefined);
+      if (current.persist) writePanesWidth(current.persist, undefined);
     }
     current.onSizeChange?.(value, { committed: true });
   }, []);
 
-  const onOpenChangeRef = useRef(onOpenChange);
-  onOpenChangeRef.current = onOpenChange;
-  const close = useCallback(() => onOpenChangeRef.current?.(false), []);
-  const show = useCallback(() => onOpenChangeRef.current?.(true), []);
+  const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
+  const open = controlledOpen ?? uncontrolledOpen;
+  const latestOpen = useRef({ controlled: controlledOpen !== undefined, onOpenChange });
+  latestOpen.current = { controlled: controlledOpen !== undefined, onOpenChange };
+  const setOpen = useCallback((next: boolean, reason: OpenChangeReason) => {
+    if (!latestOpen.current.controlled) setUncontrolledOpen(next);
+    latestOpen.current.onOpenChange?.(next, { reason });
+  }, []);
+  const close = useCallback((reason: OpenChangeReason) => setOpen(false, reason), [setOpen]);
+  const show = useCallback(() => setOpen(true, 'trigger-press'), [setOpen]);
   const resizedId = `${useId()}-resized`;
   const listRef = useRef<HTMLDivElement>(null);
   const context = useMemo<PanesContextValue>(
@@ -314,9 +354,13 @@ function Root({
       >
         {children}
         {behavior === 'supporting' && (
-          // The scrim behind the supporting sheet; a press on it closes the sheet. Pointer only:
+          // The backdrop behind the supporting sheet; a press on it closes the sheet. Pointer only:
           // Escape closes it from the keyboard.
-          <div className="env-panes-scrim" aria-hidden="true" onClick={close} />
+          <div
+            className="env-panes-backdrop"
+            aria-hidden="true"
+            onClick={() => close('outside-press')}
+          />
         )}
       </div>
     </PanesContext>
@@ -324,7 +368,7 @@ function Root({
 }
 
 /** The main pane of supporting Panes, at the start. */
-function Main({ label, className, ...props }: PaneProps) {
+function Main({ label, className, ...props }: MainProps) {
   usePanes('Main');
   return (
     <div
@@ -339,10 +383,12 @@ function Main({ label, className, ...props }: PaneProps) {
  * The supporting pane, at the end, such as details or filters for the main pane. Below `splitAt` it
  * is a modal sheet over the main pane while `open`: a side sheet in a medium width, a bottom sheet
  * in a compact one. Inside a Scaffold whose document scrolls, the sheet is the window's, as Sheet
- * is: fixed to the window over a scrim, scrolling inside itself while the page stays. As a sheet
+ * is: fixed to the window over a backdrop, scrolling inside itself while the page stays. As a sheet
  * it is a modal dialog with a close button: everything else on the page is inert, focus moves into
- * it and Tab stays in it, and Escape, the close button or a press on the scrim closes it, which
- * returns focus to where it was.
+ * it and Tab stays in it, and Escape, the close button or a press on the backdrop closes it, which
+ * returns focus to where it was. In a contained PortalContainer, such as a preview on a page, the
+ * sheet belongs to the container: it is not modal, so the page stays in use and focus stays where
+ * it is.
  */
 function Supporting({
   label,
@@ -356,6 +402,7 @@ function Supporting({
 }: SupportingProps) {
   const { open, close, closeLabel, resizedId } = usePanes('Supporting');
   const messages = useMessages('panes', panes);
+  const { contained } = usePortalContainer();
   const pane = useRef<HTMLDivElement | null>(null);
   const returnFocus = useRef<HTMLElement | null>(null);
   // Whether the pane is a sheet: CSS decides, positioning it over the main pane below splitAt. Read
@@ -376,6 +423,8 @@ function Supporting({
     if (element.parentElement) observer.observe(element.parentElement);
     return () => observer.disconnect();
   }, [open]);
+  // A sheet is modal, unless it belongs to a contained PortalContainer rather than the window.
+  const modal = sheet && !contained;
   // As a sheet, everything else on the page is inert, so aria-modal holds, and focus moves in; as it
   // closes, focus goes back to where it was. A sheet that becomes a pane beside the main one, as
   // the Panes widen, keeps focus where it is. A sheet fixed to the window keeps the page still.
@@ -383,7 +432,7 @@ function Supporting({
   openRef.current = open;
   useLayoutEffect(() => {
     const element = pane.current;
-    if (!sheet || !element) return;
+    if (!modal || !element) return;
     const document = element.ownerDocument;
     const active = document.activeElement;
     returnFocus.current = active instanceof HTMLElement ? active : null;
@@ -395,9 +444,9 @@ function Supporting({
           other instanceof HTMLElement &&
           other !== node &&
           !other.inert &&
-          // The scrim stays live, as a press on it closes the sheet, and so do live regions, such
+          // The backdrop stays live, as a press on it closes the sheet, and so do live regions, such
           // as toasts, which announce what happens meanwhile.
-          !other.classList.contains('env-panes-scrim') &&
+          !other.classList.contains('env-panes-backdrop') &&
           !other.hasAttribute('aria-live')
         )
           others.push(other);
@@ -428,7 +477,7 @@ function Supporting({
       target.getBoundingClientRect();
       target.focus();
     };
-  }, [sheet]);
+  }, [modal]);
   return (
     <div
       tabIndex={-1}
@@ -439,7 +488,7 @@ function Supporting({
         setRef(ref, node);
       }}
       role={sheet ? 'dialog' : 'region'}
-      aria-modal={sheet || undefined}
+      aria-modal={modal || undefined}
       aria-label={label}
       {...skeletonAttributes(skeleton)}
       className={classNames('env-panes-supporting', className)}
@@ -448,11 +497,11 @@ function Supporting({
         if (event.defaultPrevented || !sheet) return;
         if (event.key === 'Escape') {
           event.preventDefault();
-          close();
+          close('escape-key');
           return;
         }
-        // Tab stays in the sheet, from its last stop to its first and back.
-        if (event.key !== 'Tab') return;
+        // Tab stays in a modal sheet, from its last stop to its first and back.
+        if (event.key !== 'Tab' || !modal) return;
         const stops = tabbables(event.currentTarget);
         const first = stops[0];
         const last = stops[stops.length - 1];
@@ -473,9 +522,9 @@ function Supporting({
       <div className="env-panes-close">
         <IconButton
           variant="ghost"
-          icon={<Close />}
+          icon={<IconClose />}
           aria-label={closeLabel ?? messages.close}
-          onClick={close}
+          onClick={() => close('close-press')}
         />
       </div>
       {inSkeleton(skeleton, children)}
@@ -499,7 +548,7 @@ function focusCurrentRow(list: HTMLElement | null) {
 }
 
 /** The list pane of list-detail Panes, at the start. Below `splitAt` it hides while `open`. */
-function List({ label, className, ref, id, ...props }: NamedPaneProps) {
+function List({ label, className, ref, id, ...props }: ListProps) {
   const { listRef, resizedId } = usePanes('List');
   return (
     <div
@@ -521,7 +570,7 @@ function List({ label, className, ref, id, ...props }: NamedPaneProps) {
  * with a back button to the list at its start, and focus follows what shows: the back button as
  * the detail opens, the list's current row as it closes.
  */
-function Detail({ label, className, children, ref, ...props }: PaneProps) {
+function Detail({ label, className, children, ref, ...props }: DetailProps) {
   const { open, close, backLabel, listRef } = usePanes('Detail');
   const messages = useMessages('panes', panes);
   const back = useRef<HTMLButtonElement>(null);
@@ -557,7 +606,12 @@ function Detail({ label, className, children, ref, ...props }: PaneProps) {
       {/* Always rendered, so the server's markup has it; the style sheet shows it only while one
           pane shows at a time, and hidden it is out of the tab order and the accessibility tree. */}
       <div className="env-panes-back">
-        <Button ref={back} variant="text" startIcon={<ArrowBack />} onClick={close}>
+        <Button
+          ref={back}
+          variant="text"
+          startIcon={<IconArrowBack />}
+          onClick={() => close('back-press')}
+        >
           {backLabel ?? messages.back}
         </Button>
       </div>
@@ -596,7 +650,7 @@ function Divider({ label, className, onDoubleClick, ...props }: DividerProps) {
       onChange={(value, { committed }) => change(value, committed)}
       valueText={(value) =>
         messages.size({
-          size: formatters.number({ maximumFractionDigits: 1 }).format(round(value)),
+          size: formatters.number({ maximumFractionDigits: 1 }).format(roundToHundredth(value)),
         })
       }
       label={label ?? messages.resize}

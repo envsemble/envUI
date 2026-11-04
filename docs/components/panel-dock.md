@@ -1,8 +1,8 @@
 ---
 title: PanelDock
 summary: Panels docked side by side at the bottom of a region, for work beside the page, that minimize to tabs and maximize while their content stays mounted.
-status: experimental
-since: 0.6.0
+status: alpha
+since: 1.0.0
 category: App frame & layout
 aliases:
   - dock
@@ -41,9 +41,6 @@ examples:
   ShortTabLabels:
     role: do
     caption: A short tab label, with the full title as its tooltip.
-  LongTabLabels:
-    role: dont
-    caption: 'Long titles on the tabs: they truncate and crowd the strip.'
 ---
 
 # PanelDock
@@ -56,25 +53,26 @@ examples:
 | Minimized | Setting a panel aside as a tab over the bottom edge, with its content kept and nothing moved. |
 | Maximized | Giving one panel the whole region, behind the open panels.                                    |
 
-```tsx figure=MaximizedPanel
+```tsx figure=MaximizedPanel motion
 
 ```
 
 ## Anatomy
 
-```tsx figure=PanelDockAnatomy width="41"
+```tsx figure=PanelDockAnatomy width="34"
 
 ```
 
 1. **Dock** (`env-panel-dock`)
 2. **Panel** (`env-panel-dock-panel`)
-3. **Resize handle** (`env-panel-dock-resize`)
-4. **Header** (`env-panel-dock-header`)
-5. **Title** (`env-panel-dock-title`, `title`)
-6. **Meta** (`env-panel-dock-meta`, `meta`)
-7. **Actions** (`env-panel-dock-actions`, `actions`)
-8. **Window controls** (`env-panel-dock-controls`)
-9. **Tab** (`env-panel-dock-tab`)
+3. **Header** (`env-panel-dock-header`)
+4. **Title** (`env-panel-dock-title`, `title`)
+5. **Meta** (`env-panel-dock-meta`, `meta`)
+6. **Actions** (`env-panel-dock-actions`, `actions`)
+7. **Window controls** (`env-panel-dock-controls`)
+8. **Tab** (`env-panel-dock-tab`)
+
+Not shown: the resize handle, an invisible strip along an open panel's top edge.
 
 ## Behaviour
 
@@ -88,17 +86,15 @@ Open panels take their preferred width and shrink to a minimum, then the row scr
 
 - The dock can instead minimize the panel used longest ago, and open it again once there is room.
 
-```tsx figure=MinimizeWhatDoesNotFit
+```tsx figure=MinimizeWhatDoesNotFit motion
 
 ```
 
 ### Adapting to width
 
-Where the dock is narrow, such as on a phone, one panel at a time fills the region like a sheet, and the others wait as tabs, already in the first paint.
+Where the dock is narrow, such as on a phone, one panel at a time fills the region like a sheet, and the others wait as tabs. In a narrow panel, the header's actions and controls take a row of their own above the title.
 
-- In a narrow panel, the header's actions and controls take a row of their own above the title.
-
-```tsx figure=NarrowRegion widths="24 48"
+```tsx figure=NarrowRegion widths="48 24" sweep
 
 ```
 
@@ -106,11 +102,7 @@ Where the dock is narrow, such as on a phone, one panel at a time fills the regi
 
 Keep the tabs short, and one panel at the front.
 
-```tsx figure=ShortTabLabels
-
-```
-
-```tsx figure=LongTabLabels
+```tsx figure=ShortTabLabels motion
 
 ```
 
@@ -152,7 +144,6 @@ Activate a panel when it opens, and keep at most one maximized.
 - A positioned container with a height, and `inert` on the content beneath while a panel fills the region.
 - A PanelDock.Header with a title in each panel.
 - `attention` text for a tab's dot, and a `tooltip` where labels truncate.
-- The names in the page's language, through `messages.panelDock`.
 
 ## Compose
 
@@ -187,10 +178,10 @@ A minimized panel is a tab.
 
 #### Make room
 
-A panel takes `preferredWidth`, 32 rem, where the row has room, and shrinks to `minWidth`, 20 rem, up to `maxWidth`, 48 rem; then the row scrolls sideways.
+A panel's sizes are numbers of rem, as Sheet's and Panes' are. It takes `preferredWidth`, 32 rem, where the row has room, and shrinks to `minWidth`, 20 rem, up to `maxWidth`, 48 rem; then the row scrolls sideways.
 
 - With `overflow="minimize"`, the dock instead asks `onModeChange` to minimize the open panel active longest ago, one at a time, until the rest fit, and to open it again once there is room. It never asks for the active panel, the newest one or the one that holds focus.
-- A panel starts at 85% of the dock's room, up to 40 rem, unless `height` sets it, and people resize it between `minHeight`, 15 rem, and `maxHeight`, the dock's room; all of them are in pixels.
+- A panel starts at 85% of the dock's room, up to 40 rem, unless `height` sets it, and people resize it between `minHeight`, 15 rem, and `maxHeight`, the dock's room; `onHeightChange` reports the new height in rem.
 - The tabs float over the bottom of the open panels, so a panel minimized or brought back never moves the others; their content keeps the tabs' height clear at its end, so it scrolls out from beneath them.
 - The arrow keys on a resize handle change the height by 16 px, and by 64 px with <kbd>Shift</kbd>.
 
@@ -211,7 +202,7 @@ A panel takes `preferredWidth`, 32 rem, where the row has room, and shrinks to `
 
 #### Stacking
 
-Below `stackBelow`, 40 rem of the dock's own width, or a number of pixels, one panel at a time fills the region and the others wait as tabs.
+Below `stackBelow`, 40 rem of the dock's own width, a CSS length or a number of rem, one panel at a time fills the region and the others wait as tabs.
 
 - A container query on the dock decides it, so the server's markup and the first paint already stack.
 - The dock then reads the layout to report it with `data-stacked` and `onStackedChange`, and to make the panels it leaves out inert.
@@ -223,11 +214,11 @@ Below `stackBelow`, 40 rem of the dock's own width, or a number of pixels, one p
 Put the dock in a positioned container with a height, or directly in a Scaffold's body.
 
 - Set `inert` on the content beneath while a panel is maximized.
-- `minimizedLabel`, `openLabel`, `closeLabel` and `resizeLabel` name the list of tabs, a tab's buttons and the resize handles for one dock, from EnvUIProvider's `messages.panelDock` by default.
+- `minimizedLabel`, `openLabel`, `closeLabel` and `resizeLabel` name the list of tabs, a tab's buttons and the resize handles for one dock.
 
-The parts are the dock, `env-panel-dock`; each panel, `env-panel-dock-panel`, with its resize handle, `env-panel-dock-resize`, its header, `env-panel-dock-header`, which holds the title, `env-panel-dock-title`, the meta, `env-panel-dock-meta`, the actions, `env-panel-dock-actions`, and the window controls, `env-panel-dock-controls`, and its content, `env-panel-dock-content`; and the tabs, `env-panel-dock-tab`, in the strip, `env-panel-dock-strip`. The dock has `data-tabs` while it shows tabs.
+The parts are the dock, `env-panel-dock`; each panel, `env-panel-dock-panel`, with its resize handle, `env-panel-dock-resize-handle`, its header, `env-panel-dock-header`, which holds the title, `env-panel-dock-title`, the meta, `env-panel-dock-meta`, the actions, `env-panel-dock-actions`, and the window controls, `env-panel-dock-controls`, and its content, `env-panel-dock-content`; and the tabs, `env-panel-dock-tab`, in the strip, `env-panel-dock-strip`. The dock has `data-tabs` while it shows tabs.
 
 ## Changelog
 
-- **1.0.0**: One namespace, `PanelDock.Root` and `PanelDock.Header`; PanelDockControls is internal, `controls` is a boolean and the controls' names come from EnvUIProvider's `messages.panelDock`. Minimized panels are tabs, `env-panel-dock-tab` and `data-tabs`, where they were chips, and a header's application buttons are ghost by default. `showLabel`, which names a tab's button, is `openLabel`.
-- **0.6.0**: PanelDock, PanelDockHeader and PanelDockControls: open panels side by side on the bottom inline-end edge, a maximized panel filling the region and minimized panels as chips, with content that stays mounted, resizing from the top edge, `overflow="minimize"`, stacking below `stackBelow`, focus that follows the panels, and labels that localize the dock.
+- **1.0.0-prerelease.5**: A panel's `height`, `preferredWidth`, `minWidth`, `maxWidth`, `minHeight` and `maxHeight`, and the height `onHeightChange` reports, are in rem, where they were pixels: divide them by 16. A number for `stackBelow` is rem too.
+- **1.0.0**: One namespace, `PanelDock.Root` and `PanelDock.Header`; PanelDockControls is internal, `controls` is a boolean and the controls' names come from EnvUIProvider's `messages.panelDock`. Minimized panels are tabs, `env-panel-dock-tab` and `data-tabs`, where they were chips, and a header's application buttons are ghost by default. `showLabel`, which names a tab's button, is `openLabel`. A panel's resize handle, `env-panel-dock-resize`, is `env-panel-dock-resize-handle`, as every resize handle is named.

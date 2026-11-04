@@ -8,10 +8,10 @@ import {
   Theme,
   type ComboboxGroup,
   type ComboboxItem,
-  type ThemeValue,
+  type ColorScheme,
 } from '@envsemble/envui';
-import { Description } from '@envsemble/envui/icons/Description';
-import { Folder } from '@envsemble/envui/icons/Folder';
+import { IconDescription } from '@envsemble/envui/icons/Description';
+import { IconFolder } from '@envsemble/envui/icons/Folder';
 
 const names = [
   'Alex Morgan',
@@ -44,16 +44,16 @@ const documents: ComboboxGroup[] = [
   {
     label: 'Recent',
     items: [
-      { value: 'quarterly-report', label: 'Quarterly report', start: <Description /> },
-      { value: 'release-notes', label: 'Release notes', start: <Description /> },
+      { value: 'quarterly-report', label: 'Quarterly report', start: <IconDescription /> },
+      { value: 'release-notes', label: 'Release notes', start: <IconDescription /> },
     ],
   },
   {
     label: 'Folders',
     items: [
-      { value: 'design-system/tokens', label: 'design-system/tokens', start: <Folder /> },
-      { value: 'design-system/icons', label: 'design-system/icons', start: <Folder /> },
-      { value: 'research/interviews', label: 'research/interviews', start: <Folder /> },
+      { value: 'design-system/tokens', label: 'design-system/tokens', start: <IconFolder /> },
+      { value: 'design-system/icons', label: 'design-system/icons', start: <IconFolder /> },
+      { value: 'research/interviews', label: 'research/interviews', start: <IconFolder /> },
     ],
   },
 ];
@@ -67,7 +67,7 @@ const tags: ComboboxItem[] = [
   'Testing',
 ].map((label) => ({ value: label.toLowerCase(), label }));
 
-function ServerSearch({ theme }: { theme: ThemeValue }) {
+function ServerSearch({ theme }: { theme: ColorScheme }) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<ComboboxItem[]>([]);
   const [loading, setLoading] = useState(false);
@@ -114,7 +114,7 @@ function ServerSearch({ theme }: { theme: ThemeValue }) {
   );
 }
 
-export function ComboboxFixture({ theme }: { theme: ThemeValue }) {
+export function ComboboxFixture({ theme }: { theme: ColorScheme }) {
   const [submitted, setSubmitted] = useState('');
   const [authorChanges, setAuthorChanges] = useState<(string | null)[]>([]);
   const [owner, setOwner] = useState<string | null>('riley-chen');

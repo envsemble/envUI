@@ -2,7 +2,7 @@
 title: Breadcrumbs
 summary: The path from the top level to the current page, with earlier levels as links or buttons.
 status: stable
-since: 0.5.0
+since: 1.0.0
 category: Navigation
 aliases:
   - breadcrumb
@@ -17,7 +17,7 @@ useWhen:
   - An item's place, on one line of a header or a bar beside its status and actions
 avoidWhen:
   - text: The application's main navigation, such as the pages in a sidebar.
-    use: Drawer
+    use: NavigationDrawer
   - text: Previous and next pages of a sequence.
     use: Pager
   - text: Browsing and expanding a whole hierarchy.
@@ -27,12 +27,12 @@ components:
 examples:
   DocumentTrail:
     role: overview
-    caption: A trail from a workspace through its folders to the open document; the current page is always last, and never a link.
+    caption: From the workspace to the open document.
   WithoutUrls: example
   LevelWithoutPage: example
+  WrappingTrail: example
   OneLine: example
   BreadcrumbsAnatomy: anatomy
-  WrappingTrail: example
   RecognisedTop:
     role: do
     caption: Start at the level people know as the top, such as the workspace.
@@ -52,7 +52,7 @@ Levels can be buttons rather than links.
 - Pressing one shortens the trail.
 - The application moves focus, here to the folder's title.
 
-```tsx figure=WithoutUrls
+```tsx figure=WithoutUrls motion
 
 ```
 
@@ -66,12 +66,14 @@ A level that can't be opened is plain text.
 
 ### Wrapping
 
-A trail above a page wraps; one in a bar stays on one line.
+| Wrapping | Use for                                                                                         |
+| -------- | ----------------------------------------------------------------------------------------------- |
+| Wraps    | A trail above a page's content: it wraps onto more lines when it runs out of room. The default. |
+| One line | A bar that stays one line tall: the current page is cut short first.                            |
 
-| Wrapping | Use for                                                              |
-| -------- | -------------------------------------------------------------------- |
-| Wraps    | A trail above a page's content. The default.                         |
-| One line | A bar that stays one line tall: the current page is cut short first. |
+```tsx figure=WrappingTrail widths="36 14" sweep
+
+```
 
 ```tsx figure=OneLine
 
@@ -96,15 +98,7 @@ A long label ends with an ellipsis, and a tooltip shows it in full on hover and 
 
 - On one line, the current page is cut short first, and earlier levels keep their width.
 
-### Adapting to width
-
-The trail wraps onto more lines when it runs out of room.
-
-- Its chevrons mirror in right-to-left text.
-
-```tsx figure=WrappingTrail widths="14 36"
-
-```
+<!-- specimen: LongLabel -->
 
 ## Rules
 
@@ -140,7 +134,7 @@ Pair the trail with the main navigation: it never replaces it.
 
 ### envUI provides
 
-- A `nav` landmark named Breadcrumb, from `messages.breadcrumbs`, around an ordered list.
+- A `nav` landmark named Breadcrumb around an ordered list.
 - `aria-current="page"` on the last level, which is never a link.
 - Separators hidden from assistive technology, and full labels for those cut short.
 
@@ -176,9 +170,9 @@ Give levels `onClick` where the application has no URLs. Pressing one makes it t
 
 ### Composition
 
-The landmark is named Breadcrumb, from EnvUIProvider's `messages.breadcrumbs`; `aria-label` tells two trails on a page apart. Pair it with the main navigation, such as a Drawer. Each level sits in an item, `env-breadcrumbs-item`.
+The landmark is named Breadcrumb; `aria-label` tells two trails on a page apart. Pair it with the main navigation, such as a NavigationDrawer. Each level sits in an item, `env-breadcrumbs-item`. The chevrons mirror in right-to-left text.
 
 ## Changelog
 
+- **1.0.0-prerelease.5**: An item's type is `BreadcrumbsItem`, after the component, where it was `BreadcrumbItem`.
 - **1.0.0**: A label cut short with an ellipsis shows in full in a tooltip, on hover and keyboard focus; a plain level or the current page cut short takes keyboard focus for it, keeping `aria-current`. The landmark's default name comes from `messages.breadcrumbs`, and the `nav` takes `ref`, `style` and native props. Classes: `env-breadcrumb` and `env-breadcrumb-*` are `env-breadcrumbs-item` and `env-breadcrumbs-*`.
-- **0.5.0**: Breadcrumbs, with `wrap={false}` for a trail that stays on one line in a bar or header.

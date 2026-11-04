@@ -8,7 +8,6 @@ import type {
   InnerData,
   LayoutKind,
   NodeData,
-  OverlayKind,
   ScrollData,
   Snapshot,
   StickyData,
@@ -17,32 +16,18 @@ import { layoutKinds } from './model.js';
 import { partClassOf } from './parts.js';
 import { pageContainerQueries } from './queries.js';
 import { rootFontPx } from './units.js';
+import { isOpenOverlay, outermost, overlayKind, overlaySelector } from './overlays.js';
 
 /** The attribute every primitive and scaffold renders on its root, with its kind. */
 export const layoutAttribute = 'data-env-layout';
 /** The attribute on dev mode's own UI, which the readout leaves out. */
 export const devAttribute = 'data-env-dev';
 
-/**
- * What can be an open overlay, if it floats: dialogs, popovers, and the popups of components, which
- * take a role or the side of their anchor (`data-side`), but not their positioners.
- */
-export const overlaySelector = [
-  'dialog[open]',
-  '[popover]',
-  '[role="dialog"]',
-  '[role="alertdialog"]',
-  '[role="menu"]',
-  '[role="listbox"]',
-  '[role="tooltip"]',
-  '[data-side]:not([role="presentation"])',
-].join(', ');
-
 export interface MeasureOptions {
   /** Also read what sticks, scrolls or holds squeezed text inside the nodes; the readout does. */
   inner?: boolean;
   /** The fewest characters a line of text may hold before it counts as squeezed. */
-  minTextChars?: number;
+  minTextCharacters?: number;
 }
 
 const ids = new WeakMap<Element, number>();
@@ -120,43 +105,12 @@ export function layoutChildrenOf(element: Element): HTMLElement[] {
   return out;
 }
 
-/** Whether an open overlay: in the top layer, or floating, and shown. */
-function isOpenOverlay(element: Element): boolean {
-  if (element instanceof HTMLDialogElement) return element.open;
-  if (element.hasAttribute('popover')) {
-    try {
-      return element.matches(':popover-open');
-    } catch {
-      return false;
-    }
-  }
-  // Floating is the element's own position, or its positioner's: Base UI places a popup in a
-  // positioner, its parent, and a dialog or a command palette sits in a positioner fixed over the
-  // window. A listbox or menu inside some other floating box is no overlay.
-  const position = (at: Element) => getComputedStyle(at).position;
-  if (['fixed', 'absolute'].includes(position(element))) return true;
-  const parent = element.parentElement;
-  if (parent === null) return false;
-  if (parent.matches('[role="presentation"]') && ['fixed', 'absolute'].includes(position(parent)))
-    return true;
-  return element.matches('[role="dialog"], [role="alertdialog"]') && position(parent) === 'fixed';
-}
-
-function overlayKind(element: Element): OverlayKind {
-  const role = element.getAttribute('role');
-  if (element instanceof HTMLDialogElement || role === 'dialog' || role === 'alertdialog')
-    return 'dialog';
-  if (role === 'menu') return 'menu';
-  if (role === 'tooltip') return 'tooltip';
-  return 'popover';
-}
-
 /**
  * The element dev mode measures when none is given: the outermost theme boundary that is the
  * `env-window` container, else the first theme boundary, else the body. Dev mode's own UI and the
  * boundaries popups carry don't count.
  */
-export function defaultRoot(): HTMLElement {
+function defaultRoot(): HTMLElement {
   const boundaries = Array.from(document.querySelectorAll<HTMLElement>('.env-theme')).filter(
     (element) =>
       element !== document.documentElement &&
@@ -182,7 +136,7 @@ export function resolveRoot(root?: Element | string | null): HTMLElement {
 /** Measures the page under a root, with the open overlays anywhere in the document. */
 export function measure(root: HTMLElement, options: MeasureOptions = {}): Snapshot {
   const rootPx = rootFontPx();
-  const minTextChars = options.minTextChars ?? 8;
+  const minTextCharacters = options.minTextCharacters ?? 8;
   const queries = pageContainerQueries(rootPx);
   const windowBox: Box = { x: 0, y: 0, w: window.innerWidth, h: window.innerHeight };
   const rootBox = toBox(root.getBoundingClientRect());
@@ -193,11 +147,7 @@ export function measure(root: HTMLElement, options: MeasureOptions = {}): Snapsh
       element instanceof HTMLElement && !isDevElement(element) && isOpenOverlay(element),
   );
   const overlaySet = new Set<Element>(overlays);
-  const outerOverlays = overlays.filter((element) => {
-    for (let at = element.parentElement; at; at = at.parentElement)
-      if (overlaySet.has(at)) return false;
-    return true;
-  });
+  const outerOverlays = outermost(overlays);
   // The nodes in document order, so that parents come before their children: the page's, then
   // each overlay with the nodes in it.
   const inOverlay = (element: Element) =>
@@ -407,7 +357,7 @@ export function measure(root: HTMLElement, options: MeasureOptions = {}): Snapsh
   );
   for (const index of overlayOf.keys()) nodes[index].level += Math.ceil(top) + 2;
 
-  if (options.inner) measureInner(root, outerOverlays, nodes, indexOf, minTextChars, rootPx);
+  if (options.inner) measureInner(root, outerOverlays, nodes, indexOf, minTextCharacters, rootPx);
 
   return {
     rootPx,
@@ -416,7 +366,7 @@ export function measure(root: HTMLElement, options: MeasureOptions = {}): Snapsh
     nodes,
     tops: nodes.filter((node) => node.parent === null).map((node) => node.index),
     queries,
-    minTextChars,
+    minTextCharacters,
     elements,
   };
 }
@@ -531,7 +481,7 @@ function measureInner(
   overlays: HTMLElement[],
   nodes: NodeData[],
   indexOf: Map<Element, number>,
-  minTextChars: number,
+  minTextCharacters: number,
   rootPx: number,
 ) {
   const nearestNode = (element: Element): number | null => {
@@ -553,7 +503,7 @@ function measureInner(
       if (indexOf.has(element) || !(element instanceof HTMLElement)) continue;
       const sticky = style.position === 'sticky';
       const scroll = scrollOf(element, style);
-      const squeezed = squeezedText(element, style, minTextChars, rootPx);
+      const squeezed = squeezedText(element, style, minTextCharacters, rootPx);
       if (!sticky && !scroll && !squeezed) continue;
       const index = nearestNode(element);
       if (index === null || nodes[index].hidden !== null || isDevElement(element)) continue;
@@ -602,25 +552,29 @@ function transformReach(
 }
 
 /**
- * Text squeezed so narrow that it wraps at fewer than `minTextChars` characters a line: an element
+ * Text squeezed so narrow that it wraps at fewer than `minTextCharacters` characters a line: an element
  * holding text of its own that is longer than that, and wraps, in a box narrower than that many
  * characters of its font (a character taken as half the font size).
  */
 function squeezedText(
   element: HTMLElement,
   style: CSSStyleDeclaration,
-  minTextChars: number,
+  minTextCharacters: number,
   rootPx: number,
 ): { chars: number; width: number } | null {
   const width = element.clientWidth - px(style.paddingLeft) - px(style.paddingRight);
   const fontSize = px(style.fontSize) || rootPx;
   const charWidth = fontSize / 2;
-  if (width <= 0 || width >= minTextChars * charWidth) return null;
+  if (width <= 0 || width >= minTextCharacters * charWidth) return null;
   let text = '';
   for (const child of Array.from(element.childNodes))
     if (child.nodeType === Node.TEXT_NODE) text += child.textContent ?? '';
   text = text.trim();
-  if (text.length <= minTextChars || style.whiteSpace === 'nowrap' || style.whiteSpace === 'pre')
+  if (
+    text.length <= minTextCharacters ||
+    style.whiteSpace === 'nowrap' ||
+    style.whiteSpace === 'pre'
+  )
     return null;
   const lineHeight = px(style.lineHeight) || fontSize * 1.4;
   // The content's height, without the padding, holds the lines.

@@ -1,70 +1,72 @@
-/* DescriptionList: labelled values in a grid, the labels in a column as wide as the longest one, or
-   each label above its value. Labels are muted and wrap between words only. */
-.env-description-list {
-  display: grid;
-  grid-template-columns: minmax(min-content, max-content) minmax(0, 1fr);
-  gap: var(--env-space-2) var(--env-space-4);
-  margin: 0;
-  font: var(--env-type-body-small);
-  color: var(--env-color-fg-default);
-}
-.env-description-list[data-size='md'] {
-  gap: var(--env-space-3) var(--env-space-5);
-  font: var(--env-type-body);
-}
-.env-description-list-item {
-  display: grid;
-  grid-column: 1 / -1;
-  grid-template-columns: subgrid;
-  align-items: baseline;
-}
-.env-description-list-label {
-  color: var(--env-color-fg-muted);
-  overflow-wrap: normal;
-  word-break: normal;
-}
-.env-description-list-value {
-  min-inline-size: 0;
-  margin: 0;
-  overflow-wrap: anywhere;
-}
-/* Only an automatic layout follows its own width, so only it is a container: a container is as wide
-   as its context gives it, never as its content. Its threshold, 24 rem, is the list's own and no
-   window class: below it a label and its value no longer fit side by side, at any window size. */
-.env-description-list[data-layout='auto'] {
-  container: env-description-list / inline-size;
-}
-/* Stacked, each label sits above its value, the rows apart. */
-.env-description-list[data-layout='stacked'] .env-description-list-item {
-  display: flex;
-  flex-direction: column;
-  gap: var(--env-space-1);
-}
-@container env-description-list (width < 24rem) {
-  .env-description-list[data-layout='auto'] .env-description-list-item {
+@layer env.components {
+  /* DescriptionList: labelled values in a grid, the labels in a column as wide as the longest one, or
+     each label above its value. Labels are muted and wrap between words only. */
+  .env-description-list {
+    display: grid;
+    grid-template-columns: minmax(min-content, max-content) minmax(0, 1fr);
+    gap: var(--env-space-2) var(--env-space-4);
+    margin: 0;
+    font: var(--env-type-body-sm);
+    color: var(--env-color-fg-default);
+  }
+  .env-description-list[data-size='md'] {
+    gap: var(--env-space-3) var(--env-space-5);
+    font: var(--env-type-body);
+  }
+  .env-description-list-item {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: subgrid;
+    align-items: baseline;
+  }
+  .env-description-list-label {
+    color: var(--env-color-fg-muted);
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+  .env-description-list-value {
+    min-inline-size: 0;
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+  /* Only an automatic layout follows its own width, so only it is a container: a container is as wide
+     as its context gives it, never as its content. Its threshold, 24 rem, is the list's own and no
+     window class: below it a label and its value no longer fit side by side, at any window size. */
+  .env-description-list[data-layout='auto'] {
+    container: env-description-list / inline-size;
+  }
+  /* Stacked, each label sits above its value, the rows apart. */
+  .env-description-list[data-layout='stacked'] .env-description-list-item {
     display: flex;
     flex-direction: column;
     gap: var(--env-space-1);
   }
-}
-/* With controls, each row is at least as tall as a small control, and its label sits on the
-   control's first line. */
-.env-description-list[data-controls] .env-description-list-item {
-  align-items: start;
-}
-.env-description-list[data-controls] .env-description-list-value {
-  display: flex;
-  align-items: center;
-  min-block-size: var(--env-control-height-sm);
-}
-.env-description-list[data-controls] .env-description-list-label {
-  padding-block: calc((var(--env-control-height-sm) - 1lh) / 2);
-}
-.env-description-list[data-controls][data-layout='stacked'] .env-description-list-label {
-  padding-block: 0;
-}
-@container env-description-list (width < 24rem) {
-  .env-description-list[data-controls][data-layout='auto'] .env-description-list-label {
+  @container env-description-list (width < 24rem) {
+    .env-description-list[data-layout='auto'] .env-description-list-item {
+      display: flex;
+      flex-direction: column;
+      gap: var(--env-space-1);
+    }
+  }
+  /* With controls, each row is at least as tall as a small control, and its label sits on the
+     control's first line. */
+  .env-description-list[data-controls] .env-description-list-item {
+    align-items: start;
+  }
+  .env-description-list[data-controls] .env-description-list-value {
+    display: flex;
+    align-items: center;
+    min-block-size: var(--env-control-height-sm);
+  }
+  .env-description-list[data-controls] .env-description-list-label {
+    padding-block: calc((var(--env-control-height-sm) - 1lh) / 2);
+  }
+  .env-description-list[data-controls][data-layout='stacked'] .env-description-list-label {
     padding-block: 0;
+  }
+  @container env-description-list (width < 24rem) {
+    .env-description-list[data-controls][data-layout='auto'] .env-description-list-label {
+      padding-block: 0;
+    }
   }
 }

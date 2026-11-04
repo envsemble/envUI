@@ -25,10 +25,14 @@ import {
   type MarkdownCommand,
   type MarkdownLink,
   type MarkdownSelection,
-} from './internal/markdown/MarkdownFormatting.js';
+} from './internal/markdown/markdownFormatting.js';
+import '../styles/Base.css';
+import '../styles/MarkdownEditor.css';
 
-export type { MarkdownCommand, MarkdownLink } from './internal/markdown/MarkdownFormatting.js';
+export type { MarkdownCommand, MarkdownLink } from './internal/markdown/markdownFormatting.js';
+/** What pickLink receives when people ask for a link. */
 export interface MarkdownLinkRequest {
+  /** The text selected at the time, which the link will wrap; empty without a selection. */
   selectedText: string;
 }
 /** The commands of MarkdownEditor's toolbar, in order: every one it offers. */
@@ -64,9 +68,7 @@ export interface MarkdownEditorProps
     'headingOffset' | 'renderLink' | 'codeCopyable'
   >;
   /** Optional application picker. Return null to cancel; otherwise return an ordinary link. */
-  onRequestLink?: (
-    request: MarkdownLinkRequest,
-  ) => MarkdownLink | null | Promise<MarkdownLink | null>;
+  pickLink?: (request: MarkdownLinkRequest) => MarkdownLink | null | Promise<MarkdownLink | null>;
 }
 
 /**
@@ -81,7 +83,7 @@ export function MarkdownEditor({
   toolbar = defaultMarkdownCommands,
   preview = true,
   previewProps,
-  onRequestLink,
+  pickLink,
   label,
   description,
   error,
@@ -152,14 +154,14 @@ export function MarkdownEditor({
     }
   }
   async function requestLink(selection: MarkdownSelection) {
-    if (!onRequestLink) {
+    if (!pickLink) {
       setLinkSelection(selection);
       return;
     }
     const version = ++linkRequestVersion.current;
     setLinkPending(true);
     try {
-      const result = await onRequestLink({
+      const result = await pickLink({
         selectedText: selection.value.slice(selection.start, selection.end),
       });
       if (linkRequestVersion.current === version && result) insertLink(selection, result);
@@ -198,7 +200,7 @@ export function MarkdownEditor({
           {...nativeProps}
           {...metadata}
           ref={attachInput}
-          className="env-markdown-source"
+          className="env-markdown-editor-input"
           rows={rows}
           sizing={sizing}
           disabled={disabled}

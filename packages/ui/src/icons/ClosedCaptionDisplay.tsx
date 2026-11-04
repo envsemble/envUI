@@ -1,11 +1,11 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
-// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
+// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../Icon.js';
+import { useSymbolIconFill } from '../SymbolIconState.js';
 
-export function ClosedCaptionDisplay({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
+export function IconClosedCaptionDisplay({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
   return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M520-80q-33 0-56.5-23.5T440-160v-160q0-33 23.5-56.5T520-400h280q33 0 56.5 23.5T880-320v160q0 33-23.5 56.5T800-80H520Zm0-80h280v-160H520v160ZM365-360q-1 5 5 12.5t46.5 27.5Q457-300 546-262.5T360-320v120q0 17-11.5 28.5T320-160H200q-33 0-56.5-23.5T120-240v-480q0-33 23.5-56.5T200-800h560q33 0 56.5 23.5T840-720v200q0 17-11.5 28.5T800-480H580v-60h80q0 9 6 15t15 6h18q9 0 15-6t6-15v-20q0-17-11.5-28.5T680-600H560q-17 0-28.5 11.5T520-560v80q-38 0-70 16.5T396-420h-96v-120h80q0 9 6 15t15 6h18q9 0 15-6t6-15v-20q0-17-11.5-28.5T400-600H280q-17 0-28.5 11.5T240-560v160q0 17 11.5 28.5T280-360h85Z" /> : <path d="M200-240v-480 480Zm80-120h85q5-17 12.5-32t18.5-28h-96v-120h80q0 9 6 15t15 6h18q9 0 15-6t6-15v-20q0-17-11.5-28.5T400-600H280q-17 0-28.5 11.5T240-560v160q0 17 11.5 28.5T280-360Zm280-240q-17 0-28.5 11.5T520-560v80h60v-60h80q0 9 6 15t15 6h18q9 0 15-6t6-15v-20q0-17-11.5-28.5T680-600H560ZM200-160q-33 0-56.5-23.5T120-240v-480q0-33 23.5-56.5T200-800h560q33 0 56.5 23.5T840-720v200q0 17-11.5 28.5T800-480q-17 0-28.5-11.5T760-520v-200H200v480h120q17 0 28.5 11.5T360-200q0 17-11.5 28.5T320-160H200Zm320 80q-33 0-56.5-23.5T440-160v-160q0-33 23.5-56.5T520-400h280q33 0 56.5 23.5T880-320v160q0 33-23.5 56.5T800-80H520Zm0-80h280v-160H520v160Z" />}</Icon>;
 }

@@ -4,7 +4,7 @@
  */
 export const tree = {
   /** Names an item's menu of actions. */
-  actions: 'Actions',
+  contextMenu: 'Actions',
 };
 
 export type TreeMessages = typeof tree;

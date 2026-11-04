@@ -6,9 +6,8 @@ import { readFile, writeFile, mkdir, mkdtemp, rm, lstat, readdir } from 'node:fs
 import { dirname, join, resolve, relative, isAbsolute, delimiter } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
-import { compileDocumentation } from '../scripts/GenerateDocumentation.mjs';
-import { readMap } from '../packages/codemods/src/map.mjs';
-import { documentedLibraries } from '../scripts/EntryLibraries.mjs';
+import { compileDocumentation } from '../scripts/docs/GenerateDocumentation.ts';
+import { documentedLibraries } from '../scripts/build/EntryLibraries.ts';
 
 const repository = fileURLToPath(new URL('../', import.meta.url));
 const cacheDirectory = join(repository, '.cache');
@@ -62,6 +61,21 @@ function run(script, args = [], cwd = consumerDirectory) {
   }
 }
 
+/** envUI's cascade layers, in their order. */
+const envLayers = ['env.reset', 'env.tokens', 'env.base', 'env.components', 'env.utilities'];
+
+/**
+ * The cascade layers a style sheet names, in the order they first appear, which is their order: a
+ * bundler may merge blocks of a layer or drop a statement that repeats an order already set.
+ */
+function layerOrder(css) {
+  const names = [];
+  for (const [, list] of css.replace(/\/\*[\s\S]*?\*\//g, '').matchAll(/@layer\s+([^{;]+)[{;]/g))
+    for (const name of list.split(',').map((part) => part.trim()))
+      if (!names.includes(name)) names.push(name);
+  return names;
+}
+
 async function runConsumer(name, source) {
   const script = join(consumerDirectory, name);
   await writeFile(script, source);
@@ -95,6 +109,7 @@ before(
       '@types/react-dom',
       'typescript',
       'esbuild',
+      'vite',
     ]) {
       dependencies[name] = manifest.devDependencies[name];
     }
@@ -139,17 +154,16 @@ before(
     import * as ui from '@envsemble/envui';
     import * as color from '@envsemble/envui/color';
     import * as themeBootstrap from '@envsemble/envui/theme-bootstrap';
-    import { Home } from '@envsemble/envui/icons/Home';
-    import { Home as BarrelHome } from '@envsemble/envui/icons';
+    import { IconHome } from '@envsemble/envui/icons/Home';
     if (typeof document !== 'undefined' || typeof window !== 'undefined') throw new Error('DOM globals must be absent');
     function ThemeProbe() { return h('span', { 'data-originating-theme': ui.useTheme().theme }); }
     const custom = h(ui.Icon, { label: 'Custom star', viewBox: '0 0 8 8' }, h('path', { d: 'M0 0L8 8' }));
     const html = renderToString(h(ui.Theme, { theme: 'dark' },
       h(ThemeProbe),
-      h(ui.Button, { startIcon: h(Home) }, 'Create'),
+      h(ui.Button, { startIcon: h(IconHome) }, 'Create'),
       h(ui.IconButton, { icon: custom, 'aria-label': 'Open item' }),
       h(ui.ButtonGroup, { orientation: 'vertical', 'aria-label': 'Connected actions' },
-        h(ui.Button, { startIcon: h(Home) }, 'Continue'),
+        h(ui.Button, { startIcon: h(IconHome) }, 'Continue'),
         h(ui.IconButton, { icon: custom, 'aria-label': 'Settings' }),
         h(ui.Button, { variant: 'primary', tone: 'accent', href: '/confirm' }, 'Confirm')),
       h(ui.Pager.Previous, { href: '/previous-guide' }, 'Earlier guide'),
@@ -168,19 +182,20 @@ before(
       h(ui.DatePicker, { name: 'due', label: 'Due', defaultValue: '2026-10-14T09:30', granularity: 'minute', locale: 'en-GB' }),
       h(ui.Calendar, { 'aria-label': 'Planning', defaultValue: '2026-03-09', locale: 'en-GB', weekStart: 1 }),
       h(ui.Dialog, { title: 'Example', open: false, trigger: h(ui.Button, null, 'Open') }),
-      h(ui.Toast.Provider, null, 'Managed notifications'),
+      h(ui.ToastProvider, null, 'Managed notifications'),
       h(ui.Spinner, { label: 'Loading projects', showLabel: true }),
       h(ui.Card, { skeleton: true, title: ui.placeholders(1)[0].title }, h(ui.Text))
     ));
     console.log(JSON.stringify({
       exports: Object.keys(ui), colorExports: Object.keys(color), themeBootstrapExports: Object.keys(themeBootstrap), html,
-      defaultIcon: renderToString(h(Home)), filledIcon: renderToString(h(Home, { filled: true, label: 'Home' })),
-      barrelIcon: renderToString(h(BarrelHome)), customIcon: renderToString(custom),
-      module: import.meta.resolve('@envsemble/envui'), iconsModule: import.meta.resolve('@envsemble/envui/icons'),
+      defaultIcon: renderToString(h(IconHome)), filledIcon: renderToString(h(IconHome, { filled: true, label: 'Home' })),
+      customIcon: renderToString(custom),
+      module: import.meta.resolve('@envsemble/envui'),
+      iconsBarrel: (() => { try { return import.meta.resolve('@envsemble/envui/icons'); } catch { return null; } })(),
       homeModule: import.meta.resolve('@envsemble/envui/icons/Home'),
       reactModule: import.meta.resolve('react'),
       css: import.meta.resolve('@envsemble/envui/styles.css'),
-      font: import.meta.resolve('@envsemble/envui/assets/Inter.woff2')
+      font: import.meta.resolve('@envsemble/envui/assets/Geist.woff2')
     }));
   `,
     );
@@ -199,12 +214,15 @@ after(async function removeConsumerFixture() {
 });
 
 test('the packed package ships no logos', () => {
-  assert.ok(packedFiles.includes('dist/assets/Inter.woff2'), 'The pack lists its files.');
+  assert.ok(packedFiles.includes('dist/assets/Geist.woff2'), 'The pack lists its files.');
   const images = packedFiles.filter((path) => /\.(?:svg|png|ico)$/i.test(path));
-  // The README's captures of the catalogue and the Docs are the only images the package ships.
+  // The README's captures of the catalogue and the Docs, and the spark that marks a bullet in
+  // formatted text (Prose.css), are the only images the package ships.
   assert.deepEqual(
     images.filter(
-      (path) => !/^dist\/assets\/readme\/(?:catalogue|docs)-(?:light|dark)\.png$/.test(path),
+      (path) =>
+        !/^dist\/assets\/readme\/(?:catalogue|docs)-(?:light|dark)\.png$/.test(path) &&
+        path !== 'dist/assets/spark.svg',
     ),
     [],
   );
@@ -214,36 +232,11 @@ test('the packed package ships no logos', () => {
   );
 });
 
-test('no 0.x name of the rename map is exported, and every namespace is', async () => {
-  const map = readMap(join(repository, 'packages/codemods/src/maps/v1'));
-  const names = (section) => Object.keys(section).filter((name) => !name.startsWith('$'));
-  const entries = {
-    '@envsemble/envui': ssr.exports,
-    '@envsemble/envui/theme-bootstrap': ssr.themeBootstrapExports,
-  };
-  // Namespaces such as Menu and Toast reuse the name of a 0.x component.
-  const namespaces = new Set(
-    Object.values(map.exports['@envsemble/envui'])
-      .filter((name) => name.includes('.'))
-      .map((name) => name.split('.')[0]),
-  );
-  // Names that 1.0 exports again for something else, such as Row, a list row in 0.x and a layout
-  // primitive in 1.0, which the map lists as reused.
-  const reused = new Set(map.reused ?? []);
-  for (const [entry, exported] of Object.entries(entries)) {
-    for (const section of ['exports', 'split', 'removed'])
-      for (const name of names(map[section][entry] ?? {}))
-        if (!namespaces.has(name) && !reused.has(name))
-          assert.ok(!exported.includes(name), `${entry} still exports ${name}.`);
-  }
-  for (const namespace of namespaces)
-    assert.ok(ssr.exports.includes(namespace), `Missing namespace export: ${namespace}`);
-});
-
 test('a packed consumer resolves compiled public exports and its own React installation', async function () {
   assert.equal((await lstat(installedDirectory)).isSymbolicLink(), false);
   assert.match(ssr.module, /\/node_modules\/@envsemble\/envui\/dist\/index\.js$/);
-  assert.match(ssr.iconsModule, /\/dist\/icons\/index\.js$/);
+  // Icons are imported one by one: there is no barrel of them all.
+  assert.equal(ssr.iconsBarrel, null);
   assert.match(ssr.homeModule, /\/dist\/icons\/Home\.js$/);
   assert.match(ssr.reactModule, /\/consumer\/node_modules\/react\/index\.js$/);
   assert.equal(existsSync(join(installedDirectory, 'src')), false);
@@ -255,9 +248,9 @@ test('a packed consumer resolves compiled public exports and its own React insta
     'Button',
     'ButtonGroup',
     'IconButton',
-    'Bar',
-    'Rail',
-    'Drawer',
+    'NavigationBar',
+    'NavigationRail',
+    'NavigationDrawer',
     'Pager',
     'Card',
     'Row',
@@ -285,7 +278,7 @@ test('a packed consumer resolves compiled public exports and its own React insta
     'Calendar',
     'Dialog',
     'DialogClose',
-    'Toast',
+    'ToastProvider',
     'useToast',
     'Icon',
     'DropZone',
@@ -384,44 +377,43 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     join(consumerDirectory, 'Consumer.tsx'),
     `
     import { createRef } from 'react';
-    import { Theme, Button, ButtonGroup, ConfirmButton, IconButton, Bar, Rail, Drawer, Pager, Icon, TextField, Textarea, Checkbox, Switch, Row, Column,
-      EnvUIProvider, Toolbar, Field, RadioGroup, Radio, Select, Combobox, DatePicker, Calendar, Dialog, DialogClose, Toast, useToast,
-      type ThemeValue, type ButtonProps, type ButtonGroupProps, type SelectItem, type ComboboxItem, type ToastManager } from '@envsemble/envui';
-    import { Home } from '@envsemble/envui/icons/Home';
-    import { Home as BarrelHome } from '@envsemble/envui/icons';
+    import { Theme, Button, ButtonGroup, ConfirmButton, IconButton, NavigationBar, NavigationRail, NavigationDrawer, Pager, Icon, TextField, Textarea, Checkbox, Switch, Row, Column,
+      EnvUIProvider, Toolbar, Field, RadioGroup, Radio, Select, Combobox, DatePicker, Calendar, Dialog, DialogClose, ToastProvider, useToast,
+      type ColorScheme, type ButtonProps, type ButtonGroupProps, type SelectItem, type ComboboxItem, type ToastManager } from '@envsemble/envui';
+    import { IconHome } from '@envsemble/envui/icons/Home';
     import '@envsemble/envui/styles.css';
     import { RichText, RichTextEditor, type RichTextEditorHandle, type RichTextReferenceSource } from '@envsemble/envui/rich-text';
     import { ColorPicker, ColorPickerButton, ColorSwatch, type Color, type ColorValue } from '@envsemble/envui/color';
     const colorValue: ColorValue = 'hsl(256, 34%, 48%)';
     const advanced = (color: Color): ColorValue => color.withChannelValue('alpha', 0.5);
     void advanced;
-    const buttonProps: ButtonProps = { variant: 'primary', tone: 'accent', ref: createRef<HTMLButtonElement>(), startIcon: <Home /> };
+    const buttonProps: ButtonProps = { variant: 'primary', tone: 'accent', ref: createRef<HTMLButtonElement>(), startIcon: <IconHome /> };
     const buttonGroupProps: ButtonGroupProps = { orientation: 'vertical', ref: createRef<HTMLDivElement>(), 'aria-label': 'Actions' };
-    const pagerLinkProps: Pager.LinkProps = { href: '/guide', children: 'Read the guide', ref: createRef<HTMLAnchorElement>(), icon: <Home /> };
+    const pagerLinkProps: Pager.LinkProps = { href: '/guide', children: 'Read the guide', ref: createRef<HTMLAnchorElement>(), icon: <IconHome /> };
     const options: SelectItem[] = [{ value: 'one', label: 'One' }];
-    const people: ComboboxItem[] = [{ value: 'first', label: 'First person', description: 'first@example.com', start: <Home /> }];
-    const theme: ThemeValue = 'dark';
-    const referenceSources: RichTextReferenceSource[] = [{ char: '@', items: async ({ query, signal }) => signal.aborted ? [] : [{ id: query, label: query }] }];
-    const richTextConsumer = <><RichTextEditor ref={createRef<RichTextEditorHandle>()} value="Notes" references={referenceSources} onValueChange={markdown => { const typed: string = markdown; void typed; }} onUpload={async (file, { signal }) => signal.aborted ? null : ({ url: '/uploads/example', label: file.name, id: 'stable-file-id', kind: 'file' })} /><RichText onReferenceClick={(reference, event) => { event.preventDefault(); void reference.id; }}>Notes</RichText></>;
+    const people: ComboboxItem[] = [{ value: 'first', label: 'First person', description: 'first@example.com', start: <IconHome /> }];
+    const theme: ColorScheme = 'dark';
+    const referenceSources: RichTextReferenceSource[] = [{ trigger: '@', search: async ({ query, signal }) => signal.aborted ? [] : [{ id: query, label: query }] }];
+    const richTextConsumer = <><RichTextEditor editorRef={createRef<RichTextEditorHandle>()} value="Notes" references={referenceSources} onValueChange={markdown => { const typed: string = markdown; void typed; }} onUpload={async (file, { signal }) => signal.aborted ? null : ({ url: '/uploads/example', label: file.name, id: 'stable-file-id', kind: 'file' })} /><RichText onReferenceClick={(reference, event) => { event.preventDefault(); void reference.id; }}>Notes</RichText></>;
     void richTextConsumer;
     function NotificationAction() { const manager: ToastManager = useToast(); return <Button onClick={() => manager.show({ message: 'Saved' })}>Save</Button>; }
     export const consumer = <Theme theme={theme} ref={createRef<HTMLDivElement>()}>
-      <Button {...buttonProps}>Create</Button><IconButton aria-label="Open" icon={<Home filled />} />
-      <ConfirmButton variant="ghost" icon={<Home />} aria-label="Remove" confirmLabel="Remove" onConfirm={() => undefined} />
-      <ButtonGroup {...buttonGroupProps}><Button href="/">Home</Button><IconButton aria-label="Options" icon={<Home />} /><Button variant="primary" tone="accent">Confirm</Button></ButtonGroup>
+      <Button {...buttonProps}>Create</Button><IconButton aria-label="Open" icon={<IconHome filled />} />
+      <ConfirmButton variant="ghost" icon={<IconHome />} aria-label="Remove" confirmLabel="Remove" onConfirm={() => undefined} />
+      <ButtonGroup {...buttonGroupProps}><Button href="/">Home</Button><IconButton aria-label="Options" icon={<IconHome />} /><Button variant="primary" tone="accent">Confirm</Button></ButtonGroup>
       <Column gap={3} ref={createRef<HTMLDivElement>()}><TextField label="First" /><TextField label="Second" /></Column>
       <Row wrap justify="end" ref={createRef<HTMLDivElement>()}><Button fullWidth>Save</Button><Button variant="outline" tone="danger">Cancel</Button></Row>
-      <EnvUIProvider locale="de-CH" dir="ltr" messages={{ common: { clear: 'Leeren' }, toast: { hidden: ({ count }) => count + ' hidden' } }}><IconButton ref={createRef<HTMLButtonElement>()} aria-label="Schließen" icon={<Home />} /></EnvUIProvider>
-      <Toolbar.Root aria-label="Formatting"><Toolbar.Button icon={<Home />} label="Home" pressed shortcut="Ctrl+H" /><Toolbar.Separator /><Toolbar.Link href="/" icon={<Home />} label="Home" /></Toolbar.Root>
+      <EnvUIProvider locale="de-CH" dir="ltr" messages={{ combobox: { clear: 'Leeren' }, toast: { hidden: ({ count }) => count + ' hidden' } }}><IconButton ref={createRef<HTMLButtonElement>()} aria-label="Schließen" icon={<IconHome />} /></EnvUIProvider>
+      <Toolbar.Root aria-label="Formatting"><Toolbar.Button icon={<IconHome />} label="Home" pressed shortcut="Ctrl+H" /><Toolbar.Separator /><Toolbar.Link href="/" icon={<IconHome />} label="Home" /></Toolbar.Root>
       <Field.Root name="project" invalid><Field.Label>Project</Field.Label><Field.Control size="sm" /><Field.Description>Shown to everyone</Field.Description><Field.Error>Enter a name</Field.Error></Field.Root>
-      <Bar ref={createRef<HTMLElement>()} destinations={[{ label: 'Home', icon: <Home />, href: '/', current: true }, { label: 'View', icon: <Home />, onSelect: () => undefined, count: 2 }]} />
-      <Rail aria-label="Places" destinations={[{ label: 'Home', icon: <Home />, href: '/' }]} header={<Home />} />
-      <Drawer destinations={[{ label: 'Guide', href: '/guide', group: 'Help' }]} footer={<Home />} />
+      <NavigationBar ref={createRef<HTMLElement>()} destinations={[{ label: 'Home', icon: <IconHome />, href: '/', current: true }, { label: 'View', icon: <IconHome />, onClick: () => undefined, count: 2 }]} />
+      <NavigationRail aria-label="Places" destinations={[{ label: 'Home', icon: <IconHome />, href: '/' }]} header={<IconHome />} />
+      <NavigationDrawer destinations={[{ label: 'Guide', href: '/guide', group: 'Help' }]} footer={<IconHome />} />
       <Pager.Next {...pagerLinkProps} target="_blank" rel="noopener" />
       <Pager.Previous href="/previous">Previous guide</Pager.Previous>
-      <Icon label="Custom" viewBox="0 0 1 1"><path d="M0 0L1 1" /></Icon><BarrelHome />
+      <Icon label="Custom" viewBox="0 0 1 1"><path d="M0 0L1 1" /></Icon>
       <TextField name="title" label="Title" required ref={createRef<HTMLInputElement>()} />
-      <ColorPicker label="Accent color" name="accent" defaultValue="#abcdef" formats={['hex', 'rgb']} alpha ref={createRef<HTMLDivElement>()} onValueChange={(value, color) => { const typed: string = value; const hsl: string = color.toString('hsl'); void typed; void hsl; }} />
+      <ColorPicker label="Accent color" name="accent" defaultValue="#abcdef" formats={['hex', 'rgb']} alpha ref={createRef<HTMLDivElement>()} onValueChange={(value) => { const typed: string = value; void typed; }} />
       <ColorPickerButton label="Border color" value={colorValue} valueFormat="hsl" swatches={['#abcdef', { color: colorValue, label: 'Current' }]} />
       <ColorSwatch color="#abcdef" format="hex" size="sm" label="Accent" />
       <Textarea label="Notes" ref={createRef<HTMLTextAreaElement>()} />
@@ -433,10 +425,10 @@ test('installed declarations typecheck a React 19 consumer without source aliase
       <DatePicker label="Due" granularity="minute" clearable onValueChange={value => { const typed: string | null = value; void typed; }} ref={createRef<HTMLButtonElement>()} />
       <Calendar value="2026-10-14" weekStart={1} onValueChange={value => { const typed: string = value; void typed; }} />
       <Dialog title="Confirm" trigger={<Button>Open</Button>} actions={<DialogClose>Done</DialogClose>} />
-      <Toast.Provider><NotificationAction /></Toast.Provider>
+      <ToastProvider><NotificationAction /></ToastProvider>
     </Theme>;
     // @ts-expect-error Icon-only actions require an accessible name.
-    const unnamedIconButton = <IconButton icon={<Home />} />;
+    const unnamedIconButton = <IconButton icon={<IconHome />} />;
     // @ts-expect-error The theme boundary has only the two owned themes.
     const unknownTheme = <Theme theme="system" />;
     // @ts-expect-error Button variants are the explicit public contract.
@@ -535,7 +527,7 @@ test('public components import and render on a server with no DOM globals', func
   assert.match(ssr.html, /<span class="env-spinner-label">Loading projects<\/span>/);
   assert.match(
     ssr.html,
-    /class="env-card env-surface"[^>]* data-env-skeleton="" aria-busy="true"[^>]*><div class="env-skeleton-content" inert=""><div class="env-card-header"[^>]*><h3 class="env-text env-card-heading" data-variant="title"><\/h3>/,
+    /class="env-card env-surface"[^>]* data-env-skeleton="" aria-busy="true"[^>]*><div class="env-skeleton-content" inert=""><div class="env-card-header"[^>]*><h3 class="env-text env-card-title" data-variant="title"><\/h3>/,
   );
 });
 
@@ -749,7 +741,7 @@ test('the package includes scoped CSS, local fonts, branding and license notices
     'Map prefers-contrast: more onto the high-contrast themes.',
   );
   assert.ok(
-    /--env-color-bg-brand-emphasis-hover:\s*#[0-9a-f]{3,8}\b/i.test(css),
+    /--env-color-bg-primary-emphasis-hover:\s*#[0-9a-f]{3,8}\b/i.test(css),
     'Hover and pressed colors are precomputed tokens.',
   );
   assert.ok(
@@ -757,7 +749,7 @@ test('the package includes scoped CSS, local fonts, branding and license notices
     'No runtime lightness rule: every state color is a token the contrast gate can measure.',
   );
   assert.ok(
-    /@font-face\s*\{[^}]*font-family:\s*["']envUI Inter["']/.test(css),
+    /@font-face\s*\{[^}]*font-family:\s*["']envUI Geist["']/.test(css),
     'Missing owned font family.',
   );
   assert.ok(
@@ -791,21 +783,40 @@ test('the package includes scoped CSS, local fonts, branding and license notices
       `Missing packaged guidance: ${filename}`,
     );
   }
+  // The contract data resolves by name, so an application never keeps a copy of it.
+  const parts = JSON.parse(await readFile(consumerRequire.resolve('@envsemble/envui/parts.json')));
+  assert.ok(parts.components.Button, 'parts.json lists the components');
+  const props = JSON.parse(await readFile(consumerRequire.resolve('@envsemble/envui/props.json')));
+  assert.ok(props.exports.Button, 'props.json lists the exports');
+  const tokens = JSON.parse(
+    await readFile(consumerRequire.resolve('@envsemble/envui/tokens.json')),
+  );
+  assert.ok(tokens.tokens.length > 100, 'tokens.json lists the tokens');
   // The agent tooling of the prereleases is gone: agents read docs/, and the site serves the setup
   // skill and llms.txt.
-  for (const removed of ['bin', 'skills', 'manifest.json', 'llms.txt', 'llms-full.txt'])
+  for (const removed of ['skills', 'manifest.json', 'llms.txt', 'llms-full.txt'])
     assert.equal(existsSync(join(installedDirectory, removed)), false, removed);
   const installedManifest = JSON.parse(
     await readFile(join(installedDirectory, 'package.json'), 'utf8'),
   );
-  assert.equal(installedManifest.bin, undefined);
+  // The one command is envui-graphic, which trims a picture's empty edges; it loads sharp only
+  // when it runs, so an application without sharp installs and runs envUI as before, and the
+  // command says what to install.
+  assert.deepEqual(installedManifest.bin, { 'envui-graphic': './bin/envui-graphic.js' });
+  const graphicBin = join(installedDirectory, 'bin/envui-graphic.js');
+  assert.match(run(graphicBin, ['--help']), /^Usage: npx envui-graphic <file>/);
+  await writeFile(join(consumerDirectory, 'logo.png'), '');
+  assert.throws(
+    () => run(graphicBin, ['logo.png']),
+    /envui-graphic needs sharp to read pictures, and the project has none/,
+  );
   assert.match(
     await readFile(join(installedDirectory, 'licenses/Runtime-Dependencies-LICENSE.txt'), 'utf8'),
     /@base-ui\/react@1\.8\.0/,
   );
   for (const filename of [
     'Base-UI-LICENSE.txt',
-    'Inter-LICENSE.txt',
+    'Geist-LICENSE.txt',
     'Material-Symbols-LICENSE.txt',
   ]) {
     assert.ok((await readFile(join(installedDirectory, 'licenses', filename))).length > 0);
@@ -818,7 +829,6 @@ test('explicit official icons preserve filled geometry and accept custom SVG con
   assert.match(ssr.filledIcon, /aria-label="Home"/);
   assert.doesNotMatch(ssr.filledIcon, /aria-hidden="true"/);
   assert.notEqual(ssr.defaultIcon, ssr.filledIcon);
-  assert.equal(ssr.defaultIcon, ssr.barrelIcon);
   assert.match(ssr.customIcon, /aria-label="Custom star"/);
   assert.ok(
     (await readdir(join(installedDirectory, 'dist/icons'))).length > 100,
@@ -867,14 +877,16 @@ test('a small independent bundle excludes unused icons and Base UI', async funct
     `
     import { build } from 'esbuild';
     const result = await build({
-      stdin: { contents: "export { Theme, Button, Icon } from '@envsemble/envui'; export { Home } from '@envsemble/envui/icons/Home';", resolveDir: process.cwd(), sourcefile: 'consumer.js' },
+      stdin: { contents: "export { Theme, Button, Icon } from '@envsemble/envui'; export { IconHome } from '@envsemble/envui/icons/Home';", resolveDir: process.cwd(), sourcefile: 'consumer.js' },
       bundle: true, write: false, format: 'esm', platform: 'browser', treeShaking: true,
       outfile: 'consumer.js', metafile: true, logLevel: 'silent',
+      loader: { '.woff2': 'file', '.svg': 'file' },
       external: ['react', 'react/*', 'react-dom', 'react-dom/*', '@base-ui/react', '@base-ui/react/*']
     });
-    const output = result.outputFiles[0];
-    const meta = Object.values(result.metafile.outputs)[0];
-    console.log(JSON.stringify({ code: output.text, bytes: output.contents.length,
+    const output = result.outputFiles.find((file) => file.path.endsWith('.js'));
+    const css = result.outputFiles.find((file) => file.path.endsWith('.css'));
+    const meta = Object.entries(result.metafile.outputs).find(([path]) => path.endsWith('consumer.js'))[1];
+    console.log(JSON.stringify({ code: output.text, css: css.text,
       emittedInputs: Object.entries(meta.inputs).filter(([, value]) => value.bytesInOutput > 0).map(([path]) => path.replaceAll('\\\\', '/')) }));
   `,
   );
@@ -885,7 +897,7 @@ test('a small independent bundle excludes unused icons and Base UI', async funct
     `Unexpected icons in consumer bundle: ${iconInputs.join(', ')}`,
   );
   assert.match(iconInputs[0], /\/Home\.js$/);
-  assert.ok(result.bytes < 12000, `Small consumer unexpectedly emitted ${result.bytes} bytes.`);
+  // Its size is held by tests/SizeBudgets.test.mjs (Theme + Button + Icon, minified).
   assert.doesNotMatch(result.code, /@base-ui\/react|CheckCircle|ChevronRight|Warning/);
   assert.ok(
     result.emittedInputs.every(
@@ -901,6 +913,52 @@ test('a small independent bundle excludes unused icons and Base UI', async funct
     result.emittedInputs.every((path) => !path.includes('/src/')),
     'The release consumer must not resolve the development source condition.',
   );
+  // esbuild bundles the style sheets the modules import, the base first with the layer order. It
+  // keeps those of the modules it shakes out too, so the CSS isn't any smaller than styles.css.
+  assert.deepEqual(layerOrder(result.css), envLayers);
+  assert.match(result.css, /--env-color-bg-primary-emphasis-hover:/);
+  assert.match(result.css, /\.env-button\s*\{/);
+  assert.match(result.css, /@font-face\s*\{\s*font-family:\s*"?envUI Geist/);
+});
+
+test('a Vite application loads the style sheets of the components it uses, and renders on a server', async function () {
+  const result = await runConsumer(
+    'ViteConsumer.mjs',
+    `
+    import { build } from 'vite';
+    import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
+    import { join } from 'node:path';
+    import { pathToFileURL } from 'node:url';
+    const root = join(process.cwd(), 'vite-app');
+    await mkdir(root, { recursive: true });
+    await writeFile(join(root, 'index.html'), '<div id="root"></div><script type="module" src="./main.js"></script>');
+    const app = "import { createElement as h } from 'react'; import { Theme, Button } from '@envsemble/envui'; export const App = () => h(Theme, null, h(Button, null, 'Save'));";
+    await writeFile(join(root, 'App.js'), app);
+    await writeFile(join(root, 'main.js'), "import { createElement as h } from 'react'; import { createRoot } from 'react-dom/client'; import { App } from './App.js'; createRoot(document.getElementById('root')).render(h(App));");
+    await writeFile(join(root, 'server.js'), "import { createElement as h } from 'react'; import { renderToString } from 'react-dom/server'; import { App } from './App.js'; export const render = () => renderToString(h(App));");
+    const quiet = { root, logLevel: 'silent', configFile: false };
+    await build({ ...quiet, build: { outDir: 'client' } });
+    const assets = join(root, 'client/assets');
+    const css = (await Promise.all((await readdir(assets)).filter((file) => file.endsWith('.css')).map((file) => readFile(join(assets, file), 'utf8')))).join('');
+    // The server build twice: envUI left to Node, as Vite does with dependencies by default, and
+    // bundled into the server's code.
+    const html = {};
+    for (const [name, noExternal] of [['external', []], ['bundled', ['@envsemble/envui']]]) {
+      await build({ ...quiet, ssr: { noExternal }, build: { ssr: 'server.js', outDir: 'server-' + name } });
+      const { render } = await import(pathToFileURL(join(root, 'server-' + name, 'server.js')).href);
+      html[name] = render();
+    }
+    console.log(JSON.stringify({ css, html }));
+  `,
+  );
+  // The client's CSS: the base, with the layer order first, and Button's, and no other component's.
+  assert.deepEqual(layerOrder(result.css), envLayers);
+  assert.match(result.css, /--env-color-bg-primary-emphasis-hover:/);
+  assert.match(result.css, /\.env-button\s*\{/);
+  assert.match(result.css, /@font-face\s*\{\s*font-family:\s*"?envUI Geist/);
+  for (const other of ['card', 'menu', 'text-field', 'dialog', 'tooltip', 'table', 'toast'])
+    assert.doesNotMatch(result.css, new RegExp(`\\.env-${other}\\b`), `${other}'s style sheet`);
+  for (const html of Object.values(result.html)) assert.match(html, /class="env-button"/);
 });
 
 test('packed rich text statically renders the shared Markdown schema and reference marks', async function () {
@@ -1008,7 +1066,7 @@ test('avatar groups, relative times, copy buttons and pagination render on a ser
     export const display = <>
       <AvatarGroup {...groupProps} onPersonClick={(clicked, event) => { void clicked.name; event.preventDefault(); }} />
       <RelativeTime {...timeProps} nowLabel="moments ago" />
-      <CopyButton {...copyProps} onCopy={(copied) => { const typed: string = copied; void typed; }} />
+      <CopyButton {...copyProps} onCopied={(copied) => { const typed: string = copied; void typed; }} />
       <CopyButton value="text" size="sm" variant="text">Copy</CopyButton>
       <Pagination {...pagerProps} formatRange={describe} hasNextPage pending size="sm" />
     </>;
@@ -1092,8 +1150,8 @@ test('the panel dock renders its panels, tabs and header on a server and types i
     import { EnvUIProvider, PanelDock, type PanelDockMode, type PanelDockPanel } from '@envsemble/envui';
     type Document = PanelDockPanel & { body: string };
     const documents: Document[] = [
-      { id: 'notes', title: 'Notes', mode: 'open', body: 'Text', height: 320, preferredWidth: 480, minWidth: 320,
-        maxWidth: 640, minHeight: 240, maxHeight: 560, active: true, label: 'Notes', icon: <span />, attention: 'Unsaved', tooltip: 'Notes' },
+      { id: 'notes', title: 'Notes', mode: 'open', body: 'Text', height: 20, preferredWidth: 30, minWidth: 20,
+        maxWidth: 40, minHeight: 15, maxHeight: 35, active: true, label: 'Notes', icon: <span />, attention: 'Unsaved', tooltip: 'Notes' },
     ];
     const headerProps: PanelDock.HeaderProps = { title: 'Notes', meta: 'Edited today', headingLevel: 3, controls: true };
     const dockProps: Omit<PanelDock.RootProps<Document>, 'children'> = {
@@ -1111,7 +1169,7 @@ test('the panel dock renders its panels, tabs and header on a server and types i
       resizeLabel: (title) => 'Resize ' + title,
     };
     export const dock = (
-      <EnvUIProvider messages={{ panelDock: { minimize: 'Min', maximize: 'Max', restore: 'Back', close: 'Shut' } }}>
+      <EnvUIProvider messages={{ panelDock: { minimize: 'Min', maximize: 'Max', restore: 'Back', closeWindow: 'Shut' } }}>
         <PanelDock.Root {...dockProps}>
           {(panel) => <PanelDock.Header {...headerProps} title={panel.body} controls={false} />}
         </PanelDock.Root>

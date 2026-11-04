@@ -1,0 +1,56 @@
+import { Column } from '@envsemble/envui';
+import Submenus from '../../examples/menu/Submenus';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
+
+const row = (index: number) => `.env-menu-item:nth-child(${index} of .env-menu-item)`;
+const person = (index: number) =>
+  `[data-nested] .env-menu-item:nth-child(${index} of .env-menu-item)`;
+
+/*
+ * The pointer opens Share and rests on Send to, whose submenu opens beside it. It moves into the
+ * submenu and down its people, and a press outside closes the menus.
+ */
+const script: PointerStep[] = [
+  { wait: 500 },
+  { to: '.env-button', x: 0.6, y: 0.6 },
+  { wait: 350 },
+  { click: true },
+  { wait: 450 },
+  { to: row(1), x: 0.35, duration: 400 },
+  { wait: 300 },
+  { to: row(2), x: 0.35, duration: 250 },
+  { wait: 900 },
+  { to: person(1), x: 0.3, duration: 450 },
+  { wait: 450 },
+  { to: person(2), x: 0.3, duration: 250 },
+  { wait: 500 },
+  { to: person(3), x: 0.3, duration: 250 },
+  { wait: 700 },
+  { to: '.env-button', x: 4, y: 0.5, duration: 500 },
+  { wait: 200 },
+  { click: true },
+  { wait: 400 },
+  { leave: true },
+  { wait: 900 },
+];
+
+function Opening() {
+  usePointer(script);
+  return (
+    // Share sits at the start of a box as wide as its menu and submenu together, which the stage
+    // centres.
+    <Column align="start" style={{ blockSize: '14rem', inlineSize: 'min(100%, 27rem)' }}>
+      <Submenus />
+    </Column>
+  );
+}
+
+/** Share's submenu, opened beside its row by a pointer no one sees. */
+export default function SubmenusMotion() {
+  return (
+    <MotionStage label="the submenu opening">
+      <Opening />
+    </MotionStage>
+  );
+}

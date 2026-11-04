@@ -1,5 +1,5 @@
 import { test, expect, type Locator } from '@playwright/test';
-import { fixtureUrl } from './Servers';
+import { fixtureUrl } from './helpers/Servers';
 
 /** Lines of text plus the field's 1 rem inset above and below. */
 async function linesHigh(field: Locator, lines: number) {

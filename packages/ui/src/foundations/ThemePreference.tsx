@@ -4,19 +4,16 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useInsertionEffect,
+  useLayoutEffect,
   useMemo,
+  useRef,
   useState,
   useSyncExternalStore,
   type ReactNode,
 } from 'react';
-import { classNames } from '../internal/classNames.js';
-import { outsideTheme } from '../internal/outsideTheme.js';
-import { Theme, useTheme, type ThemeContrast, type ThemeScale, type ThemeValue } from './Theme.js';
-import { IconButton, type IconButtonProps } from '../actions/Button.js';
-import { useMessages } from '../internal/EnvUIContext.js';
-import { themeToggle } from './messages/themeToggle.js';
-import { DarkMode } from '../icons/DarkMode.js';
-import { LightMode } from '../icons/LightMode.js';
+import { outsideTheme } from './internal/outsideTheme.js';
+import { Theme, useTheme, type ThemeContrast, type ThemeScale, type ColorScheme } from './Theme.js';
 import {
   contrastSourceAttribute,
   defaultThemeStorageKey,
@@ -24,12 +21,19 @@ import {
   ownScaleSource,
   scaleSourceAttribute,
   type ThemePreference,
-} from './ThemeBootstrap.js';
-import { ThemePreferenceContext, type ThemePreferenceValue } from './ThemePreferenceContext.js';
+} from './themeBootstrap.js';
+import {
+  ThemePreferenceContext,
+  type ThemePreferenceValue,
+} from './internal/ThemePreferenceContext.js';
+import { reportOnce } from '../internal/developmentReport.js';
+
+export type { ThemePreferenceValue } from './internal/ThemePreferenceContext.js';
 
 const systemDarkQuery = '(prefers-color-scheme: dark)';
 
 export interface ThemePreferenceProviderProps {
+  /** The application, or the part of it that the preference themes. */
   children: ReactNode;
   /** localStorage key; match the bootstrap script's. Defaults to "env-theme". */
   storageKey?: string;
@@ -89,7 +93,6 @@ interface DocumentWrites {
  * more, a provider at system still leaves a contrast another of them wrote.
  */
 const documentProviders = new Map<symbol, DocumentWrites>();
-let warnedAboutProviders = false;
 
 /**
  * Removes the root's contrast when envUI wrote it, the page has not written over it since, and no
@@ -160,7 +163,10 @@ function readPageContrast(): Exclude<ThemeContrast, 'system'> | undefined {
 
 const onServer = () => undefined;
 
-function readSystemTheme(): ThemeValue {
+/** On the root while a provider switches the page's colors: nothing transitions (Theme.css). */
+const switchingAttribute = 'data-env-theme-switching';
+
+function readSystemTheme(): ColorScheme {
   return typeof window !== 'undefined' && window.matchMedia?.(systemDarkQuery).matches
     ? 'dark'
     : 'light';
@@ -191,12 +197,12 @@ export function ThemePreferenceProvider({
       ? defaultPreference
       : readStoredPreference(storageKey, defaultPreference),
   );
-  const [systemTheme, setSystemTheme] = useState<ThemeValue>(() =>
+  const [systemTheme, setSystemTheme] = useState<ColorScheme>(() =>
     typeof document !== 'undefined' && document.documentElement.dataset.envTheme === 'dark'
       ? 'dark'
       : readSystemTheme(),
   );
-  const theme: ThemeValue = preference === 'system' ? systemTheme : preference;
+  const theme: ColorScheme = preference === 'system' ? systemTheme : preference;
   const [provider] = useState(() => Symbol('ThemePreferenceProvider'));
 
   useEffect(() => {
@@ -221,22 +227,15 @@ export function ThemePreferenceProvider({
     return () => window.removeEventListener('storage', onStorage);
   }, [storageKey, defaultPreference]);
 
-  // One provider applies to the document; a second would write over the first's root theme.
-  useEffect(() => {
+  // One provider applies to the document; a second would write over the first's root theme. A
+  // layout effect, so it registers before the provider writes on the root below.
+  useLayoutEffect(() => {
     if (!applyToDocument) return;
     try {
-      if (
-        process.env.NODE_ENV !== 'production' &&
-        documentProviders.size > 0 &&
-        !warnedAboutProviders
-      ) {
-        warnedAboutProviders = true;
-        // A development-only report, as React reports an invalid prop.
-        // eslint-disable-next-line no-console
-        console.error(
-          'envUI: more than one ThemePreferenceProvider applies to the document. Let one theme the root and pass applyToDocument={false} to the others.',
+      if (process.env.NODE_ENV !== 'production' && documentProviders.size > 0)
+        reportOnce(
+          'more than one ThemePreferenceProvider applies to the document. Let one theme the root and pass applyToDocument={false} to the others.',
         );
-      }
     } catch {
       // No bundler defined process.env.NODE_ENV: written as in Theme.
     }
@@ -246,12 +245,14 @@ export function ThemePreferenceProvider({
     return () => {
       documentProviders.delete(provider);
       const root = document.documentElement;
+      root.removeAttribute(switchingAttribute);
       releaseContrast(root);
       releaseScale(root);
     };
   }, [applyToDocument, provider]);
 
-  useEffect(() => {
+  // Before the paint, so the root and the boundary take a theme in the same frame.
+  useLayoutEffect(() => {
     if (!applyToDocument) return;
     const root = document.documentElement;
     root.classList.add('env-theme');
@@ -282,6 +283,34 @@ export function ThemePreferenceProvider({
     ))
       browserTheme.content = canvas;
   }, [applyToDocument, theme, appliedContrast, ownScale, provider]);
+
+  // The page's new colors show at once rather than easing, each restyled every frame until done.
+  // Before the new theme is styled, the root stops transitions; once it is, they resume, and as
+  // the colors no longer change, none start. A provider that doesn't apply to the document, such as
+  // one in a figure, leaves its transitions to ease.
+  const colors = `${theme} ${contrast} ${appliedContrast}`;
+  const shownColors = useRef<string | undefined>(undefined);
+  useInsertionEffect(() => {
+    if (applyToDocument && shownColors.current !== undefined && shownColors.current !== colors)
+      document.documentElement.setAttribute(switchingAttribute, '');
+  }, [applyToDocument, colors]);
+  useLayoutEffect(() => {
+    shownColors.current = colors;
+    const root = document.documentElement;
+    if (!root.hasAttribute(switchingAttribute)) return;
+    // Reading a computed style brings the page's styles up to date, with the new colors.
+    void getComputedStyle(root).transitionProperty;
+    // After the frame that shows them, so that frame's style isn't worked out twice.
+    let timer = 0;
+    const frame = requestAnimationFrame(() => {
+      timer = window.setTimeout(() => root.removeAttribute(switchingAttribute));
+    });
+    // A switch before then removes it in its own time.
+    return () => {
+      cancelAnimationFrame(frame);
+      clearTimeout(timer);
+    };
+  }, [colors]);
 
   const setPreference = useCallback(
     (next: ThemePreference) => {
@@ -318,38 +347,4 @@ export function useThemePreference(): ThemePreferenceValue {
   const value = useContext(ThemePreferenceContext);
   if (!value) throw new Error('useThemePreference must be used inside ThemePreferenceProvider.');
   return value;
-}
-
-export type ThemeToggleProps = (IconButtonProps extends infer Props
-  ? Props extends unknown
-    ? Omit<Props, 'icon' | 'aria-label' | 'onClick'>
-    : never
-  : never) & {
-  /**
-   * The button's name; without it, Switch to dark theme or Switch to light theme, or
-   * EnvUIProvider's messages.themeToggle.
-   */
-  'aria-label'?: string;
-};
-
-/** Switches between the light and dark themes and stores the choice. */
-export function ThemeToggle({
-  title,
-  className,
-  'aria-label': ownLabel,
-  ...props
-}: ThemeToggleProps) {
-  const { theme, toggleTheme } = useThemePreference();
-  const messages = useMessages('themeToggle', themeToggle);
-  const label = ownLabel ?? (theme === 'light' ? messages.toDark : messages.toLight);
-  return (
-    <IconButton
-      {...(props as IconButtonProps)}
-      className={classNames('env-theme-toggle', className)}
-      icon={theme === 'light' ? <DarkMode /> : <LightMode />}
-      aria-label={label}
-      title={title ?? label}
-      onClick={toggleTheme}
-    />
-  );
 }

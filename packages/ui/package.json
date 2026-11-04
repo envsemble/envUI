@@ -20,7 +20,11 @@
     "url": "git+https://github.com/envsemble/envUI.git",
     "directory": "packages/ui"
   },
+  "bin": {
+    "envui-graphic": "./bin/envui-graphic.js"
+  },
   "files": [
+    "bin",
     "dist",
     "README.md",
     "docs",
@@ -86,11 +90,11 @@
       "envui-source": "./src/styles/index.css",
       "default": "./dist/styles.css"
     },
-    "./icons": {
-      "envui-source": "./src/icons/index.ts",
-      "types": "./dist/icons/index.d.ts",
-      "import": "./dist/icons/index.js",
-      "default": "./dist/icons/index.js"
+    "./parts.json": "./docs/generated/parts.json",
+    "./props.json": "./docs/generated/props.json",
+    "./tokens.json": {
+      "envui-source": "./src/generated/tokens.json",
+      "default": "./dist/tokens.json"
     },
     "./icons/*": {
       "envui-source": "./src/icons/*.tsx",
@@ -100,6 +104,13 @@
     },
     "./assets/*": "./dist/assets/*",
     "./package.json": "./package.json"
+  },
+  "imports": {
+    "#styles/*": {
+      "module": "./dist/styles/*",
+      "node": "./dist/styles/empty.js",
+      "default": "./dist/styles/*"
+    }
   },
   "engines": {
     "node": "^22.13.0 || >=24"

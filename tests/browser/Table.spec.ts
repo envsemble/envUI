@@ -1,6 +1,6 @@
 import { test, expect, type Locator } from '@playwright/test';
-import { fixtureUrl } from './Servers';
-import { openServerMarkup } from './ServerMarkup';
+import { fixtureUrl } from './helpers/Servers';
+import { openServerMarkup } from './helpers/ServerMarkup';
 
 const tablesFixture = `${fixtureUrl}/?fixture=tables`;
 const themes = ['light', 'dark'] as const;
@@ -535,10 +535,10 @@ test('a handler added later learns that rows stack, and stacking again starts ov
   await expect(changes).toHaveText('stacked stacked columns');
 });
 
-test('a bare number for stackBelow is a length in pixels', async ({ page }) => {
+test('a bare number for stackBelow is a length in rem', async ({ page }) => {
   const frame = page.getByTestId('bare-stack-frame-light');
   const region = page.getByRole('region', { name: 'Bare threshold light' });
-  // The frame is 400 px wide, below 600.
+  // The frame is 400 px wide, 25 rem, below 37.5 rem.
   await expect(region).toHaveAttribute('data-stacked', '');
   // So is a number.
   const number = page.getByRole('region', { name: 'Number threshold light' });

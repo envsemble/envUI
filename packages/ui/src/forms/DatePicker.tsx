@@ -14,11 +14,15 @@ import { type ControlSize } from '../foundations/Theme.js';
 import { datePicker as datePickerMessages } from '../foundations/messages/datePicker.js';
 import { Button } from '../actions/Button.js';
 import { Grid, Row } from '../foundations/Layout.js';
-import { CalendarClock } from '../icons/CalendarClock.js';
-import { CalendarMonth } from '../icons/CalendarMonth.js';
+import { IconCalendarClock } from '../icons/CalendarClock.js';
+import { IconCalendarMonth } from '../icons/CalendarMonth.js';
 import { Calendar, calendarActiveDay } from './Calendar.js';
 import { type FieldProps } from './internal/FieldFrame.js';
-import { PickerField, usePickerOpen } from './internal/PickerField.js';
+import {
+  PickerField,
+  usePickerOpen,
+  type PickerOpenChangeDetails,
+} from './internal/PickerField.js';
 import { TimeList } from './internal/TimeList.js';
 import {
   clampDay,
@@ -33,7 +37,11 @@ import {
   parseTime,
   toUtcDate,
   type Weekday,
-} from './internal/CalendarDays.js';
+} from '../internal/calendarDays.js';
+import '../styles/Base.css';
+import '../styles/DatePicker.css';
+
+export type { PickerOpenChangeDetails, PickerOpenChangeReason } from './internal/PickerField.js';
 
 export interface DatePickerProps
   extends Omit<
@@ -67,7 +75,7 @@ export interface DatePickerProps
   /** The latest value, as YYYY-MM-DD or YYYY-MM-DDTHH:mm; later days are unavailable. */
   max?: string;
   /** The time a newly chosen day starts with, as HH:mm; 00:00 by default. */
-  defaultTime?: string;
+  placeholderTime?: string;
   /**
    * With the minute granularity, the minutes between the times the list offers, from 1 to 60. A
    * value between them still shows in the list, in its place.
@@ -79,7 +87,10 @@ export interface DatePickerProps
    * browser's. Dates are Gregorian, also in a locale with a calendar of its own.
    */
   locale?: string;
-  /** The calendar's first day of the week, from 0 for Sunday to 6 for Saturday; see Calendar. */
+  /**
+   * The calendar's first day of the week, from 0 for Sunday to 6 for Saturday.
+   * @default the locale's, or Monday where the browser cannot tell
+   */
   weekStart?: Weekday;
   /**
    * How the field shows the value: Intl.DateTimeFormat options, by default the medium date style
@@ -89,7 +100,10 @@ export interface DatePickerProps
   formatOptions?: Intl.DateTimeFormatOptions;
   /** The name the value is submitted under with a form, as YYYY-MM-DD or YYYY-MM-DDTHH:mm. */
   name?: string;
-  /** A value is needed: an empty field keeps its form from submitting and takes focus. */
+  /**
+   * A value is needed: an empty field keeps its form from submitting and takes focus.
+   * @default false
+   */
   required?: boolean;
   /** The value can be read and focused but not changed. */
   readOnly?: boolean;
@@ -118,8 +132,8 @@ export interface DatePickerProps
   open?: boolean;
   /** Whether an uncontrolled calendar starts open; closed by default. */
   defaultOpen?: boolean;
-  /** Called with the new state when the calendar opens or closes. */
-  onOpenChange?: (open: boolean) => void;
+  /** Called with the new state, and why, when the calendar opens or closes. */
+  onOpenChange?: (open: boolean, details: PickerOpenChangeDetails) => void;
   /**
    * Accessible name of the field's clear button and text of the calendar's.
    * @default 'Clear', or EnvUIProvider's messages.datePicker.clear
@@ -193,7 +207,7 @@ export function DatePicker({
   granularity = 'day',
   min,
   max,
-  defaultTime,
+  placeholderTime,
   minuteStep,
   locale,
   weekStart,
@@ -222,7 +236,7 @@ export function DatePicker({
     disabled,
     readOnly,
   });
-  const defaultMinutes = parseTime(defaultTime) ?? 0;
+  const defaultMinutes = parseTime(placeholderTime) ?? 0;
 
   const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
   const current = parseValue(
@@ -279,7 +293,7 @@ export function DatePicker({
     const chosen = parseDay(day);
     if (chosen === undefined) return;
     commit({ day: chosen, minutes: current?.minutes ?? defaultMinutes });
-    if (!withTime) setOpen(false);
+    if (!withTime) setOpen(false, 'item-press');
   }
 
   // Without a value, a chosen time goes with today, kept within min and max.
@@ -288,12 +302,12 @@ export function DatePicker({
   function chooseNow() {
     const moment = now();
     commit(withTime ? moment : { day: moment.day, minutes: 0 });
-    if (!withTime) setOpen(false);
+    if (!withTime) setOpen(false, 'item-press');
   }
 
   function clear() {
     commit(null);
-    setOpen(false);
+    setOpen(false, 'clear-press');
   }
 
   const reference = now();
@@ -321,7 +335,7 @@ export function DatePicker({
       {...fieldProps}
       serialized={serialized}
       display={display}
-      icon={withTime ? <CalendarClock /> : <CalendarMonth />}
+      icon={withTime ? <IconCalendarClock /> : <IconCalendarMonth />}
       rootClassName="env-date-picker"
       initialFocus={calendarActiveDay}
       popupStart={
@@ -360,7 +374,7 @@ export function DatePicker({
         <Grid gap={3} className="env-date-picker-panes">
           {calendar}
           <Grid gap={2} className="env-date-picker-time">
-            <Row align="center" className="env-date-picker-time-heading" id={timeHeadingId}>
+            <Row align="center" className="env-date-picker-time-title" id={timeHeadingId}>
               {timeLabel ?? messages.time}
             </Row>
             <TimeList
@@ -368,7 +382,7 @@ export function DatePicker({
               value={current?.minutes}
               onValueChange={(minutes) => commit({ day: timeDay, minutes })}
               minuteStep={minuteStep}
-              start={defaultTime === undefined ? undefined : defaultMinutes}
+              start={placeholderTime === undefined ? undefined : defaultMinutes}
               min={boundMinutes(minMoment, timeDay)}
               max={boundMinutes(maxMoment, timeDay)}
               locale={locale}

@@ -1,9 +1,0 @@
-{
-  "@envsemble/envui": {
-    "Disclosure": {
-      "onToggle": {
-        "report": "Disclosure keeps its open state in 1.0, with open or defaultOpen, and tells onOpenChange(open) each time it opens or closes: read the state there rather than from the native onToggle's event."
-      }
-    }
-  }
-}

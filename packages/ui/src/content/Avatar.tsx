@@ -3,8 +3,10 @@
 import { Avatar as BaseAvatar } from '@base-ui/react/avatar';
 import type { ComponentPropsWithRef } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { Check } from '../icons/Check.js';
+import { IconCheck } from '../icons/Check.js';
 import { useResolvedLocale } from '../internal/useFormatters.js';
+import '../styles/Base.css';
+import '../styles/Avatar.css';
 
 /** An avatar's size: sm 1.5 rem, md 2 rem, lg 3 rem or xl 5.5 rem. */
 export type AvatarSize = 'sm' | 'md' | 'lg' | 'xl';
@@ -148,7 +150,7 @@ export function Avatar({
       </BaseAvatar.Fallback>
       {selected && (
         <span className="env-avatar-check" aria-hidden="true">
-          <Check />
+          <IconCheck />
         </span>
       )}
     </BaseAvatar.Root>

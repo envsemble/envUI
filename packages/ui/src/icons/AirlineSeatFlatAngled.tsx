@@ -1,11 +1,14 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
-// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
+// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../Icon.js';
+import { useSymbolIconFill } from '../SymbolIconState.js';
 
-export function AirlineSeatFlatAngled({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
-  return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="m376-489 55-150q11-31 41-45t61-3l263 96q63 23 91 82.5t5 122.5l-27 75q-6 16-21 23t-31 1L400-437q-16-6-23-21t-1-31Zm395 315L94-420q-16-5-22.5-20T70-471q5-16 20.5-23t31.5-1l677 246q16 5 22.5 20t1.5 31q-5 16-20.5 23t-31.5 1ZM253-498q-50 0-85-35t-35-85q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35Z" /> : <path d="m376-489 55-150q11-31 41-45t61-3l263 96q63 23 91 82.5t5 122.5l-27 75q-6 16-21 23t-31 1L400-437q-16-6-23-21t-1-31Zm130-122q-8 20-14.5 37.5T478-536l-13 37 41-112Zm266 437L95-420q-16-5-22.5-20T71-471q5-16 20.5-23t31.5-1l677 246q16 5 22.5 20t1.5 31q-5 16-20.5 23t-31.5 1ZM253-498q-50 0-85-35t-35-85q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35Zm0-80q17 0 28.5-11.5T293-618q0-17-11.5-28.5T253-658q-17 0-28.5 11.5T213-618q0 17 11.5 28.5T253-578Zm212 79 338 124 14-38q11-32-2.5-62T769-516l-263-95-41 112ZM253-617Z" />}</Icon>;
+/** The path both styles start with. */
+const start = "m376-489 55-150q11-31 41-45t61-3l263 96q63 23 91 82.5t5 122.5l-27 75q-6 16-21 23t-31 1L400-437q-16-6-23-21t-1-31Zm";
+
+export function IconAirlineSeatFlatAngled({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
+  return <Icon viewBox="0 -960 960 960" {...props}><path d={filled ? start + "395 315L94-420q-16-5-22.5-20T70-471q5-16 20.5-23t31.5-1l677 246q16 5 22.5 20t1.5 31q-5 16-20.5 23t-31.5 1ZM253-498q-50 0-85-35t-35-85q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35Z" : start + "130-122q-8 20-14.5 37.5T478-536l-13 37 41-112Zm266 437L95-420q-16-5-22.5-20T71-471q5-16 20.5-23t31.5-1l677 246q16 5 22.5 20t1.5 31q-5 16-20.5 23t-31.5 1ZM253-498q-50 0-85-35t-35-85q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35Zm0-80q17 0 28.5-11.5T293-618q0-17-11.5-28.5T253-658q-17 0-28.5 11.5T213-618q0 17 11.5 28.5T253-578Zm212 79 338 124 14-38q11-32-2.5-62T769-516l-263-95-41 112ZM253-617Z"} /></Icon>;
 }

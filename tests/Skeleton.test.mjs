@@ -28,6 +28,8 @@ await build({
     loader: 'ts',
   },
   bundle: true,
+  // The style sheets the modules import are the browser's concern.
+  loader: { '.css': 'empty' },
   platform: 'node',
   format: 'esm',
   packages: 'external',
@@ -115,11 +117,11 @@ test('missing text renders empty where a skeleton shows a bar, and given slots r
     }),
   );
   assert.match(card, /data-env-skeleton=""/);
-  assert.match(card, /<h3 class="env-text env-card-heading" data-variant="title"><\/h3>/);
+  assert.match(card, /<h3 class="env-text env-card-title" data-variant="title"><\/h3>/);
   assert.match(card, /class="env-text env-card-meta" data-variant="body-sm"><\/span>/);
   assert.match(card, /class="env-text env-card-description"[^>]*><\/p>/);
   // A slot not given at all renders nothing.
-  assert.doesNotMatch(markup(h(Card, null, 'Body')), /env-card-heading|env-card-description/);
+  assert.doesNotMatch(markup(h(Card, null, 'Body')), /env-card-title|env-card-description/);
 
   const row = markup(h(List.Item, { label: item.name, description: item.owner }));
   assert.match(
@@ -132,20 +134,36 @@ test('missing text renders empty where a skeleton shows a bar, and given slots r
   assert.match(markup(h(Text, null, undefined)), /^<p class="env-text" data-variant="body"><\/p>$/);
 });
 
-test('the style sheet draws text as bars, shapes and missing text, and keeps still on request', () => {
+test('the style sheet draws text as bars, shapes and missing text, and pulses gentler on request', () => {
   const css = readFileSync(join(repository, 'packages/ui/src/styles/Skeleton.css'), 'utf8');
-  assert.match(css, /\[data-env-skeleton\] \{[^}]*text-decoration: line-through/);
+  assert.match(css, /\[data-env-skeleton\]:not\(env-none\) \{[^}]*text-decoration: line-through/);
   assert.match(css, /-webkit-text-fill-color: transparent/);
   // Missing text is a bar only in the parts that turn it on.
   assert.match(
     css,
-    /\[data-env-skeleton\] :empty::before \{[^}]*display: var\(--env-skeleton-placeholder\);/,
+    /\[data-env-skeleton\]:not\(env-none\) :empty::before \{[^}]*display: var\(--env-skeleton-placeholder\);/,
   );
-  // The shimmer runs only without a reduced-motion preference.
-  const motion = css.indexOf('@media (prefers-reduced-motion: no-preference)');
-  assert.ok(motion > 0);
-  assert.equal(css.indexOf('animation:'), css.indexOf('animation:', motion));
+  // The pulse: a breath of 1.8 s, slower and half as deep with a reduced-motion preference, and
+  // none in forced colors.
+  assert.match(
+    css,
+    /\[data-env-skeleton\]:not\(env-none\) \{[^}]*animation: env-skeleton-pulse 1\.8s ease-in-out infinite;/,
+  );
+  const block = (start) =>
+    css.slice(css.indexOf(start), css.indexOf('\n  }\n', css.indexOf(start)));
+  assert.match(
+    block('@media (prefers-reduced-motion: reduce)'),
+    /animation: env-skeleton-pulse-reduced 3\.2s ease-in-out infinite;/,
+  );
+  assert.match(block('@keyframes env-skeleton-pulse-reduced'), /--env-skeleton-pulse: 0\.5;/);
+  assert.match(block('@media (forced-colors: active)'), /animation: none;/);
+  // Its keyframes are plain values: Firefox doesn't interpolate a registered custom property
+  // between keyframes that use var().
+  const keyframes = [...css.matchAll(/@keyframes [\w-]+ \{(?:[^{}]*\{[^}]*\})*\s*\}/g)];
+  assert.equal(keyframes.length, 2);
+  for (const [rule] of keyframes) assert.doesNotMatch(rule, /var\(/);
   const index = readFileSync(join(repository, 'packages/ui/src/styles/index.css'), 'utf8');
-  // Last among the components, so its rules follow theirs.
-  assert.match(index, /@import '\.\/Skeleton\.css' layer\(env\.components\);\n\/\*/);
+  // Last among the components in styles.css, so its rules follow theirs; where a bundler puts it
+  // first, a type selector more wins the same ties.
+  assert.match(index, /@import '\.\/Skeleton\.css';\n$/);
 });

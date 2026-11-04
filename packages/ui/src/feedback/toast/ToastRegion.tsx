@@ -1,19 +1,24 @@
 'use client';
 
-import { useCallback, useLayoutEffect, useRef } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { Toast as BaseToast } from '@base-ui/react/toast';
 import { Button, IconButton } from '../../actions/Button.js';
 import { Badge } from '../../content/Badge.js';
 import { Theme, useTheme } from '../../foundations/Theme.js';
 import { toast as toastMessages } from '../../foundations/messages/toast.js';
 import { useMessages } from '../../internal/EnvUIContext.js';
+import { useFormatters } from '../../internal/useFormatters.js';
 import { useDirection } from '../../internal/useDirection.js';
 import { ToastBody } from './ToastBody.js';
 import type { ToastController } from './useToastController.js';
-import type { ToastEntry } from './ToastInternals.js';
-import type { ToastPlacement } from './ToastTypes.js';
+import type { ToastEntry } from './toastInternals.js';
+import type { ToastPlacement } from './toastTypes.js';
 import { usePortalContainer } from '../../internal/PortalContainerContext.js';
-import { Close } from '../../icons/Close.js';
+import { IconClose } from '../../icons/Close.js';
+import { prefersReducedMotion } from '../../internal/reducedMotion.js';
+import { flag } from '../../internal/flag.js';
+import '../../styles/Base.css';
+import '../../styles/Toast.css';
 
 const glideId = 'env-toast-glide';
 const revealId = 'env-toast-reveal';
@@ -28,6 +33,68 @@ function glideOffset(item: HTMLElement) {
 /** A notice's running animations; none where the Web Animations API is missing, such as jsdom. */
 function animationsOf(item: HTMLElement) {
   return item.getAnimations?.() ?? [];
+}
+
+/**
+ * A notice of a contained region's picture: it arrives and leaves with a live notice's motion, from
+ * the toast's starting and ending styles, and its time stops while the pointer rests on it. Once it
+ * has left, `onGone` takes it out of the picture.
+ */
+function PictureNotice({
+  id,
+  tone,
+  limited,
+  ending,
+  controller,
+  onGone,
+  children,
+}: {
+  id: string;
+  tone: ToastEntry['tone'];
+  limited: boolean;
+  ending: boolean;
+  controller: ToastController;
+  onGone: (id: string) => void;
+  children: ReactNode;
+}) {
+  const element = useRef<HTMLDivElement>(null);
+  // A notice closed before it was ever shown, such as one an effect shows and takes back at once,
+  // never arrives.
+  const [arrives] = useState(!ending);
+  // It comes in from its starting style, which its first style holds, as Base UI's notices do.
+  useLayoutEffect(() => {
+    const item = element.current;
+    if (!item) return;
+    void getComputedStyle(item).opacity;
+    item.removeAttribute('data-starting-style');
+  }, []);
+  // Leaving, it fades to its ending style, and is gone once that ends; at once without motion.
+  useEffect(() => {
+    if (!ending) return;
+    const item = element.current;
+    const seconds = item
+      ? Math.max(...getComputedStyle(item).transitionDuration.split(',').map(Number.parseFloat))
+      : 0;
+    const timer = setTimeout(() => onGone(id), (seconds || 0) * 1000);
+    return () => clearTimeout(timer);
+  }, [ending, id, onGone]);
+  if (!arrives) return null;
+  return (
+    <div
+      ref={element}
+      data-toast-id={id}
+      className="env-toast"
+      data-tone={tone}
+      data-limited={flag(limited)}
+      data-starting-style=""
+      data-ending-style={ending ? '' : undefined}
+      role={tone === 'danger' ? 'alert' : 'status'}
+      onMouseEnter={() => controller.pause(id, 'hover')}
+      onMouseLeave={() => controller.resume(id, 'hover')}
+    >
+      {children}
+    </div>
+  );
 }
 
 /**
@@ -61,6 +128,7 @@ export function ToastRegion({
   const theme = useTheme();
   const { container, contained } = usePortalContainer();
   const messages = useMessages('toast', toastMessages);
+  const number = useFormatters().number();
   const viewport = useRef<HTMLDivElement | null>(null);
   const positions = useRef(new Map<string, number>());
   const limited = limitedIds(toastStore.toasts, visibleLimit);
@@ -71,6 +139,13 @@ export function ToastRegion({
     direction === 'rtl' ? 'left' : 'right',
   ];
   const hiddenCount = limited.size;
+  const hiddenLabel =
+    hiddenCount > 0
+      ? messages.hidden({ count: hiddenCount, countText: number.format(hiddenCount) })
+      : undefined;
+  // The notices of a picture that have left; Base UI's own notices leave by themselves.
+  const [gone, setGone] = useState<ReadonlySet<string>>(() => new Set());
+  const leave = useCallback((id: string) => setGone((current) => new Set(current).add(id)), []);
   useLayoutEffect(
     () =>
       controller.registerPlacementStore(placement, {
@@ -107,7 +182,7 @@ export function ToastRegion({
     const overflowing =
       !element.hasAttribute('data-settling') &&
       element.scrollHeight > element.clientHeight + 1 &&
-      element.getBoundingClientRect().height >= limit - 1;
+      element.offsetHeight >= limit - 1;
     element.toggleAttribute('data-settling', moving && !overflowing);
   }, []);
   // The viewport mounts in a portal, so its transition listeners follow the element itself.
@@ -126,7 +201,7 @@ export function ToastRegion({
     if (!element) return;
     // Without the Web Animations API, such as in jsdom, notices move without motion.
     const animates = typeof element.animate === 'function';
-    const glide = animates && !window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    const glide = animates && !prefersReducedMotion();
     const leavingIds = new Set(
       toastStore.toasts
         .filter((toast) => toast.transitionStatus === 'ending')
@@ -137,7 +212,9 @@ export function ToastRegion({
     // move into its place in a single glide, and a notice revealed from the hidden ones takes its
     // turn, instead of the stack growing while the notice fades and shrinking after. Its layout box
     // is pinned, so a running entrance or exit transform carries on from where it is.
-    const before = element.getBoundingClientRect();
+    // Everything is measured in layout px, the viewport's offsets and the notices' within it, never
+    // the drawn boxes, which a transform or zoom around the region scales.
+    const before = { left: element.offsetLeft, top: element.offsetTop };
     const pins = items
       .filter((item) => leavingIds.has(item.dataset.toastId!) && !item.hasAttribute('data-leaving'))
       .map((item) => {
@@ -154,7 +231,12 @@ export function ToastRegion({
       item.style.width = `${right - left}px`;
       item.setAttribute('data-leaving', '');
     }
-    const box = element.getBoundingClientRect();
+    const box = {
+      left: element.offsetLeft,
+      top: element.offsetTop,
+      right: element.offsetLeft + element.offsetWidth,
+      bottom: element.offsetTop + element.offsetHeight,
+    };
     for (const pin of pins) {
       // Physical sides: the measurements are physical, whatever the writing direction.
       if (placement === 'bottom-end') {
@@ -211,11 +293,12 @@ export function ToastRegion({
     placement === 'bottom-end' ? messages.regionBottomEnd : messages.regionTopCenter;
   // In a contained PortalContainer the notices are a picture of the region, part of the container:
   // without Base UI's viewport, whose window-wide F6 would take the page's F6 for a region that is
-  // only shown. They keep their look, action, dismiss button and duration.
+  // only shown. They keep their look, action, dismiss button and duration, arrive and leave with
+  // their motion, and stay while the pointer rests on them.
   if (contained)
     return (
       <BaseToast.Portal container={container}>
-        <Theme {...theme} className="env-toast-portal-theme">
+        <Theme {...theme} className="env-toast-theme">
           <div
             ref={attachViewport}
             className="env-toast-viewport"
@@ -228,21 +311,22 @@ export function ToastRegion({
                 className="env-toast-queued-count"
                 data-toast-id="queued"
                 count={`+${hiddenCount}`}
-                aria-label={messages.hidden({ count: hiddenCount })}
+                aria-label={hiddenLabel}
               />
             )}
             {toastStore.toasts
-              .filter((toast) => toast.transitionStatus !== 'ending')
+              .filter((toast) => !gone.has(toast.id))
               .map((toast) => {
                 const entry = toast.data!;
                 return (
-                  <div
+                  <PictureNotice
                     key={toast.id}
-                    data-toast-id={toast.id}
-                    className="env-toast"
-                    data-tone={entry.tone}
-                    data-limited={limited.has(toast.id) || undefined}
-                    role={entry.tone === 'danger' ? 'alert' : 'status'}
+                    id={toast.id}
+                    tone={entry.tone}
+                    limited={limited.has(toast.id)}
+                    ending={toast.transitionStatus === 'ending'}
+                    controller={controller}
+                    onGone={leave}
                   >
                     <ToastBody
                       tone={entry.tone}
@@ -258,7 +342,7 @@ export function ToastRegion({
                         entry.dismissible !== false && (
                           <IconButton
                             variant="ghost"
-                            icon={<Close />}
+                            icon={<IconClose />}
                             className="env-toast-dismiss"
                             aria-label={messages.dismiss}
                             onClick={() => toastStore.close(toast.id)}
@@ -266,7 +350,7 @@ export function ToastRegion({
                         )
                       }
                     />
-                  </div>
+                  </PictureNotice>
                 );
               })}
           </div>
@@ -275,7 +359,7 @@ export function ToastRegion({
     );
   return (
     <BaseToast.Portal container={container}>
-      <Theme {...theme} className="env-toast-portal-theme">
+      <Theme {...theme} className="env-toast-theme">
         <BaseToast.Viewport
           ref={attachViewport}
           className="env-toast-viewport"
@@ -305,7 +389,7 @@ export function ToastRegion({
               data-toast-id="queued"
               role="status"
               count={`+${hiddenCount}`}
-              aria-label={messages.hidden({ count: hiddenCount })}
+              aria-label={hiddenLabel}
             />
           )}
           {toastStore.toasts.map((toast) => {
@@ -320,7 +404,7 @@ export function ToastRegion({
                 className="env-toast"
                 data-tone={entry.tone}
                 swipeDirection={swipeDirection}
-                data-limited={isLimited || undefined}
+                data-limited={flag(isLimited)}
                 inert={isLimited || undefined}
                 // A danger notice interrupts: it is an alert as it appears, outside any polite
                 // region, and stays readable.
@@ -358,7 +442,7 @@ export function ToastRegion({
                         render={
                           <IconButton
                             variant="ghost"
-                            icon={<Close />}
+                            icon={<IconClose />}
                             className="env-toast-dismiss"
                             aria-label={messages.dismiss}
                           />

@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { fixtureUrl } from './Servers';
+import { fixtureUrl } from './helpers/Servers';
 
 test('segmented controls choose one option with the pointer and arrow keys', async ({ page }) => {
   const errors: string[] = [];
@@ -31,8 +31,8 @@ test('segmented controls choose one option with the pointer and arrow keys', asy
       return color;
     });
     await expect(open).toHaveCSS('background-color', fill);
-    await expect(open.locator('.env-segmented-control-item-check')).toBeVisible();
-    await expect(blocked.locator('.env-segmented-control-item-check')).toBeHidden();
+    await expect(open.locator('.env-segmented-control-item-indicator')).toBeVisible();
+    await expect(blocked.locator('.env-segmented-control-item-indicator')).toBeHidden();
     await expect(group).toHaveCSS('outline-style', 'solid');
     await expect(open).toHaveCSS('border-inline-start-color', 'rgba(0, 0, 0, 0)');
     await expect(blocked).not.toHaveCSS('border-inline-start-color', 'rgba(0, 0, 0, 0)');

@@ -15,13 +15,25 @@ import {
   type PointerEvent,
   type ReactNode,
 } from 'react';
-import { TooltipPopup } from '../feedback/internal/TooltipPopup.js';
+import { TooltipPopup, tooltipDelay } from '../internal/TooltipPopup.js';
 import { classNames } from '../internal/classNames.js';
 import { Grid, Row } from '../foundations/Layout.js';
 import { useMessages } from '../internal/EnvUIContext.js';
-import { useFormatters, type Formatters } from '../internal/useFormatters.js';
+import { useFormatters, useResolvedLocale } from '../internal/useFormatters.js';
 import { calendarHeatmap as calendarHeatmapMessages } from '../foundations/messages/calendarHeatmap.js';
 import type { BadgeTone } from './Badge.js';
+import { isRightToLeft } from '../internal/direction.js';
+import { reportInDevelopment } from '../internal/developmentReport.js';
+import { dayParts, localeWeekStart, parseDay, type Weekday } from '../internal/calendarDays.js';
+import { day as dayMilliseconds } from '../internal/durations.js';
+import {
+  calendarHeatmapModel,
+  levelMix,
+  localeNames,
+  type CalendarHeatmapModel,
+} from './internal/calendarHeatmapModel.js';
+import '../styles/Base.css';
+import '../styles/CalendarHeatmap.css';
 
 export interface CalendarHeatmapDay {
   /** The day, as YYYY-MM-DD. */
@@ -55,9 +67,12 @@ interface CalendarHeatmapOptions {
    * first threshold shows as empty, and a first threshold of 0 or less colors days of 0 too.
    */
   thresholds?: readonly number[];
-  /** The first day of each week column: 0 for Sunday (default) or 1 for Monday. */
-  weekStart?: 0 | 1;
-  /** The tone the colors are mixed from: accent by default. */
+  /**
+   * The first day of each week column, from 0 for Sunday to 6 for Saturday, as on Calendar.
+   * @default the locale's, or Monday where the browser cannot tell
+   */
+  weekStart?: Weekday;
+  /** The tone the colors are mixed from: primary by default. */
   tone?: BadgeTone;
   /**
    * Text for a value.
@@ -70,7 +85,7 @@ interface CalendarHeatmapOptions {
    */
   formatDate?: (date: string) => string;
   /** Tooltip content for a day; the date and value by default. */
-  formatTooltip?: (day: CalendarHeatmapCell) => ReactNode;
+  renderTooltip?: (day: CalendarHeatmapCell) => ReactNode;
   /**
    * Twelve month names above the weeks, from January.
    * @default the locale's short month names, from Intl
@@ -112,68 +127,6 @@ export type CalendarHeatmapProps = CalendarHeatmapOptions &
     keyof CalendarHeatmapOptions | 'children' | 'aria-label' | 'aria-labelledby'
   >;
 
-const dayMilliseconds = 86_400_000;
-
-/** The locale's short month names, from January, and weekday names, from Sunday. */
-function localeNames(formatters: Formatters) {
-  const month = formatters.dateTime({ month: 'short', timeZone: 'UTC' });
-  const weekday = formatters.dateTime({ weekday: 'short', timeZone: 'UTC' });
-  return {
-    months: Array.from({ length: 12 }, (_, index) => month.format(Date.UTC(2024, index, 1))),
-    // 7 January 2024 was a Sunday.
-    weekdays: Array.from({ length: 7 }, (_, index) => weekday.format(Date.UTC(2024, 0, 7 + index))),
-  };
-}
-/** Hover waits like Tooltip; moving between days while one is shown switches at once. */
-const hoverDelay = 400;
-
-/** Days count from 1970-01-01 in UTC, so daylight saving never shifts a week. */
-function parseDay(date: string | undefined) {
-  const match = date === undefined ? null : /^(\d{4})-(\d{2})-(\d{2})$/.exec(date);
-  if (!match) return undefined;
-  return Math.floor(Date.UTC(+match[1]!, +match[2]! - 1, +match[3]!) / dayMilliseconds);
-}
-
-function dayParts(day: number) {
-  const date = new Date(day * dayMilliseconds);
-  return {
-    year: date.getUTCFullYear(),
-    month: date.getUTCMonth(),
-    date: date.getUTCDate(),
-    weekday: date.getUTCDay(),
-  };
-}
-
-function dayKey(day: number) {
-  const { year, month, date } = dayParts(day);
-  return `${year}-${String(month + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
-}
-
-interface DayModel extends CalendarHeatmapCell {
-  day: number;
-  name: string;
-}
-
-interface CalendarHeatmapModel {
-  start: number;
-  end: number;
-  /** The first day of the first week column. */
-  first: number;
-  weeks: number;
-  levelCount: number;
-  days: Map<number, DayModel>;
-  months: { column: number; span: number; label: string }[];
-}
-
-/**
- * The strength of each color step, from 30% of the tone over the canvas to the full tone at the
- * strongest step; with a single step above the empty one, that step is the tone.
- */
-function levelMix(level: number, levelCount: number) {
-  if (levelCount <= 2) return '100%';
-  return `${30 + (70 * (level - 1)) / (levelCount - 2)}%`;
-}
-
 /**
  * A calendar of daily values with weeks as columns and weekdays as rows, colored in steps of a tone.
  * Each day names its date and value, shows them in a tooltip on hover and focus, and the grid is
@@ -186,11 +139,11 @@ export function CalendarHeatmap({
   levels = 5,
   maxValue,
   thresholds,
-  weekStart = 0,
-  tone = 'accent',
+  weekStart: ownWeekStart,
+  tone = 'primary',
   formatValue: ownFormatValue,
   formatDate: ownFormatDate,
-  formatTooltip,
+  renderTooltip,
   monthLabels: ownMonthLabels,
   weekdayLabels: ownWeekdayLabels,
   lessLabel: ownLessLabel,
@@ -206,6 +159,11 @@ export function CalendarHeatmap({
   const lessLabel = ownLessLabel ?? messages.less;
   const moreLabel = ownMoreLabel ?? messages.more;
   const formatters = useFormatters();
+  const resolvedLocale = useResolvedLocale();
+  const weekStart = useMemo(
+    () => ownWeekStart ?? localeWeekStart(resolvedLocale),
+    [ownWeekStart, resolvedLocale],
+  );
   const names = useMemo(() => localeNames(formatters), [formatters]);
   const monthLabels = ownMonthLabels ?? names.months;
   const weekdayLabels = ownWeekdayLabels ?? names.weekdays;
@@ -232,83 +190,43 @@ export function CalendarHeatmap({
   }, [ownFormatDate, ownMonthLabels, ownWeekdayLabels, monthLabels, weekdayLabels, formatters]);
   // Thresholds compare by value, so a new array with the same steps keeps the model.
   const thresholdsKey = thresholds?.join(' ');
-  const model = useMemo<CalendarHeatmapModel>(() => {
-    const steps = thresholdsKey
-      ?.split(' ')
-      .filter(Boolean)
-      .map(Number)
-      .filter(Number.isFinite)
-      .sort((first, second) => first - second)
-      .slice(0, 9);
-    const values = new Map<number, CalendarHeatmapDay>();
-    for (const entry of data) {
-      const day = parseDay(entry.date);
-      if (day !== undefined) values.set(day, entry);
-    }
-    let earliest: number | undefined;
-    let latest: number | undefined;
-    for (const day of values.keys()) {
-      if (earliest === undefined || day < earliest) earliest = day;
-      if (latest === undefined || day > latest) latest = day;
-    }
-    const start = parseDay(startDate) ?? earliest;
-    const end = parseDay(endDate) ?? latest;
-    const levelCount = steps?.length
-      ? steps.length + 1
-      : Math.min(10, Math.max(2, Math.round(levels)));
-    if (start === undefined || end === undefined || end < start)
-      return { start: 0, end: -1, first: 0, weeks: 0, levelCount, days: new Map(), months: [] };
-    const offset = (day: number) => (dayParts(day).weekday - weekStart + 7) % 7;
-    const first = start - offset(start);
-    const weeks = (end - offset(end) - first) / 7 + 1;
-    let top = maxValue ?? 0;
-    if (maxValue === undefined)
-      for (const [day, entry] of values)
-        if (day >= start && day <= end) top = Math.max(top, entry.value);
-    const days = new Map<number, DayModel>();
-    // Each month is labelled above the week holding its first day, or above the first week.
-    const monthColumns = new Map<number, number>([[0, dayParts(start).month]]);
-    for (let day = start; day <= end; day += 1) {
-      const entry = values.get(day);
-      const value = entry?.value ?? 0;
-      // Explicit thresholds decide alone, also for values of 0 and below.
-      const level = steps?.length
-        ? steps.filter((step) => value >= step).length
-        : value > 0 && top > 0
-          ? Math.min(levelCount - 1, Math.max(1, Math.ceil((value / top) * (levelCount - 1))))
-          : 0;
-      const date = dayKey(day);
-      const valueText = entry?.label ?? formatValue(value);
-      days.set(day, {
-        day,
-        date,
-        value,
-        label: entry?.label,
-        level,
-        name: `${formatDate(date)}: ${valueText}`,
-      });
-      const parts = dayParts(day);
-      if (parts.date === 1) monthColumns.set(Math.floor((day - first) / 7), parts.month);
-    }
-    const columns = [...monthColumns.keys()].sort((a, b) => a - b);
-    const months = columns.map((column, index) => ({
-      column,
-      span: (columns[index + 1] ?? weeks) - column,
-      label: monthLabels[monthColumns.get(column)!] ?? '',
-    }));
-    return { start, end, first, weeks, levelCount, days, months };
-  }, [
-    data,
-    startDate,
-    endDate,
-    levels,
-    maxValue,
-    thresholdsKey,
-    weekStart,
-    formatValue,
-    formatDate,
-    monthLabels,
-  ]);
+  const model = useMemo(
+    () =>
+      calendarHeatmapModel({
+        data,
+        startDate,
+        endDate,
+        levels,
+        maxValue,
+        thresholdsKey,
+        weekStart,
+        formatValue,
+        formatDate,
+        monthLabels,
+      }),
+    [
+      data,
+      startDate,
+      endDate,
+      levels,
+      maxValue,
+      thresholdsKey,
+      weekStart,
+      formatValue,
+      formatDate,
+      monthLabels,
+    ],
+  );
+
+  // A date it can't read, such as 2026-02-31, is left out rather than moved to another day: said
+  // while developing, once.
+  reportInDevelopment(
+    () =>
+      process.env.NODE_ENV !== 'production' &&
+      model.invalid.length > 0 &&
+      `CalendarHeatmap leaves out dates it can't read, such as ${JSON.stringify(model.invalid[0])}: write each as YYYY-MM-DD, a day that exists.`,
+    { level: 'warn' },
+  );
 
   const [activeDay, setActiveDay] = useState<number>();
   const active =
@@ -427,7 +345,7 @@ export function CalendarHeatmap({
     if (!cell) return;
     clearTimeout(hoverTimer.current);
     if (tip?.open) show(cell);
-    else hoverTimer.current = setTimeout(() => show(cell), hoverDelay);
+    else hoverTimer.current = setTimeout(() => show(cell), tooltipDelay);
   }
 
   function handleFocus(event: FocusEvent<HTMLTableElement>) {
@@ -448,7 +366,7 @@ export function CalendarHeatmap({
 
   function handleKeyDown(event: KeyboardEvent<HTMLTableElement>) {
     if (event.altKey || event.metaKey) return;
-    const rtl = getComputedStyle(event.currentTarget).direction === 'rtl';
+    const rtl = isRightToLeft(event.currentTarget);
     const week = rtl ? -7 : 7;
     // As in a grid, Home and End move along the row, the same weekday in the first and the last
     // week; Page Up and Page Down along the column, to the week's first and last day; and Ctrl+Home
@@ -562,8 +480,8 @@ export function CalendarHeatmap({
           }}
           content={
             shown &&
-            (formatTooltip
-              ? formatTooltip({
+            (renderTooltip
+              ? renderTooltip({
                   date: shown.date,
                   value: shown.value,
                   label: shown.label,
@@ -586,7 +504,7 @@ const CalendarHeatmapDays = memo(function CalendarHeatmapDays({
 }: {
   model: CalendarHeatmapModel;
   active: number;
-  weekStart: 0 | 1;
+  weekStart: Weekday;
   weekdayLabels: readonly string[];
 }) {
   const weeks = Array.from({ length: model.weeks }, (_, week) => week);

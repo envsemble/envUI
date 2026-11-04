@@ -1,6 +1,8 @@
 import type { ComponentPropsWithRef, ReactElement, ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { renderElement } from '../internal/renderElement.js';
+import '../styles/Base.css';
+import '../styles/Page.css';
 
 /** A page column's width: sm 40 rem, md 60 rem, lg 76 rem, or full, the whole width. */
 export type PageWidth = 'sm' | 'md' | 'lg' | 'full';

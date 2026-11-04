@@ -5,7 +5,6 @@ import { DirectionProvider } from '@base-ui/react/direction-provider';
 import {
   useCallback,
   useEffect,
-  useId,
   useLayoutEffect,
   useMemo,
   useRef,
@@ -18,22 +17,16 @@ import {
 import { setRef } from '../internal/setRef.js';
 import { useDirection } from '../internal/useDirection.js';
 import { useLocale, useMessages } from '../internal/EnvUIContext.js';
-import { PopupSurface } from '../internal/PopupSurface.js';
 import {
   keepsOpen,
   useKeepPageVisible,
   usePortalContainer,
 } from '../internal/PortalContainerContext.js';
-import { Column, Grid } from '../foundations/Layout.js';
-import { ListRow } from '../internal/ListRow.js';
 import { type ControlSize } from '../foundations/Theme.js';
 import { combobox as comboboxMessages } from '../foundations/messages/combobox.js';
-import { common as commonMessages } from '../foundations/messages/common.js';
 import { IconButton } from '../actions/Button.js';
-import { Spinner } from '../feedback/Spinner.js';
-import { Check } from '../icons/Check.js';
-import { ChevronRight } from '../icons/ChevronRight.js';
-import { Close } from '../icons/Close.js';
+import { IconChevronRight } from '../icons/ChevronRight.js';
+import { IconClose } from '../icons/Close.js';
 import {
   FieldFrame,
   isLabelShown,
@@ -41,7 +34,11 @@ import {
   type FieldProps,
 } from './internal/FieldFrame.js';
 import { subscribeFormReset } from './internal/subscribeFormReset.js';
+import { flattenItems, isGroup, standIn } from './internal/comboboxItems.js';
+import { ComboboxPopup } from './internal/ComboboxPopup.js';
 import { useFieldMetadata } from './internal/useFieldMetadata.js';
+import '../styles/Base.css';
+import '../styles/Combobox.css';
 
 /** One option of a Combobox. */
 export interface ComboboxItem {
@@ -63,6 +60,15 @@ export interface ComboboxGroup<Item extends ComboboxItem = ComboboxItem> {
   label: string;
   /** The options under the heading, in display order. */
   items: readonly Item[];
+}
+
+/** What a combobox's onOpenChange receives beside the requested state. */
+export interface ComboboxOpenChangeDetails {
+  /**
+   * Why it asks to open or close, as Base UI says, such as trigger-press, input-change, item-press,
+   * input-clear or escape-key.
+   */
+  reason: string;
 }
 
 /** Whether an option matches the text typed into the field. */
@@ -92,7 +98,10 @@ interface ComboboxSharedProps<Item extends ComboboxItem>
   filter?: ComboboxFilter<Item> | null;
   /** Receives the typed text, and an empty string once it is cleared, such as to search a server. */
   onInputValueChange?: (query: string) => void;
-  /** The options are loading: the popup shows loadingLabel instead of emptyLabel. */
+  /**
+   * The options are loading: the popup shows loadingLabel instead of emptyLabel.
+   * @default false
+   */
   loading?: boolean;
   /**
    * Shown in the popup while loading.
@@ -123,11 +132,14 @@ interface ComboboxSharedProps<Item extends ComboboxItem>
    * @default true
    */
   showLabel?: boolean;
-  /** A clear button removes the value while there is one; Esc on the closed field clears it too. */
+  /**
+   * A clear button removes the value while there is one; Esc on the closed field clears it too.
+   * @default false
+   */
   clearable?: boolean;
   /**
    * Accessible name of the clear button.
-   * @default 'Clear', or EnvUIProvider's messages.common.clear
+   * @default 'Clear', or EnvUIProvider's messages.combobox.clear
    */
   clearLabel?: string;
   /**
@@ -137,10 +149,13 @@ interface ComboboxSharedProps<Item extends ComboboxItem>
   removeLabel?: (label: string) => string;
   /** Whether the list is open; with `onOpenChange` it controls the popup. */
   open?: boolean;
-  /** Whether an uncontrolled list starts open; closed by default. */
+  /**
+   * Whether an uncontrolled list starts open; closed by default.
+   * @default false
+   */
   defaultOpen?: boolean;
-  /** Called as the popup opens and closes, such as to load the options as it opens. */
-  onOpenChange?: (open: boolean) => void;
+  /** Called as the popup opens and closes, and why, such as to load the options as it opens. */
+  onOpenChange?: (open: boolean, details: ComboboxOpenChangeDetails) => void;
   /** The locale of the default filter's matching: EnvUIProvider's, else the browser's. */
   locale?: string;
 }
@@ -173,37 +188,6 @@ type ChangeDetails = BaseCombobox.Root.ChangeEventDetails;
 
 /** Changes of the typed text that people make, rather than the field filling in a chosen label. */
 const typedChanges = new Set(['input-change', 'input-clear', 'clear-press', 'escape-key']);
-
-/** A chosen value the field never saw among the options stands for itself, as its chip shows. */
-function standIn<Item extends ComboboxItem>(value: string) {
-  return { value, label: value } as Item;
-}
-
-function isGroup<Item extends ComboboxItem>(
-  entry: Item | ComboboxGroup<Item>,
-): entry is ComboboxGroup<Item> {
-  return Array.isArray((entry as ComboboxGroup<Item>).items);
-}
-
-function flattenItems<Item extends ComboboxItem>(
-  items: readonly Item[] | readonly ComboboxGroup<Item>[],
-) {
-  return (items as readonly (Item | ComboboxGroup<Item>)[]).flatMap((entry) =>
-    isGroup(entry) ? entry.items : [entry],
-  );
-}
-
-/** Field geometry in rem follows the reader's text size; Base UI positions in pixels. */
-function remPixels(element: Element | null) {
-  if (!element) return 16;
-  return Number.parseFloat(getComputedStyle(element.ownerDocument.documentElement).fontSize) || 16;
-}
-
-const popupParts = {
-  Portal: BaseCombobox.Portal,
-  Positioner: BaseCombobox.Positioner,
-  Popup: BaseCombobox.Popup,
-};
 
 /**
  * A text field that filters a list of options as people type, for choosing one option or several.
@@ -251,10 +235,9 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
   } = props;
   const isMultiple = multiple === true;
   const messages = useMessages('combobox', comboboxMessages);
-  const common = useMessages('common', commonMessages);
   const providedLocale = useLocale();
   const locale = ownLocale ?? providedLocale;
-  const clearName = clearLabel ?? common.clear;
+  const clearName = clearLabel ?? messages.clear;
   const removeName = removeLabel ?? ((text: string) => messages.remove({ label: text }));
   const metadata = useFieldMetadata(suppliedId, description, error, describedBy, invalid);
   const { id } = metadata;
@@ -337,9 +320,9 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
   // closes and as the field takes focus.
   const [direction, readDirection] = useDirection(inputRef, popupOpen);
 
-  function changeOpen(next: boolean) {
+  function changeOpen(next: boolean, reason: string) {
     if (open === undefined) setUncontrolledOpen(next);
-    onOpenChange?.(next);
+    onOpenChange?.(next, { reason });
   }
 
   useEffect(
@@ -365,7 +348,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
       details.cancel();
       details.allowPropagation();
       // Emptied text shows every option to choose another; closing the popup restores the label.
-      if (details.reason === 'input-clear' && !popupOpen) changeOpen(true);
+      if (details.reason === 'input-clear' && !popupOpen) changeOpen(true, details.reason);
       return;
     }
     if (value === undefined) setUncontrolledValue(next);
@@ -403,10 +386,6 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
     }
   }
 
-  function popupOffset() {
-    return remPixels(inputRef.current) * 0.25;
-  }
-
   const hasChips = isMultiple && selectedValues.length > 0;
   const labelShown = label != null && isLabelShown({ showLabel });
   // A floating label needs a blank placeholder to detect the empty state; chips fill the field.
@@ -425,7 +404,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
     const props = {
       ...boxProps,
       className: `${boxProps.className} env-combobox-control`,
-      'data-actions': clearShown ? '2' : '1',
+      'data-action-count': clearShown ? '2' : '1',
     };
     if (!isMultiple) return <BaseCombobox.InputGroup {...props} />;
     // Chips and the text input share the well, so Backspace and the arrow keys reach the chips.
@@ -461,7 +440,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
         open={popupOpen}
         onOpenChange={(next, details) => {
           if (keepsOpen(portal, next, details)) details.cancel();
-          else changeOpen(next);
+          else changeOpen(next, details.reason);
         }}
         name={name}
         form={form}
@@ -491,7 +470,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
           renderControlBox={renderControlBox}
         >
           {showStart && (
-            <span className="env-combobox-leading env-combobox-value-leading" aria-hidden="true">
+            <span className="env-combobox-start env-combobox-value-icon" aria-hidden="true">
               {singleItem.start}
             </span>
           )}
@@ -507,7 +486,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
                   render={({ 'aria-readonly': _readOnly, ...chipProps }) => <div {...chipProps} />}
                 >
                   {item?.start != null && (
-                    <span className="env-combobox-leading" aria-hidden="true">
+                    <span className="env-combobox-start" aria-hidden="true">
                       {item.start}
                     </span>
                   )}
@@ -518,7 +497,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
                       render={
                         <IconButton
                           variant="ghost"
-                          icon={<Close />}
+                          icon={<IconClose />}
                           aria-label={removeName(text)}
                         />
                       }
@@ -562,7 +541,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
                 render={
                   <IconButton
                     variant="ghost"
-                    icon={<Close />}
+                    icon={<IconClose />}
                     aria-label={clearName}
                     title={clearName}
                   />
@@ -583,7 +562,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
                 <IconButton
                   {...triggerProps}
                   variant="ghost"
-                  icon={<ChevronRight />}
+                  icon={<IconChevronRight />}
                   {...({ 'aria-label': label != null ? undefined : ariaLabel } as {
                     'aria-label': string;
                   })}
@@ -598,100 +577,16 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
             {selectedValues.map(labelOf).join(', ')}
           </span>
         )}
-        <PopupSurface
-          parts={popupParts}
-          side="bottom"
-          align="start"
-          sideOffset={popupOffset}
-          dir={direction}
-          className="env-combobox-popup"
-          layout={<Column padding={1} />}
-          popupProps={{ ref: popupRef }}
-        >
-          <BaseCombobox.Status className="env-combobox-status">
-            {loading ? (
-              <>
-                <Spinner size="sm" />
-                {loadingLabel ?? messages.loading}
-              </>
-            ) : null}
-          </BaseCombobox.Status>
-          <BaseCombobox.Empty className="env-combobox-empty">
-            {loading ? null : (emptyLabel ?? messages.empty)}
-          </BaseCombobox.Empty>
-          {/* The options are busy while they load, not the popup, whose status announces
-              the loading label meanwhile. */}
-          <BaseCombobox.List
-            render={<Grid />}
-            className="env-combobox-list"
-            aria-busy={loading || undefined}
-          >
-            {(entry: Item | ComboboxGroup<Item>) =>
-              grouped && isGroup(entry) ? (
-                <BaseCombobox.Group
-                  key={entry.label}
-                  items={entry.items as Item[]}
-                  render={<Grid />}
-                  className="env-combobox-group"
-                >
-                  <BaseCombobox.GroupLabel className="env-combobox-group-label">
-                    {entry.label}
-                  </BaseCombobox.GroupLabel>
-                  <BaseCombobox.Collection>
-                    {(item: Item) => (
-                      <ComboboxOption key={item.value} item={item} startSlot={hasStart} />
-                    )}
-                  </BaseCombobox.Collection>
-                </BaseCombobox.Group>
-              ) : (
-                <ComboboxOption
-                  key={(entry as Item).value}
-                  item={entry as Item}
-                  startSlot={hasStart}
-                />
-              )
-            }
-          </BaseCombobox.List>
-        </PopupSurface>
+        <ComboboxPopup
+          popupRef={popupRef}
+          direction={direction}
+          loading={loading}
+          loadingLabel={loadingLabel ?? messages.loading}
+          emptyLabel={emptyLabel ?? messages.empty}
+          grouped={grouped}
+          startSlot={hasStart}
+        />
       </BaseCombobox.Root>
     </DirectionProvider>
-  );
-}
-
-/** An option row: a check mark slot, optional start content, the label and its description. */
-function ComboboxOption<Item extends ComboboxItem>({
-  item,
-  startSlot,
-}: {
-  item: Item;
-  startSlot: boolean;
-}) {
-  const descriptionId = useId();
-  return (
-    <ListRow
-      render={
-        <BaseCombobox.Item
-          value={item.value}
-          disabled={item.disabled}
-          aria-describedby={item.description ? descriptionId : undefined}
-        />
-      }
-      className="env-combobox-item"
-      indicator={
-        <BaseCombobox.ItemIndicator className="env-icon env-combobox-item-indicator">
-          <Check />
-        </BaseCombobox.ItemIndicator>
-      }
-      icon={startSlot ? <span className="env-combobox-leading">{item.start}</span> : undefined}
-      label={item.label}
-      description={
-        item.description ? (
-          // Announced through aria-describedby rather than as part of the option's name.
-          <span id={descriptionId} aria-hidden="true">
-            {item.description}
-          </span>
-        ) : undefined
-      }
-    />
   );
 }

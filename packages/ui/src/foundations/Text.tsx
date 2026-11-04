@@ -2,6 +2,8 @@ import type { ComponentPropsWithRef, ReactElement, Ref } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { markText } from '../internal/hoverDetail.js';
 import { renderElement } from '../internal/renderElement.js';
+import '../styles/Base.css';
+import '../styles/Text.css';
 
 /**
  * A text style from the type scale: display for a page's introduction, body for running text,

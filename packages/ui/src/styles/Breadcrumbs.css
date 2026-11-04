@@ -1,66 +1,68 @@
-/* Breadcrumbs: muted links separated by chevrons, ending in the current page. */
-.env-breadcrumbs {
-  min-inline-size: 0;
-}
-.env-breadcrumbs-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  font: var(--env-type-body-small);
-}
-/* On one line, the current page gives way first and ends in an ellipsis; earlier levels keep their
-   width. Nothing clips the list, so focus outlines stay whole. */
-.env-breadcrumbs[data-nowrap] > .env-breadcrumbs-list > .env-breadcrumbs-item:not(:last-child) {
-  flex-shrink: 0;
-}
-.env-breadcrumbs-link,
-.env-breadcrumbs-text,
-.env-breadcrumbs-current {
-  min-inline-size: 0;
-  max-inline-size: 20rem;
-  display: inline-flex;
-  padding: 0.125rem var(--env-space-1);
-  border-radius: var(--env-radius-sm);
-}
-.env-breadcrumbs-link {
-  border: 0;
-  background: transparent;
-  color: var(--env-color-fg-muted);
-  font: inherit;
-  text-decoration: none;
-  cursor: pointer;
-  transition: color var(--env-motion-duration-fast) var(--env-motion-ease);
-}
-.env-breadcrumbs-link:hover {
-  color: var(--env-color-fg-default);
-  text-decoration: underline;
-  text-underline-offset: 0.15em;
-}
-.env-breadcrumbs-link:focus-visible,
-.env-breadcrumbs-text:focus-visible,
-.env-breadcrumbs-current:focus-visible {
-  outline: 0.125rem solid var(--env-color-border-focus);
-  /* Clear of the label's first and last letters, as on a text button: half the smallest space. */
-  outline-offset: calc(var(--env-space-1) / 2);
-}
-.env-breadcrumbs-text {
-  color: var(--env-color-fg-muted);
-}
-.env-breadcrumbs-current {
-  color: var(--env-color-fg-default);
-  font-weight: var(--env-font-weight-medium);
-}
-.env-breadcrumbs-label {
-  min-inline-size: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.env-breadcrumbs-separator {
-  /* Room for the focus ring of the level on either side. */
-  margin-inline: calc(var(--env-space-1) / 2);
-  color: var(--env-color-fg-muted);
-}
-.env-breadcrumbs-separator:dir(rtl) {
-  transform: scaleX(-1);
+@layer env.components {
+  /* Breadcrumbs: muted links separated by chevrons, ending in the current page. */
+  .env-breadcrumbs {
+    min-inline-size: 0;
+  }
+  .env-breadcrumbs-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font: var(--env-type-body-sm);
+  }
+  /* On one line, the current page gives way first and ends in an ellipsis; earlier levels keep their
+     width. Nothing clips the list, so focus outlines stay whole. */
+  .env-breadcrumbs[data-nowrap] > .env-breadcrumbs-list > .env-breadcrumbs-item:not(:last-child) {
+    flex-shrink: 0;
+  }
+  .env-breadcrumbs-link,
+  .env-breadcrumbs-text,
+  .env-breadcrumbs-current {
+    min-inline-size: 0;
+    max-inline-size: 20rem;
+    display: inline-flex;
+    padding: 0.125rem var(--env-space-1);
+    border-radius: var(--env-radius-sm);
+  }
+  .env-breadcrumbs-link {
+    border: 0;
+    background: transparent;
+    color: var(--env-color-fg-muted);
+    font: inherit;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color var(--env-motion-duration-fast) var(--env-motion-ease);
+  }
+  .env-breadcrumbs-link:hover {
+    color: var(--env-color-fg-default);
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+  .env-breadcrumbs-link:focus-visible,
+  .env-breadcrumbs-text:focus-visible,
+  .env-breadcrumbs-current:focus-visible {
+    outline: 0.125rem solid var(--env-color-border-focus);
+    /* Clear of the label's first and last letters, as on a text button: half the smallest space. */
+    outline-offset: calc(var(--env-space-1) / 2);
+  }
+  .env-breadcrumbs-text {
+    color: var(--env-color-fg-muted);
+  }
+  .env-breadcrumbs-current {
+    color: var(--env-color-fg-default);
+    font-weight: var(--env-font-weight-medium);
+  }
+  .env-breadcrumbs-label {
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .env-breadcrumbs-separator {
+    /* Room for the focus ring of the level on either side. */
+    margin-inline: calc(var(--env-space-1) / 2);
+    color: var(--env-color-fg-muted);
+  }
+  .env-breadcrumbs-separator:dir(rtl) {
+    transform: scaleX(-1);
+  }
 }

@@ -7,18 +7,12 @@ import {
   type Ref,
 } from 'react';
 import { classNames } from './classNames.js';
+import { setRef } from './setRef.js';
 
 type Props = Record<string, unknown> & { className?: string; style?: CSSProperties };
 
 /** An event handler prop, such as onClick or onKeyDownCapture. */
 const handlerName = /^on[A-Z]/;
-
-/** Sets a ref, a callback or an object, to a node; returns a callback ref's cleanup. */
-function setRef<T>(ref: Ref<T> | undefined, node: T | null) {
-  if (typeof ref === 'function') return ref(node);
-  if (ref) (ref as { current: T | null }).current = node;
-  return undefined;
-}
 
 /** One callback ref that sets both refs, and cleans both up, as React 19's refs do. */
 function mergeRefs<T>(first: Ref<T> | undefined, second: Ref<T> | undefined): Ref<T> {

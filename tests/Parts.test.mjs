@@ -7,7 +7,7 @@ import {
   partsFile,
   removedParts,
   serializeParts,
-} from '../scripts/GenerateParts.mjs';
+} from '../scripts/docs/GenerateParts.ts';
 
 const { parts, problems } = buildParts();
 const component = (name) => parts.components[name];
@@ -34,9 +34,12 @@ test('a component lists its root, its part classes and the states it is styled b
   // A class built from a value is expanded over the value's type.
   assert.ok(component('Avatar').parts.some((part) => part.class === 'env-avatar-fallback-person'));
   // The style sheets add the states Base UI sets, on the part they style.
-  assert.deepEqual(state(component('Menu'), 'data-highlighted')?.parts, ['env-menu-item']);
+  assert.deepEqual(state(component('Menu'), 'data-highlighted')?.parts, [
+    'env-menu-choice',
+    'env-menu-item',
+  ]);
   // A component whose root is not env-<name> takes it from packages/ui/src/parts.json.
-  assert.equal(component('Dialog').root, 'env-dialog-popup');
+  assert.equal(component('Dialog').root, 'env-dialog');
 });
 
 test('a component lists its color properties, each registered so it does not inherit', () => {
@@ -50,7 +53,15 @@ test('a component lists its color properties, each registered so it does not inh
   ]);
   // IconButton is a Button, and takes its properties.
   assert.deepEqual(colors('IconButton'), colors('Button'));
-  for (const name of ['Card', 'List', 'Drawer', 'TextField', 'Checkbox', 'Switch', 'Slider'])
+  for (const name of [
+    'Card',
+    'List',
+    'NavigationDrawer',
+    'TextField',
+    'Checkbox',
+    'Switch',
+    'Slider',
+  ])
     assert.ok(colors(name).length > 0, `${name} lists its color properties`);
   for (const entry of Object.values(parts.components))
     for (const color of entry.colors ?? []) {
@@ -152,12 +163,12 @@ test('a part or state that goes is reported until a major changeset names it', (
   assert.equal(meta([minor('Card drops `env-card-meta`.')]), false);
   assert.equal(meta(['Card drops `env-card-meta`.']), false);
   assert.equal(
-    meta([`---\n'@envsemble/envui-codemods': major\n---\n\nCard drops \`env-card-meta\`.\n`]),
+    meta([`---\n'@envsemble/eslint-plugin-envui': major\n---\n\nCard drops \`env-card-meta\`.\n`]),
     false,
   );
   assert.equal(
     meta([
-      `---\n"@envsemble/envui-codemods": minor\n"@envsemble/envui": major\n---\n\nCard drops \`env-card-meta\`.\n`,
+      `---\n"@envsemble/eslint-plugin-envui": minor\n"@envsemble/envui": major\n---\n\nCard drops \`env-card-meta\`.\n`,
     ]),
     true,
   );
@@ -203,6 +214,7 @@ test('a part that moves to another group, or a value list that becomes free-form
 
 test('data-env-ssr-* attributes are private, and the contract leaves them out', () => {
   assert.equal(isPrivateState('data-env-ssr-placement'), true);
+  assert.equal(isPrivateState('data-env-theme-switching'), true);
   assert.equal(isPrivateState('data-stacked'), false);
   // PanelDock sets and styles them until it reads its layout; its public states stay.
   const dock = component('PanelDock');

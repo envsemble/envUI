@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { catalogueUrl, fixtureUrl } from './Servers';
+import { siteDevUrl, fixtureUrl } from './helpers/Servers';
 
 /** The computed display of the panel each tab of a tab list controls, in order. */
 function panelDisplays(page: Page, list: string) {
@@ -60,15 +60,34 @@ test('a panel keeps the direction around it, not the tab list’s', async ({ pag
   await expect(slider).toHaveAttribute('aria-valuenow', '51');
 });
 
+test('a rail with more tabs than fit starts at its chosen first tab @engines', async ({ page }) => {
+  // The rail measures its tabs from its own start: in a positioned frame set in from the page's
+  // start, it once measured them from the frame's and rested scrolled past the chosen tab.
+  await page.goto(`${fixtureUrl}/?fixture=scrolling-tabs`);
+  const list = page.getByRole('tablist', { name: 'Project views' });
+  await expect(list.getByRole('tab', { name: 'Summary' })).toHaveAttribute('aria-selected', 'true');
+  const place = () =>
+    list.evaluate((rail) => {
+      const tab = rail.querySelector('[aria-selected="true"]')!.getBoundingClientRect();
+      const box = rail.getBoundingClientRect();
+      return {
+        overflows: rail.scrollWidth > rail.clientWidth,
+        atStart: rail.scrollLeft === 0,
+        inView: tab.left >= box.left - 0.5 && tab.right <= box.right + 0.5,
+      };
+    });
+  await expect.poll(place).toEqual({ overflows: true, atStart: true, inView: true });
+});
+
 test('filling tabs give the selected panel the height left below the list', async ({ page }) => {
-  await page.goto(`${catalogueUrl}/components/tabs`);
-  const example = page.locator('.docs-live-example[data-example="FillARegion"]');
+  await page.goto(`${siteDevUrl}/components/tabs`);
+  const example = page.locator('.site-live-example[data-example="FillARegion"]');
   const canvas = example.getByRole('tabpanel', { name: 'Canvas' }).locator(':scope > *').first();
   await expect(canvas).toBeVisible();
   // The region, which has a height of its own, the list and the canvas, measured in one frame: the
   // examples above this one are still loading and move it down the page between separate calls.
   const { region, list, box } = await canvas.evaluate((element) => {
-    const example = element.closest('.docs-live-example')!;
+    const example = element.closest('.site-live-example')!;
     const rect = (target: Element): { top: number; bottom: number; height: number } =>
       target.getBoundingClientRect().toJSON();
     return {

@@ -1,7 +1,7 @@
 // Friendly alias for the official text_fields symbol.
-import type { MaterialSymbolProps } from '../Icon.js';
-import { TextFields } from './TextFields.js';
+import type { SymbolIconProps } from '../Icon.js';
+import { IconTextFields } from './TextFields.js';
 
-export function Typography(props: MaterialSymbolProps) {
-  return <TextFields {...props} />;
+export function IconTypography(props: SymbolIconProps) {
+  return <IconTextFields {...props} />;
 }

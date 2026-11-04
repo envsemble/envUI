@@ -8,6 +8,8 @@ import {
   type MouseEvent as ReactMouseEvent,
 } from 'react';
 import { useEnvUI, type Direction } from './EnvUIContext.js';
+import { computedDirection } from './direction.js';
+import { typeaheadTimeout } from './typeahead.js';
 
 export interface RovingOptions<Item> {
   /** The items, in the order they are laid out. */
@@ -41,9 +43,6 @@ export interface RovingOptions<Item> {
   /** How many items Page Up and Page Down move; 10 by default, lists only. */
   pageSize?: number;
 }
-
-/** How long typed letters keep adding up for typeahead, in milliseconds. */
-const typeaheadTimeout = 500;
 
 /**
  * The index the keyboard moves to from `index`, or undefined for a key it ignores. Disabled items
@@ -164,10 +163,7 @@ export function useRovingFocus<Item>(options: RovingOptions<Item>) {
     const index = items.findIndex((item) => getKey(item) === stopKey);
     if (index === -1) return;
     // Left and Right follow the given direction, the provider's, or the one at the widget.
-    const direction =
-      options.dir ??
-      provided ??
-      (getComputedStyle(event.currentTarget).direction === 'rtl' ? 'rtl' : 'ltr');
+    const direction = options.dir ?? provided ?? computedDirection(event.currentTarget);
     const next = target(options, index, event, direction) ?? typeahead(event, index);
     if (next === undefined) return;
     event.preventDefault();

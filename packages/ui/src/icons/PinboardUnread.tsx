@@ -1,11 +1,14 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
-// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
+// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../Icon.js';
+import { useSymbolIconFill } from '../SymbolIconState.js';
 
-export function PinboardUnread({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
-  return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M720-640q-50 0-85-35t-35-85q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35Zm-196-80H120q-17 0-28.5-11.5T80-760q0-17 11.5-28.5T120-800h404q-2 10-3 19.5t-1 20.5q0 11 1 20.5t3 19.5Zm-4 560q-17 0-28.5-11.5T480-200q0-17 11.5-28.5T520-240h280v-337q24-11 44-27t36-36v400q0 33-23.5 56.5T800-160H520ZM260-80q-17 0-28.5-11.5T220-120v-160H103q-23 0-34-20t0-40l71-126v-94h-20q-17 0-28.5-11.5T80-600q0-17 11.5-28.5T120-640h280q17 0 28.5 11.5T440-600q0 17-11.5 28.5T400-560h-20v94l71 126q11 20 0 40t-34 20H300v160q0 17-11.5 28.5T260-80Z" /> : <path d="M720-640q-50 0-85-35t-35-85q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35Zm-196-80H120q-17 0-28.5-11.5T80-760q0-17 11.5-28.5T120-800h404q-2 10-3 19.5t-1 20.5q0 11 1 20.5t3 19.5Zm-4 560q-17 0-28.5-11.5T480-200q0-17 11.5-28.5T520-240h280v-337q24-11 44-27t36-36v400q0 33-23.5 56.5T800-160H520ZM260-80q-17 0-28.5-11.5T220-120v-160H103q-23 0-34-20t0-40l71-126v-94h-20q-17 0-28.5-11.5T80-600q0-17 11.5-28.5T120-640h280q17 0 28.5 11.5T440-600q0 17-11.5 28.5T400-560h-20v94l71 126q11 20 0 40t-34 20H300v160q0 17-11.5 28.5T260-80Zm-88-280h176l-48-84v-116h-80v116l-48 84Zm88 0Z" />}</Icon>;
+/** The path both styles start with. */
+const start = "M720-640q-50 0-85-35t-35-85q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35Zm-196-80H120q-17 0-28.5-11.5T80-760q0-17 11.5-28.5T120-800h404q-2 10-3 19.5t-1 20.5q0 11 1 20.5t3 19.5Zm-4 560q-17 0-28.5-11.5T480-200q0-17 11.5-28.5T520-240h280v-337q24-11 44-27t36-36v400q0 33-23.5 56.5T800-160H520ZM260-80q-17 0-28.5-11.5T220-120v-160H103q-23 0-34-20t0-40l71-126v-94h-20q-17 0-28.5-11.5T80-600q0-17 11.5-28.5T120-640h280q17 0 28.5 11.5T440-600q0 17-11.5 28.5T400-560h-20v94l71 126q11 20 0 40t-34 20H300v160q0 17-11.5 28.5T260-80Z";
+
+export function IconPinboardUnread({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
+  return <Icon viewBox="0 -960 960 960" {...props}><path d={filled ? start : start + "m-88-280h176l-48-84v-116h-80v116l-48 84Zm88 0Z"} /></Icon>;
 }

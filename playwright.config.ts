@@ -1,16 +1,21 @@
 import { availableParallelism } from 'node:os';
 import { fileURLToPath } from 'node:url';
 import { defineConfig, devices } from '@playwright/test';
-import { resolveServers } from './scripts/CheckoutMarker.mjs';
+import { defaultPorts, resolveServers } from './scripts/test/CheckoutMarker.ts';
 
 /**
- * The development servers this run needs: ENVUI_SERVERS lists them (catalogue, fixture, or none),
+ * The development servers this run needs: ENVUI_SERVERS lists them (site, fixture, or none; the
+ * site's name before, catalogue, still counts),
  * as `npm run check` sets it for the specs it picked. Without it a run that only scans the hosted
  * build (the a11y projects) needs none, and any other run needs both.
  */
 function wantedServers() {
   if (process.env.ENVUI_SERVERS)
-    return new Set(process.env.ENVUI_SERVERS.split(',').filter((name) => name !== 'none'));
+    return new Set(
+      process.env.ENVUI_SERVERS.split(',')
+        .filter((name) => name !== 'none')
+        .map((name) => (name === 'catalogue' ? 'site' : name)),
+    );
   const projects = process.argv.flatMap((argument, index, all) =>
     argument === '--project'
       ? [all[index + 1]]
@@ -19,17 +24,21 @@ function wantedServers() {
         : [],
   );
   if (projects.length && projects.every((project) => project === 'a11y')) return new Set<string>();
-  return new Set(['catalogue', 'fixture']);
+  return new Set(['site', 'fixture']);
 }
 const wanted = wantedServers();
 
 // Ports, and whether a server running there belongs to this checkout and can be reused. Specs read
-// the chosen ports through tests/browser/Servers.ts; see scripts/CheckoutMarker.mjs.
+// the chosen ports through tests/browser/helpers/Servers.ts; see scripts/test/CheckoutMarker.ts.
+// The site's port was ENVUI_CATALOGUE_PORT before, which still chooses it. With neither set, the
+// default ports apply: assigning undefined to process.env would store the string 'undefined'.
+if (!process.env.ENVUI_SITE_PORT && process.env.ENVUI_CATALOGUE_PORT)
+  process.env.ENVUI_SITE_PORT = process.env.ENVUI_CATALOGUE_PORT;
 const servers = await resolveServers(
   Object.fromEntries(
     Object.entries({
-      catalogue: { variable: 'ENVUI_CATALOGUE_PORT', port: 8770, offset: 0 },
-      fixture: { variable: 'ENVUI_FIXTURE_PORT', port: 8766, offset: 1 },
+      site: { variable: 'ENVUI_SITE_PORT', port: defaultPorts.site, offset: 0 },
+      fixture: { variable: 'ENVUI_FIXTURE_PORT', port: defaultPorts.fixture, offset: 1 },
     }).filter(([name]) => wanted.has(name)),
   ),
 );
@@ -110,7 +119,7 @@ export default defineConfig({
       dependencies: ['chromium', 'firefox', 'webkit'],
       use: { ...devices['Desktop Chrome'] },
     },
-    // `npm run test:a11y`: axe over every catalogue page, Chromium only.
+    // `npm run test:a11y`: axe over every page of the site, Chromium only.
     {
       name: 'a11y',
       testDir: './tests/accessibility',
@@ -156,11 +165,11 @@ export default defineConfig({
   // theme loaded on demand, the first page to ask for it makes Vite bundle it and reload every page
   // the server has open, and the tests on those pages lose their state midway.
   webServer: [
-    servers.catalogue && {
-      command: `node ../../node_modules/vite/bin/vite.js --host 127.0.0.1 --port ${servers.catalogue.port} --strictPort --force`,
-      cwd: 'apps/catalogue',
-      url: `http://127.0.0.1:${servers.catalogue.port}`,
-      reuseExistingServer: servers.catalogue.reuse,
+    servers.site && {
+      command: `node ../../node_modules/vite/bin/vite.js --host 127.0.0.1 --port ${servers.site.port} --strictPort --force`,
+      cwd: 'apps/site',
+      url: `http://127.0.0.1:${servers.site.port}`,
+      reuseExistingServer: servers.site.reuse,
     },
     servers.fixture && {
       command: `node node_modules/vite/bin/vite.js --config tests/fixture/vite.config.ts --host 127.0.0.1 --port ${servers.fixture.port} --strictPort --force`,

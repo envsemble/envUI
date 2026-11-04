@@ -1,6 +1,6 @@
 import { test, expect, type Page } from '@playwright/test';
-import { fixtureUrl } from './Servers';
-import { openServerMarkup } from './ServerMarkup';
+import { fixtureUrl } from './helpers/Servers';
+import { openServerMarkup } from './helpers/ServerMarkup';
 
 const fixture = `${fixtureUrl}/?fixture=adoption`;
 
@@ -68,6 +68,48 @@ test.describe('on a coarse pointer', () => {
   });
 });
 
+test("a number within a label's words stays in their line, and a badge keeps the button's gap", async ({
+  page,
+}) => {
+  await page.goto(`${fixtureUrl}/?fixture=button-counts`);
+  const button = page.getByTestId('show-tasks-light');
+  await expect(button).toHaveText('Show 33 tasks');
+  const spacing = await button.evaluate((element) => {
+    const number = element.querySelector('.env-animated-number')!.getBoundingClientRect();
+    const words = document.createRange();
+    const text = element.querySelector('.env-button-text')!.firstChild!;
+    words.setStart(text, 0);
+    words.setEnd(text, text.textContent!.trimEnd().length);
+    return {
+      // The space between "Show" and the number: a word space, narrower than the button's gap.
+      space: number.left - words.getBoundingClientRect().right,
+      gap: parseFloat(getComputedStyle(element).columnGap),
+    };
+  });
+  expect(spacing.space).toBeGreaterThan(0);
+  expect(spacing.space).toBeLessThan(spacing.gap);
+  // A badge is an item of its own, the gap from the words before it: only the number's button
+  // holds a run of text.
+  await expect(
+    page.getByTestId('button-counts-light').locator('.env-button .env-button-text'),
+  ).toHaveCount(1);
+});
+
+test('a text button alone in a box as wide as its content keeps its words in a line', async ({
+  page,
+}) => {
+  await page.goto(`${fixtureUrl}/?fixture=button-counts`);
+  const button = page.getByTestId('text-alone-light');
+  await expect(button).toHaveText('Alex Morgan');
+  // Its margins give its padding back, which its largest width allows for.
+  const lines = await button.evaluate((element) => {
+    const words = document.createRange();
+    words.selectNodeContents(element);
+    return new Set([...words.getClientRects()].map((line) => Math.round(line.top))).size;
+  });
+  expect(lines).toBe(1);
+});
+
 test('a pending button keeps its size and name, reports busy and ignores presses', async ({
   page,
   browserName,
@@ -77,6 +119,11 @@ test('a pending button keeps its size and name, reports busy and ignores presses
   await expect(button).toHaveAttribute('aria-busy', 'true');
   await expect(button.locator('.env-spinner')).toBeVisible();
   await expect(button.locator('.env-button-content')).toHaveCSS('color', 'rgba(0, 0, 0, 0)');
+  // The spinner turns in the label's color, which holds its contrast on the fill, as an arc alone
+  // rather than a labelled status line.
+  const color = await button.evaluate((element) => getComputedStyle(element).color);
+  await expect(button.locator('.env-spinner')).toHaveCSS('color', color);
+  await expect(button.locator('.env-spinner')).toHaveAttribute('data-label-hidden', '');
   await button.click({ force: true });
   await expect(page.getByTestId('pending-presses')).toHaveText('0');
   await expect(page.getByRole('progressbar', { name: 'Refreshing seats' })).toBeVisible();
@@ -298,11 +345,15 @@ test(
     // The icon starts at the padding and the keys end at it, with the room between them.
     expect(Math.abs(layout.startGap)).toBeLessThan(1);
     expect(Math.abs(layout.endGap)).toBeLessThan(1);
-    // The slot and its keys take the button's own content color, on no fill of their own, and the
-    // + between the keys is quieter, which the contrast gate measures on every variant.
+    // The slot and its keys take the button's own content color, each key on a faint fill of it as
+    // keys are drawn everywhere, and the + between the keys is quieter, which the contrast gate
+    // measures on every variant.
     expect(layout.endColor).toBe(layout.label);
     expect(layout.capColor).toBe(layout.label);
-    expect(layout.capFill).toBe('rgba(0, 0, 0, 0)');
+    const [red, green, blue, alpha] = channels(layout.capFill);
+    const label = channels(layout.label);
+    expect([red, green, blue].map(Math.round)).toEqual(label.slice(0, 3).map(Math.round));
+    expect(alpha).toBeCloseTo(0.1, 2);
     expect(layout.separatorColor).toBe(layout.separator);
   },
 );

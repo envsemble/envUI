@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { fixtureUrl } from './Servers';
+import { fixtureUrl } from './helpers/Servers';
 
 const preview = `${fixtureUrl}/?fixture=portal-containers`;
 
@@ -35,7 +35,7 @@ test.describe('PortalContainer, contained', () => {
     await expect(layer.getByText('Changes saved.')).toBeVisible();
     for (const selector of ['.env-menu', '.env-tooltip', '.env-toast'])
       expect(await insidePreview(page, selector), selector).toBe(true);
-    expect(await insidePreview(page, '.env-dialog-popup', 'dialog-preview')).toBe(true);
+    expect(await insidePreview(page, '.env-dialog', 'dialog-preview')).toBe(true);
     // No focus moved in, and the page neither hides behind a modal layer nor stops scrolling.
     // Base UI focuses a menu as it opens; waiting past the 500 ms in which a contained popup sends
     // that focus back shows that it stays out.
@@ -75,11 +75,98 @@ test.describe('PortalContainer, contained', () => {
     await expect(layer.getByRole('tooltip')).toHaveCount(0);
   });
 
+  test('a context menu opens at the pointer in the container, without hiding or locking the page @engines', async ({
+    page,
+  }) => {
+    await page.goto(preview);
+    const region = page.getByTestId('context-region');
+    await region.scrollIntoViewIfNeeded();
+    const box = (await region.boundingBox())!;
+    await page.mouse.click(box.x + 60, box.y + 30, { button: 'right' });
+    const menu = page.getByTestId('context-layer').getByRole('menu', { name: 'Document actions' });
+    await expect(menu).toBeVisible();
+    expect(
+      await insidePreview(page, '[data-testid="context-layer"] .env-menu', 'context-preview'),
+    ).toBe(true);
+    // Its first row is under the pointer, as a context menu's is anywhere.
+    const opened = (await menu.boundingBox())!;
+    expect(Math.abs(opened.x - (box.x + 60))).toBeLessThan(12);
+    expect(Math.abs(opened.y - (box.y + 30))).toBeLessThan(12);
+    // The page stays in reach and keeps its scroll.
+    await expect(page.getByTestId('outside')).not.toHaveAttribute('aria-hidden');
+    expect(await page.evaluate(() => getComputedStyle(document.documentElement).overflow)).not.toBe(
+      'hidden',
+    );
+    expect(await page.evaluate(() => getComputedStyle(document.body).overflow)).not.toBe('hidden');
+    // A press outside the container leaves it open; Esc on the menu closes it.
+    await page.getByTestId('outside').click();
+    await expect(menu).toBeVisible();
+    await menu.dispatchEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true });
+    await expect(menu).toHaveCount(0);
+  });
+
+  test('a contained notice arrives and leaves with its motion, and stays under the pointer', async ({
+    page,
+  }) => {
+    await page.goto(preview);
+    const layer = page.getByTestId('layer');
+    await page.getByRole('button', { name: 'Notify' }).click();
+    const notice = layer.locator('.env-toast', { hasText: 'Invitation sent.' });
+    await expect(notice).toBeVisible();
+    // It came in from its starting style, which it no longer holds.
+    await expect(notice).not.toHaveAttribute('data-starting-style');
+    await expect
+      .poll(() => notice.evaluate((element) => getComputedStyle(element).opacity))
+      .toBe('1');
+    // Under the pointer its time stops: past its 1.2 s it is still there.
+    await notice.hover();
+    await page.waitForTimeout(1800);
+    await expect(notice).toBeVisible();
+    // Once the pointer leaves, it goes, taking its ending style before it is removed.
+    await layer.evaluate((element) => {
+      new MutationObserver((records) => {
+        if (records.some((record) => (record.target as Element).hasAttribute('data-ending-style')))
+          element.dataset.ended = '';
+      }).observe(element, { subtree: true, attributeFilter: ['data-ending-style'] });
+    });
+    await page.mouse.move(1, 1);
+    await expect(notice).toHaveCount(0);
+    await expect(layer).toHaveAttribute('data-ended', '');
+  });
+
   test('F6 leaves the contained toasts alone @engines', async ({ page }) => {
     await page.goto(preview);
     await expect(page.getByTestId('layer').getByText('Changes saved.')).toBeVisible();
     await page.getByTestId('outside').focus();
     await page.keyboard.press('F6');
     await expect(page.getByTestId('outside')).toBeFocused();
+  });
+
+  test('a menubar switches menus in it, one open at a time', async ({ page }) => {
+    await page.goto(preview);
+    const layer = page.getByTestId('menubar-layer');
+    const bar = page.getByRole('menubar', { name: 'Application menu' });
+    await bar.getByRole('menuitem', { name: 'File' }).click();
+    await expect(layer.getByRole('menu', { name: 'File' })).toBeVisible();
+    // Another menu opening in its place closes it, though the press came from outside the layer.
+    await bar.getByRole('menuitem', { name: 'Edit' }).hover();
+    await expect(layer.getByRole('menu', { name: 'Edit' })).toBeVisible();
+    await expect(layer.getByRole('menu', { name: 'File' })).toHaveCount(0);
+  });
+
+  test('Panes open as a sheet in it leave the page in use', async ({ page }) => {
+    await page.goto(preview);
+    const sheet = page.getByTestId('panes-preview').getByRole('dialog', { name: 'Details' });
+    await expect(sheet).toBeVisible();
+    // Not modal: nothing on the page turns inert, focus stays out and Tab leaves the sheet.
+    await expect(sheet).not.toHaveAttribute('aria-modal');
+    expect(await page.evaluate(() => document.querySelectorAll('[inert]').length)).toBe(0);
+    expect(await page.evaluate(() => document.activeElement === document.body)).toBe(true);
+    await page.getByTestId('outside').focus();
+    await expect(page.getByTestId('outside')).toBeFocused();
+    await sheet.getByRole('button', { name: 'Edit details' }).focus();
+    await page.keyboard.press('Tab');
+    await expect(sheet.getByRole('button', { name: 'Edit details' })).not.toBeFocused();
+    await expect(sheet).toBeVisible();
   });
 });

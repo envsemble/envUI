@@ -8,19 +8,19 @@ import {
   longParagraphs,
   optionTable,
   paragraphLength,
-  siteInlineCode,
-  siteStructure,
-  siteText,
+  catalogueInlineCode,
+  catalogueStructure,
+  catalogueText,
   technicalText,
   withoutCodeColumns,
-} from '../scripts/SiteContent.mjs';
+} from '../apps/site/src/shared/CatalogueContent.ts';
 import {
   examplesDirectory,
   isPropsTable,
   readDocumentation,
   readProps,
   specimensDirectory,
-} from '../scripts/GenerateDocumentation.mjs';
+} from '../scripts/docs/GenerateDocumentation.ts';
 
 /** Exports without a page that lists them in its frontmatter; the list only shrinks. */
 const undocumentedExports = [];
@@ -84,22 +84,6 @@ test('every public export is documented on exactly one page', () => {
     assert.ok(props.exports[name], `A page lists ${name}, which envUI does not export.`);
 });
 
-test("every component's page names each of its color properties", () => {
-  const parts = JSON.parse(
-    readFileSync(new URL('../docs/generated/parts.json', import.meta.url), 'utf8'),
-  );
-  for (const [name, entry] of Object.entries(parts.components)) {
-    if (!entry.colors?.length) continue;
-    const page = documents.find((document) => document.frontmatter?.components?.includes(name));
-    assert.ok(page, `${name} has color properties but no page`);
-    for (const { property } of entry.colors)
-      assert.ok(
-        page.markdown.includes(`\`${property}\``),
-        `${page.path} names ${name}'s color property ${property}, under Compose's Customize`,
-      );
-  }
-});
-
 test('every alternative a page suggests has a page to link to', () => {
   // As the catalogue links them: a part such as Menu.Item goes to its namespace's page.
   const documented = new Set(
@@ -120,7 +104,7 @@ test('every component, pattern and foundation page is in the one-file structure'
     .filter((document) => /^(components|patterns|foundations)\//.test(document.path))
     .filter((document) => !document.sections || !document.frontmatter?.examples)
     .map(({ path }) => path);
-  assert.deepEqual(outside, [], 'Write these pages as docs/component-pages.md describes.');
+  assert.deepEqual(outside, [], 'Write these pages as contributing/pages.md describes.');
 });
 
 test('pages list no props by hand', () => {
@@ -151,11 +135,12 @@ function files(directory) {
 }
 
 test('every example file is referenced once, by its page, and imports only public modules', () => {
+  // A foundation's figure with an example file of its name shows it as its code.
   const referenced = new Map();
   for (const document of sectioned)
     for (const section of document.sections ?? [])
       for (const block of section.blocks)
-        if (block.kind === 'example') {
+        if (block.kind === 'example' || (block.kind === 'figure' && block.code)) {
           const key = `${document.id}/${block.name}`;
           referenced.set(key, (referenced.get(key) ?? 0) + 1);
         }
@@ -189,7 +174,7 @@ test('the import check reads every way a source loads a module', () => {
         "import 'side-effect';",
         "import { Button } from '@envsemble/envui';",
         "import type { ButtonProps } from '@envsemble/envui';",
-        "export { Home } from '@envsemble/envui/icons/Home';",
+        "export { IconHome } from '@envsemble/envui/icons/Home';",
         "const Editor = lazy(() => import('./Editor'));",
         "const legacy = require('legacy');",
       ].join('\n'),
@@ -207,12 +192,16 @@ test('the import check reads every way a source loads a module', () => {
   assert.match('@envsemble/envui/icons/Home', publicModules);
 });
 
-test('every specimen file is placed by its page', () => {
+test('every specimen file is placed by its page, or plays or holds the example it is named after', () => {
   const placed = new Set();
   for (const document of sectioned)
     for (const section of document.sections ?? [])
       for (const block of section.blocks)
-        if (block.kind === 'specimen') placed.add(`${document.id}/${block.name}`);
+        if (
+          block.kind === 'specimen' ||
+          (block.kind === 'example' && (block.motion || block.specimen))
+        )
+          placed.add(`${document.id}/${block.name}`);
   for (const { page, name } of files(specimensDirectory))
     assert.ok(
       placed.has(`${page}/${name}`),
@@ -243,7 +232,7 @@ test('the import reader finds the runtime names a source takes from envUI', () =
         "import { Button, type ButtonProps, Row as Line } from '@envsemble/envui';",
         "import type { Theme } from '@envsemble/envui';",
         "import { CodeBlock } from '@envsemble/envui/content';",
-        "import { Close } from '@envsemble/envui/icons/Close';",
+        "import { IconClose } from '@envsemble/envui/icons/Close';",
         "import { useState } from 'react';",
       ].join('\n'),
     ),
@@ -352,7 +341,7 @@ test("a page's Overview doesn't open by saying its summary again", () => {
  * Compose", the lists of what envUI and the application provide, and its tables' In code columns,
  * which its page in the Docs shows.
  */
-function siteMarkdown(document) {
+function catalogueMarkdown(document) {
   return withoutCodeColumns(
     document.markdown
       .replace(/\n## Changelog\n[\s\S]*$/, '\n')
@@ -368,7 +357,7 @@ test('a page of the catalogue links nowhere in the Docs', () => {
   const links = sectioned
     .filter((document) => document.id !== 'field')
     .flatMap((document) =>
-      [...siteMarkdown(document).matchAll(/\]\(([^)\s]+)\)/g)]
+      [...catalogueMarkdown(document).matchAll(/\]\(([^)\s]+)\)/g)]
         .map(([, href]) => href)
         .filter((href) => !/^(?:[a-z][a-z\d+.-]*:|#)/i.test(href))
         .filter((href) => {
@@ -385,11 +374,11 @@ test('a page of the catalogue links nowhere in the Docs', () => {
 });
 
 /** Every page the catalogue shows: Field's page is in the Docs only. */
-const sitePages = () => sectioned.filter((document) => document.id !== 'field');
+const cataloguePages = () => sectioned.filter((document) => document.id !== 'field');
 
 test("a page's catalogue shows no inline code", () => {
-  const found = sitePages().flatMap((document) =>
-    siteInlineCode(document).map(({ where, code }) => `${document.path}, ${where}: ${code}`),
+  const found = cataloguePages().flatMap((document) =>
+    catalogueInlineCode(document).map(({ where, code }) => `${document.path}, ${where}: ${code}`),
   );
   assert.deepEqual(
     found,
@@ -399,8 +388,8 @@ test("a page's catalogue shows no inline code", () => {
 });
 
 test("a page's catalogue text is in titled blocks", () => {
-  const found = sitePages().flatMap((document) =>
-    siteStructure(document).map(
+  const found = cataloguePages().flatMap((document) =>
+    catalogueStructure(document).map(
       ({ where, kind, text }) => `${document.path}, ${where}, ${kind}: ${text}`,
     ),
   );
@@ -412,7 +401,7 @@ test("a page's catalogue text is in titled blocks", () => {
 });
 
 test("a page's catalogue text is in short paragraphs", () => {
-  const found = sitePages().flatMap((document) =>
+  const found = cataloguePages().flatMap((document) =>
     longParagraphs(document).map(
       ({ where, length, text }) => `${document.path}, ${where}, ${length} characters: ${text}`,
     ),
@@ -460,7 +449,7 @@ test("an option table after a variants figure names the figure's variants", () =
 test('technical text is found in words, and plain words are left alone', () => {
   const kinds = (text) => technicalText(text).map(({ kind }) => kind);
   assert.deepEqual(kinds('Use --env-color-bg-page here'), ['token']);
-  assert.deepEqual(kinds('The env-card-heading part'), ['class name']);
+  assert.deepEqual(kinds('The env-card-title part'), ['class name']);
   assert.deepEqual(kinds('#1e1f21 or #fff'), ['hex color', 'hex color']);
   assert.deepEqual(kinds('0.25 rem, 32px and 150ms'), ['length', 'length', 'length']);
   assert.deepEqual(kinds('A 50% radius'), ['percentage']);
@@ -474,28 +463,28 @@ test('technical text is found in words, and plain words are left alone', () => {
 });
 
 /** The technical text in a page's catalogue Markdown, as plain words: keys are written as <kbd>. */
-const siteTechnicalText = (document) =>
-  siteText(document).flatMap(({ markdown, text }) =>
+const catalogueTechnicalText = (document) =>
+  catalogueText(document).flatMap(({ markdown, text }) =>
     technicalText((markdown ?? text).replace(/`[^`]*`/g, '').replace(/<\/?kbd>/g, '')),
   );
 
 test("a component page's catalogue shows no technical text", () => {
   // The catalogue is for people looking at envUI: lengths, tokens, percentages and code names go
   // in the page's Compose, which its page in the Docs shows.
-  const found = sitePages()
+  const found = cataloguePages()
     .filter((document) => document.path.startsWith('components/'))
     .flatMap((document) =>
-      siteTechnicalText(document).map(({ kind, text }) => `${document.path}: ${kind} ${text}`),
+      catalogueTechnicalText(document).map(({ kind, text }) => `${document.path}: ${kind} ${text}`),
     );
   assert.deepEqual(found, [], 'Say it in words, and move the value to "## Compose".');
 });
 
 test("the technical text in each page's catalogue Markdown is counted, for the rewrite to come", (t) => {
-  // Reporting only, like Catalogue.spec.ts's count of the rendered pages: the catalogue shows no
+  // Reporting only, like CataloguePlainLanguage.spec.ts's count of the rendered pages: the catalogue shows no
   // token names, hex colors, lengths, percentages or code, which belong to the page in the Docs.
   // Inline code is already rejected above; this counts what plain words still carry.
-  const counts = sitePages().flatMap((document) => {
-    const found = siteTechnicalText(document);
+  const counts = cataloguePages().flatMap((document) => {
+    const found = catalogueTechnicalText(document);
     return found.length
       ? [`${document.path}: ${found.length} (${found.map(({ text }) => text).join(', ')})`]
       : [];

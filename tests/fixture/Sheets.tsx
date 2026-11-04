@@ -2,8 +2,8 @@ import { useRef, useState } from 'react';
 import {
   Button,
   DialogClose,
+  NavigationDrawer,
   Sheet,
-  Link,
   Column,
   Row,
   Text,
@@ -12,8 +12,9 @@ import {
 } from '@envsemble/envui';
 
 /**
- * Side sheets at both edges, named by a title or by aria-label, one whose first element is a field,
- * one in right-to-left text, and a bottom sheet.
+ * Side sheets at both edges, named by a title or by aria-label, one holding a NavigationDrawer, one whose
+ * first element is a field,
+ * one in right-to-left text, a bottom sheet, and two taller than the window.
  */
 export function SheetsFixture() {
   const [open, setOpen] = useState(false);
@@ -38,12 +39,13 @@ export function SheetsFixture() {
           width="min(18rem, 100vw - 2rem)"
           trigger={<Button variant="secondary">Open navigation</Button>}
         >
-          <nav aria-label="Sections">
-            <Column gap={2}>
-              <Link href="#overview">Overview</Link>
-              <Link href="#people">People</Link>
-            </Column>
-          </nav>
+          <NavigationDrawer
+            aria-label="Sections"
+            destinations={[
+              { label: 'Overview', href: '#overview', current: true },
+              { label: 'People', href: '#people' },
+            ]}
+          />
         </Sheet>
         <Button variant="secondary" onClick={() => setOpen(true)}>
           Open controlled
@@ -77,6 +79,23 @@ export function SheetsFixture() {
       >
         <Text>Choose how to share.</Text>
       </Sheet>
+      <Row wrap gap={3}>
+        {/* Taller than a short window: their bodies scroll, between the heading and the actions. */}
+        {(['end', 'bottom'] as const).map((side) => (
+          <Sheet
+            key={side}
+            side={side}
+            title={`Long ${side}`}
+            trigger={<Button variant="secondary">{`Open long ${side}`}</Button>}
+            actions={<DialogClose variant="primary">Show 5 projects</DialogClose>}
+          >
+            <TextField label="Owner" name="owner" />
+            <div style={{ blockSize: '150vh' }}>
+              <Text>A long list.</Text>
+            </div>
+          </Sheet>
+        ))}
+      </Row>
       <div dir="rtl">
         <Sheet title="Details" trigger={<Button variant="secondary">Open details rtl</Button>}>
           <Text>In right-to-left text.</Text>

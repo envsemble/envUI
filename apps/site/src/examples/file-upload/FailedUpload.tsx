@@ -1,0 +1,123 @@
+import { useEffect, useRef, useState } from 'react';
+import { Button, List, Progress } from '@envsemble/envui';
+
+export default function FailedUpload() {
+  const [state, setState] = useState<'failed' | 'uploading' | 'done'>('uploading');
+  const [sent, setSent] = useState(0);
+  const [removed, setRemoved] = useState<string[]>([]);
+  const list = useRef<HTMLUListElement>(null);
+  const remove = useRef<HTMLButtonElement>(null);
+  const timer = useRef<number>(undefined);
+  /**
+   * A timer stands in for the upload, reporting how much has been sent; the first attempt drops
+   * part way, as an unsteady connection can.
+   */
+  function upload(drops: boolean) {
+    let done = 0;
+    timer.current = window.setInterval(() => {
+      done = Math.min(1, done + 0.1);
+      if (drops && done > 0.45) {
+        window.clearInterval(timer.current);
+        setState('failed');
+        return;
+      }
+      setSent(done);
+      if (done === 1) {
+        window.clearInterval(timer.current);
+        setState('done');
+      }
+    }, 200);
+  }
+
+  // The photo starts uploading as it is added.
+  useEffect(() => {
+    upload(true);
+    return () => window.clearInterval(timer.current);
+  }, []);
+
+  function tryAgain() {
+    setState('uploading');
+    setSent(0);
+    // Try again leaves while the upload runs, so focus moves to Remove in the same row.
+    remove.current?.focus();
+    upload(false);
+  }
+
+  // A removed row takes its buttons with it, so focus moves to the list.
+  const drop = (name: string) => {
+    if (name === 'team-photo.jpg') window.clearInterval(timer.current);
+    setRemoved((current) => [...current, name]);
+    list.current?.focus();
+  };
+
+  const megabytes = (share: number) => `${(1.1 * share).toFixed(1)} MB`;
+
+  return (
+    <List.Root
+      ref={list}
+      aria-label="Files"
+      tabIndex={-1}
+      style={{ inlineSize: 'min(100%, 28rem)' }}
+    >
+      {!removed.includes('annual-review.pdf') && (
+        <List.Item
+          label="annual-review.pdf"
+          description="2.4 MB"
+          end={
+            <Button
+              variant="text"
+              aria-label="Remove annual-review.pdf"
+              onClick={() => drop('annual-review.pdf')}
+            >
+              Remove
+            </Button>
+          }
+        />
+      )}
+      {!removed.includes('team-photo.jpg') && (
+        <List.Item
+          label="team-photo.jpg"
+          description={
+            state === 'failed'
+              ? "Couldn't upload. Check your connection and try again."
+              : state === 'done'
+                ? '1.1 MB'
+                : undefined
+          }
+          end={
+            <>
+              {state === 'failed' && (
+                <Button
+                  variant="text"
+                  aria-label="Try again to upload team-photo.jpg"
+                  onClick={tryAgain}
+                >
+                  Try again
+                </Button>
+              )}
+              <Button
+                ref={remove}
+                variant="text"
+                aria-label="Remove team-photo.jpg"
+                onClick={() => drop('team-photo.jpg')}
+              >
+                Remove
+              </Button>
+            </>
+          }
+        >
+          {state === 'uploading' && (
+            <Progress
+              label="Uploading"
+              value={sent}
+              max={1}
+              valueText={`${megabytes(sent)} of ${megabytes(1)}`}
+              aria-valuetext={`team-photo.jpg, ${megabytes(sent)} of ${megabytes(1)}`}
+            />
+          )}
+        </List.Item>
+      )}
+      {removed.length === 2 && <List.Item label="No files." />}
+    </List.Root>
+  );
+}

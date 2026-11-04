@@ -2,7 +2,7 @@
 title: List
 summary: A vertical list of connected rows, each with a title, a detail and an action, that can open what it names, show the current one and be put in order.
 status: stable
-since: 0.1.0
+since: 1.0.0
 category: Data display
 aliases:
   - GroupedRows
@@ -28,7 +28,7 @@ avoidWhen:
   - text: Data compared across columns, or rows people sort by a value.
     use: Table
   - text: Destinations in an application's navigation.
-    use: Drawer
+    use: NavigationDrawer
   - text: A hierarchy people expand, such as folders.
     use: Tree
   - text: One choice from a few options shown as rows.
@@ -91,7 +91,7 @@ Rows pack more or less tightly, from extra small to large, which changes only th
 4. **Start** (`env-list-item-start > env-avatar`, `start`)
 5. **Content** (`env-list-item-content`, `label`)
 6. **Description** (`env-list-item-content > small`, `description`)
-7. **Action** (`env-list-item > env-button:last-child`, `action`)
+7. **End** (`env-list-item > env-button:last-child`, `end`)
 
 ## Behaviour
 
@@ -99,7 +99,7 @@ Rows pack more or less tightly, from extra small to large, which changes only th
 
 A whole row can open what it names, through its one link, while its other controls stay pressable above it.
 
-```tsx figure=OpenFromRow
+```tsx figure=OpenFromRow motion
 
 ```
 
@@ -115,7 +115,7 @@ The row whose details show beside the list is marked as the current one.
 
 A checkbox at a row's start chooses it for an action on several rows at once.
 
-```tsx figure=CheckedRows
+```tsx figure=CheckedRows motion
 
 ```
 
@@ -123,7 +123,7 @@ A checkbox at a row's start chooses it for an action on several rows at once.
 
 Rows can each take a handle: drag it, or press <kbd>Space</kbd> and move the row with the arrow keys.
 
-```tsx figure=Reorder
+```tsx figure=Reorder motion
 
 ```
 
@@ -131,7 +131,7 @@ Rows can each take a handle: drag it, or press <kbd>Space</kbd> and move the row
 
 Labels and descriptions wrap, and an action that no longer fits beside the text moves below it.
 
-```tsx figure=NarrowRows widths="16 32"
+```tsx figure=NarrowRows widths="32 16" sweep
 
 ```
 
@@ -155,13 +155,13 @@ Keep the description to one fact that tells items apart, such as who changed it 
 
 ### Keyboard
 
-| Key                                                                      | Action                                                 |
-| ------------------------------------------------------------------------ | ------------------------------------------------------ |
-| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd>                          | Moves through the handles, links and controls of rows. |
-| <kbd>Space</kbd>, <kbd>Enter</kbd> on a handle                           | Lifts the row, or drops a lifted row.                  |
-| <kbd>↑</kbd>, <kbd>↓</kbd>, <kbd>Home</kbd>, <kbd>End</kbd> while lifted | Moves the row one place, or to either end.             |
-| <kbd>Esc</kbd>, <kbd>Tab</kbd> while lifted                              | Puts the row back.                                     |
-| <kbd>Alt</kbd>+<kbd>↑</kbd>, <kbd>Alt</kbd>+<kbd>↓</kbd> on a row target | Moves the row one place at once.                       |
+| Key                                                         | Action                                                       |
+| ----------------------------------------------------------- | ------------------------------------------------------------ |
+| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd>             | Moves through the handles, links and controls of rows.       |
+| <kbd>Space</kbd>, <kbd>Enter</kbd>                          | On a handle, lifts the row, or drops a lifted row.           |
+| <kbd>↑</kbd>, <kbd>↓</kbd>, <kbd>Home</kbd>, <kbd>End</kbd> | While a row is lifted, moves it one place, or to either end. |
+| <kbd>Esc</kbd>, <kbd>Tab</kbd>                              | While a row is lifted, puts it back.                         |
+| <kbd>Alt</kbd>+<kbd>↑</kbd>, <kbd>Alt</kbd>+<kbd>↓</kbd>    | On a row's link or button, moves the row one place at once.  |
 
 ### envUI provides
 
@@ -181,7 +181,7 @@ Keep the description to one fact that tells items apart, such as who changed it 
 
 ### Usage
 
-List.Root is a `ul` of List.Item rows, each with its `label`, a `description` below it, one short fact, an `action` at its end, such as a Button, and `children` after the description, such as a Badge. `start` holds content before the label, such as an Avatar, an icon or a Checkbox. Name the list with `aria-label` where its heading doesn't.
+List.Root is a `ul` of List.Item rows, each with its `label`, a `description` below it, one short fact, content at its `end`, such as a Button, and `children` after the description, such as a Badge. `start` holds content before the label, such as an Avatar, an icon or a Checkbox. Name the list with `aria-label` where its heading doesn't.
 
 ```tsx source=SettingsRows
 
@@ -200,10 +200,10 @@ With `interactive`, a row reacts to hover, keyboard focus inside it and presses.
     </Link>
   }
   description="Updated today by Sam Lee"
-  action={
+  end={
     <IconButton
       variant="text"
-      icon={<MoreHoriz />}
+      icon={<IconMoreHoriz />}
       aria-label="More actions for Roadmap"
       style={{ position: 'relative' }}
     />
@@ -213,10 +213,10 @@ With `interactive`, a row reacts to hover, keyboard focus inside it and presses.
 
 #### The current and checked rows
 
-`selected` marks the current row, such as the one whose details show beside the list, with the selected fill and `aria-current="true"` on its `data-row-target`, or on the row without one. A row whose `start` checkbox is checked takes the selected fill too; name each checkbox after its row.
+`current` marks the current row, such as the one whose details show beside the list, with the selected fill and `aria-current="true"` on its `data-row-target`, or on the row without one. A row whose `start` checkbox is checked takes the selected fill too; name each checkbox after its row.
 
 ```tsx
-<List.Item interactive selected={id === current} label="Roadmap" />
+<List.Item interactive current={id === shown} label="Roadmap" />
 ```
 
 #### Put in order
@@ -257,12 +257,7 @@ With `interactive`, a row reacts to hover, keyboard focus inside it and presses.
 
 The parts are the list, `env-list`, each row, `env-list-item`, with its handle, `env-list-item-handle`, its start, `env-list-item-start`, its content, `env-list-item-content`, which holds the label and the description, and its action at the end. Rows render on the server; only the handle of a reorderable row needs the browser.
 
-### Customize
-
-`--env-list-item-container`, `--env-list-item-content`, `--env-list-item-selected` and `--env-list-item-selected-content` set the colors of one List, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
-
 ## Changelog
 
-- **1.0.0**: List.Item takes `selected` for the current row, marked in the server's HTML, `start` for content before the label, such as an avatar or a checkbox, and `textValue`; List.Root takes `onReorder`, which moves rows by a drag handle, by keyboard, by a press and by pointer, with announcements. `GroupedRows` is `List.Root` and `Row` is `List.Item`, with the `env-list` and `env-list-item` classes; the page is `list`. List.Item's `title` is `label` and its `detail` is `description`. List.Root's `contrast` is gone: put the list directly in `<Surface background="muted" padding={3}>`, where its rows take the raised fill.
-- **0.5.0**: `interactive` rows, which react to hover, focus inside them and presses, and open from anywhere through a `data-row-target`.
-- **0.1.0**: GroupedRows and Row, with connected corners.
+- **1.0.0-prerelease.5**: List.Item's `selected` is `current`, as it marks the current row with `aria-current`; `selected` means chosen elsewhere.
+- **1.0.0**: List.Item takes `current` for the current row, marked in the server's HTML, `start` for content before the label, such as an avatar or a checkbox, and `textValue`; List.Root takes `onReorder`, which moves rows by a drag handle, by keyboard, by a press and by pointer, with announcements. `GroupedRows` is `List.Root` and `Row` is `List.Item`, with the `env-list` and `env-list-item` classes; the page is `list`. List.Item's `title` is `label`, its `detail` is `description` and its `action` is `end`, as on CommandPalette's items and Button. List.Root's `contrast` is gone: put the list directly in `<Surface background="muted" padding={3}>`, where its rows take the raised fill.

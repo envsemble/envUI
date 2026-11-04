@@ -6,10 +6,11 @@ export * from './foundations/windowClasses.js';
 export * from './foundations/useContainerSize.js';
 export * from './layout/Scaffold.js';
 export * as Panes from './layout/Panes.js';
-export type { PanesBehavior, PanesSplitAt } from './layout/Panes.js';
-export { readPanesSize } from './layout/panesSize.js';
+export { readPanesWidth } from './layout/panesSize.js';
+export type { ResizeDetails } from './internal/resizeDetails.js';
 export * from './layout/Page.js';
 export * from './layout/PageHeader.js';
+export * from './layout/LineArt.js';
 export * from './navigation/TopBar.js';
 export * from './foundations/EnvUIProvider.js';
 export * from './foundations/PortalContainer.js';
@@ -21,10 +22,13 @@ export * from './actions/AvatarButton.js';
 export * from './actions/ConfirmButton.js';
 export * from './actions/CopyButton.js';
 export * from './actions/SegmentedControl.js';
-export * from './navigation/Bar.js';
-export * from './navigation/Rail.js';
-export * from './navigation/Drawer.js';
-export type { Destination, DrawerDestination } from './navigation/internal/Destinations.js';
+export * from './navigation/NavigationBar.js';
+export * from './navigation/NavigationRail.js';
+export * from './navigation/NavigationDrawer.js';
+export type {
+  Destination,
+  NavigationDrawerDestination,
+} from './navigation/internal/Destinations.js';
 export type { NavigationBackground } from './navigation/internal/background.js';
 export * as Pager from './navigation/Pager.js';
 export * from './navigation/Tabs.js';
@@ -62,7 +66,7 @@ export * from './feedback/HoverCard.js';
 export { placeholders, isPlaceholder, type Placeholder } from './foundations/placeholders.js';
 export { useSkeleton } from './foundations/SkeletonScope.js';
 export * from './feedback/Spinner.js';
-export * as Toast from './feedback/toast/ToastProvider.js';
+export { ToastProvider, type ToastProviderProps } from './feedback/toast/ToastProvider.js';
 export { useToast } from './feedback/toast/useToast.js';
 export type {
   ToastTone,
@@ -70,7 +74,7 @@ export type {
   ToastAction,
   ToastNotification,
   ToastManager,
-} from './feedback/toast/ToastTypes.js';
+} from './feedback/toast/toastTypes.js';
 export * from './Icon.js';
 export {
   LinkProvider,
@@ -83,6 +87,7 @@ export * from './feedback/Meter.js';
 export * from './feedback/Progress.js';
 export * from './content/Avatar.js';
 export * from './content/AvatarGroup.js';
+export * from './content/Graphic.js';
 export * from './content/AnimatedNumber.js';
 export * from './content/RelativeTime.js';
 // Plain functions that a server component calls come from modules that are not client modules.
@@ -97,12 +102,14 @@ export * as Accordion from './content/Accordion.js';
 export * as DescriptionList from './content/DescriptionList.js';
 export * from './content/CalendarHeatmap.js';
 export * from './foundations/ThemePreference.js';
+export * from './foundations/ThemeToggle.js';
 export {
   createThemeBootstrapScript,
   type ThemeBootstrapOptions,
   type ThemePreference,
-} from './foundations/ThemeBootstrap.js';
-export * from './foundations/ThemeRadioGroup.js';
+} from './foundations/themeBootstrap.js';
+export * from './foundations/ThemeMenuRadioGroup.js';
+export type { HeadingLevel } from './foundations/headingLevel.js';
 export * as Menu from './navigation/Menu.js';
 export * from './navigation/ContextMenu.js';
 export * as Menubar from './navigation/Menubar.js';

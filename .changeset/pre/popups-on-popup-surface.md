@@ -10,4 +10,4 @@ Popover, HoverCard and Tooltip open on the shared popup surface.
 
 Migrate with the codemods: `envui-codemods v1-props` maps `width` and reports an expression.
 
-Migration guide: [Overlays and feedback](https://github.com/envsemble/envUI/blob/main/docs/migration.md#overlays-and-feedback).
+Migration guide: [Overlays and feedback](https://github.com/envsemble/envUI/blob/main/docs/migration.md).

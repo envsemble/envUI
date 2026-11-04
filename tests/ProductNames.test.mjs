@@ -43,32 +43,23 @@ const allowedIn = {
 const sources = [
   { path: 'README.md', read: 'whole' },
   { path: 'CONTRIBUTING.md', read: 'whole' },
+  { path: 'AGENTS.md', read: 'whole' },
+  { directory: 'contributing', extensions: ['.md'], read: 'whole' },
   { path: 'packages/ui/CHANGELOG.md', read: 'whole' },
   { directory: '.changeset', extensions: ['.md'], read: 'whole' },
   { directory: 'docs', extensions: ['.md'], read: 'whole' },
   { directory: 'packages/ui/src', extensions: ['.css'], read: 'whole' },
   { directory: 'packages/ui/src', extensions: ['.ts', '.tsx'], read: 'code' },
-  // The catalogue's sample data, copy and styles, and the hosted catalogue's Worker and headers.
-  { directory: 'apps/catalogue/src', extensions: ['.ts', '.tsx'], read: 'code' },
-  { directory: 'apps/catalogue/src', extensions: ['.css'], read: 'whole' },
-  { directory: 'apps/catalogue/site', extensions: ['.mjs'], read: 'code' },
-  { path: 'apps/catalogue/site/_headers', read: 'whole' },
+  // The catalogue's sample data, copy and styles, and the hosted site's Worker and headers.
+  { directory: 'apps/site/src', extensions: ['.ts', '.tsx'], read: 'code' },
+  { directory: 'apps/site/src', extensions: ['.css'], read: 'whole' },
+  { directory: 'apps/site/hosting', extensions: ['.mjs'], read: 'code' },
+  { path: 'apps/site/hosting/_headers', read: 'whole' },
   // The setup skill the hosted site serves to coding agents.
-  { path: 'apps/catalogue/site/SKILL.md', read: 'whole' },
+  { path: 'apps/site/hosting/SKILL.md', read: 'whole' },
   // The test fixtures' sample data and copy.
   { directory: 'tests/fixture', extensions: ['.ts', '.tsx'], read: 'code' },
   { directory: 'tests/fixture', extensions: ['.css', '.html'], read: 'whole' },
-  // The codemods package, its rename map and the code its fixtures show.
-  { path: 'packages/codemods/README.md', read: 'whole' },
-  { directory: 'packages/codemods/src', extensions: ['.json'], read: 'whole' },
-  { directory: 'packages/codemods/src', extensions: ['.mjs'], read: 'code' },
-  { directory: 'packages/codemods/bin', extensions: ['.mjs'], read: 'code' },
-  {
-    directory: 'packages/codemods/test/fixtures',
-    extensions: ['.ts', '.tsx', '.jsx'],
-    read: 'code',
-  },
-  { directory: 'packages/codemods/test/fixtures', extensions: ['.css', '.scss'], read: 'whole' },
   // The lint packages: their READMEs, the rules with their messages, the data they ship, and the
   // code their tests lint.
   { path: 'packages/eslint-plugin/README.md', read: 'whole' },
@@ -90,8 +81,8 @@ const sources = [
 /** Generated from pinned inputs: Material Symbols names its own icons, such as ChromeMaximize. */
 const generated = [
   'packages/ui/src/icons/',
-  'apps/catalogue/src/brand/EnvUILogo.tsx',
-  'apps/catalogue/src/generated/',
+  'apps/site/src/brand/EnvUILogo.tsx',
+  'apps/site/src/generated/',
 ];
 
 test('shipped text, documentation and sample data name no products', async () => {

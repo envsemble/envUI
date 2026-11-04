@@ -3,6 +3,9 @@
 import { useRef } from 'react';
 import { useColorArea } from '@react-aria/color';
 import { useColorAreaState, type Color } from '@react-stately/color';
+import { flag } from '../../internal/flag.js';
+import '../../styles/Base.css';
+import '../../styles/ColorPicker.css';
 
 export interface ColorAreaProps {
   /** The color it shows. */
@@ -52,12 +55,12 @@ export function ColorArea({ value, onChange, onChangeEnd, disabled, label }: Col
       {...colorAreaProps}
       ref={containerRef}
       className="env-color-picker-area"
-      data-disabled={disabled || undefined}
+      data-disabled={flag(disabled)}
     >
       <div
         {...thumbProps}
         className="env-color-picker-thumb"
-        data-dragging={state.isDragging || undefined}
+        data-dragging={flag(state.isDragging)}
         style={{ ...thumbProps.style, backgroundColor: state.getDisplayColor().toString('css') }}
       >
         <input {...xInputProps} ref={inputXRef} />

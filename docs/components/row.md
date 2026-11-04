@@ -38,7 +38,7 @@ examples:
   FormActions: overview
   WrappingActions:
     role: do
-    caption: A row that wraps, so an action that doesn't fit moves to the next line.
+    caption: A row that wraps, so an action that doesn't fit moves down.
   SqueezedActions:
     role: dont
     caption: 'No wrap in a narrow pane: the labels break inside their buttons.'
@@ -69,11 +69,9 @@ The gap between the children is a step of the [spacing scale](../foundations/spa
 
 ### Adapting to width
 
-A row that wraps runs onto more lines; it never turns into a column by itself.
+A row that wraps runs onto more lines; it never turns into a column by itself; change the layout at a [window class](../foundations/responsive.md) for that.
 
-- For that, change the layout at a [window class](../foundations/responsive.md).
-
-```tsx figure=SectionHeading widths="12 30"
+```tsx figure=SectionHeading widths="30 12" sweep
 
 ```
 
@@ -81,11 +79,11 @@ A row that wraps runs onto more lines; it never turns into a column by itself.
 
 A row that may get narrow wraps, so its children keep their shape.
 
-```tsx figure=WrappingActions
+```tsx figure=WrappingActions motion
 
 ```
 
-```tsx figure=SqueezedActions
+```tsx figure=SqueezedActions motion
 
 ```
 
@@ -132,7 +130,7 @@ Row lays out its children side by side, in the reading direction.
     </Text>
     <Badge>12</Badge>
   </Row>
-  <Button variant="secondary" size="sm" startIcon={<Add />}>
+  <Button variant="secondary" size="sm" startIcon={<IconAdd />}>
     Invite people
   </Button>
 </Row>
@@ -150,4 +148,4 @@ A row never turns into a column by itself. `container` makes it a size container
 
 ## Changelog
 
-- **1.0.0**: Row, with Column, Grid and Box, replaces Stack: a Stack with `direction="row"` is a Row, which the `v1-stack` codemod writes. A Row has no gap of its own; the codemod writes `gap={4}`, Stack's default, where a Stack set none.
+- **1.0.0**: Row, with Column, Grid and Box, replaces Stack: a Stack with `direction="row"` is a Row. A Row has no gap of its own, where Stack's default was `gap={4}`.

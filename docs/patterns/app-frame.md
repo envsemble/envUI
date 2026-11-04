@@ -1,6 +1,6 @@
 ---
 title: App frame
-summary: Frame an application's screens with a Scaffold, a TopBar and the same destinations as a Bar, a Rail or a Drawer, by the width of the window.
+summary: Frame an application's screens with a Scaffold, a TopBar and the same destinations as a NavigationBar, a NavigationRail or a NavigationDrawer, by the width of the window.
 status: beta
 since: 1.0.0
 intent: Frame the application
@@ -32,18 +32,19 @@ avoidWhen:
 composes:
   - Scaffold
   - TopBar
-  - Bar
-  - Rail
-  - Drawer
+  - NavigationBar
+  - NavigationRail
+  - NavigationDrawer
   - Sheet
   - Panes
+  - List
   - Menubar
   - Tooltip
   - CommandPalette
   - Menu
   - AvatarButton
   - Avatar
-  - ThemeRadioGroup
+  - ThemeMenuRadioGroup
   - Page
   - PageHeader
   - IconButton
@@ -51,6 +52,7 @@ composes:
   - Row
   - Column
   - Text
+  - useContainerSize
 examples:
   AppFrame:
     role: overview
@@ -75,7 +77,7 @@ examples:
 
 Side content that is not navigation goes in a supporting pane of [Panes](../components/panes.md), in the body.
 
-```tsx figure=WithDetails stage=shaded
+```tsx figure=WithDetails stage=shaded motion
 
 ```
 
@@ -99,7 +101,7 @@ An installed app that draws its own title bar runs it across the whole window, a
 1. **Top bar** (`env-top-bar`)
 2. **Search** (`env-top-bar-actions > env-icon-button`)
 3. **Account menu** (`env-avatar-button`)
-4. **Navigation** (`env-rail`)
+4. **Navigation** (`env-navigation-rail`)
 5. **Page header** (`env-page-header`)
 6. **Page** (`env-page`)
 
@@ -117,9 +119,9 @@ The app frame is one [Scaffold](../components/scaffold.md) at the application's 
 The navigation takes the form the frame's width calls for: a bar on a phone, a rail on a tablet and a drawer on wider windows.
 
 - With many destinations, or none with icons, a phone shows no bar.
-- A menu button in the top bar then opens the same Drawer in a [Sheet](../components/sheet.md).
+- A menu button in the top bar then opens the same NavigationDrawer in a [Sheet](../components/sheet.md).
 
-```tsx figure=MenuOnPhones stage=shaded
+```tsx figure=MenuOnPhones stage=shaded widths="22 44" sweep classes motion
 
 ```
 
@@ -167,9 +169,9 @@ After a destination opens its page, move focus to the body or the page's heading
 Render one Scaffold at the application's root, around the router's outlet.
 
 - Its `topBar` is a TopBar with the application's `title` and, in `actions`, the search IconButton in a Tooltip and the account menu's AvatarButton.
-- Its `navigation` takes `bar`, `rail` and `drawer`, a Bar, a Rail and a Drawer given the same array of destinations, with `current` set from the router.
+- Its `navigation` takes `bar`, `rail` and `drawer`, a NavigationBar, a NavigationRail and a NavigationDrawer given the same array of destinations, with `current` set from the router.
 - The router's page, a Page with its PageHeader, is the Scaffold's children.
-- The Scaffold shows the bar on a `compact` window, the rail on a `medium` one and the drawer from `expanded`, by its own container's width, and `forms` changes the form for a window class; don't choose the form in script from the window's width.
+- The Scaffold shows the bar on a `compact` window, the rail on a `medium` one and the drawer from `expanded`, by its own container's width, and `navigationForms` changes the form for a window class; don't choose the form in script from the window's width.
 
 ```tsx source=AppFrame
 
@@ -177,26 +179,32 @@ Render one Scaffold at the application's root, around the router's outlet.
 
 #### A menu on phones
 
-`forms={{ compact: 'none', medium: 'drawer' }}` shows no navigation on a compact window and the drawer from medium. A menu IconButton in the TopBar's `start` opens a Sheet with `side="start"` holding the same Drawer, which closes the sheet when a destination is chosen.
+`navigationForms={{ compact: 'none', medium: 'drawer' }}` shows no navigation on a compact window and the drawer from medium. A menu IconButton in the TopBar's `start` opens a Sheet with `side="start"` holding the same NavigationDrawer, which closes the sheet when a destination is chosen.
 
 ```tsx
+import { IconMenu } from '@envsemble/envui/icons/Menu';
+
 <Scaffold
-  forms={{ compact: 'none', medium: 'drawer' }}
+  navigationForms={{ compact: 'none', medium: 'drawer' }}
   topBar={
     <TopBar
       title="Guide"
       start={
-        <IconButton icon={<Menu />} aria-label="Open the chapters" onClick={() => setMenu(true)} />
+        <IconButton
+          icon={<IconMenu />}
+          aria-label="Open the chapters"
+          onClick={() => setMenu(true)}
+        />
       }
     />
   }
-  navigation={{ drawer: <Drawer aria-label="Chapters" destinations={destinations} /> }}
+  navigation={{ drawer: <NavigationDrawer aria-label="Chapters" destinations={destinations} /> }}
 >
   {page}
   <Sheet side="start" aria-label="Chapters" open={menu} onOpenChange={setMenu}>
-    <Drawer aria-label="Chapters" destinations={destinationsThatCloseTheSheet} />
+    <NavigationDrawer aria-label="Chapters" destinations={destinationsThatCloseTheSheet} />
   </Sheet>
-</Scaffold>
+</Scaffold>;
 ```
 
 #### Details beside the page
@@ -231,7 +239,7 @@ Give the Scaffold `topBarSpan="full"`, so its `topBar` runs across the whole win
       }
     />
   }
-  navigation={{ drawer: <Drawer destinations={destinations} /> }}
+  navigation={{ drawer: <NavigationDrawer destinations={destinations} /> }}
 >
   <Page header={<PageHeader title="Home" sticky />}>{content}</Page>
 </Scaffold>
@@ -239,7 +247,7 @@ Give the Scaffold `topBarSpan="full"`, so its `topBar` runs across the whole win
 
 ### Composition
 
-The parts are the top bar, `env-top-bar`, the search button, `env-top-bar-actions > env-icon-button`, the account menu's `env-avatar-button`, the rail, `env-rail`, and the page, `env-page`, with its `env-page-header`. Search opens a [CommandPalette](../components/command-palette.md#opening-it-the-button-and-the-shortcut), and the account menu is the [account and organizations](account-and-organizations.md) pattern. In an installed app's window, the title bar is the Scaffold's `env-top-bar`, its menubar `env-menubar` and its title `env-top-bar-title`, above the body, `env-scaffold-body`.
+The parts are the top bar, `env-top-bar`, the search button, `env-top-bar-actions > env-icon-button`, the account menu's `env-avatar-button`, the rail, `env-navigation-rail`, and the page, `env-page`, with its `env-page-header`. Search opens a [CommandPalette](../components/command-palette.md#opening-it-the-button-and-the-shortcut), and the account menu is the [account and organizations](account-and-organizations.md) pattern. In an installed app's window, the title bar is the Scaffold's `env-top-bar`, its menubar `env-menubar` and its title `env-top-bar-title`, above the body, `env-scaffold-body`.
 
 ## Changelog
 

@@ -24,6 +24,8 @@ import {
   usePortalContainer,
 } from '../internal/PortalContainerContext.js';
 import type { SkeletonProps } from '../internal/skeleton.js';
+import '../styles/Base.css';
+import '../styles/Dialog.css';
 
 /**
  * Why a dialog or a sheet asks to open or close: its trigger, Escape, a press outside, focus
@@ -215,7 +217,7 @@ export function Dialog({
               <BaseDialog.Popup
                 render={<DialogSurface radius="xl" />}
                 {...popupProps}
-                className={classNames('env-dialog-popup', className)}
+                className={classNames('env-dialog', className)}
                 data-placement={placement}
                 data-width={width}
                 aria-busy={pending || skeleton || undefined}

@@ -11,16 +11,20 @@ import {
 import { IconButton } from '../../actions/Button.js';
 import { Tooltip } from '../../feedback/Tooltip.js';
 import { panelDock as panelDockMessages } from '../../foundations/messages/panelDock.js';
-import { CloseFullscreen } from '../../icons/CloseFullscreen.js';
-import { Minimize } from '../../icons/Minimize.js';
-import { Close } from '../../icons/Close.js';
-import { OpenInFull } from '../../icons/OpenInFull.js';
+import { IconCloseFullscreen } from '../../icons/CloseFullscreen.js';
+import { IconMinimize } from '../../icons/Minimize.js';
+import { IconClose } from '../../icons/Close.js';
+import { IconOpenInFull } from '../../icons/OpenInFull.js';
 import { classNames } from '../../internal/classNames.js';
 import { Grid, Row } from '../../foundations/Layout.js';
 import { ControlDefaults } from '../../internal/ControlDefaults.js';
 import { useMessages } from '../../internal/EnvUIContext.js';
 import { setRef } from '../../internal/setRef.js';
-import { PanelDockPanelContext } from '../internal/PanelDockContext.js';
+import { PanelDockPanelContext } from './internal/PanelDockPanelContext.js';
+import { flag } from '../../internal/flag.js';
+import type { HeadingLevel } from '../../foundations/headingLevel.js';
+import '../../styles/Base.css';
+import '../../styles/PanelDock.css';
 
 export interface HeaderProps extends Omit<ComponentPropsWithRef<'header'>, 'title'> {
   /**
@@ -45,7 +49,7 @@ export interface HeaderProps extends Omit<ComponentPropsWithRef<'header'>, 'titl
    * The title's heading level in the page outline; the look stays the same.
    * @default 2
    */
-  headingLevel?: 1 | 2 | 3 | 4 | 5 | 6;
+  headingLevel?: HeadingLevel;
   /** Content below the title row that stays with the sticky header, such as Tabs. */
   children?: ReactNode;
 }
@@ -94,7 +98,7 @@ export function Header({
       }}
       className={classNames('env-panel-dock-header', className)}
       // Also where the header sits deeper in the content, such as in a form.
-      data-scrolled={panel?.scrolled || undefined}
+      data-scrolled={flag(panel?.scrolled)}
     >
       <Grid className="env-panel-dock-heading">
         {createElement(`h${headingLevel}`, { className: 'env-panel-dock-title' }, title)}
@@ -125,22 +129,22 @@ function WindowControls() {
     <Row align="center" className="env-panel-dock-controls">
       <WindowControl
         label={messages.minimize}
-        icon={<Minimize />}
+        icon={<IconMinimize />}
         onClick={() => panel.changeMode('minimized')}
       />
       {!panel.stacked && (
         <WindowControl
           control="maximize"
           label={maximized ? messages.restore : messages.maximize}
-          icon={maximized ? <CloseFullscreen /> : <OpenInFull />}
+          icon={maximized ? <IconCloseFullscreen /> : <IconOpenInFull />}
           onClick={() => panel.changeMode(maximized ? 'open' : 'maximized')}
         />
       )}
-      <Tooltip content={messages.close}>
+      <Tooltip content={messages.closeWindow}>
         <IconButton
           variant="ghost"
-          icon={<Close />}
-          aria-label={messages.close}
+          icon={<IconClose />}
+          aria-label={messages.closeWindow}
           onClick={panel.close}
         />
       </Tooltip>

@@ -7,10 +7,10 @@ import {
   Row,
   Surface,
   Theme,
-  type ThemeValue,
+  type ColorScheme,
 } from '@envsemble/envui';
 
-export function DatePickerFixture({ theme }: { theme: ThemeValue }) {
+export function DatePickerFixture({ theme }: { theme: ColorScheme }) {
   const [submitted, setSubmitted] = useState('');
   const [due, setDue] = useState<string | null>('2026-10-20');
   const [changes, setChanges] = useState<(string | null)[]>([]);
@@ -47,7 +47,7 @@ export function DatePickerFixture({ theme }: { theme: ThemeValue }) {
           granularity="minute"
           defaultValue="2026-10-21T09:30"
           locale="en-GB"
-          defaultTime="09:00"
+          placeholderTime="09:00"
           clearable
         />
         <DatePicker

@@ -2,7 +2,7 @@
 title: Combobox
 summary: A text field that filters a list of options as people type, to choose one option or, as chips, several.
 status: stable
-since: 0.6.0
+since: 1.0.0
 category: Forms & selection
 aliases:
   - autocomplete
@@ -36,7 +36,9 @@ avoidWhen:
 components:
   - Combobox
 examples:
-  ChooseOwner: overview
+  ChooseOwner:
+    role: overview
+    motion: true
   Variants: variants
   ComboboxAnatomy: anatomy
   ComboboxListAnatomy: anatomy
@@ -44,12 +46,6 @@ examples:
   ServerSearch: example
   RequiredInForm: example
   WrappingChips: example
-  ClearableOptional:
-    role: do
-    caption: A clear button where the value is optional.
-  StuckOptional:
-    role: dont
-    caption: An optional value that people can change but not remove.
   SmallToolbar: example
 ---
 
@@ -76,13 +72,14 @@ examples:
 ```
 
 1. **Field** (`env-combobox`)
-2. **Control** (`env-combobox-control`)
-3. **Chip** (`env-combobox-chip`)
-4. **Chip label** (`env-combobox-chip-label`)
-5. **Remove** (`env-combobox-chip-remove`)
-6. **Input** (`env-combobox-input`)
-7. **Clear** (`env-combobox-clear`, `clearable`)
-8. **Trigger** (`env-combobox-trigger`)
+2. **Chip** (`env-combobox-chip`)
+3. **Chip label** (`env-combobox-chip-label`)
+4. **Remove** (`env-combobox-chip-remove`)
+5. **Input** (`env-combobox-input`)
+6. **Clear** (`env-combobox-clear`, `clearable`)
+7. **Trigger** (`env-combobox-trigger`)
+
+Not shown: the control, which holds the chips, the input and the buttons, and takes the field's own box.
 
 ```tsx figure=ComboboxListAnatomy open
 
@@ -105,7 +102,7 @@ A read-only field can be focused and its list browsed, but its value can't chang
 
 Where people choose several options, each shows as a chip in the field, and the list stays open as they choose.
 
-```tsx figure=Reviewers
+```tsx figure=Reviewers motion
 
 ```
 
@@ -113,7 +110,7 @@ Where people choose several options, each shows as a chip in the field, and the 
 
 The application can find the options itself, such as on a server, and a spinner shows while it searches.
 
-```tsx figure=ServerSearch
+```tsx figure=ServerSearch motion
 
 ```
 
@@ -121,7 +118,7 @@ The application can find the options itself, such as on a server, and a spinner 
 
 A required field shows its error when the form is sent without a value.
 
-```tsx figure=RequiredInForm
+```tsx figure=RequiredInForm motion
 
 ```
 
@@ -129,21 +126,17 @@ A required field shows its error when the form is sent without a value.
 
 A field fills its container, and chips wrap onto more rows.
 
-```tsx figure=WrappingChips widths="16 30"
+```tsx figure=WrappingChips widths="30 16" sweep
 
 ```
 
 ## Rules
 
-A combobox's value is always one of its options, and an optional value can be cleared.
+A combobox's value is always one of its options.
 
-```tsx figure=ClearableOptional
+### Optional values
 
-```
-
-```tsx figure=StuckOptional
-
-```
+Give an optional value a clear button, so people can remove it, not only change it.
 
 ### Options
 
@@ -225,7 +218,7 @@ By default the list shows the options whose label or description contains the ty
 
 - With `filter={null}` it shows `items` as given: search from `onInputValueChange`, which receives the typed text.
 - Set `loading` while the search runs, which shows `loadingLabel` instead of `emptyLabel`.
-- `onOpenChange` can load the options as the list opens.
+- `onOpenChange` can load the options as the list opens; its second argument, `ComboboxOpenChangeDetails`, says why it opens or closes.
 
 ```tsx
 <Combobox
@@ -283,9 +276,9 @@ The field is `env-field` with `env-combobox`: the control, `env-combobox-control
 
 ### Customize
 
-`--env-combobox-chip-container` and `--env-combobox-chip-content` set the colors of one Combobox's chips, through `style` or CSS. Their hover, focus and press then follow them, as state layers; with none set, they keep their own colors.
+Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blur` and `--env-popup-shadow`, set on a theme, change it, as [Popover](popover.md#customize) describes.
 
 ## Changelog
 
-- **1.0.0**: `hint` is `description` and `variant="outlined"` is `variant="outline"`, which the `v1-props` codemod writes. `className` and `style` style the field's root rather than the input, which takes `ref`. Read-only chips no longer carry `aria-readonly`, which the input reports. The popup is the shared popup and the options its rows, and a chip's remove button is an IconButton with a cross: `env-combobox-well` is `env-combobox-control`, `env-combobox-option` `env-combobox-item` and `env-combobox-check` `env-combobox-item-indicator`. The loading, empty, clear and remove labels come from EnvUIProvider's `messages`. An option's `leading` content is `start`, as on List.Item.
-- **0.6.0**: Combobox, for one option or several, with leading content, descriptions, groups, a server search, compact density and native form support.
+- **1.0.0-prerelease.5**: The popup is frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge, and is solid with its edge at high contrast and with reduced transparency. Options are the md control height in body text, chosen ones take the selection's fill as well as their check mark, and groups part by space. Group labels sit a little ahead of the rows, and options lie one under the next with no space between them. A chosen option's check mark ends its row, after the label.
+- **1.0.0**: `hint` is `description` and `variant="outlined"` is `variant="outline"`. `className` and `style` style the field's root rather than the input, which takes `ref`. Read-only chips no longer carry `aria-readonly`, which the input reports. The popup is the shared popup and the options its rows, and a chip's remove button is an IconButton with a cross: `env-combobox-well` is `env-combobox-control`, `env-combobox-option` `env-combobox-item` and `env-combobox-check` `env-combobox-item-indicator`, and the icons at the start, `env-combobox-leading` and `env-combobox-value-leading`, are `env-combobox-start` and `env-combobox-value-icon`, as other components name their start slots. The loading, empty, clear and remove labels come from EnvUIProvider's `messages`. An option's `leading` content is `start`, as on List.Item.

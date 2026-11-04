@@ -1,266 +1,276 @@
-/* Color properties: a toast's colors, which an application sets on one toast through style or its
-   own CSS: its fill, its text and icons, and its edge. They don't inherit, and they win over its
-   tone. */
-@property --env-toast-container {
-  syntax: '*';
-  inherits: false;
-}
-@property --env-toast-content {
-  syntax: '*';
-  inherits: false;
-}
-@property --env-toast-outline {
-  syntax: '*';
-  inherits: false;
-}
-.env-toast {
-  --env-toast-text: var(--env-toast-content, var(--env-color-fg-on-strong));
-  /* The dismiss button's hover and press fills: state layers of the text color over a container
-     the application set. While none is set, --env-toast-custom-hover and -pressed refer to it
-     without a fallback, so they are invalid, and the tone's designed fills apply, which darken in
-     high contrast, where a light layer would take the cross below its contrast. */
-  --env-toast-content-gate: color-mix(
-    in srgb,
-    var(--env-toast-content) 0%,
-    var(--env-toast-container-default)
-  );
-  --env-toast-custom-base: var(--env-toast-container, var(--env-toast-content-gate));
-  --env-toast-custom-hover: color-mix(
-    in srgb,
-    var(--env-toast-custom-base),
-    var(--env-toast-text) calc(var(--env-state-hover-opacity) * 100%)
-  );
-  --env-toast-custom-pressed: color-mix(
-    in srgb,
-    var(--env-toast-custom-base),
-    var(--env-toast-text) calc(var(--env-state-pressed-opacity) * 100%)
-  );
-  --env-toast-dismiss-hover: var(--env-toast-custom-hover, var(--env-toast-hover-default));
-  --env-toast-dismiss-pressed: var(--env-toast-custom-pressed, var(--env-toast-pressed-default));
-  box-sizing: border-box;
-  display: inline-flex;
-  width: max-content;
-  /* Long messages wrap within a readable measure instead of stretching across the viewport. */
-  max-width: min(100%, 28rem);
-  align-items: center;
-  gap: var(--env-space-2);
-  padding: var(--env-space-2) var(--env-space-3);
-  min-width: 0;
-  min-height: 3rem;
-  /* Toasts float over everything at elevation 2, as menus do, set apart by their strong fill and
-     an edge, with no shadow, so the fill separates from a surface of its own color. On a light page
-     each tone's edge is its fill a step darker rather than the light popup edge, which would ring
-     it like a halo; in dark it is the popup edge. The edge is the boundary in high contrast and
-     what forced colors paint. */
-  border: 1px solid
-    var(
-      --env-toast-outline,
-      var(--env-toast-outline-default, var(--env-color-border-neutral-strong))
-    );
-  border-radius: var(--env-radius-sm);
-  background: var(--env-toast-container, var(--env-toast-container-default));
-  font: var(--env-type-body-small);
-  color: var(--env-toast-text);
-  flex-wrap: nowrap;
-}
-.env-toast:where([data-tone='neutral']) {
-  --env-toast-container-default: var(--env-color-bg-neutral-strong);
-  --env-toast-outline-default: var(--env-color-border-neutral-strong);
-  --env-toast-hover-default: var(--env-color-bg-neutral-strong-hover);
-  --env-toast-pressed-default: var(--env-color-bg-neutral-strong-pressed);
-}
-.env-toast:where([data-tone='success']) {
-  --env-toast-container-default: var(--env-color-bg-success-strong);
-  --env-toast-outline-default: var(--env-color-border-success-strong);
-  --env-toast-hover-default: var(--env-color-bg-success-strong-hover);
-  --env-toast-pressed-default: var(--env-color-bg-success-strong-pressed);
-}
-.env-toast:where([data-tone='info']) {
-  --env-toast-container-default: var(--env-color-bg-info-strong);
-  --env-toast-outline-default: var(--env-color-border-info-strong);
-  --env-toast-hover-default: var(--env-color-bg-info-strong-hover);
-  --env-toast-pressed-default: var(--env-color-bg-info-strong-pressed);
-}
-.env-toast:where([data-tone='danger']) {
-  --env-toast-container-default: var(--env-color-bg-danger-strong);
-  --env-toast-outline-default: var(--env-color-border-danger-strong);
-  --env-toast-hover-default: var(--env-color-bg-danger-strong-hover);
-  --env-toast-pressed-default: var(--env-color-bg-danger-strong-pressed);
-}
-.env-toast-message {
-  flex: 0 1 auto;
-  min-width: 0;
-  /* A fixed measure also bounds the toast's intrinsic width, which percentages cannot do in auto-sized
-     layouts such as tables. */
-  max-inline-size: 24rem;
-  padding-block: var(--env-space-1);
-  /* Up to three lines; the full message remains in the title and the announcement. */
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
-  line-clamp: 3;
-  overflow: hidden;
-  overflow-wrap: anywhere;
-  font: inherit;
-  margin: 0;
-}
-.env-toast-status-icon {
-  flex: 0 0 1.125rem;
-  width: 1.125rem;
-  height: 1.125rem;
-}
-/* The action keeps its label on one line and the message wraps instead; only a label longer than
-   half the toast wraps. */
-.env-toast .env-toast-action {
-  flex: 0 0 auto;
-  max-inline-size: 50%;
-  white-space: normal;
-  overflow-wrap: break-word;
-}
-/* The dismiss button is an IconButton with a cross on the notice's strong fill: the fill's text color, with the
-   fill's own hover and press steps, or state layers on a container the application set. Toast.css comes after Button.css, so at equal specificity
-   these colors win over the ghost ones. */
-.env-toast-dismiss {
-  --env-icon-button-hit-area: var(--env-control-height-touch);
-  --env-icon-size: 1.125rem;
-  color: inherit;
-}
-.env-toast-dismiss:hover:not(:disabled):not([aria-disabled='true']) {
-  background: var(--env-toast-dismiss-hover);
-  color: inherit;
-}
-.env-toast-dismiss:active:not(:disabled):not([aria-disabled='true']) {
-  background: var(--env-toast-dismiss-pressed);
-  color: inherit;
-}
-.env-toast-dismiss:focus-visible {
-  outline: 0.125rem solid currentColor;
-  outline-offset: 0.125rem;
-}
-/* The toasts need no window, so their portal's boundary is no container: nothing changes for the
-   fixed viewport inside it. */
-.env-toast-portal-theme {
-  container-type: normal;
-  background: none;
-}
-.env-toast-viewport {
-  position: fixed;
-  z-index: var(--env-z-toast);
-  display: flex;
-  gap: var(--env-space-2);
-  width: max-content;
-  max-width: calc(
-    100% - max(var(--env-space-4), env(safe-area-inset-left)) -
-      max(var(--env-space-4), env(safe-area-inset-right))
-  );
-  max-block-size: calc(
-    100dvh - max(var(--env-space-4), env(safe-area-inset-top)) -
-      max(var(--env-space-4), env(safe-area-inset-bottom))
-  );
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  outline: none;
-  pointer-events: none;
-}
-.env-toast-viewport:empty {
-  display: none;
-}
-.env-toast-viewport > .env-toast {
-  flex-shrink: 0;
-  pointer-events: auto;
-  box-sizing: border-box;
-  /* Motion: it fades in, below; the toast list has no positioner, so it scales from the center. */
-  transform-origin: var(--transform-origin, center);
-  transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);
-}
-.env-toast-viewport > .env-toast[data-limited] {
-  display: none;
-}
-/* While notices glide or one leaves, they may reach past the box for a moment: no scrollbar then. */
-.env-toast-viewport[data-settling] {
-  overflow: visible;
-}
-/* A leaving notice is out of the stack, fading where it was drawn beneath the others as they move
-   into its place. Presses reach the notice moving in. */
-.env-toast-viewport > .env-toast[data-leaving] {
-  position: absolute;
-  z-index: calc(var(--env-z-base) - 1);
-  max-width: none;
-  margin: 0;
-  pointer-events: none;
-}
-/* The count of hidden notices, a Badge, sits beyond the stack: above it at the bottom end, and below
-   it, centered, at the top center, where notices arrive from above. It takes the neutral toast
-   colors through the badge's count hooks, so it reads over any page. */
-.env-toast-viewport > .env-toast-queued-count {
-  --env-badge-count-bg: var(--env-color-bg-neutral-strong);
-  --env-badge-count-fg: var(--env-color-fg-on-strong);
-  order: 1;
-}
-.env-toast-viewport[data-placement='bottom-end'] {
-  inset-inline-end: max(var(--env-space-4), env(safe-area-inset-right));
-  inset-block-end: max(var(--env-space-4), env(safe-area-inset-bottom));
-  flex-direction: column-reverse;
-  align-items: flex-end;
-}
-/* In right-to-left text the end is the left edge, so the left safe area pads it. */
-.env-toast-viewport[data-placement='bottom-end']:dir(rtl) {
-  inset-inline-end: max(var(--env-space-4), env(safe-area-inset-left));
-}
-/* Centred by its margins, which hold in either direction. */
-.env-toast-viewport[data-placement='top-center'] {
-  inset-inline: 0;
-  margin-inline: auto;
-  inset-block-start: max(var(--env-space-4), env(safe-area-inset-top));
-  flex-direction: column;
-  align-items: center;
-}
-.env-toast[data-starting-style],
-.env-toast[data-ending-style] {
-  opacity: 0;
-}
-.env-toast {
-  transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);
-}
-@media (prefers-reduced-motion: reduce) {
+@layer env.components {
+  /* Color properties: a toast's colors, which an application sets on one toast through style or its
+     own CSS: its fill, its text and icons, and its edge. They don't inherit, and they win over its
+     tone. */
+  @property --env-toast-container {
+    syntax: '*';
+    inherits: false;
+  }
+  @property --env-toast-content {
+    syntax: '*';
+    inherits: false;
+  }
+  @property --env-toast-outline {
+    syntax: '*';
+    inherits: false;
+  }
   .env-toast {
-    transition: none;
+    --env-toast-text: var(--env-toast-content, var(--env-color-fg-on-strong));
+    /* The dismiss button's hover and press fills: state layers of the text color over a container
+       the application set. While none is set, --env-toast-custom-hover and -pressed refer to it
+       without a fallback, so they are invalid, and the tone's designed fills apply, which darken in
+       high contrast, where a light layer would take the cross below its contrast. */
+    --env-toast-content-gate: color-mix(
+      in srgb,
+      var(--env-toast-content) 0%,
+      var(--env-toast-container-default)
+    );
+    --env-toast-custom-base: var(--env-toast-container, var(--env-toast-content-gate));
+    --env-toast-custom-hover: color-mix(
+      in srgb,
+      var(--env-toast-custom-base),
+      var(--env-toast-text) calc(var(--env-state-hover-opacity) * 100%)
+    );
+    --env-toast-custom-pressed: color-mix(
+      in srgb,
+      var(--env-toast-custom-base),
+      var(--env-toast-text) calc(var(--env-state-pressed-opacity) * 100%)
+    );
+    --env-toast-dismiss-hover: var(--env-toast-custom-hover, var(--env-toast-hover-default));
+    --env-toast-dismiss-pressed: var(--env-toast-custom-pressed, var(--env-toast-pressed-default));
+    box-sizing: border-box;
+    display: inline-flex;
+    width: max-content;
+    /* Long messages wrap within a readable measure instead of stretching across the viewport. */
+    max-width: min(100%, 28rem);
+    align-items: center;
+    gap: calc(var(--env-space-2) + var(--env-space-1) / 2);
+    padding: var(--env-space-2) var(--env-space-3) var(--env-space-2)
+      calc(var(--env-space-4) - var(--env-control-border-width));
+    min-width: 0;
+    min-height: 3rem;
+    /* Toasts float over everything at elevation 2, as menus do, set apart by their strong fill, with
+       no shadow and no edge, in an alert's card corner. At high contrast each tone's edge bounds it:
+       on a light page its fill a step darker rather than the light popup edge, which would ring it
+       like a halo; in dark the popup edge. Under forced colors the edge, transparent otherwise, is what
+       the system paints. An edge the application sets is drawn at every contrast. */
+    --env-toast-radius: 1.25rem;
+    --env-toast-high-contrast-edge: var(--env-theme-high-contrast)
+      var(--env-toast-outline-default, var(--env-color-border-neutral-strong));
+    border: 1px solid var(--env-toast-outline, var(--env-toast-high-contrast-edge, transparent));
+    border-radius: var(--env-toast-radius);
+    background: var(--env-toast-container, var(--env-toast-container-default));
+    font: var(--env-type-body-sm);
+    color: var(--env-toast-text);
+    flex-wrap: nowrap;
   }
-}
-
-/* Motion: a toast fades in, and without a reduced-motion preference arrives from its screen
-   edge. The toast list has no positioner, so toasts scale from the center. */
-.env-toast-viewport > .env-toast[data-ending-style] {
-  transition-duration: var(--env-motion-duration-fast);
-  transition-timing-function: var(--env-motion-ease-exit);
-}
-@media (prefers-reduced-motion: no-preference) {
+  .env-toast:where([data-tone='neutral']) {
+    --env-toast-container-default: var(--env-color-bg-neutral-strong);
+    --env-toast-outline-default: var(--env-color-border-neutral-strong);
+    --env-toast-hover-default: var(--env-color-bg-neutral-strong-hover);
+    --env-toast-pressed-default: var(--env-color-bg-neutral-strong-pressed);
+  }
+  .env-toast:where([data-tone='success']) {
+    --env-toast-container-default: var(--env-color-bg-success-strong);
+    --env-toast-outline-default: var(--env-color-border-success-strong);
+    --env-toast-hover-default: var(--env-color-bg-success-strong-hover);
+    --env-toast-pressed-default: var(--env-color-bg-success-strong-pressed);
+  }
+  .env-toast:where([data-tone='info']) {
+    --env-toast-container-default: var(--env-color-bg-info-strong);
+    --env-toast-outline-default: var(--env-color-border-info-strong);
+    --env-toast-hover-default: var(--env-color-bg-info-strong-hover);
+    --env-toast-pressed-default: var(--env-color-bg-info-strong-pressed);
+  }
+  .env-toast:where([data-tone='danger']) {
+    --env-toast-container-default: var(--env-color-bg-danger-strong);
+    --env-toast-outline-default: var(--env-color-border-danger-strong);
+    --env-toast-hover-default: var(--env-color-bg-danger-strong-hover);
+    --env-toast-pressed-default: var(--env-color-bg-danger-strong-pressed);
+  }
+  .env-toast-message {
+    flex: 0 1 auto;
+    min-width: 0;
+    /* A fixed measure also bounds the toast's intrinsic width, which percentages cannot do in auto-sized
+       layouts such as tables. */
+    max-inline-size: 24rem;
+    padding-block: var(--env-space-1);
+    /* Up to three lines; the full message remains in the title and the announcement. */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    overflow: hidden;
+    overflow-wrap: anywhere;
+    font: inherit;
+    margin: 0;
+  }
+  .env-toast-status-icon {
+    flex: 0 0 1.125rem;
+    width: 1.125rem;
+    height: 1.125rem;
+  }
+  /* The action keeps its label on one line and the message wraps instead; only a label longer than
+     half the toast wraps. */
+  .env-toast .env-toast-action {
+    flex: 0 0 auto;
+    max-inline-size: 50%;
+    white-space: normal;
+    overflow-wrap: break-word;
+  }
+  /* The dismiss button is an IconButton with a cross on the notice's strong fill: the fill's text color, with the
+     fill's own hover and press steps, or state layers on a container the application set. Toast.css comes after Button.css, so at equal specificity
+     these colors win over the ghost ones. */
+  .env-toast-dismiss {
+    --env-icon-button-hit-area: var(--env-control-height-touch);
+    --env-icon-size: 1.125rem;
+    color: inherit;
+  }
+  .env-toast-dismiss:hover:not(:disabled):not([aria-disabled='true']) {
+    background: var(--env-toast-dismiss-hover);
+    color: inherit;
+  }
+  .env-toast-dismiss:active:not(:disabled):not([aria-disabled='true']) {
+    background: var(--env-toast-dismiss-pressed);
+    color: inherit;
+  }
+  .env-toast-dismiss:focus-visible {
+    outline: 0.125rem solid currentColor;
+    outline-offset: 0.125rem;
+  }
+  /* The toasts need no window, so their portal's boundary is no container: nothing changes for the
+     fixed viewport inside it. */
+  .env-toast-theme {
+    container-type: normal;
+    background: none;
+  }
+  .env-toast-viewport {
+    position: fixed;
+    z-index: var(--env-z-toast);
+    display: flex;
+    gap: var(--env-space-2);
+    width: max-content;
+    max-width: calc(
+      100% - max(var(--env-space-4), env(safe-area-inset-left)) -
+        max(var(--env-space-4), env(safe-area-inset-right))
+    );
+    max-block-size: calc(
+      100dvh - max(var(--env-space-4), env(safe-area-inset-top)) -
+        max(var(--env-space-4), env(safe-area-inset-bottom))
+    );
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    outline: none;
+    pointer-events: none;
+  }
+  .env-toast-viewport:empty {
+    display: none;
+  }
   .env-toast-viewport > .env-toast {
-    transition:
-      opacity var(--env-motion-duration-medium) var(--env-motion-ease),
-      transform var(--env-motion-duration-slow) var(--env-motion-ease-enter);
+    flex-shrink: 0;
+    pointer-events: auto;
+    box-sizing: border-box;
+    /* Motion: it fades in, below; the toast list has no positioner, so it scales from the center. */
+    transform-origin: var(--transform-origin, center);
+    transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);
   }
-  .env-toast-viewport[data-placement='bottom-end'] > .env-toast[data-starting-style],
-  .env-toast-viewport[data-placement='bottom-end'] > .env-toast[data-ending-style] {
-    transform: translateY(0.75rem) scale(0.98);
+  .env-toast-viewport > .env-toast[data-limited] {
+    display: none;
   }
-  .env-toast-viewport[data-placement='top-center'] > .env-toast[data-starting-style],
-  .env-toast-viewport[data-placement='top-center'] > .env-toast[data-ending-style] {
-    transform: translateY(-0.75rem) scale(0.98);
+  /* While notices glide or one leaves, they may reach past the box for a moment: no scrollbar then. */
+  .env-toast-viewport[data-settling] {
+    overflow: visible;
   }
+  /* A leaving notice is out of the stack, fading where it was drawn beneath the others as they move
+     into its place. Presses reach the notice moving in. */
+  .env-toast-viewport > .env-toast[data-leaving] {
+    position: absolute;
+    z-index: calc(var(--env-z-base) - 1);
+    max-width: none;
+    margin: 0;
+    pointer-events: none;
+  }
+  /* The count of hidden notices, a Badge, sits beyond the stack: above it at the bottom end, and below
+     it, centered, at the top center, where notices arrive from above. It takes the neutral toast
+     colors through the badge's count hooks, so it reads over any page. */
+  .env-toast-viewport > .env-toast-queued-count {
+    --env-badge-count-bg: var(--env-color-bg-neutral-strong);
+    --env-badge-count-fg: var(--env-color-fg-on-strong);
+    order: 1;
+  }
+  .env-toast-viewport[data-placement='bottom-end'] {
+    inset-inline-end: max(var(--env-space-4), env(safe-area-inset-right));
+    inset-block-end: max(var(--env-space-4), env(safe-area-inset-bottom));
+    flex-direction: column-reverse;
+    align-items: flex-end;
+  }
+  /* In right-to-left text the end is the left edge, so the left safe area pads it. */
+  .env-toast-viewport[data-placement='bottom-end']:dir(rtl) {
+    inset-inline-end: max(var(--env-space-4), env(safe-area-inset-left));
+  }
+  /* Centred by its margins, which hold in either direction. */
+  .env-toast-viewport[data-placement='top-center'] {
+    inset-inline: 0;
+    margin-inline: auto;
+    inset-block-start: max(var(--env-space-4), env(safe-area-inset-top));
+    flex-direction: column;
+    align-items: center;
+  }
+  .env-toast[data-starting-style],
+  .env-toast[data-ending-style] {
+    opacity: 0;
+  }
+  .env-toast {
+    transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .env-toast {
+      transition: none;
+    }
+  }
+
+  /* Motion: a toast fades in, and without a reduced-motion preference arrives from its screen
+     edge. The toast list has no positioner, so toasts scale from the center. */
   .env-toast-viewport > .env-toast[data-ending-style] {
     transition-duration: var(--env-motion-duration-fast);
     transition-timing-function: var(--env-motion-ease-exit);
   }
-}
+  @media (prefers-reduced-motion: no-preference) {
+    .env-toast-viewport > .env-toast {
+      transition:
+        opacity var(--env-motion-duration-medium) var(--env-motion-ease),
+        transform var(--env-motion-duration-slow) var(--env-motion-ease-enter);
+    }
+    .env-toast-viewport[data-placement='bottom-end'] > .env-toast[data-starting-style],
+    .env-toast-viewport[data-placement='bottom-end'] > .env-toast[data-ending-style] {
+      transform: translateY(0.75rem) scale(0.98);
+    }
+    .env-toast-viewport[data-placement='top-center'] > .env-toast[data-starting-style],
+    .env-toast-viewport[data-placement='top-center'] > .env-toast[data-ending-style] {
+      transform: translateY(-0.75rem) scale(0.98);
+    }
+    .env-toast-viewport > .env-toast[data-ending-style] {
+      transition-duration: var(--env-motion-duration-fast);
+      transition-timing-function: var(--env-motion-ease-exit);
+    }
+  }
 
-/* The status that reads ordinary notices: out of the layout and clipped away whole. */
-.env-toast-announcer {
-  position: fixed;
-  inset-block-start: 0;
-  inset-inline-start: 0;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-  pointer-events: none;
+  /* The status that reads ordinary notices: out of the layout and clipped away whole. */
+  .env-toast-announcer {
+    position: fixed;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  /* Forced colors: the edge takes the system's text color, as a popup's does, where the engine
+     leaves a transparent one transparent. */
+  @media (forced-colors: active) {
+    .env-toast {
+      border-color: CanvasText;
+    }
+  }
 }

@@ -18,10 +18,12 @@ import { ActionElement } from '../internal/ActionElement.js';
 import { FileInput } from '../internal/FileInput.js';
 import { setRef } from '../internal/setRef.js';
 import { Spinner } from '../feedback/Spinner.js';
-import { CloudUpload } from '../icons/CloudUpload.js';
+import { IconCloudUpload } from '../icons/CloudUpload.js';
 import * as Field from './Field.js';
 import { acceptsFile } from './internal/acceptsFile.js';
 import { subscribeFormReset } from './internal/subscribeFormReset.js';
+import '../styles/Base.css';
+import '../styles/DropZone.css';
 
 export interface DropZoneProps
   extends Omit<
@@ -39,15 +41,16 @@ export interface DropZoneProps
   icon?: ReactNode;
   /**
    * The file types the zone takes, as in the native accept attribute: MIME types such as image/png,
-   * groups such as image/*, and extensions such as .webp. Any file by default.
+   * groups such as image/*, and extensions such as .webp.
+   * @default any file
    */
   accept?: string;
   /** Take several files at once; otherwise the zone takes the first file. */
   multiple?: boolean;
   /** Receives the dropped or chosen files that the zone takes. */
-  onDropAccepted: (files: File[]) => void;
+  onFilesAccepted: (files: File[]) => void;
   /** Receives the files that do not match accept, and those after the first without multiple. */
-  onDropRejected?: (files: File[]) => void;
+  onFilesRejected?: (files: File[]) => void;
   /** The zone can't be pressed or focused and takes no files; it still keeps the browser from opening dropped files. */
   disabled?: boolean;
   /**
@@ -75,7 +78,11 @@ export interface DropZoneProps
   files?: readonly File[];
   /** The id of a form the zone belongs to when it is outside of it. */
   form?: string;
-  /** The native file input that opens the file picker, for example from a Replace button. */
+  /**
+   * The native file input that opens the file picker, for example from a Replace button. The zone
+   * holds no value a form library could register, as a field's input does, so ref reaches the zone
+   * itself, the drop target, and this ref the picker.
+   */
   inputRef?: Ref<HTMLInputElement>;
 }
 
@@ -90,8 +97,8 @@ export function DropZone({
   icon,
   accept,
   multiple = false,
-  onDropAccepted,
-  onDropRejected,
+  onFilesAccepted,
+  onFilesRejected,
   disabled = false,
   pending = false,
   error,
@@ -146,8 +153,8 @@ export function DropZone({
     const rejected = chosen.filter((file) => !taken.includes(file));
     // Rejected files leave the held ones as they were, and files from the application win.
     if (taken.length > 0 && files === undefined) hold(taken);
-    if (rejected.length > 0) onDropRejected?.(rejected);
-    if (taken.length > 0) onDropAccepted(taken);
+    if (rejected.length > 0) onFilesRejected?.(rejected);
+    if (taken.length > 0) onFilesAccepted(taken);
   }
 
   function endDrag() {
@@ -177,7 +184,7 @@ export function DropZone({
         {pending ? (
           <Spinner size={size === 'sm' ? 'sm' : 'md'} />
         ) : (
-          <DecorativeIcon>{icon ?? <CloudUpload />}</DecorativeIcon>
+          <DecorativeIcon>{icon ?? <IconCloudUpload />}</DecorativeIcon>
         )}
       </span>
       <Grid render={<span />} gap={size === 'sm' ? 0 : 1} className="env-drop-zone-text">
@@ -201,7 +208,7 @@ export function DropZone({
       invalid={error != null || undefined}
       className={classNames('env-drop-zone', className)}
       data-size={size}
-      data-dragging={dragging ? '' : undefined}
+      data-drag-over={dragging ? '' : undefined}
       data-pending={pending ? '' : undefined}
       data-invalid={error != null ? '' : undefined}
       onDragEnter={(event) => {

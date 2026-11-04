@@ -1,0 +1,34 @@
+import PastAndComing from '../../examples/relative-time/PastAndComing';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
+
+const time = (index: number) => `.env-text:nth-child(${index}) > .env-relative-time`;
+
+/* The pointer rests on each time in turn, and its tooltip gives the exact date and time. */
+const script: PointerStep[] = [
+  { wait: 500 },
+  { to: time(1), x: 0.5, y: 0.6 },
+  { wait: 2000 },
+  { to: time(2), x: 0.5, y: 0.6, duration: 500 },
+  { wait: 1800 },
+  { to: time(3), x: 0.5, y: 0.6, duration: 500 },
+  { wait: 1800 },
+  { to: time(4), x: 0.5, y: 0.6, duration: 500 },
+  { wait: 1800 },
+  { leave: true },
+  { wait: 900 },
+];
+
+function Hovering() {
+  usePointer(script);
+  return <PastAndComing />;
+}
+
+/** Each relative time's exact date, in its tooltip, as a pointer no one sees rests on it. */
+export default function PastAndComingMotion() {
+  return (
+    <MotionStage label="the exact dates in the tooltips" height="12rem">
+      <Hovering />
+    </MotionStage>
+  );
+}

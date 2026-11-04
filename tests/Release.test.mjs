@@ -4,7 +4,7 @@ import { execFileSync } from 'node:child_process';
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 
-const script = fileURLToPath(new URL('../scripts/ValidateRelease.mjs', import.meta.url));
+const script = fileURLToPath(new URL('../scripts/release/ValidateRelease.ts', import.meta.url));
 const { version } = JSON.parse(
   await readFile(new URL('../packages/ui/package.json', import.meta.url), 'utf8'),
 );

@@ -1,11 +1,14 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
-// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
+// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../Icon.js';
+import { useSymbolIconFill } from '../SymbolIconState.js';
 
-export function NfcOff({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
-  return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M200-120q-33 0-56.5-23.5T120-200v-527l-65-65q-12-12-12-28.5T55-849q12-12 28.5-12t28.5 12l736 736q12 12 12 28t-12 28q-12 12-28.5 12T791-57l-64-63H200Zm80-447v247q0 17 11.5 28.5T320-280h247l-80-80H360v-127l-80-80Zm560-193v429q0 27-24.5 37.5T772-302l-92-92v-246q0-17-11.5-28.5T640-680H520q-26 0-46 14t-29 37L302-772q-19-19-8.5-43.5T331-840h429q33 0 56.5 23.5T840-760ZM600-600v126l-80-80v-46h80Z" /> : <path d="M200-120q-33 0-56.5-23.5T120-200v-527l-65-65q-12-12-12-28.5T55-849q12-12 28.5-12t28.5 12l736 736q12 12 12 28t-12 28q-12 12-28.5 12T791-57l-64-63H200Zm0-527v447h447l-80-80H320q-17 0-28.5-11.5T280-320v-247l-80-80Zm160 287h127L360-487v127Zm320-280v166q0 17-11.5 28.5T640-434q-17 0-28.5-11.5T600-474v-126H455q-5 0-7.5-2.5T445-610v-30q0-17 11.5-28.5T485-680h155q17 0 28.5 11.5T680-640Zm160-120v446q0 17-11.5 28.5T800-274q-17 0-28.5-11.5T760-314v-446H314q-17 0-28.5-11.5T274-800q0-17 11.5-28.5T314-840h446q33 0 56.5 23.5T840-760ZM424-424Zm113-113Z" />}</Icon>;
+/** The path both styles start with. */
+const start = "M200-120q-33 0-56.5-23.5T120-200v-527l-65-65q-12-12-12-28.5T55-849q12-12 28.5-12t28.5 12l736 736q12 12 12 28t-12 28q-12 12-28.5 12T791-57l-64-63H200Zm";
+
+export function IconNfcOff({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
+  return <Icon viewBox="0 -960 960 960" {...props}><path d={filled ? start + "80-447v247q0 17 11.5 28.5T320-280h247l-80-80H360v-127l-80-80Zm560-193v429q0 27-24.5 37.5T772-302l-92-92v-246q0-17-11.5-28.5T640-680H520q-26 0-46 14t-29 37L302-772q-19-19-8.5-43.5T331-840h429q33 0 56.5 23.5T840-760ZM600-600v126l-80-80v-46h80Z" : start + "0-527v447h447l-80-80H320q-17 0-28.5-11.5T280-320v-247l-80-80Zm160 287h127L360-487v127Zm320-280v166q0 17-11.5 28.5T640-434q-17 0-28.5-11.5T600-474v-126H455q-5 0-7.5-2.5T445-610v-30q0-17 11.5-28.5T485-680h155q17 0 28.5 11.5T680-640Zm160-120v446q0 17-11.5 28.5T800-274q-17 0-28.5-11.5T760-314v-446H314q-17 0-28.5-11.5T274-800q0-17 11.5-28.5T314-840h446q33 0 56.5 23.5T840-760ZM424-424Zm113-113Z"} /></Icon>;
 }

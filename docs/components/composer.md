@@ -2,7 +2,7 @@
 title: Composer
 summary: The message field of a conversation, which grows with its text and sends with Enter, with a send button that stops a running reply.
 status: stable
-since: 0.5.0
+since: 1.0.0
 category: Text & content
 aliases:
   - ChatInput
@@ -32,7 +32,9 @@ avoidWhen:
 components:
   - Composer
 examples:
-  AskAnything: overview
+  AskAnything:
+    role: overview
+    motion: true
   StartAndFooter: example
   ComposerAnatomy: anatomy
   PendingSend: example
@@ -73,7 +75,7 @@ A composer is its field alone, or has a row below the field with controls at its
 3. **Input** (`env-composer-input`)
 4. **Start** (`env-composer-start`, `start`)
 5. **Send** (`env-composer-action`)
-6. **Footer** (`env-composer-footer`, `footer`)
+6. **Footer** (`env-composer-footer`, `description`)
 
 ## Behaviour
 
@@ -81,7 +83,7 @@ A composer is its field alone, or has a row below the field with controls at its
 
 While a send is in progress, the next one waits; the field stays editable and keeps focus.
 
-```tsx figure=PendingSend
+```tsx figure=PendingSend motion
 
 ```
 
@@ -89,7 +91,7 @@ While a send is in progress, the next one waits; the field stays editable and ke
 
 A composer fills its container, and its field grows with its text up to a set number of lines, then scrolls.
 
-```tsx figure=GrowingDraft widths="18 36"
+```tsx figure=GrowingDraft widths="36 18" sweep
 
 ```
 
@@ -97,11 +99,11 @@ A composer fills its container, and its field grows with its text up to a set nu
 
 A composer stays ready for the next message, below the conversation it adds to.
 
-```tsx figure=PendingStaysEditable
+```tsx figure=PendingStaysEditable motion
 
 ```
 
-```tsx figure=DisabledWhileSending
+```tsx figure=DisabledWhileSending motion
 
 ```
 
@@ -139,7 +141,7 @@ Place the composer below the conversation it adds to.
 
 ### Usage
 
-A Composer is a native textarea with no visible label, so name it with `aria-label` or `aria-labelledby`. <kbd>Enter</kbd> or the send button passes the text to `onSubmit`; blank text never sends, and neither does a disabled, running or pending composer.
+A Composer is a native textarea with no visible label, so name it with `aria-label` or `aria-labelledby`. <kbd>Enter</kbd> or the send button passes the text to `onSend`; blank text never sends, and neither does a disabled, running or pending composer.
 
 - Leave it uncontrolled, with `defaultValue`, and it clears after each send and when its form resets.
 - Or control it with `value` and `onValueChange`, and clear it yourself.
@@ -153,13 +155,13 @@ A Composer is a native textarea with no visible label, so name it with `aria-lab
 `pending` marks a send in progress: sending is unavailable while the field stays editable and keeps focus, so use it rather than `disabled`. `running` marks a reply on its way: the send button becomes a stop button, which calls `onStop` and stays available when the field is disabled, and <kbd>Enter</kbd> doesn't send.
 
 ```tsx
-<Composer aria-label="Reply to Priya Shah" pending={sending} onSubmit={send} />
-<Composer aria-label="Message" running={replying} onSubmit={send} onStop={stop} />
+<Composer aria-label="Reply to Priya Shah" pending={sending} onSend={send} />
+<Composer aria-label="Message" running={replying} onSend={send} onStop={stop} />
 ```
 
 #### Sent by its form
 
-Without `onSubmit`, <kbd>Enter</kbd> and the send button submit the composer's form, which sends the text under its `name`.
+Without `onSend`, <kbd>Enter</kbd> and the send button submit the composer's form, which sends the text under its `name`.
 
 ```tsx
 <form onSubmit={submit}>
@@ -167,18 +169,18 @@ Without `onSubmit`, <kbd>Enter</kbd> and the send button submit the composer's f
 </form>
 ```
 
-#### Rows, start and footer
+#### Rows, start and description
 
-The field shows `minRows` lines while empty, 1 by default, and grows to `maxRows`, 8 by default, before it scrolls. `start` holds content at the start of the action row, such as an attach button or the name of a model, and `footer` supporting text below the composer, which describes the field. `sendLabel` and `stopLabel` name the button.
+The field shows `minRows` lines while empty, 1 by default, and grows to `maxRows`, 8 by default, before it scrolls. `start` holds content at the start of the action row, such as an attach button or the name of a model, and `description` supporting text below the composer, which describes the field. `sendLabel` and `stopLabel` name the button.
 
 ```tsx
 <Composer
   aria-label="Comment"
   minRows={2}
   maxRows={6}
-  start={<IconButton variant="text" icon={<AttachFile />} aria-label="Attach files" />}
-  footer="Files up to 10 MB."
-  onSubmit={addComment}
+  start={<IconButton variant="text" icon={<IconAttachFile />} aria-label="Attach files" />}
+  description="Files up to 10 MB."
+  onSend={addComment}
 />
 ```
 
@@ -192,5 +194,4 @@ The composer, `env-composer`, is on the raised popup surface, `env-composer-surf
 
 ## Changelog
 
-- **1.0.0**: The send and stop labels come from EnvUIProvider's `messages`, unless `sendLabel` and `stopLabel` set them.
-- **0.5.0**: Composer, on the raised popup surface, with `onSubmit` or form submission, `pending`, `running` and `onStop`, `minRows` and `maxRows`, `start` and `footer`.
+- **1.0.0**: `footer` is `description`, as on a field, since it describes the field. `onSubmit` is `onSend`, which pairs with `sendLabel` and leaves the native submit event's name alone. The send and stop labels come from EnvUIProvider's `messages`, unless `sendLabel` and `stopLabel` set them.

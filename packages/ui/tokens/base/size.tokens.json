@@ -38,11 +38,17 @@
       "$description": "The space between a control's icon and its label.",
       "$value": { "value": 0.4375, "unit": "rem" }
     },
-    "font-size": { "$value": "{font.size.body}" }
+    "font-size": {
+      "$description": "The text of a control and of a field's value: the body size, and 1 rem under a coarse pointer, where smaller text makes touch browsers zoom into a focused field.",
+      "$value": "{font.size.body}"
+    }
   },
   "icon": {
     "$type": "dimension",
-    "size-sm": { "$value": "{control.icon-size}" },
+    "size-sm": {
+      "$description": "A small icon, such as inside a control: the control's icon size, 1 rem.",
+      "$value": "{control.icon-size}"
+    },
     "size-md": {
       "$description": "An icon beside body text, such as in a tree or a select trigger.",
       "$value": { "value": 1.125, "unit": "rem" }
@@ -50,6 +56,26 @@
     "size-lg": {
       "$description": "A leading icon in a large row, such as a list item's.",
       "$value": { "value": 1.25, "unit": "rem" }
+    }
+  },
+  "picture": {
+    "$type": "dimension",
+    "$description": "The sizes of a picture: an Avatar's and a Graphic's, the same in both scales.",
+    "size-sm": {
+      "$description": "A small picture, beside compact text such as a combobox option or the application's name in a top bar.",
+      "$value": { "value": 1.5, "unit": "rem" }
+    },
+    "size-md": {
+      "$description": "A picture beside a name in a list, a comment or a toolbar: an avatar's default size.",
+      "$value": { "value": 2, "unit": "rem" }
+    },
+    "size-lg": {
+      "$description": "A picture beside a name with a second line, such as an account header.",
+      "$value": { "value": 3, "unit": "rem" }
+    },
+    "size-xl": {
+      "$description": "The largest picture, such as on a profile page or a sign-in screen.",
+      "$value": { "value": 5.5, "unit": "rem" }
     }
   },
   "field": {
@@ -108,7 +134,7 @@
       "$value": { "value": 3.25, "unit": "rem" }
     }
   },
-  "counter-badge": {
+  "badge-count": {
     "$type": "dimension",
     "height": {
       "$description": "The height, and the least width, of a counter badge and a diff stat.",

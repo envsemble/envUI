@@ -52,7 +52,7 @@ examples:
     role: do
     caption: One column, read top to bottom, with the action after the last field.
   SideBySide:
-    role: dont
+    role: caution
     caption: 'Fields side by side: people miss the one beside their path.'
   FormAnatomy: anatomy
   ErrorSummary: example
@@ -70,7 +70,7 @@ examples:
 
 After a refused submit, a danger [Alert](../components/alert.md) titled "There is a problem" lists each error as a [Link](../components/link.md) that moves focus to its field. It is read once, as it takes focus, with no announcement of its own.
 
-```tsx figure=ErrorSummary
+```tsx figure=ErrorSummary motion
 
 ```
 
@@ -90,7 +90,7 @@ A long form splits into a few short steps, each a page of its own with its field
 - Continue checks the step's fields before moving on, and Back keeps every answer.
 - The last step shows the answers before the form's own action.
 
-```tsx figure=LongFormInSteps
+```tsx figure=LongFormInSteps motion
 
 ```
 
@@ -115,7 +115,7 @@ On submit first: show each field's error, and move focus to the error summary, o
 - Then as people leave a field they have typed in.
 - Never while they type, though an error goes as soon as the value is right.
 
-```tsx figure=ValidationTiming
+```tsx figure=ValidationTiming motion
 
 ```
 
@@ -126,7 +126,7 @@ While the form is sent, its submit button shows that it is working: it keeps its
 - When the server refuses or can't be reached, keep everything people entered.
 - Move focus to an [Alert](../components/alert.md) at the top that says what to do.
 
-```tsx figure=ServerError
+```tsx figure=ServerError motion
 
 ```
 

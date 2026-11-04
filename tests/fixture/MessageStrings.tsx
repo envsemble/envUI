@@ -10,7 +10,7 @@ import {
   CommandPalette,
   Sheet,
   Progress,
-  Toast,
+  ToastProvider,
   useToast,
   ConfirmButton,
   CopyButton,
@@ -140,7 +140,7 @@ const MessagesProbe = memo(function MessagesProbe() {
   });
   return (
     <span ref={ref} data-testid="inline-probe">
-      {messages.clear}
+      {messages.loading}
     </span>
   );
 });
@@ -156,7 +156,7 @@ function InlineMessages() {
       <button type="button" onClick={() => setRenders((current) => current + 1)}>
         ⟦rerender⟧ {renders}
       </button>
-      <EnvUIProvider messages={{ common: { clear: '⟦inline.clear⟧' } }}>
+      <EnvUIProvider messages={{ common: { loading: '⟦inline.loading⟧' } }}>
         <MessagesProbe />
       </EnvUIProvider>
     </>
@@ -226,7 +226,7 @@ export function MessageStringsFixture() {
           <TimePicker label="Starts" clearable defaultValue="09:30" />
           <MonthPicker label="Period" clearable defaultValue="2026-10" />
           <Calendar aria-label="Planning" defaultValue="2026-10-14" />
-          <Composer aria-label="Reply" defaultValue="Hello" onSubmit={() => {}} />
+          <Composer aria-label="Reply" defaultValue="Hello" onSend={() => {}} />
           <ColorPicker label="Accent" defaultValue="#336699" swatches={['#336699']} />
           <ColorPickerButton label="Border" defaultValue="#336699" />
           {/* Layout: the divider between two panes, a detail's back button, and a scaffold's skip
@@ -244,9 +244,9 @@ export function MessageStringsFixture() {
           >
             Body
           </Scaffold>
-          <Toast.Provider>
+          <ToastProvider>
             <FeedbackStrings />
-          </Toast.Provider>
+          </ToastProvider>
           <ShellAndEditorStrings />
           {/* App parts: a reorderable list's handle and announcements, and a confirm dialog. */}
           <List.Root aria-label="Order" onReorder={() => {}}>

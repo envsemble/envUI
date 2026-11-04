@@ -5,17 +5,17 @@ import {
   documentedExports,
   readDocumentation,
   readProps,
-} from '../scripts/GenerateDocumentation.mjs';
-import { headingsOf } from '../scripts/MarkdownHeadings.mjs';
-import { exportSection, propSection, tokenSection } from '../scripts/SearchAnchors.mjs';
+} from '../scripts/docs/GenerateDocumentation.ts';
+import { headingsOf } from '../scripts/docs/MarkdownHeadings.ts';
+import { exportSection, propSection, tokenSection } from '../apps/site/src/shared/SearchAnchors.ts';
 import {
   buildSearchIndex,
   standalonePages,
   readTokens,
   searchDocuments,
   unlistedPages,
-} from '../scripts/SearchIndex.mjs';
-import { indexOptions, queryOptionsFor, tokenize } from '../scripts/SearchTerms.mjs';
+} from '../scripts/site/SearchIndex.ts';
+import { indexOptions, queryOptionsFor, tokenize } from '../apps/site/src/shared/SearchTerms.ts';
 
 const props = readProps();
 const documents = readDocumentation(undefined, { props });
@@ -58,7 +58,7 @@ test('every search result leads to a page there is, and to an element that page 
   const pages = new Map(documents.map((document) => [document.id, document]));
   const tokenRows = new Set(tokens.tokens.map(({ cssVariable }) => tokenSection(cssVariable)));
   // The ids a page renders: its headings, and on its Props view each export's props and their rows
-  // (apps/catalogue/src/template/PropsTables.tsx).
+  // (apps/site/src/template/PropsTables.tsx).
   const elements = (document, view) =>
     new Set(
       view === 'props'
@@ -82,13 +82,11 @@ test('every search result leads to a page there is, and to an element that page 
 
 test('search finds components by alias, props and tokens by name, and pages before their parts', () => {
   assert.deepEqual(best('text box'), ['page:text-field']);
-  assert.deepEqual(best('hamburger'), ['page:drawer']);
+  assert.deepEqual(best('hamburger'), ['page:navigation-drawer']);
   assert.ok(best('startIcon', 5).includes('prop:Button.startIcon'));
   assert.ok(best('start icon', 5).includes('prop:Button.startIcon'));
   assert.deepEqual(best('--env-color-fg-muted'), ['token:color.fg.muted']);
   assert.deepEqual(best('fg muted'), ['token:color.fg.muted']);
-  // A 0.7 name finds the token that replaces it.
-  assert.ok(best('--color-text-muted', 3).includes('token:color.fg.muted'));
   assert.deepEqual(best('button'), ['page:button']);
   assert.ok(best('loading', 3).includes('page:loading'));
   // A typo in a longer word still finds it.
@@ -139,7 +137,7 @@ test('a result names the page it opens', () => {
   const detail = (id) => records.find((record) => record.id === id).detail;
   assert.equal(detail('export:useTheme'), 'Colors & themes');
   assert.equal(detail('export:useThemePreference'), 'Colors & themes');
-  assert.equal(detail('export:ThemeToggle'), 'Install the private package');
+  assert.equal(detail('export:ThemeToggle'), 'Install and set up');
 });
 
 test('an export on a page without a Props view leads to the section that shows it', () => {
@@ -205,8 +203,8 @@ test('a result names its area: the catalogue, or the Docs for the reference', ()
   assert.equal(area('export:useTheme'), 'docs');
   assert.equal(area('token:color.fg.muted'), 'docs');
   for (const record of records) assert.ok(['catalogue', 'docs'].includes(record.area), record.id);
-  // The site's own pages: the Docs' home, tokens, codemods and the full changelog are in the Docs.
-  const inDocs = new Set(['docs', 'tokens', 'codemods', 'full-changelog']);
+  // The site's own pages: the Docs' home, tokens and the full changelog are in the Docs.
+  const inDocs = new Set(['docs', 'tokens', 'full-changelog']);
   for (const { page, area: where } of standalonePages)
     assert.equal(where, inDocs.has(page) ? 'docs' : 'catalogue', page);
   // A foundation's page in the catalogue ranks above its guide in the Docs.

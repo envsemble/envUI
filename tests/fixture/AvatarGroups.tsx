@@ -8,9 +8,9 @@ import {
   List,
   Surface,
   Theme,
-  type ThemeValue,
+  type ColorScheme,
 } from '@envsemble/envui';
-import { Settings } from '@envsemble/envui/icons/Settings';
+import { IconSettings } from '@envsemble/envui/icons/Settings';
 
 const people = [
   { id: 'alex', name: 'Alex Morgan' },
@@ -43,7 +43,7 @@ function RecordingLink({ href, onClick, ...props }: LinkComponentProps) {
   );
 }
 
-export function AvatarGroupsFixture({ theme }: { theme: ThemeValue }) {
+export function AvatarGroupsFixture({ theme }: { theme: ColorScheme }) {
   const [pressed, setPressed] = useState('');
   return (
     <Theme theme={theme} data-testid={`avatar-groups-${theme}`} className="fixture-section">
@@ -140,7 +140,7 @@ export function AvatarGroupsFixture({ theme }: { theme: ThemeValue }) {
           onPersonClick={() => undefined}
         />
         <AvatarGroup data-testid="toolbar-small" people={people} max={2} size="sm" />
-        <IconButton size="sm" icon={<Settings />} aria-label="Report settings" />
+        <IconButton size="sm" icon={<IconSettings />} aria-label="Report settings" />
       </Surface>
       <div className="fixture-shrink-row" data-testid="narrow">
         <span className="fixture-shrink-label">A long title that needs more room</span>
@@ -156,7 +156,7 @@ export function AvatarGroupsFixture({ theme }: { theme: ThemeValue }) {
           <List.Item
             label="Northwind launch"
             description="4 members"
-            action={<AvatarGroup data-testid="in-row" people={people} max={3} gather="end" />}
+            end={<AvatarGroup data-testid="in-row" people={people} max={3} align="end" />}
           />
         </List.Root>
       </div>

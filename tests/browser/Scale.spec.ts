@@ -9,7 +9,7 @@
  */
 import { expect, test, type Locator, type Page } from '@playwright/test';
 import { controlSizes, densityScales } from '../fixture/DensitySections';
-import { fixtureUrl } from './Servers';
+import { fixtureUrl } from './helpers/Servers';
 
 /** The control heights of each scale, in CSS pixels at the default 16 px root. */
 const heights = {
@@ -97,7 +97,7 @@ const treeRows = {
   compact: { xs: 24, sm: 28, md: 30, lg: 34 },
 } as const;
 
-test('tree rows are as tall as their density in each scale, and as a compact menu row at sm', async ({
+test('tree rows are as tall as their density in each scale, and menu rows the md control height', async ({
   page,
 }) => {
   await openSection(page, 'tree');
@@ -116,8 +116,8 @@ test('tree rows are as tall as their density in each scale, and as a compact men
     for (const density of ['xs', 'sm', 'md', 'lg'] as const)
       expect(treeRows.compact[density]).toBeLessThanOrEqual(treeRows.comfortable[density]);
   }
-  // The menu of each scale opens in a popup of that scale; its rows reach their height once it has
-  // grown in.
+  // The menu of each scale opens in a popup of that scale, with rows of its md control height (2.5
+  // and 2 rem); they reach their height once it has grown in.
   await openSection(page, 'menu');
   await expect
     .poll(() =>
@@ -132,7 +132,7 @@ test('tree rows are as tall as their density in each scale, and as a compact men
           ),
         ),
     )
-    .toEqual({ comfortable: 36, compact: treeRows.compact.sm });
+    .toEqual({ comfortable: 40, compact: 32 });
 });
 
 test('each scale writes data-env-scale on its boundary, and nested Themes and popups keep it', async ({
@@ -155,11 +155,11 @@ test('each scale writes data-env-scale on its boundary, and nested Themes and po
     'data-env-scale',
     'compact',
   );
-  // The list grows in; its rows reach the compact row height once it has.
+  // The list grows in; its rows reach the compact md control height once it has.
   const option = list.getByRole('option', { name: 'Team', exact: true });
   await expect
     .poll(() => option.evaluate((element) => element.getBoundingClientRect().height))
-    .toBe(28);
+    .toBe(32);
 });
 
 /** What can be pressed, as a person aims at it. */

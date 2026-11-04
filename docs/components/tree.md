@@ -2,7 +2,7 @@
 title: Tree
 summary: A tree of rows for large hierarchies, such as file trees, with keyboard navigation and a context menu.
 status: stable
-since: 0.5.0
+since: 1.0.0
 category: Navigation
 aliases:
   - TreeView
@@ -20,7 +20,7 @@ useWhen:
   - Rows previewed with a click and opened to keep with a double click
 avoidWhen:
   - text: An application's destinations, such as the pages in a sidebar, one or two levels deep.
-    use: Drawer
+    use: NavigationDrawer
   - text: A flat list of items, each with its own actions.
     use: List
   - text: Records that share the same fields and that people compare.
@@ -33,7 +33,7 @@ examples:
   FileTree: overview
   RowDensity:
     role: example
-    caption: Medium, with counts at the end, a description and a disabled row.
+    caption: Counts at the end, a description and a disabled row, at each density.
   TreeAnatomy: anatomy
   ContextMenuActions: example
   NarrowTree: example
@@ -54,7 +54,7 @@ Density changes only the room around a row's text, never the text or the icons.
 | Medium      | Fewer rows with more room, such as mailboxes.         |
 | Large       | The most room, as tall as a touch target.             |
 
-```tsx figure=RowDensity
+```tsx figure=RowDensity motion
 
 ```
 
@@ -80,11 +80,13 @@ A click and <kbd>Space</kbd> preview a row, and a double click and <kbd>Enter</k
 
 - A disabled row can be reached with the keyboard, but doesn't open or expand.
 
+<!-- specimen: OpeningAndPreviewing -->
+
 ### Actions in a context menu
 
 A right click, a long press, <kbd>Shift</kbd>+<kbd>F10</kbd> or the <kbd>Menu</kbd> key open a menu for a row, or for the empty area. Offer the same actions in visible controls.
 
-```tsx figure=ContextMenuActions
+```tsx figure=ContextMenuActions motion
 
 ```
 
@@ -98,7 +100,7 @@ The tree draws only the rows in view, so it stays quick with tens of thousands o
 
 Rows keep one line: the description gives way first, then the label ends with an ellipsis.
 
-```tsx figure=NarrowTree widths="12 24"
+```tsx figure=NarrowTree widths="24 12" sweep
 
 ```
 
@@ -149,16 +151,23 @@ Keep buttons, links and fields out of rows: their actions go in the context menu
 <Tree
   aria-label="Files"
   items={[
-    { id: 'src', depth: 0, label: 'src', icon: <Folder />, expandable: true, expanded: true },
-    { id: 'src/index.ts', depth: 1, label: 'index.ts', icon: <Description /> },
+    {
+      value: 'src',
+      depth: 0,
+      label: 'src',
+      icon: <IconFolder />,
+      expandable: true,
+      expanded: true,
+    },
+    { value: 'src/index.ts', depth: 1, label: 'index.ts', icon: <IconDescription /> },
   ]}
   value={selected}
-  onAction={(row) => setSelected(row.id)}
-  onExpandedChange={(row, open) => toggle(row.id, open)}
+  onAction={(row) => setSelected(row.value)}
+  onExpandedChange={(row, open) => toggle(row.value, open)}
 />
 ```
 
-`items` are the visible rows in order, flattened: an expanded row is followed by its visible descendants. Each row has a stable, unique `id`, such as a path, which it carries as `data-id`; its `depth`, 0 for a top-level row, each level indenting it by 0.75 rem; its `label`; and an optional decorative `icon`, a muted `description`, such as a status or a path, `end` content, such as a Badge with a count, a native `title` tooltip, `textValue` for type-ahead where the label isn't plain text, and `disabled`.
+`items` are the visible rows in order, flattened: an expanded row is followed by its visible descendants. Each row, a `TreeItem`, has a stable, unique `value`, such as a path, which it carries as `data-id`; its `depth`, 0 for a top-level row, each level indenting it by 0.75 rem; its `label`; and an optional decorative `icon`, a muted `description`, such as a status or a path, `end` content, such as a Badge with a count, a native `tooltip`, `textValue` for type-ahead where the label isn't plain text, and `disabled`.
 
 #### Expanding
 
@@ -166,11 +175,11 @@ Keep buttons, links and fields out of rows: their actions go in the context menu
 
 #### Opening, previewing and selection
 
-`onAction` receives the row people open and `{ preview }`: `true` on a single click and <kbd>Space</kbd>, `false` on a double click and <kbd>Enter</kbd>. Expandable rows call it too, and disabled rows don't. The tree doesn't select by itself: set `value`, the selected row's id, from `onAction`; that row takes the navigation selection colors and scrolls into view when it changes.
+`onAction` receives the row people open and `{ preview }`, a `TreeActionDetails`: `true` on a single click and <kbd>Space</kbd>, `false` on a double click and <kbd>Enter</kbd>. Expandable rows call it too, and disabled rows don't. The tree doesn't select by itself: set `value`, the selected row's value, from `onAction`; that row takes the navigation selection colors and scrolls into view when it changes.
 
 #### Context menu
 
-`contextMenu` returns the menu items for the row, or for the tree's empty area when the row is `null`; without it, the browser's own context menu stays. `contextMenuLabel` names the menu, Actions by default, from EnvUIProvider's `messages.tree.actions`.
+`contextMenu` returns the menu items for the row, or for the tree's empty area when the row is `null`; without it, the browser's own context menu stays. `contextMenuLabel` names the menu.
 
 #### Thousands of rows
 
@@ -179,7 +188,8 @@ Keep buttons, links and fields out of rows: their actions go in the context menu
   <Tree
     aria-label="Build logs"
     items={rows}
-    onExpandedChange={(row, open) => toggle(row.id, open)}
+    onAction={(row) => setSelected(row.value)}
+    onExpandedChange={(row, open) => toggle(row.value, open)}
   />
 </div>
 ```
@@ -192,5 +202,5 @@ The tree renders only the rows in view, and is as tall as its parent: give the p
 
 ## Changelog
 
-- **1.0.0**: `selectedId` is `value` and `onOpen` is `onAction`, with `TreeActionOptions` (was `TreeOpenOptions`); a TreeItem's `detail` is `description` and its `trailing` is `end`. The context menu's default name comes from `messages.tree`, and the tree takes `ref` and `style`. A row's class is `env-tree-item` (was `env-tree-row`), and `env-tree-detail` and `-trailing` are `env-tree-description` and `-end`.
-- **0.5.0**: Tree: a virtualized tree for thousands of rows, with keyboard navigation, type-ahead, preview and open callbacks, a context menu and two densities. Keys pressed with <kbd>Alt</kbd>, <kbd>Ctrl</kbd> or <kbd>⌘</kbd> are left to the application.
+- **1.0.0-prerelease.5**: A row is keyed by `value`, which the tree's `value` names, where it had `id`, and its native tooltip is `tooltip`, where it was `title`. `TreeActionOptions` is `TreeActionDetails`. The tree takes the native props, such as `id` and `data-*`.
+- **1.0.0**: `selectedId` is `value` and `onOpen` is `onAction`, with `TreeActionDetails`; a TreeItem's `detail` is `description` and its `trailing` is `end`. The context menu's default name comes from `messages.tree`, and the tree takes `ref` and `style`. A row's class is `env-tree-item` (was `env-tree-row`), and `env-tree-detail` and `-trailing` are `env-tree-description` and `-end`; a description keeps more room from its label.

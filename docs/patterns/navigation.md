@@ -29,9 +29,9 @@ avoidWhen:
 composes:
   - Scaffold
   - TopBar
-  - Bar
-  - Rail
-  - Drawer
+  - NavigationBar
+  - NavigationRail
+  - NavigationDrawer
   - Breadcrumbs
   - Page
   - PageHeader
@@ -55,6 +55,7 @@ examples:
   PrimaryNavigation:
     role: overview
     stage: shaded
+    motion: true
   Hierarchy: example
   ViewsOfOneThing: example
   ListAndDetail: example
@@ -83,7 +84,7 @@ The trail shows the levels above the page, each a link; the page itself is the l
 
 Tabs switch the views of one project in place. Its settings are another page, so they are a link in the header's actions.
 
-```tsx figure=ViewsOfOneThing
+```tsx figure=ViewsOfOneThing motion
 
 ```
 
@@ -91,7 +92,7 @@ Tabs switch the views of one project in place. Its settings are another page, so
 
 As narrow as a phone, the detail shows in place of the list, with a back button that names where it goes.
 
-```tsx figure=ListAndDetail
+```tsx figure=ListAndDetail motion
 
 ```
 
@@ -101,7 +102,7 @@ As narrow as a phone, the detail shows in place of the list, with a back button 
 
 ```
 
-1. **Primary navigation** (`env-rail`)
+1. **Primary navigation** (`env-navigation-rail`)
 2. **Quick open** (`env-top-bar-actions > env-icon-button`)
 3. **Trail** (`env-breadcrumbs`)
 4. **Views** (`env-tabs-list`)
@@ -112,10 +113,7 @@ Not shown: the [Pager](../components/pager.md) at the end of a page read in orde
 
 ### Changing the page
 
-After the router shows the new page, the window's title names it, such as "Projects – Northwind".
-
-- Every place has an address of its own, opened by the application's router.
-- The examples keep the page in state instead.
+After the router shows the new page, the window's title names it, such as "Projects – Northwind". Every place has an address of its own, opened by the application's router.
 
 ## Rules
 
@@ -179,9 +177,9 @@ After a page opens, from a destination, a trail level or a search result, focus 
 
 ### Usage
 
-Build one array of destinations, each with its `label`, `icon` and `href`, `current` on the place shown, and optionally a `count`, a `group` and an `onSelect`.
+Build one array of destinations, each with its `label`, `icon` and `href`, `current` on the place shown, and optionally a `count`, a `group` and an `onClick`.
 
-- Give the same array to a Bar, a Rail and a Drawer, in the Scaffold's `navigation` as `bar`, `rail` and `drawer`.
+- Give the same array to a NavigationBar, a NavigationRail and a NavigationDrawer, in the Scaffold's `navigation` as `bar`, `rail` and `drawer`.
 - Render every `href` through the router's link with `LinkProvider`.
 - After the router shows the new page, set `document.title`, such as "Projects – Northwind", and move focus to the body or the page's heading.
 
@@ -232,7 +230,7 @@ Tabs go under the PageHeader for the views of the object the page is about; a li
 
 ### Composition
 
-The primary navigation is a Rail here, from Scaffold's `navigation`; the trail is Breadcrumbs in the PageHeader, the views Tabs below it, and quick open an IconButton in the TopBar's actions. A Pager ends a page read in order. The parts are the rail, `env-rail`, the quick-open button, `env-top-bar-actions > env-icon-button`, the trail, `env-breadcrumbs`, and the tabs, `env-tabs-list`.
+The primary navigation is a NavigationRail here, from Scaffold's `navigation`; the trail is Breadcrumbs in the PageHeader, the views Tabs below it, and quick open an IconButton in the TopBar's actions. A Pager ends a page read in order. The parts are the rail, `env-navigation-rail`, the quick-open button, `env-top-bar-actions > env-icon-button`, the trail, `env-breadcrumbs`, and the tabs, `env-tabs-list`.
 
 ## Changelog
 

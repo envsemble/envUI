@@ -5,12 +5,16 @@ export interface IconProps extends SVGProps<SVGSVGElement> {
   label?: string;
 }
 
-export interface MaterialSymbolProps extends Omit<IconProps, 'children'> {
+export interface SymbolIconProps extends Omit<IconProps, 'children'> {
   /** Select fill=1 geometry outside selection controls; navigation and tabs own their icon fill. */
   filled?: boolean;
 }
 
-/** Shared SVG defaults; custom icons may supply their own viewBox and children. */
+/**
+ * The SVG that envUI's symbols render: 1 em, `currentColor`, and hidden from assistive technology
+ * unless labelled. An application's own icons and logos go in Graphic, as a file or an SVG
+ * component inside it.
+ */
 export function Icon({ label, children, ...props }: IconProps) {
   const accessible = Boolean(label || props['aria-label'] || props['aria-labelledby']);
   return (

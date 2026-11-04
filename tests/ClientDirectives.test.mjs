@@ -5,7 +5,7 @@ import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { clientReasonsOf, libraryModules } from '../scripts/ClientModules.mjs';
+import { clientReasonsOf, libraryModules } from '../scripts/build/ClientModules.ts';
 
 // envUI and React Server Components: each module that uses client-only React APIs starts with
 // 'use client', the entry points carry no directive, the build keeps the directives where they
@@ -16,16 +16,7 @@ const dist = join(repository, 'packages/ui/dist');
 const modules = await libraryModules();
 
 /** The entry points, whose `export *` and `export * as` lines a server component imports through. */
-const entries = [
-  'index',
-  'content',
-  'diff',
-  'color',
-  'rich-text',
-  'theme-bootstrap',
-  'dev',
-  'icons/index',
-];
+const entries = ['index', 'content', 'diff', 'color', 'rich-text', 'theme-bootstrap', 'dev'];
 
 const startsWithDirective = (code) => /^\s*(['"])use client\1;?/.test(code);
 
@@ -36,7 +27,11 @@ test("every module that uses client-only APIs, and only such a module, says 'use
   const needless = modules
     .filter((module) => module.reasons.length === 0 && module.client)
     .map((module) => module.file);
-  assert.deepEqual(missing, [], 'Run node scripts/ClientModules.mjs, or npm run icons:generate.');
+  assert.deepEqual(
+    missing,
+    [],
+    'Run node scripts/build/ClientModules.ts, or npm run icons:generate.',
+  );
   assert.deepEqual(needless, [], 'These modules use nothing client-only.');
   for (const entry of entries) {
     const module = modules.find(({ file }) => file.replace(/\.tsx?$/, '') === entry);
@@ -227,7 +222,7 @@ test('a server component imports envUI and renders it on the server', () => {
   // The page's client components receive only what a server can send them.
   const page = JSON.stringify(result.page);
   assert.match(page, /"client":"navigation\/Menu\.js#Item"/);
-  assert.match(page, /"client":"icons\/Home\.js#Home"/);
+  assert.match(page, /"client":"icons\/Home\.js#IconHome"/);
   // A pending Button hands ActionElement a boolean, not a click handler.
   assert.match(
     page,

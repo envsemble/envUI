@@ -28,6 +28,7 @@ components:
 examples:
   StartTime:
     role: overview
+    motion: true
     caption: Where people write AM and PM, a third wheel holds them.
   Variants: variants
   TimePickerAnatomy: anatomy
@@ -47,10 +48,10 @@ examples:
 1. **Outline**
 2. **Floating**
 
-| Variant  | Use for                                                            |
-| -------- | ------------------------------------------------------------------ |
-| Outline  | A time of day, on wheels that stay open as they turn. The default. |
-| Floating | A long form on a page, as TextField's floating variant.            |
+| Variant  | Use for                                                 |
+| -------- | ------------------------------------------------------- |
+| Outline  | In forms, dialogs and panes. The default.               |
+| Floating | A long form on a page, as TextField's floating variant. |
 
 ## Anatomy
 
@@ -72,17 +73,14 @@ examples:
 
 1. **Popup** (`env-time-picker-popup`)
 2. **Column** (`env-time-list-column`)
-3. **Time** (`env-time-list-row[data-centred]`)
+3. **Time** (`env-time-list-row[data-centered]`)
 4. **Actions** (`env-date-picker-actions`)
 
 ## Behaviour
 
 ### The locale's clock
 
-The same value on a 12-hour and a 24-hour clock, as people there write it.
-
-- The value itself stays on the 24-hour clock.
-- The popup offers a shortcut to the current time, and a clearable field a clear button.
+The same value on a 12-hour and a 24-hour clock, as people there write it. The value itself stays on the 24-hour clock.
 
 ```tsx figure=ClockConventions
 
@@ -98,7 +96,7 @@ Offer the times that can be booked: between an earliest and a latest time, on st
 
 - A value between the steps still shows, in its place.
 
-```tsx figure=OfficeHours
+```tsx figure=OfficeHours motion
 
 ```
 
@@ -137,7 +135,7 @@ Show it read-only, not disabled.
 <TimePicker label="Starts at" value={start} onValueChange={setStart} clearable />
 ```
 
-The value is a time of day as `HH:mm` on the 24-hour clock, or `null` for none: control it with `value` and `onValueChange`, which receives `HH:mm`, or `null` once the field is cleared, or leave it uncontrolled with `defaultValue`. It shows the value and its wheels on the clock of `locale`, EnvUIProvider's or else the browser's, and `formatOptions` sets how the field shows it, as `Intl.DateTimeFormat` options, by default the short time style. `label`, `description` and `error` work as on TextField. `clearable` adds a clear button to the field and the popup, named by `clearLabel`, and `nowLabel` names the popup's shortcut to the current time.
+The value is a time of day as `HH:mm` on the 24-hour clock, or `null` for none: control it with `value` and `onValueChange`, which receives `HH:mm`, or `null` once the field is cleared, or leave it uncontrolled with `defaultValue`. It shows the value and its wheels on the clock of `locale`, EnvUIProvider's or else the browser's, and `formatOptions` sets how the field shows it, as `Intl.DateTimeFormat` options, by default the short time style. `label`, `description` and `error` work as on TextField. `clearable` adds a clear button to the field and the popup, named by `clearLabel`, and `nowLabel` names the popup's shortcut to the current time. The popup stays open as its wheels turn.
 
 #### Available times
 
@@ -161,8 +159,13 @@ The value is a time of day as `HH:mm` on the 24-hour clock, or `null` for none: 
 
 ### Composition
 
-TimePicker shares DatePicker's field and its picker card, `env-picker-popup` with `env-date-picker-popup` and `env-time-picker-popup`: the wheels in its body, `env-picker-popup-body`, and Now and Clear in its footer, `env-picker-popup-footer` with `env-date-picker-actions`. The wheels are for hours, minutes and, on a 12-hour clock, the day period, each row an `env-time-list-row`, the chosen one with `data-centred`. `className` and `style` reach the root, and `ref` the field's button.
+TimePicker shares DatePicker's field and its picker card, `env-picker-popup` with `env-date-picker-popup` and `env-time-picker-popup`: the wheels in its body, `env-picker-popup-body`, and Now and Clear in its footer, `env-picker-popup-footer` with `env-date-picker-actions`. The wheels are for hours, minutes and, on a 12-hour clock, the day period, each row an `env-time-list-row`, the chosen one with `data-centered`. `className` and `style` reach the root, and `ref` the field's button.
+
+### Customize
+
+Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blur` and `--env-popup-shadow`, set on a theme, change it, as [Popover](popover.md#customize) describes.
 
 ## Changelog
 
+- **1.0.0-prerelease.5**: The popup is frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge, and is solid with its edge at high contrast and with reduced transparency. Its inset is a panel's, as wide as a popup row's corner: 14 px, 11.2 px at the compact scale.
 - **1.0.0**: TimePicker, for a time of day chosen on wheels of hours, minutes and day periods on the locale's clock, with `minuteStep`, `min` and `max`.

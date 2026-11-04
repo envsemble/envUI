@@ -2,7 +2,7 @@
 // src/styles/Tokens.css and the generated token modules in src/generated. Run it through
 // `npm run tokens:build`, which formats the output with Prettier; `npm run tokens:check` fails when
 // the committed output is stale. `npx tz check --config packages/ui/terrazzo.config.mjs` only lints
-// the tokens. See docs/library-development.md.
+// the tokens. See AGENTS.md.
 import { existsSync, readFileSync } from 'node:fs';
 import { RECOMMENDED_CONFIG } from '@terrazzo/parser';
 import css from '@terrazzo/plugin-css';
@@ -256,6 +256,79 @@ function withoutDescriptions(plugin) {
 }
 
 /**
+ * The theme rules an element of each theme also matches, whose values it takes where its own rule
+ * declares nothing, nearest first. A dark high-contrast element falls back to the light
+ * high-contrast rule before the dark one: both have the same specificity, and the high-contrast
+ * rule comes later in Tokens.css.
+ */
+const rulesBelow = {
+  light: [],
+  dark: ['light'],
+  'light-high-contrast': ['light'],
+  'dark-high-contrast': ['light-high-contrast', 'dark', 'light'],
+};
+
+/**
+ * Tokens.css without the declarations of a theme rule that repeat the value an element of that
+ * theme takes from the rules below it anyway, such as a dark value that is the light one. Every
+ * element computes the same tokens; the token files still give each scheme and contrast all its
+ * values, and the generated modules list them all.
+ */
+export function withoutRepeatedValues(css) {
+  const themeOf = new Map(
+    themes.flatMap((theme) => [
+      ...theme.selectors.map((selector) => [selector, theme.name]),
+      ...(theme.media ? [[theme.media.selector, theme.name]] : []),
+    ]),
+  );
+  const declared = Object.fromEntries(themes.map((theme) => [theme.name, new Map()]));
+  for (const { property, value, selector } of cssDeclarations(css)) {
+    const theme = themeOf.get(selector);
+    if (theme && property.startsWith('--')) declared[theme].set(property, value);
+  }
+  const repeated = {};
+  for (const theme of themes) {
+    repeated[theme.name] = new Set(
+      [...declared[theme.name]]
+        .filter(([property, value]) => {
+          // The value below: of the nearest rule that still declares the property.
+          const below = rulesBelow[theme.name]
+            .filter((name) => !repeated[name]?.has(property))
+            .map((name) => declared[name].get(property))
+            .find((each) => each !== undefined);
+          return below === value;
+        })
+        .map(([property]) => property),
+    );
+  }
+  // Each theme rule, `selector {` to its `}`, without the lines of the repeated declarations.
+  return css.replace(/([^\n{}]+) \{\n([^{}]*)\}/g, (rule, selector, body) => {
+    const theme = themeOf.get(selector.trim());
+    if (!theme) return rule;
+    const kept = body
+      .split('\n')
+      .filter((line) => !repeated[theme].has(line.match(/^\s*(--[\w-]+):/)?.[1]));
+    return `${selector} {\n${kept.join('\n')}}`;
+  });
+}
+
+/** plugin-css with Tokens.css written by withoutRepeatedValues(). */
+function withoutRepeatedDeclarations(plugin) {
+  return {
+    ...plugin,
+    build: (options) =>
+      plugin.build({
+        ...options,
+        outputFile: (filename, contents) =>
+          options.outputFile(
+            filename,
+            filename.endsWith('.css') ? withoutRepeatedValues(contents) : contents,
+          ),
+      }),
+  };
+}
+
+/**
  * `envui/color-schemes`: every semantic color is declared in the dark scheme, so dark is designed
  * rather than inherited, and every other color outside the palette is an alias, which follows its
  * target into each scheme. (core/required-modes reads only the legacy `$extensions.mode`, so with a
@@ -440,102 +513,51 @@ function checkCustomProperties(list, handwrittenFile) {
 }
 
 /**
- * The migration map: every custom property that envUI 0.x or 1.0's development defined and 1.0
- * no longer does, with what replaces it, from the sections of removed-tokens.json:
- *
- * - `prefixed`: names that only take the prefix, `--space-4` as `--env-space-4`, each the custom
- *   property of a token or of a part of one (`properties`);
- * - `renamed`: names that changed beyond the prefix, each to a token (`replacement`) or to a
- *   custom property that envUI's style sheets declare or read (`cssVariable`); a name that 1.0's
- *   development introduced has the prefix already, such as `--env-topbar-height`;
- * - `aliases`: the 0.7 alias tokens, each to the token of its role (`replacement`) or, for a
- *   fixed color no role replaces, its `value`;
- * - `removed`: names with no counterpart, with the token to use instead where there is one, also
- *   with the prefix.
- *
- * Fails on a name in two sections, a name with the prefix outside `renamed` and `removed` or
- * that a token still has, and a replacement that doesn't exist.
- * Returns the entries sorted by name.
+ * The public tokens TokensHandwritten.css declares, from tokens/handwritten.json, as entries of the
+ * token list: each with its value as the style sheet declares it on the theme boundary, with the
+ * tokens it reads resolved in every theme. Fails on a listed token the style sheet doesn't declare.
  */
-export function migrationNames(data, { isToken, properties }) {
-  const names = {};
-  const add = (name, entry, section) => {
-    if (!/^--[a-z0-9]+(?:-[a-z0-9]+)*$/.test(name))
-      throw new Error(`removed-tokens.json: ${name} in ${section} is not a custom property.`);
-    if (name.startsWith(`--${prefix}-`) && !['renamed', 'removed'].includes(section))
-      throw new Error(`removed-tokens.json: ${name} in ${section} already has the prefix.`);
-    if (properties.has(name))
-      throw new Error(`removed-tokens.json: ${name} in ${section} is a token's custom property.`);
-    if (names[name])
-      throw new Error(
-        `removed-tokens.json lists ${name} in both ${names[name].kind} and ${section}.`,
+function handwrittenTokens(listFile, cssFile, resolve) {
+  if (!existsSync(listFile)) return [];
+  const listed = JSON.parse(readFileSync(listFile, 'utf8'));
+  const css = existsSync(cssFile)
+    ? readFileSync(cssFile, 'utf8').replace(/\/\*[\s\S]*?\*\//g, '')
+    : '';
+  return Object.entries(listed)
+    .filter(([id]) => !id.startsWith('$'))
+    .map(([id, { type, description }]) => {
+      const name = cssVariable(id);
+      const declared = css
+        .match(new RegExp(`${name}\\s*:\\s*([^;]+);`))?.[1]
+        .replace(/\s+/g, ' ')
+        .trim();
+      if (!declared)
+        throw new Error(
+          `tokens/handwritten.json lists ${id}, but TokensHandwritten.css declares no ${name}.`,
+        );
+      const values = Object.fromEntries(
+        themes.map((theme) => [
+          theme.name,
+          {
+            css: declared,
+            resolved: declared.replace(/var\((--[\w-]+)\)/g, (_, used) =>
+              resolve(theme.name, used),
+            ),
+          },
+        ]),
       );
-    names[name] = entry;
-  };
-  const token = (name, id, section) => {
-    if (!isToken(id))
-      throw new Error(
-        `removed-tokens.json: ${section} replaces ${name} with ${id}, which is no public token.`,
-      );
-    return { token: id, cssVariable: cssVariable(id) };
-  };
-  const extras = ({ component, colorPropertyOf, note }) => ({
-    ...(component && { component }),
-    ...(colorPropertyOf && { colorPropertyOf }),
-    ...(note && { note }),
-  });
-  for (const name of data.prefixed ?? []) {
-    const target = `--${prefix}-${name.slice(2)}`;
-    if (!properties.has(target))
-      throw new Error(
-        `removed-tokens.json: prefixed lists ${name}, but no token becomes ${target}.`,
-      );
-    add(name, { kind: 'prefixed', cssVariable: target }, 'prefixed');
-  }
-  for (const [name, entry] of Object.entries(data.renamed ?? {})) {
-    if (entry.replacement)
-      add(
-        name,
-        { kind: 'renamed', ...token(name, entry.replacement, 'renamed'), ...extras(entry) },
-        'renamed',
-      );
-    else if (entry.cssVariable?.startsWith(`--${prefix}-`))
-      add(name, { kind: 'renamed', cssVariable: entry.cssVariable, ...extras(entry) }, 'renamed');
-    else
-      throw new Error(
-        `removed-tokens.json: renamed needs a replacement token or an --${prefix}- cssVariable for ${name}.`,
-      );
-  }
-  for (const [name, entry] of Object.entries(data.aliases ?? {}))
-    add(
-      name,
-      entry.replacement
-        ? { kind: 'alias', ...token(name, entry.replacement, 'aliases'), ...extras(entry) }
-        : { kind: 'fixed', value: entry.value, ...extras(entry) },
-      'aliases',
-    );
-  for (const [name, entry] of Object.entries(data.removed ?? {}))
-    add(
-      name,
-      {
-        kind: 'removed',
-        ...(entry.replacement && token(name, entry.replacement, 'removed')),
-        ...extras(entry),
-      },
-      'removed',
-    );
-  return Object.fromEntries(Object.entries(names).sort(([a], [b]) => a.localeCompare(b)));
+      return { id, cssVariable: name, type, description, handwritten: true, values };
+    });
 }
 
 /**
- * envUI's own plugin: the lint rules, and the generated token modules, a typed TypeScript module, a
- * JSON token list for the docs, and the migration map from the 0.7 custom properties to the roles,
- * which scripts/BuildTokens.mjs copies into the codemods' rename map and the migration guide.
+ * envUI's own plugin: the lint rules, and the generated token modules, a typed TypeScript module and
+ * a JSON token list for the docs.
  * The modules carry each token's value in every theme, as the browser resolves Tokens.css alone:
  * TokensHandwritten.css can change a few of them under a condition, such as the touch sizes of
  * --control-height and --title-bar-height under a coarse pointer, and those values are not in them.
  */
-function envui({ removedFile, handwrittenFile }) {
+function envui({ handwrittenFile, handwrittenList }) {
   return {
     name: 'envui',
     lint: () => ({
@@ -648,6 +670,8 @@ function envui({ removedFile, handwrittenFile }) {
         };
       });
       checkCustomProperties(list, handwrittenFile);
+      list.push(...handwrittenTokens(handwrittenList, handwrittenFile, resolve));
+      list.sort((a, b) => a.id.localeCompare(b.id, 'en', { numeric: true }));
       const header =
         'Generated from packages/ui/tokens by `npm run tokens:build`. Do not edit: change the tokens and rebuild.';
       outputFile(
@@ -658,29 +682,6 @@ function envui({ removedFile, handwrittenFile }) {
           themes,
           scales: scales.map(({ name, selector }) => ({ name, ...(selector && { selector }) })),
           tokens: list,
-        }),
-      );
-
-      // Every custom property of 0.x and of 1.0's development that 1.0 no longer defines.
-      const properties = new Set(
-        list.flatMap((token) => [
-          token.cssVariable,
-          ...Object.values(token.values).flatMap(({ css }) =>
-            css && typeof css === 'object'
-              ? Object.keys(css).map((part) => `${token.cssVariable}-${part}`)
-              : [],
-          ),
-        ]),
-      );
-      const migration = migrationNames(JSON.parse(readFileSync(removedFile, 'utf8')), {
-        isToken: (id) => Boolean(tokens[id]) && !internal(id),
-        properties,
-      });
-      outputFile(
-        'generated/token-migration.json',
-        JSON.stringify({
-          $comment: `${header} Maps every custom property that 1.0 no longer defines to what replaces it, from packages/ui/tokens/removed-tokens.json: the token (token, with its custom property, cssVariable) or the hand-written property (cssVariable alone) that takes its place, a fixed color's value, or nothing for a removed one. kind says why: prefixed (only the --env- prefix is new), renamed, alias (a 0.7 alias, removed for its role), fixed (a 0.7 color no role replaces) or removed; a note says what changed beyond the name. npm run tokens:build copies it into the tokens section of the codemods' rename map and the token list of docs/migration.md.`,
-          names: migration,
         }),
       );
 
@@ -713,7 +714,7 @@ function envui({ removedFile, handwrittenFile }) {
   };
 }
 
-/** A fresh config, so a long-running build (the catalogue's dev server) reads the tokens anew. */
+/** A fresh config, so a long-running build (the site's dev server) reads the tokens anew. */
 export function createConfig({
   tokensDirectory = defaultTokensDirectory,
   outDir = defaultOutDir,
@@ -746,53 +747,55 @@ export function createConfig({
     tokens: [resolverFile],
     outDir,
     plugins: [
-      withoutDescriptions(
-        css({
-          filename: 'styles/Tokens.css',
-          // Every property takes the prefix. plugin-css also passes this the parts that an alias of
-          // a composite token reads, as `type.label-fontSize`, which makeCSSVar() writes as
-          // `--env-type-label-font-size`, the part's own property.
-          variableName: (token) => cssVariable(token.id),
-          exclude: internalGroups.map((group) => `${group}.**`),
-          transform,
-          permutations: [
-            {
-              // The base set: every token, in the light scheme at standard contrast.
-              input: {},
-              prepare: (contents) =>
-                `${header}.env-theme {\n  color-scheme: light;\n  ${contents}\n}`,
-            },
-            {
-              // Only what the dark scheme overrides, so the dark rule declares what it always did.
-              input: { colorScheme: 'dark' },
-              include: dark,
-              prepare: (contents) =>
-                `.env-theme[data-env-theme='dark'] {\n  color-scheme: dark;\n  ${contents}\n}`,
-            },
-            ...themes
-              .filter((theme) => theme.media)
-              .map((theme) => ({
-                // Every token high contrast changes, in both schemes, so the dark high-contrast rule
-                // also replaces the light one's values.
-                input: theme.input,
-                include: high,
+      withoutRepeatedDeclarations(
+        withoutDescriptions(
+          css({
+            filename: 'styles/Tokens.css',
+            // Every property takes the prefix. plugin-css also passes this the parts that an alias
+            // of a composite token reads, as `type.label-fontSize`, which makeCSSVar() writes as
+            // `--env-type-label-font-size`, the part's own property.
+            variableName: (token) => cssVariable(token.id),
+            exclude: internalGroups.map((group) => `${group}.**`),
+            transform,
+            permutations: [
+              {
+                // The base set: every token, in the light scheme at standard contrast.
+                input: {},
                 prepare: (contents) =>
-                  `${block(theme.selectors.join(', '), contents)}\n@media ${theme.media.query} {\n  ${block(theme.media.selector, contents)}\n}`,
-              })),
-            ...scales
-              .filter((scale) => scale.selector)
-              .map((scale) => ({
-                // Only the sizes the scale changes; colors come from the theme rules above.
-                input: scale.input,
-                include: scaleTokens[scale.name],
-                prepare: (contents) => block(scale.selector, contents),
-              })),
-          ],
-        }),
+                  `${header}.env-theme {\n  color-scheme: light;\n  ${contents}\n}`,
+              },
+              {
+                // What the dark scheme overrides, less what withoutRepeatedValues() finds repeated.
+                input: { colorScheme: 'dark' },
+                include: dark,
+                prepare: (contents) =>
+                  `.env-theme[data-env-theme='dark'] {\n  color-scheme: dark;\n  ${contents}\n}`,
+              },
+              ...themes
+                .filter((theme) => theme.media)
+                .map((theme) => ({
+                  // Every token high contrast changes, in both schemes, so the dark high-contrast
+                  // rule also replaces the light one's values.
+                  input: theme.input,
+                  include: high,
+                  prepare: (contents) =>
+                    `${block(theme.selectors.join(', '), contents)}\n@media ${theme.media.query} {\n  ${block(theme.media.selector, contents)}\n}`,
+                })),
+              ...scales
+                .filter((scale) => scale.selector)
+                .map((scale) => ({
+                  // Only the sizes the scale changes; colors come from the theme rules above.
+                  input: scale.input,
+                  include: scaleTokens[scale.name],
+                  prepare: (contents) => block(scale.selector, contents),
+                })),
+            ],
+          }),
+        ),
       ),
       envui({
-        removedFile: new URL('removed-tokens.json', tokensDirectory),
         handwrittenFile: new URL('styles/TokensHandwritten.css', outDir),
+        handwrittenList: new URL('handwritten.json', tokensDirectory),
       }),
     ],
     lint: {

@@ -5,6 +5,8 @@ import { useMessages } from '../../internal/EnvUIContext.js';
 import { useResize } from '../../internal/useResize.js';
 import { textarea as textareaMessages } from '../../foundations/messages/textarea.js';
 import type { TextareaControlProps } from './TextareaControl.js';
+import '../../styles/Base.css';
+import '../../styles/TextField.css';
 
 interface Metrics {
   height: number;
@@ -132,7 +134,7 @@ export function TextareaResizeEdge({
         if (event.key === 'End' && !bounded) return;
         handleProps.onKeyDown(event);
       }}
-      className="env-textarea-resize-edge"
+      className="env-textarea-resize-handle"
       aria-label={messages.resize}
       aria-controls={inputId}
       aria-description={messages.resizeDescription}

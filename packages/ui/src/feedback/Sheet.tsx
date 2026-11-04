@@ -14,7 +14,8 @@ import {
   type ReactNode,
 } from 'react';
 import { IconButton } from '../actions/Button.js';
-import { Close } from '../icons/Close.js';
+import { Column } from '../foundations/Layout.js';
+import { IconClose } from '../icons/Close.js';
 import { classNames } from '../internal/classNames.js';
 import { markTriggerOwner } from '../internal/triggerOwner.js';
 import { setRef } from '../internal/setRef.js';
@@ -42,6 +43,11 @@ import {
   keepsOpen,
   usePortalContainer,
 } from '../internal/PortalContainerContext.js';
+import { computedDirection } from '../internal/direction.js';
+import { reportInDevelopment } from '../internal/developmentReport.js';
+import type { ResizeDetails } from '../internal/resizeDetails.js';
+import '../styles/Base.css';
+import '../styles/Sheet.css';
 
 export interface SheetProps
   extends Omit<ComponentPropsWithRef<'div'>, 'title' | 'children' | 'defaultValue'>,
@@ -126,7 +132,7 @@ export interface SheetProps
    * false, and with committed true as a drag ends, a key moves the handle or a double click resets
    * it. Store the committed width to keep it, and pass it back as `width`.
    */
-  onWidthChange?: (width: number, details: { committed: boolean }) => void;
+  onWidthChange?: (width: number, details: ResizeDetails) => void;
   /**
    * The smallest width of a `resizable` side sheet, in rem.
    * @default 16
@@ -184,7 +190,7 @@ export type SheetSide = 'bottom' | 'start' | 'end';
 function readDirection(source: Element | null): Direction {
   if (typeof document === 'undefined') return 'ltr';
   const element = source ?? document.activeElement ?? document.documentElement;
-  return getComputedStyle(element).direction === 'rtl' ? 'rtl' : 'ltr';
+  return computedDirection(element);
 }
 
 /** Base UI's mark on an element that no swipe starts from: a drag on the handle resizes, by touch too. */
@@ -194,22 +200,13 @@ const noSwipe = { 'data-base-ui-swipe-ignore': '' };
  * Says while developing that a resizable side sheet ignores a CSS length as its width, once a page:
  * its width is a number of rem then, which it starts at.
  */
-let reportedCssWidth = false;
 function reportCssWidth(width: string) {
-  let developing = false;
-  try {
-    // Written inline so bundlers replace process.env.NODE_ENV, as in Theme.
-    developing = process.env.NODE_ENV !== 'production';
-  } catch {
-    // No bundler defined process.env.NODE_ENV.
-  }
-  if (!developing || reportedCssWidth) return;
-  reportedCssWidth = true;
-  // A development-only warning, as React warns of a prop it can't use.
-  // eslint-disable-next-line no-console
-  console.warn(
-    `envUI: a resizable Sheet ignores width="${width}": its width is a number of rem. ` +
-      'Pass defaultWidth, or width as a number with onWidthChange, and minWidth and maxWidth.',
+  reportInDevelopment(
+    () =>
+      process.env.NODE_ENV !== 'production' &&
+      `a resizable Sheet ignores width="${width}": its width is a number of rem. ` +
+        'Pass defaultWidth, or width as a number with onWidthChange, and minWidth and maxWidth.',
+    { level: 'warn', key: 'Sheet width' },
   );
 }
 
@@ -348,7 +345,7 @@ export function Sheet({
                 }
                 {...popupProps}
                 ref={attachPopup}
-                className={classNames('env-sheet-popup', className)}
+                className={classNames('env-sheet', className)}
                 style={
                   {
                     ...(customWidth !== undefined && { '--env-sheet-width': customWidth }),
@@ -374,7 +371,7 @@ export function Sheet({
                           render={
                             <IconButton
                               variant="ghost"
-                              icon={<Close />}
+                              icon={<IconClose />}
                               aria-label={ownCloseLabel ?? messages.close}
                               disabled={pending}
                             />
@@ -383,11 +380,17 @@ export function Sheet({
                       ) : undefined
                     }
                   />
-                  {children}
+                  {/* The body scrolls on its own, so the heading and the actions stay in view in
+                      a sheet too short for all it holds. */}
+                  {children != null && (
+                    <Column gap={5} className="env-sheet-body">
+                      {children}
+                    </Column>
+                  )}
                   {actions != null && <DialogActions>{actions}</DialogActions>}
                   {resizable && (
-                    // On the content, which runs the sheet's full height and scrolls with it, so
-                    // the handle stays as tall as the sheet; the handle reaches out to the edge.
+                    // On the content, which runs the sheet's full height, so the handle stays as
+                    // tall as the sheet; the handle reaches out to the edge.
                     // A drag on it resizes rather than swipes the sheet closed, by touch too.
                     <ResizeHandle
                       {...resize.handleProps}

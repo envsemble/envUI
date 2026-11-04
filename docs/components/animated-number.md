@@ -2,7 +2,7 @@
 title: AnimatedNumber
 summary: A number in text that rolls to its new value when it changes, so a count updated elsewhere is noticed.
 status: stable
-since: 0.4.0
+since: 1.0.0
 category: Data display
 aliases:
   - animated counter
@@ -26,7 +26,9 @@ avoidWhen:
 components:
   - AnimatedNumber
 examples:
-  ShowResults: overview
+  ShowResults:
+    role: overview
+    motion: true
   CustomFormat: example
   SeatsLeft:
     role: do
@@ -34,7 +36,9 @@ examples:
   EveryNumberRolls:
     role: dont
     caption: 'Several numbers rolling at once: none of them draws the eye.'
-  AnimatedNumberAnatomy: anatomy
+  AnimatedNumberAnatomy:
+    role: anatomy
+    caption: Caught as a new value rolls in.
 ---
 
 # AnimatedNumber
@@ -45,17 +49,17 @@ examples:
 
 The number can be written in any format, such as a currency. By default it is written as the application's language writes numbers.
 
-```tsx figure=CustomFormat
+```tsx figure=CustomFormat motion
 
 ```
 
 ## Anatomy
 
-```tsx figure=AnimatedNumberAnatomy
+```tsx figure=AnimatedNumberAnatomy specimen
 
 ```
 
-1. **Number** (`env-animated-number`)
+1. **Window** (`env-animated-number`)
 2. **Value** (`env-animated-number-value`, `value`)
 
 ## Behaviour
@@ -63,6 +67,8 @@ The number can be written in any format, such as a currency. By default it is wr
 ### Rolling to a new value
 
 AnimatedNumber rolls up as the value grows and down as it shrinks.
+
+<!-- specimen: Rolling -->
 
 ### Reduced motion
 
@@ -72,11 +78,11 @@ With a reduced-motion preference, the new value only fades in.
 
 Roll one number at a time, with its words beside it.
 
-```tsx figure=SeatsLeft
+```tsx figure=SeatsLeft motion
 
 ```
 
-```tsx figure=EveryNumberRolls
+```tsx figure=EveryNumberRolls motion
 
 ```
 
@@ -100,7 +106,7 @@ Keep the words in the same sentence as the number, and match them to it: 1 seat,
 
 ### Usage
 
-AnimatedNumber shows its `value` as text inside a sentence or a label; when `value` changes, the new number rolls in, up as it grows and down as it shrinks, and with reduced motion it only fades in. Keep the words beside it in the same element, and match them to the number.
+AnimatedNumber shows its `value` as text inside a sentence or a label; when `value` changes, the new number rolls in, up as it grows and down as it shrinks, and with reduced motion it only fades in. Keep the words beside it in the same element, and match them to the number; in a Button's label, the words and the number stay one line of text.
 
 ```tsx source=ShowResults
 
@@ -123,4 +129,3 @@ AnimatedNumber is the root, `env-animated-number`, around the value, `env-animat
 ## Changelog
 
 - **1.0.0**: The default format follows EnvUIProvider's `locale`. `format` is `formatValue`, as on Slider and CalendarHeatmap.
-- **0.4.0**: AnimatedNumber: a count rolls up as it grows and down as it shrinks, and fades with reduced motion.

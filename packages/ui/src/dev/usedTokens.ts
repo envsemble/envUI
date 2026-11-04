@@ -13,7 +13,7 @@ interface RuleVariables {
 }
 
 /** The custom properties a declaration block reads. */
-export const variablesIn = (cssText: string) => [
+const variablesIn = (cssText: string) => [
   ...new Set(Array.from(cssText.matchAll(/var\(\s*(--[\w-]+)/g), (match) => match[1])),
 ];
 

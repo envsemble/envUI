@@ -2,7 +2,7 @@
 title: Badge
 summary: Small static pills that name a state in its tone or a piece of metadata, show a count, or the size of a change.
 status: stable
-since: 0.5.0
+since: 1.0.0
 category: Data display
 aliases:
   - Counter
@@ -42,8 +42,8 @@ avoidWhen:
     use: Meter
   - text: A headline number with its label and trend, such as on a dashboard.
     see: key-figures
-  - text: A count beside a destination in the navigation, which a Drawer item shows itself.
-    use: Drawer
+  - text: A count beside a destination in the navigation, which a NavigationDrawer item shows itself.
+    use: NavigationDrawer
   - text: An identifier or a command in text.
     use: Code
 components:
@@ -96,15 +96,16 @@ A badge takes every status tone, which [Colors & themes](../foundations/colors.m
 ```
 
 1. **Neutral**
-2. **Accent**
-3. **Success**
-4. **Warning**
-5. **Danger**
-6. **Done**
+2. **Primary**
+3. **Accent**
+4. **Success**
+5. **Warning**
+6. **Danger**
+7. **Done**
 
 ### Counts
 
-A count takes the same tones and variants: neutral and soft by default, and solid in the accent tone for a count that needs attention.
+A count takes the same tones and variants: neutral and soft by default, and solid in the primary tone for a count that needs attention.
 
 ## Anatomy
 
@@ -116,15 +117,13 @@ A count takes the same tones and variants: neutral and soft by default, and soli
 2. **Icon** (`env-badge > env-icon`, `icon`)
 3. **Label** (`env-badge-label`, `children`)
 
-Not shown: a count, and DiffStat's added and removed lines.
-
 ## Behaviour
 
 ### Adapting to width
 
 A badge stays on one line and ends with an ellipsis where its container is narrower.
 
-```tsx figure=LongState widths="10 20"
+```tsx figure=LongState widths="20 10" sweep
 
 ```
 
@@ -154,7 +153,7 @@ Show 99+ beyond two digits, and give the full count in the count's name for assi
 
 - The label as text, read in place; the icon hidden.
 - A count's `aria-label` read instead of its number.
-- A DiffStat named once, such as 12 added lines and 3 removed lines, from `messages.diffStat.label` or `formatLabel`.
+- A DiffStat named once, such as 12 added lines and 3 removed lines, or from `formatLabel`.
 
 ### You provide
 
@@ -173,7 +172,7 @@ A Badge's label is its `children`, a state, a name or a category in a word or tw
 
 #### Variants and tones
 
-`variant` is `soft`, the default, which tints the background, `solid`, which fills it with the tone, or `outline`, which draws a border. `tone` is `neutral`, the default, `accent`, `success`, `warning`, `danger` or `done`, the purple of completed work.
+`variant` is `soft`, the default, which tints the background without an edge, in the tone's stronger tint for primary, accent, success, warning and danger, with a semibold label, `solid`, which fills it with the tone, or `outline`, which draws a border. `tone` is `neutral`, the default, `primary`, the blue of what is current, `accent`, the purple that stands out, `success`, `warning`, `danger` or `done`, the violet of completed work.
 
 ```tsx
 <Badge tone="success">Ready</Badge>
@@ -190,13 +189,13 @@ A Badge's label is its `children`, a state, a name or a category in a word or tw
   Comments <Badge count={4} />
 </Button>
 <Button>
-  Review requests <Badge count={2} tone="accent" variant="solid" />
+  Review requests <Badge count={2} tone="primary" variant="solid" />
 </Button>
 ```
 
 #### DiffStat
 
-DiffStat shows `additions` as +12 in the success tone and `deletions` as −3 in the danger tone, in the locale's digits. It is named once for assistive technology, such as 12 added lines and 3 removed lines, from EnvUIProvider's `messages.diffStat.label` or its own `formatLabel`.
+DiffStat shows `additions` as +12 in the success tone and `deletions` as −3 in the danger tone, in the locale's digits. It is named once for assistive technology, such as 12 added lines and 3 removed lines,, or from its own `formatLabel`.
 
 ```tsx
 <DiffStat additions={12} deletions={3} />
@@ -204,33 +203,23 @@ DiffStat shows `additions` as +12 in the success tone and `deletions` as −3 in
 
 #### In navigation
 
-A Drawer destination's `count` shows the count at its end and adds it to the destination's name, such as Inbox, 12 new.
+A NavigationDrawer destination's `count` shows the count at its end and adds it to the destination's name, such as Inbox, 12 new.
 
 ```tsx
 const destinations: Destination[] = [
-  { label: 'Inbox', icon: <Inbox />, href: '/inbox', count: 12, current: true },
-  { label: 'Later', icon: <Schedule />, href: '/later', count: 1200 },
+  { label: 'Inbox', icon: <IconInbox />, href: '/inbox', count: 12, current: true },
+  { label: 'Later', icon: <IconSchedule />, href: '/later', count: 1200 },
 ];
 
-<Drawer aria-label="Workspace" destinations={destinations} />;
+<NavigationDrawer aria-label="Workspace" destinations={destinations} />;
 ```
 
 ### Composition
 
-The parts are the pill, `env-badge`, its icon, `env-badge > env-icon`, and its label, `env-badge-label`. A count is `env-badge[data-count]`, with `env-badge-count-label` for its `aria-label`; DiffStat has `env-diff-stat-additions` and `env-diff-stat-deletions`. A control, such as a Button, sets the badges, counts and DiffStats inside it through the `--env-badge-*`, `--env-badge-count-*` and `--env-diff-stat-*` properties.
-
-### Customize
-
-`--env-badge-container`, `--env-badge-content` and `--env-badge-outline` set the colors of one Badge, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
-
-```tsx
-<Badge style={{ '--env-badge-container': 'var(--env-color-bg-brand-muted)' } as CSSProperties}>
-  Beta
-</Badge>
-```
+The parts are the pill, `env-badge`, its icon, `env-badge > env-icon`, and its label, `env-badge-label`. A count is `env-badge[data-count]`, with `env-badge-count-label` for its `aria-label`; DiffStat has `env-diff-stat-additions` and `env-diff-stat-deletions`.
 
 ## Changelog
 
-- **1.0.0**: InfoChip is Badge, a pill, and its page joins this one. The `subtle` variant is `soft`. `Counter` is a Badge with `count`, which the `v1-structure` codemod writes, `.env-badge[data-count]` with `env-badge-count-label`, and `DiffCount` is `DiffStat`, with its props type and the `env-diff-stat-*` classes; the page is `badge`. DiffStat writes its numbers and its name in the locale, and its name comes from `messages.diffStat.label`. A control sets the badges inside it through the `--env-badge-*`, `--env-badge-count-*` and `--env-diff-stat-*` hooks.
-- **0.7.0**: DiffCount; a counter in a button keeps its own filled pill, except on primary and important fills.
-- **0.5.0**: Badge in six tones and three variants, and Counter; in a button, a badge or counter takes the button's text color as an outlined pill.
+- **1.0.0-prerelease.5**: A little roomier: 3 px above and below its label and 10 px at the sides, edge included.
+- **1.0.0**: A soft badge in the accent, success, warning or danger tone takes the tone's stronger tint, and its label is semibold; at high contrast it keeps the softer tint.
+- **1.0.0**: InfoChip is Badge, a pill, and its page joins this one. The `subtle` variant is `soft`. `Counter` is a Badge with `count`, `.env-badge[data-count]` with `env-badge-count-label`, and `DiffCount` is `DiffStat`, with its props type and the `env-diff-stat-*` classes; the page is `badge`. DiffStat writes its numbers and its name in the locale, and its name comes from `messages.diffStat.label`. A control sets the badges inside it through the `--env-badge-*`, `--env-badge-count-*` and `--env-diff-stat-*` hooks.

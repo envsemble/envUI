@@ -1,194 +1,210 @@
-/* Quick open: a dialog near the top of the window with a search field over its options. It shares
-   the dialog surface, and its options take the Select options' shape and selection colors. */
-.env-command-palette-positioner {
-  box-sizing: border-box;
-  position: fixed;
-  inset: 0;
-  z-index: var(--env-z-modal);
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  justify-items: center;
-  align-items: start;
-  /* The env-window container of the palette (see .env-overlay-theme in Dialog.css); its inline
-     gutter is the palette's margin, so the container measures the whole window. */
-  container: env-window / inline-size;
-  padding-block: max(var(--env-viewport-gutter), min(12vh, 6rem)) var(--env-viewport-gutter);
-  pointer-events: none;
-}
-.env-command-palette {
-  box-sizing: border-box;
-  inline-size: min(40rem, 100% - 2 * var(--env-viewport-gutter));
-  margin-inline: var(--env-viewport-gutter);
-  max-block-size: 100%;
-  border: 0.0625rem solid var(--env-elevation-3-border);
-  border-radius: var(--env-radius-surface);
-  background: var(--env-color-bg-popup);
-  color: var(--env-color-fg-default);
-  font: var(--env-type-body);
-  overflow: hidden;
-  outline: none;
-  pointer-events: auto;
-  /* Motion: it fades in, below; it has no positioner, so it scales from the center. */
-  transform-origin: var(--transform-origin, center);
-  transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);
-}
-.env-command-palette-search {
-  flex: 0 0 auto;
-  min-block-size: var(--env-control-height);
-  padding-inline: var(--env-space-4);
-  border-radius: var(--env-radius-full);
-  background: var(--env-color-bg-neutral-muted);
-}
-.env-command-palette-search > .env-icon {
-  color: var(--env-color-fg-muted);
-}
-.env-command-palette-input {
-  flex: 1 1 auto;
-  min-inline-size: 0;
-  block-size: var(--env-control-height);
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: var(--env-color-fg-default);
-  font: var(--env-type-body);
-  font-size: var(--env-control-font-size);
-  outline: none;
-}
-.env-command-palette-input::placeholder {
-  color: var(--env-color-fg-muted);
-}
-.env-command-palette-search:has(.env-command-palette-input:focus-visible) {
-  outline: 0.125rem solid var(--env-color-border-focus);
-  outline-offset: -0.125rem;
-}
-.env-command-palette-list {
-  /* The options' offset parent, so the highlight scrolls into view by their offsets. */
-  position: relative;
-  flex: 0 1 auto;
-  min-block-size: 0;
-  max-block-size: 60vh;
-  margin-block-start: var(--env-space-2);
-  align-content: start;
-  gap: 0.125rem;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  scrollbar-width: thin;
-}
-.env-command-palette-list[hidden] {
-  display: none;
-}
-.env-command-palette-group {
-  gap: 0.125rem;
-}
-.env-command-palette-group + .env-command-palette-group,
-.env-command-palette-item + .env-command-palette-group {
-  margin-block-start: var(--env-space-2);
-}
-.env-command-palette-heading {
-  padding: var(--env-space-2) var(--env-space-4) var(--env-space-1);
-  color: var(--env-color-fg-muted);
-  font: var(--env-type-body-small);
-  font-weight: var(--env-font-weight-medium);
-}
-/* Options are ListRows; the palette gives them its taller rows, body text, wider gaps and its
-   concentric corners. */
-.env-command-palette-item {
-  min-block-size: var(--env-control-height-md);
-  gap: var(--env-space-3);
-  font: var(--env-type-body);
-  padding: var(--env-space-1) var(--env-space-4);
-  /* Concentric with the palette's corners through its padding, like the search field above. */
-  border-radius: calc(var(--env-radius-surface) - var(--env-space-2));
-  color: var(--env-color-fg-control);
-}
-.env-command-palette-item:active {
-  background: var(--env-color-bg-popup-pressed);
-}
-/* The status announces the number of results; it shows only when it says that nothing matches. */
-.env-command-palette-status:not([data-empty]) {
-  /* Out of the layout and clipped away whole; the palette's own overflow holds it. */
-  position: absolute;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
-/* The empty state, in place of the list: a quiet icon on a muted circle, as DropZone draws its
-   icon, then the title and a quieter description, centred. */
-.env-command-palette-status[data-empty] {
-  display: grid;
-  justify-items: center;
-  gap: var(--env-space-1);
-  padding: var(--env-space-7) var(--env-space-4) var(--env-space-5);
-  color: var(--env-color-fg-default);
-  text-align: center;
-  overflow-wrap: anywhere;
-}
-.env-command-palette-empty-icon {
-  --env-command-palette-empty-icon-size: 1.5rem;
-  display: grid;
-  place-items: center;
-  inline-size: var(--env-control-height-touch);
-  block-size: var(--env-control-height-touch);
-  margin-block-end: var(--env-space-2);
-  border-radius: var(--env-radius-full);
-  background: var(--env-color-bg-neutral-muted);
-  color: var(--env-color-fg-muted);
-}
-.env-command-palette-empty-icon > .env-icon {
-  inline-size: var(--env-command-palette-empty-icon-size);
-  block-size: var(--env-command-palette-empty-icon-size);
-}
-.env-command-palette-empty-title {
-  font-weight: var(--env-font-weight-medium);
-}
-.env-command-palette-empty-description {
-  max-inline-size: 48ch;
-  color: var(--env-color-fg-muted);
-  font: var(--env-type-body-small);
-  text-wrap: pretty;
-}
-/* The footer stands apart from the options by space, its small muted text and its keys, with no
-   line. */
-.env-command-palette-footer {
-  flex: 0 0 auto;
-  margin-block-start: var(--env-space-3);
-  padding: var(--env-space-2) var(--env-space-4) var(--env-space-1);
-  gap: var(--env-space-1) var(--env-space-4);
-  color: var(--env-color-fg-muted);
-  font: var(--env-type-body-small);
-}
-/* The application's own footer content flows as text after the hints. */
-.env-command-palette-footer-content {
-  min-inline-size: 0;
-}
-/* Each hint is its keys followed by what they do. */
-@media (pointer: coarse) {
-  .env-command-palette-item {
-    min-block-size: var(--env-control-height-touch);
+@layer env.components {
+  /* Quick open: a dialog near the top of the window with a search field over its options. It is a
+     frosted popup over the dialog's backdrop (Popup.css), with a solid search pill, and its options take
+     the Select options' shape and colors. */
+  .env-command-palette-positioner {
+    box-sizing: border-box;
+    position: fixed;
+    inset: 0;
+    z-index: var(--env-z-modal);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    align-items: start;
+    /* The env-window container of the palette (see .env-overlay-theme in Dialog.css); its inline
+       gutter is the palette's margin, so the container measures the whole window. */
+    container: env-window / inline-size;
+    padding-block: max(var(--env-viewport-gutter), min(12vh, 6rem)) var(--env-viewport-gutter);
+    pointer-events: none;
   }
-}
-
-/* Motion: the command palette fades in and drops into place. Movement only without a
-   reduced-motion preference. Base UI's positioner sets the origin. */
-.env-command-palette[data-starting-style],
-.env-command-palette[data-ending-style] {
-  opacity: 0;
-}
-.env-command-palette[data-ending-style] {
-  transition-duration: var(--env-motion-duration-fast);
-  transition-timing-function: var(--env-motion-ease-exit);
-}
-@media (prefers-reduced-motion: no-preference) {
   .env-command-palette {
-    transition:
-      opacity var(--env-motion-duration-medium) var(--env-motion-ease),
-      transform var(--env-motion-duration-slow) var(--env-motion-ease-enter);
+    /* The edge of a solid palette; frosted, it has none. */
+    --env-command-palette-edge: var(--env-popup-solid) var(--env-elevation-3-border);
+    box-sizing: border-box;
+    inline-size: min(40rem, 100% - 2 * var(--env-viewport-gutter));
+    margin-inline: var(--env-viewport-gutter);
+    max-block-size: 100%;
+    /* An inset that keeps the rows' corners concentric with the palette's. */
+    padding: calc(var(--env-radius-surface) - var(--env-popup-row-radius));
+    border: var(--env-control-border-width) solid var(--env-command-palette-edge, transparent);
+    border-radius: var(--env-radius-surface);
+    background: color-mix(in srgb, var(--env-popup-fill) var(--env-popup-opacity), transparent);
+    box-shadow: var(--env-popup-shadow);
+    -webkit-backdrop-filter: blur(var(--env-popup-blur)) saturate(1.4);
+    backdrop-filter: blur(var(--env-popup-blur)) saturate(1.4);
+    color: var(--env-color-fg-default);
+    font: var(--env-type-body);
+    overflow: hidden;
+    outline: none;
+    pointer-events: auto;
+    /* Motion: it fades in, below; it has no positioner, so it scales from the center. */
+    transform-origin: var(--transform-origin, center);
+    transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);
   }
+  /* The search is a ghost TextField at the large height (TextField.css), the one field in a popup
+     with a fill of its own: solid in every state, the neutral fill over the popup's own color, so what
+     shows through the palette never reaches the text typed in it. It is always focused, so its
+     placeholder stays, and its edge returns on a solid palette. Its icon lines up with the options'. */
+  .env-command-palette-search {
+    --env-text-field-ghost-solid:
+      linear-gradient(var(--env-color-bg-neutral-muted), var(--env-color-bg-neutral-muted)),
+      var(--env-popup-fill);
+    --env-text-field-ghost-placeholder: var(--env-color-fg-muted);
+    --env-text-field-ghost-edge: var(--env-popup-solid) var(--env-color-border-default);
+    /* Where the options' icons sit, inside the control's border. */
+    --env-text-field-start-inset: calc(
+      var(--env-popup-row-padding-inline) - var(--env-control-border-width)
+    );
+    /* The containing block of its focus ring, below. */
+    position: relative;
+    flex: 0 0 auto;
+  }
+  /* While it holds the caret, the search shows the focus ring inside its edge, as every focused
+     control does. The search draws it over its field, a pill as the field is: an outline of its
+     own would sit under the field, which is positioned and paints after it. */
+  .env-command-palette-search::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 2px solid transparent;
+    border-radius: var(--env-radius-full);
+    pointer-events: none;
+  }
+  .env-command-palette-search:focus-within::after {
+    border-color: var(--env-color-border-focus);
+  }
+  .env-command-palette-list {
+    /* The options' offset parent, so the highlight scrolls into view by their offsets. */
+    position: relative;
+    flex: 0 1 auto;
+    min-block-size: 0;
+    max-block-size: 60vh;
+    margin-block-start: var(--env-popup-group-gap);
+    align-content: start;
+    gap: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+  }
+  .env-command-palette-list[hidden] {
+    display: none;
+  }
+  /* Options are ListRows, as in every popup list, in the text color, one under the next. */
+  .env-command-palette-group {
+    gap: 0;
+  }
+  /* Groups stand apart by space, under a small muted heading, with no line. */
+  .env-command-palette-group + .env-command-palette-group,
+  .env-command-palette-item + .env-command-palette-group {
+    margin-block-start: var(--env-popup-group-gap);
+  }
+  .env-command-palette-group-label {
+    padding: var(--env-popup-padding) var(--env-popup-label-padding-inline)
+      calc(0.1 * var(--env-control-height-md));
+    color: var(--env-color-fg-muted);
+    font: var(--env-font-weight-medium) var(--env-font-size-caption) / 1.4 var(--env-font-family);
+    letter-spacing: 0.01em;
+  }
+  /* The status announces the number of results; it shows only when it says that nothing matches. */
+  .env-command-palette-status:not([data-empty]) {
+    /* Out of the layout and clipped away whole; the palette's own overflow holds it. */
+    position: absolute;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  /* The empty state, in place of the list: a quiet icon on a muted circle, as DropZone draws its
+     icon, then the title and a quieter description, centred. */
+  .env-command-palette-status[data-empty] {
+    display: grid;
+    justify-items: center;
+    gap: var(--env-space-1);
+    padding: var(--env-space-7) var(--env-space-4) var(--env-space-5);
+    color: var(--env-color-fg-default);
+    text-align: center;
+    overflow-wrap: anywhere;
+  }
+  .env-command-palette-empty-icon {
+    --env-command-palette-empty-icon-size: 1.5rem;
+    display: grid;
+    place-items: center;
+    inline-size: var(--env-control-height-touch);
+    block-size: var(--env-control-height-touch);
+    margin-block-end: var(--env-space-2);
+    border-radius: var(--env-radius-full);
+    background: var(--env-color-bg-neutral-muted);
+    color: var(--env-color-fg-muted);
+  }
+  .env-command-palette-empty-icon > .env-icon {
+    inline-size: var(--env-command-palette-empty-icon-size);
+    block-size: var(--env-command-palette-empty-icon-size);
+  }
+  .env-command-palette-empty-title {
+    font-weight: var(--env-font-weight-medium);
+  }
+  .env-command-palette-empty-description {
+    max-inline-size: 48ch;
+    color: var(--env-color-fg-muted);
+    font: var(--env-type-body-sm);
+    text-wrap: pretty;
+  }
+  /* The footer stands apart from the options by space, its small muted text and its keys, with no
+     line. */
+  .env-command-palette-footer {
+    /* Its keys are the rows' muted chips, side by side. */
+    --env-kbd-size: calc(0.5 * var(--env-control-height-md));
+    --env-kbd-padding-inline: calc(0.125 * var(--env-control-height-md));
+    --env-kbd-radius: calc(0.125 * var(--env-control-height-md));
+    --env-kbd-fg: var(--env-color-fg-muted);
+    --env-kbd-bg: var(--env-color-bg-neutral-muted);
+    --env-kbd-border: transparent;
+    --env-kbd-border-end-width: var(--env-control-border-width);
+    --env-kbd-font-size: var(--env-font-size-caption);
+    --env-kbd-separator-padding-inline: calc(0.0625 * var(--env-control-height-md));
+    --env-kbd-separator-font: 0 / 1 var(--env-font-family);
+    flex: 0 0 auto;
+    padding: var(--env-popup-group-gap) var(--env-popup-row-padding-inline)
+      calc(0.1 * var(--env-control-height-md));
+    gap: var(--env-space-1) var(--env-space-4);
+    color: var(--env-color-fg-muted);
+    font: var(--env-font-weight-body) var(--env-font-size-label-sm) / 1.35 var(--env-font-family);
+  }
+  /* Each hint's keys stand as close to what they do as to one another. */
+  .env-command-palette-hint {
+    gap: calc(0.125 * var(--env-control-height-md));
+  }
+  /* The application's own footer content flows as text after the hints. */
+  .env-command-palette-footer-content {
+    min-inline-size: 0;
+  }
+  @media (pointer: coarse) {
+    .env-command-palette-item {
+      min-block-size: var(--env-control-height-touch);
+    }
+  }
+
+  /* Motion: the command palette fades in and drops into place. Movement only without a
+     reduced-motion preference. Base UI's positioner sets the origin. */
   .env-command-palette[data-starting-style],
   .env-command-palette[data-ending-style] {
-    transform: translateY(-0.5rem) scale(0.98);
+    opacity: 0;
   }
   .env-command-palette[data-ending-style] {
     transition-duration: var(--env-motion-duration-fast);
     transition-timing-function: var(--env-motion-ease-exit);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .env-command-palette {
+      transition:
+        opacity var(--env-motion-duration-medium) var(--env-motion-ease),
+        transform var(--env-motion-duration-slow) var(--env-motion-ease-enter);
+    }
+    .env-command-palette[data-starting-style],
+    .env-command-palette[data-ending-style] {
+      transform: translateY(-0.5rem) scale(0.98);
+    }
+    .env-command-palette[data-ending-style] {
+      transition-duration: var(--env-motion-duration-fast);
+      transition-timing-function: var(--env-motion-ease-exit);
+    }
   }
 }

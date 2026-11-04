@@ -6,7 +6,7 @@ import {
   documentedLibraries,
   importedLibraries,
   libraryEntries,
-} from '../scripts/EntryLibraries.mjs';
+} from '../scripts/build/EntryLibraries.ts';
 
 const repository = fileURLToPath(new URL('../', import.meta.url));
 const manifest = JSON.parse(

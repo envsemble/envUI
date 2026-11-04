@@ -2,7 +2,7 @@
 
 // Dev mode's two sidebars: the nodes as a tree on one side of the 3D view, with dev mode's theme at
 // its foot, and on the other the inspector, with the selected node in detail and the readout an
-// agent reads. Each is resizable by its inner edge, with the grip of a resizable Drawer, and hides
+// agent reads. Each is resizable by its inner edge, with the grip of a resizable NavigationDrawer, and hides
 // with the button in its header's outer corner.
 
 import { Fragment, memo, useMemo, useState, type CSSProperties, type ReactNode } from 'react';
@@ -13,11 +13,12 @@ import * as DescriptionList from '../../content/DescriptionList.js';
 import { Column, Grid, Row } from '../../foundations/Layout.js';
 import { Surface } from '../../foundations/Surface.js';
 import { Text } from '../../foundations/Text.js';
-import { Contrast } from '../../icons/Contrast.js';
-import { DarkMode } from '../../icons/DarkMode.js';
-import { LightMode } from '../../icons/LightMode.js';
+import { IconContrast } from '../../icons/Contrast.js';
+import { IconDarkMode } from '../../icons/DarkMode.js';
+import { IconLightMode } from '../../icons/LightMode.js';
 import { ResizeHandle } from '../../internal/ResizeHandle.js';
-import { remPixels, useResizableWidth } from '../../internal/useResizableWidth.js';
+import { useResizableWidth } from '../../internal/useResizableWidth.js';
+import { remPixels } from '../../internal/lengths.js';
 import * as Menu from '../../navigation/Menu.js';
 import { Tabs } from '../../navigation/Tabs.js';
 import { Tree, type TreeItem } from '../../navigation/Tree.js';
@@ -27,7 +28,7 @@ import { conditionHolds, queriesFor, thresholdsFor } from '../queries.js';
 import { labelOf } from '../readout.js';
 import { tokensUsedBy } from '../usedTokens.js';
 import { toRem, windowClassOf } from '../units.js';
-import { SidebarToggle, type Side } from './controls.js';
+import { SidebarToggle, type Side } from './Controls.js';
 import type { EditorTheme } from './editorTheme.js';
 import { sideWidths } from './sides.js';
 import type { LivePage } from './useLivePage.js';
@@ -54,8 +55,8 @@ function roomFor(handle: HTMLElement) {
 }
 
 /**
- * A sidebar: a flush, square pane on the navigation's background, as a Drawer is, resizable by its
- * inner edge with the same grip, keyboard and double click as a resizable Drawer's. It keeps its
+ * A sidebar: a flush, square pane on the navigation's background, as a NavigationDrawer is, resizable by its
+ * inner edge with the same grip, keyboard and double click as a resizable NavigationDrawer's. It keeps its
  * width while it is dragged, rendering only itself, and hands it on once the drag ends.
  */
 function Sidebar({
@@ -171,9 +172,9 @@ export const NodeTree = memo(function NodeTree({
 });
 
 const themeIcons: Record<EditorTheme['theme'], ReactNode> = {
-  page: <Contrast />,
-  light: <LightMode />,
-  dark: <DarkMode />,
+  page: <IconContrast />,
+  light: <IconLightMode />,
+  dark: <IconDarkMode />,
 };
 
 /** The theme of dev mode's own UI: the page's, light or dark, with or without high contrast. */
@@ -200,13 +201,13 @@ function EditorThemeMenu({
         value={value.theme}
         onValueChange={(theme) => onChange({ ...value, theme: theme as EditorTheme['theme'] })}
       >
-        <Menu.RadioItem value="page" icon={<Contrast />} description="As the page is now">
+        <Menu.RadioItem value="page" icon={<IconContrast />} description="As the page is now">
           Same as the page
         </Menu.RadioItem>
-        <Menu.RadioItem value="light" icon={<LightMode />}>
+        <Menu.RadioItem value="light" icon={<IconLightMode />}>
           Light
         </Menu.RadioItem>
-        <Menu.RadioItem value="dark" icon={<DarkMode />}>
+        <Menu.RadioItem value="dark" icon={<IconDarkMode />}>
           Dark
         </Menu.RadioItem>
       </Menu.RadioGroup>
@@ -355,7 +356,7 @@ function Nodes({ full, selected, onSelect, onTreeHover }: NodesProps) {
       const open = !collapsed.has(node.key);
       const problems = problemsByKey.get(node.key)?.length ?? 0;
       rows.push({
-        id: String(node.key),
+        value: String(node.key),
         depth,
         node,
         label: labelOf(node),
@@ -363,7 +364,7 @@ function Nodes({ full, selected, onSelect, onTreeHover }: NodesProps) {
         expandable: node.hidden === null && node.children.length > 0,
         expanded: open,
         description: node.hidden ?? undefined,
-        title: node.hidden ?? undefined,
+        tooltip: node.hidden ?? undefined,
         end: problems ? (
           <Badge tone="danger" variant="soft">
             {problems}
@@ -400,12 +401,12 @@ function Nodes({ full, selected, onSelect, onTreeHover }: NodesProps) {
         density="xs"
         items={items}
         value={selected === null ? null : String(selected)}
-        onAction={(item) => onSelect(Number(item.id) === selected ? null : Number(item.id))}
+        onAction={(item) => onSelect(Number(item.value) === selected ? null : Number(item.value))}
         onExpandedChange={(item, expanded) =>
           setCollapsed((keys) => {
             const next = new Set(keys);
-            if (expanded) next.delete(Number(item.id));
-            else next.add(Number(item.id));
+            if (expanded) next.delete(Number(item.value));
+            else next.add(Number(item.value));
             return next;
           })
         }
@@ -414,7 +415,7 @@ function Nodes({ full, selected, onSelect, onTreeHover }: NodesProps) {
   );
 }
 
-/** A heading of the details, quiet and small, as a Drawer's group headings are. */
+/** A heading of the details, quiet and small, as a NavigationDrawer's group headings are. */
 const Heading = ({ children }: { children: ReactNode }) => (
   <Text variant="caption" render={<h3 />}>
     {children}

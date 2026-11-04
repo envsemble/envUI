@@ -20,6 +20,8 @@ import { classNames } from '../internal/classNames.js';
 import { useButtonEmphasis } from '../internal/ControlDefaults.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { confirmButton } from '../foundations/messages/confirmButton.js';
+import '../styles/Base.css';
+import '../styles/Button.css';
 
 type ConfirmButtonBaseProps = Omit<ButtonAppearanceProps, 'variant' | 'tone'> &
   Omit<ComponentPropsWithRef<'button'>, 'onClick' | 'type'> & {
@@ -70,6 +72,7 @@ export type ConfirmButtonProps = ConfirmButtonBaseProps &
          * confirm label, so the consequence is still named.
          */
         icon: ReactNode;
+        /** The icon-only button's name at rest, such as Delete draft. */
         'aria-label': string;
         children?: never;
       } & ConfirmButtonEmphasisProps<'neutral'>)
@@ -128,7 +131,7 @@ export function ConfirmButton({
         return;
       }
       // A double click arms the button only: the second press must be deliberate.
-      if (event.timeStamp - armedAt < DOUBLE_PRESS_GUARD_MS) return;
+      if (event.timeStamp - armedAt < doublePressGuard) return;
       setArmedAt(null);
       onConfirm();
     },
@@ -180,4 +183,5 @@ export function ConfirmButton({
   );
 }
 
-const DOUBLE_PRESS_GUARD_MS = 400;
+/** A press this soon after the one that armed the button, in milliseconds, is a double click. */
+const doublePressGuard = 400;

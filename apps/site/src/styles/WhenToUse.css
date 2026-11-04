@@ -1,0 +1,40 @@
+/* The start of a page's Rules, from its frontmatter: a short plain list of what it is for under Use
+   it when and, for a pattern, what it is built from. */
+.site-when {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  /* Apart, as one sub-topic from the next. */
+  row-gap: var(--env-space-8);
+  min-inline-size: 0;
+}
+
+.site-when .env-markdown > :is(h3, ul):first-child {
+  margin-block-start: 0;
+}
+
+.site-when .env-markdown > :last-child {
+  margin-block-end: 0;
+}
+
+/* A Use it when list of more than three items runs in two columns where its section has room for
+   both at a readable width, the first half on the left, each column read top to bottom, and no
+   item split between them; one column where it is narrow. */
+.site-when .catalogue-when-columns {
+  container-type: inline-size;
+}
+
+@container (min-width: 40rem) {
+  .site-when .catalogue-when-columns .env-markdown > ul {
+    display: grid;
+    grid-template-rows: repeat(var(--catalogue-when-rows), auto);
+    grid-auto-columns: minmax(0, 1fr);
+    grid-auto-flow: column;
+    column-gap: var(--env-space-8);
+    row-gap: var(--env-prose-list-item-gap);
+    max-inline-size: none;
+  }
+
+  .site-when .catalogue-when-columns .env-markdown > ul > li {
+    margin-block-start: 0;
+  }
+}

@@ -2,7 +2,7 @@
 title: SegmentedControl
 summary: One choice among a few items, as connected outlined segments, such as views or filters of the same content.
 status: stable
-since: 0.5.0
+since: 1.0.0
 category: Forms & selection
 aliases:
   - segmented button
@@ -62,8 +62,8 @@ Small, medium and large, the control heights of the [scale](../foundations/spaci
 
 1. **Outline** (`env-segmented-control`)
 2. **Segment** (`env-segmented-control-item`)
-3. **Check** (`env-segmented-control-item-check`)
-4. **Icon** (`env-segmented-control-item > env-icon`, `icon`)
+3. **Check** (`env-segmented-control-item-indicator`)
+4. **Icon** (`env-segmented-control-item[data-unchecked] > env-icon:not(env-segmented-control-item-indicator)`, `icon`)
 5. **Label** (`env-segmented-control-item-label`, `label`)
 6. **Count** (`env-segmented-control-item-count`, `count`)
 
@@ -85,7 +85,7 @@ The control is as wide as its options, or fills its container and splits it even
 - A label too long for its share ends with an ellipsis and shows whole in a tooltip.
 - In a container too narrow for its options, a control as wide as its options scrolls.
 
-```tsx figure=FullWidthScope widths="14 26"
+```tsx figure=FullWidthScope widths="26 14" motion
 
 ```
 
@@ -140,7 +140,7 @@ Name each option with a word or two for its view.
 />
 ```
 
-It is always controlled: set `value` and update it from `onValueChange`. `items` are two to five `SegmentedControlItem`s in the order they show, each with its `value`, a short `label`, and optionally a `count`, read as part of its name, a decorative `icon` and `disabled`. `aria-label` names the control, which has no visible label; `disabled` turns off the whole control.
+Leave it uncontrolled, starting at `defaultValue`, the first item by default, or control it with `value` and `onValueChange`. `items` are two to five `SegmentedControlItem`s in the order they show, each with its `value`, a short `label`, and optionally a `count`, read as part of its name, a decorative `icon` and `disabled`. `aria-label` names the control, which has no visible label; `disabled` turns off the whole control.
 
 #### Size and width
 
@@ -148,16 +148,10 @@ It is always controlled: set `value` and update it from `onValueChange`. `items`
 
 ### Composition
 
-The outline, `env-segmented-control`, carries `data-size` and `data-full-width`; each segment, `env-segmented-control-item`, `data-checked` while chosen and `data-disabled`. The check, `env-segmented-control-item-check`, takes the chosen segment's icon's place.
-
-### Customize
-
-`--env-segmented-control-container`, `--env-segmented-control-content`, `--env-segmented-control-outline`, `--env-segmented-control-selected` and `--env-segmented-control-selected-content` color one SegmentedControl, through `style` or CSS; hover, focus and press follow them.
+The outline, `env-segmented-control`, carries `data-size` and `data-full-width`; each segment, `env-segmented-control-item`, `data-checked` while chosen and `data-disabled`. The check, `env-segmented-control-item-indicator`, takes the chosen segment's icon's place.
 
 ## Changelog
 
+- **1.0.0-prerelease.5**: It can be uncontrolled, with `defaultValue`.
 - **1.0.0-prerelease.2**: SegmentedControl looks like Material's segmented buttons: connected segments in one outline, the chosen one in the selected fill, `--env-color-bg-selected`, with a check, `env-segmented-control-item-check`, in place of its icon, so it reads differently from Tabs. `--env-segmented-control-outline` sets the outline. The API stays.
 - **1.0.0**: `options` is `items`, and `SegmentedControlOption` is `SegmentedControlItem`. The segments' classes are `env-segmented-control-item`, `-item-label` and `-item-count`. An unchosen segment's count keeps 4.5:1 contrast. SegmentedControl takes `ref`, `style`, `id` and other attributes of its rail, and its page is under Forms & selection.
-- **0.7.0**: The chosen segment takes the soft blue primary in the dark theme, as primary buttons do.
-- **0.6.0**: `fullWidth`: the rail fills its container and splits it evenly; a label too long for its share ends with an ellipsis and shows whole in a tooltip, or wraps on touch screens.
-- **0.5.0**: SegmentedControl, with counts, icons and the compact size.

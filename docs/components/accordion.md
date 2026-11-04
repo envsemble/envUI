@@ -40,13 +40,13 @@ examples:
 2. **Title** (`env-accordion-label`, `title`)
 3. **Panel** (`env-accordion-content`, `children`)
 
-Each item draws the line under it, and its heading is a button.
-
 ## Behaviour
 
 ### One open at a time
 
 One section is open at a time: opening another closes it.
+
+<!-- specimen: OneAtATime -->
 
 ### Several open
 
@@ -60,13 +60,11 @@ An accordion can let people keep several sections open at once.
 
 The application can open a section itself, such as from a help button elsewhere on the page.
 
-```tsx figure=OpenFromOutside
+```tsx figure=OpenFromOutside motion
 
 ```
 
 ## Rules
-
-An accordion holds one level of sections, and nothing people need to finish a task.
 
 ### One level
 

@@ -1,11 +1,14 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
-// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
+// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../Icon.js';
+import { useSymbolIconFill } from '../SymbolIconState.js';
 
-export function Gate({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
-  return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M120-280q-17 0-28.5-11.5T80-320v-320q0-17 11.5-28.5T120-680q17 0 28.5 11.5T160-640v320q0 17-11.5 28.5T120-280Zm720 0q-17 0-28.5-11.5T800-320v-320q0-17 11.5-28.5T840-680q17 0 28.5 11.5T880-640v320q0 17-11.5 28.5T840-280Zm-640 40v-360q0-66 47-113t113-47h40q17 0 28.5 11.5T440-720v200h-40q-17 0-28.5 11.5T360-480q0 17 11.5 28.5T400-440h40v200q0 17-11.5 28.5T400-200H240q-17 0-28.5-11.5T200-240Zm320 0v-200h40q17 0 28.5-11.5T600-480q0-17-11.5-28.5T560-520h-40v-200q0-17 11.5-28.5T560-760h40q66 0 113 47t47 113v360q0 17-11.5 28.5T720-200H560q-17 0-28.5-11.5T520-240Z" /> : <path d="M120-280q-17 0-28.5-11.5T80-320v-320q0-17 11.5-28.5T120-680q17 0 28.5 11.5T160-640v320q0 17-11.5 28.5T120-280Zm120 80q-17 0-28.5-11.5T200-240v-360q0-66 47-113t113-47h240q66 0 113 47t47 113v360q0 17-11.5 28.5T720-200H240Zm600-80q-17 0-28.5-11.5T800-320v-320q0-17 11.5-28.5T840-680q17 0 28.5 11.5T880-640v320q0 17-11.5 28.5T840-280ZM480-480ZM280-280h160v-160h-40q-17 0-28.5-11.5T360-480q0-17 11.5-28.5T400-520h40v-160h-80q-33 0-56.5 23.5T280-600v320Zm240 0h160v-320q0-33-23.5-56.5T600-680h-80v160h40q17 0 28.5 11.5T600-480q0 17-11.5 28.5T560-440h-40v160Z" />}</Icon>;
+/** The path both styles start with. */
+const start = "M120-280q-17 0-28.5-11.5T80-320v-320q0-17 11.5-28.5T120-680q17 0 28.5 11.5T160-640v320q0 17-11.5 28.5T120-280Zm";
+
+export function IconGate({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
+  return <Icon viewBox="0 -960 960 960" {...props}><path d={filled ? start + "720 0q-17 0-28.5-11.5T800-320v-320q0-17 11.5-28.5T840-680q17 0 28.5 11.5T880-640v320q0 17-11.5 28.5T840-280Zm-640 40v-360q0-66 47-113t113-47h40q17 0 28.5 11.5T440-720v200h-40q-17 0-28.5 11.5T360-480q0 17 11.5 28.5T400-440h40v200q0 17-11.5 28.5T400-200H240q-17 0-28.5-11.5T200-240Zm320 0v-200h40q17 0 28.5-11.5T600-480q0-17-11.5-28.5T560-520h-40v-200q0-17 11.5-28.5T560-760h40q66 0 113 47t47 113v360q0 17-11.5 28.5T720-200H560q-17 0-28.5-11.5T520-240Z" : start + "120 80q-17 0-28.5-11.5T200-240v-360q0-66 47-113t113-47h240q66 0 113 47t47 113v360q0 17-11.5 28.5T720-200H240Zm600-80q-17 0-28.5-11.5T800-320v-320q0-17 11.5-28.5T840-680q17 0 28.5 11.5T880-640v320q0 17-11.5 28.5T840-280ZM480-480ZM280-280h160v-160h-40q-17 0-28.5-11.5T360-480q0-17 11.5-28.5T400-520h40v-160h-80q-33 0-56.5 23.5T280-600v320Zm240 0h160v-320q0-33-23.5-56.5T600-680h-80v160h40q17 0 28.5 11.5T600-480q0 17-11.5 28.5T560-440h-40v160Z"} /></Icon>;
 }

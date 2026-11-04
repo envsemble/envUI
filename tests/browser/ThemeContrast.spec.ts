@@ -1,8 +1,8 @@
 import { test, expect, type Locator, type Page } from '@playwright/test';
-import { fixtureUrl } from './Servers';
+import { fixtureUrl } from './helpers/Servers';
 import { cssColor, pairs } from '../contrast/Pairs';
 import { themes } from '../contrast/Themes';
-import { closePopup, openPopup, popupKinds } from './Popups';
+import { closePopup, openPopup, popupKinds } from './helpers/Popups';
 
 /** Every color the contrast gate measures, by name, as CSS. */
 const colors = Object.fromEntries(

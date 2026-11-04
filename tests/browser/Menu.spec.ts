@@ -1,5 +1,5 @@
 import { test, expect, type Locator, type Page } from '@playwright/test';
-import { fixtureUrl } from './Servers';
+import { fixtureUrl } from './helpers/Servers';
 
 const adoption = `${fixtureUrl}/?fixture=adoption`;
 const menusFixture = `${fixtureUrl}/?fixture=menus`;
@@ -58,6 +58,8 @@ async function popupSurface(menu: Locator) {
     return {
       background: style.backgroundColor,
       borderColor: style.borderTopColor,
+      shadow: style.boxShadow,
+      filter: style.backdropFilter,
       borderWidth: Number.parseFloat(style.borderTopWidth),
       radius: Number.parseFloat(style.borderTopLeftRadius),
       padding: Number.parseFloat(style.paddingTop),
@@ -66,7 +68,7 @@ async function popupSurface(menu: Locator) {
 }
 
 test.describe('Menus', () => {
-  test('every menu has the same anatomy, and a compact region gives it 28 px rows', async ({
+  test('every menu has the same anatomy, and a compact region gives it 32 px rows', async ({
     page,
   }) => {
     await page.goto(menusFixture);
@@ -74,10 +76,24 @@ test.describe('Menus', () => {
     const menu = page.getByRole('menu', { name: 'View options' });
     await expect(menu).toBeVisible();
     await settled(menu);
+    // Frosted: the popup color at 88 % in light over a blur, no visible edge, a soft shadow.
     const [popup] = await tokenColors(menu, ['--env-color-bg-popup']);
-    expect((await popupSurface(menu)).background).toBe(popup);
+    expect(popup).toBe('rgb(245, 245, 247)');
+    const frosted = await popupSurface(menu);
+    expect(frosted.background).toBe('color(srgb 0.960784 0.960784 0.968627 / 0.88)');
+    expect(frosted.borderColor).toBe('rgba(0, 0, 0, 0)');
+    expect(frosted.shadow).not.toBe('none');
+    expect(frosted.filter).toBe('blur(22px) saturate(1.4)');
+    expect(frosted.radius).toBeCloseTo(20, 0);
+    expect(frosted.padding).toBeCloseTo(6, 0);
     const row = (await menu.getByRole('menuitemradio', { name: 'Name' }).boundingBox())!;
-    expect(row.height).toBeCloseTo(36, 0);
+    expect(row.height).toBeCloseTo(40, 0);
+    // A group's label sits 10 px in, a little ahead of the rows' 12 px, whatever leads them.
+    const labelInset = await menu
+      .locator('.env-menu-group-label')
+      .first()
+      .evaluate((label) => Number.parseFloat(getComputedStyle(label).paddingLeft));
+    expect(labelInset).toBeCloseTo(10, 0);
     await page.keyboard.press('Escape');
     await page
       .getByTestId('menus-light')
@@ -87,12 +103,82 @@ test.describe('Menus', () => {
     await expect(actions).toBeVisible();
     await settled(actions);
     const surface = await popupSurface(actions);
-    expect(surface.radius).toBeCloseTo(10, 0);
+    expect(surface.radius).toBeCloseTo(16, 0);
     const action = (await actions
       .getByRole('menuitem', { name: 'Programmatic action' })
       .boundingBox())!;
-    expect(action.height).toBeCloseTo(28, 0);
+    expect(action.height).toBeCloseTo(32, 0);
   });
+
+  test('in dark a menu takes the default surface, frosted and solid', async ({ page }) => {
+    await page.goto(menusFixture);
+    const open = async () => {
+      await page.getByTestId('menus-dark').getByRole('button', { name: 'View options' }).click();
+      const menu = page.getByRole('menu', { name: 'View options' });
+      await expect(menu).toBeVisible();
+      await settled(menu);
+      return menu;
+    };
+    let menu = await open();
+    const [surface] = await tokenColors(menu, ['--env-color-bg-default']);
+    expect(surface).toBe('rgb(40, 41, 43)');
+    expect((await popupSurface(menu)).background).toBe(
+      'color(srgb 0.156863 0.160784 0.168627 / 0.9)',
+    );
+    await page.keyboard.press('Escape');
+    await expect(menu).toBeHidden();
+    await page.emulateMedia({ contrast: 'more' });
+    menu = await open();
+    // Solid: the default surface itself, as the same mix resolves it, inside the strongest edge.
+    const [solid, edge] = await menu.evaluate((element) => {
+      const probe = document.createElement('div');
+      element.append(probe);
+      probe.style.backgroundColor =
+        'color-mix(in srgb, var(--env-color-bg-default) 100%, transparent)';
+      const fill = getComputedStyle(probe).backgroundColor;
+      probe.style.backgroundColor = 'var(--env-elevation-3-border)';
+      const border = getComputedStyle(probe).backgroundColor;
+      probe.remove();
+      return [fill, border];
+    });
+    const look = await popupSurface(menu);
+    expect(look.background).toBe(solid);
+    expect(look.borderColor).toBe(edge);
+  });
+
+  for (const [why, setUp] of [
+    ['high contrast', (page: Page) => page.emulateMedia({ contrast: 'more' })],
+    [
+      'reduced transparency',
+      async (page: Page) => {
+        const session = await page.context().newCDPSession(page);
+        await session.send('Emulation.setEmulatedMedia', {
+          features: [{ name: 'prefers-reduced-transparency', value: 'reduce' }],
+        });
+      },
+    ],
+  ] as const)
+    test(`a menu is solid with its edge, no blur and no shadow under ${why}`, async ({ page }) => {
+      await setUp(page);
+      await page.goto(menusFixture);
+      await page.getByTestId('menus-light').getByRole('button', { name: 'View options' }).click();
+      const menu = page.getByRole('menu', { name: 'View options' });
+      await expect(menu).toBeVisible();
+      await settled(menu);
+      // The edge is its elevation's, and at high contrast a modal's, the strongest.
+      const [popup, edge] = await tokenColors(menu, [
+        '--env-color-bg-popup',
+        why === 'high contrast' ? '--env-elevation-3-border' : '--env-elevation-2-border',
+      ]);
+      const solid = await popupSurface(menu);
+      // Opaque: the popup color itself.
+      expect(popup).toBe('rgb(245, 245, 247)');
+      expect(solid.background).toBe('color(srgb 0.960784 0.960784 0.968627)');
+      expect(solid.borderColor).toBe(edge);
+      expect(solid.borderWidth).toBe(1);
+      expect(solid.shadow).toBe('none');
+      expect(solid.filter).toBe('blur(0px) saturate(1.4)');
+    });
 });
 
 test.describe('Submenus', () => {
@@ -105,24 +191,16 @@ test.describe('Submenus', () => {
     return menu;
   }
 
-  test('a separator is a hairline across the popup from edge to edge', async ({ page }) => {
+  test('a separator is space as tall as the gap between groups, with no line', async ({ page }) => {
     const menu = await openCompactOptions(page);
     const separator = menu.getByRole('separator').first();
-    await expect(separator).toHaveCSS('border-top-width', '1px');
-    await expect(separator).toHaveCSS('border-top-style', 'solid');
-    // As wide as the popup inside its edge: no inset from its sides.
-    const [line, popup] = await separator.evaluate((element) => {
-      const own = element.getBoundingClientRect();
-      const surface = element.closest('.env-menu')!;
-      const box = surface.getBoundingClientRect();
-      const edge = surface.clientLeft;
-      return [
-        { left: own.left, width: own.width },
-        { left: box.left + edge, width: surface.clientWidth },
-      ];
-    });
-    expect(line.width).toBeCloseTo(popup.width, 0);
-    expect(line.left).toBeCloseTo(popup.left, 0);
+    await expect(separator).toHaveCSS('border-top-width', '0px');
+    // A quarter of a row's height, the md control height, as the space between groups.
+    const [height, row] = await separator.evaluate((element) => [
+      element.getBoundingClientRect().height,
+      element.closest('.env-menu')!.querySelector('.env-menu-item')!.getBoundingClientRect().height,
+    ]);
+    expect(height).toBeCloseTo(row / 4, 0);
   });
 
   test('a submenu opens beside its row on hover, with the rows of its menu', async ({ page }) => {
@@ -145,7 +223,7 @@ test.describe('Submenus', () => {
     expect(submenuBox!.x).toBeGreaterThanOrEqual(menuBox!.x + menuBox!.width);
     expect(submenuBox!.x).toBeLessThanOrEqual(menuBox!.x + menuBox!.width + 4);
     expect(Math.abs(firstBox!.y - rowBox!.y)).toBeLessThanOrEqual(1.5);
-    expect(firstBox!.height).toBeCloseTo(36, 0);
+    expect(firstBox!.height).toBeCloseTo(40, 0);
     // The submenu row stays highlighted while its submenu is open.
     const [popup] = await tokenColors(menu, ['--env-color-bg-popup']);
     expect(await recent.evaluate((element) => getComputedStyle(element).backgroundColor)).not.toBe(
@@ -436,6 +514,28 @@ test.describe('ContextMenu', () => {
   });
 });
 
+test("a menu takes its trigger's name, and keeps its own choices from their defaults", async ({
+  page,
+}) => {
+  await page.goto(menusFixture);
+  await page.getByTestId('menus-light').getByRole('button', { name: 'Density' }).click();
+  const menu = page.getByRole('menu', { name: 'Density' });
+  await expect(menu.getByRole('menuitemradio', { name: 'Cozy' })).toHaveAttribute(
+    'aria-checked',
+    'true',
+  );
+  await expect(menu.getByRole('menuitemcheckbox', { name: 'Show icons' })).toHaveAttribute(
+    'aria-checked',
+    'true',
+  );
+  await expect(page.getByTestId('density-separator-light')).toHaveClass(/env-menu-separator/);
+  await menu.getByRole('menuitemradio', { name: 'Tight' }).click();
+  await page.getByTestId('menus-light').getByRole('button', { name: 'Density' }).click();
+  await expect(
+    page.getByRole('menu', { name: 'Density' }).getByRole('menuitemradio', { name: 'Tight' }),
+  ).toHaveAttribute('aria-checked', 'true');
+});
+
 test('menu groups, radio and checkbox items keep their choice', async ({ page }) => {
   await page.goto(menusFixture);
   const scope = page.getByTestId('menus-light');
@@ -447,6 +547,20 @@ test('menu groups, radio and checkbox items keep their choice', async ({ page })
   const name = menu.getByRole('menuitemradio', { name: 'Name' });
   const date = menu.getByRole('menuitemradio', { name: 'Date' });
   await expect(name).toHaveAttribute('aria-checked', 'true');
+  // The chosen radio row takes the selection's fill and text; the other keeps none.
+  const [selected, onSelected] = await tokenColors(menu, [
+    '--env-color-bg-selected',
+    '--env-color-fg-on-selected',
+  ]);
+  const look = (item: Locator) =>
+    item.evaluate((element) => {
+      const style = getComputedStyle(element);
+      return [style.backgroundColor, style.color];
+    });
+  await expect(menu).not.toHaveAttribute('data-starting-style');
+  await page.mouse.move(0, 0);
+  expect(await look(name)).toEqual([selected, onSelected]);
+  expect((await look(date))[0]).toBe('rgba(0, 0, 0, 0)');
   await expect(date).toHaveAccessibleDescription('Most recently changed first');
   await date.click();
   await expect(menu).toBeHidden();
@@ -473,6 +587,29 @@ test('menu groups, radio and checkbox items keep their choice', async ({ page })
       .getByRole('menuitem', { name: 'Command palette' })
       .locator('.env-menu-item-shortcut kbd.env-kbd'),
   ).toHaveText(['Ctrl', 'Shift', 'P']);
+  // Side by side, as flat chips 3 px apart, the + between them read but not shown; the chords of
+  // a sequence stand further apart.
+  const spacing = (name: string) =>
+    menu
+      .getByRole('menuitem', { name })
+      .locator('.env-menu-item-shortcut')
+      .evaluate((shortcut) => {
+        const keys = [...shortcut.querySelectorAll('kbd.env-kbd')].map((key) =>
+          key.getBoundingClientRect(),
+        );
+        const separators = [...shortcut.querySelectorAll('.env-kbd-separator')];
+        return {
+          text: shortcut.textContent,
+          gaps: keys.slice(1).map((key, index) => Math.round(key.left - keys[index]!.right)),
+          shown: separators.some((separator) => separator.getBoundingClientRect().width > 6),
+        };
+      });
+  expect(await spacing('Command palette')).toEqual({
+    text: 'Ctrl+Shift+P',
+    gaps: [3, 3],
+    shown: false,
+  });
+  expect((await spacing('Keyboard shortcuts')).gaps).toEqual([3, 6, 3]);
   // The plus key keeps its name, and a sequence shows its keys without claiming a single shortcut.
   const zoom = menu.getByRole('menuitem', { name: 'Zoom in' });
   await expect(zoom).toHaveAttribute('aria-keyshortcuts', 'Control+Plus');

@@ -151,13 +151,13 @@ export interface Snapshot {
   /** The page's container queries, by container name. */
   queries: Map<string, ContainerQuery[]>;
   /** The fewest characters a line of text may hold before it counts as squeezed. */
-  minTextChars: number;
+  minTextCharacters: number;
   /** The nodes' elements, by index; a measurement of the page has them, a test's need not. */
   elements?: HTMLElement[];
 }
 
 /** What a problem is about. */
-export type ProblemRule =
+export type LayoutProblemRule =
   | 'content-overflow'
   | 'child-overflow'
   | 'overlay-off-window'
@@ -168,7 +168,7 @@ export type ProblemRule =
 
 /** A problem the readout measured. */
 export interface LayoutProblem {
-  rule: ProblemRule;
+  rule: LayoutProblemRule;
   /** The node it is about, as the readout labels it, such as `grid "cards"`. */
   node: string;
   /** The nodes from the top down to it, such as `scaffold > page > grid "cards"`. */

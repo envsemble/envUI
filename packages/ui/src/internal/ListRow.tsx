@@ -1,10 +1,13 @@
 import { cloneElement, isValidElement, type ReactElement, type ReactNode } from 'react';
 import { classNames } from './classNames.js';
 import { DecorativeIcon } from './DecorativeIcon.js';
+import { flag } from './flag.js';
+import '../styles/Base.css';
+import '../styles/ListRow.css';
 
 export interface ListRowProps {
   /**
-   * The row's element, which gives it its role and behaviour: a Base UI item, such as
+   * The row's element, which gives it its role and behavior: a Base UI item, such as
    * <BaseSelect.Item value={…} />, <BaseMenu.Item />, <BaseMenu.RadioItem value={…} /> or
    * <BaseCombobox.Item value={…} />, or an option element of a listbox. ListRow fills it with the
    * row's anatomy and the env-list-row class; its state shows through Base UI's data-highlighted,
@@ -64,7 +67,7 @@ export function ListRow({
     render as ReactElement<{ className?: string; children?: ReactNode }>,
     {
       className: classNames('env-list-row', className, own.className),
-      'data-indicator': indicator != null || undefined,
+      'data-indicator': flag(indicator != null),
       children,
     } as { className: string; children: ReactNode },
   );

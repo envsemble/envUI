@@ -10,7 +10,7 @@ import {
 import type { RowDensity } from '../foundations/Theme.js';
 import { classNames } from '../internal/classNames.js';
 import { Grid, Row } from '../foundations/Layout.js';
-import { inSkeleton, inSkeletonList } from '../foundations/inSkeleton.js';
+import { inSkeleton, inSkeletonList } from '../foundations/internal/inSkeleton.js';
 import { SkeletonStatus } from '../foundations/SkeletonScope.js';
 import { Text } from '../foundations/Text.js';
 import {
@@ -20,7 +20,10 @@ import {
   type SkeletonProps,
 } from '../internal/skeleton.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
-import { ListReorderHandle, ReorderableList } from './internal/ListBehavior.js';
+import { ListReorderHandle, ReorderableList } from './internal/ReorderableList.js';
+import '../styles/Base.css';
+import '../styles/List.css';
+import '../styles/ConnectedRows.css';
 
 export interface RootProps extends ComponentPropsWithRef<'ul'>, SkeletonProps {
   /**
@@ -116,13 +119,17 @@ export interface ItemProps extends ComponentPropsWithRef<'li'>, SkeletonProps {
    * undefined, such as over a placeholder item, a skeleton shows a bar in its place.
    */
   description?: ReactNode;
-  /** A control at the end of the row, such as a Button; it moves below the text when it doesn't fit. */
-  action?: ReactNode;
+  /**
+   * Content at the end of the row, such as a Button or a Switch; it moves below the text when it
+   * doesn't fit.
+   */
+  end?: ReactNode;
   /** More content after the label and the description, such as a Badge. */
   children?: ReactNode;
   /**
    * The row opens something through a link or button inside: it reacts to hover, keyboard focus
    * inside it and presses. Mark that link or button `data-row-target` to stretch it over the row.
+   * @default false
    */
   interactive?: boolean;
   /**
@@ -131,7 +138,7 @@ export interface ItemProps extends ComponentPropsWithRef<'li'>, SkeletonProps {
    * or on the row without one.
    * @default false
    */
-  selected?: boolean;
+  current?: boolean;
   /**
    * Content before the label, such as an Avatar, an icon or a Checkbox for choosing several rows;
    * a row whose checkbox is checked takes the selected fill.
@@ -171,7 +178,7 @@ function markCurrent(node: ReactNode): [ReactNode, boolean] {
 }
 
 /**
- * One `li` row with a label, a description and an action; the current row, content at its start,
+ * One `li` row with a label, a description and content at its end; the current row, content at its start,
  * and in a reorderable list a drag handle. It renders on the server: only the handle of a
  * reorderable row needs the browser.
  */
@@ -179,9 +186,9 @@ function Item(props: ItemProps) {
   const {
     label,
     description,
-    action,
+    end,
     interactive = false,
-    selected = false,
+    current = false,
     start,
     textValue,
     skeleton = false,
@@ -192,11 +199,11 @@ function Item(props: ItemProps) {
   } = props as ItemProps & { [reorderableProp]?: boolean };
   const hasDescription = description != null || given(props, 'description');
   // The current row says so on its target, which people reach and hear, or on the row itself.
-  let current = false;
+  let targetMarked = false;
   const mark = (node: ReactNode) => {
-    if (!selected || current || node == null) return node;
+    if (!current || targetMarked || node == null) return node;
     const [marked, found] = markCurrent(node);
-    current = found;
+    targetMarked = found;
     return marked;
   };
   const shownLabel = mark(label);
@@ -214,12 +221,12 @@ function Item(props: ItemProps) {
       gap={3}
       render={
         <li
-          aria-current={selected && !current ? 'true' : undefined}
+          aria-current={current && !targetMarked ? 'true' : undefined}
           {...rest}
           {...skeletonAttributes(skeleton)}
           className={classNames('env-list-item', 'env-connected-row', className)}
           data-interactive={interactive ? '' : undefined}
-          data-selected={selected ? '' : undefined}
+          data-selected={current ? '' : undefined}
           data-start={hasStart ? '' : undefined}
         />
       }
@@ -239,7 +246,7 @@ function Item(props: ItemProps) {
             {hasDescription && <small>{shownDescription}</small>}
             {shownChildren}
           </div>
-          {action}
+          {end}
         </>,
       )}
     </Row>

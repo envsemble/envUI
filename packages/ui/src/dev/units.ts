@@ -4,6 +4,7 @@ import {
   windowClasses as windowClassStarts,
   type WindowClass,
 } from '../foundations/windowClasses.js';
+import { remPixels, roundToHundredth } from '../internal/lengths.js';
 
 export type { WindowClass };
 
@@ -24,7 +25,7 @@ export function windowClassOf(widthRem: number): WindowClass {
 }
 
 /** A number rounded to two decimals, without a trailing zero. */
-export const round = (value: number) => Math.round(value * 100) / 100;
+export const round = roundToHundredth;
 
 /** A length in px as rem, rounded: 24 px at a 16 px root is 1.5. */
 export const toRem = (px: number, rootPx: number) => round(px / rootPx);
@@ -47,5 +48,5 @@ export function toPx(value: number | string, rootPx: number): number {
 /** The root font size in px: what 1 rem is. */
 export function rootFontPx(): number {
   if (typeof document === 'undefined') return 16;
-  return Number.parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+  return remPixels();
 }

@@ -1,87 +1,89 @@
-/* Page: the page column, its widths and its gutter, invisible structure that never paints. The
-   column is centered and grows to its width; the gutter pads its inline edges. Its gutter and its
-   block padding follow the window class of the region it sits in, the nearest container around it,
-   compact first; the page itself is the env-page container for its content. */
-.env-page {
-  --env-page-width-sm: 40rem;
-  --env-page-width-md: 60rem;
-  --env-page-width-lg: 76rem;
-  --env-page-gutter: var(--env-space-4);
-  --env-page-width: var(--env-page-width-lg);
-  container: env-page / inline-size;
-  box-sizing: border-box;
-  inline-size: 100%;
-  max-inline-size: calc(var(--env-page-width) + 2 * var(--env-page-gutter));
-  margin-inline: auto;
-  padding-inline: var(--env-page-gutter);
-  padding-block: var(--env-space-5) var(--env-space-7);
-}
-@container (width >= 37.5rem) {
+@layer env.components {
+  /* Page: the page column, its widths and its gutter, invisible structure that never paints. The
+     column is centered and grows to its width; the gutter pads its inline edges. Its gutter and its
+     block padding follow the window class of the region it sits in, the nearest container around it,
+     compact first; the page itself is the env-page container for its content. */
   .env-page {
-    --env-page-gutter: var(--env-space-5);
-    padding-block: var(--env-space-6) var(--env-space-8);
+    --env-page-width-sm: 40rem;
+    --env-page-width-md: 60rem;
+    --env-page-width-lg: 76rem;
+    --env-page-gutter: var(--env-space-4);
+    --env-page-width: var(--env-page-width-lg);
+    container: env-page / inline-size;
+    box-sizing: border-box;
+    inline-size: 100%;
+    max-inline-size: calc(var(--env-page-width) + 2 * var(--env-page-gutter));
+    margin-inline: auto;
+    padding-inline: var(--env-page-gutter);
+    padding-block: var(--env-space-5) var(--env-space-7);
   }
-}
-.env-page[data-width='sm'] {
-  --env-page-width: var(--env-page-width-sm);
-}
-.env-page[data-width='md'] {
-  --env-page-width: var(--env-page-width-md);
-}
-.env-page[data-width='full'] {
-  max-inline-size: none;
-}
-.env-page[data-gutter='none'] {
-  --env-page-gutter: 0rem;
-}
-/* The content under the page's header, the page's space below it. */
-.env-page-content {
-  margin-block-start: var(--env-space-6);
-}
+  @container (width >= 37.5rem) {
+    .env-page {
+      --env-page-gutter: var(--env-space-5);
+      padding-block: var(--env-space-6) var(--env-space-8);
+    }
+  }
+  .env-page[data-width='sm'] {
+    --env-page-width: var(--env-page-width-sm);
+  }
+  .env-page[data-width='md'] {
+    --env-page-width: var(--env-page-width-md);
+  }
+  .env-page[data-width='full'] {
+    max-inline-size: none;
+  }
+  .env-page[data-gutter='none'] {
+    --env-page-gutter: 0rem;
+  }
+  /* The content under the page's header, the page's space below it. */
+  .env-page-content {
+    margin-block-start: var(--env-space-6);
+  }
 
-/* A sticky header covers the top of the area that scrolls, so what scrolls into view below it, such
-   as an element taking focus or an anchor's target, keeps clear of it (WCAG 2.4.11); a Scaffold
-   whose document scrolls keeps the top bar above it clear with the document's scroll padding, which
-   adds to this margin. The header publishes its height as
-   --env-page-header-block-size once script runs, so a title that wraps counts; until then, as in
-   the server's markup, the height is reckoned from the rows it has, a title line, then its
-   breadcrumbs, description, toolbar and, in a compact page, actions under the title. */
-.env-page:has(> .env-page-header[data-sticky]) {
-  --env-page-sticky-title: max(1.4 * var(--env-font-size-heading), var(--env-control-height));
-  --env-page-sticky-small-line: calc(1.4 * var(--env-type-body-small-font-size));
-  --env-page-sticky-breadcrumbs: 0rem;
-  --env-page-sticky-description: 0rem;
-  --env-page-sticky-toolbar: 0rem;
-  --env-page-sticky-actions: 0rem;
-}
-.env-page:has(> .env-page-header[data-sticky] > .env-page-header-breadcrumbs) {
-  --env-page-sticky-breadcrumbs: calc(
-    max(var(--env-page-sticky-small-line), var(--env-control-height-sm)) + var(--env-space-3)
-  );
-}
-.env-page:has(> .env-page-header[data-sticky] .env-page-header-description) {
-  --env-page-sticky-description: calc(var(--env-page-sticky-small-line) + var(--env-space-1));
-}
-.env-page:has(> .env-page-header[data-sticky] > .env-page-header-toolbar) {
-  --env-page-sticky-toolbar: calc(var(--env-control-height) + var(--env-space-3));
-}
-.env-page:has(> .env-page-header[data-sticky] .env-page-header-actions) {
-  --env-page-sticky-actions: calc(var(--env-control-height) + var(--env-space-4));
-}
-.env-page:has(> .env-page-header[data-sticky]) > .env-page-content * {
-  scroll-margin-block-start: calc(
-    var(
-        --env-page-header-block-size,
-        2 * var(--env-space-4) + var(--env-page-sticky-title) + var(--env-page-sticky-breadcrumbs) +
-          var(--env-page-sticky-description) + var(--env-page-sticky-toolbar) +
-          var(--env-page-sticky-actions)
-      ) +
-      var(--env-space-2)
-  );
-}
-/* From a medium page the actions sit at the end of the title row, adding no row of their own. */
-@container env-page (width >= 37.5rem) {
-  .env-page:has(> .env-page-header[data-sticky]) > .env-page-content * {
+  /* A sticky header covers the top of the area that scrolls, so what scrolls into view below it, such
+     as an element taking focus or an anchor's target, keeps clear of it (WCAG 2.4.11); a Scaffold
+     whose document scrolls keeps the top bar above it clear with the document's scroll padding, which
+     adds to this margin. The header publishes its height as
+     --env-page-header-block-size once script runs, so a title that wraps counts; until then, as in
+     the server's markup, the height is reckoned from the rows it has, a title line, then its
+     breadcrumbs, description, toolbar and, in a compact page, actions under the title. */
+  .env-page:has(> .env-page-header[data-sticky]) {
+    --env-page-sticky-title: max(1.4 * var(--env-font-size-headline), var(--env-control-height));
+    --env-page-sticky-small-line: calc(1.4 * var(--env-type-body-sm-font-size));
+    --env-page-sticky-breadcrumbs: 0rem;
+    --env-page-sticky-description: 0rem;
+    --env-page-sticky-toolbar: 0rem;
     --env-page-sticky-actions: 0rem;
+  }
+  .env-page:has(> .env-page-header[data-sticky] > .env-page-header-breadcrumbs) {
+    --env-page-sticky-breadcrumbs: calc(
+      max(var(--env-page-sticky-small-line), var(--env-control-height-sm)) + var(--env-space-3)
+    );
+  }
+  .env-page:has(> .env-page-header[data-sticky] .env-page-header-description) {
+    --env-page-sticky-description: calc(var(--env-page-sticky-small-line) + var(--env-space-1));
+  }
+  .env-page:has(> .env-page-header[data-sticky] > .env-page-header-toolbar) {
+    --env-page-sticky-toolbar: calc(var(--env-control-height) + var(--env-space-3));
+  }
+  .env-page:has(> .env-page-header[data-sticky] .env-page-header-actions) {
+    --env-page-sticky-actions: calc(var(--env-control-height) + var(--env-space-4));
+  }
+  .env-page:has(> .env-page-header[data-sticky]) > .env-page-content * {
+    scroll-margin-block-start: calc(
+      var(
+          --env-page-header-block-size,
+          2 * var(--env-space-4) + var(--env-page-sticky-title) +
+            var(--env-page-sticky-breadcrumbs) + var(--env-page-sticky-description) +
+            var(--env-page-sticky-toolbar) + var(--env-page-sticky-actions)
+        ) +
+        var(--env-space-2)
+    );
+  }
+  /* From a medium page the actions sit at the end of the title row, adding no row of their own. */
+  @container env-page (width >= 37.5rem) {
+    .env-page:has(> .env-page-header[data-sticky]) > .env-page-content * {
+      --env-page-sticky-actions: 0rem;
+    }
   }
 }

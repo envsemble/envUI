@@ -1,13 +1,13 @@
 import { useState } from 'react';
-import { Button, ContextMenu, Menu, Theme, type ThemeValue } from '@envsemble/envui';
-import { Edit } from '@envsemble/envui/icons/Edit';
-import { Delete } from '@envsemble/envui/icons/Delete';
-import { Add } from '@envsemble/envui/icons/Add';
-import { History } from '@envsemble/envui/icons/History';
+import { Button, ContextMenu, Menu, Theme, type ColorScheme } from '@envsemble/envui';
+import { IconEdit } from '@envsemble/envui/icons/Edit';
+import { IconDelete } from '@envsemble/envui/icons/Delete';
+import { IconAdd } from '@envsemble/envui/icons/Add';
+import { IconHistory } from '@envsemble/envui/icons/History';
 
 const documents = ['Alpha', 'Beta', 'Gamma'];
 
-export function MenusFixture({ theme }: { theme: ThemeValue }) {
+export function MenusFixture({ theme }: { theme: ColorScheme }) {
   const [log, setLog] = useState('');
   const [sort, setSort] = useState('name');
   const [hidden, setHidden] = useState(false);
@@ -32,7 +32,7 @@ export function MenusFixture({ theme }: { theme: ThemeValue }) {
           const name = target?.closest<HTMLElement>('[data-document]')?.dataset.document;
           return name ? (
             <>
-              <Menu.Item icon={<Edit />} shortcut="F2" onClick={() => setLog(`Rename ${name}`)}>
+              <Menu.Item icon={<IconEdit />} shortcut="F2" onClick={() => setLog(`Rename ${name}`)}>
                 Rename {name}
               </Menu.Item>
               <Menu.Item
@@ -42,7 +42,7 @@ export function MenusFixture({ theme }: { theme: ThemeValue }) {
                 Open to the side
               </Menu.Item>
               <Menu.Separator />
-              <Menu.Item icon={<Delete />} onClick={() => setLog(`Delete ${name}`)}>
+              <Menu.Item icon={<IconDelete />} onClick={() => setLog(`Delete ${name}`)}>
                 Delete
               </Menu.Item>
             </>
@@ -102,7 +102,11 @@ export function MenusFixture({ theme }: { theme: ThemeValue }) {
         trigger={<Button variant="secondary">Compact options</Button>}
       >
         <Menu.Group label="Document">
-          <Menu.Item icon={<Add />} shortcut="Ctrl+Shift+N" onClick={() => setLog('New window')}>
+          <Menu.Item
+            icon={<IconAdd />}
+            shortcut="Ctrl+Shift+N"
+            onClick={() => setLog('New window')}
+          >
             New window
           </Menu.Item>
           <Menu.Item shortcut="Ctrl+S" onClick={() => setLog('Save')}>
@@ -111,7 +115,7 @@ export function MenusFixture({ theme }: { theme: ThemeValue }) {
         </Menu.Group>
         <Menu.Submenu
           label="Open recent"
-          icon={<History />}
+          icon={<IconHistory />}
           onOpenChange={(open) => {
             if (open) setRecentLoads((count) => count + 1);
           }}
@@ -145,6 +149,15 @@ export function MenusFixture({ theme }: { theme: ThemeValue }) {
         >
           Open to the side
         </Menu.Item>
+      </Menu.Root>
+      {/* Named by its trigger, with choices the menu keeps itself. */}
+      <Menu.Root trigger={<button type="button">Density</button>}>
+        <Menu.RadioGroup label="Rows" defaultValue="cozy">
+          <Menu.RadioItem value="cozy">Cozy</Menu.RadioItem>
+          <Menu.RadioItem value="tight">Tight</Menu.RadioItem>
+        </Menu.RadioGroup>
+        <Menu.Separator data-testid={`density-separator-${theme}`} />
+        <Menu.CheckboxItem defaultChecked>Show icons</Menu.CheckboxItem>
       </Menu.Root>
       {/* A compact region: its context menu and submenus open at the compact scale. */}
       <Theme theme={theme} scale="compact" data-testid={`compact-region-${theme}`}>

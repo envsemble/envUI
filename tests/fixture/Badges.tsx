@@ -1,18 +1,18 @@
 import {
   Badge,
-  Drawer,
-  Rail,
+  NavigationDrawer,
+  NavigationRail,
   Column,
   Surface,
   Theme,
   type BadgeTone,
-  type ThemeValue,
+  type ColorScheme,
 } from '@envsemble/envui';
-import { Inbox } from '@envsemble/envui/icons/Inbox';
+import { IconInbox } from '@envsemble/envui/icons/Inbox';
 
-const tones: BadgeTone[] = ['neutral', 'accent', 'success', 'warning', 'danger', 'done'];
+const tones: BadgeTone[] = ['neutral', 'primary', 'accent', 'success', 'warning', 'danger', 'done'];
 
-export function BadgesFixture({ theme }: { theme: ThemeValue }) {
+export function BadgesFixture({ theme }: { theme: ColorScheme }) {
   return (
     <Theme theme={theme} data-testid={`badges-${theme}`} className="fixture-section">
       {(['canvas', 'pane', 'row'] as const).map((surface) => (
@@ -46,13 +46,13 @@ export function BadgesFixture({ theme }: { theme: ThemeValue }) {
           </Column>
         </Surface>
       ))}
-      <Drawer
+      <NavigationDrawer
         aria-label={`Badges ${theme}`}
-        destinations={[{ label: 'Inbox', icon: <Inbox />, href: '#inbox', count: 12 }]}
+        destinations={[{ label: 'Inbox', icon: <IconInbox />, href: '#inbox', count: 12 }]}
       />
-      <Rail
+      <NavigationRail
         aria-label={`Badges rail ${theme}`}
-        destinations={[{ label: 'Inbox', icon: <Inbox />, href: '#inbox', count: 12 }]}
+        destinations={[{ label: 'Inbox', icon: <IconInbox />, href: '#inbox', count: 12 }]}
       />
     </Theme>
   );

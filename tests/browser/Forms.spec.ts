@@ -1,35 +1,6 @@
-import { expect, test, type Page } from '@playwright/test';
-import { chevronTips, expectVerticalFlip, slowChevron } from './Chevron';
-import { fixtureUrl } from './Servers';
-
-/** Contrast between two opaque CSS colors, as WCAG computes it. */
-function contrastRatio(first: string, second: string) {
-  const luminance = (color: string) => {
-    const [r, g, b] = color
-      .match(/[\d.]+/g)!
-      .slice(0, 3)
-      .map((channel) => {
-        const value = Number(channel) / 255;
-        return value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
-      });
-    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
-  };
-  const [lighter, darker] = [luminance(first), luminance(second)].sort((a, b) => b - a);
-  return (lighter + 0.05) / (darker + 0.05);
-}
-
-/** The open Select list against the surface it opens over: its color and its border. */
-async function popupSeparation(page: Page, surfaceSelector: string) {
-  const [surface, popup, border] = await page.evaluate((selector) => {
-    const popupElement = document.querySelector('.env-select-popup')!;
-    return [
-      getComputedStyle(document.querySelector(selector)!).backgroundColor,
-      getComputedStyle(popupElement).backgroundColor,
-      getComputedStyle(popupElement).borderTopWidth,
-    ];
-  }, surfaceSelector);
-  return { contrast: contrastRatio(surface, popup), border: Number.parseFloat(border) };
-}
+import { expect, test } from '@playwright/test';
+import { chevronTips, expectVerticalFlip, slowChevron } from './helpers/Chevron';
+import { fixtureUrl } from './helpers/Servers';
 
 test.beforeEach(async ({ page }) => {
   await page.goto(`${fixtureUrl}/?fixture=forms`);
@@ -303,7 +274,7 @@ test("a Select's chevron flips as the list opens and closes, never pointing side
   // A half turn swings the chevron through pointing right in a frame or two, a twitch beside the
   // opening list. It flips over instead.
   const trigger = page.getByRole('combobox', { name: 'Plan', exact: true });
-  const icon = trigger.locator('.env-select-icon');
+  const icon = trigger.locator('xpath=..').locator('.env-select-icon');
   await slowChevron(icon);
   await trigger.click();
   await expect(page.getByRole('listbox')).toBeVisible();
@@ -325,43 +296,44 @@ test("a Select's chevron flips as the list opens and closes, never pointing side
   await page.keyboard.press('Escape');
 });
 
-test('Select triggers are button styles, and the open list stands apart from a pane', async ({
+test('a Select is an outlined field, and the open list stands apart from a pane', async ({
   page,
 }) => {
   const outlined = page.getByRole('combobox', { name: 'Pane sort', exact: true });
-  await expect(outlined).toHaveAttribute('data-variant', 'outline');
-  // The outlined trigger looks like an outlined Button beside it.
-  const looks = await outlined.evaluate((element) => {
-    const button = document.createElement('button');
-    button.className = 'env-button';
-    button.dataset.variant = 'outline';
-    button.dataset.tone = 'neutral';
-    element.parentElement!.append(button);
-    const read = (target: Element) => {
-      const style = getComputedStyle(target);
-      return [style.backgroundColor, style.color, style.borderTopColor, style.borderTopWidth];
-    };
-    const result = { trigger: read(element), button: read(button) };
-    button.remove();
-    return result;
-  });
-  expect(looks.trigger).toEqual(looks.button);
-  expect(Number.parseFloat(looks.trigger[3]!)).toBeGreaterThan(0);
-  // The label sits above a trigger that fits its content, as for every select.
-  const role = page.getByRole('combobox', { name: 'Pane role', exact: true });
-  const [roleBox, labelBox, paneBox] = await Promise.all([
-    role.boundingBox(),
-    page.getByText('Pane role', { exact: true }).boundingBox(),
+  // An outlined field, as a TextField is: the well has an edge and no fill, and the label rests
+  // inside it.
+  const [field, labelBox, paneBox] = await Promise.all([
+    outlined
+      .locator('xpath=ancestor::*[contains(@class, "env-select-control")][1]')
+      .evaluate((control) => {
+        const edge = getComputedStyle(control.querySelector('.env-text-field-border')!);
+        return {
+          box: control.getBoundingClientRect().toJSON() as DOMRect,
+          edge: Number.parseFloat(edge.borderTopWidth),
+          fill: getComputedStyle(control).backgroundColor,
+        };
+      }),
+    page.locator('label.env-select-label', { hasText: 'Pane sort' }).boundingBox(),
     page.getByTestId('select-pane').boundingBox(),
   ]);
-  expect(labelBox!.y + labelBox!.height).toBeLessThanOrEqual(roleBox!.y + 1);
-  expect(roleBox!.width).toBeLessThan(paneBox!.width / 2);
+  expect(field.edge).toBeGreaterThan(0);
+  expect(field.fill).toBe('rgba(0, 0, 0, 0)');
+  expect(labelBox!.y).toBeGreaterThanOrEqual(field.box.y - labelBox!.height);
+  // With a visible label it fills its container, as every field does; without one it is as wide
+  // as its longest option.
+  const filter = page.getByRole('combobox', { name: 'Pane filter', exact: true });
+  expect(field.box.width).toBeGreaterThan(paneBox!.width / 2);
+  expect((await filter.boundingBox())!.width).toBeLessThan(paneBox!.width / 2);
+  // The floating variant is taller.
+  const role = page.getByRole('combobox', { name: 'Pane role', exact: true });
+  expect((await role.boundingBox())!.height).toBeGreaterThan(
+    (await outlined.boundingBox())!.height,
+  );
 
   await role.click();
   await expect(page.getByRole('option', { name: 'Boreal', exact: true })).toBeVisible();
-  const separation = await popupSeparation(page, '[data-testid="select-pane"]');
-  expect(separation.contrast).toBeGreaterThanOrEqual(1.08);
-  expect(separation.border).toBeGreaterThan(0);
+  // Frosted, its fill is close to a pane's in light: its shadow sets it apart.
+  await expect(page.locator('.env-select-popup')).not.toHaveCSS('box-shadow', 'none');
   // The popup takes the surface corners, and its options the same corners inset by its padding.
   const corners = await page.locator('.env-select-popup').evaluate((popup) => {
     const option = popup.querySelector('.env-select-item')!;
@@ -373,8 +345,8 @@ test('Select triggers are button styles, and the open list stands apart from a p
       padding: Number.parseFloat(getComputedStyle(popup).paddingTop),
     };
   });
-  // The menus' popup: 0.75 rem corners, concentric with its rows'.
-  expect(corners.popup).toBeCloseTo(12, 0);
+  // The menus' frosted popup: 1.25 rem corners, concentric with its rows'.
+  expect(corners.popup).toBeCloseTo(20, 0);
   expect(Math.abs(corners.option - (corners.popup - corners.padding))).toBeLessThan(1);
   await page.getByRole('option', { name: 'Boreal', exact: true }).click();
   await expect(role).toHaveText('Boreal');
@@ -413,24 +385,21 @@ test('a small Select has a small trigger, and its popup has the menus anatomy wi
 }) => {
   const compact = page.getByRole('combobox', { name: 'Compact plan', exact: true });
   const standard = page.getByRole('combobox', { name: 'Plan', exact: true });
-  await expect(compact).toHaveAttribute('data-size', 'sm');
-  const [compactBox, standardBox] = await Promise.all([
-    compact.boundingBox(),
-    standard.boundingBox(),
-  ]);
+  // The field's well, with its edge, is as tall as the control height.
+  const well = (locator: typeof compact) =>
+    locator.locator('xpath=ancestor::*[contains(@class, "env-select-control")][1]').boundingBox();
+  const [compactBox, standardBox] = await Promise.all([well(compact), well(standard)]);
   expect(compactBox!.height).toBeCloseTo(32, 0);
   expect(compactBox!.height).toBeLessThan(standardBox!.height);
   const chevron = (locator: typeof compact) =>
-    locator.locator('.env-icon').evaluate((icon) => icon.getBoundingClientRect().width);
+    locator
+      .locator('xpath=..')
+      .locator('.env-select-icon')
+      .evaluate((icon) => icon.getBoundingClientRect().width);
   expect(await chevron(compact)).toBeLessThan(await chevron(standard));
-  // The outlined variant keeps its Button style at the small height.
-  const outlined = page.getByRole('combobox', { name: 'Compact outlined plan', exact: true });
-  expect((await outlined.boundingBox())!.height).toBeCloseTo(32, 0);
-  expect(
-    Number.parseFloat(
-      await outlined.evaluate((element) => getComputedStyle(element).borderTopWidth),
-    ),
-  ).toBeGreaterThan(0);
+  // Without a visible label, a small select keeps the small height.
+  const unlabelled = page.getByRole('combobox', { name: 'Compact unlabelled plan', exact: true });
+  expect((await well(unlabelled))!.height).toBeCloseTo(32, 0);
 
   await compact.focus();
   await page.keyboard.press('Space');
@@ -456,27 +425,51 @@ test('a small Select has a small trigger, and its popup has the menus anatomy wi
       padding: Number.parseFloat(style.paddingTop),
     };
   });
-  expect(surface.background).toBe(surface.popupColor);
+  // The popup's color, frosted at 88 % in light; its edge is there, clear, for a solid popup.
+  expect(surface.popupColor).toBe('rgb(245, 245, 247)');
+  expect(surface.background).toBe('color(srgb 0.960784 0.960784 0.968627 / 0.88)');
   expect(surface.border).toBeGreaterThanOrEqual(1);
-  expect(surface.radius).toBeCloseTo(12, 0);
-  expect(surface.padding).toBeCloseTo(4, 0);
+  expect(surface.radius).toBeCloseTo(20, 0);
+  expect(surface.padding).toBeCloseTo(6, 0);
+  // It opens 8 px clear of its trigger, as every popup does, whatever the trigger's size.
+  const [triggerBox, popupBox] = [(await compact.boundingBox())!, (await popup.boundingBox())!];
+  const gap =
+    popupBox.y > triggerBox.y
+      ? popupBox.y - (triggerBox.y + triggerBox.height)
+      : triggerBox.y - (popupBox.y + popupBox.height);
+  expect(gap).toBeCloseTo(8, 0);
   const starter = page.getByRole('option', { name: 'Starter', exact: true });
   const team = page.getByRole('option', { name: 'Team', exact: true });
   await expect(starter).toBeFocused();
   for (const option of [starter, team])
-    expect((await option.boundingBox())!.height).toBeCloseTo(36, 0);
-  // A check mark shows the selected option instead of a fill, and labels stay aligned.
+    expect((await option.boundingBox())!.height).toBeCloseTo(40, 0);
+  // The selection's fill and a check mark show the selected option, and labels stay aligned.
   await expect(starter.locator('.env-select-item-indicator svg')).toBeVisible();
   await expect(team.locator('.env-select-item-indicator svg')).toHaveCount(0);
   const textStart = (option: typeof starter) =>
     option.evaluate((element) => element.lastElementChild!.getBoundingClientRect().x);
   expect(await textStart(team)).toBeCloseTo(await textStart(starter), 0);
+  // The check ends the row, after the label.
+  const ends = await starter.evaluate((element) => {
+    const check = element.querySelector('.env-select-item-indicator')!.getBoundingClientRect();
+    const label = element.lastElementChild!.getBoundingClientRect();
+    return check.left >= label.right - 1;
+  });
+  expect(ends).toBe(true);
   await page.keyboard.press('ArrowDown');
   await expect(team).toBeFocused();
-  // The highlight fades out as rows' highlights do.
+  // The highlight fades out as rows' highlights do, leaving the selection's fill.
+  const [selectedFill] = await starter.evaluate((element) => {
+    const probe = document.createElement('div');
+    probe.style.backgroundColor = 'var(--env-color-bg-selected)';
+    element.append(probe);
+    const color = getComputedStyle(probe).backgroundColor;
+    probe.remove();
+    return [color];
+  });
   await expect
     .poll(() => starter.evaluate((element) => getComputedStyle(element).backgroundColor))
-    .toBe('rgba(0, 0, 0, 0)');
+    .toBe(selectedFill);
   await page.keyboard.press('Enter');
   await expect(list).toHaveCount(0);
   await expect(compact).toHaveText('Team');

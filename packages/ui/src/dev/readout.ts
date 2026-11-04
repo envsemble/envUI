@@ -6,7 +6,7 @@ import type {
   ChildData,
   LayoutProblem,
   NodeData,
-  ProblemRule,
+  LayoutProblemRule,
   ScrollData,
   Snapshot,
   StickyData,
@@ -61,7 +61,7 @@ class Reader {
   rem = (px: number) => String(toRem(px, this.snapshot.rootPx));
   size = (w: number, h: number) => `${this.rem(w)}×${this.rem(h)}rem`;
 
-  problem(node: NodeData, rule: ProblemRule, message: string) {
+  problem(node: NodeData, rule: LayoutProblemRule, message: string) {
     const problem: LayoutProblem = {
       rule,
       node: labelOf(node),
@@ -208,7 +208,7 @@ class Reader {
         this.problem(
           node,
           'text-squeezed',
-          `${label}: the text of ${inner.label} is squeezed to ${this.rem(inner.squeezed.width)}rem, about ${inner.squeezed.chars} characters a line, under the ${this.snapshot.minTextChars} a line can take. Give it room, or let it wrap below its neighbours.`,
+          `${label}: the text of ${inner.label} is squeezed to ${this.rem(inner.squeezed.width)}rem, about ${inner.squeezed.chars} characters a line, under the ${this.snapshot.minTextCharacters} a line can take. Give it room, or let it wrap below its neighbours.`,
         );
     if (node.overlay) {
       const { box } = node;

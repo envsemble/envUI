@@ -1,11 +1,11 @@
 import { expect, test, type Page } from '@playwright/test';
-import { fixtureUrl } from './Servers';
-import { closePopup, openPopup, popupKinds } from './Popups';
+import { fixtureUrl } from './helpers/Servers';
+import { closePopup, openPopup, popupKinds } from './helpers/Popups';
 
 /**
  * Under forced colors the system replaces envUI's colors, drops shadows and paints no fills, so a
  * state shown by a fill alone would vanish. Each stateful component sets system colors for its
- * states instead (tests/fixture/forced-colors.tsx shows them side by side). This spec compares what
+ * states instead (tests/fixture/ForcedColors.tsx shows them side by side). This spec compares what
  * is painted for a state and for its rest, from computed styles: the colors, borders, outlines,
  * opacity and decoration of the element, its descendants and their ::before and ::after,
  * with a background in the canvas color counting as none, as it paints nothing on the canvas.
@@ -26,12 +26,12 @@ const states: Record<string, [state: string, rest: string]> = {
   ],
   'the selected tab': ['[role=tab] >> nth=0', '[role=tab] >> nth=1'],
   'the selected navigation item': [
-    '.env-drawer-item[data-current]',
-    '.env-drawer-item:not([data-current]) >> nth=0',
+    '.env-navigation-drawer-item[data-current]',
+    '.env-navigation-drawer-item:not([data-current]) >> nth=0',
   ],
   'the current rail destination': [
-    '.env-rail-item[data-current] .env-rail-indicator',
-    '.env-rail-item:not([data-current]) .env-rail-indicator >> nth=0',
+    '.env-navigation-rail-item[data-current] .env-navigation-rail-indicator',
+    '.env-navigation-rail-item:not([data-current]) .env-navigation-rail-indicator >> nth=0',
   ],
   'a checked checkbox': [
     '.env-checkbox:has-text("Checked") >> nth=0',
@@ -66,7 +66,7 @@ const states: Record<string, [state: string, rest: string]> = {
     '.env-calendar-day:has-text("20")',
   ],
   'the chosen hour': [
-    '[data-part=hour] .env-time-list-row[data-centred]',
+    '[data-part=hour] .env-time-list-row[data-centered]',
     '[data-part=hour] .env-time-list-row[data-value="10"]',
   ],
   'an unavailable hour': [
@@ -147,7 +147,7 @@ async function open(page: Page) {
   // today is a day of that month that is neither.
   await page.clock.install({ time: new Date('2026-10-16T12:00:00') });
   await page.emulateMedia({ forcedColors: 'active' });
-  await page.goto(`${fixtureUrl}/forced-colors.html`);
+  await page.goto(`${fixtureUrl}/ForcedColors.html`);
   await page.waitForSelector('body[data-styles-ready] .env-theme');
   expect(await page.evaluate(() => matchMedia('(forced-colors: active)').matches)).toBe(true);
   // The menus held open move focus into their popup once they have opened; let them, or they take
@@ -201,11 +201,11 @@ test(
         .evaluate((element) => getComputedStyle(element).backgroundColor);
     for (const selector of [
       '.env-segmented-control-item[data-checked]',
-      '.env-drawer-item[data-current]',
-      '.env-rail-item[data-current] .env-rail-indicator',
+      '.env-navigation-drawer-item[data-current]',
+      '.env-navigation-rail-item[data-current] .env-navigation-rail-indicator',
       "[role=treeitem][aria-selected='true']",
       '.env-calendar-day[aria-selected=true] > .env-calendar-day-mark',
-      '[data-part=hour] .env-time-list-row[data-centred]',
+      '[data-part=hour] .env-time-list-row[data-centered]',
       '.env-month-picker-month[aria-selected=true] > .env-month-picker-month-mark',
       '.env-checkbox:has-text("Checked") >> nth=0 >> .env-checkbox-input',
       '.env-switch:has-text("On") >> .env-switch-input',
@@ -213,7 +213,9 @@ test(
       expect(await background(selector), selector).toBe(system.highlight);
     // Where the system forces colors, an unselected item paints no fill of its own.
     if (browserName !== 'webkit')
-      expect(await background('.env-drawer-item:not([data-current])')).not.toBe(system.highlight);
+      expect(await background('.env-navigation-drawer-item:not([data-current])')).not.toBe(
+        system.highlight,
+      );
   },
 );
 
@@ -272,7 +274,11 @@ interface FocusCase {
 const focusCases: FocusCase[] = [
   // A text tab has no fill: its ring is drawn on the canvas.
   { name: 'the selected tab', ring: '[role=tab][aria-selected=true]', over: 'canvas' },
-  { name: 'the selected navigation item', ring: '.env-drawer-item[data-current]', over: 'fill' },
+  {
+    name: 'the selected navigation item',
+    ring: '.env-navigation-drawer-item[data-current]',
+    over: 'fill',
+  },
   // The ring is drawn inside the segment, on its fill, as the control clips what reaches past it.
   { name: 'the chosen segment', ring: '.env-segmented-control-item[data-checked]', over: 'fill' },
   {

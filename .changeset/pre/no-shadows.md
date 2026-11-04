@@ -12,4 +12,4 @@ envUI draws no drop shadows. Menus, Select and Combobox lists, popovers, hover c
 - A row that moves in a reorderable list takes the elevation edge as a ring, and the color picker's thumbs take a ring outside their white edge. Neither has a shadow any more. Docked panels and the active one are no longer set apart by shadows: the active docked panel's edge takes the accent, `--env-color-border-accent-emphasis`, in every theme and contrast.
 - Focus rings, halos, inset edges and selection bars drawn with `box-shadow` are rings, not shadows, and stay.
 
-Migration guide: [Tokens](https://github.com/envsemble/envUI/blob/main/docs/migration.md#tokens).
+Migration guide: [Tokens](https://github.com/envsemble/envUI/blob/main/docs/migration.md).

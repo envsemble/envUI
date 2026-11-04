@@ -2,7 +2,7 @@
 title: Progress
 summary: How much of a task is done, such as an upload, as a labelled bar, or that it runs while the amount is unknown.
 status: beta
-since: 0.2.0
+since: 1.0.0
 category: Feedback
 aliases:
   - progress bar
@@ -29,7 +29,9 @@ avoidWhen:
 components:
   - Progress
 examples:
-  UploadingFile: overview
+  UploadingFile:
+    role: overview
+    motion: true
   SetupSteps: example
   ProgressAnatomy: anatomy
   PreparingExport: example
@@ -39,8 +41,8 @@ examples:
     role: do
     caption: One bar for one task, however many items it covers.
   BarPerFile:
-    role: dont
-    caption: A bar for every file of one task, as when they upload together.
+    role: caution
+    caption: 'A bar for every file of one task: more to follow than one bar for the whole.'
 ---
 
 # Progress
@@ -51,7 +53,7 @@ examples:
 
 The track can split into equal steps that fill in turn.
 
-```tsx figure=SetupSteps
+```tsx figure=SetupSteps motion
 
 ```
 
@@ -66,8 +68,6 @@ The track can split into equal steps that fill in turn.
 3. **Value** (`env-progress-value`, `valueText`)
 4. **Track** (`env-progress-track`)
 5. **Indicator** (`env-progress-indicator`, `value`)
-
-Not shown: the steps of a split track.
 
 ## Behaviour
 
@@ -87,7 +87,7 @@ While the amount of work is unknown, the indicator sweeps along the track.
 
 Start with an unknown amount, show the share once it is known, and replace the bar with the result.
 
-```tsx figure=ExportMembers
+```tsx figure=ExportMembers motion
 
 ```
 
@@ -95,7 +95,7 @@ Start with an unknown amount, show the share once it is known, and replace the b
 
 The bar fills its container. The label and the value wrap onto two lines where they don't fit.
 
-```tsx figure=LongTaskName widths="12 24"
+```tsx figure=LongTaskName widths="12 24" sweep
 
 ```
 
@@ -103,11 +103,11 @@ The bar fills its container. The label and the value wrap onto two lines where t
 
 One bar stands for one task.
 
-```tsx figure=OneBarForBatch
+```tsx figure=OneBarForBatch motion
 
 ```
 
-```tsx figure=BarPerFile
+```tsx figure=BarPerFile motion
 
 ```
 
@@ -166,5 +166,3 @@ The parts are the bar, `env-progress`, its label, `env-progress-label`, its valu
 
 - **1.0.0**: The classes are `env-progress*`; `segments` splits the track into steps; an indeterminate bar is read as Loading, and sweeps toward the end of the line also in right-to-left text; without `aria-valuetext` the formatted value stays; `className`, `style`, `ref` and data attributes reach the root.
 - **1.0.0**: `LoadingBar` is no longer exported: TopBar's `loading` and `loadingLabel` show page progress, and Progress shows a task's.
-- **0.4.0**: The track uses the translucent neutral fill, so it stays visible on panes, rows and cards.
-- **0.2.0**: Progress.

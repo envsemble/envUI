@@ -1,5 +1,8 @@
 import type { ComponentPropsWithRef, CSSProperties, ReactElement, Ref } from 'react';
 import { renderElement } from '../internal/renderElement.js';
+import { flag } from '../internal/flag.js';
+import '../styles/Base.css';
+import '../styles/Layout.css';
 
 /**
  * A step in the shared spacing scale: 1 is 0.25 rem, 2 is 0.5 rem, 3 is 0.75 rem, 4 is 1 rem, 5 is
@@ -83,7 +86,10 @@ interface LineOptions {
 }
 
 interface RowOptions extends LineOptions {
-  /** Lets the row run onto more lines when its children don't fit, as a row of actions does. */
+  /**
+   * Lets the row run onto more lines when its children don't fit, as a row of actions does.
+   * @default false
+   */
   wrap?: boolean;
 }
 
@@ -178,7 +184,7 @@ export function Row<RenderedElement extends HTMLElement = HTMLDivElement>({
   wrap,
   ...props
 }: RowProps<RenderedElement>) {
-  return primitive('row', render, props as AnyPrimitiveProps, { 'data-wrap': wrap || undefined });
+  return primitive('row', render, props as AnyPrimitiveProps, { 'data-wrap': flag(wrap) });
 }
 
 /**

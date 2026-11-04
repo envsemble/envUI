@@ -3,7 +3,7 @@ import {
   Theme,
   Button,
   IconButton,
-  Drawer,
+  NavigationDrawer,
   Column,
   Surface,
   Card,
@@ -18,10 +18,10 @@ import {
   Checkbox,
   Switch,
   Badge,
-  type ThemeValue,
+  type ColorScheme,
 } from '@envsemble/envui';
-import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
-import { Home } from '@envsemble/envui/icons/Home';
+import { IconChevronRight } from '@envsemble/envui/icons/ChevronRight';
+import { IconHome } from '@envsemble/envui/icons/Home';
 import { planOptions } from './SelectOptions.js';
 
 /** The 1.0 emphasis of each 0.7 variant, which the samples are still named by. */
@@ -34,7 +34,7 @@ const emphasis = {
   text: { variant: 'text' },
 } as const;
 
-export function ColorControls({ theme }: { theme: ThemeValue }) {
+export function ColorControls({ theme }: { theme: ColorScheme }) {
   const variants: readonly (keyof typeof emphasis)[] = [
     'primary',
     'secondary',
@@ -51,20 +51,20 @@ export function ColorControls({ theme }: { theme: ThemeValue }) {
         </Button>
       ))}
       <IconButton
-        icon={<ChevronRight />}
+        icon={<IconChevronRight />}
         aria-label={`${theme} chevron`}
         data-testid={`${theme}-icon-button`}
       />
-      <Drawer
+      <NavigationDrawer
         aria-label={`${theme} navigation`}
         data-testid={`${theme}-navigation`}
         destinations={[
-          { label: `${theme} navigation`, icon: <Home />, onSelect: () => {} },
+          { label: `${theme} navigation`, icon: <IconHome />, onClick: () => {} },
           {
             label: `${theme} selected navigation`,
-            icon: <Home />,
+            icon: <IconHome />,
             current: true,
-            onSelect: () => {},
+            onClick: () => {},
           },
         ]}
       />
@@ -109,7 +109,7 @@ export function ColorControls({ theme }: { theme: ThemeValue }) {
             {
               value: 'ghost',
               button: (
-                <Button variant="ghost" startIcon={<Home />}>
+                <Button variant="ghost" startIcon={<IconHome />}>
                   Third tab
                 </Button>
               ),
@@ -189,9 +189,9 @@ export function ColorOverrides() {
         data-testid="override-area"
         style={
           {
-            '--env-color-bg-brand-emphasis': '#176f35',
-            '--env-color-bg-brand-emphasis-hover': '#115a2a',
-            '--env-color-bg-brand-emphasis-pressed': '#0b4520',
+            '--env-color-bg-primary-emphasis': '#176f35',
+            '--env-color-bg-primary-emphasis-hover': '#115a2a',
+            '--env-color-bg-primary-emphasis-pressed': '#0b4520',
           } as CSSProperties
         }
       >

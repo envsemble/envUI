@@ -2,7 +2,10 @@
 
 import { useState, type ComponentPropsWithRef } from 'react';
 import { classNames } from '../internal/classNames.js';
+import { runsInText } from '../internal/textRuns.js';
 import { useFormatters } from '../internal/useFormatters.js';
+import '../styles/Base.css';
+import '../styles/Text.css';
 
 export interface AnimatedNumberProps extends Omit<ComponentPropsWithRef<'span'>, 'children'> {
   /** The number to show; when it changes, the new value rolls in, up as it grows, down as it shrinks. */
@@ -36,3 +39,6 @@ export function AnimatedNumber({ value, formatValue, className, ...props }: Anim
     </span>
   );
 }
+
+// Within a button's label, the number stays in the line with its words.
+runsInText(AnimatedNumber);

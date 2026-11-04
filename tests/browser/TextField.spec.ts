@@ -1,5 +1,5 @@
 import { test, expect, type Locator, type Page } from '@playwright/test';
-import { fixtureUrl } from './Servers';
+import { fixtureUrl } from './helpers/Servers';
 
 const affixes = `${fixtureUrl}/?fixture=affixes`;
 const adoption = `${fixtureUrl}/?fixture=adoption`;
@@ -14,7 +14,7 @@ async function open(page: Page, url: string) {
   await page.goto(url);
   await page.evaluate(async () => {
     // Loaded by name, so the wait holds even before the fixture has rendered any text.
-    await document.fonts.load('1em "envUI Inter"');
+    await document.fonts.load('1em "envUI Geist"');
     await document.fonts.ready;
   });
 }

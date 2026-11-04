@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { fixtureUrl } from './Servers';
+import { fixtureUrl } from './helpers/Servers';
 
 /** The clock is fixed, so Today, Now and This month stay available. */
 const today = new Date('2026-10-14T10:00:00');
@@ -55,13 +55,21 @@ test('the three pickers open the same card, their actions inset alike from its e
     await expect(openCard(page)).toBeVisible();
     const geometry = await cardGeometry(page);
     expect(geometry.buttons).toEqual(buttons);
+    // It opens 8 px clear of the field's box, as every popup opens from its trigger, at its start.
+    const control = (await field(page, name)
+      .locator('xpath=ancestor::*[contains(@class, "env-text-field-control")][1]')
+      .boundingBox())!;
+    const card = (await openCard(page).boundingBox())!;
+    expect(card.y - (control.y + control.height)).toBeCloseTo(8, 0);
+    expect(card.x).toBeCloseTo(control.x, 0);
     cards.push(geometry);
     await page.keyboard.press('Escape');
     await expect(openCard(page)).toHaveCount(0);
   }
   const [date, time, month] = cards;
-  // One inset and one radius: the spacing scale's 1 rem at the default scale.
-  expect(date!.padding).toBe('16px');
+  // One inset and one radius: a panel's, as wide as a popup row's corner, 14 px at the default
+  // scale.
+  expect(date!.padding).toBe('14px');
   for (const card of [time, month]) {
     expect(card!.padding).toBe(date!.padding);
     expect(card!.radius).toBe(date!.radius);

@@ -1,0 +1,59 @@
+import WithinRange from '../../examples/date-picker/WithinRange';
+import { usePointer, type PointerStep } from '../../motion/Motion';
+import { MotionStage } from '../../motion/MotionStage';
+
+const next = '.env-calendar-next';
+const previous = '.env-calendar-previous';
+
+/*
+ * The pointer opens the calendar on this month, its days before the range unavailable, and presses
+ * next month until it stops: in the last month, the days after the range are unavailable and a
+ * further press does nothing. It goes back to the first month and closes the calendar with Esc.
+ */
+const script: PointerStep[] = [
+  { wait: 500 },
+  { to: '.env-date-picker-control', x: 0.4, y: 0.5 },
+  { wait: 300 },
+  { click: true },
+  { wait: 1100 },
+  { to: next, duration: 600 },
+  { wait: 250 },
+  { click: true },
+  { wait: 800 },
+  { click: true },
+  { wait: 900 },
+  { click: true },
+  { wait: 500 },
+  { click: true },
+  { wait: 1200 },
+  { to: previous, duration: 600 },
+  { wait: 250 },
+  { click: true },
+  { wait: 500 },
+  { click: true },
+  { wait: 900 },
+  { key: 'Escape', on: '.env-date-picker-popup' },
+  { leave: true },
+  { wait: 900 },
+];
+
+function Browsing() {
+  usePointer(script);
+  return (
+    // The field at the top of the room its calendar opens into, below it.
+    <div
+      style={{ display: 'grid', justifyItems: 'center', inlineSize: '100%', blockSize: '26rem' }}
+    >
+      <WithinRange />
+    </div>
+  );
+}
+
+/** A field whose days are limited to a range, its months browsed to the end by a pointer. */
+export default function WithinRangeMotion() {
+  return (
+    <MotionStage label="the month buttons stopping at the range">
+      <Browsing />
+    </MotionStage>
+  );
+}

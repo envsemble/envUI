@@ -1,5 +1,15 @@
 import { useState } from 'react';
-import { Badge, Button, DiffStat, Tabs, Text, Theme, type ThemeValue, Row } from '@envsemble/envui';
+import {
+  AnimatedNumber,
+  Badge,
+  Button,
+  DiffStat,
+  Tabs,
+  Text,
+  Theme,
+  type ColorScheme,
+  Row,
+} from '@envsemble/envui';
 
 /** The 1.0 emphasis of each 0.7 variant, which the samples are still named by. */
 const emphasis = {
@@ -12,8 +22,8 @@ const emphasis = {
 } as const;
 const variants = ['primary', 'secondary', 'outlined', 'text', 'important'] as const;
 
-/** Counts and badges inside buttons and tabs, mounted with ?fixture=button-counts. */
-export function ButtonCountsFixture({ theme }: { theme: ThemeValue }) {
+/** Counts, badges and numbers inside buttons and tabs, mounted with ?fixture=button-counts. */
+export function ButtonCountsFixture({ theme }: { theme: ColorScheme }) {
   const [tab, setTab] = useState('submissions');
   const [view, setView] = useState('editor');
   return (
@@ -27,7 +37,7 @@ export function ButtonCountsFixture({ theme }: { theme: ThemeValue }) {
             value: 'submissions',
             button: (
               <Button>
-                Submissions <Badge count={24} tone="accent" variant="solid" />
+                Submissions <Badge count={24} tone="primary" variant="solid" />
               </Button>
             ),
             content: <Text>Submissions</Text>,
@@ -72,7 +82,19 @@ export function ButtonCountsFixture({ theme }: { theme: ThemeValue }) {
           </Button>
         ))}
       </Row>
+      {/* A number within the label's words. */}
+      <Button data-testid={`show-tasks-${theme}`}>
+        Show <AnimatedNumber value={33} /> tasks
+      </Button>
       <DiffStat additions={12} deletions={3} data-testid={`diff-stat-${theme}`} />
+      {/* A text button alone in a box as wide as its content, as a list row's name. */}
+      <Row>
+        <div>
+          <Button variant="text" data-testid={`text-alone-${theme}`}>
+            Alex Morgan
+          </Button>
+        </div>
+      </Row>
     </Theme>
   );
 }

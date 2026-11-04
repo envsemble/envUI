@@ -21,7 +21,7 @@ The words of an interface built with envUI: titles, labels, buttons and messages
 
 Write as a calm, direct colleague who knows the task: plain words, short sentences and the active voice.
 
-- Speak to the reader as "you", and call them "people" in documentation; never "the user".
+- Speak to the reader as "you"; never "the user".
 - Say what happened and what to do next, without blame, jargon or codes.
 - No exclamation marks, "please", "simply", "just", "easy" or "oops".
 - "We" only where a person or a service really acted: "We sent a code to sam.lee@example.com".

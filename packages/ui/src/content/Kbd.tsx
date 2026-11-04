@@ -1,5 +1,7 @@
 import type { ComponentPropsWithRef } from 'react';
 import { classNames } from '../internal/classNames.js';
+import '../styles/Base.css';
+import '../styles/Kbd.css';
 
 export interface KbdProps extends ComponentPropsWithRef<'kbd'> {
   /**

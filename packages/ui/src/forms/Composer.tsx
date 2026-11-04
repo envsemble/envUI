@@ -14,8 +14,8 @@ import {
 } from 'react';
 import { useFormStatus } from 'react-dom';
 import { IconButton } from '../actions/Button.js';
-import { ArrowUpward } from '../icons/ArrowUpward.js';
-import { Stop } from '../icons/Stop.js';
+import { IconArrowUpward } from '../icons/ArrowUpward.js';
+import { IconStop } from '../icons/Stop.js';
 import { classNames } from '../internal/classNames.js';
 import { Grid, Row } from '../foundations/Layout.js';
 import { setRef } from '../internal/setRef.js';
@@ -23,12 +23,15 @@ import { useMessages } from '../internal/EnvUIContext.js';
 import { composer as composerMessages } from '../foundations/messages/composer.js';
 import { subscribeFormReset } from './internal/subscribeFormReset.js';
 import { TextareaControl } from './internal/TextareaControl.js';
+import { flag } from '../internal/flag.js';
+import '../styles/Base.css';
+import '../styles/Composer.css';
 
 interface ComposerOptions {
   /** The message text of a controlled composer. */
   value?: string;
   /**
-   * The starting text of an uncontrolled composer; it clears after each submit through onSubmit and
+   * The starting text of an uncontrolled composer; it clears after each send through onSend and
    * when its form resets.
    */
   defaultValue?: string;
@@ -36,11 +39,11 @@ interface ComposerOptions {
   onValueChange?: (value: string) => void;
   /**
    * Enter or the send button submits the text as typed, and an uncontrolled composer clears. Blank
-   * text never submits, and neither does a disabled, running or pending composer. Without onSubmit,
-   * they submit the field's form instead and the text stays until the form resets. Without onSubmit
+   * text never submits, and neither does a disabled, running or pending composer. Without onSend,
+   * they submit the field's form instead and the text stays until the form resets. Without onSend
    * or a form there is nothing to send: the button is unavailable and Enter starts a new line.
    */
-  onSubmit?: (value: string) => void;
+  onSend?: (value: string) => void;
   /**
    * A send is in progress, such as a request the application makes: sending is unavailable while
    * the field stays editable and keeps focus. The pending action of an enclosing form counts too;
@@ -69,7 +72,7 @@ interface ComposerOptions {
   /** Content at the start of the action row, such as an attach button or the name of a model. */
   start?: ReactNode;
   /** Supporting text below the composer, such as a note on attachments; it describes the field. */
-  footer?: ReactNode;
+  description?: ReactNode;
 }
 
 /** The field needs a name: aria-label without a visible label, or aria-labelledby. */
@@ -133,13 +136,13 @@ function useContentHeight(inputRef: RefObject<HTMLTextAreaElement | null>, text:
  * The message field of a conversation: a multiline field on a raised surface that grows with its
  * text up to maxRows, with a send button at the end that becomes a stop button while running.
  * Enter submits, Shift+Enter starts a new line and an input method's composition never submits.
- * Without onSubmit, Enter and the send button submit the field's form.
+ * Without onSend, Enter and the send button submit the field's form.
  */
 export function Composer({
   value,
   defaultValue = '',
   onValueChange,
-  onSubmit,
+  onSend,
   pending = false,
   running = false,
   onStop,
@@ -148,7 +151,7 @@ export function Composer({
   minRows = 1,
   maxRows = 8,
   start,
-  footer,
+  description,
   disabled = false,
   enterKeyHint,
   id: suppliedId,
@@ -164,7 +167,7 @@ export function Composer({
   const messages = useMessages('composer', composerMessages);
   const generatedId = useId();
   const id = suppliedId ?? generatedId;
-  const footerId = `${id}-footer`;
+  const descriptionId = `${id}-description`;
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
   const text = value ?? uncontrolledValue;
@@ -183,7 +186,7 @@ export function Composer({
   useLayoutEffect(() => {
     setInForm(Boolean(inputRef.current?.form));
   });
-  const canSend = onSubmit !== undefined || inForm;
+  const canSend = onSend !== undefined || inForm;
 
   // The browser resets the native field; an uncontrolled composer follows with its own text.
   useEffect(() => {
@@ -200,8 +203,8 @@ export function Composer({
   /** Sends the text, and reports whether it went. */
   function submit() {
     if (disabled || running || blank || busy) return false;
-    if (onSubmit) {
-      onSubmit(text);
+    if (onSend) {
+      onSend(text);
       if (value === undefined) change('');
       return true;
     }
@@ -241,9 +244,9 @@ export function Composer({
           ...style,
         } as CSSProperties
       }
-      data-running={running || undefined}
-      data-disabled={disabled || undefined}
-      data-start={start != null || undefined}
+      data-running={flag(running)}
+      data-disabled={flag(disabled)}
+      data-start={flag(start != null)}
     >
       <div
         className="env-composer-surface"
@@ -269,8 +272,9 @@ export function Composer({
           // Touch keyboards label Enter Send only where it sends.
           enterKeyHint={enterKeyHint ?? (canSend ? 'send' : undefined)}
           aria-describedby={
-            [describedBy, footer != null ? footerId : undefined].filter(Boolean).join(' ') ||
-            undefined
+            [describedBy, description != null ? descriptionId : undefined]
+              .filter(Boolean)
+              .join(' ') || undefined
           }
           className="env-composer-input"
           onChange={(event) => {
@@ -287,7 +291,7 @@ export function Composer({
         <IconButton
           variant="primary"
           className="env-composer-action"
-          icon={running ? <Stop filled /> : <ArrowUpward />}
+          icon={running ? <IconStop filled /> : <IconArrowUpward />}
           aria-label={actionLabel}
           disabled={!running && disabled}
           aria-disabled={unavailable || undefined}
@@ -301,9 +305,9 @@ export function Composer({
           }}
         />
       </div>
-      {footer != null && (
-        <div className="env-composer-footer" id={footerId}>
-          {footer}
+      {description != null && (
+        <div className="env-composer-footer" id={descriptionId}>
+          {description}
         </div>
       )}
     </Grid>

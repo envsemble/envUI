@@ -68,7 +68,7 @@ Given a minimum width, a grid fits as many columns as it can, with no breakpoint
 
 - The rest of a row stays empty, so every item keeps one width.
 
-```tsx figure=ColumnsThatFit widths="22 50"
+```tsx figure=ColumnsThatFit widths="22 50" sweep
 
 ```
 
@@ -76,11 +76,11 @@ Given a minimum width, a grid fits as many columns as it can, with no breakpoint
 
 A grid of items fits its columns to the room it has, rather than keeping a set number.
 
-```tsx figure=FittingColumns
+```tsx figure=FittingColumns motion
 
 ```
 
-```tsx figure=FixedColumns
+```tsx figure=FixedColumns motion
 
 ```
 

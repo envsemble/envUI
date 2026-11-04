@@ -27,6 +27,8 @@ examples:
   Styles: example
   Emphasis: example
   Hierarchy: example
+  TextSize: example
+  Measure: example
 ---
 
 # Typography
@@ -43,11 +45,11 @@ envUI sets text in six styles, from the one large line that opens a page to smal
 
 ```
 
-1. **Headline**: The title of the page.
-2. **Title**: The title of a section, a card or a dialog.
-3. **Body**: Most text: paragraphs, descriptions and values.
-4. **Small body**: Supporting text, a step smaller and quieter.
-5. **Caption**: A note under a figure or a chart, at the small size.
+1. **Headline**
+2. **Title**
+3. **Body**
+4. **Small body**
+5. **Caption**
 
 ### Every style
 
@@ -87,7 +89,9 @@ Everything is set in one typeface, at a regular weight for reading and a medium 
 
 Text grows with the text size people choose in their browser, and the compact scale makes every style a step smaller.
 
-- Choose Compact under Scale in the Display menu to see it on this site.
+```tsx figure=TextSize
+
+```
 
 ## Rules
 
@@ -112,6 +116,10 @@ Open a page or a section with a sentence or two in the main color that say what 
 A line holds about as many words as a line of a book.
 
 - However wide the window, a paragraph wraps at that length, so the eye finds the start of the next line easily.
+
+```tsx figure=Measure
+
+```
 
 ### Short paragraphs
 
@@ -138,7 +146,7 @@ Ask an agent for text in these words; envUI turns each into a style, so the resu
 | A caption        | `variant="caption"`                                                           | A small, quiet note under a figure or a chart.                                               |
 | Quieter text     | `emphasis="muted"` on Text of any variant                                     | The same size in the quieter color of supporting text.                                       |
 | A lead           | The first paragraph as body in the default color; the detail after it muted   | The sentence or two that open a page or a section, in the main color, before quieter detail. |
-| Short paragraphs | A few lines each, with `max-inline-size: 56ch` on running text                | Running text in paragraphs of a few lines, each line a comfortable length.                   |
+| Short paragraphs | A few lines each, with `max-inline-size: 53ch` on running text                | Running text in paragraphs of a few lines, each line a comfortable length.                   |
 
 ## Compose
 
@@ -169,14 +177,14 @@ import { Column, Text } from '@envsemble/envui';
 
 At the default 16 px root, in the comfortable [scale](spacing.md), as its Sizes in each scale lists them; compact takes each a step smaller. Display, headline and title are medium (500), the rest regular (400).
 
-| Variant    | In the catalogue | Size                               | Color                    |
-| ---------- | ---------------- | ---------------------------------- | ------------------------ |
-| `display`  | Display          | 1.75 to 2.75 rem, with the window  | `--env-color-fg-default` |
-| `headline` | Headline         | 1.125 rem, `--env-type-h1`         | `--env-color-fg-default` |
-| `title`    | Title            | 1 rem, `--env-type-h2`             | `--env-color-fg-default` |
-| `body`     | Body             | 0.9375 rem, `--env-type-body`      | `--env-color-fg-default` |
-| `body-sm`  | Small body       | 0.875 rem, `--env-type-body-small` | `--env-color-fg-muted`   |
-| `caption`  | Caption          | 0.875 rem, `--env-type-body-small` | `--env-color-fg-muted`   |
+| Variant    | In the catalogue | Size                                                    | Color                    |
+| ---------- | ---------------- | ------------------------------------------------------- | ------------------------ |
+| `display`  | Display          | 1.75 to 2.75 rem, with the window, `--env-type-display` | `--env-color-fg-default` |
+| `headline` | Headline         | 1.125 rem, `--env-type-headline`                        | `--env-color-fg-default` |
+| `title`    | Title            | 1 rem, `--env-type-title`                               | `--env-color-fg-default` |
+| `body`     | Body             | 0.9375 rem, `--env-type-body`                           | `--env-color-fg-default` |
+| `body-sm`  | Small body       | 0.875 rem, `--env-type-body-sm`                         | `--env-color-fg-muted`   |
+| `caption`  | Caption          | 0.875 rem, `--env-type-body-sm`                         | `--env-color-fg-muted`   |
 
 `emphasis` replaces a variant's color: `default` is `--env-color-fg-default`, and `muted` and `subtle` are both `--env-color-fg-muted` today.
 
@@ -190,17 +198,16 @@ At the default 16 px root, in the comfortable [scale](spacing.md), as its Sizes 
 
 - Choose the element for the document's structure and the variant for its look, apart: a section's `h2` may be a title.
 - One display text per view at most, for a page's hero; it scales from 1.75 to 2.75 rem and balances its lines.
-- Inter at regular (400) and medium (500), from `--env-font-weight-*`; semibold (600) only for the strongest emphasis in a small space, such as today in a calendar.
+- Geist at regular (400) and medium (500), from `--env-font-weight-*`; semibold (600) only for the strongest emphasis in a small space, such as today in a calendar.
 - Text adds no outer spacing: a Column, a Row or the component around it owns the gaps.
 - Vary the text by its role rather than setting everything as body: open with what matters in the default color, and set supporting text, such as a description under a title, details and hints, `emphasis="muted"` or `body-sm`.
-- Keep running text to a readable measure, about 60–75 characters a line: give paragraphs and Markdown a `max-inline-size` of about `56ch`, since Text and Markdown fill their container. Write short paragraphs, one point each, a few lines long.
-- The 0.7 names are gone: page-heading is headline, section-heading is title, supporting is body-sm, `tone` is `emphasis` and `as` is `render`.
+- Keep running text to a readable measure, about 60–75 characters a line: give paragraphs and Markdown a `max-inline-size` of about `53ch`, since Text and Markdown fill their container. Write short paragraphs, one point each, a few lines long.
 
 #### Lists
 
 Formatted text, which Markdown, RichText and RichTextEditor render in the `env-prose` class, sets its lists apart from the text around them.
 
-- A bullet is a plain small dot in the text color, on the middle of the item's first line.
+- A bullet is a small spark, four points with curved sides, in the text color, on the middle of the item's first line; one level in, a smaller spark in the muted color.
 - An ordered item's number is plain, in tabular figures in the muted text color.
 - Items stand a full step apart.
 - A nested list steps down quietly, with closer items and a small muted ring, or a letter for an ordered item.

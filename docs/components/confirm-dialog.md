@@ -21,16 +21,16 @@ avoidWhen:
   - text: A task with fields, a choice between several actions or content to review.
     use: Dialog
   - text: Undoing an action after it ran, such as an archived item.
-    use: Toast
+    use: ToastProvider
   - text: A warning that needs no answer, shown in the page.
     use: Alert
 components:
   - ConfirmDialog
 examples:
-  DeleteProject: overview
-  ArchiveProject:
-    role: example
-    caption: The neutral tone, for archiving.
+  DeleteProject:
+    role: overview
+    motion: true
+  ArchiveProject: example
   ConfirmDialogAnatomy: anatomy
   AsyncWithError: example
   FromMenu: example
@@ -67,13 +67,11 @@ examples:
 
 ```
 
-1. **Dialog** (`env-dialog-popup`)
+1. **Dialog** (`env-dialog`)
 2. **Question** (`env-dialog-title`, `title`)
 3. **Description** (`env-dialog-description`, `description`)
 4. **Cancel** (`env-dialog-actions > env-button:first-child`, `cancelLabel`)
 5. **Confirm** (`env-dialog-actions > env-button:last-child`, `confirmLabel`)
-
-Not shown: the error of a failed action, above the buttons.
 
 ## Behaviour
 
@@ -81,13 +79,15 @@ Not shown: the error of a failed action, above the buttons.
 
 A press outside doesn't close a ConfirmDialog.
 
+<!-- specimen: PressOutside -->
+
 ### An action that can fail
 
 The dialog waits for its action, showing that it is working.
 
 - When the action fails, it stays open with the error, so people can try again.
 
-```tsx figure=AsyncWithError
+```tsx figure=AsyncWithError motion
 
 ```
 
@@ -95,7 +95,7 @@ The dialog waits for its action, showing that it is working.
 
 A menu item can open the dialog, and focus returns to the menu's button when it closes.
 
-```tsx figure=FromMenu
+```tsx figure=FromMenu motion
 
 ```
 
@@ -103,11 +103,11 @@ A menu item can open the dialog, and focus returns to the menu's button when it 
 
 Match the tone to the consequence, and let the buttons say what each choice does.
 
-```tsx figure=DangerForDelete open
+```tsx figure=DangerForDelete motion
 
 ```
 
-```tsx figure=NeutralForDelete open
+```tsx figure=NeutralForDelete motion
 
 ```
 
@@ -150,7 +150,7 @@ Ask the question in the title, and name the consequence on the confirm button.
 
 A ConfirmDialog opens from its `trigger`, such as a Button. Its `title` asks the question, such as “Delete Northwind launch?”, its `description` says what confirming does and whether it can be undone, and `confirmLabel` names the consequence, such as Delete project.
 
-- `cancelLabel` is Cancel by default, from EnvUIProvider's `messages.confirmDialog.cancel`.
+- `cancelLabel` names the cancel button.
 - `children` holds more content between the heading and the actions, such as the one field a confirmation holds, where <kbd>Enter</kbd> confirms.
 - A press outside doesn't close it.
 
@@ -214,8 +214,9 @@ Without a `trigger`, open it with `open` and `onOpenChange`, which receives the 
 
 ### Customize
 
-A ConfirmDialog is an alert dialog with Dialog's parts: the surface, `env-dialog-popup`, the question, `env-dialog-title`, the description, `env-dialog-description`, and the actions, `env-dialog-actions`, with Cancel first and the confirm button last. The error is an Alert, `env-alert`, above the actions.
+A ConfirmDialog is an alert dialog with Dialog's parts: the surface, `env-dialog`, the question, `env-dialog-title`, the description, `env-dialog-description`, and the actions, `env-dialog-actions`, with Cancel first and the confirm button last. The error is an Alert, `env-alert`, above the actions. Its surface looks as [Dialog's](dialog.md#customize) does.
 
 ## Changelog
 
+- **1.0.0-prerelease.5**: The dialog takes the popups' color and soft shadow, with no outline edge, as Dialog does.
 - **1.0.0**: ConfirmDialog, an alert dialog with a neutral or danger tone that waits for its action and stays open when it fails.

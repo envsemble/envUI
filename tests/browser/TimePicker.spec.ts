@@ -1,5 +1,5 @@
 import { test, expect, type Locator, type Page } from '@playwright/test';
-import { fixtureUrl } from './Servers';
+import { fixtureUrl } from './helpers/Servers';
 
 /** The clock is fixed, so Now and the time the wheels start at without a value stay the same. */
 const today = new Date('2026-10-14T10:00:00');
@@ -31,7 +31,7 @@ const wheelNames = (scope: Locator) =>
 async function rowFromMiddle(spinbutton: Locator, offset: number) {
   const rows = spinbutton.locator('.env-time-list-row');
   const middle = await rows.evaluateAll((all) =>
-    all.findIndex((row) => row.hasAttribute('data-centred')),
+    all.findIndex((row) => row.hasAttribute('data-centered')),
   );
   return rows.nth(middle + offset);
 }
@@ -67,11 +67,11 @@ test('the field shows its time in the locale and each wheel follows the spinbutt
   await expect(hours).toHaveAttribute('aria-valuemax', '23');
   await expect(minutes).toHaveAttribute('aria-valuetext', '30');
   // The values sit on one line, in the middle of their wheels.
-  await expect(hours.locator('[data-centred]')).toHaveText('09');
+  await expect(hours.locator('[data-centered]')).toHaveText('09');
   await expect(async () => {
     const [hour, minute, box] = await Promise.all([
-      hours.locator('[data-centred]').boundingBox(),
-      minutes.locator('[data-centred]').boundingBox(),
+      hours.locator('[data-centered]').boundingBox(),
+      minutes.locator('[data-centered]').boundingBox(),
       hours.boundingBox(),
     ]);
     expect(Math.abs(hour!.y - minute!.y)).toBeLessThan(1);
@@ -104,7 +104,7 @@ test('the field shows its time in the locale and each wheel follows the spinbutt
   // Digits name an hour.
   await page.keyboard.type('14');
   await expect(start).toHaveText('14:00');
-  await expect(hours.locator('[data-centred]')).toHaveText('14');
+  await expect(hours.locator('[data-centered]')).toHaveText('14');
   await expect(dialog).toBeVisible();
   await page.keyboard.press('Escape');
   await expect(openPopup(page)).toHaveCount(0);
@@ -121,20 +121,22 @@ test(
     await start.click();
     const dialog = page.getByRole('dialog', { name: 'Start time' });
     const hours = wheel(dialog, 'Hours');
-    await expect(hours.locator('[data-centred]')).toHaveText('09');
+    await expect(hours.locator('[data-centered]')).toHaveText('09');
     // A row below the middle turns to it and becomes the value.
     await (await rowFromMiddle(hours, 2)).click();
     await expect(start).toHaveText('11:30');
-    await expect(hours.locator('[data-centred]')).toHaveText('11');
+    await expect(hours.locator('[data-centered]')).toHaveText('11');
     // Turning the wheel by a row moves the value by one; it loops on past the hour.
     const minutes = wheel(dialog, 'Minutes');
     await minutes.hover();
-    const row = await minutes.locator('[data-centred]').evaluate((element) => element.clientHeight);
+    const row = await minutes
+      .locator('[data-centered]')
+      .evaluate((element) => element.clientHeight);
     await page.mouse.wheel(0, row);
     await expect(start).toHaveText('11:45');
     await page.mouse.wheel(0, row);
     await expect(start).toHaveText('11:00');
-    await expect(minutes.locator('[data-centred]')).toHaveText('00');
+    await expect(minutes.locator('[data-centered]')).toHaveText('00');
   },
 );
 
@@ -299,7 +301,7 @@ test(
     // A notch of a mouse wheel, 100 pixels, is one row, not as far as a page would scroll.
     await page.mouse.wheel(0, 100);
     await expect(start).toHaveText('09:45');
-    await expect(minutes.locator('[data-centred]')).toHaveText('45');
+    await expect(minutes.locator('[data-centered]')).toHaveText('45');
     // Notches in quick succession turn on together, a row each, and settle once.
     await page.mouse.wheel(0, 100);
     await page.mouse.wheel(0, 100);

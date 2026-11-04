@@ -1,170 +1,196 @@
-/* Badges: small pills that name a state in its tone. The tone's text color keeps 4.5:1 on the page,
-   panes and rows, also over its tint; a solid badge puts fg-on-emphasis on the tone's emphasis fill,
-   and an outlined one draws the tone's edge.
-   In a control, such as a tab with a count, the control sets hooks on its own element:
-   --env-badge-fg, --env-badge-bg and --env-badge-border (a border shorthand) for every badge inside
-   it, whatever its tone and variant; --env-badge-count-fg, -bg and -border for a badge with a
-   count, which reads them instead; and --env-diff-stat-fg, -bg and -border for a diff stat, whose two tones then take that one
-   color. Button sets them (Button.css). */
-/* Color properties: a badge's colors, which an application sets on one badge through style or its
-   own CSS. They don't inherit, and they win over its tone and variant and over the hooks of a
-   control around it. outline draws an edge in that color. */
-@property --env-badge-container {
-  syntax: '*';
-  inherits: false;
-}
-@property --env-badge-content {
-  syntax: '*';
-  inherits: false;
-}
-@property --env-badge-outline {
-  syntax: '*';
-  inherits: false;
-}
-.env-badge {
-  /* The edge of an outline the application set; invalid, and so not drawn, while none is. */
-  --env-badge-own-border: 0.0625rem solid var(--env-badge-outline);
-  --env-badge-tone: var(--env-color-fg-muted);
-  --env-badge-tint: var(--env-color-bg-neutral-muted);
-  --env-badge-fill: var(--env-color-bg-neutral-emphasis);
-  --env-badge-edge: var(--env-color-border-neutral);
-  box-sizing: border-box;
-  inline-size: fit-content;
-  max-inline-size: 100%;
-  min-inline-size: 0;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--env-space-1);
-  padding: 0.0625rem var(--env-space-2);
-  border: var(--env-badge-own-border, var(--env-badge-border, 0.0625rem solid transparent));
-  border-radius: var(--env-radius-full);
-  background: var(--env-badge-container, var(--env-badge-bg, var(--env-badge-tint)));
-  color: var(--env-badge-content, var(--env-badge-fg, var(--env-badge-tone)));
-  font: var(--env-font-weight-medium) var(--env-font-size-caption) / 1.4 var(--env-font-family);
-  white-space: nowrap;
-  vertical-align: middle;
-}
-.env-badge[data-tone='accent'] {
-  --env-badge-tone: var(--env-color-fg-accent);
-  --env-badge-tint: var(--env-color-bg-accent-badge);
-  --env-badge-fill: var(--env-color-bg-accent-emphasis);
-  --env-badge-edge: var(--env-color-border-accent);
-}
-.env-badge[data-tone='success'] {
-  --env-badge-tone: var(--env-color-fg-success);
-  --env-badge-tint: var(--env-color-bg-success-muted);
-  --env-badge-fill: var(--env-color-bg-success-emphasis);
-  --env-badge-edge: var(--env-color-border-success);
-}
-.env-badge[data-tone='warning'] {
-  --env-badge-tone: var(--env-color-fg-warning);
-  --env-badge-tint: var(--env-color-bg-warning-muted);
-  --env-badge-fill: var(--env-color-bg-warning-emphasis);
-  --env-badge-edge: var(--env-color-border-warning);
-}
-.env-badge[data-tone='danger'] {
-  --env-badge-tone: var(--env-color-fg-danger);
-  --env-badge-tint: var(--env-color-bg-danger-muted);
-  --env-badge-fill: var(--env-color-bg-danger-emphasis);
-  --env-badge-edge: var(--env-color-border-danger);
-}
-.env-badge[data-tone='done'] {
-  --env-badge-tone: var(--env-color-fg-done);
-  --env-badge-tint: var(--env-color-bg-done-muted);
-  --env-badge-fill: var(--env-color-bg-done-emphasis);
-  --env-badge-edge: var(--env-color-border-done);
-}
-.env-badge[data-variant='solid'] {
-  background: var(--env-badge-container, var(--env-badge-bg, var(--env-badge-fill)));
-  color: var(--env-badge-content, var(--env-badge-fg, var(--env-color-fg-on-emphasis)));
-}
-.env-badge[data-variant='outline'] {
-  --env-badge-edge-border: 0.0625rem solid var(--env-badge-edge);
-  border: var(--env-badge-own-border, var(--env-badge-border, var(--env-badge-edge-border)));
-  background: var(--env-badge-container, var(--env-badge-bg, transparent));
-}
-.env-badge .env-icon {
-  inline-size: 0.875rem;
-  block-size: 0.875rem;
-}
-.env-badge-label {
-  min-inline-size: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+@layer env.components {
+  /* Badges: small pills that name a state in its tone. A soft badge has no edge: the status tones fill
+     it with their stronger tint and its label is semibold, and at high contrast it takes the tone's
+     softer tint. The tone's text color keeps 4.5:1 on the page, panes and rows, also over its tints; a
+     solid badge puts fg-on-emphasis on the tone's emphasis fill, and an outlined one draws the tone's
+     edge.
+     In a control, such as a tab with a count, the control sets hooks on its own element:
+     --env-badge-fg, --env-badge-bg and --env-badge-border (a border shorthand) for every badge inside
+     it, whatever its tone and variant; --env-badge-count-fg, -bg and -border for a badge with a
+     count, which reads them instead; and --env-diff-stat-fg, -bg and -border for a diff stat, whose two tones then take that one
+     color. Button sets them (Button.css). */
+  /* Color properties: a badge's colors, which an application sets on one badge through style or its
+     own CSS. They don't inherit, and they win over its tone and variant and over the hooks of a
+     control around it. outline draws an edge in that color. */
+  @property --env-badge-container {
+    syntax: '*';
+    inherits: false;
+  }
+  @property --env-badge-content {
+    syntax: '*';
+    inherits: false;
+  }
+  @property --env-badge-outline {
+    syntax: '*';
+    inherits: false;
+  }
+  .env-badge {
+    /* The edge of an outline the application set; invalid, and so not drawn, while none is. */
+    --env-badge-own-border: 0.0625rem solid var(--env-badge-outline);
+    --env-badge-tone: var(--env-color-fg-muted);
+    /* A soft badge's fill: the tone's stronger tint, which the status tones set, or its tint; at high
+       contrast always its tint (see Theme.css). */
+    --env-badge-tint: var(--env-color-bg-neutral-muted);
+    --env-badge-tonal: var(--env-badge-tint);
+    --env-badge-high-contrast-tint: var(--env-theme-high-contrast) var(--env-badge-tint);
+    --env-badge-soft: var(--env-badge-high-contrast-tint, var(--env-badge-tonal));
+    --env-badge-fill: var(--env-color-bg-neutral-emphasis);
+    --env-badge-edge: var(--env-color-border-neutral);
+    box-sizing: border-box;
+    inline-size: fit-content;
+    max-inline-size: 100%;
+    min-inline-size: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--env-space-1);
+    /* With the border, 3 px above and below and 10 px at the sides. */
+    padding: calc(var(--env-space-1) / 2) calc(var(--env-space-2) + var(--env-control-border-width));
+    border: var(--env-badge-own-border, var(--env-badge-border, 0.0625rem solid transparent));
+    border-radius: var(--env-radius-full);
+    background: var(--env-badge-container, var(--env-badge-bg, var(--env-badge-soft)));
+    color: var(--env-badge-content, var(--env-badge-fg, var(--env-badge-tone)));
+    font: var(--env-font-weight-medium) var(--env-font-size-caption) / 1.4 var(--env-font-family);
+    white-space: nowrap;
+    vertical-align: middle;
+  }
+  .env-badge[data-tone='primary'] {
+    --env-badge-tone: var(--env-color-fg-primary);
+    --env-badge-tint: var(--env-color-bg-primary-soft);
+    --env-badge-tonal: var(--env-color-bg-primary-subtle-hover);
+    --env-badge-fill: var(--env-color-bg-primary-solid);
+    --env-badge-edge: var(--env-color-border-primary);
+  }
+  .env-badge[data-tone='accent'] {
+    --env-badge-tone: var(--env-color-fg-accent);
+    --env-badge-tint: var(--env-color-bg-accent-soft);
+    --env-badge-tonal: var(--env-color-bg-accent-subtle-hover);
+    --env-badge-fill: var(--env-color-bg-accent-solid);
+    --env-badge-edge: var(--env-color-border-accent);
+  }
+  .env-badge[data-tone='success'] {
+    --env-badge-tone: var(--env-color-fg-success);
+    --env-badge-tint: var(--env-color-bg-success-muted);
+    --env-badge-tonal: var(--env-color-bg-success-subtle-hover);
+    --env-badge-fill: var(--env-color-bg-success-emphasis);
+    --env-badge-edge: var(--env-color-border-success);
+  }
+  .env-badge[data-tone='warning'] {
+    --env-badge-tone: var(--env-color-fg-warning);
+    --env-badge-tint: var(--env-color-bg-warning-muted);
+    --env-badge-tonal: var(--env-color-bg-warning-subtle-hover);
+    --env-badge-fill: var(--env-color-bg-warning-emphasis);
+    --env-badge-edge: var(--env-color-border-warning);
+  }
+  .env-badge[data-tone='danger'] {
+    --env-badge-tone: var(--env-color-fg-danger);
+    --env-badge-tint: var(--env-color-bg-danger-muted);
+    --env-badge-tonal: var(--env-color-bg-danger-subtle-hover);
+    --env-badge-fill: var(--env-color-bg-danger-emphasis);
+    --env-badge-edge: var(--env-color-border-danger);
+  }
+  .env-badge[data-tone='done'] {
+    --env-badge-tone: var(--env-color-fg-done);
+    --env-badge-tint: var(--env-color-bg-done-muted);
+    --env-badge-fill: var(--env-color-bg-done-emphasis);
+    --env-badge-edge: var(--env-color-border-done);
+  }
+  /* A soft badge's label is semibold, which sets it apart on its tint as the tone's text. */
+  .env-badge:not([data-variant='solid'], [data-variant='outline'], [data-count]) {
+    font-weight: var(--env-font-weight-semibold);
+  }
+  .env-badge[data-variant='solid'] {
+    background: var(--env-badge-container, var(--env-badge-bg, var(--env-badge-fill)));
+    color: var(--env-badge-content, var(--env-badge-fg, var(--env-color-fg-on-emphasis)));
+  }
+  .env-badge[data-variant='outline'] {
+    --env-badge-edge-border: 0.0625rem solid var(--env-badge-edge);
+    border: var(--env-badge-own-border, var(--env-badge-border, var(--env-badge-edge-border)));
+    background: var(--env-badge-container, var(--env-badge-bg, transparent));
+  }
+  .env-badge .env-icon {
+    inline-size: 0.875rem;
+    block-size: 0.875rem;
+  }
+  .env-badge-label {
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
-/* A count: a compact round pill, as wide as it is tall for one digit, a size smaller in the compact
-   scale, in tabular figures. Its tone and variant color it as any badge's, but a neutral count's
-   figures take the default text color, and it reads the count hooks instead of the badge ones. */
-.env-badge[data-count] {
-  position: relative;
-  flex: 0 0 auto;
-  min-inline-size: var(--env-counter-badge-height);
-  block-size: var(--env-counter-badge-height);
-  justify-content: center;
-  padding-block: 0;
-  padding-inline: 0.375rem;
-  border: var(--env-badge-own-border, var(--env-badge-count-border, none));
-  background: var(--env-badge-container, var(--env-badge-count-bg, var(--env-badge-tint)));
-  color: var(--env-badge-content, var(--env-badge-count-fg, var(--env-badge-tone)));
-  font: var(--env-font-weight-medium) var(--env-font-size-caption) / 1 var(--env-font-family);
-  font-variant-numeric: tabular-nums;
-}
-.env-badge[data-count][data-tone='neutral'] {
-  --env-badge-tone: var(--env-color-fg-default);
-}
-/* The variant in :where(), so a skeleton's fill below still wins over it. */
-.env-badge[data-count]:where([data-variant='solid']) {
-  background: var(--env-badge-container, var(--env-badge-count-bg, var(--env-badge-fill)));
-  color: var(--env-badge-content, var(--env-badge-count-fg, var(--env-color-fg-on-emphasis)));
-}
-.env-badge[data-count]:where([data-variant='outline']) {
-  border: var(--env-badge-own-border, var(--env-badge-count-border, var(--env-badge-edge-border)));
-  background: var(--env-badge-container, var(--env-badge-count-bg, transparent));
-}
-/* A change as one count-sized pill: additions in the success tone, deletions in the danger tone. */
-.env-diff-stat {
-  box-sizing: border-box;
-  position: relative;
-  flex: 0 0 auto;
-  block-size: var(--env-counter-badge-height);
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  padding-inline: 0.375rem;
-  border: var(--env-diff-stat-border, none);
-  border-radius: var(--env-radius-full);
-  background: var(--env-diff-stat-bg, var(--env-color-bg-neutral-muted));
-  font: var(--env-font-weight-medium) var(--env-font-size-caption) / 1 var(--env-font-family);
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-  vertical-align: middle;
-}
-.env-diff-stat-additions {
-  color: var(--env-diff-stat-fg, var(--env-color-fg-success));
-}
-.env-diff-stat-deletions {
-  color: var(--env-diff-stat-fg, var(--env-color-fg-danger));
-}
-.env-badge-count-label,
-.env-diff-stat-label {
-  position: absolute;
-  inline-size: 0.0625rem;
-  block-size: 0.0625rem;
-  margin: -0.0625rem;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
+  /* A count: a compact round pill, as wide as it is tall for one digit, a size smaller in the compact
+     scale, in tabular figures. Its tone and variant color it as any badge's, but a neutral count's
+     figures take the default text color, and it reads the count hooks instead of the badge ones. */
+  .env-badge[data-count] {
+    position: relative;
+    flex: 0 0 auto;
+    min-inline-size: var(--env-badge-count-height);
+    block-size: var(--env-badge-count-height);
+    justify-content: center;
+    padding-block: 0;
+    padding-inline: 0.375rem;
+    border: var(--env-badge-own-border, var(--env-badge-count-border, none));
+    background: var(--env-badge-container, var(--env-badge-count-bg, var(--env-badge-soft)));
+    color: var(--env-badge-content, var(--env-badge-count-fg, var(--env-badge-tone)));
+    font: var(--env-font-weight-medium) var(--env-font-size-caption) / 1 var(--env-font-family);
+    font-variant-numeric: tabular-nums;
+  }
+  .env-badge[data-count][data-tone='neutral'] {
+    --env-badge-tone: var(--env-color-fg-default);
+  }
+  /* The variant in :where(), so a skeleton's fill below still wins over it. */
+  .env-badge[data-count]:where([data-variant='solid']) {
+    background: var(--env-badge-container, var(--env-badge-count-bg, var(--env-badge-fill)));
+    color: var(--env-badge-content, var(--env-badge-count-fg, var(--env-color-fg-on-emphasis)));
+  }
+  .env-badge[data-count]:where([data-variant='outline']) {
+    /* prettier-ignore */
+    border: var(--env-badge-own-border, var(--env-badge-count-border, var(--env-badge-edge-border)));
+    background: var(--env-badge-container, var(--env-badge-count-bg, transparent));
+  }
+  /* A change as one count-sized pill: additions in the success tone, deletions in the danger tone. */
+  .env-diff-stat {
+    box-sizing: border-box;
+    position: relative;
+    flex: 0 0 auto;
+    block-size: var(--env-badge-count-height);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding-inline: 0.375rem;
+    border: var(--env-diff-stat-border, none);
+    border-radius: var(--env-radius-full);
+    background: var(--env-diff-stat-bg, var(--env-color-bg-neutral-muted));
+    font: var(--env-font-weight-medium) var(--env-font-size-caption) / 1 var(--env-font-family);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    vertical-align: middle;
+  }
+  .env-diff-stat-additions {
+    color: var(--env-diff-stat-fg, var(--env-color-fg-success));
+  }
+  .env-diff-stat-deletions {
+    color: var(--env-diff-stat-fg, var(--env-color-fg-danger));
+  }
+  .env-badge-count-label,
+  .env-diff-stat-label {
+    position: absolute;
+    inline-size: 0.0625rem;
+    block-size: 0.0625rem;
+    margin: -0.0625rem;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
 
-/* In a skeleton, a badge is a filled shape of its size, without its text or tone. */
-[data-env-skeleton] .env-badge {
-  forced-color-adjust: none;
-  border-color: transparent;
-  box-shadow: none;
-  --env-skeleton-shape: 1;
-  background: var(--env-skeleton-paint);
-}
-[data-env-skeleton] .env-badge * {
-  visibility: hidden;
+  /* In a skeleton, a badge is a filled shape of its size, without its text or tone. */
+  [data-env-skeleton] .env-badge {
+    forced-color-adjust: none;
+    border-color: transparent;
+    box-shadow: none;
+    --env-skeleton-shape: 1;
+    background: var(--env-skeleton-paint);
+  }
+  [data-env-skeleton] .env-badge * {
+    visibility: hidden;
+  }
 }

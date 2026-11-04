@@ -9,8 +9,8 @@ import * as diff from '@envsemble/envui/diff';
 import * as color from '@envsemble/envui/color';
 import * as richText from '@envsemble/envui/rich-text';
 import * as themeBootstrap from '@envsemble/envui/theme-bootstrap';
-import { Home } from '@envsemble/envui/icons/Home';
-import { Search } from '@envsemble/envui/icons';
+import { IconHome } from '@envsemble/envui/icons/Home';
+import { IconSearch } from '@envsemble/envui/icons/Search';
 import { render } from './Render.mjs';
 
 const clientReference = Symbol.for('react.client.reference');
@@ -32,7 +32,7 @@ const requiredProps = {
   DiffStat: { additions: 12, deletions: 3 },
 };
 
-const icon = h(Home);
+const icon = h(IconHome);
 
 /**
  * The props a component is rendered with beyond its defaults, from its documented props: each
@@ -116,12 +116,12 @@ const page = render(
     { title: 'Release' },
     h(ui.Text, null, 'Ready to ship'),
     h(ui.Badge, null, 'New'),
-    h(ui.Button, { startIcon: h(Home), href: '/home' }, 'Home'),
+    h(ui.Button, { startIcon: h(IconHome), href: '/home' }, 'Home'),
     h(ui.Button, { pending: true }, 'Publish'),
     h(ui.Button, { href: '/archive', pending: true }, 'Archive'),
     h(ui.Button, { href: '/history', disabled: true }, 'History'),
-    h(ui.IconButton, { icon: h(Search), 'aria-label': 'Search' }),
-    h(ui.IconButton, { icon: h(Search), 'aria-label': 'Searching', pending: true }),
+    h(ui.IconButton, { icon: h(IconSearch), 'aria-label': 'Search' }),
+    h(ui.IconButton, { icon: h(IconSearch), 'aria-label': 'Searching', pending: true }),
     h(ui.Menu.Root, { trigger: h(ui.Button, null, 'More') }, h(ui.Menu.Item, null, 'Rename')),
     h(ui.Alert, { tone: 'success', title: 'Saved' }, 'The release is saved.'),
   ),
@@ -134,10 +134,10 @@ const list = render(
     { 'aria-label': 'Plans' },
     h(ui.List.Item, {
       interactive: true,
-      selected: true,
+      current: true,
       label: h('a', { href: '/plans/launch', 'data-row-target': true }, 'Launch'),
     }),
-    h(ui.List.Item, { label: 'Roadmap', selected: true }),
+    h(ui.List.Item, { label: 'Roadmap', current: true }),
     h(ui.List.Item, { label: 'Budget', start: h('span', null, 'B') }),
   ),
 );

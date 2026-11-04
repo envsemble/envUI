@@ -24,6 +24,9 @@
         }
       },
       "page": {
+        "$root": {
+          "$value": "{contrast-high.color.bg.page}"
+        },
         "hover": {
           "$value": "{contrast-high.color.bg.page.hover}"
         },
@@ -32,6 +35,9 @@
         }
       },
       "default": {
+        "$root": {
+          "$value": "{contrast-high.color.bg.default}"
+        },
         "hover": {
           "$value": "{contrast-high.color.bg.default.hover}"
         },
@@ -104,50 +110,45 @@
           }
         }
       },
-      "brand": {
+      "primary": {
         "emphasis": {
           "$root": {
-            "$value": "{contrast-high.color.bg.brand.emphasis}"
+            "$value": "{contrast-high.color.bg.primary.emphasis}"
           },
           "hover": {
-            "$value": "{contrast-high.color.bg.brand.emphasis.hover}"
+            "$value": "{contrast-high.color.bg.primary.emphasis.hover}"
           },
           "pressed": {
-            "$value": "{contrast-high.color.bg.brand.emphasis.pressed}"
+            "$value": "{contrast-high.color.bg.primary.emphasis.pressed}"
           }
         },
         "strong": {
           "$root": {
-            "$value": "{contrast-high.color.bg.brand.strong}"
+            "$value": "{contrast-high.color.bg.primary.strong}"
           },
           "hover": {
-            "$value": "{contrast-high.color.bg.brand.strong.hover}"
+            "$value": "{contrast-high.color.bg.primary.strong.hover}"
           },
           "pressed": {
-            "$value": "{contrast-high.color.bg.brand.strong.pressed}"
+            "$value": "{contrast-high.color.bg.primary.strong.pressed}"
           }
-        },
-        "muted": {
-          "$value": "{contrast-high.color.bg.brand.muted}"
-        }
-      },
-      "accent": {
-        "emphasis": {
-          "$value": "{contrast-high.color.bg.accent.emphasis}"
-        },
-        "muted": {
-          "$value": "{contrast-high.color.bg.accent.muted}"
-        },
-        "badge": {
-          "$value": "{contrast-high.color.bg.accent.muted}"
         },
         "subtle": {
           "hover": {
-            "$value": "{contrast-high.color.bg.accent.subtle.hover}"
+            "$value": "{contrast-high.color.bg.primary.subtle.hover}"
           },
           "pressed": {
-            "$value": "{contrast-high.color.bg.accent.subtle.pressed}"
+            "$value": "{contrast-high.color.bg.primary.subtle.pressed}"
           }
+        },
+        "muted": {
+          "$value": "{contrast-high.color.bg.primary.muted}"
+        },
+        "soft": {
+          "$value": "{contrast-high.color.bg.primary.muted}"
+        },
+        "solid": {
+          "$value": "{contrast-high.color.bg.primary.solid}"
         }
       },
       "success": {
@@ -241,17 +242,82 @@
           }
         }
       },
-      "important": {
+      "accent": {
         "strong": {
           "$root": {
-            "$value": "{contrast-high.color.bg.important.strong}"
+            "$value": "{contrast-high.color.bg.accent.strong}"
           },
           "hover": {
-            "$value": "{contrast-high.color.bg.important.strong.hover}"
+            "$value": "{contrast-high.color.bg.accent.strong.hover}"
           },
           "pressed": {
-            "$value": "{contrast-high.color.bg.important.strong.pressed}"
+            "$value": "{contrast-high.color.bg.accent.strong.pressed}"
           }
+        },
+        "subtle": {
+          "hover": {
+            "$value": "{contrast-high.color.bg.accent.subtle.hover}"
+          },
+          "pressed": {
+            "$value": "{contrast-high.color.bg.accent.subtle.pressed}"
+          }
+        },
+        "muted": {
+          "$value": "{contrast-high.color.bg.accent.muted}"
+        },
+        "soft": {
+          "$value": "{contrast-high.color.bg.accent.muted}"
+        },
+        "solid": {
+          "$value": "{contrast-high.color.bg.accent.solid}"
+        }
+      },
+      "recessed": {
+        "$root": {
+          "$value": "{contrast-high.color.bg.recessed}"
+        },
+        "hover": {
+          "$value": "{contrast-high.color.bg.recessed.hover}"
+        },
+        "pressed": {
+          "$value": "{contrast-high.color.bg.recessed.pressed}"
+        }
+      },
+      "list-item": {
+        "$root": {
+          "$value": "{contrast-high.color.bg.list-item}"
+        },
+        "hover": {
+          "$value": "{contrast-high.color.bg.list-item.hover}"
+        },
+        "pressed": {
+          "$value": "{contrast-high.color.bg.list-item.pressed}"
+        }
+      },
+      "avatar": {
+        "powder": {
+          "$value": "{contrast-high.color.bg.avatar.powder}"
+        },
+        "seafoam": {
+          "$value": "{contrast-high.color.bg.avatar.seafoam}"
+        },
+        "sage": {
+          "$value": "{contrast-high.color.bg.avatar.sage}"
+        },
+        "butter": {
+          "$value": "{contrast-high.color.bg.avatar.butter}"
+        },
+        "blush": {
+          "$value": "{contrast-high.color.bg.avatar.blush}"
+        },
+        "periwinkle": {
+          "$value": "{contrast-high.color.bg.avatar.periwinkle}"
+        },
+        "orchid": {
+          "$value": "{contrast-high.color.bg.avatar.orchid}"
+        },
+        "oat": {
+          "$value": "{contrast-high.color.bg.avatar.oat}"
         }
       }
     },
@@ -284,16 +350,8 @@
           "$value": "{contrast-high.color.fg.link.pressed}"
         }
       },
-      "link-on-tint": {
-        "$root": {
-          "$value": "{contrast-high.color.fg.link}"
-        },
-        "hover": {
-          "$value": "{contrast-high.color.fg.link.hover}"
-        },
-        "pressed": {
-          "$value": "{contrast-high.color.fg.link.pressed}"
-        }
+      "primary": {
+        "$value": "{contrast-high.color.fg.primary}"
       },
       "accent": {
         "$value": "{contrast-high.color.fg.accent}"
@@ -315,6 +373,46 @@
       },
       "on-emphasis": {
         "$value": "{contrast-high.color.fg.on-emphasis}"
+      },
+      "link-on-muted": {
+        "$root": {
+          "$value": "{contrast-high.color.fg.link}"
+        },
+        "hover": {
+          "$value": "{contrast-high.color.fg.link.hover}"
+        },
+        "pressed": {
+          "$value": "{contrast-high.color.fg.link.pressed}"
+        }
+      },
+      "rating-star": {
+        "$value": "{contrast-high.color.fg.rating-star}"
+      },
+      "avatar": {
+        "powder": {
+          "$value": "{contrast-high.color.fg.avatar.powder}"
+        },
+        "seafoam": {
+          "$value": "{contrast-high.color.fg.avatar.seafoam}"
+        },
+        "sage": {
+          "$value": "{contrast-high.color.fg.avatar.sage}"
+        },
+        "butter": {
+          "$value": "{contrast-high.color.fg.avatar.butter}"
+        },
+        "blush": {
+          "$value": "{contrast-high.color.fg.avatar.blush}"
+        },
+        "periwinkle": {
+          "$value": "{contrast-high.color.fg.avatar.periwinkle}"
+        },
+        "orchid": {
+          "$value": "{contrast-high.color.fg.avatar.orchid}"
+        },
+        "oat": {
+          "$value": "{contrast-high.color.fg.avatar.oat}"
+        }
       }
     },
     "border": {
@@ -340,24 +438,27 @@
           "$value": "{contrast-high.color.border.muted.pressed}"
         }
       },
-      "accent": {
+      "primary": {
         "$root": {
-          "$value": "{contrast-high.color.border.accent}"
+          "$value": "{contrast-high.color.border.primary}"
         },
         "muted": {
-          "$value": "{contrast-high.color.border.accent.muted}"
+          "$value": "{contrast-high.color.border.primary.muted}"
         },
         "emphasis": {
           "$root": {
-            "$value": "{contrast-high.color.border.accent.emphasis}"
+            "$value": "{contrast-high.color.border.primary.emphasis}"
           },
           "hover": {
-            "$value": "{contrast-high.color.border.accent.emphasis.hover}"
+            "$value": "{contrast-high.color.border.primary.emphasis.hover}"
           },
           "pressed": {
-            "$value": "{contrast-high.color.border.accent.emphasis.pressed}"
+            "$value": "{contrast-high.color.border.primary.emphasis.pressed}"
           }
         }
+      },
+      "accent": {
+        "$value": "{contrast-high.color.border.accent}"
       },
       "danger": {
         "$root": {
@@ -419,73 +520,6 @@
       "done": {
         "$value": "{contrast-high.color.border.done}"
       }
-    },
-    "list-item": {
-      "bg": {
-        "$root": {
-          "$value": "{contrast-high.color.list-item.bg}"
-        },
-        "hover": {
-          "$value": "{contrast-high.color.list-item.bg.hover}"
-        },
-        "pressed": {
-          "$value": "{contrast-high.color.list-item.bg.pressed}"
-        }
-      }
-    },
-    "avatar": {
-      "bg": {
-        "powder": {
-          "$value": "{contrast-high.color.avatar.bg.powder}"
-        },
-        "seafoam": {
-          "$value": "{contrast-high.color.avatar.bg.seafoam}"
-        },
-        "sage": {
-          "$value": "{contrast-high.color.avatar.bg.sage}"
-        },
-        "butter": {
-          "$value": "{contrast-high.color.avatar.bg.butter}"
-        },
-        "blush": {
-          "$value": "{contrast-high.color.avatar.bg.blush}"
-        },
-        "periwinkle": {
-          "$value": "{contrast-high.color.avatar.bg.periwinkle}"
-        },
-        "orchid": {
-          "$value": "{contrast-high.color.avatar.bg.orchid}"
-        },
-        "oat": {
-          "$value": "{contrast-high.color.avatar.bg.oat}"
-        }
-      },
-      "fg": {
-        "powder": {
-          "$value": "{contrast-high.color.avatar.fg.powder}"
-        },
-        "seafoam": {
-          "$value": "{contrast-high.color.avatar.fg.seafoam}"
-        },
-        "sage": {
-          "$value": "{contrast-high.color.avatar.fg.sage}"
-        },
-        "butter": {
-          "$value": "{contrast-high.color.avatar.fg.butter}"
-        },
-        "blush": {
-          "$value": "{contrast-high.color.avatar.fg.blush}"
-        },
-        "periwinkle": {
-          "$value": "{contrast-high.color.avatar.fg.periwinkle}"
-        },
-        "orchid": {
-          "$value": "{contrast-high.color.avatar.fg.orchid}"
-        },
-        "oat": {
-          "$value": "{contrast-high.color.avatar.fg.oat}"
-        }
-      }
     }
   },
   "elevation": {
@@ -504,8 +538,8 @@
     "3": {
       "border": {
         "$type": "color",
-        "$description": "Dialogs float over the scrim, so their edge keeps 4.5:1 against the scrim over the page.",
-        "$value": "{contrast-high.color.border.scrim}"
+        "$description": "Dialogs float over the backdrop, so their edge keeps 4.5:1 against the backdrop over the page.",
+        "$value": "{contrast-high.color.border.backdrop}"
       }
     }
   },

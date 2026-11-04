@@ -21,10 +21,10 @@ import {
 } from 'react';
 import type { NodeData, Snapshot } from '../model.js';
 import { angles, fitted, useCamera, useOrbit, type Angle } from './camera.js';
-import type { Side } from './controls.js';
+import type { Side } from './Controls.js';
 import { Frame, type FrameSize } from './Frame.js';
 import { Legend } from './Legend.js';
-import { HoverCard, Ruler } from './NodeHints.js';
+import { NodeHoverCard, Ruler } from './NodeHints.js';
 import { PerformancePanel } from './PerformancePanel.js';
 import { Plane, SurfaceCache } from './Plane.js';
 import { devStats } from './stats.js';
@@ -384,7 +384,7 @@ export const View3D = memo(function View3D({
           className="env-dev-card"
           style={{ left: pointer.current.x, top: pointer.current.y }}
         >
-          <HoverCard
+          <NodeHoverCard
             snapshot={snapshot}
             node={hoveredNode}
             problems={problemsByKey?.get(hoveredNode.key) ?? []}

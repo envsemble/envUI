@@ -1,0 +1,15 @@
+{
+  "name": "@envsemble/envui-site",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 8770 --strictPort",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "@envsemble/envui": "1.0.0-prerelease.4",
+    "minisearch": "7.2.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  }
+}

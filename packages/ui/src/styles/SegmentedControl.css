@@ -1,258 +1,262 @@
-/* A segmented control picks a value, after Material's segmented buttons: connected segments in one
-   outline, the chosen one in the selected fill with a check before its label. Tabs, which switch
-   panels, look different on purpose. The control is as tall as a control of its size, or of its
-   container's. */
-.env-segmented-control[data-size='sm'] {
-  --env-control-height: var(--env-control-height-sm);
-}
-.env-segmented-control[data-size='md'] {
-  --env-control-height: var(--env-control-height-md);
-}
-.env-segmented-control[data-size='lg'] {
-  --env-control-height: var(--env-control-height-lg);
-}
-/* Color properties: a segmented control's colors, which an application sets on one control through
-   style or its own CSS: container the segments' fill, transparent by default, content the labels of
-   the other options, outline the outline around and between the segments, selected and
-   selected-content the chosen option. They don't inherit; the control passes them on to its
-   options. With none set, the options keep their designed fills in every state; with them, hover
-   and press are state layers of an option's label color (see Button.css). */
-@property --env-segmented-control-container {
-  syntax: '*';
-  inherits: false;
-}
-@property --env-segmented-control-content {
-  syntax: '*';
-  inherits: false;
-}
-@property --env-segmented-control-outline {
-  syntax: '*';
-  inherits: false;
-}
-@property --env-segmented-control-selected {
-  syntax: '*';
-  inherits: false;
-}
-@property --env-segmented-control-selected-content {
-  syntax: '*';
-  inherits: false;
-}
-.env-segmented-control {
-  --env-segmented-control-option-color: var(
-    --env-segmented-control-content,
-    var(--env-color-fg-default)
-  );
-  --env-segmented-control-option-hover-color: var(
-    --env-segmented-control-content,
-    var(--env-color-fg-default)
-  );
-  --env-segmented-control-selected-color: var(
-    --env-segmented-control-selected-content,
-    var(--env-color-fg-on-selected)
-  );
-  --env-segmented-control-edge: var(
-    --env-segmented-control-outline,
-    var(--env-color-border-default)
-  );
-  /* Valid only while the application sets the colors of the options or of the chosen one. */
-  --env-segmented-control-custom: var(
-    --env-segmented-control-container,
-    var(--env-segmented-control-content)
-  );
-  --env-segmented-control-selected-gate: color-mix(
-    in srgb,
-    var(--env-segmented-control-selected-content) 0%,
-    var(--env-color-bg-selected)
-  );
-  --env-segmented-control-custom-selected: var(
-    --env-segmented-control-selected,
-    var(--env-segmented-control-selected-gate)
-  );
-  /* The height the control draws at: the control height, or the touch height under a coarse
-     pointer. */
-  --env-segmented-control-height: var(--env-control-height);
-  box-sizing: border-box;
-  inline-size: fit-content;
-  max-inline-size: 100%;
-  min-inline-size: 0;
-  display: inline-flex;
-  align-items: stretch;
-  min-block-size: var(--env-segmented-control-height);
-  /* The outline is drawn over the segments, inside the control's edge, so the segments fill its
-     whole height and the chosen one's fill never covers it. */
-  outline: var(--env-control-border-width) solid
-    var(--env-segmented-control-edge, var(--env-color-border-default));
-  outline-offset: calc(-1 * var(--env-control-border-width));
-  /* The capped full corner, so a control whose labels wrap keeps its corners. */
-  border-radius: var(--env-radius-full);
-  background: var(--env-segmented-control-container, transparent);
-  /* Long labels stay reachable in narrow containers; the rounded ends clip the segments' fills. */
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-.env-segmented-control-item {
-  box-sizing: border-box;
-  flex: 0 0 auto;
-  min-block-size: var(--env-segmented-control-height);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--env-space-2);
-  /* The block padding gives way where a line and the padding would outgrow the segment. */
-  padding: min(var(--env-space-1), calc((var(--env-segmented-control-height) - 1lh) / 2))
-    var(--env-space-4);
-  --env-segmented-control-layer: initial;
-  --env-segmented-control-custom-fill: color-mix(
-    in srgb,
-    var(--env-segmented-control-custom) 0%,
-    color-mix(in srgb, transparent, currentColor var(--env-segmented-control-layer))
-  );
-  --env-segmented-control-selected-layered: color-mix(
-    in srgb,
-    var(--env-segmented-control-custom-selected),
-    currentColor var(--env-segmented-control-layer)
-  );
-  --env-segmented-control-selected-fill: var(
-    --env-segmented-control-selected-layered,
-    var(--env-segmented-control-custom-selected)
-  );
-  border: 0;
-  border-inline-start: var(--env-control-border-width) solid transparent;
-  border-radius: 0;
-  background: transparent;
-  color: var(--env-segmented-control-option-color, var(--env-color-fg-default));
-  font: var(--env-font-weight-medium) var(--env-font-size-label) / 1.4 var(--env-font-family);
-  white-space: nowrap;
-  cursor: pointer;
-  transition:
-    background-color var(--env-motion-duration-fast) var(--env-motion-ease),
-    color var(--env-motion-duration-fast) var(--env-motion-ease);
-}
-/* The outline between two segments. Every segment takes the line's width, the first a clear one,
-   so segments that share a width evenly stay equal. */
-.env-segmented-control-item ~ .env-segmented-control-item {
-  border-inline-start-color: var(--env-segmented-control-edge, var(--env-color-border-default));
-}
-.env-segmented-control[data-size='sm'] .env-segmented-control-item {
-  padding-inline: var(--env-space-3);
-}
-.env-segmented-control-item:hover:not([data-disabled]) {
-  --env-segmented-control-layer: calc(var(--env-state-hover-opacity) * 100%);
-}
-.env-segmented-control-item:focus-visible:not([data-disabled]) {
-  --env-segmented-control-layer: calc(var(--env-state-focus-opacity) * 100%);
-}
-.env-segmented-control-item:active:not([data-disabled]) {
-  --env-segmented-control-layer: calc(var(--env-state-pressed-opacity) * 100%);
-}
-.env-segmented-control-item:focus-visible:not([data-checked]):not([data-disabled]) {
-  background: var(--env-segmented-control-custom-fill, transparent);
-}
-.env-segmented-control-item:hover:not([data-checked]):not([data-disabled]) {
-  background: var(--env-segmented-control-custom-fill, var(--env-color-bg-neutral-subtle-hover));
-  color: var(--env-segmented-control-option-hover-color, var(--env-color-fg-default));
-}
-.env-segmented-control-item:active:not([data-checked]):not([data-disabled]) {
-  background: var(--env-segmented-control-custom-fill, var(--env-color-bg-neutral-subtle-pressed));
-}
-.env-segmented-control-item[data-checked] {
-  background: var(--env-segmented-control-selected-fill, var(--env-color-bg-selected));
-  color: var(--env-segmented-control-selected-color, var(--env-color-fg-on-selected));
-}
-.env-segmented-control-item[data-checked]:hover:not([data-disabled]) {
-  background: var(--env-segmented-control-selected-fill, var(--env-color-bg-selected-hover));
-}
-.env-segmented-control-item[data-checked]:active:not([data-disabled]) {
-  background: var(--env-segmented-control-selected-fill, var(--env-color-bg-selected-pressed));
-}
-/* The ring is drawn inside the segment, as the control clips what reaches past its outline. */
-.env-segmented-control-item:focus-visible {
-  outline: 2px solid var(--env-color-border-focus);
-  outline-offset: -4px;
-}
-/* The check shows only on the chosen segment, in place of its icon. */
-.env-segmented-control-item:not([data-checked]) > .env-segmented-control-item-check,
-.env-segmented-control-item[data-checked] > .env-icon:not(.env-segmented-control-item-check) {
-  display: none;
-}
-/* Under a coarse pointer the control grows to the touch height, like every control of its row. A
-   segment is at least as wide, unless the control shares out a full width. */
-@media (pointer: coarse) {
+@layer env.components {
+  /* A segmented control picks a value, after Material's segmented buttons: connected segments in one
+     outline, the chosen one in the selected fill with a check before its label. Tabs, which switch
+     panels, look different on purpose. The control is as tall as a control of its size, or of its
+     container's. */
+  .env-segmented-control[data-size='sm'] {
+    --env-control-height: var(--env-control-height-sm);
+  }
+  .env-segmented-control[data-size='md'] {
+    --env-control-height: var(--env-control-height-md);
+  }
+  .env-segmented-control[data-size='lg'] {
+    --env-control-height: var(--env-control-height-lg);
+  }
+  /* Color properties: a segmented control's colors, which an application sets on one control through
+     style or its own CSS: container the segments' fill, transparent by default, content the labels of
+     the other options, outline the outline around and between the segments, selected and
+     selected-content the chosen option. They don't inherit; the control passes them on to its
+     options. With none set, the options keep their designed fills in every state; with them, hover
+     and press are state layers of an option's label color (see Button.css). */
+  @property --env-segmented-control-container {
+    syntax: '*';
+    inherits: false;
+  }
+  @property --env-segmented-control-content {
+    syntax: '*';
+    inherits: false;
+  }
+  @property --env-segmented-control-outline {
+    syntax: '*';
+    inherits: false;
+  }
+  @property --env-segmented-control-selected {
+    syntax: '*';
+    inherits: false;
+  }
+  @property --env-segmented-control-selected-content {
+    syntax: '*';
+    inherits: false;
+  }
   .env-segmented-control {
-    --env-segmented-control-height: max(var(--env-control-height), var(--env-control-height-touch));
+    --env-segmented-control-option-color: var(
+      --env-segmented-control-content,
+      var(--env-color-fg-default)
+    );
+    --env-segmented-control-option-hover-color: var(
+      --env-segmented-control-content,
+      var(--env-color-fg-default)
+    );
+    --env-segmented-control-selected-color: var(
+      --env-segmented-control-selected-content,
+      var(--env-color-fg-on-selected)
+    );
+    --env-segmented-control-edge: var(
+      --env-segmented-control-outline,
+      var(--env-color-border-default)
+    );
+    /* Valid only while the application sets the colors of the options or of the chosen one. */
+    --env-segmented-control-custom: var(
+      --env-segmented-control-container,
+      var(--env-segmented-control-content)
+    );
+    --env-segmented-control-selected-gate: color-mix(
+      in srgb,
+      var(--env-segmented-control-selected-content) 0%,
+      var(--env-color-bg-selected)
+    );
+    --env-segmented-control-custom-selected: var(
+      --env-segmented-control-selected,
+      var(--env-segmented-control-selected-gate)
+    );
+    /* The height the control draws at: the control height, or the touch height under a coarse
+       pointer. */
+    --env-segmented-control-height: var(--env-control-height);
+    box-sizing: border-box;
+    inline-size: fit-content;
+    max-inline-size: 100%;
+    min-inline-size: 0;
+    display: inline-flex;
+    align-items: stretch;
+    min-block-size: var(--env-segmented-control-height);
+    /* The outline is drawn over the segments, inside the control's edge, so the segments fill its
+       whole height and the chosen one's fill never covers it. */
+    outline: var(--env-control-border-width) solid
+      var(--env-segmented-control-edge, var(--env-color-border-default));
+    outline-offset: calc(-1 * var(--env-control-border-width));
+    /* The capped full corner, so a control whose labels wrap keeps its corners. */
+    border-radius: var(--env-radius-full);
+    background: var(--env-segmented-control-container, transparent);
+    /* Long labels stay reachable in narrow containers; the rounded ends clip the segments' fills. */
+    overflow-x: auto;
+    scrollbar-width: none;
   }
   .env-segmented-control-item {
-    min-inline-size: var(--env-control-height-touch);
+    box-sizing: border-box;
+    flex: 0 0 auto;
+    min-block-size: var(--env-segmented-control-height);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--env-space-2);
+    /* The block padding gives way where a line and the padding would outgrow the segment. */
+    padding: min(var(--env-space-1), calc((var(--env-segmented-control-height) - 1lh) / 2))
+      var(--env-space-4);
+    --env-segmented-control-layer: initial;
+    --env-segmented-control-custom-fill: color-mix(
+      in srgb,
+      var(--env-segmented-control-custom) 0%,
+      color-mix(in srgb, transparent, currentColor var(--env-segmented-control-layer))
+    );
+    --env-segmented-control-selected-layered: color-mix(
+      in srgb,
+      var(--env-segmented-control-custom-selected),
+      currentColor var(--env-segmented-control-layer)
+    );
+    --env-segmented-control-selected-fill: var(
+      --env-segmented-control-selected-layered,
+      var(--env-segmented-control-custom-selected)
+    );
+    border: 0;
+    border-inline-start: var(--env-control-border-width) solid transparent;
+    border-radius: 0;
+    background: transparent;
+    color: var(--env-segmented-control-option-color, var(--env-color-fg-default));
+    font: var(--env-font-weight-medium) var(--env-font-size-label) / 1.4 var(--env-font-family);
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+      background-color var(--env-motion-duration-fast) var(--env-motion-ease),
+      color var(--env-motion-duration-fast) var(--env-motion-ease);
   }
-}
-.env-segmented-control-item[data-disabled] {
-  opacity: var(--env-state-disabled-opacity);
-  cursor: default;
-}
-.env-segmented-control-item .env-icon {
-  inline-size: var(--env-control-icon-size);
-  block-size: var(--env-control-icon-size);
-}
-.env-segmented-control-item-count {
-  font-size: 0.8125em;
-  font-variant-numeric: tabular-nums;
-}
-/* An unchosen item's count is muted text on what the control sits on, which keeps 4.5:1 (the
-   contrast gate measures it); a chosen one takes the selected label's color. */
-.env-segmented-control-item:not([data-checked]) > .env-segmented-control-item-count {
-  color: var(--env-color-fg-muted);
-}
-/* fullWidth fills the container and splits it evenly between the items, rather than scrolling. A
-   label too long for its share ends in an ellipsis; its item's tooltip shows it whole. */
-.env-segmented-control[data-full-width] {
-  display: flex;
-  inline-size: 100%;
-  overflow-x: hidden;
-}
-.env-segmented-control[data-full-width] > .env-segmented-control-item {
-  flex: 1 1 0;
-  min-inline-size: 0;
-}
-.env-segmented-control[data-full-width] .env-segmented-control-item-label {
-  min-inline-size: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-/* Without hover, as on touch screens, no tooltip shows a cut label: a label too long for its share
-   wraps onto more lines instead, breaking long words only where they would overflow, and the
-   control grows to hold it. */
-@media (hover: none), (pointer: coarse) {
-  .env-segmented-control[data-full-width] > .env-segmented-control-item {
-    white-space: normal;
+  /* The outline between two segments. Every segment takes the line's width, the first a clear one,
+     so segments that share a width evenly stay equal. */
+  .env-segmented-control-item ~ .env-segmented-control-item {
+    border-inline-start-color: var(--env-segmented-control-edge, var(--env-color-border-default));
   }
-  .env-segmented-control[data-full-width] .env-segmented-control-item-label {
-    overflow: visible;
-    text-overflow: clip;
-    overflow-wrap: break-word;
-    text-align: center;
+  .env-segmented-control[data-size='sm'] .env-segmented-control-item {
+    padding-inline: var(--env-space-3);
   }
-}
-@media (prefers-reduced-motion: reduce) {
-  .env-segmented-control-item {
-    transition: none;
+  .env-segmented-control-item:hover:not([data-disabled]) {
+    --env-segmented-control-layer: calc(var(--env-state-hover-opacity) * 100%);
   }
-}
-
-/* Forced colors: the system paints no fills or shadows, so the chosen segment takes the system’s
-   selection colors. */
-@media (forced-colors: active) {
+  .env-segmented-control-item:focus-visible:not([data-disabled]) {
+    --env-segmented-control-layer: calc(var(--env-state-focus-opacity) * 100%);
+  }
+  .env-segmented-control-item:active:not([data-disabled]) {
+    --env-segmented-control-layer: calc(var(--env-state-pressed-opacity) * 100%);
+  }
+  .env-segmented-control-item:focus-visible:not([data-checked]):not([data-disabled]) {
+    background: var(--env-segmented-control-custom-fill, transparent);
+  }
+  .env-segmented-control-item:hover:not([data-checked]):not([data-disabled]) {
+    background: var(--env-segmented-control-custom-fill, var(--env-color-bg-neutral-subtle-hover));
+    color: var(--env-segmented-control-option-hover-color, var(--env-color-fg-default));
+  }
+  .env-segmented-control-item:active:not([data-checked]):not([data-disabled]) {
+    /* prettier-ignore */
+    background: var(--env-segmented-control-custom-fill, var(--env-color-bg-neutral-subtle-pressed));
+  }
   .env-segmented-control-item[data-checked] {
-    forced-color-adjust: none;
-    background-color: Highlight;
-    color: HighlightText;
+    background: var(--env-segmented-control-selected-fill, var(--env-color-bg-selected));
+    color: var(--env-segmented-control-selected-color, var(--env-color-fg-on-selected));
   }
-  .env-segmented-control-item[data-checked] :where(*) {
-    color: inherit;
+  .env-segmented-control-item[data-checked]:hover:not([data-disabled]) {
+    background: var(--env-segmented-control-selected-fill, var(--env-color-bg-selected-hover));
+  }
+  .env-segmented-control-item[data-checked]:active:not([data-disabled]) {
+    background: var(--env-segmented-control-selected-fill, var(--env-color-bg-selected-pressed));
+  }
+  /* The ring is drawn inside the segment, as the control clips what reaches past its outline. */
+  .env-segmented-control-item:focus-visible {
+    outline: 2px solid var(--env-color-border-focus);
+    outline-offset: -4px;
+  }
+  /* The check shows only on the chosen segment, in place of its icon. */
+  .env-segmented-control-item:not([data-checked]) > .env-segmented-control-item-indicator,
+  .env-segmented-control-item[data-checked] > .env-icon:not(.env-segmented-control-item-indicator) {
+    display: none;
+  }
+  /* Under a coarse pointer the control grows to the touch height, like every control of its row. A
+     segment is at least as wide, unless the control shares out a full width. */
+  @media (pointer: coarse) {
+    .env-segmented-control {
+      /* prettier-ignore */
+      --env-segmented-control-height: max(var(--env-control-height), var(--env-control-height-touch));
+    }
+    .env-segmented-control-item {
+      min-inline-size: var(--env-control-height-touch);
+    }
   }
   .env-segmented-control-item[data-disabled] {
-    color: GrayText;
+    opacity: var(--env-state-disabled-opacity);
+    cursor: default;
   }
-  .env-segmented-control-item[data-checked]:focus-visible {
-    outline-color: HighlightText;
+  .env-segmented-control-item .env-icon {
+    inline-size: var(--env-control-icon-size);
+    block-size: var(--env-control-icon-size);
+  }
+  .env-segmented-control-item-count {
+    font-size: 0.8125em;
+    font-variant-numeric: tabular-nums;
+  }
+  /* An unchosen item's count is muted text on what the control sits on, which keeps 4.5:1 (the
+     contrast gate measures it); a chosen one takes the selected label's color. */
+  .env-segmented-control-item:not([data-checked]) > .env-segmented-control-item-count {
+    color: var(--env-color-fg-muted);
+  }
+  /* fullWidth fills the container and splits it evenly between the items, rather than scrolling. A
+     label too long for its share ends in an ellipsis; its item's tooltip shows it whole. */
+  .env-segmented-control[data-full-width] {
+    display: flex;
+    inline-size: 100%;
+    overflow-x: hidden;
+  }
+  .env-segmented-control[data-full-width] > .env-segmented-control-item {
+    flex: 1 1 0;
+    min-inline-size: 0;
+  }
+  .env-segmented-control[data-full-width] .env-segmented-control-item-label {
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  /* Without hover, as on touch screens, no tooltip shows a cut label: a label too long for its share
+     wraps onto more lines instead, breaking long words only where they would overflow, and the
+     control grows to hold it. */
+  @media (hover: none), (pointer: coarse) {
+    .env-segmented-control[data-full-width] > .env-segmented-control-item {
+      white-space: normal;
+    }
+    .env-segmented-control[data-full-width] .env-segmented-control-item-label {
+      overflow: visible;
+      text-overflow: clip;
+      overflow-wrap: break-word;
+      text-align: center;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .env-segmented-control-item {
+      transition: none;
+    }
+  }
+
+  /* Forced colors: the system paints no fills or shadows, so the chosen segment takes the system’s
+     selection colors. */
+  @media (forced-colors: active) {
+    .env-segmented-control-item[data-checked] {
+      forced-color-adjust: none;
+      background-color: Highlight;
+      color: HighlightText;
+    }
+    .env-segmented-control-item[data-checked] :where(*) {
+      color: inherit;
+    }
+    .env-segmented-control-item[data-disabled] {
+      color: GrayText;
+    }
+    .env-segmented-control-item[data-checked]:focus-visible {
+      outline-color: HighlightText;
+    }
   }
 }

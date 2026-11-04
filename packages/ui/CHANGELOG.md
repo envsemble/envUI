@@ -9,7 +9,7 @@ The fourth prerelease of envUI 1.0. Its documentation is one file per page, whic
 - One prompt sets envUI up with a coding agent, and the package's own agent tooling is gone. Agents read the documentation the package ships, which a few lines in the project's `AGENTS.md` lead them to.
   - The prompt `Set up envUI in my app: envui.envsemble.com/SKILL.md`, on the Docs' home with a copy button, leads an agent to the setup skill the site hosts. After a short checklist that waits for a yes, it installs envUI at an exact version from GitHub Packages with its styles and theme, adds the `AGENTS.md` pointer, and turns on the ESLint plugin and the Stylelint config at the same version; the pointer and the lint rules are recommended, and any step can be skipped. In an application with UI of its own, it changes none of it and offers to plan a migration. The site also serves `llms.txt`, an index of the Docs.
   - Removed: the `envui` command (`bin`) with `envui agents` and the `envui mcp` server; the envui-use, envui-migrate and envui-contribute skills under `skills/`; the `envui` agent plugin and its marketplaces; and `manifest.json`, `llms.txt` and `llms-full.txt` at the package root. The Docs' Agent skills page opens For agents.
-  - Migration: remove an `envui` MCP server from the project's or client's configuration, copied skill folders, the plugin and its marketplace, and `npx --no envui agents --check` from CI; replace the index between `<!-- BEGIN envui -->` and `<!-- END envui -->` with the pointer; and read `docs/index.md`, `docs/generated/props.json` and `docs/generated/parts.json` where code read the manifest. Running the setup prompt does most of this. The [migration guide](https://github.com/envsemble/envUI/blob/main/docs/migration.md#templates-and-agent-tools) lists each step.
+  - Migration: remove an `envui` MCP server from the project's or client's configuration, copied skill folders, the plugin and its marketplace, and `npx --no envui agents --check` from CI; replace the index between `<!-- BEGIN envui -->` and `<!-- END envui -->` with the pointer; and read `docs/index.md`, `docs/generated/props.json` and `docs/generated/parts.json` where code read the manifest. Running the setup prompt does most of this. The [migration guide](https://github.com/envsemble/envUI/blob/main/docs/migration.md) lists each step.
 
 ### Minor Changes
 
@@ -47,7 +47,7 @@ The third prerelease of envUI 1.0, and the first versioned since 1.0.0-prereleas
   - Dev mode's `envui.layout.skeletonShift(root)` toggles a skeleton and reports, as `skeleton-shift` problems, the elements that move or resize when it loads, and media without an aspect ratio or a size of its own.
   - `v1-names` reports `Skeleton` and `SkeletonProps`, and `v1-classes` `env-skeleton`, `env-skeleton-highlight` and NavList.Skeleton's classes, with what to use instead; Skeleton's `tone` no longer moves to `emphasis`. `envui/no-renamed-exports` reports Skeleton too.
 
-  Migration guide: [Skeletons](https://github.com/envsemble/envUI/blob/main/docs/migration.md#skeletons).
+  Migration guide: [Skeletons](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - Avatar hues are named for their colors: `blue` is `powder`, `teal` `seafoam`, `green` `sage`, `amber` `butter`, `red` `blush`, `violet` `periwinkle`, `purple` `orchid` and `slate` `oat`, in `hue`, `avatarHues`, `AvatarHue` and `avatarHue`, and as the values of `data-hue`: `[data-hue='blue']`, `[data-hue='teal']`, `[data-hue='green']`, `[data-hue='amber']`, `[data-hue='red']`, `[data-hue='violet']`, `[data-hue='purple']` and `[data-hue='slate']` are `[data-hue='powder']`, `[data-hue='seafoam']`, `[data-hue='sage']`, `[data-hue='butter']`, `[data-hue='blush']`, `[data-hue='periwinkle']`, `[data-hue='orchid']` and `[data-hue='oat']`. A name keeps the hue it had, now under its new name.
 
@@ -61,7 +61,7 @@ The third prerelease of envUI 1.0, and the first versioned since 1.0.0-prereleas
   - The part classes `env-counter-badge` and `env-counter-badge-label` are `.env-badge[data-count]` and `env-badge-count-label`, and the hooks a control sets for the counts inside it, `--env-counter-badge-fg`, `-bg` and `-border`, are `--env-badge-count-fg`, `-bg` and `-border`.
   - `v1-structure` rewrites CounterBadge and Counter into a Badge with `count`, and reports a `tone` that is an expression; `v1-names` renames `CounterBadgeProps` and `CounterProps` to `BadgeProps`, and `v1-classes` renames the classes and hooks. `envui/no-renamed-exports` reports Counter with what replaces it.
 
-  Migration guide: [Folded components and patterns](https://github.com/envsemble/envUI/blob/main/docs/migration.md#folded-components-and-patterns).
+  Migration guide: [Folded components and patterns](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - ColorPicker and ColorSwatch move to their own entry point, `@envsemble/envui/color`, rebuilt on React Aria's color hooks (`@react-aria/color`, `@react-stately/color` and `@react-aria/i18n`), which the application installs, as the setup guide lists; an application that never imports the entry never loads them. The main entry exports neither any more.
   - **ColorPicker** is compact: a saturation and brightness area, a hue slider, an alpha slider and field with `alpha`, a format menu and quiet fields for hex, RGB and HSL, each channel named by its letter beside its number, such as R, G and B, a copy button, the browser's eyedropper where it has one (`eyeDropper`), and preset `swatches`. `formats` chooses the formats and their order, and `copy` the copy button. `value` and `defaultValue` take a CSS color string, hex, `rgb()` or `hsl()`, or React Aria's `Color`; `onValueChange(value, color)` receives the string in `valueFormat`, `#rrggbb` by default, and the `Color`; `name` submits the string through a hidden input. `showLabel`, `description`, `error`, `disabled` and `readOnly` stay; `variant` is gone, and `ref` reaches the picker's root rather than the HEX field. Fields commit on Enter and as focus leaves, and the arrow keys step them.
@@ -72,7 +72,7 @@ The third prerelease of envUI 1.0, and the first versioned since 1.0.0-prereleas
 
   The `v1-props` and `v1-entries` codemods move the props and the imports.
 
-  Migration guide: [Color picker and swatches](https://github.com/envsemble/envUI/blob/main/docs/migration.md#color-picker-and-swatches).
+  Migration guide: [Color picker and swatches](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - ColorPicker's `formats` with two or more formats shows them at once, instead of limiting the format menu to them as in 1.0.0-prerelease.2: `formats={['hex', 'rgb', 'hsl']}` shows each format's fields on a row of its own, in that order, with a copy button of its own, all editing the same color, their letters and numbers lined up from row to row. Each row is a group named after its format, and its copy button takes the new `messages.colorPicker.copyFormat`, such as Copy color as RGB. With one format, or without `formats`, the picker shows one format at a time as before, and the format menu stays the default. ColorPickerButton passes `formats` to its picker too.
 
@@ -86,11 +86,11 @@ The third prerelease of envUI 1.0, and the first versioned since 1.0.0-prereleas
   - **Removed component tokens.** A toast's hover and pressed tokens, `--env-toast-fill-hover` and `--env-toast-fill-pressed`, are gone: set `--env-toast-container`, and the dismiss button's hover and press become layers of the toast's text color. `v1-classes` reports them.
   - **`--env-badge-outline` changed meaning.** In prerelease.1 it was a private border shorthand, such as `0.0625rem solid <color>`; now it is the badge's public outline color. Write `--env-badge-outline: <color>`: a shorthand is an invalid color, and the badge draws no edge.
 
-  Migration guide: [Color properties and state layers](https://github.com/envsemble/envUI/blob/main/docs/migration.md#color-properties-and-state-layers).
+  Migration guide: [Color properties and state layers](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - envUI's components lay out their own parts with Row, Column and Grid instead of flex and grid rules of their own, so the parts that arrange others carry `data-env-layout` (and dev mode names them). Their part classes, state attributes and look are unchanged: what was a grid is a Grid, a flex row or column a Row or Column, and a part's own class still overrides the primitive's rules.
 
-  Row and Column zero the block margins of their direct children (and Row the inline ones too), so content of yours placed directly in such a part loses its default margins, such as a `<p>` passed to List.Item, Message's actions, Alert's `action`, Card's header or Tabs. Give it a class with the margin you want, or wrap it. Parts that were grids, such as Message, Popover and Field, keep their children's margins. Migration guide: [Layout primitives](https://github.com/envsemble/envUI/blob/main/docs/migration.md#layout-primitives).
+  Row and Column zero the block margins of their direct children (and Row the inline ones too), so content of yours placed directly in such a part loses its default margins, such as a `<p>` passed to List.Item, Message's actions, Alert's `action`, Card's header or Tabs. Give it a class with the margin you want, or wrap it. Parts that were grids, such as Message, Popover and Field, keep their children's margins. Migration guide: [Layout primitives](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
   - Feedback and floating surfaces: Alert, Dialog's header, Meter, Progress, Popover, HoverCard, CommandPalette, the popups of Menu, Select, Combobox, DatePicker, MonthPicker and TimePicker.
   - Content: Card's header, CodeBlock's heading, CalendarHeatmap, List, Message and MessageList.
   - Form controls: Field and its error, Calendar, the month grid, the panes, time column and actions of DatePicker, MonthPicker and TimePicker, DropZone, Composer, MarkdownEditor's write pane, RadioGroup and Slider's heading.
@@ -101,41 +101,41 @@ The third prerelease of envUI 1.0, and the first versioned since 1.0.0-prereleas
   - The part classes `env-drawer-popup`, `env-drawer-viewport` and `env-drawer-backdrop` are `env-sheet-popup`, `env-sheet-viewport` and `env-sheet-backdrop`, with the same state attributes, `data-side`, `data-width`, `data-starting-style`, `data-ending-style` and `data-swiping`.
   - `v1-structure` turns a 0.x `<Dialog placement="right">` into a Sheet. 0.x had no Drawer, and the name is the navigation drawer's now, so no codemod renames one: rename `Drawer` and `DrawerProps` from the prerelease to `Sheet` and `SheetProps`, and the `env-drawer-*` classes to `env-sheet-*`, by hand. `v1-structure` reports a Drawer without `destinations`, and `v1-classes` the classes.
 
-  Migration guide: [Overlays and feedback](https://github.com/envsemble/envUI/blob/main/docs/migration.md#overlays-and-feedback).
+  Migration guide: [Overlays and feedback](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - EmptyState is a pattern now, not a component: it carries no behavior, and its parts are envUI's own.
   - EmptyState and `EmptyStateProps` are gone. The empty states pattern, `docs/patterns/empty-states.md`, builds one from a Column with an icon, a Text heading, a Text sentence and a Button: at the start of a card or under a list's toolbar, or centred with a larger icon where it takes a region's place. Its notes keep what EmptyState took care of: the heading's level in the page's outline, which `headingLevel` set, and the alert role of a failure, which `tone="danger"` set.
   - The part classes `env-empty-state` and `env-empty-state-description` go, with `data-tone` and `data-align`. CodeDiff shows a failure to load with its own parts, `env-code-diff-failed` and `env-code-diff-failed-icon`, as an alert. The `empty-state` page opens the pattern.
   - `v1-names` reports EmptyState where it is used, and `v1-classes` its classes and 0.x's `env-empty-copy`; no codemod rewrites them. `envui/no-renamed-exports` reports them with the pattern to use instead.
 
-  Migration guide: [Folded components and patterns](https://github.com/envsemble/envUI/blob/main/docs/migration.md#folded-components-and-patterns).
+  Migration guide: [Folded components and patterns](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - Card's feature layout is built from envUI's components now: Card keeps its surface and its parts, and a feature card is a Card holding envUI's own components.
   - Card's `layout` and `icon` props are gone, with the `data-layout` attribute, `[data-layout='feature']`, `[data-layout='stack']` and the part classes `env-card-layout` and `env-card-icon`. A card with actions is `.env-card[data-actions]`, and a card's title is an `h3` by default whatever it holds.
   - The feature card on Card's page, `docs/components/card.md`, builds one from a Card holding a Row with the icon in muted Text, a Column with a headline Text heading and a Text sentence, and the Button that starts the feature, which moves below the text in a narrow card. The page keeps the heading's level in the page's outline.
   - `v1-props` drops `layout="stack"` and reports `layout="feature"` and `icon`, `v1-structure` reports 0.x's FeatureCard instead of writing the feature layout, and `v1-classes` reports `env-feature-card-*`, `env-card-layout`, `env-card-icon` and `[data-layout]` on a card.
 
-  Migration guide: [Folded components and patterns](https://github.com/envsemble/envUI/blob/main/docs/migration.md#folded-components-and-patterns).
+  Migration guide: [Folded components and patterns](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - Popover and HoverCard size to their content, from 12 rem up to their `width`, so a short note or a single field no longer sits in a wide empty card. Menus, tooltips, popovers, hover cards and the date, month and time pickers' popups are never wider than the room their positioner finds beside the trigger (`--available-width`), rather than the window less 2 rem, so they stay on screen in any frame.
 
   Migration: `width` (`md` 20 rem, `lg` 28 rem) is now the maximum, not a fixed width. To keep a fixed width, set `inline-size` through `className`, such as `.rename-popover { inline-size: 28rem; }`.
 
-  Migration guide: [Overlays and feedback](https://github.com/envsemble/envUI/blob/main/docs/migration.md#overlays-and-feedback).
+  Migration guide: [Overlays and feedback](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - IconButton is the one icon-only button, and the one close button.
   - CloseButton and `CloseButtonProps` are gone: a close, dismiss or remove button is an IconButton with `variant="ghost"`, `icon={<Close />}` and an `aria-label` in the application's language, as the Button page's close and remove section shows. Dialog, Sheet, Panes, Alert, Toast, Combobox, DocumentTabs and PanelDock render theirs that way. The small ones, Alert's and Toast's dismiss, Combobox's chip remove, and DocumentTabs' and PanelDock's tab close, keep CloseButton's touch-size hit area under a coarse pointer through IconButton's new hook `--env-icon-button-hit-area`, which they set to the touch size; Dialog's, Sheet's and Panes' close buttons are full size and need none. An application's own small close button sets the hook to keep the hit area. The part class `env-close-button` goes, and so does `messages.common.close`, which only CloseButton read.
   - `Button iconOnly` is gone: `<IconButton icon aria-label>` replaces it, and takes `href` for an icon-only link.
   - `v1-structure` rewrites `<CloseButton>` into the IconButton, importing `Close` from `@envsemble/envui/icons/Close`, and writes `aria-label="Close"` where it had no name, which it reports to translate. It rewrites `<Button iconOnly>` into `<IconButton>`, reporting those without a `variant`, which were primary where IconButton is secondary, and those that set `fullWidth`, `underline` or a `tone` without a `variant`, which IconButton doesn't take; a structure case's `reportProps` reports such props. `v1-classes` reports `env-close-button`. A structure case can now add a component imported from another module, such as an icon.
 
-  Migration guide: [Folded components and patterns](https://github.com/envsemble/envUI/blob/main/docs/migration.md#folded-components-and-patterns).
+  Migration guide: [Folded components and patterns](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - Stat is a pattern now, not a component: a figure carries no behavior of its own, and applications arrange their figures differently.
   - Stat, with Stat.Root, Stat.Group and the `Stat.RootProps`, `Stat.GroupProps`, `Stat.Trend` and `Stat.TrendTone` types, is gone. The key figures pattern, `docs/patterns/key-figures.md`, builds a figure from a muted Text label, a headline Text figure in tabular digits and a Badge that says the trend in words, in its tone and with a trending icon, and a group from a Surface with `role="group"` around a Grid of even columns. Its notes keep what Stat took care of: the trend said in words, tabular digits, and the group's name.
   - The part classes `env-stat`, `env-stat-label`, `env-stat-value`, `env-stat-footer`, `env-stat-trend`, `env-stat-description` and `env-stat-group` go, with the `data-direction` and `data-tone` of the trend. The `stat` page opens the pattern.
   - `v1-names` reports Stat, 0.x's Stat and StatGroup and their types where they are used, and `v1-classes` reports the `env-stat-*` classes; no codemod rewrites them. `envui/no-renamed-exports` reports them with the pattern to use instead.
 
-  Migration guide: [Folded components and patterns](https://github.com/envsemble/envUI/blob/main/docs/migration.md#folded-components-and-patterns).
+  Migration guide: [Folded components and patterns](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - Row, Column, Grid and Box, the layout primitives, replace Stack: thin wrappers over flex and grid that size to their content and never paint.
   - `<Stack direction="row">` is `<Row>`, with `wrap`, and any other Stack a `<Column>`; `gap`, `padding`, `align` and `justify` take Stack's values, the gap and the padding as steps of the spacing scale. Row and Column have no gap of their own, where Stack's was 1 rem.
@@ -143,7 +143,7 @@ The third prerelease of envUI 1.0, and the first versioned since 1.0.0-prereleas
   - Each renders `data-env-layout` (`box`, `row`, `column` or `grid`), `name` as `data-env-name`, and its options as attributes such as `data-gap`, and takes `render`, `className` and `ref`. Its rules have no specificity, so any class overrides them; the `env-stack` class and `StackProps` are gone.
   - The `v1-stack` codemod rewrites each Stack, after `v1-structure` and `v1-render`, and reports a `direction` that is an expression. `envui/no-renamed-exports` no longer reports `Row` and `RowProps`, 0.x's list row, as 1.0 exports `Row` again.
 
-  Migration guide: [Layout primitives](https://github.com/envsemble/envUI/blob/main/docs/migration.md#layout-primitives).
+  Migration guide: [Layout primitives](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - envUI draws no drop shadows. Menus, Select and Combobox lists, popovers, hover cards, pickers, rich text suggestions, docked panels, tooltips, toasts, dialogs, sheets and the command palette separate by their fill, their edge and, for modals, the scrim.
   - The elevation edge, `--env-elevation-{1|2|3}-border`, is clearly visible now, one color for every level: about 2:1 against a popup and the page, and at least 1.6:1 against every surface a popup floats over. In high contrast it stays the 4.5:1 boundary. In dark, the edge of tooltips and toasts, `--env-color-border-{neutral|success|info|danger}-strong`, is this edge too.
@@ -151,31 +151,31 @@ The third prerelease of envUI 1.0, and the first versioned since 1.0.0-prereleas
   - A row that moves in a reorderable list takes the elevation edge as a ring, and the color picker's thumbs take a ring outside their white edge. Neither has a shadow any more. Docked panels and the active one are no longer set apart by shadows: the active docked panel's edge takes the accent, `--env-color-border-accent-emphasis`, in every theme and contrast.
   - Focus rings, halos, inset edges and selection bars drawn with `box-shadow` are rings, not shadows, and stay.
 
-  Migration guide: [Tokens](https://github.com/envsemble/envUI/blob/main/docs/migration.md#tokens).
+  Migration guide: [Tokens](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - The underline field is gone: TextField, SearchField, Textarea, MarkdownEditor and RichTextEditor take `variant` `outline`, `floating` (TextField and SearchField) or `ghost`, and no longer `underline`, with its state value `data-variant="underline"` on `env-text-field-control`. The `v1-props` codemod drops `variant="underline"`, and 0.x's `variant="plain"`, so the field takes the default outline, and reports each.
 
-  Migration guide: [Fields and choice controls](https://github.com/envsemble/envUI/blob/main/docs/migration.md#fields-and-choice-controls).
+  Migration guide: [Fields and choice controls](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - OrganizationSwitcher is a pattern now, not a component: it is a Menu that lists the organizations, which applications arrange as they need.
   - OrganizationSwitcher, `OrganizationSwitcherProps`, `OrganizationSwitcherItem` and `messages.organizationSwitcher` are gone. The organization switcher pattern, `docs/patterns/organization-switcher.md`, builds it from a Menu.Root whose trigger is a secondary Button that names the active organization, a Menu.RadioGroup of Menu.RadioItems with the person's role as each `description`, and a Menu.Item that creates one; before the first organization, the create action is a Button of its own. The Menu page links to it.
   - The part classes `env-organization-switcher`, `env-organization-switcher-trigger`, `env-organization-switcher-trigger-label`, `env-organization-switcher-header`, `env-organization-switcher-heading`, `env-organization-switcher-options`, `env-organization-switcher-option`, `env-organization-switcher-description` and `env-organization-switcher-create` go, with the `data-checked` and `data-highlighted` they carried: the pattern's rows are Menu's own `env-menu-item`, which carry them.
   - `v1-names` reports OrganizationSwitcher, and 0.x's OrganizationMenu and their types, where they are used, and `v1-classes` the `env-organization-switcher-*` and `env-organization-menu-*` classes; no codemod rewrites them, and `v1-props` no longer renames OrganizationSwitcher's props. `envui/no-renamed-exports` reports OrganizationMenu with the pattern to use instead.
 
-  Migration guide: [Folded components and patterns](https://github.com/envsemble/envUI/blob/main/docs/migration.md#folded-components-and-patterns).
+  Migration guide: [Folded components and patterns](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - Page is invisible structure: `data-env-layout="page"`, `name` as `data-env-name`, and the `env-page` container for its content. Its gutter follows the window class of the region it sits in, 1 rem in a compact one and 1.5 rem from medium, where it grew with the viewport from 1 to 2 rem.
 
   PageHeader is built from Row and Column. A sticky one sticks at the top of the area that scrolls, under a Scaffold's top bar where the document scrolls (`--env-scaffold-sticky-top`), and no longer reads `--env-frame-sticky-top`. What scrolls into view in its Page's content keeps clear of it by a scroll margin: it still publishes its height as `--env-page-header-block-size` on its Page, and until script runs CSS reckons the height from its rows; put content that should stay in view under it in its `toolbar`.
 
-  Migration guide: [The app frame](https://github.com/envsemble/envUI/blob/main/docs/migration.md#the-app-frame).
+  Migration guide: [The app frame](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - Part names are public; component tokens are private.
   - **Part classes and state attributes are public and versioned.** Every part of a component has a class, `env-<component>-<part>`, such as `.env-card-header`, and a component shows its state in `data-*` attributes, such as `[data-tone='danger']`. An application's CSS may target them, and from now on a release that renames or removes one is a major release with a migration note. `docs/generated/parts.json` lists every component's root class, its parts with what each one is, and its state attributes with their values; the manifest gives each component page its `parts`, the MCP server's `get_component` returns them, and llms.txt names each component's root classes.
   - **Component tokens are private.** The custom properties a component declares for itself, such as `--env-card-padding` or `--env-badge-fill`, may change in any release. Set the system tokens, such as `--env-space-4` or `--env-color-bg-muted`, instead.
   - **The `no-private-classes` rules are removed** from the ESLint plugin (`envui/no-private-classes`) and the Stylelint config (`envui/no-private-classes`), since the classes they reported are public now. To migrate, delete the rule from any configuration or disable comment that names it: ESLint and Stylelint report a rule they don't know.
 
-  Migration guide: [Part names and component tokens](https://github.com/envsemble/envUI/blob/main/docs/migration.md#part-names-and-component-tokens).
+  Migration guide: [Part names and component tokens](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - AppShell, its parts, Sidebar and SidebarTrigger are gone, with `useAppShell`, `useSidebar`, `readAppShellCookie` and their types (`AppShellState`, `PerSide`, `PersistOptions`, `SidebarSide`, `SidebarSnapshot`, `FrameStateProps`, `SidebarChangeReason`, `SidebarTriggerProps`). An app frame is an arrangement every application makes its own: build it on Scaffold, with a TopBar in its `topBar` and the navigation forms in `navigation={{ bar, rail, drawer }}`, which it shows by its own width, as the app frame pattern shows. The body scrolls rather than the document, and nothing collapses, so there is no state to keep.
   - The part classes go: `env-app-shell`, `env-app-shell-header`, `env-app-shell-header-start`, `env-app-shell-header-title`, `env-app-shell-header-end`, `env-app-shell-main`, `env-app-shell-loading-bar`, `env-app-shell-skip-links` and `env-app-shell-skip-link`, which are `env-scaffold`, `env-top-bar`, `env-top-bar-start`, `env-top-bar-title`, `env-top-bar-actions`, `env-scaffold-body`, `env-top-bar-loading-bar`, `env-scaffold-skip-links` and `env-scaffold-skip-link`; and `env-sidebar`, `env-sidebar-header`, `env-sidebar-content`, `env-sidebar-footer`, `env-sidebar-group`, `env-sidebar-group-heading`, `env-sidebar-group-label`, `env-sidebar-group-action`, `env-sidebar-handle`, `env-sidebar-panel`, `env-sidebar-trigger`, `env-sidebar-trigger-glyphs`, `env-sidebar-trigger-icon`, `env-sidebar-trigger-mark` and `env-sidebar-trigger-tooltip`, whose place the navigation forms and the Scaffold's slots `env-scaffold-bar`, `env-scaffold-rail` and `env-scaffold-drawer` take.
@@ -184,7 +184,7 @@ The third prerelease of envUI 1.0, and the first versioned since 1.0.0-prereleas
   - SearchTrigger no longer shows only its icon by itself in a sidebar's rail: set `iconOnly`.
   - The `v1-app-shell` codemod goes: no codemod rewrites an app frame. `v1-names` reports AppShell, AppShellSkeleton, Sidebar, SidebarTrigger, the hooks and the types, `AppShellContextValue` and `SidebarApi` among them, wherever they are used, and the migration guide shows a frame before and after. `v1-classes` renames the part classes that carry on, `env-app-shell-header` to `env-top-bar` and the others as listed above, and reports `env-app-shell` itself and the `env-sidebar-*` classes.
 
-  Migration guide: [The app frame](https://github.com/envsemble/envUI/blob/main/docs/migration.md#the-app-frame).
+  Migration guide: [The app frame](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - NavList and NavList.Skeleton are gone: Bar, Rail and Drawer show an application's destinations from one array.
   - A NavList.Item is a destination in the array: `selected` is `current`, a count in `end` is `count`, NavList.Group's `label` is each destination's `group`, and `iconOnly` in a sidebar's rail is the Rail. End content other than a count has no place in a destination.
@@ -193,7 +193,7 @@ The third prerelease of envUI 1.0, and the first versioned since 1.0.0-prereleas
   - NavList's parts are gone: `env-nav-list`, `env-nav-list-group`, `env-nav-list-group-label`, `env-nav-list-group-list`, `env-nav-list-item`, `env-nav-list-item-dot`, `env-nav-list-item-end`, `env-nav-list-skeleton` and `env-nav-list-skeleton-item`, with their states `data-selected`, `data-icon-only` and `data-rail`. The navigation forms' parts are `env-bar-*`, `env-rail-*` and `env-drawer-*`, the current item with `data-current`.
   - No codemod rewrites a NavList, since its items are elements and a destination is data. `v1-names` reports NavList, and with `envui/no-renamed-exports` 0.x's NavigationItem and NavigationItemProps, with what to use instead, and `v1-classes` reports the `env-navigation-*` and `env-nav-list-*` classes instead of renaming them.
 
-  Migration guide: [Navigation forms](https://github.com/envsemble/envUI/blob/main/docs/migration.md#navigation-forms).
+  Migration guide: [Navigation forms](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - SplitPane and ListDetail are gone: Panes replaces them, one scaffold for two panes side by side with two behaviors in less room, `supporting` and `list-detail`, which CSS decides from its own width instead of measuring it.
   - `<ListDetail.Root detailShown onBack backLabel>` is `<Panes.Root behavior="list-detail" open onOpenChange backLabel>`, with Panes.List and Panes.Detail; the `v1-structure` codemod rewrites it, and reports its sizes, its `stackBelow`, which is `splitAt` at a window class, and its `resizeLabel`, as the divider is Panes.Divider, a part of its own. SplitPane is rewritten by hand, as supporting Panes with Panes.Main, an optional Panes.Divider and Panes.Supporting.
@@ -202,25 +202,25 @@ The third prerelease of envUI 1.0, and the first versioned since 1.0.0-prereleas
   - A vertical split pane has no counterpart.
   - `v1-classes` renames the classes of SplitPane and ListDetail to Panes', `env-split-pane-handle` to `env-panes-divider` and `env-list-detail-back` to `env-panes-back`, and reports `env-split-pane-probe` and the states Panes no longer sets, such as `[data-stacked]`.
 
-  Migration guide: [Split panes](https://github.com/envsemble/envUI/blob/main/docs/migration.md#split-panes).
+  Migration guide: [Split panes](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - The templates are gone from the documentation: the app frame, index, details, settings, dashboard, sign-in and error pages, their screens in `docs/examples/`, and the manifest's `templates`. The MCP server's `list_templates` and `get_template` tools go with them; `plan` points to the patterns, and `list_patterns`, `get_pattern` and `get_example` serve their examples. The app frame is a pattern now, `docs/patterns/app-frame.md`: a Scaffold with a TopBar and the same destinations as a Bar, a Rail or a Drawer.
 
-  Migration guide: [Templates and agent tools](https://github.com/envsemble/envUI/blob/main/docs/migration.md#templates-and-agent-tools).
+  Migration guide: [Templates and agent tools](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - SearchTrigger is gone: CommandPalette's page builds the button that opens the palette from a secondary Button with the Search icon, its label and the shortcut's keys, or from a ghost IconButton in a Tooltip, and the application listens for ⌘K or Ctrl+K itself, once.
   - SearchTrigger and `SearchTriggerProps` go, with `messages.searchTrigger`, the part classes `env-search-trigger`, `env-search-trigger-label`, `env-search-trigger-shortcut` and `env-search-trigger-tooltip`, and the page `components/search-trigger`, which opens CommandPalette's page now.
   - Button takes `end`: quiet content after the label, such as the Kbd of a shortcut, in the button's content color with outlined key caps, so it keeps its contrast on every variant, and at the far end of a button wider than its content, the part `env-button-end`. Kbd takes `--env-kbd-separator-fg` for the + between keys.
   - `v1-names` reports SearchTrigger and `SearchTriggerProps` where they are used, and `v1-classes` the `env-search-trigger-*` classes, each with a pointer to CommandPalette's page; no codemod rewrites them.
 
-  Migration guide: [Folded components and patterns](https://github.com/envsemble/envUI/blob/main/docs/migration.md#folded-components-and-patterns).
+  Migration guide: [Folded components and patterns](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - LoadingState folds into Spinner: a Spinner with `showLabel` shows its label beside it.
   - `<Spinner label="Loading project" showLabel />` is a status line for loading with no known shape: a busy `role="status"` that centres the spinner and its muted label in its row, the label read as the status. Without a `label` it says Loading, from EnvUIProvider's `messages.common.loading`. The label is `env-spinner-label`, and the spinner carries `data-show-label`. Without `showLabel`, a Spinner is as it was: a progress bar named by `label`, or hidden.
   - LoadingState and `LoadingStateProps` are gone: `<LoadingState label>` is `<Spinner label showLabel>`, and `env-loading-state` and `env-loading-state-label` are `.env-spinner[data-show-label]` and `env-spinner-label`. CodeDiff shows its loading so.
   - `v1-structure` rewrites a LoadingState without children into the Spinner and reports the children of one that has them; `v1-names` renames `LoadingStateProps` to `SpinnerProps`, and `v1-classes` renames the classes. A structure case can be `childless`, for elements without children. `envui/no-renamed-exports` reports LoadingState with what replaces it.
 
-  Migration guide: [Folded components and patterns](https://github.com/envsemble/envUI/blob/main/docs/migration.md#folded-components-and-patterns).
+  Migration guide: [Folded components and patterns](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - A Table with `narrowLayout="stack"` stacks its rows through a container query on its region instead of measuring it in script, so server-rendered markup and the first paint already stack in a narrow region and nothing moves as the page hydrates. `stackBelow` still takes any CSS length or a number of pixels.
   - The `env-table-stack-probe` part, the invisible element the table measured, is gone. Migration: nothing to change unless your styles targeted it, which `v1-classes` reports.
@@ -228,7 +228,7 @@ The third prerelease of envUI 1.0, and the first versioned since 1.0.0-prereleas
   - A stacking region is now the `env-table` size container and fills the width its context gives it (`inline-size: 100%`), as a container must; give a stacking table a width where it sits in a row that sizes to its content.
   - `data-stacked` and `onStackedChange` still report the layout once the table is in the document. Style stacked rows under `@container env-table (width < 37.5em)`, where the region makes 37.5em its `stackBelow`, rather than through `data-stacked`, so they apply before hydration.
 
-  Migration guide: [Navigation and collections](https://github.com/envsemble/envUI/blob/main/docs/migration.md#navigation-and-collections).
+  Migration guide: [Navigation and collections](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - envUI responds to containers at window classes rather than to the viewport: compact below 37.5 rem, medium from 37.5, expanded from 52.5 and large from 75 rem, which `windowClasses`, `WindowClass` and the `--env-window-class-*` tokens hold.
   - The outermost theme boundary, the themed document root or the Theme around the application, is the `env-window` size container, and takes the whole width its parent gives it. Style sheets write compact first and switch up, as in `@container env-window (width >= 37.5rem)`, so content without a window stays compact. A region becomes a window of its own with `<Box container="env-window">`.
@@ -236,14 +236,14 @@ The third prerelease of envUI 1.0, and the first versioned since 1.0.0-prereleas
   - Card's feature layout and PageHeader take their wide layout from 37.5 rem of their own width (38 and 32 rem before), and DatePicker sets its time beside the calendar from a medium `env-window` rather than a viewport of 32 rem.
   - The viewport breakpoint helpers and tokens of earlier prereleases (`breakpoints`, `Breakpoint`, `breakpointQuery`, `useBreakpoint`, `useMediaQuery`, `MediaQueryOptions` and `--env-breakpoint-*`) are gone: `v1-names` reports the exports and `v1-classes` the tokens.
 
-  Migration guide: [Window classes and container queries](https://github.com/envsemble/envUI/blob/main/docs/migration.md#window-classes-and-container-queries).
+  Migration guide: [Window classes and container queries](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - WindowFrame and AccountMenu are patterns now, not components: they are arrangements of other components that applications arrange differently.
   - WindowFrame, with WindowFrame.Root, WindowFrame.TitleBar and WindowFrame.Content, is a Scaffold with `topBarSpan="full"` and a `<TopBar titleBar>`, whose body scrolls below the title bar; its `bodyRef` is the content's ref. The window frame pattern shows it. The part classes `env-window-frame`, `env-window-frame-content`, `env-window-frame-title-bar`, `env-window-frame-title-bar-layout`, `env-window-frame-title-bar-start`, `env-window-frame-title-bar-center` and `env-window-frame-title-bar-end` go: a title bar is `.env-top-bar[data-title-bar]`, with `env-top-bar-start`, `env-top-bar-title` and `env-top-bar-actions`.
   - AccountMenu, with AccountMenu.ThemeSubmenu and AccountMenu.OrganizationSubmenu, is a Menu.Root whose trigger is an AvatarButton, with a Menu.Header of the Avatar and the name, and a Menu.Submenu around a ThemeRadioGroup for the theme. The account menu pattern shows it. The part classes `env-account-menu`, `env-account-menu-header`, `env-account-menu-header-text`, `env-account-menu-header-name`, `env-account-menu-header-description`, `env-account-menu-trigger`, `env-account-menu-trigger-text`, `env-account-menu-trigger-name` and `env-account-menu-trigger-description` go, and with the trigger its `data-popup-open`, which every Menu.Root trigger still has.
   - The `v1-structure` codemod no longer rewrites 0.x's WindowFrame, or SplitView, into 1.0.0-prerelease.0's parts: `v1-names` reports WindowFrame, TitleBar, SplitView and AccountMenu where they are used. `v1-classes` renames WindowFrame's parts to the TopBar's and the Scaffold's, as listed above, and reports `env-window-frame` itself, `env-window-frame-title-bar-layout` and the `env-account-menu-*` classes.
 
-  Migration guide: [Shell, dock, editors and code](https://github.com/envsemble/envUI/blob/main/docs/migration.md#shell-dock-editors-and-code).
+  Migration guide: [Shell, dock, editors and code](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 ### Minor Changes
 
@@ -324,7 +324,7 @@ The third prerelease of envUI 1.0, and the first versioned since 1.0.0-prereleas
 
 - Hairlines separate the items of one list, always across the full width, and no longer divide regions. Menu.Separator is a hairline across the menu's whole width, edge to edge rather than inset from its sides, with space above and below, in menus, context menus, menubar menus and submenus. Markdown rules (`hr`) and table rows keep their lines. Lines that only divided regions are gone: DocumentTabs' bar has no base line, and the command palette's footer no line above it. A sticky PageHeader and a docked panel's header take the muted fill, `--env-color-bg-muted`, once content scrolls beneath them, instead of a line, and keep a line in forced colors. Panes.Divider is the gap between the panes, with a small grip of three dots in it, darker on hover and in the focus color with keyboard focus, which also rings the gap, and while dragging; it draws no line. Give each pane a Surface so they stand apart across the gap. Toolbar.Separator keeps its line between groups. Dev mode's inspector sits beside the view without a line. No class, prop or token changes: where an application needs a line, give the part its own `border`.
 
-  Migration guide: [Navigation and collections](https://github.com/envsemble/envUI/blob/main/docs/migration.md#navigation-and-collections).
+  Migration guide: [Navigation and collections](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - Numbers and editor toolbars keep their width in narrow places.
   - A Table cell with `numeric` no longer breaks a number at its separators, such as `$4,687.50` after the comma: where the columns keep their widths, the column stays as wide as its numbers and the region scrolls.
@@ -365,19 +365,19 @@ The first prerelease of envUI 1.0, published under the `prerelease` dist-tag; 1.
 
   Migrate with the codemods: `envui-codemods v1-props` maps `tone="error"` to `tone="danger"` and reports an expression; `v1-classes` rewrites the classes.
 
-  Migration guide: [Overlays and feedback](https://github.com/envsemble/envUI/blob/main/docs/migration.md#overlays-and-feedback).
+  Migration guide: [Overlays and feedback](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - AnimatedNumber's `format`, the function that writes its value, is `formatValue`, as on Slider and CalendarHeatmap.
 
   Migrate with the codemods: `envui-codemods v1-props` renames `format` to `formatValue`.
 
-  Migration guide: [Content and display](https://github.com/envsemble/envUI/blob/main/docs/migration.md#content-and-display).
+  Migration guide: [Content and display](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - AppShell is made of parts: `AppShell.Root` lays out `AppShell.SkipLinks`, `AppShell.Header`, `AppShell.Main`, an `AppShell.Aside` and the sidebars in a grid that follows the text direction, and keeps the sidebars' state per side. The sidebars are `Sidebar.Root` with `Sidebar.Header`, `Content`, `Group`, `Footer` and `Handle`, opened and closed by `SidebarTrigger` and read with `useSidebar`; `Sidebar.Provider` gives a sidebar the same state without the frame. A sidebar collapses to a rail of icons (`collapsible="rail"`) or out of view (`offcanvas`), its rail opens over the content on hover and focus (`peek`), it docks from `dockAt` up, resizes with its handle, and below the frame's breakpoint (48 rem by default, 40 rem before) its content opens in a drawer from its side. Expanding and collapsing never remount its content.
 
   `persist` keeps both sidebars' docked preference and width (in rem) in localStorage, or in a cookie that the server reads with `readAppShellCookie` for `initialState`, so a server-rendered frame paints as it was left. `shortcut="mod+b"` toggles a sidebar; it is off by default. The frame publishes `--env-frame-header-block-size` and `--env-frame-sticky-top`, which replace `--env-app-topbar-block-size` and `--env-app-sticky-top`, and `useAppShell().getStickyTop()` reads the second; WindowFrame.Root publishes the same, and `useAppShell` works inside it. `titleBar` makes the header the window's title bar, on WindowFrame's title bar internals, with Main scrolling below it. `closeNarrowSidebar` is `useSidebar().dismiss()`. AppShellSkeleton is removed: the frame's parts with the new `NavList.Skeleton` inside a LoadingState are its loading state. Under a coarse pointer the trigger is 44 px and the rail grows with it.
 
-  Migration guide: [The app frame](https://github.com/envsemble/envUI/blob/main/docs/migration.md#the-app-frame).
+  Migration guide: [The app frame](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - An app scale: `Theme` and `ThemePreferenceProvider` take `scale`, `comfortable` (the default, today's sizes) or `compact`, about 0.8 of them with type one step smaller, for desktop productivity apps. Left out, a Theme takes the scale of the Theme around it. Theme writes it to `data-env-scale` on every boundary, nested ones and those around popups included, and `useTheme()` returns `{ theme, contrast, scale }`. `createThemeBootstrapScript({ scale: 'compact' })` puts the compact scale on the root before the first paint. Outside any Theme, a `ThemePreferenceProvider` without a `scale` or a `contrast` gives its boundary the scale and contrast the page set on the root, so the application matches the page and other libraries' portals; one that unmounts, or whose `applyToDocument` turns false, removes the scale and contrast it wrote on the root, unless the page wrote over them or another provider holds them. Use one scale per app or window, and another only on a Theme around a whole region.
 
@@ -387,13 +387,13 @@ The first prerelease of envUI 1.0, published under the `prerelease` dist-tag; 1.
 
   Under a coarse pointer, `@media (pointer: coarse)`, controls grow to at least 2.75 rem in either scale: buttons and icon buttons, tall and wide, fields, Select, the rails of SegmentedControl and Tabs, ButtonGroup, Pagination, menubar triggers, AppShell's sidebar toggle and collapsed sidebar, a toast's dismiss button, AvatarButton, sortable table headers, and the close buttons of PanelDock chips and DocumentTabs. The control tokens keep their values; an application's own control takes `max(var(--env-control-height), var(--env-control-height-touch))` under the same query. A link in running text, a breadcrumb link, a combobox chip's remove button, an interactive AvatarGroup's avatars and a Switch's track stay smaller and rely on WCAG 2.5.8's spacing exception. The controls of a row still match, and a control's own box is its hit area, so a press always reaches the control it lands on, whatever the layout around it. Segments, tabs and the actions inside fields take presses across their control's height, within it. Rows, navigation items and table rows with an action grow to at least 2.75 rem too, and the top bar and the title bar to 3.25 rem.
 
-  Migration guide: [Scale and density](https://github.com/envsemble/envUI/blob/main/docs/migration.md#scale-and-density).
+  Migration guide: [Scale and density](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - Avatar's `label`, a boolean that named the avatar as an image by its `name`, is `named`, as every other `label` is text. Without it, an avatar is still decorative.
 
   Migrate with the codemods: `envui-codemods v1-props` renames `label` to `named`, whatever its value.
 
-  Migration guide: [Content and display](https://github.com/envsemble/envUI/blob/main/docs/migration.md#content-and-display).
+  Migration guide: [Content and display](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - Avatar, AvatarGroup and AvatarButton take the 1.0 sizes and slot words.
   - `size` is `sm`, `md` (the default), `lg` or `xl` on Avatar and AvatarGroup, and `sm`, `md` or `lg` on AvatarButton, for `small`, `standard`, `large` and `display`; the sizes are `data-size` attributes instead of the `env-avatar-{size}` and `env-avatar-group-{size}` classes.
@@ -403,7 +403,7 @@ The first prerelease of envUI 1.0, published under the `prerelease` dist-tag; 1.
 
   Migrate with the codemods: `envui-codemods v1-props` maps the sizes and renames `detail`, and `v1-classes` turns the size classes into attribute selectors.
 
-  Migration guide: [Content and display](https://github.com/envsemble/envUI/blob/main/docs/migration.md#content-and-display).
+  Migration guide: [Content and display](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - InfoChip is a Badge, and Badge's `subtle` variant is `soft`.
   - `<InfoChip>` is `<Badge>`, a neutral soft pill: it is slightly larger, at medium weight, fully rounded and on one line. Its page joins Badge's, which shows neutral metadata, and the search finds Badge by chip, info chip, tag and metadata.
@@ -413,7 +413,7 @@ The first prerelease of envUI 1.0, published under the `prerelease` dist-tag; 1.
 
   Migrate with the codemods: `envui-codemods v1-names` renames InfoChip and InfoChipProps, `v1-props` drops `variant="subtle"`, and `v1-classes` renames `env-info-chip`.
 
-  Migration guide: [Content and display](https://github.com/envsemble/envUI/blob/main/docs/migration.md#content-and-display).
+  Migration guide: [Content and display](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - Buttons take a `variant` for their emphasis and a `tone` for their meaning. `variant` is `primary`, `secondary`, `outline`, `ghost` or `text`, and `tone` is `neutral`, the default, `accent` or `danger`, in the designed pairs: a primary button takes any tone, outline, ghost and text buttons take neutral or danger, and a secondary button is neutral. This applies to Button, IconButton, ConfirmButton, CopyButton, DialogClose, ThemeToggle and Pagination.
   - `variant="important"` is `variant="primary" tone="accent"`, with the same square corners and fill.
@@ -426,7 +426,7 @@ The first prerelease of envUI 1.0, published under the `prerelease` dist-tag; 1.
 
   Migrate with the codemods: `envui-codemods v1-props` rewrites each literal `variant` (an expression is reported), and `envui-codemods v1-classes` rewrites the classes in style sheets and selector strings with the specificity they had, and reports them in `className`, where the props set them now.
 
-  Migration guide: [Variants, tones and render](https://github.com/envsemble/envUI/blob/main/docs/migration.md#variants-tones-and-render).
+  Migration guide: [Variants, tones and render](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - ClickableCard, ActionCard and FeatureCard are one Card.
   - A card with `href` is a link and one with `onClick` a native button; `as` is gone, and `render` sets the element of a content card, such as `render={<article />}`.
@@ -437,27 +437,27 @@ The first prerelease of envUI 1.0, published under the `prerelease` dist-tag; 1.
 
   Migrate with the codemods: `envui-codemods v1-names` renames ClickableCard and its props type; `v1-structure` turns ActionCard and FeatureCard into a Card and drops or converts Card's `as`; `v1-props` moves `tone` and drops `layout="content"` and `"action"`; `v1-classes` renames the classes. An `as` that is an expression is reported.
 
-  Migration guide: [Content and display](https://github.com/envsemble/envUI/blob/main/docs/migration.md#content-and-display).
+  Migration guide: [Content and display](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - Card takes its heading as `title`, as Alert, EmptyState and Dialog do, where it was `heading`; `headingLevel` still sets its level. The native `title` attribute is no longer a prop of a card.
 
   Migrate with the codemods: `envui-codemods v1-props` renames `heading` to `title`, and `v1-structure` keeps ActionCard's and FeatureCard's `title` as it is. Move a native `title` tooltip of a 0.x content card to an element inside it.
 
-  Migration guide: [Content and display](https://github.com/envsemble/envUI/blob/main/docs/migration.md#content-and-display).
+  Migration guide: [Content and display](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - CodeBlock and CodeDiff take their words from EnvUIProvider's `messages.codeBlock` and `messages.codeDiff`: the heading of a block without a label or language, the copy button's names and announcements, the name of the code region, and CodeDiff's loading name, error, its description and Retry. CodeBlock copies as CopyButton does: where the Clipboard API is unavailable it copies a selection of a hidden field, and only where that fails too does it select the code for people to copy. Its visually hidden status is `env-code-block-copy-status`, where it was `env-code-copy-status`; `v1-classes` renames it.
 
-  Migration guide: [Shell, dock, editors and code](https://github.com/envsemble/envUI/blob/main/docs/migration.md#shell-dock-editors-and-code).
+  Migration guide: [Shell, dock, editors and code](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - ColorPicker's color area and hue are envUI's own, the hue on Base UI's Slider, and the package no longer depends on react-colorful. The look stays; the `.react-colorful` classes are gone, and envUI's style sheet declares nothing `!important`. The area and the hue are named after the picker's label, such as "Accent color saturation and brightness" and "Accent color hue", by EnvUIProvider's `messages.colorPicker.area` and `.hue`, functions of `{ label }`; the area's value comes from `.areaValue`, and the hue's is in degrees, both in the provider's locale; the area moves by 1 % per arrow key and 10 % with Shift, and the hue by one degree, or 18 with Shift. `ref` reaches the HEX field.
 
-  Migration guide: [Fields and choice controls](https://github.com/envsemble/envUI/blob/main/docs/migration.md#fields-and-choice-controls).
+  Migration guide: [Fields and choice controls](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - A Combobox option takes its content before the label, such as an Avatar, as `start`, as List.Item does, where it was `leading`.
 
   Migrate with the codemods: `envui-codemods v1-props` renames `leading` to `start` in an array written in `items`, also in a group's `items`, and reports items it can't read, such as a variable; TypeScript points at the rest.
 
-  Migration guide: [Fields and choice controls](https://github.com/envsemble/envUI/blob/main/docs/migration.md#fields-and-choice-controls).
+  Migration guide: [Fields and choice controls](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - CommandPalette is built on Base UI's autocomplete and announces its results.
   - `query`, `onQueryChange`, `onSelect` and `closeOnSelect` are `inputValue`, `onInputValueChange`, `onAction` and `closeOnAction`; `CommandPaletteSelectOptions` is `CommandPaletteActionOptions`.
@@ -467,7 +467,7 @@ The first prerelease of envUI 1.0, published under the `prerelease` dist-tag; 1.
 
   Migrate with the codemods: `envui-codemods v1-props` renames the props and `v1-names` the type. Rename the items' `detail` and `trailing` by hand; the type checker reports them where the array is typed.
 
-  Migration guide: [Overlays and feedback](https://github.com/envsemble/envUI/blob/main/docs/migration.md#overlays-and-feedback).
+  Migration guide: [Overlays and feedback](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - Control sizes and row density replace the `density`, `compact` and size-as-density props. The `v1-props` codemod moves what it can and reports the rest.
   - **`size="sm" | "md" | "lg"`** on Button, IconButton, CopyButton, TextField, SearchField, Select, Combobox, DatePicker, SegmentedControl and Pagination: every control of a size has the same height in a scale, 2, 2.5 and 3 rem in the comfortable one. Without a size, a control takes the control height of its container, `md` by default. Tabs' `size` is its rail's: `lg`, the default, keeps today's rail, and `sm` replaces `compact`. TextField no longer takes the native `size` attribute.
@@ -475,7 +475,7 @@ The first prerelease of envUI 1.0, published under the `prerelease` dist-tag; 1.
   - **Removed:** `density` on Select, Combobox, DatePicker, Surface, Menu.Root, ContextMenu and Menubar.Menu; `compact` on TextField and SearchField; `size` on NavList.Item; the `standard` and `compact` sizes of Tabs, SegmentedControl, Pagination and CopyButton, which are `md` or `lg` and `sm`. DropZone's `compact` is `size="sm"`. For a compact app or region, set `scale="compact"` on its Theme; for a small control, set `size="sm"`.
   - **Rows match:** buttons, icon buttons and fields in table cells take the small control height at every density, so a row with an action is no taller than it needs to be. Title bars, panel headers, message actions and the date picker's popup hold small controls.
 
-  Migration guide: [Scale and density](https://github.com/envsemble/envUI/blob/main/docs/migration.md#scale-and-density).
+  Migration guide: [Scale and density](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - envUI's CSS moves into cascade layers, and every token takes the `--env-` prefix.
   - **Cascade layers.** Every rule of `styles.css` is in a layer of `env`: `env.reset`, `env.tokens`, `env.base`, `env.components` and `env.utilities`, in that order. An application's CSS outside cascade layers overrides envUI's whatever its specificity, so selectors and `!important` that only out-weighed envUI's rules can go. An application puts its resets and element styles in a layer before `env` and its own layers after it, declared once, such as `@layer reset, env, app;`: an element rule outside layers would restyle envUI's components too. The font face stays outside layers.
@@ -487,7 +487,7 @@ The first prerelease of envUI 1.0, published under the `prerelease` dist-tag; 1.
 
   To migrate, run `npx @envsemble/envui-codemods v1-classes src`: it rewrites the old custom properties in style sheets and scripts, declared or read, to their 1.0 names, the 0.7 aliases straight to the tokens that replace them, and reports `--color-white`, `--color-canvas-dark` and the removed names with what to use instead. The migration guide lists every name. The ESLint plugin and the Stylelint config suggest the prefixed tokens.
 
-  Migration guide: [Cascade layers](https://github.com/envsemble/envUI/blob/main/docs/migration.md#cascade-layers) and [Tokens](https://github.com/envsemble/envUI/blob/main/docs/migration.md#tokens).
+  Migration guide: [Cascade layers](https://github.com/envsemble/envUI/blob/main/docs/migration.md) and [Tokens](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - Dialog's side panel is a new component, Drawer, and Dialog takes `width`.
   - Drawer is a full-height panel at the `start` or `end` edge of the window (`side`, default `end`), which follows the text direction: it slides in from its edge, and closes with a swipe toward it on a touch screen. It takes Dialog's `title`, `description`, `actions`, `trigger`, `modal`, `disablePointerDismissal`, `pending`, `initialFocus` and `finalFocus`, and adds `aria-label` for a drawer without a visible title, `closeButton`, and `width`: `md` (24 rem, the default), `lg` (44 rem) or any CSS length. Its close button is a CloseButton. Opened by keyboard or mouse, focus starts on the first element inside that takes Tab; opened by touch, or with nothing inside that takes focus, on the drawer itself, so a field inside doesn't open the on-screen keyboard.
@@ -497,7 +497,7 @@ The first prerelease of envUI 1.0, published under the `prerelease` dist-tag; 1.
 
   Migrate with the codemods: `envui-codemods v1-structure` turns a `<Dialog placement="right">` into a `<Drawer side="end">`, with its `size` as `width`, and reports a `placement` that is an expression; `v1-props` turns Dialog's `size` into `width`; `v1-classes` renames `env-modal-pane`.
 
-  Migration guide: [Overlays and feedback](https://github.com/envsemble/envUI/blob/main/docs/migration.md#overlays-and-feedback).
+  Migration guide: [Overlays and feedback](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - MarkdownEditor and RichTextEditor share their toolbar, their link dialog and their status, and take their words from EnvUIProvider's `messages` (`markdownEditor`, `richText`, `editor` for the formatting commands and `linkDialog`):
   - The toolbar is a Toolbar of buttons, each named in a tooltip instead of a native `title`; it keeps the selection in the editor and scrolls sideways where it doesn't fit. Its class is `env-editor-toolbar`, where it was `env-markdown-toolbar`, and the status line's is `env-editor-status`, where it was `env-markdown-editor-status`.
@@ -514,14 +514,14 @@ The first prerelease of envUI 1.0, published under the `prerelease` dist-tag; 1.
 
   MarkdownEditor stays beta, and the `./rich-text` entry, RichText, RichTextEditor and `createRichTextExtensions`, is experimental.
 
-  Migration guide: [Shell, dock, editors and code](https://github.com/envsemble/envUI/blob/main/docs/migration.md#shell-dock-editors-and-code).
+  Migration guide: [Shell, dock, editors and code](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - Fields and popups have one anatomy each, at the sizes of the app's scale:
   - **Fields take the control height.** TextField, SearchField, Combobox and DatePicker are pills as tall as a button of their size, whose label rests inside and floats into the outline without adding height, so they line up with buttons. The 3.5 rem field whose label floats above the value is the opt-in `variant="floating"`, for a long form on a page; plain fields and text areas keep that height. `showLabel` defaults to true, and SearchField's to false, as before; `showLabel={false}` hides a label and leaves the placeholder as the visible guidance.
   - **Menus and the popups of Select and Combobox** share the raised popup of 0.7's compact menu: small corners, a hairline edge and rows of the scale's row height, 2.25 rem, or 1.75 rem compact, with 0.875 rem labels, which highlight on hover and keyboard focus. A check mark and a medium-weight label show a select's chosen option, in place of the selection fill. OrganizationSwitcher composes the same popup.
   - **Menubar triggers** are as tall as a small control, and menus no longer have their own density.
 
-  Migration guide: [Fields and choice controls](https://github.com/envsemble/envUI/blob/main/docs/migration.md#fields-and-choice-controls).
+  Migration guide: [Fields and choice controls](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - Fields and choice controls take the 1.0 vocabulary, and envUI's fields are built from Field's parts:
   - `hint` is `description` on TextField, SearchField, Textarea, Select, Combobox, DatePicker, ColorPicker, Slider and MarkdownEditor.
@@ -540,20 +540,20 @@ The first prerelease of envUI 1.0, published under the `prerelease` dist-tag; 1.
 
   Migrate with the codemods: `v1-props` moves the props and their literal values (an expression is reported), `v1-names` renames `SelectOption`, and `v1-classes` the classes. `v1-props` reports each `className` and `style` on these components; move one meant for the native control to a selector under the root by hand, as the migration guide shows.
 
-  Migration guide: [Fields and choice controls](https://github.com/envsemble/envUI/blob/main/docs/migration.md#fields-and-choice-controls).
+  Migration guide: [Fields and choice controls](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - Markdown names its table regions and task checkboxes from EnvUIProvider's `messages.markdown`: a table is named after its caption, else the heading before it (`tableNamed`, "Prices table"), else `table` ("Table"), numbered where several share a name. Words in a table cell, inline code included, break only where they would overflow the cell, so a column keeps room for its longest word and the table's region scrolls instead; `Code` takes the hook `--env-code-overflow-wrap` for this.
 
   The prose typography that Markdown, RichText and RichTextEditor's document share is the `env-prose` class: Markdown's root is `env-markdown env-prose`, and RichText's root and the editor's document no longer carry `env-markdown`. Select them by `env-prose`, or by their own `env-rich-text` and `env-rich-text-document`.
 
-  Migration guide: [Shell, dock, editors and code](https://github.com/envsemble/envUI/blob/main/docs/migration.md#shell-dock-editors-and-code).
+  Migration guide: [Shell, dock, editors and code](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - Message's actions are small ghost buttons by default, and its statuses come from messages.
   - A Button or IconButton in `actions` without a variant or size of its own is a small ghost button; one that sets them keeps them. A text IconButton at the edge still lines its icon up with the message, now through Button's `--env-button-text-icon-edge-start` and `-end` hooks.
   - The statuses are `messages.message.sending` and `.failed`; `statusLabel` still overrides them for one message. Message stays a server component and renders its status text in a client leaf.
   - The spinner of a sending message takes its color through Spinner's `--env-spinner-color` hook.
 
-  Migration guide: [Content and display](https://github.com/envsemble/envUI/blob/main/docs/migration.md#content-and-display).
+  Migration guide: [Content and display](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - Components, compound parts, classes and documentation pages take the established names envUI keeps for 1.0. Nothing is exported under an old name. `npx @envsemble/envui-codemods v1-names src` and `v1-classes src` rewrite most of an application; the rename map in that package lists every change.
   - Renamed components and their props types: `Input` is `TextField`, `DateTimeField` is `DatePicker`, `FileDropzone` is `DropZone`, `DisclosureNote` is `Disclosure`, `Notice` is `Alert` (with `AlertTone`), `Counter` is `CounterBadge`, `DiffCount` is `DiffStat`, `Heatmap` is `CalendarHeatmap` (with `CalendarHeatmapDay` and `CalendarHeatmapCell`) and `OrganizationMenu` is `OrganizationSwitcher` (with `OrganizationSwitcherOrganization`). Their props, behavior and look are unchanged.
@@ -570,7 +570,7 @@ The first prerelease of envUI 1.0, published under the `prerelease` dist-tag; 1.
   - Class names follow the components: `env-date-time-*` is `env-date-picker-*`, `env-file-dropzone-*` is `env-drop-zone-*`, `env-disclosure-note` is `env-disclosure` and its content `env-disclosure-panel`, `env-notice-*` is `env-alert-*`, `env-counter-*` is `env-counter-badge-*`, `env-diff-count-*` is `env-diff-stat-*`, `env-heatmap-*` is `env-calendar-heatmap-*`, `env-organization-menu-*` and `env-organization-trigger-*` are `env-organization-switcher-*`, `env-grouped-rows` is `env-list`, `env-row` is `env-list-item`, `env-contrast-row-pane` is `env-list-surface`, `env-navigation-*` is `env-nav-list-item-*`, and `env-direction-link(s)` is `env-pager` and `env-pager-link-*`. Component custom properties follow the same names, such as `--env-alert-tone`. Styles that select envUI's classes need the new names.
   - Documentation pages move to the new names: `text-field`, `date-picker`, `drop-zone`, `disclosure`, `alert`, `calendar-heatmap`, `list`, `nav-list` and `pager`. The offline catalogue redirects the old routes.
 
-  Migration guide: [Renamed components, parts and pages](https://github.com/envsemble/envUI/blob/main/docs/migration.md#renamed-components-parts-and-pages).
+  Migration guide: [Renamed components, parts and pages](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - Menus, navigation and collections take the 1.0 vocabulary, and several of their bugs are fixed.
   - Menu: `Menu.Item`'s `trailing` is `end`. An item with `href` closes the menu as it is followed and runs its `onClick`, if any, such as for analytics, and a disabled one renders no link, so nothing follows it. Every menu's popup, Menu.Root's, Menu.Submenu's, ContextMenu's and Menubar.Menu's, is the shared popup surface in the theme, scale and text direction of its trigger; Menu.RadioGroup takes `aria-labelledby`, which OrganizationSwitcher points at its heading; Menu.Root takes `side="inline-start"` and `"inline-end"`, and these parts pass `ref`, `style` and data attributes to the popup.
@@ -587,13 +587,13 @@ The first prerelease of envUI 1.0, published under the `prerelease` dist-tag; 1.
 
   Migrate with the codemods: `envui-codemods v1-props` renames `trailing`, OrganizationSwitcher's, Tree's, Table.HeaderCell's and List.Item's props; `v1-structure` wraps a `contrast` List.Root in a muted Surface and reports a computed one; `v1-names` renames `OrganizationSwitcherOrganization` and `TreeOpenOptions`; and `v1-classes` renames the classes, `env-menu-theme` to `env-popup-theme` among them, and turns NavList's modifiers into attributes; it reports OrganizationSwitcher's `env-organization-menu-radio` and `-radio-dot`, whose radio is Menu's `.env-menu-item-check` and `-check-mark` now, and a selector that puts `.env-document-tabs-close` inside `.env-document-tabs-tab`, its sibling now. By hand: the `detail` and `trailing` fields of Tree and OrganizationSwitcher data, which TypeScript reports, and the count in an icon-only NavList.Item's `aria-label`, which the item now adds itself. The ESLint plugin reports the renamed types.
 
-  Migration guide: [Navigation and collections](https://github.com/envsemble/envUI/blob/main/docs/migration.md#navigation-and-collections).
+  Migration guide: [Navigation and collections](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - envUI ships no logos: BrandLogo and EnvUILogo, with their props types, are gone, and so is the brand artwork among the package's assets: the envUI lockups and favicons under `@envsemble/envui/assets/envUI/` and the envsemble lockup. The package README no longer shows a logo.
 
   Keep your artwork in the application, as an SVG file or a component that draws it with `Icon`, which follows the text color. The codemods report each use (`envui-codemods v1-names`), and the ESLint plugin's `no-renamed-exports` reports the imports.
 
-  Migration guide: [Content and display](https://github.com/envsemble/envUI/blob/main/docs/migration.md#content-and-display).
+  Migration guide: [Content and display](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - OrganizationSwitcher passes `className` to its menu popup, as Menu.Root, AccountMenu and ContextMenu do, and names each organization with `label`, as every other item does.
   - `className` goes to the popup, beside `env-organization-switcher`, with `style` and `ref`; the new `triggerClassName` styles the trigger, or the create button without organizations, which `className` styled before.
@@ -601,7 +601,7 @@ The first prerelease of envUI 1.0, published under the `prerelease` dist-tag; 1.
 
   Migrate with the codemods: `envui-codemods v1-props` renames `className` to `triggerClassName`, and an organization's `name` to `label`, and 0.x's `detail` to `description`, in an array written in `items` or 0.x's `organizations`; it reports items it can't read, such as a variable.
 
-  Migration guide: [Navigation and collections](https://github.com/envsemble/envUI/blob/main/docs/migration.md#navigation-and-collections).
+  Migration guide: [Navigation and collections](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - Colors now come from a primitive palette with contrast built in, through semantic color tokens, and every theme passes the contrast gate with no exceptions, including two new high-contrast themes.
   - **Palette.** Ten hues (neutral, blue, slate, steel, green, teal, amber, red, violet, purple) seeded from the previous colors, on one grade scale from 0 (white) to 100 (black). Each grade is a band of WCAG luminance, so colors 40, 50 and 70 grades apart have at least 3:1, 4.5:1 and 7:1, in any hue. The palette is internal.
@@ -613,7 +613,7 @@ The first prerelease of envUI 1.0, published under the `prerelease` dist-tag; 1.
 
   Removed custom properties: the runtime state rule (`--state-lightness-threshold`, `--state-hover-shift`, `--state-pressed-shift`, `--state-surface-hover-shift`, `--state-surface-pressed-shift`, `--state-lightness-direction` and the `--state-*-lightness` values), the state opacities that are color tokens now (`--state-layer-hover-opacity`, `--state-layer-pressed-opacity`, `--state-fill-hover-opacity`, `--state-fill-pressed-opacity`, `--state-tone-subtle-opacity`, `--state-fill-opacity`, `--state-dialog-overlay-opacity`), and the unused `--color-surface-base`, `--color-surface-raised`, `--color-text-subtle`, `--color-control-text`, `--color-neutral-fill`, `--color-border-pressed`, `--color-control-blue-hover`, `--color-control-blue-pressed`, `--color-fill-hover`, `--color-fill-pressed`, `--state-card-strip-weight`, `--state-selected-base-weight` and `--member-identity-*`. The 1.0 migration lists the replacement of each, where there is one.
 
-  Migration guide: [Tokens](https://github.com/envsemble/envUI/blob/main/docs/migration.md#tokens).
+  Migration guide: [Tokens](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - PanelDock is a namespace, `PanelDock.Root` and `PanelDock.Header`, and its words come from EnvUIProvider's `messages.panelDock`:
   - `PanelDock` is `PanelDock.Root` and `PanelDockHeader` is `PanelDock.Header`, with `PanelDock.RootProps` and `PanelDock.HeaderProps`; `PanelDockPanel` and `PanelDockMode` keep their names.
@@ -624,13 +624,13 @@ The first prerelease of envUI 1.0, published under the `prerelease` dist-tag; 1.
 
   The codemods rename the exports (`v1-names`), turn `controls={null}` into `controls={false}` and report a `controls` element (`v1-props`), report `PanelDockControls` with what replaces it, and rename the classes (`v1-classes`). Rename `[data-chips]` in style sheets by hand.
 
-  Migration guide: [Shell, dock, editors and code](https://github.com/envsemble/envUI/blob/main/docs/migration.md#shell-dock-editors-and-code).
+  Migration guide: [Shell, dock, editors and code](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - PanelDock.Root's `showLabel`, the function that names a tab's button, is `openLabel`, as SidebarTrigger's `openLabel` names the button that opens a sidebar; a field's `showLabel` stays a boolean.
 
   Migrate with the codemods: `envui-codemods v1-props` renames `showLabel` to `openLabel` on PanelDock.Root.
 
-  Migration guide: [Shell, dock, editors and code](https://github.com/envsemble/envUI/blob/main/docs/migration.md#shell-dock-editors-and-code).
+  Migration guide: [Shell, dock, editors and code](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - Popover, HoverCard and Tooltip open on the shared popup surface.
   - Popover's and HoverCard's `width` is `md`, the default, or `lg`, where it was `standard` or `wide`. Popover's `side` takes `inline-start` and `inline-end`, and the `onOpenChange` of Popover and HoverCard receives the reason as its second argument (`PopoverOpenChangeReason`).
@@ -639,7 +639,7 @@ The first prerelease of envUI 1.0, published under the `prerelease` dist-tag; 1.
 
   Migrate with the codemods: `envui-codemods v1-props` maps `width` and reports an expression.
 
-  Migration guide: [Overlays and feedback](https://github.com/envsemble/envUI/blob/main/docs/migration.md#overlays-and-feedback).
+  Migration guide: [Overlays and feedback](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - SegmentedControl takes `items`, and an unchosen segment's count keeps its contrast.
   - `options` is `items`, and `SegmentedControlOption` is `SegmentedControlItem`.
@@ -649,7 +649,7 @@ The first prerelease of envUI 1.0, published under the `prerelease` dist-tag; 1.
 
   Migrate with the codemods: `envui-codemods v1-props` renames `options`, `v1-names` the type and `v1-classes` the classes.
 
-  Migration guide: [Content and display](https://github.com/envsemble/envUI/blob/main/docs/migration.md#content-and-display).
+  Migration guide: [Content and display](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - Spinner, Meter and Progress take the 1.0 sizes and classes, and read their values right.
   - Spinner's `size` is `sm`, `md` (the default) or `lg`, set as `data-size` where the class `env-spinner-{size}` was. Its drawing is hidden from assistive technology also when it has a label.
@@ -659,7 +659,7 @@ The first prerelease of envUI 1.0, published under the `prerelease` dist-tag; 1.
 
   Migrate with the codemods: `envui-codemods v1-props` maps Spinner's `size`; `v1-classes` renames `env-bar` to `env-meter` and the Spinner size classes; rename a Progress's `env-bar` selectors to `env-progress` by hand.
 
-  Migration guide: [Overlays and feedback](https://github.com/envsemble/envUI/blob/main/docs/migration.md#overlays-and-feedback).
+  Migration guide: [Overlays and feedback](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - New: `SplitPane` and `ListDetail`, which replace 0.6's SplitView.
   - `SplitPane.Root` lays out two `SplitPane.Pane`s, side by side or one above the other (`orientation`), with a `SplitPane.ResizeHandle` between them: an APG window splitter that the pointer drags and the arrow keys move, in the text direction, and a double click resets. The first pane's `size`, `defaultSize`, `minSize` and `maxSize` are in `unit`, `%` of the split pane or `rem`; `onSizeChange` receives each size with `{ committed }`, and `persist` keeps it in localStorage, read after the first render. Below `stackBelow` of its own width the panes stack and the handle goes (`onStackedChange`, `data-stacked`). A Pane with `label` is a named region; the handle's name comes from `label` or `messages.splitPane.resize`.
@@ -667,7 +667,7 @@ The first prerelease of envUI 1.0, published under the `prerelease` dist-tag; 1.
 
   Migrate a SplitView with the codemods: `v1-names` and `v1-structure` turn `<SplitView start end resizeLabel storageKey>` into `<SplitPane.Root persist>` around `<SplitPane.Pane>{start}</SplitPane.Pane>`, `<SplitPane.ResizeHandle label />` and `<SplitPane.Pane>{end}</SplitPane.Pane>`, `SplitViewProps` into `SplitPane.RootProps`, and `v1-classes` renames `env-split-view` and its parts. The sizes keep their percentages, now of the whole split pane.
 
-  Migration guide: [Split panes](https://github.com/envsemble/envUI/blob/main/docs/migration.md#split-panes).
+  Migration guide: [Split panes](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - Stacking tokens: `--env-z-base` (0), `--env-z-raised` (1), `--env-z-sticky` (20), `--env-z-peek` (30), `--env-z-overlay` (90), `--env-z-modal` (100), `--env-z-popover` (110), `--env-z-toast` (120) and `--env-z-tooltip` (130), one z-index scale for envUI's components and the application's own layers. Every component takes its z-index from them, in the order it had: a tooltip stays above a toast, a toast above a menu, and a menu, a select list or a popover opened inside a dialog above the dialog. A dialog and the command palette sit at `modal`, over their scrim at `overlay`. Give an application's layers a token, with `calc()` for a step between two, such as `calc(var(--env-z-sticky) + 1)`.
 
@@ -675,7 +675,7 @@ The first prerelease of envUI 1.0, published under the `prerelease` dist-tag; 1.
 
   `--env-topbar-height` is `--env-app-shell-header-height`, with the same values: 3.25 rem, 2.625 rem in the compact scale, and 3.25 rem under a coarse pointer. `v1-classes` rewrites it, and the names the app frame's sticky offsets had before 1.0, `--topbar-height`, `--app-sticky-top`, `--env-app-sticky-top` and `--env-app-topbar-block-size`, to the 1.0 frame's `--env-app-shell-header-height`, `--env-frame-sticky-top` and `--env-frame-header-block-size`.
 
-  Migration guide: [Tokens](https://github.com/envsemble/envUI/blob/main/docs/migration.md#tokens).
+  Migration guide: [Tokens](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - Stat.Root's `detail` is `description`, and Stat.Group's `tone` is `background`.
   - `detail` is `description`, and its class `env-stat-detail` is `env-stat-description`.
@@ -683,7 +683,7 @@ The first prerelease of envUI 1.0, published under the `prerelease` dist-tag; 1.
 
   Migrate with the codemods: `envui-codemods v1-props` renames both props and maps the values, and `v1-classes` renames the class.
 
-  Migration guide: [Content and display](https://github.com/envsemble/envUI/blob/main/docs/migration.md#content-and-display).
+  Migration guide: [Content and display](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - Text, Skeleton, Surface and Stack take the 1.0 vocabulary, and `render` replaces `as`.
   - Text: `tone` is `emphasis`, `default`, `muted` or `subtle` (`primary` is `default`, `quiet` is `subtle`). The variants `page-heading`, `section-heading` and `supporting` are `headline`, `title` and `body-sm`. `as="h2"` is `render={<h2 />}`. `TextTone` is `TextEmphasis`, and `TextElement` is gone. The classes `env-text-{variant}` and `env-text-tone-{tone}` are `[data-variant]` and `[data-emphasis]` on `.env-text`.
@@ -695,13 +695,13 @@ The first prerelease of envUI 1.0, published under the `prerelease` dist-tag; 1.
 
   Migrate with the codemods: `envui-codemods v1-structure` rewrites ActionGroup into Stack and reports a `stacked` it can't read; `v1-render` turns a literal `as` into `render` and reports an expression; `v1-props` renames `tone`, `corners` and the Text variants and maps their literal values, reporting an expression; `v1-names` renames the types and reports the removed ones; and `v1-classes` rewrites the classes and `env-symbol`.
 
-  Migration guide: [Variants, tones and render](https://github.com/envsemble/envUI/blob/main/docs/migration.md#variants-tones-and-render).
+  Migration guide: [Variants, tones and render](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - `Theme` and `ThemePreferenceProvider` take a `contrast`: `high` for the high-contrast colors, `standard` to keep the standard ones even when the system asks for more contrast, or `system` to follow `prefers-contrast: more`. Left out, a Theme takes the contrast of the Theme around it, and `system` outside any. Nested Themes and envUI's popups, such as menus, Select lists, tooltips, toasts and dialogs, keep the contrast of the boundary they open from, as they keep its color scheme. With `applyToDocument`, the provider writes the contrast on the document root too, marked with `data-env-contrast-source` and the value written, such as `envui:high`, and removes from it only a contrast so marked that the page has not written over, so a provider mounted in place of another, such as one keyed by the signed-in user, removes its predecessor's contrast. One provider per document applies to it: any other passes `applyToDocument={false}`, and development reports two that both apply. `createThemeBootstrapScript` takes the same `contrast`, so a fixed high or standard contrast is on the root before the first paint. The script marks what it writes the same way, and the provider treats that contrast as its own once the application starts: its contrast replaces it, and at `system` it removes it, so a contrast the application stores as a user setting does not stay at the script's value after a reload.
 
   `useTheme()` returns `{ theme, contrast }` instead of the color scheme alone: read the scheme as `const { theme } = useTheme()`, and re-theme an application's own portal with `<Theme {...useTheme()}>`, which the `v1-names` codemod writes for `<Theme theme={useTheme()}>`; it turns other calls into `useTheme().theme` unless the file already reads them as `{ theme, contrast }`, and reports those that are returned or passed to a context. In development, where the bundler defines `process.env.NODE_ENV`, Theme reports a `theme` that is not `light` or `dark`; a production build leaves the report out, and without a bundler it stays silent. Its `contrast` wins over a `data-env-contrast` attribute passed to it; without the prop, such an attribute sets the contrast for the boundary and everything in it.
 
-  Migration guide: [useTheme returns the theme, its contrast and its scale](https://github.com/envsemble/envUI/blob/main/docs/migration.md#usetheme-returns-the-theme-its-contrast-and-its-scale).
+  Migration guide: [useTheme returns the theme, its contrast and its scale](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - Toast takes the 1.0 vocabulary and reads in every language and direction.
   - A notification's `variant` is `tone`: `neutral`, `success`, `info` or `danger`, where `error` was. `ToastVariant` is `ToastTone`.
@@ -713,7 +713,7 @@ The first prerelease of envUI 1.0, published under the `prerelease` dist-tag; 1.
 
   Migrate with the codemods: `envui-codemods v1-props` moves `variant` and `placement` in `useToast().show({ … })` object literals and `defaultPlacement` on Toast.Provider, and reports an argument it can't read; `v1-names` renames `ToastVariant`; `v1-classes` rewrites the classes.
 
-  Migration guide: [Overlays and feedback](https://github.com/envsemble/envUI/blob/main/docs/migration.md#overlays-and-feedback).
+  Migration guide: [Overlays and feedback](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - TitleBar and WindowFrame are one namespace, `WindowFrame`, with three parts:
   - `WindowFrame.Root` fills the window and scrolls `WindowFrame.Content` with the keyboard as it would the document; the title bar is its first child instead of its `titleBar` prop.
@@ -723,7 +723,7 @@ The first prerelease of envUI 1.0, published under the `prerelease` dist-tag; 1.
 
   The codemods cover it: `v1-names` renames `TitleBar` to `WindowFrame.TitleBar` and `<WindowFrame>` to `<WindowFrame.Root>`; `v1-structure` makes the `titleBar` prop the first child and wraps the children in `WindowFrame.Content`, which takes `scrollRef` as its `ref`; `v1-classes` renames the classes and custom properties.
 
-  Migration guide: [Shell, dock, editors and code](https://github.com/envsemble/envUI/blob/main/docs/migration.md#shell-dock-editors-and-code).
+  Migration guide: [Shell, dock, editors and code](https://github.com/envsemble/envUI/blob/main/docs/migration.md).
 
 - The content, rich-text and diff entries' libraries (Shiki, the Pierre themes, react-markdown, remark-gfm, marked, Tiptap and Diffs) are no longer peer dependencies. GitHub Packages drops the field that marked them optional, so npm installed all of them in every application. An application importing one of these entries installs its libraries itself, with the commands in [Setup](https://github.com/envsemble/envUI/blob/main/docs/setup.md#public-entry-points); one using only the main entry installs none of them.
 

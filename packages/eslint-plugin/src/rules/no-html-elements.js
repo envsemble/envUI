@@ -1,6 +1,7 @@
 import {
   documentationUrl,
   findAttribute,
+  importedComponent,
   isFunction,
   isIntrinsic,
   jsxName,
@@ -28,8 +29,8 @@ function ownersOf(entry) {
 }
 
 /**
- * The envUI entry points that export components. The others export icons, assets and a script, whose
- * names, such as the `Button` icon, are not components.
+ * The envUI entry points that export components. The others export icons, assets and a script,
+ * which are not components whatever their local name.
  */
 const componentEntryPoints = new Set([
   '@envsemble/envui',
@@ -303,34 +304,6 @@ export default {
     const isAdapter = (fn) => adapters.has(fn) || hasLinkComponentProps(fn, sourceCode.visitorKeys);
 
     /**
-     * What a JSX element name stands for when its first name is imported: the entry point, and the
-     * name that entry point exports, `Popover` for `<Popover>` or `<P>` imported as
-     * `Popover as P`, `Menu.Submenu` for `<Menu.Submenu>` or `<ui.Menu.Submenu>`. `name` is
-     * undefined for an import that names no export, such as a default import. `{}` for a local,
-     * and undefined for a name that nothing in the file declares.
-     */
-    function importedComponent(name) {
-      const members = [];
-      let root = name;
-      for (; root.type === 'JSXMemberExpression'; root = root.object)
-        members.unshift(root.property.name);
-      if (root.type !== 'JSXIdentifier') return undefined;
-      const variable = resolveVariable(sourceCode, root, root.name);
-      if (!variable?.defs.length) return undefined;
-      const definition = variable.defs.find((candidate) => candidate.type === 'ImportBinding');
-      if (!definition) return {};
-      const source = definition.parent.source?.value;
-      if (definition.node.type === 'ImportNamespaceSpecifier')
-        return { source, name: members.join('.') };
-      if (definition.node.type === 'ImportSpecifier')
-        return {
-          source,
-          name: [moduleExportName(definition.node.imported), ...members].join('.'),
-        };
-      return { source, name: undefined };
-    }
-
-    /**
      * Whether a component element renders a role itself, so that a role on it refines its own: an
      * envUI component of the role's owners, by the name its entry point, or a module listed in
      * `settings.envui.reexportModules`, exports when it is imported, or by its written name when
@@ -338,7 +311,7 @@ export default {
      */
     function ownsRole(node, entry) {
       const owners = ownersOf(entry);
-      const imported = importedComponent(node.name);
+      const imported = importedComponent(sourceCode, node.name);
       if (!imported) return owners.has(jsxName(node.name));
       return isEnvuiSource(imported.source) && owners.has(imported.name);
     }

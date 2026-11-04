@@ -14,10 +14,13 @@ import { Kbd } from '../content/Kbd.js';
 import { ControlDefaults } from '../internal/ControlDefaults.js';
 import { classNames } from '../internal/classNames.js';
 import { Column, Row } from '../foundations/Layout.js';
-import { DirectedToolbarRoot } from '../internal/DirectedToolbarRoot.js';
+import { DirectedToolbarRoot } from './internal/DirectedToolbarRoot.js';
 import { keyShortcuts, shortcutChords } from '../internal/shortcuts.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 import type { ControlSize } from '../foundations/Theme.js';
+import { flag } from '../internal/flag.js';
+import '../styles/Base.css';
+import '../styles/Toolbar.css';
 
 export interface RootProps extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
   /** Names the toolbar for assistive technology, such as Formatting. */
@@ -29,7 +32,10 @@ export interface RootProps extends Omit<ComponentPropsWithRef<'div'>, 'children'
    * Without it, the control height of the container.
    */
   size?: ControlSize;
-  /** Disables every control inside. */
+  /**
+   * Disables every control inside.
+   * @default false
+   */
   disabled?: boolean;
   /**
    * Whether the arrow keys move from the last control to the first and back.
@@ -121,7 +127,10 @@ function Root({
 export interface GroupProps extends ComponentPropsWithRef<'div'> {
   /** Names the group, such as Text style, where its controls belong together. */
   'aria-label'?: string;
-  /** Disables every control in the group. */
+  /**
+   * Disables every control in the group.
+   * @default false
+   */
   disabled?: boolean;
   /** Another element to render the group as, such as a ButtonGroup. */
   render?: ReactElement;
@@ -188,7 +197,10 @@ export interface ButtonProps
   shortcut?: string;
   /** As Button's; ghost by default, from the toolbar. */
   variant?: ButtonVariant;
-  /** As Button's: a spinner replaces the icon while the work runs. */
+  /**
+   * As Button's: a spinner replaces the icon while the work runs.
+   * @default false
+   */
   pending?: boolean;
 }
 
@@ -222,7 +234,7 @@ function ToolbarButton({
             'aria-label': label,
             'aria-pressed': pressed,
             'aria-keyshortcuts': keyShortcuts(chords),
-            'data-pressed': pressed || undefined,
+            'data-pressed': flag(pressed),
             className: classNames('env-toolbar-button', className),
           } as IconButtonProps)}
         />

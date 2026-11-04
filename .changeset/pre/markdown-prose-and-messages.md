@@ -6,4 +6,4 @@ Markdown names its table regions and task checkboxes from EnvUIProvider's `messa
 
 The prose typography that Markdown, RichText and RichTextEditor's document share is the `env-prose` class: Markdown's root is `env-markdown env-prose`, and RichText's root and the editor's document no longer carry `env-markdown`. Select them by `env-prose`, or by their own `env-rich-text` and `env-rich-text-document`.
 
-Migration guide: [Shell, dock, editors and code](https://github.com/envsemble/envUI/blob/main/docs/migration.md#shell-dock-editors-and-code).
+Migration guide: [Shell, dock, editors and code](https://github.com/envsemble/envUI/blob/main/docs/migration.md).

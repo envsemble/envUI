@@ -5,12 +5,12 @@ import { Extension } from '@tiptap/core';
 import { EditorContent, useEditor, useEditorState } from '@tiptap/react';
 import { Suggestion, exitSuggestion } from '@tiptap/suggestion';
 import * as Toolbar from '../actions/Toolbar.js';
-import { AttachFile } from '../icons/AttachFile.js';
+import { IconAttachFile } from '../icons/AttachFile.js';
 import { editor as editorMessages } from '../foundations/messages/editor.js';
 import { linkDialog as linkDialogMessages } from '../foundations/messages/linkDialog.js';
 import { richText as richTextMessages } from '../foundations/messages/richText.js';
 import { EditorStatus } from '../forms/internal/EditorStatus.js';
-import { editorCommands } from '../forms/internal/EditorCommands.js';
+import { editorCommands } from '../forms/internal/editorCommands.js';
 import { EditorToolbar, keepEditorFocus } from '../forms/internal/EditorToolbar.js';
 import { FieldFrame, type FieldControlBoxProps } from '../forms/internal/FieldFrame.js';
 import { LinkDialog, type EditorLink } from '../forms/internal/LinkDialog.js';
@@ -18,17 +18,21 @@ import { useFieldMetadata } from '../forms/internal/useFieldMetadata.js';
 import { classNames } from '../internal/classNames.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { FileInput } from '../internal/FileInput.js';
-import { createRichTextExtensions } from './Extensions.js';
-import { createSuggestionOptions, referenceSuggestion } from './Suggestions.js';
+import { createRichTextExtensions } from './extensions.js';
+import { createSuggestionOptions, referenceSuggestion } from './internal/suggestions.js';
 import {
   defaultRichTextCommands,
   richTextCommandActive,
   runRichTextCommand,
   slashCommandIds,
-} from './Commands.js';
-import { RichTextRenderingContext } from './Reference.js';
-import { safeRichTextUrl } from './ReferenceAttributes.js';
-import type { RichTextCommand, RichTextEditorProps, RichTextSlashCommand } from './Types.js';
+} from './internal/commands.js';
+import { RichTextRenderingContext } from './internal/Reference.js';
+import { safeRichTextUrl } from './internal/referenceAttributes.js';
+import type { RichTextCommand, RichTextEditorProps, RichTextSlashCommand } from './types.js';
+import { flag } from '../internal/flag.js';
+import '../styles/Base.css';
+import '../styles/Prose.css';
+import '../styles/RichText.css';
 
 const emptySources: NonNullable<RichTextEditorProps['references']> = [];
 const emptyExtensions: NonNullable<RichTextEditorProps['extensions']> = [];
@@ -37,11 +41,13 @@ const noCommands: readonly RichTextCommand[] = [];
 /**
  * A labelled editor for formatted text that people edit as it looks, built on Tiptap, with a
  * formatting toolbar, references typed with a trigger such as @, optional slash commands and
- * attachments; its value is Markdown. ref.editor gives the Tiptap editor for commands. Its words
+ * attachments; its value is Markdown. ref reaches the root element, and editorRef.current.editor
+ * gives the Tiptap editor for commands. Its words
  * come from EnvUIProvider's messages: richText, editor and linkDialog.
  */
 export function RichTextEditor({
   ref,
+  editorRef,
   value,
   defaultValue = '',
   onValueChange,
@@ -57,7 +63,7 @@ export function RichTextEditor({
   renderReference,
   onReferenceClick,
   onLinkClick,
-  onRequestLink,
+  pickLink,
   onUpload,
   accept,
   multiple = true,
@@ -107,16 +113,16 @@ export function RichTextEditor({
   const focusTarget = useRef<HTMLElement | null>(null);
   const [, rerender] = useState(0);
   const configured = useMemo(() => {
-    if (new Set(references.map((source) => source.char)).size !== references.length)
+    if (new Set(references.map((source) => source.trigger)).size !== references.length)
       throw new Error('Reference triggers must be unique.');
-    if (slashCommands && references.some((source) => source.char === '/'))
+    if (slashCommands && references.some((source) => source.trigger === '/'))
       throw new Error('Use either a / reference source or slashCommands.');
     const result = createRichTextExtensions({
       extensions,
       placeholder,
       renderReference: (reference, context) =>
         latest.current.renderReference?.(reference, context) ??
-        `${reference.char ?? ''}${reference.label}`,
+        `${reference.trigger ?? ''}${reference.label}`,
       onReferenceClick: (reference, event) => latest.current.onReferenceClick?.(reference, event),
     });
     const reference = result.find((extension) => extension.name === 'envReference')!;
@@ -226,7 +232,7 @@ export function RichTextEditor({
           }
         : null,
   });
-  useImperativeHandle(ref, () => ({ editor }), [editor]);
+  useImperativeHandle(editorRef, () => ({ editor }), [editor]);
   const describedByIds = metadata['aria-describedby'];
   const invalidState = metadata['aria-invalid'];
   useLayoutEffect(() => {
@@ -353,7 +359,7 @@ export function RichTextEditor({
       }
     };
     setStatus('');
-    if (!onRequestLink) {
+    if (!pickLink) {
       setLinkRequest({ selectedText, insert });
       return;
     }
@@ -362,7 +368,7 @@ export function RichTextEditor({
     pending.current = controller;
     setBusy(true);
     void Promise.resolve()
-      .then(() => onRequestLink({ selectedText }))
+      .then(() => pickLink({ selectedText }))
       .then((link) => {
         if (!controller.signal.aborted && link) insert(link);
       })
@@ -434,16 +440,17 @@ export function RichTextEditor({
     <div
       {...box}
       className={classNames(box.className, 'env-rich-text-editor-control')}
-      data-invalid={invalidState === true || invalidState === 'true' || undefined}
-      data-disabled={disabled || undefined}
+      data-invalid={flag(invalidState === true || invalidState === 'true')}
+      data-disabled={flag(disabled)}
     />
   );
   return (
     <div
       {...props}
+      ref={ref}
       className={classNames('env-rich-text-editor', className)}
-      data-disabled={disabled || undefined}
-      data-readonly={readOnly || undefined}
+      data-disabled={flag(disabled)}
+      data-readonly={flag(readOnly)}
     >
       <FieldFrame
         id={metadata.id}
@@ -475,7 +482,7 @@ export function RichTextEditor({
           >
             {onUpload && (
               <Toolbar.Button
-                icon={<AttachFile />}
+                icon={<IconAttachFile />}
                 label={messages.attach}
                 onMouseDown={keepEditorFocus}
                 onClick={() => input.current?.click()}

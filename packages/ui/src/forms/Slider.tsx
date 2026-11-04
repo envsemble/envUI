@@ -22,9 +22,12 @@ import { useDirectionScope } from '../internal/useDirection.js';
 import { FieldFrame } from './internal/FieldFrame.js';
 import { fieldMessageIds } from './internal/useFieldMetadata.js';
 import { subscribeFormReset } from './internal/subscribeFormReset.js';
+import { followOverdrag } from './internal/sliderOverdrag.js';
+import '../styles/Base.css';
+import '../styles/Slider.css';
 
 export interface SliderProps
-  extends Omit<ComponentPropsWithRef<'div'>, 'defaultValue' | 'onChange' | 'children'> {
+  extends Omit<ComponentPropsWithRef<'div'>, 'defaultValue' | 'onChange' | 'children' | 'ref'> {
   /**
    * The value's name, inside the slider at its start, such as Opacity. It names the slider.
    */
@@ -34,6 +37,11 @@ export interface SliderProps
    * its description.
    */
   description?: ReactNode;
+  /**
+   * A message under the slider that says how to correct the value; it joins the slider's
+   * description, after the description.
+   */
+  error?: ReactNode;
   /** The value of a controlled slider; update it from onValueChange. */
   value?: number;
   /**
@@ -78,8 +86,12 @@ export interface SliderProps
   name?: string;
   /** The id of a form the slider belongs to when it sits outside of it. */
   form?: string;
-  /** The native range input, for example to focus it. */
-  inputRef?: Ref<HTMLInputElement>;
+  /**
+   * The native range input, which holds the value and takes focus, as a field's ref reaches its
+   * input: for example to focus it, or for a form library to register it. className, style and
+   * the other native props go to the root.
+   */
+  ref?: Ref<HTMLInputElement>;
 }
 
 /**
@@ -93,6 +105,7 @@ export interface SliderProps
 export function Slider({
   label,
   description,
+  error,
   value,
   defaultValue,
   onValueChange,
@@ -106,7 +119,6 @@ export function Slider({
   disabled = false,
   name,
   form,
-  inputRef,
   className,
   ref,
   onFocus,
@@ -115,7 +127,7 @@ export function Slider({
   ...props
 }: SliderProps) {
   // The arrow keys follow the text direction: Base UI reads it from its DirectionProvider.
-  const scope = useDirectionScope(ref);
+  const scope = useDirectionScope<HTMLDivElement>();
   const id = useId();
   const providedLocale = useLocale();
   const input = useRef<HTMLInputElement>(null);
@@ -222,7 +234,11 @@ export function Slider({
   // Faint ticks mark the steps, or, where they are many, the large steps, so they never crowd.
   const ticks = tickCount(min, max, step, largeStep);
   const describedByIds =
-    [describedBy, description != null ? fieldMessageIds(id).description : undefined]
+    [
+      describedBy,
+      description != null ? fieldMessageIds(id).description : undefined,
+      error != null ? fieldMessageIds(id).error : undefined,
+    ]
       .filter(Boolean)
       .join(' ') || undefined;
   return (
@@ -261,11 +277,11 @@ export function Slider({
         name={name}
         form={form}
       >
-        <FieldFrame id={id} description={description}>
+        <FieldFrame id={id} description={description} error={error}>
           <BaseSlider.Control
             ref={control}
             className="env-slider-control"
-            data-pressed={pressed && !disabled ? '' : undefined}
+            data-dragging={pressed && !disabled ? '' : undefined}
             data-handle={reveal.handle ? '' : undefined}
             data-ruler={reveal.ruler ? '' : undefined}
             onPointerDown={(event) => {
@@ -288,7 +304,7 @@ export function Slider({
                 className="env-slider-thumb"
                 inputRef={(node: HTMLInputElement | null) => {
                   input.current = node;
-                  setRef(inputRef, node);
+                  setRef(ref, node);
                 }}
                 aria-describedby={describedByIds}
                 getAriaValueText={(formatted, number) =>
@@ -298,7 +314,7 @@ export function Slider({
             </BaseSlider.Track>
             {/* The label and the value sit over the track, the fill and the handle, inside the
                 slider, in the type of a field's text, always at full strength. */}
-            <Row align="center" justify="between" gap={3} className="env-slider-heading">
+            <Row align="center" justify="between" gap={3} className="env-slider-header">
               <BaseSlider.Label className="env-slider-label" render={<Text render={<div />} />}>
                 {label}
               </BaseSlider.Label>
@@ -393,111 +409,6 @@ function veilIndicatorUnderText(control: HTMLElement) {
   control.style.setProperty('--env-slider-veil', veiled ? '1' : '0');
   control.style.setProperty('--env-slider-clear-start', `${clearStart}px`);
   control.style.setProperty('--env-slider-clear-end', `${clearEnd}px`);
-}
-
-/**
- * The most a slider stretches, as a fraction of its length, and, so that a wide one stays calm, at
- * most half its height.
- */
-const STRETCH_MOST = 0.06;
-/** How readily the stretch gives at first: at a pointer's first pixels past the end, about half. */
-const STRETCH_GIVE = 0.55;
-
-/**
- * How far the slider stretches, in pixels, for a pointer this far past its end: a rubber band's
- * curve, which gives a little over half the distance at first and less the further it goes,
- * approaching the reach but never reaching it, and always short of the pointer.
- */
-function rubberBand(past: number, reach: number): number {
-  if (!(past > 0) || !(reach > 0)) return 0;
-  return reach * (1 - 1 / (1 + (STRETCH_GIVE * past) / reach));
-}
-
-/**
- * Follows a pointer that presses the slider's control and drags past either end: the control's
- * --env-slider-stretch is the fraction it stretches by, and --env-slider-stretch-origin the side it
- * stays fixed on, the one away from the pointer, physical, so either direction works. The stretch
- * is measured once a frame, at most, and follows at once (--env-slider-stretch-spring, 0s); a release
- * sets it back to 0, and the stylesheet springs it back.
- * Under reduced motion it never stretches. Returns the cleanup.
- */
-function followOverdrag(control: HTMLElement): () => void {
-  const owner = control.ownerDocument;
-  const view = owner.defaultView;
-  if (!view) return () => {};
-  let drag: { id: number; left: number; right: number; width: number; reach: number } | null = null;
-  let pointerX = 0;
-  let frame = 0;
-  const stretch = (fraction: number) =>
-    control.style.setProperty('--env-slider-stretch', String(Math.round(fraction * 1e5) / 1e5));
-  const apply = () => {
-    frame = 0;
-    if (!drag) return;
-    const pastRight = pointerX - drag.right;
-    const pastLeft = drag.left - pointerX;
-    const past = Math.max(pastRight, pastLeft, 0);
-    if (past > 0) {
-      control.style.setProperty('--env-slider-stretch-origin', pastRight > 0 ? 'left' : 'right');
-      // Past the end, the stretch follows the pointer at once, until the release springs it back.
-      control.style.setProperty('--env-slider-stretch-spring', '0s');
-    }
-    stretch(rubberBand(past, drag.reach) / drag.width);
-  };
-  const move = (event: PointerEvent) => {
-    if (!drag || event.pointerId !== drag.id) return;
-    // A move without a button means the release went to something that kept it.
-    if (event.buttons === 0) return stop();
-    pointerX = event.clientX;
-    if (!frame) frame = view.requestAnimationFrame(apply);
-  };
-  const end = (event: Event) => {
-    if (drag && (!('pointerId' in event) || (event as PointerEvent).pointerId === drag.id)) stop();
-  };
-  const listen = () => {
-    owner.addEventListener('pointermove', move, true);
-    owner.addEventListener('pointerup', end, true);
-    owner.addEventListener('pointercancel', end, true);
-    control.addEventListener('lostpointercapture', end);
-    view.addEventListener('blur', end);
-  };
-  const stop = () => {
-    drag = null;
-    if (frame) view.cancelAnimationFrame(frame);
-    frame = 0;
-    owner.removeEventListener('pointermove', move, true);
-    owner.removeEventListener('pointerup', end, true);
-    owner.removeEventListener('pointercancel', end, true);
-    control.removeEventListener('lostpointercapture', end);
-    view.removeEventListener('blur', end);
-    // Both in one change, as the release may be measured before the next frame.
-    control.style.removeProperty('--env-slider-stretch-spring');
-    stretch(0);
-  };
-  const down = (event: PointerEvent) => {
-    if (drag || event.button !== 0 || !event.isPrimary) return;
-    if (view.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
-    // The box as it would be unstretched, as a press can come while the slider still springs back:
-    // its stretch so far, and the side it stretches from, give its length and where it starts.
-    const now = Number.parseFloat(
-      getComputedStyle(control).getPropertyValue('--env-slider-stretch'),
-    );
-    const s = Number.isFinite(now) ? now : 0;
-    const box = control.getBoundingClientRect();
-    const width = box.width / (1 + s);
-    const height = box.height / (1 - s / 2);
-    if (!(width > 0)) return;
-    const fromRight = control.style.getPropertyValue('--env-slider-stretch-origin') === 'right';
-    const left = fromRight ? box.right - width : box.left;
-    const reach = Math.min(width * STRETCH_MOST, height / 2);
-    drag = { id: event.pointerId, left, right: left + width, width, reach };
-    pointerX = event.clientX;
-    listen();
-  };
-  control.addEventListener('pointerdown', down);
-  return () => {
-    control.removeEventListener('pointerdown', down);
-    if (drag) stop();
-  };
 }
 
 /**

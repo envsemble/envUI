@@ -1,13 +1,14 @@
 /**
  * Accessibility gate: axe scans every page of the catalogue and the Docs in light, and the theme
- * sample of samplePages (tests/browser/CatalogueThemes.ts) in dark and both high-contrast themes
+ * sample of samplePages (tests/browser/helpers/CatalogueThemes.ts) in dark and both high-contrast themes
  * too, and compares the violations with KnownViolations.json. A new violation fails, and so does a
  * listed one that no longer occurs, so the list only shrinks. Run `npm run test:a11y`; after fixing
  * violations, or when a reviewed change has to add one, rewrite the list with `npm run
  * test:a11y:update` and review its diff.
  *
  * Violations are keyed by page, theme, axe rule and a stable target: the catalogue region (the
- * specimen's heading, sidebar, header…) and the element's tag with its env-/docs- classes, counted.
+ * specimen's heading, sidebar, header…) and the element's tag with its env-, site-, catalogue-
+ * and docs- classes, counted.
  * React ids and child positions are left out so unrelated edits do not move the keys.
 
  */
@@ -15,15 +16,15 @@ import { expect, test, type Page, type TestInfo } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { mkdirSync, readFileSync, rmdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { serveSite, siteBuilt, siteUrl } from '../browser/HostedSite';
+import { serveSite, siteBuilt, siteUrl } from '../browser/helpers/HostedSite';
 import {
   chooseScheme,
   emulateContrast,
   themesFor,
   type CatalogueTheme,
   type ThemeName,
-} from '../browser/CatalogueThemes';
-import { allPages } from '../../apps/catalogue/src/navigation/DocumentationRoutes';
+} from '../browser/helpers/CatalogueThemes';
+import { allPages } from '../../apps/site/src/navigation/SiteRoutes';
 
 /** light on every page, and dark, light-hc and dark-hc on the pages of samplePages. */
 type Theme = ThemeName;
@@ -68,8 +69,13 @@ const routes = new Map<string, Set<string>>([
   ),
 ]);
 
+/** The note KnownViolations.json opens with: it is written, not edited. */
+const generatedNote =
+  'Written by tests/accessibility/Accessibility.spec.ts. After fixing violations, run npm run test:a11y:update; add to it only for a reviewed reason.';
+
 function readExceptions(): Violations {
-  return JSON.parse(readFileSync(exceptionsFile, 'utf8'));
+  const { $comment: _note, ...violations } = JSON.parse(readFileSync(exceptionsFile, 'utf8'));
+  return violations;
 }
 
 function sortKeys<T>(value: T): T {
@@ -103,7 +109,10 @@ function updateExceptions(change: (violations: Violations) => void) {
   try {
     const violations = readExceptions();
     change(violations);
-    writeFileSync(exceptionsFile, `${JSON.stringify(sortKeys(violations), null, 2)}\n`);
+    writeFileSync(
+      exceptionsFile,
+      `${JSON.stringify({ $comment: generatedNote, ...sortKeys(violations) }, null, 2)}\n`,
+    );
   } finally {
     rmdirSync(lock);
   }
@@ -114,15 +123,14 @@ function updating(testInfo: TestInfo) {
 }
 
 async function settle(page: Page) {
-  await page.locator('#docs-main').waitFor();
-  // The catalogue's Loading spinner (.docs-loading) marks a part that is still loading: an
-  // example, its code, a specimen, a demo or the icon list; a part from LoadedPart says "Loading
-  // the …".
-  await page
-    .locator('.docs-loading')
-    .or(page.getByText(/^Loading .*…$/))
-    .first()
-    .waitFor({ state: 'detached' });
+  await page.locator('#site-main').waitFor();
+  // A skeleton of the site's (.site-loading, template/Loading.tsx) marks a part that is still
+  // loading: an example, its code, a specimen, a demo, the icon list, the token reference or the
+  // changelog. A tile's (.catalogue-tile-loading) waits for the tile to come into view instead.
+  // A section still to show is its outline (data-site-pending, template/SectionOutline.ts) until
+  // it renders, with the skeletons of its parts.
+  await page.locator('[data-site-pending]').first().waitFor({ state: 'detached' });
+  await page.locator('.site-loading').first().waitFor({ state: 'detached' });
   await page.evaluate(() => document.fonts.ready);
   // Theme changes transition colors; contrast measured mid-transition is neither theme's. The
   // animations' states are polled rather than their finished promises awaited: Chromium does not
@@ -148,10 +156,10 @@ async function settle(page: Page) {
  * it sees it; closed, its tokens are not rendered and the scan would pass over them.
  */
 async function expandCode(page: Page) {
-  await page.locator('#docs-main').waitFor();
+  await page.locator('#site-main').waitFor();
   await page.evaluate(() => {
     for (const details of document.querySelectorAll<HTMLDetailsElement>(
-      'details.docs-live-example-code',
+      'details.site-live-example-code',
     ))
       details.open = true;
   });
@@ -166,7 +174,7 @@ async function highlighted(page: Page) {
     [...document.querySelectorAll<HTMLElement>('.env-code-block pre')]
       .filter(
         (pre) =>
-          pre.closest('.docs-live-example-code') ||
+          pre.closest('.site-live-example-code') ||
           /^(?:tsx?|jsx?|typescript|javascript|json|css|html|xml|sh|bash|shell|ya?ml|sql|java|md|markdown|ini) code$/i.test(
             pre.getAttribute('aria-label') ?? '',
           ),
@@ -178,10 +186,10 @@ async function highlighted(page: Page) {
 /** Switches the catalogue to the theme's scheme in its Display menu, under the theme's contrast. */
 async function setTheme(page: Page, theme: CatalogueTheme) {
   await emulateContrast(page, theme);
-  const app = page.locator('.docs-app');
+  const app = page.locator('.site-app');
   if ((await app.getAttribute('data-env-theme')) !== theme.scheme)
     await chooseScheme(page, theme.scheme);
-  await page.locator(`.docs-app[data-env-theme="${theme.scheme}"]`).waitFor();
+  await page.locator(`.site-app[data-env-theme="${theme.scheme}"]`).waitFor();
 }
 
 async function scan(page: Page, route: string, theme: Theme): Promise<Scan> {
@@ -197,7 +205,7 @@ async function scan(page: Page, route: string, theme: Theme): Promise<Scan> {
     const targets = await page.evaluate(
       (selectors) => {
         const stable = (element: Element) =>
-          [...element.classList].filter((name) => /^(env|docs)-/.test(name));
+          [...element.classList].filter((name) => /^(env|site|catalogue|docs)-/.test(name));
         const part = (element: Element) =>
           element.localName +
           stable(element)
@@ -215,20 +223,20 @@ async function scan(page: Page, route: string, theme: Theme): Promise<Scan> {
           return element;
         };
         const region = (element: Element) => {
-          const example = element.closest('.docs-example');
+          const example = element.closest('.site-example');
           const heading = example?.querySelector(
-            ':scope > h2, :scope > .docs-example-heading > h2',
+            ':scope > h2, :scope > .catalogue-example-heading > h2',
           );
           if (heading?.textContent?.trim()) return heading.textContent.trim();
           if (example) return 'specimen';
           const regions: [string, string][] = [
-            ['.docs-sidebar', 'sidebar'],
-            ['.docs-compact-controls', 'page controls'],
-            ['.docs-page-header, .docs-page-banner, .docs-overview-hero', 'header'],
-            ['.docs-page-navigation', 'page navigation'],
-            ['.docs-article', 'article'],
-            ['.docs-preview', 'preview'],
-            ['#docs-main', 'main'],
+            ['.site-sidebar', 'sidebar'],
+            ['.site-compact-controls', 'page controls'],
+            ['.site-page-header, .site-page-banner, .catalogue-overview-hero', 'header'],
+            ['.site-page-navigation', 'page navigation'],
+            ['.site-article', 'article'],
+            ['.catalogue-specimen-area', 'specimen area'],
+            ['#site-main', 'main'],
           ];
           return regions.find(([selector]) => element.closest(selector))?.[1] ?? 'page';
         };
@@ -301,7 +309,7 @@ function compare(scan: Scan, known: RuleCounts = {}) {
 test.beforeAll(() => {
   if (!siteBuilt())
     throw new Error(
-      'The hosted catalogue is missing: run npm run test:a11y, which builds it first with npm run build:site.',
+      'The hosted site is missing: run npm run test:a11y, which builds it first with npm run build:site.',
     );
 });
 

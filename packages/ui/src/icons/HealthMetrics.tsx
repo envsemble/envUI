@@ -1,11 +1,14 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
-// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
+// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../Icon.js';
+import { useSymbolIconFill } from '../SymbolIconState.js';
 
-export function HealthMetrics({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
-  return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M360-80q-33 0-56.5-23.5T280-160v-120H160q-33 0-56.5-23.5T80-360v-80h258l68 102q5 8 14 13t19 5q13 0 24-8t15-20l54-162 34 52q6 8 15 13t19 5h280v80q0 33-23.5 56.5T800-280H680v120q0 33-23.5 56.5T600-80H360Zm68-370-35-52q-5-8-14-13t-19-5H80v-80q0-33 23.5-56.5T160-680h120v-120q0-33 23.5-56.5T360-880h240q33 0 56.5 23.5T680-800v120h120q33 0 56.5 23.5T880-600v80H621l-68-102q-5-8-14-13t-19-5q-13 0-23.5 8T482-612l-54 162Z" /> : <path d="M360-80q-33 0-56.5-23.5T280-160v-120H160q-33 0-56.5-23.5T80-360v-240q0-33 23.5-56.5T160-680h120v-120q0-33 23.5-56.5T360-880h240q33 0 56.5 23.5T680-800v120h120q33 0 56.5 23.5T880-600v240q0 33-23.5 56.5T800-280H680v120q0 33-23.5 56.5T600-80H360ZM160-520h200q10 0 19 5t14 13l35 52 54-162q4-12 14.5-20t23.5-8q10 0 19 5t14 13l68 102h179v-80H640q-17 0-28.5-11.5T600-640v-160H360v160q0 17-11.5 28.5T320-600H160v80Zm0 80v80h160q17 0 28.5 11.5T360-320v160h240v-160q0-17 11.5-28.5T640-360h160v-80H600q-10 0-19-5t-15-13l-34-52-54 162q-4 12-15 20t-24 8q-10 0-19-5t-14-13l-68-102H160Zm320-40Z" />}</Icon>;
+/** The path both styles start with. */
+const start = "M360-80q-33 0-56.5-23.5T280-160v-120H160q-33 0-56.5-23.5T80-360v-";
+
+export function IconHealthMetrics({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
+  return <Icon viewBox="0 -960 960 960" {...props}><path d={filled ? start + "80h258l68 102q5 8 14 13t19 5q13 0 24-8t15-20l54-162 34 52q6 8 15 13t19 5h280v80q0 33-23.5 56.5T800-280H680v120q0 33-23.5 56.5T600-80H360Zm68-370-35-52q-5-8-14-13t-19-5H80v-80q0-33 23.5-56.5T160-680h120v-120q0-33 23.5-56.5T360-880h240q33 0 56.5 23.5T680-800v120h120q33 0 56.5 23.5T880-600v80H621l-68-102q-5-8-14-13t-19-5q-13 0-23.5 8T482-612l-54 162Z" : start + "240q0-33 23.5-56.5T160-680h120v-120q0-33 23.5-56.5T360-880h240q33 0 56.5 23.5T680-800v120h120q33 0 56.5 23.5T880-600v240q0 33-23.5 56.5T800-280H680v120q0 33-23.5 56.5T600-80H360ZM160-520h200q10 0 19 5t14 13l35 52 54-162q4-12 14.5-20t23.5-8q10 0 19 5t14 13l68 102h179v-80H640q-17 0-28.5-11.5T600-640v-160H360v160q0 17-11.5 28.5T320-600H160v80Zm0 80v80h160q17 0 28.5 11.5T360-320v160h240v-160q0-17 11.5-28.5T640-360h160v-80H600q-10 0-19-5t-15-13l-34-52-54 162q-4 12-15 20t-24 8q-10 0-19-5t-14-13l-68-102H160Zm320-40Z"} /></Icon>;
 }

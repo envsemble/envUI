@@ -1,7 +1,7 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
-// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
+// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
+import { Icon, type SymbolIconProps } from '../Icon.js';
 
-export function FanIndirect({ filled: _filled = false, ...props }: MaterialSymbolProps) {
+export function IconFanIndirect({ filled: _filled = false, ...props }: SymbolIconProps) {
   return <Icon viewBox="0 -960 960 960" {...props}><path d="m520-233 15-15q11-11 27.5-11t28.5 11q12 12 12 28.5T591-191l-83 83q-12 12-28 12t-28-12l-84-84q-11-11-11.5-27.5T368-248q11-11 27.5-11.5T424-249l16 16v-207q0-17 11.5-28.5T480-480q17 0 28.5 11.5T520-440v207Zm-327-67 16 16q11 11 11 27.5T208-228q-11 11-28 11t-28-11L40-340l112-112q12-12 28-11.5t28 12.5q11 12 11.5 28T208-395l-15 15h87v-180q0-17 11.5-28.5T320-600q17 0 28.5 11.5T360-560v180q0 33-23.5 56.5T280-300h-87Zm574 0h-87q-33 0-56.5-23.5T600-380v-180q0-17 11.5-28.5T640-600q17 0 28.5 11.5T680-560v180h87l-15-15q-12-11-12-28t12-29q12-12 28.5-12t28.5 12l83 84q12 12 12 28t-12 28l-84 84q-11 11-27.5 11T752-228q-12-12-12-28.5t12-28.5l15-15ZM80-760q0-33 23.5-56.5T160-840h640q33 0 56.5 23.5T880-760v188q0 17-11.5 28.5T840-532q-17 0-28.5-11.5T800-572v-188H160v188q0 17-11.5 28.5T120-532q-17 0-28.5-11.5T80-572v-188Z" /></Icon>;
 }

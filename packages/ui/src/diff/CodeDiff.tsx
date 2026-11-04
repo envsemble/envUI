@@ -16,19 +16,22 @@ import {
   codeThemeStyle,
   diffTintOpacity,
   type CodeContrast,
-} from '../content/internal/CodeColors.js';
-import { codeTheme, diffTintColors, type DiffTintColors } from '../content/internal/CodeThemes.js';
+} from '../content/internal/codeColors.js';
+import type { DiffTintColors } from '../content/internal/codeThemes.js';
 import { useCodeContrast } from '../content/internal/useCodeContrast.js';
 import { Column } from '../foundations/Layout.js';
 import { Text } from '../foundations/Text.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
-import { Error as ErrorIcon } from '../icons/Error.js';
+import { IconError } from '../icons/Error.js';
 import { useTheme } from '../foundations/Theme.js';
 import { Spinner } from '../feedback/Spinner.js';
-import { Refresh } from '../icons/Refresh.js';
+import { IconRefresh } from '../icons/Refresh.js';
 import { codeDiff as codeDiffMessages } from '../foundations/messages/codeDiff.js';
 import { classNames } from '../internal/classNames.js';
 import { useMessages } from '../internal/EnvUIContext.js';
+import { remPixels } from '../internal/lengths.js';
+import '../styles/Base.css';
+import '../styles/Code.css';
 
 export interface CodeDiffProps extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
   /** The source before the change. */
@@ -75,14 +78,23 @@ function diffCSS({ addition, deletion }: DiffTintColors) {
 }`;
 }
 
-/** Side by side from this many rem of the diff's own width. */
-const SPLIT_FROM_REM = 56;
+/**
+ * Side by side from this many rem of the diff's own width. Not a window class: the diff measures
+ * its own width, not the window's.
+ */
+const splitFrom = 56;
 
 /** The names of the code themes for a contrast, light and dark, the ones code blocks take. */
 const diffThemeNames = (contrast: CodeContrast) => ({
   light: codeThemeName('light', contrast),
   dark: codeThemeName('dark', contrast),
 });
+/**
+ * The code themes and what is made of them, loaded with the highlighter rather than with the page:
+ * the Shiki themes they start from are large, and a diff waits for its highlighter anyway.
+ */
+const loadCodeThemes = () => import('../content/internal/codeThemes.js');
+
 let themesRegistered = false;
 /** Registers the code themes with Diffs once, under their names; each is built when Diffs asks. */
 function registerThemes() {
@@ -92,7 +104,7 @@ function registerThemes() {
     for (const scheme of ['light', 'dark'] as const)
       registerCustomTheme(
         codeThemeName(scheme, contrast),
-        async () => codeTheme(scheme, contrast) as never,
+        async () => (await loadCodeThemes()).codeTheme(scheme, contrast) as never,
       );
 }
 
@@ -164,7 +176,10 @@ export function CodeDiff({
 
   useEffect(() => {
     let active = true;
-    Promise.all([prepareHighlighter(lang, contrast), diffTintColors(theme, contrast)]).then(
+    Promise.all([
+      prepareHighlighter(lang, contrast),
+      loadCodeThemes().then(({ diffTintColors }) => diffTintColors(theme, contrast)),
+    ]).then(
       ([, colors]) => {
         if (active) setShown({ lang, theme, contrast, css: diffCSS(colors) });
       },
@@ -186,18 +201,17 @@ export function CodeDiff({
       setWide(false);
       return;
     }
-    const rem =
-      Number.parseFloat(getComputedStyle(root.ownerDocument.documentElement).fontSize) || 16;
+    const rem = remPixels(root);
     const style = getComputedStyle(root);
     setWide(
       root.clientWidth -
         (Number.parseFloat(style.paddingLeft) || 0) -
         (Number.parseFloat(style.paddingRight) || 0) >=
-        SPLIT_FROM_REM * rem,
+        splitFrom * rem,
     );
     if (typeof ResizeObserver === 'undefined') return;
     const observer = new ResizeObserver(([entry]) => {
-      if (entry) setWide(entry.contentRect.width >= SPLIT_FROM_REM * rem);
+      if (entry) setWide(entry.contentRect.width >= splitFrom * rem);
     });
     observer.observe(root);
     return () => observer.disconnect();
@@ -228,7 +242,7 @@ export function CodeDiff({
         <Column role="alert" gap={4} className="env-code-diff-failed">
           <span className="env-code-diff-failed-icon">
             <DecorativeIcon>
-              <ErrorIcon />
+              <IconError />
             </DecorativeIcon>
           </span>
           <Column gap={2}>
@@ -239,7 +253,7 @@ export function CodeDiff({
           </Column>
           <Button
             variant="secondary"
-            startIcon={<Refresh />}
+            startIcon={<IconRefresh />}
             onClick={() => {
               setFailed(false);
               setAttempt((current) => current + 1);

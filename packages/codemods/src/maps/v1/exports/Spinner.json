@@ -1,5 +1,0 @@
-{
-  "@envsemble/envui": {
-    "LoadingStateProps": "SpinnerProps"
-  }
-}

@@ -4,10 +4,13 @@ import { Grid, Row } from '../foundations/Layout.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { ControlDefaults } from '../internal/ControlDefaults.js';
 import { Spinner } from '../feedback/Spinner.js';
-import { Error as ErrorIcon } from '../icons/Error.js';
+import { IconError } from '../icons/Error.js';
 import { MessageStatusLabel } from './internal/MessageStatusLabel.js';
-import { inSkeleton } from '../foundations/inSkeleton.js';
+import { inSkeleton } from '../foundations/internal/inSkeleton.js';
 import { given, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
+import { flag } from '../internal/flag.js';
+import '../styles/Base.css';
+import '../styles/Message.css';
 
 export type MessageStatus = 'sending' | 'failed';
 
@@ -100,10 +103,7 @@ export function Message(allProps: MessageProps) {
               {hasMeta && <span className="env-message-meta">{meta}</span>}
             </Row>
           )}
-          <div
-            className="env-message-content"
-            data-text={typeof children === 'string' || undefined}
-          >
+          <div className="env-message-content" data-text={flag(typeof children === 'string')}>
             {children}
           </div>
           {status != null && (
@@ -112,7 +112,7 @@ export function Message(allProps: MessageProps) {
                 <Spinner size="sm" />
               ) : (
                 <DecorativeIcon>
-                  <ErrorIcon />
+                  <IconError />
                 </DecorativeIcon>
               )}
               <MessageStatusLabel status={status} label={statusLabel} />

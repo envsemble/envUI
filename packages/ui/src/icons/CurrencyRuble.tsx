@@ -1,7 +1,7 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
-// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
+// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
+import { Icon, type SymbolIconProps } from '../Icon.js';
 
-export function CurrencyRuble({ filled: _filled = false, ...props }: MaterialSymbolProps) {
+export function IconCurrencyRuble({ filled: _filled = false, ...props }: SymbolIconProps) {
   return <Icon viewBox="0 -960 960 960" {...props}><path d="M280-160v-80h-40q-17 0-28.5-11.5T200-280q0-17 11.5-28.5T240-320h40v-80h-40q-17 0-28.5-11.5T200-440q0-17 11.5-28.5T240-480h40v-320q0-17 11.5-28.5T320-840h220q92 0 156 64t64 156q0 92-64 156t-156 64H360v80h120q17 0 28.5 11.5T520-280q0 17-11.5 28.5T480-240H360v80q0 17-11.5 28.5T320-120q-17 0-28.5-11.5T280-160Zm80-320h180q58 0 99-41t41-99q0-58-41-99t-99-41H360v280Z" /></Icon>;
 }

@@ -1,6 +1,8 @@
 // Container queries, read from the page's style sheets: which `@container` rules ask about a
 // container, the widths they test and whether each holds at a width.
 
+import { roundToHundredth } from '../internal/lengths.js';
+
 /** One condition of `@container` rules, with every rule that asks it about one container name. */
 export interface ContainerQuery {
   /** The container name the rules ask about; empty for the nearest container of any name. */
@@ -30,7 +32,7 @@ export function thresholdsOf(condition: string, rootPx: number): number[] {
   const widths = new Set<number>();
   for (const match of condition.matchAll(/(\d*\.?\d+)(rem|em|px)\b/g)) {
     const value = Number(match[1]);
-    widths.add(Math.round((match[2] === 'px' ? value / rootPx : value) * 100) / 100);
+    widths.add(roundToHundredth(match[2] === 'px' ? value / rootPx : value));
   }
   return [...widths].sort((a, b) => a - b);
 }

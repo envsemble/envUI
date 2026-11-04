@@ -2,7 +2,7 @@
 title: Dialog
 summary: A focused task over the page, as a centered modal or a modal near the top of the window, with shared focus and dismissal.
 status: stable
-since: 0.1.0
+since: 1.0.0
 category: Overlays
 aliases:
   - modal
@@ -21,7 +21,7 @@ avoidWhen:
   - text: Details or a few fields beside the control that opens them.
     use: Popover
   - text: Feedback after an action, such as Saved or Invitation sent.
-    use: Toast
+    use: ToastProvider
   - text: A message about the page or a section that stays in place, such as a warning.
     use: Alert
   - text: Quick open of a document or a command by name.
@@ -34,13 +34,11 @@ components:
   - Dialog
   - DialogClose
 examples:
-  ProjectDetails: overview
-  FindPlan:
-    role: example
-    caption: 'Near the top: the field stays put as the results grow.'
-  ReviewChanges:
-    role: example
-    caption: A large dialog, for a table of changes.
+  ProjectDetails:
+    role: overview
+    motion: true
+  FindPlan: example
+  ReviewChanges: example
   DialogAnatomy: anatomy
   RenameProject: example
   UnsavedChanges: example
@@ -69,7 +67,7 @@ examples:
 | Centered     | Confirmations, short forms and details. The default.           |
 | Near the top | Search-like tasks, whose results grow down from a fixed field. |
 
-```tsx figure=FindPlan
+```tsx figure=FindPlan motion
 
 ```
 
@@ -82,7 +80,7 @@ Both narrow to fit the window.
 | Medium | Most dialogs. The default.            |
 | Large  | Tables, comparisons and longer forms. |
 
-```tsx figure=ReviewChanges
+```tsx figure=ReviewChanges motion
 
 ```
 
@@ -92,14 +90,12 @@ Both narrow to fit the window.
 
 ```
 
-1. **Dialog** (`env-dialog-popup`)
+1. **Dialog** (`env-dialog`)
 2. **Title** (`env-dialog-title`, `title`)
 3. **Description** (`env-dialog-description`, `description`)
 4. **Content** (`env-text-field`, `children`)
 5. **Close button** (`env-dialog-actions > env-button:first-child`, `closeLabel`)
 6. **Action** (`env-dialog-actions > env-button:last-child`, `actions`)
-
-Not shown: the scrim behind a modal dialog.
 
 ## Behaviour
 
@@ -113,7 +109,7 @@ While its work runs, nothing closes the dialog and its close button is disabled.
 
 - Submit a form from its primary action, so <kbd>Enter</kbd> in a field submits it too.
 
-```tsx figure=RenameProject
+```tsx figure=RenameProject motion
 
 ```
 
@@ -121,7 +117,7 @@ While its work runs, nothing closes the dialog and its close button is disabled.
 
 Other buttons can close the dialog after doing their own work, such as Don’t save.
 
-```tsx figure=UnsavedChanges
+```tsx figure=UnsavedChanges motion
 
 ```
 
@@ -174,7 +170,7 @@ One task per dialog, closed by its built-in button.
 
 A Dialog opens from its `trigger`, such as a Button, and holds its `title`, which names it, a `description`, its content as `children`, and its own `actions`, after the built-in close button, with the primary action last.
 
-- `closeLabel` names the close button, Close by default from EnvUIProvider's `messages.dialog.close`, or Cancel for a decision.
+- `closeLabel` names the close button; name it Cancel for a decision.
 - Leave it uncontrolled, or control it with `open` and `onOpenChange`, which receives the requested state and why: the trigger, <kbd>Esc</kbd>, an outside press, the close button or a DialogClose.
 - `defaultOpen` opens it on the first render.
 
@@ -242,13 +238,11 @@ Keep one task per dialog: show a field's error on the field rather than in a sec
 
 ### Customize
 
-The parts are the surface, `env-dialog-popup`, its heading, `env-dialog-heading`, with the title, `env-dialog-title`, the description, `env-dialog-description`, and the actions, `env-dialog-actions`, which start with the close button. The scrim behind a modal dialog is `env-dialog-backdrop`.
+The parts are the surface, `env-dialog`, its heading, `env-dialog-heading`, with the title, `env-dialog-title`, the description, `env-dialog-description`, and the actions, `env-dialog-actions`, which start with the close button. The backdrop behind a modal dialog is `env-dialog-backdrop`.
+
+The surface takes the popups' color and their shadow, `--env-popup-shadow`, as [Popover](popover.md#customize) describes, with no edge. It stays solid over the backdrop, so `--env-popup-opacity` and `--env-popup-blur` don't reach it. At high contrast, with reduced transparency and under forced colors it has no shadow and its level-3 elevation edge returns.
 
 ## Changelog
 
-- **1.0.0**: `width` (`md` or `lg`) for `size`; the side panel, `placement="right"`, is [Sheet](../components/sheet.md); `onOpenChange` reports the reason; `initialFocus` and `finalFocus` take functions too; the surface's class is `env-dialog-popup`. The page is `dialog`, after the component.
-- **0.5.0**: `size="wide"`, also for side panels, and `placement="top"`. Dialogs share Popover's raised surface with a hairline border; in the dark theme they keep the pane color through `--env-color-bg-raised`. The title and description sit together above the content. A side panel takes the whole width of a narrow window, with its content clear of the safe areas.
-- **0.4.0**: Secondary buttons in dialogs and side panels, such as the close button, stay distinct on their surface.
-- **0.3.0**: Dialogs rise into place and side panels slide in, over a backdrop that fades in.
-- **0.2.0**: `pending`.
-- **0.1.0**: Dialog and DialogClose.
+- **1.0.0-prerelease.5**: Dialogs take the popups' color and soft shadow, with no outline edge, and stay solid over the scrim; at high contrast and with reduced transparency the shadow goes and the edge returns.
+- **1.0.0**: `width` (`md` or `lg`) for `size`; the side panel, `placement="right"`, is [Sheet](../components/sheet.md); `onOpenChange` reports the reason; `initialFocus` and `finalFocus` take functions too; the surface's class is `env-dialog`. The page is `dialog`, after the component.

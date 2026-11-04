@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { fixtureUrl } from './Servers';
+import { fixtureUrl } from './helpers/Servers';
 
 let errors: string[] = [];
 
@@ -224,7 +224,7 @@ test('a slider is a field: as tall as the fields, with their corners, its label 
   // The text never dims: the handle and the fill's end fade under it instead, as the tests of the
   // states below show.
   for (const part of [
-    slider.locator('.env-slider-heading'),
+    slider.locator('.env-slider-header'),
     slider.locator('.env-slider-label'),
     value,
   ]) {
@@ -368,7 +368,7 @@ test(
     const y = box.y + box.height / 2;
     await page.mouse.move(box.x + box.width * 0.5, y);
     await page.mouse.down();
-    await expect(state.control).toHaveAttribute('data-pressed', '');
+    await expect(state.control).toHaveAttribute('data-dragging', '');
     // Dragged under the label, the handle and the fill's end fade there, as on hover.
     await page.mouse.move(box.x + 2, y, { steps: 4 });
     await expect(state.input).toHaveAttribute('aria-valuenow', '0');
@@ -379,7 +379,7 @@ test(
     await expect(state.thumb).toHaveCSS('opacity', '1');
     // Released with the pointer still over the slider: back at rest, and moving over it keeps it so.
     await page.mouse.up();
-    await expect(state.control).not.toHaveAttribute('data-pressed');
+    await expect(state.control).not.toHaveAttribute('data-dragging');
     await expectRest(state);
     await page.mouse.move(box.x + box.width * 0.3, y, { steps: 3 });
     await expectRest(state);
@@ -404,9 +404,9 @@ test(
       await page.mouse.move(box.x + box.width * 0.5, box.y - 40);
       await page.mouse.move(box.x + box.width * 0.5, y);
       await page.mouse.down();
-      await expect(state.control).toHaveAttribute('data-pressed', '');
+      await expect(state.control).toHaveAttribute('data-dragging', '');
       await state.control.dispatchEvent(end, { pointerId: 1, bubbles: true });
-      await expect(state.control).not.toHaveAttribute('data-pressed');
+      await expect(state.control).not.toHaveAttribute('data-dragging');
       await expectRest(state);
       await page.mouse.up();
     }
@@ -451,7 +451,7 @@ test('a finger shows the handle and the ticks only while it is down', async ({ b
   await expect(state.control).toHaveAttribute('data-handle', '');
   await expect(state.control).toHaveAttribute('data-ruler', '');
   await touch.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
-  await expect(state.control).not.toHaveAttribute('data-pressed');
+  await expect(state.control).not.toHaveAttribute('data-dragging');
   await expectRest(state);
   await context.close();
 });

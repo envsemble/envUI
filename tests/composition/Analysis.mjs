@@ -3,6 +3,7 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { join, posix, relative, resolve, sep } from 'node:path';
+import { kebab } from '../../scripts/docs/Schema.ts';
 
 const require = createRequire(import.meta.url);
 const ts = require('typescript');
@@ -51,11 +52,6 @@ function lineIndex(text) {
     return low + 1;
   };
 }
-const kebab = (name) =>
-  name
-    .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
-    .replace(/([A-Z]+)([A-Z][a-z])/g, '$1-$2')
-    .toLowerCase();
 const baseName = (module) => posix.basename(module).replace(/\.tsx?$/, '');
 
 /**
@@ -442,6 +438,9 @@ export function analyze() {
   return {
     problems,
     layers: order,
+    // Who owns what, for tests/StyleImports.test.mjs: each module's component, each component's
+    // style sheets, and a class's owner, a component or 'shared'.
+    ownership: { componentOf, components, ownerOf: (token) => ownerOf(token, 'a test') },
     findings: {
       imports: importFindings,
       interactive: interactiveFindings,

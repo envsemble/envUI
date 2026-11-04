@@ -1,9 +1,0 @@
-{
-  "env-bar": "env-meter",
-  "env-bar-heading": "env-meter-heading",
-  "env-bar-indeterminate": "env-meter-indeterminate",
-  "env-bar-indicator": "env-meter-indicator",
-  "env-bar-label": "env-meter-label",
-  "env-bar-track": "env-meter-track",
-  "env-bar-value": "env-meter-value"
-}

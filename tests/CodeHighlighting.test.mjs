@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { highlightCode } from '../packages/ui/dist/content/internal/CodeHighlighting.js';
+import { highlightCode } from '../packages/ui/dist/content/internal/codeHighlighting.js';
 import { tokenStyle } from '../packages/ui/dist/content/internal/codeTokenStyle.js';
 
 test('concurrent cold highlighting consumers share one token matrix', async (context) => {
@@ -55,14 +55,14 @@ test('a token without high-contrast styles takes its standard color at high cont
 test('every highlighted token is readable on its code background, in code blocks and diffs', async () => {
   const { wcagContrast, differenceEuclidean } = await import('culori');
   const { codeTheme, diffTintColors } = await import(
-    '../packages/ui/dist/content/internal/CodeThemes.js'
+    '../packages/ui/dist/content/internal/codeThemes.js'
   );
   const { codeBackgrounds, codeColors, codeContrastTargets, diffTintOpacity } = await import(
-    '../packages/ui/dist/content/internal/CodeColors.js'
+    '../packages/ui/dist/content/internal/codeColors.js'
   );
   const { tokens } = await import('../packages/ui/src/generated/tokens.ts');
   const { over, readableReplacements } = await import(
-    '../packages/ui/dist/content/internal/ReadableColors.js'
+    '../packages/ui/dist/content/internal/readableColors.js'
   );
   const theme = async (name) => (await import(`shiki/themes/${name}.mjs`)).default;
   const github = {
@@ -140,11 +140,11 @@ test('every highlighted token is readable on its code background, in code blocks
           ...new Set(
             [
               ...['page', 'default', 'raised', 'popup', 'muted'].map((name) => `color.bg.${name}`),
-              'color.list-item.bg',
+              'color.bg.list-item',
             ].map(value),
           ),
         ].sort(),
-        `${scheme} ${contrast}: update the surfaces in CodeColors.ts to the color tokens`,
+        `${scheme} ${contrast}: update the surfaces in codeColors.ts to the color tokens`,
       );
       const { color: layer, alpha } = colors.inline;
       const [r, g, b] = [1, 3, 5].map((start) =>
@@ -182,7 +182,7 @@ test('every highlighted token is readable on its code background, in code blocks
       assert.equal(
         foreground,
         readable,
-        `${scheme} ${contrast}: update CodeColors.ts to the installed themes`,
+        `${scheme} ${contrast}: update codeColors.ts to the installed themes`,
       );
       // Inline code and a block's plain text take the theme's foreground, on either background.
       assert.equal(theme.colors['editor.foreground'], foreground);

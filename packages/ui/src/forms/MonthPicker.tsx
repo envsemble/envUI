@@ -5,7 +5,7 @@ import { useMessages } from '../internal/EnvUIContext.js';
 import { useResolvedLocale } from '../internal/useFormatters.js';
 import { monthPicker as monthPickerMessages } from '../foundations/messages/monthPicker.js';
 import { Button } from '../actions/Button.js';
-import { CalendarMonth } from '../icons/CalendarMonth.js';
+import { IconCalendarMonth } from '../icons/CalendarMonth.js';
 import { MonthGrid, monthGridActive } from './internal/MonthGrid.js';
 import { PickerField, usePickerOpen, type PickerFieldProps } from './internal/PickerField.js';
 import {
@@ -17,7 +17,9 @@ import {
   now,
   parseMonth,
   toUtcDate,
-} from './internal/CalendarDays.js';
+} from '../internal/calendarDays.js';
+import '../styles/Base.css';
+import '../styles/DatePicker.css';
 
 export interface MonthPickerProps extends PickerFieldProps {
   /** The value: a month as YYYY-MM. null, or an empty string, for none. */
@@ -127,7 +129,7 @@ export function MonthPicker({
 
   function choose(month: number | null) {
     commit(month);
-    setOpen(false);
+    setOpen(false, month === null ? 'clear-press' : 'item-press');
   }
 
   const thisMonth = monthOfDay(now().day);
@@ -140,7 +142,7 @@ export function MonthPicker({
       {...fieldProps}
       serialized={serialized}
       display={display}
-      icon={<CalendarMonth />}
+      icon={<IconCalendarMonth />}
       rootClassName="env-date-picker env-month-picker"
       popupClassName="env-month-picker-popup"
       initialFocus={monthGridActive}

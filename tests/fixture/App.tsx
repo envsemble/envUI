@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Theme, Toast } from '@envsemble/envui';
+import { Theme, ToastProvider } from '@envsemble/envui';
 import '@envsemble/envui/styles.css';
 import './Fixture.css';
 import { FormsFixture } from './Forms.js';
@@ -12,7 +12,7 @@ import { ButtonGroupsFixture } from './ButtonGroups.js';
 import { LayoutFixture } from './Layout.js';
 import { CardsFixture } from './Cards.js';
 import { ColorPickerFixture } from './ColorPicker.js';
-import { MarkdownEditingFixture, MarkdownExtensionsFixture } from './MarkdownEditing.js';
+import { MarkdownEditingFixture, MarkdownExtensionsFixture } from './MarkdownEditors.js';
 import { AdoptionFixture } from './Adoption.js';
 import { ScaffoldFixture, ScrollKeysFixture } from './Scaffolds.js';
 import { ScaffoldPanesFixture } from './ScaffoldPanes.js';
@@ -23,7 +23,7 @@ import { FieldsFixture } from './Fields.js';
 import { MarkdownFixture } from './Markdowns.js';
 import { MenusFixture } from './Menus.js';
 import { MenubarFixture } from './Menubars.js';
-import { TreeFixture } from './TreeView.js';
+import { TreeFixture } from './Trees.js';
 import {
   CompactTabsFixture,
   DocumentTabsFixture,
@@ -31,11 +31,13 @@ import {
   FillTabsFixture,
   RtlDocumentTabsFixture,
   RtlTabsFixture,
+  ScrollingTabsFixture,
   TabStatesFixture,
 } from './Tabs.js';
 import { CommandPaletteEmptyFixture, CommandPaletteFixture } from './Palette.js';
-import { SegmentedControlFixture } from './Segments.js';
+import { SegmentedControlFixture } from './SegmentedControls.js';
 import { BadgesFixture } from './Badges.js';
+import { GraphicsFixture } from './Graphics.js';
 import {
   DialogVariantsFixture,
   HoverCardFixture,
@@ -69,13 +71,13 @@ import { ResizableDrawersFixture } from './ResizableDrawers.js';
 import { NestedDrawersFixture } from './NestedDrawers.js';
 import { TooltipsFixture } from './Tooltips.js';
 import { MetersFixture } from './Meters.js';
+import { LineArtsFixture } from './LineArts.js';
 import { RatingsFixture } from './Ratings.js';
 import { DisclosuresFixture } from './Disclosures.js';
 import { AccordionsFixture } from './Accordions.js';
 import { DensityFixture } from './Density.js';
 import { ChoiceControlsFixture } from './ChoiceControls.js';
 import { StackingFixture } from './Stacking.js';
-import { ResponsiveHooksFixture } from './ResponsiveHooks.js';
 import { PrimitivesFixture } from './Primitives.js';
 import { MessageStringsFixture } from './MessageStrings.js';
 import { DirectionFixture } from './Direction.js';
@@ -110,11 +112,11 @@ const standaloneFixtures: Record<string, () => ReactNode> = {
   'choice-controls': ChoiceControlsFixture,
   stacking: StackingFixture,
   'portal-containers': PortalContainersFixture,
-  'responsive-hooks': ResponsiveHooksFixture,
   primitives: PrimitivesFixture,
   'message-strings': MessageStringsFixture,
   direction: DirectionFixture,
   'rtl-tabs': RtlTabsFixture,
+  'scrolling-tabs': ScrollingTabsFixture,
   'rtl-document-tabs': RtlDocumentTabsFixture,
   'document-tabs-rerender': DocumentTabsRerenderFixture,
   pagers: PagersFixture,
@@ -124,6 +126,7 @@ const standaloneFixtures: Record<string, () => ReactNode> = {
   'nested-drawers': NestedDrawersFixture,
   tooltips: TooltipsFixture,
   meters: MetersFixture,
+  'line-arts': LineArtsFixture,
   'page-headers': PageHeadersFixture,
   'description-lists': DescriptionListsFixture,
   'container-size': ContainerSizeFixture,
@@ -175,9 +178,9 @@ export default function App() {
           )}
           {includes('toast') && (
             <>
-              <Toast.Provider>
+              <ToastProvider>
                 <ToastTriggers />
-              </Toast.Provider>
+              </ToastProvider>
               <StrictToastFixture />
             </>
           )}
@@ -251,6 +254,7 @@ export default function App() {
               <BadgesFixture theme="dark" />
             </>
           )}
+          {includes('graphics') && <GraphicsFixture />}
           {includes('alerts') && (
             <>
               <AlertsFixture theme="light" />

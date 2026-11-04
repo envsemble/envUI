@@ -11,6 +11,9 @@ import { Column, Row, type SpaceStep } from '../foundations/Layout.js';
 import { Surface } from '../foundations/Surface.js';
 import { ActionElement, type ActionElementProps } from '../internal/ActionElement.js';
 import { given, type SkeletonProps } from '../internal/skeleton.js';
+import type { HeadingLevel } from '../foundations/headingLevel.js';
+import '../styles/Base.css';
+import '../styles/Card.css';
 
 /**
  * A card's fill: muted, the standalone card fill; default, a quieter fill that groups content, as a
@@ -19,7 +22,6 @@ import { given, type SkeletonProps } from '../internal/skeleton.js';
 export type CardBackground = 'muted' | 'default' | 'page';
 
 /** The level of a card's heading, from h1 to h6. */
-export type CardHeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
 
 interface CardSurfaceProps extends SkeletonProps {
   /**
@@ -34,7 +36,9 @@ interface CardSurfaceProps extends SkeletonProps {
    * @default 1.25 rem in narrow windows, growing to 1.5 rem from 50 rem wide
    */
   padding?: SpaceStep;
+  /** The card's class, beside env-card. */
   className?: string;
+  /** Styles of the card. */
   style?: CSSProperties;
 }
 
@@ -49,7 +53,7 @@ interface CardContentOptions {
    * The title's heading level, for the page's outline; the type stays the title type.
    * @default 3
    */
-  headingLevel?: CardHeadingLevel;
+  headingLevel?: HeadingLevel;
   /** A short fact at the end of the title row, such as when the card was updated. */
   meta?: ReactNode;
   /** A sentence under the title, in muted text. */
@@ -82,6 +86,7 @@ export type CardLinkProps = CardSurfaceProps &
     /**
      * A disabled link card has no destination, cannot be focused and reports aria-disabled; a
      * disabled button card cannot be pressed.
+     * @default false
      */
     disabled?: boolean;
   };
@@ -173,7 +178,7 @@ function ContentCardLayout({
   const level = headingLevel ?? 3;
   const Heading = `h${level}` as const;
   const headingText = hasTitle && (
-    <Text render={<Heading />} variant="title" className="env-card-heading">
+    <Text render={<Heading />} variant="title" className="env-card-title">
       {title}
     </Text>
   );

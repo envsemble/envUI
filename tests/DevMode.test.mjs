@@ -227,7 +227,7 @@ function snapshot(entries, more = {}) {
         ],
       ],
     ]),
-    minTextChars: 8,
+    minTextCharacters: 8,
     ...more,
   };
 }
@@ -451,7 +451,7 @@ test('what is set out on purpose, or out of the flow, neither spills nor overflo
 });
 
 test('no entry point but dev reaches dev mode, so production builds contain none of it', async () => {
-  // Every entry point the package exports, but dev and the one-icon pattern, which the barrel covers.
+  // Every entry point the package exports, but dev and the one-icon pattern.
   const { exports } = JSON.parse(
     await readFile(join(repository, 'packages/ui/package.json'), 'utf8'),
   );
@@ -461,7 +461,7 @@ test('no entry point but dev reaches dev mode, so production builds contain none
         name !== './dev' && !name.includes('*') && /\.tsx?$/.test(target['envui-source'] ?? ''),
     )
     .map(([, target]) => target['envui-source'].replace(/^\.\/src\//, ''));
-  assert.ok(entries.includes('index.ts') && entries.includes('icons/index.ts'), String(entries));
+  assert.ok(entries.includes('index.ts'), String(entries));
   const dev = join(repository, 'packages/ui/src/dev');
   for (const entry of entries) {
     const result = await build({
@@ -522,6 +522,7 @@ test('installDevMode() warns about parts in the wrong shape and installs all the
     absWorkingDir: repository,
     entryPoints: [join(repository, 'packages/ui/src/dev/install.tsx')],
     bundle: true,
+    loader: { '.css': 'empty' },
     platform: 'node',
     format: 'esm',
     jsx: 'automatic',

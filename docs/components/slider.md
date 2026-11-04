@@ -2,7 +2,7 @@
 title: Slider
 summary: A value in a known range, chosen by pressing or dragging along a field, or with the keyboard.
 status: stable
-since: 0.5.0
+since: 1.0.0
 category: Forms & selection
 aliases:
   - range
@@ -30,23 +30,19 @@ examples:
   LayerOpacity:
     role: overview
     caption: A field among fields, with its label inside at the start, its value at the end and a fill that shows it.
-  SliderAnatomy: anatomy
+  SliderAnatomy:
+    role: anatomy
+    caption: As under the pointer, which shows the handle.
   SaveOnRelease: example
   SessionTimeout: example
   NarrowSlider: example
-  UsefulSteps:
-    role: do
-    caption: A step and a range that match the precision people need.
-  NeedlessPrecision:
-    role: dont
-    caption: 'Single minutes over a whole day: no value is easy to reach.'
 ---
 
 # Slider
 
 ## Anatomy
 
-```tsx figure=SliderAnatomy
+```tsx figure=SliderAnatomy specimen
 
 ```
 
@@ -66,16 +62,14 @@ Not shown: the span the value moves along, which draws the faint ticks, and the 
 
 Slider is a field, as tall as the fields and with their corners, so it sits in a form among them.
 
-- At rest it shows only its label, its value and the fill, which ends crisply.
-
 ### Under the pointer
 
 When the pointer comes over the slider, a thin handle marks the value and faint ticks mark its steps.
 
-- Where the handle, the end of the fill and the ticks pass under the label or the value, they fade, so the text keeps its full strength.
 - Pressing anywhere moves the value there, and dragging carries it along.
-- Once the slider is let go, the handle and the ticks go away, even with the pointer still over it, and come back when the pointer leaves and returns.
 - On a touch screen they show only while the finger is down.
+
+<!-- specimen: UnderThePointer -->
 
 ### Past the ends
 
@@ -86,17 +80,21 @@ Dragged past either end, the value stays at the minimum or maximum, and the slid
 - Once let go, it springs back.
 - A press, the keyboard and a disabled slider don't stretch it, nor does it stretch where reduced motion is preferred.
 
+<!-- specimen: PastTheEnds -->
+
 ### With the keyboard
 
-Reached with the keyboard, the slider shows its focus ring and the handle at the value, faded under the text in the same way.
+Reached with the keyboard, the slider shows its focus ring and the handle at the value, faded where it passes under the text.
 
 - The arrow keys move the value; the ticks stay hidden.
+
+<!-- specimen: WithTheKeyboard -->
 
 ### Save once a change is complete
 
 The value follows the pointer as it moves, and is reported once more when the pointer lets go or after a key. Save it then.
 
-```tsx figure=SaveOnRelease
+```tsx figure=SaveOnRelease motion
 
 ```
 
@@ -120,7 +118,7 @@ A slider fills its container.
 
 - Where it is narrow, a long label is cut short with an ellipsis, and the value keeps its room.
 
-```tsx figure=NarrowSlider widths="14 30"
+```tsx figure=NarrowSlider widths="30 10" sweep
 
 ```
 
@@ -128,13 +126,9 @@ A slider fills its container.
 
 Match the range and the step to the precision people need.
 
-```tsx figure=UsefulSteps
+### Range and step
 
-```
-
-```tsx figure=NeedlessPrecision
-
-```
+Offer only the values people need, such as 5 to 120 minutes in steps of 5. Single minutes over a whole day leave no value easy to reach.
 
 ### Show the effect
 
@@ -180,7 +174,7 @@ Show the value with its unit, such as 30 minutes; the same text is announced.
 />
 ```
 
-Leave it uncontrolled, with `defaultValue`, the minimum by default, or control it with `value` and `onValueChange`, which receives the value as often as the handle moves. `formatValue` formats the value with its unit, as it shows at the end and is announced; without it, the number shows in the `locale`, EnvUIProvider's by default. `description` goes under it.
+Leave it uncontrolled, with `defaultValue`, the minimum by default, or control it with `value` and `onValueChange`, which receives the value as often as the handle moves. `formatValue` formats the value with its unit, as it shows at the end and is announced; without it, the number shows in the `locale`, EnvUIProvider's by default. `description` goes under it, and `error` says how to correct the value.
 
 #### Save once a change is complete
 
@@ -207,22 +201,18 @@ Leave it uncontrolled, with `defaultValue`, the minimum by default, or control i
 
 ### Composition
 
-`inputRef` reaches the native range input, such as to focus it. The row of the label and the value is `env-slider-heading`, its numbers of one width. The field, `env-slider-control`, is the track's quiet tint, which takes the pointer. The span the value moves along, `env-slider-track`, runs across the whole field, so the fill is empty at the minimum and full at the maximum, and draws the faint ticks at the steps, or at the large steps where the steps are many.
+`ref` reaches the native range input, which holds the value and takes focus, as a field's does, so a form library can register it; `className`, `style` and the other native props go to the root. The row of the label and the value is `env-slider-header`, its numbers of one width. The field, `env-slider-control`, is the track's quiet tint, which takes the pointer. The span the value moves along, `env-slider-track`, runs across the whole field, so the fill is empty at the minimum and full at the maximum, and draws the faint ticks at the steps, or at the large steps where the steps are many.
 
 The field marks what it shows besides its text and fill:
 
 - `data-handle` while the handle shows, under a hovering or pressing pointer and with keyboard focus.
 - `data-ruler` while the ticks do, under a hovering or pressing pointer.
-- `data-pressed` while the pointer presses it.
+- `data-dragging` while the pointer presses it and drags the value.
 - A release clears them until the pointer leaves and comes back.
-
-### Customize
-
-`--env-slider-container` sets the track's tint, `--env-slider-indicator` the fill and `--env-slider-content` the label, the value, the handle and the ticks of one Slider, through `style` or CSS; with none set, it keeps its own colors.
 
 ## Changelog
 
+- **1.0.0-prerelease.5**: `error`, as on a field.
 - **1.0.0-prerelease.2**: Slider is a field: as tall as the fields and with their corners, its label inside at the start, its value at the end in the text style of a field, with numbers of one width and a fill from the start, with a thin handle and faint ticks under the pointer and on focus, both fading where they pass under the text. The track has no outline. `--env-slider-indicator` colors the fill alone, and `--env-slider-content` the label, value, handle and ticks.
-- **1.0.0**: `onValueCommit` is `onValueCommitted`, as Base UI names it, and `hint` is `description`, which the `v1-props` codemod writes. The value is formatted in EnvUIProvider's `locale`, or the one Slider takes.
+- **1.0.0**: `onValueCommit` is `onValueCommitted`, as Base UI names it, `hint` is `description`, and `inputRef` is `ref`, which reaches the native range input as a field's does, while the root takes `className`, `style` and the other native props. The value is formatted in EnvUIProvider's `locale`, or the one Slider takes. The row of the label and the value, `env-slider-heading`, is `env-slider-header`.
 - **1.0.0**: Sliders in the dark theme reach 3:1 contrast on every surface.
-- **0.5.0**: Slider, with `formatValue`, `min`, `max`, `step`, `largeStep`, `hint`, `disabled`, `name`, `form` and `onValueCommit`; the thumb grows on touch screens.

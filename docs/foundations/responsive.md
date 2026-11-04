@@ -39,9 +39,10 @@ avoidWhen:
   - text: A short label over the page.
     use: Tooltip
   - text: A notification over the page.
-    use: Toast
+    use: ToastProvider
 examples:
   Widths: example
+  TextSize: example
 ---
 
 # Adapting to width
@@ -83,11 +84,13 @@ Menus, dialogs and sheets size themselves to the window they open in, not to the
 
 The window classes follow the reader's text size: with larger text, a window counts as a narrower class, so its layout never gets cramped.
 
+```tsx figure=TextSize
+
+```
+
 ## Rules
 
-Start from the phone: a screen is laid out for the compact class first, and spreads out from a class up.
-
-- Such as a list with its details beside it from expanded up, and above it below.
+Start from the phone: a screen is laid out for the compact class first, and spreads out from a class up. A list shows its details beside it from Expanded up, and above it below.
 
 ## Words to use
 
@@ -181,19 +184,19 @@ envUI has no width media queries: components respond to their container, so a co
 
 #### Stacking order
 
-| Token             | Value | For                                                                              |
-| ----------------- | ----- | -------------------------------------------------------------------------------- |
-| `--env-z-base`    | 0     | The flow of a page or a component                                                |
-| `--env-z-raised`  | 1     | A part over its siblings inside a component, such as a sticky table header       |
-| `--env-z-sticky`  | 20    | The frame's sticky parts that content scrolls under: the top bar, the navigation |
-| `--env-z-peek`    | 30    | A pane over the content that doesn't dock, such as a supporting pane as a sheet  |
-| `--env-z-overlay` | 90    | The scrim behind a modal layer                                                   |
-| `--env-z-modal`   | 100   | Dialogs, sheets and the command palette                                          |
-| `--env-z-popover` | 110   | Menus, popovers and the lists of Select and Combobox                             |
-| `--env-z-toast`   | 120   | Notifications                                                                    |
-| `--env-z-tooltip` | 130   | Tooltips                                                                         |
+| Token                     | Value | For                                                                              |
+| ------------------------- | ----- | -------------------------------------------------------------------------------- |
+| `--env-z-base`            | 0     | The flow of a page or a component                                                |
+| `--env-z-raised`          | 1     | A part over its siblings inside a component, such as a sticky table header       |
+| `--env-z-sticky`          | 20    | The frame's sticky parts that content scrolls under: the top bar, the navigation |
+| `--env-z-supporting-pane` | 30    | A pane over the content that doesn't dock, such as a supporting pane as a sheet  |
+| `--env-z-backdrop`        | 90    | The backdrop behind a modal layer                                                |
+| `--env-z-modal`           | 100   | Dialogs, sheets and the command palette                                          |
+| `--env-z-popup`           | 110   | Menus, popovers and the lists of Select and Combobox                             |
+| `--env-z-toast`           | 120   | Notifications                                                                    |
+| `--env-z-tooltip`         | 130   | Tooltips                                                                         |
 
 - Take a level for what a layer is: a sticky toolbar of your own takes `var(--env-z-sticky)`. A step between levels is a small `calc()`, such as `calc(var(--env-z-sticky) + 1)`.
-- envUI's popups are portaled to the end of the document; keep your own layers below `--env-z-overlay`. envUI's Stylelint config reports a literal z-index.
+- envUI's popups are portaled to the end of the document; keep your own layers below `--env-z-backdrop`. envUI's Stylelint config reports a literal z-index.
 
 TypeScript declarations provide the complete public API.

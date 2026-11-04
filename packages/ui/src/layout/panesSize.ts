@@ -1,14 +1,17 @@
 /**
  * The width Panes keeps under its `persist` key, read from a Cookie header, such as the request's
- * on the server, or from `document.cookie`. Render Panes.Root with it as `persistedSize`, on the
+ * on the server, or from `document.cookie`. Render Panes.Root with it as `persistedWidth`, on the
  * server and in the browser alike, so the server's markup has the width people chose and nothing
  * moves as the page hydrates:
  *
- *   <Panes.Root persist="inbox" persistedSize={readPanesSize(cookieHeader, 'inbox')}>
+ *   <Panes.Root persist="inbox" persistedWidth={readPanesWidth(cookieHeader, 'inbox')}>
  *
  * Returns undefined where no width is kept under the key.
  */
-export function readPanesSize(cookies: string | null | undefined, key: string): number | undefined {
+export function readPanesWidth(
+  cookies: string | null | undefined,
+  key: string,
+): number | undefined {
   if (!cookies) return undefined;
   const name = encodeURIComponent(key);
   for (const part of cookies.split(';')) {
@@ -21,7 +24,7 @@ export function readPanesSize(cookies: string | null | undefined, key: string): 
 }
 
 /** Keeps a width under a key in a cookie for a year, or forgets it, for every page of the site. */
-export function writePanesSize(key: string, size: number | undefined) {
+export function writePanesWidth(key: string, size: number | undefined) {
   try {
     const name = encodeURIComponent(key);
     document.cookie =

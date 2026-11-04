@@ -21,6 +21,8 @@ await build({
     loader: 'ts',
   },
   bundle: true,
+  // The style sheets the modules import are the browser's concern.
+  loader: { '.css': 'empty' },
   platform: 'node',
   format: 'esm',
   packages: 'external',
@@ -31,7 +33,10 @@ await build({
 const { Spinner, EnvUIProvider } = await import(pathToFileURL(output).href);
 
 test('a spinner without a label is hidden, and with one a progress bar it names', () => {
-  assert.match(renderToStaticMarkup(h(Spinner)), /^<span aria-hidden="true" class="env-spinner"/);
+  assert.match(
+    renderToStaticMarkup(h(Spinner)),
+    /^<span aria-hidden="true" data-label-hidden="" class="env-spinner"/,
+  );
   const named = renderToStaticMarkup(h(Spinner, { label: 'Refreshing members' }));
   assert.match(named, /role="progressbar" aria-label="Refreshing members"/);
   assert.doesNotMatch(named, /env-spinner-label/);
@@ -39,10 +44,7 @@ test('a spinner without a label is hidden, and with one a progress bar it names'
 
 test('with showLabel, a busy status shows the label beside the arc', () => {
   const markup = renderToStaticMarkup(h(Spinner, { label: 'Loading project', showLabel: true }));
-  assert.match(
-    markup,
-    /^<span role="status" aria-busy="true" data-show-label="" class="env-spinner" data-size="md">/,
-  );
+  assert.match(markup, /^<span role="status" aria-busy="true" class="env-spinner" data-size="md">/);
   assert.doesNotMatch(markup, /aria-label|progressbar/);
   assert.match(markup, /<svg [^>]*aria-hidden="true">/);
   assert.match(markup, /<span class="env-spinner-label">Loading project<\/span><\/span>$/);

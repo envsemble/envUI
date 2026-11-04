@@ -1,11 +1,11 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
-// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
+// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../Icon.js';
+import { useSymbolIconFill } from '../SymbolIconState.js';
 
-export function PlayDisabled({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
+export function IconPlayDisabled({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
   return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M658-416 334-740q10-8 23-9.5t25 6.5l325 229q19 12 18.5 34T706-446l-48 30ZM762-84 520-328l-138 89q-20 13-41 1.5T320-273v-255L84-764q-11-11-11-28t11-28q11-11 28-11t28 11l679 679q12 12 12 28.5T819-84q-12 11-28.5 11.5T762-84Z" /> : <path d="m658-416-56-58-38-36-230-230q10-8 23-9.5t25 6.5l325 229q19 12 18.5 34T706-446l-48 30ZM762-84 520-328l-138 89q-20 13-41 1.5T320-273v-255L84-764q-11-11-11-28t11-28q11-11 28-11t28 11l679 679q12 12 12 28.5T819-84q-12 11-28.5 11.5T762-84ZM400-448Zm0 102 62-40-62-62v102Zm202-128Z" />}</Icon>;
 }

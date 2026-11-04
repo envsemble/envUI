@@ -57,27 +57,30 @@ How dense the whole app is, how tight the rows of a table are, and the corners t
 
 The whole of envUI comes in two scales. Compact makes every control, text, corner and space a step smaller at once, so a dense tool stays in proportion. An app uses one scale throughout.
 
+- Comfortable, the default, has room to breathe: for websites and touch.
+- Compact suits desktop tools people work in all day.
+- Choose Compact under Scale in the Display menu to see it on this site.
+
 ```tsx figure=Scales
 
 ```
 
-1. **Comfortable**: The default, with room to breathe: for websites and touch.
-2. **Compact**: Everything a step smaller: for desktop tools people work in all day.
-
-### Try it on this site
-
-Choose Compact under Scale in the Display menu, at the top of the page, and this whole site becomes the compact scale.
+1. **Comfortable**
+2. **Compact**
 
 ### Tighter rows
 
 Tables, lists and trees can pack their rows closer on their own, in either scale. Only the space in each row changes; the text keeps its size.
 
+- Tighter rows suit scanning many records at once.
+- Regular rows suit reading row by row.
+
 ```tsx figure=Rows
 
 ```
 
-1. **Tighter rows**: For scanning many records at once.
-2. **Regular rows**: For reading row by row.
+1. **Tighter rows**
+2. **Regular rows**
 
 ### Corners say what a thing is
 
@@ -160,7 +163,6 @@ Ask an agent for space, density and shape in these words; envUI turns each into 
 
 ```tsx
 import { Button, Column, Surface, Table, Text, TextField, Theme } from '@envsemble/envui';
-import '@envsemble/envui/styles.css';
 
 // Padding is inside the surface; gap is between its children.
 <Surface padding={5} render={<Column gap={4} />}>
@@ -250,19 +252,20 @@ The catalogue shows four kinds of corner; small marks are a fifth, for code. The
 
 At the default 16 px root; every value is a token in rem.
 
-| Token                                                          | Comfortable           | Compact               |
-| -------------------------------------------------------------- | --------------------- | --------------------- |
-| `--env-control-height-sm` / `-md` / `-lg`                      | 32 / 40 / 48          | 26 / 32 / 38          |
-| `--env-row-height` (menu, Select and Combobox rows)            | 36                    | 28                    |
-| `--env-row-padding-block-xs` / `-sm` / `-md` / `-lg`           | 2 / 4 / 8 / 12        | 2 / 3 / 4 / 6         |
-| `--env-space-1` … `--env-space-9`                              | 4, 8, 12, 16, 24 … 64 | 4, 6, 10, 12, 20 … 52 |
-| `--env-font-size-caption` / `-body-small` / `-label`           | 12 / 14 / 14          | 11 / 12 / 13          |
-| `--env-font-size-body` / `-heading-small` / `-heading`         | 15 / 16 / 18          | 13 / 14 / 16          |
-| `--env-icon-size-sm` / `-md` / `-lg`                           | 16 / 18 / 20          | 16 / 16 / 18          |
-| `--env-radius-sm` / `--env-radius-lg` / `--env-radius-surface` | 8 / 16 / 28           | 6 / 12 / 22           |
-| `--env-field-floating-height`                                  | 56                    | 44                    |
-| `--env-top-bar-height` / `--env-title-bar-height`              | 52 / 40               | 42 / 32               |
-| `--env-control-target-min` / `--env-control-height-touch`      | 24 / 44               | 24 / 44               |
+| Token                                                             | Comfortable           | Compact               |
+| ----------------------------------------------------------------- | --------------------- | --------------------- |
+| `--env-control-height-sm` / `-md` / `-lg`                         | 32 / 40 / 48          | 26 / 32 / 38          |
+| `--env-row-height` (menu, Select and Combobox rows)               | 36                    | 28                    |
+| `--env-row-padding-block-xs` / `-sm` / `-md` / `-lg`              | 2 / 4 / 8 / 12        | 2 / 3 / 4 / 6         |
+| `--env-space-1` … `--env-space-9`                                 | 4, 8, 12, 16, 24 … 64 | 4, 6, 10, 12, 20 … 52 |
+| `--env-font-size-caption` / `-body-small` / `-label`              | 12 / 14 / 14          | 11 / 12 / 13          |
+| `--env-font-size-body` / `-heading-small` / `-heading`            | 15 / 16 / 18          | 13 / 14 / 16          |
+| `--env-icon-size-sm` / `-md` / `-lg`                              | 16 / 18 / 20          | 16 / 16 / 18          |
+| `--env-picture-size-sm` / `-md` / `-lg` / `-xl` (Avatar, Graphic) | 24 / 32 / 48 / 88     | 24 / 32 / 48 / 88     |
+| `--env-radius-sm` / `--env-radius-lg` / `--env-radius-surface`    | 8 / 16 / 28           | 6 / 12 / 22           |
+| `--env-field-floating-height`                                     | 56                    | 44                    |
+| `--env-top-bar-height` / `--env-title-bar-height`                 | 52 / 40               | 42 / 32               |
+| `--env-control-target-min` / `--env-control-height-touch`         | 24 / 44               | 24 / 44               |
 
 #### Touch
 

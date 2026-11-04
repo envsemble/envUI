@@ -23,18 +23,24 @@ avoidWhen:
 composes:
   - Button
   - ConfirmDialog
+  - ConfirmButton
   - List
   - Checkbox
   - TextField
-  - Toast
+  - ToastProvider
   - useToast
   - Column
   - Row
   - Text
 examples:
-  UndoInstead: overview
+  UndoInstead:
+    role: overview
+    motion: true
   TypeToConfirm: example
   BulkDelete: example
+  RemoveFile:
+    role: example
+    caption: Where little is at stake, the button arms in place and a second press removes the file.
   DangerKeptForDelete:
     role: do
     caption: The danger tone only on what deletes or ends something.
@@ -54,7 +60,7 @@ Where an action can't be undone and reaches many people or much work, the dialog
 - Its confirm button stays enabled.
 - A wrong name keeps the dialog open and says what to type.
 
-```tsx figure=TypeToConfirm
+```tsx figure=TypeToConfirm motion
 
 ```
 
@@ -62,7 +68,7 @@ Where an action can't be undone and reaches many people or much work, the dialog
 
 The count is in the button, the question and the confirm button: "Delete 2 documents…".
 
-```tsx figure=BulkDelete
+```tsx figure=BulkDelete motion
 
 ```
 
@@ -86,6 +92,10 @@ Match the friction to what is at stake.
 | Confirm in place    | An action that can't be undone, with little at stake, through a [ConfirmButton](../components/button.md).                            |
 | Confirm in a dialog | Deleting something people made, or something that affects others, through a danger [ConfirmDialog](../components/confirm-dialog.md). |
 | Type the name       | An action that can't be undone and reaches many people or much work.                                                                 |
+
+```tsx figure=RemoveFile wide motion
+
+```
 
 ```tsx figure=DangerKeptForDelete
 
@@ -189,7 +199,7 @@ Put a TextField for the name inside the ConfirmDialog, as the TypeToConfirm exam
 
 ### Composition
 
-Lay the items out as a List, each List.Item taking its trigger as its `action`: a Button, an IconButton named with `aria-label`, a ConfirmButton or a Menu. The danger tone, `tone="danger"`, goes only on what deletes or ends something.
+Lay the items out as a List, each List.Item taking its trigger at its `end`: a Button, an IconButton named with `aria-label`, a ConfirmButton or a Menu. The danger tone, `tone="danger"`, goes only on what deletes or ends something.
 
 Bulk delete selects rows with Checkboxes and names the count in an outline danger Button, the dialog's `title` and its `confirmLabel`, as the BulkDelete example does. Its `finalFocus` returns focus to the button, or to the list, with `tabIndex={-1}`, once the button has gone with the deleted selection.
 

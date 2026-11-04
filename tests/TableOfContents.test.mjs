@@ -1,6 +1,7 @@
 // TableOfContents: the outline it builds from headings, the current section it finds from where
-// the page has scrolled, and its server markup, which lists
-// the sections given as items and marks none until the page hydrates.
+// the page has scrolled, the shape that marks the reader's place and the springs it moves on, and
+// its server markup, which lists the sections given as items and marks none until the page
+// hydrates.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { join } from 'node:path';
@@ -17,12 +18,15 @@ await build({
     contents: [
       "export { TableOfContents } from './packages/ui/src/navigation/TableOfContents.tsx';",
       "export * from './packages/ui/src/navigation/internal/contentsOutline.ts';",
+      "export * from './packages/ui/src/navigation/internal/contentsWave.ts';",
       "export { EnvUIProvider } from './packages/ui/src/foundations/EnvUIProvider.tsx';",
     ].join('\n'),
     resolveDir: repository,
     loader: 'ts',
   },
   bundle: true,
+  // The style sheets the modules import are the browser's concern.
+  loader: { '.css': 'empty' },
   platform: 'node',
   format: 'esm',
   packages: 'external',
@@ -30,8 +34,22 @@ await build({
   outfile: output,
   logLevel: 'error',
 });
-const { TableOfContents, EnvUIProvider, outline, flatten, slug, uniqueId, currentSection } =
-  await import(pathToFileURL(output).href);
+const {
+  TableOfContents,
+  EnvUIProvider,
+  outline,
+  flatten,
+  slug,
+  uniqueId,
+  currentSection,
+  swellAt,
+  springStep,
+  springAtRest,
+  waveReach,
+  wavePath,
+  wavePlace,
+  waveThin,
+} = await import(pathToFileURL(output).href);
 
 test('headings nest under the last heading above them of a lower level', () => {
   const items = outline([
@@ -155,4 +173,108 @@ test('without items, the server renders the landmark hidden, named in the provid
     /<nav aria-label="Auf dieser Seite" class="env-table-of-contents" hidden="">/,
   );
   assert.doesNotMatch(markup, /<a /);
+});
+
+test('the shape stays on the current entry, then glides on to the next as it nears', () => {
+  assert.equal(wavePlace(2), 2);
+  assert.equal(wavePlace(2.4), 2);
+  assert.equal(wavePlace(2.75), 2.5);
+  assert.ok(wavePlace(2.9) > 2.8 && wavePlace(2.9) < 3);
+  assert.equal(wavePlace(3), 3);
+});
+
+test("the shape swells at the reader's place, half 0.9 entries away, and none two and a half away", () => {
+  assert.equal(swellAt(4, 4, []), 1);
+  assert.ok(Math.abs(swellAt(4.9, 4, []) - 0.5) < 0.01);
+  assert.ok(swellAt(4.5, 4, []) > 0.85);
+  assert.ok(swellAt(6, 4, []) < 0.02);
+  assert.equal(swellAt(6.5, 4, []), 0);
+  assert.equal(swellAt(0, 4, []), 0);
+  // The entry under the pointer swells it a little, by how far its swell has grown.
+  assert.ok(swellAt(0, 4, [1]) > 0.3 && swellAt(0, 4, [1]) < 0.5);
+  assert.ok(swellAt(0, 4, [0.5]) < swellAt(0, 4, [1]));
+  assert.equal(swellAt(0, null, []), 0);
+  // In a short list, the bulge is shorter, so the thin stroke still shows.
+  assert.equal(waveReach(12), 1);
+  assert.equal(waveReach(3), 0.85);
+  assert.ok(swellAt(4.9, 4, [], undefined, 0.85) < swellAt(4.9, 4, []));
+});
+
+test('moving, the bulge leans back and stretches; landing, it squashes a little past its fullest', () => {
+  const lean = { lean: 0.5, stretch: 0 };
+  // Moving down, its upper side is drawn out and its lower side drawn in.
+  assert.ok(swellAt(2.5, 4, [], lean) > swellAt(2.5, 4, []));
+  assert.ok(swellAt(5.5, 4, [], lean) < swellAt(5.5, 4, []));
+  // Stretched, taller and thinner; squashed, shorter and fuller, never more than 8% past.
+  const stretched = { lean: 0, stretch: 0.6 };
+  assert.ok(swellAt(4, 4, [], stretched) < 1);
+  assert.ok(swellAt(6, 4, [], stretched) > swellAt(6, 4, []));
+  const squashed = { lean: 0, stretch: -1 };
+  assert.ok(swellAt(4, 4, [], squashed) > 1 && swellAt(4, 4, [], squashed) <= 1.05);
+});
+
+test('a spring overshoots a little when underdamped, never when critically damped, and rests', () => {
+  const peak = (damping) => {
+    const spring = { value: 0, velocity: 0 };
+    let most = 0;
+    for (let frame = 0; frame < 120; frame += 1) {
+      springStep(spring, 1, 20, damping, 1 / 60);
+      most = Math.max(most, spring.value);
+    }
+    return [most, spring];
+  };
+  const [under, rested] = peak(0.5);
+  assert.ok(under > 1.1 && under < 1.25);
+  assert.ok(springAtRest(rested, 1, 0.002));
+  const [critical] = peak(1);
+  assert.ok(critical <= 1);
+  // A long frame is stepped in small steps, so it lands where short frames do.
+  const long = { value: 0, velocity: 0 };
+  const short = { value: 0, velocity: 0 };
+  springStep(long, 1, 20, 0.7, 0.048);
+  for (let frame = 0; frame < 3; frame += 1) springStep(short, 1, 20, 0.7, 0.016);
+  assert.ok(Math.abs(long.value - short.value) < 0.01);
+  // A push, such as its carrier slowing, moves it off its target.
+  const pushed = { value: 0, velocity: 0 };
+  springStep(pushed, 0, 18, 0.4, 0.05, { push: -100 });
+  assert.ok(pushed.value < 0);
+});
+
+test("the shape's outline is straight at its start, widest beside the reader's place, with round ends", () => {
+  const layout = { anchors: [10, 40, 70, 100, 130, 160], top: 4, bottom: 166, full: 12 };
+  const path = wavePath(layout, 2, []);
+  const edge = [...path.matchAll(/L([\d.]+) ([\d.]+)/g)].map((m) => [Number(m[1]), Number(m[2])]);
+  const widest = Math.max(...edge.map(([x]) => x));
+  assert.equal(widest, 12);
+  // Its fullest is a short run, round at the top, centred beside the place.
+  const run = edge.filter(([x]) => x === widest).map(([, y]) => y);
+  assert.ok(Math.abs((Math.min(...run) + Math.max(...run)) / 2 - 70) <= 1);
+  // Three entries away, as thin as it gets: a tenth of its fullest.
+  assert.ok(Math.abs(Math.min(...edge.map(([x]) => x)) - 12 * waveThin) < 0.01);
+  // It starts and ends at the box's start: the closing edge is straight down it.
+  assert.match(path, /^M0 [\d.]+A[^L]*L.*A[\d. ]+ 0 0 1 0 [\d.]+Z$/);
+  assert.equal((path.match(/A/g) ?? []).length, 2);
+  assert.equal(wavePath({ ...layout, anchors: [] }, 0, []), '');
+});
+
+test('near either end the edge runs on into the round end, with no step to a second peak', () => {
+  const anchors = Array.from({ length: 12 }, (_, index) => 20 + index * 41);
+  const layout = { anchors, top: 8, bottom: anchors.at(-1) + 12, full: 32 };
+  const ends = (path) => {
+    const edge = [...path.matchAll(/L([\d.]+) ([\d.]+)/g)].map((m) => Number(m[1]));
+    const radii = [...path.matchAll(/A([\d.]+)/g)].map((m) => Number(m[1]));
+    return { edge, radii };
+  };
+  // The bulge just short of either end, and on the end entry itself.
+  for (const place of [0, 0.3, 0.6, 10.4, 10.7, 11]) {
+    const { edge, radii } = ends(wavePath(layout, place, []));
+    // Points two pixels apart never jump in width: the shape's own slope, at most.
+    for (let index = 1; index < edge.length; index += 1)
+      assert.ok(Math.abs(edge[index] - edge[index - 1]) < 2, `a step of the edge at ${place}`);
+    // Each round end is as wide as the edge where it starts.
+    assert.ok(Math.abs(radii[0] * 2 - edge[0]) < 0.05, `the start at ${place}`);
+    assert.ok(Math.abs(radii[1] * 2 - edge.at(-1)) < 0.05, `the end at ${place}`);
+  }
+  // On the last entry, the end is as round as the shape is full.
+  assert.ok(Math.abs(ends(wavePath(layout, 11, [])).radii[1] - 16) < 0.1);
 });

@@ -23,7 +23,7 @@ export interface CopyOptions {
   /** How long copied or failed stays before the status returns to idle, in ms; 2000 by default. */
   resetAfter?: number;
   /** Runs once the text is on the clipboard, with that text. */
-  onCopy?: (text: string) => void;
+  onCopied?: (text: string) => void;
   /** The class of the hidden field the selection fallback copies from; inline styles without it. */
   fieldClassName?: string;
 }
@@ -42,12 +42,12 @@ export type CopyStatus = 'idle' | 'copied' | 'failed';
  *   const { copy, status } = useCopy();
  *   <button onClick={(event) => copy(value, event.currentTarget)}>…</button>
  */
-export function useCopy({ write, resetAfter = 2000, onCopy, fieldClassName }: CopyOptions = {}) {
+export function useCopy({ write, resetAfter = 2000, onCopied, fieldClassName }: CopyOptions = {}) {
   const [result, setResult] = useState<{ status: Exclude<CopyStatus, 'idle'>; round: number }>();
   const [phase, setPhase] = useState<'idle' | 'copying' | 'waiting'>('idle');
-  const latest = useRef({ write, onCopy, fieldClassName });
+  const latest = useRef({ write, onCopied, fieldClassName });
   useEffect(() => {
-    latest.current = { write, onCopy, fieldClassName };
+    latest.current = { write, onCopied, fieldClassName };
   });
   useEffect(() => {
     if (!result) return;
@@ -73,7 +73,7 @@ export function useCopy({ write, resetAfter = 2000, onCopy, fieldClassName }: Co
       status: copied ? 'copied' : 'failed',
       round: (current?.round ?? 0) + 1,
     }));
-    if (copied) latest.current.onCopy?.(text);
+    if (copied) latest.current.onCopied?.(text);
     return copied;
   }, []);
   const reset = useCallback(() => setResult(undefined), []);
@@ -88,7 +88,7 @@ export function useCopy({ write, resetAfter = 2000, onCopy, fieldClassName }: Co
 }
 
 /** Writes the text with the asynchronous Clipboard API, or by copying a selection where it fails. */
-export async function writeToClipboard(
+async function writeToClipboard(
   value: CopyValue,
   anchor: HTMLElement | null,
   { onWait, fieldClassName, write }: WriteOptions = {},

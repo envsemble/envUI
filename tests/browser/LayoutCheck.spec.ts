@@ -8,12 +8,12 @@
  *
  * It renders hundreds of examples, so it runs in the full tier (`npm run verify`), and in the
  * affected tier when the examples, the pages that place them or dev mode's checks change
- * (scripts/TestScope.mjs); the fast tier leaves it to those.
+ * (scripts/test/TestScope.ts); the fast tier leaves it to those.
  */
 import { test, expect, type Page } from '@playwright/test';
-import type { LayoutProblem, ProblemRule } from '@envsemble/envui/dev';
-import { documents } from '../../apps/catalogue/src/generated/Documentation';
-import { fixtureUrl } from './Servers';
+import type { LayoutProblem, LayoutProblemRule } from '@envsemble/envui/dev';
+import { documents } from '../../apps/site/src/generated/Documentation';
+import { fixtureUrl } from './helpers/Servers';
 
 /** The widths of the completion check, in rem. */
 const widths = [22, 40, 60, 80] as const;
@@ -25,14 +25,14 @@ const windowHeight = 800;
 interface Figure {
   page: string;
   name: string;
-  role: 'example' | 'do' | 'anatomy' | 'variants';
+  role: 'example' | 'do' | 'caution' | 'anatomy' | 'variants';
 }
 
 /** Every figure the documentation places, but the don'ts, which show mistakes on purpose. */
 const figures: Figure[] = documents.flatMap((document) =>
-  (document.sections ?? []).flatMap((section) =>
-    section.blocks.flatMap((block) =>
-      block.kind === 'example' && block.role !== 'dont'
+  (document.outline ?? []).flatMap((section) =>
+    section.examples.flatMap((block) =>
+      block.role !== 'dont'
         ? [{ page: document.id, name: block.name, role: block.role ?? 'example' }]
         : [],
     ),
@@ -47,7 +47,7 @@ const figures: Figure[] = documents.flatMap((document) =>
 interface Allowance {
   page: string;
   name: string;
-  rule: ProblemRule;
+  rule: LayoutProblemRule;
   /** The problem's path, as the readout writes it, or its end, such as `column "env-card"`. */
   path: string;
   widths?: Width[];
@@ -151,7 +151,7 @@ for (const page of new Set(figures.map((figure) => figure.page)))
           });
         expect(
           [...errors, ...found],
-          `apps/catalogue/src/examples/${figure.page}/${figure.name}.tsx`,
+          `apps/site/src/examples/${figure.page}/${figure.name}.tsx`,
         ).toEqual([]);
       });
     }

@@ -2,7 +2,7 @@
 title: Link
 summary: A destination inside running text, underlined by default, routed by the application.
 status: beta
-since: 0.1.0
+since: 1.0.0
 category: Actions
 aliases:
   - anchor
@@ -11,12 +11,11 @@ aliases:
   - inline link
 useWhen:
   - A destination inside a sentence or a paragraph, such as a guide or a related page.
-  - A short list of destinations where buttons would be too heavy, with the underline turned off.
 avoidWhen:
   - text: An action, such as saving or deleting, even when it looks like text, or the next step of a flow.
     use: Button
   - text: Destinations in an application's navigation, such as a sidebar.
-    use: Drawer
+    use: NavigationDrawer
   - text: Previous and next pages of a sequence.
     use: Pager
 components:
@@ -39,10 +38,10 @@ examples:
 
 ## Variants
 
-| Underline | Use for                                               |
-| --------- | ----------------------------------------------------- |
-| On        | Running text. The default.                            |
-| Off       | A list of destinations, where the context marks them. |
+| Underline | Use for                                                                                    |
+| --------- | ------------------------------------------------------------------------------------------ |
+| On        | Running text. The default.                                                                 |
+| Off       | A short list of destinations, where buttons would be too heavy and the context marks them. |
 
 ```tsx figure=WithoutUnderline
 
@@ -135,4 +134,3 @@ Link is a text Button with the class `env-link`, whose `data-underline` says whe
 ## Changelog
 
 - **1.0.0**: Link has a page of its own, split from the button page.
-- **0.1.0**: Link, an inline link built on Button.

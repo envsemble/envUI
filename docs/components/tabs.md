@@ -2,7 +2,7 @@
 title: Tabs
 summary: Switches between panels of related content in one place, from a row of text tabs.
 status: stable
-since: 0.1.0
+since: 1.0.0
 category: Navigation
 aliases:
   - tab bar
@@ -23,7 +23,7 @@ avoidWhen:
   - text: Open documents that people close, reorder and keep, as in an editor.
     use: DocumentTabs
   - text: An application's destinations, such as the pages in a sidebar.
-    use: Drawer
+    use: NavigationDrawer
   - text: Sections people may want open at the same time, one under another.
     use: Accordion
 components:
@@ -38,9 +38,6 @@ examples:
   ListBesideAHeading: example
   TabsAnatomy: anatomy
   ScrollingRail: example
-  RelatedViews:
-    role: do
-    caption: Tabs for views of one subject, in any order.
   StepsAsTabs:
     role: dont
     caption: 'Steps that go in order: nothing leads to the next one.'
@@ -93,7 +90,7 @@ The tabs can share a row with a heading, with their panels below.
 
 1. **Tabs** (`env-tabs`)
 2. **Rail** (`env-tabs-list`)
-3. **Tab** (`env-tabs-tab`, `button`)
+3. **Tab** (`env-tabs-tab`, `label`, `icon` or `button`)
 4. **Panel** (`env-tabs-panel`, `content`)
 
 ## Behaviour
@@ -105,21 +102,19 @@ A tab shows its panel as soon as the arrow keys reach it.
 - Where a panel takes a while to load, a tab can wait to be pressed instead.
 - A disabled tab is dimmed: the arrow keys reach it but don't choose it.
 
+<!-- specimen: ChoosingATab -->
+
 ### Adapting to width
 
 Tabs keep their size: a rail with more tabs than fit scrolls sideways.
 
-```tsx figure=ScrollingRail widths="20 40"
+```tsx figure=ScrollingRail widths="40 20" motion
 
 ```
 
 ## Rules
 
 Tabs show views of one subject, one panel at a time.
-
-```tsx figure=RelatedViews
-
-```
 
 ```tsx figure=StepsAsTabs
 
@@ -165,13 +160,13 @@ Keep content people compare in one panel.
   aria-label="Project"
   defaultValue="summary"
   items={[
-    { value: 'summary', button: <Button>Summary</Button>, content: <Summary /> },
-    { value: 'activity', button: <Button>Activity</Button>, content: <Activity /> },
+    { value: 'summary', label: 'Summary', content: <Summary /> },
+    { value: 'activity', label: 'Activity', content: <Activity /> },
   ]}
 />
 ```
 
-Each `TabsItem` has its `value`, its `button`, which becomes the tab, and the panel's `content`; `disabled` dims a tab and reports `aria-disabled`. The button is a Button, an IconButton or a component that forwards native button props and its ref, never a link, and every tab is a text tab, whatever its button's variant. `aria-label` names the tab list. Leave the tabs uncontrolled, starting on `defaultValue`, the first enabled tab by default, or control them with `value` and `onValueChange`.
+Each `TabsItem` has its `value`, its `label` and an optional `icon`, or a `button` of your own, which becomes the tab, and the panel's `content`; `disabled` dims a tab and reports `aria-disabled`. The button is a Button, an IconButton or a component that forwards native button props and its ref, never a link, and every tab is a text tab, whatever its button's variant. `aria-label` names the tab list. Leave the tabs uncontrolled, starting on `defaultValue`, the first enabled tab by default, or control them with `value` and `onValueChange`.
 
 #### Activation and mounting
 
@@ -210,14 +205,10 @@ The tabs, `env-tabs`, carry `data-fill` when they fill a region; the rail, `env-
 
 ### Customize
 
-`--env-tabs-container`, `--env-tabs-content`, `--env-tabs-selected-content` and `--env-tabs-indicator` color one Tabs, through `style` or CSS; hover, focus and press follow them. The rail has no fill unless `--env-tabs-container` sets one.
+The rail has no fill unless its container color sets one.
 
 ## Changelog
 
+- **1.0.0-prerelease.5**: An item takes a `label` and an `icon`, as SegmentedControl's do; `button` is for a control of your own.
 - **1.0.0-prerelease.2**: Tabs look like Material's: text tabs on no fill, whatever their buttons' variants, the selected one in the accent's text color with an indicator under it, so they read differently from SegmentedControl. `--env-tabs-selected-content` and `--env-tabs-indicator` set those colors, and the rail has no fill unless `--env-tabs-container` sets one. The API stays.
 - **1.0.0**: The arrow keys follow the text direction, from EnvUIProvider's `dir` or the direction at the tabs; only the tab list takes it, so a panel keeps the direction around it. The tab and panel classes are `env-tabs-tab` and `env-tabs-panel` (were `env-tab` and `env-tab-panel`).
-- **0.7.0**: `size="compact"`: the whole rail as tall as a compact control, for bars and toolbars.
-- **0.5.0**: `fill`, for panels that fill a region. Labels in a selected tab keep 4.5:1 contrast on hover.
-- **0.4.0**: Unselected tabs show translucent hover and press layers, and the rail's fill stays visible on panes.
-- **0.3.0**: Content after the tabs moves once when the tab changes: the outgoing panel fades out of the layout.
-- **0.1.0**: Tabs, with keyboard selection, animated panels and `renderList`.

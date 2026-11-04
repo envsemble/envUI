@@ -3,7 +3,7 @@ title: Message
 summary: 'Conversation entries in a log: compact bubbles for your own messages, full-width content
   from others.'
 status: stable
-since: 0.5.0
+since: 1.0.0
 category: Text & content
 aliases:
   - Messages
@@ -28,7 +28,7 @@ avoidWhen:
   - text: Items people scan, open and act on, such as a list of conversations.
     use: List
   - text: A short notification that comes and goes, such as Message sent.
-    use: Toast
+    use: ToastProvider
   - text: Formatted text on its own, outside a conversation.
     use: Markdown
 components:
@@ -45,7 +45,7 @@ examples:
     caption: Comments by others, each with its author, at full width.
   SelfForOthers:
     role: dont
-    caption: "Someone else's message in your bubble, to put them on a side: the bubble means you."
+    caption: "Someone else's message in your bubble: the bubble means you."
 ---
 
 # Message
@@ -80,17 +80,13 @@ examples:
 
 ## Behaviour
 
-### In a list
-
-Each Message sits in a MessageList, which holds the conversation.
-
 ### Delivery status
 
 A message can show that it is on its way, or that it wasn't sent.
 
 - Offer Try again beside one that failed.
 
-```tsx figure=DeliveryStatus
+```tsx figure=DeliveryStatus motion
 
 ```
 
@@ -98,7 +94,7 @@ A message can show that it is on its way, or that it wasn't sent.
 
 Your own bubble grows to three quarters of the list, and keeps a readable width in a narrow list.
 
-```tsx figure=BubbleWidth widths="20 40"
+```tsx figure=BubbleWidth widths="20 40" sweep
 
 ```
 
@@ -157,7 +153,7 @@ A MessageList holds the conversation, oldest first, and each Message in it takes
 
 #### Actions and status
 
-`actions` holds small actions below the message, such as Copy or Try again: buttons without a variant or size of their own are small ghost buttons. `status` is `sending`, with a spinner and Sending, or `failed`, with an error icon and Not sent; `statusLabel` replaces the words, which otherwise come from EnvUIProvider's `messages.message`.
+`actions` holds small actions below the message, such as Copy or Try again: buttons without a variant or size of their own are small ghost buttons. `status` is `sending`, with a spinner and Sending, or `failed`, with an error icon and Not sent; `statusLabel` replaces the words.
 
 ```tsx
 <Message
@@ -172,8 +168,8 @@ A MessageList holds the conversation, oldest first, and each Message in it takes
     )
   }
 >
-  {'Northwind Hall
-12 Harbour Street'}
+  {`Northwind Hall
+12 Harbour Street`}
 </Message>
 ```
 
@@ -198,4 +194,3 @@ The list is `env-message-list`, and each message `env-message`, with its author,
 ## Changelog
 
 - **1.0.0**: Buttons in `actions` are small ghost buttons unless they set their own variant or size, and the statuses come from `messages.message`. The page is `message`, after the component, instead of `messages`. Message and MessageList can render in React Server Components.
-- **0.5.0**: Message and MessageList, with `from`, `author`, `meta`, `actions`, `status` and `statusLabel`, and `busy` on the list.

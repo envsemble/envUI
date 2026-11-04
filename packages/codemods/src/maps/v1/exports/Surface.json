@@ -1,6 +1,0 @@
-{
-  "@envsemble/envui": {
-    "SurfaceTone": "SurfaceBackground",
-    "SurfaceCorners": "SurfaceRadius"
-  }
-}

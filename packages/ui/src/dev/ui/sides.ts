@@ -10,7 +10,7 @@ export interface Sides {
   inspectorWidth: number;
 }
 
-export const sidesKey = 'envui-dev-sidebars';
+const sidesKey = 'envui-dev-sidebars';
 
 /**
  * The width each sidebar starts at, and its least and largest, in rem. The room the window leaves

@@ -1,5 +1,0 @@
-[
-  "line 2: --control-height-small is declared here, but 1.0 merges --control-height-small, --control-height and --icon-button-size into one token, --env-control-height. The codemod leaves the declaration, since rewriting it would set --env-control-height for every component that reads it, and renames only its uses: remove it, or set --env-control-height where you mean that. It always equalled --control-height, which every control reads now.",
-  "line 13: --state-dialog-overlay-opacity is removed in 1.0; use --env-color-bg-overlay: The scrim is a translucent color token now.",
-  "line 14: --scale is removed in 1.0: The multiplier is gone: components read sized tokens. Set scale=\"compact\" on a Theme for the compact scale."
-]

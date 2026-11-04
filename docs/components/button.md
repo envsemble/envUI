@@ -2,7 +2,7 @@
 title: Button
 summary: Starts an action, or goes to a destination as a link, alone, icon-only, confirmed in place, copying a value or connected in a group.
 status: stable
-since: 0.1.0
+since: 1.0.0
 category: Actions
 aliases:
   - action
@@ -134,7 +134,7 @@ Small, medium and large, the control heights of the [scale](../foundations/spaci
 3. **Label** (`env-button::text`)
 4. **End icon** (`env-button > env-icon:last-child`, `endIcon`)
 
-Not shown: the spinner, a group's frame, and the end slot, quiet content after the label, such as a shortcut's keys, at the far end of a wide button, as the [button that opens a CommandPalette](command-palette.md#opening-it-the-button-and-the-shortcut) shows it.
+Not shown: the end slot, as on the [button that opens a CommandPalette](command-palette.md#opening-it-the-button-and-the-shortcut).
 
 ## Behaviour
 
@@ -151,7 +151,7 @@ Hover, press, keyboard focus and disabled, for each variant.
 
 While its work runs, a spinner replaces the content at the same size, and presses do nothing.
 
-```tsx figure=PendingAction
+```tsx figure=PendingAction motion
 
 ```
 
@@ -162,7 +162,7 @@ ConfirmButton arms on the first press and acts on the second.
 - <kbd>Esc</kbd>, leaving it or 4 seconds disarm it.
 - Its armed label is short, with no question mark: the verb, or the verb and object, "Remove Sam".
 
-```tsx figure=ConfirmInPlace
+```tsx figure=ConfirmInPlace motion
 
 ```
 
@@ -170,7 +170,7 @@ ConfirmButton arms on the first press and acts on the second.
 
 CopyButton copies a value and shows Copied, or Couldn’t copy, for about two seconds.
 
-```tsx figure=CopyValue
+```tsx figure=CopyValue motion
 
 ```
 
@@ -181,7 +181,7 @@ Labels wrap, and icon-only buttons keep their size.
 - On touch screens every button grows to the size of a fingertip.
 - An icon button drawn smaller, such as a close button in a chip or a tab, reaches that size with the area it answers to.
 
-```tsx figure=NarrowActions widths="16 30"
+```tsx figure=NarrowActions widths="30 16" sweep
 
 ```
 
@@ -201,7 +201,7 @@ A button says what will happen, and only the main action of a group stands out.
 
 ```
 
-```tsx figure=ExplainWhatIsMissing
+```tsx figure=ExplainWhatIsMissing motion
 
 ```
 
@@ -213,7 +213,7 @@ A button says what will happen, and only the main action of a group stands out.
 
 Start with a verb and say what will happen, and when the outcome is known, put it in the label.
 
-```tsx figure=SayWhatWillHappen
+```tsx figure=SayWhatWillHappen motion
 
 ```
 
@@ -266,8 +266,8 @@ An IconButton with the Close cross closes, dismisses or removes what it sits in.
 <Button variant="secondary">Cancel</Button>
 <Button tone="danger">Delete project</Button>
 <Button href="/projects">Open projects</Button>
-<Button startIcon={<Add />}>Create project</Button>
-<IconButton icon={<Settings />} aria-label="Project settings" />
+<Button startIcon={<IconAdd />}>Create project</Button>
+<IconButton icon={<IconSettings />} aria-label="Project settings" />
 <Button pending={saving} onClick={save}>Save changes</Button>
 ```
 
@@ -293,26 +293,17 @@ ConfirmButton with `icon` and an `aria-label` is icon-only until armed. When the
 </ButtonGroup>
 ```
 
-`orientation="vertical"` stacks a group, every button as wide as it; `fullWidth` makes a button or a group fill its container. `end` holds quiet content after the label, such as the Kbd of a shortcut, as the [button that opens a CommandPalette](command-palette.md#opening-it-the-button-and-the-shortcut) does.
+`orientation="vertical"` stacks a group, every button as wide as it; `fullWidth` makes a button or a group fill its container. `end` holds quiet content after the label, at the far end of a wide button, such as the Kbd of a shortcut, as the [button that opens a CommandPalette](command-palette.md#opening-it-the-button-and-the-shortcut) does.
+
+The label's parts are flex items the button's gap spaces apart, such as its words and a Badge. Words with an AnimatedNumber or an inline element, such as `<strong>`, in their line stay one run of text, `env-button-text`, spaced by their own word spaces.
 
 ### Customize
 
-`--env-button-container`, `--env-button-content`, `--env-button-outline`, `--env-button-selected` and `--env-button-selected-content` color one Button or IconButton, through `style` or CSS; hover, focus and press follow them.
-
-```tsx
-<Button
-  style={{ '--env-button-container': '#0a5c42', '--env-button-content': '#fff' } as CSSProperties}
->
-  Start trial
-</Button>
-```
-
 Parts the anatomy doesn't show: the spinner, `env-button-spinner`, the end slot, `env-button-end`, and the group, `env-button-group`. A container that sets `--env-icon-button-hit-area: var(--env-control-height-touch)` gives its smaller icon buttons the touch size under a coarse pointer, as Alert and Toast do for their close buttons.
+
+A wrapper of your own that passes a variant and a tone on types them as Button does: `ButtonEmphasisProps`, the designed pairs of `variant` and `tone`, `IconButtonEmphasisProps`, IconButton's, and `ButtonAppearanceProps`, the pairs with `size`, `fullWidth` and `underline`.
 
 ## Changelog
 
-- **1.0.0**: `end`, a quiet slot at the far end for a shortcut's keys, in the button's content color, which the search trigger pattern uses. IconButton is the one icon-only button, and takes `href`: `Button iconOnly` is gone, and CloseButton is an IconButton with the Close cross, which the `v1-structure` codemod writes. `variant` is `primary`, `secondary`, `outline`, `ghost` or `text`, and `tone` is `neutral`, `accent` or `danger`: `important` is `variant="primary" tone="accent"`, `destructive` is `variant="primary" tone="danger"`, `outlined` is `outline` and `quiet` is `ghost`, which the `v1-props` codemod writes. Outline, ghost and text buttons take the danger tone. `fullWidth`. Buttons take the variant their container gives where they set none. The page is `button`, after the component, and Link has a page of its own. CopyButton takes `write`, a clipboard writer of the application's own. A Badge or DiffStat inside a button takes its colors through their custom properties, which the button sets.
-- **0.6.0**: The `quiet` variant on Button, IconButton and ConfirmButton; CopyButton; ButtonGroup `fullWidth`.
-- **0.5.0**: ConfirmButton `icon`, an icon-only form that grows when armed.
-- **0.4.0**: `pending` on Button and IconButton; ConfirmButton.
-- **0.1.0**: Button, IconButton and ButtonGroup.
+- **1.0.0-prerelease.5**: An outline button is an edge with no fill at rest, the same on the page, a pane, a card or a popup; hover and press lay a state layer over the surface beneath it.
+- **1.0.0**: `end`, a quiet slot at the far end for a shortcut's keys, in the button's content color, which the search trigger pattern uses. IconButton is the one icon-only button, and takes `href`: `Button iconOnly` is gone, and CloseButton is an IconButton with the Close cross. `variant` is `primary`, `secondary`, `outline`, `ghost` or `text`, and `tone` is `neutral`, `accent` or `danger`: `important` is `variant="primary" tone="accent"`, `destructive` is `variant="primary" tone="danger"`, `outlined` is `outline` and `quiet` is `ghost`. Outline, ghost and text buttons take the danger tone. `fullWidth`. Buttons take the variant their container gives where they set none. The page is `button`, after the component, and Link has a page of its own. CopyButton takes `write`, a clipboard writer of the application's own. A Badge or DiffStat inside a button takes its colors through their custom properties, which the button sets.

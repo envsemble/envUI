@@ -12,7 +12,7 @@ avoidWhen:
   - text: A button that is only an icon, with a name of its own.
     use: IconButton
   - text: Navigation that fills the icon of the place that is selected.
-    use: Drawer
+    use: NavigationDrawer
   - text: Views whose selected tab fills its icon.
     use: Tabs
   - text: Names and announcements for everything people can use.
@@ -29,16 +29,13 @@ examples:
 
 ### Outlined and filled
 
-Every icon comes in two forms.
+Every icon comes in two forms: outlined, the usual form, light beside text, and filled, for what is selected or an icon that stands alone.
 
 - Navigation and tabs fill the icon of the place that is selected, so it stands out from the rest.
 
 ```tsx figure=OutlinedAndFilled
 
 ```
-
-1. **Outlined**: The usual form, light beside text.
-2. **Filled**: For what is selected, or an icon that stands alone.
 
 ### Every icon
 
@@ -64,44 +61,44 @@ An icon beside a label adds nothing for a screen reader, so it stays silent.
 
 - An icon that stands alone, such as a button that is only an icon, gets a name of its own.
 
-### Logos
+### Logos and own icons
 
-envUI comes with no logos: an app draws its own mark as an icon, so it takes the color of the text around it.
+envUI comes with no logos. Show the application's logo, and an icon envUI doesn't have, with [Graphic](../components/graphic.md): it takes the same sizes and slots as envUI's icons.
 
 ## Words to use
 
 Ask an agent for icons in these words, and name the icon you chose from the list above.
 
-| Words                    | In code                                                                                    | Use for                                                                           |
-| ------------------------ | ------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------- |
-| An icon button           | IconButton with the icon and an `aria-label`                                               | A button that is only an icon, with a name that screen readers say.               |
-| An icon before the label | `startIcon` on Button or a field, `icon` on a menu item                                    | An icon at the start of a button or a menu item.                                  |
-| A filled icon            | `filled` on the symbol; navigation and tabs fill the selected one themselves               | The filled form, for what is selected or stands alone.                            |
-| Our own logo             | The application's own SVG in `Icon`, which gives it the shared defaults and the text color | The app's own mark drawn as an icon, so it takes the color of the text around it. |
-| The icon's name          | Its import, such as `@envsemble/envui/icons/Settings`                                      | The icon you chose from the list, such as Settings, so the agent uses that one.   |
+| Words                    | In code                                                                      | Use for                                                                         |
+| ------------------------ | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| An icon button           | IconButton with the icon and an `aria-label`                                 | A button that is only an icon, with a name that screen readers say.             |
+| An icon before the label | `startIcon` on Button or a field, `icon` on a menu item                      | An icon at the start of a button or a menu item.                                |
+| A filled icon            | `filled` on the symbol; navigation and tabs fill the selected one themselves | The filled form, for what is selected or stands alone.                          |
+| Our own logo or icon     | `Graphic`, with the file in `src` or the SVG component as its children       | The app's own mark or an icon envUI lacks, at envUI's sizes.                    |
+| The icon's name          | Its import, such as `IconSettings` from `@envsemble/envui/icons/Settings`    | The icon you chose from the list, such as Settings, so the agent uses that one. |
 
 ## Compose
 
 ### Usage
 
 ```tsx
-import { Column, Icon } from '@envsemble/envui';
-import { Home } from '@envsemble/envui/icons/Home';
+import { Button, Column } from '@envsemble/envui';
+import { IconAdd } from '@envsemble/envui/icons/Add';
+import { IconHome } from '@envsemble/envui/icons/Home';
 
 <Column gap={4}>
-  <Home filled label="Home" />
-  <Icon viewBox="0 0 24 24" label="Custom mark">
-    <path d="M12 2 22 12 12 22 2 12Z" />
-  </Icon>
+  <IconHome filled label="Home" />
+  <Button startIcon={<IconAdd />}>Create project</Button>
 </Column>;
 ```
 
-| Name         | Takes                                                                                          |
-| ------------ | ---------------------------------------------------------------------------------------------- |
-| Symbols      | Material Symbols Rounded, bundled and imported one by one from `@envsemble/envui/icons/<Name>` |
-| `filled`     | The filled form of a standalone symbol; navigation and tabs fill the selected one themselves   |
-| `label`      | The accessible name of a meaningful standalone icon; leave it out for decoration               |
-| Custom icons | Controls take any React icon; `Icon` gives an SVG of your own the shared defaults              |
+| Name     | Takes                                                                                                        |
+| -------- | ------------------------------------------------------------------------------------------------------------ |
+| Symbols  | Material Symbols Rounded, bundled and imported one by one: `Icon<Name>` from `@envsemble/envui/icons/<Name>` |
+| `filled` | The filled form of a standalone symbol; navigation and tabs fill the selected one themselves                 |
+| `label`  | The accessible name of a meaningful standalone icon; leave it out for decoration                             |
+| `Icon`   | The SVG that envUI's symbols render: `currentColor`, 1 em, and hidden unless labelled                        |
+| Your own | A logo or an icon of the application's own: `Graphic`, which every icon slot sizes like a symbol             |
 
 #### The words of the figures
 
@@ -110,9 +107,8 @@ import { Home } from '@envsemble/envui/icons/Home';
 
 ### Composition
 
-- Copy an icon's import from the list on the Icons page of the catalogue. Import each icon by its subpath, never from the `@envsemble/envui/icons` barrel, which makes the bundler read every icon.
+- Copy an icon's import from the list on the Icons page of the catalogue. Each icon has its own path, such as `@envsemble/envui/icons/Add` for `IconAdd`.
 - Icons take the color of their text. Decorative icons stay hidden from assistive technology; icon-only controls need an accessible name.
-- envUI ships no logos: draw the application's own with `Icon` where it should follow the text color.
 
 The symbols are Material Design's [Material Symbols](https://m3.material.io/styles/icons), in their Rounded style, under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0); the package carries the license and its notice.
 

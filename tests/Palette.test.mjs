@@ -1,5 +1,5 @@
 // The primitive palette's guarantees: every color sits in its grade's luminance band, and a grade
-// difference alone gives a contrast ratio, for any two hues. scripts/GeneratePalette.mjs builds the
+// difference alone gives a contrast ratio, for any two hues. scripts/build/GeneratePalette.ts builds the
 // palette; tests/browser/Contrast.spec.ts checks the semantic pairs built from it.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -11,11 +11,13 @@ import {
   gradeBand,
   grades,
   guarantees,
+  hueGrades,
   hues,
+  keyGrade,
   luminanceGrade,
   paletteFile,
   writePalette,
-} from '../scripts/GeneratePalette.mjs';
+} from '../scripts/build/GeneratePalette.ts';
 
 const document = JSON.parse(await readFile(paletteFile, 'utf8'));
 /** Every palette color: hue, grade and luminance, read from the committed file. */
@@ -26,7 +28,7 @@ const colors = Object.entries(document.palette)
       .filter(([grade]) => !grade.startsWith('$'))
       .map(([grade, token]) => ({
         hue,
-        grade: Number(grade),
+        grade: keyGrade(grade),
         hex: token.$value.hex,
         luminance: wcagLuminance(parse(token.$value.hex)),
       })),
@@ -39,8 +41,26 @@ test('the committed palette is what the generator builds', async () => {
 test('every hue has every grade, white and black only in the neutral hue', () => {
   for (const hue of Object.keys(hues)) {
     const expected = grades.filter((grade) => hue === 'neutral' || (grade !== 0 && grade !== 100));
-    const actual = colors.filter((color) => color.hue === hue).map((color) => color.grade);
+    const actual = colors
+      .filter((color) => color.hue === hue && Number.isInteger(color.grade))
+      .map((color) => color.grade);
     assert.deepEqual(actual, expected, `${hue} has the wrong grades`);
+  }
+});
+
+test('a hue’s in-between grades lie between the grades around them', () => {
+  for (const hue of Object.keys(hues)) {
+    const scale = colors.filter((color) => color.hue === hue).sort((a, b) => a.grade - b.grade);
+    assert.deepEqual(
+      scale.map((color) => color.grade),
+      hueGrades(hue),
+      `${hue} has the wrong in-between grades`,
+    );
+    for (let index = 1; index < scale.length; index++)
+      assert.ok(
+        scale[index].luminance < scale[index - 1].luminance,
+        `${hue}.${scale[index].grade} is not darker than ${hue}.${scale[index - 1].grade}`,
+      );
   }
 });
 

@@ -9,9 +9,9 @@ import {
   TopBar,
   type ScaffoldForms,
 } from '@envsemble/envui';
-import { Menu as MenuIcon } from '@envsemble/envui/icons/Menu';
-import { Search } from '@envsemble/envui/icons/Search';
-import { Settings } from '@envsemble/envui/icons/Settings';
+import { IconMenu } from '@envsemble/envui/icons/Menu';
+import { IconSearch } from '@envsemble/envui/icons/Search';
+import { IconSettings } from '@envsemble/envui/icons/Settings';
 
 const params = () => new URLSearchParams(location.search);
 
@@ -85,16 +85,16 @@ export function ScaffoldFixture() {
           name="app"
           topBarSpan={query.get('span') === 'full' ? 'full' : 'body'}
           landmarks={query.get('landmarks') !== 'off'}
-          forms={forms}
+          navigationForms={forms}
           navigation={given}
           topBar={
             <TopBar
-              start={<IconButton icon={<MenuIcon />} aria-label="Open navigation" />}
+              start={<IconButton icon={<IconMenu />} aria-label="Open navigation" />}
               title="Inbox"
               actions={
                 <>
-                  <IconButton icon={<Search />} aria-label="Search" />
-                  <IconButton icon={<Settings />} aria-label="Settings" />
+                  <IconButton icon={<IconSearch />} aria-label="Search" />
+                  <IconButton icon={<IconSettings />} aria-label="Settings" />
                 </>
               }
             />
@@ -173,7 +173,7 @@ export function ScrollKeysFixture() {
     <Scaffold
       scroll="body"
       topBarSpan="full"
-      forms={{ compact: 'drawer', medium: 'drawer' }}
+      navigationForms={{ compact: 'drawer', medium: 'drawer' }}
       navigation={{
         drawer: (
           <nav aria-label="Keys navigation" className="fixture-keys-navigation">

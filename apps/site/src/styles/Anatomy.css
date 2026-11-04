@@ -1,0 +1,211 @@
+/* An anatomy figure: the component in the reader's theme on its recessed canvas, with numbered
+   callouts on its parts, measured from the live parts, and the legend of part names below. */
+.site-anatomy,
+.catalogue-variants {
+  display: grid;
+  gap: var(--env-space-6);
+  min-inline-size: 0;
+  margin: 0;
+}
+
+.site-anatomy-stage {
+  position: relative;
+  padding: 3.5rem 3.75rem;
+}
+
+.site-anatomy-subject {
+  display: grid;
+  justify-items: center;
+  inline-size: 100%;
+  min-inline-size: 0;
+  /* Parts raised in their component, such as a dock's panels, stay under the callouts. */
+  isolation: isolate;
+}
+
+/* A subject that needs a width to show its parts (`width` on its fence): it fills the stage, or,
+   where the stage is narrower, is laid out at that width and drawn smaller from its start corner
+   into the scaled place it takes (FitFrame in AnatomyFigure.tsx). */
+.catalogue-anatomy-fit {
+  inline-size: 100%;
+}
+
+.catalogue-anatomy-fit-box {
+  display: grid;
+}
+
+.catalogue-anatomy-fit[data-scaled] {
+  position: relative;
+}
+
+.catalogue-anatomy-fit[data-scaled] > .catalogue-anatomy-fit-box {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  transform-origin: top left;
+}
+
+.catalogue-anatomy-fit[data-scaled]:dir(rtl) > .catalogue-anatomy-fit-box {
+  transform-origin: top right;
+}
+
+.site-anatomy-lines {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.site-anatomy-lines line {
+  stroke: var(--env-color-fg-muted);
+  stroke-width: 1px;
+}
+
+.site-anatomy-lines circle {
+  fill: var(--env-color-bg-page);
+  stroke: var(--env-color-fg-default);
+  stroke-width: 1px;
+}
+
+/* A part's box, dashed, over a line in the canvas's color, which fills its gaps, so it still shows
+   on a part of a strong fill, such as a notification's, and is unchanged on the canvas. */
+.site-anatomy-box,
+.site-anatomy-box-rim {
+  fill: none;
+  stroke-width: 1px;
+}
+
+.site-anatomy-box {
+  stroke: var(--env-color-fg-muted);
+  stroke-dasharray: 3 2;
+}
+
+.site-anatomy-box-rim {
+  stroke: var(--catalogue-card-fill, var(--env-color-bg-recessed));
+}
+
+.site-anatomy-badge,
+.site-anatomy-number,
+.catalogue-option-tag {
+  display: grid;
+  place-items: center;
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  border-radius: var(--env-radius-lg);
+  background: var(--env-color-fg-default);
+  color: var(--env-color-bg-page);
+  font: var(--env-type-body-sm);
+  font-weight: var(--env-font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+.site-anatomy-badge {
+  position: absolute;
+  translate: -50% -50%;
+  pointer-events: none;
+}
+
+/* A variants figure's callouts: each variant's name in place of a number, on the start side of
+   items one under another, or above items side by side (AnatomyFigure.tsx), and the same tags in
+   an option legend. */
+.catalogue-variant-label,
+.catalogue-option-tag {
+  inline-size: auto;
+  padding-inline: var(--env-space-3);
+  white-space: nowrap;
+}
+
+.catalogue-variant-label[data-side='left'] {
+  translate: -100% -50%;
+}
+
+.catalogue-variant-label[data-side='right'] {
+  translate: 0 -50%;
+}
+
+.catalogue-variant-label[data-side='top'] {
+  translate: -50% -100%;
+}
+
+.site-anatomy-caption {
+  display: grid;
+  gap: var(--env-space-6);
+}
+
+.site-anatomy-legend {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 21rem), 1fr));
+  /* Room between the entries, so each name and its explanation read as one item. */
+  gap: var(--env-space-5) var(--env-space-8);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-anatomy-legend > li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: var(--env-space-4);
+}
+
+.site-anatomy-legend p {
+  margin: 0;
+}
+
+/* An option table in the catalogue, such as a component's variants or sizes: a legend laid out
+   as an anatomy figure's is, each option's name in the tag a variants figure's callouts use, followed by
+   what it is for (OptionLegend.tsx). The tags of a column share its widest tag's width, so what
+   each option is for starts on one line down the column; two columns where they fit. */
+.catalogue-option-legend {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  /* Room between the entries, so each tag and its explanation read as one item. */
+  gap: var(--env-space-5) var(--env-space-8);
+  align-items: start;
+  margin: 0;
+}
+
+.catalogue-option {
+  display: grid;
+  grid-column: span 2;
+  grid-template-columns: subgrid;
+  column-gap: var(--env-space-4);
+  align-items: start;
+}
+
+.catalogue-option > dt {
+  display: grid;
+  justify-items: start;
+}
+
+.catalogue-option > dd {
+  display: grid;
+  gap: var(--env-space-1);
+  margin: 0;
+  /* The text's first line sits on the tag's centre line. */
+  padding-block-start: calc((1.5rem - 1lh) / 2);
+}
+
+.catalogue-option > dd p {
+  margin: 0;
+}
+
+.catalogue-option-detail,
+.catalogue-option-detail p {
+  color: var(--env-color-fg-muted);
+  font: var(--env-type-body-sm);
+}
+
+@container (width >= 48rem) {
+  .catalogue-option-legend:has(> :nth-child(2)) {
+    grid-template-columns: max-content minmax(0, 1fr) max-content minmax(0, 1fr);
+  }
+}
+
+@container (width < 30rem) {
+  .site-anatomy-stage {
+    padding: 3.5rem 2.75rem;
+  }
+}

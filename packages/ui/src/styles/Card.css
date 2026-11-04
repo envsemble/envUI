@@ -1,157 +1,163 @@
-/* Color properties: a card's colors, which an application sets on one card through style or its
-   own CSS. They take the place of Surface's, which a card also reads, and don't inherit. */
-@property --env-card-container {
-  syntax: '*';
-  inherits: false;
-}
-@property --env-card-content {
-  syntax: '*';
-  inherits: false;
-}
-@property --env-card-outline {
-  syntax: '*';
-  inherits: false;
-}
-
-.env-card {
-  --env-card-padding: var(--env-surface-padding);
-  /* With no color property set, the designed fills below apply in every state. The custom fill is
-     valid only while the application sets the container or the content (see Button.css), and
-     then hover, focus and press lay the content color over the container. */
-  --env-card-layer: initial;
-  --env-card-content-gate: color-mix(in srgb, var(--env-card-content) 0%, var(--env-surface-color));
-  --env-card-custom-base: var(
-    --env-card-container,
-    var(--env-surface-container, var(--env-card-content-gate))
-  );
-  --env-card-custom-layered: color-mix(
-    in srgb,
-    var(--env-card-custom-base),
-    currentColor var(--env-card-layer)
-  );
-  --env-card-custom-fill: var(--env-card-custom-layered, var(--env-card-custom-base));
-  --env-surface-color: var(
-    --env-card-container,
-    var(--env-surface-container, var(--env-surface-container-default))
-  );
-  border: var(--env-control-border-width) solid var(--env-card-outline, var(--env-surface-outline));
-  color: var(--env-card-content, var(--env-surface-content));
-}
-
-/* A link or button card: the whole surface is the target. With a container or content color of
-   the application's, hover, focus and press lay the state layer of its text color over it. */
-.env-card[data-interactive] {
-  inline-size: 100%;
-  margin: 0;
-  background: var(--env-card-custom-fill, var(--env-surface-color));
-  color: var(--env-card-content, var(--env-color-fg-default));
-  font: inherit;
-  text-align: start;
-  text-decoration: none;
-  overflow-wrap: anywhere;
-  cursor: pointer;
-  transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
-}
-.env-card[data-interactive]:hover:not(:disabled):not([aria-disabled='true']) {
-  --env-card-layer: calc(var(--env-state-hover-opacity) * 100%);
-  background: var(--env-card-custom-fill, var(--env-surface-hover));
-}
-.env-card[data-interactive]:focus-visible:not(:disabled):not([aria-disabled='true']) {
-  --env-card-layer: calc(var(--env-state-focus-opacity) * 100%);
-}
-.env-card[data-interactive]:active:not(:disabled):not([aria-disabled='true']) {
-  --env-card-layer: calc(var(--env-state-pressed-opacity) * 100%);
-  background: var(--env-card-custom-fill, var(--env-surface-pressed));
-}
-
-.env-card[data-interactive]:focus-visible {
-  outline: 0.125rem solid var(--env-color-border-focus);
-  outline-offset: 0.125rem;
-}
-.env-card[data-interactive]:is(:disabled, [aria-disabled='true']) {
-  opacity: var(--env-state-disabled-opacity);
-  cursor: default;
-}
-@media (prefers-reduced-motion: reduce) {
-  .env-card[data-interactive] {
-    transition: none;
+@layer env.components {
+  /* Color properties: a card's colors, which an application sets on one card through style or its
+     own CSS. They take the place of Surface's, which a card also reads, and don't inherit. */
+  @property --env-card-container {
+    syntax: '*';
+    inherits: false;
   }
-}
+  @property --env-card-content {
+    syntax: '*';
+    inherits: false;
+  }
+  @property --env-card-outline {
+    syntax: '*';
+    inherits: false;
+  }
 
-/* The heading row, which wraps when it runs out of room: the meta goes to its end; the header's
-   child selector outweighs the text margin reset that Text applies to every variant. */
-.env-card-header > .env-card-meta {
-  margin-inline-start: auto;
-}
+  .env-card {
+    --env-card-padding: var(--env-surface-padding);
+    /* With no color property set, the designed fills below apply in every state. The custom fill is
+       valid only while the application sets the container or the content (see Button.css), and
+       then hover, focus and press lay the content color over the container. */
+    --env-card-layer: initial;
+    /* prettier-ignore */
+    --env-card-content-gate: color-mix(in srgb, var(--env-card-content) 0%, var(--env-surface-color));
+    --env-card-custom-base: var(
+      --env-card-container,
+      var(--env-surface-container, var(--env-card-content-gate))
+    );
+    --env-card-custom-layered: color-mix(
+      in srgb,
+      var(--env-card-custom-base),
+      currentColor var(--env-card-layer)
+    );
+    --env-card-custom-fill: var(--env-card-custom-layered, var(--env-card-custom-base));
+    --env-surface-color: var(
+      --env-card-container,
+      var(--env-surface-container, var(--env-surface-container-default))
+    );
+    border: var(--env-control-border-width) solid
+      var(--env-card-outline, var(--env-surface-outline));
+    color: var(--env-card-content, var(--env-surface-content));
+  }
 
-/* A title, meta or description given as undefined, as over a placeholder item, takes no room
-   outside a skeleton; in one it is a bar. */
-.env-card-heading:empty:not([data-env-skeleton] *),
-.env-card-meta:empty:not([data-env-skeleton] *),
-.env-card-description:empty:not([data-env-skeleton] *),
-.env-card-header:not(:has(> :not(:empty))):not([data-env-skeleton] *) {
-  display: none;
-}
-
-/* In a skeleton, the bars take the room the loaded text usually does, so the card keeps its size
-   when it loads: the title and the meta share one row, the title's bar giving way to the meta's in
-   a narrow card, and the description is one line, as a card's supporting sentence usually is. */
-.env-card:is([data-env-skeleton], [data-env-skeleton] *) .env-card-heading {
-  --env-skeleton-length: 9rem;
-}
-.env-card:is([data-env-skeleton], [data-env-skeleton] *) .env-card-heading:empty {
-  flex: 1 1 0;
-  min-inline-size: 0;
-}
-.env-card:is([data-env-skeleton], [data-env-skeleton] *) .env-card-meta {
-  --env-skeleton-length: 3.5rem;
-}
-.env-card:is([data-env-skeleton], [data-env-skeleton] *) .env-card-description {
-  --env-skeleton-length: 16rem;
-  --env-skeleton-lines: 1;
-  --env-skeleton-last: 100%;
-}
-
-/* A card with an action strip: the body takes the card's padding and the strip its own fill along
-   the bottom. */
-.env-card[data-actions] {
-  padding: 0;
-  overflow: hidden;
-}
-.env-card[data-actions] > .env-card-body,
-.env-card[data-actions] > .env-skeleton-content > .env-card-body {
-  padding: var(--env-card-padding);
-}
-.env-card[data-actions] > .env-card-body > :where(p:not(.env-text)),
-.env-card[data-actions] > .env-skeleton-content > .env-card-body > :where(p:not(.env-text)) {
-  margin: 0;
-  max-width: 32ch;
-  font: var(--env-type-body);
-  color: var(--env-color-fg-muted);
-  overflow-wrap: anywhere;
-}
-.env-card[data-actions] > .env-card-footer,
-.env-card[data-actions] > .env-skeleton-content > .env-card-footer {
-  margin-block-start: auto;
-  padding: var(--env-space-3) var(--env-card-padding);
-  background: var(--env-color-bg-default);
-}
-
-/* Motion: an interactive card settles a little while it is held, less than a compact control. Only
-   without a reduced-motion preference. */
-@media (prefers-reduced-motion: no-preference) {
+  /* A link or button card: the whole surface is the target. With a container or content color of
+     the application's, hover, focus and press lay the state layer of its text color over it. */
   .env-card[data-interactive] {
-    transition-property: background-color, color, border-color, transform;
-    transition-duration: var(--env-motion-duration-fast);
-    transition-timing-function: var(--env-motion-ease);
+    inline-size: 100%;
+    margin: 0;
+    background: var(--env-card-custom-fill, var(--env-surface-color));
+    color: var(--env-card-content, var(--env-color-fg-default));
+    font: inherit;
+    text-align: start;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+    cursor: pointer;
+    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
+  }
+  .env-card[data-interactive]:hover:not(:disabled):not([aria-disabled='true']) {
+    --env-card-layer: calc(var(--env-state-hover-opacity) * 100%);
+    background: var(--env-card-custom-fill, var(--env-surface-hover));
+  }
+  .env-card[data-interactive]:focus-visible:not(:disabled):not([aria-disabled='true']) {
+    --env-card-layer: calc(var(--env-state-focus-opacity) * 100%);
   }
   .env-card[data-interactive]:active:not(:disabled):not([aria-disabled='true']) {
-    transform: scale(0.99);
+    --env-card-layer: calc(var(--env-state-pressed-opacity) * 100%);
+    background: var(--env-card-custom-fill, var(--env-surface-pressed));
   }
-}
 
-/* In a skeleton, a card carries the skeleton's highlight over its fill (Skeleton.css). */
-[data-env-skeleton] .env-card {
-  background-image: var(--env-skeleton-glow);
-  background-attachment: fixed;
+  .env-card[data-interactive]:focus-visible {
+    outline: 0.125rem solid var(--env-color-border-focus);
+    outline-offset: 0.125rem;
+  }
+  .env-card[data-interactive]:is(:disabled, [aria-disabled='true']) {
+    opacity: var(--env-state-disabled-opacity);
+    cursor: default;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .env-card[data-interactive] {
+      transition: none;
+    }
+  }
+
+  /* The heading row, which wraps when it runs out of room: the meta goes to its end; the header's
+     child selector outweighs the text margin reset that Text applies to every variant. */
+  .env-card-header > .env-card-meta {
+    margin-inline-start: auto;
+  }
+
+  /* A title, meta or description given as undefined, as over a placeholder item, takes no room
+     outside a skeleton; in one it is a bar. */
+  .env-card-title:empty:not([data-env-skeleton] *),
+  .env-card-meta:empty:not([data-env-skeleton] *),
+  .env-card-description:empty:not([data-env-skeleton] *),
+  .env-card-header:not(:has(> :not(:empty))):not([data-env-skeleton] *) {
+    display: none;
+  }
+
+  /* In a skeleton, the bars take the room the loaded text usually does, so the card keeps its size
+     when it loads: the title and the meta share one row, the title's bar giving way to the meta's in
+     a narrow card, and the description is one line, as a card's supporting sentence usually is. */
+  .env-card:is([data-env-skeleton], [data-env-skeleton] *) .env-card-title {
+    --env-skeleton-length: 9rem;
+  }
+  .env-card:is([data-env-skeleton], [data-env-skeleton] *) .env-card-title:empty {
+    flex: 1 1 0;
+    min-inline-size: 0;
+  }
+  .env-card:is([data-env-skeleton], [data-env-skeleton] *) .env-card-meta {
+    --env-skeleton-length: 3.5rem;
+  }
+  .env-card:is([data-env-skeleton], [data-env-skeleton] *) .env-card-description {
+    --env-skeleton-length: 16rem;
+    --env-skeleton-lines: 1;
+    --env-skeleton-last: 100%;
+  }
+
+  /* A card with an action strip: the body takes the card's padding and the strip its own fill along
+     the bottom. */
+  .env-card[data-actions] {
+    padding: 0;
+    overflow: hidden;
+  }
+  .env-card[data-actions] > .env-card-body,
+  .env-card[data-actions] > .env-skeleton-content > .env-card-body {
+    padding: var(--env-card-padding);
+  }
+  .env-card[data-actions] > .env-card-body > :where(p:not(.env-text)),
+  .env-card[data-actions] > .env-skeleton-content > .env-card-body > :where(p:not(.env-text)) {
+    margin: 0;
+    max-width: 32ch;
+    font: var(--env-type-body);
+    color: var(--env-color-fg-muted);
+    overflow-wrap: anywhere;
+  }
+  .env-card[data-actions] > .env-card-footer,
+  .env-card[data-actions] > .env-skeleton-content > .env-card-footer {
+    margin-block-start: auto;
+    padding: var(--env-space-3) var(--env-card-padding);
+    background: var(--env-color-bg-default);
+  }
+
+  /* Motion: an interactive card settles a little while it is held, less than a compact control. Only
+     without a reduced-motion preference. */
+  @media (prefers-reduced-motion: no-preference) {
+    .env-card[data-interactive] {
+      transition-property: background-color, color, border-color, transform;
+      transition-duration: var(--env-motion-duration-fast);
+      transition-timing-function: var(--env-motion-ease);
+    }
+    .env-card[data-interactive]:active:not(:disabled):not([aria-disabled='true']) {
+      transform: scale(0.99);
+    }
+  }
+
+  /* In a skeleton, a card carries the skeleton's tint over its fill (Skeleton.css), and so does its
+     action strip over its own. */
+  [data-env-skeleton] .env-card,
+  .env-card[data-actions][data-env-skeleton] .env-card-footer,
+  [data-env-skeleton] .env-card[data-actions] .env-card-footer {
+    background-image: var(--env-skeleton-overlay);
+  }
 }

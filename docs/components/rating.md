@@ -2,7 +2,7 @@
 title: Rating
 summary: A read-only rating as stars filled in half steps, named once for assistive technology.
 status: stable
-since: 0.7.0
+since: 1.0.0
 category: Data display
 aliases:
   - stars
@@ -29,15 +29,12 @@ examples:
   ReviewScore: overview
   Scales:
     role: example
-    caption: With the number, on scales of five and of ten stars.
+    caption: Stars only, with the number, and on a scale of ten stars.
   RatingAnatomy: anatomy
   ApplicationLabel: example
   WhoRated:
     role: do
     caption: Say whose rating it is and how many people gave it.
-  UnsourcedStars:
-    role: dont
-    caption: "Stars with no source: people can't tell how much they count."
 ---
 
 # Rating
@@ -72,6 +69,8 @@ examples:
 
 The stars, the number and the name show the value to the nearest half star: 4.3 shows as 4.5. A value outside the scale shows as its nearest end.
 
+<!-- specimen: Rounding -->
+
 ### In another language
 
 The name and the number follow the application's language, such as 4,5 in German.
@@ -85,10 +84,6 @@ The name and the number follow the application's language, such as 4,5 in German
 A rating only shows a score people gave; to ask for one, use a separate input.
 
 ```tsx figure=WhoRated
-
-```
-
-```tsx figure=UnsourcedStars
 
 ```
 
@@ -107,7 +102,6 @@ Keep to one scale on a page, so ratings compare at a glance.
 ### You provide
 
 - Text that says whose rating it is.
-- `messages.rating.label` in the page's language.
 - A separate input, such as a RadioGroup, where people give a rating.
 
 ## Compose
@@ -122,7 +116,7 @@ A Rating shows `value`, from 0 to `max`, such as 4.5, rounded to the nearest hal
 
 #### Name and language
 
-The stars are one image, named such as 4.5 out of 5 stars, from EnvUIProvider's `messages.rating.label`, or `formatLabel` for one rating, which receives the shown value and the number of stars. The number from `showValue` is hidden from assistive technology, since the name says it.
+The stars are one image, named such as 4.5 out of 5 stars, or by `formatLabel` for one rating, which receives the shown value and the number of stars. The number from `showValue` is hidden from assistive technology, since the name says it.
 
 ```tsx
 const messages = {
@@ -140,7 +134,10 @@ const messages = {
 
 The parts are the number, `env-rating-value`, and the stars, `env-rating-stars`, each an `env-rating-star` with `data-fill`, `full` or `half`, and a half star's filled half, `env-rating-star-half`. Say beside it whose rating it is and how many people gave it.
 
+### Customize
+
+`--env-color-fg-rating-star` is the filled stars' gold, a token with a value for each theme and contrast; the empty stars take `--env-color-border-default`.
+
 ## Changelog
 
-- **1.0.0**: The shown number and the name follow the locale, and the name comes from `messages.rating.label`. Empty stars take the boundary color of controls, at least 3:1 against every surface.
-- **0.7.0**: Rating, with half stars, `max`, `showValue` and `formatLabel`.
+- **1.0.0**: The shown number and the name follow the locale, and the name comes from `messages.rating.label`. Empty stars take the boundary color of controls, at least 3:1 against every surface. Filled stars take a clear gold of their own, `--env-color-fg-rating-star`, in place of the warning tone.

@@ -12,4 +12,4 @@ Any single element can take colors of its own, Material's way. envUI's own color
 - **Removed component tokens.** A toast's hover and pressed tokens, `--env-toast-fill-hover` and `--env-toast-fill-pressed`, are gone: set `--env-toast-container`, and the dismiss button's hover and press become layers of the toast's text color. `v1-classes` reports them.
 - **`--env-badge-outline` changed meaning.** In prerelease.1 it was a private border shorthand, such as `0.0625rem solid <color>`; now it is the badge's public outline color. Write `--env-badge-outline: <color>`: a shorthand is an invalid color, and the badge draws no edge.
 
-Migration guide: [Color properties and state layers](https://github.com/envsemble/envUI/blob/main/docs/migration.md#color-properties-and-state-layers).
+Migration guide: [Color properties and state layers](https://github.com/envsemble/envUI/blob/main/docs/migration.md).

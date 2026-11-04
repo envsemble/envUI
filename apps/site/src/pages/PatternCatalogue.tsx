@@ -1,0 +1,11 @@
+import { pagesOf } from '../navigation/SiteRoutes';
+import { Gallery } from '../figures/Gallery';
+
+/**
+ * Every pattern, a tile with its preview for each, in one gallery without group headings, in the
+ * order the index lists the patterns.
+ */
+export function PatternCatalogue() {
+  const pages = pagesOf('catalogue').filter((entry) => entry.kind === 'pattern');
+  return <Gallery groups={[{ id: 'patterns', pages }]} />;
+}

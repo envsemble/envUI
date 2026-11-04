@@ -2,18 +2,21 @@
 
 import { Fragment, useEffect, useRef, type ComponentPropsWithRef } from 'react';
 import { IconButton } from '../actions/Button.js';
-import { ContentCopy } from '../icons/ContentCopy.js';
-import { Check } from '../icons/Check.js';
+import { IconContentCopy } from '../icons/ContentCopy.js';
+import { IconCheck } from '../icons/Check.js';
 import { useTheme } from '../foundations/Theme.js';
 import { codeBlock as codeBlockMessages } from '../foundations/messages/codeBlock.js';
 import { classNames } from '../internal/classNames.js';
 import { Row } from '../foundations/Layout.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { useCopy } from '../internal/useCopy.js';
-import { codeThemeStyle } from './internal/CodeColors.js';
+import { codeThemeStyle } from './internal/codeColors.js';
 import { useCodeContrast } from './internal/useCodeContrast.js';
 import { useCodeHighlighting } from './internal/useCodeHighlighting.js';
 import { tokenStyle } from './internal/codeTokenStyle.js';
+import { flag } from '../internal/flag.js';
+import '../styles/Base.css';
+import '../styles/Code.css';
 
 export interface CodeBlockProps extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
   /** The source, as one string; it is shown, highlighted and copied as it is. */
@@ -70,16 +73,16 @@ export function CodeBlock({
     <div
       {...props}
       className={classNames('env-code-block', className)}
-      data-wrap={wrap || undefined}
+      data-wrap={flag(wrap)}
       style={{ ...codeThemeStyle(theme), ...style }}
     >
       {(label || copyable) && (
-        <Row wrap align="center" justify="between" gap={4} className="env-code-block-heading">
+        <Row wrap align="center" justify="between" gap={4} className="env-code-block-header">
           <span>{label ?? language ?? messages.title}</span>
           {copyable && (
             <IconButton
               variant="ghost"
-              icon={status === 'copied' ? <Check /> : <ContentCopy />}
+              icon={status === 'copied' ? <IconCheck /> : <IconContentCopy />}
               aria-label={status === 'copied' ? messages.copied : messages.copy}
               onClick={(event) => void copySource(event.currentTarget)}
             />

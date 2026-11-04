@@ -7,12 +7,9 @@
 import { test, expect, type Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { catalogueUrl } from './Servers';
-import { moduleFiles, requireSite, serveSite, site, siteUrl } from './HostedSite';
-import {
-  normalizeRoute,
-  routeOfDocument,
-} from '../../apps/catalogue/src/navigation/DocumentationRoutes';
+import { siteDevUrl } from './helpers/Servers';
+import { moduleFiles, requireSite, serveSite, site, siteUrl } from './helpers/HostedSite';
+import { normalizeRoute, routeOfDocument } from '../../apps/site/src/navigation/SiteRoutes';
 
 const dialog = (page: Page) => page.getByRole('dialog', { name: 'Search envUI' });
 const field = (page: Page) => dialog(page).getByRole('combobox', { name: 'Search envUI' });
@@ -44,7 +41,7 @@ async function shortcutKeys(page: Page) {
 async function search(page: Page, query: string) {
   await page.keyboard.press((await shortcutKeys(page)).own);
   await expect(field(page)).toBeFocused();
-  await expect(dialog(page).locator('.docs-loading')).toHaveCount(0);
+  await expect(dialog(page).locator('.site-loading')).toHaveCount(0);
   await field(page).fill(query);
 }
 
@@ -58,7 +55,7 @@ test.describe('search', () => {
     'Ctrl+K, or ⌘K on Apple platforms, opens and closes search, and so does its button',
     { tag: '@engines' },
     async ({ page }) => {
-      await openCatalogue(page, `${catalogueUrl}/`);
+      await openCatalogue(page, `${siteDevUrl}/`);
       const keys = await shortcutKeys(page);
       await page.keyboard.press(keys.own);
       await expect(dialog(page)).toBeVisible();
@@ -76,7 +73,7 @@ test.describe('search', () => {
       await expect(dialog(page)).toBeHidden();
 
       const button = page
-        .locator('.docs-sidebar')
+        .locator('.site-sidebar')
         .getByRole('button', { name: /^Search/ })
         .first();
       await expect(button).toHaveAttribute('aria-keyshortcuts', keys.named);
@@ -93,7 +90,7 @@ test.describe('search', () => {
   test('suggests the same page in the other part and where to start, until people type', async ({
     page,
   }) => {
-    await openCatalogue(page, `${catalogueUrl}/components/badge`);
+    await openCatalogue(page, `${siteDevUrl}/components/badge`);
     await page.keyboard.press((await shortcutKeys(page)).own);
     const suggested = dialog(page).getByRole('group', { name: 'Suggested' });
     // The page's counterpart in the Docs comes first, highlighted, then the starting points.
@@ -114,14 +111,14 @@ test.describe('search', () => {
     await field(page).fill('');
     await expect.poll(() => highlighted(page)).toBe('docs/components/badge');
     await page.keyboard.press('Enter');
-    await expect(page).toHaveURL(`${catalogueUrl}/docs/components/badge`);
+    await expect(page).toHaveURL(`${siteDevUrl}/docs/components/badge`);
     // From the Docs, the counterpart is the catalogue's page.
     await page.keyboard.press((await shortcutKeys(page)).own);
     await expect(option(page, 'components/badge')).toContainText('Catalogue');
   });
 
   test("finds a prop and opens its component's page in the Docs at its row", async ({ page }) => {
-    await openCatalogue(page, `${catalogueUrl}/`);
+    await openCatalogue(page, `${siteDevUrl}/`);
     await search(page, 'start icon');
     const result = option(page, 'prop:Button.startIcon');
     await expect(result).toBeVisible();
@@ -129,7 +126,7 @@ test.describe('search', () => {
     await expect(result).toContainText('Docs · Button prop');
     await expect(dialog(page).getByRole('group', { name: 'Props' })).toBeVisible();
     await result.click();
-    await expect(page).toHaveURL(`${catalogueUrl}/docs/components/button#props-Button-startIcon`);
+    await expect(page).toHaveURL(`${siteDevUrl}/docs/components/button#props-Button-startIcon`);
     await expect(page.getByRole('navigation', { name: 'Docs' })).toBeVisible();
     await expect(page.locator('[id="props-Button-startIcon"]')).toBeInViewport();
     // Focus goes to the row, so reading and the keyboard go on from it.
@@ -137,30 +134,30 @@ test.describe('search', () => {
   });
 
   test('finds pages of the catalogue and of the Docs, each named by its part', async ({ page }) => {
-    await openCatalogue(page, `${catalogueUrl}/docs`);
+    await openCatalogue(page, `${siteDevUrl}/docs`);
     await search(page, 'colors and themes');
     await expect(option(page, 'page:colors')).toContainText('Catalogue · Foundations');
     await expect(option(page, 'guide:colors')).toContainText('Docs · Foundation guide');
     await option(page, 'guide:colors').click();
-    await expect(page).toHaveURL(`${catalogueUrl}/docs/foundations/colors`);
+    await expect(page).toHaveURL(`${siteDevUrl}/docs/foundations/colors`);
     await search(page, 'button');
     await expect(option(page, 'page:button')).toContainText('Catalogue · Actions');
     await page.keyboard.press('Enter');
-    await expect(page).toHaveURL(`${catalogueUrl}/components/button`);
+    await expect(page).toHaveURL(`${siteDevUrl}/components/button`);
     await expect(page.getByRole('navigation', { name: 'Catalogue' })).toBeVisible();
   });
 
   test('a link to a heading opens the page that shows it', async ({ page }) => {
     // A component's page shows every heading, also for a link to an old view.
-    const route = routeOfDocument('dialog', { section: 'keyboard' });
-    expect(route).toBe('components/dialog?section=keyboard');
-    expect(normalizeRoute('components/dialog?section=keyboard')).toBe(route);
-    expect(normalizeRoute('components/dialog/accessibility?section=keyboard')).toBe(route);
+    const route = routeOfDocument('dialog', { section: 'pending-work' });
+    expect(route).toBe('components/dialog?section=pending-work');
+    expect(normalizeRoute('components/dialog?section=pending-work')).toBe(route);
+    expect(normalizeRoute('components/dialog/accessibility?section=pending-work')).toBe(route);
     expect(normalizeRoute('components/button/accessibility?section=keyboard')).toBe(
       'components/button?section=keyboard',
     );
-    await openCatalogue(page, `${catalogueUrl}/components/dialog/accessibility#keyboard`);
-    const heading = page.getByRole('heading', { name: 'Keyboard', exact: true });
+    await openCatalogue(page, `${siteDevUrl}/components/dialog/accessibility#pending-work`);
+    const heading = page.getByRole('heading', { name: 'Pending work', exact: true });
     await expect(heading).toBeInViewport();
     await expect(heading).toBeFocused();
   });
@@ -221,7 +218,7 @@ test.describe('hosted build', () => {
       for (const file of [resolve(site, 'index.html')]) {
         const html = readFileSync(file, 'utf8');
         const charset = html.indexOf('<meta charset="UTF-8" />');
-        const script = html.indexOf('envui-catalogue-theme');
+        const script = html.indexOf('envui-site-theme');
         expect(charset, file).toBeGreaterThan(-1);
         expect(charset + 24, file).toBeLessThan(1024);
         expect(script, file).toBeGreaterThan(charset);
@@ -246,19 +243,19 @@ test.describe('hosted build', () => {
     await navigation.getByRole('link', { name: 'Dialog', exact: true }).click();
     await expect(page).toHaveURL(`${siteUrl}/components/dialog`);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Dialog');
-    await expect(page.locator('#docs-main')).toBeFocused();
+    await expect(page.locator('#site-main')).toBeFocused();
     await expect(navigation.getByRole('link', { name: 'Dialog', exact: true })).toHaveAttribute(
       'aria-current',
       'page',
     );
     await page
-      .locator('.docs-page-header')
+      .locator('.site-page-header')
       .getByRole('link', { name: 'Docs', exact: true })
       .click();
     await expect(page).toHaveURL(`${siteUrl}/docs/components/dialog`);
     // The switch at the top end leads back to the same subject in the catalogue.
     await page
-      .locator('.docs-page-actions')
+      .locator('.site-page-actions')
       .getByRole('link', { name: 'Catalogue', exact: true })
       .click();
     await expect(page).toHaveURL(`${siteUrl}/components/dialog`);
@@ -287,9 +284,7 @@ test.describe('hosted build', () => {
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Table');
     await page.goto(`${siteUrl}/#/overview/get-started?document=migration&section=documentation`);
     await expect(page).toHaveURL(`${siteUrl}/docs/migration`);
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText(
-      'Migrate an interface to envUI',
-    );
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Move an app to envUI');
     // An old hash address entered in an open page is redirected to its path too.
     await page.evaluate(() => (location.hash = '/components/buttons/preview'));
     await expect(page).toHaveURL(`${siteUrl}/components/button`);
@@ -299,9 +294,10 @@ test.describe('hosted build', () => {
     await expect(page).toHaveURL(`${siteUrl}/docs/components/button`);
     await page.goto(`${siteUrl}/foundations/tokens`);
     await expect(page).toHaveURL(`${siteUrl}/docs/tokens`);
-    // The section addresses open their first page.
+    // A section's address is its own page, as the rail opens it.
     await page.goto(`${siteUrl}/foundations`);
-    await expect(page).toHaveURL(`${siteUrl}/foundations/colors`);
+    await expect(page).toHaveURL(`${siteUrl}/foundations`);
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Foundations');
   });
 
   test('search loads its index from its own file, when it first opens', async ({ page }) => {
@@ -317,10 +313,10 @@ test.describe('hosted build', () => {
     await openCatalogue(page, `${siteUrl}/`);
     expect(requested.filter((path) => files.includes(path))).toEqual([]);
     await search(page, 'hamburger');
-    await expect.poll(() => highlighted(page)).toBe('page:drawer');
+    await expect.poll(() => highlighted(page)).toBe('page:navigation-drawer');
     expect(requested).toContain(files[0]);
     await page.keyboard.press('Enter');
-    await expect(page).toHaveURL(`${siteUrl}/components/drawer`);
+    await expect(page).toHaveURL(`${siteUrl}/components/navigation-drawer`);
 
     // An index that fails to load says so, and offers to load the page again.
     failing = true;
@@ -335,19 +331,19 @@ test.describe('hosted build', () => {
 });
 
 test('a token found in search opens the token reference in the Docs', async ({ page }) => {
-  await openCatalogue(page, `${catalogueUrl}/`);
+  await openCatalogue(page, `${siteDevUrl}/`);
   await search(page, 'fg muted');
   await expect.poll(() => highlighted(page)).toBe('token:color.fg.muted');
   await expect(option(page, 'token:color.fg.muted')).toContainText('Docs · color token');
   await page.keyboard.press('Enter');
-  await expect(page).toHaveURL(`${catalogueUrl}/docs/tokens#token-env-color-fg-muted`);
+  await expect(page).toHaveURL(`${siteDevUrl}/docs/tokens#token-env-color-fg-muted`);
   await expect(page.locator('#token-env-color-fg-muted')).toBeInViewport();
   // The token reference has no page in the catalogue: the switch leads to its Overview.
   await page
-    .locator('.docs-page-actions')
+    .locator('.site-page-actions')
     .getByRole('link', { name: 'Catalogue', exact: true })
     .click();
-  await expect(page).toHaveURL(`${catalogueUrl}/`);
+  await expect(page).toHaveURL(`${siteDevUrl}/`);
   await page
     .getByRole('navigation', { name: 'Catalogue' })
     .getByRole('link', { name: 'Patterns', exact: true })
@@ -356,6 +352,6 @@ test('a token found in search opens the token reference in the Docs', async ({ p
     .getByRole('navigation', { name: 'Patterns' })
     .getByRole('link', { name: 'Loading', exact: true })
     .click();
-  await expect(page).toHaveURL(`${catalogueUrl}/patterns/loading`);
+  await expect(page).toHaveURL(`${siteDevUrl}/patterns/loading`);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Loading');
 });

@@ -15,23 +15,23 @@ import { Switch } from '../../forms/Switch.js';
 import { Column, Grid, Row } from '../../foundations/Layout.js';
 import { Surface } from '../../foundations/Surface.js';
 import { Text } from '../../foundations/Text.js';
-import { FilterAlt } from '../../icons/FilterAlt.js';
-import { Info } from '../../icons/Info.js';
-import { Label } from '../../icons/Label.js';
-import { Layers } from '../../icons/Layers.js';
-import { Padding } from '../../icons/Padding.js';
-import { Palette } from '../../icons/Palette.js';
-import { ResponsiveLayout } from '../../icons/ResponsiveLayout.js';
-import { StayCurrentLandscape } from '../../icons/StayCurrentLandscape.js';
-import { StayCurrentPortrait } from '../../icons/StayCurrentPortrait.js';
-import { Tune } from '../../icons/Tune.js';
-import { ViewInAr } from '../../icons/ViewInAr.js';
+import { IconFilterAlt } from '../../icons/FilterAlt.js';
+import { IconInfo } from '../../icons/Info.js';
+import { IconLabel } from '../../icons/Label.js';
+import { IconLayers } from '../../icons/Layers.js';
+import { IconPadding } from '../../icons/Padding.js';
+import { IconPalette } from '../../icons/Palette.js';
+import { IconResponsiveLayout } from '../../icons/ResponsiveLayout.js';
+import { IconStayCurrentLandscape } from '../../icons/StayCurrentLandscape.js';
+import { IconStayCurrentPortrait } from '../../icons/StayCurrentPortrait.js';
+import { IconTune } from '../../icons/Tune.js';
+import { IconViewInAr } from '../../icons/ViewInAr.js';
 import * as Menu from '../../navigation/Menu.js';
 import { angles, type Angle } from './camera.js';
-import { HintedIconButton, SidebarToggle, instant, type Side } from './controls.js';
+import { HintedIconButton, SidebarToggle, instant, type Side } from './Controls.js';
 import { deviceGroups } from './devices.js';
 import { realSize, type FrameSize } from './Frame.js';
-import { ViewFront, ViewLeft, ViewRight, ViewTilted, ViewTop } from './icons.js';
+import { ViewFront, ViewLeft, ViewRight, ViewTilted, ViewTop } from './Icons.js';
 
 /** What the planes show, which the Show dropdown sets. */
 export interface ShowOptions {
@@ -127,7 +127,7 @@ export const ViewToolbar = memo(function ViewToolbar({
  */
 function ViewMenu({ angle, onAngle }: { angle: Angle | null; onAngle: (angle: Angle) => void }) {
   return (
-    <Popover aria-label="View" trigger={<Toolbar.Button icon={<ViewInAr />} label="View" />}>
+    <Popover aria-label="View" trigger={<Toolbar.Button icon={<IconViewInAr />} label="View" />}>
       {(close) => (
         <Grid columns={3} gap={1} role="group" aria-label="Angles">
           {angleGrid.map((cell, index) =>
@@ -167,24 +167,24 @@ function ShowMenu({
     <Menu.Root
       aria-label="Show"
       align="center"
-      trigger={<Toolbar.Button icon={<Layers />} label="Show" />}
+      trigger={<Toolbar.Button icon={<IconLayers />} label="Show" />}
     >
       <Menu.CheckboxItem
-        icon={<Label />}
+        icon={<IconLabel />}
         checked={show.names}
         onCheckedChange={(names) => onShowChange({ ...show, names })}
       >
         Names
       </Menu.CheckboxItem>
       <Menu.CheckboxItem
-        icon={<Padding />}
+        icon={<IconPadding />}
         checked={show.spacing}
         onCheckedChange={(spacing) => onShowChange({ ...show, spacing })}
       >
         Padding and gaps
       </Menu.CheckboxItem>
       <Menu.CheckboxItem
-        icon={<FilterAlt />}
+        icon={<IconFilterAlt />}
         description="And what is inside it"
         checked={show.onlySelected}
         onCheckedChange={(onlySelected) => onShowChange({ ...show, onlySelected })}
@@ -192,7 +192,7 @@ function ShowMenu({
         Only the selected
       </Menu.CheckboxItem>
       <Menu.CheckboxItem
-        icon={<Palette />}
+        icon={<IconPalette />}
         checked={show.colorBy === 'window'}
         onCheckedChange={(on) => onShowChange({ ...show, colorBy: on ? 'window' : 'kind' })}
       >
@@ -234,10 +234,10 @@ function ResponsiveMenu({
     <Menu.Root
       aria-label="Responsive"
       align="center"
-      trigger={<Toolbar.Button icon={<ResponsiveLayout />} label="Responsive" />}
+      trigger={<Toolbar.Button icon={<IconResponsiveLayout />} label="Responsive" />}
     >
       <Menu.CheckboxItem
-        icon={<ResponsiveLayout />}
+        icon={<IconResponsiveLayout />}
         description="Lays the page out at another size"
         checked={on}
         onCheckedChange={(next) =>
@@ -284,10 +284,10 @@ function ResponsiveMenu({
             onFrameChange({ width: frameHeight, height: frameWidth, device: frame.device });
         }}
       >
-        <Menu.RadioItem value="portrait" icon={<StayCurrentPortrait />} disabled={!on}>
+        <Menu.RadioItem value="portrait" icon={<IconStayCurrentPortrait />} disabled={!on}>
           Portrait
         </Menu.RadioItem>
-        <Menu.RadioItem value="landscape" icon={<StayCurrentLandscape />} disabled={!on}>
+        <Menu.RadioItem value="landscape" icon={<IconStayCurrentLandscape />} disabled={!on}>
           Landscape
         </Menu.RadioItem>
       </Menu.RadioGroup>
@@ -318,7 +318,7 @@ function ViewSettings({
   return (
     <Popover
       title="View settings"
-      trigger={<Toolbar.Button icon={<Tune />} label="View settings" />}
+      trigger={<Toolbar.Button icon={<IconTune />} label="View settings" />}
     >
       <Column gap={3}>
         <Slider
@@ -420,7 +420,7 @@ export const ViewCorners = memo(function ViewCorners({
           trigger={
             <HintedIconButton
               label="How to move around"
-              icon={<Info />}
+              icon={<IconInfo />}
               size="sm"
               side="inline-start"
             />

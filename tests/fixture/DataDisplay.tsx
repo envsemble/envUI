@@ -12,11 +12,11 @@ import {
   Text,
   Theme,
   type LinkComponentProps,
-  type ThemeValue,
+  type ColorScheme,
 } from '@envsemble/envui';
-import { Description } from '@envsemble/envui/icons/Description';
-import { MoreHoriz } from '@envsemble/envui/icons/MoreHoriz';
-import { MoreVert } from '@envsemble/envui/icons/MoreVert';
+import { IconDescription } from '@envsemble/envui/icons/Description';
+import { IconMoreHoriz } from '@envsemble/envui/icons/MoreHoriz';
+import { IconMoreVert } from '@envsemble/envui/icons/MoreVert';
 
 /** A trail too long for its narrow frame: the current page cannot fit beside the earlier levels. */
 const narrowTrail = [
@@ -47,7 +47,7 @@ function RecordingLink({ href, onClick, ...props }: LinkComponentProps) {
   );
 }
 
-export function DataDisplayFixture({ theme }: { theme: ThemeValue }) {
+export function DataDisplayFixture({ theme }: { theme: ColorScheme }) {
   const [crumb, setCrumb] = useState('');
   const [rowResult, setRowResult] = useState('');
   return (
@@ -99,7 +99,7 @@ export function DataDisplayFixture({ theme }: { theme: ThemeValue }) {
             ]}
           />
           <Badge tone="success">Published</Badge>
-          <IconButton size="sm" icon={<MoreVert />} aria-label="More actions" />
+          <IconButton size="sm" icon={<IconMoreVert />} aria-label="More actions" />
         </Surface>
       </LinkProvider>
       <output data-testid={`breadcrumb-result-${theme}`}>{crumb}</output>
@@ -127,7 +127,7 @@ export function DataDisplayFixture({ theme }: { theme: ThemeValue }) {
                 <Table.Cell nowrap>{plan.owner}</Table.Cell>
                 <Table.Cell numeric>{plan.decisions}</Table.Cell>
                 <Table.Cell>
-                  <Badge tone={plan.status === 'Blocked' ? 'warning' : 'accent'}>
+                  <Badge tone={plan.status === 'Blocked' ? 'warning' : 'primary'}>
                     {plan.status}
                   </Badge>
                 </Table.Cell>
@@ -145,7 +145,7 @@ export function DataDisplayFixture({ theme }: { theme: ThemeValue }) {
           className="fixture-open-row"
           label={
             <span className="fixture-row-title">
-              <Description />
+              <IconDescription />
               <Link
                 href="#roadmap"
                 underline={false}
@@ -161,10 +161,10 @@ export function DataDisplayFixture({ theme }: { theme: ThemeValue }) {
             </span>
           }
           description="Updated today"
-          action={
+          end={
             <IconButton
               variant="text"
-              icon={<MoreHoriz />}
+              icon={<IconMoreHoriz />}
               aria-label="More actions"
               className="fixture-row-action"
               onClick={() => setRowResult('more actions')}

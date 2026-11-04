@@ -2,7 +2,7 @@
 title: Kbd
 summary: Key caps that show a key, or keys pressed together joined by plus, in text, hints and menus.
 status: stable
-since: 0.5.0
+since: 1.0.0
 category: Text & content
 aliases:
   - keyboard
@@ -58,7 +58,7 @@ examples:
 
 ## Rules
 
-Show the keys people really press, named as their keyboard names them.
+Show the keys people really press.
 
 ```tsx figure=ShortcutSequence
 
@@ -122,7 +122,9 @@ const search = <Kbd keys={[label, 'K']} />;
 
 The parts are the combination, `env-kbd-combination`, an outer `<kbd>` around the keys, each key cap, `env-kbd`, and the separator between them, `env-kbd-separator`, the + as text.
 
+In a tooltip, a menu, a popup list and the command palette's hints, keys are flat chips with no edge, side by side: the + between them is still read, but not shown.
+
 ## Changelog
 
+- **1.0.0-prerelease.5**: In tooltips, menus, popup lists and the command palette's hints, the keys of a combination are flat chips side by side, with the + read but not shown.
 - **1.0.0**: `useModifierKey()`, the platform's shortcut modifier, safe to render on the server. The page is `kbd`, after the component.
-- **0.5.0**: Kbd, for a key or, with `keys`, keys pressed together; Markdown renders `<kbd>` as Kbd.

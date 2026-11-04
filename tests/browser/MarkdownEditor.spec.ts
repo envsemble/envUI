@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { fixtureUrl as fixtureServer } from './Servers';
+import { fixtureUrl as fixtureServer } from './helpers/Servers';
 
 const fixtureUrl = `${fixtureServer}/?fixture=markdown`;
 
@@ -8,7 +8,7 @@ test('inactive preview avoids rendering and highlighting work while retaining cu
 }) => {
   let highlightingImports = 0;
   page.on('request', (request) => {
-    if (/\/CodeHighlighting\.(?:ts|js)(?:\?|$)/.test(request.url())) highlightingImports++;
+    if (/\/codeHighlighting\.(?:ts|js)(?:\?|$)/.test(request.url())) highlightingImports++;
   });
   await page.goto(fixtureUrl);
   const form = page.getByTestId('markdown-form');
@@ -150,7 +150,7 @@ for (const change of ['remove', 'replace'] as const) {
     const requested = new Promise<void>((resolve) => {
       notifyRequest = resolve;
     });
-    await page.route(/\/CodeHighlighting\.(?:ts|js)(?:\?|$)/, async (route) => {
+    await page.route(/\/codeHighlighting\.(?:ts|js)(?:\?|$)/, async (route) => {
       notifyRequest();
       await held;
       await route.fulfill({
@@ -206,7 +206,7 @@ test('className and style reach the root, and the textarea keeps its own class',
   await expect(root).toHaveClass(/(^| )env-markdown-editor( |$)/);
   await expect(root).toHaveCSS('max-inline-size', '640px');
   const source = page.getByRole('textbox', { name: 'Required source' });
-  await expect(source).toHaveClass(/(^| )env-markdown-source( |$)/);
+  await expect(source).toHaveClass(/(^| )env-markdown-editor-input( |$)/);
   await expect(source).not.toHaveClass(/required-markdown-editor/);
   expect(await source.evaluate((input) => input.style.maxInlineSize)).toBe('');
 });

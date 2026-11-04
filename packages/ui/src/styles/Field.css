@@ -1,122 +1,124 @@
-/* The look every field shares: the field (Field.Root, and the frame of envUI's own fields), its
-   description and its error. */
-.env-field {
-  /* The color of a field's error and of its invalid control. */
-  --env-field-error-color: var(--env-color-fg-danger);
-  align-content: start;
-  max-inline-size: 100%;
-  overflow-wrap: anywhere;
-  font: var(--env-type-body-small);
-  font-size: var(--env-font-size-body-small);
-  color: var(--env-color-fg-default);
-}
-.env-field-description,
-.env-field-error {
-  font: var(--env-type-body-small);
-  font-size: var(--env-font-size-body-small);
-}
-.env-field-description {
-  color: var(--env-color-fg-muted);
-}
-.env-field-error {
-  color: var(--env-field-error-color);
-}
-.env-field-error > svg {
-  flex-shrink: 0;
-  width: var(--env-control-icon-size);
-  height: var(--env-control-icon-size);
-  margin-block-start: 0.125rem;
-}
-.env-field-label {
-  inline-size: fit-content;
-  max-inline-size: 100%;
-  cursor: default;
-}
-.env-field[data-disabled] > .env-field-label {
-  opacity: var(--env-state-disabled-opacity);
-}
-/* Field.Control: a native text input in the outlined field look, at the control height of its size
-   or its container's, with the rounded ends of buttons so the two line up in a row, and no fill of
-   its own: it takes the background of what it sits on. A control given through render takes the
-   same outline. */
-.env-field-control {
-  --env-field-control-border: var(--env-color-border-default);
-  box-sizing: border-box;
-  display: block;
-  inline-size: 100%;
-  min-inline-size: 0;
-  min-block-size: var(--env-control-height);
-  margin: 0;
-  padding: min(
-      var(--env-space-1),
-      calc((var(--env-control-height) - 2 * var(--env-control-border-width) - 1lh) / 2)
-    )
-    var(--env-space-4);
-  border: var(--env-control-border-width) solid var(--env-field-control-border);
-  /* The capped full corner, so a taller control given through render, such as a text area, keeps
-     the corners rather than becoming a pill. */
-  border-radius: var(--env-radius-full);
-  outline: none;
-  background: transparent;
-  color: var(--env-color-fg-default);
-  font: var(--env-type-body);
-  /* The control font size is 1 rem on touch screens, where smaller entered text zooms the page. */
-  font-size: var(--env-control-font-size);
-  caret-color: var(--env-color-border-accent-emphasis);
-  transition: border-color var(--env-motion-duration-medium) var(--env-motion-ease);
-}
-.env-field-control[data-size='sm'] {
-  --env-control-height: var(--env-control-height-sm);
-}
-.env-field-control[data-size='md'] {
-  --env-control-height: var(--env-control-height-md);
-}
-.env-field-control[data-size='lg'] {
-  --env-control-height: var(--env-control-height-lg);
-}
-.env-field-control::placeholder {
-  color: var(--env-color-fg-muted);
-  opacity: 1;
-}
-@media (hover: hover) {
-  .env-field-control:hover:not(:disabled, [data-disabled]) {
-    --env-field-control-border: var(--env-color-border-accent-emphasis-hover);
+@layer env.components {
+  /* The look every field shares: the field (Field.Root, and the frame of envUI's own fields), its
+     description and its error. */
+  .env-field {
+    /* The color of a field's error and of its invalid control. */
+    --env-field-error-color: var(--env-color-fg-danger);
+    align-content: start;
+    max-inline-size: 100%;
+    overflow-wrap: anywhere;
+    font: var(--env-type-body-sm);
+    font-size: var(--env-font-size-body-sm);
+    color: var(--env-color-fg-default);
   }
-}
-.env-field-control:focus-visible,
-.env-field-control:focus-within {
-  --env-field-control-border: var(--env-color-border-accent-emphasis);
-}
-.env-field-control:is([data-invalid], [aria-invalid='true']) {
-  --env-field-control-border: var(--env-color-fg-danger);
-}
-.env-field-control:is(:disabled, [data-disabled]) {
-  opacity: var(--env-state-disabled-opacity);
-  cursor: default;
-}
-/* Under a coarse pointer the control grows to the touch height, as every control does. */
-@media (pointer: coarse) {
+  .env-field-description,
+  .env-field-error {
+    font: var(--env-type-body-sm);
+    font-size: var(--env-font-size-body-sm);
+  }
+  .env-field-description {
+    color: var(--env-color-fg-muted);
+  }
+  .env-field-error {
+    color: var(--env-field-error-color);
+  }
+  .env-field-error > svg {
+    flex-shrink: 0;
+    width: var(--env-control-icon-size);
+    height: var(--env-control-icon-size);
+    margin-block-start: 0.125rem;
+  }
+  .env-field-label {
+    inline-size: fit-content;
+    max-inline-size: 100%;
+    cursor: default;
+  }
+  .env-field[data-disabled] > .env-field-label {
+    opacity: var(--env-state-disabled-opacity);
+  }
+  /* Field.Control: a native text input in the outlined field look, at the control height of its size
+     or its container's, with the rounded ends of buttons so the two line up in a row, and no fill of
+     its own: it takes the background of what it sits on. A control given through render takes the
+     same outline. */
   .env-field-control {
-    min-block-size: max(var(--env-control-height), var(--env-control-height-touch));
+    --env-field-control-border: var(--env-color-border-default);
+    box-sizing: border-box;
+    display: block;
+    inline-size: 100%;
+    min-inline-size: 0;
+    min-block-size: var(--env-control-height);
+    margin: 0;
+    padding: min(
+        var(--env-space-1),
+        calc((var(--env-control-height) - 2 * var(--env-control-border-width) - 1lh) / 2)
+      )
+      var(--env-space-4);
+    border: var(--env-control-border-width) solid var(--env-field-control-border);
+    /* The capped full corner, so a taller control given through render, such as a text area, keeps
+       the corners rather than becoming a pill. */
+    border-radius: var(--env-radius-full);
+    outline: none;
+    background: transparent;
+    color: var(--env-color-fg-default);
+    font: var(--env-type-body);
+    /* The control font size is 1 rem on touch screens, where smaller entered text zooms the page. */
+    font-size: var(--env-control-font-size);
+    caret-color: var(--env-color-border-primary-emphasis);
+    transition: border-color var(--env-motion-duration-medium) var(--env-motion-ease);
   }
-}
-@media (prefers-reduced-motion: reduce) {
-  .env-field-control {
-    transition: none;
+  .env-field-control[data-size='sm'] {
+    --env-control-height: var(--env-control-height-sm);
   }
-}
-/* Forced colors: the system paints no fills, so a focused control is outlined in the selection
-   color and an invalid one has a dashed border. */
-@media (forced-colors: active) {
-  .env-field-control:is(:focus-visible, :focus-within) {
-    outline: 2px solid Highlight;
-    outline-offset: 1px;
+  .env-field-control[data-size='md'] {
+    --env-control-height: var(--env-control-height-md);
+  }
+  .env-field-control[data-size='lg'] {
+    --env-control-height: var(--env-control-height-lg);
+  }
+  .env-field-control::placeholder {
+    color: var(--env-color-fg-muted);
+    opacity: 1;
+  }
+  @media (hover: hover) {
+    .env-field-control:hover:not(:disabled, [data-disabled]) {
+      --env-field-control-border: var(--env-color-border-primary-emphasis-hover);
+    }
+  }
+  .env-field-control:focus-visible,
+  .env-field-control:focus-within {
+    --env-field-control-border: var(--env-color-border-primary-emphasis);
   }
   .env-field-control:is([data-invalid], [aria-invalid='true']) {
-    border-style: dashed;
+    --env-field-control-border: var(--env-color-fg-danger);
   }
   .env-field-control:is(:disabled, [data-disabled]) {
-    border-color: GrayText;
-    color: GrayText;
+    opacity: var(--env-state-disabled-opacity);
+    cursor: default;
+  }
+  /* Under a coarse pointer the control grows to the touch height, as every control does. */
+  @media (pointer: coarse) {
+    .env-field-control {
+      min-block-size: max(var(--env-control-height), var(--env-control-height-touch));
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .env-field-control {
+      transition: none;
+    }
+  }
+  /* Forced colors: the system paints no fills, so a focused control is outlined in the selection
+     color and an invalid one has a dashed border. */
+  @media (forced-colors: active) {
+    .env-field-control:is(:focus-visible, :focus-within) {
+      outline: 2px solid Highlight;
+      outline-offset: 1px;
+    }
+    .env-field-control:is([data-invalid], [aria-invalid='true']) {
+      border-style: dashed;
+    }
+    .env-field-control:is(:disabled, [data-disabled]) {
+      border-color: GrayText;
+      color: GrayText;
+    }
   }
 }

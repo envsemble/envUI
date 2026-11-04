@@ -46,14 +46,12 @@ examples:
   WithHeader: overview
   WithBreadcrumbs: example
   WithToolbar: example
-  Widths: example
   PageAnatomy: anatomy
   PageHeaderAnatomy: anatomy
   Sticky: example
   Gutters:
     role: example
     caption: The muted fill shows the gutter.
-  InANarrowPane: example
 ---
 
 # Page
@@ -87,9 +85,7 @@ A row below the title holds search, filters and view switches.
 | Large  | A dashboard, a list or a table. The default.       |
 | Full   | A board, a canvas or a wide table.                 |
 
-```tsx figure=Widths
-
-```
+<!-- specimen: ColumnWidths -->
 
 ### Without the gutter
 
@@ -126,7 +122,7 @@ A header can stay at the top of the area that scrolls, under a Scaffold's top ba
 
 - What takes focus in the page keeps clear of it.
 
-```tsx figure=Sticky
+```tsx figure=Sticky motion
 
 ```
 
@@ -138,11 +134,7 @@ The gutter at the page's sides is narrower in a compact region, such as on a pho
 - The title wraps too and is never cut short.
 - More actions than fit go in a [Menu](menu.md) as the last one.
 
-```tsx figure=Gutters widths="24 44"
-
-```
-
-```tsx figure=InANarrowPane widths="22 44"
+```tsx figure=Gutters widths="44 22" sweep classes
 
 ```
 
@@ -152,9 +144,7 @@ Page goes in a [Scaffold](scaffold.md)'s body, and its header sits at the top of
 
 ### Width
 
-One page per page, at the width for what it holds, and never the full width for text.
-
-- A part that needs a narrower width takes it from its own content.
+One page per page, never the full width for text. A part that needs a narrower width takes it from its own content.
 
 ### One heading
 
@@ -227,7 +217,7 @@ A PageHeader takes the page's `title`, which wraps, balanced across its lines, a
   meta={<Badge tone="success">On track</Badge>}
   actions={
     <>
-      <Button variant="secondary" startIcon={<Share />}>
+      <Button variant="secondary" startIcon={<IconShare />}>
         Share
       </Button>
       <Button>New task</Button>
@@ -252,7 +242,7 @@ The title is an `h1` by default. Set `headingLevel` lower for a header inside a 
 <PageHeader
   title="People"
   controlSize="sm"
-  actions={<Button startIcon={<Add />}>Invite</Button>}
+  actions={<Button startIcon={<IconAdd />}>Invite</Button>}
   toolbar={
     <Row wrap align="center" justify="between" gap={3}>
       <SearchField label="Search people" size="sm" />

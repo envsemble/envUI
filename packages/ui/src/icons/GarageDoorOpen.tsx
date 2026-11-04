@@ -1,11 +1,11 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
-// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
+// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../Icon.js';
+import { useSymbolIconFill } from '../SymbolIconState.js';
 
-export function GarageDoorOpen({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
+export function IconGarageDoorOpen({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
   return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M320-460h320v-60H320v60Zm160-180q17 0 28.5-11.5T520-680q0-17-11.5-28.5T480-720q-17 0-28.5 11.5T440-680q0 17 11.5 28.5T480-640ZM240-160q-33 0-56.5-23.5T160-240v-320h-59q-14 0-19-14t7-22l344-250q21-15 47-15t47 15l344 250q12 8 7 22t-19 14h-59v320q0 33-23.5 56.5T720-160h-40q-17 0-28.5-11.5T640-200v-200H320v200q0 17-11.5 28.5T280-160h-40Z" /> : <path d="M300-240v-360h360v360-360H300v360Zm-60-366v366h60v-320q0-17 11.5-28.5T340-600h280q17 0 28.5 11.5T660-560v320h60v-366L480-780 240-606Zm120 126h240v-60H360v60Zm120-160q17 0 28.5-11.5T520-680q0-17-11.5-28.5T480-720q-17 0-28.5 11.5T440-680q0 17 11.5 28.5T480-640ZM240-160q-33 0-56.5-23.5T160-240v-320h-59q-14 0-19-14t7-22l344-250q21-15 47-15t47 15l344 250q12 8 7 22t-19 14h-59v320q0 33-23.5 56.5T720-160h-80q-17 0-28.5-11.5T600-200v-220H360v220q0 17-11.5 28.5T320-160h-80Z" />}</Icon>;
 }

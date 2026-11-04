@@ -2,7 +2,7 @@
 title: Toast
 summary: Brief feedback after an action, such as Changes saved, at the edge of the window, announced and dismissed after a few seconds or by people.
 status: stable
-since: 0.1.0
+since: 1.0.0
 category: Feedback
 aliases:
   - snackbar
@@ -10,7 +10,6 @@ aliases:
   - flash message
   - toaster
   - ToastProvider
-  - Toast.Provider
   - useToast
   - undo notification
 useWhen:
@@ -30,10 +29,12 @@ avoidWhen:
   - text: Work that runs after a press, shown on the control that started it.
     use: Button
 components:
-  - Toast
+  - ToastProvider
   - useToast
 examples:
-  SaveChanges: overview
+  SaveChanges:
+    role: overview
+    motion: true
   Tones: example
   TopCenter: example
   ToastAnatomy: anatomy
@@ -61,7 +62,7 @@ examples:
 | Info    | Something worth noticing that needs no action.         |
 | Danger  | An action that failed.                                 |
 
-```tsx figure=Tones
+```tsx figure=Tones open
 
 ```
 
@@ -74,7 +75,7 @@ Past a limit, older notifications wait behind a count, and danger notifications 
 | Bottom end | Most applications, at the bottom corner at the end of the line. The default. |
 | Top center | An application whose bottom corner is taken.                                 |
 
-```tsx figure=TopCenter
+```tsx figure=TopCenter motion
 
 ```
 
@@ -102,7 +103,7 @@ Its timer pauses while the pointer rests on it or it has focus.
 
 A notification with an action stays until its action has run or people dismiss it.
 
-```tsx figure=UndoArchive
+```tsx figure=UndoArchive motion
 
 ```
 
@@ -110,7 +111,7 @@ A notification with an action stays until its action has run or people dismiss i
 
 A danger notification stays until it is dismissed, and is announced at once.
 
-```tsx figure=RetryAfterError
+```tsx figure=RetryAfterError motion
 
 ```
 
@@ -118,7 +119,7 @@ A danger notification stays until it is dismissed, and is announced at once.
 
 A notification can stay until people dismiss it.
 
-```tsx figure=ExportReady
+```tsx figure=ExportReady motion
 
 ```
 
@@ -158,7 +159,7 @@ Label an action with a short verb, such as Undo or Try again, and give a notific
 
 ### You provide
 
-- One Toast.Provider around the components that call `useToast`.
+- One ToastProvider around the components that call `useToast`.
 - A message that makes sense read on its own.
 - `dismiss(id)` once an action has run.
 
@@ -166,7 +167,7 @@ Label an action with a short verb, such as Undo or Try again, and give a notific
 
 ### Usage
 
-Put one Toast.Provider near the root of the application. Any component inside it calls `useToast()`, whose `show` shows a notification and returns its id, `dismiss(id)` dismisses one, and `clear()` dismisses them all. `show` takes the `message`, a short sentence that wraps to three lines, its `tone`, an `action`, a `placement`, `dismissible` and a `duration`.
+Put one ToastProvider near the root of the application. Any component inside it calls `useToast()`, whose `show` shows a notification and returns its id, `dismiss(id)` dismisses one, and `clear()` dismisses them all. `show` takes the `message`, a short sentence that wraps to three lines, its `tone`, an `action`, a `placement`, `dismissible` and a `duration`.
 
 ```tsx source=SaveChanges
 
@@ -175,6 +176,8 @@ Put one Toast.Provider near the root of the application. Any component inside it
 #### Tones
 
 `tone` is `neutral`, the default, with no icon, `success`, `info` or `danger`. A danger notification stays until it is dismissed, is announced at once as an alert, and is never hidden behind the count.
+
+A toast has no `warning` tone, unlike Alert: a warning needs attention where it applies, so it is an Alert on the page, not a notification that passes.
 
 ```tsx
 toast.show({ tone: 'danger', message: 'Changes couldn’t be saved.' });
@@ -205,12 +208,12 @@ const id = toast.show({
 
 #### Placement and limit
 
-Toast.Provider's `defaultPlacement` is `bottom-end`, stacking upward from the bottom corner at the end of the line in the text direction, or `top-center`; `placement` on one notification overrides it. `visibleLimit`, 3 by default, is how many each placement shows at once.
+ToastProvider's `defaultPlacement` is `bottom-end`, stacking upward from the bottom corner at the end of the line in the text direction, or `top-center`; `placement` on one notification overrides it. `limit`, 3 by default, is how many each placement shows at once.
 
 ```tsx
-<Toast.Provider defaultPlacement="top-center" visibleLimit={2}>
+<ToastProvider defaultPlacement="top-center" limit={2}>
   <App />
-</Toast.Provider>
+</ToastProvider>
 ```
 
 ### Composition
@@ -219,14 +222,11 @@ The parts are each placement's region, `env-toast-viewport`, with `data-placemen
 
 ### Customize
 
-`--env-toast-container`, `--env-toast-content` and `--env-toast-outline` set the colors of one Toast, through `style` or CSS: the fill in place of the tone's, the message, icons and dismiss button, and the edge. The dismiss button's hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
+A Toast draws an edge only at high contrast, unless its outline color sets one, and its container color takes the place of the tone's fill.
 
 ## Changelog
 
-- **1.0.0**: `tone` for `variant`, with `danger` for `error`, and `ToastTone`; `bottom-end` for `bottom-right`, which follows the text direction, with the top-center stack centred in either direction; the region names, hidden count and dismiss button come from the provider's messages; danger notifications are alerts at once and always shown; the dismiss button is an IconButton with a cross; the manual `Toast` is gone.
-- **1.0.0**: `ToastProvider` is `Toast.Provider`, and `useToast` keeps its name. The manual `Toast` component and `ToastProps` are no longer exported; show notifications with `useToast` inside `Toast.Provider`.
-- **0.5.0**: The hidden count is a counter badge. A dismissed notification steps out of the stack at once and fades where it was, and one revealed from the hidden ones fades in. The regions no longer throw where the Web Animations API is missing, such as in jsdom.
-- **0.4.0**: Notifications glide to their new place as others arrive and leave; the top-center hidden count sits below the stack, centred. The dismiss button settles when pressed.
-- **0.3.0**: Notifications arrive from their screen edge.
-- **0.2.0**: Messages wrap to three lines within 28 rem instead of truncating to one line.
-- **0.1.0**: `ToastProvider` and `useToast`, with the bottom-right and top-center placements, a visible limit with a count of older notifications, durations and timers that pause; the manual `Toast`.
+- **1.0.0-prerelease.5**: 16 px from its start edge to its icon or message, and 10 px between its parts.
+- **1.0.0**: No edge outside high contrast, where the tone's edge bounds it, and an alert's corners, 1.25 rem. The notifications' theme boundary, `env-toast-portal-theme`, is `env-toast-theme`, as Popup's is `env-popup-theme`.
+- **1.0.0**: `limit` for `visibleLimit`, as Base UI names it. `tone` for `variant`, with `danger` for `error`, and `ToastTone`; `bottom-end` for `bottom-right`, which follows the text direction, with the top-center stack centered in either direction; the region names, hidden count and dismiss button come from the provider's messages; danger notifications are alerts at once and always shown; the dismiss button is an IconButton with a cross; the manual `Toast` is gone.
+- **1.0.0**: `ToastProvider` and `useToast` keep their names. The manual `Toast` component and `ToastProps` are no longer exported; show notifications with `useToast` inside `ToastProvider`.

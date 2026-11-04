@@ -21,13 +21,11 @@ avoidWhen:
   - text: A task that holds focus until people finish it.
     use: Dialog
   - text: A message announced without moving focus.
-    use: Toast
+    use: ToastProvider
   - text: Colors and their contrast in every theme.
     see: colors
 examples:
-  Keyboard:
-    role: example
-    caption: Tab moves forward and Shift+Tab back; Space checks the box and Enter presses a button.
+  Keyboard: example
 ---
 
 # Accessibility
@@ -41,22 +39,18 @@ Every envUI component works for everyone without extra work, and each component'
 - **Keyboard**: everything works from the keyboard, in the order it shows.
 - **Visible focus**: a clear ring shows where the keyboard is.
 - **Screen readers**: controls, regions and messages are announced by their name and state.
-- **Contrast**: text, edges and focus are checked for contrast in all four themes.
+- **Contrast**: text, edges and focus are checked for contrast in all four [themes](colors.md).
 - **Reduced motion**: when people ask for less motion, things fade instead of move.
 - **Forced colors**: with the system's own high-contrast colors, every state stays visible.
 - **Touch**: on a touchscreen, controls grow big enough for a finger.
 
 ### Try the keyboard
 
-Press Tab to move into the example and through it, and watch the focus follow the keyboard in the order the controls show.
+Tab moves through the controls in the order they show.
 
 ```tsx figure=Keyboard
 
 ```
-
-### Try high contrast
-
-Choose High under Contrast in the Display menu, at the top of the page, and every page here shows stronger text and edges.
 
 ## Rules
 
@@ -84,11 +78,11 @@ Ask an agent for accessibility in these words; envUI does the rest in every comp
 
 ```tsx
 import { Column, IconButton, TextField } from '@envsemble/envui';
-import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
+import { IconChevronRight } from '@envsemble/envui/icons/ChevronRight';
 
 <Column gap={4}>
   <TextField label="Project name" description="Visible labels stay while people type." />
-  <IconButton icon={<ChevronRight />} aria-label="Next project" />
+  <IconButton icon={<IconChevronRight />} aria-label="Next project" />
 </Column>;
 ```
 
@@ -98,7 +92,7 @@ import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 | You provide    | Labels and icon action names, headings, reading order, validation messages and recovery actions                                            |
 | Focus          | Text fields recolor their border; other controls take the shared 0.125 rem ring                                                            |
 | Contrast       | The contrast gate measures every pair a component paints in all four themes: 4.5:1 for text, 3:1 for boundaries, 7:1 at high contrast      |
-| Reduced motion | `prefers-reduced-motion` keeps only opacity changes; spinners turn slowly                                                                  |
+| Reduced motion | `prefers-reduced-motion` keeps only opacity changes; spinners turn and skeletons pulse slowly                                              |
 | Forced colors  | States a fill or shadow carried take system colors, such as Highlight and GrayText; swatches and heatmaps keep theirs                      |
 | Touch          | Under a coarse pointer, controls and rows grow to at least 44 px; as Touch on [Spacing & density](spacing.md) says                         |
 | Motion tokens  | `--env-motion-duration-fast`, `--env-motion-duration-medium` and `--env-motion-ease`, for the application's own transitions                |

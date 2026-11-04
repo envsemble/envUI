@@ -8,17 +8,15 @@ import type { ControlSize } from '../foundations/Theme.js';
 import { classNames } from '../internal/classNames.js';
 import { Column, Grid, Row } from '../foundations/Layout.js';
 import { useDirectionScope } from '../internal/useDirection.js';
-import { NavigationIconState } from '../MaterialSymbolState.js';
+import { NavigationIconState } from '../SymbolIconState.js';
 import { Surface } from '../foundations/Surface.js';
+import { Button } from '../actions/Button.js';
+import '../styles/Base.css';
+import '../styles/Tabs.css';
 
-export interface TabsItem {
+interface TabsItemFields {
   /** Unique, stable identifier shared by the tab and its panel. */
   value: string;
-  /**
-   * The tab's control: a Button, an IconButton, or a component that forwards native button props
-   * and its ref. It takes the tab's look, a text tab, whatever its variant; a link is not allowed.
-   */
-  button: ReactElement<ComponentPropsWithRef<'button'>>;
   /** The panel's content, shown while the tab is selected. */
   content: ReactNode;
   /**
@@ -28,12 +26,35 @@ export interface TabsItem {
   disabled?: boolean;
 }
 
+/** A tab's control: its label and icon, or a control of the application's own. */
+type TabsItemControl =
+  | {
+      /** The tab's text, which names it. */
+      label: ReactNode;
+      /** A decorative icon before the label, such as one of envUI's Material Symbols. */
+      icon?: ReactNode;
+      button?: undefined;
+    }
+  | {
+      label?: undefined;
+      icon?: undefined;
+      /**
+       * The tab's control, in place of label and icon: a Button, an IconButton, or a component that
+       * forwards native button props and its ref. It takes the tab's look, a text tab, whatever its
+       * variant; a link is not allowed.
+       */
+      button: ReactElement<ComponentPropsWithRef<'button'>>;
+    };
+
+/** One tab and its panel: `{ value: 'summary', label: 'Summary', content: <Summary /> }`. */
+export type TabsItem = TabsItemFields & TabsItemControl;
+
 export interface TabsProps
   extends Omit<
     ComponentPropsWithRef<'div'>,
     'children' | 'defaultValue' | 'onChange' | 'aria-label'
   > {
-  /** The tabs in order, each with its value, button and panel content. */
+  /** The tabs in order, each with its value, its label or button, and its panel content. */
   items: readonly TabsItem[];
   /** The tab list's accessible name, such as Project views. */
   'aria-label': string;
@@ -89,7 +110,18 @@ export interface TabsProps
 }
 
 function isDisabled(item: TabsItem) {
-  return Boolean(item.disabled || item.button.props.disabled);
+  return Boolean(item.disabled || item.button?.props.disabled);
+}
+
+/** The item's control: its own button, or a text button with its label and icon. */
+function buttonOf(item: TabsItem): ReactElement<ComponentPropsWithRef<'button'>> {
+  return (
+    item.button ?? (
+      <Button variant="text" startIcon={item.icon}>
+        {item.label}
+      </Button>
+    )
+  );
 }
 
 function TabButton({
@@ -98,7 +130,7 @@ function TabButton({
   disabled,
   ...props
 }: ComponentPropsWithRef<'button'> & {
-  button: TabsItem['button'];
+  button: ReactElement<ComponentPropsWithRef<'button'>>;
   active: boolean;
   disabled: boolean;
 }) {
@@ -181,7 +213,7 @@ export function Tabs({
             render={(tabProps, state) => (
               <TabButton
                 {...tabProps}
-                button={item.button}
+                button={buttonOf(item)}
                 active={state.active}
                 disabled={state.disabled}
               />

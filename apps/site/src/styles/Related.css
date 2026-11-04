@@ -1,0 +1,281 @@
+/* Related, at the end of a page: a tile for each component or page to use
+   instead, from its frontmatter, each a tiny live picture of it on its recessed canvas, with its
+   name and when to pick it below. The stage is the tile's one frame. */
+
+/* Tiles of one size. A row is never left with one alone: one column until two fit, even counts
+   two to a row, counts of three, five, six and nine three to a row, and once four fit, every count
+   in tiles of a quarter of the column, five, six and nine still in rows of three. */
+.catalogue-related-tiles {
+  --catalogue-related-gap: var(--env-space-5);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--env-space-6) var(--catalogue-related-gap);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@container (width >= 24rem) {
+  .catalogue-related-tiles:is(
+    [data-count='2'],
+    [data-count='4'],
+    [data-count='6'],
+    [data-count='8']
+  ) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@container (width >= 36rem) {
+  .catalogue-related-tiles:is(
+    [data-count='3'],
+    [data-count='5'],
+    [data-count='6'],
+    [data-count='9']
+  ) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@container (width >= 48rem) {
+  .catalogue-related-tiles.catalogue-related-tiles {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .catalogue-related-tiles:is([data-count='5'], [data-count='6'], [data-count='9'])
+    > :nth-child(3n + 1) {
+    grid-column-start: 1;
+  }
+}
+
+.catalogue-related-tile {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  row-gap: var(--env-space-2);
+  min-inline-size: 0;
+}
+
+/* The name's link covers the tile's picture and name, so the whole preview leads to the page. The
+   lines below keep their own links above it. */
+.catalogue-related-link::after {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--env-radius-surface);
+  content: '';
+}
+.catalogue-related-line {
+  position: relative;
+}
+
+/* The stage, as wide as the tile and of one height in a row; what it shows is scaled to fit. */
+.catalogue-related-stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  inline-size: 100%;
+  aspect-ratio: 16 / 10;
+  max-block-size: 10rem;
+  overflow: clip;
+}
+
+/* The window the example lays out in, at a width it was written for, then scaled down and centred
+   (Related.tsx). It contains its fixed overlays, such as a dialog, and is transparent until it
+   fits, rather than hidden, so what hides by itself inside it can be told from what shows. It is
+   inert, so no reader's pointer reaches it; a tile's own pointer, which no one sees, follows what
+   its parts let through (VirtualPointer.ts). */
+.catalogue-related-canvas {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  display: grid;
+  place-content: center stretch;
+  justify-items: center;
+  box-sizing: border-box;
+  inline-size: 36rem;
+  container: env-window / inline-size;
+  contain: layout;
+  transform: scale(1);
+  transform-origin: 0 0;
+  opacity: 0;
+}
+
+/* Once fitted, the picture appears, fading in, rather than from nowhere: by its opacity alone, so
+   the boxes the fit measures keep their place. */
+.catalogue-related-canvas[data-fitted] {
+  opacity: 1;
+  animation: catalogue-tile-appear var(--env-motion-duration-medium) var(--env-motion-ease) both;
+}
+
+@keyframes catalogue-tile-appear {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .catalogue-related-canvas[data-fitted] {
+    animation: none;
+  }
+}
+
+/* Room for an overlay shown open, such as a dialog over the page. */
+.catalogue-related-canvas:has(> .catalogue-overlay-layer) {
+  min-block-size: 28rem;
+}
+
+/* A page's own tile (tiles/Tiles.ts) lays out in a small window of its own, which counts whole,
+   so every tile is drawn at one scale, large: its component, written for the window, fills much
+   of the stage. Its popups open inside it, with no more room than that. A tile of a wide component,
+   such as a notification, takes a larger window (tileWindows, Tiles.ts), drawn smaller. */
+.catalogue-related-stage > .catalogue-related-canvas[data-tile],
+.catalogue-gallery-stage.catalogue-gallery-stage > .catalogue-related-canvas[data-tile] {
+  inline-size: var(--catalogue-tile-width, 10rem);
+  block-size: var(--catalogue-tile-height, 7.5rem);
+  min-block-size: 0;
+}
+
+/* A command palette in a tile sits in the tile's window without the room a screen leaves above it,
+   which its stylesheet measures on the browser's window, not the tile's; the view centres it. */
+.catalogue-related-canvas[data-tile] .env-command-palette-positioner {
+  padding-block: var(--env-space-4);
+}
+
+/* A rich text editor in a tile holds a line: its document as tall as the line, rather than the room
+   a page leaves for writing, so the line is drawn large. */
+.catalogue-related-canvas[data-tile] .env-rich-text-document {
+  min-block-size: 0;
+}
+
+/* A picture of the overlay, without the backdrop, which would fill the canvas. */
+.catalogue-related-canvas :is(.env-dialog-backdrop, .env-sheet-backdrop) {
+  display: none;
+}
+
+/* An alternative without an example: a page icon in the middle of the same stage. */
+.catalogue-related-placeholder {
+  inline-size: 2rem;
+  block-size: 2rem;
+  color: var(--env-color-fg-muted);
+}
+
+.catalogue-related-name {
+  padding-block-start: var(--env-space-2);
+  font-weight: var(--env-font-weight-medium);
+}
+
+.catalogue-related-line .env-markdown {
+  color: var(--env-color-fg-muted);
+  font: var(--env-type-body-sm);
+}
+
+.catalogue-related-line .env-markdown > * {
+  margin: 0;
+}
+
+/* A page's specimen in a tile, for a page without an example, such as a foundation's
+   (PageSpecimens.tsx): drawn with tokens, scaled to fit the stage as an example is. */
+.catalogue-page-specimen-icons {
+  color: var(--env-color-fg-default);
+}
+
+.catalogue-page-specimen-swatches > span {
+  inline-size: 3.5rem;
+  block-size: 3.5rem;
+  border-radius: var(--env-radius-lg);
+  background: var(--env-color-bg-neutral-emphasis);
+}
+.catalogue-page-specimen-swatches > [data-role='primary'] {
+  background: var(--env-color-bg-primary-emphasis);
+}
+.catalogue-page-specimen-swatches > [data-role='accent'] {
+  background: var(--env-color-bg-accent-strong);
+}
+.catalogue-page-specimen-swatches > [data-role='success'] {
+  background: var(--env-color-bg-success-emphasis);
+}
+.catalogue-page-specimen-swatches > [data-role='warning'] {
+  background: var(--env-color-bg-warning-emphasis);
+}
+.catalogue-page-specimen-swatches > [data-role='danger'] {
+  background: var(--env-color-bg-danger-emphasis);
+}
+
+.catalogue-page-specimen-spacing > span {
+  block-size: var(--env-space-3);
+  border-radius: var(--env-radius-xs);
+  background: var(--env-color-bg-primary-solid);
+}
+.catalogue-page-specimen-spacing > [data-step='1'] {
+  inline-size: calc(4 * var(--env-space-1));
+}
+.catalogue-page-specimen-spacing > [data-step='2'] {
+  inline-size: calc(4 * var(--env-space-2));
+}
+.catalogue-page-specimen-spacing > [data-step='3'] {
+  inline-size: calc(4 * var(--env-space-3));
+}
+.catalogue-page-specimen-spacing > [data-step='4'] {
+  inline-size: calc(4 * var(--env-space-4));
+}
+.catalogue-page-specimen-spacing > [data-step='5'] {
+  inline-size: calc(4 * var(--env-space-5));
+}
+.catalogue-page-specimen-spacing > [data-step='6'] {
+  inline-size: calc(4 * var(--env-space-6));
+}
+.catalogue-page-specimen-spacing > [data-step='7'] {
+  inline-size: calc(4 * var(--env-space-7));
+}
+.catalogue-page-specimen-spacing > [data-step='8'] {
+  inline-size: calc(4 * var(--env-space-8));
+}
+
+.catalogue-page-specimen-windows > span {
+  display: grid;
+  place-items: end center;
+  padding: var(--env-space-1);
+  border: 0.125rem solid var(--env-color-border-default);
+  border-radius: var(--env-radius-md);
+  background: var(--env-color-bg-default);
+  white-space: nowrap;
+}
+.catalogue-page-specimen-windows > [data-size='compact'] {
+  inline-size: 4.5rem;
+  block-size: 7rem;
+}
+.catalogue-page-specimen-windows > [data-size='medium'] {
+  inline-size: 7rem;
+  block-size: 8rem;
+}
+.catalogue-page-specimen-windows > [data-size='expanded'] {
+  inline-size: 11rem;
+  block-size: 7rem;
+}
+
+/* The focus ring keyboard use shows, drawn on the button at rest. */
+.catalogue-page-specimen-focus {
+  outline: 0.125rem solid var(--env-color-border-focus);
+  outline-offset: 0.125rem;
+}
+
+.catalogue-page-specimen-content {
+  text-align: center;
+}
+
+/* A tile's skeleton (TileSkeleton in template/Loading.tsx): over the whole stage, which pulses as
+   envUI's skeleton surfaces do, from a moment after the tile nears the view until the picture is
+   fitted on the stage and fades in over it. */
+.catalogue-tile-loading {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-color: transparent;
+}
+.catalogue-tile-loading:not([data-shown]) {
+  opacity: 0;
+}
+.catalogue-related-canvas[data-fitted] ~ .catalogue-tile-loading {
+  display: none;
+}

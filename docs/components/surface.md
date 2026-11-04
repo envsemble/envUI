@@ -2,7 +2,7 @@
 title: Surface
 summary: A container with a background, an inset and corners, but no layout of its own.
 status: beta
-since: 0.1.0
+since: 1.0.0
 category: App frame & layout
 aliases:
   - panel
@@ -38,12 +38,13 @@ examples:
 
 ### Backgrounds
 
-| Background | Use for                                         |
-| ---------- | ----------------------------------------------- |
-| Default    | Panes and side regions. The default.            |
-| Muted      | A block that stands apart on a pane, and rows.  |
-| Page       | A well inside a pane that returns to the page.  |
-| Raised     | Popups and overlays, in the default background. |
+| Background | Use for                                                                      |
+| ---------- | ---------------------------------------------------------------------------- |
+| Default    | Panes and side regions. The default.                                         |
+| Muted      | A block that stands apart on a pane, and rows.                               |
+| Page       | A well inside a pane that returns to the page.                               |
+| Raised     | Popups and overlays, in the default background.                              |
+| Recessed   | A well on the page that its content rises out of, such as a preview's stage. |
 
 <!-- specimen: Backgrounds -->
 
@@ -92,7 +93,7 @@ A Surface gives its content a `background`, an inset and corners.
 
 #### Backgrounds, corners and inset
 
-- `background` is `default`, the default, `muted`, `page` or `raised`, which matches `default`.
+- `background` is `default`, the default, `muted`, `page`, `raised`, which matches `default`, or `recessed`, a well on the page: a shade deeper than it in dark, and lighter than it and the panes in light.
 - `radius` is `xl`, 1.75 rem and the default, `sm`, 0.5 rem, `full`, fully rounded ends, or `none`, square.
 - `padding` sets the inset as a step of the spacing scale, from `1`, 0.25 rem, to `9`, 4 rem, and `0` removes it; without it, the inset grows from 1.25 rem in narrow windows to 1.5 rem from 50 rem wide.
 
@@ -106,8 +107,8 @@ A group of controls, as wide as its controls in a Column with `align="start"`:
   aria-label="Diagram view"
   render={<Row wrap align="center" gap={4} />}
 >
-  <IconButton variant="ghost" size="sm" icon={<ZoomOut />} aria-label="Zoom out" />
-  <IconButton variant="ghost" size="sm" icon={<ZoomIn />} aria-label="Zoom in" />
+  <IconButton variant="ghost" size="sm" icon={<IconZoomOut />} aria-label="Zoom out" />
+  <IconButton variant="ghost" size="sm" icon={<IconZoomIn />} aria-label="Zoom in" />
   <Button variant="secondary" size="sm">
     Fit to screen
   </Button>
@@ -118,7 +119,7 @@ A group of controls, as wide as its controls in a Column with `align="start"`:
 
 `skeleton` shows the surface and everything inside it as a skeleton until its content arrives: text becomes bars of its text style's length, and controls filled shapes.
 
-- Render the same components over stand-in items, `items ?? placeholders<Project>(3)`, whose fields are undefined; `isPlaceholder(item)` tells a stand-in by its id.
+- Render the same components over stand-in items, `items ?? placeholders<Project>(3)`, whose fields are undefined; `isPlaceholder(item)` tells a stand-in by its id, and narrows the type, so the other branch reads the item's own fields.
 - A component of the application's own reads `useSkeleton()` to give its skeleton a look of its own, such as a chart's.
 
 ```tsx
@@ -135,39 +136,10 @@ A group of controls, as wide as its controls in a Column with `align="start"`:
 
 ### Customize
 
-`--env-surface-container`, `--env-surface-content` and `--env-surface-outline` set the fill, the text and an edge of one surface, through `style` or CSS; a surface inside keeps its own.
-
-- To recolor everything in an area, its controls included, override the semantic tokens on a nested Theme, with hover and pressed values of their own, such as `--env-color-bg-brand-emphasis` with `-hover` and `-pressed`, for each theme.
+- To recolor an area, its controls included, set the semantic tokens on a nested Theme, as [Customize and extend](../customizing.md#recolor-an-area) shows.
 - CSS may target `env-surface`, with `data-background` and `data-radius` for the values other than the defaults.
-
-```tsx
-/** The brand's roles in green, with their hover and pressed values, for each theme. */
-const green = {
-  light: {
-    '--env-color-bg-brand-emphasis': '#176f35',
-    '--env-color-bg-brand-emphasis-hover': '#115a2a',
-    '--env-color-bg-brand-emphasis-pressed': '#0b4520',
-    '--env-color-fg-on-emphasis': '#ffffff',
-  },
-  dark: {
-    '--env-color-bg-brand-emphasis': '#7ad197',
-    '--env-color-bg-brand-emphasis-hover': '#5fbf80',
-    '--env-color-bg-brand-emphasis-pressed': '#45ad69',
-    '--env-color-fg-on-emphasis': '#1e1f21',
-  },
-};
-
-const { theme } = useTheme();
-<Theme theme={theme} style={green[theme] as CSSProperties}>
-  <Surface background="muted" padding={4} render={<Column gap={3} align="start" />}>
-    …
-  </Surface>
-</Theme>;
-```
 
 ## Changelog
 
+- **1.0.0-prerelease.5**: `background="recessed"`, a well on the page a shade deeper than it, in `--env-color-bg-recessed`.
 - **1.0.0**: `skeleton`, with `placeholders()`, `isPlaceholder()` and `useSkeleton()`. `tone` is `background`, with the names of the background roles: `pane` is `default`, `row` `muted`, `canvas` `page` and `alternate` `raised`; `corners` is `radius`: `surface` is `xl`, `standard` `sm` and `pill` `full`; `render` replaces `as`. The backgrounds take the semantic background colors.
-- **0.5.0**: `density="compact"`, which gives the controls inside the compact height.
-- **0.4.0**: The inset is at least 1.25 rem.
-- **0.1.0**: Surface, with backgrounds, padding and corners.

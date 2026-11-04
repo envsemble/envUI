@@ -1,5 +1,5 @@
 import { test, expect, type Locator, type Page } from '@playwright/test';
-import { fixtureUrl } from './Servers';
+import { fixtureUrl } from './helpers/Servers';
 
 const menubarFixture = `${fixtureUrl}/?fixture=menubar`;
 
@@ -302,6 +302,22 @@ test.describe('Access keys', { tag: '@engines' }, () => {
     // A disabled menu's letter opens nothing.
     await page.keyboard.press('Alt+KeyH');
     await expect(keys).toHaveText('KeyH free');
+    await expect(page.getByRole('menu')).toHaveCount(0);
+    await expect(note).toBeFocused();
+  });
+
+  test('a menubar in an inert region takes no access keys from outside it', async ({ page }) => {
+    await page.goto(menubarFixture);
+    const note = page.getByRole('textbox', { name: 'Note' });
+    await note.click();
+    // As behind a modal dialog: the menubar is inert, and the note outside it has focus.
+    await menubar(page).evaluate((element) => element.setAttribute('inert', ''));
+    await page.keyboard.down('Alt');
+    // Just past the update holding Alt would make.
+    await page.waitForTimeout(100);
+    await expect(menubar(page)).not.toHaveAttribute('data-access-keys-shown');
+    await page.keyboard.press('KeyF');
+    await page.keyboard.up('Alt');
     await expect(page.getByRole('menu')).toHaveCount(0);
     await expect(note).toBeFocused();
   });

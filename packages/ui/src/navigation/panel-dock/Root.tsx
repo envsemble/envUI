@@ -2,7 +2,6 @@
 
 import {
   useCallback,
-  useEffect,
   useLayoutEffect,
   useMemo,
   useReducer,
@@ -14,37 +13,39 @@ import {
 } from 'react';
 import { classNames } from '../../internal/classNames.js';
 import { Column, Row } from '../../foundations/Layout.js';
-import { cssLength } from '../../internal/cssLength.js';
+import { remLength } from '../../internal/cssLength.js';
+import { roundToHundredth } from '../../internal/lengths.js';
 import { setRef } from '../../internal/setRef.js';
 import { useMessages } from '../../internal/EnvUIContext.js';
 import { useStackedReport } from '../../internal/useStackedReport.js';
 import { panelDock as panelDockMessages } from '../../foundations/messages/panelDock.js';
-import type { PanelDockMode } from '../internal/PanelDockContext.js';
+import type { PanelDockMode } from './internal/PanelDockPanelContext.js';
 import {
   clampRound,
-  fitsInRow,
   heldChoice,
   isAtRowEnd,
   isShown,
   locateFocus,
-  minimumWidth,
   newest,
-  oldest,
   overflows,
   readScrollPositions,
   reveal,
   revealInContent,
   revealInWindow,
-  rowRoom,
   scrollToRowEnd,
   type FocusedPanel,
   type HeightBounds,
   type Placement,
   type ScrollPosition,
   type TabChoice,
-} from './dockLayout.js';
-import { PanelFrame } from './PanelFrame.js';
-import { PanelTab } from './PanelTab.js';
+} from './internal/dockLayout.js';
+import { PanelFrame } from './internal/PanelFrame.js';
+import { PanelTab } from './internal/PanelTab.js';
+import { useDockOverflow } from './internal/useDockOverflow.js';
+import { useStripWheel } from './internal/useStripWheel.js';
+import { flag } from '../../internal/flag.js';
+import '../../styles/Base.css';
+import '../../styles/PanelDock.css';
 
 export type { PanelDockMode };
 
@@ -59,19 +60,31 @@ export interface PanelDockPanel {
    */
   mode: PanelDockMode;
   /**
-   * Height of the open panel in pixels. Without it, the panel starts at 85% of the room in the
-   * dock, up to 40 rem, and keeps the height people choose.
+   * Height of the open panel in rem, as Sheet's and Panes' sizes are. Without it, the panel starts
+   * at 85% of the room in the dock, up to 40 rem, and keeps the height people choose.
    */
   height?: number;
-  /** Width of the open panel where the row has room, in pixels; 32 rem by default. */
+  /**
+   * Width of the open panel where the row has room, in rem.
+   * @default 32
+   */
   preferredWidth?: number;
-  /** The narrowest the open panel gets when the row runs short, in pixels; 20 rem by default. */
+  /**
+   * The narrowest the open panel gets when the row runs short, in rem.
+   * @default 20
+   */
   minWidth?: number;
-  /** The widest the open panel gets, in pixels; 48 rem by default. */
+  /**
+   * The widest the open panel gets, in rem.
+   * @default 48
+   */
   maxWidth?: number;
-  /** The lowest height people can resize the panel to, in pixels; 15 rem by default. */
+  /**
+   * The lowest height people can resize the panel to, in rem.
+   * @default 15
+   */
   minHeight?: number;
-  /** The greatest height people can resize the panel to, in pixels; the room in the dock. */
+  /** The greatest height people can resize the panel to, in rem; the room in the dock by default. */
   maxHeight?: number;
   /** The panel people work in: in front of the other open panels, and shown by a stacked dock. */
   active?: boolean;
@@ -85,18 +98,18 @@ export interface PanelDockPanel {
   tooltip?: ReactNode;
 }
 
-export interface RootProps<T extends PanelDockPanel = PanelDockPanel>
+export interface RootProps<Panel extends PanelDockPanel = PanelDockPanel>
   extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
   /**
    * The panels in order, each a PanelDockPanel: open panels sit side by side, the newest at the
    * end, and tabs follow in the same order. The application owns them.
    */
-  panels: readonly T[];
+  panels: readonly Panel[];
   /**
    * Renders a panel's content from its panel, such as a PanelDock.Header above the panel's body.
    * The content mounts once and stays mounted until the panel closes.
    */
-  children: (panel: T) => ReactNode;
+  children: (panel: Panel) => ReactNode;
   /**
    * Called with the mode a panel asks for, from its window controls and its tab, and from the dock
    * itself with overflow="minimize".
@@ -110,14 +123,15 @@ export interface RootProps<T extends PanelDockPanel = PanelDockPanel>
    */
   onActivate?: (id: string) => void;
   /**
-   * Called with a panel's new height in pixels when a drag on its top edge ends, and on each key
+   * Called with a panel's new height in rem when a drag on its top edge ends, and on each key
    * press there.
    */
   onHeightChange?: (id: string, height: number) => void;
   /**
-   * A width, 40rem by default, or a number of pixels, such as 600 or "600": while the dock itself
-   * is narrower, one panel at a time fills it and the others wait as tabs. The dock then has
+   * A width, as a CSS length, such as "40rem", or a number of rem, such as 40: while the dock
+   * itself is narrower, one panel at a time fills it and the others wait as tabs. The dock then has
    * data-stacked.
+   * @default '40rem'
    */
   stackBelow?: string | number;
   /** Called with true when the dock stacks and with false when its panels sit side by side. */
@@ -134,18 +148,18 @@ export interface RootProps<T extends PanelDockPanel = PanelDockPanel>
   /**
    * Accessible name of the list of tabs, which holds minimized panels and the panels a stacked dock
    * leaves out, for this dock only.
-   * @default 'Hidden panels', or EnvUIProvider's messages.panelDock.hidden
+   * @default 'Hidden panels', or EnvUIProvider's messages.panelDock.minimized
    */
   minimizedLabel?: string;
   /**
    * Accessible name of a tab's button that opens its panel, from the tab's text, for this dock
    * only. A function, as each tab names its own panel.
-   * @default Show and the text, such as Show Budget, or EnvUIProvider's messages.panelDock.show
+   * @default Show and the text, such as Show Budget, or EnvUIProvider's messages.panelDock.open
    */
   openLabel?: (label: string) => string;
   /**
    * Accessible name of a tab's close button, from the tab's text, for this dock only.
-   * @default Close and the text, such as Close Budget, or EnvUIProvider's messages.panelDock.closePanel
+   * @default Close and the text, such as Close Budget, or EnvUIProvider's messages.panelDock.close
    */
   closeLabel?: (label: string) => string;
   /**
@@ -153,26 +167,6 @@ export interface RootProps<T extends PanelDockPanel = PanelDockPanel>
    * @default Resize and the title, such as Resize Quarterly report, or EnvUIProvider's messages.panelDock.resize
    */
   resizeLabel?: (title: string) => string;
-}
-
-/** A change of mode a dock with overflow="minimize" asked for, until the application answers. */
-interface FitRequest {
-  id: string;
-  mode: PanelDockMode;
-  /** The panel's mode when asked; the panel in any other mode is the answer. */
-  from: PanelDockMode;
-  /** When the dock asked, from performance.now(). */
-  since: number;
-}
-
-/** A panel a dock with overflow="minimize" minimized to make room. */
-interface MinimizedForRoom {
-  /** When the panel was last brought forward, its place among the others once it comes back. */
-  time: number | undefined;
-  /** The panel's minimum width in the row while open, borders and margins included, in pixels. */
-  width: number;
-  /** The inline size the row had for its panels then, in pixels. */
-  room: number;
 }
 
 interface Measurements {
@@ -186,8 +180,11 @@ interface Measurements {
 const defaultHeightShare = 0.85;
 const defaultHeightRem = 40;
 const minHeightRem = 15;
-/** How long a dock with overflow="minimize" waits for an answer, in milliseconds. */
-const answerTimeout = 5_000;
+/**
+ * The dock width below which one panel at a time fills it. Not a window class: the dock measures its
+ * own width, which a page beside it narrows.
+ */
+const defaultStackBelow = '40rem';
 
 /**
  * Panels docked to the bottom inline-end edge of a region, beside the page, for items people work
@@ -195,14 +192,14 @@ const answerTimeout = 5_000;
  * filling the region, and minimized panels as tabs. A panel's content stays mounted through every
  * change of mode and order.
  */
-export function Root<T extends PanelDockPanel>({
+export function Root<Panel extends PanelDockPanel>({
   panels,
   children,
   onModeChange,
   onClose,
   onActivate,
   onHeightChange,
-  stackBelow = '40rem',
+  stackBelow = defaultStackBelow,
   onStackedChange,
   overflow = 'scroll',
   minimizedLabel,
@@ -213,12 +210,12 @@ export function Root<T extends PanelDockPanel>({
   style,
   ref,
   ...props
-}: RootProps<T>) {
+}: RootProps<Panel>) {
   // Words that fit a minimized panel and one a stacked dock leaves out alike.
   const messages = useMessages('panelDock', panelDockMessages);
-  const tabsLabel = minimizedLabel ?? messages.hidden;
-  const nameOpen = openLabel ?? ((label: string) => messages.show({ label }));
-  const nameClose = closeLabel ?? ((label: string) => messages.closePanel({ label }));
+  const tabsLabel = minimizedLabel ?? messages.minimized;
+  const nameOpen = openLabel ?? ((label: string) => messages.open({ label }));
+  const nameClose = closeLabel ?? ((label: string) => messages.close({ label }));
   const nameResize = resizeLabel ?? ((label: string) => messages.resize({ label }));
   const root = useRef<HTMLDivElement>(null);
   const row = useRef<HTMLDivElement>(null);
@@ -239,14 +236,6 @@ export function Root<T extends PanelDockPanel>({
   // The panel a tab asked a stacked dock to show, also where the application does not activate
   // panels, until the situation it was asked in changes.
   const tabChoice = useRef<TabChoice | null>(null);
-  // With overflow="minimize": the change the dock awaits the application's answer to, and a timer
-  // that looks again once the answer is overdue; the panels the application kept open when asked
-  // to minimize them, or opened again itself after the dock minimized them, each with the room the
-  // row had then; and the panels the dock minimized to make room.
-  const awaiting = useRef<FitRequest | null>(null);
-  const answerTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
-  const keptOpen = useRef(new Map<string, number>());
-  const minimizedForRoom = useRef(new Map<string, MinimizedForRoom>());
   const atRowEnd = useRef(true);
   const previousRow = useRef<readonly string[]>([]);
   const previousTabs = useRef<readonly string[]>([]);
@@ -269,6 +258,11 @@ export function Root<T extends PanelDockPanel>({
     [],
   );
   const close = useCallback((id: string) => latest.current.onClose(id), []);
+  const { fitRow, returningTime, release } = useDockOverflow<Panel>({
+    overflow,
+    changeMode,
+    refresh,
+  });
 
   // A stacked dock fills the region with one shown panel: the one its tab asked for, else the
   // active one, else the newest; a wide one with its maximized panel. The others wait behind their
@@ -331,12 +325,15 @@ export function Root<T extends PanelDockPanel>({
     [panels, children],
   );
 
-  function heightOf(panel: T): { height?: number; bounds?: HeightBounds } {
-    const requested = panel.height ?? chosenHeights.get(panel.id);
+  function heightOf(panel: Panel): { height?: number; bounds?: HeightBounds } {
+    // The panel's sizes are in rem, and the dock works in pixels: until it has measured itself, a
+    // rem is the browser's default 16 px.
+    const rem = measurements?.rem ?? 16;
+    const requested = panel.height === undefined ? chosenHeights.get(panel.id) : panel.height * rem;
     if (!measurements) return { height: requested };
-    const { rem, room } = measurements;
-    const max = Math.floor(Math.max(0, Math.min(panel.maxHeight ?? Infinity, room)));
-    const min = Math.round(Math.min(panel.minHeight ?? minHeightRem * rem, max));
+    const { room } = measurements;
+    const max = Math.floor(Math.max(0, Math.min((panel.maxHeight ?? Infinity) * rem, room)));
+    const min = Math.round(Math.min((panel.minHeight ?? minHeightRem) * rem, max));
     const fallback = Math.min(room * defaultHeightShare, defaultHeightRem * rem);
     return { height: clampRound(requested ?? fallback, min, max), bounds: { min, max, room } };
   }
@@ -345,122 +342,19 @@ export function Root<T extends PanelDockPanel>({
     recency.current.set(id, ++clock.current);
   }
 
-  function activate(panel: T) {
+  function activate(panel: Panel) {
     if (placements.get(panel.id) === 'hidden') return;
     bringForward(panel.id);
     if (!panel.active) latest.current.onActivate?.(panel.id);
   }
 
-  /**
-   * With overflow="minimize", fits the open panels to the row. Where they cannot all sit side by
-   * side at their minimum widths, the dock asks to minimize the least recently active one, never
-   * the active panel, the newest or the one that holds focus, and only where that lets the rest fit. Once the region widens
-   * past the room the row had when the dock minimized a panel, and the panel fits again at its
-   * width while open, it asks to open it, the most recently active first. It asks for one change at
-   * a time and waits for the answer; a panel the application keeps open, or opens again itself, is
-   * not asked for again until the region changes size.
-   */
-  function fitRow(rowElement: HTMLElement) {
-    if (overflow !== 'minimize' || rowElement.getClientRects().length === 0) return;
-    const room = rowRoom(rowElement);
-    const asked = awaiting.current;
-    if (asked) {
-      const panel = panels.find(({ id }) => id === asked.id);
-      if (panel?.mode === asked.from) {
-        // The answer can come in a later render, as from a transition or after an asynchronous
-        // step: until then the dock asks for nothing else. Once it is overdue, the application
-        // keeps the panel as it is.
-        if (performance.now() - asked.since < answerTimeout) return;
-        minimizedForRoom.current.delete(asked.id);
-        if (asked.mode === 'minimized') keptOpen.current.set(asked.id, room.size);
-      } else if (asked.mode === 'open') minimizedForRoom.current.delete(asked.id);
-      awaiting.current = null;
-      clearTimeout(answerTimer.current);
-    }
-    for (const [id, size] of keptOpen.current)
-      if (!rowIds.includes(id) || Math.abs(size - room.size) >= 1) keptOpen.current.delete(id);
-    // A panel the dock minimized that closed is no longer the dock's to bring back, and one the
-    // application opened again itself stays open until the region changes size.
-    for (const id of minimizedForRoom.current.keys()) {
-      const mode = panels.find((panel) => panel.id === id)?.mode;
-      if (mode === 'minimized') continue;
-      minimizedForRoom.current.delete(id);
-      if (mode === 'open') keptOpen.current.set(id, room.size);
-    }
-    // A dock that stacks, or is about to as it first shows or narrows, also in the update that
-    // narrows it, as the application's own state can, has no row to fit.
-    if (stacked || stacksNow()) return;
-    const inRow = panels.filter((panel) => placements.get(panel.id) === 'row');
-    // Widths are read only where a decision needs them, as reading styles takes time.
-    const widths = new Map<string, number>();
-    const widthOf = (id: string) => {
-      const width = widths.get(id) ?? minimumWidth(frameOf(id));
-      widths.set(id, width);
-      return width;
-    };
-    const fit = (list: readonly T[], more: readonly number[] = []) =>
-      fitsInRow(room, [...list.map(({ id }) => widthOf(id)), ...more]);
-    if (overflows(rowElement) && !fit(inRow)) {
-      // The panel people work in stays, and so does the newest, such as one just brought back
-      // from its tab, also alone in the row, the one that holds focus, as where people type, and
-      // any the application kept open. Where those cannot fit by themselves, minimizing the others
-      // would only hide them, and the row scrolls.
-      const newestInRow = newest(inRow, recency.current);
-      const focus = locateFocus(root.current, focusedPanel.current);
-      const focusedId = focus && !focus.tab ? focus.id : undefined;
-      const stays = (panel: T) =>
-        panel.active ||
-        panel === newestInRow ||
-        panel.id === focusedId ||
-        keptOpen.current.has(panel.id);
-      if (!fit(inRow.filter(stays))) return;
-      const others = inRow.filter((panel) => !stays(panel));
-      const leaving = oldest(others, recency.current);
-      if (!leaving) return;
-      minimizedForRoom.current.set(leaving.id, {
-        time: recency.current.get(leaving.id),
-        width: widthOf(leaving.id),
-        room: room.size,
-      });
-      ask(leaving, 'minimized');
-      return;
-    }
-    // A panel comes back only as the region widens, and at the width it had while open, which a
-    // style may make wider than while minimized: room that people free brings no panel back, and
-    // minimizing and opening never alternate at one size.
-    let returning: { panel: T; minimized: MinimizedForRoom } | undefined;
-    for (const panel of panels) {
-      const minimized = minimizedForRoom.current.get(panel.id);
-      if (!minimized || panel.mode !== 'minimized' || room.size <= minimized.room + 1) continue;
-      if (!returning || (minimized.time ?? 0) > (returning.minimized.time ?? 0))
-        returning = { panel, minimized };
-    }
-    if (returning && fit(inRow, [returning.minimized.width])) ask(returning.panel, 'open');
-  }
-
-  /**
-   * Asks the application to change a panel's mode. It answers by rendering the dock with the panel
-   * in another mode, also in a later render; a panel still in its mode after answerTimeout is one
-   * the application keeps as it is.
-   */
-  function ask(panel: T, mode: PanelDockMode) {
-    const request = { id: panel.id, mode, from: panel.mode, since: performance.now() };
-    awaiting.current = request;
-    // Where the answer is overdue, the dock renders again to look; an answer renders it anyway.
-    clearTimeout(answerTimer.current);
-    answerTimer.current = setTimeout(() => {
-      if (awaiting.current === request) refresh();
-    }, answerTimeout + 50);
-    latest.current.onModeChange(panel.id, mode);
-  }
-
-  function restoreFromTab(panel: T) {
+  function restoreFromTab(panel: Panel) {
     pendingRestore.current = panel.id;
     bringForward(panel.id);
     // A stacked dock shows the panel brought forward, even without an active panel.
     if (stacked) tabChoice.current = { id: panel.id, active: activeId, time: clock.current };
     // People brought the panel back: the dock leaves it to them from now on.
-    minimizedForRoom.current.delete(panel.id);
+    release(panel.id);
     if (panel.mode === 'minimized') latest.current.onModeChange(panel.id, 'open');
     if (!panel.active) latest.current.onActivate?.(panel.id);
     refresh();
@@ -485,12 +379,12 @@ export function Root<T extends PanelDockPanel>({
     }
   }
 
-  function resize(panel: T, height: number) {
+  function resize(panel: Panel, height: number) {
     if (panel.height === undefined)
       setChosenHeights((current) =>
         current.get(panel.id) === height ? current : new Map(current).set(panel.id, height),
       );
-    latest.current.onHeightChange?.(panel.id, height);
+    latest.current.onHeightChange?.(panel.id, roundToHundredth(height / (measurements?.rem ?? 16)));
   }
 
   function frameOf(id: string) {
@@ -613,11 +507,7 @@ export function Root<T extends PanelDockPanel>({
       shownIds.add(panel.id);
       if (recency.current.has(panel.id)) continue;
       // A panel the dock brings back once it fits again returns to its place among the others.
-      const request = awaiting.current;
-      const earlier =
-        request?.id === panel.id && request.mode === 'open'
-          ? minimizedForRoom.current.get(panel.id)?.time
-          : undefined;
+      const earlier = returningTime(panel.id);
       if (earlier === undefined) bringForward(panel.id);
       else recency.current.set(panel.id, earlier);
     }
@@ -629,7 +519,7 @@ export function Root<T extends PanelDockPanel>({
         (current) =>
           new Map([...current].filter(([id]) => ids.has(id))) as ReadonlyMap<string, number>,
       );
-  }, [panels, chosenHeights]);
+  }, [panels, chosenHeights, returningTime]);
 
   // A tab's choice that no longer holds is forgotten, so it never returns with an earlier state,
   // such as the panel that was active when it was made; one a newer panel took over now is that
@@ -653,7 +543,18 @@ export function Root<T extends PanelDockPanel>({
     const frame = joined === undefined ? undefined : frameOf(joined);
     if (frame) reveal(rowElement, frame);
     setOverflowing(overflows(rowElement));
-    fitRow(rowElement);
+    fitRow(rowElement, {
+      panels,
+      rowIds,
+      placements,
+      recency: recency.current,
+      stacks: () => stacked || stacksNow(),
+      frameOf,
+      focusedId: () => {
+        const focus = locateFocus(root.current, focusedPanel.current);
+        return focus && !focus.tab ? focus.id : undefined;
+      },
+    });
   });
 
   // Focus follows a panel's content: a panel that hides hands focus to its tab, a panel brought
@@ -699,24 +600,7 @@ export function Root<T extends PanelDockPanel>({
     }
   });
 
-  // A vertical wheel scrolls an overflowing strip of tabs sideways.
-  useEffect(() => {
-    const element = strip.current;
-    if (!element) return;
-    const onWheel = (event: WheelEvent) => {
-      if (event.deltaX !== 0 || event.deltaY === 0 || event.ctrlKey) return;
-      const max = element.scrollWidth - element.clientWidth;
-      if (max <= 0) return;
-      const direction = getComputedStyle(element).direction === 'rtl' ? -1 : 1;
-      const position = element.scrollLeft * direction;
-      const next = Math.min(max, Math.max(0, position + event.deltaY));
-      if (next === position) return;
-      event.preventDefault();
-      element.scrollLeft = next * direction;
-    };
-    element.addEventListener('wheel', onWheel, { passive: false });
-    return () => element.removeEventListener('wheel', onWheel);
-  }, [hasStrip]);
+  useStripWheel(strip, hasStrip);
 
   return (
     <Column
@@ -727,10 +611,10 @@ export function Root<T extends PanelDockPanel>({
         setRef(ref, node);
       }}
       className={classNames('env-panel-dock', className)}
-      style={{ ...style, '--env-panel-dock-stack-below': cssLength(stackBelow) } as CSSProperties}
-      data-stacked={stacked || undefined}
-      data-filled={filled || undefined}
-      data-tabs={hasTabs || undefined}
+      style={{ ...style, '--env-panel-dock-stack-below': remLength(stackBelow) } as CSSProperties}
+      data-stacked={flag(stacked)}
+      data-filled={flag(filled)}
+      data-tabs={flag(hasTabs)}
       data-env-ssr-pending={pending || undefined}
       data-env-ssr-filled={stackedLayout?.filling !== undefined || undefined}
       data-env-ssr-tabs={(stackedLayout && stackedTabs.length > 0) || undefined}
@@ -739,7 +623,7 @@ export function Root<T extends PanelDockPanel>({
         align="end"
         ref={row}
         className="env-panel-dock-row"
-        data-overflowing={overflowing || undefined}
+        data-overflowing={flag(overflowing)}
         onScroll={(event) => {
           atRowEnd.current = isAtRowEnd(event.currentTarget);
         }}

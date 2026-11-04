@@ -1,38 +1,12 @@
 'use client';
 
 import { Meter as BaseMeter } from '@base-ui/react/meter';
-import type { ComponentPropsWithRef, ReactNode } from 'react';
+import type { RangeBarProps } from './internal/rangeBarProps.js';
 import { classNames } from '../internal/classNames.js';
 import { Grid, Row } from '../foundations/Layout.js';
 import { useLocale } from '../internal/EnvUIContext.js';
-
-/** What Meter and Progress share: a label, a range, an optional value text and native passthrough. */
-export interface RangeBarProps
-  extends Omit<ComponentPropsWithRef<'div'>, 'children' | 'aria-valuetext' | 'defaultValue'> {
-  /** What the bar shows, such as Seats assigned; it is visible above the bar and names it. */
-  label: ReactNode;
-  /**
-   * The low end of the range.
-   * @default 0
-   */
-  min?: number;
-  /**
-   * The high end of the range.
-   * @default 100
-   */
-  max?: number;
-  /**
-   * The value as text at the end of the label's row, formatted by the application, such as 2 of 5
-   * or 40%. Without it, no value shows.
-   */
-  valueText?: ReactNode;
-  /**
-   * The value as assistive technology reads it, with its unit in words, such as 2 of 5 seats.
-   * Without it, a screen reader reads the value as a percentage of the range, in the locale of the
-   * nearest EnvUIProvider.
-   */
-  'aria-valuetext'?: string;
-}
+import '../styles/Base.css';
+import '../styles/Meter.css';
 
 export interface MeterProps extends RangeBarProps {
   /**
@@ -70,7 +44,7 @@ export function Meter({
       render={<Grid gap={2} />}
       className={classNames('env-meter', className)}
     >
-      <Row wrap justify="between" gap={3} className="env-meter-heading">
+      <Row wrap justify="between" gap={3} className="env-meter-header">
         <BaseMeter.Label className="env-meter-label">{label}</BaseMeter.Label>
         {valueText != null && <span className="env-meter-value">{valueText}</span>}
       </Row>

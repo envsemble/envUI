@@ -12,12 +12,15 @@ import {
   type ReactNode,
 } from 'react';
 import type { ControlSize } from '../foundations/Theme.js';
-import { TooltipPopup } from '../feedback/internal/TooltipPopup.js';
+import { TooltipPopup, tooltipDelay } from '../internal/TooltipPopup.js';
 import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { useDirectionScope } from '../internal/useDirection.js';
 import { useFormatters } from '../internal/useFormatters.js';
-import { Check } from '../icons/Check.js';
+import { IconCheck } from '../icons/Check.js';
+import { flag } from '../internal/flag.js';
+import '../styles/Base.css';
+import '../styles/SegmentedControl.css';
 
 /** One item of a SegmentedControl. */
 export interface SegmentedControlItem {
@@ -43,10 +46,15 @@ export interface SegmentedControlProps
   > {
   /** The items, two to five, in the order they show. */
   items: readonly SegmentedControlItem[];
-  /** The chosen item's value. The control is always controlled: update it from onValueChange. */
-  value: string;
+  /** The chosen item's value, for a control the application keeps; update it from onValueChange. */
+  value?: string;
+  /**
+   * The item an uncontrolled control starts with chosen.
+   * @default the first item's value
+   */
+  defaultValue?: string;
   /** Receives the value of the item people choose, by pressing it or with the arrow keys. */
-  onValueChange: (value: string) => void;
+  onValueChange?: (value: string) => void;
   /** The group's accessible name, such as Work items; the control has no visible label. */
   'aria-label': string;
   /**
@@ -73,6 +81,7 @@ export interface SegmentedControlProps
 export function SegmentedControl({
   items,
   value,
+  defaultValue = items[0]?.value,
   onValueChange,
   'aria-label': label,
   size,
@@ -95,12 +104,13 @@ export function SegmentedControl({
           onFocus?.(event);
         }}
         value={value}
-        onValueChange={(next) => onValueChange(next as string)}
+        defaultValue={defaultValue}
+        onValueChange={(next) => onValueChange?.(next as string)}
         disabled={disabled}
         aria-label={label}
         className={classNames('env-segmented-control', className)}
         data-size={size}
-        data-full-width={fullWidth || undefined}
+        data-full-width={flag(fullWidth)}
       >
         {items.map((item) => (
           <Segment key={item.value} item={item} fullWidth={fullWidth} />
@@ -137,8 +147,8 @@ function Segment({ item, fullWidth }: { item: SegmentedControlItem; fullWidth: b
       className="env-segmented-control-item"
     >
       {/* The chosen segment shows a check, in place of its icon where it has one. */}
-      <span className="env-icon env-segmented-control-item-check" aria-hidden="true">
-        <Check />
+      <span className="env-icon env-segmented-control-item-indicator" aria-hidden="true">
+        <IconCheck />
       </span>
       {item.icon != null && <DecorativeIcon>{item.icon}</DecorativeIcon>}
       <span ref={labelRef} className="env-segmented-control-item-label">
@@ -157,7 +167,7 @@ function Segment({ item, fullWidth }: { item: SegmentedControlItem; fullWidth: b
   if (!fullWidth) return segment;
   return (
     <BaseTooltip.Root disabled={!cut}>
-      <BaseTooltip.Trigger delay={400} render={segment} />
+      <BaseTooltip.Trigger delay={tooltipDelay} render={segment} />
       {cut && <TooltipPopup content={item.label} side="top" />}
     </BaseTooltip.Root>
   );

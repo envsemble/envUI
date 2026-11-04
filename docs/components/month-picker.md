@@ -13,7 +13,6 @@ aliases:
   - billing period
 useWhen:
   - A month of a year, such as the month a report covers
-  - A period where the day doesn't matter, such as a billing period
 avoidWhen:
   - text: A day, or a day and a time.
     use: DatePicker
@@ -66,7 +65,7 @@ examples:
 
 1. **Popup** (`env-month-picker-popup`)
 2. **Previous year** (`env-month-picker-previous`)
-3. **Year** (`env-month-picker-heading`)
+3. **Year** (`env-month-picker-title::text`)
 4. **Next year** (`env-month-picker-next`)
 5. **Month** (`env-month-picker-month`)
 6. **Actions** (`env-date-picker-actions`)
@@ -77,11 +76,13 @@ examples:
 
 The month shows in the reader's language, and choosing one closes the popup.
 
+<!-- specimen: ChoosingAMonth -->
+
 ### Within a fiscal year
 
 Months outside the range a field allows are unavailable, and the year buttons stop at them.
 
-```tsx figure=FiscalYear
+```tsx figure=FiscalYear motion
 
 ```
 
@@ -161,12 +162,17 @@ A MonthPicker takes its `label`, a `description` and an `error`, and its value i
 
 #### Variants, sizes and the popup
 
-`variant` is `outline`, the default, at the control height, or `floating`, 3.5 rem tall with room for its label. `size` is `sm`, `md` or `lg`; without it the field takes its container's control height. `showLabel={false}` hides the label for a field whose purpose is clear, and `placeholder` shows while it is empty. `open`, `defaultOpen` and `onOpenChange` control the popup. `clearLabel`, `thisMonthLabel`, `previousYearLabel` and `nextYearLabel` name its buttons, or EnvUIProvider's `messages.monthPicker` does for the whole application.
+`variant` is `outline`, the default, at the control height, or `floating`, 3.5 rem tall with room for its label. `size` is `sm`, `md` or `lg`; without it the field takes its container's control height. `showLabel={false}` hides the label for a field whose purpose is clear, and `placeholder` shows while it is empty. `open`, `defaultOpen` and `onOpenChange` control the popup; `onOpenChange` also receives why it opens or closes, `PickerOpenChangeDetails`. `clearLabel`, `thisMonthLabel`, `previousYearLabel` and `nextYearLabel` name its buttons.
 
 ### Composition
 
-The field, `env-month-picker`, shares DatePicker's parts: the control, `env-date-picker-control`, with the label, `env-date-picker-label`, the value, `env-date-picker-value`, the clear button, `env-date-picker-clear`, and the calendar icon, `env-date-picker-icon`; then the description, `env-field-description`, and the error, `env-field-error`. The popup is DatePicker's picker card, `env-picker-popup` with `env-date-picker-popup` and `env-month-picker-popup`. Its body, `env-picker-popup-body`, has a header, `env-month-picker-header`, with the previous year, `env-month-picker-previous`, the year, `env-month-picker-heading`, and the next year, `env-month-picker-next`; the year's grid, `env-month-picker-year` and `env-month-picker-grid`, of months, `env-month-picker-month`, each with `data-month` and a mark, `env-month-picker-month-mark`; and its footer, `env-picker-popup-footer` with `env-date-picker-actions`, the actions. `ref` reaches the field's button, and `className` and `style` its root.
+The field, `env-month-picker`, shares DatePicker's parts: the control, `env-date-picker-control`, with the label, `env-date-picker-label`, the value, `env-date-picker-value`, the clear button, `env-date-picker-clear`, and the calendar icon, `env-date-picker-icon`; then the description, `env-field-description`, and the error, `env-field-error`. The popup is DatePicker's picker card, `env-picker-popup` with `env-date-picker-popup` and `env-month-picker-popup`. Its body, `env-picker-popup-body`, has a header, `env-month-picker-header`, with the previous year, `env-month-picker-previous`, the year, `env-month-picker-title`, and the next year, `env-month-picker-next`; the year's grid, `env-month-picker-year` and `env-month-picker-grid`, of months, `env-month-picker-month`, each with `data-month` and a mark, `env-month-picker-month-mark`; and its footer, `env-picker-popup-footer` with `env-date-picker-actions`, the actions. `ref` reaches the field's button, and `className` and `style` its root.
+
+### Customize
+
+Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blur` and `--env-popup-shadow`, set on a theme, change it, as [Popover](popover.md#customize) describes.
 
 ## Changelog
 
+- **1.0.0-prerelease.5**: The popup is frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge, and is solid with its edge at high contrast and with reduced transparency. Its inset is a panel's, as wide as a popup row's corner: 14 px, 11.2 px at the compact scale. The year leads its header, its buttons side by side at the end; this month is in the accent color rather than ringed, and a month under the pointer takes the neutral fill.
 - **1.0.0**: MonthPicker, for a month of a year, with `min` and `max`.

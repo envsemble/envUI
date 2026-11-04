@@ -10,6 +10,8 @@ import {
 import { classNames } from '../../internal/classNames.js';
 import { setRef } from '../../internal/setRef.js';
 import { TextareaResizeEdge } from './TextareaResizeEdge.js';
+import '../../styles/Base.css';
+import '../../styles/TextField.css';
 
 export interface TextareaControlProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   /**

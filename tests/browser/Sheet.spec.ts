@@ -1,5 +1,5 @@
 import { test, expect, type Locator, type Page } from '@playwright/test';
-import { fixtureUrl } from './Servers';
+import { fixtureUrl } from './helpers/Servers';
 
 const sheets = `${fixtureUrl}/?fixture=sheets`;
 
@@ -224,6 +224,105 @@ test.describe('Sheet', () => {
     expect(style.offset).toBe('2rem');
   });
 
+  test('a side sheet keeps its actions at its foot, however little its body holds', async ({
+    page,
+  }) => {
+    await page.goto(sheets);
+    await page.getByRole('button', { name: 'Open filters' }).click();
+    const sheet = page.getByRole('dialog', { name: 'Filters' });
+    await expect(sheet).toBeVisible();
+    await slidIn(sheet);
+    const [box, action] = [
+      (await sheet.boundingBox())!,
+      (await sheet.getByRole('button', { name: 'Apply' }).boundingBox())!,
+    ];
+    const padding = await sheet.evaluate((element) =>
+      Number.parseFloat(getComputedStyle(element).paddingBottom),
+    );
+    expect(box.y + box.height - (action.y + action.height)).toBeCloseTo(padding, 0);
+  });
+
+  test('a sheet too short for its content scrolls its body and keeps its heading and actions in view', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 900, height: 400 });
+    await page.goto(sheets);
+    for (const side of ['end', 'bottom']) {
+      await page.getByRole('button', { name: `Open long ${side}` }).click();
+      const sheet = page.getByRole('dialog', { name: `Long ${side}` });
+      await expect(sheet).toBeVisible();
+      await slidIn(sheet);
+      const body = sheet.locator('.env-sheet-body');
+      const parts = async () => ({
+        sheet: (await sheet.boundingBox())!,
+        title: (await sheet.getByRole('heading', { name: `Long ${side}` }).boundingBox())!,
+        action: (await sheet.getByRole('button', { name: 'Show 5 projects' }).boundingBox())!,
+      });
+      const before = await parts();
+      // The sheet keeps to the window, with its actions inside it.
+      expect(before.sheet.y + before.sheet.height).toBeLessThanOrEqual(400.5);
+      expect(before.action.y + before.action.height).toBeLessThanOrEqual(
+        before.sheet.y + before.sheet.height,
+      );
+      expect(await body.evaluate((element) => element.scrollHeight > element.clientHeight)).toBe(
+        true,
+      );
+      expect(await sheet.evaluate((element) => element.scrollHeight - element.clientHeight)).toBe(
+        0,
+      );
+      // Scrolled to its end, the body moves under them; the heading and the actions stay.
+      await body.evaluate((element) => element.scrollTo({ top: element.scrollHeight }));
+      expect(await body.evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
+      const after = await parts();
+      expect(after.title.y).toBeCloseTo(before.title.y, 0);
+      expect(after.action.y).toBeCloseTo(before.action.y, 0);
+      await page.keyboard.press('Escape');
+      await expect(sheet).toBeHidden();
+    }
+  });
+
+  test("a sheet is on the navigation's fill, and a Drawer in it keeps that fill", async ({
+    page,
+  }) => {
+    await page.goto(sheets);
+    const fill = (locator: Locator) =>
+      locator.evaluate((element) => getComputedStyle(element).backgroundColor);
+    // The navigation's fill, the default surface, which a Drawer has at the window's edge.
+    const navigation = await page.locator('body').evaluate((body) => {
+      const probe = document.createElement('div');
+      probe.style.background = 'var(--env-color-bg-default)';
+      (body.querySelector('.env-theme') ?? body).append(probe);
+      const color = getComputedStyle(probe).backgroundColor;
+      probe.remove();
+      return color;
+    });
+    await page.getByRole('button', { name: 'Open filters' }).click();
+    expect(await fill(page.getByRole('dialog', { name: 'Filters' }))).toBe(navigation);
+    await page.keyboard.press('Escape');
+    await page.getByRole('button', { name: 'Open navigation' }).click();
+    const sheet = page.getByRole('dialog', { name: 'Navigation' });
+    expect(await fill(sheet)).toBe(navigation);
+    expect(await fill(sheet.getByRole('navigation', { name: 'Sections' }))).toBe(navigation);
+  });
+
+  test('a sheet has no edge, and at high contrast its edge returns', async ({ page }) => {
+    const edge = (locator: Locator) =>
+      locator.evaluate((element) => {
+        const style = getComputedStyle(element);
+        return [style.borderInlineStartColor, style.boxShadow];
+      });
+    await page.goto(sheets);
+    await page.getByRole('button', { name: 'Open filters' }).click();
+    const filters = page.getByRole('dialog', { name: 'Filters' });
+    expect(await edge(filters)).toEqual(['rgba(0, 0, 0, 0)', 'none']);
+    await page.keyboard.press('Escape');
+    await page.emulateMedia({ contrast: 'more' });
+    await page.reload();
+    await page.getByRole('button', { name: 'Open filters' }).click();
+    const [color] = await edge(filters);
+    expect(color).not.toBe('rgba(0, 0, 0, 0)');
+  });
+
   test('a md side sheet takes the whole width of a compact window', async ({ page }) => {
     await page.setViewportSize({ width: 400, height: 700 });
     await page.goto(sheets);
@@ -279,7 +378,7 @@ test.describe('Sheet resizable', () => {
     expect(handleBox.x).toBeCloseTo(sheetBox.x + 1, 0);
     expect(handleBox.height).toBeGreaterThanOrEqual(sheetBox.height - 1);
     // The same handle as between Panes, as wide as their gap: a grip of three dots, never a line,
-    // which sticks to the middle of the sheet as its content scrolls.
+    // which would stick to the middle of the sheet should the sheet itself scroll.
     const grip = await handle.evaluate((element) => {
       const after = getComputedStyle(element, '::after');
       return {
@@ -341,8 +440,10 @@ test.describe('Sheet resizable', () => {
       await page.keyboard.press('Shift+ArrowLeft');
       await expect(page.getByTestId('sheet-width')).toHaveText('35');
 
-      // Scrolled to its end, the handle still runs along the whole edge.
-      await sheet.evaluate((element) => element.scrollTo({ top: element.scrollHeight }));
+      // Its body scrolled to its end, the handle still runs along the whole edge.
+      await sheet
+        .locator('.env-sheet-body')
+        .evaluate((element) => element.scrollTo({ top: element.scrollHeight }));
       const scrolled = (await sheet.boundingBox())!;
       const edge = (await handle.boundingBox())!;
       const hit = await page.evaluate(

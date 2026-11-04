@@ -1,11 +1,11 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
-// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
+// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../Icon.js';
+import { useSymbolIconFill } from '../SymbolIconState.js';
 
-export function BatteryAndroidShield({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
+export function IconBatteryAndroidShield({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
   return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M440-330q67-32 97-100.5T570-574q-35-8-66.5-23.5T440-630q-32 17-63.5 32.5T310-574q3 75 33 143.5T440-330Zm0-70v-160q16 10 32.5 18t33.5 14q-6 37-21.5 70.5T440-400ZM160-210q-33 0-56.5-23.5T80-290v-380q0-33 23.5-56.5T160-750h560q33 0 56.5 23.5T800-670v90h20q25 0 42.5 17.5T880-520v80q0 26-17.5 43T820-380h-20v90q0 33-23.5 56.5T720-210H160Z" /> : <path d="M440-340q9 0 18-3t17-9q20-15 35.5-35.5T537-431q12-25 19-52.5t11-56.5q2-15-7-26.5T537-583q-22-8-42-18t-40-21q-8-4-15-4t-15 4q-20 11-40.5 21T343-583q-14 5-23 17t-7 26q3 29 10.5 56.5T343-431q11 23 26.5 43t35.5 36q8 6 17 9t18 3Zm0-60v-160q16 10 32.5 18t33.5 14q-6 37-21.5 70.5T440-400ZM160-290h560v-380H160v380Zm0 80q-33 0-56.5-23.5T80-290v-380q0-33 23.5-56.5T160-750h560q33 0 56.5 23.5T800-670v90h20q25 0 42.5 17.5T880-520v80q0 26-17.5 43T820-380h-20v90q0 33-23.5 56.5T720-210H160Zm0-80v-380 380Z" />}</Icon>;
 }

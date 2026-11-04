@@ -1,11 +1,14 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
-// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
+// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../Icon.js';
+import { useSymbolIconFill } from '../SymbolIconState.js';
 
-export function TakeoutDining2({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
-  return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M171-80q-20 0-32-15.5t-7-34.5l150-600-2-28q-1-17-12-29.5T240-800q-17 0-28.5 11.5T200-760v40q0 17-11.5 28.5T160-680q-17 0-28.5-11.5T120-720v-40q0-50 35-85t85-35h442q48 0 82.5 32.5T802-767l36 645q1 17-11 29.5T798-80H171Zm53-80h93l-19-304-74 304Zm326-80q13 0 21.5-8.5T580-270v-130q26-6 43-27.5t17-49.5v-143q0-8-6-14t-14-6q-8 0-14 6t-6 14v131h-30v-131q0-8-6-14t-14-6q-8 0-14 6t-6 14v131h-30v-131q0-8-6-14t-14-6q-8 0-14 6t-6 14v143q0 28 17 49.5t43 27.5v130q0 13 8.5 21.5T550-240Z" /> : <path d="M171-80q-20 0-32-15.5t-7-34.5l150-600-2-28q-1-17-12-29.5T240-800q-17 0-28.5 11.5T200-760v40q0 17-11.5 28.5T160-680q-17 0-28.5-11.5T120-720v-40q0-50 35-85t85-35h442q48 0 82.5 32.5T802-767l36 645q1 17-11 29.5T798-80H171Zm53-80h93l-19-304-74 304Zm174 0h358l-34-602q-1-16-12.5-27T682-800H353q4 10 5 19.5t2 20.5l38 600Zm152-80q13 0 21.5-8.5T580-270v-130q26-6 43-27.5t17-49.5v-143q0-8-6-14t-14-6q-8 0-14 6t-6 14v131h-30v-131q0-8-6-14t-14-6q-8 0-14 6t-6 14v131h-30v-131q0-8-6-14t-14-6q-8 0-14 6t-6 14v143q0 28 17 49.5t43 27.5v130q0 13 8.5 21.5T550-240Zm-152 80h358-358Z" />}</Icon>;
+/** The path both styles start with. */
+const start = "M171-80q-20 0-32-15.5t-7-34.5l150-600-2-28q-1-17-12-29.5T240-800q-17 0-28.5 11.5T200-760v40q0 17-11.5 28.5T160-680q-17 0-28.5-11.5T120-720v-40q0-50 35-85t85-35h442q48 0 82.5 32.5T802-767l36 645q1 17-11 29.5T798-80H171Zm53-80h93l-19-304-74 304Zm";
+
+export function IconTakeoutDining2({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
+  return <Icon viewBox="0 -960 960 960" {...props}><path d={filled ? start + "326-80q13 0 21.5-8.5T580-270v-130q26-6 43-27.5t17-49.5v-143q0-8-6-14t-14-6q-8 0-14 6t-6 14v131h-30v-131q0-8-6-14t-14-6q-8 0-14 6t-6 14v131h-30v-131q0-8-6-14t-14-6q-8 0-14 6t-6 14v143q0 28 17 49.5t43 27.5v130q0 13 8.5 21.5T550-240Z" : start + "174 0h358l-34-602q-1-16-12.5-27T682-800H353q4 10 5 19.5t2 20.5l38 600Zm152-80q13 0 21.5-8.5T580-270v-130q26-6 43-27.5t17-49.5v-143q0-8-6-14t-14-6q-8 0-14 6t-6 14v131h-30v-131q0-8-6-14t-14-6q-8 0-14 6t-6 14v131h-30v-131q0-8-6-14t-14-6q-8 0-14 6t-6 14v143q0 28 17 49.5t43 27.5v130q0 13 8.5 21.5T550-240Zm-152 80h358-358Z"} /></Icon>;
 }

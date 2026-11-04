@@ -1,52 +1,55 @@
-/* A read-only rating: the number, then the stars, empty in the control boundary color (3:1 on any
-   surface) and filled in the warning tone; a half star fills its inline-start half, the right one in right-to-left text. */
-.env-rating {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--env-space-2);
-}
-.env-rating-value {
-  min-inline-size: 3ch;
-  font-variant-numeric: tabular-nums;
-}
-.env-rating-stars {
-  display: inline-flex;
-  gap: 0.125rem;
-  color: var(--env-color-border-default);
-}
-.env-rating-star {
-  position: relative;
-  display: inline-flex;
-  inline-size: 1.125rem;
-  block-size: 1.125rem;
-}
-.env-rating-star svg {
-  display: block;
-  inline-size: 100%;
-  block-size: 100%;
-  fill: currentColor;
-}
-.env-rating-star[data-fill='full'] {
-  color: var(--env-color-fg-warning);
-}
-.env-rating-star-half {
-  position: absolute;
-  inset-block: 0;
-  inset-inline-start: 0;
-  inline-size: 50%;
-  overflow: hidden;
-  color: var(--env-color-fg-warning);
-}
-.env-rating-star-half svg {
-  inline-size: 1.125rem;
-  max-inline-size: none;
-}
-
-/* Forced colors: the system paints no fills or shadows, so the filled stars take the selection
-   color. */
-@media (forced-colors: active) {
-  .env-rating-star[data-fill='full'],
+@layer env.components {
+  /* A read-only rating: the number, then the stars, empty in the control boundary color (3:1 on any
+     surface) and filled in a gold of their own, --env-color-fg-rating-star, set apart from the empty
+     grey; a half star fills its inline-start half, the right one in right-to-left text. */
+  .env-rating {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--env-space-2);
+  }
+  .env-rating-value {
+    min-inline-size: 3ch;
+    font-variant-numeric: tabular-nums;
+  }
+  .env-rating-stars {
+    display: inline-flex;
+    gap: 0.125rem;
+    color: var(--env-color-border-default);
+  }
+  .env-rating-star {
+    position: relative;
+    display: inline-flex;
+    inline-size: 1.125rem;
+    block-size: 1.125rem;
+  }
+  .env-rating-star svg {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    fill: currentColor;
+  }
+  .env-rating-star[data-fill='full'] {
+    color: var(--env-color-fg-rating-star);
+  }
   .env-rating-star-half {
-    color: Highlight;
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    inline-size: 50%;
+    overflow: hidden;
+    color: var(--env-color-fg-rating-star);
+  }
+  .env-rating-star-half svg {
+    inline-size: 1.125rem;
+    max-inline-size: none;
+  }
+
+  /* Forced colors: the system paints no fills or shadows, so the filled stars take the selection
+     color. */
+  @media (forced-colors: active) {
+    .env-rating-star[data-fill='full'],
+    .env-rating-star-half {
+      color: Highlight;
+    }
   }
 }

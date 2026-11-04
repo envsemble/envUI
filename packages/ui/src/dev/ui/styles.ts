@@ -48,7 +48,7 @@ export const devStyles = /* css */ `
   }
 
   /* The sidebars: flush, square panes as wide as people drag them, each with the grip of a
-     resizable Drawer on its inner edge, inside it. */
+     resizable NavigationDrawer on its inner edge, inside it. */
   :where(.env-dev-sidebar) {
     position: relative;
     flex: none;
@@ -354,7 +354,7 @@ export const devStyles = /* css */ `
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
     font-size: var(--env-font-size-caption);
     font-weight: var(--env-font-weight-medium);
     color: var(--env-color-fg-on-strong);
@@ -377,7 +377,7 @@ export const devStyles = /* css */ `
      seldom reach, and none in a narrow view, which needs the room. The frame's label is small text
      too. */
   :where(.env-dev-legend, .env-dev-frame-label) {
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
     font-size: var(--env-font-size-caption);
   }
   :where(.env-dev-legend) {
@@ -417,7 +417,7 @@ export const devStyles = /* css */ `
     padding-inline: var(--env-space-1);
     overflow: hidden;
     white-space: nowrap;
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
     font-size: var(--env-font-size-caption);
     line-height: 1.25rem;
     background: color-mix(in oklab, var(--env-dev-tint) 35%, transparent);
@@ -441,7 +441,7 @@ export const devStyles = /* css */ `
     inset-inline-start: var(--env-space-1);
     padding-inline: var(--env-space-1);
     white-space: nowrap;
-    font: var(--env-type-body-small);
+    font: var(--env-type-body-sm);
     font-size: var(--env-font-size-caption);
     background: var(--env-color-bg-raised);
   }

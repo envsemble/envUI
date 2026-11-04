@@ -1,11 +1,11 @@
-// The hosted catalogue holds dev mode in the dev mode page's files only, and every demo a guide
+// The hosted site holds dev mode in the dev mode page's files only, and every demo a guide
 // page places is one the catalogue has.
 import assert from 'node:assert/strict';
 import { readdir, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { devEntry, devMarker, devModeDemo, devModeProblems } from '../scripts/SiteDevMode.mjs';
+import { devEntry, devMarker, devModeDemo, devModeProblems } from '../scripts/site/SiteDevMode.ts';
 
 const repository = fileURLToPath(new URL('../', import.meta.url));
 
@@ -78,10 +78,7 @@ test('dev mode anywhere else is a problem', () => {
 });
 
 test('every demo a guide page places is one the catalogue has', async () => {
-  const guide = await readFile(
-    join(repository, 'apps/catalogue/src/pages/GuideDocument.tsx'),
-    'utf8',
-  );
+  const guide = await readFile(join(repository, 'apps/site/src/pages/GuideDocument.tsx'), 'utf8');
   const docs = join(repository, 'docs');
   const placed = [];
   for (const name of (await readdir(docs)).filter((file) => file.endsWith('.md'))) {

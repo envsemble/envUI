@@ -1,75 +1,77 @@
-.env-disclosure {
-  min-inline-size: 0;
-  max-inline-size: 100%;
-  overflow-wrap: anywhere;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  background: none;
-  color: var(--env-color-fg-muted);
-  font: var(--env-type-body-small);
-}
-.env-disclosure > summary {
-  display: flex;
-  align-items: baseline;
-  gap: 0.5rem;
-  list-style: none;
-  white-space: normal;
-  /* Not anywhere: Firefox sizes the fit-content summary from its min-content width, which anywhere
-     shrinks to one letter, and a one-word title such as Code would break. */
-  overflow-wrap: break-word;
-  cursor: pointer;
-  width: fit-content;
-  max-width: 100%;
-}
-.env-disclosure > summary::-webkit-details-marker {
-  display: none;
-}
-.env-disclosure > summary::before {
-  content: '›';
-  flex: 0 0 0.5rem;
-  text-align: center;
-}
-.env-disclosure[open] > summary::before {
-  transform: rotate(90deg);
-}
-.env-disclosure > summary:focus-visible {
-  outline: 0.125rem solid var(--env-color-border-focus);
-  outline-offset: 0.25rem;
-}
-.env-disclosure > summary:hover {
-  color: var(--env-color-fg-muted-hover);
-}
-.env-disclosure > summary:active {
-  color: var(--env-color-fg-muted-pressed);
-}
-@media (pointer: coarse) {
-  .env-disclosure > summary {
-    min-block-size: var(--env-control-height-touch);
-    align-items: center;
+@layer env.components {
+  .env-disclosure {
+    min-inline-size: 0;
+    max-inline-size: 100%;
+    overflow-wrap: anywhere;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--env-color-fg-muted);
+    font: var(--env-type-body-sm);
   }
-}
-.env-disclosure-panel {
-  margin-block: var(--env-space-2) 0;
-  margin-inline: var(--env-space-4) 0;
-  color: inherit;
-  font: inherit;
-}
-.env-disclosure-panel > :where(p:not(.env-text)) {
-  color: inherit;
-  font: inherit;
-}
-.env-disclosure-panel > :is(ul, ol) {
-  padding-inline-start: var(--env-space-5);
-}
-
-/* Motion: an open panel fades in, and without a reduced-motion preference the summary's
-   indicator turns. */
-.env-disclosure[open] > .env-disclosure-panel {
-  animation: env-motion-fade-in var(--env-motion-duration-slow) var(--env-motion-ease-enter);
-}
-@media (prefers-reduced-motion: no-preference) {
+  .env-disclosure > summary {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    list-style: none;
+    white-space: normal;
+    /* Not anywhere: Firefox sizes the fit-content summary from its min-content width, which anywhere
+       shrinks to one letter, and a one-word title such as Code would break. */
+    overflow-wrap: break-word;
+    cursor: pointer;
+    width: fit-content;
+    max-width: 100%;
+  }
+  .env-disclosure > summary::-webkit-details-marker {
+    display: none;
+  }
   .env-disclosure > summary::before {
-    transition: transform var(--env-motion-duration-medium) var(--env-motion-ease);
+    content: '›';
+    flex: 0 0 0.5rem;
+    text-align: center;
+  }
+  .env-disclosure[open] > summary::before {
+    transform: rotate(90deg);
+  }
+  .env-disclosure > summary:focus-visible {
+    outline: 0.125rem solid var(--env-color-border-focus);
+    outline-offset: 0.25rem;
+  }
+  .env-disclosure > summary:hover {
+    color: var(--env-color-fg-muted-hover);
+  }
+  .env-disclosure > summary:active {
+    color: var(--env-color-fg-muted-pressed);
+  }
+  @media (pointer: coarse) {
+    .env-disclosure > summary {
+      min-block-size: var(--env-control-height-touch);
+      align-items: center;
+    }
+  }
+  .env-disclosure-panel {
+    margin-block: var(--env-space-2) 0;
+    margin-inline: var(--env-space-4) 0;
+    color: inherit;
+    font: inherit;
+  }
+  .env-disclosure-panel > :where(p:not(.env-text)) {
+    color: inherit;
+    font: inherit;
+  }
+  .env-disclosure-panel > :is(ul, ol) {
+    padding-inline-start: var(--env-space-5);
+  }
+
+  /* Motion: an open panel fades in, and without a reduced-motion preference the summary's
+     indicator turns. */
+  .env-disclosure[open] > .env-disclosure-panel {
+    animation: env-motion-fade-in var(--env-motion-duration-slow) var(--env-motion-ease-enter);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .env-disclosure > summary::before {
+      transition: transform var(--env-motion-duration-medium) var(--env-motion-ease);
+    }
   }
 }

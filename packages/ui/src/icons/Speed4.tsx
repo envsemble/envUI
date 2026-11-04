@@ -1,11 +1,14 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
-// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
+// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../Icon.js';
+import { useSymbolIconFill } from '../SymbolIconState.js';
 
-export function Speed4({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
-  return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M448-328q34 14 65.5 2.5T555-372q22-74 40-146t34-145q4-18-12.5-25.5T589-682q-46 60-90.5 119.5T410-440q-21 30-6.5 64t44.5 48ZM205-160q-22 0-40.5-9.5T135-198q-28-48-42-100.5T79-406q1-80 34-151.5T201-683q55-54 127-85.5T480-800q83 0 155.5 31.5t127 86q54.5 54.5 86 127T880-400q0 54-14 105t-40 97q-11 19-30 28.5t-40 9.5H205Z" /> : <path d="M448-328q34 14 65.5 2.5T555-372q22-74 40-146t34-145q4-18-12.5-25.5T589-682q-46 60-90.5 119.5T410-440q-21 30-6.5 64t44.5 48ZM205-160q-21 0-40-9.5T135-198q-26-45-40-95.5T81-400q0-94 39.5-173T227-708q57-47 126.5-71T496-800q16 1 24 14t6 29q-2 16-14.5 26.5T483-720q-55-1-108 18t-95 54q-54 45-86.5 109T161-400q0 42 11.5 83t32.5 77h551q23-38 33.5-78.5T800-400q0-59-22.5-116T717-615q-12-14-9-29t14-25q11-10 28-10.5t32 16.5q51 55 74.5 124.5T880-400q0 53-13 104.5T826-198q-10 19-29.5 28.5T756-160H205Zm275-241Z" />}</Icon>;
+/** The path both styles start with. */
+const start = "M448-328q34 14 65.5 2.5T555-372q22-74 40-146t34-145q4-18-12.5-25.5T589-682q-46 60-90.5 119.5T410-440q-21 30-6.5 64t44.5 48ZM205-160q-2";
+
+export function IconSpeed4({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
+  return <Icon viewBox="0 -960 960 960" {...props}><path d={filled ? start + "2 0-40.5-9.5T135-198q-28-48-42-100.5T79-406q1-80 34-151.5T201-683q55-54 127-85.5T480-800q83 0 155.5 31.5t127 86q54.5 54.5 86 127T880-400q0 54-14 105t-40 97q-11 19-30 28.5t-40 9.5H205Z" : start + "1 0-40-9.5T135-198q-26-45-40-95.5T81-400q0-94 39.5-173T227-708q57-47 126.5-71T496-800q16 1 24 14t6 29q-2 16-14.5 26.5T483-720q-55-1-108 18t-95 54q-54 45-86.5 109T161-400q0 42 11.5 83t32.5 77h551q23-38 33.5-78.5T800-400q0-59-22.5-116T717-615q-12-14-9-29t14-25q11-10 28-10.5t32 16.5q51 55 74.5 124.5T880-400q0 53-13 104.5T826-198q-10 19-29.5 28.5T756-160H205Zm275-241Z"} /></Icon>;
 }

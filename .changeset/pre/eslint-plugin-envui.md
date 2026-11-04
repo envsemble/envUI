@@ -13,4 +13,4 @@ An application that re-exports envUI from a module of its own lists it in `setti
 
 The plugin is released with `@envsemble/envui` at the same version; install the version that matches envUI.
 
-Migration guide: [Upgrade from envUI 0.x to 1.0](https://github.com/envsemble/envUI/blob/main/docs/migration.md#upgrade-from-envui-0x-to-10).
+Migration guide: [Upgrade from envUI 0.x to 1.0](https://github.com/envsemble/envUI/blob/main/docs/migration.md).

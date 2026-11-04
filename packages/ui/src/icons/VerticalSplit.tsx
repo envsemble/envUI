@@ -1,11 +1,14 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
-// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
+// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../Icon.js';
+import { useSymbolIconFill } from '../SymbolIconState.js';
 
-export function VerticalSplit({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
-  return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M160-360q-17 0-28.5-11.5T120-400q0-17 11.5-28.5T160-440h240q17 0 28.5 11.5T440-400q0 17-11.5 28.5T400-360H160Zm0 160q-17 0-28.5-11.5T120-240q0-17 11.5-28.5T160-280h240q17 0 28.5 11.5T440-240q0 17-11.5 28.5T400-200H160Zm0-320q-17 0-28.5-11.5T120-560q0-17 11.5-28.5T160-600h240q17 0 28.5 11.5T440-560q0 17-11.5 28.5T400-520H160Zm0-160q-17 0-28.5-11.5T120-720q0-17 11.5-28.5T160-760h240q17 0 28.5 11.5T440-720q0 17-11.5 28.5T400-680H160Zm440 480q-33 0-56.5-23.5T520-280v-400q0-33 23.5-56.5T600-760h160q33 0 56.5 23.5T840-680v400q0 33-23.5 56.5T760-200H600Z" /> : <path d="M160-360q-17 0-28.5-11.5T120-400q0-17 11.5-28.5T160-440h240q17 0 28.5 11.5T440-400q0 17-11.5 28.5T400-360H160Zm0 160q-17 0-28.5-11.5T120-240q0-17 11.5-28.5T160-280h240q17 0 28.5 11.5T440-240q0 17-11.5 28.5T400-200H160Zm0-320q-17 0-28.5-11.5T120-560q0-17 11.5-28.5T160-600h240q17 0 28.5 11.5T440-560q0 17-11.5 28.5T400-520H160Zm0-160q-17 0-28.5-11.5T120-720q0-17 11.5-28.5T160-760h240q17 0 28.5 11.5T440-720q0 17-11.5 28.5T400-680H160Zm440 480q-33 0-56.5-23.5T520-280v-400q0-33 23.5-56.5T600-760h160q33 0 56.5 23.5T840-680v400q0 33-23.5 56.5T760-200H600Zm0-80h160v-400H600v400Zm80-200Z" />}</Icon>;
+/** The path both styles start with. */
+const start = "M160-360q-17 0-28.5-11.5T120-400q0-17 11.5-28.5T160-440h240q17 0 28.5 11.5T440-400q0 17-11.5 28.5T400-360H160Zm0 160q-17 0-28.5-11.5T120-240q0-17 11.5-28.5T160-280h240q17 0 28.5 11.5T440-240q0 17-11.5 28.5T400-200H160Zm0-320q-17 0-28.5-11.5T120-560q0-17 11.5-28.5T160-600h240q17 0 28.5 11.5T440-560q0 17-11.5 28.5T400-520H160Zm0-160q-17 0-28.5-11.5T120-720q0-17 11.5-28.5T160-760h240q17 0 28.5 11.5T440-720q0 17-11.5 28.5T400-680H160Zm440 480q-33 0-56.5-23.5T520-280v-400q0-33 23.5-56.5T600-760h160q33 0 56.5 23.5T840-680v400q0 33-23.5 56.5T760-200H600Z";
+
+export function IconVerticalSplit({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
+  return <Icon viewBox="0 -960 960 960" {...props}><path d={filled ? start : start + "m0-80h160v-400H600v400Zm80-200Z"} /></Icon>;
 }

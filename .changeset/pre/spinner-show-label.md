@@ -10,4 +10,4 @@ LoadingState folds into Spinner: a Spinner with `showLabel` shows its label besi
 - LoadingState and `LoadingStateProps` are gone: `<LoadingState label>` is `<Spinner label showLabel>`, and `env-loading-state` and `env-loading-state-label` are `.env-spinner[data-show-label]` and `env-spinner-label`. CodeDiff shows its loading so.
 - `v1-structure` rewrites a LoadingState without children into the Spinner and reports the children of one that has them; `v1-names` renames `LoadingStateProps` to `SpinnerProps`, and `v1-classes` renames the classes. A structure case can be `childless`, for elements without children. `envui/no-renamed-exports` reports LoadingState with what replaces it.
 
-Migration guide: [Folded components and patterns](https://github.com/envsemble/envUI/blob/main/docs/migration.md#folded-components-and-patterns).
+Migration guide: [Folded components and patterns](https://github.com/envsemble/envUI/blob/main/docs/migration.md).

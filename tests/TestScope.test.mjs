@@ -13,8 +13,8 @@ import {
   specNeeds,
   specsFor,
   unitTestFiles,
-} from '../scripts/TestScope.mjs';
-import { checkoutId, checkoutPort } from '../scripts/CheckoutMarker.mjs';
+} from '../scripts/test/TestScope.ts';
+import { checkoutId, checkoutPort } from '../scripts/test/CheckoutMarker.ts';
 
 const specs = (...paths) => [...specsFor(paths).specs.keys()].sort();
 
@@ -101,16 +101,26 @@ test('a shared file runs the shared set, and an unknown file runs no spec', () =
 
 test('a changed spec runs itself, and a changed helper the specs that import it', () => {
   assert.deepEqual(specs('tests/browser/Tree.spec.ts'), ['Tree']);
+  assert.deepEqual(specs('tests/browser/helpers/Chevron.ts'), ['Combobox', 'Forms']);
   // Every spec imports Servers.ts: verify covers it.
-  assert.deepEqual(specs('tests/browser/Servers.ts'), []);
+  assert.deepEqual(specs('tests/browser/helpers/Servers.ts'), []);
 });
 
-test('the catalogue runs its specs and live development, with the builds they open', () => {
-  const scope = selectScope(['apps/catalogue/src/main.tsx']);
+test('a module of the documentation generator runs the specs of the site', () => {
+  assert.ok([...selectScope(['scripts/docs/Validation.ts']).specs.keys()].includes('DocsPages'));
+});
+
+test('the site runs its specs and live development, with the builds they open', () => {
+  const scope = selectScope(['apps/site/src/main.tsx']);
   assert.deepEqual([...scope.specs.keys()].sort(), [
-    'Catalogue',
+    'CataloguePages',
+    'CataloguePlainLanguage',
     'CatalogueSearch',
+    'DocsPages',
     'LiveDevelopment',
+    'SiteFailures',
+    'SiteRoutes',
+    'SiteShell',
   ]);
   assert.equal(scope.build.site, true);
   assert.equal(specNeeds('LiveDevelopment').live, true);
@@ -120,7 +130,7 @@ test('the catalogue runs its specs and live development, with the builds they op
 
 test('the examples, the pages that place them and dev mode run the layout check', () => {
   assert.deepEqual(specs('docs/components/card.md'), ['LayoutCheck']);
-  assert.ok(specs('apps/catalogue/src/examples/card/ProjectSummary.tsx').includes('LayoutCheck'));
+  assert.ok(specs('apps/site/src/examples/card/ProjectSummary.tsx').includes('LayoutCheck'));
   assert.ok(specs('packages/ui/src/dev/measure.ts').includes('LayoutCheck'));
   assert.equal(specNeeds('LayoutCheck').whole, true);
 });
@@ -135,8 +145,8 @@ test('static checks cover the changed files, and configuration the whole of its 
 
 test('servers follow the specs that need them', () => {
   assert.deepEqual(serversFor(['Tree']), ['fixture']);
-  assert.deepEqual(serversFor(['Catalogue']), ['catalogue']);
-  assert.deepEqual(serversFor(['Tree', 'Catalogue']), ['catalogue', 'fixture']);
+  assert.deepEqual(serversFor(['SiteShell']), ['site']);
+  assert.deepEqual(serversFor(['Tree', 'SiteShell']), ['fixture', 'site']);
   assert.deepEqual(serversFor([]), []);
 });
 

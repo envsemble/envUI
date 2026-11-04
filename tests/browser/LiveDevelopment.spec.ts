@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { catalogueUrl } from './Servers';
+import { siteDevUrl } from './helpers/Servers';
 import { readFile, writeFile, unlink } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
@@ -9,14 +9,14 @@ test('public component, stylesheet, new export and Markdown documentation update
   const buttonSource = resolve('packages/ui/src/actions/internal/ButtonBase.tsx');
   const stylesheet = resolve('packages/ui/src/styles/Button.css');
   const index = resolve('packages/ui/src/index.ts');
-  const example = resolve('apps/catalogue/src/examples/text-field/FieldsBesideButtons.tsx');
+  const example = resolve('apps/site/src/examples/text-field/FieldsBesideButtons.tsx');
   const documentation = resolve('docs/components/text-field.md');
   const newComponent = resolve('packages/ui/src/LiveAcceptance.tsx');
   const paths = [buttonSource, stylesheet, index, example, documentation];
   const originals = await Promise.all(paths.map((path) => readFile(path, 'utf8')));
   const version = await readFile('packages/ui/package.json', 'utf8');
   try {
-    await page.goto(`${catalogueUrl}/components/text-field`);
+    await page.goto(`${siteDevUrl}/components/text-field`);
     await page.evaluate(() => {
       (window as unknown as { liveProof: string }).liveProof = 'same-document';
     });
@@ -28,7 +28,7 @@ test('public component, stylesheet, new export and Markdown documentation update
     await projectName.fill('Preserved draft');
     // A Button of the site's own: the page's link to the Docs.
     const docsLink = page
-      .locator('.docs-page-actions')
+      .locator('.site-page-actions')
       .getByRole('link', { name: 'Docs', exact: true });
     await writeFile(
       buttonSource,

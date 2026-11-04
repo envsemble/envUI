@@ -3,7 +3,7 @@ title: RelativeTime
 summary: A moment as text relative to now, such as 3 hours ago, kept current, with the date and time
   in a tooltip.
 status: stable
-since: 0.6.0
+since: 1.0.0
 category: Data display
 aliases:
   - time ago
@@ -26,19 +26,19 @@ components:
   - RelativeTime
   - formatRelativeTime
 examples:
-  DraftSaved: overview
+  DraftSaved:
+    role: overview
+    motion: true
   PastAndComing:
     role: overview
     caption: Past moments read ago, coming ones in.
+    motion: true
   Formats: variants
   VersionLabels: example
   RelativeTimeAnatomy: anatomy
   ExactDateNearby:
     role: do
     caption: Show the date where it matters, with the relative time beside it.
-  DateOnlyInTooltip:
-    role: dont
-    caption: 'The date only in the tooltip: keyboards and screen readers never reach it.'
 ---
 
 # RelativeTime
@@ -92,10 +92,6 @@ The words around a relative time say what happened, and the exact date shows whe
 
 ```
 
-```tsx figure=DateOnlyInTooltip
-
-```
-
 ## Accessibility
 
 ### Keyboard
@@ -128,7 +124,7 @@ RelativeTime's `value` is the moment: a Date, milliseconds since 1970 or a date 
 
 #### Formats and languages
 
-`format` is `long`, the default, `short` or `narrow`, in the locale's own wording from `Intl.RelativeTimeFormat`. `locale` sets the language as a BCP 47 tag, such as `de` for vor 3 Stunden, or a list of them; without it, EnvUIProvider's `locale`, else the browser's. `nowLabel` is the text for a moment less than 45 seconds away, by default just now, or now for a coming one, which EnvUIProvider's `messages.relativeTime.now` can set.
+`format` is `long`, the default, `short` or `narrow`, in the locale's own wording from `Intl.RelativeTimeFormat`. `locale` sets the language as a BCP 47 tag, such as `de` for vor 3 Stunden, or a list of them; without it, EnvUIProvider's `locale`, else the browser's. `nowLabel` is the text for a moment less than 45 seconds away.
 
 ```tsx
 <RelativeTime value={updatedAt} format="short" locale="de" />
@@ -164,4 +160,3 @@ RelativeTime is a native `<time>`, `env-relative-time`, whose `dateTime` holds t
 ## Changelog
 
 - **1.0.0**: RelativeTime's time, which shows the full date in a tooltip, takes the quiet dotted underline, `env-hover-detail`, that marks text with more on hover. RelativeTime takes EnvUIProvider's `locale` and `messages.relativeTime.now`. `formatRelativeTime` runs in React Server Components; RelativeTime is a client component.
-- **0.6.0**: RelativeTime and `formatRelativeTime`, with `format`, `locale`, `nowLabel`, `now` and `tooltip`, kept current by one shared clock.

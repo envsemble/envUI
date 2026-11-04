@@ -15,6 +15,7 @@ aliases:
   - skeleton
   - skeleton screen
   - shimmer
+  - pulse
 useWhen:
   - A page, a region or a result that takes a noticeable while
   - Work with a measurable end, such as an upload
@@ -26,8 +27,8 @@ avoidWhen:
 composes:
   - Scaffold
   - TopBar
-  - Rail
-  - Drawer
+  - NavigationRail
+  - NavigationDrawer
   - Page
   - PageHeader
   - Card
@@ -44,7 +45,9 @@ composes:
   - Text
   - Avatar
 examples:
-  CardsLoading: overview
+  CardsLoading:
+    role: overview
+    motion: true
   SkeletonList: example
   SearchResultsLoading: example
   PendingButton: example
@@ -76,7 +79,7 @@ Where the shape is known, the page renders its own components as skeletons over 
 - Placeholder items give the components stand-ins to render.
 - Text that hasn't arrived shows as a bar the length of its text style.
 
-```tsx figure=SkeletonList
+```tsx figure=SkeletonList motion
 
 ```
 
@@ -92,7 +95,7 @@ A [Spinner](../components/spinner.md) says what is loading beside it.
 
 The [button](../components/button.md) that saves shows the work in progress.
 
-```tsx figure=PendingButton
+```tsx figure=PendingButton motion
 
 ```
 
@@ -100,7 +103,7 @@ The [button](../components/button.md) that saves shows the work in progress.
 
 [Progress](../components/progress.md) measures each file.
 
-```tsx figure=UploadProgress
+```tsx figure=UploadProgress motion
 
 ```
 
@@ -108,7 +111,7 @@ The [button](../components/button.md) that saves shows the work in progress.
 
 The [top bar](../components/top-bar.md)'s progress bar shows the next page is on its way.
 
-```tsx figure=PageProgress stage="shaded"
+```tsx figure=PageProgress stage="shaded" motion
 
 ```
 
@@ -119,7 +122,7 @@ The [top bar](../components/top-bar.md)'s progress bar shows the next page is on
 ```
 
 1. **Busy root** (`env-card`)
-2. **Title bar** (`env-card-heading`)
+2. **Title bar** (`env-card-title`)
 3. **Meta bar** (`env-card-meta`)
 4. **Description bars** (`env-card-description`)
 5. **Action shape** (`env-card-footer`)
@@ -132,12 +135,15 @@ Not shown: the inert content inside the root, which has no box of its own.
 
 Show the skeleton only once a load takes a noticeable moment, so quick loads never flash it.
 
-### Highlight
+<!-- specimen: WhenItShows -->
 
-A soft highlight sweeps across every bar and shape, in step across the page.
+### Pulse
 
-- It sweeps more faintly across the skeleton's own surfaces, such as a card or a row.
-- It keeps still for people who ask for reduced motion.
+Every bar and shape breathes between a stronger and a fainter tone, in step across the page.
+
+- The skeleton's own surfaces, such as a card or a row, pulse with them, more faintly.
+- For people who ask for reduced motion it breathes slower and shallower: only the tone changes.
+- In forced colors the bars stand still in the system's gray.
 
 ## Rules
 
@@ -156,19 +162,19 @@ Show what is coming in its place and shape where you can, and say only that some
 | A progress bar           | Work whose end can be measured, such as an upload.      |
 | The top bar's progress   | A whole page on its way.                                |
 
-```tsx figure=SkeletonInPlace
+```tsx figure=SkeletonInPlace motion
 
 ```
 
-```tsx figure=SpinnerInPlace
+```tsx figure=SpinnerInPlace motion
 
 ```
 
-```tsx figure=RefreshInPlace
+```tsx figure=RefreshInPlace motion
 
 ```
 
-```tsx figure=SkeletonOnRefresh
+```tsx figure=SkeletonOnRefresh motion
 
 ```
 

@@ -3,17 +3,18 @@
 // @client-module It provides the link context, which React reads only in client modules.
 
 import type { ComponentType, ReactNode } from 'react';
-import { LinkComponentContext, type LinkComponentProps } from '../internal/LinkContext.js';
+import { LinkComponentContext, type LinkComponentProps } from '../internal/LinkComponentContext.js';
 
 export type { LinkComponentProps };
 
 export interface LinkProviderProps {
   /**
-   * Renders every envUI destination (Button, Link, the destinations of Bar, Rail and Drawer, Card,
+   * Renders every envUI destination (Button, Link, the destinations of NavigationBar, NavigationRail and NavigationDrawer, Card,
    * Pager links and menu links with href). It must render an anchor and forward native props and
    * ref, for example a router's link that navigates on the client.
    */
   component: ComponentType<LinkComponentProps>;
+  /** The application, or the part of it whose destinations use the link component. */
   children: ReactNode;
 }
 

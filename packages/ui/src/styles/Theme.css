@@ -3,6 +3,8 @@
 .env-theme {
   min-inline-size: 0;
   overflow-wrap: anywhere;
+  /* Standard contrast until a rule below says otherwise (see the switch at the end). */
+  --env-theme-high-contrast: initial;
 }
 /* The outermost theme boundary is the env-window container, on which the window classes are
    measured: a themed document root, the Theme around an application, or the portal of a popup or a
@@ -29,15 +31,15 @@ html.env-theme > body {
   font: var(--env-type-body);
   /* A unitless line height, so content in another font size keeps lines in proportion to it; set
      --env-line-height-body to change it. */
-  line-height: var(--env-line-height-body, 1.4);
+  line-height: var(--env-line-height-body);
 }
 .env-theme h1 {
   margin: 0;
-  font: var(--env-type-h1);
+  font: var(--env-type-headline);
 }
 .env-theme :is(h2, h3, h4, h5, h6) {
   margin: 0;
-  font: var(--env-type-h2);
+  font: var(--env-type-title);
 }
 .env-theme p {
   margin: 0;
@@ -45,4 +47,27 @@ html.env-theme > body {
 }
 .env-theme a {
   color: inherit;
+}
+/* A switch for the high-contrast looks of components, set by each boundary as the tokens' contrast
+   is: empty under high contrast, and invalid otherwise, so a custom property that starts with it,
+   such as Alert's --env-alert-high-contrast-fill, holds its high-contrast value or nothing, and the
+   standard look applies. Every boundary sets it again, standard in its first rule, so the nearest
+   one decides. */
+.env-theme[data-env-contrast='high'] {
+  --env-theme-high-contrast: ;
+}
+@media (prefers-contrast: more) {
+  .env-theme:not([data-env-contrast='standard']) {
+    --env-theme-high-contrast: ;
+  }
+}
+/* While a ThemePreferenceProvider switches the page's theme or contrast, nothing transitions: the
+   new colors show in the frame they change, not eased over the next ones. Important in the first of
+   envUI's layers that sets it, so no component's transition wins. The provider marks the root it
+   themes, so the rule names the themed root, never the document's root as such. */
+.env-theme[data-env-theme-switching],
+.env-theme[data-env-theme-switching] *,
+.env-theme[data-env-theme-switching] ::before,
+.env-theme[data-env-theme-switching] ::after {
+  transition: none !important;
 }

@@ -2,13 +2,18 @@
 
 import { Field as BaseField } from '@base-ui/react/field';
 import { createContext, useContext, type ComponentProps, type ReactNode } from 'react';
-import { Error as ErrorIcon } from '../icons/Error.js';
+import { IconError } from '../icons/Error.js';
 import { classNames } from '../internal/classNames.js';
 import { Grid, Row } from '../foundations/Layout.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 import type { ControlSize } from '../foundations/Theme.js';
+import '../styles/Base.css';
+import '../styles/Field.css';
 
-type ClassName = { className?: string };
+type ClassName = {
+  /** The part's class, beside its own env-field class. */
+  className?: string;
+};
 
 /** Whether Field.Root was given invalid, which shows its error as Base UI's own failures do. */
 const InvalidContext = createContext(false);
@@ -103,7 +108,7 @@ function FieldError({ className, children, match, ...props }: ErrorProps) {
       // The message, the children or the browser's, follows the icon.
       render={({ children: message, ...errorProps }) => (
         <Row align="start" gap={2} {...errorProps}>
-          <ErrorIcon aria-hidden="true" focusable="false" />
+          <IconError aria-hidden="true" focusable="false" />
           <span>{message}</span>
         </Row>
       )}

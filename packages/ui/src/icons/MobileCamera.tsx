@@ -1,11 +1,11 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
-// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
+// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../Icon.js';
+import { useSymbolIconFill } from '../SymbolIconState.js';
 
-export function MobileCamera({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
+export function IconMobileCamera({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
   return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M280-40q-33 0-56.5-23.5T200-120v-720q0-33 23.5-56.5T280-920h400q33 0 56.5 23.5T760-840v80q0 17-11.5 28.5T720-720h-61q-17 0-32 6.5T601-695l-14 15q-61 0-104 38.5T440-540v160q0 58 41 99t99 41h140q17 0 28.5 11.5T760-200v80q0 33-23.5 56.5T680-40H280Zm200-680q17 0 28.5-11.5T520-760q0-17-11.5-28.5T480-800q-17 0-28.5 11.5T440-760q0 17 11.5 28.5T480-720Zm100 400q-25 0-42.5-17.5T520-380v-160q0-25 17.5-42.5T580-600h40l28-28q6-6 13.5-9t15.5-3h46q8 0 15.5 3t13.5 9l28 28h40q25 0 42.5 17.5T880-540v160q0 25-17.5 42.5T820-320H580Zm120-70q29 0 49.5-20.5T770-460q0-29-20.5-49.5T700-530q-29 0-49.5 20.5T630-460q0 29 20.5 49.5T700-390Z" /> : <path d="M280-240v120-720 600Zm200-480q17 0 28.5-11.5T520-760q0-17-11.5-28.5T480-800q-17 0-28.5 11.5T440-760q0 17 11.5 28.5T480-720ZM280-40q-33 0-56.5-23.5T200-120v-720q0-33 23.5-56.5T280-920h400q33 0 56.5 23.5T760-840v80q0 17-11.5 28.5T720-720q-17 0-28.5-11.5T680-760v-80H280v720h400v-80q0-17 11.5-28.5T720-240q17 0 28.5 11.5T760-200v80q0 33-23.5 56.5T680-40H280Zm300-280q-25 0-42.5-17.5T520-380v-160q0-25 17.5-42.5T580-600h40l28-28q6-6 13.5-9t15.5-3h46q8 0 15.5 3t13.5 9l28 28h40q25 0 42.5 17.5T880-540v160q0 25-17.5 42.5T820-320H580Zm120-70q29 0 49.5-20.5T770-460q0-29-20.5-49.5T700-530q-29 0-49.5 20.5T630-460q0 29 20.5 49.5T700-390Z" />}</Icon>;
 }

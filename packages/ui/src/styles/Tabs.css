@@ -1,232 +1,237 @@
-/* Tabs switch panels, after Material's: text tabs on no fill of their own, with an indicator under
-   the selected one, whatever the buttons' variants. A segmented control, which picks a value,
-   looks different on purpose. */
-/* Color properties: the tabs' colors, which an application sets on one Tabs through style or its
-   own CSS: container the rail, transparent by default, content the labels of the tabs not
-   selected, selected-content the selected tab's label and indicator its indicator. They don't
-   inherit; Tabs passes them on to its rail and tabs. */
-@property --env-tabs-container {
-  syntax: '*';
-  inherits: false;
-}
-@property --env-tabs-content {
-  syntax: '*';
-  inherits: false;
-}
-@property --env-tabs-selected-content {
-  syntax: '*';
-  inherits: false;
-}
-@property --env-tabs-indicator {
-  syntax: '*';
-  inherits: false;
-}
-.env-tabs {
-  /* The indicator's thickness and the rounding of its ends, three hairlines. */
-  --env-tabs-indicator-size: calc(3 * var(--env-control-border-width));
-  --env-tabs-rail-color: var(--env-tabs-container, transparent);
-  --env-tabs-label-color: var(--env-tabs-content, var(--env-color-fg-muted));
-  --env-tabs-selected-color: var(--env-tabs-selected-content, var(--env-color-fg-accent));
-  --env-tabs-indicator-color: var(--env-tabs-indicator, var(--env-color-border-accent-emphasis));
-  /* Valid only while the application sets the container or the content (see Button.css). */
-  --env-tabs-custom: var(--env-tabs-container, var(--env-tabs-content));
-}
+@layer env.components {
+  /* Tabs switch panels, after Material's: text tabs on no fill of their own, with an indicator under
+     the selected one, whatever the buttons' variants. A segmented control, which picks a value,
+     looks different on purpose. */
+  /* Color properties: the tabs' colors, which an application sets on one Tabs through style or its
+     own CSS: container the rail, transparent by default, content the labels of the tabs not
+     selected, selected-content the selected tab's label and indicator its indicator. They don't
+     inherit; Tabs passes them on to its rail and tabs. */
+  @property --env-tabs-container {
+    syntax: '*';
+    inherits: false;
+  }
+  @property --env-tabs-content {
+    syntax: '*';
+    inherits: false;
+  }
+  @property --env-tabs-selected-content {
+    syntax: '*';
+    inherits: false;
+  }
+  @property --env-tabs-indicator {
+    syntax: '*';
+    inherits: false;
+  }
+  .env-tabs {
+    /* The indicator's thickness and the rounding of its ends, three hairlines. */
+    --env-tabs-indicator-size: calc(3 * var(--env-control-border-width));
+    --env-tabs-rail-color: var(--env-tabs-container, transparent);
+    --env-tabs-label-color: var(--env-tabs-content, var(--env-color-fg-muted));
+    --env-tabs-selected-color: var(--env-tabs-selected-content, var(--env-color-fg-primary));
+    --env-tabs-indicator-color: var(--env-tabs-indicator, var(--env-color-border-primary-emphasis));
+    /* Valid only while the application sets the container or the content (see Button.css). */
+    --env-tabs-custom: var(--env-tabs-container, var(--env-tabs-content));
+  }
 
-/* The whole rail is as tall as a control of its size, and its tabs fill it. */
-.env-tabs-list {
-  --env-tabs-rail: var(--env-control-height-lg);
-  /* The height the rail draws at: its size's, or the touch height under a coarse pointer. */
-  --env-tabs-height: var(--env-tabs-rail);
-  --env-tabs-inset: 0rem;
-  --env-control-height: var(--env-tabs-height);
-  inline-size: fit-content;
-  max-inline-size: 100%;
-  /* Inset focus rings remain visible when a long list needs scrolling. */
-  overflow: auto;
-  scrollbar-width: thin;
-}
-/* The rail has no fill of its own: the tabs sit on what the Tabs sit on. */
-.env-tabs-list.env-surface {
-  --env-surface-color: var(--env-tabs-rail-color, transparent);
-  --env-surface-padding: var(--env-tabs-inset);
-  --env-surface-radius: 0rem;
-}
-/* Under a coarse pointer the rail grows to the touch height, like every control of its row, and
-   each tab's hit area covers the rail's padding above and below it, so it is as tall as the rail and
-   nothing reaches out of the rail, which scrolls, and it is at least as wide. A vertical rail's tabs
-   grow themselves instead. */
-@media (pointer: coarse) {
+  /* The whole rail is as tall as a control of its size, and its tabs fill it. */
   .env-tabs-list {
-    --env-tabs-height: max(var(--env-tabs-rail), var(--env-control-height-touch));
-  }
-  .env-tabs-list:not([data-orientation='vertical']) {
-    --env-touch-height: 0rem;
-  }
-  .env-tabs-list:not([data-orientation='vertical']) > .env-tabs-tab {
+    --env-tabs-rail: var(--env-control-height-lg);
+    /* The height the rail draws at: its size's, or the touch height under a coarse pointer. */
+    --env-tabs-height: var(--env-tabs-rail);
+    --env-tabs-inset: 0rem;
+    --env-control-height: var(--env-tabs-height);
+    inline-size: fit-content;
+    max-inline-size: 100%;
+    /* Inset focus rings remain visible when a long list needs scrolling. */
+    overflow: auto;
+    scrollbar-width: thin;
+    /* The tabs' offset parent, so the rail, which scrolls the selected tab into view, measures it
+       from its own start rather than from a positioned ancestor's, and starts with it in view. */
     position: relative;
-    min-inline-size: var(--env-control-height-touch);
   }
-  .env-tabs-list:not([data-orientation='vertical']) > .env-tabs-tab::before {
-    content: '';
-    position: absolute;
-    inset-block: calc(-1 * var(--env-tabs-inset));
-    inset-inline: 0;
+  /* The rail has no fill of its own: the tabs sit on what the Tabs sit on. */
+  .env-tabs-list.env-surface {
+    --env-surface-color: var(--env-tabs-rail-color, transparent);
+    --env-surface-padding: var(--env-tabs-inset);
+    --env-surface-radius: 0rem;
   }
-}
-.env-tabs-list[data-size='sm'] {
-  --env-tabs-rail: var(--env-control-height-sm);
-}
-.env-tabs-list[data-size='md'] {
-  --env-tabs-rail: var(--env-control-height-md);
-}
-.env-tabs-list[data-size='sm'] > .env-tabs-tab {
-  padding-block: 0;
-}
-.env-tabs-list > .env-tabs-tab {
-  position: relative;
-  flex-shrink: 0;
-  border-radius: var(--env-radius-sm);
-  white-space: normal;
-  overflow-wrap: anywhere;
-  transition:
-    background-color var(--env-motion-duration-medium) var(--env-motion-ease),
-    color var(--env-motion-duration-medium) var(--env-motion-ease);
-}
-/* Every tab is a text tab, whatever its button's variant: no fill or edge of its own, its label
-   muted. Under the pointer and pressed a state layer shows; with the application's colors, the
-   layer is their label's, a quarter stronger than Button's, as a muted label is lighter than the
-   text color. The states are named so these rules outweigh the button's own. */
-.env-tabs-list > .env-tabs-tab,
-.env-tabs-list
-  > .env-tabs-tab:is(:hover, :active, :focus-visible):not(:disabled):not([aria-disabled='true']) {
-  /* Valid only in a state while the application sets the tabs' colors (see Button.css). */
-  --env-tabs-tab-custom-fill: color-mix(
-    in srgb,
-    var(--env-tabs-custom) 0%,
-    color-mix(in srgb, transparent, currentColor calc(var(--env-button-layer) * 1.25))
-  );
-  border-color: transparent;
-  background: transparent;
-  box-shadow: none;
-  color: var(--env-tabs-label-color, var(--env-color-fg-muted));
-}
-.env-tabs-list > .env-tabs-tab:hover:not(:disabled):not([aria-disabled='true']) {
-  background: var(--env-tabs-tab-custom-fill, var(--env-color-bg-neutral-subtle-hover));
-}
-.env-tabs-list > .env-tabs-tab:active:not(:disabled):not([aria-disabled='true']) {
-  --env-button-layer: calc(var(--env-state-pressed-opacity) * 100%);
-  background: var(--env-tabs-tab-custom-fill, var(--env-color-bg-neutral-subtle-pressed));
-}
-/* The selected tab: its label in the accent's text color, with the indicator under it. */
-.env-tabs-list > .env-tabs-tab[data-active],
-.env-tabs-list
-  > .env-tabs-tab[data-active]:is(:hover, :active, :focus-visible):not(:disabled):not(
-    [aria-disabled='true']
-  ) {
-  color: var(--env-tabs-selected-color, var(--env-color-fg-accent));
-}
-.env-tabs-list > .env-tabs-tab[data-active]::after {
-  content: '';
-  position: absolute;
-  inset-inline: var(--env-space-2);
-  inset-block-end: 0;
-  block-size: var(--env-tabs-indicator-size);
-  border-start-start-radius: var(--env-tabs-indicator-size);
-  border-start-end-radius: var(--env-tabs-indicator-size);
-  background: var(--env-tabs-indicator-color, var(--env-color-border-accent-emphasis));
-  pointer-events: none;
-}
-/* A vertical rail's indicator stands at the start of the selected tab. */
-.env-tabs-list[data-orientation='vertical'] > .env-tabs-tab {
-  justify-content: flex-start;
-  text-align: start;
-}
-.env-tabs-list[data-orientation='vertical'] > .env-tabs-tab[data-active]::after {
-  inset-block: var(--env-space-2);
-  inset-inline: 0 auto;
-  inline-size: var(--env-tabs-indicator-size);
-  block-size: auto;
-  border-radius: 0;
-  border-start-end-radius: var(--env-tabs-indicator-size);
-  border-end-end-radius: var(--env-tabs-indicator-size);
-}
-.env-tabs-list > .env-tabs-tab:focus-visible {
-  outline: 2px solid var(--env-color-border-focus);
-  outline-offset: -2px;
-}
-.env-tabs-panels {
-  position: relative;
-}
-/* Filling Tabs give the selected panel the height left below the list. */
-.env-tabs[data-fill] {
-  min-block-size: 0;
-}
-.env-tabs[data-fill] > .env-tabs-panels {
-  flex: 1;
-  min-block-size: 0;
-  grid-template-rows: minmax(0, 1fr);
-}
-/* Only the Tabs' own shown panels become columns: hidden panels, which keepMounted leaves in place,
-   stay hidden, and Tabs nested in a panel keep their layout. :where() keeps the rule's specificity. */
-.env-tabs[data-fill] > .env-tabs-panels > :where(.env-tabs-panel:not([hidden])) {
-  display: flex;
-  flex-direction: column;
-  min-block-size: 0;
-}
-.env-tabs-panel {
-  grid-area: 1 / 1;
-  min-inline-size: 0;
-  opacity: 1;
-  transition:
-    opacity var(--env-motion-duration-medium) var(--env-motion-ease),
-    transform var(--env-motion-duration-medium) var(--env-motion-ease);
-}
-.env-tabs-panel[hidden] {
-  display: none;
-}
-.env-tabs-panel[data-starting-style] {
-  opacity: 0;
-  transform: translateY(var(--env-space-1));
-}
-/* The outgoing panel fades out of flow, so content after the tabs settles when the tab changes
-   instead of jumping when the fade ends. */
-.env-tabs-panel[data-ending-style] {
-  position: absolute;
-  inset-inline: 0;
-  inset-block-start: 0;
-  opacity: 0;
-  transform: translateY(calc(-1 * var(--env-space-1)));
-  pointer-events: none;
-}
-.env-tabs-panel:focus-visible {
-  outline: 0.125rem solid var(--env-color-border-focus);
-  outline-offset: 0.125rem;
-}
-@media (prefers-reduced-motion: reduce) {
+  /* Under a coarse pointer the rail grows to the touch height, like every control of its row, and
+     each tab's hit area covers the rail's padding above and below it, so it is as tall as the rail and
+     nothing reaches out of the rail, which scrolls, and it is at least as wide. A vertical rail's tabs
+     grow themselves instead. */
+  @media (pointer: coarse) {
+    .env-tabs-list {
+      --env-tabs-height: max(var(--env-tabs-rail), var(--env-control-height-touch));
+    }
+    .env-tabs-list:not([data-orientation='vertical']) {
+      --env-button-touch-height: 0rem;
+    }
+    .env-tabs-list:not([data-orientation='vertical']) > .env-tabs-tab {
+      position: relative;
+      min-inline-size: var(--env-control-height-touch);
+    }
+    .env-tabs-list:not([data-orientation='vertical']) > .env-tabs-tab::before {
+      content: '';
+      position: absolute;
+      inset-block: calc(-1 * var(--env-tabs-inset));
+      inset-inline: 0;
+    }
+  }
+  .env-tabs-list[data-size='sm'] {
+    --env-tabs-rail: var(--env-control-height-sm);
+  }
+  .env-tabs-list[data-size='md'] {
+    --env-tabs-rail: var(--env-control-height-md);
+  }
+  .env-tabs-list[data-size='sm'] > .env-tabs-tab {
+    padding-block: 0;
+  }
+  .env-tabs-list > .env-tabs-tab {
+    position: relative;
+    flex-shrink: 0;
+    border-radius: var(--env-radius-sm);
+    white-space: normal;
+    overflow-wrap: anywhere;
+    transition:
+      background-color var(--env-motion-duration-medium) var(--env-motion-ease),
+      color var(--env-motion-duration-medium) var(--env-motion-ease);
+  }
+  /* Every tab is a text tab, whatever its button's variant: no fill or edge of its own, its label
+     muted. Under the pointer and pressed a state layer shows; with the application's colors, the
+     layer is their label's, a quarter stronger than Button's, as a muted label is lighter than the
+     text color. The states are named so these rules outweigh the button's own. */
   .env-tabs-list > .env-tabs-tab,
-  .env-tabs-panel {
-    transition: none;
+  .env-tabs-list
+    > .env-tabs-tab:is(:hover, :active, :focus-visible):not(:disabled):not([aria-disabled='true']) {
+    /* Valid only in a state while the application sets the tabs' colors (see Button.css). */
+    --env-tabs-tab-custom-fill: color-mix(
+      in srgb,
+      var(--env-tabs-custom) 0%,
+      color-mix(in srgb, transparent, currentColor calc(var(--env-button-layer) * 1.25))
+    );
+    border-color: transparent;
+    background: transparent;
+    box-shadow: none;
+    color: var(--env-tabs-label-color, var(--env-color-fg-muted));
   }
-  .env-tabs-panel:is([data-starting-style], [data-ending-style]) {
-    transform: none;
+  .env-tabs-list > .env-tabs-tab:hover:not(:disabled):not([aria-disabled='true']) {
+    background: var(--env-tabs-tab-custom-fill, var(--env-color-bg-neutral-subtle-hover));
   }
-}
-
-/* Forced colors: the system paints no fills, so the selected tab's label and indicator take the
-   system's selection color. */
-@media (forced-colors: active) {
-  .env-tabs-list > .env-tabs-tab[data-active] {
-    forced-color-adjust: none;
-    color: Highlight;
+  .env-tabs-list > .env-tabs-tab:active:not(:disabled):not([aria-disabled='true']) {
+    --env-button-layer: calc(var(--env-state-pressed-opacity) * 100%);
+    background: var(--env-tabs-tab-custom-fill, var(--env-color-bg-neutral-subtle-pressed));
   }
-  .env-tabs-list > .env-tabs-tab[data-active] :where(*) {
-    color: inherit;
+  /* The selected tab: its label in the accent's text color, with the indicator under it. */
+  .env-tabs-list > .env-tabs-tab[data-active],
+  .env-tabs-list
+    > .env-tabs-tab[data-active]:is(:hover, :active, :focus-visible):not(:disabled):not(
+      [aria-disabled='true']
+    ) {
+    color: var(--env-tabs-selected-color, var(--env-color-fg-primary));
   }
   .env-tabs-list > .env-tabs-tab[data-active]::after {
-    forced-color-adjust: none;
-    background: Highlight;
+    content: '';
+    position: absolute;
+    inset-inline: var(--env-space-2);
+    inset-block-end: 0;
+    block-size: var(--env-tabs-indicator-size);
+    border-start-start-radius: var(--env-tabs-indicator-size);
+    border-start-end-radius: var(--env-tabs-indicator-size);
+    background: var(--env-tabs-indicator-color, var(--env-color-border-primary-emphasis));
+    pointer-events: none;
   }
-  .env-tabs-list > .env-tabs-tab[data-active]:focus-visible {
-    outline-color: CanvasText;
+  /* A vertical rail's indicator stands at the start of the selected tab. */
+  .env-tabs-list[data-orientation='vertical'] > .env-tabs-tab {
+    justify-content: flex-start;
+    text-align: start;
+  }
+  .env-tabs-list[data-orientation='vertical'] > .env-tabs-tab[data-active]::after {
+    inset-block: var(--env-space-2);
+    inset-inline: 0 auto;
+    inline-size: var(--env-tabs-indicator-size);
+    block-size: auto;
+    border-radius: 0;
+    border-start-end-radius: var(--env-tabs-indicator-size);
+    border-end-end-radius: var(--env-tabs-indicator-size);
+  }
+  .env-tabs-list > .env-tabs-tab:focus-visible {
+    outline: 2px solid var(--env-color-border-focus);
+    outline-offset: -2px;
+  }
+  .env-tabs-panels {
+    position: relative;
+  }
+  /* Filling Tabs give the selected panel the height left below the list. */
+  .env-tabs[data-fill] {
+    min-block-size: 0;
+  }
+  .env-tabs[data-fill] > .env-tabs-panels {
+    flex: 1;
+    min-block-size: 0;
+    grid-template-rows: minmax(0, 1fr);
+  }
+  /* Only the Tabs' own shown panels become columns: hidden panels, which keepMounted leaves in place,
+     stay hidden, and Tabs nested in a panel keep their layout. :where() keeps the rule's specificity. */
+  .env-tabs[data-fill] > .env-tabs-panels > :where(.env-tabs-panel:not([hidden])) {
+    display: flex;
+    flex-direction: column;
+    min-block-size: 0;
+  }
+  .env-tabs-panel {
+    grid-area: 1 / 1;
+    min-inline-size: 0;
+    opacity: 1;
+    transition:
+      opacity var(--env-motion-duration-medium) var(--env-motion-ease),
+      transform var(--env-motion-duration-medium) var(--env-motion-ease);
+  }
+  .env-tabs-panel[hidden] {
+    display: none;
+  }
+  .env-tabs-panel[data-starting-style] {
+    opacity: 0;
+    transform: translateY(var(--env-space-1));
+  }
+  /* The outgoing panel fades out of flow, so content after the tabs settles when the tab changes
+     instead of jumping when the fade ends. */
+  .env-tabs-panel[data-ending-style] {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-start: 0;
+    opacity: 0;
+    transform: translateY(calc(-1 * var(--env-space-1)));
+    pointer-events: none;
+  }
+  .env-tabs-panel:focus-visible {
+    outline: 0.125rem solid var(--env-color-border-focus);
+    outline-offset: 0.125rem;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .env-tabs-list > .env-tabs-tab,
+    .env-tabs-panel {
+      transition: none;
+    }
+    .env-tabs-panel:is([data-starting-style], [data-ending-style]) {
+      transform: none;
+    }
+  }
+
+  /* Forced colors: the system paints no fills, so the selected tab's label and indicator take the
+     system's selection color. */
+  @media (forced-colors: active) {
+    .env-tabs-list > .env-tabs-tab[data-active] {
+      forced-color-adjust: none;
+      color: Highlight;
+    }
+    .env-tabs-list > .env-tabs-tab[data-active] :where(*) {
+      color: inherit;
+    }
+    .env-tabs-list > .env-tabs-tab[data-active]::after {
+      forced-color-adjust: none;
+      background: Highlight;
+    }
+    .env-tabs-list > .env-tabs-tab[data-active]:focus-visible {
+      outline-color: CanvasText;
+    }
   }
 }

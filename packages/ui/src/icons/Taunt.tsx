@@ -1,7 +1,7 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
-// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
+// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
+import { Icon, type SymbolIconProps } from '../Icon.js';
 
-export function Taunt({ filled: _filled = false, ...props }: MaterialSymbolProps) {
+export function IconTaunt({ filled: _filled = false, ...props }: SymbolIconProps) {
   return <Icon viewBox="0 -960 960 960" {...props}><path d="M218-381q-24 13-51 5.5T126-406q-17-29-6-60t43-42l305-101q14-5 27.5 1.5T518-584q8 14 2.5 29.5T501-531L218-381Zm102 261q-33 0-56.5-23.5T240-200v-147l315-166q14-8 19-23.5t-2-29.5l193-96q15-8 30.5-1.5T821-637q7 13 3.5 27T810-588L560-400v200q0 33-23.5 56.5T480-120H320Zm-20-440q-58 0-99-41t-41-99q0-58 41-99t99-41q58 0 99 41t41 99q0 58-41 99t-99 41Z" /></Icon>;
 }

@@ -7,9 +7,11 @@ import { topBar } from '../foundations/messages/topBar.js';
 import { classNames } from '../internal/classNames.js';
 import { ControlDefaults } from '../internal/ControlDefaults.js';
 import { useMessages } from '../internal/EnvUIContext.js';
-import { inSkeleton } from '../foundations/inSkeleton.js';
+import { inSkeleton } from '../foundations/internal/inSkeleton.js';
 import { skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import { backgroundAttribute, type NavigationBackground } from './internal/background.js';
+import '../styles/Base.css';
+import '../styles/TopBar.css';
 
 export interface TopBarProps
   extends Omit<ComponentPropsWithRef<'div'>, 'title' | 'children'>,
@@ -47,7 +49,7 @@ export interface TopBarProps
    * The bar's background, named as Surface's and Card's: default, the navigation's background,
    * the default surface color, as a plain rectangle; page, the page's background, so it sits on the
    * page. On a surface, such as a Sheet, both take the surface's color. Set it on its own, such as
-   * a TopBar with page over a Drawer with its background.
+   * a TopBar with page over a NavigationDrawer with its background.
    * @default 'default'
    */
   background?: NavigationBackground;
@@ -55,7 +57,7 @@ export interface TopBarProps
   loading?: boolean;
   /**
    * The progress bar's name.
-   * @default 'Loading page', or EnvUIProvider's messages.topBar.loadingPage
+   * @default 'Loading page', or EnvUIProvider's messages.topBar.loading
    */
   loadingLabel?: string;
   /**
@@ -128,7 +130,7 @@ export function TopBar({
       )}
       <LoadingBar
         active={loading}
-        label={loadingLabel ?? messages.loadingPage}
+        label={loadingLabel ?? messages.loading}
         contained
         className="env-top-bar-loading-bar"
       />

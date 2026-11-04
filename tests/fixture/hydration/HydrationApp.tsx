@@ -6,7 +6,7 @@ import {
   Select,
   Dialog,
   Button,
-  Toast,
+  ToastProvider,
   useToast,
   Badge,
   Breadcrumbs,
@@ -18,7 +18,7 @@ import {
   Tree,
   Menubar,
   Panes,
-  readPanesSize,
+  readPanesWidth,
   TopBar,
   Menu,
   Table,
@@ -41,7 +41,7 @@ import {
 import { ColorPicker } from '@envsemble/envui/color';
 
 const treeItems = Array.from({ length: 40 }, (_, index) => ({
-  id: `doc-${index}`,
+  value: `doc-${index}`,
   depth: 0,
   label: `Hydrated document ${index}`,
 }));
@@ -83,7 +83,7 @@ export function HydrationApp() {
   const [page, setPage] = useState(1);
   return (
     <Theme theme="dark">
-      <Toast.Provider>
+      <ToastProvider>
         <TopBar
           titleBar
           title="Hydrated title"
@@ -178,8 +178,8 @@ export function HydrationApp() {
         <DocumentTabs
           aria-label="Hydrated tabs"
           items={[
-            { id: 'one', label: 'One.md' },
-            { id: 'two', label: 'Two.md' },
+            { value: 'one', label: 'One.md' },
+            { value: 'two', label: 'Two.md' },
           ]}
           value={tab}
           onValueChange={setTab}
@@ -191,7 +191,7 @@ export function HydrationApp() {
             aria-label="Hydrated tree"
             items={treeItems}
             value={selected}
-            onAction={(item) => setSelected(item.id)}
+            onAction={(item) => setSelected(item.value)}
             onExpandedChange={() => undefined}
           />
         </div>
@@ -233,11 +233,11 @@ export function HydrationApp() {
           aria-label="Hydrated composer"
           value={draft}
           onValueChange={setDraft}
-          onSubmit={(value) => {
+          onSend={(value) => {
             setMessage(value);
             setDraft('');
           }}
-          footer="Hydrated composer footer"
+          description="Hydrated composer footer"
         />
         <Panes.Root behavior="supporting" splitAt="medium">
           <Panes.Main label="Hydrated main">Hydrated main pane</Panes.Main>
@@ -250,7 +250,10 @@ export function HydrationApp() {
           behavior="supporting"
           splitAt="medium"
           persist="hydrated-kept-panes"
-          persistedSize={readPanesSize('theme=dark; hydrated-kept-panes=30', 'hydrated-kept-panes')}
+          persistedWidth={readPanesWidth(
+            'theme=dark; hydrated-kept-panes=30',
+            'hydrated-kept-panes',
+          )}
         >
           <Panes.Main label="Hydrated kept main">Kept main pane</Panes.Main>
           <Panes.Divider label="Hydrated kept split" />
@@ -282,7 +285,7 @@ export function HydrationApp() {
           size="sm"
           label="Hydrated files"
           description="Any file"
-          onDropAccepted={(chosen) => setFiles(chosen.map((file) => file.name).join(' '))}
+          onFilesAccepted={(chosen) => setFiles(chosen.map((file) => file.name).join(' '))}
         />
         <p>{files}</p>
         <CalendarHeatmap
@@ -321,7 +324,7 @@ export function HydrationApp() {
           onPageChange={setPage}
         />
         <output>{name}</output>
-      </Toast.Provider>
+      </ToastProvider>
     </Theme>
   );
 }

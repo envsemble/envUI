@@ -2,16 +2,19 @@ import { useEffect, useState } from 'react';
 import {
   Button,
   Combobox,
+  ContextMenu,
   Dialog,
   IconButton,
   Menu,
+  Menubar,
+  Panes,
   PortalContainer,
   Theme,
-  Toast,
+  ToastProvider,
   Tooltip,
   useToast,
 } from '@envsemble/envui';
-import { Refresh } from '@envsemble/envui/icons/Refresh';
+import { IconRefresh } from '@envsemble/envui/icons/Refresh';
 
 /** A toast shown as the preview mounts, kept until it is dismissed. */
 function SavedNotice() {
@@ -23,16 +26,31 @@ function SavedNotice() {
   return null;
 }
 
+/** A button that raises a short notice, which stays while the pointer rests on it. */
+function NotifyButton() {
+  const toast = useToast();
+  return (
+    <Button onClick={() => toast.show({ message: 'Invitation sent.', duration: 1200 })}>
+      Notify
+    </Button>
+  );
+}
+
 /**
  * Preview regions of a page, not inert, whose overlays render into a layer of each through a
  * contained PortalContainer, open as the page loads: a menu, a tooltip and a toast in one, a dialog
- * in another, a combobox's list in the third. The page is taller than the window, so its scroll can
- * be checked.
+ * in another, a combobox's list in the third; a fourth holds a context menu, opened by right click,
+ * a fifth a menubar, and a sixth supporting Panes too narrow for two panes, open as a sheet.
+ * The page is taller than the window, so its scroll can be checked.
  */
 export function PortalContainersFixture() {
   const [layer, setLayer] = useState<HTMLDivElement | null>(null);
   const [dialogLayer, setDialogLayer] = useState<HTMLDivElement | null>(null);
   const [comboboxLayer, setComboboxLayer] = useState<HTMLDivElement | null>(null);
+  const [contextLayer, setContextLayer] = useState<HTMLDivElement | null>(null);
+  const [menubarLayer, setMenubarLayer] = useState<HTMLDivElement | null>(null);
+  const [panesLayer, setPanesLayer] = useState<HTMLDivElement | null>(null);
+  const [panesOpen, setPanesOpen] = useState(true);
   const region = {
     position: 'relative',
     contain: 'layout',
@@ -47,7 +65,7 @@ export function PortalContainersFixture() {
       <Button data-testid="outside">Outside the preview</Button>
       <div data-testid="preview" style={region}>
         <PortalContainer container={layer} contained>
-          <Toast.Provider>
+          <ToastProvider>
             <Menu.Root
               aria-label="Actions"
               defaultOpen
@@ -58,10 +76,11 @@ export function PortalContainersFixture() {
               <Menu.Item>Delete</Menu.Item>
             </Menu.Root>
             <Tooltip content="Refresh members" defaultOpen>
-              <IconButton icon={<Refresh />} aria-label="Refresh members" />
+              <IconButton icon={<IconRefresh />} aria-label="Refresh members" />
             </Tooltip>
             <SavedNotice />
-          </Toast.Provider>
+            <NotifyButton />
+          </ToastProvider>
         </PortalContainer>
         <div ref={setLayer} data-testid="layer" />
       </div>
@@ -83,6 +102,42 @@ export function PortalContainersFixture() {
           />
         </PortalContainer>
         <div ref={setComboboxLayer} data-testid="combobox-layer" />
+      </div>
+      <div data-testid="context-preview" style={region}>
+        <PortalContainer container={contextLayer} contained>
+          <ContextMenu aria-label="Document actions" content={<Menu.Item>Duplicate</Menu.Item>}>
+            <div data-testid="context-region" style={{ blockSize: '8rem' }}>
+              Quarterly report
+            </div>
+          </ContextMenu>
+        </PortalContainer>
+        <div ref={setContextLayer} data-testid="context-layer" />
+      </div>
+      <div data-testid="menubar-preview" style={region}>
+        <PortalContainer container={menubarLayer} contained>
+          <Menubar.Root aria-label="Application menu">
+            <Menubar.Menu label="File">
+              <Menu.Item>New note</Menu.Item>
+            </Menubar.Menu>
+            <Menubar.Menu label="Edit">
+              <Menu.Item>Copy</Menu.Item>
+            </Menubar.Menu>
+          </Menubar.Root>
+        </PortalContainer>
+        <div ref={setMenubarLayer} data-testid="menubar-layer" />
+      </div>
+      <div data-testid="panes-preview" style={{ ...region, inlineSize: '24rem' }}>
+        <PortalContainer container={panesLayer} contained>
+          <Panes.Root behavior="supporting" open={panesOpen} onOpenChange={setPanesOpen}>
+            <Panes.Main label="Document">
+              <Button>In the document</Button>
+            </Panes.Main>
+            <Panes.Supporting label="Details">
+              <Button>Edit details</Button>
+            </Panes.Supporting>
+          </Panes.Root>
+        </PortalContainer>
+        <div ref={setPanesLayer} data-testid="panes-layer" />
       </div>
       {/* Taller than the window, so the page scrolls. */}
       <div style={{ blockSize: '150vh' }} />

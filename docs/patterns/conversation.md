@@ -23,7 +23,7 @@ avoidWhen:
   - text: Comments on one item, read more often than written.
     use: Message
   - text: A short notice that comes and goes, such as Message sent.
-    use: Toast
+    use: ToastProvider
   - text: Several answers given together and submitted once.
     see: forms
 composes:
@@ -96,7 +96,7 @@ Before anything is said, the log's place holds a short question and a few sugges
 - Pressing one sends it as the first message.
 - The composer is there from the start.
 
-```tsx figure=FirstMessage
+```tsx figure=FirstMessage motion
 
 ```
 
@@ -107,11 +107,13 @@ An assistant's reply shows in the log at once and grows as it is written.
 - While it runs, the composer's send button is Stop.
 - Copy waits until the reply is complete.
 
+<!-- specimen: ReplyAsItArrives -->
+
 ### Stopping a reply
 
 Stop keeps what has arrived, marked as stopped, with Try again beside it. People can also simply write their next message.
 
-```tsx figure=StoppedReply
+```tsx figure=StoppedReply motion
 
 ```
 
@@ -122,7 +124,7 @@ The message stays in the log where it was written, marked as not sent, with Try 
 - Nothing people wrote is lost.
 - The composer is free for the next message.
 
-```tsx figure=FailedSend
+```tsx figure=FailedSend motion
 
 ```
 
@@ -133,15 +135,17 @@ While people are at the end of the log, each new line keeps the newest in view.
 - Once they scroll up to read, the log stays where they are.
 - A Latest button takes them back to the end.
 
+<!-- specimen: ScrollingTheLog -->
+
 ## Rules
 
 A conversation shows what happens to a reply in the log itself, where people are reading.
 
-```tsx figure=ReplyAsItArrives
+```tsx figure=ReplyAsItArrives motion
 
 ```
 
-```tsx figure=WholeReplyAtOnce
+```tsx figure=WholeReplyAtOnce motion
 
 ```
 
@@ -227,7 +231,7 @@ async function ask(question: string) {
 <MessageList aria-label="Conversation with the assistant" busy={running}>…</MessageList>
 <Composer
   aria-label="Message the assistant"
-  onSubmit={send}
+  onSend={send}
   running={running}
   onStop={() => request.current?.abort()}
 />

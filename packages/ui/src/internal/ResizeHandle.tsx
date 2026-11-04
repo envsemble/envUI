@@ -4,6 +4,8 @@ import { useEffect, useRef, type ComponentPropsWithRef } from 'react';
 import { classNames } from './classNames.js';
 import { setRef } from './setRef.js';
 import { useResize, type ResizeOptions } from './useResize.js';
+import '../styles/Base.css';
+import '../styles/ResizeHandle.css';
 
 export type ResizeHandleProps = ResizeOptions &
   Omit<ComponentPropsWithRef<'div'>, 'onChange' | 'children'> & {
@@ -11,7 +13,7 @@ export type ResizeHandleProps = ResizeOptions &
     label: string;
     /**
      * Shows a grip, three dots at its middle, in place of the line: for a handle between two
-     * surfaces or on a surface's edge, as Panes.Divider, a side Sheet's and the Drawer's.
+     * surfaces or on a surface's edge, as Panes.Divider, a side Sheet's and the NavigationDrawer's.
      */
     grip?: boolean;
   };

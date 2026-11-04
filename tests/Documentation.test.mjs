@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { existsSync, readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import { cp, mkdtemp, mkdir, readFile, writeFile, rm } from 'node:fs/promises';
 import { resolve, join, relative, isAbsolute } from 'node:path';
@@ -7,7 +8,7 @@ import {
   compileDocumentation,
   libraryVersions,
   readDocumentation,
-} from '../scripts/GenerateDocumentation.mjs';
+} from '../scripts/docs/GenerateDocumentation.ts';
 import { marked } from 'marked';
 import {
   longParagraphs,
@@ -15,8 +16,8 @@ import {
   optionTable,
   optionTableProblems,
   paragraphLength,
-  siteStructure,
-} from '../scripts/SiteContent.mjs';
+  catalogueStructure,
+} from '../apps/site/src/shared/CatalogueContent.ts';
 
 test('focused Markdown discovery preserves examples and rejects broken documentation', async () => {
   const cache = resolve('.cache');
@@ -229,7 +230,7 @@ async function pageFixture(run) {
   const versions = new Set(['0.1.0', '0.2.0']);
   const read = () => readDocumentation(docs, { props: switchProps, examples, specimens, versions });
   try {
-    await run({ page, read, examples, docs });
+    await run({ page, read, examples, specimens, docs });
   } finally {
     const contained = relative(cache, fixture);
     assert.ok(contained && !contained.startsWith('..') && !isAbsolute(contained));
@@ -324,7 +325,7 @@ test('a page is read into its sections, figures, legends and specimens', async (
 });
 
 test('the build fails a page that is not in the one-file structure', async () => {
-  await pageFixture(async ({ page, read, docs }) => {
+  await pageFixture(async ({ page, read, docs, specimens }) => {
     const rejects = async (source, pattern) => {
       await writeFile(page, source);
       assert.throws(read, pattern);
@@ -398,7 +399,7 @@ test('the build fails a page that is not in the one-file structure', async () =>
     // The frontmatter: an example's entry, a role and a caption, and on an overview its framing.
     await rejects(
       frontmatter.replace('  Parts: anatomy', '  Parts: legend') + body,
-      /gives Parts the role legend; one of overview, example, variants, anatomy, do, dont/,
+      /gives Parts the role legend; one of overview, example, variants, anatomy, do, dont, caution/,
     );
     await rejects(
       frontmatter.replace(
@@ -407,15 +408,44 @@ test('the build fails a page that is not in the one-file structure', async () =>
       ) + body,
       /gives the dont figure OnSubmit no caption, its rule/,
     );
+    // A caution, acceptable with care, states its rule too.
+    await rejects(
+      frontmatter.replace(
+        "    role: dont\n    caption: Don't use a switch in a form that applies on submit.\n",
+        '    role: caution\n',
+      ) + body,
+      /gives the caution figure OnSubmit no caption, its rule/,
+    );
+    await rejects(
+      frontmatter.replace('  Narrow: example', '  Narrow:\n    role: example\n    width: 30') +
+        body,
+      /gives Narrow a field other than role, caption, open, stage, motion, wide/,
+    );
     await rejects(
       frontmatter.replace('  Narrow: example', '  Narrow:\n    role: example\n    wide: true') +
         body,
-      /gives Narrow a field other than role, caption, open, stage/,
+      /gives Narrow open, stage, motion or wide, which only an overview example takes here/,
     );
     await rejects(
       frontmatter.replace('  Narrow: example', '  Narrow:\n    role: example\n    open: true') +
         body,
-      /gives Narrow open or stage, which only an overview example takes here/,
+      /gives Narrow open, stage, motion or wide, which only an overview example takes here/,
+    );
+    // An example the catalogue plays needs its specimen of the same name.
+    await rejects(
+      frontmatter.replace('  Basic: overview', '  Basic:\n    role: overview\n    motion: true') +
+        body,
+      /example Basic has motion but no specimen apps\/site\/src\/specimens\/switch\/Basic\.tsx/,
+    );
+    await rejects(
+      frontmatter +
+        body.replace('figure=Narrow widths="16 30"', 'figure=Narrow motion widths="16 30"'),
+      /example Narrow has motion but no specimen/,
+    );
+    // An anatomy figure held in a moment needs its specimen of the same name too.
+    await rejects(
+      frontmatter + body.replace('figure=Parts\n', 'figure=Parts specimen\n'),
+      /anatomy Parts has specimen but no specimen apps\/site\/src\/specimens\/switch\/Parts\.tsx/,
     );
     await rejects(
       frontmatter.replace('  Basic: overview', '  Basic:\n    role: overview\n    open: yes') +
@@ -441,6 +471,22 @@ test('the build fails a page that is not in the one-file structure', async () =>
       open: true,
       stage: 'shaded',
     });
+    // With its specimen, an example the catalogue plays says so, in the Overview and on its fence.
+    await writeFile(join(specimens, 'switch', 'Basic.tsx'), 'export default function Basic() {}\n');
+    await writeFile(
+      join(specimens, 'switch', 'Narrow.tsx'),
+      'export default function Narrow() {}\n',
+    );
+    await writeFile(
+      page,
+      frontmatter.replace('  Basic: overview', '  Basic:\n    role: overview\n    motion: true') +
+        body.replace('figure=Narrow widths="16 30"', 'figure=Narrow motion widths="16 30"'),
+    );
+    const motions = read()[1]
+      .sections.flatMap((section) => section.blocks)
+      .filter((block) => block.motion)
+      .map((block) => block.name);
+    assert.deepEqual(motions, ['Basic', 'Narrow']);
     // A pattern or foundation page is in the structure too.
     await mkdir(join(docs, 'foundations'), { recursive: true });
     await writeFile(
@@ -567,6 +613,31 @@ test('the structure checks the frontmatter, the figures and the text of a page',
     assert.doesNotThrow(read);
     // A figure's fence: the attributes its role takes, as name="value", and flags alone.
     await rejects(frontmatter + body.replace('widths="16 30"', 'widths="wide"'), /widths="wide"/);
+    // sweep shows one frame sweeping between at least two widths; classes needs a sweep.
+    await rejects(
+      frontmatter + body.replace('widths="16 30"', 'widths="16" sweep'),
+      /example Narrow has sweep; give the widths it sweeps between/,
+    );
+    await rejects(
+      frontmatter + body.replace('widths="16 30"', 'widths="16 30" classes'),
+      /example Narrow has classes without sweep/,
+    );
+    await rejects(
+      frontmatter + body.replace('widths="16 30"', 'widths="16 30" fit'),
+      /example Narrow has fit without sweep/,
+    );
+    await writeFile(
+      page,
+      frontmatter + body.replace('widths="16 30"', 'widths="30 16" sweep classes fit'),
+    );
+    assert.deepEqual(
+      (({ widths, sweep, classes, fit }) => ({ widths, sweep, classes, fit }))(
+        read()[1]
+          .sections.flatMap((section) => section.blocks)
+          .find((block) => block.name === 'Narrow'),
+      ),
+      { widths: [30, 16], sweep: true, classes: true, fit: true },
+    );
     await rejects(
       frontmatter + body.replace('figure=Parts', 'figure=Parts size=lg'),
       /anatomy Parts takes no size/,
@@ -748,13 +819,13 @@ test('since names a stable release or the version the changesets lead to, also i
     await mkdir(changesets);
     await writeFile(
       join(changesets, 'config.json'),
-      JSON.stringify({ fixed: [['@envsemble/envui', '@envsemble/envui-codemods']] }),
+      JSON.stringify({ fixed: [['@envsemble/envui', '@envsemble/eslint-plugin-envui']] }),
     );
     await writeFile(changelog, '# Changelog\n\n## 0.7.0\n\nText.\n\n## 0.6.0\n\nText.\n');
     await changeset('fix', { '@envsemble/envui': 'patch' });
     assert.deepEqual(versions(), ['0.6.0', '0.7.0', '0.7.1']);
     // A package that shares envUI's version raises it too.
-    await changeset('codemods', { '@envsemble/envui-codemods': 'minor' });
+    await changeset('lint', { '@envsemble/eslint-plugin-envui': 'minor' });
     assert.deepEqual(versions(), ['0.6.0', '0.7.0', '0.8.0']);
     // In prerelease mode, a released prerelease is no version of its own, and the changesets lead
     // to the version the prereleases are for, from the version before them.
@@ -1048,7 +1119,7 @@ test('an option table is read for the catalogue as a legend', () => {
 test('Catalogue text with no structure is found: loose after a figure, or a fourth paragraph', () => {
   const markdown = (text) => ({ kind: 'markdown', markdown: text });
   const figure = (role) => ({ kind: 'example', name: 'Figure', heading: 'Figure', role });
-  const found = siteStructure({
+  const found = catalogueStructure({
     sections: [
       {
         id: 'rules',
@@ -1135,7 +1206,7 @@ ${long}
   assert.ok(long.length > paragraphLength);
 });
 
-test("a guide's statuses and exportAliases name only the exports it lists", async () => {
+test("a guide's status, statuses and exportAliases hold, and name only the exports it lists", async () => {
   const cache = resolve('.cache');
   await mkdir(cache, { recursive: true });
   const directory = await mkdtemp(join(cache, 'guide-'));
@@ -1155,6 +1226,22 @@ test("a guide's statuses and exportAliases name only the exports it lists", asyn
       source.replace('exportAliases:\n', 'exportAliases:\n  Button:\n    - push\n'),
     );
     assert.throws(read, /exportAliases names Button, which components does not list/);
+    // A guide may carry a status of the ladder, which its exports take, so one that says so
+    // repeats the guide's.
+    const withStatus = (status, text = source) => `---\nstatus: ${status}\n${text.slice(4)}`;
+    await writeFile(setup, withStatus('experimental'));
+    assert.throws(read, /status must be one of alpha, beta, stable, deprecated/);
+    await writeFile(
+      setup,
+      withStatus(
+        'alpha',
+        source.replace(/^statuses:.*\n(?: {2}.*\n)*/m, 'statuses:\n  LinkProvider: alpha\n'),
+      ),
+    );
+    assert.throws(read, /statuses of LinkProvider repeats the page's status/);
+    await writeFile(setup, withStatus('alpha'));
+    const guide = read().find((document) => document.path === 'setup.md');
+    assert.equal(guide.frontmatter.status, 'alpha');
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
@@ -1172,20 +1259,16 @@ test('Table ships each example once, by name in its frontmatter, its rules and l
   assert.ok(compiled.has('examples/table/ProjectStatus.tsx'));
   assert.doesNotMatch(table, /^`{3,}tsx (?:example|do|dont|anatomy|variants|figure)=/m);
   assert.match(table, /^`{3,}tsx source=ProjectStatus$/m);
+  assert.ok(hasLine(table, "Examples: NumbersAligned (do), NumbersUnaligned (don't)."));
   assert.ok(
     hasLine(
       table,
-      "Examples: NumbersAligned (do), NumbersUnaligned (don't), NamedStates (do), ColorOnly (don't).",
+      '  NumbersAligned: { role: do, caption: "Numbers aligned to the end, so the digits line up down the column." }',
     ),
-  );
-  assert.ok(
-    hasLine(table, '  ColorOnly: { role: dont, caption: "States told apart by color alone." }'),
   );
   assert.ok(hasLine(table, '1. **Region** (`env-table-region`)'));
   assert.ok(hasLine(table, 'Native props: `<table>`.'));
   assert.doesNotMatch(table, /^## (?:Changelog|Related)/m);
-  // The index leaves out the contributor pages.
-  assert.ok(!compiled.get('index.md').includes('component-pages.md'));
 });
 
 test('a page ships the whole file, in its order, with code once', () => {
@@ -1212,7 +1295,15 @@ test('a page ships the whole file, in its order, with code once', () => {
     'Accessibility',
     'Compose',
     'Props',
+    'Part names',
+    'Color properties',
+    'Strings',
   ]);
+  // Its strings are generated from envUI's messages, ConfirmButton's among them.
+  assert.match(button, /^\| `messages\.confirmButton\.[a-z]\w*` \| /m);
+  // The generated lists are the page's one list of its parts and color properties.
+  assert.ok(hasLine(button, '- `env-button`: The button.'));
+  assert.match(button, /^- `--env-button-container`: /m);
   // A run of figures is a line that names them; no figure's code ships in the page.
   assert.ok(
     hasLine(
@@ -1227,9 +1318,51 @@ test('a page ships the whole file, in its order, with code once', () => {
   // A pattern's canonical example ships once, in full, in Compose.
   const forms = compiled.get('patterns/forms.md');
   assert.equal(forms.match(/^`{3,}tsx source=ErrorSummary$/gm)?.length, 1);
-  // A foundation's figures are the catalogue's: their legends ship, and the frontmatter lists none.
+  // A foundation's figures are the catalogue's: their legends ship, and the frontmatter lists only
+  // those with an example file, their code, which ships and is named before the legend.
   const spacing = compiled.get('foundations/spacing.md');
   assert.ok(spacing.includes('\n1. **Tight, inside a group**: '));
-  assert.doesNotMatch(spacing, /^examples:/m);
+  assert.ok(hasLine(spacing, 'examples: # Each file is examples/spacing/<Name>.tsx.'));
+  assert.ok(hasLine(spacing, '  Grouping: example'));
+  assert.ok(!hasLine(spacing, '  Shapes: example'));
+  assert.ok(spacing.includes('\nExample: Grouping.\n\n1. **Tight, inside a group**: '));
+  assert.ok(compiled.has('examples/spacing/Grouping.tsx'));
   assert.ok(spacing.includes('\n| More room between these | The next larger step'));
+});
+
+test("the contributor guides' relative links reach files, and headings, that exist", async () => {
+  const { headingsOf } = await import('../scripts/docs/MarkdownHeadings.ts');
+  const guides = ['README.md', 'CONTRIBUTING.md', 'AGENTS.md', 'contributing/pages.md'];
+  const broken = [];
+  for (const guide of guides) {
+    const source = await readFile(resolve(guide), 'utf8');
+    marked.walkTokens(marked.lexer(source), (token) => {
+      if (token.type !== 'link' || /^[a-z][a-z\d+.-]*:/i.test(token.href)) return;
+      const [path, fragment] = token.href.split('#');
+      const target = path ? join(resolve(guide, '..'), path) : resolve(guide);
+      if (!existsSync(target)) broken.push(`${guide}: ${token.href}`);
+      else if (
+        fragment &&
+        !headingsOf(readFileSync(target, 'utf8')).some(({ id }) => id === fragment)
+      )
+        broken.push(`${guide}: ${token.href} names no heading`);
+    });
+  }
+  assert.deepEqual(broken, []);
+});
+
+test("every namespace of envUI's strings but the shared one shows on a component's page", async () => {
+  const { readMessages } = await import('../scripts/docs/Messages.ts');
+  const documented = new Set(
+    readDocumentation().flatMap((document) => document.frontmatter?.components ?? []),
+  );
+  for (const { namespace, components, strings } of readMessages()) {
+    assert.ok(strings.length, `${namespace} has strings`);
+    for (const string of strings) assert.ok(string.description, `${namespace}.${string.key}`);
+    if (namespace === 'common') continue;
+    assert.ok(
+      components.some((name) => documented.has(name)),
+      `${namespace} names no documented export: ${components.join(', ')}`,
+    );
+  }
 });

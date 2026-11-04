@@ -1,6 +1,8 @@
 'use client';
 
 import { ContextMenu as BaseContextMenu } from '@base-ui/react/context-menu';
+import { Menu as BaseMenu } from '@base-ui/react/menu';
+import { useRender } from '@base-ui/react/use-render';
 import {
   useRef,
   useState,
@@ -14,7 +16,12 @@ import {
   type TouchEvent,
 } from 'react';
 import { MenuPopup } from './internal/MenuPopup.js';
+import type {
+  OpenChangeDetails as MenuOpenChangeDetails,
+  OpenChangeReason as MenuOpenChangeReason,
+} from './internal/menuOpenChange.js';
 import { keepsOpen, usePortalContainer } from '../internal/PortalContainerContext.js';
+import { isRightToLeft } from '../internal/direction.js';
 
 /** The Base UI parts of a context menu's popup. */
 const contextMenuParts = {
@@ -22,6 +29,16 @@ const contextMenuParts = {
   Positioner: BaseContextMenu.Positioner,
   Popup: BaseContextMenu.Popup,
 };
+
+/** The Base UI parts of a contained context menu's popup: a menu's, which needn't be modal. */
+const containedMenuParts = {
+  Portal: BaseMenu.Portal,
+  Positioner: BaseMenu.Positioner,
+  Popup: BaseMenu.Popup,
+};
+
+/** What a context menu's onOpenChange receives beside the requested state: a menu's details. */
+export type ContextMenuOpenChangeDetails = MenuOpenChangeDetails;
 
 export interface ContextMenuPoint {
   /** Distance from the viewport's left edge in pixels, such as a pointer event's clientX. */
@@ -42,12 +59,15 @@ export interface ContextMenuProps {
   content: ReactNode | ((target: Element | null) => ReactNode);
   /** One element that becomes the region; it must accept native props and a ref. */
   children: ReactElement;
-  /** The region keeps the browser's own context menu. */
+  /**
+   * The region keeps the browser's own context menu.
+   * @default false
+   */
   disabled?: boolean;
   /** Controlled visibility, for example to open the menu from another control. */
   open?: boolean;
-  /** Called with the new visibility as the menu opens or closes. */
-  onOpenChange?: (open: boolean) => void;
+  /** Called with the new visibility, and why, as the menu opens or closes. */
+  onOpenChange?: (open: boolean, details: ContextMenuOpenChangeDetails) => void;
   /** Viewport point to open at while controlled; otherwise the menu opens at the pointer. */
   anchorPoint?: ContextMenuPoint;
   /** Class of the menu popup. */
@@ -74,7 +94,7 @@ function elementAnchor(element: Element) {
   return {
     getBoundingClientRect: () => {
       const rect = element.getBoundingClientRect();
-      const rtl = getComputedStyle(element).direction === 'rtl';
+      const rtl = isRightToLeft(element);
       const inset = Math.min(rect.width / 2, 24);
       return DOMRect.fromRect({
         x: rtl ? rect.right - inset : rect.left + inset,
@@ -87,8 +107,19 @@ function elementAnchor(element: Element) {
   };
 }
 
-/** Actions for an area, opened by right click, long press, the ContextMenu key or Shift+F10. */
-export function ContextMenu({
+/**
+ * Actions for an area, opened by right click, long press, the ContextMenu key or Shift+F10. In a
+ * contained PortalContainer, such as a preview of an interface, it is part of the container as its
+ * other overlays are: it opens by right click and the keyboard without hiding the page, locking its
+ * scroll or taking focus.
+ */
+export function ContextMenu(props: ContextMenuProps) {
+  const { contained } = usePortalContainer();
+  return contained ? <ContainedContextMenu {...props} /> : <WindowContextMenu {...props} />;
+}
+
+/** A context menu over the window: modal, as Base UI's is. */
+function WindowContextMenu({
   'aria-label': label,
   content,
   children,
@@ -118,10 +149,10 @@ export function ContextMenu({
     return node != null && node !== false && node !== '';
   };
 
-  function setOpen(next: boolean) {
+  function setOpen(next: boolean, reason: MenuOpenChangeReason = 'trigger-press') {
     if (!next) keyboardOpenedAt.current = Number.NEGATIVE_INFINITY;
     if (controlledOpen === undefined) setUncontrolledOpen(next);
-    onOpenChange?.(next);
+    onOpenChange?.(next, { reason });
   }
 
   function openAtPointer(event: MouseEvent<Element> & { preventBaseUIHandler?: () => void }) {
@@ -182,7 +213,7 @@ export function ContextMenu({
       open={open}
       onOpenChange={(next, details) => {
         if (keepsOpen(portal, next, details, region.current)) details.cancel();
-        else setOpen(next);
+        else setOpen(next, details.reason as MenuOpenChangeReason);
       }}
       disabled={disabled}
     >
@@ -210,5 +241,104 @@ export function ContextMenu({
         {typeof content === 'function' ? content(target) : content}
       </MenuPopup>
     </BaseContextMenu.Root>
+  );
+}
+
+/**
+ * A context menu in a contained PortalContainer. Base UI's context menu is always modal, which
+ * would hide the page and lock its scroll for a menu in a preview; this one is a menu that isn't
+ * modal, opened at the pointer or below the focused element as the context menu is.
+ */
+function ContainedContextMenu({
+  'aria-label': label,
+  content,
+  children,
+  disabled = false,
+  open: controlledOpen,
+  onOpenChange,
+  anchorPoint,
+  className,
+  ref,
+  style,
+}: ContextMenuProps) {
+  const portal = usePortalContainer();
+  const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
+  const open = controlledOpen ?? uncontrolledOpen;
+  const [target, setTarget] = useState<Element | null>(null);
+  const [anchor, setAnchor] = useState<{
+    at: ReturnType<typeof pointAnchor> | ReturnType<typeof elementAnchor>;
+    pointer: boolean;
+  } | null>(null);
+  const region = useRef<HTMLElement>(null);
+  const offersMenu = (element: Element | null) => {
+    const node = typeof content === 'function' ? content(element) : content;
+    return node != null && node !== false && node !== '';
+  };
+
+  function setOpen(next: boolean, reason: MenuOpenChangeReason = 'trigger-press') {
+    if (controlledOpen === undefined) setUncontrolledOpen(next);
+    onOpenChange?.(next, { reason });
+  }
+
+  function openAtPointer(event: MouseEvent<Element>) {
+    if (disabled) return;
+    const element = event.target instanceof Element ? event.target : null;
+    // Where no menu is offered, the browser keeps its own.
+    if (!offersMenu(element)) return;
+    event.preventDefault();
+    setTarget(element);
+    setAnchor({ at: pointAnchor({ x: event.clientX, y: event.clientY }), pointer: true });
+    setOpen(true);
+  }
+
+  function openFromKeyboard(event: KeyboardEvent<Element>) {
+    if (disabled || !isContextMenuKey(event)) return;
+    const focused = event.target instanceof Element ? event.target : event.currentTarget;
+    const descendantId = focused.getAttribute('aria-activedescendant');
+    const descendant = descendantId ? focused.ownerDocument.getElementById(descendantId) : null;
+    const element = descendant ?? focused;
+    if (!offersMenu(element)) return;
+    event.preventDefault();
+    setTarget(element);
+    setAnchor({ at: elementAnchor(element), pointer: false });
+    setOpen(true);
+  }
+
+  const regionElement = useRender({
+    render: children,
+    ref: region,
+    props: { onContextMenu: openAtPointer, onKeyDown: openFromKeyboard },
+  });
+  const controlledAnchor = controlledOpen !== undefined && anchorPoint;
+  const at = controlledAnchor ? pointAnchor(anchorPoint) : anchor?.at;
+  // At the pointer its first row is under the pointer, as Base UI places a context menu; at a
+  // point or an element it opens below its start.
+  const pointer = !controlledAnchor && anchor?.pointer;
+  return (
+    <BaseMenu.Root
+      open={open && !disabled}
+      modal={false}
+      onOpenChange={(next, details) => {
+        if (keepsOpen(portal, next, details, region.current)) details.cancel();
+        else setOpen(next, details.reason as MenuOpenChangeReason);
+      }}
+    >
+      {regionElement}
+      <MenuPopup
+        parts={containedMenuParts}
+        label={label}
+        trigger={region}
+        anchor={at}
+        side="bottom"
+        align="start"
+        sideOffset={pointer ? -5 : 4}
+        alignOffset={pointer ? 2 : 0}
+        className={className}
+        popupRef={ref}
+        popupProps={{ style }}
+      >
+        {typeof content === 'function' ? content(target) : content}
+      </MenuPopup>
+    </BaseMenu.Root>
   );
 }

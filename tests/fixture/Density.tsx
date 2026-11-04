@@ -12,8 +12,8 @@ import {
   TextField,
   Menu,
   Menubar,
-  Drawer,
-  Rail,
+  NavigationDrawer,
+  NavigationRail,
   type Destination,
   Pagination,
   PanelDock,
@@ -29,21 +29,21 @@ import {
   type ControlSize,
   type RowDensity,
   type ThemeScale,
-  type ThemeValue,
+  type ColorScheme,
   type TreeItem,
 } from '@envsemble/envui';
-import { Add } from '@envsemble/envui/icons/Add';
-import { ContentCopy } from '@envsemble/envui/icons/ContentCopy';
-import { Delete } from '@envsemble/envui/icons/Delete';
-import { Description } from '@envsemble/envui/icons/Description';
-import { Edit } from '@envsemble/envui/icons/Edit';
-import { FilterList } from '@envsemble/envui/icons/FilterList';
-import { Folder } from '@envsemble/envui/icons/Folder';
-import { Home } from '@envsemble/envui/icons/Home';
-import { Inbox } from '@envsemble/envui/icons/Inbox';
-import { MoreVert } from '@envsemble/envui/icons/MoreVert';
-import { Refresh } from '@envsemble/envui/icons/Refresh';
-import { Settings } from '@envsemble/envui/icons/Settings';
+import { IconAdd } from '@envsemble/envui/icons/Add';
+import { IconContentCopy } from '@envsemble/envui/icons/ContentCopy';
+import { IconDelete } from '@envsemble/envui/icons/Delete';
+import { IconDescription } from '@envsemble/envui/icons/Description';
+import { IconEdit } from '@envsemble/envui/icons/Edit';
+import { IconFilterList } from '@envsemble/envui/icons/FilterList';
+import { IconFolder } from '@envsemble/envui/icons/Folder';
+import { IconHome } from '@envsemble/envui/icons/Home';
+import { IconInbox } from '@envsemble/envui/icons/Inbox';
+import { IconMoreVert } from '@envsemble/envui/icons/MoreVert';
+import { IconRefresh } from '@envsemble/envui/icons/Refresh';
+import { IconSettings } from '@envsemble/envui/icons/Settings';
 import {
   controlSizes,
   densityScales,
@@ -106,7 +106,7 @@ function SizeRow({ size }: { size: ControlSize }) {
       </Button>
       <IconButton
         size={size}
-        icon={<Edit />}
+        icon={<IconEdit />}
         aria-label="Edit"
         variant="secondary"
         data-control="icon-button"
@@ -187,7 +187,7 @@ function FormSection() {
           <Button variant="primary" tone="accent">
             Important
           </Button>
-          <IconButton icon={<Edit />} aria-label="Edit" variant="secondary" />
+          <IconButton icon={<IconEdit />} aria-label="Edit" variant="secondary" />
         </Row>
       </div>
     </div>
@@ -203,8 +203,8 @@ function ToolbarSection() {
         <div key={size} className="density-band">
           <div className="density-label">Toolbar, size="{size}"</div>
           <div className="density-row">
-            <IconButton size={size} icon={<Add />} aria-label="Add" variant="secondary" />
-            <IconButton size={size} icon={<Refresh />} aria-label="Refresh" variant="ghost" />
+            <IconButton size={size} icon={<IconAdd />} aria-label="Add" variant="secondary" />
+            <IconButton size={size} icon={<IconRefresh />} aria-label="Refresh" variant="ghost" />
             <SegmentedControl
               aria-label="Filter"
               size={size}
@@ -218,7 +218,7 @@ function ToolbarSection() {
             />
             <SearchField size={size} label="Search" placeholder="Search" />
             <Select size={size} aria-label="Sort" items={plans} defaultValue="team" />
-            <Button size={size} variant="secondary" startIcon={<FilterList />}>
+            <Button size={size} variant="secondary" startIcon={<IconFilterList />}>
               Filter
             </Button>
             <Pagination page={page} pageSize={25} total={240} onPageChange={setPage} size={size} />
@@ -239,19 +239,19 @@ function MenuSection() {
           trigger={<Button variant="secondary">Menu</Button>}
           align="start"
         >
-          <Menu.Item icon={<Edit />} shortcut="F2">
+          <Menu.Item icon={<IconEdit />} shortcut="F2">
             Rename
           </Menu.Item>
           <Menu.Item
-            icon={<ContentCopy />}
+            icon={<IconContentCopy />}
             shortcut="Ctrl+D"
             description="Copy beside the original"
           >
             Duplicate
           </Menu.Item>
-          <Menu.Item icon={<Folder />}>Move to folder</Menu.Item>
+          <Menu.Item icon={<IconFolder />}>Move to folder</Menu.Item>
           <Menu.Separator />
-          <Menu.Item icon={<Delete />}>Delete</Menu.Item>
+          <Menu.Item icon={<IconDelete />}>Delete</Menu.Item>
         </Menu.Root>
       </div>
     </div>
@@ -260,30 +260,43 @@ function MenuSection() {
 
 function treeRows(): TreeItem[] {
   return [
-    { id: 'src', depth: 0, label: 'src', icon: <Folder />, expandable: true, expanded: true },
     {
-      id: 'components',
+      value: 'src',
+      depth: 0,
+      label: 'src',
+      icon: <IconFolder />,
+      expandable: true,
+      expanded: true,
+    },
+    {
+      value: 'components',
       depth: 1,
       label: 'components',
-      icon: <Folder />,
+      icon: <IconFolder />,
       expandable: true,
       expanded: true,
     },
     ...['Button.tsx', 'Input.tsx', 'Select.tsx', 'Tree.tsx'].map((name) => ({
-      id: `components/${name}`,
+      value: `components/${name}`,
       depth: 2,
       label: name,
-      icon: <Description />,
+      icon: <IconDescription />,
     })),
     {
-      id: 'styles',
+      value: 'styles',
       depth: 1,
       label: 'styles',
-      icon: <Folder />,
+      icon: <IconFolder />,
       expandable: true,
       expanded: false,
     },
-    { id: 'readme', depth: 0, label: 'README.md', icon: <Description />, description: 'Modified' },
+    {
+      value: 'readme',
+      depth: 0,
+      label: 'README.md',
+      icon: <IconDescription />,
+      description: 'Modified',
+    },
   ];
 }
 
@@ -358,7 +371,7 @@ function ReportTable({ density }: { density?: RowDensity }) {
               <Badge tone={tones[report.status]}>{report.status}</Badge>
             </Table.Cell>
             <Table.Cell>
-              <IconButton icon={<MoreVert />} aria-label="More" variant="ghost" />
+              <IconButton icon={<IconMoreVert />} aria-label="More" variant="ghost" />
             </Table.Cell>
           </Table.Row>
         ))}
@@ -404,21 +417,23 @@ function TabsSection() {
 }
 
 const destinations: Destination[] = [
-  { label: 'Home', icon: <Home />, href: '#home', current: true },
-  { label: 'Inbox', icon: <Inbox />, href: '#inbox', count: 3 },
-  { label: 'Settings', icon: <Settings />, href: '#settings' },
+  { label: 'Home', icon: <IconHome />, href: '#home', current: true },
+  { label: 'Inbox', icon: <IconInbox />, href: '#inbox', count: 3 },
+  { label: 'Settings', icon: <IconSettings />, href: '#settings' },
 ];
 
-function NavigationDrawer({ label }: { label: string }) {
-  return <Drawer className="density-drawer" aria-label={label} destinations={destinations} />;
+function DensityDrawer({ label }: { label: string }) {
+  return (
+    <NavigationDrawer className="density-drawer" aria-label={label} destinations={destinations} />
+  );
 }
 
 function NavigationSection() {
   return (
     <div className="density-columns">
       <Column title="Drawer, Rail and Breadcrumbs">
-        <NavigationDrawer label="Navigation" />
-        <Rail aria-label="Rail navigation" destinations={destinations} />
+        <DensityDrawer label="Navigation" />
+        <NavigationRail aria-label="Rail navigation" destinations={destinations} />
         <Breadcrumbs
           aria-label="Location"
           items={[
@@ -457,12 +472,12 @@ function DesktopSection() {
       </div>
       <div className="density-app-body">
         <aside className="density-app-side">
-          <NavigationDrawer label="Sections" />
+          <DensityDrawer label="Sections" />
           <FileTree label="Files" />
         </aside>
         <div className="density-app-main">
           <div className="density-row">
-            <Button variant="primary" startIcon={<Add />}>
+            <Button variant="primary" startIcon={<IconAdd />}>
               New report
             </Button>
             <SearchField label="Search reports" placeholder="Search reports" />
@@ -523,8 +538,8 @@ function DockedPanel() {
             title={panel.title}
             actions={
               <>
-                <IconButton icon={<Edit />} aria-label="Edit the report" />
-                <IconButton icon={<MoreVert />} aria-label="More actions" />
+                <IconButton icon={<IconEdit />} aria-label="Edit the report" />
+                <IconButton icon={<IconMoreVert />} aria-label="More actions" />
               </>
             }
           />
@@ -553,7 +568,7 @@ function LayoutsSection() {
                 <IconButton
                   size="sm"
                   variant="ghost"
-                  icon={<Edit />}
+                  icon={<IconEdit />}
                   aria-label={`${name}, ${direction}`}
                 />
               </span>
@@ -582,7 +597,7 @@ const densitySections: Record<DensitySection, () => ReactNode> = {
 };
 
 /** One section in each scale, one above the other. */
-function ScaledSection({ name, theme }: { name: string; theme: ThemeValue }) {
+function ScaledSection({ name, theme }: { name: string; theme: ColorScheme }) {
   const Section = (densitySectionNames as readonly string[]).includes(name)
     ? densitySections[name as DensitySection]
     : undefined;
@@ -612,7 +627,7 @@ export function DensityFixture() {
   const sections: string[] = section
     ? [section]
     : densitySectionNames.filter((name) => name !== 'menu');
-  const themes: ThemeValue[] = theme ? [theme as ThemeValue] : ['light', 'dark'];
+  const themes: ColorScheme[] = theme ? [theme as ColorScheme] : ['light', 'dark'];
   return (
     <div className="density-fixture">
       {themes.map((name) =>

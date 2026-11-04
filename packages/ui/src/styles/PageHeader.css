@@ -1,69 +1,81 @@
-/* PageHeader: a page's title row, with an optional trail above it, a description under it, actions
-   at its end and a toolbar row below. It responds to its own width at the window classes, compact
-   first: in a compact header the actions wrap under the title, and from a medium one, 37.5 rem,
-   they sit at the end of the title row. Row and Column lay its parts out. */
-.env-page-header {
-  container: env-page-header / inline-size;
-}
-/* A sticky header stays at the top of the area that scrolls, over the content that scrolls under it,
-   across the page's gutters: under a Scaffold's top bar where the document scrolls. Once content
-   scrolls beneath it, it takes the muted fill, which sets it apart without a line, as a docked
-   panel's header does. */
-.env-page-header[data-sticky] {
-  /* Inside a Page it reaches across the page's gutters, so content never shows beside it. */
-  --env-page-header-inset: var(--env-page-gutter, 0rem);
-  /* Under a Scaffold's top bar where the document scrolls, else at the top. */
-  --env-page-header-sticky-top: var(--env-scaffold-sticky-top, 0rem);
-  position: sticky;
-  inset-block-start: var(--env-page-header-sticky-top);
-  z-index: calc(var(--env-z-sticky) - 1);
-  margin-block-start: calc(-1 * var(--env-space-4));
-  margin-inline: calc(-1 * var(--env-page-header-inset));
-  padding-block: var(--env-space-4);
-  padding-inline: var(--env-page-header-inset);
-  background: var(--env-color-bg-page);
-  transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
-}
-.env-page-header[data-sticky][data-scrolled] {
-  background-color: var(--env-color-bg-muted);
-}
-.env-page-header-start {
-  flex: none;
-}
-.env-page-header-heading {
-  flex: 1 1 auto;
-}
-.env-page-header-title-line {
-  gap: var(--env-space-1) var(--env-space-3);
-}
-/* The title wraps, balanced across its lines, and is never cut short. */
-.env-page-header-title {
-  text-wrap: balance;
-}
-/* In a compact header the actions take a row of their own under the title. */
-.env-page-header-actions {
-  flex: 1 1 100%;
-}
-@container env-page-header (width >= 37.5rem) {
-  .env-page-header-row {
-    flex-wrap: nowrap;
+@layer env.components {
+  /* PageHeader: a page's title row, with an optional trail above it, a description under it, actions
+     at its end and a toolbar row below. It responds to its own width at the window classes, compact
+     first: in a compact header the actions wrap under the title, and from a medium one, 37.5 rem,
+     they sit at the end of the title row. Row and Column lay its parts out. */
+  .env-page-header {
+    container: env-page-header / inline-size;
   }
-  .env-page-header-actions {
-    flex: none;
-    justify-content: flex-end;
-  }
-}
-/* Without motion the fill changes at once. */
-@media (prefers-reduced-motion: reduce) {
+  /* A sticky header stays at the top of the area that scrolls, over the content that scrolls under it,
+     across the page's gutters: under a Scaffold's top bar where the document scrolls. Once content
+     scrolls beneath it, it takes the muted fill, which sets it apart without a line, as a docked
+     panel's header does. */
   .env-page-header[data-sticky] {
-    transition: none;
+    /* Inside a Page it reaches across the page's gutters, so content never shows beside it. */
+    --env-page-header-inset: var(--env-page-gutter, 0rem);
+    /* Under a Scaffold's top bar where the document scrolls, else at the top. */
+    --env-page-header-sticky-top: var(--env-scaffold-sticky-top, 0rem);
+    position: sticky;
+    inset-block-start: var(--env-page-header-sticky-top);
+    z-index: calc(var(--env-z-sticky) - 1);
+    margin-block-start: calc(-1 * var(--env-space-4));
+    margin-inline: calc(-1 * var(--env-page-header-inset));
+    padding-block: var(--env-space-4);
+    padding-inline: var(--env-page-header-inset);
+    background: var(--env-color-bg-page);
+    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
   }
-}
-/* Forced colors: the system paints no fills, so a line under the header stands in for its fill once
-   content scrolls beneath it, overlapping the content so nothing moves. */
-@media (forced-colors: active) {
   .env-page-header[data-sticky][data-scrolled] {
-    margin-block-end: calc(-1 * var(--env-control-border-width));
-    border-block-end: var(--env-control-border-width) solid CanvasText;
+    background-color: var(--env-color-bg-muted);
+  }
+  /* A picture before the title takes an avatar's size: a Graphic of the icon size, and an svg or
+     img of the application's own, contained in that box whatever its file's size. An svg that
+     follows the text, such as one of envUI's symbols, and the icon buttons, which set their own,
+     keep their sizes. */
+  .env-page-header-start {
+    flex: none;
+    --env-icon-size: var(--env-picture-size-md);
+  }
+  .env-page-header-start > :is(img, svg:not([width='1em'])) {
+    inline-size: var(--env-icon-size);
+    block-size: var(--env-icon-size);
+    object-fit: contain;
+  }
+  .env-page-header-heading {
+    flex: 1 1 auto;
+  }
+  .env-page-header-title-line {
+    gap: var(--env-space-1) var(--env-space-3);
+  }
+  /* The title wraps, balanced across its lines, and is never cut short. */
+  .env-page-header-title {
+    text-wrap: balance;
+  }
+  /* In a compact header the actions take a row of their own under the title. */
+  .env-page-header-actions {
+    flex: 1 1 100%;
+  }
+  @container env-page-header (width >= 37.5rem) {
+    .env-page-header-row {
+      flex-wrap: nowrap;
+    }
+    .env-page-header-actions {
+      flex: none;
+      justify-content: flex-end;
+    }
+  }
+  /* Without motion the fill changes at once. */
+  @media (prefers-reduced-motion: reduce) {
+    .env-page-header[data-sticky] {
+      transition: none;
+    }
+  }
+  /* Forced colors: the system paints no fills, so a line under the header stands in for its fill once
+     content scrolls beneath it, overlapping the content so nothing moves. */
+  @media (forced-colors: active) {
+    .env-page-header[data-sticky][data-scrolled] {
+      margin-block-end: calc(-1 * var(--env-control-border-width));
+      border-block-end: var(--env-control-border-width) solid CanvasText;
+    }
   }
 }

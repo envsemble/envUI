@@ -1,93 +1,135 @@
-/* A row of a popup list (ListRow): an indicator, an icon, a label over its description, and content
-   or a shortcut at the end, on the element of the list's own item. Its states come from Base UI's
-   data-highlighted, data-selected and data-disabled. */
-.env-list-row {
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  gap: var(--env-space-2);
-  min-inline-size: 0;
-  min-block-size: var(--env-row-height);
-  padding: var(--env-space-1) var(--env-space-2);
-  border-radius: var(--env-radius-sm);
-  background: transparent;
-  color: var(--env-color-fg-default);
-  font: var(--env-body-font-weight) var(--env-font-size-label) / 1.4 var(--env-font-family);
-  text-decoration: none;
-  cursor: pointer;
-  outline: none;
-  user-select: none;
-  transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
-}
-.env-list-row:is([data-highlighted], [data-popup-open]) {
-  background: var(--env-color-bg-popup-hover);
-}
-.env-list-row:is([data-disabled], [aria-disabled='true']) {
-  opacity: var(--env-state-disabled-opacity);
-  cursor: default;
-}
-/* The indicator keeps its slot whether or not the row is chosen, so the labels align. The icon's
-   slot takes the hook --env-list-row-icon-size, which an owner whose rows lead with larger content,
-   such as avatars, sets on its own element. */
-.env-list-row-indicator,
-.env-list-row-icon {
-  flex: 0 0 auto;
-  display: grid;
-  place-items: center;
-  inline-size: var(--env-control-icon-size);
-  block-size: var(--env-control-icon-size);
-  --env-icon-size: var(--env-control-icon-size);
-}
-.env-list-row-indicator {
-  color: var(--env-color-bg-brand-emphasis);
-}
-.env-list-row-icon {
-  inline-size: var(--env-list-row-icon-size, var(--env-control-icon-size));
-  block-size: var(--env-list-row-icon-size, var(--env-control-icon-size));
-  --env-icon-size: var(--env-list-row-icon-size, var(--env-control-icon-size));
-  color: var(--env-color-fg-muted);
-}
-.env-list-row-text {
-  min-inline-size: 0;
-  flex: 1 1 auto;
-  display: grid;
-}
-.env-list-row-label {
-  min-inline-size: 0;
-  overflow-wrap: anywhere;
-}
-.env-list-row-description {
-  min-inline-size: 0;
-  color: var(--env-color-fg-muted);
-  font: var(--env-body-font-weight) var(--env-font-size-caption) / 1.4 var(--env-font-family);
-  overflow-wrap: anywhere;
-}
-.env-list-row-end,
-.env-list-row-shortcut {
-  flex: 0 0 auto;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--env-space-1);
-}
-.env-list-row-shortcut {
-  margin-inline-start: var(--env-space-3);
-  color: var(--env-color-fg-muted);
-  font: var(--env-type-body-small);
-  white-space: nowrap;
-}
-
-/* Forced colors: the system paints no fills, so a highlighted row takes the selection colors and a
-   disabled one the disabled color. */
-@media (forced-colors: active) {
+@layer env.components {
+  /* A row of a popup list (ListRow): an icon, a label over its description, content or a shortcut,
+     and an indicator at the end, on the element of the list's own item. Its states come from Base UI's
+     data-highlighted, data-selected and data-disabled. Rows are the md control height in body text,
+     with corners concentric with the popup's (Popup.css); the highlight is the neutral fill over the
+     frosted popup, and the chosen option takes the selection's fill and text. */
+  .env-list-row {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    gap: var(--env-popup-row-gap);
+    min-inline-size: 0;
+    min-block-size: var(--env-control-height-md);
+    padding: var(--env-space-1) var(--env-popup-row-padding-inline);
+    border-radius: var(--env-popup-row-radius);
+    background: transparent;
+    color: var(--env-color-fg-default);
+    font: var(--env-font-weight-body) var(--env-font-size-body) / 1.35 var(--env-font-family);
+    text-decoration: none;
+    cursor: pointer;
+    outline: none;
+    user-select: none;
+    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
+  }
   .env-list-row:is([data-highlighted], [data-popup-open]) {
-    forced-color-adjust: none;
-    background-color: Highlight;
-    color: HighlightText;
+    background: var(--env-color-bg-neutral-muted);
   }
-  .env-list-row:is([data-highlighted], [data-popup-open]) :where(*) {
-    color: inherit;
+  /* The chosen option is opaque, so its text keeps its contrast whatever shows through the popup. */
+  .env-list-row[data-selected] {
+    background: var(--env-color-bg-selected);
+    color: var(--env-color-fg-on-selected);
   }
-  .env-list-row[data-disabled] {
-    color: GrayText;
+  .env-list-row[data-selected]:is([data-highlighted], [data-popup-open]) {
+    background: var(--env-color-bg-selected-hover);
+  }
+  .env-list-row:active:not([data-disabled], [aria-disabled='true']) {
+    background: var(--env-color-bg-neutral-muted-pressed);
+  }
+  .env-list-row[data-selected]:active:not([data-disabled], [aria-disabled='true']) {
+    background: var(--env-color-bg-selected-pressed);
+  }
+  .env-list-row:is([data-disabled], [aria-disabled='true']) {
+    opacity: var(--env-state-disabled-opacity);
+    cursor: default;
+  }
+  /* The indicator keeps its slot whether or not the row is chosen, so the rows' ends align. The icon's
+     slot takes the hook --env-list-row-icon-size, which an owner whose rows lead with larger content,
+     such as avatars, sets on its own element. */
+  .env-list-row-indicator,
+  .env-list-row-icon {
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    inline-size: var(--env-control-icon-size);
+    block-size: var(--env-control-icon-size);
+    --env-icon-size: var(--env-control-icon-size);
+  }
+  /* The indicator, a chosen option's check mark, ends the row, after its label and any end content. */
+  .env-list-row-indicator {
+    order: 1;
+    color: var(--env-color-bg-primary-emphasis);
+  }
+  .env-list-row[data-selected] .env-list-row-indicator {
+    color: var(--env-color-fg-on-selected);
+  }
+  .env-list-row-icon {
+    inline-size: var(--env-list-row-icon-size, var(--env-control-icon-size));
+    block-size: var(--env-list-row-icon-size, var(--env-control-icon-size));
+    --env-icon-size: var(--env-list-row-icon-size, var(--env-control-icon-size));
+    color: var(--env-color-fg-muted);
+  }
+  .env-list-row-text {
+    min-inline-size: 0;
+    flex: 1 1 auto;
+    display: grid;
+  }
+  .env-list-row-label {
+    min-inline-size: 0;
+    overflow-wrap: anywhere;
+  }
+  .env-list-row-description {
+    min-inline-size: 0;
+    color: var(--env-color-fg-muted);
+    font: var(--env-font-weight-body) var(--env-font-size-label-sm) / 1.35 var(--env-font-family);
+    overflow-wrap: anywhere;
+  }
+  .env-list-row-end,
+  .env-list-row-shortcut {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--env-space-1);
+    /* Keys, in the shortcut or at the end, are small muted chips on the neutral fill, with no edge,
+       side by side, as a menu's are. */
+    --env-kbd-size: calc(0.5 * var(--env-control-height-md));
+    --env-kbd-padding-inline: calc(0.125 * var(--env-control-height-md));
+    --env-kbd-radius: calc(0.125 * var(--env-control-height-md));
+    --env-kbd-fg: var(--env-color-fg-muted);
+    --env-kbd-bg: var(--env-color-bg-neutral-muted);
+    --env-kbd-border: transparent;
+    --env-kbd-border-end-width: var(--env-control-border-width);
+    --env-kbd-font-size: var(--env-font-size-caption);
+    --env-kbd-separator-padding-inline: calc(0.0375 * var(--env-control-height-md));
+    --env-kbd-separator-font: 0 / 1 var(--env-font-family);
+  }
+  /* On a highlighted row, where the chip lies on the highlight, its label takes the text color, as
+     the muted one would fall below 4.5:1 there in dark. */
+  .env-list-row:is([data-highlighted], [data-popup-open])
+    :is(.env-list-row-end, .env-list-row-shortcut) {
+    --env-kbd-fg: var(--env-color-fg-default);
+  }
+  .env-list-row-shortcut {
+    margin-inline-start: calc(0.4 * var(--env-control-height-md));
+    color: var(--env-color-fg-muted);
+    font: var(--env-type-body-sm);
+    white-space: nowrap;
+  }
+
+  /* Forced colors: the system paints no fills, so a highlighted row takes the selection colors and a
+     disabled one the disabled color. */
+  @media (forced-colors: active) {
+    .env-list-row:is([data-highlighted], [data-popup-open]),
+    .env-list-row[data-selected]:is([data-highlighted], [data-popup-open]) {
+      forced-color-adjust: none;
+      background-color: Highlight;
+      color: HighlightText;
+    }
+    .env-list-row:is([data-highlighted], [data-popup-open]) :where(*) {
+      color: inherit;
+    }
+    .env-list-row[data-disabled] {
+      color: GrayText;
+    }
   }
 }

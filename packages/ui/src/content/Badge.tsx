@@ -1,16 +1,26 @@
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
+import '../styles/Base.css';
+import '../styles/Badge.css';
 
-export type BadgeTone = 'neutral' | 'accent' | 'success' | 'warning' | 'danger' | 'done';
+export type BadgeTone =
+  | 'neutral'
+  | 'primary'
+  | 'accent'
+  | 'success'
+  | 'warning'
+  | 'danger'
+  | 'done';
 
 /** A badge's emphasis: a tinted, a filled or an outlined pill. */
 export type BadgeVariant = 'soft' | 'solid' | 'outline';
 
 interface BadgeAppearanceProps extends Omit<ComponentPropsWithRef<'span'>, 'children'> {
   /**
-   * Meaning of the state; done is the purple of completed work. Neutral by default. A count in the
-   * accent tone, solid, draws attention, such as unread messages that need an answer.
+   * Meaning of the state: primary is the blue of what is current, accent the purple that stands
+   * out, done the violet of completed work. Neutral by default. A count in the primary tone, solid,
+   * draws attention, such as unread messages that need an answer.
    */
   tone?: BadgeTone;
   /**

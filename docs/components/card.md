@@ -2,7 +2,7 @@
 title: Card
 summary: A rounded surface that groups content about one subject, as a content card with a title and actions, or one link or button.
 status: stable
-since: 0.1.0
+since: 1.0.0
 category: App frame & layout
 aliases:
   - tile
@@ -74,7 +74,7 @@ The default: a title, a short fact beside it, a description, its content, and ac
 
 The whole card is one link.
 
-```tsx figure=Destinations
+```tsx figure=Destinations motion
 
 ```
 
@@ -82,7 +82,7 @@ The whole card is one link.
 
 The whole card is one button.
 
-```tsx figure=StartOptions
+```tsx figure=StartOptions motion
 
 ```
 
@@ -100,7 +100,7 @@ An icon, a heading, a sentence and the one button that starts a feature.
 
 ### Backgrounds
 
-```tsx figure=Backgrounds
+```tsx figure=Backgrounds stage=shaded
 
 ```
 
@@ -122,7 +122,7 @@ An icon, a heading, a sentence and the one button that starts a feature.
 
 1. **Surface** (`env-card`)
 2. **Header** (`env-card-header`)
-3. **Title** (`env-card-heading`, `title`)
+3. **Title** (`env-card-title`, `title`)
 4. **Meta** (`env-card-meta`, `meta`)
 5. **Description** (`env-card-description`, `description`)
 6. **Content** (`env-card-body > env-text:last-child`, `children`)
@@ -134,13 +134,15 @@ An icon, a heading, a sentence and the one button that starts a feature.
 
 While its content loads, a card can show as its own skeleton, as [Loading](../patterns/loading.md) shows.
 
+<!-- specimen: SkeletonFirst -->
+
 ### Adapting to width
 
 A card fills its container.
 
 - In a narrow feature card, the button moves below the text.
 
-```tsx figure=InviteFeature widths="24 40"
+```tsx figure=InviteFeature widths="40 24" sweep
 
 ```
 
@@ -229,7 +231,7 @@ A feature card is a Card holding a Row with `wrap` and `align="center"`: the ico
 <Card>
   <Row wrap align="center" gap={4}>
     <Text render={<span />} emphasis="muted">
-      <UploadFile width="1.5rem" height="1.5rem" />
+      <IconUploadFile width="1.5rem" height="1.5rem" />
     </Text>
     <Column gap={1} style={{ flex: '1 1 16rem' }}>
       <Text render={<h3 />} variant="headline">
@@ -244,7 +246,7 @@ A feature card is a Card holding a Row with `wrap` and `align="center"`: the ico
 
 #### Backgrounds
 
-`background` is `muted`, the default, `default` or `page`.
+`background` is `muted`, the default, `default` or `page`. `default` names the token role it paints, `--env-color-bg-default`, as Surface's does, not Card's default.
 
 ```tsx
 <Card background="default" title="Notifications">
@@ -273,28 +275,15 @@ The title is an `h3`; set `headingLevel` to fit the page's outline, and its type
 
 - Lay out the content with Text, Row and Column, one card per subject, never a card inside a card, and put cards side by side in a Grid.
 - A card fills its container's width.
-- The parts are the surface, `env-card`, its header, `env-card-header`, with the title, `env-card-heading`, and the meta, `env-card-meta`; the description, `env-card-description`; the body, `env-card-body`; and the actions, `env-card-footer`.
+- The parts are the surface, `env-card`, its header, `env-card-header`, with the title, `env-card-title`, and the meta, `env-card-meta`; the description, `env-card-description`; the body, `env-card-body`; and the actions, `env-card-footer`.
 - A feature card's parts are envUI's own components inside it: its icon, `env-card env-text > svg`, its heading, `env-card env-text[data-variant='headline']`, its sentence, `env-card env-text[data-variant='body-sm']`, and its action, `env-card env-button`.
 
 ### Customize
 
-`--env-card-container`, `--env-card-content` and `--env-card-outline` set the colors of one Card, through `style` or CSS.
-
 - Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
 - `padding` sets the inset as a step of the spacing scale, such as `6` for 2 rem, and `0` removes it.
-
-```tsx
-<Card
-  title="Northwind launch"
-  padding={6}
-  style={{ '--env-card-container': 'var(--env-color-bg-brand-muted)' } as CSSProperties}
-/>
-```
 
 ## Changelog
 
 - **1.0.0-prerelease.3**: The feature cards pattern is the feature card on this page, which the pattern's address opens.
 - **1.0.0**: ClickableCard, ActionCard and FeatureCard are Card: `onClick` makes a button card, `render` the element of a content card, and the feature card is a Card holding a Row of Text and a Button, as [Feature card](#feature-card) shows, in place of `layout` and `icon`, with `env-card-layout` and `env-card-icon`. `tone` is `background`, `heading` is `title`, which takes `headingLevel`, and Card takes `description`; the native `title` attribute is not a prop of a card. The page is `card`, after the component.
-- **0.5.0**: `meta` sits at the end of the heading row, also in right-to-left text.
-- **0.2.0**: Link cards render through the application's router link, from `LinkProvider`.
-- **0.1.0**: Card for plain, interactive and action-strip cards, with ClickableCard and ActionCard as wrappers; FeatureCard.

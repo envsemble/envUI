@@ -2,7 +2,7 @@
 title: Checkbox
 summary: A native checkbox with its label, for a choice people turn on or off on its own, with a mixed state for a group's parent.
 status: stable
-since: 0.1.0
+since: 1.0.0
 category: Forms & selection
 aliases:
   - check box
@@ -39,9 +39,6 @@ examples:
   NamedGroup:
     role: do
     caption: Name a group with a legend, so each choice reads in context.
-  UnnamedGroup:
-    role: dont
-    caption: 'Checkboxes with no name for the group: mentions of what?'
 ---
 
 # Checkbox
@@ -54,7 +51,7 @@ examples:
 
 1. **Checkbox** (`env-checkbox`)
 2. **Box** (`env-checkbox-box`)
-3. **Check** (`env-checkbox-indicator`)
+3. **Check** (`env-checkbox-indicator path`)
 4. **Label** (`env-checkbox-label`, `label`)
 
 ## Behaviour
@@ -72,7 +69,7 @@ A parent checks or clears all its children.
 - Checked when every child is.
 - Mixed when some are.
 
-```tsx figure=SelectAll
+```tsx figure=SelectAll motion
 
 ```
 
@@ -80,7 +77,7 @@ A parent checks or clears all its children.
 
 The label wraps onto more lines, and the box stays centred beside it.
 
-```tsx figure=LongLabel widths="14 30"
+```tsx figure=LongLabel widths="30 14" sweep
 
 ```
 
@@ -89,10 +86,6 @@ The label wraps onto more lines, and the box stays centred beside it.
 A checkbox says what it turns on, and a group of them has a name.
 
 ```tsx figure=NamedGroup
-
-```
-
-```tsx figure=UnnamedGroup
 
 ```
 
@@ -125,7 +118,7 @@ Write the label as the choice it turns on, in sentence case, so checking it mean
 
 ### Usage
 
-A Checkbox is a native checkbox inside its `<label>`, named by `label`.
+A Checkbox is a native checkbox inside its `<label>`, named by `label`; an optional `description` is a short muted line under it, read with its name.
 
 - Uncontrolled: `defaultChecked`.
 - Controlled: `checked` and `onCheckedChange`, which receives the new state as a boolean.
@@ -165,12 +158,7 @@ A checked box submits its `name` with its `value`; an unchecked one submits noth
 
 `className` and `style` reach the root, `env-checkbox`, the label around the box and the text; `ref` and the other native props, such as `name` and `required`, reach the input, `env-checkbox-input`, so a form library can register and focus it. The box is `env-checkbox-box`, the check `env-checkbox-indicator` and the text `env-checkbox-label`.
 
-### Customize
-
-`--env-checkbox-outline`, `--env-checkbox-selected` and `--env-checkbox-icon` set the colors of one Checkbox, through `style` or CSS. Its hover, focus and press then follow them, as state layers; with none set, it keeps its own colors.
-
 ## Changelog
 
+- **1.0.0-prerelease.5**: `description`, a muted line under the label.
 - **1.0.0**: `className` and `style` style the root, `env-checkbox`, rather than the input, which keeps `ref` and the other native props. The classes follow the component: `env-choice-control` is `env-checkbox`, `env-checkbox-control` `env-checkbox-input` and `env-checkbox-mark` `env-checkbox-indicator`.
-- **0.4.0**: Checkboxes shrink slightly whether the box or its label is pressed.
-- **0.1.0**: Checkbox.

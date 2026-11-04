@@ -1,5 +1,5 @@
 import { test, expect, type Locator } from '@playwright/test';
-import { fixtureUrl } from './Servers';
+import { fixtureUrl } from './helpers/Servers';
 
 // Bar, Rail and Drawer over the same destinations, in tests/fixture/Navigation.tsx.
 
@@ -15,9 +15,9 @@ test('each form is a navigation landmark, named by its label, its heading or Mai
   const scope = page.getByTestId('navigation-light');
   for (const name of ['Mail drawer', 'Mail rail', 'Mail bar', 'Main', 'Routed'])
     await expect(scope.getByRole('navigation', { name, exact: true })).toHaveCount(1);
-  await expect(scope.locator('nav.env-drawer[aria-label="Mail drawer"]')).toHaveCount(1);
-  await expect(scope.locator('nav.env-rail[aria-label="Mail rail"]')).toHaveCount(1);
-  await expect(scope.locator('nav.env-bar[aria-label="Mail bar"]')).toHaveCount(1);
+  await expect(scope.locator('nav.env-navigation-drawer[aria-label="Mail drawer"]')).toHaveCount(1);
+  await expect(scope.locator('nav.env-navigation-rail[aria-label="Mail rail"]')).toHaveCount(1);
+  await expect(scope.locator('nav.env-navigation-bar[aria-label="Mail bar"]')).toHaveCount(1);
 });
 
 test('the current destination reports aria-current and fills its icon, also wrapped', async ({
@@ -55,22 +55,44 @@ test('a count shows on its destination, capped at 999+, and its name says it', a
   for (const form of ['drawer', 'rail'] as const) {
     const nav = scope.getByRole('navigation', { name: `Mail ${form}` });
     const inbox = nav.getByRole('button', { name: 'Inbox, 3 new', exact: true });
-    await expect(inbox.locator(`.env-${form}-count`)).toHaveText('3');
-    await expect(inbox.locator(`.env-${form}-count`)).toHaveAttribute('aria-hidden', 'true');
+    await expect(inbox.locator(`.env-navigation-${form}-count`)).toHaveText('3');
+    await expect(inbox.locator(`.env-navigation-${form}-count`)).toHaveAttribute(
+      'aria-hidden',
+      'true',
+    );
     // Its text is the label, then the count, apart, in the order its name gives them; the rail
     // draws its indicator, with the count, above the label all the same.
     expect(await inbox.evaluate((element) => element.textContent)).toBe('Inbox 3');
     if (form === 'rail') {
-      const indicator = (await inbox.locator('.env-rail-indicator').boundingBox())!;
-      const label = (await inbox.locator('.env-rail-label').boundingBox())!;
+      const indicator = (await inbox.locator('.env-navigation-rail-indicator').boundingBox())!;
+      const label = (await inbox.locator('.env-navigation-rail-label').boundingBox())!;
       expect(indicator.y + indicator.height).toBeLessThanOrEqual(label.y + 0.5);
     }
     const sent = nav.getByRole('button', { name: 'Sent, 999+ new', exact: true });
-    await expect(sent.locator(`.env-${form}-count`)).toHaveText('999+');
+    await expect(sent.locator(`.env-navigation-${form}-count`)).toHaveText('999+');
     // A count of 0 shows nothing, and the label alone names the destination.
     const drafts = nav.getByRole('button', { name: 'Drafts', exact: true });
-    await expect(drafts.locator(`.env-${form}-count`)).toHaveCount(0);
+    await expect(drafts.locator(`.env-navigation-${form}-count`)).toHaveCount(0);
   }
+});
+
+test("a Drawer destination's badge follows its label at the item's end, and names it with the label", async ({
+  page,
+}) => {
+  await page.goto(`${fixtureUrl}/?fixture=navigation`);
+  const nav = page
+    .getByTestId('navigation-light')
+    .getByRole('navigation', { name: 'Badged drawer' });
+  const reports = nav.getByRole('link', { name: 'Reports New', exact: true });
+  const label = (await reports.locator('.env-navigation-drawer-label').boundingBox())!;
+  const badge = (await reports.locator('.env-badge').boundingBox())!;
+  const item = (await reports.boundingBox())!;
+  // After the label, at the item's end, with the item's padding after it.
+  expect(badge.x).toBeGreaterThanOrEqual(label.x + label.width);
+  expect(item.x + item.width - (badge.x + badge.width)).toBeLessThan(24);
+  // With a count, the label and the count name the item, and the badge stands before the count.
+  const archive = nav.getByRole('link', { name: 'Archive, 2 new', exact: true });
+  expect(await archive.evaluate((element) => element.textContent)).toBe('ArchiveBeta 2');
 });
 
 test('Drawer heads each run of a group, and Rail and Bar keep the order without headings', async ({
@@ -79,23 +101,29 @@ test('Drawer heads each run of a group, and Rail and Bar keep the order without 
   await page.goto(`${fixtureUrl}/?fixture=navigation`);
   const scope = page.getByTestId('navigation-light');
   const drawer = scope.getByRole('navigation', { name: 'Mail drawer' });
-  await expect(drawer.locator('.env-drawer-heading')).toHaveText(['Folders', 'Account']);
+  await expect(drawer.locator('.env-navigation-drawer-group-label')).toHaveText([
+    'Folders',
+    'Account',
+  ]);
   const folders = drawer.getByRole('list', { name: 'Folders' });
   await expect(folders.getByRole('button')).toHaveText(['Starred', 'Archive']);
   await expect(drawer.getByRole('list', { name: 'Account' }).getByRole('button')).toHaveText([
     'Settings',
   ]);
   const order = ['Inbox', 'Drafts', 'Sent', 'Starred', 'Archive', 'Settings'];
-  await expect(drawer.locator('.env-drawer-label')).toHaveText(order);
+  await expect(drawer.locator('.env-navigation-drawer-label')).toHaveText(order);
   const rail = scope.getByRole('navigation', { name: 'Mail rail' });
-  await expect(rail.locator('.env-rail-label')).toHaveText(order);
+  await expect(rail.locator('.env-navigation-rail-label')).toHaveText(order);
   await expect(rail.getByRole('heading')).toHaveCount(0);
   // The drawer's group headings are headings, at level 2 by default.
   await expect(drawer.getByRole('heading', { level: 2 })).toHaveText(['Folders', 'Account']);
   await expect(rail.locator('[class*="heading"]')).toHaveCount(0);
   // The drawer keeps its header and footer, and its list takes the height between.
   const box = (locator: Locator) => locator.evaluate((element) => element.getBoundingClientRect());
-  const [nav, footer] = [await box(drawer), await box(drawer.locator('.env-drawer-footer'))];
+  const [nav, footer] = [
+    await box(drawer),
+    await box(drawer.locator('.env-navigation-drawer-footer')),
+  ];
   expect(Math.abs(nav.bottom - footer.bottom)).toBeLessThan(16);
 });
 
@@ -112,11 +140,11 @@ test('Bar shows five destinations at most, and opens the rest from More', async 
   // Five destinations fit without More.
   const five = scope.getByRole('navigation', { name: 'Five bar' });
   await expect(five.getByRole('listitem')).toHaveCount(5);
-  await expect(five.locator('.env-bar-more')).toHaveCount(0);
+  await expect(five.locator('.env-navigation-bar-more')).toHaveCount(0);
 
   const bar = scope.getByRole('navigation', { name: 'Many bar' });
   await expect(bar.getByRole('listitem')).toHaveCount(5);
-  await expect(bar.locator('.env-bar-text')).toHaveText([
+  await expect(bar.locator('.env-navigation-bar-label')).toHaveText([
     'Home',
     'Inbox',
     'Drafts',
@@ -132,9 +160,9 @@ test('Bar shows five destinations at most, and opens the rest from More', async 
   await expect(more).not.toHaveAttribute('aria-current');
   // Its text is its label, then its count, as its name reads them, with its icon drawn above.
   expect(await more.evaluate((element) => element.textContent)).toBe('More 5');
-  const icon = (await more.locator('.env-bar-icon').boundingBox())!;
+  const icon = (await more.locator('.env-navigation-bar-indicator').boundingBox())!;
   expect(icon.y + icon.height).toBeLessThanOrEqual(
-    (await more.locator('.env-bar-text').boundingBox())!.y + 0.5,
+    (await more.locator('.env-navigation-bar-label').boundingBox())!.y + 0.5,
   );
   await more.click();
   const menu = page.getByRole('menu', { name: 'More' });
@@ -157,7 +185,7 @@ test(
     const rail = page
       .getByTestId('navigation-light')
       .getByRole('navigation', { name: 'Mail rail' });
-    const items = rail.locator('.env-rail-item');
+    const items = rail.locator('.env-navigation-rail-item');
     await items.first().focus();
     for (const label of ['Drafts', 'Sent', 'Starred']) {
       await page.keyboard.press('Tab');
@@ -183,7 +211,7 @@ test(
     // Tab reaches More after the four destinations before it.
     await bar.getByRole('link', { name: 'Sent', exact: true }).focus();
     await page.keyboard.press('Tab');
-    const more = bar.locator('.env-bar-more');
+    const more = bar.locator('.env-navigation-bar-more');
     await expect(more).toBeFocused();
     await expect(more).toHaveAttribute('aria-haspopup', 'menu');
     await page.keyboard.press('Enter');
@@ -231,8 +259,8 @@ test('Rail is a narrow column, and Drawer items fill its width', async ({ page }
   );
   expect((await rail.boundingBox())!.width).toBeCloseTo(5 * rem, 0);
   const drawer = scope.getByRole('navigation', { name: 'Mail drawer' });
-  const list = (await drawer.locator('.env-drawer-list').boundingBox())!;
-  for (const item of await drawer.locator('.env-drawer-item').all())
+  const list = (await drawer.locator('.env-navigation-drawer-list').boundingBox())!;
+  for (const item of await drawer.locator('.env-navigation-drawer-item').all())
     expect(Math.abs((await item.boundingBox())!.width - list.width)).toBeLessThan(1);
 });
 
@@ -374,7 +402,7 @@ test.describe('Drawer resizable', () => {
       await page.mouse.move(box.x + box.width / 2, y);
       await page.mouse.down();
       await page.mouse.move(box.x + box.width / 2 - 32, y, { steps: 4 });
-      await expect(handle).toHaveAttribute('data-dragging', '');
+      await expect(handle).toHaveAttribute('data-resizing', '');
       // While dragging, the application hears each width, uncommitted.
       await expect(page.getByTestId('width')).toHaveText('18');
       await expect(page.getByTestId('committed')).toHaveText('');
@@ -384,7 +412,7 @@ test.describe('Drawer resizable', () => {
       await expect(page.getByTestId('width')).toHaveText('24');
       await page.mouse.up();
       await expect(page.getByTestId('committed')).toHaveText('24');
-      await expect(handle).not.toHaveAttribute('data-dragging');
+      await expect(handle).not.toHaveAttribute('data-resizing');
       expect(await widthOf(drawer)).toBeCloseTo(24 * 16, 0);
     },
   );
@@ -396,8 +424,8 @@ test.describe('Drawer resizable', () => {
       await page.goto(resizable);
       const drawer = page.getByRole('navigation', { name: 'Long labels' });
       const item = drawer.getByRole('link', { name: 'Reviews waiting for the whole team' });
-      const label = item.locator('.env-drawer-label');
-      const heading = drawer.locator('.env-drawer-heading');
+      const label = item.locator('.env-navigation-drawer-label');
+      const heading = drawer.locator('.env-navigation-drawer-group-label');
       const isCut = (element: Locator) =>
         element.evaluate((node) => node.scrollWidth > node.clientWidth);
       const tooltip = page.getByRole('tooltip');
@@ -446,7 +474,9 @@ test.describe('Drawer resizable', () => {
     await expect(handle).toHaveAttribute('aria-valuenow', '17.5');
     await expect(handle).toHaveAttribute('aria-valuetext', '17.5 rem');
     expect(
-      await drawer.evaluate((element) => element.style.getPropertyValue('--env-drawer-width')),
+      await drawer.evaluate((element) =>
+        element.style.getPropertyValue('--env-navigation-drawer-width'),
+      ),
     ).toBe('17.5rem');
     expect(await widthOf(drawer)).toBeCloseTo(17.5 * 16, 0);
   });
@@ -482,7 +512,7 @@ async function expectClosed(link: Locator) {
   await expect
     .poll(() =>
       link.evaluate((element) => {
-        const section = element.closest('.env-drawer-children');
+        const section = element.closest('.env-navigation-drawer-children');
         if (!section?.hasAttribute('hidden')) return false;
         const style = getComputedStyle(section);
         return (
@@ -541,7 +571,7 @@ test.describe('Drawer nested sections', () => {
       await page.goto(nested);
       const drawer = page.getByRole('navigation', { name: 'Guide' });
       const billing = drawer.getByRole('button', { name: 'Billing', exact: true });
-      const chevron = billing.locator('.env-drawer-chevron');
+      const chevron = billing.locator('.env-navigation-drawer-chevron');
       const transform = () => chevron.evaluate((element) => getComputedStyle(element).transform);
       // Closed, the chevron points down, and it flips over to point up as Select's does.
       const closed = await transform();
@@ -581,7 +611,7 @@ test.describe('Drawer nested sections', () => {
         return { width: style.outlineWidth, offset: style.outlineOffset };
       });
       expect(ring).toEqual({ width: '2px', offset: '-2px' });
-      const label = (await signIn.locator('.env-drawer-label').boundingBox())!;
+      const label = (await signIn.locator('.env-navigation-drawer-label').boundingBox())!;
       expect(label.x + label.width).toBeLessThanOrEqual((await signInButton.boundingBox())!.x);
     },
   );
@@ -636,7 +666,7 @@ test.describe('Drawer nested sections', () => {
     await page.goto(nested);
     const drawer = page.getByRole('navigation', { name: 'Guide' });
     const durations = await drawer
-      .locator('.env-drawer-children, .env-drawer-chevron')
+      .locator('.env-navigation-drawer-children, .env-navigation-drawer-chevron')
       .evaluateAll((elements) =>
         elements.map((element) => getComputedStyle(element).transitionDuration),
       );

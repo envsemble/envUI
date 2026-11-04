@@ -17,20 +17,23 @@ import { classNames } from '../internal/classNames.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { setRef } from '../internal/setRef.js';
 import { useScrollKeys } from './internal/useScrollKeys.js';
+import { resolveNavigationForms } from './internal/navigationForms.js';
+import '../styles/Base.css';
+import '../styles/Scaffold.css';
 
 /**
- * One of the three ways an application's destinations show: a Bar at the bottom, a Rail at the
- * start or a Drawer at the start.
+ * One of the three ways an application's destinations show: a NavigationBar at the bottom, a NavigationRail at the
+ * start or a NavigationDrawer at the start.
  */
-export type NavigationForm = 'bar' | 'rail' | 'drawer';
+export type ScaffoldNavigationForm = 'bar' | 'rail' | 'drawer';
 
 /** The navigation forms an application gives a Scaffold, each the component that renders it. */
 export interface ScaffoldNavigation {
-  /** The navigation Bar, at the bottom of a compact window. */
+  /** The NavigationBar, at the bottom of a compact window. */
   bar?: ReactNode;
-  /** The navigation Rail, at the start of a medium window. */
+  /** The NavigationRail, at the start of a medium window. */
   rail?: ReactNode;
-  /** The navigation Drawer, at the start of an expanded or a large window. */
+  /** The NavigationDrawer, at the start of an expanded or a large window. */
   drawer?: ReactNode;
 }
 
@@ -38,13 +41,13 @@ export interface ScaffoldNavigation {
  * Which navigation form shows at each window class, or none. A window class left out keeps its
  * default: bar on compact, rail on medium, drawer on expanded and large.
  */
-export type ScaffoldForms = Partial<Record<WindowClass, NavigationForm | 'none'>>;
+export type ScaffoldForms = Partial<Record<WindowClass, ScaffoldNavigationForm | 'none'>>;
 
 export interface ScaffoldProps extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
   /** The top bar region, above the body: usually a TopBar. */
   topBar?: ReactNode;
   /**
-   * The navigation forms, such as `{ bar: <Bar … />, rail: <Rail … />, drawer: <Drawer … /> }`
+   * The navigation forms, such as `{ bar: <NavigationBar … />, rail: <NavigationRail … />, drawer: <NavigationDrawer … /> }`
    * with the same destinations. One shows at a time, chosen by the Scaffold's own width; give only
    * the forms the application uses.
    */
@@ -56,7 +59,7 @@ export interface ScaffoldProps extends Omit<ComponentPropsWithRef<'div'>, 'child
    * way round, then the bar.
    * @default { compact: 'bar', medium: 'rail', expanded: 'drawer', large: 'drawer' }
    */
-  forms?: ScaffoldForms;
+  navigationForms?: ScaffoldForms;
   /**
    * body: the top bar sits above the body, beside the rail or drawer, which run the full height.
    * full: the top bar runs across the whole width, above the navigation, as a window's title bar
@@ -89,12 +92,12 @@ export interface ScaffoldProps extends Omit<ComponentPropsWithRef<'div'>, 'child
    * The name of the skip link to the body.
    * @default 'Skip to content', or EnvUIProvider's messages.scaffold.skipToContent
    */
-  skipLabel?: string;
+  skipToContentLabel?: string;
   /**
    * The name of the skip link to the navigation.
    * @default 'Skip to navigation', or EnvUIProvider's messages.scaffold.skipToNavigation
    */
-  skipNavigationLabel?: string;
+  skipToNavigationLabel?: string;
   /**
    * false renders the regions without landmarks, a div for the banner and the main, and no skip
    * links, for a preview of an application inside another page's main content.
@@ -108,42 +111,6 @@ export interface ScaffoldProps extends Omit<ComponentPropsWithRef<'div'>, 'child
   name?: string;
   /** The body: the page's main content, usually a Page or Panes. */
   children?: ReactNode;
-}
-
-/** The window classes, smallest first. */
-const classes = ['compact', 'medium', 'expanded', 'large'] as const;
-
-const defaultForms: Record<WindowClass, NavigationForm> = {
-  compact: 'bar',
-  medium: 'rail',
-  expanded: 'drawer',
-  large: 'drawer',
-};
-
-/** The forms that stand in for one that wasn't given, nearest first. */
-const standIns: Record<NavigationForm, readonly NavigationForm[]> = {
-  bar: ['bar', 'rail', 'drawer'],
-  rail: ['rail', 'drawer', 'bar'],
-  drawer: ['drawer', 'rail', 'bar'],
-};
-
-/**
- * The form that shows at each window class: the one asked for, else the nearest one given, else
- * none. Worked out from the props alone, so the server's markup has it, and CSS shows it at its
- * width.
- */
-export function resolveNavigationForms(
-  navigation: ScaffoldNavigation | undefined,
-  forms: ScaffoldForms | undefined,
-): Record<WindowClass, NavigationForm | 'none'> {
-  const given = (form: NavigationForm) => navigation?.[form] != null;
-  const resolved = {} as Record<WindowClass, NavigationForm | 'none'>;
-  for (const windowClass of classes) {
-    const asked = forms?.[windowClass] ?? defaultForms[windowClass];
-    resolved[windowClass] =
-      asked === 'none' ? 'none' : (standIns[asked].find(given) ?? ('none' as const));
-  }
-  return resolved;
 }
 
 /** The element of a navigation form to put focus on: its current item, else its first one. */
@@ -173,21 +140,21 @@ function focusRegion(target: HTMLElement) {
 /**
  * The invisible structure of an application's screen, after Material's: a top bar region, a
  * navigation region and the body. It never paints. It shows one navigation form at a time by its
- * own width, CSS only: a Bar at the bottom of a compact window, a Rail at the start of a medium one
- * and a Drawer at the start from expanded. The document scrolls by default, with the top bar, the
+ * own width, CSS only: a NavigationBar at the bottom of a compact window, a NavigationRail at the start of a medium one
+ * and a NavigationDrawer at the start from expanded. The document scrolls by default, with the top bar, the
  * bar and the rail or the drawer kept in view; `scroll="body"` scrolls the body alone. Skip links
  * to the body and the navigation come first.
  */
 export function Scaffold({
   topBar,
   navigation,
-  forms,
+  navigationForms,
   topBarSpan = 'body',
   scroll = 'document',
   bodyId,
   bodyRef,
-  skipLabel,
-  skipNavigationLabel,
+  skipToContentLabel,
+  skipToNavigationLabel,
   landmarks = true,
   name,
   className,
@@ -219,7 +186,7 @@ export function Scaffold({
   // document, also before anything in it has focus.
   useScrollKeys(scroll === 'body' ? root : null, body);
 
-  const resolved = resolveNavigationForms(navigation, forms);
+  const resolved = resolveNavigationForms(navigation, navigationForms);
   const shown = new Set(Object.values(resolved));
   const hasNavigation = shown.has('bar') || shown.has('rail') || shown.has('drawer');
   const hasTopBar = topBar != null;
@@ -302,7 +269,7 @@ export function Scaffold({
   }, [root, hasNavigation, navigationId]);
   // Every form that shows at some window class is rendered; CSS shows the one for the Scaffold's
   // width, and the others are display: none, out of the tab order and the accessibility tree.
-  const slot = (form: NavigationForm) =>
+  const slot = (form: ScaffoldNavigationForm) =>
     shown.has(form) ? (
       <div className={`env-scaffold-${form}`} data-navigation-form={form}>
         {navigation?.[form]}
@@ -336,10 +303,10 @@ export function Scaffold({
       data-env-name={name}
       data-top-bar-span={topBarSpan}
       data-scroll={scroll}
-      data-compact={resolved.compact}
-      data-medium={resolved.medium}
-      data-expanded={resolved.expanded}
-      data-large={resolved.large}
+      data-navigation-compact={resolved.compact}
+      data-navigation-medium={resolved.medium}
+      data-navigation-expanded={resolved.expanded}
+      data-navigation-large={resolved.large}
     >
       {landmarks && (
         <div className="env-scaffold-skip-links">
@@ -349,7 +316,7 @@ export function Scaffold({
             className="env-scaffold-skip-link"
             onClick={skipToBody}
           >
-            {skipLabel ?? messages.skipToContent}
+            {skipToContentLabel ?? messages.skipToContent}
           </Button>
           {hasNavigation && (
             // Hidden where the Scaffold's width shows no navigation form.
@@ -360,7 +327,7 @@ export function Scaffold({
               data-skip="navigation"
               onClick={skipToNavigation}
             >
-              {skipNavigationLabel ?? messages.skipToNavigation}
+              {skipToNavigationLabel ?? messages.skipToNavigation}
             </Button>
           )}
         </div>

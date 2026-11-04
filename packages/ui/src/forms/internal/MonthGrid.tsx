@@ -3,8 +3,8 @@
 import { useId, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
 import { Grid, Row } from '../../foundations/Layout.js';
 import { IconButton } from '../../actions/Button.js';
-import { ChevronLeft } from '../../icons/ChevronLeft.js';
-import { ChevronRight } from '../../icons/ChevronRight.js';
+import { IconChevronLeft } from '../../icons/ChevronLeft.js';
+import { IconChevronRight } from '../../icons/ChevronRight.js';
 import {
   clampMonth,
   dateFormat,
@@ -13,7 +13,10 @@ import {
   monthOfDay,
   now,
   toUtcDate,
-} from './CalendarDays.js';
+} from '../../internal/calendarDays.js';
+import { isRightToLeft } from '../../internal/direction.js';
+import '../../styles/Base.css';
+import '../../styles/MonthPicker.css';
 
 /** The month of the grid that holds its tab stop, where focus goes as the popup opens. */
 export function monthGridActive(root: ParentNode | null | undefined): HTMLElement | null {
@@ -97,7 +100,7 @@ export function MonthGrid({
 
   function handleKeyDown(event: KeyboardEvent<HTMLTableElement>) {
     if (event.altKey || event.ctrlKey || event.metaKey) return;
-    const rtl = getComputedStyle(event.currentTarget).direction === 'rtl';
+    const rtl = isRightToLeft(event.currentTarget);
     const column = (active - first) % columns;
     const moves: Record<string, number> = {
       ArrowLeft: active + (rtl ? 1 : -1),
@@ -128,7 +131,7 @@ export function MonthGrid({
       <Row align="center" gap={1} className="env-month-picker-header">
         <IconButton
           variant="ghost"
-          icon={<ChevronLeft />}
+          icon={<IconChevronLeft />}
           aria-label={previousYearLabel}
           title={previousYearLabel}
           // Unavailable rather than disabled, so focus stays on the button at the earliest year.
@@ -138,12 +141,12 @@ export function MonthGrid({
             if (previousAvailable) moveTo(active - 12, false);
           }}
         />
-        <div className="env-month-picker-heading" id={headingId} aria-live="polite">
+        <div className="env-month-picker-title" id={headingId} aria-live="polite">
           {formats.year.format(toUtcDate(monthFirstDay(first)))}
         </div>
         <IconButton
           variant="ghost"
-          icon={<ChevronRight />}
+          icon={<IconChevronRight />}
           aria-label={nextYearLabel}
           title={nextYearLabel}
           aria-disabled={!nextAvailable || undefined}

@@ -11,8 +11,8 @@ import { Text } from '../../foundations/Text.js';
 import { round, windowClasses, windowClassOf } from '../units.js';
 
 /** The smallest and largest the frame lays the page out at, in rem. */
-export const frameMin = 15;
-export const frameMax = 120;
+const frameMin = 15;
+const frameMax = 120;
 /** How close to a window class boundary, in screen px, a dragged width snaps to it. */
 const snapDistance = 8;
 

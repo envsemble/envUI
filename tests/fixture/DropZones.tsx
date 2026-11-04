@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, DropZone, Text, Theme, type ThemeValue } from '@envsemble/envui';
+import { Button, DropZone, Text, Theme, type ColorScheme } from '@envsemble/envui';
 
 const names = (files: File[]) => files.map((file) => file.name).join(' ');
 
@@ -7,7 +7,7 @@ const names = (files: File[]) => files.map((file) => file.name).join(' ');
  * An image chosen in a drop zone, shown with actions to replace or remove it; its form submits the
  * image the application keeps.
  */
-function AvatarPicker({ theme }: { theme: ThemeValue }) {
+function AvatarPicker({ theme }: { theme: ColorScheme }) {
   const picker = useRef<HTMLInputElement>(null);
   const [avatar, setAvatar] = useState<File | null>(null);
   const [preview, setPreview] = useState<string>();
@@ -34,7 +34,7 @@ function AvatarPicker({ theme }: { theme: ThemeValue }) {
         label="Drop an avatar here, or browse"
         description="Square images look best"
         accept="image/*"
-        onDropAccepted={([file]) => setAvatar(file ?? null)}
+        onFilesAccepted={([file]) => setAvatar(file ?? null)}
       />
       {avatar && (
         <div className="fixture-actions fixture-file-preview">
@@ -59,7 +59,7 @@ function AvatarPicker({ theme }: { theme: ThemeValue }) {
   );
 }
 
-export function DropZonesFixture({ theme }: { theme: ThemeValue }) {
+export function DropZonesFixture({ theme }: { theme: ColorScheme }) {
   const [taken, setTaken] = useState('');
   const [rejected, setRejected] = useState('');
   const [documents, setDocuments] = useState('');
@@ -72,8 +72,8 @@ export function DropZonesFixture({ theme }: { theme: ThemeValue }) {
         label="Drop a logo here, or browse"
         description="PNG, JPG or WebP up to 2 MB"
         accept="image/png,image/jpeg,.webp"
-        onDropAccepted={(files) => setTaken(names(files))}
-        onDropRejected={(files) => setRejected(names(files))}
+        onFilesAccepted={(files) => setTaken(names(files))}
+        onFilesRejected={(files) => setRejected(names(files))}
       />
       <output data-testid={`taken-${theme}`}>{taken}</output>
       <output data-testid={`rejected-${theme}`}>{rejected}</output>
@@ -82,26 +82,26 @@ export function DropZonesFixture({ theme }: { theme: ThemeValue }) {
         multiple
         label="Attach documents"
         description="Any file, several at once"
-        onDropAccepted={(files) => setDocuments(names(files))}
+        onFilesAccepted={(files) => setDocuments(names(files))}
       />
       <output data-testid={`documents-${theme}`}>{documents}</output>
       <DropZone
         pending
         label="Uploading the logo"
         description="This takes a moment"
-        onDropAccepted={(files) => setUnavailable(names(files))}
+        onFilesAccepted={(files) => setUnavailable(names(files))}
       />
       <DropZone
         disabled
         label="Uploads are paused"
-        onDropAccepted={(files) => setUnavailable(names(files))}
+        onFilesAccepted={(files) => setUnavailable(names(files))}
       />
       <output data-testid={`unavailable-${theme}`}>{unavailable}</output>
       <DropZone
         label="Drop a cover image"
         accept="image/*"
         error="Choose an image at least 1200 pixels wide."
-        onDropAccepted={() => undefined}
+        onFilesAccepted={() => undefined}
       />
       <form
         onSubmit={(event) => {
@@ -121,7 +121,7 @@ export function DropZonesFixture({ theme }: { theme: ThemeValue }) {
           name="attachments"
           accept=".pdf,.txt"
           label="Add attachments"
-          onDropAccepted={(files) => setAttached((list) => [...list, names(files)])}
+          onFilesAccepted={(files) => setAttached((list) => [...list, names(files)])}
         />
         <div className="fixture-actions">
           <Button type="submit">Submit files</Button>

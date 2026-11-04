@@ -5,6 +5,11 @@ import { useColorSwatch } from '@react-aria/color';
 import { classNames } from '../internal/classNames.js';
 import { ColorLocale, displayColor } from './internal/ColorLocale.js';
 import { toColor, type ColorFormat, type ColorValue } from './internal/colorValue.js';
+import { flag } from '../internal/flag.js';
+import '../styles/Base.css';
+// A swatch restyles the icon button that holds it, so Button's style sheet comes first.
+import '../styles/Button.css';
+import '../styles/ColorSwatch.css';
 
 export interface ColorSwatchProps
   extends Omit<ComponentPropsWithRef<'span'>, 'children' | 'color'> {
@@ -49,7 +54,7 @@ function Swatch({
         {...props}
         className={classNames('env-color-swatch', 'env-color-swatch-sample', className)}
         data-size={size}
-        data-translucent={translucent}
+        data-translucent={flag(translucent)}
         style={{ ...sampleStyle, ...props.style }}
       />
     );
@@ -58,7 +63,7 @@ function Swatch({
       <span
         className="env-color-swatch-sample"
         aria-hidden="true"
-        data-translucent={translucent}
+        data-translucent={flag(translucent)}
         style={sampleStyle}
       />
       {label != null && <span className="env-color-swatch-label">{label}</span>}

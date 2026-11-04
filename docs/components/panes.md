@@ -27,21 +27,23 @@ avoidWhen:
     use: Page
 components:
   - Panes
-  - readPanesSize
+  - readPanesWidth
 examples:
   SupportingPane:
     role: overview
     caption: A main pane and a supporting one.
+    motion: true
   ListAndDetail:
     role: overview
     caption: A list and its detail.
+    motion: true
   ResizableDetails: example
   PanesAnatomy: anatomy
   SupportingByWidth: example
   ListDetailByWidth: example
   DetailsButton:
     role: do
-    caption: A button in the main pane that opens the details where there is no room.
+    caption: A button that opens the details where there is no room.
   NoWayToDetails:
     role: dont
     caption: 'No button: in less room, the details can’t be reached.'
@@ -65,7 +67,7 @@ The panes sit side by side once they are as wide as a medium, an expanded or a l
 
 People can resize the supporting pane or the list by the gap between the panes, with its small grip, by pointer or with the arrow keys.
 
-```tsx figure=ResizableDetails widths="44"
+```tsx figure=ResizableDetails motion
 
 ```
 
@@ -80,28 +82,24 @@ People can resize the supporting pane or the list by the gap between the panes, 
 3. **Divider** (`env-panes-divider`)
 4. **Detail** (`env-panes-detail`)
 
-Not shown: the main and supporting panes, the supporting sheet's close button and scrim, the button that opens it, and the detail's back button.
-
 ## Behaviour
 
 ### Scrolling
 
-Panes never paints, and each pane scrolls on its own where the panes have a height, as in a [Scaffold](scaffold.md) whose body scrolls.
-
-- Where the page scrolls, the panes scroll with it.
+Each pane scrolls on its own where the panes have a height, as in a [Scaffold](scaffold.md) whose body scrolls. Where the page scrolls, the panes scroll with it.
 
 ### Adapting to width
 
-The panes decide how they sit from their own width alone, before anything runs.
+The panes decide how they sit from their own width alone.
 
-- A supporting pane becomes a side sheet in a medium width and a bottom sheet in a compact one, which a button in the main pane opens; press Details to open it.
-- In less room a list and its detail show one at a time: choose a message, and a back button named after the list, here Inbox, returns to it.
+- A supporting pane becomes a side sheet in a medium width and a bottom sheet in a compact one, which a button in the main pane opens. The sheet is on a [Sheet](sheet.md)'s color, so a surface in the pane reads as the same panel.
+- In less room a list and its detail show one at a time, and a back button named after the list, here Team inbox, returns to it.
 
-```tsx figure=SupportingByWidth widths="24 44 60"
+```tsx figure=SupportingByWidth motion
 
 ```
 
-```tsx figure=ListDetailByWidth widths="24 60"
+```tsx figure=ListDetailByWidth widths="24 54" sweep classes fit
 
 ```
 
@@ -109,11 +107,11 @@ The panes decide how they sit from their own width alone, before anything runs.
 
 Whatever the room, people can reach both panes.
 
-```tsx figure=DetailsButton
+```tsx figure=DetailsButton wide motion
 
 ```
 
-```tsx figure=NoWayToDetails
+```tsx figure=NoWayToDetails wide motion
 
 ```
 
@@ -163,8 +161,8 @@ The application's navigation goes in the [Scaffold](scaffold.md), not in a suppo
 Panes.Root takes a `behavior`: `supporting` holds Panes.Main and Panes.Supporting, such as a document and its details, and `list-detail` holds Panes.List and Panes.Detail, such as messages and the one chosen, each pair with an optional Panes.Divider between them.
 
 - Below `splitAt`, the supporting pane is a modal sheet over the main one while `open`, and a list-detail shows the detail instead of the list while `open`.
-- The application keeps `open`, setting it as an item is chosen or the sheet's button is pressed.
-- `onOpenChange` receives `false` as people close it: <kbd>Esc</kbd>, the close button or a press on the scrim close the sheet, and the back button returns to the list.
+- Left uncontrolled, with `defaultOpen`, Panes.Trigger opens the sheet and people close it; a list-detail application keeps `open` itself, setting it as an item is chosen.
+- `onOpenChange` receives the new state and why: `true` with `trigger-press`, and `false` as people close it, with `escape-key`, `close-press`, `outside-press` for the backdrop, or `back-press` for the back button that returns to the list.
 
 ```tsx source=SupportingPane
 
@@ -175,7 +173,7 @@ Panes.Root takes a `behavior`: `supporting` holds Panes.Main and Panes.Supportin
 Panes.Supporting and Panes.List take a `label`, which names their region; on Panes.Main and Panes.Detail it is optional, and makes the pane a region landmark, for the panes of a page's main layout.
 
 - Panes.Trigger is a Button, `primary` by default, that opens the supporting sheet and hides while the panes sit side by side.
-- `closeLabel` names the sheet's close button, Close by default, and `backLabel` the back button, Back by default, from EnvUIProvider's `messages.panes`; name where it goes, such as Inbox.
+- `closeLabel` names the sheet's close button, and `backLabel` the back button: name where it goes, such as Inbox.
 - Set `aria-current` on the list's current row.
 
 ```tsx
@@ -200,22 +198,22 @@ Panes.Supporting and Panes.List take a `label`, which names their region; on Pan
 
 #### Resizable
 
-Panes.Divider, named by its `label`, Resize panes by default, resizes the supporting pane or the list, by pointer and the arrow keys; a double click returns it to `defaultSize`, 22.5 rem by default.
+Panes.Divider, named by its `label`, Resize panes by default, resizes the supporting pane or the list, by pointer and the arrow keys; a double click returns it to `defaultWidth`, 22.5 rem by default.
 
-- It stays between `minSize` and `maxSize`, 16 and 40 rem by default, and never leaves the other pane less than 16 rem.
+- It stays between `minWidth` and `maxWidth`, 16 and 40 rem by default, and never leaves the other pane less than 16 rem.
 - The arrow keys move it 1 rem, 5 rem with <kbd>Shift</kbd>, and <kbd>Page Up</kbd> and <kbd>Page Down</kbd> 5 rem.
-- `size` and `onSizeChange`, which receives each width in rem and `committed` once a drag ends or a key moves it, let the application control it.
+- `width` and `onWidthChange`, which receives each width in rem and `committed` once a drag ends or a key moves it, as Sheet's do, let the application control it.
 - The divider is the gap between two surfaces: give each pane a Surface as tall as the pane, with `min-block-size: 100%`, and where the detail shows alone, its surface fills the room below the back button.
 - Panes keeps the same gap without a divider.
 
-`persist` keeps the width people choose in a cookie of that name. Read it on the server with `readPanesSize(cookieHeader, key)` and pass it as `persistedSize`, so nothing moves as the page hydrates.
+`persist` keeps the width people choose in a cookie of that name. Read it on the server with `readPanesWidth(cookieHeader, key)` and pass it as `persistedWidth`, so nothing moves as the page hydrates.
 
 ```tsx
 <Panes.Root
   behavior="supporting"
-  defaultSize={18}
-  minSize={14}
-  maxSize={28}
+  defaultWidth={18}
+  minWidth={14}
+  maxWidth={28}
   persist="details-width"
 >
   <Panes.Main label="Canvas">…</Panes.Main>
@@ -226,8 +224,10 @@ Panes.Divider, named by its `label`, Resize panes by default, resizes the suppor
 
 ### Composition
 
-The parts are the root, `env-panes`, with `data-behavior`, `data-split-at` and `data-open`; the main pane, `env-panes-main`, and the supporting one, `env-panes-supporting`, with its close button, `env-panes-close`, and its scrim, `env-panes-scrim`, while it is a sheet, and the trigger that opens it, `env-panes-trigger`; the list, `env-panes-list`, and the detail, `env-panes-detail`, with its back button, `env-panes-back`; and the divider, `env-panes-divider`. `name` names the node for dev mode, as `data-env-name`.
+The parts are the root, `env-panes`, with `data-behavior`, `data-split-at` and `data-open`; the main pane, `env-panes-main`, and the supporting one, `env-panes-supporting`, with its close button, `env-panes-close`, and its backdrop, `env-panes-backdrop`, while it is a sheet, and the trigger that opens it, `env-panes-trigger`; the list, `env-panes-list`, and the detail, `env-panes-detail`, with its back button, `env-panes-back`; and the divider, `env-panes-divider`. Panes paints no background of its own: the surfaces in its panes do. `name` names the node for dev mode, as `data-env-name`.
 
 ## Changelog
 
+- **1.0.0-prerelease.5**: The resized pane's `size`, `defaultSize`, `onSizeChange`, `minSize`, `maxSize` and `persistedSize` are `width`, `defaultWidth`, `onWidthChange`, `minWidth`, `maxWidth` and `persistedWidth`, as on Sheet, and `readPanesSize` is `readPanesWidth`. `defaultOpen` leaves the open state to Panes, and `onOpenChange` receives why. The part props are `Panes.MainProps`, `Panes.DetailProps` and `Panes.ListProps`.
+- **1.0.0-prerelease.5**: The supporting sheet is on a Sheet's fill, `--env-color-bg-default`, rather than `--env-color-bg-raised`, which differ only at high contrast in the light theme.
 - **1.0.0**: Panes, which replaces SplitPane and ListDetail: the supporting and list-detail behaviors, `splitAt` at a window class, a divider in rem, and Panes.Trigger, which opens the supporting sheet.

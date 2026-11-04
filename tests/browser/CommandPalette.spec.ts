@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { fixtureUrl } from './Servers';
+import { fixtureUrl } from './helpers/Servers';
 
 const paletteFixture = `${fixtureUrl}/?fixture=palette`;
 
@@ -101,6 +101,68 @@ test.describe('CommandPalette', () => {
     expect(errors).toEqual([]);
   });
 
+  test('the search is a large ghost text field, solid in every state', async ({ page }) => {
+    await page.goto(paletteFixture);
+    await page.getByRole('button', { name: 'Quick open light' }).focus();
+    await page.keyboard.press('Enter');
+    const dialog = page.getByRole('dialog', { name: 'Go to document' });
+    const input = dialog.getByRole('combobox', { name: 'Go to document' });
+    await expect(input).toBeFocused();
+    // Autocomplete's combobox, in TextField's ghost frame at the large size.
+    await expect(input).toHaveAttribute('aria-autocomplete', 'list');
+    await expect(input).toHaveAttribute('aria-expanded', 'true');
+    await expect(input).toHaveClass(/\benv-text-field-input\b/);
+    const search = dialog.locator('.env-command-palette-search');
+    await expect(search).toHaveClass(/\benv-text-field\b/);
+    await expect(search).toHaveAttribute('data-size', 'lg');
+    const control = search.locator('.env-text-field-control');
+    await expect(control).toHaveAttribute('data-variant', 'ghost');
+    const look = () =>
+      control.evaluate((element) => {
+        const style = getComputedStyle(element);
+        const field = element.querySelector('input')!;
+        const border = element.querySelector('.env-text-field-border')!;
+        // Its layout height: the palette may still be scaling in.
+        const height = (element as HTMLElement).offsetHeight;
+        return {
+          height,
+          pill: parseFloat(style.borderTopLeftRadius) >= height / 2,
+          // The neutral fill over the popup's opaque color.
+          fill: [style.backgroundImage.startsWith('linear-gradient'), style.backgroundColor],
+          placeholder: getComputedStyle(field, '::placeholder').color,
+          edge: getComputedStyle(border).borderTopColor,
+          ring: getComputedStyle(element.closest('.env-command-palette-search')!, '::after')
+            .borderTopColor,
+        };
+      });
+    const focused = await look();
+    expect(focused.height).toBe(48);
+    expect(focused.pill).toBe(true);
+    expect(focused.fill[0]).toBe(true);
+    expect(focused.fill[1]).toMatch(/^rgb\(/);
+    // Always focused, it keeps its placeholder; frosted, it has no edge, and holding the caret, it
+    // shows the focus ring.
+    expect(focused.placeholder).not.toBe('rgba(0, 0, 0, 0)');
+    expect(focused.edge).toBe('rgba(0, 0, 0, 0)');
+    expect(focused.ring).toMatch(/^rgb\(/);
+    // Under the pointer it stays as it is.
+    await control.hover();
+    expect(await look()).toEqual(focused);
+
+    // Typing and the arrow keys keep the focus in the field, and so does Tab.
+    await page.keyboard.type('document 2');
+    await expect(input).toHaveValue('document 2');
+    await page.keyboard.press('ArrowDown');
+    await expect.poll(() => highlighted(page)).toBe('documents/Document 20.md');
+    await expect(input).toBeFocused();
+    await page.keyboard.press('Tab');
+    await expect(input).toBeFocused();
+
+    // On a solid palette, as at high contrast, its edge returns.
+    await page.emulateMedia({ contrast: 'more' });
+    await expect.poll(async () => (await look()).edge).toMatch(/^rgb\(/);
+  });
+
   test('modifier selection, pointer highlight, empty results and Escape', async ({
     page,
     browserName,
@@ -199,6 +261,33 @@ test.describe('CommandPalette', () => {
     await expect(translated.getByRole('status')).toHaveText('Začněte psát');
     await translated.getByRole('combobox').fill('xyz');
     await expect(translated.getByRole('status')).toHaveText('Nic nenalezeno Pro „xyz“ nic není.');
+  });
+
+  test('while results load, the palette says so, and results already shown stay, busy', async ({
+    page,
+  }) => {
+    await page.goto(paletteFixture);
+    const root = page.getByTestId('palette-empty');
+    await root.getByRole('button', { name: 'Open Search the server' }).click();
+    const dialog = page.getByRole('dialog', { name: 'Search the server' });
+    const status = dialog.getByRole('status');
+    const icon = dialog.locator('.env-command-palette-empty-icon');
+    const field = dialog.locator('.env-command-palette-search');
+    // With nothing to show yet, the empty state says the results are on their way, beside a
+    // spinner hidden from assistive technology, and only the words are announced.
+    await expect(status).toHaveText('Searching…');
+    await expect(icon.locator('.env-spinner')).toHaveAttribute('aria-hidden', 'true');
+    await expect(field.locator('.env-spinner')).toHaveCount(0);
+    await dialog.getByRole('combobox').fill('xyz');
+    await expect(status).toHaveText('Searching…');
+    // Results already found stay, marked busy, with the loading words announced in place of the
+    // count, and the search field's icon turns into a spinner.
+    await dialog.getByRole('combobox').fill('bill');
+    await expect(dialog.getByRole('option', { name: 'Billing' })).toBeVisible();
+    await expect(dialog.getByRole('listbox')).toHaveAttribute('aria-busy', 'true');
+    await expect(status).toHaveText('Searching…');
+    await expect(icon).toHaveCount(0);
+    await expect(field.locator('.env-spinner')).toHaveCount(1);
   });
 
   test('default items show until people type, and choose like results', async ({ page }) => {

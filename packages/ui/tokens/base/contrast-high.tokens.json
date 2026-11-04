@@ -4,19 +4,6 @@
     "$type": "color",
     "$description": "The light scheme’s high-contrast values: text 70 grades from what it sits on, boundaries and indicators 50. contrast/high.tokens.json points the roles here; color-scheme/dark-contrast-high.tokens.json holds the dark values. Internal: never CSS.",
     "color": {
-      "list-item": {
-        "bg": {
-          "$root": {
-            "$value": "{palette.neutral.4}"
-          },
-          "hover": {
-            "$value": "{palette.neutral.8}"
-          },
-          "pressed": {
-            "$value": "{palette.neutral.10}"
-          }
-        }
-      },
       "bg": {
         "selected": {
           "$root": {
@@ -31,59 +18,65 @@
         },
         "navigation": {
           "hover": {
-            "$value": "{palette.neutral.13}"
+            "$value": "{palette.gray.13}"
           },
           "pressed": {
-            "$value": "{palette.neutral.15}"
+            "$value": "{palette.gray.15}"
           }
         },
         "page": {
+          "$root": {
+            "$value": "{palette.gray.4}"
+          },
           "hover": {
-            "$value": "{palette.neutral.4}"
+            "$value": "{palette.gray.8}"
           },
           "pressed": {
-            "$value": "{palette.neutral.8}"
+            "$value": "{palette.gray.11}"
           }
         },
         "default": {
+          "$root": {
+            "$value": "{palette.gray.2}"
+          },
           "hover": {
-            "$value": "{palette.neutral.8}"
+            "$value": "{palette.gray.6}"
           },
           "pressed": {
-            "$value": "{palette.neutral.10}"
+            "$value": "{palette.gray.9}"
           }
         },
         "muted": {
           "$root": {
-            "$value": "{palette.neutral.2}"
+            "$value": "{palette.neutral.0}"
           },
           "hover": {
-            "$value": "{palette.neutral.6}"
+            "$value": "{palette.gray.4}"
           },
           "pressed": {
-            "$value": "{palette.neutral.8}"
+            "$value": "{palette.gray.8}"
           }
         },
         "raised": {
           "$root": {
-            "$value": "{palette.neutral.0}"
+            "$value": "{palette.gray.2}"
           },
           "hover": {
-            "$value": "{palette.neutral.4}"
+            "$value": "{palette.gray.6}"
           },
           "pressed": {
-            "$value": "{palette.neutral.8}"
+            "$value": "{palette.gray.9}"
           }
         },
         "popup": {
           "$root": {
-            "$value": "{palette.neutral.0}"
+            "$value": "{palette.gray.2-75}"
           },
           "hover": {
-            "$value": "{palette.neutral.4}"
+            "$value": "{palette.gray.7}"
           },
           "pressed": {
-            "$value": "{palette.neutral.8}"
+            "$value": "{palette.gray.10}"
           }
         },
         "neutral": {
@@ -92,39 +85,40 @@
               "$value": {
                 "colorSpace": "oklch",
                 "components": {
-                  "$ref": "#/palette/neutral/92/$value/components"
+                  "$ref": "#/palette/gray/92/$value/components"
                 },
                 "alpha": 0.06
               }
             },
             "hover": {
+              "$description": "As strong as the standard light value, never fainter: skeletons' bars and switch tracks take it, and stay as visible at high contrast.",
               "$value": {
                 "colorSpace": "oklch",
                 "components": {
-                  "$ref": "#/palette/neutral/92/$value/components"
+                  "$ref": "#/palette/gray/92/$value/components"
                 },
-                "alpha": 0.12
+                "alpha": 0.17
               }
             },
             "pressed": {
               "$value": {
                 "colorSpace": "oklch",
                 "components": {
-                  "$ref": "#/palette/neutral/92/$value/components"
+                  "$ref": "#/palette/gray/92/$value/components"
                 },
-                "alpha": 0.18
+                "alpha": 0.25
               }
             }
           },
           "emphasis": {
-            "$value": "{palette.neutral.80}"
+            "$value": "{palette.gray.80}"
           },
           "subtle": {
             "hover": {
               "$value": {
                 "colorSpace": "oklch",
                 "components": {
-                  "$ref": "#/palette/neutral/92/$value/components"
+                  "$ref": "#/palette/gray/92/$value/components"
                 },
                 "alpha": 0.06
               }
@@ -133,7 +127,7 @@
               "$value": {
                 "colorSpace": "oklch",
                 "components": {
-                  "$ref": "#/palette/neutral/92/$value/components"
+                  "$ref": "#/palette/gray/92/$value/components"
                 },
                 "alpha": 0.08
               }
@@ -141,14 +135,14 @@
           },
           "strong": {
             "hover": {
-              "$value": "{palette.neutral.84}"
+              "$value": "{palette.gray.84}"
             },
             "pressed": {
-              "$value": "{palette.neutral.88}"
+              "$value": "{palette.gray.88}"
             }
           }
         },
-        "brand": {
+        "primary": {
           "emphasis": {
             "$root": {
               "$value": "{palette.blue.75}"
@@ -169,29 +163,6 @@
             },
             "pressed": {
               "$value": "{palette.blue.84}"
-            }
-          },
-          "muted": {
-            "$value": {
-              "colorSpace": "oklch",
-              "components": {
-                "$ref": "#/palette/blue/75/$value/components"
-              },
-              "alpha": 0.16
-            }
-          }
-        },
-        "accent": {
-          "emphasis": {
-            "$value": "{palette.blue.80}"
-          },
-          "muted": {
-            "$value": {
-              "colorSpace": "oklch",
-              "components": {
-                "$ref": "#/palette/blue/80/$value/components"
-              },
-              "alpha": 0.08
             }
           },
           "subtle": {
@@ -213,6 +184,18 @@
                 "alpha": 0.22
               }
             }
+          },
+          "muted": {
+            "$value": {
+              "colorSpace": "oklch",
+              "components": {
+                "$ref": "#/palette/blue/80/$value/components"
+              },
+              "alpha": 0.08
+            }
+          },
+          "solid": {
+            "$value": "{palette.blue.80}"
           }
         },
         "success": {
@@ -366,7 +349,7 @@
             }
           }
         },
-        "important": {
+        "accent": {
           "strong": {
             "$root": {
               "$value": "{palette.purple.75}"
@@ -377,26 +360,106 @@
             "pressed": {
               "$value": "{palette.purple.84}"
             }
+          },
+          "subtle": {
+            "hover": {
+              "$value": {
+                "colorSpace": "oklch",
+                "components": {
+                  "$ref": "#/palette/purple/80/$value/components"
+                },
+                "alpha": 0.14
+              }
+            },
+            "pressed": {
+              "$value": {
+                "colorSpace": "oklch",
+                "components": {
+                  "$ref": "#/palette/purple/80/$value/components"
+                },
+                "alpha": 0.22
+              }
+            }
+          },
+          "muted": {
+            "$value": {
+              "colorSpace": "oklch",
+              "components": {
+                "$ref": "#/palette/purple/80/$value/components"
+              },
+              "alpha": 0.08
+            }
+          },
+          "solid": {
+            "$value": "{palette.purple.80}"
+          }
+        },
+        "recessed": {
+          "$root": {
+            "$value": "{palette.gray.2}"
+          },
+          "hover": {
+            "$value": "{palette.gray.6}"
+          },
+          "pressed": {
+            "$value": "{palette.gray.9}"
+          }
+        },
+        "list-item": {
+          "$root": {
+            "$value": "{palette.neutral.0}"
+          },
+          "hover": {
+            "$value": "{palette.gray.4}"
+          },
+          "pressed": {
+            "$value": "{palette.gray.8}"
+          }
+        },
+        "avatar": {
+          "powder": {
+            "$value": "{palette.powder.10}"
+          },
+          "seafoam": {
+            "$value": "{palette.seafoam.10}"
+          },
+          "sage": {
+            "$value": "{palette.sage.10}"
+          },
+          "butter": {
+            "$value": "{palette.butter.10}"
+          },
+          "blush": {
+            "$value": "{palette.blush.10}"
+          },
+          "periwinkle": {
+            "$value": "{palette.periwinkle.10}"
+          },
+          "orchid": {
+            "$value": "{palette.orchid.10}"
+          },
+          "oat": {
+            "$value": "{palette.oat.10}"
           }
         }
       },
       "fg": {
         "default": {
-          "$value": "{palette.neutral.96}"
+          "$value": "{palette.gray.96}"
         },
         "muted": {
           "$root": {
-            "$value": "{palette.neutral.84}"
+            "$value": "{palette.gray.84}"
           },
           "hover": {
-            "$value": "{palette.neutral.88}"
+            "$value": "{palette.gray.88}"
           },
           "pressed": {
-            "$value": "{palette.neutral.92}"
+            "$value": "{palette.gray.92}"
           }
         },
         "control": {
-          "$value": "{palette.neutral.88}"
+          "$value": "{palette.gray.88}"
         },
         "link": {
           "$root": {
@@ -409,8 +472,11 @@
             "$value": "{palette.blue.88}"
           }
         },
-        "accent": {
+        "primary": {
           "$value": "{palette.blue.80}"
+        },
+        "accent": {
+          "$value": "{palette.purple.80}"
         },
         "on-selected": {
           "$value": "{palette.blue.84}"
@@ -429,32 +495,61 @@
         },
         "on-emphasis": {
           "$value": "{palette.neutral.0}"
+        },
+        "rating-star": {
+          "$value": "{palette.amber.80}"
+        },
+        "avatar": {
+          "powder": {
+            "$value": "{palette.powder.80}"
+          },
+          "seafoam": {
+            "$value": "{palette.seafoam.80}"
+          },
+          "sage": {
+            "$value": "{palette.sage.80}"
+          },
+          "butter": {
+            "$value": "{palette.butter.80}"
+          },
+          "blush": {
+            "$value": "{palette.blush.80}"
+          },
+          "periwinkle": {
+            "$value": "{palette.periwinkle.80}"
+          },
+          "orchid": {
+            "$value": "{palette.orchid.80}"
+          },
+          "oat": {
+            "$value": "{palette.oat.80}"
+          }
         }
       },
       "border": {
         "default": {
           "$root": {
-            "$value": "{palette.neutral.55}"
+            "$value": "{palette.gray.55}"
           },
           "hover": {
-            "$value": "{palette.neutral.60}"
+            "$value": "{palette.gray.60}"
           },
           "pressed": {
-            "$value": "{palette.neutral.65}"
+            "$value": "{palette.gray.65}"
           }
         },
         "muted": {
           "$root": {
-            "$value": "{palette.neutral.55}"
+            "$value": "{palette.gray.55}"
           },
           "hover": {
-            "$value": "{palette.neutral.60}"
+            "$value": "{palette.gray.60}"
           },
           "pressed": {
-            "$value": "{palette.neutral.65}"
+            "$value": "{palette.gray.65}"
           }
         },
-        "accent": {
+        "primary": {
           "$root": {
             "$value": {
               "colorSpace": "oklch",
@@ -483,6 +578,15 @@
             "pressed": {
               "$value": "{palette.blue.84}"
             }
+          }
+        },
+        "accent": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": {
+              "$ref": "#/palette/purple/80/$value/components"
+            },
+            "alpha": 0.55
           }
         },
         "danger": {
@@ -524,13 +628,13 @@
             "$value": {
               "colorSpace": "oklch",
               "components": {
-                "$ref": "#/palette/neutral/84/$value/components"
+                "$ref": "#/palette/gray/84/$value/components"
               },
               "alpha": 0.55
             }
           },
           "strong": {
-            "$value": "{palette.neutral.84}"
+            "$value": "{palette.gray.84}"
           }
         },
         "success": {
@@ -579,9 +683,9 @@
         "focus": {
           "$value": "{palette.blue.65}"
         },
-        "scrim": {
-          "$description": "The edge of a dialog against the scrim: 4.5:1 against the gray of the page under the scrim, which only near-black reaches in light.",
-          "$value": "{palette.neutral.96}"
+        "backdrop": {
+          "$description": "The edge of a dialog against the backdrop: 4.5:1 against the gray of the page under the backdrop, which only near-black reaches in light.",
+          "$value": "{palette.gray.96}"
         },
         "info": {
           "strong": {
@@ -595,60 +699,6 @@
               "$ref": "#/palette/violet/80/$value/components"
             },
             "alpha": 0.55
-          }
-        }
-      },
-      "avatar": {
-        "bg": {
-          "powder": {
-            "$value": "{palette.powder.10}"
-          },
-          "seafoam": {
-            "$value": "{palette.seafoam.10}"
-          },
-          "sage": {
-            "$value": "{palette.sage.10}"
-          },
-          "butter": {
-            "$value": "{palette.butter.10}"
-          },
-          "blush": {
-            "$value": "{palette.blush.10}"
-          },
-          "periwinkle": {
-            "$value": "{palette.periwinkle.10}"
-          },
-          "orchid": {
-            "$value": "{palette.orchid.10}"
-          },
-          "oat": {
-            "$value": "{palette.oat.10}"
-          }
-        },
-        "fg": {
-          "powder": {
-            "$value": "{palette.powder.80}"
-          },
-          "seafoam": {
-            "$value": "{palette.seafoam.80}"
-          },
-          "sage": {
-            "$value": "{palette.sage.80}"
-          },
-          "butter": {
-            "$value": "{palette.butter.80}"
-          },
-          "blush": {
-            "$value": "{palette.blush.80}"
-          },
-          "periwinkle": {
-            "$value": "{palette.periwinkle.80}"
-          },
-          "orchid": {
-            "$value": "{palette.orchid.80}"
-          },
-          "oat": {
-            "$value": "{palette.oat.80}"
           }
         }
       }

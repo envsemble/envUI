@@ -2,7 +2,7 @@
 title: DatePicker
 summary: A field that opens a calendar to choose a date, or a date and time, and the calendar on its own.
 status: stable
-since: 0.6.0
+since: 1.0.0
 category: Forms & selection
 aliases:
   - DateTimeField
@@ -34,7 +34,9 @@ components:
   - DatePicker
   - Calendar
 examples:
-  PublishDate: overview
+  PublishDate:
+    role: overview
+    motion: true
   PlanningCalendar:
     role: overview
     caption: 'Calendar: the month the field opens.'
@@ -98,12 +100,10 @@ A field without a visible label, such as in a toolbar, shows its placeholder ins
 
 1. **Popup** (`env-date-picker-popup`)
 2. **Previous month** (`env-calendar-previous`)
-3. **Month** (`env-calendar-heading`)
+3. **Month** (`env-calendar-title`)
 4. **Next month** (`env-calendar-next`)
-5. **Day** (`env-calendar-day`)
+5. **Day** (`env-calendar-day:last-child`)
 6. **Actions** (`env-date-picker-actions`)
-
-Not shown: the time's wheels beside the calendar, for a field that takes a time.
 
 ## Behaviour
 
@@ -117,7 +117,7 @@ A read-only field shows its value, and its calendar doesn't open.
 
 With a time, the calendar stays open beside the time's wheels, and turning a wheel sets the time at once.
 
-```tsx figure=MeetingTime
+```tsx figure=MeetingTime motion
 
 ```
 
@@ -125,7 +125,7 @@ With a time, the calendar stays open beside the time's wheels, and turning a whe
 
 Days outside the allowed range are unavailable, and the month buttons stop at them.
 
-```tsx figure=WithinRange
+```tsx figure=WithinRange motion
 
 ```
 
@@ -193,13 +193,13 @@ A DatePicker is a field with its `label`, `description` and `error`, whose butto
 `granularity` is `day`, the default, or `minute`, for a local date and time as `YYYY-MM-DDTHH:mm`.
 
 - The time is chosen on wheels of hours, minutes every `minuteStep` minutes, 15 by default, and, on a 12-hour clock, day periods.
-- `defaultTime`, as `HH:mm`, is the time a newly chosen day starts with, 00:00 by default.
+- `placeholderTime`, as `HH:mm`, is the time a newly chosen day starts with, 00:00 by default.
 
 ```tsx
 <DatePicker
   label="Meeting"
   granularity="minute"
-  defaultTime="09:00"
+  placeholderTime="09:00"
   minuteStep={30}
   value={meeting}
   onValueChange={setMeeting}
@@ -253,14 +253,19 @@ Calendar is the month on its own, for a page or a panel: it takes `value`, `defa
 
 ### Composition
 
-`open`, `defaultOpen` and `onOpenChange` control the calendar. `clearLabel`, `todayLabel`, `nowLabel`, `timeLabel`, `previousMonthLabel` and `nextMonthLabel` name its buttons, from EnvUIProvider's `messages` by default. `className` and `style` reach the field's root, and `ref` the button.
+`open`, `defaultOpen` and `onOpenChange` control the calendar; `onOpenChange` also receives why it opens or closes, `PickerOpenChangeDetails`, such as `item-press` for a chosen day. `clearLabel`, `todayLabel`, `nowLabel`, `timeLabel`, `previousMonthLabel` and `nextMonthLabel` name its buttons, from EnvUIProvider's `messages` by default. `className` and `style` reach the field's root, and `ref` the button.
 
-The field's parts are the root, `env-field` with `env-date-picker`; the control, `env-date-picker-control`, with the label, `env-date-picker-label`, the value, `env-date-picker-value`, the clear button, `env-date-picker-clear`, and the calendar icon, `env-date-picker-icon`; then the description, `env-field-description`, and the error, `env-field-error`. The popup is the picker card TimePicker and MonthPicker open too, `env-picker-popup` with `env-date-picker-popup`. Its body, `env-picker-popup-body`, holds the calendar, with `env-calendar-previous`, `env-calendar-heading`, `env-calendar-next` and `env-calendar-day`, and the times, `env-date-picker-time`, beside it with `granularity="minute"`; its footer, `env-picker-popup-footer` with `env-date-picker-actions`, holds the actions, Clear in `env-picker-popup-footer-end` with `env-date-picker-actions-end`.
+The field's parts are the root, `env-field` with `env-date-picker`; the control, `env-date-picker-control`, with the label, `env-date-picker-label`, the value, `env-date-picker-value`, the clear button, `env-date-picker-clear`, and the calendar icon, `env-date-picker-icon`; then the description, `env-field-description`, and the error, `env-field-error`. The popup is the picker card TimePicker and MonthPicker open too, `env-picker-popup` with `env-date-picker-popup`. Its body, `env-picker-popup-body`, holds the calendar, with `env-calendar-previous`, `env-calendar-title`, `env-calendar-next` and `env-calendar-day`, and the times, `env-date-picker-time`, beside it with `granularity="minute"`; its footer, `env-picker-popup-footer` with `env-date-picker-actions`, holds the actions, Clear in `env-picker-popup-footer-end` with `env-date-picker-actions-end`.
+
+### Customize
+
+Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blur` and `--env-popup-shadow`, set on a theme, change it, as [Popover](popover.md#customize) describes.
 
 ## Changelog
 
-- **1.0.0**: The field keeps its minimum width, 12 rem, in a container sized to its content, such as an inline-flex toolbar, rather than growing after the container measured it and pushing its neighbours onto another row; in a narrower container it still takes the container's width.
+- **1.0.0-prerelease.5**: `defaultTime` is `placeholderTime`, as React Aria names it: `default` names an uncontrolled starting value elsewhere.
+- **1.0.0-prerelease.5**: The calendar popup is frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge, and is solid with its edge at high contrast and with reduced transparency. Its inset is a panel's, as wide as a popup row's corner: 14 px, 11.2 px at the compact scale. The calendar leads with the month's name, its buttons side by side at the end; the days of a week touch, a row height wide; today is in the accent color rather than ringed, and a day under the pointer takes the neutral fill.
+- **1.0.0**: The field keeps its minimum width, 12 rem, in a container sized to its content, such as an inline-flex toolbar, rather than growing after the container measured it and pushing its neighbours onto another row; in a narrower container it still takes the container's width. The calendar's month and year, `env-calendar-heading`, are `env-calendar-title`.
 - **1.0.0**: With the minute granularity, the time is chosen on wheels of hours, minutes every `minuteStep` minutes (15) and, on a 12-hour clock, day periods, beside the calendar, in place of the time field under it; turning a wheel sets the time at once. The calendar has no Done button, and `doneLabel` is gone: it closes as a date-only one does. The field and popup are shared with TimePicker and MonthPicker.
-- **1.0.0**: `withTime` is `granularity`, `"day"` or `"minute"`; `hint` is `description`; `variant="outlined"` is `variant="outline"`, which the `v1-props` codemod writes. `className` and `style` style the field's root rather than the button, which takes `ref`. The calendar opens on the shared popup, its month buttons are ghost icon buttons, and its labels come from EnvUIProvider's `messages`, as its locale does: `env-date-time-well` is `env-date-picker-control`.
+- **1.0.0**: `withTime` is `granularity`, `"day"` or `"minute"`; `hint` is `description`; `variant="outlined"` is `variant="outline"`. `className` and `style` style the field's root rather than the button, which takes `ref`. The calendar opens on the shared popup, its month buttons are ghost icon buttons, and its labels come from EnvUIProvider's `messages`, as its locale does: `env-date-time-well` is `env-date-picker-control`.
 - **1.0.0**: `DateTimeField` is `DatePicker`, with the `env-date-picker-*` classes; the page is `date-picker`.
-- **0.6.0**: DateTimeField, for a day or, with `withTime`, a date and time, and Calendar.

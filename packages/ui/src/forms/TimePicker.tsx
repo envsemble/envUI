@@ -5,10 +5,13 @@ import { useMessages } from '../internal/EnvUIContext.js';
 import { useResolvedLocale } from '../internal/useFormatters.js';
 import { timePicker as timePickerMessages } from '../foundations/messages/timePicker.js';
 import { Button } from '../actions/Button.js';
-import { Schedule } from '../icons/Schedule.js';
+import { IconSchedule } from '../icons/Schedule.js';
 import { PickerField, usePickerOpen, type PickerFieldProps } from './internal/PickerField.js';
 import { TimeList, timeListFirstColumn } from './internal/TimeList.js';
-import { dateFormat, formatTime, now, parseTime, toUtcDate } from './internal/CalendarDays.js';
+import { dateFormat, formatTime, now, parseTime, toUtcDate } from '../internal/calendarDays.js';
+import '../styles/Base.css';
+import '../styles/DatePicker.css';
+import '../styles/TimePicker.css';
 
 export interface TimePickerProps extends PickerFieldProps {
   /** The value: a time of day as HH:mm on the 24-hour clock. null, or an empty string, for none. */
@@ -117,7 +120,7 @@ export function TimePicker({
 
   function clear() {
     commit(null);
-    setOpen(false);
+    setOpen(false, 'clear-press');
   }
 
   const reference = now().minutes;
@@ -130,7 +133,7 @@ export function TimePicker({
       {...fieldProps}
       serialized={serialized}
       display={display}
-      icon={<Schedule />}
+      icon={<IconSchedule />}
       rootClassName="env-date-picker env-time-picker"
       popupClassName="env-time-picker-popup"
       initialFocus={timeListFirstColumn}

@@ -52,6 +52,8 @@ The end is the right edge in left-to-right text, and the left in right-to-left t
 | From the start  | Panels about what sits at the start of the page.        |
 | From the bottom | A short set of choices or actions.                      |
 
+<!-- specimen: Sides -->
+
 ### Choices from the bottom
 
 A sheet from the bottom is as tall as its content.
@@ -73,18 +75,18 @@ A medium side sheet takes the whole width of a compact window, and a large one o
 
 ## Anatomy
 
-```tsx figure=SheetAnatomy open
+```tsx figure=SheetAnatomy stage=shaded open
 
 ```
 
-1. **Sheet** (`env-sheet-popup`)
+1. **Sheet** (`env-sheet`)
 2. **Title** (`env-dialog-title`, `title`)
 3. **Description** (`env-dialog-description`, `description`)
 4. **Close button** (`env-dialog-heading > env-button`, `closeLabel`)
-5. **Content** (`env-sheet-popup env-checkbox`, `children`)
+5. **Content** (`env-sheet env-checkbox`, `children`)
 6. **Action** (`env-dialog-actions > env-button`, `actions`)
 
-Not shown: the scrim behind a modal sheet, and the handle on a resizable sheet's inner edge.
+Not shown: the backdrop behind a modal sheet, and the handle on a resizable sheet's inner edge.
 
 ## Behaviour
 
@@ -94,6 +96,8 @@ A sheet has a dialog's surface, title, description and actions.
 
 - On a touch screen a swipe toward its edge closes it too.
 - A mouse or a pen never moves the sheet, and a drag inside it selects text.
+- In a sheet too short for all it holds, its content scrolls between the title and the actions, which stay in view.
+- A sheet is on the navigation's color, so a [NavigationDrawer](navigation-drawer.md) in it looks as it does at the window's edge; its fill and the backdrop set it apart.
 
 ### Inspector beside the page
 
@@ -102,7 +106,7 @@ The page can stay usable beside the sheet.
 - The sheet then stays open while people choose another row.
 - When it closes, focus returns to the row it showed last.
 
-```tsx figure=InspectorPanel
+```tsx figure=InspectorPanel stage=shaded motion
 
 ```
 
@@ -112,7 +116,7 @@ People can resize a side sheet by its inner edge, by pointer or with the arrow k
 
 - It stays between a smallest and a largest width, and never grows past the window.
 
-```tsx figure=ResizableDetails
+```tsx figure=ResizableDetails motion
 
 ```
 
@@ -206,7 +210,7 @@ With `modal={false}` the page stays usable beside the sheet. `disablePointerDism
 With `resizable`, people resize a side sheet by its inner edge, between `minWidth` and `maxWidth`, 16 and 60 rem by default, and never past the window.
 
 - The arrow keys on the handle resize it 1 rem, 5 rem with <kbd>Shift</kbd>.
-- It starts at `defaultWidth`; `width` and `onWidthChange` let the application keep the width, as a number of rem.
+- It starts at `defaultWidth`; `width` and `onWidthChange` let the application keep the width, as a number of rem; `onWidthChange` receives a `ResizeDetails`, `{ committed }`.
 - A CSS length as `width`, such as `min(30rem, 90%)`, is ignored then, with a warning while developing.
 - `resizeLabel` names the handle.
 
@@ -232,9 +236,11 @@ The close button is an IconButton named by `closeLabel`, which `closeButton={fal
 
 ### Customize
 
-A Sheet shares Dialog's parts: its heading, `env-dialog-heading`, with the title, `env-dialog-title`, and the close button; the description, `env-dialog-description`; and the actions, `env-dialog-actions`. The panel is `env-sheet-popup`, the scrim behind a modal sheet `env-sheet-backdrop` and the handle on a resizable sheet's inner edge `env-sheet-resize-handle`, the same grip as Panes.Divider's.
+A Sheet shares Dialog's parts: its heading, `env-dialog-heading`, with the title, `env-dialog-title`, and the close button; the description, `env-dialog-description`; and the actions, `env-dialog-actions`. The panel is `env-sheet`, its content, which scrolls between the heading and the actions, `env-sheet-body`, the backdrop behind a modal sheet `env-sheet-backdrop` and the handle on a resizable sheet's inner edge `env-sheet-resize-handle`, the same grip as Panes.Divider's.
 
 ## Changelog
 
+- **1.0.0-prerelease.5**: A Sheet has no edge line: its fill and its scrim set it apart, and its edge returns at high contrast. A side sheet keeps its actions at its foot, however little its body holds.
+- **1.0.0-prerelease.5**: A Sheet is on the navigation's background, `--env-color-bg-default`, rather than the popup's, in every theme, so navigation that opens in it in a narrow window keeps its color.
 - **1.0.0-prerelease.2**: With `resizable`, people resize a side sheet by its inner edge, between `minWidth` and `maxWidth`, from `defaultWidth`; `width` takes a number of rem, which `onWidthChange` keeps. The handle is `env-sheet-resize-handle`, the same grip as Panes.Divider's. Only a finger swipes a sheet closed; a mouse or a pen no longer moves it.
 - **1.0.0**: Sheet, which was Drawer in 1.0.0-prerelease.0, adds `side="bottom"`, and its widths follow the window classes of its container. Drawer, for the panels that were Dialog's `placement="right"`, with `side`, `width`, a swipe to close and the text direction.

@@ -2,7 +2,7 @@
 title: Menubar
 summary: A desktop-style menubar of menus, such as File, Edit and View, with shortcuts, submenus and access keys.
 status: stable
-since: 0.5.0
+since: 1.0.0
 category: Actions
 aliases:
   - menu bar
@@ -26,7 +26,9 @@ avoidWhen:
 components:
   - Menubar
 examples:
-  NotesMenubar: overview
+  NotesMenubar:
+    role: overview
+    motion: true
   InTitleBar: example
   MenubarAnatomy: anatomy
 ---
@@ -60,6 +62,8 @@ The [app frame](../patterns/app-frame.md) pattern shows the whole title bar, in 
 
 Menubar returns focus to where it was, so Copy acts on the field people were in.
 
+<!-- specimen: AfterACommand -->
+
 ### Access keys
 
 A menubar can underline a letter of each menu's name while <kbd>Alt</kbd> is held.
@@ -67,13 +71,11 @@ A menubar can underline a letter of each menu's name while <kbd>Alt</kbd> is hel
 - <kbd>Alt</kbd> with the letter opens that menu.
 - One menubar per window has them.
 
+<!-- specimen: AccessKeys -->
+
 ## Rules
 
 A menubar groups many commands, and the most frequent ones stay in view too.
-
-### Visible controls too
-
-Offer the most frequent commands in visible controls too, not only in the menus.
 
 ### Content
 
@@ -139,6 +141,7 @@ With `accessKeys` on Menubar.Root, holding <kbd>Alt</kbd> underlines each menu's
 - <kbd>Alt</kbd> with the letter opens that menu.
 - <kbd>Alt</kbd> alone moves focus to the menubar and back.
 - They are off by default; turn them on for one menubar per window.
+- A menubar in an inert region, such as behind a modal dialog, takes none from outside it.
 
 #### In a title bar
 
@@ -162,7 +165,11 @@ In a window that draws its own title bar, a TopBar with `titleBar`, put the menu
 
 The menubar is `env-menubar`, with a trigger, `env-menubar-trigger`, for each menu, whose access key is `env-menubar-access-key`. Each menu's popup is the shared popup surface, `env-menu`; `className`, `style` and `ref` on Menubar.Menu reach it, and the trigger is the menubar's own. The arrow keys between menus follow the text direction.
 
+### Customize
+
+Its menus are frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blur` and `--env-popup-shadow`, set on a theme, change it, as [Popover](popover.md#customize) describes.
+
 ## Changelog
 
+- **1.0.0-prerelease.5**: A Menubar's menus are frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge, and is solid with its edge at high contrast and with reduced transparency, with Menu's new rows.
 - **1.0.0**: The parts are members of the `Menubar` namespace: `Menubar` is `Menubar.Root`, `MenubarMenu` is `Menubar.Menu`, and `MenubarMenuOpenChangeDetails` is `Menubar.MenuOpenChangeDetails`. Menubar.Menu's popup is the shared popup surface and takes `ref` and `style`; the arrow keys between menus follow the text direction.
-- **0.5.0**: Menubar and MenubarMenu, with compact menus, switching on hover and with the arrow keys, focus returning to where it was with `previousFocus`, and `accessKeys`.

@@ -1,251 +1,250 @@
-/* Editor tabs for open documents. Inactive tabs are quiet, with state layers on hover; the active tab
-   carries the translucent fill and a selection-blue indicator along its bottom edge. Each item lays
-   out its tab, a Base UI tab, beside its close button, which isn't nested in the tab. */
-.env-document-tabs-root {
-  display: contents;
-}
-/* The bar holds the strip and the content after it, as tall as a medium control: 2.5rem, and 2rem
-   in the compact scale. No line runs under it: the active tab's fill and indicator mark it. It
-   takes the width it is given; its tabs never widen a grid or flex parent. */
-.env-document-tabs-bar {
-  /* The close button's size, and the room a tab leaves for it as it scrolls into view. */
-  --env-document-tabs-close-size: 1.5rem;
-  /* The widest a tab, and the copy of one being dragged, grows. */
-  --env-document-tabs-item-max: 14rem;
-  box-sizing: border-box;
-  max-inline-size: 100%;
-  block-size: var(--env-control-height-md);
-  contain: inline-size;
-}
-/* Content after the tabs, such as a button that closes them all, keeps its size at the end. */
-.env-document-tabs-end {
-  flex: 0 0 auto;
-  padding-inline: var(--env-space-1);
-}
-.env-document-tabs {
-  /* How far tabs fade at an edge they run past. */
-  --env-document-tabs-fade: 2.5rem;
-  box-sizing: border-box;
-  /* The strip is the offset parent of its items, which Base UI measures to scroll the active tab
-     into view. */
-  position: relative;
-  flex: 1 1 auto;
-  gap: 0.125rem;
-  block-size: 100%;
-  padding-inline: var(--env-space-1);
-  overflow-x: auto;
-  overflow-y: hidden;
-  overscroll-behavior-x: contain;
-  /* A scrollbar would cover the tabs; the wheel, touch and the keyboard scroll the strip instead, and
-     the active tab scrolls into view. */
-  scrollbar-width: none;
-}
-.env-document-tabs::-webkit-scrollbar {
-  display: none;
-}
-/* Tabs that run past an edge fade out toward it, so the strip shows there is more to scroll to. */
-.env-document-tabs:is([data-fade-left], [data-fade-right]) {
-  --env-document-tabs-fade-left: 0rem;
-  --env-document-tabs-fade-right: 0rem;
-  mask-image: linear-gradient(
-    to right,
-    transparent,
-    /* Any opaque color: the mask keeps what lies under its opaque part. */
-      var(--env-color-fg-default) var(--env-document-tabs-fade-left),
-    var(--env-color-fg-default) calc(100% - var(--env-document-tabs-fade-right)),
-    transparent
-  );
-}
-.env-document-tabs[data-fade-left] {
-  --env-document-tabs-fade-left: var(--env-document-tabs-fade);
-}
-.env-document-tabs[data-fade-right] {
-  --env-document-tabs-fade-right: var(--env-document-tabs-fade);
-}
-/* While a tab is dragged it stays in place, dimmed, a copy of it follows the pointer, and a line
-   between two tabs marks where it will land. */
-.env-document-tabs[data-reordering],
-.env-document-tabs[data-reordering] .env-document-tabs-item {
-  cursor: grabbing;
-}
-/* Only the dragged tab's contents dim, so a line drawn on its edge keeps its full strength. */
-.env-document-tabs-item[data-dragging] > * {
-  opacity: 0.5;
-}
-.env-document-tabs-item[data-drop]::before {
-  content: '';
-  position: absolute;
-  z-index: var(--env-z-raised);
-  inset-block: var(--env-space-1);
-  inline-size: calc(2 * var(--env-control-border-width));
-  border-radius: var(--env-control-border-width);
-  /* The text color: the strongest contrast in every theme, and apart from the selection blue of the
-     active tab's indicator. */
-  background: var(--env-color-fg-default);
-  pointer-events: none;
-}
-.env-document-tabs-item[data-drop='before']::before {
-  inset-inline-start: calc(-2 * var(--env-control-border-width));
-}
-.env-document-tabs-item[data-drop='after']::before {
-  inset-inline-end: calc(-2 * var(--env-control-border-width));
-}
-.env-document-tabs-drag-image {
-  position: fixed;
-  z-index: var(--env-z-popover);
-  display: inline-flex;
-  align-items: center;
-  gap: var(--env-space-2);
-  /* As wide as a tab can be. */
-  max-inline-size: var(--env-document-tabs-item-max);
-  padding: var(--env-space-1) var(--env-space-3);
-  border: var(--env-control-border-width) solid var(--env-elevation-2-border);
-  border-radius: var(--env-radius-sm);
-  background: var(--env-color-bg-popup);
-  color: var(--env-color-fg-default);
-  font: var(--env-type-body-small);
-  white-space: nowrap;
-  pointer-events: none;
-}
-.env-document-tabs-drag-image .env-icon {
-  inline-size: var(--env-control-icon-size);
-  block-size: var(--env-control-icon-size);
-  color: var(--env-color-fg-muted);
-}
-.env-document-tabs-item {
-  box-sizing: border-box;
-  position: relative;
-  flex: 0 0 auto;
-  min-inline-size: 0;
-  max-inline-size: 14rem;
-  display: inline-flex;
-  align-items: center;
-  padding-inline-end: var(--env-space-1);
-  border-start-start-radius: var(--env-radius-sm);
-  border-start-end-radius: var(--env-radius-sm);
-  color: var(--env-color-fg-muted);
-  font: var(--env-type-body-small);
-  white-space: nowrap;
-  cursor: pointer;
-  user-select: none;
-  transition:
-    background-color var(--env-motion-duration-fast) var(--env-motion-ease),
-    color var(--env-motion-duration-fast) var(--env-motion-ease);
-}
-/* While a tab is dragged, the pointer passing over the others is not a hover: they keep their
-   fills and hide their close buttons. */
-:where(.env-document-tabs:not([data-reordering])) .env-document-tabs-item:hover {
-  background: var(--env-color-bg-neutral-subtle-hover);
-  color: var(--env-color-fg-default);
-}
-:where(.env-document-tabs:not([data-reordering])) .env-document-tabs-item:active {
-  background: var(--env-color-bg-neutral-subtle-pressed);
-}
-.env-document-tabs-item[data-active] {
-  background: var(--env-color-bg-neutral-muted);
-  color: var(--env-color-fg-default);
-}
-.env-document-tabs-item[data-active]::after {
-  content: '';
-  position: absolute;
-  inset: auto 0 0;
-  block-size: 0.125rem;
-  border-radius: 0.125rem 0.125rem 0 0;
-  background: var(--env-color-fg-on-selected);
-}
-/* The ring of a focused tab goes around its whole item, close button included. */
-.env-document-tabs-item:has(> .env-document-tabs-tab:focus-visible) {
-  outline: 0.125rem solid var(--env-color-border-focus);
-  outline-offset: -0.125rem;
-}
-/* The tab covers its item up to the close button, so a press anywhere on the label selects it. */
-.env-document-tabs-tab {
-  box-sizing: border-box;
-  /* Scrolled into view, a tab brings its close button and the item's end padding with it. */
-  scroll-margin-inline-end: calc(var(--env-document-tabs-close-size) + var(--env-space-1));
-  align-self: stretch;
-  flex: 1 1 auto;
-  min-inline-size: 0;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--env-space-2);
-  margin: 0;
-  padding-block: 0;
-  padding-inline: var(--env-space-3) var(--env-space-2);
-  border: 0;
-  background: transparent;
-  color: inherit;
-  font: inherit;
-  text-align: start;
-  white-space: nowrap;
-  cursor: inherit;
-  user-select: none;
-  outline: none;
-}
-.env-document-tabs-tab .env-icon {
-  inline-size: var(--env-control-icon-size);
-  block-size: var(--env-control-icon-size);
-  color: var(--env-color-fg-muted);
-}
-.env-document-tabs-tab-label {
-  min-inline-size: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-/* A preview tab is replaced by the next previewed document until it is pinned. The bundled Inter has
-   no italic face, so the slant is synthesized. */
-.env-document-tabs-tab[data-preview='true'] .env-document-tabs-tab-label {
-  font-style: italic;
-  font-synthesis: style;
-  padding-inline-end: 0.125em;
-}
-/* The close button, an IconButton with a cross, is a small circle that keeps its space so tabs do not change
-   width; it shows on the active tab, on hover and with keyboard focus. The strip sets its size
-   through the control size it reads, also inside a container that gives controls a size. */
-.env-document-tabs-item .env-document-tabs-close {
-  --env-icon-button-hit-area: var(--env-control-height-touch);
-  --env-control-height: var(--env-document-tabs-close-size);
-  --env-control-icon-size: 1rem;
-  visibility: hidden;
-}
-.env-document-tabs-item:is([data-active], :has(:focus-visible)) .env-document-tabs-close,
-:where(.env-document-tabs:not([data-reordering]))
-  .env-document-tabs-item:hover
-  .env-document-tabs-close {
-  visibility: visible;
-}
-/* Under a coarse pointer the tabs are the touch height, and each close button always shows, as tall
-   and wide as its tab. */
-@media (pointer: coarse) {
-  .env-document-tabs-bar {
-    --env-document-tabs-close-size: var(--env-control-height-touch);
-    block-size: var(--env-control-height-touch);
+@layer env.components {
+  /* Editor tabs for open documents. Inactive tabs are quiet, with state layers on hover; the active tab
+     carries the translucent fill and a selection-blue indicator along its bottom edge. Each item lays
+     out its tab, a Base UI tab, beside its close button, which isn't nested in the tab. */
+  /* The root holds the strip and the content after it, as tall as a medium control: 2.5rem, and 2rem
+     in the compact scale. No line runs under it: the active tab's fill and indicator mark it. It
+     takes the width it is given; its tabs never widen a grid or flex parent. */
+  .env-document-tabs {
+    /* The close button's size, and the room a tab leaves for it as it scrolls into view. */
+    --env-document-tabs-close-size: 1.5rem;
+    /* The widest a tab, and the copy of one being dragged, grows. */
+    --env-document-tabs-item-max: 14rem;
+    box-sizing: border-box;
+    max-inline-size: 100%;
+    block-size: var(--env-control-height-md);
+    contain: inline-size;
   }
-  .env-document-tabs-item .env-document-tabs-close {
-    visibility: visible;
+  /* Content after the tabs, such as a button that closes them all, keeps its size at the end. */
+  .env-document-tabs-end {
+    flex: 0 0 auto;
+    padding-inline: var(--env-space-1);
   }
-}
-@media (prefers-reduced-motion: reduce) {
+  .env-document-tabs-list {
+    /* How far tabs fade at an edge they run past. */
+    --env-document-tabs-fade: 2.5rem;
+    box-sizing: border-box;
+    /* The strip is the offset parent of its items, which Base UI measures to scroll the active tab
+       into view. */
+    position: relative;
+    flex: 1 1 auto;
+    gap: 0.125rem;
+    block-size: 100%;
+    padding-inline: var(--env-space-1);
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    /* A scrollbar would cover the tabs; the wheel, touch and the keyboard scroll the strip instead, and
+       the active tab scrolls into view. */
+    scrollbar-width: none;
+  }
+  .env-document-tabs-list::-webkit-scrollbar {
+    display: none;
+  }
+  /* Tabs that run past an edge fade out toward it, so the strip shows there is more to scroll to. */
+  .env-document-tabs-list:is([data-fade-left], [data-fade-right]) {
+    --env-document-tabs-fade-left: 0rem;
+    --env-document-tabs-fade-right: 0rem;
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      /* Any opaque color: the mask keeps what lies under its opaque part. */
+        var(--env-color-fg-default) var(--env-document-tabs-fade-left),
+      var(--env-color-fg-default) calc(100% - var(--env-document-tabs-fade-right)),
+      transparent
+    );
+  }
+  .env-document-tabs-list[data-fade-left] {
+    --env-document-tabs-fade-left: var(--env-document-tabs-fade);
+  }
+  .env-document-tabs-list[data-fade-right] {
+    --env-document-tabs-fade-right: var(--env-document-tabs-fade);
+  }
+  /* While a tab is dragged it stays in place, dimmed, a copy of it follows the pointer, and a line
+     between two tabs marks where it will land. */
+  .env-document-tabs-list[data-reordering],
+  .env-document-tabs-list[data-reordering] .env-document-tabs-item {
+    cursor: grabbing;
+  }
+  /* Only the dragged tab's contents dim, so a line drawn on its edge keeps its full strength. */
+  .env-document-tabs-item[data-moving] > * {
+    opacity: 0.5;
+  }
+  .env-document-tabs-item[data-drop]::before {
+    content: '';
+    position: absolute;
+    z-index: var(--env-z-raised);
+    inset-block: var(--env-space-1);
+    inline-size: calc(2 * var(--env-control-border-width));
+    border-radius: var(--env-control-border-width);
+    /* The text color: the strongest contrast in every theme, and apart from the selection blue of the
+       active tab's indicator. */
+    background: var(--env-color-fg-default);
+    pointer-events: none;
+  }
+  .env-document-tabs-item[data-drop='before']::before {
+    inset-inline-start: calc(-2 * var(--env-control-border-width));
+  }
+  .env-document-tabs-item[data-drop='after']::before {
+    inset-inline-end: calc(-2 * var(--env-control-border-width));
+  }
+  .env-document-tabs-drag-image {
+    position: fixed;
+    z-index: var(--env-z-popup);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--env-space-2);
+    /* As wide as a tab can be. */
+    max-inline-size: var(--env-document-tabs-item-max);
+    padding: var(--env-space-1) var(--env-space-3);
+    border: var(--env-control-border-width) solid var(--env-elevation-2-border);
+    border-radius: var(--env-radius-sm);
+    background: var(--env-color-bg-popup);
+    color: var(--env-color-fg-default);
+    font: var(--env-type-body-sm);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  .env-document-tabs-drag-image .env-icon {
+    inline-size: var(--env-control-icon-size);
+    block-size: var(--env-control-icon-size);
+    color: var(--env-color-fg-muted);
+  }
   .env-document-tabs-item {
-    transition: none;
+    box-sizing: border-box;
+    position: relative;
+    flex: 0 0 auto;
+    min-inline-size: 0;
+    max-inline-size: 14rem;
+    display: inline-flex;
+    align-items: center;
+    padding-inline-end: var(--env-space-1);
+    border-start-start-radius: var(--env-radius-sm);
+    border-start-end-radius: var(--env-radius-sm);
+    color: var(--env-color-fg-muted);
+    font: var(--env-type-body-sm);
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+    transition:
+      background-color var(--env-motion-duration-fast) var(--env-motion-ease),
+      color var(--env-motion-duration-fast) var(--env-motion-ease);
   }
-}
-
-/* Forced colors: the system paints no fills or shadows, so the active tab takes the system’s
-   selection colors. */
-@media (forced-colors: active) {
+  /* While a tab is dragged, the pointer passing over the others is not a hover: they keep their
+     fills and hide their close buttons. */
+  :where(.env-document-tabs-list:not([data-reordering])) .env-document-tabs-item:hover {
+    background: var(--env-color-bg-neutral-subtle-hover);
+    color: var(--env-color-fg-default);
+  }
+  :where(.env-document-tabs-list:not([data-reordering])) .env-document-tabs-item:active {
+    background: var(--env-color-bg-neutral-subtle-pressed);
+  }
   .env-document-tabs-item[data-active] {
-    forced-color-adjust: none;
-    background-color: Highlight;
-    color: HighlightText;
-  }
-  .env-document-tabs-item[data-active] :where(*) {
-    color: inherit;
+    background: var(--env-color-bg-neutral-muted);
+    color: var(--env-color-fg-default);
   }
   .env-document-tabs-item[data-active]::after {
-    background-color: HighlightText;
+    content: '';
+    position: absolute;
+    inset: auto 0 0;
+    block-size: 0.125rem;
+    border-radius: 0.125rem 0.125rem 0 0;
+    background: var(--env-color-fg-on-selected);
   }
-  .env-document-tabs-item[data-active]:has(> .env-document-tabs-tab:focus-visible) {
-    outline-color: HighlightText;
+  /* The ring of a focused tab goes around its whole item, close button included. */
+  .env-document-tabs-item:has(> .env-document-tabs-tab:focus-visible) {
+    outline: 0.125rem solid var(--env-color-border-focus);
+    outline-offset: -0.125rem;
+  }
+  /* The tab covers its item up to the close button, so a press anywhere on the label selects it. */
+  .env-document-tabs-tab {
+    box-sizing: border-box;
+    /* Scrolled into view, a tab brings its close button and the item's end padding with it. */
+    scroll-margin-inline-end: calc(var(--env-document-tabs-close-size) + var(--env-space-1));
+    align-self: stretch;
+    flex: 1 1 auto;
+    min-inline-size: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--env-space-2);
+    margin: 0;
+    padding-block: 0;
+    padding-inline: var(--env-space-3) var(--env-space-2);
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: start;
+    white-space: nowrap;
+    cursor: inherit;
+    user-select: none;
+    outline: none;
+  }
+  .env-document-tabs-tab .env-icon {
+    inline-size: var(--env-control-icon-size);
+    block-size: var(--env-control-icon-size);
+    color: var(--env-color-fg-muted);
+  }
+  .env-document-tabs-tab-label {
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  /* A preview tab is replaced by the next previewed document until it is pinned. The bundled Geist has
+     no italic face, so the slant is synthesized. */
+  .env-document-tabs-tab[data-preview] .env-document-tabs-tab-label {
+    font-style: italic;
+    font-synthesis: style;
+    padding-inline-end: 0.125em;
+  }
+  /* The close button, an IconButton with a cross, is a small circle that keeps its space so tabs do not change
+     width; it shows on the active tab, on hover and with keyboard focus. The strip sets its size
+     through the control size it reads, also inside a container that gives controls a size. */
+  .env-document-tabs-item .env-document-tabs-close {
+    --env-icon-button-hit-area: var(--env-control-height-touch);
+    --env-control-height: var(--env-document-tabs-close-size);
+    --env-control-icon-size: 1rem;
+    visibility: hidden;
+  }
+  .env-document-tabs-item:is([data-active], :has(:focus-visible)) .env-document-tabs-close,
+  :where(.env-document-tabs-list:not([data-reordering]))
+    .env-document-tabs-item:hover
+    .env-document-tabs-close {
+    visibility: visible;
+  }
+  /* Under a coarse pointer the tabs are the touch height, and each close button always shows, as tall
+     and wide as its tab. */
+  @media (pointer: coarse) {
+    .env-document-tabs {
+      --env-document-tabs-close-size: var(--env-control-height-touch);
+      block-size: var(--env-control-height-touch);
+    }
+    .env-document-tabs-item .env-document-tabs-close {
+      visibility: visible;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .env-document-tabs-item {
+      transition: none;
+    }
+  }
+
+  /* Forced colors: the system paints no fills or shadows, so the active tab takes the system’s
+     selection colors. */
+  @media (forced-colors: active) {
+    .env-document-tabs-item[data-active] {
+      forced-color-adjust: none;
+      background-color: Highlight;
+      color: HighlightText;
+    }
+    .env-document-tabs-item[data-active] :where(*) {
+      color: inherit;
+    }
+    .env-document-tabs-item[data-active]::after {
+      background-color: HighlightText;
+    }
+    .env-document-tabs-item[data-active]:has(> .env-document-tabs-tab:focus-visible) {
+      outline-color: HighlightText;
+    }
   }
 }

@@ -5,24 +5,32 @@ import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import { build } from 'esbuild';
 
-// envUI draws no drop shadows: popups, dialogs, sheets, toasts and tooltips separate by their fill,
-// their edge and, for modals, the scrim. Rings drawn with box-shadow stay: focus rings and halos
+// envUI draws no drop shadows: sheets, toasts and tooltips separate by their fill, their edge and,
+// for modals, the backdrop. Rings drawn with box-shadow stay: focus rings and halos
 // (no offset, no blur), inset edges and selection bars, and a hairline line one pixel below or
 // beside a box. This test reads the shipped style sheet, dev mode's own and the catalogue's, and
-// rejects every other shadow, also one a custom property carries into box-shadow. The catalogue has
-// one exception, by request: the very faint shadow its example canvases, tiles and the Overview's
-// cards take, `--docs-card-shadow` (Stage.css), a device of the documentation that envUI never ships.
+// rejects every other shadow, also one a custom property carries into box-shadow. The library has
+// two exceptions, by request: the faint, small shadow under an avatar and an avatar group's count,
+// `--env-avatar-shadow` (Avatar.css), so stacked avatars part from one another; and the soft shadow
+// of the frosted popups, `--env-popup-shadow` (Popup.css), which keeps a translucent popup's edge
+// where it crosses an area of its own color, gone wherever the popup is solid; dialogs, which take
+// the popups' fill, cast it too. They are the only
+// custom properties of envUI that are shadows, and no token is one. The catalogue has
+// one exception, by request: the very faint shadow its example canvases, tiles and its own cards
+// take, `--catalogue-card-shadow`, and half of it for a small card, `--catalogue-card-shadow-subtle`, and a stronger one for cards laid over one another,
+// `--catalogue-card-shadow-raised`
+// (Stage.css), a device of the documentation that envUI never ships.
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const styles = join(root, 'packages/ui/src/styles');
 
-/** The bundled style sheet, as scripts/BuildLibrary.mjs writes dist/styles.css. */
+/** The bundled style sheet, as scripts/build/BuildLibrary.ts writes dist/styles.css. */
 async function shipped() {
   const result = await build({
     entryPoints: [join(styles, 'index.css')],
     bundle: true,
     write: false,
-    loader: { '.woff2': 'file' },
+    loader: { '.woff2': 'file', '.svg': 'file' },
     assetNames: 'assets/[name]',
     outfile: join(styles, 'out.css'),
     logLevel: 'silent',
@@ -39,7 +47,7 @@ async function devMode() {
 }
 
 async function catalogue() {
-  const folder = join(root, 'apps/catalogue/src/styles');
+  const folder = join(root, 'apps/site/src/styles');
   const files = (await readdir(folder)).filter((name) => name.endsWith('.css'));
   return Promise.all(files.map((name) => readFile(join(folder, name), 'utf8')));
 }
@@ -147,22 +155,134 @@ function problems(sheets, { allowed = [] } = {}) {
   return [...new Set(found)];
 }
 
-test('no envUI style sheet draws a drop shadow; rings stay', async () => {
-  assert.deepEqual(problems([await shipped()]), [], 'The shipped style sheet');
-  assert.deepEqual(problems([await shipped(), await devMode()]), [], 'Dev mode’s style sheet');
+/** The library's drop shadows: under avatars and an avatar group's count, and under frosted popups and tooltips. */
+const avatarShadow = '--env-avatar-shadow';
+const popupShadow = '--env-popup-shadow';
+const tooltipShadow = '--env-tooltip-shadow';
+
+test('no envUI style sheet draws a drop shadow but the avatars’, the popups’ and the tooltips’; rings stay', async () => {
+  const library = { allowed: [avatarShadow, popupShadow, tooltipShadow] };
+  assert.deepEqual(problems([await shipped()], library), [], 'The shipped style sheet');
   assert.deepEqual(
-    problems(await catalogue(), { allowed: ['--docs-card-shadow'] }),
+    problems([await shipped(), await devMode()], library),
+    [],
+    'Dev mode’s style sheet',
+  );
+  assert.deepEqual(
+    problems(await catalogue(), {
+      allowed: [
+        '--catalogue-card-shadow',
+        '--catalogue-card-shadow-subtle',
+        '--catalogue-card-shadow-raised',
+      ],
+    }),
     [],
     'The catalogue’s style sheets',
   );
 });
 
-test('no token or custom property is a shadow', async () => {
+test('no token or custom property is a shadow but the avatars’, the popups’ and the tooltips’', async () => {
   const css = await shipped();
   const shadows = declarations(css)
     .map(([property]) => property)
     .filter((property) => /^--env-.*shadow$/.test(property));
-  assert.deepEqual([...new Set(shadows)], []);
+  assert.deepEqual([...new Set(shadows)].sort(), [avatarShadow, popupShadow, tooltipShadow].sort());
+});
+
+/** The values a frosted shadow takes: one in light, one in dark, and none where it is solid. */
+function frostedShadows(css, name) {
+  const values = [
+    ...new Set(
+      declarations(css)
+        .filter(([property]) => property === name)
+        .map(([, value]) => value.replace(/\s+/g, ' ')),
+    ),
+  ];
+  // The light and the dark shadow, and none: at high contrast, under reduced transparency and
+  // forced colors, where the popup is solid.
+  assert.ok(values.includes('none'), `${name}: solid popups have no shadow`);
+  const shadows = values.filter((value) => value !== 'none');
+  assert.equal(shadows.length, 2, `${name}: one shadow in light, one in dark`);
+  for (const value of shadows)
+    for (const layer of split(value, /,/)) {
+      const [x, y, blur, ...rest] = split(layer, /\s/);
+      assert.equal(x, '0', 'it falls straight down');
+      assert.match(y, /^\d+px$/);
+      assert.match(blur, /^\d+px$/);
+      // An optional negative spread, then a color derived from a token, never a literal color.
+      const color = rest.at(-1);
+      assert.match(color, /^oklch\(from var\(--env-color-[\w-]+\) /, layer);
+      assert.ok(rest.length <= 2, layer);
+    }
+  return shadows;
+}
+
+/** The selectors whose box-shadow is the property `name`. */
+function usersOf(css, name) {
+  return [
+    ...css
+      .replace(/\/\*[\s\S]*?\*\//g, '')
+      .matchAll(new RegExp(String.raw`([^{}]+)\{[^}]*box-shadow:\s*var\(${name}\)`, 'g')),
+  ].map(([, selector]) => selector.trim().replace(/\s+/g, ' '));
+}
+
+test('the popups’ shadow is soft, follows the theme, goes where popups are solid and stays on popups', async () => {
+  const css = await shipped();
+  frostedShadows(css, popupShadow);
+  // Only the frosted popups use it.
+  assert.deepEqual(usersOf(css, popupShadow).sort(), [
+    '.env-command-palette',
+    '.env-popup',
+    '.env-rich-text-suggestions',
+    '.env-surface.env-dialog',
+  ]);
+});
+
+test('the tooltips’ shadow is smaller than the popups’, goes where they are solid and stays on tooltips', async () => {
+  const css = await shipped();
+  const [light, dark] = frostedShadows(css, tooltipShadow);
+  const [popupLight, popupDark] = frostedShadows(css, popupShadow);
+  // A single layer, its blur below the popups’ largest.
+  const blurOf = (value) =>
+    Math.max(...split(value, /,/).map((layer) => parseFloat(split(layer, /\s/)[2])));
+  for (const [tooltip, popup] of [
+    [light, popupLight],
+    [dark, popupDark],
+  ]) {
+    assert.equal(split(tooltip, /,/).length, 1, 'one layer');
+    assert.ok(blurOf(tooltip) < blurOf(popup), 'smaller than a popup’s');
+  }
+  assert.deepEqual(usersOf(css, tooltipShadow), ['.env-tooltip']);
+});
+
+test('the avatars’ shadow is small, faint and follows the surface below', async () => {
+  const css = await shipped();
+  const values = [
+    ...new Set(
+      declarations(css)
+        .filter(([property]) => property === avatarShadow)
+        .map(([, value]) => value.replace(/\s+/g, ' ')),
+    ),
+  ];
+  // Avatar.css and AvatarGroup.css, for the count, declare the same shadow.
+  assert.equal(values.length, 1, 'one shadow');
+  const [value] = values;
+  // A single layer, 1px down and blurred 2px, with no spread.
+  const [x, y, blur, ...rest] = split(value, /\s/);
+  assert.deepEqual([x, y, blur], ['0', '1px', '2px']);
+  assert.equal(rest.length, 1, 'no spread, one color');
+  // Its color is derived from the surface below, never a literal color.
+  assert.match(
+    rest[0],
+    /^oklch\(\s*from var\(--env-avatar-group-ring-color, var\(--env-surface-color, var\(--env-color-bg-page\)\)\)/,
+  );
+  // Only an avatar and the count use it.
+  const users = [
+    ...css
+      .replace(/\/\*[\s\S]*?\*\//g, '')
+      .matchAll(/([^{}]+)\{[^}]*box-shadow:\s*var\(--env-avatar-shadow\)/g),
+  ].map(([, selector]) => selector.trim().replace(/\s+/g, ' '));
+  assert.deepEqual(users, ['.env-avatar', '.env-avatar-group-overflow']);
 });
 
 test('the check tells drop shadows from rings', () => {

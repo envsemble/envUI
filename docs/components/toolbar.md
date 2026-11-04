@@ -28,7 +28,9 @@ avoidWhen:
 components:
   - Toolbar
 examples:
-  FormattingToolbar: overview
+  FormattingToolbar:
+    role: overview
+    motion: true
   DrawingTools:
     role: example
     caption: A vertical toolbar of toggles, where one tool stays chosen.
@@ -66,7 +68,7 @@ A toolbar can float over dense content, such as a diagram, on a fully rounded su
 
 Where people scan its icons by pointing at them, its buttons can show their names at once, with no wait.
 
-```tsx figure=ViewControls
+```tsx figure=ViewControls motion
 
 ```
 
@@ -99,11 +101,11 @@ A button of the application's own, such as a menu's trigger, keeps its own tab s
 
 A toolbar holds icon commands for one subject, each named after its action.
 
-```tsx figure=SameIconPressed
+```tsx figure=SameIconPressed motion
 
 ```
 
-```tsx figure=IconSwapsPressed
+```tsx figure=IconSwapsPressed motion
 
 ```
 
@@ -188,13 +190,13 @@ A Surface with `radius="full"` floats a small toolbar over content, as the ViewC
 <Surface
   padding={1}
   radius="full"
-  render={<Toolbar.Root aria-label="Diagram view" size="sm" />}
+  render={<Toolbar.Root aria-label="Diagram view" size="sm" tooltipDelay={0} />}
   style={{ inlineSize: 'fit-content' }}
 >
-  <Toolbar.Button icon={<ZoomOut />} label="Zoom out" shortcut="Ctrl+-" />
-  <Toolbar.Button icon={<ZoomIn />} label="Zoom in" shortcut="Ctrl+=" />
+  <Toolbar.Button icon={<IconZoomOut />} label="Zoom out" shortcut="Ctrl+-" />
+  <Toolbar.Button icon={<IconZoomIn />} label="Zoom in" shortcut="Ctrl+=" />
   <Toolbar.Separator />
-  <Toolbar.Link href="/help/diagrams" icon={<Help />} label="Diagram help" />
+  <Toolbar.Link href="/help/diagrams" icon={<IconHelp />} label="Diagram help" />
 </Surface>
 ```
 
@@ -219,7 +221,7 @@ A bar with a field, a Select or labelled actions is a Row:
   toolbar={
     <Row wrap align="center" justify="between" gap={3}>
       <Row wrap align="center" gap={3}>
-        <SearchField label="Search tasks" />
+        <SearchField label="Search tasks" placeholder="Search tasks" />
         <SegmentedControl
           aria-label="Status"
           value={status}
@@ -227,7 +229,7 @@ A bar with a field, a Select or labelled actions is a Row:
           items={statuses}
         />
       </Row>
-      <Button startIcon={<Add />}>New task</Button>
+      <Button startIcon={<IconAdd />}>New task</Button>
     </Row>
   }
 />

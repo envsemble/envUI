@@ -30,13 +30,14 @@ export interface PartsIndex {
 }
 
 /** One component or shared group of parts.json. */
-interface PartsEntry {
-  root: string;
+export interface PartsEntry {
+  /** The root class, or null for a shared group without one of its own. */
+  root: string | null;
   parts: { class: string; description: string }[];
   states?: { attribute: string; values: string[]; parts: string[] }[];
 }
 
-/** docs/generated/parts.json, as scripts/GenerateParts.mjs writes it. */
+/** docs/generated/parts.json, as scripts/docs/GenerateParts.ts writes it. */
 export interface PartsFile {
   schemaVersion: number;
   components: Record<string, PartsEntry & { source: string; uses?: string[] }>;
@@ -106,7 +107,7 @@ const helpers = new Set([
 ]);
 
 /** Whether a class is a part class: `env-*`, but not the window's container or dev mode's own. */
-export const isPartClass = (name: string) =>
+const isPartClass = (name: string) =>
   name.startsWith('env-') && name !== 'env-window' && !name.startsWith('env-dev');
 
 /**

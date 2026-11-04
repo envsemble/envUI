@@ -28,7 +28,9 @@ avoidWhen:
 components:
   - TopBar
 examples:
-  AppTopBar: overview
+  AppTopBar:
+    role: overview
+    stage: shaded
   TitleBar: example
   TopBarAnatomy: anatomy
   TitleFirstToGo: example
@@ -46,9 +48,7 @@ examples:
 
 ### Its background
 
-The bar is a plain rectangle in the navigation's background, with no line below.
-
-- Or it sits on the page's background instead, opaque when it sticks, while the navigation keeps its own, as [Scaffold](scaffold.md#backgrounds) shows.
+The bar is a plain rectangle in the navigation's background, with no line below. On the page's background instead: see [Scaffold](scaffold.md#backgrounds).
 
 ### Title bar
 
@@ -56,13 +56,13 @@ The bar can be the window's own title bar in an installed web app: empty space d
 
 - It then spans the whole Scaffold.
 
-```tsx figure=TitleBar
+```tsx figure=TitleBar stage=shaded widths="40"
 
 ```
 
 ## Anatomy
 
-```tsx figure=TopBarAnatomy
+```tsx figure=TopBarAnatomy stage=shaded
 
 ```
 
@@ -79,7 +79,7 @@ Not shown: the page progress.
 
 The bar never wraps: the title is cut short first, and the start content and actions keep their size.
 
-```tsx figure=TitleFirstToGo widths="20 40"
+```tsx figure=TitleFirstToGo stage=shaded widths="40 20" sweep
 
 ```
 
@@ -87,11 +87,11 @@ The bar never wraps: the title is cut short first, and the start content and act
 
 The bar goes in a [Scaffold](scaffold.md)'s top bar region, the screen's banner, and keeps room for its title.
 
-```tsx figure=FewActions
+```tsx figure=FewActions stage=shaded
 
 ```
 
-```tsx figure=ManyActions
+```tsx figure=ManyActions stage=shaded
 
 ```
 
@@ -136,7 +136,7 @@ Put it in a Scaffold's top bar region, which is the banner landmark.
 
 #### Page progress
 
-`loading` shows a thin bar along the bottom edge while the next page loads, after a short delay so quick loads never flash it. `loadingLabel` names it, Loading page by default, from EnvUIProvider's `messages.topBar`.
+`loading` shows a thin bar along the bottom edge while the next page loads, after a short delay so quick loads never flash it. `loadingLabel` names it.
 
 ```tsx
 // True while the next page loads from the server.
@@ -154,7 +154,7 @@ Put it in a Scaffold's top bar region, which is the banner landmark.
   titleBar
   title="Roadmap.md"
   start={<Menubar.Root aria-label="Application menu">…</Menubar.Root>}
-  actions={<IconButton icon={<Share />} aria-label="Share" />}
+  actions={<IconButton icon={<IconShare />} aria-label="Share" />}
 />
 ```
 

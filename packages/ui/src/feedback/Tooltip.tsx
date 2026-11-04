@@ -27,8 +27,14 @@ import {
   TooltipNestingContext,
   TooltipPopup,
   type TooltipSide,
-} from './internal/TooltipPopup.js';
+  tooltipDelay,
+} from '../internal/TooltipPopup.js';
+import { accessibleName } from '../internal/accessibleName.js';
 import { keepsOpen, usePortalContainer } from '../internal/PortalContainerContext.js';
+import { reportInDevelopment } from '../internal/developmentReport.js';
+import type { PopoverOpenChangeDetails, PopoverOpenChangeReason } from './Popover.js';
+import '../styles/Base.css';
+import '../styles/Tooltip.css';
 
 /** The props of the control a Tooltip describes, as far as the tooltip reads them. */
 interface TriggerProps {
@@ -76,6 +82,11 @@ export interface TooltipProps
    */
   side?: TooltipSide;
   /**
+   * How the tooltip lines up with the control along that side: its start, center or end.
+   * @default 'center'
+   */
+  align?: 'start' | 'center' | 'end';
+  /**
    * Milliseconds the pointer rests on the control before the tooltip opens; keyboard focus opens it
    * at once.
    * @default 400
@@ -87,7 +98,20 @@ export interface TooltipProps
    * @default false
    */
   defaultOpen?: boolean;
+  /**
+   * Whether the tooltip shows, for a tooltip the application controls with onOpenChange, such as
+   * one a step of a tour opens.
+   */
+  open?: boolean;
+  /**
+   * Receives the requested state, and why, as the pointer rests on the control or leaves it, focus
+   * reaches or leaves it, it is pressed or Esc closes the tooltip.
+   */
+  onOpenChange?: (open: boolean, details: TooltipOpenChangeDetails) => void;
 }
+
+/** What a tooltip's onOpenChange receives beside the requested state: a popover's details. */
+export type TooltipOpenChangeDetails = PopoverOpenChangeDetails;
 
 /** The control's own accessible name, where its props give one as text: a first guess. */
 function ownName(props: TriggerProps): string | undefined {
@@ -96,67 +120,6 @@ function ownName(props: TriggerProps): string | undefined {
   if (typeof props.children === 'string' || typeof props.children === 'number')
     return String(props.children);
   return undefined;
-}
-
-/** Whether an element is hidden from assistive technology, by aria-hidden, hidden or its style. */
-function hiddenFromAccessibility(element: Element): boolean {
-  if (element.getAttribute('aria-hidden') === 'true' || element.hasAttribute('hidden')) return true;
-  const style = element.ownerDocument.defaultView?.getComputedStyle(element);
-  return !!style && (style.display === 'none' || style.visibility === 'hidden');
-}
-
-/**
- * The text an element contributes to a name, as assistive technology reads it: text hidden from
- * it, by aria-hidden, hidden or a display or visibility that hides it, counts for nothing, while
- * text hidden only visually counts; an image counts with its alternative text, and an element with
- * an aria-label inside with that label. The root itself is never checked for being hidden: the
- * stand-in of a disabled control hides the control it names, which must keep its name, and a
- * hidden label that aria-labelledby references directly still names. Below a hidden root, as in
- * such a label, hidden text counts too.
- */
-function nameText(node: Node, root: Node, hiddenCounts = false): string {
-  if (node.nodeType === Node.TEXT_NODE) return node.textContent ?? '';
-  if (!(node instanceof Element)) return '';
-  if (node !== root && !hiddenCounts && hiddenFromAccessibility(node)) return '';
-  if (node !== root) {
-    const label = node.getAttribute('aria-label')?.trim();
-    if (label) return ` ${label} `;
-  }
-  if (node.tagName === 'IMG') return node.getAttribute('alt') ?? '';
-  return Array.from(node.childNodes, (child) => nameText(child, root, hiddenCounts)).join('');
-}
-
-/**
- * An element's accessible name as the page has it: its aria-labelledby text, hidden labels it
- * references directly among it, its aria-label, its visible labels, or its text, without text
- * hidden from assistive technology. Enough to tell whether a control is named, and by what words.
- */
-function accessibleName(element: Element | null | undefined): string | undefined {
-  if (!element) return undefined;
-  const clean = (text: string | null | undefined) => text?.replace(/\s+/g, ' ').trim() || undefined;
-  const textOf = (node: Node) => nameText(node, node);
-  const labelledBy = element.getAttribute('aria-labelledby');
-  if (labelledBy) {
-    const text = clean(
-      labelledBy
-        .split(/\s+/)
-        .map((id) => {
-          const label = element.ownerDocument.getElementById(id);
-          if (!label) return '';
-          if (label === element) return label.getAttribute('aria-label') ?? textOf(label);
-          return nameText(label, label, hiddenFromAccessibility(label));
-        })
-        .join(' '),
-    );
-    if (text) return text;
-  }
-  const label = clean(element.getAttribute('aria-label'));
-  if (label) return label;
-  const labels = Array.from((element as HTMLInputElement).labels ?? []).filter(
-    (each) => !hiddenFromAccessibility(each),
-  );
-  if (labels.length) return clean(labels.map(textOf).join(' '));
-  return clean(textOf(element));
 }
 
 /** The attributes that change a control's name or a stand-in's role and states. */
@@ -213,23 +176,6 @@ const sameStandIn = (a: StandIn, b: StandIn) =>
 const isExpanded = (props: TriggerProps) =>
   props['aria-expanded'] === true || props['aria-expanded'] === 'true';
 
-/** Says what a Tooltip can't do while developing, once per message, as React reports a prop. */
-function report(message: string) {
-  let developing = false;
-  try {
-    // Written inline so bundlers replace process.env.NODE_ENV, as in Theme.
-    developing = process.env.NODE_ENV !== 'production';
-  } catch {
-    // No bundler defined process.env.NODE_ENV.
-  }
-  if (!developing || reported.has(message)) return;
-  reported.add(message);
-  // A development-only report, as React reports an invalid prop.
-  // eslint-disable-next-line no-console
-  console.error(`envUI: ${message}`);
-}
-const reported = new Set<string>();
-
 /** A component's name for a report. */
 function typeName(type: unknown): string {
   if (typeof type === 'string') return type;
@@ -237,7 +183,10 @@ function typeName(type: unknown): string {
   return named?.displayName || named?.name || 'a component';
 }
 
-type Forwarded = Omit<TooltipProps, 'content' | 'children' | 'side' | 'delay' | 'popupClassName'>;
+type Forwarded = Omit<
+  TooltipProps,
+  'content' | 'children' | 'side' | 'align' | 'delay' | 'popupClassName' | 'open' | 'onOpenChange'
+>;
 
 /**
  * The control with the Tooltip's own props joined to its own, handlers chained and the control's
@@ -274,17 +223,23 @@ export function Tooltip(props: TooltipProps) {
     content,
     children,
     side = 'top',
-    delay = 400,
+    align = 'center',
+    delay = tooltipDelay,
     defaultOpen = false,
+    open,
+    onOpenChange,
     popupClassName,
     ...forwarded
   } = props;
   const hoverCardTrigger = useContext(HoverCardTriggerContext);
   // Text, a Fragment or a list can't take the trigger's props and ref.
   if (!isValidElement(children) || children.type === Fragment) {
-    report(
-      'A Tooltip wraps one element that takes props and a ref, such as a Button or an IconButton; ' +
-        `it got ${isValidElement(children) ? 'a Fragment' : typeof children}, and shows no tooltip.`,
+    // Says what a Tooltip can't do while developing, once per message, as React reports a prop.
+    reportInDevelopment(
+      () =>
+        process.env.NODE_ENV !== 'production' &&
+        'A Tooltip wraps one element that takes props and a ref, such as a Button or an IconButton; ' +
+          `it got ${isValidElement(children) ? 'a Fragment' : typeof children}, and shows no tooltip.`,
     );
     return <>{children as ReactNode}</>;
   }
@@ -298,9 +253,11 @@ export function Tooltip(props: TooltipProps) {
   // A HoverCard's trigger opens the card on the same hover and focus, which the tooltip would
   // cover.
   if (hoverCardTrigger) {
-    report(
-      "A Tooltip around a HoverCard, or as a HoverCard's trigger, shows no tooltip: the card opens " +
-        'on the same hover and focus. Put what the tooltip says in the card.',
+    reportInDevelopment(
+      () =>
+        process.env.NODE_ENV !== 'production' &&
+        "A Tooltip around a HoverCard, or as a HoverCard's trigger, shows no tooltip: the card " +
+          'opens on the same hover and focus. Put what the tooltip says in the card.',
     );
     return (
       <HoverCardTriggerContext value={false}>
@@ -312,8 +269,11 @@ export function Tooltip(props: TooltipProps) {
     <TooltipTrigger
       content={content}
       side={side}
+      align={align}
       delay={delay}
       defaultOpen={defaultOpen}
+      open={open}
+      onOpenChange={onOpenChange}
       popupClassName={popupClassName}
       forwarded={forwarded}
     >
@@ -338,16 +298,22 @@ function TooltipTrigger({
   content,
   children,
   side,
+  align,
   delay,
   defaultOpen,
+  open: controlledOpen,
+  onOpenChange,
   popupClassName,
   forwarded,
 }: {
   content: ReactNode;
   children: ReactElement<TriggerProps>;
   side: TooltipSide;
+  align: 'start' | 'center' | 'end';
   delay: number;
   defaultOpen: boolean;
+  open: boolean | undefined;
+  onOpenChange: TooltipProps['onOpenChange'];
   popupClassName?: string;
   forwarded: Forwarded;
 }) {
@@ -358,8 +324,13 @@ function TooltipTrigger({
   // closes that popup and the tooltip doesn't cover it.
   const expanded = isExpanded(trigger);
   const popupId = `${useId()}-tooltip`;
-  const [open, setOpen] = useState(defaultOpen);
-  if (open && expanded) setOpen(false);
+  const [ownOpen, setOwnOpen] = useState(defaultOpen);
+  if (ownOpen && expanded) setOwnOpen(false);
+  const open = (controlledOpen ?? ownOpen) && !expanded;
+  function setOpen(next: boolean, reason: PopoverOpenChangeReason) {
+    if (controlledOpen === undefined) setOwnOpen(next);
+    onOpenChange?.(next, { reason });
+  }
   const portal = usePortalContainer();
   // The tooltip takes the text direction at its trigger, the control or its wrapper.
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -430,9 +401,11 @@ function TooltipTrigger({
   const childType = children.type;
   useLayoutEffect(() => {
     if (!isDisabled && !triggerRef.current)
-      report(
-        `A Tooltip's child, ${typeName(childType)}, doesn't pass the ref on to its element, so ` +
-          'no tooltip opens: have it take ref as a prop and give it to its element.',
+      reportInDevelopment(
+        () =>
+          process.env.NODE_ENV !== 'production' &&
+          `A Tooltip's child, ${typeName(childType)}, doesn't pass the ref on to its element, so ` +
+            'no tooltip opens: have it take ref as a prop and give it to its element.',
       );
   }, [isDisabled, childType]);
   const standsIn = isDisabled && stand.name !== undefined && stand.role !== undefined;
@@ -468,7 +441,7 @@ function TooltipTrigger({
             returning.current = false;
           }
           if (next && !isDisabled) setName(accessibleName(triggerRef.current) ?? ownName(trigger));
-          setOpen(next);
+          setOpen(next, details.reason as PopoverOpenChangeReason);
         }}
       >
         <BaseTooltip.Trigger
@@ -511,6 +484,7 @@ function TooltipTrigger({
         <TooltipPopup
           content={content}
           side={side}
+          align={align}
           trigger={triggerRef}
           popupProps={{ id: popupId, className: popupClassName }}
         />

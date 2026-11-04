@@ -15,6 +15,17 @@
           "$value": "{palette.neutral.80}"
         }
       },
+      "recessed": {
+        "$root": {
+          "$value": "{palette.neutral.94}"
+        },
+        "hover": {
+          "$value": "{palette.neutral.88}"
+        },
+        "pressed": {
+          "$value": "{palette.neutral.82}"
+        }
+      },
       "default": {
         "$root": {
           "$value": "{palette.neutral.88}"
@@ -62,7 +73,7 @@
       "field": {
         "$value": "{palette.neutral.92}"
       },
-      "overlay": {
+      "backdrop": {
         "$root": {
           "$value": {
             "colorSpace": "oklch",
@@ -94,6 +105,13 @@
         }
       },
       "navigation": {
+        "$root": {
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [0, 0, 0],
+            "alpha": 0
+          }
+        },
         "hover": {
           "$value": "{palette.neutral.75}"
         },
@@ -173,7 +191,7 @@
           }
         }
       },
-      "brand": {
+      "primary": {
         "emphasis": {
           "$root": {
             "$value": "{palette.blue.20}"
@@ -183,15 +201,6 @@
           },
           "pressed": {
             "$value": "{palette.blue.40}"
-          }
-        },
-        "muted": {
-          "$value": {
-            "colorSpace": "oklch",
-            "components": {
-              "$ref": "#/palette/blue/20/$value/components"
-            },
-            "alpha": 0.16
           }
         },
         "strong": {
@@ -204,23 +213,6 @@
           "pressed": {
             "$value": "{palette.blue.50}"
           }
-        }
-      },
-      "accent": {
-        "emphasis": {
-          "$value": "{palette.blue.20}"
-        },
-        "muted": {
-          "$value": {
-            "colorSpace": "oklch",
-            "components": {
-              "$ref": "#/palette/blue/20/$value/components"
-            },
-            "alpha": 0.14
-          }
-        },
-        "badge": {
-          "$value": "{color.bg.accent.muted}"
         },
         "subtle": {
           "$root": {
@@ -248,6 +240,21 @@
               "alpha": 0.22
             }
           }
+        },
+        "muted": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": {
+              "$ref": "#/palette/blue/20/$value/components"
+            },
+            "alpha": 0.14
+          }
+        },
+        "soft": {
+          "$value": "{color.bg.primary.muted}"
+        },
+        "solid": {
+          "$value": "{palette.blue.20}"
         }
       },
       "success": {
@@ -422,7 +429,7 @@
           }
         }
       },
-      "important": {
+      "accent": {
         "strong": {
           "$root": {
             "$value": "{palette.purple.55}"
@@ -433,6 +440,48 @@
           "pressed": {
             "$value": "{palette.purple.75}"
           }
+        },
+        "subtle": {
+          "$root": {
+            "$value": {
+              "colorSpace": "srgb",
+              "components": [0, 0, 0],
+              "alpha": 0
+            }
+          },
+          "hover": {
+            "$value": {
+              "colorSpace": "oklch",
+              "components": {
+                "$ref": "#/palette/purple/20/$value/components"
+              },
+              "alpha": 0.14
+            }
+          },
+          "pressed": {
+            "$value": {
+              "colorSpace": "oklch",
+              "components": {
+                "$ref": "#/palette/purple/20/$value/components"
+              },
+              "alpha": 0.22
+            }
+          }
+        },
+        "muted": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": {
+              "$ref": "#/palette/purple/20/$value/components"
+            },
+            "alpha": 0.14
+          }
+        },
+        "soft": {
+          "$value": "{color.bg.accent.muted}"
+        },
+        "solid": {
+          "$value": "{palette.purple.20}"
         }
       },
       "inset": {
@@ -442,6 +491,46 @@
             "$ref": "#/palette/neutral/92/$value/components"
           },
           "alpha": 0.5
+        }
+      },
+      "list-item": {
+        "$root": {
+          "$value": "{color.bg.muted}"
+        },
+        "hover": {
+          "$value": "{color.bg.muted.hover}"
+        },
+        "pressed": {
+          "$value": "{color.bg.muted.pressed}"
+        }
+      },
+      "avatar": {
+        "$root": {
+          "$value": "{color.bg.avatar.powder}"
+        },
+        "powder": {
+          "$value": "{palette.powder.15}"
+        },
+        "seafoam": {
+          "$value": "{palette.seafoam.15}"
+        },
+        "sage": {
+          "$value": "{palette.sage.15}"
+        },
+        "butter": {
+          "$value": "{palette.butter.15}"
+        },
+        "blush": {
+          "$value": "{palette.blush.15}"
+        },
+        "periwinkle": {
+          "$value": "{palette.periwinkle.15}"
+        },
+        "orchid": {
+          "$value": "{palette.orchid.15}"
+        },
+        "oat": {
+          "$value": "{palette.oat.15}"
         }
       }
     },
@@ -474,19 +563,11 @@
           "$value": "{palette.blue.30}"
         }
       },
-      "link-on-tint": {
-        "$root": {
-          "$value": "{palette.blue.20}"
-        },
-        "hover": {
-          "$value": "{palette.blue.15}"
-        },
-        "pressed": {
-          "$value": "{palette.blue.10}"
-        }
+      "primary": {
+        "$value": "{palette.blue.20}"
       },
       "accent": {
-        "$value": "{palette.blue.20}"
+        "$value": "{palette.purple.20}"
       },
       "on-selected": {
         "$value": "{palette.blue.15}"
@@ -508,6 +589,78 @@
       },
       "on-strong": {
         "$value": "{palette.neutral.0}"
+      },
+      "link-on-muted": {
+        "$root": {
+          "$value": "{palette.blue.20}"
+        },
+        "hover": {
+          "$value": "{palette.blue.15}"
+        },
+        "pressed": {
+          "$value": "{palette.blue.10}"
+        }
+      },
+      "rating-star": {
+        "$value": "{palette.amber.20}"
+      },
+      "avatar": {
+        "$root": {
+          "$value": "{color.fg.avatar.powder}"
+        },
+        "powder": {
+          "$value": "{palette.powder.65}"
+        },
+        "seafoam": {
+          "$value": "{palette.seafoam.65}"
+        },
+        "sage": {
+          "$value": "{palette.sage.65}"
+        },
+        "butter": {
+          "$value": "{palette.butter.65}"
+        },
+        "blush": {
+          "$value": "{palette.blush.65}"
+        },
+        "periwinkle": {
+          "$value": "{palette.periwinkle.65}"
+        },
+        "orchid": {
+          "$value": "{palette.orchid.65}"
+        },
+        "oat": {
+          "$value": "{palette.oat.65}"
+        }
+      },
+      "avatar-figure": {
+        "$root": {
+          "$value": "{color.fg.avatar-figure.powder}"
+        },
+        "powder": {
+          "$value": "{color.fg.avatar.powder}"
+        },
+        "seafoam": {
+          "$value": "{color.fg.avatar.seafoam}"
+        },
+        "sage": {
+          "$value": "{color.fg.avatar.sage}"
+        },
+        "butter": {
+          "$value": "{color.fg.avatar.butter}"
+        },
+        "blush": {
+          "$value": "{color.fg.avatar.blush}"
+        },
+        "periwinkle": {
+          "$value": "{color.fg.avatar.periwinkle}"
+        },
+        "orchid": {
+          "$value": "{color.fg.avatar.orchid}"
+        },
+        "oat": {
+          "$value": "{color.fg.avatar.oat}"
+        }
       }
     },
     "border": {
@@ -533,7 +686,7 @@
           "$value": "{palette.neutral.35}"
         }
       },
-      "accent": {
+      "primary": {
         "$root": {
           "$value": {
             "colorSpace": "oklch",
@@ -562,6 +715,15 @@
           "pressed": {
             "$value": "{palette.blue.40}"
           }
+        }
+      },
+      "accent": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": {
+            "$ref": "#/palette/purple/20/$value/components"
+          },
+          "alpha": 0.55
         }
       },
       "danger": {
@@ -679,78 +841,6 @@
             "$ref": "#/palette/neutral/100/$value/components"
           },
           "alpha": 0.05
-        }
-      }
-    },
-    "list-item": {
-      "bg": {
-        "$root": {
-          "$value": "{color.bg.muted}"
-        },
-        "hover": {
-          "$value": "{color.bg.muted.hover}"
-        },
-        "pressed": {
-          "$value": "{color.bg.muted.pressed}"
-        }
-      }
-    },
-    "skeleton": {
-      "shine": {
-        "$value": "{color.border.default}"
-      }
-    },
-    "avatar": {
-      "bg": {
-        "powder": {
-          "$value": "{palette.powder.15}"
-        },
-        "seafoam": {
-          "$value": "{palette.seafoam.15}"
-        },
-        "sage": {
-          "$value": "{palette.sage.15}"
-        },
-        "butter": {
-          "$value": "{palette.butter.15}"
-        },
-        "blush": {
-          "$value": "{palette.blush.15}"
-        },
-        "periwinkle": {
-          "$value": "{palette.periwinkle.15}"
-        },
-        "orchid": {
-          "$value": "{palette.orchid.15}"
-        },
-        "oat": {
-          "$value": "{palette.oat.15}"
-        }
-      },
-      "fg": {
-        "powder": {
-          "$value": "{palette.powder.65}"
-        },
-        "seafoam": {
-          "$value": "{palette.seafoam.65}"
-        },
-        "sage": {
-          "$value": "{palette.sage.65}"
-        },
-        "butter": {
-          "$value": "{palette.butter.65}"
-        },
-        "blush": {
-          "$value": "{palette.blush.65}"
-        },
-        "periwinkle": {
-          "$value": "{palette.periwinkle.65}"
-        },
-        "orchid": {
-          "$value": "{palette.orchid.65}"
-        },
-        "oat": {
-          "$value": "{palette.oat.65}"
         }
       }
     }

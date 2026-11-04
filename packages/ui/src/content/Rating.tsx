@@ -5,7 +5,9 @@ import { classNames } from '../internal/classNames.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { useFormatters } from '../internal/useFormatters.js';
 import { rating as ratingMessages } from '../foundations/messages/rating.js';
-import { Star } from '../icons/Star.js';
+import { IconStar } from '../icons/Star.js';
+import '../styles/Base.css';
+import '../styles/Rating.css';
 
 export interface RatingProps extends Omit<ComponentPropsWithRef<'span'>, 'children'> {
   /**
@@ -34,8 +36,8 @@ export interface RatingProps extends Omit<ComponentPropsWithRef<'span'>, 'childr
 }
 
 /**
- * A read-only rating, such as a review score: stars filled to the value in half steps in the
- * warning tone, with an optional number before them, named once for assistive technology as an
+ * A read-only rating, such as a review score: stars filled to the value in half steps in their
+ * own gold, with an optional number before them, named once for assistive technology as an
  * image, such as "4.5 out of 5 stars". It shows a rating; it does not ask for one.
  */
 export function Rating({
@@ -72,10 +74,10 @@ export function Rating({
               key={index}
               data-fill={fill === 1 ? 'full' : fill > 0 ? 'half' : undefined}
             >
-              <Star filled />
+              <IconStar filled />
               {fill > 0 && fill < 1 && (
                 <span className="env-rating-star-half">
-                  <Star filled />
+                  <IconStar filled />
                 </span>
               )}
             </span>

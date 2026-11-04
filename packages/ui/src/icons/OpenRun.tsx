@@ -1,7 +1,7 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
-// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
+// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
+import { Icon, type SymbolIconProps } from '../Icon.js';
 
-export function OpenRun({ filled: _filled = false, ...props }: MaterialSymbolProps) {
+export function IconOpenRun({ filled: _filled = false, ...props }: SymbolIconProps) {
   return <Icon viewBox="0 -960 960 960" {...props}><path d="m480-193 57-57q12-12 28-12t28 12q12 12 12 28.5T593-193l-85 85q-6 6-13 8.5T480-97q-8 0-15-2.5t-13-8.5l-85-85q-12-12-12-28.5t12-28.5q12-12 28-12t28 12l57 57ZM193-480l57 57q12 12 12 28t-12 28q-12 12-28.5 12T193-367l-85-85q-6-6-8.5-13T97-480q0-8 2.5-15t8.5-13l85-85q12-12 28.5-12t28.5 12q12 12 12 28t-12 28l-57 57Zm574 0-57-57q-12-12-12-28t12-28q12-12 28.5-12t28.5 12l85 85q6 6 8.5 13t2.5 15q0 8-2.5 15t-8.5 13l-85 85q-12 12-28.5 12T710-367q-12-12-12-28t12-28l57-57ZM480-767l-57 57q-12 12-28 12t-28-12q-12-12-12-28.5t12-28.5l85-85q6-6 13-8.5t15-2.5q8 0 15 2.5t13 8.5l85 85q12 12 12 28.5T593-710q-12 12-28 12t-28-12l-57-57Z" /></Icon>;
 }

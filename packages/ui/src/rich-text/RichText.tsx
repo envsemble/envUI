@@ -10,10 +10,13 @@ import { Link } from '../actions/Link.js';
 import { Code } from '../content/Code.js';
 import { CodeBlock } from '../content/CodeBlock.js';
 import { Checkbox } from '../forms/Checkbox.js';
-import { createRichTextExtensions } from './Extensions.js';
-import { ReferenceContent } from './Reference.js';
-import { referenceFromAttributes, safeRichTextUrl } from './ReferenceAttributes.js';
-import type { RichTextProps } from './Types.js';
+import { createRichTextExtensions } from './extensions.js';
+import { ReferenceContent } from './internal/Reference.js';
+import { referenceFromAttributes, safeRichTextUrl } from './internal/referenceAttributes.js';
+import type { RichTextProps } from './types.js';
+import '../styles/Base.css';
+import '../styles/Prose.css';
+import '../styles/RichText.css';
 
 /**
  * Saved rich text, read-only: Markdown rendered with the editor's own schema and parser, so it
@@ -55,11 +58,14 @@ export function RichText({
         ),
         taskItem: ({ node, children: content }) => (
           <li data-type="taskItem" data-checked={Boolean(node.attrs.checked)}>
-            <Checkbox
-              checked={Boolean(node.attrs.checked)}
-              disabled
-              aria-label={node.textContent || messages.task}
-            />
+            {/* In a span, as in the editor, so a task's row is as tall here as there. */}
+            <span className="env-rich-text-task-check">
+              <Checkbox
+                checked={Boolean(node.attrs.checked)}
+                disabled
+                aria-label={node.textContent || messages.task}
+              />
+            </span>
             <div>{content}</div>
           </li>
         ),

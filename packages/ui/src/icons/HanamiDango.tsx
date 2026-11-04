@@ -1,11 +1,14 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
-// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
+// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../Icon.js';
+import { useSymbolIconFill } from '../SymbolIconState.js';
 
-export function HanamiDango({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
-  return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M758-145q-49 30-107 24t-101-49q-29-29-41-66.5t-7-75.5q-38 5-75.5-7T360-360q-29-29-41-66.5t-7-75.5q-38 5-75.5-7T170-550q-43-43-49-101.5T145-759l-57-56q-12-12-12-28.5T88-872q12-12 28.5-12t28.5 12l57 57q49-30 107-24t101 49q29 29 41 66t7 75q38-5 75.5 7.5T600-600q29 29 41 66t7 75q38-5 75.5 7.5T790-410q43 43 49 101t-24 107l57 57q11 12 11 28t-12 28q-12 12-28 12t-28-12l-57-56Z" /> : <path d="M758-145q-49 30-107 24t-101-49q-29-29-41-66.5t-7-75.5q-38 5-75.5-7T360-360q-29-29-41-66.5t-7-75.5q-38 5-75.5-7T170-550q-43-43-49-101.5T145-759l-57-56q-12-12-12-28.5T88-872q12-12 28.5-12t28.5 12l57 57q49-30 107-24t101 49q29 29 41 66t7 75q38-5 75.5 7.5T600-600q29 29 41 66t7 75q38-5 75.5 7.5T790-410q43 43 49 101t-24 107l57 57q11 12 11 28t-12 28q-12 12-28 12t-28-12l-57-56Zm-88-55q38 0 64-26t26-64q0-38-26-64t-64-26q-38 0-64 26t-26 64q0 38 26 64t64 26ZM480-390q38 0 64-26t26-64q0-38-26-64t-64-26q-38 0-64 26t-26 64q0 38 26 64t64 26ZM290-580q38 0 64-26t26-64q0-38-26-64t-64-26q-38 0-64 26t-26 64q0 38 26 64t64 26Zm380 290ZM480-480ZM290-670Z" />}</Icon>;
+/** The path both styles start with. */
+const start = "M758-145q-49 30-107 24t-101-49q-29-29-41-66.5t-7-75.5q-38 5-75.5-7T360-360q-29-29-41-66.5t-7-75.5q-38 5-75.5-7T170-550q-43-43-49-101.5T145-759l-57-56q-12-12-12-28.5T88-872q12-12 28.5-12t28.5 12l57 57q49-30 107-24t101 49q29 29 41 66t7 75q38-5 75.5 7.5T600-600q29 29 41 66t7 75q38-5 75.5 7.5T790-410q43 43 49 101t-24 107l57 57q11 12 11 28t-12 28q-12 12-28 12t-28-12l-57-56Z";
+
+export function IconHanamiDango({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
+  return <Icon viewBox="0 -960 960 960" {...props}><path d={filled ? start : start + "m-88-55q38 0 64-26t26-64q0-38-26-64t-64-26q-38 0-64 26t-26 64q0 38 26 64t64 26ZM480-390q38 0 64-26t26-64q0-38-26-64t-64-26q-38 0-64 26t-26 64q0 38 26 64t64 26ZM290-580q38 0 64-26t26-64q0-38-26-64t-64-26q-38 0-64 26t-26 64q0 38 26 64t64 26Zm380 290ZM480-480ZM290-670Z"} /></Icon>;
 }

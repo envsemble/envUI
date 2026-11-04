@@ -2,7 +2,7 @@
 
 import { useCallback, useContext, useSyncExternalStore, type ComponentPropsWithRef } from 'react';
 import { Tooltip } from '../feedback/Tooltip.js';
-import { TooltipNestingContext } from '../feedback/internal/TooltipPopup.js';
+import { TooltipNestingContext } from '../internal/TooltipPopup.js';
 import { classNames } from '../internal/classNames.js';
 import { hoverDetailClass } from '../internal/hoverDetail.js';
 import { useEnvUI } from '../internal/EnvUIContext.js';
@@ -15,6 +15,8 @@ import {
   type RelativeTimeOptions,
   type RelativeTimeValue,
 } from './formatRelativeTime.js';
+import '../styles/Base.css';
+import '../styles/RelativeTime.css';
 
 export interface RelativeTimeProps
   extends Omit<ComponentPropsWithRef<'time'>, 'children' | 'dateTime'>,
@@ -78,7 +80,7 @@ export function RelativeTime({
       {...props}
       dateTime={new Date(time).toISOString()}
       // With a tooltip of its own, the time takes the dotted underline of text with more on hover,
-      // which Tooltip gives text it recognises but not another component's part.
+      // which Tooltip gives text it recognizes but not another component's part.
       className={classNames('env-relative-time', withTooltip && hoverDetailClass, className)}
       // The server's clock, time zone or language can differ from the browser's. The text then
       // differs while hydrating, which is expected: it is rendered as a separate text node until

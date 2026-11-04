@@ -7,7 +7,7 @@ import {
   Surface,
   Theme,
   type CalendarHeatmapDay,
-  type ThemeValue,
+  type ColorScheme,
 } from '@envsemble/envui';
 
 /** A deterministic year of activity, so the fixture renders the same days everywhere. */
@@ -22,11 +22,12 @@ function activity(end: string, days: number, seed: number): CalendarHeatmapDay[]
 
 const year = activity('2026-10-10', 365, 3);
 
-export function CalendarHeatmapFixture({ theme }: { theme: ThemeValue }) {
+export function CalendarHeatmapFixture({ theme }: { theme: ColorScheme }) {
   const [data, setData] = useState(year);
   return (
     <Theme theme={theme} data-testid={`calendar-heatmap-${theme}`} className="fixture-section">
       <CalendarHeatmap
+        weekStart={0}
         aria-label={`Activity ${theme}`}
         data={data}
         data-testid={`calendar-heatmap-year-${theme}`}
@@ -61,7 +62,7 @@ export function CalendarHeatmapFixture({ theme }: { theme: ThemeValue }) {
           levels={3}
           maxValue={8}
           tone="success"
-          formatTooltip={(day) => `${day.label ?? `${day.value} deployments`} on ${day.date}`}
+          renderTooltip={(day) => `${day.label ?? `${day.value} deployments`} on ${day.date}`}
           monthLabels={[
             'Jan',
             'Feb',
@@ -84,6 +85,7 @@ export function CalendarHeatmapFixture({ theme }: { theme: ThemeValue }) {
       {/* Names, dates and values from the provider's locale, and its legend from its messages. */}
       <EnvUIProvider locale="de-DE" messages={{ calendarHeatmap: { less: 'Wenig', more: 'Viel' } }}>
         <CalendarHeatmap
+          weekStart={0}
           aria-label={`Provided ${theme}`}
           data={[{ date: '2026-10-06', value: 1234 }]}
           startDate="2026-10-04"
@@ -93,6 +95,7 @@ export function CalendarHeatmapFixture({ theme }: { theme: ThemeValue }) {
       </EnvUIProvider>
       <Dialog title={`Activity details ${theme}`} trigger={<Button>Open activity {theme}</Button>}>
         <CalendarHeatmap
+          weekStart={0}
           aria-label={`Activity in a dialog ${theme}`}
           data={year.slice(-60)}
           startDate="2026-08-12"
@@ -100,6 +103,7 @@ export function CalendarHeatmapFixture({ theme }: { theme: ThemeValue }) {
         />
       </Dialog>
       <CalendarHeatmap
+        weekStart={0}
         aria-label={`Ranked ${theme}`}
         data={[
           { date: '2026-05-04', value: 5 },
@@ -113,6 +117,7 @@ export function CalendarHeatmapFixture({ theme }: { theme: ThemeValue }) {
         thresholds={[40, 1, 20, 10]}
       />
       <CalendarHeatmap
+        weekStart={0}
         aria-label={`From zero ${theme}`}
         data={[
           { date: '2026-05-04', value: 0 },
@@ -124,6 +129,7 @@ export function CalendarHeatmapFixture({ theme }: { theme: ThemeValue }) {
         thresholds={[0, 10]}
       />
       <CalendarHeatmap
+        weekStart={0}
         aria-label={`Two steps ${theme}`}
         data={[
           { date: '2026-05-04', value: 3 },

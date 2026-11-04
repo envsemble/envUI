@@ -1,27 +1,37 @@
-/* The icon wrapper. Its size is the hook --env-icon-size, which a container such as a button or a
-   navigation item sets on its own element for the icons inside. */
-.env-icon {
-  display: inline-block;
-  width: var(--env-icon-size, 1rem);
-  height: var(--env-icon-size, 1rem);
-  fill: currentColor;
-  flex-shrink: 0;
-}
+@layer env.components {
+  /* The icon wrapper. Its size is the hook --env-icon-size, which a container such as a button or a
+     navigation item sets on its own element for the icons inside. Whatever it holds, one of envUI's
+     icons, an application's own svg or img, or a Graphic, takes that size, contained and centered: the
+     fixed tracks give the child a definite box, so an img's 100% is the slot's and never the file's. */
+  .env-icon {
+    display: inline-grid;
+    grid-template: minmax(0, 1fr) / minmax(0, 1fr);
+    place-items: center;
+    width: var(--env-icon-size, 1rem);
+    height: var(--env-icon-size, 1rem);
+    fill: currentColor;
+    flex-shrink: 0;
+  }
 
-.env-icon svg {
-  display: block;
-  width: 100%;
-  height: 100%;
-  fill: currentColor;
-}
+  .env-icon > * {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: contain;
+  }
 
-/* In a skeleton, an icon is a filled square of its size, rounded like the symbol it stands for. */
-[data-env-skeleton] .env-icon {
-  forced-color-adjust: none;
-  border-radius: var(--env-radius-sm);
-  --env-skeleton-shape: 1;
-  background: var(--env-skeleton-paint);
-}
-[data-env-skeleton] .env-icon * {
-  visibility: hidden;
+  .env-icon > svg {
+    fill: currentColor;
+  }
+
+  /* In a skeleton, an icon is a filled square of its size, rounded like the symbol it stands for. */
+  [data-env-skeleton] .env-icon {
+    forced-color-adjust: none;
+    border-radius: var(--env-radius-sm);
+    --env-skeleton-shape: 1;
+    background: var(--env-skeleton-paint);
+  }
+  [data-env-skeleton] .env-icon * {
+    visibility: hidden;
+  }
 }

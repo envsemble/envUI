@@ -36,12 +36,10 @@ export default defineConfig(
     'playwright-report/**',
     // Generated from pinned inputs by scripts; edit the generator instead.
     'packages/ui/src/icons/**',
-    'apps/catalogue/src/brand/EnvUILogo.tsx',
-    'apps/catalogue/src/generated/**',
+    'apps/site/src/brand/EnvUILogo.tsx',
+    'apps/site/src/generated/**',
     // Packaged copies of the documentation.
     'packages/ui/docs/**',
-    // Codemod fixtures: inputs and expected outputs, compared byte for byte.
-    'packages/codemods/test/fixtures/**',
   ]),
   {
     files: ['**/*.{ts,tsx,mjs,js,cjs}'],
@@ -96,7 +94,7 @@ export default defineConfig(
   },
   {
     // Shipped code: no logging, and nothing that a strict Content Security Policy blocks.
-    files: ['packages/ui/src/**', 'apps/catalogue/src/**'],
+    files: ['packages/ui/src/**', 'apps/site/src/**'],
     rules: {
       'no-console': 'error',
       'no-eval': 'error',
@@ -108,6 +106,6 @@ export default defineConfig(
     // Examples and templates are the code applications and agents copy, so they follow the rules
     // envUI asks of applications: envUI's components over raw elements and no raw colors.
     ...envui.configs.recommended,
-    files: ['apps/catalogue/src/examples/**/*.{ts,tsx}'],
+    files: ['apps/site/src/examples/**/*.{ts,tsx}'],
   },
 );

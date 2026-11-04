@@ -6,14 +6,14 @@ import {
   Theme,
   type CommandPaletteItem,
   type CommandPaletteProps,
-  type ThemeValue,
+  type ColorScheme,
 } from '@envsemble/envui';
-import { Description } from '@envsemble/envui/icons/Description';
+import { IconDescription } from '@envsemble/envui/icons/Description';
 
 const recent = ['Roadmap.md', 'Decisions.md'];
 const documents = Array.from({ length: 60 }, (_, index) => `Document ${index + 1}.md`);
 
-export function CommandPaletteFixture({ theme }: { theme: ThemeValue }) {
+export function CommandPaletteFixture({ theme }: { theme: ColorScheme }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [log, setLog] = useState('');
@@ -24,14 +24,14 @@ export function CommandPaletteFixture({ theme }: { theme: ThemeValue }) {
         id: `recent/${name}`,
         label: name,
         description: 'plans',
-        icon: <Description />,
+        icon: <IconDescription />,
         group: 'Recently opened',
       })),
       ...documents.filter(match).map((name) => ({
         id: `documents/${name}`,
         label: name,
         description: 'documents',
-        icon: <Description />,
+        icon: <IconDescription />,
         group: 'Documents',
       })),
     ];
@@ -120,8 +120,8 @@ function EmptyPalette({
 
 /**
  * The empty states: the defaults before people type and when nothing matches, the same in another
- * language from EnvUIProvider's messages, and default items with the application's own words and
- * no icon.
+ * language from EnvUIProvider's messages, default items with the application's own words and
+ * no icon, and a palette whose results are always on their way.
  */
 export function CommandPaletteEmptyFixture() {
   return (
@@ -140,11 +140,12 @@ export function CommandPaletteEmptyFixture() {
       </EnvUIProvider>
       <EmptyPalette
         name="Go to page"
-        defaultItems={suggested}
+        suggestedItems={suggested}
         emptyLabel="No matching pages"
         emptyDescription="Try a page's name, such as Billing."
         emptyIcon={null}
       />
+      <EmptyPalette name="Search the server" loading />
     </div>
   );
 }

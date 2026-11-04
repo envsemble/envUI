@@ -2,7 +2,7 @@
 title: Disclosure
 summary: A one-line summary that shows and hides optional details below it, on the native details element.
 status: stable
-since: 0.1.0
+since: 1.0.0
 category: Text & content
 aliases:
   - DisclosureNote
@@ -62,7 +62,7 @@ Finding text in a closed disclosure's details opens it, where the browser suppor
 
 Disclosures in a set can open one at a time, where the browser supports it.
 
-```tsx figure=FrequentQuestions
+```tsx figure=FrequentQuestions motion
 
 ```
 
@@ -70,7 +70,7 @@ Disclosures in a set can open one at a time, where the browser supports it.
 
 The application can open a disclosure itself, such as when a field inside has an error.
 
-```tsx figure=OpenOnError
+```tsx figure=OpenOnError motion
 
 ```
 
@@ -153,4 +153,3 @@ The summary is `env-disclosure > summary`, and the details are in `env-disclosur
 ## Changelog
 
 - **1.0.0**: Disclosure takes `open`, `defaultOpen` and `onOpenChange(open)`; a native `onToggle` still passes through. `DisclosureNote` is `Disclosure`, and its content `env-disclosure-panel`; the page is `disclosure`.
-- **0.1.0**: DisclosureNote.

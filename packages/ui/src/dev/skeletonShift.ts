@@ -38,7 +38,7 @@ function labelOf(element: Element): string {
   return describeElement(element);
 }
 
-/** The labelled elements from the surface down to this one, such as `env-card > env-card-heading`. */
+/** The labelled elements from the surface down to this one, such as `env-card > env-card-title`. */
 function pathOf(element: Element, surface: Element): string {
   const labels: string[] = [];
   for (let at: Element | null = element; at; at = at.parentElement) {
@@ -153,7 +153,7 @@ function shiftsOf(surface: HTMLElement, tolerance: number, rootPx: number): Layo
   } finally {
     surface.toggleAttribute(skeletonAttribute, wasSkeleton);
     wrapper.restore(wasSkeleton);
-    // Toggling started the root's shimmer anew: put it back in step with the others.
+    // Toggling started the root's pulse anew: put it back in step with the others.
     alignPulses();
   }
   const index = new Map(elements.map((element, at) => [element, at]));

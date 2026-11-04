@@ -16,11 +16,11 @@ import {
   Theme,
   ThemePreferenceProvider,
   ThemeToggle,
-  Toast,
+  ToastProvider,
   Tooltip,
   useToast,
   type ThemeContrast,
-  type ThemeValue,
+  type ColorScheme,
   Sheet,
 } from '@envsemble/envui';
 
@@ -42,9 +42,9 @@ const commands = [{ id: 'rename', label: 'Rename' }];
  */
 function Popups({ name }: { name: string }) {
   return (
-    <Toast.Provider>
+    <ToastProvider>
       <PopupTriggers name={name} />
-    </Toast.Provider>
+    </ToastProvider>
   );
 }
 
@@ -126,7 +126,7 @@ function Boundary({
   contrast,
 }: {
   name: string;
-  theme: ThemeValue;
+  theme: ColorScheme;
   contrast?: ThemeContrast;
 }) {
   return (

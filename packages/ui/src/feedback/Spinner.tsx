@@ -12,7 +12,7 @@ export interface SpinnerProps extends Omit<ComponentPropsWithRef<'span'>, 'child
   label?: string;
   /**
    * Show the label beside the spinner, for loading with no known shape, such as search results:
-   * a status line, marked busy, that centres the spinner and its label in its row. Without a label
+   * a status line, marked busy, that centers the spinner and its label in its row. Without a label
    * it says Loading in the provider's language, from EnvUIProvider's messages.common.loading.
    * @default false
    */
@@ -42,14 +42,7 @@ export function Spinner({
   if (showLabel)
     return (
       // A status region marked busy, which the label names as it shows.
-      <SpinnerArc
-        {...props}
-        size={size}
-        role="status"
-        aria-busy="true"
-        className={className}
-        data-show-label=""
-      >
+      <SpinnerArc {...props} size={size} role="status" aria-busy="true" className={className}>
         <SpinnerLabel label={label} />
       </SpinnerArc>
     );

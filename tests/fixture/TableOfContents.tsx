@@ -1,13 +1,14 @@
 import { useRef, useState } from 'react';
-import { TableOfContents } from '@envsemble/envui';
+import { Button, Dialog, TableOfContents } from '@envsemble/envui';
 
 const tall = { blockSize: '40rem', margin: 0 };
 const short = { blockSize: '3rem', margin: 0 };
 
 /**
  * A page under a sticky bar that reads its article's headings, h2 and h3, leaving out an example's
- * own heading and an h4; and sections of its own, cards in a box that scrolls. Mounted with
- * ?fixture=table-of-contents.
+ * own heading and an h4; and sections of its own, cards in a box that scrolls, also in a box drawn
+ * at half its size; and a modal dialog that adds a section while the page behind it is hidden.
+ * Mounted with ?fixture=table-of-contents.
  */
 export function TableOfContentsFixture() {
   const article = useRef<HTMLElement>(null);
@@ -33,6 +34,12 @@ export function TableOfContentsFixture() {
         <button type="button" onClick={() => setRound((count) => count + 1)}>
           Render the review again
         </button>
+        <Dialog
+          title="Add from a dialog"
+          closeLabel="Close"
+          trigger={<Button>Open a dialog</Button>}
+          actions={<Button onClick={() => setExtra(true)}>Add a section</Button>}
+        />
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 14rem', gap: '2rem' }}>
         <article ref={article} className="toc-fixture-article">
@@ -81,6 +88,28 @@ export function TableOfContentsFixture() {
                 Revenue and costs.
               </section>
               <section id="review-costs" style={{ blockSize: '4rem' }}>
+                Costs went down.
+              </section>
+            </div>
+          </div>
+          {/* The same sections at half size, as in a scaled preview of a screen. */}
+          <div style={{ transform: 'scale(0.5)', transformOrigin: '0 0' }}>
+            <TableOfContents
+              aria-label="At half size"
+              items={[
+                { id: 'scaled-summary', label: 'Summary' },
+                { id: 'scaled-results', label: 'Results' },
+                { id: 'scaled-costs', label: 'Costs' },
+              ]}
+            />
+            <div data-testid="scaled" style={{ blockSize: '12rem', overflow: 'auto' }}>
+              <section id="scaled-summary" style={{ blockSize: '20rem' }}>
+                The year in brief.
+              </section>
+              <section id="scaled-results" style={{ blockSize: '20rem' }}>
+                Revenue and costs.
+              </section>
+              <section id="scaled-costs" style={{ blockSize: '4rem' }}>
                 Costs went down.
               </section>
             </div>

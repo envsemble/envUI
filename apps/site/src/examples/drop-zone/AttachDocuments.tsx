@@ -1,0 +1,38 @@
+import { useState } from 'react';
+import { Button, DropZone, List, Column } from '@envsemble/envui';
+
+export default function AttachDocuments() {
+  const [documents, setDocuments] = useState<File[]>([]);
+  return (
+    // As wide as a form column.
+    <Column gap={3} style={{ inlineSize: 'min(100%, 24rem)' }}>
+      <DropZone
+        size="sm"
+        multiple
+        label="Attach documents"
+        description="Any file, several at once"
+        onFilesAccepted={(files) => setDocuments((current) => [...current, ...files])}
+      />
+      {documents.length > 0 && (
+        <List.Root aria-label="Attached documents">
+          {documents.map((file, index) => (
+            <List.Item
+              key={`${index}-${file.name}`}
+              label={file.name}
+              description={`${Math.max(1, Math.round(file.size / 1024))} KB`}
+              end={
+                <Button
+                  variant="text"
+                  aria-label={`Remove ${file.name}`}
+                  onClick={() => setDocuments((current) => current.filter((item) => item !== file))}
+                >
+                  Remove
+                </Button>
+              }
+            />
+          ))}
+        </List.Root>
+      )}
+    </Column>
+  );
+}

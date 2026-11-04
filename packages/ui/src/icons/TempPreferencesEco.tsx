@@ -1,11 +1,14 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
-// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
+// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../Icon.js';
+import { useSymbolIconFill } from '../SymbolIconState.js';
 
-export function TempPreferencesEco({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
-  return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M460-690q-8 0-14-6t-6-14v-80q0-42 29-71t71-29h80q8 0 14 6t6 14v80q0 42-29 71t-71 29h-80ZM220-450q-58 0-99-41t-41-99v-100q0-17 11.5-28.5T120-730h100q58 0 99 41t41 99v100q0 17-11.5 28.5T320-450H220ZM640-90q-39 0-74.5-12T501-135l-33 33q-11 11-28 11t-28-11q-11-11-11-28t11-28l33-33q-21-29-33-64.5T400-330q0-100 70-170.5T640-571h161q33 0 56.5 23.5T881-491v161q0 100-70.5 170T640-90ZM532-222q11 11 28 11t28-11l80-80q11-11 11-28t-11-28q-11-11-28-11t-28 11l-80 80q-11 11-11 28t11 28Z" /> : <path d="M460-690q-8 0-14-6t-6-14v-80q0-42 29-71t71-29h80q8 0 14 6t6 14v80q0 42-29 71t-71 29h-80ZM220-450q-58 0-99-41t-41-99v-100q0-17 11.5-28.5T120-730h100q58 0 99 41t41 99v100q0 17-11.5 28.5T320-450H220ZM640-90q-39 0-74.5-12T501-135l-33 33q-11 11-28 11t-28-11q-11-11-11-28t11-28l33-33q-21-29-33-64.5T400-330q0-100 70-170.5T640-571h161q33 0 56.5 23.5T881-491v161q0 100-70.5 170T640-90Zm0-80q67 0 113-47t46-113v-160H640q-66 0-113 46.5T480-330q0 23 5.5 43.5T502-248l110-110q11-11 28-11t28 11q11 11 11 28t-11 28L558-192q18 11 38.5 16.5T640-170Zm1-161Z" />}</Icon>;
+/** The path both styles start with. */
+const start = "M460-690q-8 0-14-6t-6-14v-80q0-42 29-71t71-29h80q8 0 14 6t6 14v80q0 42-29 71t-71 29h-80ZM220-450q-58 0-99-41t-41-99v-100q0-17 11.5-28.5T120-730h100q58 0 99 41t41 99v100q0 17-11.5 28.5T320-450H220ZM640-90q-39 0-74.5-12T501-135l-33 33q-11 11-28 11t-28-11q-11-11-11-28t11-28l33-33q-21-29-33-64.5T400-330q0-100 70-170.5T640-571h161q33 0 56.5 23.5T881-491v161q0 100-70.5 170T640-90Z";
+
+export function IconTempPreferencesEco({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
+  return <Icon viewBox="0 -960 960 960" {...props}><path d={filled ? start + "M532-222q11 11 28 11t28-11l80-80q11-11 11-28t-11-28q-11-11-28-11t-28 11l-80 80q-11 11-11 28t11 28Z" : start + "m0-80q67 0 113-47t46-113v-160H640q-66 0-113 46.5T480-330q0 23 5.5 43.5T502-248l110-110q11-11 28-11t28 11q11 11 11 28t-11 28L558-192q18 11 38.5 16.5T640-170Zm1-161Z"} /></Icon>;
 }

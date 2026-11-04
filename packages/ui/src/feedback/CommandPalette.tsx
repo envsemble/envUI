@@ -3,6 +3,7 @@
 import { Autocomplete as BaseAutocomplete } from '@base-ui/react/autocomplete';
 import { Dialog as BaseDialog } from '@base-ui/react/dialog';
 import {
+  useId,
   useRef,
   type ComponentPropsWithRef,
   type KeyboardEvent,
@@ -13,19 +14,26 @@ import { classNames } from '../internal/classNames.js';
 import { Column, Grid, Row } from '../foundations/Layout.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { ListRow } from '../internal/ListRow.js';
+import { FieldFrame } from '../forms/internal/FieldFrame.js';
 import { useLocale, useMessages } from '../internal/EnvUIContext.js';
+import { useFormatters } from '../internal/useFormatters.js';
 import { commandPalette } from '../foundations/messages/commandPalette.js';
 import { useTheme } from '../foundations/Theme.js';
-import { Search } from '../icons/Search.js';
-import { SearchOff } from '../icons/SearchOff.js';
+import { IconSearch } from '../icons/Search.js';
+import { IconSearchOff } from '../icons/SearchOff.js';
 import { Kbd } from '../content/Kbd.js';
+import { Spinner } from './Spinner.js';
 import { DialogBackdrop, OverlayTheme } from './internal/DialogParts.js';
+import type { DialogOpenChangeReason } from './Dialog.js';
 import { ResetControlDefaults } from '../internal/ControlDefaults.js';
 import {
   containedModal,
   keepsOpen,
   usePortalContainer,
 } from '../internal/PortalContainerContext.js';
+import { flag } from '../internal/flag.js';
+import '../styles/Base.css';
+import '../styles/CommandPalette.css';
 
 export interface CommandPaletteItem {
   /** Stable identifier; options carry it as data-item-id. */
@@ -54,17 +62,26 @@ export interface CommandPaletteHint {
   label: ReactNode;
 }
 
-export interface CommandPaletteActionOptions {
+export interface CommandPaletteActionDetails {
   /** Ctrl or Cmd was held, for example to open beside the current document. */
   modifier: boolean;
+}
+
+/** What CommandPalette's onOpenChange receives beside the requested state. */
+export interface CommandPaletteOpenChangeDetails {
+  /**
+   * Why the palette asks to close: a dialog's reasons, such as escape-key or outside-press, or
+   * item-press when a chosen option closes it under closeOnAction.
+   */
+  reason: DialogOpenChangeReason | 'item-press';
 }
 
 export interface CommandPaletteProps
   extends Omit<ComponentPropsWithRef<'div'>, 'children' | 'defaultValue' | 'onChange'> {
   /** Whether the palette is open; the application opens it, such as from a shortcut. */
   open: boolean;
-  /** Called with false when Esc, a press on the backdrop or a choice closes the palette. */
-  onOpenChange: (open: boolean) => void;
+  /** Called with false, and why, when Esc, a press on the backdrop or a choice closes the palette. */
+  onOpenChange: (open: boolean, details: CommandPaletteOpenChangeDetails) => void;
   /** Accessible name of the dialog, the search field and the list. */
   'aria-label': string;
   /** The text in the search field. */
@@ -77,9 +94,9 @@ export interface CommandPaletteProps
    * Shown in place of items while the search field is empty, such as recent documents or
    * suggested pages under a group heading; options like any other.
    */
-  defaultItems?: readonly CommandPaletteItem[];
+  suggestedItems?: readonly CommandPaletteItem[];
   /** Enter or a press on an option; Ctrl or Cmd sets modifier. */
-  onAction: (item: CommandPaletteItem, options: CommandPaletteActionOptions) => void;
+  onAction: (item: CommandPaletteItem, details: CommandPaletteActionDetails) => void;
   /**
    * Close after an option is chosen.
    * @default true
@@ -88,20 +105,32 @@ export interface CommandPaletteProps
   /** Shown in the empty search field, such as "Search documents by name or folder". */
   placeholder?: string;
   /**
+   * The results are on their way, such as from a server. With none to show yet, the empty state
+   * says loadingLabel beside a spinner; results already shown stay, marked busy, and the search
+   * field's icon turns into a spinner.
+   * @default false
+   */
+  loading?: boolean;
+  /**
+   * Shown and announced while loading.
+   * @default 'Searching…', or EnvUIProvider's messages.commandPalette.loading
+   */
+  loadingLabel?: ReactNode;
+  /**
    * The empty state's title, shown in place of the list when there are no options, and announced.
    * @default 'Type to search' while the search field is empty and 'No results' when its text
    * finds nothing, or EnvUIProvider's messages.commandPalette.emptyQuery and empty
    */
   emptyLabel?: ReactNode;
   /**
-   * Quieter text under the empty state's title, such as what the palette searches; null shows
-   * none.
+   * Quieter text under the empty state's title, such as what the palette searches; null or false
+   * shows none.
    * @default None while the search field is empty; when its text finds nothing, 'Nothing matches
    * “…”. Check the spelling or try other words.', or messages.commandPalette.emptyHint
    */
   emptyDescription?: ReactNode;
   /**
-   * The empty state's decorative icon, above its title; null shows none.
+   * The empty state's decorative icon, above its title; null or false shows none.
    * @default Search while the search field is empty, SearchOff when its text finds nothing
    */
   emptyIcon?: ReactNode;
@@ -145,10 +174,12 @@ export function CommandPalette({
   inputValue,
   onInputValueChange,
   items: results,
-  defaultItems,
+  suggestedItems,
   onAction,
   closeOnAction = true,
   placeholder,
+  loading = false,
+  loadingLabel,
   emptyLabel,
   emptyDescription,
   emptyIcon,
@@ -161,22 +192,38 @@ export function CommandPalette({
   const portal = usePortalContainer();
   const locale = useLocale();
   const messages = useMessages('commandPalette', commandPalette);
+  const number = useFormatters().number();
   const input = useRef<HTMLInputElement>(null);
+  const searchId = useId();
   const highlighted = useRef<{ item?: CommandPaletteItem; index: number }>({ index: -1 });
   const list = useRef<HTMLDivElement>(null);
   const query = inputValue.trim();
   // Until people type, the default items, where there are any, show in place of the results.
-  const items = query === '' && defaultItems ? defaultItems : results;
+  const items = query === '' && suggestedItems ? suggestedItems : results;
   const sections = sectionsOf(items);
   const grouped = sections.some((section) => section.label !== undefined);
   // With no options, the empty state invites a search before people type, and says what to try
   // when the text finds nothing.
   const empty = items.length === 0;
   const typed = query !== '';
-  const icon = emptyIcon === undefined ? typed ? <SearchOff /> : <Search /> : emptyIcon;
-  const title = emptyLabel ?? (typed ? messages.empty : messages.emptyQuery);
-  const description =
-    emptyDescription === undefined
+  // While loading, the empty state says so instead, with a spinner in its icon's place.
+  const icon = loading ? (
+    <Spinner />
+  ) : emptyIcon === undefined ? (
+    typed ? (
+      <IconSearchOff />
+    ) : (
+      <IconSearch />
+    )
+  ) : (
+    emptyIcon
+  );
+  const title = loading
+    ? (loadingLabel ?? messages.loading)
+    : (emptyLabel ?? (typed ? messages.empty : messages.emptyQuery));
+  const description = loading
+    ? null
+    : emptyDescription === undefined
       ? typed
         ? messages.emptyHint({ query })
         : null
@@ -185,7 +232,7 @@ export function CommandPalette({
   function act(item: CommandPaletteItem, modifier: boolean) {
     if (item.disabled) return;
     onAction(item, { modifier });
-    if (closeOnAction) onOpenChange(false);
+    if (closeOnAction) onOpenChange(false, { reason: 'item-press' });
   }
 
   /** Options that fit in the list's height, for Page Up and Page Down. */
@@ -247,7 +294,7 @@ export function CommandPalette({
           eventDetails.cancel();
           return;
         }
-        onOpenChange(next);
+        onOpenChange(next, { reason: eventDetails.reason as DialogOpenChangeReason });
       }}
       modal={containedModal(portal, true)}
     >
@@ -283,13 +330,20 @@ export function CommandPalette({
                     highlighted.current = { item, index: item ? details.index : -1 };
                   }}
                 >
-                  <Row align="center" gap={3} className="env-command-palette-search">
-                    <DecorativeIcon>
-                      <Search />
-                    </DecorativeIcon>
+                  {/* The search is a ghost TextField's frame around Autocomplete's input, kept
+                    solid on the frosted palette (CommandPalette.css). */}
+                  <FieldFrame
+                    id={searchId}
+                    floatingLabel
+                    variant="ghost"
+                    size="lg"
+                    startIcon={loading && !empty ? <Spinner size="sm" /> : <IconSearch />}
+                    className="env-command-palette-search"
+                  >
                     <BaseAutocomplete.Input
                       ref={input}
-                      className="env-command-palette-input"
+                      id={searchId}
+                      className="env-text-field-input env-command-palette-input"
                       aria-label={label}
                       autoComplete="off"
                       autoCorrect="off"
@@ -297,12 +351,13 @@ export function CommandPalette({
                       placeholder={placeholder}
                       onKeyDown={onKeyDown}
                     />
-                  </Row>
+                  </FieldFrame>
                   <BaseAutocomplete.List
                     ref={list}
                     render={<Grid />}
                     className="env-command-palette-list"
                     aria-label={label}
+                    aria-busy={loading || undefined}
                     hidden={empty}
                   >
                     {grouped
@@ -320,7 +375,7 @@ export function CommandPalette({
                               render={<Grid />}
                               className="env-command-palette-group"
                             >
-                              <BaseAutocomplete.GroupLabel className="env-command-palette-heading">
+                              <BaseAutocomplete.GroupLabel className="env-command-palette-group-label">
                                 {section.label}
                               </BaseAutocomplete.GroupLabel>
                               <BaseAutocomplete.Collection>
@@ -330,22 +385,23 @@ export function CommandPalette({
                           )
                       : renderItem}
                   </BaseAutocomplete.List>
-                  {/* One polite status: the number of results as they change, read by assistive
-                    technology only, or the empty state, shown in place of the list: its title and
-                    description are announced, and its icon is decorative. */}
+                  {/* One polite status: the number of results as they change, or the loading label
+                    while they load, read by assistive technology only, or the empty state, shown in
+                    place of the list: its title and description are announced, and its icon is
+                    decorative. */}
                   <BaseAutocomplete.Status
                     className="env-command-palette-status"
-                    data-empty={empty || undefined}
+                    data-empty={flag(empty)}
                   >
                     {empty ? (
                       <>
-                        {icon != null && (
+                        {icon != null && icon !== false && (
                           <span className="env-command-palette-empty-icon">
-                            <DecorativeIcon>{icon}</DecorativeIcon>
+                            {loading ? icon : <DecorativeIcon>{icon}</DecorativeIcon>}
                           </span>
                         )}
                         <span className="env-command-palette-empty-title">{title}</span>
-                        {description != null && (
+                        {description != null && description !== false && (
                           <>
                             {/* A space between the lines, so they are read as two. */}{' '}
                             <span className="env-command-palette-empty-description">
@@ -354,8 +410,13 @@ export function CommandPalette({
                           </>
                         )}
                       </>
+                    ) : loading ? (
+                      (loadingLabel ?? messages.loading)
                     ) : (
-                      messages.results({ count: items.length })
+                      messages.results({
+                        count: items.length,
+                        countText: number.format(items.length),
+                      })
                     )}
                   </BaseAutocomplete.Status>
                 </BaseAutocomplete.Root>

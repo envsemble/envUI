@@ -10,13 +10,13 @@ import { IconButton } from '../../actions/Button.js';
 import { Tooltip } from '../../feedback/Tooltip.js';
 import { Row } from '../../foundations/Layout.js';
 import { PortalContainer } from '../../foundations/PortalContainer.js';
-import { Theme, type ThemeValue } from '../../foundations/Theme.js';
-import { ViewInAr } from '../../icons/ViewInAr.js';
+import { Theme, type ColorScheme } from '../../foundations/Theme.js';
+import { IconViewInAr } from '../../icons/ViewInAr.js';
 import { resizeRoot } from '../api.js';
 import { resolveRoot } from '../measure.js';
 import { Inspector, NodeTree } from './Inspector.js';
 import { realSize, type FrameSize } from './Frame.js';
-import type { Side } from './controls.js';
+import type { Side } from './Controls.js';
 import { loadEditorTheme, saveEditorTheme, type EditorTheme } from './editorTheme.js';
 import { containWheel } from './wheel.js';
 import { loadSides, saveSides, type Sides } from './sides.js';
@@ -53,7 +53,7 @@ export interface DevModeController {
  * its root, or the root's own, which a nested Theme gives a page of another theme than the document,
  * else the document's first.
  */
-function pageTheme(root?: Element | string): ThemeValue {
+function pageTheme(root?: Element | string): ColorScheme {
   let element: Element | null | undefined;
   try {
     const resolved = resolveRoot(root);
@@ -117,7 +117,7 @@ export function DevMode({ controller }: { controller: DevModeController }) {
             <IconButton
               className="env-dev-toggle"
               variant="secondary"
-              icon={<ViewInAr />}
+              icon={<IconViewInAr />}
               aria-label="Dev mode"
               aria-keyshortcuts={controller.shortcut ?? undefined}
               onClick={() => controller.openInNewTab()}

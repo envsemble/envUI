@@ -1,5 +1,5 @@
 import { test, expect, type Browser } from '@playwright/test';
-import { fixtureUrl } from './Servers';
+import { fixtureUrl } from './helpers/Servers';
 
 /** A phone-sized page with a touch screen, whose primary pointer is coarse. */
 async function openOnTouchScreen(browser: Browser, path: string) {
@@ -66,7 +66,7 @@ test(
     );
     await markdown.context().close();
 
-    const richText = await openOnTouchScreen(browser, '/rich-text.html');
+    const richText = await openOnTouchScreen(browser, '/RichText.html');
     // The editing host is the element that gets focus, so it takes the size, and so do paragraphs.
     const editable = richText.locator('[contenteditable="true"]').first();
     await expect(editable).toHaveCSS('font-size', '16px');
@@ -85,6 +85,6 @@ test('entered text keeps the body size with a mouse', { tag: '@engines' }, async
     'font-size',
     '15px',
   );
-  await page.goto(`${fixtureUrl}/rich-text.html`);
+  await page.goto(`${fixtureUrl}/RichText.html`);
   await expect(page.locator('[contenteditable="true"]').first()).toHaveCSS('font-size', '15px');
 });

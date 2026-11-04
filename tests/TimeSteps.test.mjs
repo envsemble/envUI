@@ -1,4 +1,4 @@
-// forms/internal/CalendarDays: the minutes a time list offers, the entry typed keys name, and the
+// internal/calendarDays: the minutes a time list offers, the entry typed keys name, and the
 // YYYY-MM months of MonthPicker.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -10,8 +10,10 @@ const repository = fileURLToPath(new URL('../', import.meta.url));
 const output = join(repository, '.cache/unit/CalendarDays.mjs');
 await build({
   absWorkingDir: repository,
-  entryPoints: [join(repository, 'packages/ui/src/forms/internal/CalendarDays.ts')],
+  entryPoints: [join(repository, 'packages/ui/src/internal/calendarDays.ts')],
   bundle: true,
+  // The style sheets the modules import are the browser's concern.
+  loader: { '.css': 'empty' },
   platform: 'node',
   format: 'esm',
   packages: 'external',

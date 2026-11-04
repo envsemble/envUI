@@ -3,7 +3,7 @@ title: Table
 summary: 'Semantic data tables on a rounded surface: sorting, resizable columns, selected rows and
   stacked rows in narrow containers.'
 status: stable
-since: 0.5.0
+since: 1.0.0
 category: Data display
 aliases:
   - data table
@@ -46,12 +46,6 @@ examples:
   NumbersUnaligned:
     role: dont
     caption: "Numbers aligned to the start: they can't be compared at a glance."
-  NamedStates:
-    role: do
-    caption: A Badge that names each state.
-  ColorOnly:
-    role: dont
-    caption: States told apart by color alone.
 ---
 
 # Table
@@ -62,7 +56,7 @@ examples:
 
 Density changes only the rows' padding; controls in cells keep the small height.
 
-```tsx figure=RowDensity
+```tsx figure=RowDensity motion
 
 ```
 
@@ -110,7 +104,7 @@ Not shown: a column's resize handle, and a stacked cell's label.
 
 A header can sort the rows by its column, and each sortable header shows the order.
 
-```tsx figure=SortableColumns
+```tsx figure=SortableColumns motion
 
 ```
 
@@ -126,7 +120,7 @@ A selected row takes the selection colors, and a checkbox labelled with the row'
 
 People can resize columns by dragging the boundary at the end of a header, or with the arrow keys. A double click restores the starting widths.
 
-```tsx figure=ResizableColumns
+```tsx figure=ResizableColumns motion
 
 ```
 
@@ -134,13 +128,15 @@ People can resize columns by dragging the boundary at the end of a header, or wi
 
 The header row can stay in view while the rows scroll beneath it, in a region of a set height.
 
-```tsx figure=StickyHeader
+```tsx figure=StickyHeader motion
 
 ```
 
 ### Loading
 
 While its rows load, a table shows as its own skeleton, as [Loading](../patterns/loading.md) shows.
+
+<!-- specimen: Loading -->
 
 ### Adapting to width
 
@@ -149,7 +145,7 @@ By default the columns keep their width and the region scrolls sideways.
 - A table can stack its rows instead where it is narrow, such as on a phone.
 - Each row then becomes a block titled by its first cell, with each other value beside its column's name.
 
-```tsx figure=StackedRows widths="22 44"
+```tsx figure=StackedRows widths="44 22" sweep
 
 ```
 
@@ -165,13 +161,9 @@ Numbers line up and states have names, so rows compare at a glance.
 
 ```
 
-```tsx figure=NamedStates
+### States
 
-```
-
-```tsx figure=ColorOnly
-
-```
+Name each state in words, such as in a Badge, never by color alone.
 
 ### Names
 
@@ -211,7 +203,6 @@ Start each row with the cell that identifies it, which titles the row when rows 
 - A `caption` or an `aria-label` for every table.
 - The sorting, the selection control and the row actions, named for the row they act on.
 - A `label` on every cell after the first in a stacking table.
-- The sort and resize words in the page's language, through `messages.table`.
 
 ## Compose
 
@@ -244,10 +235,12 @@ The application sorts the rows. `onSortChange` on a header cell makes it a sort 
 
 #### Resizable columns
 
-`resizableColumns` needs widths in percent that add up to 100, in column order: `defaultColumnWidths`, or `columnWidths` with `onColumnWidthsChange`.
+`resizableColumns` needs widths in percent that add up to 100, in column order: `defaultColumnWidths`, or `columnWidths` with `onColumnWidthsChange`, which receives `{ committed }`, a `ResizeDetails`, as Panes' and Sheet's width callbacks do: `false` while people drag and `true` once a change is complete, the widths to save.
 
 ```tsx
 <Table.Root aria-label="Files" resizableColumns defaultColumnWidths={[40, 25, 20, 15]}>
+  …
+</Table.Root>
 ```
 
 #### Sticky header and loading
@@ -260,16 +253,21 @@ The application sorts the rows. `onSortChange` on a header cell makes it a sort 
 
 ```tsx
 <Table.Root aria-label="Invoices" narrowLayout="stack" onStackedChange={setStacked}>
-  …
-  <Table.Cell label="Due">{due}</Table.Cell>
+  <Table.Body>
+    <Table.Row>
+      <Table.Cell>{invoice.number}</Table.Cell>
+      <Table.Cell label="Due">{invoice.due}</Table.Cell>
+    </Table.Row>
+  </Table.Body>
+</Table.Root>
 ```
 
 ### Composition
 
-Parts the anatomy doesn't show: a column's resize handle, `env-table-column-resize`, and a stacked cell's label, `env-table-cell-label`.
+Parts the anatomy doesn't show: a column's resize handle, `env-table-column-resize-handle`, and a stacked cell's label, `env-table-cell-label`.
 
 ## Changelog
 
-- **1.0.0**: The parts are members of the `Table` namespace: `Table` is `Table.Root`, and `TableHead`, `TableBody`, `TableRow`, `TableHeaderCell` and `TableCell` are `Table.Head`, `Table.Body`, `Table.Row`, `Table.HeaderCell` and `Table.Cell`; `TableSortDirection` is `Table.SortDirection`. The page is `table`, after the component. Table.HeaderCell's `onSort` is `onSortChange`, called with the order pressing asks for. A table named by `aria-labelledby` names its scroll region too, which was left unnamed. The sort and resize words come from `messages.table`.
-- **0.6.0**: A table with `stickyHeader` no longer swallows the wheel: over a region without a height of its own, or scrolled to an end, the wheel scrolls the page.
-- **0.5.0**: Table and its parts, with density, sticky headers, numeric cells and a focusable scroll region; sortable headers with `sortDirection` and `onSort`; resizable columns; selected rows; and stacked rows with `narrowLayout="stack"`, `stackBelow` and `onStackedChange`.
+- **1.0.0-prerelease.5**: A number for `stackBelow` is a number of rem, as on PanelDock, where it was pixels.
+- **1.0.0-prerelease.5**: `onColumnWidthsChange` receives `{ committed }` beside the widths, as the other resize callbacks do.
+- **1.0.0**: The parts are members of the `Table` namespace: `Table` is `Table.Root`, and `TableHead`, `TableBody`, `TableRow`, `TableHeaderCell` and `TableCell` are `Table.Head`, `Table.Body`, `Table.Row`, `Table.HeaderCell` and `Table.Cell`; `TableSortDirection` is `Table.SortDirection`. The page is `table`, after the component. Table.HeaderCell's `onSort` is `onSortChange`, called with the order pressing asks for. A table named by `aria-labelledby` names its scroll region too, which was left unnamed. The sort and resize words come from `messages.table`. A column's resize handle, `env-table-column-resize`, is `env-table-column-resize-handle`, as every resize handle is named.

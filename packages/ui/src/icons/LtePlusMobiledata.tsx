@@ -1,7 +1,7 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
-// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
+// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
+import { Icon, type SymbolIconProps } from '../Icon.js';
 
-export function LtePlusMobiledata({ filled: _filled = false, ...props }: MaterialSymbolProps) {
+export function IconLtePlusMobiledata({ filled: _filled = false, ...props }: SymbolIconProps) {
   return <Icon viewBox="0 -960 960 960" {...props}><path d="M200-320H80q-17 0-28.5-11.5T40-360v-240q0-17 11.5-28.5T80-640q17 0 28.5 11.5T120-600v200h80q17 0 28.5 11.5T240-360q0 17-11.5 28.5T200-320Zm120 0q-17 0-28.5-11.5T280-360v-200h-40q-17 0-28.5-11.5T200-600q0-17 11.5-28.5T240-640h160q17 0 28.5 11.5T440-600q0 17-11.5 28.5T400-560h-40v200q0 17-11.5 28.5T320-320Zm320 0H520q-17 0-28.5-11.5T480-360v-240q0-17 11.5-28.5T520-640h120q17 0 28.5 11.5T680-600q0 17-11.5 28.5T640-560h-80v40h80q17 0 28.5 11.5T680-480q0 17-11.5 28.5T640-440h-80v40h80q17 0 28.5 11.5T680-360q0 17-11.5 28.5T640-320Zm160-120h-40q-17 0-28.5-11.5T720-480q0-17 11.5-28.5T760-520h40v-40q0-17 11.5-28.5T840-600q17 0 28.5 11.5T880-560v40h40q17 0 28.5 11.5T960-480q0 17-11.5 28.5T920-440h-40v40q0 17-11.5 28.5T840-360q-17 0-28.5-11.5T800-400v-40Z" /></Icon>;
 }

@@ -158,7 +158,7 @@ test('a literal z-index is reported, and stacking tokens pass', async () => {
     "Literal z-index 999: use an envUI stacking token (--env-z-…) instead, such as var(--env-z-sticky) for a sticky header or var(--env-z-modal) for a modal layer, with calc() for a step between two, so the application's layers keep one order with envUI's popups and dialogs. (declaration-property-value-allowed-list)",
   );
   await passes('.a { z-index: auto; }');
-  await passes('.a { z-index: var(--env-z-popover); }');
+  await passes('.a { z-index: var(--env-z-popup); }');
   await passes('.a { z-index: calc(var(--env-z-sticky) + 1); }');
   await passes('.a { z-index: var(--app-z-modal); }');
   await passes('.a { z-index: calc(var(--app-z-modal) + 1); }');

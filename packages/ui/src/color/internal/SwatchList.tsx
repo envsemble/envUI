@@ -5,6 +5,9 @@ import { useLocale } from '@react-aria/i18n';
 import type { Color } from '@react-stately/color';
 import { useRovingFocus } from '../../internal/useRovingFocus.js';
 import { sameColor, toColor, type ColorValue } from './colorValue.js';
+import { flag } from '../../internal/flag.js';
+import '../../styles/Base.css';
+import '../../styles/ColorPicker.css';
 
 /** A preset color, as a CSS color string or React Aria's Color, or with a name of its own. */
 export type ColorPickerSwatch = ColorValue | { color: ColorValue; label: string };
@@ -69,8 +72,8 @@ export function SwatchList({ swatches, value, onChange, alpha, disabled, label }
             aria-label={item.name}
             aria-disabled={disabled || undefined}
             className="env-color-picker-swatch"
-            data-selected={item === selected || undefined}
-            data-translucent={item.color.getChannelValue('alpha') < 1 || undefined}
+            data-selected={flag(item === selected)}
+            data-translucent={flag(item.color.getChannelValue('alpha') < 1)}
             style={{ '--env-color-swatch-color': item.color.toString('css') } as CSSProperties}
             {...roving.getItemProps(item)}
             onClick={choose}

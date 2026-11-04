@@ -1,11 +1,14 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
-// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
+// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../Icon.js';
+import { useSymbolIconFill } from '../SymbolIconState.js';
 
-export function FlagCircle({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
-  return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M380-440h100l29 58q5 11 15 16.5t21 5.5h135q17 0 28.5-11.5T720-400v-160q0-17-11.5-28.5T680-600h-80l-29-58q-5-11-15-16.5t-21-5.5H360q-17 0-28.5 11.5T320-640v370q0 13 8.5 21.5T350-240q13 0 21.5-8.5T380-270v-170Zm140-80ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z" /> : <path d="M380-440h100l29 58q5 11 15 16.5t21 5.5h135q17 0 28.5-11.5T720-400v-160q0-17-11.5-28.5T680-600h-80l-29-58q-5-11-15-16.5t-21-5.5H360q-17 0-28.5 11.5T320-640v370q0 13 8.5 21.5T350-240q13 0 21.5-8.5T380-270v-170Zm177 20-40-80H380v-120h143l40 80h97v120H557ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" />}</Icon>;
+/** The path both styles start with. */
+const start = "M380-440h100l29 58q5 11 15 16.5t21 5.5h135q17 0 28.5-11.5T720-400v-160q0-17-11.5-28.5T680-600h-80l-29-58q-5-11-15-16.5t-21-5.5H360q-17 0-28.5 11.5T320-640v370q0 13 8.5 21.5T350-240q13 0 21.5-8.5T380-270v-170Zm1";
+
+export function IconFlagCircle({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
+  return <Icon viewBox="0 -960 960 960" {...props}><path d={filled ? start + "40-80ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z" : start + "77 20-40-80H380v-120h143l40 80h97v120H557ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"} /></Icon>;
 }

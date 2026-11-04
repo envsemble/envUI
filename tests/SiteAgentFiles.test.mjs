@@ -1,26 +1,17 @@
 // The files the hosted site serves to coding agents at its root: the setup skill, SKILL.md, and the
-// index of the Docs, llms.txt (scripts/SiteAgentFiles.mjs).
+// signpost llms.txt (scripts/site/SiteAgentFiles.ts).
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import { parse } from 'yaml';
-import { readDocumentation } from '../scripts/GenerateDocumentation.mjs';
-import { unlistedPages } from '../scripts/SearchIndex.mjs';
-import {
-  libraryVersion,
-  pageUrl,
-  renderLlmsText,
-  renderSkill,
-  siteOrigin,
-} from '../scripts/SiteAgentFiles.mjs';
+import { libraryVersion, renderLlmsText, renderSkill } from '../scripts/site/SiteAgentFiles.ts';
 
 const repository = fileURLToPath(new URL('../', import.meta.url));
 const version = libraryVersion();
 const skill = renderSkill();
-const documents = readDocumentation();
-const llms = renderLlmsText({ documents });
+const llms = renderLlmsText();
 
 /** The skill's frontmatter and body. */
 function skillParts(text) {
@@ -78,36 +69,21 @@ test("the skill's AGENTS.md block is short and points at docs the package ships"
   }
 });
 
-test('llms.txt introduces envUI, links the setup skill and every page of the Docs', () => {
+test('llms.txt introduces envUI and points to the setup skill and the installed docs, no pages', () => {
   const [title, , summary] = llms.split('\n');
   assert.equal(title, '# envUI');
   assert.match(summary, /^> envUI is /);
-  assert.match(
-    llms,
-    /^## Agent setup\n\n- \[Setup skill\]\(https:\/\/envui\.envsemble\.com\/SKILL\.md\)/m,
-  );
-  const links = [...llms.matchAll(/\]\(([^)]+)\)/g)].map((match) => match[1]);
-  for (const link of links) assert.ok(link.startsWith(`${siteOrigin}/`), link);
-  const listed = documents.filter((document) => !unlistedPages.has(document.id));
-  assert.ok(listed.length > 50);
-  for (const document of listed) assert.ok(links.includes(pageUrl(document.path)), document.path);
-  // The contributor pages stay in the repository.
-  for (const id of ['library-development', 'component-pages', 'pattern-pages'])
-    assert.ok(!links.some((link) => link.endsWith(`/docs/${id}`)), id);
-  assert.equal(pageUrl('components/button.md'), `${siteOrigin}/docs/components/button`);
-  assert.match(llms, /^## Components: Actions$/m);
-  assert.match(llms, /^## Optional$/m);
+  assert.match(llms, /^- \[Setup skill\]\(https:\/\/envui\.envsemble\.com\/SKILL\.md\)/m);
+  assert.match(llms, /node_modules\/@envsemble\/envui\/docs\//);
+  // A signpost, not another index: the skill is its only link.
+  assert.equal([...llms.matchAll(/\]\(([^)]+)\)/g)].length, 1);
   assert.ok(llms.endsWith('\n') && !llms.endsWith('\n\n'));
 });
 
-test('For agents shows the AGENTS.md block and the prompt the skill and the Docs home give', () => {
-  const block = (text) =>
-    /```md\n(<!-- BEGIN envui -->[\s\S]*?<!-- END envui -->)\n```/.exec(text)?.[1];
-  const guide = readFileSync(join(repository, 'docs/agent-tooling.md'), 'utf8');
-  assert.ok(block(guide));
-  assert.equal(block(guide), block(skill));
-  const docsHome = readFileSync(join(repository, 'apps/catalogue/src/pages/DocsPages.tsx'), 'utf8');
+test('the Docs home and setup lead to the skill the site serves at /SKILL.md', () => {
+  const docsHome = readFileSync(join(repository, 'apps/site/src/pages/DocsPages.tsx'), 'utf8');
   const prompt = /setupPrompt = '([^']+)'/.exec(docsHome)?.[1];
   assert.equal(prompt, 'Set up envUI in my app: envui.envsemble.com/SKILL.md');
-  assert.ok(guide.includes(`\`\`\`text\n${prompt}\n\`\`\``));
+  const setup = readFileSync(join(repository, 'docs/setup.md'), 'utf8');
+  assert.ok(setup.includes('(https://envui.envsemble.com/SKILL.md)'));
 });

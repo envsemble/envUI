@@ -1,133 +1,135 @@
-/* The layout primitives, Box, Row, Column and Grid, each marked by data-env-layout. They size to
-   their content and never paint. Every rule is :where(), of zero specificity, so a component's part
-   class and any application rule override it, inside the components' layer too. */
-:where([data-env-layout='row'], [data-env-layout='column']) {
-  display: flex;
-  min-inline-size: 0;
-}
-:where([data-env-layout='row']) {
-  flex-direction: row;
-}
-:where([data-env-layout='column']) {
-  flex-direction: column;
-}
-:where([data-env-layout='row'][data-wrap]) {
-  flex-wrap: wrap;
-}
-/* The direct children of a row or column keep no margins along it, so the gap alone spaces them,
-   and shrink rather than widen it; also through a skeleton's content wrapper, which has no box. */
-:where([data-env-layout='row'], [data-env-layout='column']) > *,
-:where([data-env-layout='row']) > :where(.env-skeleton-content) > *,
-:where([data-env-layout='column']) > :where(.env-skeleton-content) > * {
-  margin-block: 0;
-  min-inline-size: 0;
-  max-inline-size: 100%;
-}
-:where([data-env-layout='row']) > *,
-:where([data-env-layout='row']) > :where(.env-skeleton-content) > * {
-  margin-inline: 0;
-}
-/* A grid is one column until columns sets --env-grid-columns: a count of equal columns, a
-   template, or auto-fill tracks of a minimum width. */
-:where([data-env-layout='grid']) {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  min-inline-size: 0;
-}
-:where([data-env-layout='grid'][data-columns]) {
-  grid-template-columns: var(--env-grid-columns, minmax(0, 1fr));
-}
-:where([data-env-layout='grid']) > *,
-:where([data-env-layout='grid']) > :where(.env-skeleton-content) > * {
-  min-inline-size: 0;
-}
-:where([data-env-layout][data-align='start']) {
-  align-items: start;
-}
-:where([data-env-layout][data-align='center']) {
-  align-items: center;
-}
-:where([data-env-layout][data-align='end']) {
-  align-items: end;
-}
-:where([data-env-layout][data-align='stretch']) {
-  align-items: stretch;
-}
-:where([data-env-layout][data-justify='start']) {
-  justify-content: start;
-}
-:where([data-env-layout][data-justify='center']) {
-  justify-content: center;
-}
-:where([data-env-layout][data-justify='end']) {
-  justify-content: end;
-}
-:where([data-env-layout][data-justify='between']) {
-  justify-content: space-between;
-}
-/* A size container only through its container prop, which names it. */
-:where([data-env-layout][data-env-container]) {
-  container-type: inline-size;
-  container-name: var(--env-layout-container, none);
-}
-/* Gap and padding take the numbered steps of the spacing scale, which the compact scale shrinks. */
-:where([data-env-layout][data-gap='0']) {
-  gap: 0;
-}
-:where([data-env-layout][data-gap='1']) {
-  gap: var(--env-space-1);
-}
-:where([data-env-layout][data-gap='2']) {
-  gap: var(--env-space-2);
-}
-:where([data-env-layout][data-gap='3']) {
-  gap: var(--env-space-3);
-}
-:where([data-env-layout][data-gap='4']) {
-  gap: var(--env-space-4);
-}
-:where([data-env-layout][data-gap='5']) {
-  gap: var(--env-space-5);
-}
-:where([data-env-layout][data-gap='6']) {
-  gap: var(--env-space-6);
-}
-:where([data-env-layout][data-gap='7']) {
-  gap: var(--env-space-7);
-}
-:where([data-env-layout][data-gap='8']) {
-  gap: var(--env-space-8);
-}
-:where([data-env-layout][data-gap='9']) {
-  gap: var(--env-space-9);
-}
-:where([data-env-layout][data-padding='0']) {
-  padding: 0;
-}
-:where([data-env-layout][data-padding='1']) {
-  padding: var(--env-space-1);
-}
-:where([data-env-layout][data-padding='2']) {
-  padding: var(--env-space-2);
-}
-:where([data-env-layout][data-padding='3']) {
-  padding: var(--env-space-3);
-}
-:where([data-env-layout][data-padding='4']) {
-  padding: var(--env-space-4);
-}
-:where([data-env-layout][data-padding='5']) {
-  padding: var(--env-space-5);
-}
-:where([data-env-layout][data-padding='6']) {
-  padding: var(--env-space-6);
-}
-:where([data-env-layout][data-padding='7']) {
-  padding: var(--env-space-7);
-}
-:where([data-env-layout][data-padding='8']) {
-  padding: var(--env-space-8);
-}
-:where([data-env-layout][data-padding='9']) {
-  padding: var(--env-space-9);
+@layer env.components {
+  /* The layout primitives, Box, Row, Column and Grid, each marked by data-env-layout. They size to
+     their content and never paint. Every rule is :where(), of zero specificity, so a component's part
+     class and any application rule override it, inside the components' layer too. */
+  :where([data-env-layout='row'], [data-env-layout='column']) {
+    display: flex;
+    min-inline-size: 0;
+  }
+  :where([data-env-layout='row']) {
+    flex-direction: row;
+  }
+  :where([data-env-layout='column']) {
+    flex-direction: column;
+  }
+  :where([data-env-layout='row'][data-wrap]) {
+    flex-wrap: wrap;
+  }
+  /* The direct children of a row or column keep no margins along it, so the gap alone spaces them,
+     and shrink rather than widen it; also through a skeleton's content wrapper, which has no box. */
+  :where([data-env-layout='row'], [data-env-layout='column']) > *,
+  :where([data-env-layout='row']) > :where(.env-skeleton-content) > *,
+  :where([data-env-layout='column']) > :where(.env-skeleton-content) > * {
+    margin-block: 0;
+    min-inline-size: 0;
+    max-inline-size: 100%;
+  }
+  :where([data-env-layout='row']) > *,
+  :where([data-env-layout='row']) > :where(.env-skeleton-content) > * {
+    margin-inline: 0;
+  }
+  /* A grid is one column until columns sets --env-grid-columns: a count of equal columns, a
+     template, or auto-fill tracks of a minimum width. */
+  :where([data-env-layout='grid']) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    min-inline-size: 0;
+  }
+  :where([data-env-layout='grid'][data-columns]) {
+    grid-template-columns: var(--env-grid-columns, minmax(0, 1fr));
+  }
+  :where([data-env-layout='grid']) > *,
+  :where([data-env-layout='grid']) > :where(.env-skeleton-content) > * {
+    min-inline-size: 0;
+  }
+  :where([data-env-layout][data-align='start']) {
+    align-items: start;
+  }
+  :where([data-env-layout][data-align='center']) {
+    align-items: center;
+  }
+  :where([data-env-layout][data-align='end']) {
+    align-items: end;
+  }
+  :where([data-env-layout][data-align='stretch']) {
+    align-items: stretch;
+  }
+  :where([data-env-layout][data-justify='start']) {
+    justify-content: start;
+  }
+  :where([data-env-layout][data-justify='center']) {
+    justify-content: center;
+  }
+  :where([data-env-layout][data-justify='end']) {
+    justify-content: end;
+  }
+  :where([data-env-layout][data-justify='between']) {
+    justify-content: space-between;
+  }
+  /* A size container only through its container prop, which names it. */
+  :where([data-env-layout][data-env-container]) {
+    container-type: inline-size;
+    container-name: var(--env-layout-container, none);
+  }
+  /* Gap and padding take the numbered steps of the spacing scale, which the compact scale shrinks. */
+  :where([data-env-layout][data-gap='0']) {
+    gap: 0;
+  }
+  :where([data-env-layout][data-gap='1']) {
+    gap: var(--env-space-1);
+  }
+  :where([data-env-layout][data-gap='2']) {
+    gap: var(--env-space-2);
+  }
+  :where([data-env-layout][data-gap='3']) {
+    gap: var(--env-space-3);
+  }
+  :where([data-env-layout][data-gap='4']) {
+    gap: var(--env-space-4);
+  }
+  :where([data-env-layout][data-gap='5']) {
+    gap: var(--env-space-5);
+  }
+  :where([data-env-layout][data-gap='6']) {
+    gap: var(--env-space-6);
+  }
+  :where([data-env-layout][data-gap='7']) {
+    gap: var(--env-space-7);
+  }
+  :where([data-env-layout][data-gap='8']) {
+    gap: var(--env-space-8);
+  }
+  :where([data-env-layout][data-gap='9']) {
+    gap: var(--env-space-9);
+  }
+  :where([data-env-layout][data-padding='0']) {
+    padding: 0;
+  }
+  :where([data-env-layout][data-padding='1']) {
+    padding: var(--env-space-1);
+  }
+  :where([data-env-layout][data-padding='2']) {
+    padding: var(--env-space-2);
+  }
+  :where([data-env-layout][data-padding='3']) {
+    padding: var(--env-space-3);
+  }
+  :where([data-env-layout][data-padding='4']) {
+    padding: var(--env-space-4);
+  }
+  :where([data-env-layout][data-padding='5']) {
+    padding: var(--env-space-5);
+  }
+  :where([data-env-layout][data-padding='6']) {
+    padding: var(--env-space-6);
+  }
+  :where([data-env-layout][data-padding='7']) {
+    padding: var(--env-space-7);
+  }
+  :where([data-env-layout][data-padding='8']) {
+    padding: var(--env-space-8);
+  }
+  :where([data-env-layout][data-padding='9']) {
+    padding: var(--env-space-9);
+  }
 }

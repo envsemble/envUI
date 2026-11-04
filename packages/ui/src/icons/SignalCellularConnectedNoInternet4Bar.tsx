@@ -1,7 +1,7 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
-// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
+// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
+import { Icon, type SymbolIconProps } from '../Icon.js';
 
-export function SignalCellularConnectedNoInternet4Bar({ filled: _filled = false, ...props }: MaterialSymbolProps) {
+export function IconSignalCellularConnectedNoInternet4Bar({ filled: _filled = false, ...props }: SymbolIconProps) {
   return <Icon viewBox="0 -960 960 960" {...props}><path d="m148-148 663-663q20-20 44.5-9.5T880-783v143h-40q-50 0-85 35t-35 85v440H176q-26 0-36.5-24.5T148-148Zm692 68q-17 0-28.5-11.5T800-120q0-17 11.5-28.5T840-160q17 0 28.5 11.5T880-120q0 17-11.5 28.5T840-80Zm-40-200v-240q0-17 11.5-28.5T840-560q17 0 28.5 11.5T880-520v241q0 17-11.5 28T840-240q-17 0-28.5-11.5T800-280Z" /></Icon>;
 }

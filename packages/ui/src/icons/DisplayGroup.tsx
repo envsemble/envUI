@@ -1,11 +1,11 @@
 // Generated from Google Material Symbols (bd8cb85bd4bad964fe6918f79665bb40c3a8efef); Apache-2.0.
-// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.
+// Run node scripts/build/GenerateIcons.ts to regenerate. Do not edit.
 'use client';
 
-import { Icon, type MaterialSymbolProps } from '../Icon.js';
-import { useMaterialSymbolFill } from '../MaterialSymbolState.js';
+import { Icon, type SymbolIconProps } from '../Icon.js';
+import { useSymbolIconFill } from '../SymbolIconState.js';
 
-export function DisplayGroup({ filled: requestedFill, ...props }: MaterialSymbolProps) {
-  const filled = useMaterialSymbolFill(requestedFill);
+export function IconDisplayGroup({ filled: requestedFill, ...props }: SymbolIconProps) {
+  const filled = useSymbolIconFill(requestedFill);
   return <Icon viewBox="0 -960 960 960" {...props}>{filled ? <path d="M168-160q-20 0-33-14.5t-8-33.5q16-49 57.5-80.5T280-320q8 0 15.5.5T311-317q-37 31-58.5 71T223-160h-55Zm569 0q-8-47-30.5-86T649-317q8-2 15.5-2.5t15.5-.5q54 0 95.5 31.5T833-208q6 18-7.5 33T792-160h-55ZM160-360q-33 0-56.5-23.5T80-440v-280q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v280q0 33-23.5 56.5T800-360h-10q10-15 15-32.5t5-37.5q0-54-38-92t-92-38q-19 0-36 5t-32 14q-19-35-54-57t-78-22q-43 0-78 22t-54 57q-15-9-32-14t-36-5q-54 0-92 38t-38 92q0 20 5 37.5t15 32.5h-10Zm120 0q-29 0-49.5-20.5T210-430q0-29 20.5-49.5T280-500q29 0 49.5 20.5T350-430q0 29-20.5 49.5T280-360Zm4 200q14-69 68.5-114.5T480-320q73 0 127.5 45.5T676-160H284Zm196-220q-38 0-64-26t-26-64q0-38 26-64t64-26q38 0 64 26t26 64q0 38-26 64t-64 26Zm200 20q-29 0-49.5-20.5T610-430q0-29 20.5-49.5T680-500q29 0 49.5 20.5T750-430q0 29-20.5 49.5T680-360Zm57 200q-8-47-30.5-86T649-317q8-2 15.5-2.5t15.5-.5q66 0 113 47t47 113H737Z" /> : <path d="M160-720h640-640Zm-80 0q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v320q0 17-11.5 28.5T840-360q-17 0-28.5-11.5T800-400v-320H160v320q0 17-11.5 28.5T120-360q-17 0-28.5-11.5T80-400v-320Zm88 560q-20 0-33-14.5t-8-33.5q16-49 57.5-80.5T280-320q8 0 15.5.5T311-317q-37 31-58.5 71T223-160h-55Zm112-200q-29 0-49.5-20.5T210-430q0-29 20.5-49.5T280-500q29 0 49.5 20.5T350-430q0 29-20.5 49.5T280-360Zm4 200q14-69 68.5-114.5T480-320q73 0 127.5 45.5T676-160H284Zm196-220q-38 0-64-26t-26-64q0-38 26-64t64-26q38 0 64 26t26 64q0 38-26 64t-64 26Zm200 20q-29 0-49.5-20.5T610-430q0-29 20.5-49.5T680-500q29 0 49.5 20.5T750-430q0 29-20.5 49.5T680-360Zm57 200q-8-47-30.5-86T649-317q8-2 15.5-2.5t15.5-.5q54 0 95.5 31.5T833-208q6 18-7.5 33T792-160h-55Z" />}</Icon>;
 }

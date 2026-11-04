@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Avatar, Checkbox, EnvUIProvider, Link, List, Column } from '@envsemble/envui';
+import { Avatar, Button, Checkbox, EnvUIProvider, Link, List, Column } from '@envsemble/envui';
 
 const slides = ['Intro', 'Roadmap', 'Budget', 'Questions'];
 
@@ -26,7 +26,7 @@ function Slides({ testId }: { testId: string }) {
           <List.Item
             key={slide}
             interactive
-            selected={slide === current}
+            current={slide === current}
             label={
               <Link
                 href={`#${slide.toLowerCase()}`}
@@ -109,6 +109,17 @@ export function ListsFixture() {
       </EnvUIProvider>
       <WrappedSlides />
       {new URLSearchParams(location.search).has('bare-rows') && <WrappedSlides bare />}
+      <List.Root aria-label="Plans">
+        <List.Item
+          interactive
+          label={
+            <Button variant="text" data-row-target>
+              Hiring plan 2027
+            </Button>
+          }
+          description="Sam Lee"
+        />
+      </List.Root>
       <List.Root aria-label="People">
         {['Alex Morgan', 'Sam Lee'].map((name) => (
           <List.Item

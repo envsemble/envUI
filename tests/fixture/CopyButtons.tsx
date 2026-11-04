@@ -7,11 +7,11 @@ import {
   Surface,
   Theme,
   Tooltip,
-  type ThemeValue,
+  type ColorScheme,
 } from '@envsemble/envui';
-import { Settings } from '@envsemble/envui/icons/Settings';
+import { IconSettings } from '@envsemble/envui/icons/Settings';
 
-export function CopyButtonsFixture({ theme }: { theme: ThemeValue }) {
+export function CopyButtonsFixture({ theme }: { theme: ColorScheme }) {
   const [copied, setCopied] = useState('');
   const [presses, setPresses] = useState(0);
   const [bridged, setBridged] = useState('');
@@ -21,9 +21,9 @@ export function CopyButtonsFixture({ theme }: { theme: ThemeValue }) {
         <CopyButton
           value="https://example.com/r/quarterly-report"
           aria-label={`Copy link ${theme}`}
-          onCopy={setCopied}
+          onCopied={setCopied}
         />
-        <CopyButton value={() => `RPT-${2040 + 1}`} variant="outline" onCopy={setCopied}>
+        <CopyButton value={() => `RPT-${2040 + 1}`} variant="outline" onCopied={setCopied}>
           Copy ID {theme}
         </CopyButton>
         <CopyButton
@@ -31,7 +31,7 @@ export function CopyButtonsFixture({ theme }: { theme: ThemeValue }) {
             new Promise<string>((resolve) => setTimeout(() => resolve('Later text'), 400))
           }
           aria-label={`Copy later ${theme}`}
-          onCopy={setCopied}
+          onCopied={setCopied}
         />
         <CopyButton
           value="Custom"
@@ -46,10 +46,10 @@ export function CopyButtonsFixture({ theme }: { theme: ThemeValue }) {
             setPresses((count) => count + 1);
             event.preventDefault();
           }}
-          onCopy={setCopied}
+          onCopied={setCopied}
         />
         <Tooltip content="Copy the address of the plan">
-          <CopyButton value="Plan address" aria-label={`Copy plan ${theme}`} onCopy={setCopied} />
+          <CopyButton value="Plan address" aria-label={`Copy plan ${theme}`} onCopied={setCopied} />
         </Tooltip>
         <CopyButton value="Unavailable" aria-label={`Copy unavailable ${theme}`} disabled />
         {/* The text never arrives. */}
@@ -60,7 +60,7 @@ export function CopyButtonsFixture({ theme }: { theme: ThemeValue }) {
             )
           }
           aria-label={`Copy gone ${theme}`}
-          onCopy={setCopied}
+          onCopied={setCopied}
         />
       </div>
       <output data-testid="copied">{copied}</output>
@@ -80,7 +80,7 @@ export function CopyButtonsFixture({ theme }: { theme: ThemeValue }) {
           value="RPT-2041"
           aria-label={`Copy report ID ${theme}`}
         />
-        <IconButton size="sm" icon={<Settings />} aria-label="Report settings" />
+        <IconButton size="sm" icon={<IconSettings />} aria-label="Report settings" />
       </Surface>
       <div className="fixture-toolbar" data-testid="sizes">
         <CopyButton value="Standard" aria-label="Copy standard" />
@@ -111,7 +111,7 @@ export function CopyButtonsFixture({ theme }: { theme: ThemeValue }) {
             await new Promise((resolve) => setTimeout(resolve, 50));
             setBridged(text);
           }}
-          onCopy={setCopied}
+          onCopied={setCopied}
         />
         <CopyButton
           value="Refused"
@@ -124,7 +124,7 @@ export function CopyButtonsFixture({ theme }: { theme: ThemeValue }) {
         <CopyButton
           value="https://example.com/r/shared"
           aria-label={`Copy shared link ${theme}`}
-          onCopy={setCopied}
+          onCopied={setCopied}
         />
       </Dialog>
     </Theme>
