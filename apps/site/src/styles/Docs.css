@@ -137,7 +137,9 @@
   font-family: var(--site-code-font-family);
   font-size: 0.85em;
 }
-/* A list of links, such as a group of the Docs' pages on their home, one to a line. */
+/* A list of links, such as a group of the Docs' pages on their home, one to a line: quiet text,
+   as the footer's, that comes forward when hovered, so the index reads as a calm list rather than
+   a wall of underlines. */
 .docs-link-list {
   margin: 0;
   padding: 0;
@@ -145,6 +147,15 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
   gap: var(--env-space-2) var(--env-space-5);
+  font: var(--env-type-body-sm);
+}
+.docs-link-list .env-link {
+  color: var(--env-color-fg-muted);
+}
+.docs-link-list .env-link:hover {
+  color: var(--env-color-fg-default);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
 }
 /* The Docs home's setup prompt: centred, with room below it before the pages, as a compact pill:
    the agents' marks, the prompt in monospace and a ghost copy button. */
