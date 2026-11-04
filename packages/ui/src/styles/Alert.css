@@ -30,6 +30,18 @@
     --env-alert-title-color: var(--env-alert-content, var(--env-alert-icon-color));
     /* Valid only while the application sets the container or the icon (see Button.css). */
     --env-alert-custom: var(--env-alert-container, var(--env-alert-icon));
+    /* The layers of the dismiss button and the actions on hover and press with the application's
+       colors: their own color, currentColor, as strong as the tone's tints. */
+    --env-alert-custom-hover: color-mix(
+      in srgb,
+      var(--env-alert-custom) 0%,
+      color-mix(in srgb, transparent, currentColor 14%)
+    );
+    --env-alert-custom-pressed: color-mix(
+      in srgb,
+      var(--env-alert-custom) 0%,
+      color-mix(in srgb, transparent, currentColor 22%)
+    );
     --env-color-fg-link: var(--env-color-fg-link-on-muted);
     --env-color-fg-link-hover: var(--env-color-fg-link-on-muted-hover);
     --env-color-fg-link-pressed: var(--env-color-fg-link-on-muted-pressed);
@@ -127,6 +139,23 @@
       var(--env-color-bg-muted-pressed),
       color-mix(in srgb, var(--env-alert-pressed), var(--env-color-fg-default) 28%)
     );
+    /* Outline, ghost and text buttons among the actions are drawn in the alert's own colors rather
+       than the link blue: an outline or text button's label takes the message's text color, an
+       outline's edge the title's color at 55%, and hover and press lay the dismiss button's layers
+       of the tone, over which the text color keeps 4.5:1. */
+    --env-color-fg-primary: var(--env-alert-text-color);
+    --env-color-fg-link: var(--env-alert-text-color);
+    --env-color-fg-link-hover: var(--env-alert-text-color);
+    --env-color-fg-link-pressed: var(--env-alert-text-color);
+    --env-color-border-default: color-mix(in srgb, var(--env-alert-title-color) 55%, transparent);
+    --env-color-border-default-hover: color-mix(
+      in srgb,
+      var(--env-alert-title-color) 75%,
+      transparent
+    );
+    --env-color-border-default-pressed: var(--env-alert-title-color);
+    --env-color-bg-neutral-subtle-hover: var(--env-alert-custom-hover, var(--env-alert-hover));
+    --env-color-bg-neutral-subtle-pressed: var(--env-alert-custom-pressed, var(--env-alert-pressed));
     margin-block-start: var(--env-space-2);
   }
   .env-alert[data-tone='warning'] .env-alert-action {
@@ -148,16 +177,6 @@
      Button.css, so at equal specificity the tone wins over the ghost colors. */
   .env-alert-dismiss {
     --env-icon-button-hit-area: var(--env-control-height-touch);
-    --env-alert-custom-hover: color-mix(
-      in srgb,
-      var(--env-alert-custom) 0%,
-      color-mix(in srgb, transparent, currentColor 14%)
-    );
-    --env-alert-custom-pressed: color-mix(
-      in srgb,
-      var(--env-alert-custom) 0%,
-      color-mix(in srgb, transparent, currentColor 22%)
-    );
     /* The small button's height, which grows to the touch height under a coarse pointer, as the
        button itself does. */
     --env-alert-dismiss-height: var(--env-control-height-sm);

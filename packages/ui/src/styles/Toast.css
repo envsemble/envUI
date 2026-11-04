@@ -118,6 +118,29 @@
     white-space: normal;
     overflow-wrap: break-word;
   }
+  /* The action is an outline Button drawn in the toast's own ink, its label in the toast's text color
+     and its edge that color at 55%, so no second accent competes with the tone's fill; hover and press
+     take the dismiss button's fills. A button's own color properties still win. */
+  .env-toast .env-toast-action {
+    color: var(--env-button-content, var(--env-toast-text));
+    border-color: var(
+      --env-button-outline,
+      color-mix(in srgb, var(--env-toast-text) 55%, transparent)
+    );
+    font-weight: var(--env-font-weight-medium);
+  }
+  .env-toast-action:hover:not(:disabled):not([aria-disabled='true']) {
+    background: var(--env-button-custom-fill, var(--env-toast-dismiss-hover));
+    border-color: var(--env-button-outline, var(--env-toast-text));
+  }
+  .env-toast-action:active:not(:disabled):not([aria-disabled='true']) {
+    background: var(--env-button-custom-fill, var(--env-toast-dismiss-pressed));
+    border-color: var(--env-button-outline, var(--env-toast-text));
+  }
+  .env-toast-action:focus-visible {
+    outline: 0.125rem solid currentColor;
+    outline-offset: 0.125rem;
+  }
   /* The dismiss button is an IconButton with a cross on the notice's strong fill: the fill's text color, with the
      fill's own hover and press steps, or state layers on a container the application set. Toast.css comes after Button.css, so at equal specificity
      these colors win over the ghost ones. */

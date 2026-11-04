@@ -965,6 +965,34 @@ const registry: readonly ContrastPair[] = merged([
       ],
       'The dismiss icon of an alert on hover and press, on its fill and at high contrast on its softer tint',
     ),
+    // The label of an outline or text button among an alert's actions, in the text color, over the
+    // dismiss button's layers.
+    ...on(
+      'text',
+      '--env-color-fg-default',
+      [
+        [`--env-color-bg-${tone}-subtle-hover`, alertFill(tone), page],
+        [`--env-color-bg-${tone}-subtle-pressed`, alertFill(tone), page],
+      ],
+      `An outline or text button among the actions of an alert, tone="${tone}", on hover and press`,
+      tonal,
+    ),
+    ...text(
+      '--env-color-fg-default',
+      [[`--env-color-bg-${tone}-subtle-hover`, `--env-color-bg-${tone}-muted`, page]],
+      `An outline or text button among the actions of an alert, tone="${tone}", on hover at high contrast`,
+    ),
+    ...on(
+      'text',
+      '--env-color-fg-default',
+      [[`--env-color-bg-${tone}-subtle-pressed`, `--env-color-bg-${tone}-muted`, page]],
+      `An outline or text button among the actions of an alert, tone="${tone}", while pressed at high contrast`,
+      {
+        minimum: { high: 4.5 },
+        rationale:
+          'A press lasts a moment: the label keeps the text minimum of standard contrast under the tone’s pressed layer, as the dismiss button’s does there.',
+      },
+    ),
   ]),
   ...tones.flatMap((tone) =>
     nonText(
