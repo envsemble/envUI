@@ -5,19 +5,22 @@
      current sections in the text color, never bolder, so no label rewraps as the reader moves, and
      those still to come quieter. */
   .env-table-of-contents {
-    /* How far each level sits in from the one above it, and the shape's width at its fullest, which
-       is also its column's. */
+    /* How far each level sits in from the one above it, the shape's width at its fullest, which is
+       also its column's, and the room above the first entry and below the last that it runs on
+       into, so its bulge tapers whole at either end. */
     --env-table-of-contents-indent: var(--env-space-3);
     --env-table-of-contents-stroke: var(--env-space-5);
+    --env-table-of-contents-room: var(--env-space-4);
     min-inline-size: 0;
     font: var(--env-type-body-sm);
   }
   .env-table-of-contents[hidden] {
     display: none;
   }
-  /* The shape's box, which the links measure their place in. */
+  /* The shape's box, which the links measure their place in, with the shape's room around them. */
   .env-table-of-contents-body {
     position: relative;
+    padding-block: var(--env-table-of-contents-room);
   }
   .env-table-of-contents-list {
     margin: 0;
@@ -48,8 +51,8 @@
     outline-offset: -2px;
   }
 
-  /* The shape, in the column at the list's start, the same beside every level, from the first
-     label's top to the last one's bottom, straight along the column's start and bulging toward its
+  /* The shape, in the column at the list's start, the same beside every level, from a little above
+     the first label to a little below the last, straight along the column's start and bulging toward its
      end, never past the gap before the labels. The component draws its outline every frame the
      reader's place moves. The section under the pointer swells it a little. */
   .env-table-of-contents-wave {

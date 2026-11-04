@@ -5287,6 +5287,11 @@
           "property": "--env-table-of-contents-depth",
           "use": "read",
           "description": "An item's level below the top, from 1, which the component sets on each nested item and its indent reads."
+        },
+        {
+          "property": "--env-table-of-contents-room",
+          "use": "read",
+          "description": "The room the contents leave above the first link and below the last, which the reader's place runs on into: an application reads it to line the first label up with what is beside it."
         }
       ]
     },

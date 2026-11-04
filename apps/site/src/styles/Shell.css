@@ -332,11 +332,15 @@ body {
 }
 .site-contents-list {
   position: sticky;
-  inset-block-start: var(--site-contents-top);
-  max-block-size: calc(100dvh - var(--site-contents-top) - var(--env-space-6));
+  inset-block-start: calc(var(--site-contents-top) - var(--env-table-of-contents-room));
+  max-block-size: calc(
+    100dvh - var(--site-contents-top) + var(--env-table-of-contents-room) - var(--env-space-6)
+  );
   overflow-y: auto;
-  /* Level with the top of the page's banner. */
-  padding-block: 0 var(--env-space-6);
+  /* The first label level with the top of the page's banner: the room the contents leave above it
+     for their shape reaches up beside the banner. */
+  margin-block-start: calc(-1 * var(--env-table-of-contents-room));
+  padding-block: 0 calc(var(--env-space-6) - var(--env-table-of-contents-room));
   /* On the page's own color, which it stands on anyway: the accessibility scan measures its
      labels on that, not on a banner shape whose box, clipped on screen, reaches beside it. */
   background: var(--env-color-bg-page);
