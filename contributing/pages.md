@@ -27,7 +27,7 @@ After the YAML frontmatter and the `# Title`, a page has these `##` sections in 
 
 | Section                            | Required                       | Holds                                                                                                                                         |
 | ---------------------------------- | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| Overview                           | generated                      | The frontmatter's overview examples, side by side, the first also atop a component's page in the Docs; don't write it.                        |
+| Overview                           | generated                      | The frontmatter's overview examples, side by side, the first on a component's page with its code open; don't write it.                        |
 | Variants (Options on a foundation) |                                | The variants figure and its option table, then the options in titled blocks, each beside its figure.                                          |
 | Anatomy                            |                                | The anatomy figure and its legend, and one sentence naming the parts the figure can't show.                                                   |
 | Behaviour                          |                                | States and what it does on its own, such as pending work or dismissing, in titled blocks, ending with `### Adapting to width`.                |
@@ -206,6 +206,7 @@ An ordered list right after an anatomy figure is its legend: each item the part'
 - A figure without a list numbers every part `docs/generated/parts.json` lists for the page's component, or for the one `of="Name"` names. Read a component's entry there before writing its legend.
 - `enlarge` draws a subject whose parts sit close half as large again; `width="38"` lays out a subject that shows all its parts only from a width, such as [Panes](../docs/components/panes.md) side by side.
 - Make the example small and complete, every part the legend names present once, the root first, then the parts in reading order. Name the parts it can't show in one sentence below, such as "Not shown: the spinner."
+- **Callouts on what shows.** A callout points at what shows of a part: its edge, its text or its icon; only a region, with no edge of its own around several things, such as a card's actions, is outlined. The catalogue names in the legend alone, unnumbered, the outermost part around the others that has no edge of its own, such as a text field's root, and the part inside it as wide as it that holds several others, such as its control.
 - **Two callouts, two things.** No two callouts land on one box, and none points at nothing. Parts that look alike at rest, such as AnimatedNumber's window and its value, show apart with `specimen`: the catalogue numbers them on the specimen of the same name, which holds the example in that moment, and a caption says which.
 
 ### Variants figures and option tables

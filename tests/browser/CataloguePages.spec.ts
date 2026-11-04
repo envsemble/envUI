@@ -209,7 +209,8 @@ test('a component page shows plain sections, equal cells and the parts of its an
 test('every anatomy figure numbers each part its legend names', async ({ page }) => {
   // It visits every component and pattern page, whose examples load as each opens.
   test.slow();
-  // A legend part the example doesn't render would leave its number off the figure.
+  // A legend part the example doesn't render would leave its number off the figure. A part the
+  // figure shows whole, such as a field around its control, is named in the legend alone.
   const pages = figurePages.map((document) => ({
     id: document.id,
     route: document.route,
@@ -227,7 +228,7 @@ test('every anatomy figure numbers each part its legend names', async ({ page })
     const anatomy = page.locator('.site-anatomy');
     await expect(anatomy, `${id} shows its anatomy figures`).toHaveCount(figures);
     for (const figure of await anatomy.all()) {
-      const legend = await figure.locator('.site-anatomy-legend > li').count();
+      const legend = await figure.locator('.site-anatomy-legend > li:not([data-whole])').count();
       await expect(
         figure.locator('.site-anatomy-stage .site-anatomy-badge'),
         `${id} numbers every part`,

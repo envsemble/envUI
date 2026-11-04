@@ -12,7 +12,7 @@ export default function TextFieldAnatomy() {
       defaultValue="northwind"
       endAction={<IconButton icon={<IconContentCopy />} aria-label="Copy address" />}
       description="Used in links to the project."
-      style={{ inlineSize: 'min(100%, 26rem)' }}
+      style={{ inlineSize: 'min(100%, 32rem)' }}
     />
   );
 }

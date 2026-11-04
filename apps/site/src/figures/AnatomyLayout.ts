@@ -18,7 +18,11 @@ export interface Callout {
   side?: Side;
   badge: { x: number; y: number };
   anchor: { x: number; y: number };
-  /** The part's box, outlined; the root's is not. */
+  /**
+   * The part's box, outlined: only a region's, which has no edge of its own and holds several
+   * things, such as a card's actions. A part with a fill, a border or a shadow shows its own edge,
+   * and text or an icon its own shape, so the callout's dot alone marks them.
+   */
   box?: { x: number; y: number; width: number; height: number };
   /** Where the outline gives way, so it doesn't strike through a label it crosses. */
   gaps?: { x: number; y: number; width: number; height: number }[];
@@ -66,6 +70,73 @@ function holdsText(element: Element) {
   return [...element.children].every((child) =>
     getComputedStyle(child).display.startsWith('inline'),
   );
+}
+
+/**
+ * Whether an element draws an edge of its own: a fill, a border or a shadow, on itself or on a
+ * pseudo-element, as a segmented control's outline is drawn.
+ */
+function hasEdge(element: Element) {
+  return [null, '::before', '::after'].some((pseudo) => {
+    const style = getComputedStyle(element, pseudo);
+    if (pseudo && (style.content === 'none' || style.display === 'none')) return false;
+    const border = ['top', 'right', 'bottom', 'left'].some(
+      (side) =>
+        parseFloat(style.getPropertyValue(`border-${side}-width`)) > 0 &&
+        style.getPropertyValue(`border-${side}-style`) !== 'none',
+    );
+    const fill =
+      !/[,/]\s*0\)$|^transparent$/.test(style.backgroundColor) || style.backgroundImage !== 'none';
+    return border || fill || style.boxShadow !== 'none';
+  });
+}
+
+/** Whether an element has text of its own, outside its child elements. */
+const ownText = (element: Element) =>
+  [...element.childNodes].some(
+    (node) => node.nodeType === Node.TEXT_NODE && node.textContent?.trim(),
+  );
+
+/**
+ * What shows of a part: the part, or where it is only a frame around one thing, with no edge or
+ * text of its own, that thing, as an icon's slot holds its icon, so the callout meets what shows.
+ */
+function drawnPart(element: Element): Element {
+  let drawn = element;
+  while (drawn.children.length === 1 && !ownText(drawn) && !hasEdge(drawn))
+    drawn = drawn.children[0]!;
+  return drawn;
+}
+
+/**
+ * The box of a text input's value, as drawn: the input's own box spans its field, wider than the
+ * words in it. Undefined for an empty input or one of another kind.
+ */
+function valueBox(element: Element, origin: DOMRect): Box | undefined {
+  if (!(element instanceof HTMLInputElement) || !element.value) return undefined;
+  if (!/^(?:text|search|url|email|tel|number)$/.test(element.type)) return undefined;
+  const style = getComputedStyle(element);
+  const context = document.createElement('canvas').getContext('2d');
+  if (!context) return undefined;
+  context.font = `${style.fontStyle} ${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+  const rect = element.getBoundingClientRect();
+  // Drawn larger or smaller than laid out, as an enlarged figure's subject is.
+  const scale = element.offsetWidth ? rect.width / element.offsetWidth : 1;
+  const start = (parseFloat(style.paddingLeft) + parseFloat(style.borderLeftWidth)) * scale;
+  const end = (parseFloat(style.paddingRight) + parseFloat(style.borderRightWidth)) * scale;
+  const width = Math.min(
+    context.measureText(element.value).width * scale,
+    rect.width - start - end,
+  );
+  const height = parseFloat(style.fontSize) * 1.25 * scale;
+  const left = style.direction === 'rtl' ? rect.right - end - width : rect.left + start;
+  const top = rect.top + (rect.height - height) / 2;
+  return {
+    left: left - origin.left,
+    top: top - origin.top,
+    right: left + width - origin.left,
+    bottom: top + height - origin.top,
+  };
 }
 
 /** The box of a part, or of its own text, relative to the stage. */
@@ -188,14 +259,21 @@ function followsText(element: Element) {
 
 /**
  * Places a numbered callout on each part found in the subject: on the side of the component the
- * part is nearest to, the root at the start, with a line to the part and its box outlined. In a
- * figure of an open popup, the callouts keep clear of what opens it, such as a select's field: no
- * callout sits over it, or reaches a part across it.
+ * part is nearest to, the root at the start, with a line to what shows of the part, and a region's
+ * box outlined. A part that only frames the others, with no edge of its own, such as a field
+ * around its label and control, and a part of the same box as that frame, such as the control,
+ * take no callout: the legend names them alone (`whole`, by their legend items). In a figure of an
+ * open popup, the callouts keep clear of what opens it, such as a select's field: no callout sits
+ * over it, or reaches a part across it.
  */
-export function measure(stage: HTMLElement, subject: HTMLElement, legend: AnatomyLegendItem[]) {
+export function measure(
+  stage: HTMLElement,
+  subject: HTMLElement,
+  legend: AnatomyLegendItem[],
+): { callouts: Callout[]; whole: number[] } {
   const origin = stage.getBoundingClientRect();
   const rtl = getComputedStyle(stage).direction === 'rtl';
-  const found = legend.flatMap((item, index) => {
+  const all = legend.flatMap((item, index) => {
     const { selector, text } = partSelector(item.part);
     let element: Element | null;
     try {
@@ -204,26 +282,76 @@ export function measure(stage: HTMLElement, subject: HTMLElement, legend: Anatom
       // A reference that is no selector numbers nothing; the legend still lists it.
       return [];
     }
-    const box = element && boxOf(element, text, origin);
-    return element && box
+    if (!element) return [];
+    const drawn = text ? element : drawnPart(element);
+    const box = (!text && valueBox(drawn, origin)) || boxOf(drawn, text, origin);
+    const textual = text || drawn instanceof HTMLInputElement || holdsText(drawn);
+    const edge = !textual && hasEdge(drawn);
+    return box
       ? [
           {
             number: index + 1,
             element,
             box,
-            corners: cornersOf(element, text, box),
+            corners: cornersOf(drawn, text, box),
             inline: followsText(element),
+            edge,
+            // A region: no edge or shape of its own, around several things that show.
+            region:
+              !edge &&
+              !textual &&
+              !(drawn instanceof SVGElement) &&
+              [...drawn.children].filter((child) => {
+                const rect = child.getBoundingClientRect();
+                return rect.width > 1 && rect.height > 1;
+              }).length > 1,
+            // One of several alike, such as a list's row.
+            repeated: subject.querySelectorAll(selector).length > 1,
           },
         ]
       : [];
   });
-  if (!found.length) return [];
+  const sameBox = (a: Box, b: Box) =>
+    Math.abs(a.left - b.left) < 2 &&
+    Math.abs(a.top - b.top) < 2 &&
+    Math.abs(a.right - b.right) < 2 &&
+    Math.abs(a.bottom - b.bottom) < 2;
+  const holds = (part: (typeof all)[number]) =>
+    all.filter((other) => other !== part && part.element.contains(other.element));
+  // The parts the legend names alone, as their callouts would point at the edges of the parts
+  // inside them: the outermost frame around several others, with no edge of its own, such as a
+  // field around its label and control; and inside it, a part of its box, or the one part as wide
+  // as it that holds several others, such as that control around its icon, prefix and input, but
+  // not a list's row.
+  const frames = all.filter(
+    (part) =>
+      !hasEdge(part.element) &&
+      holds(part).length > 1 &&
+      !all.some((other) => other !== part && other.element.contains(part.element)),
+  );
+  const whole = all.filter(
+    (part) =>
+      frames.includes(part) ||
+      frames.some(
+        (frame) =>
+          frame.element.contains(part.element) &&
+          (sameBox(frame.box, part.box) ||
+            (holds(part).length > 1 &&
+              !part.repeated &&
+              Math.abs(frame.box.left - part.box.left) < 2 &&
+              Math.abs(frame.box.right - part.box.right) < 2)),
+      ),
+  );
+  const found = all.filter((part) => !whole.includes(part));
+  const wholeItems = whole.map(({ number }) => number - 1);
+  if (!found.length) return { callouts: [], whole: wholeItems };
   const labelled = labelBoxes(subject, origin);
+  // The whole component, the parts the legend names alone included: the callouts sit outside it.
   const outer: Box = {
-    left: Math.min(...found.map(({ box }) => box.left)),
-    top: Math.min(...found.map(({ box }) => box.top)),
-    right: Math.max(...found.map(({ box }) => box.right)),
-    bottom: Math.max(...found.map(({ box }) => box.bottom)),
+    left: Math.min(...all.map(({ box }) => box.left)),
+    top: Math.min(...all.map(({ box }) => box.top)),
+    right: Math.max(...all.map(({ box }) => box.right)),
+    bottom: Math.max(...all.map(({ box }) => box.bottom)),
   };
   const opener = openerBox(subject);
   const avoid: Box | undefined = opener && {
@@ -308,11 +436,11 @@ export function measure(stage: HTMLElement, subject: HTMLElement, legend: Anatom
     return candidates[0] ?? null;
   };
   let stacked = 0;
-  const placed = found.map(({ number, element, box, corners, inline }) => {
+  const placed = found.map(({ number, element, box, corners, inline, edge, region }) => {
     const root = isRoot(box, element);
     if (root && roots > 1) {
       const side: Side = stacked++ % 2 ? 'bottom' : 'top';
-      return { number, box, corners, root, side, at: null };
+      return { number, box, corners, root, side, at: null, edge, region };
     }
     // The nearest side whose line reaches out clear of the other parts, with the sides above and
     // below preferred by a few pixels.
@@ -354,6 +482,8 @@ export function measure(stage: HTMLElement, subject: HTMLElement, legend: Anatom
       root: root && !inline,
       side,
       at: root ? null : clearAt(side, box),
+      edge,
+      region,
     };
   });
   const callouts: Callout[] = [];
@@ -375,11 +505,13 @@ export function measure(stage: HTMLElement, subject: HTMLElement, legend: Anatom
       badgeSize / 2 + 2,
       extent - badgeSize / 2 - 2,
     );
-    items.forEach(({ number, box: part, corners: partCorners, root }, index) => {
+    items.forEach(({ number, box: part, corners: partCorners, root, edge, region }, index) => {
       const at = along[index];
-      // A part other than the root is outlined, a little off it: its line ends on the outline.
-      const box = root ? part : fenced(part);
-      const corners = root ? partCorners : square;
+      // A part with an edge of its own takes the dot on that edge, round its corners; text, an
+      // icon or a region takes it a little off, where a region's outline runs.
+      const own = root || edge;
+      const box = own ? part : fenced(part);
+      const corners = own ? partCorners : square;
       const clamp = (value: number, low: number, high: number) =>
         Math.min(Math.max(value, low + 2), Math.max(high - 2, low + 2));
       const badge =
@@ -408,14 +540,20 @@ export function measure(stage: HTMLElement, subject: HTMLElement, legend: Anatom
         index: number - 1,
         badge,
         anchor,
-        box: root
-          ? undefined
-          : { x: box.left, y: box.top, width: box.right - box.left, height: box.bottom - box.top },
-        gaps: root ? undefined : gapsIn(box, labelled),
+        box:
+          root || !region
+            ? undefined
+            : {
+                x: box.left,
+                y: box.top,
+                width: box.right - box.left,
+                height: box.bottom - box.top,
+              },
+        gaps: root || !region ? undefined : gapsIn(box, labelled),
       });
     });
   }
-  return inReadingOrder(callouts, rtl);
+  return { callouts: inReadingOrder(callouts, rtl), whole: wholeItems };
 }
 
 /**

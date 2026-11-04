@@ -164,6 +164,12 @@
   margin: 0;
 }
 
+/* A part the figure shows whole, such as a field around its control, named without a number: its
+   number's place stays, empty, so the names line up. */
+.site-anatomy-legend > li[data-whole] > .site-anatomy-number {
+  background: none;
+}
+
 /* An option table in the catalogue, such as a component's variants or sizes: a legend laid out
    as an anatomy figure's is, each option's name followed by what it is for (OptionLegend.tsx). The
    name is plain text, as a variants figure's callouts already tag each variant. The names of a
