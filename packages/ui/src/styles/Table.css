@@ -446,19 +446,13 @@
   /* A region with more to scroll sideways fades at the edge it scrolls toward, its frame included, so
      a column cut short reads as more to see rather than the table's end; scrolled to an end, that
      edge is whole again. A region with nothing to scroll has no scroll timeline and never fades, nor
-     does one with keyboard focus, whose ring the fade would cover. */
-  @property --env-table-fade-start {
-    syntax: '<length>';
-    inherits: false;
-    initial-value: 0rem;
-  }
-  @property --env-table-fade-end {
-    syntax: '<length>';
-    inherits: false;
-    initial-value: 0rem;
-  }
+     does one with keyboard focus, whose ring the fade would cover. The fades' widths are private and
+     change in steps, just past each end. */
   @supports (animation-timeline: scroll()) {
     .env-table-region:not(:focus-visible) {
+      /* No fade, until the region's scroll timeline sets one. */
+      --env-table-fade-start: 0;
+      --env-table-fade-end: 0;
       mask-image: linear-gradient(
         to right,
         transparent,
@@ -472,7 +466,7 @@
   }
   @keyframes env-table-edge-fade {
     0% {
-      --env-table-fade-start: 0rem;
+      --env-table-fade-start: 0;
       --env-table-fade-end: 2rem;
     }
     5%,
@@ -482,7 +476,7 @@
     }
     100% {
       --env-table-fade-start: 2rem;
-      --env-table-fade-end: 0rem;
+      --env-table-fade-end: 0;
     }
   }
 

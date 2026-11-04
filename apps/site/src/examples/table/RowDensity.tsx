@@ -43,9 +43,9 @@ export default function RowDensity() {
               <Table.Cell nowrap>{report.name}</Table.Cell>
               <Table.Cell nowrap>{report.owner}</Table.Cell>
               <Table.Cell numeric>{report.pages}</Table.Cell>
-              <Table.Cell align="end">
+              <Table.Cell align="end" nowrap>
                 {/* Buttons in the cells take the small control height at every density. */}
-                <Row wrap align="center" gap={4} justify="end">
+                <Row align="center" gap={4} justify="end">
                   <Button variant="text">Open</Button>
                   <IconButton
                     variant="ghost"
