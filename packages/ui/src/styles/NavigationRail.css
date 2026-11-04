@@ -196,9 +196,13 @@
   .env-navigation-rail-item[data-current]:active .env-navigation-rail-indicator {
     background: var(--env-navigation-rail-item-selected-fill, var(--env-color-bg-selected-pressed));
   }
+  /* Keyboard focus rings the pill, as the item's visible shape, rather than the whole item. */
   .env-navigation-rail-item:focus-visible {
+    outline: none;
+  }
+  .env-navigation-rail-item:focus-visible .env-navigation-rail-indicator {
     outline: 2px solid var(--env-color-border-focus);
-    outline-offset: -2px;
+    outline-offset: 2px;
   }
   /* Under a reduced-motion preference, fills change at once. */
   @media (prefers-reduced-motion: reduce) {
