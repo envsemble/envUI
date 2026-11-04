@@ -135,7 +135,7 @@
     backdrop-filter: blur(var(--env-popup-blur)) saturate(1.4);
     color: var(--env-color-fg-default);
     font: var(--env-type-body);
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
     outline: none;
     /* Motion: it fades in, and grows from the origin its positioner sets. */
     transform-origin: var(--transform-origin, center);

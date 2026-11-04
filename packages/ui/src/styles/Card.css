@@ -51,7 +51,7 @@
     font: inherit;
     text-align: start;
     text-decoration: none;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
     cursor: pointer;
     transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
   }
@@ -131,7 +131,7 @@
     max-width: 32ch;
     font: var(--env-type-body);
     color: var(--env-color-fg-muted);
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
   }
   .env-card[data-actions] > .env-card-footer,
   .env-card[data-actions] > .env-skeleton-content > .env-card-footer {

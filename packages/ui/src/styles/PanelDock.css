@@ -82,7 +82,7 @@
     background: var(--env-panel-dock-panel-color);
     color: var(--env-color-fg-default);
     font: var(--env-type-body);
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
     pointer-events: auto;
     outline: none;
   }

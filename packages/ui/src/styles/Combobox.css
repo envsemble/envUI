@@ -205,7 +205,7 @@
      a check mark and a heavier label show the chosen ones. */
   .env-combobox-item {
     text-align: start;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
   }
   .env-combobox-item[data-disabled] {
     cursor: default;
@@ -222,7 +222,7 @@
     color: var(--env-color-fg-muted);
     font: var(--env-font-weight-medium) var(--env-font-size-caption) / 1.4 var(--env-font-family);
     letter-spacing: 0.01em;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
   }
   .env-combobox-status:not(:empty),
   .env-combobox-empty:not(:empty) {
@@ -233,7 +233,7 @@
     padding: var(--env-space-1) var(--env-popup-row-padding-inline);
     color: var(--env-color-fg-muted);
     font: var(--env-font-weight-body) var(--env-font-size-body) / 1.35 var(--env-font-family);
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
   }
 
   /* Coarse pointers keep the touch height for options, and larger chips and remove buttons. Wrapped

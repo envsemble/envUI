@@ -22,7 +22,7 @@
     padding-inline-start: calc(0.25 * var(--env-control-height-md));
     text-align: start;
     font: var(--env-font-weight-semibold) var(--env-font-size-body) / 1.4 var(--env-font-family);
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
   }
   /* The month buttons point back and forward in the reading direction. */
   .env-calendar-header .env-icon:dir(rtl) {

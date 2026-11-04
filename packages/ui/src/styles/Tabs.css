@@ -100,7 +100,7 @@
     flex-shrink: 0;
     border-radius: var(--env-radius-sm);
     white-space: normal;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
     transition:
       background-color var(--env-motion-duration-medium) var(--env-motion-ease),
       color var(--env-motion-duration-medium) var(--env-motion-ease);

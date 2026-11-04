@@ -64,7 +64,7 @@
     padding: var(--env-space-1) var(--env-space-3);
     color: var(--env-color-fg-default);
     font: var(--env-font-weight-semibold) var(--env-font-size-body-sm) / 1.4 var(--env-font-family);
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
   }
   /* resizable: the drawer is --env-navigation-drawer-width wide, which the component sets with its bounds, and
      never more than half its container, such as the Scaffold, or of the window. The resize handle
@@ -186,7 +186,7 @@
     font: var(--env-font-weight-body) var(--env-font-size-body) / 1.4 var(--env-font-family);
     text-align: start;
     text-decoration: none;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
     transition:
       background-color var(--env-motion-duration-fast) var(--env-motion-ease),
       color var(--env-motion-duration-fast) var(--env-motion-ease);

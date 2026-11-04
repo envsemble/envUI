@@ -101,7 +101,7 @@
     -webkit-line-clamp: 3;
     line-clamp: 3;
     overflow: hidden;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
     font: inherit;
     margin: 0;
   }

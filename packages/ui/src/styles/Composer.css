@@ -54,7 +54,7 @@
     field-sizing: content;
     overflow-y: auto;
     scrollbar-width: thin;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
   }
   .env-composer[data-start] .env-composer-input {
     padding-inline-end: var(--env-space-4);
@@ -111,7 +111,7 @@
     padding-inline: var(--env-space-5);
     color: var(--env-color-fg-muted);
     font: var(--env-type-body-sm);
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
   }
   @media (prefers-reduced-motion: reduce) {
     .env-composer-surface {

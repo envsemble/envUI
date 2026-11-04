@@ -34,7 +34,7 @@
     );
     min-inline-size: 0;
     max-inline-size: 100%;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
     display: inline-flex;
     align-items: center;
     gap: var(--env-space-3);

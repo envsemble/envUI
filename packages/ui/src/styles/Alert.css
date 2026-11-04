@@ -57,7 +57,7 @@
     );
     color: var(--env-alert-text-color);
     font: var(--env-type-body);
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
   }
   .env-alert[data-tone='success'] {
     --env-alert-icon-default: var(--env-color-fg-success);

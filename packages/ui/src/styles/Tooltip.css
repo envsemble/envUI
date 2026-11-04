@@ -47,7 +47,7 @@
     -webkit-backdrop-filter: blur(var(--env-popup-blur)) saturate(1.4);
     backdrop-filter: blur(var(--env-popup-blur)) saturate(1.4);
     font: var(--env-type-body-sm);
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
     /* A Kbd in a tooltip, such as a shortcut beside the name, is a flat chip of the tooltip's light
        text over its fill, with no edge, the keys of a combination side by side: the + between them is
        read but not shown. */

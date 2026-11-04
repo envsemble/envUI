@@ -22,7 +22,7 @@
     padding-inline-start: calc(0.25 * var(--env-control-height-md));
     text-align: start;
     font: var(--env-font-weight-semibold) var(--env-font-size-body) / 1.4 var(--env-font-family);
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
   }
   /* The year buttons point back and forward in the reading direction. */
   .env-month-picker-header .env-icon:dir(rtl) {
@@ -52,7 +52,7 @@
     margin-inline: auto;
     padding-inline: var(--env-space-1);
     border-radius: var(--env-radius-full);
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
     transition:
       background-color var(--env-motion-duration-fast) var(--env-motion-ease),
       color var(--env-motion-duration-fast) var(--env-motion-ease);
