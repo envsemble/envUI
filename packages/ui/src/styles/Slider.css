@@ -2,10 +2,11 @@
   /* A slider as a field: as tall as the fields and with their corners, so it sits in a form among
      them. The whole control is the track, a quiet tint, with the label inside at its start, the value
      at its end, in a field's type, and a stronger fill from the start that shows the value. At rest
-     that is all: the fill ends crisply. Slider decides what shows besides (sliderReveal) and marks it
-     on the control: a thin handle at the value and faint ticks at the steps, a ruler, under a hovering
-     pointer and while pressed (data-handle, data-ruler), until a release, and the handle alone with
-     keyboard focus (data-handle). The text always keeps its full strength: while they show, where the
+     a quiet handle at the fill's end says it can be moved, where it is clear of the text. Slider
+     decides what shows besides (sliderReveal) and marks it on the control: the handle at full
+     strength and faint ticks at the steps, a ruler, under a hovering pointer and while pressed
+     (data-handle, data-ruler), until a release, and the handle alone with keyboard focus
+     (data-handle). The text always keeps its full strength: while they show, where the
      handle, the fill's end and the ticks pass under the label or the value, they fade instead. */
   /* Color properties: a slider's colors, which an application sets on one slider through style or its
      own CSS: container the track, indicator the fill that shows the value, and content the label, the
@@ -143,7 +144,8 @@
     block-size: 55%;
     border-radius: var(--env-radius-full);
     background: var(--env-slider-ink, var(--env-color-fg-default));
-    opacity: 0;
+    /* At rest, quiet, and gone where it passes under the label or the value. */
+    opacity: calc(0.4 * (1 - var(--env-slider-veil)));
     transform: translateX(
       calc(
         var(--env-slider-thumb-side) *

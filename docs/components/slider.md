@@ -60,11 +60,11 @@ Not shown: the span the value moves along, which draws the faint ticks, and the 
 
 ### At rest
 
-Slider is a field, as tall as the fields and with their corners, so it sits in a form among them.
+Slider is a field, as tall as the fields and with their corners, so it sits in a form among them. A quiet handle at the end of the fill shows it can be moved; it leaves the text clear where the value sits under the label or the value.
 
 ### Under the pointer
 
-When the pointer comes over the slider, a thin handle marks the value and faint ticks mark its steps.
+When the pointer comes over the slider, the handle at the value darkens and faint ticks mark its steps.
 
 - Pressing anywhere moves the value there, and dragging carries it along.
 - On a touch screen they show only while the finger is down.
@@ -212,6 +212,7 @@ The field marks what it shows besides its text and fill:
 
 ## Changelog
 
+- **1.0.0-prerelease.6**: A quiet handle marks the value at rest, so the slider no longer reads as a meter; it shows in full under the pointer and with keyboard focus.
 - **1.0.0-prerelease.5**: `error`, as on a field.
 - **1.0.0-prerelease.2**: Slider is a field: as tall as the fields and with their corners, its label inside at the start, its value at the end in the text style of a field, with numbers of one width and a fill from the start, with a thin handle and faint ticks under the pointer and on focus, both fading where they pass under the text. The track has no outline. `--env-slider-indicator` colors the fill alone, and `--env-slider-content` the label, value, handle and ticks.
 - **1.0.0**: `onValueCommit` is `onValueCommitted`, as Base UI names it, `hint` is `description`, and `inputRef` is `ref`, which reaches the native range input as a field's does, while the root takes `className`, `style` and the other native props. The value is formatted in EnvUIProvider's `locale`, or the one Slider takes. The row of the label and the value, `env-slider-heading`, is `env-slider-header`.

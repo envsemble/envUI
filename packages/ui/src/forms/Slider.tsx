@@ -98,9 +98,9 @@ export interface SliderProps
  * A value in a range, as a field: as tall as the fields and with their corners, so it sits in a form
  * among them, with its label inside at the start, its value at the end and a fill from the start
  * that shows it. Pressing or dragging anywhere in it chooses a value, and so do the arrow keys. At
- * rest it shows only its text and fill; a thin handle at the value and faint ticks at its steps
- * appear under the pointer and while it is pressed, and go once it is released, and the handle
- * alone shows with keyboard focus. An optional description sits below it.
+ * rest it shows its text, its fill and a quiet handle at the value; the handle at full strength and
+ * faint ticks at its steps appear under the pointer and while it is pressed, and go once it is
+ * released, and the handle alone shows with keyboard focus. An optional description sits below it.
  */
 export function Slider({
   label,
