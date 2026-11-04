@@ -329,12 +329,21 @@
   .env-text-field-control:is(:has(> .env-text-field-input:disabled), [data-disabled]) > label {
     cursor: default;
   }
+  /* Text that scrolls clips at the padding, as a scroll box's content does at its edge, so a line
+     that runs on never shows in the padding or under the border. While it doesn't scroll, the padding
+     is empty and nothing is cut. */
   textarea.env-text-field-input {
     min-height: 7.5rem;
     field-sizing: fixed;
     overflow-y: auto;
     scrollbar-width: thin;
     resize: none;
+    mask-image: linear-gradient(
+      transparent var(--env-space-4),
+      /* Any opaque color: the mask keeps what lies under its opaque part. */
+        var(--env-color-fg-default) var(--env-space-4) calc(100% - var(--env-space-4)),
+      transparent calc(100% - var(--env-space-4))
+    );
   }
   textarea.env-text-field-input[data-sizing='content'] {
     field-sizing: content;
