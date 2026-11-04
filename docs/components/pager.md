@@ -140,5 +140,6 @@ The pager is the `nav` landmark `env-pager`; each link is `env-pager-link-previo
 
 ## Changelog
 
+- **1.0.0-prerelease.6**: A link's corners are the large corner of the radius scale, `--env-radius-lg`, rather than the small one.
 - **1.0.0-prerelease.5**: Pager.Root takes its links as Pager.Previous and Pager.Next children alone: the `previous` and `next` props are gone.
 - **1.0.0**: `DirectionLinks` is `Pager.Root`, and `DirectionLink` is `Pager.Previous` or `Pager.Next`, which no longer take `direction`. Pager.Root also accepts the two parts as children. `DirectionLinkProps` and `DirectionLinksDestination` are `Pager.LinkProps`, the classes are `env-pager` and `env-pager-link-*`, and the page is `pager`. The direction labels and the landmark's name come from `messages.pager`, and children render between the `previous` and `next` props' links instead of after both.
