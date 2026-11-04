@@ -1,6 +1,7 @@
 /* The galleries of components and patterns (Gallery.tsx): by group, a tile for each page, its
-   live picture on the recessed canvas every example sits on, inert and scaled to fit, with its
-   name under it. Tiles are of one size, so the pictures line up in rows. */
+   live picture on the recessed canvas every example sits on, inert, with its name under it: a
+   component at its own size, a pattern's scene scaled to fit. Tiles are of one size, so the
+   pictures line up in rows. */
 /* The groups stand well apart, about half a tile, so each reads as a section of its own. */
 .catalogue-gallery {
   row-gap: calc(var(--env-space-9) * 2.5);
