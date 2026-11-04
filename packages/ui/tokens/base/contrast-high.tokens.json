@@ -251,9 +251,9 @@
             "$value": {
               "colorSpace": "oklch",
               "components": {
-                "$ref": "#/palette/amber/80/$value/components"
+                "$ref": "#/palette/amber/12/$value/components"
               },
-              "alpha": 0.08
+              "alpha": 0.24
             }
           },
           "subtle": {
@@ -261,18 +261,18 @@
               "$value": {
                 "colorSpace": "oklch",
                 "components": {
-                  "$ref": "#/palette/amber/80/$value/components"
+                  "$ref": "#/palette/amber/12/$value/components"
                 },
-                "alpha": 0.14
+                "alpha": 0.36
               }
             },
             "pressed": {
               "$value": {
                 "colorSpace": "oklch",
                 "components": {
-                  "$ref": "#/palette/amber/80/$value/components"
+                  "$ref": "#/palette/amber/12/$value/components"
                 },
-                "alpha": 0.22
+                "alpha": 0.5
               }
             }
           }

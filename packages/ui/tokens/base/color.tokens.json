@@ -378,13 +378,13 @@
           "$value": "{palette.amber.60}"
         },
         "muted": {
-          "$description": "The translucent warning tint of badges and alerts.",
+          "$description": "The translucent warning tint of badges and alerts: a clean light amber rather than the warning text color, which would turn a light surface tan.",
           "$value": {
             "colorSpace": "oklch",
             "components": {
-              "$ref": "#/palette/amber/60/$value/components"
+              "$ref": "#/palette/amber/12/$value/components"
             },
-            "alpha": 0.12
+            "alpha": 0.24
           }
         },
         "subtle": {
@@ -397,23 +397,23 @@
             }
           },
           "hover": {
-            "$description": "The state layer of a control without a fill in the warning tone, such as a warning alert’s dismiss button, under the pointer: the warning text color at 14%, in every theme and at high contrast.",
+            "$description": "The stronger warning tint, which fills a warning alert and a soft badge and lies under a control without a fill in the warning tone, such as a warning alert’s dismiss button, under the pointer: a light amber at 36% in light, at either contrast, so a light surface takes a clean amber rather than tan; the warning text color at 17% in dark, and 14% at high contrast.",
             "$value": {
               "colorSpace": "oklch",
               "components": {
-                "$ref": "#/palette/amber/60/$value/components"
+                "$ref": "#/palette/amber/12/$value/components"
               },
-              "alpha": 0.14
+              "alpha": 0.36
             }
           },
           "pressed": {
-            "$description": "The warning state layer while pressed: the warning text color at 22%.",
+            "$description": "The warning state layer while pressed: the light amber at 50% in light, at either contrast; the warning text color at 25% in dark, and 22% at high contrast.",
             "$value": {
               "colorSpace": "oklch",
               "components": {
-                "$ref": "#/palette/amber/60/$value/components"
+                "$ref": "#/palette/amber/12/$value/components"
               },
-              "alpha": 0.22
+              "alpha": 0.5
             }
           }
         }
