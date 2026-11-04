@@ -548,6 +548,17 @@
   box-shadow: none;
 }
 
+/* A field's description lies under the list or calendar that opens below the field, and would
+   peek past the popup's rounded corner: a figure that plays, or shows a field open, gives the
+   popup that room while it is open. */
+:is(
+    .catalogue-motion-subject,
+    :is(.site-live-example, .site-verdict-stage) .catalogue-open-example
+  ):has(.env-select-popup, .env-combobox-popup, .env-picker-popup)
+  .env-field-description {
+  visibility: hidden;
+}
+
 /* The keys a figure's keyboard presses (PressedKeys.tsx), over what opens in it, backdrop included. */
 .catalogue-pressed-keys {
   z-index: var(--env-z-tooltip);
