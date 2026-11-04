@@ -42,7 +42,9 @@ avoidWhen:
 components:
   - Card
 examples:
-  ProjectSummary: overview
+  ProjectSummary:
+    role: overview
+    stage: shaded
   ActionStrip: example
   Destinations: example
   StartOptions: example

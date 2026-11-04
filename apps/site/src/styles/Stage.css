@@ -244,6 +244,13 @@
   }
 }
 
+/* A table fills its stage: a rounded surface of its own, inset from the stage's edge by the
+   difference of their corners, so the two curves run side by side rather than one card in
+   another. */
+.site-live-example:has(> .env-table-region) {
+  padding: calc(var(--env-radius-surface) - var(--env-radius-lg));
+}
+
 /* A row of items centres them on the stage, also once it wraps, unless the example aligns it or it
    is a group of choices, whose options start under its label, as in a form. */
 :is(.site-live-example, .site-verdict-fit, .catalogue-related-canvas)
