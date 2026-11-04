@@ -88,12 +88,12 @@ test(
       .locator('.env-table-of-contents-link')
       .evaluateAll((links) => new Set(links.map((link) => getComputedStyle(link).fontWeight)).size);
     expect(weights).toBe(1);
-    // Passed sections and the current one read in the text color; only those still to come are
-    // quieter.
+    // Only the current section reads in the text color: the passed ones are as quiet as those
+    // still to come.
     const color = (link: Locator) => link.evaluate((element) => getComputedStyle(element).color);
-    expect(await color(contents.locator('[data-passed]').first())).toBe(
-      await color(current(contents)),
-    );
+    const quiet = await color(contents.locator('[data-passed]').first());
+    expect(quiet).not.toBe(await color(current(contents)));
+    expect(quiet).toBe(await color(contents.getByRole('link', { name: 'Last' })));
   },
 );
 
@@ -231,8 +231,7 @@ test(
     await contents.getByRole('link', { name: 'Last' }).hover();
     await expect.poll(async () => (await widths(contents))[5]).toBeGreaterThan(each[5]! * 1.5);
     expect((await widths(contents))[5]).toBeLessThan(each[2]!);
-    // One shape in one color, without a track or a fill: the labels alone tell the sections
-    // passed from those still to come.
+    // One shape in one color, without a track or a fill: the shape alone marks the reader's place.
     await expect(contents.locator('svg path')).toHaveCount(1);
     await expect(contents.locator('svg linearGradient, svg stop')).toHaveCount(0);
     // Drawn by script, which assistive technology doesn't read.

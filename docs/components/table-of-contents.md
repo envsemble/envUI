@@ -67,7 +67,7 @@ A section need not be a heading: name any part of the page, such as a card or a 
 3. **Link** (`env-table-of-contents-link:not([aria-current])`)
 4. **Current section** (`env-table-of-contents-link[aria-current='location']`)
 
-Not shown: the sections passed, their labels as dark as the current one's.
+Not shown: the sections passed, their labels as quiet as those still to come.
 
 ## Behaviour
 
@@ -172,7 +172,7 @@ The current section is the last one whose start, less its scroll margin, has pas
 
 ### Composition
 
-The landmark is `env-table-of-contents`, around `env-table-of-contents-body`, which holds the list. Each level is an ordered list, `env-table-of-contents-list`, of items, `env-table-of-contents-item`, each a link with its level below it, indented by the depth the component sets on it, `--env-table-of-contents-depth`. Links before the current one carry `data-passed`, and the sections after it are quieter.
+The landmark is `env-table-of-contents`, around `env-table-of-contents-body`, which holds the list. Each level is an ordered list, `env-table-of-contents-list`, of items, `env-table-of-contents-item`, each a link with its level below it, indented by the depth the component sets on it, `--env-table-of-contents-depth`. Links before the current one carry `data-passed`; only the current one's label takes the text color.
 
 The reader's place is `env-table-of-contents-wave`, an SVG hidden from assistive technology in the body's start column, `--env-space-5` wide at its fullest, and a tenth of that elsewhere. The component draws its outline every frame the place moves, without rendering again, from the links' layout positions.
 

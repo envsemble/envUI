@@ -71,33 +71,30 @@
   .env-table-of-contents-wave:dir(rtl) {
     scale: -1 1;
   }
-  .env-table-of-contents .env-table-of-contents-link[data-passed],
-  .env-table-of-contents .env-table-of-contents-link[aria-current='location'] {
-    color: var(--env-color-fg-default);
-  }
-  /* The sections still to come, quieter than muted text yet still 4.5:1 on the page and on a
-     surface in both themes; at high contrast they keep the muted text color. */
-  .env-table-of-contents .env-table-of-contents-link:not([data-passed], [aria-current]) {
+  /* Only the current section's label takes the text color: every other one, passed or still to come,
+     is quieter than muted text yet still 4.5:1 on the page and on a surface in both themes, so the
+     list has one place that reads as current. At high contrast they keep the muted text color. */
+  .env-table-of-contents .env-table-of-contents-link:not([aria-current]) {
     color: color-mix(in srgb, var(--env-color-fg-muted) 85%, transparent);
   }
   :where([data-env-contrast='high'])
     .env-table-of-contents
-    .env-table-of-contents-link:not([data-passed], [aria-current]) {
+    .env-table-of-contents-link:not([aria-current]) {
     color: var(--env-color-fg-muted);
   }
   @media (prefers-contrast: more) {
     :where(.env-theme:not([data-env-contrast='standard']))
       .env-table-of-contents
-      .env-table-of-contents-link:not([data-passed], [aria-current]) {
+      .env-table-of-contents-link:not([aria-current]) {
       color: var(--env-color-fg-muted);
     }
   }
   .env-table-of-contents .env-table-of-contents-link[aria-current='location'] {
     color: var(--env-color-fg-default);
   }
-  /* The section under the pointer takes muted text's hover color, a quiet gray between the passed
-     sections' and those to come, whichever it is: after every rule above, which it outranks. */
-  .env-table-of-contents .env-table-of-contents-link:hover:is(*, [data-passed], [aria-current]) {
+  /* The section under the pointer takes muted text's hover color, a quiet gray between the current
+     section's and the others', whichever it is: after every rule above, which it outranks. */
+  .env-table-of-contents .env-table-of-contents-link:hover:is(*, [aria-current]) {
     color: var(--env-color-fg-muted-hover);
   }
 
