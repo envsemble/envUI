@@ -443,6 +443,49 @@
     }
   }
 
+  /* A region with more to scroll sideways fades at the edge it scrolls toward, its frame included, so
+     a column cut short reads as more to see rather than the table's end; scrolled to an end, that
+     edge is whole again. A region with nothing to scroll has no scroll timeline and never fades, nor
+     does one with keyboard focus, whose ring the fade would cover. */
+  @property --env-table-fade-start {
+    syntax: '<length>';
+    inherits: false;
+    initial-value: 0rem;
+  }
+  @property --env-table-fade-end {
+    syntax: '<length>';
+    inherits: false;
+    initial-value: 0rem;
+  }
+  @supports (animation-timeline: scroll()) {
+    .env-table-region:not(:focus-visible) {
+      mask-image: linear-gradient(
+        to right,
+        transparent,
+        var(--env-color-fg-default) var(--env-table-fade-start),
+        var(--env-color-fg-default) calc(100% - var(--env-table-fade-end)),
+        transparent
+      );
+      animation: env-table-edge-fade linear both;
+      animation-timeline: scroll(self inline);
+    }
+  }
+  @keyframes env-table-edge-fade {
+    0% {
+      --env-table-fade-start: 0rem;
+      --env-table-fade-end: 2rem;
+    }
+    5%,
+    95% {
+      --env-table-fade-start: 2rem;
+      --env-table-fade-end: 2rem;
+    }
+    100% {
+      --env-table-fade-start: 2rem;
+      --env-table-fade-end: 0rem;
+    }
+  }
+
   /* In a skeleton, the header's cells carry the skeleton's tint over their fill, as the region does
      over its own (Skeleton.css). */
   [data-env-skeleton] .env-table-head .env-table-header-cell {
