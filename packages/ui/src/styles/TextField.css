@@ -332,6 +332,14 @@
     border-radius: var(--env-radius-full);
     background: currentColor;
     pointer-events: none;
+    opacity: 0;
+    transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);
+  }
+  /* At rest the edge is the frame alone; the grip shows under the pointer, while the field or the
+     handle has focus, so the keyboard finds it, and while it is dragged. */
+  .env-text-field-control:is(:hover, :focus-within) > .env-textarea-resize-handle::after,
+  .env-textarea-resize-handle[data-resizing]::after {
+    opacity: 1;
   }
   /* Older browsers retain the shared edge when native content sizing is unavailable. */
   @supports (field-sizing: content) {
@@ -359,7 +367,8 @@
     .env-text-field-border,
     .env-text-field-border > legend,
     .env-text-field-control > label,
-    .env-textarea-resize-handle {
+    .env-textarea-resize-handle,
+    .env-textarea-resize-handle::after {
       transition: none;
     }
   }
