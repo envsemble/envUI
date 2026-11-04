@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { Fragment, useMemo } from 'react';
 import { Column, CopyButton, DescriptionList, Row, Surface, Text } from '@envsemble/envui';
 import { Code } from '@envsemble/envui/content';
 import { AgentLogos } from '../brand/AgentLogos';
@@ -70,7 +70,17 @@ function AgentSetup() {
       >
         <AgentLogos className="docs-agent-logos" />
         <Text render={<code />} className="docs-agent-prompt-text">
-          {setupPrompt}
+          {/* Where it wraps, as on a phone, the address breaks after a slash. */}
+          {setupPrompt.split('/').map((piece, index) => (
+            <Fragment key={index}>
+              {index > 0 && (
+                <>
+                  /<wbr />
+                </>
+              )}
+              {piece}
+            </Fragment>
+          ))}
         </Text>
         <CopyButton value={setupPrompt} variant="ghost" size="sm" aria-label="Copy prompt" />
       </Surface>
