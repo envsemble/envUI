@@ -408,12 +408,12 @@ body {
   text-decoration: underline;
   text-underline-offset: 0.2em;
 }
-/* The five columns sit in one row beside the wordmark where they fit. Narrower, the wordmark moves
-   above them, and they keep one row, then go three and two, then pair up two to a row in a compact
-   page, so none is left on a row of its own. */
+/* The four columns sit in one row beside the wordmark where they fit. Narrower, the wordmark moves
+   above them, and they keep one row, then pair up two to a row, so none is left on a row of its
+   own. */
 @container site-footer (width >= 37.5rem) {
   .site-footer-columns {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 @container site-footer (width < 66rem) {
@@ -424,17 +424,8 @@ body {
     align-self: stretch;
   }
 }
-@container site-footer (37.5rem <= width < 54rem) {
+@container site-footer (width < 46rem) {
   .site-footer-columns {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-@container site-footer (width < 37.5rem) {
-  .site-footer-main {
-    flex-direction: column;
-  }
-  .site-footer-columns {
-    align-self: stretch;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     column-gap: var(--env-space-5);
   }
