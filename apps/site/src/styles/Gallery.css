@@ -10,9 +10,10 @@
 }
 
 .catalogue-gallery-grid {
+  /* The least width a component drawn at its own size is drawn whole at (useFit.ts). */
+  --catalogue-own-least: 14rem;
   display: grid;
-  /* Four to a row on a wide page, and one to a row on a phone, where two would draw each
-     component too small to read. */
+  /* Four to a row on a wide page, and two on a phone (below). */
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
   gap: var(--env-space-7) var(--env-space-5);
   margin: 0;
@@ -37,11 +38,26 @@
   max-block-size: none;
 }
 
-/* One to a row, as on a phone, a component's tile is wide and low: the component at its own size,
-   as on a wide page, with the room its window needs above and below it. */
+/* On a phone, components two to a row on lower stages, so the gallery stays short: each at its
+   own size, as on a wide page, and what is larger than the stage cut off at its end and its foot,
+   such as a popup under its trigger, the trigger and the top of the popup in view. A pattern's
+   scene keeps its taller tile, one to a row. */
 @container catalogue-gallery (width < 27.25rem) {
+  .catalogue-gallery-grid:not([data-scenes]) {
+    --catalogue-own-least: 0rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: var(--env-space-5);
+    column-gap: var(--env-space-4);
+  }
+  /* The picture, not the stage, is clipped to the stage's corners: a popup measures the room it
+     has against the boxes that clip it, and would shift off its trigger to fit inside a stage
+     narrower than it, rather than run past the stage's end and be cut off there. */
   .catalogue-gallery-grid:not([data-scenes]) .catalogue-gallery-stage.catalogue-gallery-stage {
-    aspect-ratio: 16 / 9;
+    aspect-ratio: 3 / 2;
+    overflow: visible;
+  }
+  .catalogue-gallery-grid:not([data-scenes]) .catalogue-related-crop {
+    clip-path: inset(0 round var(--env-radius-surface));
   }
 }
 
@@ -82,7 +98,8 @@
 
 /* Drawn at its own size, a component lays out as wide as the stage's room, less the fit's inset,
    so what it opens stays in view, but never narrower than the tiles' window, 14 rem, which a
-   narrower stage draws smaller, by one scale for every tile (useFit.ts); and at least as tall as
+   narrower stage draws smaller, by one scale for every tile (`--catalogue-own-least`, useFit.ts),
+   but on a phone; and at least as tall as
    its tile's window, so what opens below it has the room it was written for. What is larger,
    such as a calendar, is cut off at its end. */
 .catalogue-gallery-stage.catalogue-gallery-stage .catalogue-related-canvas[data-own-size] {
