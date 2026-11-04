@@ -227,13 +227,20 @@ test('every anatomy figure numbers each part its legend names', async ({ page })
     await goTo(page, route);
     const anatomy = page.locator('.site-anatomy');
     await expect(anatomy, `${id} shows its anatomy figures`).toHaveCount(figures);
-    for (const figure of await anatomy.all()) {
-      const legend = await figure.locator('.site-anatomy-legend > li:not([data-whole])').count();
-      await expect(
-        figure.locator('.site-anatomy-stage .site-anatomy-badge'),
-        `${id} numbers every part`,
-      ).toHaveCount(legend);
-    }
+    for (const figure of await anatomy.all())
+      await expect
+        .poll(
+          () =>
+            figure.evaluate((element) => {
+              const badges = element.querySelectorAll('.site-anatomy-stage .site-anatomy-badge');
+              const numbered = element.querySelectorAll(
+                '.site-anatomy-legend > li:not([data-whole])',
+              );
+              return badges.length > 0 && badges.length === numbered.length;
+            }),
+          { message: `${id} numbers every part` },
+        )
+        .toBe(true);
   }
 });
 
