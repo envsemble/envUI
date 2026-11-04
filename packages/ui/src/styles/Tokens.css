@@ -160,6 +160,7 @@
   --env-color-fg-control: #434346;
   --env-color-fg-danger: #ac190f;
   --env-color-fg-default: #1f1f22;
+  --env-color-fg-disabled: #808083;
   --env-color-fg-done: #006071;
   --env-color-fg-link: #0053b5;
   --env-color-fg-link-hover: #004aa2;
@@ -416,6 +417,7 @@
   --env-color-fg-control: #e8eaee;
   --env-color-fg-danger: #f8aca6;
   --env-color-fg-default: #e8eaee;
+  --env-color-fg-disabled: #898c91;
   --env-color-fg-done: #81cbd7;
   --env-color-fg-link: #9fc1f8;
   --env-color-fg-link-hover: #8ab3f5;
@@ -549,6 +551,7 @@
   --env-color-fg-control: #29292c;
   --env-color-fg-danger: #7a0200;
   --env-color-fg-default: #131315;
+  --env-color-fg-disabled: #57575a;
   --env-color-fg-done: #00404c;
   --env-color-fg-link: #00377c;
   --env-color-fg-link-hover: #002f6d;
@@ -683,6 +686,7 @@
     --env-color-fg-control: #29292c;
     --env-color-fg-danger: #7a0200;
     --env-color-fg-default: #131315;
+    --env-color-fg-disabled: #57575a;
     --env-color-fg-done: #00404c;
     --env-color-fg-link: #00377c;
     --env-color-fg-link-hover: #002f6d;
@@ -810,6 +814,7 @@
   --env-color-fg-control: #eff1f5;
   --env-color-fg-danger: #ffe4e2;
   --env-color-fg-default: #f6f8fc;
+  --env-color-fg-disabled: #a1a4a9;
   --env-color-fg-done: #b5f5ff;
   --env-color-fg-link: #e0ebfd;
   --env-color-fg-link-hover: #eaf2ff;
@@ -932,6 +937,7 @@
     --env-color-fg-control: #eff1f5;
     --env-color-fg-danger: #ffe4e2;
     --env-color-fg-default: #f6f8fc;
+    --env-color-fg-disabled: #a1a4a9;
     --env-color-fg-done: #b5f5ff;
     --env-color-fg-link: #e0ebfd;
     --env-color-fg-link-hover: #eaf2ff;

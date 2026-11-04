@@ -190,7 +190,7 @@ Tokens are named `--env-color-{bg|fg|border}-{role}[-{emphasis}][-{state}]`, emp
 
 - **Backgrounds:** `bg-page`, the deepest; `bg-recessed`, a well on it; `bg-default`, `bg-muted` and `bg-raised`, the surfaces; `bg-popup`, the fill of dialogs, menus and popovers, frosted or solid, in dark a step lighter than the surfaces they open over; `bg-field`, `bg-selected`; `bg-backdrop`, the backdrop behind dialogs.
 - **Fills:** `bg-neutral-muted`, a translucent layer of the text color under secondary buttons, chips, switch tracks and skeletons; `bg-neutral-subtle`, the state layer of controls without a fill, such as ghost and outline buttons; `emphasis` and `strong` solid fills.
-- **Text:** `fg-default`, `fg-muted` for supporting text and icons, `fg-control`, `fg-link`, `fg-on-selected`, and one per tone.
+- **Text:** `fg-default`, `fg-muted` for supporting text and icons, `fg-disabled` for the label and value of a disabled control, `fg-control`, `fg-link`, `fg-on-selected`, and one per tone.
 - **Borders:** `border-default`, the only boundary of a control, at least 3:1; `border-muted` for the hairlines between a list's items, quote bars and other decorative edges; `border-focus`; `border-media`, the inner edge of images.
 
 The colors come from an internal palette of eleven hues, and the pastel hues of avatars, in grades from 0 to 100, where the grade difference alone sets the contrast: 50 grades apart give at least 4.5:1. The light theme takes a nearly neutral gray, the dark theme a slightly blue-tinted one.

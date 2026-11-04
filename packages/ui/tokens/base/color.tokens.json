@@ -746,6 +746,10 @@
           "$value": "{palette.gray.80}"
         }
       },
+      "disabled": {
+        "$description": "The label, value and icon of a control that is disabled: quieter than muted text yet still readable, so a disabled control reads as unavailable rather than missing; its fill or outline quiets more. Disabled controls are exempt from the contrast minimums.",
+        "$value": "{palette.gray.45}"
+      },
       "control": {
         "$description": "The labels of navigation items, secondary buttons and Select options, the values of meters and sliders, and the thumb of a switch that is off.",
         "$value": "{palette.gray.75}"

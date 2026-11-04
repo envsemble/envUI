@@ -1723,6 +1723,17 @@ export const tokens = {
       'dark-high-contrast': '#f6f8fc',
     },
   },
+  /** The label, value and icon of a control that is disabled: quieter than muted text yet still readable, so a disabled control reads as unavailable rather than missing; its fill or outline quiets more. Disabled controls are exempt from the contrast minimums. */
+  'color.fg.disabled': {
+    cssVariable: '--env-color-fg-disabled',
+    type: 'color',
+    values: {
+      light: '#808083',
+      dark: '#898c91',
+      'light-high-contrast': '#57575a',
+      'dark-high-contrast': '#a1a4a9',
+    },
+  },
   /** Done text and icons. */
   'color.fg.done': {
     cssVariable: '--env-color-fg-done',

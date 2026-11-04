@@ -568,6 +568,9 @@
           "$value": "{palette.neutral.10}"
         }
       },
+      "disabled": {
+        "$value": "{palette.neutral.40}"
+      },
       "control": {
         "$value": "{palette.neutral.6}"
       },

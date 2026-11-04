@@ -323,6 +323,7 @@ A wrapper of your own that passes a variant and a tone on types them as Button d
 
 ## Changelog
 
+- **1.0.0-prerelease.6**: A disabled button no longer fades as a whole: its label and icon take `--env-color-fg-disabled`, a filled one half the secondary's neutral fill and an outline one the muted edge, so it stays readable, also in dark.
 - **1.0.0-prerelease.6**: An accent primary is a pill like every other button, rather than having square corners.
 - **1.0.0-prerelease.6**: A ButtonGroup's buttons meet with a hairline between them and small inner corners, so the group reads as one control with pill ends; outline buttons in a group share their edge.
 - **1.0.0-prerelease.5**: An outline button is an edge with no fill at rest, the same on the page, a pane, a card or a popup; hover and press lay a state layer over the surface beneath it.

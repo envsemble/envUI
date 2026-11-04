@@ -419,24 +419,25 @@
   }
 
   .env-button:is(:disabled, [aria-disabled='true']) {
-    opacity: var(--env-state-disabled-opacity);
     cursor: default;
   }
-  /* An unavailable button reads as unavailable rather than as a lighter brand color: a primary one,
-     in any tone, takes the secondary's neutral fill and label, and an outline or a labelled text one
-     the neutral label and edge. A pending one keeps its colors. */
-  .env-button:where([data-variant='primary']):is(:disabled, [aria-disabled='true']):not(
-      [data-pending]
-    ) {
-    background: var(--env-button-custom-fill, var(--env-color-bg-neutral-muted));
-    color: var(--env-button-content, var(--env-color-fg-default));
+  /* An unavailable button reads as unavailable rather than as a lighter brand color, without the
+     whole button fading: its label and icon take the disabled text color, and its shape quiets more
+     than the label: a primary or secondary one, in any tone, takes half the secondary's neutral
+     fill, and an outline one the muted edge. A pending one keeps its colors. */
+  .env-button:is(:disabled, [aria-disabled='true']):not([data-pending]) {
+    color: var(--env-color-fg-disabled);
   }
-  .env-button:where([data-variant='outline'], [data-variant='text']:not(.env-icon-button)):is(
+  .env-button:where([data-variant='primary'], [data-variant='secondary']):is(
       :disabled,
       [aria-disabled='true']
     ):not([data-pending]) {
-    border-color: var(--env-button-outline, var(--env-color-border-default));
-    color: var(--env-button-content, var(--env-color-fg-default));
+    background: color-mix(in srgb, var(--env-color-bg-neutral-muted) 50%, transparent);
+  }
+  .env-button:where([data-variant='outline']):is(:disabled, [aria-disabled='true']):not(
+      [data-pending]
+    ) {
+    border-color: var(--env-color-border-muted);
   }
 
   /* fullWidth: a labelled button fills its container, such as a narrow form's stacked actions. */

@@ -477,6 +477,9 @@
             "$value": "{palette.gray.92}"
           }
         },
+        "disabled": {
+          "$value": "{palette.gray.65}"
+        },
         "control": {
           "$value": "{palette.gray.88}"
         },
