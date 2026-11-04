@@ -140,7 +140,11 @@ test.describe('search', () => {
     await search(page, 'date');
     const groups = dialog(page).getByRole('group');
     await expect(groups.first()).toContainText('DatePicker');
-    await expect(groups.last()).toHaveAccessibleName('Mentions');
+    await expect(groups.last()).toHaveAccessibleName('Also mentioned in');
+    // The pages it names, components and patterns, come before the props.
+    const top = async (name: string) =>
+      (await dialog(page).getByRole('group', { name, exact: true }).boundingBox())!.y;
+    expect(await top('Patterns')).toBeLessThan(await top('Props'));
     await expect(groups.last().locator('[data-item-id="page:table"]')).toBeVisible();
     // The props of the component found come first, a few of them, then a row that shows the rest
     // in place and keeps search open.

@@ -180,7 +180,13 @@ body {
     transparent
   );
 }
-/* The search shortcut's keys show for a keyboard alone: a touch screen has none to press. */
+/* The results end a little apart from the footer of keys under them. */
+.site-search .env-command-palette-footer {
+  margin-block-start: var(--env-space-2);
+}
+/* The search shortcut's keys show for a keyboard alone, on a window wide enough to hold them: a
+   touch screen has none to press, and in the navigation's sheet of a narrower window they would
+   crowd the wordmark and the close button on search's row. */
 @media (pointer: coarse) {
   .site-search-keys {
     display: none;
