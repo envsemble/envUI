@@ -430,25 +430,21 @@ body {
   padding: var(--env-space-6) var(--site-gutter) var(--env-space-8);
   margin-top: auto;
 }
-/* The foot of every page, set apart from the page by space alone: the wordmark, the catalogue's
-   destinations in columns, as many as fit and wrapping onto more rows in a narrow page. Its links are quiet text that comes forward when hovered. */
+/* The foot of every page, set apart from the page by space alone: one compact row, the wordmark
+   and the version at its start, a few links at its end. Its links are quiet text that comes
+   forward when hovered. */
 .site-footer {
-  container: site-footer / inline-size;
   background: var(--env-color-bg-default);
 }
 .site-footer-inner {
   inline-size: min(100%, var(--site-content-width));
   margin-inline: auto;
-  padding: var(--env-space-7) var(--site-gutter) var(--env-space-8);
+  padding: var(--env-space-6) var(--site-gutter);
 }
 .site-footer-brand {
   display: block;
   flex: none;
   inline-size: 4.5rem;
-}
-.site-footer-columns {
-  flex: 1;
-  min-inline-size: 0;
 }
 .site-footer-brand svg {
   display: block;
@@ -456,9 +452,9 @@ body {
   block-size: auto;
   color: var(--env-color-fg-default);
 }
-.site-footer .site-footer-title {
+.site-footer-version {
   margin: 0;
-  font-weight: var(--env-font-weight-medium);
+  font-variant-numeric: tabular-nums;
 }
 .site-footer-links {
   margin: 0;
@@ -473,28 +469,6 @@ body {
   color: var(--env-color-fg-default);
   text-decoration: underline;
   text-underline-offset: 0.2em;
-}
-/* The four columns sit in one row beside the wordmark where they fit. Narrower, the wordmark moves
-   above them, and they keep one row, then pair up two to a row, so none is left on a row of its
-   own. */
-@container site-footer (width >= 37.5rem) {
-  .site-footer-columns {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-}
-@container site-footer (width < 66rem) {
-  .site-footer-main {
-    flex-direction: column;
-  }
-  .site-footer-columns {
-    align-self: stretch;
-  }
-}
-@container site-footer (width < 46rem) {
-  .site-footer-columns {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: var(--env-space-5);
-  }
 }
 /* A section that a route scrolls to, such as a prop's row, stops below the sticky controls at the
    page's top, as a figure's section does (Figures.css). An example's own sections keep the margins

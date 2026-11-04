@@ -31,7 +31,7 @@ test('the hosted build opens every page of the catalogue and the Docs without ne
   await expect(page.getByRole('heading', { level: 1 })).toHaveAccessibleName('envUI');
   await expect(
     page.locator('.site-footer').getByRole('navigation', { name: 'Footer' }),
-  ).toContainText('Install and set up');
+  ).toContainText('Changelog');
   for (const { path, title, kind, area } of allPages) {
     await goTo(page, path === 'overview' ? '/' : `/${path}`);
     await expect(page.getByRole('heading', { level: 1 }), path).toHaveAccessibleName(
