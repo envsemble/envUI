@@ -72,9 +72,16 @@
       var(--env-color-border-primary-emphasis-pressed)
     );
     --env-text-field-border-color: var(--env-text-field-border-base);
-    /* Where the label starts, resting and floated, and the height of the notch it cuts. */
+    /* Where the label rests, and the height of the notch it cuts once it floats. */
     --env-text-field-label-start: var(--env-space-4);
     --env-text-field-notch: var(--env-space-2);
+    /* The corner's radius as drawn, and where the notch starts: before the label, and no sooner
+       than where the corner's curve has flattened, so the edge runs level into the notch rather than
+       ending in a hook. The floated label sits in the notch, at its rest or past the curve. */
+    --env-text-field-corner: var(--env-radius-lg);
+    --env-text-field-notch-start: calc(
+      max(var(--env-text-field-label-start), var(--env-text-field-corner)) - var(--env-space-1)
+    );
     position: relative;
     min-width: 0;
     /* The border takes its room here and is drawn by the fieldset inside (env-text-field-border). */
@@ -94,7 +101,7 @@
     min-inline-size: 0;
     margin: 0;
     padding-block: 0;
-    padding-inline: calc(var(--env-text-field-label-start) - var(--env-space-1)) var(--env-space-2);
+    padding-inline: var(--env-text-field-notch-start) var(--env-space-2);
     border: var(--env-control-border-width) solid var(--env-text-field-border-color);
     border-radius: inherit;
     pointer-events: none;
@@ -168,6 +175,7 @@
     cursor: text;
     transition:
       inset-block-start var(--env-motion-duration-medium) var(--env-motion-ease),
+      inset-inline-start var(--env-motion-duration-medium) var(--env-motion-ease),
       font-size var(--env-motion-duration-medium) var(--env-motion-ease),
       color var(--env-motion-duration-medium) var(--env-motion-ease),
       padding var(--env-motion-duration-medium) var(--env-motion-ease);
@@ -184,6 +192,7 @@
     )
     > label {
     inset-block-start: -0.625rem;
+    inset-inline-start: calc(var(--env-text-field-notch-start) + var(--env-space-1));
     padding-inline: var(--env-space-1);
     margin-inline-start: calc(-1 * var(--env-space-1));
     font-size: var(--env-font-size-body-sm);
@@ -382,6 +391,7 @@
      full corner keeps the corners of a field that grows taller, as a combobox whose chips wrap, and
      makes it a rounded rectangle. */
   .env-text-field:not([data-tall]) .env-text-field-control {
+    --env-text-field-corner: min(var(--env-radius-full), var(--env-field-height) / 2);
     box-sizing: border-box;
     display: flex;
     min-height: var(--env-field-height);
