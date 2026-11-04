@@ -17,6 +17,8 @@ export interface Callout {
   anchor: { x: number; y: number };
   /** The part's box, outlined; the root's is not. */
   box?: { x: number; y: number; width: number; height: number };
+  /** Where the outline gives way, so it doesn't strike through a label it crosses. */
+  gaps?: { x: number; y: number; width: number; height: number }[];
 }
 
 type Side = 'top' | 'bottom' | 'left' | 'right';
@@ -55,6 +57,43 @@ function boxOf(element: Element, text: boolean, origin: DOMRect): Box | undefine
     right: Math.max(...rects.map((rect) => rect.right)) - origin.left,
     bottom: Math.max(...rects.map((rect) => rect.bottom)) - origin.top,
   };
+}
+
+/** The boxes of the labels that show in the subject, relative to the stage. */
+function labelBoxes(subject: Element, origin: DOMRect): Box[] {
+  return [...subject.querySelectorAll('label')].flatMap((label) => {
+    const rect = label.getBoundingClientRect();
+    return rect.width > 1 && rect.height > 1 ? [boxOf(label, false, origin)!] : [];
+  });
+}
+
+/**
+ * Where a part's outline gives way: across the labels its edge runs through, such as a field's
+ * label floated into its outline, which the dashed line would otherwise strike through. A label
+ * wholly inside the box, or the part itself, leaves the outline whole.
+ */
+function gapsIn(box: Box, labels: Box[]) {
+  const gaps = labels.filter(
+    (label) =>
+      label.left < box.right &&
+      label.right > box.left &&
+      label.top < box.bottom &&
+      label.bottom > box.top &&
+      !(
+        label.left >= box.left - 0.5 &&
+        label.right <= box.right + 0.5 &&
+        label.top >= box.top - 0.5 &&
+        label.bottom <= box.bottom + 0.5
+      ),
+  );
+  return gaps.length
+    ? gaps.map((gap) => ({
+        x: gap.left,
+        y: gap.top,
+        width: gap.right - gap.left,
+        height: gap.bottom - gap.top,
+      }))
+    : undefined;
 }
 
 /** A part's corner radii, in px, as drawn: none for the text of a part. */
@@ -141,6 +180,7 @@ export function measure(stage: HTMLElement, subject: HTMLElement, legend: Anatom
       : [];
   });
   if (!found.length) return [];
+  const labelled = labelBoxes(subject, origin);
   const outer: Box = {
     left: Math.min(...found.map(({ box }) => box.left)),
     top: Math.min(...found.map(({ box }) => box.top)),
@@ -275,6 +315,7 @@ export function measure(stage: HTMLElement, subject: HTMLElement, legend: Anatom
         box: root
           ? undefined
           : { x: box.left, y: box.top, width: box.right - box.left, height: box.bottom - box.top },
+        gaps: root ? undefined : gapsIn(box, labelled),
       });
     });
   }
@@ -353,6 +394,7 @@ export function measureVariants(
     return box ? [{ number: index + 1, box, label: item.label ?? '' }] : [];
   });
   if (!found.length) return { callouts: [], room: { start: 0, top: 0 } };
+  const labelled = labelBoxes(subject, origin);
   const widths = labelWidths(
     stage,
     found.map(({ label }) => label),
@@ -386,6 +428,7 @@ export function measureVariants(
         badge: { x: side === 'left' ? outer.left - reach : outer.right + reach, y },
         anchor: { x: side === 'left' ? box.left : box.right, y },
         box: outline(box),
+        gaps: gapsIn(box, labelled),
       };
     });
     return { callouts, room: { start: Math.ceil(Math.max(...widths) + reach + 8), top: 0 } };
@@ -410,6 +453,7 @@ export function measureVariants(
       badge: { x, y: outer.top - reach },
       anchor: { x: Math.min(Math.max(x, box.left + 2), box.right - 2), y: box.top },
       box: outline(box),
+      gaps: gapsIn(box, labelled),
     };
   });
   return {
