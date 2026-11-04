@@ -197,10 +197,13 @@ const toneOutline = {
 } as const;
 
 /**
- * An alert's fill: the tone's stronger tint, its subtle hover fill. At high contrast it takes the
- * tone's softer tint, its muted fill, with an edge in the border color.
+ * The tone's stronger tint, its subtle hover fill: an alert's hover layer and a soft badge's tint,
+ * which alerts rested on until 1.0.0-prerelease.6. Their text stays measured on it at standard
+ * contrast; an alert now rests on the tone's muted fill (alertRest) in every contrast.
  */
 const alertFill = (tone: (typeof alertTones)[number]) => `--env-color-bg-${tone}-subtle-hover`;
+/** An alert's fill: the tone's muted tint, at every contrast. */
+const alertRest = (tone: (typeof alertTones)[number]) => `--env-color-bg-${tone}-muted`;
 /** What an alert sits on: the page, a pane and a card. */
 const alertGrounds = [page, surface, muted] as const;
 /** The stronger tint of an alert or a soft badge, which high contrast replaces with the softer one. */
@@ -316,11 +319,8 @@ const registry: readonly ContrastPair[] = merged([
       ),
       ...text(
         link,
-        [
-          [`--env-color-bg-${tone}-muted`, page],
-          [`--env-color-bg-${tone}-muted`, surface],
-        ],
-        `Links and text buttons in an alert, tone="${tone === 'primary' ? 'info' : tone}", at rest, hovered and pressed, at high contrast`,
+        alertGrounds.map((ground) => [alertRest(tone), ground]),
+        `Links and text buttons in an alert, tone="${tone === 'primary' ? 'info' : tone}", on its tint, at rest, hovered and pressed`,
       ),
     ]),
   ),
@@ -384,10 +384,19 @@ const registry: readonly ContrastPair[] = merged([
     [raised, '--env-color-bg-raised-hover', '--env-color-bg-raised-pressed'],
     'The icon of a pager link',
   ),
-  // An outline button has no fill: its label sits on the surface beneath it, and on hover and
-  // press on the state layer over that surface.
   ...text(
     '--env-color-fg-primary',
+    [page, surface, muted, raised, popup].flatMap((ground) => [
+      ground,
+      [layerHover, ground],
+      [layerPressed, ground],
+    ]),
+    'Text in the brand’s text color, such as a selected tab’s label or today in a calendar, on the page, a pane, a card, a raised surface or a popup, at rest, hovered and pressed',
+  ),
+  // An outline button has no fill: its label, in the text color, sits on the surface beneath it,
+  // and on hover and press on the state layer over that surface.
+  ...text(
+    '--env-color-fg-default',
     [page, surface, muted, raised, popup].flatMap((ground) => [
       ground,
       [layerHover, ground],
@@ -458,6 +467,10 @@ const registry: readonly ContrastPair[] = merged([
     ]),
     'The label of an outline button in the danger tone, which has no fill: on the page, a pane, a card, a raised surface or a popup, at rest, hovered and pressed',
   ),
+  // Ghost and outline buttons, and icon-only text buttons, in the danger tone lay the tone's own
+  // tint on hover and press: on press the tone's hover layer, a soft danger badge's tint, which the
+  // badge pairs measure under fg.danger on the page, a pane, a card, a raised surface and a popup;
+  // on hover a lighter mix of it, which the label clears by more.
 
   // Fields.
   ...text('--env-color-fg-default', [field]),
@@ -933,28 +946,14 @@ const registry: readonly ContrastPair[] = merged([
     ),
     ...text(
       '--env-color-fg-default',
-      [[`--env-color-bg-${tone}-muted`, page]],
-      `Alert tone="${tone}" at high contrast: the message`,
+      alertGrounds.map((ground) => [alertRest(tone), ground]),
+      `Alert tone="${tone}" on its tint: the message`,
     ),
-    // On a card at high contrast; a soft badge measures the other tones' text on their tint there.
     ...text(
-      '--env-color-fg-default',
-      [[`--env-color-bg-${tone}-muted`, muted]],
-      `Alert tone="${tone}" on a card at high contrast: the message`,
+      toneText(tone),
+      alertGrounds.map((ground) => [alertRest(tone), ground]),
+      `Alert tone="${tone}" on its tint: the title, and the icon held to the text minimum`,
     ),
-    ...(tone === 'primary'
-      ? on(
-          'text',
-          toneText(tone),
-          [[`--env-color-bg-${tone}-muted`, muted]],
-          `Alert tone="${tone}" on a card at high contrast: the title and the icon`,
-          {
-            contrast: 'high',
-            rationale:
-              'The info alert takes this tint only at high contrast; outside it, its stronger tint, measured above.',
-          },
-        )
-      : []),
     ...nonText(
       toneText(tone),
       [
@@ -980,13 +979,13 @@ const registry: readonly ContrastPair[] = merged([
     ...text(
       '--env-color-fg-default',
       [[`--env-color-bg-${tone}-subtle-hover`, `--env-color-bg-${tone}-muted`, page]],
-      `An outline or text button among the actions of an alert, tone="${tone}", on hover at high contrast`,
+      `An outline or text button among the actions of an alert, tone="${tone}", on hover over its tint`,
     ),
     ...on(
       'text',
       '--env-color-fg-default',
       [[`--env-color-bg-${tone}-subtle-pressed`, `--env-color-bg-${tone}-muted`, page]],
-      `An outline or text button among the actions of an alert, tone="${tone}", while pressed at high contrast`,
+      `An outline or text button among the actions of an alert, tone="${tone}", while pressed over its tint`,
       {
         minimum: { high: 4.5 },
         rationale:

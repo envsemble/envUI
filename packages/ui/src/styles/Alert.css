@@ -1,9 +1,8 @@
 @layer env.components {
-  /* Alerts: an inline banner filled with its tone's stronger tint, without an edge, in a card's
-     rounder corner. The title and the icon carry the tone; the message stays primary. Links and text
+  /* Alerts: an inline banner filled with its tone's tint, without an edge, in the large corner of
+     the radius scale, which the compact scale tightens. The title and the icon carry the tone; the message stays primary. Links and text
      buttons in it take the link colors for a tint, as the link blue falls below 4.5:1 on the tints in
-     the light theme. At high contrast the fill is the tone's softer tint and a 1px edge in the border
-     color bounds it; under forced colors the edge, transparent otherwise, is what the system paints. */
+     the light theme. At high contrast a 1px edge in the border color bounds it; under forced colors the edge, transparent otherwise, is what the system paints. */
   /* Color properties: an alert's colors, which an application sets on one alert through style or its
      own CSS: its tint, its text, which its title takes too, its edge and its icon, which its title
      and dismiss button take while its text is its own. They don't inherit, and they win over its tone. */
@@ -45,17 +44,14 @@
     --env-color-fg-link: var(--env-color-fg-link-on-muted);
     --env-color-fg-link-hover: var(--env-color-fg-link-on-muted-hover);
     --env-color-fg-link-pressed: var(--env-color-fg-link-on-muted-pressed);
-    /* Its tone: the text color of the icon and title, the stronger tint it is filled with, and the
-       softer tint, its fill at high contrast. */
+    /* Its tone: the text color of the icon and title, and the tint it rests on, the tone's muted
+       fill; the dismiss button and the actions lay the tone's state layers over it. */
     --env-alert-icon-default: var(--env-color-fg-primary);
-    --env-alert-fill: var(--env-color-bg-primary-subtle-hover);
-    --env-alert-soft-fill: var(--env-color-bg-primary-muted);
+    --env-alert-fill: var(--env-color-bg-primary-muted);
     --env-alert-hover: var(--env-color-bg-primary-subtle-hover);
     --env-alert-pressed: var(--env-color-bg-primary-subtle-pressed);
-    /* A card's corner, a step rounder than a control's and below a surface's. */
-    --env-alert-radius: 1.25rem;
-    /* The high-contrast fill and edge, valid only under high contrast (see Theme.css). */
-    --env-alert-high-contrast-fill: var(--env-theme-high-contrast) var(--env-alert-soft-fill);
+    --env-alert-radius: var(--env-radius-lg);
+    /* The high-contrast edge, valid only under high contrast (see Theme.css). */
     --env-alert-high-contrast-edge: var(--env-theme-high-contrast) var(--env-color-border-default);
     box-sizing: border-box;
     /* A little less inset above and below than at the sides, as a card's. */
@@ -63,37 +59,26 @@
     border: 0.0625rem solid
       var(--env-alert-outline, var(--env-alert-high-contrast-edge, transparent));
     border-radius: var(--env-alert-radius);
-    background: var(
-      --env-alert-container,
-      var(--env-alert-high-contrast-fill, var(--env-alert-fill))
-    );
+    background: var(--env-alert-container, var(--env-alert-fill));
     color: var(--env-alert-text-color);
     font: var(--env-type-body);
     overflow-wrap: break-word;
   }
   .env-alert[data-tone='success'] {
     --env-alert-icon-default: var(--env-color-fg-success);
-    --env-alert-fill: var(--env-color-bg-success-subtle-hover);
-    --env-alert-soft-fill: var(--env-color-bg-success-muted);
+    --env-alert-fill: var(--env-color-bg-success-muted);
     --env-alert-hover: var(--env-color-bg-success-subtle-hover);
     --env-alert-pressed: var(--env-color-bg-success-subtle-pressed);
   }
-  /* In dark the warning rests on its softer tint: on the stronger one, its amber title and icon
-     sank into a brown. light-dark() follows the nearest theme's color scheme. */
   .env-alert[data-tone='warning'] {
     --env-alert-icon-default: var(--env-color-fg-warning);
-    --env-alert-fill: light-dark(
-      var(--env-color-bg-warning-subtle-hover),
-      var(--env-color-bg-warning-muted)
-    );
-    --env-alert-soft-fill: var(--env-color-bg-warning-muted);
+    --env-alert-fill: var(--env-color-bg-warning-muted);
     --env-alert-hover: var(--env-color-bg-warning-subtle-hover);
     --env-alert-pressed: var(--env-color-bg-warning-subtle-pressed);
   }
   .env-alert[data-tone='danger'] {
     --env-alert-icon-default: var(--env-color-fg-danger);
-    --env-alert-fill: var(--env-color-bg-danger-subtle-hover);
-    --env-alert-soft-fill: var(--env-color-bg-danger-muted);
+    --env-alert-fill: var(--env-color-bg-danger-muted);
     --env-alert-hover: var(--env-color-bg-danger-subtle-hover);
     --env-alert-pressed: var(--env-color-bg-danger-subtle-pressed);
   }
@@ -143,7 +128,7 @@
        than the link blue: an outline or text button's label takes the message's text color, an
        outline's edge the title's color at 55%, and hover and press lay the dismiss button's layers
        of the tone, over which the text color keeps 4.5:1. */
-    --env-color-fg-primary: var(--env-alert-text-color);
+    --env-color-fg-default: var(--env-alert-text-color);
     --env-color-fg-link: var(--env-alert-text-color);
     --env-color-fg-link-hover: var(--env-alert-text-color);
     --env-color-fg-link-pressed: var(--env-alert-text-color);

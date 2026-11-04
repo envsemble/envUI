@@ -148,7 +148,7 @@ An Alert takes its `tone`, a short `title`, the message as `children`, and `acti
 
 #### Tones
 
-`tone` is `info`, the default, `success`, `warning` or `danger`, for an error or a failure; a toast has `neutral` instead of `warning`, since a warning stays on the page, here. It sets the fill, the tone's stronger tint, or a warning's softer one in dark, and the color of the title and the icon. An alert has no edge, except at high contrast, where it takes the tone's softer tint and an edge in the border color.
+`tone` is `info`, the default, `success`, `warning` or `danger`, for an error or a failure; a toast has `neutral` instead of `warning`, since a warning stays on the page, here. It sets the fill, the tone's tint, and the color of the title and the icon. An alert has no edge, except at high contrast, where an edge in the border color bounds it.
 
 ```tsx
 <Alert title="Sync paused">Changes are saved on this device until you reconnect.</Alert>
@@ -188,6 +188,7 @@ An Alert draws an edge only at high contrast, unless its outline color sets one,
 
 ## Changelog
 
+- **1.0.0-prerelease.6**: An alert rests on its tone's tint, `--env-color-bg-{tone}-muted`, in every theme and contrast, rather than the tone's hover layer, and takes the large corner of the radius scale, `--env-radius-lg`, which the compact scale tightens, rather than a fixed 1.25 rem, so a one-line alert no longer reads as a pill.
 - **1.0.0-prerelease.6**: Outline, ghost and text buttons among the actions take the alert's text color, an outline's edge the tone's color, and the tone's hover and press layers, rather than the link blue on every tone.
 - **1.0.0-prerelease.5**: A card's inset, 14 px above and below and 16 px at the sides; the title is semibold in the body size, 2 px above the message, which takes the small body size.
 - **1.0.0**: No edge outside high contrast: the tone's stronger tint fills it, the title takes the tone's color as the icon does, and its corners are a card's, 1.25 rem. At high contrast it keeps the softer tint with an edge in the border color.

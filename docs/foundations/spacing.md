@@ -230,9 +230,9 @@ Inside a Theme these tokens follow the theme, its scale and the reader's text si
 | ----------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `--env-space-1` … `--env-space-9`                                 | The spacing scale                                                                                                                                                |
 | `--env-radius-xs`                                                 | 0.25 rem: small marks, checkboxes and color swatches                                                                                                             |
-| `--env-radius-sm`                                                 | Inner rows, important actions, toasts and thumbnails                                                                                                             |
-| `--env-radius-lg`                                                 | Fields, text areas, tables and drop zones; a single-line field's corner is no more than a third of its height                                                    |
-| `--env-radius-surface`                                            | Panes, cards and the outside of a row group                                                                                                                      |
+| `--env-radius-sm`                                                 | Inner rows, important actions and thumbnails                                                                                                                     |
+| `--env-radius-lg`                                                 | Alerts, toasts, fields, text areas, tables and drop zones; a single-line field's corner is no more than a third of its height                                    |
+| `--env-radius-surface`                                            | Panes, cards, dialogs, sheets and the outside of a row group                                                                                                     |
 | `--env-radius-full`                                               | Rounded ends: buttons, ghost fields, navigation items, badges; half the tallest single-line control, 1.5 rem at most, so a taller element is a rounded rectangle |
 | `--env-control-height`, `--env-control-height-sm` / `-md` / `-lg` | Control heights, to line up with                                                                                                                                 |
 | `--env-control-icon-size`                                         | 1 rem: the icon inside controls                                                                                                                                  |
@@ -243,8 +243,8 @@ The catalogue shows four kinds of corner; small marks are a fifth, for code. The
 
 | In the catalogue | Token and where it is used                                                                                                                      |
 | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| Surfaces         | `--env-radius-surface`: panes, cards, dialogs, popups and the outside of a row group                                                            |
-| Inside a surface | `--env-radius-lg` for alerts, fields, tables, text areas and drop zones; `--env-radius-sm` for list rows, menu items, tabs, toasts and tooltips |
+| Surfaces         | `--env-radius-surface`: panes, cards, dialogs, sheets and the outside of a row group; popups take a smaller corner, concentric with their rows  |
+| Inside a surface | `--env-radius-lg` for alerts, toasts, fields, tables, text areas and drop zones; `--env-radius-sm` for list rows, menu items, tabs and tooltips |
 | Fully rounded    | `--env-radius-full`: buttons, ghost fields, badges, switches, segmented controls and navigation items                                           |
 | Circles          | `50%`: avatars and icon buttons, which are always square                                                                                        |
 | Small marks      | `--env-radius-xs`: checkboxes and color swatches, which read as boxes                                                                           |
