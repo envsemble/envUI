@@ -161,7 +161,9 @@
   --env-color-fg-avatar-seafoam: #266b68;
   --env-color-fg-control: #434346;
   --env-color-fg-danger: #ac190f;
+  --env-color-fg-danger-hover: #9f0300;
   --env-color-fg-danger-on-strong: #f8aca6;
+  --env-color-fg-danger-pressed: #7a0200;
   --env-color-fg-default: #1f1f22;
   --env-color-fg-disabled: #808083;
   --env-color-fg-done: #455874;
@@ -171,7 +173,7 @@
   --env-color-fg-link-on-muted: #0053b5;
   --env-color-fg-link-on-muted-hover: #004aa2;
   --env-color-fg-link-on-muted-pressed: #00408f;
-  --env-color-fg-link-pressed: #00408f;
+  --env-color-fg-link-pressed: #00377c;
   --env-color-fg-muted: #4d4d50;
   --env-color-fg-muted-hover: #434346;
   --env-color-fg-muted-pressed: #39393d;
@@ -422,6 +424,8 @@
   --env-color-fg-avatar-seafoam: #97c9c1;
   --env-color-fg-control: #e8eaee;
   --env-color-fg-danger: #f8aca6;
+  --env-color-fg-danger-hover: #ee9c95;
+  --env-color-fg-danger-pressed: #e68c84;
   --env-color-fg-default: #e8eaee;
   --env-color-fg-disabled: #898c91;
   --env-color-fg-done: #aac1dd;
@@ -558,7 +562,9 @@
   --env-color-fg-avatar-seafoam: #004140;
   --env-color-fg-control: #29292c;
   --env-color-fg-danger: #7a0200;
+  --env-color-fg-danger-hover: #6b0100;
   --env-color-fg-danger-on-strong: #ffd3cf;
+  --env-color-fg-danger-pressed: #5a0100;
   --env-color-fg-default: #131315;
   --env-color-fg-disabled: #57575a;
   --env-color-fg-done: #253650;
@@ -698,7 +704,9 @@
     --env-color-fg-avatar-seafoam: #004140;
     --env-color-fg-control: #29292c;
     --env-color-fg-danger: #7a0200;
+    --env-color-fg-danger-hover: #6b0100;
     --env-color-fg-danger-on-strong: #ffd3cf;
+    --env-color-fg-danger-pressed: #5a0100;
     --env-color-fg-default: #131315;
     --env-color-fg-disabled: #57575a;
     --env-color-fg-done: #253650;
@@ -843,6 +851,8 @@
   --env-color-fg-avatar-seafoam: #c5f4eb;
   --env-color-fg-control: #eff1f5;
   --env-color-fg-danger: #ffe4e2;
+  --env-color-fg-danger-hover: #ffedeb;
+  --env-color-fg-danger-pressed: #fff6f5;
   --env-color-fg-default: #f6f8fc;
   --env-color-fg-disabled: #a1a4a9;
   --env-color-fg-done: #deecfd;
@@ -980,6 +990,8 @@
     --env-color-fg-avatar-seafoam: #c5f4eb;
     --env-color-fg-control: #eff1f5;
     --env-color-fg-danger: #ffe4e2;
+    --env-color-fg-danger-hover: #ffedeb;
+    --env-color-fg-danger-pressed: #fff6f5;
     --env-color-fg-default: #f6f8fc;
     --env-color-fg-disabled: #a1a4a9;
     --env-color-fg-done: #deecfd;

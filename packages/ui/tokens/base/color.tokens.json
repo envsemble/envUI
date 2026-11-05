@@ -796,8 +796,8 @@
           "$value": "{palette.blue.70}"
         },
         "pressed": {
-          "$description": "A link while pressed.",
-          "$value": "{palette.blue.75}"
+          "$description": "A link while pressed: a grade past its hover in light.",
+          "$value": "{palette.blue.80}"
         }
       },
       "primary": {
@@ -821,8 +821,18 @@
         "$value": "{palette.amber.65}"
       },
       "danger": {
-        "$description": "Danger text and icons, and field errors.",
-        "$value": "{palette.red.65}"
+        "$root": {
+          "$description": "Danger text and icons, and field errors.",
+          "$value": "{palette.red.65}"
+        },
+        "hover": {
+          "$description": "A danger text button under the pointer: a grade darker in light and in dark, as a link is.",
+          "$value": "{palette.red.70}"
+        },
+        "pressed": {
+          "$description": "A danger text button while pressed: a grade past its hover.",
+          "$value": "{palette.red.80}"
+        }
       },
       "done": {
         "$description": "Done text and icons.",

@@ -509,7 +509,15 @@
           "$value": "{palette.amber.6}"
         },
         "danger": {
-          "$value": "{palette.red.6}"
+          "$root": {
+            "$value": "{palette.red.6}"
+          },
+          "hover": {
+            "$value": "{palette.red.4}"
+          },
+          "pressed": {
+            "$value": "{palette.red.2}"
+          }
         },
         "done": {
           "$value": "{palette.slate.6}"

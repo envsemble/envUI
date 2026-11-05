@@ -225,7 +225,8 @@
   }
 
   /* Under the pointer a text button's label is underlined in its full color, as a link's is, and
-     darkens a step; a press keeps the underline and darkens it another. */
+     takes the link's hover color; a press keeps the underline and takes the pressed color, a step
+     further. */
   .env-button:where([data-variant='text']):hover:not(:disabled):not([aria-disabled='true']) {
     color: var(--env-button-content, var(--env-color-fg-link-hover));
     text-decoration: underline;
@@ -376,15 +377,27 @@
 
   .env-button:where([data-tone='danger']):where([data-variant='ghost'], [data-variant='text']),
   .env-button:where([data-tone='danger'][data-variant='text']).env-icon-button,
-  .env-button:where([data-tone='danger']):where([data-variant='ghost'], [data-variant='text']):is(
-      :hover,
-      :active
-    ):not(:disabled):not([aria-disabled='true']),
+  .env-button:where([data-tone='danger'][data-variant='ghost']):is(:hover, :active):not(
+      :disabled
+    ):not([aria-disabled='true']),
   .env-button:where([data-tone='danger'][data-variant='text']).env-icon-button:is(
       :hover,
       :active
     ):not(:disabled):not([aria-disabled='true']) {
     color: var(--env-button-content, var(--env-color-fg-danger));
+  }
+
+  /* A danger text button with a label steps as the link blue does: a grade darker under the pointer
+     and another while pressed, so a press reads apart from hover. */
+  .env-button:where([data-tone='danger'][data-variant='text']):not(.env-icon-button):hover:not(
+      :disabled
+    ):not([aria-disabled='true']) {
+    color: var(--env-button-content, var(--env-color-fg-danger-hover));
+  }
+  .env-button:where([data-tone='danger'][data-variant='text']):not(.env-icon-button):active:not(
+      :disabled
+    ):not([aria-disabled='true']) {
+    color: var(--env-button-content, var(--env-color-fg-danger-pressed));
   }
 
   /* Their state layers are a faint tint of the danger color rather than the neutral grey, so the

@@ -1745,6 +1745,28 @@ export const tokens = {
       'dark-high-contrast': '#ffd3cf',
     },
   },
+  /** A danger text button under the pointer: a grade darker in light and in dark, as a link is. */
+  'color.fg.danger.hover': {
+    cssVariable: '--env-color-fg-danger-hover',
+    type: 'color',
+    values: {
+      light: '#9f0300',
+      dark: '#ee9c95',
+      'light-high-contrast': '#6b0100',
+      'dark-high-contrast': '#ffedeb',
+    },
+  },
+  /** A danger text button while pressed: a grade past its hover. */
+  'color.fg.danger.pressed': {
+    cssVariable: '--env-color-fg-danger-pressed',
+    type: 'color',
+    values: {
+      light: '#7a0200',
+      dark: '#e68c84',
+      'light-high-contrast': '#5a0100',
+      'dark-high-contrast': '#fff6f5',
+    },
+  },
   /** Body text and the labels of rows, fields and choice controls. */
   'color.fg.default': {
     cssVariable: '--env-color-fg-default',
@@ -1844,12 +1866,12 @@ export const tokens = {
       'dark-high-contrast': '#eaf2ff',
     },
   },
-  /** A link while pressed. */
+  /** A link while pressed: a grade past its hover in light. */
   'color.fg.link.pressed': {
     cssVariable: '--env-color-fg-link-pressed',
     type: 'color',
     values: {
-      light: '#00408f',
+      light: '#00377c',
       dark: '#75a5f2',
       'light-high-contrast': '#00275c',
       'dark-high-contrast': '#f4f8ff',

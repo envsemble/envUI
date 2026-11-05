@@ -283,6 +283,16 @@ const registry: readonly ContrastPair[] = merged([
   ),
   ...text('--env-color-fg-link-hover', [page, surface, muted]),
   ...text('--env-color-fg-link-pressed', [page, surface, muted]),
+  ...text(
+    '--env-color-fg-danger-hover',
+    [page, surface, muted, raised, popup],
+    'A danger text button under the pointer; in a selected table row it keeps the danger color',
+  ),
+  ...text(
+    '--env-color-fg-danger-pressed',
+    [page, surface, muted, raised, popup],
+    'A danger text button while pressed; in a selected table row it keeps the danger color',
+  ),
   // Where a tint lowers the link blue below 4.5:1 in the light theme, links and text buttons take
   // the link colors for a tint: alerts and rows under the pointer or pressed point fg.link at them,
   // and applications put them on the brand's muted tint.
