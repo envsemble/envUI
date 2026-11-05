@@ -144,8 +144,9 @@
 
   /* The open list is the menus' frosted popup, with their corners and rows that highlight on hover
      and keyboard focus, where a check mark and a heavier label show the chosen option. It is at least
-     as wide as its field, wider only for a label that needs it; options with descriptions keep it to
-     the field's width, their descriptions wrapping, so it never runs past the field's end. */
+     as wide as its field, wider only for a label that needs it. Options with descriptions let it grow
+     to 20 rem, or the field's width where that is more, their descriptions wrapping past it, so a
+     short description stays on one line beside a narrow field. */
   .env-select-popup {
     width: max-content;
     min-width: min(var(--anchor-width), var(--available-width));
@@ -156,7 +157,7 @@
     border-radius: var(--env-popup-radius);
   }
   .env-select-popup:has(.env-select-item[aria-describedby]) {
-    width: min(var(--anchor-width), var(--available-width));
+    max-width: min(max(var(--anchor-width), 20rem), var(--available-width));
   }
   .env-select-popup[hidden] {
     display: none;
