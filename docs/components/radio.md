@@ -139,7 +139,7 @@ Keep links and buttons out of labels and descriptions: pressing anywhere on an o
 
 - A `label` for the group, or `aria-label`.
 - A `name` for a group in a form.
-- Errors linked with `aria-describedby`, and focus on the group when a form is refused.
+- Focus on the group when a form is refused.
 
 ## Compose
 
@@ -171,7 +171,7 @@ A RadioGroup holds Radio options and is a native `<fieldset>`: its `label`, the 
 
 #### Required and disabled
 
-`required` asks for a choice before the form submits, through native constraint validation. Show the error under the group, linked with `aria-describedby`, and move focus to the group when a form is refused, as the RequiredChoice example does; envUI has no error message for RadioGroup yet, so a Text with `role="alert"` holds it. `disabled` disables every option: the group keeps its choice visible, but can't be focused or changed. Say where to change it in a sentence beside it.
+`required` asks for a choice before the form submits, through native constraint validation. Pass the message as `error` and move focus to the group when a form is refused, as the RequiredChoice example does. `disabled` disables every option: the group keeps its choice visible, but can't be focused or changed. Say where to change it in a sentence beside it.
 
 ```tsx
 <RadioGroup label="Access" value="team" disabled aria-describedby={reason}>
