@@ -191,7 +191,7 @@
   },
   "packages/ui/src/styles/Toast.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 10
+      "count": 8
     },
     "no-duplicate-selectors": {
       "count": 1

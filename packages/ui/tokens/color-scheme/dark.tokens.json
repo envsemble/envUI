@@ -620,6 +620,15 @@
       "on-strong": {
         "$value": "{palette.neutral.0}"
       },
+      "success-on-strong": {
+        "$value": "{palette.green.20}"
+      },
+      "info-on-strong": {
+        "$value": "{palette.blue.20}"
+      },
+      "danger-on-strong": {
+        "$value": "{palette.red.20}"
+      },
       "link-on-muted": {
         "$root": {
           "$value": "{palette.blue.20}"

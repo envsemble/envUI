@@ -215,7 +215,7 @@
         },
         "strong": {
           "$root": {
-            "$description": "The dark neutral fill of tooltips and neutral toasts in both themes; paired with fg.on-strong.",
+            "$description": "The dark neutral fill of tooltips and toasts in both themes; paired with fg.on-strong, and a toast’s tone icon with fg.{success|info|danger}-on-strong.",
             "$value": "{palette.gray.75}"
           },
           "hover": {
@@ -359,15 +359,15 @@
         },
         "strong": {
           "$root": {
-            "$description": "The teal success fill of toasts in both themes; paired with fg.on-strong.",
+            "$description": "A strong teal success fill in both themes; paired with fg.on-strong. Toasts take the neutral strong fill, their tone in the icon.",
             "$value": "{palette.teal.60}"
           },
           "hover": {
-            "$description": "A control on the success toast, its action or dismiss button, under the pointer. Its white label keeps 4.5:1.",
+            "$description": "A control on the strong success fill under the pointer. Its white label keeps 4.5:1.",
             "$value": "{palette.teal.55}"
           },
           "pressed": {
-            "$description": "A control on the success toast while pressed. Its white label keeps 4.5:1.",
+            "$description": "A control on the strong success fill while pressed. Its white label keeps 4.5:1.",
             "$value": "{palette.teal.50}"
           }
         }
@@ -475,15 +475,15 @@
         },
         "strong": {
           "$root": {
-            "$description": "The danger fill of error toasts in both themes; paired with fg.on-strong.",
+            "$description": "A strong danger fill in both themes; paired with fg.on-strong. Toasts take the neutral strong fill, their tone in the icon.",
             "$value": "{palette.red.60}"
           },
           "hover": {
-            "$description": "A control on the error toast, its action or dismiss button, under the pointer: lighter, as on every toast, at the lightest grade that keeps white labels at 4.5:1.",
+            "$description": "A control on the strong danger fill under the pointer: lighter, at the lightest grade that keeps white labels at 4.5:1.",
             "$value": "{palette.red.50}"
           },
           "pressed": {
-            "$description": "A control on the error toast while pressed. It can’t lighten further without its white label falling below 4.5:1, so it settles halfway back.",
+            "$description": "A control on the strong danger fill while pressed. It can’t lighten further without its white label falling below 4.5:1, so it settles halfway back.",
             "$value": "{palette.red.55}"
           }
         }
@@ -507,15 +507,15 @@
       "info": {
         "strong": {
           "$root": {
-            "$description": "The information fill of toasts in both themes; paired with fg.on-strong.",
+            "$description": "A strong information fill in both themes; paired with fg.on-strong. Toasts take the neutral strong fill, their tone in the icon.",
             "$value": "{palette.steel.60}"
           },
           "hover": {
-            "$description": "A control on the information toast under the pointer. Its white label keeps 4.5:1.",
+            "$description": "A control on the strong information fill under the pointer. Its white label keeps 4.5:1.",
             "$value": "{palette.steel.55}"
           },
           "pressed": {
-            "$description": "A control on the information toast while pressed. Its white label keeps 4.5:1.",
+            "$description": "A control on the strong information fill while pressed. Its white label keeps 4.5:1.",
             "$value": "{palette.steel.50}"
           }
         }
@@ -836,6 +836,18 @@
         "$description": "White in both themes, on the strong fills: labels at 4.5:1 on the danger, accent, neutral, success and information fills, at rest, hovered and pressed; marks at 3:1 on the primary strong fill.",
         "$value": "{palette.neutral.0}"
       },
+      "success-on-strong": {
+        "$description": "A success toast’s icon, on the neutral strong fill of toasts in both themes, at 3:1 on its tinted disc.",
+        "$value": "{palette.green.20}"
+      },
+      "info-on-strong": {
+        "$description": "An information toast’s icon, on the neutral strong fill of toasts in both themes, at 3:1 on its tinted disc.",
+        "$value": "{palette.blue.20}"
+      },
+      "danger-on-strong": {
+        "$description": "A danger toast’s icon, on the neutral strong fill of toasts in both themes, at 3:1 on its tinted disc.",
+        "$value": "{palette.red.20}"
+      },
       "link-on-muted": {
         "$root": {
           "$description": "Links and text buttons on a tint, where fg.link falls below 4.5:1: inside alerts, on bg.primary.muted, and in list rows and interactive table rows under the pointer or pressed. In light it is a grade darker than fg.link and darkens on hover and press; in dark it is fg.link at rest and lightens on hover and press, where fg.link darkens. Alerts and those rows point fg.link at it; an application puts it on bg.brand-muted.",
@@ -1125,7 +1137,7 @@
           }
         },
         "strong": {
-          "$description": "The edge of the strong danger fill where it floats, on error toasts. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge, elevation.2.border, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted.",
+          "$description": "The edge of the strong danger fill where it floats. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge, elevation.2.border, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted.",
           "$value": "{palette.red.70}"
         },
         "emphasis": {
@@ -1155,7 +1167,7 @@
           }
         },
         "strong": {
-          "$description": "The edge of the strong neutral fill where it floats, on tooltips and neutral toasts. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge, elevation.2.border, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted.",
+          "$description": "The edge of the strong neutral fill where it floats, on tooltips and toasts. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge, elevation.2.border, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted.",
           "$value": "{palette.gray.84}"
         }
       },
@@ -1181,7 +1193,7 @@
           }
         },
         "strong": {
-          "$description": "The edge of the strong success fill where it floats, on success toasts. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge, elevation.2.border, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted.",
+          "$description": "The edge of the strong success fill where it floats. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge, elevation.2.border, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted.",
           "$value": "{palette.teal.70}"
         }
       },
@@ -1213,7 +1225,7 @@
       },
       "info": {
         "strong": {
-          "$description": "The edge of the strong information fill where it floats, on information toasts. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge, elevation.2.border, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted.",
+          "$description": "The edge of the strong information fill where it floats. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge, elevation.2.border, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted.",
           "$value": "{palette.steel.70}"
         }
       },

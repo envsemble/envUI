@@ -1094,6 +1094,13 @@ const registry: readonly ContrastPair[] = merged([
     ],
     'Toasts and tooltips, and the focus ring of a toast’s dismiss button',
   ),
+  ...(['success', 'info', 'danger'] as const).flatMap((tone) =>
+    nonText(
+      `--env-color-fg-${tone}-on-strong`,
+      [[`toast-icon-disc-${tone}`, '--env-color-bg-neutral-strong']],
+      'A toast’s tone icon, on its disc over the toast’s neutral strong fill',
+    ),
+  ),
   ...text(
     '--env-color-fg-on-strong',
     [
@@ -3308,6 +3315,7 @@ const ofLabel = (formula: string, token: string) =>
 
 const separator = markedColor('packages/ui/src/styles/Button.css', 'button-end-separator');
 const badgeOutline = markedColor('packages/ui/src/styles/Button.css', 'badge-outline');
+const toastIconDisc = markedColor('packages/ui/src/styles/Toast.css', 'toast-icon-disc');
 const tooltipFill = markedColor('packages/ui/src/styles/Tooltip.css', 'tooltip-frosted');
 const tooltipKeyFill = markedColor('packages/ui/src/styles/Tooltip.css', 'tooltip-key');
 
@@ -3318,6 +3326,12 @@ export const derived: Readonly<Record<string, string>> = {
     ),
   ),
   'badge-outline-primary': ofLabel(badgeOutline, '--env-color-fg-on-emphasis'),
+  ...Object.fromEntries(
+    ['success', 'info', 'danger'].map((tone) => [
+      `toast-icon-disc-${tone}`,
+      ofLabel(toastIconDisc, `--env-color-fg-${tone}-on-strong`),
+    ]),
+  ),
   'badge-outline-important': ofLabel(badgeOutline, '--env-color-fg-on-strong'),
   'heatmap-accent-lowest':
     'color-mix(in srgb, var(--env-color-fg-primary) 30%, var(--env-color-bg-page))',

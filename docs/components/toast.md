@@ -179,7 +179,7 @@ Put one ToastProvider near the root of the application. Any component inside it 
 
 #### Tones
 
-`tone` is `neutral`, the default, with no icon, `success`, `info` or `danger`. A danger notification stays until it is dismissed, is announced at once as an alert, and is never hidden behind the count.
+`tone` is `neutral`, the default, with no icon, `success`, `info` or `danger`. Every tone takes the same dark fill, and the tone shows in its icon, so a stack stays quiet beside the page's content. A danger notification stays until it is dismissed, is announced at once as an alert, and is never hidden behind the count.
 
 A toast has no `warning` tone, unlike Alert: a warning needs attention where it applies, so it is an Alert on the page, not a notification that passes.
 
@@ -226,13 +226,14 @@ The parts are each placement's region, `env-toast-viewport`, with `data-placemen
 
 ### Customize
 
-A Toast draws an edge only at high contrast, unless its outline color sets one, and its container color takes the place of the tone's fill.
+A Toast draws an edge only at high contrast, unless its outline color sets one, and its container color takes the place of the dark fill; with its content color set, the tone icon takes that color too.
 
 ## Changelog
 
 - **1.0.0**: No edge outside high contrast, where the tone's edge bounds it, and an alert's corners, 1.25 rem. The notifications' theme boundary, `env-toast-portal-theme`, is `env-toast-theme`, as Popup's is `env-popup-theme`.
 - **1.0.0**: `limit` for `visibleLimit`, as Base UI names it. `tone` for `variant`, with `danger` for `error`, and `ToastTone`; `bottom-end` for `bottom-right`, which follows the text direction, with the top-center stack centered in either direction; the region names, hidden count and dismiss button come from the provider's messages; danger notifications are alerts at once and always shown; the dismiss button is an IconButton with a cross; the manual `Toast` is gone.
 - **1.0.0**: `ToastProvider` and `useToast` keep their names. The manual `Toast` component and `ToastProps` are no longer exported; show notifications with `useToast` inside `ToastProvider`.
+- **1.0.0-prerelease.6**: Every tone takes the neutral toast's dark fill, `--env-color-bg-neutral-strong`, with its icon in the tone's light grade on a faint disc of it, rather than a solid green, blue or red fill. Every toast in a region is one width, 22 rem, less the gutters on a phone, so a stack's edges line up.
 - **1.0.0-prerelease.6**: A toast takes the large corner of the radius scale, `--env-radius-lg`, as an alert does, rather than a fixed 1.25 rem.
 - **1.0.0-prerelease.6**: The action is an outline button in the notification's own text color, with its edge in that color and the dismiss button's hover and press fills, rather than a blue primary button on the tone's fill. Notifications wait while a modal is open in the same container and show once it closes, rather than covering its actions.
 - **1.0.0-prerelease.5**: 16 px from its start edge to its icon or message, and 10 px between its parts.
