@@ -249,6 +249,25 @@
   }
   .env-table-sort-button .env-icon {
     color: var(--env-color-fg-muted);
+    transition: opacity var(--env-motion-duration-fast) var(--env-motion-ease);
+  }
+  /* With a pointer that hovers, an unsorted column's neutral arrow shows only while the pointer is
+     over the header row or the header has keyboard focus, as the resize handles do, so a dense header
+     rests on its labels; the sorted column's arrow always shows. It keeps its room, so the label
+     doesn't move. Without hover, as on touch, every arrow shows. */
+  @media (hover: hover) {
+    .env-table-header-cell[aria-sort='none'] .env-table-sort-button .env-icon {
+      opacity: 0;
+    }
+    .env-table-head .env-table-row:hover .env-table-sort-button .env-icon,
+    .env-table-header-cell .env-table-sort-button:focus-visible .env-icon {
+      opacity: 1;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .env-table-sort-button .env-icon {
+      transition: none;
+    }
   }
   .env-table-header-cell:is([aria-sort='ascending'], [aria-sort='descending']) {
     color: var(--env-color-fg-default);
