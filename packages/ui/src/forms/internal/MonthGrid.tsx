@@ -26,6 +26,25 @@ export function monthGridActive(root: ParentNode | null | undefined): HTMLElemen
 /** A year's months in rows of three. */
 const columns = 3;
 
+/**
+ * The short names of a year's months in the format's locale, of one length where the locale makes
+ * nearly all of them that long: a longer name of letters alone is cut to it, such as Sept among
+ * en-GB's three-letter months, as long as the names stay distinct. Names with punctuation or digits,
+ * and a locale whose names vary in length, keep the locale's own.
+ */
+function shortMonthNames(format: Intl.DateTimeFormat): string[] {
+  const names = Array.from({ length: 12 }, (_, month) => format.format(Date.UTC(2001, month, 1)));
+  const length = (name: string) => Array.from(name).length;
+  const counts = new Map<number, number>();
+  for (const name of names) counts.set(length(name), (counts.get(length(name)) ?? 0) + 1);
+  const [common, count] = [...counts].reduce((most, entry) => (entry[1] > most[1] ? entry : most));
+  if (count < 9) return names;
+  const longer = names.filter((name) => length(name) > common);
+  if (!longer.every((name) => /^\p{L}+$/u.test(name))) return names;
+  const cut = names.map((name) => Array.from(name).slice(0, common).join(''));
+  return new Set(cut).size === names.length ? cut : names;
+}
+
 export interface MonthGridProps {
   value: number | undefined;
   onChoose: (month: number) => void;
@@ -69,7 +88,7 @@ export function MonthGrid({
   const formats = useMemo(
     () => ({
       year: dateFormat(locale, { year: 'numeric' }),
-      short: dateFormat(locale, { month: 'short' }),
+      short: shortMonthNames(dateFormat(locale, { month: 'short' })),
       long: dateFormat(locale, { month: 'long', year: 'numeric' }),
     }),
     [locale],
@@ -187,7 +206,9 @@ export function MonthGrid({
                       if (month !== active) setActiveState(month);
                     }}
                   >
-                    <span className="env-month-picker-month-mark">{formats.short.format(day)}</span>
+                    <span className="env-month-picker-month-mark">
+                      {formats.short[month - first]}
+                    </span>
                   </td>
                 );
               })}

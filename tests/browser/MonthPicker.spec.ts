@@ -44,6 +44,9 @@ test('the field shows its month in the locale and the grid follows the calendar 
   await expect(grid.getByRole('row').first().getByRole('gridcell')).toHaveCount(3);
   await expect(grid.locator('[data-month="2026-01"]')).toHaveAccessibleName('January 2026');
   await expect(grid.locator('[data-month="2026-01"]')).toHaveText('Jan');
+  // en-GB names September Sept among its three-letter months: the grid keeps them of one length.
+  await expect(grid.locator('[data-month="2026-09"]')).toHaveText('Sep');
+  await expect(grid.locator('[data-month="2026-09"]')).toHaveAccessibleName('September 2026');
   // Focus moves to the chosen month, the grid's only tab stop; this month is marked.
   await expect.poll(() => focusedMonth(page)).toBe('2026-10');
   await expect(grid.locator('td[tabindex="0"]')).toHaveCount(1);
