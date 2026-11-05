@@ -31,7 +31,9 @@ avoidWhen:
 components:
   - PanelDock
 examples:
-  DocumentDrafts: overview
+  DocumentDrafts:
+    role: overview
+    device: window
   MaximizedPanel:
     role: example
     caption: A maximized panel fills the region; Restore returns it to the row.
@@ -53,7 +55,7 @@ examples:
 | Minimized | Setting a panel aside as a tab over the bottom edge, with its content kept and nothing moved. |
 | Maximized | Giving one panel the whole region, behind the open panels.                                    |
 
-```tsx figure=MaximizedPanel motion
+```tsx figure=MaximizedPanel motion device=window
 
 ```
 

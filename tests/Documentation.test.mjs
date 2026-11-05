@@ -428,17 +428,17 @@ test('the build fails a page that is not in the one-file structure', async () =>
     await rejects(
       frontmatter.replace('  Narrow: example', '  Narrow:\n    role: example\n    width: 30') +
         body,
-      /gives Narrow a field other than role, caption, open, stage, motion, wide/,
+      /gives Narrow a field other than role, caption, open, stage, motion, wide, device/,
     );
     await rejects(
       frontmatter.replace('  Narrow: example', '  Narrow:\n    role: example\n    wide: true') +
         body,
-      /gives Narrow open, stage, motion or wide, which only an overview example takes here/,
+      /gives Narrow open, stage, motion, wide or device, which only an overview example takes here/,
     );
     await rejects(
       frontmatter.replace('  Narrow: example', '  Narrow:\n    role: example\n    open: true') +
         body,
-      /gives Narrow open, stage, motion or wide, which only an overview example takes here/,
+      /gives Narrow open, stage, motion, wide or device, which only an overview example takes here/,
     );
     // An example the catalogue plays needs its specimen of the same name.
     await rejects(

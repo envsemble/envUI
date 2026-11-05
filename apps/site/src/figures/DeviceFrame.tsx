@@ -1,146 +1,142 @@
-import { useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
+import {
+  createContext,
+  use,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+  type RefObject,
+} from 'react';
 import { Text } from '@envsemble/envui';
 import { IconArrowBack } from '@envsemble/envui/icons/ArrowBack';
 import { IconArrowForward } from '@envsemble/envui/icons/ArrowForward';
 import { IconBatteryFull } from '@envsemble/envui/icons/BatteryFull';
 import { IconLock } from '@envsemble/envui/icons/Lock';
-import { IconSignalCellularAlt } from '@envsemble/envui/icons/SignalCellularAlt';
-import { IconWifi } from '@envsemble/envui/icons/Wifi';
+import { IconRefresh } from '@envsemble/envui/icons/Refresh';
+import { IconSignalCellular4Bar } from '@envsemble/envui/icons/SignalCellular4Bar';
+import { IconSignalWifi4Bar } from '@envsemble/envui/icons/SignalWifi4Bar';
+import type { DeviceKind } from '../shared/DocumentationTypes';
 
 /*
- * A device frame around a figure: a phone or a desktop window whose screen is a window of its own,
- * at a real width, so a frame of an application, such as a Scaffold, lays out as it does on that
- * device. The frame is the only graphic; what it shows is the figure as it is. A stage scales the
- * frames it holds, together, to fit it (DeviceStage). A demo for now (DeviceFrameBoard.tsx), not
- * used by the site's pages.
+ * A device drawn around a page's figure: a phone or a browser's window whose screen is a window of
+ * its own, at a real width, so a frame of an application, such as a Scaffold, lays out as it does
+ * on that device. The device is a line drawing: one hairline around the whole body, a phone's
+ * status bar and home indicator, a window's address bar; what its screen shows is the figure as it
+ * is. A page's figure takes one with `device` on its fence (LiveExample.tsx); the gallery's and
+ * Related's cards never do.
  */
-
-/** The kinds of device: a phone, portrait, or a desktop browser's window. */
-export type DeviceKind = 'phone' | 'window';
-
-/**
- * How the frame is drawn: `outline`, a hairline around the screen; `bezel`, a band of the muted
- * surface around it; `cutaway`, the outline rising from the stage's foot, cut off by it, drawn
- * larger.
- */
-export type DeviceLook = 'outline' | 'bezel' | 'cutaway';
 
 /** The screen's size, in rem, of each kind: a phone 384 px across, a window 1024 px. */
 const screens: Record<DeviceKind, { width: number; height: number }> = {
-  phone: { width: 24, height: 50 },
+  phone: { width: 24, height: 44 },
   window: { width: 64, height: 40 },
 };
 
-/** The share of a frame's height a cutaway shows, its top, the rest cut off at the stage's foot. */
-const cutawayShows = 0.62;
-
-export interface DeviceStageProps {
-  look: DeviceLook;
-  children: ReactNode;
-  className?: string;
-  style?: CSSProperties;
-  /** Data attributes for the stage, such as a site stage's `data-stage`. */
-  [data: `data-${string}`]: string | undefined;
-}
+/**
+ * The device a page's figure is drawn in, which an animated figure's stage (MotionStage) puts
+ * around what it plays: the figure's, from its fence, never a card's.
+ */
+export const FigureDevice = createContext<DeviceKind | undefined>(undefined);
 
 /**
- * A stage of one or more device frames side by side, their feet in line, scaled together to fit
- * it, inset from its edges: whole, or for a cutaway, its top share as large as fits, cut off at
- * the stage's foot. The stage's own class gives its size and fill, such as a gallery card's.
+ * Whether what renders is on a device's screen: a specimen that frames its example in a window of
+ * its own width, such as a sweep's frame, shows it on the screen as it is instead.
  */
-export function DeviceStage({ look, children, className, style, ...data }: DeviceStageProps) {
+const OnScreen = createContext(false);
+
+/** Whether what renders is on a device's screen (DeviceFrame). */
+export const useOnScreen = () => use(OnScreen);
+
+/**
+ * A device at its own size, scaled to fit its stage's width and at most `--site-device-most` high,
+ * never drawn larger than it is; the place it holds on the stage is the scaled size, so the stage
+ * is as tall as the device it shows.
+ */
+export function DeviceStage({ children }: { children: ReactNode }) {
   const stage = useRef<HTMLDivElement>(null);
   const row = useRef<HTMLDivElement>(null);
-  const [scale, setScale] = useState(0);
-  // How much of a cutaway's row shows, in its own px: down to the stage's foot, where it fades out.
-  const [cut, setCut] = useState<number>();
+  const [fit, setFit] = useState<{ scale: number; width: number; height: number }>();
   useLayoutEffect(() => {
     const stageElement = stage.current;
     const rowElement = row.current;
     if (!stageElement || !rowElement) return;
     const update = () => {
-      const box = getComputedStyle(stageElement);
-      const inset = parseFloat(box.getPropertyValue('--site-device-inset')) || 0;
       const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
-      const width = stageElement.clientWidth - 2 * inset * rem;
-      const height = stageElement.clientHeight - (look === 'cutaway' ? 1 : 2) * inset * rem;
+      const most =
+        parseFloat(getComputedStyle(stageElement).getPropertyValue('--site-device-most')) * rem ||
+        Infinity;
       // offsetWidth and offsetHeight are the row's own, before its scale.
-      const across = width / rowElement.offsetWidth;
-      const down = height / (rowElement.offsetHeight * (look === 'cutaway' ? cutawayShows : 1));
-      const next = Math.max(0.01, Math.min(across, down, 1));
-      setScale(next);
-      setCut(look === 'cutaway' ? height / next : undefined);
+      const width = rowElement.offsetWidth;
+      const height = rowElement.offsetHeight;
+      if (!width || !height) return;
+      const scale = Math.min(1, stageElement.clientWidth / width, most / height);
+      setFit((current) =>
+        current && Math.abs(current.scale - scale) < 0.001
+          ? current
+          : { scale, width: width * scale, height: height * scale },
+      );
     };
     update();
-    const observer = new ResizeObserver(update);
+    // Measured in the next frame: the size it sets resizes the stage it observes.
+    let request = 0;
+    const observer = new ResizeObserver(() => {
+      cancelAnimationFrame(request);
+      request = requestAnimationFrame(update);
+    });
     observer.observe(stageElement);
     observer.observe(rowElement);
-    return () => observer.disconnect();
-  }, [look]);
+    return () => {
+      cancelAnimationFrame(request);
+      observer.disconnect();
+    };
+  }, []);
   return (
     <div
       ref={stage}
-      className={['site-device-stage', className].filter(Boolean).join(' ')}
-      data-look={look}
-      {...data}
-      style={{ ...style, '--site-device-scale': scale } as CSSProperties}
+      className="site-device-stage"
+      style={{ '--site-device-scale': fit?.scale ?? 1 } as CSSProperties}
     >
       <div
-        ref={row}
-        className="site-device-row"
-        data-fitted={scale ? '' : undefined}
-        style={cut ? ({ '--site-device-cut': `${cut}px` } as CSSProperties) : undefined}
+        className="site-device-fit"
+        style={fit && { inlineSize: fit.width, blockSize: fit.height }}
       >
-        {children}
+        <div ref={row} className="site-device-row" data-fitted={fit ? '' : undefined}>
+          {children}
+        </div>
       </div>
     </div>
   );
-}
-
-export interface DeviceFrameProps {
-  kind: DeviceKind;
-  children: ReactNode;
-  /** The address the window's bar shows. */
-  address?: string;
-  /** The screen's height, in rem, where it isn't the kind's. */
-  height?: number;
-  /**
-   * Whether the figure fills the screen's height: a figure that stands a box in for the window,
-   * such as a Scaffold 22 rem high, takes the screen's height instead, as the frame is its window.
-   */
-  fill?: boolean;
-  /** What the frame is named for assistive technology, such as the figure's subject. */
-  label?: string;
 }
 
 /** The phone's status bar: the time at its start, the signal, the Wi-Fi and the battery at its end. */
 function StatusBar() {
   return (
     <div className="site-device-bar" aria-hidden>
-      <Text variant="body-sm" render={<span />} className="site-device-time">
-        9:41
+      <Text variant="caption" render={<span />} className="site-device-time">
+        9:30
       </Text>
-      <span className="site-device-camera" />
-      <span className="site-device-status">
-        <IconSignalCellularAlt />
-        <IconWifi />
+      <span className="site-device-glyphs">
+        <IconSignalWifi4Bar />
+        <IconSignalCellular4Bar />
         <IconBatteryFull />
       </span>
     </div>
   );
 }
 
-/** The window's bar: back and forward, and the address in a field-like pill. */
+/** The window's address bar: back, forward and reload, and the address in a pill. */
 function AddressBar({ address }: { address: string }) {
   return (
     <div className="site-device-bar" aria-hidden>
-      <span className="site-device-buttons">
+      <span className="site-device-glyphs">
         <IconArrowBack />
         <IconArrowForward />
+        <IconRefresh />
       </span>
       <span className="site-device-address">
         <IconLock />
-        <Text variant="body-sm" render={<span />} emphasis="muted">
+        <Text variant="caption" render={<span />}>
           {address}
         </Text>
       </span>
@@ -149,23 +145,55 @@ function AddressBar({ address }: { address: string }) {
 }
 
 /**
+ * Makes the figure on a screen as tall as the screen, which stands in for its window: the first
+ * element on it, and through the wrappers that hold it, down to the example's own root, an envUI
+ * part or the box that set its height, such as a Scaffold standing a 22 rem box in for the window.
+ * It holds as the figure loads, goes live and comes back.
+ */
+function useFill(screen: RefObject<HTMLDivElement | null>) {
+  useLayoutEffect(() => {
+    const element = screen.current;
+    if (!element) return;
+    // Whether each element filled is where the figure's own height was, read before filling it.
+    const filled = new WeakMap<HTMLElement, boolean>();
+    const fill = () => {
+      let next = [...element.children].find(
+        (child) => !child.classList.contains('catalogue-overlay-layer'),
+      );
+      for (let depth = 0; next instanceof HTMLElement && depth < 4; depth++) {
+        const own =
+          filled.get(next) ??
+          (Boolean(next.style.blockSize) || [...next.classList].some((name) => /^env-/.test(name)));
+        filled.set(next, own);
+        next.style.blockSize = '100%';
+        if (own) break;
+        next = next.firstElementChild ?? undefined;
+      }
+    };
+    fill();
+    const observer = new MutationObserver(fill);
+    observer.observe(element, { childList: true, subtree: true });
+    return () => observer.disconnect();
+  }, [screen]);
+}
+
+export interface DeviceFrameProps {
+  kind: DeviceKind;
+  children: ReactNode;
+  /** The address the window's bar shows. */
+  address?: string;
+  /** What the device is named for assistive technology, such as the figure's subject. */
+  label?: string;
+}
+
+/**
  * A phone or a window around a figure, at its own size: the stage around it scales it. The screen
  * is the figure's window, a size container named env-window as a width frame is (Stage.css), and
- * the containing block of its fixed overlays.
+ * the containing block of its fixed overlays; the figure fills it.
  */
-export function DeviceFrame({
-  kind,
-  children,
-  address = 'northwind.app',
-  height,
-  fill = false,
-  label,
-}: DeviceFrameProps) {
+export function DeviceFrame({ kind, children, address = 'example.com', label }: DeviceFrameProps) {
   const screen = useRef<HTMLDivElement>(null);
-  useLayoutEffect(() => {
-    const figure = screen.current?.firstElementChild;
-    if (fill && figure instanceof HTMLElement) figure.style.blockSize = '100%';
-  }, [fill]);
+  useFill(screen);
   const size = screens[kind];
   return (
     <div
@@ -178,10 +206,30 @@ export function DeviceFrame({
       <div
         ref={screen}
         className="site-device-screen"
-        style={{ inlineSize: `${size.width}rem`, blockSize: `${height ?? size.height}rem` }}
+        style={{ inlineSize: `${size.width}rem`, blockSize: `${size.height}rem` }}
       >
-        {children}
+        <OnScreen value>{children}</OnScreen>
       </div>
+      {kind === 'phone' && <span className="site-device-home" aria-hidden />}
     </div>
+  );
+}
+
+/** A figure on a device of its kind, fitted to its stage. */
+export function OnDevice({
+  kind,
+  label,
+  children,
+}: {
+  kind: DeviceKind;
+  label?: string;
+  children: ReactNode;
+}) {
+  return (
+    <DeviceStage>
+      <DeviceFrame kind={kind} label={label}>
+        {children}
+      </DeviceFrame>
+    </DeviceStage>
   );
 }

@@ -131,6 +131,7 @@ export interface ExampleEntry {
   stage?: string;
   motion?: boolean;
   wide?: boolean;
+  device?: string;
 }
 
 /** The props of every export, as docs/generated/props.json holds them. */
@@ -172,7 +173,8 @@ export const exampleRoles: readonly string[] = [
  * `CreateProject: overview`, or a role and a caption. An overview example, which no fence places,
  * takes here the framing a fence gives a figure: `open: true` shows its overlays open on its stage,
  * `stage: shaded` the deeper stage of a whole window, `motion: true` plays it in the catalogue,
- * by its animated specimen of the same name, and `wide: true` gives it a row of its own.
+ * by its animated specimen of the same name, `wide: true` gives it a row of its own, and
+ * `device: phone` or `device: window` draws it on that device's screen, at its real width.
  */
 export function examplesOf(frontmatter: Frontmatter | undefined): Record<string, ExampleEntry> {
   return Object.fromEntries(
@@ -187,16 +189,17 @@ export function examplesOf(frontmatter: Frontmatter | undefined): Record<string,
             ...(value?.stage !== undefined && { stage: value.stage }),
             ...(value?.motion !== undefined && { motion: value.motion }),
             ...(value?.wide !== undefined && { wide: value.wide }),
+            ...(value?.device !== undefined && { device: value.device }),
           },
     ]),
   );
 }
 
 /**
- * The fields of an example's entry in the frontmatter; open, stage, motion and wide are an
+ * The fields of an example's entry in the frontmatter; open, stage, motion, wide and device are an
  * overview's alone.
  */
-export const exampleFields = ['role', 'caption', 'open', 'stage', 'motion', 'wide'];
+export const exampleFields = ['role', 'caption', 'open', 'stage', 'motion', 'wide', 'device'];
 
 /**
  * The developer part of a page: its "## Compose" section, which the catalogue leaves out and the

@@ -35,6 +35,7 @@ examples:
     role: overview
     stage: shaded
     motion: true
+    device: phone
   ChooseForms:
     role: example
     caption: A drawer only, and none on a phone.
@@ -66,7 +67,7 @@ A button can narrow the navigation to a strip of icons by asking for the rail in
 
 - Don't build a narrow drawer of your own: the Scaffold already has both forms.
 
-```tsx figure=NarrowNavigation stage=shaded motion
+```tsx figure=NarrowNavigation stage=shaded motion device=window
 
 ```
 

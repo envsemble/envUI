@@ -43,7 +43,9 @@ components:
   - Page
   - PageHeader
 examples:
-  WithHeader: overview
+  WithHeader:
+    role: overview
+    device: window
   WithBreadcrumbs: example
   WithToolbar: example
   PageAnatomy: anatomy

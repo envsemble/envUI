@@ -11,7 +11,8 @@ import {
 } from 'react';
 import { Disclosure, Column, Text, Theme, useTheme } from '@envsemble/envui';
 import { CodeBlock } from '@envsemble/envui/content';
-import type { StageFill } from '../shared/DocumentationTypes';
+import type { DeviceKind, StageFill } from '../shared/DocumentationTypes';
+import { FigureDevice, OnDevice } from './DeviceFrame';
 import { LoadBoundary, loadModule, reloadModule } from '../template/LoadBoundary';
 import { OpenExample } from './OpenExample';
 import { CodeSkeleton, exampleLines, StageSkeleton } from '../template/Loading';
@@ -287,7 +288,9 @@ function WidthBox({ width, children }: { width: number; children: ReactNode }) {
  * person would, takes the stage's place, above its caption and code. With `open` and `live`, as an
  * overview's, it rests with its overlay open, and people can use it; without `live`, it is a still
  * picture, marked as one. Without `code`, as the preview at the top of a Docs page's Usage, whose
- * code follows it, it shows no code of its own.
+ * code follows it, it shows no code of its own. With `device`, it shows on a phone's or a window's
+ * screen at the device's real width, filling it, the device drawn to fit the stage (DeviceFrame),
+ * an animated one too: its stage puts the device around what it plays.
  */
 export function LiveExample({
   page,
@@ -303,6 +306,7 @@ export function LiveExample({
   stage,
   motion = false,
   code = true,
+  device,
 }: {
   page: string;
   name: string;
@@ -325,6 +329,8 @@ export function LiveExample({
   motion?: boolean;
   /** Whether its code shows under it, in a disclosure. */
   code?: boolean;
+  /** The device it shows on, at the device's real width. */
+  device?: DeviceKind;
 }) {
   const theme = useTheme();
   const render = open ? (
@@ -337,7 +343,9 @@ export function LiveExample({
   return (
     <Column gap={3} className="site-live-example-entry">
       {motion ? (
-        <SpecimenRender page={page} name={name} />
+        <FigureDevice value={device}>
+          <SpecimenRender page={page} name={name} />
+        </FigureDevice>
       ) : widths && sweep ? (
         // On the page's own theme: a theme boundary around it would paint over the page.
         <div
@@ -394,9 +402,16 @@ export function LiveExample({
           className="site-live-example"
           data-example={name}
           data-stage={stage}
+          data-device={device}
           {...keepLinksInPlace}
         >
-          {render}
+          {device ? (
+            <OnDevice kind={device} label={`${title} on a ${device}`}>
+              {render}
+            </OnDevice>
+          ) : (
+            render
+          )}
         </Column>
       )}
       {open && !live && !motion && <StillMark />}

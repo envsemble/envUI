@@ -33,10 +33,12 @@ examples:
     role: overview
     caption: A main pane and a supporting one.
     motion: true
+    device: phone
   ListAndDetail:
     role: overview
     caption: A list and its detail.
     motion: true
+    device: phone
   ResizableDetails: example
   PanesAnatomy: anatomy
   SupportingByWidth: example
@@ -67,7 +69,7 @@ The panes sit side by side once they are as wide as a medium, an expanded or a l
 
 People can resize the supporting pane or the list by the gap between the panes, with its small grip, by pointer or with the arrow keys.
 
-```tsx figure=ResizableDetails motion
+```tsx figure=ResizableDetails motion device=window
 
 ```
 
