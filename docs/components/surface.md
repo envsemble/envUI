@@ -141,6 +141,6 @@ A group of controls, as wide as its controls in a Column with `align="start"`:
 
 ## Changelog
 
+- **1.0.0**: `skeleton`, with `placeholders()`, `isPlaceholder()` and `useSkeleton()`. `tone` is `background`, with the names of the background roles: `pane` is `default`, `row` `muted`, `canvas` `page` and `alternate` `raised`; `corners` is `radius`: `surface` is `xl`, `standard` `sm` and `pill` `full`; `render` replaces `as`. The backgrounds take the semantic background colors.
 - **1.0.0-prerelease.6**: `raised` is a step above `default` in dark too, with `muted`'s fill, and `recessed` lies below `default` in light too, between the page and the panes.
 - **1.0.0-prerelease.5**: `background="recessed"`, a well on the page a shade deeper than it, in `--env-color-bg-recessed`.
-- **1.0.0**: `skeleton`, with `placeholders()`, `isPlaceholder()` and `useSkeleton()`. `tone` is `background`, with the names of the background roles: `pane` is `default`, `row` `muted`, `canvas` `page` and `alternate` `raised`; `corners` is `radius`: `surface` is `xl`, `standard` `sm` and `pill` `full`; `render` replaces `as`. The backgrounds take the semantic background colors.

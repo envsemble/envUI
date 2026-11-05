@@ -218,5 +218,5 @@ A ConfirmDialog is an alert dialog with Dialog's parts: the surface, `env-dialog
 
 ## Changelog
 
-- **1.0.0-prerelease.5**: The dialog takes the popups' color and soft shadow, with no outline edge, as Dialog does.
 - **1.0.0**: ConfirmDialog, an alert dialog with a neutral or danger tone that waits for its action and stays open when it fails.
+- **1.0.0-prerelease.5**: The dialog takes the popups' color and soft shadow, with no outline edge, as Dialog does.

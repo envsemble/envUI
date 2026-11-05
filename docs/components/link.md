@@ -133,6 +133,5 @@ Link is a text Button with the class `env-link`, whose `data-underline` says whe
 
 ## Changelog
 
-- **1.0.0-prerelease.6**: An underlined link rests on a lighter line, its color at 40 %, and draws the underline in its full color under the pointer and while pressed, so rest, hover and press read apart.
-
 - **1.0.0**: Link has a page of its own, split from the button page.
+- **1.0.0-prerelease.6**: An underlined link rests on a lighter line, its color at 40 %, and draws the underline in its full color under the pointer and while pressed, so rest, hover and press read apart.

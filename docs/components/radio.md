@@ -189,9 +189,9 @@ The parts are the group, `env-radio-group`, with `data-orientation` and its lege
 
 ## Changelog
 
+- **1.0.0**: RadioGroup's `variant` is `orientation`: `inline` is `horizontal` and `rows` is `vertical`; Radio's `detail` is `description`. `className` and `style` style a Radio's root rather than the input, which keeps `ref` and the other native props. A focused radio shows the focus ring. The classes follow the component: `env-radio-options` is `env-radio-group` with `[data-orientation]`, `env-radio-option` and the inline label are `env-radio`, `env-radio-control` is `env-radio-input` and `env-radio-detail` `env-radio-description`.
 - **1.0.0-prerelease.6**: A chosen radio that is unavailable takes the neutral fill, with its dot in `--env-color-fg-disabled`, rather than a faded accent, as an unavailable button does.
 - **1.0.0-prerelease.6**: Beside a label that wraps or has a description, the radio sits on the middle of its first line rather than across both lines.
 - **1.0.0-prerelease.6**: The radio is drawn, as a checkbox is: a ring that darkens and fills under the pointer, and the accent disc with its dot once chosen, ringed round when focused. The group's error shows the error icon, as a field's does.
 - **1.0.0-prerelease.5**: RadioGroup takes `description` and `error`, as a field does, and a controlled `value` of `null` chooses none.
 - **1.0.0-prerelease.5**: The chosen row of a group in rows takes the selection's fill and text, as a selected list row does, rather than the hover fill.
-- **1.0.0**: RadioGroup's `variant` is `orientation`: `inline` is `horizontal` and `rows` is `vertical`; Radio's `detail` is `description`. `className` and `style` style a Radio's root rather than the input, which keeps `ref` and the other native props. A focused radio shows the focus ring. The classes follow the component: `env-radio-options` is `env-radio-group` with `[data-orientation]`, `env-radio-option` and the inline label are `env-radio`, `env-radio-control` is `env-radio-input` and `env-radio-detail` `env-radio-description`.

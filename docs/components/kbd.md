@@ -126,6 +126,6 @@ In a tooltip, a menu, a popup list and the command palette's hints, keys are fla
 
 ## Changelog
 
+- **1.0.0**: `useModifierKey()`, the platform's shortcut modifier, safe to render on the server. The page is `kbd`, after the component.
 - **1.0.0-prerelease.6**: In a button's `end`, such as the search button's shortcut, the keys of a combination stand side by side with the + read but not shown, as in menus and tooltips.
 - **1.0.0-prerelease.5**: In tooltips, menus, popup lists and the command palette's hints, the keys of a combination are flat chips side by side, with the + read but not shown.
-- **1.0.0**: `useModifierKey()`, the platform's shortcut modifier, safe to render on the server. The page is `kbd`, after the component.

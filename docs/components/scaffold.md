@@ -246,5 +246,5 @@ The parts are the root, `env-scaffold`, the top bar, `env-scaffold-top-bar`, the
 
 ## Changelog
 
-- **1.0.0-prerelease.5**: `skipLabel` and `skipNavigationLabel` are `skipToContentLabel` and `skipToNavigationLabel`, after their messages. `forms` is `navigationForms`, and `NavigationForm` is `ScaffoldNavigationForm`, so neither reads as a form of fields. `resolveNavigationForms` is internal.
 - **1.0.0**: Scaffold, which replaces AppShell and WindowFrame: a top bar region, the navigation forms by window class, and the body, with the document or the body scrolling.
+- **1.0.0-prerelease.5**: `skipLabel` and `skipNavigationLabel` are `skipToContentLabel` and `skipToNavigationLabel`, after their messages. `forms` is `navigationForms`, and `NavigationForm` is `ScaffoldNavigationForm`, so neither reads as a form of fields. `resolveNavigationForms` is internal.

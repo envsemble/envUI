@@ -230,9 +230,9 @@ A Toast draws an edge only at high contrast, unless its outline color sets one, 
 
 ## Changelog
 
-- **1.0.0-prerelease.6**: A toast takes the large corner of the radius scale, `--env-radius-lg`, as an alert does, rather than a fixed 1.25 rem.
-- **1.0.0-prerelease.6**: The action is an outline button in the notification's own text color, with its edge in that color and the dismiss button's hover and press fills, rather than a blue primary button on the tone's fill. Notifications wait while a modal is open in the same container and show once it closes, rather than covering its actions.
-- **1.0.0-prerelease.5**: 16 px from its start edge to its icon or message, and 10 px between its parts.
 - **1.0.0**: No edge outside high contrast, where the tone's edge bounds it, and an alert's corners, 1.25 rem. The notifications' theme boundary, `env-toast-portal-theme`, is `env-toast-theme`, as Popup's is `env-popup-theme`.
 - **1.0.0**: `limit` for `visibleLimit`, as Base UI names it. `tone` for `variant`, with `danger` for `error`, and `ToastTone`; `bottom-end` for `bottom-right`, which follows the text direction, with the top-center stack centered in either direction; the region names, hidden count and dismiss button come from the provider's messages; danger notifications are alerts at once and always shown; the dismiss button is an IconButton with a cross; the manual `Toast` is gone.
 - **1.0.0**: `ToastProvider` and `useToast` keep their names. The manual `Toast` component and `ToastProps` are no longer exported; show notifications with `useToast` inside `ToastProvider`.
+- **1.0.0-prerelease.6**: A toast takes the large corner of the radius scale, `--env-radius-lg`, as an alert does, rather than a fixed 1.25 rem.
+- **1.0.0-prerelease.6**: The action is an outline button in the notification's own text color, with its edge in that color and the dismiss button's hover and press fills, rather than a blue primary button on the tone's fill. Notifications wait while a modal is open in the same container and show once it closes, rather than covering its actions.
+- **1.0.0-prerelease.5**: 16 px from its start edge to its icon or message, and 10 px between its parts.
