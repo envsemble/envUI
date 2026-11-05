@@ -1,6 +1,7 @@
 import ResizableDetails from '../../examples/panes/ResizableDetails';
 import { usePointer, type PointerStep } from '../../motion/Motion';
 import { MotionStage } from '../../motion/MotionStage';
+import { useOnScreen } from '../../figures/DeviceFrame';
 import { WidthSweep } from '../../motion/WidthSweep';
 
 const divider = '.env-panes-divider';
@@ -40,7 +41,10 @@ const script: PointerStep[] = [
 
 function Resizing() {
   usePointer(script);
-  // A frame of a medium window, where the panes sit side by side, drawn smaller on a narrow stage.
+  // A frame of a medium window, where the panes sit side by side, drawn smaller on a narrow stage;
+  // on a window's screen, the window itself.
+  const onScreen = useOnScreen();
+  if (onScreen) return <ResizableDetails />;
   return (
     <WidthSweep widths={[40]} at={0} ruler={false} outline={false}>
       <ResizableDetails />

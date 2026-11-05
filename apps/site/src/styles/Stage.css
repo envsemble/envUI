@@ -136,16 +136,12 @@
    recessed surface is already deeper than both, the navigation being lighter than the page. In the
    light themes it is lighter than both, so the canvas is a shade deeper than the page instead, the
    darker of the window's two. A still example carries its theme itself; an animated figure takes
-   the page's. */
-:is(
-    .site-live-example,
-    .site-verdict-stage,
-    .site-anatomy-stage,
-    .catalogue-related-stage
-  )[data-stage='shaded']:is(
-    [data-env-theme='light'],
-    [data-env-theme='light'] :not([data-env-theme])
-  ) {
+   the page's. A figure drawn on a device (DeviceFrame.css) takes it too: the device's body is the
+   page's fill. */
+:is(.site-live-example, .site-verdict-stage, .site-anatomy-stage, .catalogue-related-stage):is(
+    [data-stage='shaded'],
+    [data-device]
+  ):is([data-env-theme='light'], [data-env-theme='light'] :not([data-env-theme])) {
   --catalogue-card-fill: oklch(from var(--env-color-bg-page) calc(l - 0.035) c h);
 }
 

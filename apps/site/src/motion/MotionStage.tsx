@@ -19,6 +19,7 @@ import type { StageFill } from '../shared/DocumentationTypes';
 import { useVerdictFit } from '../template/VerdictFit';
 import { useDisplaySettings } from '../theme/DisplaySettings';
 import { Playback, PreviewOverlays, useInView } from './Motion';
+import { FigureDevice, OnDevice } from '../figures/DeviceFrame';
 
 /** What the reader can operate in a figure: a stage with none of it stays a recording. */
 const operable =
@@ -222,6 +223,9 @@ export function MotionStage({
       <PreviewOverlays>{children}</PreviewOverlays>
     </Playback>
   );
+  // On a page's figure drawn on a device, the device stands on the stage, what plays on its screen.
+  const device = use(FigureDevice);
+  const shown = device && !verdict ? <OnDevice kind={device}>{content}</OnDevice> : content;
   const subjectProps = {
     inert: !live,
     'aria-hidden': live ? undefined : true,
@@ -243,6 +247,7 @@ export function MotionStage({
         .join(' ')}
       data-figure={foundation ? 'example' : undefined}
       data-stage={fill}
+      data-device={device && !verdict ? device : undefined}
       data-live={live ? '' : undefined}
       data-top={top ? '' : undefined}
       style={height && !square ? { minBlockSize: height } : undefined}
@@ -265,7 +270,7 @@ export function MotionStage({
         </div>
       ) : (
         <div ref={setSubject} {...subjectProps}>
-          {content}
+          {shown}
         </div>
       )}
       <Tooltip content={action}>

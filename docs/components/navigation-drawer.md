@@ -66,6 +66,7 @@ examples:
   AppDestinations:
     role: overview
     stage: shaded
+    device: window
   TabletDestinations:
     role: overview
     stage: shaded

@@ -2,6 +2,7 @@ import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import NarrowNavigation from '../../examples/scaffold/NarrowNavigation';
 import { usePointer, type PointerStep } from '../../motion/Motion';
 import { MotionStage } from '../../motion/MotionStage';
+import { useOnScreen } from '../../figures/DeviceFrame';
 
 /** A window wide enough for the drawer, in rem: an expanded one. */
 const windowWidth = 56;
@@ -84,7 +85,11 @@ const script: PointerStep[] = [
 
 function Narrowing() {
   usePointer(script);
-  return (
+  // On a window's screen, which is wide enough for the drawer, it shows as it is.
+  const onScreen = useOnScreen();
+  return onScreen ? (
+    <NarrowNavigation />
+  ) : (
     <Fitted>
       <NarrowNavigation />
     </Fitted>

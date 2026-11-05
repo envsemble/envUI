@@ -39,6 +39,11 @@ export type ExportEntry =
 
 /** A fill a figure's stage takes instead of the canvas recessed from the page. */
 export type StageFill = 'shaded';
+/**
+ * The device a page's figure is drawn in, at its real width: a phone, portrait, or a desktop
+ * browser's window (figures/DeviceFrame.tsx).
+ */
+export type DeviceKind = 'phone' | 'window';
 
 export type DocumentationBlock =
   | { kind: 'markdown'; markdown: string }
@@ -93,6 +98,8 @@ export type DocumentationBlock =
       specimen?: boolean;
       /** The stage's fill where the page's own would hide the subject: `raised` or `shaded`. */
       stage?: StageFill;
+      /** The device an example is drawn in on the page, at its real width, filling its screen. */
+      device?: DeviceKind;
       /**
        * An anatomy figure's legend: each numbered part by its class name, and what it is; a variants
        * figure's: each variant's name, and the item it labels.

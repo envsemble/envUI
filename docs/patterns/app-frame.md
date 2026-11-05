@@ -57,6 +57,7 @@ examples:
   AppFrame:
     role: overview
     stage: shaded
+    device: window
   WithDetails: example
   InstalledWindow: example
   MenuOnPhones: example
@@ -77,7 +78,7 @@ examples:
 
 Side content that is not navigation goes in a supporting pane of [Panes](../components/panes.md), in the body.
 
-```tsx figure=WithDetails stage=shaded motion
+```tsx figure=WithDetails stage=shaded motion device=window
 
 ```
 

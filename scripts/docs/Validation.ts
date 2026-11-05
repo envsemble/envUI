@@ -112,7 +112,7 @@ export function validateFrontmatter(frontmatter, path, { kind, versions }) {
         );
       else
         for (const [name, entry] of Object.entries(value)) {
-          const { role, caption, open, stage, motion, wide } =
+          const { role, caption, open, stage, motion, wide, device } =
             typeof entry === 'string' ? { role: entry } : (entry ?? {});
           if (!/^[A-Z][A-Za-z\d]*$/.test(name))
             problems.push(`${key} names ${name}; name an example by its PascalCase file name`);
@@ -131,12 +131,19 @@ export function validateFrontmatter(frontmatter, path, { kind, versions }) {
             (open !== undefined ||
               stage !== undefined ||
               motion !== undefined ||
-              wide !== undefined) &&
+              wide !== undefined ||
+              device !== undefined) &&
             role !== 'overview'
           )
             problems.push(
-              `${key} gives ${name} open, stage, motion or wide, which only an overview example takes here; write them on its fence`,
+              `${key} gives ${name} open, stage, motion, wide or device, which only an overview example takes here; write them on its fence`,
             );
+          if (device !== undefined && !deviceKinds.includes(device))
+            problems.push(
+              `${key} gives ${name} device: ${device}; a device is ${deviceKinds.join(' or ')}, or nothing for the stage alone`,
+            );
+          if (device !== undefined && open !== undefined)
+            problems.push(`${key} gives ${name} device and open; a figure on a device is closed`);
           if (open !== undefined && open !== true)
             problems.push(`${key} gives ${name} open: ${open}; write open: true, or leave it out`);
           if (motion !== undefined && motion !== true)
@@ -349,7 +356,7 @@ const kindFencePattern = /^tsx\s+(?:example|do|dont|anatomy|variants)=/;
 /** The attributes each role's figure takes, and those it needs. */
 const figureAttributes: Record<string, { allowed: string[]; required: string[] }> = {
   example: {
-    allowed: ['widths', 'sweep', 'classes', 'fit', 'open', 'stage', 'wide', 'motion'],
+    allowed: ['widths', 'sweep', 'classes', 'fit', 'open', 'stage', 'wide', 'motion', 'device'],
     required: [],
   },
   do: { allowed: ['open', 'stage', 'wide', 'motion'], required: ['caption'] },
@@ -364,6 +371,12 @@ const figureAttributes: Record<string, { allowed: string[]; required: string[] }
  * the subject is a whole window that shows both, such as a Scaffold.
  */
 const stageFills = ['shaded'];
+/**
+ * The devices an example is drawn in on its page, at the device's real width and filling its
+ * screen (`device="phone"` or `device="window"`): a whole screen of an application, such as a
+ * Scaffold, rather than a box standing in for one. The catalogue's cards never draw one.
+ */
+const deviceKinds = ['phone', 'window'];
 /**
  * The attributes that are flags, written without a value: `open` shows the example's overlays
  * open on its stage, contained; `enlarge` shows an anatomy figure's subject half as large again
@@ -800,6 +813,17 @@ export function readPage(
           );
       }
       if (attributes.open === true) block.open = true;
+      if (attributes.device !== undefined) {
+        if (!deviceKinds.includes(String(attributes.device)))
+          problems.push(
+            `example ${name} has device="${attributes.device}"; a device is ${deviceKinds.map((kind) => `"${kind}"`).join(' or ')}`,
+          );
+        else if (attributes.widths !== undefined || attributes.open === true)
+          problems.push(
+            `example ${name} has device with widths or open; a device is one window of its own width, closed`,
+          );
+        else block.device = attributes.device as ExampleBlock['device'];
+      }
       if (attributes.enlarge === true) block.enlarge = true;
       if (attributes.wide === true) block.wide = true;
       if (attributes.motion === true) block.motion = true;
@@ -854,9 +878,11 @@ export function readPage(
   // shows; a component or pattern shows what it is with at least one, and says what envUI and the
   // application provide under Accessibility.
   const entries = Object.entries(catalog);
-  for (const [name, { role, open, stage, motion, wide }] of entries) {
-    if (foundation && (open || stage || motion || wide))
-      problems.push(`figure ${name} takes no open, stage, motion or wide on a foundation page`);
+  for (const [name, { role, open, stage, motion, wide, device }] of entries) {
+    if (foundation && (open || stage || motion || wide || device))
+      problems.push(
+        `figure ${name} takes no open, stage, motion, wide or device on a foundation page`,
+      );
     if (role !== 'overview' && !placed.has(name))
       problems.push(`example ${name} is listed in the frontmatter but placed nowhere`);
     if (!foundation && !examples.has(name))
@@ -898,7 +924,7 @@ export function readPage(
     title: 'Overview',
     blocks: [
       { kind: 'markdown', markdown: '## Overview\n\n' },
-      ...overviews.map(([name, { caption, open, stage, motion, wide }], index) => ({
+      ...overviews.map(([name, { caption, open, stage, motion, wide, device }], index) => ({
         kind: foundation ? 'figure' : 'example',
         name,
         heading: index === 0 ? document.title : fileWords(name),
@@ -907,6 +933,7 @@ export function readPage(
         ...(stage && { stage }),
         ...(motion && { motion: true }),
         ...(wide && { wide: true }),
+        ...(device && { device: device as ExampleBlock['device'] }),
       })),
     ],
   };

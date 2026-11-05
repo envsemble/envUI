@@ -214,6 +214,7 @@ function Figure({
       live={live}
       stage={block.stage}
       motion={block.motion}
+      device={block.device}
     />
   );
 }
@@ -238,6 +239,7 @@ export function UsagePreview({ page }: { page: Document }) {
         open={block.open}
         live
         stage={block.stage}
+        device={block.device}
         code={false}
       />
     </div>

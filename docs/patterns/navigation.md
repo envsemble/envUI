@@ -56,6 +56,7 @@ examples:
     role: overview
     stage: shaded
     motion: true
+    device: window
   Hierarchy: example
   ViewsOfOneThing: example
   ListAndDetail: example
