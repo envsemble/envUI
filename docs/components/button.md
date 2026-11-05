@@ -143,7 +143,7 @@ A button takes an icon at its start or its end; an IconButton shows an icon alon
 A ButtonGroup joins related buttons of one variant in a row or a column, or filled primary and secondary buttons together, such as a split button.
 
 - A split button's menu half takes the main half's variant and tone and shows a chevron, so the hairline between them reads as one action with its options rather than two actions.
-- A group that mixes an outline, ghost or text button with another variant, such as an outline Cancel beside a primary Save, keeps them apart as whole pills.
+- A group that mixes an outline, ghost or text button with another variant, such as an outline Back beside a primary Next, keeps them apart as whole pills.
 
 ```tsx figure=ConnectedButtons
 

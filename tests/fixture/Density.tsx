@@ -169,7 +169,7 @@ function FormSection() {
           <TextField label="Name" defaultValue="Quarterly report" />
           <Select aria-label="Plan" items={plans} defaultValue="team" />
           <Button variant="primary">Save</Button>
-          <Button variant="outline">Cancel</Button>
+          <Button variant="secondary">Cancel</Button>
         </Row>
       </div>
       <div className="density-band">

@@ -594,7 +594,7 @@ function ProjectDetails({ project }: { project: Project }) {
         />
         <Switch label="Deploy on every push to main" defaultChecked />
         <Row gap={2} justify="end">
-          <Button variant="text" size="sm" type="reset">
+          <Button variant="secondary" size="sm" type="reset">
             Cancel
           </Button>
           <Button size="sm" type="submit">
