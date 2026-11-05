@@ -79,7 +79,7 @@
   },
   "packages/ui/src/styles/Disclosure.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 4
+      "count": 2
     }
   },
   "packages/ui/src/styles/DocumentTabs.css": {

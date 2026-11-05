@@ -1,5 +1,9 @@
 @layer env.components {
   .env-disclosure {
+    /* The chevron and the gap after it, which the panel's inset matches, so the details line up
+       with the summary's words. */
+    --env-disclosure-indicator-size: var(--env-icon-size-sm);
+    --env-disclosure-gap: var(--env-space-1);
     min-inline-size: 0;
     max-inline-size: 100%;
     overflow-wrap: break-word;
@@ -9,12 +13,6 @@
     background: none;
     color: var(--env-color-fg-muted);
     font: var(--env-type-body-sm);
-  }
-  .env-disclosure {
-    /* The chevron and the gap after it, which the panel's inset matches, so the details line up
-       with the summary's words. */
-    --env-disclosure-indicator-size: var(--env-icon-size-sm);
-    --env-disclosure-gap: var(--env-space-1);
   }
   .env-disclosure > summary {
     display: flex;
