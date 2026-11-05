@@ -25,7 +25,7 @@ export interface AvatarGroupPerson {
   name: string;
   /** Picture URL; the fallback shows while it loads and when it is missing or fails. */
   src?: string | null;
-  /** person, the default person picture (default), or initials, as for Avatar. */
+  /** Initials, by default, or the default person picture, as for Avatar. */
   fallback?: AvatarProps['fallback'];
   /** A stable key, such as an account ID; the name and position by default. */
   id?: string | number;

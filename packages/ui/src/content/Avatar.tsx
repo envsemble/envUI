@@ -51,7 +51,11 @@ export interface AvatarProps extends Omit<ComponentPropsWithRef<'span'>, 'childr
   name: string;
   /** Picture URL. The fallback shows while it loads and when it is missing or fails. */
   src?: string | null;
-  /** Shown without a picture: the default person picture, or initials (for example, for an organization). */
+  /**
+   * Shown without a picture: the initials of `name`, so people tell avatars apart, or the default
+   * person picture, which an empty `name` shows too.
+   * @default 'initials'
+   */
   fallback?: 'person' | 'initials';
   /**
    * The fill behind the initials or the person picture. Without it, the name chooses one, the same
@@ -110,11 +114,11 @@ function PersonPicture() {
   );
 }
 
-/** A round picture of a person or organization, with the default person picture or initials as fallback. */
+/** A round picture of a person or organization, with their initials or the default person picture as fallback. */
 export function Avatar({
   name,
   src,
-  fallback = 'person',
+  fallback: ownFallback,
   hue,
   size = 'md',
   named = false,
@@ -123,6 +127,8 @@ export function Avatar({
   ...props
 }: AvatarProps) {
   const locale = useResolvedLocale();
+  const initials = getInitials(name, locale);
+  const fallback = ownFallback ?? (initials ? 'initials' : 'person');
   return (
     <BaseAvatar.Root
       {...props}
@@ -146,7 +152,7 @@ export function Avatar({
       <BaseAvatar.Fallback
         className={classNames('env-avatar-fallback', `env-avatar-fallback-${fallback}`)}
       >
-        {fallback === 'person' ? <PersonPicture /> : getInitials(name, locale)}
+        {fallback === 'person' ? <PersonPicture /> : initials}
       </BaseAvatar.Fallback>
       {selected && (
         <span className="env-avatar-check" aria-hidden="true">

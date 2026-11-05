@@ -272,18 +272,23 @@ test('the avatars’ shadow is small, faint and follows the surface below', asyn
         .map(([, value]) => value.replace(/\s+/g, ' ')),
     ),
   ];
-  // Avatar.css declares it; the count of a group is flat.
+  // Avatar.css declares it; the count of a group is flat. In a group, the group's rings take its
+  // place: rings alone, with no offset and no blur.
   assert.equal(values.length, 1, 'one shadow');
-  const [value] = values;
+  const [, ringName, shadow] = values[0].match(/^var\(\s*(--[\w-]+),\s*(.*?)\s*\)$/);
+  assert.equal(ringName, '--env-avatar-group-ring-layers');
+  const rings = declarations(css).filter(([property]) => property === ringName);
+  assert.equal(rings.length, 1, 'AvatarGroup.css declares the rings');
+  for (const layer of split(rings[0][1], /,/)) {
+    const [x, y, blur] = split(layer, /\s/);
+    assert.deepEqual([x, y, blur], ['0', '0', '0'], layer);
+  }
   // A single layer, 1px down and blurred 2px, with no spread.
-  const [x, y, blur, ...rest] = split(value, /\s/);
+  const [x, y, blur, ...rest] = split(shadow, /\s/);
   assert.deepEqual([x, y, blur], ['0', '1px', '2px']);
   assert.equal(rest.length, 1, 'no spread, one color');
   // Its color is derived from the surface below, never a literal color.
-  assert.match(
-    rest[0],
-    /^oklch\(\s*from var\(--env-avatar-group-ring-color, var\(--env-surface-color, var\(--env-color-bg-page\)\)\)/,
-  );
+  assert.match(rest[0], /^oklch\(\s*from var\(--env-surface-color, var\(--env-color-bg-page\)\)/);
   // Only an avatar uses it.
   const users = [
     ...css

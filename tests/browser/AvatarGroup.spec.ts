@@ -205,7 +205,7 @@ test('pressable avatars are buttons and links named after each person, with name
   await expect(page.locator('body')).toHaveAttribute('data-avatar-navigated-to', '/people/sam');
 });
 
-test('nothing rings the avatars, which cast a faint shadow, and a chosen avatar’s gap takes the surface color', async ({
+test('a ring in the surface color parts the avatars, and a chosen avatar’s gap takes it too', async ({
   page,
 }) => {
   await page.goto(fixture);
@@ -221,25 +221,28 @@ test('nothing rings the avatars, which cast a faint shadow, and a chosen avatar�
           const chosen = group.querySelector('.env-avatar[data-selected]');
           return {
             group: group.getAttribute('data-testid'),
-            // Each casts one faint shadow, 1px down and 2px soft, and no ring.
-            ringed: [...group.querySelectorAll('.env-avatar:not([data-selected])')].some(
-              (element) =>
-                !/^(?:rgba?|color|oklch|hsla?)\([^)]*\) 0px 1px 2px 0px$/.test(
-                  getComputedStyle(element).boxShadow,
-                ),
+            // Each takes a 2px ring in the surface color, under a tint that is clear here, and
+            // casts no shadow of its own.
+            ringed: [...group.querySelectorAll('.env-avatar:not([data-selected])')].every(
+              (element) => {
+                const match = getComputedStyle(element).boxShadow.match(
+                  /^(\S+\([^)]*\)) 0px 0px 0px 2px, (\S+\([^)]*\)) 0px 0px 0px 2px$/,
+                );
+                return match?.[1] === 'rgba(0, 0, 0, 0)' && match[2] === background;
+              },
             ),
-            // The chosen look: the gap in the surface color, then the accent ring.
+            // The chosen look: the clear tint, the gap in the surface color, then the accent ring.
             gap: chosen
               ? getComputedStyle(chosen).boxShadow.match(
-                  /^(?:rgba?|color|oklch|hsla?)\([^)]*\)/,
-                )?.[0] === background
+                  /^\S+\([^)]*\) 0px 0px 0px 2px, (\S+\([^)]*\)) 0px 0px 0px 2px/,
+                )?.[1] === background
               : null,
           };
         }),
       );
     expect(groups).toEqual([
-      { group: 'decorative', ringed: false, gap: null },
-      ...['on-pane', 'on-row', 'on-custom'].map((group) => ({ group, ringed: false, gap: true })),
+      { group: 'decorative', ringed: true, gap: null },
+      ...['on-pane', 'on-row', 'on-custom'].map((group) => ({ group, ringed: true, gap: true })),
     ]);
   }
 });

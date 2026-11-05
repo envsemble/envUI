@@ -2,8 +2,9 @@
   /* Avatar groups: a pile of avatars at rest, stacked like cards, each a little off the line and
      turned, with the count of the rest at the bottom of the pile, peeking out past its end. The whole
      pile is one thing: hovering it, a tap on it or keyboard focus inside it spreads the avatars apart
-     along a gentle arch, and only spread is each avatar a target of its own. Nothing rings them: each
-     avatar's own hairline edge keeps it apart from the one it lies on.
+     along a gentle arch, and only spread is each avatar a target of its own. A ring in the color of
+     the surface below parts each avatar from the one it lies on, and the last from the count, so
+     initials never run together.
 
      The group's box is always the spread row, and resting and spreading only move the items, by
      translate and rotate, within it: spreading never changes the group's size, so it can't push what
@@ -28,13 +29,21 @@
     --env-avatar-group-inline: 1;
     /* How long the pile stays one target once it starts to spread: until the avatars are in place. */
     --env-avatar-group-settle: 0s;
-    /* The color of the surface below, for the gap in a chosen avatar's ring: the envUI surface the
-       group sits on, or the canvas; --env-avatar-group-ring sets it for any other surface, such as a
-       row. */
+    /* The color of the surface below, for the ring around each avatar and the gap in a chosen
+       avatar's ring: the envUI surface the group sits on, or the canvas; --env-avatar-group-ring sets
+       it for any other surface, such as a table's. A container whose rows take a translucent fill,
+       such as a hovered or selected row, sets that fill as --env-avatar-group-ring-tint, which the
+       ring lays over the surface, so it matches the row. */
     --env-avatar-group-ring-color: var(
       --env-avatar-group-ring,
       var(--env-surface-color, var(--env-color-bg-page))
     );
+    --env-avatar-group-ring-width: 0.125rem;
+    /* Each avatar's ring, which Avatar draws in place of a lone avatar's faint shadow: the surface's
+       color with the row's tint over it. A chosen avatar keeps its own rings. */
+    --env-avatar-group-ring-layers:
+      0 0 0 var(--env-avatar-group-ring-width) var(--env-avatar-group-ring-tint, transparent),
+      0 0 0 var(--env-avatar-group-ring-width) var(--env-avatar-group-ring-color);
     position: relative;
     box-sizing: border-box;
     display: inline-flex;
@@ -54,10 +63,12 @@
   .env-avatar-group[data-size='xl'] {
     --env-avatar-group-size: var(--env-picture-size-xl);
   }
-  /* Initials center in their circle, so a pile of them is looser, each avatar four fifths
-     uncovered, so two letters stay whole under the next avatar. */
+  /* Initials center in their circle, so a pile of them is looser, each avatar about five sixths
+     uncovered beside the next avatar's ring, so two letters stay whole under it. */
   .env-avatar-group:has(.env-avatar-fallback-initials) {
-    --env-avatar-group-pitch: calc(var(--env-avatar-group-size) * 0.8);
+    --env-avatar-group-pitch: calc(
+      var(--env-avatar-group-size) * 0.84 + var(--env-avatar-group-ring-width)
+    );
   }
   .env-avatar-group[data-align='end'] {
     --env-avatar-group-gather: 1;

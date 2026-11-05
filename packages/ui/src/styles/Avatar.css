@@ -42,18 +42,21 @@
       1 var(--env-font-family);
     letter-spacing: 0.01em;
     user-select: none;
-    /* A faint, small drop shadow under an avatar, the one exception to envUI's rule of no drop
-       shadows: stacked in a group, each avatar parts from the one it lies on, and a lone avatar, a
-       pastel fill or a light photo keeps its circle on a surface of a near color, with no line drawn
-       around it. Its color is a deep shade of the surface below, the group's ring color or the envUI
-       surface it sits on, else the page, and stronger the darker that is, so it reads as faintly on
-       a dark surface as on a light one. A chosen avatar keeps its rings alone, and under forced colors the system draws no
-       shadow. */
-    --env-avatar-shadow: 0 1px 2px
-      oklch(
-        from var(--env-avatar-group-ring-color, var(--env-surface-color, var(--env-color-bg-page)))
-          calc(l * 0.3) calc(c * 0.5) h / calc(0.26 - l * 0.15)
-      );
+    /* A faint, small drop shadow under a lone avatar, the one exception to envUI's rule of no drop
+       shadows: a pastel fill or a light photo keeps its circle on a surface of a near color, with no
+       line drawn around it. Its color is a deep shade of the surface below, the envUI surface it
+       sits on, else the page, and stronger the darker that is, so it reads as faintly on a dark
+       surface as on a light one. In an AvatarGroup the group's rings in the surface's color,
+       --env-avatar-group-ring-layers, take its place, so each avatar parts from the one it lies on.
+       A chosen avatar keeps its rings alone, and under forced colors the system draws no shadow. */
+    --env-avatar-shadow: var(
+      --env-avatar-group-ring-layers,
+      0 1px 2px
+        oklch(
+          from var(--env-surface-color, var(--env-color-bg-page)) calc(l * 0.3) calc(c * 0.5) h /
+            calc(0.26 - l * 0.15)
+        )
+    );
     box-shadow: var(--env-avatar-shadow);
   }
   .env-avatar[data-hue='seafoam'] {
@@ -105,6 +108,7 @@
       var(--env-surface-color, var(--env-color-bg-page))
     );
     box-shadow:
+      0 0 0 2px var(--env-avatar-group-ring-tint, transparent),
       0 0 0 2px var(--env-avatar-selected-gap),
       0 0 0 4px var(--env-color-bg-primary-emphasis);
   }

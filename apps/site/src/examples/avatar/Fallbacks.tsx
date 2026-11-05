@@ -14,9 +14,10 @@ export default function Fallbacks() {
   return (
     <Row wrap align="center" gap={4}>
       <Avatar name="Priya Shah" src={picture} size="lg" named />
-      {/* A picture that fails to load shows the default person picture, without an error. */}
+      {/* A picture that fails to load shows the initials, without an error. */}
       <Avatar name="Jordan Ellis" src="data:image/png;base64,missing" size="lg" named />
-      <Avatar name="Northwind Labs" fallback="initials" size="lg" named />
+      {/* The default person picture, such as for a guest without a name of their own. */}
+      <Avatar name="Guest" fallback="person" size="lg" named />
     </Row>
   );
 }

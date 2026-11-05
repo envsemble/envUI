@@ -230,7 +230,7 @@
     "Avatar": {
       "kind": "component",
       "source": "packages/ui/src/content/Avatar.tsx",
-      "description": "A round picture of a person or organization, with the default person picture or initials as fallback.",
+      "description": "A round picture of a person or organization, with their initials or the default person picture as fallback.",
       "props": [
         {
           "name": "name",
@@ -248,8 +248,8 @@
           "name": "fallback",
           "type": "'person' | 'initials'",
           "required": false,
-          "default": "'person'",
-          "description": "Shown without a picture: the default person picture, or initials (for example, for an organization)."
+          "default": "'initials'",
+          "description": "Shown without a picture: the initials of `name`, so people tell avatars apart, or the default person picture, which an empty `name` shows too."
         },
         {
           "name": "hue",
@@ -307,13 +307,13 @@
           "name": "src",
           "type": "string | null",
           "required": false,
-          "description": "Picture URL; the default person picture shows without one."
+          "description": "Picture URL; the fallback shows without one."
         },
         {
           "name": "fallback",
           "type": "AvatarProps['fallback']",
           "required": false,
-          "description": "Shown without a picture: the default person picture (default), or the initials of `name`."
+          "description": "Shown without a picture: the initials of `name`, by default, or the default person picture."
         },
         {
           "name": "size",
