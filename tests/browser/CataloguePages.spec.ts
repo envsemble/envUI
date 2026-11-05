@@ -886,8 +886,8 @@ test("a gallery tile that plays draws out what it opens inside its stage and res
     DatePicker: [
       '.env-calendar-next',
       '.env-calendar-previous',
-      '.env-calendar-day[data-date="2026-10-07"]',
-      '.env-calendar-day[data-date="2026-10-09"]',
+      '.env-calendar-day[data-date="2026-02-04"]',
+      '.env-calendar-day[data-date="2026-02-11"]',
     ],
   };
   for (const [name, targets] of Object.entries(cards)) {
