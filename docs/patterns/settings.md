@@ -197,7 +197,7 @@ A section that saves together is a `form` with `noValidate` and an `onSubmit`, o
 
 #### Danger zone
 
-The danger zone is the last section: a List item whose `end` is an outline Button with `tone="danger"`, opening a ConfirmDialog with `tone="danger"`. Where the action can't be undone and reaches everyone, the dialog holds a TextField for the name, and `onConfirm` sets its `error` and focuses it while the name doesn't match; `onOpenChange` keeps the dialog open meanwhile, as the DangerZone example does.
+The danger zone is the last section: a List item whose `end` is an outline Button with `tone="danger"`, opening a ConfirmDialog with `tone="danger"`. Where the action can't be undone and reaches everyone, the dialog holds a TextField for the name and takes `confirmDisabled` while the name doesn't match, as the DangerZone example does.
 
 ```tsx
 <ConfirmDialog

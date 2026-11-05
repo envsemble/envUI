@@ -1,4 +1,4 @@
-import { useId, useRef, useState } from 'react';
+import { useId, useState } from 'react';
 import { Button, ConfirmDialog, List, Column, Text, TextField } from '@envsemble/envui';
 
 const workspace = 'Northwind';
@@ -7,9 +7,7 @@ export default function DangerZone() {
   const id = useId();
   const [open, setOpen] = useState(false);
   const [typed, setTyped] = useState('');
-  const [error, setError] = useState<string>();
   const [deleted, setDeleted] = useState(false);
-  const field = useRef<HTMLInputElement>(null);
   const matches = typed.trim() === workspace;
 
   return (
@@ -27,7 +25,6 @@ export default function DangerZone() {
               tone="danger"
               onClick={() => {
                 setTyped('');
-                setError(undefined);
                 setOpen(true);
               }}
             >
@@ -41,39 +38,25 @@ export default function DangerZone() {
       </Text>
       <ConfirmDialog
         open={open}
-        onOpenChange={(next, details) => {
-          // A confirmation with the wrong name keeps the dialog open, with the field's error.
-          if (!next && details.reason === 'imperative-action' && !matches) return;
-          setOpen(next);
-        }}
+        onOpenChange={setOpen}
         tone="danger"
         title={`Delete the ${workspace} workspace?`}
         description="This deletes every project, document and member, for everyone. You can’t undo this."
         confirmLabel="Delete workspace"
+        confirmDisabled={!matches}
         onConfirm={() => {
-          if (!matches) {
-            setError(`Enter ${workspace} to confirm`);
-            field.current?.focus();
-            return;
-          }
           // The workspace is deleted on a server, and the application then leaves it; the example
           // only says so.
           setDeleted(true);
         }}
       >
         <TextField
-          ref={field}
           label="Workspace name"
           description={`Enter ${workspace} to confirm.`}
           autoComplete="off"
           spellCheck={false}
-          // Enter in the field confirms through onConfirm, as the confirm button does.
           value={typed}
-          error={error}
-          onValueChange={(value) => {
-            setTyped(value);
-            if (value.trim() === workspace) setError(undefined);
-          }}
+          onValueChange={setTyped}
         />
       </ConfirmDialog>
     </Column>
