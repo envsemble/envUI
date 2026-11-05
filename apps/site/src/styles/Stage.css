@@ -79,7 +79,9 @@
 .site-foundation-stage[data-figure='example'],
 .site-figures :is(.catalogue-specimen-grid, .catalogue-matrix-scroll),
 .catalogue-fan-card {
-  --catalogue-card-fill: var(--env-color-bg-recessed);
+  /* Near-white in the light themes, as the stages have always been; the deeper near-black in the
+     dark ones. */
+  --catalogue-card-fill: light-dark(var(--env-color-bg-raised), var(--env-color-bg-recessed));
   background-color: var(--catalogue-card-fill);
   /* Every canvas, an example's, a tile's or a card's, lifts off the page a little in the light
      themes. */
