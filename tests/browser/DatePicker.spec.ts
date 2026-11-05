@@ -61,8 +61,8 @@ test('the field shows its value in the locale and the calendar follows the date 
   await expect(grid.locator('td[tabindex="0"]')).toHaveCount(1);
   await expect(grid.locator('[data-date="2026-10-20"]')).toHaveAttribute('aria-selected', 'true');
   await expect(grid.locator('[data-date="2026-10-14"]')).toHaveAttribute('aria-current', 'date');
-  // Today is in the accent color with no ring; the days of a week touch, a row height wide; the
-  // month's name leads the header, its buttons after it.
+  // Today is in the accent color with no ring; the days of a week touch, a little less than a row
+  // height wide, 32 px at the comfortable scale; the month's name leads the header, its buttons after it.
   const look = await dialog.evaluate(async (card) => {
     // The card grows in; its boxes have their final size once the transition has run.
     await Promise.allSettled(card.getAnimations().map(({ finished }) => finished));
@@ -87,7 +87,7 @@ test('the field shows its value in the locale and the calendar follows the date 
       headingFirst: heading.left < previous.left,
     };
   });
-  expect(look.width).toBeCloseTo(36, 0);
+  expect(look.width).toBeCloseTo(32, 0);
   expect(look.gap).toBeCloseTo(0, 0);
   expect({ ...look, width: 0, gap: 0 }).toEqual({
     todayColor: true,
