@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import { Breadcrumbs } from '@envsemble/envui';
-import { useMedia } from '../motion/Autoplay';
 import { usePointer, type PointerStep } from '../motion/Motion';
-import { narrowGallery } from './Tiles';
 import { Renew } from '../motion/Renew';
 
 const link = (index: number) => `.env-breadcrumbs-item:nth-child(${index}) > .env-breadcrumbs-link`;
@@ -29,21 +27,22 @@ const script: PointerStep[] = [
 const levels = [
   { label: 'Home', href: '/' },
   { label: 'Plans', href: '/plans' },
-  { label: 'Launch', href: '/plans/launch' },
+  { label: 'Q3', href: '/plans/q3' },
 ];
 
 /**
- * The trail, which a link pressed takes back to its level, in the tile rather than the site; in a
- * phone's narrower tile, its last level shorter, so the trail is drawn at about its own size there.
+ * The trail, which a link pressed takes back to its level, in the tile rather than the site; its
+ * last level short, the same at every width, so the trail is drawn at about its own size in a
+ * phone's narrower tile too.
  */
-function Trail({ narrow }: { narrow: boolean }) {
+function Trail() {
   const [depth, setDepth] = useState(levels.length);
   return (
     <Breadcrumbs
       wrap={false}
       items={levels.slice(0, depth).map(({ label, href }, index) =>
         index === depth - 1
-          ? { label: narrow && index === 2 ? 'Q3' : label }
+          ? { label }
           : {
               label,
               href,
@@ -64,17 +63,16 @@ function Trail({ narrow }: { narrow: boolean }) {
  * open.
  */
 export default function BreadcrumbsTile() {
-  const narrow = useMedia(narrowGallery);
   const [round, setRound] = useState(0);
   usePointer(script, { onCue: () => setRound((count) => count + 1) });
   return (
     <Renew round={round}>
       <div style={{ display: 'grid', justifyItems: 'start' }}>
         <div style={{ gridArea: '1 / 1' }}>
-          <Trail narrow={narrow} />
+          <Trail />
         </div>
         <div aria-hidden="true" inert style={{ gridArea: '1 / 1', visibility: 'hidden' }}>
-          <Trail narrow={narrow} />
+          <Trail />
         </div>
       </div>
     </Renew>

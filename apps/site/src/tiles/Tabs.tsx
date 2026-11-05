@@ -1,13 +1,11 @@
 import { useState } from 'react';
 import { IconButton, Row, Tabs, Text } from '@envsemble/envui';
 import { IconUpload } from '@envsemble/envui/icons/Upload';
-import { useMedia } from '../motion/Autoplay';
 import { usePointer, type PointerStep } from '../motion/Motion';
-import { narrowGallery } from './Tiles';
 
 const tab = (index: number) => `.env-tabs-tab:nth-child(${index} of .env-tabs-tab)`;
 
-/** Files chosen, the indicator and the panel following, and Summary again. */
+/** Files chosen, the indicator and the panel following, and Plan again. */
 const script: PointerStep[] = [
   { wait: 300 },
   { to: tab(2) },
@@ -23,16 +21,14 @@ const script: PointerStep[] = [
 ];
 
 /**
- * Three tabs of a project, Summary chosen, over its panel, filling a box of the height of the
- * tallest panel, as tabs in a pane do, so the strip stays where it is as the panels change. The
- * component fades the panel leaving out as the one coming fades in, in the same place, so the two
- * panels the card moves between hold their content apart: Summary a short line at the start, Files
- * its count and upload button at the end. In a phone's narrower and lower tile the tabs take
- * shorter names and Files its button alone, so the strip is drawn at about its own size there and
- * its panels show whole and apart.
+ * Three tabs of a project, Plan chosen, over its panel, filling a box of the height of the tallest
+ * panel, as tabs in a pane do, so the strip stays where it is as the panels change. The component
+ * fades the panel leaving out as the one coming fades in, in the same place, so the two panels the
+ * card moves between hold their content apart: Plan a short line at the start, Files its upload
+ * button at the end. Its names are short, the same at every width, so the strip is drawn at about
+ * its own size in a phone's narrower and lower tile too, its panels whole and apart.
  */
 export default function TabsTile() {
-  const narrow = useMedia(narrowGallery);
   const [value, setValue] = useState('summary');
   usePointer(script);
   return (
@@ -45,7 +41,7 @@ export default function TabsTile() {
       items={[
         {
           value: 'summary',
-          label: narrow ? 'Plan' : 'Summary',
+          label: 'Plan',
           content: <Text>Due in May.</Text>,
         },
         {
@@ -53,7 +49,6 @@ export default function TabsTile() {
           label: 'Files',
           content: (
             <Row gap={2} justify="end" align="center">
-              {!narrow && <Text emphasis="muted">2 files</Text>}
               <IconButton
                 size="sm"
                 variant="ghost"
@@ -65,7 +60,7 @@ export default function TabsTile() {
         },
         {
           value: 'activity',
-          label: narrow ? 'Log' : 'Activity',
+          label: 'Log',
           content: <Text>Sam edited the brief.</Text>,
         },
       ]}

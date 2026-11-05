@@ -21,8 +21,8 @@ const script: PointerStep[] = [
 
 /**
  * A drop zone for documents, the small one, which shows whole in a gallery's low tile; narrower in
- * a phone's, its words shorter so each stays one line, so it is drawn whole at its own size there
- * too.
+ * a phone's, so it is drawn whole at its own size there too. Its words are short, the same at every
+ * width, so each stays one line there.
  */
 export default function DropZoneTile() {
   const [pending, setPending] = useState(false);
@@ -36,16 +36,8 @@ export default function DropZoneTile() {
   return (
     <DropZone
       size="sm"
-      label={
-        narrow
-          ? pending
-            ? 'Uploading'
-            : 'Drop a PDF'
-          : pending
-            ? 'Uploading report.pdf'
-            : 'Drop files or browse'
-      }
-      description={narrow ? (pending ? 'report.pdf' : 'Up to 10 MB') : 'PDF, up to 10 MB'}
+      label={pending ? 'Uploading' : 'Drop a PDF'}
+      description={pending ? 'report.pdf' : 'Up to 10 MB'}
       pending={pending}
       onFilesAccepted={() => setPending(true)}
       style={{ inlineSize: narrow ? '8.75rem' : '12.5rem' }}
