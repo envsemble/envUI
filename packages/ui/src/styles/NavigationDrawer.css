@@ -262,10 +262,18 @@
   .env-navigation-drawer-branch {
     /* The round button at the end of a section's link, inside the item's height. */
     --env-navigation-drawer-toggle-size: calc(var(--env-control-height) - 2 * var(--env-space-1));
-    /* How far nested destinations sit in from their section's: past its icon and the gap after
-       it, so their labels start a step inside the section's label. */
+    /* How far nested destinations sit in from their section's: their labels start a step inside
+       the section's label, past its icon and the gap after it where it has one. */
+    --env-navigation-drawer-indent: var(--env-space-4);
+  }
+  .env-navigation-drawer-branch:has(
+    > .env-navigation-drawer-item > .env-navigation-drawer-label:not(:first-child),
+    > .env-navigation-drawer-branch-row
+      > .env-navigation-drawer-item
+      > .env-navigation-drawer-label:not(:first-child)
+  ) {
     --env-navigation-drawer-indent: calc(
-      var(--env-control-icon-size) + var(--env-space-3) + var(--env-space-2)
+      var(--env-control-icon-size) + var(--env-space-3) + var(--env-space-4)
     );
   }
   .env-navigation-drawer-branch-row {
