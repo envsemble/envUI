@@ -178,6 +178,51 @@ test('a 12-hour locale adds its day periods, in the order it writes them', async
   await expect(field(page, 'Abfahrt')).toHaveText('18:45');
 });
 
+test('hourCycle sets the clock whatever the locale writes', async ({ page }) => {
+  // en-US on the 24-hour clock: 18:45, with hours from 00 to 23 and no AM/PM wheel.
+  const rota = field(page, 'Rota');
+  await expect(rota).toHaveText('18:45');
+  await rota.focus();
+  await page.keyboard.press('ArrowDown');
+  const dialog = page.getByRole('dialog', { name: 'Rota' });
+  await expect.poll(() => wheelNames(dialog)).toEqual(['Hours', 'Minutes']);
+  const hours = wheel(dialog, 'Hours');
+  await expect(hours).toHaveAttribute('aria-valuetext', '18');
+  await expect(hours).toHaveAttribute('aria-valuemin', '0');
+  await expect(hours).toHaveAttribute('aria-valuemax', '23');
+  await expect(hours.locator('[data-centered]')).toHaveText('18');
+  await expect.poll(() => focusedWheel(page)).toBe('Hours=18');
+  await page.keyboard.press('End');
+  await expect(rota).toHaveText('23:45');
+  await page.keyboard.press('ArrowDown');
+  await expect(rota).toHaveText('00:45');
+  await page.keyboard.type('7');
+  await expect(rota).toHaveText('07:45');
+  await page.keyboard.press('Escape');
+
+  // en-GB on the 12-hour clock, as it writes one: 06:45 pm, with its day periods.
+  const twelve = field(page, 'Twelve-hour');
+  await expect(twelve).toHaveText(/^06:45\spm$/i);
+  await twelve.click();
+  const twelveDialog = page.getByRole('dialog', { name: 'Twelve-hour' });
+  await expect.poll(() => wheelNames(twelveDialog)).toEqual(['Hours', 'Minutes', 'AM/PM']);
+  await expect(wheel(twelveDialog, 'Hours')).toHaveAttribute('aria-valuetext', '06');
+  await expect.poll(() => focusedWheel(page)).toBe('Hours=6');
+  await page.keyboard.press('ArrowRight');
+  await page.keyboard.press('ArrowRight');
+  await page.keyboard.press('a');
+  await expect(twelve).toHaveText(/^06:45\sam$/i);
+  await page.keyboard.press('Escape');
+
+  // A date and a time takes it too.
+  const shift = field(page, 'Shift start');
+  await expect(shift).toHaveText('Oct 21, 2026, 18:00');
+  await shift.click();
+  const shiftDialog = page.getByRole('dialog', { name: 'Shift start' });
+  await expect.poll(() => wheelNames(shiftDialog)).toEqual(['Hours', 'Minutes']);
+  await expect(wheel(shiftDialog, 'Hours')).toHaveAttribute('aria-valuetext', '18');
+});
+
 test('a minute between the steps keeps its own row in order', async ({ page }) => {
   const checkIn = field(page, 'Check in');
   await expect(checkIn).toHaveText('10:07');

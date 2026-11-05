@@ -8,7 +8,14 @@ import { Button } from '../actions/Button.js';
 import { IconSchedule } from '../icons/Schedule.js';
 import { PickerField, usePickerOpen, type PickerFieldProps } from './internal/PickerField.js';
 import { TimeList, timeListFirstColumn } from './internal/TimeList.js';
-import { dateFormat, formatTime, now, parseTime, toUtcDate } from '../internal/calendarDays.js';
+import {
+  dateFormat,
+  formatTime,
+  now,
+  parseTime,
+  toUtcDate,
+  withHourCycle,
+} from '../internal/calendarDays.js';
 import '../styles/Base.css';
 import '../styles/DatePicker.css';
 import '../styles/TimePicker.css';
@@ -31,10 +38,16 @@ export interface TimePickerProps extends PickerFieldProps {
    */
   minuteStep?: number;
   /**
-   * The locale of the shown value and the list's times, with its own 12- or 24-hour clock:
-   * EnvUIProvider's, else the browser's.
+   * The locale of the shown value and the list's times, with its own 12- or 24-hour clock unless
+   * `hourCycle` sets one: EnvUIProvider's, else the browser's.
    */
   locale?: string;
+  /**
+   * The clock of the shown value and the wheels, whatever the locale's: h23 for 18:00, with no
+   * AM/PM wheel, or h12 for 6:00 PM. The value stays HH:mm on the 24-hour clock.
+   * @default the locale's
+   */
+  hourCycle?: 'h12' | 'h23';
   /**
    * How the field shows the value: Intl.DateTimeFormat options, by default the short time style.
    */
@@ -63,6 +76,7 @@ export function TimePicker({
   max,
   minuteStep,
   locale,
+  hourCycle,
   formatOptions,
   disabled = false,
   readOnly = false,
@@ -97,11 +111,14 @@ export function TimePicker({
       // Values are wall-clock times, formatted in UTC so no zone shifts them.
       dateFormat(
         shownLocale,
-        (JSON.parse(formatOptionsKey) as Intl.DateTimeFormatOptions | null) ?? {
-          timeStyle: 'short',
-        },
+        withHourCycle(
+          (JSON.parse(formatOptionsKey) as Intl.DateTimeFormatOptions | null) ?? {
+            timeStyle: 'short',
+          },
+          hourCycle,
+        ),
       ),
-    [shownLocale, formatOptionsKey],
+    [shownLocale, formatOptionsKey, hourCycle],
   );
   const display = current === undefined ? '' : formatter.format(toUtcDate(0, current));
 
@@ -176,6 +193,7 @@ export function TimePicker({
           min={minMinutes}
           max={maxMinutes}
           locale={locale}
+          hourCycle={hourCycle}
         />
       )}
     </PickerField>

@@ -65,7 +65,7 @@ examples:
 
 ### The locale's clock
 
-The same value on a 12-hour and a 24-hour clock, as people there write it. The value itself stays on the 24-hour clock.
+The same value on a 12-hour and a 24-hour clock, as people there write it, and on the 24-hour clock in New York too, where the field sets its own clock. The value itself stays on the 24-hour clock.
 
 ```tsx figure=ClockConventions
 
@@ -120,7 +120,7 @@ Show it read-only, not disabled.
 <TimePicker label="Starts at" value={start} onValueChange={setStart} clearable />
 ```
 
-The value is a time of day as `HH:mm` on the 24-hour clock, or `null` for none: control it with `value` and `onValueChange`, which receives `HH:mm`, or `null` once the field is cleared, or leave it uncontrolled with `defaultValue`. It shows the value and its wheels on the clock of `locale`, EnvUIProvider's or else the browser's, and `formatOptions` sets how the field shows it, as `Intl.DateTimeFormat` options, by default the short time style. `label`, `description` and `error` work as on TextField. `clearable` adds a clear button to the field and the popup, named by `clearLabel`, and `nowLabel` names the popup's shortcut to the current time. The popup stays open as its wheels turn.
+The value is a time of day as `HH:mm` on the 24-hour clock, or `null` for none: control it with `value` and `onValueChange`, which receives `HH:mm`, or `null` once the field is cleared, or leave it uncontrolled with `defaultValue`. It shows the value and its wheels on the clock of `locale`, EnvUIProvider's or else the browser's, unless `hourCycle` sets one: `h23` for 18:00 with no AM/PM wheel, `h12` for 6:00 PM. `formatOptions` sets how the field shows it, as `Intl.DateTimeFormat` options, by default the short time style. `label`, `description` and `error` work as on TextField. `clearable` adds a clear button to the field and the popup, named by `clearLabel`, and `nowLabel` names the popup's shortcut to the current time. The popup stays open as its wheels turn.
 
 #### Available times
 
@@ -153,6 +153,8 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 ## Changelog
 
 - **1.0.0**: TimePicker, for a time of day chosen on wheels of hours, minutes and day periods on the locale's clock, with `minuteStep`, `min` and `max`.
+- **1.0.0-prerelease.6**: `hourCycle`, `h12` or `h23`, sets the clock of the field and its wheels whatever the locale's, such as 18:00 with no AM/PM wheel in English; the value stays `HH:mm`.
+- **1.0.0-prerelease.6**: The wheels' rows are a little less than a row height tall, as the calendar's days are, 24 px at the compact scale; touch screens keep the touch height.
 - **1.0.0-prerelease.6**: A clearable field's clear button and its clock icon stand a step apart, so they don't crowd each other in a small field.
 - **1.0.0-prerelease.6**: While its list of times is open, the field keeps its focused frame, the accent edge and label, also when focus is in the popup, as when it opens under the pointer.
 - **1.0.0-prerelease.6**: The chosen hour and minute take the chosen day's solid accent fill rather than the selection's tint, and are round and as tall as a day, as the chosen day is, so a chosen day and time look alike and the wheels stay narrow; a wheel with fewer values than it shows rows, such as minutes every 15, no longer loops and shows a value twice, while its arrow keys still wrap around. A light fade at a wheel's edges hints that it scrolls, while every value it shows stays legible, and times outside `min` and `max` are struck through in the disabled color, so they no longer look like the fade.

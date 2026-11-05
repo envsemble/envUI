@@ -2335,6 +2335,13 @@
           "description": "The locale of the shown value and the calendar's names and numbers: EnvUIProvider's, else the browser's. Dates are Gregorian, also in a locale with a calendar of its own."
         },
         {
+          "name": "hourCycle",
+          "type": "'h12' | 'h23'",
+          "required": false,
+          "default": "the locale's",
+          "description": "With the minute granularity, the clock of the shown time and the wheels, whatever the locale's: h23 for 18:00, with no AM/PM wheel, or h12 for 6:00 PM. The value stays on the 24-hour clock."
+        },
+        {
           "name": "weekStart",
           "type": "0 | 1 | 2 | 3 | 4 | 5 | 6",
           "required": false,
@@ -8458,7 +8465,14 @@
           "name": "locale",
           "type": "string",
           "required": false,
-          "description": "The locale of the shown value and the list's times, with its own 12- or 24-hour clock: EnvUIProvider's, else the browser's."
+          "description": "The locale of the shown value and the list's times, with its own 12- or 24-hour clock unless `hourCycle` sets one: EnvUIProvider's, else the browser's."
+        },
+        {
+          "name": "hourCycle",
+          "type": "'h12' | 'h23'",
+          "required": false,
+          "default": "the locale's",
+          "description": "The clock of the shown value and the wheels, whatever the locale's: h23 for 18:00, with no AM/PM wheel, or h12 for 6:00 PM. The value stays HH:mm on the 24-hour clock."
         },
         {
           "name": "formatOptions",

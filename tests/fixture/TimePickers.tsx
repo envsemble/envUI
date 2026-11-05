@@ -66,6 +66,9 @@ export function TimePickersFixture() {
         <TimePicker label="Abfahrt" locale="de-DE" defaultValue="18:45" />
         {/* Korean writes the day period before the hour. */}
         <TimePicker label="Korean time" locale="ko-KR" defaultValue="14:30" />
+        {/* hourCycle sets the clock whatever the locale's. */}
+        <TimePicker label="Rota" locale="en-US" hourCycle="h23" defaultValue="18:45" />
+        <TimePicker label="Twelve-hour" locale="en-GB" hourCycle="h12" defaultValue="18:45" />
         <TimePicker label="Disabled time" locale="en-GB" defaultValue="12:00" disabled />
         <TimePicker label="Read only time" locale="en-GB" defaultValue="12:00" readOnly />
         <TimePicker label="Invalid time" locale="en-GB" error="Choose a later time." />
@@ -78,6 +81,13 @@ export function TimePickersFixture() {
           locale="en-US"
           minuteStep={30}
           defaultValue="2026-10-21T09:10"
+        />
+        <DatePicker
+          label="Shift start"
+          granularity="minute"
+          locale="en-US"
+          hourCycle="h23"
+          defaultValue="2026-10-21T18:00"
         />
       </div>
     </div>

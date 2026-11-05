@@ -193,6 +193,14 @@ export function dateFormat(locale: string | undefined, options: Intl.DateTimeFor
   return new Intl.DateTimeFormat(locale, { calendar: 'gregory', ...options, timeZone: 'UTC' });
 }
 
+/** The options on the given clock, in place of the locale's and of any hour12 they set. */
+export function withHourCycle(
+  options: Intl.DateTimeFormatOptions,
+  hourCycle: 'h12' | 'h23' | undefined,
+): Intl.DateTimeFormatOptions {
+  return hourCycle ? { ...options, hour12: undefined, hourCycle } : options;
+}
+
 type LocaleWithWeekInfo = Intl.Locale & {
   getWeekInfo?: () => { firstDay: number };
   weekInfo?: { firstDay: number };

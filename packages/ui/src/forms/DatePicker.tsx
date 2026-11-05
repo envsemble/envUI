@@ -36,6 +36,7 @@ import {
   parseDay,
   parseTime,
   toUtcDate,
+  withHourCycle,
   type Weekday,
 } from '../internal/calendarDays.js';
 import '../styles/Base.css';
@@ -87,6 +88,12 @@ export interface DatePickerProps
    * browser's. Dates are Gregorian, also in a locale with a calendar of its own.
    */
   locale?: string;
+  /**
+   * With the minute granularity, the clock of the shown time and the wheels, whatever the locale's:
+   * h23 for 18:00, with no AM/PM wheel, or h12 for 6:00 PM. The value stays on the 24-hour clock.
+   * @default the locale's
+   */
+  hourCycle?: 'h12' | 'h23';
   /**
    * The calendar's first day of the week, from 0 for Sunday to 6 for Saturday.
    * @default the locale's, or Monday where the browser cannot tell
@@ -204,6 +211,7 @@ export function DatePicker({
   placeholderTime,
   minuteStep,
   locale,
+  hourCycle,
   weekStart,
   formatOptions,
   disabled = false,
@@ -258,10 +266,13 @@ export function DatePicker({
       // Values are wall-clock dates and times, formatted in UTC so no zone shifts them.
       dateFormat(
         shownLocale,
-        (JSON.parse(formatOptionsKey) as Intl.DateTimeFormatOptions | null) ??
-          (withTime ? { dateStyle: 'medium', timeStyle: 'short' } : { dateStyle: 'medium' }),
+        withHourCycle(
+          (JSON.parse(formatOptionsKey) as Intl.DateTimeFormatOptions | null) ??
+            (withTime ? { dateStyle: 'medium', timeStyle: 'short' } : { dateStyle: 'medium' }),
+          hourCycle,
+        ),
       ),
-    [shownLocale, withTime, formatOptionsKey],
+    [shownLocale, withTime, formatOptionsKey, hourCycle],
   );
   const display = current ? formatter.format(toUtcDate(current.day, current.minutes)) : '';
 
@@ -380,6 +391,7 @@ export function DatePicker({
               min={boundMinutes(minMoment, timeDay)}
               max={boundMinutes(maxMoment, timeDay)}
               locale={locale}
+              hourCycle={hourCycle}
             />
           </Grid>
         </Grid>

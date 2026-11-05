@@ -192,6 +192,7 @@ A DatePicker is a field with its `label`, `description` and `error`, whose butto
 
 - The time is chosen on wheels of hours, minutes every `minuteStep` minutes, 15 by default, and, on a 12-hour clock, day periods.
 - `placeholderTime`, as `HH:mm`, is the time a newly chosen day starts with, 00:00 by default.
+- `hourCycle` sets the time's clock whatever the locale's: `h23` for 18:00 with no AM/PM wheel, `h12` for 6:00 PM. The value stays on the 24-hour clock.
 
 ```tsx
 <DatePicker
@@ -199,6 +200,7 @@ A DatePicker is a field with its `label`, `description` and `error`, whose butto
   granularity="minute"
   placeholderTime="09:00"
   minuteStep={30}
+  hourCycle="h23"
   value={meeting}
   onValueChange={setMeeting}
   clearable
@@ -263,6 +265,8 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 - **1.0.0**: With the minute granularity, the time is chosen on wheels of hours, minutes every `minuteStep` minutes (15) and, on a 12-hour clock, day periods, beside the calendar, in place of the time field under it; turning a wheel sets the time at once. The calendar has no Done button, and `doneLabel` is gone: it closes as a date-only one does. The field and popup are shared with TimePicker and MonthPicker.
 - **1.0.0**: `withTime` is `granularity`, `"day"` or `"minute"`; `hint` is `description`; `variant="outlined"` is `variant="outline"`. `className` and `style` style the field's root rather than the button, which takes `ref`. The calendar opens on the shared popup, its month buttons are ghost icon buttons, and its labels come from EnvUIProvider's `messages`, as its locale does: `env-date-time-well` is `env-date-picker-control`.
 - **1.0.0**: `DateTimeField` is `DatePicker`, with the `env-date-picker-*` classes; the page is `date-picker`.
+- **1.0.0-prerelease.6**: With the minute granularity, `hourCycle`, `h12` or `h23`, sets the time's clock whatever the locale's, such as 18:00 with no AM/PM wheel in English; the value stays `YYYY-MM-DDTHH:mm`.
+- **1.0.0-prerelease.6**: The calendar's days, on their own and in the popup, are a little less than a row height wide, 24 px at the compact scale and 32 px at the comfortable one, so the columns stand close around the numbers; they still touch, and touch screens keep touch-sized days.
 - **1.0.0-prerelease.6**: A clearable field's clear button and its calendar icon stand a step apart, so they don't crowd each other in a small field.
 - **1.0.0-prerelease.6**: While its calendar is open, the field keeps its focused frame, the accent edge and label, also when focus is in the popup, as when it opens under the pointer.
 - **1.0.0-prerelease.6**: The calendar names the weekdays by their first two letters at every width and scale, Mo Tu We in English, where those tell the seven apart, so the names never run into each other in the popup's narrow days.
