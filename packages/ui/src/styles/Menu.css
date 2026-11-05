@@ -205,11 +205,12 @@
   /* A chosen radio item's mark is a dot in the accent, as a Radio's, where a checkbox item's is a
      check. A border draws it, which forced colors keep in the text color. */
   .env-menu-item-indicator[data-shape='dot'] {
+    --env-menu-item-dot: 0.5rem;
     box-sizing: border-box;
-    inline-size: 0.5rem;
-    block-size: 0.5rem;
-    border: 0.25rem solid currentColor;
-    border-radius: 50%;
+    inline-size: var(--env-menu-item-dot);
+    block-size: var(--env-menu-item-dot);
+    border: calc(var(--env-menu-item-dot) / 2) solid currentColor;
+    border-radius: var(--env-radius-full);
   }
   .env-menu-choice[data-checked] .env-menu-item-label {
     font-weight: var(--env-font-weight-medium);
