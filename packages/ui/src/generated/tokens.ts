@@ -46,7 +46,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#9948b6',
-      dark: '#e7a8ff',
+      dark: '#d683f5',
       'light-high-contrast': '#6d1888',
       'dark-high-contrast': '#f2d2ff',
     },
@@ -57,7 +57,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#83319f',
-      dark: '#f0caff',
+      dark: '#e7a8ff',
       'light-high-contrast': '#63047d',
       'dark-high-contrast': '#f7e4ff',
     },
@@ -68,7 +68,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#6d1888',
-      dark: '#f2d2ff',
+      dark: '#efc6ff',
       'light-high-contrast': '#57006e',
       'dark-high-contrast': '#faedff',
     },
@@ -101,7 +101,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#8e3caa',
-      dark: '#e7a8ff',
+      dark: '#d683f5',
       'light-high-contrast': '#63047d',
       'dark-high-contrast': '#f2d2ff',
     },
@@ -805,7 +805,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#005cc8',
-      dark: '#c3d8fc',
+      dark: '#bfd5fb',
       'light-high-contrast': '#00377c',
       'dark-high-contrast': '#cddefc',
     },
@@ -816,7 +816,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#004aa2',
-      dark: '#cddefc',
+      dark: '#dbe8fd',
       'light-high-contrast': '#002f6d',
       'dark-high-contrast': '#e0ebfd',
     },

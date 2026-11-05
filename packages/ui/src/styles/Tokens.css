@@ -302,12 +302,12 @@
 
 .env-theme[data-env-theme='dark'] {
   color-scheme: dark;
-  --env-color-bg-accent-emphasis: #e7a8ff;
-  --env-color-bg-accent-emphasis-hover: #f0caff;
-  --env-color-bg-accent-emphasis-pressed: #f2d2ff;
+  --env-color-bg-accent-emphasis: #d683f5;
+  --env-color-bg-accent-emphasis-hover: #e7a8ff;
+  --env-color-bg-accent-emphasis-pressed: #efc6ff;
   --env-color-bg-accent-muted: rgb(231 168 255 / 0.14);
   --env-color-bg-accent-soft: var(--env-color-bg-accent-muted);
-  --env-color-bg-accent-solid: #e7a8ff;
+  --env-color-bg-accent-solid: #d683f5;
   --env-color-bg-accent-subtle-hover: rgb(231 168 255 / 0.17);
   --env-color-bg-accent-subtle-pressed: rgb(231 168 255 / 0.25);
   --env-color-bg-avatar-blush: #732c30;
@@ -354,8 +354,8 @@
   --env-color-bg-popup-hover: #424447;
   --env-color-bg-popup-pressed: #4b4d51;
   --env-color-bg-primary-emphasis: #9fc1f8;
-  --env-color-bg-primary-emphasis-hover: #c3d8fc;
-  --env-color-bg-primary-emphasis-pressed: #cddefc;
+  --env-color-bg-primary-emphasis-hover: #bfd5fb;
+  --env-color-bg-primary-emphasis-pressed: #dbe8fd;
   --env-color-bg-primary-muted: rgb(52 126 234 / 0.16);
   --env-color-bg-primary-soft: var(--env-color-bg-primary-muted);
   --env-color-bg-primary-solid: #9fc1f8;
