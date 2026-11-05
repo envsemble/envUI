@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
+import { Fragment, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { PortalContainer } from '@envsemble/envui';
 
 /** The least room a dialog, a sheet or a toast keeps from the stage's edges, in px. */
@@ -317,7 +317,12 @@ function press(trigger: HTMLElement) {
  * Opens a live example's overlay once, as it first renders, where the example doesn't open it
  * itself: pressed open, its trigger stays what it is in the code, closed until used.
  */
-function useOpenOnce(room: HTMLElement | null, layer: HTMLElement | null, live: boolean) {
+function useOpenOnce(
+  room: HTMLElement | null,
+  layer: HTMLElement | null,
+  live: boolean,
+  round: number,
+) {
   useLayoutEffect(() => {
     if (!live || !room || !layer) return;
     let frame = 0;
@@ -346,7 +351,56 @@ function useOpenOnce(room: HTMLElement | null, layer: HTMLElement | null, live: 
       cancelAnimationFrame(frame);
       finish();
     };
+  }, [room, layer, live, round]);
+}
+
+/** How long, in ms, a live example's closed overlay waits, with the reader gone, to rest open. */
+const restDelay = 800;
+
+/**
+ * Brings a live example back to rest, its overlay open, once the reader has closed it and left: a
+ * while after the pointer has left the example and focus is outside it, the example is drawn anew,
+ * as it first rendered, and opened again (useOpenOnce), without taking focus, so an overview never
+ * stays a lone trigger in an empty stage. Returns the round, which keys the example.
+ */
+function useRestOpen(room: HTMLElement | null, layer: HTMLElement | null, live: boolean) {
+  const [round, setRound] = useState(0);
+  useLayoutEffect(() => {
+    if (!live || !room || !layer) return;
+    let timer = 0;
+    let shown = false;
+    const open = () => layer.childElementCount > 0 && overlays(layer).length > 0;
+    const away = () => !room.matches(':hover') && !room.contains(document.activeElement);
+    const check = () => {
+      if (open()) {
+        shown = true;
+        window.clearTimeout(timer);
+        timer = 0;
+        return;
+      }
+      if (!shown || timer) return;
+      timer = window.setTimeout(() => {
+        timer = 0;
+        if (open() || !away()) return;
+        // At rest again, it keeps its focus to itself until the reader reaches for it once more.
+        delete room.dataset.touched;
+        shown = false;
+        setRound((current) => current + 1);
+      }, restDelay);
+    };
+    const changes = new MutationObserver(check);
+    changes.observe(layer, { childList: true, subtree: true });
+    room.addEventListener('pointerleave', check);
+    room.addEventListener('focusout', check);
+    check();
+    return () => {
+      window.clearTimeout(timer);
+      changes.disconnect();
+      room.removeEventListener('pointerleave', check);
+      room.removeEventListener('focusout', check);
+    };
   }, [room, layer, live]);
+  return round;
 }
 
 /**
@@ -356,7 +410,8 @@ function useOpenOnce(room: HTMLElement | null, layer: HTMLElement | null, live: 
  * the stage, centred with what opens them. The example opens them itself, such as with
  * `defaultOpen`. The whole is inert: a picture people read, not a control they use. A `live` one,
  * a page's overview, is the component at rest open, which people can use: it isn't inert, and
- * where the example doesn't open its overlay itself, it is pressed open once as it first renders.
+ * where the example doesn't open its overlay itself, it is pressed open once as it first renders;
+ * closed by the reader, it comes back to rest open once they leave it (useRestOpen).
  */
 export function OpenExample({
   name,
@@ -371,7 +426,8 @@ export function OpenExample({
   const room = useRef<HTMLDivElement>(null);
   const [roomElement, setRoomElement] = useState<HTMLDivElement | null>(null);
   const [layer, setLayer] = useState<HTMLDivElement | null>(null);
-  useOpenOnce(roomElement, layer, live);
+  const round = useRestOpen(roomElement, layer, live);
+  useOpenOnce(roomElement, layer, live, round);
   // The reader reaching for it, by a pointer or the keyboard, lets it take focus from then on.
   useLayoutEffect(() => {
     if (!live || !roomElement) return;
@@ -421,7 +477,7 @@ export function OpenExample({
       inert={!live}
     >
       <PortalContainer container={layer} contained>
-        {children}
+        <Fragment key={round}>{children}</Fragment>
       </PortalContainer>
       <div ref={setLayer} className="catalogue-overlay-layer" />
     </div>
