@@ -574,8 +574,12 @@ test('menu groups, radio and checkbox items keep their choice', async ({ page })
   const name = menu.getByRole('menuitemradio', { name: 'Name' });
   const date = menu.getByRole('menuitemradio', { name: 'Date' });
   await expect(name).toHaveAttribute('aria-checked', 'true');
-  // The chosen radio row shows its check mark alone, with no fill, as the other row has none.
-  const [text] = await tokenColors(menu, ['--env-color-fg-default']);
+  // The chosen radio row takes the selection's fill and text with its check mark; the other keeps
+  // none.
+  const [selected, onSelected] = await tokenColors(menu, [
+    '--env-color-bg-selected',
+    '--env-color-fg-on-selected',
+  ]);
   const look = (item: Locator) =>
     item.evaluate((element) => {
       const style = getComputedStyle(element);
@@ -583,7 +587,7 @@ test('menu groups, radio and checkbox items keep their choice', async ({ page })
     });
   await expect(menu).not.toHaveAttribute('data-starting-style');
   await page.mouse.move(0, 0);
-  await expect.poll(() => look(name)).toEqual(['rgba(0, 0, 0, 0)', text]);
+  await expect.poll(() => look(name)).toEqual([selected, onSelected]);
   await expect(name.locator('.env-menu-item-indicator')).toBeVisible();
   expect((await look(date))[0]).toBe('rgba(0, 0, 0, 0)');
   await expect(date).toHaveAccessibleDescription('Most recently changed first');

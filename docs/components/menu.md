@@ -86,8 +86,8 @@ Groups put items under a heading, and separators split sets without one.
 
 Items can be choices, checked in place.
 
-- A radio item checks one choice and closes the menu. The chosen one shows a dot, as a Radio does.
-- A checkbox item toggles and keeps it open, with a check mark while it is on.
+- A radio item checks one choice and closes the menu; the chosen one takes the selection's fill as well as its check mark.
+- A checkbox item toggles and keeps it open.
 
 ```tsx figure=Choices motion
 
@@ -296,7 +296,7 @@ The parts:
 - The popup, `env-menu`, and its positioner, `env-menu-positioner`; the header, `env-menu-header`.
 - A group, `env-menu-group`, with its label, `env-menu-group-label`.
 - Each item, `env-menu-item`, with `data-highlighted`, `data-disabled` and `data-tone`. Its label and description are in `env-menu-item-text`, `env-menu-item-label` and `env-menu-item-description`; its end, `env-menu-item-end`, holds the shortcut, `env-menu-item-shortcut`.
-- A radio or checkbox item, `env-menu-choice`, with `data-checked`, and its mark, the dot or the check, in `env-menu-item-indicator-slot` and `env-menu-item-indicator`, which is `[data-shape='dot']` on a radio item.
+- A radio or checkbox item, `env-menu-choice`, with `data-checked`, and its check in `env-menu-item-indicator-slot` and `env-menu-item-indicator`.
 - A submenu's row, `env-menu-submenu-trigger`, with its chevron, `env-menu-submenu-chevron`.
 - The separator, `env-menu-separator`.
 
@@ -309,10 +309,9 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 - **1.0.0**: ThemeMenuRadioGroup, the theme choice for any menu. The parts are members of the `Menu` namespace: `Menu` is `Menu.Root`, and `MenuItem`, `MenuHeader`, `MenuSeparator`, `MenuGroup`, `MenuRadioGroup`, `MenuRadioItem`, `MenuCheckboxItem` and `MenuSubmenu` are `Menu.Item`, `Menu.Header`, `Menu.Separator`, `Menu.Group`, `Menu.RadioGroup`, `Menu.RadioItem`, `Menu.CheckboxItem` and `Menu.Submenu`. Menus have one anatomy at the scale's row height: `density` and the `MenuDensity` type are gone. `OrganizationMenu`, OrganizationSwitcher in 1.0.0-prerelease.0, is the organization switcher pattern, built from Menu.Root, Menu.RadioGroup and Menu.RadioItem. ContextMenu keeps its name, and a `content` function that returns `null` leaves the menu closed on that element. Menu.Item's `trailing` is `end`. A Menu.Item with `href` closes the menu as it is followed and takes an `onClick`, which runs as it is followed, and a disabled one renders no link. Every menu's popup is the shared popup surface, which takes the direction at its trigger, and Menu.Root takes `side="inline-start"` and `"inline-end"` and passes `ref`, `style` and native props to its popup. A chosen item's check is `env-menu-item-indicator`, as in Select and Combobox, in its place, `env-menu-item-indicator-slot`; they were `env-menu-item-check-mark` and `env-menu-item-check`.
 - **1.0.0-prerelease.6**: A shortcut is muted text in one unit, such as Ctrl+D, rather than a filled chip for each key, so a menu of shortcuts stays quiet down its rows.
 - **1.0.0-prerelease.6**: A separator is a break of half a row, rather than a gap that read as uneven spacing between rows, and so is the space before a group without a heading; it still draws no line.
-- **1.0.0-prerelease.6**: A chosen radio item shows a dot in the accent, as a Radio does, rather than the check mark a checkbox item keeps.
 - **1.0.0-prerelease.6**: In an item with a description, the check mark, the icon, the end and the shortcut sit on the label's line rather than across both lines.
 - **1.0.0-prerelease.6**: A group with a heading sits closer to the rows before it, and its heading closer to its rows, so a menu of a few groups stays compact; a separator, such as the one before a destructive item, keeps the full space.
 - **1.0.0-prerelease.6**: A disabled item's label takes the disabled text color, `--env-color-fg-disabled`, rather than the muted color its description has, so unavailable and explanatory text no longer look alike.
 - **1.0.0-prerelease.5**: Menu.Root's `aria-label` is optional: the menu takes its trigger's name. Menu.RadioGroup takes `defaultValue` and Menu.CheckboxItem `defaultChecked`, for choices the menu keeps; Menu.Separator, Menu.Group and Menu.RadioGroup pass their native props on. `onOpenChange` of Menu.Root, Menu.Submenu and ContextMenu receives why.
 - **1.0.0-prerelease.5**: ThemeRadioGroup is ThemeMenuRadioGroup, with `ThemeMenuRadioGroupProps`: it works only inside a menu.
-- **1.0.0-prerelease.5**: Menus are frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge but a faint hairline in dark, and is solid with its edge at high contrast and with reduced transparency. Rows are the md control height in body text, in a menu with 1.25 rem corners; separators and groups part by space, with no hairline, and shortcut keys are muted chips with no edge, side by side with the + read but not shown. The highlighted row, under the pointer or the keyboard, takes the neutral fill with no focus ring, and a chosen radio item shows its check mark alone. Group labels sit 10 px from the menu's edge, a little ahead of the rows' icons and text, rather than in line with the labels.
+- **1.0.0-prerelease.5**: Menus are frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge but a faint hairline in dark, and is solid with its edge at high contrast and with reduced transparency. Rows are the md control height in body text, in a menu with 1.25 rem corners; separators and groups part by space, with no hairline, and shortcut keys are muted chips with no edge, side by side with the + read but not shown. The highlighted row, under the pointer or the keyboard, takes the neutral fill with no focus ring, and a chosen radio item takes the selection's fill and text as well as its check mark. Group labels sit 10 px from the menu's edge, a little ahead of the rows' icons and text, rather than in line with the labels.

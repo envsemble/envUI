@@ -2,9 +2,9 @@
   /* A row of a popup list (ListRow): an icon, a label over its description, content or a shortcut,
      and an indicator at the end, on the element of the list's own item. Its states come from Base UI's
      data-highlighted, data-selected and data-disabled. Rows are the popup row height in body text,
-     with corners concentric with the popup's (Popup.css). Each state has one mark: the highlight, the
-     pointer's or the keyboard's, is the neutral fill over the frosted popup, with no ring, and the
-     chosen option is its check mark. */
+     with corners concentric with the popup's (Popup.css). The highlight, the pointer's or the keyboard's,
+     is the neutral fill over the frosted popup, with no ring, and the chosen option takes the
+     selection's fill and text with its check mark. */
   .env-list-row {
     box-sizing: border-box;
     display: flex;
@@ -26,8 +26,19 @@
   .env-list-row:is([data-highlighted], [data-popup-open]) {
     background: var(--env-color-bg-neutral-muted);
   }
+  /* The chosen option is opaque, so its text keeps its contrast whatever shows through the popup. */
+  .env-list-row[data-selected] {
+    background: var(--env-color-bg-selected);
+    color: var(--env-color-fg-on-selected);
+  }
+  .env-list-row[data-selected]:is([data-highlighted], [data-popup-open]) {
+    background: var(--env-color-bg-selected-hover);
+  }
   .env-list-row:active:not([data-disabled], [aria-disabled='true']) {
     background: var(--env-color-bg-neutral-muted-pressed);
+  }
+  .env-list-row[data-selected]:active:not([data-disabled], [aria-disabled='true']) {
+    background: var(--env-color-bg-selected-pressed);
   }
   /* An unavailable row dims its indicator, icon, end and shortcut, and its label takes the disabled
      text color, as a menu item's does, so it reads as unavailable rather than as a description; its
@@ -57,6 +68,9 @@
   .env-list-row-indicator {
     order: 1;
     color: var(--env-color-bg-primary-emphasis);
+  }
+  .env-list-row[data-selected] .env-list-row-indicator {
+    color: var(--env-color-fg-on-selected);
   }
   .env-list-row-icon {
     inline-size: var(--env-list-row-icon-size, var(--env-control-icon-size));
@@ -132,7 +146,8 @@
   /* Forced colors: the system paints no fills, so a highlighted row takes the selection colors and a
      disabled one the disabled color. */
   @media (forced-colors: active) {
-    .env-list-row:is([data-highlighted], [data-popup-open]) {
+    .env-list-row:is([data-highlighted], [data-popup-open]),
+    .env-list-row[data-selected]:is([data-highlighted], [data-popup-open]) {
       forced-color-adjust: none;
       background-color: Highlight;
       color: HighlightText;

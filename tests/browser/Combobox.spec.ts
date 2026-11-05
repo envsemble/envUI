@@ -76,7 +76,7 @@ test('typing filters by label and description, ignoring case and accents, and En
   expect(errors).toEqual([]);
 });
 
-test('arrows move the highlight from the chosen option, which shows a check mark', async ({
+test('arrows move the highlight from the chosen option, which shows the selection and a check mark', async ({
   page,
 }) => {
   const owner = field(page, 'Owner light');
@@ -91,6 +91,25 @@ test('arrows move the highlight from the chosen option, which shows a check mark
   await expect(list.locator('.env-combobox-item-indicator svg')).toHaveCount(1);
   await page.keyboard.press('ArrowDown');
   await expect.poll(() => highlighted(page)).toEqual(['Taylor Brooks']);
+  // Off the highlight, the chosen option keeps the selection's fill and text.
+  const [fill, text] = await riley.evaluate((element) => {
+    const probe = document.createElement('div');
+    probe.style.backgroundColor = 'var(--env-color-bg-selected)';
+    probe.style.color = 'var(--env-color-fg-on-selected)';
+    element.append(probe);
+    const style = getComputedStyle(probe);
+    const colors = [style.backgroundColor, style.color];
+    probe.remove();
+    return colors;
+  });
+  await expect
+    .poll(() =>
+      riley.evaluate((element) => {
+        const style = getComputedStyle(element);
+        return [style.backgroundColor, style.color];
+      }),
+    )
+    .toEqual([fill, text]);
   await page.keyboard.press('ArrowUp');
   await page.keyboard.press('ArrowUp');
   await expect.poll(() => highlighted(page)).toEqual(['Jordan Park']);
