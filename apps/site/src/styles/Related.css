@@ -155,6 +155,17 @@
   min-block-size: 0;
 }
 
+/* A region that scrolls in a tile, such as a page's body in its box, fades out at its foot while
+   its content runs on past it (useFit.ts), as the stage's crop does: it ends in a fade, not in a
+   slice through a line. */
+.catalogue-related-canvas [data-catalogue-runs-on] {
+  mask-image: linear-gradient(
+    to bottom,
+    var(--env-color-fg-default) calc(100% - 1.25rem),
+    transparent
+  );
+}
+
 /* A picture of the overlay, without the backdrop, which would fill the canvas. */
 .catalogue-related-canvas :is(.env-dialog-backdrop, .env-sheet-backdrop) {
   display: none;

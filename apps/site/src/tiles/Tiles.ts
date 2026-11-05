@@ -72,6 +72,13 @@ export const tileWindows: Readonly<Record<string, { width: number; height: numbe
  */
 export const narrowGallery = '(width < 29rem)';
 
+/**
+ * Starts loading a page's tile, where it has one, well before it nears the view, so it is drawn as
+ * it comes in rather than after.
+ */
+export const preloadTile = (page: string) =>
+  void loaders[`./${pascal(page)}.tsx`]?.().catch(() => undefined);
+
 /** The tile of a page, by its id, where it has one of its own. */
 export const tileOf = (page: string): ComponentType | undefined =>
   tiles.get(`./${pascal(page)}.tsx`);

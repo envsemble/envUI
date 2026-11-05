@@ -194,9 +194,15 @@ function useStillAtRest(canvas: HTMLElement | null, resting: boolean) {
   }, [canvas, resting]);
 }
 
-/** Whether an element is near the viewport, once: the tiles render their examples from then on. */
-export function useNear(element: RefObject<HTMLElement | null>) {
+/**
+ * Whether an element is near the viewport, once: the tiles render their examples from then on.
+ * Further off, `approach` runs once, such as to start loading a tile's module, so it is there by
+ * the time the tile renders.
+ */
+export function useNear(element: RefObject<HTMLElement | null>, approach?: () => void) {
   const [near, setNear] = useState(false);
+  const approaching = useRef(approach);
+  approaching.current = approach;
   useEffect(() => {
     const target = element.current;
     if (!target || near) return;
@@ -210,7 +216,19 @@ export function useNear(element: RefObject<HTMLElement | null>) {
       { rootMargin: '600px 0px' },
     );
     observer.observe(target);
-    return () => observer.disconnect();
+    const ahead = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        ahead.disconnect();
+        approaching.current?.();
+      },
+      { rootMargin: '1800px 0px' },
+    );
+    if (approaching.current) ahead.observe(target);
+    return () => {
+      observer.disconnect();
+      ahead.disconnect();
+    };
   }, [element, near]);
   return near;
 }

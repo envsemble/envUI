@@ -66,8 +66,9 @@ export function previewOf(document: DocumentSummary, component?: string): Previe
   const lead = document.outline
     ?.find((section) => section.id === 'overview')
     ?.examples.find((block) => !block.role);
-  // A tile's popups, such as a menu it opens as it plays, open inside its canvas; it takes the
-  // overview's stage, such as the deeper one of a whole window.
+  // A tile's popups, such as a menu it opens as it plays, open inside its canvas. Every tile sits
+  // on the one stage fill, a whole window too, which sets itself apart by its own surfaces, so no
+  // card reads as one under the pointer.
   if (tile)
     return {
       page: document.id,
@@ -76,7 +77,6 @@ export function previewOf(document: DocumentSummary, component?: string): Previe
       composition: tile,
       tile: true,
       window: tileWindows[document.id],
-      stage: lead?.stage,
     };
   const anatomy = blocks.find((block) => block.role === 'anatomy');
   const named =

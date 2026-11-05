@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 import { siteDevUrl } from './helpers/Servers';
 import { chooseScheme } from './helpers/CatalogueThemes';
 import { documents, componentDocuments } from '../../apps/site/src/pages/PageModel';
@@ -731,24 +731,142 @@ test('every tile of the galleries is fitted: components at one scale, a scene at
   }
 });
 
-test("a gallery tile that plays draws out what it acts on and opens inside its stage, once, and rests at its still's scale", async ({
+/** A gallery tile's view: the translate and scale its canvas is drawn at (useFit.ts). */
+const viewOf = (canvas: Element) => {
+  const [, x, y, scale] =
+    (canvas as HTMLElement).style.transform.match(
+      /translate\(([-\d.e]+)px, ([-\d.e]+)px\) scale\(([-\d.e]+)\)/,
+    ) ?? [];
+  return { x: Number(x), y: Number(y), scale: Number(scale) };
+};
+
+type PlayFrame = {
+  time: number;
+  view: { x: number; y: number; scale: number };
+  cut: string;
+  past: Record<string, number>;
+  popups: Record<string, number>[];
+};
+
+/**
+ * Hovers a gallery tile from rest for `duration` ms and records each frame of its play: its view,
+ * where it is cut off, how far what `targets` select reaches past the stage's edges, and how far
+ * each popup it opens does. Then rests it, back at its still's scale.
+ */
+async function playTile(page: Page, name: string, targets: string[], duration = 4500) {
+  const tile = page.locator('.catalogue-gallery-tile').filter({
+    has: page.locator('.catalogue-gallery-name', { hasText: new RegExp(`^${name}$`) }),
+  });
+  const canvas = tile.locator('.catalogue-related-canvas[data-fitted]');
+  await tile.scrollIntoViewIfNeeded();
+  await expect(canvas).toHaveCount(1);
+  await page.mouse.move(0, 0);
+  await expect(tile.locator('[data-playing]')).toHaveCount(0);
+  const rest = await canvas.evaluate(viewOf);
+  await tile.evaluate((element, targets) => {
+    // As viewOf reads it, in the page.
+    const view = (canvas: HTMLElement) => {
+      const [, x, y, scale] =
+        canvas.style.transform.match(
+          /translate\(([-\d.e]+)px, ([-\d.e]+)px\) scale\(([-\d.e]+)\)/,
+        ) ?? [];
+      return { x: Number(x), y: Number(y), scale: Number(scale) };
+    };
+    const frames: PlayFrame[] = [];
+    (element as HTMLElement & { frames?: PlayFrame[] }).frames = frames;
+    const stage = element.querySelector('.catalogue-related-stage')!;
+    const start = performance.now();
+    const reach = (boxes: DOMRect[]) => {
+      const edge = stage.getBoundingClientRect();
+      return {
+        top: edge.top - Math.min(...boxes.map((box) => box.top)),
+        start: edge.left - Math.min(...boxes.map((box) => box.left)),
+        end: Math.max(...boxes.map((box) => box.right)) - edge.right,
+        bottom: Math.max(...boxes.map((box) => box.bottom)) - edge.bottom,
+      };
+    };
+    const card = ".env-popup, [role='menu'], [role='dialog'], [role='alertdialog']";
+    // What the still showed open, drawn as it rests, such as a dialog cut off at its foot: what
+    // opens as it plays is judged.
+    const rested = new Set(element.querySelectorAll('.catalogue-overlay-layer *'));
+    const sample = () => {
+      const canvas = element.querySelector<HTMLElement>('.catalogue-related-canvas');
+      if (canvas && element.querySelector('[data-playing]')) {
+        // What shows of each, as a scrolled row doesn't.
+        const boxes = targets
+          .flatMap((selector) => [...canvas.querySelectorAll(selector)])
+          .filter((node) => node.checkVisibility({ opacityProperty: true }))
+          .map((node) => node.getBoundingClientRect())
+          .filter((box) => box.width > 1 && box.height > 1);
+        // Each popup that opened and shows, but on its way in or out.
+        const popups = [...canvas.querySelectorAll('.catalogue-overlay-layer *')]
+          .filter((node) => !rested.has(node))
+          .filter((node) => node.matches(card) && !node.parentElement?.closest(card))
+          .filter((node) => node.checkVisibility({ opacityProperty: true }))
+          .filter((node) => !node.closest('[data-starting-style], [data-ending-style]'))
+          .filter((node) => !node.getAnimations().length)
+          .map((node) => reach([node.getBoundingClientRect()]));
+        frames.push({
+          time: performance.now() - start,
+          view: view(canvas),
+          cut: canvas.dataset.cut ?? '',
+          past: boxes.length ? reach(boxes) : { top: 0, start: 0, end: 0, bottom: 0 },
+          popups,
+        });
+      }
+      if (element.isConnected) requestAnimationFrame(sample);
+    };
+    sample();
+  }, targets);
+  const box = (await tile.boundingBox())!;
+  await page.mouse.move(box.x + box.width / 2, box.y + 8);
+  await expect(tile.locator('[data-playing]')).toHaveCount(1);
+  await page.waitForTimeout(duration);
+  const frames = await tile.evaluate((element) =>
+    (element as HTMLElement & { frames: PlayFrame[] }).frames.splice(0),
+  );
+  await page.mouse.move(0, 0);
+  // About its still's scale: a popup shown open at rest, placed against the window's edge, may
+  // come to rest a hair from where it was.
+  await expect
+    .poll(async () => Math.abs((await canvas.evaluate(viewOf)).scale - rest.scale), {
+      message: name,
+    })
+    .toBeLessThan(0.005);
+  return { rest, frames };
+}
+
+/**
+ * Frames whose view holds for 300 ms either side: where it is drawn, not on its way there, nor in
+ * the frame or two a popup shows before the view follows it.
+ */
+const heldFrames = (frames: PlayFrame[]) =>
+  frames.filter((frame) =>
+    frames
+      .filter(({ time }) => Math.abs(time - frame.time) <= 300)
+      .every(
+        ({ view }) =>
+          view.scale === frame.view.scale &&
+          Math.abs(view.x - frame.view.x) < 0.5 &&
+          Math.abs(view.y - frame.view.y) < 0.5,
+      ),
+  );
+
+test("a gallery tile that plays draws out what it opens inside its stage and rests at its still's scale", async ({
   page,
 }) => {
-  // As a tile plays, its view is drawn out once for what its script acts on and what that opens,
-  // such as a select's list or a drawer's rows past its foot, no smaller than a popup's least
-  // scale (Gallery.css), and holds there: its scale only falls, and played again, it is drawn out
-  // as it starts and keeps one scale throughout. A calendar cut off at rest keeps its month in view.
+  // As a tile plays, its view stays at its still until what its script opens needs more room,
+  // such as a select's list: then it is drawn out about its trigger, no smaller than a popup's
+  // least scale (Gallery.css), a field's floating label in view too, and holds there: its scale
+  // only falls. Played again, it does the same. A calendar cut off at rest keeps its month in view.
   test.setTimeout(90_000);
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto(`${siteDevUrl}/components`);
   const least = 0.84;
-  const scaleOf = (canvas: Element) =>
-    Number((canvas as HTMLElement).style.transform.match(/scale\(([^)]+)\)/)?.[1]);
   // What each script acts on, by the selectors of its tile (tiles/).
   const cards = {
     Select: ['.env-select-trigger', '.env-select-item'],
-    Combobox: ['.env-combobox-input', '.env-combobox-item'],
-    NavigationDrawer: ['.env-navigation-drawer-item'],
+    Combobox: ['.env-combobox-input', '.env-combobox-item', '.env-field-label'],
     DatePicker: [
       '.env-calendar-next',
       '.env-calendar-previous',
@@ -756,90 +874,67 @@ test("a gallery tile that plays draws out what it acts on and opens inside its s
       '.env-calendar-day[data-date="2026-10-09"]',
     ],
   };
-  type Frame = { time: number; scale: number; cut: string; past: Record<string, number> };
   for (const [name, targets] of Object.entries(cards)) {
-    const tile = page.locator('.catalogue-gallery-tile').filter({
-      has: page.locator('.catalogue-gallery-name', { hasText: new RegExp(`^${name}$`) }),
-    });
-    const canvas = tile.locator('.catalogue-related-canvas[data-fitted]');
-    await tile.scrollIntoViewIfNeeded();
-    await expect(canvas).toHaveCount(1);
-    await page.mouse.move(0, 0);
-    await expect(tile.locator('[data-playing]')).toHaveCount(0);
-    const rest = await canvas.evaluate(scaleOf);
-    const play = async () => {
-      // Each frame of the play: its scale, where it is cut off, and how far what its script acts
-      // on reaches past the stage's edges.
-      await tile.evaluate((element, targets) => {
-        const frames: Frame[] = [];
-        (element as HTMLElement & { frames?: Frame[] }).frames = frames;
-        const stage = element.querySelector('.catalogue-related-stage')!;
-        const start = performance.now();
-        const record = () => {
-          const canvas = element.querySelector<HTMLElement>('.catalogue-related-canvas');
-          if (!canvas || !element.querySelector('[data-playing]')) return;
-          // What shows of each, inside what clips it, as a scrolled row doesn't.
-          const boxes = targets
-            .flatMap((selector) => [...canvas.querySelectorAll(selector)])
-            .filter((node) => node.checkVisibility({ opacityProperty: true }))
-            .map((node) => node.getBoundingClientRect())
-            .filter((box) => box.width > 1 && box.height > 1);
-          const edge = stage.getBoundingClientRect();
-          frames.push({
-            time: performance.now() - start,
-            scale: Number(canvas.style.transform.match(/scale\(([^)]+)\)/)?.[1]),
-            cut: canvas.dataset.cut ?? '',
-            past: boxes.length
-              ? {
-                  top: edge.top - Math.min(...boxes.map((box) => box.top)),
-                  start: edge.left - Math.min(...boxes.map((box) => box.left)),
-                  end: Math.max(...boxes.map((box) => box.right)) - edge.right,
-                  bottom: Math.max(...boxes.map((box) => box.bottom)) - edge.bottom,
-                }
-              : { top: 0, start: 0, end: 0, bottom: 0 },
-          });
-        };
-        const sample = () => {
-          record();
-          if (element.isConnected) requestAnimationFrame(sample);
-        };
-        sample();
-      }, targets);
-      const box = (await tile.boundingBox())!;
-      await page.mouse.move(box.x + box.width / 2, box.y + 8);
-      await expect(tile.locator('[data-playing]')).toHaveCount(1);
-      await page.waitForTimeout(4500);
-      const frames = await tile.evaluate(
-        (element) => (element as HTMLElement & { frames: Frame[] }).frames,
-      );
-      await page.mouse.move(0, 0);
-      await expect.poll(() => canvas.evaluate(scaleOf), { message: name }).toBe(rest);
-      return frames;
-    };
-    const first = await play();
+    const { rest, frames: first } = await playTile(page, name, targets);
     expect(first.length, name).toBeGreaterThan(20);
-    const floor = Math.min(rest, least);
-    // Judged where it is drawn, not on its way there: frames whose scale held from the last, once
-    // what its script first opens has opened and the view has drawn out to it.
-    const held = first.filter(
-      (frame, index) => frame.time > 900 && first[index - 1]!.scale === frame.scale,
-    );
-    const outside = held.flatMap(({ scale, past }) => [
-      ...(scale < floor - 0.001 ? [`drawn at ${scale}`] : []),
-      ...Object.entries(past).flatMap(([side, by]) =>
-        by > 1 ? [`${side} ${by} at ${scale}`] : [],
-      ),
-    ]);
+    const floor = Math.min(rest.scale, least);
+    const outside = heldFrames(first)
+      .filter(({ time }) => time > 900)
+      .flatMap(({ view: { scale }, past }) => [
+        ...(scale < floor - 0.001 ? [`drawn at ${scale}`] : []),
+        ...Object.entries(past).flatMap(([side, by]) =>
+          by > 1 ? [`${side} ${by} at ${scale}`] : [],
+        ),
+      ]);
     expect([...new Set(outside)], name).toEqual([]);
     // Drawn out, it is drawn no larger again until it rests.
     const grows = first.filter(
-      (frame, index) => index > 0 && frame.scale > first[index - 1]!.scale,
+      (frame, index) => index > 0 && frame.view.scale > first[index - 1]!.view.scale,
     );
     expect(grows, name).toEqual([]);
-    // Played again, it is drawn out as it starts and keeps that scale.
-    const again = await play();
-    const scales = new Set(again.filter(({ time }) => time > 700).map(({ scale }) => scale));
-    expect(scales.size, name).toBe(1);
+    // Played again, it does the same: it starts at its still and is drawn out as far.
+    const { frames: again } = await playTile(page, name, targets);
+    expect(again[0]!.view.scale, name).toBe(rest.scale);
+    expect(again.at(-1)!.view.scale, name).toBeCloseTo(first.at(-1)!.view.scale, 3);
+  }
+});
+
+test('a gallery tile whose script opens nothing holds its still as the pointer comes in', async ({
+  page,
+}) => {
+  // The first thing seen as a tile starts to play is what its script does, not the tile moving.
+  test.setTimeout(60_000);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(`${siteDevUrl}/components`);
+  for (const name of ['Tree', 'List', 'Accordion', 'Avatar']) {
+    // Just past 300 ms, the first stretch of the play.
+    const { rest, frames } = await playTile(page, name, [], 400);
+    const moved = frames
+      .filter(({ time }) => time <= 300)
+      .filter(
+        ({ view }) =>
+          view.scale !== rest.scale ||
+          Math.abs(view.x - rest.x) > 0.5 ||
+          Math.abs(view.y - rest.y) > 0.5,
+      );
+    expect(moved, name).toEqual([]);
+  }
+});
+
+test('on a phone, what a playing gallery tile opens shows inside its stage', async ({ page }) => {
+  test.setTimeout(60_000);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(`${siteDevUrl}/components`);
+  for (const name of ['Menubar', 'Select', 'Dialog']) {
+    const { frames } = await playTile(page, name, []);
+    const outside = heldFrames(frames).flatMap(({ time, popups }) =>
+      popups.flatMap((popup) =>
+        Object.entries(popup).flatMap(([side, by]) =>
+          by > 1 ? [`${side} ${Math.round(by)} at ${Math.round(time)}`] : [],
+        ),
+      ),
+    );
+    expect(outside, name).toEqual([]);
   }
 });
 

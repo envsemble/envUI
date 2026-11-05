@@ -6,6 +6,7 @@ import { useAutoplay } from '../motion/Autoplay';
 import { usePlaying } from '../motion/Motion';
 import { TilePreview, useNear } from '../template/Related';
 import { previewOf, type Preview } from '../template/RelatedPages';
+import { preloadTile } from '../tiles/Tiles';
 
 /** One group of a gallery, such as a kind of component or what people are doing. */
 export interface GalleryGroup {
@@ -30,7 +31,7 @@ export function galleryPreviewOf(page: RoutePage): Preview | undefined {
  */
 function GalleryTile({ page, level }: { page: RoutePage; level: 2 | 3 }) {
   const tile = useRef<HTMLLIElement>(null);
-  const near = useNear(tile);
+  const near = useNear(tile, () => page.document && preloadTile(page.document.id));
   const [playing, playOn] = usePlaying();
   const autoplay = useAutoplay(tile, playing);
   const Heading = level === 2 ? 'h2' : 'h3';
