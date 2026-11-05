@@ -553,7 +553,9 @@ test('every tile of the galleries is fitted: components at one scale, a scene at
       const scaleOf = (canvas: Element | null) =>
         (canvas as HTMLElement | null)?.style.transform.match(/scale\(([^)]+)\)/)?.[1];
       const one = items
-        .map((tile) => scaleOf(tile.querySelector('[data-own-size][data-fitted]')))
+        .map((tile) =>
+          scaleOf(tile.querySelector('[data-own-size][data-fitted]:not([data-popup])')),
+        )
         .find(Boolean);
       return items.flatMap((tile) => {
         const name = tile.querySelector('.catalogue-gallery-name')?.textContent ?? '';
@@ -626,6 +628,9 @@ test('every tile of the galleries is fitted: components at one scale, a scene at
           .filter((box) => box.width > scale && box.height > scale)
           .filter((box) => box.width < window.width - 1 || box.height < window.height - 1);
         if (!shown.length) return [`${name}: empty`];
+        // A popup shown open is drawn whole, no larger than the one scale.
+        if (canvas.hasAttribute('data-popup'))
+          return Number(scaleOf(canvas)) <= Number(one) ? [] : [`${name}: popup drawn larger`];
         if (canvas.hasAttribute('data-own-size'))
           return scaleOf(canvas) === one && Number(one) <= 1 ? [] : [`${name}: not at one scale`];
         if (canvas.parentElement?.classList.contains('catalogue-related-crop'))
@@ -667,6 +672,35 @@ test('every tile of the galleries is fitted: components at one scale, a scene at
       }),
     );
     expect(cutRows, route).toEqual([]);
+    // A popup shown open, such as a menu under its button or a dialog, is whole in its stage: no
+    // edge or corner of its card is cut off or faded out.
+    const cutPopups = await tiles.evaluateAll((items) =>
+      items.flatMap((tile) => {
+        const stage = tile.querySelector('.catalogue-related-stage')!.getBoundingClientRect();
+        const layer = tile.querySelector('.catalogue-overlay-layer');
+        if (!layer) return [];
+        // A card: the outermost popup or dialog, such as a menu, a palette or a hover card.
+        const card =
+          ".env-popup, [role='menu'], [role='dialog'], [role='alertdialog'], [role='tooltip']";
+        const cards = [...layer.querySelectorAll<HTMLElement>(card)]
+          .filter((element) => !element.parentElement?.closest(card))
+          .filter((element) => element.checkVisibility());
+        const name = tile.querySelector('.catalogue-gallery-name')?.textContent;
+        return cards
+          .filter((card) => {
+            const box = card.getBoundingClientRect();
+            return (
+              box.left < stage.left - 1 ||
+              box.top < stage.top - 1 ||
+              box.right > stage.right + 1 ||
+              box.bottom > stage.bottom + 1 ||
+              tile.querySelector('.catalogue-related-canvas[data-cut]') !== null
+            );
+          })
+          .map((card) => `${name}: ${card.className}`);
+      }),
+    );
+    expect(cutPopups, route).toEqual([]);
   }
 });
 

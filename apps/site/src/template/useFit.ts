@@ -303,10 +303,25 @@ export function useFit(
         parseFloat(canvasStyle.getPropertyValue('--catalogue-own-least-block')) * rem || 0;
       const downScale = leastBlock > 0 ? height / leastBlock : 1;
       const floor = parseFloat(canvasStyle.getPropertyValue('--catalogue-own-floor'));
-      const scale = ownSize
-        ? floor > 0
+      // A popup shown open, such as a menu under its button or a dialog, is drawn whole, its edges
+      // and corners in view: what holds one is drawn as much smaller as it needs to fit the stage,
+      // never cut off, and lays out in its tile's own window (`data-popup`, Gallery.css), as wide
+      // as it was written for. Once fitted, it keeps its scale as it plays, so a popup that closes
+      // and opens again doesn't resize the picture.
+      const popup = boxes.some(({ element }) => element.closest('.catalogue-overlay-layer'));
+      if (ownSize && popup && canvasElement.dataset.fitted === undefined)
+        canvasElement.dataset.popup = '';
+      const wholeScale = Math.min(width / (right - left), height / (bottom - top));
+      const own =
+        floor > 0
           ? Math.max(floor, Math.min(1, width / (right - left), downScale))
-          : Math.min(1, width / least, downScale)
+          : Math.min(1, width / least, downScale);
+      const scale = ownSize
+        ? tile && playingNow.current && canvasElement.dataset.fitted !== undefined
+          ? view.scale
+          : popup
+            ? Math.min(own, wholeScale)
+            : own
         : legible
           ? Math.max(legibleScale, Math.min(1, windowScale))
           : tile

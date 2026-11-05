@@ -127,6 +127,14 @@
   min-block-size: 0;
 }
 
+/* A popup shown open is drawn whole, as small as it needs (useFit.ts), so it lays out in its tile's
+   own window, as wide as it was written for, such as a dialog's, also on a phone. */
+.catalogue-gallery-grid
+  .catalogue-gallery-stage.catalogue-gallery-stage
+  .catalogue-related-canvas[data-own-size][data-popup] {
+  inline-size: max(100% - 2rem, var(--catalogue-tile-width, 14rem));
+}
+
 /* A command palette and a notification leave the window's gutter beside them; drawn at their
    own size in a gallery's tile, they take the tile's width, as the stage's inset is their gutter. */
 .catalogue-related-canvas[data-own-size] .env-command-palette {
