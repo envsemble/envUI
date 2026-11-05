@@ -113,7 +113,8 @@
 
 /* A tile under the pointer, or with the keyboard on its link, as its picture comes alive
    (motion/Motion.tsx): its canvas a shade deeper in the light themes and a shade lighter in the
-   dark ones, a fainter step than the recessed surface's own hover, eased, with no outline. */
+   dark ones, a step of about the same lightness either way, so it reads as clearly on the deep
+   near-black well as on the near-white stage, eased, with no outline. */
 .catalogue-related-stage {
   transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
 }
@@ -122,7 +123,7 @@
   :is(.catalogue-gallery-tile, .catalogue-related-tile):hover .catalogue-related-stage {
     background-color: light-dark(
       oklch(from var(--catalogue-card-fill) calc(l - 0.03) c h),
-      oklch(from var(--catalogue-card-fill) calc(l + 0.01) c h)
+      oklch(from var(--catalogue-card-fill) calc(l + 0.035) c h)
     );
   }
 }
@@ -130,7 +131,7 @@
 :is(.catalogue-gallery-tile, .catalogue-related-tile):has(:focus-visible) .catalogue-related-stage {
   background-color: light-dark(
     oklch(from var(--catalogue-card-fill) calc(l - 0.03) c h),
-    oklch(from var(--catalogue-card-fill) calc(l + 0.01) c h)
+    oklch(from var(--catalogue-card-fill) calc(l + 0.035) c h)
   );
 }
 
