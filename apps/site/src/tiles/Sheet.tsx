@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { Checkbox, Column, DialogClose, IconButton, Sheet, Text } from '@envsemble/envui';
+import { Checkbox, Column, IconButton, Sheet, Text } from '@envsemble/envui';
 import { IconFilterList } from '@envsemble/envui/icons/FilterList';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
-/** Applied, which closes the sheet toward its edge; opened again from its button. */
+/** Closed by its cross, toward its edge; opened again from its button. */
 const script: PointerStep[] = [
   { wait: 400 },
-  { to: '.env-sheet .env-dialog-actions .env-button', x: 0.4, y: 0.6 },
+  { to: '.env-sheet .env-dialog-heading .env-button' },
   { wait: 700 },
   { click: true },
   { wait: 900 },
@@ -34,8 +34,10 @@ const page = {
 const rows = ['Launch review', 'Q3 budget', 'Hiring plan'];
 
 /**
- * A side sheet, open at the end edge beside the button that opens it, over a list of projects.
- * Stopped, it is open again rather than drawn anew, which would bring it in again.
+ * A side sheet, open at the end edge beside the button that opens it, over a list of projects: its
+ * title, its cross and a filter, with no actions below, so it shows whole in its low window
+ * (Tiles.ts) and what closes it is in view. Stopped, it is open again rather than drawn anew, which
+ * would bring it in again.
  */
 export default function SheetTile() {
   const [open, setOpen] = useState(true);
@@ -48,7 +50,6 @@ export default function SheetTile() {
         trigger={<IconButton variant="secondary" icon={<IconFilterList />} aria-label="Filters" />}
         width={9.5}
         title="Filters"
-        actions={<DialogClose variant="primary">Apply</DialogClose>}
       >
         <Checkbox label="Active" defaultChecked />
       </Sheet>

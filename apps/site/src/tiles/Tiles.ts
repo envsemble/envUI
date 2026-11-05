@@ -37,6 +37,8 @@ export const tileWindows: Readonly<Record<string, { width: number; height: numbe
   breadcrumbs: { width: 15, height: 11.25 },
   // A dialog with a field is taller than a tile's window: it lays out whole in a taller one.
   dialog: { width: 14, height: 13 },
+  // A sheet of a title and a filter is as tall as its window: lower than a tile's, it shows whole.
+  sheet: { width: 14, height: 7 },
   'confirm-dialog': { width: 15, height: 11.25 },
   'date-picker': { width: 20, height: 15 },
   'time-picker': { width: 24, height: 18 },
