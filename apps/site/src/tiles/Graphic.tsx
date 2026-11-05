@@ -12,11 +12,14 @@ const logo =
       '<path d="M18 58 36 38l18 20Z" fill="#f97316"/></svg>',
   );
 
-/** The steps it takes, from the still at large. */
-const sizes: GraphicSize[] = ['lg', 'md', 'sm', 'md', 'xl'];
+/** The steps it takes, from the still at md, up one size at a time. */
+const sizes: GraphicSize[] = ['md', 'lg', 'xl'];
 
-/** A logo at envUI's sizes: it steps down to a small one, then up to the largest, and back. */
+/**
+ * A logo at envUI's sizes: from md it steps up, one size at a time, to the largest, and holds
+ * there, a file drawn at the size it is given rather than its own.
+ */
 export default function GraphicTile() {
-  const size = sizes[useTimeline([900, 600, 600, 600, 900])]!;
+  const size = sizes[useTimeline([700, 1000, 4000])]!;
   return <Graphic src={logo} alt="Northwind" size={size} />;
 }

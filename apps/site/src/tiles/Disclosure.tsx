@@ -20,9 +20,10 @@ const script: PointerStep[] = [
 ];
 
 /**
- * A disclosure, open on its details. Its box keeps one size open or closed, so its summary stays
- * where it is as the details hide. Stopped, it opens again rather than being drawn anew, which
- * would fade its details in again.
+ * A disclosure, open on its details, as wide as the stage, so its details run on one line rather
+ * than in a narrow column. Its box keeps about its open height closed, so its summary stays where
+ * it is as the details hide, and the closed box is a line short rather than a tall empty frame.
+ * Stopped, it opens again rather than being drawn anew, which would fade its details in again.
  */
 export default function DisclosureTile() {
   const [open, setOpen] = useState(true);
@@ -32,9 +33,9 @@ export default function DisclosureTile() {
       title="Who can see it"
       open={open}
       onOpenChange={setOpen}
-      style={{ inlineSize: '8.5rem', blockSize: '5rem' }}
+      style={{ inlineSize: '100%', minBlockSize: '2.5rem' }}
     >
-      Only people you invite.
+      Only the people you invite.
     </Disclosure>
   );
 }
