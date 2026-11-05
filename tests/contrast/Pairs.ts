@@ -107,7 +107,7 @@ const popupFill = 'popup-fill';
 const worstBackdrop = 'popup-worst-backdrop';
 // A tooltip's frosted fill, a key chip on it and the worst behind it (Tooltip.css).
 const tooltipFrosted = 'tooltip-frosted';
-// A slider's fill as it is drawn, the primary color's muted tint (Slider.css).
+// A slider's fill as it is drawn, the primary color (Slider.css).
 const sliderFill = 'slider-fill';
 // A text field's prefix and suffix (TextField.css).
 const textFieldAffix = 'text-field-affix';
@@ -1171,11 +1171,10 @@ const registry: readonly ContrastPair[] = merged([
     ],
     'The fill of a slider against its track',
   ),
-  // The slider's fill as it is drawn (Slider.css): the primary color's muted tint over the track,
-  // a stronger grade of it in dark, and the muted tint in either theme at high contrast.
-  ...on(
-    'text',
-    '--env-color-fg-default',
+  // The slider's fill as it is drawn (Slider.css): the primary color, as Progress's indicator, over
+  // the track, with the label and the value over it in the text color for emphasis.
+  ...text(
+    '--env-color-fg-on-emphasis',
     [
       [sliderFill, fill, page],
       [sliderFill, fill, surface],
@@ -1183,15 +1182,9 @@ const registry: readonly ContrastPair[] = merged([
       [sliderFill, fill, raised],
       [sliderFill, fill, popup],
     ],
-    'The label, the value and the handle of a slider on its fill as drawn',
-    {
-      contrast: 'standard',
-      rationale:
-        'At high contrast the fill is the primary muted tint in either theme (Slider.css), measured below.',
-    },
+    'The label and the value of a slider over its fill',
   ),
-  ...on(
-    'difference',
+  ...different(
     sliderFill,
     [
       [fill, page],
@@ -1201,45 +1194,6 @@ const registry: readonly ContrastPair[] = merged([
       [fill, popup],
     ],
     'The fill of a slider as drawn against its track',
-    {
-      contrast: 'standard',
-      rationale:
-        'At high contrast the fill is the primary muted tint in either theme (Slider.css), measured below.',
-    },
-  ),
-  ...on(
-    'text',
-    '--env-color-fg-default',
-    [
-      ['--env-color-bg-primary-muted', fill, page],
-      ['--env-color-bg-primary-muted', fill, surface],
-      ['--env-color-bg-primary-muted', fill, muted],
-      ['--env-color-bg-primary-muted', fill, raised],
-      ['--env-color-bg-primary-muted', fill, popup],
-    ],
-    'The label, the value and the handle of a slider on its fill at high contrast',
-    {
-      contrast: 'high',
-      rationale:
-        'The fill at high contrast (Slider.css); outside it the fill as drawn, measured above, takes a stronger grade in dark.',
-    },
-  ),
-  ...on(
-    'difference',
-    '--env-color-bg-primary-muted',
-    [
-      [fill, page],
-      [fill, surface],
-      [fill, muted],
-      [fill, raised],
-      [fill, popup],
-    ],
-    'The fill of a slider at high contrast against its track',
-    {
-      contrast: 'high',
-      rationale:
-        'The fill at high contrast (Slider.css); outside it the fill as drawn, measured above, takes a stronger grade in dark.',
-    },
   ),
   ...nonText(
     '--env-color-bg-primary-emphasis',
@@ -1387,12 +1341,35 @@ const onPage = registry.filter((pair) => pair.bg.at(-1) === page && pair.fg !== 
 export const pairs: readonly ContrastPair[] = merged([...registry, ...onPage.map(onRecessed)]);
 
 /**
+ * The grounds under a slider's track that its retired fills were measured over, and the fills: at
+ * high contrast the primary muted tint, earlier named for the accent and the brand tones, with the
+ * text color on it. The fill is the primary color now, with the text color for emphasis over it.
+ */
+const retiredSliderGrounds = ['default', 'muted', 'page', 'popup', 'raised', 'recessed'].map(
+  (ground) => `--env-color-bg-${ground}`,
+);
+const retiredSliderFill = (fill: string, ground: string) =>
+  `${fill} on --env-color-bg-neutral-muted over ${ground}`;
+const retiredSliderText = (fill: string, ground: string) =>
+  `--env-color-fg-default on ${fill} over --env-color-bg-neutral-muted over ${ground}`;
+const retiredSliderRationale =
+  'The slider’s fill is the primary color, as Progress’s indicator, in every theme and at high contrast, and its label and value take the text color for emphasis over it: measured as --env-color-fg-on-emphasis on slider-fill. The text color no longer sits on the fill, and the primary muted tint is no longer its fill at high contrast.';
+
+/**
  * Pairs the gate measured once and no longer does, with the reason. A pair that leaves `pairs`
  * must be listed here or in `renamed`: tests/contrast/DeclaredPairs.json holds the names declared
  * when it was last updated, and tests/browser/Contrast.spec.ts fails on a name that is gone from
  * `pairs` without an entry, and on a dropped pair that is still declared.
  */
 export const dropped: readonly { pair: string; rationale: string }[] = [
+  // The slider's retired fills, and the text color on them.
+  ...retiredSliderGrounds.flatMap((ground) =>
+    [
+      retiredSliderFill('--env-color-bg-primary-muted', ground),
+      retiredSliderText('--env-color-bg-primary-muted', ground),
+      retiredSliderText('slider-fill', ground),
+    ].map((pair) => ({ pair, rationale: retiredSliderRationale })),
+  ),
   // Alerts have no edge outside high contrast, where the border color bounds them, measured as a
   // boundary there.
   ...(['accent', 'success', 'warning', 'danger'] as const).flatMap((tone) =>
@@ -3082,6 +3059,28 @@ export const renamed: readonly { from: string; to: string; rationale: string }[]
       'Every token takes the --env- prefix, and the tone borders are named by emphasis: the solid edge is border.{tone}.emphasis, the translucent one border.{tone}.',
   })),
   ...apiReviewRenames(),
+  // The renames the slider's retired fills went through before they were dropped: the tones' tints
+  // to primary, and the catalogue's canvas to the recessed surface.
+  ...(['accent', 'brand'] as const).flatMap((tone) =>
+    [...retiredSliderGrounds, 'catalogue-canvas'].flatMap((ground) =>
+      [retiredSliderFill, retiredSliderText].map((name) => ({
+        from: name(`--env-color-bg-${tone}-muted`, ground),
+        to: name('--env-color-bg-primary-muted', ground),
+        rationale:
+          'The blue roles are primary, and the purple of accent actions is accent: one meaning for a tone on every component.',
+      })),
+    ),
+  ),
+  ...[
+    retiredSliderFill('--env-color-bg-primary-muted', 'catalogue-canvas'),
+    retiredSliderText('--env-color-bg-primary-muted', 'catalogue-canvas'),
+    retiredSliderText('slider-fill', 'catalogue-canvas'),
+  ].map((from) => ({
+    from,
+    to: from.replace(/catalogue-canvas$/, '--env-color-bg-recessed'),
+    rationale:
+      'The catalogue’s canvas, a formula in its style sheet, is the recessed surface, --env-color-bg-recessed: the same shade deeper than the page, a token of the themes.',
+  })),
 ];
 
 /** What a pair is held to: its kind, and its minimum at each contrast it is measured in. */
