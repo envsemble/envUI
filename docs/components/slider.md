@@ -62,7 +62,7 @@ Not shown: the span the value moves along, which draws the faint ticks, and the 
 
 Slider is a field, as tall as the fields and with their corners, so it sits in a form among them. A quiet handle at the end of the fill shows it can be moved.
 
-- Under the label or the value, the handle shortens to a mark below the text, so the text stays clear and the value's place still shows.
+- Under the label or the value, the handle keeps its size and quiets to half its strength, with the text over it, so both stay readable and the value's place still shows.
 
 ### Under the pointer
 
@@ -219,7 +219,7 @@ The field marks what it shows besides its text and fill:
 
 ## Changelog
 
-- **1.0.0-prerelease.6**: A handle, a short bar, marks the value at rest, clear though quieter than in use, and the fill takes the primary color's muted tint, so the slider no longer reads as a meter or a disabled field; at either end the handle stays in the padding clear of the label and the value, and it shows in full under the pointer and with keyboard focus. Under the label or the value, the handle shortens to a mark below the text rather than fading out. In dark the fill takes a stronger grade of the tint, so it stands apart from the track. A disabled slider shows no handle and a neutral fill.
+- **1.0.0-prerelease.6**: A handle, a short bar, marks the value at rest, clear though quieter than in use, and the fill takes the primary color's muted tint, so the slider no longer reads as a meter or a disabled field; at either end the handle stays in the padding clear of the label and the value, and it shows in full under the pointer and with keyboard focus. Under the label or the value, the handle keeps its size, quieter, with the text over it. The fill takes a strong grade of the primary tint, so it stands clearly apart from the track. A disabled slider shows no handle and a neutral fill.
 - **1.0.0-prerelease.6**: An invalid slider, one with an `error`, takes the error color's edge; its control marks `data-invalid` and its range input is `aria-invalid`.
 - **1.0.0-prerelease.5**: `error`, as on a field.
 - **1.0.0-prerelease.2**: Slider is a field: as tall as the fields and with their corners, its label inside at the start, its value at the end in the text style of a field, with numbers of one width and a fill from the start, with a thin handle and faint ticks under the pointer and on focus, both fading where they pass under the text. The track has no outline. `--env-slider-indicator` colors the fill alone, and `--env-slider-content` the label, value, handle and ticks.

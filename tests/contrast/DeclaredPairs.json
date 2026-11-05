@@ -1048,35 +1048,60 @@
     "--env-color-border-focus on segmented-control-thumb over --env-color-bg-neutral-muted over --env-color-bg-default": {
       "kind": "focus",
       "minimum": {
-        "standard": 3,
-        "high": 4.5
+        "standard": 3
       }
     },
     "--env-color-border-focus on segmented-control-thumb over --env-color-bg-neutral-muted over --env-color-bg-muted": {
       "kind": "focus",
       "minimum": {
-        "standard": 3,
-        "high": 4.5
+        "standard": 3
       }
     },
     "--env-color-border-focus on segmented-control-thumb over --env-color-bg-neutral-muted over --env-color-bg-page": {
       "kind": "focus",
       "minimum": {
-        "standard": 3,
-        "high": 4.5
+        "standard": 3
       }
     },
     "--env-color-border-focus on segmented-control-thumb over --env-color-bg-neutral-muted over --env-color-bg-raised": {
       "kind": "focus",
       "minimum": {
-        "standard": 3,
-        "high": 4.5
+        "standard": 3
       }
     },
     "--env-color-border-focus on segmented-control-thumb over --env-color-bg-neutral-muted over --env-color-bg-recessed": {
       "kind": "focus",
       "minimum": {
-        "standard": 3,
+        "standard": 3
+      }
+    },
+    "--env-color-border-focus on segmented-control-thumb-high over --env-color-bg-neutral-muted over --env-color-bg-default": {
+      "kind": "focus",
+      "minimum": {
+        "high": 4.5
+      }
+    },
+    "--env-color-border-focus on segmented-control-thumb-high over --env-color-bg-neutral-muted over --env-color-bg-muted": {
+      "kind": "focus",
+      "minimum": {
+        "high": 4.5
+      }
+    },
+    "--env-color-border-focus on segmented-control-thumb-high over --env-color-bg-neutral-muted over --env-color-bg-page": {
+      "kind": "focus",
+      "minimum": {
+        "high": 4.5
+      }
+    },
+    "--env-color-border-focus on segmented-control-thumb-high over --env-color-bg-neutral-muted over --env-color-bg-raised": {
+      "kind": "focus",
+      "minimum": {
+        "high": 4.5
+      }
+    },
+    "--env-color-border-focus on segmented-control-thumb-high over --env-color-bg-neutral-muted over --env-color-bg-recessed": {
+      "kind": "focus",
+      "minimum": {
         "high": 4.5
       }
     },
@@ -3274,35 +3299,60 @@
     "--env-color-fg-default on segmented-control-thumb over --env-color-bg-neutral-muted over --env-color-bg-default": {
       "kind": "text",
       "minimum": {
-        "standard": 4.5,
-        "high": 7
+        "standard": 4.5
       }
     },
     "--env-color-fg-default on segmented-control-thumb over --env-color-bg-neutral-muted over --env-color-bg-muted": {
       "kind": "text",
       "minimum": {
-        "standard": 4.5,
-        "high": 7
+        "standard": 4.5
       }
     },
     "--env-color-fg-default on segmented-control-thumb over --env-color-bg-neutral-muted over --env-color-bg-page": {
       "kind": "text",
       "minimum": {
-        "standard": 4.5,
-        "high": 7
+        "standard": 4.5
       }
     },
     "--env-color-fg-default on segmented-control-thumb over --env-color-bg-neutral-muted over --env-color-bg-raised": {
       "kind": "text",
       "minimum": {
-        "standard": 4.5,
-        "high": 7
+        "standard": 4.5
       }
     },
     "--env-color-fg-default on segmented-control-thumb over --env-color-bg-neutral-muted over --env-color-bg-recessed": {
       "kind": "text",
       "minimum": {
-        "standard": 4.5,
+        "standard": 4.5
+      }
+    },
+    "--env-color-fg-default on segmented-control-thumb-high over --env-color-bg-neutral-muted over --env-color-bg-default": {
+      "kind": "text",
+      "minimum": {
+        "high": 7
+      }
+    },
+    "--env-color-fg-default on segmented-control-thumb-high over --env-color-bg-neutral-muted over --env-color-bg-muted": {
+      "kind": "text",
+      "minimum": {
+        "high": 7
+      }
+    },
+    "--env-color-fg-default on segmented-control-thumb-high over --env-color-bg-neutral-muted over --env-color-bg-page": {
+      "kind": "text",
+      "minimum": {
+        "high": 7
+      }
+    },
+    "--env-color-fg-default on segmented-control-thumb-high over --env-color-bg-neutral-muted over --env-color-bg-raised": {
+      "kind": "text",
+      "minimum": {
+        "high": 7
+      }
+    },
+    "--env-color-fg-default on segmented-control-thumb-high over --env-color-bg-neutral-muted over --env-color-bg-recessed": {
+      "kind": "text",
+      "minimum": {
         "high": 7
       }
     },
@@ -6254,35 +6304,60 @@
     "segmented-control-thumb on --env-color-bg-neutral-muted over --env-color-bg-default": {
       "kind": "difference",
       "minimum": {
-        "standard": 0.02,
-        "high": 0.02
+        "standard": 0.02
       }
     },
     "segmented-control-thumb on --env-color-bg-neutral-muted over --env-color-bg-muted": {
       "kind": "difference",
       "minimum": {
-        "standard": 0.02,
-        "high": 0.02
+        "standard": 0.02
       }
     },
     "segmented-control-thumb on --env-color-bg-neutral-muted over --env-color-bg-page": {
       "kind": "difference",
       "minimum": {
-        "standard": 0.02,
-        "high": 0.02
+        "standard": 0.02
       }
     },
     "segmented-control-thumb on --env-color-bg-neutral-muted over --env-color-bg-raised": {
       "kind": "difference",
       "minimum": {
-        "standard": 0.02,
-        "high": 0.02
+        "standard": 0.02
       }
     },
     "segmented-control-thumb on --env-color-bg-neutral-muted over --env-color-bg-recessed": {
       "kind": "difference",
       "minimum": {
-        "standard": 0.02,
+        "standard": 0.02
+      }
+    },
+    "segmented-control-thumb-high on --env-color-bg-neutral-muted over --env-color-bg-default": {
+      "kind": "difference",
+      "minimum": {
+        "high": 0.02
+      }
+    },
+    "segmented-control-thumb-high on --env-color-bg-neutral-muted over --env-color-bg-muted": {
+      "kind": "difference",
+      "minimum": {
+        "high": 0.02
+      }
+    },
+    "segmented-control-thumb-high on --env-color-bg-neutral-muted over --env-color-bg-page": {
+      "kind": "difference",
+      "minimum": {
+        "high": 0.02
+      }
+    },
+    "segmented-control-thumb-high on --env-color-bg-neutral-muted over --env-color-bg-raised": {
+      "kind": "difference",
+      "minimum": {
+        "high": 0.02
+      }
+    },
+    "segmented-control-thumb-high on --env-color-bg-neutral-muted over --env-color-bg-recessed": {
+      "kind": "difference",
+      "minimum": {
         "high": 0.02
       }
     },
@@ -6856,6 +6931,7 @@
     "--env-color-border-focus on --env-color-list-item-bg-pressed",
     "--env-color-border-focus on catalogue-canvas",
     "--env-color-border-focus on segmented-control-thumb over --env-color-bg-neutral-muted over catalogue-canvas",
+    "--env-color-border-focus on segmented-control-thumb-high over --env-color-bg-neutral-muted over catalogue-canvas",
     "--env-color-border-info-strong on catalogue-canvas",
     "--env-color-border-muted on catalogue-canvas",
     "--env-color-border-neutral on --env-color-list-item-bg",
@@ -7164,6 +7240,7 @@
     "--env-color-fg-default on --env-color-list-item-bg-pressed",
     "--env-color-fg-default on catalogue-canvas",
     "--env-color-fg-default on segmented-control-thumb over --env-color-bg-neutral-muted over catalogue-canvas",
+    "--env-color-fg-default on segmented-control-thumb-high over --env-color-bg-neutral-muted over catalogue-canvas",
     "--env-color-fg-default on slider-fill over --env-color-bg-neutral-muted over catalogue-canvas",
     "--env-color-fg-done on --env-color-bg-done-muted over --env-color-list-item-bg",
     "--env-color-fg-done on --env-color-bg-done-muted over catalogue-canvas",
@@ -7595,10 +7672,116 @@
     "heatmap-accent-lowest on --color-bg-neutral-muted over --color-bg-page",
     "heatmap-accent-lowest on --env-color-bg-neutral-muted over catalogue-canvas",
     "segmented-control-thumb on --env-color-bg-neutral-muted over catalogue-canvas",
+    "segmented-control-thumb-high on --env-color-bg-neutral-muted over catalogue-canvas",
     "slider-fill on --env-color-bg-neutral-muted over catalogue-canvas",
     "text-field-affix on catalogue-canvas"
   ],
   "relaxed": [
+    {
+      "pair": "--env-color-fg-default on segmented-control-thumb over --env-color-bg-neutral-muted over --env-color-bg-default",
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5
+      }
+    },
+    {
+      "pair": "segmented-control-thumb on --env-color-bg-neutral-muted over --env-color-bg-default",
+      "kind": "difference",
+      "minimum": {
+        "standard": 0.02
+      }
+    },
+    {
+      "pair": "--env-color-border-focus on segmented-control-thumb over --env-color-bg-neutral-muted over --env-color-bg-default",
+      "kind": "focus",
+      "minimum": {
+        "standard": 3
+      }
+    },
+    {
+      "pair": "--env-color-fg-default on segmented-control-thumb over --env-color-bg-neutral-muted over --env-color-bg-muted",
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5
+      }
+    },
+    {
+      "pair": "segmented-control-thumb on --env-color-bg-neutral-muted over --env-color-bg-muted",
+      "kind": "difference",
+      "minimum": {
+        "standard": 0.02
+      }
+    },
+    {
+      "pair": "--env-color-border-focus on segmented-control-thumb over --env-color-bg-neutral-muted over --env-color-bg-muted",
+      "kind": "focus",
+      "minimum": {
+        "standard": 3
+      }
+    },
+    {
+      "pair": "--env-color-fg-default on segmented-control-thumb over --env-color-bg-neutral-muted over --env-color-bg-page",
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5
+      }
+    },
+    {
+      "pair": "segmented-control-thumb on --env-color-bg-neutral-muted over --env-color-bg-page",
+      "kind": "difference",
+      "minimum": {
+        "standard": 0.02
+      }
+    },
+    {
+      "pair": "--env-color-border-focus on segmented-control-thumb over --env-color-bg-neutral-muted over --env-color-bg-page",
+      "kind": "focus",
+      "minimum": {
+        "standard": 3
+      }
+    },
+    {
+      "pair": "--env-color-fg-default on segmented-control-thumb over --env-color-bg-neutral-muted over --env-color-bg-raised",
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5
+      }
+    },
+    {
+      "pair": "segmented-control-thumb on --env-color-bg-neutral-muted over --env-color-bg-raised",
+      "kind": "difference",
+      "minimum": {
+        "standard": 0.02
+      }
+    },
+    {
+      "pair": "--env-color-border-focus on segmented-control-thumb over --env-color-bg-neutral-muted over --env-color-bg-raised",
+      "kind": "focus",
+      "minimum": {
+        "standard": 3
+      }
+    },
+    {
+      "pair": "--env-color-fg-default on segmented-control-thumb over --env-color-bg-neutral-muted over --env-color-bg-recessed",
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5
+      }
+    },
+    {
+      "pair": "segmented-control-thumb on --env-color-bg-neutral-muted over --env-color-bg-recessed",
+      "kind": "difference",
+      "minimum": {
+        "standard": 0.02
+      }
+    },
+    {
+      "pair": "--env-color-border-focus on segmented-control-thumb over --env-color-bg-neutral-muted over --env-color-bg-recessed",
+      "kind": "focus",
+      "minimum": {
+        "standard": 3
+      }
+    },
     {
       "pair": "--env-color-fg-default on slider-fill over --env-color-bg-neutral-muted over --env-color-bg-recessed",
       "kind": "text",

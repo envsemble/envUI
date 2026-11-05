@@ -498,7 +498,7 @@ export function RichTextEditor({
           renderControlBox={renderControlBox}
         >
           <RichTextRenderingContext
-            value={{ renderReference, onReferenceClick, readOnly: readOnly || disabled }}
+            value={{ renderReference, onReferenceClick, readOnly: readOnly || disabled, disabled }}
           >
             <EditorContent editor={editor} className="env-rich-text-editor-content" />
           </RichTextRenderingContext>

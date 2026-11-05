@@ -109,7 +109,8 @@ A ghost field has no edge. A faint fill at rest shows where to type, and deepens
 
 - It has the outline field's corners, so the two sit together in a row.
 - Keep it to toolbars, an application's chrome and palettes. In a form, a faint fill says less than an edge, so a form's fields are outline.
-- A read-only or disabled ghost field has no fill.
+- Its label floats inside the fill, above the value, as there is no edge to cut a notch in. A labelled ghost field is a little taller than an outline one.
+- A read-only or disabled ghost field keeps a fainter fill, quieter than one to fill in.
 - Its placeholder clears once it has focus.
 - An invalid ghost field shows a red edge.
 - The [CommandPalette](command-palette.md)'s search is a large ghost field that keeps its fill.
@@ -197,7 +198,7 @@ A SearchField's clear button and <kbd>Esc</kbd> empty the query.
 A Textarea keeps its height and scrolls, or grows with its text instead.
 
 - People resize it by its bottom edge, by dragging or with the arrow keys.
-- The edge shows its grip under the pointer and while the field has focus.
+- The grip shows toward the edge's end under the pointer and while the field has focus.
 
 ```tsx figure=TextareaSizing motion
 
@@ -328,8 +329,9 @@ A field fills its container's width, so set the width on the container, or on th
 
 ## Changelog
 
+- **1.0.0-prerelease.6**: Textarea's resize grip is a short, quiet bar on the bottom edge toward its end, rather than a bar in the middle that read as a sheet's handle.
 - **1.0.0-prerelease.6**: A Textarea whose text runs past its `rows` clips that text at its padding, rather than showing the next line under the bottom border.
-- **1.0.0-prerelease.6**: The `floating` variant is gone: a field on its own or in a long form on a page takes `outline`, the default, with `size="lg"`. An outline field takes a text area's rounded corners rather than round ends, still as tall as a button, and so does a ghost field. A ghost field shows a faint fill at rest, unless it is read-only or disabled, so a labelled one no longer reads as a label and its value. A disabled field no longer fades as a whole: its label, value and icons take `--env-color-fg-disabled` and its outline the muted border, so it stays readable, also in dark.
+- **1.0.0-prerelease.6**: The `floating` variant is gone: a field on its own or in a long form on a page takes `outline`, the default, with `size="lg"`. An outline field takes a text area's rounded corners rather than round ends, still as tall as a button, and so does a ghost field. A ghost field shows a faint fill at rest, fainter when it is read-only or disabled, so a labelled one no longer reads as a label and its value, and its label floats inside the fill rather than across its top edge. A disabled field no longer fades as a whole: its label, value and icons take `--env-color-fg-disabled` and its outline the muted border, so it stays readable, also in dark.
 - **1.0.0-prerelease.2**: The `underline` variant, which `plain` became in the earlier prereleases, is gone from TextField, SearchField and Textarea, for the default outline. Outline and floating fields have no fill of their own.
 - **1.0.0**: `hint` is `description`, and the variants are `outline`, `floating` and `ghost`: `outlined` is `outline` and `quiet` is `ghost`, and `plain` is gone, for the default outline. `className` and `style` style the field's root rather than the input; `ref` and the other native props still reach the input. TextField and Textarea take `onValueChange`. The frame is Field's parts, and the classes follow: `env-text-input` is `env-text-field-input`, `env-text-field-well` `env-text-field-control`, `env-form-field` `env-field` and `env-field-hint` `env-field-description`. A button in `endAction` takes the ghost variant where it sets none. Textarea's resize edge is a `separator`, and its labels and the clear label come from EnvUIProvider's `messages`. Textarea's resize edge, `env-textarea-resize-edge`, is `env-textarea-resize-handle`, as every resize handle is named.
 - **1.0.0**: `Input` is `TextField`, with the same props, behaviour and look; the page is `text-field`.

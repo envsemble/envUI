@@ -103,7 +103,7 @@ Name the setting in a short phrase, so that on means yes.
 
 ### Disabled
 
-A disabled switch keeps its setting from changing.
+A disabled switch keeps its setting from changing. One that is on takes the neutral fill rather than the accent, as a disabled button does.
 
 - Say why beside it, such as in the row's detail, and who can change it.
 
@@ -157,6 +157,7 @@ The root, `env-switch`, is the label around the track, `env-switch-input`, and t
 
 ## Changelog
 
+- **1.0.0-prerelease.6**: A switch that is on that is unavailable takes the neutral fill, with its thumb in `--env-color-fg-disabled`, rather than a faded accent, as an unavailable button does.
 - **1.0.0-prerelease.6**: Beside a label that wraps or has a description, the track sits on the middle of its first line rather than across both lines.
 - **1.0.0-prerelease.6**: A switch that is off darkens its ring under the pointer and while pressed, as its track deepens.
 - **1.0.0-prerelease.5**: `description`, a muted line under the label.

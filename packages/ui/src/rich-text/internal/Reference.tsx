@@ -12,7 +12,7 @@ import '../../styles/Prose.css';
 import '../../styles/RichText.css';
 
 export const RichTextRenderingContext = createContext<
-  (RichTextRenderOptions & { readOnly: boolean }) | null
+  (RichTextRenderOptions & { readOnly: boolean; disabled?: boolean }) | null
 >(null);
 
 export function ReferenceContent({

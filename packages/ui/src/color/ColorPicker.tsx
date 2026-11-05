@@ -16,6 +16,7 @@ import { IconExpandMore } from '../icons/ExpandMore.js';
 import { Tooltip } from '../feedback/Tooltip.js';
 import { colorPicker as colorPickerMessages } from '../foundations/messages/colorPicker.js';
 import { IconColorize } from '../icons/Colorize.js';
+import * as Field from '../forms/Field.js';
 import { classNames } from '../internal/classNames.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { setRef } from '../internal/setRef.js';
@@ -288,9 +289,12 @@ export function ColorPicker({
           </div>
         )}
         {error != null && (
-          <div id={`${id}-error`} className="env-color-picker-error">
-            {error}
-          </div>
+          // Field's error, with its icon before the message, as under every field.
+          <Field.Root invalid>
+            <Field.Error id={`${id}-error`} className="env-color-picker-error">
+              {error}
+            </Field.Error>
+          </Field.Root>
         )}
         <input
           ref={inputRef}

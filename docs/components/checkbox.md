@@ -58,7 +58,7 @@ examples:
 
 ### States
 
-Pressing the box or its label toggles it. A mixed box shows a dash.
+Pressing the box or its label toggles it. A mixed box shows a dash. A checked box that is disabled takes the neutral fill rather than the accent, as a disabled button does.
 
 <!-- specimen: States -->
 
@@ -160,6 +160,7 @@ A checked box submits its `name` with its `value`; an unchecked one submits noth
 
 ## Changelog
 
+- **1.0.0-prerelease.6**: A checked or mixed box that is unavailable takes the neutral fill, with its mark in `--env-color-fg-disabled`, rather than a faded accent, as an unavailable button does. A read-only box, with `aria-readonly`, keeps its colors and doesn't answer the pointer.
 - **1.0.0-prerelease.6**: Beside a label that wraps or has a description, the box sits on the middle of its first line rather than across both lines.
 - **1.0.0-prerelease.6**: An unchecked box takes the neutral state layer under the pointer and while pressed, with its edge a step darker.
 - **1.0.0-prerelease.5**: `description`, a muted line under the label.

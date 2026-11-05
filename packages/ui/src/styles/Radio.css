@@ -186,6 +186,19 @@
   .env-radio:has(input:disabled) > * {
     opacity: var(--env-state-disabled-opacity);
   }
+  /* A chosen radio that is unavailable reads as unavailable rather than as a lighter brand color, as
+     an unavailable button does: the neutral fill, with its dot in the disabled text color, at full
+     strength while its label fades. */
+  .env-radio:has(input:disabled:checked) > .env-radio-input {
+    opacity: 1;
+  }
+  .env-radio-input:checked:disabled {
+    background: var(--env-color-bg-neutral-muted);
+  }
+  .env-radio-input:checked:disabled::before {
+    border-color: transparent;
+    background: var(--env-color-fg-disabled);
+  }
 
   .env-radio-group[data-orientation='horizontal'] {
     gap: var(--env-space-4) var(--env-space-6);

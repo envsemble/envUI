@@ -10,6 +10,7 @@ import { Link } from '../actions/Link.js';
 import { Code } from '../content/Code.js';
 import { CodeBlock } from '../content/CodeBlock.js';
 import { Checkbox } from '../forms/Checkbox.js';
+import { readOnlyCheckboxProps } from './internal/readOnlyCheckbox.js';
 import { createRichTextExtensions } from './extensions.js';
 import { ReferenceContent } from './internal/Reference.js';
 import { referenceFromAttributes, safeRichTextUrl } from './internal/referenceAttributes.js';
@@ -62,7 +63,7 @@ export function RichText({
             <span className="env-rich-text-task-check">
               <Checkbox
                 checked={Boolean(node.attrs.checked)}
-                disabled
+                {...readOnlyCheckboxProps}
                 aria-label={node.textContent || messages.task}
               />
             </span>
