@@ -23,7 +23,7 @@ export function galleryPreviewOf(page: RoutePage): Preview | undefined {
 
 /**
  * One page's tile: its preview on the recessed canvas, rendered once near the viewport, and its name
- * in small, quiet text, so the group headings lead. The name is a heading one level under the
+ * under it in body text, clear enough to scan a row by, while the group headings lead. The name is a heading one level under the
  * gallery's group, or under the page's title where the gallery has no groups. The preview plays
  * while the pointer or the keyboard is on the tile, and where the reader can't hover, while it is
  * the tile in the middle of the viewport (Autoplay.ts).
@@ -48,12 +48,7 @@ function GalleryTile({ page, level }: { page: RoutePage; level: 2 | 3 }) {
         legible={page.kind === 'pattern'}
       />
       {/* The name is the link; it stretches over the picture, so the whole tile leads to the page. */}
-      <Text
-        render={<Heading />}
-        variant="body-sm"
-        emphasis="muted"
-        className="catalogue-gallery-name"
-      >
+      <Text render={<Heading />} className="catalogue-gallery-name">
         <Link href={routeHref(page.path)} underline={false} className="catalogue-gallery-link">
           {page.label ?? page.title}
         </Link>
@@ -70,7 +65,7 @@ const scenes = (group: GalleryGroup) =>
 /**
  * A gallery of pages, such as every component or every pattern: by group, a tile for each page
  * with a small live picture of it, inert, on the recessed canvas every example sits on. The groups'
- * headings lead, their tiles' names are quiet, and the groups stand well apart (Gallery.css).
+ * headings lead, their tiles' names read under each picture, and the groups stand well apart (Gallery.css).
  */
 export function Gallery({ groups }: { groups: GalleryGroup[] }) {
   return (
