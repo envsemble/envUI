@@ -181,7 +181,7 @@ Hover, press, keyboard focus and disabled, for each variant.
 
 ### Pending work
 
-While its work runs, the label stays in its full color, with a small spinner before it that says the work runs, in the start icon's place where there is one, and presses do nothing. An icon button's spinner takes the icon's place.
+While its work runs, a spinner turns centred over the button, in the label's color, and presses do nothing. The label and icons stay in place but transparent, so the button keeps its width and its name; an icon button's spinner takes the icon's place.
 
 ```tsx figure=PendingAction motion
 
@@ -354,7 +354,7 @@ A wrapper of your own that passes a variant and a tone on types them as Button d
 ## Changelog
 
 - **1.0.0-prerelease.6**: An outline button's label and icon take the text color, `--env-color-fg-default`, rather than the brand blue, so beside a primary button it reads as the other choice; a text button keeps the link blue. Ghost, outline and text icon buttons in the danger tone lay a faint tint of the danger color on hover and press, from `--env-color-bg-danger-subtle-hover`, rather than the neutral grey.
-- **1.0.0-prerelease.6**: A pending button keeps its label, in its full color, with a small spinner before it, in the start icon's place where there is one, rather than a spinner alone over a hidden label; a button keeps its width, the spinner taking its room from the padding where there is no start icon.
+- **1.0.0-prerelease.6**: Every pending button, an icon button's included, shows a spinner of an icon's size centred over its transparent label, in the label's color, and keeps its width and name.
 - **1.0.0-prerelease.6**: In light, a danger primary darkens on hover and press as the default and accent primaries do; in dark, the soft primaries deepen by a clearer, even step.
 - **1.0.0-prerelease.6**: A disabled button no longer fades as a whole: its label and icon take `--env-color-fg-disabled`, a filled one half the secondary's neutral fill and an outline one the muted edge, so it stays readable, also in dark.
 - **1.0.0-prerelease.6**: An accent primary is a pill like every other button, rather than having square corners.
