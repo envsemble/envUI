@@ -33,14 +33,18 @@ import { Cell, Section, Stage, Strip, interactionStates } from './ContactSheetPa
 const sizes = ['sm', 'md', 'lg'] as const;
 const fieldWidth = '15rem';
 
-/** The states a text-like field is shown in, with the props each takes. */
-function fieldStates<P extends object>(rest: P, filled: P) {
+/** The states a text-like field is shown in, with the props each takes, and its error when invalid. */
+function fieldStates<P extends object>(
+  rest: P,
+  filled: P,
+  error = 'Use lowercase letters and hyphens.',
+) {
   return [
     { caption: 'Empty', props: rest },
     { caption: 'Hover', props: rest, force: 'hover' as const },
     { caption: 'Focus-visible', props: filled, force: 'focus' as const },
     { caption: 'Filled', props: filled },
-    { caption: 'Invalid', props: { ...filled, error: 'Use lowercase letters and hyphens.' } },
+    { caption: 'Invalid', props: { ...filled, error } },
     { caption: 'Read-only', props: { ...filled, readOnly: true } },
     { caption: 'Disabled', props: { ...filled, disabled: true } },
   ];
@@ -153,6 +157,7 @@ function Textareas() {
           {fieldStates(
             { label: 'Notes', placeholder: 'Add notes' },
             { label: 'Notes', defaultValue: notes },
+            'Keep notes under 200 characters.',
           ).map(({ caption, props, force }) => (
             <Cell
               key={caption}
@@ -199,6 +204,7 @@ function Selects() {
         {fieldStates(
           { label: 'Plan', items: plans, placeholder: 'Choose a plan' },
           { label: 'Plan', items: plans, defaultValue: 'team' },
+          'Team needs at least 3 seats.',
         ).map(({ caption, props, force }) => (
           <Cell key={caption} caption={caption} force={force} target="button" width={fieldWidth}>
             <Select {...props} />
@@ -243,6 +249,7 @@ function Comboboxes() {
         {fieldStates(
           { label: 'Owner', items: people, placeholder: 'Choose a person' },
           { label: 'Owner', items: people, defaultValue: 'sam.lee' },
+          'Choose someone on this project.',
         ).map(({ caption, props, force }) => (
           <Cell key={caption} caption={caption} force={force} target="input" width={fieldWidth}>
             <Combobox {...props} />
@@ -515,6 +522,7 @@ function Pickers() {
           {fieldStates(
             { label: 'Due date', locale: 'en-GB', placeholder: 'Pick a date' },
             { label: 'Due date', locale: 'en-GB', defaultValue: '2026-11-20' },
+            'Pick a date before the launch.',
           ).map(({ caption, props, force }) => (
             <Cell key={caption} caption={caption} force={force} target="button" width={fieldWidth}>
               <DatePicker {...props} />
@@ -586,6 +594,7 @@ function Pickers() {
           {fieldStates(
             { label: 'Start', locale: 'en-GB', placeholder: 'Pick a time' },
             { label: 'Start', locale: 'en-GB', defaultValue: '09:30' },
+            'Start within office hours, 10:00 to 18:00.',
           ).map(({ caption, props, force }) => (
             <Cell key={caption} caption={caption} force={force} target="button" width={fieldWidth}>
               <TimePicker {...props} />
@@ -610,6 +619,7 @@ function Pickers() {
           {fieldStates(
             { label: 'Billing month', locale: 'en-GB', placeholder: 'Pick a month' },
             { label: 'Billing month', locale: 'en-GB', defaultValue: '2026-11' },
+            'That month is billed already.',
           ).map(({ caption, props, force }) => (
             <Cell key={caption} caption={caption} force={force} target="button" width={fieldWidth}>
               <MonthPicker {...props} />

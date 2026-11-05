@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import {
   Button,
   ButtonGroup,
@@ -162,6 +162,19 @@ function IconButtons() {
   );
 }
 
+/**
+ * Arms the ConfirmButton inside by a press that takes no focus, so a later click elsewhere on the
+ * sheet, which moves focus and would disarm a focused one, leaves it armed.
+ */
+function Armed({ children }: { children: ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const button = ref.current?.querySelector<HTMLButtonElement>('.env-confirm-button');
+    if (button && !button.hasAttribute('data-armed')) button.click();
+  }, []);
+  return <div ref={ref}>{children}</div>;
+}
+
 function ConfirmAndCopy() {
   return (
     <>
@@ -174,15 +187,17 @@ function ConfirmAndCopy() {
               </ConfirmButton>
             </Cell>
           ))}
-          <Cell caption="Armed (after a click)" click="left">
-            <ConfirmButton
-              tone="danger"
-              confirmLabel="Delete for good"
-              armedDuration={3_600_000}
-              onConfirm={() => {}}
-            >
-              Delete
-            </ConfirmButton>
+          <Cell caption="Armed (after a press)">
+            <Armed>
+              <ConfirmButton
+                tone="danger"
+                confirmLabel="Delete for good"
+                armedDuration={3_600_000}
+                onConfirm={() => {}}
+              >
+                Delete
+              </ConfirmButton>
+            </Armed>
           </Cell>
           <Cell caption="Pending">
             <ConfirmButton
@@ -213,16 +228,18 @@ function ConfirmAndCopy() {
               </ConfirmButton>
             </Cell>
           ))}
-          <Cell caption="Icon only, armed" click="left">
-            <ConfirmButton
-              variant="ghost"
-              tone="danger"
-              icon={<IconDelete />}
-              aria-label="Delete"
-              confirmLabel="Delete"
-              armedDuration={3_600_000}
-              onConfirm={() => {}}
-            />
+          <Cell caption="Icon only, armed">
+            <Armed>
+              <ConfirmButton
+                variant="ghost"
+                tone="danger"
+                icon={<IconDelete />}
+                aria-label="Delete"
+                confirmLabel="Delete"
+                armedDuration={3_600_000}
+                onConfirm={() => {}}
+              />
+            </Armed>
           </Cell>
         </Strip>
       </Section>
