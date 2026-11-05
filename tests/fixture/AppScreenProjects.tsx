@@ -75,19 +75,15 @@ const statusLabel: Record<Status, string> = {
   paused: 'Paused',
 };
 const statusTone = {
-  healthy: 'success',
+  healthy: 'neutral',
   deploying: 'primary',
   failing: 'danger',
   paused: 'neutral',
 } as const;
 
-/** A project's status: the routine one, healthy, outlined, so the states that need people stand out. */
+/** A project's status, soft throughout: the routine one, healthy, neutral, so the states that need people stand out. */
 function StatusBadge({ status }: { status: Status }) {
-  return (
-    <Badge tone={statusTone[status]} variant={status === 'healthy' ? 'outline' : 'soft'}>
-      {statusLabel[status]}
-    </Badge>
-  );
+  return <Badge tone={statusTone[status]}>{statusLabel[status]}</Badge>;
 }
 
 const people = [
@@ -450,6 +446,7 @@ function ProjectsTable({ onOpen, openId }: { onOpen: (id: string) => void; openI
                 <Toolbar.Separator />
                 <Toolbar.Button
                   icon={<IconDelete />}
+                  tone="danger"
                   label={`Delete ${projectCount(selected.length)}…`}
                 />
               </Toolbar.Root>
