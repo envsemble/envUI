@@ -191,7 +191,7 @@
     font: var(--env-type-body-sm);
     white-space: nowrap;
   }
-  /* Radio and checkbox items keep a check-mark slot, so their labels align whether checked or not. */
+  /* Radio and checkbox items keep a slot for their mark, so their labels align whether checked or not. */
   .env-menu-item-indicator-slot {
     inline-size: var(--env-control-icon-size);
     block-size: var(--env-control-icon-size);
@@ -201,6 +201,15 @@
   }
   .env-menu-item .env-menu-item-indicator {
     color: var(--env-color-bg-primary-emphasis);
+  }
+  /* A chosen radio item's mark is a dot in the accent, as a Radio's, where a checkbox item's is a
+     check. A border draws it, which forced colors keep in the text color. */
+  .env-menu-item-indicator[data-shape='dot'] {
+    box-sizing: border-box;
+    inline-size: 0.5rem;
+    block-size: 0.5rem;
+    border: 0.25rem solid currentColor;
+    border-radius: 50%;
   }
   .env-menu-choice[data-checked] .env-menu-item-label {
     font-weight: var(--env-font-weight-medium);
