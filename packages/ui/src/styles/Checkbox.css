@@ -35,15 +35,20 @@
     min-inline-size: 0;
     max-inline-size: 100%;
     overflow-wrap: break-word;
+    /* The row is at least the 24 px minimum target in both scales, with the box as drawn. */
+    --env-checkbox-row: var(--env-control-target-min);
+    box-sizing: border-box;
     display: inline-flex;
-    align-items: center;
+    /* The box sits on the middle of the label's first line, and a one-line label in the middle of
+       the row, so a label that wraps or takes a description keeps the box beside its first line. */
+    align-items: flex-start;
     gap: var(--env-space-3);
+    min-block-size: var(--env-checkbox-row);
+    padding-block: max(0%, (var(--env-checkbox-row) - 1lh) / 2);
     font: var(--env-type-body-sm);
     font-size: var(--env-font-size-body-sm);
     color: var(--env-color-fg-default);
     cursor: pointer;
-    /* The row is at least the 24 px minimum target in both scales, with the box as drawn. */
-    min-block-size: var(--env-control-target-min);
   }
   .env-checkbox > span {
     min-inline-size: 0;
@@ -69,7 +74,7 @@
   }
   @media (pointer: coarse) {
     .env-checkbox {
-      min-height: var(--env-control-height-touch);
+      --env-checkbox-row: var(--env-control-height-touch);
     }
     .env-checkbox:not(:has(> .env-checkbox-label)) {
       --env-checkbox-target: var(--env-control-height-touch);
@@ -85,6 +90,7 @@
     width: var(--env-checkbox-size);
     height: var(--env-checkbox-size);
     flex: 0 0 auto;
+    margin-block-start: calc((1lh - var(--env-checkbox-size)) / 2);
   }
   .env-checkbox-input {
     appearance: none;

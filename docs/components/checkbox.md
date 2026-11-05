@@ -160,6 +160,7 @@ A checked box submits its `name` with its `value`; an unchecked one submits noth
 
 ## Changelog
 
+- **1.0.0-prerelease.6**: Beside a label that wraps or has a description, the box sits on the middle of its first line rather than across both lines.
 - **1.0.0-prerelease.6**: An unchecked box takes the neutral state layer under the pointer and while pressed, with its edge a step darker.
 - **1.0.0-prerelease.5**: `description`, a muted line under the label.
 - **1.0.0**: `className` and `style` style the root, `env-checkbox`, rather than the input, which keeps `ref` and the other native props. The classes follow the component: `env-choice-control` is `env-checkbox`, `env-checkbox-control` `env-checkbox-input` and `env-checkbox-mark` `env-checkbox-indicator`.

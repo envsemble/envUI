@@ -299,6 +299,7 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 
 ## Changelog
 
+- **1.0.0-prerelease.6**: In an item with a description, the check mark, the icon, the end and the shortcut sit on the label's line rather than across both lines.
 - **1.0.0-prerelease.6**: A group with a heading sits closer to the rows before it, and its heading closer to its rows, so a menu of a few groups stays compact; a separator, such as the one before a destructive item, keeps the full space.
 - **1.0.0-prerelease.6**: A disabled item's label takes the disabled text color, `--env-color-fg-disabled`, rather than the muted color its description has, so unavailable and explanatory text no longer look alike.
 - **1.0.0-prerelease.5**: Menu.Root's `aria-label` is optional: the menu takes its trigger's name. Menu.RadioGroup takes `defaultValue` and Menu.CheckboxItem `defaultChecked`, for choices the menu keeps; Menu.Separator, Menu.Group and Menu.RadioGroup pass their native props on. `onOpenChange` of Menu.Root, Menu.Submenu and ContextMenu receives why.

@@ -503,10 +503,10 @@
   }
   /* A short field, as a small one or one at the compact scale, would set its value almost on the
      floated label above it: with a visible label, the value, its prefix, suffix and start icon sit a
-     little below the middle, up to 3 px in the shortest field and not at all from 2.25 rem up. The
+     little below the middle, up to 4 px in the shortest field and not at all from 2.25 rem up. The
      field keeps its height, and its end actions stay in the middle. */
   .env-text-field:not([data-tall], [data-label-hidden]) .env-text-field-control:has(> label) {
-    --env-text-field-value-shift: clamp(0rem, (2.25rem - var(--env-field-height)) / 2, 0.1875rem);
+    --env-text-field-value-shift: clamp(0rem, (2.25rem - var(--env-field-height)) / 2, 0.25rem);
   }
   /* Moved by relative offsets, which, unlike a transform, keep the parts in the field's stacking
      context, so a control's hit areas, such as those of a combobox's chips, still reach past them.

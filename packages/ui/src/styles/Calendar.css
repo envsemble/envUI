@@ -1,7 +1,7 @@
 @layer env.components {
   /* Calendar: a month of days as round marks side by side in a grid, as wide as seven days, under the
      month's name and, at its end, the month buttons. Today is in the accent color, the chosen day a
-     solid fill, and unavailable days are faded. Coarse pointers get touch-sized days. */
+     solid fill, and unavailable days take the disabled color, faded. Coarse pointers get touch-sized days. */
   .env-calendar {
     --env-calendar-day: var(--env-row-height);
     inline-size: calc(7 * var(--env-calendar-day));
@@ -95,8 +95,13 @@
   .env-calendar-day[aria-disabled='true'] {
     cursor: default;
   }
+  /* A day outside the range, before min or after max, takes the disabled text color and fades,
+     so it can't be taken for one that can be chosen; today keeps its accent color, faded. */
   .env-calendar-day[aria-disabled='true'] > .env-calendar-day-mark {
     opacity: var(--env-state-disabled-opacity);
+  }
+  .env-calendar-day[aria-disabled='true']:not([aria-current='date']) > .env-calendar-day-mark {
+    color: var(--env-color-fg-disabled);
   }
   @media (pointer: coarse) {
     .env-calendar {

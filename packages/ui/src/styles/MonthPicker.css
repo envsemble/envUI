@@ -82,8 +82,14 @@
   .env-month-picker-month[aria-disabled='true'] {
     cursor: default;
   }
+  /* A month outside the range takes the disabled text color and fades, as a calendar's days do;
+     this month keeps its accent color, faded. */
   .env-month-picker-month[aria-disabled='true'] > .env-month-picker-month-mark {
     opacity: var(--env-state-disabled-opacity);
+  }
+  .env-month-picker-month[aria-disabled='true']:not([aria-current='date'])
+    > .env-month-picker-month-mark {
+    color: var(--env-color-fg-disabled);
   }
   @media (pointer: coarse) {
     .env-month-picker-year {

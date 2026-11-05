@@ -1,13 +1,14 @@
 @layer env.components {
   /* A slider as a field: as tall as the fields and with their corners, so it sits in a form among
      them. The whole control is the track, a quiet tint, with the label inside at its start, the value
-     at its end, in a field's type, and a stronger fill from the start that shows the value. At rest
-     a quiet handle at the fill's end says it can be moved, where it is clear of the text. Slider
-     decides what shows besides (sliderReveal) and marks it on the control: the handle at full
-     strength and faint ticks at the steps, a ruler, under a hovering pointer and while pressed
-     (data-handle, data-ruler), until a release, and the handle alone with keyboard focus
-     (data-handle). The text always keeps its full strength: while they show, where the
-     handle, the fill's end and the ticks pass under the label or the value, they fade instead. */
+     at its end, in a field's type, and a fill in the primary color's muted tint from the start that
+     shows the value. At rest a quiet handle, a short bar at the fill's end, says it can be moved,
+     where it is clear of the text; at either end it sits in the padding before the label or after
+     the value, so it never meets them there. Slider decides what shows besides (sliderReveal) and
+     marks it on the control: the handle at full strength and faint ticks at the steps, a ruler,
+     under a hovering pointer and while pressed (data-handle, data-ruler), until a release, and the
+     handle alone with keyboard focus (data-handle). The text always keeps its full strength: where
+     the handle, the fill's end and the ticks pass under the label or the value, they fade instead. */
   /* Color properties: a slider's colors, which an application sets on one slider through style or its
      own CSS: container the track, indicator the fill that shows the value, and content the label, the
      value, the handle and the ticks. They don't inherit; the slider passes them on to its parts. */
@@ -41,19 +42,17 @@
   .env-slider {
     /* A field's height: the control height, or the touch height under a coarse pointer. */
     --env-slider-height: var(--env-control-height);
+    /* The label's and the value's distance from the ends. */
+    --env-slider-padding: var(--env-space-4);
     /* The track spans the whole field, so the fill is empty at the minimum, full at the maximum and
        in proportion between, and ends where the pointer chooses the value. Near the ends the handle
-       keeps this far from the rounded edge, so the corner never cuts it short. */
-    --env-slider-handle-inset: calc(var(--env-slider-height) / 4);
+       stops halfway into the padding, clear of the rounded edge and of the label and the value. */
+    --env-slider-handle-inset: calc(var(--env-slider-padding) / 2);
     --env-slider-track: var(--env-slider-container, var(--env-color-bg-neutral-muted));
-    /* The fill is a step stronger than the track's tint in light, so it reads at a glance; in dark
-       the tint a step lighter already does, and a stronger one would take the text's contrast.
-       light-dark() follows the nearest theme's color scheme. */
+    /* The fill is the primary color's muted tint over the track, so it reads as a control's value
+       rather than a disabled field or a meter, and the text keeps its contrast on it. */
     /* contrast: slider-fill */
-    --env-slider-fill-default: light-dark(
-      var(--env-color-bg-neutral-muted-hover),
-      var(--env-color-bg-neutral-subtle-pressed)
-    );
+    --env-slider-fill-default: var(--env-color-bg-primary-muted);
     --env-slider-fill: var(--env-slider-indicator, var(--env-slider-fill-default));
     --env-slider-ink: var(--env-slider-content, var(--env-color-fg-default));
     /* The color of the field's error and of its invalid control, as on every field. */
@@ -115,7 +114,7 @@
   /* The fill runs from the slider's start to the value: none at the minimum, the whole field at the
      maximum. */
   .env-slider-indicator {
-    background: var(--env-slider-fill, var(--env-color-bg-neutral-subtle-pressed));
+    background: var(--env-slider-fill, var(--env-color-bg-primary-muted));
   }
   /* While the handle shows, under the label or the value, the fill's end fades into the track, so no
      edge cuts through the text: a veil of the track's color over its last stretch, cut off at the
@@ -142,7 +141,7 @@
   .env-slider-indicator:dir(rtl)::after {
     --env-slider-indicator-direction: to left;
   }
-  /* The handle: a thin line at the value, at the fill's end, beneath the label and the value. Within
+  /* The handle: a short bar at the value, at the fill's end, beneath the label and the value. Within
      the handle's inset of either end it stops short of the rounded edge: Slider sets the value's
      fraction of the range (--env-slider-fraction), and the handle moves back by what it lacks of the
      inset, physically, so to the left in right-to-left text. */
@@ -150,7 +149,7 @@
     --env-slider-thumb-side: 1;
     --env-slider-thumb-at: calc(var(--env-slider-fraction, 0) * 100cqi);
     box-sizing: border-box;
-    inline-size: calc(2 * var(--env-control-border-width));
+    inline-size: var(--env-space-1);
     block-size: 55%;
     border-radius: var(--env-radius-full);
     background: var(--env-slider-ink, var(--env-color-fg-default));
@@ -213,7 +212,7 @@
     position: relative;
     grid-area: slider;
     z-index: var(--env-z-raised);
-    padding-inline: var(--env-space-4);
+    padding-inline: var(--env-slider-padding);
     pointer-events: none;
   }
   /* The label, in the text color, as muted text would lose its contrast on the fill; cut short where

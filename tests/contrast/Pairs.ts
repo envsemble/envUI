@@ -104,7 +104,7 @@ const popupFill = 'popup-fill';
 const worstBackdrop = 'popup-worst-backdrop';
 // A tooltip's frosted fill, a key chip on it and the worst behind it (Tooltip.css).
 const tooltipFrosted = 'tooltip-frosted';
-// A slider's fill as it is drawn, a step stronger in light than in dark (Slider.css).
+// A slider's fill as it is drawn, the primary color's muted tint (Slider.css).
 const sliderFill = 'slider-fill';
 // A text field's prefix and suffix (TextField.css).
 const textFieldAffix = 'text-field-affix';
@@ -1101,7 +1101,7 @@ const registry: readonly ContrastPair[] = merged([
     ],
     'The fill of a slider against its track',
   ),
-  // The slider's fill as it is drawn (Slider.css): a step stronger in light than in dark.
+  // The slider's fill as it is drawn (Slider.css): the primary color's muted tint over the track.
   ...text(
     '--env-color-fg-default',
     [
@@ -1111,7 +1111,7 @@ const registry: readonly ContrastPair[] = merged([
       [sliderFill, fill, raised],
       [sliderFill, fill, popup],
     ],
-    'The label, the value and the handle of a slider on its fill as drawn, a step stronger in light',
+    'The label, the value and the handle of a slider on its fill as drawn',
   ),
   ...different(
     sliderFill,
@@ -1122,7 +1122,7 @@ const registry: readonly ContrastPair[] = merged([
       [fill, raised],
       [fill, popup],
     ],
-    'The fill of a slider as drawn against its track, a step stronger in light',
+    'The fill of a slider as drawn against its track',
   ),
   ...nonText(
     '--env-color-bg-primary-emphasis',
@@ -3023,6 +3023,8 @@ export function markedColor(file: string, name: string): string {
     .replace(/\(\s+/g, '(')
     .replace(/\s+\)/g, ')')
     .trim();
+  // A token alone is its own color.
+  if (/^var\(--[\w-]+\)$/.test(value)) return value;
   const start = value.search(/\b(?:color-mix|light-dark|oklch|rgb|hsl)\(/);
   let depth = 0;
   for (let index = start; index < value.length; index++) {

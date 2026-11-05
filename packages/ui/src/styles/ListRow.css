@@ -29,9 +29,9 @@
   .env-list-row:active:not([data-disabled], [aria-disabled='true']) {
     background: var(--env-color-bg-neutral-muted-pressed);
   }
-  /* An unavailable row dims its indicator, icon, end and shortcut, and its label takes the muted
-     text color, so it still sits above its description, which often says why it is unavailable
-     and keeps the muted color and its smaller size, readable. */
+  /* An unavailable row dims its indicator, icon, end and shortcut, and its label takes the disabled
+     text color, as a menu item's does, so it reads as unavailable rather than as a description; its
+     description, which often says why, keeps the muted color and its smaller size, readable. */
   .env-list-row:is([data-disabled], [aria-disabled='true']) {
     cursor: default;
   }
@@ -39,7 +39,7 @@
     opacity: var(--env-state-disabled-opacity);
   }
   .env-list-row:is([data-disabled], [aria-disabled='true']) .env-list-row-label {
-    color: var(--env-color-fg-muted);
+    color: var(--env-color-fg-disabled);
   }
   /* The indicator keeps its slot whether or not the row is chosen, so the rows' ends align. The icon's
      slot takes the hook --env-list-row-icon-size, which an owner whose rows lead with larger content,
@@ -78,6 +78,23 @@
     color: var(--env-color-fg-muted);
     font: var(--env-font-weight-body) var(--env-font-size-label-sm) / 1.35 var(--env-font-family);
     overflow-wrap: break-word;
+  }
+  /* Beside a label with a description under it, the indicator, the icon, the end and the shortcut
+     sit on the middle of the label's line, 1lh in the row's type, rather than across both lines. */
+  .env-list-row:has(> .env-list-row-text > .env-list-row-description) {
+    align-items: flex-start;
+  }
+  .env-list-row:has(> .env-list-row-text > .env-list-row-description) > .env-list-row-indicator {
+    margin-block-start: calc((1lh - var(--env-control-icon-size)) / 2);
+  }
+  .env-list-row:has(> .env-list-row-text > .env-list-row-description) > .env-list-row-icon {
+    margin-block-start: calc(
+      (1lh - var(--env-list-row-icon-size, var(--env-control-icon-size))) / 2
+    );
+  }
+  .env-list-row:has(> .env-list-row-text > .env-list-row-description)
+    > :is(.env-list-row-end, .env-list-row-shortcut) {
+    min-block-size: 1lh;
   }
   .env-list-row-end,
   .env-list-row-shortcut {

@@ -257,6 +257,27 @@ function stateOf(page: Page) {
 }
 
 /**
+ * Where the middle of the first slider's label is, from 0 to 100 as its value runs: at either end
+ * the handle stays clear of the text, so the tests move it under the label's middle.
+ */
+function labelMiddle(state: ReturnType<typeof stateOf>) {
+  return state.slider.evaluate((root) => {
+    const track = root.querySelector('.env-slider-track')!.getBoundingClientRect();
+    const label = root.querySelector('.env-slider-label')!.getBoundingClientRect();
+    const x = label.left + label.width / 2;
+    return { x, value: Math.round(((x - track.left) / track.width) * 100) };
+  });
+}
+
+/** Moves the focused first slider's value under the middle of its label with the keyboard. */
+async function toLabel(page: Page, state: ReturnType<typeof stateOf>) {
+  const { value } = await labelMiddle(state);
+  await page.keyboard.press('Home');
+  for (let step = 0; step < value; step++) await page.keyboard.press('ArrowRight');
+  await expect(state.input).toHaveAttribute('aria-valuenow', String(value));
+}
+
+/**
  * Expects the slider at rest: its text, its fill and a quiet handle, gone where it sits under the
  * text, with no ticks or fade.
  */
@@ -280,9 +301,15 @@ test('at rest a slider shows its text, its fill and a quiet handle, with no tick
   const state = stateOf(page);
   await page.mouse.move(0, 0);
   await expectRest(state);
-  // Even where the fill ends under the label, it ends crisply.
+  // At the minimum the handle stays, halfway into the padding before the label.
   await state.input.focus();
   await page.keyboard.press('Home');
+  await state.input.blur();
+  await expect.poll(state.veil).toBe('0');
+  await expectRest(state);
+  // Even where the fill ends under the label, it ends crisply, and the handle is gone there.
+  await state.input.focus();
+  await toLabel(page, state);
   await state.input.blur();
   await expect.poll(state.veil).toBe('1');
   await expectRest(state);
@@ -307,7 +334,7 @@ test(
     // fill's end fade there, while the text stays at full strength.
     await page.mouse.move(0, 0);
     await state.input.focus();
-    await page.keyboard.press('Home');
+    await toLabel(page, state);
     await state.input.blur();
     await page.mouse.move(box.x + box.width * 0.5, y);
     await expect.poll(state.veil).toBe('1');
@@ -379,8 +406,9 @@ test(
     await page.mouse.down();
     await expect(state.control).toHaveAttribute('data-dragging', '');
     // Dragged under the label, the handle and the fill's end fade there, as on hover.
-    await page.mouse.move(box.x + 2, y, { steps: 4 });
-    await expect(state.input).toHaveAttribute('aria-valuenow', '0');
+    const label = await labelMiddle(state);
+    await page.mouse.move(label.x, y, { steps: 4 });
+    await expect(state.input).toHaveAttribute('aria-valuenow', String(label.value));
     await expect(state.thumb).toHaveCSS('opacity', '0.25');
     await expect.poll(state.ticks).toBe('0.35');
     await expect.poll(state.fillEnd).toBe('1');
@@ -434,8 +462,11 @@ test(
     await expect(state.control).toHaveAttribute('data-handle', '');
     await expect(state.control).not.toHaveAttribute('data-ruler');
     await expect(state.thumb).toHaveCSS('opacity', '1');
+    // At the minimum, the handle in the padding before the label is clear of it.
     await page.keyboard.press('Home');
     await expect(state.input).toHaveAttribute('aria-valuenow', '0');
+    await expect(state.thumb).toHaveCSS('opacity', '1');
+    await toLabel(page, state);
     await expect(state.thumb).toHaveCSS('opacity', '0.25');
     await expect.poll(state.fillEnd).toBe('1');
     expect(await state.ticks()).toBe('0');
@@ -479,7 +510,11 @@ test('the fill is empty at the minimum, the whole field at the maximum and in pr
     const thumb = slider.locator('.env-slider-thumb');
     await input.focus();
     const box = (await control.boundingBox())!;
-    const inset = box.height / 4;
+    // The handle stops halfway into the padding before the label and after the value.
+    const padding = await slider
+      .locator('.env-slider-header')
+      .evaluate((e) => Number.parseFloat(getComputedStyle(e).paddingInlineStart));
+    const inset = padding / 2;
     const start = (x: number, width: number) =>
       direction === 'ltr' ? x - box.x : box.x + box.width - (x + width);
     await page.keyboard.press('Home');
