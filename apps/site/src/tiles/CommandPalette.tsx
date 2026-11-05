@@ -11,22 +11,28 @@ const items: CommandPaletteItem[] = [
 
 const input = '.env-command-palette-input';
 
-/** A search typed, which narrows the commands to one; erased, they all come back. */
+/** What it rests on: a search typed, narrowed to one command. */
+const resting = 'inv';
+
+/** The search erased, which brings back every command, and another typed, then the first again. */
 const script: PointerStep[] = [
-  { wait: 500 },
-  { type: 'inv', into: input, every: 220 },
-  { wait: 1400 },
+  { wait: 900 },
   { erase: 3, into: input, every: 120 },
+  { wait: 700 },
+  { type: 'new', into: input, every: 220 },
+  { wait: 1200 },
+  { erase: 3, into: input, every: 120 },
+  { type: resting, into: input, every: 220 },
   { wait: 900 },
 ];
 
 /**
- * A command palette, open on two commands, with a short placeholder. A gallery's low tile shows it
- * whole across, from its search to its first command, cut off at its foot.
+ * A command palette, open on a search that has narrowed its commands to one: its field and that
+ * result, so a gallery's low tile shows it whole at about its own size.
  */
 export default function CommandPaletteTile() {
-  const [query, setQuery] = useState('');
-  usePointer(script, { onRest: () => setQuery('') });
+  const [query, setQuery] = useState(resting);
+  usePointer(script, { onRest: () => setQuery(resting) });
   return (
     <CommandPalette
       open

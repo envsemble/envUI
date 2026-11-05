@@ -319,17 +319,19 @@ export function useFit(
       if ((ownSize || legible) && popup && canvasElement.dataset.fitted === undefined)
         canvasElement.dataset.popup = '';
       const wholeScale = Math.min(width / (right - left), height / (bottom - top));
-      // A dialog a little larger than the inset leaves room for, such as a confirm dialog's
-      // question and actions, is drawn whole in the stage, a margin from its edges, where that
-      // scale allows, rather than as a window cut off through its actions. A menu stays a window
-      // onto it from its top.
+      // A popup a little larger than the inset leaves room for, such as a confirm dialog's
+      // question and actions or a menu bar with its menu open, is drawn whole in the stage, a
+      // margin from its edges, where that scale allows, rather than as a window cut off through
+      // its last row. A larger one, such as a picker, stays a window onto it from its top.
       const dialog =
         canvasElement.querySelector('.catalogue-overlay-layer .env-dialog-backdrop') !== null;
       const room = {
         width: stageElement.clientWidth - 2 * margin,
         height: stageElement.clientHeight - 2 * margin,
       };
-      const roomScale = dialog
+      // A component's own popup, or a dialog in a scene too.
+      const roomy = dialog || (ownSize && popup);
+      const roomScale = roomy
         ? Math.min(room.width / (right - left), room.height / (bottom - top))
         : 0;
       const popupLeast =
@@ -376,8 +378,8 @@ export function useFit(
       // and fades out (`data-cut`, Gallery.css).
       const across = (right - left) * scale;
       const down = (bottom - top) * scale;
-      // A dialog drawn whole in the stage's room is centred on it, cut off nowhere.
-      const inRoom = dialog && down <= room.height + 0.5 && across <= room.width + 0.5;
+      // A popup drawn whole in the stage's room is centred on it, cut off nowhere.
+      const inRoom = roomy && down <= room.height + 0.5 && across <= room.width + 0.5;
       // It starts at the component's own start, rather than its popups': a popup shifts to stay
       // in the window, and a view that followed it would shift it again. A dialog, over its
       // backdrop, is placed by the window alone and covers what opens it: it starts at its own.
