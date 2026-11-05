@@ -111,6 +111,6 @@ The parts are the meter, `env-meter`, its label, `env-meter-label`, its value, `
 
 ## Changelog
 
-- **1.0.0-prerelease.6**: The track is the neutral fill a Slider's track takes, so it shows on dark panels.
 - **1.0.0**: The classes are `env-meter*`; without `aria-valuetext` the formatted value stays; `className`, `style`, `ref` and data attributes reach the root, and numbers follow the provider's locale.
 - **1.0.0**: In the dark theme, meters reach 3:1 on every surface.
+- **1.0.0-prerelease.6**: The track is the neutral fill a Slider's track takes, so it shows on dark panels.

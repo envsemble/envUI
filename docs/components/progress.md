@@ -164,6 +164,6 @@ The parts are the bar, `env-progress`, its label, `env-progress-label`, its valu
 
 ## Changelog
 
-- **1.0.0-prerelease.6**: The track and the segments are the neutral fill a Slider's track takes, so empty steps show on dark panels.
 - **1.0.0**: The classes are `env-progress*`; `segments` splits the track into steps; an indeterminate bar is read as Loading, and sweeps toward the end of the line also in right-to-left text; without `aria-valuetext` the formatted value stays; `className`, `style`, `ref` and data attributes reach the root.
 - **1.0.0**: `LoadingBar` is no longer exported: TopBar's `loading` and `loadingLabel` show page progress, and Progress shows a task's.
+- **1.0.0-prerelease.6**: The track and the segments are the neutral fill a Slider's track takes, so empty steps show on dark panels.

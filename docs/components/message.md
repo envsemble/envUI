@@ -192,5 +192,5 @@ The list is `env-message-list`, with `env-message-list-busy` for its spinner whi
 
 ## Changelog
 
-- **1.0.0-prerelease.6**: While `busy`, MessageList shows a quiet spinner in the muted color after the last message, `env-message-list-busy`.
 - **1.0.0**: Buttons in `actions` are small ghost buttons unless they set their own variant or size, and the statuses come from `messages.message`. The page is `message`, after the component, instead of `messages`. Message and MessageList can render in React Server Components.
+- **1.0.0-prerelease.6**: While `busy`, MessageList shows a quiet spinner in the muted color after the last message, `env-message-list-busy`.

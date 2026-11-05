@@ -142,5 +142,5 @@ The parts are the list, `env-description-list`, with `data-layout`, `data-size` 
 
 ## Changelog
 
-- **1.0.0-prerelease.6**: Stacked, the pairs stand further apart than a label from its value. Auto stacks below 18 rem of the list's width, in place of 24 rem, so a 360 px panel keeps its labels beside their values.
 - **1.0.0**: DescriptionList, with `layout`, `size` and `controls`.
+- **1.0.0-prerelease.6**: Stacked, the pairs stand further apart than a label from its value. Auto stacks below 18 rem of the list's width, in place of 24 rem, so a 360 px panel keeps its labels beside their values.
