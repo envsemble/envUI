@@ -378,7 +378,11 @@ export function useFit(
             ? learned
             : null;
         run = {
-          rested: new Map(boxes.map(({ element, box }) => [element, box])),
+          rested: boxes.reduce(
+            (rested, { element, box }) =>
+              rested.set(element, join(rested.get(element) ?? null, box)!),
+            new Map<Element, Box>(),
+          ),
           union: join(base, again?.box ?? null)!,
           must: again?.must ?? null,
           anchor,
@@ -400,11 +404,12 @@ export function useFit(
           return !still || !covers(still, box);
         })
         .map(({ element, box }) => {
-          const holder = settling(element, canvasElement)
-            ? element.closest(
-                '.env-popup-positioner, .env-menu-positioner, .env-tooltip-positioner',
-              )
-            : null;
+          const holder =
+            !current.rested.has(element) && settling(element, canvasElement)
+              ? element.closest(
+                  '.env-popup-positioner, .env-menu-positioner, .env-tooltip-positioner',
+                )
+              : null;
           return holder && canvasElement.contains(holder) ? ownBox(holder) : box;
         });
       const must = join(...named, ...opened);
