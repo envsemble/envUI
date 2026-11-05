@@ -147,7 +147,7 @@
     padding: 0;
     overflow: hidden;
     font: var(--env-type-body);
-    font-size: var(--env-font-size-body-sm);
+    font-size: var(--env-font-size-label);
     line-height: 1;
     white-space: nowrap;
     visibility: hidden;
@@ -232,7 +232,7 @@
     inset-inline-start: calc(var(--env-text-field-notch-start) + var(--env-space-1));
     padding-inline: var(--env-space-1);
     margin-inline-start: calc(-1 * var(--env-space-1));
-    font-size: var(--env-font-size-body-sm);
+    font-size: var(--env-font-size-label);
   }
   /* The floated label opens the notch in the border behind it, as wide as the label shows; a ghost
      field's floats inside its fill and cuts none. */
@@ -296,7 +296,7 @@
      floats. A single-line one keeps it within its height, below. */
   .env-text-field:not([data-label-hidden])
     .env-text-field-control[data-variant='ghost']:has(> label) {
-    --env-text-field-ghost-label-room: calc(var(--env-font-size-body-sm) + 0.125rem);
+    --env-text-field-ghost-label-room: calc(var(--env-font-size-label) + 0.125rem);
     --env-text-field-label-floated: var(--env-space-1);
   }
   .env-text-field-control[data-variant='ghost'] > label {
