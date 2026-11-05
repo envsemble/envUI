@@ -2,4 +2,4 @@
 '@envsemble/envui': patch
 ---
 
-SegmentedControl: a segment not chosen keeps its muted label under the pointer and pressed, with only the faint neutral state layer, `--env-color-bg-neutral-subtle-hover` and `-pressed`, so only the thumb reads as chosen, in the dark theme too. In dark the thumb is the raised neutral grade, `--env-color-bg-neutral-strong-hover`, opaque and clearly lighter than the track and a hovered segment; at high contrast it keeps a layer of the neutral fill.
+SegmentedControl: under the pointer a segment not chosen takes no layer, only the text color on its label, and pressed only the faint neutral pressed layer, `--env-color-bg-neutral-subtle-pressed`, with a muted label, so only the thumb reads as chosen and hover never looks like a second selection, in the dark theme too. In dark the thumb is the raised neutral grade, `--env-color-bg-neutral-strong-hover`, opaque and clearly lighter than the track and a hovered segment; at high contrast it keeps a layer of the neutral fill.
