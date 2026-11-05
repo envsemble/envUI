@@ -730,6 +730,119 @@ test('every tile of the galleries is fitted: components at one scale, a scene at
   }
 });
 
+test("a gallery tile that plays draws out what opens inside its stage, and rests at its still's scale", async ({
+  page,
+}) => {
+  // As a tile plays, what it opens, such as a combobox's list, is drawn smaller to show whole in
+  // its stage, but no smaller than a popup's least scale (Gallery.css); what is larger still shows
+  // from its top and is cut off at its foot. A calendar cut off at rest keeps its month in view.
+  test.setTimeout(60_000);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(`${siteDevUrl}/components`);
+  const least = 0.84;
+  const scaleOf = (canvas: Element) =>
+    Number((canvas as HTMLElement).style.transform.match(/scale\(([^)]+)\)/)?.[1]);
+  for (const name of ['Combobox', 'DatePicker']) {
+    const tile = page.locator('.catalogue-gallery-tile').filter({
+      has: page.locator('.catalogue-gallery-name', { hasText: new RegExp(`^${name}$`) }),
+    });
+    const canvas = tile.locator('.catalogue-related-canvas[data-fitted]');
+    await tile.scrollIntoViewIfNeeded();
+    await expect(canvas).toHaveCount(1);
+    await page.mouse.move(0, 0);
+    await expect(tile.locator('[data-playing]')).toHaveCount(0);
+    const rest = await canvas.evaluate(scaleOf);
+    // Each frame of the play, how far what shows reaches past the stage's edges, by the scale it
+    // is drawn at and where it is cut off.
+    await tile.evaluate((element) => {
+      const frames: { scale: number; cut: string; past: Record<string, number> }[] = [];
+      (element as HTMLElement & { frames?: typeof frames }).frames = frames;
+      const stage = element.querySelector('.catalogue-related-stage')!;
+      const record = () => {
+        const canvas = element.querySelector<HTMLElement>('.catalogue-related-canvas');
+        if (!canvas || !element.querySelector('[data-playing]')) return;
+        const window = canvas.getBoundingClientRect();
+        const clear = (color: string) =>
+          color === 'transparent' || /rgba\([^)]*,\s*0\)$|\/\s*0\)$/.test(color);
+        const paints = (node: Element) => {
+          const style = getComputedStyle(node);
+          return (
+            !clear(style.backgroundColor) ||
+            style.boxShadow !== 'none' ||
+            /^(svg|img|input)$/.test(node.localName) ||
+            [...node.childNodes].some((child) => child.nodeType === 3 && child.textContent?.trim())
+          );
+        };
+        const shown = (node: Element) => {
+          for (let at: Element | null = node; at && at !== canvas; at = at.parentElement)
+            if (getComputedStyle(at).opacity === '0') return false;
+          return node.checkVisibility({ visibilityProperty: true });
+        };
+        const boxes = [...canvas.querySelectorAll('*')]
+          .filter((node) => !node.closest('svg') || node.localName === 'svg')
+          .filter((node) => shown(node) && paints(node))
+          .map((node) => node.getBoundingClientRect())
+          .filter((box) => box.width > 1 && box.height > 1)
+          .filter((box) => box.width < window.width - 1 || box.height < window.height - 1);
+        if (!boxes.length) return;
+        const edge = stage.getBoundingClientRect();
+        frames.push({
+          scale: Number(canvas.style.transform.match(/scale\(([^)]+)\)/)?.[1]),
+          cut: canvas.dataset.cut ?? '',
+          past: {
+            top: edge.top - Math.min(...boxes.map((box) => box.top)),
+            start: edge.left - Math.min(...boxes.map((box) => box.left)),
+            end: Math.max(...boxes.map((box) => box.right)) - edge.right,
+            bottom: Math.max(...boxes.map((box) => box.bottom)) - edge.bottom,
+          },
+        });
+      };
+      const sample = () => {
+        record();
+        if (element.isConnected) requestAnimationFrame(sample);
+      };
+      sample();
+    });
+    const box = (await tile.boundingBox())!;
+    await page.mouse.move(box.x + box.width / 2, box.y + 8);
+    await expect(tile.locator('[data-playing]')).toHaveCount(1);
+    await page.waitForTimeout(4500);
+    const frames = await tile.evaluate(
+      (element) =>
+        (
+          element as HTMLElement & {
+            frames: { scale: number; cut: string; past: Record<string, number> }[];
+          }
+        ).frames,
+    );
+    expect(frames.length, name).toBeGreaterThan(20);
+    const floor = Math.min(rest, least);
+    // Judged where it is drawn, not on its way there: frames whose scale held from the last.
+    const held = frames.filter(
+      (frame, index) => index > 0 && frames[index - 1]!.scale === frame.scale,
+    );
+    const outside = held.flatMap(({ scale, cut, past }) => [
+      ...(scale < floor - 0.001 ? [`drawn at ${scale}`] : []),
+      // Its top and its start always show; its foot and its end only past the stage where it is
+      // cut off there, drawn at the least scale or its still's.
+      ...(past.top > 1 ? [`top ${past.top}`] : []),
+      ...(past.start > 1 ? [`start ${past.start}`] : []),
+      ...(past.end > 1 && !(cut.includes('end') && scale <= Math.max(floor, rest) + 0.001)
+        ? [`end ${past.end}`]
+        : []),
+      ...(past.bottom > 1 && !(cut.includes('bottom') && (scale <= floor + 0.001 || scale === rest))
+        ? [`bottom ${past.bottom} at ${scale}`]
+        : []),
+    ]);
+    expect([...new Set(outside)], name).toEqual([]);
+    // A combobox whose list opens under it is drawn smaller to show it.
+    if (name === 'Combobox')
+      expect(Math.min(...frames.map(({ scale }) => scale))).toBeLessThan(rest);
+    await page.mouse.move(0, 0);
+    await expect.poll(() => canvas.evaluate(scaleOf), { message: name }).toBe(rest);
+  }
+});
+
 test('figures with open overlays keep them in their stages, overviews live and others inert, and leave the page alone', async ({
   page,
 }) => {

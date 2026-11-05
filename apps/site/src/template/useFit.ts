@@ -201,7 +201,8 @@ function within(box: DOMRect, clip: DOMRect | null) {
  * A page's own tile is drawn at its window's scale. At rest it is centred on what it paints. As it
  * plays, its view stays where it is, so what happens in it, such as notifications stacking, happens
  * in place; it moves only when something would leave the stage, easing just far enough to keep it
- * in, and it eases back to centre the still once the tile rests.
+ * in, and in a gallery it is drawn smaller where that can't (a legible least allowing); it eases
+ * back to centre the still at its scale once the tile rests.
  */
 export function useFit(
   stage: RefObject<HTMLElement | null>,
@@ -237,13 +238,28 @@ export function useFit(
     refit.current = update;
     const resize = new ResizeObserver(update);
     const largest = tile ? most : 1;
-    // The view: where the canvas is, and where it eases to. Each frame closes a share of the way
-    // left, so a target that moves as the preview changes is followed without restarting.
-    const view = { x: 0, y: 0, scale: 1, toX: 0, toY: 0, frame: 0, last: 0 };
-    // Before it shows, the frames its fit has held where it is, and the frames it has been fitted
-    // in: a popup is placed by its style a frame or two after it opens, and a preview shown before
-    // then would glide to it as it fades in.
-    const first = { calm: 0, tries: 0 };
+    // The view: where the canvas is and the scale it is drawn at, and where it eases to. Each frame
+    // closes a share of the way left, so a target that moves as the preview changes is followed
+    // without restarting. `rest` is the scale it is fitted at resting, and `zoomed` whether it is
+    // drawn smaller than that as it plays, or on its way back.
+    const view = {
+      x: 0,
+      y: 0,
+      scale: 1,
+      toX: 0,
+      toY: 0,
+      toScale: 1,
+      rest: 1,
+      restAcross: 0,
+      restDown: 0,
+      zoomed: false,
+      frame: 0,
+      last: 0,
+    };
+    // Before it shows, the frames its fit has held where it is, and when it was first fitted: a
+    // popup is placed by its style a frame or two after it opens, and a preview shown before then
+    // would glide to it as it fades in.
+    const first = { calm: 0, start: 0 };
     const place = () => {
       const transform = `translate(${-view.x}px, ${-view.y}px) scale(${view.scale})`;
       if (canvasElement.style.transform !== transform) canvasElement.style.transform = transform;
@@ -255,10 +271,15 @@ export function useFit(
       const share = 1 - Math.exp(-elapsed / 110);
       view.x += (view.toX - view.x) * share;
       view.y += (view.toY - view.y) * share;
-      const settled = Math.abs(view.toX - view.x) < 0.25 && Math.abs(view.toY - view.y) < 0.25;
+      view.scale += (view.toScale - view.scale) * share;
+      const settled =
+        Math.abs(view.toX - view.x) < 0.25 &&
+        Math.abs(view.toY - view.y) < 0.25 &&
+        Math.abs(view.toScale - view.scale) < 0.001;
       if (settled) {
         view.x = view.toX;
         view.y = view.toY;
+        view.scale = view.toScale;
       }
       place();
       view.frame = settled ? 0 : requestAnimationFrame(glide);
@@ -313,8 +334,7 @@ export function useFit(
       // legible one: its words stay legible beside the other tiles'. A larger one, such as a
       // dialog, is a window onto it from its top, cut off at its foot after its last whole row,
       // drawn whole across where that scale allows, else at the one scale and cut off at its end.
-      // Once fitted, a tile keeps its scale as it plays, so a popup that closes and opens again
-      // doesn't resize it.
+      // As it plays, it is drawn smaller only where what opens needs it (below).
       const popup = boxes.some(({ element }) => element.closest('.catalogue-overlay-layer'));
       if ((ownSize || legible) && popup && canvasElement.dataset.fitted === undefined)
         canvasElement.dataset.popup = '';
@@ -348,27 +368,47 @@ export function useFit(
           ? Math.max(floor, Math.min(1, width / (right - left), downScale))
           : Math.min(1, width / least, downScale);
       const scene = Math.max(legibleScale, Math.min(1, windowScale));
-      const scale =
+      // As a gallery's tile plays, it is drawn smaller where what it shows needs more room than its
+      // still, such as a menu opening or a list under its field, easing out just far enough to show
+      // it whole, but never below the least it is drawn at (its popup's, a phone's or a scene's),
+      // so its words stay legible; at that scale, what is larger still shows from its top and is
+      // cut off at its foot, as at rest. Where its still is already cut off, such as a calendar's,
+      // what it shows grows there into what is cut off, as a window onto it, at its own scale. It
+      // is drawn no larger again until it rests, so what closes and opens again doesn't move it in
+      // and out, and then eases back to its still.
+      const plays =
         (ownSize || legible) &&
         tile &&
         playingNow.current &&
-        canvasElement.dataset.fitted !== undefined
-          ? view.scale
-          : ownSize
+        canvasElement.dataset.fitted !== undefined;
+      const playLeast = Math.min(
+        view.rest,
+        ownSize ? (floor > 0 ? floor : popupLeast) : legibleScale,
+      );
+      const playScale = Math.min(
+        view.restAcross > width + inset
+          ? Infinity
+          : Math.max(width, view.restAcross) / (right - left),
+        view.restDown > height + inset
+          ? Infinity
+          : Math.max(height, view.restDown) / (bottom - top),
+      );
+      // What reaches a little into the inset, such as a time a word longer, keeps the scale.
+      const scale = plays
+        ? playScale >= view.toScale * zoomSlack
+          ? view.toScale
+          : Math.max(playLeast, playScale)
+        : ownSize
+          ? popup
+            ? popupScale(own)
+            : own
+          : legible
             ? popup
-              ? popupScale(own)
-              : own
-            : legible
-              ? popup
-                ? popupScale(scene)
-                : scene
-              : tile
-                ? windowScale
-                : Math.min(
-                    whole ? windowScale : 1,
-                    width / (right - left),
-                    height / (bottom - top),
-                  );
+              ? popupScale(scene)
+              : scene
+            : tile
+              ? windowScale
+              : Math.min(whole ? windowScale : 1, width / (right - left), height / (bottom - top));
       // A tile in place eases to where it is fitted next; anything else is placed at once.
       const eases = tile && canvasElement.dataset.fitted !== undefined && !still.matches;
       let toX = ((left + right) / 2) * scale;
@@ -406,13 +446,34 @@ export function useFit(
         else delete canvasElement.dataset.cut;
         trimRows(canvasElement);
       }
-      if (tile && playingNow.current && view.scale === scale) {
+      // As it plays, the view stays where it is while what it shows stays in the stage, else moves
+      // just far enough to keep it in; once drawn smaller, it is centred on what it shows, and what
+      // is larger than the stage shows from its start, as at rest.
+      if (plays) {
+        const rescaled = scale !== view.toScale;
+        if (!rescaled && across <= width + 0.5)
+          toX = contain(
+            view.toX,
+            left * scale,
+            right * scale,
+            stageElement.clientWidth / 2 - inset,
+          );
+        if (!rescaled && down <= height + 0.5)
+          toY = contain(
+            view.toY,
+            top * scale,
+            bottom * scale,
+            stageElement.clientHeight / 2 - inset,
+          );
+      } else if (tile && playingNow.current && view.scale === scale) {
         toX = contain(view.toX, left * scale, right * scale, stageElement.clientWidth / 2 - inset);
         toY = contain(view.toY, top * scale, bottom * scale, stageElement.clientHeight / 2 - inset);
       }
       // Until it shows, it is placed at once, and shows only once its place has held for a few
-      // frames, or after half a second, whatever is still moving: it appears in place, as every
-      // preview does, by fading in.
+      // frames, or after half a second, whatever is still moving, such as a popup placed again
+      // against the stage's edges as the view moves: it appears in place, as every preview does,
+      // by fading in. Half a second, not a count of frames: on a busy page, as a gallery is while
+      // its tiles load, frames come slowly, and a count would keep it hidden for seconds.
       if (canvasElement.dataset.fitted === undefined) {
         const held =
           first.calm > 0 &&
@@ -420,13 +481,16 @@ export function useFit(
           Math.abs(view.x - toX) < 0.5 &&
           Math.abs(view.y - toY) < 0.5;
         first.calm = held ? first.calm + 1 : 1;
-        first.tries += 1;
+        first.start ||= performance.now();
         view.x = view.toX = toX;
         view.y = view.toY = toY;
-        view.scale = scale;
+        view.scale = view.toScale = view.rest = scale;
+        view.restAcross = across;
+        view.restDown = down;
         place();
         for (const { element } of boxes) resize.observe(element);
-        if (first.calm >= 3 || first.tries >= 30) canvasElement.dataset.fitted = '';
+        if (first.calm >= 3 || performance.now() - first.start >= 500)
+          canvasElement.dataset.fitted = '';
         else update();
         return;
       }
@@ -435,21 +499,33 @@ export function useFit(
       if (
         eases &&
         playingNow.current &&
-        view.scale === scale &&
+        view.toScale === scale &&
         Math.hypot(toX - view.toX, toY - view.toY) < 1
       )
         return;
+      if (!plays) {
+        view.rest = scale;
+        view.restAcross = across;
+        view.restDown = down;
+      }
+      // Drawn smaller as it plays, it eases out to that scale and back to its still's, unless
+      // motion is reduced; any other change of scale, such as the stage's, is placed at once.
+      const zooms = scale !== view.toScale && (plays || view.zoomed);
+      view.zoomed = plays && scale < view.rest;
       view.toX = toX;
       view.toY = toY;
-      if (eases && view.scale === scale) {
+      if (eases && (view.toScale === scale || zooms)) {
+        view.toScale = scale;
         if (!view.frame) {
           view.last = 0;
           view.frame = requestAnimationFrame(glide);
         }
       } else {
+        cancelAnimationFrame(view.frame);
+        view.frame = 0;
         view.x = view.toX;
         view.y = view.toY;
-        view.scale = scale;
+        view.scale = view.toScale = scale;
         place();
       }
       canvasElement.dataset.fitted = '';
@@ -494,6 +570,9 @@ export function useFit(
     };
   }, [stage, canvas, on, whole, tile, ownSize, legible]);
 }
+
+/** The share of its scale a playing tile's content may need before it is drawn smaller. */
+const zoomSlack = 0.97;
 
 /** How far ahead of a stage's edge a tile's view keeps what it shows, once it has to move. */
 const margin = 6;
