@@ -16,7 +16,7 @@
     inherits: false;
   }
   .env-select {
-    --env-field-height: var(--env-control-height);
+    --env-field-height: max(var(--env-control-height), var(--env-text-field-least, 0rem));
     /* prettier-ignore */
     --env-text-field-well: var(--env-select-container, var(--env-text-field-container, transparent));
     --env-text-field-text: var(

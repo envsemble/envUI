@@ -10,7 +10,7 @@
      minimum width keeps the field from shrinking under 12rem in a row with room for it; alone, it
      counts as nothing while a container measures its content. */
   .env-date-picker {
-    --env-field-height: var(--env-control-height);
+    --env-field-height: max(var(--env-control-height), var(--env-text-field-least, 0rem));
     --env-date-picker-min-width: 12rem;
     min-inline-size: min(var(--env-date-picker-min-width), 100%);
     grid-template-columns: minmax(0, var(--env-date-picker-min-width)) minmax(0, 1fr);

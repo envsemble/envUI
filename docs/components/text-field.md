@@ -98,7 +98,7 @@ examples:
 
 An outline field has no fill of its own. It takes the background of what it sits on, such as a card or a dialog. Its label rests inside it and floats into the edge, which opens behind it.
 
-- With its label hidden, it is as tall as a button of its size, so the two line up in a row. With its label shown, a short one is a little taller.
+- It is as tall as a button of its size, so the two line up in a row. A small one that shows its label takes the medium height, room for the label and the value.
 - Stacked in a Column or a Grid, it keeps a little room above it for its floated label.
 - A field on its own on a page, or in a long form, takes the large size.
 - It can be given a fill of its own where it needs one.
@@ -109,9 +109,8 @@ A ghost field has no edge. A faint fill at rest shows where to type, and deepens
 
 - It has the outline field's corners, so the two sit together in a row.
 - Keep it to toolbars, an application's chrome and palettes. In a form, a faint fill says less than an edge, so a form's fields are outline.
-- Its label floats inside the fill, above the value, as there is no edge to cut a notch in. A labelled ghost field is a little taller than an outline one.
+- Its label floats inside the fill, above the value, as there is no edge to cut a notch in, and stays within the field's height, so a ghost field is as tall as an outline one.
 - A read-only or disabled ghost field keeps a fainter fill, quieter than one to fill in.
-- Its placeholder clears once it has focus.
 - An invalid ghost field shows a red edge.
 - The [CommandPalette](command-palette.md)'s search is a large ghost field that keeps its fill.
 
@@ -123,8 +122,8 @@ A ghost field has no edge. A faint fill at rest shows where to type, and deepens
 
 Outline and ghost fields come in the three control heights of the [scale](../foundations/spacing.md): small, medium and large.
 
-- A field without a visible label, as in a toolbar, lines up with a button of its size.
-- An outline field that shows its label gives the label and the value room: a small one, or a medium one at the compact scale, is a little taller than a button of its size.
+- A field lines up with a button of its size, its label shown or hidden.
+- A small field that shows its label takes the medium height, so the label and the value each have room; with its label hidden, as in a dense toolbar, it keeps the small height.
 
 ```tsx figure=FieldsBesideButtons
 
@@ -306,7 +305,7 @@ A TextField is a native `<input>` with its `label`, `description` and `error`. G
 <TextField size="sm" label="Filter" name="filter" />
 ```
 
-`variant` is `outline`, the default, or `ghost`, as on Textarea. `size` is `sm`, `md` or `lg`; without it, a field takes its container's. `showLabel={false}` keeps the label for assistive technology only. An outline field that shows its label is at least 2.25 rem tall.
+`variant` is `outline`, the default, or `ghost`, as on Textarea. `size` is `sm`, `md` or `lg`; without it, a field takes its container's. `showLabel={false}` keeps the label for assistive technology only. A single-line field that shows its label is at least the md control height.
 
 #### Prefix, suffix, icon and end action
 
@@ -337,5 +336,5 @@ A field fills its container's width, so set the width on the container, or on th
 - **1.0.0-prerelease.6**: A SearchField with its label hidden and no `placeholder` shows Search, `messages.searchField.placeholder`, rather than an empty field with only its icon.
 - **1.0.0-prerelease.6**: Textarea's resize grip is a short, quiet bar on the bottom edge toward its end, rather than a bar in the middle that read as a sheet's handle.
 - **1.0.0-prerelease.6**: A Textarea whose text runs past its `rows` clips that text at its padding, rather than showing the next line under the bottom border.
-- **1.0.0-prerelease.6**: The `floating` variant is gone: a field on its own or in a long form on a page takes `outline`, the default, with `size="lg"`. An outline field takes a text area's rounded corners rather than round ends, and so does a ghost field. An outline field with a visible label is at least 2.25 rem tall, so its floated label and its value each have room, a step taller than a button in a form at the compact scale. A ghost field shows a faint fill at rest, fainter when it is read-only or disabled, so a labelled one no longer reads as a label and its value, and its label floats inside the fill rather than across its top edge. A disabled field no longer fades as a whole: its label, value and icons take `--env-color-fg-disabled` and its outline the muted border, so it stays readable, also in dark.
+- **1.0.0-prerelease.6**: The `floating` variant is gone: a field on its own or in a long form on a page takes `outline`, the default, with `size="lg"`. An outline field takes a text area's rounded corners rather than round ends, and so does a ghost field. A small field with a visible label takes the medium height, so its floated label and its value each have room. A ghost field shows a faint fill at rest, fainter when it is read-only or disabled, so a labelled one no longer reads as a label and its value, and its label floats inside the fill, within the field's height, rather than across its top edge. A focused ghost field keeps its placeholder, as an outline one does. A disabled field no longer fades as a whole: its label, value and icons take `--env-color-fg-disabled` and its outline the muted border, so it stays readable, also in dark.
 - **1.0.0-prerelease.2**: The `underline` variant, which `plain` became in the earlier prereleases, is gone from TextField, SearchField and Textarea, for the default outline. Outline and floating fields have no fill of their own.

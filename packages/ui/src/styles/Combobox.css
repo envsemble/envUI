@@ -7,7 +7,7 @@
   /* The field's height, as TextField sets it: its size's control height, and the touch height under a
      coarse pointer. */
   .env-combobox {
-    --env-field-height: var(--env-control-height);
+    --env-field-height: max(var(--env-control-height), var(--env-text-field-least, 0rem));
   }
   @media (pointer: coarse) {
     .env-combobox {

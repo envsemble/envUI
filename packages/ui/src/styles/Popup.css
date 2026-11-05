@@ -38,20 +38,23 @@
      */
     --env-popup-solid: initial;
     --env-popup-frosted-edge: transparent;
-    /* The geometry popups share, following the scale as the md control height does (2.5 rem, 2 rem
-       compact): the inset of their rows, the rows' corners and, concentric with them, the popup's,
-       and the space between groups. */
-    --env-popup-padding: calc(0.15 * var(--env-control-height-md));
-    --env-popup-row-radius: calc(0.35 * var(--env-control-height-md));
-    --env-popup-row-padding-inline: calc(0.3 * var(--env-control-height-md));
-    --env-popup-row-gap: calc(0.25 * var(--env-control-height-md));
+    /* The height of a popup's row, a menu item's or an option's, and the unit of the geometry popups
+       share: the comfortable md control height, 2.5 rem, and 2 rem at the compact scale, a step
+       shorter than the compact controls, so a menu stays dense. Its scale follows the row height
+       token. From it: the inset of the rows, the rows' corners and, concentric with them, the
+       popup's, and the space between groups. */
+    --env-popup-row-height: calc(var(--env-row-height) + 0.25rem);
+    --env-popup-padding: calc(0.15 * var(--env-popup-row-height));
+    --env-popup-row-radius: calc(0.35 * var(--env-popup-row-height));
+    --env-popup-row-padding-inline: calc(0.3 * var(--env-popup-row-height));
+    --env-popup-row-gap: calc(0.25 * var(--env-popup-row-height));
     --env-popup-radius: calc(var(--env-popup-row-radius) + var(--env-popup-padding));
-    --env-popup-group-gap: calc(0.25 * var(--env-control-height-md));
+    --env-popup-group-gap: calc(0.25 * var(--env-popup-row-height));
     /* A group's label sits a little ahead of its rows' icons and text. */
-    --env-popup-label-padding-inline: calc(0.25 * var(--env-control-height-md));
+    --env-popup-label-padding-inline: calc(0.25 * var(--env-popup-row-height));
     /* The inset of a panel, a popover's, a hover card's or a picker's, on a surface's corners: as
        wide as a row's corner, so content keeps clear of the curve. */
-    --env-popup-panel-padding: calc(0.35 * var(--env-control-height-md));
+    --env-popup-panel-padding: calc(0.35 * var(--env-popup-row-height));
   }
   .env-theme[data-env-theme='dark'] {
     --env-popup-frosted-edge: oklch(from var(--env-color-fg-default) l c h / 0.12);

@@ -61,7 +61,6 @@
     --env-text-field-ghost-solid:
       linear-gradient(var(--env-color-bg-neutral-muted), var(--env-color-bg-neutral-muted)),
       var(--env-popup-fill);
-    --env-text-field-ghost-placeholder: var(--env-color-fg-muted);
     --env-text-field-ghost-edge: var(--env-popup-solid) var(--env-color-border-default);
     /* Its focus is its own edge, below, so the field's focus frame stays a hairline in its edge. */
     --env-text-field-ghost-focus-edge: transparent;

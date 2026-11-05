@@ -1,7 +1,7 @@
 @layer env.components {
   /* A row of a popup list (ListRow): an icon, a label over its description, content or a shortcut,
      and an indicator at the end, on the element of the list's own item. Its states come from Base UI's
-     data-highlighted, data-selected and data-disabled. Rows are the md control height in body text,
+     data-highlighted, data-selected and data-disabled. Rows are the popup row height in body text,
      with corners concentric with the popup's (Popup.css). Each state has one mark: the highlight, the
      pointer's or the keyboard's, is the neutral fill over the frosted popup, with no ring, and the
      chosen option is its check mark. */
@@ -11,7 +11,7 @@
     align-items: center;
     gap: var(--env-popup-row-gap);
     min-inline-size: 0;
-    min-block-size: var(--env-control-height-md);
+    min-block-size: var(--env-popup-row-height);
     padding: var(--env-space-1) var(--env-popup-row-padding-inline);
     border-radius: var(--env-popup-row-radius);
     background: transparent;
@@ -104,15 +104,15 @@
     gap: var(--env-space-1);
     /* Keys, in the shortcut or at the end, are small muted chips on the neutral fill, with no edge,
        side by side, as a menu's are. */
-    --env-kbd-size: calc(0.5 * var(--env-control-height-md));
-    --env-kbd-padding-inline: calc(0.125 * var(--env-control-height-md));
-    --env-kbd-radius: calc(0.125 * var(--env-control-height-md));
+    --env-kbd-size: calc(0.5 * var(--env-popup-row-height));
+    --env-kbd-padding-inline: calc(0.125 * var(--env-popup-row-height));
+    --env-kbd-radius: calc(0.125 * var(--env-popup-row-height));
     --env-kbd-fg: var(--env-color-fg-muted);
     --env-kbd-bg: var(--env-color-bg-neutral-muted);
     --env-kbd-border: transparent;
     --env-kbd-border-end-width: var(--env-control-border-width);
     --env-kbd-font-size: var(--env-font-size-caption);
-    --env-kbd-separator-padding-inline: calc(0.0375 * var(--env-control-height-md));
+    --env-kbd-separator-padding-inline: calc(0.0375 * var(--env-popup-row-height));
     --env-kbd-separator-font: 0 / 1 var(--env-font-family);
   }
   /* On a highlighted row, where the chip lies on the highlight, its label takes the text color, as
@@ -122,7 +122,7 @@
     --env-kbd-fg: var(--env-color-fg-default);
   }
   .env-list-row-shortcut {
-    margin-inline-start: calc(0.4 * var(--env-control-height-md));
+    margin-inline-start: calc(0.4 * var(--env-popup-row-height));
     color: var(--env-color-fg-muted);
     font: var(--env-type-body-sm);
     white-space: nowrap;

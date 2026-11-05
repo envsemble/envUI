@@ -156,12 +156,38 @@ function SizeRow({ size }: { size: ControlSize }) {
   );
 }
 
+/**
+ * Fields with their labels shown, outline and ghost, beside a button of their size: at md and lg
+ * every one is as tall as the button; at sm a labelled field takes the md height, room for its label.
+ */
+function LabelledRow({ size }: { size: ControlSize }) {
+  return (
+    <Row label={`size="${size}", labels shown`} data-labelled-row={size}>
+      <Button size={size} variant="secondary" data-control="button">
+        Apply
+      </Button>
+      <TextField size={size} label="Name" defaultValue="Quarterly report" data-field="outline" />
+      <TextField size={size} label="Empty" data-field="outline-empty" />
+      <Select size={size} label="Plan" items={plans} defaultValue="team" data-field="select" />
+      <TextField
+        size={size}
+        variant="ghost"
+        label="Owner"
+        defaultValue="Sam Lee"
+        data-field="ghost"
+      />
+      <TextField size={size} variant="ghost" label="Empty" data-field="ghost-empty" />
+    </Row>
+  );
+}
+
 function SizesSection() {
   return (
     <div className="density-stack">
       {controlSizes.map((size) => (
         <div key={size} className="density-band">
           <SizeRow size={size} />
+          <LabelledRow size={size} />
         </div>
       ))}
     </div>
