@@ -234,14 +234,10 @@ test("the Design and Code switch keeps the reader's section where the other page
   await partSwitch.getByRole('link', { name: 'Design', exact: true }).click();
   await expect(page).toHaveURL(`${siteDevUrl}/patterns/forms#sending`);
   await expect(page.locator('#sending')).toBeInViewport();
-  // The corner's way to the other part keeps it too, from where the reader has scrolled to.
-  await page.goto(`${siteDevUrl}/patterns/forms`);
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Form layout and validation');
-  await expect(page.locator('.site-section-groups[aria-busy]')).toHaveCount(0);
-  await page.locator('#error-summary').evaluate((heading) => heading.scrollIntoView());
-  await page.locator('.site-page-actions').getByRole('link', { name: 'Docs', exact: true }).click();
-  await expect(page).toHaveURL(`${siteDevUrl}/docs/patterns/forms#error-summary`);
-  await expect(page.locator('#error-summary')).toBeInViewport();
+  // The switch is the one way across from a page with one: the corner has no link to the other part.
+  await expect(
+    page.locator('.site-page-actions').getByRole('link', { name: 'Docs', exact: true }),
+  ).toHaveCount(0);
   // A section the other page doesn't have, such as the props, opens it at its top.
   await goTo(page, '/docs/components/button#props');
   await partSwitch.getByRole('link', { name: 'Design', exact: true }).click();

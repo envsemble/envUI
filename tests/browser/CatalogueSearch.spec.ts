@@ -289,10 +289,10 @@ test.describe('hosted build', () => {
       .getByRole('link', { name: 'Code', exact: true })
       .click();
     await expect(page).toHaveURL(`${siteUrl}/docs/components/dialog`);
-    // The switch at the top end leads back to the same subject in the catalogue.
+    // The switch leads back to the same subject in the catalogue.
     await page
-      .locator('.site-page-actions')
-      .getByRole('link', { name: 'Catalogue', exact: true })
+      .locator('.site-page-header')
+      .getByRole('link', { name: 'Design', exact: true })
       .click();
     await expect(page).toHaveURL(`${siteUrl}/components/dialog`);
     await rail.getByRole('link', { name: 'Overview', exact: true }).click();

@@ -154,9 +154,10 @@ test('the navigation holds the wordmark and search, the page the other area and 
 }) => {
   for (const [address, other, brand] of [
     // In the catalogue the wordmark tops the rail; the Docs, which have no rail, put it in the
-    // drawer.
-    ['/components/menu', 'Docs', 'Catalogue'],
-    ['/docs/components/menu', 'Catalogue', 'Docs'],
+    // drawer. A page with a page of its subject in the other part has the switch in its banner for
+    // that instead, so these are pages without one.
+    ['/components', 'Docs', 'Catalogue'],
+    ['/docs/tokens', 'Catalogue', 'Docs'],
   ] as const) {
     await page.setViewportSize({ width: 1280, height: 800 });
     await page.goto(`${siteDevUrl}${address}`);
@@ -322,19 +323,17 @@ test('the navigation shows the current page, and focus moves to the page only on
   await expect(foundations.getByRole('link', { name: 'Typography' })).toBeVisible();
   await foundations.getByRole('link', { name: 'Colors & themes', exact: true }).click();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Colors & themes');
-  // The Docs have a navigation of their own, and the switch at the top end leads to the same
+  // The Docs have a navigation of their own, and the switch in the banner leads to the same
   // subject in the other part and back.
-  await page.locator('.site-page-actions').getByRole('link', { name: 'Docs', exact: true }).click();
+  const partSwitch = page.getByRole('navigation', { name: 'Design or code' });
+  await partSwitch.getByRole('link', { name: 'Code', exact: true }).click();
   await expect(page).toHaveURL(`${siteDevUrl}/docs/foundations/colors`);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Colors & themes');
   await expect(page.getByRole('navigation', { name: 'Catalogue' })).toHaveCount(0);
   await expect(
     page.getByRole('navigation', { name: 'Docs' }).getByRole('link', { name: 'Design tokens' }),
   ).toBeVisible();
-  await page
-    .locator('.site-page-actions')
-    .getByRole('link', { name: 'Catalogue', exact: true })
-    .click();
+  await partSwitch.getByRole('link', { name: 'Design', exact: true }).click();
   await expect(page).toHaveURL(`${siteDevUrl}/foundations/colors`);
   await expect(page.getByRole('navigation', { name: 'Catalogue' })).toBeVisible();
 });

@@ -216,9 +216,10 @@ test('a page of the Docs has breadcrumbs, a tree of the Docs open at its section
     'aria-current',
     'page',
   );
+  // The switch is the way to the catalogue: the corner repeats none.
   await expect(
     page.locator('.site-page-actions').getByRole('link', { name: 'Catalogue', exact: true }),
-  ).toHaveAttribute('href', '/components/button');
+  ).toHaveCount(0);
   // The navigation opens the section of the current page, and keeps the others closed.
   const navigation = page.getByRole('navigation', { name: 'Docs' });
   await expect(navigation.getByRole('button', { name: 'Actions' })).toHaveAttribute(
