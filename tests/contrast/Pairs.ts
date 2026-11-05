@@ -2860,7 +2860,7 @@ export const renamed: readonly { from: string; to: string; rationale: string }[]
       from: `${fill} on --env-color-bg-neutral-subtle-hover over ${ground}`,
       to: `${fill} on --env-color-bg-row-hover over ${ground}`,
       rationale:
-        'Tree and table rows take their own state layer, --env-color-bg-row-hover, a step quieter than a control�s in light, so a hovered row never weighs as much as the selection on the gray page.',
+        'Tree and table rows take their own state layer, --env-color-bg-row-hover, a step quieter than a control’s in light, so a hovered row never weighs as much as the selection on the gray page.',
     })),
   ),
   // The catalogue's canvas is the recessed surface, a token now rather than a formula of its own.

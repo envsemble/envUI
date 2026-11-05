@@ -248,7 +248,7 @@ The application sorts the rows. `onSortChange` on a header cell makes it a sort 
 
 #### Sticky header and loading
 
-`stickyHeader` makes the region scroll vertically, so give it a height through `regionClassName` or its layout. `skeleton` shows the table as its own skeleton over placeholder rows until they arrive.
+`stickyHeader` makes the region scroll vertically, so give it a height through `regionClassName` or its layout. `skeleton` shows the table as its own skeleton over placeholder rows until they arrive, without the selection's fill or bar.
 
 #### Stacked rows
 
@@ -272,6 +272,7 @@ Parts the anatomy doesn't show: a column's resize handle, `env-table-column-resi
 ## Changelog
 
 - **1.0.0-prerelease.6**: A stacked row is a compact block: the first labelled value, such as a status, sits beside the title without its label, an unlabelled cell such as the row's menu joins them, and the other values follow two to a line, each under its label, in place of a line for each value. The row densities differ by at least 4 px of row height in the compact scale: `xs` and `sm` rows are shorter, and `md` keeps its height.
+- **1.0.0-prerelease.6**: A skeleton shows no selection. A row under the pointer takes `--env-color-bg-row-hover`, a step quieter than the selection in light.
 - **1.0.0-prerelease.6**: A selected row whose first cell holds a checkbox takes no bar at its start, as the checkbox and the fill say it already; a row selected without one keeps the bar.
 - **1.0.0-prerelease.6**: Links and times repeat down the rows, so a Link in a table takes the cell's text color and shows its underline only under the pointer and with keyboard focus, and a RelativeTime its dotted line; in a selected row too. A secondary line keeps to one line, ending in an ellipsis. A skeleton's sortable headers are bars, as the others are.
 - **1.0.0-prerelease.5**: A number for `stackBelow` is a number of rem, as on PanelDock, where it was pixels.
