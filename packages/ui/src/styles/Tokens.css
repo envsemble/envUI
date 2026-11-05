@@ -467,8 +467,8 @@
   --env-color-bg-default: #f8f8fa;
   --env-color-bg-default-hover: #eaeaec;
   --env-color-bg-default-pressed: #e0e0e2;
-  --env-color-bg-done-emphasis: #293a55;
-  --env-color-bg-done-muted: rgb(41 58 85 / 0.08);
+  --env-color-bg-done-emphasis: #253650;
+  --env-color-bg-done-muted: rgb(37 54 80 / 0.08);
   --env-color-bg-info-strong: #094285;
   --env-color-bg-info-strong-hover: #003878;
   --env-color-bg-info-strong-pressed: #003068;
@@ -527,7 +527,7 @@
   --env-color-border-default: #6b6b6e;
   --env-color-border-default-hover: #616164;
   --env-color-border-default-pressed: #57575a;
-  --env-color-border-done: rgb(41 58 85 / 0.55);
+  --env-color-border-done: rgb(37 54 80 / 0.55);
   --env-color-border-focus: #0053b5;
   --env-color-border-info-strong: #003068;
   --env-color-border-muted: #6b6b6e;
@@ -557,7 +557,7 @@
   --env-color-fg-danger: #7a0200;
   --env-color-fg-default: #131315;
   --env-color-fg-disabled: #57575a;
-  --env-color-fg-done: #293a55;
+  --env-color-fg-done: #253650;
   --env-color-fg-link: #00377c;
   --env-color-fg-link-hover: #002f6d;
   --env-color-fg-link-on-muted: #00377c;
@@ -604,8 +604,8 @@
     --env-color-bg-default: #f8f8fa;
     --env-color-bg-default-hover: #eaeaec;
     --env-color-bg-default-pressed: #e0e0e2;
-    --env-color-bg-done-emphasis: #293a55;
-    --env-color-bg-done-muted: rgb(41 58 85 / 0.08);
+    --env-color-bg-done-emphasis: #253650;
+    --env-color-bg-done-muted: rgb(37 54 80 / 0.08);
     --env-color-bg-info-strong: #094285;
     --env-color-bg-info-strong-hover: #003878;
     --env-color-bg-info-strong-pressed: #003068;
@@ -664,7 +664,7 @@
     --env-color-border-default: #6b6b6e;
     --env-color-border-default-hover: #616164;
     --env-color-border-default-pressed: #57575a;
-    --env-color-border-done: rgb(41 58 85 / 0.55);
+    --env-color-border-done: rgb(37 54 80 / 0.55);
     --env-color-border-focus: #0053b5;
     --env-color-border-info-strong: #003068;
     --env-color-border-muted: #6b6b6e;
@@ -694,7 +694,7 @@
     --env-color-fg-danger: #7a0200;
     --env-color-fg-default: #131315;
     --env-color-fg-disabled: #57575a;
-    --env-color-fg-done: #293a55;
+    --env-color-fg-done: #253650;
     --env-color-fg-link: #00377c;
     --env-color-fg-link-hover: #002f6d;
     --env-color-fg-link-on-muted: #00377c;

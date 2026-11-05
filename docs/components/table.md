@@ -103,7 +103,7 @@ Not shown: a column's resize handle, and a stacked cell's label.
 
 ### Sort by a column
 
-A header can sort the rows by its column. The sorted column shows its order; with a pointer that hovers, the other sortable headers show their arrow while the pointer is over the header row or one has keyboard focus, so a dense header rests on its labels.
+A header can sort the rows by its column. The sorted column shows its order; the other sortable headers show their arrow while the pointer is over the header row or one has keyboard focus, and always on touch.
 
 ```tsx figure=SortableColumns motion
 

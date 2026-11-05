@@ -443,7 +443,7 @@ export const tokens = {
     values: {
       light: '#4e627e',
       dark: '#aac1dd',
-      'light-high-contrast': '#293a55',
+      'light-high-contrast': '#253650',
       'dark-high-contrast': '#d2dff0',
     },
   },
@@ -454,7 +454,7 @@ export const tokens = {
     values: {
       light: 'rgb(78 98 126 / 0.12)',
       dark: 'rgb(170 193 221 / 0.17)',
-      'light-high-contrast': 'rgb(41 58 85 / 0.08)',
+      'light-high-contrast': 'rgb(37 54 80 / 0.08)',
       'dark-high-contrast': 'rgb(210 223 240 / 0.1)',
     },
   },
@@ -1301,7 +1301,7 @@ export const tokens = {
     values: {
       light: 'rgb(78 98 126 / 0.55)',
       dark: 'rgb(170 193 221 / 0.55)',
-      'light-high-contrast': 'rgb(41 58 85 / 0.55)',
+      'light-high-contrast': 'rgb(37 54 80 / 0.55)',
       'dark-high-contrast': 'rgb(222 236 253 / 0.55)',
     },
   },
@@ -1763,7 +1763,7 @@ export const tokens = {
     values: {
       light: '#455874',
       dark: '#aac1dd',
-      'light-high-contrast': '#293a55',
+      'light-high-contrast': '#253650',
       'dark-high-contrast': '#deecfd',
     },
   },
