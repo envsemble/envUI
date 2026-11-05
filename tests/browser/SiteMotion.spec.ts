@@ -273,6 +273,10 @@ test("a figure's wheel scrolls the box under the pointer smoothly and back, neve
   await expect(page.locator('.site-loading')).toHaveCount(0);
   await stage.scrollIntoViewIfNeeded();
   const scrolled = await pageScroll(page);
+  const room = await stage.evaluate((element) => {
+    const region = element.querySelector('.env-table-region')!;
+    return region.scrollHeight - region.clientHeight;
+  });
   const samples = await stage.evaluate(
     (element) =>
       new Promise<{ top: number; header: number }[]>((done) => {
@@ -292,8 +296,9 @@ test("a figure's wheel scrolls the box under the pointer smoothly and back, neve
   );
   const tops = samples.map((sample) => sample.top);
   const deepest = Math.max(...tops);
-  // It scrolls down through the rows a little at a time, and back to the top.
-  expect(deepest).toBeGreaterThan(200);
+  // It scrolls down through most of the rows a little at a time, and back to the top.
+  expect(room).toBeGreaterThan(100);
+  expect(deepest).toBeGreaterThan(room * 0.6);
   const steps = tops.slice(1).map((top, index) => Math.abs(top - tops[index]!));
   expect(Math.max(...steps)).toBeLessThan(40);
   expect(tops.slice(tops.indexOf(deepest)).includes(0)).toBe(true);
