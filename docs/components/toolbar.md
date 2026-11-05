@@ -151,7 +151,7 @@ Not every bar of controls is a Toolbar. A bar with a field, a Select or labelled
 ### envUI provides
 
 - `role="toolbar"` with `aria-orientation`, and a group role on each group.
-- One tab stop, with disabled buttons out of the arrow keys' path.
+- One tab stop, with disabled buttons and links out of the arrow keys' path.
 - Names from `label`, `aria-pressed` on toggles and `aria-keyshortcuts` from `shortcut`.
 
 ### You provide
@@ -182,7 +182,7 @@ Toolbar.Root, named by its `aria-label`, holds Toolbar.Button, Toolbar.Link, Too
 - `size` is `sm`, `md` or `lg`; without it the buttons take their container's control height.
 - `loopFocus`, on by default, moves from the last control to the first and back.
 - `tooltipDelay` is how long, in milliseconds, the pointer rests on a button or link before its tooltip opens, 400 by default, as Tooltip's `delay`; keyboard focus opens it at once.
-- `disabled` on Toolbar.Root or a Toolbar.Group disables every control inside.
+- `disabled` on Toolbar.Root or a Toolbar.Group disables every control inside, links included.
 
 A Surface with `radius="full"` floats a small toolbar over content, as the ViewControls example does:
 
@@ -242,4 +242,5 @@ The parts are the toolbar, `env-toolbar`; its groups, `env-toolbar-group`; its b
 ## Changelog
 
 - **1.0.0**: Toolbar, on Base UI's Toolbar.
+- **1.0.0-prerelease.6**: A disabled toolbar or group disables its Toolbar.Link too: the link reports `aria-disabled`, has no destination and leaves the arrow keys' path.
 - **1.0.0-prerelease.4**: `tooltipDelay` on Toolbar.Root sets how long the pointer rests on a button or link before its tooltip opens; 0 shows every name at once.

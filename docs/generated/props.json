@@ -8708,7 +8708,7 @@
     "Toolbar.Link": {
       "kind": "component",
       "source": "packages/ui/src/actions/Toolbar.tsx",
-      "description": "An icon-only link of a toolbar, named by its label, which a tooltip shows.",
+      "description": "An icon-only link of a toolbar, named by its label, which a tooltip shows. In a disabled toolbar or group it has no destination: it reports aria-disabled, leaves the arrow keys' path and has no tooltip, as a disabled button does.",
       "props": [
         {
           "name": "href",

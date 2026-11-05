@@ -66,6 +66,7 @@ function ToolbarSample() {
       <button type="button">After toolbar</button>
       <Toolbar.Root aria-label="Disabled toolbar" disabled>
         <Toolbar.Button icon={<IconFormatBold />} label="Highlight" shortcut="Ctrl+Shift+B" />
+        <Toolbar.Link href="#shortcuts" icon={<IconHelp />} label="Shortcuts" />
       </Toolbar.Root>
       {/* Disabled while busy, as an editor's toolbar is while it saves. */}
       <Toolbar.Root aria-label="Partly disabled" disabled={busy}>
