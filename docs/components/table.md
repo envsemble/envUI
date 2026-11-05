@@ -111,7 +111,7 @@ A header can sort the rows by its column, and each sortable header shows the ord
 
 ### Select rows
 
-A selected row takes the selection colors, and a checkbox labelled with the row's name selects it.
+A selected row takes the selection fill and a bar at its start, and a checkbox labelled with the row's name selects it.
 
 ```tsx figure=SelectRows
 
@@ -144,7 +144,7 @@ While its rows load, a table shows as its own skeleton, as [Loading](../patterns
 By default the columns keep their width and the region scrolls sideways.
 
 - A table can stack its rows instead where it is narrow, such as on a phone.
-- Each row then becomes a block titled by its first cell, with each other value beside its column's name.
+- Each row then becomes a compact block: its first cell titles it, with the next value, such as a status, beside it, and the others two to a line under their columns' names.
 
 ```tsx figure=StackedRows widths="44 22" sweep
 
@@ -252,7 +252,7 @@ The application sorts the rows. `onSortChange` on a header cell makes it a sort 
 
 #### Stacked rows
 
-`narrowLayout="stack"` stacks the body rows below `stackBelow`, the region's own width, by a container query, so server markup already stacks. Give every cell after the first a `label`, which titles its value in a stacked row. The header row, and its sort buttons, are hidden while rows stack: `onStackedChange` tells the application, such as to show a Select for the order instead.
+`narrowLayout="stack"` stacks the body rows below `stackBelow`, the region's own width, by a container query, so server markup already stacks. Give every cell after the first a `label`, which titles its value in a stacked row. The first labelled value sits beside the title without its label, so put one there that reads on its own, such as a status; a cell without a label, such as the row's menu of actions, joins that line too, and the other values follow two to a line, each under its label. The header row, and its sort buttons, are hidden while rows stack: `onStackedChange` tells the application, such as to show a Select for the order instead.
 
 ```tsx
 <Table.Root aria-label="Invoices" narrowLayout="stack" onStackedChange={setStacked}>
@@ -271,7 +271,8 @@ Parts the anatomy doesn't show: a column's resize handle, `env-table-column-resi
 
 ## Changelog
 
-- **1.0.0-prerelease.6**: Links and times repeat down the rows, so a Link in a table takes the cell's text color and shows its underline only under the pointer and with keyboard focus, and a RelativeTime its dotted line; a selected row's links stay underlined. A secondary line keeps to one line, ending in an ellipsis. A skeleton's sortable headers are bars, as the others are.
+- **1.0.0-prerelease.6**: A stacked row is a compact block: the first labelled value, such as a status, sits beside the title without its label, an unlabelled cell such as the row's menu joins them, and the other values follow two to a line, each under its label, in place of a line for each value. The row densities differ by at least 4 px of row height in the compact scale: `xs` and `sm` rows are shorter, and `md` keeps its height.
+- **1.0.0-prerelease.6**: Links and times repeat down the rows, so a Link in a table takes the cell's text color and shows its underline only under the pointer and with keyboard focus, and a RelativeTime its dotted line; in a selected row too. A secondary line keeps to one line, ending in an ellipsis. A skeleton's sortable headers are bars, as the others are.
 - **1.0.0-prerelease.5**: A number for `stackBelow` is a number of rem, as on PanelDock, where it was pixels.
 - **1.0.0-prerelease.5**: `onColumnWidthsChange` receives `{ committed }` beside the widths, as the other resize callbacks do.
 - **1.0.0**: The parts are members of the `Table` namespace: `Table` is `Table.Root`, and `TableHead`, `TableBody`, `TableRow`, `TableHeaderCell` and `TableCell` are `Table.Head`, `Table.Body`, `Table.Row`, `Table.HeaderCell` and `Table.Cell`; `TableSortDirection` is `Table.SortDirection`. The page is `table`, after the component. Table.HeaderCell's `onSort` is `onSortChange`, called with the order pressing asks for. A table named by `aria-labelledby` names its scroll region too, which was left unnamed. The sort and resize words come from `messages.table`. A column's resize handle, `env-table-column-resize`, is `env-table-column-resize-handle`, as every resize handle is named.

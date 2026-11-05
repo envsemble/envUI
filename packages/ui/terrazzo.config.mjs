@@ -225,7 +225,9 @@ function transform(token, options) {
         )
         .join(', ');
     case 'dimension':
-      return value.value === 0 ? '0' : undefined;
+      // A zero keeps its unit, so a calc() that adds a length to it, such as a row density's
+      // padding and a space, stays valid.
+      return value.value === 0 ? `0${value.unit}` : undefined;
     case 'fontFamily':
       // Single quotes, as Prettier writes them, so the CSS and the modules carry the same text.
       return value.map((name) => (/^[a-z-]+$/.test(name) ? name : `'${name}'`)).join(', ');

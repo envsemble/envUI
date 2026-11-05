@@ -2413,7 +2413,12 @@ export const tokens = {
   'radius.none': {
     cssVariable: '--env-radius-none',
     type: 'dimension',
-    values: { light: '0', dark: '0', 'light-high-contrast': '0', 'dark-high-contrast': '0' },
+    values: {
+      light: '0rem',
+      dark: '0rem',
+      'light-high-contrast': '0rem',
+      'dark-high-contrast': '0rem',
+    },
   },
   /** The corners where connected rows meet: small, so the rows read as one block. */
   'radius.row-inner': {
@@ -2552,7 +2557,7 @@ export const tokens = {
       'light-high-contrast': '0.25rem',
       'dark-high-contrast': '0.25rem',
     },
-    scales: { compact: '0.1875rem' },
+    scales: { compact: '0.125rem' },
   },
   /** Row density xs: the block padding of each row of a data component, such as a table, a tree or a list. */
   'row.padding-block-xs': {
@@ -2564,7 +2569,7 @@ export const tokens = {
       'light-high-contrast': '0.125rem',
       'dark-high-contrast': '0.125rem',
     },
-    scales: { compact: '0.125rem' },
+    scales: { compact: '0rem' },
   },
   /** Text in rows keeps clear of the large outer corners, whether a row stands alone or is connected. */
   'row.padding-inline': {
