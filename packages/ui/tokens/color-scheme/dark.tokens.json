@@ -353,13 +353,13 @@
       "danger": {
         "emphasis": {
           "$root": {
-            "$value": "{palette.red.25}"
+            "$value": "{palette.red.55}"
           },
           "hover": {
-            "$value": "{palette.red.15}"
+            "$value": "{palette.red.50}"
           },
           "pressed": {
-            "$value": "{palette.red.30}"
+            "$value": "{palette.red.60}"
           }
         },
         "muted": {

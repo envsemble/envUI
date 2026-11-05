@@ -335,14 +335,15 @@
     overflow-wrap: inherit;
   }
 
-  /* Danger: a primary button takes the danger emphasis fill, as every primary takes its tone's:
-     saturated with white labels in light, soft with dark labels in dark, so a destructive action is
-     never louder than the main one beside it. Outline, ghost and text buttons take the danger color,
-     which stays on hover and press, over the variant's own fill or state layer. */
+  /* Danger: a primary button takes the danger emphasis fill, a saturated red with a white label in
+     every theme, so in dark, beside the soft primary and accent fills with their dark labels, a
+     destructive action carries the most weight rather than reading as a third pastel. Outline,
+     ghost and text buttons take the danger color, which stays on hover and press, over the
+     variant's own fill or state layer. */
   .env-button:where([data-variant='primary'][data-tone='danger']) {
     --env-button-container-default: var(--env-color-bg-danger-emphasis);
     background: var(--env-button-custom-fill, var(--env-color-bg-danger-emphasis));
-    color: var(--env-button-content, var(--env-color-fg-on-emphasis));
+    color: var(--env-button-content, var(--env-color-fg-on-strong));
     border: 0;
   }
 

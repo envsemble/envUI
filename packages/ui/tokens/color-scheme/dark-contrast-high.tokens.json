@@ -279,13 +279,13 @@
         "danger": {
           "emphasis": {
             "$root": {
-              "$value": "{palette.red.10}"
+              "$value": "{palette.red.75}"
             },
             "hover": {
-              "$value": "{palette.red.6}"
+              "$value": "{palette.red.70}"
             },
             "pressed": {
-              "$value": "{palette.red.4}"
+              "$value": "{palette.red.80}"
             }
           },
           "muted": {

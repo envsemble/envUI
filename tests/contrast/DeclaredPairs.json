@@ -4727,27 +4727,6 @@
         "high": 7
       }
     },
-    "--env-color-fg-on-emphasis on --env-color-bg-danger-emphasis": {
-      "kind": "text",
-      "minimum": {
-        "standard": 4.5,
-        "high": 7
-      }
-    },
-    "--env-color-fg-on-emphasis on --env-color-bg-danger-emphasis-hover": {
-      "kind": "text",
-      "minimum": {
-        "standard": 4.5,
-        "high": 7
-      }
-    },
-    "--env-color-fg-on-emphasis on --env-color-bg-danger-emphasis-pressed": {
-      "kind": "text",
-      "minimum": {
-        "standard": 4.5,
-        "high": 7
-      }
-    },
     "--env-color-fg-on-emphasis on --env-color-bg-done-emphasis": {
       "kind": "text",
       "minimum": {
@@ -4917,6 +4896,27 @@
       }
     },
     "--env-color-fg-on-strong on --env-color-bg-accent-strong-pressed": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-on-strong on --env-color-bg-danger-emphasis": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-on-strong on --env-color-bg-danger-emphasis-hover": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-on-strong on --env-color-bg-danger-emphasis-pressed": {
       "kind": "text",
       "minimum": {
         "standard": 4.5,
@@ -5899,14 +5899,14 @@
         "high": 3
       }
     },
-    "badge-outline-primary on --env-color-bg-accent-emphasis": {
+    "badge-outline-important on --env-color-bg-danger-emphasis": {
       "kind": "non-text",
       "minimum": {
         "standard": 1.5,
         "high": 3
       }
     },
-    "badge-outline-primary on --env-color-bg-danger-emphasis": {
+    "badge-outline-primary on --env-color-bg-accent-emphasis": {
       "kind": "non-text",
       "minimum": {
         "standard": 1.5,
@@ -6242,27 +6242,6 @@
         "high": 4.5
       }
     },
-    "button-end-separator-on-emphasis on --env-color-bg-danger-emphasis": {
-      "kind": "non-text",
-      "minimum": {
-        "standard": 3,
-        "high": 4.5
-      }
-    },
-    "button-end-separator-on-emphasis on --env-color-bg-danger-emphasis-hover": {
-      "kind": "non-text",
-      "minimum": {
-        "standard": 3,
-        "high": 4.5
-      }
-    },
-    "button-end-separator-on-emphasis on --env-color-bg-danger-emphasis-pressed": {
-      "kind": "non-text",
-      "minimum": {
-        "standard": 3,
-        "high": 4.5
-      }
-    },
     "button-end-separator-on-emphasis on --env-color-bg-primary-emphasis": {
       "kind": "non-text",
       "minimum": {
@@ -6299,6 +6278,27 @@
       }
     },
     "button-end-separator-on-strong on --env-color-bg-accent-strong-pressed": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 3,
+        "high": 4.5
+      }
+    },
+    "button-end-separator-on-strong on --env-color-bg-danger-emphasis": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 3,
+        "high": 4.5
+      }
+    },
+    "button-end-separator-on-strong on --env-color-bg-danger-emphasis-hover": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 3,
+        "high": 4.5
+      }
+    },
+    "button-end-separator-on-strong on --env-color-bg-danger-emphasis-pressed": {
       "kind": "non-text",
       "minimum": {
         "standard": 3,
@@ -7617,6 +7617,9 @@
     "--env-color-fg-on-emphasis on --env-color-bg-brand-emphasis",
     "--env-color-fg-on-emphasis on --env-color-bg-brand-emphasis-hover",
     "--env-color-fg-on-emphasis on --env-color-bg-brand-emphasis-pressed",
+    "--env-color-fg-on-emphasis on --env-color-bg-danger-emphasis",
+    "--env-color-fg-on-emphasis on --env-color-bg-danger-emphasis-hover",
+    "--env-color-fg-on-emphasis on --env-color-bg-danger-emphasis-pressed",
     "--env-color-fg-on-emphasis on slider-fill over --env-color-bg-neutral-muted over catalogue-canvas",
     "--env-color-fg-on-selected on --env-color-bg-neutral-muted over catalogue-canvas",
     "--env-color-fg-on-strong on --env-color-bg-brand-strong",
@@ -7747,6 +7750,7 @@
     "badge-outline-important on --env-color-bg-important-strong",
     "badge-outline-primary on --color-bg-brand-emphasis",
     "badge-outline-primary on --env-color-bg-brand-emphasis",
+    "badge-outline-primary on --env-color-bg-danger-emphasis",
     "button-end-separator-control on --env-color-bg-neutral-muted over catalogue-canvas",
     "button-end-separator-control on --env-color-bg-neutral-muted-hover over catalogue-canvas",
     "button-end-separator-control on --env-color-bg-neutral-muted-pressed over catalogue-canvas",
@@ -7759,6 +7763,9 @@
     "button-end-separator-on-emphasis on --env-color-bg-brand-emphasis",
     "button-end-separator-on-emphasis on --env-color-bg-brand-emphasis-hover",
     "button-end-separator-on-emphasis on --env-color-bg-brand-emphasis-pressed",
+    "button-end-separator-on-emphasis on --env-color-bg-danger-emphasis",
+    "button-end-separator-on-emphasis on --env-color-bg-danger-emphasis-hover",
+    "button-end-separator-on-emphasis on --env-color-bg-danger-emphasis-pressed",
     "button-end-separator-on-strong on --env-color-bg-important-strong",
     "button-end-separator-on-strong on --env-color-bg-important-strong-hover",
     "button-end-separator-on-strong on --env-color-bg-important-strong-pressed",

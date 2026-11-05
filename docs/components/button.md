@@ -109,10 +109,10 @@ Only the main action and links are blue.
 
 ### Primary tones
 
-A danger or accent primary is never louder than the main one beside it.
+A danger primary carries the most weight of a group, and an accent primary is never louder than the main one beside it.
 
-- Every primary takes the same grade of its tone.
-- In light, that is a saturated fill with white text; in dark, a soft fill with dark text.
+- The neutral and accent primaries take the same grade of their tone: in light a saturated fill with white text, in dark a soft fill with dark text.
+- A danger primary is a saturated red with white text in both themes, so in dark it is the deepest fill beside the soft ones.
 
 ```tsx figure=PrimaryTones
 
@@ -358,7 +358,8 @@ A wrapper of your own that passes a variant and a tone on types them as Button d
 
 - **1.0.0**: `end`, a quiet slot at the far end for a shortcut's keys, in the button's content color, which the search trigger pattern uses. IconButton is the one icon-only button, and takes `href`: `Button iconOnly` is gone, and CloseButton is an IconButton with the Close cross. `variant` is `primary`, `secondary`, `outline`, `ghost` or `text`, and `tone` is `neutral`, `accent` or `danger`: `important` is `variant="primary" tone="accent"`, `destructive` is `variant="primary" tone="danger"`, `outlined` is `outline` and `quiet` is `ghost`. Outline, ghost and text buttons take the danger tone. `fullWidth`. Buttons take the variant their container gives where they set none. The page is `button`, after the component, and Link has a page of its own. CopyButton takes `write`, a clipboard writer of the application's own. A Badge or DiffStat inside a button takes its colors through their custom properties, which the button sets.
 - **1.0.0-prerelease.6**: A text button's press reads apart from its hover: a danger one darkens a step under the pointer and another while pressed, as the link blue does, and a pressed link blue is a step deeper in light.
-- **1.0.0-prerelease.6**: In dark, primary, accent and danger primary buttons share one soft lightness and strength, the accent a soft lilac and danger a soft coral red; each lightens a step on hover and, pressed, deepens a small step below rest rather than turning nearly white.
+- **1.0.0-prerelease.6**: In dark, a danger primary is a saturated red with a white label, the deepest fill beside the soft primary and accent ones, rather than a pastel coral that weighed no more than Save; it lightens a step on hover and deepens a small step pressed, as they do.
+- **1.0.0-prerelease.6**: In dark, primary and accent primary buttons share one soft lightness and strength, the accent a soft lilac; each lightens a step on hover and, pressed, deepens a small step below rest rather than turning nearly white.
 - **1.0.0-prerelease.6**: An outline button's focus ring lies on its edge, which takes the ring's color, rather than around a gray or red edge; in dark, a primary button's ring takes the text color.
 - **1.0.0-prerelease.6**: A label keeps to one line and its button to its width, so a row short of room wraps whole buttons, not their words; a `fullWidth` button and a ButtonGroup's still wrap their labels. A vertical group of outline buttons shares straight edges, round only at the column's outer corners.
 - **1.0.0-prerelease.6**: An outline button's label and icon take the text color, `--env-color-fg-default`, rather than the brand blue, so beside a primary button it reads as the other choice; a text button keeps the link blue. Ghost, outline and text icon buttons in the danger tone lay a faint tint of the danger color on hover and press, from `--env-color-bg-danger-subtle-hover`, rather than the neutral grey.

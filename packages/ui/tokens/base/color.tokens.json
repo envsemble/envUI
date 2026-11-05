@@ -421,15 +421,15 @@
       "danger": {
         "emphasis": {
           "$root": {
-            "$description": "A solid danger fill, such as a solid danger badge, and the fill of destructive primary actions, as the primary emphasis fill is of the main one: saturated with white labels in light, soft with dark labels in dark, where it is a deeper, redder grade than the accent's lilac, so a destructive action never reads as the accent; paired with fg.on-emphasis.",
+            "$description": "A solid danger fill, such as a solid danger badge, and the fill of destructive primary actions: a saturated red with white labels in every theme, so in dark, beside the soft primary and accent fills with their dark labels, a destructive action is the deepest and weightiest fill rather than a third pastel; paired with fg.on-strong.",
             "$value": "{palette.red.60}"
           },
           "hover": {
-            "$description": "A destructive primary action under the pointer: a grade further from its label, darker in light and lighter in dark, as every primary hovers.",
+            "$description": "A destructive primary action under the pointer: darker in light, as every primary hovers there, and a grade lighter in dark, as every dark primary hovers, still 4.5:1 to its white label.",
             "$value": "{palette.red.70}"
           },
           "pressed": {
-            "$description": "A destructive primary action while pressed: in light a grade past its hover, further from its label. In dark, where lightening further would turn the soft fill nearly white, it is instead a small step deeper than rest, still clear of its dark label, so it reads as pressed rather than highlighted.",
+            "$description": "A destructive primary action while pressed: in light a grade past its hover, further from its label; in dark a small step deeper than rest, as every dark primary presses, so it reads as pressed rather than highlighted.",
             "$value": "{palette.red.80}"
           }
         },

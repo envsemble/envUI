@@ -293,37 +293,37 @@ export const tokens = {
       'dark-high-contrast': 'rgb(0 0 0 / 0.3)',
     },
   },
-  /** A solid danger fill, such as a solid danger badge, and the fill of destructive primary actions, as the primary emphasis fill is of the main one: saturated with white labels in light, soft with dark labels in dark, where it is a deeper, redder grade than the accent's lilac, so a destructive action never reads as the accent; paired with fg.on-emphasis. */
+  /** A solid danger fill, such as a solid danger badge, and the fill of destructive primary actions: a saturated red with white labels in every theme, so in dark, beside the soft primary and accent fills with their dark labels, a destructive action is the deepest and weightiest fill rather than a third pastel; paired with fg.on-strong. */
   'color.bg.danger.emphasis': {
     cssVariable: '--env-color-bg-danger-emphasis',
     type: 'color',
     values: {
       light: '#b72b20',
-      dark: '#ee9c95',
+      dark: '#bf3e33',
       'light-high-contrast': '#7a0200',
-      'dark-high-contrast': '#ffd3cf',
+      'dark-high-contrast': '#8d0200',
     },
   },
-  /** A destructive primary action under the pointer: a grade further from its label, darker in light and lighter in dark, as every primary hovers. */
+  /** A destructive primary action under the pointer: darker in light, as every primary hovers there, and a grade lighter in dark, as every dark primary hovers, still 4.5:1 to its white label. */
   'color.bg.danger.emphasis.hover': {
     cssVariable: '--env-color-bg-danger-emphasis-hover',
     type: 'color',
     values: {
       light: '#9f0300',
-      dark: '#ffbeb8',
+      dark: '#c64e43',
       'light-high-contrast': '#6b0100',
-      'dark-high-contrast': '#ffe4e2',
+      'dark-high-contrast': '#9f0300',
     },
   },
-  /** A destructive primary action while pressed: in light a grade past its hover, further from its label. In dark, where lightening further would turn the soft fill nearly white, it is instead a small step deeper than rest, still clear of its dark label, so it reads as pressed rather than highlighted. */
+  /** A destructive primary action while pressed: in light a grade past its hover, further from its label; in dark a small step deeper than rest, as every dark primary presses, so it reads as pressed rather than highlighted. */
   'color.bg.danger.emphasis.pressed': {
     cssVariable: '--env-color-bg-danger-emphasis-pressed',
     type: 'color',
     values: {
       light: '#7a0200',
-      dark: '#e68c84',
+      dark: '#b72b20',
       'light-high-contrast': '#5a0100',
-      'dark-high-contrast': '#ffedeb',
+      'dark-high-contrast': '#7a0200',
     },
   },
   /** The translucent danger tint of badges and alerts: a light red in light, rather than the danger text color, which would lie at the page's own lightness and barely part from it. */
