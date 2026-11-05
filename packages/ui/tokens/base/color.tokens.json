@@ -318,13 +318,13 @@
           "$value": "{palette.green.60}"
         },
         "muted": {
-          "$description": "The translucent success tint of badges and alerts.",
+          "$description": "The translucent success tint of badges and alerts: a light green in light, rather than the success text color, which would lie at the page's own lightness and barely part from it.",
           "$value": {
             "colorSpace": "oklch",
             "components": {
-              "$ref": "#/palette/green/60/$value/components"
+              "$ref": "#/palette/green/25/$value/components"
             },
-            "alpha": 0.12
+            "alpha": 0.2
           }
         },
         "subtle": {
@@ -434,13 +434,13 @@
           }
         },
         "muted": {
-          "$description": "The translucent danger tint of badges and alerts.",
+          "$description": "The translucent danger tint of badges and alerts: a light red in light, rather than the danger text color, which would lie at the page's own lightness and barely part from it.",
           "$value": {
             "colorSpace": "oklch",
             "components": {
-              "$ref": "#/palette/red/60/$value/components"
+              "$ref": "#/palette/red/20/$value/components"
             },
-            "alpha": 0.12
+            "alpha": 0.28
           }
         },
         "subtle": {

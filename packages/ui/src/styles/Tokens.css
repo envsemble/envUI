@@ -33,7 +33,7 @@
   --env-color-bg-danger-emphasis: #b72b20;
   --env-color-bg-danger-emphasis-hover: #9f0300;
   --env-color-bg-danger-emphasis-pressed: #7a0200;
-  --env-color-bg-danger-muted: rgb(183 43 32 / 0.12);
+  --env-color-bg-danger-muted: rgb(248 172 166 / 0.28);
   --env-color-bg-danger-strong: #b72b20;
   --env-color-bg-danger-strong-hover: #c64e43;
   --env-color-bg-danger-strong-pressed: #bf3e33;
@@ -99,7 +99,7 @@
   --env-color-bg-selected-hover: #cddefc;
   --env-color-bg-selected-pressed: #c8dbfc;
   --env-color-bg-success-emphasis: #176f35;
-  --env-color-bg-success-muted: rgb(23 111 53 / 0.12);
+  --env-color-bg-success-muted: rgb(109 195 137 / 0.2);
   --env-color-bg-success-strong: #236d52;
   --env-color-bg-success-strong-hover: #2f775c;
   --env-color-bg-success-strong-pressed: #3b8266;

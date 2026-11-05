@@ -326,12 +326,12 @@ export const tokens = {
       'dark-high-contrast': '#ffedeb',
     },
   },
-  /** The translucent danger tint of badges and alerts. */
+  /** The translucent danger tint of badges and alerts: a light red in light, rather than the danger text color, which would lie at the page's own lightness and barely part from it. */
   'color.bg.danger.muted': {
     cssVariable: '--env-color-bg-danger-muted',
     type: 'color',
     values: {
-      light: 'rgb(183 43 32 / 0.12)',
+      light: 'rgb(248 172 166 / 0.28)',
       dark: 'rgb(206 94 83 / 0.18)',
       'light-high-contrast': 'rgb(122 2 0 / 0.08)',
       'dark-high-contrast': 'rgb(255 211 207 / 0.1)',
@@ -1052,12 +1052,12 @@ export const tokens = {
       'dark-high-contrast': '#98f0b5',
     },
   },
-  /** The translucent success tint of badges and alerts. */
+  /** The translucent success tint of badges and alerts: a light green in light, rather than the success text color, which would lie at the page's own lightness and barely part from it. */
   'color.bg.success.muted': {
     cssVariable: '--env-color-bg-success-muted',
     type: 'color',
     values: {
-      light: 'rgb(23 111 53 / 0.12)',
+      light: 'rgb(109 195 137 / 0.2)',
       dark: 'rgb(60 144 86 / 0.18)',
       'light-high-contrast': 'rgb(0 68 26 / 0.08)',
       'dark-high-contrast': 'rgb(152 240 181 / 0.1)',
