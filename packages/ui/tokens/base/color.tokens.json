@@ -6,7 +6,7 @@
     "bg": {
       "page": {
         "$root": {
-          "$description": "The page behind all content: the app frame, title bars and Surface background=\"page\". Deeper than the panes and cards on it in both themes, so they part from it.",
+          "$description": "The page behind all content: the app frame, title bars and Surface background=\"page\". Below the default surface in every theme, so the panes and cards on it part from it; the deepest surface in light, where nothing deeper keeps edges and focus rings at 3:1.",
           "$value": "{palette.gray.6}"
         },
         "hover": {
@@ -20,21 +20,21 @@
       },
       "recessed": {
         "$root": {
-          "$description": "A recessed surface: a well that what it holds rises out of, such as a stage for a preview or a drop area, and Surface background=\"recessed\". A shade deeper than the page in dark; in light a shade lighter than the page and the panes, since a deeper gray would take edges and focus rings below 3:1. Everything measured on the page keeps its minimum on it.",
-          "$value": "{palette.gray.2}"
+          "$description": "A recessed surface: a well that what it holds rises out of, such as a stage for a preview or a drop area, and Surface background=\"recessed\". Below the default surface in every theme: in dark a shade deeper than the page too; in light between the page and the panes, since a gray deeper than the page would take edges and focus rings below 3:1. Everything measured on the page keeps its minimum on it.",
+          "$value": "{palette.gray.4}"
         },
         "hover": {
           "$description": "An interactive recessed surface under the pointer.",
-          "$value": "{palette.gray.6}"
+          "$value": "{palette.gray.8}"
         },
         "pressed": {
           "$description": "An interactive recessed surface while pressed.",
-          "$value": "{palette.gray.9}"
+          "$value": "{palette.gray.11}"
         }
       },
       "default": {
         "$root": {
-          "$description": "The default surface: Surface, panes, navigation and sheets. A step lighter than the page in both themes.",
+          "$description": "The default surface: Surface, panes, navigation and sheets. A step above the page in every theme.",
           "$value": "{palette.gray.3}"
         },
         "hover": {
@@ -48,7 +48,7 @@
       },
       "muted": {
         "$root": {
-          "$description": "The muted surface: Surface background=\"muted\", cards, list and radio rows. Lighter than the default surface in both themes, white in light, so cards stand apart from a pane.",
+          "$description": "The filled surface: Surface background=\"muted\", cards, list and radio rows. A step above the default surface in every theme, white in light, so cards stand apart from a pane; the raised surface takes the same fill.",
           "$value": "{palette.neutral.0}"
         },
         "hover": {
@@ -62,7 +62,7 @@
       },
       "raised": {
         "$root": {
-          "$description": "A raised surface: Surface background=\"raised\", tables, docked panels and the pager. White in light, so it lifts off the page and the panes; the default surface’s shade in dark.",
+          "$description": "A raised surface: Surface background=\"raised\", tables, docked panels and the pager. A step above the default surface in every theme, with the filled surface’s fill: white in light, so it lifts off the page and the panes.",
           "$value": "{palette.neutral.0}"
         },
         "hover": {
@@ -117,15 +117,15 @@
       "selected": {
         "$root": {
           "$description": "Selected navigation items, tree and table rows, Select options and drop targets; paired with fg.on-selected. A blue tint in light and a blue-gray in dark, distinct from the other items around it, at rest and under the pointer: ΔEOK 0.03 or more, 0.04 at high contrast.",
-          "$value": "{palette.blue.7}"
+          "$value": "{palette.blue.8}"
         },
         "hover": {
           "$description": "A selected item under the pointer: visibly deeper than the selection, and distinct from an unselected item under the pointer.",
-          "$value": "{palette.blue.9}"
+          "$value": "{palette.blue.10}"
         },
         "pressed": {
           "$description": "A selected item while pressed. Muted text and an inset focus ring keep their minimums on it.",
-          "$value": "{palette.blue.10}"
+          "$value": "{palette.blue.11}"
         }
       },
       "navigation": {

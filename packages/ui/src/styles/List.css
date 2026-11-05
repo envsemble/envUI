@@ -175,7 +175,7 @@
     --env-skeleton-placeholder: inline-block;
     --env-skeleton-length: 10rem;
   }
-  /* On a muted Surface that holds only lists, a pane of their own, the rows take the raised fill, so
+  /* On a muted Surface that holds only lists, a pane of their own, the rows take the default fill, so
      they stand out from it. A surface with more in it, such as a card with a heading, keeps the row
      fill. A skeleton's content wrapper and a skeleton list's status beside it don't count. */
   .env-surface[data-background='muted']:not(

@@ -50,13 +50,13 @@
       },
       "raised": {
         "$root": {
-          "$value": "{palette.neutral.88}"
+          "$value": "{palette.neutral.82}"
         },
         "hover": {
-          "$value": "{palette.neutral.80}"
+          "$value": "{palette.neutral.75}"
         },
         "pressed": {
-          "$value": "{palette.neutral.75}"
+          "$value": "{palette.neutral.70}"
         }
       },
       "popup": {

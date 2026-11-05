@@ -403,7 +403,7 @@ export const tokens = {
       'dark-high-contrast': 'rgb(255 228 226 / 0.22)',
     },
   },
-  /** The default surface: Surface, panes, navigation and sheets. A step lighter than the page in both themes. */
+  /** The default surface: Surface, panes, navigation and sheets. A step above the page in every theme. */
   'color.bg.default': {
     cssVariable: '--env-color-bg-default',
     type: 'color',
@@ -546,7 +546,7 @@ export const tokens = {
       'dark-high-contrast': '#424447',
     },
   },
-  /** The muted surface: Surface background="muted", cards, list and radio rows. Lighter than the default surface in both themes, white in light, so cards stand apart from a pane. */
+  /** The filled surface: Surface background="muted", cards, list and radio rows. A step above the default surface in every theme, white in light, so cards stand apart from a pane; the raised surface takes the same fill. */
   'color.bg.muted': {
     cssVariable: '--env-color-bg-muted',
     type: 'color',
@@ -722,7 +722,7 @@ export const tokens = {
       'dark-high-contrast': 'rgb(232 234 238 / 0.08)',
     },
   },
-  /** The page behind all content: the app frame, title bars and Surface background="page". Deeper than the panes and cards on it in both themes, so they part from it. */
+  /** The page behind all content: the app frame, title bars and Surface background="page". Below the default surface in every theme, so the panes and cards on it part from it; the deepest surface in light, where nothing deeper keeps edges and focus rings at 3:1. */
   'color.bg.page': {
     cssVariable: '--env-color-bg-page',
     type: 'color',
@@ -920,15 +920,15 @@ export const tokens = {
       'dark-high-contrast': 'rgb(224 235 253 / 0.22)',
     },
   },
-  /** A raised surface: Surface background="raised", tables, docked panels and the pager. White in light, so it lifts off the page and the panes; the default surface’s shade in dark. */
+  /** A raised surface: Surface background="raised", tables, docked panels and the pager. A step above the default surface in every theme, with the filled surface’s fill: white in light, so it lifts off the page and the panes. */
   'color.bg.raised': {
     cssVariable: '--env-color-bg-raised',
     type: 'color',
     values: {
       light: '#ffffff',
-      dark: '#28292b',
-      'light-high-contrast': '#f8f8fa',
-      'dark-high-contrast': '#28292b',
+      dark: '#343638',
+      'light-high-contrast': '#ffffff',
+      'dark-high-contrast': '#343638',
     },
   },
   /** An interactive raised surface under the pointer. */
@@ -937,9 +937,9 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#f1f1f3',
-      dark: '#383a3d',
-      'light-high-contrast': '#eaeaec',
-      'dark-high-contrast': '#303234',
+      dark: '#424447',
+      'light-high-contrast': '#f1f1f3',
+      'dark-high-contrast': '#383a3d',
     },
   },
   /** An interactive raised surface while pressed. */
@@ -948,17 +948,17 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#e3e3e6',
-      dark: '#424447',
-      'light-high-contrast': '#e0e0e2',
-      'dark-high-contrast': '#383a3d',
+      dark: '#4b4d51',
+      'light-high-contrast': '#e3e3e6',
+      'dark-high-contrast': '#424447',
     },
   },
-  /** A recessed surface: a well that what it holds rises out of, such as a stage for a preview or a drop area, and Surface background="recessed". A shade deeper than the page in dark; in light a shade lighter than the page and the panes, since a deeper gray would take edges and focus rings below 3:1. Everything measured on the page keeps its minimum on it. */
+  /** A recessed surface: a well that what it holds rises out of, such as a stage for a preview or a drop area, and Surface background="recessed". Below the default surface in every theme: in dark a shade deeper than the page too; in light between the page and the panes, since a gray deeper than the page would take edges and focus rings below 3:1. Everything measured on the page keeps its minimum on it. */
   'color.bg.recessed': {
     cssVariable: '--env-color-bg-recessed',
     type: 'color',
     values: {
-      light: '#f8f8fa',
+      light: '#f1f1f3',
       dark: '#191a1b',
       'light-high-contrast': '#f8f8fa',
       'dark-high-contrast': '#191a1b',
@@ -969,7 +969,7 @@ export const tokens = {
     cssVariable: '--env-color-bg-recessed-hover',
     type: 'color',
     values: {
-      light: '#eaeaec',
+      light: '#e3e3e6',
       dark: '#28292b',
       'light-high-contrast': '#eaeaec',
       'dark-high-contrast': '#28292b',
@@ -980,7 +980,7 @@ export const tokens = {
     cssVariable: '--env-color-bg-recessed-pressed',
     type: 'color',
     values: {
-      light: '#e0e0e2',
+      light: '#dadadc',
       dark: '#343638',
       'light-high-contrast': '#e0e0e2',
       'dark-high-contrast': '#343638',
@@ -1013,7 +1013,7 @@ export const tokens = {
     cssVariable: '--env-color-bg-selected',
     type: 'color',
     values: {
-      light: '#dbe8fd',
+      light: '#d7e5fd',
       dark: '#293a55',
       'light-high-contrast': '#c8dbfc',
       'dark-high-contrast': '#1d2e47',
@@ -1024,7 +1024,7 @@ export const tokens = {
     cssVariable: '--env-color-bg-selected-hover',
     type: 'color',
     values: {
-      light: '#d2e1fc',
+      light: '#cddefc',
       dark: '#33445f',
       'light-high-contrast': '#bfd5fb',
       'dark-high-contrast': '#253650',
@@ -1035,7 +1035,7 @@ export const tokens = {
     cssVariable: '--env-color-bg-selected-pressed',
     type: 'color',
     values: {
-      light: '#cddefc',
+      light: '#c8dbfc',
       dark: '#3c4e69',
       'light-high-contrast': '#bad2fb',
       'dark-high-contrast': '#293a55',

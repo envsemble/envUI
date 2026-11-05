@@ -66,8 +66,9 @@
   border-radius: var(--env-radius-surface);
 }
 
-/* The recessed canvas: envUI's recessed surface, `--env-color-bg-recessed`, a shade deeper than the
-   page in the dark themes and a shade lighter than the page and the panes in the light ones. The
+/* The recessed canvas: envUI's recessed surface, `--env-color-bg-recessed`, below the panes in every
+   theme: a shade deeper than the page in the dark themes, between the page and the panes in the
+   light ones. The
    contrast gate measures every pair an example paints on the page on it too
    (tests/contrast/Pairs.ts). */
 .site-live-example,

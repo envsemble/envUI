@@ -78,7 +78,7 @@ const badgeFill = (tone: (typeof tones)[number]) =>
 
 // Surfaces, by role.
 const page = '--env-color-bg-page'; // the app frame, title bars, Surface background="page"
-const recessed = '--env-color-bg-recessed'; // a shade deeper than the page: Surface background="recessed", the catalogue's canvas
+const recessed = '--env-color-bg-recessed'; // below the panes, a shade deeper than the page in dark: Surface background="recessed", the catalogue's canvas
 const recessedHover = '--env-color-bg-recessed-hover';
 const recessedPressed = '--env-color-bg-recessed-pressed';
 const surface = '--env-color-bg-default'; // Surface's default, sidebars, standard menus
