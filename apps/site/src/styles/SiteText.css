@@ -227,3 +227,56 @@
     );
   }
 }
+
+/* Under a coarse pointer, as on a phone, scrollbars stay hidden until the code is dragged, so a
+   block whose code scrolls draws a thin one of its own under the lines, in the padding below them:
+   a hairline track the width of the code, and a thumb a quarter of it that moves along as the code
+   scrolls. Code that fits draws none: the timeline is inactive and the thumb has no length. */
+@property --site-code-thumb {
+  syntax: '<length-percentage>';
+  inherits: false;
+  initial-value: 0;
+}
+@property --site-code-scrolled {
+  syntax: '<percentage>';
+  inherits: false;
+  initial-value: 0%;
+}
+@keyframes site-code-scrollbar {
+  from {
+    --site-code-thumb: 25%;
+    --site-code-scrolled: 0%;
+  }
+  to {
+    --site-code-thumb: 25%;
+    --site-code-scrolled: 100%;
+  }
+}
+@media (pointer: coarse) {
+  @supports (timeline-scope: --site-code) {
+    :is(.site-code-block > .env-code-block, .site-example-source.env-code-block) {
+      timeline-scope: --site-code;
+      background-image:
+        linear-gradient(var(--env-color-fg-muted), var(--env-color-fg-muted)),
+        linear-gradient(var(--env-color-border-muted), var(--env-color-border-muted));
+      background-repeat: no-repeat;
+      background-origin: content-box;
+      background-size:
+        var(--site-code-thumb) 0.125rem,
+        calc(var(--site-code-thumb) * 4) 0.0625rem;
+      background-position:
+        var(--site-code-scrolled) calc(100% + var(--env-space-2)),
+        0 calc(100% + var(--env-space-2) - 0.03125rem);
+      animation: site-code-scrollbar linear both;
+      animation-timeline: --site-code;
+    }
+    :is(.site-code-block > .env-code-block, .site-example-source.env-code-block):dir(rtl) {
+      background-position:
+        calc(100% - var(--site-code-scrolled)) calc(100% + var(--env-space-2)),
+        100% calc(100% + var(--env-space-2) - 0.03125rem);
+    }
+    :is(.site-code-block, .site-example-source) pre {
+      scroll-timeline: --site-code inline;
+    }
+  }
+}
