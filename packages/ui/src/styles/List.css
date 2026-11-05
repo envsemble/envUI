@@ -183,9 +183,9 @@
     > .env-skeleton-content
     > .env-list
     > .env-list-item {
-    --env-list-item-container-default: var(--env-color-bg-raised);
-    --env-list-item-fill-hover: var(--env-color-bg-raised-hover);
-    --env-list-item-fill-pressed: var(--env-color-bg-raised-pressed);
+    --env-list-item-container-default: var(--env-color-bg-default);
+    --env-list-item-fill-hover: var(--env-color-bg-default-hover);
+    --env-list-item-fill-pressed: var(--env-color-bg-default-pressed);
   }
   /* A row that opens something through a link or button inside reacts like a clickable card: to
      hover, to keyboard focus inside it and to presses. The link or button marked data-row-target

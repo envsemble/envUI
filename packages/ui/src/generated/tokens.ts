@@ -51,24 +51,24 @@ export const tokens = {
       'dark-high-contrast': '#f2d2ff',
     },
   },
-  /** An accent primary action under the pointer. */
+  /** An accent primary action under the pointer: a grade further from its label, darker in light and lighter in dark. */
   'color.bg.accent.emphasis.hover': {
     cssVariable: '--env-color-bg-accent-emphasis-hover',
     type: 'color',
     values: {
       light: '#83319f',
-      dark: '#d683f5',
+      dark: '#ecbdff',
       'light-high-contrast': '#63047d',
       'dark-high-contrast': '#f7e4ff',
     },
   },
-  /** An accent primary action while pressed. */
+  /** An accent primary action while pressed: a grade past its hover, further from its label. */
   'color.bg.accent.emphasis.pressed': {
     cssVariable: '--env-color-bg-accent-emphasis-pressed',
     type: 'color',
     values: {
       light: '#6d1888',
-      dark: '#bc6ada',
+      dark: '#f2d2ff',
       'light-high-contrast': '#57006e',
       'dark-high-contrast': '#faedff',
     },
@@ -293,18 +293,18 @@ export const tokens = {
       'dark-high-contrast': 'rgb(0 0 0 / 0.3)',
     },
   },
-  /** A solid danger fill, such as a solid danger badge, and the fill of destructive primary actions, as the primary emphasis fill is of the main one: saturated with white labels in light, soft with dark labels in dark; paired with fg.on-emphasis. */
+  /** A solid danger fill, such as a solid danger badge, and the fill of destructive primary actions, as the primary emphasis fill is of the main one: saturated with white labels in light, soft with dark labels in dark, where it is a deeper, redder grade than the accent's lilac, so a destructive action never reads as the accent; paired with fg.on-emphasis. */
   'color.bg.danger.emphasis': {
     cssVariable: '--env-color-bg-danger-emphasis',
     type: 'color',
     values: {
       light: '#b72b20',
-      dark: '#f8aca6',
+      dark: '#dd7c74',
       'light-high-contrast': '#7a0200',
       'dark-high-contrast': '#ffd3cf',
     },
   },
-  /** A destructive primary action under the pointer: a grade darker, as every primary steps. */
+  /** A destructive primary action under the pointer: a grade further from its label, darker in light and lighter in dark, as every primary steps. */
   'color.bg.danger.emphasis.hover': {
     cssVariable: '--env-color-bg-danger-emphasis-hover',
     type: 'color',
@@ -315,13 +315,13 @@ export const tokens = {
       'dark-high-contrast': '#ffe4e2',
     },
   },
-  /** A destructive primary action while pressed: a grade past its hover. */
+  /** A destructive primary action while pressed: a grade past its hover, further from its label. */
   'color.bg.danger.emphasis.pressed': {
     cssVariable: '--env-color-bg-danger-emphasis-pressed',
     type: 'color',
     values: {
       light: '#7a0200',
-      dark: '#d66d63',
+      dark: '#ee9c95',
       'light-high-contrast': '#5a0100',
       'dark-high-contrast': '#ffedeb',
     },
@@ -403,7 +403,7 @@ export const tokens = {
       'dark-high-contrast': 'rgb(255 228 226 / 0.22)',
     },
   },
-  /** The default surface: Surface, navigation, sheets, standard menus. A step lighter than the page in both themes. */
+  /** The default surface: Surface, panes, navigation and sheets. A step lighter than the page in both themes. */
   'color.bg.default': {
     cssVariable: '--env-color-bg-default',
     type: 'color',
@@ -755,12 +755,12 @@ export const tokens = {
       'dark-high-contrast': '#303234',
     },
   },
-  /** Popups over the page: menus, Select lists, popovers, the composer. They take elevation 2. In light a gray between the recessed well and the panes, so a popup parts from the white cards it opens over; in dark a step lighter than the page. */
+  /** Popups over the page: menus, Select lists, popovers, the composer. They take elevation 2. In light white, as the raised surfaces are, its soft shadow keeping its edge over a white card or table; in dark a step lighter than the page. */
   'color.bg.popup': {
     cssVariable: '--env-color-bg-popup',
     type: 'color',
     values: {
-      light: '#f5f5f7',
+      light: '#ffffff',
       dark: '#343638',
       'light-high-contrast': '#f5f5f7',
       'dark-high-contrast': '#303234',
@@ -799,24 +799,24 @@ export const tokens = {
       'dark-high-contrast': '#b5cffb',
     },
   },
-  /** A primary action under the pointer. */
+  /** A primary action under the pointer: a grade further from its label, darker in light and lighter in dark, so the label gains contrast. */
   'color.bg.primary.emphasis.hover': {
     cssVariable: '--env-color-bg-primary-emphasis-hover',
     type: 'color',
     values: {
       light: '#005cc8',
-      dark: '#75a5f2',
+      dark: '#b5cffb',
       'light-high-contrast': '#00377c',
       'dark-high-contrast': '#cddefc',
     },
   },
-  /** A primary action while pressed. */
+  /** A primary action while pressed: a grade past its hover, further from its label. */
   'color.bg.primary.emphasis.pressed': {
     cssVariable: '--env-color-bg-primary-emphasis-pressed',
     type: 'color',
     values: {
       light: '#004aa2',
-      dark: '#4b8bec',
+      dark: '#cddefc',
       'light-high-contrast': '#002f6d',
       'dark-high-contrast': '#e0ebfd',
     },
@@ -920,12 +920,12 @@ export const tokens = {
       'dark-high-contrast': 'rgb(224 235 253 / 0.22)',
     },
   },
-  /** A raised surface: Surface background="raised", rows on a contrasting surface, outlined buttons. */
+  /** A raised surface: Surface background="raised", tables, docked panels and the pager. White in light, so it lifts off the page and the panes; the default surface’s shade in dark. */
   'color.bg.raised': {
     cssVariable: '--env-color-bg-raised',
     type: 'color',
     values: {
-      light: '#f4f4f6',
+      light: '#ffffff',
       dark: '#28292b',
       'light-high-contrast': '#f8f8fa',
       'dark-high-contrast': '#28292b',
@@ -936,7 +936,7 @@ export const tokens = {
     cssVariable: '--env-color-bg-raised-hover',
     type: 'color',
     values: {
-      light: '#e7e7e9',
+      light: '#f1f1f3',
       dark: '#383a3d',
       'light-high-contrast': '#eaeaec',
       'dark-high-contrast': '#303234',
@@ -947,7 +947,7 @@ export const tokens = {
     cssVariable: '--env-color-bg-raised-pressed',
     type: 'color',
     values: {
-      light: '#dddddf',
+      light: '#e3e3e6',
       dark: '#424447',
       'light-high-contrast': '#e0e0e2',
       'dark-high-contrast': '#383a3d',

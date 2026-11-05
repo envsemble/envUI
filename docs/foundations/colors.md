@@ -152,6 +152,7 @@ The Design tokens page of the Docs lists every value in each theme, and this gui
 - **Page**: `--env-color-bg-page`, the document's background, behind everything: deeper than the panes and cards on it.
 - **Recessed surface**: `--env-color-bg-recessed`, a well on the page, `background="recessed"`, such as the stage of a preview: a shade deeper than the page in dark, lighter than the page and the panes in light.
 - **Surface**: `--env-color-bg-default`: Surface's `background="default"`, panes, the navigation and sheets, a step lighter than the page.
+- **Raised surface**: `--env-color-bg-raised`: tables, docked panels and `background="raised"`, white in light, so they lift off the page and the panes.
 - **Filled card**: `--env-color-bg-muted`: a group inside a surface, a Card's fill, `background="muted"`, list rows and tab rails, lighter than the surface: white in light.
 - **Text**: `--env-color-fg-default`, Text's default, for headings and the main words.
 - **Supporting text**: `--env-color-fg-muted`: `emphasis="muted"` on Text, details, captions, hints and icons.
@@ -173,7 +174,7 @@ Status icons, short status text and badges share these tokens, at least 4.5:1 on
 | `--env-color-fg-warning`         | Warning: needs attention soon                                       |
 | `--env-color-fg-danger`          | Danger: failed, or an action that destroys something                |
 | `--env-color-fg-done`            | Done: completed work                                                |
-| `--env-color-bg-{tone}-muted`    | The tone's tint behind badges, and behind alerts at high contrast   |
+| `--env-color-bg-{tone}-muted`    | The tone's tint behind badges and alerts                            |
 | `--env-color-bg-{tone}-emphasis` | A solid fill in the tone, with `fg-on-emphasis`                     |
 
 ```css
@@ -188,7 +189,7 @@ Status icons, short status text and badges share these tokens, at least 4.5:1 on
 
 Tokens are named `--env-color-{bg|fg|border}-{role}[-{emphasis}][-{state}]`, emphasis weakest first: `subtle`, `muted`, none, `emphasis` and `strong`. Every `fg-on-X` pairs with a `bg-X`, every state token has its resting token, and the contrast gate measures every pair a component paints, in all four themes.
 
-- **Backgrounds:** `bg-page`, the deepest; `bg-recessed`, a well on it; `bg-default`, `bg-muted` and `bg-raised`, the surfaces; `bg-popup`, the fill of dialogs, menus and popovers, frosted or solid, in dark a step lighter than the surfaces they open over; `bg-field`, `bg-selected`; `bg-backdrop`, the backdrop behind dialogs.
+- **Backgrounds:** `bg-page`, the deepest; `bg-recessed`, a well on it; `bg-default`, `bg-muted` and `bg-raised`, the surfaces; `bg-popup`, the fill of dialogs, menus and popovers, frosted or solid, white in light and in dark a step lighter than the surfaces they open over; `bg-field`, `bg-selected`; `bg-backdrop`, the backdrop behind dialogs.
 - **Fills:** `bg-neutral-muted`, a translucent layer of the text color under secondary buttons, chips, switch tracks and skeletons; `bg-neutral-subtle`, the state layer of controls without a fill, such as ghost and outline buttons; `emphasis` and `strong` solid fills.
 - **Text:** `fg-default`, `fg-muted` for supporting text and icons, `fg-disabled` for the label and value of a disabled control, `fg-control`, `fg-link`, `fg-on-selected`, and one per tone.
 - **Borders:** `border-default`, the only boundary of a control, at least 3:1; `border-muted` for the hairlines between a list's items, quote bars and other decorative edges; `border-focus`; `border-media`, the inner edge of images.

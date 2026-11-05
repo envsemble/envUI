@@ -83,7 +83,7 @@ const recessedHover = '--env-color-bg-recessed-hover';
 const recessedPressed = '--env-color-bg-recessed-pressed';
 const surface = '--env-color-bg-default'; // Surface's default, sidebars, standard menus
 const muted = '--env-color-bg-muted'; // Surface background="muted", cards, radio rows
-const raised = '--env-color-bg-raised'; // Surface background="raised", tables, rows on a contrasting surface
+const raised = '--env-color-bg-raised'; // Surface background="raised", tables, docked panels, the pager
 const popup = '--env-color-bg-popup'; // Select lists, popovers, compact menus, menu rows, the composer, solid dialogs
 const field = '--env-color-bg-field';
 const overlay = '--env-color-bg-backdrop'; // the backdrop behind dialogs
@@ -206,7 +206,8 @@ const toneOutline = {
 const alertFill = (tone: (typeof alertTones)[number]) => `--env-color-bg-${tone}-subtle-hover`;
 /** An alert's fill: the tone's muted tint, at every contrast. */
 const alertRest = (tone: (typeof alertTones)[number]) => `--env-color-bg-${tone}-muted`;
-/** What an alert sits on: the page, a pane and a card. */
+/** What an alert sits on: the page, a pane and a card. In light its tint lies over the raised surface,
+ * white, which the card measures. */
 const alertGrounds = [page, surface, muted] as const;
 /** The stronger tint of an alert or a soft badge, which high contrast replaces with the softer one. */
 const tonal = {
