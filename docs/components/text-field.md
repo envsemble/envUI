@@ -181,7 +181,7 @@ An error marks the field invalid and shows under its description. Say how to cor
 
 ### Search
 
-A search field's clear button and <kbd>Esc</kbd> empty the query.
+A SearchField's clear button and <kbd>Esc</kbd> empty the query.
 
 - Its label is for assistive technology, unless it is set to show.
 

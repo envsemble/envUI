@@ -20,6 +20,7 @@ import { EnvUILogo } from '../brand/EnvUILogo';
 import { SearchButton } from '../search/SearchButton';
 import { DisplayMenu } from '../theme/DisplaySettings';
 import { drawerWidthKey } from '../theme/DisplayStorage';
+import type { PageMember } from '../shared/DocumentationTypes';
 import { pageBadge } from './PageBadges';
 import {
   counterpartOf,
@@ -75,6 +76,30 @@ export const drawerless = (page: RoutePage | undefined) =>
   sectionPages(catalogueSectionOf(page)).length === 1;
 
 /**
+ * A page's link in a drawer, then a link to each component it documents besides its own, such as
+ * IconButton after Button, at the heading of the page that shows it (`anchor`): entries of the
+ * same list, set in from the page's by their address's fragment (Shell.css), which only they have.
+ */
+function withMembers(
+  page: RoutePage,
+  link: NavigationDrawerDestination,
+  anchor: (member: PageMember) => string,
+  onChoose?: () => void,
+): NavigationDrawerDestination[] {
+  return [
+    link,
+    ...(page.document?.members ?? []).map(
+      (member): NavigationDrawerDestination => ({
+        group: link.group,
+        label: member.name,
+        href: routeHref(`${page.path}?section=${anchor(member)}`),
+        onClick: onChoose,
+      }),
+    ),
+  ];
+}
+
+/**
  * The pages of one of the catalogue's destinations, for its drawer: its pages of no group, such as
  * All components, then each group, such as a kind of component or a pattern's intent, as a section
  * of its pages that opens and closes, open while it holds the current page, as in the Docs.
@@ -84,21 +109,27 @@ export function pageDestinations(
   currentPath: string,
   onChoose?: () => void,
 ): NavigationDrawerDestination[] {
-  const link = (page: RoutePage): NavigationDrawerDestination => ({
-    label: page.label ?? page.title,
-    href: routeHref(page.path),
-    current: page.path === currentPath,
-    onClick: onChoose,
-  });
+  const link = (page: RoutePage) =>
+    withMembers(
+      page,
+      {
+        label: page.label ?? page.title,
+        href: routeHref(page.path),
+        current: page.path === currentPath,
+        onClick: onChoose,
+      },
+      (member) => member.catalogue ?? 'overview',
+      onChoose,
+    );
   const groups = new Map<string, RoutePage[]>();
   for (const page of pages)
     if (page.group) groups.set(page.group, [...(groups.get(page.group) ?? []), page]);
   return [
-    ...pages.filter((page) => !page.group).map(link),
+    ...pages.filter((page) => !page.group).flatMap(link),
     ...[...groups].map(
       ([label, members]): NavigationDrawerDestination => ({
         label,
-        children: members.map(link),
+        children: members.flatMap(link),
       }),
     ),
   ];
@@ -146,25 +177,31 @@ export function docsDestinations(
   currentPath: string,
   onChoose?: () => void,
 ): NavigationDrawerDestination[] {
-  const link = (page: RoutePage, group?: string): NavigationDrawerDestination => ({
-    group,
-    label: page.label ?? page.title,
-    badge: <PageBadgeOf page={page} />,
-    href: routeHref(page.path),
-    current: page.path === currentPath,
-    onClick: onChoose,
-  });
+  const link = (page: RoutePage, group?: string) =>
+    withMembers(
+      page,
+      {
+        group,
+        label: page.label ?? page.title,
+        badge: <PageBadgeOf page={page} />,
+        href: routeHref(page.path),
+        current: page.path === currentPath,
+        onClick: onChoose,
+      },
+      (member) => member.docs,
+      onChoose,
+    );
   const lone = (section: DocsGroup) =>
     !section.groups.length &&
     section.pages.length === 1 &&
     section.pages[0]!.title === section.label;
   return docsTree.flatMap((section) => [
-    ...section.pages.map((page) => link(page, lone(section) ? undefined : section.label)),
+    ...section.pages.flatMap((page) => link(page, lone(section) ? undefined : section.label)),
     ...section.groups.map(
       (group): NavigationDrawerDestination => ({
         group: section.label,
         label: group.label,
-        children: group.pages.map((page) => link(page)),
+        children: group.pages.flatMap((page) => link(page)),
       }),
     ),
   ]);

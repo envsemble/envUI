@@ -158,7 +158,7 @@ A drawer's destinations can go without icons, such as the sections of a guide; t
 
 ### One list, three forms
 
-The drawer, the rail and the bar take the same list of destinations, and [Scaffold](scaffold.md) shows the one that fits its width.
+NavigationDrawer, NavigationRail and NavigationBar take the same list of destinations, and [Scaffold](scaffold.md) shows the one that fits its width.
 
 - A group is a heading in the drawer only: the rail and the bar show its destinations one after another.
 - Nested sections are the drawer's too: the rail and the bar show the top level, and mark the destination whose section holds the current page.

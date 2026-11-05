@@ -115,7 +115,7 @@ While its work runs, nothing closes the dialog: its close buttons are disabled, 
 
 ### Closing actions
 
-Other buttons can close the dialog after doing their own work, such as Don’t save.
+A DialogClose closes the dialog after doing its own work, such as Don’t save.
 
 ```tsx figure=UnsavedChanges motion
 
