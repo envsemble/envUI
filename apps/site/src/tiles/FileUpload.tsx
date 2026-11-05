@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Button, Column, DropZone, List, Progress, Surface } from '@envsemble/envui';
 import { usePointer, type PointerStep } from '../motion/Motion';
+import { outlined } from './Outline';
 
 /*
  * A photo dragged in from the desktop and dropped: it uploads, and once it is up, it is removed
@@ -41,7 +42,7 @@ export default function FileUploadTile() {
   return (
     <Column gap={3} style={{ inlineSize: '16rem' }}>
       <DropZone size="sm" multiple label="Add files" onFilesAccepted={() => setUploaded(0)} />
-      <Surface background="muted" padding={1} radius="sm">
+      <Surface background="muted" padding={1} radius="sm" style={outlined}>
         <List.Root aria-label="Files">
           <List.Item label="annual-review.pdf" description="2.4 MB" />
           {uploaded !== null && (

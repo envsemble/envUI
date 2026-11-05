@@ -12,6 +12,7 @@ import {
 import { IconTrendingDown } from '@envsemble/envui/icons/TrendingDown';
 import { IconTrendingUp } from '@envsemble/envui/icons/TrendingUp';
 import { usePointer, type PointerStep } from '../motion/Motion';
+import { outlined } from './Outline';
 
 const periods = {
   week: { lead: 2.5, faster: 0.5, done: 42, more: 6 },
@@ -42,7 +43,7 @@ export default function KeyFiguresTile() {
   usePointer(script);
   const figures = periods[period];
   return (
-    <Surface padding={5} style={{ inlineSize: '17rem' }}>
+    <Surface padding={5} style={{ ...outlined, inlineSize: '17rem' }}>
       <Column gap={4}>
         <SegmentedControl
           aria-label="Period"
