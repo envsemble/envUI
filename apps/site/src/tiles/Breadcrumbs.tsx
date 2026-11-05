@@ -9,7 +9,8 @@ const link = (index: number) => `.env-breadcrumbs-item:nth-child(${index}) > .en
 
 /**
  * Along the trail, then a press on Plans, a level back: the trail ends there, Plans now the current
- * page, and holds so a while; then it is drawn anew as it began, with a short fade (Renew).
+ * page, and holds so for the rest of a look at the card; only then, long after, is it drawn anew as
+ * it began, with a short fade (Renew), since nothing on the trail leads forward again.
  */
 const script: PointerStep[] = [
   { wait: 300 },
@@ -20,7 +21,7 @@ const script: PointerStep[] = [
   { click: true },
   { wait: 300 },
   { leave: true },
-  { wait: 2600 },
+  { wait: 9000 },
   { cue: 'renew' },
   { wait: 500 },
 ];
@@ -56,14 +57,26 @@ function Trail({ narrow }: { narrow: boolean }) {
   );
 }
 
-/** A trail of three levels, the last the current page, on one line at every width. */
+/**
+ * A trail of three levels, the last the current page, on one line at every width. The trail keeps
+ * its start where it is as it shortens: it lies at the start of a box as wide as the whole trail,
+ * which a copy of it, hidden and after it, so the pointer's aims find the trail itself, holds
+ * open.
+ */
 export default function BreadcrumbsTile() {
   const narrow = useMedia(narrowGallery);
   const [round, setRound] = useState(0);
   usePointer(script, { onCue: () => setRound((count) => count + 1) });
   return (
     <Renew round={round}>
-      <Trail narrow={narrow} />
+      <div style={{ display: 'grid', justifyItems: 'start' }}>
+        <div style={{ gridArea: '1 / 1' }}>
+          <Trail narrow={narrow} />
+        </div>
+        <div aria-hidden="true" inert style={{ gridArea: '1 / 1', visibility: 'hidden' }}>
+          <Trail narrow={narrow} />
+        </div>
+      </div>
     </Renew>
   );
 }
