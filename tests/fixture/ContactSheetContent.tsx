@@ -314,7 +314,11 @@ function Messages() {
             <Message from="self" status="sending">
               On my way.
             </Message>
-            <Message from="self" status="failed">
+            <Message
+              from="self"
+              status="failed"
+              actions={<Button variant="text">Try again</Button>}
+            >
               Can we move it to Monday?
             </Message>
           </MessageList>
