@@ -22,6 +22,7 @@ import {
   type AimPoints,
   type PointerStep,
 } from './PointerPlan';
+import { useSitePopupOpen } from './SitePopup';
 
 export type { PointerStep } from './PointerPlan';
 
@@ -69,6 +70,25 @@ export function Playback({
   children,
 }: PlaybackValue & {
   /** Counts the timelines in it, whose figure is a recording the reader can't take over. */
+  countTimeline?: () => () => void;
+  children: ReactNode;
+}) {
+  // A site popup open, such as the Display menu, holds the previews where they are (SitePopup.ts).
+  const held = useSitePopupOpen();
+  return (
+    <PlaybackOf playing={playing && !held} rest={rest} root={root} countTimeline={countTimeline}>
+      {children}
+    </PlaybackOf>
+  );
+}
+
+function PlaybackOf({
+  playing,
+  rest,
+  root,
+  countTimeline,
+  children,
+}: PlaybackValue & {
   countTimeline?: () => () => void;
   children: ReactNode;
 }) {

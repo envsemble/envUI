@@ -1,5 +1,6 @@
 import { Fragment, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { PortalContainer } from '@envsemble/envui';
+import { sitePopupOpen } from '../motion/SitePopup';
 
 /** The least room a dialog, a sheet or a toast keeps from the stage's edges, in px. */
 const gutter = 16;
@@ -370,7 +371,24 @@ function useRestOpen(room: HTMLElement | null, layer: HTMLElement | null, live: 
     let timer = 0;
     let shown = false;
     const open = () => layer.childElementCount > 0 && overlays(layer).length > 0;
-    const away = () => !room.matches(':hover') && !room.contains(document.activeElement);
+    // Another popup open on the page, such as the Display menu: opening the example's own would
+    // close it, so the example waits until it has closed.
+    const elsewhere = sitePopupOpen;
+    const away = () =>
+      !room.matches(':hover') && !room.contains(document.activeElement) && !elsewhere();
+    const rest = () => {
+      timer = 0;
+      if (open()) return;
+      if (!away()) {
+        // Still near it, or another popup is open: look again a while later.
+        timer = window.setTimeout(rest, restDelay);
+        return;
+      }
+      // At rest again, it keeps its focus to itself until the reader reaches for it once more.
+      delete room.dataset.touched;
+      shown = false;
+      setRound((current) => current + 1);
+    };
     const check = () => {
       if (open()) {
         shown = true;
@@ -379,14 +397,7 @@ function useRestOpen(room: HTMLElement | null, layer: HTMLElement | null, live: 
         return;
       }
       if (!shown || timer) return;
-      timer = window.setTimeout(() => {
-        timer = 0;
-        if (open() || !away()) return;
-        // At rest again, it keeps its focus to itself until the reader reaches for it once more.
-        delete room.dataset.touched;
-        shown = false;
-        setRound((current) => current + 1);
-      }, restDelay);
+      timer = window.setTimeout(rest, restDelay);
     };
     const changes = new MutationObserver(check);
     changes.observe(layer, { childList: true, subtree: true });

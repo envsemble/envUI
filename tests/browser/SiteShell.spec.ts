@@ -521,3 +521,22 @@ test('the theme in the Display menu switches the whole page and keeps the canvas
   await expect(app).toHaveAttribute('data-env-theme', 'dark');
   await expect(panes).toHaveCount(0);
 });
+
+test("the Display menu stays open while a page's previews play, and they go on once it closes", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  // The Menu page's overview rests open and its figures press their menus open as they play.
+  await page.goto(`${siteDevUrl}/components/menu`);
+  const overview = page.locator('.catalogue-overlay-layer [role="menu"]').first();
+  await expect(overview).toBeVisible();
+  await page.getByRole('button', { name: 'Display', exact: true }).click();
+  const display = page.getByRole('menu').filter({ hasText: 'Contrast' });
+  await expect(display).toBeVisible();
+  // Their presses would count as presses outside it; held, they leave it open.
+  await page.waitForTimeout(3000);
+  await expect(display).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(display).toHaveCount(0);
+  await expect(overview).toBeVisible();
+});
