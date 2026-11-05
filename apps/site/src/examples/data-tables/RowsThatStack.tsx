@@ -11,27 +11,30 @@ import {
   Table,
 } from '@envsemble/envui';
 
+/** A time some hours before now, as an ISO date, so the sample reads as recent. */
+const ago = (hours: number) => new Date(Date.now() - hours * 3_600_000).toISOString();
+
 const projects = [
   {
     id: 'website-refresh',
     name: 'Website refresh',
     owner: 'Priya Shah',
     status: 'On track',
-    updated: '2026-03-04T08:15:00Z',
+    updated: ago(2),
   },
   {
     id: 'quarterly-report',
     name: 'Quarterly report',
     owner: 'Sam Lee',
     status: 'At risk',
-    updated: '2026-03-03T16:40:00Z',
+    updated: ago(26),
   },
   {
     id: 'onboarding-guide',
     name: 'Onboarding guide',
     owner: 'Jordan Kim',
     status: 'On track',
-    updated: '2026-03-02T11:05:00Z',
+    updated: ago(53),
   },
 ];
 
