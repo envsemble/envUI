@@ -116,7 +116,7 @@ export default function ConversationTile() {
   }
 
   return (
-    <Column gap={4} style={{ inlineSize: '14rem' }}>
+    <Column gap={4} style={{ inlineSize: '17rem' }}>
       <MessageList
         ref={log}
         aria-label="Conversation with the assistant"

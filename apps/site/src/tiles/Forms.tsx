@@ -37,7 +37,7 @@ export default function FormsTile() {
   return (
     // As tall as the form with its error, the button at its foot, so the form keeps its place as
     // the error comes and goes.
-    <Column gap={4} style={{ inlineSize: '15rem', minBlockSize: '10.5rem' }}>
+    <Column gap={4} style={{ inlineSize: '17rem', minBlockSize: '10.5rem' }}>
       <TextField label="Project name" defaultValue="Northwind launch" />
       <TextField
         label="Owner's email"

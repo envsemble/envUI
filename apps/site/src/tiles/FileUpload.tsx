@@ -4,26 +4,27 @@ import { usePointer, type PointerStep } from '../motion/Motion';
 import { outlined } from './Outline';
 
 /*
- * A photo dragged in from the desktop and dropped: it uploads, and once it is up, it is removed
- * again, leaving the files as they began.
+ * A photo removed from the files and dragged in again from the desktop: dropped, it uploads,
+ * leaving the files as they began.
  */
 const script: PointerStep[] = [
   { wait: 400 },
+  { to: '[aria-label="Remove team-photo.jpg"]', duration: 600 },
+  { wait: 700 },
+  { click: true },
+  { wait: 300 },
+  // Off to the desktop for the photo, and back with it.
+  { leave: true },
+  { wait: 500 },
   { carry: 'team-photo.jpg', as: 'image/jpeg' },
   { to: '.env-drop-zone-target', x: 0.85, y: 0.8 },
   { to: '.env-drop-zone-target', x: 0.5, y: 0.5, duration: 500 },
   { wait: 300 },
   { drop: true },
   { wait: 200 },
-  // The hand moves off the zone while the photo goes up, and comes back to remove it.
+  // The hand moves off the zone while the photo goes up.
   { leave: true },
-  { wait: 2400 },
-  { to: '[aria-label="Remove team-photo.jpg"]' },
-  { wait: 700 },
-  { click: true },
-  { wait: 600 },
-  { leave: true },
-  { wait: 400 },
+  { wait: 3600 },
 ];
 
 /** How much of the photo has gone up, in MB, of 1.1. */
@@ -31,7 +32,7 @@ const size = 1.1;
 
 /** Adding files: a drop zone over the files added, one uploading as it goes up. */
 export default function FileUploadTile() {
-  const [uploaded, setUploaded] = useState<number | null>(null);
+  const [uploaded, setUploaded] = useState<number | null>(size);
   usePointer(script);
   const uploading = uploaded !== null && uploaded < size;
   useEffect(() => {

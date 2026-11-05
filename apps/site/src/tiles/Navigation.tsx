@@ -38,7 +38,7 @@ export default function NavigationTile() {
   usePointer(script);
   const shown = path[path.length - 1];
   return (
-    <Column gap={3} style={{ inlineSize: '14rem' }}>
+    <Column gap={3} style={{ inlineSize: '17rem' }}>
       <PageHeader
         headingLevel={3}
         title={shown}

@@ -49,7 +49,7 @@ export default function DataTablesTile() {
   );
   const all = selected.length === projects.length;
   return (
-    <Column gap={3} style={{ inlineSize: '16rem' }}>
+    <Column gap={3} style={{ inlineSize: '17rem' }}>
       <Row align="center" gap={3}>
         <Text>{selected.length} selected</Text>
         <Toolbar.Root aria-label="Selected projects">
