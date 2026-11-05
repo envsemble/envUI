@@ -178,7 +178,7 @@ test('a long prefix is cut short so the value keeps its room', async ({ page }) 
   expect(narrow.width).toBeGreaterThanOrEqual(95);
 });
 
-test('a quiet field has a faint fill at rest, the neutral fill on hover and the accent frame on focus, and clears its placeholder once focused', async ({
+test('a quiet field has a faint fill at rest, the neutral fill on hover and the accent frame on focus, and keeps its placeholder while focused', async ({
   page,
 }) => {
   await open(page, affixes);
@@ -207,7 +207,9 @@ test('a quiet field has a faint fill at rest, the neutral fill on hover and the 
     expect((await look()).border).toBe('rgba(0, 0, 0, 0)');
     await field.focus();
     await page.mouse.move(0, 0);
-    await expect.poll(async () => (await look()).placeholder).toBe('rgba(0, 0, 0, 0)');
+    // The placeholder stays, as an outline field's does.
+    await expect.poll(async () => (await look()).border).not.toBe('rgba(0, 0, 0, 0)');
+    expect((await look()).placeholder).toBe(rest.placeholder);
     // Focus reads as on an outline field: the accent frame over the rest fill, not the pointer's.
     await expect.poll(async () => (await look()).fill).toBe(rest.fill);
     expect((await look()).border).not.toBe('rgba(0, 0, 0, 0)');
@@ -255,7 +257,7 @@ test('SearchField clears with its button and with Escape inside a dialog', async
   await expect(dialog).toBeVisible();
 });
 
-test('compact fields float their label into the outline, at least 36 px tall while it shows', async ({
+test('compact fields float their label into the outline and keep the button height', async ({
   page,
 }) => {
   await open(page, adoption);
@@ -279,9 +281,7 @@ test('compact fields float their label into the outline, at least 36 px tall whi
     .toBeGreaterThan(0);
   await expect.poll(async () => (await label.boundingBox())!.y).toBeLessThan(wellBox.y + 2);
   const button = page.getByTestId('compact-label-toolbar').getByRole('button', { name: 'Apply' });
-  // With its label shown, a field is at least 2.25 rem tall, a step taller than a compact button.
-  const buttonHeight = Math.round((await button.boundingBox())!.height);
-  expect(Math.round(wellBox.height)).toBe(Math.max(36, buttonHeight));
+  expect(Math.round(wellBox.height)).toBe(Math.round((await button.boundingBox())!.height));
 });
 
 test('an outline field has no fill of its own, and its floated label cuts a notch in the border', async ({
