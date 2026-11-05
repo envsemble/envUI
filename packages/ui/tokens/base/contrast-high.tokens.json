@@ -518,6 +518,15 @@
         "on-emphasis": {
           "$value": "{palette.neutral.0}"
         },
+        "success-on-strong": {
+          "$value": "{palette.green.10}"
+        },
+        "info-on-strong": {
+          "$value": "{palette.blue.10}"
+        },
+        "danger-on-strong": {
+          "$value": "{palette.red.10}"
+        },
         "rating-star": {
           "$value": "{palette.amber.80}"
         },

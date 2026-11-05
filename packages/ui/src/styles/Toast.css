@@ -14,7 +14,12 @@
     syntax: '*';
     inherits: false;
   }
+  /* Every tone takes the neutral strong fill, so a stack reads as one quiet column in a busy screen. */
   .env-toast {
+    --env-toast-container-default: var(--env-color-bg-neutral-strong);
+    --env-toast-outline-default: var(--env-color-border-neutral-strong);
+    --env-toast-hover-default: var(--env-color-bg-neutral-strong-hover);
+    --env-toast-pressed-default: var(--env-color-bg-neutral-strong-pressed);
     --env-toast-text: var(--env-toast-content, var(--env-color-fg-on-strong));
     /* The dismiss button's hover and press fills: state layers of the text color over a container
        the application set. While none is set, --env-toast-custom-hover and -pressed refer to it
@@ -40,9 +45,7 @@
     --env-toast-dismiss-pressed: var(--env-toast-custom-pressed, var(--env-toast-pressed-default));
     box-sizing: border-box;
     display: inline-flex;
-    width: max-content;
-    /* Long messages wrap within a readable measure instead of stretching across the viewport. */
-    max-width: min(100%, 28rem);
+    max-width: 100%;
     align-items: center;
     gap: calc(var(--env-space-2) + var(--env-space-1) / 2);
     padding: var(--env-space-2) var(--env-space-3) var(--env-space-2)
@@ -50,9 +53,9 @@
     min-width: 0;
     min-height: 3rem;
     /* Toasts float over everything at elevation 2, as menus do, set apart by their strong fill, with
-       no shadow and no edge, in an alert's corner, the large one of the radius scale. At high contrast each tone's edge bounds it:
-       on a light page its fill a step darker rather than the light popup edge, which would ring it
-       like a halo; in dark the popup edge. Under forced colors the edge, transparent otherwise, is what
+       no shadow and no edge, in an alert's corner, the large one of the radius scale. At high
+       contrast the strong fill's edge bounds it: on a light page the fill a step darker rather than
+       the light popup edge, which would ring it like a halo; in dark the popup edge. Under forced colors the edge, transparent otherwise, is what
        the system paints. An edge the application sets is drawn at every contrast. */
     --env-toast-radius: var(--env-radius-lg);
     --env-toast-high-contrast-edge: var(--env-theme-high-contrast)
@@ -64,32 +67,18 @@
     color: var(--env-toast-text);
     flex-wrap: nowrap;
   }
-  .env-toast:where([data-tone='neutral']) {
-    --env-toast-container-default: var(--env-color-bg-neutral-strong);
-    --env-toast-outline-default: var(--env-color-border-neutral-strong);
-    --env-toast-hover-default: var(--env-color-bg-neutral-strong-hover);
-    --env-toast-pressed-default: var(--env-color-bg-neutral-strong-pressed);
-  }
+  /* The tone is the status icon, in the tone's light grade, on a disc of it. */
   .env-toast:where([data-tone='success']) {
-    --env-toast-container-default: var(--env-color-bg-success-strong);
-    --env-toast-outline-default: var(--env-color-border-success-strong);
-    --env-toast-hover-default: var(--env-color-bg-success-strong-hover);
-    --env-toast-pressed-default: var(--env-color-bg-success-strong-pressed);
+    --env-toast-tone: var(--env-color-fg-success-on-strong);
   }
   .env-toast:where([data-tone='info']) {
-    --env-toast-container-default: var(--env-color-bg-info-strong);
-    --env-toast-outline-default: var(--env-color-border-info-strong);
-    --env-toast-hover-default: var(--env-color-bg-info-strong-hover);
-    --env-toast-pressed-default: var(--env-color-bg-info-strong-pressed);
+    --env-toast-tone: var(--env-color-fg-info-on-strong);
   }
   .env-toast:where([data-tone='danger']) {
-    --env-toast-container-default: var(--env-color-bg-danger-strong);
-    --env-toast-outline-default: var(--env-color-border-danger-strong);
-    --env-toast-hover-default: var(--env-color-bg-danger-strong-hover);
-    --env-toast-pressed-default: var(--env-color-bg-danger-strong-pressed);
+    --env-toast-tone: var(--env-color-fg-danger-on-strong);
   }
   .env-toast-message {
-    flex: 0 1 auto;
+    flex: 1 1 auto;
     min-width: 0;
     /* A fixed measure also bounds the toast's intrinsic width, which percentages cannot do in auto-sized
        layouts such as tables. */
@@ -105,10 +94,20 @@
     font: inherit;
     margin: 0;
   }
+  /* The icon sits on a disc of its tone, its center where the bare icon's would be, so the message
+     keeps its place; with the application's text color, it takes that color. */
   .env-toast-status-icon {
-    flex: 0 0 1.125rem;
+    --env-toast-icon-inset: 0.3125rem;
+    box-sizing: content-box;
+    flex: 0 0 auto;
     width: 1.125rem;
     height: 1.125rem;
+    margin-inline: calc(-1 * var(--env-toast-icon-inset)) 0;
+    padding: var(--env-toast-icon-inset);
+    border-radius: var(--env-radius-full);
+    color: var(--env-toast-content, var(--env-toast-tone, currentColor));
+    /* contrast: toast-icon-disc */
+    background: color-mix(in srgb, currentColor 16%, transparent);
   }
   /* The action keeps its label on one line and the message wraps instead; only a label longer than
      half the toast wraps. */
@@ -118,7 +117,7 @@
     white-space: normal;
     overflow-wrap: break-word;
     /* The action is an outline Button drawn in the toast's own ink, its label in the toast's text
-       color and its edge that color at 55%, so no second accent competes with the tone's fill; hover
+       color and its edge that color at 55%, so no second accent competes with the tone's icon; hover
        and press take the dismiss button's fills. A button's own color properties still win. */
     color: var(--env-button-content, var(--env-toast-text));
     border-color: var(
@@ -135,13 +134,14 @@
     background: var(--env-button-custom-fill, var(--env-toast-dismiss-pressed));
     border-color: var(--env-button-outline, var(--env-toast-text));
   }
-  /* Its focus ring is in the toast's text color, as the dismiss button's is: the blue one would sink
-     into the information toast. */
-  .env-toast-action:focus-visible {
+  /* Its focus ring is in the toast's text color, as the dismiss button's is, which reads on the
+     toast's fill, the application's included. */
+  .env-toast-action:focus-visible:not(:disabled):not([aria-disabled='true']) {
     outline-color: currentColor;
+    border-color: currentColor;
   }
-  /* The dismiss button is an IconButton with a cross on the notice's strong fill: the fill's text color, with the
-     fill's own hover and press steps, or state layers on a container the application set. Toast.css comes after Button.css, so at equal specificity
+  /* The dismiss button is an IconButton with a cross on the notice's strong fill: the fill's text
+     color, with the fill's own hover and press steps, or state layers on a container the application set. Toast.css comes after Button.css, so at equal specificity
      these colors win over the ghost ones. */
   .env-toast-dismiss {
     --env-icon-button-hit-area: var(--env-control-height-touch);
@@ -171,7 +171,10 @@
     z-index: var(--env-z-toast);
     display: flex;
     gap: var(--env-space-2);
-    width: max-content;
+    /* One width for every toast in a region, so a stack's edges line up; a phone's width less its
+       gutters caps it. */
+    --env-toast-width: 22rem;
+    width: var(--env-toast-width);
     max-width: calc(
       100% - max(var(--env-space-4), env(safe-area-inset-left)) -
         max(var(--env-space-4), env(safe-area-inset-right))
@@ -190,6 +193,7 @@
   }
   .env-toast-viewport > .env-toast {
     flex-shrink: 0;
+    width: 100%;
     pointer-events: auto;
     box-sizing: border-box;
     /* Motion: it fades in, below; the toast list has no positioner, so it scales from the center. */

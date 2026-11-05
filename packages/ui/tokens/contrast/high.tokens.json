@@ -404,6 +404,15 @@
       "on-emphasis": {
         "$value": "{contrast-high.color.fg.on-emphasis}"
       },
+      "success-on-strong": {
+        "$value": "{contrast-high.color.fg.success-on-strong}"
+      },
+      "info-on-strong": {
+        "$value": "{contrast-high.color.fg.info-on-strong}"
+      },
+      "danger-on-strong": {
+        "$value": "{contrast-high.color.fg.danger-on-strong}"
+      },
       "link-on-muted": {
         "$root": {
           "$value": "{contrast-high.color.fg.link}"

@@ -564,7 +564,8 @@
           "attribute": "data-tone",
           "values": [
             "accent",
-            "danger"
+            "danger",
+            "neutral"
           ],
           "parts": [
             "env-button"

@@ -2213,6 +2213,13 @@
         "high": 7
       }
     },
+    "--env-color-fg-danger-on-strong on toast-icon-disc-danger over --env-color-bg-neutral-strong": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 3,
+        "high": 4.5
+      }
+    },
     "--env-color-fg-default on --env-color-bg-danger-muted over --env-color-bg-default": {
       "kind": "text",
       "minimum": {
@@ -3268,6 +3275,13 @@
       "minimum": {
         "standard": 4.5,
         "high": 7
+      }
+    },
+    "--env-color-fg-info-on-strong on toast-icon-disc-info over --env-color-bg-neutral-strong": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 3,
+        "high": 4.5
       }
     },
     "--env-color-fg-link on --env-color-bg-default": {
@@ -5512,6 +5526,13 @@
       }
     },
     "--env-color-fg-success on --env-color-bg-success-subtle-pressed over --env-color-bg-success-subtle-hover over --env-color-bg-recessed": {
+      "kind": "non-text",
+      "minimum": {
+        "standard": 3,
+        "high": 4.5
+      }
+    },
+    "--env-color-fg-success-on-strong on toast-icon-disc-success over --env-color-bg-neutral-strong": {
       "kind": "non-text",
       "minimum": {
         "standard": 3,

@@ -164,18 +164,19 @@ The Design tokens page of the Docs lists every value in each theme, and this gui
 
 Status icons, short status text and badges share these tokens, at least 4.5:1 on the page, surfaces and rows in both themes, and 7:1 at high contrast.
 
-| Token                            | Meaning                                                             |
-| -------------------------------- | ------------------------------------------------------------------- |
-| `--env-color-fg-muted`           | Neutral: no particular state, such as archived, and most actions    |
-| `--env-color-fg-primary`         | Primary: what is current or highlighted                             |
-| `--env-color-fg-accent`          | Accent: what stands out, in purple, such as a featured item         |
-| `--env-color-bg-info-strong`     | Info, an info toast's fill: something to know, neither good nor bad |
-| `--env-color-fg-success`         | Success: healthy, ready or saved                                    |
-| `--env-color-fg-warning`         | Warning: needs attention soon                                       |
-| `--env-color-fg-danger`          | Danger: failed, or an action that destroys something                |
-| `--env-color-fg-done`            | Done: completed work                                                |
-| `--env-color-bg-{tone}-muted`    | The tone's tint behind badges and alerts                            |
-| `--env-color-bg-{tone}-emphasis` | A solid fill in the tone, with `fg-on-emphasis`                     |
+| Token                             | Meaning                                                          |
+| --------------------------------- | ---------------------------------------------------------------- |
+| `--env-color-fg-muted`            | Neutral: no particular state, such as archived, and most actions |
+| `--env-color-fg-primary`          | Primary: what is current or highlighted                          |
+| `--env-color-fg-accent`           | Accent: what stands out, in purple, such as a featured item      |
+| `--env-color-bg-info-strong`      | Info, as a strong fill: something to know, neither good nor bad  |
+| `--env-color-fg-success`          | Success: healthy, ready or saved                                 |
+| `--env-color-fg-warning`          | Warning: needs attention soon                                    |
+| `--env-color-fg-danger`           | Danger: failed, or an action that destroys something             |
+| `--env-color-fg-done`             | Done: completed work                                             |
+| `--env-color-bg-{tone}-muted`     | The tone's tint behind badges and alerts                         |
+| `--env-color-bg-{tone}-emphasis`  | A solid fill in the tone, with `fg-on-emphasis`                  |
+| `--env-color-fg-{tone}-on-strong` | A toast's tone icon on its dark fill: success, info or danger    |
 
 ```css
 .work-status[data-status='blocked'] {

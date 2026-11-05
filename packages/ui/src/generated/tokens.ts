@@ -46,7 +46,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#9948b6',
-      dark: '#e7a8ff',
+      dark: '#d683f5',
       'light-high-contrast': '#6d1888',
       'dark-high-contrast': '#f2d2ff',
     },
@@ -57,7 +57,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#83319f',
-      dark: '#f0caff',
+      dark: '#e7a8ff',
       'light-high-contrast': '#63047d',
       'dark-high-contrast': '#f7e4ff',
     },
@@ -68,7 +68,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#6d1888',
-      dark: '#f2d2ff',
+      dark: '#efc6ff',
       'light-high-contrast': '#57006e',
       'dark-high-contrast': '#faedff',
     },
@@ -101,7 +101,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#8e3caa',
-      dark: '#e7a8ff',
+      dark: '#d683f5',
       'light-high-contrast': '#63047d',
       'dark-high-contrast': '#f2d2ff',
     },
@@ -337,7 +337,7 @@ export const tokens = {
       'dark-high-contrast': 'rgb(255 211 207 / 0.1)',
     },
   },
-  /** The danger fill of error toasts in both themes; paired with fg.on-strong. */
+  /** A strong danger fill in both themes; paired with fg.on-strong. Toasts take the neutral strong fill, their tone in the icon. */
   'color.bg.danger.strong': {
     cssVariable: '--env-color-bg-danger-strong',
     type: 'color',
@@ -348,7 +348,7 @@ export const tokens = {
       'dark-high-contrast': '#8d0200',
     },
   },
-  /** A control on the error toast, its action or dismiss button, under the pointer: lighter, as on every toast, at the lightest grade that keeps white labels at 4.5:1. */
+  /** A control on the strong danger fill under the pointer: lighter, at the lightest grade that keeps white labels at 4.5:1. */
   'color.bg.danger.strong.hover': {
     cssVariable: '--env-color-bg-danger-strong-hover',
     type: 'color',
@@ -359,7 +359,7 @@ export const tokens = {
       'dark-high-contrast': '#7a0200',
     },
   },
-  /** A control on the error toast while pressed. It can’t lighten further without its white label falling below 4.5:1, so it settles halfway back. */
+  /** A control on the strong danger fill while pressed. It can’t lighten further without its white label falling below 4.5:1, so it settles halfway back. */
   'color.bg.danger.strong.pressed': {
     cssVariable: '--env-color-bg-danger-strong-pressed',
     type: 'color',
@@ -469,7 +469,7 @@ export const tokens = {
       'dark-high-contrast': '#1e1f21',
     },
   },
-  /** The information fill of toasts in both themes; paired with fg.on-strong. */
+  /** A strong information fill in both themes; paired with fg.on-strong. Toasts take the neutral strong fill, their tone in the icon. */
   'color.bg.info.strong': {
     cssVariable: '--env-color-bg-info-strong',
     type: 'color',
@@ -480,7 +480,7 @@ export const tokens = {
       'dark-high-contrast': '#094285',
     },
   },
-  /** A control on the information toast under the pointer. Its white label keeps 4.5:1. */
+  /** A control on the strong information fill under the pointer. Its white label keeps 4.5:1. */
   'color.bg.info.strong.hover': {
     cssVariable: '--env-color-bg-info-strong-hover',
     type: 'color',
@@ -491,7 +491,7 @@ export const tokens = {
       'dark-high-contrast': '#003878',
     },
   },
-  /** A control on the information toast while pressed. Its white label keeps 4.5:1. */
+  /** A control on the strong information fill while pressed. Its white label keeps 4.5:1. */
   'color.bg.info.strong.pressed': {
     cssVariable: '--env-color-bg-info-strong-pressed',
     type: 'color',
@@ -656,7 +656,7 @@ export const tokens = {
       'dark-high-contrast': 'rgb(232 234 238 / 0.15)',
     },
   },
-  /** The dark neutral fill of tooltips and neutral toasts in both themes; paired with fg.on-strong. */
+  /** The dark neutral fill of tooltips and toasts in both themes; paired with fg.on-strong, and a toast’s tone icon with fg.{success|info|danger}-on-strong. */
   'color.bg.neutral.strong': {
     cssVariable: '--env-color-bg-neutral-strong',
     type: 'color',
@@ -805,7 +805,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#005cc8',
-      dark: '#c3d8fc',
+      dark: '#bfd5fb',
       'light-high-contrast': '#00377c',
       'dark-high-contrast': '#cddefc',
     },
@@ -816,7 +816,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#004aa2',
-      dark: '#cddefc',
+      dark: '#dbe8fd',
       'light-high-contrast': '#002f6d',
       'dark-high-contrast': '#e0ebfd',
     },
@@ -1063,7 +1063,7 @@ export const tokens = {
       'dark-high-contrast': 'rgb(152 240 181 / 0.1)',
     },
   },
-  /** The teal success fill of toasts in both themes; paired with fg.on-strong. */
+  /** A strong teal success fill in both themes; paired with fg.on-strong. Toasts take the neutral strong fill, their tone in the icon. */
   'color.bg.success.strong': {
     cssVariable: '--env-color-bg-success-strong',
     type: 'color',
@@ -1074,7 +1074,7 @@ export const tokens = {
       'dark-high-contrast': '#004e37',
     },
   },
-  /** A control on the success toast, its action or dismiss button, under the pointer. Its white label keeps 4.5:1. */
+  /** A control on the strong success fill under the pointer. Its white label keeps 4.5:1. */
   'color.bg.success.strong.hover': {
     cssVariable: '--env-color-bg-success-strong-hover',
     type: 'color',
@@ -1085,7 +1085,7 @@ export const tokens = {
       'dark-high-contrast': '#00432e',
     },
   },
-  /** A control on the success toast while pressed. Its white label keeps 4.5:1. */
+  /** A control on the strong success fill while pressed. Its white label keeps 4.5:1. */
   'color.bg.success.strong.pressed': {
     cssVariable: '--env-color-bg-success-strong-pressed',
     type: 'color',
@@ -1250,7 +1250,7 @@ export const tokens = {
       'dark-high-contrast': 'rgb(255 228 226 / 0.28)',
     },
   },
-  /** The edge of the strong danger fill where it floats, on error toasts. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge, elevation.2.border, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted. */
+  /** The edge of the strong danger fill where it floats. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge, elevation.2.border, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted. */
   'color.border.danger.strong': {
     cssVariable: '--env-color-border-danger-strong',
     type: 'color',
@@ -1316,7 +1316,7 @@ export const tokens = {
       'dark-high-contrast': '#b5cffb',
     },
   },
-  /** The edge of the strong information fill where it floats, on information toasts. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge, elevation.2.border, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted. */
+  /** The edge of the strong information fill where it floats. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge, elevation.2.border, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted. */
   'color.border.info.strong': {
     cssVariable: '--env-color-border-info-strong',
     type: 'color',
@@ -1382,7 +1382,7 @@ export const tokens = {
       'dark-high-contrast': 'rgb(232 234 238 / 0.55)',
     },
   },
-  /** The edge of the strong neutral fill where it floats, on tooltips and neutral toasts. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge, elevation.2.border, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted. */
+  /** The edge of the strong neutral fill where it floats, on tooltips and toasts. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge, elevation.2.border, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted. */
   'color.border.neutral.strong': {
     cssVariable: '--env-color-border-neutral-strong',
     type: 'color',
@@ -1470,7 +1470,7 @@ export const tokens = {
       'dark-high-contrast': 'rgb(165 253 193 / 0.28)',
     },
   },
-  /** The edge of the strong success fill where it floats, on success toasts. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge, elevation.2.border, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted. */
+  /** The edge of the strong success fill where it floats. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge, elevation.2.border, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted. */
   'color.border.success.strong': {
     cssVariable: '--env-color-border-success-strong',
     type: 'color',
@@ -1734,6 +1734,17 @@ export const tokens = {
       'dark-high-contrast': '#ffe4e2',
     },
   },
+  /** A danger toast’s icon, on the neutral strong fill of toasts in both themes, at 3:1 on its tinted disc. */
+  'color.fg.danger-on-strong': {
+    cssVariable: '--env-color-fg-danger-on-strong',
+    type: 'color',
+    values: {
+      light: '#f8aca6',
+      dark: '#f8aca6',
+      'light-high-contrast': '#ffd3cf',
+      'dark-high-contrast': '#ffd3cf',
+    },
+  },
   /** Body text and the labels of rows, fields and choice controls. */
   'color.fg.default': {
     cssVariable: '--env-color-fg-default',
@@ -1765,6 +1776,17 @@ export const tokens = {
       dark: '#aac1dd',
       'light-high-contrast': '#253650',
       'dark-high-contrast': '#deecfd',
+    },
+  },
+  /** An information toast’s icon, on the neutral strong fill of toasts in both themes, at 3:1 on its tinted disc. */
+  'color.fg.info-on-strong': {
+    cssVariable: '--env-color-fg-info-on-strong',
+    type: 'color',
+    values: {
+      light: '#9fc1f8',
+      dark: '#9fc1f8',
+      'light-high-contrast': '#cddefc',
+      'dark-high-contrast': '#cddefc',
     },
   },
   /** Links and text buttons: at least 4.5:1 on every surface and row. */
@@ -1930,6 +1952,17 @@ export const tokens = {
       dark: '#7ad197',
       'light-high-contrast': '#00441a',
       'dark-high-contrast': '#a5fdc1',
+    },
+  },
+  /** A success toast’s icon, on the neutral strong fill of toasts in both themes, at 3:1 on its tinted disc. */
+  'color.fg.success-on-strong': {
+    cssVariable: '--env-color-fg-success-on-strong',
+    type: 'color',
+    values: {
+      light: '#7ad197',
+      dark: '#7ad197',
+      'light-high-contrast': '#98f0b5',
+      'dark-high-contrast': '#98f0b5',
     },
   },
   /** Warning text and icons. */
