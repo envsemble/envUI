@@ -60,8 +60,9 @@ Not shown: the span the value moves along, which draws the faint ticks, and the 
 
 ### At rest
 
-Slider is a field, as tall as the fields and with their corners, so it sits in a form among them. Its fill is the primary color, as a Progress bar's, and the label and the value turn to the text color for emphasis where they lie over it. A quiet handle at the end of the fill shows it can be moved.
+Slider is a field, as tall as the fields and with their corners, so it sits in a form among them. A quiet handle at the end of the fill shows it can be moved.
 
+- Its fill is the primary color, as a Progress bar's. Over it, the label and the value take the text color of a primary button's label.
 - Under the label or the value, the handle hides at rest. Under the pointer and with keyboard focus it shows there too, at its full size and half its strength, with the text over it, so both stay readable.
 
 ### Under the pointer

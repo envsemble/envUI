@@ -236,7 +236,8 @@
   }
   /* The label and the value undo the stretch, so their text keeps its shape and size: each scaled
      back from its outer side, which travels with the end of the field it sits at. */
-  :is(.env-slider-header, .env-slider-fill-text) > * {
+  .env-slider-header > *,
+  .env-slider-fill-text > * {
     scale: calc(1 / (1 + var(--env-slider-stretch))) calc(1 / (1 - var(--env-slider-stretch) / 2));
   }
   :is(.env-slider-header, .env-slider-fill-text) > :first-child,

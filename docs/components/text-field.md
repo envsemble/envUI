@@ -98,7 +98,7 @@ examples:
 
 An outline field has no fill of its own. It takes the background of what it sits on, such as a card or a dialog. Its label rests inside it and floats into the edge, which opens behind it.
 
-- With its label hidden, it is as tall as a button of its size, so the two line up in a row; with a visible label it is at least 2.25 rem tall.
+- With its label hidden, it is as tall as a button of its size, so the two line up in a row. With its label shown, a short one is a little taller.
 - Stacked in a Column or a Grid, it keeps a little room above it for its floated label.
 - A field on its own on a page, or in a long form, takes the large size.
 - It can be given a fill of its own where it needs one.
@@ -121,7 +121,10 @@ A ghost field has no edge. A faint fill at rest shows where to type, and deepens
 
 ### Sizes
 
-Outline and ghost fields come in the three control heights of the [scale](../foundations/spacing.md): small, medium and large. A field without a visible label, as in a toolbar, lines up with a button of the same size. An outline field that shows its label is at least 2.25 rem tall, so its floated label and its value each have room: in a form at the compact scale, a small or medium field is a step taller than a button of its size.
+Outline and ghost fields come in the three control heights of the [scale](../foundations/spacing.md): small, medium and large.
+
+- A field without a visible label, as in a toolbar, lines up with a button of its size.
+- An outline field that shows its label gives the label and the value room: a small one, or a medium one at the compact scale, is a little taller than a button of its size.
 
 ```tsx figure=FieldsBesideButtons
 
@@ -303,7 +306,7 @@ A TextField is a native `<input>` with its `label`, `description` and `error`. G
 <TextField size="sm" label="Filter" name="filter" />
 ```
 
-`variant` is `outline`, the default, or `ghost`, as on Textarea. `size` is `sm`, `md` or `lg`; without it, a field takes its container's. `showLabel={false}` keeps the label for assistive technology only.
+`variant` is `outline`, the default, or `ghost`, as on Textarea. `size` is `sm`, `md` or `lg`; without it, a field takes its container's. `showLabel={false}` keeps the label for assistive technology only. An outline field that shows its label is at least 2.25 rem tall.
 
 #### Prefix, suffix, icon and end action
 
