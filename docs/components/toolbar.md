@@ -240,5 +240,6 @@ The parts are the toolbar, `env-toolbar`; its groups, `env-toolbar-group`; its b
 ## Changelog
 
 - **1.0.0**: Toolbar, on Base UI's Toolbar.
+- **1.0.0-prerelease.6**: `Toolbar.Button` takes `tone="danger"` for an action that destroys, such as Delete.
 - **1.0.0-prerelease.6**: A disabled toolbar or group disables its Toolbar.Link too: the link reports `aria-disabled`, has no destination and leaves the arrow keys' path.
 - **1.0.0-prerelease.4**: `tooltipDelay` on Toolbar.Root sets how long the pointer rests on a button or link before its tooltip opens; 0 shows every name at once.

@@ -198,6 +198,12 @@ export interface ButtonProps
   /** As Button's; ghost by default, from the toolbar. */
   variant?: ButtonVariant;
   /**
+   * As Button's: danger for an action that destroys, such as Delete, so it keeps its warning
+   * without a label.
+   * @default 'neutral'
+   */
+  tone?: 'neutral' | 'danger';
+  /**
    * As Button's: a spinner replaces the icon while the work runs.
    * @default false
    */
@@ -215,6 +221,7 @@ function ToolbarButton({
   shortcut,
   disabled,
   variant,
+  tone,
   className,
   ...props
 }: ButtonProps) {
@@ -230,6 +237,7 @@ function ToolbarButton({
           {...({
             ...props,
             variant,
+            tone,
             icon,
             'aria-label': label,
             'aria-pressed': pressed,
