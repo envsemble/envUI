@@ -5,6 +5,7 @@ import {
   DropZone,
   List,
   Progress,
+  Row,
   Text,
   ToastProvider,
   useToast,
@@ -143,7 +144,8 @@ function Uploads() {
                   : undefined
             }
             end={
-              <>
+              // Try again beside Remove: the pair moves below the text together.
+              <Row gap={2}>
                 {upload.state === 'failed' && (
                   <Button
                     variant="text"
@@ -160,7 +162,7 @@ function Uploads() {
                 >
                   Remove
                 </Button>
-              </>
+              </Row>
             }
           >
             {upload.state === 'uploading' && (
