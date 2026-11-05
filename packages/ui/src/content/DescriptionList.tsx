@@ -7,7 +7,7 @@ import '../styles/DescriptionList.css';
 export interface RootProps extends ComponentPropsWithRef<'dl'> {
   /**
    * Where each label sits: inline, beside its value, in a column as wide as the longest label;
-   * stacked, above its value; auto, inline, stacked below 24 rem of the list's own width.
+   * stacked, above its value; auto, inline, stacked below 18 rem of the list's own width.
    * @default 'auto'
    */
   layout?: 'inline' | 'stacked' | 'auto';

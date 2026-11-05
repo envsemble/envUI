@@ -37,7 +37,7 @@ const sheets = Object.fromEntries(
  */
 const ownThresholds = {
   // A label beside its value needs about 24 rem, whatever the window.
-  'DescriptionList.css': ['24rem'],
+  'DescriptionList.css': ['18rem'],
   // A stacking Table's region makes 37.5em its stackBelow through its font size, as em in a
   // container query is the container's own.
   'Table.css': ['37.5em'],
