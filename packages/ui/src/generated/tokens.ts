@@ -992,7 +992,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: 'rgb(31 31 34 / 0.07)',
-      dark: 'rgb(232 234 238 / 0.12)',
+      dark: 'rgb(232 234 238 / 0.18)',
       'light-high-contrast': 'rgb(31 31 34 / 0.06)',
       'dark-high-contrast': 'rgb(232 234 238 / 0.06)',
     },
@@ -1003,7 +1003,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: 'rgb(31 31 34 / 0.11)',
-      dark: 'rgb(232 234 238 / 0.15)',
+      dark: 'rgb(232 234 238 / 0.2)',
       'light-high-contrast': 'rgb(31 31 34 / 0.08)',
       'dark-high-contrast': 'rgb(232 234 238 / 0.08)',
     },
@@ -1822,13 +1822,13 @@ export const tokens = {
       'dark-high-contrast': '#e0ebfd',
     },
   },
-  /** Links and text buttons on a tint, where fg.link falls below 4.5:1: inside alerts, on bg.primary.muted, and in list rows and interactive table rows under the pointer or pressed. In light it is a grade darker than fg.link and darkens on hover and press; in dark it is fg.link at rest and lightens on hover and press, where fg.link darkens. Alerts and those rows point fg.link at it; an application puts it on bg.brand-muted. */
+  /** Links and text buttons on a tint, where fg.link falls below 4.5:1: inside alerts, on bg.primary.muted, and in list rows and interactive table rows under the pointer or pressed. In light it is a grade darker than fg.link and darkens on hover and press; in dark it is a grade lighter than fg.link, so it keeps 4.5:1 on a hovered or pressed row, and lightens on hover and press, where fg.link darkens. Alerts and those rows point fg.link at it; an application puts it on bg.brand-muted. */
   'color.fg.link-on-muted': {
     cssVariable: '--env-color-fg-link-on-muted',
     type: 'color',
     values: {
       light: '#0053b5',
-      dark: '#9fc1f8',
+      dark: '#b5cffb',
       'light-high-contrast': '#00377c',
       'dark-high-contrast': '#e0ebfd',
     },
@@ -1839,7 +1839,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#004aa2',
-      dark: '#b5cffb',
+      dark: '#cddefc',
       'light-high-contrast': '#002f6d',
       'dark-high-contrast': '#eaf2ff',
     },
@@ -1850,7 +1850,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#00408f',
-      dark: '#cddefc',
+      dark: '#dbe8fd',
       'light-high-contrast': '#00275c',
       'dark-high-contrast': '#f4f8ff',
     },
