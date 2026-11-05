@@ -10,7 +10,9 @@ import {
 import { IconHome } from '@envsemble/envui/icons/Home';
 import { IconInbox } from '@envsemble/envui/icons/Inbox';
 import { IconSearch } from '@envsemble/envui/icons/Search';
+import { useMedia } from '../motion/Autoplay';
 import { usePointer, type PointerStep } from '../motion/Motion';
+import { narrowGallery } from './Tiles';
 
 const item = (index: number) =>
   `.env-navigation-bar-list > li:nth-child(${index}) .env-navigation-bar-item`;
@@ -38,10 +40,12 @@ const places = [
 /**
  * An application's frame at its own size, as wide as a gallery's tile shows: the top bar, titled
  * with the place, over the navigation bar, the form a compact window's navigation takes, its places
- * side by side, so both show whole in the low stage.
+ * side by side, so both show whole in the low stage; on a phone's narrower tile, narrower, so its
+ * end shows there too.
  */
 export default function ScaffoldTile() {
   const [current, setCurrent] = useState('Home');
+  const narrow = useMedia(narrowGallery);
   usePointer(script);
   const destinations: Destination[] = places.map(({ label, icon }) => ({
     label,
@@ -54,7 +58,7 @@ export default function ScaffoldTile() {
       scroll="body"
       landmarks={false}
       navigationForms={{ compact: 'bar', medium: 'bar', expanded: 'bar', large: 'bar' }}
-      style={{ inlineSize: '12.5rem', blockSize: '7rem' }}
+      style={{ inlineSize: narrow ? '10rem' : '12.5rem', blockSize: '7rem' }}
       topBar={
         <TopBar
           title={current}

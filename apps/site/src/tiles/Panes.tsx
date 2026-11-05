@@ -1,5 +1,5 @@
 import { Column, List, Panes, Surface, Text } from '@envsemble/envui';
-import { useMustShow, usePointer, type PointerStep } from '../motion/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 
 const panes = '.env-panes';
 
@@ -41,11 +41,11 @@ const script: PointerStep[] = [
 /**
  * A list of messages beside the chosen one, resized by the gap between them: low, and as wide as
  * panes side by side are, so the stage shows the list, the divider and the start of the detail,
- * whose end it fades out (useFit.ts); the detail's heading is what the drag moves.
+ * whose end it fades out (useFit.ts), all three in view as the list widens; the detail's short
+ * lines start close to the divider, so they stay in view at a phone's width too.
  */
 export default function PanesTile() {
   usePointer(script);
-  useMustShow('.env-panes-detail h3');
   return (
     <Panes.Root
       behavior="list-detail"
@@ -64,11 +64,9 @@ export default function PanesTile() {
       </Panes.List>
       <Panes.Divider label="Resize the inbox" />
       <Panes.Detail label="Launch">
-        <Surface padding={3} render={<Column gap={1} />} style={{ minBlockSize: '100%' }}>
-          <Text variant="title" render={<h3 />}>
-            Launch
-          </Text>
-          <Text emphasis="muted">May 4</Text>
+        <Surface padding={2} render={<Column gap={1} />} style={{ minBlockSize: '100%' }}>
+          <Text render={<h3 />}>Launch</Text>
+          <Text variant="body-sm">May 4</Text>
         </Surface>
       </Panes.Detail>
     </Panes.Root>

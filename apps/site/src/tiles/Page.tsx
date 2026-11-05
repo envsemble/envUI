@@ -11,16 +11,16 @@ const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2
 
 /**
  * A page in a box that scrolls, as a window does, at its own size and as low as its header and one
- * section, so it ends on a whole line: it scrolls down a section at a time, its sticky
- * header staying at the top and taking its fill as the sections pass beneath it, and back up.
- * Each step rests with one whole section just under the header; room after the last lets it
- * scroll there too. In a phone's narrower tile the box is narrower, so the page is drawn at about
+ * whole section: its still is scrolled to the first section, under the header stuck at the top
+ * with its fill, and it scrolls down a section at a time and back. Each step rests with one whole
+ * section just under the header; room after the last lets it scroll there too. In a phone's narrower tile the box is narrower, so the page is drawn at about
  * its own size there.
  */
 export default function PageTile() {
   const step = useTimeline([1100, 1700, 1700]);
   const narrow = useMedia(narrowGallery);
   const box = useRef<HTMLDivElement>(null);
+  const placed = useRef(false);
   useEffect(() => {
     const element = box.current;
     if (!element) return;
@@ -32,8 +32,14 @@ export default function PageTile() {
     const frameBox = element.getBoundingClientRect();
     const scale = frameBox.height / element.offsetHeight || 1;
     const top = section ? (section.getBoundingClientRect().top - frameBox.top) / scale + from : 0;
-    const to = step === 0 || !header ? 0 : Math.round(top - header.offsetHeight - 4);
+    const to = header ? Math.round(top - header.offsetHeight - 4) : 0;
     if (from === to) return;
+    // Its still is drawn there at once rather than scrolled to.
+    if (!placed.current) {
+      placed.current = true;
+      element.scrollTop = to;
+      return;
+    }
     const start = performance.now();
     let frame = 0;
     const tick = (now: number) => {
@@ -49,7 +55,7 @@ export default function PageTile() {
       ref={box}
       style={{
         inlineSize: narrow ? '10rem' : '12.5rem',
-        blockSize: '6.125rem',
+        blockSize: '6.25rem',
         overflow: 'hidden',
         borderRadius: 'var(--env-radius-lg)',
         background: 'var(--env-color-bg-page)',
