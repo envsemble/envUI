@@ -208,8 +208,10 @@ test('compositions reuse primitive colors while unrelated roles stay independent
       ['--env-color-bg-neutral-muted', ['secondary', 'icon', 'chip']],
       ['--env-color-fg-link', ['link', 'textButton']],
       ['--env-color-bg-primary-emphasis', ['primary', 'checkbox', 'switch']],
-      // Every primary, the destructive one too, takes its tone's emphasis fill and its label color.
-      ['--env-color-fg-on-emphasis', ['primary', 'destructive']],
+      // Every primary takes its tone's emphasis fill; the destructive one's saturated red takes the
+      // white label of the strong fills, the others the emphasis label.
+      ['--env-color-fg-on-emphasis', ['primary']],
+      ['--env-color-fg-on-strong', ['destructive']],
       // The selected tab is a text tab in the accent's text color, whatever its button's variant.
       ['--env-color-fg-primary', ['tab']],
       ['--env-color-bg-selected', ['navigation']],
@@ -264,9 +266,8 @@ test('compositions reuse primitive colors while unrelated roles stay independent
     const selectedFill = await selected.evaluate(
       (element) => getComputedStyle(element).backgroundColor,
     );
-    // An unselected tab under the pointer and pressed shows no block, which would read as a second
-    // kind of selection: its label takes the text color and a faint underline in that color stands
-    // where the indicator would, never as strong as the indicator.
+    // An unselected tab under the pointer and pressed shows no block and no bar, either of which
+    // would read as a second selection: only its label takes the text color.
     const markAlpha = (tab: import('@playwright/test').Locator) =>
       tab.evaluate((element) => {
         const probe = document.createElement('canvas').getContext('2d')!;
@@ -287,12 +288,10 @@ test('compositions reuse primitive colors while unrelated roles stay independent
       await inactive.hover();
       await expect(inactive).toHaveCSS('color', text);
       await expect(inactive).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
-      const hoverMark = await markAlpha(inactive);
-      expect(hoverMark).toBeGreaterThan(0.15);
-      expect(hoverMark).toBeLessThan(0.5);
+      expect(await markAlpha(inactive)).toBe(0);
       await expect(inactive).toHaveAttribute('aria-selected', 'false');
       await expect(selected).toHaveCSS('background-color', selectedFill);
-      // A press selects the tab, still with no fill: the faint mark gives way to the indicator.
+      // A press selects the tab, still with no fill: then the indicator shows.
       await page.mouse.down();
       await expect(inactive).toHaveAttribute('aria-selected', 'true');
       await expect(inactive).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');

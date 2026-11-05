@@ -186,7 +186,7 @@
     display: inline-flex;
     align-items: center;
     /* The chords of a sequence stand further apart than the keys of one. */
-    gap: calc(0.15 * var(--env-popup-row-height));
+    gap: calc(0.25 * var(--env-popup-row-height));
     margin-inline-start: calc(0.4 * var(--env-popup-row-height));
     color: var(--env-color-fg-muted);
     font: var(--env-type-body-sm);

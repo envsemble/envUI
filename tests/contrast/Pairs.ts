@@ -1240,10 +1240,7 @@ const registry: readonly ContrastPair[] = merged([
   ),
   ...nonText(
     'badge-outline-primary',
-    [
-      '--env-color-bg-primary-emphasis',
-      '--env-color-bg-accent-emphasis',
-    ],
+    ['--env-color-bg-primary-emphasis', '--env-color-bg-accent-emphasis'],
     'The outline of a badge or counter on a primary button in the neutral or accent tone',
     {
       minimum: { standard: 1.5, high: 3 },
