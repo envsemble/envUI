@@ -498,7 +498,7 @@ function ProjectTable({
               <Badge
                 tone={
                   project.status === 'Active'
-                    ? 'success'
+                    ? 'primary'
                     : project.status === 'Done'
                       ? 'done'
                       : 'neutral'

@@ -66,7 +66,7 @@ const colors: Record<ColorScheme, Record<CodeContrast, CodeColors>> = {
   },
   dark: {
     standard: {
-      surfaces: ['#1e1f21', '#28292b', '#343638'],
+      surfaces: ['#1e1f21', '#28292b', '#303234', '#343638'],
       block: { color: dark, alpha: 0.05 },
       inline: { color: dark, alpha: 0.125 },
       foreground: '#b2c0cd',

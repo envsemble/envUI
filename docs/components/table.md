@@ -109,7 +109,7 @@ A header can sort the rows by its column. The sorted column shows its order; the
 
 ### Select rows
 
-A selected row takes the selection fill.
+A selected row takes a lighter tint of the selection fill, so wide rows don't outweigh what is in them, and the full fill at high contrast.
 
 - A checkbox labelled with the row's name selects it.
 - A row selected without a checkbox in its first cell, such as the one open in a detail pane, also takes a bar at its start.
@@ -280,6 +280,7 @@ Parts the anatomy doesn't show: a column's resize handle, `env-table-column-resi
 ## Changelog
 
 - **1.0.0**: The parts are members of the `Table` namespace: `Table` is `Table.Root`, and `TableHead`, `TableBody`, `TableRow`, `TableHeaderCell` and `TableCell` are `Table.Head`, `Table.Body`, `Table.Row`, `Table.HeaderCell` and `Table.Cell`; `TableSortDirection` is `Table.SortDirection`. The page is `table`, after the component. Table.HeaderCell's `onSort` is `onSortChange`, called with the order pressing asks for. A table named by `aria-labelledby` names its scroll region too, which was left unnamed. The sort and resize words come from `messages.table`. A column's resize handle, `env-table-column-resize`, is `env-table-column-resize-handle`, as every resize handle is named.
+- **1.0.0-prerelease.6**: A selected row takes a lighter tint of the selection fill, still a step above a row under the pointer; at high contrast it keeps the full fill.
 - **1.0.0-prerelease.6**: A sortable header's focus ring has a row's rounded corners. In dark, the header band and row dividers are a light step closer to the surface. A stacked row's labels sit directly over their values.
 - **1.0.0-prerelease.6**: A sortable header under the pointer takes no fill: its label darkens to the text color, with its arrow showing.
 - **1.0.0-prerelease.6**: The focus ring of the first and last sortable headers follows the frame's rounded corners.

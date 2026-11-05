@@ -46,9 +46,26 @@ function loadHighContrast() {
   return highContrast;
 }
 
-/** The Shiki theme of an app theme and contrast. */
+/**
+ * The color keywords take instead of the themes' red, which reads as an error in code that has
+ * none: envUI's seafoam, a hue no other token uses, at about the lightness of the red it replaces.
+ * Like every token color, it is then moved to reach the contrast's target.
+ */
+const keywordColors: Record<ColorScheme, Record<CodeContrast, string>> = {
+  light: { standard: '#266b68', high: '#035755' },
+  dark: { standard: '#78aea7', high: '#97c9c1' },
+};
+
+/** The Shiki theme of an app theme and contrast, its keywords in `keywordColors`. */
 async function shikiTheme(scheme: ColorScheme, contrast: CodeContrast) {
-  return contrast === 'high' ? (await loadHighContrast())[scheme] : standard[scheme];
+  const theme = contrast === 'high' ? (await loadHighContrast())[scheme] : standard[scheme];
+  const keyword = theme.tokenColors?.find((rule) => [rule.scope ?? []].flat().includes('keyword'))
+    ?.settings?.foreground;
+  return keyword
+    ? withColors(theme, theme.name ?? '', {
+        [keyword.toLowerCase()]: keywordColors[scheme][contrast],
+      })
+    : theme;
 }
 
 const direction = (scheme: ColorScheme): LightnessDirection =>
