@@ -63,6 +63,10 @@
   .env-select-control:has(> .env-select-trigger[aria-readonly='true']) .env-select-icon {
     color: var(--env-color-fg-muted);
   }
+  /* A disabled select's chevron takes the disabled text color, as its value and label do. */
+  .env-select-control:has(> .env-select-trigger:disabled) .env-select-icon {
+    color: var(--env-color-fg-disabled);
+  }
   .env-select-trigger > *,
   .env-select-sizer > * {
     grid-area: 1 / 1;
