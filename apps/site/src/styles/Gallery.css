@@ -62,6 +62,13 @@
   aspect-ratio: 4 / 3;
 }
 
+/* A scene lays out from its window's top rather than its middle: at rest the view centres what it
+   paints either way (useFit.ts), and as it plays, what grows or shrinks in it, such as a list a
+   filter narrows or files added, changes below what stays, which holds still. */
+.catalogue-gallery-grid[data-scenes] .catalogue-gallery-stage .catalogue-related-canvas {
+  place-content: start stretch;
+}
+
 /* On a phone, components two to a row on lower stages, so the gallery stays short: each drawn as
    small as fits its stage's width, but no smaller than 0.7 of its own size (useFit.ts), laid out
    as wide as the stage shows at that scale; what is larger still, an open popup too, is cut off
