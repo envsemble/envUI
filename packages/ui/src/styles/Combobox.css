@@ -84,12 +84,12 @@
     > :is(.env-combobox-trigger, .env-combobox-clear) {
     cursor: default;
   }
-  /* A read-only combobox opens nothing, so it shows no chevron, as a read-only Select; the value
-     keeps its place. */
+  /* A read-only combobox's chevron stays, in the field's quiet icon color, and doesn't answer the
+     pointer, as a read-only Select's; its list is still browsed from the keyboard. */
   .env-combobox-control:has(> .env-combobox-input[readonly]:not(:disabled))
     .env-combobox-end
     > .env-combobox-trigger {
-    visibility: hidden;
+    pointer-events: none;
   }
 
   /* Leading content, such as an avatar or an icon, takes the size of its slot wherever it appears. */

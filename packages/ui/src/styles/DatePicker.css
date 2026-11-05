@@ -69,8 +69,9 @@
     .env-date-picker-placeholder {
     color: transparent;
   }
-  /* The icon shows what the field opens; presses on it reach the field. The clear button, a quiet icon
-     button like the other fields' actions, stays pressable. */
+  /* The icon shows what the field opens; presses on it reach the field. It keeps its quiet color
+     while the field is read-only, as a read-only Select's chevron does. The clear button, a quiet
+     icon button like the other fields' actions, stays pressable. */
   .env-date-picker-end {
     pointer-events: none;
   }
