@@ -66,6 +66,12 @@ export const tileWindows: Readonly<Record<string, { width: number; height: numbe
   navigation: { width: 15, height: 11.25 },
 };
 
+/**
+ * About the widths at which the components' gallery stands two to a row (Gallery.css), whose
+ * stages are too narrow for a popup beside its button: there a tile opens it below.
+ */
+export const narrowGallery = '(width < 29rem)';
+
 /** The tile of a page, by its id, where it has one of its own. */
 export const tileOf = (page: string): ComponentType | undefined =>
   tiles.get(`./${pascal(page)}.tsx`);

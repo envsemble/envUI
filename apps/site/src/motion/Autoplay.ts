@@ -114,7 +114,8 @@ function subscribe(listener: () => void) {
   return () => listeners.delete(listener);
 }
 
-function useMedia(query: string) {
+/** Whether a media query matches now, following it as it changes. */
+export function useMedia(query: string) {
   return useSyncExternalStore(
     (change) => {
       const list = matchMedia(query);

@@ -1,7 +1,7 @@
 import { Avatar, Combobox, type ComboboxItem } from '@envsemble/envui';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
-const people: ComboboxItem[] = ['Alex Morgan', 'Priya Shah', 'Sam Lee'].map((name) => ({
+const people: ComboboxItem[] = ['Alex Morgan', 'Priya Shah'].map((name) => ({
   value: name.toLowerCase().replace(' ', '.'),
   label: name,
   start: <Avatar name={name} size="sm" />,
@@ -30,7 +30,7 @@ const script: PointerStep[] = [
   { wait: 400 },
 ];
 
-/** A combobox of people. */
+/** A combobox of two people, so its field and its open list show whole in a gallery's low tile. */
 export default function ComboboxTile() {
   usePointer(script);
   return (

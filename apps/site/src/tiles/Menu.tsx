@@ -3,7 +3,9 @@ import { IconButton, Menu } from '@envsemble/envui';
 import { IconDelete } from '@envsemble/envui/icons/Delete';
 import { IconEdit } from '@envsemble/envui/icons/Edit';
 import { IconMoreVert } from '@envsemble/envui/icons/MoreVert';
+import { useMedia } from '../motion/Autoplay';
 import { usePointer, type PointerStep } from '../motion/Motion';
+import { narrowGallery } from './Tiles';
 
 const item = (index: number) => `.env-menu-item:nth-child(${index} of .env-menu-item)`;
 
@@ -32,11 +34,13 @@ const script: PointerStep[] = [
  */
 export default function MenuTile() {
   const [open, setOpen] = useState(true);
+  // Two to a row, it opens below its button, inside the narrow stage.
+  const narrow = useMedia(narrowGallery);
   usePointer(script, { onRest: () => setOpen(true) });
   return (
     <Menu.Root
       aria-label="Report actions"
-      side="inline-end"
+      side={narrow ? 'bottom' : 'inline-end'}
       align="start"
       open={open}
       onOpenChange={setOpen}
