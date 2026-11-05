@@ -149,12 +149,6 @@
   padding-block: var(--env-space-4);
 }
 
-/* A rich text editor in a tile holds a line: its document as tall as the line, rather than the room
-   a page leaves for writing, so the line is drawn large. */
-.catalogue-related-canvas[data-tile] .env-rich-text-document {
-  min-block-size: 0;
-}
-
 /* A region that scrolls in a tile, such as a page's body in its box, fades out at its foot while
    its content runs on past it (useFit.ts), as the stage's crop does: it ends in a fade, not in a
    slice through a line. */
@@ -164,11 +158,6 @@
     var(--env-color-fg-default) calc(100% - 1.25rem),
     transparent
   );
-}
-
-/* A picture of the overlay, without the backdrop, which would fill the canvas. */
-.catalogue-related-canvas :is(.env-dialog-backdrop, .env-sheet-backdrop) {
-  display: none;
 }
 
 /* An alternative without an example: a page icon in the middle of the same stage. */

@@ -156,13 +156,6 @@
   inline-size: max(100% - 2rem, var(--catalogue-tile-width, 14rem));
 }
 
-/* A notification leaves the window's gutter beside it; drawn at its own size in a gallery's tile,
-   it takes the tile's width, as the stage's inset is its gutter. */
-.catalogue-related-canvas[data-own-size] .env-toast-viewport {
-  inset-inline-end: 0;
-  max-inline-size: 100%;
-}
-
 /* The box of a component drawn at its own size, or a pattern's scene at a legible scale, as large
    as the stage (Related.tsx): what is cut off at an edge, the bottom and the end for a component, any
    side for a scene centred on what it paints, fades out over the last stretch, rather than ending in
