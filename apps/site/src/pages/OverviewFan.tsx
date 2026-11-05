@@ -53,13 +53,15 @@ const services = [
  * The cards in the hand, from the back to the front, each a small moment of a B2B or AI product
  * built with envUI. `place` is the card's place in the fan, from the middle; on a narrower page the
  * first goes and the rest take `narrowPlace`, and on a narrow one only those with a `compactPlace`
- * stay: the agent's run and the services' status, the richer two that still read on a phone.
+ * stay: the agent's run and the services' status, the richer two. A phone shows the one card with
+ * `phone`, whole and upright.
  */
 const cards: {
   id: string;
   place: number;
   narrowPlace?: number;
   compactPlace?: number;
+  phone?: true;
   /** A slight lift of its own, in rem, so the fan looks laid by hand rather than ruled. */
   lift: number;
   content: ReactNode;
@@ -99,6 +101,7 @@ const cards: {
     place: -0.5,
     narrowPlace: -1,
     compactPlace: -0.5,
+    phone: true,
     lift: -0.15,
     content: (
       <>
@@ -178,6 +181,7 @@ export function OverviewFan() {
             padding={5}
             data-narrow={card.narrowPlace === undefined ? 'hidden' : undefined}
             data-compact={card.compactPlace === undefined ? 'hidden' : undefined}
+            data-phone={card.phone ? undefined : 'hidden'}
             style={
               {
                 '--catalogue-fan-place': card.place,

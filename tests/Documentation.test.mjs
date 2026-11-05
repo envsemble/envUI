@@ -1271,6 +1271,16 @@ test('Table ships each example once, by name in its frontmatter, its rules and l
   assert.doesNotMatch(table, /^## (?:Changelog|Related)/m);
 });
 
+test("the Import leads with the page's own export, and leaves a companion to the code that imports it", () => {
+  const compiled = compileDocumentation();
+  const button = compiled.get('components/button.md');
+  assert.ok(
+    button.includes("### Import\n\n```tsx\nimport { Button } from '@envsemble/envui';\n```"),
+  );
+  assert.ok(hasLine(button, "import { IconButton } from '@envsemble/envui';"));
+  assert.ok(hasLine(button, "import { ButtonGroup } from '@envsemble/envui';"));
+});
+
 test('a page ships the whole file, in its order, with code once', () => {
   const compiled = compileDocumentation();
   const button = compiled.get('components/button.md');

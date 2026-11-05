@@ -138,7 +138,10 @@ const shortLimit = 3;
 /** The id of the row that shows the rest of a short group. */
 const moreId = (group: string) => `more:${group}`;
 
-/** The group of results that only mention the query in their text, after those it names. */
+/**
+ * The group of results that only mention the query, after those it names: one row that shows them
+ * in place, so they never push what the query names out of view.
+ */
 const mentions = 'Also mentioned in';
 
 /** The group a result is shown in. */
@@ -159,9 +162,11 @@ const noGroups: ReadonlySet<string> = new Set();
  * the reference groups, props and tokens, each in the order of its best result. Within a group,
  * results keep their order, best first. Where the query names some results, by their names,
  * aliases or keywords, those come first, and results that only mention it in their text follow
- * them in a group of their own, so "date" lists DatePicker and the date props before Table. The
- * props of the components it finds come before other props, so "date" lists DatePicker's own
- * first, and a short group shows its first few until it is expanded.
+ * them in a group of their own, folded into one row, so "date" lists DatePicker and the date props
+ * before Table. A pattern is named by its title and aliases only, so "IconButton" lists IconButton
+ * and its props rather than every pattern that uses it. The props of the components it finds come
+ * before other props, so "date" lists DatePicker's own first, and a short group shows its first few
+ * until it is expanded.
  */
 function groupResults(results: readonly SearchResult[], expanded: ReadonlySet<string>): Group[] {
   const named = results.some((result) => result.named);
@@ -193,19 +198,17 @@ function groupResults(results: readonly SearchResult[], expanded: ReadonlySet<st
   );
   return order.map((name) => {
     const members = grouped.get(name)!;
-    const limit = !shortGroups.has(name)
+    const folds = shortGroups.has(name) || name === mentions;
+    const limit = !folds
       ? groupLimit
       : expanded.has(name)
         ? members.length
-        : shortLimit;
+        : name === mentions
+          ? 0
+          : shortLimit;
     // A short group of one more than it shows shows that one rather than a row for it.
-    const shown =
-      shortGroups.has(name) && members.length === limit + 1 ? members : members.slice(0, limit);
-    return {
-      name,
-      results: shown,
-      hidden: shortGroups.has(name) ? members.length - shown.length : 0,
-    };
+    const shown = folds && members.length === limit + 1 ? members : members.slice(0, limit);
+    return { name, results: shown, hidden: folds ? members.length - shown.length : 0 };
   });
 }
 
@@ -276,7 +279,10 @@ export function SiteSearch({
         ? [
             {
               id: moreId(name),
-              label: `${hidden} more ${name.toLowerCase()}`,
+              label:
+                name === mentions
+                  ? `${hidden} ${hidden === 1 ? 'result' : 'results'}`
+                  : `${hidden} more ${name.toLowerCase()}`,
               icon: <IconExpandMore />,
               group: name,
             },

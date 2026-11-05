@@ -22,6 +22,7 @@ import { DisplayMenu } from '../theme/DisplaySettings';
 import { drawerWidthKey } from '../theme/DisplayStorage';
 import { pageBadge } from './PageBadges';
 import {
+  counterpartOf,
   docsTree,
   otherPartRoute,
   pagesOf,
@@ -369,27 +370,34 @@ export function DocsNavigation({
 /**
  * The page's own controls at its top end, quiet ghost buttons that stay in the corner as the page
  * scrolls, on a small pill of the page's color: the other part, the Docs from the catalogue and
- * the catalogue from the Docs, at the page of the same subject there (otherPartRoute), and the
- * Display menu, where the theme, contrast, scale and motion are. The other part keeps the reader's
- * section where its page has it too (keepSection). Below an expanded window the other part
- * keeps its name, without its icon, and Display is an icon button with a tooltip.
+ * the catalogue from the Docs, and the Display menu, where the theme, contrast, scale and motion
+ * are. The other part shows only on a page without a page of the same subject there, such as the
+ * Overview, a gallery or a guide, and leads to that part's start (otherPartRoute); a page with one
+ * has the Design | Code switch in its banner (PartSwitch) for that, so a second way across would
+ * repeat it. Below an expanded window the other part keeps its name, without its icon, and Display
+ * is an icon button with a tooltip.
  */
 export function PageActions({ page, area }: { page?: RoutePage; area: Area }) {
   const { label, Icon } = otherPart(area);
+  const switched = page !== undefined && counterpartOf(page) !== undefined;
   const href = routeHref(otherPartRoute(page, area));
   return (
     <div className="site-page-actions">
       <div className="site-page-actions-bar">
         <span className="site-wide-only">
-          <Button variant="ghost" href={href} startIcon={<Icon />} onClick={keepSection}>
-            {label}
-          </Button>
+          {!switched && (
+            <Button variant="ghost" href={href} startIcon={<Icon />} onClick={keepSection}>
+              {label}
+            </Button>
+          )}
           <DisplayMenu />
         </span>
         <span className="site-narrow-only">
-          <Button variant="ghost" href={href} onClick={keepSection}>
-            {label}
-          </Button>
+          {!switched && (
+            <Button variant="ghost" href={href} onClick={keepSection}>
+              {label}
+            </Button>
+          )}
           <DisplayMenu iconOnly />
         </span>
       </div>

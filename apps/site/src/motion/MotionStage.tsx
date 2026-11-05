@@ -4,6 +4,7 @@ import {
   useEffect,
   useRef,
   useState,
+  useSyncExternalStore,
   type FocusEvent,
   type KeyboardEvent,
   type MouseEvent,
@@ -48,6 +49,36 @@ function pressAt(x: number, y: number, subject: HTMLElement) {
 }
 
 /**
+ * How many figures on the page the reader has taken over. While any has, the others hold where
+ * they are: their pointer's presses would reach the page as a press outside what the reader opened,
+ * such as a calendar, and close it.
+ */
+let takenOver = 0;
+const takeoverListeners = new Set<() => void>();
+function subscribeTakeovers(listener: () => void) {
+  takeoverListeners.add(listener);
+  return () => {
+    takeoverListeners.delete(listener);
+  };
+}
+function useTakeover(live: boolean) {
+  useEffect(() => {
+    if (!live) return;
+    takenOver++;
+    for (const listener of takeoverListeners) listener();
+    return () => {
+      takenOver--;
+      for (const listener of takeoverListeners) listener();
+    };
+  }, [live]);
+  return useSyncExternalStore(
+    subscribeTakeovers,
+    () => takenOver > 0,
+    () => false,
+  );
+}
+
+/**
  * Whether an animated figure plays a do or don't figure's example: its stage is then that figure's
  * (VerdictFigure), joined to its Do or Don't bar, a square, or with `wide`, as wide as the column.
  */
@@ -69,7 +100,9 @@ export const VerdictMotion = createContext<false | 'square' | 'wide'>(false);
  * reaching it, stops the playback, puts the example back at its start and hands it to the reader,
  * live, the click going on to what it was on. Its overlays then open as they do in an application.
  * The play button plays it again; the keyboard leaving it untouched does too. A figure whose
- * timeline sets its props, or with nothing to operate, stays a recording.
+ * timeline sets its props, or with nothing to operate, stays a recording. While the reader has one
+ * figure, the page's others hold where they are (useTakeover), so their pointers' presses never
+ * close what the reader opened.
  *
  * Playing, its overlays, such as a menu, a dialog or a tooltip, open inside the stage, as a tile's
  * do (PreviewOverlays): a dialog's backdrop covers the stage, not the page, and nothing leaves it.
@@ -130,7 +163,9 @@ export function MotionStage({
   const tallest = useRef<HTMLDivElement>(null);
   useVerdictFit(stage, box, square);
   useTallest(square ? tallest : stage, height);
-  const paused = live || (own && own.over === motionPaused ? own.paused : motionPaused);
+  // Another figure the reader has taken over holds this one where it is, unless the reader plays it.
+  const held = useTakeover(live);
+  const paused = live || (own && own.over === motionPaused ? own.paused : held || motionPaused);
   const action = paused ? `Play ${label}` : `Pause ${label}`;
   const goLive = () => {
     touched.current = false;

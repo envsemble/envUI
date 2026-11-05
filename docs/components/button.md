@@ -294,19 +294,33 @@ An IconButton with the Close cross closes, dismisses or removes what it sits in.
 
 ```tsx
 <Button onClick={save}>Save</Button>
+```
+
+```tsx
 <Button variant="secondary">Cancel</Button>
 <Button tone="danger">Delete project</Button>
 <Button href="/projects">Open projects</Button>
 <Button startIcon={<IconAdd />}>Create project</Button>
-<IconButton icon={<IconSettings />} aria-label="Project settings" />
 <Button pending={saving} onClick={save}>Save changes</Button>
 ```
 
-A button without a `variant` or a `size` takes its container's, such as `ghost` in a Toolbar and `sm` in a table cell; an IconButton is otherwise `secondary`. With `href` it renders the router link from `LinkProvider`.
+A button without a `variant` or a `size` takes its container's, such as `ghost` in a Toolbar and `sm` in a table cell. With `href` it renders the router link from `LinkProvider`.
+
+#### Icon only
+
+```tsx
+import { IconButton } from '@envsemble/envui';
+
+<IconButton icon={<IconSettings />} aria-label="Project settings" />;
+```
+
+An IconButton takes its container's variant too, and is otherwise `secondary`.
 
 #### Confirm and copy
 
 ```tsx
+import { ConfirmButton, CopyButton } from '@envsemble/envui';
+
 <ConfirmButton confirmLabel="Remove Sam" onConfirm={() => remove('sam')}>
   Remove
 </ConfirmButton>
@@ -318,10 +332,12 @@ ConfirmButton with `icon` and an `aria-label` is icon-only until armed. When the
 ### Composition
 
 ```tsx
+import { ButtonGroup } from '@envsemble/envui';
+
 <ButtonGroup aria-label="Project actions">
   <Button>Open</Button>
   <Button>Edit</Button>
-</ButtonGroup>
+</ButtonGroup>;
 ```
 
 `orientation="vertical"` stacks a group, every button as wide as it; `fullWidth` makes a button or a group fill its container. `end` holds quiet content after the label, at the far end of a wide button, such as the Kbd of a shortcut, as the [button that opens a CommandPalette](command-palette.md#opening-it-the-button-and-the-shortcut) does.

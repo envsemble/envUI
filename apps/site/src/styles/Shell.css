@@ -332,6 +332,11 @@ body {
     display: none;
   }
 }
+/* The page's body reserves no gutter for a scrollbar, so the footer's band runs to the window's
+   edge; a scrollbar that shows takes its room, and almost every page scrolls. */
+.site-frame > .env-scaffold-body {
+  scrollbar-gutter: auto;
+}
 .site-main {
   display: flex;
   flex-direction: column;

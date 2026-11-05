@@ -26,10 +26,10 @@ test('public component, stylesheet, new export and Markdown documentation update
       .getByRole('textbox', { name: 'Project name', exact: true })
       .and(page.locator('[name="project"]'));
     await projectName.fill('Preserved draft');
-    // A Button of the site's own: the page's link to the Docs.
-    const docsLink = page
-      .locator('.site-page-actions')
-      .getByRole('link', { name: 'Docs', exact: true });
+    // A Button of the site's own: the page's Display menu button.
+    const displayButton = page
+      .locator('.site-page-actions .site-wide-only')
+      .getByRole('button', { name: 'Display', exact: true });
     await writeFile(
       buttonSource,
       originals[0].replace(
@@ -37,9 +37,9 @@ test('public component, stylesheet, new export and Markdown documentation update
         '<ActionElement$1{...props} data-env-live="updated"',
       ),
     );
-    await expect(docsLink).toHaveAttribute('data-env-live', 'updated');
+    await expect(displayButton).toHaveAttribute('data-env-live', 'updated');
     await writeFile(stylesheet, `${originals[1]}\n.env-button { padding-inline-start: 1.5rem; }\n`);
-    await expect(docsLink).toHaveCSS('padding-left', '24px');
+    await expect(displayButton).toHaveCSS('padding-left', '24px');
     await expect(projectName).toHaveValue('Preserved draft');
     expect(await page.evaluate(() => (window as unknown as { liveProof: string }).liveProof)).toBe(
       'same-document',
