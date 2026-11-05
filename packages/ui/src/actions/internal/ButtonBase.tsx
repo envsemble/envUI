@@ -42,7 +42,7 @@ export function ButtonBase({
 }: ButtonBaseProps) {
   const spinner = <SpinnerArc size="sm" aria-hidden className="env-button-spinner" />;
   // While pending, a start icon gives its place to the spinner; without one, the spinner stands
-  // before the label, which keeps its place (Button.css). Either way it stays out of the subdued
+  // before the label, which keeps its place (Button.css). Either way it stays out of the
   // content, in the label's own color.
   const pendingIcon = pending && !iconOnly && startIcon != null;
   const content = iconOnly ? (
