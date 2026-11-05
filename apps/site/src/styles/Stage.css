@@ -236,11 +236,12 @@
 }
 
 /* A live example's stage is as tall as what it shows, with room around it: a row of buttons takes a
-   low stage, which doesn't push the next figure out of view, and composed UI a large one by its own
+   low stage, its room above and below no more than a control's height, which doesn't push the next
+   figure out of view or leave a few small controls adrift, and composed UI a large one by its own
    size. */
 .site-live-example {
-  min-block-size: 6rem;
-  padding: var(--env-space-6);
+  min-block-size: 4.5rem;
+  padding: var(--env-space-5) var(--env-space-6);
 }
 
 @container (width < 30rem) {
