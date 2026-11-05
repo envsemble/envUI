@@ -1,52 +1,42 @@
 import type { CSSProperties } from 'react';
-import { Card, Text } from '@envsemble/envui';
+import { Button, Card } from '@envsemble/envui';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
-/**
- * Hovered, the card takes its hover fill; pressed, it settles a little; let go, and left; then
- * reached by the keyboard, it takes the focus ring, and is left again.
- */
+/** The card's action reached and pressed, then left. */
 const script: PointerStep[] = [
   { wait: 400 },
-  { to: '.env-card', x: 0.62, y: 0.6 },
-  { wait: 800 },
-  { press: true },
-  { wait: 300 },
-  { release: true },
-  { wait: 700 },
-  { leave: true },
-  { wait: 500 },
-  { focus: '.env-card' },
-  { wait: 1300 },
-  { blur: true },
+  { to: '.env-card .env-button', x: 0.45 },
   { wait: 600 },
+  { click: true },
+  { wait: 1200 },
+  { leave: true },
+  { wait: 800 },
 ];
 
 /**
  * The edge, through the card's own color property: on a stage of the card's own fill, it keeps the
- * card's shape in view at rest, and its hover fill then shows inside it.
+ * card's shape in view.
  */
 const outlined = { '--env-card-outline': 'var(--env-color-border-muted)' } as CSSProperties;
 
 /**
- * A card that opens a project: its name and a summary, narrow enough for a phone's stage at its
- * own size.
+ * A project's card, laid out as a Card lays out its parts, unlike a plain surface: the title row
+ * with a short fact at its end, and the strip of its actions along the bottom; small enough for a
+ * phone's stage at its own size.
  */
 export default function CardTile() {
   usePointer(script);
   return (
     <Card
-      href="#northwind"
-      onClick={(event) => event.preventDefault()}
+      title="Northwind"
+      meta="Today"
+      actions={
+        <Button variant="secondary" size="sm">
+          Open
+        </Button>
+      }
       padding={4}
-      style={{ inlineSize: '8.5rem', ...outlined }}
-    >
-      <Text render={<span />} variant="title">
-        Northwind
-      </Text>
-      <Text render={<span />} emphasis="muted">
-        12 open tasks
-      </Text>
-    </Card>
+      style={{ inlineSize: '9.5rem', ...outlined }}
+    />
   );
 }

@@ -15,11 +15,14 @@ const fit = (count: number) =>
  */
 const widths = [fit(4), fit(3), fit(4), fit(2)];
 
-/** The gap between the first two blocks, which stay where they are, marked in the padding above. */
+/**
+ * The gap between the first two blocks, which stay where they are, marked in the padding above,
+ * against the blocks, its ends on the edges either side of the gap, which it continues.
+ */
 const firstGap = gap('inline', {
   from: `calc(var(--env-space-2) + ${items[0]}rem)`,
   across: 'var(--env-space-2)',
-  off: 'calc((var(--env-space-2) - var(--env-space-1)) / 2)',
+  off: 'calc(var(--env-space-2) - var(--env-space-1))',
 });
 
 /**

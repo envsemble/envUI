@@ -3,8 +3,8 @@ import { usePointer, type PointerStep } from '../motion/Motion';
 
 /**
  * Pressed, a fill behind it, held a while, as the press is what shows on a link already underlined;
- * let go and left, then reached with the keyboard, its focus ring round it, held longest, as it
- * reads best, and taken off again before the script ends.
+ * let go, and left. Only the pointer acts: a focus ring arriving with no key to see would come
+ * from nowhere.
  */
 const script: PointerStep[] = [
   { wait: 300 },
@@ -13,19 +13,12 @@ const script: PointerStep[] = [
   { press: true },
   { wait: 1700 },
   { release: true },
-  { wait: 200 },
-  { leave: true },
-  { wait: 300 },
-  { focus: '.env-link' },
-  { wait: 2800 },
-  { blur: true },
   { wait: 600 },
+  { leave: true },
+  { wait: 900 },
 ];
 
-/**
- * A link on a line of its own under a line of text, a step apart, so its focus ring has room round
- * it rather than over the words beside it. Its click stays in the tile.
- */
+/** A link on a line of its own under a line of text, a step apart. Its click stays in the tile. */
 export default function LinkTile() {
   usePointer(script);
   return (
