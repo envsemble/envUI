@@ -157,8 +157,15 @@
     display: inline-block;
     padding-inline: var(--env-space-1);
   }
+  /* Under the pointer the edge darkens, unless the field has focus or its list is open, which keep
+     the accent. */
   @media (hover: hover) {
-    .env-text-field-control:hover:not(:has(> .env-text-field-input:disabled), [data-disabled]) {
+    .env-text-field-control:hover:not(
+        :has(> .env-text-field-input:disabled),
+        [data-disabled],
+        :focus-within,
+        :has(> .env-text-field-input[aria-expanded='true'])
+      ) {
       --env-text-field-border-color: var(--env-text-field-interaction-hover);
     }
   }
@@ -169,8 +176,10 @@
     --env-text-field-border-color: var(--env-text-field-interaction-pressed);
   }
   /* Focus draws the frame in the accent at twice its width, all the way round the notch, in every
-     variant: a ghost field too, whose frame shows only while it has focus. */
-  .env-text-field-control:focus-within {
+     variant: a ghost field too, whose frame shows only while it has focus. A field whose list or
+     calendar is open, a Select's, a Combobox's or a picker's, keeps that frame while focus is in the
+     popup, as when it opens under the pointer, so the field reads as the list's. */
+  .env-text-field-control:is(:focus-within, :has(> .env-text-field-input[aria-expanded='true'])) {
     --env-text-field-border-color: var(--env-text-field-interaction-color);
     --env-text-field-frame: var(
       --env-text-field-ghost-focus-frame,
@@ -251,7 +260,8 @@
   .env-text-field-control:has(> label) > .env-text-field-input:not(:focus)::placeholder {
     color: transparent;
   }
-  .env-text-field-control:focus-within > label {
+  .env-text-field-control:is(:focus-within, :has(> .env-text-field-input[aria-expanded='true']))
+    > label {
     color: var(--env-text-field-label-accent, var(--env-color-fg-primary));
   }
   /* Ghost fields have no border: at rest a faint fill, half the neutral fill, says where to type, so
