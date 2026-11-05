@@ -21,8 +21,8 @@ test('the track and thumb follow the scale, and the row is a 24 px target, or th
 }) => {
   for (const [scale, track, thumb, touch] of [
     ['comfortable', [40, 24], 16, false],
-    ['compact', [34, 21], 13, false],
-    ['compact', [34, 21], 13, true],
+    ['compact', [36, 22], 14, false],
+    ['compact', [36, 22], 14, true],
   ] as const) {
     const context = await browser.newContext({ hasTouch: touch });
     const page = await context.newPage();
