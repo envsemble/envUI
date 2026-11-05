@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import {
   Button,
   Column,
@@ -9,7 +9,7 @@ import {
   useToast,
 } from '@envsemble/envui';
 import { IconArchive } from '@envsemble/envui/icons/Archive';
-import { usePointer, usePreviewLayer, type PointerStep } from '../motion/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 import { outlined } from './Outline';
 
 const projects = ['Launch plan', 'Annual report', 'Press kit'];
@@ -51,43 +51,63 @@ function Projects() {
     });
   };
   return (
-    <Column style={{ inlineSize: '17rem' }}>
-      <Surface background="muted" padding={1} radius="sm" style={outlined}>
-        <List.Root aria-label="Projects">
-          {projects
-            .filter((name) => !archived.includes(name))
-            .map((name) => (
-              <List.Item
-                key={name}
-                label={name}
-                end={
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    startIcon={<IconArchive />}
-                    aria-label={`Archive ${name}`}
-                    onClick={() => archive(name)}
-                  >
-                    Archive
-                  </Button>
-                }
-              />
-            ))}
-        </List.Root>
-      </Surface>
-    </Column>
+    <Surface background="muted" padding={1} radius="sm" style={outlined}>
+      <List.Root aria-label="Projects">
+        {projects
+          .filter((name) => !archived.includes(name))
+          .map((name) => (
+            <List.Item
+              key={name}
+              label={name}
+              end={
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  startIcon={<IconArchive />}
+                  aria-label={`Archive ${name}`}
+                  onClick={() => archive(name)}
+                >
+                  Archive
+                </Button>
+              }
+            />
+          ))}
+      </List.Root>
+    </Surface>
   );
 }
 
-/** A list whose rows are archived at once, each with Undo in a notification. */
-export default function DestructiveActionsTile() {
-  const layer = usePreviewLayer();
-  if (!layer) return null;
+/**
+ * The window's foot, below the list, where its notifications appear at the end, as an
+ * application's toast region sits at the foot of its window rather than over what it lists.
+ */
+function NotificationArea({ children }: { children: (area: HTMLElement | null) => ReactNode }) {
+  const [area, setArea] = useState<HTMLDivElement | null>(null);
   return (
-    <PortalContainer container={layer}>
-      <ToastProvider>
-        <Projects />
-      </ToastProvider>
-    </PortalContainer>
+    <>
+      {children(area)}
+      {/* Its own containing block, so the toast region's fixed position places it here. */}
+      <div
+        ref={setArea}
+        style={{ position: 'relative', contain: 'layout', minBlockSize: '4.5rem' }}
+      />
+    </>
+  );
+}
+
+/** A list whose rows are archived at once, each with Undo in a notification below it. */
+export default function DestructiveActionsTile() {
+  return (
+    <Column gap={2} style={{ inlineSize: '17rem' }}>
+      <NotificationArea>
+        {(area) => (
+          <PortalContainer container={area}>
+            <ToastProvider>
+              <Projects />
+            </ToastProvider>
+          </PortalContainer>
+        )}
+      </NotificationArea>
+    </Column>
   );
 }

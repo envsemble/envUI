@@ -6,7 +6,8 @@ const email = '.env-text-field:nth-child(2 of .env-text-field) .env-text-field-i
 
 /*
  * At rest the form has been submitted with the email half typed, which says what is wrong under
- * the field. The address finished clears it; erased and submitted again, the error is back.
+ * the field. The address finished clears it; its domain selected, deleted and submitted again,
+ * the error is back.
  */
 const script: PointerStep[] = [
   { wait: 400 },
@@ -16,9 +17,15 @@ const script: PointerStep[] = [
   { wait: 200 },
   { type: 'example.com', into: email, every: 80 },
   // About two seconds with the address whole, so the error's going registers.
-  { wait: 3200 },
-  { erase: 11, into: email, every: 40 },
-  { wait: 300 },
+  { wait: 2600 },
+  // The domain selected with a drag and deleted, so the address is put back by a hand, in view.
+  { to: email, text: 'example.com', x: 0, duration: 450 },
+  { press: true },
+  { to: email, text: 'example.com', x: 1, duration: 450 },
+  { release: true, stay: true },
+  { wait: 700 },
+  { erase: 1, into: email },
+  { wait: 400 },
   { to: '.env-button', duration: 450 },
   { wait: 300 },
   { click: true },
