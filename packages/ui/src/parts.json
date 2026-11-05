@@ -462,7 +462,7 @@
     },
     "MessageList": {
       "env-message-list": "The list of messages.",
-      "env-message-list-busy": "The spinner after the last message while busy."
+      "env-message-list-busy": "The row after the last message while busy: the busy author, a spinner and Working."
     },
     "Meter": {
       "env-meter": "The meter.",

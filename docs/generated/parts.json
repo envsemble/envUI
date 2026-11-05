@@ -3083,7 +3083,7 @@
         },
         {
           "class": "env-message-list-busy",
-          "description": "The spinner after the last message while busy."
+          "description": "The row after the last message while busy: the busy author, a spinner and Working."
         }
       ],
       "states": [],

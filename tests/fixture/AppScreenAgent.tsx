@@ -131,6 +131,7 @@ function Conversation() {
         ref={log}
         aria-label="Conversation with the agent"
         busy={running}
+        busyAuthor="Agent"
         tabIndex={0}
         style={{ flex: 1, minBlockSize: 0, overflowY: 'auto', paddingInline: 'var(--env-space-1)' }}
       >
@@ -162,8 +163,12 @@ function Conversation() {
         <Message
           from="other"
           author="Agent"
-          meta={<RelativeTime value={minutesAgo(4)} />}
-          actions={<CopyButton variant="text" value={after} aria-label="Copy the change" />}
+          meta={
+            <Row align="center" gap={1} render={<span />}>
+              <RelativeTime value={minutesAgo(4)} />
+              <CopyButton variant="text" size="sm" value={after} aria-label="Copy the change" />
+            </Row>
+          }
         >
           <Column gap={3}>
             <Text>

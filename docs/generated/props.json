@@ -4787,7 +4787,20 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "A reply is on its way or streaming in: a quiet spinner in the muted color shows after the last message, and the log reports aria-busy, so assistive technology can wait for the reply to finish instead of announcing every step."
+          "description": "A reply is on its way or streaming in: after the last message, where the reply will show, a row with the busy author, a quiet spinner and Working in the muted color; and the log reports aria-busy, so assistive technology can wait for the reply to finish instead of announcing every step."
+        },
+        {
+          "name": "busyAuthor",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Who the reply on its way comes from, such as Agent, named on the busy row as a message's author."
+        },
+        {
+          "name": "busyLabel",
+          "type": "string",
+          "required": false,
+          "default": "'Working'",
+          "description": "The text beside the busy spinner, such as \"Thinking\". It overrides EnvUIProvider's `messages.message.working`."
         }
       ],
       "native": [
