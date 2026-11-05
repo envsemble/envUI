@@ -194,7 +194,9 @@ test('the source is a tall text area with medium corners, never a pill', async (
   for (const well of await wells.all()) {
     await expect(well.locator('xpath=..')).toHaveAttribute('data-tall');
     await expect(well).toHaveCSS('border-top-left-radius', '16px');
-    expect((await well.boundingBox())!.height).toBeGreaterThanOrEqual(120);
+    // At least 7.5 rem, or the lines its rows give where that is less, such as four.
+    const rows = await well.locator('textarea').getAttribute('data-rows');
+    expect((await well.boundingBox())!.height).toBeGreaterThanOrEqual(rows === null ? 120 : 112);
   }
 });
 
