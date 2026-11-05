@@ -175,13 +175,16 @@
   /* A radio beside its label takes the checkbox's halo under the pointer and while pressed
      (Checkbox.css): the shared state layer in a circle around it, which takes no room. A row radio
      keeps its row's fills instead. */
+  .env-radio[data-orientation='horizontal'] > .env-radio-input {
+    --env-radio-halo: 0.375rem;
+  }
   .env-radio[data-orientation='horizontal'] > .env-radio-input:hover:not(:disabled) {
-    box-shadow: 0 0 0 0.375rem var(--env-color-bg-neutral-subtle-pressed);
+    box-shadow: 0 0 0 var(--env-radio-halo) var(--env-color-bg-neutral-subtle-pressed);
   }
   .env-radio[data-orientation='horizontal'] > .env-radio-input:active:not(:disabled) {
     box-shadow:
-      0 0 0 0.375rem var(--env-color-bg-neutral-subtle-pressed),
-      0 0 0 0.375rem var(--env-color-bg-neutral-subtle-pressed);
+      0 0 0 var(--env-radio-halo) var(--env-color-bg-neutral-subtle-pressed),
+      0 0 0 var(--env-radio-halo) var(--env-color-bg-neutral-subtle-pressed);
   }
   /* A radio in its label, side by side with the group's others. */
   .env-radio[data-orientation='horizontal'] {
