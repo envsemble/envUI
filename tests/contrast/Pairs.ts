@@ -265,11 +265,7 @@ const registry: readonly ContrastPair[] = merged([
     [page, surface, muted, raised, popup],
     'Supporting text, icons, field descriptions, unchecked checkbox rings',
   ),
-  ...text(
-    '--env-color-fg-control',
-    [page, surface],
-    'Navigation labels and meter values',
-  ),
+  ...text('--env-color-fg-control', [page, surface], 'Navigation labels and meter values'),
   ...text('--env-color-fg-default', [row, rowHover, rowPressed], 'List rows'),
   ...text('--env-color-fg-muted', [row, rowHover, rowPressed], 'List row details'),
   ...text(
