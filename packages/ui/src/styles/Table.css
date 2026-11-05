@@ -6,6 +6,19 @@
   .env-theme {
     --env-table-band: var(--env-color-bg-neutral-muted);
     --env-table-divider: var(--env-color-border-muted);
+    /* A selected row lays three quarters of the selection fill over the table's surface: rows are
+       wide bands, and at the full fill they outweigh the names and states in them, while their
+       checkboxes, the bulk bar or the start bar already mark them. It stays a step above a hovered
+       row. At high contrast rows take the full fill. */
+    --env-table-selected-weight: 75%;
+  }
+  .env-theme[data-env-contrast='high'] {
+    --env-table-selected-weight: 100%;
+  }
+  @media (prefers-contrast: more) {
+    .env-theme:not([data-env-contrast='standard']) {
+      --env-table-selected-weight: 100%;
+    }
   }
   .env-theme[data-env-theme='dark']:not([data-env-contrast='high']) {
     --env-table-band: oklch(from var(--env-color-bg-neutral-muted) l c h / calc(alpha * 0.65));
@@ -212,10 +225,15 @@
     --env-color-fg-danger-pressed: var(--env-color-fg-danger);
     /* The bar's color, which a skeleton clears. */
     --env-table-selection-bar: var(--env-color-fg-on-selected);
-    --env-avatar-group-ring-tint: var(--env-color-bg-selected);
+    --env-table-selected: color-mix(
+      in oklab,
+      var(--env-color-bg-selected) var(--env-table-selected-weight, 100%),
+      var(--env-table-surface)
+    );
+    --env-avatar-group-ring-tint: var(--env-table-selected);
     /* Soft badges lay their tint over the table's surface, not the selection's blue (Badge.css). */
     --env-badge-underlay: var(--env-table-surface);
-    background: var(--env-color-bg-selected);
+    background: var(--env-table-selected);
   }
   .env-table-row[aria-selected='true'][data-interactive]:is(:hover, :focus-within) {
     --env-avatar-group-ring-tint: var(--env-color-bg-selected-hover);
