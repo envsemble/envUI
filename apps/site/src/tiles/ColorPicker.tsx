@@ -1,5 +1,7 @@
 import { ColorPicker } from '@envsemble/envui/color';
+import { useMedia } from '../motion/Autoplay';
 import { usePointer, type PointerStep } from '../motion/Motion';
+import { narrowGallery } from './Tiles';
 
 const area = '.env-color-picker-area';
 const hue = '.env-color-picker-slider .env-color-picker-track';
@@ -31,9 +33,11 @@ const script: PointerStep[] = [
  * A compact color picker: its colors and its hue whole in the tile, over the value they make. Its
  * square area is as tall as it is wide, so the picker is drawn a little smaller, as wide as leaves
  * the value its whole row under it in a gallery's low tile. Its label is left out of sight, as is
- * its copy button, so the value has the row; the label still names the picker.
+ * its copy button, so the value has the row; the label still names the picker. In a phone's lower
+ * tile its colors are smaller still and its eye dropper left out, so the value shows whole under them.
  */
 export default function ColorPickerTile() {
+  const narrow = useMedia(narrowGallery);
   usePointer(script);
   return (
     <ColorPicker
@@ -42,7 +46,8 @@ export default function ColorPickerTile() {
       defaultValue="#3b6fd4"
       formats={['hex']}
       copyable={false}
-      style={{ inlineSize: '6rem', zoom: 0.86 }}
+      eyeDropper={!narrow}
+      style={{ inlineSize: narrow ? '4.5rem' : '6rem' }}
     />
   );
 }

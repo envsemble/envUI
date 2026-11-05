@@ -1,5 +1,7 @@
 import { CodeBlock } from '@envsemble/envui/content';
+import { useMedia } from '../motion/Autoplay';
 import { usePointer, type PointerStep } from '../motion/Motion';
+import { narrowGallery } from './Tiles';
 
 const copy = '.env-code-block-header .env-icon-button';
 
@@ -20,9 +22,15 @@ const script: PointerStep[] = [
 
 /** A code block with a command and its copy button. */
 export default function CodeTile() {
+  const narrow = useMedia(narrowGallery);
   usePointer(script);
   return (
-    <CodeBlock language="sh" label="Terminal" copyable style={{ inlineSize: '11rem' }}>
+    <CodeBlock
+      language="sh"
+      label="Terminal"
+      copyable
+      style={{ inlineSize: narrow ? '10.5rem' : '11rem' }}
+    >
       {'npm run build'}
     </CodeBlock>
   );

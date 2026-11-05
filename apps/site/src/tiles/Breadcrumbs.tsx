@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Breadcrumbs } from '@envsemble/envui';
+import { useMedia } from '../motion/Autoplay';
 import { usePointer, type PointerStep } from '../motion/Motion';
+import { narrowGallery } from './Tiles';
 import { Renew } from '../motion/Renew';
 
 const link = (index: number) => `.env-breadcrumbs-item:nth-child(${index}) > .env-breadcrumbs-link`;
@@ -29,15 +31,18 @@ const levels = [
   { label: 'Launch', href: '/plans/launch' },
 ];
 
-/** The trail, which a link pressed takes back to its level, in the tile rather than the site. */
-function Trail() {
+/**
+ * The trail, which a link pressed takes back to its level, in the tile rather than the site; in a
+ * phone's narrower tile, its last level shorter, so the trail is drawn at about its own size there.
+ */
+function Trail({ narrow }: { narrow: boolean }) {
   const [depth, setDepth] = useState(levels.length);
   return (
     <Breadcrumbs
       wrap={false}
       items={levels.slice(0, depth).map(({ label, href }, index) =>
         index === depth - 1
-          ? { label }
+          ? { label: narrow && index === 2 ? 'Q3' : label }
           : {
               label,
               href,
@@ -53,11 +58,12 @@ function Trail() {
 
 /** A trail of three levels, the last the current page, on one line at every width. */
 export default function BreadcrumbsTile() {
+  const narrow = useMedia(narrowGallery);
   const [round, setRound] = useState(0);
   usePointer(script, { onCue: () => setRound((count) => count + 1) });
   return (
     <Renew round={round}>
-      <Trail />
+      <Trail narrow={narrow} />
     </Renew>
   );
 }

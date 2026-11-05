@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Table } from '@envsemble/envui';
+import { useMedia } from '../motion/Autoplay';
 import { usePointer, type PointerStep } from '../motion/Motion';
+import { narrowGallery } from './Tiles';
 
 /** Two projects, so the table shows whole, its frame in view, in a gallery's low tile. */
 const projects = [
@@ -41,6 +43,7 @@ const script: PointerStep[] = [
 
 /** A table of projects and their open tasks, sortable by the tasks, whose rows can be chosen. */
 export default function TableTile() {
+  const narrow = useMedia(narrowGallery);
   const [direction, setDirection] = useState<Table.SortDirection>('ascending');
   const [chosen, setChosen] = useState<string | null>(null);
   usePointer(script);
@@ -48,7 +51,7 @@ export default function TableTile() {
     direction === 'ascending' ? a.tasks - b.tasks : b.tasks - a.tasks,
   );
   return (
-    <Table.Root aria-label="Projects" style={{ inlineSize: '11.5rem' }}>
+    <Table.Root aria-label="Projects" style={{ inlineSize: narrow ? '10rem' : '11.5rem' }}>
       <Table.Head>
         <Table.Row>
           <Table.HeaderCell>Project</Table.HeaderCell>

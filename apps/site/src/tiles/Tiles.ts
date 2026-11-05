@@ -28,7 +28,7 @@ export const tileWindows: Readonly<Record<string, { width: number; height: numbe
   // The layout drawings, each drawn about as large as LineArt's, whose lines they share.
   'line-art': { width: 10, height: 7.5 },
   box: { width: 9.4, height: 7.05 },
-  row: { width: 8.4, height: 6.3 },
+  row: { width: 7.2, height: 5.4 },
   column: { width: 9.5, height: 7.125 },
   grid: { width: 8.8, height: 6.6 },
   accordion: { width: 15, height: 11.25 },

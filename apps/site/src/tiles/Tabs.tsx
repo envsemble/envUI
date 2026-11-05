@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Tabs, Text } from '@envsemble/envui';
+import { useMedia } from '../motion/Autoplay';
 import { usePointer, type PointerStep } from '../motion/Motion';
+import { narrowGallery } from './Tiles';
 
 const tab = (index: number) => `.env-tabs-tab:nth-child(${index} of .env-tabs-tab)`;
 
@@ -24,16 +26,18 @@ const script: PointerStep[] = [
 ];
 
 const panels = [
-  { value: 'summary', label: 'Summary', text: 'Plans and owners.' },
-  { value: 'files', label: 'Files', text: 'Twelve files.' },
-  { value: 'activity', label: 'Activity', text: 'Updated today.' },
+  { value: 'summary', label: 'Summary', short: 'Plan', text: 'Plans and owners.' },
+  { value: 'files', label: 'Files', short: 'Files', text: 'Twelve files.' },
+  { value: 'activity', label: 'Activity', short: 'Log', text: 'Updated today.' },
 ];
 
 /**
- * Three tabs of a project, Summary chosen, over its one-line panel. A panel's line goes at once as
- * another tab is chosen, while the next one fades in, so two lines never show over each other.
+ * Three tabs of a project, Summary chosen, over its one-line panel.
+ * In a phone's narrower tile the tabs take shorter names, so the strip is drawn at about its own
+ * size there.
  */
 export default function TabsTile() {
+  const narrow = useMedia(narrowGallery);
   const [value, setValue] = useState('summary');
   usePointer(script);
   return (
@@ -43,8 +47,8 @@ export default function TabsTile() {
       onValueChange={(next) => next && setValue(next)}
       items={panels.map((panel) => ({
         value: panel.value,
-        label: panel.label,
-        content: <Text style={{ opacity: panel.value === value ? 1 : 0 }}>{panel.text}</Text>,
+        label: narrow ? panel.short : panel.label,
+        content: <Text>{panel.text}</Text>,
       }))}
     />
   );

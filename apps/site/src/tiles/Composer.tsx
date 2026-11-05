@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { Composer } from '@envsemble/envui';
+import { useMedia } from '../motion/Autoplay';
 import { usePointer, type PointerStep } from '../motion/Motion';
+import { narrowGallery } from './Tiles';
 
 const input = '.env-composer-input';
 
@@ -28,6 +30,7 @@ const script: PointerStep[] = [
 
 /** A composer with its placeholder and its send button. */
 export default function ComposerTile() {
+  const narrow = useMedia(narrowGallery);
   const [replying, setReplying] = useState(false);
   const timer = useRef<number>(undefined);
   useEffect(() => () => window.clearTimeout(timer.current), []);
@@ -43,7 +46,7 @@ export default function ComposerTile() {
         // A timer stands in for the reply.
         timer.current = window.setTimeout(() => setReplying(false), 1300);
       }}
-      style={{ inlineSize: '11rem' }}
+      style={{ inlineSize: narrow ? '8.5rem' : '11rem' }}
     />
   );
 }

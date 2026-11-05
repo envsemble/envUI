@@ -8,16 +8,21 @@ const button = (index: number) => `.env-icon-button:nth-child(${index} of .env-i
 
 /*
  * The pointer, resting on the middle button, moves to the next, whose tooltip opens once it rests
- * there for the tooltip's delay, and back, where the loop began.
+ * there for the tooltip's delay, and back, where the loop began. The delay is short, as it is
+ * between the buttons of a toolbar once one tooltip has shown, so the row is never long without
+ * one.
  */
 const script: PointerStep[] = [
   { to: button(2), y: 0.6 },
-  { wait: 900 },
-  { to: button(3), y: 0.6, duration: 400 },
   { wait: 1500 },
-  { to: button(2), y: 0.6, duration: 400 },
-  { wait: 1200 },
+  { to: button(3), y: 0.6, duration: 300 },
+  { wait: 2000 },
+  { to: button(2), y: 0.6, duration: 300 },
+  { wait: 500 },
 ];
+
+/** How long the pointer rests on a button before its tooltip opens. */
+const delay = 120;
 
 const actions = [
   { label: 'Refresh', icon: <IconRefresh /> },
@@ -31,7 +36,7 @@ export default function TooltipTile() {
   return (
     <Row gap={2} align="center">
       {actions.map(({ label, icon }) => (
-        <Tooltip key={label} content={label} defaultOpen={label === 'Download'}>
+        <Tooltip key={label} content={label} delay={delay} defaultOpen={label === 'Download'}>
           <IconButton icon={icon} aria-label={label} variant="secondary" />
         </Tooltip>
       ))}

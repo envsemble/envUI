@@ -1,5 +1,7 @@
 import { Markdown } from '@envsemble/envui/content';
+import { useMedia } from '../motion/Autoplay';
 import { useTimeline } from '../motion/Motion';
+import { narrowGallery } from './Tiles';
 
 /**
  * A short note as it is written: a heading, and a list with a version in inline code, which renders
@@ -8,8 +10,11 @@ import { useTimeline } from '../motion/Motion';
  */
 const note = '## Launch plan\n- Design review\n- Ship `v2.0` in May';
 
-/** The note's source, shown as it is written, in a code block of its own. */
-const source = `\`\`\`md\n${note}\n\`\`\``;
+/** The note in a phone's narrower tile, its lines shorter, so it is drawn at about its own size. */
+const shortNote = '## Launch\n- Review it\n- Ship `v2.0`';
+
+/** A note's source, shown as it is written, in a code block of its own. */
+const sourceOf = (text: string) => `\`\`\`md\n${text}\n\`\`\``;
 
 /**
  * One view over the other, the one leaving fading out before the one coming fades in, so the two
@@ -23,18 +28,19 @@ const layer = (shown: boolean) => ({
 });
 
 /**
- * A note in Markdown: its source at rest, with its marks, which gives way to the note rendered, a
- * heading over a list with a version in code, and back.
+ * A note in Markdown: rendered at rest, a heading over a list with a version in code; as it plays,
+ * its source, with its marks, and the note rendered from it again.
  */
 export default function MarkdownTile() {
-  const rendered = useTimeline([1000, 2600]) === 1;
+  const rendered = useTimeline([400, 1800, 2600]) !== 1;
+  const text = useMedia(narrowGallery) ? shortNote : note;
   return (
     <div style={{ display: 'grid', alignItems: 'center', inlineSize: 'max-content' }}>
       <Markdown aria-hidden={rendered} style={layer(!rendered)}>
-        {source}
+        {sourceOf(text)}
       </Markdown>
       <Markdown aria-hidden={!rendered} style={layer(rendered)}>
-        {note}
+        {text}
       </Markdown>
     </div>
   );

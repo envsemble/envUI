@@ -9,17 +9,20 @@ import { usePointer, usePreviewLayer, type PointerStep } from '../motion/Motion'
 const script: PointerStep[] = [
   { wait: 400 },
   { to: '.env-toast-action' },
-  { wait: 500 },
+  { wait: 700 },
   { click: true },
   { wait: 300 },
   { leave: true },
   { wait: 2600 },
   { cue: 'again' },
-  { wait: 900 },
+  { wait: 2600 },
 ];
 
-/** How long a notification takes to leave before the next one comes, so the two never stack. */
-const handover = 300;
+/**
+ * How long after one notification starts to leave the next comes: as it fades, so the stage is
+ * never empty between them, but not before it has mostly gone, so the two never stack.
+ */
+const handover = 120;
 
 /**
  * A notification of an archived project, short enough to show whole in a gallery's tile, with

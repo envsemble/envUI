@@ -1,5 +1,7 @@
 import { CopyButton, Message, MessageList, Row } from '@envsemble/envui';
+import { useMedia } from '../motion/Autoplay';
 import { usePointer, type PointerStep } from '../motion/Motion';
+import { narrowGallery } from './Tiles';
 
 const answer = '.env-message[data-from="other"] .env-message-content';
 
@@ -21,11 +23,13 @@ const script: PointerStep[] = [
 /**
  * The assistant's answer, with an action to copy it at its end, so Copied, above the action, shows
  * beside the answer's line rather than over it.
+ * In a phone's narrower tile it is narrower too, so it is drawn at about its own size there.
  */
 export default function MessageTile() {
+  const narrow = useMedia(narrowGallery);
   usePointer(script);
   return (
-    <MessageList aria-label="Conversation" style={{ inlineSize: '12rem' }}>
+    <MessageList aria-label="Conversation" style={{ inlineSize: narrow ? '8.75rem' : '12rem' }}>
       <Message
         from="other"
         author="Assistant"
