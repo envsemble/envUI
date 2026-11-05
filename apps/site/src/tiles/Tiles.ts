@@ -41,7 +41,7 @@ export const tileWindows: Readonly<Record<string, { width: number; height: numbe
   tabs: { width: 15, height: 11.25 },
   breadcrumbs: { width: 15, height: 11.25 },
   'document-tabs': { width: 18, height: 13.5 },
-  dialog: { width: 16, height: 12 },
+  dialog: { width: 14, height: 10.5 },
   'confirm-dialog': { width: 15, height: 11.25 },
   'date-picker': { width: 20, height: 15 },
   'time-picker': { width: 24, height: 18 },
