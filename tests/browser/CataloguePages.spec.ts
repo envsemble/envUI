@@ -980,7 +980,8 @@ test('a gallery tile whose script opens nothing holds its still as the pointer c
   test.setTimeout(60_000);
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto(`${siteDevUrl}/components`);
-  for (const name of ['Tree', 'List', 'Accordion', 'Avatar']) {
+  // Accordion opens a panel, so the view may ease to it; these open nothing.
+  for (const name of ['Tree', 'List', 'Avatar']) {
     // Just past 300 ms, the first stretch of the play.
     const { rest, frames } = await playTile(page, name, [], 400);
     const moved = frames
