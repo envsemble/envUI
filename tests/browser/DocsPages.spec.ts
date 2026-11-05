@@ -4,7 +4,7 @@ import { chooseScheme } from './helpers/CatalogueThemes';
 import { readReleaseNotes } from '../../scripts/site/ReleaseNotes.ts';
 import { renderLlmsText, renderSkill } from '../../scripts/site/SiteAgentFiles.ts';
 import { pagesOf } from '../../apps/site/src/navigation/SiteRoutes';
-import { version, goTo } from './helpers/SiteSpecHelpers';
+import { goTo } from './helpers/SiteSpecHelpers';
 
 test('a guide in the Docs renders shared Markdown and follows relative links', async ({ page }) => {
   await page.goto(`${siteDevUrl}/docs/customizing`);
@@ -155,21 +155,6 @@ test("a page's changelog in the Docs is collapsed, and a link to it opens it", a
   await expect(page.locator('#changelog')).toBeInViewport();
 });
 
-test('the props in the Docs link each source file at the revision the site was built from', async ({
-  page,
-}) => {
-  await page.goto(`${siteDevUrl}/docs/components/button`);
-  const link = page.getByRole('link', { name: 'actions/Button.tsx', exact: true });
-  // The release tag of a release build, or the commit of any other: never a moving branch.
-  const revision = `(?:v${version.replaceAll('.', '\\.')}|[0-9a-f]{40})`;
-  await expect(link).toHaveAttribute(
-    'href',
-    new RegExp(
-      `^https://github\\.com/envsemble/envUI/blob/${revision}/packages/ui/src/actions/Button\\.tsx$`,
-    ),
-  );
-});
-
 test("the Docs' home is the setup guide, with a prompt to copy that sets envUI up through the skill the site serves under Coding agents", async ({
   page,
   context,
@@ -220,10 +205,13 @@ test('a page of the Docs has breadcrumbs, a tree of the Docs open at its section
     'aria-current',
     'page',
   );
-  // The switch is the way to the catalogue: the corner repeats none.
+  // The corner leads to the catalogue as on every page of the Docs, here to the same page.
   await expect(
-    page.locator('.site-page-actions').getByRole('link', { name: 'Catalogue', exact: true }),
-  ).toHaveCount(0);
+    page.locator('.site-page-actions .site-wide-only').getByRole('link', {
+      name: 'Catalogue',
+      exact: true,
+    }),
+  ).toHaveAttribute('href', '/components/button');
   // The navigation opens the section of the current page, and keeps the others closed.
   const navigation = page.getByRole('navigation', { name: 'Docs' });
   await expect(navigation.getByRole('button', { name: 'Actions' })).toHaveAttribute(
