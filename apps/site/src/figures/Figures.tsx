@@ -219,6 +219,32 @@ function Figure({
 }
 
 /**
+ * A component's preview at the top of its Usage in the Docs: its catalogue's first overview
+ * example, live as the Overview shows it, without its code, which Usage gives right under it. It
+ * is the one figure a Docs page shows, so a reader sees what the code makes without switching
+ * parts; the catalogue's Overview section itself isn't repeated.
+ */
+export function UsagePreview({ page }: { page: Document }) {
+  const block = page.sections
+    ?.find((section) => section.id === 'overview')
+    ?.blocks.find((item): item is ExampleBlock => item.kind === 'example');
+  if (!block) return null;
+  return (
+    <div className="docs-usage-preview">
+      <LiveExample
+        page={page.id}
+        name={block.name}
+        title={block.heading}
+        open={block.open}
+        live
+        stage={block.stage}
+        code={false}
+      />
+    </div>
+  );
+}
+
+/**
  * Markdown cut before its last `###` subsection, when that subsection is text a figure can sit
  * beside: no table, no fence, and not only a list.
  */
