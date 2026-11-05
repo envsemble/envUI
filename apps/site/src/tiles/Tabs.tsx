@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Tabs, Text } from '@envsemble/envui';
+import { Column, Tabs, Text } from '@envsemble/envui';
 import { useMedia } from '../motion/Autoplay';
 import { usePointer, type PointerStep } from '../motion/Motion';
 import { narrowGallery } from './Tiles';
@@ -25,16 +25,40 @@ const script: PointerStep[] = [
   { wait: 400 },
 ];
 
+/**
+ * Each panel a different shape, as views of a project are: a line, two files, and a longer line
+ * over a shorter one, so a change of panel reads as one, though the component fades the panel
+ * leaving out as the one coming fades in, in the same place.
+ */
 const panels = [
-  { value: 'summary', label: 'Summary', short: 'Plan', text: 'Plans and owners.' },
-  { value: 'files', label: 'Files', short: 'Files', text: 'Twelve files.' },
-  { value: 'activity', label: 'Activity', short: 'Log', text: 'Updated today.' },
+  {
+    value: 'summary',
+    label: 'Summary',
+    short: 'Plan',
+    lines: ['Plans and owners.'],
+    shortLines: ['Plans and owners.'],
+  },
+  {
+    value: 'files',
+    label: 'Files',
+    short: 'Files',
+    lines: ['brief.pdf', 'budget.xlsx'],
+    shortLines: ['Two files.'],
+  },
+  {
+    value: 'activity',
+    label: 'Activity',
+    short: 'Log',
+    lines: ['Sam edited the brief.', 'Updated today.'],
+    shortLines: ['Edited today.'],
+  },
 ];
 
 /**
- * Three tabs of a project, Summary chosen, over its one-line panel.
- * In a phone's narrower tile the tabs take shorter names, so the strip is drawn at about its own
- * size there.
+ * Three tabs of a project, Summary chosen, over its panel, filling a box of the height of the
+ * tallest panel, as tabs in a pane do, so the strip stays where it is as the panels change.
+ * In a phone's narrower and lower tile the tabs take shorter names and the panels a line each, of
+ * different lengths, so the strip is drawn at about its own size there and its panels show whole.
  */
 export default function TabsTile() {
   const narrow = useMedia(narrowGallery);
@@ -43,12 +67,20 @@ export default function TabsTile() {
   return (
     <Tabs
       aria-label="Project views"
+      fill
+      style={{ blockSize: '6.5rem' }}
       value={value}
       onValueChange={(next) => next && setValue(next)}
       items={panels.map((panel) => ({
         value: panel.value,
         label: narrow ? panel.short : panel.label,
-        content: <Text>{panel.text}</Text>,
+        content: (
+          <Column gap={1}>
+            {(narrow ? panel.shortLines : panel.lines).map((line) => (
+              <Text key={line}>{line}</Text>
+            ))}
+          </Column>
+        ),
       }))}
     />
   );
