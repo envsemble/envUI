@@ -375,10 +375,10 @@ test("the overview's hero says what envUI is, leads to setting it up and gives t
   const hero = page.locator('.catalogue-overview-hero');
   await expect(hero.getByRole('heading', { level: 1 })).toHaveAccessibleName('envUI');
   await expect(hero.locator('.catalogue-overview-lede')).toContainText('A React design system');
-  // The install command names packages/ui/package.json's version, as docs/setup.md does, and
-  // copies; the catalogue's counts sit under it.
+  // The install command names packages/ui/package.json's version and copies; the catalogue's
+  // counts sit under it.
   const code = hero.locator('.catalogue-overview-install code');
-  await expect(code).toHaveText(`npm install --save-exact @envsemble/envui@${version}`);
+  await expect(code).toHaveText(`npm install @envsemble/envui@${version}`);
   await expect(code).toBeVisible();
   await expect(hero.getByRole('button', { name: 'Copy install command' })).toBeVisible();
   await expect(hero.locator('.catalogue-overview-facts')).toContainText(
@@ -392,13 +392,13 @@ test("the overview's hero says what envUI is, leads to setting it up and gives t
   const install = hero.locator('.catalogue-overview-install');
   const height = async (locator: typeof install) => (await locator.boundingBox())!.height;
   expect(await height(install)).toBeCloseTo(await height(start), 0);
-  // A phone shows the same command, the one the button copies, whole: it wraps before the package
-  // and its version rather than scrolling or breaking inside a word.
+  // A phone shows the same command, the one the button copies, whole and on one line, so the
+  // package and its version never read as two.
   await page.setViewportSize({ width: 390, height: 844 });
   await expect
     .poll(() => code.evaluate((element) => element.scrollWidth - element.clientWidth))
     .toBe(0);
-  await expect(code.locator('span').first()).toHaveCSS('white-space', 'nowrap');
+  await expect(code).toHaveCSS('white-space', 'nowrap');
 });
 
 test("a catalogue page's banner reads from the start under its breadcrumbs, its picture hidden", async ({

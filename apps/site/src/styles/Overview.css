@@ -59,26 +59,26 @@
   text-wrap: balance;
 }
 /* The install command beside Get started: code on the cards' fill, with its copy button at its
-   end, as tall as the button beside it, so the two read as one row. Where the line doesn't fit, it
-   wraps before the package's name and its version (Overview.tsx), so all of it shows. */
+   end, as tall as the button beside it, so the two read as one row. It stays on one line, whole on
+   a phone; on a narrower screen still it scrolls rather than wrap, so the package and its version
+   never read as two. */
 .catalogue-overview-install {
   display: inline-flex;
   align-items: center;
-  gap: var(--env-space-1);
   max-inline-size: 100%;
-  padding-inline-start: var(--env-space-4);
+  padding-inline-start: var(--env-space-3);
   border-radius: var(--env-radius-full);
   background: var(--env-color-bg-default);
   text-align: start;
 }
 .catalogue-overview-install code {
   min-inline-size: 0;
+  overflow-x: auto;
   padding-block: var(--env-space-1);
   font-family: var(--site-code-font-family);
   font-size: var(--env-font-size-caption);
-}
-.catalogue-overview-install code > span {
   white-space: nowrap;
+  scrollbar-width: none;
 }
 /* The counts, a middle dot between each, each whole. */
 .catalogue-overview-facts {
