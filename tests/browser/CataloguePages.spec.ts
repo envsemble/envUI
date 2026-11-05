@@ -1291,3 +1291,39 @@ for (const [route, parts] of [
       );
       expect(await deadClicks(page, names)).toEqual([]);
     });
+
+test("a playing preview draws its pointer's cursor over its stage, gone at rest and when paused", async ({
+  page,
+}) => {
+  // A gallery's card: the cursor shows on its stage while the card plays, and goes as it rests.
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(`${siteDevUrl}/components`);
+  const tile = page.locator('.catalogue-gallery-tile').filter({
+    has: page.locator('.catalogue-gallery-name', { hasText: /^Select$/ }),
+  });
+  await tile.scrollIntoViewIfNeeded();
+  await expect(tile.locator('.catalogue-related-canvas[data-fitted]')).toHaveCount(1);
+  const cursor = page.locator('.catalogue-pointer-cursor');
+  await expect(cursor).toHaveCount(0);
+  const box = (await tile.boundingBox())!;
+  await page.mouse.move(box.x + box.width / 2, box.y + 8);
+  const onStage = tile.locator('.catalogue-related-stage > .catalogue-pointer-cursor');
+  await expect(onStage).toBeVisible();
+  // Its tip is where the pointer no one sees is, inside the stage.
+  const stage = (await tile.locator('.catalogue-related-stage').boundingBox())!;
+  const tip = (await onStage.boundingBox())!;
+  expect(tip.x).toBeGreaterThanOrEqual(stage.x - 1);
+  expect(tip.x).toBeLessThanOrEqual(stage.x + stage.width);
+  await page.mouse.move(0, 0);
+  await expect(cursor).toHaveCount(0);
+  // A page's animated figure: its cursor shows while it plays in view, and goes when it is paused.
+  await page.goto(`${siteDevUrl}/components/menu`);
+  const figure = page.locator('.catalogue-motion-stage').filter({
+    has: page.locator('.catalogue-motion-pause'),
+  });
+  await figure.first().scrollIntoViewIfNeeded();
+  await expect(figure.first().locator('.catalogue-pointer-cursor')).toBeVisible();
+  await figure.first().hover();
+  await figure.first().locator('.catalogue-motion-pause').click();
+  await expect(figure.first().locator('.catalogue-pointer-cursor')).toHaveCount(0);
+});

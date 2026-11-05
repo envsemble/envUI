@@ -11,6 +11,7 @@
  */
 
 import { editorOf, PointerSelection } from './VirtualSelection';
+import { PointerCursor } from './PointerCursor';
 import {
   focusMark,
   focusWithinMark,
@@ -161,6 +162,24 @@ export class VirtualPointer {
     captures.set(this.id, null);
     mirrorPointerStates();
     this.selection = new PointerSelection(scope);
+    this.cursor = new PointerCursor(scope);
+  }
+
+  /** Its cursor, drawn over the preview's stage while it plays (PointerCursor.ts). */
+  private readonly cursor: PointerCursor;
+  /** Whether its cursor is drawn: while its preview plays. */
+  private cursorShown = false;
+
+  /** Draws its cursor while its preview plays, or takes it away. */
+  showCursor(on: boolean) {
+    this.cursorShown = on;
+    this.drawCursor();
+  }
+
+  /** Draws its cursor where it is, pressed or not, or none while it is off the preview. */
+  private drawCursor() {
+    if (this.cursorShown) this.cursor.place(this.at, this.buttons > 0);
+    else this.cursor.remove();
   }
 
   /** The flags of the modifier keys held, for an event. */
@@ -302,6 +321,9 @@ export class VirtualPointer {
    * before a drop, it carries them all together.
    */
   carry(files: readonly CarriedFile[]) {
+    // What it hovers, it leaves, as the drag comes in over it: the drag's own events take over,
+    // and nothing keeps its hover after the drop.
+    if (!this.carried) this.unhover();
     this.carried ??= new DataTransfer();
     for (const { name, type, size } of files)
       this.carried.items.add(
@@ -345,6 +367,7 @@ export class VirtualPointer {
       this.sendDrag(element, 'dragenter');
     this.over = chain;
     this.sendDrag(target, 'dragover');
+    this.drawCursor();
   }
 
   /** Whether a move to a point is no move: a pointer at rest sends nothing. */
@@ -394,6 +417,7 @@ export class VirtualPointer {
     this.send(captures.get(this.id) ?? target, 'pointermove');
     // A drag across text selects it, unless something took the drag, as a slider's thumb does.
     if (this.buttons === 1 && this.selects && !captures.get(this.id)) this.selection.extend(point);
+    this.drawCursor();
   }
 
   /** Whether this pointer may go on now: no other is holding its button down on the page. */
@@ -446,6 +470,7 @@ export class VirtualPointer {
     pressing = this.id;
     this.button = button;
     this.buttons = button === 2 ? 2 : 1;
+    this.drawCursor();
     const sent = this.send(target, 'pointerdown', { button });
     this.pressed = [...this.over];
     if (button === 0) for (const element of this.pressed) mark(element, pressMark, true);
@@ -528,6 +553,7 @@ export class VirtualPointer {
     for (const element of this.pressed) mark(element, pressMark, false);
     this.pressed = [];
     this.mouseless = false;
+    this.drawCursor();
   }
 
   /** The last click, which a second one soon after on the same element makes a double click. */
@@ -784,16 +810,23 @@ export class VirtualPointer {
       this.carried = null;
       this.over = [];
       this.at = null;
+      this.drawCursor();
       return;
     }
     this.release();
+    this.unhover();
+    this.at = null;
+    this.drawCursor();
+  }
+
+  /** Leaves what it is over: each element hears it go and loses its hover. */
+  private unhover() {
     if (this.over[0]) this.send(this.over[0], 'pointerout');
     for (const element of this.over) {
       this.send(element, 'pointerleave');
       mark(element, hoverMark, false);
     }
     this.over = [];
-    this.at = null;
   }
 
   /** Whether the pointer is over the preview. */
@@ -812,6 +845,7 @@ export class VirtualPointer {
     this.focus(null);
     this.leave();
     this.selection.clear();
+    this.cursor.remove();
     captures.delete(this.id);
   }
 }

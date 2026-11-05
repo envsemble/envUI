@@ -517,10 +517,13 @@ export function usePointer(
       advance(state.time, still);
     };
     const stop = joinPointerFrames({ read, write });
+    // Its cursor shows while it plays, and goes as it stops or pauses.
+    current.showCursor(true);
     return () => {
       stop();
       together?.leave();
       current.suspend();
+      current.showCursor(false);
       headFor(scope, null);
     };
   }, [playing, root, plan, clockName]);
@@ -534,7 +537,7 @@ export function usePointer(
 export function useMustShow(...selectors: string[]) {
   const { root } = use(PlaybackContext);
   const key = selectors.join('\n');
-  useEffect(() => (root ? nameMustShow(root, key.split('\n')) : undefined), [root, key]);
+  useEffect(() => (root ? nameMustShow(root, key.split('\n'), true) : undefined), [root, key]);
 }
 
 /**

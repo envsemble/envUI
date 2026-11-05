@@ -672,3 +672,51 @@
 .catalogue-motion-stage[data-top] {
   align-content: start;
 }
+
+/* The cursor of the pointer no one sees (motion/PointerCursor.ts), over a playing preview's stage:
+   a plain arrow in the text's color, edged in the page's, at the scale the preview is drawn at,
+   its tip where the pointer is, a little smaller while it presses. */
+.catalogue-pointer-cursor {
+  --catalogue-cursor-scale: 1;
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  z-index: var(--env-z-raised);
+  inline-size: 0.875rem;
+  block-size: 1.25rem;
+  pointer-events: none;
+  transform-origin: 0 0;
+  scale: var(--catalogue-cursor-scale);
+}
+.catalogue-pointer-cursor > svg {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  overflow: visible;
+  fill: var(--env-color-fg-default);
+  stroke: var(--env-color-bg-default);
+  stroke-width: 1.25;
+  stroke-linejoin: round;
+  paint-order: stroke;
+  transform-origin: 0 0;
+}
+.catalogue-pointer-cursor[data-pressed] > svg {
+  scale: 0.85;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .catalogue-pointer-cursor > svg {
+    transition: scale var(--env-motion-duration-fast) var(--env-motion-ease);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .catalogue-pointer-cursor {
+    display: none;
+  }
+}
+@media (forced-colors: active) {
+  .catalogue-pointer-cursor > svg {
+    forced-color-adjust: none;
+    fill: CanvasText;
+    stroke: Canvas;
+  }
+}
