@@ -1,20 +1,23 @@
 import { Column, List, Panes, Surface, Text } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../motion/Motion';
+import { useMedia } from '../motion/Autoplay';
+import { useMustShow, usePointer, type PointerStep } from '../motion/Motion';
+import { narrowGallery } from './Tiles';
 
 const panes = '.env-panes';
 
 /** The panes' width, in rem: side by side from a medium width, 37.5 rem of their own. */
 const across = 38;
 
-/**
- * The list's width, in rem, at rest, its least, and widened, and half the gap that holds the
- * divider: at rest the detail's heading starts well inside the stage, and widened by 3 rem the
- * list takes room from the detail, far from its own least and the detail's.
- */
-const list = 6.25;
-const least = 6;
-const widened = 9.25;
+/** Half the gap that holds the divider, in rem. */
 const half = 0.5;
+
+/**
+ * The list's width, in rem, at rest and widened, and its least, for the stage's width: what the
+ * stage shows of the panes splits about a third to the list at rest and three fifths widened, far
+ * from the list's least, and the detail's heading stays in view beside it.
+ */
+const wide = { list: 5.75, widened: 8.5, least: 5.5 };
+const narrow = { list: 6, widened: 7.5, least: 6 };
 
 /** Where a list as wide as `width` ends, as a share of the panes' width. */
 const at = (width: number) => (width + half) / across;
@@ -24,39 +27,47 @@ const at = (width: number) => (width + half) / across;
  * beside it, held there, and back, and let go. The pointer aims at the panes rather than at the
  * gap, which moves as it drags.
  */
-const script: PointerStep[] = [
+const scriptOf = ({ list, widened }: typeof wide): PointerStep[] => [
   { wait: 400 },
   { to: panes, x: at(list) },
-  { wait: 500 },
+  { wait: 400 },
   { press: true },
   { to: panes, x: at(widened), duration: 1000 },
-  { wait: 900 },
+  { wait: 1000 },
   { to: panes, x: at(list), duration: 900 },
   { release: true },
   { wait: 500 },
   { leave: true },
   { wait: 500 },
 ];
+const scripts = { wide: scriptOf(wide), narrow: scriptOf(narrow) };
 
 /**
- * A list of messages beside the chosen one, resized by the gap between them: low, and as wide as
- * panes side by side are, so the stage shows the list, the divider and the start of the detail,
- * whose end it fades out (useFit.ts), all three in view as the list widens; the detail's short
- * lines start close to the divider, so they stay in view at a phone's width too.
+ * An inbox beside the message chosen in it, resized by the divider between them: as wide as panes
+ * side by side are, so the stage shows the list, the divider and the start of the detail, whose
+ * end it fades out (useFit.ts). Each pane names what it holds, and the detail's heading, what the
+ * drag moves, starts close to the divider, so it stays in view at a phone's width too.
  */
 export default function PanesTile() {
-  usePointer(script);
+  const sizes = useMedia(narrowGallery) ? narrow : wide;
+  usePointer(sizes === narrow ? scripts.narrow : scripts.wide);
+  // The detail's heading, which the drag moves, stays in view; a phone's stage has no room to keep
+  // it whole beside a widened list, so there the divider does, as the heading fades at its end.
+  useMustShow(sizes === narrow ? '.env-panes-divider' : '.env-panes-detail h3');
   return (
     <Panes.Root
       behavior="list-detail"
       splitAt="medium"
-      defaultWidth={list}
-      minWidth={least}
-      style={{ inlineSize: `${across}rem`, blockSize: '5.5rem' }}
+      defaultWidth={sizes.list}
+      minWidth={sizes.least}
+      style={{ inlineSize: `${across}rem`, blockSize: '6rem' }}
     >
       <Panes.List label="Inbox">
-        <Surface padding={2} style={{ minBlockSize: '100%' }}>
-          <List.Root aria-label="Messages">
+        <Surface padding={1} render={<Column gap={1} />} style={{ minBlockSize: '100%' }}>
+          <Text variant="caption" emphasis="muted" style={{ padding: '0.25rem 0.75rem 0' }}>
+            Inbox
+          </Text>
+          <List.Root aria-label="Messages" density="xs">
             <List.Item label="Launch" current />
             <List.Item label="Budget" />
           </List.Root>
@@ -64,9 +75,17 @@ export default function PanesTile() {
       </Panes.List>
       <Panes.Divider label="Resize the inbox" />
       <Panes.Detail label="Launch">
-        <Surface padding={2} render={<Column gap={1} />} style={{ minBlockSize: '100%' }}>
-          <Text render={<h3 />}>Launch</Text>
-          <Text variant="body-sm">May 4</Text>
+        <Surface
+          padding={2}
+          render={<Column gap={1} align="start" />}
+          style={{ minBlockSize: '100%' }}
+        >
+          <Text variant="title" render={<h3 />}>
+            Launch
+          </Text>
+          <Text variant="body-sm" emphasis="muted">
+            May 4
+          </Text>
         </Surface>
       </Panes.Detail>
     </Panes.Root>
