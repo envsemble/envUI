@@ -1,6 +1,7 @@
 import { Button, ButtonGroup, Row, IconButton } from '@envsemble/envui';
 import { IconCheck } from '@envsemble/envui/icons/Check';
 import { IconClose } from '@envsemble/envui/icons/Close';
+import { IconExpandMore } from '@envsemble/envui/icons/ExpandMore';
 import { IconSettings } from '@envsemble/envui/icons/Settings';
 
 export default function ConnectedButtons() {
@@ -10,6 +11,10 @@ export default function ConnectedButtons() {
         <Button>Open</Button>
         <Button>Edit</Button>
         <Button>Share</Button>
+      </ButtonGroup>
+      <ButtonGroup aria-label="Publish">
+        <Button>Publish</Button>
+        <IconButton variant="primary" icon={<IconExpandMore />} aria-label="More publish options" />
       </ButtonGroup>
       <ButtonGroup orientation="vertical" aria-label="Item actions">
         <Button variant="secondary">Open</Button>

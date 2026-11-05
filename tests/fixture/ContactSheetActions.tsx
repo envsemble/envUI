@@ -21,6 +21,7 @@ import { IconAdd } from '@envsemble/envui/icons/Add';
 import { IconDelete } from '@envsemble/envui/icons/Delete';
 import { IconDownload } from '@envsemble/envui/icons/Download';
 import { IconEdit } from '@envsemble/envui/icons/Edit';
+import { IconExpandMore } from '@envsemble/envui/icons/ExpandMore';
 import { IconFormatBold } from '@envsemble/envui/icons/FormatBold';
 import { IconFormatItalic } from '@envsemble/envui/icons/FormatItalic';
 import { IconFormatUnderlined } from '@envsemble/envui/icons/FormatUnderlined';
@@ -316,7 +317,11 @@ function Groups() {
         <Cell caption="Split button">
           <ButtonGroup>
             <Button>Publish</Button>
-            <IconButton icon={<IconMoreVert />} aria-label="More publish options" />
+            <IconButton
+              variant="primary"
+              icon={<IconExpandMore />}
+              aria-label="More publish options"
+            />
           </ButtonGroup>
         </Cell>
         <Cell caption="Secondary, one hovered" force="hover" target="button:nth-of-type(2)">
