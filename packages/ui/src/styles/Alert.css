@@ -186,6 +186,12 @@
       --env-alert-dismiss-height: max(var(--env-control-height-sm), var(--env-control-height-touch));
     }
   }
+  /* Its focus ring lies inside the circle, so it is the hover circle's size rather than a ring around
+     it, which nearly filled a one-line alert's height. */
+  .env-alert-dismiss:focus-visible {
+    --env-alert-dismiss-ring: 0.125rem;
+    outline-offset: calc(-1 * var(--env-alert-dismiss-ring));
+  }
   /* Hover and press tint the circle with the tone instead of the ghost button's neutral layer; with
      the application's colors, a layer of the icon color, as strong as the tone's tints. */
   .env-alert-dismiss:hover:not(:disabled):not([aria-disabled='true']) {

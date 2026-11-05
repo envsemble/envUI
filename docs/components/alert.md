@@ -188,6 +188,7 @@ An Alert draws an edge only at high contrast, unless its outline color sets one,
 
 ## Changelog
 
+- **1.0.0-prerelease.6**: The dismiss button's focus ring lies inside its circle, the size of its hover fill, rather than around it.
 - **1.0.0**: No edge outside high contrast: the tone's stronger tint fills it, the title takes the tone's color as the icon does, and its corners are a card's, 1.25 rem. At high contrast it keeps the softer tint with an edge in the border color.
 - **1.0.0**: `actions` for `action`, as on Card and Dialog. `tone="danger"` for `error`; the dismiss button is an IconButton with a cross, named Dismiss in the provider's language.
 - **1.0.0**: `Notice` is `Alert`, with `AlertTone` and the `env-alert-*` classes; the page is `alert`.

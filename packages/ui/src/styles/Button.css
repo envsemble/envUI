@@ -455,9 +455,22 @@
     outline-offset: 0;
   }
 
+  /* An outline button's ring lies flush on its edge, which takes the ring's color while focused, so
+     the two read as one outline rather than an edge in the tone with a blue ring around it. */
   .env-button:where([data-variant='outline']):focus-visible {
     outline-color: var(--env-color-border-focus);
-    outline-offset: 0.0625rem;
+    outline-offset: 0;
+  }
+  .env-button:where([data-variant='outline']):focus-visible:not(:disabled):not(
+      [aria-disabled='true']
+    ) {
+    border-color: var(--env-color-border-focus);
+  }
+
+  /* In dark the primary fill is a soft blue of the focus ring's own hue, so a ring in the focus
+     color reads as a wider button; it takes the text color there instead, apart from the fill. */
+  .env-button:where([data-variant='primary'][data-tone='neutral']):focus-visible {
+    outline-color: light-dark(var(--env-color-border-focus), var(--env-color-fg-default));
   }
 
   .env-button:is(:disabled, [aria-disabled='true']) {
