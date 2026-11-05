@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Column, List, Row, SearchField, Select, Text } from '@envsemble/envui';
+import { Column, List, Row, SearchField, Select, Surface, Text } from '@envsemble/envui';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
 const projects = [
@@ -59,11 +59,14 @@ export default function FilteringTile() {
           ? `${projects.length} projects`
           : `${shown.length} projects of ${projects.length}`}
       </Text>
-      <List.Root aria-label="Projects">
-        {shown.map((project) => (
-          <List.Item key={project.name} label={project.name} />
-        ))}
-      </List.Root>
+      {/* On a muted surface its rows take the raised fill, so they read on any stage. */}
+      <Surface background="muted" padding={1} radius="sm">
+        <List.Root aria-label="Projects">
+          {shown.map((project) => (
+            <List.Item key={project.name} label={project.name} />
+          ))}
+        </List.Root>
+      </Surface>
     </Column>
   );
 }

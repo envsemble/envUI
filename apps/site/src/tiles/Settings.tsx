@@ -1,4 +1,4 @@
-import { Column, List, Switch, Text } from '@envsemble/envui';
+import { Column, List, Surface, Switch, Text } from '@envsemble/envui';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
 const toggle = (index: number) =>
@@ -32,10 +32,12 @@ export default function SettingsTile() {
       <Text render={<span />} variant="title">
         Notifications
       </Text>
-      <List.Root aria-label="Notifications">
-        <List.Item label="Email" end={<Switch aria-label="Email" defaultChecked />} />
-        <List.Item label="Weekly digest" end={<Switch aria-label="Weekly digest" />} />
-      </List.Root>
+      <Surface background="muted" padding={1} radius="sm">
+        <List.Root aria-label="Notifications">
+          <List.Item label="Email" end={<Switch aria-label="Email" defaultChecked />} />
+          <List.Item label="Weekly digest" end={<Switch aria-label="Weekly digest" />} />
+        </List.Root>
+      </Surface>
     </Column>
   );
 }
