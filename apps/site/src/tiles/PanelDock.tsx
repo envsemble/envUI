@@ -5,7 +5,7 @@ import { usePointer, type PointerStep } from '../motion/Motion';
 const minimize = '.env-panel-dock-panel[data-panel-id="notes"] [aria-label="Minimize"]';
 const notesTab = '.env-panel-dock-tab[data-panel-id="notes"] .env-panel-dock-tab-restore';
 
-/** The open panel minimized to a tab beside the other one, and brought back from its tab. */
+/** The open panel minimized to its tab at the window's foot, and brought back from it. */
 const script: PointerStep[] = [
   { wait: 500 },
   { to: minimize },
@@ -26,26 +26,27 @@ const start: PanelDockPanel[] = [
     title: 'Notes',
     mode: 'open',
     active: true,
-    height: 10.5,
-    preferredWidth: 12,
-    minWidth: 12,
+    height: 5.25,
+    preferredWidth: 10,
+    minWidth: 8,
   },
-  // After the notes, so its tab keeps its place at the end as the notes' tab comes and goes.
-  { id: 'budget', title: 'Budget', mode: 'minimized' },
 ];
 
-/** The window the panels dock in, outlined, so the bottom edge they stand on shows. */
+/**
+ * The window the panels dock in, outlined, so the bottom edge they stand on shows: low, so a
+ * gallery's tile shows the panel, the tabs beside it and that edge whole.
+ */
 const edges = {
   position: 'relative',
-  inlineSize: '15.5rem',
-  blockSize: '12rem',
+  inlineSize: '13rem',
+  blockSize: '6.5rem',
   boxSizing: 'border-box',
   border: '0.0625rem solid var(--env-color-border-muted)',
   overflow: 'hidden',
 } as const;
 
 /**
- * A notes panel docked at the bottom edge of a window, with a budget minimized to a tab beside it.
+ * A notes panel docked at the bottom edge of a window, whose tab takes its place there minimized.
  * Stopped, it puts its panels back rather than being drawn anew, which would raise the notes in
  * again.
  */

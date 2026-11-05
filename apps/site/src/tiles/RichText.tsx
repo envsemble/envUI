@@ -43,7 +43,7 @@ export default function RichTextTile() {
         aria-label="Launch note"
         defaultValue="Launch on Friday"
         toolbar={['bold', 'italic']}
-        style={{ inlineSize: '10rem' }}
+        style={{ inlineSize: '12.5rem' }}
       />
     </Renew>
   );

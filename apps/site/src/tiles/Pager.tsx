@@ -1,21 +1,22 @@
-import { useState, type MouseEvent, type ReactNode } from 'react';
+import { useState, type MouseEvent } from 'react';
 import { Pager } from '@envsemble/envui';
-import { IconArrowBack } from '@envsemble/envui/icons/ArrowBack';
-import { IconArrowForward } from '@envsemble/envui/icons/ArrowForward';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
-const pages = ['Overview', 'Install', 'Configure', 'Deploy', 'Monitor'];
+const pages = ['Intro', 'Setup', 'Usage', 'Theme', 'Deploy'];
 
-/** On through the guide twice by Up next, each page's neighbours following, and back twice. */
+/** The page the guide opens at, with a page on either side of it. */
+const first = 1;
+
+/** On through the guide twice by Next, each page's neighbours following, and back twice. */
 const script: PointerStep[] = [
   { wait: 300 },
-  { to: '.env-pager-link-next', x: 0.6 },
+  { to: '.env-pager-link-next', x: 0.5 },
   { wait: 400 },
   { click: true },
   { wait: 900 },
   { click: true },
   { wait: 900 },
-  { to: '.env-pager-link-previous', x: 0.6, duration: 450 },
+  { to: '.env-pager-link-previous', x: 0.5, duration: 450 },
   { wait: 200 },
   { click: true },
   { wait: 900 },
@@ -25,24 +26,33 @@ const script: PointerStep[] = [
   { wait: 400 },
 ];
 
-/** The links before and after a guide's Install page, one above the other, the same width. */
+/**
+ * The links before and after a page of a guide, side by side, the same width, so both show in a
+ * gallery's low tile. A page at either end of the guide shows only the link it has.
+ */
 export default function PagerTile() {
-  const [page, setPage] = useState(1);
-  usePointer(script);
-  const link = (to: number, icon: ReactNode) => ({
-    href: `#${pages[to]!.toLowerCase()}`,
-    children: pages[to],
-    icon,
-    style: { inlineSize: '100%' },
-    onClick: (event: MouseEvent) => {
-      event.preventDefault();
-      setPage(to);
-    },
-  });
+  const [page, setPage] = useState(first);
+  usePointer(script, { onRest: () => setPage(first) });
+  const link = (to: number) => {
+    const title = pages[to];
+    return (
+      title && {
+        href: `#${title.toLowerCase()}`,
+        children: title,
+        style: { flex: '1 1 0' },
+        onClick: (event: MouseEvent) => {
+          event.preventDefault();
+          setPage(to);
+        },
+      }
+    );
+  };
+  const previous = link(page - 1);
+  const next = link(page + 1);
   return (
-    <Pager.Root aria-label="Guide pages" style={{ inlineSize: '11rem' }}>
-      <Pager.Previous {...link(page - 1, <IconArrowBack />)} />
-      <Pager.Next {...link(page + 1, <IconArrowForward />)} />
+    <Pager.Root aria-label="Guide pages" style={{ inlineSize: '12rem', flexWrap: 'nowrap' }}>
+      {previous && <Pager.Previous {...previous} />}
+      {next && <Pager.Next {...next} />}
     </Pager.Root>
   );
 }

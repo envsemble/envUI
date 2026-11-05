@@ -27,9 +27,9 @@ const pascal = (id: string) =>
 export const tileWindows: Readonly<Record<string, { width: number; height: number }>> = {
   'top-bar': { width: 17, height: 12.75 },
   page: { width: 16, height: 12 },
-  scaffold: { width: 17, height: 12.75 },
-  panes: { width: 40, height: 30 },
-  'panel-dock': { width: 17, height: 12.75 },
+  scaffold: { width: 14, height: 7.5 },
+  panes: { width: 14, height: 7 },
+  'panel-dock': { width: 14, height: 8 },
   // The layout drawings, each drawn about as large as LineArt's, whose lines they share.
   'line-art': { width: 10, height: 7.5 },
   box: { width: 9.4, height: 7.05 },
@@ -41,7 +41,7 @@ export const tileWindows: Readonly<Record<string, { width: number; height: numbe
   tabs: { width: 15, height: 11.25 },
   breadcrumbs: { width: 15, height: 11.25 },
   'document-tabs': { width: 18, height: 13.5 },
-  dialog: { width: 16, height: 12 },
+  dialog: { width: 14, height: 10.5 },
   'confirm-dialog': { width: 15, height: 11.25 },
   'date-picker': { width: 20, height: 15 },
   'time-picker': { width: 24, height: 18 },
