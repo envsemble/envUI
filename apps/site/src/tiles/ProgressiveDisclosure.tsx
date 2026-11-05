@@ -25,7 +25,8 @@ export default function ProgressiveDisclosureTile() {
   return (
     <Column gap={4} align="start" style={{ inlineSize: '13rem', minBlockSize: '11rem' }}>
       <Select label="Format" items={formats} defaultValue="csv" />
-      <Disclosure title="Advanced options">
+      {/* As wide as the form, so its title stays on one line, open or closed. */}
+      <Disclosure title="Advanced options" style={{ alignSelf: 'stretch' }}>
         <Checkbox label="Include archived" />
       </Disclosure>
       <Button>Export</Button>
