@@ -47,7 +47,7 @@ export default function ColorPickerTile() {
       formats={['hex']}
       copyable={false}
       eyeDropper={!narrow}
-      style={{ inlineSize: narrow ? '5.5rem' : '6rem', zoom: 0.86 }}
+      style={{ inlineSize: narrow ? '4.5rem' : '6rem' }}
     />
   );
 }
