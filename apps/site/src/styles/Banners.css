@@ -74,6 +74,17 @@
   }
 }
 
+/* On a phone the banner is snugger, its trail, title, description and facts closer together, so
+   the first screen reaches the page's first figure. */
+@container site-page-header (width < 36rem) {
+  .site-banner.site-page-banner {
+    padding-block: var(--env-space-5);
+  }
+  .site-banner .site-page-banner-heading > :first-child {
+    gap: var(--env-space-2);
+  }
+}
+
 /* A trail given as a line rather than breadcrumbs, such as a missing page's, is set as a trail's
    earlier level is (Breadcrumbs.css): small and muted. */
 .site-banner .catalogue-page-banner-breadcrumb {
