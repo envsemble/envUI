@@ -21,7 +21,7 @@ import type { DeviceKind } from '../shared/DocumentationTypes';
 /*
  * A device drawn around a page's figure: a phone or a browser's window whose screen is a window of
  * its own, at a real width, so a frame of an application, such as a Scaffold, lays out as it does
- * on that device. The device is a line drawing: one hairline around the whole body, a phone's
+ * on that device. The device is a plain drawing: one solid stroke around the whole body, a phone's
  * status bar and home indicator, a window's address bar; what its screen shows is the figure as it
  * is. A page's figure takes one with `device` on its fence (LiveExample.tsx); the gallery's and
  * Related's cards never do.

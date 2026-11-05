@@ -48,8 +48,8 @@ function Board() {
           Device frames
         </Text>
         <Text emphasis="muted">
-          A phone 384 px across and a window 1024 px across, each drawn as one hairline around the
-          whole device, around a real figure at its real width, scaled to fit the page&rsquo;s
+          A phone 384 px across and a window 1024 px across, each drawn as one solid stroke around
+          the whole device, around a real figure at its real width, scaled to fit the page&rsquo;s
           figure.
         </Text>
       </Column>

@@ -1,7 +1,7 @@
 /* The device a page's figure is drawn in (figures/DeviceFrame.tsx): a line drawing of a phone or
    a browser's window around the figure, at the device's own size, scaled to fit the stage. Its
-   lengths are the device's own, in the scale of what it shows; its hairline is divided by the
-   scale, so it stays one pixel at any size, and so is a window's corner, which stays envUI's. */
+   lengths are the device's own, in the scale of what it shows, its stroke too; the hairline under a
+   window's address bar is divided by the scale, so it stays one pixel at any size. */
 .site-device-stage {
   /* The most a device is drawn high, so a phone leaves the page around it in view. */
   --site-device-most: 40rem;
@@ -34,38 +34,23 @@
   visibility: visible;
 }
 
-/* The device's body: the page's fill, one hairline all round drawn over what it holds. */
+/* The device's body: one solid stroke all round, a share of the device's own size, with large
+   rounded corners, and the screen right up to its inner edge. */
 .site-device {
-  --site-device-radius: 2.5rem;
-  position: relative;
+  --site-device-stroke: 0.4375rem;
+  --site-device-radius: 2rem;
   display: flex;
   flex: none;
   flex-direction: column;
   overflow: clip;
+  border: var(--site-device-stroke) solid var(--env-color-border-neutral);
   border-radius: var(--site-device-radius);
   background-color: var(--env-color-bg-page);
   color: var(--env-color-fg-default);
 }
 
-.site-device::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: var(--env-z-raised);
-  border-radius: inherit;
-  /* A ring, not a border, so its width is never rounded to a whole pixel before the scale. */
-  box-shadow: inset 0 0 0 var(--site-device-hairline) var(--env-color-border-default, currentColor);
-  pointer-events: none;
-}
-
-/* A phone: the screen with an even margin to the outline at its sides, the status bar above it and
-   the home indicator below. */
-.site-device[data-kind='phone'] {
-  padding-inline: 0.5rem;
-}
-
 .site-device[data-kind='window'] {
-  --site-device-radius: calc(var(--env-radius-lg) / var(--site-device-scale, 1));
+  --site-device-radius: 1.5rem;
 }
 
 /* The screen: the figure's window, which its fixed overlays stay inside. */
@@ -76,10 +61,6 @@
   container: env-window / inline-size;
   contain: layout paint;
   background-color: var(--env-color-bg-page);
-}
-
-.site-device[data-kind='phone'] .site-device-screen {
-  border-radius: 0.75rem;
 }
 
 /* The bar over the screen: a phone's status bar, or a window's address bar. */
@@ -100,7 +81,7 @@
 .site-device[data-kind='phone'] .site-device-bar {
   justify-content: space-between;
   block-size: 2.25rem;
-  padding-inline: 1.25rem;
+  padding-inline: 1.5rem 1.25rem;
 }
 
 .site-device-time {
@@ -117,16 +98,17 @@
 .site-device-home {
   flex: none;
   align-self: center;
-  inline-size: 7.5rem;
+  inline-size: 6rem;
   block-size: 0.25rem;
-  margin-block: 0.625rem;
+  margin-block: 0.5rem 0.625rem;
   border-radius: var(--env-radius-full);
   background-color: var(--env-color-fg-default);
 }
 
 .site-device[data-kind='window'] .site-device-bar {
-  block-size: 2.75rem;
+  block-size: 3rem;
   padding-inline: 1rem 0.75rem;
+  border-block-end: var(--site-device-hairline) solid var(--env-color-border-muted);
 }
 
 .site-device[data-kind='window'] .site-device-glyphs {
@@ -161,8 +143,8 @@
 }
 
 @media (forced-colors: active) {
-  .site-device::after {
-    box-shadow: inset 0 0 0 var(--site-device-hairline) CanvasText;
+  .site-device {
+    border-color: CanvasText;
   }
 
   .site-device-home {
