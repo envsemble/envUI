@@ -239,7 +239,7 @@
             "$value": "{palette.blue.60}"
           },
           "pressed": {
-            "$description": "A primary action while pressed: a grade past its hover, further from its label.",
+            "$description": "A primary action while pressed: in light a grade past its hover, further from its label. In dark, where lightening further would turn the soft fill nearly white, it is instead a small step deeper than rest, still clear of its dark label, so it reads as pressed rather than highlighted.",
             "$value": "{palette.blue.70}"
           }
         },
@@ -425,11 +425,11 @@
             "$value": "{palette.red.60}"
           },
           "hover": {
-            "$description": "A destructive primary action under the pointer: a grade further from its label, darker in light and lighter in dark, as every primary steps.",
+            "$description": "A destructive primary action under the pointer: a grade further from its label, darker in light and lighter in dark, as every primary hovers.",
             "$value": "{palette.red.70}"
           },
           "pressed": {
-            "$description": "A destructive primary action while pressed: a grade past its hover, further from its label.",
+            "$description": "A destructive primary action while pressed: in light a grade past its hover, further from its label. In dark, where lightening further would turn the soft fill nearly white, it is instead a small step deeper than rest, still clear of its dark label, so it reads as pressed rather than highlighted.",
             "$value": "{palette.red.80}"
           }
         },
@@ -531,7 +531,7 @@
             "$value": "{palette.purple.65}"
           },
           "pressed": {
-            "$description": "An accent primary action while pressed: a grade past its hover, further from its label.",
+            "$description": "An accent primary action while pressed: in light a grade past its hover, further from its label. In dark, where lightening further would turn the soft fill nearly white, it is instead a small step deeper than rest, still clear of its dark label, so it reads as pressed rather than highlighted.",
             "$value": "{palette.purple.75}"
           }
         },

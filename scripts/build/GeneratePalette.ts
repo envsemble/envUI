@@ -106,7 +106,11 @@ export const hues = {
   teal: { description: 'The teal green of success toasts, seeded from 0.7’s.', seeds: ['#287156'] },
   amber: { description: 'Warning.', seeds: ['#f1bd55', '#855000'] },
   red: { description: 'Danger and errors.', seeds: ['#f5a9a3', '#b42318'] },
-  purple: { description: 'The accent purple of important actions.', seeds: ['#9b4ab8'] },
+  purple: {
+    description:
+      'The accent purple of important actions. Its light seed, a lilac at the chroma of the dark theme’s soft blue, keeps the dark accent fill as soft as the primary’s; from grade 40 the purple keeps its full chroma.',
+    seeds: ['#dbb2ec', '#bc6ada', '#9b4ab8'],
+  },
   // The pastel hues of avatars, one palette rather than the hues above softened: a light seed for
   // the fill and a deep one for the initials and figure, each a shade of the same hue, at a shared
   // soft chroma so a group of avatars reads as one set.
