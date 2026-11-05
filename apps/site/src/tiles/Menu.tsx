@@ -1,63 +1,85 @@
 import { useState } from 'react';
-import { IconButton, Menu } from '@envsemble/envui';
+import { Button, IconButton, Menu, Row, Text } from '@envsemble/envui';
 import { IconDelete } from '@envsemble/envui/icons/Delete';
 import { IconEdit } from '@envsemble/envui/icons/Edit';
 import { IconMoreVert } from '@envsemble/envui/icons/MoreVert';
-import { useMedia } from '../motion/Autoplay';
 import { usePointer, type PointerStep } from '../motion/Motion';
-import { narrowGallery } from './Tiles';
 
 const item = (index: number) => `.env-menu-item:nth-child(${index} of .env-menu-item)`;
+const trigger = '.env-button[aria-haspopup]';
+const undo = '.env-button:not([aria-haspopup])';
 
 /**
- * Its button pressed at once, which closes the open menu, and pressed again, which opens it, so the
- * menu is seen opening; down it, an item chosen, which closes it, and opened again from its button,
- * as it rests, and held so a while before it plays again.
+ * From the open menu, as it rests: down it, Delete chosen, which closes it and deletes the report,
+ * whose row offers to undo it; undone, and the menu opened again from its button, as it rests, and
+ * held so a while before it plays again.
  */
 const script: PointerStep[] = [
   { wait: 300 },
-  { to: '.env-button', x: 0.6, y: 0.7 },
-  { wait: 250 },
-  { click: true },
-  { wait: 1500 },
-  { click: true },
-  { wait: 700 },
-  { to: item(1), duration: 350 },
-  { wait: 400 },
-  { to: item(2), duration: 300 },
+  { to: item(1) },
   { wait: 500 },
-  { to: item(1), duration: 300 },
+  { to: item(2), duration: 300 },
+  { wait: 450 },
+  { click: true },
+  { wait: 1100 },
+  { to: undo, duration: 400 },
   { wait: 250 },
   { click: true },
-  { wait: 800 },
-  { to: '.env-button', duration: 350 },
+  { wait: 600 },
+  { to: trigger, x: 0.6, y: 0.7, duration: 350 },
   { wait: 200 },
   { click: true },
   { wait: 600 },
   { leave: true },
-  { wait: 4000 },
+  { wait: 3000 },
 ];
 
+/** The row, as wide as the menu, so its end stays where it is as Delete changes what it shows. */
+const row = { inlineSize: '12rem' } as const;
+
 /**
- * A menu, open beside the icon button that opens it: two items, so it shows whole at about its own
- * size in a gallery's low tile.
+ * A report's row with its actions menu, open below the icon button that opens it, lined up with
+ * its end, so the row's name stays in view beside it: two items, so it shows whole at about its own
+ * size in a gallery's low tile. Delete removes the report, and its
+ * row offers Undo in its place. Stopped, the report is there and its menu open again rather than
+ * drawn anew, which would bring it in again.
  */
 export default function MenuTile() {
   const [open, setOpen] = useState(true);
-  // Two to a row, it opens below its button, inside the narrow stage.
-  const narrow = useMedia(narrowGallery);
-  usePointer(script, { onRest: () => setOpen(true) });
+  const [deleted, setDeleted] = useState(false);
+  usePointer(script, {
+    onRest: () => {
+      setDeleted(false);
+      setOpen(true);
+    },
+  });
+  if (deleted)
+    return (
+      <Row gap={2} align="center" justify="end" style={row}>
+        <Text variant="body-sm" emphasis="muted">
+          Report deleted
+        </Text>
+        <Button variant="ghost" size="sm" onClick={() => setDeleted(false)}>
+          Undo
+        </Button>
+      </Row>
+    );
   return (
-    <Menu.Root
-      aria-label="Report actions"
-      side={narrow ? 'bottom' : 'inline-end'}
-      align="start"
-      open={open}
-      onOpenChange={setOpen}
-      trigger={<IconButton variant="secondary" icon={<IconMoreVert />} aria-label="Actions" />}
-    >
-      <Menu.Item icon={<IconEdit />}>Rename</Menu.Item>
-      <Menu.Item icon={<IconDelete />}>Delete</Menu.Item>
-    </Menu.Root>
+    <Row gap={1} align="center" justify="end" style={row}>
+      <Text variant="body-sm">Q3 report</Text>
+      <Menu.Root
+        aria-label="Report actions"
+        side="bottom"
+        align="end"
+        open={open}
+        onOpenChange={setOpen}
+        trigger={<IconButton variant="secondary" icon={<IconMoreVert />} aria-label="Actions" />}
+      >
+        <Menu.Item icon={<IconEdit />}>Rename</Menu.Item>
+        <Menu.Item icon={<IconDelete />} tone="danger" onClick={() => setDeleted(true)}>
+          Delete
+        </Menu.Item>
+      </Menu.Root>
+    </Row>
   );
 }
