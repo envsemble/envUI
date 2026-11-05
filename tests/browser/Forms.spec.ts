@@ -422,9 +422,9 @@ test('a small Select has a small trigger, and its popup has the menus anatomy wi
       padding: Number.parseFloat(style.paddingTop),
     };
   });
-  // The popup's color, frosted at 88 % in light; its edge is there, clear, for a solid popup.
-  expect(surface.popupColor).toBe('rgb(245, 245, 247)');
-  expect(surface.background).toBe('color(srgb 0.960784 0.960784 0.968627 / 0.88)');
+  // The popup's color, white and frosted at 88 % in light; its edge is there, clear, for a solid popup.
+  expect(surface.popupColor).toBe('rgb(255, 255, 255)');
+  expect(surface.background).toBe('color(srgb 1 1 1 / 0.88)');
   expect(surface.border).toBeGreaterThanOrEqual(1);
   expect(surface.radius).toBeCloseTo(20, 0);
   expect(surface.padding).toBeCloseTo(6, 0);
