@@ -253,6 +253,11 @@
     padding: 0;
   }
   .env-table-sort-button {
+    --env-table-sort-ring-inset: 0.125rem;
+    --env-table-sort-start-radius: var(--env-radius-sm);
+    --env-table-sort-end-radius: var(--env-radius-sm);
+
+    position: relative;
     box-sizing: border-box;
     display: flex;
     align-items: center;
@@ -263,6 +268,8 @@
     border: 0;
     /* A row's corners, which its focus ring follows (below). */
     border-radius: var(--env-radius-sm);
+    border-start-start-radius: var(--env-table-sort-start-radius);
+    border-start-end-radius: var(--env-table-sort-end-radius);
     background: transparent;
     color: inherit;
     font: inherit;
@@ -282,21 +289,34 @@
   .env-table-sort-button:hover .env-icon {
     color: inherit;
   }
-  /* The focus ring is drawn inside the header cell, so the frame doesn't clip it, with a row's
-     corners, as the rings of other rows and controls are round, and the surface's outer corners in
-     the first and last header cells. It is an inset shadow, which keeps each corner's radius, where an
-     outline drawn inside the edge tightens it; forced colors draw the outline, as they show no
-     shadows. */
+  /* The focus ring is drawn a hair inside the header cell, so neither the frame nor the table's
+     rounded top corners cut it: a ring of its own, inset from the button's edge, with the button's
+     corners less that inset, a row's in most cells and the surface's outer corners in the first and
+     last header cells. It is a border, which forced colors paint in the system color. */
   .env-table-head .env-table-row:first-child > :first-child .env-table-sort-button {
-    border-start-start-radius: calc(var(--env-radius-lg) - 0.0625rem);
+    --env-table-sort-start-radius: calc(var(--env-radius-lg) - 0.0625rem);
   }
   .env-table-head .env-table-row:first-child > :last-child .env-table-sort-button {
-    border-start-end-radius: calc(var(--env-radius-lg) - 0.0625rem);
+    --env-table-sort-end-radius: calc(var(--env-radius-lg) - 0.0625rem);
   }
   .env-table-sort-button:focus-visible {
     outline: 0.125rem solid transparent;
     outline-offset: -0.125rem;
-    box-shadow: inset 0 0 0 calc(2 * var(--env-control-border-width)) var(--env-color-border-focus);
+  }
+  .env-table-sort-button:focus-visible::after {
+    content: '';
+    position: absolute;
+    inset: var(--env-table-sort-ring-inset);
+    border: calc(2 * var(--env-control-border-width)) solid var(--env-color-border-focus);
+    border-start-start-radius: calc(
+      var(--env-table-sort-start-radius) - var(--env-table-sort-ring-inset)
+    );
+    border-start-end-radius: calc(
+      var(--env-table-sort-end-radius) - var(--env-table-sort-ring-inset)
+    );
+    border-end-start-radius: calc(var(--env-radius-sm) - var(--env-table-sort-ring-inset));
+    border-end-end-radius: calc(var(--env-radius-sm) - var(--env-table-sort-ring-inset));
+    pointer-events: none;
   }
   .env-table-sort-button .env-icon {
     color: var(--env-color-fg-muted);
@@ -569,9 +589,9 @@
       outline: 2px solid Highlight;
       outline-offset: -2px;
     }
-    /* A sortable header's ring is the system's outline, as the inset shadow doesn't show. */
-    .env-table-sort-button:focus-visible {
-      outline-color: CanvasText;
+    /* A sortable header's ring takes the system's text color. */
+    .env-table-sort-button:focus-visible::after {
+      border-color: CanvasText;
     }
   }
 
