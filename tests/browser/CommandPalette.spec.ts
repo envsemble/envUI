@@ -245,19 +245,16 @@ test.describe('CommandPalette', () => {
     const dialog = page.getByRole('dialog', { name: 'Find a page' });
     const status = dialog.getByRole('status');
     const icon = dialog.locator('.env-command-palette-empty-icon');
-    // Before people type, an invitation in place of the list, with the search icon; the icon is
-    // decorative, so only the words are announced.
+    // Before people type, an invitation in place of the list: one line of words, with no icon.
     await expect(status).toHaveText('Type to search');
     await expect(dialog.getByRole('listbox', { includeHidden: true })).toBeHidden();
-    await expect(icon.locator('.env-icon')).toHaveAttribute('aria-hidden', 'true');
-    const search = await icon.innerHTML();
-    // A query that finds nothing says so, quoting it, with another icon.
+    await expect(icon).toHaveCount(0);
+    // A query that finds nothing says so, quoting it, on the same one line.
     await dialog.getByRole('combobox').fill('  roadmap ');
     await expect(status).toHaveText(
       'No results Nothing matches “roadmap”. Check the spelling or try other words.',
     );
-    await expect(icon.locator('.env-icon')).toHaveAttribute('aria-hidden', 'true');
-    expect(await icon.innerHTML()).not.toBe(search);
+    await expect(icon).toHaveCount(0);
     // Whatever it finds replaces the empty state, and only the count is announced.
     await dialog.getByRole('combobox').fill('bill');
     await expect(dialog.getByRole('option', { name: 'Billing' })).toBeVisible();
@@ -283,21 +280,24 @@ test.describe('CommandPalette', () => {
     const status = dialog.getByRole('status');
     const icon = dialog.locator('.env-command-palette-empty-icon');
     const field = dialog.locator('.env-command-palette-search');
-    // With nothing to show yet, the empty state says the results are on their way, beside a
-    // spinner hidden from assistive technology, and only the words are announced.
+    // With nothing to show yet, the empty state's line says the results are on their way, and a
+    // spinner hidden from assistive technology turns at the search field's end.
     await expect(status).toHaveText('Searching…');
-    await expect(icon.locator('.env-spinner')).toHaveAttribute('aria-hidden', 'true');
-    await expect(field.locator('.env-spinner')).toHaveCount(0);
+    await expect(icon).toHaveCount(0);
+    await expect(field.locator('.env-text-field-end .env-spinner')).toHaveAttribute(
+      'aria-hidden',
+      'true',
+    );
     await dialog.getByRole('combobox').fill('xyz');
     await expect(status).toHaveText('Searching…');
     // Results already found stay, marked busy, with the loading words announced in place of the
-    // count, and the search field's icon turns into a spinner.
+    // count, and the spinner stays at the search field's end.
     await dialog.getByRole('combobox').fill('bill');
     await expect(dialog.getByRole('option', { name: 'Billing' })).toBeVisible();
     await expect(dialog.getByRole('listbox')).toHaveAttribute('aria-busy', 'true');
     await expect(status).toHaveText('Searching…');
     await expect(icon).toHaveCount(0);
-    await expect(field.locator('.env-spinner')).toHaveCount(1);
+    await expect(field.locator('.env-text-field-end .env-spinner')).toHaveCount(1);
   });
 
   test('default items show until people type, and choose like results', async ({ page }) => {

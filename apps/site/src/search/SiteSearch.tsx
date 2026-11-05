@@ -321,7 +321,7 @@ export function SiteSearch({
       emptyLabel: 'Search could not load',
       emptyDescription: canRetryLoad ? (
         <Button
-          variant="secondary"
+          variant="text"
           onClick={() => {
             setIndex({ status: 'loading' });
             setAttempt((count) => count + 1);
@@ -330,7 +330,7 @@ export function SiteSearch({
           Try again
         </Button>
       ) : (
-        <Button variant="secondary" onClick={() => void reloadPage([indexModule])}>
+        <Button variant="text" onClick={() => void reloadPage([indexModule])}>
           Reload the page
         </Button>
       ),

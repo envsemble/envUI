@@ -1490,11 +1490,11 @@
         },
         {
           "class": "env-command-palette-empty-description",
-          "description": "The empty state's quieter text under its title."
+          "description": "The empty state's text after its title, on its line."
         },
         {
           "class": "env-command-palette-empty-icon",
-          "description": "The empty state's icon on its circle."
+          "description": "The empty state's icon, at the start of its line."
         },
         {
           "class": "env-command-palette-empty-title",
