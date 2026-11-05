@@ -699,7 +699,6 @@
     "Slider": {
       "env-slider": "The slider.",
       "env-slider-control": "The field: the track's tint, which takes the pointer.",
-      "env-slider-fill-text": "The label and the value again, over the fill, in the text color for emphasis; hidden from assistive technology.",
       "env-slider-header": "The row of the label and the value, over the track.",
       "env-slider-indicator": "The fill from the start to the value.",
       "env-slider-label": "The label, inside at the start.",
@@ -924,7 +923,7 @@
     "Slider": {
       "--env-slider-container": "The track: the field's tint.",
       "--env-slider-indicator": "The fill that shows the value.",
-      "--env-slider-content": "The label and the value over the track, the handle and the ticks."
+      "--env-slider-content": "The label, the value, the handle and the ticks."
     },
     "Surface": {
       "--env-surface-container": "The surface's fill, which its contents take as the color beneath them.",

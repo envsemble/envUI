@@ -58,14 +58,11 @@ examples:
 
 ### At rest
 
-Slider is a field, as tall as the fields and with their corners, so it sits in a form among them. A quiet handle at the end of the fill shows it can be moved.
-
-- Its fill is the primary color, as a Progress bar's. Over it, the label and the value take the text color of a primary button's label.
-- Under the label or the value, the handle hides at rest. Under the pointer and with keyboard focus it shows there too, at its full size and half its strength, with the text over it, so both stay readable.
+Slider is a field, as tall as the fields and with their corners, so it sits in a form among them.
 
 ### Under the pointer
 
-When the pointer comes over the slider, the handle at the value darkens and faint ticks mark its steps.
+When the pointer comes over the slider, a thin handle marks the value and faint ticks mark its steps.
 
 - Pressing anywhere moves the value there, and dragging carries it along.
 - On a touch screen they show only while the finger is down.
@@ -85,7 +82,7 @@ Dragged past either end, the value stays at the minimum or maximum, and the slid
 
 ### With the keyboard
 
-Reached with the keyboard, the slider shows its focus ring and the handle at the value.
+Reached with the keyboard, the slider shows its focus ring and the handle at the value, faded where it passes under the text.
 
 - The arrow keys move the value; the ticks stay hidden.
 
@@ -109,13 +106,9 @@ A slider has a lowest and a highest value and a step between values.
 
 ### Disabled
 
-A disabled slider is dimmed and flatter than one at rest: no handle, and its fill is neutral rather than the primary color, and its label and value keep the text color. It can't be focused or moved, and forms leave it out.
+A disabled slider is dimmed: it can't be focused or moved, and forms leave it out.
 
 - Its description says who sets the value.
-
-### Invalid
-
-An invalid slider takes the error color's edge, as every invalid field does, with its error under it.
 
 ### Adapting to width
 
@@ -158,7 +151,7 @@ Show the value with its unit, such as 30 minutes; the same text is announced.
 
 - A native range input in Base UI's slider, named by its label.
 - The formatted value as `aria-valuetext`, such as 40%.
-- The description and the error linked to the input, `aria-invalid` while it has an error, a focus ring around the whole field, and the touch height on touch screens, where the whole field takes the finger.
+- The description linked to the input, a focus ring around the whole field, and the touch height on touch screens, where the whole field takes the finger.
 
 ### You provide
 
@@ -206,22 +199,18 @@ Leave it uncontrolled, with `defaultValue`, the minimum by default, or control i
 
 ### Composition
 
-`ref` reaches the native range input, which holds the value and takes focus, as a field's does, so a form library can register it; `className`, `style` and the other native props go to the root. The row of the label and the value is `env-slider-header`, its numbers of one width; `env-slider-fill-text`, a copy of it hidden from assistive technology, shows them over the fill in the text color for emphasis, so a fill set through `--env-slider-indicator` should be one that text in `--env-color-fg-on-emphasis` reads on. The field, `env-slider-control`, is the track's quiet tint, which takes the pointer. The span the value moves along, `env-slider-track`, runs across the whole field, so the fill is empty at the minimum and full at the maximum, and draws the faint ticks at the steps, or at the large steps where the steps are many.
+`ref` reaches the native range input, which holds the value and takes focus, as a field's does, so a form library can register it; `className`, `style` and the other native props go to the root. The row of the label and the value is `env-slider-header`, its numbers of one width. The field, `env-slider-control`, is the track's quiet tint, which takes the pointer. The span the value moves along, `env-slider-track`, runs across the whole field, so the fill is empty at the minimum and full at the maximum, and draws the faint ticks at the steps, or at the large steps where the steps are many.
 
 The field marks what it shows besides its text and fill:
 
 - `data-handle` while the handle shows, under a hovering or pressing pointer and with keyboard focus.
 - `data-ruler` while the ticks do, under a hovering or pressing pointer.
 - `data-dragging` while the pointer presses it and drags the value.
-- `data-invalid` while it has an `error`.
 - A release clears them until the pointer leaves and comes back.
 
 ## Changelog
 
 - **1.0.0**: `onValueCommit` is `onValueCommitted`, as Base UI names it, `hint` is `description`, and `inputRef` is `ref`, which reaches the native range input as a field's does, while the root takes `className`, `style` and the other native props. The value is formatted in EnvUIProvider's `locale`, or the one Slider takes. The row of the label and the value, `env-slider-heading`, is `env-slider-header`.
 - **1.0.0**: Sliders in the dark theme reach 3:1 contrast on every surface.
-- **1.0.0-prerelease.6**: A handle, a short bar, marks the value at rest, clear though quieter than in use, and the fill takes the primary color's muted tint, so the slider no longer reads as a meter or a disabled field; at either end the handle stays in the padding clear of the label and the value, and it shows in full under the pointer and with keyboard focus. Under the label or the value, the handle keeps its size, quieter, with the text over it. The fill takes a strong grade of the primary tint, so it stands clearly apart from the track. A disabled slider shows no handle and a neutral fill.
-- **1.0.0-prerelease.6**: A handle, a short bar, marks the value at rest, clear though quieter than in use, and the fill is the primary color, as a Progress bar's, with the label and the value in the text color for emphasis over it, so the slider reads as an active control rather than a meter or a disabled field; at either end the handle stays in the padding clear of the label and the value, and it shows in full under the pointer and with keyboard focus. Under the label or the value the handle hides at rest, and shows at half its strength in use. A disabled slider shows no handle and a neutral fill.
-- **1.0.0-prerelease.6**: An invalid slider, one with an `error`, takes the error color's edge; its control marks `data-invalid` and its range input is `aria-invalid`.
 - **1.0.0-prerelease.5**: `error`, as on a field.
 - **1.0.0-prerelease.2**: Slider is a field: as tall as the fields and with their corners, its label inside at the start, its value at the end in the text style of a field, with numbers of one width and a fill from the start, with a thin handle and faint ticks under the pointer and on focus, both fading where they pass under the text. The track has no outline. `--env-slider-indicator` colors the fill alone, and `--env-slider-content` the label, value, handle and ticks.
