@@ -484,7 +484,9 @@
   .env-text-field-start,
   .env-text-field-end {
     /* Icon actions, such as the clear action, take the field's quiet icon color rather than the
-       link blue of text buttons, darkening to the field text on hover and press. */
+       link blue of text buttons, darkening to the field text on hover and press. The icons at the
+       end, as a select's chevron and a date's calendar, keep their color while the field has focus:
+       the frame shows focus. */
     --env-button-text-icon-color: var(--env-color-fg-muted);
     --env-button-text-icon-color-active: var(--env-color-fg-default);
     position: absolute;

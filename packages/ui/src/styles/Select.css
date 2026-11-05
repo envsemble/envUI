@@ -138,9 +138,6 @@
     inline-size: var(--env-control-icon-size);
     block-size: var(--env-control-icon-size);
   }
-  .env-select-control:focus-within .env-select-icon {
-    color: var(--env-text-field-accent, var(--env-color-border-primary-emphasis));
-  }
 
   /* The open list is the menus' frosted popup, with their corners and rows that highlight on hover
      and keyboard focus, where a check mark and a heavier label show the chosen option. It is at least
