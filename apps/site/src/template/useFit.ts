@@ -635,8 +635,14 @@ export function useFit(
         holdsView(canvasElement) && floor > 0
           ? heldLeast
           : parseFloat(canvasStyle.getPropertyValue('--catalogue-own-popup-least')) || legibleScale;
+      // A component's dialog on a wide stage, its title, a field and its actions, shows whole
+      // down to `dialogLeast`, rather than cut off through its actions; on a phone it is drawn
+      // at the phone's floor and cut off at its foot, and as it plays the view follows what its
+      // script presses there (playFit).
+      const shownLeast =
+        dialog && ownSize && !(floor > 0) ? Math.min(popupLeast, dialogLeast) : popupLeast;
       const popupScale = (atMost: number) => {
-        const lowest = Math.min(atMost, popupLeast);
+        const lowest = Math.min(atMost, shownLeast);
         if (wholeScale >= lowest) return Math.min(atMost, wholeScale);
         if (roomScale >= lowest) return Math.min(atMost, roomScale);
         const across = width / (right - left);
@@ -820,6 +826,9 @@ export function useFit(
     };
   }, [stage, canvas, on, whole, tile, ownSize, legible]);
 }
+
+/** The least a component's dialog is drawn at on a wide stage, so it shows whole (useFit). */
+const dialogLeast = 0.66;
 
 /**
  * The least a tile that holds its view is drawn at on a phone, a little below the phone's floor

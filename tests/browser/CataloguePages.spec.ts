@@ -645,7 +645,9 @@ test('every tile of the galleries is fitted: components at one scale, a scene at
           const at = Number(scaleOf(canvas));
           const own = canvas.hasAttribute('data-own-size');
           const most = own ? Number(one ?? 1) : 1;
-          const least = Math.min(most, own ? 0.84 : 0.95);
+          // A component's dialog shows whole down to a lower scale (useFit.ts).
+          const dialog = canvas.querySelector('.catalogue-overlay-layer .env-dialog-backdrop');
+          const least = Math.min(most, own ? (dialog ? 0.66 : 0.84) : 0.95);
           return at >= least - 0.001 && at <= most ? [] : [`${name}: popup drawn at ${at}`];
         }
         if (canvas.hasAttribute('data-own-size'))
