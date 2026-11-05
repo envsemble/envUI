@@ -17,15 +17,16 @@ const script: PointerStep[] = [
 /** A tile's links lead nowhere. */
 const stay = (event: { preventDefault: () => void }) => event.preventDefault();
 
-/** A trail of three levels, the last the current page. */
+/** A trail of three levels, the last the current page, on one line at every width. */
 export default function BreadcrumbsTile() {
   usePointer(script);
   return (
     <Breadcrumbs
+      wrap={false}
       items={[
         { label: 'Home', href: '/', onClick: stay },
         { label: 'Plans', href: '/plans', onClick: stay },
-        { label: 'Roadmap' },
+        { label: 'Launch' },
       ]}
     />
   );

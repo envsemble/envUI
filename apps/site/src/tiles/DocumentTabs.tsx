@@ -50,7 +50,7 @@ export default function DocumentTabsTile() {
   const [value, setValue] = useState<string | null>(documents[0]!.value);
   usePointer(script);
   return (
-    <Surface background="default" padding={0} style={{ inlineSize: '16.5rem' }}>
+    <Surface background="default" padding={0} style={{ inlineSize: '13.75rem' }}>
       <DocumentTabs
         aria-label="Open documents"
         items={tabs}

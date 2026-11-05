@@ -27,7 +27,7 @@ export default function TopBarTile() {
   return (
     <TopBar
       loading={loading}
-      style={{ inlineSize: '16rem' }}
+      style={{ inlineSize: '13.75rem' }}
       start={<IconButton icon={<IconArrowBack />} aria-label="Back to projects" variant="ghost" />}
       title="Reports"
       actions={
