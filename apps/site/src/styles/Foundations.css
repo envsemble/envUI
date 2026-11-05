@@ -205,7 +205,7 @@
 .catalogue-tall-box {
   display: flex;
   justify-content: flex-end;
-  inline-size: 12rem;
+  inline-size: 9.5rem;
   transition: inline-size calc(2 * var(--env-motion-duration-slow)) var(--env-motion-ease);
 }
 .catalogue-tall-box[data-narrow] {

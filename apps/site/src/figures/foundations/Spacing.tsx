@@ -326,7 +326,11 @@ function TallSteps() {
     <Row align="start" justify="center" gap={6} className="catalogue-tall">
       <div className="catalogue-tall-slot">
         <Box className="catalogue-tall-box" data-narrow={narrow || undefined}>
-          <Button className="catalogue-tall-save">Save the changes</Button>
+          {/* It fills its container, so it wraps its label as that narrows, as a button does that
+              can't move to a line of its own. */}
+          <Button className="catalogue-tall-save" fullWidth>
+            Save the changes
+          </Button>
         </Box>
       </div>
       <Box className="catalogue-tall-field">
