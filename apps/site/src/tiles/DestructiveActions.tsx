@@ -10,6 +10,7 @@ import {
 } from '@envsemble/envui';
 import { IconArchive } from '@envsemble/envui/icons/Archive';
 import { usePointer, usePreviewLayer, type PointerStep } from '../motion/Motion';
+import { outlined } from './Outline';
 
 const projects = ['Launch plan', 'Annual report', 'Press kit'];
 
@@ -48,7 +49,7 @@ function Projects() {
   // At the window's top, so the notification at its foot covers none of the rows.
   return (
     <Column style={{ minBlockSize: '11.5rem' }}>
-      <Surface background="muted" padding={1} radius="sm">
+      <Surface background="muted" padding={1} radius="sm" style={outlined}>
         <List.Root aria-label="Projects" style={{ inlineSize: '16rem' }}>
           {projects
             .filter((name) => !archived.includes(name))

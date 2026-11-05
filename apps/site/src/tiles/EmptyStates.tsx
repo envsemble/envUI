@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Button, Column, List, SearchField, Surface, Text } from '@envsemble/envui';
 import { IconSearchOff } from '@envsemble/envui/icons/SearchOff';
 import { usePointer, type PointerStep } from '../motion/Motion';
+import { outlined } from './Outline';
 
 const projects = ['Northwind launch', 'Annual report', 'Pricing research'];
 
@@ -35,7 +36,7 @@ export default function EmptyStatesTile() {
     <Column gap={4} style={{ inlineSize: '15rem', minBlockSize: '11.5rem' }}>
       <SearchField label="Search projects" value={query} onValueChange={setQuery} />
       {matches.length > 0 ? (
-        <Surface background="muted" padding={1} radius="sm">
+        <Surface background="muted" padding={1} radius="sm" style={outlined}>
           <List.Root aria-label="Projects">
             {matches.map((name) => (
               <List.Item key={name} label={name} />

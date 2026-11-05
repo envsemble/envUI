@@ -1,5 +1,6 @@
 import { Column, List, Surface, Switch, Text } from '@envsemble/envui';
 import { usePointer, type PointerStep } from '../motion/Motion';
+import { outlined } from './Outline';
 
 const toggle = (index: number) =>
   `.env-list-item:nth-child(${index} of .env-list-item) .env-switch-input`;
@@ -32,7 +33,7 @@ export default function SettingsTile() {
       <Text render={<span />} variant="title">
         Notifications
       </Text>
-      <Surface background="muted" padding={1} radius="sm">
+      <Surface background="muted" padding={1} radius="sm" style={outlined}>
         <List.Root aria-label="Notifications">
           <List.Item label="Email" end={<Switch aria-label="Email" defaultChecked />} />
           <List.Item label="Weekly digest" end={<Switch aria-label="Weekly digest" />} />

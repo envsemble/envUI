@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Column, List, Row, SearchField, Select, Surface, Text } from '@envsemble/envui';
 import { usePointer, type PointerStep } from '../motion/Motion';
+import { outlined } from './Outline';
 
 const projects = [
   { name: 'Website refresh', active: true },
@@ -60,7 +61,7 @@ export default function FilteringTile() {
           : `${shown.length} projects of ${projects.length}`}
       </Text>
       {/* On a muted surface its rows take the raised fill, so they read on any stage. */}
-      <Surface background="muted" padding={1} radius="sm">
+      <Surface background="muted" padding={1} radius="sm" style={outlined}>
         <List.Root aria-label="Projects">
           {shown.map((project) => (
             <List.Item key={project.name} label={project.name} />
