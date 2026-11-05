@@ -134,8 +134,7 @@ test.describe('CommandPalette', () => {
           placeholder: getComputedStyle(field, '::placeholder').color,
           edge: getComputedStyle(border).borderTopColor,
           ring: getComputedStyle(element.closest('.env-command-palette-search')!, '::after')
-            .content,
-          outline: style.outlineStyle,
+            .borderTopColor,
         };
       });
     const focused = await look();
@@ -143,12 +142,11 @@ test.describe('CommandPalette', () => {
     expect(focused.pill).toBe(true);
     expect(focused.fill[0]).toBe(true);
     expect(focused.fill[1]).toMatch(/^rgb\(/);
-    // Always focused, it keeps its placeholder; frosted, it has no edge, and as it always holds the
-    // caret, it shows no focus ring.
+    // Always focused, it keeps its placeholder; frosted, it has no edge, and holding the caret, it
+    // shows the focus ring.
     expect(focused.placeholder).not.toBe('rgba(0, 0, 0, 0)');
     expect(focused.edge).toBe('rgba(0, 0, 0, 0)');
-    expect(focused.ring).toBe('none');
-    expect(focused.outline).toBe('none');
+    expect(focused.ring).toMatch(/^rgb\(/);
     // Under the pointer it stays as it is.
     await control.hover();
     expect(await look()).toEqual(focused);
