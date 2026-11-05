@@ -1,5 +1,5 @@
 import type { CSSProperties, ReactNode } from 'react';
-import { Badge, Card, Column, List, Meter, Surface, Table, Text } from '@envsemble/envui';
+import { Badge, Card, Column, List, Meter, Table, Text } from '@envsemble/envui';
 import { IconCheckCircle } from '@envsemble/envui/icons/CheckCircle';
 import { IconIncompleteCircle } from '@envsemble/envui/icons/IncompleteCircle';
 
@@ -122,16 +122,10 @@ const cards: {
     content: (
       <>
         <CardHeader title="Usage" note="This billing period" />
-        <Surface
-          background="muted"
-          padding={4}
-          radius="sm"
-          className="catalogue-fan-body"
-          render={<Column gap={3} />}
-        >
+        <Column gap={3} className="catalogue-fan-body">
           <span className="catalogue-fan-figure">1.24M</span>
           <Meter label="Tokens, 62% of 2M" value={1.24} max={2} />
-        </Surface>
+        </Column>
       </>
     ),
   },

@@ -129,6 +129,12 @@
   margin-block-start: auto;
 }
 
+/* A list's rows, which inset their content for a row's fill, start at the card's padding as its
+   title does: a card's rows have no fill. */
+.catalogue-fan-body.env-list > .env-list-item {
+  padding-inline: 0;
+}
+
 .catalogue-fan-title {
   font-weight: var(--env-font-weight-medium);
 }

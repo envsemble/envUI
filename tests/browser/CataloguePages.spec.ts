@@ -375,15 +375,18 @@ test("the overview's hero says what envUI is, leads to setting it up and gives t
   const hero = page.locator('.catalogue-overview-hero');
   await expect(hero.getByRole('heading', { level: 1 })).toHaveAccessibleName('envUI');
   await expect(hero.locator('.catalogue-overview-lede')).toContainText('A React design system');
-  // The install command is short and copies; under it, a line leads to the registry access it
-  // needs, and the catalogue's counts sit under that.
+  // The install command is short and copies; under it, one quiet line gives the catalogue's counts
+  // and leads to the registry access installing needs.
   const code = hero.locator('.catalogue-overview-install code');
   await expect(code).toHaveText('npm i @envsemble/envui');
   await expect(code).toBeVisible();
   await expect(hero.getByRole('button', { name: 'Copy install command' })).toBeVisible();
-  await expect(hero.locator('.catalogue-overview-facts')).toContainText(
+  const facts = hero.locator('.catalogue-overview-facts');
+  await expect(facts).toHaveCount(1);
+  await expect(facts).toContainText(
     `${componentDocuments.filter(({ id }) => id !== 'field').length} components`,
   );
+  await expect(facts.getByRole('link', { name: 'registry access' })).toBeVisible();
   // One way on of its own, to setting envUI up, and the setup's registry access; the sidebar and
   // the Explore cards lead elsewhere.
   await expect(hero.getByRole('link')).toHaveText(['Get started', 'registry access']);
