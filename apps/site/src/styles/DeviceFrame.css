@@ -10,10 +10,56 @@
   inline-size: 100%;
 }
 
-/* The place the device holds on the stage, its scaled size, centred. */
+/* The place the device holds on the stage, its view at its scale, centred. A device too large to
+   show whole at a legible scale is cut off there (DeviceStage), and what is cut off at an edge
+   fades out over the last stretch, as a tile's crop does (Gallery.css), rather than ending in a
+   slice through a line. */
 .site-device-fit {
+  --site-device-fade: 1.75rem;
+  /* Any opaque color: the mask reads only its alpha. */
+  --site-device-opaque: var(--env-color-fg-default);
+  --site-device-top: 0rem;
+  --site-device-bottom: 0rem;
+  --site-device-start: 0rem;
+  --site-device-end: 0rem;
   position: relative;
+  overflow: clip;
   margin-inline: auto;
+}
+
+.site-device-fit[data-cut~='top'] {
+  --site-device-top: var(--site-device-fade);
+}
+
+.site-device-fit[data-cut~='bottom'] {
+  --site-device-bottom: var(--site-device-fade);
+}
+
+.site-device-fit[data-cut~='start'] {
+  --site-device-start: var(--site-device-fade);
+}
+
+.site-device-fit[data-cut~='end'] {
+  --site-device-end: var(--site-device-fade);
+}
+
+.site-device-fit[data-cut] {
+  mask-image:
+    linear-gradient(
+      to bottom,
+      transparent,
+      var(--site-device-opaque) var(--site-device-top),
+      var(--site-device-opaque) calc(100% - var(--site-device-bottom)),
+      transparent
+    ),
+    linear-gradient(
+      to right,
+      transparent,
+      var(--site-device-opaque) var(--site-device-start),
+      var(--site-device-opaque) calc(100% - var(--site-device-end)),
+      transparent
+    );
+  mask-composite: intersect;
 }
 
 /* The device at its own size, scaled from its top left corner into its place, hidden until it is.
@@ -32,6 +78,13 @@
 
 .site-device-row[data-fitted] {
   visibility: visible;
+}
+
+/* A view that follows an animated figure's pointer pans to where it heads. */
+@media (prefers-reduced-motion: no-preference) {
+  .site-device-row[data-fitted] {
+    transition: translate var(--env-motion-duration-medium) var(--env-motion-ease);
+  }
 }
 
 /* The device's body: one solid stroke all round, a share of the device's own size, with large
