@@ -247,13 +247,15 @@ test('SearchField clears with its button and with Escape inside a dialog', async
   await button.click();
   const dialog = page.getByRole('dialog', { name: 'Save project' });
   const inner = dialog.getByRole('searchbox', { name: 'Search inside dialog' });
+  // With its label hidden and no placeholder of its own, a search field says Search.
+  await expect(inner).toHaveAttribute('placeholder', 'Search');
   await inner.focus();
   await page.keyboard.press('Escape');
   await expect(inner).toHaveValue('');
   await expect(dialog).toBeVisible();
 });
 
-test('compact fields can float their label into the outline and keep the button height', async ({
+test('compact fields float their label into the outline, at least 36 px tall while it shows', async ({
   page,
 }) => {
   await open(page, adoption);
@@ -277,7 +279,9 @@ test('compact fields can float their label into the outline and keep the button 
     .toBeGreaterThan(0);
   await expect.poll(async () => (await label.boundingBox())!.y).toBeLessThan(wellBox.y + 2);
   const button = page.getByTestId('compact-label-toolbar').getByRole('button', { name: 'Apply' });
-  expect(Math.round(wellBox.height)).toBe(Math.round((await button.boundingBox())!.height));
+  // With its label shown, a field is at least 2.25 rem tall, a step taller than a compact button.
+  const buttonHeight = Math.round((await button.boundingBox())!.height);
+  expect(Math.round(wellBox.height)).toBe(Math.max(36, buttonHeight));
 });
 
 test('an outline field has no fill of its own, and its floated label cuts a notch in the border', async ({

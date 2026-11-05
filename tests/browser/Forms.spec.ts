@@ -381,11 +381,12 @@ test('a small Select has a small trigger, and its popup has the menus anatomy wi
 }) => {
   const compact = page.getByRole('combobox', { name: 'Compact plan', exact: true });
   const standard = page.getByRole('combobox', { name: 'Plan', exact: true });
-  // The field's well, with its edge, is as tall as the control height.
+  // The field's well, with its edge, is as tall as the control height, and at least 2.25 rem while
+  // its label shows: a small one, of 2 rem, takes 2.25 rem.
   const well = (locator: typeof compact) =>
     locator.locator('xpath=ancestor::*[contains(@class, "env-select-control")][1]').boundingBox();
   const [compactBox, standardBox] = await Promise.all([well(compact), well(standard)]);
-  expect(compactBox!.height).toBeCloseTo(32, 0);
+  expect(compactBox!.height).toBeCloseTo(36, 0);
   expect(compactBox!.height).toBeLessThan(standardBox!.height);
   const chevron = (locator: typeof compact) =>
     locator

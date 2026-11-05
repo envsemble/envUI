@@ -336,6 +336,23 @@ export function Slider({
                 {(formatted, values) => (formatValue ? formatValue(values[0]!) : formatted[0])}
               </BaseSlider.Value>
             </Row>
+            {/* The label and the value again, in the text color for the fill, shown over the fill
+                alone, where the row above is cut away: the text keeps its contrast on either side
+                of the fill's end. Hidden from assistive technology, which reads the row above. */}
+            <Row
+              align="center"
+              justify="between"
+              gap={3}
+              className="env-slider-fill-text"
+              aria-hidden="true"
+            >
+              <Text render={<div />}>{label}</Text>
+              <Text render={<span />}>
+                {formatValue
+                  ? formatValue(current)
+                  : new Intl.NumberFormat(locale ?? providedLocale).format(current)}
+              </Text>
+            </Row>
           </BaseSlider.Control>
         </FieldFrame>
       </BaseSlider.Root>

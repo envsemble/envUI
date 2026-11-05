@@ -58,6 +58,23 @@
   .env-text-field[data-size='lg'] {
     --env-control-height: var(--env-control-height-lg);
   }
+  /* An outline field that shows its label is at least 2.25 rem tall, so the floated label in its
+     edge and the value below it each keep room: a small one, or one at the compact scale, is a step
+     taller than the controls of its size. A field with its label hidden, as a search in a toolbar,
+     keeps the control height and lines up with buttons. Select, Combobox and the pickers take it
+     too. */
+  .env-text-field:not([data-tall], [data-label-hidden]):has(
+      > .env-text-field-control:not([data-variant='ghost']) > label
+    ) {
+    --env-field-height: max(var(--env-control-height), 2.25rem);
+  }
+  @media (pointer: coarse) {
+    .env-text-field:not([data-tall], [data-label-hidden]):has(
+        > .env-text-field-control:not([data-variant='ghost']) > label
+      ) {
+      --env-field-height: max(var(--env-control-height), var(--env-control-height-touch));
+    }
+  }
   .env-text-field[data-tall]:not([data-label-hidden]):has(
       > .env-text-field-control:not([data-variant='ghost']) > label
     ) {
@@ -547,13 +564,6 @@
       var(--env-space-1),
       calc((var(--env-field-height) - 2 * var(--env-control-border-width) - 1lh) / 2)
     );
-  }
-  /* A short field, as a small one or one at the compact scale, would set its value almost on the
-     floated label above it: with a visible label, the value, its prefix, suffix and start icon sit a
-     little below the middle, up to 4 px in the shortest field and not at all from 2.25 rem up. The
-     field keeps its height, and its end actions stay in the middle. */
-  .env-text-field:not([data-tall], [data-label-hidden]) .env-text-field-control:has(> label) {
-    --env-text-field-value-shift: clamp(0rem, (2.25rem - var(--env-field-height)) / 2, 0.25rem);
   }
   /* A labelled ghost field: its well is taller by the label's room, and its value, prefix and suffix
      sit in the middle of what lies below it; the start icon and the end actions stay in the middle of

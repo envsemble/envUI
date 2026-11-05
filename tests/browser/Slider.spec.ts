@@ -27,7 +27,10 @@ test('a slider is a labelled range with a visible value linked to it', async ({ 
   await expect(output).toHaveAttribute('aria-live', 'off');
   // The label is inside the slider, which takes the press: pressing it focuses the slider and
   // chooses the value there, as pressing anywhere in the field does.
-  await scope.getByText('Opacity', { exact: true }).click({ force: true });
+  await scope
+    .locator('.env-slider-header')
+    .getByText('Opacity', { exact: true })
+    .click({ force: true });
   await expect(opacity).toBeFocused();
   await expect(opacity).not.toHaveAttribute('aria-valuenow', '40');
 });
@@ -221,8 +224,8 @@ test('a slider is a field: as tall as the fields, with their corners, its label 
   const fill = (await slider.locator('.env-slider-indicator').boundingBox())!;
   expect(Math.abs(fill.x - box.x)).toBeLessThanOrEqual(0.5);
   expect(fill.width / box.width).toBeCloseTo(0.4, 2);
-  // The text never dims: the handle and the fill's end fade under it instead, as the tests of the
-  // states below show.
+  // The text never dims: the handle hides or quiets under it instead, as the tests of the states
+  // below show.
   for (const part of [
     slider.locator('.env-slider-header'),
     slider.locator('.env-slider-label'),
@@ -233,6 +236,49 @@ test('a slider is a field: as tall as the fields, with their corners, its label 
   }
   // Ten parts of 0 to 100 by large steps of 10; a range of few steps is cut at every step.
   await expect(slider).toHaveCSS('--env-slider-ticks', '10');
+});
+
+test('the fill is the primary color, with the text over it in the text color for emphasis', async ({
+  page,
+}) => {
+  const scope = page.getByTestId('sliders-light');
+  const slider = scope.locator('.env-slider').first();
+  const token = (name: string) =>
+    slider.evaluate((root, name) => {
+      const probe = document.createElement('span');
+      probe.style.color = `var(${name})`;
+      root.append(probe);
+      const color = getComputedStyle(probe).color;
+      probe.remove();
+      return color;
+    }, name);
+  await expect(slider.locator('.env-slider-indicator')).toHaveCSS(
+    'background-color',
+    await token('--env-color-bg-primary-emphasis'),
+  );
+  // The copy over the fill holds the same text, hidden from assistive technology, in the text
+  // color for emphasis; the row over the track keeps the text color. Each is cut at the fill's end,
+  // 40% of the way.
+  const copy = slider.locator('.env-slider-fill-text');
+  await expect(copy).toHaveAttribute('aria-hidden', 'true');
+  await expect(copy).toHaveText(/Opacity\s*40%/);
+  const onFill = await token('--env-color-fg-on-emphasis');
+  for (const part of await copy.locator(':scope > *').all())
+    await expect(part).toHaveCSS('color', onFill);
+  await expect(slider.locator('.env-slider-label')).toHaveCSS(
+    'color',
+    await token('--env-color-fg-default'),
+  );
+  const clips = await slider.evaluate((root) => [
+    getComputedStyle(root.querySelector('.env-slider-header')!).clipPath,
+    getComputedStyle(root.querySelector('.env-slider-fill-text')!).clipPath,
+  ]);
+  expect(clips[0]).toBe('inset(0px 0px 0px 40%)');
+  expect(clips[1]).toMatch(/^inset\(0px (60%|calc\(60%\)) 0px 0px\)$/);
+  // Disabled, the fill is neutral and the text keeps the text color all along.
+  const disabled = scope.locator('.env-slider').nth(3);
+  await expect(disabled.locator('.env-slider-fill-text')).toBeHidden();
+  await expect(disabled.locator('.env-slider-header')).toHaveCSS('clip-path', 'none');
 });
 
 /** The parts of the first slider whose look changes with its state, read from computed styles. */
@@ -246,11 +292,6 @@ function stateOf(page: Page) {
     thumb: slider.locator('.env-slider-thumb'),
     ticks: () =>
       slider.locator('.env-slider-track').evaluate((e) => getComputedStyle(e, '::after').opacity),
-    // The fade at the fill's end: a gradient over its last stretch, out of sight at 0.
-    fillEnd: () =>
-      slider
-        .locator('.env-slider-indicator')
-        .evaluate((e) => getComputedStyle(e, '::after').opacity),
     veil: () =>
       control.evaluate((e) => getComputedStyle(e).getPropertyValue('--env-slider-veil').trim()),
     // Whether the handle is its full bar, over half the field's height and across the label's
@@ -290,8 +331,8 @@ async function toLabel(page: Page, state: ReturnType<typeof stateOf>) {
 }
 
 /**
- * Expects the slider at rest: its text, its fill and a quiet handle at its full size, at half that
- * strength where it sits under the text, with no ticks or fade.
+ * Expects the slider at rest: its text, its fill and a quiet handle at its full size, hidden where it
+ * sits under the text, with no ticks.
  */
 async function expectRest(state: ReturnType<typeof stateOf>) {
   await expect(state.control).not.toHaveAttribute('data-handle');
@@ -300,19 +341,15 @@ async function expectRest(state: ReturnType<typeof stateOf>) {
     .poll(async () => {
       const veil = await state.veil();
       const opacity = Number(await state.thumb.evaluate((e) => getComputedStyle(e).opacity));
-      return (
-        (veil === '0' && Math.abs(opacity - 0.7) < 0.01) ||
-        (veil === '1' && Math.abs(opacity - 0.35) < 0.01)
-      );
+      return (veil === '0' && Math.abs(opacity - 0.7) < 0.01) || (veil === '1' && opacity === 0);
     })
     .toBe(true);
   // The handle never shrinks, under the label or the value or elsewhere.
   await expect.poll(state.fullSize).toBe(true);
   await expect.poll(state.ticks).toBe('0');
-  await expect.poll(state.fillEnd).toBe('0');
 }
 
-test('at rest a slider shows its text, its fill and a quiet handle, with no ticks or fade', async ({
+test('at rest a slider shows its text, its fill and a quiet handle, hidden under the text, with no ticks', async ({
   page,
 }) => {
   const state = stateOf(page);
@@ -324,7 +361,7 @@ test('at rest a slider shows its text, its fill and a quiet handle, with no tick
   await state.input.blur();
   await expect.poll(state.veil).toBe('0');
   await expectRest(state);
-  // Even where the fill ends under the label, it ends crisply, and the handle keeps its size.
+  // Where the fill ends under the label, the handle hides there at rest.
   await state.input.focus();
   await toLabel(page, state);
   await state.input.blur();
@@ -339,16 +376,15 @@ test(
     const state = stateOf(page);
     const box = (await state.control.boundingBox())!;
     const y = box.y + box.height / 2;
-    // At 40%, clear of the text: the handle in full and the fill's end crisp.
+    // At 40%, clear of the text: the handle in full.
     await page.mouse.move(box.x + box.width * 0.5, y);
     await expect(state.control).toHaveAttribute('data-handle', '');
     await expect(state.control).toHaveAttribute('data-ruler', '');
     await expect.poll(state.veil).toBe('0');
     await expect(state.thumb).toHaveCSS('opacity', '1');
     await expect.poll(state.ticks).toBe('0.35');
-    await expect.poll(state.fillEnd).toBe('0');
     // Leave, move the value under the label with the keyboard, and hover again: the handle keeps its
-    // size at half its strength and the fill's end fades there, while the text stays at full strength.
+    // size at half its strength, while the text stays at full strength.
     await page.mouse.move(0, 0);
     await state.input.focus();
     await toLabel(page, state);
@@ -357,7 +393,6 @@ test(
     await expect.poll(state.veil).toBe('1');
     await expect.poll(state.strength).toBe('0.5');
     await expect.poll(state.fullSize).toBe(true);
-    await expect.poll(state.fillEnd).toBe('1');
     await expect.poll(state.ticks).toBe('0.35');
     await expect(state.slider.locator('.env-slider-label')).toHaveCSS('opacity', '1');
   },
@@ -423,14 +458,13 @@ test(
     await page.mouse.move(box.x + box.width * 0.5, y);
     await page.mouse.down();
     await expect(state.control).toHaveAttribute('data-dragging', '');
-    // Dragged under the label, the handle quiets at its size and the fill's end fades, as on hover.
+    // Dragged under the label, the handle quiets at its size, as on hover.
     const label = await labelMiddle(state);
     await page.mouse.move(label.x, y, { steps: 4 });
     await expect(state.input).toHaveAttribute('aria-valuenow', String(label.value));
     await expect.poll(state.strength).toBe('0.5');
     await expect.poll(state.fullSize).toBe(true);
     await expect.poll(state.ticks).toBe('0.35');
-    await expect.poll(state.fillEnd).toBe('1');
     await page.mouse.move(box.x + box.width * 0.6, y, { steps: 4 });
     await expect.poll(state.strength).toBe('1');
     // Released with the pointer still over the slider: back at rest, and moving over it keeps it so.
@@ -488,7 +522,6 @@ test(
     await toLabel(page, state);
     await expect.poll(state.strength).toBe('0.5');
     await expect.poll(state.fullSize).toBe(true);
-    await expect.poll(state.fillEnd).toBe('1');
     expect(await state.ticks()).toBe('0');
     // Leaving the slider puts it back at rest.
     await state.input.blur();

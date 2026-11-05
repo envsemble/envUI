@@ -6873,6 +6873,13 @@
           "description": "The accessible name and tooltip of the clear button."
         },
         {
+          "name": "placeholder",
+          "type": "string",
+          "required": false,
+          "default": "'Search' while the label is hidden, or EnvUIProvider's messages.searchField.placeholder",
+          "description": "The visible guidance while the field is empty, such as Search members. With the label hidden it shows Search unless it is set."
+        },
+        {
           "name": "style",
           "type": "CSSProperties",
           "required": false,

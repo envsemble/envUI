@@ -4837,6 +4837,10 @@
           "description": "The field: the track's tint, which takes the pointer."
         },
         {
+          "class": "env-slider-fill-text",
+          "description": "The label and the value again, over the fill, in the text color for emphasis; hidden from assistive technology."
+        },
+        {
           "class": "env-slider-header",
           "description": "The row of the label and the value, over the track."
         },
@@ -4932,7 +4936,7 @@
         },
         {
           "property": "--env-slider-content",
-          "description": "The label, the value, the handle and the ticks."
+          "description": "The label and the value over the track, the handle and the ticks."
         }
       ]
     },
