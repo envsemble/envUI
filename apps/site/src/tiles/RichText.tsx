@@ -6,9 +6,8 @@ import { Renew } from '../motion/Renew';
 import { narrowGallery } from './Tiles';
 
 const line = '.ProseMirror p';
-/** The line, and the phrase in it that turns bold: on a phone's narrower tile, a shorter line. */
-const wide = { text: 'Share the launch plan', phrase: 'launch plan', last: 'plan' };
-const short = { text: 'Ship the plan', phrase: 'the plan', last: 'plan' };
+/** The line, and the phrase in it that turns bold: short, the same at every width. */
+const words = { text: 'Ship the plan', phrase: 'the plan', last: 'plan' };
 const bold = '[aria-label="Bold"]';
 
 /*
@@ -17,7 +16,8 @@ const bold = '[aria-label="Bold"]';
  * reads beside the plain words at a tile's size. A press after it lets the selection go, so the
  * bold phrase shows, and the line is drawn anew as it began, with a short fade (Renew).
  */
-const scriptOf = ({ phrase, last }: typeof wide): PointerStep[] => [
+const { phrase, last } = words;
+const script: PointerStep[] = [
   { wait: 300 },
   { to: line, text: phrase, x: 0, duration: 0 },
   { wait: 250 },
@@ -38,26 +38,23 @@ const scriptOf = ({ phrase, last }: typeof wide): PointerStep[] => [
   { cue: 'renew' },
   { wait: 500 },
 ];
-const scripts = { wide: scriptOf(wide), short: scriptOf(short) };
 
 /**
  * A rich text editor with its fewest tools, Bold beside undo and redo, over a line whose phrase
- * turns bold; in a phone's tile narrower, on a shorter line that stays one line. Its document is
+ * turns bold; in a phone's tile narrower, its line still one line. Its document is
  * never lower than 10 rem, taller than a gallery's stage, so it shows from its top: the toolbar and
  * the line whole, cut off in the empty document below them.
  */
 export default function RichTextTile() {
   const [round, setRound] = useState(0);
   const narrow = useMedia(narrowGallery);
-  const words = narrow ? short : wide;
-  usePointer(narrow ? scripts.short : scripts.wide, {
+  usePointer(script, {
     onCue: () => setRound((count) => count + 1),
   });
   return (
     <Renew round={round}>
       <RichTextEditor
         aria-label="Launch note"
-        key={words.text}
         defaultValue={words.text}
         toolbar={['bold']}
         style={{ inlineSize: narrow ? '8.5rem' : '12.5rem' }}

@@ -34,9 +34,9 @@ const uploading = 1100;
 
 /**
  * A drop zone for documents, the small one, which shows whole in a gallery's low tile; narrower in
- * a phone's, its words shorter so each stays one line, so it is drawn whole at its own size there
- * too. Once a file has uploaded, it shows in the zone's place, as tall as the zone, so nothing
- * around it moves.
+ * a phone's, so it is drawn whole at its own size there too. Its words are short, the same at every
+ * width, so each stays one line. Once a file has uploaded, it shows in the zone's place, as tall as
+ * the zone, so nothing around it moves.
  */
 export default function DropZoneTile() {
   const [file, setFile] = useState<string | null>(null);
@@ -73,16 +73,8 @@ export default function DropZoneTile() {
   return (
     <DropZone
       size="sm"
-      label={
-        narrow
-          ? pending
-            ? 'Uploading'
-            : 'Drop a PDF'
-          : pending
-            ? `Uploading ${file}`
-            : 'Drop files or browse'
-      }
-      description={narrow ? (pending ? file : 'Up to 10 MB') : 'PDF, up to 10 MB'}
+      label={pending ? 'Uploading' : 'Drop a PDF'}
+      description={pending ? (file ?? 'report.pdf') : 'Up to 10 MB'}
       pending={pending}
       onFilesAccepted={([accepted]) => {
         setFile(accepted?.name ?? null);

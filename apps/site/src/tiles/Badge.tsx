@@ -14,15 +14,16 @@ const states = {
 
 /**
  * A few pieces of work, each with a badge naming its state, in its tone. A badge shows a state it is
- * given and changes only when the state does, so the tile holds still. In a phone's narrower tile
- * the names are shorter and closer to their badges, so it is drawn at about its own size there.
+ * given and changes only when the state does, so the tile holds still. Its names are short, the
+ * same at every width; in a phone's narrower tile they sit closer to their badges, so it is drawn
+ * at about its own size there.
  */
 export default function BadgeTile() {
   const narrow = useMedia(narrowGallery);
   const work = [
-    { name: narrow ? 'Launch' : 'Launch plan', state: 'review' },
-    { name: narrow ? 'Brand' : 'Brand refresh', state: 'released' },
-    { name: narrow ? 'Pricing' : 'Pricing page', state: 'draft' },
+    { name: 'Launch', state: 'review' },
+    { name: 'Brand', state: 'released' },
+    { name: 'Pricing', state: 'draft' },
   ] as const;
   return (
     <div

@@ -25,7 +25,7 @@ function Hovering() {
     // The sentence keeps to the top of the stage, so the card has room to open below it.
     <div style={{ display: 'grid', alignContent: 'start', minBlockSize: '9rem' }}>
       <Text>
-        The launch depends on the{' '}
+        The launch depends on the pricing review and the{' '}
         <HoverCard trigger={<Link href="/documents/roadmap">roadmap</Link>}>
           <Column gap={2}>
             <Text render={<strong />} variant="title">
@@ -33,8 +33,8 @@ function Hovering() {
             </Text>
             <Text emphasis="muted">Changed today by Alex Morgan. 3 open decisions, 1 blocked.</Text>
           </Column>
-        </HoverCard>{' '}
-        and the pricing review.
+        </HoverCard>
+        .
       </Text>
     </div>
   );

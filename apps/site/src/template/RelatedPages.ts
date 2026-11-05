@@ -8,7 +8,13 @@ import { routeHref } from '../navigation/Address';
 import { pageHref, groupedPages, routeOfDocument } from '../navigation/SiteRoutes';
 import { documents, type DocumentSummary } from '../pages/PageModel';
 import { hasPageSpecimen } from '../figures/PageSpecimens';
-import { tileOf, tileWindows, type TileWindow } from '../tiles/Tiles';
+import {
+  memberTileOf,
+  memberTileWindow,
+  tileOf,
+  tileWindows,
+  type TileWindow,
+} from '../tiles/Tiles';
 
 /**
  * The page that documents a component, for the components a page relates to and the exports a
@@ -54,26 +60,21 @@ const squash = (text: string) => text.toLowerCase().replace(/[^a-z\d]/g, '');
 
 /**
  * The example that shows an export documented on another's page, where no example is named after
- * it: the first that renders it, so its tile shows the export itself, not the page's lead.
+ * it and no tile of its own (tiles/members/): the first that renders it, so its tile shows the
+ * export itself, not the page's lead.
  */
 const memberExamples: Record<string, string> = {
-  SearchField: 'SearchInSidebar',
-  Textarea: 'TextareaSizing',
   IconButton: 'Icons',
-  ConfirmButton: 'ConfirmInPlace',
   CopyButton: 'CopyValue',
-  ButtonGroup: 'ConnectedButtons',
-  DiffStat: 'ChangeSize',
-  MarkdownEditor: 'EditDescription',
 };
 
 /**
  * What a tile shows of a page: its own tile, where it has one (tiles/Tiles.ts); else where its
  * component floats over the page, such as a dialog or a menu, its anatomy figure, which shows it
  * open; else the Overview's first example, its lead example. For an export that isn't the page's
- * first, such as SearchField on the TextField page, the example that renders it (memberExamples),
- * else the first named after it, where there is one. A page without one, such as a foundation's,
- * shows its specimen.
+ * first, such as SearchField on the TextField page, its own tile (tiles/members/), else the example
+ * that renders it (memberExamples), else the first named after it, where there is one. A page
+ * without one, such as a foundation's, shows its specimen.
  */
 export function previewOf(document: DocumentSummary, component?: string): Preview | undefined {
   const own = component && document.metadata?.components[0] !== component.split('.')[0];
@@ -93,6 +94,18 @@ export function previewOf(document: DocumentSummary, component?: string): Previe
       composition: tile,
       tile: true,
       window: tileWindows[document.id],
+    };
+  // An export documented on another's page, such as SearchField on TextField's, with a tile of its
+  // own (tiles/members/): that tile, as a page's own is shown.
+  const memberTile = own && component ? memberTileOf(component) : undefined;
+  if (memberTile && component)
+    return {
+      page: document.id,
+      name: component,
+      open: true,
+      composition: memberTile,
+      tile: true,
+      window: memberTileWindow(component),
     };
   const anatomy = blocks.find((block) => block.role === 'anatomy');
   const member = own && component ? memberExamples[component] : undefined;

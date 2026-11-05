@@ -11,8 +11,11 @@ const cell = '1.75rem';
 /** Where the first gap begins on either axis, past the padding and the first cell. */
 const firstGap = `calc(var(--env-space-2) + ${cell})`;
 
-/** Where a mark stands in the padding, centred in it. */
-const inPadding = 'calc((var(--env-space-2) - var(--env-space-1)) / 2)';
+/**
+ * Where a mark stands in the padding: against the cells, its ends on the edges either side of the
+ * gap, which it continues, so it reads as that gap rather than a mark of its own.
+ */
+const inPadding = 'calc(var(--env-space-2) - var(--env-space-1))';
 
 /** The gap between the first two columns, marked above, and between the two rows, to the left. */
 const columnGap = gap('inline', { from: firstGap, across: 'var(--env-space-2)', off: inPadding });
