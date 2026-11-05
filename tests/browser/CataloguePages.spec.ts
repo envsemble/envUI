@@ -818,9 +818,10 @@ test("a gallery tile that plays draws out what it acts on and opens inside its s
     const first = await play();
     expect(first.length, name).toBeGreaterThan(20);
     const floor = Math.min(rest, least);
-    // Judged where it is drawn, not on its way there: frames whose scale held from the last.
+    // Judged where it is drawn, not on its way there: frames whose scale held from the last, once
+    // what its script first opens has opened and the view has drawn out to it.
     const held = first.filter(
-      (frame, index) => index > 0 && first[index - 1]!.scale === frame.scale,
+      (frame, index) => frame.time > 900 && first[index - 1]!.scale === frame.scale,
     );
     const outside = held.flatMap(({ scale, past }) => [
       ...(scale < floor - 0.001 ? [`drawn at ${scale}`] : []),
