@@ -634,9 +634,10 @@ test('every tile of the galleries is fitted: components at one scale, a scene at
           .filter((box) => box.width > scale && box.height > scale)
           .filter((box) => box.width < window.width - 1 || box.height < window.height - 1);
         if (!shown.length) return [`${name}: empty`];
-        // A popup shown open is drawn whole, no larger than the one scale.
+        // A popup shown open, in a component's tile or a scene, is drawn whole, as much smaller
+        // as it needs, and no larger than the one scale.
         if (canvas.hasAttribute('data-popup'))
-          return Number(scaleOf(canvas)) <= Number(one) ? [] : [`${name}: popup drawn larger`];
+          return Number(scaleOf(canvas)) <= Number(one ?? 1) ? [] : [`${name}: popup drawn larger`];
         if (canvas.hasAttribute('data-own-size'))
           return scaleOf(canvas) === one && Number(one) <= 1 ? [] : [`${name}: not at one scale`];
         if (canvas.parentElement?.classList.contains('catalogue-related-crop'))

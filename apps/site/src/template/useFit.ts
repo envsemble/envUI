@@ -309,7 +309,7 @@ export function useFit(
       // window (`data-popup`, Gallery.css), as wide as it was written for. Once fitted, a tile
       // keeps its scale as it plays, so a popup that closes and opens again doesn't resize it.
       const popup = boxes.some(({ element }) => element.closest('.catalogue-overlay-layer'));
-      if (ownSize && popup && canvasElement.dataset.fitted === undefined)
+      if ((ownSize || legible) && popup && canvasElement.dataset.fitted === undefined)
         canvasElement.dataset.popup = '';
       const wholeScale = Math.min(width / (right - left), height / (bottom - top));
       const own =
