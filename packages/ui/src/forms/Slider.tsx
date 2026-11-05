@@ -391,10 +391,10 @@ function afterRelease(current: SliderHover, control: HTMLElement, event: Event):
 }
 
 /**
- * Marks where the slider's indicators pass under the label or the value, within half a line of
- * either, so the stylesheet fades them there while they show. --env-slider-veil on the control is 1
- * where the end of the fill and the handle sit under the text, and 0 elsewhere. For the ticks,
- * --env-slider-clear-start and --env-slider-clear-end bound the stretch clear of the text, from the
+ * Marks where the slider's indicators pass under the label or the value, so the stylesheet fades
+ * them there while they show. --env-slider-veil on the control is 1 where the end of the fill and
+ * the handle would touch the text, and 0 elsewhere. For the ticks, --env-slider-clear-start and
+ * --env-slider-clear-end bound the stretch half a line clear of the text, from the
  * track's left side, physical as the ticks are, so that either direction works.
  */
 function veilIndicatorUnderText(control: HTMLElement) {
@@ -413,7 +413,10 @@ function veilIndicatorUnderText(control: HTMLElement) {
     const box = text.getBoundingClientRect();
     if (box.width === 0) continue;
     const margin = Number.parseFloat(getComputedStyle(text).fontSize) / 2 || 0;
-    if (at >= box.left - margin && at <= box.right + margin) veiled = true;
+    // The handle fades once it would touch the text, so at either end, halfway into the padding
+    // before the label or after the value, it stays.
+    const reach = handle.width / 2 + margin / 4;
+    if (at >= box.left - reach && at <= box.right + reach) veiled = true;
     // The text in the track's left half bounds the clear stretch on the left, the other on the right.
     if (box.left + box.width / 2 < span.left + span.width / 2)
       clearStart = Math.max(clearStart, box.right + margin - span.left);
