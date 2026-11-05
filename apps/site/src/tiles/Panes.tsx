@@ -4,8 +4,8 @@ import { usePointer, type PointerStep } from '../motion/Motion';
 
 const panes = '.env-panes';
 
-/** Where the gap between the panes is, as a share of their width: a 17 rem list and half the gap. */
-const gap = 17.5 / 38;
+/** Where the gap between the panes is, as a share of their width: a 15 rem list and half the gap. */
+const gap = 15.5 / 38;
 
 /**
  * The gap between the panes, hovered, pressed, dragged to widen the list and back, and let go.
@@ -16,7 +16,7 @@ const script: PointerStep[] = [
   { to: panes, x: gap },
   { wait: 500 },
   { press: true },
-  { to: panes, x: gap + 4 / 38, duration: 1100 },
+  { to: panes, x: gap + 5 / 38, duration: 1100 },
   { wait: 400 },
   { to: panes, x: gap, duration: 1000 },
   { release: true },
@@ -26,40 +26,48 @@ const script: PointerStep[] = [
 ];
 
 /**
- * Panes sit side by side from a medium width, 37.5 rem of their own, more than a tile's window
- * shows legibly: what they hold is drawn larger, as panes about half the size would show it.
+ * Panes sit side by side from a medium width, 37.5 rem of their own, three times what a tile's
+ * window shows: they are drawn a third of their size, whole, the divider between them in view, and
+ * what they hold is drawn larger again, so it reads at about the size of a phone's tiles.
  */
-const larger: CSSProperties = { zoom: 1.8, minBlockSize: '100%' };
+const whole: CSSProperties = {
+  inlineSize: '38rem',
+  blockSize: '19rem',
+  transform: 'scale(0.33)',
+  transformOrigin: '0 0',
+};
+const larger: CSSProperties = { zoom: 2.1, minBlockSize: '100%' };
 
 /** A list of messages beside the chosen one, resized by the gap between them. */
 export default function PanesTile() {
   usePointer(script);
   return (
-    <Panes.Root
-      behavior="list-detail"
-      splitAt="medium"
-      defaultWidth={17}
-      minWidth={12}
-      style={{ inlineSize: '38rem', blockSize: '27rem' }}
-    >
-      <Panes.List label="Inbox">
-        <Surface padding={2} style={larger}>
-          <List.Root aria-label="Messages">
-            <List.Item label="Launch" description="Priya Shah" current />
-            <List.Item label="Budget" description="Sam Lee" />
-            <List.Item label="Hiring" description="Alex Morgan" />
-          </List.Root>
-        </Surface>
-      </Panes.List>
-      <Panes.Divider label="Resize the inbox" />
-      <Panes.Detail label="Launch">
-        <Surface padding={4} render={<Column gap={2} />} style={larger}>
-          <Text variant="title" render={<h3 />}>
-            Launch
-          </Text>
-          <Text>The venue is booked.</Text>
-        </Surface>
-      </Panes.Detail>
-    </Panes.Root>
+    <div style={whole}>
+      <Panes.Root
+        behavior="list-detail"
+        splitAt="medium"
+        defaultWidth={15}
+        minWidth={12}
+        style={{ inlineSize: '100%', blockSize: '100%' }}
+      >
+        <Panes.List label="Inbox">
+          <Surface padding={2} style={larger}>
+            <List.Root aria-label="Messages">
+              <List.Item label="Launch" description="Priya Shah" current />
+              <List.Item label="Budget" description="Sam Lee" />
+            </List.Root>
+          </Surface>
+        </Panes.List>
+        <Panes.Divider label="Resize the inbox" />
+        <Panes.Detail label="Launch">
+          <Surface padding={4} render={<Column gap={2} />} style={larger}>
+            <Text variant="title" render={<h3 />}>
+              Launch
+            </Text>
+            <Text>The venue is booked.</Text>
+          </Surface>
+        </Panes.Detail>
+      </Panes.Root>
+    </div>
   );
 }

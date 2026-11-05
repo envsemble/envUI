@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { NavigationDrawer, Text, type Destination } from '@envsemble/envui';
+import { NavigationDrawer, type Destination } from '@envsemble/envui';
 import { IconInbox } from '@envsemble/envui/icons/Inbox';
 import { IconSend } from '@envsemble/envui/icons/Send';
 import { IconStar } from '@envsemble/envui/icons/Star';
@@ -27,6 +27,13 @@ const script: PointerStep[] = [
   { wait: 400 },
 ];
 
+/**
+ * A drawer of three rows is taller than a gallery's low tile at its own size: it is drawn at four
+ * fifths of it, as an application's frame is (Scaffold.tsx), so every row the pointer chooses
+ * shows whole.
+ */
+const smaller = { transform: 'scale(0.8)', transformOrigin: '0 0' } as const;
+
 /** A mail application's drawer of three destinations, Inbox current. */
 export default function DrawerTile() {
   const [current, setCurrent] = useState('inbox');
@@ -41,14 +48,12 @@ export default function DrawerTile() {
     { label: 'Sent', icon: <IconSend />, ...destination('sent') },
   ];
   return (
-    <NavigationDrawer
-      aria-label="Mail"
-      destinations={destinations}
-      header={
-        <Text variant="title" render={<span />}>
-          Mail
-        </Text>
-      }
-    />
+    <div style={smaller}>
+      <NavigationDrawer
+        aria-label="Mail"
+        destinations={destinations}
+        style={{ inlineSize: '15rem' }}
+      />
+    </div>
   );
 }

@@ -37,6 +37,13 @@ const places = [
   { label: 'Inbox', icon: <IconInbox />, line: '3 new messages.' },
 ];
 
+/**
+ * An application's frame is taller than a gallery's low tile at its own size, its rail's places
+ * one under the other: it is drawn at four fifths of it, as a pattern's scene is, so both places
+ * and the page beside them show whole.
+ */
+const smaller = { transform: 'scale(0.8)', transformOrigin: '0 0' } as const;
+
 /** An application's frame: the rail at the start, the top bar and the page beside it. */
 export default function ScaffoldTile() {
   const [current, setCurrent] = useState('Home');
@@ -48,22 +55,24 @@ export default function ScaffoldTile() {
     onClick: () => setCurrent(label),
   }));
   return (
-    <Scaffold
-      scroll="body"
-      landmarks={false}
-      navigationForms={{ compact: 'rail', medium: 'rail', expanded: 'rail', large: 'rail' }}
-      style={{ inlineSize: '16rem', blockSize: '10.5rem' }}
-      topBar={
-        <TopBar
-          title="Northwind"
-          actions={<IconButton icon={<IconSearch />} aria-label="Search" />}
-        />
-      }
-      navigation={{ rail: <NavigationRail destinations={destinations} /> }}
-    >
-      <Page header={<PageHeader title={current} headingLevel={3} />}>
-        <Text emphasis="muted">{places.find((place) => place.label === current)?.line}</Text>
-      </Page>
-    </Scaffold>
+    <div style={smaller}>
+      <Scaffold
+        scroll="body"
+        landmarks={false}
+        navigationForms={{ compact: 'rail', medium: 'rail', expanded: 'rail', large: 'rail' }}
+        style={{ inlineSize: '15rem', blockSize: '8.75rem' }}
+        topBar={
+          <TopBar
+            title="Northwind"
+            actions={<IconButton icon={<IconSearch />} aria-label="Search" />}
+          />
+        }
+        navigation={{ rail: <NavigationRail destinations={destinations} /> }}
+      >
+        <Page header={<PageHeader title={current} headingLevel={3} />}>
+          <Text emphasis="muted">{places.find((place) => place.label === current)?.line}</Text>
+        </Page>
+      </Scaffold>
+    </div>
   );
 }
