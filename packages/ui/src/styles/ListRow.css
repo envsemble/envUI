@@ -29,9 +29,9 @@
   .env-list-row:active:not([data-disabled], [aria-disabled='true']) {
     background: var(--env-color-bg-neutral-muted-pressed);
   }
-  /* An unavailable row dims its indicator, icon, end and shortcut, and its label takes the muted
-     text color, so it still sits above its description, which often says why it is unavailable
-     and keeps the muted color and its smaller size, readable. */
+  /* An unavailable row dims its indicator, icon, end and shortcut, and its label takes the disabled
+     text color, as a menu item's does, so it reads as unavailable rather than as a description; its
+     description, which often says why, keeps the muted color and its smaller size, readable. */
   .env-list-row:is([data-disabled], [aria-disabled='true']) {
     cursor: default;
   }
@@ -39,7 +39,7 @@
     opacity: var(--env-state-disabled-opacity);
   }
   .env-list-row:is([data-disabled], [aria-disabled='true']) .env-list-row-label {
-    color: var(--env-color-fg-muted);
+    color: var(--env-color-fg-disabled);
   }
   /* The indicator keeps its slot whether or not the row is chosen, so the rows' ends align. The icon's
      slot takes the hook --env-list-row-icon-size, which an owner whose rows lead with larger content,

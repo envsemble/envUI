@@ -83,7 +83,7 @@ Small, medium and large, the control heights of the [scale](../foundations/spaci
 While nothing is chosen, the trigger shows a placeholder.
 
 - People can't clear a choice, only make another.
-- An option can be unavailable, so it can't be chosen; its label is muted, and a description under it can say why.
+- An option can be unavailable, so it can't be chosen; its label takes the disabled color, and a description under it, in the muted color, can say why.
 
 <!-- specimen: States -->
 
