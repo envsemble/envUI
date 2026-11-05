@@ -6,6 +6,12 @@ import { narrowGallery } from './Tiles';
 
 const sections = ['Summary', 'Revenue', 'Costs'];
 
+/**
+ * How long a scroll to the next section takes, in ms: brief beside the hold on each, so the page
+ * is mostly seen resting on a section's start rather than with lines passing under its header.
+ */
+const scrollTakes = 400;
+
 /** Eases a scroll in and out, as a wheel's does. */
 const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
 
@@ -13,11 +19,12 @@ const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2
  * A page in a box that scrolls, as a window does, at its own size and as low as its header and one
  * whole section: its still is scrolled to the first section, under the header stuck at the top
  * with its fill, and it scrolls down a section at a time and back. Each step rests with one whole
- * section just under the header; room after the last lets it scroll there too. In a phone's narrower tile the box is narrower, so the page is drawn at about
- * its own size there.
+ * section just under the header, snapped to its start; room after the last lets it scroll there
+ * too. In a phone's narrower tile the box is narrower, so the page is drawn at about its own size
+ * there.
  */
 export default function PageTile() {
-  const step = useTimeline([1100, 1700, 1700]);
+  const step = useTimeline([2000, 2000, 2000]);
   const narrow = useMedia(narrowGallery);
   const box = useRef<HTMLDivElement>(null);
   const placed = useRef(false);
@@ -43,7 +50,7 @@ export default function PageTile() {
     const start = performance.now();
     let frame = 0;
     const tick = (now: number) => {
-      const progress = Math.min(1, (now - start) / 750);
+      const progress = Math.min(1, (now - start) / scrollTakes);
       element.scrollTop = from + (to - from) * ease(progress);
       if (progress < 1) frame = requestAnimationFrame(tick);
     };

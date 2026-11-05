@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Button, Dialog, DialogClose, TextField } from '@envsemble/envui';
+import { Dialog, DialogClose, IconButton, TextField } from '@envsemble/envui';
+import { IconEdit } from '@envsemble/envui/icons/Edit';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
 const field = '.env-dialog input';
@@ -38,8 +39,14 @@ const named = 'Northwind';
 const narrow = { inlineSize: '12.5rem' } as const;
 
 /**
- * A dialog that renames a project, open over the button that opens it. Stopped, it is open again
- * with the first name rather than drawn anew, which would bring it in again.
+ * The button, at the start of the screen the stage is, beside the dialog it opens rather than
+ * under it, so it never shows through the dialog as it comes and goes.
+ */
+const beside = { display: 'flex', inlineSize: '100%', paddingInline: '0.5rem' } as const;
+
+/**
+ * A dialog that renames a project, open beside the button that opens it, drawn whole. Stopped, it
+ * is open again with the first name rather than drawn anew, which would bring it in again.
  */
 export default function DialogTile() {
   const [open, setOpen] = useState(true);
@@ -51,16 +58,18 @@ export default function DialogTile() {
     },
   });
   return (
-    <Dialog
-      open={open}
-      onOpenChange={setOpen}
-      trigger={<Button>Rename</Button>}
-      title="Rename project"
-      style={narrow}
-      closeLabel="Cancel"
-      actions={<DialogClose variant="primary">Rename</DialogClose>}
-    >
-      <TextField label="Name" value={name} onValueChange={setName} />
-    </Dialog>
+    <div style={beside}>
+      <Dialog
+        open={open}
+        onOpenChange={setOpen}
+        trigger={<IconButton variant="secondary" icon={<IconEdit />} aria-label="Rename" />}
+        title="Rename project"
+        style={narrow}
+        closeLabel="Cancel"
+        actions={<DialogClose variant="primary">Rename</DialogClose>}
+      >
+        <TextField label="Name" value={name} onValueChange={setName} />
+      </Dialog>
+    </div>
   );
 }

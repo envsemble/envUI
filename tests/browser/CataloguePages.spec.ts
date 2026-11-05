@@ -648,8 +648,12 @@ test('every tile of the galleries is fitted: components at one scale, a scene at
           const at = Number(scaleOf(canvas));
           const own = canvas.hasAttribute('data-own-size');
           const most = own ? Number(one ?? 1) : 1;
-          // Every component's popup, a dialog's too, is drawn no smaller than one least (useFit.ts).
-          const least = Math.min(most, own ? 0.84 : 0.95);
+          // Every component's popup, a dialog's too, is drawn no smaller than one least (useFit.ts),
+          // or the least its tile's window sets for a modal that shows whole only smaller (Tiles.ts).
+          const windowLeast = parseFloat(
+            getComputedStyle(canvas).getPropertyValue('--catalogue-own-popup-least'),
+          );
+          const least = Math.min(most, own ? Math.min(0.84, windowLeast || 0.84) : 0.95);
           return at >= least - 0.001 && at <= most ? [] : [`${name}: popup drawn at ${at}`];
         }
         if (canvas.hasAttribute('data-own-size'))

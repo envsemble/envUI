@@ -18,13 +18,24 @@ const tiles = new Map(
 const pascal = (id: string) =>
   id.replace(/(^|-)([a-z\d])/g, (_, __: string, letter: string) => letter.toUpperCase());
 
+/** A tile's window, in rem, and the least scale its open popup is drawn at, where not a popup's. */
+export interface TileWindow {
+  width: number;
+  height: number;
+  /**
+   * The least its popup is drawn at to show whole, in place of `--catalogue-own-popup-least`
+   * (Gallery.css): for a modal whose least whole size is taller than a tile's stage at that scale.
+   */
+  popupLeast?: number;
+}
+
 /**
  * The windows of the tiles whose component doesn't fit the tiles' 14 by 10.5 rem, by page id: a
  * larger one, drawn smaller, such as a calendar's. Every other tile shares the one window, so
  * components show at one scale across the galleries, about their own size; only the drawings of
  * the layout pages take a smaller one, drawn larger, as a drawing has no size of its own.
  */
-export const tileWindows: Readonly<Record<string, { width: number; height: number }>> = {
+export const tileWindows: Readonly<Record<string, TileWindow>> = {
   // The layout drawings, each drawn about as large as LineArt's, whose lines they share.
   'line-art': { width: 10, height: 7.5 },
   box: { width: 8.4, height: 6.3 },
@@ -35,11 +46,13 @@ export const tileWindows: Readonly<Record<string, { width: number; height: numbe
   'navigation-drawer': { width: 17, height: 12.75 },
   tabs: { width: 15, height: 11.25 },
   breadcrumbs: { width: 15, height: 11.25 },
-  // A dialog with a field is taller than a tile's window: it lays out whole in a taller one.
-  dialog: { width: 14, height: 13 },
+  // A dialog with a field is taller than a tile's window: it lays out whole in a taller one, and
+  // its title, field and actions show whole drawn smaller than a popup's least.
+  dialog: { width: 14, height: 13, popupLeast: 0.56 },
   // A sheet of a title and a filter is as tall as its window: lower than a tile's, it shows whole.
   sheet: { width: 14, height: 7 },
-  'confirm-dialog': { width: 15, height: 11.25 },
+  // A confirm dialog with its button beside it is wider than a tile's stage at a popup's least.
+  'confirm-dialog': { width: 15, height: 11.25, popupLeast: 0.56 },
   'date-picker': { width: 20, height: 15 },
   'time-picker': { width: 24, height: 18 },
   'month-picker': { width: 27, height: 20.25 },
