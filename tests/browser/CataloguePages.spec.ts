@@ -387,14 +387,18 @@ test("the overview's hero says what envUI is, leads to setting it up and gives t
   // One way on of its own, to setting envUI up; the sidebar and the Explore cards lead elsewhere.
   await expect(hero.getByRole('link')).toHaveText(['Get started']);
   await expect(hero.getByRole('link', { name: 'Get started' })).toHaveAttribute('href', '/docs');
-  // A phone shows the same command, the one the button copies, on one line that scrolls, its end
-  // fading while more of it lies beyond.
+  // The command is as tall as Get started beside it.
+  const start = hero.getByRole('link', { name: 'Get started' });
+  const install = hero.locator('.catalogue-overview-install');
+  const height = async (locator: typeof install) => (await locator.boundingBox())!.height;
+  expect(await height(install)).toBeCloseTo(await height(start), 0);
+  // A phone shows the same command, the one the button copies, whole: it wraps before the package
+  // and its version rather than scrolling or breaking inside a word.
   await page.setViewportSize({ width: 390, height: 844 });
-  await expect(code).toHaveCSS('white-space', 'nowrap');
   await expect
     .poll(() => code.evaluate((element) => element.scrollWidth - element.clientWidth))
-    .toBeGreaterThan(0);
-  await expect(code).not.toHaveCSS('mask-image', 'none');
+    .toBe(0);
+  await expect(code.locator('span').first()).toHaveCSS('white-space', 'nowrap');
 });
 
 test("a catalogue page's banner reads from the start under its breadcrumbs, its picture hidden", async ({

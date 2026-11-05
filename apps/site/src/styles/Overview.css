@@ -59,47 +59,26 @@
   text-wrap: balance;
 }
 /* The install command beside Get started: code on the cards' fill, with its copy button at its
-   end; always one line, which scrolls where it doesn't fit. */
+   end, as tall as the button beside it, so the two read as one row. Where the line doesn't fit, it
+   wraps before the package's name and its version (Overview.tsx), so all of it shows. */
 .catalogue-overview-install {
   display: inline-flex;
   align-items: center;
   gap: var(--env-space-1);
   max-inline-size: 100%;
-  padding-block: var(--env-space-1);
-  padding-inline: var(--env-space-4) var(--env-space-1);
+  padding-inline-start: var(--env-space-4);
   border-radius: var(--env-radius-full);
   background: var(--env-color-bg-default);
   text-align: start;
 }
 .catalogue-overview-install code {
   min-inline-size: 0;
+  padding-block: var(--env-space-1);
   font-family: var(--site-code-font-family);
   font-size: var(--env-font-size-caption);
-  white-space: nowrap;
-  overflow-x: auto;
-  scrollbar-width: none;
 }
-/* Where the hero is too narrow for the whole command, as on a phone, it scrolls, and its end fades
-   while more of it lies beyond, as a code block's does (SiteText.css), so what shows is the start
-   of what the button copies, never a line cut mid-character. */
-@supports (animation-timeline: scroll()) {
-  .catalogue-overview-install code:not(:focus-visible) {
-    mask-image: linear-gradient(
-      to left,
-      transparent,
-      var(--env-color-fg-default) var(--site-code-fade)
-    );
-    animation: site-code-fade linear both;
-    animation-timeline: scroll(self inline);
-    animation-range: calc(100% - var(--env-space-9)) 100%;
-  }
-  .catalogue-overview-install code:dir(rtl):not(:focus-visible) {
-    mask-image: linear-gradient(
-      to right,
-      transparent,
-      var(--env-color-fg-default) var(--site-code-fade)
-    );
-  }
+.catalogue-overview-install code > span {
+  white-space: nowrap;
 }
 /* The counts, a middle dot between each, each whole. */
 .catalogue-overview-facts {

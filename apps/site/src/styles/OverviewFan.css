@@ -100,18 +100,24 @@
     display: none;
   }
 }
-/* A phone shows one card, upright, in the page's flow, at its own height. */
+/* A phone shows one card, upright, in the page's flow, at its own height, its body right under
+   its header, and Explore close under it, so it comes into view sooner. */
 @container (width < 32rem) {
   .catalogue-fan-stack {
     --catalogue-fan-width: min(17rem, 100cqi);
     block-size: auto;
+    margin-block-end: calc(var(--env-space-6) - var(--env-space-9));
   }
   .catalogue-fan-card {
     position: relative;
     inset: auto;
     inline-size: 100%;
+    min-block-size: 0;
     rotate: none;
     translate: none;
+  }
+  .catalogue-fan-body {
+    margin-block-start: 0;
   }
   .catalogue-fan-card[data-phone='hidden'] {
     display: none;
