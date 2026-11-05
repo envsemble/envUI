@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, List, PortalContainer, ToastProvider, useToast } from '@envsemble/envui';
+import { Button, Column, List, PortalContainer, ToastProvider, useToast } from '@envsemble/envui';
 import { IconArchive } from '@envsemble/envui/icons/Archive';
 import { usePointer, usePreviewLayer, type PointerStep } from '../motion/Motion';
 
@@ -37,28 +37,31 @@ function Projects() {
       },
     });
   };
+  // At the window's top, so the notification at its foot covers none of the rows.
   return (
-    <List.Root aria-label="Projects" style={{ inlineSize: '16rem' }}>
-      {projects
-        .filter((name) => !archived.includes(name))
-        .map((name) => (
-          <List.Item
-            key={name}
-            label={name}
-            end={
-              <Button
-                variant="secondary"
-                size="sm"
-                startIcon={<IconArchive />}
-                aria-label={`Archive ${name}`}
-                onClick={() => archive(name)}
-              >
-                Archive
-              </Button>
-            }
-          />
-        ))}
-    </List.Root>
+    <Column style={{ minBlockSize: '11.5rem' }}>
+      <List.Root aria-label="Projects" style={{ inlineSize: '16rem' }}>
+        {projects
+          .filter((name) => !archived.includes(name))
+          .map((name) => (
+            <List.Item
+              key={name}
+              label={name}
+              end={
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  startIcon={<IconArchive />}
+                  aria-label={`Archive ${name}`}
+                  onClick={() => archive(name)}
+                >
+                  Archive
+                </Button>
+              }
+            />
+          ))}
+      </List.Root>
+    </Column>
   );
 }
 

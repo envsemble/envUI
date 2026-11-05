@@ -51,10 +51,21 @@
   max-block-size: none;
 }
 
+/* A pattern's scene takes a larger card than a component's: three to a row on a wide page, two on
+   a narrower one and one on a phone, on a stage of 4:3, so the whole window its scene is written
+   for shows at about its own size and its words read as a page's do (useFit.ts). */
+.catalogue-gallery-grid[data-scenes] {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+}
+
+.catalogue-gallery-grid[data-scenes] .catalogue-gallery-stage.catalogue-gallery-stage {
+  aspect-ratio: 4 / 3;
+}
+
 /* On a phone, components two to a row on lower stages, so the gallery stays short: each drawn as
    small as fits its stage's width, but no smaller than 0.7 of its own size (useFit.ts), laid out
    as wide as the stage shows at that scale; what is larger still, an open popup too, is cut off
-   at its end and its foot, fading out. A pattern's scene keeps its taller tile, one to a row. */
+   at its end and its foot, fading out. A pattern's scene keeps its own card, one to a row (above). */
 @container catalogue-gallery (width < 27.25rem) {
   .catalogue-gallery-grid:not([data-scenes]) {
     --catalogue-own-least: 0rem;
