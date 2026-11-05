@@ -63,27 +63,28 @@
       var(--env-popup-fill);
     --env-text-field-ghost-placeholder: var(--env-color-fg-muted);
     --env-text-field-ghost-edge: var(--env-popup-solid) var(--env-color-border-default);
-    /* Its focus is its own ring, below, so the field's focus frame stays a hairline in its edge. */
+    /* Its focus is its own edge, below, so the field's focus frame stays a hairline in its edge. */
     --env-text-field-ghost-focus-edge: transparent;
     --env-text-field-ghost-focus-frame: var(--env-control-border-width);
-    /* A pill, which its focus ring below follows, rather than the fields' rounded rectangle. */
+    /* A pill, which its focus edge below follows, rather than the fields' rounded rectangle. */
     --env-text-field-ghost-corner: var(--env-radius-full);
     /* Where the options' icons sit, inside the control's border. */
     --env-text-field-start-inset: calc(
       var(--env-popup-row-padding-inline) - var(--env-control-border-width)
     );
-    /* The containing block of its focus ring, below. */
+    /* The containing block of its focus edge, below. */
     position: relative;
     flex: 0 0 auto;
   }
-  /* While it holds the caret, the search shows the focus ring inside its edge, as every focused
-     control does. The search draws it over its field, a pill as the field is: an outline of its
-     own would sit under the field, which is positioned and paints after it. */
+  /* While it holds the caret, the search's edge takes the focus color: a hairline in place of its
+     edge, not a ring, as the search is always focused and a ring would read as a second frame. The
+     search draws it over its field, a pill as the field is: an outline of its own would sit under
+     the field, which is positioned and paints after it. */
   .env-command-palette-search::after {
     content: '';
     position: absolute;
     inset: 0;
-    border: 2px solid transparent;
+    border: var(--env-control-border-width) solid transparent;
     border-radius: var(--env-radius-full);
     pointer-events: none;
   }
