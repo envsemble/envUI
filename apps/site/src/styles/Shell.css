@@ -407,6 +407,9 @@ body {
   .site-compact-contents {
     margin-block-start: var(--env-space-2);
   }
+  .site-page-grid .site-page-header {
+    margin-block-end: var(--env-space-4);
+  }
 }
 @container site-page-layout (width >= 56rem) {
   .site-page-grid[data-contents] .site-compact-contents {
