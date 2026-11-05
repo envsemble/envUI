@@ -10,18 +10,16 @@
     --env-picker-popup-day: var(--env-row-height);
     align-content: start;
     inline-size: auto;
+    /* In a narrow window, where a field fills its container, the card is at least as wide as the
+       field, so it ends with it; this comes first, so it holds also where no env-window is found. */
+    min-inline-size: min(var(--anchor-width, 0%), var(--available-width, 100vw));
     max-inline-size: var(--available-width, calc(100vw - 2rem));
     padding: var(--env-popup-panel-padding);
   }
   .env-picker-popup-body {
     min-inline-size: 0;
   }
-  /* A calendar alone, its days touching, keeps its width and sits in the middle of the card. In a
-     narrow window, where a field fills its container, the card is at least as wide as the field, so
-     it ends with it; this comes first, so it holds also where no env-window is found. */
-  .env-picker-popup {
-    min-inline-size: min(var(--anchor-width, 0%), var(--available-width, 100vw));
-  }
+  /* A calendar alone, its days touching, keeps its width and sits in the middle of the card. */
   .env-picker-popup-body:has(> .env-calendar) {
     justify-items: center;
   }

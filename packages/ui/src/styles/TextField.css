@@ -432,9 +432,10 @@
     --env-textarea-grip-size: 0.625rem;
     --env-textarea-grip-line: linear-gradient(
       to top left,
-      transparent calc(50% - 0.5px),
-      var(--env-color-fg-muted) calc(50% - 0.5px) calc(50% + 0.5px),
-      transparent calc(50% + 0.5px)
+      transparent calc(50% - var(--env-control-border-width) / 2),
+      var(--env-color-fg-muted) calc(50% - var(--env-control-border-width) / 2)
+        calc(50% + var(--env-control-border-width) / 2),
+      transparent calc(50% + var(--env-control-border-width) / 2)
     );
     content: '';
     position: absolute;
