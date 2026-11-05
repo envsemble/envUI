@@ -86,6 +86,12 @@ export interface ConfirmDialogProps
    * went wrong with error.
    */
   onConfirm: () => void | Promise<void>;
+  /**
+   * Whether the confirm button is disabled, and Enter in a field doesn't confirm, such as for a
+   * confirmation that waits on a typed name.
+   * @default false
+   */
+  confirmDisabled?: boolean;
   /** What went wrong, shown as a danger Alert above the actions and announced. */
   error?: ReactNode;
   /**
@@ -142,6 +148,7 @@ export function ConfirmDialog({
   cancelLabel,
   tone = 'neutral',
   onConfirm,
+  confirmDisabled = false,
   error,
   finalFocus,
   className,
@@ -246,7 +253,7 @@ export function ConfirmDialog({
                       event.preventDefault();
                       // The dialog is portalled, but React events still bubble to a form around it.
                       event.stopPropagation();
-                      void run();
+                      if (!confirmDisabled) void run();
                     }}
                   >
                     {children}
@@ -264,6 +271,7 @@ export function ConfirmDialog({
                         variant="primary"
                         tone={tone}
                         pending={pending}
+                        disabled={confirmDisabled}
                         type="submit"
                       >
                         {confirmLabel}

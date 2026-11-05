@@ -6,7 +6,8 @@ import { Button, ConfirmDialog, Menu, Column, Text, TextField } from '@envsemble
  * danger one whose action takes a moment and can fail, one whose action resolves at once, one
  * opened from a menu item that returns focus to the menu's button, a controlled one that stays
  * open after its action, and one with a typed name, inside a form of the page's own, whose action
- * waits for the spec and fails the first time, and one that holds a form of its own.
+ * waits for the spec and fails the first time, one whose confirm button waits on a typed name, and
+ * one that holds a form of its own.
  */
 export function ConfirmDialogsFixture() {
   const [log, setLog] = useState<string[]>([]);
@@ -21,6 +22,7 @@ export function ConfirmDialogsFixture() {
   const [typedFail, setTypedFail] = useState(true);
   const [typedError, setTypedError] = useState('');
   const settleTyped = useRef<(() => void) | null>(null);
+  const [repository, setRepository] = useState('');
   return (
     <Column gap={4} className="fixture-section">
       <ConfirmDialog
@@ -132,6 +134,22 @@ export function ConfirmDialogsFixture() {
           Finish the workspace action
         </Button>
       </form>
+      {/* Its confirm button waits on the typed name. */}
+      <ConfirmDialog
+        trigger={<Button variant="secondary">Delete repository</Button>}
+        tone="danger"
+        title="Delete acme/api?"
+        confirmLabel="Delete repository"
+        confirmDisabled={repository !== 'acme/api'}
+        onConfirm={() => record('delete repository')}
+      >
+        <TextField
+          label="Repository name"
+          autoComplete="off"
+          value={repository}
+          onValueChange={setRepository}
+        />
+      </ConfirmDialog>
       {/* A form of its own in the content, which nests in the dialog's: reported while developing. */}
       <ConfirmDialog
         trigger={<Button variant="secondary">Rename project</Button>}

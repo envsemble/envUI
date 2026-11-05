@@ -57,8 +57,8 @@ examples:
 
 Where an action can't be undone and reaches many people or much work, the dialog asks for the name.
 
-- Its confirm button stays enabled.
-- A wrong name keeps the dialog open and says what to type.
+- Its confirm button stays disabled until the name matches.
+- The field's description says what to type.
 
 ```tsx figure=TypeToConfirm motion
 
@@ -169,29 +169,22 @@ A ConfirmButton runs `onConfirm` on its second press and shows `confirmLabel`, s
 
 #### Type to confirm
 
-Put a TextField for the name inside the ConfirmDialog, as the TypeToConfirm example does.
-
-- In `onOpenChange`, ignore the close whose `details.reason` is `'imperative-action'` while the name doesn't match.
-- In `onConfirm`, set the field's `error` and focus it through its `ref`; keep the confirm button enabled.
-- Enter in the field confirms through `onConfirm`, as the confirm button does.
+Put a TextField for the name inside the ConfirmDialog, as the TypeToConfirm example does, and pass `confirmDisabled` while the name doesn't match: the confirm button is disabled, and <kbd>Enter</kbd> in the field doesn't confirm until it does.
 
 ```tsx
 <ConfirmDialog
   open={open}
-  onOpenChange={(next, details) => {
-    if (!next && details.reason === 'imperative-action' && !matches) return;
-    setOpen(next);
-  }}
+  onOpenChange={setOpen}
   tone="danger"
   title="Delete Data migration?"
   confirmLabel="Delete project"
-  onConfirm={confirmIfNameMatches}
+  confirmDisabled={typed.trim() !== 'Data migration'}
+  onConfirm={() => deleteProject(project.id)}
 >
   <TextField
-    ref={field}
     label="Project name"
+    description="Enter Data migration to confirm."
     value={typed}
-    error={error}
     onValueChange={setTyped}
   />
 </ConfirmDialog>
