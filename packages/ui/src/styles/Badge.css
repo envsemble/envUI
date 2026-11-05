@@ -2,8 +2,8 @@
   /* Badges: small pills that name a state in its tone. A soft badge has no edge: the status tones fill
      it with their stronger tint and its label is semibold, and at high contrast it takes the tone's
      softer tint. The tone's text color keeps 4.5:1 on the page, panes and rows, also over its tints; a
-     solid badge puts fg-on-emphasis on the tone's emphasis fill, and an outlined one draws the tone's
-     edge.
+     solid badge puts fg-on-emphasis on the tone's emphasis fill, fg-on-strong on danger's saturated
+     red, and an outlined one draws the tone's edge.
      In a control, such as a tab with a count, the control sets hooks on its own element:
      --env-badge-fg, --env-badge-bg and --env-badge-border (a border shorthand) for every badge inside
      it, whatever its tone and variant; --env-badge-count-fg, -bg and -border for a badge with a
@@ -36,6 +36,7 @@
     --env-badge-high-contrast-tint: var(--env-theme-high-contrast) var(--env-badge-tint);
     --env-badge-soft: var(--env-badge-high-contrast-tint, var(--env-badge-tonal));
     --env-badge-fill: var(--env-color-bg-neutral-emphasis);
+    --env-badge-on-fill: var(--env-color-fg-on-emphasis);
     --env-badge-edge: var(--env-color-border-neutral);
     /* On a selected row, whose blue fill would swallow a translucent tint, the row sets
        --env-badge-underlay to its surface, and a soft badge lays its tint over it, so it reads as it
@@ -97,6 +98,7 @@
     --env-badge-tint: var(--env-color-bg-danger-muted);
     --env-badge-tonal: var(--env-color-bg-danger-subtle-hover);
     --env-badge-fill: var(--env-color-bg-danger-emphasis);
+    --env-badge-on-fill: var(--env-color-fg-on-strong);
     --env-badge-edge: var(--env-color-border-danger);
   }
   /* Completed work recedes: a soft done badge takes half its tint, quieter than a neutral one, and
@@ -115,7 +117,7 @@
   }
   .env-badge[data-variant='solid'] {
     background: var(--env-badge-container, var(--env-badge-bg, var(--env-badge-fill)));
-    color: var(--env-badge-content, var(--env-badge-fg, var(--env-color-fg-on-emphasis)));
+    color: var(--env-badge-content, var(--env-badge-fg, var(--env-badge-on-fill)));
   }
   .env-badge[data-variant='outline'] {
     --env-badge-edge-border: 0.0625rem solid var(--env-badge-edge);

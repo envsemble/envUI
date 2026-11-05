@@ -370,6 +370,7 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 ## Changelog
 
 - **1.0.0**: Opens from a Button with the shortcut's keys in its new `end` slot, in place of the SearchTrigger component. Rebuilt on Base UI's autocomplete: `inputValue`, `onInputValueChange`, `onAction` and `closeOnAction` for `query`, `onQueryChange`, `onSelect` and `closeOnSelect`, and `CommandPaletteActionDetails`; items take `description`, `end` and `disabled`; options are list rows; the number of results is announced; `className`, `style`, `ref` and data attributes reach the surface. A group's label, `env-command-palette-heading`, is `env-command-palette-group-label`, as in Menu.
+- **1.0.0-prerelease.6**: An item's shortcut is muted text in one unit, such as Ctrl+N, rather than a filled chip for each key; the key hints below the list keep their keys.
 - **1.0.0-prerelease.6**: The empty state is one muted line at an option's height, its title and description after a dot, rather than an icon on a circle over a centred title, so the palette keeps about its height as results come and go; it shows an icon only when `emptyIcon` gives one. While results load, a spinner turns at the search field's end, rather than in place of its icon or the empty state's.
 - **1.0.0-prerelease.6**: While it holds the caret, the search's edge takes the focus color as a hairline, rather than a ring that read as a second frame.
 - **1.0.0-prerelease.6**: A key hint for <kbd>Enter</kbd> hides while there is no option to choose, as results load or when nothing matches.

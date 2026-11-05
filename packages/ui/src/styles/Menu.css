@@ -2,7 +2,7 @@
   /* Menus are the desktop dropdown: a frosted popup, a PopupSurface like Popover's and Select's, with
      concentric rows of the popup row height in body text that highlight on hover and keyboard
      focus, groups and separators set apart by space alone, small muted group labels, and shortcuts as
-     small muted key chips at the end. env-popup gives the popup its fill, shadow and motion. */
+     muted text at the end. env-popup gives the popup its fill, shadow and motion. */
   /* Color properties: an item's colors, which an application sets on one Menu.Item through style or
      its own CSS: its container, its text and its icon. They don't inherit. */
   @property --env-menu-item-container {
@@ -149,7 +149,7 @@
     min-block-size: 1lh;
   }
   /* A count at the end, a Badge with one, is its figures alone, in its tone's color, without the
-     pill, through Badge's count hooks, so it can't be taken for a shortcut's key chips. */
+     pill, through Badge's count hooks, in its tone's color apart from a shortcut's muted keys. */
   .env-menu-item-end {
     flex: 0 0 auto;
     display: inline-flex;
@@ -158,24 +158,25 @@
     --env-badge-count-bg: transparent;
     --env-badge-count-border: none;
   }
-  /* Shortcut keys are small muted chips on the neutral fill, with no edge, muted like the hint they
-     are, a little apart, the + between the keys of a combination read but not shown: the menu sets
-     Kbd's custom properties on its own element. */
+  /* A shortcut is muted text in one unit, such as Ctrl+D, with no chip or fill per key, so a menu
+     of shortcuts stays quiet down its rows: the menu sets Kbd's custom properties on its own
+     element. */
   .env-menu-item-end,
   .env-menu-item-shortcut {
-    --env-kbd-size: calc(0.5 * var(--env-popup-row-height));
-    --env-kbd-padding-inline: calc(0.125 * var(--env-popup-row-height));
-    --env-kbd-radius: calc(0.125 * var(--env-popup-row-height));
+    --env-kbd-size: auto;
+    --env-kbd-padding-inline: 0;
+    --env-kbd-radius: 0;
     --env-kbd-fg: var(--env-color-fg-muted);
-    --env-kbd-bg: var(--env-color-bg-neutral-muted);
+    --env-kbd-bg: transparent;
     --env-kbd-border: transparent;
     --env-kbd-border-end-width: var(--env-control-border-width);
     --env-kbd-font-size: var(--env-font-size-caption);
-    --env-kbd-separator-padding-inline: calc(0.0375 * var(--env-popup-row-height));
-    --env-kbd-separator-font: 0 / 1 var(--env-font-family);
+    --env-kbd-separator-padding-inline: 0;
+    --env-kbd-separator-font: var(--env-font-weight-medium) var(--env-font-size-caption) / 1
+      var(--env-font-family);
   }
-  /* On a highlighted row, where the chip lies on the highlight, its label takes the text color, as
-     the muted one would fall below 4.5:1 there in dark. */
+  /* On a highlighted row, where the shortcut lies on the highlight, it takes the text color, as the
+     muted one would fall below 4.5:1 there in dark. */
   .env-menu-item:is([data-highlighted], [data-popup-open])
     :is(.env-menu-item-end, .env-menu-item-shortcut) {
     --env-kbd-fg: var(--env-color-fg-default);
@@ -185,7 +186,7 @@
     display: inline-flex;
     align-items: center;
     /* The chords of a sequence stand further apart than the keys of one. */
-    gap: calc(0.15 * var(--env-popup-row-height));
+    gap: calc(0.25 * var(--env-popup-row-height));
     margin-inline-start: calc(0.4 * var(--env-popup-row-height));
     color: var(--env-color-fg-muted);
     font: var(--env-type-body-sm);
@@ -249,20 +250,21 @@
   .env-menu-item:is([data-disabled], [aria-disabled='true']) .env-menu-item-label {
     color: var(--env-color-fg-disabled);
   }
-  /* A separator is space as tall as the gap between groups, with no line: popups have no hairlines. */
+  /* A separator is space with no line, as popups have no hairlines: half a row, so it reads as a
+     break between groups rather than as uneven spacing between rows. */
   .env-menu-separator {
-    block-size: var(--env-popup-group-gap);
+    block-size: var(--env-popup-separator-gap);
     margin: 0;
     border: 0;
   }
-  /* A group is its own set of rows below a small muted heading, a little ahead of its rows, apart
-     from the rows before it by space; after a separator, the separator is that space. A heading
-     parts the groups too, so a labelled group takes half the space, and its heading sits close
-     over its rows: a menu of a few groups stays compact. A separator, such as the one before a
-     destructive item, keeps the full space. */
+  /* A group is its own set of rows, apart from the rows before it by a separator's break; after a
+     separator, the separator is that space. A heading, small and muted, a little ahead of its rows,
+     parts the groups too, so a labelled group takes a little space before its heading, which sits
+     close over its rows: a menu of a few groups stays compact. A separator, such as the one before
+     a destructive item, keeps the full break. */
   .env-menu > .env-menu-group:not(:first-child, .env-menu-separator + *),
   .env-menu > .env-skeleton-content > .env-menu-group:not(:first-child, .env-menu-separator + *) {
-    margin-block-start: var(--env-popup-group-gap);
+    margin-block-start: var(--env-popup-separator-gap);
   }
   .env-menu
     > .env-menu-group:not(:first-child, .env-menu-separator + *):has(> .env-menu-group-label),

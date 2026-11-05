@@ -125,8 +125,6 @@ const segmentThumbAtHigh = {
   rationale:
     'The thumb at high contrast (SegmentedControl.css); segmented-control-thumb is measured at standard contrast.',
 } as const;
-// The state layer under a segment not chosen while the pointer is over it (SegmentedControl.css).
-const segmentHoverLayer = 'segmented-control-hover-layer';
 /** The surfaces a segmented control's track sits on, each with the track's fill over it. */
 const segmentTracks = [page, surface, muted, raised].map((below) => [fill, below] as const);
 const tooltipKey = 'tooltip-key';
@@ -463,16 +461,22 @@ const registry: readonly ContrastPair[] = merged([
     'Button variant="important"',
   ),
   ...text(
-    '--env-color-fg-on-emphasis',
+    '--env-color-fg-on-strong',
     [
       '--env-color-bg-danger-emphasis',
       '--env-color-bg-danger-emphasis-hover',
       '--env-color-bg-danger-emphasis-pressed',
+    ],
+    'Primary buttons in the danger tone, at rest, hovered and pressed',
+  ),
+  ...text(
+    '--env-color-fg-on-emphasis',
+    [
       '--env-color-bg-accent-emphasis',
       '--env-color-bg-accent-emphasis-hover',
       '--env-color-bg-accent-emphasis-pressed',
     ],
-    'Primary buttons in the danger and accent tones, at rest, hovered and pressed',
+    'Primary buttons in the accent tone, at rest, hovered and pressed',
   ),
   ...text(
     '--env-color-fg-default',
@@ -830,9 +834,9 @@ const registry: readonly ContrastPair[] = merged([
     ),
   ]),
   ...text(
-    '--env-color-fg-muted-hover',
-    segmentTracks.map((track) => [segmentHoverLayer, ...track]),
-    'The label of a segment not chosen, on its state layer under the pointer',
+    '--env-color-fg-default',
+    segmentTracks,
+    'The label of a segment not chosen under the pointer, on the track with no layer',
   ),
   ...text(
     '--env-color-fg-muted-pressed',
@@ -989,7 +993,11 @@ const registry: readonly ContrastPair[] = merged([
           'A soft badge on the page, a pane, a row, a muted or raised surface or a popup',
           tonal,
         )),
-    ...text('--env-color-fg-on-emphasis', [badgeFill(tone)], 'Solid badges and counters'),
+    ...text(
+      tone === 'danger' ? '--env-color-fg-on-strong' : '--env-color-fg-on-emphasis',
+      [badgeFill(tone)],
+      'Solid badges and counters',
+    ),
   ]),
   ...text(
     '--env-color-fg-on-emphasis',
@@ -1232,12 +1240,8 @@ const registry: readonly ContrastPair[] = merged([
   ),
   ...nonText(
     'badge-outline-primary',
-    [
-      '--env-color-bg-primary-emphasis',
-      '--env-color-bg-danger-emphasis',
-      '--env-color-bg-accent-emphasis',
-    ],
-    'The outline of a badge or counter on a primary button, in any tone',
+    ['--env-color-bg-primary-emphasis', '--env-color-bg-accent-emphasis'],
+    'The outline of a badge or counter on a primary button in the neutral or accent tone',
     {
       minimum: { standard: 1.5, high: 3 },
       rationale:
@@ -1246,8 +1250,8 @@ const registry: readonly ContrastPair[] = merged([
   ),
   ...nonText(
     'badge-outline-important',
-    ['--env-color-bg-accent-strong'],
-    'The outline of a badge or counter on an important button',
+    ['--env-color-bg-accent-strong', '--env-color-bg-danger-emphasis'],
+    'The outline of a badge or counter on an important button or a danger primary, on a white label',
     {
       minimum: { standard: 1.5, high: 3 },
       rationale:
@@ -1262,9 +1266,6 @@ const registry: readonly ContrastPair[] = merged([
     '--env-color-bg-primary-emphasis',
     '--env-color-bg-primary-emphasis-hover',
     '--env-color-bg-primary-emphasis-pressed',
-    '--env-color-bg-danger-emphasis',
-    '--env-color-bg-danger-emphasis-hover',
-    '--env-color-bg-danger-emphasis-pressed',
     '--env-color-bg-accent-emphasis',
     '--env-color-bg-accent-emphasis-hover',
     '--env-color-bg-accent-emphasis-pressed',
@@ -1289,6 +1290,9 @@ const registry: readonly ContrastPair[] = merged([
     '--env-color-bg-raised-pressed',
   ]),
   ...buttonEndSeparator('on-strong', [
+    '--env-color-bg-danger-emphasis',
+    '--env-color-bg-danger-emphasis-hover',
+    '--env-color-bg-danger-emphasis-pressed',
     '--env-color-bg-danger-strong',
     '--env-color-bg-danger-strong-hover',
     '--env-color-bg-danger-strong-pressed',
@@ -3138,6 +3142,36 @@ export const renamed: readonly { from: string; to: string; rationale: string }[]
     rationale:
       'The catalogue’s canvas, a formula in its style sheet, is the recessed surface, --env-color-bg-recessed: the same shade deeper than the page, a token of the themes.',
   })),
+  // The danger emphasis fill is a saturated red with a white label in every theme, so a destructive
+  // primary outweighs the soft primary and accent fills in dark: its label, a solid danger badge's
+  // and what an end slot or a count draws in it are --env-color-fg-on-strong.
+  ...['', '-hover', '-pressed'].flatMap((state) =>
+    ['--env-color-fg-on-emphasis', 'button-end-separator-on-emphasis'].map((label) => ({
+      from: `${label} on --env-color-bg-danger-emphasis${state}`,
+      to: `${label.replace('on-emphasis', 'on-strong')} on --env-color-bg-danger-emphasis${state}`,
+      rationale:
+        'The danger primary takes a white label, --env-color-fg-on-strong, on its saturated red in every theme, rather than a dark one on a soft coral in dark, so a destructive action outweighs the soft primary and accent fills beside it.',
+    })),
+  ),
+  // A segment not chosen takes no layer under the pointer, only the text color on its label.
+  ...[page, surface, muted, raised, recessed].map((below) => ({
+    from: `--env-color-fg-muted-hover on segmented-control-hover-layer over ${fill} over ${below}`,
+    to: `--env-color-fg-default on ${fill} over ${below}`,
+    rationale:
+      'A hovered segment of a SegmentedControl lays no state layer, which read as a second selection beside the thumb, and its label takes the text color on the track.',
+  })),
+  {
+    from: `--env-color-fg-muted-hover on segmented-control-hover-layer over ${fill} over catalogue-canvas`,
+    to: `--env-color-fg-muted-hover on segmented-control-hover-layer over ${fill} over ${recessed}`,
+    rationale:
+      'The catalogue’s canvas, a formula in its style sheet, is the recessed surface, --env-color-bg-recessed: the same shade deeper than the page, a token of the themes.',
+  },
+  {
+    from: 'badge-outline-primary on --env-color-bg-danger-emphasis',
+    to: 'badge-outline-important on --env-color-bg-danger-emphasis',
+    rationale:
+      'A count on a danger primary is outlined in its white label, as on an important button, now that the danger fill takes --env-color-fg-on-strong.',
+  },
 ];
 
 /** What a pair is held to: its kind, and its minimum at each contrast it is measured in. */
@@ -3360,10 +3394,6 @@ export const derived: Readonly<Record<string, string>> = {
   // A text field's prefix and suffix, a share of muted text (TextField.css).
   'text-field-affix': markedColor('packages/ui/src/styles/TextField.css', 'text-field-affix'),
   // A segmented control's thumb (SegmentedControl.css).
-  'segmented-control-hover-layer': markedColor(
-    'packages/ui/src/styles/SegmentedControl.css',
-    'segmented-control-hover-layer',
-  ),
   'segmented-control-thumb': markedColor(
     'packages/ui/src/styles/SegmentedControl.css',
     'segmented-control-thumb',

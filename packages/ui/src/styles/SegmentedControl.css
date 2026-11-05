@@ -205,21 +205,13 @@
   .env-segmented-control-item:focus-visible:not([data-checked]):not([data-disabled]) {
     background: var(--env-segmented-control-custom-fill, transparent);
   }
-  /* Under the pointer and pressed, a segment not chosen keeps a muted label, in muted text's own
-     hover and pressed grades, which hold their contrast on the layer, and takes no more than the
-     faint neutral state layer, far lighter than the thumb, so only the thumb reads as chosen, in
-     dark too. The application's colors keep their label and its state layer. */
+  /* Under the pointer a segment not chosen takes no layer at all, only the text color on its label,
+     so nothing but the thumb reads as chosen. Pressed, it takes the neutral pressed state layer, far
+     lighter than the thumb, with muted text's pressed grade. The application's colors keep their
+     label and its state layer. */
   .env-segmented-control-item:hover:not([data-checked]):not([data-disabled]) {
-    /* Three quarters of the neutral state layer, so the label keeps 4.5:1 on the track over a card
-       in dark. */
-    /* contrast: segmented-control-hover-layer */
-    --env-segmented-control-hover-layer: color-mix(
-      in srgb,
-      var(--env-color-bg-neutral-subtle-hover) 75%,
-      transparent
-    );
-    background: var(--env-segmented-control-custom-fill, var(--env-segmented-control-hover-layer));
-    color: var(--env-segmented-control-option-hover-color, var(--env-color-fg-muted-hover));
+    background: var(--env-segmented-control-custom-fill, transparent);
+    color: var(--env-segmented-control-option-hover-color, var(--env-color-fg-default));
   }
   .env-segmented-control-item:active:not([data-checked]):not([data-disabled]) {
     background: var(

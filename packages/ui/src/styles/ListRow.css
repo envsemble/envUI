@@ -102,21 +102,22 @@
     display: inline-flex;
     align-items: center;
     gap: var(--env-space-1);
-    /* Keys, in the shortcut or at the end, are small muted chips on the neutral fill, with no edge,
-       side by side, as a menu's are. */
-    --env-kbd-size: calc(0.5 * var(--env-popup-row-height));
-    --env-kbd-padding-inline: calc(0.125 * var(--env-popup-row-height));
-    --env-kbd-radius: calc(0.125 * var(--env-popup-row-height));
+    /* Keys, in the shortcut or at the end, are muted text in one unit, such as Ctrl+D, with no chip
+       per key, as a menu's are. */
+    --env-kbd-size: auto;
+    --env-kbd-padding-inline: 0;
+    --env-kbd-radius: 0;
     --env-kbd-fg: var(--env-color-fg-muted);
-    --env-kbd-bg: var(--env-color-bg-neutral-muted);
+    --env-kbd-bg: transparent;
     --env-kbd-border: transparent;
     --env-kbd-border-end-width: var(--env-control-border-width);
     --env-kbd-font-size: var(--env-font-size-caption);
-    --env-kbd-separator-padding-inline: calc(0.0375 * var(--env-popup-row-height));
-    --env-kbd-separator-font: 0 / 1 var(--env-font-family);
+    --env-kbd-separator-padding-inline: 0;
+    --env-kbd-separator-font: var(--env-font-weight-medium) var(--env-font-size-caption) / 1
+      var(--env-font-family);
   }
-  /* On a highlighted row, where the chip lies on the highlight, its label takes the text color, as
-     the muted one would fall below 4.5:1 there in dark. */
+  /* On a highlighted row, where the shortcut lies on the highlight, it takes the text color, as the
+     muted one would fall below 4.5:1 there in dark. */
   .env-list-row:is([data-highlighted], [data-popup-open])
     :is(.env-list-row-end, .env-list-row-shortcut) {
     --env-kbd-fg: var(--env-color-fg-default);

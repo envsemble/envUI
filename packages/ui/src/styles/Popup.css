@@ -42,7 +42,7 @@
        share: the comfortable md control height, 2.5 rem, and 2 rem at the compact scale, a step
        shorter than the compact controls, so a menu stays dense. Its scale follows the row height
        token. From it: the inset of the rows, the rows' corners and, concentric with them, the
-       popup's, and the space between groups. */
+       popup's, the space between groups and, half a row, a separator's break. */
     --env-popup-row-height: calc(var(--env-row-height) + 0.25rem);
     --env-popup-padding: calc(0.15 * var(--env-popup-row-height));
     --env-popup-row-radius: calc(0.35 * var(--env-popup-row-height));
@@ -50,6 +50,7 @@
     --env-popup-row-gap: calc(0.25 * var(--env-popup-row-height));
     --env-popup-radius: calc(var(--env-popup-row-radius) + var(--env-popup-padding));
     --env-popup-group-gap: calc(0.25 * var(--env-popup-row-height));
+    --env-popup-separator-gap: calc(0.5 * var(--env-popup-row-height));
     /* A group's label sits a little ahead of its rows' icons and text. */
     --env-popup-label-padding-inline: calc(0.25 * var(--env-popup-row-height));
     /* The inset of a panel, a popover's, a hover card's or a picker's, on a surface's corners: as

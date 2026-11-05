@@ -207,16 +207,16 @@ test.describe('Submenus', () => {
     return menu;
   }
 
-  test('a separator is space as tall as the gap between groups, with no line', async ({ page }) => {
+  test('a separator is a break of half a row, with no line', async ({ page }) => {
     const menu = await openCompactOptions(page);
     const separator = menu.getByRole('separator').first();
     await expect(separator).toHaveCSS('border-top-width', '0px');
-    // A quarter of a row's height, the md control height, as the space between groups.
+    // Half a row's height, so it reads as a break between groups rather than uneven spacing.
     const [height, row] = await separator.evaluate((element) => [
       element.getBoundingClientRect().height,
       element.closest('.env-menu')!.querySelector('.env-menu-item')!.getBoundingClientRect().height,
     ]);
-    expect(height).toBeCloseTo(row / 4, 0);
+    expect(height).toBeCloseTo(row / 2, 0);
   });
 
   test('a submenu opens beside its row on hover, with the rows of its menu', async ({ page }) => {
@@ -612,8 +612,8 @@ test('menu groups, radio and checkbox items keep their choice', async ({ page })
       .getByRole('menuitem', { name: 'Command palette' })
       .locator('.env-menu-item-shortcut kbd.env-kbd'),
   ).toHaveText(['Ctrl', 'Shift', 'P']);
-  // Side by side, as flat chips 3 px apart, the + between them read but not shown; the chords of
-  // a sequence stand further apart.
+  // Muted text in one unit, no chip per key: the keys carry no fill and the + between them shows;
+  // the chords of a sequence stand apart by space.
   const spacing = (name: string) =>
     menu
       .getByRole('menuitem', { name })
@@ -626,15 +626,23 @@ test('menu groups, radio and checkbox items keep their choice', async ({ page })
         return {
           text: shortcut.textContent,
           gaps: keys.slice(1).map((key, index) => Math.round(key.left - keys[index]!.right)),
-          shown: separators.some((separator) => separator.getBoundingClientRect().width > 6),
+          fills: [
+            ...new Set(
+              [...shortcut.querySelectorAll('kbd.env-kbd')].map(
+                (key) => getComputedStyle(key).backgroundColor,
+              ),
+            ),
+          ],
+          shown: separators.every((separator) => separator.getBoundingClientRect().width > 3),
         };
       });
   expect(await spacing('Command palette')).toEqual({
     text: 'Ctrl+Shift+P',
-    gaps: [3, 3],
-    shown: false,
+    gaps: [7, 7],
+    fills: ['rgba(0, 0, 0, 0)'],
+    shown: true,
   });
-  expect((await spacing('Keyboard shortcuts')).gaps).toEqual([3, 6, 3]);
+  expect((await spacing('Keyboard shortcuts')).gaps).toEqual([7, 10, 7]);
   // The plus key keeps its name, and a sequence shows its keys without claiming a single shortcut.
   const zoom = menu.getByRole('menuitem', { name: 'Zoom in' });
   await expect(zoom).toHaveAttribute('aria-keyshortcuts', 'Control+Plus');
