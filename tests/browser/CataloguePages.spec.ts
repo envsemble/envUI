@@ -993,6 +993,198 @@ test('a gallery tile holds its still as the pointer comes in', async ({ page }) 
   }
 });
 
+/**
+ * In the page: waits until every gallery tile whose stage shows whole has been still for half a
+ * second, then reads each one's view over 60 frames, and again after the page scrolls a little.
+ * A popup is placed against the stage's and the window's edges, so a view that followed it each
+ * time would never stop (holdsFrame, useFit.ts).
+ */
+const stillTiles = (page: Page, from: number) =>
+  page.evaluate(async (from) => {
+    const frame = () => new Promise(requestAnimationFrame);
+    const tiles = [...document.querySelectorAll<HTMLElement>('.catalogue-gallery-tile')];
+    const whole = () =>
+      tiles.filter((tile) => {
+        const box = tile.querySelector('.catalogue-related-stage')!.getBoundingClientRect();
+        return (
+          box.top >= 0 && box.bottom <= innerHeight && box.left >= 0 && box.right <= innerWidth
+        );
+      });
+    const nameOf = (tile: Element) => tile.querySelector('.catalogue-gallery-name')!.textContent!;
+    const viewOf = (tile: Element) =>
+      tile.querySelector<HTMLElement>('.catalogue-related-canvas[data-fitted]')?.style.transform;
+    tiles[from]!.scrollIntoView({ block: 'start' });
+    const shown = whole();
+    // Still for 30 frames running, within four seconds.
+    let calm = 0;
+    let last = shown.map(viewOf).join();
+    for (const start = performance.now(); calm < 30 && performance.now() - start < 4000; ) {
+      await frame();
+      const now = shown.map(viewOf).join();
+      calm = now === last && !now.includes(',,') && shown.every(viewOf) ? calm + 1 : 0;
+      last = now;
+    }
+    const seen = shown.map((tile) => new Set([viewOf(tile)]));
+    for (let count = 0; count < 60; count++) {
+      await frame();
+      shown.forEach((tile, index) => seen[index]!.add(viewOf(tile)));
+    }
+    const moving = shown.flatMap((tile, index) =>
+      seen[index]!.size > 1
+        ? [`${nameOf(tile)}: ${[...seen[index]!].slice(0, 3).join(' | ')}`]
+        : [],
+    );
+    // Scrolled a little, each tile that still shows whole holds its view.
+    const views = new Map(shown.map((tile) => [tile, viewOf(tile)]));
+    let scroller: HTMLElement | null = tiles[from]!;
+    while (
+      scroller &&
+      !(
+        scroller.scrollHeight > scroller.clientHeight + 1 &&
+        /auto|scroll/.test(getComputedStyle(scroller).overflowY)
+      )
+    )
+      scroller = scroller.parentElement;
+    scroller?.scrollBy(0, 60);
+    for (let count = 0; count < 30; count++) await frame();
+    const reframed = whole()
+      .filter((tile) => views.has(tile) && views.get(tile) !== viewOf(tile))
+      .map((tile) => `${nameOf(tile)}: ${views.get(tile)} → ${viewOf(tile)}`);
+    return {
+      moving,
+      reframed,
+      next: Math.max(from + 1, ...shown.map((tile) => tiles.indexOf(tile) + 1)),
+      count: tiles.length,
+    };
+  }, from);
+
+for (const [width, scale] of [
+  [1280, 1.5],
+  [1536, 1.25],
+  [1920, 1],
+] as const)
+  test.describe(`at ${width} px wide, ${scale} device px to a px`, () => {
+    test.use({ viewport: { width, height: 864 }, deviceScaleFactor: scale });
+    test('every gallery tile at rest holds still, also as the page scrolls', async ({ page }) => {
+      // Such as a menu bar resting with its menu open: the view eases to its frame and stops,
+      // rather than following its popup as it is placed again a fraction away, every frame.
+      test.setTimeout(240_000);
+      for (const route of ['/components', '/patterns']) {
+        await page.goto(`${siteDevUrl}${route}`);
+        await page.mouse.move(0, 0);
+        await expect(page.locator('.catalogue-related-canvas[data-fitted]').first()).toBeVisible();
+        const moving: string[] = [];
+        const reframed: string[] = [];
+        for (let from = 0, count = 1; from < count; ) {
+          const found = await stillTiles(page, from);
+          moving.push(...found.moving);
+          reframed.push(...found.reframed);
+          ({ next: from, count } = found);
+        }
+        expect(moving, `${route}: tiles that never hold still`).toEqual([]);
+        expect(reframed, `${route}: tiles framed again as the page scrolls`).toEqual([]);
+      }
+    });
+  });
+
+test('a tile that holds its view is framed the same wherever the pointer comes in', async ({
+  page,
+}) => {
+  // Framed at rest on its largest state, such as the avatar pile in the row it spreads into, it
+  // shows the same frame from its still through its play and back, whether the pointer comes in at
+  // the stage's middle or its corner, and the pile's count and its tooltip show whole.
+  test.setTimeout(150_000);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(`${siteDevUrl}/components`);
+  await expect(page.locator('.catalogue-related-canvas[data-fitted]').first()).toBeVisible();
+  for (const name of [
+    'Avatar',
+    'Select',
+    'Combobox',
+    'Menubar',
+    'CommandPalette',
+    'DatePicker',
+    'MonthPicker',
+    'TimePicker',
+  ]) {
+    const tile = page.locator('.catalogue-gallery-tile').filter({
+      has: page.locator('.catalogue-gallery-name', { hasText: new RegExp(`^${name}$`) }),
+    });
+    const canvas = tile.locator('.catalogue-related-canvas[data-fitted]');
+    await tile.scrollIntoViewIfNeeded();
+    await page.mouse.move(0, 0);
+    await expect(canvas).toHaveCount(1);
+    const still = () =>
+      canvas.evaluate(
+        (element: HTMLElement) =>
+          new Promise<string>((resolve) => {
+            const { transform } = element.style;
+            let frames = 20;
+            const next = () => {
+              if (element.style.transform !== transform) resolve('');
+              else if (--frames) requestAnimationFrame(next);
+              else resolve(transform);
+            };
+            requestAnimationFrame(next);
+          }),
+      );
+    await expect.poll(still, { message: name }).not.toBe('');
+    const rest = await still();
+    for (const [x, y] of [
+      [0.5, 0.4],
+      [0.97, 0.7],
+    ] as const) {
+      await tile.scrollIntoViewIfNeeded();
+      const box = (await tile.locator('.catalogue-related-stage').boundingBox())!;
+      await page.mouse.move(box.x + box.width * x, box.y + box.height * y);
+      await expect(tile.locator('[data-playing]')).toHaveCount(1);
+      const { views, cut } = await tile.evaluate(
+        (element, name) =>
+          new Promise<{ views: string[]; cut: string[] }>((resolve) => {
+            const canvas = element.querySelector<HTMLElement>('.catalogue-related-canvas')!;
+            const stage = element
+              .querySelector('.catalogue-related-stage')!
+              .getBoundingClientRect();
+            const views = new Set<string>();
+            const cut = new Set<string>();
+            const start = performance.now();
+            const sample = () => {
+              views.add(canvas.style.transform);
+              // The pile's avatars, its count and its tooltip, whole in the stage, and the row the
+              // pile spreads into across its middle.
+              const row = canvas.querySelector('.env-avatar-group')?.getBoundingClientRect();
+              if (row && Math.abs((row.left + row.right) / 2 - (stage.left + stage.right) / 2) > 2)
+                cut.add('off the middle');
+              if (name === 'Avatar')
+                for (const part of canvas.querySelectorAll(
+                  '.env-avatar-group > *, .catalogue-overlay-layer .env-tooltip',
+                )) {
+                  const box = part.getBoundingClientRect();
+                  if (
+                    part.checkVisibility({ opacityProperty: true }) &&
+                    (box.left < stage.left - 0.5 ||
+                      box.right > stage.right + 0.5 ||
+                      box.top < stage.top - 0.5 ||
+                      box.bottom > stage.bottom + 0.5)
+                  )
+                    cut.add(part.className);
+                }
+              if (performance.now() - start < 2200) requestAnimationFrame(sample);
+              else resolve({ views: [...views], cut: [...cut] });
+            };
+            sample();
+          }),
+        name,
+      );
+      expect(views, `${name}, the pointer in at ${x}, ${y}`).toEqual([rest]);
+      expect(cut, `${name}, the pointer in at ${x}, ${y}`).toEqual([]);
+      await page.mouse.move(0, 0);
+      await expect(tile.locator('[data-playing]')).toHaveCount(0);
+      await expect.poll(still, { message: `${name} rests again` }).toBe(rest);
+    }
+  }
+});
+
 test('on a phone, what a playing gallery tile opens shows inside its stage', async ({ page }) => {
   test.setTimeout(60_000);
   await page.setViewportSize({ width: 390, height: 844 });
