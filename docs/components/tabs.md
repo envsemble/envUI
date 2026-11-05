@@ -185,7 +185,7 @@ Each `TabsItem` has its `value`, the panel's `content`, and its `label` with an 
 
 `size` is `sm`, `md` or `lg`, the default, whose tabs are as tall as medium buttons.
 
-- `orientation` is `horizontal`, the default, or `vertical`, a column moved through with <kbd>↑</kbd> and <kbd>↓</kbd>. The panels stay below the list either way: to put a vertical list beside them, lay the Tabs out as a row through `style`, as the VerticalList example does.
+- `orientation` is `horizontal`, the default, or `vertical`, a column moved through with <kbd>↑</kbd> and <kbd>↓</kbd>, whose tabs are as tall as medium controls unless `size` is `sm`. The panels stay below the list either way: to put a vertical list beside them, lay the Tabs out as a row through `style`, as the VerticalList example does.
 - With `fill`, the selected panel takes the height left below the list. Give the Tabs a height, for example as a flex child.
 - A horizontal list lines its first label up with the content's edge, so the first tab's padding, where its focus ring shows, reaches into the space before it. Leave that room where the Tabs sit flush against an edge that clips.
 
@@ -219,6 +219,7 @@ The rail has no fill unless its container color sets one.
 ## Changelog
 
 - **1.0.0**: The arrow keys follow the text direction, from EnvUIProvider's `dir` or the direction at the tabs; only the tab list takes it, so a panel keeps the direction around it. The tab and panel classes are `env-tabs-tab` and `env-tabs-panel` (were `env-tab` and `env-tab-panel`).
+- **1.0.0-prerelease.6**: A vertical rail's tabs are as tall as a medium control, like other navigation rows; a small rail keeps its smaller tabs.
 - **1.0.0-prerelease.6**: The labels of the tabs not selected are a step stronger than the muted text, so a disabled tab stands apart from them.
 - **1.0.0-prerelease.6**: Under the pointer and pressed, a tab shows no fill: its label takes the text color and a faint underline stands where the indicator would, so the indicator alone marks the selected tab.
 - **1.0.0-prerelease.5**: An item takes a `label` and an `icon`, as SegmentedControl's do; `button` is for a control of your own.

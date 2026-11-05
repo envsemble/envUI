@@ -98,6 +98,11 @@
       inset-inline: 0;
     }
   }
+  /* A vertical rail's tabs are rows of a column, as tall as a medium control like the other
+     navigation rows beside them, at the large size too; a small rail keeps its smaller tabs. */
+  .env-tabs-list[data-orientation='vertical'] {
+    --env-tabs-rail: var(--env-control-height-md);
+  }
   .env-tabs-list[data-size='sm'] {
     --env-tabs-rail: var(--env-control-height-sm);
   }
