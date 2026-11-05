@@ -2,4 +2,4 @@
 '@envsemble/envui': patch
 ---
 
-`Table`: the focus ring of the first and last sortable headers keeps the frame's corner radius, drawn as an inset ring rather than an outline that tightened the corner.
+`Table`: a sortable header's focus ring sits a hair inside the header, following its corners and, in the first and last headers, the frame's, so the table's rounded corners never cut it.

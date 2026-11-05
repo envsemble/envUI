@@ -530,7 +530,7 @@
             "components": {
               "$ref": "#/palette/neutral/6/$value/components"
             },
-            "alpha": 0.12
+            "alpha": 0.18
           }
         },
         "pressed": {
@@ -539,7 +539,7 @@
             "components": {
               "$ref": "#/palette/neutral/6/$value/components"
             },
-            "alpha": 0.15
+            "alpha": 0.2
           }
         }
       },
@@ -651,13 +651,13 @@
       },
       "link-on-muted": {
         "$root": {
-          "$value": "{palette.blue.20}"
-        },
-        "hover": {
           "$value": "{palette.blue.15}"
         },
-        "pressed": {
+        "hover": {
           "$value": "{palette.blue.10}"
+        },
+        "pressed": {
+          "$value": "{palette.blue.7}"
         }
       },
       "rating-star": {

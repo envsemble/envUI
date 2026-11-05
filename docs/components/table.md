@@ -283,7 +283,7 @@ Parts the anatomy doesn't show: a column's resize handle, `env-table-column-resi
 - **1.0.0-prerelease.6**: A selected row takes a lighter tint of the selection fill, still a step above a row under the pointer; at high contrast it keeps the full fill.
 - **1.0.0-prerelease.6**: A sortable header's focus ring has a row's rounded corners. In dark, the header band and row dividers are a light step closer to the surface. A stacked row's labels sit directly over their values.
 - **1.0.0-prerelease.6**: A sortable header under the pointer takes no fill: its label darkens to the text color, with its arrow showing.
-- **1.0.0-prerelease.6**: The focus ring of the first and last sortable headers follows the frame's rounded corners.
+- **1.0.0-prerelease.6**: A sortable header's focus ring sits a hair inside the header, so the frame's rounded corners never cut it in the first and last headers.
 - **1.0.0-prerelease.6**: An unsorted sortable header shows its arrow only while the pointer is over the header row or the header has keyboard focus, where the pointer hovers; the sorted column's arrow always shows.
 - **1.0.0-prerelease.6**: A stacked row is a compact block: the first labelled value, such as a status, sits beside the title without its label, an unlabelled cell such as the row's menu joins them, and the other values follow two to a line, each under its label, in place of a line for each value. The row densities differ by at least 4 px of row height in the compact scale: `xs` and `sm` rows are shorter, and `md` keeps its height.
 - **1.0.0-prerelease.6**: A skeleton shows no selection. A row under the pointer takes `--env-color-bg-row-hover`, clear in light and dark and a step below the selection.

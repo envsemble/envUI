@@ -372,8 +372,8 @@
   --env-color-bg-recessed: #191a1b;
   --env-color-bg-recessed-hover: #28292b;
   --env-color-bg-recessed-pressed: #343638;
-  --env-color-bg-row-hover: rgb(232 234 238 / 0.12);
-  --env-color-bg-row-pressed: rgb(232 234 238 / 0.15);
+  --env-color-bg-row-hover: rgb(232 234 238 / 0.18);
+  --env-color-bg-row-pressed: rgb(232 234 238 / 0.2);
   --env-color-bg-selected: #293a55;
   --env-color-bg-selected-hover: #33445f;
   --env-color-bg-selected-pressed: #3c4e69;
@@ -431,9 +431,9 @@
   --env-color-fg-done: #aac1dd;
   --env-color-fg-link: #9fc1f8;
   --env-color-fg-link-hover: #8ab3f5;
-  --env-color-fg-link-on-muted: #9fc1f8;
-  --env-color-fg-link-on-muted-hover: #b5cffb;
-  --env-color-fg-link-on-muted-pressed: #cddefc;
+  --env-color-fg-link-on-muted: #b5cffb;
+  --env-color-fg-link-on-muted-hover: #cddefc;
+  --env-color-fg-link-on-muted-pressed: #dbe8fd;
   --env-color-fg-link-pressed: #75a5f2;
   --env-color-fg-muted: #bdbfc3;
   --env-color-fg-muted-hover: #ccced2;

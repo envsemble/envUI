@@ -144,7 +144,9 @@ A badge's word carries its meaning, and only the state that must stand out is so
 
 ### Words and tones
 
-Give the same state the same word and tone everywhere. Let the word carry the meaning, never the tone alone. Where most rows share a routine state, such as healthy, outline it, so the states that need someone stand out.
+Give the same state the same word and tone everywhere. Let the word carry the meaning, never the tone alone.
+
+Give a routine state most rows share, such as healthy, the neutral tone in the column's one variant, so the states that need someone stand out.
 
 ### Content
 

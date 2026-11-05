@@ -110,12 +110,15 @@ test('sortable headers are buttons that say what pressing does and report the or
   const padding = await number.evaluate((cell) => parseFloat(getComputedStyle(cell).paddingRight));
   expect(arrow.x).toBeLessThan(label.x);
   expect(label.x + label.width).toBeCloseTo(numberBox.x + numberBox.width - padding, 0);
-  // The focus ring is an inset ring with a row's rounded corners, not a square outline.
+  // The focus ring is a rounded ring a hair inside the button, so the table's corners never cut it.
   const sortButton = reviews.getByRole('button');
   const focus = await tokenColor(reviews, '--env-color-border-focus');
-  await expect
-    .poll(() => sortButton.evaluate((button) => getComputedStyle(button).boxShadow))
-    .toBe(`${focus} 0px 0px 0px 2px inset`);
+  const ring = () =>
+    sortButton.evaluate((button) => {
+      const style = getComputedStyle(button, '::after');
+      return [style.borderTopColor, style.borderTopWidth, style.top, style.borderTopLeftRadius];
+    });
+  await expect.poll(ring).toEqual([focus, '2px', '2px', expect.not.stringMatching(/^0px$/)]);
   await expect(sortButton).not.toHaveCSS('border-radius', '0px');
 });
 

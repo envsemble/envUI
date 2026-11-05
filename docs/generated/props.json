@@ -8671,6 +8671,13 @@
           "description": "As Button's; ghost by default, from the toolbar."
         },
         {
+          "name": "tone",
+          "type": "'neutral' | 'danger'",
+          "required": false,
+          "default": "'neutral'",
+          "description": "As Button's: danger for an action that destroys, such as Delete, so it keeps its warning without a label."
+        },
+        {
           "name": "pending",
           "type": "boolean",
           "required": false,

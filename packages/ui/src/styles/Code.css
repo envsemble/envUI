@@ -15,12 +15,19 @@
     background: var(--env-code-background-now, var(--env-code-background));
     color: var(--env-code-foreground-now, var(--env-code-foreground));
   }
-  /* Inline code: the neutral muted fill, a layer of the text color, so it stands apart from the
-     page, panes, cards, muted fills and popups alike, as code blocks do with a layer of their own. */
+  /* Inline code: the monospace carries it, on half the neutral muted fill, a faint layer of the text
+     color, so a sentence with several identifiers reads as text rather than a row of chips, and it
+     still stands apart on the page, panes, cards, muted fills and popups alike. High contrast keeps
+     the whole fill. */
   .env-code {
+    --env-code-inline-fill-now: var(--env-theme-high-contrast) var(--env-color-bg-neutral-muted);
+
     padding: 0.125em 0.375em;
     border-radius: var(--env-radius-sm);
-    background: var(--env-color-bg-neutral-muted);
+    background: var(
+      --env-code-inline-fill-now,
+      color-mix(in srgb, var(--env-color-bg-neutral-muted) 50%, transparent)
+    );
     font: 0.9em/1.4 var(--env-code-font-family);
     /* A container where a column should keep room for its longest word, such as a table cell, sets
        --env-code-overflow-wrap to break-word. */
