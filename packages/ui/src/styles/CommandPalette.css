@@ -71,6 +71,8 @@
     --env-text-field-start-inset: calc(
       var(--env-popup-row-padding-inline) - var(--env-control-border-width)
     );
+    /* While results load, a small spinner sits at its end, inset as its icon is at the start. */
+    --env-text-field-end-inset: var(--env-text-field-start-inset);
     /* The containing block of its focus edge, below. */
     position: relative;
     flex: 0 0 auto;
@@ -160,10 +162,6 @@
   .env-command-palette-empty-description::before {
     content: '·' / '';
     margin-inline-end: var(--env-space-1);
-  }
-  /* While results load, a small spinner sits at the search's end, inset as its icon is at the start. */
-  .env-command-palette-search .env-text-field-end {
-    inset-inline-end: var(--env-text-field-start-inset);
   }
   /* The footer stands apart from the options by space, its small muted text and its keys, with no
      line. */

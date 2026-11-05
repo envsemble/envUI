@@ -200,13 +200,13 @@ Name commands with a verb and what they act on, such as Invite people.
 
 Ask for the palette's states in these words.
 
-| Words            | In code                                                  | Use for                                                        |
-| ---------------- | -------------------------------------------------------- | -------------------------------------------------------------- |
-| Suggestions      | `suggestedItems`, with a `group` such as Suggested       | Options shown before people type.                              |
-| Recent items     | `suggestedItems`, with a `group` such as Recently opened | The items people opened last, before they type.                |
-| Type to search   | The empty state with an empty query: `emptyDescription`  | Inviting a search, and what it finds, with nothing to suggest. |
-| No results       | `emptyLabel`, `emptyDescription` and `emptyHint`         | Saying that the text found nothing, and what to try.           |
-| With an icon     | `emptyIcon`                                              | Marking an empty state, such as a search that failed.          |
+| Words          | In code                                                  | Use for                                                        |
+| -------------- | -------------------------------------------------------- | -------------------------------------------------------------- |
+| Suggestions    | `suggestedItems`, with a `group` such as Suggested       | Options shown before people type.                              |
+| Recent items   | `suggestedItems`, with a `group` such as Recently opened | The items people opened last, before they type.                |
+| Type to search | The empty state with an empty query: `emptyDescription`  | Inviting a search, and what it finds, with nothing to suggest. |
+| No results     | `emptyLabel`, `emptyDescription` and `emptyHint`         | Saying that the text found nothing, and what to try.           |
+| With an icon   | `emptyIcon`                                              | Marking an empty state, such as a search that failed.          |
 
 ## Compose
 
