@@ -645,6 +645,28 @@ test('every tile of the galleries is fitted: components at one scale, a scene at
     expect(count).toBeGreaterThan(route === '/components' ? 60 : 10);
     for (let index = 0; index < count; index += 4) await tiles.nth(index).scrollIntoViewIfNeeded();
     await expect.poll(unfitted, { message: route }).toEqual([]);
+    // A picture cut off at its foot ends on a whole row: each row of a menu, a list, a table or a
+    // tree that shows ends inside its stage.
+    const cutRows = await tiles.evaluateAll((items) =>
+      items.flatMap((tile) => {
+        const canvas = tile.querySelector('.catalogue-related-canvas[data-cut~="bottom"]');
+        if (!canvas) return [];
+        const stage = tile.querySelector('.catalogue-related-stage')!.getBoundingClientRect();
+        const rows = "[role^='menuitem'], [role='option'], [role='row'], [role='treeitem'], li, tr";
+        return [...canvas.querySelectorAll(rows)]
+          .filter((row) => !row.querySelector(rows))
+          .filter((row) => row.checkVisibility({ visibilityProperty: true }))
+          .filter((row) => {
+            const box = row.getBoundingClientRect();
+            return box.top < stage.bottom && box.bottom > stage.bottom + 2;
+          })
+          .map(
+            (row) =>
+              `${tile.querySelector('.catalogue-gallery-name')?.textContent}: ${row.textContent}`,
+          );
+      }),
+    );
+    expect(cutRows, route).toEqual([]);
   }
 });
 

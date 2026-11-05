@@ -156,16 +156,21 @@ const rowSlack = 2;
 function trimRows(canvas: HTMLElement) {
   const crop = canvas.parentElement;
   if (!crop?.classList.contains('catalogue-related-crop')) return;
-  const cut = canvas.dataset.cut?.split(' ').includes('bottom');
+  if (!canvas.dataset.cut?.split(' ').includes('bottom')) {
+    for (const row of canvas.querySelectorAll<HTMLElement>('[data-catalogue-past]'))
+      delete row.dataset.cataloguePast;
+    crop.style.removeProperty('--catalogue-crop-bottom');
+    return;
+  }
   const { top, height } = crop.getBoundingClientRect();
   let kept = -Infinity;
   for (const row of canvas.querySelectorAll<HTMLElement>(rowSelector)) {
     const bottom = row.getBoundingClientRect().bottom - top;
-    const past = cut && !row.querySelector(rowSelector) && bottom > height + rowSlack;
-    if (past) row.dataset.cataloguePast = '';
+    if (!row.querySelector(rowSelector) && bottom > height + rowSlack)
+      row.dataset.cataloguePast = '';
     else {
       delete row.dataset.cataloguePast;
-      if (cut && bottom < height + rowSlack) kept = Math.max(kept, bottom);
+      if (bottom <= height + rowSlack) kept = Math.max(kept, bottom);
     }
   }
   const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
