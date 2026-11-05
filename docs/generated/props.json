@@ -1762,7 +1762,7 @@
           "name": "hints",
           "type": "readonly CommandPaletteHint[]",
           "required": false,
-          "description": "Key hints below the list, such as { keys: ['Enter'], label: 'Open' }."
+          "description": "Key hints below the list, such as { keys: ['Enter'], label: 'Open' }. A hint with Enter in its keys hides while there is no option to choose."
         },
         {
           "name": "footer",
