@@ -234,15 +234,13 @@ test('a page of the Docs has breadcrumbs, a tree of the Docs open at its section
     'aria-current',
     'page',
   );
-  // The contents list the page's sections, each export's props under Props, and mark where the
-  // reader is.
+  // The contents list the page's sections alone, not their subsections, such as each export's
+  // props, and mark where the reader is.
   const contents = page.getByRole('navigation', { name: 'On this page' });
   await expect(contents).toBeVisible();
-  const props = contents.getByRole('listitem').filter({
-    has: page.getByRole('link', { name: 'Props', exact: true }),
-  });
-  await expect(props.getByRole('link', { name: 'Button', exact: true })).toBeVisible();
-  await expect(contents.locator('[aria-current="location"]')).toHaveText('Button');
+  await expect(contents.getByRole('link', { name: 'Props', exact: true })).toBeVisible();
+  await expect(contents.locator('li li')).toHaveCount(0);
+  await expect(contents.locator('[aria-current="location"]')).toHaveText('Props');
   // A link of the contents writes the section's fragment, and the address and Back follow it.
   await contents.getByRole('link', { name: 'Usage', exact: true }).click();
   await expect(page).toHaveURL(`${siteDevUrl}/docs/components/button#usage`);

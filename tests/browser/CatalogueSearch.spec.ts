@@ -161,6 +161,10 @@ test.describe('search', () => {
     await expect(more).toHaveCount(0);
     await expect(props).toContainText('startDate');
     await expect(field(page)).toHaveValue('date');
+    // A component's own props come before those it passes to its root, such as className.
+    await field(page).fill('Textarea');
+    await expect(props.getByRole('option').first()).toContainText('Textarea prop');
+    await expect(props.locator('[data-item-id="prop:Textarea.className"]')).toHaveCount(0);
   });
 
   test('finds a page once, and opens it in the part the reader is in', async ({ page }) => {

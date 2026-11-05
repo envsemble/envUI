@@ -135,6 +135,14 @@ const groupLimit = 8;
 const shortGroups = new Set(['Props', 'Tokens']);
 const shortLimit = 3;
 
+/**
+ * The props most components pass to their root element, which a query for a component names along
+ * with its own: they follow its own props, so "Textarea" lists sizing and variant before className.
+ */
+const passThroughProps = new Set(['ref', 'className', 'style']);
+const passedThrough = ({ kind, title }: SearchResult) =>
+  kind === 'prop' && passThroughProps.has(title);
+
 /** The id of the row that shows the rest of a short group. */
 const moreId = (group: string) => `more:${group}`;
 
@@ -165,8 +173,8 @@ const noGroups: ReadonlySet<string> = new Set();
  * them in a group of their own, folded into one row, so "date" lists DatePicker and the date props
  * before Table. A pattern is named by its title and aliases only, so "IconButton" lists IconButton
  * and its props rather than every pattern that uses it. The props of the components it finds come
- * before other props, so "date" lists DatePicker's own first, and a short group shows its first few
- * until it is expanded.
+ * before other props, so "date" lists DatePicker's own first, its pass-through props, such as
+ * className, last, and a short group shows its first few until it is expanded.
  */
 function groupResults(results: readonly SearchResult[], expanded: ReadonlySet<string>): Group[] {
   const named = results.some((result) => result.named);
@@ -185,8 +193,11 @@ function groupResults(results: readonly SearchResult[], expanded: ReadonlySet<st
     ? [...results.filter((result) => result.named), ...results.filter((result) => !result.named)]
     : results;
   const grouped = new Map<string, SearchResult[]>();
-  // Sorting is stable, so results of one rank keep their order.
-  for (const result of [...ordered].sort((a, b) => rankOf(a) - rankOf(b))) {
+  // Sorting is stable, so results of one rank keep their order; a component's pass-through props
+  // come after its own.
+  const byRank = (a: SearchResult, b: SearchResult) =>
+    rankOf(a) - rankOf(b) || Number(passedThrough(a)) - Number(passedThrough(b));
+  for (const result of [...ordered].sort(byRank)) {
     const group = groupOf(result, named);
     grouped.set(group, [...(grouped.get(group) ?? []), result]);
   }

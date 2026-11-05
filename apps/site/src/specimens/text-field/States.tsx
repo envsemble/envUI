@@ -7,7 +7,7 @@ import { Example, Specimen, SpecimenGrid } from '../../figures/Example';
  */
 export default function States() {
   return (
-    <Example size="collection">
+    <Example size="collection" still>
       <SpecimenGrid size="compact">
         <Specimen title="Empty">
           <TextField label="Project name" placeholder="Enter a name" />

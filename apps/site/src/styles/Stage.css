@@ -218,6 +218,11 @@
 .site-figures :is(.catalogue-specimen-grid, .catalogue-matrix-scroll) {
   padding: var(--env-space-6);
 }
+@container site-page-layout (width < 37.5rem) {
+  .site-figures :is(.catalogue-specimen-grid, .catalogue-matrix-scroll) {
+    padding: var(--env-space-5) var(--env-space-4);
+  }
+}
 
 /* A foundation's figure that explains the system (`explains`), such as the spacing scale, the
    palette's swatches and the state layers: on the page itself, with no fill and no inset, so it
@@ -240,7 +245,7 @@
 
 @container (width < 30rem) {
   .site-live-example {
-    padding: var(--env-space-6) var(--env-space-4);
+    padding: var(--env-space-5) var(--env-space-4);
   }
 }
 

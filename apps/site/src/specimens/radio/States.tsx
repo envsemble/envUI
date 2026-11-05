@@ -4,7 +4,7 @@ import { Example, MatrixScroll } from '../../figures/Example';
 /** Unchosen and chosen, enabled and disabled. */
 export default function States() {
   return (
-    <Example size="wide">
+    <Example size="wide" still>
       <MatrixScroll label="Radio states">
         {/* Two columns don't fill the stage: the table takes its own width, centred. */}
         <table

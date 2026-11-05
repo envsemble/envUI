@@ -348,17 +348,14 @@ test("a catalogue page has its contents beside it from 56rem, in the Docs' colum
         (item) => item.querySelector(':scope > a')?.textContent,
       ),
     );
-  // A component's page lists its sections, with the rules under Rules, and marks where the reader
+  // A component's page lists its sections, none of their subsections, and marks where the reader
   // is; a link scrolls to its section.
   await page.goto(`${siteDevUrl}/components/button`);
   await expect(contents).toBeVisible();
   await expect
     .poll(topLevel)
     .toEqual(['Overview', 'Variants', 'Anatomy', 'Behaviour', 'Rules', 'Accessibility', 'Related']);
-  const rules = contents.getByRole('listitem').filter({
-    has: page.getByRole('link', { name: 'Rules', exact: true }),
-  });
-  await expect(rules.getByRole('link', { name: 'Use it when', exact: true })).toBeVisible();
+  await expect(contents.locator('li li')).toHaveCount(0);
   await expect(contents.locator('[aria-current="location"]')).toHaveText('Overview');
   await contents.getByRole('link', { name: 'Rules', exact: true }).click();
   await expect(page).toHaveURL(`${siteDevUrl}/components/button#rules`);

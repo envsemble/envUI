@@ -269,4 +269,9 @@
   .site-anatomy-stage {
     padding: 3.5rem 2.75rem;
   }
+  /* A variants figure names its items beside them, with no callouts above or below to make room
+     for, so a phone's stage keeps only an example's room around them. */
+  .catalogue-variants .site-anatomy-stage {
+    padding-block: var(--env-space-5);
+  }
 }

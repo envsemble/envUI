@@ -79,6 +79,19 @@
   overflow-x: auto;
   scrollbar-width: none;
 }
+/* A phone's hero shows the short command, which fits whole, rather than cutting the pinned one
+   mid-version. */
+.catalogue-overview-install-short {
+  display: none;
+}
+@container site-page-header (width < 34rem) {
+  .catalogue-overview-install-pinned {
+    display: none;
+  }
+  .catalogue-overview-install-short {
+    display: inline;
+  }
+}
 /* The counts, a middle dot between each, each whole. */
 .catalogue-overview-facts {
   margin: 0;

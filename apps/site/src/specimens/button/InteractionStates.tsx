@@ -5,7 +5,7 @@ import { VariantButton, buttonVariants, pairName } from '../../figures/ButtonVar
 /** Each variant forced into its hover, pressed, focus and disabled looks. */
 export default function InteractionStates() {
   return (
-    <Example size="wide">
+    <Example size="wide" still>
       <MatrixScroll label="Button interaction states">
         <table className="catalogue-matrix">
           <thead>

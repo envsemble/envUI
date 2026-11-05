@@ -373,6 +373,16 @@ body {
   inline-size: calc(min(100cqi, var(--site-content-width)) - 2 * var(--site-gutter));
   margin: var(--env-space-4) auto 0;
 }
+/* On a phone the banner, the contents under it and the first figure share the first screen: the
+   sections sit closer, so the page doesn't spend its first screens on room. */
+@container site-page-layout (width < 37.5rem) {
+  .site-page-grid {
+    --site-section-gap: var(--env-space-7);
+  }
+  .site-compact-contents {
+    margin-block-start: var(--env-space-2);
+  }
+}
 @container site-page-layout (width >= 56rem) {
   .site-page-grid[data-contents] .site-compact-contents {
     display: none;
