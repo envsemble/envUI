@@ -19,5 +19,5 @@ const script: PointerStep[] = [
 /** A pile of people's avatars. */
 export default function AvatarTile() {
   usePointer(script);
-  return <AvatarGroup people={people} size="lg" />;
+  return <AvatarGroup people={people} size="md" />;
 }

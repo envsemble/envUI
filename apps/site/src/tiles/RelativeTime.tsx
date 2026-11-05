@@ -33,7 +33,7 @@ export default function RelativeTimeTile() {
     onCue: (cue) => setMinutes((current) => (cue === 'save' ? 0 : current + 1)),
   });
   return (
-    <Text variant="title">
+    <Text>
       <RelativeTime value={saved} now={saved + minutes * minute} />
     </Text>
   );

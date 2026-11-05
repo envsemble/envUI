@@ -9,17 +9,20 @@ import {
 
 /*
  * The layout tiles' shared pieces, drawn as the catalogue banners' figures are, as a draughtsman
- * sets out a plan: every line one screen pixel wide at any scale, in the muted edge color, nothing
+ * sets out a plan: every line one screen pixel wide at any scale, in the default edge color, nothing
  * filled. The outlines stand for a layout box's edges and the content it lays out, a few marks
  * show what it sets out, such as a gap, an inset or the line its content aligns to, and a glide
  * carries what a reflow moves, such as an item wrapping to the next line, from where it was to
  * where it lands, rather than jumping there.
  */
 
-/** A line of the drawing: a hairline at any scale, unfilled, in the muted edge color, as LineArt's. */
+/**
+ * A line of the drawing: a hairline at any scale, unfilled, in the default edge color, a step
+ * stronger than LineArt's muted one behind a banner, as a drawing on its own is all the tile shows.
+ */
 const hairline: CSSProperties = {
   fill: 'none',
-  stroke: 'var(--env-color-border-muted)',
+  stroke: 'var(--env-color-border-default)',
   strokeWidth: 1,
   vectorEffect: 'non-scaling-stroke',
 };

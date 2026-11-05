@@ -7,7 +7,8 @@ const durations = [600, 6500];
 /**
  * The golden section, whole, across the tile. Playing, its lines run out past their ends and draw
  * themselves in again, one after another from the rectangle that frames it, so the drawing is
- * never empty, and rest: LineArt's own play motion.
+ * never empty, and rest: LineArt's own play motion. Its lines take the default edge color, a step
+ * stronger than behind a banner, as the layout tiles' drawings do (Reflow.ts).
  */
 export default function LineArtTile() {
   const step = useTimeline(durations);
@@ -18,6 +19,7 @@ export default function LineArtTile() {
         drawing="golden-section"
         viewBox="24 25 447 280"
         motion={step === 1 ? 'play' : undefined}
+        style={{ stroke: 'var(--env-color-border-default)' }}
       />
     </div>
   );
