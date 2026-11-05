@@ -104,7 +104,7 @@
     height: 1.125rem;
     margin-inline: calc(-1 * var(--env-toast-icon-inset)) 0;
     padding: var(--env-toast-icon-inset);
-    border-radius: 50%;
+    border-radius: var(--env-radius-full);
     color: var(--env-toast-content, var(--env-toast-tone, currentColor));
     /* contrast: toast-icon-disc */
     background: color-mix(in srgb, currentColor 16%, transparent);
