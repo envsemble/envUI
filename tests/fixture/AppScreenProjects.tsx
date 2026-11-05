@@ -136,6 +136,9 @@ const visuallyHidden: CSSProperties = {
   whiteSpace: 'nowrap',
 };
 
+/** The bulk bar's height: a small control in the bar's padding. */
+const barHeight = 'calc(var(--env-control-height-sm) + 2 * var(--env-space-2))';
+
 /** A width in rem, such as a window class's, in CSS pixels at the document's font size. */
 const remToPixels = (width: string) =>
   Number.parseFloat(width) * Number.parseFloat(getComputedStyle(document.documentElement).fontSize);
@@ -339,112 +342,117 @@ function ProjectsTable({ onOpen, openId }: { onOpen: (id: string) => void; openI
           </Sheet>
         )}
       </Row>
-      {/* The filters in use that no control above shows, as tokens that remove themselves: the
-          owner shows in its Combobox, so it takes no token. Finding: no chip component; a token is
-          a small secondary Button with a close icon, as the filtering pattern says. */}
-      <Row wrap align="center" gap={2} role="group" aria-label="Filters in use">
-        <Button
-          variant="secondary"
-          size="sm"
-          endIcon={<IconClose />}
-          aria-label="Remove filter Environment: Production, Staging"
-        >
-          Environment: Production, Staging
-        </Button>
-        <Button variant="text" size="sm">
-          Clear filters
-        </Button>
-      </Row>
       <div role="status" style={visuallyHidden}>
         {selected.length > 0 ? `${projectCount(selected.length)} selected` : 'No projects selected'}
       </div>
-      {/* The bulk bar while rows are selected, the count otherwise. Layout glue: it keeps one
-          height so the table stays put as it comes and goes. */}
-      <Surface background="muted" padding={2} radius="full">
+      {/* One row above the table: the filters in use that no control above shows, as tokens that
+          remove themselves, and while rows are selected the bulk bar in their place, so a phone
+          doesn't stack both above the first row. The owner shows in its Combobox, so it takes no
+          token. Finding: no chip component; a token is a small secondary Button with a close
+          icon, as the filtering pattern says. Layout glue: both keep the bar's height, so the
+          table stays put as the selection comes and goes. */}
+      {selected.length === 0 ? (
         <Row
-          wrap={wide}
+          wrap
           align="center"
-          gap={3}
-          style={{ minBlockSize: 'var(--env-control-height-sm)' }}
+          gap={2}
+          role="group"
+          aria-label="Filters in use"
+          style={{ minBlockSize: barHeight }}
         >
-          {selected.length === 0 ? (
-            <Text emphasis="muted">{projectCount(projects.length)}</Text>
-          ) : (
-            <>
-              {/* Narrow, clearing is a cross beside the count, so the bar stays one row. */}
-              <Row align="center" gap={1}>
-                <Text variant="body-sm" style={{ paddingInlineStart: 'var(--env-space-2)' }}>
-                  {selected.length} selected
-                </Text>
-                {!wide && (
-                  <IconButton
-                    variant="ghost"
-                    size="sm"
-                    icon={<IconClose />}
-                    aria-label="Clear selection"
-                    onClick={() => setSelected([])}
-                  />
-                )}
-              </Row>
-              {/* On a desktop the actions are labelled buttons; on a phone, where the bar keeps one
-                  row, a toolbar of icons named by tooltips. */}
-              {wide ? (
-                <Row role="group" aria-label="Selected projects" align="center" gap={1}>
-                  <Button variant="ghost" size="sm" startIcon={<IconRocketLaunch />}>
-                    Deploy
-                  </Button>
-                  <Button variant="ghost" size="sm" startIcon={<IconDownload />}>
-                    Export
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    startIcon={<IconArchive />}
-                    onClick={() => {
-                      toast.show({ message: `${projectCount(selected.length)} archived.` });
-                      setSelected([]);
-                    }}
-                  >
-                    Archive
-                  </Button>
-                  <Button variant="ghost" tone="danger" size="sm" startIcon={<IconDelete />}>
-                    Delete…
-                  </Button>
-                </Row>
-              ) : (
-                <Toolbar.Root aria-label="Selected projects" size="sm">
-                  <Toolbar.Button
-                    icon={<IconRocketLaunch />}
-                    label={`Deploy ${projectCount(selected.length)}`}
-                  />
-                  <Toolbar.Button
-                    icon={<IconDownload />}
-                    label={`Export ${projectCount(selected.length)}`}
-                  />
-                  <Toolbar.Button
-                    icon={<IconArchive />}
-                    label={`Archive ${projectCount(selected.length)}`}
-                    onClick={() => {
-                      toast.show({ message: `${projectCount(selected.length)} archived.` });
-                      setSelected([]);
-                    }}
-                  />
-                  <Toolbar.Separator />
-                  <Toolbar.Button
-                    icon={<IconDelete />}
-                    label={`Delete ${projectCount(selected.length)}…`}
-                  />
-                </Toolbar.Root>
-              )}
-              {wide && (
-                <Button variant="text" size="sm" onClick={() => setSelected([])}>
-                  Clear selection
-                </Button>
-              )}
-            </>
-          )}
+          <Button
+            variant="secondary"
+            size="sm"
+            endIcon={<IconClose />}
+            aria-label="Remove filter Environment: Production, Staging"
+          >
+            Environment: Production, Staging
+          </Button>
+          <Button variant="text" size="sm">
+            Clear filters
+          </Button>
         </Row>
-      </Surface>
+      ) : (
+        <Surface background="muted" padding={2} radius="full">
+          <Row
+            wrap={wide}
+            align="center"
+            gap={3}
+            style={{ minBlockSize: 'var(--env-control-height-sm)' }}
+          >
+            {/* Narrow, clearing is a cross beside the count, so the bar stays one row. */}
+            <Row align="center" gap={1}>
+              <Text variant="body-sm" style={{ paddingInlineStart: 'var(--env-space-2)' }}>
+                {selected.length} selected
+              </Text>
+              {!wide && (
+                <IconButton
+                  variant="ghost"
+                  size="sm"
+                  icon={<IconClose />}
+                  aria-label="Clear selection"
+                  onClick={() => setSelected([])}
+                />
+              )}
+            </Row>
+            {/* On a desktop the actions are labelled buttons; on a phone, where the bar keeps one
+                row, a toolbar of icons named by tooltips. */}
+            {wide ? (
+              <Row role="group" aria-label="Selected projects" align="center" gap={1}>
+                <Button variant="ghost" size="sm" startIcon={<IconRocketLaunch />}>
+                  Deploy
+                </Button>
+                <Button variant="ghost" size="sm" startIcon={<IconDownload />}>
+                  Export
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  startIcon={<IconArchive />}
+                  onClick={() => {
+                    toast.show({ message: `${projectCount(selected.length)} archived.` });
+                    setSelected([]);
+                  }}
+                >
+                  Archive
+                </Button>
+                <Button variant="ghost" tone="danger" size="sm" startIcon={<IconDelete />}>
+                  Delete…
+                </Button>
+              </Row>
+            ) : (
+              <Toolbar.Root aria-label="Selected projects" size="sm">
+                <Toolbar.Button
+                  icon={<IconRocketLaunch />}
+                  label={`Deploy ${projectCount(selected.length)}`}
+                />
+                <Toolbar.Button
+                  icon={<IconDownload />}
+                  label={`Export ${projectCount(selected.length)}`}
+                />
+                <Toolbar.Button
+                  icon={<IconArchive />}
+                  label={`Archive ${projectCount(selected.length)}`}
+                  onClick={() => {
+                    toast.show({ message: `${projectCount(selected.length)} archived.` });
+                    setSelected([]);
+                  }}
+                />
+                <Toolbar.Separator />
+                <Toolbar.Button
+                  icon={<IconDelete />}
+                  label={`Delete ${projectCount(selected.length)}…`}
+                />
+              </Toolbar.Root>
+            )}
+            {wide && (
+              <Button variant="text" size="sm" onClick={() => setSelected([])}>
+                Clear selection
+              </Button>
+            )}
+          </Row>
+        </Surface>
+      )}
       {stacked && sortControl}
       <Table.Root
         aria-label="Projects"
@@ -527,7 +535,7 @@ function ProjectsTable({ onOpen, openId }: { onOpen: (id: string) => void; openI
                 <Table.Cell label="Members">
                   <AvatarGroup
                     size="sm"
-                    max={3}
+                    max={2}
                     people={project.members.map((name) => ({ name, fallback: 'initials' }))}
                   />
                 </Table.Cell>

@@ -247,7 +247,7 @@
             "components": {
               "$ref": "#/palette/blue/45/$value/components"
             },
-            "alpha": 0.16
+            "alpha": 0.15
           }
         },
         "soft": {
@@ -525,10 +525,22 @@
       },
       "row": {
         "hover": {
-          "$value": "{color.bg.neutral.subtle.hover}"
+          "$value": {
+            "colorSpace": "oklch",
+            "components": {
+              "$ref": "#/palette/neutral/6/$value/components"
+            },
+            "alpha": 0.12
+          }
         },
         "pressed": {
-          "$value": "{color.bg.neutral.subtle.pressed}"
+          "$value": {
+            "colorSpace": "oklch",
+            "components": {
+              "$ref": "#/palette/neutral/6/$value/components"
+            },
+            "alpha": 0.15
+          }
         }
       },
       "avatar": {
