@@ -4,43 +4,43 @@ import { usePointer, type PointerStep } from '../motion/Motion';
 
 const month = (value: string) => `.env-month-picker-month[data-month="${value}"]`;
 
-/** March chosen, then January, and February again, as it began: the year's first row. */
+/** Opened, March chosen beside February, which closes it and shows March in the field. */
 const script: PointerStep[] = [
-  { wait: 300 },
-  { to: month('2026-03') },
-  { wait: 300 },
-  { click: true },
-  { wait: 900 },
-  { to: month('2026-01'), duration: 600 },
+  { wait: 400 },
+  { to: '.env-date-picker-trigger', x: 0.4, duration: 500 },
   { wait: 300 },
   { click: true },
-  { wait: 900 },
-  { to: month('2026-02'), duration: 400 },
-  { wait: 300 },
+  { wait: 1100 },
+  { to: month('2026-03'), duration: 500 },
+  { wait: 400 },
   { click: true },
-  { wait: 700 },
+  { wait: 1600 },
   { leave: true },
   { wait: 400 },
 ];
 
 /**
- * A month picker's year, February chosen: in its first row, which a gallery's low tile shows from
- * its top.
+ * A month picker's field, February chosen: whole at its own size at rest, and its year below it as
+ * it plays, which shows from its top in the low stage, the month chosen in its first row. Stopped,
+ * it is closed again.
  */
 export default function MonthPickerTile() {
   const [value, setValue] = useState<string | null>('2026-02');
+  const [open, setOpen] = useState(false);
   usePointer(script, {
-    onRest: () => setValue('2026-02'),
+    onRest: () => {
+      setValue('2026-02');
+      setOpen(false);
+    },
   });
   return (
     <MonthPicker
       label="Report month"
       value={value}
       onValueChange={setValue}
-      open
-      onOpenChange={() => {}}
-      // Its popup alone shows: the field it opens from stays in place, to hold it there.
-      style={{ inlineSize: '12rem', visibility: 'hidden' }}
+      open={open}
+      onOpenChange={setOpen}
+      style={{ inlineSize: '8.5rem' }}
     />
   );
 }

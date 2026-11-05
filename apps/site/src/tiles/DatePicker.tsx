@@ -4,14 +4,14 @@ import { usePointer, type PointerStep } from '../motion/Motion';
 const day = (date: string) => `.env-calendar-day[data-date="${date}"]`;
 
 /*
- * The 9th chosen, then the next month looked at and back, and the 7th chosen again, as it began:
+ * The 11th chosen, then the next month looked at and back, and the 4th chosen again, as it began:
  * days of its first weeks, which the tile shows from its top.
  */
 const script: PointerStep[] = [
   { wait: 300 },
-  { to: day('2026-10-08') },
+  { to: day('2026-02-10') },
   { wait: 250 },
-  { to: day('2026-10-09'), duration: 450 },
+  { to: day('2026-02-11'), duration: 450 },
   { wait: 300 },
   { click: true },
   { wait: 800 },
@@ -23,7 +23,7 @@ const script: PointerStep[] = [
   { wait: 200 },
   { click: true },
   { wait: 700 },
-  { to: day('2026-10-07'), duration: 500 },
+  { to: day('2026-02-04'), duration: 500 },
   { wait: 250 },
   { click: true },
   { wait: 600 },
@@ -32,10 +32,12 @@ const script: PointerStep[] = [
 ];
 
 /**
- * A date picker's calendar, the 7th chosen: its popup's body, which shows what the page is about
- * at a size a tile can show, as the field it opens from would only shrink it.
+ * A date picker's calendar, the 4th chosen: its popup's body, which shows what the page is about
+ * at a size a tile can show, as the field it opens from would only shrink it. February 2026 and
+ * the March after it start on a Sunday, so the weeks the low stage shows are whole ones, not a
+ * first week of a few days.
  */
 export default function DatePickerTile() {
   usePointer(script);
-  return <Calendar aria-label="Publish on" defaultValue="2026-10-07" />;
+  return <Calendar aria-label="Publish on" defaultValue="2026-02-04" />;
 }

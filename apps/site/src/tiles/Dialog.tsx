@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Button, Dialog, DialogClose, TextField } from '@envsemble/envui';
 import { usePointer, type PointerStep } from '../motion/Motion';
-import { useTriggerStyle } from './useTriggerStyle';
 
 const field = '.env-dialog input';
 
@@ -34,19 +33,16 @@ const named = 'Northwind';
 
 /**
  * A dialog as narrow as a gallery's tile shows across at its own size, so its words read as the
- * other tiles' do; taller than the tile, it shows from its top, and its view follows the pointer
- * down to its actions as it plays.
+ * other tiles' do; taller than the tile, it shows from its top.
  */
 const narrow = { inlineSize: '12.5rem' } as const;
 
 /**
- * A dialog that renames a project, open over the button that opens it, which hides as the
- * dialog opens and comes back once it has gone (useTriggerStyle). Stopped, it is open again with
- * the first name rather than drawn anew, which would bring it in again.
+ * A dialog that renames a project, open over the button that opens it. Stopped, it is open again
+ * with the first name rather than drawn anew, which would bring it in again.
  */
 export default function DialogTile() {
   const [open, setOpen] = useState(true);
-  const triggerStyle = useTriggerStyle(open);
   const [name, setName] = useState(named);
   usePointer(script, {
     onRest: () => {
@@ -58,7 +54,7 @@ export default function DialogTile() {
     <Dialog
       open={open}
       onOpenChange={setOpen}
-      trigger={<Button style={triggerStyle}>Rename</Button>}
+      trigger={<Button>Rename</Button>}
       title="Rename project"
       style={narrow}
       closeLabel="Cancel"

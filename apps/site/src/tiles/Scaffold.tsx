@@ -2,8 +2,7 @@ import { useState } from 'react';
 import {
   IconButton,
   Page,
-  PageHeader,
-  NavigationRail,
+  NavigationBar,
   Scaffold,
   TopBar,
   type Destination,
@@ -14,9 +13,9 @@ import { IconSearch } from '@envsemble/envui/icons/Search';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
 const item = (index: number) =>
-  `.env-navigation-rail-list > li:nth-child(${index}) .env-navigation-rail-item`;
+  `.env-navigation-bar-list > li:nth-child(${index}) .env-navigation-bar-item`;
 
-/** Inbox chosen in the rail, and Home again: the body follows, and the frame stays. */
+/** Inbox chosen in the bar, and Home again: the top bar's title follows, and the frame stays. */
 const script: PointerStep[] = [
   { wait: 400 },
   { to: item(2) },
@@ -37,8 +36,9 @@ const places = [
 ];
 
 /**
- * An application's frame at its own size, as wide as a gallery's tile shows: the rail at the
- * start, the top bar and the page's header beside it.
+ * An application's frame at its own size, as wide as a gallery's tile shows: the top bar, titled
+ * with the place, over the navigation bar, the form a compact window's navigation takes, its places
+ * side by side, so both show whole in the low stage.
  */
 export default function ScaffoldTile() {
   const [current, setCurrent] = useState('Home');
@@ -53,14 +53,17 @@ export default function ScaffoldTile() {
     <Scaffold
       scroll="body"
       landmarks={false}
-      navigationForms={{ compact: 'rail', medium: 'rail', expanded: 'rail', large: 'rail' }}
-      style={{ inlineSize: '12.5rem', blockSize: '7.125rem' }}
+      navigationForms={{ compact: 'bar', medium: 'bar', expanded: 'bar', large: 'bar' }}
+      style={{ inlineSize: '12.5rem', blockSize: '7rem' }}
       topBar={
-        <TopBar title="Acme" actions={<IconButton icon={<IconSearch />} aria-label="Search" />} />
+        <TopBar
+          title={current}
+          actions={<IconButton icon={<IconSearch />} aria-label="Search" />}
+        />
       }
-      navigation={{ rail: <NavigationRail destinations={destinations} /> }}
+      navigation={{ bar: <NavigationBar destinations={destinations} /> }}
     >
-      <Page header={<PageHeader title={current} headingLevel={3} />} />
+      <Page />
     </Scaffold>
   );
 }
