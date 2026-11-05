@@ -3,8 +3,9 @@
      halves, in the popups of DatePicker and TimePicker. Each wheel shows an odd number of rows and
      snaps a row to its middle. The middle rows, side by side, read as one line: each has the solid
      accent fill of the chosen calendar day beside it, so a chosen day and time look alike, and the
-     body type in semibold, while the rows above and below are smaller, dimmer and fade towards the
-     edges. Coarse pointers get touch-tall rows. */
+     body type in semibold, while the rows above and below are smaller and dimmer, and only the
+     outermost rows fade at the wheel's edges. Unavailable times are struck through in the disabled
+     color, so they never read as the fade. Coarse pointers get touch-tall rows. */
   .env-time-list {
     --env-time-list-row: var(--env-control-height-md);
     --env-time-list-rows: 5;
@@ -27,7 +28,7 @@
     scroll-snap-type: y mandatory;
     scrollbar-width: none;
     outline: none;
-    mask-image: linear-gradient(transparent, currentcolor 30%, currentcolor 70%, transparent);
+    mask-image: linear-gradient(transparent, currentcolor 15%, currentcolor 85%, transparent);
   }
   /* While the wheel eases into a row by itself, snapping would pull each step back. */
   .env-time-list-column[data-turning] {
@@ -70,8 +71,14 @@
     outline-offset: 1px;
   }
   .env-time-list-row[data-disabled] {
-    opacity: var(--env-state-disabled-opacity);
+    text-decoration: line-through;
     cursor: default;
+  }
+  .env-time-list-row[data-disabled]:not([data-centered]) {
+    color: var(--env-color-fg-disabled);
+  }
+  .env-time-list-row[data-disabled][data-centered] {
+    opacity: var(--env-state-disabled-opacity);
   }
   @media (pointer: coarse) {
     .env-time-list {
