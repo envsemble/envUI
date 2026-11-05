@@ -120,7 +120,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
+          "description": "Shows it and its content as a busy skeleton while that loads; turning it on or off renders the content anew."
         }
       ],
       "native": [
@@ -191,7 +191,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
+          "description": "Shows it and its content as a busy skeleton while that loads; turning it on or off renders the content anew."
         }
       ],
       "native": [
@@ -538,14 +538,14 @@
           "type": "'primary' | 'secondary' | 'outline' | 'ghost' | 'text'",
           "required": false,
           "default": "'primary'",
-          "description": "The emphasis: primary for the main action of a view, secondary and outline for the rest, ghost for an application's chrome, such as a toolbar, and text for a link-like action. Without it, the button takes the variant its container gives where that variant takes its tone, such as ghost in a toolbar, and else primary."
+          "description": "The emphasis, primary for a group's main action; without it, the container's, such as ghost in a toolbar, and else primary."
         },
         {
           "name": "tone",
           "type": "'neutral' | 'danger' | 'accent'",
           "required": false,
           "default": "'neutral'",
-          "description": "The meaning: neutral for most actions; accent, on a primary button only, for a rare consequential action, with 0.5 rem corners; danger for an action that deletes or ends something. Secondary buttons are always neutral."
+          "description": "The meaning: neutral for most actions, danger for one that deletes or ends something, and accent, on a primary only, for a main action that must stand apart from the brand blue."
         },
         {
           "name": "underline",
@@ -558,7 +558,7 @@
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The height, as on every control: sm, md or lg in the current scale, such as sm for an action in a table cell or lg for the main call to action of a page. Without it, the button takes the control height of its container, md unless the container sets another. A button beside a field takes the field's size."
+          "description": "The control height, sm, md or lg; without it, the container's, and else md."
         },
         {
           "name": "fullWidth",
@@ -583,14 +583,14 @@
           "name": "end",
           "type": "ReactNode",
           "required": false,
-          "description": "Quiet content at the far end, after the label, such as the Kbd of the shortcut that does the same: it takes the button's content color, keys in it are outlined caps with no fill, and in a button wider than its content, such as with fullWidth, it stays at the end while the icon and label stay at the start. Keys shown here take aria-hidden, and the button announces them with aria-keyshortcuts."
+          "description": "Quiet content at the far end, such as a shortcut's Kbd, with aria-hidden on its keys and aria-keyshortcuts on the button."
         },
         {
           "name": "pending",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Work started by this button is running: a spinner turns over the button in its label's color, the label and icons kept in place but transparent, so the button keeps its width and its name; it reports busy and ignores activation until pending ends."
+          "description": "Its work is running: a spinner turns over it, it keeps its width and name, and presses do nothing."
         },
         {
           "name": "disabled",
@@ -873,7 +873,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
+          "description": "Shows it and its content as a busy skeleton while that loads; turning it on or off renders the content anew."
         },
         {
           "name": "title",
@@ -1552,7 +1552,7 @@
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The field's height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another. The popup's rows take the row height of the scale. sm is for a field with its label hidden; one that shows its label takes the md height."
+          "description": "The control height, sm, md or lg; without it, the container's, and else md. sm is for a field with its label hidden."
         },
         {
           "name": "showLabel",
@@ -1898,13 +1898,13 @@
           "name": "end",
           "type": "ReactNode",
           "required": false,
-          "description": "Quiet content at the far end, after the label, such as the Kbd of the shortcut that does the same: it takes the button's content color, keys in it are outlined caps with no fill, and in a button wider than its content, such as with fullWidth, it stays at the end while the icon and label stay at the start. Keys shown here take aria-hidden, and the button announces them with aria-keyshortcuts."
+          "description": "Quiet content at the far end, such as a shortcut's Kbd, with aria-hidden on its keys and aria-keyshortcuts on the button."
         },
         {
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The height, as on every control: sm, md or lg in the current scale, such as sm for an action in a table cell or lg for the main call to action of a page. Without it, the button takes the control height of its container, md unless the container sets another. A button beside a field takes the field's size."
+          "description": "The control height, sm, md or lg; without it, the container's, and else md."
         },
         {
           "name": "underline",
@@ -1937,7 +1937,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Work started by this button is running: a spinner turns over the button in its label's color, the label and icons kept in place but transparent, so the button keeps its width and its name; it reports busy and ignores activation until pending ends."
+          "description": "Its work is running: a spinner turns over it, it keeps its width and name, and presses do nothing."
         },
         {
           "name": "aria-label",
@@ -2237,7 +2237,7 @@
           "type": "'neutral' | 'danger' | 'accent'",
           "required": false,
           "default": "'neutral'",
-          "description": "The meaning, as Button's: accent on a primary button only, and danger on a primary, outline, ghost or text one. A secondary button is always neutral."
+          "description": "The meaning, as Button's."
         },
         {
           "name": "children",
@@ -2377,7 +2377,7 @@
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The field's height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another. sm is for a field with its label hidden; one that shows its label takes the md height."
+          "description": "The control height, sm, md or lg; without it, the container's, and else md. sm is for a field with its label hidden."
         },
         {
           "name": "showLabel",
@@ -2664,7 +2664,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
+          "description": "Shows it and its content as a busy skeleton while that loads; turning it on or off renders the content anew."
         }
       ],
       "native": [
@@ -2691,7 +2691,7 @@
           "type": "'neutral' | 'danger' | 'accent'",
           "required": false,
           "default": "'neutral'",
-          "description": "The meaning: neutral for most actions; accent, on a primary button only, for a rare consequential action, with 0.5 rem corners; danger for an action that deletes or ends something. Secondary buttons are always neutral."
+          "description": "The meaning: neutral for most actions, danger for one that deletes or ends something, and accent, on a primary only, for a main action that must stand apart from the brand blue."
         },
         {
           "name": "underline",
@@ -2704,7 +2704,7 @@
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The height, as on every control: sm, md or lg in the current scale, such as sm for an action in a table cell or lg for the main call to action of a page. Without it, the button takes the control height of its container, md unless the container sets another. A button beside a field takes the field's size."
+          "description": "The control height, sm, md or lg; without it, the container's, and else md."
         },
         {
           "name": "fullWidth",
@@ -2729,14 +2729,14 @@
           "name": "end",
           "type": "ReactNode",
           "required": false,
-          "description": "Quiet content at the far end, after the label, such as the Kbd of the shortcut that does the same: it takes the button's content color, keys in it are outlined caps with no fill, and in a button wider than its content, such as with fullWidth, it stays at the end while the icon and label stay at the start. Keys shown here take aria-hidden, and the button announces them with aria-keyshortcuts."
+          "description": "Quiet content at the far end, such as a shortcut's Kbd, with aria-hidden on its keys and aria-keyshortcuts on the button."
         },
         {
           "name": "pending",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Work started by this button is running: a spinner turns over the button in its label's color, the label and icons kept in place but transparent, so the button keeps its width and its name; it reports busy and ignores activation until pending ends."
+          "description": "Its work is running: a spinner turns over it, it keeps its width and name, and presses do nothing."
         }
       ],
       "native": [
@@ -3542,7 +3542,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
+          "description": "Shows it and its content as a busy skeleton while that loads; turning it on or off renders the content anew."
         }
       ],
       "native": [
@@ -3609,7 +3609,7 @@
           "type": "'neutral' | 'danger' | 'accent'",
           "required": false,
           "default": "'neutral'",
-          "description": "The meaning, as Button's: accent on a primary button only, and danger on a primary, outline, ghost or text one. A secondary button is always neutral."
+          "description": "The meaning, as Button's."
         },
         {
           "name": "icon",
@@ -3836,7 +3836,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
+          "description": "Shows it and its content as a busy skeleton while that loads; turning it on or off renders the content anew."
         }
       ],
       "native": [
@@ -3869,7 +3869,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
+          "description": "Shows it and its content as a busy skeleton while that loads; turning it on or off renders the content anew."
         }
       ],
       "native": [
@@ -4472,7 +4472,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
+          "description": "Shows it and its content as a busy skeleton while that loads; turning it on or off renders the content anew."
         }
       ],
       "native": [
@@ -4766,7 +4766,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
+          "description": "Shows it and its content as a busy skeleton while that loads; turning it on or off renders the content anew."
         }
       ],
       "native": [
@@ -4984,7 +4984,7 @@
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The field's height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another. sm is for a field with its label hidden; one that shows its label takes the md height."
+          "description": "The control height, sm, md or lg; without it, the container's, and else md. sm is for a field with its label hidden."
         },
         {
           "name": "showLabel",
@@ -5075,7 +5075,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
+          "description": "Shows it and its content as a busy skeleton while that loads; turning it on or off renders the content anew."
         }
       ],
       "native": [
@@ -5200,7 +5200,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
+          "description": "Shows it and its content as a busy skeleton while that loads; turning it on or off renders the content anew."
         }
       ],
       "native": [
@@ -5252,7 +5252,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
+          "description": "Shows it and its content as a busy skeleton while that loads; turning it on or off renders the content anew."
         }
       ],
       "native": [
@@ -5989,7 +5989,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
+          "description": "Shows it and its content as a busy skeleton while that loads; turning it on or off renders the content anew."
         }
       ],
       "native": [
@@ -6009,14 +6009,14 @@
           "type": "'primary' | 'secondary' | 'outline' | 'ghost' | 'text'",
           "required": false,
           "default": "'primary'",
-          "description": "The emphasis: primary for the main action of a view, secondary and outline for the rest, ghost for an application's chrome, such as a toolbar, and text for a link-like action. Without it, the button takes the variant its container gives where that variant takes its tone, such as ghost in a toolbar, and else primary."
+          "description": "The emphasis, primary for a group's main action; without it, the container's, such as ghost in a toolbar, and else primary."
         },
         {
           "name": "tone",
           "type": "'neutral' | 'danger' | 'accent'",
           "required": false,
           "default": "'neutral'",
-          "description": "The meaning: neutral for most actions; accent, on a primary button only, for a rare consequential action, with 0.5 rem corners; danger for an action that deletes or ends something. Secondary buttons are always neutral."
+          "description": "The meaning: neutral for most actions, danger for one that deletes or ends something, and accent, on a primary only, for a main action that must stand apart from the brand blue."
         },
         {
           "name": "underline",
@@ -6029,7 +6029,7 @@
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The height, as on every control: sm, md or lg in the current scale, such as sm for an action in a table cell or lg for the main call to action of a page. Without it, the button takes the control height of its container, md unless the container sets another. A button beside a field takes the field's size."
+          "description": "The control height, sm, md or lg; without it, the container's, and else md."
         },
         {
           "name": "fullWidth",
@@ -6054,14 +6054,14 @@
           "name": "end",
           "type": "ReactNode",
           "required": false,
-          "description": "Quiet content at the far end, after the label, such as the Kbd of the shortcut that does the same: it takes the button's content color, keys in it are outlined caps with no fill, and in a button wider than its content, such as with fullWidth, it stays at the end while the icon and label stay at the start. Keys shown here take aria-hidden, and the button announces them with aria-keyshortcuts."
+          "description": "Quiet content at the far end, such as a shortcut's Kbd, with aria-hidden on its keys and aria-keyshortcuts on the button."
         },
         {
           "name": "pending",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Work started by this button is running: a spinner turns over the button in its label's color, the label and icons kept in place but transparent, so the button keeps its width and its name; it reports busy and ignores activation until pending ends."
+          "description": "Its work is running: a spinner turns over it, it keeps its width and name, and presses do nothing."
         }
       ],
       "native": [
@@ -6145,7 +6145,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
+          "description": "Shows it and its content as a busy skeleton while that loads; turning it on or off renders the content anew."
         }
       ],
       "native": [
@@ -6919,7 +6919,7 @@
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another, as a table cell does. A button beside a field takes the field's size. sm is for a field with its label hidden, as in a toolbar or a filter row: one that shows its label takes the md height, so the label and the value each keep room."
+          "description": "The control height, sm, md or lg; without it, the container's, and else md. sm is for a field with its label hidden."
         },
         {
           "name": "description",
@@ -6932,7 +6932,7 @@
           "type": "'outline' | 'ghost'",
           "required": false,
           "default": "'outline'",
-          "description": "The field's look: outline, with a thin border, at the control height, whose label rests inside and floats into the outline; or ghost, only its text and start icon at rest, with a soft fill under the pointer and while focused and a placeholder that clears on focus, for a search at the top of a sidebar or a list. An outline field has no fill of its own: it takes the background of what it sits on."
+          "description": "The field's look: outline, a thin border its label floats into, or ghost, a faint fill, for a search at the top of a sidebar or a list."
         },
         {
           "name": "error",
@@ -7120,7 +7120,7 @@
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The field's height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another. The popup's rows take the row height of the scale. A select without a visible label, such as in a toolbar, is as wide as its longest option. sm is for a field with its label hidden; one that shows its label takes the md height."
+          "description": "The control height, sm, md or lg; without it, the container's, and else md. sm is for a field with its label hidden."
         },
         {
           "name": "label",
@@ -7322,7 +7322,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
+          "description": "Shows it and its content as a busy skeleton while that loads; turning it on or off renders the content anew."
         }
       ],
       "native": [
@@ -7517,7 +7517,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
+          "description": "Shows it and its content as a busy skeleton while that loads; turning it on or off renders the content anew."
         },
         {
           "name": "render",
@@ -7836,7 +7836,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
+          "description": "Shows it and its content as a busy skeleton while that loads; turning it on or off renders the content anew."
         }
       ],
       "native": [
@@ -8111,7 +8111,7 @@
           "type": "'outline' | 'ghost'",
           "required": false,
           "default": "'outline'",
-          "description": "The field's look: outline, with a thin border, at the control height, whose label rests inside and floats into the outline; or ghost, only its text and start icon at rest, with a soft fill under the pointer and while focused and a placeholder that clears on focus, for a search at the top of a sidebar or a list. An outline field has no fill of its own: it takes the background of what it sits on."
+          "description": "The field's look: outline, a thin border its label floats into, or ghost, a faint fill, for a search at the top of a sidebar or a list."
         },
         {
           "name": "startIcon",
@@ -8136,7 +8136,7 @@
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another, as a table cell does. A button beside a field takes the field's size. sm is for a field with its label hidden, as in a toolbar or a filter row: one that shows its label takes the md height, so the label and the value each keep room."
+          "description": "The control height, sm, md or lg; without it, the container's, and else md. sm is for a field with its label hidden."
         },
         {
           "name": "prefix",
@@ -8388,7 +8388,7 @@
           "type": "'neutral' | 'danger' | 'accent'",
           "required": false,
           "default": "'neutral'",
-          "description": "The meaning, as Button's: accent on a primary button only, and danger on a primary, outline, ghost or text one. A secondary button is always neutral."
+          "description": "The meaning, as Button's."
         },
         {
           "name": "pending",
@@ -8528,7 +8528,7 @@
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The field's height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another. sm is for a field with its label hidden; one that shows its label takes the md height."
+          "description": "The control height, sm, md or lg; without it, the container's, and else md. sm is for a field with its label hidden."
         },
         {
           "name": "showLabel",
@@ -8978,7 +8978,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
+          "description": "Shows it and its content as a busy skeleton while that loads; turning it on or off renders the content anew."
         }
       ],
       "native": [

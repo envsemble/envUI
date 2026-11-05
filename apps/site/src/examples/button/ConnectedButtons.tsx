@@ -8,9 +8,9 @@ export default function ConnectedButtons() {
   return (
     <Row wrap align="start" gap={6}>
       <ButtonGroup aria-label="Project actions">
-        <Button>Open</Button>
-        <Button>Edit</Button>
-        <Button>Share</Button>
+        <Button variant="secondary">Open</Button>
+        <Button variant="secondary">Edit</Button>
+        <Button variant="secondary">Share</Button>
       </ButtonGroup>
       <ButtonGroup aria-label="Publish">
         <Button>Publish</Button>

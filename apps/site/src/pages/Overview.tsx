@@ -66,7 +66,7 @@ export function Overview() {
             A React design system for dense B2B SaaS and AI developer tools.
           </Text>
           {/* The one way in, to setting envUI up, beside the command that installs it; under them,
-              quiet, what installing needs first, and how much the catalogue shows. */}
+              one quiet line: how much the catalogue shows, and what installing needs first. */}
           <Column gap={4} align="center">
             <Row gap={4} align="center" justify="center" wrap className="catalogue-overview-start">
               <Button href={routeHref(docsRoute)} endIcon={<IconArrowForward />}>
@@ -78,22 +78,19 @@ export function Overview() {
                 <CopyButton value={install} variant="ghost" aria-label="Copy install command" />
               </span>
             </Row>
-            <Column gap={1} align="center">
-              <Text variant="caption" emphasis="muted" className="catalogue-overview-note">
+            <Text variant="caption" emphasis="muted" className="catalogue-overview-facts">
+              {counts.map(({ kind, count }) => (
+                <span key={kind}>
+                  {count} {kind}s
+                </span>
+              ))}
+              <span>
                 Installing needs{' '}
                 <Link href={routeHref(`${docsRoute}?section=registry-access`)}>
                   registry access
-                </Link>{' '}
-                first.
-              </Text>
-              <Text variant="caption" emphasis="muted" className="catalogue-overview-facts">
-                {counts.map(({ kind, count }) => (
-                  <span key={kind}>
-                    {count} {kind}s
-                  </span>
-                ))}
-              </Text>
-            </Column>
+                </Link>
+              </span>
+            </Text>
           </Column>
         </Column>
       </header>

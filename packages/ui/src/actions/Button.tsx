@@ -24,17 +24,14 @@ export type ButtonTone = 'neutral' | 'accent' | 'danger';
 export type ButtonEmphasisProps =
   | {
       /**
-       * The emphasis: primary for the main action of a view, secondary and outline for the rest,
-       * ghost for an application's chrome, such as a toolbar, and text for a link-like action.
-       * Without it, the button takes the variant its container gives where that variant takes its
-       * tone, such as ghost in a toolbar, and else primary.
+       * The emphasis, primary for a group's main action; without it, the container's, such as ghost
+       * in a toolbar, and else primary.
        * @default 'primary'
        */
       variant?: ButtonVariant;
       /**
-       * The meaning: neutral for most actions; accent, on a primary button only, for a rare
-       * consequential action, with 0.5 rem corners; danger for an action that deletes or ends
-       * something. Secondary buttons are always neutral.
+       * The meaning: neutral for most actions, danger for one that deletes or ends something, and
+       * accent, on a primary only, for a main action that must stand apart from the brand blue.
        * @default 'neutral'
        */
       tone?: 'neutral';
@@ -55,8 +52,7 @@ export type IconButtonEmphasisProps =
        */
       variant?: ButtonVariant;
       /**
-       * The meaning, as Button's: accent on a primary button only, and danger on a primary,
-       * outline, ghost or text one. A secondary button is always neutral.
+       * The meaning, as Button's.
        * @default 'neutral'
        */
       tone?: 'neutral';
@@ -70,12 +66,7 @@ export type ButtonAppearanceProps = ButtonEmphasisProps & {
    * @default false
    */
   underline?: boolean;
-  /**
-   * The height, as on every control: sm, md or lg in the current scale, such as sm for an action
-   * in a table cell or lg for the main call to action of a page. Without it, the button takes the
-   * control height of its container, md unless the container sets another. A button beside a
-   * field takes the field's size.
-   */
+  /** The control height, sm, md or lg; without it, the container's, and else md. */
   size?: ControlSize;
   /**
    * Fill the width of the container, such as the actions of a narrow form stacked in a column.
@@ -87,17 +78,13 @@ export type ButtonAppearanceProps = ButtonEmphasisProps & {
   /** A decorative icon after the label, such as a ChevronRight for a next step. */
   endIcon?: ReactNode;
   /**
-   * Quiet content at the far end, after the label, such as the Kbd of the shortcut that does the
-   * same: it takes the button's content color, keys in it are outlined caps with no fill, and in a
-   * button wider than its content, such as with fullWidth, it stays at the end while the icon and
-   * label stay at the start. Keys shown here take aria-hidden, and the button announces them with
-   * aria-keyshortcuts.
+   * Quiet content at the far end, such as a shortcut's Kbd, with aria-hidden on its keys and
+   * aria-keyshortcuts on the button.
    */
   end?: ReactNode;
   /**
-   * Work started by this button is running: a spinner turns over the button in its label's color,
-   * the label and icons kept in place but transparent, so the button keeps its width and its name;
-   * it reports busy and ignores activation until pending ends.
+   * Its work is running: a spinner turns over it, it keeps its width and name, and presses do
+   * nothing.
    * @default false
    */
   pending?: boolean;

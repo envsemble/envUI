@@ -119,6 +119,21 @@
   vertical-align: top;
   overflow-wrap: anywhere;
 }
+/* Stacked, on a narrow page, a prop is a block of three lines: its name, its type under it and its
+   description the row's full width, with no labels, as each reads for itself. */
+@container env-table (width < 37.5em) {
+  .docs-props-table > .env-table-body > .env-table-row > .env-table-cell {
+    flex: 0 0 100%;
+    order: 0;
+    margin-block-start: var(--env-space-2);
+  }
+  .docs-props-table > .env-table-body > .env-table-row > .env-table-cell:first-child {
+    margin-block-start: 0;
+  }
+  .docs-props-table .env-table-cell-label {
+    display: none;
+  }
+}
 .docs-prop-name {
   display: flex;
   flex-wrap: wrap;

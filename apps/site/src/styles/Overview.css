@@ -79,10 +79,9 @@
   white-space: nowrap;
   scrollbar-width: none;
 }
-/* What installing needs first, and under it the counts, a middle dot between each, each whole. */
-.catalogue-overview-note {
-  margin: 0;
-}
+/* One quiet line: the counts, then what installing needs first, a middle dot between each, each
+   whole. Where the line can't hold them all, as on a phone, what installing needs takes a line of
+   its own, with no dot to start it. */
 .catalogue-overview-facts {
   margin: 0;
   font-variant-numeric: tabular-nums;
@@ -93,4 +92,12 @@
 .catalogue-overview-facts > * + *::before {
   margin-inline: var(--env-space-2);
   content: '·';
+}
+@media (width < 40rem) {
+  .catalogue-overview-facts > :last-child {
+    display: block;
+  }
+  .catalogue-overview-facts > :last-child::before {
+    content: none;
+  }
 }

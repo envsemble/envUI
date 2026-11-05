@@ -125,10 +125,15 @@ test("a page's guide in the Docs complements its page in the catalogue, and Fiel
   await expect(page.locator('.docs-changelog')).toHaveCount(1);
   await expect(page.locator('[data-section="overview"]')).toHaveCount(1);
   await expect(page.locator('.catalogue-related')).toHaveCount(0);
-  // A component's guide shows none of the catalogue's figures, whose Overview shows the component
-  // with its code: it goes from its header to Import, then Usage.
+  // A component's guide repeats no section of the catalogue: it goes from its header to Import,
+  // then Usage, which opens with one compact preview of the component, its overview example live
+  // without its code, as the code follows it.
   await page.goto(`${siteDevUrl}/docs/components/button`);
-  await expect(page.locator('.docs-api .site-live-example-entry')).toHaveCount(0);
+  const shown = page.locator('.docs-api .site-live-example-entry');
+  await expect(shown).toHaveCount(1);
+  await expect(shown.getByRole('button', { name: 'Create project' })).toBeVisible();
+  await expect(shown.locator('.site-live-example-code')).toHaveCount(0);
+  await expect(page.locator('#usage + .docs-usage-preview')).toHaveCount(1);
   const headings = main.getByRole('heading', { level: 2 });
   await expect(headings.nth(0)).toHaveText('Import');
   await expect(headings.nth(1)).toHaveText('Usage');

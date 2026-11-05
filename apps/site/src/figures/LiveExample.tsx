@@ -286,7 +286,8 @@ function WidthBox({ width, children }: { width: number; children: ReactNode }) {
  * `motion`, the stage plays it: its animated specimen of the same name, which uses the example as a
  * person would, takes the stage's place, above its caption and code. With `open` and `live`, as an
  * overview's, it rests with its overlay open, and people can use it; without `live`, it is a still
- * picture, marked as one.
+ * picture, marked as one. Without `code`, as the preview at the top of a Docs page's Usage, whose
+ * code follows it, it shows no code of its own.
  */
 export function LiveExample({
   page,
@@ -301,6 +302,7 @@ export function LiveExample({
   live = false,
   stage,
   motion = false,
+  code = true,
 }: {
   page: string;
   name: string;
@@ -321,6 +323,8 @@ export function LiveExample({
   stage?: StageFill;
   /** Whether its animated specimen plays it in place of the live stage. */
   motion?: boolean;
+  /** Whether its code shows under it, in a disclosure. */
+  code?: boolean;
 }) {
   const theme = useTheme();
   const render = open ? (
@@ -401,7 +405,7 @@ export function LiveExample({
           {caption}
         </Text>
       )}
-      <ExampleCode page={page} name={name} />
+      {code && <ExampleCode page={page} name={name} />}
     </Column>
   );
 }

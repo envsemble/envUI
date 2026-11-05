@@ -109,11 +109,8 @@ export interface SelectProps
   /** A hint for the browser's autofill, such as country, set on the hidden input. */
   autoComplete?: string;
   /**
-   * The field's height, as on every control: sm, md or lg in the current scale. Without it, the
-   * field takes the control height of its container, md unless the container sets another. The
-   * popup's rows take the row height of the scale. A select without a visible label, such as in a
-   * toolbar, is as wide as its longest option.
-   * sm is for a field with its label hidden; one that shows its label takes the md height.
+   * The control height, sm, md or lg; without it, the container's, and else md. sm is for a
+   * field with its label hidden.
    */
   size?: ControlSize;
 }

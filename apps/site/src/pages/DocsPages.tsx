@@ -6,6 +6,7 @@ import { docsTrail, pagesOf, type RoutePage } from '../navigation/SiteRoutes';
 import { PartSwitch } from '../navigation/OtherPart';
 import { lazyPart } from '../template/LoadBoundary';
 import { ExampleSource } from '../figures/LiveExample';
+import { UsagePreview } from '../figures/Figures';
 import { partsOf } from '../template/Parts';
 import { providesOf } from '../template/Provides';
 import { PropsTables } from '../template/PropsTables';
@@ -314,9 +315,10 @@ function guideSubsections(document: Document) {
 /**
  * The guide at the top of a page in the Docs, from the page's "## Compose": how to import it, its
  * common uses in code, how its parts compose and how to customize it, each a section of its own,
- * with an example file of the page shown as code where the page names one.
+ * with an example file of the page shown as code where the page names one. With `preview`, as a
+ * component's, Usage opens with the component, live and compact (UsagePreview).
  */
-function CodeGuide({ document }: { document: Document }) {
+function CodeGuide({ document, preview = false }: { document: Document; preview?: boolean }) {
   return guideSubsections(document).map(({ title, content }) => {
     const id = headingSlug(title);
     return (
@@ -324,6 +326,7 @@ function CodeGuide({ document }: { document: Document }) {
         <Text render={<h2 />} variant="title" className="site-section-title" id={id}>
           {title}
         </Text>
+        {preview && title === 'Usage' && <UsagePreview page={document} />}
         {content.map((part, index) =>
           part.kind === 'source' ? (
             <ExampleSource key={index} page={document.id} name={part.name} />
@@ -464,9 +467,9 @@ function Strings({ document }: { document: Document }) {
  * its page in the catalogue rather than repeating it: how to import it, its common uses, how its
  * parts compose and how to customize it, from the page's Compose; what the
  * application and envUI provide, which the catalogue leaves out; then, as reference, its props,
- * part names and color properties, and its changelog. It shows none of the catalogue's figures,
- * whose Overview shows the component with its code, and no Related: the page goes from its header
- * to Import and Usage. Field, which has no page in the catalogue, shows its whole page here, on
+ * part names and color properties, and its changelog. It repeats no section of the catalogue and
+ * shows no Related: the page goes from its header to Import and Usage, which a component's opens
+ * with a compact preview of the component, its catalogue's first overview example. Field, which has no page in the catalogue, shows its whole page here, on
  * the page, as "Build your own field".
  */
 export function DocsReferencePage({ page }: { page: RoutePage }) {
@@ -476,7 +479,10 @@ export function DocsReferencePage({ page }: { page: RoutePage }) {
   const pattern = cataloguePage?.kind === 'pattern';
   // The guide, then once it has painted its reference, together: each step lays the whole page out
   // again, which costs more here than a step saves (useRevealed).
-  const guide = useMemo(() => <CodeGuide document={document} />, [document]);
+  const guide = useMemo(
+    () => <CodeGuide document={document} preview={!!cataloguePage && !pattern} />,
+    [document, cataloguePage, pattern],
+  );
   const parts = useMemo(
     () =>
       [
