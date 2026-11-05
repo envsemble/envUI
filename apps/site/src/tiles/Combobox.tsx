@@ -30,7 +30,10 @@ const script: PointerStep[] = [
   { wait: 400 },
 ];
 
-/** A combobox of two people, so its field and its open list show whole in a gallery's low tile. */
+/**
+ * A combobox of two people, so its field and its open list show whole in a gallery's low tile,
+ * about as narrow as a text field, so a phone's tile draws it at about its own size too.
+ */
 export default function ComboboxTile() {
   usePointer(script);
   return (
@@ -39,7 +42,7 @@ export default function ComboboxTile() {
       placeholder="Type a name"
       items={people}
       clearable
-      style={{ inlineSize: '11rem' }}
+      style={{ inlineSize: '9.5rem' }}
     />
   );
 }

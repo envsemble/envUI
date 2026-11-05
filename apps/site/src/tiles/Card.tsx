@@ -1,7 +1,10 @@
 import { Card, Text } from '@envsemble/envui';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
-/** Hovered, the card takes its hover fill; pressed, it settles a little; let go, and left. */
+/**
+ * Hovered, the card takes its hover fill; pressed, it settles a little; let go, and left; then
+ * reached by the keyboard, it takes the focus ring, and is left again.
+ */
 const script: PointerStep[] = [
   { wait: 400 },
   { to: '.env-card', x: 0.62, y: 0.6 },
@@ -11,7 +14,11 @@ const script: PointerStep[] = [
   { release: true },
   { wait: 700 },
   { leave: true },
-  { wait: 700 },
+  { wait: 500 },
+  { focus: '.env-card' },
+  { wait: 1300 },
+  { blur: true },
+  { wait: 600 },
 ];
 
 /** A card that opens a project: its name and a summary. */

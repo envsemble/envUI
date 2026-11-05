@@ -8,16 +8,11 @@ const sections = ['Summary', 'Revenue', 'Costs'];
 const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
 
 /**
- * A page and its sticky header are taller than a gallery's low tile at their own size: the box is
- * drawn at four fifths of it, as an application's frame is (Scaffold.tsx), and as low as the
- * header and one section, so it ends on a whole line.
- */
-const smaller = { transform: 'scale(0.8)', transformOrigin: '0 0' } as const;
-
-/**
- * A page in a box that scrolls, as a window does: it scrolls down a section at a time, its sticky
+ * A page in a box that scrolls, as a window does, at its own size and as low as its header and one
+ * section, so it ends on a whole line: it scrolls down a section at a time, its sticky
  * header staying at the top and taking its fill as the sections pass beneath it, and back up.
- * Each step rests with one whole section under the header.
+ * Each step rests with one whole section just under the header; room after the last lets it
+ * scroll there too.
  */
 export default function PageTile() {
   const step = useTimeline([1100, 1700, 1700]);
@@ -26,8 +21,14 @@ export default function PageTile() {
     const element = box.current;
     if (!element) return;
     const from = element.scrollTop;
-    const shown = element.querySelectorAll('section');
-    const to = (shown[step]?.offsetTop ?? 0) - (shown[0]?.offsetTop ?? 0);
+    const section = element.querySelectorAll('section')[step];
+    const header = element.querySelector<HTMLElement>('.env-page-header');
+    // The section's top in the box's content, read through the tile's scale, just under the header
+    // stuck at the box's top.
+    const frameBox = element.getBoundingClientRect();
+    const scale = frameBox.height / element.offsetHeight || 1;
+    const top = section ? (section.getBoundingClientRect().top - frameBox.top) / scale + from : 0;
+    const to = step === 0 || !header ? 0 : Math.round(top - header.offsetHeight - 4);
     if (from === to) return;
     const start = performance.now();
     let frame = 0;
@@ -40,30 +41,28 @@ export default function PageTile() {
     return () => cancelAnimationFrame(frame);
   }, [step]);
   return (
-    <div style={smaller}>
-      <div
-        ref={box}
-        style={{
-          inlineSize: '15rem',
-          blockSize: '7.75rem',
-          overflow: 'hidden',
-          borderRadius: 'var(--env-radius-lg)',
-          background: 'var(--env-color-bg-page)',
-        }}
-      >
-        <Page header={<PageHeader headingLevel={3} sticky title="Annual report" />}>
-          <Column gap={5}>
-            {sections.map((section) => (
-              <Column key={section} gap={2} render={<section />}>
-                <Text variant="title" render={<h4 />}>
-                  {section}
-                </Text>
-                <Text emphasis="muted">The figures for the year, by quarter.</Text>
-              </Column>
-            ))}
-          </Column>
-        </Page>
-      </div>
+    <div
+      ref={box}
+      style={{
+        inlineSize: '12.5rem',
+        blockSize: '6.125rem',
+        overflow: 'hidden',
+        borderRadius: 'var(--env-radius-lg)',
+        background: 'var(--env-color-bg-page)',
+      }}
+    >
+      <Page header={<PageHeader headingLevel={3} sticky title="Annual report" />}>
+        <Column gap={5} style={{ paddingBlockEnd: '3rem' }}>
+          {sections.map((section) => (
+            <Column key={section} gap={1} render={<section />}>
+              <Text variant="title" render={<h4 />}>
+                {section}
+              </Text>
+              <Text emphasis="muted">Figures by quarter.</Text>
+            </Column>
+          ))}
+        </Column>
+      </Page>
     </div>
   );
 }
