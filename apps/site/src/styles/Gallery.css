@@ -39,7 +39,7 @@
 
 /* The stage of a gallery tile: wide and low, as most components are, so a row of controls
    doesn't stand in empty space and many components can be scanned at once; what is taller, such
-   as a menu open under its button, is cut off at its foot, fading out. Each page's own tile lays out in its own window (tiles/Tiles.ts,
+   as a menu open under its button, is cut off at its foot after its last whole row, fading out. Each page's own tile lays out in its own window (tiles/Tiles.ts,
    Related.css); a page without one shows its example in a window that counts whole
    (Related.tsx), so it is drawn at the tiles' scale. */
 .catalogue-gallery-stage.catalogue-gallery-stage {
@@ -168,6 +168,12 @@
 
 .catalogue-related-crop:has(> [data-cut~='end']) {
   --catalogue-crop-end: var(--catalogue-crop-fade);
+}
+
+/* A row cut off at the foot is hidden whole, and the fade starts where it did (useFit.ts), so the
+   picture ends on a whole row. */
+.catalogue-related-crop [data-catalogue-past] {
+  visibility: hidden;
 }
 
 .catalogue-related-crop:has(> [data-cut]) {

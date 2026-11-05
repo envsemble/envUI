@@ -172,10 +172,11 @@ const noGroups: ReadonlySet<string> = new Set();
  * aliases or keywords, those come first, and results that only mention it in their text follow
  * them in a group of their own, folded into one row, so "date" lists DatePicker and the date props
  * before Table. A pattern is named by its title and aliases only, so "IconButton" lists IconButton
- * and its props rather than every pattern that uses it. Props the query names by their own name
- * come first and show, so "date" lists startDate; the props of the components it finds follow,
- * folded into the group's row, their pass-through props, such as className, last; and a short
- * group shows its first few until it is expanded.
+ * and its props rather than every pattern that uses it. The props of the components the query
+ * names come first, best first, so "date" lists DatePicker's before CalendarHeatmap's startDate,
+ * their pass-through props, such as className, last; then the props it names by their own name.
+ * Props show where the query names some by their own name, as many as it names, up to a few;
+ * else, and past those, they fold into the group's row, which shows the rest in place.
  */
 function groupResults(results: readonly SearchResult[], expanded: ReadonlySet<string>): Group[] {
   const named = results.some((result) => result.named);
@@ -194,11 +195,12 @@ function groupResults(results: readonly SearchResult[], expanded: ReadonlySet<st
     ? [...results.filter((result) => result.named), ...results.filter((result) => !result.named)]
     : results;
   const grouped = new Map<string, SearchResult[]>();
-  // Sorting is stable, so results of one rank keep their order; a component's pass-through props
-  // come after its own.
+  // Sorting is stable, so results of one rank keep their order: the props of the components the
+  // query names, best first, then the props it names by their own name; a component's pass-through
+  // props come after its own.
   const byRank = (a: SearchResult, b: SearchResult) =>
-    Number(b.namesProp) - Number(a.namesProp) ||
     rankOf(a) - rankOf(b) ||
+    Number(b.namesProp) - Number(a.namesProp) ||
     Number(passedThrough(a)) - Number(passedThrough(b));
   for (const result of [...ordered].sort(byRank)) {
     const group = groupOf(result, named);
@@ -213,8 +215,8 @@ function groupResults(results: readonly SearchResult[], expanded: ReadonlySet<st
   return order.map((name) => {
     const members = grouped.get(name)!;
     const folds = shortGroups.has(name) || name === mentions;
-    // Props show only those the query names by their own name; the props of an export it names,
-    // such as Select's for "sel", wait in the group's row.
+    // Props show as many as the query names by their own name, the best first; with none, such as
+    // for "Textarea", they all wait in the group's row.
     const limit = !folds
       ? groupLimit
       : expanded.has(name)

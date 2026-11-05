@@ -145,19 +145,11 @@
   font-family: var(--site-code-font-family);
   font-size: 0.85em;
 }
-/* The setup prompt at the top of the Docs' home, from the start of the page's column as the banner
-   above it is: a compact pill of the agents' marks, the prompt in monospace and a ghost copy
-   button. */
-.docs-agent-setup > * {
-  margin: 0;
-}
-.docs-agent-setup-text {
-  max-inline-size: 38rem;
-  text-wrap: pretty;
-}
+/* The setup prompt in the setup guide's Coding agents (AgentPrompt.tsx): a compact pill of the
+   agents' marks, the prompt in monospace and a ghost copy button, as wide as it holds. */
 .docs-agent-prompt {
+  align-self: start;
   max-inline-size: 100%;
-  margin-block-start: var(--env-space-2);
   padding-inline-start: var(--env-space-3);
   border-radius: var(--env-radius-full);
 }

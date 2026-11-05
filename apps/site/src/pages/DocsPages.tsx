@@ -1,10 +1,8 @@
-import { Fragment, useMemo } from 'react';
-import { Column, CopyButton, DescriptionList, Row, Surface, Text } from '@envsemble/envui';
+import { useMemo } from 'react';
+import { Column, DescriptionList, Text } from '@envsemble/envui';
 import { Code } from '@envsemble/envui/content';
-import { AgentLogos } from '../brand/AgentLogos';
 import { PageHeader } from '../layout/PageHeader';
 import { docsTrail, pagesOf, type RoutePage } from '../navigation/SiteRoutes';
-import { docsRoute } from '../navigation/Address';
 import { PartSwitch } from '../navigation/OtherPart';
 import { lazyPart } from '../template/LoadBoundary';
 import { ExampleSource } from '../figures/LiveExample';
@@ -41,57 +39,7 @@ const colorPalette = lazyPart(
   'src/figures/foundations/ColorPalette.tsx',
 );
 
-/** What people paste into a coding agent to set envUI up: the skill the site serves at /SKILL.md. */
-export const setupPrompt = 'Set up envUI in my app: envui.envsemble.com/SKILL.md';
-
-/**
- * The prompt that sets envUI up with a coding agent, at the top of the Docs' home, the setup guide,
- * whose sections set it up by hand.
- */
-function AgentSetup() {
-  return (
-    <Column
-      render={<section aria-labelledby="agent-setup" />}
-      gap={3}
-      align="start"
-      className="docs-agent-setup"
-    >
-      <Text render={<h2 id="agent-setup" />} variant="title" className="site-section-title">
-        Set up with your agent
-      </Text>
-      <Text render={<p />} className="docs-agent-setup-text">
-        Paste this into your coding agent, or follow the steps below by hand.
-      </Text>
-      <Surface
-        background="muted"
-        padding={1}
-        render={<Row gap={3} align="center" />}
-        className="docs-agent-prompt"
-      >
-        <AgentLogos className="docs-agent-logos" />
-        <Text render={<code />} className="docs-agent-prompt-text">
-          {/* Where it wraps, as on a phone, the address breaks after a slash. */}
-          {setupPrompt.split('/').map((piece, index) => (
-            <Fragment key={index}>
-              {index > 0 && (
-                <>
-                  /<wbr />
-                </>
-              )}
-              {piece}
-            </Fragment>
-          ))}
-        </Text>
-        <CopyButton value={setupPrompt} variant="ghost" size="sm" aria-label="Copy prompt" />
-      </Surface>
-    </Column>
-  );
-}
-
-/**
- * A guide of docs/, such as migration, with its live demos in place. The setup guide is the Docs'
- * home, with the prompt that sets envUI up with a coding agent at its top.
- */
+/** A guide of docs/, such as migration or the setup guide, the Docs' home, with its live demos in place. */
 export function GuidePage({ page }: { page: RoutePage }) {
   const document = useDocument(page.document!);
   return (
@@ -108,7 +56,6 @@ export function GuidePage({ page }: { page: RoutePage }) {
         }
       />
       <Column gap={7} className="site-article">
-        {page.path === docsRoute && <AgentSetup />}
         <GuideDocument document={document} />
       </Column>
     </>

@@ -117,10 +117,21 @@ body {
   overflow-wrap: normal;
 }
 /* A component a page documents besides its own, such as IconButton under Button, is an entry of the
-   same list after the page's, set in as a nested destination is; only these entries lead to a
-   heading, so their address's fragment marks them (SiteNavigation.tsx). */
+   same list after the page's, set in further than a section's pages are from their heading, so it
+   reads as the page's rather than a sibling; only these entries lead to a heading, so their
+   address's fragment marks them (SiteNavigation.tsx). */
 .site-sidebar .env-navigation-drawer-item[href*='#'] {
-  padding-inline-start: calc(var(--env-space-3) + var(--env-space-4));
+  padding-inline-start: calc(var(--env-space-3) + var(--env-space-5));
+}
+/* Under a fine pointer, the drawer's rows are the scale's row height, as a tree's are, so the long
+   lists of pages stay dense; under a coarse pointer they keep the touch height (NavigationDrawer). */
+@media (pointer: fine) {
+  .site-sidebar .env-navigation-drawer-item {
+    --env-navigation-drawer-item-height: var(--env-row-height);
+  }
+  .site-sidebar .env-navigation-drawer-branch {
+    --env-navigation-drawer-toggle-size: calc(var(--env-row-height) - 2 * var(--env-space-1));
+  }
 }
 /* In a wide window, search keeps its one place (--site-search-start) rather than centring in the
    drawer, which the reader resizes; a drawer too narrow for it there takes it back towards its
@@ -170,8 +181,13 @@ body {
 }
 @keyframes site-drawer-fade {
   to {
-    --site-drawer-fade: var(--env-space-6);
+    --site-drawer-fade: var(--site-drawer-fade-length);
   }
+}
+.site-sidebar .env-navigation-drawer-list {
+  /* The fade's length, which the list scrolls the current page's group heading clear of
+     (SiteNavigation.tsx). */
+  --site-drawer-fade-length: var(--env-space-6);
 }
 @supports (animation-timeline: scroll()) {
   .site-sidebar .env-navigation-drawer-list {
@@ -181,7 +197,7 @@ body {
       var(--env-color-fg-default) var(--site-drawer-fade)
     );
     animation: site-drawer-fade linear both;
-    animation-range: 0 var(--env-space-6);
+    animation-range: 0 var(--site-drawer-fade-length);
     animation-timeline: scroll(self);
   }
 }

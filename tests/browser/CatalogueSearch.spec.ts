@@ -150,16 +150,17 @@ test.describe('search', () => {
     await mentioned.click();
     await expect(mentioned).toHaveCount(0);
     await expect(mentions.locator('[data-item-id="page:table"]')).toBeVisible();
-    // The props the query names by their own name show, a few of them; the component's own props,
-    // which only its name matches, wait in a row that shows them in place and keeps search open.
+    // The props of the component the query names come first, before those it names by their own
+    // name, such as CalendarHeatmap's startDate; a few show, and the rest wait in a row that shows
+    // them in place and keeps search open.
     const props = dialog(page).getByRole('group', { name: 'Props' });
     const more = props.locator('[data-item-id="more:Props"]');
     await expect(props.getByRole('option')).toHaveCount(4);
-    await expect(props).toContainText('startDate');
-    await expect(props).not.toContainText('DatePicker prop');
+    await expect(props.getByRole('option').first()).toContainText('DatePicker prop');
+    await expect(props).not.toContainText('startDate');
     await more.click();
     await expect(more).toHaveCount(0);
-    await expect(props).toContainText('DatePicker prop');
+    await expect(props).toContainText('startDate');
     await expect(field(page)).toHaveValue('date');
     // A query that names no prop folds the props into the row; shown, a component's own props
     // come before those it passes to its root, such as className.

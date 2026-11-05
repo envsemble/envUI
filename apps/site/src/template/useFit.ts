@@ -85,7 +85,8 @@ function shownBoxes(canvas: HTMLElement) {
       // What is transparent doesn't show, unless it is on its way in or out, such as a popup
       // starting its entrance: the view is placed for it, rather than without it and back.
       if (style.opacity === '0' && !moving(child)) continue;
-      if (style.visibility === 'hidden') continue;
+      // A row hidden past the crop's foot (trimRows) still counts, so hiding it moves nothing.
+      if (style.visibility === 'hidden' && !child.closest('[data-catalogue-past]')) continue;
       const rect = child.getBoundingClientRect();
       const box = within(
         new DOMRect(
@@ -127,6 +128,56 @@ function shownBoxes(canvas: HTMLElement) {
   };
   visit(canvas, null);
   return found;
+}
+
+/**
+ * The rows of a list, a menu, a table, a tree or a picker's column, and the cards of a pager: each
+ * drawn whole or not at all at a crop's foot.
+ */
+const rowSelector = [
+  ...['menuitem', 'menuitemradio', 'menuitemcheckbox', 'option', 'row', 'treeitem'].map(
+    (role) => `[role='${role}']`,
+  ),
+  'li',
+  'tr',
+  '.env-time-list-row',
+  '.env-pager-link',
+].join(', ');
+
+/** How far, in px, a row may reach past the crop's foot and still count as whole. */
+const rowSlack = 2;
+
+/**
+ * Where a picture is cut off at its foot, hides each row that reaches past it and fades out only
+ * below the rows that stay, so it ends on a whole row, the surface under it fading out, rather than
+ * in a slice through one (Gallery.css). A row that holds others, such as a tree's branch, is left
+ * to its rows.
+ */
+function trimRows(canvas: HTMLElement) {
+  const crop = canvas.parentElement;
+  if (!crop?.classList.contains('catalogue-related-crop')) return;
+  if (!canvas.dataset.cut?.split(' ').includes('bottom')) {
+    for (const row of canvas.querySelectorAll<HTMLElement>('[data-catalogue-past]'))
+      delete row.dataset.cataloguePast;
+    crop.style.removeProperty('--catalogue-crop-bottom');
+    return;
+  }
+  const { top, height } = crop.getBoundingClientRect();
+  let kept = -Infinity;
+  for (const row of canvas.querySelectorAll<HTMLElement>(rowSelector)) {
+    const bottom = row.getBoundingClientRect().bottom - top;
+    if (!row.querySelector(rowSelector) && bottom > height + rowSlack)
+      row.dataset.cataloguePast = '';
+    else {
+      delete row.dataset.cataloguePast;
+      if (bottom <= height + rowSlack) kept = Math.max(kept, bottom);
+    }
+  }
+  const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
+  const fade = parseFloat(getComputedStyle(crop).getPropertyValue('--catalogue-crop-fade')) * rem;
+  if (kept > height - fade)
+    crop.style.setProperty('--catalogue-crop-bottom', `${Math.max(0, height - kept)}px`);
+  else crop.style.removeProperty('--catalogue-crop-bottom');
 }
 
 /** The part of a box inside a clip, empty where none is, or the box where nothing clips it. */
@@ -193,6 +244,7 @@ export function useFit(
     const place = () => {
       const transform = `translate(${-view.x}px, ${-view.y}px) scale(${view.scale})`;
       if (canvasElement.style.transform !== transform) canvasElement.style.transform = transform;
+      trimRows(canvasElement);
     };
     const glide = (now: number) => {
       const elapsed = Math.min(64, now - (view.last || now - 16));
@@ -290,6 +342,7 @@ export function useFit(
         const sides = cut.filter(Boolean).join(' ');
         if (sides) canvasElement.dataset.cut = sides;
         else delete canvasElement.dataset.cut;
+        trimRows(canvasElement);
       }
       if (tile && playingNow.current && view.scale === scale) {
         toX = contain(view.toX, left * scale, right * scale, stageElement.clientWidth / 2 - inset);
