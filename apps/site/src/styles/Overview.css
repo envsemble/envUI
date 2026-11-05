@@ -59,7 +59,7 @@
   text-wrap: balance;
 }
 /* The install command beside Get started: code on the cards' fill, with its copy button at its
-   end; where it doesn't fit, it breaks onto a second line. */
+   end; always one line, which scrolls where it doesn't fit. */
 .catalogue-overview-install {
   display: inline-flex;
   align-items: center;
@@ -75,7 +75,9 @@
   min-inline-size: 0;
   font-family: var(--site-code-font-family);
   font-size: var(--env-font-size-caption);
-  overflow-wrap: anywhere;
+  white-space: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
 }
 /* The counts, a middle dot between each, each whole. */
 .catalogue-overview-facts {

@@ -72,7 +72,8 @@ export function Overview() {
                 Get started
               </Button>
               <span className="catalogue-overview-install">
-                <code>{install}</code>
+                {/* One line that scrolls where it doesn't fit, so it is focusable for the keyboard. */}
+                <code tabIndex={0}>{install}</code>
                 <CopyButton value={install} variant="ghost" aria-label="Copy install command" />
               </span>
             </Row>
