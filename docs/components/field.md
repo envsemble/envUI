@@ -160,4 +160,5 @@ The parts are the root, `env-field`, the label, `env-field-label`, the control, 
 ## Changelog
 
 - **1.0.0**: Field, on Base UI's Field.
+- **1.0.0-prerelease.6**: Field.Label takes the size, weight and muted color of a field's floated label, so it reads as the labels of envUI's own fields do.
 - **1.0.0-prerelease.6**: Field.Control takes a text field's rounded corners rather than round ends.
