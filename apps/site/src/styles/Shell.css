@@ -107,6 +107,15 @@ body {
 .site-drawer-search {
   max-inline-size: 100%;
 }
+/* In the sheet, as in the resizable drawer, a label keeps to one line and ends in an ellipsis
+   where it doesn't fit, its full name in its title (SiteNavigation.tsx), rather than breaking a
+   long component name mid-word. */
+.site-navigation[data-in-sheet] .site-sidebar .env-navigation-drawer-label {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow-wrap: normal;
+}
 /* A component a page documents besides its own, such as IconButton under Button, is an entry of the
    same list after the page's, set in as a nested destination is; only these entries lead to a
    heading, so their address's fragment marks them (SiteNavigation.tsx). */
@@ -262,6 +271,16 @@ body {
   border-radius: var(--env-radius-full);
   background: var(--env-color-bg-page);
   pointer-events: auto;
+}
+/* The Display menu's settings (DisplaySettings.tsx): a row each, its name at the start and its
+   choices beside it, each control as wide as its choices, whole, and the controls starting level
+   in one column. */
+.site-display-settings {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  justify-items: start;
+  gap: var(--env-space-3) var(--env-space-4);
 }
 .site-page-actions ~ .site-page-layout .site-page-header {
   padding-block-start: var(--env-space-2);
