@@ -210,7 +210,7 @@ function fit(room: HTMLElement, layer: HTMLElement) {
     // a link that opens a hover card, would wrap to it, move its link and the popup with it, and be
     // padded narrower again, down to a column of a word or two. What opens them keeps at least
     // the widest popup's width, so a popup about as wide as the stage leaves the text as wide.
-    const widest = Math.max(...anchored.map((box) => box.width)) / scale;
+    const widest = Math.max(...anchored.map((box) => box.right - box.left)) / scale;
     const spare = Math.max(0, room.clientWidth - widest);
     const sides = next.left + next.right;
     if (sides > spare) {
