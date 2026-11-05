@@ -492,6 +492,17 @@ export function readPage(
         codeOrder.push(index);
       } else if (token.type !== 'space' && !codeOrder.length)
         problems.push(`"## ${codeTitle}" starts with a "###" subsection, such as "### Usage"`);
+      // Code of one language with nothing between is one block, rather than a line and then more.
+      const before = current.tokens.slice(0, -1).findLast((item) => item.type !== 'space');
+      if (
+        token.type === 'code' &&
+        before?.type === 'code' &&
+        before.lang === token.lang &&
+        !sourcePattern.test(token.lang ?? '')
+      )
+        problems.push(
+          `"## ${codeTitle}" gives two ${token.lang || 'code'} blocks in a row; make them one block`,
+        );
       if (token.type === 'code' && sourcePattern.test(token.lang ?? '')) {
         const name = token.lang.match(sourcePattern)[1];
         if (!examples.has(name))

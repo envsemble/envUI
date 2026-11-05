@@ -303,9 +303,6 @@ An IconButton with the Close cross closes, dismisses or removes what it sits in.
 
 ```tsx
 <Button onClick={save}>Save</Button>
-```
-
-```tsx
 <Button variant="secondary">Cancel</Button>
 <Button tone="danger">Delete project</Button>
 <Button href="/projects">Open projects</Button>
