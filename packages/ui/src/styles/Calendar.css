@@ -1,9 +1,10 @@
 @layer env.components {
   /* Calendar: a month of days as round marks side by side in a grid, as wide as seven days, under the
-     month's name and, at its end, the month buttons. Today is in the accent color, the chosen day a
+     month's name and, at its end, the month buttons. A day is a little less than a row height, so
+     the columns stand close around the small numbers. Today is in the accent color, the chosen day a
      solid fill, and unavailable days take the disabled color, faded. Coarse pointers get touch-sized days. */
   .env-calendar {
-    --env-calendar-day: var(--env-row-height);
+    --env-calendar-day: calc(var(--env-row-height) - 0.25rem);
     inline-size: calc(7 * var(--env-calendar-day));
     max-inline-size: 100%;
     color: var(--env-color-fg-default);

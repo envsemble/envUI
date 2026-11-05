@@ -1,6 +1,6 @@
 @layer env.components {
   /* Month field: DatePicker's field on the picker card, whose body holds a year of months in rows of
-     three, as wide as a calendar, under the year and its buttons. As the calendar's days, this month
+     three, seven row heights wide, under the year and its buttons. As the calendar's days, this month
      is in the accent color, the chosen month a solid fill, and unavailable months are faded. Coarse
      pointers get touch-tall months. */
   .env-month-picker-year {

@@ -12,6 +12,7 @@ import {
   now,
   roundToStep,
   toUtcDate,
+  withHourCycle,
 } from '../../internal/calendarDays.js';
 import { TimeWheel, type Entry, type Part } from './TimeWheel.js';
 import '../../styles/Base.css';
@@ -37,6 +38,8 @@ export interface TimeListProps
   start?: number;
   /** The locale the times are written in, with its own 12- or 24-hour clock. */
   locale?: string;
+  /** The clock, h12 or h23, whatever the locale's; the locale's by default. */
+  hourCycle?: 'h12' | 'h23';
 }
 
 /** The first column of a time list, where focus goes as a popup with the list opens. */
@@ -67,6 +70,7 @@ export function TimeList({
   max,
   start,
   locale,
+  hourCycle,
   className,
   ...props
 }: TimeListProps) {
@@ -74,9 +78,10 @@ export function TimeList({
   const columnsRef = useRef<(HTMLDivElement | null)[]>([]);
   const shownLocale = useResolvedLocale(locale);
   const step = minuteStepOf(minuteStep);
-  // Times are wall-clock minutes, formatted in UTC so no zone shifts them, on the locale's clock.
+  // Times are wall-clock minutes, formatted in UTC so no zone shifts them, on the locale's clock
+  // unless hourCycle sets one.
   const clock = useMemo(() => {
-    const format = dateFormat(shownLocale, { timeStyle: 'short' });
+    const format = dateFormat(shownLocale, withHourCycle({ timeStyle: 'short' }, hourCycle));
     const cycle = format.resolvedOptions().hourCycle;
     const partOf = (minutes: number, type: Part) =>
       format.formatToParts(toUtcDate(0, minutes)).find((part) => part.type === type)?.value ?? '';
@@ -98,7 +103,7 @@ export function TimeList({
       periodLabels: [partOf(60, 'dayPeriod'), partOf(13 * 60, 'dayPeriod')],
       cycle,
     };
-  }, [shownLocale]);
+  }, [shownLocale, hourCycle]);
 
   // Without a value, a choice in one column completes the time the others show.
   const [startState] = useState(() => roundToStep(now().minutes, step));

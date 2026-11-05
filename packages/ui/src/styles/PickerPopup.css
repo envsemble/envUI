@@ -7,7 +7,7 @@
   .env-picker-popup {
     --env-control-height: var(--env-control-height-sm);
     /* A calendar's day, as Calendar.css sizes it. */
-    --env-picker-popup-day: var(--env-row-height);
+    --env-picker-popup-day: calc(var(--env-row-height) - 0.25rem);
     align-content: start;
     inline-size: auto;
     /* In a narrow window, where a field fills its container, the card is at least as wide as the

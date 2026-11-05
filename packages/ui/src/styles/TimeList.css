@@ -8,7 +8,7 @@
      color, so they never read as the fade. Coarse pointers get touch-tall rows. */
   .env-time-list {
     /* A calendar day's height, as the picker card sets it. */
-    --env-time-list-row: var(--env-picker-popup-day, var(--env-row-height));
+    --env-time-list-row: var(--env-picker-popup-day, calc(var(--env-row-height) - 0.25rem));
     --env-time-list-rows: 5;
     display: grid;
     grid-auto-columns: minmax(max-content, 1fr);

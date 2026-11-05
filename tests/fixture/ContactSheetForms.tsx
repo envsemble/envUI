@@ -648,6 +648,22 @@ function Pickers() {
               />
             </Stage>
           </Cell>
+          <Cell caption="Open, en-US on the 24-hour clock">
+            <Stage height="22rem" width="18rem">
+              <TimePicker
+                label="Start"
+                locale="en-US"
+                hourCycle="h23"
+                defaultValue="18:00"
+                defaultOpen
+              />
+            </Stage>
+          </Cell>
+          <Cell caption="Open, en-US on its 12-hour clock">
+            <Stage height="22rem" width="18rem">
+              <TimePicker label="Start" locale="en-US" defaultValue="18:00" defaultOpen />
+            </Stage>
+          </Cell>
         </Strip>
       </Section>
       <Section name="MonthPicker">
