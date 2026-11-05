@@ -154,9 +154,10 @@ test('the navigation holds the wordmark and search, the page the other area and 
 }) => {
   for (const [address, other, brand] of [
     // In the catalogue the wordmark tops the rail; the Docs, which have no rail, put it in the
-    // drawer. A page with a page of its subject in the other part has the switch in its banner for
-    // that instead, so these are pages without one.
+    // drawer. The bar is the same on every page of a part, also on one with the Design | Code
+    // switch in its banner.
     ['/components', 'Docs', 'Catalogue'],
+    ['/components/button', 'Docs', 'Catalogue'],
     ['/docs/tokens', 'Catalogue', 'Docs'],
   ] as const) {
     await page.setViewportSize({ width: 1280, height: 800 });
