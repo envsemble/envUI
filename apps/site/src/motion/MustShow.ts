@@ -103,3 +103,24 @@ export function headFor(root: Element, heading: Heading | null) {
 
 /** Where a preview's pointer is heading, if anywhere. */
 export const headingOf = (root: Element) => headings.get(root) ?? null;
+
+/*
+ * Every point a preview's pointer heads to over its script, in its order: a tile's still is framed
+ * as its play is, with each of them in view that fits, so the pointer coming in moves nothing
+ * (useFit.ts).
+ */
+
+/** The points each preview's pointer heads to, by the preview's root element. */
+const courses = new WeakMap<Element, Set<readonly Heading[]>>();
+
+/** Names the points a preview's pointer heads to, in order; returns the release. */
+export function nameCourse(root: Element, points: readonly Heading[]) {
+  let set = courses.get(root);
+  if (!set) courses.set(root, (set = new Set()));
+  const own = set;
+  own.add(points);
+  return () => void own.delete(points);
+}
+
+/** The points a preview's pointer heads to over its script, in order. */
+export const courseOf = (root: Element): Heading[] => [...(courses.get(root) ?? [])].flat();

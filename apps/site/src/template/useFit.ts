@@ -1,5 +1,12 @@
 import { useLayoutEffect, useRef, type RefObject } from 'react';
-import { headingEvent, headingOf, holdsView, mustShowOf } from '../motion/MustShow';
+import {
+  courseOf,
+  headingEvent,
+  headingOf,
+  holdsView,
+  mustShowOf,
+  type Heading,
+} from '../motion/MustShow';
 import { aimedElement } from '../motion/PointerPlan';
 
 /** The least room, in px, between a preview and its stage's edges. */
@@ -230,7 +237,8 @@ function within(box: DOMRect, clip: DOMRect | null) {
  * size a box to what its content measures. It follows the stage's width, the preview as it loads
  * and resizes, and the overlays as they open, are placed and finish their transitions: each change
  * fits it again in the next frame, however late it comes, so no timing decides whether it fits.
- * A page's own tile is drawn at its window's scale. At rest it is centred on what it paints. As it
+ * A page's own tile is drawn at its window's scale. At rest it is centred on what it paints, and a
+ * gallery's tile framed as it plays, with what its pointer heads to in view (onCourse). As it
  * plays, its view stays where it is, so what happens in it, such as notifications stacking, happens
  * in place; it moves only when something would leave the stage, easing just far enough to keep it
  * in. In a gallery, it is drawn out once for all its animation acts on and opens (playFit), and
@@ -300,6 +308,54 @@ export function useFit(
       trimRows(canvasElement, run !== null || (screen && playingNow.current));
     };
     /**
+     * Where what a preview shows reaches past the stage's edges, drawn at a view: the sides it is
+     * cut off at (`data-cut`, Gallery.css).
+     */
+    const cutSides = (boxes: Shown[], toX: number, toY: number, scale: number) => {
+      const shows = join(...boxes.map(({ box }) => box))!;
+      const past = (at: number, size: number, low: number, high: number) => [
+        size / 2 - at + low * scale < -1,
+        size / 2 - at + high * scale > size + 1,
+      ];
+      const [top, bottom] = past(toY, stageElement.clientHeight, shows.top, shows.bottom);
+      const [start, end] = past(toX, stageElement.clientWidth, shows.left, shows.right);
+      return [top && 'top', bottom && 'bottom', start && 'start', end && 'end']
+        .filter(Boolean)
+        .join(' ');
+    };
+    /**
+     * A still framed as its play is: each point its pointer heads to over its script that is
+     * there at rest, in order, as many as fit together, kept in the stage as the play keeps them
+     * (heading), so the pointer coming in and going moves nothing.
+     */
+    const onCourse = (toX: number, toY: number, scale: number) => {
+      const across = stageElement.clientWidth / 2 - 4;
+      const down = stageElement.clientHeight / 2 - 4;
+      let held: Box | null = null;
+      // What the tile names anywhere (useMustShow), such as a panel it opens in place, as far as
+      // it paints (inkOf), first.
+      const named = mustShowOf(canvasElement, true).flatMap((selector) => {
+        const element = aimedElement(canvasElement, selector);
+        return element?.checkVisibility() ? [inkOf(element, canvasElement)] : [];
+      });
+      const aims = courseOf(canvasElement).map(aimBox);
+      for (const box of [...named, ...aims]) {
+        if (!box || box.right <= box.left || box.bottom <= box.top) continue;
+        const next: Box = join(held, box)!;
+        if (
+          (next.right - next.left) * scale > 2 * (across - margin) ||
+          (next.bottom - next.top) * scale > 2 * (down - margin)
+        )
+          continue;
+        held = next;
+      }
+      if (!held) return { toX, toY };
+      return {
+        toX: contain(toX, held.left * scale, held.right * scale, across),
+        toY: contain(toY, held.top * scale, held.bottom * scale, down),
+      };
+    };
+    /**
      * The part of the canvas a playing tile's pointer is heading to, in its own px: the element it
      * aims at, or the row it is in, such as a list's row around its link, so the crop shows it whole
      * rather than hiding it past its foot (trimRows); of an element taller than a row, such as a
@@ -307,7 +363,10 @@ export function useFit(
      */
     const heading = (): Box | null => {
       const aim = headingOf(canvasElement);
-      if (!aim) return null;
+      return aim ? aimBox(aim) : null;
+    };
+    /** The part of the canvas a point the pointer heads to takes in (heading). */
+    const aimBox = (aim: Heading): Box | null => {
       const element = aimedElement(canvasElement, aim.selector);
       if (!element?.checkVisibility()) return null;
       const row = element.closest(rowSelector);
@@ -382,6 +441,9 @@ export function useFit(
         ),
         scale: view.toScale,
         pending: null,
+        at: { x: view.toX, y: view.toY, scale: view.toScale },
+        cut: canvasElement.dataset.cut?.split(' ') ?? [],
+        moved: false,
       };
       const current = run;
       // What the script acts on in a popup, such as a select's options, and what the tile names
@@ -398,7 +460,7 @@ export function useFit(
         ...mustShowOf(canvasElement, true).flatMap(query),
       ]
         .filter((element) => element.checkVisibility({ visibilityProperty: true }))
-        .map(shownPart)
+        .map((element) => inkOf(element, canvasElement))
         .filter((box) => box.right > box.left && box.bottom > box.top);
       // What opens, a popup, and what grows in one, such as a palette's results: a popup on its
       // way in is measured by the box that places it, untransformed, as it ends.
@@ -561,18 +623,16 @@ export function useFit(
           glideTo();
         }
       }
-      // What reaches past the stage's edges, where the view is drawn, is cut off there.
-      const shows = join(...boxes.map(({ box }) => box))!;
-      const past = (at: number, size: number, low: number, high: number) => [
-        size / 2 - at + low * view.toScale < -1,
-        size / 2 - at + high * view.toScale > size + 1,
-      ];
-      const [top, bottom] = past(view.toY, down, shows.top, shows.bottom);
-      const [start, end] = past(view.toX, across, shows.left, shows.right);
-      const sides = [top && 'top', bottom && 'bottom', start && 'start', end && 'end']
-        .filter(Boolean)
-        .join(' ');
-      if (sides) canvasElement.dataset.cut = sides;
+      // What reaches past the stage's edges, where the view is drawn, is cut off there; until its
+      // view moves, also where its still was, so the pointer coming in changes nothing.
+      current.moved ||=
+        Math.abs(view.toX - current.at.x) >= 0.5 ||
+        Math.abs(view.toY - current.at.y) >= 0.5 ||
+        Math.abs(view.toScale - current.at.scale) >= 0.0005;
+      const sides = new Set(cutSides(boxes, view.toX, view.toY, view.toScale).split(' '));
+      if (!current.moved) for (const side of current.cut) sides.add(side);
+      sides.delete('');
+      if (sides.size) canvasElement.dataset.cut = [...sides].join(' ');
       else delete canvasElement.dataset.cut;
       trimRows(canvasElement, true);
       for (const { element } of boxes) resize.observe(element);
@@ -745,8 +805,10 @@ export function useFit(
       // and fades out (`data-cut`, Gallery.css).
       const across = (right - left) * scale;
       const down = (bottom - top) * scale;
-      // A popup drawn whole in the stage's room is centred on it, cut off nowhere.
-      const inRoom = roomy && down <= room.height + 0.5 && across <= room.width + 0.5;
+      // What fits the stage's room, a margin from its edges, such as a popup drawn whole there or
+      // a component a little taller than the inset leaves room for, is centred on it, cut off
+      // nowhere.
+      const inRoom = down <= room.height + 0.5 && across <= room.width + 0.5;
       // So is a component a little wider than the inset leaves room for, such as a strip of tabs,
       // across: it is cut off at its foot alone, as every other one is, not at its side.
       const acrossRoom = across <= room.width + 0.5;
@@ -766,16 +828,27 @@ export function useFit(
       // what its script acts on further down, such as a picker's chosen row, shows whole.
       if ((ownSize || legible) && down > height && !inRoom)
         toY = keep
-          ? top * scale + stageElement.clientHeight / 2 - margin
+          ? keepWhole(top * scale, keep.bottom * scale, stageElement.clientHeight)
           : top * scale + height / 2;
-      // Drawn at a legible scale, a scene wider than the stage is cut off on both sides, fading
-      // out there too.
+      // At rest, a tile is framed as it plays, on what its pointer heads to (onCourse); moved
+      // for it, it is cut off where it reaches past the stage's edges.
+      const course =
+        (ownSize || legible) && tile && !playingNow.current && !keep
+          ? onCourse(toX, toY, scale)
+          : null;
+      const shifted =
+        course !== null && (Math.abs(course.toX - toX) >= 0.5 || Math.abs(course.toY - toY) >= 0.5);
+      if (course) ({ toX, toY } = course);
       if (ownSize || legible) {
-        const cut = [
-          down > height + inset && !inRoom ? 'bottom' : '',
-          !legible && across > width + inset && !inRoom && !acrossRoom ? 'end' : '',
-          legible && across > stageElement.clientWidth ? 'start end' : '',
-        ];
+        // Drawn at a legible scale, a scene wider than the stage is cut off on both sides, fading
+        // out there too.
+        const cut = shifted
+          ? [cutSides(boxes, toX, toY, scale)]
+          : [
+              down > height + inset && !inRoom ? 'bottom' : '',
+              !legible && across > width + inset && !inRoom && !acrossRoom ? 'end' : '',
+              legible && across > stageElement.clientWidth ? 'start end' : '',
+            ];
         const sides = cut.filter(Boolean).join(' ');
         if (sides) canvasElement.dataset.cut = sides;
         else delete canvasElement.dataset.cut;
@@ -913,14 +986,13 @@ export function useFit(
       // From the screen's top to its foot: where the stage's middle is along it.
       const highest = down / 2;
       const lowest = Math.max(highest, tall * scale - down / 2);
-      let toY = highest;
+      const along = (y: number) => Math.min(Math.max(y, highest), lowest);
+      // At rest, framed as it plays, on what its pointer heads to (onCourse).
+      let toY = plays ? view.toY : along(onCourse(across / 2, highest, scale).toY);
       if (plays) {
-        toY = Math.min(Math.max(view.toY, highest), lowest);
+        toY = along(toY);
         const box = heading();
-        if (box) {
-          toY = contain(toY, box.top * scale, box.bottom * scale, down / 2 - 4);
-          toY = Math.min(Math.max(toY, highest), lowest);
-        }
+        if (box) toY = along(contain(toY, box.top * scale, box.bottom * scale, down / 2 - 4));
       }
       // What it shows past the stage's top or foot, the screen's own fill aside, is cut off there.
       const shows = join(...boxes.map(({ box }) => box));
@@ -1034,6 +1106,39 @@ function partOf(element: Element, canvas: HTMLElement): Box {
   return box;
 }
 
+/**
+ * What shows of an element as far as it paints, in its canvas's own px: of one that holds text,
+ * such as a heading as wide as its pane, the text's own extent, not its box's.
+ */
+function inkOf(element: Element, canvas: HTMLElement): Box {
+  const box = partOf(element, canvas);
+  if (!element.textContent?.trim()) return box;
+  const frame = canvas.getBoundingClientRect();
+  const ratio = frame.width / canvas.offsetWidth || 1;
+  const range = document.createRange();
+  range.selectNodeContents(element);
+  const text = range.getBoundingClientRect();
+  return {
+    left: Math.max(box.left, (text.left - frame.left) / ratio),
+    top: Math.max(box.top, (text.top - frame.top) / ratio),
+    right: Math.min(box.right, (text.right - frame.left) / ratio),
+    bottom: Math.min(box.bottom, (text.bottom - frame.top) / ratio),
+  };
+}
+
+/**
+ * Where a held view's middle goes down a stage `size` tall, for what it shows from `top` and what
+ * it acts on down to `bottom`, drawn at its scale: a margin from the stage's top, or where what it
+ * acts on would end just past the foot, as a picker's chosen row, as much nearer the top as keeps it
+ * whole (trimRows), its top still inside.
+ */
+function keepWhole(top: number, bottom: number, size: number) {
+  const atMargin = top + size / 2 - margin;
+  const whole = bottom - size / 2 - rowSlack + 0.25;
+  // Its top may reach as far past the stage's top as a row past its foot, its leading clear.
+  return whole > atMargin && whole <= top + size / 2 + rowSlack ? whole : atMargin;
+}
+
 /** The share of its scale a playing tile's content may need before it is drawn smaller. */
 const zoomSlack = 0.97;
 
@@ -1071,6 +1176,10 @@ interface Run {
   rested: Map<Element, Box>;
   scale: number;
   pending: Box | null;
+  /** Where its view rested, the sides it was cut off at, and whether it has moved since. */
+  at: { x: number; y: number; scale: number };
+  cut: string[];
+  moved: boolean;
 }
 
 /**

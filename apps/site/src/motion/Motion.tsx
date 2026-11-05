@@ -12,7 +12,7 @@ import {
 } from 'react';
 import { PortalContainer } from '@envsemble/envui';
 import { isVirtual, VirtualPointer, type Aimed } from './VirtualPointer';
-import { headFor, holdView, nameMustShow } from './MustShow';
+import { headFor, holdView, nameCourse, nameMustShow } from './MustShow';
 import {
   aimsOf,
   ease,
@@ -364,6 +364,17 @@ export function usePointer(
   const [plan] = useState(() => planOf(script));
   // What it acts on stays in its tile's view as it plays (MustShow.ts).
   useEffect(() => (root ? nameMustShow(root, aimsOf(plan)) : undefined), [root, plan]);
+  // Where it heads, which its tile's still is framed on, as its play is (useFit.ts).
+  useEffect(
+    () =>
+      root
+        ? nameCourse(
+            root,
+            plan.moves.map(({ to }) => ({ selector: to.selector, x: to.x, y: to.y })),
+          )
+        : undefined,
+    [root, plan],
+  );
   // The pointer's events go out after React's commit, as a component may answer them by
   // rendering at once, which React refuses from inside an effect.
   useEffect(

@@ -2,6 +2,9 @@ import { test, expect, type Page } from '@playwright/test';
 import { siteDevUrl } from './helpers/Servers';
 import { chooseScheme } from './helpers/CatalogueThemes';
 import { documents, componentDocuments } from '../../apps/site/src/pages/PageModel';
+import type * as PageModel from '../../apps/site/src/pages/PageModel';
+import type * as RelatedPages from '../../apps/site/src/template/RelatedPages';
+import type { DocumentationMetadata } from '../../apps/site/src/shared/DocumentationTypes';
 import { goTo } from './helpers/SiteSpecHelpers';
 import { pagesOf } from '../../apps/site/src/navigation/SiteRoutes';
 import { bannerDrawingIndex, bannerSubject } from '../../apps/site/src/layout/CatalogueBannerOrder';
@@ -692,7 +695,8 @@ test('every tile of the galleries is fitted: components at one scale, a scene at
     expect(cutRows, route).toEqual([]);
     // A popup shown open, such as a menu beside its button or a dialog, shows its top and its
     // start in its stage, its corners there in view. Where it is larger, it is a window onto it,
-    // cut off at its foot or its end alone, fading out there, after a whole row (above).
+    // cut off at its foot or its end, fading out there, after a whole row (above); a modal taller
+    // than its stage's screen, framed down it on what its script acts on, at its top too.
     const cutPopups = await tiles.evaluateAll((items) =>
       items.flatMap((tile) => {
         const stage = tile.querySelector('.catalogue-related-stage')!.getBoundingClientRect();
@@ -711,7 +715,7 @@ test('every tile of the galleries is fitted: components at one scale, a scene at
             const box = card.getBoundingClientRect();
             return (
               box.left < stage.left - 1 ||
-              box.top < stage.top - 1 ||
+              (box.top < stage.top - 1 && !cut.includes('top')) ||
               (box.right > stage.right + 1 && !cut.includes('end')) ||
               (box.bottom > stage.bottom + 1 && !cut.includes('bottom'))
             );
@@ -863,22 +867,17 @@ const heldFrames = (frames: PlayFrame[]) =>
 test("a gallery tile that plays draws out what it opens inside its stage and rests at its still's scale", async ({
   page,
 }) => {
-  // As a tile plays, its view stays at its still until what its script opens needs more room,
-  // such as a date picker's next month: then it is drawn out about its trigger, no smaller than a
-  // popup's least scale (Gallery.css), and holds there: its scale only falls. Played again, it
-  // does the same. A calendar cut off at rest keeps its month in view.
+  // As a tile plays, its view stays at its still until what its script opens needs more room:
+  // then it is drawn out about its trigger, no smaller than a popup's least scale (Gallery.css),
+  // and holds there: its scale only falls. Played again, it does the same. A menu closed and
+  // opened again from its button keeps its items and its button in view.
   test.setTimeout(60_000);
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto(`${siteDevUrl}/components`);
   const least = 0.84;
   // What each script acts on, by the selectors of its tile (tiles/).
   const cards = {
-    DatePicker: [
-      '.env-calendar-next',
-      '.env-calendar-previous',
-      '.env-calendar-day[data-date="2026-02-04"]',
-      '.env-calendar-day[data-date="2026-02-11"]',
-    ],
+    Menu: ['.env-menu-item', '.env-button'],
   };
   for (const [name, targets] of Object.entries(cards)) {
     const { rest, frames: first } = await playTile(page, name, targets);
@@ -973,15 +972,13 @@ test('the gallery renders its tiles ahead of the scroll, before they come into v
   }
 });
 
-test('a gallery tile whose script opens nothing holds its still as the pointer comes in', async ({
-  page,
-}) => {
+test('a gallery tile holds its still as the pointer comes in', async ({ page }) => {
   // The first thing seen as a tile starts to play is what its script does, not the tile moving.
   test.setTimeout(60_000);
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto(`${siteDevUrl}/components`);
-  // Accordion opens a panel, so the view may ease to it; these open nothing.
-  for (const name of ['Tree', 'List', 'Avatar']) {
+  // Its still is framed as its play is (useFit.ts): Accordion's panel opens in place.
+  for (const name of ['Tree', 'List', 'Avatar', 'Accordion']) {
     // Just past 300 ms, the first stretch of the play.
     const { rest, frames } = await playTile(page, name, [], 400);
     const moved = frames
@@ -1327,4 +1324,60 @@ test("a playing preview draws its pointer's cursor over its stage, gone at rest 
   await figure.first().hover();
   await figure.first().locator('.catalogue-motion-pause').click();
   await expect(figure.first().locator('.catalogue-pointer-cursor')).toHaveCount(0);
+});
+
+test('a playing pointer that carries a file names it in a chip beside its cursor until the drop', async ({
+  page,
+}) => {
+  // DropZone's card carries report.pdf in, over the zone, and drops it (tiles/DropZone.tsx).
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(`${siteDevUrl}/components`);
+  const tile = page.locator('.catalogue-gallery-tile').filter({
+    has: page.locator('.catalogue-gallery-name', { hasText: /^DropZone$/ }),
+  });
+  await tile.scrollIntoViewIfNeeded();
+  await expect(tile.locator('.catalogue-related-canvas[data-fitted]')).toHaveCount(1);
+  const chip = tile.locator('.catalogue-pointer-cursor .catalogue-pointer-file');
+  await expect(chip).toHaveCount(0);
+  const box = (await tile.boundingBox())!;
+  await page.mouse.move(box.x + box.width / 2, box.y + 8);
+  await expect(chip).toHaveText('report.pdf');
+  // Dropped, the zone uploads it, and the chip is gone while the cursor stays.
+  await expect(tile.locator('.env-drop-zone')).toContainText('Uploading');
+  await expect(chip).toHaveCount(0);
+  await expect(tile.locator('.catalogue-pointer-cursor')).toBeVisible();
+  await page.mouse.move(0, 0);
+  await expect(tile.locator('.catalogue-pointer-cursor')).toHaveCount(0);
+});
+
+test('each Related tile shows the component it names, also one documented on another page', async ({
+  page,
+}) => {
+  // An export documented on another's page, such as SearchField on TextField's, shows an example
+  // that renders it, not the page's lead (RelatedPages.ts).
+  await page.goto(`${siteDevUrl}/components`);
+  const wrong = await page.evaluate(async () => {
+    // The site's own modules, as its dev server serves them.
+    const load = (path: string) => import(/* @vite-ignore */ path);
+    const related = (await load('/src/template/RelatedPages.ts')) as typeof RelatedPages;
+    const { documents } = (await load('/src/pages/PageModel.ts')) as typeof PageModel;
+    const found: string[] = [];
+    for (const document of documents) {
+      const full = (await load(`/src/generated/pages/${document.id}.json`).catch(() => null)) as {
+        default: { metadata?: DocumentationMetadata };
+      } | null;
+      const metadata = full?.default.metadata;
+      for (const { name, preview } of metadata?.avoidWhen ? related.alternativesOf(metadata) : []) {
+        // A page's own export shows the page's tile; a pattern or a guide is no component.
+        if (!related.pageOf(name) || !preview || preview.tile || preview.specimen) continue;
+        const { default: source } = (await load(
+          `/src/examples/${preview.page}/${preview.name}.tsx?raw`,
+        )) as { default: string };
+        if (!new RegExp(`<${name.replace('.', '\\.')}[\\s/>.]`).test(source))
+          found.push(`${document.id}: ${name} shows ${preview.page}/${preview.name}`);
+      }
+    }
+    return [...new Set(found)];
+  });
+  expect(wrong).toEqual([]);
 });
