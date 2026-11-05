@@ -1114,7 +1114,7 @@ test('content that scrolls itself back to its start as panels reorder stays ther
   expect(await list.evaluate((element) => element.scrollTop)).toBe(60);
 });
 
-test('the muted fill sets apart a header that a form in the content holds', async ({ page }) => {
+test('the scrolled fill sets apart a header that a form in the content holds', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto(dockFixture);
   const panel = page.getByTestId('passive-dock-light').locator('section[data-panel-id="first"]');
@@ -1244,7 +1244,7 @@ test('a narrow panel puts its actions and window controls above a title that kee
   await expect(title).toHaveCSS('overflow-wrap', 'break-word');
 });
 
-test('the muted fill, not a line, sets the header apart once the content scrolls beneath it, in both themes', async ({
+test('the default surface, not a line, sets the header apart once the content scrolls beneath it, in both themes', async ({
   page,
 }) => {
   await page.goto(dockFixture);
@@ -1252,8 +1252,8 @@ test('the muted fill, not a line, sets the header apart once the content scrolls
     const panel = dockOf(page, theme).panel('report');
     const content = panel.locator(':scope > .env-panel-dock-content');
     const header = panel.locator('.env-panel-dock-header');
-    const [panelColor, muted] = await panel.evaluate((element) =>
-      ['var(--env-color-bg-raised)', 'var(--env-color-bg-muted)'].map((value) => {
+    const [panelColor, scrolled] = await panel.evaluate((element) =>
+      ['var(--env-color-bg-raised)', 'var(--env-color-bg-default)'].map((value) => {
         const probe = document.createElement('span');
         probe.style.backgroundColor = value;
         element.append(probe);
@@ -1262,10 +1262,10 @@ test('the muted fill, not a line, sets the header apart once the content scrolls
         return color;
       }),
     );
-    expect(muted).not.toBe(panelColor);
+    expect(scrolled).not.toBe(panelColor);
     await expect(header).toHaveCSS('background-color', panelColor);
     await content.evaluate((element) => (element.scrollTop = 40));
-    await expect(header).toHaveCSS('background-color', muted);
+    await expect(header).toHaveCSS('background-color', scrolled);
     await expect(header).toHaveCSS('box-shadow', 'none');
     await expect(header).toHaveCSS('border-bottom-width', '0px');
     await content.evaluate((element) => (element.scrollTop = 0));

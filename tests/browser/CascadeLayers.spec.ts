@@ -11,6 +11,22 @@ const adoption = `${fixtureUrl}/?fixture=adoption`;
  * same element and state.
  */
 
+/**
+ * The body type and the medium control height of the adoption page's scale, which follows the
+ * pointer by default (compact under a fine one), so the specs measure the type the theme sets.
+ */
+async function adoptionMeasures(page: Page) {
+  return page.locator('.fixture-adoption').evaluate((boundary) => {
+    const probe = document.createElement('span');
+    probe.style.cssText =
+      'position: absolute; display: block; font: var(--env-type-body); height: var(--env-control-height-md)';
+    boundary.append(probe);
+    const { fontSize, lineHeight, height } = getComputedStyle(probe);
+    probe.remove();
+    return { fontSize, lineHeight, control: Number.parseFloat(height) };
+  });
+}
+
 async function openLayers(page: Page) {
   await page.goto(`${fixtureUrl}/CascadeLayers.html`);
   await page.waitForSelector('body[data-styles-ready] .env-button', { state: 'attached' });
@@ -133,15 +149,16 @@ test(
     await page.goto(adoption);
     const root = page.locator('html');
     await expect(root).toHaveClass(/env-theme/);
+    const type = await adoptionMeasures(page);
     // 1 rem stays the browser's 16 px, so rem measures keep their designed size.
     await expect(root).toHaveCSS('font-size', '16px');
     const button = page.getByTestId('router-button');
     await expect(button).toBeVisible();
-    expect((await button.boundingBox())!.height).toBeCloseTo(40, 1);
+    expect((await button.boundingBox())!.height).toBeCloseTo(type.control, 1);
     // Text takes the body type in the document body, the application and portals alike.
-    await expect(page.locator('body')).toHaveCSS('font-size', '15px');
-    await expect(page.locator('body')).toHaveCSS('line-height', '21px');
-    await expect(page.locator('.fixture-adoption')).toHaveCSS('font-size', '15px');
+    await expect(page.locator('body')).toHaveCSS('font-size', type.fontSize);
+    await expect(page.locator('body')).toHaveCSS('line-height', type.lineHeight);
+    await expect(page.locator('.fixture-adoption')).toHaveCSS('font-size', type.fontSize);
     const portal = await page.evaluate(() => {
       const element = document.createElement('div');
       element.textContent = 'Another library’s popup';
@@ -150,14 +167,14 @@ test(
       element.remove();
       return { fontSize, fontFamily };
     });
-    expect(portal.fontSize).toBe('15px');
+    expect(portal.fontSize).toBe(type.fontSize);
     expect(portal.fontFamily).toContain('envUI Geist');
     await page.getByRole('button', { name: 'Open pending dialog' }).click();
     const dialog = page.getByRole('dialog', { name: 'Save project' });
-    await expect(dialog).toHaveCSS('font-size', '15px');
+    await expect(dialog).toHaveCSS('font-size', type.fontSize);
     await expect(dialog.getByRole('button', { name: 'Toggle pending' })).toHaveCSS(
       'height',
-      '40px',
+      `${type.control}px`,
     );
   },
 );
@@ -168,6 +185,7 @@ test(
   async ({ page }) => {
     await page.goto(adoption);
     await expect(page.locator('html')).toHaveClass(/env-theme/);
+    const type = await adoptionMeasures(page);
     const body = page.locator('body');
     const inside = [
       page.getByTestId('adoption-plain-text'),
@@ -181,7 +199,7 @@ test(
       document.head.prepend(style);
       return style;
     });
-    await expect(body).toHaveCSS('font-size', '15px');
+    await expect(body).toHaveCSS('font-size', type.fontSize);
     await layered.evaluate((style) => style.remove());
     // An application's unlayered body rule, before envUI's style sheet, styles the body itself.
     await page.evaluate(() => {
@@ -200,8 +218,8 @@ test(
       await expect(element).not.toHaveCSS('font-size', '18px');
     }
     for (const element of inside) {
-      await expect(element).toHaveCSS('font-size', '15px');
-      await expect(element).toHaveCSS('line-height', '21px');
+      await expect(element).toHaveCSS('font-size', type.fontSize);
+      await expect(element).toHaveCSS('line-height', type.lineHeight);
     }
     await page.getByRole('button', { name: 'Assign seat' }).hover();
     const tooltip = page.locator('.env-tooltip');
@@ -211,7 +229,7 @@ test(
     await page.getByRole('button', { name: 'Open pending dialog' }).click();
     const dialog = page.getByRole('dialog', { name: 'Save project' });
     await expect(dialog).toHaveCSS('font-family', /envUI Geist/);
-    await expect(dialog).toHaveCSS('font-size', '15px');
+    await expect(dialog).toHaveCSS('font-size', type.fontSize);
     // envUI's font tokens change its typeface wherever it applies.
     await page.evaluate(() => {
       const style = document.createElement('style');
@@ -240,7 +258,10 @@ test(
       style.textContent = '.env-theme { --env-line-height-body: 2; }';
       document.head.append(style);
     });
-    await expect(page.getByTestId('adoption-plain-text')).toHaveCSS('line-height', '30px');
+    await expect(page.getByTestId('adoption-plain-text')).toHaveCSS(
+      'line-height',
+      `${Number.parseFloat(type.fontSize) * 2}px`,
+    );
     // The root keeps the browser's size, so rem measures keep theirs.
     await expect(page.locator('html')).toHaveCSS('font-size', '16px');
   },
