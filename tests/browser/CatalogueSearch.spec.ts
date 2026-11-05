@@ -140,12 +140,16 @@ test.describe('search', () => {
     await search(page, 'date');
     const groups = dialog(page).getByRole('group');
     await expect(groups.first()).toContainText('DatePicker');
-    await expect(groups.last()).toHaveAccessibleName('Also mentioned in');
-    // The pages it names, components and patterns, come before the props.
-    const top = async (name: string) =>
-      (await dialog(page).getByRole('group', { name, exact: true }).boundingBox())!.y;
-    expect(await top('Patterns')).toBeLessThan(await top('Props'));
-    await expect(groups.last().locator('[data-item-id="page:table"]')).toBeVisible();
+    const mentions = groups.last();
+    await expect(mentions).toHaveAccessibleName('Also mentioned in');
+    // A pattern that only composes a component the query names is a mention, not a pattern found.
+    await expect(dialog(page).getByRole('group', { name: 'Patterns', exact: true })).toHaveCount(0);
+    // What only mentions it folds into one row, which shows it in place.
+    const mentioned = mentions.locator('[data-item-id="more:Also mentioned in"]');
+    await expect(mentions.getByRole('option')).toHaveCount(1);
+    await mentioned.click();
+    await expect(mentioned).toHaveCount(0);
+    await expect(mentions.locator('[data-item-id="page:table"]')).toBeVisible();
     // The props of the component found come first, a few of them, then a row that shows the rest
     // in place and keeps search open.
     const props = dialog(page).getByRole('group', { name: 'Props' });

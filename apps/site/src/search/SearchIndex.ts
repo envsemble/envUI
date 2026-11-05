@@ -20,7 +20,11 @@ export interface SearchResult {
   view?: string;
   /** The id of its element on the page. */
   section?: string;
-  /** Whether the query matched what it is called, its name, aliases or keywords, not only its text. */
+  /**
+   * Whether the query matched what it is called, its name, aliases or keywords, not only its text;
+   * for a pattern, its name or aliases, as its keywords are the components it composes, which a
+   * query for one of them doesn't mean.
+   */
   named: boolean;
 }
 
@@ -40,6 +44,8 @@ export function searchDocumentation(query: string, limit: number): SearchResult[
       area,
       view,
       section,
-      named: Object.values(match).some((fields) => fields.some((field) => field !== 'text')),
+      named: Object.values(match).some((fields) =>
+        fields.some((field) => field !== 'text' && (kind !== 'pattern' || field !== 'keywords')),
+      ),
     }));
 }
