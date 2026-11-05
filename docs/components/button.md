@@ -309,7 +309,7 @@ A button without a `variant` or a `size` takes its container's, such as `ghost` 
 ```tsx
 import { IconButton } from '@envsemble/envui';
 
-<IconButton icon={<IconSettings />} aria-label="Project settings" />
+<IconButton icon={<IconSettings />} aria-label="Project settings" />;
 ```
 
 An IconButton takes its container's variant too, and is otherwise `secondary`.
@@ -335,7 +335,7 @@ import { ButtonGroup } from '@envsemble/envui';
 <ButtonGroup aria-label="Project actions">
   <Button>Open</Button>
   <Button>Edit</Button>
-</ButtonGroup>
+</ButtonGroup>;
 ```
 
 `orientation="vertical"` stacks a group, every button as wide as it; `fullWidth` makes a button or a group fill its container. `end` holds quiet content after the label, at the far end of a wide button, such as the Kbd of a shortcut, as the [button that opens a CommandPalette](command-palette.md#opening-it-the-button-and-the-shortcut) does.

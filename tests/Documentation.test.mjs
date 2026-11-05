@@ -1274,7 +1274,9 @@ test('Table ships each example once, by name in its frontmatter, its rules and l
 test("the Import leads with the page's own export, and leaves a companion to the code that imports it", () => {
   const compiled = compileDocumentation();
   const button = compiled.get('components/button.md');
-  assert.ok(button.includes("### Import\n\n```tsx\nimport { Button } from '@envsemble/envui';\n```"));
+  assert.ok(
+    button.includes("### Import\n\n```tsx\nimport { Button } from '@envsemble/envui';\n```"),
+  );
   assert.ok(hasLine(button, "import { IconButton } from '@envsemble/envui';"));
   assert.ok(hasLine(button, "import { ButtonGroup } from '@envsemble/envui';"));
 });
