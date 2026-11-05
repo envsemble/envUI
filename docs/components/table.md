@@ -103,7 +103,7 @@ Not shown: a column's resize handle, and a stacked cell's label.
 
 ### Sort by a column
 
-A header can sort the rows by its column, and each sortable header shows the order.
+A header can sort the rows by its column. The sorted column shows its order; the other sortable headers show their arrow while the pointer is over the header row or one has keyboard focus, and always on touch.
 
 ```tsx figure=SortableColumns motion
 
@@ -271,6 +271,7 @@ Parts the anatomy doesn't show: a column's resize handle, `env-table-column-resi
 
 ## Changelog
 
+- **1.0.0-prerelease.6**: An unsorted sortable header shows its arrow only while the pointer is over the header row or the header has keyboard focus, where the pointer hovers; the sorted column's arrow always shows.
 - **1.0.0-prerelease.6**: A stacked row is a compact block: the first labelled value, such as a status, sits beside the title without its label, an unlabelled cell such as the row's menu joins them, and the other values follow two to a line, each under its label, in place of a line for each value. The row densities differ by at least 4 px of row height in the compact scale: `xs` and `sm` rows are shorter, and `md` keeps its height.
 - **1.0.0-prerelease.6**: A skeleton shows no selection. A row under the pointer takes `--env-color-bg-row-hover`, a step quieter than the selection in light.
 - **1.0.0-prerelease.6**: A selected row whose first cell holds a checkbox takes no bar at its start, as the checkbox and the fill say it already; a row selected without one keeps the bar.

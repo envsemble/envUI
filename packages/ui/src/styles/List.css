@@ -214,6 +214,16 @@
     position: absolute;
     inset: 0;
   }
+  /* The target's keyboard focus ring is the row's: it traces the row's corners inside its edge, the
+     area a press follows, rather than the label alone, whose ring would cut into the description. */
+  .env-list > .env-list-item[data-interactive]:has([data-row-target]:focus-visible) {
+    --env-list-item-focus-ring: 0.125rem;
+    outline: var(--env-list-item-focus-ring) solid var(--env-color-border-focus);
+    outline-offset: calc(-1 * var(--env-list-item-focus-ring));
+  }
+  .env-list > .env-list-item[data-interactive] [data-row-target]:focus-visible {
+    outline: none;
+  }
   /* Links and text buttons in a row under the pointer or pressed take the link colors for a tint: the
      link blue falls below 4.5:1 on the row's hover and press fills in the light theme. */
   .env-list > .env-list-item[data-interactive]:is(:hover, :has(:focus-visible)) {

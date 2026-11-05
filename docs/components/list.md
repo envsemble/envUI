@@ -189,7 +189,7 @@ List.Root is a `ul` of List.Item rows, each with its `label`, a `description` be
 
 #### Rows that open something
 
-With `interactive`, a row reacts to hover, keyboard focus inside it and presses. Mark its one link or button `data-row-target`, which stretches it over the row; give a link `draggable={false}`, so a press that moves a little doesn't drag it. The row's other controls take `position: relative` to stay above it.
+With `interactive`, a row reacts to hover, keyboard focus inside it and presses. Mark its one link or button `data-row-target`, which stretches it over the row; give a link `draggable={false}`, so a press that moves a little doesn't drag it. The row's other controls take `position: relative` to stay above it. While the target has keyboard focus, its ring traces the row's edge, the area a press follows.
 
 ```tsx
 <List.Item
@@ -259,6 +259,7 @@ The parts are the list, `env-list`, each row, `env-list-item`, with its handle, 
 
 ## Changelog
 
+- **1.0.0-prerelease.6**: In an interactive row the focus ring of the `data-row-target` link or button traces the row, not the label alone.
 - **1.0.0-prerelease.6**: The start slot is at least an icon wide, with its content centred, so a Spinner among icons keeps its label in line.
 - **1.0.0-prerelease.5**: List.Item's `selected` is `current`, as it marks the current row with `aria-current`; `selected` means chosen elsewhere.
 - **1.0.0**: List.Item takes `current` for the current row, marked in the server's HTML, `start` for content before the label, such as an avatar or a checkbox, and `textValue`; List.Root takes `onReorder`, which moves rows by a drag handle, by keyboard, by a press and by pointer, with announcements. `GroupedRows` is `List.Root` and `Row` is `List.Item`, with the `env-list` and `env-list-item` classes; the page is `list`. List.Item's `title` is `label`, its `detail` is `description` and its `action` is `end`, as on CommandPalette's items and Button. List.Root's `contrast` is gone: put the list directly in `<Surface background="muted" padding={3}>`, where its rows take the raised fill.

@@ -332,13 +332,13 @@
         },
         "done": {
           "emphasis": {
-            "$value": "{palette.cyan.80}"
+            "$value": "{palette.slate.82}"
           },
           "muted": {
             "$value": {
               "colorSpace": "oklch",
               "components": {
-                "$ref": "#/palette/cyan/80/$value/components"
+                "$ref": "#/palette/slate/82/$value/components"
               },
               "alpha": 0.08
             }
@@ -513,7 +513,7 @@
           "$value": "{palette.red.80}"
         },
         "done": {
-          "$value": "{palette.cyan.80}"
+          "$value": "{palette.slate.82}"
         },
         "on-emphasis": {
           "$value": "{palette.neutral.0}"
@@ -718,7 +718,7 @@
           "$value": {
             "colorSpace": "oklch",
             "components": {
-              "$ref": "#/palette/cyan/80/$value/components"
+              "$ref": "#/palette/slate/82/$value/components"
             },
             "alpha": 0.55
           }

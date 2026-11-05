@@ -322,7 +322,7 @@ function Lists() {
         start={<IconDescription />}
         label={
           interactive ? (
-            <Link href="#launch" underline={false}>
+            <Link href="#launch" underline={false} data-row-target draggable={false}>
               Launch checklist
             </Link>
           ) : (
@@ -338,7 +338,7 @@ function Lists() {
         start={<IconDescription />}
         label={
           interactive ? (
-            <Link href="#budget" underline={false}>
+            <Link href="#budget" underline={false} data-row-target draggable={false}>
               Budget review
             </Link>
           ) : (
@@ -353,7 +353,7 @@ function Lists() {
         start={<IconDescription />}
         label={
           interactive ? (
-            <Link href="#notes" underline={false}>
+            <Link href="#notes" underline={false} data-row-target draggable={false}>
               Notes
             </Link>
           ) : (
