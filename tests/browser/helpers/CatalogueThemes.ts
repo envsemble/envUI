@@ -72,10 +72,9 @@ export async function emulateContrast(page: Page, theme: CatalogueTheme) {
  */
 export async function chooseScheme(page: Page, scheme: 'light' | 'dark') {
   await page.getByRole('button', { name: 'Display', exact: true }).click();
-  const menu = page.getByRole('dialog', { name: 'Display' });
+  const menu = page.getByRole('menu', { name: 'Display' });
   await menu
-    .getByRole('radiogroup', { name: 'Theme' })
-    .getByRole('radio', { name: scheme === 'dark' ? 'Dark' : 'Light', exact: true })
+    .getByRole('menuitemradio', { name: scheme === 'dark' ? 'Dark' : 'Light', exact: true })
     .click();
   await page.locator(`.site-app[data-env-theme="${scheme}"]`).waitFor();
   await page.keyboard.press('Escape');

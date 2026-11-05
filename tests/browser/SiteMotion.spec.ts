@@ -12,10 +12,10 @@ import { displayStorageKeys } from '../../apps/site/src/theme/DisplayStorage';
 
 /** The Display menu's Motion choice, Play or Pause, opening the menu to reach it. */
 async function motionChoice(page: Page, name: 'Play' | 'Pause') {
-  const menu = page.getByRole('dialog', { name: 'Display' });
+  const menu = page.getByRole('menu', { name: 'Display' });
   if (!(await menu.isVisible()))
     await page.locator('.site-page-actions').getByRole('button', { name: 'Display' }).click();
-  return menu.getByRole('radiogroup', { name: 'Motion' }).getByRole('radio', { name });
+  return menu.getByRole('group', { name: 'Motion' }).getByRole('menuitemradio', { name });
 }
 
 const tile = (page: Page, name: string) =>
