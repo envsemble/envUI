@@ -132,6 +132,19 @@
     font: var(--env-font-weight-body) var(--env-font-size-label-sm) / 1.35 var(--env-font-family);
     overflow-wrap: break-word;
   }
+  /* Beside a label with a description under it, the check mark, the icon, the end and the shortcut
+     sit on the middle of the label's line, 1lh in the item's type, rather than across both lines. */
+  .env-menu-item:has(> .env-menu-item-text > .env-menu-item-description) {
+    align-items: flex-start;
+  }
+  .env-menu-item:has(> .env-menu-item-text > .env-menu-item-description)
+    > :is(.env-menu-item-indicator-slot, .env-icon) {
+    margin-block-start: calc((1lh - var(--env-control-icon-size)) / 2);
+  }
+  .env-menu-item:has(> .env-menu-item-text > .env-menu-item-description)
+    > :is(.env-menu-item-end, .env-menu-item-shortcut) {
+    min-block-size: 1lh;
+  }
   /* A count at the end, a Badge with one, is its figures alone, in its tone's color, without the
      pill, through Badge's count hooks, so it can't be taken for a shortcut's key chips. */
   .env-menu-item-end {

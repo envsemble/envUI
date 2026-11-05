@@ -79,6 +79,23 @@
     font: var(--env-font-weight-body) var(--env-font-size-label-sm) / 1.35 var(--env-font-family);
     overflow-wrap: break-word;
   }
+  /* Beside a label with a description under it, the indicator, the icon, the end and the shortcut
+     sit on the middle of the label's line, 1lh in the row's type, rather than across both lines. */
+  .env-list-row:has(> .env-list-row-text > .env-list-row-description) {
+    align-items: flex-start;
+  }
+  .env-list-row:has(> .env-list-row-text > .env-list-row-description) > .env-list-row-indicator {
+    margin-block-start: calc((1lh - var(--env-control-icon-size)) / 2);
+  }
+  .env-list-row:has(> .env-list-row-text > .env-list-row-description) > .env-list-row-icon {
+    margin-block-start: calc(
+      (1lh - var(--env-list-row-icon-size, var(--env-control-icon-size))) / 2
+    );
+  }
+  .env-list-row:has(> .env-list-row-text > .env-list-row-description)
+    > :is(.env-list-row-end, .env-list-row-shortcut) {
+    min-block-size: 1lh;
+  }
   .env-list-row-end,
   .env-list-row-shortcut {
     flex: 0 0 auto;

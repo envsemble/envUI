@@ -224,7 +224,7 @@
   },
   "packages/ui/src/styles/Radio.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 5
+      "count": 3
     }
   },
   "packages/ui/src/styles/Spinner.css": {

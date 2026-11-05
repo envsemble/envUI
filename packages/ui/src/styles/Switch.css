@@ -46,15 +46,21 @@
     min-inline-size: 0;
     max-inline-size: 100%;
     overflow-wrap: break-word;
+    /* The row is at least the 24 px minimum target in both scales, with the track as drawn. */
+    --env-switch-row: var(--env-control-target-min);
+    box-sizing: border-box;
     display: inline-flex;
-    align-items: center;
+    /* The track sits on the middle of the label's first line, and a one-line label in the middle
+       of the row, so a label that wraps or takes a description keeps the track beside its first
+       line. */
+    align-items: flex-start;
     gap: var(--env-space-3);
+    min-block-size: var(--env-switch-row);
+    padding-block: max(0%, (var(--env-switch-row) - 1lh) / 2);
     font: var(--env-type-body-sm);
     font-size: var(--env-font-size-body-sm);
     color: var(--env-color-fg-default);
     cursor: pointer;
-    /* The row is at least the 24 px minimum target in both scales, with the track as drawn. */
-    min-block-size: var(--env-control-target-min);
   }
   .env-switch > span {
     min-inline-size: 0;
@@ -67,7 +73,7 @@
   }
   @media (pointer: coarse) {
     .env-switch {
-      min-height: var(--env-control-height-touch);
+      --env-switch-row: var(--env-control-height-touch);
     }
   }
 
@@ -80,7 +86,9 @@
     flex: 0 0 auto;
     width: calc(2 * var(--env-switch-thumb) + 2 * var(--env-space-1));
     height: calc(var(--env-switch-thumb) + 2 * var(--env-space-1));
-    margin: 0;
+    /* The label's type, so 1lh is the label's line: the track's middle on the first line's. */
+    font: inherit;
+    margin: calc((1lh - var(--env-switch-thumb) - 2 * var(--env-space-1)) / 2) 0 0;
     padding: var(--env-space-1);
     --env-switch-layer: initial;
     --env-switch-off-layered: color-mix(

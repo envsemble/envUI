@@ -59,7 +59,8 @@
     );
     --env-radio-custom-fill: var(--env-radio-custom-layered, var(--env-radio-custom-base));
     display: flex;
-    align-items: center;
+    /* The radio sits on the middle of the label's first line, beside a description too. */
+    align-items: flex-start;
     justify-content: space-between;
     gap: var(--env-space-3);
     min-width: 0;
@@ -107,11 +108,14 @@
     appearance: none;
     box-sizing: border-box;
     display: inline-grid;
+    --env-radio-size: 1rem;
     place-content: center;
-    width: 1rem;
-    height: 1rem;
+    width: var(--env-radio-size);
+    height: var(--env-radio-size);
     flex: 0 0 auto;
-    margin: 0;
+    /* The label's type, so 1lh is the label's line: the radio's middle on the first line's. */
+    font: inherit;
+    margin: calc((1lh - var(--env-radio-size)) / 2) 0 0;
     border: var(--env-control-border-width) solid var(--env-color-fg-muted);
     border-radius: 50%;
     background: transparent;
@@ -161,7 +165,7 @@
     max-inline-size: 100%;
     overflow-wrap: break-word;
     display: inline-flex;
-    align-items: center;
+    align-items: flex-start;
     gap: var(--env-space-3);
     font: var(--env-type-body-sm);
     font-size: var(--env-font-size-body-sm);

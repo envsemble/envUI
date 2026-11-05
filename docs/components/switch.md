@@ -157,6 +157,7 @@ The root, `env-switch`, is the label around the track, `env-switch-input`, and t
 
 ## Changelog
 
+- **1.0.0-prerelease.6**: Beside a label that wraps or has a description, the track sits on the middle of its first line rather than across both lines.
 - **1.0.0-prerelease.6**: A switch that is off darkens its ring under the pointer and while pressed, as its track deepens.
 - **1.0.0-prerelease.5**: `description`, a muted line under the label.
 - **1.0.0**: `className` and `style` style the root, `env-switch`, rather than the input, which keeps `ref` and the other native props. `env-choice-control` is `env-switch` and `env-switch-control` `env-switch-input`.
