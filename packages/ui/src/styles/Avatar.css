@@ -28,6 +28,12 @@
     --env-avatar-fill: var(--env-avatar-container, var(--env-avatar-container-default));
     --env-avatar-figure-color: var(--env-avatar-content, var(--env-avatar-content-default));
     background: var(--env-avatar-fill);
+    /* Dense, where --env-avatar-dense is 1, as in a table or a small AvatarGroup: the fill takes
+       half its chroma under a layer of its own gray at its lightness, so the initials keep their
+       contrast and a column of avatars stays quieter than the data beside it. */
+    background-image: linear-gradient(
+      oklch(from var(--env-avatar-fill) l 0 h / calc(var(--env-avatar-dense, 0) * 0.5)) 0 0
+    );
     color: var(--env-avatar-content, var(--env-avatar-content-default));
     /* Initials at 0.38 of the avatar, at least the caption size so they stay legible; smaller than
        sm, too small for them, the avatar is a disc of its color alone. */

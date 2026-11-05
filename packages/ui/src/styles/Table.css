@@ -5,6 +5,8 @@
     /* Avatar groups in the cells ring their avatars in the table's surface, with the row's fill
        over it while the row is hovered or selected. */
     --env-avatar-group-ring: var(--env-table-surface);
+    /* Avatars and their groups in the cells are dense, quieter among the rows of data. */
+    --env-avatar-dense: 1;
     /* Absolutely positioned content, such as visually hidden text in a cell, stays in the region and
        scrolls with it instead of widening the page. */
     position: relative;

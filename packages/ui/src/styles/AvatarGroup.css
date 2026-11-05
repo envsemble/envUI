@@ -17,7 +17,11 @@
     /* Spread, the gap between avatars; at rest, how far each avatar starts after the one under it,
        and how far the count lies under the last avatar. */
     --env-avatar-group-gap: calc(var(--env-avatar-group-size) * 0.15);
-    --env-avatar-group-pitch: calc(var(--env-avatar-group-size) * 0.6);
+    --env-avatar-group-pitch: calc(
+      var(--env-avatar-group-size) * (0.6 + 0.1 * var(--env-avatar-dense, 0))
+    );
+    /* 1 for a pile that leans at rest, 0 for a dense one, which rests upright and in line. */
+    --env-avatar-group-lean: calc(1 - var(--env-avatar-dense, 0));
     --env-avatar-group-tuck: calc(var(--env-avatar-group-size) * 0.25);
     /* The room each avatar takes in the spread row: its size, or a pressable avatar's touch target. */
     --env-avatar-group-slot: var(--env-avatar-group-size);
@@ -54,8 +58,13 @@
     /* The group's own stacking context, so the count can lie under its avatars. */
     isolation: isolate;
   }
+  /* Dense: a small group, or one where --env-avatar-dense is 1, as in a table, sits among rows of
+     text, so it stays quiet. It rests upright and in line; pictures overlap less, by 0.3 of the
+     avatar; initials only by the ring, which alone parts them, as the caption-size letters of a
+     small avatar fill most of its circle; and its avatars take quieter fills (Avatar.css). */
   .env-avatar-group[data-size='sm'] {
     --env-avatar-group-size: var(--env-picture-size-sm);
+    --env-avatar-dense: 1;
   }
   .env-avatar-group[data-size='lg'] {
     --env-avatar-group-size: var(--env-picture-size-lg);
@@ -67,7 +76,8 @@
      uncovered beside the next avatar's ring, so two letters stay whole under it. */
   .env-avatar-group:has(.env-avatar-fallback-initials) {
     --env-avatar-group-pitch: calc(
-      var(--env-avatar-group-size) * 0.84 + var(--env-avatar-group-ring-width)
+      (var(--env-avatar-group-size) * 0.84 + var(--env-avatar-group-ring-width)) *
+        (1 - var(--env-avatar-dense, 0)) + var(--env-avatar-group-size) * var(--env-avatar-dense, 0)
     );
   }
   .env-avatar-group[data-align='end'] {
@@ -179,23 +189,33 @@
     );
   }
   /* At rest, small offsets that vary by place, so the avatars read as a pile rather than a row. A
-     group of initials, or a small one, as in a table's row, rests upright and in line, below, so
-     letters never lean and a dense row stays calm. */
+     group of initials, below, or a dense one rests upright and in line, so letters never lean and a
+     dense row stays calm. */
   .env-avatar-group > :nth-child(3n + 1) {
-    --env-avatar-group-rest-lift: calc(var(--env-avatar-group-size) * -0.04);
-    --env-avatar-group-rest-turn: -6deg;
+    --env-avatar-group-rest-lift: calc(
+      var(--env-avatar-group-size) * -0.04 * var(--env-avatar-group-lean)
+    );
+    --env-avatar-group-rest-turn: calc(-6deg * var(--env-avatar-group-lean));
   }
   .env-avatar-group > :nth-child(3n + 2) {
-    --env-avatar-group-nudge: calc(var(--env-avatar-group-size) * 0.03);
-    --env-avatar-group-rest-lift: calc(var(--env-avatar-group-size) * 0.05);
-    --env-avatar-group-rest-turn: 5deg;
+    --env-avatar-group-nudge: calc(
+      var(--env-avatar-group-size) * 0.03 * var(--env-avatar-group-lean)
+    );
+    --env-avatar-group-rest-lift: calc(
+      var(--env-avatar-group-size) * 0.05 * var(--env-avatar-group-lean)
+    );
+    --env-avatar-group-rest-turn: calc(5deg * var(--env-avatar-group-lean));
   }
   .env-avatar-group > :nth-child(3n) {
-    --env-avatar-group-nudge: calc(var(--env-avatar-group-size) * -0.02);
-    --env-avatar-group-rest-lift: calc(var(--env-avatar-group-size) * -0.01);
-    --env-avatar-group-rest-turn: -2deg;
+    --env-avatar-group-nudge: calc(
+      var(--env-avatar-group-size) * -0.02 * var(--env-avatar-group-lean)
+    );
+    --env-avatar-group-rest-lift: calc(
+      var(--env-avatar-group-size) * -0.01 * var(--env-avatar-group-lean)
+    );
+    --env-avatar-group-rest-turn: calc(-2deg * var(--env-avatar-group-lean));
   }
-  .env-avatar-group:is([data-size='sm'], :has(.env-avatar-fallback-initials)) > * {
+  .env-avatar-group:has(.env-avatar-fallback-initials) > * {
     --env-avatar-group-nudge: 0rem;
     --env-avatar-group-rest-lift: 0rem;
     --env-avatar-group-rest-turn: 0deg;

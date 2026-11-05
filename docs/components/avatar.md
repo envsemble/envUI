@@ -88,6 +88,8 @@ The name chooses one of eight pastel colors, the same on every page.
 
 - An organization can take another of them as its own.
 - Each is a soft fill with the initials or the figure in a deep shade of the same hue.
+- In a dense place, a table's cell or a small group, the fills are quieter, so a column of avatars doesn't outweigh the data beside it.
+- In a group, no two neighbours take colors that look alike.
 - Initials stay large enough to read; an avatar smaller than the small size, such as one sized to a dense row, shows its color alone.
 - The colors only tell people apart.
 
@@ -214,13 +216,14 @@ Avatar takes the person's or organization's `name`, a picture in `src`, and `fal
 
 #### Colors
 
-`hue` sets one of the eight colors by name, in place of the one the name chooses: `powder` (powder blue), `seafoam`, `sage`, `butter`, `blush`, `periwinkle`, `orchid` or `oat` (a warm oat). `avatarHue(name)` returns the one a name chooses, and `avatarHues` lists the eight in order. Each is a tonal pair, a soft fill with the initials or the figure in a deep shade of the same hue, slightly deeper in the dark theme.
+`hue` sets one of the eight colors by name, in place of the one the name chooses: `powder` (powder blue), `seafoam`, `sage`, `butter`, `blush`, `periwinkle`, `orchid` or `oat` (a warm oat). `avatarHue(name)` returns the one a name chooses, and `avatarHues` lists the eight in order. Each is a tonal pair, a soft fill with the initials or the figure in a deep shade of the same hue, slightly deeper in the dark theme. In a table's cell and in a small AvatarGroup the fill takes half its chroma at the same lightness, so the initials keep their contrast; `--env-avatar-dense: 1` on a container of your own, such as a dense list, does the same for the avatars and groups in it. In an AvatarGroup, an avatar whose color looks like its neighbour's before it, the two blues, greens, pinks or warm hues, takes the next of the eight that doesn't.
 
 #### Groups
 
 AvatarGroup takes `people`, each with a `name` and an optional `src`, `fallback`, `id` and `selected`. `max` sets how many show, and the count chip counts the rest; `total` counts people beyond a preview list.
 
 - At rest the avatars pile up, each a little off the line and turned, with the count chip at the bottom of the pile. A group of initials piles looser, so two letters stay whole under the next avatar, and rests upright and in line, as does a small group.
+- A small group, or any group in a table's cell, is dense: pictures overlap by 0.3 of the avatar, and initials only by the ring that parts them, so the letters stay clear.
 - The group always keeps the room its spread takes, so spreading never moves what is around it; `align="end"` piles a group at the end of that room, for a group that ends a row, such as a list row's action.
 - With reduced motion it spreads at once.
 - `formatMore` and `formatLabel` set its words.
@@ -253,6 +256,7 @@ Its color properties take the place of its hue. The hues are tokens, `--env-colo
 
 ## Changelog
 
+- **1.0.0-prerelease.6**: Avatars in a table's cell and in a small group take quieter fills, and a small group or one in a table overlaps less, initials only by the ring. In a group, an avatar whose color looks like the one before it takes another.
 - **1.0.0-prerelease.6**: An avatar without a picture shows its name's initials by default, in place of the default person picture, which `fallback="person"` keeps. Avatars in a group take a ring in the color of the surface below, so their initials never run together.
 - **1.0.0-prerelease.6**: Initials stay legible at small sizes, at least the caption size; below `sm`, an avatar with initials is a disc of its color alone.
 - **1.0.0-prerelease.5**: AvatarGroup's `gather` is `align`, as Row and Popover name the inline axis, and its `data-gather` attribute is `data-align`.

@@ -9,7 +9,14 @@ import {
   type MouseEvent,
   type PointerEvent as ReactPointerEvent,
 } from 'react';
-import { Avatar, type AvatarProps, type AvatarSize } from './Avatar.js';
+import {
+  Avatar,
+  avatarHue,
+  avatarHues,
+  type AvatarHue,
+  type AvatarProps,
+  type AvatarSize,
+} from './Avatar.js';
 import { Tooltip } from '../feedback/Tooltip.js';
 import { ActionElement } from '../internal/ActionElement.js';
 import { classNames } from '../internal/classNames.js';
@@ -77,6 +84,42 @@ export interface AvatarGroupProps extends Omit<ComponentPropsWithRef<'div'>, 'ch
    * @default '{count} people: {names}'
    */
   formatLabel?: (count: number, names: readonly string[]) => string;
+}
+
+/** The hues that look alike side by side: two blues, two greens, two pinks and two warm hues. */
+const hueFamily: Record<AvatarHue, string> = {
+  powder: 'blue',
+  periwinkle: 'blue',
+  seafoam: 'green',
+  sage: 'green',
+  blush: 'pink',
+  orchid: 'pink',
+  butter: 'warm',
+  oat: 'warm',
+};
+
+/**
+ * Each person's hue in the group: the one their name chooses, unless it looks like the previous
+ * avatar's, in its family; then the next hue in order that doesn't, so no two neighbours blur.
+ */
+function groupHues(names: readonly string[]): AvatarHue[] {
+  const hues: AvatarHue[] = [];
+  for (const name of names) {
+    let hue = avatarHue(name);
+    const previous = hues.at(-1);
+    if (previous !== undefined && hueFamily[hue] === hueFamily[previous]) {
+      const start = avatarHues.indexOf(hue);
+      for (let step = 1; step < avatarHues.length; step += 1) {
+        const next = avatarHues[(start + step) % avatarHues.length];
+        if (hueFamily[next] !== hueFamily[previous]) {
+          hue = next;
+          break;
+        }
+      }
+    }
+    hues.push(hue);
+  }
+  return hues;
 }
 
 /** How long a group spread by a tap stays spread without another tap in it. */
@@ -160,6 +203,7 @@ export function AvatarGroup({
   // Each item's place: the avatars before and after it, and whether the count is, from which the
   // style sheet moves it as the group bunches, within the room the group keeps for its spread.
   const counted = overflow > 0;
+  const hues = groupHues(shown.map((person) => person.name));
   const place = (index: number) =>
     ({
       '--env-avatar-group-before': String(Math.min(index, shown.length - 1)),
@@ -203,6 +247,7 @@ export function AvatarGroup({
         <AvatarGroupItem
           key={person.id ?? `${index}-${person.name}`}
           person={person}
+          hue={hues[index]}
           size={size}
           style={place(index)}
           onPersonClick={onPersonClick}
@@ -239,11 +284,13 @@ export function AvatarGroup({
 
 function AvatarGroupItem({
   person,
+  hue,
   size,
   style,
   onPersonClick,
 }: {
   person: AvatarGroupPerson;
+  hue: AvatarHue | undefined;
   size: AvatarSize;
   style: CSSProperties;
   onPersonClick: AvatarGroupProps['onPersonClick'];
@@ -254,6 +301,7 @@ function AvatarGroupItem({
       name={person.name}
       src={person.src}
       fallback={person.fallback}
+      hue={hue}
       size={size}
       selected={person.selected}
       style={pressable ? undefined : style}
