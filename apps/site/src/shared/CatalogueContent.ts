@@ -334,8 +334,9 @@ export const blockParagraphs = 3;
  * opening or a `###` subsection is written. Two kinds of loose text break that:
  *
  * - **after a figure**: a paragraph after a figure, a table or a list with no heading between them,
- *   such as a lone sentence after the do and don't pairs, or between two figures, or a note under
- *   an anatomy figure's legend on the parts it can't show, which is for the Docs' Composition.
+ *   such as a lone sentence after the do and don't pairs, or between two figures. The one
+ *   paragraph right after an anatomy figure's legend, which names the parts it can't show, belongs
+ *   to the figure.
  * - **too many paragraphs**: a block holds at most three short paragraphs; more are two blocks
  *   with headings of their own.
  */
@@ -348,19 +349,23 @@ export function catalogueStructure(
     if (docsOnlySections.has(section.id)) continue;
     let paragraphs = 0;
     let figure = false;
+    let afterAnatomy = false;
     for (const block of section.blocks) {
       if (block.kind !== 'markdown') {
         figure = true;
+        afterAnatomy = block.kind === 'example' && block.role === 'anatomy';
         continue;
       }
       const markdown = catalogueMarkdown(section, block.markdown);
       for (const token of marked.lexer(markdown)) {
         if (token.type === 'space') continue;
+        const anatomyNote = afterAnatomy;
+        afterAnatomy = false;
         if (token.type === 'heading') {
           paragraphs = 0;
           figure = false;
         } else if (token.type === 'paragraph') {
-          if (figure)
+          if (figure && !anatomyNote)
             found.push({ where: section.title, kind: 'after a figure', text: opening(token.text) });
           else if (paragraphs >= blockParagraphs)
             found.push({
@@ -369,6 +374,7 @@ export function catalogueStructure(
               text: opening(token.text),
             });
           paragraphs++;
+          if (anatomyNote) figure = true;
         } else figure = true;
       }
     }

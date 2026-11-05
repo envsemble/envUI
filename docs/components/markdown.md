@@ -81,8 +81,6 @@ The toolbar holds the actions the text needs, as [RichText](rich-text.md#toolbar
 4. **Source** (`env-markdown-editor-input`)
 5. **Description** (`env-field-description`, `description`)
 
-A rendered document is a single part, in which each table scrolls in a region of its own.
-
 ## Behaviour
 
 ### What it renders

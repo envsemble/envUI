@@ -70,8 +70,6 @@ Each is a construction from geometry, drawn whole on a sheet a little wider than
 
 1. **Drawing** (`env-line-art`)
 
-The drawing has no box of its own: it fills the one it is given.
-
 ## Behaviour
 
 ### Cropping and anchoring

@@ -1146,7 +1146,7 @@ test('Catalogue text with no structure is found: loose after a figure, or a four
       {
         id: 'anatomy',
         title: 'Anatomy',
-        // A note under an anatomy legend on what the figure can't show is loose text too.
+        // The sentence after an anatomy legend names what the figure can't show; it belongs to it.
         blocks: [
           markdown('## Anatomy\n\n'),
           figure('anatomy'),
@@ -1171,7 +1171,6 @@ test('Catalogue text with no structure is found: loose after a figure, or a four
     [
       'Rules, after a figure: A lone sentence after the pairs.',
       'Rules, too many paragraphs: One too many.',
-      'Anatomy, after a figure: Not shown: the spinner.',
       'Variants, after a figure: Loose after the legend.',
     ],
   );
