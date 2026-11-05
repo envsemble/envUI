@@ -4,44 +4,26 @@ import { useTimeline } from '../motion/Motion';
 import { narrowGallery } from './Tiles';
 
 /**
- * A short note as it is written: a heading, and a list with a version in inline code, which renders
- * as a code chip, a change that reads at a tile's size. A bold word renders in the medium weight
- * prose gives emphasis, too close to the words around it to see at that size.
+ * A short note as it is written, step by step: a heading over a list of two, then a third item, a
+ * version in inline code, which renders as a code chip, a change that reads at a tile's size.
  */
-const note = '## Launch plan\n- Design review\n- Ship `v2.0` in May';
-
-/** The note in a phone's narrower tile, its lines shorter, so it is drawn at about its own size. */
-const shortNote = '## Launch\n- Review it\n- Ship `v2.0`';
-
-/** A note's source, shown as it is written, in a code block of its own. */
-const sourceOf = (text: string) => `\`\`\`md\n${text}\n\`\`\``;
+const notes = [
+  '## Launch plan\n- Design review\n- Write the notes',
+  '## Launch plan\n- Design review\n- Write the notes\n- Ship `v2.0` in May',
+];
 
 /**
- * One view over the other, the one leaving fading out before the one coming fades in, so the two
- * never show at once; the one not shown lets the pointer through to the other.
+ * The note in a phone's narrower and lower tile, its lines shorter and one fewer, so it is drawn at
+ * about its own size there and shows whole: the item with the version comes as it plays.
  */
-const layer = (shown: boolean) => ({
-  gridArea: '1 / 1',
-  opacity: shown ? 1 : 0,
-  pointerEvents: shown ? ('auto' as const) : ('none' as const),
-  transition: `opacity 220ms ease ${shown ? '220ms' : '0ms'}`,
-});
+const shortNotes = ['## Launch\n- Review it', '## Launch\n- Review it\n- Ship `v2.0`'];
 
 /**
- * A note in Markdown: rendered at rest, a heading over a list with a version in code; as it plays,
- * its source, with its marks, and the note rendered from it again.
+ * A note in Markdown, rendered as an application shows one: as it plays, its text changes, as a
+ * note does when someone edits it, and the one Markdown renders the new text.
  */
 export default function MarkdownTile() {
-  const rendered = useTimeline([400, 1800, 2600]) !== 1;
-  const text = useMedia(narrowGallery) ? shortNote : note;
-  return (
-    <div style={{ display: 'grid', alignItems: 'center', inlineSize: 'max-content' }}>
-      <Markdown aria-hidden={rendered} style={layer(!rendered)}>
-        {sourceOf(text)}
-      </Markdown>
-      <Markdown aria-hidden={!rendered} style={layer(rendered)}>
-        {text}
-      </Markdown>
-    </div>
-  );
+  const step = useTimeline([1000, 4000]);
+  const narrow = useMedia(narrowGallery);
+  return <Markdown>{(narrow ? shortNotes : notes)[step]}</Markdown>;
 }

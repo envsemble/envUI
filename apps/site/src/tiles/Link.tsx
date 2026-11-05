@@ -2,23 +2,24 @@ import { Column, Link, Text } from '@envsemble/envui';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
 /**
- * Hovered a moment, its underline drawn in full; pressed, a faint fill behind it; let go and left,
- * then reached with the keyboard, its focus ring round it, which holds longest, as it reads best.
+ * Pressed, a fill behind it, held a while, as the press is what shows on a link already underlined;
+ * let go and left, then reached with the keyboard, its focus ring round it, held longest, as it
+ * reads best, and taken off again before the script ends.
  */
 const script: PointerStep[] = [
   { wait: 300 },
   { to: '.env-link', x: 0.3 },
-  { wait: 700 },
+  { wait: 500 },
   { press: true },
-  { wait: 1300 },
+  { wait: 1700 },
   { release: true },
   { wait: 200 },
   { leave: true },
-  { wait: 200 },
+  { wait: 300 },
   { focus: '.env-link' },
-  { wait: 3000 },
+  { wait: 2800 },
   { blur: true },
-  { wait: 500 },
+  { wait: 600 },
 ];
 
 /**
