@@ -204,7 +204,7 @@ A Badge's label is its `children`, a state, a name or a category in a word or tw
 
 #### DiffStat
 
-DiffStat shows `additions` as +12 in the success tone and `deletions` as −3 in the danger tone, in the locale's digits. It is named once for assistive technology, such as 12 added lines and 3 removed lines,, or from its own `formatLabel`.
+DiffStat shows `additions` as +12 in the success tone and `deletions` as −3 in the danger tone, in the locale's digits, and leaves out a side that is 0, so a change that only adds reads +40. It is named once for assistive technology, such as 12 added lines and 3 removed lines, or from its own `formatLabel`.
 
 ```tsx
 <DiffStat additions={12} deletions={3} />
@@ -229,6 +229,7 @@ The parts are the pill, `env-badge`, its icon, `env-badge > env-icon`, and its l
 
 ## Changelog
 
+- **1.0.0-prerelease.6**: DiffStat leaves out a side that is 0, such as +40 for a change that only adds.
 - **1.0.0-prerelease.6**: The `done` tone is a quiet slate blue-gray, in place of a cyan that sat too close to the success green at table size: completed things recede.
 - **1.0.0-prerelease.5**: A little roomier: 3 px above and below its label and 10 px at the sides, edge included.
 - **1.0.0**: A soft badge in the accent, success, warning or danger tone takes the tone's stronger tint, and its label is semibold; at high contrast it keeps the softer tint.
