@@ -8,7 +8,7 @@ import { routeHref } from '../navigation/Address';
 import { pageHref, groupedPages, routeOfDocument } from '../navigation/SiteRoutes';
 import { documents, type DocumentSummary } from '../pages/PageModel';
 import { hasPageSpecimen } from '../figures/PageSpecimens';
-import { tileOf, tileWindows } from '../tiles/Tiles';
+import { tileOf, tileWindows, type TileWindow } from '../tiles/Tiles';
 
 /**
  * The page that documents a component, for the components a page relates to and the exports a
@@ -46,7 +46,7 @@ export interface Preview {
   /** Whether the composition is the page's own tile, drawn in the tiles' window (Related.css). */
   tile?: boolean;
   /** The window a tile lays out in, in rem, where it needs a larger one than the tiles'. */
-  window?: { width: number; height: number };
+  window?: TileWindow;
 }
 
 /** Letters alone, lower case, to match an export's name with a figure's heading or file. */
