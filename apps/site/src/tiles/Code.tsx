@@ -29,7 +29,7 @@ export default function CodeTile() {
       language="sh"
       label="Terminal"
       copyable
-      style={{ inlineSize: narrow ? '10.5rem' : '11rem' }}
+      style={{ inlineSize: narrow ? '10rem' : '11rem' }}
     >
       {'npm run build'}
     </CodeBlock>

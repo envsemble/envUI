@@ -1,6 +1,8 @@
 import { useEffect, useRef } from 'react';
 import { Column, Page, PageHeader, Text } from '@envsemble/envui';
+import { useMedia } from '../motion/Autoplay';
 import { useTimeline } from '../motion/Motion';
+import { narrowGallery } from './Tiles';
 
 const sections = ['Summary', 'Revenue', 'Costs'];
 
@@ -12,10 +14,12 @@ const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2
  * section, so it ends on a whole line: it scrolls down a section at a time, its sticky
  * header staying at the top and taking its fill as the sections pass beneath it, and back up.
  * Each step rests with one whole section just under the header; room after the last lets it
- * scroll there too.
+ * scroll there too. In a phone's narrower tile the box is narrower, so the page is drawn at about
+ * its own size there.
  */
 export default function PageTile() {
   const step = useTimeline([1100, 1700, 1700]);
+  const narrow = useMedia(narrowGallery);
   const box = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const element = box.current;
@@ -44,7 +48,7 @@ export default function PageTile() {
     <div
       ref={box}
       style={{
-        inlineSize: '12.5rem',
+        inlineSize: narrow ? '10rem' : '12.5rem',
         blockSize: '6.125rem',
         overflow: 'hidden',
         borderRadius: 'var(--env-radius-lg)',
