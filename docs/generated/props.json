@@ -1552,7 +1552,7 @@
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The field's height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another. The popup's rows take the row height of the scale."
+          "description": "The field's height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another. The popup's rows take the row height of the scale. sm is for a field with its label hidden; one that shows its label takes the md height."
         },
         {
           "name": "showLabel",
@@ -2378,7 +2378,7 @@
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The field's height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another."
+          "description": "The field's height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another. sm is for a field with its label hidden; one that shows its label takes the md height."
         },
         {
           "name": "showLabel",
@@ -4985,7 +4985,7 @@
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The field's height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another."
+          "description": "The field's height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another. sm is for a field with its label hidden; one that shows its label takes the md height."
         },
         {
           "name": "showLabel",
@@ -6920,7 +6920,7 @@
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another, as a table cell does. A button beside a field takes the field's size."
+          "description": "The height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another, as a table cell does. A button beside a field takes the field's size. sm is for a field with its label hidden, as in a toolbar or a filter row: one that shows its label takes the md height, so the label and the value each keep room."
         },
         {
           "name": "description",
@@ -7121,7 +7121,7 @@
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The field's height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another. The popup's rows take the row height of the scale. A select without a visible label, such as in a toolbar, is as wide as its longest option."
+          "description": "The field's height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another. The popup's rows take the row height of the scale. A select without a visible label, such as in a toolbar, is as wide as its longest option. sm is for a field with its label hidden; one that shows its label takes the md height."
         },
         {
           "name": "label",
@@ -8137,7 +8137,7 @@
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another, as a table cell does. A button beside a field takes the field's size."
+          "description": "The height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another, as a table cell does. A button beside a field takes the field's size. sm is for a field with its label hidden, as in a toolbar or a filter row: one that shows its label takes the md height, so the label and the value each keep room."
         },
         {
           "name": "prefix",
@@ -8529,7 +8529,7 @@
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The field's height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another."
+          "description": "The field's height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another. sm is for a field with its label hidden; one that shows its label takes the md height."
         },
         {
           "name": "showLabel",

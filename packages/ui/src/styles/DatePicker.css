@@ -69,8 +69,9 @@
     .env-date-picker-placeholder {
     color: transparent;
   }
-  /* The icon shows what the field opens; presses on it reach the field. The clear button, a quiet icon
-     button like the other fields' actions, stays pressable. */
+  /* The icon shows what the field opens; presses on it reach the field. It keeps its quiet color
+     while the field is read-only, as a read-only Select's chevron does. The clear button, a quiet
+     icon button like the other fields' actions, stays pressable. */
   .env-date-picker-end {
     pointer-events: none;
   }
@@ -86,9 +87,6 @@
   .env-date-picker-end > .env-date-picker-icon > svg {
     inline-size: var(--env-control-icon-size);
     block-size: var(--env-control-icon-size);
-  }
-  .env-date-picker-control:focus-within .env-date-picker-icon {
-    color: var(--env-color-border-primary-emphasis);
   }
   /* Carries the value for native forms; an invalid required field's message points at the field. */
   .env-date-picker-native {
@@ -126,7 +124,7 @@
     font-weight: var(--env-font-weight-medium);
   }
   /* From a medium window up, the time sits beside the calendar, as tall as it, and its heading as
-     tall as the calendar's month heading, so the first time lines up with the weekday names. Where
+     tall as the calendar's month heading (Calendar.css), so the two headings share a line. Where
      the card has too little room beside the trigger for both, the time moves under the calendar
      rather than running past the card's edge, its wheels whole. */
   @container env-window (width >= 37.5rem) {
@@ -140,7 +138,7 @@
     }
     .env-date-picker-time-title {
       justify-content: center;
-      min-block-size: var(--env-control-height-md);
+      min-block-size: calc(0.8 * var(--env-control-height-md));
     }
   }
   /* Motion: the calendar icon, always in the field, doesn't settle in as the field's other actions

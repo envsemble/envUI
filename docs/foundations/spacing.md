@@ -127,7 +127,7 @@ The space inside a button, a field or a card is part of the component, so it loo
 
 ### Things line up
 
-Fields, menus, toggles and buttons of one size are exactly as tall as each other, so a toolbar or a form row lines up without any adjusting. A small form field that shows its label takes the medium height, as [TextField's sizes](../components/text-field.md#sizes) say.
+Fields, menus, toggles and buttons of one size are exactly as tall as each other, so a toolbar or a form row lines up without any adjusting. Small fields are for toolbars, with their label hidden, as [TextField's sizes](../components/text-field.md#sizes) say.
 
 ```tsx figure=Align
 

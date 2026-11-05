@@ -58,9 +58,14 @@
   .env-select .env-select-control > .env-select-trigger:is(:disabled, [aria-readonly='true']) {
     cursor: default;
   }
-  /* A read-only select opens nothing, so it shows no chevron; the value keeps its place. */
-  .env-select-control:has(> .env-select-trigger[aria-readonly='true']) > .env-select-end {
-    visibility: hidden;
+  /* A read-only select opens nothing: its chevron stays, muted, so the field still reads as a
+     choice, as a read-only Combobox's and a date's calendar do. */
+  .env-select-control:has(> .env-select-trigger[aria-readonly='true']) .env-select-icon {
+    color: var(--env-color-fg-muted);
+  }
+  /* A disabled select's chevron takes the disabled text color, as its value and label do. */
+  .env-select-control:has(> .env-select-trigger:disabled) .env-select-icon {
+    color: var(--env-color-fg-disabled);
   }
   .env-select-trigger > *,
   .env-select-sizer > * {
@@ -137,9 +142,6 @@
   .env-select-icon > svg {
     inline-size: var(--env-control-icon-size);
     block-size: var(--env-control-icon-size);
-  }
-  .env-select-control:focus-within .env-select-icon {
-    color: var(--env-text-field-accent, var(--env-color-border-primary-emphasis));
   }
 
   /* The open list is the menus' frosted popup, with their corners and rows that highlight on hover

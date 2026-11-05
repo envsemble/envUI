@@ -2,12 +2,13 @@
   /* Time list: a time of day on wheels side by side, hours, minutes and on a 12-hour clock the day's
      halves, in the popups of DatePicker and TimePicker. Each wheel shows an odd number of rows and
      snaps a row to its middle. The middle rows, side by side, read as one line: each has the solid
-     accent fill of the chosen calendar day beside it, so a chosen day and time look alike, and the
-     body type in semibold, while the rows above and below are smaller and dimmer, and only the
+     accent fill of the chosen calendar day beside it, as tall as a day and as round where its value
+     fits, so a chosen day and time look alike, and the body type in semibold, while the rows above and below are smaller and dimmer, and only the
      outermost rows fade at the wheel's edges. Unavailable times are struck through in the disabled
      color, so they never read as the fade. Coarse pointers get touch-tall rows. */
   .env-time-list {
-    --env-time-list-row: var(--env-control-height-md);
+    /* A calendar day's height, as the picker card sets it. */
+    --env-time-list-row: var(--env-picker-popup-day, var(--env-row-height));
     --env-time-list-rows: 5;
     display: grid;
     grid-auto-columns: minmax(max-content, 1fr);
@@ -20,7 +21,7 @@
   .env-time-list-column {
     position: relative;
     block-size: calc(var(--env-time-list-rows) * var(--env-time-list-row));
-    min-inline-size: calc(1.5 * var(--env-time-list-row));
+    min-inline-size: var(--env-time-list-row);
     /* Room for the focus ring around the middle row, which sits outside its fill. */
     padding-inline: var(--env-space-1);
     overflow-y: auto;
@@ -47,9 +48,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    inline-size: max-content;
+    min-inline-size: var(--env-time-list-row);
     block-size: var(--env-time-list-row);
-    padding-inline: var(--env-space-2);
-    /* A pill, as the chosen calendar day is round. */
+    margin-inline: auto;
+    padding-inline: var(--env-space-1);
+    /* Round, as the chosen calendar day is, and a pill for a longer value, such as a day period. */
     border-radius: var(--env-radius-full);
     font-variant-numeric: tabular-nums;
     white-space: nowrap;

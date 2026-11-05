@@ -61,9 +61,10 @@
     --env-control-height: var(--env-control-height-lg);
   }
   /* A single-line field that shows its label is at least the md control height, so the label and
-     the value each keep room: a small one takes the md height, and at md and lg it is as tall as the
-     buttons of its size. A field with its label hidden, as a search in a toolbar, keeps its size's
-     height at sm too. Select, Combobox and the pickers take it too. */
+     the value each keep room, and at md and lg it is as tall as the buttons of its size. sm is for a
+     field with its label hidden, as a search in a toolbar, which keeps the sm height; a small one that
+     shows its label takes md, and FieldFrame says so while developing. Select, Combobox and the
+     pickers take it too. */
   .env-text-field:not([data-tall], [data-label-hidden]):has(> .env-text-field-control > label) {
     --env-text-field-least: var(--env-control-height-md);
   }
@@ -146,7 +147,7 @@
     padding: 0;
     overflow: hidden;
     font: var(--env-type-body);
-    font-size: var(--env-font-size-body-sm);
+    font-size: var(--env-font-size-label);
     line-height: 1;
     white-space: nowrap;
     visibility: hidden;
@@ -231,7 +232,7 @@
     inset-inline-start: calc(var(--env-text-field-notch-start) + var(--env-space-1));
     padding-inline: var(--env-space-1);
     margin-inline-start: calc(-1 * var(--env-space-1));
-    font-size: var(--env-font-size-body-sm);
+    font-size: var(--env-font-size-label);
   }
   /* The floated label opens the notch in the border behind it, as wide as the label shows; a ghost
      field's floats inside its fill and cuts none. */
@@ -295,7 +296,7 @@
      floats. A single-line one keeps it within its height, below. */
   .env-text-field:not([data-label-hidden])
     .env-text-field-control[data-variant='ghost']:has(> label) {
-    --env-text-field-ghost-label-room: calc(var(--env-font-size-body-sm) + 0.125rem);
+    --env-text-field-ghost-label-room: calc(var(--env-font-size-label) + 0.125rem);
     --env-text-field-label-floated: var(--env-space-1);
   }
   .env-text-field-control[data-variant='ghost'] > label {
@@ -424,23 +425,33 @@
     touch-action: none;
     user-select: none;
   }
-  /* The grip: a short, quiet bar on the bottom edge toward its end, just inside the frame and clear
-     of the corner's curve, where a text area's resize grip is looked for, so it reads as the edge to
-     drag rather than as a sheet's handle or a second edge. */
+  /* The grip: two short diagonal hairlines in the end corner, inside the corner's curve, where a
+     text area's resize grip is looked for, so it reads as the corner to drag rather than as a minus
+     sign or a sheet's handle. */
   .env-textarea-resize-handle::after {
-    --env-textarea-grip-width: 1rem;
-    --env-textarea-grip-height: 0.125rem;
+    --env-textarea-grip-size: 0.625rem;
+    --env-textarea-grip-line: linear-gradient(
+      to top left,
+      transparent calc(50% - var(--env-control-border-width) / 2),
+      var(--env-color-fg-muted) calc(50% - var(--env-control-border-width) / 2)
+        calc(50% + var(--env-control-border-width) / 2),
+      transparent calc(50% + var(--env-control-border-width) / 2)
+    );
     content: '';
     position: absolute;
-    inset-inline-end: var(--env-space-4);
+    inset-inline-end: var(--env-space-1);
     inset-block-end: var(--env-space-1);
-    inline-size: var(--env-textarea-grip-width);
-    block-size: var(--env-textarea-grip-height);
-    border-radius: var(--env-radius-full);
-    background: var(--env-color-border-default);
+    inline-size: var(--env-textarea-grip-size);
+    block-size: var(--env-textarea-grip-size);
+    background:
+      var(--env-textarea-grip-line),
+      var(--env-textarea-grip-line) right bottom / 50% 50% no-repeat;
     pointer-events: none;
     opacity: 0;
     transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);
+  }
+  .env-textarea-resize-handle:dir(rtl)::after {
+    scale: -1 1;
   }
   /* At rest the edge is the frame alone; the grip shows under the pointer, while the field or the
      handle has focus, so the keyboard finds it, and while it is dragged. */
@@ -483,7 +494,9 @@
   .env-text-field-start,
   .env-text-field-end {
     /* Icon actions, such as the clear action, take the field's quiet icon color rather than the
-       link blue of text buttons, darkening to the field text on hover and press. */
+       link blue of text buttons, darkening to the field text on hover and press. The icons at the
+       end, as a select's chevron and a date's calendar, keep their color while the field has focus:
+       the frame shows focus. */
     --env-button-text-icon-color: var(--env-color-fg-muted);
     --env-button-text-icon-color-active: var(--env-color-fg-default);
     position: absolute;

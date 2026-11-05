@@ -15,6 +15,7 @@ import { classNames } from '../../internal/classNames.js';
 import type { ControlSize } from '../../foundations/Theme.js';
 import { fieldMessageIds } from './useFieldMetadata.js';
 import { flag } from '../../internal/flag.js';
+import { reportInDevelopment } from '../../internal/developmentReport.js';
 import '../../styles/Base.css';
 import '../../styles/TextField.css';
 
@@ -60,7 +61,9 @@ export interface FieldSizeProps {
   /**
    * The height, as on every control: sm, md or lg in the current scale. Without it, the field takes
    * the control height of its container, md unless the container sets another, as a table cell
-   * does. A button beside a field takes the field's size.
+   * does. A button beside a field takes the field's size. sm is for a field with its label hidden,
+   * as in a toolbar or a filter row: one that shows its label takes the md height, so the label
+   * and the value each keep room.
    */
   size?: ControlSize;
 }
@@ -122,6 +125,21 @@ export function isLabelShown({ showLabel }: TextFieldDecorationProps) {
   return showLabel ?? true;
 }
 
+/**
+ * Says while developing, once a page, that a single-line field with size="sm" that shows its label
+ * takes the md height: sm is for a field with its label hidden.
+ */
+function reportSmallWithLabel() {
+  reportInDevelopment(
+    () =>
+      process.env.NODE_ENV !== 'production' &&
+      'a field with size="sm" that shows its label takes the md height, so the label and the ' +
+        'value each keep room. Hide the label with showLabel={false}, as in a toolbar, or use ' +
+        'size="md".',
+    { level: 'warn', key: 'Field size sm with label' },
+  );
+}
+
 /** The control box as a plain element; composed controls render it through their own primitive. */
 function renderPlainControlBox(props: FieldControlBoxProps) {
   return <div {...props} />;
@@ -171,6 +189,8 @@ export function FieldFrame({
     renderControlBox?: (props: FieldControlBoxProps) => ReactNode;
   }) {
   const ids = fieldMessageIds(id);
+  if (floatingLabel && !multiline && size === 'sm' && label != null && isLabelShown({ showLabel }))
+    reportSmallWithLabel();
   return (
     <Field.Root
       ref={rootRef}

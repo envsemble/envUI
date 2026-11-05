@@ -229,7 +229,6 @@ function ProjectsTable({ onOpen, openId }: { onOpen: (id: string) => void; openI
     <Select
       label="Sort by"
       showLabel
-      size="sm"
       items={sortOrders}
       value={sortOrder}
       onValueChange={(value) => {
@@ -258,7 +257,7 @@ function ProjectsTable({ onOpen, openId }: { onOpen: (id: string) => void; openI
       <Select
         label="Status"
         showLabel={!inlineFilters}
-        size="sm"
+        size={inlineFilters ? 'sm' : undefined}
         items={statuses}
         value={status}
         onValueChange={setStatus}
@@ -268,7 +267,7 @@ function ProjectsTable({ onOpen, openId }: { onOpen: (id: string) => void; openI
         label="Owner"
         showLabel={!inlineFilters}
         placeholder="Any owner"
-        size="sm"
+        size={inlineFilters ? 'sm' : undefined}
         items={owners}
         value={owner}
         onValueChange={(value: string[]) => setOwner(value)}
@@ -623,12 +622,11 @@ function ProjectDetails({ project }: { project: Project }) {
         <Text render={<h3 />} variant="title">
           Settings
         </Text>
-        <TextField label="Display name" defaultValue={project.name} size="sm" />
+        <TextField label="Display name" defaultValue={project.name} />
         <Select
           label="Default environment"
           items={environments}
           defaultValue={project.environment}
-          size="sm"
         />
         <Switch label="Deploy on every push to main" defaultChecked />
         <Row gap={2} justify="end">

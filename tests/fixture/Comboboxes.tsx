@@ -235,7 +235,6 @@ export function ComboboxFixture({ theme }: { theme: ColorScheme }) {
       <div className="fixture-narrow-field" data-testid={`combobox-narrow-${theme}`}>
         <Combobox
           multiple
-          size="sm"
           label={`Topics ${theme}`}
           showLabel
           items={tags}
@@ -262,14 +261,7 @@ export function ComboboxFixture({ theme }: { theme: ColorScheme }) {
         />
       </div>
       <Dialog title={`Share ${theme}`} trigger={<Button variant="secondary">Share {theme}</Button>}>
-        <Combobox
-          multiple
-          size="sm"
-          label={`Share with ${theme}`}
-          showLabel
-          items={people}
-          clearable
-        />
+        <Combobox multiple label={`Share with ${theme}`} showLabel items={people} clearable />
       </Dialog>
     </Theme>
   );
