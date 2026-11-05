@@ -24,6 +24,7 @@ export default function ChooseOwner() {
     <div style={{ inlineSize: 'min(100%, 24rem)' }}>
       <Combobox
         label="Owner"
+        placeholder="Type a name"
         description="The person who answers questions about the plan."
         items={people}
         value={owner}

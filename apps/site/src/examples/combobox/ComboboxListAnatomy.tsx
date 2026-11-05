@@ -11,7 +11,7 @@ export default function ComboboxListAnatomy() {
   return (
     <Combobox
       label="Owner"
-      placeholder="Choose an owner"
+      placeholder="Type a name"
       items={people}
       defaultValue="sam.lee"
       // Shown open in the docs; without defaultOpen, it opens from its trigger.

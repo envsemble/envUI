@@ -36,7 +36,7 @@ export default function ComboboxTile() {
   return (
     <Combobox
       label="Owner"
-      placeholder="Choose a person"
+      placeholder="Type a name"
       items={people}
       clearable
       style={{ inlineSize: '11rem' }}

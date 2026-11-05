@@ -276,7 +276,7 @@ function Comboboxes() {
     <Section name="Combobox">
       <Strip label="Single">
         {fieldStates(
-          { label: 'Owner', items: people, placeholder: 'Choose a person' },
+          { label: 'Owner', items: people, placeholder: 'Type a name' },
           { label: 'Owner', items: people, defaultValue: 'sam.lee' },
           'Choose someone on this project.',
         ).map(({ caption, props, force }) => (

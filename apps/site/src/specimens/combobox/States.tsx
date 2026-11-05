@@ -14,7 +14,7 @@ export default function States() {
     <Example size="collection">
       <SpecimenGrid>
         <Specimen title="Nothing chosen">
-          <Combobox label="Owner" placeholder="Choose a person" items={people} />
+          <Combobox label="Owner" placeholder="Type a name" items={people} />
         </Specimen>
         <Specimen title="Invalid">
           <Combobox label="Approver" items={people} required error="Choose an approver." />
