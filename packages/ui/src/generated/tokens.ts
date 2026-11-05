@@ -2268,9 +2268,9 @@ export const tokens = {
     type: 'fontWeight',
     values: {
       light: '500',
-      dark: '500',
+      dark: '460',
       'light-high-contrast': '500',
-      'dark-high-contrast': '500',
+      'dark-high-contrast': '460',
     },
   },
   /** Regular, 400: running text and most labels. */
@@ -2947,11 +2947,11 @@ export const tokens = {
     type: 'typography',
     values: {
       light: "500 clamp(1.75rem, 1.25rem + 2.5vw, 2.75rem) / 1.1 'envUI Geist', sans-serif",
-      dark: "500 clamp(1.75rem, 1.25rem + 2.5vw, 2.75rem) / 1.1 'envUI Geist', sans-serif",
+      dark: "460 clamp(1.75rem, 1.25rem + 2.5vw, 2.75rem) / 1.1 'envUI Geist', sans-serif",
       'light-high-contrast':
         "500 clamp(1.75rem, 1.25rem + 2.5vw, 2.75rem) / 1.1 'envUI Geist', sans-serif",
       'dark-high-contrast':
-        "500 clamp(1.75rem, 1.25rem + 2.5vw, 2.75rem) / 1.1 'envUI Geist', sans-serif",
+        "460 clamp(1.75rem, 1.25rem + 2.5vw, 2.75rem) / 1.1 'envUI Geist', sans-serif",
     },
   },
   /** A page's heading: Text's headline variant, medium, its lines tighter than body text's and its letters a touch closer, as larger type wants. */
@@ -2969,7 +2969,7 @@ export const tokens = {
       dark: {
         'font-family': "'envUI Geist', sans-serif",
         'font-size': '1.375rem',
-        'font-weight': '500',
+        'font-weight': '460',
         'letter-spacing': '-0.0125rem',
         'line-height': '1.3em',
       },
@@ -2983,7 +2983,7 @@ export const tokens = {
       'dark-high-contrast': {
         'font-family': "'envUI Geist', sans-serif",
         'font-size': '1.375rem',
-        'font-weight': '500',
+        'font-weight': '460',
         'letter-spacing': '-0.0125rem',
         'line-height': '1.3em',
       },
@@ -3004,7 +3004,7 @@ export const tokens = {
       dark: {
         'font-family': "'envUI Geist', sans-serif",
         'font-size': '1.125rem',
-        'font-weight': '500',
+        'font-weight': '460',
         'letter-spacing': '-0.00625rem',
         'line-height': '1.35em',
       },
@@ -3018,7 +3018,7 @@ export const tokens = {
       'dark-high-contrast': {
         'font-family': "'envUI Geist', sans-serif",
         'font-size': '1.125rem',
-        'font-weight': '500',
+        'font-weight': '460',
         'letter-spacing': '-0.00625rem',
         'line-height': '1.35em',
       },

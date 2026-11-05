@@ -55,13 +55,16 @@
        sits on, else the page, and stronger the darker that is, so it reads as faintly on a dark
        surface as on a light one. In an AvatarGroup the group's rings in the surface's color,
        --env-avatar-group-ring-layers, take its place, so each avatar parts from the one it lies on.
-       A chosen avatar keeps its rings alone, and under forced colors the system draws no shadow. */
+       A small avatar and a dense one, as in a table, cast none, so a column of them stays quiet; a
+       chosen avatar keeps its rings alone, and under forced colors the system draws no shadow. */
     --env-avatar-shadow: var(
       --env-avatar-group-ring-layers,
       0 1px 2px
         oklch(
           from var(--env-surface-color, var(--env-color-bg-page)) calc(l * 0.3) calc(c * 0.5) h /
-            calc(0.26 - l * 0.15)
+            calc(
+              (0.26 - l * 0.15) * (1 - max(var(--env-avatar-dense, 0), var(--env-avatar-small, 0)))
+            )
         )
     );
     box-shadow: var(--env-avatar-shadow);
@@ -96,6 +99,7 @@
   }
   .env-avatar[data-size='sm'] {
     --env-avatar-size: var(--env-picture-size-sm);
+    --env-avatar-small: 1;
   }
   .env-avatar[data-size='lg'] {
     --env-avatar-size: var(--env-picture-size-lg);

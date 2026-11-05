@@ -921,6 +921,15 @@
       }
     }
   },
+  "font": {
+    "weight": {
+      "$type": "fontWeight",
+      "medium": {
+        "$description": "Medium, a touch lighter in dark, 460: light text on a dark ground reads heavier than dark text on a light one, so labels and headings keep the weight they have in light.",
+        "$value": 460
+      }
+    }
+  },
   "state": {
     "$type": "number",
     "$description": "A stronger pressed layer, as the designed dark pressed fills step further from their rest than the light ones.",

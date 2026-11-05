@@ -83,8 +83,17 @@
     .env-progress-indicator {
       transition: none;
     }
+    /* With no sweep, a still bar part of the way along would read as a value: the indicator spans
+       the track as quiet stripes of the indicator's color instead, which no amount reads as. */
     .env-progress[data-indeterminate] .env-progress-indicator {
+      inline-size: 100%;
       animation: none;
+      background: repeating-linear-gradient(
+        -45deg,
+        color-mix(in srgb, var(--env-color-bg-primary-emphasis) 35%, transparent) 0
+          var(--env-space-1),
+        transparent var(--env-space-1) calc(2 * var(--env-space-1))
+      );
     }
   }
 
@@ -107,6 +116,16 @@
     }
     .env-progress-segment::before {
       background: Highlight;
+    }
+  }
+  @media (forced-colors: active) and (prefers-reduced-motion: reduce) {
+    .env-progress[data-indeterminate] .env-progress-indicator {
+      forced-color-adjust: none;
+      background: repeating-linear-gradient(
+        -45deg,
+        Highlight 0 var(--env-space-1),
+        Canvas var(--env-space-1) calc(2 * var(--env-space-1))
+      );
     }
   }
 

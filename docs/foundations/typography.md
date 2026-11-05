@@ -198,7 +198,7 @@ At the default 16 px root, in the comfortable [scale](spacing.md), as its Sizes 
 
 - Choose the element for the document's structure and the variant for its look, apart: a section's `h2` may be a title.
 - One display text per view at most, for a page's hero; it scales from 1.75 to 2.75 rem and balances its lines.
-- Geist at regular (400) and medium (500), from `--env-font-weight-*`; semibold (600) only for the strongest emphasis in a small space, such as today in a calendar.
+- Geist at regular (400) and medium (500, a touch lighter in dark, 460, where light text on a dark ground reads heavier), from `--env-font-weight-*`; semibold (600) only for the strongest emphasis in a small space, such as today in a calendar.
 - Text adds no outer spacing: a Column, a Row or the component around it owns the gaps.
 - Vary the text by its role rather than setting everything as body: open with what matters in the default color, and set supporting text, such as a description under a title, details and hints, `emphasis="muted"` or `body-sm`.
 - Keep running text to a readable measure, about 60–75 characters a line: give paragraphs and Markdown a `max-inline-size` of about `53ch`, since Text and Markdown fill their container. Write short paragraphs, one point each, a few lines long.

@@ -52,11 +52,14 @@
     white-space: nowrap;
     transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
   }
+  /* A tree marks its selection with a light tint, so its rows' layers stay below it: hover at three
+     quarters of the row hover layer and a press at the full one, a step quieter than a table's
+     rows, so a passing pointer never outweighs the selected row. */
   .env-tree-item:hover {
-    background: var(--env-color-bg-row-hover);
+    background: color-mix(in srgb, var(--env-color-bg-row-hover) 75%, transparent);
   }
   .env-tree-item:active {
-    background: var(--env-color-bg-row-pressed);
+    background: var(--env-color-bg-row-hover);
   }
   .env-tree-item[aria-selected='true'] {
     background: var(--env-color-bg-selected);

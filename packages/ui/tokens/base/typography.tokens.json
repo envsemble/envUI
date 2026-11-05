@@ -39,7 +39,7 @@
     },
     "weight": {
       "$type": "fontWeight",
-      "$description": "The font weights: regular for body text, medium for headings, labels that lead and emphasis in a row, semibold for the strongest emphasis in a small space, such as today in a calendar. The same in every scale.",
+      "$description": "The font weights: regular for body text, medium for headings, labels that lead and emphasis in a row, semibold for the strongest emphasis in a small space, such as today in a calendar. The same in every scale; medium is a touch lighter in dark.",
       "regular": { "$description": "Regular, 400: running text and most labels.", "$value": 400 },
       "medium": {
         "$description": "Medium, 500: headings, labels that lead and emphasis in a row.",
