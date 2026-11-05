@@ -148,7 +148,7 @@ An Alert takes its `tone`, a short `title`, the message as `children`, and `acti
 
 #### Tones
 
-`tone` is `info`, the default, `success`, `warning` or `danger`, for an error or a failure; a toast has `neutral` instead of `warning`, since a warning stays on the page, here. It sets the fill, the tone's tint, and the color of the title and the icon. An alert has no edge, except at high contrast, where an edge in the border color bounds it.
+`tone` is `info`, the default, `success`, `warning` or `danger`, for an error or a failure; a toast has `neutral` instead of `warning`, since a warning stays on the page, here. It sets the fill, the tone's tint, and the color of the icon; the title and the message keep the text color. An alert has no edge, except at high contrast, where an edge in the border color bounds it.
 
 ```tsx
 <Alert title="Sync paused">Changes are saved on this device until you reconnect.</Alert>
@@ -184,9 +184,11 @@ The parts are the container, `env-alert`, the icon, `env-alert-icon`, the title,
 
 ### Customize
 
-An Alert draws an edge only at high contrast, unless its outline color sets one, and its title takes the icon's color while its text takes the tone's.
+An Alert draws an edge only at high contrast, unless its outline color sets one, and its title and message take its text color while its icon and dismiss button take the icon's.
 
 ## Changelog
+
+- **1.0.0-prerelease.6**: In light the tone's tint lies over the white raised surface, so it reads as its tone's color on the gray page; the title takes the text color, and the icon and the tint carry the tone.
 
 - **1.0.0-prerelease.6**: An alert rests on its tone's tint, `--env-color-bg-{tone}-muted`, in every theme and contrast, rather than the tone's hover layer, and takes the large corner of the radius scale, `--env-radius-lg`, which the compact scale tightens, rather than a fixed 1.25 rem, so a one-line alert no longer reads as a pill.
 - **1.0.0-prerelease.6**: Outline, ghost and text buttons among the actions take the alert's text color, an outline's edge the tone's color, and the tone's hover and press layers, rather than the link blue on every tone.

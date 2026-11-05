@@ -22,7 +22,7 @@ export function ButtonGroupsFixture({ theme }: { theme: ColorScheme }) {
             <Button onClick={() => setActivations((value) => value + 1)}>Continue</Button>
             <IconButton variant="primary" tone="accent" icon={<IconCheck />} aria-label="Confirm" />
             <IconButton icon={<IconSettings />} aria-label="Settings" />
-            <Button href="#group-destination" variant="outline" startIcon={<IconSettings />}>
+            <Button href="#group-destination" variant="secondary" startIcon={<IconSettings />}>
               Manage
             </Button>
             <Button variant="primary" tone="danger" endIcon={<IconCheck />}>
@@ -30,6 +30,16 @@ export function ButtonGroupsFixture({ theme }: { theme: ColorScheme }) {
             </Button>
           </ButtonGroup>
         ))}
+        {/* Outline buttons share their edge; a mix with an outline one stands apart. */}
+        <ButtonGroup aria-label="Range" data-testid="outline-row">
+          <Button variant="outline">Day</Button>
+          <Button variant="outline">Week</Button>
+          <Button variant="outline">Month</Button>
+        </ButtonGroup>
+        <ButtonGroup aria-label="Form footer" data-testid="mixed">
+          <Button variant="outline">Cancel</Button>
+          <Button>Save</Button>
+        </ButtonGroup>
         <ButtonGroup data-testid="important-end">
           <IconButton variant="primary" tone="accent" icon={<IconCheck />} aria-label="Approve" />
           <Button variant="secondary">Cancel</Button>

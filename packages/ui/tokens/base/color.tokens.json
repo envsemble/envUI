@@ -34,7 +34,7 @@
       },
       "default": {
         "$root": {
-          "$description": "The default surface: Surface, navigation, sheets, standard menus. A step lighter than the page in both themes.",
+          "$description": "The default surface: Surface, panes, navigation and sheets. A step lighter than the page in both themes.",
           "$value": "{palette.gray.3}"
         },
         "hover": {
@@ -62,22 +62,22 @@
       },
       "raised": {
         "$root": {
-          "$description": "A raised surface: Surface background=\"raised\", rows on a contrasting surface, outlined buttons.",
-          "$value": "{palette.gray.3}"
+          "$description": "A raised surface: Surface background=\"raised\", tables, docked panels and the pager. White in light, so it lifts off the page and the panes; the default surface’s shade in dark.",
+          "$value": "{palette.neutral.0}"
         },
         "hover": {
           "$description": "An interactive raised surface under the pointer.",
-          "$value": "{palette.gray.7}"
+          "$value": "{palette.gray.4}"
         },
         "pressed": {
           "$description": "An interactive raised surface while pressed.",
-          "$value": "{palette.gray.10}"
+          "$value": "{palette.gray.8}"
         }
       },
       "popup": {
         "$root": {
-          "$description": "Popups over the page: menus, Select lists, popovers, the composer. They take elevation 2. In light a gray between the recessed well and the panes, so a popup parts from the white cards it opens over; in dark a step lighter than the page.",
-          "$value": "{palette.gray.2-75}"
+          "$description": "Popups over the page: menus, Select lists, popovers, the composer. They take elevation 2. In light white, as the raised surfaces are, its soft shadow keeping its edge over a white card or table; in dark a step lighter than the page.",
+          "$value": "{palette.neutral.0}"
         },
         "hover": {
           "$description": "A highlighted row in a popup.",
@@ -235,11 +235,11 @@
             "$value": "{palette.blue.50}"
           },
           "hover": {
-            "$description": "A primary action under the pointer.",
+            "$description": "A primary action under the pointer: a grade further from its label, darker in light and lighter in dark, so the label gains contrast.",
             "$value": "{palette.blue.60}"
           },
           "pressed": {
-            "$description": "A primary action while pressed.",
+            "$description": "A primary action while pressed: a grade past its hover, further from its label.",
             "$value": "{palette.blue.70}"
           }
         },
@@ -421,15 +421,15 @@
       "danger": {
         "emphasis": {
           "$root": {
-            "$description": "A solid danger fill, such as a solid danger badge, and the fill of destructive primary actions, as the primary emphasis fill is of the main one: saturated with white labels in light, soft with dark labels in dark; paired with fg.on-emphasis.",
+            "$description": "A solid danger fill, such as a solid danger badge, and the fill of destructive primary actions, as the primary emphasis fill is of the main one: saturated with white labels in light, soft with dark labels in dark, where it is a deeper, redder grade than the accent's lilac, so a destructive action never reads as the accent; paired with fg.on-emphasis.",
             "$value": "{palette.red.60}"
           },
           "hover": {
-            "$description": "A destructive primary action under the pointer: a grade darker, as every primary steps.",
+            "$description": "A destructive primary action under the pointer: a grade further from its label, darker in light and lighter in dark, as every primary steps.",
             "$value": "{palette.red.70}"
           },
           "pressed": {
-            "$description": "A destructive primary action while pressed: a grade past its hover.",
+            "$description": "A destructive primary action while pressed: a grade past its hover, further from its label.",
             "$value": "{palette.red.80}"
           }
         },
@@ -527,11 +527,11 @@
             "$value": "{palette.purple.55}"
           },
           "hover": {
-            "$description": "An accent primary action under the pointer.",
+            "$description": "An accent primary action under the pointer: a grade further from its label, darker in light and lighter in dark.",
             "$value": "{palette.purple.65}"
           },
           "pressed": {
-            "$description": "An accent primary action while pressed.",
+            "$description": "An accent primary action while pressed: a grade past its hover, further from its label.",
             "$value": "{palette.purple.75}"
           }
         },

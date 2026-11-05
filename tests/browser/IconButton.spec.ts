@@ -61,7 +61,6 @@ test('quiet buttons take the icon color, a state layer and the focus ring in bot
     const icon = await resolve(toggle, 'var(--env-color-fg-muted)');
     const text = await resolve(toggle, 'var(--env-color-fg-default)');
     const hover = await resolve(toggle, 'var(--env-color-bg-neutral-subtle-hover)');
-    const pressed = await resolve(toggle, 'var(--env-color-bg-neutral-subtle-pressed)');
     const ring = await resolve(toggle, 'var(--env-color-border-focus)');
     // At rest: the icon, or the label, in the icon color, without a fill or a border.
     for (const button of [toggle, labelled, pane]) {
@@ -77,12 +76,14 @@ test('quiet buttons take the icon color, a state layer and the focus ring in bot
       .evaluate((element) => getComputedStyle(element).backgroundColor);
     expect(contrast(icon, canvas)).toBeGreaterThanOrEqual(4.5);
     expect(contrast(icon, paneFill)).toBeGreaterThanOrEqual(4.5);
-    // Hover and press lay the state layer under the icon, which takes the text color.
+    // Hover lays the state layer under the icon, which takes the text color, and a press lays it
+    // twice: the layer as the fill with the same layer as an image over it.
     await toggle.hover();
     await expect(toggle).toHaveCSS('background-color', hover);
     await expect(toggle).toHaveCSS('color', text);
     await page.mouse.down();
-    await expect(toggle).toHaveCSS('background-color', pressed);
+    await expect(toggle).toHaveCSS('background-color', hover);
+    await expect(toggle).toHaveCSS('background-image', /linear-gradient/);
     await page.mouse.up();
     await page.mouse.move(0, 0);
     // The keyboard shows the shared focus ring.
@@ -91,9 +92,12 @@ test('quiet buttons take the icon color, a state layer and the focus ring in bot
     await expect(toggle).toBeFocused();
     await expect(toggle).toHaveCSS('outline-style', 'solid');
     await expect(toggle).toHaveCSS('outline-color', ring);
-    await expect(scope.getByRole('button', { name: `Unavailable settings ${theme}` })).toHaveCSS(
-      'opacity',
-      '0.48',
+    // A disabled one doesn't fade as a whole: its icon takes the disabled color.
+    const unavailable = scope.getByRole('button', { name: `Unavailable settings ${theme}` });
+    await expect(unavailable).toHaveCSS('opacity', '1');
+    await expect(unavailable).toHaveCSS(
+      'color',
+      await resolve(toggle, 'var(--env-color-fg-disabled)'),
     );
   }
 });
