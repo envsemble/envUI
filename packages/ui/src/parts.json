@@ -433,8 +433,8 @@
       "env-menu-group-label": "A group's label.",
       "env-menu-header": "The header at the top of the menu.",
       "env-menu-item": "One item.",
-      "env-menu-item-indicator-slot": "The place for a chosen item's check.",
-      "env-menu-item-indicator": "The check of a chosen item.",
+      "env-menu-item-indicator-slot": "The place for a chosen item's mark.",
+      "env-menu-item-indicator": "The mark of a chosen item: a dot, data-shape=dot, on a radio item and a check on a checkbox item.",
       "env-menu-item-description": "An item's description.",
       "env-menu-item-end": "The end of an item, for a shortcut or a chevron.",
       "env-menu-item-label": "An item's label.",
@@ -462,7 +462,7 @@
     },
     "MessageList": {
       "env-message-list": "The list of messages.",
-      "env-message-list-busy": "The spinner after the last message while busy."
+      "env-message-list-busy": "The row after the last message while busy: the busy author, a spinner and Working."
     },
     "Meter": {
       "env-meter": "The meter.",

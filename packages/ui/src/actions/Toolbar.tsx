@@ -259,9 +259,26 @@ export type LinkProps = Omit<ComponentPropsWithRef<'a'>, 'children' | 'aria-labe
   label: string;
 };
 
-/** An icon-only link of a toolbar, named by its label, which a tooltip shows. */
+/**
+ * An icon-only link of a toolbar, named by its label, which a tooltip shows. In a disabled toolbar
+ * or group it has no destination: it reports aria-disabled, leaves the arrow keys' path and has no
+ * tooltip, as a disabled button does.
+ */
 function Link({ icon, label, className, ...props }: LinkProps) {
+  const off = useContext(DisabledContext);
   const delay = useContext(TooltipDelayContext);
+  if (off)
+    return (
+      <IconButton
+        {...({
+          ...props,
+          icon,
+          disabled: true,
+          'aria-label': label,
+          className: classNames('env-toolbar-button', className),
+        } as IconButtonProps)}
+      />
+    );
   return (
     <Tooltip content={label} delay={delay}>
       <BaseToolbar.Link

@@ -320,7 +320,7 @@ function Messages() {
           </MessageList>
         </Cell>
         <Cell caption="Busy list (a reply coming)" width="26rem">
-          <MessageList aria-label="Conversation" busy>
+          <MessageList aria-label="Conversation" busy busyAuthor="Assistant">
             <Message from="self">Summarise the notes.</Message>
           </MessageList>
         </Cell>

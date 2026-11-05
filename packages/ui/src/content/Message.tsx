@@ -133,11 +133,20 @@ export function Message(allProps: MessageProps) {
 
 export interface MessageListProps extends ComponentPropsWithRef<'div'> {
   /**
-   * A reply is on its way or streaming in: a quiet spinner in the muted color shows after the last
-   * message, and the log reports aria-busy, so assistive technology can wait for the reply to
-   * finish instead of announcing every step.
+   * A reply is on its way or streaming in: after the last message, where the reply will show, a
+   * row with the busy author, a quiet spinner and Working in the muted color; and the log reports
+   * aria-busy, so assistive technology can wait for the reply to finish instead of announcing
+   * every step.
    */
   busy?: boolean;
+  /** Who the reply on its way comes from, such as Agent, named on the busy row as a message's author. */
+  busyAuthor?: ReactNode;
+  /**
+   * The text beside the busy spinner, such as "Thinking". It overrides EnvUIProvider's
+   * `messages.message.working`.
+   * @default 'Working'
+   */
+  busyLabel?: string;
 }
 
 /**
@@ -145,7 +154,14 @@ export interface MessageListProps extends ComponentPropsWithRef<'div'> {
  * messages added anywhere in it and text that changes. Set busy while a reply is on its way or
  * streams in. Name it with aria-label or aria-labelledby.
  */
-export function MessageList({ busy = false, className, children, ...props }: MessageListProps) {
+export function MessageList({
+  busy = false,
+  busyAuthor,
+  busyLabel,
+  className,
+  children,
+  ...props
+}: MessageListProps) {
   return (
     <Grid
       gap={5}
@@ -158,9 +174,13 @@ export function MessageList({ busy = false, className, children, ...props }: Mes
       {children}
       {/* Shown, not read: aria-busy says it, and the reply is announced once it is complete. */}
       {busy && (
-        <div className="env-message-list-busy" aria-hidden="true">
-          <Spinner size="sm" />
-        </div>
+        <Row wrap align="center" className="env-message-list-busy" aria-hidden="true">
+          {present(busyAuthor) && <span className="env-message-author">{busyAuthor}</span>}
+          <Row align="center" gap={1} className="env-message-status">
+            <Spinner size="sm" />
+            <MessageStatusLabel status="working" label={busyLabel} />
+          </Row>
+        </Row>
       )}
     </Grid>
   );

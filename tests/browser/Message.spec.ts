@@ -65,6 +65,8 @@ test('a busy log reports it while a reply streams in', async ({ page }) => {
   await scope.getByRole('button', { name: 'Start reply light' }).click();
   // While busy, assistive technology can wait instead of announcing each step of the reply.
   await expect(log).toHaveAttribute('aria-busy', 'true');
+  // The busy row names who replies and says it works, shown rather than read.
+  await expect(log.locator('.env-message-list-busy')).toHaveText(/^Aurora\s*Working$/);
   await expect(log).toHaveAttribute('aria-live', 'polite');
   await expect(log.getByRole('article').last()).toContainText('The summary');
   await scope.getByRole('button', { name: 'Finish reply light' }).click();

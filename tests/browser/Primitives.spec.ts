@@ -79,6 +79,14 @@ test.describe('Toolbar', () => {
     );
   });
 
+  test('a disabled toolbar disables its links too', async ({ page }) => {
+    await open(page);
+    const link = page.getByRole('toolbar', { name: 'Disabled toolbar' }).getByLabel('Shortcuts');
+    await expect(link).toHaveAttribute('aria-disabled', 'true');
+    await expect(link).not.toHaveAttribute('href');
+    await expect(link).toHaveAttribute('tabindex', '-1');
+  });
+
   test("runs its ref's cleanup rather than calling the ref with null", async ({ page }) => {
     await open(page);
     const log = page.getByTestId('ref-log');

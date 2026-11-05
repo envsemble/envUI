@@ -7,6 +7,8 @@ export const message = {
   sending: 'Sending',
   /** The status of a message that could not be sent. */
   failed: 'Not sent',
+  /** Beside the spinner of a MessageList while a reply is on its way. */
+  working: 'Working',
 };
 
 export type MessageMessages = typeof message;

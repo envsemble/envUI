@@ -60,8 +60,8 @@ Each style, largest first, in the theme you are reading in, with what it is for.
 ```
 
 1. **Display**: The one large line that opens a page, at most once.
-2. **Headline**: The title of a page.
-3. **Title**: The title of a section, a card or a dialog.
+2. **Headline**: The title of a page, once per page.
+3. **Title**: The title of a pane, a section, a card or a dialog, and of a section inside a pane, so nothing in a pane outranks its title.
 4. **Body**: Most text: paragraphs, descriptions and values.
 5. **Small body**: Supporting text, a step smaller and quieter.
 6. **Caption**: A note under a figure or a chart.
@@ -141,7 +141,7 @@ Ask an agent for text in these words; envUI turns each into a style, so the resu
 | ---------------- | ----------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
 | A hero line      | `variant="display"`, once per view at most                                    | The display style: one large line that opens a page.                                         |
 | A page title     | `variant="headline"` on the page's heading element, such as `render={<h1 />}` | The headline style, as the page’s main heading.                                              |
-| A section title  | `variant="title"` on the section's heading element, such as `render={<h2 />}` | The title style, for a section, a card or a dialog.                                          |
+| A section title  | `variant="title"` on the section's heading element, such as `render={<h2 />}` | The title style, for a pane, a section, a card or a dialog.                                  |
 | Supporting text  | `variant="body-sm"`, muted by default                                         | Text a step smaller and quieter, for details and hints.                                      |
 | A caption        | `variant="caption"`                                                           | A small, quiet note under a figure or a chart.                                               |
 | Quieter text     | `emphasis="muted"` on Text of any variant                                     | The same size in the quieter color of supporting text.                                       |

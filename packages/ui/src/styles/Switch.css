@@ -72,13 +72,14 @@
     opacity: var(--env-state-disabled-opacity);
   }
   /* A switch that is on and unavailable reads as unavailable rather than as a lighter brand color,
-     as an unavailable button does: the neutral fill, with its thumb in the disabled text color, at
-     full strength while its label fades. */
+     as an unavailable button does: a faint tint of the primary, which keeps it apart from a switch
+     that is off by more than its thumb's place, with its thumb in the disabled text color, at full
+     strength while its label fades. */
   .env-switch:has(input:disabled:checked) > .env-switch-input {
     opacity: 1;
   }
   .env-switch-input:checked:disabled {
-    background: var(--env-color-bg-neutral-muted);
+    background: var(--env-color-bg-primary-muted);
   }
   .env-switch-input:checked:disabled::before {
     background: var(--env-color-fg-disabled);
@@ -129,7 +130,12 @@
     width: var(--env-switch-thumb);
     height: var(--env-switch-thumb);
     border-radius: 50%;
-    background: var(--env-switch-handle, var(--env-color-fg-control));
+    /* Off, the thumb is muted, at 3:1 on its track, so it doesn't outweigh a switch that is on; it
+       darkens with the ring under the pointer. */
+    background: var(
+      --env-switch-handle,
+      var(--env-switch-thumb-off, var(--env-color-border-default-pressed))
+    );
     transition: transform var(--env-motion-duration-fast) var(--env-motion-ease);
   }
   .env-switch-input:checked {
@@ -149,11 +155,13 @@
   .env-switch-input:hover:not(:disabled) {
     --env-switch-layer: calc(var(--env-state-hover-opacity) * 100%);
     --env-switch-ring: var(--env-switch-outline, var(--env-color-fg-muted));
+    --env-switch-thumb-off: var(--env-color-fg-muted);
     background: var(--env-switch-off-fill, var(--env-color-bg-neutral-muted-hover));
   }
   .env-switch-input:active:not(:disabled) {
     --env-switch-layer: calc(var(--env-state-pressed-opacity) * 100%);
     --env-switch-ring: var(--env-switch-outline, var(--env-color-fg-muted-hover));
+    --env-switch-thumb-off: var(--env-color-fg-muted);
     background: var(--env-switch-off-fill, var(--env-color-bg-neutral-muted-pressed));
   }
   .env-switch-input:checked:hover:not(:disabled) {

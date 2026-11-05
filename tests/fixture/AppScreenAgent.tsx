@@ -131,6 +131,7 @@ function Conversation() {
         ref={log}
         aria-label="Conversation with the agent"
         busy={running}
+        busyAuthor="Agent"
         tabIndex={0}
         style={{ flex: 1, minBlockSize: 0, overflowY: 'auto', paddingInline: 'var(--env-space-1)' }}
       >
@@ -162,8 +163,12 @@ function Conversation() {
         <Message
           from="other"
           author="Agent"
-          meta={<RelativeTime value={minutesAgo(4)} />}
-          actions={<CopyButton variant="text" value={after} aria-label="Copy the change" />}
+          meta={
+            <Row align="center" gap={1} render={<span />}>
+              <RelativeTime value={minutesAgo(4)} />
+              <CopyButton variant="text" size="sm" value={after} aria-label="Copy the change" />
+            </Row>
+          }
         >
           <Column gap={3}>
             <Text>
@@ -237,14 +242,14 @@ function RunPanel() {
         ))}
       </List.Root>
       <Column gap={3}>
-        <Text render={<h3 />} variant="headline">
+        <Text render={<h3 />} variant="title">
           Usage
         </Text>
         <Progress value={62} label="Context" valueText="124k of 200k tokens" />
         <Progress value={null} label="Sandbox" valueText="Starting the test database" />
       </Column>
       <Column gap={3}>
-        <Text render={<h3 />} variant="headline">
+        <Text render={<h3 />} variant="title">
           Preview
         </Text>
         {/* The empty state. Finding: no empty state component; it is a Surface and a centred
@@ -255,9 +260,8 @@ function RunPanel() {
               <IconVisibility width="2rem" height="2rem" />
             </Text>
             <Column gap={1} align="center">
-              <Text render={<h4 />} variant="headline">
-                No preview yet
-              </Text>
+              {/* Under the section's title, the state's heading is body text in the default color. */}
+              <Text render={<h4 />}>No preview yet</Text>
               <Text variant="body-sm" emphasis="muted">
                 A preview deploys once the tests pass.
               </Text>

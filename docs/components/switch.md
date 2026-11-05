@@ -103,7 +103,7 @@ Name the setting in a short phrase, so that on means yes.
 
 ### Disabled
 
-A disabled switch keeps its setting from changing. One that is on takes the neutral fill rather than the accent, as a disabled button does.
+A disabled switch keeps its setting from changing. One that is on takes a faint tint of the accent rather than its fill, with its thumb in the disabled color, so it reads unavailable and still apart from one that is off.
 
 - Say why beside it, such as in the row's detail, and who can change it.
 
@@ -159,6 +159,7 @@ The root, `env-switch`, is the label around the track, `env-switch-input`, and t
 
 - **1.0.0**: `className` and `style` style the root, `env-switch`, rather than the input, which keeps `ref` and the other native props. `env-choice-control` is `env-switch` and `env-switch-control` `env-switch-input`.
 - **1.0.0**: The track of a switch that is off has a 3:1 boundary, and switches in the dark theme reach 3:1 on every surface.
+- **1.0.0-prerelease.6**: A switch that is off has a muted thumb, which no longer outweighs one that is on, and darkens it under the pointer with its ring. A switch that is on and unavailable takes a faint tint of the accent, `--env-color-bg-primary-muted`, rather than the neutral fill, so it differs from one that is off by more than the thumb's place.
 - **1.0.0-prerelease.6**: A switch that is on that is unavailable takes the neutral fill, with its thumb in `--env-color-fg-disabled`, rather than a faded accent, as an unavailable button does.
 - **1.0.0-prerelease.6**: Beside a label that wraps or has a description, the track sits on the middle of its first line rather than across both lines.
 - **1.0.0-prerelease.6**: A switch that is off darkens its ring under the pointer and while pressed, as its track deepens.

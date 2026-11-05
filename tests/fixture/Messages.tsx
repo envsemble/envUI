@@ -74,7 +74,7 @@ export function MessagesFixture({ theme }: { theme: ColorScheme }) {
       <output data-testid={`messages-copied-${theme}`}>{copied}</output>
       <output data-testid={`messages-retried-${theme}`}>{retried}</output>
       <Surface background="default" padding={4} data-surface="pane">
-        <MessageList aria-label={`Pane conversation ${theme}`} busy={replying}>
+        <MessageList aria-label={`Pane conversation ${theme}`} busy={replying} busyAuthor="Aurora">
           <Message from="self">On a pane</Message>
           <Message from="other" author="Aurora">
             Answers read as plain content.

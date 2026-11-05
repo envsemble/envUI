@@ -2827,11 +2827,11 @@
         },
         {
           "class": "env-menu-item-indicator",
-          "description": "The check of a chosen item."
+          "description": "The mark of a chosen item: a dot, data-shape=dot, on a radio item and a check on a checkbox item."
         },
         {
           "class": "env-menu-item-indicator-slot",
-          "description": "The place for a chosen item's check."
+          "description": "The place for a chosen item's mark."
         },
         {
           "class": "env-menu-item-label",
@@ -2898,6 +2898,15 @@
           "values": [],
           "parts": [
             "env-menu-item"
+          ]
+        },
+        {
+          "attribute": "data-shape",
+          "values": [
+            "dot"
+          ],
+          "parts": [
+            "env-menu-item-indicator"
           ]
         },
         {
@@ -3083,7 +3092,7 @@
         },
         {
           "class": "env-message-list-busy",
-          "description": "The spinner after the last message while busy."
+          "description": "The row after the last message while busy: the busy author, a spinner and Working."
         }
       ],
       "states": [],

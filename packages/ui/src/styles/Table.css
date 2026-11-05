@@ -226,23 +226,25 @@
     font: inherit;
     text-align: inherit;
     cursor: pointer;
-    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
+    transition: color var(--env-motion-duration-fast) var(--env-motion-ease);
   }
   /* At the end of a numeric column the arrow comes first, so the label lines up with the numbers. */
   .env-table-header-cell[data-align='end'] .env-table-sort-button {
     flex-direction: row-reverse;
   }
+  /* Under the pointer a header takes no fill, lighter than a hovered row: its label darkens to the
+     text color and its arrow shows (below). */
   .env-table-sort-button:hover {
-    background: var(--env-color-bg-neutral-subtle-hover);
+    color: var(--env-color-fg-default);
   }
-  .env-table-sort-button:active {
-    background: var(--env-color-bg-neutral-subtle-pressed);
+  .env-table-sort-button:hover .env-icon {
+    color: inherit;
   }
   .env-table-sort-button:focus-visible {
     outline: 0.125rem solid var(--env-color-border-focus);
     outline-offset: -0.125rem;
   }
-  /* The hover fill and focus ring follow the surface's outer corners in the first and last header
+  /* The focus ring follows the surface's outer corners in the first and last header
      cells. There the ring is an inset shadow, which keeps the corner's radius, where an outline
      drawn inside the edge tightens it; forced colors draw the outline, as they show no shadows. */
   .env-table-head .env-table-row:first-child > :first-child .env-table-sort-button {

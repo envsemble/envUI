@@ -6,14 +6,11 @@
     max-inline-size: 100%;
     overflow-wrap: break-word;
   }
-  /* While busy, a reply on its way: a small spinner in the muted color after the last message, at
-     the start, where the reply will show. */
+  /* While busy, a reply on its way, where it will show: its author, as a message's header, then a
+     small spinner and Working in the muted color. */
   .env-message-list-busy {
-    display: flex;
-    align-items: center;
-    min-block-size: 1lh;
-    --env-spinner-color: var(--env-color-fg-muted);
-    font: var(--env-type-body);
+    column-gap: var(--env-space-2);
+    font: var(--env-type-body-sm);
   }
   .env-message {
     justify-items: start;

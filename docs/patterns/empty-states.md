@@ -187,7 +187,7 @@ An empty state doesn't take focus; <kbd>Tab</kbd> reaches its action after the t
 
 ### You provide
 
-- The heading's level, such as `render={<h4 />}` under a section's `h3`, so the state takes its place in the page's outline; its look stays the title type whatever the level.
+- The heading's level, such as `render={<h4 />}` under a section's `h3`, so the state takes its place in the page's outline; its look stays the title type whatever the level, except inside a section whose own heading is a title, such as in a pane, where it is body text so it doesn't match its section.
 - A danger Alert with `announce` for content that failed to load, so it is announced; a neutral state isn't.
 - The right kind of state, its words and its one action.
 - A count of results in a `role="status"` text beside a search, since a neutral state isn't announced.

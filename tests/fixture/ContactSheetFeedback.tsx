@@ -58,9 +58,18 @@ function Progresses() {
   return (
     <Section name="Progress">
       <Strip>
-        {[0, 30, 75, 100].map((value) => (
-          <Cell key={value} caption={`${value}%`} width="14rem">
-            <Progress label="Uploading" value={value} />
+        {/* The captions name the states rather than repeat the value, which the bar shows at its
+            top end. */}
+        {(
+          [
+            [0, 'Not started'],
+            [30, 'Under way'],
+            [75, 'Most done'],
+            [100, 'Complete'],
+          ] as const
+        ).map(([value, caption]) => (
+          <Cell key={value} caption={caption} width="14rem">
+            <Progress label="Uploading" value={value} valueText={`${value}%`} />
           </Cell>
         ))}
         <Cell caption="Indeterminate" width="14rem">

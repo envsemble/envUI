@@ -265,11 +265,7 @@ const registry: readonly ContrastPair[] = merged([
     [page, surface, muted, raised, popup],
     'Supporting text, icons, field descriptions, unchecked checkbox rings',
   ),
-  ...text(
-    '--env-color-fg-control',
-    [page, surface],
-    'Navigation labels, meter values, the thumb of a switch that is off',
-  ),
+  ...text('--env-color-fg-control', [page, surface], 'Navigation labels and meter values'),
   ...text('--env-color-fg-default', [row, rowHover, rowPressed], 'List rows'),
   ...text('--env-color-fg-muted', [row, rowHover, rowPressed], 'List row details'),
   ...text(
@@ -371,23 +367,29 @@ const registry: readonly ContrastPair[] = merged([
     ],
     'Primary buttons, the chosen calendar day and time, the check of a checked checkbox and the thumb of a switch that is on',
   ),
-  ...text(
-    '--env-color-fg-control',
+  ...nonText(
+    '--env-color-border-default-pressed',
     [
       [fill, page],
+      [fill, surface],
+      [fill, muted],
+      [fill, raised],
+    ],
+    'The thumb of a switch that is off on its track at rest: the fill is translucent, so it is measured on each surface it sits on',
+  ),
+  ...nonText(
+    '--env-color-fg-muted',
+    [
       ['--env-color-bg-neutral-muted-hover', page],
       ['--env-color-bg-neutral-muted-pressed', page],
-      [fill, surface],
       ['--env-color-bg-neutral-muted-hover', surface],
       ['--env-color-bg-neutral-muted-pressed', surface],
-      [fill, muted],
       ['--env-color-bg-neutral-muted-hover', muted],
       ['--env-color-bg-neutral-muted-pressed', muted],
-      [fill, raised],
       ['--env-color-bg-neutral-muted-hover', raised],
       ['--env-color-bg-neutral-muted-pressed', raised],
     ],
-    'The thumb of a switch that is off on its track: the fill is translucent, so it is measured on each surface it sits on',
+    'The thumb of a switch that is off on its track under the pointer and pressed',
   ),
   ...text(
     '--env-color-fg-default',
@@ -1362,6 +1364,20 @@ const retiredSliderRationale =
  * `pairs` without an entry, and on a dropped pair that is still declared.
  */
 export const dropped: readonly { pair: string; rationale: string }[] = [
+  // A switch that is off has a muted thumb now, measured as a boundary at rest and in its states.
+  ...['', '-hover', '-pressed'].flatMap((state) =>
+    [
+      '--env-color-bg-default',
+      '--env-color-bg-muted',
+      '--env-color-bg-page',
+      '--env-color-bg-raised',
+      '--env-color-bg-recessed',
+    ].map((ground) => ({
+      pair: `--env-color-fg-control on --env-color-bg-neutral-muted${state} over ${ground}`,
+      rationale:
+        'The thumb of a switch that is off is muted, so it no longer outweighs a switch that is on: --env-color-border-default-pressed at rest and --env-color-fg-muted under the pointer and pressed, each measured on the track at 3:1 as the control’s boundary.',
+    })),
+  ),
   // The slider's retired fills, and the text color on them.
   ...retiredSliderGrounds.flatMap((ground) =>
     [
@@ -2957,6 +2973,13 @@ export const renamed: readonly { from: string; to: string; rationale: string }[]
       rationale:
         'The catalogue’s canvas, a formula in its style sheet, is the recessed surface, --env-color-bg-recessed: the same shade deeper than the page, a token of the themes.',
     })),
+  // The thumb of a switch that is off, since dropped, was renamed onto the recessed surface first.
+  ...['', '-hover', '-pressed'].map((state) => ({
+    from: `--env-color-fg-control on --env-color-bg-neutral-muted${state} over catalogue-canvas`,
+    to: `--env-color-fg-control on --env-color-bg-neutral-muted${state} over --env-color-bg-recessed`,
+    rationale:
+      'The catalogue’s canvas, a formula in its style sheet, is the recessed surface, --env-color-bg-recessed: the same shade deeper than the page, a token of the themes.',
+  })),
   // The alerts' edges, since dropped, were renamed onto the recessed surface first.
   ...(['accent', 'success', 'warning', 'danger'] as const).map((tone) => ({
     from: `--env-color-border-${tone}-muted on catalogue-canvas`,
