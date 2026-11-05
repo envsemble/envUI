@@ -181,7 +181,9 @@ Hover, press, keyboard focus and disabled, for each variant.
 
 ### Pending work
 
-While its work runs, a spinner turns centred over the button, in the label's color, and presses do nothing. The label and icons stay in place but transparent, so the button keeps its width and its name; an icon button's spinner takes the icon's place.
+While its work runs, a spinner turns over the button and presses do nothing.
+
+- The label and icons stay in place but transparent, so the button keeps its width and its name.
 
 ```tsx figure=PendingAction motion
 

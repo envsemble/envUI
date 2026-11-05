@@ -854,6 +854,15 @@
           ]
         },
         {
+          "attribute": "data-background",
+          "values": [
+            "page"
+          ],
+          "parts": [
+            "env-card"
+          ]
+        },
+        {
           "attribute": "data-env-skeleton",
           "values": [],
           "parts": [
