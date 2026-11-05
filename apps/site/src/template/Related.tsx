@@ -195,9 +195,21 @@ function useStillAtRest(canvas: HTMLElement | null, resting: boolean) {
 }
 
 /**
+ * The box an element scrolls in, such as the scaffold's body the page scrolls inside, or none where
+ * it scrolls with the document.
+ */
+function scrollerOf(element: Element) {
+  for (let node = element.parentElement; node; node = node.parentElement)
+    if (/auto|scroll|overlay/.test(getComputedStyle(node).overflowY)) return node;
+  return null;
+}
+
+/**
  * Whether an element is near the viewport, once: the tiles render their examples from then on.
  * Further off, `approach` runs once, such as to start loading a tile's module, so it is there by
- * the time the tile renders.
+ * the time the tile renders. Near is measured in the box the page scrolls in: measured against the
+ * window, that box would clip the tiles until they scroll into it, and a margin around the window
+ * would never look ahead.
  */
 export function useNear(element: RefObject<HTMLElement | null>, approach?: () => void) {
   const [near, setNear] = useState(false);
@@ -206,32 +218,53 @@ export function useNear(element: RefObject<HTMLElement | null>, approach?: () =>
   useEffect(() => {
     const target = element.current;
     if (!target || near) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (!entries.some((entry) => entry.isIntersecting)) return;
-        observer.disconnect();
-        // The examples load and render without holding up what the reader is doing.
-        startTransition(() => setNear(true));
-      },
-      { rootMargin: '600px 0px' },
-    );
-    observer.observe(target);
-    const ahead = new IntersectionObserver(
-      (entries) => {
-        if (!entries.some((entry) => entry.isIntersecting)) return;
-        ahead.disconnect();
-        approaching.current?.();
-      },
-      { rootMargin: '1800px 0px' },
-    );
-    if (approaching.current) ahead.observe(target);
+    const root = scrollerOf(target);
+    const idle = { near: 0, ahead: 0 };
+    // What is in view renders at once, as after a jump down the page; what is ahead of the view
+    // once the page is idle, without holding up what the reader is doing or what is in view.
+    const watch = (margin: string, then: () => void) => {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          if (!entries.some((entry) => entry.isIntersecting)) return;
+          observer.disconnect();
+          then();
+        },
+        { root, rootMargin: margin },
+      );
+      observer.observe(target);
+      return observer;
+    };
+    const inView = watch('0px', () => {
+      cancelIdle(idle.near);
+      setNear(true);
+    });
+    const close = watch('600px 0px', () => {
+      idle.near = whenIdle(() => startTransition(() => setNear(true)));
+    });
+    const ahead = approaching.current
+      ? watch('1800px 0px', () => {
+          idle.ahead = whenIdle(() => approaching.current?.());
+        })
+      : null;
     return () => {
-      observer.disconnect();
-      ahead.disconnect();
+      inView.disconnect();
+      close.disconnect();
+      ahead?.disconnect();
+      cancelIdle(idle.near);
+      cancelIdle(idle.ahead);
     };
   }, [element, near]);
   return near;
 }
+
+/** Runs a task once the page is idle, or after a second at the latest; returns its handle. */
+const whenIdle = (task: () => void) =>
+  typeof requestIdleCallback === 'function'
+    ? requestIdleCallback(task, { timeout: 1000 })
+    : window.setTimeout(task, 50);
+
+const cancelIdle = (handle: number) =>
+  typeof cancelIdleCallback === 'function' ? cancelIdleCallback(handle) : clearTimeout(handle);
 
 /**
  * One alternative's tile, whose preview plays while the pointer or the keyboard is on it, and where
