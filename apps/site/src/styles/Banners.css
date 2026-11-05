@@ -9,6 +9,14 @@
   z-index: var(--env-z-raised);
 }
 
+/* The banner's top end corner (PageHeader.tsx), such as the Design | Code switch: over the picture,
+   at the banner's corner, so the text keeps its column. */
+.site-banner > .site-page-banner-corner {
+  position: absolute;
+  inset-block-start: var(--env-space-4);
+  inset-inline-end: var(--env-space-4);
+}
+
 /* The banner's inline padding, as a length its text measures the picture by (below). */
 @property --site-banner-padding {
   syntax: '<length>';

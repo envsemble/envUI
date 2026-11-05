@@ -23,13 +23,8 @@ export function ComponentPage({ page }: { page: RoutePage }) {
         trail={catalogueTrail(page)}
         description={page.summary}
         subject={document.id}
-        meta={
-          document.metadata && (
-            <MetadataBadges metadata={document.metadata} plain>
-              <PartSwitch page={page} />
-            </MetadataBadges>
-          )
-        }
+        meta={document.metadata && <MetadataBadges metadata={document.metadata} plain />}
+        corner={<PartSwitch page={page} />}
       />
       <TemplateContent document={document} />
     </>
@@ -49,13 +44,8 @@ export function PatternPage({ page }: { page: RoutePage }) {
         trail={catalogueTrail(page)}
         description={page.summary}
         subject={document.id}
-        meta={
-          document.metadata && (
-            <MetadataBadges metadata={document.metadata} plain>
-              <PartSwitch page={page} />
-            </MetadataBadges>
-          )
-        }
+        meta={document.metadata && <MetadataBadges metadata={document.metadata} plain />}
+        corner={<PartSwitch page={page} />}
       />
       <TemplateContent document={document} />
     </>
@@ -94,7 +84,7 @@ export function FoundationPage({ page }: { page: RoutePage }) {
         trail={catalogueTrail(page)}
         description={page.summary}
         subject={document.id}
-        meta={<PartSwitch page={page} />}
+        corner={<PartSwitch page={page} />}
       />
       {document.id === 'icons' && <IconsCredit />}
       {/* A foundation is its Markdown, with its figures in place. */}

@@ -102,11 +102,8 @@ export function GuidePage({ page }: { page: RoutePage }) {
         trail={docsTrail(page)}
         description={page.summary}
         kind="docs"
-        meta={
-          <MetadataBadges metadata={{ status: page.document?.status }}>
-            <PartSwitch page={page} />
-          </MetadataBadges>
-        }
+        meta={<MetadataBadges metadata={{ status: page.document?.status }} />}
+        corner={<PartSwitch page={page} />}
       />
       <Column gap={7} className="site-article">
         {page.path === docsRoute && <AgentSetup />}
@@ -210,7 +207,7 @@ export function FoundationGuidePage({ page }: { page: RoutePage }) {
         kind="docs"
         trail={docsTrail(page)}
         description={page.summary}
-        meta={<PartSwitch page={page} />}
+        corner={<PartSwitch page={page} />}
       />
       <Column gap={8} className="site-article docs-api">
         <CodeGuide document={document} />
@@ -559,13 +556,8 @@ export function DocsReferencePage({ page }: { page: RoutePage }) {
         kind="docs"
         trail={docsTrail(page)}
         description={page.summary}
-        meta={
-          metadata && (
-            <MetadataBadges metadata={metadata}>
-              <PartSwitch page={page} />
-            </MetadataBadges>
-          )
-        }
+        meta={metadata && <MetadataBadges metadata={metadata} />}
+        corner={<PartSwitch page={page} />}
       />
       {/* Field, which has no page in the catalogue, shows the whole file, what envUI and the
           application provide in place. */}

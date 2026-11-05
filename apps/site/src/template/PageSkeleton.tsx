@@ -97,10 +97,9 @@ export function PageSkeleton({ page }: { page: RoutePage }) {
           <MetadataBadges
             metadata={page.document?.metadata ?? { status: page.document?.status }}
             plain={!docs}
-          >
-            <PartSwitch page={page} />
-          </MetadataBadges>
+          />
         }
+        corner={<PartSwitch page={page} />}
       />
       {docs ? <DocsSection code={page.kind === 'reference'} /> : <CatalogueSection page={page} />}
     </PartSkeleton>

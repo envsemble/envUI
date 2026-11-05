@@ -25,6 +25,7 @@ export function PageHeader({
   subject,
   children,
   actions,
+  corner,
   kind = 'catalogue',
 }: {
   title: string;
@@ -42,6 +43,8 @@ export function PageHeader({
   subject?: string;
   children?: ReactNode;
   actions?: ReactNode;
+  /** What sits over the banner's top end corner, such as the Design | Code switch. */
+  corner?: ReactNode;
   kind?: BannerKind;
 }) {
   const motif = kind === 'catalogue' ? motifOf(subject) : undefined;
@@ -90,6 +93,7 @@ export function PageHeader({
           </div>
           {children}
         </Column>
+        {corner && <div className="site-page-banner-corner">{corner}</div>}
       </Card>
       <CompactContents />
     </header>
