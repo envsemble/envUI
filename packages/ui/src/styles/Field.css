@@ -89,16 +89,11 @@
     opacity: 1;
   }
   /* Under the pointer the edge darkens to the muted text color, as a text field's does; the accent
-     shows focus alone. */
+     shows focus alone. A read-only control keeps its resting edge, as TextField's does. */
   @media (hover: hover) {
     .env-field-control:hover:not(:disabled, [data-disabled], [readonly]) {
       --env-field-control-border: var(--env-color-fg-muted);
     }
-  }
-  /* Read-only: the value keeps its full contrast while the edge quiets to the muted one and doesn't
-     answer the pointer, as TextField's does. */
-  .env-field-control[readonly] {
-    --env-field-control-border: var(--env-color-border-muted);
   }
   /* Focus draws the edge in the accent at twice its width, the second hairline inside it, so
      nothing moves. */

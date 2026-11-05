@@ -234,7 +234,7 @@ Say what kind of value each field takes, such as an e-mail address, so the brows
 
 Show a value people can't change as read-only, so they can still focus and copy it.
 
-- Its outline is quieter and doesn't answer the pointer. The value stays as dark as any other.
+- Its outline stays as at rest and doesn't answer the pointer. The value stays as dark as any other.
 - A disabled field can't be focused, copied or submitted.
 
 ### Labels

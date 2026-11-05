@@ -20,8 +20,7 @@
   /* Checkbox: a native checkbox drawn as a box with a check mark, inside its label. */
   .env-checkbox {
     --env-checkbox-edge: var(--env-checkbox-outline, var(--env-color-fg-muted));
-    --env-checkbox-edge-hover: var(--env-checkbox-outline, var(--env-color-fg-muted-hover));
-    --env-checkbox-edge-pressed: var(--env-checkbox-outline, var(--env-color-fg-muted-pressed));
+    --env-checkbox-edge-hover: var(--env-checkbox-outline, var(--env-color-fg-default));
     --env-checkbox-mark: var(--env-checkbox-selected-content, var(--env-color-fg-on-emphasis));
     --env-checkbox-selected-content-gate: color-mix(
       in srgb,
@@ -164,17 +163,15 @@
     height: 0.125rem;
     background: currentColor;
   }
-  /* Under the pointer and while pressed, an unchecked box darkens its edge and takes the neutral
-     state layer, as a radio and a ghost button do. */
+  /* Under the pointer and while pressed, an unchecked box darkens its edge to the text color and
+     stays empty, as a radio does, so it never reads as a checked one that is unavailable. */
   .env-checkbox-input:hover:not(:disabled) {
     --env-checkbox-layer: calc(var(--env-state-hover-opacity) * 100%);
-    border-color: var(--env-checkbox-edge-hover, var(--env-color-fg-muted-hover));
-    background: var(--env-color-bg-neutral-muted);
+    border-color: var(--env-checkbox-edge-hover, var(--env-color-fg-default));
   }
   .env-checkbox-input:active:not(:disabled) {
     --env-checkbox-layer: calc(var(--env-state-pressed-opacity) * 100%);
-    border-color: var(--env-checkbox-edge-pressed, var(--env-color-fg-muted-pressed));
-    background: var(--env-color-bg-neutral-muted-hover);
+    border-color: var(--env-checkbox-edge-hover, var(--env-color-fg-default));
   }
   .env-checkbox-input:is(:checked, :indeterminate):hover:not(:disabled) {
     background: var(--env-checkbox-custom-fill, var(--env-color-bg-primary-emphasis-hover));

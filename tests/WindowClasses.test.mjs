@@ -43,6 +43,8 @@ const ownThresholds = {
   'Table.css': ['37.5em'],
   // PanelDock does the same with the dock's own stackBelow.
   'PanelDock.css': ['37.5em'],
+  // A calendar seven days of under 2 rem wide names the weekdays by two letters.
+  'Calendar.css': ['14rem'],
 };
 
 test('windowClasses holds the widths of the window-class tokens, from compact up', () => {

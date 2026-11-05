@@ -198,7 +198,7 @@ The field is `env-field` with `env-select`, a text field's frame.
 - The open list is the shared popup, with its list, `env-select-list`. Its options are the popup's rows.
 - `className` and `style` reach the field's root, and `ref` the trigger.
 - `defaultOpen` opens the list on the first render. `open` and `onOpenChange`, which receives why, control it.
-- `readOnly` shows the choice in a quieter outline, its chevron muted, and doesn't open the list.
+- `readOnly` shows the choice in the resting outline, which doesn't answer the pointer, its chevron muted, and doesn't open the list.
 
 ### Customize
 

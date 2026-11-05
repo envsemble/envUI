@@ -35,7 +35,7 @@
     padding-inline: var(--env-space-3)
       calc(
         var(--env-combobox-end) + var(--env-combobox-actions) * var(--env-combobox-action) +
-          var(--env-space-1)
+          var(--env-combobox-actions) * var(--env-space-1)
       );
     cursor: text;
   }
@@ -208,7 +208,9 @@
   .env-combobox-chip-remove {
     --env-control-height: calc(var(--env-combobox-row) - 0.25rem);
     --env-button-touch-height: 0rem;
-    --env-icon-size: 0.875rem;
+    /* A little smaller than the field's own actions, so a chip's cross reads as the chip's and not
+       as one of them. */
+    --env-icon-size: 0.75rem;
     flex: 0 0 auto;
     border-radius: calc(var(--env-radius-sm) - 0.125rem);
   }
@@ -288,11 +290,30 @@
       row-gap: var(--env-space-2);
     }
     .env-combobox-chip-remove {
+      --env-icon-size: 0.875rem;
       --env-icon-button-hit-area: calc(var(--env-combobox-row) + var(--env-space-2));
       z-index: var(--env-z-raised);
     }
     .env-combobox-popup .env-combobox-item {
       min-block-size: var(--env-control-height-touch);
+    }
+  }
+
+  /* Beside chips, each with its own cross, the clear button that removes them all shows under a
+     fine pointer only while the field is under it or has focus, so the field's end holds one cross
+     at rest; its room stays, so nothing moves. It stays in the accessibility tree and in reach of
+     the keyboard, which shows it as focus reaches the field, and under a coarse pointer it always
+     shows. */
+  @media (hover: hover) and (pointer: fine) {
+    .env-combobox-control:has(> .env-combobox-chip):not(:hover, :focus-within)
+      > .env-combobox-end
+      > .env-combobox-clear {
+      opacity: 0;
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .env-combobox-end > .env-combobox-clear {
+      transition-property: background-color, color, opacity;
     }
   }
 

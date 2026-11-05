@@ -119,8 +119,9 @@
   }
   /* The radio: a native radio input drawn as a ring, as a checkbox is drawn as a box, so it answers
      the pointer as the other choice controls do. Unchosen, it is a ring in a checkbox's edge, which
-     darkens and fills with the neutral state layer under the pointer; chosen, a disc in the accent
-     with a dot in the mark color, a ring of the accent around it. */
+     darkens to the text color under the pointer and stays empty, so it never reads as a chosen one
+     that is unavailable; chosen, a disc in the accent with a dot in the mark color, a ring of the
+     accent around it. */
   .env-radio-input {
     appearance: none;
     box-sizing: border-box;
@@ -158,13 +159,8 @@
   .env-radio-input:checked::before {
     visibility: visible;
   }
-  .env-radio-input:hover:not(:disabled, :checked) {
-    border-color: var(--env-color-fg-muted-hover);
-    background: var(--env-color-bg-neutral-muted);
-  }
-  .env-radio-input:active:not(:disabled, :checked) {
-    border-color: var(--env-color-fg-muted-pressed);
-    background: var(--env-color-bg-neutral-muted-hover);
+  .env-radio-input:is(:hover, :active):not(:disabled, :checked) {
+    border-color: var(--env-color-fg-default);
   }
   .env-radio-input:checked:hover:not(:disabled) {
     background: var(--env-radio-accent-hover, var(--env-color-bg-primary-emphasis-hover));

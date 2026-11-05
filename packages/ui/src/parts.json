@@ -138,7 +138,9 @@
       "env-calendar-title": "The month and year.",
       "env-calendar-next": "The button for the next month.",
       "env-calendar-pad": "An empty cell before the first day or after the last.",
-      "env-calendar-previous": "The button for the previous month."
+      "env-calendar-previous": "The button for the previous month.",
+      "env-calendar-weekday": "A weekday's short name above its column, shown where the days are wide enough.",
+      "env-calendar-weekday-compact": "A weekday's compact name, such as Mo, shown where the days are narrow."
     },
     "CalendarHeatmap": {
       "env-calendar-heatmap": "The heatmap of days over months.",
@@ -329,6 +331,7 @@
     },
     "Disclosure": {
       "env-disclosure": "The disclosure: a summary that shows and hides a panel.",
+      "env-disclosure-indicator": "The chevron before the summary's words, turned down while open.",
       "env-disclosure-panel": "The panel it shows."
     },
     "DocumentTabs": {

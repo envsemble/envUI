@@ -82,6 +82,29 @@ export function calendarActiveDay(root: ParentNode | null | undefined): HTMLElem
 /** Six weeks always fit a month, so the calendar keeps its height from month to month. */
 const weeksShown = 6;
 
+function firstGraphemes(text: string, count: number) {
+  const Segmenter = (Intl as { Segmenter?: typeof Intl.Segmenter }).Segmenter;
+  const graphemes = Segmenter
+    ? Array.from(
+        new Segmenter(undefined, { granularity: 'grapheme' }).segment(text),
+        (part) => part.segment,
+      )
+    : Array.from(text);
+  return graphemes.slice(0, count).join('');
+}
+
+/**
+ * The weekday names for narrow days: the short names' first two letters, as Mo Tu We in English,
+ * where those still tell the seven apart, else the narrow names where they do, else the short names.
+ */
+function compactWeekdays(short: string[], narrow: string[]) {
+  const distinct = (names: string[]) => new Set(names).size === names.length;
+  const twoLetters = short.map((name) => firstGraphemes(name.replace(/\.$/, ''), 2));
+  if (distinct(twoLetters)) return twoLetters;
+  if (distinct(narrow)) return narrow;
+  return short;
+}
+
 /**
  * A month of days to choose one from, following the WAI-ARIA date picker grid: the arrow keys move
  * by day and week, Page Up and Page Down by month (with Shift, by year), Home and End to the week's
@@ -143,6 +166,7 @@ export function Calendar({
       }),
       month: dateFormat(shownLocale, { month: 'long', year: 'numeric' }),
       weekday: dateFormat(shownLocale, { weekday: 'short' }),
+      weekdayNarrow: dateFormat(shownLocale, { weekday: 'narrow' }),
       weekdayName: dateFormat(shownLocale, { weekday: 'long' }),
       number: new Intl.NumberFormat(shownLocale, { useGrouping: false }),
     }),
@@ -206,11 +230,22 @@ export function Calendar({
   const previousAvailable = !daysShown || minDay === undefined || first - 1 >= minDay;
   const nextMonth = addMonths(first, 1);
   const nextAvailable = !daysShown || maxDay === undefined || nextMonth <= maxDay;
-  const weekdays = Array.from({ length: 7 }, (_, column) => {
-    // 1970-01-04, day 3, was a Sunday.
-    const sample = toUtcDate(3 + ((firstWeekday + column) % 7));
-    return { short: formats.weekday.format(sample), long: formats.weekdayName.format(sample) };
-  });
+  const weekdays = useMemo(() => {
+    const samples = Array.from({ length: 7 }, (_, column) =>
+      // 1970-01-04, day 3, was a Sunday.
+      toUtcDate(3 + ((firstWeekday + column) % 7)),
+    );
+    const short = samples.map((sample) => formats.weekday.format(sample));
+    const compact = compactWeekdays(
+      short,
+      samples.map((sample) => formats.weekdayNarrow.format(sample)),
+    );
+    return samples.map((sample, column) => ({
+      short: short[column],
+      compact: compact[column],
+      long: formats.weekdayName.format(sample),
+    }));
+  }, [formats, firstWeekday]);
   const named = props['aria-label'] != null || props['aria-labelledby'] != null;
 
   return (
@@ -261,9 +296,11 @@ export function Calendar({
       >
         <thead>
           <tr>
-            {weekdays.map(({ short, long }) => (
+            {/* Both names are rendered and the calendar's width picks one (Calendar.css). */}
+            {weekdays.map(({ short, compact, long }) => (
               <th key={long} scope="col" abbr={long}>
-                {short}
+                <span className="env-calendar-weekday">{short}</span>
+                <span className="env-calendar-weekday-compact">{compact}</span>
               </th>
             ))}
           </tr>

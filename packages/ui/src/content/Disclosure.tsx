@@ -3,6 +3,7 @@
 import { useState, type ComponentPropsWithRef, type MouseEvent, type ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { Column } from '../foundations/Layout.js';
+import { IconChevronRight } from '../icons/ChevronRight.js';
 import '../styles/Base.css';
 import '../styles/Disclosure.css';
 
@@ -74,6 +75,9 @@ export function Disclosure({
           onOpenChange?.(!shown);
         }}
       >
+        <span className="env-icon env-disclosure-indicator" aria-hidden="true">
+          <IconChevronRight />
+        </span>
         {title}
       </summary>
       <Column gap={2} className="env-disclosure-panel">
