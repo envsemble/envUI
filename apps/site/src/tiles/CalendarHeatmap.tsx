@@ -1,5 +1,7 @@
 import { CalendarHeatmap, type CalendarHeatmapDay } from '@envsemble/envui';
+import { useMedia } from '../motion/Autoplay';
 import { usePointer, type PointerStep } from '../motion/Motion';
+import { narrowGallery } from './Tiles';
 
 /** Nine weeks of edits from Monday 2 February 2026, busier in waves. */
 const data: CalendarHeatmapDay[] = Array.from({ length: 63 }, (_, index) => ({
@@ -29,13 +31,17 @@ const days = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', 
 /** A day as its month and date, such as Mar 4, so its tooltip stays short. */
 const dayOf = (date: string) => days.format(new Date(`${date}T00:00:00Z`));
 
-/** A calendar heatmap of nine weeks of edits. */
+/**
+ * A calendar heatmap of nine weeks of edits; in a phone's tile eight, so it is drawn larger and its
+ * stage cuts it off below a whole week's row, rather than through one.
+ */
 export default function CalendarHeatmapTile() {
+  const narrow = useMedia(narrowGallery);
   usePointer(script);
   return (
     <CalendarHeatmap
-      aria-label="Edits in nine weeks"
-      data={data}
+      aria-label={narrow ? 'Edits in eight weeks' : 'Edits in nine weeks'}
+      data={narrow ? data.slice(0, 56) : data}
       levels={4}
       weekStart={1}
       formatValue={edits}
