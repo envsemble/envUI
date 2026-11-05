@@ -40,6 +40,12 @@ export interface SearchFieldProps
    * @default 'Clear search', or EnvUIProvider's messages.searchField.clear
    */
   clearLabel?: string;
+  /**
+   * The visible guidance while the field is empty, such as Search members. With the label hidden it
+   * shows Search unless it is set.
+   * @default 'Search' while the label is hidden, or EnvUIProvider's messages.searchField.placeholder
+   */
+  placeholder?: string;
 }
 
 /**
@@ -55,6 +61,7 @@ export function SearchField({
   onChange,
   clearLabel,
   showLabel = false,
+  placeholder,
   disabled,
   ...props
 }: SearchFieldProps) {
@@ -84,6 +91,7 @@ export function SearchField({
       type="search"
       label={label}
       showLabel={showLabel}
+      placeholder={placeholder ?? (showLabel ? undefined : messages.placeholder)}
       disabled={disabled}
       value={query}
       onChange={(event) => {

@@ -189,7 +189,7 @@ An error marks the field invalid and shows under its description. Say how to cor
 
 A SearchField's clear button and <kbd>Esc</kbd> empty the query.
 
-- Its label is for assistive technology, unless it is set to show.
+- Its label is for assistive technology, unless it is set to show; with the label hidden, its placeholder says Search unless it is given another.
 
 <!-- specimen: ClearingTheQuery -->
 
@@ -276,7 +276,7 @@ Name the value in a short noun phrase, and keep lasting instructions in the desc
 - An `aria-label` on an icon-only `endAction`.
 - Validation, the `error` text, and focus on the first invalid field.
 - An announcement of results when a search filters as people type.
-- The clear and resize labels in the application's language, through EnvUIProvider's `messages`.
+- The clear and resize labels and the search placeholder in the application's language, through EnvUIProvider's `messages`.
 
 ## Compose
 
@@ -329,6 +329,7 @@ A field fills its container's width, so set the width on the container, or on th
 
 ## Changelog
 
+- **1.0.0-prerelease.6**: A SearchField with its label hidden and no `placeholder` shows Search, `messages.searchField.placeholder`, rather than an empty field with only its icon.
 - **1.0.0-prerelease.6**: Textarea's resize grip is a short, quiet bar on the bottom edge toward its end, rather than a bar in the middle that read as a sheet's handle.
 - **1.0.0-prerelease.6**: A Textarea whose text runs past its `rows` clips that text at its padding, rather than showing the next line under the bottom border.
 - **1.0.0-prerelease.6**: The `floating` variant is gone: a field on its own or in a long form on a page takes `outline`, the default, with `size="lg"`. An outline field takes a text area's rounded corners rather than round ends, and so does a ghost field. An outline field with a visible label is at least 2.25 rem tall, so its floated label and its value each have room, a step taller than a button in a form at the compact scale. A ghost field shows a faint fill at rest, fainter when it is read-only or disabled, so a labelled one no longer reads as a label and its value, and its label floats inside the fill rather than across its top edge. A disabled field no longer fades as a whole: its label, value and icons take `--env-color-fg-disabled` and its outline the muted border, so it stays readable, also in dark.

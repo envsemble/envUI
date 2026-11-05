@@ -247,6 +247,8 @@ test('SearchField clears with its button and with Escape inside a dialog', async
   await button.click();
   const dialog = page.getByRole('dialog', { name: 'Save project' });
   const inner = dialog.getByRole('searchbox', { name: 'Search inside dialog' });
+  // With its label hidden and no placeholder of its own, a search field says Search.
+  await expect(inner).toHaveAttribute('placeholder', 'Search');
   await inner.focus();
   await page.keyboard.press('Escape');
   await expect(inner).toHaveValue('');
