@@ -178,97 +178,97 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#c0e2f6',
-      dark: '#afd3e9',
+      dark: '#1a466f',
       'light-high-contrast': '#c0e2f6',
-      'dark-high-contrast': '#afd3e9',
+      'dark-high-contrast': '#04335b',
     },
   },
-  /** The blush pink pastel fill, one of the hues an avatar takes from its name. */
+  /** The blush pink fill, one of the hues an avatar takes from its name: a pastel, and a deep shade in dark. */
   'color.bg.avatar.blush': {
     cssVariable: '--env-color-bg-avatar-blush',
     type: 'color',
     values: {
       light: '#ffd3d4',
-      dark: '#f3c2c4',
+      dark: '#732c30',
       'light-high-contrast': '#ffd3d4',
-      'dark-high-contrast': '#f3c2c4',
+      'dark-high-contrast': '#5e181f',
     },
   },
-  /** The butter yellow pastel fill, one of the hues an avatar takes from its name. */
+  /** The butter yellow fill, one of the hues an avatar takes from its name: a pastel, and a deep shade in dark. */
   'color.bg.avatar.butter': {
     cssVariable: '--env-color-bg-avatar-butter',
     type: 'color',
     values: {
       light: '#efdca4',
-      dark: '#e1cc95',
+      dark: '#5e3d06',
       'light-high-contrast': '#efdca4',
-      'dark-high-contrast': '#e1cc95',
+      'dark-high-contrast': '#472c00',
     },
   },
-  /** The warm oat pastel fill, one of the hues an avatar takes from its name. */
+  /** The warm oat fill, one of the hues an avatar takes from its name: a pastel, and a deep shade in dark. */
   'color.bg.avatar.oat': {
     cssVariable: '--env-color-bg-avatar-oat',
     type: 'color',
     values: {
       light: '#e7dbce',
-      dark: '#d8ccbf',
+      dark: '#504134',
       'light-high-contrast': '#e7dbce',
-      'dark-high-contrast': '#d8ccbf',
+      'dark-high-contrast': '#3d2f23',
     },
   },
-  /** The orchid pastel fill, one of the hues an avatar takes from its name. */
+  /** The orchid fill, one of the hues an avatar takes from its name: a pastel, and a deep shade in dark. */
   'color.bg.avatar.orchid': {
     cssVariable: '--env-color-bg-avatar-orchid',
     type: 'color',
     values: {
       light: '#fad2ec',
-      dark: '#ecc2dd',
+      dark: '#683052',
       'light-high-contrast': '#fad2ec',
-      'dark-high-contrast': '#ecc2dd',
+      'dark-high-contrast': '#531e3f',
     },
   },
-  /** The periwinkle pastel fill, one of the hues an avatar takes from its name. */
+  /** The periwinkle fill, one of the hues an avatar takes from its name: a pastel, and a deep shade in dark. */
   'color.bg.avatar.periwinkle': {
     cssVariable: '--env-color-bg-avatar-periwinkle',
     type: 'color',
     values: {
       light: '#dadaff',
-      dark: '#cacaf3',
+      dark: '#413c78',
       'light-high-contrast': '#dadaff',
-      'dark-high-contrast': '#cacaf3',
+      'dark-high-contrast': '#302964',
     },
   },
-  /** The powder blue pastel fill, one of the hues an avatar takes from its name. */
+  /** The powder blue fill, one of the hues an avatar takes from its name: a pastel, and a deep shade in dark. */
   'color.bg.avatar.powder': {
     cssVariable: '--env-color-bg-avatar-powder',
     type: 'color',
     values: {
       light: '#c0e2f6',
-      dark: '#afd3e9',
+      dark: '#1a466f',
       'light-high-contrast': '#c0e2f6',
-      'dark-high-contrast': '#afd3e9',
+      'dark-high-contrast': '#04335b',
     },
   },
-  /** The sage pastel fill, one of the hues an avatar takes from its name. */
+  /** The sage fill, one of the hues an avatar takes from its name: a pastel, and a deep shade in dark. */
   'color.bg.avatar.sage': {
     cssVariable: '--env-color-bg-avatar-sage',
     type: 'color',
     values: {
       light: '#cee4c3',
-      dark: '#bed4b3',
+      dark: '#2f4a28',
       'light-high-contrast': '#cee4c3',
-      'dark-high-contrast': '#bed4b3',
+      'dark-high-contrast': '#1d3817',
     },
   },
-  /** The seafoam pastel fill, one of the hues an avatar takes from its name. */
+  /** The seafoam fill, one of the hues an avatar takes from its name: a pastel, and a deep shade in dark. */
   'color.bg.avatar.seafoam': {
     cssVariable: '--env-color-bg-avatar-seafoam',
     type: 'color',
     values: {
       light: '#b8e7de',
-      dark: '#a7d7cf',
+      dark: '#004c4b',
       'light-high-contrast': '#b8e7de',
-      'dark-high-contrast': '#a7d7cf',
+      'dark-high-contrast': '#003837',
     },
   },
   /** The backdrop behind dialogs and the command palette: the dark page color at 32% in light, which sets the page back without turning it gray, and black at 70% in dark, where the page color would not darken it and less would barely dim the dark page. */
@@ -1520,9 +1520,9 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#39648d',
-      dark: '#2f5a84',
+      dark: '#9fc4dc',
       'light-high-contrast': '#0f3b64',
-      'dark-high-contrast': '#002e56',
+      'dark-high-contrast': '#d3efff',
     },
   },
   /** The default figure, on the powder fill. */
@@ -1531,9 +1531,9 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#39648d',
-      dark: '#2f5a84',
+      dark: '#9fc4dc',
       'light-high-contrast': '#0f3b64',
-      'dark-high-contrast': '#002e56',
+      'dark-high-contrast': '#d3efff',
     },
   },
   /** The default figure on the blush fill, the shade of its initials. */
@@ -1542,9 +1542,9 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#924c4f',
-      dark: '#894144',
+      dark: '#e6b2b4',
       'light-high-contrast': '#682227',
-      'dark-high-contrast': '#59131b',
+      'dark-high-contrast': '#ffe4e5',
     },
   },
   /** The default figure on the butter fill, the shade of its initials. */
@@ -1553,9 +1553,9 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#7c5b2a',
-      dark: '#73501f',
+      dark: '#d4bd87',
       'light-high-contrast': '#523300',
-      'dark-high-contrast': '#422800',
+      'dark-high-contrast': '#fde9b1',
     },
   },
   /** The default figure on the oat fill, the shade of its initials. */
@@ -1564,9 +1564,9 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#6e5e51',
-      dark: '#645447',
+      dark: '#cabdb0',
       'light-high-contrast': '#46372b',
-      'dark-high-contrast': '#392b1f',
+      'dark-high-contrast': '#f5e8db',
     },
   },
   /** The default figure on the orchid fill, the shade of its initials. */
@@ -1575,9 +1575,9 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#864f70',
-      dark: '#7d4566',
+      dark: '#deb3ce',
       'light-high-contrast': '#5d2648',
-      'dark-high-contrast': '#4e193b',
+      'dark-high-contrast': '#ffe2f5',
     },
   },
   /** The default figure on the periwinkle fill, the shade of its initials. */
@@ -1586,9 +1586,9 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#5d5a96',
-      dark: '#54508d',
+      dark: '#bcbbe6',
       'light-high-contrast': '#38326d',
-      'dark-high-contrast': '#2c255f',
+      'dark-high-contrast': '#e8e9ff',
     },
   },
   /** The default figure on the powder fill, the shade of its initials. */
@@ -1597,9 +1597,9 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#39648d',
-      dark: '#2f5a84',
+      dark: '#9fc4dc',
       'light-high-contrast': '#0f3b64',
-      'dark-high-contrast': '#002e56',
+      'dark-high-contrast': '#d3efff',
     },
   },
   /** The default figure on the sage fill, the shade of its initials. */
@@ -1608,9 +1608,9 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#4d6845',
-      dark: '#425e3b',
+      dark: '#afc6a4',
       'light-high-contrast': '#26401f',
-      'dark-high-contrast': '#193312',
+      'dark-high-contrast': '#dbf1d0',
     },
   },
   /** The default figure on the seafoam fill, the shade of its initials. */
@@ -1619,9 +1619,9 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#266b68',
-      dark: '#16615f',
+      dark: '#97c9c1',
       'light-high-contrast': '#004140',
-      'dark-high-contrast': '#003432',
+      'dark-high-contrast': '#c5f4eb',
     },
   },
   /** The initials on the blush fill. */
@@ -1630,9 +1630,9 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#924c4f',
-      dark: '#894144',
+      dark: '#e6b2b4',
       'light-high-contrast': '#682227',
-      'dark-high-contrast': '#59131b',
+      'dark-high-contrast': '#ffe4e5',
     },
   },
   /** The initials on the butter fill. */
@@ -1641,9 +1641,9 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#7c5b2a',
-      dark: '#73501f',
+      dark: '#d4bd87',
       'light-high-contrast': '#523300',
-      'dark-high-contrast': '#422800',
+      'dark-high-contrast': '#fde9b1',
     },
   },
   /** The initials on the oat fill. */
@@ -1652,9 +1652,9 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#6e5e51',
-      dark: '#645447',
+      dark: '#cabdb0',
       'light-high-contrast': '#46372b',
-      'dark-high-contrast': '#392b1f',
+      'dark-high-contrast': '#f5e8db',
     },
   },
   /** The initials on the orchid fill. */
@@ -1663,9 +1663,9 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#864f70',
-      dark: '#7d4566',
+      dark: '#deb3ce',
       'light-high-contrast': '#5d2648',
-      'dark-high-contrast': '#4e193b',
+      'dark-high-contrast': '#ffe2f5',
     },
   },
   /** The initials on the periwinkle fill. */
@@ -1674,9 +1674,9 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#5d5a96',
-      dark: '#54508d',
+      dark: '#bcbbe6',
       'light-high-contrast': '#38326d',
-      'dark-high-contrast': '#2c255f',
+      'dark-high-contrast': '#e8e9ff',
     },
   },
   /** The initials on the powder fill. */
@@ -1685,9 +1685,9 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#39648d',
-      dark: '#2f5a84',
+      dark: '#9fc4dc',
       'light-high-contrast': '#0f3b64',
-      'dark-high-contrast': '#002e56',
+      'dark-high-contrast': '#d3efff',
     },
   },
   /** The initials on the sage fill. */
@@ -1696,9 +1696,9 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#4d6845',
-      dark: '#425e3b',
+      dark: '#afc6a4',
       'light-high-contrast': '#26401f',
-      'dark-high-contrast': '#193312',
+      'dark-high-contrast': '#dbf1d0',
     },
   },
   /** The initials on the seafoam fill. */
@@ -1707,9 +1707,9 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#266b68',
-      dark: '#16615f',
+      dark: '#97c9c1',
       'light-high-contrast': '#004140',
-      'dark-high-contrast': '#003432',
+      'dark-high-contrast': '#c5f4eb',
     },
   },
   /** The labels of navigation items, secondary buttons and Select options, the values of meters and sliders, and the thumb of a switch that is off. */

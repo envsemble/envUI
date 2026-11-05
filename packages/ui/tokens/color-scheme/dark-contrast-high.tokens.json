@@ -436,28 +436,28 @@
         },
         "avatar": {
           "powder": {
-            "$value": "{palette.powder.15}"
+            "$value": "{palette.powder.84}"
           },
           "seafoam": {
-            "$value": "{palette.seafoam.15}"
+            "$value": "{palette.seafoam.84}"
           },
           "sage": {
-            "$value": "{palette.sage.15}"
+            "$value": "{palette.sage.84}"
           },
           "butter": {
-            "$value": "{palette.butter.15}"
+            "$value": "{palette.butter.84}"
           },
           "blush": {
-            "$value": "{palette.blush.15}"
+            "$value": "{palette.blush.84}"
           },
           "periwinkle": {
-            "$value": "{palette.periwinkle.15}"
+            "$value": "{palette.periwinkle.84}"
           },
           "orchid": {
-            "$value": "{palette.orchid.15}"
+            "$value": "{palette.orchid.84}"
           },
           "oat": {
-            "$value": "{palette.oat.15}"
+            "$value": "{palette.oat.84}"
           }
         }
       },
@@ -522,28 +522,28 @@
         },
         "avatar": {
           "powder": {
-            "$value": "{palette.powder.86}"
+            "$value": "{palette.powder.6}"
           },
           "seafoam": {
-            "$value": "{palette.seafoam.86}"
+            "$value": "{palette.seafoam.6}"
           },
           "sage": {
-            "$value": "{palette.sage.86}"
+            "$value": "{palette.sage.6}"
           },
           "butter": {
-            "$value": "{palette.butter.86}"
+            "$value": "{palette.butter.6}"
           },
           "blush": {
-            "$value": "{palette.blush.86}"
+            "$value": "{palette.blush.6}"
           },
           "periwinkle": {
-            "$value": "{palette.periwinkle.86}"
+            "$value": "{palette.periwinkle.6}"
           },
           "orchid": {
-            "$value": "{palette.orchid.86}"
+            "$value": "{palette.orchid.6}"
           },
           "oat": {
-            "$value": "{palette.oat.86}"
+            "$value": "{palette.oat.6}"
           }
         }
       },

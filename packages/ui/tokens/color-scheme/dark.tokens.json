@@ -536,28 +536,28 @@
           "$value": "{color.bg.avatar.powder}"
         },
         "powder": {
-          "$value": "{palette.powder.15}"
+          "$value": "{palette.powder.75}"
         },
         "seafoam": {
-          "$value": "{palette.seafoam.15}"
+          "$value": "{palette.seafoam.75}"
         },
         "sage": {
-          "$value": "{palette.sage.15}"
+          "$value": "{palette.sage.75}"
         },
         "butter": {
-          "$value": "{palette.butter.15}"
+          "$value": "{palette.butter.75}"
         },
         "blush": {
-          "$value": "{palette.blush.15}"
+          "$value": "{palette.blush.75}"
         },
         "periwinkle": {
-          "$value": "{palette.periwinkle.15}"
+          "$value": "{palette.periwinkle.75}"
         },
         "orchid": {
-          "$value": "{palette.orchid.15}"
+          "$value": "{palette.orchid.75}"
         },
         "oat": {
-          "$value": "{palette.oat.15}"
+          "$value": "{palette.oat.75}"
         }
       }
     },
@@ -639,28 +639,28 @@
           "$value": "{color.fg.avatar.powder}"
         },
         "powder": {
-          "$value": "{palette.powder.65}"
+          "$value": "{palette.powder.20}"
         },
         "seafoam": {
-          "$value": "{palette.seafoam.65}"
+          "$value": "{palette.seafoam.20}"
         },
         "sage": {
-          "$value": "{palette.sage.65}"
+          "$value": "{palette.sage.20}"
         },
         "butter": {
-          "$value": "{palette.butter.65}"
+          "$value": "{palette.butter.20}"
         },
         "blush": {
-          "$value": "{palette.blush.65}"
+          "$value": "{palette.blush.20}"
         },
         "periwinkle": {
-          "$value": "{palette.periwinkle.65}"
+          "$value": "{palette.periwinkle.20}"
         },
         "orchid": {
-          "$value": "{palette.orchid.65}"
+          "$value": "{palette.orchid.20}"
         },
         "oat": {
-          "$value": "{palette.oat.65}"
+          "$value": "{palette.oat.20}"
         }
       },
       "avatar-figure": {

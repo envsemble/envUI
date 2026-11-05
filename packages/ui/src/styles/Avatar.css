@@ -22,7 +22,8 @@
     block-size: var(--env-avatar-size);
     border-radius: 50%;
     /* A tonal pair of the avatar's hue, from data-hue: a soft pastel fill behind initials and a
-       figure in a deep shade of the same hue. */
+       figure in a deep shade of the same hue, and in dark a deep fill behind light ones, so an
+       avatar is never the brightest thing on a dark screen. */
     --env-avatar-container-default: var(--env-color-bg-avatar);
     --env-avatar-content-default: var(--env-color-fg-avatar);
     --env-avatar-fill: var(--env-avatar-container, var(--env-avatar-container-default));

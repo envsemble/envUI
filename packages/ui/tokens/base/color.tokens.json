@@ -686,7 +686,7 @@
           }
         },
         "powder": {
-          "$description": "The powder blue pastel fill, one of the hues an avatar takes from its name.",
+          "$description": "The powder blue fill, one of the hues an avatar takes from its name: a pastel, and a deep shade in dark.",
           "$value": "{palette.powder.10}",
           "$extensions": {
             "com.envsemble.envui": {
@@ -695,7 +695,7 @@
           }
         },
         "seafoam": {
-          "$description": "The seafoam pastel fill, one of the hues an avatar takes from its name.",
+          "$description": "The seafoam fill, one of the hues an avatar takes from its name: a pastel, and a deep shade in dark.",
           "$value": "{palette.seafoam.10}",
           "$extensions": {
             "com.envsemble.envui": {
@@ -704,7 +704,7 @@
           }
         },
         "sage": {
-          "$description": "The sage pastel fill, one of the hues an avatar takes from its name.",
+          "$description": "The sage fill, one of the hues an avatar takes from its name: a pastel, and a deep shade in dark.",
           "$value": "{palette.sage.10}",
           "$extensions": {
             "com.envsemble.envui": {
@@ -713,7 +713,7 @@
           }
         },
         "butter": {
-          "$description": "The butter yellow pastel fill, one of the hues an avatar takes from its name.",
+          "$description": "The butter yellow fill, one of the hues an avatar takes from its name: a pastel, and a deep shade in dark.",
           "$value": "{palette.butter.10}",
           "$extensions": {
             "com.envsemble.envui": {
@@ -722,7 +722,7 @@
           }
         },
         "blush": {
-          "$description": "The blush pink pastel fill, one of the hues an avatar takes from its name.",
+          "$description": "The blush pink fill, one of the hues an avatar takes from its name: a pastel, and a deep shade in dark.",
           "$value": "{palette.blush.10}",
           "$extensions": {
             "com.envsemble.envui": {
@@ -731,7 +731,7 @@
           }
         },
         "periwinkle": {
-          "$description": "The periwinkle pastel fill, one of the hues an avatar takes from its name.",
+          "$description": "The periwinkle fill, one of the hues an avatar takes from its name: a pastel, and a deep shade in dark.",
           "$value": "{palette.periwinkle.10}",
           "$extensions": {
             "com.envsemble.envui": {
@@ -740,7 +740,7 @@
           }
         },
         "orchid": {
-          "$description": "The orchid pastel fill, one of the hues an avatar takes from its name.",
+          "$description": "The orchid fill, one of the hues an avatar takes from its name: a pastel, and a deep shade in dark.",
           "$value": "{palette.orchid.10}",
           "$extensions": {
             "com.envsemble.envui": {
@@ -749,7 +749,7 @@
           }
         },
         "oat": {
-          "$description": "The warm oat pastel fill, one of the hues an avatar takes from its name.",
+          "$description": "The warm oat fill, one of the hues an avatar takes from its name: a pastel, and a deep shade in dark.",
           "$value": "{palette.oat.10}",
           "$extensions": {
             "com.envsemble.envui": {
@@ -851,7 +851,7 @@
         }
       },
       "avatar-figure": {
-        "$description": "The default figure of an avatar without an image, the same deep shade as its initials, at least 3:1 on its fill.",
+        "$description": "The default figure of an avatar without an image, the same shade as its initials, at least 3:1 on its fill.",
         "$root": {
           "$description": "The default figure, on the powder fill.",
           "$value": "{color.fg.avatar-figure.powder}",
@@ -944,7 +944,7 @@
         }
       },
       "avatar": {
-        "$description": "The initials of an avatar, in a deep shade of its fill's hue: at least 4.5:1 on its fill, and 7:1 at high contrast.",
+        "$description": "The initials of an avatar, in a shade of its fill's hue: deep on the pastel fill, and light on the deep fill in dark, at least 4.5:1 on it, and 7:1 at high contrast.",
         "$root": {
           "$description": "The default initials, on the powder fill.",
           "$value": "{color.fg.avatar.powder}",

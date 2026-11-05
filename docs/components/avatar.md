@@ -87,7 +87,7 @@ Without a picture, or while it loads or after it fails, an avatar shows the init
 The name chooses one of eight pastel colors, the same on every page.
 
 - An organization can take another of them as its own.
-- Each is a soft fill with the initials or the figure in a deep shade of the same hue.
+- Each is a soft fill with the initials or the figure in a deep shade of the same hue. In dark it turns over: a deep fill with light initials, so avatars stay quieter than the screen's text.
 - In a dense place, a table's cell or a small group, the fills are quieter, so a column of avatars doesn't outweigh the data beside it.
 - In a group, no two neighbours take colors that look alike.
 - Initials stay large enough to read; an avatar smaller than the small size, such as one sized to a dense row, shows its color alone.
@@ -216,7 +216,7 @@ Avatar takes the person's or organization's `name`, a picture in `src`, and `fal
 
 #### Colors
 
-`hue` sets one of the eight colors by name, in place of the one the name chooses: `powder` (powder blue), `seafoam`, `sage`, `butter`, `blush`, `periwinkle`, `orchid` or `oat` (a warm oat). `avatarHue(name)` returns the one a name chooses, and `avatarHues` lists the eight in order. Each is a tonal pair, a soft fill with the initials or the figure in a deep shade of the same hue, slightly deeper in the dark theme. In a table's cell and in a small AvatarGroup the fill takes half its chroma at the same lightness, so the initials keep their contrast; `--env-avatar-dense: 1` on a container of your own, such as a dense list, does the same for the avatars and groups in it. In an AvatarGroup, an avatar whose color looks like its neighbour's before it, the two blues, greens, pinks or warm hues, takes the next of the eight that doesn't.
+`hue` sets one of the eight colors by name, in place of the one the name chooses: `powder` (powder blue), `seafoam`, `sage`, `butter`, `blush`, `periwinkle`, `orchid` or `oat` (a warm oat). `avatarHue(name)` returns the one a name chooses, and `avatarHues` lists the eight in order. Each is a tonal pair, a soft fill with the initials or the figure in a deep shade of the same hue, and in the dark theme a deep fill with the initials and the figure in a light shade. In a table's cell and in a small AvatarGroup the fill takes half its chroma at the same lightness, so the initials keep their contrast; `--env-avatar-dense: 1` on a container of your own, such as a dense list, does the same for the avatars and groups in it. In an AvatarGroup, an avatar whose color looks like its neighbour's before it, the two blues, greens, pinks or warm hues, takes the next of the eight that doesn't.
 
 #### Groups
 
@@ -257,6 +257,7 @@ Its color properties take the place of its hue. The hues are tokens, `--env-colo
 ## Changelog
 
 - **1.0.0**: An avatar without a picture takes a solid color that its name chooses, one of eight, with white initials or a white figure; `hue` sets the color, and `avatarHue` returns the one a name chooses. Initials are semibold. Sizes are `sm`, `md`, `lg` and `xl` (were `small`, `standard`, `large` and `display`), set as `data-size` rather than the `env-avatar-{size}` classes. AvatarButton's `detail` is `description`, and it takes the touch height on touch screens. AvatarGroup's strings come from `messages.avatarGroup`, with the counts in the locale's digits. `getInitials` is internal; Avatar shows initials with `fallback="initials"`. Avatar's `label`, which named it as an image, is `named`.
+- **1.0.0-prerelease.6**: In the dark theme an avatar takes a deep fill of its hue with light initials, rather than the light theme's pastel, so avatars are no longer the brightest thing on a dark screen.
 - **1.0.0-prerelease.6**: Avatars in a table's cell and in a small group take quieter fills, and a small group or one in a table overlaps less, initials only by the ring. In a group, an avatar whose color looks like the one before it takes another.
 - **1.0.0-prerelease.6**: An avatar without a picture shows its name's initials by default, in place of the default person picture, which `fallback="person"` keeps. Avatars in a group take a ring in the color of the surface below, so their initials never run together.
 - **1.0.0-prerelease.6**: Initials stay legible at small sizes, at least the caption size; below `sm`, an avatar with initials is a disc of its color alone.
