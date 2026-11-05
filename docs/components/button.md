@@ -140,7 +140,9 @@ A button takes an icon at its start or its end; an IconButton shows an icon alon
 
 ### Groups
 
-A ButtonGroup joins related buttons in a row or a column.
+A ButtonGroup joins related buttons of one variant in a row or a column, or filled primary and secondary buttons together, such as a split button.
+
+- A group that mixes an outline, ghost or text button with another variant, such as an outline Cancel beside a primary Save, keeps them apart as whole pills.
 
 ```tsx figure=ConnectedButtons
 
@@ -178,7 +180,7 @@ Hover, press, keyboard focus and disabled, for each variant.
 
 ### Pending work
 
-While its work runs, the label stays, subdued, with a small spinner before it, in the start icon's place where there is one, and presses do nothing. An icon button's spinner takes the icon's place.
+While its work runs, the label stays in its full color, with a small spinner before it that says the work runs, in the start icon's place where there is one, and presses do nothing. An icon button's spinner takes the icon's place.
 
 ```tsx figure=PendingAction motion
 
@@ -335,10 +337,10 @@ A wrapper of your own that passes a variant and a tone on types them as Button d
 ## Changelog
 
 - **1.0.0-prerelease.6**: An outline button's label and icon take the text color, `--env-color-fg-default`, rather than the brand blue, so beside a primary button it reads as the other choice; a text button keeps the link blue. Ghost, outline and text icon buttons in the danger tone lay a faint tint of the danger color on hover and press, from `--env-color-bg-danger-subtle-hover`, rather than the neutral grey.
-- **1.0.0-prerelease.6**: A pending button keeps its label, subdued, with a small spinner before it, in the start icon's place where there is one, rather than a spinner alone over a hidden label; a button without a start icon grows by at most 8 px.
+- **1.0.0-prerelease.6**: A pending button keeps its label, in its full color, with a small spinner before it, in the start icon's place where there is one, rather than a spinner alone over a hidden label; a button without a start icon grows by at most 8 px.
 - **1.0.0-prerelease.6**: In light, a danger primary darkens on hover and press as the default and accent primaries do; in dark, the soft primaries deepen by a clearer, even step.
 - **1.0.0-prerelease.6**: A disabled button no longer fades as a whole: its label and icon take `--env-color-fg-disabled`, a filled one half the secondary's neutral fill and an outline one the muted edge, so it stays readable, also in dark.
 - **1.0.0-prerelease.6**: An accent primary is a pill like every other button, rather than having square corners.
-- **1.0.0-prerelease.6**: A ButtonGroup's buttons meet with a hairline between them and small inner corners, so the group reads as one control with pill ends; outline buttons in a group share their edge.
+- **1.0.0-prerelease.6**: A ButtonGroup's buttons meet with a hairline between them and small inner corners, so the group reads as one control with pill ends; outline buttons in a group share their edge. A group that mixes an outline, ghost or text button with another variant keeps its buttons apart as whole pills.
 - **1.0.0-prerelease.5**: An outline button is an edge with no fill at rest, the same on the page, a pane, a card or a popup; hover and press lay a state layer over the surface beneath it.
 - **1.0.0**: `end`, a quiet slot at the far end for a shortcut's keys, in the button's content color, which the search trigger pattern uses. IconButton is the one icon-only button, and takes `href`: `Button iconOnly` is gone, and CloseButton is an IconButton with the Close cross. `variant` is `primary`, `secondary`, `outline`, `ghost` or `text`, and `tone` is `neutral`, `accent` or `danger`: `important` is `variant="primary" tone="accent"`, `destructive` is `variant="primary" tone="danger"`, `outlined` is `outline` and `quiet` is `ghost`. Outline, ghost and text buttons take the danger tone. `fullWidth`. Buttons take the variant their container gives where they set none. The page is `button`, after the component, and Link has a page of its own. CopyButton takes `write`, a clipboard writer of the application's own. A Badge or DiffStat inside a button takes its colors through their custom properties, which the button sets.

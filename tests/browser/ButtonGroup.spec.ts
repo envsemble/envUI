@@ -46,13 +46,13 @@ test('mixed buttons connect in rows and columns with variant outer corners', asy
         const group = scope.getByTestId(orientation);
         await expect(group).toHaveAttribute('role', 'group');
         const { root, gap, buttons } = await geometry(group);
-        // A hairline apart; an outline button shares its edge with the one before it.
+        // Filled buttons of mixed variants, a hairline apart.
         expect(gap).toBe(1);
         expect(buttons).toHaveLength(5);
         buttons.forEach((button, index) => {
           const outer = root * 1.25;
           const inner = root * 0.25;
-          const spacing = button.outline ? -1 : gap;
+          const spacing = gap;
           const first = index === 0;
           const last = index === buttons.length - 1;
           expect(button.corners).toEqual(
@@ -83,6 +83,21 @@ test('mixed buttons connect in rows and columns with variant outer corners', asy
           }
         });
       }
+      // Outline buttons share their edge with the one before them.
+      const outlines = await geometry(scope.getByTestId('outline-row'));
+      outlines.buttons.slice(1).forEach((button, index) => {
+        const previous = outlines.buttons[index];
+        expect(button.x - previous.x - previous.width).toBeCloseTo(-1, 0);
+      });
+      // An outline button beside a filled one stands apart, both whole pills.
+      const mixed = await geometry(scope.getByTestId('mixed'));
+      expect(mixed.gap).toBeGreaterThan(4);
+      for (const button of mixed.buttons)
+        expect(button.corners).toEqual(Array(4).fill(button.height / 2));
+      expect(mixed.buttons[1].x - mixed.buttons[0].x - mixed.buttons[0].width).toBeCloseTo(
+        mixed.gap,
+        0,
+      );
       // An accent primary is a pill like every other button.
       expect((await geometry(scope.getByTestId('important-end'))).buttons[0].corners).toEqual([
         20, 4, 20, 4,

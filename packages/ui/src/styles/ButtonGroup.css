@@ -107,4 +107,37 @@
     border-end-start-radius: var(--env-radius-xs);
     border-end-end-radius: var(--env-radius-xs);
   }
+
+  /* A group joins buttons of one variant, and the filled primary and secondary buttons together, such
+     as a split button. A group that mixes an outline, ghost or text button with another variant, such
+     as an outline Cancel beside a primary Save, would put a square inner edge against a pill: its
+     buttons stand apart instead, whole pills a small gap from each other. */
+  .env-button-group:is(
+    :has(> .env-button:not([hidden])[data-variant='outline']):has(
+      > .env-button:not([hidden]):not([data-variant='outline'])
+    ),
+    :has(> .env-button:not([hidden])[data-variant='ghost']):has(
+      > .env-button:not([hidden]):not([data-variant='ghost'])
+    ),
+    :has(> .env-button:not([hidden])[data-variant='text']):has(
+      > .env-button:not([hidden]):not([data-variant='text'])
+    )
+  ) {
+    gap: var(--env-space-2);
+  }
+  .env-button-group:is(
+      :has(> .env-button:not([hidden])[data-variant='outline']):has(
+        > .env-button:not([hidden]):not([data-variant='outline'])
+      ),
+      :has(> .env-button:not([hidden])[data-variant='ghost']):has(
+        > .env-button:not([hidden]):not([data-variant='ghost'])
+      ),
+      :has(> .env-button:not([hidden])[data-variant='text']):has(
+        > .env-button:not([hidden]):not([data-variant='text'])
+      )
+    )
+    > .env-button {
+    border-radius: calc(var(--env-button-height) / 2);
+    margin: 0;
+  }
 }

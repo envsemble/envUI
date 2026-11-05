@@ -490,8 +490,8 @@
         {
           "stylesheet": "ButtonGroup.css",
           "classes": ["env-button", "env-icon-button"],
-          "properties": ["border-radius", "border-*-radius", "outline-offset"],
-          "note": "ButtonGroup joins its buttons into one control: it sizes them, squares their inner corners and insets their focus rings."
+          "properties": ["border-radius", "border-*-radius", "outline-offset", "gap"],
+          "note": "ButtonGroup joins its buttons into one control: it sizes them, squares their inner corners and insets their focus rings; where it holds buttons of mixed variants, read with :has(), it spaces them apart with their own corners instead."
         },
         {
           "stylesheet": "TextField.css",
