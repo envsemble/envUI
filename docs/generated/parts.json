@@ -689,14 +689,6 @@
         {
           "class": "env-calendar-title",
           "description": "The month and year."
-        },
-        {
-          "class": "env-calendar-weekday",
-          "description": "A weekday's short name above its column, shown where the days are wide enough."
-        },
-        {
-          "class": "env-calendar-weekday-compact",
-          "description": "A weekday's compact name, such as Mo, shown where the days are narrow."
         }
       ],
       "states": [

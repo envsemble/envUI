@@ -6,7 +6,6 @@
     --env-calendar-day: var(--env-row-height);
     inline-size: calc(7 * var(--env-calendar-day));
     max-inline-size: 100%;
-    container: env-calendar / inline-size;
     color: var(--env-color-fg-default);
     font: var(--env-type-body-sm);
   }
@@ -47,19 +46,6 @@
     font: var(--env-font-weight-medium) var(--env-font-size-caption) / 1.4 var(--env-font-family);
     text-align: center;
     white-space: nowrap;
-  }
-  /* Days narrower than 2 rem, as at the compact scale, take the weekdays' compact names, Mo Tu We
-     in English, so the names keep room between them; wider ones the short names. */
-  .env-calendar-weekday-compact {
-    display: none;
-  }
-  @container env-calendar (inline-size < 14rem) {
-    .env-calendar-weekday {
-      display: none;
-    }
-    .env-calendar-weekday-compact {
-      display: inline;
-    }
   }
   /* Weeks stand a hair apart; the days of a week touch. */
   .env-calendar-day,
