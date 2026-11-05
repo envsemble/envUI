@@ -35,9 +35,16 @@
   .env-page[data-gutter='none'] {
     --env-page-gutter: 0rem;
   }
-  /* The content under the page's header, the page's space below it. */
+  /* The content under the page's header, the page's space below it. In a compact page, where the
+     header's actions already take a row of their own above it, content such as tabs follows them
+     at the gap between a page's sections; from a medium page it keeps more. */
   .env-page-content {
-    margin-block-start: var(--env-space-6);
+    margin-block-start: var(--env-space-4);
+  }
+  @container (width >= 37.5rem) {
+    .env-page-content {
+      margin-block-start: var(--env-space-6);
+    }
   }
 
   /* A sticky header covers the top of the area that scrolls, so what scrolls into view below it, such
