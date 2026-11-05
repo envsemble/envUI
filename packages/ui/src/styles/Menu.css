@@ -50,7 +50,10 @@
     color: var(--env-color-fg-default);
     font: var(--env-font-weight-body) var(--env-font-size-body) / 1.35 var(--env-font-family);
   }
-  .env-menu-header {
+  /* A header of plain words, such as Project, is a heading like a group's label, in its style
+     (below), so one menu shows one kind of heading. A header of richer content, such as the
+     signed-in person's avatar, name and address, sets its own text and keeps the room around it. */
+  .env-menu-header:has(> *) {
     padding: var(--env-space-3) var(--env-popup-row-padding-inline);
   }
   .env-menu-item {
@@ -258,7 +261,8 @@
     > .env-menu-group:not(:first-child, .env-menu-separator + *):has(> .env-menu-group-label) {
     margin-block-start: calc(0.5 * var(--env-popup-group-gap));
   }
-  .env-menu-group-label {
+  .env-menu-group-label,
+  .env-menu-header:not(:has(> *)) {
     padding-block: calc(0.1 * var(--env-control-height-md))
       calc(0.05 * var(--env-control-height-md));
     padding-inline: var(--env-popup-label-padding-inline);
