@@ -5,10 +5,8 @@ import '../styles/Skeleton.css';
 
 export interface SkeletonProps {
   /**
-   * Shows the component, and everything inside it, as a skeleton while its content loads: text
-   * becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and
-   * corners stay. It is a busy region, and its content can't be focused or read until it loads.
-   * Turning it on or off renders its content anew, so state inside it starts over.
+   * Shows it and its content as a busy skeleton while that loads; turning it on or off renders the
+   * content anew.
    * @default false
    */
   skeleton?: boolean;

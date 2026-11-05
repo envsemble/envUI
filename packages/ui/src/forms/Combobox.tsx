@@ -114,10 +114,8 @@ interface ComboboxSharedProps<Item extends ComboboxItem>
    */
   emptyLabel?: ReactNode;
   /**
-   * The field's height, as on every control: sm, md or lg in the current scale. Without it, the
-   * field takes the control height of its container, md unless the container sets another. The
-   * popup's rows take the row height of the scale.
-   * sm is for a field with its label hidden; one that shows its label takes the md height.
+   * The control height, sm, md or lg; without it, the container's, and else md. sm is for a
+   * field with its label hidden.
    */
   size?: ControlSize;
   /**

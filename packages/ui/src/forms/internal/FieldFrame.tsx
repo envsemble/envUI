@@ -47,11 +47,8 @@ export type FieldVariant = 'outline' | 'ghost';
 
 export interface TextFieldAppearanceProps {
   /**
-   * The field's look: outline, with a thin border, at the control height, whose label rests inside
-   * and floats into the outline; or ghost, only its text and start icon at rest, with a soft fill
-   * under the pointer and while focused and a placeholder that clears on focus, for a search at the
-   * top of a sidebar or a list. An outline field has no fill of its own: it takes the background of
-   * what it sits on.
+   * The field's look: outline, a thin border its label floats into, or ghost, a faint fill, for a
+   * search at the top of a sidebar or a list.
    * @default 'outline'
    */
   variant?: FieldVariant;
@@ -59,11 +56,8 @@ export interface TextFieldAppearanceProps {
 
 export interface FieldSizeProps {
   /**
-   * The height, as on every control: sm, md or lg in the current scale. Without it, the field takes
-   * the control height of its container, md unless the container sets another, as a table cell
-   * does. A button beside a field takes the field's size. sm is for a field with its label hidden,
-   * as in a toolbar or a filter row: one that shows its label takes the md height, so the label
-   * and the value each keep room.
+   * The control height, sm, md or lg; without it, the container's, and else md. sm is for a
+   * field with its label hidden.
    */
   size?: ControlSize;
 }
