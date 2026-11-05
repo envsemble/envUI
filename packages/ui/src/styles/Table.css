@@ -1,4 +1,26 @@
 @layer env.components {
+  /* The header band's fill and the rows' dividers. In dark, on the raised surface, the theme's own
+     roles read a step heavier than they do in light, so there the band is lighter and the dividers
+     sit closer to the surface, in the same hues, as much apart from it as in light. At high contrast
+     they keep the roles' values. */
+  .env-theme {
+    --env-table-band: var(--env-color-bg-neutral-muted);
+    --env-table-divider: var(--env-color-border-muted);
+  }
+  .env-theme[data-env-theme='dark']:not([data-env-contrast='high']) {
+    --env-table-band: oklch(from var(--env-color-bg-neutral-muted) l c h / calc(alpha * 0.65));
+    --env-table-divider: color-mix(
+      in srgb,
+      var(--env-color-border-muted) 60%,
+      var(--env-color-bg-raised)
+    );
+  }
+  @media (prefers-contrast: more) {
+    .env-theme[data-env-theme='dark']:not([data-env-contrast='standard']) {
+      --env-table-band: var(--env-color-bg-neutral-muted);
+      --env-table-divider: var(--env-color-border-muted);
+    }
+  }
   /* Tables sit on a rounded surface with subtle row dividers and scroll sideways within their region. */
   .env-table-region {
     --env-table-surface: var(--env-color-bg-raised);
@@ -100,8 +122,7 @@
   .env-table-header-cell {
     /* The fill over the surface keeps the header opaque, so a sticky header covers scrolled rows. */
     background:
-      linear-gradient(var(--env-color-bg-neutral-muted), var(--env-color-bg-neutral-muted)),
-      var(--env-table-surface);
+      linear-gradient(var(--env-table-band), var(--env-table-band)), var(--env-table-surface);
     color: var(--env-color-fg-muted);
     font: var(--env-type-body-sm);
     font-weight: var(--env-font-weight-medium);
@@ -114,7 +135,7 @@
   }
   /* Rows are separated by hairlines; the first body row meets the header without one. */
   .env-table-body > .env-table-row + .env-table-row > :is(.env-table-cell, .env-table-header-cell) {
-    border-block-start: 0.0625rem solid var(--env-color-border-muted);
+    border-block-start: 0.0625rem solid var(--env-table-divider);
   }
   .env-table-body .env-table-header-cell {
     background: transparent;
@@ -220,7 +241,8 @@
     margin: 0;
     padding: var(--env-table-cell-padding);
     border: 0;
-    border-radius: 0;
+    /* A row's corners, which its focus ring follows (below). */
+    border-radius: var(--env-radius-sm);
     background: transparent;
     color: inherit;
     font: inherit;
@@ -240,24 +262,20 @@
   .env-table-sort-button:hover .env-icon {
     color: inherit;
   }
-  .env-table-sort-button:focus-visible {
-    outline: 0.125rem solid var(--env-color-border-focus);
-    outline-offset: -0.125rem;
-  }
-  /* The focus ring follows the surface's outer corners in the first and last header
-     cells. There the ring is an inset shadow, which keeps the corner's radius, where an outline
-     drawn inside the edge tightens it; forced colors draw the outline, as they show no shadows. */
+  /* The focus ring is drawn inside the header cell, so the frame doesn't clip it, with a row's
+     corners, as the rings of other rows and controls are round, and the surface's outer corners in
+     the first and last header cells. It is an inset shadow, which keeps each corner's radius, where an
+     outline drawn inside the edge tightens it; forced colors draw the outline, as they show no
+     shadows. */
   .env-table-head .env-table-row:first-child > :first-child .env-table-sort-button {
     border-start-start-radius: calc(var(--env-radius-lg) - 0.0625rem);
   }
   .env-table-head .env-table-row:first-child > :last-child .env-table-sort-button {
     border-start-end-radius: calc(var(--env-radius-lg) - 0.0625rem);
   }
-  .env-table-head
-    .env-table-row:first-child
-    > :is(:first-child, :last-child)
-    .env-table-sort-button:focus-visible {
-    outline-color: transparent;
+  .env-table-sort-button:focus-visible {
+    outline: 0.125rem solid transparent;
+    outline-offset: -0.125rem;
     box-shadow: inset 0 0 0 calc(2 * var(--env-control-border-width)) var(--env-color-border-focus);
   }
   .env-table-sort-button .env-icon {
@@ -458,7 +476,7 @@
       .env-table-body
       > .env-table-row
       + .env-table-row {
-      border-block-start: 0.0625rem solid var(--env-color-border-muted);
+      border-block-start: 0.0625rem solid var(--env-table-divider);
     }
     .env-table-region[data-narrow-layout='stack']
       .env-table-body
@@ -487,7 +505,7 @@
       > .env-table-cell[data-labelled]:not(:first-child + *) {
       flex: 0 0 calc((100% - var(--env-space-4)) / 2);
       order: 2;
-      margin-block-start: var(--env-space-2);
+      margin-block-start: var(--env-space-3);
     }
     .env-table-region[data-narrow-layout='stack']
       .env-table-body
@@ -503,7 +521,6 @@
     .env-table-region[data-narrow-layout='stack'] .env-table-cell-label {
       display: block;
       min-inline-size: 0;
-      margin-block-end: 0.125rem;
       color: var(--env-color-fg-muted);
       font: var(--env-type-body-sm);
       overflow-wrap: break-word;
@@ -531,6 +548,10 @@
     .env-table-row[aria-selected='true'] {
       outline: 2px solid Highlight;
       outline-offset: -2px;
+    }
+    /* A sortable header's ring is the system's outline, as the inset shadow doesn't show. */
+    .env-table-sort-button:focus-visible {
+      outline-color: CanvasText;
     }
   }
 
@@ -576,8 +597,7 @@
      over its own (Skeleton.css). */
   [data-env-skeleton] .env-table-head .env-table-header-cell {
     background-image:
-      var(--env-skeleton-overlay),
-      linear-gradient(var(--env-color-bg-neutral-muted), var(--env-color-bg-neutral-muted));
+      var(--env-skeleton-overlay), linear-gradient(var(--env-table-band), var(--env-table-band));
   }
   /* A sortable header's button isn't a shape, as other buttons are in a skeleton: its label is a bar,
      as every header's is, and its arrow isn't drawn. */
