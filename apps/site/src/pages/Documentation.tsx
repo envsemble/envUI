@@ -170,14 +170,11 @@ const rehypePlugins = [headingIds];
 /** The languages most of the site's code is in, which its blocks don't name. */
 const usualLanguages = new Set(['tsx', 'ts', 'jsx', 'js']);
 
-/** Code that is imports alone, such as a page's Import, which wraps rather than scrolling. */
-const importsOnly = /^(?:\s*import [^;]+;)+\s*$/;
-
 /**
  * The site's code blocks: the code alone, with its copy button in the block's top end corner
  * rather than on a heading row of its own, and the language named beside the button only where it
- * isn't the usual TypeScript and JSX, such as sh or css (SiteText.css). An import, too long for a
- * narrow page, wraps whole into view.
+ * isn't the usual TypeScript and JSX, such as sh or css (SiteText.css). Every block keeps its lines
+ * whole and scrolls sideways where one is too long, its end edge fading, imports included.
  */
 const elements: NonNullable<MarkdownProps['components']> = {
   pre: function SiteCodeBlock({ node, children }) {
@@ -192,9 +189,7 @@ const elements: NonNullable<MarkdownProps['components']> = {
     const named = language && !usualLanguages.has(language) ? language : undefined;
     return (
       <div className="site-code-block" data-language={named}>
-        <CodeBlock language={language} wrap={importsOnly.test(source)}>
-          {source}
-        </CodeBlock>
+        <CodeBlock language={language}>{source}</CodeBlock>
         <div className="site-code-block-corner">
           {named && (
             <span className="site-code-block-language" aria-hidden="true">
