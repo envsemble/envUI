@@ -186,7 +186,7 @@ A Menu.Item runs its `onClick` and takes:
 - its label as `children`;
 - a decorative `icon`;
 - a muted `description`, read as its description;
-- a `shortcut`, such as `Ctrl+D`, shown as Kbd keys and announced as `aria-keyshortcuts`;
+- a `shortcut`, such as `Ctrl+D`, shown as muted text in one unit and announced as `aria-keyshortcuts`;
 - `end` content, such as a Badge, which is part of its name; a count there shows as its figures alone, without a pill, apart from the shortcut's keys;
 - `tone="danger"` for a destructive action, such as Delete, whose label and icon take the danger color while its row highlights as any other's;
 - `disabled`, which keeps it in place with `aria-disabled`, its icon dimmed and its label in the disabled text color, apart from its description, which stays muted and readable to say why.
@@ -307,6 +307,8 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 ## Changelog
 
 - **1.0.0**: ThemeMenuRadioGroup, the theme choice for any menu. The parts are members of the `Menu` namespace: `Menu` is `Menu.Root`, and `MenuItem`, `MenuHeader`, `MenuSeparator`, `MenuGroup`, `MenuRadioGroup`, `MenuRadioItem`, `MenuCheckboxItem` and `MenuSubmenu` are `Menu.Item`, `Menu.Header`, `Menu.Separator`, `Menu.Group`, `Menu.RadioGroup`, `Menu.RadioItem`, `Menu.CheckboxItem` and `Menu.Submenu`. Menus have one anatomy at the scale's row height: `density` and the `MenuDensity` type are gone. `OrganizationMenu`, OrganizationSwitcher in 1.0.0-prerelease.0, is the organization switcher pattern, built from Menu.Root, Menu.RadioGroup and Menu.RadioItem. ContextMenu keeps its name, and a `content` function that returns `null` leaves the menu closed on that element. Menu.Item's `trailing` is `end`. A Menu.Item with `href` closes the menu as it is followed and takes an `onClick`, which runs as it is followed, and a disabled one renders no link. Every menu's popup is the shared popup surface, which takes the direction at its trigger, and Menu.Root takes `side="inline-start"` and `"inline-end"` and passes `ref`, `style` and native props to its popup. A chosen item's check is `env-menu-item-indicator`, as in Select and Combobox, in its place, `env-menu-item-indicator-slot`; they were `env-menu-item-check-mark` and `env-menu-item-check`.
+- **1.0.0-prerelease.6**: A shortcut is muted text in one unit, such as Ctrl+D, rather than a filled chip for each key, so a menu of shortcuts stays quiet down its rows.
+- **1.0.0-prerelease.6**: A separator is a break of half a row, rather than a gap that read as uneven spacing between rows, and so is the space before a group without a heading; it still draws no line.
 - **1.0.0-prerelease.6**: A chosen radio item shows a dot in the accent, as a Radio does, rather than the check mark a checkbox item keeps.
 - **1.0.0-prerelease.6**: In an item with a description, the check mark, the icon, the end and the shortcut sit on the label's line rather than across both lines.
 - **1.0.0-prerelease.6**: A group with a heading sits closer to the rows before it, and its heading closer to its rows, so a menu of a few groups stays compact; a separator, such as the one before a destructive item, keeps the full space.
