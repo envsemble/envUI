@@ -63,30 +63,16 @@
       var(--env-popup-fill);
     --env-text-field-ghost-placeholder: var(--env-color-fg-muted);
     --env-text-field-ghost-edge: var(--env-popup-solid) var(--env-color-border-default);
-    /* Its focus is its own ring, below, so the field's focus frame stays a hairline in its edge. */
+    /* The search always holds the caret while the palette is open, so it draws no focus ring: a
+       ring that never leaves says nothing. Its frame stays the hairline of its edge; the options and
+       the palette's buttons keep their rings for keyboard focus. */
     --env-text-field-ghost-focus-edge: transparent;
     --env-text-field-ghost-focus-frame: var(--env-control-border-width);
     /* Where the options' icons sit, inside the control's border. */
     --env-text-field-start-inset: calc(
       var(--env-popup-row-padding-inline) - var(--env-control-border-width)
     );
-    /* The containing block of its focus ring, below. */
-    position: relative;
     flex: 0 0 auto;
-  }
-  /* While it holds the caret, the search shows the focus ring inside its edge, as every focused
-     control does. The search draws it over its field, a pill as the field is: an outline of its
-     own would sit under the field, which is positioned and paints after it. */
-  .env-command-palette-search::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border: 2px solid transparent;
-    border-radius: var(--env-radius-full);
-    pointer-events: none;
-  }
-  .env-command-palette-search:focus-within::after {
-    border-color: var(--env-color-border-focus);
   }
   .env-command-palette-list {
     /* The options' offset parent, so the highlight scrolls into view by their offsets. */

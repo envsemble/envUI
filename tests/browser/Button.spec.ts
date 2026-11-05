@@ -125,6 +125,18 @@ test('a pending button keeps its label and name, reports busy and ignores presse
   await expect(button.locator('.env-button-content')).toHaveCSS('color', color);
   await expect(button.locator('.env-spinner')).toHaveCSS('color', color);
   await expect(button.locator('.env-spinner')).toHaveAttribute('data-label-hidden', '');
+  // Without a start icon, the spinner takes its room from the padding: the button is as wide as
+  // the same button at rest, so the buttons beside it stay put.
+  const widths = await button.evaluate((element) => {
+    const rest = element.cloneNode(true) as HTMLElement;
+    rest.removeAttribute('data-pending');
+    rest.querySelector(':scope > .env-button-spinner')?.remove();
+    element.after(rest);
+    const result = [element.getBoundingClientRect().width, rest.getBoundingClientRect().width];
+    rest.remove();
+    return result;
+  });
+  expect(widths[0]).toBeCloseTo(widths[1], 1);
   await button.click({ force: true });
   await expect(page.getByTestId('pending-presses')).toHaveText('0');
   await expect(page.getByRole('progressbar', { name: 'Refreshing seats' })).toBeVisible();

@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { IconCheckCircle } from '../../icons/CheckCircle.js';
+import { IconError } from '../../icons/Error.js';
 import { IconInfo } from '../../icons/Info.js';
-import { IconWarning } from '../../icons/Warning.js';
 import type { ToastTone } from './toastTypes.js';
 import '../../styles/Base.css';
 import '../../styles/Toast.css';
@@ -9,7 +9,7 @@ import '../../styles/Toast.css';
 function StatusIcon({ tone }: { tone: ToastTone }) {
   if (tone === 'neutral') return null;
   const StatusSymbol =
-    tone === 'success' ? IconCheckCircle : tone === 'info' ? IconInfo : IconWarning;
+    tone === 'success' ? IconCheckCircle : tone === 'info' ? IconInfo : IconError;
   return (
     <span className="env-icon env-toast-status-icon">
       <StatusSymbol />

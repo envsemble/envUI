@@ -142,6 +142,7 @@ A button takes an icon at its start or its end; an IconButton shows an icon alon
 
 A ButtonGroup joins related buttons of one variant in a row or a column, or filled primary and secondary buttons together, such as a split button.
 
+- A split button's menu half takes the main half's variant and tone and shows a chevron, so the hairline between them reads as one action with its options rather than two actions.
 - A group that mixes an outline, ghost or text button with another variant, such as an outline Cancel beside a primary Save, keeps them apart as whole pills.
 
 ```tsx figure=ConnectedButtons
@@ -353,7 +354,7 @@ A wrapper of your own that passes a variant and a tone on types them as Button d
 ## Changelog
 
 - **1.0.0-prerelease.6**: An outline button's label and icon take the text color, `--env-color-fg-default`, rather than the brand blue, so beside a primary button it reads as the other choice; a text button keeps the link blue. Ghost, outline and text icon buttons in the danger tone lay a faint tint of the danger color on hover and press, from `--env-color-bg-danger-subtle-hover`, rather than the neutral grey.
-- **1.0.0-prerelease.6**: A pending button keeps its label, in its full color, with a small spinner before it, in the start icon's place where there is one, rather than a spinner alone over a hidden label; a button without a start icon grows by at most 8 px.
+- **1.0.0-prerelease.6**: A pending button keeps its label, in its full color, with a small spinner before it, in the start icon's place where there is one, rather than a spinner alone over a hidden label; a button keeps its width, the spinner taking its room from the padding where there is no start icon.
 - **1.0.0-prerelease.6**: In light, a danger primary darkens on hover and press as the default and accent primaries do; in dark, the soft primaries deepen by a clearer, even step.
 - **1.0.0-prerelease.6**: A disabled button no longer fades as a whole: its label and icon take `--env-color-fg-disabled`, a filled one half the secondary's neutral fill and an outline one the muted edge, so it stays readable, also in dark.
 - **1.0.0-prerelease.6**: An accent primary is a pill like every other button, rather than having square corners.
