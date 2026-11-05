@@ -122,6 +122,12 @@
      neighbouring tabs overlap and their labels run together. */
   .env-tabs-list > .env-tabs-tab {
     --env-tabs-tab-padding: var(--env-space-3);
+    /* The faint layer a press lays (below). */
+    --env-tabs-press-layer: color-mix(
+      in srgb,
+      var(--env-color-bg-neutral-subtle-hover) 70%,
+      transparent
+    );
     position: relative;
     flex-shrink: 0;
     border-radius: var(--env-radius-sm);
@@ -130,10 +136,11 @@
     transition: color var(--env-motion-duration-medium) var(--env-motion-ease);
   }
   /* Every tab is a text tab, whatever its button's variant: no fill or edge of its own, its label
-     quieter than the text. Under the pointer and pressed no block or bar shows, as either would
-     read as a second selection: only the label takes the text color, and the indicator is the
-     selected tab's alone. The states, unavailable included, are named so these rules outweigh the
-     button's own. */
+     quieter than the text. Under the pointer no block or bar shows, as either would read as a
+     second selection: only the label takes the text color, and the indicator is the selected tab's
+     alone. A press, which lasts only as long as the button is held, lays a faint state layer under
+     the label as well (below), a step past hover. The states, unavailable included, are named so
+     these rules outweigh the button's own. */
   .env-tabs-list > .env-tabs-tab,
   .env-tabs-list > .env-tabs-tab:is(:disabled, [aria-disabled='true']),
   .env-tabs-list
@@ -153,6 +160,9 @@
       [aria-disabled='true']
     ) {
     color: var(--env-tabs-content, var(--env-color-fg-default));
+  }
+  .env-tabs-list > .env-tabs-tab:active:not(:disabled):not([aria-disabled='true']) {
+    background: var(--env-tabs-press-layer);
   }
   /* The selected tab: its label in the accent's text color, with the indicator under it. */
   .env-tabs-list > .env-tabs-tab[data-active],
@@ -219,6 +229,15 @@
     > .env-tabs-tab:first-child:focus-visible::before {
     outline: 2px solid var(--env-color-border-focus);
     outline-offset: -2px;
+  }
+  /* Its press layer, too, covers the whole tab: the shape under its label takes it. */
+  .env-tabs-list:not([data-orientation='vertical'])
+    > .env-tabs-tab:first-child:active:not(:disabled):not([aria-disabled='true']) {
+    background: transparent;
+  }
+  .env-tabs-list:not([data-orientation='vertical'])
+    > .env-tabs-tab:first-child:active:not(:disabled):not([aria-disabled='true'])::before {
+    background: var(--env-tabs-press-layer);
   }
   .env-tabs-list:not([data-orientation='vertical']) > .env-tabs-tab:first-child::after {
     inset-inline-start: 0;

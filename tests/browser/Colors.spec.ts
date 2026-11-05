@@ -291,10 +291,10 @@ test('compositions reuse primitive colors while unrelated roles stay independent
       expect(await markAlpha(inactive)).toBe(0);
       await expect(inactive).toHaveAttribute('aria-selected', 'false');
       await expect(selected).toHaveCSS('background-color', selectedFill);
-      // A press selects the tab, still with no fill: then the indicator shows.
+      // A press selects the tab, so the indicator shows, and lays a faint state layer while held.
       await page.mouse.down();
       await expect(inactive).toHaveAttribute('aria-selected', 'true');
-      await expect(inactive).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+      await expect(inactive).not.toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
       expect(await markAlpha(inactive)).toBe(1);
       await page.mouse.up();
       await page.mouse.move(0, 0);

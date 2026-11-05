@@ -157,6 +157,18 @@ test('every tab is a text tab, the selected one with an indicator under it', asy
     .poll(() => other.evaluate((element) => getComputedStyle(element).color))
     .not.toBe(restColor);
   expect((await indicator(other)).color).toBe('rgba(0, 0, 0, 0)');
+  // Pressed, a tab, which a press also selects, lays a faint state layer, a step past hover; the
+  // first tab, its label at the content's edge, lays it on the shape under its label.
+  const pressed = rail.locator(`[id="${await other.getAttribute('id')}"]`);
+  const pressLayer = () =>
+    pressed.evaluate((element) =>
+      [getComputedStyle(element), getComputedStyle(element, '::before')]
+        .map((style) => style.backgroundColor)
+        .find((color) => color !== 'rgba(0, 0, 0, 0)'),
+    );
+  await page.mouse.down();
+  await expect.poll(pressLayer).toBeTruthy();
+  await page.mouse.up();
   await page.mouse.move(0, 0);
   // The selected label takes the accent's text color, the others a quieter one.
   expect(await selected.evaluate((element) => getComputedStyle(element).color)).not.toBe(
