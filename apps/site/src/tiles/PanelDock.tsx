@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Column, PanelDock, Text, type PanelDockPanel } from '@envsemble/envui';
+import { useMedia } from '../motion/Autoplay';
 import { usePointer, type PointerStep } from '../motion/Motion';
+import { narrowGallery } from './Tiles';
 
 const minimize = '.env-panel-dock-panel[data-panel-id="notes"] [aria-label="Minimize"]';
 const notesTab = '.env-panel-dock-tab[data-panel-id="notes"] .env-panel-dock-tab-restore';
@@ -25,27 +27,32 @@ const start: PanelDockPanel[] = [
     id: 'notes',
     title: 'Notes',
     mode: 'open',
-    height: 4.25,
-    preferredWidth: 7.25,
+    // As tall as its header, the title under the window controls, whole: its note runs on below,
+    // where the panel scrolls.
+    height: 5.25,
+    preferredWidth: 7,
     minWidth: 7,
   },
 ];
 
 /**
  * The window the panels dock in, outlined, so the bottom edge they stand on shows, a few rows of
- * its page beside the panel: as low as a gallery's tile shows whole at its own size.
+ * its page beside the panel: as low as a gallery's tile shows whole at its own size; on a phone's
+ * narrower tile, narrower, so it is drawn at about its own size there too.
  */
 const edges = {
   position: 'relative',
   inlineSize: '12rem',
-  blockSize: '6rem',
+  blockSize: '6.25rem',
   padding: '0.5rem 0.75rem',
   boxSizing: 'border-box',
   border: '0.0625rem solid var(--env-color-border-muted)',
   overflow: 'hidden',
 } as const;
+const narrowEdges = { ...edges, inlineSize: '10rem', paddingInline: '0.5rem' } as const;
 
-const rows = ['Launch', 'Budget', 'Hiring'];
+const rows = ['Plan', 'Team', 'Docs'];
+const narrowRows = ['Q1', 'Q2', 'Q3'];
 
 /**
  * A notes panel docked at the bottom edge of a window, at rest, whose tab takes its place there
@@ -54,11 +61,12 @@ const rows = ['Launch', 'Budget', 'Hiring'];
  */
 export default function PanelDockTile() {
   const [panels, setPanels] = useState(start);
+  const narrow = useMedia(narrowGallery);
   usePointer(script, { onRest: () => setPanels(start) });
   return (
-    <div style={edges}>
+    <div style={narrow ? narrowEdges : edges}>
       <Column gap={2}>
-        {rows.map((row) => (
+        {(narrow ? narrowRows : rows).map((row) => (
           <Text key={row} variant="body-sm" style={{ whiteSpace: 'nowrap' }}>
             {row}
           </Text>
@@ -66,7 +74,7 @@ export default function PanelDockTile() {
       </Column>
       <PanelDock.Root
         panels={panels}
-        stackBelow="10rem"
+        stackBelow={narrow ? '8rem' : '10rem'}
         onModeChange={(id, mode) =>
           setPanels((current) =>
             current.map((panel) => (panel.id === id ? { ...panel, mode } : panel)),
