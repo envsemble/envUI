@@ -554,10 +554,10 @@
           "$value": "{palette.seafoam.75}"
         },
         "sage": {
-          "$value": "{palette.sage.75}"
+          "$value": "{palette.sage.70}"
         },
         "butter": {
-          "$value": "{palette.butter.75}"
+          "$value": "{palette.butter.65}"
         },
         "blush": {
           "$value": "{palette.blush.75}"
@@ -569,7 +569,7 @@
           "$value": "{palette.orchid.75}"
         },
         "oat": {
-          "$value": "{palette.oat.75}"
+          "$value": "{palette.oat.70}"
         }
       }
     },
@@ -674,10 +674,10 @@
           "$value": "{palette.seafoam.20}"
         },
         "sage": {
-          "$value": "{palette.sage.20}"
+          "$value": "{palette.sage.15}"
         },
         "butter": {
-          "$value": "{palette.butter.20}"
+          "$value": "{palette.butter.10}"
         },
         "blush": {
           "$value": "{palette.blush.20}"
@@ -689,7 +689,7 @@
           "$value": "{palette.orchid.20}"
         },
         "oat": {
-          "$value": "{palette.oat.20}"
+          "$value": "{palette.oat.15}"
         }
       },
       "avatar-figure": {

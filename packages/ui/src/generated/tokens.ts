@@ -200,7 +200,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#efdca4',
-      dark: '#5e3d06',
+      dark: '#73501f',
       'light-high-contrast': '#efdca4',
       'dark-high-contrast': '#472c00',
     },
@@ -211,7 +211,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#e7dbce',
-      dark: '#504134',
+      dark: '#5a4a3e',
       'light-high-contrast': '#e7dbce',
       'dark-high-contrast': '#3d2f23',
     },
@@ -255,7 +255,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#cee4c3',
-      dark: '#2f4a28',
+      dark: '#395432',
       'light-high-contrast': '#cee4c3',
       'dark-high-contrast': '#1d3817',
     },
@@ -1553,7 +1553,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#7c5b2a',
-      dark: '#d4bd87',
+      dark: '#efdca4',
       'light-high-contrast': '#523300',
       'dark-high-contrast': '#fde9b1',
     },
@@ -1564,7 +1564,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#6e5e51',
-      dark: '#cabdb0',
+      dark: '#d8ccbf',
       'light-high-contrast': '#46372b',
       'dark-high-contrast': '#f5e8db',
     },
@@ -1608,7 +1608,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#4d6845',
-      dark: '#afc6a4',
+      dark: '#bed4b3',
       'light-high-contrast': '#26401f',
       'dark-high-contrast': '#dbf1d0',
     },
@@ -1641,7 +1641,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#7c5b2a',
-      dark: '#d4bd87',
+      dark: '#efdca4',
       'light-high-contrast': '#523300',
       'dark-high-contrast': '#fde9b1',
     },
@@ -1652,7 +1652,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#6e5e51',
-      dark: '#cabdb0',
+      dark: '#d8ccbf',
       'light-high-contrast': '#46372b',
       'dark-high-contrast': '#f5e8db',
     },
@@ -1696,7 +1696,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#4d6845',
-      dark: '#afc6a4',
+      dark: '#bed4b3',
       'light-high-contrast': '#26401f',
       'dark-high-contrast': '#dbf1d0',
     },
