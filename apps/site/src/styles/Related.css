@@ -2,9 +2,10 @@
    instead, from its frontmatter, each a tiny live picture of it on its recessed canvas, with its
    name and when to pick it below. The stage is the tile's one frame. */
 
-/* Tiles of one size. A row is never left with one alone: one column until two fit, even counts
-   two to a row, counts of three, five, six and nine three to a row, and once four fit, every count
-   in tiles of a quarter of the column, five, six and nine still in rows of three. */
+/* Tiles of one size, framed as a gallery's are (Gallery.css). A row is rarely left with one alone:
+   one column until two fit, even counts and one two to a row, counts of three, five, six, seven and
+   nine and one three to a row, and once four fit, every count in tiles of a quarter of the column,
+   five, six and nine still in rows of three. A tile alone takes a column's width, not the row's. */
 .catalogue-related-tiles {
   --catalogue-related-gap: var(--env-space-5);
   display: grid;
@@ -17,6 +18,7 @@
 
 @container (width >= 24rem) {
   .catalogue-related-tiles:is(
+    [data-count='1'],
     [data-count='2'],
     [data-count='4'],
     [data-count='6'],
@@ -28,9 +30,11 @@
 
 @container (width >= 36rem) {
   .catalogue-related-tiles:is(
+    [data-count='1'],
     [data-count='3'],
     [data-count='5'],
     [data-count='6'],
+    [data-count='7'],
     [data-count='9']
   ) {
     grid-template-columns: repeat(3, minmax(0, 1fr));

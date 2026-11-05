@@ -112,6 +112,7 @@ export function TilePreview({
       data-stage={preview?.stage}
       data-empty={preview ? undefined : ''}
       data-playing={plays ? '' : undefined}
+      data-scene={legible ? '' : undefined}
     >
       {!preview ? (
         <IconArticle className="catalogue-related-placeholder" aria-hidden />
@@ -349,14 +350,18 @@ function whenIdle(task: () => Promise<unknown> | void) {
 /**
  * One alternative's tile, whose preview plays while the pointer or the keyboard is on it, and where
  * the reader can't hover, while it is the tile in the middle of the viewport, as a gallery's does.
+ * It is framed as a gallery's tile is (Gallery.tsx): on a stage of one shape, a component at its
+ * own size and a pattern's scene at a legible scale.
  */
 function RelatedTile({
   preview,
   near,
+  frame,
   children,
 }: {
   preview?: Preview;
   near: boolean;
+  frame?: Alternative['frame'];
   children: ReactNode;
 }) {
   const tile = useRef<HTMLLIElement>(null);
@@ -364,7 +369,15 @@ function RelatedTile({
   const autoplay = useAutoplay(tile, playing);
   return (
     <li ref={tile} className="catalogue-related-tile" {...playOn}>
-      <TilePreview preview={preview} near={near} playing={playing || autoplay} />
+      <TilePreview
+        preview={preview}
+        near={near}
+        playing={playing || autoplay}
+        className="catalogue-related-stage catalogue-gallery-stage"
+        whole
+        ownSize={frame === 'own'}
+        legible={frame === 'legible'}
+      />
       {children}
     </li>
   );
@@ -375,9 +388,15 @@ function Tiles({ alternatives, path }: { alternatives: Alternative[]; path: stri
   const list = useRef<HTMLUListElement>(null);
   const near = useNear(list);
   return (
-    <ul ref={list} className="catalogue-related-tiles" data-count={alternatives.length}>
-      {alternatives.map(({ key, name, href, preview, line }) => (
-        <RelatedTile key={key} preview={preview} near={near}>
+    <ul
+      ref={list}
+      className="catalogue-related-tiles"
+      data-count={alternatives.length}
+      // A scene's tile takes a larger stage, as in its gallery: so does every tile beside it.
+      data-scenes={alternatives.some(({ frame }) => frame === 'legible') ? '' : undefined}
+    >
+      {alternatives.map(({ key, name, href, preview, line, frame }) => (
+        <RelatedTile key={key} preview={preview} near={near} frame={frame}>
           {/* The name is the link; it stretches over the picture, so a pointer can follow it from
               there too without a link around the preview, whose example may hold links itself. */}
           <Text render={<span />} className="catalogue-related-name">
