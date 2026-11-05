@@ -17,6 +17,7 @@ import { IconRefresh } from '@envsemble/envui/icons/Refresh';
 import { IconSignalCellular4Bar } from '@envsemble/envui/icons/SignalCellular4Bar';
 import { IconSignalWifi4Bar } from '@envsemble/envui/icons/SignalWifi4Bar';
 import type { DeviceKind } from '../shared/DocumentationTypes';
+import { courseOf, headingEvent, headingOf, type Heading } from '../motion/MustShow';
 
 /*
  * A device drawn around a page's figure: a phone or a browser's window whose screen is a window of
@@ -49,18 +50,110 @@ const OnScreen = createContext(false);
 export const useOnScreen = () => use(OnScreen);
 
 /**
- * A device at its own size, scaled to fit its stage's width and at most `--site-device-most` high,
- * never drawn larger than it is; the place it holds on the stage is the scaled size, so the stage
- * is as tall as the device it shows.
+ * The least each kind is drawn at, so its text stays legible, about 10 px: a device that would
+ * need to be drawn smaller is drawn at it instead and cut off at the stage's edges.
  */
-export function DeviceStage({ children }: { children: ReactNode }) {
+const leastScale: Record<DeviceKind, number> = { phone: 0.8, window: 0.75 };
+
+/** Room kept around a point the pointer heads to, in the device's px: its cursor and a margin. */
+const pointRoom = 40;
+
+/** A box in the device's own px, from its top left corner. */
+interface Box {
+  left: number;
+  top: number;
+  right: number;
+  bottom: number;
+}
+
+/** The point of a heading, in the device's own px, as a box with room around it. */
+function pointBox(row: Element, scale: number, { selector, x, y }: Heading): Box | undefined {
+  // The first that shows: a pane that is closed may keep its parts, hidden.
+  const element = [...row.querySelectorAll(selector)].find(
+    (candidate) =>
+      candidate.getClientRects().length > 0 &&
+      candidate.checkVisibility({ opacityProperty: true, visibilityProperty: true }),
+  );
+  if (!element) return undefined;
+  const own = row.getBoundingClientRect();
+  const box = element.getBoundingClientRect();
+  const left = (box.left - own.left + x * box.width) / scale;
+  const top = (box.top - own.top + y * box.height) / scale;
+  return {
+    left: left - pointRoom / 2,
+    top: top - pointRoom / 2,
+    right: left + pointRoom,
+    bottom: top + pointRoom,
+  };
+}
+
+/**
+ * Where a view of `size` starts along one side of a device of `whole`: so it shows `span` where
+ * it fits, as near the start as it can; where it doesn't, so it shows `focus`, moving no more
+ * than it must from `from`; else at the span's start, or the device's.
+ */
+function viewStart(
+  whole: number,
+  size: number,
+  span: [number, number] | undefined,
+  focus: [number, number] | undefined,
+  from: number,
+) {
+  const most = Math.max(0, whole - size);
+  const clamp = (value: number) => Math.min(most, Math.max(0, value));
+  if (span && span[1] - span[0] <= size) return clamp(Math.min(span[0], span[1] - size));
+  if (focus) return clamp(Math.min(Math.max(from, focus[1] - size), focus[0]));
+  return clamp(span ? span[0] : 0);
+}
+
+/** The span of boxes along one side, or nothing where there are none. */
+function spanOf(boxes: Box[], pick: (box: Box) => [number, number]) {
+  return boxes.length
+    ? boxes
+        .map(pick)
+        .reduce<
+          [number, number]
+        >((a, b) => [Math.min(a[0], b[0]), Math.max(a[1], b[1])], [Infinity, -Infinity])
+    : undefined;
+}
+
+interface Fit {
+  scale: number;
+  width: number;
+  height: number;
+  x: number;
+  y: number;
+  cut: string;
+}
+
+const sameFit = (a: Fit, b: Fit) =>
+  a.scale === b.scale &&
+  a.cut === b.cut &&
+  Math.abs(a.width - b.width) < 0.5 &&
+  Math.abs(a.height - b.height) < 0.5 &&
+  Math.abs(a.x - b.x) < 0.5 &&
+  Math.abs(a.y - b.y) < 0.5;
+
+/**
+ * A device at its own size, scaled to fit its stage's width and at most `--site-device-most` high,
+ * never drawn larger than it is nor smaller than its kind's least scale (leastScale): where it
+ * would need to be, it is cut off at the stage's end and foot, its top start, the bar and the
+ * navigation, in view, and its cut edges fade out. On an animated figure, the view keeps every
+ * point its pointer heads to in it, where they fit together, or else follows the pointer, so what
+ * it acts on is never cut off (MustShow.ts). The place it holds on the stage is its view, so the
+ * stage is as tall as what it shows.
+ */
+export function DeviceStage({ kind, children }: { kind: DeviceKind; children: ReactNode }) {
   const stage = useRef<HTMLDivElement>(null);
   const row = useRef<HTMLDivElement>(null);
-  const [fit, setFit] = useState<{ scale: number; width: number; height: number }>();
+  const [fit, setFit] = useState<Fit>();
   useLayoutEffect(() => {
     const stageElement = stage.current;
     const rowElement = row.current;
     if (!stageElement || !rowElement) return;
+    // The animated figure's preview, whose pointer's points the view keeps.
+    const root = stageElement.closest('.catalogue-motion-subject');
+    let view = { x: 0, y: 0 };
     const update = () => {
       const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
       const most =
@@ -69,28 +162,73 @@ export function DeviceStage({ children }: { children: ReactNode }) {
       // offsetWidth and offsetHeight are the row's own, before its scale.
       const width = rowElement.offsetWidth;
       const height = rowElement.offsetHeight;
-      if (!width || !height) return;
-      const scale = Math.min(1, stageElement.clientWidth / width, most / height);
-      setFit((current) =>
-        current && Math.abs(current.scale - scale) < 0.001
-          ? current
-          : { scale, width: width * scale, height: height * scale },
-      );
+      const room = stageElement.clientWidth;
+      if (!width || !height || !room) return;
+      const fits = Math.min(1, room / width, most / height);
+      const scale = Math.min(1, Math.max(fits, leastScale[kind]));
+      const shown = {
+        width: Math.min(width * scale, room),
+        height: Math.min(height * scale, most),
+      };
+      // The scale the row is drawn at now, which its points are measured in.
+      const drawn = rowElement.getBoundingClientRect().width / width || scale;
+      const boxes = root
+        ? courseOf(root).flatMap((point) => pointBox(rowElement, drawn, point) ?? [])
+        : [];
+      const heading = root && headingOf(root);
+      const focus = heading ? pointBox(rowElement, drawn, heading) : undefined;
+      view = {
+        x: viewStart(
+          width,
+          shown.width / scale,
+          spanOf(boxes, (box) => [box.left, box.right]),
+          focus && [focus.left, focus.right],
+          view.x,
+        ),
+        y: viewStart(
+          height,
+          shown.height / scale,
+          spanOf(boxes, (box) => [box.top, box.bottom]),
+          focus && [focus.top, focus.bottom],
+          view.y,
+        ),
+      };
+      const cut = [
+        view.y > 0.5 && 'top',
+        view.y + shown.height / scale < height - 0.5 && 'bottom',
+        view.x > 0.5 && 'start',
+        view.x + shown.width / scale < width - 0.5 && 'end',
+      ]
+        .filter(Boolean)
+        .join(' ');
+      const next = { scale, ...shown, ...view, cut };
+      setFit((current) => (current && sameFit(current, next) ? current : next));
     };
     update();
     // Measured in the next frame: the size it sets resizes the stage it observes.
     let request = 0;
-    const observer = new ResizeObserver(() => {
+    const later = () => {
       cancelAnimationFrame(request);
       request = requestAnimationFrame(update);
-    });
+    };
+    const observer = new ResizeObserver(later);
     observer.observe(stageElement);
     observer.observe(rowElement);
+    root?.addEventListener(headingEvent, later);
+    // What opens and closes on the screen, such as a pane the pointer heads into, moves the view
+    // to what is left of its points.
+    const mutations = new MutationObserver(later);
+    if (root) mutations.observe(rowElement, { childList: true, attributes: true, subtree: true });
+    // The pointer's script names its points as its preview starts, a moment after.
+    const timer = setTimeout(later, 600);
     return () => {
       cancelAnimationFrame(request);
+      clearTimeout(timer);
       observer.disconnect();
+      mutations.disconnect();
+      root?.removeEventListener(headingEvent, later);
     };
-  }, []);
+  }, [kind]);
   return (
     <div
       ref={stage}
@@ -99,9 +237,15 @@ export function DeviceStage({ children }: { children: ReactNode }) {
     >
       <div
         className="site-device-fit"
+        data-cut={fit?.cut || undefined}
         style={fit && { inlineSize: fit.width, blockSize: fit.height }}
       >
-        <div ref={row} className="site-device-row" data-fitted={fit ? '' : undefined}>
+        <div
+          ref={row}
+          className="site-device-row"
+          data-fitted={fit ? '' : undefined}
+          style={fit && { translate: `${-fit.x * fit.scale}px ${-fit.y * fit.scale}px` }}
+        >
           {children}
         </div>
       </div>
@@ -226,7 +370,7 @@ export function OnDevice({
   children: ReactNode;
 }) {
   return (
-    <DeviceStage>
+    <DeviceStage kind={kind}>
       <DeviceFrame kind={kind} label={label}>
         {children}
       </DeviceFrame>
