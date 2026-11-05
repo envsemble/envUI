@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Disclosure } from '@envsemble/envui';
+import { Column, Disclosure, Text } from '@envsemble/envui';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
 const summary = '.env-disclosure > summary';
@@ -20,22 +20,25 @@ const script: PointerStep[] = [
 ];
 
 /**
- * A disclosure, open on its details, as wide as the stage, so its details run on one line rather
- * than in a narrow column. Its box keeps about its open height closed, so its summary stays where
- * it is as the details hide, and the closed box is a line short rather than a tall empty frame.
+ * A disclosure under the title of what it tells more about, open on its details, so closed it
+ * still reads as a part of a page rather than a lone line. The column they stand in keeps its
+ * height as the details hide, as a page's would, so the title and the summary stay where they are.
  * Stopped, it opens again rather than being drawn anew, which would fade its details in again.
  */
 export default function DisclosureTile() {
   const [open, setOpen] = useState(true);
   usePointer(script, { onRest: () => setOpen(true) });
   return (
-    <Disclosure
-      title="Who can see it"
-      open={open}
-      onOpenChange={setOpen}
-      style={{ inlineSize: '100%', minBlockSize: '2.5rem' }}
-    >
-      Only the people you invite.
-    </Disclosure>
+    <Column gap={2} align="start" style={{ inlineSize: '8.5rem', minBlockSize: '5.25rem' }}>
+      <Text variant="title">Launch plan</Text>
+      <Disclosure
+        title="What changed"
+        open={open}
+        onOpenChange={setOpen}
+        style={{ inlineSize: '100%' }}
+      >
+        It ships in May.
+      </Disclosure>
+    </Column>
   );
 }

@@ -1,5 +1,7 @@
 import { Accordion } from '@envsemble/envui';
+import { useMedia } from '../motion/Autoplay';
 import { usePointer, type PointerStep } from '../motion/Motion';
+import { narrowGallery } from './Tiles';
 
 const trigger = (index: number) => `.env-accordion-item:nth-child(${index}) .env-accordion-trigger`;
 
@@ -20,19 +22,20 @@ const script: PointerStep[] = [
   { wait: 700 },
 ];
 
-/** An accordion of three questions, the first open. */
+/**
+ * An accordion of two questions, the first open: short enough that the stage shows it whole with
+ * either answer open; in a phone's lower tile a little smaller, so it shows whole there too.
+ */
 export default function AccordionTile() {
+  const narrow = useMedia(narrowGallery);
   usePointer(script);
   return (
-    <Accordion.Root defaultValue={['see']} style={{ inlineSize: '12rem' }}>
-      <Accordion.Item value="see" title="Who can see it?">
-        Everyone in the team.
+    <Accordion.Root defaultValue={['see']} style={{ inlineSize: narrow ? '11.25rem' : '12rem' }}>
+      <Accordion.Item value="see" title="Who sees it?">
+        Your team.
       </Accordion.Item>
       <Accordion.Item value="move" title="Can I move it?">
-        Yes, from its menu.
-      </Accordion.Item>
-      <Accordion.Item value="export" title="Can I export it?">
-        As Markdown or PDF.
+        Yes, any time.
       </Accordion.Item>
     </Accordion.Root>
   );
