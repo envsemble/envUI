@@ -22,9 +22,10 @@ const script: PointerStep[] = [
   { wait: 300 },
   { drop: true },
   { wait: 200 },
-  // The hand moves off the zone while the photo goes up.
+  // The hand moves off the zone while the photo goes up, about two seconds, and the files rest
+  // as they began for about three more, so the upload is seen to finish before the loop.
   { leave: true },
-  { wait: 3600 },
+  { wait: 5800 },
 ];
 
 /** How much of the photo has gone up, in MB, of 1.1. */
