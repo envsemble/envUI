@@ -52,7 +52,7 @@ examples:
 
 ### Editor sizing
 
-An editor keeps its height for a long document, or grows with its text for a short one.
+A MarkdownEditor keeps its height for a long document, or grows with its text for a short one.
 
 | Editor sizing       | Use for                                                    |
 | ------------------- | ---------------------------------------------------------- |

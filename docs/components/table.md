@@ -55,7 +55,7 @@ examples:
 
 ### Density
 
-Density changes only the rows' padding; controls in cells keep the small height.
+Density changes only the rows' padding. Controls in cells keep the small height.
 
 ```tsx figure=RowDensity motion
 
@@ -111,7 +111,10 @@ A header can sort the rows by its column. The sorted column shows its order; the
 
 ### Select rows
 
-A selected row takes the selection fill, and a checkbox labelled with the row's name selects it; a row selected without a checkbox in its first cell, such as the one open in a detail pane, also takes a bar at its start.
+A selected row takes the selection fill.
+
+- A checkbox labelled with the row's name selects it.
+- A row selected without a checkbox in its first cell, such as the one open in a detail pane, also takes a bar at its start.
 
 ```tsx figure=SelectRows
 
@@ -144,7 +147,8 @@ While its rows load, a table shows as its own skeleton, as [Loading](../patterns
 By default the columns keep their width and the region scrolls sideways.
 
 - A table can stack its rows instead where it is narrow, such as on a phone.
-- Each row then becomes a compact block: its first cell titles it, with the next value, such as a status, beside it, and the others two to a line under their columns' names.
+- Each row then becomes a compact block. Its first cell titles it, with the next value, such as a status, beside it.
+- The other cells sit two to a line, under their columns' names.
 
 ```tsx figure=StackedRows widths="44 22" sweep
 
@@ -252,7 +256,13 @@ The application sorts the rows. `onSortChange` on a header cell makes it a sort 
 
 #### Stacked rows
 
-`narrowLayout="stack"` stacks the body rows below `stackBelow`, the region's own width, by a container query, so server markup already stacks. Give every cell after the first a `label`, which titles its value in a stacked row. The first labelled value sits beside the title without its label, so put one there that reads on its own, such as a status; a cell without a label, such as the row's menu of actions, joins that line too, and the other values follow two to a line, each under its label. The header row, and its sort buttons, are hidden while rows stack: `onStackedChange` tells the application, such as to show a Select for the order instead.
+`narrowLayout="stack"` stacks the body rows below `stackBelow`, the region's own width. It works by a container query, so server markup already stacks.
+
+- Give every cell after the first a `label`, which titles its value in a stacked row.
+- The first labelled value sits beside the title without its label, so put one there that reads on its own, such as a status.
+- A cell without a label, such as the row's menu of actions, joins that line too.
+- The other values follow two to a line, each under its label.
+- The header row, and its sort buttons, are hidden while rows stack. `onStackedChange` tells the application, such as to show a Select for the order instead.
 
 ```tsx
 <Table.Root aria-label="Invoices" narrowLayout="stack" onStackedChange={setStacked}>

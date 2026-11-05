@@ -224,6 +224,20 @@ export interface DocumentationSummary {
   status?: DocumentationStatus;
   /** The sections of a component, pattern or foundation page, outlined; absent on guides. */
   outline?: SectionOutline[];
+  /**
+   * The components a page documents besides the one it is named after, such as IconButton on
+   * Button's, which the navigation lists under the page.
+   */
+  members?: PageMember[];
+}
+
+/** A component a page documents besides its own, and the headings that lead to it. */
+export interface PageMember {
+  name: string;
+  /** The id of the catalogue's heading that first names it, on a component page. */
+  catalogue?: string;
+  /** The id of the Docs' heading that shows it: its props, or a guide's heading that names it. */
+  docs: string;
 }
 
 /** A page with its content, which loads with the page. */

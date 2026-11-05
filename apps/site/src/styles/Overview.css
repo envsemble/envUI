@@ -79,17 +79,26 @@
   overflow-x: auto;
   scrollbar-width: none;
 }
-/* A phone's hero shows the short command, which fits whole, rather than cutting the pinned one
-   mid-version. */
-.catalogue-overview-install-short {
-  display: none;
-}
-@container site-page-header (width < 34rem) {
-  .catalogue-overview-install-pinned {
-    display: none;
+/* Where the hero is too narrow for the whole command, as on a phone, it scrolls, and its end fades
+   while more of it lies beyond, as a code block's does (SiteText.css), so what shows is the start
+   of what the button copies, never a line cut mid-character. */
+@supports (animation-timeline: scroll()) {
+  .catalogue-overview-install code:not(:focus-visible) {
+    mask-image: linear-gradient(
+      to left,
+      transparent,
+      var(--env-color-fg-default) var(--site-code-fade)
+    );
+    animation: site-code-fade linear both;
+    animation-timeline: scroll(self inline);
+    animation-range: calc(100% - var(--env-space-9)) 100%;
   }
-  .catalogue-overview-install-short {
-    display: inline;
+  .catalogue-overview-install code:dir(rtl):not(:focus-visible) {
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      var(--env-color-fg-default) var(--site-code-fade)
+    );
   }
 }
 /* The counts, a middle dot between each, each whole. */

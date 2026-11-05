@@ -86,7 +86,7 @@ Groups put items under a heading, and separators split sets without one.
 
 Items can be choices, checked in place.
 
-- A radio item checks one choice and closes the menu; the chosen one shows its check mark.
+- A radio item checks one choice and closes the menu. The chosen one shows its check mark.
 - A checkbox item toggles and keeps it open.
 
 ```tsx figure=Choices motion
@@ -291,7 +291,14 @@ With `href`, a Menu.Item is a link, through the link component of `LinkProvider`
 
 ### Composition
 
-The parts are the popup, `env-menu`, and its positioner, `env-menu-positioner`; the header, `env-menu-header`; a group, `env-menu-group`, with its label, `env-menu-group-label`; each item, `env-menu-item`, with `data-highlighted`, `data-disabled` and `data-tone`, its label and description in `env-menu-item-text`, `env-menu-item-label` and `env-menu-item-description`, and its end, `env-menu-item-end`, with the shortcut, `env-menu-item-shortcut`; a radio or checkbox item, `env-menu-choice`, with `data-checked` and its check in `env-menu-item-indicator-slot` and `env-menu-item-indicator`; a submenu's row, `env-menu-submenu-trigger`, with its chevron, `env-menu-submenu-chevron`; and the separator, `env-menu-separator`.
+The parts:
+
+- The popup, `env-menu`, and its positioner, `env-menu-positioner`; the header, `env-menu-header`.
+- A group, `env-menu-group`, with its label, `env-menu-group-label`.
+- Each item, `env-menu-item`, with `data-highlighted`, `data-disabled` and `data-tone`. Its label and description are in `env-menu-item-text`, `env-menu-item-label` and `env-menu-item-description`; its end, `env-menu-item-end`, holds the shortcut, `env-menu-item-shortcut`.
+- A radio or checkbox item, `env-menu-choice`, with `data-checked`, and its check in `env-menu-item-indicator-slot` and `env-menu-item-indicator`.
+- A submenu's row, `env-menu-submenu-trigger`, with its chevron, `env-menu-submenu-chevron`.
+- The separator, `env-menu-separator`.
 
 ### Customize
 

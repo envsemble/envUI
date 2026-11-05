@@ -107,6 +107,12 @@ body {
 .site-drawer-search {
   max-inline-size: 100%;
 }
+/* A component a page documents besides its own, such as IconButton under Button, is an entry of the
+   same list after the page's, set in as a nested destination is; only these entries lead to a
+   heading, so their address's fragment marks them (SiteNavigation.tsx). */
+.site-sidebar .env-navigation-drawer-item[href*='#'] {
+  padding-inline-start: calc(var(--env-space-3) + var(--env-space-4));
+}
 /* In a wide window, search keeps its one place (--site-search-start) rather than centring in the
    drawer, which the reader resizes; a drawer too narrow for it there takes it back towards its
    start. In the Docs, the wordmark takes the room up to it, or less where the drawer is narrow. */

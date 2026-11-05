@@ -96,17 +96,19 @@ examples:
 
 ### Outline
 
-An outline field has no fill of its own: it takes the background of what it sits on, such as a card or a dialog. Its label rests inside it and floats into the edge, which opens behind it.
+An outline field has no fill of its own. It takes the background of what it sits on, such as a card or a dialog. Its label rests inside it and floats into the edge, which opens behind it.
 
-- It is as tall as a button of its size, so the two line up in a row; stacked in a Column or a Grid, it keeps a little room above it for its floated label.
+- It is as tall as a button of its size, so the two line up in a row.
+- Stacked in a Column or a Grid, it keeps a little room above it for its floated label.
 - A field on its own on a page, or in a long form, takes the large size.
 - It can be given a fill of its own where it needs one.
 
 ### Ghost
 
-A ghost field has no edge: a faint fill at rest shows where to type, and deepens under the pointer. Focus draws the accent edge an outline field takes. It has the outline field's corners, so the two sit together in a row.
+A ghost field has no edge. A faint fill at rest shows where to type, and deepens under the pointer. Focus draws the accent edge an outline field takes.
 
-- Keep it to toolbars, an application's chrome and palettes: in a form, a faint fill says less than an edge, so a form's fields are outline.
+- It has the outline field's corners, so the two sit together in a row.
+- Keep it to toolbars, an application's chrome and palettes. In a form, a faint fill says less than an edge, so a form's fields are outline.
 - A read-only or disabled ghost field has no fill.
 - Its placeholder clears once it has focus.
 - An invalid ghost field shows a red edge.
@@ -118,7 +120,7 @@ A ghost field has no edge: a faint fill at rest shows where to type, and deepens
 
 ### Sizes
 
-Outline and ghost fields come in the three control heights of the [scale](../foundations/spacing.md), small, medium and large, so they line up with buttons of the same size.
+A field lines up with a button of the same size. Outline and ghost fields come in the three control heights of the [scale](../foundations/spacing.md): small, medium and large.
 
 ```tsx figure=FieldsBesideButtons
 
@@ -164,7 +166,10 @@ Not shown: the suffix, the error and a text area's resize edge.
 
 ### States
 
-The label rests in an empty field and floats into the outline on focus or with a value. Under the pointer the outline darkens; focus alone draws it in the accent, twice as thick.
+The label rests in an empty field and floats into the outline on focus or with a value.
+
+- Under the pointer, the outline darkens.
+- Focus alone draws it in the accent, twice as thick.
 
 <!-- specimen: States -->
 
@@ -181,7 +186,7 @@ An error marks the field invalid and shows under its description. Say how to cor
 
 ### Search
 
-A search field's clear button and <kbd>Esc</kbd> empty the query.
+A SearchField's clear button and <kbd>Esc</kbd> empty the query.
 
 - Its label is for assistive technology, unless it is set to show.
 
@@ -189,7 +194,10 @@ A search field's clear button and <kbd>Esc</kbd> empty the query.
 
 ### Textarea sizing
 
-A text area keeps its height and scrolls, and people resize it by its bottom edge, by dragging or with the arrow keys; the edge shows its grip under the pointer and while the field has focus. It can grow with its text instead.
+A Textarea keeps its height and scrolls, or grows with its text instead.
+
+- People resize it by its bottom edge, by dragging or with the arrow keys.
+- The edge shows its grip under the pointer and while the field has focus.
 
 ```tsx figure=TextareaSizing motion
 
@@ -223,7 +231,10 @@ Say what kind of value each field takes, such as an e-mail address, so the brows
 
 ### Read-only values
 
-Show a value people can't change as read-only, so they can still focus and copy it. Its outline is quieter and doesn't answer the pointer, while the value stays as dark as any other. A disabled field can't be focused, copied or submitted.
+Show a value people can't change as read-only, so they can still focus and copy it.
+
+- Its outline is quieter and doesn't answer the pointer. The value stays as dark as any other.
+- A disabled field can't be focused, copied or submitted.
 
 ### Labels
 

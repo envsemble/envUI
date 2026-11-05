@@ -23,8 +23,10 @@ import type {
   DocumentationEntry,
   DocumentationSummary,
 } from '../../apps/site/src/shared/DocumentationTypes.ts';
-import { headingsOf } from './MarkdownHeadings.ts';
-import { headingSlugger } from '../../apps/site/src/shared/SearchAnchors.ts';
+import { marked } from 'marked';
+import { headingsOf, plainText } from './MarkdownHeadings.ts';
+import { exportSection, headingSlugger } from '../../apps/site/src/shared/SearchAnchors.ts';
+import { providesHeadings } from '../../apps/site/src/shared/CatalogueContent.ts';
 import { writeSearchIndex } from '../site/SearchIndex.ts';
 import { documentationDirectory, generatedFile, pageKindOf, readProps } from './Schema.ts';
 import { readDocumentation } from './Reader.ts';
@@ -66,6 +68,82 @@ export {
 /** Each page's content for the catalogue: generated/pages/<id>.json beside generatedFile. */
 const pagesDirectory = resolve(dirname(generatedFile), 'pages');
 
+const names = (text: string, name: string) =>
+  new RegExp(`(?<![\\w.])${name.replace(/[.$]/g, '\\$&')}(?![\\w])`).test(text);
+
+/**
+ * The heading ids of Markdown with the text under each, the text before its first heading under
+ * `start`: the `slug` numbers repeated headings across the parts of one page.
+ */
+function headedText(markdown: string, slug: (text: string) => string, start: string) {
+  const parts = [{ id: start, heading: '', text: '' }];
+  for (const token of marked.lexer(markdown)) {
+    if (token.type === 'heading')
+      parts.push({ id: slug(plainText(token.tokens)), heading: token.text, text: '' });
+    else parts.at(-1)!.text += `\n${token.raw}`;
+  }
+  return parts;
+}
+
+/**
+ * The exports a page documents besides the one it is named after, each a component or a namespace,
+ * such as IconButton on Button's, for the navigation's entries under the page: each with where the
+ * Docs show it, its props on a component page and a guide's first heading whose text names it, and
+ * on a component page where the catalogue does, the first heading of its plain sections whose text
+ * names it, else the Overview; a page with none has none.
+ */
+function membersOf(
+  document: {
+    title: string;
+    markdown: string;
+    sections?: { id: string; blocks: { kind: string; markdown?: string }[] }[];
+  },
+  components: readonly string[],
+  props: NonNullable<ReturnType<typeof readProps>>,
+) {
+  const members = components.filter(
+    (name) =>
+      name !== document.title && ['component', 'namespace'].includes(props.exports[name]?.kind),
+  );
+  if (!members.length) return undefined;
+  const slug = headingSlugger();
+  const parts = document.sections
+    ? document.sections.flatMap((section) =>
+        headedText(
+          section.blocks
+            .flatMap((block) => (block.kind === 'markdown' ? [block.markdown!] : []))
+            .join('\n\n'),
+          slug,
+          section.id,
+        ).map((part) => ({
+          ...part,
+          // The catalogue leaves out Compose, the changelog and the lists of what is provided.
+          plain:
+            !['code', 'changelog'].includes(section.id) &&
+            !Object.values(providesHeadings).includes(part.heading as never),
+        })),
+      )
+    : headedText(document.markdown, slug, '').map((part) => ({ ...part, plain: false }));
+  const firstNaming = (name: string, plain: boolean) =>
+    parts.find((part) => part.id && part.plain === plain && names(part.text, name))?.id;
+  // A guide's component that no heading's text names has no place to lead to, and no entry.
+  const placed = members.flatMap((name) => {
+    const entry = props.exports[name]!;
+    if (!document.sections) {
+      const docs = firstNaming(name, false);
+      return docs ? [{ name, docs }] : [];
+    }
+    return [
+      {
+        name,
+        catalogue: firstNaming(name, true) ?? 'overview',
+        docs: exportSection(entry.kind === 'namespace' ? (entry.parts[0] ?? name) : name),
+      },
+    ];
+  });
+  return placed.length ? placed : undefined;
+}
+
 /** Writes a generated file only when it changes, so a dev server watching it doesn't reload. */
 function writeIfChanged(file: string, source: string) {
   mkdirSync(dirname(file), { recursive: true });
@@ -82,12 +160,18 @@ export function generateDocumentation() {
     if (!frontmatter) return entry;
     // A guide names the exports it documents, such as LinkProvider, so a page that relates to one
     // links to it, and may carry a status, such as alpha.
-    if (!sections)
+    if (!sections) {
+      const members =
+        frontmatter.components && props && membersOf(document, frontmatter.components, props);
       return {
         ...entry,
         ...(frontmatter.status && { status: frontmatter.status }),
         ...(frontmatter.components && { components: frontmatter.components }),
+        ...(members && { members }),
       };
+    }
+    const members =
+      kind === 'component' && props && membersOf(document, frontmatter.components ?? [], props);
     const metadata = {
       ...(frontmatter.status && { status: frontmatter.status }),
       ...(frontmatter.since && { since: frontmatter.since }),
@@ -106,6 +190,7 @@ export function generateDocumentation() {
     return {
       ...entry,
       metadata,
+      ...(members && { members }),
       sections: sections.map((section) => ({
         ...section,
         anchors: section.blocks.flatMap((block) =>

@@ -102,13 +102,17 @@ examples:
 
 ### Tones
 
-The neutral tone is the variant's own color: a primary's brand blue fill, a text button's link blue and a text color for the others, so only the main action and links are blue.
+Only the main action and links are blue.
 
-The danger tone colors the label, or a primary's fill, and tints the state layers of the quiet variants.
+- The neutral tone keeps the variant's own color: a brand blue fill on a primary, link blue on a text button, and the text color on the others.
+- The danger tone colors the label, or a primary's fill. On the quiet variants it tints hover and press too.
 
 ### Primary tones
 
-Every primary takes the same grade of its tone: a saturated fill with white text in light, and a soft fill with dark text in dark, so a danger or accent button is never louder than the main one beside it.
+A danger or accent primary is never louder than the main one beside it.
+
+- Every primary takes the same grade of its tone.
+- In light, that is a saturated fill with white text; in dark, a soft fill with dark text.
 
 ```tsx figure=PrimaryTones
 
@@ -124,7 +128,7 @@ A button without a variant of its own takes its container's, such as ghost in a 
 
 ### Links
 
-A button can go to a page instead of acting; [Link](link.md) says when a destination takes a button's shape.
+A button can go to a page instead of acting. [Link](link.md) says when a destination takes a button's shape.
 
 ```tsx figure=ButtonLinks
 
@@ -132,7 +136,7 @@ A button can go to a page instead of acting; [Link](link.md) says when a destina
 
 ### Icons
 
-A button takes an icon at its start or its end; an IconButton shows an icon alone, with a name for assistive technology.
+A button takes an icon at its start or its end. An IconButton shows an icon alone, with a name for assistive technology.
 
 ```tsx figure=Icons
 
@@ -140,10 +144,11 @@ A button takes an icon at its start or its end; an IconButton shows an icon alon
 
 ### Groups
 
-A ButtonGroup joins related buttons of one variant in a row or a column, or filled primary and secondary buttons together, such as a split button.
+A ButtonGroup joins related buttons in a row or a column.
 
-- A split button's menu half takes the main half's variant and tone and shows a chevron, so the hairline between them reads as one action with its options rather than two actions.
-- A group that mixes an outline, ghost or text button with another variant, such as an outline Back beside a primary Next, keeps them apart as whole pills.
+- It joins buttons of one variant, or filled primary and secondary buttons, such as a split button.
+- A split button's menu half takes the main half's variant and tone, and shows a chevron. The hairline between the halves then reads as one action with its options, not two actions.
+- A group that mixes an outline, ghost or text button with another variant keeps them apart as whole pills, such as an outline Back beside a primary Next.
 
 ```tsx figure=ConnectedButtons
 
@@ -245,7 +250,7 @@ A button says what will happen, and only the main action of a group stands out.
 
 ### Labels
 
-Start with a verb and say what will happen, and when the outcome is known, put it in the label.
+Start with a verb that says what will happen. When the outcome is known, put it in the label.
 
 ```tsx figure=SayWhatWillHappen motion
 

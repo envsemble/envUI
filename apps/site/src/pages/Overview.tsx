@@ -48,11 +48,6 @@ const counts = (['component', 'pattern', 'foundation'] as const).map((kind) => (
  * from packages/ui/package.json, pinned exactly.
  */
 const install = `npm install --save-exact ${name}@${version}`;
-/**
- * The command a phone shows in its place, which fits its width whole; the copy button still copies
- * the pinned one.
- */
-const shortInstall = `npm i ${name}`;
 
 /**
  * The catalogue's home: what envUI is, the way to setting it up, a hand of cards built with it, and
@@ -77,13 +72,9 @@ export function Overview() {
                 Get started
               </Button>
               <span className="catalogue-overview-install">
-                {/* One line, the short command where the hero is too narrow for the pinned one
-                    (Overview.css); it scrolls where even that doesn't fit, so it is focusable for
-                    the keyboard. */}
-                <code tabIndex={0}>
-                  <span className="catalogue-overview-install-pinned">{install}</span>
-                  <span className="catalogue-overview-install-short">{shortInstall}</span>
-                </code>
+                {/* One line, the command the button copies, which scrolls with its end fading
+                    where it doesn't fit (Overview.css), so it is focusable for the keyboard. */}
+                <code tabIndex={0}>{install}</code>
                 <CopyButton value={install} variant="ghost" aria-label="Copy install command" />
               </span>
             </Row>

@@ -105,9 +105,11 @@ function ExportProps({ name, entry }: { name: string; entry: ExportEntry }) {
   // Waiting its turn to show, an export's props are its heading alone (SectionOutline).
   const outline = useSectionOutline();
   if (entry.kind === 'namespace') return null;
+  // The export's name in the heading style of the page's other h3s, not as code, so the long Props
+  // section has landmarks.
   const heading = (
     <Text render={<h3 />} variant="title" id={exportSection(name)}>
-      <PlainCode>{name}</PlainCode>
+      {name}
     </Text>
   );
   if (outline) return heading;

@@ -105,7 +105,7 @@ A dialog's actions end with the primary one, after a built-in close button. A Ca
 
 ### Pending work
 
-While its work runs, nothing closes the dialog: its close buttons are disabled, and its primary action shows the work running.
+While its work runs, nothing closes the dialog. Its close buttons are disabled, and its primary action shows the work running.
 
 - Submit a form from its primary action, so <kbd>Enter</kbd> in a field submits it too.
 
@@ -115,7 +115,7 @@ While its work runs, nothing closes the dialog: its close buttons are disabled, 
 
 ### Closing actions
 
-Other buttons can close the dialog after doing their own work, such as Don’t save.
+A DialogClose closes the dialog after doing its own work, such as Don’t save.
 
 ```tsx figure=UnsavedChanges motion
 
@@ -180,7 +180,11 @@ A Dialog opens from its `trigger`, such as a Button, and holds its `title`, whic
 
 #### Pending work
 
-`pending` keeps <kbd>Esc</kbd>, outside presses and the close buttons from dismissing the dialog until it returns to `false`. It disables the built-in close button and every DialogClose inside, and the last action, the primary one, shows it pending where it is a Button that sets no `pending` of its own. Put a `<form>` in `children` and make the primary action its submit button, through the `form` attribute, so <kbd>Enter</kbd> in a field submits it too.
+`pending` keeps the dialog open until it returns to `false`: <kbd>Esc</kbd>, outside presses and the close buttons don't dismiss it.
+
+- It disables the built-in close button and every DialogClose inside.
+- The last action, the primary one, shows it pending, where it is a Button that sets no `pending` of its own.
+- Put a `<form>` in `children` and make the primary action its submit button, through the `form` attribute, so <kbd>Enter</kbd> in a field submits it too.
 
 ```tsx
 <Dialog
@@ -220,7 +224,11 @@ An action closes the dialog only where it is a DialogClose, a Button that closes
 
 #### Placement, width and modal
 
-`placement` is `center`, the default, or `top`, near the top of the window, so results grow down without moving the field. `width` is `md`, 28 rem and the default, or `lg`, 44 rem; both narrow to fit the window. `modal={false}` leaves the page usable beside the dialog, such as an inspector; by default it traps focus over a backdrop, hides the page from assistive technology, blocks presses on it and locks its scroll. `disablePointerDismissal` keeps it open on presses outside it, and a non-modal one also when focus moves outside.
+`placement` is `center`, the default, or `top`, near the top of the window, so results grow down without moving the field.
+
+- `width` is `md`, 28 rem and the default, or `lg`, 44 rem. Both narrow to fit the window.
+- By default the dialog is modal: it traps focus over a backdrop, hides the page from assistive technology, blocks presses on it and locks its scroll. `modal={false}` leaves the page usable beside the dialog, such as an inspector.
+- `disablePointerDismissal` keeps it open on presses outside it, and a non-modal one also when focus moves outside.
 
 ```tsx
 <Dialog width="lg" title="Review changes" trigger={<Button>Review</Button>}>
