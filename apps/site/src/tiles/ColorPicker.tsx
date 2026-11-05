@@ -29,7 +29,9 @@ const script: PointerStep[] = [
 
 /**
  * A compact color picker: its colors and its hue whole in the tile, over the value they make. Its
- * label is left out of sight, so the area shows whole; it still names the picker.
+ * square area is as tall as it is wide, so the picker is drawn a little smaller, as wide as leaves
+ * the value its whole row under it in a gallery's low tile. Its label is left out of sight, as is
+ * its copy button, so the value has the row; the label still names the picker.
  */
 export default function ColorPickerTile() {
   usePointer(script);
@@ -39,7 +41,8 @@ export default function ColorPickerTile() {
       showLabel={false}
       defaultValue="#3b6fd4"
       formats={['hex']}
-      style={{ inlineSize: '6.75rem' }}
+      copyable={false}
+      style={{ inlineSize: '6rem', zoom: 0.86 }}
     />
   );
 }
