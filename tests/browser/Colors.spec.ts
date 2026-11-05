@@ -207,7 +207,7 @@ test('compositions reuse primitive colors while unrelated roles stay independent
       ['--env-color-bg-list-item', ['row']],
       ['--env-color-bg-neutral-muted', ['secondary', 'icon', 'chip']],
       ['--env-color-fg-link', ['link', 'textButton']],
-      ['--env-color-bg-primary-emphasis', ['primary', 'checkbox', 'switch']],
+      ['--env-color-bg-primary-emphasis', ['primary', 'radio', 'checkbox', 'switch']],
       // Every primary takes its tone's emphasis fill; the destructive one's saturated red takes the
       // white label of the strong fills, the others the emphasis label.
       ['--env-color-fg-on-emphasis', ['primary']],
@@ -216,8 +216,7 @@ test('compositions reuse primitive colors while unrelated roles stay independent
       ['--env-color-fg-primary', ['tab']],
       ['--env-color-bg-selected', ['navigation']],
       // A neutral badge's text is muted, as InfoChip's metadata became a Badge.
-      // An unchosen radio's ring is an unchecked checkbox's edge.
-      ['--env-color-fg-muted', ['navigationIcon', 'selectHint', 'chip', 'radio']],
+      ['--env-color-fg-muted', ['navigationIcon', 'selectHint', 'chip']],
       ['--env-color-bg-raised', ['direction']],
       ['--env-color-border-primary-emphasis', ['fieldWell']],
       ['--env-color-fg-danger', ['fieldError', 'selectError']],

@@ -79,8 +79,6 @@ examples:
 
 Choosing an option clears the one chosen before. People can't clear a choice, only make another. A chosen row takes the selection's fill, as a selected list row does.
 
-A chosen radio that is disabled takes the neutral fill rather than the accent, as a disabled button does.
-
 <!-- specimen: States -->
 
 ### A required choice
@@ -191,8 +189,7 @@ The parts are the group, `env-radio-group`, with `data-orientation` and its lege
 
 - **1.0.0**: RadioGroup's `variant` is `orientation`: `inline` is `horizontal` and `rows` is `vertical`; Radio's `detail` is `description`. `className` and `style` style a Radio's root rather than the input, which keeps `ref` and the other native props. A focused radio shows the focus ring. The classes follow the component: `env-radio-options` is `env-radio-group` with `[data-orientation]`, `env-radio-option` and the inline label are `env-radio`, `env-radio-control` is `env-radio-input` and `env-radio-detail` `env-radio-description`.
 - **1.0.0-prerelease.6**: The group's legend takes the size, weight and muted color of a field's floated label. In a vertical group, the chosen row's label keeps the text color, its choice shown by the selection's fill and the filled radio, and on a dialog, a popover or a muted or raised card or Surface, the rows take a faint neutral tint, so they keep their shape there.
-- **1.0.0-prerelease.6**: A chosen radio that is unavailable takes the neutral fill, with its dot in `--env-color-fg-disabled`, rather than a faded accent, as an unavailable button does.
 - **1.0.0-prerelease.6**: Beside a label that wraps or has a description, the radio sits on the middle of its first line rather than across both lines.
-- **1.0.0-prerelease.6**: The radio is drawn, as a checkbox is: a ring that darkens to the text color under the pointer and stays empty, with the checkbox's halo of the shared state layer around it beside its label (a row radio keeps its row's fills), and the accent disc with its dot once chosen, ringed round when focused. The group's error shows the error icon, as a field's does.
+- **1.0.0-prerelease.6**: The group's error shows the error icon, as a field's does.
 - **1.0.0-prerelease.5**: RadioGroup takes `description` and `error`, as a field does, and a controlled `value` of `null` chooses none.
 - **1.0.0-prerelease.5**: The chosen row of a group in rows takes the selection's fill and text, as a selected list row does, rather than the hover fill.
