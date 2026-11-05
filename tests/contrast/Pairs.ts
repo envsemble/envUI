@@ -354,8 +354,8 @@ const registry: readonly ContrastPair[] = merged([
   ),
   ...text(
     '--env-color-fg-muted-hover',
-    [page, surface],
-    'Disclosure summaries and checkbox rings on hover',
+    [page, surface, muted, raised, popup],
+    'Disclosure summaries and checkbox rings on hover, and the labels of unselected tabs',
   ),
   ...text('--env-color-fg-muted-pressed', [page, surface], 'Disclosure summaries on press'),
 
@@ -1244,13 +1244,13 @@ const registry: readonly ContrastPair[] = merged([
   ...nonText(
     '--env-color-bg-primary-emphasis',
     [
-      [layerHover, page],
-      [layerHover, surface],
-      [layerHover, muted],
-      [layerHover, raised],
-      [layerHover, popup],
+      [fill, page],
+      [fill, surface],
+      [fill, muted],
+      [fill, raised],
+      [fill, popup],
     ],
-    'The indicators of Meter and Progress on their track, a quiet tint with no outline, on every surface',
+    'The indicators of Meter and Progress on their track, the neutral fill with no outline, on every surface',
   ),
   ...distinct(
     'heatmap-accent-lowest',
@@ -2940,6 +2940,23 @@ function apiReviewRenames() {
  * is, or has since been dropped or renamed onward in turn.
  */
 export const renamed: readonly { from: string; to: string; rationale: string }[] = [
+  // Meter's and Progress's track is the neutral fill, as a Slider's track is.
+  ...[
+    '--env-color-bg-default',
+    '--env-color-bg-muted',
+    '--env-color-bg-page',
+    '--env-color-bg-popup',
+    '--env-color-bg-raised',
+    '--env-color-bg-recessed',
+    'catalogue-canvas',
+  ].flatMap((ground) =>
+    reviewed(`--env-color-bg-primary-emphasis on ${layerHover} over ${ground}`).map((from) => ({
+      from,
+      to: `--env-color-bg-primary-emphasis on ${fill} over ${ground === 'catalogue-canvas' ? '--env-color-bg-recessed' : ground}`,
+      rationale:
+        'The track of Meter and Progress is the neutral fill a Slider’s track takes, --env-color-bg-neutral-muted, rather than a state layer’s faint tint, so empty steps show on dark panels.',
+    })),
+  ),
   // Tree and table rows take a state layer of their own, a step quieter than a control's in light.
   ...(['--env-color-bg-selected', '--env-color-bg-selected-hover'] as const).flatMap((fill) =>
     ['--env-color-bg-default', '--env-color-bg-raised'].map((ground) => ({
