@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import { Card, Text } from '@envsemble/envui';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
@@ -21,7 +22,16 @@ const script: PointerStep[] = [
   { wait: 600 },
 ];
 
-/** A card that opens a project: its name and a summary. */
+/**
+ * The edge, through the card's own color property: on a stage of the card's own fill, it keeps the
+ * card's shape in view at rest, and its hover fill then shows inside it.
+ */
+const outlined = { '--env-card-outline': 'var(--env-color-border-muted)' } as CSSProperties;
+
+/**
+ * A card that opens a project: its name and a summary, narrow enough for a phone's stage at its
+ * own size.
+ */
 export default function CardTile() {
   usePointer(script);
   return (
@@ -29,7 +39,7 @@ export default function CardTile() {
       href="#northwind"
       onClick={(event) => event.preventDefault()}
       padding={4}
-      style={{ inlineSize: '9rem' }}
+      style={{ inlineSize: '8.5rem', ...outlined }}
     >
       <Text render={<span />} variant="title">
         Northwind
