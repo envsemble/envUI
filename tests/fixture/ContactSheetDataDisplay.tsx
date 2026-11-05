@@ -525,7 +525,7 @@ function Tables() {
         <Cell
           caption="Onboarding row: hover"
           force="hover"
-          target="tbody tr:nth-child(3) a"
+          target="tbody tr:nth-child(3) td:nth-child(2)"
           width="30rem"
         >
           <ProjectTable />
