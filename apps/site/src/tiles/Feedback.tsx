@@ -49,7 +49,7 @@ function Invite() {
   }, [sending, toast]);
   // At the window's top, so the notification at its foot leaves the button in view.
   return (
-    <Column gap={4} style={{ inlineSize: '14rem', minBlockSize: '11.5rem' }}>
+    <Column gap={4} style={{ inlineSize: '17rem', minBlockSize: '11.5rem' }}>
       <TextField label="Email address" defaultValue="jordan.kim@example.com" />
       <Button startIcon={<IconSend />} pending={sending} onClick={() => setSending(true)}>
         Send invitation

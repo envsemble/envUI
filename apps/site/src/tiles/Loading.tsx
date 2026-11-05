@@ -17,7 +17,7 @@ export default function LoadingTile() {
       title={loaded ? 'Quarterly report' : undefined}
       description={loaded ? 'Updated 2 hours ago' : undefined}
       actions={<Button>Open</Button>}
-      style={{ ...outlined, inlineSize: '15rem' }}
+      style={{ ...outlined, inlineSize: '17rem' }}
     />
   );
 }

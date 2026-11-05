@@ -4,7 +4,7 @@ import { IconSearchOff } from '@envsemble/envui/icons/SearchOff';
 import { usePointer, type PointerStep } from '../motion/Motion';
 import { outlined } from './Outline';
 
-const projects = ['Northwind launch', 'Annual report', 'Pricing research'];
+const projects = ['Northwind launch', 'Pricing research'];
 
 const input = '.env-text-field-input';
 
@@ -33,7 +33,7 @@ export default function EmptyStatesTile() {
   usePointer(script);
   const matches = projects.filter((name) => name.toLowerCase().includes(query.toLowerCase()));
   return (
-    <Column gap={4} style={{ inlineSize: '15rem', minBlockSize: '11.5rem' }}>
+    <Column gap={3} style={{ inlineSize: '17rem', minBlockSize: '11.5rem' }}>
       <SearchField label="Search projects" value={query} onValueChange={setQuery} />
       {matches.length > 0 ? (
         <Surface background="muted" padding={1} radius="sm" style={outlined}>

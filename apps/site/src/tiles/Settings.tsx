@@ -29,7 +29,7 @@ const script: PointerStep[] = [
 export default function SettingsTile() {
   usePointer(script);
   return (
-    <Column gap={3} style={{ inlineSize: '15rem' }}>
+    <Column gap={3} style={{ inlineSize: '17rem' }}>
       <Text render={<span />} variant="title">
         Notifications
       </Text>
