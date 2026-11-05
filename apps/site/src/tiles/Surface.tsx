@@ -1,7 +1,6 @@
 import type { CSSProperties } from 'react';
 import { Surface, Text, type SurfaceBackground, type SurfaceRadius } from '@envsemble/envui';
 import { useTimeline } from '../motion/Motion';
-import { easing } from './Reflow';
 
 /**
  * Step by step: the default fill, the page's, muted, its corners small, the page's again. Its edge,
@@ -18,7 +17,10 @@ const looks: { background: SurfaceBackground; radius: SurfaceRadius }[] = [
 /** The edge, through the surface's own color property. */
 const outlined = { '--env-surface-outline': 'var(--env-color-border-muted)' } as CSSProperties;
 
-/** A surface holding a plan's name and a line about it, outlined, its fill and corners in turn. */
+/**
+ * A surface holding a plan's name and a line about it, outlined, its fill and corners in turn, each
+ * drawn at once, as a Surface draws a change of its props.
+ */
 export default function SurfaceTile() {
   const step = useTimeline([1000, 1100, 1100, 1100, 1100]);
   const { background, radius } = looks[step]!;
@@ -27,11 +29,7 @@ export default function SurfaceTile() {
       background={background}
       radius={radius}
       padding={5}
-      style={{
-        inlineSize: '9rem',
-        ...outlined,
-        transition: `background-color 500ms ${easing}, border-radius 500ms ${easing}`,
-      }}
+      style={{ inlineSize: '9rem', ...outlined }}
     >
       <Text variant="title">Launch plan</Text>
       <Text emphasis="muted">Due in May.</Text>
