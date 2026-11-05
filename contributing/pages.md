@@ -325,6 +325,7 @@ The galleries and Related show each page by a tile: `apps/site/src/tiles/<Page>.
 - **A still that is its animation's first frame.** On hover or focus it plays a short script of the component in use, and on a touch screen the tile nearest the middle plays once scrolling settles. The script ends where it began.
 - **Its window** is 14 by 10.5 rem, the same for every tile, so components show at one scale; only a component too large for it takes a larger one in `tileWindows` (`apps/site/src/tiles/Tiles.ts`).
 - **A still with a popup open** keeps it in state and puts it back with `usePointer`'s `onRest`.
+- **A popup whose script opens, closes and changes it**, such as a select's list, rests open in its largest state, through the component's own `defaultOpen` or `open`, and calls `useHeldView` (`apps/site/src/motion/Motion.tsx`): framed on that still, its view holds while it plays.
 
 ## Pattern pages
 

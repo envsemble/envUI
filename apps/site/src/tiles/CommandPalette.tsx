@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { CommandPalette, type CommandPaletteItem } from '@envsemble/envui';
 import { IconNoteAdd } from '@envsemble/envui/icons/NoteAdd';
 import { IconPersonAdd } from '@envsemble/envui/icons/PersonAdd';
-import { usePointer, type PointerStep } from '../motion/Motion';
+import { useHeldView, usePointer, type PointerStep } from '../motion/Motion';
 
 const items: CommandPaletteItem[] = [
   { id: 'new', label: 'New document', icon: <IconNoteAdd /> },
@@ -11,28 +11,28 @@ const items: CommandPaletteItem[] = [
 
 const input = '.env-command-palette-input';
 
-/** What it rests on: a search typed, narrowed to one command. */
-const resting = 'inv';
-
-/** The search erased, which brings back every command, and another typed, then the first again. */
+/** A search typed, which narrows the commands to one, and erased; another, and erased, as it began. */
 const script: PointerStep[] = [
-  { wait: 900 },
+  { wait: 600 },
+  { type: 'inv', into: input, every: 220 },
+  { wait: 1200 },
   { erase: 3, into: input, every: 120 },
   { wait: 700 },
   { type: 'new', into: input, every: 220 },
   { wait: 1200 },
   { erase: 3, into: input, every: 120 },
-  { type: resting, into: input, every: 220 },
   { wait: 900 },
 ];
 
 /**
- * A command palette, open on a search that has narrowed its commands to one: its field and that
- * result, so a gallery's low tile shows it whole at about its own size.
+ * A command palette, open with its two commands under its search: framed on all of it, so as a
+ * search narrows the list and is erased, the palette, which stays at its top, changes in place and
+ * nothing in its tile moves.
  */
 export default function CommandPaletteTile() {
-  const [query, setQuery] = useState(resting);
-  usePointer(script, { onRest: () => setQuery(resting) });
+  const [query, setQuery] = useState('');
+  useHeldView();
+  usePointer(script, { onRest: () => setQuery('') });
   return (
     <CommandPalette
       open

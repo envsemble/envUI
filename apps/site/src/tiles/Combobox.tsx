@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Combobox, type ComboboxItem } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../motion/Motion';
+import { useHeldView, usePointer, type PointerStep } from '../motion/Motion';
 import { Renew } from '../motion/Renew';
 
 const labels: ComboboxItem[] = ['Design', 'Docs'].map((name) => ({
@@ -11,9 +11,9 @@ const labels: ComboboxItem[] = ['Design', 'Docs'].map((name) => ({
 const input = '.env-combobox-input';
 
 /**
- * A label typed after the chip already chosen, which narrows the list to one; chosen, it joins
- * the first as a second chip, and the two hold a while; then the field is drawn anew as it began, with
- * a short fade (Renew).
+ * A label typed after the chip already chosen, which narrows the open list to one; chosen, it joins
+ * the first as a second chip, and the two hold a while; then the field is drawn anew as it began,
+ * its list open, with a short fade (Renew).
  */
 const script: PointerStep[] = [
   { wait: 300 },
@@ -37,10 +37,12 @@ const script: PointerStep[] = [
 /**
  * A combobox of two labels, several to choose, one already chosen as a chip beside the field's
  * text, so at rest it reads as a field to type in rather than a select; short labels, so two chips
- * share the field's one row, and its field and its open list show whole in a gallery's low tile.
+ * share the field's one row. It rests with its list open, framed on the field and the list, so as
+ * it plays the list narrows, closes and opens again in place, and nothing in its tile moves.
  */
 export default function ComboboxTile() {
   const [round, setRound] = useState(0);
+  useHeldView();
   usePointer(script, { onCue: () => setRound((count) => count + 1) });
   return (
     <Renew round={round}>
@@ -50,6 +52,7 @@ export default function ComboboxTile() {
         placeholder="Add a label"
         items={labels}
         defaultValue={['design']}
+        defaultOpen
         style={{ inlineSize: '12rem' }}
       />
     </Renew>

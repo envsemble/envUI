@@ -1,5 +1,5 @@
 import { Select } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../motion/Motion';
+import { useHeldView, usePointer, type PointerStep } from '../motion/Motion';
 
 const options = [
   { value: 'team', label: 'Team' },
@@ -9,31 +9,40 @@ const options = [
 const trigger = '.env-select-trigger';
 const option = (index: number) => `.env-select-item:nth-child(${index})`;
 
-/** Opened and Private chosen; opened again and Team chosen, as it began. */
+/**
+ * Down the open list, Private chosen, which closes it; opened again from its trigger and Team
+ * chosen; opened once more, as it began.
+ */
 const script: PointerStep[] = [
   { wait: 300 },
-  { to: trigger },
+  { to: option(1) },
+  { wait: 400 },
+  { to: option(2), duration: 400 },
   { wait: 400 },
   { click: true },
-  { wait: 600 },
-  { to: option(2), duration: 500 },
-  { wait: 300 },
-  { click: true },
-  { wait: 1000 },
+  { wait: 900 },
   { to: trigger, duration: 400 },
   { wait: 200 },
   { click: true },
-  { wait: 600 },
-  { to: option(1), duration: 500 },
+  { wait: 500 },
+  { to: option(1), duration: 400 },
   { wait: 300 },
+  { click: true },
+  { wait: 900 },
+  { to: trigger, duration: 400 },
+  { wait: 200 },
   { click: true },
   { wait: 600 },
   { leave: true },
   { wait: 400 },
 ];
 
-/** A select. */
+/**
+ * A select resting with its list open under it, framed on both, so as it plays the list closes and
+ * opens again in place, and nothing in its tile moves.
+ */
 export default function SelectTile() {
+  useHeldView();
   usePointer(script);
-  return <Select aria-label="Visibility" items={options} defaultValue="team" />;
+  return <Select aria-label="Visibility" items={options} defaultValue="team" defaultOpen />;
 }
