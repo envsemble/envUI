@@ -3,8 +3,7 @@
    most, so its text stays crisp, and the outer ones hanging lower, so the hand keeps its arch. Each card meets the one
    before it at its padding only, so none covers what another shows. The cards are envUI's own, on
    the site's card shadow (Stage.css), as the banner and the Overview's cards are. On a narrower
-   page the fan keeps three cards, then two, and is drawn smaller in between; a phone shows one card,
-   upright and whole. */
+   page the fan keeps three cards, then two, and is drawn smaller in between and on a phone. */
 .catalogue-fan {
   container-type: inline-size;
   display: grid;
@@ -100,27 +99,16 @@
     display: none;
   }
 }
-/* A phone shows one card, upright, in the page's flow, at its own height, its body right under
-   its header, and Explore close under it, so it comes into view sooner. */
+/* A phone keeps the fan, as a smaller hand of the same cards, so the home still shows envUI's
+   components side by side. */
 @container (width < 32rem) {
   .catalogue-fan-stack {
-    --catalogue-fan-width: min(17rem, 100cqi);
-    block-size: auto;
-    margin-block-end: calc(var(--env-space-6) - var(--env-space-9));
+    --catalogue-fan-scale: 0.7;
   }
-  .catalogue-fan-card {
-    position: relative;
-    inset: auto;
-    inline-size: 100%;
-    min-block-size: 0;
-    rotate: none;
-    translate: none;
-  }
-  .catalogue-fan-body {
-    margin-block-start: 0;
-  }
-  .catalogue-fan-card[data-phone='hidden'] {
-    display: none;
+}
+@container (width < 21rem) {
+  .catalogue-fan-stack {
+    --catalogue-fan-scale: 0.6;
   }
 }
 
