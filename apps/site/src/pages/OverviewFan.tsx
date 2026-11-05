@@ -44,9 +44,9 @@ const stepIcons = {
 
 /** The services on the status card, and how each is doing. */
 const services = [
-  { name: 'API', status: 'Operational', tone: 'neutral' },
+  { name: 'API', status: 'Operational', tone: 'success' },
   { name: 'Inference', status: 'Degraded', tone: 'warning' },
-  { name: 'Webhooks', status: 'Operational', tone: 'neutral' },
+  { name: 'Webhooks', status: 'Operational', tone: 'success' },
 ] as const;
 
 /**
@@ -149,14 +149,8 @@ const cards: {
             <List.Item
               key={service.name}
               label={service.name}
-              end={
-                // Only the service that needs attention takes a badge; the rest say so quietly.
-                service.tone === 'warning' ? (
-                  <Badge tone="warning">{service.status}</Badge>
-                ) : (
-                  <CardNote>{service.status}</CardNote>
-                )
-              }
+              // Every service's state is a badge of its tone, so the rows line up.
+              end={<Badge tone={service.tone}>{service.status}</Badge>}
             />
           ))}
         </List.Root>
