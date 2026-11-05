@@ -237,12 +237,28 @@ export function importMarkdown(names: readonly string[], props: PropsFile | unde
   return `### Import\n\n\`\`\`tsx\n${lines.join('\n')}\n\`\`\`\n\n`;
 }
 
+/** The names a page's own code imports, such as `import { IconButton } from '@envsemble/envui';`. */
+function importedIn(sections): Set<string> {
+  const imported = new Set<string>();
+  for (const section of sections)
+    for (const block of section.blocks ?? [])
+      for (const [, list] of (block.markdown ?? '').matchAll(/^import\s*\{([^}]*)\}\s*from/gm))
+        for (const name of list.split(',')) if (name.trim()) imported.add(name.trim());
+  return imported;
+}
+
 /**
  * The page's sections with "## Compose" opening on the generated Import, and the section added,
- * after the plain sections, where the page writes none.
+ * after the plain sections, where the page writes none. The Import leads with the page's own
+ * export, the first it documents; a companion the page's code imports where it shows it, such as
+ * IconButton in Button's section on icons, is left to that code, so the Import stays short.
  */
 export function withImport(sections, names, props, title = 'Compose') {
-  const imports = importMarkdown(names, props);
+  const imported = importedIn(sections);
+  const imports = importMarkdown(
+    names.filter((name, place) => place === 0 || !imported.has(name)),
+    props,
+  );
   if (!imports) return sections;
   const index = sections.findIndex((section) => section.id === 'code');
   if (index === -1) {
