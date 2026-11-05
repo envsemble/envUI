@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { AvatarButton, IconButton, TopBar } from '@envsemble/envui';
-import { IconArrowBack } from '@envsemble/envui/icons/ArrowBack';
 import { IconRefresh } from '@envsemble/envui/icons/Refresh';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
@@ -20,15 +19,14 @@ const script: PointerStep[] = [
   { wait: 600 },
 ];
 
-/** An application's top bar: back, the title, and the actions at the end. */
+/** An application's top bar, as wide as a gallery's tile shows: the title, and the actions at the end. */
 export default function TopBarTile() {
   const [loading, setLoading] = useState(false);
   usePointer(script, { onCue: (cue) => setLoading(cue === 'load') });
   return (
     <TopBar
       loading={loading}
-      style={{ inlineSize: '13.75rem' }}
-      start={<IconButton icon={<IconArrowBack />} aria-label="Back to projects" variant="ghost" />}
+      style={{ inlineSize: '12.5rem' }}
       title="Reports"
       actions={
         <>

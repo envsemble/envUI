@@ -5,7 +5,6 @@ import {
   PageHeader,
   NavigationRail,
   Scaffold,
-  Text,
   TopBar,
   type Destination,
 } from '@envsemble/envui';
@@ -33,18 +32,14 @@ const script: PointerStep[] = [
 ];
 
 const places = [
-  { label: 'Home', icon: <IconHome />, line: 'Welcome back.' },
-  { label: 'Inbox', icon: <IconInbox />, line: '3 new messages.' },
+  { label: 'Home', icon: <IconHome /> },
+  { label: 'Inbox', icon: <IconInbox /> },
 ];
 
 /**
- * An application's frame is taller than a gallery's low tile at its own size, its rail's places
- * one under the other: it is drawn at four fifths of it, as a pattern's scene is, so both places
- * and the page beside them show whole.
+ * An application's frame at its own size, as wide as a gallery's tile shows: the rail at the
+ * start, the top bar and the page's header beside it.
  */
-const smaller = { transform: 'scale(0.8)', transformOrigin: '0 0' } as const;
-
-/** An application's frame: the rail at the start, the top bar and the page beside it. */
 export default function ScaffoldTile() {
   const [current, setCurrent] = useState('Home');
   usePointer(script);
@@ -55,24 +50,17 @@ export default function ScaffoldTile() {
     onClick: () => setCurrent(label),
   }));
   return (
-    <div style={smaller}>
-      <Scaffold
-        scroll="body"
-        landmarks={false}
-        navigationForms={{ compact: 'rail', medium: 'rail', expanded: 'rail', large: 'rail' }}
-        style={{ inlineSize: '15rem', blockSize: '8.75rem' }}
-        topBar={
-          <TopBar
-            title="Northwind"
-            actions={<IconButton icon={<IconSearch />} aria-label="Search" />}
-          />
-        }
-        navigation={{ rail: <NavigationRail destinations={destinations} /> }}
-      >
-        <Page header={<PageHeader title={current} headingLevel={3} />}>
-          <Text emphasis="muted">{places.find((place) => place.label === current)?.line}</Text>
-        </Page>
-      </Scaffold>
-    </div>
+    <Scaffold
+      scroll="body"
+      landmarks={false}
+      navigationForms={{ compact: 'rail', medium: 'rail', expanded: 'rail', large: 'rail' }}
+      style={{ inlineSize: '12.5rem', blockSize: '7.125rem' }}
+      topBar={
+        <TopBar title="Acme" actions={<IconButton icon={<IconSearch />} aria-label="Search" />} />
+      }
+      navigation={{ rail: <NavigationRail destinations={destinations} /> }}
+    >
+      <Page header={<PageHeader title={current} headingLevel={3} />} />
+    </Scaffold>
   );
 }

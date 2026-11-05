@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Checkbox, Column, DialogClose, IconButton, Sheet } from '@envsemble/envui';
+import { Checkbox, Column, DialogClose, IconButton, Sheet, Text } from '@envsemble/envui';
 import { IconFilterList } from '@envsemble/envui/icons/FilterList';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
@@ -19,43 +19,44 @@ const script: PointerStep[] = [
 ];
 
 /**
- * The window the sheet opens at the edge of, outlined, with the button at the top of what the
- * sheet leaves of it, beside the sheet's heading: as wide as a tile's window, so a gallery's low
- * tile shows it whole across at about its own size, cut off at its foot.
+ * The page the sheet opens at the edge of, outlined, as large as the tile's window: the button at
+ * its top, over a few of its rows, which the sheet covers but for their starts.
  */
 const page = {
-  inlineSize: '14rem',
-  blockSize: '10.5rem',
-  display: 'grid',
-  gridTemplateColumns: '4rem',
-  placeItems: 'start center',
-  paddingBlockStart: '1.25rem',
+  inlineSize: '100%',
+  blockSize: '100%',
+  padding: '0.75rem',
   boxSizing: 'border-box',
   border: '0.0625rem solid var(--env-color-border-muted)',
+  overflow: 'hidden',
 } as const;
 
+const rows = ['Launch review', 'Q3 budget', 'Hiring plan'];
+
 /**
- * A side sheet, open at the end edge beside the button that opens it. Stopped, it is open again
- * rather than drawn anew, which would bring it in again.
+ * A side sheet, open at the end edge beside the button that opens it, over a list of projects.
+ * Stopped, it is open again rather than drawn anew, which would bring it in again.
  */
 export default function SheetTile() {
   const [open, setOpen] = useState(true);
   usePointer(script, { onRest: () => setOpen(true) });
   return (
-    <div style={page}>
+    <Column gap={2} style={page}>
       <Sheet
         open={open}
         onOpenChange={setOpen}
         trigger={<IconButton variant="secondary" icon={<IconFilterList />} aria-label="Filters" />}
-        width={10}
+        width={9.5}
         title="Filters"
         actions={<DialogClose variant="primary">Apply</DialogClose>}
       >
-        <Column gap={3}>
-          <Checkbox label="Active" defaultChecked />
-          <Checkbox label="Paused" />
-        </Column>
+        <Checkbox label="Active" defaultChecked />
       </Sheet>
-    </div>
+      {rows.map((row) => (
+        <Text key={row} variant="body-sm" style={{ whiteSpace: 'nowrap' }}>
+          {row}
+        </Text>
+      ))}
+    </Column>
   );
 }

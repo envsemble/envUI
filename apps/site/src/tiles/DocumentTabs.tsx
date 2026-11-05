@@ -3,15 +3,15 @@ import { DocumentTabs, IconButton, Surface, Text, type DocumentTabsItem } from '
 import { IconAdd } from '@envsemble/envui/icons/Add';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
-const documents: DocumentTabsItem[] = ['Plan.md', 'Notes.md'].map((label) => ({
+const documents: DocumentTabsItem[] = ['Plan', 'Notes'].map((label) => ({
   value: label,
   label,
 }));
 
 /** The first line of each document, the panel under the strip, which the application renders. */
 const firstLines: Record<string, string> = {
-  'Plan.md': 'Launch in the spring.',
-  'Notes.md': 'From the interviews.',
+  Plan: 'Launch in the spring.',
+  Notes: 'From the interviews.',
 };
 
 const tab = (id: string) => `.env-document-tabs-tab[data-tab-id="${id}"]`;
@@ -19,16 +19,16 @@ const close = (id: string) =>
   `.env-document-tabs-item:has(> ${tab(id)}) > .env-document-tabs-close`;
 
 /*
- * Notes.md shown, then closed by its button, which shows Plan.md beside it, opened again by New
- * document, and Plan.md shown, as it began.
+ * Notes shown, then closed by its button, which shows Plan beside it, opened again by New
+ * document, and Plan shown, as it began.
  */
 const script: PointerStep[] = [
   { wait: 300 },
-  { to: tab('Notes.md') },
+  { to: tab('Notes') },
   { wait: 400 },
   { click: true },
   { wait: 900 },
-  { to: close('Notes.md'), duration: 350 },
+  { to: close('Notes'), duration: 350 },
   { wait: 250 },
   { click: true },
   { wait: 900 },
@@ -36,7 +36,7 @@ const script: PointerStep[] = [
   { wait: 200 },
   { click: true },
   { wait: 900 },
-  { to: tab('Plan.md'), duration: 500 },
+  { to: tab('Plan'), duration: 500 },
   { wait: 200 },
   { click: true },
   { wait: 600 },
@@ -44,13 +44,13 @@ const script: PointerStep[] = [
   { wait: 400 },
 ];
 
-/** Two open documents, Plan.md shown, over the start of its page. */
+/** Two open documents, Plan shown, over the start of its page, short enough to show whole. */
 export default function DocumentTabsTile() {
   const [tabs, setTabs] = useState(documents);
   const [value, setValue] = useState<string | null>(documents[0]!.value);
   usePointer(script);
   return (
-    <Surface background="default" padding={0} style={{ inlineSize: '13.75rem' }}>
+    <Surface background="default" padding={0} style={{ inlineSize: '12.5rem' }}>
       <DocumentTabs
         aria-label="Open documents"
         items={tabs}
