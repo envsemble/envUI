@@ -225,8 +225,9 @@
   }
 
   /* Under the pointer a text button's label is underlined in its full color, as a link's is, and
-     takes the link's hover color; a press keeps the underline and takes the pressed color, a step
-     further. */
+     takes the link's hover color; a press keeps the underline, takes the pressed color and lays a
+     faint layer of that color behind the label, as a step in color alone is too small to read at a
+     label's size. */
   .env-button:where([data-variant='text']):hover:not(:disabled):not([aria-disabled='true']) {
     color: var(--env-button-content, var(--env-color-fg-link-hover));
     text-decoration: underline;
@@ -237,6 +238,11 @@
     color: var(--env-button-content, var(--env-color-fg-link-pressed));
     text-decoration: underline;
     text-underline-offset: 0.15em;
+  }
+  .env-button:where([data-variant='text']):not(.env-icon-button):active:not(:disabled):not(
+      [aria-disabled='true']
+    ) {
+    background: var(--env-button-custom-fill, color-mix(in srgb, currentColor 10%, transparent));
   }
 
   /* Without a label, a color change alone is too faint; icon-only text buttons such as a field's clear
