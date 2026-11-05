@@ -292,3 +292,9 @@
     padding-block: var(--env-space-5);
   }
 }
+
+/* An anatomy shows every part at rest: beside chips, a combobox's clear button, which a fine pointer
+   shows only while the field is under it or has focus, shows here too, so its callout points at it. */
+.site-anatomy-subject .env-combobox-clear {
+  opacity: 1;
+}
