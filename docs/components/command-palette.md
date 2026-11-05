@@ -368,6 +368,7 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 
 ## Changelog
 
+- **1.0.0-prerelease.6**: While it holds the caret, the search's edge takes the focus color as a hairline, rather than a ring that read as a second frame.
 - **1.0.0-prerelease.6**: A key hint for <kbd>Enter</kbd> hides while there is no option to choose, as results load or when nothing matches.
 - **1.0.0-prerelease.6**: Under a coarse pointer the palette hides the keys, the shortcuts in its items and the key hints of its footer, and shows a close button after the search field, `env-command-palette-close`, for touch screens with no <kbd>Esc</kbd>; the two share a row, `env-command-palette-header`.
 - **1.0.0-prerelease.5**: `onOpenChange` receives why the palette closes, `CommandPaletteOpenChangeDetails`, as a dialog's does.

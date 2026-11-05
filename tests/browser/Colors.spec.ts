@@ -277,7 +277,7 @@ test('compositions reuse primitive colors while unrelated roles stay independent
     for (const id of ['tab-primary', 'tab-secondary']) {
       const inactive = page.getByTestId(`${theme}-${id}`);
       const [muted, text] = [
-        await tokenColor(inactive, '--env-color-fg-muted'),
+        await tokenColor(inactive, '--env-color-fg-muted-hover'),
         await tokenColor(inactive, '--env-color-fg-default'),
       ];
       expect(text, `${theme} text and muted labels differ`).not.toBe(muted);

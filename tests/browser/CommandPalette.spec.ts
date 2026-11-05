@@ -133,8 +133,12 @@ test.describe('CommandPalette', () => {
           fill: [style.backgroundImage.startsWith('linear-gradient'), style.backgroundColor],
           placeholder: getComputedStyle(field, '::placeholder').color,
           edge: getComputedStyle(border).borderTopColor,
-          ring: getComputedStyle(element.closest('.env-command-palette-search')!, '::after')
-            .borderTopColor,
+          ring: [
+            getComputedStyle(element.closest('.env-command-palette-search')!, '::after')
+              .borderTopColor,
+            getComputedStyle(element.closest('.env-command-palette-search')!, '::after')
+              .borderTopWidth,
+          ],
         };
       });
     const focused = await look();
@@ -143,10 +147,11 @@ test.describe('CommandPalette', () => {
     expect(focused.fill[0]).toBe(true);
     expect(focused.fill[1]).toMatch(/^rgb\(/);
     // Always focused, it keeps its placeholder; frosted, it has no edge, and holding the caret, it
-    // shows the focus ring.
+    // shows a hairline edge in the focus color rather than a ring.
     expect(focused.placeholder).not.toBe('rgba(0, 0, 0, 0)');
     expect(focused.edge).toBe('rgba(0, 0, 0, 0)');
-    expect(focused.ring).toMatch(/^rgb\(/);
+    expect(focused.ring[0]).toMatch(/^rgb\(/);
+    expect(focused.ring[1]).toBe('1px');
     // Under the pointer it stays as it is.
     await control.hover();
     expect(await look()).toEqual(focused);

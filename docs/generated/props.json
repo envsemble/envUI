@@ -2756,13 +2756,13 @@
           "name": "additions",
           "type": "number",
           "required": true,
-          "description": "Lines or items added, shown as +12 in the success tone, in the locale's digits."
+          "description": "Lines or items added, shown as +12 in the success tone, in the locale's digits; left out where it is 0 and deletions aren't."
         },
         {
           "name": "deletions",
           "type": "number",
           "required": true,
-          "description": "Lines or items removed, shown as −3 in the danger tone, in the locale's digits."
+          "description": "Lines or items removed, shown as −3 in the danger tone, in the locale's digits; left out where it is 0 and additions aren't."
         },
         {
           "name": "formatLabel",
@@ -4780,14 +4780,14 @@
     "MessageList": {
       "kind": "component",
       "source": "packages/ui/src/content/Message.tsx",
-      "description": "The messages of a conversation in order, as a log: assistive technology politely announces messages added anywhere in it and text that changes. Set busy while a reply streams in or earlier messages load. Name it with aria-label or aria-labelledby.",
+      "description": "The messages of a conversation in order, as a log: assistive technology politely announces messages added anywhere in it and text that changes. Set busy while a reply is on its way or streams in. Name it with aria-label or aria-labelledby.",
       "props": [
         {
           "name": "busy",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Messages are still changing, such as a reply streaming in or earlier messages loading. The log reports aria-busy, so assistive technology can wait for the change to finish instead of announcing every step."
+          "description": "A reply is on its way or streaming in: a quiet spinner in the muted color shows after the last message, and the log reports aria-busy, so assistive technology can wait for the reply to finish instead of announcing every step."
         }
       ],
       "native": [

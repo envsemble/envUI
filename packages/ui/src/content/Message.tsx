@@ -133,19 +133,19 @@ export function Message(allProps: MessageProps) {
 
 export interface MessageListProps extends ComponentPropsWithRef<'div'> {
   /**
-   * Messages are still changing, such as a reply streaming in or earlier messages loading. The log
-   * reports aria-busy, so assistive technology can wait for the change to finish instead of
-   * announcing every step.
+   * A reply is on its way or streaming in: a quiet spinner in the muted color shows after the last
+   * message, and the log reports aria-busy, so assistive technology can wait for the reply to
+   * finish instead of announcing every step.
    */
   busy?: boolean;
 }
 
 /**
  * The messages of a conversation in order, as a log: assistive technology politely announces
- * messages added anywhere in it and text that changes. Set busy while a reply streams in or earlier
- * messages load. Name it with aria-label or aria-labelledby.
+ * messages added anywhere in it and text that changes. Set busy while a reply is on its way or
+ * streams in. Name it with aria-label or aria-labelledby.
  */
-export function MessageList({ busy = false, className, ...props }: MessageListProps) {
+export function MessageList({ busy = false, className, children, ...props }: MessageListProps) {
   return (
     <Grid
       gap={5}
@@ -154,6 +154,14 @@ export function MessageList({ busy = false, className, ...props }: MessageListPr
       {...props}
       role="log"
       className={classNames('env-message-list', className)}
-    />
+    >
+      {children}
+      {/* Shown, not read: aria-busy says it, and the reply is announced once it is complete. */}
+      {busy && (
+        <div className="env-message-list-busy" aria-hidden="true">
+          <Spinner size="sm" />
+        </div>
+      )}
+    </Grid>
   );
 }

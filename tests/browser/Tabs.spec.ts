@@ -153,7 +153,7 @@ test('every tab is a text tab, the selected one with an indicator under it', asy
   await expect(other).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
   await expect.poll(async () => (await indicator(other)).color).not.toBe('rgba(0, 0, 0, 0)');
   await page.mouse.move(0, 0);
-  // The selected label takes the accent's text color, the others the muted one.
+  // The selected label takes the accent's text color, the others a quieter one.
   expect(await selected.evaluate((element) => getComputedStyle(element).color)).not.toBe(
     await other.evaluate((element) => getComputedStyle(element).color),
   );

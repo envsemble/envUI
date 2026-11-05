@@ -1,6 +1,6 @@
 @layer env.components {
   /* Meter and Progress share one look: a label row over a rounded track whose indicator fills with
-     the value. The track is a quiet tint with no outline, as Material draws it; the indicator reaches
+     the value. The track is the neutral fill with no outline, as Material draws it; the indicator reaches
      3:1 against the track and the surface, and the value text says the exact amount. Each emits its own classes, env-meter* and env-progress*; Progress adds the
      indeterminate sweep and segments. */
   .env-meter-header,
@@ -22,9 +22,9 @@
     block-size: 0.625rem;
     overflow: hidden;
     border-radius: var(--env-radius-full);
-    /* The quiet tint of a state layer, light enough that the indicator keeps 3:1 against it on every
-       surface, a card's included. */
-    background: var(--env-color-bg-neutral-subtle-hover);
+    /* The neutral fill, the track a Slider draws, so empty steps still show on a dark panel, light
+       enough that the indicator keeps 3:1 against it on every surface, a card's included. */
+    background: var(--env-color-bg-neutral-muted);
   }
   .env-meter-indicator,
   .env-progress-indicator {
@@ -68,7 +68,7 @@
     flex: 1 1 0;
     overflow: hidden;
     border-radius: var(--env-radius-full);
-    background: var(--env-color-bg-neutral-subtle-hover);
+    background: var(--env-color-bg-neutral-muted);
   }
   .env-progress-segment::before {
     content: '';

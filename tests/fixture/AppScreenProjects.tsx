@@ -1,4 +1,4 @@
-import { useRef, useState, type CSSProperties } from 'react';
+import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 import {
   Avatar,
   AvatarGroup,
@@ -140,6 +140,31 @@ const visuallyHidden: CSSProperties = {
 const remToPixels = (width: string) =>
   Number.parseFloat(width) * Number.parseFloat(getComputedStyle(document.documentElement).fontSize);
 
+/**
+ * Whether what an element holds fits its width: false from the width where it first overflowed
+ * until its container is as wide as it needed then, so the arrangement doesn't flip back and forth.
+ * Finding: a row of controls whose width depends on the scale has no way to say when it no longer
+ * fits; a window class alone, in rem, can't tell compact controls from comfortable ones.
+ */
+function useFits(element: () => HTMLElement | null | undefined, available: number | undefined) {
+  const [needed, setNeeded] = useState(0);
+  const fits = available === undefined || available >= needed;
+  useLayoutEffect(() => {
+    const node = element();
+    if (!fits || !node || available === undefined) return;
+    const check = () => {
+      const excess = node.scrollWidth - node.clientWidth;
+      if (excess > 1) setNeeded(available + excess);
+    };
+    check();
+    // What it holds can grow without a render, as when the fonts load.
+    const observer = new ResizeObserver(check);
+    for (const child of node.children) observer.observe(child);
+    return () => observer.disconnect();
+  });
+  return fits;
+}
+
 const projectCount = (count: number) => (count === 1 ? '1 project' : `${count} projects`);
 
 type SortColumn = 'name' | 'issues' | 'updated';
@@ -173,6 +198,14 @@ function ProjectsTable({ onOpen, openId }: { onOpen: (id: string) => void; openI
   const [stacked, setStacked] = useState(false);
   const size = useContainerSize(root);
   const wide = size === undefined || size.inlineSize >= remToPixels(windowClasses.medium);
+  // The filters stay on one row while they fit it, else they move into a sheet, as on a phone; the
+  // members column goes while the table would otherwise scroll its last columns out of view.
+  const filterRow = useRef<HTMLDivElement>(null);
+  const inlineFilters = useFits(() => filterRow.current, size?.inlineSize) && wide;
+  const showMembers = useFits(
+    () => root.current?.querySelector<HTMLElement>('.env-table-region'),
+    size?.inlineSize,
+  );
 
   const sorted = [...projects].sort((first, second) => {
     const order =
@@ -224,7 +257,7 @@ function ProjectsTable({ onOpen, openId }: { onOpen: (id: string) => void; openI
     <>
       <Select
         label="Status"
-        showLabel={!wide}
+        showLabel={!inlineFilters}
         size="sm"
         items={statuses}
         value={status}
@@ -233,13 +266,13 @@ function ProjectsTable({ onOpen, openId }: { onOpen: (id: string) => void; openI
       <Combobox
         multiple
         label="Owner"
-        showLabel={!wide}
+        showLabel={!inlineFilters}
         placeholder="Any owner"
         size="sm"
         items={owners}
         value={owner}
         onValueChange={(value: string[]) => setOwner(value)}
-        style={wide ? { inlineSize: '12rem' } : undefined}
+        style={inlineFilters ? { inlineSize: '12rem' } : undefined}
       />
     </>
   );
@@ -247,7 +280,7 @@ function ProjectsTable({ onOpen, openId }: { onOpen: (id: string) => void; openI
     <SegmentedControl
       aria-label="View"
       size="sm"
-      fullWidth={!wide}
+      fullWidth={!inlineFilters}
       value={view}
       onValueChange={setView}
       items={[
@@ -263,18 +296,21 @@ function ProjectsTable({ onOpen, openId }: { onOpen: (id: string) => void; openI
           search taking the room left. Narrower than a medium window, measured on the table's own
           width, they move into a sheet and the search stays in view, as the filtering pattern
           does. */}
-      <Row align="center" gap={3}>
-        {/* Layout glue: SearchField has no width of its own in a row. */}
+      <Row ref={filterRow} align="center" gap={3}>
+        {/* Layout glue: SearchField has no width of its own in a row; it keeps room for its
+            placeholder. */}
         <SearchField
           label="Search projects"
           placeholder="Search projects"
           size="sm"
-          style={{ flex: '1 1 10rem', minInlineSize: 0, maxInlineSize: '18rem' }}
+          style={{ flex: '1 1 12rem', minInlineSize: '10rem', maxInlineSize: '18rem' }}
           value={query}
           onValueChange={setQuery}
         />
-        {wide ? (
-          <>
+        {inlineFilters ? (
+          // Layout glue: the filters keep their widths rather than squeezing their values, so the
+          // row overflows, and moves them into the sheet, once the search is at its narrowest.
+          <Row align="center" gap={3} style={{ flex: '1 0 auto' }}>
             {filters}
             <Button variant="secondary" size="sm" startIcon={<IconAdd />}>
               Add filter
@@ -283,7 +319,7 @@ function ProjectsTable({ onOpen, openId }: { onOpen: (id: string) => void; openI
             <Row align="center" gap={2} style={{ marginInlineStart: 'auto' }}>
               {viewControl}
             </Row>
-          </>
+          </Row>
         ) : (
           <Sheet
             title="Filters"
@@ -435,7 +471,7 @@ function ProjectsTable({ onOpen, openId }: { onOpen: (id: string) => void; openI
             </Table.HeaderCell>
             <Table.HeaderCell>Status</Table.HeaderCell>
             <Table.HeaderCell>Owner</Table.HeaderCell>
-            <Table.HeaderCell>Members</Table.HeaderCell>
+            {showMembers && <Table.HeaderCell>Members</Table.HeaderCell>}
             <Table.HeaderCell
               numeric
               sortDirection={direction('issues')}
@@ -488,13 +524,15 @@ function ProjectsTable({ onOpen, openId }: { onOpen: (id: string) => void; openI
                   {project.owner}
                 </Row>
               </Table.Cell>
-              <Table.Cell label="Members">
-                <AvatarGroup
-                  size="sm"
-                  max={3}
-                  people={project.members.map((name) => ({ name, fallback: 'initials' }))}
-                />
-              </Table.Cell>
+              {showMembers && (
+                <Table.Cell label="Members">
+                  <AvatarGroup
+                    size="sm"
+                    max={3}
+                    people={project.members.map((name) => ({ name, fallback: 'initials' }))}
+                  />
+                </Table.Cell>
+              )}
               <Table.Cell label="Issues" numeric>
                 {project.issues}
               </Table.Cell>
@@ -606,20 +644,25 @@ function ProjectDetails({ project }: { project: Project }) {
         <Text render={<h3 />} variant="title">
           Activity
         </Text>
-        <List.Root aria-label="Recent activity" density="sm">
-          {activity.map((entry) => (
-            <List.Item
-              key={entry.text}
-              start={<Avatar name={entry.who} size="sm" fallback="initials" />}
-              label={entry.text}
-              description={
-                <>
-                  {entry.who} · <RelativeTime value={minutesAgo(entry.minutes)} />
-                </>
-              }
-            />
-          ))}
-        </List.Root>
+        {/* One surface with the entries as rows on it, rather than a card each. Layout glue: the
+            rows take no fill of their own (List.Item's container color property). */}
+        <Surface background="raised" padding={1}>
+          <List.Root aria-label="Recent activity" density="sm">
+            {activity.map((entry) => (
+              <List.Item
+                key={entry.text}
+                style={{ '--env-list-item-container': 'transparent' } as CSSProperties}
+                start={<Avatar name={entry.who} size="sm" fallback="initials" />}
+                label={entry.text}
+                description={
+                  <>
+                    {entry.who} · <RelativeTime value={minutesAgo(entry.minutes)} />
+                  </>
+                }
+              />
+            ))}
+          </List.Root>
+        </Surface>
       </Column>
     </Column>
   );

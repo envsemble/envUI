@@ -3080,6 +3080,10 @@
         {
           "class": "env-message-list",
           "description": "The list of messages."
+        },
+        {
+          "class": "env-message-list-busy",
+          "description": "The spinner after the last message while busy."
         }
       ],
       "states": [],

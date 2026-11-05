@@ -461,7 +461,8 @@
       "env-message-status": "The sending or failed status."
     },
     "MessageList": {
-      "env-message-list": "The list of messages."
+      "env-message-list": "The list of messages.",
+      "env-message-list-busy": "The spinner after the last message while busy."
     },
     "Meter": {
       "env-meter": "The meter.",
