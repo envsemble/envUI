@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Checkbox, Column, DialogClose, Sheet } from '@envsemble/envui';
+import { Checkbox, Column, DialogClose, IconButton, Sheet } from '@envsemble/envui';
 import { IconFilterList } from '@envsemble/envui/icons/FilterList';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
@@ -19,15 +19,17 @@ const script: PointerStep[] = [
 ];
 
 /**
- * The window the sheet opens at the edge of, outlined, with the button in the middle of what the
- * sheet leaves of it.
+ * The window the sheet opens at the edge of, outlined, with the button at the top of what the
+ * sheet leaves of it, beside the sheet's heading: as wide as a tile's window, so a gallery's low
+ * tile shows it whole across at about its own size, cut off at its foot.
  */
 const page = {
-  inlineSize: '20rem',
-  blockSize: '15rem',
+  inlineSize: '14rem',
+  blockSize: '10.5rem',
   display: 'grid',
-  gridTemplateColumns: '8rem',
-  placeItems: 'center',
+  gridTemplateColumns: '4rem',
+  placeItems: 'start center',
+  paddingBlockStart: '1.25rem',
   boxSizing: 'border-box',
   border: '0.0625rem solid var(--env-color-border-muted)',
 } as const;
@@ -44,12 +46,8 @@ export default function SheetTile() {
       <Sheet
         open={open}
         onOpenChange={setOpen}
-        trigger={
-          <Button variant="secondary" startIcon={<IconFilterList />}>
-            Filters
-          </Button>
-        }
-        width={12}
+        trigger={<IconButton variant="secondary" icon={<IconFilterList />} aria-label="Filters" />}
+        width={10}
         title="Filters"
         actions={<DialogClose variant="primary">Apply</DialogClose>}
       >

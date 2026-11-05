@@ -5,14 +5,14 @@ import { usePointer, type PointerStep } from '../motion/Motion';
 const row = (part: string, value: string) =>
   `.env-time-list-column[data-part="${part}"] .env-time-list-row[data-value="${value}"]`;
 
-/** Open on 9:30: 10:45 chosen, an hour and then its minutes, and 9:30 again. */
+/** Open on 9:30: 8:15 chosen, an hour and then its minutes, and 9:30 again. */
 const script: PointerStep[] = [
   { wait: 300 },
-  { to: row('hour', '10') },
+  { to: row('hour', '8') },
   { wait: 300 },
   { click: true },
   { wait: 700 },
-  { to: row('minute', '45'), duration: 450 },
+  { to: row('minute', '15'), duration: 450 },
   { wait: 250 },
   { click: true },
   { wait: 1100 },
@@ -28,7 +28,10 @@ const script: PointerStep[] = [
   { wait: 400 },
 ];
 
-/** A time picker's hours and minutes, 9:30 chosen. */
+/**
+ * A time picker's hours and minutes, 9:30 chosen. In a gallery's low tile its columns show three
+ * rows, the chosen one second (Gallery.css), so the view from its top holds it.
+ */
 export default function TimePickerTile() {
   const [value, setValue] = useState<string | null>('09:30');
   usePointer(script, {

@@ -24,7 +24,8 @@ const script: PointerStep[] = [
 const deleting = 1000;
 
 /**
- * A confirm dialog, open over the button that opens it. Stopped, it is open again rather than
+ * A confirm dialog, open over the button that opens it: its question and its actions alone, so a
+ * gallery's low tile shows them at about their own size. Stopped, it is open again rather than
  * drawn anew, which would bring it in again; a deletion still running then ends at once, and no
  * longer closes it.
  */
@@ -51,7 +52,6 @@ export default function ConfirmDialogTile() {
       trigger={<Button variant="secondary">Delete</Button>}
       tone="danger"
       title="Delete Northwind?"
-      description="It can’t be undone."
       confirmLabel="Delete"
       onConfirm={() => {
         confirmedIn.current = round.current;

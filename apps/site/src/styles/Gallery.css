@@ -15,10 +15,14 @@
 .catalogue-gallery-grid {
   /* The least box a component drawn at its own size is drawn whole at, with the inset around it
      (useFit.ts): as wide as five to a row, and as tall as a row of controls with room around it;
-     what is taller, such as a calendar, is cut off at its foot rather than drawn smaller, and an
-     open popup, such as a menu under its button, is drawn smaller to show whole. */
+     what is taller, such as a calendar, is cut off at its foot rather than drawn smaller. An open
+     popup, such as a menu beside its button, is drawn a little smaller to show whole, but never
+     smaller than `--catalogue-own-popup-least`, so its words read as the other tiles' do; a larger
+     one, such as a dialog, is cut off at its foot as a calendar is. A popup's tile is written to
+     show whole, or as a window onto it from its top (tiles/). */
   --catalogue-own-least: 12rem;
   --catalogue-own-least-block: 4.5rem;
+  --catalogue-own-popup-least: 0.84;
   display: grid;
   /* Four to a row on a wide page, five on the widest, and two on a phone (below). */
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr));
@@ -49,9 +53,8 @@
 
 /* On a phone, components two to a row on lower stages, so the gallery stays short: each drawn as
    small as fits its stage's width, but no smaller than 0.7 of its own size (useFit.ts), laid out
-   as wide as the stage shows at that scale; what is larger still is cut off at its end and its
-   foot, fading out, but an open popup, which is drawn whole. A pattern's scene keeps its taller
-   tile, one to a row. */
+   as wide as the stage shows at that scale; what is larger still, an open popup too, is cut off
+   at its end and its foot, fading out. A pattern's scene keeps its taller tile, one to a row. */
 @container catalogue-gallery (width < 27.25rem) {
   .catalogue-gallery-grid:not([data-scenes]) {
     --catalogue-own-least: 0rem;
@@ -127,12 +130,18 @@
   min-block-size: 0;
 }
 
-/* A popup shown open is drawn whole, as small as it needs (useFit.ts), so it lays out in its tile's
-   own window, as wide as it was written for, such as a dialog's, also on a phone. */
+/* A popup shown open lays out in its tile's own window, as wide as it was written for, such as a
+   menu beside its button, also on a phone (useFit.ts). */
 .catalogue-gallery-grid
   .catalogue-gallery-stage.catalogue-gallery-stage
   .catalogue-related-canvas[data-own-size][data-popup] {
   inline-size: max(100% - 2rem, var(--catalogue-tile-width, 14rem));
+}
+
+/* A time picker's columns show three rows in a gallery's tile, the chosen one second, so the view
+   from the popup's top holds it, a whole row, before the foot cuts the popup off. */
+.catalogue-gallery-stage .catalogue-related-canvas[data-own-size] .env-time-list {
+  --env-time-list-rows: 3;
 }
 
 /* A command palette and a notification leave the window's gutter beside them; drawn at their

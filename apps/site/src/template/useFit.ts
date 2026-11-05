@@ -131,8 +131,9 @@ function shownBoxes(canvas: HTMLElement) {
 }
 
 /**
- * The rows of a list, a menu, a table, a tree or a picker's column, and the cards of a pager: each
- * drawn whole or not at all at a crop's foot.
+ * The rows of a list, a menu, a table, a tree or a picker's column, the cards of a pager, and the
+ * parts of a dialog, such as its heading, a field, a checkbox or its actions: each drawn whole or
+ * not at all at a crop's foot.
  */
 const rowSelector = [
   ...['menuitem', 'menuitemradio', 'menuitemcheckbox', 'option', 'row', 'treeitem'].map(
@@ -142,6 +143,8 @@ const rowSelector = [
   'tr',
   '.env-time-list-row',
   '.env-pager-link',
+  '.env-dialog-content > *',
+  '.env-dialog-content .env-checkbox',
 ].join(', ');
 
 /** How far, in px, a row may reach past the crop's foot and still count as whole. */
@@ -303,15 +306,27 @@ export function useFit(
         parseFloat(canvasStyle.getPropertyValue('--catalogue-own-least-block')) * rem || 0;
       const downScale = leastBlock > 0 ? height / leastBlock : 1;
       const floor = parseFloat(canvasStyle.getPropertyValue('--catalogue-own-floor'));
-      // A popup shown open, such as a menu under its button or a dialog, is drawn whole, its edges
-      // and corners in view, also in a pattern's scene: what holds one is drawn as much smaller as
-      // it needs to fit the stage, never cut off, and a component lays out in its tile's own
-      // window (`data-popup`, Gallery.css), as wide as it was written for. Once fitted, a tile
-      // keeps its scale as it plays, so a popup that closes and opens again doesn't resize it.
+      // A popup shown open, such as a menu beside its button, lays out in its tile's own window
+      // (`data-popup`, Gallery.css), as wide as it was written for, also in a pattern's scene. It
+      // is drawn whole, its edges and corners in view, where that takes a scale no smaller than
+      // the least a popup is drawn at, `--catalogue-own-popup-least` (Gallery.css), or a scene's
+      // legible one: its words stay legible beside the other tiles'. A larger one, such as a
+      // dialog, is a window onto it from its top, cut off at its foot after its last whole row,
+      // drawn whole across where that scale allows, else at the one scale and cut off at its end.
+      // Once fitted, a tile keeps its scale as it plays, so a popup that closes and opens again
+      // doesn't resize it.
       const popup = boxes.some(({ element }) => element.closest('.catalogue-overlay-layer'));
       if ((ownSize || legible) && popup && canvasElement.dataset.fitted === undefined)
         canvasElement.dataset.popup = '';
       const wholeScale = Math.min(width / (right - left), height / (bottom - top));
+      const popupLeast =
+        parseFloat(canvasStyle.getPropertyValue('--catalogue-own-popup-least')) || legibleScale;
+      const popupScale = (atMost: number) => {
+        const lowest = Math.min(atMost, popupLeast);
+        if (wholeScale >= lowest) return Math.min(atMost, wholeScale);
+        const across = width / (right - left);
+        return across >= lowest ? Math.min(atMost, across) : atMost;
+      };
       const own =
         floor > 0
           ? Math.max(floor, Math.min(1, width / (right - left), downScale))
@@ -325,11 +340,11 @@ export function useFit(
           ? view.scale
           : ownSize
             ? popup
-              ? Math.min(own, wholeScale)
+              ? popupScale(own)
               : own
             : legible
               ? popup
-                ? Math.min(scene, wholeScale)
+                ? popupScale(scene)
                 : scene
               : tile
                 ? windowScale
@@ -348,9 +363,13 @@ export function useFit(
       const across = (right - left) * scale;
       const down = (bottom - top) * scale;
       // It starts at the component's own start, rather than its popups': a popup shifts to stay
-      // in the window, and a view that followed it would shift it again.
+      // in the window, and a view that followed it would shift it again. A dialog, over its
+      // backdrop, is placed by the window alone and covers what opens it: it starts at its own.
       if (ownSize && across > width) {
-        const own = boxes.filter(({ element }) => !element.closest('.catalogue-overlay-layer'));
+        const modal = canvasElement.querySelector('.catalogue-overlay-layer .env-dialog-backdrop');
+        const own = boxes.filter(
+          ({ element }) => modal !== null || !element.closest('.catalogue-overlay-layer'),
+        );
         const start = own.length ? Math.min(...own.map(({ box }) => box.left)) : left;
         toX = start * scale + width / 2;
       }

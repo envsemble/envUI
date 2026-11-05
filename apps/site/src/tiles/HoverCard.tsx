@@ -19,7 +19,8 @@ const script: PointerStep[] = [
 ];
 
 /**
- * A hover card, open below the name it tells about. The pointer ends the loop resting on the name,
+ * A hover card, open below the name it tells about, its avatar of the default size, so it shows
+ * whole at about its own size in a gallery's low tile. The pointer ends the loop resting on the name,
  * so it stays open; stopped, it stays open too, rather than closing as the pointer goes or being
  * drawn anew, which would bring it in again.
  */
@@ -48,7 +49,7 @@ export default function HoverCardTile() {
       }
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-        <Avatar name="Priya Shah" size="lg" />
+        <Avatar name="Priya Shah" />
         <div>
           <Text render={<strong />} variant="title">
             Priya Shah
