@@ -75,9 +75,11 @@ export const drawerless = (page: RoutePage | undefined) =>
   sectionPages(catalogueSectionOf(page)).length === 1;
 
 /**
- * A page's link in a drawer, then a link to each component it documents besides its own, such as
- * IconButton after Button, at the heading of the page that shows it (`anchor`): entries of the
- * same list, set in from the page's by their address's fragment (Shell.css), which only they have.
+ * A page's link in a drawer, then, on the current page alone, a link to each component it documents
+ * besides its own, such as IconButton after Button, at the heading of the page that shows it
+ * (`anchor`): entries of the same list, set in from the page's by their address's fragment
+ * (Shell.css), which only they have. Other pages list theirs nowhere but in search and on the page,
+ * so a group lists its pages alone.
  */
 function withMembers(
   page: RoutePage,
@@ -87,7 +89,7 @@ function withMembers(
 ): NavigationDrawerDestination[] {
   return [
     link,
-    ...(page.document?.members ?? []).map(
+    ...(link.current ? (page.document?.members ?? []) : []).map(
       (member): NavigationDrawerDestination => ({
         // Two can lead to one heading, such as NavigationRail and NavigationBar.
         id: `${page.path} ${member.name}`,
