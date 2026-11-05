@@ -4,8 +4,13 @@
  * what it moves to and presses. It is drawn beside the preview, not in it, so it changes nothing of
  * the component, isn't measured by a tile's fit and is never under the pointer itself; it takes the
  * scale the preview is drawn at, so it sits on what it points at, and shrinks a little while it
- * presses (Stage.css). Without motion, previews don't play, and it isn't drawn.
+ * presses (Stage.css). While it carries files in, as from the desktop, a small chip beside it names
+ * them, with a file icon, as a drag image does. Without motion, previews don't play, and it isn't
+ * drawn.
  */
+import { createElement } from 'react';
+import { createRoot, type Root } from 'react-dom/client';
+import { IconDescription } from '@envsemble/envui/icons/Description';
 
 /** The stages a cursor is drawn in: a gallery's or a Related tile's, and a page's figure's. */
 const stages = '.catalogue-related-stage, .catalogue-motion-stage';
@@ -17,14 +22,16 @@ const svgNamespace = 'http://www.w3.org/2000/svg';
 
 export class PointerCursor {
   private element: HTMLElement | null = null;
+  /** The chip that names the files it carries, and where its icon renders. */
+  private chip: { element: HTMLElement; name: HTMLElement; icon: Root } | null = null;
 
   constructor(private readonly scope: Element) {}
 
   /**
-   * Draws the cursor at a point, in the viewport's coordinates, pressed or not; with no point, or
-   * outside a stage, takes it away.
+   * Draws the cursor at a point, in the viewport's coordinates, pressed or not, and the names of the
+   * files it carries beside it; with no point, or outside a stage, takes it away.
    */
-  place(point: { x: number; y: number } | null, pressed: boolean) {
+  place(point: { x: number; y: number } | null, pressed: boolean, files: readonly string[] = []) {
     const stage = this.scope.closest<HTMLElement>(stages);
     if (!point || !stage) {
       this.remove();
@@ -43,11 +50,39 @@ export class PointerCursor {
     element.style.translate = `${x}px ${y}px`;
     element.style.setProperty('--catalogue-cursor-scale', String(scale));
     element.toggleAttribute('data-pressed', pressed);
+    this.carry(element, files);
+  }
+
+  /** Shows the chip naming the files it carries, the first and how many more, or takes it away. */
+  private carry(cursor: HTMLElement, files: readonly string[]) {
+    if (!files.length) {
+      this.chip?.element.remove();
+      return;
+    }
+    const chip = this.chip ?? this.makeChip();
+    if (chip.element.parentElement !== cursor) cursor.append(chip.element);
+    const text = files.length > 1 ? `${files[0]} +${files.length - 1}` : files[0]!;
+    if (chip.name.textContent !== text) chip.name.textContent = text;
   }
 
   /** Takes the cursor away. */
   remove() {
     this.element?.remove();
+    this.chip?.element.remove();
+  }
+
+  private makeChip() {
+    const element = document.createElement('span');
+    element.className = 'catalogue-pointer-file';
+    const icon = document.createElement('span');
+    icon.className = 'catalogue-pointer-file-icon';
+    const name = document.createElement('span');
+    name.className = 'catalogue-pointer-file-name';
+    element.append(icon, name);
+    const root = createRoot(icon);
+    root.render(createElement(IconDescription));
+    this.chip = { element, name, icon: root };
+    return this.chip;
   }
 
   private make() {

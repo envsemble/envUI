@@ -53,11 +53,27 @@ export interface Preview {
 const squash = (text: string) => text.toLowerCase().replace(/[^a-z\d]/g, '');
 
 /**
+ * The example that shows an export documented on another's page, where no example is named after
+ * it: the first that renders it, so its tile shows the export itself, not the page's lead.
+ */
+const memberExamples: Record<string, string> = {
+  SearchField: 'SearchInSidebar',
+  Textarea: 'TextareaSizing',
+  IconButton: 'Icons',
+  ConfirmButton: 'ConfirmInPlace',
+  CopyButton: 'CopyValue',
+  ButtonGroup: 'ConnectedButtons',
+  DiffStat: 'ChangeSize',
+  MarkdownEditor: 'EditDescription',
+};
+
+/**
  * What a tile shows of a page: its own tile, where it has one (tiles/Tiles.ts); else where its
  * component floats over the page, such as a dialog or a menu, its anatomy figure, which shows it
  * open; else the Overview's first example, its lead example. For an export that isn't the page's
- * first, such as Textarea on the TextField page, the first example named after it, where there is
- * one. A page without one, such as a foundation's, shows its specimen.
+ * first, such as SearchField on the TextField page, the example that renders it (memberExamples),
+ * else the first named after it, where there is one. A page without one, such as a foundation's,
+ * shows its specimen.
  */
 export function previewOf(document: DocumentSummary, component?: string): Preview | undefined {
   const own = component && document.metadata?.components[0] !== component.split('.')[0];
@@ -79,14 +95,16 @@ export function previewOf(document: DocumentSummary, component?: string): Previe
       window: tileWindows[document.id],
     };
   const anatomy = blocks.find((block) => block.role === 'anatomy');
+  const member = own && component ? memberExamples[component] : undefined;
   const named =
     own &&
-    blocks.find(
-      (block) =>
-        !block.role &&
-        !block.widths &&
-        [block.name, block.heading].some((text) => squash(text).includes(squash(component))),
-    );
+    (blocks.find((block) => !block.role && block.name === member) ??
+      blocks.find(
+        (block) =>
+          !block.role &&
+          !block.widths &&
+          [block.name, block.heading].some((text) => squash(text).includes(squash(component))),
+      ));
   const chosen = named || (!own && anatomy?.open ? anatomy : lead);
   if (!chosen)
     return hasPageSpecimen(document.id)
@@ -107,6 +125,20 @@ export interface Alternative {
   href?: string;
   preview?: Preview;
   line: string;
+  /**
+   * How its tile is framed, as a gallery's is (Gallery.tsx): a component at its own size, a
+   * pattern's scene at a legible scale.
+   */
+  frame?: 'own' | 'legible';
+}
+
+/** How a page's tile is framed, by its document's id, in a gallery and in Related (`frame`). */
+export function frameOf(id?: string): Alternative['frame'] {
+  if (groupedPages.some((page) => page.document.id === id && page.section === 'Components'))
+    return 'own';
+  return documents.some((document) => document.id === id && document.group === 'Patterns')
+    ? 'legible'
+    : undefined;
 }
 
 /**
@@ -123,6 +155,7 @@ export function alternativesOf(metadata: DocumentationMetadata): Alternative[] {
         href: page && pageHref(page),
         preview: page && previewOf(page.document, use),
         line: text,
+        frame: frameOf(page?.document.id),
       };
     }
     const document = documents.find((item) => item.id === see);
@@ -132,6 +165,7 @@ export function alternativesOf(metadata: DocumentationMetadata): Alternative[] {
       href: see && relatedHref(see),
       preview: document && previewOf(document),
       line: text,
+      frame: frameOf(see),
     };
   });
 }

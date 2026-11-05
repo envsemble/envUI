@@ -178,7 +178,8 @@ export class VirtualPointer {
 
   /** Draws its cursor where it is, pressed or not, or none while it is off the preview. */
   private drawCursor() {
-    if (this.cursorShown) this.cursor.place(this.at, this.buttons > 0);
+    const files = this.carried ? [...this.carried.files].map((file) => file.name) : [];
+    if (this.cursorShown) this.cursor.place(this.at, this.buttons > 0, files);
     else this.cursor.remove();
   }
 
@@ -331,6 +332,8 @@ export class VirtualPointer {
           type,
         }),
       );
+    // Its cursor shows what it carries, as a drag image does.
+    this.drawCursor();
   }
 
   private sendDrag(target: Element, type: string) {
@@ -354,6 +357,7 @@ export class VirtualPointer {
     this.sendDrag(target, 'drop');
     this.carried = null;
     this.over = [];
+    this.drawCursor();
   }
 
   /** Moves a carried file over the preview: the elements it enters, leaves and is over hear it. */

@@ -5,7 +5,7 @@ import type { RoutePage } from '../navigation/SiteRoutes';
 import { useAutoplay } from '../motion/Autoplay';
 import { usePlaying } from '../motion/Motion';
 import { TilePreview, useNear } from '../template/Related';
-import { previewOf, type Preview } from '../template/RelatedPages';
+import { frameOf, previewOf, type Preview } from '../template/RelatedPages';
 import { preloadTile } from '../tiles/Tiles';
 
 /** One group of a gallery, such as a kind of component or what people are doing. */
@@ -45,8 +45,8 @@ function GalleryTile({ page, level }: { page: RoutePage; level: 2 | 3 }) {
         whole
         // Components show at their own size, one scale for all; a pattern's scene at a legible
         // scale, cropped to its middle.
-        ownSize={page.section === 'Components'}
-        legible={page.kind === 'pattern'}
+        ownSize={frameOf(page.document?.id) === 'own'}
+        legible={frameOf(page.document?.id) === 'legible'}
       />
       {/* The name is the link; it stretches over the picture, so the whole tile leads to the page. */}
       <Text render={<Heading />} className="catalogue-gallery-name">

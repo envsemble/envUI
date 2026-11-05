@@ -12,7 +12,9 @@
   margin-block-start: var(--site-section-gap);
 }
 
-.catalogue-gallery-grid {
+/* A gallery's grid, and Related's, whose tiles are framed as a gallery's are (Related.tsx). */
+.catalogue-gallery-grid,
+.catalogue-related-tiles {
   /* The least box a component drawn at its own size is drawn whole at, with the inset around it
      (useFit.ts): as wide as five to a row, and as tall as a row of controls with room around it;
      what is taller, such as a calendar, is cut off at its foot rather than drawn smaller. An open
@@ -25,6 +27,9 @@
   --catalogue-own-least: 12rem;
   --catalogue-own-least-block: 4.5rem;
   --catalogue-own-popup-least: 0.84;
+}
+
+.catalogue-gallery-grid {
   display: grid;
   /* Four to a row on a wide page, five on the widest, and two on a phone (below). */
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr));
@@ -62,14 +67,16 @@
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
 }
 
-.catalogue-gallery-grid[data-scenes] .catalogue-gallery-stage.catalogue-gallery-stage {
+/* So do Related's tiles where one of them is a scene, so they line up in a row. */
+:is(.catalogue-gallery-grid, .catalogue-related-tiles)[data-scenes]
+  .catalogue-gallery-stage.catalogue-gallery-stage {
   aspect-ratio: 4 / 3;
 }
 
 /* A scene lays out from its window's top rather than its middle: at rest the view centres what it
    paints either way (useFit.ts), and as it plays, what grows or shrinks in it, such as a list a
    filter narrows or files added, changes below what stays, which holds still. */
-.catalogue-gallery-grid[data-scenes] .catalogue-gallery-stage .catalogue-related-canvas {
+.catalogue-gallery-stage[data-scene] .catalogue-related-canvas {
   place-content: start stretch;
 }
 
@@ -102,14 +109,16 @@
     .catalogue-related-canvas[data-own-size] {
     inline-size: min(14rem, (100% - 2rem) / var(--catalogue-own-floor));
   }
-  /* A popup shown open lays out no wider than the stage shows at a popup's least, so what fits
-     its window fits the stage; one narrower is drawn larger (useFit.ts). */
+  /* A popup shown open lays out no wider than the stage's room shows at a popup's least, a
+     margin from its edges, where it is drawn whole (useFit.ts), so what fits its window fits the
+     stage, such as a notification at its own width, its message on one line; one narrower is drawn
+     larger. */
   .catalogue-gallery-grid:not([data-scenes])
     .catalogue-gallery-stage.catalogue-gallery-stage
     .catalogue-related-canvas[data-own-size][data-popup] {
     inline-size: min(
       var(--catalogue-tile-width, 14rem),
-      (100% - 2rem) / var(--catalogue-own-popup-least)
+      (100% - 0.75rem) / var(--catalogue-own-popup-least)
     );
   }
 }
@@ -166,7 +175,7 @@
 
 /* A popup shown open lays out in its tile's own window, as wide as it was written for, such as a
    menu beside its button, also on a phone (useFit.ts). */
-.catalogue-gallery-grid
+:is(.catalogue-gallery-grid, .catalogue-related-tiles)
   .catalogue-gallery-stage.catalogue-gallery-stage
   .catalogue-related-canvas[data-own-size][data-popup] {
   inline-size: max(100% - 2rem, var(--catalogue-tile-width, 14rem));
