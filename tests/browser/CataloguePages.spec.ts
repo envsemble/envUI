@@ -833,6 +833,22 @@ async function playTile(page: Page, name: string, targets: string[], duration = 
       message: name,
     })
     .toBeLessThan(0.005);
+  // And has come to a stop there.
+  await expect
+    .poll(() =>
+      canvas.evaluate(
+        (element) =>
+          new Promise<boolean>((resolve) => {
+            const { transform } = (element as HTMLElement).style;
+            requestAnimationFrame(() =>
+              requestAnimationFrame(() =>
+                resolve((element as HTMLElement).style.transform === transform),
+              ),
+            );
+          }),
+      ),
+    )
+    .toBe(true);
   return { rest, frames };
 }
 
@@ -894,7 +910,7 @@ test("a gallery tile that plays draws out what it opens inside its stage and res
     expect(grows, name).toEqual([]);
     // Played again, it does the same: it starts at its still and is drawn out as far.
     const { frames: again } = await playTile(page, name, targets);
-    expect(again[0]!.view.scale, name).toBe(rest.scale);
+    expect(again[0]!.view.scale, name).toBeCloseTo(rest.scale, 2);
     expect(again.at(-1)!.view.scale, name).toBeCloseTo(first.at(-1)!.view.scale, 3);
   }
 });

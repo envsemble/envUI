@@ -191,15 +191,23 @@ function trimRows(canvas: HTMLElement, played = false) {
  * content runs on past its foot (`data-catalogue-runs-on`), so it fades out there (Related.css),
  * as the crop does where the stage cuts a picture off, rather than ending in a slice through a
  * line. Only the foot: what stays at its top, such as a sticky header, isn't cut. A region on its
- * way open or closed, such as a panel easing to its height, isn't one.
+ * way open or closed, such as a panel easing to its height, isn't one, nor one that fades its own
+ * edges.
  */
 function markRunsOn(regions: Iterable<Element>) {
   for (const region of regions) {
     if (!(region instanceof HTMLElement)) continue;
+    if (region.clientHeight < 24 || region.scrollHeight <= region.clientHeight + 1) {
+      delete region.dataset.catalogueRunsOn;
+      continue;
+    }
+    const style = getComputedStyle(region);
+    // A region that fades its own edges, such as a time picker's wheel, keeps its own fade.
+    const ownFade = region.dataset.catalogueRunsOn === undefined && style.maskImage !== 'none';
     const runsOn =
-      region.clientHeight >= 24 &&
       region.scrollTop + region.clientHeight < region.scrollHeight - 1 &&
-      getComputedStyle(region).overflowY !== 'visible' &&
+      style.overflowY !== 'visible' &&
+      !ownFade &&
       !moving(region);
     if (runsOn) region.dataset.catalogueRunsOn = '';
     else delete region.dataset.catalogueRunsOn;
@@ -362,6 +370,7 @@ export function useFit(
           new Map<Element, Box>(),
         ),
         scale: view.toScale,
+        pending: null,
       };
       const current = run;
       // What the script acts on in a popup, such as a select's options (MustShow.ts).
@@ -407,7 +416,16 @@ export function useFit(
         screen(must.right, at.x, across) <= across + 1 &&
         screen(must.top, at.y, down) >= -1 &&
         screen(must.bottom, at.y, down) <= down + 1;
-      if (must && !shown) {
+      // What opens is placed by its style a frame or two after it shows: the view follows it once
+      // it has held its place from one frame to the next, not to where it first showed.
+      const placed =
+        must &&
+        current.pending !== null &&
+        covers(current.pending, must) &&
+        covers(must, current.pending);
+      current.pending = must && !shown && !placed ? must : null;
+      if (current.pending) update();
+      if (must && !shown && placed) {
         // The trigger, outside the popups, with its field's label, which floats over its edge,
         // where the stage shows it.
         const trigger = [...canvasElement.querySelectorAll(triggers)].find(
@@ -674,9 +692,9 @@ export function useFit(
         toY = contain(view.toY, top * scale, bottom * scale, stageElement.clientHeight / 2 - inset);
       }
       // Until it shows, it is placed at once, and shows only once its place has held for a few
-      // frames, or after half a second, whatever is still moving, such as a popup placed again
+      // frames, or after a quarter of a second, whatever is still moving, such as a popup placed again
       // against the stage's edges as the view moves: it appears in place, as every preview does,
-      // by fading in. Half a second, not a count of frames: on a busy page, as a gallery is while
+      // by fading in. A quarter of a second, not a count of frames: on a busy page, as a gallery is while
       // its tiles load, frames come slowly, and a count would keep it hidden for seconds.
       if (canvasElement.dataset.fitted === undefined) {
         const held =
@@ -691,7 +709,7 @@ export function useFit(
         view.scale = view.toScale = view.rest = scale;
         place();
         for (const { element } of boxes) resize.observe(element);
-        if (first.calm >= 3 || performance.now() - first.start >= 500)
+        if (first.calm >= 3 || performance.now() - first.start >= 250)
           canvasElement.dataset.fitted = '';
         else update();
         return;
@@ -802,12 +820,14 @@ interface Box {
 type Shown = ReturnType<typeof shownBoxes>[number];
 
 /**
- * A playing tile's run (playFit): the elements its still showed, in the canvas's own px, and the
- * scale it is drawn at, which only falls until it rests.
+ * A playing tile's run (playFit): the elements its still showed, in the canvas's own px; the
+ * scale it is drawn at, which only falls until it rests; and what opened outside the view, until
+ * it has held its place.
  */
 interface Run {
   rested: Map<Element, Box>;
   scale: number;
+  pending: Box | null;
 }
 
 /**
