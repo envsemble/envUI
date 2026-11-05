@@ -52,7 +52,7 @@ async function uploadIndex(page: Page, file: string) {
   );
 }
 
-test('formatting toolbar uses named SVG icon buttons and stays compact at narrow widths', async ({
+test('formatting toolbar uses named SVG icon buttons and wraps its groups at narrow widths', async ({
   page,
 }) => {
   await page.goto(`${fixtureUrl}?fixture=upload`);
@@ -86,29 +86,43 @@ test('formatting toolbar uses named SVG icon buttons and stays compact at narrow
       await expect(button.locator('svg[aria-hidden="true"] path')).not.toHaveCount(0);
     }
     const geometry = await toolbar.evaluate((root) => {
-      const bounds = root.getBoundingClientRect();
       const buttons = Array.from(root.querySelectorAll('button')).map((button) => ({
         text: button.textContent,
         bounds: button.getBoundingClientRect().toJSON(),
       }));
       const viewport = root.parentElement!;
-      return {
-        height: bounds.height,
-        buttons,
-        viewportWidth: viewport.clientWidth,
-        viewportRight: viewport.getBoundingClientRect().right,
-        scrollWidth: viewport.scrollWidth,
-      };
+      const box = viewport.getBoundingClientRect();
+      // The visible box: the toolbar's, inside its room for focus rings, where it clips.
+      const visible = { left: box.left, right: box.right };
+      const separators = Array.from(root.querySelectorAll('[role="separator"]')).map((separator) =>
+        separator.getBoundingClientRect().toJSON(),
+      );
+      return { buttons, visible, separators, viewportRight: box.right };
     });
-    expect(geometry.height).toBeLessThanOrEqual(48);
     expect(geometry.viewportRight).toBeLessThanOrEqual(width);
+    const rows = new Set(geometry.buttons.map((button) => Math.round(button.bounds.top)));
     for (const button of geometry.buttons) {
       expect(button.text).toBe('');
       expect(button.bounds.width).toBeGreaterThanOrEqual(32);
       expect(button.bounds.height).toBeLessThanOrEqual(48);
-      expect(button.bounds.top).toBe(geometry.buttons[0].bounds.top);
+      // Every button stays in view: the groups wrap rather than scroll.
+      expect(button.bounds.left).toBeGreaterThanOrEqual(geometry.visible.left);
+      expect(button.bounds.right).toBeLessThanOrEqual(geometry.visible.right);
     }
-    if (width === 390) expect(geometry.scrollWidth).toBeGreaterThan(geometry.viewportWidth);
+    if (width === 1200) expect(rows.size).toBe(1);
+    else expect(rows.size).toBeGreaterThan(1);
+    // A separator shows only between two groups of a row: one a wrapped row starts with lies
+    // outside the visible box, and no row ends with one.
+    for (const separator of geometry.separators) {
+      const inView =
+        separator.right > geometry.visible.left && separator.left < geometry.visible.right;
+      const row = geometry.buttons.filter(
+        (button) => Math.abs(button.bounds.top - separator.top) < 12,
+      );
+      const before = row.some((button) => button.bounds.right <= separator.left);
+      const after = row.some((button) => button.bounds.left >= separator.right);
+      expect(inView).toBe(before && after);
+    }
     await toolbar.getByRole('button', { name: 'Heading', exact: true }).focus();
     await page.keyboard.press('ArrowRight');
     await expect(toolbar.getByRole('button', { name: 'Bold', exact: true })).toBeFocused();
@@ -651,7 +665,7 @@ test('the document takes the field look: border, variants, error and a disabled 
     await color('--env-color-fg-danger'),
   );
   // Disabled, the document takes the disabled text color rather than the box fading, and its label
-  // keeps the text color.
+  // keeps a field label's muted color.
   const disabled = scope.getByRole('textbox', { name: 'Disabled notes' });
   await expect(box('Disabled notes')).toHaveCSS('opacity', '1');
   await expect(disabled).toHaveCSS('color', await color('--env-color-fg-disabled'));
@@ -660,7 +674,7 @@ test('the document takes the field look: border, variants, error and a disabled 
     await color('--env-color-fg-disabled'),
   );
   const label = scope.getByText('Disabled notes', { exact: true });
-  await expect(label).toHaveCSS('color', await color('--env-color-fg-default'));
+  await expect(label).toHaveCSS('color', await color('--env-color-fg-muted'));
   expect(
     await label.evaluate((element) => {
       let opacity = 1;

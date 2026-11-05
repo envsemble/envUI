@@ -6299,7 +6299,7 @@
         },
         {
           "class": "env-editor-toolbar",
-          "description": "The editor's formatting toolbar, a Toolbar of groups with a line between each, which scrolls sideways where it is wider than the editor."
+          "description": "The editor's formatting toolbar, a Toolbar of groups with a line between each, which wrap onto more rows where they are wider than the editor."
         }
       ],
       "states": [],
