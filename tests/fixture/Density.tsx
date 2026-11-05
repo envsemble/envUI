@@ -111,11 +111,18 @@ function SizeRow({ size }: { size: ControlSize }) {
         variant="secondary"
         data-control="icon-button"
       />
-      <TextField size={size} label="Name" defaultValue="Quarterly report" />
+      <TextField size={size} label="Name" showLabel={false} defaultValue="Quarterly report" />
       <SearchField size={size} label="Search" placeholder="Search" />
       <Select size={size} aria-label="Plan" items={plans} defaultValue="team" />
-      <Combobox size={size} label="Owner" items={owners} defaultValue="sam-lee" clearable />
-      <DatePicker size={size} label="Due" />
+      <Combobox
+        size={size}
+        label="Owner"
+        showLabel={false}
+        items={owners}
+        defaultValue="sam-lee"
+        clearable
+      />
+      <DatePicker size={size} label="Due" showLabel={false} />
       <SegmentedControl
         size={size}
         aria-label="Filter"
@@ -166,7 +173,7 @@ function FormSection() {
     <div className="density-stack">
       <div className="density-band">
         <Row label="TextField · Select · Button, at the control height (defaults)">
-          <TextField label="Name" defaultValue="Quarterly report" />
+          <TextField label="Name" showLabel={false} defaultValue="Quarterly report" />
           <Select aria-label="Plan" items={plans} defaultValue="team" />
           <Button variant="primary">Save</Button>
           <Button variant="secondary">Cancel</Button>

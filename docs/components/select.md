@@ -49,7 +49,7 @@ examples:
 
 ### Sizes
 
-A select lines up with the buttons beside it. It comes in small, medium and large, the control heights of the [scale](../foundations/spacing.md).
+A select comes in small, medium and large, the control heights of the [scale](../foundations/spacing.md), as tall as a [TextField](text-field.md#sizes) of its size: without a visible label, it lines up with the buttons beside it.
 
 - Without a size of its own, it takes its container's.
 - Without a visible label, as in a toolbar, it is as wide as its longest option.
@@ -207,7 +207,7 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 ## Changelog
 
 - **1.0.0-prerelease.6**: In an option with a description, the check mark and the leading content sit on the label's line rather than across both lines.
-- **1.0.0-prerelease.6**: The `floating` variant and the `variant` prop are gone: the field is outlined, and takes `size="lg"` in a long form on a page. The field takes a text area's rounded corners rather than round ends, still as tall as a button.
+- **1.0.0-prerelease.6**: The `floating` variant and the `variant` prop are gone: the field is outlined, and takes `size="lg"` in a long form on a page. The field takes a text area's rounded corners rather than round ends. With a visible label it is at least 2.25 rem tall, so its floated label and its value each have room, a step taller than a button in a form at the compact scale.
 - **1.0.0-prerelease.6**: The open list is at least as wide as the field; when options have descriptions it keeps to the field's width and the descriptions wrap, rather than running past the field's end.
 - **1.0.0-prerelease.5**: Select is an outlined field, as TextField and DatePicker are, with the label inside: `variant` is `outline`, the default, or `floating`, where it was a Button's `secondary` or `outline`. Without a visible label it fits its longest option. It takes `open`, `onOpenChange`, `readOnly` and `showLabel`.
 - **1.0.0-prerelease.5**: The open list is frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge but a faint hairline in dark, and is solid with its edge at high contrast and with reduced transparency. Options are the md control height in body text, the highlighted one, under the pointer or the keyboard, takes the neutral fill with no focus ring, and the chosen one shows its check mark. The list opens 8 px clear of the trigger at every scale and size. Its options lie one under the next with no space between them. The chosen option's check mark ends its row, after the label. The outline trigger has no fill at rest, as an outline button has none.
