@@ -34,11 +34,14 @@ function Exporting() {
   const [round, setRound] = useState(0);
   usePointer(script, { onCue: () => setRound((count) => count + 1) });
   return (
-    // As tall as the form with its error or its result, so the stage keeps its height.
+    // As tall and as wide as the form with its error or its result, so the stage keeps its height
+    // and the form its place as the error comes and goes.
     <div style={{ display: 'grid', justifyItems: 'center', inlineSize: '100%' }}>
-      <div style={{ minBlockSize: '11rem' }}>
+      <div style={{ minBlockSize: '11rem', inlineSize: 'min(100%, 16rem)' }}>
         <Renew round={round}>
-          <RequiredChoice />
+          <div style={{ inlineSize: '100%' }}>
+            <RequiredChoice />
+          </div>
         </Renew>
       </div>
     </div>

@@ -7,17 +7,20 @@ import { narrowGallery } from './Tiles';
 
 const trigger = '.env-button[aria-haspopup]';
 
-/** Closed from its button, and opened again from it. */
+/**
+ * Closed from its button at once, and opened again from it, so the popover is seen opening; then
+ * it holds open, as it rests, for as long as a look at the card takes before it plays again.
+ */
 const script: PointerStep[] = [
-  { wait: 400 },
+  { wait: 300 },
   { to: trigger, x: 0.6, y: 0.7 },
-  { wait: 600 },
+  { wait: 250 },
   { click: true },
-  { wait: 900 },
+  { wait: 1500 },
   { click: true },
-  { wait: 600 },
+  { wait: 2200 },
   { leave: true },
-  { wait: 600 },
+  { wait: 7000 },
 ];
 
 /**

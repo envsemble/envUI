@@ -42,15 +42,8 @@ function Stepping() {
         </Text>
       </Column>
       {/* As tall as the largest gap holds from the start, the first block at its top, so only the
-          second moves. */}
-      <Column
-        gap={step}
-        style={{
-          flex: 1,
-          minBlockSize: 'calc(2 * 2.75rem + 4rem)',
-          transition: 'gap var(--env-motion-duration-slow) var(--env-motion-ease)',
-        }}
-      >
+          second moves, at once, as a Column lays out a new gap. */}
+      <Column gap={step} style={{ flex: 1, minBlockSize: 'calc(2 * 2.75rem + 4rem)' }}>
         <Surface radius="sm" padding={2} style={block}>
           <Text>First</Text>
         </Surface>

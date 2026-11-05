@@ -1,7 +1,6 @@
-import { useRef } from 'react';
 import { Row } from '@envsemble/envui';
 import { useTimeline } from '../motion/Motion';
-import { edges, gap, Item, Mark, useReflow } from './Reflow';
+import { edges, gap, Item, Mark } from './Reflow';
 
 /** The blocks' widths, in rem, at a height of 1.25: two squares between longer blocks. */
 const items = [1.75, 1.25, 1.5, 1.25];
@@ -12,7 +11,7 @@ const fit = (count: number) =>
 
 /**
  * The row's widths, step by step: all on one line, the last wrapped, all on one line again, two and
- * two. Each wrap and its undoing moves blocks clear of one another, never across.
+ * two.
  */
 const widths = [fit(4), fit(3), fit(4), fit(2)];
 
@@ -25,19 +24,16 @@ const firstGap = gap('inline', {
 
 /**
  * A row of four blocks in a frame, drawn in hairlines, the gap between them marked, that wraps as
- * it narrows, a block and then two, and widens again, its frame easing to its new width and holding
- * a block until it has wrapped.
+ * it narrows, a block and then two, and widens again. Each width lays the row out at once, as a
+ * Row does when the room it has changes.
  */
 export default function RowTile() {
   const step = useTimeline([1000, 1400, 1300, 1600]);
-  const row = useRef<HTMLDivElement>(null);
-  const outline = useRef<HTMLDivElement>(null);
-  useReflow(row, step, { outline });
   return (
-    <div ref={outline} style={{ position: 'relative', padding: 'var(--env-space-2)' }}>
+    <div style={{ position: 'relative', padding: 'var(--env-space-2)', inlineSize: 'max-content' }}>
       {edges()}
       <Mark {...firstGap} />
-      <Row ref={row} wrap gap={2} style={{ position: 'relative', inlineSize: widths[step] }}>
+      <Row wrap gap={2} style={{ position: 'relative', inlineSize: widths[step] }}>
         {items.map((width, index) => (
           <Item key={index} width={`${width}rem`} height="1.25rem" />
         ))}

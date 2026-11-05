@@ -53,11 +53,13 @@ function Checking() {
   return (
     <>
       <PressedKeys keys={tabs ? ['Tab'] : null} press={tabs} />
-      {/* As tall as the field with its error, so the figure keeps its height. */}
+      {/* As tall as the field with its error, so the figure keeps its height; the field in the
+          middle, clear of the key's cap in the corner. */}
       <div
         style={{
           display: 'grid',
           alignContent: 'start',
+          justifyItems: 'center',
           inlineSize: '100%',
           minBlockSize: '9.5rem',
         }}

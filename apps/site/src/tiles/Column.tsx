@@ -1,7 +1,6 @@
-import { useRef } from 'react';
 import { Column, type LayoutAlign, type SpaceStep } from '@envsemble/envui';
 import { useTimeline } from '../motion/Motion';
-import { along, easing, edges, Item, line, Mark, useReflow } from './Reflow';
+import { along, edges, Item, line, Mark } from './Reflow';
 
 /** The blocks' widths: a heading, two lines and an action, as a column often holds. */
 const items = ['4.5rem', '6.5rem', '5rem', '2.75rem'];
@@ -19,23 +18,15 @@ const lines: Partial<Record<LayoutAlign, number>> = { start: 0, center: 0.5, end
 
 /**
  * A column of four blocks of different widths in a frame, drawn in hairlines, aligned in turn and
- * spaced further apart, the line they align to drawn through them a little beyond, gliding with
- * them.
+ * spaced further apart, the line they align to drawn through them a little beyond. Each step lays
+ * the column out at once, as a Column does when its props change.
  */
 export default function ColumnTile() {
-  const step = useTimeline([1000, 1300, 1300, 1300]);
-  const column = useRef<HTMLDivElement>(null);
-  useReflow(column, step);
-  const { align, gap } = layouts[step]!;
+  const { align, gap } = layouts[useTimeline([1000, 1300, 1300, 1300])]!;
   return (
     <div style={{ position: 'relative', padding: 'var(--env-space-2)' }}>
       {edges()}
-      <Column
-        ref={column}
-        align={align}
-        gap={gap}
-        style={{ position: 'relative', inlineSize: '7.5rem', transition: `gap 600ms ${easing}` }}
-      >
+      <Column align={align} gap={gap} style={{ position: 'relative', inlineSize: '7.5rem' }}>
         <Mark
           at={{
             ...line('block', `${(lines[align] ?? 0) * 100}%`),

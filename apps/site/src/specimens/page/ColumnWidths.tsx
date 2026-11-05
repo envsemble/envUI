@@ -16,12 +16,8 @@ const widths: readonly { width: PageWidth; column: number; words: string }[] = [
   { width: 'full', column: frame.width - 3, words: 'Full' },
 ];
 
-/** How long each width shows, its move in, then its hold, in ms; the last leads back to Small. */
+/** How long each width shows, in ms; the last leads back to Small. */
 const durations = [1500, 2000, 2000, 2000];
-
-/** How long the column takes to move to a width, in ms, and back from Full to Small. */
-const move = 900;
-const moveBack = 1300;
 
 /*
  * A page in a window drawn small, its column widening from Small through Medium and Large to Full,
@@ -32,7 +28,6 @@ function Widening() {
   const area = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(0.5);
   const { width, column, words } = widths[step]!;
-  const travel = `${step === 0 ? moveBack : move}ms var(--env-motion-ease)`;
 
   // The window is drawn at the scale that fits the stage, again as the stage resizes.
   useLayoutEffect(() => {
@@ -49,15 +44,9 @@ function Widening() {
     return () => resize.disconnect();
   }, []);
 
-  const ruler: CSSProperties = {
-    inlineSize: `calc(${scale} * ${column}rem)`,
-    transition: `inline-size ${travel}`,
-  };
-  const page: CSSProperties = {
-    // The column's own width, eased as it changes, Full's as wide as the window's.
-    maxInlineSize: `calc(${column}rem + 2 * var(--env-page-gutter))`,
-    transition: `max-inline-size ${travel}`,
-  };
+  const ruler: CSSProperties = { inlineSize: `calc(${scale} * ${column}rem)` };
+  // The column's own width, Full's as wide as the window's, laid out at once as Page does.
+  const page: CSSProperties = { maxInlineSize: `calc(${column}rem + 2 * var(--env-page-gutter))` };
   return (
     <div
       ref={area}

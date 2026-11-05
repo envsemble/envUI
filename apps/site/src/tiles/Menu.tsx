@@ -9,10 +9,20 @@ import { narrowGallery } from './Tiles';
 
 const item = (index: number) => `.env-menu-item:nth-child(${index} of .env-menu-item)`;
 
-/** Down the open menu, an item chosen, which closes it; opened again from its button. */
+/**
+ * Its button pressed at once, which closes the open menu, and pressed again, which opens it, so the
+ * menu is seen opening; down it, an item chosen, which closes it, and opened again from its button,
+ * as it rests, and held so a while before it plays again.
+ */
 const script: PointerStep[] = [
   { wait: 300 },
-  { to: item(1) },
+  { to: '.env-button', x: 0.6, y: 0.7 },
+  { wait: 250 },
+  { click: true },
+  { wait: 1500 },
+  { click: true },
+  { wait: 700 },
+  { to: item(1), duration: 350 },
   { wait: 400 },
   { to: item(2), duration: 300 },
   { wait: 500 },
@@ -25,7 +35,7 @@ const script: PointerStep[] = [
   { click: true },
   { wait: 600 },
   { leave: true },
-  { wait: 400 },
+  { wait: 4000 },
 ];
 
 /**
