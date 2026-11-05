@@ -15,7 +15,8 @@ const script: PointerStep[] = [
   { click: true },
   { wait: 200 },
   { type: 'example.com', into: email, every: 80 },
-  { wait: 1400 },
+  // About two seconds with the address whole, so the error's going registers.
+  { wait: 3200 },
   { erase: 11, into: email, every: 40 },
   { wait: 300 },
   { to: '.env-button', duration: 450 },
