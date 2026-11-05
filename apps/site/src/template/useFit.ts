@@ -302,6 +302,66 @@ export function useFit(
     let run: Run | null = null;
     // Whether the canvas is a screen as large as the stage, for a modal over it (screenFit).
     let screen = false;
+    // At rest, what the view was last framed on and where, how many times since it was framed
+    // anew it has followed its popups placed again as it moves, and whether the fit at hand does
+    // (holdsFrame).
+    let framed: Framed | null = null;
+    let follows = 0;
+    let following = false;
+    // What the fit at hand was decided on, measured before it moves anything (shapeOf).
+    let measured: Shape | null = null;
+    /** What a fit at rest is decided on, where the canvas is in its stage, if that shows whole. */
+    const shapeOf = (boxes: Shown[]): Shape => {
+      const canvasBox = canvasElement.getBoundingClientRect();
+      const stageBox = stageElement.getBoundingClientRect();
+      return {
+        room: [
+          stageElement.clientWidth,
+          stageElement.clientHeight,
+          canvasElement.offsetWidth,
+          canvasElement.offsetHeight,
+        ],
+        whole: wholeInView(stageElement),
+        view: [canvasBox.left - stageBox.left, canvasBox.top - stageBox.top],
+        boxes: boxes.map((shown) => ({ ...shown, popup: layerRoot(shown.element) })),
+        popups: new Set(boxes.flatMap(({ element }) => layerRoot(element) ?? [])).size,
+      };
+    };
+    /**
+     * Whether a resting preview holds the view it was framed on. What it shows outside its popups
+     * is where it was and as large, and as many popups are open, or it is framed again. A popup is
+     * placed against the stage's and the window's edges, so as the view eases to its place, or the
+     * page scrolls, it is placed again, a fraction or a flip away, and a view that followed it each
+     * time could move it again, never still. While the stage shows only in part, scrolled to the
+     * window's edge, the view holds, so scrolling moves nothing. Where nothing has moved, such as a
+     * popup placed a frame after its tile shows, or opened again where it was after its tile
+     * played, it is framed again on any change. Where the view has moved in its stage since, it
+     * follows a popup placed a few px away, a number of times, such as a menu pressed against the
+     * stage's edge until it is under its button, and then holds.
+     */
+    const holdsFrame = (was: Shape, now: Shape) => {
+      const near = (a: readonly number[], b: readonly number[], slack: number) =>
+        a.every((value, index) => Math.abs(value - b[index]!) <= slack);
+      const edges = ({ box }: Shown) => [box.left, box.top, box.right, box.bottom];
+      const same = (before: Shape['boxes'], after: Shape['boxes'], slack: number) =>
+        before.length === after.length &&
+        before.every((shown, index) => near(edges(shown), edges(after[index]!), slack));
+      const parts = (boxes: Shape['boxes'], inPopup: boolean) =>
+        boxes.filter(({ popup }) => (popup !== null) === inPopup);
+      if (
+        !near(was.room, now.room, 0.5) ||
+        was.popups !== now.popups ||
+        !same(parts(was.boxes, false), parts(now.boxes, false), 1)
+      )
+        return false;
+      if (!now.whole) return true;
+      const popups = [parts(was.boxes, true), parts(now.boxes, true)] as const;
+      if (near(was.view, now.view, 0.01)) return same(...popups, 1);
+      if (follows >= followsAtMost || same(...popups, followSlack)) return true;
+      follows += 1;
+      following = true;
+      return false;
+    };
     const place = () => {
       const transform = `translate(${-view.x}px, ${-view.y}px) scale(${view.scale})`;
       if (canvasElement.style.transform !== transform) canvasElement.style.transform = transform;
@@ -402,6 +462,8 @@ export function useFit(
       }
       place();
       view.frame = settled ? 0 : requestAnimationFrame(glide);
+      // Still again at rest, it looks once more at where its popups are placed now (holdsFrame).
+      if (settled && !playingNow.current) update();
     };
     const still = matchMedia('(prefers-reduced-motion: reduce)');
     /** Eases the view to where it goes, or with motion reduced, places it there at once. */
@@ -658,10 +720,47 @@ export function useFit(
         boxes.some(({ element }) => settling(element, canvasElement))
       )
         return;
-      const left = Math.min(...boxes.map(({ box }) => box.left));
-      const top = Math.min(...boxes.map(({ box }) => box.top));
-      const right = Math.max(...boxes.map(({ box }) => box.right));
-      const bottom = Math.max(...boxes.map(({ box }) => box.bottom));
+      // At rest, a preview framed on what it shows holds that view, and after it played, eases back
+      // to it, rather than framing it again on where its popups were placed meanwhile (holdsFrame).
+      measured = playingNow.current ? null : shapeOf(boxes);
+      if (
+        measured &&
+        canvasElement.dataset.fitted !== undefined &&
+        framed &&
+        holdsFrame(framed.shape, measured)
+      ) {
+        if (view.toX !== framed.toX || view.toY !== framed.toY || view.toScale !== framed.scale) {
+          const { scale, toX, toY, cut } = framed;
+          if (cut) canvasElement.dataset.cut = cut;
+          else delete canvasElement.dataset.cut;
+          settle(scale, toX, toY, boxes);
+          trimRows(canvasElement);
+        }
+        return;
+      }
+      // A tile that holds its view is framed on its largest state: what its script acts on, also
+      // where it is laid out, such as a pile's avatars in the row they spread into as it plays, so
+      // its view is the same whenever and wherever the pointer comes in.
+      const held = holdsView(canvasElement)
+        ? mustShowOf(canvasElement)
+            .flatMap((selector) => {
+              try {
+                return [...canvasElement.querySelectorAll(selector)];
+              } catch {
+                return [];
+              }
+            })
+            .filter((element) => element.checkVisibility())
+        : [];
+      const filled = (box: Box) => box.right > box.left && box.bottom > box.top;
+      const laidOut = held
+        .flatMap((element) => laidOutOf(element, canvasElement) ?? [])
+        .filter(filled);
+      const extent = [...boxes.map(({ box }) => box), ...laidOut];
+      const left = Math.min(...extent.map((box) => box.left));
+      const top = Math.min(...extent.map((box) => box.top));
+      const right = Math.max(...extent.map((box) => box.right));
+      const bottom = Math.max(...extent.map((box) => box.bottom));
       const width = stageElement.clientWidth - 2 * inset;
       const height = stageElement.clientHeight - 2 * inset;
       // A window that counts whole, a gallery's or a tile's, sets the scale, so every tile of its
@@ -738,21 +837,10 @@ export function useFit(
       // A tile that holds its view is framed once on its still, the largest it shows: what its
       // script acts on there, such as a time picker's chosen hour under its field, shows in it from
       // its top, drawn smaller for that down to the popup's least.
-      const keep = holdsView(canvasElement)
-        ? join(
-            ...mustShowOf(canvasElement)
-              .flatMap((selector) => {
-                try {
-                  return [...canvasElement.querySelectorAll(selector)];
-                } catch {
-                  return [];
-                }
-              })
-              .filter((element) => element.checkVisibility())
-              .map((element) => partOf(element, canvasElement))
-              .filter((box) => box.right > box.left && box.bottom > box.top),
-          )
-        : null;
+      const keep = join(
+        ...held.map((element) => partOf(element, canvasElement)).filter(filled),
+        ...laidOut,
+      );
       const keepScale = keep
         ? (stageElement.clientHeight - 2 * margin) / (keep.bottom - top)
         : Infinity;
@@ -886,6 +974,7 @@ export function useFit(
         view.y = view.toY = toY;
         view.scale = view.toScale = view.rest = scale;
         place();
+        hold(scale, toX, toY);
         for (const { element } of boxes) resize.observe(element);
         if (first.calm >= 3 || performance.now() - first.start >= 250)
           canvasElement.dataset.fitted = '';
@@ -922,8 +1011,17 @@ export function useFit(
         view.scale = view.toScale = scale;
         place();
       }
+      hold(scale, toX, toY);
       canvasElement.dataset.fitted = '';
       for (const { element } of boxes) resize.observe(element);
+    };
+    /** At rest, keeps where the view is framed and on what, held from then on (holdsFrame). */
+    const hold = (scale: number, toX: number, toY: number) => {
+      if (playingNow.current || !measured) return;
+      // Framed anew, it may follow its popups again (holdsFrame).
+      if (!following) follows = 0;
+      following = false;
+      framed = { shape: measured, scale, toX, toY, cut: canvasElement.dataset.cut };
     };
     /**
      * A component's modal over its backdrop, such as a dialog, a sheet or a command palette, has
@@ -1107,6 +1205,32 @@ function partOf(element: Element, canvas: HTMLElement): Box {
 }
 
 /**
+ * Where an element is laid out, in its canvas's own px, without the transforms that move it from
+ * there, such as a pile's avatar gathered toward its start from its place in the spread row; for an
+ * element that nothing moves, none: it counts as far as it paints (shownBoxes).
+ */
+function laidOutOf(element: Element, canvas: HTMLElement): Box | null {
+  if (!(element instanceof HTMLElement)) return null;
+  const holder = element.offsetParent;
+  const style = getComputedStyle(element);
+  const moved = [style.transform, style.translate, style.rotate, style.scale].some(
+    (value) => value !== 'none',
+  );
+  if (!moved || !(holder instanceof HTMLElement) || !canvas.contains(holder)) return null;
+  const frame = canvas.getBoundingClientRect();
+  const ratio = frame.width / canvas.offsetWidth || 1;
+  const around = holder.getBoundingClientRect();
+  const left = (around.left - frame.left) / ratio + holder.clientLeft - holder.scrollLeft;
+  const top = (around.top - frame.top) / ratio + holder.clientTop - holder.scrollTop;
+  return {
+    left: left + element.offsetLeft,
+    top: top + element.offsetTop,
+    right: left + element.offsetLeft + element.offsetWidth,
+    bottom: top + element.offsetTop + element.offsetHeight,
+  };
+}
+
+/**
  * What shows of an element as far as it paints, in its canvas's own px: of one that holds text,
  * such as a heading as wide as its pane, the text's own extent, not its box's.
  */
@@ -1139,6 +1263,15 @@ function keepWhole(top: number, bottom: number, size: number) {
   return whole > atMargin && whole <= top + size / 2 + rowSlack ? whole : atMargin;
 }
 
+/** How far, in px, a resting preview's popup is placed again before its view follows it. */
+const followSlack = 4;
+
+/**
+ * How many times a resting preview's view follows its popups placed again once framed anew: as
+ * far as a menu needs, and soon still where they would follow it on.
+ */
+const followsAtMost = 30;
+
 /** The share of its scale a playing tile's content may need before it is drawn smaller. */
 const zoomSlack = 0.97;
 
@@ -1166,6 +1299,65 @@ interface Box {
 
 /** A box a preview paints, and its element (shownBoxes). */
 type Shown = ReturnType<typeof shownBoxes>[number];
+
+/**
+ * What a fit at rest is decided on (holdsFrame, useFit): the stage's and the canvas's sizes, what
+ * the preview paints, how many popups are open in it, whether its stage showed whole, and where its
+ * canvas was in it.
+ */
+interface Shape {
+  room: number[];
+  /** Whether the stage shows whole (wholeInView), and where the canvas is in it. */
+  whole: boolean;
+  view: number[];
+  /** What it paints, each with the popup it is part of as it was measured, if any (layerRoot). */
+  boxes: (Shown & { popup: Element | null })[];
+  popups: number;
+}
+
+/** Where a resting preview's view is framed, on what, and the sides it is cut off at there. */
+interface Framed {
+  shape: Shape;
+  scale: number;
+  toX: number;
+  toY: number;
+  cut: string | undefined;
+}
+
+/**
+ * Whether an element shows whole: inside the window and every box around it that clips it, such as
+ * the page's body that scrolls, so a popup in it is placed against nothing but the stage's edges.
+ */
+function wholeInView(element: Element) {
+  const box = element.getBoundingClientRect();
+  const inside = (around: { left: number; top: number; right: number; bottom: number }) =>
+    box.left >= around.left - 0.5 &&
+    box.top >= around.top - 0.5 &&
+    box.right <= around.right + 0.5 &&
+    box.bottom <= around.bottom + 0.5;
+  if (!inside({ left: 0, top: 0, right: innerWidth, bottom: innerHeight })) return false;
+  for (let node = element.parentElement; node; node = node.parentElement) {
+    const style = getComputedStyle(node);
+    if (style.overflowX === 'visible' && style.overflowY === 'visible') continue;
+    if (!inside(node.getBoundingClientRect())) return false;
+  }
+  return true;
+}
+
+/**
+ * The popup an element is part of, open in a preview's overlay layer: the outermost box its theme
+ * holds, such as a menu's positioner, or none for what is not in a popup.
+ */
+function layerRoot(element: Element) {
+  let root: Element | null = null;
+  let top: Element | null = null;
+  for (let node: Element | null = element; node; node = node.parentElement) {
+    if (node.classList.contains('catalogue-overlay-layer')) return root ?? top;
+    if (node.parentElement?.classList.contains('env-theme')) root = node;
+    top = node;
+  }
+  return null;
+}
 
 /**
  * A playing tile's run (playFit): the elements its still showed, in the canvas's own px; the
