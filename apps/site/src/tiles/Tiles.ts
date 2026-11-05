@@ -71,7 +71,7 @@ export const narrowGallery = '(width < 29rem)';
  * it comes in rather than after.
  */
 export const preloadTile = (page: string) =>
-  void loaders[`./${pascal(page)}.tsx`]?.().catch(() => undefined);
+  loaders[`./${pascal(page)}.tsx`]?.().catch(() => undefined);
 
 /** The tile of a page, by its id, where it has one of its own. */
 export const tileOf = (page: string): ComponentType | undefined =>

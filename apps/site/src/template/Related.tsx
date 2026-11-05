@@ -211,7 +211,10 @@ function scrollerOf(element: Element) {
  * window, that box would clip the tiles until they scroll into it, and a margin around the window
  * would never look ahead.
  */
-export function useNear(element: RefObject<HTMLElement | null>, approach?: () => void) {
+export function useNear(
+  element: RefObject<HTMLElement | null>,
+  approach?: () => Promise<unknown> | void,
+) {
   const [near, setNear] = useState(false);
   const approaching = useRef(approach);
   approaching.current = approach;
@@ -219,52 +222,98 @@ export function useNear(element: RefObject<HTMLElement | null>, approach?: () =>
     const target = element.current;
     if (!target || near) return;
     const root = scrollerOf(target);
-    const idle = { near: 0, ahead: 0 };
-    // What is in view renders at once, as after a jump down the page; what is ahead of the view
-    // once the page is idle, without holding up what the reader is doing or what is in view.
-    const watch = (margin: string, then: () => void) => {
+    // What is in view renders at once, as after a jump down the page; what is near it once the
+    // page is idle, one tile after another, while it stays near: a tile scrolled past before its
+    // turn comes waits until it nears the view again.
+    const watch = (margin: string, enter: () => void, leave: () => void = () => {}) => {
       const observer = new IntersectionObserver(
         (entries) => {
-          if (!entries.some((entry) => entry.isIntersecting)) return;
-          observer.disconnect();
-          then();
+          const entry = entries.at(-1);
+          if (entry?.isIntersecting) enter();
+          else leave();
         },
         { root, rootMargin: margin },
       );
       observer.observe(target);
       return observer;
     };
+    let cancelNear = () => {};
+    let cancelAhead = () => {};
     const inView = watch('0px', () => {
-      cancelIdle(idle.near);
+      cancelNear();
       setNear(true);
     });
-    const close = watch('600px 0px', () => {
-      idle.near = whenIdle(() => startTransition(() => setNear(true)));
-    });
+    const close = watch(
+      '600px 0px',
+      () => {
+        cancelNear();
+        cancelNear = whenIdle(() => startTransition(() => setNear(true)));
+      },
+      () => cancelNear(),
+    );
+    let approached = false;
     const ahead = approaching.current
-      ? watch('1800px 0px', () => {
-          idle.ahead = whenIdle(() => approaching.current?.());
-        })
+      ? watch(
+          '1800px 0px',
+          () => {
+            cancelAhead();
+            cancelAhead = whenIdle(() => {
+              approached = true;
+              ahead?.disconnect();
+              return approaching.current?.();
+            });
+          },
+          () => {
+            if (!approached) cancelAhead();
+          },
+        )
       : null;
     return () => {
       inView.disconnect();
       close.disconnect();
       ahead?.disconnect();
-      cancelIdle(idle.near);
-      cancelIdle(idle.ahead);
+      cancelNear();
+      cancelAhead();
     };
   }, [element, near]);
   return near;
 }
 
-/** Runs a task once the page is idle, or after a second at the latest; returns its handle. */
-const whenIdle = (task: () => void) =>
-  typeof requestIdleCallback === 'function'
-    ? requestIdleCallback(task, { timeout: 1000 })
-    : window.setTimeout(task, 50);
+/**
+ * The tasks waiting for the page to be idle, run one to each idle moment, so the tiles ahead of the
+ * view come in one by one rather than all at once, each fitted before the next, and what is in
+ * view, such as the tiles after a jump down the page, loads and renders first.
+ */
+const idleTasks = new Set<() => Promise<unknown> | void>();
+let idleRunning = false;
 
-const cancelIdle = (handle: number) =>
-  typeof cancelIdleCallback === 'function' ? cancelIdleCallback(handle) : clearTimeout(handle);
+function runIdle() {
+  const [task] = idleTasks;
+  if (!task) {
+    idleRunning = false;
+    return;
+  }
+  idleTasks.delete(task);
+  // A task that loads, such as a tile's module, holds the next until it has loaded.
+  void Promise.resolve(task())
+    .catch(() => undefined)
+    .then(() => later(runIdle));
+}
+
+const later = (step: () => void) =>
+  typeof requestIdleCallback === 'function'
+    ? requestIdleCallback(step, { timeout: 1000 })
+    : window.setTimeout(step, 50);
+
+/** Runs a task once the page is idle, after those before it; returns its cancel. */
+function whenIdle(task: () => Promise<unknown> | void) {
+  idleTasks.add(task);
+  if (!idleRunning) {
+    idleRunning = true;
+    later(runIdle);
+  }
+  return () => void idleTasks.delete(task);
+}
 
 /**
  * One alternative's tile, whose preview plays while the pointer or the keyboard is on it, and where
