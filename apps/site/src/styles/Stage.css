@@ -703,6 +703,37 @@
 .catalogue-pointer-cursor[data-pressed] > svg {
   scale: 0.85;
 }
+/* While the pointer carries files in, as from the desktop, a chip beside its cursor names them, as
+   a drag image does (PointerCursor.ts): below and after the arrow's tip, scaled with it. */
+.catalogue-pointer-file {
+  position: absolute;
+  inset-block-start: 1rem;
+  inset-inline-start: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: var(--env-space-1);
+  max-inline-size: 10rem;
+  padding: var(--env-space-1) var(--env-space-2);
+  border: 1px solid var(--env-color-border-default);
+  border-radius: var(--env-radius-md);
+  background: var(--env-color-bg-raised);
+  color: var(--env-color-fg-default);
+  font: var(--env-type-body-sm);
+  white-space: nowrap;
+}
+.catalogue-pointer-file-icon {
+  display: flex;
+  flex: none;
+  color: var(--env-color-fg-muted);
+}
+.catalogue-pointer-file-icon > svg {
+  inline-size: 1rem;
+  block-size: 1rem;
+}
+.catalogue-pointer-file-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 @media (prefers-reduced-motion: no-preference) {
   .catalogue-pointer-cursor > svg {
     transition: scale var(--env-motion-duration-fast) var(--env-motion-ease);
@@ -718,5 +749,14 @@
     forced-color-adjust: none;
     fill: CanvasText;
     stroke: Canvas;
+  }
+  .catalogue-pointer-file {
+    forced-color-adjust: none;
+    border-color: CanvasText;
+    background: Canvas;
+    color: CanvasText;
+  }
+  .catalogue-pointer-file-icon {
+    color: CanvasText;
   }
 }

@@ -18,7 +18,10 @@ import { textPoint } from './VirtualSelection';
  *   wraps, such as `{ to: field, text: 'launch plan', x: 0.1 }` then `x: 0.9` to select it.
  * - `press`, `release`: its button; `click` presses and releases it a moment later, and
  *   `doubleClick` clicks twice, quickly, as a double click; two clicks in quick succession on one
- *   element are a double click too.
+ *   element are a double click too. After a click or a release that a wait follows, the pointer
+ *   steps a little aside, as a hand does, about a rem toward the end of what it pressed, staying
+ *   on it, so its cursor doesn't hide what the press changes there, such as a button's spinner;
+ *   `stay` keeps it where it pressed.
  * - `rightClick`: its secondary button pressed and released, which opens a context menu where it
  *   is, as a right click does.
  * - `leave`: it goes off the preview, releasing its button and any key held first.
@@ -46,8 +49,8 @@ export type PointerStep =
   | { wait: number }
   | { to: string; text?: string; x?: number; y?: number; duration?: number }
   | { press: true }
-  | { release: true }
-  | { click: true }
+  | { release: true; stay?: boolean }
+  | { click: true; stay?: boolean }
   | { doubleClick: true }
   | { rightClick: true }
   | { leave: true }
@@ -70,6 +73,8 @@ export interface Aim {
   text?: string;
   x: number;
   y: number;
+  /** Whether it is a step aside from that point, after a press (asideOf). */
+  aside?: boolean;
 }
 
 /**
@@ -112,6 +117,12 @@ const clickHold = 90;
 /** How long a double click waits between its clicks. */
 const doubleClickGap = 110;
 
+/** How long after a release the pointer steps aside, and how long the step takes. */
+const asideAfter = 120;
+const asideTook = 220;
+/** How far it steps aside, in rem, at most. */
+const asideReach = 1;
+
 /*
  * The pace of every animation, brisk: a script's and a timeline's waits are cut to this share of
  * what they are written as, and its moves and typing a little less, so a hand still moves at a
@@ -133,7 +144,20 @@ export function planOf(script: readonly PointerStep[]): Plan {
   let time = 0;
   let at: Aim | null = null;
   let acted = false;
-  for (const step of script) {
+  /**
+   * After a click or a release, where a wait as long as the step follows and the script doesn't
+   * say `stay`, the pointer steps aside over that wait, on what it pressed.
+   */
+  const stepAside = (index: number) => {
+    const step = script[index]!;
+    const next = script[index + 1];
+    if (!at || at.aside || at.text !== undefined || ('stay' in step && step.stay)) return;
+    if (!next || !('wait' in next) || next.wait * waitPace < asideAfter + asideTook) return;
+    const to = { ...at, aside: true };
+    plan.moves.push({ start: time + asideAfter, end: time + asideAfter + asideTook, from: at, to });
+    at = to;
+  };
+  for (const [index, step] of script.entries()) {
     if ('wait' in step) {
       time += acted ? step.wait * waitPace : Math.min(firstWait - time, step.wait * waitPace);
       continue;
@@ -146,11 +170,14 @@ export function planOf(script: readonly PointerStep[]): Plan {
       at = to;
       time += duration;
     } else if ('press' in step) plan.happenings.push({ time, kind: 'press' });
-    else if ('release' in step) plan.happenings.push({ time, kind: 'release' });
-    else if ('click' in step) {
+    else if ('release' in step) {
+      plan.happenings.push({ time, kind: 'release' });
+      stepAside(index);
+    } else if ('click' in step) {
       plan.happenings.push({ time, kind: 'press' });
       time += clickHold;
       plan.happenings.push({ time, kind: 'release' });
+      stepAside(index);
     } else if ('doubleClick' in step) {
       for (const pause of [doubleClickGap, 0]) {
         plan.happenings.push({ time, kind: 'press' });
@@ -275,7 +302,22 @@ function readPoint(scope: Element, aim: Aim) {
   if (!element) return null;
   if (aim.text !== undefined) return textPoint(element, aim.text, aim.x, aim.y);
   const box = element.getBoundingClientRect();
-  return { x: box.left + box.width * aim.x, y: box.top + box.height * aim.y };
+  const point = { x: box.left + box.width * aim.x, y: box.top + box.height * aim.y };
+  return aim.aside ? asideOf(element, box, point) : point;
+}
+
+/**
+ * A step aside from a point of an element: about a rem toward its end, at the scale it is drawn
+ * at, but no further than a few px inside its edge, so the pointer stays on it.
+ */
+function asideOf(element: Element, box: DOMRect, point: { x: number; y: number }) {
+  const own = element instanceof HTMLElement && element.offsetWidth ? element.offsetWidth : 0;
+  const scale = own ? box.width / own : 1;
+  const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+  const end = getComputedStyle(element).direction === 'rtl' ? -1 : 1;
+  const room = end > 0 ? box.right - point.x : point.x - box.left;
+  const step = Math.max(0, Math.min(asideReach * rem * scale, room - 4 * scale));
+  return { x: point.x + end * step, y: point.y };
 }
 
 /** Whether the pointer is over the preview at a time: after a move began and no leave since. */

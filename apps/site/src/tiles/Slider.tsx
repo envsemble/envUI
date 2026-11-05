@@ -12,7 +12,7 @@ const script: PointerStep[] = [
   { to: control, x: 0.4 },
   { wait: 500 },
   { press: true },
-  { to: control, x: 0.85, duration: 900 },
+  { to: control, x: 0.72, duration: 800 },
   { wait: 250 },
   { to: control, x: 0.2, duration: 1100 },
   { wait: 250 },
