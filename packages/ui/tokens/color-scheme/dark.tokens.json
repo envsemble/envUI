@@ -200,7 +200,7 @@
             "$value": "{palette.blue.12}"
           },
           "pressed": {
-            "$value": "{palette.blue.6}"
+            "$value": "{palette.blue.10}"
           }
         },
         "strong": {
@@ -359,7 +359,7 @@
             "$value": "{palette.red.25}"
           },
           "pressed": {
-            "$value": "{palette.red.15}"
+            "$value": "{palette.red.20}"
           }
         },
         "muted": {
@@ -446,7 +446,7 @@
             "$value": "{palette.purple.12}"
           },
           "pressed": {
-            "$value": "{palette.purple.6}"
+            "$value": "{palette.purple.10}"
           }
         },
         "strong": {
