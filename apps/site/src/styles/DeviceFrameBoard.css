@@ -1,0 +1,91 @@
+/* The demo board of device frames (figures/DeviceFrameBoard.tsx), on the development server only. */
+.site-board {
+  display: grid;
+  gap: var(--env-space-8);
+  box-sizing: border-box;
+  min-block-size: 100vh;
+  padding: 3rem;
+  background-color: var(--env-color-bg-page);
+  color: var(--env-color-fg-default);
+}
+
+/* The cards: a label, today's card and one for each option, in a row. */
+.site-board-cards {
+  display: grid;
+  grid-template-columns: 9rem repeat(4, minmax(0, 18rem));
+  gap: var(--env-space-6) var(--env-space-5);
+  align-items: start;
+}
+
+.site-board-card-row {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+  align-items: start;
+}
+
+.site-board-cell {
+  min-inline-size: 0;
+}
+
+/* A card of the gallery's: 16:9, a scene's 4:3. */
+.site-board-card.site-board-card {
+  aspect-ratio: 16 / 9;
+  max-block-size: none;
+}
+
+.site-board-card.site-board-scene {
+  aspect-ratio: 4 / 3;
+}
+
+.site-board-today.site-board-today {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* A page figure's: as wide as a page's column shows, 16:10, inset further. */
+.site-board-figures {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--env-space-6) var(--env-space-5);
+}
+
+.site-board-figure.site-board-figure {
+  --site-device-inset: 1.75rem;
+  aspect-ratio: 16 / 10;
+  max-block-size: none;
+}
+
+/* Today's figure is as tall as its example, as on a page. */
+.site-board-today-figure {
+  align-content: center;
+}
+
+/* The options compared: light and dark side by side, each option a row of a figure and a card. */
+.site-board-compare {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--env-space-5);
+}
+
+.site-board-compare-column {
+  display: grid;
+  gap: var(--env-space-5);
+  align-content: start;
+  padding: var(--env-space-6);
+  border-radius: var(--env-radius-surface);
+  background-color: var(--env-color-bg-page);
+  color: var(--env-color-fg-default);
+}
+
+.site-board-compare-row > .site-board-figure {
+  flex: 1.7 1 0;
+}
+
+.site-board-compare-row > .site-board-card {
+  flex: 1 1 0;
+}
+
+/* What a cell shows is as wide as it. */
+.site-board-cell > * {
+  align-self: stretch;
+}
