@@ -210,7 +210,7 @@ function ProjectsTable({ onOpen, openId }: { onOpen: (id: string) => void; openI
         items={owners}
         value={owner}
         onValueChange={(value: string[]) => setOwner(value)}
-        style={wide ? { inlineSize: '14rem' } : undefined}
+        style={wide ? { inlineSize: '12rem' } : undefined}
       />
     </>
   );
@@ -230,16 +230,17 @@ function ProjectsTable({ onOpen, openId }: { onOpen: (id: string) => void; openI
 
   return (
     <Column ref={root} gap={4}>
-      {/* The filters: the search, a Select, a multiple Combobox and the view. Narrower than a
-          medium window, measured on the table's own width, they move into a sheet and the search
-          stays in view, as the filtering pattern does. */}
-      <Row wrap={wide} align="center" gap={3}>
+      {/* The filters: the search, a Select, a multiple Combobox and the view, on one row, the
+          search taking the room left. Narrower than a medium window, measured on the table's own
+          width, they move into a sheet and the search stays in view, as the filtering pattern
+          does. */}
+      <Row align="center" gap={3}>
         {/* Layout glue: SearchField has no width of its own in a row. */}
         <SearchField
           label="Search projects"
           placeholder="Search projects"
           size="sm"
-          style={wide ? { inlineSize: '16rem' } : { flex: 1 }}
+          style={{ flex: '1 1 10rem', minInlineSize: 0, maxInlineSize: '18rem' }}
           value={query}
           onValueChange={setQuery}
         />
@@ -274,8 +275,9 @@ function ProjectsTable({ onOpen, openId }: { onOpen: (id: string) => void; openI
           </Sheet>
         )}
       </Row>
-      {/* The filters in use, as tokens that remove themselves. Finding: no chip component; a
-          token is a small secondary Button with a close icon, as the filtering pattern says. */}
+      {/* The filters in use that no control above shows, as tokens that remove themselves: the
+          owner shows in its Combobox, so it takes no token. Finding: no chip component; a token is
+          a small secondary Button with a close icon, as the filtering pattern says. */}
       <Row wrap align="center" gap={2} role="group" aria-label="Filters in use">
         <Button
           variant="secondary"
@@ -284,14 +286,6 @@ function ProjectsTable({ onOpen, openId }: { onOpen: (id: string) => void; openI
           aria-label="Remove filter Environment: Production, Staging"
         >
           Environment: Production, Staging
-        </Button>
-        <Button
-          variant="secondary"
-          size="sm"
-          endIcon={<IconClose />}
-          aria-label="Remove filter Owner: Priya Shah"
-        >
-          Owner: Priya Shah
         </Button>
         <Button variant="text" size="sm">
           Clear filters
@@ -328,29 +322,56 @@ function ProjectsTable({ onOpen, openId }: { onOpen: (id: string) => void; openI
                   />
                 )}
               </Row>
-              <Toolbar.Root aria-label="Selected projects" size="sm">
-                <Toolbar.Button
-                  icon={<IconRocketLaunch />}
-                  label={`Deploy ${projectCount(selected.length)}`}
-                />
-                <Toolbar.Button
-                  icon={<IconDownload />}
-                  label={`Export ${projectCount(selected.length)}`}
-                />
-                <Toolbar.Button
-                  icon={<IconArchive />}
-                  label={`Archive ${projectCount(selected.length)}`}
-                  onClick={() => {
-                    toast.show({ message: `${projectCount(selected.length)} archived.` });
-                    setSelected([]);
-                  }}
-                />
-                <Toolbar.Separator />
-                <Toolbar.Button
-                  icon={<IconDelete />}
-                  label={`Delete ${projectCount(selected.length)}…`}
-                />
-              </Toolbar.Root>
+              {/* On a desktop the actions are labelled buttons; on a phone, where the bar keeps one
+                  row, a toolbar of icons named by tooltips. */}
+              {wide ? (
+                <Row role="group" aria-label="Selected projects" align="center" gap={1}>
+                  <Button variant="ghost" size="sm" startIcon={<IconRocketLaunch />}>
+                    Deploy
+                  </Button>
+                  <Button variant="ghost" size="sm" startIcon={<IconDownload />}>
+                    Export
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    startIcon={<IconArchive />}
+                    onClick={() => {
+                      toast.show({ message: `${projectCount(selected.length)} archived.` });
+                      setSelected([]);
+                    }}
+                  >
+                    Archive
+                  </Button>
+                  <Button variant="ghost" tone="danger" size="sm" startIcon={<IconDelete />}>
+                    Delete…
+                  </Button>
+                </Row>
+              ) : (
+                <Toolbar.Root aria-label="Selected projects" size="sm">
+                  <Toolbar.Button
+                    icon={<IconRocketLaunch />}
+                    label={`Deploy ${projectCount(selected.length)}`}
+                  />
+                  <Toolbar.Button
+                    icon={<IconDownload />}
+                    label={`Export ${projectCount(selected.length)}`}
+                  />
+                  <Toolbar.Button
+                    icon={<IconArchive />}
+                    label={`Archive ${projectCount(selected.length)}`}
+                    onClick={() => {
+                      toast.show({ message: `${projectCount(selected.length)} archived.` });
+                      setSelected([]);
+                    }}
+                  />
+                  <Toolbar.Separator />
+                  <Toolbar.Button
+                    icon={<IconDelete />}
+                    label={`Delete ${projectCount(selected.length)}…`}
+                  />
+                </Toolbar.Root>
+              )}
               {wide && (
                 <Button variant="text" size="sm" onClick={() => setSelected([])}>
                   Clear selection
