@@ -111,8 +111,12 @@
     block-size: var(--env-icon-size);
     object-fit: contain;
   }
+  /* The chosen option's icon or avatar takes an avatar's small size, large enough for its initials,
+     where the field has room for it below the floated label; a shorter field, such as a small one
+     at the compact scale, keeps it smaller, an avatar its color alone. */
   .env-combobox .env-combobox-value-icon {
-    --env-combobox-start-size: 1.25rem;
+    --env-combobox-start-size: min(var(--env-picture-size-sm), var(--env-field-height) - 0.375rem);
+    margin-block: calc((var(--env-combobox-row) - var(--env-combobox-start-size)) / 2);
   }
 
   /* Color properties: a chip's colors, which an application sets on the chips through its own CSS,
@@ -177,8 +181,8 @@
 
   /* The popup: at most 20 rem tall, where the options scroll. */
   .env-combobox-popup {
-    /* The rows' leading content is as large as an avatar's slot. */
-    --env-list-row-icon-size: 1.25rem;
+    /* The rows' leading content is an avatar's small size, large enough for its initials. */
+    --env-list-row-icon-size: var(--env-picture-size-sm);
     width: max-content;
     min-width: min(var(--anchor-width), var(--available-width));
     max-width: min(22rem, var(--available-width));
@@ -217,7 +221,7 @@
     font-weight: var(--env-font-weight-medium);
   }
   .env-combobox-popup .env-combobox-start {
-    --env-combobox-start-size: 1.25rem;
+    --env-combobox-start-size: var(--env-picture-size-sm);
   }
   .env-combobox-group-label {
     padding-block: var(--env-popup-padding) calc(0.1 * var(--env-control-height-md));

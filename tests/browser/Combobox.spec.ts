@@ -43,7 +43,9 @@ test('typing filters by label and description, ignoring case and accents, and En
   const list = page.getByRole('listbox');
   await expect(list).toBeVisible();
   await expect(author).toHaveAttribute('aria-expanded', 'true');
-  await expect(list.getByRole('option')).toHaveText(['Sam Leesam.lee@example.com']);
+  await expect(list.getByRole('option').locator('.env-list-row-text')).toHaveText([
+    'Sam Leesam.lee@example.com',
+  ]);
   // The description is announced as the option's description, not as part of its name.
   const sam = list.getByRole('option', { name: 'Sam Lee', exact: true });
   await expect(sam).toHaveAccessibleDescription('sam.lee@example.com');
@@ -57,9 +59,13 @@ test('typing filters by label and description, ignoring case and accents, and En
   await expect(author).toBeFocused();
 
   await author.fill('emile');
-  await expect(page.getByRole('option')).toHaveText(['Émile Durandemile.durand@example.com']);
+  await expect(page.getByRole('option').locator('.env-list-row-text')).toHaveText([
+    'Émile Durandemile.durand@example.com',
+  ]);
   await author.fill('quinn.harper@');
-  await expect(page.getByRole('option')).toHaveText(['Quinn Harperquinn.harper@example.com']);
+  await expect(page.getByRole('option').locator('.env-list-row-text')).toHaveText([
+    'Quinn Harperquinn.harper@example.com',
+  ]);
   await author.fill('nobody here');
   await expect(page.locator('.env-combobox-empty')).toHaveText('No matches');
   await expect(page.locator('.env-combobox-empty')).toHaveAttribute('role', 'status');
@@ -339,7 +345,9 @@ test('a server search shows its loading state, highlights the first result and k
   ).toBe(true);
   await expect(page.locator('.env-combobox-status .env-spinner')).toBeVisible();
   // The results arrive after typing; the first is highlighted, so Enter chooses it.
-  await expect(page.getByRole('option')).toHaveText(['Morgan Diazmorgan.diaz@example.com']);
+  await expect(page.getByRole('option').locator('.env-list-row-text')).toHaveText([
+    'Morgan Diazmorgan.diaz@example.com',
+  ]);
   await expect.poll(() => highlighted(page)).toEqual(['Morgan Diaz']);
   await expect(page.locator('.env-combobox-status')).toHaveText('');
   await page.keyboard.press('Enter');
@@ -349,7 +357,9 @@ test('a server search shows its loading state, highlights the first result and k
     .toEqual({ chosen: 'morgan-diaz', chosenLabel: 'Morgan Diaz', queries: ['m', 'mo', ''] });
   // New results without the chosen option keep its label in the field.
   await contact.fill('ri');
-  await expect(page.getByRole('option')).toHaveText(['Riley Chenriley.chen@example.com']);
+  await expect(page.getByRole('option').locator('.env-list-row-text')).toHaveText([
+    'Riley Chenriley.chen@example.com',
+  ]);
   await page.keyboard.press('Escape');
   await expect(page.getByRole('listbox')).toHaveCount(0);
   await expect(contact).toHaveValue('Morgan Diaz');
@@ -663,13 +673,17 @@ test('a server search ends its query with a choice or when the label returns, so
   const state = async () => JSON.parse((await output.textContent())!);
   await contact.click();
   await contact.pressSequentially('mo');
-  await expect(page.getByRole('option')).toHaveText(['Morgan Diazmorgan.diaz@example.com']);
+  await expect(page.getByRole('option').locator('.env-list-row-text')).toHaveText([
+    'Morgan Diazmorgan.diaz@example.com',
+  ]);
   await page.keyboard.press('Enter');
   await expect(contact).toHaveValue('Morgan Diaz');
   // The chosen label is no query: the application hears the query end.
   await expect.poll(async () => (await state()).queries.at(-1)).toBe('');
   await contact.fill('ri');
-  await expect(page.getByRole('option')).toHaveText(['Riley Chenriley.chen@example.com']);
+  await expect(page.getByRole('option').locator('.env-list-row-text')).toHaveText([
+    'Riley Chenriley.chen@example.com',
+  ]);
   await page.keyboard.press('Escape');
   await expect(page.getByRole('listbox')).toHaveCount(0);
   await expect(contact).toHaveValue('Morgan Diaz');
