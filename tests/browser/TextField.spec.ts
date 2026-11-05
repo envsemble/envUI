@@ -178,7 +178,7 @@ test('a long prefix is cut short so the value keeps its room', async ({ page }) 
   expect(narrow.width).toBeGreaterThanOrEqual(95);
 });
 
-test('a quiet field is only its text at rest, takes a soft fill on hover and the accent frame on focus, and clears its placeholder once focused', async ({
+test('a quiet field has a faint fill at rest, the neutral fill on hover and the accent frame on focus, and clears its placeholder once focused', async ({
   page,
 }) => {
   await open(page, affixes);
@@ -200,16 +200,16 @@ test('a quiet field is only its text at rest, takes a soft fill on hover and the
     await page.mouse.move(0, 0);
     const rest = await look();
     expect(rest.border).toBe('rgba(0, 0, 0, 0)');
-    expect(rest.fill).toBe('rgba(0, 0, 0, 0)');
+    expect(rest.fill).not.toBe('rgba(0, 0, 0, 0)');
     expect(rest.placeholder).not.toBe('rgba(0, 0, 0, 0)');
     await field.hover();
-    await expect.poll(async () => (await look()).fill).not.toBe('rgba(0, 0, 0, 0)');
+    await expect.poll(async () => (await look()).fill).not.toBe(rest.fill);
     expect((await look()).border).toBe('rgba(0, 0, 0, 0)');
     await field.focus();
     await page.mouse.move(0, 0);
     await expect.poll(async () => (await look()).placeholder).toBe('rgba(0, 0, 0, 0)');
-    // Focus reads as on an outline field: the accent frame, not the fill of the pointer.
-    await expect.poll(async () => (await look()).fill).toBe('rgba(0, 0, 0, 0)');
+    // Focus reads as on an outline field: the accent frame over the rest fill, not the pointer's.
+    await expect.poll(async () => (await look()).fill).toBe(rest.fill);
     expect((await look()).border).not.toBe('rgba(0, 0, 0, 0)');
     await field.blur();
   }

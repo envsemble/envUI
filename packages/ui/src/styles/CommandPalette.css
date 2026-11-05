@@ -66,6 +66,8 @@
     /* Its focus is its own ring, below, so the field's focus frame stays a hairline in its edge. */
     --env-text-field-ghost-focus-edge: transparent;
     --env-text-field-ghost-focus-frame: var(--env-control-border-width);
+    /* A pill, which its focus ring below follows, rather than the fields' rounded rectangle. */
+    --env-text-field-ghost-corner: var(--env-radius-full);
     /* Where the options' icons sit, inside the control's border. */
     --env-text-field-start-inset: calc(
       var(--env-popup-row-padding-inline) - var(--env-control-border-width)

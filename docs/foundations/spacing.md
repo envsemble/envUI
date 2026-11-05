@@ -226,16 +226,16 @@ Within a scale, `size` picks one of three control heights for a deliberate local
 
 Inside a Theme these tokens follow the theme, its scale and the reader's text size. Their values in each scale are under [Sizes in each scale](#sizes-in-each-scale), and every value is on the Design tokens page of the Docs.
 
-| Token                                                             | Holds                                                                                                                                                            |
-| ----------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--env-space-1` … `--env-space-9`                                 | The spacing scale                                                                                                                                                |
-| `--env-radius-xs`                                                 | 0.25 rem: small marks, checkboxes and color swatches                                                                                                             |
-| `--env-radius-sm`                                                 | Inner rows, important actions and thumbnails                                                                                                                     |
-| `--env-radius-lg`                                                 | Alerts, toasts, fields, text areas, tables and drop zones; a single-line field's corner is no more than a third of its height                                    |
-| `--env-radius-surface`                                            | Panes, cards, dialogs, sheets and the outside of a row group                                                                                                     |
-| `--env-radius-full`                                               | Rounded ends: buttons, ghost fields, navigation items, badges; half the tallest single-line control, 1.5 rem at most, so a taller element is a rounded rectangle |
-| `--env-control-height`, `--env-control-height-sm` / `-md` / `-lg` | Control heights, to line up with                                                                                                                                 |
-| `--env-control-icon-size`                                         | 1 rem: the icon inside controls                                                                                                                                  |
+| Token                                                             | Holds                                                                                                                                              |
+| ----------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--env-space-1` … `--env-space-9`                                 | The spacing scale                                                                                                                                  |
+| `--env-radius-xs`                                                 | 0.25 rem: small marks, checkboxes and color swatches                                                                                               |
+| `--env-radius-sm`                                                 | Inner rows, important actions and thumbnails                                                                                                       |
+| `--env-radius-lg`                                                 | Alerts, toasts, fields, text areas, tables and drop zones; a single-line field's corner is no more than a third of its height                      |
+| `--env-radius-surface`                                            | Panes, cards, dialogs, sheets and the outside of a row group                                                                                       |
+| `--env-radius-full`                                               | Rounded ends: buttons, navigation items, badges; half the tallest single-line control, 1.5 rem at most, so a taller element is a rounded rectangle |
+| `--env-control-height`, `--env-control-height-sm` / `-md` / `-lg` | Control heights, to line up with                                                                                                                   |
+| `--env-control-icon-size`                                         | 1 rem: the icon inside controls                                                                                                                    |
 
 #### Corners by what they are
 
@@ -245,7 +245,7 @@ The catalogue shows four kinds of corner; small marks are a fifth, for code. The
 | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
 | Surfaces         | `--env-radius-surface`: panes, cards, dialogs, sheets and the outside of a row group; popups take a smaller corner, concentric with their rows  |
 | Inside a surface | `--env-radius-lg` for alerts, toasts, fields, tables, text areas and drop zones; `--env-radius-sm` for list rows, menu items, tabs and tooltips |
-| Fully rounded    | `--env-radius-full`: buttons, ghost fields, badges, switches, segmented controls and navigation items                                           |
+| Fully rounded    | `--env-radius-full`: buttons, badges, switches, segmented controls and navigation items                                                         |
 | Circles          | `50%`: avatars and icon buttons, which are always square                                                                                        |
 | Small marks      | `--env-radius-xs`: checkboxes and color swatches, which read as boxes                                                                           |
 
