@@ -377,9 +377,11 @@ test("the overview's hero says what envUI is, leads to setting it up and gives t
   await expect(hero.locator('.catalogue-overview-lede')).toContainText('A React design system');
   // The install command names packages/ui/package.json's version, as docs/setup.md does, and
   // copies; the catalogue's counts sit under it.
-  await expect(hero.locator('.catalogue-overview-install code')).toHaveText(
-    `npm install --save-exact @envsemble/envui@${version}`,
-  );
+  const pinned = hero.locator('.catalogue-overview-install-pinned');
+  const short = hero.locator('.catalogue-overview-install-short');
+  await expect(pinned).toHaveText(`npm install --save-exact @envsemble/envui@${version}`);
+  await expect(pinned).toBeVisible();
+  await expect(short).toBeHidden();
   await expect(hero.getByRole('button', { name: 'Copy install command' })).toBeVisible();
   await expect(hero.locator('.catalogue-overview-facts')).toContainText(
     `${componentDocuments.filter(({ id }) => id !== 'field').length} components`,
@@ -387,6 +389,13 @@ test("the overview's hero says what envUI is, leads to setting it up and gives t
   // One way on of its own, to setting envUI up; the sidebar and the Explore cards lead elsewhere.
   await expect(hero.getByRole('link')).toHaveText(['Get started']);
   await expect(hero.getByRole('link', { name: 'Get started' })).toHaveAttribute('href', '/docs');
+  // A phone shows the short command whole, rather than the pinned one cut mid-version.
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(short).toHaveText('npm i @envsemble/envui');
+  await expect(short).toBeVisible();
+  await expect(pinned).toBeHidden();
+  const code = hero.locator('.catalogue-overview-install code');
+  expect(await code.evaluate((element) => element.scrollWidth - element.clientWidth)).toBe(0);
 });
 
 test("a catalogue page's banner reads from the start under its breadcrumbs, its picture hidden", async ({
