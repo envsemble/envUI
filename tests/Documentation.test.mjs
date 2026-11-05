@@ -358,6 +358,15 @@ test('the build fails a page that is not in the one-file structure', async () =>
         '\n## Variants\n\nOne size.\n',
       /"## Variants" must come before "## Changelog"/,
     );
+    // The changelog runs from the newest version, a release after its prereleases.
+    await rejects(
+      frontmatter +
+        body.replace(
+          '- **0.1.0**: Switch.',
+          '- **1.0.0-prerelease.6**: Lighter.\n- **1.0.0**: Renamed.\n- **0.1.0**: Switch.',
+        ),
+      /"## Changelog" lists 1\.0\.0 below an older version: list the newest first/,
+    );
     await rejects(
       frontmatter + body.replace(/## Rules[\s\S]*?(?=## Accessibility)/, ''),
       /"## Rules" is required/,

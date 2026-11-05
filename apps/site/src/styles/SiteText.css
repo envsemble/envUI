@@ -138,13 +138,21 @@
 /* A code block in a page's Markdown (Documentation.tsx): the code alone, snug, with its copy
    button in the top end corner and, for a language other than the usual TypeScript and JSX, its
    name beside the button. The code keeps clear of the corner. */
+/* The code keeps clear of its corner, the copy button and any language, on every line: the button
+   is as wide as a small control, and under a coarse pointer as the touch size (Button.css). */
 .site-code-block {
-  --site-code-corner: calc(var(--env-control-height-sm) + var(--env-space-2));
+  --site-code-button: var(--env-control-height-sm);
+  --site-code-corner: calc(var(--site-code-button) + var(--env-space-2));
   position: relative;
   min-inline-size: 0;
 }
 .site-code-block[data-language] {
-  --site-code-corner: calc(var(--env-control-height-sm) + var(--env-space-2) + 3rem);
+  --site-code-corner: calc(var(--site-code-button) + var(--env-space-2) + 3rem);
+}
+@media (pointer: coarse) {
+  .site-code-block {
+    --site-code-button: max(var(--env-control-height-sm), var(--env-control-height-touch));
+  }
 }
 /* It stands on the recessed surface the example stages do, so it parts from the page by its fill,
    as a figure does; high contrast keeps the code theme's own. */

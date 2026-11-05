@@ -218,8 +218,8 @@ The rail has no fill unless its container color sets one.
 
 ## Changelog
 
+- **1.0.0**: The arrow keys follow the text direction, from EnvUIProvider's `dir` or the direction at the tabs; only the tab list takes it, so a panel keeps the direction around it. The tab and panel classes are `env-tabs-tab` and `env-tabs-panel` (were `env-tab` and `env-tab-panel`).
 - **1.0.0-prerelease.6**: The labels of the tabs not selected are a step stronger than the muted text, so a disabled tab stands apart from them.
 - **1.0.0-prerelease.6**: Under the pointer and pressed, a tab shows no fill: its label takes the text color and a faint underline stands where the indicator would, so the indicator alone marks the selected tab.
 - **1.0.0-prerelease.5**: An item takes a `label` and an `icon`, as SegmentedControl's do; `button` is for a control of your own.
 - **1.0.0-prerelease.2**: Tabs look like Material's: text tabs on no fill, whatever their buttons' variants, the selected one in the accent's text color with an indicator under it, so they read differently from SegmentedControl. `--env-tabs-selected-content` and `--env-tabs-indicator` set those colors, and the rail has no fill unless `--env-tabs-container` sets one. The API stays.
-- **1.0.0**: The arrow keys follow the text direction, from EnvUIProvider's `dir` or the direction at the tabs; only the tab list takes it, so a panel keeps the direction around it. The tab and panel classes are `env-tabs-tab` and `env-tabs-panel` (were `env-tab` and `env-tab-panel`).

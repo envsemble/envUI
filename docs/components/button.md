@@ -91,14 +91,14 @@ examples:
 5. **Text**
 6. **Primary, accent**
 
-| Variant         | Tones           | Use for                                                                   |
-| --------------- | --------------- | ------------------------------------------------------------------------- |
-| Primary         | Neutral, danger | The main action of a group. One per group.                                |
-| Secondary       | Neutral         | Other actions.                                                            |
-| Outline         | Neutral, danger | Other actions on panes, dialogs and rows.                                 |
-| Ghost           | Neutral, danger | An application's chrome, such as a toolbar.                               |
-| Text            | Neutral, danger | A link-like action, underlined where needed.                              |
-| Primary, accent | Accent          | The main action, where it must stand apart from the brand blue around it. |
+| Variant         | Tones                        | Use for                                                                   |
+| --------------- | ---------------------------- | ------------------------------------------------------------------------- |
+| Primary         | Neutral (brand blue), danger | The main action of a group. One per group.                                |
+| Secondary       | Neutral                      | Other actions.                                                            |
+| Outline         | Neutral, danger              | Other actions on panes, dialogs and rows.                                 |
+| Ghost           | Neutral, danger              | An application's chrome, such as a toolbar.                               |
+| Text            | Neutral (link blue), danger  | A link-like action, underlined where needed.                              |
+| Primary, accent | Accent                       | The main action, where it must stand apart from the brand blue around it. |
 
 ### Tones
 
@@ -361,6 +361,7 @@ A wrapper of your own that passes a variant and a tone on types them as Button d
 
 ## Changelog
 
+- **1.0.0**: `end`, a quiet slot at the far end for a shortcut's keys, in the button's content color, which the search trigger pattern uses. IconButton is the one icon-only button, and takes `href`: `Button iconOnly` is gone, and CloseButton is an IconButton with the Close cross. `variant` is `primary`, `secondary`, `outline`, `ghost` or `text`, and `tone` is `neutral`, `accent` or `danger`: `important` is `variant="primary" tone="accent"`, `destructive` is `variant="primary" tone="danger"`, `outlined` is `outline` and `quiet` is `ghost`. Outline, ghost and text buttons take the danger tone. `fullWidth`. Buttons take the variant their container gives where they set none. The page is `button`, after the component, and Link has a page of its own. CopyButton takes `write`, a clipboard writer of the application's own. A Badge or DiffStat inside a button takes its colors through their custom properties, which the button sets.
 - **1.0.0-prerelease.6**: A label keeps to one line and its button to its width, so a row short of room wraps whole buttons, not their words; a `fullWidth` button and a ButtonGroup's still wrap their labels. A vertical group of outline buttons shares straight edges, round only at the column's outer corners.
 - **1.0.0-prerelease.6**: An outline button's label and icon take the text color, `--env-color-fg-default`, rather than the brand blue, so beside a primary button it reads as the other choice; a text button keeps the link blue. Ghost, outline and text icon buttons in the danger tone lay a faint tint of the danger color on hover and press, from `--env-color-bg-danger-subtle-hover`, rather than the neutral grey.
 - **1.0.0-prerelease.6**: Every pending button, an icon button's included, shows a spinner of an icon's size centred over its transparent label, in the label's color, and keeps its width and name.
@@ -369,4 +370,3 @@ A wrapper of your own that passes a variant and a tone on types them as Button d
 - **1.0.0-prerelease.6**: An accent primary is a pill like every other button, rather than having square corners.
 - **1.0.0-prerelease.6**: A ButtonGroup's buttons meet with a hairline between them and small inner corners, so the group reads as one control with pill ends; outline buttons in a group share their edge. A group that mixes an outline, ghost or text button with another variant keeps its buttons apart as whole pills.
 - **1.0.0-prerelease.5**: An outline button is an edge with no fill at rest, the same on the page, a pane, a card or a popup; hover and press lay a state layer over the surface beneath it.
-- **1.0.0**: `end`, a quiet slot at the far end for a shortcut's keys, in the button's content color, which the search trigger pattern uses. IconButton is the one icon-only button, and takes `href`: `Button iconOnly` is gone, and CloseButton is an IconButton with the Close cross. `variant` is `primary`, `secondary`, `outline`, `ghost` or `text`, and `tone` is `neutral`, `accent` or `danger`: `important` is `variant="primary" tone="accent"`, `destructive` is `variant="primary" tone="danger"`, `outlined` is `outline` and `quiet` is `ghost`. Outline, ghost and text buttons take the danger tone. `fullWidth`. Buttons take the variant their container gives where they set none. The page is `button`, after the component, and Link has a page of its own. CopyButton takes `write`, a clipboard writer of the application's own. A Badge or DiffStat inside a button takes its colors through their custom properties, which the button sets.

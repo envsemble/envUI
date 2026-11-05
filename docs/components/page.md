@@ -293,5 +293,5 @@ The header is a `div`, no landmark, `env-page-header`, with the breadcrumbs, `en
 
 ## Changelog
 
-- **1.0.0-prerelease.3**: PageHeader is documented on this page, `page`, which its page's address opens.
 - **1.0.0**: Page, with the widths `sm`, `md`, `lg` and `full`, `header`, `gutter`, `name` and `render`; invisible structure whose gutters follow the window class of the region it sits in, and the `env-page` container. PageHeader, with `title`, `headingLevel`, `description`, `breadcrumbs`, `start`, `meta`, `actions`, `toolbar`, `sticky` and `controlSize`.
+- **1.0.0-prerelease.3**: PageHeader is documented on this page, `page`, which its page's address opens.

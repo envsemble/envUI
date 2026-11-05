@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ComponentProps } from 'react';
+import { useEffect, useRef, useState, type ComponentProps, type PointerEvent } from 'react';
 import {
   Badge,
   Button,
@@ -270,7 +270,24 @@ function SiteDrawer({
   ...props
 }: { area: Area; inSheet: boolean } & ComponentProps<typeof NavigationDrawer>) {
   const drawerWidth = useDrawerWidth(area, inSheet);
-  return <NavigationDrawer {...props} {...drawerWidth} />;
+  // The sheet's drawer isn't resizable, so its labels would wrap, breaking a long name such as
+  // ThemeMenuRadioGroup mid-word: they keep to one line there too (Shell.css), and one cut short
+  // with an ellipsis gives its full name as its title as the pointer reaches it.
+  return (
+    <NavigationDrawer
+      {...props}
+      {...drawerWidth}
+      onPointerOver={inSheet ? titleCutLabel : undefined}
+    />
+  );
+}
+
+/** Gives a drawer label cut short with an ellipsis its full name as its title. */
+function titleCutLabel(event: PointerEvent<HTMLElement>) {
+  const label = (event.target as Element).closest<HTMLElement>('.env-navigation-drawer-label');
+  if (!label) return;
+  if (label.scrollWidth > label.clientWidth) label.title = label.textContent ?? '';
+  else label.removeAttribute('title');
 }
 
 interface NavigationProps {

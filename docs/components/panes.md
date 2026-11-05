@@ -228,6 +228,6 @@ The parts are the root, `env-panes`, with `data-behavior`, `data-split-at` and `
 
 ## Changelog
 
+- **1.0.0**: Panes, which replaces SplitPane and ListDetail: the supporting and list-detail behaviors, `splitAt` at a window class, a divider in rem, and Panes.Trigger, which opens the supporting sheet.
 - **1.0.0-prerelease.5**: The resized pane's `size`, `defaultSize`, `onSizeChange`, `minSize`, `maxSize` and `persistedSize` are `width`, `defaultWidth`, `onWidthChange`, `minWidth`, `maxWidth` and `persistedWidth`, as on Sheet, and `readPanesSize` is `readPanesWidth`. `defaultOpen` leaves the open state to Panes, and `onOpenChange` receives why. The part props are `Panes.MainProps`, `Panes.DetailProps` and `Panes.ListProps`.
 - **1.0.0-prerelease.5**: The supporting sheet is on a Sheet's fill, `--env-color-bg-default`, rather than `--env-color-bg-raised`, which differ only at high contrast in the light theme.
-- **1.0.0**: Panes, which replaces SplitPane and ListDetail: the supporting and list-detail behaviors, `splitAt` at a window class, a divider in rem, and Panes.Trigger, which opens the supporting sheet.

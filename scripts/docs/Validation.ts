@@ -287,6 +287,38 @@ function accessibilityProblems(tokens) {
   return problems;
 }
 
+/**
+ * A version's place in a changelog: 1.0.0 after 0.7.0, and a release after its prereleases, so
+ * 1.0.0 after 1.0.0-prerelease.6, which comes after 1.0.0-prerelease.5.
+ */
+function versionRank(version: string) {
+  const [release, prerelease] = version.split('-');
+  const numbers = release.split('.').map(Number);
+  return [...numbers, prerelease === undefined ? 1 : 0, Number(prerelease?.split('.').at(-1) ?? 0)];
+}
+
+/** Orders versions from the oldest, as versionRank places them. */
+function compareChangelogVersions(a: string, b: string) {
+  const [x, y] = [versionRank(a), versionRank(b)];
+  for (const [index, part] of x.entries()) if (part !== y[index]) return part - y[index];
+  return 0;
+}
+
+/** What a Changelog's entries get wrong: they run from the newest version to the oldest. */
+function changelogProblems(tokens) {
+  const versions = tokens
+    .filter((token) => token.type === 'list')
+    .flatMap((list) => list.items)
+    .map((item) => /^\*\*([^*]+)\*\*:/.exec(item.text)?.[1])
+    .filter(Boolean);
+  const misplaced = versions.find(
+    (version, index) => index > 0 && compareChangelogVersions(versions[index - 1], version) < 0,
+  );
+  return misplaced
+    ? [`"## Changelog" lists ${misplaced} below an older version: list the newest first`]
+    : [];
+}
+
 /** Problems of any heading: the title is the only `#`, and props are generated. */
 function headingProblems(token) {
   const problems: string[] = [];
@@ -840,6 +872,8 @@ export function readPage(
       problems.push('"## Accessibility" is required, with what envUI and you provide');
     else problems.push(...accessibilityProblems(accessibility.tokens));
   }
+  const changelog = sections.find((item) => item.id === 'changelog');
+  if (changelog) problems.push(...changelogProblems(changelog.tokens));
   if (problems.length)
     throw new Error(
       `${document.path} does not follow the one-file structure (contributing/pages.md):\n  - ${problems.join('\n  - ')}`,

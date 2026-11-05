@@ -241,5 +241,5 @@ The parts are the toolbar, `env-toolbar`; its groups, `env-toolbar-group`; its b
 
 ## Changelog
 
-- **1.0.0-prerelease.4**: `tooltipDelay` on Toolbar.Root sets how long the pointer rests on a button or link before its tooltip opens; 0 shows every name at once.
 - **1.0.0**: Toolbar, on Base UI's Toolbar.
+- **1.0.0-prerelease.4**: `tooltipDelay` on Toolbar.Root sets how long the pointer rests on a button or link before its tooltip opens; 0 shows every name at once.

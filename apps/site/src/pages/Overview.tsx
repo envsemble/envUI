@@ -72,9 +72,14 @@ export function Overview() {
                 Get started
               </Button>
               <span className="catalogue-overview-install">
-                {/* One line, the command the button copies, which scrolls with its end fading
-                    where it doesn't fit (Overview.css), so it is focusable for the keyboard. */}
-                <code tabIndex={0}>{install}</code>
+                {/* The command the button copies, on one line where it fits; where it doesn't, as
+                    on a phone, it wraps before the package's name and its version, never inside
+                    a word (Overview.css). */}
+                <code>
+                  <span>npm install --save-exact</span> <span>{name}</span>
+                  <wbr />
+                  <span>@{version}</span>
+                </code>
                 <CopyButton value={install} variant="ghost" aria-label="Copy install command" />
               </span>
             </Row>

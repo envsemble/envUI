@@ -1,10 +1,13 @@
-import { createContext, use, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { createContext, Fragment, use, useEffect, useMemo, useState, type ReactNode } from 'react';
 import {
   Button,
   IconButton,
-  Menu,
+  Popover,
+  SegmentedControl,
+  Text,
   ThemePreferenceProvider,
   Tooltip,
+  type SegmentedControlItem,
   useThemePreference,
   type ThemeContrast,
   type ThemePreference,
@@ -141,25 +144,56 @@ export function useDisplaySettings() {
   return value;
 }
 
+/** The Display menu's settings, each one choice among a few, in the order they show. */
+const settingItems = {
+  Theme: [
+    { value: 'system', label: 'System' },
+    { value: 'light', label: 'Light' },
+    { value: 'dark', label: 'Dark' },
+  ],
+  Contrast: [
+    { value: 'system', label: 'System' },
+    { value: 'standard', label: 'Standard' },
+    { value: 'high', label: 'High' },
+  ],
+  Scale: [
+    { value: 'system', label: 'System' },
+    { value: 'comfortable', label: 'Comfortable' },
+    { value: 'compact', label: 'Compact' },
+  ],
+  Motion: [
+    { value: 'playing', label: 'Play' },
+    { value: 'paused', label: 'Pause' },
+  ],
+} satisfies Record<string, readonly SegmentedControlItem[]>;
+
 /**
  * The Display menu: the theme, the contrast, the scale and the motion, each stored as it is chosen,
- * four groups of plain choices alike. Motion pauses every animation of the site, the tiles' and the
- * figures', on every page, or plays them again; a figure's own button overrides it for that figure
- * (MotionStage.tsx). iconOnly shows its trigger as an icon, in a narrow window. It opens below its
- * trigger, at the page's top end.
+ * four rows alike, each its name beside a SegmentedControl of its choices, so the whole fits in a
+ * small popover. Motion pauses every animation of the site, the tiles' and the figures', on every
+ * page, or plays them again; a figure's own button overrides it for that figure (MotionStage.tsx).
+ * iconOnly shows its trigger as an icon, in a narrow window. It opens below its trigger, at the
+ * page's top end.
  */
 export function DisplayMenu({ iconOnly = false }: { iconOnly?: boolean }) {
   const { contrast, setContrast, scale, setScale, motionPaused, setMotionPaused } =
     useDisplaySettings();
   const { preference, setPreference } = useThemePreference();
+  const settings: [keyof typeof settingItems, string, (next: string) => void][] = [
+    ['Theme', preference, (next) => setPreference(themes.find((value) => value === next)!)],
+    ['Contrast', contrast, (next) => setContrast(contrasts.find((value) => value === next)!)],
+    ['Scale', scale, (next) => setScale(scales.find((value) => value === next)!)],
+    ['Motion', motionPaused ? 'paused' : 'playing', (next) => setMotionPaused(next === 'paused')],
+  ];
   return (
-    <Menu.Root
+    <Popover
       aria-label="Display"
       side="bottom"
       align="end"
+      width="lg"
       trigger={
         iconOnly ? (
-          // The Tooltip passes the menu button's props and ref on to the IconButton.
+          // The Tooltip passes the popover button's props and ref on to the IconButton.
           <Tooltip content="Display">
             <IconButton variant="ghost" icon={<IconTune />} aria-label="Display" />
           </Tooltip>
@@ -170,66 +204,22 @@ export function DisplayMenu({ iconOnly = false }: { iconOnly?: boolean }) {
         )
       }
     >
-      <Menu.RadioGroup
-        label="Theme"
-        value={preference}
-        onValueChange={(next) => setPreference(themes.find((value) => value === next)!)}
-      >
-        <Menu.RadioItem value="system" closeOnClick={false}>
-          System
-        </Menu.RadioItem>
-        <Menu.RadioItem value="light" closeOnClick={false}>
-          Light
-        </Menu.RadioItem>
-        <Menu.RadioItem value="dark" closeOnClick={false}>
-          Dark
-        </Menu.RadioItem>
-      </Menu.RadioGroup>
-      <Menu.Separator />
-      <Menu.RadioGroup
-        label="Contrast"
-        value={contrast}
-        onValueChange={(next) => setContrast(contrasts.find((value) => value === next)!)}
-      >
-        <Menu.RadioItem value="system" closeOnClick={false}>
-          System
-        </Menu.RadioItem>
-        <Menu.RadioItem value="standard" closeOnClick={false}>
-          Standard
-        </Menu.RadioItem>
-        <Menu.RadioItem value="high" closeOnClick={false}>
-          High
-        </Menu.RadioItem>
-      </Menu.RadioGroup>
-      <Menu.Separator />
-      <Menu.RadioGroup
-        label="Scale"
-        value={scale}
-        onValueChange={(next) => setScale(scales.find((value) => value === next)!)}
-      >
-        <Menu.RadioItem value="system" closeOnClick={false}>
-          System
-        </Menu.RadioItem>
-        <Menu.RadioItem value="comfortable" closeOnClick={false}>
-          Comfortable
-        </Menu.RadioItem>
-        <Menu.RadioItem value="compact" closeOnClick={false}>
-          Compact
-        </Menu.RadioItem>
-      </Menu.RadioGroup>
-      <Menu.Separator />
-      <Menu.RadioGroup
-        label="Motion"
-        value={motionPaused ? 'paused' : 'playing'}
-        onValueChange={(next) => setMotionPaused(next === 'paused')}
-      >
-        <Menu.RadioItem value="playing" closeOnClick={false}>
-          Play
-        </Menu.RadioItem>
-        <Menu.RadioItem value="paused" closeOnClick={false}>
-          Pause
-        </Menu.RadioItem>
-      </Menu.RadioGroup>
-    </Menu.Root>
+      <div className="site-display-settings">
+        {settings.map(([name, value, onValueChange]) => (
+          <Fragment key={name}>
+            <Text variant="body-sm" emphasis="muted" render={<span aria-hidden="true" />}>
+              {name}
+            </Text>
+            <SegmentedControl
+              aria-label={name}
+              size="sm"
+              items={settingItems[name]}
+              value={value}
+              onValueChange={onValueChange}
+            />
+          </Fragment>
+        ))}
+      </div>
+    </Popover>
   );
 }

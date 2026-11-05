@@ -158,5 +158,5 @@ RelativeTime is a native `<time>`, `env-relative-time`, whose `dateTime` holds t
 
 ## Changelog
 
-- **1.0.0-prerelease.6**: The dotted underline of a time with a tooltip shows only under the pointer and with keyboard focus, everywhere rather than only in a Table.
 - **1.0.0**: RelativeTime's time, which shows the full date in a tooltip, takes the quiet dotted underline, `env-hover-detail`, that marks text with more on hover. RelativeTime takes EnvUIProvider's `locale` and `messages.relativeTime.now`. `formatRelativeTime` runs in React Server Components; RelativeTime is a client component.
+- **1.0.0-prerelease.6**: The dotted underline of a time with a tooltip shows only under the pointer and with keyboard focus, everywhere rather than only in a Table.
