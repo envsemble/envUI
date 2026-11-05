@@ -2,13 +2,11 @@ import { Button, PageHeader } from '@envsemble/envui';
 import { IconAdd } from '@envsemble/envui/icons/Add';
 import { usePointer, type PointerStep } from '../../motion/Motion';
 
-/** The page's action reached and pressed. */
+/** The pointer on the page's action, which takes its hover fill. */
 const script: PointerStep[] = [
   { wait: 300 },
   { to: '.env-page-header .env-button', x: 0.4 },
-  { wait: 500 },
-  { click: true },
-  { wait: 900 },
+  { wait: 1400 },
   { leave: true },
   { wait: 800 },
 ];

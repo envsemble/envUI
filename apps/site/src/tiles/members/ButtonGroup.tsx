@@ -2,13 +2,11 @@ import { Button, ButtonGroup, Column, IconButton } from '@envsemble/envui';
 import { IconExpandMore } from '@envsemble/envui/icons/ExpandMore';
 import { usePointer, type PointerStep } from '../../motion/Motion';
 
-/** Along the connected buttons, Edit pressed; then the split button's menu button reached. */
+/** Along the connected buttons to Edit, then to the split button's menu button. */
 const script: PointerStep[] = [
   { wait: 300 },
   { to: '.env-button-group:first-child > :nth-child(2)' },
-  { wait: 400 },
-  { click: true },
-  { wait: 700 },
+  { wait: 1100 },
   { to: '[aria-label="More publish options"]', duration: 500 },
   { wait: 900 },
   { leave: true },

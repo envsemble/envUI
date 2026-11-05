@@ -2,13 +2,11 @@ import type { CSSProperties } from 'react';
 import { Button, Card } from '@envsemble/envui';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
-/** The card's action reached and pressed, then left. */
+/** The pointer on the card's action, which takes its hover fill, then left. */
 const script: PointerStep[] = [
   { wait: 400 },
   { to: '.env-card .env-button', x: 0.45 },
-  { wait: 600 },
-  { click: true },
-  { wait: 1200 },
+  { wait: 1800 },
   { leave: true },
   { wait: 800 },
 ];
