@@ -525,20 +525,14 @@ function RadioGroup({
   );
 }
 
-/**
- * The mark of a chosen item: a dot for a radio item, as on a Radio, and a check for a checkbox
- * item; the slot keeps labels aligned.
- */
+/** The check mark of a checked radio or checkbox item; the slot keeps labels aligned. */
 function CheckIndicator({ kind }: { kind: 'radio' | 'checkbox' }) {
+  const Indicator = kind === 'radio' ? BaseMenu.RadioItemIndicator : BaseMenu.CheckboxItemIndicator;
   return (
     <span className="env-menu-item-indicator-slot" aria-hidden="true">
-      {kind === 'radio' ? (
-        <BaseMenu.RadioItemIndicator className="env-menu-item-indicator" data-shape="dot" />
-      ) : (
-        <BaseMenu.CheckboxItemIndicator className="env-icon env-menu-item-indicator">
-          <IconCheck />
-        </BaseMenu.CheckboxItemIndicator>
-      )}
+      <Indicator className="env-icon env-menu-item-indicator">
+        <IconCheck />
+      </Indicator>
     </span>
   );
 }

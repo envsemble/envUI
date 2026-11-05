@@ -2835,11 +2835,11 @@
         },
         {
           "class": "env-menu-item-indicator",
-          "description": "The mark of a chosen item: a dot, data-shape=dot, on a radio item and a check on a checkbox item."
+          "description": "The check of a chosen item."
         },
         {
           "class": "env-menu-item-indicator-slot",
-          "description": "The place for a chosen item's mark."
+          "description": "The place for a chosen item's check."
         },
         {
           "class": "env-menu-item-label",
@@ -2889,6 +2889,7 @@
           "attribute": "data-highlighted",
           "values": [],
           "parts": [
+            "env-menu-choice",
             "env-menu-item"
           ]
         },
@@ -2905,16 +2906,8 @@
           "attribute": "data-popup-open",
           "values": [],
           "parts": [
+            "env-menu-choice",
             "env-menu-item"
-          ]
-        },
-        {
-          "attribute": "data-shape",
-          "values": [
-            "dot"
-          ],
-          "parts": [
-            "env-menu-item-indicator"
           ]
         },
         {
@@ -6384,6 +6377,13 @@
         },
         {
           "attribute": "data-popup-open",
+          "values": [],
+          "parts": [
+            "env-list-row"
+          ]
+        },
+        {
+          "attribute": "data-selected",
           "values": [],
           "parts": [
             "env-list-row"

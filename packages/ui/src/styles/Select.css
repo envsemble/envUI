@@ -145,8 +145,8 @@
   }
 
   /* The open list is the menus' frosted popup, with their corners and rows that highlight on hover
-     and keyboard focus, where a check mark and a heavier label show the chosen option. It is at least
-     as wide as its field, wider only for a label that needs it. Options with descriptions let it grow
+     and keyboard focus, where the selection's fill, a check mark and a heavier label show the chosen
+     option. It is at least as wide as its field, wider only for a label that needs it. Options with descriptions let it grow
      to 20 rem, or the field's width where that is more, their descriptions wrapping past it, so a
      short description stays on one line beside a narrow field. */
   .env-select-popup {

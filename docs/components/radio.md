@@ -192,4 +192,4 @@ The parts are the group, `env-radio-group`, with `data-orientation` and its lege
 - **1.0.0-prerelease.6**: Beside a label that wraps or has a description, the radio sits on the middle of its first line rather than across both lines.
 - **1.0.0-prerelease.6**: The group's error shows the error icon, as a field's does.
 - **1.0.0-prerelease.5**: RadioGroup takes `description` and `error`, as a field does, and a controlled `value` of `null` chooses none.
-- **1.0.0-prerelease.5**: The chosen row of a group in rows takes the selection's fill and text, as a selected list row does, rather than the hover fill.
+- **1.0.0-prerelease.5**: The chosen row of a group in rows takes the selection's fill and text, as a selected list row and Select's chosen option do, rather than the hover fill.
