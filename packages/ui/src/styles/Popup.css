@@ -123,6 +123,8 @@
   }
   .env-popup {
     --env-popup-border: var(--env-popup-edge-color);
+    /* Its fill is the muted surface's, so rows on it take another (Surface.css). */
+    --env-surface-muted-ground: ;
     /* The edge of a solid popup; frosted, the hairline of dark, or none. */
     --env-popup-edge: var(--env-popup-solid) var(--env-popup-border);
     box-sizing: border-box;

@@ -20,6 +20,7 @@
      holds takes the fill as the color beneath it. */
   .env-surface.env-dialog {
     --env-surface-color: var(--env-popup-fill);
+    --env-surface-muted-ground: ;
     --env-dialog-edge: var(--env-popup-solid) var(--env-elevation-3-border);
     border-color: var(--env-dialog-edge, var(--env-popup-frosted-edge, transparent));
     box-shadow: var(--env-popup-shadow);

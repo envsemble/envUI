@@ -62,7 +62,7 @@ test('keyboard focus rings a radio side by side, and the whole row of a row radi
     await expect(row).toHaveCSS('outline-style', 'solid');
 });
 
-test('the chosen row takes the selection fill and text, also under the pointer', async ({
+test('the chosen row takes the selection fill, its label the text color, also under the pointer', async ({
   page,
 }) => {
   const role = page.getByRole('group', { name: 'Role' });
@@ -82,14 +82,14 @@ test('the chosen row takes the selection fill and text, also under the pointer',
     const colors = {
       selected: read('--env-color-bg-selected'),
       selectedHover: read('--env-color-bg-selected-hover'),
-      onSelected: read('--env-color-fg-on-selected'),
+      text: read('--env-color-fg-default'),
       muted: read('--env-color-bg-muted'),
     };
     probe.remove();
     return colors;
   });
   await expect(chosen).toHaveCSS('background-color', tokens.selected);
-  await expect(chosen).toHaveCSS('color', tokens.onSelected);
+  await expect(chosen).toHaveCSS('color', tokens.text);
   await expect(other).toHaveCSS('background-color', tokens.muted);
   await chosen.hover();
   await expect(chosen).toHaveCSS('background-color', tokens.selectedHover);

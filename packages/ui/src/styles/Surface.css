@@ -14,6 +14,11 @@
     inherits: false;
   }
 
+  /* The muted-ground switch (below) is off outside any surface. */
+  .env-theme {
+    --env-surface-muted-ground: initial;
+  }
+
   /* Background geometry is independent of content layout and interactive behavior. The surface's
      color, --env-surface-color, is its container: what its contents, such as an avatar group's ring
      or a navigation bar, take as the color beneath them. Unset, the content and outline properties
@@ -25,6 +30,11 @@
     --env-surface-container-default: var(--env-color-bg-default);
     --env-surface-hover: var(--env-color-bg-default-hover);
     --env-surface-pressed: var(--env-color-bg-default-pressed);
+    /* A switch, private, as Theme.css's high-contrast one is: empty on a surface whose color is the
+       muted surface's, the muted and raised ones, a dialog's and a popup's (Dialog.css, Popup.css),
+       and invalid on any other, so what stands on it in the muted surface's own fill, such as a
+       vertical radio group's rows, can take another and keep its shape. */
+    --env-surface-muted-ground: initial;
     --env-surface-color: var(--env-surface-container, var(--env-surface-container-default));
     --env-surface-padding: clamp(1.25rem, 3vw, 1.5rem);
     --env-surface-radius: var(--env-radius-surface);
@@ -38,6 +48,9 @@
     --env-surface-container-default: var(--env-color-bg-muted);
     --env-surface-hover: var(--env-color-bg-muted-hover);
     --env-surface-pressed: var(--env-color-bg-muted-pressed);
+  }
+  .env-surface:where([data-background='muted'], [data-background='raised']) {
+    --env-surface-muted-ground: ;
   }
   .env-surface:where([data-background='page']) {
     --env-surface-container-default: var(--env-color-bg-page);
