@@ -1,17 +1,16 @@
 import { useState } from 'react';
 import { TimePicker } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../motion/Motion';
+import { useHeldView, usePointer, type PointerStep } from '../motion/Motion';
 
 const row = (part: string, value: string) =>
   `.env-time-list-column[data-part="${part}"] .env-time-list-row[data-value="${value}"]`;
 
-/** Opened on 9:30: 8:15 chosen, an hour and then its minutes, and 9:30 again, and closed. */
+/**
+ * Open on 9:30: 8:15 chosen, an hour and then its minutes, and 9:30 again; closed from its field
+ * and opened again, as it began.
+ */
 const script: PointerStep[] = [
   { wait: 400 },
-  { to: '.env-date-picker-trigger', x: 0.4, duration: 500 },
-  { wait: 300 },
-  { click: true },
-  { wait: 800 },
   { to: row('hour', '8') },
   { wait: 300 },
   { click: true },
@@ -32,21 +31,25 @@ const script: PointerStep[] = [
   { wait: 250 },
   { click: true },
   { wait: 900 },
+  { click: true },
+  { wait: 700 },
   { leave: true },
   { wait: 400 },
 ];
 
 /**
- * A time picker's field, 9:30 chosen: whole at its own size at rest, and its hours and minutes
- * below it as it plays. Stopped, it is closed again.
+ * A time picker resting open on 9:30, its hours and minutes under its field, framed from the
+ * field's top down past the chosen time, so as it plays the wheels turn and the popup closes and
+ * opens again in place, and nothing in its tile moves. Stopped, it is open on 9:30 again.
  */
 export default function TimePickerTile() {
   const [value, setValue] = useState<string | null>('09:30');
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
+  useHeldView();
   usePointer(script, {
     onRest: () => {
       setValue('09:30');
-      setOpen(false);
+      setOpen(true);
     },
   });
   return (
