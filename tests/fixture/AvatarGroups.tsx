@@ -12,21 +12,22 @@ import {
 } from '@envsemble/envui';
 import { IconSettings } from '@envsemble/envui/icons/Settings';
 
+/** Person pictures, which pile closer and turn as cards do; initials, below, rest looser. */
 const people = [
-  { id: 'alex', name: 'Alex Morgan' },
-  { id: 'sam', name: 'Sam Lee' },
-  { id: 'priya', name: 'Priya Shah' },
-  { id: 'jordan', name: 'Jordan Rivera' },
-  { id: 'taylor', name: 'Taylor Kim' },
+  { id: 'alex', name: 'Alex Morgan', fallback: 'person' as const },
+  { id: 'sam', name: 'Sam Lee', fallback: 'person' as const },
+  { id: 'priya', name: 'Priya Shah', fallback: 'person' as const },
+  { id: 'jordan', name: 'Jordan Rivera', fallback: 'person' as const },
+  { id: 'taylor', name: 'Taylor Kim', fallback: 'person' as const },
 ];
 /** The same people with the first chosen, whose ring's gap takes the color of the surface below. */
 const chosen = people.map((person, index) => ({ ...person, selected: index === 0 }));
 /** Initials, which a group must leave readable, such as the wide M of AM. */
 const initials = [
-  { id: 'alex', name: 'Alex Morgan', fallback: 'initials' as const },
-  { id: 'sam', name: 'Sam Lee', fallback: 'initials' as const },
-  { id: 'priya', name: 'Priya Shah', fallback: 'initials' as const },
-  { id: 'jordan', name: 'Jordan Kim', fallback: 'initials' as const },
+  { id: 'alex', name: 'Alex Morgan' },
+  { id: 'sam', name: 'Sam Lee' },
+  { id: 'priya', name: 'Priya Shah' },
+  { id: 'jordan', name: 'Jordan Kim' },
 ];
 
 function RecordingLink({ href, onClick, ...props }: LinkComponentProps) {

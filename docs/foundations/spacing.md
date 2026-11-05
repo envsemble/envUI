@@ -257,7 +257,7 @@ At the default 16 px root; every value is a token in rem.
 | ----------------------------------------------------------------- | --------------------- | --------------------- |
 | `--env-control-height-sm` / `-md` / `-lg`                         | 32 / 40 / 48          | 26 / 32 / 38          |
 | `--env-row-height` (menu, Select and Combobox rows)               | 36                    | 28                    |
-| `--env-row-padding-block-xs` / `-sm` / `-md` / `-lg`              | 2 / 4 / 8 / 12        | 2 / 3 / 4 / 6         |
+| `--env-row-padding-block-xs` / `-sm` / `-md` / `-lg`              | 2 / 4 / 8 / 12        | 0 / 2 / 4 / 6         |
 | `--env-space-1` … `--env-space-9`                                 | 4, 8, 12, 16, 24 … 64 | 4, 6, 10, 12, 20 … 52 |
 | `--env-font-size-caption` / `-body-sm` / `-label`                 | 12 / 14 / 14          | 11 / 12 / 13          |
 | `--env-font-size-body` / `-title` / `-headline`                   | 15 / 18 / 22          | 13 / 16 / 20          |

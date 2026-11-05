@@ -235,7 +235,7 @@ test('columns resize the other way in a right-to-left table', async ({ page }) =
   expect(header.width / tableWidth).toBeCloseTo(0.5, 2);
 });
 
-test('links in a selected row are underlined, so color is not all that tells them from its text', async ({
+test('a selected row underlines no link: links show their underline on their own hover and focus', async ({
   page,
 }) => {
   for (const theme of themes) {
@@ -247,8 +247,10 @@ test('links in a selected row are underlined, so color is not all that tells the
       row
         .getByRole('link', { name, exact: true })
         .evaluate((link) => getComputedStyle(link).textDecorationLine);
-    expect(await decoration(selected!, 'Plain link')).toBe('underline');
-    expect(await decoration(selected!, 'Text button link')).toBe('underline');
+    // A Link and a text button that is a link take the cell's text color in every row, and the
+    // row's state never underlines them.
+    expect(await decoration(selected!, 'Plain link')).toBe('none');
+    expect(await decoration(selected!, 'Text button link')).toBe('none');
     // A link styled as a button keeps its look, and rows that aren't selected are unchanged.
     expect(await decoration(selected!, 'Button link')).toBe('none');
     expect(await decoration(other!, 'Plain link')).toBe('none');
@@ -315,21 +317,29 @@ test('a stacking table lists its rows as blocks in a narrow container and keeps 
     await expect(row.getByRole('cell')).toHaveCount(4);
     await expect(row.getByRole('cell', { name: 'Aurora', exact: true })).toBeVisible();
 
-    await expect(row).toHaveCSS('display', 'grid');
+    await expect(row).toHaveCSS('display', 'flex');
     const title = row.getByRole('cell').first();
     await expect(title).toHaveCSS('font-weight', '500');
+    // The first labelled value sits on the title's line, without its label.
     const owner = row.getByRole('cell', { name: 'Aurora', exact: true });
     const ownerLabel = owner.locator('.env-table-cell-label');
     await expect(ownerLabel).toHaveText('Owner');
-    await expect(ownerLabel).toBeVisible();
-    await expect(ownerLabel).toHaveAttribute('aria-hidden', 'true');
-    expect(await paintedContrast(ownerLabel)).toBeGreaterThan(4.5);
-    expect(await paintedContrast(owner.locator('.env-table-cell-content'))).toBeGreaterThan(4.5);
-    // The label and its value share a line; the rows stack below each other.
-    const labelBox = (await ownerLabel.boundingBox())!;
-    const valueBox = (await owner.locator('.env-table-cell-content').boundingBox())!;
-    expect(valueBox.x).toBeGreaterThan(labelBox.x + labelBox.width);
-    expect(Math.abs(valueBox.y - labelBox.y)).toBeLessThan(4);
+    await expect(ownerLabel).toBeHidden();
+    expect(Math.abs((await owner.boundingBox())!.y - (await title.boundingBox())!.y)).toBeLessThan(
+      4,
+    );
+    // The others follow, each under its label.
+    const reviews = row.getByRole('cell').nth(2);
+    const reviewsLabel = reviews.locator('.env-table-cell-label');
+    await expect(reviewsLabel).toHaveText('Reviews');
+    await expect(reviewsLabel).toBeVisible();
+    await expect(reviewsLabel).toHaveAttribute('aria-hidden', 'true');
+    expect(await paintedContrast(reviewsLabel)).toBeGreaterThan(4.5);
+    expect(await paintedContrast(reviews.locator('.env-table-cell-content'))).toBeGreaterThan(4.5);
+    const labelBox = (await reviewsLabel.boundingBox())!;
+    const valueBox = (await reviews.locator('.env-table-cell-content').boundingBox())!;
+    expect(valueBox.y).toBeGreaterThanOrEqual(labelBox.y + labelBox.height - 0.5);
+    // The rows stack below each other.
     const rows = table.locator('tbody > tr');
     const first = (await rows.nth(0).boundingBox())!;
     const second = (await rows.nth(1).boundingBox())!;
@@ -357,11 +367,11 @@ test('a stacking table lists its rows as blocks in a narrow container and keeps 
     await expect(head).toHaveCSS('position', 'static');
     await expect(owner).toHaveText('Aurora', { useInnerText: true });
     await frame.evaluate((element) => (element.style.inlineSize = ''));
-    await expect(row).toHaveCSS('display', 'grid');
+    await expect(row).toHaveCSS('display', 'flex');
   }
 });
 
-test('stacked labels take the room they need and long values wrap inside the row', async ({
+test('stacked values sit two to a line under their labels and long values wrap inside the row', async ({
   page,
 }) => {
   for (const width of [1440, 390]) {
@@ -379,28 +389,36 @@ test('stacked labels take the room they need and long values wrap inside the row
       );
       const cells = row.locator('.env-table-cell[data-labelled]');
       await expect(cells).toHaveCount(3);
-      const labels = await cells
-        .locator('.env-table-cell-label')
-        .evaluateAll((elements) =>
-          elements.map((element) => element.getBoundingClientRect().toJSON()),
-        );
-      const values = await cells.locator('.env-table-cell-content').evaluateAll((elements) =>
-        elements.map((element) => ({
-          box: element.getBoundingClientRect().toJSON(),
-          overflows: element.scrollWidth > element.clientWidth,
-        })),
+      const fields = await cells.evaluateAll((elements) =>
+        elements.map((element) => {
+          const label = element.querySelector('.env-table-cell-label')!;
+          const value = element.querySelector('.env-table-cell-content')!;
+          return {
+            label: label.getBoundingClientRect().toJSON(),
+            labelShown: getComputedStyle(label).display !== 'none',
+            value: value.getBoundingClientRect().toJSON(),
+            overflows: value.scrollWidth > value.clientWidth,
+          };
+        }),
       );
-      // The label column fits the longest label, well under half the row.
-      expect(labels[0]!.width).toBeLessThan(rowBox.width / 3);
-      for (const value of values) {
-        // Values line up after the labels and wrap within the row instead of overflowing it.
-        expect(value.box.x).toBeCloseTo(values[0]!.box.x, 0);
-        expect(value.box.x + value.box.width).toBeLessThanOrEqual(
+      const [status, address, owner] = fields;
+      // The first value goes with the title, without its label; the others share the next line,
+      // each under its label in half the row.
+      expect(status!.labelShown).toBe(false);
+      expect(address!.label.y).toBeCloseTo(owner!.label.y, 0);
+      for (const field of [address!, owner!]) {
+        expect(field.labelShown).toBe(true);
+        expect(field.value.y).toBeGreaterThanOrEqual(field.label.y + field.label.height - 0.5);
+        expect(field.value.width).toBeLessThan(rowBox.width / 2);
+      }
+      // Values wrap within the row instead of overflowing it.
+      for (const field of fields) {
+        expect(field.value.x + field.value.width).toBeLessThanOrEqual(
           rowBox.x + rowBox.width - padding + 0.5,
         );
-        expect(value.overflows).toBe(false);
+        expect(field.overflows).toBe(false);
       }
-      expect(values[1]!.box.height).toBeGreaterThan(30);
+      expect(address!.value.height).toBeGreaterThan(30);
     }
   }
 });
@@ -416,7 +434,7 @@ test(
       const row = table.getByRole('row', { name: /Quarterly report/ });
       // 48 rem is below the 60 rem this table needs, so its rows stack.
       await expect(region).toHaveAttribute('data-stacked', '');
-      await expect(row).toHaveCSS('display', 'grid');
+      await expect(row).toHaveCSS('display', 'flex');
       await expect(
         row.getByRole('cell', { name: 'Infrastructure' }).locator('.env-table-cell-label'),
       ).toBeVisible();
@@ -628,7 +646,7 @@ test('tables fit a narrow viewport: stacking tables stack, others scroll in thei
   await page.setViewportSize({ width: 390, height: 900 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   const stacked = page.getByRole('table', { name: 'Stacked light' });
-  await expect(stacked.getByRole('row', { name: /Roadmap/ })).toHaveCSS('display', 'grid');
+  await expect(stacked.getByRole('row', { name: /Roadmap/ })).toHaveCSS('display', 'flex');
   const region = page.getByRole('region', { name: 'Reports light' });
   const regionBox = (await region.boundingBox())!;
   expect(regionBox.x + regionBox.width).toBeLessThanOrEqual(390);
@@ -667,13 +685,13 @@ test(
     const firstRow = (name: string) =>
       page.getByRole('table', { name, exact: true }).locator('tbody > tr').first();
     // Before any script runs, the container query has already stacked the narrow table.
-    await expect(firstRow('Narrow')).toHaveCSS('display', 'grid');
+    await expect(firstRow('Narrow')).toHaveCSS('display', 'flex');
     await expect(page.getByRole('region', { name: 'Narrow' })).not.toHaveAttribute('data-stacked');
     // 25 rem is under 30 rem at the 16 px root; at a 12 px root, 30 rem is 360 px and 25 rem is
     // 300 px, still under it, and both follow the root together.
-    await expect(firstRow('Thirty')).toHaveCSS('display', 'grid');
+    await expect(firstRow('Thirty')).toHaveCSS('display', 'flex');
     await page.evaluate(() => (document.documentElement.style.fontSize = '12px'));
-    await expect(firstRow('Thirty')).toHaveCSS('display', 'grid');
+    await expect(firstRow('Thirty')).toHaveCSS('display', 'flex');
     await page.evaluate(() => {
       const box = document.querySelector<HTMLElement>('[aria-label="Thirty"]')!.parentElement!;
       box.style.inlineSize = '400px';

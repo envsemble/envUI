@@ -44,9 +44,9 @@ export default function ProjectStatus() {
       <Table.Head>
         <Table.Row>
           <Table.HeaderCell>Project</Table.HeaderCell>
+          <Table.HeaderCell>Status</Table.HeaderCell>
           <Table.HeaderCell>Owner</Table.HeaderCell>
           <Table.HeaderCell numeric>Open tasks</Table.HeaderCell>
-          <Table.HeaderCell>Status</Table.HeaderCell>
         </Table.Row>
       </Table.Head>
       <Table.Body>
@@ -58,14 +58,14 @@ export default function ProjectStatus() {
               </Link>
               <Text variant="caption">{project.team}</Text>
             </Table.Cell>
+            <Table.Cell label="Status">
+              <Badge tone={tones[project.status]}>{project.status}</Badge>
+            </Table.Cell>
             <Table.Cell nowrap label="Owner">
               {project.owner}
             </Table.Cell>
             <Table.Cell numeric label="Open tasks">
               {project.openTasks}
-            </Table.Cell>
-            <Table.Cell label="Status">
-              <Badge tone={tones[project.status]}>{project.status}</Badge>
             </Table.Cell>
           </Table.Row>
         ))}

@@ -302,15 +302,32 @@ function ProjectsTable({ onOpen, openId }: { onOpen: (id: string) => void; openI
       </div>
       {/* The bulk bar while rows are selected, the count otherwise. Layout glue: it keeps one
           height so the table stays put as it comes and goes. */}
-      <Surface background="muted" padding={2} radius={wide ? 'full' : 'xl'}>
-        <Row wrap align="center" gap={3} style={{ minBlockSize: 'var(--env-control-height-sm)' }}>
+      <Surface background="muted" padding={2} radius="full">
+        <Row
+          wrap={wide}
+          align="center"
+          gap={3}
+          style={{ minBlockSize: 'var(--env-control-height-sm)' }}
+        >
           {selected.length === 0 ? (
             <Text emphasis="muted">{projectCount(projects.length)}</Text>
           ) : (
             <>
-              <Text variant="body-sm" style={{ paddingInlineStart: 'var(--env-space-2)' }}>
-                {selected.length} selected
-              </Text>
+              {/* Narrow, clearing is a cross beside the count, so the bar stays one row. */}
+              <Row align="center" gap={1}>
+                <Text variant="body-sm" style={{ paddingInlineStart: 'var(--env-space-2)' }}>
+                  {selected.length} selected
+                </Text>
+                {!wide && (
+                  <IconButton
+                    variant="ghost"
+                    size="sm"
+                    icon={<IconClose />}
+                    aria-label="Clear selection"
+                    onClick={() => setSelected([])}
+                  />
+                )}
+              </Row>
               <Toolbar.Root aria-label="Selected projects" size="sm">
                 <Toolbar.Button
                   icon={<IconRocketLaunch />}
@@ -334,9 +351,11 @@ function ProjectsTable({ onOpen, openId }: { onOpen: (id: string) => void; openI
                   label={`Delete ${projectCount(selected.length)}…`}
                 />
               </Toolbar.Root>
-              <Button variant="text" size="sm" onClick={() => setSelected([])}>
-                Clear selection
-              </Button>
+              {wide && (
+                <Button variant="text" size="sm" onClick={() => setSelected([])}>
+                  Clear selection
+                </Button>
+              )}
             </>
           )}
         </Row>

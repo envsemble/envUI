@@ -9,10 +9,10 @@ export default function Hues() {
         {avatarHues.map((hue) => (
           <Specimen key={hue} title={hue.charAt(0).toUpperCase() + hue.slice(1)}>
             <Row align="center" gap={3}>
-              <Avatar name="Northwind Labs" fallback="initials" hue={hue} size="lg" />
-              <Avatar name="Sam Lee" hue={hue} size="lg" />
-              <Avatar name="Northwind Labs" fallback="initials" hue={hue} size="sm" />
-              <Avatar name="Sam Lee" hue={hue} size="sm" />
+              <Avatar name="Northwind Labs" hue={hue} size="lg" />
+              <Avatar name="Sam Lee" fallback="person" hue={hue} size="lg" />
+              <Avatar name="Northwind Labs" hue={hue} size="sm" />
+              <Avatar name="Sam Lee" fallback="person" hue={hue} size="sm" />
             </Row>
           </Specimen>
         ))}

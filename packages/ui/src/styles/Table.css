@@ -2,6 +2,9 @@
   /* Tables sit on a rounded surface with subtle row dividers and scroll sideways within their region. */
   .env-table-region {
     --env-table-surface: var(--env-color-bg-raised);
+    /* Avatar groups in the cells ring their avatars in the table's surface, with the row's fill
+       over it while the row is hovered or selected. */
+    --env-avatar-group-ring: var(--env-table-surface);
     /* Absolutely positioned content, such as visually hidden text in a cell, stays in the region and
        scrolls with it instead of widening the page. */
     position: relative;
@@ -34,8 +37,8 @@
       var(--env-space-4);
     --env-control-height: var(--env-control-height-sm);
     /* Links and times repeat down the rows, so the lines that mark them wait for the pointer or
-       keyboard focus: a Link shows its underline then, and a RelativeTime its dotted line. A
-       selected row's links stay underlined. */
+       keyboard focus: a Link shows its underline then, and a RelativeTime its dotted line, in every
+       row, selected or not. */
     --env-button-rest-underline: none;
     --env-hover-detail-rest-color: transparent;
     inline-size: 100%;
@@ -160,6 +163,7 @@
     transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
   }
   .env-table-row[data-interactive]:is(:hover, :focus-within) {
+    --env-avatar-group-ring-tint: var(--env-color-bg-neutral-subtle-hover);
     background: var(--env-color-bg-neutral-subtle-hover);
   }
   /* Links and text buttons in an unselected row under the pointer or holding focus take the link
@@ -179,17 +183,12 @@
     --env-color-fg-link: var(--env-color-fg-on-selected);
     --env-color-fg-link-hover: var(--env-color-fg-on-selected);
     --env-color-fg-link-pressed: var(--env-color-fg-on-selected);
+    --env-avatar-group-ring-tint: var(--env-color-bg-selected);
     background: var(--env-color-bg-selected);
   }
   .env-table-row[aria-selected='true'][data-interactive]:is(:hover, :focus-within) {
+    --env-avatar-group-ring-tint: var(--env-color-bg-selected-hover);
     background: var(--env-color-bg-selected-hover);
-  }
-  /* There links share the selection's text color with the row's own text, so a link that looks like
-     one, a Link without its underline or a text button that is a link, is underlined to stay apart
-     from it, as color alone may not tell them apart. Links styled as buttons keep their look. */
-  .env-table-row[aria-selected='true'] a[href]:is(:not([data-variant]), [data-variant='text']) {
-    text-decoration-line: underline;
-    text-underline-offset: 0.15em;
   }
   .env-table-row[aria-selected='true'] > :first-child {
     box-shadow: inset 0.1875rem 0 0 var(--env-color-fg-on-selected);
@@ -399,13 +398,21 @@
     .env-table-region[data-narrow-layout='stack'] .env-table-column-resize-handle {
       display: none;
     }
-    /* The labels share a column as wide as the longest one, up to 10 rem, so the values line up and keep
-       the rest of the row; each labelled cell spans both columns through a subgrid. */
+    /* A stacked row is a compact block: its title on the first line, with the first labelled value
+       at its end without its label, as a status reads on its own, and any unlabelled cell after the
+       title, such as a menu of the row's actions, after that; then the other values, two to a line,
+       each under its label. The first line breaks off by an empty item as wide as the row. */
     .env-table-region[data-narrow-layout='stack'] .env-table-body > .env-table-row {
-      display: grid;
-      grid-template-columns: fit-content(10rem) minmax(0, 1fr);
-      gap: var(--env-space-1) var(--env-space-3);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      column-gap: var(--env-space-4);
       padding: var(--env-table-cell-padding);
+    }
+    .env-table-region[data-narrow-layout='stack'] .env-table-body > .env-table-row::after {
+      content: '';
+      flex: 0 0 100%;
+      order: 1;
     }
     .env-table-region[data-narrow-layout='stack']
       .env-table-body
@@ -417,23 +424,38 @@
       .env-table-body
       > .env-table-row
       > :is(.env-table-cell, .env-table-header-cell) {
-      grid-column: 1 / -1;
+      flex: 0 0 auto;
       min-inline-size: 0;
+      max-inline-size: 100%;
       padding: 0;
       border-block-start: 0;
       text-align: start;
       white-space: normal;
       overflow-wrap: break-word;
     }
+    /* The title takes the room its content needs and what the line has left; where a value after it
+       doesn't fit beside it, the value goes under it. */
     .env-table-region[data-narrow-layout='stack'] .env-table-body > .env-table-row > :first-child {
-      margin-block-end: var(--env-space-1);
+      flex: 1 1 auto;
       color: var(--env-color-fg-default);
       font-weight: var(--env-font-weight-medium);
     }
-    .env-table-region[data-narrow-layout='stack'] .env-table-cell[data-labelled] {
-      display: grid;
-      grid-template-columns: subgrid;
-      align-items: baseline;
+    /* The other values, after the first line, two to a line. */
+    .env-table-region[data-narrow-layout='stack']
+      .env-table-body
+      > .env-table-row
+      > .env-table-cell[data-labelled]:not(:first-child + *) {
+      flex: 0 0 calc((100% - var(--env-space-4)) / 2);
+      order: 2;
+      margin-block-start: var(--env-space-2);
+    }
+    .env-table-region[data-narrow-layout='stack']
+      .env-table-body
+      > .env-table-row
+      > :first-child
+      + .env-table-cell[data-labelled]
+      > .env-table-cell-label {
+      display: none;
     }
     .env-table-region[data-narrow-layout='stack'] .env-table-cell-content {
       min-inline-size: 0;
@@ -441,6 +463,7 @@
     .env-table-region[data-narrow-layout='stack'] .env-table-cell-label {
       display: block;
       min-inline-size: 0;
+      margin-block-end: 0.125rem;
       color: var(--env-color-fg-muted);
       font: var(--env-type-body-sm);
       overflow-wrap: break-word;

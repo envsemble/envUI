@@ -220,7 +220,7 @@
   --env-picture-size-xl: 5.5rem;
   --env-radius-lg: 1rem;
   --env-radius-md: 0.75rem;
-  --env-radius-none: 0;
+  --env-radius-none: 0rem;
   --env-radius-row-inner: var(--env-radius-sm);
   --env-radius-row-outer: var(--env-radius-surface);
   --env-radius-row-single: var(--env-radius-row-outer);
@@ -980,8 +980,8 @@
   --env-row-height: 1.75rem;
   --env-row-padding-block-lg: 0.375rem;
   --env-row-padding-block-md: 0.25rem;
-  --env-row-padding-block-sm: 0.1875rem;
-  --env-row-padding-block-xs: 0.125rem;
+  --env-row-padding-block-sm: 0.125rem;
+  --env-row-padding-block-xs: 0rem;
   --env-row-padding-inline: 1.25rem;
   --env-space-2: 0.375rem;
   --env-space-3: 0.625rem;
@@ -1021,8 +1021,8 @@
     --env-row-height: 1.75rem;
     --env-row-padding-block-lg: 0.375rem;
     --env-row-padding-block-md: 0.25rem;
-    --env-row-padding-block-sm: 0.1875rem;
-    --env-row-padding-block-xs: 0.125rem;
+    --env-row-padding-block-sm: 0.125rem;
+    --env-row-padding-block-xs: 0rem;
     --env-row-padding-inline: 1.25rem;
     --env-space-2: 0.375rem;
     --env-space-3: 0.625rem;

@@ -11,9 +11,9 @@ export interface AvatarButtonProps extends Omit<ComponentPropsWithRef<'button'>,
   name: string;
   /** A second tooltip line, such as the e-mail address of the signed-in account. */
   description?: string;
-  /** Picture URL; the default person picture shows without one. */
+  /** Picture URL; the fallback shows without one. */
   src?: string | null;
-  /** Shown without a picture: the default person picture (default), or the initials of `name`. */
+  /** Shown without a picture: the initials of `name`, by default, or the default person picture. */
   fallback?: AvatarProps['fallback'];
   /**
    * The picture: sm 1.5 rem, md 2 rem or lg 3 rem, inside a slightly larger hit area, which grows

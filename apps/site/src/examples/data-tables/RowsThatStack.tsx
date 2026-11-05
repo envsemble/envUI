@@ -39,13 +39,13 @@ export default function RowsThatStack() {
   return (
     <Column gap={3}>
       {/* Where its region is narrower than 36 rem, each row stacks into a block titled by its
-          name, with each other value beside its column's name. */}
+          name, with its status beside it and each other value under its column's name. */}
       <Table.Root aria-label="All projects" narrowLayout="stack">
         <Table.Head>
           <Table.Row>
             <Table.HeaderCell>Name</Table.HeaderCell>
-            <Table.HeaderCell>Owner</Table.HeaderCell>
             <Table.HeaderCell>Status</Table.HeaderCell>
+            <Table.HeaderCell>Owner</Table.HeaderCell>
             <Table.HeaderCell>Updated</Table.HeaderCell>
           </Table.Row>
         </Table.Head>
@@ -55,16 +55,16 @@ export default function RowsThatStack() {
               <Table.Cell>
                 <Link href={`/projects/${project.id}`}>{project.name}</Link>
               </Table.Cell>
+              <Table.Cell label="Status">
+                <Badge tone={project.status === 'At risk' ? 'warning' : 'success'}>
+                  {project.status}
+                </Badge>
+              </Table.Cell>
               <Table.Cell label="Owner" nowrap>
                 <Row align="center" gap={2}>
                   <Avatar name={project.owner} size="sm" fallback="initials" />
                   {project.owner}
                 </Row>
-              </Table.Cell>
-              <Table.Cell label="Status">
-                <Badge tone={project.status === 'At risk' ? 'warning' : 'success'}>
-                  {project.status}
-                </Badge>
               </Table.Cell>
               <Table.Cell label="Updated" nowrap>
                 <RelativeTime value={project.updated} />

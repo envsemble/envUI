@@ -36,9 +36,9 @@ export default function StackedRows() {
       <Table.Head>
         <Table.Row>
           <Table.HeaderCell>Order</Table.HeaderCell>
+          <Table.HeaderCell>Status</Table.HeaderCell>
           <Table.HeaderCell>Ship to</Table.HeaderCell>
           <Table.HeaderCell numeric>Items</Table.HeaderCell>
-          <Table.HeaderCell>Status</Table.HeaderCell>
         </Table.Row>
       </Table.Head>
       <Table.Body>
@@ -49,12 +49,13 @@ export default function StackedRows() {
               Order {order.id} · {order.customer}
               <Text variant="caption">Placed {order.placed}</Text>
             </Table.Cell>
+            {/* Stacked, the first labelled value sits beside the title without its label. */}
+            <Table.Cell label="Status">
+              <Badge tone={tones[order.status]}>{order.status}</Badge>
+            </Table.Cell>
             <Table.Cell label="Ship to">{order.address}</Table.Cell>
             <Table.Cell label="Items" numeric>
               {order.items}
-            </Table.Cell>
-            <Table.Cell label="Status">
-              <Badge tone={tones[order.status]}>{order.status}</Badge>
             </Table.Cell>
           </Table.Row>
         ))}

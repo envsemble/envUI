@@ -76,7 +76,7 @@ examples:
 
 ### Pictures and fallbacks
 
-Without a picture, or while it loads or after it fails, an avatar shows the default person picture, or initials for an organization.
+Without a picture, or while it loads or after it fails, an avatar shows the initials of its name, or the default person picture, such as for a guest.
 
 ```tsx figure=Fallbacks
 
@@ -113,7 +113,7 @@ AvatarGroup rests as a compact pile, like stacked cards, with the count of the r
 
 - Hovering, tapping or focusing it spreads the avatars along a gentle arch, so each one shows.
 - It keeps the room its spread takes, so nothing around it moves.
-- A faint shadow under each avatar parts it from the one it lies on; the count lies flat at the bottom.
+- A ring in the color of the surface below parts each avatar from the one it lies on, and the last from the count, which lies flat at the bottom.
 
 ```tsx figure=ProjectMembers motion
 
@@ -188,11 +188,11 @@ Show only as many people in a group as fit without wrapping, and use AvatarButto
 
 ### Usage
 
-Avatar takes the person's or organization's `name`, a picture in `src`, and `fallback="initials"` for initials instead of the default person picture. Beside a visible name it is decorative; `named` makes it an image named by `name`. `size` is `sm`, `md`, the default, `lg` or `xl`: 1.5, 2, 3 or 5.5 rem.
+Avatar takes the person's or organization's `name`, a picture in `src`, and `fallback="person"` for the default person picture instead of the initials, which an empty name shows too. Beside a visible name it is decorative; `named` makes it an image named by `name`. `size` is `sm`, `md`, the default, `lg` or `xl`: 1.5, 2, 3 or 5.5 rem.
 
 ```tsx
 <Avatar name="Alex Morgan" src={alex.picture} />
-<Avatar name="Northwind Labs" fallback="initials" size="lg" named />
+<Avatar name="Northwind Labs" size="lg" named />
 ```
 
 #### Chosen
@@ -249,10 +249,11 @@ The group is `env-avatar-group`, with an `env-avatar` for each person, an `env-a
 
 ### Customize
 
-Its color properties take the place of its hue. The hues are tokens, `--env-color-bg-avatar-{hue}`, `--env-color-fg-avatar-{hue}` and `--env-color-fg-avatar-figure-{hue}`, and the powder hue is also the unsuffixed `--env-color-bg-avatar`, `--env-color-fg-avatar` and `--env-color-fg-avatar-figure`. That faint shadow is 1 px down and 2 px soft; under forced colors there is none, and `box-shadow: none` on `.env-avatar` removes it.
+Its color properties take the place of its hue. The hues are tokens, `--env-color-bg-avatar-{hue}`, `--env-color-fg-avatar-{hue}` and `--env-color-fg-avatar-figure-{hue}`, and the powder hue is also the unsuffixed `--env-color-bg-avatar`, `--env-color-fg-avatar` and `--env-color-fg-avatar-figure`. A lone avatar casts a faint shadow, 1 px down and 2 px soft, which the ring replaces in a group; under forced colors there is none, and `box-shadow: none` on `.env-avatar` removes it.
 
 ## Changelog
 
+- **1.0.0-prerelease.6**: An avatar without a picture shows its name's initials by default, in place of the default person picture, which `fallback="person"` keeps. Avatars in a group take a ring in the color of the surface below, so their initials never run together.
 - **1.0.0-prerelease.6**: Initials stay legible at small sizes, at least the caption size; below `sm`, an avatar with initials is a disc of its color alone.
 - **1.0.0-prerelease.5**: AvatarGroup's `gather` is `align`, as Row and Popover name the inline axis, and its `data-gather` attribute is `data-align`.
 - **1.0.0-prerelease.5**: An avatar and AvatarGroup's count cast a faint, small shadow in a deeper shade of the surface below, so the avatars of a group part from one another.
