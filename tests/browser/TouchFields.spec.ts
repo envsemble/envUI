@@ -1,4 +1,4 @@
-import { test, expect, type Browser } from '@playwright/test';
+import { test, expect, type Browser, type Locator } from '@playwright/test';
 import { fixtureUrl } from './helpers/Servers';
 
 /** A phone-sized page with a touch screen, whose primary pointer is coarse. */
@@ -76,15 +76,23 @@ test(
 );
 
 test('entered text keeps the body size with a mouse', { tag: '@engines' }, async ({ page }) => {
+  // The body size follows the scale, compact under a fine pointer by default, so it is read from
+  // the theme.
+  const bodySize = (field: Locator) =>
+    field.evaluate((element) => {
+      const probe = document.createElement('span');
+      probe.style.font = 'var(--env-type-body)';
+      element.closest('.env-theme')!.append(probe);
+      const size = getComputedStyle(probe).fontSize;
+      probe.remove();
+      return size;
+    });
   await page.goto(`${fixtureUrl}/?fixture=forms`);
-  await expect(page.getByRole('textbox', { name: 'Project name', exact: true })).toHaveCSS(
-    'font-size',
-    '15px',
-  );
-  await expect(page.getByRole('textbox', { name: 'Notes', exact: true })).toHaveCSS(
-    'font-size',
-    '15px',
-  );
+  const name = page.getByRole('textbox', { name: 'Project name', exact: true });
+  await expect(name).toHaveCSS('font-size', await bodySize(name));
+  const notes = page.getByRole('textbox', { name: 'Notes', exact: true });
+  await expect(notes).toHaveCSS('font-size', await bodySize(notes));
   await page.goto(`${fixtureUrl}/RichText.html`);
-  await expect(page.locator('[contenteditable="true"]').first()).toHaveCSS('font-size', '15px');
+  const editable = page.locator('[contenteditable="true"]').first();
+  await expect(editable).toHaveCSS('font-size', await bodySize(editable));
 });

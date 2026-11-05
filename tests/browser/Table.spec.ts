@@ -325,7 +325,16 @@ test('a stacking table lists its rows as blocks in a narrow container and keeps 
 
     await expect(row).toHaveCSS('display', 'flex');
     const title = row.getByRole('cell').first();
-    await expect(title).toHaveCSS('font-weight', '500');
+    // The medium weight is the theme's: dark sets its own.
+    const medium = await title.evaluate((cell) => {
+      const probe = document.createElement('span');
+      probe.style.fontWeight = 'var(--env-font-weight-medium)';
+      cell.append(probe);
+      const weight = getComputedStyle(probe).fontWeight;
+      probe.remove();
+      return weight;
+    });
+    await expect(title).toHaveCSS('font-weight', medium);
     // The first labelled value sits on the title's line, without its label.
     const owner = row.getByRole('cell', { name: 'Aurora', exact: true });
     const ownerLabel = owner.locator('.env-table-cell-label');
