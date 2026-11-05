@@ -26,7 +26,7 @@ const zIndex = (element: Locator) =>
   element.evaluate((node) => Number(getComputedStyle(node).zIndex));
 
 test(
-  'a menu, a notice and a tooltip open over a modal dialog',
+  'a menu and a tooltip open over a modal dialog, above the notices layer',
   { tag: '@engines' },
   async ({ page }) => {
     await page.goto(fixture);
@@ -57,10 +57,12 @@ test(
     await expect(menu).toBeHidden();
     await expect(dialog).toBeVisible();
 
-    // A notice shown from the dialog stacks over it.
+    // A notice shown from the dialog waits until it closes (Toast.spec covers that), but its layer
+    // still stacks over the dialog's.
     await dialog.getByRole('button', { name: 'Show a notice' }).click();
     const notice = page.locator('.env-toast-message', { hasText: 'Saved over the dialog' });
-    await expect(notice).toBeVisible();
+    await expect(notice).toBeAttached();
+    await expect(notice).toBeHidden();
     const toastLayer = page.locator('.env-toast-viewport').filter({ has: notice });
     expect(await inRootContext(toastLayer)).toBe(true);
     expect(await zIndex(toastLayer)).toBeGreaterThan(await zIndex(dialogLayer));
