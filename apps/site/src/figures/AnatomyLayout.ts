@@ -614,6 +614,8 @@ export interface Room {
   start: number;
   bottom: number;
   end?: number;
+  /** In a variants figure, whether what each variant is for sits under its item. */
+  under?: boolean;
 }
 
 /** How far a variant's name stands off its item, in px, and the height of its line of text. */
@@ -623,6 +625,10 @@ const nameHeight = 20;
 /** The most and the least room, in rem, what a variant is for takes beside its item. */
 const useMeasure = 28;
 const useLeast = 12;
+/** How far what a variant is for stands under its item, and off the next, in px. */
+const useGap = 6;
+/** The least room, in rem, what a variant is for takes under its item. */
+const underLeast = 10;
 
 /**
  * The names' widths in px, as the figure sets them, measured off-screen in the stage, or kept in
@@ -726,7 +732,7 @@ export function measureVariants(
       }
     }
     const box = element && boxOf(element, false, origin);
-    return box ? [{ number: index + 1, box, label: item.label ?? '' }] : [];
+    return box ? [{ number: index + 1, box, label: item.label ?? '', element: element! }] : [];
   });
   if (!found.length) return { callouts: [], room: { start: 0, bottom: 0 } };
   const widths = labelWidths(
@@ -759,15 +765,26 @@ export function measureVariants(
     const across = Math.floor(
       Math.min(useMeasure * rem, inner - start - (outer.right - outer.left) - nameGap),
     );
+    const everyUse = lines.every((entry) => entry?.length);
     const sizes =
-      across >= useLeast * rem && lines.every((entry) => entry?.length)
+      across >= useLeast * rem && everyUse
         ? sizesOfUses(stage, lines as string[][], across, labels)
         : undefined;
+    // The room an earlier measure set above each item for what the one before it is for, under it,
+    // which the choice leaves out, so it is made on the items' own spacing and never flips.
+    const added = (element: Element) =>
+      element instanceof HTMLElement && element.hasAttribute('data-catalogue-spread')
+        ? parseFloat(element.style.marginBlockStart) || 0
+        : 0;
+    let shift = 0;
     // Each centred on its item's line, clear of the next one's.
-    const rows = sorted.map((item) => ({
-      centre: (item.box.top + item.box.bottom) / 2,
-      height: sizes?.[found.indexOf(item)]?.height ?? 0,
-    }));
+    const rows = sorted.map((item) => {
+      shift += added(item.element);
+      return {
+        centre: (item.box.top + item.box.bottom) / 2 - shift,
+        height: sizes?.[found.indexOf(item)]?.height ?? 0,
+      };
+    });
     const clear = rows.every(
       (row, index) =>
         index === 0 ||
@@ -775,6 +792,36 @@ export function measureVariants(
     );
     const end = sizes && Math.ceil(Math.max(...sizes.map(({ width }) => width)) + nameGap);
     const beside = sizes !== undefined && end !== undefined && clear;
+    // Where they don't fit beside, as in a narrow stage, each goes under its item, under the items'
+    // column where it has the room and else from the names' start, and each item stands that much
+    // further from the one before, so the names show once, by their items, rather than again in a
+    // legend under the figure.
+    const column = inner - start >= underLeast * rem;
+    const under =
+      !beside && everyUse && inner >= underLeast * rem
+        ? sizesOfUses(
+            stage,
+            lines as string[][],
+            Math.floor(Math.min(useMeasure * rem, column ? inner - start : inner)),
+            labels,
+          )
+        : undefined;
+    sorted.forEach((item, rank) => {
+      const element = item.element;
+      if (!(element instanceof HTMLElement)) return;
+      const before = rank > 0 && under?.[found.indexOf(sorted[rank - 1]!)];
+      const margin = before ? `${Math.ceil(before.height + 2 * useGap)}px` : '';
+      if (margin) {
+        if (element.style.marginBlockStart !== margin) element.style.marginBlockStart = margin;
+        if (!element.hasAttribute('data-catalogue-spread'))
+          element.setAttribute('data-catalogue-spread', '');
+      } else if (element.hasAttribute('data-catalogue-spread')) {
+        element.style.marginBlockStart = '';
+        element.removeAttribute('data-catalogue-spread');
+      }
+    });
+    const innerStart =
+      parseFloat(rtl ? style.paddingRight : style.paddingLeft) + (column ? start : 0);
     const callouts = found.map(({ number, box, label }, index) => {
       const y = (box.top + box.bottom) / 2;
       const x = side === 'left' ? outer.left - nameGap : outer.right + nameGap;
@@ -786,10 +833,25 @@ export function measureVariants(
             y,
             side: side === 'left' ? ('right' as const) : ('left' as const),
           }
-        : undefined;
+        : under
+          ? {
+              lines: lines[index]!,
+              width: under[index]!.width,
+              x: rtl ? stage.clientWidth - innerStart : innerStart,
+              y: box.bottom + useGap,
+              side: 'bottom' as const,
+            }
+          : undefined;
       return { number, index: number - 1, label, side, badge: { x, y }, anchor: { x, y }, use };
     });
-    return { callouts, room: { start, bottom: 0, end: beside ? end : 0 }, beside };
+    const last = sorted.at(-1)!;
+    return {
+      callouts,
+      room: under
+        ? { start, bottom: Math.ceil(under[found.indexOf(last)]!.height + useGap), under: true }
+        : { start, bottom: 0, end: beside ? end : 0 },
+      beside: beside || under !== undefined,
+    };
   }
   // Side by side: the names under them, spread so that none overlaps the next.
   const order = found

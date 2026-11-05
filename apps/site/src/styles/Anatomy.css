@@ -13,6 +13,13 @@
   padding: 3.5rem 3.75rem;
 }
 
+/* A variants figure names its items in plain text beside them, with no callouts around them to make
+   room for, so its stage keeps only an example's room, which leaves what each variant is for room
+   beside its item. */
+.catalogue-variants .site-anatomy-stage {
+  padding: var(--env-space-6);
+}
+
 .site-anatomy-subject {
   display: grid;
   justify-items: center;
@@ -161,6 +168,16 @@
 
 .catalogue-variant-use[data-side='left'] {
   translate: -100% -50%;
+}
+
+/* Where it doesn't fit beside, as in a narrow stage, it sits under its item, and the next item
+   stands apart by the room it takes (AnatomyLayout.ts). */
+.catalogue-variant-use[data-side='bottom'] {
+  translate: 0 0;
+}
+
+.catalogue-variant-use[data-side='bottom']:dir(rtl) {
+  translate: -100% 0;
 }
 
 .site-anatomy-caption {

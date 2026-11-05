@@ -184,7 +184,8 @@ function AnatomyStage({
           setRoom((current) =>
             current.start === needed.start &&
             current.bottom === needed.bottom &&
-            current.end === needed.end
+            current.end === needed.end &&
+            current.under === needed.under
               ? current
               : needed,
           );
@@ -243,6 +244,9 @@ function AnatomyStage({
                 paddingInlineStart: room.start || undefined,
                 paddingInlineEnd: room.end || undefined,
                 paddingBlockEnd: room.bottom || undefined,
+                // With what each variant is for under its item, the items line up at the start,
+                // beside their names' column, as a list's rows do.
+                justifyItems: room.under ? 'start' : undefined,
               }
             : undefined
         }
@@ -442,7 +446,7 @@ export function AnatomyFigure({
       />
       <figcaption className="site-anatomy-caption">
         {caption && <p className="site-figure-caption">{caption}</p>}
-        {/* Shown beside the items, the option table is read, not seen, once. */}
+        {/* Shown by the items, beside or under them, the option table is read, not seen, once. */}
         {variants &&
           options &&
           (beside ? (
