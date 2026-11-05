@@ -319,11 +319,25 @@ export function useFit(
       if ((ownSize || legible) && popup && canvasElement.dataset.fitted === undefined)
         canvasElement.dataset.popup = '';
       const wholeScale = Math.min(width / (right - left), height / (bottom - top));
+      // A dialog a little larger than the inset leaves room for, such as a confirm dialog's
+      // question and actions, is drawn whole in the stage, a margin from its edges, where that
+      // scale allows, rather than as a window cut off through its actions. A menu stays a window
+      // onto it from its top.
+      const dialog =
+        canvasElement.querySelector('.catalogue-overlay-layer .env-dialog-backdrop') !== null;
+      const room = {
+        width: stageElement.clientWidth - 2 * margin,
+        height: stageElement.clientHeight - 2 * margin,
+      };
+      const roomScale = dialog
+        ? Math.min(room.width / (right - left), room.height / (bottom - top))
+        : 0;
       const popupLeast =
         parseFloat(canvasStyle.getPropertyValue('--catalogue-own-popup-least')) || legibleScale;
       const popupScale = (atMost: number) => {
         const lowest = Math.min(atMost, popupLeast);
         if (wholeScale >= lowest) return Math.min(atMost, wholeScale);
+        if (roomScale >= lowest) return Math.min(atMost, roomScale);
         const across = width / (right - left);
         return across >= lowest ? Math.min(atMost, across) : atMost;
       };
@@ -362,26 +376,27 @@ export function useFit(
       // and fades out (`data-cut`, Gallery.css).
       const across = (right - left) * scale;
       const down = (bottom - top) * scale;
+      // A dialog drawn whole in the stage's room is centred on it, cut off nowhere.
+      const inRoom = dialog && down <= room.height + 0.5 && across <= room.width + 0.5;
       // It starts at the component's own start, rather than its popups': a popup shifts to stay
       // in the window, and a view that followed it would shift it again. A dialog, over its
       // backdrop, is placed by the window alone and covers what opens it: it starts at its own.
-      if (ownSize && across > width) {
-        const modal = canvasElement.querySelector('.catalogue-overlay-layer .env-dialog-backdrop');
+      if (ownSize && across > width && !inRoom) {
         const own = boxes.filter(
-          ({ element }) => modal !== null || !element.closest('.catalogue-overlay-layer'),
+          ({ element }) => dialog || !element.closest('.catalogue-overlay-layer'),
         );
         const start = own.length ? Math.min(...own.map(({ box }) => box.left)) : left;
         toX = start * scale + width / 2;
       }
       // A scene drawn at a legible scale shows from its top too, where it starts, such as a search
       // above the results it filters, and stays centred across.
-      if ((ownSize || legible) && down > height) toY = top * scale + height / 2;
+      if ((ownSize || legible) && down > height && !inRoom) toY = top * scale + height / 2;
       // Drawn at a legible scale, a scene wider than the stage is cut off on both sides, fading
       // out there too.
       if (ownSize || legible) {
         const cut = [
-          down > height + inset ? 'bottom' : '',
-          !legible && across > width + inset ? 'end' : '',
+          down > height + inset && !inRoom ? 'bottom' : '',
+          !legible && across > width + inset && !inRoom ? 'end' : '',
           legible && across > stageElement.clientWidth ? 'start end' : '',
         ];
         const sides = cut.filter(Boolean).join(' ');

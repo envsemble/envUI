@@ -144,6 +144,14 @@
   --env-time-list-rows: 3;
 }
 
+/* A confirm dialog's question and actions take a closer padding in a gallery's tile, so the
+   whole card shows in its low stage at the one scale (useFit.ts), its corners in view. */
+.catalogue-gallery-stage
+  .catalogue-related-canvas[data-own-size]
+  .env-dialog:has(.env-confirm-dialog-form) {
+  padding: var(--env-space-3);
+}
+
 /* A command palette and a notification leave the window's gutter beside them; drawn at their
    own size in a gallery's tile, they take the tile's width, as the stage's inset is their gutter. */
 .catalogue-related-canvas[data-own-size] .env-command-palette {
