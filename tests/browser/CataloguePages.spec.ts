@@ -645,9 +645,8 @@ test('every tile of the galleries is fitted: components at one scale, a scene at
           const at = Number(scaleOf(canvas));
           const own = canvas.hasAttribute('data-own-size');
           const most = own ? Number(one ?? 1) : 1;
-          // A component's dialog shows whole down to a lower scale (useFit.ts).
-          const dialog = canvas.querySelector('.catalogue-overlay-layer .env-dialog-backdrop');
-          const least = Math.min(most, own ? (dialog ? 0.66 : 0.84) : 0.95);
+          // Every component's popup, a dialog's too, is drawn no smaller than one least (useFit.ts).
+          const least = Math.min(most, own ? 0.84 : 0.95);
           return at >= least - 0.001 && at <= most ? [] : [`${name}: popup drawn at ${at}`];
         }
         if (canvas.hasAttribute('data-own-size'))
@@ -1000,7 +999,7 @@ test('on a phone, what a playing gallery tile opens shows inside its stage', asy
   test.setTimeout(60_000);
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(`${siteDevUrl}/components`);
-  for (const name of ['Menubar', 'Select', 'Dialog']) {
+  for (const name of ['Menubar', 'Select']) {
     const { frames } = await playTile(page, name, []);
     const outside = heldFrames(frames).flatMap(({ time, popups }) =>
       popups.flatMap((popup) =>
@@ -1011,6 +1010,9 @@ test('on a phone, what a playing gallery tile opens shows inside its stage', asy
     );
     expect(outside, name).toEqual([]);
   }
+  // A dialog taller than its stage shows from its top, and the view pans down it to what the
+  // script presses, so each press lands on what it aims at (useFit.ts).
+  expect(await deadClicks(page, ['Dialog', 'ConfirmDialog'])).toEqual([]);
 });
 
 test('figures with open overlays keep them in their stages, overviews live and others inert, and leave the page alone', async ({
@@ -1121,3 +1123,171 @@ test("F6 passes the figures' notifications by, to the browser @engines", async (
   // Every catalogue figure that raises a notice plays it or shows it as a picture, so none is
   // live; F6 reaching a live notice is Toast's own (Toast.spec.ts).
 });
+
+/**
+ * What a gallery tile shows that a click can change, as one string: each element's name, its
+ * states and its own text, and a field's value, but not what the pointer marks as it hovers and
+ * presses, nor what the fit sets as the view moves (useFit.ts).
+ */
+function tileState(canvas: Element) {
+  const states = [
+    'aria-current',
+    'aria-checked',
+    'aria-selected',
+    'aria-expanded',
+    'aria-pressed',
+    'aria-hidden',
+    'data-checked',
+    'data-selected',
+    'data-current',
+    'data-open',
+    'data-state',
+    'data-catalogue-focus',
+    'hidden',
+    'open',
+    'disabled',
+  ];
+  // What is selected, as the pointer's drag paints it (VirtualSelection.ts) or the page holds it.
+  const highlight = (
+    CSS as unknown as { highlights?: Map<string, Iterable<Range>> }
+  ).highlights?.get('catalogue-selection');
+  const selected = `${[...(highlight ?? [])].map(String).join('|')}|${String(getSelection())}`;
+  return [...canvas.querySelectorAll('*')]
+    .map((element) => {
+      const own = [...element.childNodes]
+        .filter((node) => node.nodeType === Node.TEXT_NODE)
+        .map((node) => node.textContent?.trim())
+        .join('');
+      const value =
+        element instanceof HTMLInputElement
+          ? `=${element.value}${element.checked ? ' checked' : ''}`
+          : element instanceof HTMLTextAreaElement
+            ? `=${element.value}`
+            : '';
+      const marks = states
+        .filter((name) => element.hasAttribute(name))
+        .map((name) => `${name}=${element.getAttribute(name)}`)
+        .join(' ');
+      return `${element.localName}[${marks}]${own}${value}`;
+    })
+    .concat(selected)
+    .join('\n');
+}
+
+/**
+ * Plays a gallery's tiles one after another, each for one loop of its script, and returns, for
+ * each tile whose pointer clicks, the clicks after which nothing in it changed by the time of its
+ * next press or 700 ms later: a click that misses what it aims at, such as one that a box clipped
+ * away takes, leaves the tile as it was.
+ */
+async function deadClicks(page: Page, names: string[]) {
+  const dead: string[] = [];
+  for (const name of names) {
+    const tile = page.locator('.catalogue-gallery-tile').filter({
+      has: page.locator('.catalogue-gallery-name', { hasText: new RegExp(`^${name}$`) }),
+    });
+    const canvas = tile.locator('.catalogue-related-canvas[data-fitted]');
+    await tile.scrollIntoViewIfNeeded();
+    await expect(canvas, name).toHaveCount(1);
+    await page.mouse.move(0, 0);
+    await expect(tile.locator('[data-playing]')).toHaveCount(0);
+    await canvas.evaluate((element, source) => {
+      const state = new Function(`return (${source})`)() as (canvas: Element) => string;
+      const log = { clicks: 0, dead: [] as string[], left: false, pressed: false };
+      (element as HTMLElement & { clickLog?: typeof log }).clickLog = log;
+      let before: string | null = null;
+      let down = { x: 0, y: 0, time: 0 };
+      let pending: { after: string; timer: number } | null = null;
+      const settle = () => {
+        if (!pending) return;
+        window.clearTimeout(pending.timer);
+        if (state(element) === before) log.dead.push(pending.after);
+        pending = null;
+      };
+      element.addEventListener(
+        'pointerdown',
+        (event) => {
+          if (event.isTrusted) return;
+          settle();
+          log.pressed = true;
+          before = state(element);
+          const { clientX: x, clientY: y } = event as PointerEvent;
+          down = { x, y, time: performance.now() };
+        },
+        true,
+      );
+      element.addEventListener(
+        'click',
+        (event) => {
+          if (event.isTrusted) return;
+          // A click step holds the button 90 ms where it is (PointerPlan.ts); a longer press,
+          // such as a card's, shows its pressed state, and a drag, such as a slider's, moves.
+          const { clientX: x, clientY: y } = event as MouseEvent;
+          if (performance.now() - down.time > 160 || Math.hypot(x - down.x, y - down.y) > 3) return;
+          log.clicks++;
+          const target = event.target as Element;
+          const label =
+            `${target.localName}.${[...target.classList].join('.')} ` +
+            `"${target.textContent?.trim().slice(0, 20)}"`;
+          pending = { after: label, timer: window.setTimeout(settle, 700) };
+        },
+        true,
+      );
+      // The script ends as its pointer leaves the preview, with no element it goes to.
+      element.addEventListener(
+        'pointerout',
+        (event) => {
+          if (!event.isTrusted && !(event as PointerEvent).relatedTarget) log.left = true;
+        },
+        true,
+      );
+    }, tileState.toString());
+    const box = (await tile.boundingBox())!;
+    await page.mouse.move(box.x + box.width / 2, box.y + 8);
+    await expect(tile.locator('[data-playing]')).toHaveCount(1);
+    // One loop: until the pointer leaves, or a while for a tile whose pointer never presses.
+    const started = Date.now();
+    await expect
+      .poll(
+        () =>
+          canvas.evaluate((element) => {
+            const log = (element as HTMLElement & { clickLog: { left: boolean; pressed: boolean } })
+              .clickLog;
+            return log.left;
+          }),
+        { timeout: 15_000, intervals: [200] },
+      )
+      .toBe(true)
+      .catch(() => undefined);
+    if (Date.now() - started < 800) await page.waitForTimeout(800);
+    await page.waitForTimeout(750);
+    const log = await canvas.evaluate(
+      (element) =>
+        (element as HTMLElement & { clickLog: { clicks: number; dead: string[] } }).clickLog,
+    );
+    await page.mouse.move(0, 0);
+    dead.push(...log.dead.map((click) => `${name}: ${click}`));
+  }
+  return dead;
+}
+
+for (const [route, parts] of [
+  ['/components', 8],
+  ['/patterns', 3],
+] as const)
+  for (let part = 0; part < parts; part++)
+    test(`every click a ${route.slice(1)} gallery tile's script makes changes it (${part + 1} of ${parts})`, async ({
+      page,
+    }) => {
+      // Each scripted click reaches what it aims at, as a person's would (VirtualPointer.ts), and
+      // changes something: a value, a state, a popup opening or closing, the text it shows.
+      test.setTimeout(150_000);
+      await page.setViewportSize({ width: 1440, height: 900 });
+      await page.goto(`${siteDevUrl}${route}`);
+      const tiles = page.locator('.catalogue-gallery-tile');
+      await expect(tiles.first()).toBeVisible();
+      const names = (await tiles.locator('.catalogue-gallery-name').allTextContents()).filter(
+        (_, index) => index % parts === part,
+      );
+      expect(await deadClicks(page, names)).toEqual([]);
+    });

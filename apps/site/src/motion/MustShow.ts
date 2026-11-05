@@ -47,3 +47,43 @@ export function holdView(root: Element) {
 
 /** Whether a preview's view holds while it plays. */
 export const holdsView = (root: Element) => (holding.get(root) ?? 0) > 0;
+
+/*
+ * Where a playing tile's pointer is heading (usePointer, Motion.tsx): the point of its current move,
+ * or of the last it made, as an element's selector and fractions of its box. A tile's view pans to
+ * keep it in the stage, so what the pointer goes to, and presses there, is in view before the press
+ * (useFit.ts). Each change is announced to the preview's root as a `headingEvent`.
+ */
+
+/** A point the pointer heads to: an element, by its selector, and fractions of its box. */
+export interface Heading {
+  selector: string;
+  x: number;
+  y: number;
+}
+
+/** Where each preview's pointer is heading, by the preview's root element. */
+const headings = new WeakMap<Element, Heading>();
+
+/** The event a preview's root hears as its pointer heads somewhere else. */
+export const headingEvent = 'catalogue-heading';
+
+/** Says where a preview's pointer is heading, or with null that it heads nowhere. */
+export function headFor(root: Element, heading: Heading | null) {
+  const was = headings.get(root) ?? null;
+  if (was === heading) return;
+  if (
+    was &&
+    heading &&
+    was.selector === heading.selector &&
+    was.x === heading.x &&
+    was.y === heading.y
+  )
+    return;
+  if (heading === null) headings.delete(root);
+  else headings.set(root, heading);
+  root.dispatchEvent(new Event(headingEvent));
+}
+
+/** Where a preview's pointer is heading, if anywhere. */
+export const headingOf = (root: Element) => headings.get(root) ?? null;

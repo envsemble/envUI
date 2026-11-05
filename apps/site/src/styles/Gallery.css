@@ -17,9 +17,11 @@
      (useFit.ts): as wide as five to a row, and as tall as a row of controls with room around it;
      what is taller, such as a calendar, is cut off at its foot rather than drawn smaller. An open
      popup, such as a menu beside its button, is drawn a little smaller to show whole, but never
-     smaller than `--catalogue-own-popup-least`, so its words read as the other tiles' do; a larger
-     one, such as a dialog, is cut off at its foot as a calendar is. A popup's tile is written to
-     show whole, or as a window onto it from its top (tiles/). */
+     smaller than `--catalogue-own-popup-least`, every popup's least, so its words read as the
+     other tiles' do; a larger one, such as a picker, is cut off at its foot as a calendar is. A
+     modal, such as a dialog, has the whole stage for its screen, its backdrop over all of it, and
+     shows from its top where it is taller. A popup's tile is written to show whole, or as a window
+     onto it from its top (tiles/). */
   --catalogue-own-least: 12rem;
   --catalogue-own-least-block: 4.5rem;
   --catalogue-own-popup-least: 0.84;
@@ -69,14 +71,16 @@
   place-content: start stretch;
 }
 
-/* On a phone, components two to a row on lower stages, so the gallery stays short: each drawn as
-   small as fits its stage's width, but no smaller than 0.7 of its own size (useFit.ts), laid out
-   as wide as the stage shows at that scale; what is larger still, an open popup too, is cut off
-   at its end and its foot, fading out. A pattern's scene keeps its own card, one to a row (above). */
+/* On a phone, components two to a row on lower stages, so the gallery stays short: each drawn at
+   one of a few scales (useFit.ts), its own size where it fits its stage, else `--catalogue-own-floor`,
+   laid out as wide as the stage shows at that scale, and an open popup down to its least,
+   `--catalogue-own-popup-least`; what is larger still is cut off at its end and its foot, fading
+   out. A pattern's scene keeps its own card, one to a row (above). */
 @container catalogue-gallery (width < 27.25rem) {
   .catalogue-gallery-grid:not([data-scenes]) {
     --catalogue-own-least: 0rem;
-    --catalogue-own-floor: 0.7;
+    --catalogue-own-floor: 0.85;
+    --catalogue-own-popup-least: 0.7;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     row-gap: var(--env-space-5);
     column-gap: var(--env-space-4);
@@ -129,8 +133,8 @@
   content: '';
 }
 
-/* The keyboard on a tile's link rings its picture, as focus does; the pointer only shades it
-   (Stage.css). */
+/* The keyboard on a tile's link rings its picture, as focus does; the pointer draws a hairline
+   ring inside its edge (Stage.css). */
 .catalogue-gallery-tile:has(.catalogue-gallery-link:focus-visible) .catalogue-gallery-stage {
   outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: 0.125rem;
@@ -159,7 +163,7 @@
 /* The box of a component drawn at its own size, or a pattern's scene at a legible scale, as large
    as the stage (Related.tsx): what is cut off at an edge, the bottom and the end for a component, any
    side for a scene centred on what it paints, fades out over the last stretch, rather than ending in
-   a slice through a line, and the stage's fill, which shades under the pointer, shows through. */
+   a slice through a line, and the stage's fill shows through. */
 .catalogue-related-crop {
   --catalogue-crop-fade: 1.75rem;
   /* Any opaque color: the mask reads only its alpha. */

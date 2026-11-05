@@ -12,11 +12,12 @@ import {
 } from 'react';
 import { PortalContainer } from '@envsemble/envui';
 import { isVirtual, VirtualPointer, type Aimed } from './VirtualPointer';
-import { holdView, nameMustShow } from './MustShow';
+import { headFor, holdView, nameMustShow } from './MustShow';
 import {
   aimsOf,
   ease,
   firstWait,
+  headingAt,
   planOf,
   positionAt,
   presentAt,
@@ -468,6 +469,8 @@ export function usePointer(
       aimed = null;
       known = new Map();
       const time = next >= plan.length ? next % plan.length : next;
+      // Where it is heading, which its tile's view keeps in the stage (MustShow.ts).
+      headFor(scope, headingAt(plan, time));
       // Where what happens on the way to it happens, through the end of the loop where it ends.
       const { done, time: from } = clock.current;
       const loops = next >= plan.length || next < from;
@@ -518,6 +521,7 @@ export function usePointer(
       stop();
       together?.leave();
       current.suspend();
+      headFor(scope, null);
     };
   }, [playing, root, plan, clockName]);
 }

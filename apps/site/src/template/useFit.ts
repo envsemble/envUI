@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef, type RefObject } from 'react';
-import { holdsView, mustShowOf } from '../motion/MustShow';
+import { headingEvent, headingOf, holdsView, mustShowOf } from '../motion/MustShow';
+import { aimedElement } from '../motion/PointerPlan';
 
 /** The least room, in px, between a preview and its stage's edges. */
 const inset = 16;
@@ -291,10 +292,37 @@ export function useFit(
     const first = { calm: 0, start: 0 };
     // As a tile plays, what its still showed and what it has opened since (playFit).
     let run: Run | null = null;
+    // Whether the canvas is a screen as large as the stage, for a modal over it (screenFit).
+    let screen = false;
     const place = () => {
       const transform = `translate(${-view.x}px, ${-view.y}px) scale(${view.scale})`;
       if (canvasElement.style.transform !== transform) canvasElement.style.transform = transform;
-      trimRows(canvasElement, run !== null);
+      trimRows(canvasElement, run !== null || (screen && playingNow.current));
+    };
+    /**
+     * The part of the canvas a playing tile's pointer is heading to, in its own px: the element it
+     * aims at, or the row it is in, such as a list's row around its link, so the crop shows it whole
+     * rather than hiding it past its foot (trimRows); of an element taller than a row, such as a
+     * panel's content, only the stretch around the point it aims at.
+     */
+    const heading = (): Box | null => {
+      const aim = headingOf(canvasElement);
+      if (!aim) return null;
+      const element = aimedElement(canvasElement, aim.selector);
+      if (!element?.checkVisibility()) return null;
+      const row = element.closest(rowSelector);
+      const box = partOf(row && canvasElement.contains(row) ? row : element, canvasElement);
+      const reach = 3 * remSize();
+      if (box.bottom - box.top <= 2 * reach && box.right - box.left <= 6 * reach) return box;
+      const own = partOf(element, canvasElement);
+      const x = own.left + (own.right - own.left) * aim.x;
+      const y = own.top + (own.bottom - own.top) * aim.y;
+      return {
+        left: Math.max(box.left, x - reach),
+        right: Math.min(box.right, x + reach),
+        top: Math.max(box.top, y - reach / 2),
+        bottom: Math.min(box.bottom, y + reach / 2),
+      };
     };
     const glide = (now: number) => {
       const elapsed = Math.min(64, now - (view.last || now - 16));
@@ -317,6 +345,20 @@ export function useFit(
       view.frame = settled ? 0 : requestAnimationFrame(glide);
     };
     const still = matchMedia('(prefers-reduced-motion: reduce)');
+    /** Eases the view to where it goes, or with motion reduced, places it there at once. */
+    const glideTo = () => {
+      if (still.matches) {
+        cancelAnimationFrame(view.frame);
+        view.frame = 0;
+        view.x = view.toX;
+        view.y = view.toY;
+        view.scale = view.toScale;
+        place();
+      } else if (!view.frame) {
+        view.last = 0;
+        view.frame = requestAnimationFrame(glide);
+      }
+    };
     /**
      * As a gallery's tile plays, its view stays where it rested, as the pointer comes in and while
      * what it does stays in its still, such as a tree's branch opening in place. Only once it opens
@@ -327,41 +369,10 @@ export function useFit(
      * every time it plays it does the same. What still doesn't fit is shown from its start, cut
      * off past the stage's edge, where it fades out.
      */
-    const playFit = (boxes: Shown[], least: number) => {
+    const playFit = (boxes: Shown[], least: number, stepped: (scale: number) => number) => {
       const across = stageElement.clientWidth;
       const down = stageElement.clientHeight;
-      const frame = canvasElement.getBoundingClientRect();
-      const ratio = frame.width / canvasElement.offsetWidth || 1;
-      const ownBox = (element: Element): Box => {
-        const rect = element.getBoundingClientRect();
-        return {
-          left: (rect.left - frame.left) / ratio,
-          top: (rect.top - frame.top) / ratio,
-          right: (rect.right - frame.left) / ratio,
-          bottom: (rect.bottom - frame.top) / ratio,
-        };
-      };
-      // What shows of an element, inside the boxes around it that clip it, such as a scrolling
-      // column's: a row scrolled out of it doesn't count.
-      const shownPart = (element: Element) => {
-        let box = ownBox(element);
-        for (
-          let node = element.parentElement;
-          node && node !== canvasElement;
-          node = node.parentElement
-        ) {
-          const style = getComputedStyle(node);
-          if (style.overflowX === 'visible' && style.overflowY === 'visible') continue;
-          const clip = ownBox(node);
-          box = {
-            left: Math.max(box.left, clip.left),
-            top: Math.max(box.top, clip.top),
-            right: Math.min(box.right, clip.right),
-            bottom: Math.min(box.bottom, clip.bottom),
-          };
-        }
-        return box;
-      };
+      const shownPart = (element: Element) => partOf(element, canvasElement);
       const layered = (element: Element) => element.closest('.catalogue-overlay-layer') !== null;
       run ??= {
         rested: boxes.reduce(
@@ -403,7 +414,7 @@ export function useFit(
                   '.env-popup-positioner, .env-menu-positioner, .env-tooltip-positioner',
                 )
               : null;
-          return holder && canvasElement.contains(holder) ? ownBox(holder) : box;
+          return holder && canvasElement.contains(holder) ? shownPart(holder) : box;
         });
       const must = join(...named, ...opened);
       const at = { x: view.toX, y: view.toY, scale: view.toScale };
@@ -473,7 +484,7 @@ export function useFit(
         const scale =
           wanted >= current.scale * zoomSlack
             ? current.scale
-            : Math.min(current.scale, Math.max(least, wanted));
+            : stepped(Math.min(current.scale, Math.max(least, wanted)));
         current.scale = scale;
         // Along an axis: the anchor where it was, else what is needed centred, then just far
         // enough to keep that in; where it doesn't fit, shown from its start, but never so far
@@ -524,16 +535,28 @@ export function useFit(
         );
         view.zoomed = scale < view.rest;
         view.toScale = scale;
-        if (still.matches) {
-          cancelAnimationFrame(view.frame);
-          view.frame = 0;
-          view.x = view.toX;
-          view.y = view.toY;
-          view.scale = scale;
-          place();
-        } else if (!view.frame) {
-          view.last = 0;
-          view.frame = requestAnimationFrame(glide);
+        glideTo();
+      }
+      // What the pointer heads to, such as a row below the stage's foot, is brought into the stage
+      // before it gets there, easing just far enough; a tile that holds its view is framed on it.
+      const box = holds ? null : heading();
+      if (box) {
+        const toX = contain(
+          view.toX,
+          box.left * view.toScale,
+          box.right * view.toScale,
+          across / 2 - 4,
+        );
+        const toY = contain(
+          view.toY,
+          box.top * view.toScale,
+          box.bottom * view.toScale,
+          down / 2 - 4,
+        );
+        if (Math.hypot(toX - view.toX, toY - view.toY) >= 1) {
+          view.toX = toX;
+          view.toY = toY;
+          glideTo();
         }
       }
       // What reaches past the stage's edges, where the view is drawn, is cut off there.
@@ -593,8 +616,8 @@ export function useFit(
       // in, `--catalogue-own-least` across, as five to a row, and `--catalogue-own-least-block`
       // down, as a menu open under its button (Gallery.css): then drawn smaller, by one scale for
       // every tile, as every stage is as large, so nothing reaches the stage's edge. On a phone,
-      // each is drawn as small as fits its stage's width and that height, but no smaller than
-      // `--catalogue-own-floor`: what is larger still is cut off.
+      // each is drawn at one of a few scales (phoneSteps): its own size where it fits its stage's
+      // width and that height, else `--catalogue-own-floor`, and what is larger still is cut off.
       const canvasStyle = getComputedStyle(canvasElement);
       const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
       const least = parseFloat(canvasStyle.getPropertyValue('--catalogue-own-least')) * rem;
@@ -602,22 +625,43 @@ export function useFit(
         parseFloat(canvasStyle.getPropertyValue('--catalogue-own-least-block')) * rem || 0;
       const downScale = leastBlock > 0 ? height / leastBlock : 1;
       const floor = parseFloat(canvasStyle.getPropertyValue('--catalogue-own-floor'));
+      const phone = floor > 0;
       // A popup shown open, such as a menu beside its button, lays out in its tile's own window
       // (`data-popup`, Gallery.css), as wide as it was written for, also in a pattern's scene. It
       // is drawn whole, its edges and corners in view, where that takes a scale no smaller than
-      // the least a popup is drawn at, `--catalogue-own-popup-least` (Gallery.css), or a scene's
-      // legible one: its words stay legible beside the other tiles'. A larger one, such as a
-      // dialog, is a window onto it from its top, cut off at its foot after its last whole row,
-      // drawn whole across where that scale allows, else at the one scale and cut off at its end.
-      // As it plays, it is drawn smaller only where what opens needs it (below).
+      // the least every popup is drawn at, `--catalogue-own-popup-least` (Gallery.css), or a
+      // scene's legible one: its words stay legible beside the other tiles'. A larger one, such
+      // as a picker, is a window onto it from its top, cut off at its foot after its last whole
+      // row, drawn whole across where that scale allows, else at the one scale and cut off at its
+      // end. A modal, such as a dialog, has the stage for its screen (screenFit). As it plays, it
+      // is drawn smaller only where what opens needs it (playFit).
       const popup = boxes.some(({ element }) => element.closest('.catalogue-overlay-layer'));
       if ((ownSize || legible) && popup && canvasElement.dataset.fitted === undefined)
         canvasElement.dataset.popup = '';
+      const popupLeast =
+        parseFloat(canvasStyle.getPropertyValue('--catalogue-own-popup-least')) || legibleScale;
+      // On a phone, the largest of its scales a picture fits at, no smaller than `low`.
+      const steps = phoneSteps(floor, popupLeast);
+      const step = (scale: number, low: number) =>
+        steps.find((each) => each >= low - 0.0005 && each <= scale + 0.0005) ?? low;
+      const own = phone
+        ? step(Math.min(1, width / (right - left), downScale), floor)
+        : Math.min(1, width / least, downScale);
+      // A component's modal, such as a dialog, a sheet or a command palette, over its backdrop:
+      // the stage is its screen, decided on its still, so it stays one as the modal closes.
+      if (ownSize && tile && !playingNow.current && canvasElement.querySelector(modal))
+        screen = true;
+      if (screen) {
+        screenFit(boxes, phone ? 1 : own, (scale) =>
+          phone ? step(scale, popupLeast) : Math.max(Math.min(own, popupLeast), scale),
+        );
+        return;
+      }
       const wholeScale = Math.min(width / (right - left), height / (bottom - top));
-      // A popup a little larger than the inset leaves room for, such as a confirm dialog's
-      // question and actions or a menu bar with its menu open, is drawn whole in the stage, a
-      // margin from its edges, where that scale allows, rather than as a window cut off through
-      // its last row. A larger one, such as a picker, stays a window onto it from its top.
+      // A popup a little larger than the inset leaves room for, such as a menu bar with its menu
+      // open, is drawn whole in the stage, a margin from its edges, where that scale allows, rather
+      // than as a window cut off through its last row. A larger one, such as a picker, stays a
+      // window onto it from its top.
       const dialog =
         canvasElement.querySelector('.catalogue-overlay-layer .env-dialog-backdrop') !== null;
       const room = {
@@ -629,47 +673,58 @@ export function useFit(
       const roomScale = roomy
         ? Math.min(room.width / (right - left), room.height / (bottom - top))
         : 0;
-      // A tile that holds its view as it plays is framed once on its still, the largest it shows,
-      // which shows whole: on a phone, down to `heldLeast`.
-      const popupLeast =
-        holdsView(canvasElement) && floor > 0
-          ? heldLeast
-          : parseFloat(canvasStyle.getPropertyValue('--catalogue-own-popup-least')) || legibleScale;
-      // A component's dialog on a wide stage, its title, a field and its actions, shows whole
-      // down to `dialogLeast`, rather than cut off through its actions; on a phone it is drawn
-      // at the phone's floor and cut off at its foot, and as it plays the view follows what its
-      // script presses there (playFit).
-      const shownLeast =
-        dialog && ownSize && !(floor > 0) ? Math.min(popupLeast, dialogLeast) : popupLeast;
+      // A tile that holds its view is framed once on its still, the largest it shows: what its
+      // script acts on there, such as a time picker's chosen hour under its field, shows in it from
+      // its top, drawn smaller for that down to the popup's least.
+      const keep = holdsView(canvasElement)
+        ? join(
+            ...mustShowOf(canvasElement)
+              .flatMap((selector) => {
+                try {
+                  return [...canvasElement.querySelectorAll(selector)];
+                } catch {
+                  return [];
+                }
+              })
+              .filter((element) => element.checkVisibility())
+              .map((element) => partOf(element, canvasElement))
+              .filter((box) => box.right > box.left && box.bottom > box.top),
+          )
+        : null;
+      const keepScale = keep
+        ? (stageElement.clientHeight - 2 * margin) / (keep.bottom - top)
+        : Infinity;
       const popupScale = (atMost: number) => {
-        const lowest = Math.min(atMost, shownLeast);
-        if (wholeScale >= lowest) return Math.min(atMost, wholeScale);
-        if (roomScale >= lowest) return Math.min(atMost, roomScale);
+        const lowest = Math.min(atMost, popupLeast);
         const across = width / (right - left);
-        return across >= lowest ? Math.min(atMost, across) : atMost;
+        const fits =
+          wholeScale >= lowest
+            ? wholeScale
+            : roomScale >= lowest
+              ? roomScale
+              : across >= lowest
+                ? Math.max(lowest, Math.min(across, keepScale))
+                : phone
+                  ? lowest
+                  : atMost;
+        return phone ? step(Math.min(atMost, fits), lowest) : Math.min(atMost, fits);
       };
-      const own =
-        floor > 0
-          ? Math.max(floor, Math.min(1, width / (right - left), downScale))
-          : Math.min(1, width / least, downScale);
       const scene = Math.max(legibleScale, Math.min(1, windowScale));
       // As a gallery's tile plays, its view is drawn out for all it shows (playFit), never below
-      // the least it is drawn at (its popup's, a phone's or a scene's), so its words stay legible.
+      // the least it is drawn at (its popup's or a scene's), so its words stay legible.
       if (
         (ownSize || legible) &&
         tile &&
         playingNow.current &&
         canvasElement.dataset.fitted !== undefined
       ) {
-        playFit(
-          boxes,
-          Math.min(view.rest, ownSize ? (floor > 0 ? floor : popupLeast) : legibleScale),
-        );
+        const low = Math.min(view.rest, ownSize ? popupLeast : legibleScale);
+        playFit(boxes, low, (scale) => (phone && ownSize ? step(scale, low) : scale));
         return;
       }
       const fitted = ownSize
         ? popup
-          ? popupScale(own)
+          ? popupScale(phone ? 1 : own)
           : own
         : legible
           ? popup
@@ -681,8 +736,6 @@ export function useFit(
       // Measured again, a box may come out a hair larger or smaller, a ten-millionth of the scale:
       // that is the same scale, so the view holds still and a tile shows as soon as it is fitted.
       const scale = Math.abs(fitted - view.rest) < 0.0005 ? view.rest : fitted;
-      // A tile in place eases to where it is fitted next; anything else is placed at once.
-      const eases = tile && canvasElement.dataset.fitted !== undefined && !still.matches;
       let toX = ((left + right) / 2) * scale;
       let toY = ((top + bottom) / 2) * scale;
       // Drawn at its own size, what is larger than the stage shows from its start, as a window
@@ -707,7 +760,12 @@ export function useFit(
       }
       // A scene drawn at a legible scale shows from its top too, where it starts, such as a search
       // above the results it filters, and stays centred across.
-      if ((ownSize || legible) && down > height && !inRoom) toY = top * scale + height / 2;
+      // A tile that holds its view starts a margin from the stage's top rather than the inset, so
+      // what its script acts on further down, such as a picker's chosen row, shows whole.
+      if ((ownSize || legible) && down > height && !inRoom)
+        toY = keep
+          ? top * scale + stageElement.clientHeight / 2 - margin
+          : top * scale + height / 2;
       // Drawn at a legible scale, a scene wider than the stage is cut off on both sides, fading
       // out there too.
       if (ownSize || legible) {
@@ -727,6 +785,15 @@ export function useFit(
         toX = contain(view.toX, left * scale, right * scale, stageElement.clientWidth / 2 - inset);
         toY = contain(view.toY, top * scale, bottom * scale, stageElement.clientHeight / 2 - inset);
       }
+      settle(scale, toX, toY, boxes);
+    };
+    /**
+     * Places the view at a scale and a point, `toX` and `toY`: until the preview shows, at once,
+     * and from then on, in place, easing there.
+     */
+    const settle = (scale: number, toX: number, toY: number, boxes: Shown[]) => {
+      // A tile in place eases to where it is fitted next; anything else is placed at once.
+      const eases = tile && canvasElement.dataset.fitted !== undefined && !still.matches;
       // Until it shows, it is placed at once, and shows only once its place has held for a few
       // frames, or after a quarter of a second, whatever is still moving, such as a popup placed again
       // against the stage's edges as the view moves: it appears in place, as every preview does,
@@ -783,6 +850,89 @@ export function useFit(
       canvasElement.dataset.fitted = '';
       for (const { element } of boxes) resize.observe(element);
     };
+    /**
+     * A component's modal over its backdrop, such as a dialog, a sheet or a command palette, has
+     * the stage for its screen, as an application's has the window: the canvas is laid out as large
+     * as the stage shows at its scale, from the stage's corner, so the backdrop covers the stage
+     * as it covers a screen and the modal is placed in it by its own style. It is drawn at the one
+     * scale, `atMost`, or smaller as far as the modal needs to show whole, down to the least a
+     * popup is drawn at (`stepped`). Taller than the stage still, the screen is as tall as the
+     * modal needs and shows from its top; as the tile plays, the view pans down it, easing, to
+     * what the pointer heads to, so what it presses is in view before the press.
+     */
+    const screenFit = (boxes: Shown[], atMost: number, stepped: (scale: number) => number) => {
+      const across = stageElement.clientWidth;
+      const down = stageElement.clientHeight;
+      const px = (value: string) => parseFloat(value) || 0;
+      // The room each modal needs: as tall as its content and the gutters around it, a sheet as
+      // tall as the screen it spans, and as wide where it is wider than the screen.
+      let needHeight = 0;
+      let needWidth = 0;
+      for (const surface of canvasElement.querySelectorAll<HTMLElement>(modalSurfaces)) {
+        if (!surface.checkVisibility() || surface.closest('[data-ending-style]')) continue;
+        const holder = surface.closest<HTMLElement>(modalPositioners) ?? surface.parentElement!;
+        const itself = getComputedStyle(surface);
+        const around = getComputedStyle(holder);
+        if (!surface.matches('.env-sheet'))
+          needHeight = Math.max(
+            needHeight,
+            surface.scrollHeight +
+              surface.offsetHeight -
+              surface.clientHeight +
+              px(itself.marginTop) +
+              px(itself.marginBottom) +
+              px(around.paddingTop) +
+              px(around.paddingBottom),
+          );
+        const wide =
+          surface.offsetWidth +
+          px(itself.marginLeft) +
+          px(itself.marginRight) +
+          px(around.paddingLeft) +
+          px(around.paddingRight);
+        if (wide > canvasElement.offsetWidth + 0.5) needWidth = Math.max(needWidth, wide);
+      }
+      const fits = Math.min(
+        atMost,
+        needHeight ? down / needHeight : Infinity,
+        needWidth ? across / needWidth : Infinity,
+      );
+      // As it plays, the screen stays as it was at rest, as the modal closes and opens again.
+      const plays = playingNow.current && canvasElement.dataset.fitted !== undefined;
+      const scale = plays ? view.rest : stepped(fits);
+      const style = canvasElement.style;
+      const tall = plays ? canvasElement.offsetHeight : Math.max(down / scale, needHeight);
+      const size = (value: number) => `${Math.round(value * 100) / 100}px`;
+      if (!plays) {
+        if (style.inlineSize !== size(across / scale)) style.inlineSize = size(across / scale);
+        if (style.blockSize !== size(tall)) style.blockSize = size(tall);
+        style.minBlockSize = '0px';
+      }
+      // From the screen's top to its foot: where the stage's middle is along it.
+      const highest = down / 2;
+      const lowest = Math.max(highest, tall * scale - down / 2);
+      let toY = highest;
+      if (plays) {
+        toY = Math.min(Math.max(view.toY, highest), lowest);
+        const box = heading();
+        if (box) {
+          toY = contain(toY, box.top * scale, box.bottom * scale, down / 2 - 4);
+          toY = Math.min(Math.max(toY, highest), lowest);
+        }
+      }
+      // What it shows past the stage's top or foot, the screen's own fill aside, is cut off there.
+      const shows = join(...boxes.map(({ box }) => box));
+      const sides = [
+        shows && shows.top * scale - toY < -down / 2 - 1 ? 'top' : '',
+        shows && shows.bottom * scale - toY > down / 2 + 1 ? 'bottom' : '',
+      ]
+        .filter(Boolean)
+        .join(' ');
+      if (sides) canvasElement.dataset.cut = sides;
+      else delete canvasElement.dataset.cut;
+      settle(scale, across / 2, toY, boxes);
+      trimRows(canvasElement, playingNow.current);
+    };
     resize.observe(stageElement);
     resize.observe(canvasElement);
     // The example renders once its module loads, and its overlays open into a canvas that keeps
@@ -809,6 +959,8 @@ export function useFit(
     // An overlay that opens with a transition measures its final box once it ends.
     canvasElement.addEventListener('transitionend', update);
     canvasElement.addEventListener('animationend', update);
+    // As the pointer heads somewhere else, the view keeps where it goes in the stage.
+    canvasElement.addEventListener(headingEvent, update);
     void document.fonts?.ready.then(update);
     // An overlay may size to the window, such as a sheet as tall as it.
     window.addEventListener('resize', update);
@@ -818,6 +970,9 @@ export function useFit(
       canvasElement.removeEventListener('scroll', scrolled, true);
       canvasElement.removeEventListener('transitionend', update);
       canvasElement.removeEventListener('animationend', update);
+      canvasElement.removeEventListener(headingEvent, update);
+      for (const property of ['inline-size', 'block-size', 'min-block-size'])
+        canvasElement.style.removeProperty(property);
       cancelAnimationFrame(frame);
       cancelAnimationFrame(view.frame);
       changes.disconnect();
@@ -827,15 +982,55 @@ export function useFit(
   }, [stage, canvas, on, whole, tile, ownSize, legible]);
 }
 
-/** The least a component's dialog is drawn at on a wide stage, so it shows whole (useFit). */
-const dialogLeast = 0.66;
+/**
+ * A phone's scales, largest first: a component's own size, the phone's floor where it is larger
+ * (`--catalogue-own-floor`), and for an open popup the least a popup is drawn at
+ * (`--catalogue-own-popup-least`, Gallery.css), so neighbouring tiles are drawn at one of a few.
+ */
+const phoneSteps = (floor: number, popupLeast: number) =>
+  [...new Set([1, floor, popupLeast])].filter((step) => step > 0).sort((a, b) => b - a);
+
+/** A component's modal over its backdrop, open in its tile's overlay layer (screenFit). */
+const modal = '.catalogue-overlay-layer .env-dialog-backdrop';
+
+/** A modal's surface, what it shows over its backdrop: a dialog's, a sheet's or a palette's. */
+const modalSurfaces =
+  '.catalogue-overlay-layer :is(.env-dialog-surface, .env-command-palette, .env-sheet)';
+
+/** The box that places a modal's surface over the screen, with its gutters. */
+const modalPositioners =
+  '.env-dialog-positioner, .env-command-palette-positioner, .env-sheet-viewport';
 
 /**
- * The least a tile that holds its view is drawn at on a phone, a little below the phone's floor
- * (`--catalogue-own-floor`, Gallery.css): its still, a popup open such as a command palette with its
- * commands, is the frame of all it plays, so it shows whole rather than cut off.
+ * What shows of an element, in its canvas's own px, inside the boxes around it that clip it, such
+ * as a scrolling column's: a row scrolled out of it doesn't count.
  */
-const heldLeast = 0.64;
+function partOf(element: Element, canvas: HTMLElement): Box {
+  const frame = canvas.getBoundingClientRect();
+  const ratio = frame.width / canvas.offsetWidth || 1;
+  const ownBox = (node: Element): Box => {
+    const rect = node.getBoundingClientRect();
+    return {
+      left: (rect.left - frame.left) / ratio,
+      top: (rect.top - frame.top) / ratio,
+      right: (rect.right - frame.left) / ratio,
+      bottom: (rect.bottom - frame.top) / ratio,
+    };
+  };
+  let box = ownBox(element);
+  for (let node = element.parentElement; node && node !== canvas; node = node.parentElement) {
+    const style = getComputedStyle(node);
+    if (style.overflowX === 'visible' && style.overflowY === 'visible') continue;
+    const clip = ownBox(node);
+    box = {
+      left: Math.max(box.left, clip.left),
+      top: Math.max(box.top, clip.top),
+      right: Math.min(box.right, clip.right),
+      bottom: Math.min(box.bottom, clip.bottom),
+    };
+  }
+  return box;
+}
 
 /** The share of its scale a playing tile's content may need before it is drawn smaller. */
 const zoomSlack = 0.97;
@@ -885,6 +1080,9 @@ const triggers =
 
 /** How far, in px, from a stage's edges a playing tile's view keeps what it opens and its trigger. */
 const playMargin = 10;
+
+/** The root's font size, in px, which rem lengths follow. */
+const remSize = () => parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
 
 /** The least box around boxes, or nothing for none. */
 function join(...boxes: (Box | null)[]): Box | null {
