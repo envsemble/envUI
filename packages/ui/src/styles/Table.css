@@ -5,6 +5,8 @@
     /* Avatar groups in the cells ring their avatars in the table's surface, with the row's fill
        over it while the row is hovered or selected. */
     --env-avatar-group-ring: var(--env-table-surface);
+    /* Avatars and their groups in the cells are dense, quieter among the rows of data. */
+    --env-avatar-dense: 1;
     /* Absolutely positioned content, such as visually hidden text in a cell, stays in the region and
        scrolls with it instead of widening the page. */
     position: relative;
@@ -163,8 +165,8 @@
     transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
   }
   .env-table-row[data-interactive]:is(:hover, :focus-within) {
-    --env-avatar-group-ring-tint: var(--env-color-bg-neutral-subtle-hover);
-    background: var(--env-color-bg-neutral-subtle-hover);
+    --env-avatar-group-ring-tint: var(--env-color-bg-row-hover);
+    background: var(--env-color-bg-row-hover);
   }
   /* Links and text buttons in an unselected row under the pointer or holding focus take the link
      colors for a tint: the link blue falls below 4.5:1 on the hover fill over the default surface in
@@ -185,6 +187,8 @@
     --env-color-fg-link: var(--env-color-fg-on-selected);
     --env-color-fg-link-hover: var(--env-color-fg-on-selected);
     --env-color-fg-link-pressed: var(--env-color-fg-on-selected);
+    /* The bar's color, which a skeleton clears. */
+    --env-table-selection-bar: var(--env-color-fg-on-selected);
     --env-avatar-group-ring-tint: var(--env-color-bg-selected);
     background: var(--env-color-bg-selected);
   }
@@ -194,11 +198,11 @@
   }
   .env-table-row[aria-selected='true']:not(:has(> :first-child input[type='checkbox']))
     > :first-child {
-    box-shadow: inset 0.1875rem 0 0 var(--env-color-fg-on-selected);
+    box-shadow: inset 0.1875rem 0 0 var(--env-table-selection-bar);
   }
   .env-table-row[aria-selected='true']:not(:has(> :first-child input[type='checkbox']))
     > :first-child:dir(rtl) {
-    box-shadow: inset -0.1875rem 0 0 var(--env-color-fg-on-selected);
+    box-shadow: inset -0.1875rem 0 0 var(--env-table-selection-bar);
   }
 
   /* A sortable header is a button that fills its cell: the label and an arrow for the sort order. */
@@ -474,13 +478,13 @@
     }
     .env-table-region[data-narrow-layout='stack']
       .env-table-row[aria-selected='true']:not(:has(> :first-child input[type='checkbox'])) {
-      box-shadow: inset 0.1875rem 0 0 var(--env-color-fg-on-selected);
+      box-shadow: inset 0.1875rem 0 0 var(--env-table-selection-bar);
     }
     .env-table-region[data-narrow-layout='stack']
       .env-table-row[aria-selected='true']:not(:has(> :first-child input[type='checkbox'])):dir(
         rtl
       ) {
-      box-shadow: inset -0.1875rem 0 0 var(--env-color-fg-on-selected);
+      box-shadow: inset -0.1875rem 0 0 var(--env-table-selection-bar);
     }
     .env-table-region[data-narrow-layout='stack']
       .env-table-row[aria-selected='true']
@@ -554,6 +558,13 @@
   }
   [data-env-skeleton]:not(env-none) .env-table-head .env-table-sort-button > .env-icon {
     visibility: hidden;
+  }
+  /* A loading table shows no selection: its rows aren't there yet, so a selected row takes neither
+     the selection's fill nor its bar. */
+  [data-env-skeleton] .env-table-row[aria-selected='true'] {
+    --env-table-selection-bar: transparent;
+    --env-avatar-group-ring-tint: transparent;
+    background: transparent;
   }
   /* In a skeleton, an empty cell, as over a placeholder row, is a bar of about a value's length. */
   [data-env-skeleton] .env-table-cell {

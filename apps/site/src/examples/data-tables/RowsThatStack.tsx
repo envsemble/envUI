@@ -7,6 +7,7 @@ import {
   Pagination,
   RelativeTime,
   Row,
+  Select,
   Table,
 } from '@envsemble/envui';
 
@@ -34,23 +35,65 @@ const projects = [
   },
 ];
 
+type SortColumn = 'name' | 'updated';
+type Direction = 'ascending' | 'descending';
+
+const orders = [
+  { value: 'updated descending', label: 'Updated, newest first' },
+  { value: 'updated ascending', label: 'Updated, oldest first' },
+  { value: 'name ascending', label: 'Name, A to Z' },
+  { value: 'name descending', label: 'Name, Z to A' },
+];
+
 export default function RowsThatStack() {
   const [page, setPage] = useState(1);
+  const [stacked, setStacked] = useState(false);
+  const [sort, setSort] = useState<{ column: SortColumn; direction: Direction }>({
+    column: 'updated',
+    direction: 'descending',
+  });
+  const sorted = [...projects].sort((first, second) => {
+    const order = first[sort.column].localeCompare(second[sort.column]);
+    return sort.direction === 'ascending' ? order : -order;
+  });
+  const sortBy = (column: SortColumn) => (direction: Direction) => setSort({ column, direction });
+  const direction = (column: SortColumn) => (sort.column === column ? sort.direction : 'none');
   return (
     <Column gap={3}>
+      {/* The header and its sort buttons are hidden while rows stack, so a Select above the
+          rows shows and changes the order. */}
+      {stacked && (
+        <Select
+          label="Sort by"
+          showLabel
+          size="sm"
+          items={orders}
+          value={`${sort.column} ${sort.direction}`}
+          onValueChange={(value) => {
+            if (!value) return;
+            const [column, next] = value.split(' ') as [SortColumn, Direction];
+            setSort({ column, direction: next });
+          }}
+          style={{ alignSelf: 'start' }}
+        />
+      )}
       {/* Where its region is narrower than 36 rem, each row stacks into a block titled by its
           name, with its status beside it and each other value under its column's name. */}
-      <Table.Root aria-label="All projects" narrowLayout="stack">
+      <Table.Root aria-label="All projects" narrowLayout="stack" onStackedChange={setStacked}>
         <Table.Head>
           <Table.Row>
-            <Table.HeaderCell>Name</Table.HeaderCell>
+            <Table.HeaderCell sortDirection={direction('name')} onSortChange={sortBy('name')}>
+              Name
+            </Table.HeaderCell>
             <Table.HeaderCell>Status</Table.HeaderCell>
             <Table.HeaderCell>Owner</Table.HeaderCell>
-            <Table.HeaderCell>Updated</Table.HeaderCell>
+            <Table.HeaderCell sortDirection={direction('updated')} onSortChange={sortBy('updated')}>
+              Updated
+            </Table.HeaderCell>
           </Table.Row>
         </Table.Head>
         <Table.Body>
-          {projects.map((project) => (
+          {sorted.map((project) => (
             <Table.Row key={project.id} interactive>
               <Table.Cell>
                 <Link href={`/projects/${project.id}`}>{project.name}</Link>

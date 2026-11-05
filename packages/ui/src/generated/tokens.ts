@@ -986,6 +986,28 @@ export const tokens = {
       'dark-high-contrast': '#343638',
     },
   },
+  /** The state layer over a tree or table row under the pointer: in light a step quieter than over a control, so a hovered row never weighs as much as the selection on the gray page. */
+  'color.bg.row.hover': {
+    cssVariable: '--env-color-bg-row-hover',
+    type: 'color',
+    values: {
+      light: 'rgb(31 31 34 / 0.045)',
+      dark: 'rgb(232 234 238 / 0.08)',
+      'light-high-contrast': 'rgb(31 31 34 / 0.06)',
+      'dark-high-contrast': 'rgb(232 234 238 / 0.06)',
+    },
+  },
+  /** The state layer over a tree or table row while pressed, a step stronger than its hover. */
+  'color.bg.row.pressed': {
+    cssVariable: '--env-color-bg-row-pressed',
+    type: 'color',
+    values: {
+      light: 'rgb(31 31 34 / 0.08)',
+      dark: 'rgb(232 234 238 / 0.12)',
+      'light-high-contrast': 'rgb(31 31 34 / 0.08)',
+      'dark-high-contrast': 'rgb(232 234 238 / 0.08)',
+    },
+  },
   /** Selected navigation items, tree and table rows, Select options and drop targets; paired with fg.on-selected. A blue tint in light and a blue-gray in dark, distinct from the other items around it, at rest and under the pointer: ΔEOK 0.03 or more, 0.04 at high contrast. */
   'color.bg.selected': {
     cssVariable: '--env-color-bg-selected',

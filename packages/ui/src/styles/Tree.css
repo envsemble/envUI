@@ -1,6 +1,7 @@
 @layer env.components {
   /* A virtualized tree: the tree scrolls itself and positions its rendered rows by index. Rows follow
-     navigation colors: transparent at rest, a state layer on hover and the navigation selection. */
+     navigation colors: transparent at rest, the row state layer on hover, and the navigation
+     selection, which always reads stronger than the hover. */
   .env-tree {
     /* The density sets the rows' block padding around their content line. */
     --env-tree-item-padding: var(--env-tree-row-padding-block-sm);
@@ -52,10 +53,10 @@
     transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
   }
   .env-tree-item:hover {
-    background: var(--env-color-bg-neutral-subtle-hover);
+    background: var(--env-color-bg-row-hover);
   }
   .env-tree-item:active {
-    background: var(--env-color-bg-neutral-subtle-pressed);
+    background: var(--env-color-bg-row-pressed);
   }
   .env-tree-item[aria-selected='true'] {
     background: var(--env-color-bg-selected);
