@@ -43,7 +43,7 @@
   .env-rich-text :where(ul[data-type='taskList'] > li),
   .env-rich-text-document :where(ul[data-type='taskList'] > li) {
     display: flex;
-    align-items: baseline;
+    align-items: flex-start;
     gap: var(--env-space-2);
   }
   .env-rich-text :where(ul[data-type='taskList'] > li > div),
@@ -59,8 +59,16 @@
   /* The editor's task item: its checkbox beside the item's text, as in RichText. */
   .env-rich-text-task {
     display: flex;
-    align-items: baseline;
+    align-items: flex-start;
     gap: var(--env-space-2);
+  }
+  /* A task's checkbox sits on the middle of the first line of its text, however the text wraps: its
+     slot is one line of the text tall, with the checkbox in the middle. */
+  .env-rich-text-task-check {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    block-size: 1lh;
   }
   .env-rich-text-task-content {
     min-inline-size: 0;

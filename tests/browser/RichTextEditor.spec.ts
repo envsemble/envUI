@@ -216,10 +216,19 @@ test('a task item keeps its checkbox beside its text in the editor and in the vi
       item.getByText('Review the outline', { exact: true }).boundingBox(),
     ]);
     expect(text!.x).toBeGreaterThan(checkbox!.x + checkbox!.width);
+    // The box sits on the middle of the text's first line.
     expect(
       Math.abs(text!.y + text!.height / 2 - (checkbox!.y + checkbox!.height / 2)),
-    ).toBeLessThan(8);
+    ).toBeLessThan(1.5);
   }
+  // In the view the checkbox is read-only rather than disabled: in full color, and a press doesn't
+  // change it.
+  const shownBox = items[1]!.getByRole('checkbox');
+  await expect(shownBox).toHaveAttribute('aria-readonly', 'true');
+  await expect(shownBox).toBeEnabled();
+  await expect(items[1]!.locator('.env-checkbox-box')).toHaveCSS('opacity', '1');
+  await shownBox.dispatchEvent('click');
+  await expect(shownBox).not.toBeChecked();
   // The task's row is as tall in the view as in the editor.
   const [edited, shown] = await Promise.all(items.map((item) => item.boundingBox()));
   expect(Math.abs(edited!.height - shown!.height)).toBeLessThan(1);
@@ -625,9 +634,14 @@ test('the document takes the field look: border, variants, error and a disabled 
       'xpath=ancestor::*[contains(@class, "env-text-field-control")][1]/*[contains(@class, "env-text-field-border")]',
     ),
   ).toHaveCSS('border-top-color', await color('--env-color-border-default'));
-  // Ghost draws no border or fill at rest.
+  // Ghost draws no border at rest, and the faint fill of an editable ghost field, half the neutral
+  // fill, as TextField's does.
   await expect(box('Ghost notes')).toHaveAttribute('data-variant', 'ghost');
-  await expect(box('Ghost notes')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+  await expect(box('Ghost notes').locator(':scope > .env-text-field-border')).toHaveCSS(
+    'border-top-color',
+    'rgba(0, 0, 0, 0)',
+  );
+  await expect(box('Ghost notes')).not.toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
   // The error makes the document invalid and its border the error color.
   const invalid = scope.getByRole('textbox', { name: 'Invalid notes' });
   await expect(invalid).toHaveAttribute('aria-invalid', 'true');
