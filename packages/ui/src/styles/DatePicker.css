@@ -124,7 +124,7 @@
     font-weight: var(--env-font-weight-medium);
   }
   /* From a medium window up, the time sits beside the calendar, as tall as it, and its heading as
-     tall as the calendar's month heading, so the first time lines up with the weekday names. Where
+     tall as the calendar's month heading (Calendar.css), so the two headings share a line. Where
      the card has too little room beside the trigger for both, the time moves under the calendar
      rather than running past the card's edge, its wheels whole. */
   @container env-window (width >= 37.5rem) {
@@ -138,7 +138,7 @@
     }
     .env-date-picker-time-title {
       justify-content: center;
-      min-block-size: var(--env-control-height-md);
+      min-block-size: calc(0.8 * var(--env-control-height-md));
     }
   }
   /* Motion: the calendar icon, always in the field, doesn't settle in as the field's other actions
