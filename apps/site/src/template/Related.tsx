@@ -222,9 +222,10 @@ export function useNear(
     const target = element.current;
     if (!target || near) return;
     const root = scrollerOf(target);
-    // What is in view renders at once, as after a jump down the page; what is near it once the
-    // page is idle, one tile after another, while it stays near: a tile scrolled past before its
-    // turn comes waits until it nears the view again.
+    // What is in view renders at once, as after a jump down the page, every tile that comes into
+    // view together in one pass (inViewTogether); what is near it once the page is idle, one tile
+    // after another, while it stays near: a tile scrolled past before its turn comes waits until it
+    // nears the view again.
     const watch = (margin: string, enter: () => void, leave: () => void = () => {}) => {
       const observer = new IntersectionObserver(
         (entries) => {
@@ -239,9 +240,12 @@ export function useNear(
     };
     let cancelNear = () => {};
     let cancelAhead = () => {};
+    let shown = false;
     const inView = watch('0px', () => {
       cancelNear();
-      setNear(true);
+      if (shown) return;
+      shown = true;
+      inViewTogether(approaching.current, () => setNear(true));
     });
     const close = watch(
       '600px 0px',
@@ -277,6 +281,33 @@ export function useNear(
     };
   }, [element, near]);
   return near;
+}
+
+/** The tiles that came into view in this frame: what each loads, and how each renders. */
+interface CameIntoView {
+  loads: Promise<unknown>[];
+  renders: (() => void)[];
+}
+let cameIntoView: CameIntoView | null = null;
+
+/**
+ * Renders the tiles that come into view in one frame, such as after a jump down the page, in one
+ * pass, once what each loads, such as its module, is there: they appear together rather than one
+ * by one as each arrives.
+ */
+function inViewTogether(load: (() => Promise<unknown> | void) | undefined, render: () => void) {
+  if (!cameIntoView) {
+    const batch: CameIntoView = { loads: [], renders: [] };
+    cameIntoView = batch;
+    requestAnimationFrame(() => {
+      cameIntoView = null;
+      void Promise.all(batch.loads).then(() => {
+        for (const each of batch.renders) each();
+      });
+    });
+  }
+  cameIntoView!.loads.push(Promise.resolve(load?.()).catch(() => undefined));
+  cameIntoView!.renders.push(render);
 }
 
 /**

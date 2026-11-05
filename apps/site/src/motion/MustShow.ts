@@ -9,24 +9,40 @@
  *
  * As the tile starts playing, its view is drawn out once, no smaller than the gallery's least
  * scale, so that every one of them that is there, and what the last time it played showed, is in
- * the stage; it moves again only where something larger opens.
+ * the stage; it moves again only where something larger opens. What a script moves to counts in a
+ * popup, as the view pans to the rest as the pointer heads there; what `useMustShow` names counts
+ * anywhere, such as a panel that opens in place.
  */
 
-/** The selectors each preview's animations name, by the preview's root element. */
-const named = new WeakMap<Element, Set<readonly string[]>>();
+/** A preview's named selectors, and whether they count outside its popups too. */
+interface Named {
+  selectors: readonly string[];
+  anywhere: boolean;
+}
 
-/** Names selectors of a preview's elements its animation acts on; returns the release. */
-export function nameMustShow(root: Element, selectors: readonly string[]) {
+/** The selectors each preview's animations name, by the preview's root element. */
+const named = new WeakMap<Element, Set<Named>>();
+
+/**
+ * Names selectors of a preview's elements its animation acts on, in its popups or, `anywhere`,
+ * also outside them; returns the release.
+ */
+export function nameMustShow(root: Element, selectors: readonly string[], anywhere = false) {
   let set = named.get(root);
   if (!set) named.set(root, (set = new Set()));
   const own = set;
-  own.add(selectors);
-  return () => void own.delete(selectors);
+  const entry = { selectors, anywhere };
+  own.add(entry);
+  return () => void own.delete(entry);
 }
 
-/** The selectors of the elements a preview's animations act on. */
-export function mustShowOf(root: Element): string[] {
-  return [...new Set([...(named.get(root) ?? [])].flat())];
+/**
+ * The selectors of the elements a preview's animations act on; with `anywhere`, only those that
+ * count outside its popups too.
+ */
+export function mustShowOf(root: Element, anywhere = false): string[] {
+  const entries = [...(named.get(root) ?? [])].filter((entry) => !anywhere || entry.anywhere);
+  return [...new Set(entries.flatMap((entry) => entry.selectors))];
 }
 
 /*
@@ -47,3 +63,43 @@ export function holdView(root: Element) {
 
 /** Whether a preview's view holds while it plays. */
 export const holdsView = (root: Element) => (holding.get(root) ?? 0) > 0;
+
+/*
+ * Where a playing tile's pointer is heading (usePointer, Motion.tsx): the point of its current move,
+ * or of the last it made, as an element's selector and fractions of its box. A tile's view pans to
+ * keep it in the stage, so what the pointer goes to, and presses there, is in view before the press
+ * (useFit.ts). Each change is announced to the preview's root as a `headingEvent`.
+ */
+
+/** A point the pointer heads to: an element, by its selector, and fractions of its box. */
+export interface Heading {
+  selector: string;
+  x: number;
+  y: number;
+}
+
+/** Where each preview's pointer is heading, by the preview's root element. */
+const headings = new WeakMap<Element, Heading>();
+
+/** The event a preview's root hears as its pointer heads somewhere else. */
+export const headingEvent = 'catalogue-heading';
+
+/** Says where a preview's pointer is heading, or with null that it heads nowhere. */
+export function headFor(root: Element, heading: Heading | null) {
+  const was = headings.get(root) ?? null;
+  if (was === heading) return;
+  if (
+    was &&
+    heading &&
+    was.selector === heading.selector &&
+    was.x === heading.x &&
+    was.y === heading.y
+  )
+    return;
+  if (heading === null) headings.delete(root);
+  else headings.set(root, heading);
+  root.dispatchEvent(new Event(headingEvent));
+}
+
+/** Where a preview's pointer is heading, if anywhere. */
+export const headingOf = (root: Element) => headings.get(root) ?? null;

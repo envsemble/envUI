@@ -12,11 +12,12 @@ import {
 } from 'react';
 import { PortalContainer } from '@envsemble/envui';
 import { isVirtual, VirtualPointer, type Aimed } from './VirtualPointer';
-import { holdView, nameMustShow } from './MustShow';
+import { headFor, holdView, nameMustShow } from './MustShow';
 import {
   aimsOf,
   ease,
   firstWait,
+  headingAt,
   planOf,
   positionAt,
   presentAt,
@@ -468,6 +469,8 @@ export function usePointer(
       aimed = null;
       known = new Map();
       const time = next >= plan.length ? next % plan.length : next;
+      // Where it is heading, which its tile's view keeps in the stage (MustShow.ts).
+      headFor(scope, headingAt(plan, time));
       // Where what happens on the way to it happens, through the end of the loop where it ends.
       const { done, time: from } = clock.current;
       const loops = next >= plan.length || next < from;
@@ -514,10 +517,14 @@ export function usePointer(
       advance(state.time, still);
     };
     const stop = joinPointerFrames({ read, write });
+    // Its cursor shows while it plays, and goes as it stops or pauses.
+    current.showCursor(true);
     return () => {
       stop();
       together?.leave();
       current.suspend();
+      current.showCursor(false);
+      headFor(scope, null);
     };
   }, [playing, root, plan, clockName]);
 }
@@ -530,7 +537,7 @@ export function usePointer(
 export function useMustShow(...selectors: string[]) {
   const { root } = use(PlaybackContext);
   const key = selectors.join('\n');
-  useEffect(() => (root ? nameMustShow(root, key.split('\n')) : undefined), [root, key]);
+  useEffect(() => (root ? nameMustShow(root, key.split('\n'), true) : undefined), [root, key]);
 }
 
 /**

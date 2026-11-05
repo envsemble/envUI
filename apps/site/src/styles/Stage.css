@@ -112,27 +112,23 @@
 }
 
 /* A tile under the pointer, or with the keyboard on its link, as its picture comes alive
-   (motion/Motion.tsx): its canvas a shade deeper in the light themes and a shade lighter in the
-   dark ones, a step of about the same lightness either way, so it reads as clearly on the deep
-   near-black well as on the near-white stage, eased, with no outline. */
+   (motion/Motion.tsx): a hairline ring drawn inside its stage's edge, over the picture, eased in.
+   Its fill stays as it is: a shade of it would match a surface the picture paints, such as a top
+   bar's band or a page's body, which would vanish into it. */
 .catalogue-related-stage {
-  transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
+  outline: 1px solid transparent;
+  outline-offset: -1px;
+  transition: outline-color var(--env-motion-duration-fast) var(--env-motion-ease);
 }
 
 @media (hover: hover) {
   :is(.catalogue-gallery-tile, .catalogue-related-tile):hover .catalogue-related-stage {
-    background-color: light-dark(
-      oklch(from var(--catalogue-card-fill) calc(l - 0.03) c h),
-      oklch(from var(--catalogue-card-fill) calc(l + 0.035) c h)
-    );
+    outline-color: var(--env-color-border-default);
   }
 }
 
 :is(.catalogue-gallery-tile, .catalogue-related-tile):has(:focus-visible) .catalogue-related-stage {
-  background-color: light-dark(
-    oklch(from var(--catalogue-card-fill) calc(l - 0.03) c h),
-    oklch(from var(--catalogue-card-fill) calc(l + 0.035) c h)
-  );
+  outline-color: var(--env-color-border-default);
 }
 
 /* `stage="shaded"`, for a figure that shows a whole window, such as a Scaffold with its
@@ -675,4 +671,52 @@
    shows sits at the stage's top, so the room is where the list opens (`top` on MotionStage). */
 .catalogue-motion-stage[data-top] {
   align-content: start;
+}
+
+/* The cursor of the pointer no one sees (motion/PointerCursor.ts), over a playing preview's stage:
+   a plain arrow in the text's color, edged in the page's, at the scale the preview is drawn at,
+   its tip where the pointer is, a little smaller while it presses. */
+.catalogue-pointer-cursor {
+  --catalogue-cursor-scale: 1;
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  z-index: var(--env-z-raised);
+  inline-size: 0.875rem;
+  block-size: 1.25rem;
+  pointer-events: none;
+  transform-origin: 0 0;
+  scale: var(--catalogue-cursor-scale);
+}
+.catalogue-pointer-cursor > svg {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  overflow: visible;
+  fill: var(--env-color-fg-default);
+  stroke: var(--env-color-bg-default);
+  stroke-width: 1.25;
+  stroke-linejoin: round;
+  paint-order: stroke;
+  transform-origin: 0 0;
+}
+.catalogue-pointer-cursor[data-pressed] > svg {
+  scale: 0.85;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .catalogue-pointer-cursor > svg {
+    transition: scale var(--env-motion-duration-fast) var(--env-motion-ease);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .catalogue-pointer-cursor {
+    display: none;
+  }
+}
+@media (forced-colors: active) {
+  .catalogue-pointer-cursor > svg {
+    forced-color-adjust: none;
+    fill: CanvasText;
+    stroke: Canvas;
+  }
 }

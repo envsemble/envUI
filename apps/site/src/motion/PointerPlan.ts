@@ -65,7 +65,7 @@ export type PointerStep =
   | { drop: true };
 
 /** A point of an element of the preview, as fractions of its box, or of a text in it. */
-interface Aim {
+export interface Aim {
   selector: string;
   text?: string;
   x: number;
@@ -217,6 +217,15 @@ export function aimsOf(plan: Plan): string[] {
   return [...new Set(aims)];
 }
 
+/**
+ * Where the pointer is heading at a time of its plan: the aim of the move it is making, or of the
+ * last it made; none while it is off the preview.
+ */
+export function headingAt(plan: Plan, time: number): Aim | null {
+  if (!presentAt(plan, time)) return null;
+  return plan.moves.filter((move) => move.start <= time).at(-1)?.to ?? null;
+}
+
 /** Eases a move in and out, as a hand does. */
 export const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
 
@@ -234,8 +243,35 @@ function pointOf(scope: Element, aim: Aim, known?: AimPoints) {
   return point;
 }
 
+/**
+ * The element of a preview a selector aims at: the first that shows, its middle inside every box
+ * around it that clips what overflows it, such as the shown copy of a looping wheel's row rather
+ * than one scrolled out of it, else the first there is.
+ */
+export function aimedElement(scope: Element, selector: string) {
+  let found: Element[];
+  try {
+    found = [...scope.querySelectorAll(selector)];
+  } catch {
+    return null;
+  }
+  const shows = (element: Element) => {
+    const box = element.getBoundingClientRect();
+    const x = box.left + box.width / 2;
+    const y = box.top + box.height / 2;
+    for (let node = element.parentElement; node && node !== scope; node = node.parentElement) {
+      const style = getComputedStyle(node);
+      if (style.overflowX === 'visible' && style.overflowY === 'visible') continue;
+      const clip = node.getBoundingClientRect();
+      if (x < clip.left || x > clip.right || y < clip.top || y > clip.bottom) return false;
+    }
+    return true;
+  };
+  return found.length > 1 ? (found.find(shows) ?? found[0]!) : (found[0] ?? null);
+}
+
 function readPoint(scope: Element, aim: Aim) {
-  const element = scope.querySelector(aim.selector);
+  const element = aimedElement(scope, aim.selector);
   if (!element) return null;
   if (aim.text !== undefined) return textPoint(element, aim.text, aim.x, aim.y);
   const box = element.getBoundingClientRect();
