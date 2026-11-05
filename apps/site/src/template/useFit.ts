@@ -144,8 +144,7 @@ const rowSelector = [
   '.env-time-list-row',
   '.env-pager-link',
   '.env-dialog-content > *',
-  '.env-field',
-  '.env-checkbox',
+  '.env-dialog-content .env-checkbox',
 ].join(', ');
 
 /** How far, in px, a row may reach past the crop's foot and still count as whole. */

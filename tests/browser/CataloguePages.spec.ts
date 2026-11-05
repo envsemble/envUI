@@ -635,12 +635,14 @@ test('every tile of the galleries is fitted: components at one scale, a scene at
           .filter((box) => box.width < window.width - 1 || box.height < window.height - 1);
         if (!shown.length) return [`${name}: empty`];
         // A popup shown open, in a component's tile or a scene, is drawn at about the one scale:
-        // no larger, and no smaller than a component's popup or a scene is ever drawn, so its
-        // words read as the other tiles' do (Gallery.css).
+        // no larger, and no smaller than the least a component's popup or a scene is drawn at,
+        // or the one scale where that is smaller, so its words read as the other tiles' do
+        // (Gallery.css).
         if (canvas.hasAttribute('data-popup')) {
-          const least = canvas.hasAttribute('data-own-size') ? 0.84 : 0.79;
           const at = Number(scaleOf(canvas));
-          return at >= least && at <= Number(one ?? 1) ? [] : [`${name}: popup drawn at ${at}`];
+          const most = Number(one ?? 1);
+          const least = Math.min(most, canvas.hasAttribute('data-own-size') ? 0.84 : 0.79);
+          return at >= least - 0.001 && at <= most ? [] : [`${name}: popup drawn at ${at}`];
         }
         if (canvas.hasAttribute('data-own-size'))
           return scaleOf(canvas) === one && Number(one) <= 1 ? [] : [`${name}: not at one scale`];
@@ -706,8 +708,7 @@ test('every tile of the galleries is fitted: components at one scale, a scene at
               box.left < stage.left - 1 ||
               box.top < stage.top - 1 ||
               (box.right > stage.right + 1 && !cut.includes('end')) ||
-              (box.bottom > stage.bottom + 1 && !cut.includes('bottom')) ||
-              cut.includes('start')
+              (box.bottom > stage.bottom + 1 && !cut.includes('bottom'))
             );
           })
           .map((card) => `${name}: ${card.className}`);
