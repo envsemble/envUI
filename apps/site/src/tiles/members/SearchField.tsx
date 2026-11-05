@@ -39,14 +39,14 @@ export default function SearchFieldTile() {
   usePointer(script);
   const shown = projects.filter((name) => name.toLowerCase().includes(query.trim().toLowerCase()));
   return (
-    <Column gap={2} style={{ inlineSize: '11rem' }}>
+    <Column gap={1} style={{ inlineSize: '11rem' }}>
       <SearchField
         label="Find a project"
         placeholder="Find a project"
         value={query}
         onValueChange={setQuery}
       />
-      <List.Root aria-label="Projects" density="sm">
+      <List.Root aria-label="Projects" density="xs">
         {shown.map((name) => (
           <List.Item key={name} label={name} start={<IconFolder />} />
         ))}
