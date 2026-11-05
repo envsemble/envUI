@@ -113,6 +113,8 @@
      selected fills are close together. */
   .env-list > .env-list-item:is([data-selected], :has(> .env-list-item-start input:checked)) {
     --env-list-item-container-default: var(--env-color-bg-selected);
+    /* Soft badges lay their tint over the raised surface, not the selection's blue (Badge.css). */
+    --env-badge-underlay: var(--env-color-bg-raised);
     --env-list-item-fill-hover: var(--env-color-bg-selected-hover);
     --env-list-item-fill-pressed: var(--env-color-bg-selected-pressed);
     --env-list-item-content-gate: color-mix(

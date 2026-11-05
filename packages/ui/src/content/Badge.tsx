@@ -1,6 +1,7 @@
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
+import { IconCheck } from '../icons/Check.js';
 import '../styles/Base.css';
 import '../styles/Badge.css';
 
@@ -19,7 +20,8 @@ export type BadgeVariant = 'soft' | 'solid' | 'outline';
 interface BadgeAppearanceProps extends Omit<ComponentPropsWithRef<'span'>, 'children'> {
   /**
    * Meaning of the state: primary is the blue of what is current, accent the purple that stands
-   * out, done the quiet slate of completed work. Neutral by default. A count in the primary tone,
+   * out, done the quiet slate of completed work, which leads with a check mark. Neutral by
+   * default. A count in the primary tone,
    * solid, draws attention, such as unread messages that need an answer.
    */
   tone?: BadgeTone;
@@ -32,7 +34,10 @@ interface BadgeAppearanceProps extends Omit<ComponentPropsWithRef<'span'>, 'chil
 
 /** A badge with a label. */
 interface LabelBadgeProps extends BadgeAppearanceProps {
-  /** A decorative icon before the label, such as a check mark; hidden from assistive technology. */
+  /**
+   * A decorative icon before the label, such as a check mark; hidden from assistive technology. A
+   * done badge has a check mark unless it is given another icon, or `null` for none.
+   */
   icon?: ReactNode;
   /**
    * The label: a state, a name or a category in a word or two. It stays on one line and ends with
@@ -104,7 +109,9 @@ export function Badge({
       data-tone={tone}
       data-variant={variant}
     >
-      {icon != null && <DecorativeIcon>{icon}</DecorativeIcon>}
+      {icon !== null && (icon !== undefined || tone === 'done') && (
+        <DecorativeIcon>{icon ?? <IconCheck />}</DecorativeIcon>
+      )}
       <span className="env-badge-label">{children}</span>
     </span>
   );
