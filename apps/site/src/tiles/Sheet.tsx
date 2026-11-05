@@ -20,7 +20,7 @@ const script: PointerStep[] = [
 
 /**
  * The page the sheet opens at the edge of, outlined, as large as the tile's window: the button at
- * its top, over a few of its rows, which the sheet covers but for their starts.
+ * its top, over two short rows whose words end before the sheet, so it ends on whole rows.
  */
 const page = {
   inlineSize: '100%',
@@ -31,7 +31,7 @@ const page = {
   overflow: 'hidden',
 } as const;
 
-const rows = ['Launch review', 'Q3 budget', 'Hiring plan'];
+const rows = ['Plans', 'Team'];
 
 /**
  * A side sheet, open at the end edge beside the button that opens it, over a list of projects: its

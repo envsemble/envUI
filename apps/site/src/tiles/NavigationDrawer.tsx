@@ -3,7 +3,9 @@ import { NavigationDrawer, type Destination } from '@envsemble/envui';
 import { IconInbox } from '@envsemble/envui/icons/Inbox';
 import { IconSend } from '@envsemble/envui/icons/Send';
 import { IconStar } from '@envsemble/envui/icons/Star';
+import { useMedia } from '../motion/Autoplay';
 import { usePointer, type PointerStep } from '../motion/Motion';
+import { narrowGallery } from './Tiles';
 
 const item = (index: number) =>
   `.env-navigation-drawer-list > li:nth-child(${index}) > .env-navigation-drawer-item`;
@@ -26,9 +28,20 @@ const script: PointerStep[] = [
   { wait: 400 },
 ];
 
-/** A mail application's drawer of three destinations, Inbox current. */
+/**
+ * The application's frame the drawer stands at the start of: as wide as a window, so a resizable
+ * drawer has the room it takes beside the page, which paints nothing here.
+ */
+const frame = { inlineSize: '30rem', blockSize: '100%' } as const;
+
+/**
+ * A mail application's drawer of three destinations, Inbox current: resizable, and set narrower
+ * than its 15 rem at rest, so it shows whole across a gallery's stage at its own size, its rows
+ * inset from the stage's end; on a phone's narrower stage, narrower still.
+ */
 export default function DrawerTile() {
   const [current, setCurrent] = useState('inbox');
+  const narrow = useMedia(narrowGallery);
   usePointer(script);
   const destination = (id: string) => ({
     current: current === id,
@@ -39,5 +52,16 @@ export default function DrawerTile() {
     { label: 'Starred', icon: <IconStar />, ...destination('starred') },
     { label: 'Sent', icon: <IconSend />, ...destination('sent') },
   ];
-  return <NavigationDrawer aria-label="Mail" destinations={destinations} />;
+  const width = narrow ? 9.5 : 11.5;
+  return (
+    <div style={frame}>
+      <NavigationDrawer
+        aria-label="Mail"
+        destinations={destinations}
+        resizable
+        width={width}
+        minWidth={width}
+      />
+    </div>
+  );
 }
