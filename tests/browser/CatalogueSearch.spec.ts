@@ -150,21 +150,29 @@ test.describe('search', () => {
     await mentioned.click();
     await expect(mentioned).toHaveCount(0);
     await expect(mentions.locator('[data-item-id="page:table"]')).toBeVisible();
-    // The props of the component found come first, a few of them, then a row that shows the rest
-    // in place and keeps search open.
+    // The props the query names by their own name show, a few of them; the component's own props,
+    // which only its name matches, wait in a row that shows them in place and keeps search open.
     const props = dialog(page).getByRole('group', { name: 'Props' });
     const more = props.locator('[data-item-id="more:Props"]');
     await expect(props.getByRole('option')).toHaveCount(4);
-    await expect(props.getByRole('option').first()).toContainText('DatePicker prop');
-    await expect(props).not.toContainText('startDate');
+    await expect(props).toContainText('startDate');
+    await expect(props).not.toContainText('DatePicker prop');
     await more.click();
     await expect(more).toHaveCount(0);
-    await expect(props).toContainText('startDate');
+    await expect(props).toContainText('DatePicker prop');
     await expect(field(page)).toHaveValue('date');
-    // A component's own props come before those it passes to its root, such as className.
+    // A query that names no prop folds the props into the row; shown, a component's own props
+    // come before those it passes to its root, such as className.
     await field(page).fill('Textarea');
+    await expect(props.getByRole('option')).toHaveCount(1);
+    await props.locator('[data-item-id="more:Props"]').click();
     await expect(props.getByRole('option').first()).toContainText('Textarea prop');
-    await expect(props.locator('[data-item-id="prop:Textarea.className"]')).toHaveCount(0);
+    const shown = await props
+      .getByRole('option')
+      .evaluateAll((options) => options.map((option) => option.getAttribute('data-item-id')));
+    const own = shown.filter((id) => id?.startsWith('prop:Textarea.'));
+    const passed = own.findIndex((id) => /\.(ref|className|style)$/.test(id!));
+    expect(own.slice(passed).every((id) => /\.(ref|className|style)$/.test(id!))).toBe(true);
   });
 
   test('finds a page once, and opens it in the part the reader is in', async ({ page }) => {

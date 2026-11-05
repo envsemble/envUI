@@ -172,9 +172,10 @@ const noGroups: ReadonlySet<string> = new Set();
  * aliases or keywords, those come first, and results that only mention it in their text follow
  * them in a group of their own, folded into one row, so "date" lists DatePicker and the date props
  * before Table. A pattern is named by its title and aliases only, so "IconButton" lists IconButton
- * and its props rather than every pattern that uses it. The props of the components it finds come
- * before other props, so "date" lists DatePicker's own first, its pass-through props, such as
- * className, last, and a short group shows its first few until it is expanded.
+ * and its props rather than every pattern that uses it. Props the query names by their own name
+ * come first and show, so "date" lists startDate; the props of the components it finds follow,
+ * folded into the group's row, their pass-through props, such as className, last; and a short
+ * group shows its first few until it is expanded.
  */
 function groupResults(results: readonly SearchResult[], expanded: ReadonlySet<string>): Group[] {
   const named = results.some((result) => result.named);
@@ -196,7 +197,9 @@ function groupResults(results: readonly SearchResult[], expanded: ReadonlySet<st
   // Sorting is stable, so results of one rank keep their order; a component's pass-through props
   // come after its own.
   const byRank = (a: SearchResult, b: SearchResult) =>
-    rankOf(a) - rankOf(b) || Number(passedThrough(a)) - Number(passedThrough(b));
+    Number(b.namesProp) - Number(a.namesProp) ||
+    rankOf(a) - rankOf(b) ||
+    Number(passedThrough(a)) - Number(passedThrough(b));
   for (const result of [...ordered].sort(byRank)) {
     const group = groupOf(result, named);
     grouped.set(group, [...(grouped.get(group) ?? []), result]);
@@ -210,13 +213,17 @@ function groupResults(results: readonly SearchResult[], expanded: ReadonlySet<st
   return order.map((name) => {
     const members = grouped.get(name)!;
     const folds = shortGroups.has(name) || name === mentions;
+    // Props show only those the query names by their own name; the props of an export it names,
+    // such as Select's for "sel", wait in the group's row.
     const limit = !folds
       ? groupLimit
       : expanded.has(name)
         ? members.length
         : name === mentions
           ? 0
-          : shortLimit;
+          : name === groups.prop
+            ? Math.min(shortLimit, members.filter((result) => result.namesProp).length)
+            : shortLimit;
     // A short group of one more than it shows shows that one rather than a row for it.
     const shown = folds && members.length === limit + 1 ? members : members.slice(0, limit);
     return { name, results: shown, hidden: folds ? members.length - shown.length : 0 };
@@ -293,7 +300,7 @@ export function SiteSearch({
               label:
                 name === mentions
                   ? `${hidden} ${hidden === 1 ? 'result' : 'results'}`
-                  : `${hidden} more ${name.toLowerCase()}`,
+                  : `${hidden} ${members.length ? 'more ' : ''}${name.toLowerCase()}`,
               icon: <IconExpandMore />,
               group: name,
             },
