@@ -37,14 +37,15 @@
        when a label wraps onto more lines. */
     border-radius: var(--env-radius-full);
     font: var(--env-font-weight-body) var(--env-font-size-label) / 1.4 var(--env-font-family);
-    white-space: normal;
-    /* A container whose buttons can't wrap onto a line of their own (ButtonGroup) sets
-       --env-button-overflow-wrap to anywhere. */
+    /* A label keeps to one line and the button to its label's width, so a row short of room wraps
+       whole buttons, not their words. A button that can't move to a line of its own breaks its
+       label instead: one that fills its container (fullWidth, below), and a ButtonGroup's, whose
+       group sets --env-button-white-space to normal and --env-button-overflow-wrap to anywhere. */
+    white-space: var(--env-button-white-space, nowrap);
     overflow-wrap: var(--env-button-overflow-wrap, break-word);
     text-align: center;
     text-decoration: none;
     max-inline-size: 100%;
-    min-inline-size: 0;
     /* The fill the custom fill starts from: the container the application set, or, where it set
        only the content, the variant's own fill, which the content gate gives while the content is
        set. Each variant sets its own --env-button-container-default. */
@@ -482,9 +483,11 @@
     border-color: var(--env-color-border-muted);
   }
 
-  /* fullWidth: a labelled button fills its container, such as a narrow form's stacked actions. */
+  /* fullWidth: a labelled button fills its container, such as a narrow form's stacked actions, and
+     its label wraps where the container is narrower than it. */
   .env-button:where([data-full-width]):not(.env-icon-button) {
     inline-size: 100%;
+    white-space: var(--env-button-white-space, normal);
   }
 
   /* An icon-only button keeps its square size, also where its container is squeezed narrower. */

@@ -215,8 +215,9 @@ CopyButton copies a value and shows Copied, or Couldn’t copy, for about two se
 
 ### Adapting to width
 
-Labels wrap, and icon-only buttons keep their size.
+A label stays on one line and its button keeps its width, so let a row of buttons wrap: whole buttons move to the next line. Icon-only buttons keep their size.
 
+- A button that fills its container and the buttons of a ButtonGroup can't move, so their labels wrap instead.
 - On touch screens every button grows to the size of a fingertip.
 - An icon button drawn smaller, such as a close button in a chip or a tab, reaches that size with the area it answers to.
 
@@ -360,6 +361,7 @@ A wrapper of your own that passes a variant and a tone on types them as Button d
 
 ## Changelog
 
+- **1.0.0-prerelease.6**: A label keeps to one line and its button to its width, so a row short of room wraps whole buttons, not their words; a `fullWidth` button and a ButtonGroup's still wrap their labels. A vertical group of outline buttons shares straight edges, round only at the column's outer corners.
 - **1.0.0-prerelease.6**: An outline button's label and icon take the text color, `--env-color-fg-default`, rather than the brand blue, so beside a primary button it reads as the other choice; a text button keeps the link blue. Ghost, outline and text icon buttons in the danger tone lay a faint tint of the danger color on hover and press, from `--env-color-bg-danger-subtle-hover`, rather than the neutral grey.
 - **1.0.0-prerelease.6**: Every pending button, an icon button's included, shows a spinner of an icon's size centred over its transparent label, in the label's color, and keeps its width and name.
 - **1.0.0-prerelease.6**: In light, a danger primary darkens on hover and press as the default and accent primaries do; in dark, the soft primaries deepen by a clearer, even step.
