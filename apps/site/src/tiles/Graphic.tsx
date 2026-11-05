@@ -1,5 +1,4 @@
-import { Graphic, type GraphicSize } from '@envsemble/envui';
-import { useTimeline } from '../motion/Motion';
+import { Graphic, Row, type GraphicSize } from '@envsemble/envui';
 
 /** A company's logo, as an application imports its file. */
 const logo =
@@ -12,14 +11,19 @@ const logo =
       '<path d="M18 58 36 38l18 20Z" fill="#f97316"/></svg>',
   );
 
-/** The steps it takes, from the still at lg, the middle size: up a size, back, down a size, back. */
-const sizes: GraphicSize[] = ['lg', 'xl', 'lg', 'md'];
+/** Three of envUI's sizes, side by side. */
+const sizes: GraphicSize[] = ['md', 'lg', 'xl'];
 
 /**
- * A logo at envUI's sizes: from lg it steps up to the largest and back, then down to md and back,
- * one size at a time, a file drawn at the size it is given rather than its own.
+ * A logo at three of envUI's sizes side by side, still, aligned on their bottom edge: one file drawn
+ * at the size it is given rather than its own.
  */
 export default function GraphicTile() {
-  const size = sizes[useTimeline([1000, 1600, 800, 1600])]!;
-  return <Graphic src={logo} alt="Northwind" size={size} />;
+  return (
+    <Row gap={4} align="end">
+      {sizes.map((size) => (
+        <Graphic key={size} src={logo} alt="Northwind" size={size} />
+      ))}
+    </Row>
+  );
 }
