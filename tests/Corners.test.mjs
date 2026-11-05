@@ -48,7 +48,7 @@ const unbounded = /(?:^|[\s(,])(?:\d*\.?\d+%|\d{4,}px|\d+(?:\.\d+)?vmax)/;
 
 /**
  * Parts that are always square, so a round corner of half their size draws a circle: avatars, round
- * icon buttons, dots, marks and thumbs. Each by its style sheet and selector.
+ * icon buttons, dots, marks, thumbs and the halo around a checkbox. Each by its style sheet and selector.
  */
 const alwaysSquare = new Set([
   'packages/ui/src/styles/Alert.css .env-alert-dismiss',
@@ -57,6 +57,7 @@ const alwaysSquare = new Set([
   'packages/ui/src/styles/AvatarGroup.css .env-avatar-group-item',
   'packages/ui/src/styles/AvatarButton.css .env-avatar-button',
   'packages/ui/src/styles/Calendar.css .env-calendar-day-mark',
+  'packages/ui/src/styles/Checkbox.css .env-checkbox-box::before',
   'packages/ui/src/styles/ColorPicker.css .env-color-picker-thumb',
   'packages/ui/src/styles/DropZone.css .env-drop-zone-icon',
   'packages/ui/src/styles/PanelDock.css .env-panel-dock-tab-attention',

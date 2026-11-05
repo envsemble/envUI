@@ -109,6 +109,30 @@
     flex: 0 0 auto;
     margin-block-start: calc((1lh - var(--env-checkbox-size)) / 2);
   }
+  /* Under the pointer and while pressed, a halo of the shared state layer rings the box, a circle
+     a little past its corners, as an icon button's state layer is; the box itself stays as it is,
+     empty while unchecked, so it never reads as an unavailable one. The halo takes no room: it
+     reaches into the gap before the label and a little past the row. */
+  .env-checkbox-box::before {
+    --env-checkbox-halo: calc(0.4 * var(--env-checkbox-size));
+    content: '';
+    position: absolute;
+    inset: calc(-1 * var(--env-checkbox-halo));
+    padding: var(--env-checkbox-halo);
+    border-radius: 50%;
+    background: transparent;
+    mask:
+      linear-gradient(currentcolor 0 0) content-box exclude,
+      linear-gradient(currentcolor 0 0);
+    pointer-events: none;
+  }
+  .env-checkbox-box:has(> .env-checkbox-input:hover:not(:disabled))::before {
+    background: var(--env-color-bg-neutral-subtle-pressed);
+  }
+  .env-checkbox-box:has(> .env-checkbox-input:active:not(:disabled))::before {
+    background: linear-gradient(var(--env-color-bg-neutral-subtle-pressed) 0 0)
+      var(--env-color-bg-neutral-subtle-pressed);
+  }
   .env-checkbox-input {
     appearance: none;
     box-sizing: border-box;
@@ -163,8 +187,8 @@
     height: 0.125rem;
     background: currentColor;
   }
-  /* Under the pointer and while pressed, an unchecked box darkens its edge to the text color and
-     stays empty, as a radio does, so it never reads as a checked one that is unavailable. */
+  /* Under the pointer and while pressed, an unchecked box also darkens its edge to the text color,
+     as a radio's ring does. */
   .env-checkbox-input:hover:not(:disabled) {
     --env-checkbox-layer: calc(var(--env-state-hover-opacity) * 100%);
     border-color: var(--env-checkbox-edge-hover, var(--env-color-fg-default));
@@ -194,6 +218,9 @@
       transition-property: background-color, color, border-color, transform;
       transition-duration: var(--env-motion-duration-fast);
       transition-timing-function: var(--env-motion-ease);
+    }
+    .env-checkbox-box::before {
+      transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
     }
     .env-checkbox:active:not(:has(input:disabled)) .env-checkbox-box {
       transform: scale(0.9);

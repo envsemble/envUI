@@ -172,6 +172,17 @@
   .env-radio-input:checked:active:not(:disabled)::before {
     background: var(--env-radio-accent-pressed, var(--env-color-bg-primary-emphasis-pressed));
   }
+  /* A radio beside its label takes the checkbox's halo under the pointer and while pressed
+     (Checkbox.css): the shared state layer in a circle around it, which takes no room. A row radio
+     keeps its row's fills instead. */
+  .env-radio[data-orientation='horizontal'] > .env-radio-input:hover:not(:disabled) {
+    box-shadow: 0 0 0 0.375rem var(--env-color-bg-neutral-subtle-pressed);
+  }
+  .env-radio[data-orientation='horizontal'] > .env-radio-input:active:not(:disabled) {
+    box-shadow:
+      0 0 0 0.375rem var(--env-color-bg-neutral-subtle-pressed),
+      0 0 0 0.375rem var(--env-color-bg-neutral-subtle-pressed);
+  }
   /* A radio in its label, side by side with the group's others. */
   .env-radio[data-orientation='horizontal'] {
     min-inline-size: 0;
@@ -250,7 +261,7 @@
   @media (prefers-reduced-motion: no-preference) {
     .env-radio[data-orientation='vertical'],
     .env-radio-input {
-      transition-property: background-color, color, border-color, transform;
+      transition-property: background-color, color, border-color, box-shadow, transform;
       transition-duration: var(--env-motion-duration-fast);
       transition-timing-function: var(--env-motion-ease);
     }

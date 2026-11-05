@@ -94,10 +94,11 @@ function firstGraphemes(text: string, count: number) {
 }
 
 /**
- * The weekday names for narrow days: the short names' first two letters, as Mo Tu We in English,
- * where those still tell the seven apart, else the narrow names where they do, else the short names.
+ * The weekday names above the columns, at every width: the short names' first two letters, as Mo Tu
+ * We in English, which fit the narrowest days, where those still tell the seven apart, else the
+ * narrow names where they do, else the short names. Each column's header carries the full name.
  */
-function compactWeekdays(short: string[], narrow: string[]) {
+function weekdayNames(short: string[], narrow: string[]) {
   const distinct = (names: string[]) => new Set(names).size === names.length;
   const twoLetters = short.map((name) => firstGraphemes(name.replace(/\.$/, ''), 2));
   if (distinct(twoLetters)) return twoLetters;
@@ -235,14 +236,12 @@ export function Calendar({
       // 1970-01-04, day 3, was a Sunday.
       toUtcDate(3 + ((firstWeekday + column) % 7)),
     );
-    const short = samples.map((sample) => formats.weekday.format(sample));
-    const compact = compactWeekdays(
-      short,
+    const names = weekdayNames(
+      samples.map((sample) => formats.weekday.format(sample)),
       samples.map((sample) => formats.weekdayNarrow.format(sample)),
     );
     return samples.map((sample, column) => ({
-      short: short[column],
-      compact: compact[column],
+      name: names[column],
       long: formats.weekdayName.format(sample),
     }));
   }, [formats, firstWeekday]);
@@ -296,11 +295,9 @@ export function Calendar({
       >
         <thead>
           <tr>
-            {/* Both names are rendered and the calendar's width picks one (Calendar.css). */}
-            {weekdays.map(({ short, compact, long }) => (
+            {weekdays.map(({ name, long }) => (
               <th key={long} scope="col" abbr={long}>
-                <span className="env-calendar-weekday">{short}</span>
-                <span className="env-calendar-weekday-compact">{compact}</span>
+                {name}
               </th>
             ))}
           </tr>

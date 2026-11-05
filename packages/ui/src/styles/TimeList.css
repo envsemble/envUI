@@ -3,8 +3,8 @@
      halves, in the popups of DatePicker and TimePicker. Each wheel shows an odd number of rows and
      snaps a row to its middle. The middle rows, side by side, read as one line: each has the solid
      accent fill of the chosen calendar day beside it, as tall as a day and as round where its value
-     fits, so a chosen day and time look alike, and the body type in semibold, while the rows above and below are smaller and dimmer, and only the
-     outermost rows fade at the wheel's edges. Unavailable times are struck through in the disabled
+     fits, so a chosen day and time look alike, and the body type in semibold, while the rows above and below are smaller and dimmer, and a
+     light fade hints at the wheel's edges. Unavailable times are struck through in the disabled
      color, so they never read as the fade. Coarse pointers get touch-tall rows. */
   .env-time-list {
     /* A calendar day's height, as the picker card sets it. */
@@ -29,15 +29,16 @@
     scroll-snap-type: y mandatory;
     scrollbar-width: none;
     outline: none;
-    /* The fade at the top and bottom edges says the wheel scrolls: it runs over the outermost rows
-       alone, across their values, so a value there shades off towards the edge as if the wheel went
-       on past it. */
-    --env-time-list-fade-start: calc(0.2 * var(--env-time-list-row));
+    /* A light fade at the top and bottom edges hints that the wheel scrolls: it runs over the outer
+       rows' margin above and below their values, from part strength at the edge, so a value resting
+       there stays as legible as the others and only one scrolled past the edge shades off. */
+    --env-time-list-fade: calc(0.3 * var(--env-time-list-row));
+    --env-time-list-fade-edge: color-mix(in srgb, currentcolor 35%, transparent);
     mask-image: linear-gradient(
-      transparent var(--env-time-list-fade-start),
-      currentcolor var(--env-time-list-row),
-      currentcolor calc(100% - var(--env-time-list-row)),
-      transparent calc(100% - var(--env-time-list-fade-start))
+      var(--env-time-list-fade-edge),
+      currentcolor var(--env-time-list-fade),
+      currentcolor calc(100% - var(--env-time-list-fade)),
+      var(--env-time-list-fade-edge)
     );
   }
   /* While the wheel eases into a row by itself, snapping would pull each step back. */

@@ -610,22 +610,16 @@ function Pickers() {
       </Section>
       <Section name="Calendar">
         <Strip>
-          <Cell caption="Value, min and max" width="18rem">
+          <Cell caption="Value, min and max">
             <Calendar defaultValue="2026-11-20" min="2026-11-05" max="2026-11-27" locale="en-GB" />
           </Cell>
-          <Cell
-            caption="12th hovered"
-            force="hover"
-            target="td[data-date='2026-11-12']"
-            width="18rem"
-          >
+          <Cell caption="12th hovered" force="hover" target="td[data-date='2026-11-12']">
             <Calendar defaultValue="2026-11-20" locale="en-GB" />
           </Cell>
           <Cell
             caption="Selected day, focus-visible"
             force="focus"
             target="td[data-date='2026-11-20']"
-            width="18rem"
           >
             <Calendar defaultValue="2026-11-20" locale="en-GB" />
           </Cell>

@@ -161,5 +161,5 @@ The root, `env-switch`, is the label around the track, `env-switch-input`, and t
 - **1.0.0-prerelease.6**: A switch that is off has a muted thumb, which no longer outweighs one that is on, and darkens it under the pointer with its ring. A switch that is on and unavailable takes a faint tint of the accent, `--env-color-bg-primary-muted`, rather than the neutral fill, so it differs from one that is off by more than the thumb's place.
 - **1.0.0-prerelease.6**: A switch that is on that is unavailable takes the neutral fill, with its thumb in `--env-color-fg-disabled`, rather than a faded accent, as an unavailable button does.
 - **1.0.0-prerelease.6**: Beside a label that wraps or has a description, the track sits on the middle of its first line rather than across both lines.
-- **1.0.0-prerelease.6**: A switch that is off darkens its ring under the pointer and while pressed, as its track deepens.
+- **1.0.0-prerelease.6**: Under the pointer and while pressed, a halo of the shared state layer rings the track, on or off, a step stronger while pressed; a switch that is off also darkens its ring, as its track deepens.
 - **1.0.0-prerelease.5**: `description`, a muted line under the label.

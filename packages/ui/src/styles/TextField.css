@@ -582,27 +582,22 @@
     );
   }
   /* A labelled single-line ghost field fits its label inside its height, so it shares a row with
-     an outline field and a button of its size: the floated label, at the caption size, sits close
-     under the top of the fill, and the value, prefix and suffix in the middle of what lies below it;
-     the start icon and the end actions stay in the middle of the well, beside the label at rest. */
+     an outline field and a button of its size: the floated label, at the size of an outline field's
+     notched one, sits close under the top of the fill on a tight line, and the value, prefix and
+     suffix in the middle of what lies below it; the start icon and the end actions stay in the
+     middle of the well, beside the label at rest. */
   .env-text-field:not([data-tall], [data-label-hidden])
     .env-text-field-control[data-variant='ghost']:has(> label) {
     --env-text-field-ghost-label-room: calc(
-      1.2 * var(--env-font-size-caption) + var(--env-space-1) / 2
+      1.1 * var(--env-font-size-label) + var(--env-space-1) / 4
     );
-    --env-text-field-label-floated: calc(var(--env-space-1) / 2);
+    --env-text-field-label-floated: calc(var(--env-space-1) / 4);
     --env-text-field-value-shift: calc(var(--env-text-field-ghost-label-room) / 2);
   }
   .env-text-field:not([data-tall], [data-label-hidden])
-    .env-text-field-control[data-variant='ghost']:is(
-      :has(
-        > .env-text-field-input:focus,
-        > .env-text-field-input:is(input, textarea):not(:placeholder-shown)
-      ),
-      [data-label-floating]
-    )
+    .env-text-field-control[data-variant='ghost']
     > label {
-    font-size: var(--env-font-size-caption);
+    line-height: 1.1;
   }
   .env-text-field:not([data-tall], [data-label-hidden])
     .env-text-field-control[data-variant='ghost']:has(> label)
