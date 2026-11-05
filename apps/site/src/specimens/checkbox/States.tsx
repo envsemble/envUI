@@ -10,7 +10,7 @@ const states = [
 /** Each state, enabled and disabled. */
 export default function States() {
   return (
-    <Example size="wide">
+    <Example size="wide" still>
       <MatrixScroll label="Checkbox states">
         <table className="catalogue-matrix">
           <thead>

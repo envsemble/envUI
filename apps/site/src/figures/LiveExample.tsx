@@ -18,6 +18,7 @@ import { CodeSkeleton, exampleLines, StageSkeleton } from '../template/Loading';
 import { MotionStage } from '../motion/MotionStage';
 import { WidthSweep } from '../motion/WidthSweep';
 import { SpecimenRender } from './Specimen';
+import { StillMark } from './StillMark';
 
 /**
  * Every example file, rendered live, and its source as text, each loaded with the page that shows
@@ -284,7 +285,8 @@ function WidthBox({ width, children }: { width: number; children: ReactNode }) {
  * smaller where it must to reach the widest), and with `caption`, a sentence below it. With
  * `motion`, the stage plays it: its animated specimen of the same name, which uses the example as a
  * person would, takes the stage's place, above its caption and code. With `open` and `live`, as an
- * overview's, it rests with its overlay open, and people can use it.
+ * overview's, it rests with its overlay open, and people can use it; without `live`, it is a still
+ * picture, marked as one.
  */
 export function LiveExample({
   page,
@@ -393,6 +395,7 @@ export function LiveExample({
           {render}
         </Column>
       )}
+      {open && !live && !motion && <StillMark />}
       {caption && (
         <Text className="site-figure-caption" emphasis="muted">
           {caption}

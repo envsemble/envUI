@@ -4,7 +4,7 @@ import { Example, MatrixScroll } from '../../figures/Example';
 /** Off and on, enabled and disabled. */
 export default function States() {
   return (
-    <Example size="wide">
+    <Example size="wide" still>
       <MatrixScroll label="Switch states">
         <table className="catalogue-matrix">
           <thead>

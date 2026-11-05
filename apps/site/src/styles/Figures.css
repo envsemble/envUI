@@ -57,6 +57,10 @@
   gap: var(--env-space-2);
 }
 
+/* A still picture's mark sits just under its stage, quieter than a caption (StillMark.tsx). */
+.site-still-mark {
+  margin: 0;
+}
 .site-figure-caption {
   margin: 0;
   color: var(--env-color-fg-muted);

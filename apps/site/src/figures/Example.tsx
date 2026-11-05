@@ -1,5 +1,6 @@
 import { createContext, useContext, useLayoutEffect, useRef, type ReactNode } from 'react';
 import { Column, Text, type SpaceStep } from '@envsemble/envui';
+import { StillMark } from './StillMark';
 
 /**
  * The level of a specimen's title: 2 where the specimen is a section of its own, 3 where it sits in
@@ -39,6 +40,7 @@ export function Example({
   gap = 4,
   size = 'content',
   explains = false,
+  still = false,
 }: {
   title?: string;
   actions?: ReactNode;
@@ -53,6 +55,8 @@ export function Example({
    * text, rather than on the recessed canvas of an example.
    */
   explains?: boolean;
+  /** Whether it shows the component still, such as in forced states, so it doesn't take input. */
+  still?: boolean;
 }) {
   const level = useContext(SpecimenHeadingLevel);
   const Heading = `h${level}` as const;
@@ -87,6 +91,7 @@ export function Example({
           children
         )}
       </PartHeadingLevel>
+      {still && <StillMark />}
       {caption && (
         <Text variant="caption" className="catalogue-caption">
           {caption}
