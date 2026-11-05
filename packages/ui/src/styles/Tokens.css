@@ -93,8 +93,8 @@
   --env-color-bg-recessed: #f1f1f3;
   --env-color-bg-recessed-hover: #e3e3e6;
   --env-color-bg-recessed-pressed: #dadadc;
-  --env-color-bg-row-hover: rgb(31 31 34 / 0.045);
-  --env-color-bg-row-pressed: rgb(31 31 34 / 0.08);
+  --env-color-bg-row-hover: rgb(31 31 34 / 0.07);
+  --env-color-bg-row-pressed: rgb(31 31 34 / 0.11);
   --env-color-bg-selected: #d7e5fd;
   --env-color-bg-selected-hover: #cddefc;
   --env-color-bg-selected-pressed: #c8dbfc;
@@ -356,7 +356,7 @@
   --env-color-bg-primary-emphasis: #9fc1f8;
   --env-color-bg-primary-emphasis-hover: #bfd5fb;
   --env-color-bg-primary-emphasis-pressed: #dbe8fd;
-  --env-color-bg-primary-muted: rgb(52 126 234 / 0.16);
+  --env-color-bg-primary-muted: rgb(52 126 234 / 0.15);
   --env-color-bg-primary-soft: var(--env-color-bg-primary-muted);
   --env-color-bg-primary-solid: #9fc1f8;
   --env-color-bg-primary-strong: #4b8bec;
@@ -370,8 +370,8 @@
   --env-color-bg-recessed: #191a1b;
   --env-color-bg-recessed-hover: #28292b;
   --env-color-bg-recessed-pressed: #343638;
-  --env-color-bg-row-hover: var(--env-color-bg-neutral-subtle-hover);
-  --env-color-bg-row-pressed: var(--env-color-bg-neutral-subtle-pressed);
+  --env-color-bg-row-hover: rgb(232 234 238 / 0.12);
+  --env-color-bg-row-pressed: rgb(232 234 238 / 0.15);
   --env-color-bg-selected: #293a55;
   --env-color-bg-selected-hover: #33445f;
   --env-color-bg-selected-pressed: #3c4e69;
@@ -509,6 +509,7 @@
   --env-color-bg-recessed-hover: #eaeaec;
   --env-color-bg-recessed-pressed: #e0e0e2;
   --env-color-bg-row-hover: rgb(31 31 34 / 0.06);
+  --env-color-bg-row-pressed: rgb(31 31 34 / 0.08);
   --env-color-bg-selected: #c8dbfc;
   --env-color-bg-selected-hover: #bfd5fb;
   --env-color-bg-selected-pressed: #bad2fb;
@@ -649,6 +650,7 @@
     --env-color-bg-recessed-hover: #eaeaec;
     --env-color-bg-recessed-pressed: #e0e0e2;
     --env-color-bg-row-hover: rgb(31 31 34 / 0.06);
+    --env-color-bg-row-pressed: rgb(31 31 34 / 0.08);
     --env-color-bg-selected: #c8dbfc;
     --env-color-bg-selected-hover: #bfd5fb;
     --env-color-bg-selected-pressed: #bad2fb;

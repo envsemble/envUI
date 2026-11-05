@@ -645,13 +645,13 @@
       },
       "row": {
         "hover": {
-          "$description": "The state layer over a tree or table row under the pointer: in light a step quieter than over a control, so a hovered row never weighs as much as the selection on the gray page.",
+          "$description": "The state layer over a tree or table row under the pointer: clear over the row's surface, and a step below the selection, so the selected row always reads strongest.",
           "$value": {
             "colorSpace": "oklch",
             "components": {
               "$ref": "#/palette/gray/92/$value/components"
             },
-            "alpha": 0.045
+            "alpha": 0.07
           },
           "$extensions": {
             "com.envsemble.envui": {
@@ -666,7 +666,7 @@
             "components": {
               "$ref": "#/palette/gray/92/$value/components"
             },
-            "alpha": 0.08
+            "alpha": 0.11
           },
           "$extensions": {
             "com.envsemble.envui": {

@@ -827,7 +827,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: 'rgb(0 92 200 / 0.12)',
-      dark: 'rgb(52 126 234 / 0.16)',
+      dark: 'rgb(52 126 234 / 0.15)',
       'light-high-contrast': 'rgb(0 55 124 / 0.08)',
       'dark-high-contrast': 'rgb(205 222 252 / 0.1)',
     },
@@ -838,7 +838,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: 'rgb(0 92 200 / 0.05)',
-      dark: 'rgb(52 126 234 / 0.16)',
+      dark: 'rgb(52 126 234 / 0.15)',
       'light-high-contrast': 'rgb(0 55 124 / 0.08)',
       'dark-high-contrast': 'rgb(205 222 252 / 0.1)',
     },
@@ -986,13 +986,13 @@ export const tokens = {
       'dark-high-contrast': '#343638',
     },
   },
-  /** The state layer over a tree or table row under the pointer: in light a step quieter than over a control, so a hovered row never weighs as much as the selection on the gray page. */
+  /** The state layer over a tree or table row under the pointer: clear over the row's surface, and a step below the selection, so the selected row always reads strongest. */
   'color.bg.row.hover': {
     cssVariable: '--env-color-bg-row-hover',
     type: 'color',
     values: {
-      light: 'rgb(31 31 34 / 0.045)',
-      dark: 'rgb(232 234 238 / 0.08)',
+      light: 'rgb(31 31 34 / 0.07)',
+      dark: 'rgb(232 234 238 / 0.12)',
       'light-high-contrast': 'rgb(31 31 34 / 0.06)',
       'dark-high-contrast': 'rgb(232 234 238 / 0.06)',
     },
@@ -1002,8 +1002,8 @@ export const tokens = {
     cssVariable: '--env-color-bg-row-pressed',
     type: 'color',
     values: {
-      light: 'rgb(31 31 34 / 0.08)',
-      dark: 'rgb(232 234 238 / 0.12)',
+      light: 'rgb(31 31 34 / 0.11)',
+      dark: 'rgb(232 234 238 / 0.15)',
       'light-high-contrast': 'rgb(31 31 34 / 0.08)',
       'dark-high-contrast': 'rgb(232 234 238 / 0.08)',
     },
