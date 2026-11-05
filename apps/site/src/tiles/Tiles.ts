@@ -27,10 +27,10 @@ const pascal = (id: string) =>
 export const tileWindows: Readonly<Record<string, { width: number; height: number }>> = {
   // The layout drawings, each drawn about as large as LineArt's, whose lines they share.
   'line-art': { width: 10, height: 7.5 },
-  box: { width: 9.4, height: 7.05 },
+  box: { width: 8.4, height: 6.3 },
   row: { width: 7.2, height: 5.4 },
-  column: { width: 9.5, height: 7.125 },
-  grid: { width: 8.8, height: 6.6 },
+  column: { width: 8.5, height: 6.375 },
+  grid: { width: 7.9, height: 5.925 },
   accordion: { width: 15, height: 11.25 },
   'navigation-drawer': { width: 17, height: 12.75 },
   tabs: { width: 15, height: 11.25 },
