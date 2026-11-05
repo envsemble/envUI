@@ -1,6 +1,7 @@
 @layer env.components {
   /* Editor tabs for open documents. Inactive tabs are quiet, with state layers on hover; the active tab
-     carries the translucent fill and a selection-blue indicator along its bottom edge. Each item lays
+     takes the surface of the content below it, which it joins, with a selection-blue indicator along
+     its bottom edge, so the grey fill means hover alone. Each item lays
      out its tab, a Base UI tab, beside its close button, which isn't nested in the tab. */
   /* The root holds the strip and the content after it, as tall as a medium control: 2.5rem, and 2rem
      in the compact scale. No line runs under it: the active tab's fill and indicator mark it. It
@@ -139,8 +140,11 @@
   :where(.env-document-tabs-list:not([data-reordering])) .env-document-tabs-item:active {
     background: var(--env-color-bg-neutral-subtle-pressed);
   }
+  /* The surface the strip and its content sit on: the envUI surface around them, else the canvas.
+     A strip in a fill of its own, such as a muted bar over the content, shows the active tab in the
+     content's surface. */
   .env-document-tabs-item[data-active] {
-    background: var(--env-color-bg-neutral-muted);
+    background: var(--env-surface-color, var(--env-color-bg-page));
     color: var(--env-color-fg-default);
   }
   .env-document-tabs-item[data-active]::after {
