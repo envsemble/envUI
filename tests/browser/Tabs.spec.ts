@@ -145,7 +145,14 @@ test('every tab is a text tab, the selected one with an indicator under it', asy
   const shown = await indicator(selected);
   expect(shown.content).toBe('""');
   expect(Number.parseFloat(shown.height)).toBeGreaterThan(0);
-  expect((await indicator(other)).content).toBe('none');
+  // The others draw the indicator's shape transparent, for their hover mark.
+  expect((await indicator(other)).color).toBe('rgba(0, 0, 0, 0)');
+  expect(shown.color).not.toBe('rgba(0, 0, 0, 0)');
+  // Under the pointer a tab takes no fill, only a faint mark where the indicator would be.
+  await other.hover();
+  await expect(other).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+  await expect.poll(async () => (await indicator(other)).color).not.toBe('rgba(0, 0, 0, 0)');
+  await page.mouse.move(0, 0);
   // The selected label takes the accent's text color, the others the muted one.
   expect(await selected.evaluate((element) => getComputedStyle(element).color)).not.toBe(
     await other.evaluate((element) => getComputedStyle(element).color),

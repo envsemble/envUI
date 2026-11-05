@@ -87,6 +87,12 @@
        symbols, rather than its text's size, a Graphic of the icon size, and an svg or img of the
        application's own, contained in that box whatever its file's size. */
     --env-icon-size: var(--env-icon-size-lg);
+    /* At least an icon wide, with what it holds centred, so a narrower mark, such as a running
+       step's Spinner among icons, leaves its label in line with its siblings'. */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-inline-size: var(--env-icon-size);
   }
   .env-list-item-start > :is(svg, img) {
     inline-size: var(--env-icon-size);

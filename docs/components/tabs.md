@@ -178,7 +178,7 @@ Each `TabsItem` has its `value`, its `label` and an optional `icon`, or a `butto
 
 #### Size, orientation and fill
 
-`size` is `sm`, `md` or `lg`, the default, whose tabs are as tall as medium buttons. `orientation` is `horizontal`, the default, or `vertical`, a column moved through with <kbd>↑</kbd> and <kbd>↓</kbd>; the panels stay below the list either way, so lay the Tabs out as a row through `style` to put a vertical list beside them, as the VerticalList example does. With `fill`, the selected panel takes the height left below the list; give the Tabs a height, for example as a flex child. A horizontal list lines its first label up with the content's edge, so the first tab's padding, where its hover fill shows, reaches into the space before it; leave that room where the Tabs sit flush against an edge that clips.
+`size` is `sm`, `md` or `lg`, the default, whose tabs are as tall as medium buttons. `orientation` is `horizontal`, the default, or `vertical`, a column moved through with <kbd>↑</kbd> and <kbd>↓</kbd>; the panels stay below the list either way, so lay the Tabs out as a row through `style` to put a vertical list beside them, as the VerticalList example does. With `fill`, the selected panel takes the height left below the list; give the Tabs a height, for example as a flex child. A horizontal list lines its first label up with the content's edge, so the first tab's padding, where its focus ring shows, reaches into the space before it; leave that room where the Tabs sit flush against an edge that clips.
 
 #### A layout of your own
 
@@ -209,6 +209,7 @@ The rail has no fill unless its container color sets one.
 
 ## Changelog
 
+- **1.0.0-prerelease.6**: Under the pointer and pressed, a tab shows no fill: its label takes the text color and a faint underline stands where the indicator would, so the indicator alone marks the selected tab.
 - **1.0.0-prerelease.5**: An item takes a `label` and an `icon`, as SegmentedControl's do; `button` is for a control of your own.
 - **1.0.0-prerelease.2**: Tabs look like Material's: text tabs on no fill, whatever their buttons' variants, the selected one in the accent's text color with an indicator under it, so they read differently from SegmentedControl. `--env-tabs-selected-content` and `--env-tabs-indicator` set those colors, and the rail has no fill unless `--env-tabs-container` sets one. The API stays.
 - **1.0.0**: The arrow keys follow the text direction, from EnvUIProvider's `dir` or the direction at the tabs; only the tab list takes it, so a panel keeps the direction around it. The tab and panel classes are `env-tabs-tab` and `env-tabs-panel` (were `env-tab` and `env-tab-panel`).

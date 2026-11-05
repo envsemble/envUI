@@ -29,8 +29,6 @@
     --env-tabs-label-color: var(--env-tabs-content, var(--env-color-fg-muted));
     --env-tabs-selected-color: var(--env-tabs-selected-content, var(--env-color-fg-primary));
     --env-tabs-indicator-color: var(--env-tabs-indicator, var(--env-color-border-primary-emphasis));
-    /* Valid only while the application sets the container or the content (see Button.css). */
-    --env-tabs-custom: var(--env-tabs-container, var(--env-tabs-content));
   }
 
   /* The whole rail is as tall as a control of its size, and its tabs fill it. */
@@ -122,46 +120,43 @@
     border-radius: var(--env-radius-sm);
     white-space: normal;
     overflow-wrap: break-word;
-    transition:
-      background-color var(--env-motion-duration-medium) var(--env-motion-ease),
-      color var(--env-motion-duration-medium) var(--env-motion-ease);
+    transition: color var(--env-motion-duration-medium) var(--env-motion-ease);
   }
   /* Every tab is a text tab, whatever its button's variant: no fill or edge of its own, its label
-     muted. Under the pointer and pressed a state layer shows; with the application's colors, the
-     layer is their label's, a quarter stronger than Button's, as a muted label is lighter than the
-     text color. The states, unavailable included, are named so these rules outweigh the button's
-     own. */
+     muted. Under the pointer and pressed no block shows, as one would read as a second kind of
+     selection: the label takes the text color and a faint underline, in the label's color, stands
+     where the indicator would, a little stronger pressed. The states, unavailable included, are
+     named so these rules outweigh the button's own. */
   .env-tabs-list > .env-tabs-tab,
   .env-tabs-list > .env-tabs-tab:is(:disabled, [aria-disabled='true']),
   .env-tabs-list
     > .env-tabs-tab:is(:hover, :active, :focus-visible):not(:disabled):not([aria-disabled='true']) {
-    /* Valid only in a state while the application sets the tabs' colors (see Button.css). */
-    --env-tabs-tab-custom-fill: color-mix(
-      in srgb,
-      var(--env-tabs-custom) 0%,
-      color-mix(in srgb, transparent, currentColor calc(var(--env-button-layer) * 1.25))
-    );
     border-color: transparent;
     background: transparent;
     box-shadow: none;
     color: var(--env-tabs-label-color, var(--env-color-fg-muted));
   }
-  /* An unavailable tab takes the disabled text color, as an unavailable button does, and no state
-     layer, so it reads apart from the muted labels of the tabs that are there. */
+  /* An unavailable tab takes the disabled text color, as an unavailable button does, and no state,
+     so it reads apart from the muted labels of the tabs that are there. */
   .env-tabs-list > .env-tabs-tab:is(:disabled, [aria-disabled='true']) {
     color: var(--env-color-fg-disabled);
   }
-  .env-tabs-list > .env-tabs-tab:hover:not(:disabled):not([aria-disabled='true']) {
-    --env-tabs-tab-fill: var(--env-tabs-tab-custom-fill, var(--env-color-bg-neutral-subtle-hover));
-    background: var(--env-tabs-tab-fill);
+  .env-tabs-list
+    > .env-tabs-tab:is(:hover, :active):not([data-active]):not(:disabled):not(
+      [aria-disabled='true']
+    ) {
+    --env-tabs-mark: color-mix(in srgb, currentColor 30%, transparent);
+    color: var(--env-tabs-content, var(--env-color-fg-default));
   }
-  .env-tabs-list > .env-tabs-tab:active:not(:disabled):not([aria-disabled='true']) {
-    --env-button-layer: calc(var(--env-state-pressed-opacity) * 100%);
-    --env-tabs-tab-fill: var(
-      --env-tabs-tab-custom-fill,
-      var(--env-color-bg-neutral-subtle-pressed)
-    );
-    background: var(--env-tabs-tab-fill);
+  .env-tabs-list
+    > .env-tabs-tab:is(:hover, :active):not([data-active]):not(:disabled):not(
+      [aria-disabled='true']
+    )::after {
+    background: var(--env-tabs-mark);
+  }
+  .env-tabs-list
+    > .env-tabs-tab:active:not([data-active]):not(:disabled):not([aria-disabled='true']) {
+    --env-tabs-mark: color-mix(in srgb, currentColor 55%, transparent);
   }
   /* The selected tab: its label in the accent's text color, with the indicator under it. */
   .env-tabs-list > .env-tabs-tab[data-active],
@@ -171,7 +166,8 @@
     ) {
     color: var(--env-tabs-selected-color, var(--env-color-fg-primary));
   }
-  .env-tabs-list > .env-tabs-tab[data-active]::after {
+  /* Every tab draws the indicator's shape, so hover changes only its color: transparent at rest. */
+  .env-tabs-list > .env-tabs-tab::after {
     content: '';
     position: absolute;
     inset-inline: var(--env-tabs-tab-padding);
@@ -179,15 +175,18 @@
     block-size: var(--env-tabs-indicator-size);
     border-start-start-radius: var(--env-tabs-indicator-size);
     border-start-end-radius: var(--env-tabs-indicator-size);
-    background: var(--env-tabs-indicator-color, var(--env-color-border-primary-emphasis));
+    background: transparent;
     pointer-events: none;
+  }
+  .env-tabs-list > .env-tabs-tab[data-active]::after {
+    background: var(--env-tabs-indicator-color, var(--env-color-border-primary-emphasis));
   }
   /* A vertical rail's indicator stands at the start of the selected tab. */
   .env-tabs-list[data-orientation='vertical'] > .env-tabs-tab {
     justify-content: flex-start;
     text-align: start;
   }
-  .env-tabs-list[data-orientation='vertical'] > .env-tabs-tab[data-active]::after {
+  .env-tabs-list[data-orientation='vertical'] > .env-tabs-tab::after {
     inset-block: var(--env-space-2);
     inset-inline: 0 auto;
     inline-size: var(--env-tabs-indicator-size);
@@ -200,19 +199,16 @@
     outline: 2px solid var(--env-color-border-focus);
     outline-offset: -2px;
   }
-  /* The first tab of a horizontal rail, its label at the content's edge: its fill and focus ring are
-     drawn a tab's padding wider, back over the rail's leading padding, by a shape under its label
-     that takes no presses. */
+  /* The first tab of a horizontal rail, its label at the content's edge: its focus ring is drawn a
+     tab's padding wider, back over the rail's leading padding, by a shape under its label that takes
+     no presses, so it surrounds the whole tab as the others' do. */
   .env-tabs-list:not([data-orientation='vertical']) > .env-tabs-tab:first-child {
     isolation: isolate;
     padding-inline-start: 0;
   }
   .env-tabs-list:not([data-orientation='vertical'])
-    > .env-tabs-tab:first-child:is(:hover, :active, :focus-visible):not(:disabled):not(
-      [aria-disabled='true']
-    ) {
+    > .env-tabs-tab:first-child:focus-visible:not(:disabled):not([aria-disabled='true']) {
     outline-color: transparent;
-    background: transparent;
   }
   .env-tabs-list:not([data-orientation='vertical']) > .env-tabs-tab:first-child::before {
     content: '';
@@ -221,17 +217,14 @@
     inset-block: 0;
     inset-inline: calc(-1 * var(--env-tabs-lead)) 0;
     border-radius: inherit;
-    background: var(--env-tabs-tab-fill, transparent);
     pointer-events: none;
-    transition: background-color var(--env-motion-duration-medium) var(--env-motion-ease);
   }
   .env-tabs-list:not([data-orientation='vertical'])
     > .env-tabs-tab:first-child:focus-visible::before {
     outline: 2px solid var(--env-color-border-focus);
     outline-offset: -2px;
   }
-  .env-tabs-list:not([data-orientation='vertical'])
-    > .env-tabs-tab:first-child[data-active]::after {
+  .env-tabs-list:not([data-orientation='vertical']) > .env-tabs-tab:first-child::after {
     inset-inline-start: 0;
   }
   .env-tabs-panels {
@@ -284,7 +277,6 @@
   }
   @media (prefers-reduced-motion: reduce) {
     .env-tabs-list > .env-tabs-tab,
-    .env-tabs-list > .env-tabs-tab::before,
     .env-tabs-panel {
       transition: none;
     }

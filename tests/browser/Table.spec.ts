@@ -278,11 +278,8 @@ test('selected rows report aria-selected and take the selection colors in both t
     });
     await expect(selected).toHaveCSS('background-color', selection);
     await expect(other).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
-    // A bar in the selection text color marks the start of the row.
-    await expect(selected.getByRole('cell').first()).toHaveCSS(
-      'box-shadow',
-      `${await tokenColor(selected, '--env-color-fg-on-selected')} 3px 0px 0px 0px inset`,
-    );
+    // Its checkbox says it is selected, so no bar marks the start of the row.
+    await expect(selected.getByRole('cell').first()).toHaveCSS('box-shadow', 'none');
     expect(
       await paintedContrast(selected.getByRole('cell', { name: 'Mira Okafor' })),
     ).toBeGreaterThan(4.5);

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import {
   Badge,
   Breadcrumbs,
@@ -504,6 +504,20 @@ const treeRows: TreeItem[] = [
   },
 ];
 
+/**
+ * Moves a tree's cursor down one row by its own ↓ key, as a keyboard does, so the row the tree marks
+ * as its cursor is the next one and the selection keeps none: the capture forces only the focus.
+ */
+function CursorDown({ children }: { children: ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    ref.current
+      ?.querySelector('.env-tree')
+      ?.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+  }, []);
+  return <div ref={ref}>{children}</div>;
+}
+
 function Trees() {
   const tree = (density?: (typeof densities)[number]) => (
     <div style={{ blockSize: '11rem' }}>
@@ -535,11 +549,11 @@ function Trees() {
           caption="Logo.md: focus-visible"
           force="focus"
           target=".env-tree"
-          highlight=".env-tree|[role=treeitem]:nth-of-type(3)"
-          markAs="data-focus-visible|data-highlighted"
+          highlight=".env-tree"
+          markAs="data-focus-visible"
           width="16rem"
         >
-          {tree()}
+          <CursorDown>{tree()}</CursorDown>
         </Cell>
         <Cell
           caption="Logo.md: pressed"
