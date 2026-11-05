@@ -1,24 +1,24 @@
 import { useRef, useState } from 'react';
 import { Button, ConfirmDialog } from '@envsemble/envui';
 import { usePointer, type PointerStep } from '../motion/Motion';
-import { useTriggerShown } from './useTriggerShown';
+import { useTriggerStyle } from './useTriggerStyle';
 
 /**
- * Confirmed, which waits for the action, pending, and closes; opened again from its button, which
- * it covers.
+ * Confirmed, which waits for the action, pending, and closes; its button shows a moment, and opens
+ * it again, held open a while before the loop starts over.
  */
 const script: PointerStep[] = [
   { wait: 400 },
   { to: '.env-dialog .env-button[type="submit"]', x: 0.4, y: 0.6 },
-  { wait: 700 },
-  { click: true },
-  { wait: 1900 },
-  { to: '.env-button[aria-haspopup]', duration: 450 },
-  { wait: 400 },
-  { click: true },
-  { wait: 500 },
-  { leave: true },
   { wait: 600 },
+  { click: true },
+  { wait: 1300 },
+  { to: '.env-button[aria-haspopup]', duration: 400 },
+  { wait: 250 },
+  { click: true },
+  { wait: 900 },
+  { leave: true },
+  { wait: 900 },
 ];
 
 /** How long deleting takes, pending. */
@@ -26,14 +26,14 @@ const deleting = 1000;
 
 /**
  * A confirm dialog, open over the button that opens it: its question and its actions alone, so a
- * gallery's low tile shows them at about their own size. The button hides while the dialog
- * shows (useTriggerShown). Stopped, it is open again rather than
- * drawn anew, which would bring it in again; a deletion still running then ends at once, and no
- * longer closes it.
+ * gallery's low tile shows them at about their own size. The button hides as the dialog opens and
+ * comes back once it has gone (useTriggerStyle). Stopped, it is open again rather than drawn anew,
+ * which would bring it in again; a deletion still running then ends at once, and no longer closes
+ * it.
  */
 export default function ConfirmDialogTile() {
   const [open, setOpen] = useState(true);
-  const shown = useTriggerShown(open);
+  const triggerStyle = useTriggerStyle(open);
   const round = useRef(0);
   const confirmedIn = useRef(-1);
   const done = useRef<(() => void) | null>(null);
@@ -53,7 +53,7 @@ export default function ConfirmDialogTile() {
         setOpen(next);
       }}
       trigger={
-        <Button variant="secondary" style={{ visibility: shown ? undefined : 'hidden' }}>
+        <Button variant="secondary" style={triggerStyle}>
           Delete
         </Button>
       }

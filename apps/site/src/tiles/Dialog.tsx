@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button, Dialog, DialogClose, TextField } from '@envsemble/envui';
 import { usePointer, type PointerStep } from '../motion/Motion';
-import { useTriggerShown } from './useTriggerShown';
+import { useTriggerStyle } from './useTriggerStyle';
 
 const field = '.env-dialog input';
 
@@ -33,19 +33,20 @@ const script: PointerStep[] = [
 const named = 'Northwind';
 
 /**
- * A dialog's title, field and actions stand taller than a gallery's low tile shows whole at the
- * least a popup is drawn at: it is drawn at about four fifths of its size, so its actions show with it.
+ * A dialog as narrow as a gallery's tile shows across at its own size, so its words read as the
+ * other tiles' do; taller than the tile, it shows from its top, and its view follows the pointer
+ * down to its actions as it plays.
  */
-const smaller = { zoom: 0.78 } as const;
+const narrow = { inlineSize: '12.5rem' } as const;
 
 /**
- * A dialog that renames a project, open over the button that opens it, which hides while the
- * dialog shows (useTriggerShown). Stopped, it is open again with
+ * A dialog that renames a project, open over the button that opens it, which hides as the
+ * dialog opens and comes back once it has gone (useTriggerStyle). Stopped, it is open again with
  * the first name rather than drawn anew, which would bring it in again.
  */
 export default function DialogTile() {
   const [open, setOpen] = useState(true);
-  const shown = useTriggerShown(open);
+  const triggerStyle = useTriggerStyle(open);
   const [name, setName] = useState(named);
   usePointer(script, {
     onRest: () => {
@@ -57,9 +58,9 @@ export default function DialogTile() {
     <Dialog
       open={open}
       onOpenChange={setOpen}
-      trigger={<Button style={{ visibility: shown ? undefined : 'hidden' }}>Rename</Button>}
+      trigger={<Button style={triggerStyle}>Rename</Button>}
       title="Rename project"
-      style={smaller}
+      style={narrow}
       closeLabel="Cancel"
       actions={<DialogClose variant="primary">Rename</DialogClose>}
     >
