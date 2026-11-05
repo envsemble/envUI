@@ -586,25 +586,27 @@
   }
   /* In a start icon's place the spinner is as large as the icon, and the button keeps its width.
      Without one it is smaller and closer to the label than an icon, and the padding at each side
-     gives up half its footprint, down to the small spacing, so the button grows by a few pixels at
-     most rather than crowding its label against its ends. */
+     gives up exactly half its footprint, so the button keeps its width there too and the buttons
+     beside it, as in a dialog's footer, stay where they are. A text button has no padding to give
+     up and grows by the spinner. */
   .env-button .env-button-spinner {
     inline-size: var(--env-button-spinner-size, var(--env-icon-size));
     block-size: var(--env-button-spinner-size, var(--env-icon-size));
   }
   .env-button[data-pending]:not(.env-icon-button):has(> .env-button-spinner) {
-    --env-button-spinner-size: 0.75rem;
-    --env-button-spinner-lean: calc((var(--env-button-spinner-size) + var(--env-space-1)) / 2);
-    padding-inline: max(
-      var(--env-space-2),
-      calc(var(--env-space-3) - var(--env-button-spinner-lean))
+    --env-button-spinner-size: 0.625rem;
+    --env-button-spinner-gap: 0.1875rem;
+    padding-inline: calc(
+      var(--env-space-3) - (var(--env-button-spinner-size) + var(--env-button-spinner-gap)) / 2
     );
   }
   .env-button[data-pending][data-variant='text']:not(.env-icon-button):has(> .env-button-spinner) {
     padding-inline: 0;
   }
   .env-button[data-pending] > .env-button-spinner {
-    margin-inline-end: calc(var(--env-space-1) - var(--env-control-gap));
+    margin-inline-end: calc(
+      var(--env-button-spinner-gap, var(--env-space-1)) - var(--env-control-gap)
+    );
   }
   .env-button.env-icon-button > .env-button-spinner {
     position: absolute;
