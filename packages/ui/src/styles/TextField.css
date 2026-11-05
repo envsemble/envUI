@@ -58,14 +58,18 @@
   .env-text-field[data-size='lg'] {
     --env-control-height: var(--env-control-height-lg);
   }
-  .env-text-field[data-tall]:not([data-label-hidden]):has(> .env-text-field-control > label) {
+  .env-text-field[data-tall]:not([data-label-hidden]):has(
+      > .env-text-field-control:not([data-variant='ghost']) > label
+    ) {
     padding-block-start: var(--env-space-2);
   }
   /* A single-line field reserves no room above it, so it lines up with buttons in a row. Stacked in
      a Column or a Grid, as a form's fields are, it keeps a little for its floated label, so the
      label doesn't crowd the field above. */
   :where([data-env-layout='column'], [data-env-layout='grid'])
-    > .env-text-field:not([data-tall], [data-label-hidden]):has(> .env-text-field-control > label) {
+    > .env-text-field:not([data-tall], [data-label-hidden]):has(
+      > .env-text-field-control:not([data-variant='ghost']) > label
+    ) {
     padding-block-start: var(--env-space-1);
   }
   .env-text-field-control {
@@ -186,7 +190,7 @@
   }
   .env-text-field-control > label {
     position: absolute;
-    inset-block-start: calc(var(--env-space-4) + 0.0625rem);
+    inset-block-start: calc(var(--env-text-field-clip-start, var(--env-space-4)) + 0.0625rem);
     inset-inline-start: var(--env-text-field-label-start);
     max-width: calc(100% - var(--env-space-6));
     overflow: hidden;
@@ -214,14 +218,15 @@
       [data-label-floating]
     )
     > label {
-    inset-block-start: -0.625rem;
+    inset-block-start: var(--env-text-field-label-floated, -0.625rem);
     inset-inline-start: calc(var(--env-text-field-notch-start) + var(--env-space-1));
     padding-inline: var(--env-space-1);
     margin-inline-start: calc(-1 * var(--env-space-1));
     font-size: var(--env-font-size-body-sm);
   }
-  /* The floated label opens the notch in the border behind it, as wide as the label shows. */
-  .env-text-field-control:is(
+  /* The floated label opens the notch in the border behind it, as wide as the label shows; a ghost
+     field's floats inside its fill and cuts none. */
+  .env-text-field-control:not([data-variant='ghost']):is(
       :has(
         > .env-text-field-input:focus,
         > .env-text-field-input:is(input, textarea):not(:placeholder-shown)
@@ -240,8 +245,9 @@
     color: var(--env-text-field-label-accent, var(--env-color-fg-primary));
   }
   /* Ghost fields have no border: at rest a faint fill, half the neutral fill, says where to type, so
-     a labelled field doesn't read as a label and its value; a read-only or disabled one has none.
-     The neutral fill shows under the pointer, and focus draws the outline field's accent frame, so
+     a labelled field doesn't read as a label and its value; a read-only or disabled one keeps a
+     fainter fill, so it still reads as a field, quieter than one to fill in, and doesn't answer the
+     pointer. The neutral fill shows under the pointer, and focus draws the outline field's accent frame, so
      focus reads the same in every variant; the icon keeps its quiet color, and the placeholder
      clears once the field has focus. An invalid ghost field shows its red border. The command
      palette's search is a ghost field that sets private properties (CommandPalette.css):
@@ -251,7 +257,10 @@
      its frame while focused, as it draws a focus ring of its own; --env-text-field-ghost-corner, its
      corner, a pill; and, as any field may, --env-text-field-start-inset, where its start icon sits. */
   .env-text-field-control[data-variant='ghost'] {
-    background: var(--env-text-field-ghost-solid, transparent);
+    background: var(
+      --env-text-field-ghost-solid,
+      color-mix(in srgb, var(--env-color-bg-neutral-muted) 25%, transparent)
+    );
     transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
   }
   .env-text-field-control[data-variant='ghost']:not(
@@ -270,6 +279,18 @@
       ) {
       background: var(--env-text-field-ghost-solid, var(--env-color-bg-neutral-muted));
     }
+  }
+  /* With no edge to cut a notch in, a ghost field's label floats inside its fill, as a filled
+     field's does: a labelled ghost field keeps the floated label's line as room at the top of its
+     fill, with the value below it, so the label never crosses the fill's edge and nothing moves as it
+     floats. A single-line one is that much taller than an outline field of its size. */
+  .env-text-field:not([data-label-hidden])
+    .env-text-field-control[data-variant='ghost']:has(> label) {
+    --env-text-field-ghost-label-room: calc(var(--env-font-size-body-sm) + 0.125rem);
+    --env-text-field-label-floated: var(--env-space-1);
+  }
+  .env-text-field-control[data-variant='ghost'] > label {
+    line-height: 1.2;
   }
   .env-text-field-control[data-variant='ghost']:focus-within > .env-text-field-start {
     color: var(--env-color-fg-muted);
@@ -349,11 +370,24 @@
     scrollbar-width: thin;
     resize: none;
     mask-image: linear-gradient(
-      transparent var(--env-space-4),
+      transparent var(--env-text-field-clip-start, var(--env-space-4)),
       /* Any opaque color: the mask keeps what lies under its opaque part. */
-        var(--env-color-fg-default) var(--env-space-4) calc(100% - var(--env-space-4)),
+        var(--env-color-fg-default) var(--env-text-field-clip-start, var(--env-space-4))
+        calc(100% - var(--env-space-4)),
       transparent calc(100% - var(--env-space-4))
     );
+  }
+  /* A labelled ghost text area starts its text below the label's room, where its resting label sits
+     too, and clips scrolled text there. */
+  .env-text-field[data-tall]:not([data-label-hidden])
+    .env-text-field-control[data-variant='ghost']:has(> label) {
+    --env-text-field-clip-start: calc(
+      var(--env-space-2) + var(--env-text-field-ghost-label-room) + var(--env-space-1)
+    );
+    --env-text-field-label-floated: var(--env-space-2);
+  }
+  .env-text-field[data-tall] .env-text-field-control[data-variant='ghost'] > .env-text-field-input {
+    padding-block-start: var(--env-text-field-clip-start, var(--env-space-4));
   }
   textarea.env-text-field-input[data-sizing='content'] {
     field-sizing: content;
@@ -384,19 +418,20 @@
     touch-action: none;
     user-select: none;
   }
-  /* The grip: a short muted bar in the middle of the bottom edge, just inside the frame, so it reads
-     as something to drag rather than as a second edge. */
+  /* The grip: a short, quiet bar on the bottom edge toward its end, just inside the frame and clear
+     of the corner's curve, where a text area's resize grip is looked for, so it reads as the edge to
+     drag rather than as a sheet's handle or a second edge. */
   .env-textarea-resize-handle::after {
-    --env-textarea-grip-width: 2rem;
-    --env-textarea-grip-height: 0.1875rem;
+    --env-textarea-grip-width: 1rem;
+    --env-textarea-grip-height: 0.125rem;
     content: '';
     position: absolute;
-    inset-inline-start: calc(50% - var(--env-textarea-grip-width) / 2);
+    inset-inline-end: var(--env-space-4);
     inset-block-end: var(--env-space-1);
     inline-size: var(--env-textarea-grip-width);
     block-size: var(--env-textarea-grip-height);
     border-radius: var(--env-radius-full);
-    background: var(--env-color-fg-muted);
+    background: var(--env-color-border-default);
     pointer-events: none;
     opacity: 0;
     transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);
@@ -520,6 +555,31 @@
   .env-text-field:not([data-tall], [data-label-hidden]) .env-text-field-control:has(> label) {
     --env-text-field-value-shift: clamp(0rem, (2.25rem - var(--env-field-height)) / 2, 0.25rem);
   }
+  /* A labelled ghost field: its well is taller by the label's room, and its value, prefix and suffix
+     sit in the middle of what lies below it; the start icon and the end actions stay in the middle of
+     the well, beside the label at rest. */
+  .env-text-field:not([data-tall], [data-label-hidden])
+    .env-text-field-control[data-variant='ghost']:has(> label) {
+    --env-text-field-value-shift: calc(var(--env-text-field-ghost-label-room) / 2);
+    min-height: calc(var(--env-field-height) + var(--env-text-field-ghost-label-room));
+  }
+  .env-text-field:not([data-tall], [data-label-hidden])
+    .env-text-field-control[data-variant='ghost']:has(> label)
+    > .env-text-field-input {
+    inset-block-start: 0;
+    padding-block-start: calc(
+      var(--env-text-field-ghost-label-room) +
+        min(
+          var(--env-space-1),
+          calc((var(--env-field-height) - 2 * var(--env-control-border-width) - 1lh) / 2)
+        )
+    );
+  }
+  .env-text-field:not([data-tall], [data-label-hidden])
+    .env-text-field-control[data-variant='ghost']:has(> label)
+    > .env-text-field-start {
+    translate: none;
+  }
   /* Moved by relative offsets, which, unlike a transform, keep the parts in the field's stacking
      context, so a control's hit areas, such as those of a combobox's chips, still reach past them.
      The start icon is placed absolutely, so it moves by its own transform. */
@@ -534,7 +594,10 @@
   /* The label rests at the vertical center and floats into the outline like a tall field's, without
      reserving space above the field, so the field still lines up with adjacent buttons. */
   .env-text-field:where(:not([data-tall])) .env-text-field-control > label {
-    inset-block-start: calc((var(--env-field-height) - 1lh) / 2 - var(--env-control-border-width));
+    inset-block-start: calc(
+      (var(--env-field-height) + var(--env-text-field-ghost-label-room, 0%) - 1lh) / 2 -
+        var(--env-control-border-width)
+    );
   }
   /* A hidden label stays available to assistive technology; the placeholder gives visible guidance. */
   .env-text-field[data-label-hidden]

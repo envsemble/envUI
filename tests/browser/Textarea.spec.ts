@@ -34,24 +34,38 @@ test(
   },
 );
 
-test('a ghost textarea shows no border or fill at rest, and the accent frame while focused', async ({
+test('a ghost textarea shows a faint fill and no border at rest, the accent frame while focused, and its label inside the fill', async ({
   page,
 }) => {
   await page.goto(`${fixtureUrl}/?fixture=forms`);
   const field = page.getByRole('textbox', { name: 'Ghost notes', exact: true });
   const control = page.locator('.env-text-field-control', { has: field });
+  const border = control.locator(':scope > .env-text-field-border');
   await expect(control).toHaveAttribute('data-variant', 'ghost');
-  await expect(control.locator(':scope > .env-text-field-border')).toHaveCSS(
-    'border-top-color',
-    'rgba(0, 0, 0, 0)',
-  );
-  await expect(control).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+  await expect(border).toHaveCSS('border-top-color', 'rgba(0, 0, 0, 0)');
+  await expect(control).not.toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+  const rest = await control.evaluate((element) => getComputedStyle(element).backgroundColor);
   await field.focus();
-  await expect(control.locator(':scope > .env-text-field-border')).not.toHaveCSS(
-    'border-top-color',
-    'rgba(0, 0, 0, 0)',
-  );
-  await expect(control).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+  await expect(border).not.toHaveCSS('border-top-color', 'rgba(0, 0, 0, 0)');
+  await expect(control).toHaveCSS('background-color', rest);
+  // The floated label sits inside the fill, above where the text starts, and opens no notch.
+  await expect
+    .poll(() =>
+      control.evaluate((element) => {
+        const box = element.getBoundingClientRect();
+        const label = element.querySelector(':scope > label')!.getBoundingClientRect();
+        const input = element.querySelector('textarea')!;
+        const textTop =
+          input.getBoundingClientRect().top + Number.parseFloat(getComputedStyle(input).paddingTop);
+        const legend = element.querySelector('.env-text-field-border > legend')!;
+        return (
+          label.top > box.top &&
+          label.bottom <= textTop &&
+          legend.getBoundingClientRect().width === 0
+        );
+      }),
+    )
+    .toBe(true);
 });
 
 test('the resize edge is a named separator that the arrow keys and Home move', async ({ page }) => {
