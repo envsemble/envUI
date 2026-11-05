@@ -84,6 +84,13 @@
     > :is(.env-combobox-trigger, .env-combobox-clear) {
     cursor: default;
   }
+  /* A read-only combobox opens nothing, so it shows no chevron, as a read-only Select; the value
+     keeps its place. */
+  .env-combobox-control:has(> .env-combobox-input[readonly]:not(:disabled))
+    .env-combobox-end
+    > .env-combobox-trigger {
+    visibility: hidden;
+  }
 
   /* Leading content, such as an avatar or an icon, takes the size of its slot wherever it appears. */
   .env-combobox-start {
@@ -113,10 +120,29 @@
   }
   /* The chosen option's icon or avatar takes an avatar's small size, large enough for its initials,
      where the field has room for it below the floated label; a shorter field, such as a small one
-     at the compact scale, keeps it smaller, an avatar its color alone. */
+     at the compact scale, keeps an icon smaller. */
   .env-combobox .env-combobox-value-icon {
     --env-combobox-start-size: min(var(--env-picture-size-sm), var(--env-field-height) - 0.375rem);
     margin-block: calc((var(--env-combobox-row) - var(--env-combobox-start-size)) / 2);
+  }
+  /* An avatar of initials is left out where they wouldn't fit, rather than shown as a blank disc:
+     below Avatar's least size for initials (Avatar.css) the slot and the space after it close up.
+     A photo or a figure keeps its place. */
+  .env-combobox .env-combobox-value-icon:has(> .env-avatar > .env-avatar-fallback-initials) {
+    --env-combobox-start-fit: calc(
+      (
+          min(var(--env-picture-size-sm), var(--env-field-height) - 0.375rem) - 0.96 *
+            var(--env-picture-size-sm)
+        ) *
+        1000
+    );
+    --env-combobox-start-size: min(
+      var(--env-picture-size-sm),
+      var(--env-field-height) - 0.375rem,
+      max(0rem, var(--env-combobox-start-fit))
+    );
+    --env-combobox-start-gap: clamp(0rem, var(--env-combobox-start-fit), var(--env-space-1));
+    margin-inline-end: calc(var(--env-combobox-start-gap) - var(--env-space-1));
   }
 
   /* Color properties: a chip's colors, which an application sets on the chips through its own CSS,
@@ -155,6 +181,14 @@
   }
   .env-combobox-chip:has(> .env-combobox-start) {
     padding-inline-start: 0.1875rem;
+  }
+  /* A chip is too short for an avatar's initials, so it leaves an avatar of initials out rather than
+     show a blank disc; an icon, a photo or a figure stays. */
+  .env-combobox-chip > .env-combobox-start:has(> .env-avatar > .env-avatar-fallback-initials) {
+    display: none;
+  }
+  .env-combobox-chip:has(> .env-combobox-start > .env-avatar > .env-avatar-fallback-initials) {
+    padding-inline-start: var(--env-space-2);
   }
   .env-combobox-chip > .env-combobox-start {
     --env-combobox-start-size: calc(var(--env-combobox-row) - 0.375rem);
