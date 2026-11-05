@@ -14,7 +14,6 @@ import {
   type Ref,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { flag } from '../internal/flag.js';
 import { Row } from '../foundations/Layout.js';
 import { Text } from '../foundations/Text.js';
 import { setRef } from '../internal/setRef.js';
@@ -39,9 +38,8 @@ export interface SliderProps
    */
   description?: ReactNode;
   /**
-   * A message under the slider that says how to correct the value. While it is set, the slider is
-   * invalid (aria-invalid), with the error color's edge, and the message joins its description,
-   * after the description.
+   * A message under the slider that says how to correct the value; it joins the slider's
+   * description, after the description.
    */
   error?: ReactNode;
   /** The value of a controlled slider; update it from onValueChange. */
@@ -100,9 +98,9 @@ export interface SliderProps
  * A value in a range, as a field: as tall as the fields and with their corners, so it sits in a form
  * among them, with its label inside at the start, its value at the end and a fill from the start
  * that shows it. Pressing or dragging anywhere in it chooses a value, and so do the arrow keys. At
- * rest it shows its text, its fill and a quiet handle at the value; the handle at full strength and
- * faint ticks at its steps appear under the pointer and while it is pressed, and go once it is
- * released, and the handle alone shows with keyboard focus. An optional description sits below it.
+ * rest it shows only its text and fill; a thin handle at the value and faint ticks at its steps
+ * appear under the pointer and while it is pressed, and go once it is released, and the handle
+ * alone shows with keyboard focus. An optional description sits below it.
  */
 export function Slider({
   label,
@@ -233,16 +231,6 @@ export function Slider({
       observer.observe(text);
     return () => observer.disconnect();
   }, []);
-  // With an error the range input is invalid. Base UI marks it only from a field around the slider's
-  // root, and the frame here sits inside it, so the slider marks it itself.
-  const invalid = error != null;
-  useLayoutEffect(
-    function markInvalid() {
-      if (invalid) input.current?.setAttribute('aria-invalid', 'true');
-      else input.current?.removeAttribute('aria-invalid');
-    },
-    [invalid],
-  );
   // Faint ticks mark the steps, or, where they are many, the large steps, so they never crowd.
   const ticks = tickCount(min, max, step, largeStep);
   const describedByIds =
@@ -296,7 +284,6 @@ export function Slider({
             data-dragging={pressed && !disabled ? '' : undefined}
             data-handle={reveal.handle ? '' : undefined}
             data-ruler={reveal.ruler ? '' : undefined}
-            data-invalid={flag(invalid)}
             onPointerDown={(event) => {
               setKeyboard(false);
               if (!disabled && event.button === 0) setPressed(true);
@@ -335,23 +322,6 @@ export function Slider({
               <BaseSlider.Value className="env-slider-value" render={<Text render={<output />} />}>
                 {(formatted, values) => (formatValue ? formatValue(values[0]!) : formatted[0])}
               </BaseSlider.Value>
-            </Row>
-            {/* The label and the value again, in the text color for the fill, shown over the fill
-                alone, where the row above is cut away: the text keeps its contrast on either side
-                of the fill's end. Hidden from assistive technology, which reads the row above. */}
-            <Row
-              align="center"
-              justify="between"
-              gap={3}
-              className="env-slider-fill-text"
-              aria-hidden="true"
-            >
-              <Text render={<div />}>{label}</Text>
-              <Text render={<span />}>
-                {formatValue
-                  ? formatValue(current)
-                  : new Intl.NumberFormat(locale ?? providedLocale).format(current)}
-              </Text>
             </Row>
           </BaseSlider.Control>
         </FieldFrame>
@@ -408,10 +378,10 @@ function afterRelease(current: SliderHover, control: HTMLElement, event: Event):
 }
 
 /**
- * Marks where the slider's indicators pass under the label or the value, so the stylesheet fades
- * them there while they show. --env-slider-veil on the control is 1 where the end of the fill and
- * the handle would touch the text, and 0 elsewhere. For the ticks, --env-slider-clear-start and
- * --env-slider-clear-end bound the stretch half a line clear of the text, from the
+ * Marks where the slider's indicators pass under the label or the value, within half a line of
+ * either, so the stylesheet fades them there while they show. --env-slider-veil on the control is 1
+ * where the end of the fill and the handle sit under the text, and 0 elsewhere. For the ticks,
+ * --env-slider-clear-start and --env-slider-clear-end bound the stretch clear of the text, from the
  * track's left side, physical as the ticks are, so that either direction works.
  */
 function veilIndicatorUnderText(control: HTMLElement) {
@@ -430,10 +400,7 @@ function veilIndicatorUnderText(control: HTMLElement) {
     const box = text.getBoundingClientRect();
     if (box.width === 0) continue;
     const margin = Number.parseFloat(getComputedStyle(text).fontSize) / 2 || 0;
-    // The handle fades once it would touch the text, so at either end, halfway into the padding
-    // before the label or after the value, it stays.
-    const reach = handle.width / 2 + margin / 4;
-    if (at >= box.left - reach && at <= box.right + reach) veiled = true;
+    if (at >= box.left - margin && at <= box.right + margin) veiled = true;
     // The text in the track's left half bounds the clear stretch on the left, the other on the right.
     if (box.left + box.width / 2 < span.left + span.width / 2)
       clearStart = Math.max(clearStart, box.right + margin - span.left);

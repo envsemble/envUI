@@ -107,8 +107,6 @@ const popupFill = 'popup-fill';
 const worstBackdrop = 'popup-worst-backdrop';
 // A tooltip's frosted fill, a key chip on it and the worst behind it (Tooltip.css).
 const tooltipFrosted = 'tooltip-frosted';
-// A slider's fill as it is drawn, the primary color (Slider.css).
-const sliderFill = 'slider-fill';
 // A text field's prefix and suffix (TextField.css).
 const textFieldAffix = 'text-field-affix';
 // A segmented control's thumb, the chosen segment on its track (SegmentedControl.css).
@@ -1175,7 +1173,7 @@ const registry: readonly ContrastPair[] = merged([
     'Spinners, and meter indicators on their track',
   ),
   // Slider: a field whose track is the neutral fill, with a stronger fill from the start to the
-  // value; the label, the value and the handle sit on both. The fill is this tint in dark.
+  // value; the label, the value and the handle sit on both.
   ...text(
     '--env-color-fg-default',
     [
@@ -1197,30 +1195,6 @@ const registry: readonly ContrastPair[] = merged([
       [fill, popup],
     ],
     'The fill of a slider against its track',
-  ),
-  // The slider's fill as it is drawn (Slider.css): the primary color, as Progress's indicator, over
-  // the track, with the label and the value over it in the text color for emphasis.
-  ...text(
-    '--env-color-fg-on-emphasis',
-    [
-      [sliderFill, fill, page],
-      [sliderFill, fill, surface],
-      [sliderFill, fill, muted],
-      [sliderFill, fill, raised],
-      [sliderFill, fill, popup],
-    ],
-    'The label and the value of a slider over its fill',
-  ),
-  ...different(
-    sliderFill,
-    [
-      [fill, page],
-      [fill, surface],
-      [fill, muted],
-      [fill, raised],
-      [fill, popup],
-    ],
-    'The fill of a slider as drawn against its track',
   ),
   ...nonText(
     '--env-color-bg-primary-emphasis',
@@ -1364,21 +1338,6 @@ const onPage = registry.filter((pair) => pair.bg.at(-1) === page && pair.fg !== 
 export const pairs: readonly ContrastPair[] = merged([...registry, ...onPage.map(onRecessed)]);
 
 /**
- * The grounds under a slider's track that its retired fills were measured over, and the fills: at
- * high contrast the primary muted tint, earlier named for the accent and the brand tones, with the
- * text color on it. The fill is the primary color now, with the text color for emphasis over it.
- */
-const retiredSliderGrounds = ['default', 'muted', 'page', 'popup', 'raised', 'recessed'].map(
-  (ground) => `--env-color-bg-${ground}`,
-);
-const retiredSliderFill = (fill: string, ground: string) =>
-  `${fill} on --env-color-bg-neutral-muted over ${ground}`;
-const retiredSliderText = (fill: string, ground: string) =>
-  `--env-color-fg-default on ${fill} over --env-color-bg-neutral-muted over ${ground}`;
-const retiredSliderRationale =
-  'The slider’s fill is the primary color, as Progress’s indicator, in every theme and at high contrast, and its label and value take the text color for emphasis over it: measured as --env-color-fg-on-emphasis on slider-fill. The text color no longer sits on the fill, and the primary muted tint is no longer its fill at high contrast.';
-
-/**
  * Pairs the gate measured once and no longer does, with the reason. A pair that leaves `pairs`
  * must be listed here or in `renamed`: tests/contrast/DeclaredPairs.json holds the names declared
  * when it was last updated, and tests/browser/Contrast.spec.ts fails on a name that is gone from
@@ -1398,14 +1357,6 @@ export const dropped: readonly { pair: string; rationale: string }[] = [
       rationale:
         'The thumb of a switch that is off is muted, so it no longer outweighs a switch that is on: --env-color-border-default-pressed at rest and --env-color-fg-muted under the pointer and pressed, each measured on the track at 3:1 as the control’s boundary.',
     })),
-  ),
-  // The slider's retired fills, and the text color on them.
-  ...retiredSliderGrounds.flatMap((ground) =>
-    [
-      retiredSliderFill('--env-color-bg-primary-muted', ground),
-      retiredSliderText('--env-color-bg-primary-muted', ground),
-      retiredSliderText('slider-fill', ground),
-    ].map((pair) => ({ pair, rationale: retiredSliderRationale })),
   ),
   // Alerts have no edge outside high contrast, where the border color bounds them, measured as a
   // boundary there.
@@ -3120,28 +3071,6 @@ export const renamed: readonly { from: string; to: string; rationale: string }[]
       'Every token takes the --env- prefix, and the tone borders are named by emphasis: the solid edge is border.{tone}.emphasis, the translucent one border.{tone}.',
   })),
   ...apiReviewRenames(),
-  // The renames the slider's retired fills went through before they were dropped: the tones' tints
-  // to primary, and the catalogue's canvas to the recessed surface.
-  ...(['accent', 'brand'] as const).flatMap((tone) =>
-    [...retiredSliderGrounds, 'catalogue-canvas'].flatMap((ground) =>
-      [retiredSliderFill, retiredSliderText].map((name) => ({
-        from: name(`--env-color-bg-${tone}-muted`, ground),
-        to: name('--env-color-bg-primary-muted', ground),
-        rationale:
-          'The blue roles are primary, and the purple of accent actions is accent: one meaning for a tone on every component.',
-      })),
-    ),
-  ),
-  ...[
-    retiredSliderFill('--env-color-bg-primary-muted', 'catalogue-canvas'),
-    retiredSliderText('--env-color-bg-primary-muted', 'catalogue-canvas'),
-    retiredSliderText('slider-fill', 'catalogue-canvas'),
-  ].map((from) => ({
-    from,
-    to: from.replace(/catalogue-canvas$/, '--env-color-bg-recessed'),
-    rationale:
-      'The catalogue’s canvas, a formula in its style sheet, is the recessed surface, --env-color-bg-recessed: the same shade deeper than the page, a token of the themes.',
-  })),
   // The danger emphasis fill is a saturated red with a white label in every theme, so a destructive
   // primary outweighs the soft primary and accent fills in dark: its label, a solid danger badge's
   // and what an end slot or a count draws in it are --env-color-fg-on-strong.
@@ -3198,8 +3127,6 @@ export interface Relaxation extends Requirement {
  * pair again, even back to a requirement relaxed before, needs another entry with its own
  * rationale. Entries stay once recorded: they are the history of what was relaxed and why.
  */
-const sliderHighContrast =
-  'At high contrast the slider fill is the primary muted tint in either theme, measured there as --env-color-bg-primary-muted under the same pairs; the fill as drawn, a stronger grade in dark, is measured at standard contrast.';
 const segmentThumbHighContrast =
   'At high contrast the thumb keeps a layer of the neutral fill, measured there as segmented-control-thumb-high under the same pairs; the thumb as drawn at standard contrast, the raised neutral grade in dark, is measured there.';
 export const relaxed: readonly Relaxation[] = [
@@ -3229,78 +3156,6 @@ export const relaxed: readonly Relaxation[] = [
       rationale: segmentThumbHighContrast,
     },
   ]),
-  {
-    pair: '--env-color-fg-default on slider-fill over --env-color-bg-neutral-muted over --env-color-bg-recessed',
-    kind: 'text',
-    minimum: { standard: 4.5 },
-    rationale: sliderHighContrast,
-  },
-  {
-    pair: 'slider-fill on --env-color-bg-neutral-muted over --env-color-bg-recessed',
-    kind: 'difference',
-    minimum: { standard: 0.02 },
-    rationale: sliderHighContrast,
-  },
-  {
-    pair: '--env-color-fg-default on slider-fill over --env-color-bg-neutral-muted over --env-color-bg-page',
-    kind: 'text',
-    minimum: { standard: 4.5 },
-    rationale: sliderHighContrast,
-  },
-  {
-    pair: '--env-color-fg-default on slider-fill over --env-color-bg-neutral-muted over --env-color-bg-default',
-    kind: 'text',
-    minimum: { standard: 4.5 },
-    rationale: sliderHighContrast,
-  },
-  {
-    pair: '--env-color-fg-default on slider-fill over --env-color-bg-neutral-muted over --env-color-bg-muted',
-    kind: 'text',
-    minimum: { standard: 4.5 },
-    rationale: sliderHighContrast,
-  },
-  {
-    pair: '--env-color-fg-default on slider-fill over --env-color-bg-neutral-muted over --env-color-bg-raised',
-    kind: 'text',
-    minimum: { standard: 4.5 },
-    rationale: sliderHighContrast,
-  },
-  {
-    pair: '--env-color-fg-default on slider-fill over --env-color-bg-neutral-muted over --env-color-bg-popup',
-    kind: 'text',
-    minimum: { standard: 4.5 },
-    rationale: sliderHighContrast,
-  },
-  {
-    pair: 'slider-fill on --env-color-bg-neutral-muted over --env-color-bg-page',
-    kind: 'difference',
-    minimum: { standard: 0.02 },
-    rationale: sliderHighContrast,
-  },
-  {
-    pair: 'slider-fill on --env-color-bg-neutral-muted over --env-color-bg-default',
-    kind: 'difference',
-    minimum: { standard: 0.02 },
-    rationale: sliderHighContrast,
-  },
-  {
-    pair: 'slider-fill on --env-color-bg-neutral-muted over --env-color-bg-muted',
-    kind: 'difference',
-    minimum: { standard: 0.02 },
-    rationale: sliderHighContrast,
-  },
-  {
-    pair: 'slider-fill on --env-color-bg-neutral-muted over --env-color-bg-raised',
-    kind: 'difference',
-    minimum: { standard: 0.02 },
-    rationale: sliderHighContrast,
-  },
-  {
-    pair: 'slider-fill on --env-color-bg-neutral-muted over --env-color-bg-popup',
-    kind: 'difference',
-    minimum: { standard: 0.02 },
-    rationale: sliderHighContrast,
-  },
 ];
 
 export function pairName(pair: Pick<ContrastPair, 'fg' | 'bg'>): string {
@@ -3388,7 +3243,6 @@ export const derived: Readonly<Record<string, string>> = {
   // A tooltip's frosted fill and a key chip on it, a share of its light text (Tooltip.css), and
   // the worst behind it: white under its light text, in light and in dark.
   'tooltip-frosted': tooltipFill,
-  'slider-fill': markedColor('packages/ui/src/styles/Slider.css', 'slider-fill'),
   'tooltip-key': ofLabel(tooltipKeyFill, '--env-color-fg-on-strong'),
   'tooltip-worst-backdrop': '#fff',
   // A text field's prefix and suffix, a share of muted text (TextField.css).

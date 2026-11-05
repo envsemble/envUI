@@ -1,5 +1,0 @@
----
-'@envsemble/envui': patch
----
-
-Slider's fill is the primary color, `--env-color-bg-primary-emphasis`, as Progress's indicator is, in light, in dark and at high contrast, so it reads as an active control rather than a meter or a disabled field; where the label and the value lie over the fill they take the text color for emphasis, `--env-color-fg-on-emphasis`, and over the track the text color, cut exactly at the fill's end, so each part keeps its contrast. A new part, `env-slider-fill-text`, draws them over the fill. A handle, a short bar at 70 % of its strength, marks the value at rest; at either end it stops halfway into the padding before the label or after the value, so it never meets them there, and where it passes under the label or the value it hides at rest. Under the pointer, while pressed and with keyboard focus it shows in full, and at half its strength under the text. A disabled slider is flatter than one at rest: no handle, a neutral fill, `--env-color-bg-neutral-muted`, and the label and the value in the text color.
