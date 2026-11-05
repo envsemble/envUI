@@ -181,8 +181,13 @@ body {
 }
 @keyframes site-drawer-fade {
   to {
-    --site-drawer-fade: var(--env-space-6);
+    --site-drawer-fade: var(--site-drawer-fade-length);
   }
+}
+.site-sidebar .env-navigation-drawer-list {
+  /* The fade's length, which the list scrolls the current page's group heading clear of
+     (SiteNavigation.tsx). */
+  --site-drawer-fade-length: var(--env-space-6);
 }
 @supports (animation-timeline: scroll()) {
   .site-sidebar .env-navigation-drawer-list {
@@ -192,7 +197,7 @@ body {
       var(--env-color-fg-default) var(--site-drawer-fade)
     );
     animation: site-drawer-fade linear both;
-    animation-range: 0 var(--env-space-6);
+    animation-range: 0 var(--site-drawer-fade-length);
     animation-timeline: scroll(self);
   }
 }
