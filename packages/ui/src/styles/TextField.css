@@ -239,23 +239,33 @@
   .env-text-field-control:focus-within > label {
     color: var(--env-text-field-label-accent, var(--env-color-fg-primary));
   }
-  /* Ghost fields are only their text and icon at rest: no border or fill. A soft fill shows under
-     the pointer, and focus draws the outline field's accent frame, so focus reads the same in every
-     variant; the icon keeps its quiet color, and the placeholder clears once the field has focus. An
-     invalid ghost field shows its red border. The command palette's search is a ghost field that
-     sets private properties (CommandPalette.css): --env-text-field-ghost-solid, a fill it keeps in
-     every state; --env-text-field-ghost-placeholder, its placeholder's color while focused;
-     --env-text-field-ghost-edge, an edge; --env-text-field-ghost-focus-edge and
-     --env-text-field-ghost-focus-frame, the color and width of its frame while focused, as it draws a
-     focus ring of its own; and, as any field may, --env-text-field-start-inset, where its start icon
-     sits. */
+  /* Ghost fields have no border: at rest a faint fill, half the neutral fill, says where to type, so
+     a labelled field doesn't read as a label and its value; a read-only or disabled one has none.
+     The neutral fill shows under the pointer, and focus draws the outline field's accent frame, so
+     focus reads the same in every variant; the icon keeps its quiet color, and the placeholder
+     clears once the field has focus. An invalid ghost field shows its red border. The command
+     palette's search is a ghost field that sets private properties (CommandPalette.css):
+     --env-text-field-ghost-solid, a fill it keeps in every state; --env-text-field-ghost-placeholder,
+     its placeholder's color while focused; --env-text-field-ghost-edge, an edge;
+     --env-text-field-ghost-focus-edge and --env-text-field-ghost-focus-frame, the color and width of
+     its frame while focused, as it draws a focus ring of its own; --env-text-field-ghost-corner, its
+     corner, a pill; and, as any field may, --env-text-field-start-inset, where its start icon sits. */
   .env-text-field-control[data-variant='ghost'] {
     background: var(--env-text-field-ghost-solid, transparent);
     transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
   }
+  .env-text-field-control[data-variant='ghost']:not(
+      :has(> .env-text-field-input:is(:disabled, [readonly], [aria-readonly='true'])),
+      [data-disabled]
+    ) {
+    background: var(
+      --env-text-field-ghost-solid,
+      color-mix(in srgb, var(--env-color-bg-neutral-muted) 50%, transparent)
+    );
+  }
   @media (hover: hover) {
     .env-text-field-control[data-variant='ghost']:hover:not(
-        :has(> .env-text-field-input:disabled),
+        :has(> .env-text-field-input:is(:disabled, [readonly], [aria-readonly='true'])),
         [data-disabled]
       ) {
       background: var(--env-text-field-ghost-solid, var(--env-color-bg-neutral-muted));
@@ -478,8 +488,8 @@
   /* Fields share the button height so they line up with buttons in a row, and a text area's rounded
      rectangle rather than a pill: its large corner, no more than a third of the field's height, so a
      small field still reads as a rectangle. A field that grows taller, as a combobox whose chips
-     wrap, keeps the same corners. A ghost field keeps the round ends of the ghost buttons it sits
-     among, as its fill shows only under the pointer and while focused. */
+     wrap, keeps the same corners, and so does a ghost field, so a row of fields of either variant
+     shares one corner. */
   .env-text-field:not([data-tall]) .env-text-field-control {
     --env-text-field-corner: min(var(--env-radius-lg), var(--env-field-height) / 3);
     box-sizing: border-box;
@@ -488,8 +498,10 @@
     border-radius: var(--env-text-field-corner);
   }
   .env-text-field:not([data-tall]) .env-text-field-control[data-variant='ghost'] {
-    --env-text-field-corner: min(var(--env-radius-full), var(--env-field-height) / 2);
-    border-radius: var(--env-radius-full);
+    --env-text-field-corner: var(
+      --env-text-field-ghost-corner,
+      min(var(--env-radius-lg), var(--env-field-height) / 3)
+    );
   }
   .env-text-field:not([data-tall]) .env-text-field-input {
     /* The well owns the height, including its border, so it matches the button height exactly; the

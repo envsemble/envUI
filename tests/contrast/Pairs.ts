@@ -113,6 +113,8 @@ const sliderFill = 'slider-fill';
 const textFieldAffix = 'text-field-affix';
 // A segmented control's thumb, the chosen segment on its track (SegmentedControl.css).
 const segmentThumb = 'segmented-control-thumb';
+// The state layer under a segment not chosen while the pointer is over it (SegmentedControl.css).
+const segmentHoverLayer = 'segmented-control-hover-layer';
 /** The surfaces a segmented control's track sits on, each with the track's fill over it. */
 const segmentTracks = [page, surface, muted, raised].map((below) => [fill, below] as const);
 const tooltipKey = 'tooltip-key';
@@ -783,6 +785,16 @@ const registry: readonly ContrastPair[] = merged([
     'The chosen segment’s label and count on its thumb',
   ),
   ...different(segmentThumb, segmentTracks, 'The chosen segment’s thumb against its track'),
+  ...text(
+    '--env-color-fg-muted-hover',
+    segmentTracks.map((track) => [segmentHoverLayer, ...track]),
+    'The label of a segment not chosen, on its state layer under the pointer',
+  ),
+  ...text(
+    '--env-color-fg-muted-pressed',
+    segmentTracks.map((track) => [layerPressed, ...track]),
+    'The label of a segment not chosen, on its state layer while pressed',
+  ),
   ...focus(
     '--env-color-border-focus',
     segmentTracks.map((track) => [segmentThumb, ...track]),
@@ -1132,8 +1144,10 @@ const registry: readonly ContrastPair[] = merged([
     ],
     'The fill of a slider against its track',
   ),
-  // The slider's fill as it is drawn (Slider.css): the primary color's muted tint over the track.
-  ...text(
+  // The slider's fill as it is drawn (Slider.css): the primary color's muted tint over the track,
+  // a stronger grade of it in dark, and the muted tint in either theme at high contrast.
+  ...on(
+    'text',
     '--env-color-fg-default',
     [
       [sliderFill, fill, page],
@@ -1143,8 +1157,14 @@ const registry: readonly ContrastPair[] = merged([
       [sliderFill, fill, popup],
     ],
     'The label, the value and the handle of a slider on its fill as drawn',
+    {
+      contrast: 'standard',
+      rationale:
+        'At high contrast the fill is the primary muted tint in either theme (Slider.css), measured below.',
+    },
   ),
-  ...different(
+  ...on(
+    'difference',
     sliderFill,
     [
       [fill, page],
@@ -1154,6 +1174,45 @@ const registry: readonly ContrastPair[] = merged([
       [fill, popup],
     ],
     'The fill of a slider as drawn against its track',
+    {
+      contrast: 'standard',
+      rationale:
+        'At high contrast the fill is the primary muted tint in either theme (Slider.css), measured below.',
+    },
+  ),
+  ...on(
+    'text',
+    '--env-color-fg-default',
+    [
+      ['--env-color-bg-primary-muted', fill, page],
+      ['--env-color-bg-primary-muted', fill, surface],
+      ['--env-color-bg-primary-muted', fill, muted],
+      ['--env-color-bg-primary-muted', fill, raised],
+      ['--env-color-bg-primary-muted', fill, popup],
+    ],
+    'The label, the value and the handle of a slider on its fill at high contrast',
+    {
+      contrast: 'high',
+      rationale:
+        'The fill at high contrast (Slider.css); outside it the fill as drawn, measured above, takes a stronger grade in dark.',
+    },
+  ),
+  ...on(
+    'difference',
+    '--env-color-bg-primary-muted',
+    [
+      [fill, page],
+      [fill, surface],
+      [fill, muted],
+      [fill, raised],
+      [fill, popup],
+    ],
+    'The fill of a slider at high contrast against its track',
+    {
+      contrast: 'high',
+      rationale:
+        'The fill at high contrast (Slider.css); outside it the fill as drawn, measured above, takes a stronger grade in dark.',
+    },
   ),
   ...nonText(
     '--env-color-bg-primary-emphasis',
@@ -3022,7 +3081,82 @@ export interface Relaxation extends Requirement {
  * pair again, even back to a requirement relaxed before, needs another entry with its own
  * rationale. Entries stay once recorded: they are the history of what was relaxed and why.
  */
-export const relaxed: readonly Relaxation[] = [];
+const sliderHighContrast =
+  'At high contrast the slider fill is the primary muted tint in either theme, measured there as --env-color-bg-primary-muted under the same pairs; the fill as drawn, a stronger grade in dark, is measured at standard contrast.';
+export const relaxed: readonly Relaxation[] = [
+  {
+    pair: '--env-color-fg-default on slider-fill over --env-color-bg-neutral-muted over --env-color-bg-recessed',
+    kind: 'text',
+    minimum: { standard: 4.5 },
+    rationale: sliderHighContrast,
+  },
+  {
+    pair: 'slider-fill on --env-color-bg-neutral-muted over --env-color-bg-recessed',
+    kind: 'difference',
+    minimum: { standard: 0.02 },
+    rationale: sliderHighContrast,
+  },
+  {
+    pair: '--env-color-fg-default on slider-fill over --env-color-bg-neutral-muted over --env-color-bg-page',
+    kind: 'text',
+    minimum: { standard: 4.5 },
+    rationale: sliderHighContrast,
+  },
+  {
+    pair: '--env-color-fg-default on slider-fill over --env-color-bg-neutral-muted over --env-color-bg-default',
+    kind: 'text',
+    minimum: { standard: 4.5 },
+    rationale: sliderHighContrast,
+  },
+  {
+    pair: '--env-color-fg-default on slider-fill over --env-color-bg-neutral-muted over --env-color-bg-muted',
+    kind: 'text',
+    minimum: { standard: 4.5 },
+    rationale: sliderHighContrast,
+  },
+  {
+    pair: '--env-color-fg-default on slider-fill over --env-color-bg-neutral-muted over --env-color-bg-raised',
+    kind: 'text',
+    minimum: { standard: 4.5 },
+    rationale: sliderHighContrast,
+  },
+  {
+    pair: '--env-color-fg-default on slider-fill over --env-color-bg-neutral-muted over --env-color-bg-popup',
+    kind: 'text',
+    minimum: { standard: 4.5 },
+    rationale: sliderHighContrast,
+  },
+  {
+    pair: 'slider-fill on --env-color-bg-neutral-muted over --env-color-bg-page',
+    kind: 'difference',
+    minimum: { standard: 0.02 },
+    rationale: sliderHighContrast,
+  },
+  {
+    pair: 'slider-fill on --env-color-bg-neutral-muted over --env-color-bg-default',
+    kind: 'difference',
+    minimum: { standard: 0.02 },
+    rationale: sliderHighContrast,
+  },
+  {
+    pair: 'slider-fill on --env-color-bg-neutral-muted over --env-color-bg-muted',
+    kind: 'difference',
+    minimum: { standard: 0.02 },
+    rationale: sliderHighContrast,
+  },
+  {
+    pair: 'slider-fill on --env-color-bg-neutral-muted over --env-color-bg-raised',
+    kind: 'difference',
+    minimum: { standard: 0.02 },
+    rationale: sliderHighContrast,
+  },
+  {
+    pair: 'slider-fill on --env-color-bg-neutral-muted over --env-color-bg-popup',
+    kind: 'difference',
+    minimum: { standard: 0.02 },
+    rationale: sliderHighContrast,
+  },
+];
 
 export function pairName(pair: Pick<ContrastPair, 'fg' | 'bg'>): string {
   return `${pair.fg} on ${pair.bg.join(' over ')}`;
@@ -3108,6 +3242,10 @@ export const derived: Readonly<Record<string, string>> = {
   // A text field's prefix and suffix, a share of muted text (TextField.css).
   'text-field-affix': markedColor('packages/ui/src/styles/TextField.css', 'text-field-affix'),
   // A segmented control's thumb (SegmentedControl.css).
+  'segmented-control-hover-layer': markedColor(
+    'packages/ui/src/styles/SegmentedControl.css',
+    'segmented-control-hover-layer',
+  ),
   'segmented-control-thumb': markedColor(
     'packages/ui/src/styles/SegmentedControl.css',
     'segmented-control-thumb',

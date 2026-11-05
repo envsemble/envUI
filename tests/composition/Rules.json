@@ -533,9 +533,9 @@
         },
         {
           "stylesheet": "Combobox.css",
-          "classes": ["env-avatar"],
-          "properties": ["--env-avatar-size"],
-          "note": "An avatar in a combobox's leading slot takes the slot's size."
+          "classes": ["env-avatar", "env-avatar-fallback-initials"],
+          "properties": ["--env-avatar-size", "--env-combobox-start-*"],
+          "note": "An avatar in a combobox's leading slot takes the slot's size; the combobox reads with :has() whether it shows initials, and where the slot is too small for them leaves it out or closes the slot, setting only its own properties and layout; it never styles the avatar."
         },
         {
           "stylesheet": "Markdown.css",

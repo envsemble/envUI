@@ -60,7 +60,9 @@ Not shown: the span the value moves along, which draws the faint ticks, and the 
 
 ### At rest
 
-Slider is a field, as tall as the fields and with their corners, so it sits in a form among them. A quiet handle at the end of the fill shows it can be moved; it leaves the text clear where the value sits under the label or the value.
+Slider is a field, as tall as the fields and with their corners, so it sits in a form among them. A quiet handle at the end of the fill shows it can be moved.
+
+- Under the label or the value, the handle shortens to a mark below the text, so the text stays clear and the value's place still shows.
 
 ### Under the pointer
 
@@ -84,7 +86,7 @@ Dragged past either end, the value stays at the minimum or maximum, and the slid
 
 ### With the keyboard
 
-Reached with the keyboard, the slider shows its focus ring and the handle at the value, faded where it passes under the text.
+Reached with the keyboard, the slider shows its focus ring and the handle at the value.
 
 - The arrow keys move the value; the ticks stay hidden.
 
@@ -108,7 +110,7 @@ A slider has a lowest and a highest value and a step between values.
 
 ### Disabled
 
-A disabled slider is dimmed: it can't be focused or moved, and forms leave it out.
+A disabled slider is dimmed and flatter than one at rest: no handle, and its fill is neutral rather than the primary tint. It can't be focused or moved, and forms leave it out.
 
 - Its description says who sets the value.
 
@@ -217,7 +219,7 @@ The field marks what it shows besides its text and fill:
 
 ## Changelog
 
-- **1.0.0-prerelease.6**: A handle, a short bar, marks the value at rest, clear though quieter than in use, and the fill takes the primary color's muted tint, so the slider no longer reads as a meter or a disabled field; at either end the handle stays in the padding clear of the label and the value, and it shows in full under the pointer and with keyboard focus.
+- **1.0.0-prerelease.6**: A handle, a short bar, marks the value at rest, clear though quieter than in use, and the fill takes the primary color's muted tint, so the slider no longer reads as a meter or a disabled field; at either end the handle stays in the padding clear of the label and the value, and it shows in full under the pointer and with keyboard focus. Under the label or the value, the handle shortens to a mark below the text rather than fading out. In dark the fill takes a stronger grade of the tint, so it stands apart from the track. A disabled slider shows no handle and a neutral fill.
 - **1.0.0-prerelease.6**: An invalid slider, one with an `error`, takes the error color's edge; its control marks `data-invalid` and its range input is `aria-invalid`.
 - **1.0.0-prerelease.5**: `error`, as on a field.
 - **1.0.0-prerelease.2**: Slider is a field: as tall as the fields and with their corners, its label inside at the start, its value at the end in the text style of a field, with numbers of one width and a fill from the start, with a thin handle and faint ticks under the pointer and on focus, both fading where they pass under the text. The track has no outline. `--env-slider-indicator` colors the fill alone, and `--env-slider-content` the label, value, handle and ticks.

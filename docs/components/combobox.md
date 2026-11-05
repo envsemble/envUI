@@ -79,7 +79,7 @@ Not shown: the control, which holds the chips, the input and the buttons, and ta
 
 ### States
 
-A read-only field can be focused and its list browsed, but its value can't change.
+A read-only field can be focused and its list browsed, but its value can't change; it shows no chevron, as a read-only Select.
 
 <!-- specimen: States -->
 
@@ -269,7 +269,7 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 
 ## Changelog
 
-- **1.0.0-prerelease.6**: An avatar in the field and in the options takes an avatar's small size, large enough for its initials, rather than a disc of its color alone; in a small field at the compact scale, and in a chip, it stays a disc.
+- **1.0.0-prerelease.6**: An avatar in the field and in the options takes an avatar's small size, large enough for its initials, rather than a disc of its color alone; where initials don't fit, in a small field at the compact scale and in a chip, an avatar of initials is left out, while an icon, a photo or a figure stays. A read-only field shows no chevron, as a read-only Select.
 - **1.0.0-prerelease.6**: A multiple field stays one row tall while its chips fit there; the input moves to a row of its own only once its text no longer fits.
 - **1.0.0-prerelease.6**: The `floating` variant and the `variant` prop are gone: the field is outlined, and takes `size="lg"` in a long form on a page. The field takes a text area's rounded corners rather than round ends, still as tall as a button.
 - **1.0.0-prerelease.5**: The popup is frosted: the popup's color lets a little of what is behind through, blurred, with a soft shadow and no outline edge but a faint hairline in dark, and is solid with its edge at high contrast and with reduced transparency. Options are the md control height in body text, chosen ones show their check mark, and groups part by space. Group labels sit a little ahead of the rows, and options lie one under the next with no space between them. A chosen option's check mark ends its row, after the label.
