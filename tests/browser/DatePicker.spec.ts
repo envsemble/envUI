@@ -100,15 +100,10 @@ test('the field shows its value in the locale and the calendar follows the date 
     /Tuesday,? 20 October 2026/,
   );
   // en-GB weeks start on Monday; six weeks keep the calendar's height from month to month.
-  await expect(grid.getByRole('columnheader')).toHaveText([
-    'Mon',
-    'Tue',
-    'Wed',
-    'Thu',
-    'Fri',
-    'Sat',
-    'Sun',
-  ]);
+  await expect(grid.getByRole('columnheader')).toHaveText(
+    ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    { useInnerText: true },
+  );
   await expect(grid.locator('tbody tr')).toHaveCount(6);
 
   const steps: [string, string][] = [
@@ -174,7 +169,9 @@ test('month buttons, a pressed day, Today and the clear button change the value'
   const dialog = page.getByRole('dialog', { name: 'Due light' });
   await expect(dialog).toBeVisible();
   // weekStart={0} starts the weeks on Sunday.
-  await expect(dialog.getByRole('columnheader').first()).toHaveText('Sun');
+  await expect(dialog.getByRole('columnheader').first()).toHaveText('Sun', {
+    useInnerText: true,
+  });
   await dialog.getByRole('button', { name: 'Next month', exact: true }).click();
   await expect(dialog.getByRole('grid', { name: 'November 2026' })).toBeVisible();
   await dialog.locator('[data-date="2026-11-05"]').click();
@@ -583,7 +580,9 @@ test('days before 1970 keep their date and time', async ({ page }) => {
   const dialog = page.getByRole('dialog', { name: 'Launch light' });
   await expect(dialog.getByRole('grid', { name: 'December 1969' })).toBeVisible();
   await expect.poll(() => focusedDate(page)).toBe('1969-12-20');
-  await expect(dialog.getByRole('columnheader').first()).toHaveText('Mon');
+  await expect(dialog.getByRole('columnheader').first()).toHaveText('Mon', {
+    useInnerText: true,
+  });
   await expect(dialog.locator('[data-date="1969-12-01"]')).toHaveAccessibleName(
     /Monday,? 1 December 1969/,
   );
