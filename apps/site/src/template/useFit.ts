@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef, type RefObject } from 'react';
-import { mustShowOf } from '../motion/MustShow';
+import { holdsView, mustShowOf } from '../motion/MustShow';
 
 /** The least room, in px, between a preview and its stage's edges. */
 const inset = 16;
@@ -423,9 +423,11 @@ export function useFit(
         current.pending !== null &&
         covers(current.pending, must) &&
         covers(must, current.pending);
-      current.pending = must && !shown && !placed ? must : null;
+      // A tile that holds its view, its still written as its largest state, moves for nothing.
+      const holds = holdsView(canvasElement);
+      current.pending = must && !shown && !placed && !holds ? must : null;
       if (current.pending) update();
-      if (must && !shown && placed) {
+      if (must && !shown && placed && !holds) {
         // The trigger, outside the popups, with its field's label, which floats over its edge,
         // where the stage shows it.
         const trigger = [...canvasElement.querySelectorAll(triggers)].find(
@@ -434,20 +436,19 @@ export function useFit(
             element.checkVisibility({ opacityProperty: true, visibilityProperty: true }),
         );
         const label = trigger?.closest('.env-field')?.querySelector('.env-field-label');
-        let anchor = trigger ? join(shownPart(trigger), label ? shownPart(label) : null) : null;
-        if (
+        const anchor = trigger ? join(shownPart(trigger), label ? shownPart(label) : null) : null;
+        // The trigger is never panned out of view: where it shows whole, it stays where it is;
+        // where it reaches past an edge, the view takes it in with what it opened.
+        const inView =
           anchor &&
-          (screen(anchor.left, at.x, across) < 0 ||
-            screen(anchor.right, at.x, across) > across ||
-            screen(anchor.top, at.y, down) < 0 ||
-            screen(anchor.bottom, at.y, down) > down)
-        )
-          anchor = null;
+          screen(anchor.left, at.x, across) >= 0 &&
+          screen(anchor.right, at.x, across) <= across &&
+          screen(anchor.top, at.y, down) >= 0 &&
+          screen(anchor.bottom, at.y, down) <= down;
         const needed = join(must, anchor)!;
-        const middle = anchor && {
-          x: (anchor.left + anchor.right) / 2,
-          y: (anchor.top + anchor.bottom) / 2,
-        };
+        const middle = inView
+          ? { x: (anchor.left + anchor.right) / 2, y: (anchor.top + anchor.bottom) / 2 }
+          : null;
         // Along an axis `size` long, the largest scale that holds what is needed, from `low` to
         // `high`, with the anchor's `point` where it is.
         const holding = (size: number, to: number, point: number, low: number, high: number) => {
@@ -475,16 +476,25 @@ export function useFit(
             : Math.min(current.scale, Math.max(least, wanted));
         current.scale = scale;
         // Along an axis: the anchor where it was, else what is needed centred, then just far
-        // enough to keep that in; where it doesn't fit, shown from its start.
+        // enough to keep that in; where it doesn't fit, shown from its start, but never so far
+        // that the trigger, from `keepLow` to `keepHigh`, leaves the view.
         const along = (
           size: number,
           to: number,
           point: number | undefined,
           low: number,
           high: number,
+          keepLow?: number,
+          keepHigh?: number,
         ) => {
-          if ((high - low) * scale > size - 2 * playMargin + 0.5)
-            return size / 2 + low * scale - playMargin;
+          if ((high - low) * scale > size - 2 * playMargin + 0.5) {
+            const start = size / 2 + low * scale - playMargin;
+            if (keepLow === undefined || keepHigh === undefined) return start;
+            return Math.min(
+              Math.max(start, size / 2 + keepHigh * scale - size + playMargin),
+              size / 2 + keepLow * scale - playMargin,
+            );
+          }
           const held =
             point === undefined
               ? ((low + high) / 2) * scale
@@ -494,8 +504,24 @@ export function useFit(
             size / 2 + low * scale - playMargin,
           );
         };
-        view.toX = along(across, at.x, middle?.x, needed.left, needed.right);
-        view.toY = along(down, at.y, middle?.y, needed.top, needed.bottom);
+        view.toX = along(
+          across,
+          at.x,
+          middle?.x,
+          needed.left,
+          needed.right,
+          anchor?.left,
+          anchor?.right,
+        );
+        view.toY = along(
+          down,
+          at.y,
+          middle?.y,
+          needed.top,
+          needed.bottom,
+          anchor?.top,
+          anchor?.bottom,
+        );
         view.zoomed = scale < view.rest;
         view.toScale = scale;
         if (still.matches) {
@@ -603,10 +629,20 @@ export function useFit(
       const roomScale = roomy
         ? Math.min(room.width / (right - left), room.height / (bottom - top))
         : 0;
+      // A tile that holds its view as it plays is framed once on its still, the largest it shows,
+      // which shows whole: on a phone, down to `heldLeast`.
       const popupLeast =
-        parseFloat(canvasStyle.getPropertyValue('--catalogue-own-popup-least')) || legibleScale;
+        holdsView(canvasElement) && floor > 0
+          ? heldLeast
+          : parseFloat(canvasStyle.getPropertyValue('--catalogue-own-popup-least')) || legibleScale;
+      // A component's dialog on a wide stage, its title, a field and its actions, shows whole
+      // down to `dialogLeast`, rather than cut off through its actions; on a phone it is drawn
+      // at the phone's floor and cut off at its foot, and as it plays the view follows what its
+      // script presses there (playFit).
+      const shownLeast =
+        dialog && ownSize && !(floor > 0) ? Math.min(popupLeast, dialogLeast) : popupLeast;
       const popupScale = (atMost: number) => {
-        const lowest = Math.min(atMost, popupLeast);
+        const lowest = Math.min(atMost, shownLeast);
         if (wholeScale >= lowest) return Math.min(atMost, wholeScale);
         if (roomScale >= lowest) return Math.min(atMost, roomScale);
         const across = width / (right - left);
@@ -790,6 +826,16 @@ export function useFit(
     };
   }, [stage, canvas, on, whole, tile, ownSize, legible]);
 }
+
+/** The least a component's dialog is drawn at on a wide stage, so it shows whole (useFit). */
+const dialogLeast = 0.66;
+
+/**
+ * The least a tile that holds its view is drawn at on a phone, a little below the phone's floor
+ * (`--catalogue-own-floor`, Gallery.css): its still, a popup open such as a command palette with its
+ * commands, is the frame of all it plays, so it shows whole rather than cut off.
+ */
+const heldLeast = 0.64;
 
 /** The share of its scale a playing tile's content may need before it is drawn smaller. */
 const zoomSlack = 0.97;

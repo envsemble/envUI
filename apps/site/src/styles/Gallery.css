@@ -62,6 +62,13 @@
   aspect-ratio: 4 / 3;
 }
 
+/* A scene lays out from its window's top rather than its middle: at rest the view centres what it
+   paints either way (useFit.ts), and as it plays, what grows or shrinks in it, such as a list a
+   filter narrows or files added, changes below what stays, which holds still. */
+.catalogue-gallery-grid[data-scenes] .catalogue-gallery-stage .catalogue-related-canvas {
+  place-content: start stretch;
+}
+
 /* On a phone, components two to a row on lower stages, so the gallery stays short: each drawn as
    small as fits its stage's width, but no smaller than 0.7 of its own size (useFit.ts), laid out
    as wide as the stage shows at that scale; what is larger still, an open popup too, is cut off
@@ -149,28 +156,8 @@
   inline-size: max(100% - 2rem, var(--catalogue-tile-width, 14rem));
 }
 
-/* A time picker's columns show three rows in a gallery's tile, the chosen one second, so the view
-   from the popup's top holds it, a whole row, before the foot cuts the popup off. */
-.catalogue-gallery-stage .catalogue-related-canvas[data-own-size] .env-time-list {
-  --env-time-list-rows: 3;
-}
-
-/* A calendar's month keeps to one line in a gallery's tile, a little wider than its seven days, so
-   the longest month's name stands beside its buttons and the days don't move as it changes. */
-.catalogue-gallery-stage .catalogue-related-canvas[data-own-size] .env-calendar {
-  inline-size: calc(7 * var(--env-calendar-day) + 0.75rem);
-}
-
-.catalogue-gallery-stage .catalogue-related-canvas[data-own-size] .env-calendar-title {
-  white-space: nowrap;
-}
-
-/* A command palette and a notification leave the window's gutter beside them; drawn at their
-   own size in a gallery's tile, they take the tile's width, as the stage's inset is their gutter. */
-.catalogue-related-canvas[data-own-size] .env-command-palette {
-  inline-size: 100%;
-}
-
+/* A notification leaves the window's gutter beside it; drawn at its own size in a gallery's tile,
+   it takes the tile's width, as the stage's inset is its gutter. */
 .catalogue-related-canvas[data-own-size] .env-toast-viewport {
   inset-inline-end: 0;
   max-inline-size: 100%;

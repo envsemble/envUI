@@ -12,7 +12,7 @@ import {
 } from 'react';
 import { PortalContainer } from '@envsemble/envui';
 import { isVirtual, VirtualPointer, type Aimed } from './VirtualPointer';
-import { nameMustShow } from './MustShow';
+import { holdView, nameMustShow } from './MustShow';
 import {
   aimsOf,
   ease,
@@ -531,6 +531,16 @@ export function useMustShow(...selectors: string[]) {
   const { root } = use(PlaybackContext);
   const key = selectors.join('\n');
   useEffect(() => (root ? nameMustShow(root, key.split('\n')) : undefined), [root, key]);
+}
+
+/**
+ * Holds a tile's view as it plays, for a tile whose still is its largest state, such as a select
+ * resting with its list open: framed on that still, nothing in it is drawn smaller or moved while
+ * its animation acts within it (MustShow.ts).
+ */
+export function useHeldView() {
+  const { root } = use(PlaybackContext);
+  useEffect(() => (root ? holdView(root) : undefined), [root]);
 }
 
 /**

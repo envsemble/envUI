@@ -1,5 +1,7 @@
 import { AvatarGroup } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../motion/Motion';
+import { useMedia } from '../motion/Autoplay';
+import { useHeldView, usePointer, type PointerStep } from '../motion/Motion';
+import { narrowGallery } from './Tiles';
 
 const people = [
   { id: 1, name: 'Alex Morgan' },
@@ -23,8 +25,21 @@ const script: PointerStep[] = [
   { wait: 900 },
 ];
 
-/** A pile of people's avatars, three of five shown and a count for the rest. */
+/**
+ * A pile of people's avatars, three of five shown and a count for the rest. Its view holds as it
+ * plays: the pile spreads and its count's tooltip opens in place, rather than the view following the
+ * tooltip away from the pile. Two to a row, a smaller pile of four, whose count names one person,
+ * so the spread pile and its tooltip show whole in the narrow stage.
+ */
 export default function AvatarTile() {
+  const narrow = useMedia(narrowGallery);
+  useHeldView();
   usePointer(script);
-  return <AvatarGroup people={people} max={3} size="md" />;
+  return (
+    <AvatarGroup
+      people={narrow ? people.slice(0, 4) : people}
+      max={3}
+      size={narrow ? 'sm' : 'md'}
+    />
+  );
 }

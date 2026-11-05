@@ -645,7 +645,9 @@ test('every tile of the galleries is fitted: components at one scale, a scene at
           const at = Number(scaleOf(canvas));
           const own = canvas.hasAttribute('data-own-size');
           const most = own ? Number(one ?? 1) : 1;
-          const least = Math.min(most, own ? 0.84 : 0.95);
+          // A component's dialog shows whole down to a lower scale (useFit.ts).
+          const dialog = canvas.querySelector('.catalogue-overlay-layer .env-dialog-backdrop');
+          const least = Math.min(most, own ? (dialog ? 0.66 : 0.84) : 0.95);
           return at >= least - 0.001 && at <= most ? [] : [`${name}: popup drawn at ${at}`];
         }
         if (canvas.hasAttribute('data-own-size'))
@@ -719,15 +721,6 @@ test('every tile of the galleries is fitted: components at one scale, a scene at
       }),
     );
     expect(cutPopups, route).toEqual([]);
-    // A dialog that fits its stage, such as a confirm dialog's question and actions, is drawn
-    // whole, cut off nowhere.
-    if (route === '/components')
-      await expect(
-        page
-          .locator('.catalogue-gallery-tile')
-          .filter({ has: page.locator('.catalogue-gallery-name', { hasText: /^ConfirmDialog$/ }) })
-          .locator('.catalogue-related-canvas[data-fitted]'),
-      ).not.toHaveAttribute('data-cut', /./);
   }
 });
 
@@ -872,17 +865,15 @@ test("a gallery tile that plays draws out what it opens inside its stage and res
   page,
 }) => {
   // As a tile plays, its view stays at its still until what its script opens needs more room,
-  // such as a select's list: then it is drawn out about its trigger, no smaller than a popup's
-  // least scale (Gallery.css), a field's floating label in view too, and holds there: its scale
-  // only falls. Played again, it does the same. A calendar cut off at rest keeps its month in view.
-  test.setTimeout(90_000);
+  // such as a date picker's next month: then it is drawn out about its trigger, no smaller than a
+  // popup's least scale (Gallery.css), and holds there: its scale only falls. Played again, it
+  // does the same. A calendar cut off at rest keeps its month in view.
+  test.setTimeout(60_000);
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto(`${siteDevUrl}/components`);
   const least = 0.84;
   // What each script acts on, by the selectors of its tile (tiles/).
   const cards = {
-    Select: ['.env-select-trigger', '.env-select-item'],
-    Combobox: ['.env-combobox-input', '.env-combobox-item', '.env-field-label'],
     DatePicker: [
       '.env-calendar-next',
       '.env-calendar-previous',
@@ -912,6 +903,74 @@ test("a gallery tile that plays draws out what it opens inside its stage and res
     const { frames: again } = await playTile(page, name, targets);
     expect(again[0]!.view.scale, name).toBeCloseTo(rest.scale, 2);
     expect(again.at(-1)!.view.scale, name).toBeCloseTo(first.at(-1)!.view.scale, 3);
+  }
+});
+
+test('a popup tile rests open and holds one view from its still through its play', async ({
+  page,
+}) => {
+  // A select, a combobox, a menu bar and a command palette rest with their popup open, framed on
+  // it whole; as they play, the list closes and opens again in place, and nothing is drawn smaller
+  // or moved (useHeldView, Motion.tsx). So does the avatar pile as its tooltip opens.
+  test.setTimeout(120_000);
+  for (const width of [1440, 390]) {
+    await page.setViewportSize({ width, height: width === 1440 ? 900 : 844 });
+    await page.goto(`${siteDevUrl}/components`);
+    for (const name of ['Select', 'Combobox', 'Menubar', 'CommandPalette', 'Avatar']) {
+      const tile = page.locator('.catalogue-gallery-tile').filter({
+        has: page.locator('.catalogue-gallery-name', { hasText: new RegExp(`^${name}$`) }),
+      });
+      await tile.scrollIntoViewIfNeeded();
+      // At rest, the popup shows open, cut off nowhere.
+      if (name !== 'Avatar') {
+        await expect(
+          tile
+            .locator('.catalogue-overlay-layer')
+            .locator('.env-popup, .env-command-palette')
+            .first(),
+          name,
+        ).toBeVisible();
+        await expect(
+          tile.locator('.catalogue-related-canvas[data-fitted]'),
+          name,
+        ).not.toHaveAttribute('data-cut', /./);
+      }
+      const { rest, frames } = await playTile(page, name, [], 4500);
+      expect(frames.length, name).toBeGreaterThan(20);
+      const moved = frames
+        .filter(
+          ({ view }) =>
+            Math.abs(view.scale - rest.scale) > 0.0005 ||
+            Math.abs(view.x - rest.x) > 0.5 ||
+            Math.abs(view.y - rest.y) > 0.5,
+        )
+        .map(({ time, view }) => `${Math.round(time)}: ${JSON.stringify(view)}`);
+      expect(moved, `${name} at ${width}`).toEqual([]);
+    }
+  }
+});
+
+test('the gallery renders its tiles ahead of the scroll, before they come into view', async ({
+  page,
+}) => {
+  // The page scrolls inside the scaffold's body: a tile below the fold is drawn by the time it is
+  // scrolled to, rather than fading in as it comes into view (useNear, Related.tsx).
+  for (const route of ['/components', '/patterns']) {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto(`${siteDevUrl}${route}`);
+    await expect(page.locator('.catalogue-related-canvas[data-fitted]').first()).toBeVisible();
+    // The tiles whose stage starts within a screen below the fold, unscrolled.
+    const below = () =>
+      page.locator('.catalogue-gallery-tile').evaluateAll((tiles) =>
+        tiles
+          .filter((tile) => {
+            const { top } = tile.getBoundingClientRect();
+            return top > innerHeight && top < innerHeight + 400;
+          })
+          .map((tile) => Boolean(tile.querySelector('.catalogue-related-canvas[data-fitted]'))),
+      );
+    expect((await below()).length, route).toBeGreaterThan(0);
+    await expect.poll(async () => (await below()).every(Boolean), { message: route }).toBe(true);
   }
 });
 

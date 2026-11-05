@@ -28,3 +28,22 @@ export function nameMustShow(root: Element, selectors: readonly string[]) {
 export function mustShowOf(root: Element): string[] {
   return [...new Set([...(named.get(root) ?? [])].flat())];
 }
+
+/*
+ * A tile whose still shows what its animation acts on open, such as a select with its list open,
+ * holds its view as it plays (useHeldView, Motion.tsx): it is framed once, at rest, on its still,
+ * written to be its largest state, and what happens in it, the highlight moving, the list closing
+ * and opening again, happens in place, with nothing drawn smaller or moved.
+ */
+
+/** How many of each preview's parts hold its view, by the preview's root element. */
+const holding = new WeakMap<Element, number>();
+
+/** Holds a preview's view while it plays; returns the release. */
+export function holdView(root: Element) {
+  holding.set(root, (holding.get(root) ?? 0) + 1);
+  return () => void holding.set(root, (holding.get(root) ?? 1) - 1);
+}
+
+/** Whether a preview's view holds while it plays. */
+export const holdsView = (root: Element) => (holding.get(root) ?? 0) > 0;
