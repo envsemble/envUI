@@ -333,14 +333,13 @@
       var(--env-text-field-ghost-focus-edge, var(--env-text-field-border-color))
     );
   }
-  /* Read-only: the value keeps its full contrast and the label its place, while the frame quiets to
-     the muted edge and doesn't answer the pointer, so the field reads as one to look at rather than
-     to fill in. Focus still draws the accent frame. Inputs mark it with readonly, the fields whose
-     control is a button with aria-readonly. */
+  /* Read-only: the value keeps its full contrast, the label its place and the frame its resting
+     edge, which doesn't answer the pointer, so the field reads as one to look at rather than to fill
+     in, and not as an unavailable one, whose edge quiets (below). Focus still draws the accent
+     frame. Inputs mark it with readonly, the fields whose control is a button with aria-readonly. */
   .env-text-field-control:has(> .env-text-field-input:is([readonly], [aria-readonly='true'])) {
-    --env-text-field-border-base: var(--env-color-border-muted);
-    --env-text-field-interaction-hover: var(--env-color-border-muted);
-    --env-text-field-interaction-pressed: var(--env-color-border-muted);
+    --env-text-field-interaction-hover: var(--env-text-field-border-base);
+    --env-text-field-interaction-pressed: var(--env-text-field-border-base);
   }
   /* Invalid controls recolor their existing border. */
   .env-text-field-control:is(:has(> .env-text-field-input[aria-invalid='true']), [data-invalid]) {
