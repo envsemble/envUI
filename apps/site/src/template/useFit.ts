@@ -384,18 +384,20 @@ export function useFit(
         pending: null,
       };
       const current = run;
-      // What the script acts on in a popup, such as a select's options (MustShow.ts).
-      const named = mustShowOf(canvasElement)
-        .flatMap((selector) => {
-          try {
-            return [...canvasElement.querySelectorAll(selector)];
-          } catch {
-            return [];
-          }
-        })
-        .filter(
-          (element) => layered(element) && element.checkVisibility({ visibilityProperty: true }),
-        )
+      // What the script acts on in a popup, such as a select's options, and what the tile names
+      // anywhere, such as a panel it opens (MustShow.ts).
+      const query = (selector: string) => {
+        try {
+          return [...canvasElement.querySelectorAll(selector)];
+        } catch {
+          return [];
+        }
+      };
+      const named = [
+        ...mustShowOf(canvasElement).flatMap(query).filter(layered),
+        ...mustShowOf(canvasElement, true).flatMap(query),
+      ]
+        .filter((element) => element.checkVisibility({ visibilityProperty: true }))
         .map(shownPart)
         .filter((box) => box.right > box.left && box.bottom > box.top);
       // What opens, a popup, and what grows in one, such as a palette's results: a popup on its

@@ -9,24 +9,40 @@
  *
  * As the tile starts playing, its view is drawn out once, no smaller than the gallery's least
  * scale, so that every one of them that is there, and what the last time it played showed, is in
- * the stage; it moves again only where something larger opens.
+ * the stage; it moves again only where something larger opens. What a script moves to counts in a
+ * popup, as the view pans to the rest as the pointer heads there; what `useMustShow` names counts
+ * anywhere, such as a panel that opens in place.
  */
 
-/** The selectors each preview's animations name, by the preview's root element. */
-const named = new WeakMap<Element, Set<readonly string[]>>();
+/** A preview's named selectors, and whether they count outside its popups too. */
+interface Named {
+  selectors: readonly string[];
+  anywhere: boolean;
+}
 
-/** Names selectors of a preview's elements its animation acts on; returns the release. */
-export function nameMustShow(root: Element, selectors: readonly string[]) {
+/** The selectors each preview's animations name, by the preview's root element. */
+const named = new WeakMap<Element, Set<Named>>();
+
+/**
+ * Names selectors of a preview's elements its animation acts on, in its popups or, `anywhere`,
+ * also outside them; returns the release.
+ */
+export function nameMustShow(root: Element, selectors: readonly string[], anywhere = false) {
   let set = named.get(root);
   if (!set) named.set(root, (set = new Set()));
   const own = set;
-  own.add(selectors);
-  return () => void own.delete(selectors);
+  const entry = { selectors, anywhere };
+  own.add(entry);
+  return () => void own.delete(entry);
 }
 
-/** The selectors of the elements a preview's animations act on. */
-export function mustShowOf(root: Element): string[] {
-  return [...new Set([...(named.get(root) ?? [])].flat())];
+/**
+ * The selectors of the elements a preview's animations act on; with `anywhere`, only those that
+ * count outside its popups too.
+ */
+export function mustShowOf(root: Element, anywhere = false): string[] {
+  const entries = [...(named.get(root) ?? [])].filter((entry) => !anywhere || entry.anywhere);
+  return [...new Set(entries.flatMap((entry) => entry.selectors))];
 }
 
 /*
