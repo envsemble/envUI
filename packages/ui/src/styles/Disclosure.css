@@ -10,10 +10,16 @@
     color: var(--env-color-fg-muted);
     font: var(--env-type-body-sm);
   }
+  .env-disclosure {
+    /* The chevron and the gap after it, which the panel's inset matches, so the details line up
+       with the summary's words. */
+    --env-disclosure-indicator-size: var(--env-icon-size-sm);
+    --env-disclosure-gap: var(--env-space-1);
+  }
   .env-disclosure > summary {
     display: flex;
-    align-items: baseline;
-    gap: 0.5rem;
+    align-items: flex-start;
+    gap: var(--env-disclosure-gap);
     list-style: none;
     white-space: normal;
     cursor: pointer;
@@ -32,13 +38,24 @@
   .env-disclosure > summary::-webkit-details-marker {
     display: none;
   }
-  .env-disclosure > summary::before {
-    content: '›';
-    flex: 0 0 0.5rem;
-    text-align: center;
+  /* The chevron, the icon set's as a tree's and a select's are, at the small icon size, in the
+     middle of the summary's first line. It points in the reading direction while closed and turns to
+     point down while open. */
+  .env-disclosure-indicator.env-icon {
+    --env-icon-size: var(--env-disclosure-indicator-size);
+    block-size: 1lh;
   }
-  .env-disclosure[open] > summary::before {
+  .env-disclosure-indicator > svg {
+    block-size: var(--env-disclosure-indicator-size);
+  }
+  .env-disclosure-indicator:dir(rtl) {
+    transform: scaleX(-1);
+  }
+  .env-disclosure[open] > summary > .env-disclosure-indicator {
     transform: rotate(90deg);
+  }
+  .env-disclosure[open] > summary > .env-disclosure-indicator:dir(rtl) {
+    transform: scaleX(-1) rotate(90deg);
   }
   .env-disclosure > summary:focus-visible {
     outline: 0.125rem solid var(--env-color-border-focus);
@@ -66,7 +83,7 @@
   }
   .env-disclosure-panel {
     margin-block: var(--env-space-2) 0;
-    margin-inline: var(--env-space-4) 0;
+    margin-inline: calc(var(--env-disclosure-indicator-size) + var(--env-disclosure-gap)) 0;
     color: inherit;
     font: inherit;
   }
@@ -84,7 +101,7 @@
     animation: env-motion-fade-in var(--env-motion-duration-slow) var(--env-motion-ease-enter);
   }
   @media (prefers-reduced-motion: no-preference) {
-    .env-disclosure > summary::before {
+    .env-disclosure-indicator {
       transition: transform var(--env-motion-duration-medium) var(--env-motion-ease);
     }
   }

@@ -49,7 +49,7 @@ examples:
 
 ```
 
-1. **Summary** (`env-disclosure > summary`, `title`)
+1. **Summary** (`env-disclosure > summary`, `title`), after its chevron (`env-disclosure-indicator`)
 2. **Panel** (`env-disclosure-panel`, `children`)
 
 ## Behaviour
@@ -153,4 +153,5 @@ The summary is `env-disclosure > summary`, and the details are in `env-disclosur
 ## Changelog
 
 - **1.0.0**: Disclosure takes `open`, `defaultOpen` and `onOpenChange(open)`; a native `onToggle` still passes through. `DisclosureNote` is `Disclosure`, and its content `env-disclosure-panel`; the page is `disclosure`.
+- **1.0.0-prerelease.6**: The summary's chevron is the icon set's, `env-disclosure-indicator`, at the small icon size in the middle of its first line, as a tree's is, rather than a text character, and turns to point down while open; the panel lines up with the summary's words.
 - **1.0.0-prerelease.6**: The summary lays the shared state layer on hover and press, in a small rounded rectangle a little past its words, and its focus ring takes the same rounded corners rather than square ones.
