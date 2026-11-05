@@ -8,7 +8,6 @@ const people = [
   { id: 2, name: 'Sam Lee' },
   { id: 3, name: 'Priya Shah' },
   { id: 4, name: 'Dana Kim' },
-  { id: 5, name: 'Leo Park' },
 ];
 
 /**
@@ -26,10 +25,11 @@ const script: PointerStep[] = [
 ];
 
 /**
- * A pile of people's avatars, three of five shown and a count for the rest. Its view holds as it
- * plays: the pile spreads and its count's tooltip opens in place, rather than the view following the
- * tooltip away from the pile. Two to a row, a smaller pile of four, whose count names one person,
- * so the spread pile and its tooltip show whole in the narrow stage.
+ * A pile of people's avatars, three of four shown and a count for the one more, whose tooltip names
+ * them on one line, with room above it in the stage. Its view holds as it plays: the pile spreads
+ * and its count's tooltip opens in place, rather than the view following the tooltip away from the
+ * pile. Two to a row, a smaller pile, two of three shown, so the spread pile's count stays near the
+ * middle and its tooltip shows whole in the narrow stage.
  */
 export default function AvatarTile() {
   const narrow = useMedia(narrowGallery);
@@ -37,8 +37,8 @@ export default function AvatarTile() {
   usePointer(script);
   return (
     <AvatarGroup
-      people={narrow ? people.slice(0, 4) : people}
-      max={3}
+      people={narrow ? people.slice(0, 3) : people}
+      max={narrow ? 2 : 3}
       size={narrow ? 'sm' : 'md'}
     />
   );
