@@ -1,9 +1,9 @@
 @layer env.components {
   /* TableOfContents: the page's sections as small links, nested by indent, with the reader's place
      marked by one shape down the list beside them, like a brush stroke in one quiet color: a broad
-     bulge at the current section, running thin a few sections away; the labels of the passed and
-     current sections in the text color, never bolder, so no label rewraps as the reader moves, and
-     those still to come quieter. */
+     bulge at the current section, running thin a few sections away; the current section's label in
+     the text color and drawn a little heavier, without a heavier font, so no label rewraps as the
+     reader moves, and every other one quieter. */
   .env-table-of-contents {
     /* How far each level sits in from the one above it, the shape's width at its fullest, which is
        also its column's, and the room above the first entry and below the last that it runs on
@@ -89,13 +89,22 @@
       color: var(--env-color-fg-muted);
     }
   }
+  /* The current section's label reads as current on its own, beside the shape: the text color, and
+     strokes a hairline's fraction heavier, about a medium weight, which keep the regular weight's
+     widths, so its lines break where they did. */
   .env-table-of-contents .env-table-of-contents-link[aria-current='location'] {
     color: var(--env-color-fg-default);
+    /* stylelint-disable-next-line unit-disallowed-list -- the stroke is typography: it follows the label's font size. */
+    -webkit-text-stroke: 0.025em currentColor;
   }
-  /* The section under the pointer takes muted text's hover color, a quiet gray between the current
-     section's and the others', whichever it is: after every rule above, which it outranks. */
+  /* The section under the pointer takes the text color, a step past the quiet labels around it, and
+     pressed, muted text's pressed color: after every rule above, which they outrank. The current
+     section keeps its heavier strokes, so the two still read apart. */
   .env-table-of-contents .env-table-of-contents-link:hover:is(*, [aria-current]) {
-    color: var(--env-color-fg-muted-hover);
+    color: var(--env-color-fg-default);
+  }
+  .env-table-of-contents .env-table-of-contents-link:active:is(*, [aria-current]) {
+    color: var(--env-color-fg-muted-pressed);
   }
 
   /* Forced colors: the system paints the links, so the current one takes its selection color, and

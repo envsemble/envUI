@@ -77,7 +77,8 @@ One shape down the side of the list bulges beside the section the reader is in, 
 
 - It travels to the next section with a little give: it stretches as it goes and settles with a short wobble, then stays still.
 - It moves at once, without the wobble, where reduced motion is preferred.
-- The section under the pointer swells it a little, and its label turns a quiet gray.
+- The current section's label is in the text color and drawn a little heavier, at the same widths, so no label rewraps as the reader moves.
+- The section under the pointer swells it a little, and its label takes the text color.
 - It runs a little past the first and last sections, and at either one the bulge is drawn smaller, a little toward the middle, so it tapers whole before the shape ends.
 
 <!-- specimen: ReadersPlace -->
@@ -182,4 +183,5 @@ The reader's place is `env-table-of-contents-wave`, an SVG hidden from assistive
 ## Changelog
 
 - **1.0.0**: TableOfContents: the page's headings or sections of your own, nested, with the current section marked as the reader scrolls.
+- **1.0.0-prerelease.6**: The current section's label is drawn a little heavier without changing its widths, and a label under the pointer takes the text color.
 - **1.0.0-prerelease.5**: The reader's place is one shape down the side of the list instead of a dash before each section, in one color: straight along the list's start and bulging broadly toward the labels beside the current section, thin a few sections away. It moves on a spring, stretching as it travels and settling with a short wobble, at once under reduced motion. The labels sit a little further in. Inside a transformed or zoomed container, the current section is measured in the scrolling area's own pixels.
