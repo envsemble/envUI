@@ -13,8 +13,10 @@
 }
 
 .catalogue-gallery-grid {
-  /* The least width a component drawn at its own size is drawn whole at (useFit.ts). */
+  /* The least box a component drawn at its own size is drawn whole at, with the inset around it
+     (useFit.ts): as wide as five to a row, and as tall as a menu open under its button. */
   --catalogue-own-least: 12rem;
+  --catalogue-own-least-block: 8rem;
   display: grid;
   /* Four to a row on a wide page, five on the widest, and two on a phone (below). */
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr));
@@ -109,12 +111,13 @@
 }
 
 /* Drawn at its own size, a component lays out as wide as the stage's room, less the fit's inset,
-   so what it opens stays in view, but never narrower than the tiles' window, 14 rem; a stage
-   narrower than `--catalogue-own-least` draws it smaller, by one scale for every tile (useFit.ts),
-   but on a phone; and at least as tall as its tile's window, so what opens below it has the room it was written for. What is larger,
-   such as a calendar, is cut off at its end. */
+   so what it opens stays in view, but never narrower than the least width it is drawn whole at,
+   `--catalogue-own-least`; a stage smaller than the least box draws it smaller, by one scale for
+   every tile (useFit.ts), but on a phone; and at least as tall as its tile's window, so what opens
+   below it has the room it was written for. What is larger, such as a calendar, is cut off at its
+   end. */
 .catalogue-gallery-stage.catalogue-gallery-stage .catalogue-related-canvas[data-own-size] {
-  inline-size: max(100% - 2rem, 14rem);
+  inline-size: max(100% - 2rem, var(--catalogue-own-least));
   block-size: max(100% - 2rem, var(--catalogue-tile-height, 10.5rem));
   min-block-size: 0;
 }

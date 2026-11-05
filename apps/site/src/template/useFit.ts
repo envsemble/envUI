@@ -238,19 +238,23 @@ export function useFit(
         width / canvasElement.offsetWidth,
         height / canvasElement.offsetHeight,
       );
-      // At its own size, unless the stage is narrower than the least width it is drawn whole at,
-      // `--catalogue-own-least` (Gallery.css), as five to a row: then drawn smaller, by one scale
-      // for every tile, as every stage is as wide. On a phone, each is drawn as small as fits its
-      // stage's width, but no smaller than `--catalogue-own-floor`: what is wider still is cut off.
+      // At its own size, unless the stage's room is smaller than the least box it is drawn whole
+      // in, `--catalogue-own-least` across, as five to a row, and `--catalogue-own-least-block`
+      // down, as a menu open under its button (Gallery.css): then drawn smaller, by one scale for
+      // every tile, as every stage is as large, so nothing reaches the stage's edge. On a phone,
+      // each is drawn as small as fits its stage's width and that height, but no smaller than
+      // `--catalogue-own-floor`: what is larger still is cut off.
       const canvasStyle = getComputedStyle(canvasElement);
-      const least =
-        parseFloat(canvasStyle.getPropertyValue('--catalogue-own-least')) *
-        parseFloat(getComputedStyle(document.documentElement).fontSize);
+      const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
+      const least = parseFloat(canvasStyle.getPropertyValue('--catalogue-own-least')) * rem;
+      const leastBlock =
+        parseFloat(canvasStyle.getPropertyValue('--catalogue-own-least-block')) * rem || 0;
+      const downScale = leastBlock > 0 ? height / leastBlock : 1;
       const floor = parseFloat(canvasStyle.getPropertyValue('--catalogue-own-floor'));
       const scale = ownSize
         ? floor > 0
-          ? Math.max(floor, Math.min(1, width / (right - left)))
-          : Math.min(1, width / least)
+          ? Math.max(floor, Math.min(1, width / (right - left), downScale))
+          : Math.min(1, width / least, downScale)
         : legible
           ? Math.max(legibleScale, Math.min(1, windowScale))
           : tile
