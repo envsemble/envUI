@@ -106,7 +106,7 @@ A tab shows its panel as soon as the arrow keys reach it.
 
 ### Adapting to width
 
-Tabs keep their size: a rail with more tabs than fit scrolls sideways.
+Tabs keep their size. A rail with more tabs than fit scrolls sideways.
 
 ```tsx figure=ScrollingRail widths="40 20" motion
 
@@ -166,7 +166,12 @@ Keep content people compare in one panel.
 />
 ```
 
-Each `TabsItem` has its `value`, its `label` and an optional `icon`, or a `button` of your own, which becomes the tab, and the panel's `content`; `disabled` dims a tab and reports `aria-disabled`. The button is a Button, an IconButton or a component that forwards native button props and its ref, never a link, and every tab is a text tab, whatever its button's variant. `aria-label` names the tab list. Leave the tabs uncontrolled, starting on `defaultValue`, the first enabled tab by default, or control them with `value` and `onValueChange`.
+Each `TabsItem` has its `value`, the panel's `content`, and its `label` with an optional `icon`, or a `button` of your own, which becomes the tab.
+
+- `disabled` dims a tab and reports `aria-disabled`.
+- A `button` is a Button, an IconButton or a component that forwards native button props and its ref, never a link. Every tab is a text tab, whatever its button's variant.
+- `aria-label` names the tab list.
+- Leave the tabs uncontrolled, starting on `defaultValue`, the first enabled tab by default, or control them with `value` and `onValueChange`.
 
 #### Activation and mounting
 
@@ -178,7 +183,11 @@ Each `TabsItem` has its `value`, its `label` and an optional `icon`, or a `butto
 
 #### Size, orientation and fill
 
-`size` is `sm`, `md` or `lg`, the default, whose tabs are as tall as medium buttons. `orientation` is `horizontal`, the default, or `vertical`, a column moved through with <kbd>↑</kbd> and <kbd>↓</kbd>; the panels stay below the list either way, so lay the Tabs out as a row through `style` to put a vertical list beside them, as the VerticalList example does. With `fill`, the selected panel takes the height left below the list; give the Tabs a height, for example as a flex child. A horizontal list lines its first label up with the content's edge, so the first tab's padding, where its focus ring shows, reaches into the space before it; leave that room where the Tabs sit flush against an edge that clips.
+`size` is `sm`, `md` or `lg`, the default, whose tabs are as tall as medium buttons.
+
+- `orientation` is `horizontal`, the default, or `vertical`, a column moved through with <kbd>↑</kbd> and <kbd>↓</kbd>. The panels stay below the list either way: to put a vertical list beside them, lay the Tabs out as a row through `style`, as the VerticalList example does.
+- With `fill`, the selected panel takes the height left below the list. Give the Tabs a height, for example as a flex child.
+- A horizontal list lines its first label up with the content's edge, so the first tab's padding, where its focus ring shows, reaches into the space before it. Leave that room where the Tabs sit flush against an edge that clips.
 
 #### A layout of your own
 

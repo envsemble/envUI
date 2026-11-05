@@ -49,7 +49,10 @@ examples:
 
 ### Sizes
 
-Small, medium and large, the control heights of the [scale](../foundations/spacing.md). Without a size of its own the select takes its container's, so it lines up with the buttons beside it. Without a visible label, as in a toolbar, it is as wide as its longest option.
+A select lines up with the buttons beside it. It comes in small, medium and large, the control heights of the [scale](../foundations/spacing.md).
+
+- Without a size of its own, it takes its container's.
+- Without a visible label, as in a toolbar, it is as wide as its longest option.
 
 ```tsx figure=SmallToolbar
 
@@ -83,7 +86,7 @@ Small, medium and large, the control heights of the [scale](../foundations/spaci
 While nothing is chosen, the trigger shows a placeholder.
 
 - People can't clear a choice, only make another.
-- An option can be unavailable, so it can't be chosen; its label takes the disabled color, and a description under it, in the muted color, can say why.
+- An option can be unavailable, so it can't be chosen. Its label takes the disabled color, and a description under it, in the muted color, can say why.
 
 <!-- specimen: States -->
 
@@ -107,7 +110,7 @@ Start on the option most people want, and let choosing do nothing but set the va
 
 ### Defaults
 
-Choose a default where one option suits most people. A placeholder makes everyone choose, so keep it for a choice people must make themselves.
+Choose a default where one option suits most people. A placeholder makes everyone choose: keep it for a choice people must make themselves.
 
 ### Order
 
@@ -115,7 +118,7 @@ Order options naturally, such as by frequency, or alphabetically where there is 
 
 ### Side effects
 
-Choosing an option sets a value: it never moves to another page or runs a destructive action.
+Choosing an option only sets a value. It never moves to another page or runs a destructive action.
 
 ## Accessibility
 
@@ -189,7 +192,13 @@ Where a row's title names the select, give the select that name as its `aria-lab
 
 ### Composition
 
-The field is `env-field` with `env-select`, a text field's frame: its well, `env-select-control`, holds the trigger, `env-select-trigger`, with the chosen option's label, `env-select-value`, the label and the chevron, `env-select-icon`. The open list is the shared popup, with its list, `env-select-list`, and its options are the popup's rows. `className` and `style` reach the field's root, and `ref` the trigger. `defaultOpen` opens the list on the first render, `open` and `onOpenChange`, which receives why, control it, and `readOnly` shows the choice in a quieter outline, without its chevron, and doesn't open the list.
+The field is `env-field` with `env-select`, a text field's frame.
+
+- Its well, `env-select-control`, holds the trigger, `env-select-trigger`: the chosen option's label, `env-select-value`, the label and the chevron, `env-select-icon`.
+- The open list is the shared popup, with its list, `env-select-list`. Its options are the popup's rows.
+- `className` and `style` reach the field's root, and `ref` the trigger.
+- `defaultOpen` opens the list on the first render. `open` and `onOpenChange`, which receives why, control it.
+- `readOnly` shows the choice in a quieter outline, without its chevron, and doesn't open the list.
 
 ### Customize
 

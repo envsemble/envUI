@@ -105,7 +105,10 @@ A badge takes every status tone, which [Colors & themes](../foundations/colors.m
 
 ### Counts
 
-A count takes the same tones and variants: neutral and soft by default, and solid in the primary tone for a count that needs attention.
+A count takes the same tones and variants.
+
+- By default it is neutral and soft.
+- A count that needs attention is solid, in the primary tone.
 
 ## Anatomy
 
@@ -141,11 +144,11 @@ A badge's word carries its meaning, and only the state that must stand out is so
 
 ### Words and tones
 
-Give the same state the same word and tone everywhere, and let the word carry the meaning, never the tone alone.
+Give the same state the same word and tone everywhere. Let the word carry the meaning, never the tone alone.
 
 ### Content
 
-Show 99+ beyond two digits, and give the full count in the count's name for assistive technology.
+Show 99+ beyond two digits. Give the full count in the count's name, for assistive technology.
 
 ## Accessibility
 
@@ -172,7 +175,13 @@ A Badge's label is its `children`, a state, a name or a category in a word or tw
 
 #### Variants and tones
 
-`variant` is `soft`, the default, which tints the background without an edge, in the tone's stronger tint for primary, accent, success, warning and danger, with a semibold label, `solid`, which fills it with the tone, or `outline`, which draws a border. `tone` is `neutral`, the default, `primary`, the blue of what is current, `accent`, the purple that stands out, `success`, `warning`, `danger` or `done`, the cyan of completed work, a hue of its own apart from the accent's purple.
+`variant` is one of:
+
+- `soft`, the default: it tints the background without an edge. Primary, accent, success, warning and danger take the tone's stronger tint, with a semibold label.
+- `solid`: it fills the background with the tone.
+- `outline`: it draws a border.
+
+`tone` is `neutral`, the default, `primary`, the blue of what is current, `accent`, the purple that stands out, `success`, `warning`, `danger` or `done`. Done is the cyan of completed work, a hue of its own apart from the accent's purple.
 
 ```tsx
 <Badge tone="success">Ready</Badge>
