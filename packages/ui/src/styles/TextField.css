@@ -425,23 +425,32 @@
     touch-action: none;
     user-select: none;
   }
-  /* The grip: a short, quiet bar on the bottom edge toward its end, just inside the frame and clear
-     of the corner's curve, where a text area's resize grip is looked for, so it reads as the edge to
-     drag rather than as a sheet's handle or a second edge. */
+  /* The grip: two short diagonal hairlines in the end corner, inside the corner's curve, where a
+     text area's resize grip is looked for, so it reads as the corner to drag rather than as a minus
+     sign or a sheet's handle. */
   .env-textarea-resize-handle::after {
-    --env-textarea-grip-width: 1rem;
-    --env-textarea-grip-height: 0.125rem;
+    --env-textarea-grip-size: 0.625rem;
+    --env-textarea-grip-line: linear-gradient(
+      to top left,
+      transparent calc(50% - 0.5px),
+      var(--env-color-fg-muted) calc(50% - 0.5px) calc(50% + 0.5px),
+      transparent calc(50% + 0.5px)
+    );
     content: '';
     position: absolute;
-    inset-inline-end: var(--env-space-4);
+    inset-inline-end: var(--env-space-1);
     inset-block-end: var(--env-space-1);
-    inline-size: var(--env-textarea-grip-width);
-    block-size: var(--env-textarea-grip-height);
-    border-radius: var(--env-radius-full);
-    background: var(--env-color-border-default);
+    inline-size: var(--env-textarea-grip-size);
+    block-size: var(--env-textarea-grip-size);
+    background:
+      var(--env-textarea-grip-line),
+      var(--env-textarea-grip-line) right bottom / 50% 50% no-repeat;
     pointer-events: none;
     opacity: 0;
     transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);
+  }
+  .env-textarea-resize-handle:dir(rtl)::after {
+    scale: -1 1;
   }
   /* At rest the edge is the frame alone; the grip shows under the pointer, while the field or the
      handle has focus, so the keyboard finds it, and while it is dragged. */
