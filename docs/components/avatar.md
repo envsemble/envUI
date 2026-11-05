@@ -252,7 +252,7 @@ The group is `env-avatar-group`, with an `env-avatar` for each person, an `env-a
 
 ### Customize
 
-Its color properties take the place of its hue. The hues are tokens, `--env-color-bg-avatar-{hue}`, `--env-color-fg-avatar-{hue}` and `--env-color-fg-avatar-figure-{hue}`, and the powder hue is also the unsuffixed `--env-color-bg-avatar`, `--env-color-fg-avatar` and `--env-color-fg-avatar-figure`. A lone avatar casts a faint shadow, 1 px down and 2 px soft, which the ring replaces in a group; under forced colors there is none, and `box-shadow: none` on `.env-avatar` removes it.
+Its color properties take the place of its hue. The hues are tokens, `--env-color-bg-avatar-{hue}`, `--env-color-fg-avatar-{hue}` and `--env-color-fg-avatar-figure-{hue}`, and the powder hue is also the unsuffixed `--env-color-bg-avatar`, `--env-color-fg-avatar` and `--env-color-fg-avatar-figure`. A lone avatar casts a faint shadow, 1 px down and 2 px soft, which the ring replaces in a group; a small avatar and one in a table cast none; under forced colors there is none, and `box-shadow: none` on `.env-avatar` removes it.
 
 ## Changelog
 
@@ -260,6 +260,7 @@ Its color properties take the place of its hue. The hues are tokens, `--env-colo
 - **1.0.0-prerelease.6**: In the dark theme an avatar takes a deep fill of its hue with light initials, rather than the light theme's pastel, so avatars are no longer the brightest thing on a dark screen. The butter, sage and oat fills sit a little lighter, with paler initials, so they read as gold, green and oat rather than muddy brown and olive.
 - **1.0.0-prerelease.6**: Avatars in a table's cell and in a small group take quieter fills, and a small group or one in a table overlaps less, initials only by the ring. In a group, an avatar whose color looks like the one before it takes another.
 - **1.0.0-prerelease.6**: An avatar without a picture shows its name's initials by default, in place of the default person picture, which `fallback="person"` keeps. Avatars in a group take a ring in the color of the surface below, so their initials never run together.
+- **1.0.0-prerelease.6**: A small avatar and one in a table cast no shadow, so a column of them stays quiet.
 - **1.0.0-prerelease.6**: Initials stay legible at small sizes, at least the caption size; below `sm`, an avatar with initials is a disc of its color alone.
 - **1.0.0-prerelease.5**: AvatarGroup's `gather` is `align`, as Row and Popover name the inline axis, and its `data-gather` attribute is `data-align`.
 - **1.0.0-prerelease.5**: An avatar and AvatarGroup's count cast a faint, small shadow in a deeper shade of the surface below, so the avatars of a group part from one another.
