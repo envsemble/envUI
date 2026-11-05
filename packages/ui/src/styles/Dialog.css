@@ -55,6 +55,12 @@
     font: var(--env-type-body-sm);
     color: var(--env-color-fg-muted);
   }
+  /* The content follows the heading block at the gap between the title and the description, so a
+     dialog has one gap under its title; the actions keep the sections' gap from what is above them.
+     The content column is a flex column (DialogContent), so the margin takes back its gap. */
+  .env-dialog-content > .env-dialog-header:has(+ :not(.env-dialog-actions)) {
+    margin-block-end: calc(var(--env-space-3) - var(--env-space-5));
+  }
   /* The theme boundary of a modal surface's portal (Dialog, ConfirmDialog, Sheet, CommandPalette) has
      no box: it carries the theme to the backdrop and the surface and is no container. The surface's
      layer, the fixed positioner over the viewport (Sheet's viewport), is the env-window container

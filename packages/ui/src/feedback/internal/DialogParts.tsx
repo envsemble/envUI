@@ -54,7 +54,9 @@ export function DialogSurface({ className, ...props }: SurfaceProps) {
 /**
  * The title, with a close button at its end where the owner passes one, and the description under
  * it. The title names the dialog and the description describes it; the description belongs to the
- * title, so they sit closer together than the dialog's sections.
+ * title, so they sit closer together than the dialog's sections, and what follows the heading block
+ * sits that same gap below it (Dialog.css): one gap under the title, whether a description or the
+ * content comes next.
  */
 export function DialogHeader({
   title,
@@ -67,7 +69,7 @@ export function DialogHeader({
 }) {
   if (title == null && description == null && close == null) return null;
   return (
-    <Grid gap={2} className="env-dialog-header">
+    <Grid gap={3} className="env-dialog-header">
       {(title != null || close != null) && (
         <Row align="center" justify="between" gap={4} className="env-dialog-heading">
           {title != null ? (
