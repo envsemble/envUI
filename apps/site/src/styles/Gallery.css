@@ -100,6 +100,16 @@
     .catalogue-related-canvas[data-own-size] {
     inline-size: min(14rem, (100% - 2rem) / var(--catalogue-own-floor));
   }
+  /* A popup shown open lays out no wider than the stage shows at a popup's least, so what fits
+     its window fits the stage; one narrower is drawn larger (useFit.ts). */
+  .catalogue-gallery-grid:not([data-scenes])
+    .catalogue-gallery-stage.catalogue-gallery-stage
+    .catalogue-related-canvas[data-own-size][data-popup] {
+    inline-size: min(
+      var(--catalogue-tile-width, 14rem),
+      (100% - 2rem) / var(--catalogue-own-popup-least)
+    );
+  }
 }
 
 .catalogue-gallery-stage .catalogue-related-canvas,
