@@ -17,9 +17,12 @@ const projects = ['Launch plan', 'Annual report', 'Press kit'];
 /** Archived at once, with no question first; Undo brings it back. */
 const script: PointerStep[] = [
   { wait: 400 },
-  { to: '[aria-label="Archive Annual report"]' },
-  { wait: 400 },
-  { click: true },
+  // Over Archive for a moment, and pressed, so its row goes a second in, once the card is in view.
+  { to: '[aria-label="Archive Annual report"]', duration: 600 },
+  { wait: 700 },
+  { press: true },
+  { wait: 300 },
+  { release: true },
   { wait: 1200 },
   { to: '.env-toast-action', duration: 500 },
   { wait: 300 },
@@ -40,17 +43,17 @@ function Projects() {
       action: {
         label: 'Undo',
         onClick: () => {
-          setArchived((current) => current.filter((item) => item !== name));
           toast.dismiss(id);
+          // Back once the notification has gone, so it never fades out over the row it restores.
+          setTimeout(() => setArchived((current) => current.filter((item) => item !== name)), 300);
         },
       },
     });
   };
-  // At the window's top, so the notification at its foot covers none of the rows.
   return (
-    <Column style={{ minBlockSize: '11.5rem' }}>
+    <Column style={{ inlineSize: '17rem' }}>
       <Surface background="muted" padding={1} radius="sm" style={outlined}>
-        <List.Root aria-label="Projects" style={{ inlineSize: '16rem' }}>
+        <List.Root aria-label="Projects">
           {projects
             .filter((name) => !archived.includes(name))
             .map((name) => (
