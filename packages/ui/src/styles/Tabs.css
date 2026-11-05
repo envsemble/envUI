@@ -26,7 +26,9 @@
     /* The indicator's thickness and the rounding of its ends, three hairlines. */
     --env-tabs-indicator-size: calc(3 * var(--env-control-border-width));
     --env-tabs-rail-color: var(--env-tabs-container, transparent);
-    --env-tabs-label-color: var(--env-tabs-content, var(--env-color-fg-muted));
+    /* The labels of the tabs not selected, a step stronger than the muted text, so an unavailable
+       tab's disabled color stands clearly apart from them. */
+    --env-tabs-label-color: var(--env-tabs-content, var(--env-color-fg-muted-hover));
     --env-tabs-selected-color: var(--env-tabs-selected-content, var(--env-color-fg-primary));
     --env-tabs-indicator-color: var(--env-tabs-indicator, var(--env-color-border-primary-emphasis));
   }
@@ -123,7 +125,7 @@
     transition: color var(--env-motion-duration-medium) var(--env-motion-ease);
   }
   /* Every tab is a text tab, whatever its button's variant: no fill or edge of its own, its label
-     muted. Under the pointer and pressed no block shows, as one would read as a second kind of
+     quieter than the text. Under the pointer and pressed no block shows, as one would read as a second kind of
      selection: the label takes the text color and a faint underline, in the label's color, stands
      where the indicator would, a little stronger pressed. The states, unavailable included, are
      named so these rules outweigh the button's own. */
@@ -134,7 +136,7 @@
     border-color: transparent;
     background: transparent;
     box-shadow: none;
-    color: var(--env-tabs-label-color, var(--env-color-fg-muted));
+    color: var(--env-tabs-label-color, var(--env-color-fg-muted-hover));
   }
   /* An unavailable tab takes the disabled text color, as an unavailable button does, and no state,
      so it reads apart from the muted labels of the tabs that are there. */
