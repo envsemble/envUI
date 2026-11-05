@@ -1,4 +1,5 @@
 import { useLayoutEffect, useRef, type RefObject } from 'react';
+import { mustShowOf } from '../motion/MustShow';
 
 /** The least room, in px, between a preview and its stage's edges. */
 const inset = 16;
@@ -156,7 +157,7 @@ const rowSlack = 2;
  * in a slice through one (Gallery.css). A row that holds others, such as a tree's branch, is left
  * to its rows.
  */
-function trimRows(canvas: HTMLElement) {
+function trimRows(canvas: HTMLElement, played = false) {
   const crop = canvas.parentElement;
   if (!crop?.classList.contains('catalogue-related-crop')) return;
   if (!canvas.dataset.cut?.split(' ').includes('bottom')) {
@@ -169,9 +170,11 @@ function trimRows(canvas: HTMLElement) {
   let kept = -Infinity;
   for (const row of canvas.querySelectorAll<HTMLElement>(rowSelector)) {
     const bottom = row.getBoundingClientRect().bottom - top;
-    if (!row.querySelector(rowSelector) && bottom > height + rowSlack)
-      row.dataset.cataloguePast = '';
-    else {
+    // As a tile plays, its view drawn out for all it shows, a row it showed stays as the view
+    // moves, cut off by the fade, rather than going and coming back.
+    if (!row.querySelector(rowSelector) && bottom > height + rowSlack) {
+      if (!played) row.dataset.cataloguePast = '';
+    } else {
       delete row.dataset.cataloguePast;
       if (bottom <= height + rowSlack) kept = Math.max(kept, bottom);
     }
@@ -201,8 +204,8 @@ function within(box: DOMRect, clip: DOMRect | null) {
  * A page's own tile is drawn at its window's scale. At rest it is centred on what it paints. As it
  * plays, its view stays where it is, so what happens in it, such as notifications stacking, happens
  * in place; it moves only when something would leave the stage, easing just far enough to keep it
- * in, and in a gallery it is drawn smaller where that can't (a legible least allowing); it eases
- * back to centre the still at its scale once the tile rests.
+ * in. In a gallery, it is drawn out once for all its animation acts on and opens (playFit), and
+ * eases back to centre the still at its scale once the tile rests.
  */
 export function useFit(
   stage: RefObject<HTMLElement | null>,
@@ -250,8 +253,6 @@ export function useFit(
       toY: 0,
       toScale: 1,
       rest: 1,
-      restAcross: 0,
-      restDown: 0,
       zoomed: false,
       frame: 0,
       last: 0,
@@ -260,10 +261,14 @@ export function useFit(
     // popup is placed by its style a frame or two after it opens, and a preview shown before then
     // would glide to it as it fades in.
     const first = { calm: 0, start: 0 };
+    // As a tile plays, the view it is drawn out to (played), and what the last time it played
+    // showed, in the canvas's own px, so the next time draws out to it as it starts.
+    let run: Run | null = null;
+    let learned: { box: Box; must: Box | null; width: number; height: number } | null = null;
     const place = () => {
       const transform = `translate(${-view.x}px, ${-view.y}px) scale(${view.scale})`;
       if (canvasElement.style.transform !== transform) canvasElement.style.transform = transform;
-      trimRows(canvasElement);
+      trimRows(canvasElement, run !== null);
     };
     const glide = (now: number) => {
       const elapsed = Math.min(64, now - (view.last || now - 16));
@@ -285,7 +290,215 @@ export function useFit(
       view.frame = settled ? 0 : requestAnimationFrame(glide);
     };
     const still = matchMedia('(prefers-reduced-motion: reduce)');
+    /**
+     * As a gallery's tile plays, its view is drawn out once for all it shows, and stays there: the
+     * stage's view of its still, every element its animation acts on (MustShow.ts) and every popup
+     * that opens, with what the last time it played showed, so that time it is drawn out as it
+     * starts. All of it is held in the stage, a margin from its edges, drawn smaller only as far as
+     * that needs and no smaller than `least`, easing there about the first element it acts on that
+     * the still shows, which moves only as far as the rest needs. What opens larger grows it, once;
+     * it is drawn no larger again until it rests, so what closes and opens again doesn't move it in
+     * and out. Where it doesn't fit at that scale, what it acts on and what opens is held in the
+     * stage, else shown from its start; what reaches past an edge is cut off there and fades out.
+     */
+    const playFit = (boxes: Shown[], least: number) => {
+      const across = stageElement.clientWidth;
+      const down = stageElement.clientHeight;
+      const frame = canvasElement.getBoundingClientRect();
+      const ratio = frame.width / canvasElement.offsetWidth || 1;
+      const ownBox = (element: Element): Box => {
+        const rect = element.getBoundingClientRect();
+        return {
+          left: (rect.left - frame.left) / ratio,
+          top: (rect.top - frame.top) / ratio,
+          right: (rect.right - frame.left) / ratio,
+          bottom: (rect.bottom - frame.top) / ratio,
+        };
+      };
+      // What shows of an element, inside the boxes around it that clip it, such as a scrolling
+      // column's: a row scrolled out of it doesn't count.
+      const shownPart = (element: Element) => {
+        let box = ownBox(element);
+        for (
+          let node = element.parentElement;
+          node && node !== canvasElement;
+          node = node.parentElement
+        ) {
+          const style = getComputedStyle(node);
+          if (style.overflowX === 'visible' && style.overflowY === 'visible') continue;
+          const clip = ownBox(node);
+          box = {
+            left: Math.max(box.left, clip.left),
+            top: Math.max(box.top, clip.top),
+            right: Math.min(box.right, clip.right),
+            bottom: Math.min(box.bottom, clip.bottom),
+          };
+        }
+        return box;
+      };
+      // A row hidden past the crop's foot (trimRows) counts, as it shows once the view draws out.
+      const named = mustShowOf(canvasElement)
+        .flatMap((selector) => {
+          try {
+            return [...canvasElement.querySelectorAll(selector)];
+          } catch {
+            return [];
+          }
+        })
+        .filter(
+          (element) =>
+            element.checkVisibility({ visibilityProperty: true }) ||
+            element.closest('[data-catalogue-past]') !== null,
+        )
+        .map(shownPart)
+        .filter((box) => box.right > box.left && box.bottom > box.top);
+      if (!run) {
+        const at = { x: view.toX, y: view.toY, scale: view.toScale };
+        // What the still shows, inside the stage's margin.
+        const seen = {
+          left: (at.x - across / 2 + margin) / at.scale,
+          top: (at.y - down / 2 + margin) / at.scale,
+          right: (at.x + across / 2 - margin) / at.scale,
+          bottom: (at.y + down / 2 - margin) / at.scale,
+        };
+        const base = meet(join(...boxes.map(({ box }) => box))!, seen);
+        const middle = (box: Box) => ({
+          x: (box.left + box.right) / 2,
+          y: (box.top + box.bottom) / 2,
+        });
+        const anchor =
+          named
+            .map(middle)
+            .find(
+              ({ x, y }) => x >= seen.left && x <= seen.right && y >= seen.top && y <= seen.bottom,
+            ) ?? middle(base);
+        const again =
+          learned?.width === canvasElement.offsetWidth &&
+          learned.height === canvasElement.offsetHeight
+            ? learned
+            : null;
+        run = {
+          rested: new Map(boxes.map(({ element, box }) => [element, box])),
+          union: join(base, again?.box ?? null)!,
+          must: again?.must ?? null,
+          anchor,
+          screen: {
+            x: across / 2 - at.x + anchor.x * at.scale,
+            y: down / 2 - at.y + anchor.y * at.scale,
+          },
+          scale: at.scale,
+          framed: false,
+        };
+      }
+      const current = run;
+      // What opens, a popup, and what grows in one, such as a palette's results: a popup on its
+      // way in is measured by the box that places it, untransformed, as it ends.
+      const opened = boxes
+        .filter(({ element, box }) => {
+          if (!element.closest('.catalogue-overlay-layer')) return false;
+          const still = current.rested.get(element);
+          return !still || !covers(still, box);
+        })
+        .map(({ element, box }) => {
+          const holder = settling(element, canvasElement)
+            ? element.closest(
+                '.env-popup-positioner, .env-menu-positioner, .env-tooltip-positioner',
+              )
+            : null;
+          return holder && canvasElement.contains(holder) ? ownBox(holder) : box;
+        });
+      const must = join(...named, ...opened);
+      const needed = join(current.union, must)!;
+      current.must = join(current.must, must);
+      if (!current.framed || !covers(current.union, needed)) {
+        current.union = needed;
+        current.framed = true;
+        const fits = Math.min(
+          (across - 2 * margin) / (needed.right - needed.left),
+          (down - 2 * margin) / (needed.bottom - needed.top),
+        );
+        // What reaches a little into the margin, such as a time a word longer, keeps the scale.
+        const scale =
+          fits >= current.scale * zoomSlack
+            ? current.scale
+            : Math.min(current.scale, Math.max(least, fits));
+        current.scale = scale;
+        // Along an axis of the stage, `size` long: the anchor where it was, unless what it shows
+        // would leave the stage, then just far enough to keep it in.
+        const along = (
+          size: number,
+          anchor: number,
+          screen: number,
+          shows: [number, number],
+          held: [number, number] | null,
+        ) => {
+          const fit = ([from, to]: [number, number]) =>
+            (to - from) * scale <= size - 2 * margin + 0.5;
+          const keep = ([from, to]: [number, number]) =>
+            Math.min(
+              Math.max(size / 2 + anchor * scale - screen, size / 2 + to * scale - size + margin),
+              size / 2 + from * scale - margin,
+            );
+          if (fit(shows)) return keep(shows);
+          if (held && fit(held)) return keep(held);
+          return size / 2 + (held ?? shows)[0] * scale - margin;
+        };
+        const held = current.must;
+        view.toX = along(
+          across,
+          current.anchor.x,
+          current.screen.x,
+          [needed.left, needed.right],
+          held && [held.left, held.right],
+        );
+        view.toY = along(
+          down,
+          current.anchor.y,
+          current.screen.y,
+          [needed.top, needed.bottom],
+          held && [held.top, held.bottom],
+        );
+        view.zoomed = scale < view.rest;
+        view.toScale = scale;
+        if (still.matches) {
+          cancelAnimationFrame(view.frame);
+          view.frame = 0;
+          view.x = view.toX;
+          view.y = view.toY;
+          view.scale = scale;
+          place();
+        } else if (!view.frame) {
+          view.last = 0;
+          view.frame = requestAnimationFrame(glide);
+        }
+      }
+      // What reaches past the stage's edges, where the view is drawn, is cut off there.
+      const shows = join(...boxes.map(({ box }) => box))!;
+      const past = (at: number, size: number, low: number, high: number) => [
+        size / 2 - at + low * view.toScale < -1,
+        size / 2 - at + high * view.toScale > size + 1,
+      ];
+      const [top, bottom] = past(view.toY, down, shows.top, shows.bottom);
+      const [start, end] = past(view.toX, across, shows.left, shows.right);
+      const sides = [top && 'top', bottom && 'bottom', start && 'start', end && 'end']
+        .filter(Boolean)
+        .join(' ');
+      if (sides) canvasElement.dataset.cut = sides;
+      else delete canvasElement.dataset.cut;
+      trimRows(canvasElement, true);
+      for (const { element } of boxes) resize.observe(element);
+    };
     const fit = () => {
+      // Rested, what it showed as it played is kept for the next time.
+      if (run && !playingNow.current) {
+        learned = {
+          box: run.union,
+          must: run.must,
+          width: canvasElement.offsetWidth,
+          height: canvasElement.offsetHeight,
+        };
+        run = null;
+      }
       const boxes = shownBoxes(canvasElement);
       if (!boxes.length) return;
       // At rest, a tile in place waits for what is still coming or going, such as a popup rising
@@ -368,47 +581,31 @@ export function useFit(
           ? Math.max(floor, Math.min(1, width / (right - left), downScale))
           : Math.min(1, width / least, downScale);
       const scene = Math.max(legibleScale, Math.min(1, windowScale));
-      // As a gallery's tile plays, it is drawn smaller where what it shows needs more room than its
-      // still, such as a menu opening or a list under its field, easing out just far enough to show
-      // it whole, but never below the least it is drawn at (its popup's, a phone's or a scene's),
-      // so its words stay legible; at that scale, what is larger still shows from its top and is
-      // cut off at its foot, as at rest. Where its still is already cut off, such as a calendar's,
-      // what it shows grows there into what is cut off, as a window onto it, at its own scale. It
-      // is drawn no larger again until it rests, so what closes and opens again doesn't move it in
-      // and out, and then eases back to its still.
-      const plays =
+      // As a gallery's tile plays, its view is drawn out for all it shows (playFit), never below
+      // the least it is drawn at (its popup's, a phone's or a scene's), so its words stay legible.
+      if (
         (ownSize || legible) &&
         tile &&
         playingNow.current &&
-        canvasElement.dataset.fitted !== undefined;
-      const playLeast = Math.min(
-        view.rest,
-        ownSize ? (floor > 0 ? floor : popupLeast) : legibleScale,
-      );
-      const playScale = Math.min(
-        view.restAcross > width + inset
-          ? Infinity
-          : Math.max(width, view.restAcross) / (right - left),
-        view.restDown > height + inset
-          ? Infinity
-          : Math.max(height, view.restDown) / (bottom - top),
-      );
-      // What reaches a little into the inset, such as a time a word longer, keeps the scale.
-      const scale = plays
-        ? playScale >= view.toScale * zoomSlack
-          ? view.toScale
-          : Math.max(playLeast, playScale)
-        : ownSize
+        canvasElement.dataset.fitted !== undefined
+      ) {
+        playFit(
+          boxes,
+          Math.min(view.rest, ownSize ? (floor > 0 ? floor : popupLeast) : legibleScale),
+        );
+        return;
+      }
+      const scale = ownSize
+        ? popup
+          ? popupScale(own)
+          : own
+        : legible
           ? popup
-            ? popupScale(own)
-            : own
-          : legible
-            ? popup
-              ? popupScale(scene)
-              : scene
-            : tile
-              ? windowScale
-              : Math.min(whole ? windowScale : 1, width / (right - left), height / (bottom - top));
+            ? popupScale(scene)
+            : scene
+          : tile
+            ? windowScale
+            : Math.min(whole ? windowScale : 1, width / (right - left), height / (bottom - top));
       // A tile in place eases to where it is fitted next; anything else is placed at once.
       const eases = tile && canvasElement.dataset.fitted !== undefined && !still.matches;
       let toX = ((left + right) / 2) * scale;
@@ -444,28 +641,11 @@ export function useFit(
         const sides = cut.filter(Boolean).join(' ');
         if (sides) canvasElement.dataset.cut = sides;
         else delete canvasElement.dataset.cut;
-        trimRows(canvasElement);
+        trimRows(canvasElement, run !== null);
       }
-      // As it plays, the view stays where it is while what it shows stays in the stage, else moves
-      // just far enough to keep it in; once drawn smaller, it is centred on what it shows, and what
-      // is larger than the stage shows from its start, as at rest.
-      if (plays) {
-        const rescaled = scale !== view.toScale;
-        if (!rescaled && across <= width + 0.5)
-          toX = contain(
-            view.toX,
-            left * scale,
-            right * scale,
-            stageElement.clientWidth / 2 - inset,
-          );
-        if (!rescaled && down <= height + 0.5)
-          toY = contain(
-            view.toY,
-            top * scale,
-            bottom * scale,
-            stageElement.clientHeight / 2 - inset,
-          );
-      } else if (tile && playingNow.current && view.scale === scale) {
+      // As a page's own tile plays, the view stays where it is while what it shows stays in the
+      // stage, else moves just far enough to keep it in.
+      if (tile && playingNow.current && view.scale === scale) {
         toX = contain(view.toX, left * scale, right * scale, stageElement.clientWidth / 2 - inset);
         toY = contain(view.toY, top * scale, bottom * scale, stageElement.clientHeight / 2 - inset);
       }
@@ -485,8 +665,6 @@ export function useFit(
         view.x = view.toX = toX;
         view.y = view.toY = toY;
         view.scale = view.toScale = view.rest = scale;
-        view.restAcross = across;
-        view.restDown = down;
         place();
         for (const { element } of boxes) resize.observe(element);
         if (first.calm >= 3 || performance.now() - first.start >= 500)
@@ -503,15 +681,11 @@ export function useFit(
         Math.hypot(toX - view.toX, toY - view.toY) < 1
       )
         return;
-      if (!plays) {
-        view.rest = scale;
-        view.restAcross = across;
-        view.restDown = down;
-      }
-      // Drawn smaller as it plays, it eases out to that scale and back to its still's, unless
-      // motion is reduced; any other change of scale, such as the stage's, is placed at once.
-      const zooms = scale !== view.toScale && (plays || view.zoomed);
-      view.zoomed = plays && scale < view.rest;
+      view.rest = scale;
+      // Drawn smaller as it played, it eases back to its still's scale, unless motion is reduced;
+      // any other change of scale, such as the stage's, is placed at once.
+      const zooms = scale !== view.toScale && view.zoomed;
+      view.zoomed = false;
       view.toX = toX;
       view.toY = toY;
       if (eases && (view.toScale === scale || zooms)) {
@@ -587,3 +761,57 @@ function contain(at: number, low: number, high: number, half: number) {
   if (low - at >= -half - 1 && high - at <= half + 1) return at;
   return Math.min(Math.max(at, high - half + margin), low + half - margin);
 }
+
+/** A box in a canvas's own px. */
+interface Box {
+  left: number;
+  top: number;
+  right: number;
+  bottom: number;
+}
+
+/** A box a preview paints, and its element (shownBoxes). */
+type Shown = ReturnType<typeof shownBoxes>[number];
+
+/**
+ * A playing tile's run (playFit): the elements its still showed; all it has shown, and what of that
+ * it acts on or opened, in the canvas's own px; the element it eases about and where that is in the
+ * stage; its scale; and whether its view is drawn out yet.
+ */
+interface Run {
+  rested: Map<Element, Box>;
+  union: Box;
+  must: Box | null;
+  anchor: { x: number; y: number };
+  screen: { x: number; y: number };
+  scale: number;
+  framed: boolean;
+}
+
+/** The least box around boxes, or nothing for none. */
+function join(...boxes: (Box | null)[]): Box | null {
+  const some = boxes.filter((box): box is Box => box !== null);
+  if (!some.length) return null;
+  return {
+    left: Math.min(...some.map((box) => box.left)),
+    top: Math.min(...some.map((box) => box.top)),
+    right: Math.max(...some.map((box) => box.right)),
+    bottom: Math.max(...some.map((box) => box.bottom)),
+  };
+}
+
+/** The part of a box inside another, or the box where they don't meet. */
+function meet(box: Box, within: Box): Box {
+  const left = Math.max(box.left, within.left);
+  const top = Math.max(box.top, within.top);
+  const right = Math.min(box.right, within.right);
+  const bottom = Math.min(box.bottom, within.bottom);
+  return left < right && top < bottom ? { left, top, right, bottom } : box;
+}
+
+/** Whether a box holds another, to a couple of px, as a popup ends its entrance. */
+const covers = (outer: Box, inner: Box) =>
+  inner.left >= outer.left - 2 &&
+  inner.top >= outer.top - 2 &&
+  inner.right <= outer.right + 2 &&
+  inner.bottom <= outer.bottom + 2;

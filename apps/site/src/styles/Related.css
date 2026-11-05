@@ -120,6 +120,13 @@
   }
 }
 
+/* A tile at rest draws its still without motion: drawn anew as it stops (Playback's `redraw`,
+   Motion.tsx), what it shows open, such as a menu or a hover card, is there at once rather than
+   coming in again, and nothing is caught on its way. */
+.catalogue-related-canvas[data-tile]:not([data-playing] *) * {
+  transition: none;
+}
+
 /* Room for an overlay shown open, such as a dialog over the page. */
 .catalogue-related-canvas:has(> .catalogue-overlay-layer) {
   min-block-size: 28rem;
