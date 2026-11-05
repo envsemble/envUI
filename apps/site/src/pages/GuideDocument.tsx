@@ -10,12 +10,6 @@ import { StageSkeleton } from '../template/Loading';
  * scripts/site/SiteDevMode.ts checks the hosted build for it.
  */
 export const demos = {
-  // The prompt that sets envUI up with a coding agent, in the setup guide's Coding agents.
-  AgentPrompt: lazyPart(
-    () => import('./AgentPrompt'),
-    (module) => module.AgentPrompt,
-    'src/pages/AgentPrompt.tsx',
-  ),
   DevModeDemo: lazyPart(
     () => import('../figures/dev-mode/DevModeDemo'),
     (module) => module.DevModeDemo,

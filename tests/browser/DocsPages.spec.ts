@@ -160,24 +160,20 @@ test("a page's changelog in the Docs is collapsed, and a link to it opens it", a
   await expect(page.locator('#changelog')).toBeInViewport();
 });
 
-test("the Docs' home is the setup guide, with a prompt to copy that sets envUI up through the skill the site serves under Coding agents", async ({
+test("the Docs' home is the setup guide, a prompt to copy that sets envUI up through the skill the site serves at its top", async ({
   page,
   context,
 }) => {
   await context.grantPermissions(['clipboard-read', 'clipboard-write']);
   await page.goto(`${siteDevUrl}/docs`);
-  // The guide for setting envUI up opens on what it is and installing it.
+  const setup = page.getByRole('region', { name: 'Set up with your agent' });
+  const prompt = 'Set up envUI in my app: envui.envsemble.com/SKILL.md';
+  await expect(setup).toContainText(prompt);
+  await setup.getByRole('button', { name: 'Copy prompt' }).click();
+  await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toBe(prompt);
+  // Under it, the guide for setting envUI up by hand, from installing it.
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Install and set up');
   await expect(page.locator('#install-a-release')).toBeVisible();
-  const headings = page.locator('.site-article h2');
-  await expect(headings.first()).toHaveText('Registry access');
-  // The prompt follows the guide's Coding agents, its last section.
-  await expect(headings.last()).toHaveText('Coding agents');
-  const prompt = 'Set up envUI in my app: envui.envsemble.com/SKILL.md';
-  const chip = page.locator('.docs-agent-prompt');
-  await expect(chip).toContainText(prompt);
-  await chip.getByRole('button', { name: 'Copy prompt' }).click();
-  await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toBe(prompt);
   // The development server serves the skill and llms.txt as the build writes them.
   const skill = await page.request.get(`${siteDevUrl}/SKILL.md`);
   expect(skill.headers()['content-type']).toBe('text/markdown; charset=utf-8');

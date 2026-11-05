@@ -391,5 +391,3 @@ npm install --save-dev --save-exact @envsemble/eslint-plugin-envui@{{version}} @
 ## Coding agents
 
 A coding agent can do this setup with you, following [the setup skill](https://envui.envsemble.com/SKILL.md) the site hosts: it shows its plan and waits for your yes, adds a pointer to these docs to the project's `AGENTS.md` and turns on the lint rules.
-
-<!-- demo: AgentPrompt -->
