@@ -7,9 +7,10 @@
      the value, so it never meets them there. Slider decides what shows besides (sliderReveal) and
      marks it on the control: the handle at full strength and faint ticks at the steps, a ruler,
      under a hovering pointer and while pressed (data-handle, data-ruler), until a release, and the
-     handle alone with keyboard focus (data-handle). The text always keeps its full strength: where
-     the handle passes under the label or the value it shortens to a mark below the text, and the
-     fill's end and the ticks fade there instead. */
+     handle alone with keyboard focus (data-handle). The handle never shrinks, so the value's place
+     always shows: where it passes under the label or the value, the text draws over it at full
+     strength and the handle, at its full size, quiets to half its strength, so both stay readable;
+     the fill's end and the ticks fade there too. */
   /* Color properties: a slider's colors, which an application sets on one slider through style or its
      own CSS: container the track, indicator the fill that shows the value, and content the label, the
      value, the handle and the ticks. They don't inherit; the slider passes them on to its parts. */
@@ -26,8 +27,8 @@
     inherits: false;
   }
   /* 1 while the fill's end and the handle sit under the label or the value, which Slider measures,
-     else 0; a number, so the change between them eases. The fill's end and the ticks take it only
-     while the handle shows. */
+     else 0; a number, so the change between them eases. The handle takes it at rest too; the fill's
+     end and the ticks only while the handle shows. */
   @property --env-slider-veil {
     syntax: '<number>';
     inherits: true;
@@ -51,16 +52,12 @@
        stops halfway into the padding, clear of the rounded edge and of the label and the value. */
     --env-slider-handle-inset: calc(var(--env-slider-padding) / 2);
     --env-slider-track: var(--env-slider-container, var(--env-color-bg-neutral-muted));
-    /* The fill is the primary color's muted tint over the track, so it reads as a control's value
-       rather than a disabled field or a meter, and the text keeps its contrast on it; in dark a
-       stronger grade of the tint, so the fill stands apart from the track. light-dark() follows the
-       nearest theme's color scheme. At high contrast the muted tint in either theme, where the
-       text keeps 7:1 on it (--env-theme-high-contrast, Theme.css). */
+    /* The fill is a strong grade of the primary color's tint over the track, so it reads as a
+       control's value, clearly apart from the track, rather than a disabled field or a meter, and
+       the text keeps its contrast on it. At high contrast the muted tint, where the text keeps 7:1
+       on it (--env-theme-high-contrast, Theme.css). */
     /* contrast: slider-fill */
-    --env-slider-fill-standard: light-dark(
-      var(--env-color-bg-primary-muted),
-      var(--env-color-bg-primary-subtle-pressed)
-    );
+    --env-slider-fill-standard: var(--env-color-bg-primary-subtle-pressed);
     --env-slider-fill-high: var(--env-theme-high-contrast) var(--env-color-bg-primary-muted);
     --env-slider-fill-default: var(--env-slider-fill-high, var(--env-slider-fill-standard));
     --env-slider-fill: var(--env-slider-indicator, var(--env-slider-fill-default));
@@ -158,37 +155,28 @@
   .env-slider-thumb {
     --env-slider-thumb-side: 1;
     --env-slider-thumb-at: calc(var(--env-slider-fraction, 0) * 100cqi);
-    /* Where it passes under the label or the value, the bar shortens to a mark low in the track,
-       below the text, so the value's place still shows: the mark's height, and its distance from
-       the track's bottom edge. */
-    --env-slider-mark: 0.1875rem;
-    --env-slider-mark-gap: 0.125rem;
+    /* At rest, quieter than in use but clearly there; under the label or the value, half that, so
+       the text over it stays readable while the handle keeps its size and place. */
+    --env-slider-thumb-strength: 0.7;
     box-sizing: border-box;
     inline-size: var(--env-space-1);
-    block-size: calc(55% + var(--env-slider-veil) * (var(--env-slider-mark) - 55%));
+    block-size: 55%;
     border-radius: var(--env-radius-full);
     background: var(--env-slider-ink, var(--env-color-fg-default));
-    /* At rest, quieter than in use but clearly there. */
-    opacity: 0.7;
+    opacity: calc(var(--env-slider-thumb-strength) * (1 - var(--env-slider-veil) / 2));
     transform: translateX(
-        calc(
-          var(--env-slider-thumb-side) *
-            (
-              clamp(
-                  var(--env-slider-handle-inset),
-                  var(--env-slider-thumb-at),
-                  100cqi - var(--env-slider-handle-inset)
-                ) -
-                var(--env-slider-thumb-at)
-            )
-        )
+      calc(
+        var(--env-slider-thumb-side) *
+          (
+            clamp(
+                var(--env-slider-handle-inset),
+                var(--env-slider-thumb-at),
+                100cqi - var(--env-slider-handle-inset)
+              ) -
+              var(--env-slider-thumb-at)
+          )
       )
-      translateY(
-        calc(
-          var(--env-slider-veil) *
-            (var(--env-slider-height) / 2 - var(--env-slider-mark-gap) - var(--env-slider-mark) / 2)
-        )
-      );
+    );
     transition: opacity var(--env-motion-duration-fast) var(--env-motion-ease);
   }
   .env-slider-thumb:dir(rtl) {
@@ -268,7 +256,7 @@
   /* The handle shows at full strength where Slider marks it, under a hovering pointer, while pressed
      and with keyboard focus. */
   .env-slider-control[data-handle] .env-slider-thumb {
-    opacity: 1;
+    --env-slider-thumb-strength: 1;
   }
   /* The ticks show where Slider marks the ruler, under a hovering pointer and while pressed, and fade
      out on release: not with the keyboard. */

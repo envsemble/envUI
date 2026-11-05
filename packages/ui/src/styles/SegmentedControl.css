@@ -60,14 +60,26 @@
       --env-segmented-control-container,
       var(--env-segmented-control-content)
     );
-    /* The chosen segment's thumb: in light the muted surface, white; in dark a layer of the neutral
-       fill's hover grade, at 85 % so its label and the focus ring keep their contrast, over the
-       track's, so it is clearly lighter than the track on every surface.
+    /* The chosen segment's thumb: in light the muted surface, white; in dark the raised neutral
+       grade, opaque and well lighter than the track and the faint layer under a hovered segment,
+       while its label and the focus ring keep their contrast on it. At high contrast, where that
+       grade is dark, a layer of the neutral fill's hover grade over the track's, at 85 % so its
+       label and the focus ring keep their contrast (--env-theme-high-contrast, Theme.css).
        light-dark() follows the nearest theme's color scheme. */
     /* contrast: segmented-control-thumb */
-    --env-segmented-control-thumb: light-dark(
+    --env-segmented-control-thumb-standard: light-dark(
       var(--env-color-bg-muted),
-      color-mix(in srgb, var(--env-color-bg-neutral-muted-hover) 85%, transparent)
+      var(--env-color-bg-neutral-strong-hover)
+    );
+    /* contrast: segmented-control-thumb-high */
+    --env-segmented-control-thumb-high: var(--env-theme-high-contrast)
+      light-dark(
+        var(--env-color-bg-muted),
+        color-mix(in srgb, var(--env-color-bg-neutral-muted-hover) 85%, transparent)
+      );
+    --env-segmented-control-thumb: var(
+      --env-segmented-control-thumb-high,
+      var(--env-segmented-control-thumb-standard)
     );
     --env-segmented-control-selected-gate: color-mix(
       in srgb,

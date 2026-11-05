@@ -113,6 +113,18 @@ const sliderFill = 'slider-fill';
 const textFieldAffix = 'text-field-affix';
 // A segmented control's thumb, the chosen segment on its track (SegmentedControl.css).
 const segmentThumb = 'segmented-control-thumb';
+// The thumb at high contrast, a layer of the neutral fill (SegmentedControl.css).
+const segmentThumbHigh = 'segmented-control-thumb-high';
+const segmentThumbStandard = {
+  contrast: 'standard',
+  rationale:
+    'At high contrast the thumb is a layer of the neutral fill (SegmentedControl.css), segmented-control-thumb-high, measured under the same pairs.',
+} as const;
+const segmentThumbAtHigh = {
+  contrast: 'high',
+  rationale:
+    'The thumb at high contrast (SegmentedControl.css); segmented-control-thumb is measured at standard contrast.',
+} as const;
 // The state layer under a segment not chosen while the pointer is over it (SegmentedControl.css).
 const segmentHoverLayer = 'segmented-control-hover-layer';
 /** The surfaces a segmented control's track sits on, each with the track's fill over it. */
@@ -779,12 +791,32 @@ const registry: readonly ContrastPair[] = merged([
     ],
     'The active tab of a secondary tab rail',
   ),
-  ...text(
-    '--env-color-fg-default',
-    segmentTracks.map((track) => [segmentThumb, ...track]),
-    'The chosen segment’s label and count on its thumb',
-  ),
-  ...different(segmentThumb, segmentTracks, 'The chosen segment’s thumb against its track'),
+  ...[
+    [segmentThumb, segmentThumbStandard] as const,
+    [segmentThumbHigh, segmentThumbAtHigh] as const,
+  ].flatMap(([thumb, extra]) => [
+    ...on(
+      'text',
+      '--env-color-fg-default',
+      segmentTracks.map((track) => [thumb, ...track]),
+      'The chosen segment’s label and count on its thumb',
+      extra,
+    ),
+    ...on(
+      'difference',
+      thumb,
+      segmentTracks,
+      'The chosen segment’s thumb against its track',
+      extra,
+    ),
+    ...on(
+      'focus',
+      '--env-color-border-focus',
+      segmentTracks.map((track) => [thumb, ...track]),
+      'The inset ring of the chosen segment, on its thumb',
+      extra,
+    ),
+  ]),
   ...text(
     '--env-color-fg-muted-hover',
     segmentTracks.map((track) => [segmentHoverLayer, ...track]),
@@ -794,11 +826,6 @@ const registry: readonly ContrastPair[] = merged([
     '--env-color-fg-muted-pressed',
     segmentTracks.map((track) => [layerPressed, ...track]),
     'The label of a segment not chosen, on its state layer while pressed',
-  ),
-  ...focus(
-    '--env-color-border-focus',
-    segmentTracks.map((track) => [segmentThumb, ...track]),
-    'The inset ring of the chosen segment, on its thumb',
   ),
   ...text(
     '--env-color-fg-control',
@@ -3083,7 +3110,35 @@ export interface Relaxation extends Requirement {
  */
 const sliderHighContrast =
   'At high contrast the slider fill is the primary muted tint in either theme, measured there as --env-color-bg-primary-muted under the same pairs; the fill as drawn, a stronger grade in dark, is measured at standard contrast.';
+const segmentThumbHighContrast =
+  'At high contrast the thumb keeps a layer of the neutral fill, measured there as segmented-control-thumb-high under the same pairs; the thumb as drawn at standard contrast, the raised neutral grade in dark, is measured there.';
 export const relaxed: readonly Relaxation[] = [
+  ...[
+    '--env-color-bg-default',
+    '--env-color-bg-muted',
+    '--env-color-bg-page',
+    '--env-color-bg-raised',
+    '--env-color-bg-recessed',
+  ].flatMap((below): Relaxation[] => [
+    {
+      pair: `--env-color-fg-default on segmented-control-thumb over --env-color-bg-neutral-muted over ${below}`,
+      kind: 'text',
+      minimum: { standard: 4.5 },
+      rationale: segmentThumbHighContrast,
+    },
+    {
+      pair: `segmented-control-thumb on --env-color-bg-neutral-muted over ${below}`,
+      kind: 'difference',
+      minimum: { standard: 0.02 },
+      rationale: segmentThumbHighContrast,
+    },
+    {
+      pair: `--env-color-border-focus on segmented-control-thumb over --env-color-bg-neutral-muted over ${below}`,
+      kind: 'focus',
+      minimum: { standard: 3 },
+      rationale: segmentThumbHighContrast,
+    },
+  ]),
   {
     pair: '--env-color-fg-default on slider-fill over --env-color-bg-neutral-muted over --env-color-bg-recessed',
     kind: 'text',
@@ -3249,6 +3304,10 @@ export const derived: Readonly<Record<string, string>> = {
   'segmented-control-thumb': markedColor(
     'packages/ui/src/styles/SegmentedControl.css',
     'segmented-control-thumb',
+  ),
+  'segmented-control-thumb-high': markedColor(
+    'packages/ui/src/styles/SegmentedControl.css',
+    'segmented-control-thumb-high',
   ),
 };
 
