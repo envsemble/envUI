@@ -100,19 +100,11 @@ const steps: { label: string; detail: string; state: StepState }[] = [
 /** A run step's state as an icon, in the tone that says it. */
 function StepIcon({ state }: { state: StepState }) {
   if (state === 'running') return <Spinner size="sm" label="Running" />;
-  // Finding: no tone on an icon; Text's emphasis is the only color a bare icon can take, so done
-  // and failed steps can't show green and red without custom CSS.
-  const icon =
-    state === 'done' ? (
-      <IconCheckCircle aria-label="Done" />
-    ) : state === 'failed' ? (
-      <IconError aria-label="Failed" />
-    ) : (
-      <IconPending aria-label="Queued" />
-    );
+  if (state === 'done') return <IconCheckCircle tone="success" aria-label="Done" />;
+  if (state === 'failed') return <IconError tone="danger" aria-label="Failed" />;
   return (
-    <Text render={<span />} emphasis={state === 'queued' ? 'subtle' : 'default'}>
-      {icon}
+    <Text render={<span />} emphasis="subtle">
+      <IconPending aria-label="Queued" />
     </Text>
   );
 }
