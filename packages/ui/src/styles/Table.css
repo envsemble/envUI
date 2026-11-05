@@ -163,8 +163,8 @@
     transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
   }
   .env-table-row[data-interactive]:is(:hover, :focus-within) {
-    --env-avatar-group-ring-tint: var(--env-color-bg-neutral-subtle-hover);
-    background: var(--env-color-bg-neutral-subtle-hover);
+    --env-avatar-group-ring-tint: var(--env-color-bg-row-hover);
+    background: var(--env-color-bg-row-hover);
   }
   /* Links and text buttons in an unselected row under the pointer or holding focus take the link
      colors for a tint: the link blue falls below 4.5:1 on the hover fill over the default surface in

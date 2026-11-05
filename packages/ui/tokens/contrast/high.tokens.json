@@ -313,6 +313,14 @@
           "$value": "{contrast-high.color.bg.list-item.pressed}"
         }
       },
+      "row": {
+        "hover": {
+          "$value": "{contrast-high.color.bg.neutral.subtle.hover}"
+        },
+        "pressed": {
+          "$value": "{contrast-high.color.bg.neutral.subtle.pressed}"
+        }
+      },
       "avatar": {
         "powder": {
           "$value": "{contrast-high.color.bg.avatar.powder}"

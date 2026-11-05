@@ -643,6 +643,38 @@
           }
         }
       },
+      "row": {
+        "hover": {
+          "$description": "The state layer over a tree or table row under the pointer: in light a step quieter than over a control, so a hovered row never weighs as much as the selection on the gray page.",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": {
+              "$ref": "#/palette/gray/92/$value/components"
+            },
+            "alpha": 0.045
+          },
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Tree and table rows"
+            }
+          }
+        },
+        "pressed": {
+          "$description": "The state layer over a tree or table row while pressed, a step stronger than its hover.",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": {
+              "$ref": "#/palette/gray/92/$value/components"
+            },
+            "alpha": 0.08
+          },
+          "$extensions": {
+            "com.envsemble.envui": {
+              "component": "Tree and table rows"
+            }
+          }
+        }
+      },
       "avatar": {
         "$root": {
           "$description": "The default fill, the powder hue: the fill of an avatar whose hue nothing sets.",

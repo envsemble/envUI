@@ -523,6 +523,14 @@
           "$value": "{color.bg.muted.pressed}"
         }
       },
+      "row": {
+        "hover": {
+          "$value": "{color.bg.neutral.subtle.hover}"
+        },
+        "pressed": {
+          "$value": "{color.bg.neutral.subtle.pressed}"
+        }
+      },
       "avatar": {
         "$root": {
           "$value": "{color.bg.avatar.powder}"

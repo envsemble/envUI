@@ -95,6 +95,9 @@ const popupPressed = '--env-color-bg-popup-pressed';
 const fill = '--env-color-bg-neutral-muted'; // the translucent fill of tab rails, chips, secondary buttons
 const layerHover = '--env-color-bg-neutral-subtle-hover';
 const layerPressed = '--env-color-bg-neutral-subtle-pressed';
+// The state layer of tree and table rows: in light a step quieter than layerHover, under the selection.
+const treeRowHover = '--env-color-bg-row-hover';
+const treeRowPressed = '--env-color-bg-row-pressed';
 const navigationHover = '--env-color-bg-navigation-hover';
 const navigationPressed = '--env-color-bg-navigation-pressed';
 // A frosted popup's fill, translucent (derived below), and the worst that can be behind it; and the
@@ -278,6 +281,10 @@ const registry: readonly ContrastPair[] = merged([
     [
       [layerHover, raised],
       [layerHover, surface],
+      [treeRowHover, raised],
+      [treeRowHover, surface],
+      [treeRowPressed, raised],
+      [treeRowPressed, surface],
       rowHover,
       rowPressed,
       ['--env-color-bg-primary-muted', page],
@@ -290,6 +297,8 @@ const registry: readonly ContrastPair[] = merged([
     [
       [layerHover, raised],
       [layerHover, surface],
+      [treeRowHover, raised],
+      [treeRowHover, surface],
       rowHover,
       ['--env-color-bg-primary-muted', page],
       ['--env-color-bg-primary-muted', surface],
@@ -301,6 +310,8 @@ const registry: readonly ContrastPair[] = merged([
     [
       [layerHover, raised],
       [layerHover, surface],
+      [treeRowPressed, raised],
+      [treeRowPressed, surface],
       rowPressed,
       ['--env-color-bg-primary-muted', page],
       ['--env-color-bg-primary-muted', surface],
@@ -819,14 +830,29 @@ const registry: readonly ContrastPair[] = merged([
   // a hovered selected row against a hovered unselected one. Every state also differs from its rest.
   ...distinct(
     selected,
-    [popup, popupHover, surface, page, raised, [layerHover, surface], [layerHover, raised]],
+    [
+      popup,
+      popupHover,
+      surface,
+      page,
+      raised,
+      [treeRowHover, page],
+      [treeRowHover, surface],
+      [treeRowHover, raised],
+    ],
     'The selection against the other items, at rest and under the pointer: Select options, tree and table rows',
   ),
   ...distinct(selected, [navigationHover], 'A selected navigation item next to a hovered one'),
   ...distinct(selected, [navigationPressed], 'A selected navigation item next to a pressed one'),
   ...distinct(
     selectedHover,
-    [navigationHover, popupHover, [layerHover, surface], [layerHover, raised]],
+    [
+      navigationHover,
+      popupHover,
+      [treeRowHover, page],
+      [treeRowHover, surface],
+      [treeRowHover, raised],
+    ],
     'A selected item under the pointer against an unselected one under the pointer: navigation items, Select options, tree and table rows',
   ),
   ...different(selectedHover, [selected], 'A selected item under the pointer'),
@@ -836,7 +862,12 @@ const registry: readonly ContrastPair[] = merged([
     [surface, page],
     'A navigation item under the pointer, on a sidebar and on the page',
   ),
-  ...different(layerHover, [surface, page, raised], 'A tree or table row under the pointer'),
+  ...different(
+    layerHover,
+    [surface, page, raised],
+    'A control without a fill under the pointer, such as a ghost button',
+  ),
+  ...different(treeRowHover, [surface, page, raised], 'A tree or table row under the pointer'),
   ...distinct(
     '--env-color-fg-on-selected',
     ['--env-color-fg-control', '--env-color-fg-default'],
@@ -2823,6 +2854,15 @@ function apiReviewRenames() {
  * is, or has since been dropped or renamed onward in turn.
  */
 export const renamed: readonly { from: string; to: string; rationale: string }[] = [
+  // Tree and table rows take a state layer of their own, a step quieter than a control's in light.
+  ...(['--env-color-bg-selected', '--env-color-bg-selected-hover'] as const).flatMap((fill) =>
+    ['--env-color-bg-default', '--env-color-bg-raised'].map((ground) => ({
+      from: `${fill} on --env-color-bg-neutral-subtle-hover over ${ground}`,
+      to: `${fill} on --env-color-bg-row-hover over ${ground}`,
+      rationale:
+        'Tree and table rows take their own state layer, --env-color-bg-row-hover, a step quieter than a control�s in light, so a hovered row never weighs as much as the selection on the gray page.',
+    })),
+  ),
   // The catalogue's canvas is the recessed surface, a token now rather than a formula of its own.
   ...onPage
     .flatMap((pair) => {
