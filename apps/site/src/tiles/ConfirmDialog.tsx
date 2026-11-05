@@ -51,7 +51,7 @@ export default function ConfirmDialogTile() {
       }}
       trigger={<Button variant="secondary">Delete</Button>}
       tone="danger"
-      title="Delete Northwind?"
+      title="Delete plan?"
       confirmLabel="Delete"
       onConfirm={() => {
         confirmedIn.current = round.current;
