@@ -11,9 +11,12 @@
     font: var(--env-type-body-sm);
   }
   .env-month-picker-header {
-    /* The year buttons, side by side at the end, as the calendar's month buttons. */
+    /* The year buttons, side by side at the end, as the calendar's month buttons, with their larger
+       arrows and the room under the header. */
     --env-control-height: calc(0.8 * var(--env-control-height-md));
+    --env-control-icon-size: 1.25rem;
     gap: calc(var(--env-space-1) / 2);
+    margin-block-end: var(--env-space-1);
   }
   .env-month-picker-title {
     order: -1;

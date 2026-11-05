@@ -10,9 +10,13 @@
     font: var(--env-type-body-sm);
   }
   .env-calendar-header {
-    /* The month buttons, side by side at the end, are a little smaller than a control. */
+    /* The month buttons, side by side at the end, are a little smaller than a control, with their
+       arrows a little larger than a control's icon, so they read at the compact scale too. The
+       header keeps a little room under it, before the weekdays. */
     --env-control-height: calc(0.8 * var(--env-control-height-md));
+    --env-control-icon-size: 1.25rem;
     gap: calc(var(--env-space-1) / 2);
+    margin-block-end: var(--env-space-1);
   }
   /* The month's name leads the header, a little in from the edge, with both buttons after it. */
   .env-calendar-title {

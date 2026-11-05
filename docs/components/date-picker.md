@@ -259,6 +259,7 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 
 ## Changelog
 
+- **1.0.0-prerelease.6**: The calendar's month buttons show larger arrows, 1.25 rem, at the same button size, and the header keeps a little room under it before the weekdays, so it reads at the compact scale too.
 - **1.0.0-prerelease.6**: The chosen hour and minute take the chosen day's solid accent fill rather than the selection's tint, and are pills, as the chosen day is round, so a chosen day and time look alike; a wheel with fewer values than it shows rows, such as minutes every 15, no longer loops and shows a value twice, while its arrow keys still wrap around.
 - **1.0.0-prerelease.6**: With a time, the wheels move under the calendar where the card has no room for them beside it, rather than running past its edge.
 - **1.0.0-prerelease.6**: Days outside `min` and `max` take the disabled text color, faded, so they can't be taken for days that can be chosen; today keeps its accent color.
