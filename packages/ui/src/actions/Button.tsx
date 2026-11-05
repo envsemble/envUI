@@ -33,8 +33,8 @@ export type ButtonEmphasisProps =
       variant?: ButtonVariant;
       /**
        * The meaning: neutral for most actions; accent, on a primary button only, for a rare
-       * consequential action, with 0.5 rem corners; danger for an action that deletes or ends
-       * something. Secondary buttons are always neutral.
+       * consequential action; danger for an action that deletes or ends something. Secondary
+       * buttons are always neutral.
        * @default 'neutral'
        */
       tone?: 'neutral';

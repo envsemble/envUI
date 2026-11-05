@@ -545,7 +545,7 @@
           "type": "'neutral' | 'danger' | 'accent'",
           "required": false,
           "default": "'neutral'",
-          "description": "The meaning: neutral for most actions; accent, on a primary button only, for a rare consequential action, with 0.5 rem corners; danger for an action that deletes or ends something. Secondary buttons are always neutral."
+          "description": "The meaning: neutral for most actions; accent, on a primary button only, for a rare consequential action; danger for an action that deletes or ends something. Secondary buttons are always neutral."
         },
         {
           "name": "underline",
@@ -2691,7 +2691,7 @@
           "type": "'neutral' | 'danger' | 'accent'",
           "required": false,
           "default": "'neutral'",
-          "description": "The meaning: neutral for most actions; accent, on a primary button only, for a rare consequential action, with 0.5 rem corners; danger for an action that deletes or ends something. Secondary buttons are always neutral."
+          "description": "The meaning: neutral for most actions; accent, on a primary button only, for a rare consequential action; danger for an action that deletes or ends something. Secondary buttons are always neutral."
         },
         {
           "name": "underline",
@@ -6016,7 +6016,7 @@
           "type": "'neutral' | 'danger' | 'accent'",
           "required": false,
           "default": "'neutral'",
-          "description": "The meaning: neutral for most actions; accent, on a primary button only, for a rare consequential action, with 0.5 rem corners; danger for an action that deletes or ends something. Secondary buttons are always neutral."
+          "description": "The meaning: neutral for most actions; accent, on a primary button only, for a rare consequential action; danger for an action that deletes or ends something. Secondary buttons are always neutral."
         },
         {
           "name": "underline",
