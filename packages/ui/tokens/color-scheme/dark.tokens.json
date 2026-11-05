@@ -50,13 +50,13 @@
       },
       "raised": {
         "$root": {
-          "$value": "{palette.neutral.88}"
+          "$value": "{palette.neutral.82}"
         },
         "hover": {
-          "$value": "{palette.neutral.80}"
+          "$value": "{palette.neutral.75}"
         },
         "pressed": {
-          "$value": "{palette.neutral.75}"
+          "$value": "{palette.neutral.70}"
         }
       },
       "popup": {
@@ -197,10 +197,10 @@
             "$value": "{palette.blue.20}"
           },
           "hover": {
-            "$value": "{palette.blue.15}"
+            "$value": "{palette.blue.12}"
           },
           "pressed": {
-            "$value": "{palette.blue.10}"
+            "$value": "{palette.blue.6}"
           }
         },
         "strong": {
@@ -356,10 +356,10 @@
             "$value": "{palette.red.35}"
           },
           "hover": {
-            "$value": "{palette.red.30}"
+            "$value": "{palette.red.25}"
           },
           "pressed": {
-            "$value": "{palette.red.25}"
+            "$value": "{palette.red.15}"
           }
         },
         "muted": {
@@ -443,10 +443,10 @@
             "$value": "{palette.purple.20}"
           },
           "hover": {
-            "$value": "{palette.purple.15}"
+            "$value": "{palette.purple.12}"
           },
           "pressed": {
-            "$value": "{palette.purple.10}"
+            "$value": "{palette.purple.6}"
           }
         },
         "strong": {

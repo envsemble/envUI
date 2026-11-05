@@ -139,6 +139,12 @@
     padding: var(--env-space-3) var(--env-card-padding);
     background: var(--env-color-bg-default);
   }
+  /* A page card parts from the page by space alone, so its strip takes no fill of its own either:
+     a band would be all of the card that shows. */
+  .env-card[data-actions][data-background='page'] > .env-card-footer,
+  .env-card[data-actions][data-background='page'] > .env-skeleton-content > .env-card-footer {
+    background-color: transparent;
+  }
 
   /* Motion: an interactive card settles a little while it is held, less than a compact control. Only
      without a reduced-motion preference. */

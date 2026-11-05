@@ -110,11 +110,11 @@ An icon, a heading, a sentence and the one button that starts a feature.
 2. **Default**
 3. **Page**
 
-| Background | Use for                                         |
-| ---------- | ----------------------------------------------- |
-| Muted      | A card on the page or in a pane. The default.   |
-| Default    | A quieter fill, such as a settings section.     |
-| Page       | The page's own color, set apart by its corners. |
+| Background | Use for                                       |
+| ---------- | --------------------------------------------- |
+| Muted      | A card on the page or in a pane. The default. |
+| Default    | A quieter fill, such as a settings section.   |
+| Page       | The page's own color, parted by space alone.  |
 
 ## Anatomy
 
@@ -287,5 +287,6 @@ The title is an `h3`; set `headingLevel` to fit the page's outline, and its type
 
 ## Changelog
 
+- **1.0.0-prerelease.6**: A page card's action strip takes no band of its own, so the card no longer shows as its strip alone.
 - **1.0.0-prerelease.3**: The feature cards pattern is the feature card on this page, which the pattern's address opens.
 - **1.0.0**: ClickableCard, ActionCard and FeatureCard are Card: `onClick` makes a button card, `render` the element of a content card, and the feature card is a Card holding a Row of Text and a Button, as [Feature card](#feature-card) shows, in place of `layout` and `icon`, with `env-card-layout` and `env-card-icon`. `tone` is `background`, `heading` is `title`, which takes `headingLevel`, and Card takes `description`; the native `title` attribute is not a prop of a card. The page is `card`, after the component.

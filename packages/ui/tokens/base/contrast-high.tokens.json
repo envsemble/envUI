@@ -59,13 +59,13 @@
         },
         "raised": {
           "$root": {
-            "$value": "{palette.gray.2}"
+            "$value": "{palette.neutral.0}"
           },
           "hover": {
-            "$value": "{palette.gray.6}"
+            "$value": "{palette.gray.4}"
           },
           "pressed": {
-            "$value": "{palette.gray.9}"
+            "$value": "{palette.gray.8}"
           }
         },
         "popup": {

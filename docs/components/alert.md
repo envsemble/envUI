@@ -188,6 +188,7 @@ An Alert draws an edge only at high contrast, unless its outline color sets one,
 
 ## Changelog
 
+- **1.0.0-prerelease.6**: In light, success and danger rest on lighter, clearer tints, as strong as information and warning.
 - **1.0.0-prerelease.6**: In light the tone's tint lies over the white raised surface, so it reads as its tone's color on the gray page; the title takes the text color, and the icon and the tint carry the tone.
 
 - **1.0.0-prerelease.6**: An alert rests on its tone's tint, `--env-color-bg-{tone}-muted`, in every theme and contrast, rather than the tone's hover layer, and takes the large corner of the radius scale, `--env-radius-lg`, which the compact scale tightens, rather than a fixed 1.25 rem, so a one-line alert no longer reads as a pill.

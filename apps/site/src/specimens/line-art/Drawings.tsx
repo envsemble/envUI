@@ -176,8 +176,8 @@ function DrawingCard({ drawing }: { drawing: LineArtDrawing }) {
     // Three rows of the gallery's, so the names and their lines line up across a row.
     <li style={row}>
       {/* A lighter card on the figure's stage: a card's white in the light themes, where the
-          stage is lighter than the page and the panes, and a pane's in the dark ones, where the
-          page is barely lighter than the stage. The drawing is on top, the buttons in a row below it. */}
+          stage is barely below the panes, and a pane's in the dark ones, where the page is barely
+          lighter than the stage. The drawing is on top, the buttons in a row below it. */}
       <Surface background="page" padding={3} style={card} render={<Column gap={2} />}>
         <div style={area}>
           <div style={room}>

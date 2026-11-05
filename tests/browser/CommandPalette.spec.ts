@@ -216,6 +216,9 @@ test.describe('CommandPalette', () => {
       'No matching documents Nothing matches “nothing matches this”. Check the spelling or try other words.',
     );
     await expect(dialog.getByRole('listbox', { includeHidden: true })).toBeHidden();
+    // With nothing to choose, the hints for Enter go; the application's footer stays.
+    await expect(dialog.locator('.env-command-palette-hint')).toHaveCount(0);
+    await expect(dialog.locator('.env-command-palette-footer-content')).toBeVisible();
     await page.keyboard.press('Enter');
     await expect(dialog).toBeVisible();
     await page.keyboard.press('Escape');

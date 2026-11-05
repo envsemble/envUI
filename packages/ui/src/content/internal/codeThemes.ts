@@ -14,6 +14,7 @@ import {
   contrastRatio,
   nearestColor,
   readableReplacements,
+  scaleChroma,
   type LightnessDirection,
 } from './readableColors.js';
 
@@ -146,28 +147,43 @@ export const codeTheme = memo(async (scheme, contrast) => {
   );
 });
 
-/** The colors a diff tints its changed lines and words with, at `diffTintOpacity`. */
+/**
+ * The colors a diff tints its changed lines and words with, at `diffTintOpacity`, and its line
+ * numbers' gutter with.
+ */
 export interface DiffTintColors {
   addition: string;
   deletion: string;
+  /** The gutter's tints, the change colors at their own chroma. */
+  additionGutter: string;
+  deletionGutter: string;
 }
+
+/**
+ * How much of its chroma a changed line's tint keeps in the dark theme, where saturated token colors
+ * would otherwise compete with saturated red and green fills: the gutter keeps its chroma and carries
+ * the change.
+ */
+const darkLineChroma = 0.45;
 
 /**
  * How a code diff tints its changed lines and words in an app theme and contrast. A diff sits on a
  * code block's layer and takes the code theme's token colors as they are, so the tints are chosen
  * to keep them readable: each kind's color is the theme's change color, moved in OKLCH lightness
  * towards the background, darker in the dark theme and lighter in the light one, only as far as
- * every token then reaches the target on its line and its word over every surface.
+ * every token then reaches the target on its line and its word over every surface. In dark a line's
+ * tint keeps less of the color's chroma than its gutter's.
  */
 export const diffTintColors = memo<DiffTintColors>(async (scheme, contrast) => {
   const theme = await codeTheme(scheme, contrast);
   const blocks = codeBackgrounds('block', scheme, contrast);
   const target = codeContrastTargets[contrast];
   const texts = textColors(theme);
-  const tint = (kind: (typeof changeKinds)[number]) => {
+  const tint = (kind: (typeof changeKinds)[number], chroma: number) => {
     const change = changeColorKeys[kind].map((key) => theme.colors?.[key]).find(Boolean);
+    const color = change ?? (kind === 'addition' ? '#1a7f37' : '#cf222e');
     return nearestColor(
-      change ?? (kind === 'addition' ? '#1a7f37' : '#cf222e'),
+      chroma === 1 ? color : scaleChroma(color, chroma),
       (candidate) =>
         diffTintsOver(blocks, candidate).every((tinted) =>
           texts.every((text) => contrastRatio(text, tinted) >= target),
@@ -175,5 +191,11 @@ export const diffTintColors = memo<DiffTintColors>(async (scheme, contrast) => {
       scheme === 'light' ? 'lighter' : 'darker',
     );
   };
-  return { addition: tint('addition'), deletion: tint('deletion') };
+  const line = scheme === 'dark' ? darkLineChroma : 1;
+  return {
+    addition: tint('addition', line),
+    deletion: tint('deletion', line),
+    additionGutter: tint('addition', 1),
+    deletionGutter: tint('deletion', 1),
+  };
 });

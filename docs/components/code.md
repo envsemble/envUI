@@ -207,7 +207,7 @@ const { additions, deletions } = countDiffLines(saved, draft, 'settings.json');
 envUI picks the code theme from the app theme: Shiki's `github-light-default` in the light theme and `github-dark-dimmed`, a grey dark theme, in the dark one, and `github-light-high-contrast` and `github-dark-high-contrast` under high contrast, with every token at 4.5:1 contrast, or 7:1 under high contrast.
 
 - Inline code sits on the neutral muted fill, and blocks and diffs on a translucent layer of the text color, so they stand a step apart from any surface.
-- A diff takes the same code theme and token colors as a block, and tints its added and removed lines with their change color over that layer, faintly enough that every token keeps its contrast.
+- A diff takes the same code theme and token colors as a block, and tints its added and removed lines with their change color over that layer, faintly enough that every token keeps its contrast. In dark the line tints are quieter in color than the line numbers' gutter, which carries the change, so they don't compete with the token colors.
 - Code has no theme or color props of its own.
 
 ### Customize
@@ -216,4 +216,5 @@ Inline code is one part, `env-code`. A block is `env-code-block`: its header, `e
 
 ## Changelog
 
+- **1.0.0-prerelease.6**: In dark, CodeDiff's changed lines take a less saturated tint, and the line numbers' gutter keeps the full change color.
 - **1.0.0**: Code, CodeBlock, CodeDiff and Markdown's code use Shiki's `github-light-default` and `github-dark-dimmed` code themes instead of the Pierre themes, and `github-light-high-contrast` and `github-dark-high-contrast` under high contrast; envUI no longer needs `@pierre/theme`. The `DiffCount` that `countDiffLines` feeds is `DiffStat`. Highlighted tokens reach 4.5:1 in both app themes, and 7:1 under high contrast, in code blocks and code diffs. CodeDiff takes CodeBlock's code theme, token colors and translucent layer, instead of a theme and an opaque grey of its own. CodeBlock's and CodeDiff's words come from EnvUIProvider's `messages`; the copy button copies through the selection fallback that CopyButton uses, and its status is `env-code-block-copy-status`. The row above a block's code, `env-code-block-heading`, is `env-code-block-header`.

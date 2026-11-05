@@ -52,7 +52,7 @@ const dark = '#e8eaee';
 const colors: Record<ColorScheme, Record<CodeContrast, CodeColors>> = {
   light: {
     standard: {
-      surfaces: ['#eaeaec', '#f4f4f6', '#f5f5f7', '#ffffff'],
+      surfaces: ['#eaeaec', '#f4f4f6', '#ffffff'],
       block: { color: light, alpha: 0.06 },
       inline: { color: light, alpha: 0.1 },
       foreground: '#1f2328',

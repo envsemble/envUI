@@ -57,7 +57,7 @@ export interface CodeDiffProps extends Omit<ComponentPropsWithRef<'div'>, 'child
  * tint is its color at an opacity over that layer: the colors that keep the code theme's tokens
  * readable there.
  */
-function diffCSS({ addition, deletion }: DiffTintColors) {
+function diffCSS({ addition, deletion, additionGutter, deletionGutter }: DiffTintColors) {
   const percent = (opacity: number) => `${Math.round(opacity * 100)}%`;
   const word = (color: string) =>
     `color-mix(in srgb, ${color} ${percent(diffTintOpacity.word)}, transparent)`;
@@ -66,10 +66,10 @@ function diffCSS({ addition, deletion }: DiffTintColors) {
   --diffs-light-bg: transparent;
   --diffs-dark-bg: transparent;
   --diffs-bg-addition-override: ${addition};
-  --diffs-bg-addition-number-override: ${addition};
+  --diffs-bg-addition-number-override: ${additionGutter};
   --diffs-bg-addition-emphasis-override: ${word(addition)};
   --diffs-bg-deletion-override: ${deletion};
-  --diffs-bg-deletion-number-override: ${deletion};
+  --diffs-bg-deletion-number-override: ${deletionGutter};
   --diffs-bg-deletion-emphasis-override: ${word(deletion)};
 }
 [data-line], [data-no-newline], [data-gutter-buffer], [data-column-number] {

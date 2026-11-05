@@ -137,7 +137,10 @@ export interface CommandPaletteProps
    * @default Search while the search field is empty, SearchOff when its text finds nothing
    */
   emptyIcon?: ReactNode;
-  /** Key hints below the list, such as { keys: ['Enter'], label: 'Open' }. */
+  /**
+   * Key hints below the list, such as { keys: ['Enter'], label: 'Open' }. A hint with Enter in its
+   * keys hides while there is no option to choose.
+   */
   hints?: readonly CommandPaletteHint[];
   /** Other content below the list, after the hints. */
   footer?: ReactNode;
@@ -210,6 +213,9 @@ export function CommandPalette({
   // when the text finds nothing.
   const empty = items.length === 0;
   const typed = query !== '';
+  // A hint for Enter, alone or with a modifier, chooses the highlighted option: with none to
+  // choose, while results load or when nothing matches, it would promise what can't run.
+  const shownHints = empty ? hints?.filter((hint) => !hint.keys.includes('Enter')) : hints;
   // While loading, the empty state says so instead, with a spinner in its icon's place.
   const icon = loading ? (
     <Spinner />
@@ -437,9 +443,9 @@ export function CommandPalette({
                     )}
                   </BaseAutocomplete.Status>
                 </BaseAutocomplete.Root>
-                {(Boolean(hints?.length) || footer != null) && (
+                {(Boolean(shownHints?.length) || footer != null) && (
                   <Row wrap align="center" className="env-command-palette-footer">
-                    {hints?.map((hint, hintIndex) => (
+                    {shownHints?.map((hint, hintIndex) => (
                       <Row
                         key={hintIndex}
                         render={<span />}

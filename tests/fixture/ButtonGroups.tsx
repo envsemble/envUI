@@ -37,8 +37,8 @@ export function ButtonGroupsFixture({ theme }: { theme: ColorScheme }) {
           <Button variant="outline">Month</Button>
         </ButtonGroup>
         <ButtonGroup aria-label="Form footer" data-testid="mixed">
-          <Button variant="outline">Cancel</Button>
-          <Button>Save</Button>
+          <Button variant="outline">Back</Button>
+          <Button>Next</Button>
         </ButtonGroup>
         <ButtonGroup data-testid="important-end">
           <IconButton variant="primary" tone="accent" icon={<IconCheck />} aria-label="Approve" />

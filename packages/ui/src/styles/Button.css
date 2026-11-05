@@ -528,9 +528,9 @@
     }
   }
 
-  /* Pending: the label stays, subdued, with a small spinner beside it, and the button keeps its name.
-     The spinner takes a start icon's place, or stands before the label; an icon button's takes the
-     icon's place. */
+  /* Pending: a spinner centred over the button, in the label's color, while the label and icons stay
+     in place, transparent, so the button keeps its width and its name. One model for every button,
+     an icon button's included. */
   .env-button[data-pending] {
     /* The spinner takes the label's color through its hook. */
     --env-spinner-color: currentColor;
@@ -565,14 +565,16 @@
     --env-kbd-separator-padding-inline: calc(0.0375 * var(--env-control-height-md));
     --env-kbd-separator-font: 0 / 1 var(--env-font-family);
   }
-  /* The label keeps its full color, and its contrast on the fill, while the spinner beside it says
-     the work runs; an icon button's icon is transparent rather than hidden, so the button keeps its
-     accessible name. */
-  .env-button[data-pending].env-icon-button > .env-button-content {
+  /* Transparent rather than hidden, so the label stays the button's accessible name and its width. */
+  .env-button[data-pending] > .env-button-content {
     color: transparent;
   }
-  .env-button[data-pending].env-icon-button > .env-button-content > * {
+  .env-button[data-pending] > .env-button-content > * {
     opacity: 0;
+  }
+  /* An underline would run on under the spinner without its label. */
+  .env-button[data-underline][data-pending] {
+    text-decoration-line: none;
   }
   /* ConfirmButton announces its armed state from a visually hidden status beside the button. */
   .env-confirm-button-status {
@@ -584,33 +586,12 @@
     clip-path: inset(50%);
     white-space: nowrap;
   }
-  /* In a start icon's place the spinner is as large as the icon, and the button keeps its width.
-     Without one it is smaller and closer to the label than an icon, and the padding at each side
-     gives up exactly half its footprint, so the button keeps its width there too and the buttons
-     beside it, as in a dialog's footer, stay where they are. A text button has no padding to give
-     up and grows by the spinner. */
+  /* The spinner is an icon's size, centred over the button. */
   .env-button .env-button-spinner {
-    inline-size: var(--env-button-spinner-size, var(--env-icon-size));
-    block-size: var(--env-button-spinner-size, var(--env-icon-size));
-  }
-  .env-button[data-pending]:not(.env-icon-button):has(> .env-button-spinner) {
-    --env-button-spinner-size: 0.625rem;
-    --env-button-spinner-gap: 0.1875rem;
-    padding-inline: calc(
-      var(--env-space-3) - (var(--env-button-spinner-size) + var(--env-button-spinner-gap)) / 2
-    );
-  }
-  .env-button[data-pending][data-variant='text']:not(.env-icon-button):has(> .env-button-spinner) {
-    padding-inline: 0;
-  }
-  .env-button[data-pending] > .env-button-spinner {
-    margin-inline-end: calc(
-      var(--env-button-spinner-gap, var(--env-space-1)) - var(--env-control-gap)
-    );
-  }
-  .env-button.env-icon-button > .env-button-spinner {
     position: absolute;
     inset: 0;
+    inline-size: var(--env-icon-size);
+    block-size: var(--env-icon-size);
     margin: auto;
   }
 

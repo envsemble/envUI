@@ -339,8 +339,8 @@ function Groups() {
         </Cell>
         <Cell caption="Full width" width="20rem">
           <ButtonGroup fullWidth>
-            <Button variant="outline">Cancel</Button>
-            <Button>Save</Button>
+            <Button variant="outline">Back</Button>
+            <Button>Next</Button>
           </ButtonGroup>
         </Cell>
       </Strip>

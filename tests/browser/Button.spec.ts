@@ -118,15 +118,20 @@ test('a pending button keeps its label and name, reports busy and ignores presse
   const button = page.getByTestId('pending-button');
   await expect(button).toHaveAttribute('aria-busy', 'true');
   await expect(button.locator('.env-spinner')).toBeVisible();
-  // The label stays in its full color, which holds its contrast on the fill, and the spinner turns
-  // in the same color beside it, as an arc alone rather than a labelled status line.
+  // The label stays in place, transparent, and the spinner turns in the label's color centred over
+  // the button, as an arc alone rather than a labelled status line.
   await expect(button.locator('.env-button-content')).toHaveText('Save changes');
   const color = await button.evaluate((element) => getComputedStyle(element).color);
-  await expect(button.locator('.env-button-content')).toHaveCSS('color', color);
+  await expect(button.locator('.env-button-content')).toHaveCSS('color', 'rgba(0, 0, 0, 0)');
   await expect(button.locator('.env-spinner')).toHaveCSS('color', color);
   await expect(button.locator('.env-spinner')).toHaveAttribute('data-label-hidden', '');
-  // Without a start icon, the spinner takes its room from the padding: the button is as wide as
-  // the same button at rest, so the buttons beside it stay put.
+  const [box, spinner] = await Promise.all([
+    button.boundingBox(),
+    button.locator('.env-spinner').boundingBox(),
+  ]);
+  expect(spinner!.x + spinner!.width / 2).toBeCloseTo(box!.x + box!.width / 2, 0);
+  expect(spinner!.y + spinner!.height / 2).toBeCloseTo(box!.y + box!.height / 2, 0);
+  // The button is as wide as the same button at rest, so the buttons beside it stay put.
   const widths = await button.evaluate((element) => {
     const rest = element.cloneNode(true) as HTMLElement;
     rest.removeAttribute('data-pending');

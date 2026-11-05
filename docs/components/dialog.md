@@ -101,7 +101,7 @@ Both narrow to fit the window.
 
 ### Actions
 
-A dialog's actions end with the primary one, after a built-in close button.
+A dialog's actions end with the primary one, after a built-in close button. A Cancel of your own is a secondary Button, as that close button is.
 
 ### Pending work
 
