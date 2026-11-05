@@ -11,12 +11,15 @@ const trigger = '.env-link';
 const script: PointerStep[] = [
   { cue: 'live' },
   { to: trigger, x: 0.6, y: 0.6 },
-  { wait: 800 },
-  { to: trigger, x: 1.5, y: -0.6, duration: 450 },
-  { wait: 1100 },
-  { to: trigger, x: 0.6, y: 0.6, duration: 450 },
-  { wait: 1700 },
+  { wait: 1200 },
+  { to: trigger, x: 1.5, y: -0.6, duration: 350 },
+  { wait: 500 },
+  { to: trigger, x: 0.6, y: 0.6, duration: 350 },
+  { wait: 2200 },
 ];
+
+/** How long the pointer rests on the name before the card opens: brief, so it is never long shut. */
+const delay = 350;
 
 /**
  * A hover card, open below the name it tells about, its avatar of the default size, so it shows
@@ -39,6 +42,7 @@ export default function HoverCardTile() {
   return (
     <HoverCard
       open={open}
+      delay={delay}
       onOpenChange={(next) => {
         if (live.current) setOpen(next);
       }}
