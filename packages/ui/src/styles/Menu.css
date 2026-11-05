@@ -1,6 +1,6 @@
 @layer env.components {
   /* Menus are the desktop dropdown: a frosted popup, a PopupSurface like Popover's and Select's, with
-     concentric rows of the md control height in body text that highlight on hover and keyboard
+     concentric rows of the popup row height in body text that highlight on hover and keyboard
      focus, groups and separators set apart by space alone, small muted group labels, and shortcuts as
      small muted key chips at the end. env-popup gives the popup its fill, shadow and motion. */
   /* Color properties: an item's colors, which an application sets on one Menu.Item through style or
@@ -77,7 +77,7 @@
     display: flex;
     align-items: center;
     gap: var(--env-popup-row-gap);
-    min-block-size: var(--env-control-height-md);
+    min-block-size: var(--env-popup-row-height);
     padding-block: var(--env-space-1);
     padding-inline: calc(var(--env-popup-row-padding-inline) + var(--env-menu-leading))
       var(--env-popup-row-padding-inline);
@@ -163,15 +163,15 @@
      Kbd's custom properties on its own element. */
   .env-menu-item-end,
   .env-menu-item-shortcut {
-    --env-kbd-size: calc(0.5 * var(--env-control-height-md));
-    --env-kbd-padding-inline: calc(0.125 * var(--env-control-height-md));
-    --env-kbd-radius: calc(0.125 * var(--env-control-height-md));
+    --env-kbd-size: calc(0.5 * var(--env-popup-row-height));
+    --env-kbd-padding-inline: calc(0.125 * var(--env-popup-row-height));
+    --env-kbd-radius: calc(0.125 * var(--env-popup-row-height));
     --env-kbd-fg: var(--env-color-fg-muted);
     --env-kbd-bg: var(--env-color-bg-neutral-muted);
     --env-kbd-border: transparent;
     --env-kbd-border-end-width: var(--env-control-border-width);
     --env-kbd-font-size: var(--env-font-size-caption);
-    --env-kbd-separator-padding-inline: calc(0.0375 * var(--env-control-height-md));
+    --env-kbd-separator-padding-inline: calc(0.0375 * var(--env-popup-row-height));
     --env-kbd-separator-font: 0 / 1 var(--env-font-family);
   }
   /* On a highlighted row, where the chip lies on the highlight, its label takes the text color, as
@@ -185,8 +185,8 @@
     display: inline-flex;
     align-items: center;
     /* The chords of a sequence stand further apart than the keys of one. */
-    gap: calc(0.15 * var(--env-control-height-md));
-    margin-inline-start: calc(0.4 * var(--env-control-height-md));
+    gap: calc(0.15 * var(--env-popup-row-height));
+    margin-inline-start: calc(0.4 * var(--env-popup-row-height));
     color: var(--env-color-fg-muted);
     font: var(--env-type-body-sm);
     white-space: nowrap;
@@ -263,8 +263,7 @@
   }
   .env-menu-group-label,
   .env-menu-header:not(:has(> *)) {
-    padding-block: calc(0.1 * var(--env-control-height-md))
-      calc(0.05 * var(--env-control-height-md));
+    padding-block: calc(0.1 * var(--env-popup-row-height)) calc(0.05 * var(--env-popup-row-height));
     padding-inline: var(--env-popup-label-padding-inline);
     color: var(--env-color-fg-muted);
     font: var(--env-font-weight-medium) var(--env-font-size-caption) / 1.4 var(--env-font-family);

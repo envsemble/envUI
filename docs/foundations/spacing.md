@@ -127,7 +127,7 @@ The space inside a button, a field or a card is part of the component, so it loo
 
 ### Things line up
 
-Fields, menus, toggles and buttons of one size are exactly as tall as each other, so a toolbar or a form row lines up without any adjusting. A form field that shows its label can be a step taller, as [TextField's sizes](../components/text-field.md#sizes) say.
+Fields, menus, toggles and buttons of one size are exactly as tall as each other, so a toolbar or a form row lines up without any adjusting. A small form field that shows its label takes the medium height, as [TextField's sizes](../components/text-field.md#sizes) say.
 
 ```tsx figure=Align
 
@@ -205,7 +205,7 @@ import { Button, Column, Surface, Table, Text, TextField, Theme } from '@envsemb
 
 #### Two axes of density
 
-- **Scale** is the size of the whole system, `comfortable` or `compact`: it switches every size token at once. Compact is about 0.8 of comfortable with type a step smaller, for desktop productivity apps. Icons keep a 1 rem floor; borders and focus rings keep their widths. `system`, the default, is compact under `pointer: fine` and comfortable otherwise; the stylesheet decides, so the server render and the first paint already have it.
+- **Scale** is the size of the whole system, `comfortable` or `compact`: it switches every size token at once. Compact is about 0.8 of comfortable in space and corners, with controls a step shorter and type a step smaller, for desktop productivity apps. Icons keep a 1 rem floor; borders and focus rings keep their widths. `system`, the default, is compact under `pointer: fine` and comfortable otherwise; the stylesheet decides, so the server render and the first paint already have it.
 - **Row density** is how tightly Table, Tree and List pack their rows: `xs` to `lg`, padding only.
 
 Within a scale, `size` picks one of three control heights for a deliberate local difference; every control of one size lines up. A control without a size takes its container's `--env-control-height`, `md` unless the container sets another, as a table cell does with `sm`.
@@ -255,8 +255,8 @@ At the default 16 px root; every value is a token in rem.
 
 | Token                                                             | Comfortable           | Compact               |
 | ----------------------------------------------------------------- | --------------------- | --------------------- |
-| `--env-control-height-sm` / `-md` / `-lg`                         | 32 / 40 / 48          | 26 / 32 / 38          |
-| `--env-row-height` (menu, Select and Combobox rows)               | 36                    | 28                    |
+| `--env-control-height-sm` / `-md` / `-lg`                         | 32 / 40 / 48          | 28 / 36 / 44          |
+| `--env-row-height` (calendar days; popup rows are 0.25 rem more)  | 36                    | 28                    |
 | `--env-row-padding-block-xs` / `-sm` / `-md` / `-lg`              | 2 / 4 / 8 / 12        | 0 / 2 / 4 / 6         |
 | `--env-space-1` … `--env-space-9`                                 | 4, 8, 12, 16, 24 … 64 | 4, 6, 10, 12, 20 … 52 |
 | `--env-font-size-caption` / `-body-sm` / `-label`                 | 12 / 14 / 14          | 11 / 12 / 13          |

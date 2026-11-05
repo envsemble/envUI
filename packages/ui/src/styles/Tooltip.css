@@ -33,14 +33,14 @@
     /* As wide as its text up to 18 rem, never wider than the room the positioner finds. */
     max-inline-size: min(18rem, var(--available-width, calc(100vw - 2rem)));
     /* Its inset and corners follow the scale as a popup's rows do (Popup.css). */
-    padding: calc(0.15 * var(--env-control-height-md)) calc(0.25 * var(--env-control-height-md));
+    padding: calc(0.15 * var(--env-popup-row-height)) calc(0.25 * var(--env-popup-row-height));
     /* Tooltips float over everything, set apart by their strong fill and a soft shadow of their own,
        smaller than a popup's, with no edge. At high contrast, with reduced transparency and under
        forced colors the fill is solid and the edge returns as the boundary: on a light page the dark
        fill a step darker rather than the light popup edge, which would ring it like a halo; in dark
        the popup edge. */
     border: 1px solid var(--env-tooltip-outline, var(--env-tooltip-edge, transparent));
-    border-radius: calc(0.3 * var(--env-control-height-md));
+    border-radius: calc(0.3 * var(--env-popup-row-height));
     background: var(--env-tooltip-container, var(--env-tooltip-fill));
     color: var(--env-tooltip-content, var(--env-color-fg-on-strong));
     box-shadow: var(--env-tooltip-shadow);
@@ -51,16 +51,16 @@
     /* A Kbd in a tooltip, such as a shortcut beside the name, is a flat chip of the tooltip's light
        text over its fill, with no edge, the keys of a combination side by side: the + between them is
        read but not shown. */
-    --env-kbd-size: calc(0.45 * var(--env-control-height-md));
-    --env-kbd-padding-inline: calc(0.1 * var(--env-control-height-md));
-    --env-kbd-radius: calc(0.125 * var(--env-control-height-md));
+    --env-kbd-size: calc(0.45 * var(--env-popup-row-height));
+    --env-kbd-padding-inline: calc(0.1 * var(--env-popup-row-height));
+    --env-kbd-radius: calc(0.125 * var(--env-popup-row-height));
     --env-kbd-fg: currentColor;
     /* contrast: tooltip-key */
     --env-kbd-bg: color-mix(in srgb, currentColor 11%, transparent);
     --env-kbd-border: transparent;
     --env-kbd-border-end-width: var(--env-control-border-width);
     --env-kbd-font-size: var(--env-font-size-caption);
-    --env-kbd-separator-padding-inline: calc(0.1 * var(--env-control-height-md));
+    --env-kbd-separator-padding-inline: calc(0.1 * var(--env-popup-row-height));
     --env-kbd-separator-font: 0 / 1 var(--env-font-family);
     /* Motion: it fades in, below, and grows from the origin its positioner sets. */
     transform-origin: var(--transform-origin, center);

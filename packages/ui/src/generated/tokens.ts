@@ -1998,7 +1998,7 @@ export const tokens = {
       'light-high-contrast': '3rem',
       'dark-high-contrast': '3rem',
     },
-    scales: { compact: '2.375rem' },
+    scales: { compact: '2.75rem' },
   },
   /** The medium control height, every control's default size. */
   'control.height-md': {
@@ -2010,7 +2010,7 @@ export const tokens = {
       'light-high-contrast': '2.5rem',
       'dark-high-contrast': '2.5rem',
     },
-    scales: { compact: '2rem' },
+    scales: { compact: '2.25rem' },
   },
   /** The small control height: a control of size sm, the actions in a table cell, a title bar or a panel header. */
   'control.height-sm': {
@@ -2022,7 +2022,7 @@ export const tokens = {
       'light-high-contrast': '2rem',
       'dark-high-contrast': '2rem',
     },
-    scales: { compact: '1.625rem' },
+    scales: { compact: '1.75rem' },
   },
   /** The height every control grows to under a coarse pointer, whatever the scale, and the width of a button: its own box is its hit area. Rows grow to it too. */
   'control.height-touch': {
@@ -2533,7 +2533,7 @@ export const tokens = {
       'dark-high-contrast': '1.25rem',
     },
   },
-  /** The row of a menu and of a select's or combobox's popup. */
+  /** The day of a calendar, and the base of a popup's row: a menu's, a select's or a combobox's rows are a quarter rem taller. */
   'row.height': {
     cssVariable: '--env-row-height',
     type: 'dimension',

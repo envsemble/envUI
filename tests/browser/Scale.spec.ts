@@ -14,7 +14,7 @@ import { fixtureUrl } from './helpers/Servers';
 /** The control heights of each scale, in CSS pixels at the default 16 px root. */
 const heights = {
   comfortable: { sm: 32, md: 40, lg: 48 },
-  compact: { sm: 26, md: 32, lg: 38 },
+  compact: { sm: 28, md: 36, lg: 44 },
 } as const;
 
 async function openSection(page: Page, section: string, theme = 'light') {
@@ -89,6 +89,29 @@ for (const scale of densityScales)
     });
 
 /**
+ * Fields that show their labels, outline and ghost, are as tall as a button of their size at md
+ * and lg, and take the md height at sm, so the floated label and the value each keep room.
+ */
+for (const scale of densityScales)
+  test(`labelled outline and ghost fields share one height per size in the ${scale} scale`, async ({
+    page,
+  }) => {
+    await openSection(page, 'sizes');
+    for (const size of controlSizes) {
+      const row = page.locator(`[data-density-scale="${scale}"] [data-labelled-row="${size}"]`);
+      const boxes = await controlBoxes(row);
+      expect(boxes.length).toBe(6);
+      const field = Math.max(heights[scale][size], heights[scale].md);
+      expect(boxes, `${scale} ${size}`).toEqual(
+        boxes.map(({ name }, index) => ({
+          name,
+          height: index === 0 ? heights[scale][size] : field,
+        })),
+      );
+    }
+  });
+
+/**
  * Tree rows at each density: a 20 px content line in both scales, so a compact row is never taller
  * than a comfortable one, and the default sm row is as tall as a compact menu row.
  */
@@ -97,7 +120,7 @@ const treeRows = {
   compact: { xs: 24, sm: 28, md: 30, lg: 34 },
 } as const;
 
-test('tree rows are as tall as their density in each scale, and menu rows the md control height', async ({
+test('tree rows are as tall as their density in each scale, and menu rows a popup row', async ({
   page,
 }) => {
   await openSection(page, 'tree');
@@ -116,8 +139,8 @@ test('tree rows are as tall as their density in each scale, and menu rows the md
     for (const density of ['xs', 'sm', 'md', 'lg'] as const)
       expect(treeRows.compact[density]).toBeLessThanOrEqual(treeRows.comfortable[density]);
   }
-  // The menu of each scale opens in a popup of that scale, with rows of its md control height (2.5
-  // and 2 rem); they reach their height once it has grown in.
+  // The menu of each scale opens in a popup of that scale, with rows a quarter rem taller than the
+  // scale's row height (2.5 and 2 rem); they reach their height once it has grown in.
   await openSection(page, 'menu');
   await expect
     .poll(() =>
@@ -179,7 +202,7 @@ test('each scale writes data-env-scale on its boundary, and nested Themes and po
     'data-env-scale',
     'compact',
   );
-  // The list grows in; its rows reach the compact md control height once it has.
+  // The list grows in; its rows reach the compact popup row's height once it has.
   const option = list.getByRole('option', { name: 'Team', exact: true });
   await expect
     .poll(() => option.evaluate((element) => element.getBoundingClientRect().height))

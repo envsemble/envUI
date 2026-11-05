@@ -1,11 +1,11 @@
 {
   "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
-  "$description": "The compact scale: about 0.8 of comfortable in geometry and one step down in type, for desktop productivity apps. Icons keep a 1 rem floor, and borders and focus rings keep their widths.",
+  "$description": "The compact scale: about 0.8 of comfortable in space and corners, controls a step shorter, and one step down in type, for desktop productivity apps. Icons keep a 1 rem floor, and borders and focus rings keep their widths.",
   "control": {
     "$type": "dimension",
-    "height-sm": { "$value": { "value": 1.625, "unit": "rem" } },
-    "height-md": { "$value": { "value": 2, "unit": "rem" } },
-    "height-lg": { "$value": { "value": 2.375, "unit": "rem" } },
+    "height-sm": { "$value": { "value": 1.75, "unit": "rem" } },
+    "height-md": { "$value": { "value": 2.25, "unit": "rem" } },
+    "height-lg": { "$value": { "value": 2.75, "unit": "rem" } },
     "gap": { "$value": { "value": 0.375, "unit": "rem" } }
   },
   "icon": {
