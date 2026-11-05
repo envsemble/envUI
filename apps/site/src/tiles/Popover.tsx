@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { IconButton, Popover, Text } from '@envsemble/envui';
 import { IconInfo } from '@envsemble/envui/icons/Info';
+import { useMedia } from '../motion/Autoplay';
 import { usePointer, type PointerStep } from '../motion/Motion';
+import { narrowGallery } from './Tiles';
 
 const trigger = '.env-button[aria-haspopup]';
 
@@ -25,13 +27,15 @@ const script: PointerStep[] = [
  */
 export default function PopoverTile() {
   const [open, setOpen] = useState(true);
+  // Two to a row, it opens below its button, inside the narrow stage.
+  const narrow = useMedia(narrowGallery);
   usePointer(script, { onRest: () => setOpen(true) });
   return (
     <Popover
       open={open}
       onOpenChange={setOpen}
       title="Billing period"
-      side="inline-end"
+      side={narrow ? 'bottom' : 'inline-end'}
       align="start"
       trigger={<IconButton variant="secondary" icon={<IconInfo />} aria-label="Billing" />}
     >

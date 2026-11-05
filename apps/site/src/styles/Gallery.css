@@ -155,6 +155,16 @@
   --env-time-list-rows: 3;
 }
 
+/* A calendar's month keeps to one line in a gallery's tile, a little wider than its seven days, so
+   the longest month's name stands beside its buttons and the days don't move as it changes. */
+.catalogue-gallery-stage .catalogue-related-canvas[data-own-size] .env-calendar {
+  inline-size: calc(7 * var(--env-calendar-day) + 0.75rem);
+}
+
+.catalogue-gallery-stage .catalogue-related-canvas[data-own-size] .env-calendar-title {
+  white-space: nowrap;
+}
+
 /* A confirm dialog's question and actions take a closer padding in a gallery's tile, so the
    whole card shows in its low stage at the one scale (useFit.ts), its corners in view. */
 .catalogue-gallery-stage

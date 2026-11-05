@@ -87,7 +87,7 @@ export function TilePreview({
     (Composition ? (
       <TileBoundary>
         <Suspense fallback={null}>
-          <Playback playing={plays} rest="start" root={canvasElement}>
+          <Playback playing={plays} rest="start" root={canvasElement} redraw>
             <Composition />
           </Playback>
         </Suspense>

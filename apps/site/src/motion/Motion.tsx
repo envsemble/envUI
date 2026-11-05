@@ -12,7 +12,9 @@ import {
 } from 'react';
 import { PortalContainer } from '@envsemble/envui';
 import { isVirtual, VirtualPointer, type Aimed } from './VirtualPointer';
+import { nameMustShow } from './MustShow';
 import {
+  aimsOf,
   ease,
   firstWait,
   planOf,
@@ -67,16 +69,29 @@ export function Playback({
   rest,
   root,
   countTimeline,
+  redraw = false,
   children,
 }: PlaybackValue & {
   /** Counts the timelines in it, whose figure is a recording the reader can't take over. */
   countTimeline?: () => () => void;
+  /**
+   * Whether it is drawn anew as it stops whatever its animations do, as a tile is, whose still
+   * draws without motion (Related.css): what an animation left behind that it can't set back, such
+   * as a menu's highlighted item, goes with it.
+   */
+  redraw?: boolean;
   children: ReactNode;
 }) {
   // A site popup open, such as the Display menu, holds the previews where they are (SitePopup.ts).
   const held = useSitePopupOpen();
   return (
-    <PlaybackOf playing={playing && !held} rest={rest} root={root} countTimeline={countTimeline}>
+    <PlaybackOf
+      playing={playing && !held}
+      rest={rest}
+      root={root}
+      countTimeline={countTimeline}
+      redraw={redraw}
+    >
       {children}
     </PlaybackOf>
   );
@@ -87,9 +102,11 @@ function PlaybackOf({
   rest,
   root,
   countTimeline,
+  redraw,
   children,
 }: PlaybackValue & {
   countTimeline?: () => () => void;
+  redraw: boolean;
   children: ReactNode;
 }) {
   const [round, setRound] = useState(0);
@@ -104,7 +121,7 @@ function PlaybackOf({
   if (wasPlaying !== playing) {
     setWasPlaying(playing);
     // The claims are taken in effects, so they are counted before a stop.
-    if (!playing && rest === 'start' && !claims.current) setRound(round + 1);
+    if (!playing && rest === 'start' && (redraw || !claims.current)) setRound(round + 1);
   }
   return (
     <PlaybackContext value={{ playing, rest, root, claimRest, countTimeline }}>
@@ -344,6 +361,8 @@ export function usePointer(
   const pointer = useRef<VirtualPointer | null>(null);
   const clock = useRef({ time: 0, done: -1 });
   const [plan] = useState(() => planOf(script));
+  // What it acts on stays in its tile's view as it plays (MustShow.ts).
+  useEffect(() => (root ? nameMustShow(root, aimsOf(plan)) : undefined), [root, plan]);
   // The pointer's events go out after React's commit, as a component may answer them by
   // rendering at once, which React refuses from inside an effect.
   useEffect(
@@ -501,6 +520,17 @@ export function usePointer(
       current.suspend();
     };
   }, [playing, root, plan, clockName]);
+}
+
+/**
+ * Names elements a tile's animation acts on that its pointer's script doesn't, such as a row a
+ * timeline changes, by selectors inside its preview, so they stay in its view as it plays
+ * (MustShow.ts).
+ */
+export function useMustShow(...selectors: string[]) {
+  const { root } = use(PlaybackContext);
+  const key = selectors.join('\n');
+  useEffect(() => (root ? nameMustShow(root, key.split('\n')) : undefined), [root, key]);
 }
 
 /**

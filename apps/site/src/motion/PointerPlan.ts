@@ -205,6 +205,18 @@ export function planOf(script: readonly PointerStep[]): Plan {
   return plan;
 }
 
+/**
+ * The selectors of every element a plan acts on: what it moves to, and so presses, drags and turns
+ * the wheel over, and what it types into, presses keys on or focuses.
+ */
+export function aimsOf(plan: Plan): string[] {
+  const aims = [
+    ...plan.moves.map((move) => move.to.selector),
+    ...plan.happenings.flatMap((happening) => (happening.target ? [happening.target] : [])),
+  ];
+  return [...new Set(aims)];
+}
+
 /** Eases a move in and out, as a hand does. */
 export const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
 
