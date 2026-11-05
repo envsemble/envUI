@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { siteDevUrl } from './helpers/Servers';
 import { chooseScheme } from './helpers/CatalogueThemes';
 import { documents, componentDocuments } from '../../apps/site/src/pages/PageModel';
-import { version, goTo } from './helpers/SiteSpecHelpers';
+import { goTo } from './helpers/SiteSpecHelpers';
 import { pagesOf } from '../../apps/site/src/navigation/SiteRoutes';
 import { bannerDrawingIndex, bannerSubject } from '../../apps/site/src/layout/CatalogueBannerOrder';
 
@@ -375,29 +375,35 @@ test("the overview's hero says what envUI is, leads to setting it up and gives t
   const hero = page.locator('.catalogue-overview-hero');
   await expect(hero.getByRole('heading', { level: 1 })).toHaveAccessibleName('envUI');
   await expect(hero.locator('.catalogue-overview-lede')).toContainText('A React design system');
-  // The install command names packages/ui/package.json's version and copies; the catalogue's
-  // counts sit under it.
+  // The install command is short and copies; under it, a line leads to the registry access it
+  // needs, and the catalogue's counts sit under that.
   const code = hero.locator('.catalogue-overview-install code');
-  await expect(code).toHaveText(`npm install @envsemble/envui@${version}`);
+  await expect(code).toHaveText('npm i @envsemble/envui');
   await expect(code).toBeVisible();
   await expect(hero.getByRole('button', { name: 'Copy install command' })).toBeVisible();
   await expect(hero.locator('.catalogue-overview-facts')).toContainText(
     `${componentDocuments.filter(({ id }) => id !== 'field').length} components`,
   );
-  // One way on of its own, to setting envUI up; the sidebar and the Explore cards lead elsewhere.
-  await expect(hero.getByRole('link')).toHaveText(['Get started']);
+  // One way on of its own, to setting envUI up, and the setup's registry access; the sidebar and
+  // the Explore cards lead elsewhere.
+  await expect(hero.getByRole('link')).toHaveText(['Get started', 'registry access']);
   await expect(hero.getByRole('link', { name: 'Get started' })).toHaveAttribute('href', '/docs');
+  await expect(hero.getByRole('link', { name: 'registry access' })).toHaveAttribute(
+    'href',
+    '/docs#registry-access',
+  );
   // The command is as tall as Get started beside it.
   const start = hero.getByRole('link', { name: 'Get started' });
   const install = hero.locator('.catalogue-overview-install');
   const height = async (locator: typeof install) => (await locator.boundingBox())!.height;
   expect(await height(install)).toBeCloseTo(await height(start), 0);
-  // A phone shows the same command, the one the button copies, whole and on one line, so the
-  // package and its version never read as two.
+  // A phone shows the same command, the one the button copies, whole and on one line, with room
+  // to spare before the copy button.
   await page.setViewportSize({ width: 390, height: 844 });
   await expect
     .poll(() => code.evaluate((element) => element.scrollWidth - element.clientWidth))
     .toBe(0);
+  expect((await install.boundingBox())!.width).toBeLessThan(390 * 0.75);
   await expect(code).toHaveCSS('white-space', 'nowrap');
 });
 

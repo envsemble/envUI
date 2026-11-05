@@ -1,9 +1,9 @@
-import { Button, Card, Column, CopyButton, Row, Text } from '@envsemble/envui';
+import { Button, Card, Column, CopyButton, Link, Row, Text } from '@envsemble/envui';
 import { IconArrowForward } from '@envsemble/envui/icons/ArrowForward';
 import { IconWidgets } from '@envsemble/envui/icons/Widgets';
 import { IconPattern } from '@envsemble/envui/icons/Pattern';
 import { IconPalette } from '@envsemble/envui/icons/Palette';
-import { name, version } from '../../../../packages/ui/package.json';
+import { name } from '../../../../packages/ui/package.json';
 import { EnvUILogo } from '../brand/EnvUILogo';
 import { docsRoute, routeHref } from '../navigation/Address';
 import { pagesOf, sectionHome } from '../navigation/SiteRoutes';
@@ -44,11 +44,11 @@ const counts = (['component', 'pattern', 'foundation'] as const).map((kind) => (
 }));
 
 /**
- * The command that installs envUI: the package's name and version, read from
- * packages/ui/package.json. Short enough for one line on a phone; docs/setup.md gives the command
- * that also pins the version exactly.
+ * The command that installs envUI, by the package's name in packages/ui/package.json: short, so it
+ * keeps room to spare on a phone. docs/setup.md gives the registry it needs and the command that
+ * pins the version exactly, which the line under it leads to.
  */
-const install = `npm install ${name}@${version}`;
+const install = `npm i ${name}`;
 
 /**
  * The catalogue's home: what envUI is, the way to setting it up, a hand of cards built with it, and
@@ -65,8 +65,8 @@ export function Overview() {
           <Text variant="display" className="catalogue-overview-lede">
             A React design system for dense B2B SaaS and AI developer tools.
           </Text>
-          {/* The one way in, to setting envUI up, beside the command that installs it, which names
-              the version; under them, quiet, how much the catalogue shows. */}
+          {/* The one way in, to setting envUI up, beside the command that installs it; under them,
+              quiet, what installing needs first, and how much the catalogue shows. */}
           <Column gap={4} align="center">
             <Row gap={4} align="center" justify="center" wrap className="catalogue-overview-start">
               <Button href={routeHref(docsRoute)} endIcon={<IconArrowForward />}>
@@ -78,13 +78,22 @@ export function Overview() {
                 <CopyButton value={install} variant="ghost" aria-label="Copy install command" />
               </span>
             </Row>
-            <Text variant="caption" emphasis="muted" className="catalogue-overview-facts">
-              {counts.map(({ kind, count }) => (
-                <span key={kind}>
-                  {count} {kind}s
-                </span>
-              ))}
-            </Text>
+            <Column gap={1} align="center">
+              <Text variant="caption" emphasis="muted" className="catalogue-overview-note">
+                Installing needs{' '}
+                <Link href={routeHref(`${docsRoute}?section=registry-access`)}>
+                  registry access
+                </Link>{' '}
+                first.
+              </Text>
+              <Text variant="caption" emphasis="muted" className="catalogue-overview-facts">
+                {counts.map(({ kind, count }) => (
+                  <span key={kind}>
+                    {count} {kind}s
+                  </span>
+                ))}
+              </Text>
+            </Column>
           </Column>
         </Column>
       </header>
