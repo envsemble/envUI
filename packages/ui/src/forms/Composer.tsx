@@ -45,8 +45,9 @@ interface ComposerOptions {
    */
   onSend?: (value: string) => void;
   /**
-   * A send is in progress, such as a request the application makes: sending is unavailable while
-   * the field stays editable and keeps focus. The pending action of an enclosing form counts too;
+   * A send is in progress, such as a request the application makes: the send button shows a
+   * spinner and sending is unavailable, while the field keeps its text, stays editable and keeps
+   * focus. The pending action of an enclosing form counts too;
    * set pending for a form the field joins through its form attribute, or for a request of the
    * application's own.
    */
@@ -293,6 +294,8 @@ export function Composer({
           className="env-composer-action"
           icon={running ? <IconStop filled /> : <IconArrowUpward />}
           aria-label={actionLabel}
+          // While a send is in progress, the send button shows the shared pending spinner.
+          pending={!running && busy}
           disabled={!running && disabled}
           aria-disabled={unavailable || undefined}
           onClick={() => {

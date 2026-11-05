@@ -1813,7 +1813,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "A send is in progress, such as a request the application makes: sending is unavailable while the field stays editable and keeps focus. The pending action of an enclosing form counts too; set pending for a form the field joins through its form attribute, or for a request of the application's own."
+          "description": "A send is in progress, such as a request the application makes: the send button shows a spinner and sending is unavailable, while the field keeps its text, stays editable and keeps focus. The pending action of an enclosing form counts too; set pending for a form the field joins through its form attribute, or for a request of the application's own."
         },
         {
           "name": "running",

@@ -81,7 +81,7 @@ A composer is its field alone, or has a row below the field with controls at its
 
 ### Pending send
 
-While a send is in progress, the next one waits; the field stays editable and keeps focus.
+While a send is in progress, the send button shows a spinner and the next send waits; the field keeps its text and height, stays editable and keeps focus.
 
 ```tsx figure=PendingSend motion
 
@@ -152,7 +152,7 @@ A Composer is a native textarea with no visible label, so name it with `aria-lab
 
 #### Pending and running
 
-`pending` marks a send in progress: sending is unavailable while the field stays editable and keeps focus, so use it rather than `disabled`. `running` marks a reply on its way: the send button becomes a stop button, which calls `onStop` and stays available when the field is disabled, and <kbd>Enter</kbd> doesn't send.
+`pending` marks a send in progress: the send button shows a spinner and sending is unavailable, while the field stays editable and keeps focus, so use it rather than `disabled`. `running` marks a reply on its way: the send button becomes a stop button, which calls `onStop` and stays available when the field is disabled, and <kbd>Enter</kbd> doesn't send.
 
 ```tsx
 <Composer aria-label="Reply to Priya Shah" pending={sending} onSend={send} />
