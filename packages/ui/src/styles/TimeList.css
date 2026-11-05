@@ -29,7 +29,16 @@
     scroll-snap-type: y mandatory;
     scrollbar-width: none;
     outline: none;
-    mask-image: linear-gradient(transparent, currentcolor 15%, currentcolor 85%, transparent);
+    /* The fade at the top and bottom edges says the wheel scrolls: it runs over the outermost rows
+       alone, across their values, so a value there shades off towards the edge as if the wheel went
+       on past it. */
+    --env-time-list-fade-start: calc(0.2 * var(--env-time-list-row));
+    mask-image: linear-gradient(
+      transparent var(--env-time-list-fade-start),
+      currentcolor var(--env-time-list-row),
+      currentcolor calc(100% - var(--env-time-list-row)),
+      transparent calc(100% - var(--env-time-list-fade-start))
+    );
   }
   /* While the wheel eases into a row by itself, snapping would pull each step back. */
   .env-time-list-column[data-turning] {

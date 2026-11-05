@@ -517,8 +517,8 @@
         },
         {
           "stylesheet": "Editor.css",
-          "classes": ["env-toolbar"],
-          "note": "An editor's formatting toolbar sizes its row of buttons to the buttons, so where they don't fit the toolbar scrolls the row rather than the buttons spilling out of it."
+          "classes": ["env-toolbar", "env-toolbar-group"],
+          "note": "An editor's formatting toolbar wraps its groups onto more rows, and offsets the row and its first group so the separator a wrapped row starts with lies outside its clip."
         },
         {
           "stylesheet": "Composer.css",

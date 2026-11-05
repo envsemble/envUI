@@ -33,6 +33,15 @@
     max-inline-size: 100%;
     cursor: default;
   }
+  /* A label above its control, Field.Label's and an editor's above its toolbar, reads as the notched
+     label of envUI's fields does once it floats: its size, weight and muted color (TextField.css),
+     so a form's labels read alike. */
+  .env-field-label,
+  .env-field:not(.env-text-field) > label {
+    font: var(--env-type-body);
+    font-size: var(--env-font-size-label);
+    color: var(--env-color-fg-muted);
+  }
   .env-field[data-disabled] > .env-field-label {
     opacity: var(--env-state-disabled-opacity);
   }

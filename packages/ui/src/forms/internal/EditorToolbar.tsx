@@ -1,6 +1,6 @@
 'use client';
 
-import { Children, Fragment, type MouseEvent, type ReactNode } from 'react';
+import { Children, type MouseEvent, type ReactNode } from 'react';
 import * as Toolbar from '../../actions/Toolbar.js';
 import { editor as editorMessages } from '../../foundations/messages/editor.js';
 import { IconRedo } from '../../icons/Redo.js';
@@ -33,7 +33,7 @@ function groupsOf<Command extends EditorCommand>(commands: readonly Command[]) {
  * lists, blocks, and links and tables), then Undo and Redo, then any of the editor's own buttons,
  * which it passes as Toolbar.Buttons. A command the editor can tell is on at the selection, such as
  * Bold, is a toggle button. The toolbar is one tab stop, the arrow keys move between its buttons,
- * and it scrolls sideways where it is wider than the editor.
+ * and where it is wider than the editor its groups wrap onto more rows.
  */
 export function EditorToolbar<Command extends EditorCommand>({
   label,
@@ -104,11 +104,13 @@ export function EditorToolbar<Command extends EditorCommand>({
   return (
     <div className="env-editor-toolbar">
       <Toolbar.Root aria-label={label} disabled={disabled}>
+        {/* Each group after the first leads with its separator, so where the groups wrap onto
+            more rows, a row never ends with one; Editor.css hides the one a row starts with. */}
         {groups.map(({ key, buttons }, index) => (
-          <Fragment key={key}>
+          <Toolbar.Group key={key}>
             {index > 0 && <Toolbar.Separator />}
-            <Toolbar.Group>{buttons}</Toolbar.Group>
-          </Fragment>
+            {buttons}
+          </Toolbar.Group>
         ))}
       </Toolbar.Root>
     </div>
