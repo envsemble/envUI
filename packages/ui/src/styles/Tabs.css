@@ -130,10 +130,10 @@
     transition: color var(--env-motion-duration-medium) var(--env-motion-ease);
   }
   /* Every tab is a text tab, whatever its button's variant: no fill or edge of its own, its label
-     quieter than the text. Under the pointer and pressed no block shows, as one would read as a second kind of
-     selection: the label takes the text color and a faint underline, in the label's color, stands
-     where the indicator would, a little stronger pressed. The states, unavailable included, are
-     named so these rules outweigh the button's own. */
+     quieter than the text. Under the pointer and pressed no block or bar shows, as either would
+     read as a second selection: only the label takes the text color, and the indicator is the
+     selected tab's alone. The states, unavailable included, are named so these rules outweigh the
+     button's own. */
   .env-tabs-list > .env-tabs-tab,
   .env-tabs-list > .env-tabs-tab:is(:disabled, [aria-disabled='true']),
   .env-tabs-list
@@ -152,18 +152,7 @@
     > .env-tabs-tab:is(:hover, :active):not([data-active]):not(:disabled):not(
       [aria-disabled='true']
     ) {
-    --env-tabs-mark: color-mix(in srgb, currentColor 30%, transparent);
     color: var(--env-tabs-content, var(--env-color-fg-default));
-  }
-  .env-tabs-list
-    > .env-tabs-tab:is(:hover, :active):not([data-active]):not(:disabled):not(
-      [aria-disabled='true']
-    )::after {
-    background: var(--env-tabs-mark);
-  }
-  .env-tabs-list
-    > .env-tabs-tab:active:not([data-active]):not(:disabled):not([aria-disabled='true']) {
-    --env-tabs-mark: color-mix(in srgb, currentColor 55%, transparent);
   }
   /* The selected tab: its label in the accent's text color, with the indicator under it. */
   .env-tabs-list > .env-tabs-tab[data-active],
@@ -173,7 +162,7 @@
     ) {
     color: var(--env-tabs-selected-color, var(--env-color-fg-primary));
   }
-  /* Every tab draws the indicator's shape, so hover changes only its color: transparent at rest. */
+  /* Every tab draws the indicator's shape, transparent but on the selected tab. */
   .env-tabs-list > .env-tabs-tab::after {
     content: '';
     position: absolute;

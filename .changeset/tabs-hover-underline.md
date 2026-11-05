@@ -2,4 +2,4 @@
 '@envsemble/envui': patch
 ---
 
-Tabs show no fill under the pointer or pressed: a tab's label takes the text color and a faint underline stands where the indicator would, so the indicator alone marks the selected tab.
+Tabs show no fill or bar under the pointer or pressed: only a tab's label takes the text color, so the indicator alone marks the selected tab.
