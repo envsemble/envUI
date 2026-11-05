@@ -59,9 +59,8 @@ const keywordColors: Record<ColorScheme, Record<CodeContrast, string>> = {
 /** The Shiki theme of an app theme and contrast, its keywords in `keywordColors`. */
 async function shikiTheme(scheme: ColorScheme, contrast: CodeContrast) {
   const theme = contrast === 'high' ? (await loadHighContrast())[scheme] : standard[scheme];
-  const keyword = theme.tokenColors?.find((rule) =>
-    [rule.scope ?? []].flat().includes('keyword'),
-  )?.settings?.foreground;
+  const keyword = theme.tokenColors?.find((rule) => [rule.scope ?? []].flat().includes('keyword'))
+    ?.settings?.foreground;
   return keyword
     ? withColors(theme, theme.name ?? '', {
         [keyword.toLowerCase()]: keywordColors[scheme][contrast],
