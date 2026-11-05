@@ -144,6 +144,15 @@ const projectCount = (count: number) => (count === 1 ? '1 project' : `${count} p
 
 type SortColumn = 'name' | 'issues' | 'updated';
 
+const sortOrders = [
+  { value: 'updated descending', label: 'Updated, newest first' },
+  { value: 'updated ascending', label: 'Updated, oldest first' },
+  { value: 'name ascending', label: 'Name, A to Z' },
+  { value: 'name descending', label: 'Name, Z to A' },
+  { value: 'issues descending', label: 'Issues, most first' },
+  { value: 'issues ascending', label: 'Issues, fewest first' },
+];
+
 function ProjectsTable({ onOpen, openId }: { onOpen: (id: string) => void; openId: string }) {
   const toast = useToast();
   const [query, setQuery] = useState('');
@@ -180,6 +189,26 @@ function ProjectsTable({ onOpen, openId }: { onOpen: (id: string) => void; openI
     setSort({ column, direction: next });
     setPage(1);
   };
+  // While rows stack, the header and its sort buttons are hidden, so one Select above the rows
+  // shows and changes the order.
+  const sortOrder = `${sort.column} ${sort.direction}`;
+  const sortControl = (
+    <Select
+      label="Sort by"
+      showLabel
+      size="sm"
+      items={sortOrders}
+      value={sortOrder}
+      onValueChange={(value) => {
+        const [column, next] = (value ?? sortOrder).split(' ') as [
+          SortColumn,
+          'ascending' | 'descending',
+        ];
+        sortBy(column)(next);
+      }}
+      style={{ alignSelf: 'start' }}
+    />
+  );
   const all = selected.length === projects.length;
   const toggle = (id: string, checked: boolean) =>
     setSelected((current) => (checked ? [...current, id] : current.filter((item) => item !== id)));
@@ -381,6 +410,7 @@ function ProjectsTable({ onOpen, openId }: { onOpen: (id: string) => void; openI
           )}
         </Row>
       </Surface>
+      {stacked && sortControl}
       <Table.Root
         aria-label="Projects"
         density="sm"
