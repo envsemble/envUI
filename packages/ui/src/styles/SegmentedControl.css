@@ -45,7 +45,11 @@
     );
     --env-segmented-control-option-hover-color: var(
       --env-segmented-control-content,
-      var(--env-color-fg-default)
+      var(--env-color-fg-muted-hover)
+    );
+    --env-segmented-control-option-pressed-color: var(
+      --env-segmented-control-content,
+      var(--env-color-fg-muted-pressed)
     );
     --env-segmented-control-selected-color: var(
       --env-segmented-control-selected-content,
@@ -57,12 +61,13 @@
       var(--env-segmented-control-content)
     );
     /* The chosen segment's thumb: in light the muted surface, white; in dark a layer of the neutral
-       fill over the track's, so it is a step lighter than the track on every surface. light-dark()
-       follows the nearest theme's color scheme. */
+       fill's hover grade, at 85 % so its label and the focus ring keep their contrast, over the
+       track's, so it is clearly lighter than the track on every surface.
+       light-dark() follows the nearest theme's color scheme. */
     /* contrast: segmented-control-thumb */
     --env-segmented-control-thumb: light-dark(
       var(--env-color-bg-muted),
-      var(--env-color-bg-neutral-muted)
+      color-mix(in srgb, var(--env-color-bg-neutral-muted-hover) 85%, transparent)
     );
     --env-segmented-control-selected-gate: color-mix(
       in srgb,
@@ -188,12 +193,28 @@
   .env-segmented-control-item:focus-visible:not([data-checked]):not([data-disabled]) {
     background: var(--env-segmented-control-custom-fill, transparent);
   }
-  /* Under the pointer and pressed, a segment not chosen takes the text color and no fill of its own,
-     so only the thumb reads as chosen, in dark too, where a fill would look like it. The
-     application's colors keep their state layer. */
-  .env-segmented-control-item:is(:hover, :active):not([data-checked]):not([data-disabled]) {
-    background: var(--env-segmented-control-custom-fill, transparent);
-    color: var(--env-segmented-control-option-hover-color, var(--env-color-fg-default));
+  /* Under the pointer and pressed, a segment not chosen keeps a muted label, in muted text's own
+     hover and pressed grades, which hold their contrast on the layer, and takes no more than the
+     faint neutral state layer, far lighter than the thumb, so only the thumb reads as chosen, in
+     dark too. The application's colors keep their label and its state layer. */
+  .env-segmented-control-item:hover:not([data-checked]):not([data-disabled]) {
+    /* Three quarters of the neutral state layer, so the label keeps 4.5:1 on the track over a card
+       in dark. */
+    /* contrast: segmented-control-hover-layer */
+    --env-segmented-control-hover-layer: color-mix(
+      in srgb,
+      var(--env-color-bg-neutral-subtle-hover) 75%,
+      transparent
+    );
+    background: var(--env-segmented-control-custom-fill, var(--env-segmented-control-hover-layer));
+    color: var(--env-segmented-control-option-hover-color, var(--env-color-fg-muted-hover));
+  }
+  .env-segmented-control-item:active:not([data-checked]):not([data-disabled]) {
+    background: var(
+      --env-segmented-control-custom-fill,
+      var(--env-color-bg-neutral-subtle-pressed)
+    );
+    color: var(--env-segmented-control-option-pressed-color, var(--env-color-fg-muted-pressed));
   }
   /* The chosen segment rises on its thumb, which stays as it is under the pointer, as it is chosen
      already. */

@@ -8,7 +8,8 @@
      marks it on the control: the handle at full strength and faint ticks at the steps, a ruler,
      under a hovering pointer and while pressed (data-handle, data-ruler), until a release, and the
      handle alone with keyboard focus (data-handle). The text always keeps its full strength: where
-     the handle, the fill's end and the ticks pass under the label or the value, they fade instead. */
+     the handle passes under the label or the value it shortens to a mark below the text, and the
+     fill's end and the ticks fade there instead. */
   /* Color properties: a slider's colors, which an application sets on one slider through style or its
      own CSS: container the track, indicator the fill that shows the value, and content the label, the
      value, the handle and the ticks. They don't inherit; the slider passes them on to its parts. */
@@ -25,7 +26,8 @@
     inherits: false;
   }
   /* 1 while the fill's end and the handle sit under the label or the value, which Slider measures,
-     else 0; a number, so the fade between them eases. It takes effect only while the handle shows. */
+     else 0; a number, so the change between them eases. The fill's end and the ticks take it only
+     while the handle shows. */
   @property --env-slider-veil {
     syntax: '<number>';
     inherits: true;
@@ -50,9 +52,17 @@
     --env-slider-handle-inset: calc(var(--env-slider-padding) / 2);
     --env-slider-track: var(--env-slider-container, var(--env-color-bg-neutral-muted));
     /* The fill is the primary color's muted tint over the track, so it reads as a control's value
-       rather than a disabled field or a meter, and the text keeps its contrast on it. */
+       rather than a disabled field or a meter, and the text keeps its contrast on it; in dark a
+       stronger grade of the tint, so the fill stands apart from the track. light-dark() follows the
+       nearest theme's color scheme. At high contrast the muted tint in either theme, where the
+       text keeps 7:1 on it (--env-theme-high-contrast, Theme.css). */
     /* contrast: slider-fill */
-    --env-slider-fill-default: var(--env-color-bg-primary-muted);
+    --env-slider-fill-standard: light-dark(
+      var(--env-color-bg-primary-muted),
+      var(--env-color-bg-primary-subtle-pressed)
+    );
+    --env-slider-fill-high: var(--env-theme-high-contrast) var(--env-color-bg-primary-muted);
+    --env-slider-fill-default: var(--env-slider-fill-high, var(--env-slider-fill-standard));
     --env-slider-fill: var(--env-slider-indicator, var(--env-slider-fill-default));
     --env-slider-ink: var(--env-slider-content, var(--env-color-fg-default));
     /* The color of the field's error and of its invalid control, as on every field. */
@@ -148,27 +158,37 @@
   .env-slider-thumb {
     --env-slider-thumb-side: 1;
     --env-slider-thumb-at: calc(var(--env-slider-fraction, 0) * 100cqi);
+    /* Where it passes under the label or the value, the bar shortens to a mark low in the track,
+       below the text, so the value's place still shows: the mark's height, and its distance from
+       the track's bottom edge. */
+    --env-slider-mark: 0.1875rem;
+    --env-slider-mark-gap: 0.125rem;
     box-sizing: border-box;
     inline-size: var(--env-space-1);
-    block-size: 55%;
+    block-size: calc(55% + var(--env-slider-veil) * (var(--env-slider-mark) - 55%));
     border-radius: var(--env-radius-full);
     background: var(--env-slider-ink, var(--env-color-fg-default));
-    /* At rest, quieter than in use but clearly there, and gone where it passes under the label or
-       the value. */
-    opacity: calc(0.7 * (1 - var(--env-slider-veil)));
+    /* At rest, quieter than in use but clearly there. */
+    opacity: 0.7;
     transform: translateX(
-      calc(
-        var(--env-slider-thumb-side) *
-          (
-            clamp(
-                var(--env-slider-handle-inset),
-                var(--env-slider-thumb-at),
-                100cqi - var(--env-slider-handle-inset)
-              ) -
-              var(--env-slider-thumb-at)
-          )
+        calc(
+          var(--env-slider-thumb-side) *
+            (
+              clamp(
+                  var(--env-slider-handle-inset),
+                  var(--env-slider-thumb-at),
+                  100cqi - var(--env-slider-handle-inset)
+                ) -
+                var(--env-slider-thumb-at)
+            )
+        )
       )
-    );
+      translateY(
+        calc(
+          var(--env-slider-veil) *
+            (var(--env-slider-height) / 2 - var(--env-slider-mark-gap) - var(--env-slider-mark) / 2)
+        )
+      );
     transition: opacity var(--env-motion-duration-fast) var(--env-motion-ease);
   }
   .env-slider-thumb:dir(rtl) {
@@ -245,10 +265,10 @@
   .env-slider-header > .env-slider-label:dir(rtl) {
     transform-origin: right center;
   }
-  /* The handle shows where Slider marks it, under a hovering pointer, while pressed and with keyboard
-     focus, and is faint where it passes under the label or the value. */
+  /* The handle shows at full strength where Slider marks it, under a hovering pointer, while pressed
+     and with keyboard focus. */
   .env-slider-control[data-handle] .env-slider-thumb {
-    opacity: calc(1 - 0.75 * var(--env-slider-veil));
+    opacity: 1;
   }
   /* The ticks show where Slider marks the ruler, under a hovering pointer and while pressed, and fade
      out on release: not with the keyboard. */
@@ -271,11 +291,15 @@
     outline: 2px solid var(--env-field-error-color);
     outline-offset: 2px;
   }
-  /* Disabled, the slider fades, at the opacity of every disabled control; the group says it is
+  /* Disabled, the slider fades, at the opacity of every disabled control, and is flatter than at rest:
+     no handle, and a fill of the neutral tint rather than the primary color's. The group says it is
      disabled (aria-disabled), so the faded label and value read as part of an inactive control. */
   .env-slider[data-disabled] .env-slider-control {
     opacity: var(--env-state-disabled-opacity);
     cursor: default;
+  }
+  .env-slider[data-disabled] .env-slider-indicator {
+    background: var(--env-color-bg-neutral-muted);
   }
   .env-slider[data-disabled] .env-slider-thumb,
   .env-slider[data-disabled] .env-slider-track::after {
@@ -319,6 +343,7 @@
       background-color: CanvasText;
     }
     .env-slider[data-disabled] .env-slider-indicator {
+      background: none;
       box-shadow: inset 0 -4px GrayText;
     }
     .env-slider-control[data-invalid] {
