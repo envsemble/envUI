@@ -586,7 +586,7 @@ function ProjectDetails({ project }: { project: Project }) {
     <Column gap={5} padding={4}>
       <Row align="center" justify="between" gap={3}>
         <Column gap={1}>
-          <Text render={<h2 />} variant="headline">
+          <Text render={<h2 />} variant="title">
             {project.name}
           </Text>
           <Text variant="body-sm" emphasis="muted">

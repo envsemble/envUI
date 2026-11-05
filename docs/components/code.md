@@ -193,6 +193,7 @@ CodeDiff takes `before` and `after`, and a `filename`, which names the file in i
 - `header={false}` leaves out the header with its name and change counts.
 - `expandUnchanged` shows the unchanged lines between changes instead of folding them.
 - `layout` is `auto`, the default, side by side from 56 rem of width, or `unified`, one column at any width.
+- Long lines wrap, each continuation hanging four characters in, so it doesn't read as a new line without a number.
 - `countDiffLines(before, after, filename)` returns the `additions` and `deletions` for a DiffStat.
 
 ```tsx
@@ -217,4 +218,5 @@ Inline code is one part, `env-code`. A block is `env-code-block`: its header, `e
 ## Changelog
 
 - **1.0.0**: Code, CodeBlock, CodeDiff and Markdown's code use Shiki's `github-light-default` and `github-dark-dimmed` code themes instead of the Pierre themes, and `github-light-high-contrast` and `github-dark-high-contrast` under high contrast; envUI no longer needs `@pierre/theme`. The `DiffCount` that `countDiffLines` feeds is `DiffStat`. Highlighted tokens reach 4.5:1 in both app themes, and 7:1 under high contrast, in code blocks and code diffs. CodeDiff takes CodeBlock's code theme, token colors and translucent layer, instead of a theme and an opaque grey of its own. CodeBlock's and CodeDiff's words come from EnvUIProvider's `messages`; the copy button copies through the selection fallback that CopyButton uses, and its status is `env-code-block-copy-status`. The row above a block's code, `env-code-block-heading`, is `env-code-block-header`.
+- **1.0.0-prerelease.6**: A CodeDiff line that wraps hangs its continuation four characters in.
 - **1.0.0-prerelease.6**: In dark, CodeDiff's changed lines take a less saturated tint, and the line numbers' gutter keeps the full change color.

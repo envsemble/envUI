@@ -14,7 +14,7 @@ import { IconAttachFile } from '@envsemble/envui/icons/AttachFile';
 import { Cell, Section, Strip, interactionStates } from './ContactSheetParts.js';
 
 function Accordions() {
-  const items = (disabled = false) => (
+  const items = (
     <>
       <Accordion.Item value="billing" title="Billing">
         Invoices go out on the first of the month.
@@ -22,7 +22,7 @@ function Accordions() {
       <Accordion.Item value="seats" title="Seats">
         Add seats at any time; we prorate them.
       </Accordion.Item>
-      <Accordion.Item value="export" title="Export (disabled)" disabled={disabled}>
+      <Accordion.Item value="export" title="Export (disabled)" disabled>
         Export everything as CSV.
       </Accordion.Item>
     </>
@@ -31,7 +31,7 @@ function Accordions() {
     <Section name="Accordion">
       <Strip>
         <Cell caption="Billing open, Export disabled" width="22rem">
-          <Accordion.Root defaultValue={['billing']}>{items(true)}</Accordion.Root>
+          <Accordion.Root defaultValue={['billing']}>{items}</Accordion.Root>
         </Cell>
         {interactionStates.slice(1).map(({ caption, force }) => (
           <Cell
@@ -41,19 +41,19 @@ function Accordions() {
             target=".env-accordion-item:nth-child(2) button"
             width="22rem"
           >
-            <Accordion.Root>{items()}</Accordion.Root>
+            <Accordion.Root>{items}</Accordion.Root>
           </Cell>
         ))}
         <Cell caption="Multiple open" width="22rem">
           <Accordion.Root multiple defaultValue={['billing', 'seats']}>
-            {items()}
+            {items}
           </Accordion.Root>
         </Cell>
         <Cell caption="Disabled" width="22rem">
-          <Accordion.Root disabled>{items()}</Accordion.Root>
+          <Accordion.Root disabled>{items}</Accordion.Root>
         </Cell>
         <Cell caption="Skeleton" width="22rem">
-          <Accordion.Root skeleton>{items()}</Accordion.Root>
+          <Accordion.Root skeleton>{items}</Accordion.Root>
         </Cell>
       </Strip>
     </Section>

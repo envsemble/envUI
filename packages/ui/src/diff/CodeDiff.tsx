@@ -51,11 +51,18 @@ export interface CodeDiffProps extends Omit<ComponentPropsWithRef<'div'>, 'child
 }
 
 /**
+ * How far a wrapped line's continuation sits in from the line's start, in characters: a hanging
+ * indent, so it doesn't read as a new line without a number. The line keeps Diffs' own 1 ch of
+ * padding before its first character.
+ */
+const wrapHang = 4;
+
+/**
  * Diffs paints its own background from the theme's editor color, and mixes its line tints, gutter
  * and separators from it. It takes a transparent one instead, so that the diff sits on the code
  * block's layer, which its root paints over whatever surface it is on, and each line's and word's
  * tint is its color at an opacity over that layer: the colors that keep the code theme's tokens
- * readable there.
+ * readable there. A line that wraps hangs its continuation by wrapHang.
  */
 function diffCSS({ addition, deletion, additionGutter, deletionGutter }: DiffTintColors) {
   const percent = (opacity: number) => `${Math.round(opacity * 100)}%`;
@@ -75,6 +82,10 @@ function diffCSS({ addition, deletion, additionGutter, deletionGutter }: DiffTin
 [data-line], [data-no-newline], [data-gutter-buffer], [data-column-number] {
   --mix-light: ${kept};
   --mix-dark: ${kept};
+}
+[data-overflow=wrap] [data-line] {
+  padding-inline-start: ${1 + wrapHang}ch;
+  text-indent: -${wrapHang}ch;
 }`;
 }
 
