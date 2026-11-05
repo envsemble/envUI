@@ -47,12 +47,15 @@
     block-size: var(--env-spinner-size);
     color: var(--env-spinner-color, var(--env-color-bg-primary-emphasis));
   }
+  /* The circle is about 125.66 long (r 20). Its dash and gap add up to it, so the pattern repeats
+     once round and the arc ends a turn where it began; the arc never shortens below 30, about a
+     quarter turn, so a small spinner reads as an arc in every frame, never a lone dot. */
   .env-spinner-arc {
     fill: none;
     stroke: currentColor;
     stroke-width: 5;
     stroke-linecap: round;
-    stroke-dasharray: 1 200;
+    stroke-dasharray: 30 95.66;
     animation: env-spinner-arc 1.4s ease-in-out infinite;
   }
   @keyframes env-spinner-turn {
@@ -62,16 +65,16 @@
   }
   @keyframes env-spinner-arc {
     0% {
-      stroke-dasharray: 1 200;
+      stroke-dasharray: 30 95.66;
       stroke-dashoffset: 0;
     }
     50% {
-      stroke-dasharray: 90 200;
+      stroke-dasharray: 90 35.66;
       stroke-dashoffset: -35;
     }
     100% {
-      stroke-dasharray: 90 200;
-      stroke-dashoffset: -124;
+      stroke-dasharray: 30 95.66;
+      stroke-dashoffset: -125.66;
     }
   }
 
@@ -82,7 +85,7 @@
     }
     .env-spinner-arc {
       animation: none;
-      stroke-dasharray: 80 200;
+      stroke-dasharray: 80 45.66;
     }
   }
 }

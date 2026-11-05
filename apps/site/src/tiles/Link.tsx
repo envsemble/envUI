@@ -1,4 +1,4 @@
-import { Link, Text } from '@envsemble/envui';
+import { Column, Link, Text } from '@envsemble/envui';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
 /**
@@ -21,16 +21,20 @@ const script: PointerStep[] = [
   { wait: 700 },
 ];
 
-/** A link in a line of text. Its click stays in the tile. */
+/**
+ * A link on a line of its own under a line of text, a step apart, so its focus ring has room round
+ * it rather than over the words beside it. Its click stays in the tile.
+ */
 export default function LinkTile() {
   usePointer(script);
   return (
-    <Text>
-      Read the{' '}
-      <Link href="/guide" onClick={(event) => event.preventDefault()}>
-        project guide
-      </Link>
-      .
-    </Text>
+    <Column gap={2}>
+      <Text>Setup takes five minutes.</Text>
+      <Text>
+        <Link href="/guide" onClick={(event) => event.preventDefault()}>
+          Read the project guide
+        </Link>
+      </Text>
+    </Column>
   );
 }

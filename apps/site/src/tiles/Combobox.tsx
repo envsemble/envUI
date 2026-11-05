@@ -1,48 +1,57 @@
-import { Avatar, Combobox, type ComboboxItem } from '@envsemble/envui';
+import { useState } from 'react';
+import { Combobox, type ComboboxItem } from '@envsemble/envui';
 import { usePointer, type PointerStep } from '../motion/Motion';
+import { Renew } from '../motion/Renew';
 
-const people: ComboboxItem[] = ['Alex Morgan', 'Priya Shah'].map((name) => ({
-  value: name.toLowerCase().replace(' ', '.'),
+const labels: ComboboxItem[] = ['Design', 'Docs'].map((name) => ({
+  value: name.toLowerCase(),
   label: name,
-  start: <Avatar name={name} size="sm" />,
 }));
 
 const input = '.env-combobox-input';
 
-/** A name typed, which narrows the list to one; chosen, then cleared again. */
+/**
+ * A label typed after the chip already chosen, which narrows the list to one; chosen, it joins
+ * the first as a second chip, and the two hold a while; then the field is drawn anew as it began, with
+ * a short fade (Renew).
+ */
 const script: PointerStep[] = [
   { wait: 300 },
   { to: input, x: 0.3 },
   { wait: 300 },
   { click: true },
   { wait: 300 },
-  { type: 'pr', into: input, every: 260 },
+  { type: 'do', into: input, every: 260 },
   { wait: 700 },
   { to: '.env-combobox-item', duration: 400 },
   { wait: 300 },
   { click: true },
-  { wait: 1200 },
-  { to: '.env-combobox-clear', duration: 400 },
-  { wait: 200 },
-  { click: true },
-  { wait: 500 },
+  { wait: 300 },
   { leave: true },
-  { wait: 400 },
+  { blur: true },
+  { wait: 2000 },
+  { cue: 'renew' },
+  { wait: 500 },
 ];
 
 /**
- * A combobox of two people, so its field and its open list show whole in a gallery's low tile,
- * about as narrow as a text field, so a phone's tile draws it at about its own size too.
+ * A combobox of two labels, several to choose, one already chosen as a chip beside the field's
+ * text, so at rest it reads as a field to type in rather than a select; short labels, so two chips
+ * share the field's one row, and its field and its open list show whole in a gallery's low tile.
  */
 export default function ComboboxTile() {
-  usePointer(script);
+  const [round, setRound] = useState(0);
+  usePointer(script, { onCue: () => setRound((count) => count + 1) });
   return (
-    <Combobox
-      label="Owner"
-      placeholder="Type a name"
-      items={people}
-      clearable
-      style={{ inlineSize: '9.5rem' }}
-    />
+    <Renew round={round}>
+      <Combobox
+        multiple
+        label="Labels"
+        placeholder="Add a label"
+        items={labels}
+        defaultValue={['design']}
+        style={{ inlineSize: '12rem' }}
+      />
+    </Renew>
   );
 }
