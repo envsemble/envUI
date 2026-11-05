@@ -167,14 +167,10 @@ const componentNames =
 
 const rehypePlugins = [headingIds];
 
-/** The languages most of the site's code is in, which its blocks don't name. */
-const usualLanguages = new Set(['tsx', 'ts', 'jsx', 'js']);
-
 /**
- * The site's code blocks: the code alone, with its copy button in the block's top end corner
- * rather than on a heading row of its own, and the language named beside the button only where it
- * isn't the usual TypeScript and JSX, such as sh or css (SiteText.css). Every block keeps its lines
- * whole and scrolls sideways where one is too long, its end edge fading, imports included.
+ * The site's code blocks: the code alone, unlabelled, with its copy button in the block's top end
+ * corner rather than on a heading row of its own (SiteText.css). Every block keeps its lines whole
+ * and scrolls sideways where one is too long, the edge it overflows at fading, imports included.
  */
 const elements: NonNullable<MarkdownProps['components']> = {
   pre: function SiteCodeBlock({ node, children }) {
@@ -186,16 +182,10 @@ const elements: NonNullable<MarkdownProps['components']> = {
       .map((child) => (child.type === 'text' ? child.value : ''))
       .join('');
     const language = String(code.properties.className ?? '').match(/language-([^,\s]+)/)?.[1];
-    const named = language && !usualLanguages.has(language) ? language : undefined;
     return (
-      <div className="site-code-block" data-language={named}>
+      <div className="site-code-block">
         <CodeBlock language={language}>{source}</CodeBlock>
         <div className="site-code-block-corner">
-          {named && (
-            <span className="site-code-block-language" aria-hidden="true">
-              {named}
-            </span>
-          )}
           <CopyButton value={source} variant="ghost" size="sm" aria-label="Copy code" />
         </div>
       </div>
