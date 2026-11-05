@@ -17,7 +17,7 @@ const script: PointerStep[] = [
   { wait: 600 },
 ];
 
-/** A drop zone for documents. */
+/** A drop zone for documents, the small one, which shows whole in a gallery's low tile. */
 export default function DropZoneTile() {
   const [pending, setPending] = useState(false);
   usePointer(script);
@@ -28,10 +28,12 @@ export default function DropZoneTile() {
   }, [pending]);
   return (
     <DropZone
-      label={pending ? 'Uploading report.pdf' : 'Drop files here, or browse'}
+      size="sm"
+      label={pending ? 'Uploading report.pdf' : 'Drop files or browse'}
+      description="PDF, up to 10 MB"
       pending={pending}
       onFilesAccepted={() => setPending(true)}
-      style={{ inlineSize: '12rem' }}
+      style={{ inlineSize: '12.5rem' }}
     />
   );
 }

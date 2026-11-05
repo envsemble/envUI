@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { Table } from '@envsemble/envui';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
+/** Two projects, so the table shows whole, its frame in view, in a gallery's low tile. */
 const projects = [
   { name: 'Website', tasks: 12 },
-  { name: 'Checkout', tasks: 27 },
   { name: 'Billing', tasks: 4 },
 ];
 
@@ -12,8 +12,8 @@ const row = (index: number) => `.env-table-body .env-table-row:nth-child(${index
 const sort = '.env-table-sort-button';
 
 /*
- * Down the rows, the first chosen; its column sorted the other way, which takes the chosen row to
- * the bottom, and back; the row let go again.
+ * Down the rows, the first chosen; its column sorted the other way, which takes the chosen row
+ * below the other, and back; the row let go again.
  */
 const script: PointerStep[] = [
   { wait: 300 },
@@ -48,7 +48,7 @@ export default function TableTile() {
     direction === 'ascending' ? a.tasks - b.tasks : b.tasks - a.tasks,
   );
   return (
-    <Table.Root aria-label="Projects" style={{ inlineSize: '13rem' }}>
+    <Table.Root aria-label="Projects" style={{ inlineSize: '11.5rem' }}>
       <Table.Head>
         <Table.Row>
           <Table.HeaderCell>Project</Table.HeaderCell>

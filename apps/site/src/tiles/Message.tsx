@@ -1,4 +1,4 @@
-import { CopyButton, Message, MessageList } from '@envsemble/envui';
+import { CopyButton, Message, MessageList, Row } from '@envsemble/envui';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
 const answer = '.env-message[data-from="other"] .env-message-content';
@@ -18,16 +18,22 @@ const script: PointerStep[] = [
   { wait: 1500 },
 ];
 
-/** A question of one's own, in a bubble, and the assistant's answer, with an action to copy it. */
+/**
+ * The assistant's answer, with an action to copy it at its end, so Copied, above the action, shows
+ * beside the answer's line rather than over it.
+ */
 export default function MessageTile() {
   usePointer(script);
   return (
-    <MessageList aria-label="Conversation" style={{ inlineSize: '9.5rem' }}>
-      <Message from="self">Is it ready?</Message>
+    <MessageList aria-label="Conversation" style={{ inlineSize: '12rem' }}>
       <Message
         from="other"
         author="Assistant"
-        actions={<CopyButton value="Yes, it’s shared.">Copy</CopyButton>}
+        actions={
+          <Row justify="end" style={{ flex: '1 1 auto' }}>
+            <CopyButton value="Yes, it’s shared.">Copy</CopyButton>
+          </Row>
+        }
       >
         Yes, it’s shared.
       </Message>
