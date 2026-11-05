@@ -4,7 +4,8 @@ import { usePointer, type PointerStep } from '../motion/Motion';
 const control = '.env-slider-control';
 
 /*
- * Hovered at its value, which shows the handle and the ruler; pressed there and dragged up, down
+ * Hovered at its value, which shows the handle and the ruler; pressed there and dragged up to
+ * about 70, short of the value at the end, which the handle and the pointer would cover; down
  * and back to where it began, and let go.
  */
 const script: PointerStep[] = [
@@ -12,7 +13,7 @@ const script: PointerStep[] = [
   { to: control, x: 0.4 },
   { wait: 500 },
   { press: true },
-  { to: control, x: 0.85, duration: 900 },
+  { to: control, x: 0.7, duration: 750 },
   { wait: 250 },
   { to: control, x: 0.2, duration: 1100 },
   { wait: 250 },
