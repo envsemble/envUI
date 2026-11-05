@@ -187,6 +187,9 @@ export class VirtualPointer {
           point.y <= box.bottom,
       );
       if (!under) continue;
+      // What a box around it clips away, such as a page's body past the foot of the region it
+      // scrolls in, under the bar below it, isn't there to be hit.
+      if (this.clippedAt(element, point)) continue;
       const style = getComputedStyle(element);
       // What is clipped away whole, such as a screen reader's announcer, is no target.
       if (/^inset\((50|100)%/.test(style.clipPath)) continue;
@@ -197,6 +200,45 @@ export class VirtualPointer {
       return element;
     }
     return this.scope;
+  }
+
+  /**
+   * Whether a point of an element is clipped away by a box around it inside the preview that clips
+   * what overflows it, as a browser's own hit test leaves it out. A box placed out of flow escapes
+   * the clips between it and the box that places it: an absolute one those up to its nearest
+   * positioned ancestor, a fixed one every clip inside the preview, whose canvas places it.
+   */
+  private clippedAt(element: Element, point: Point) {
+    let escapes: 'none' | 'absolute' | 'fixed' = 'none';
+    for (
+      let node: Element | null = element;
+      node && node !== this.scope;
+      node = node.parentElement
+    ) {
+      const style = getComputedStyle(node);
+      if (node !== element) {
+        // The box that places it: for an absolute one a positioned box, for a fixed one a
+        // transformed box, which also places what is fixed.
+        const transformed = style.transform !== 'none';
+        if (escapes === 'absolute' && (style.position !== 'static' || transformed))
+          escapes = 'none';
+        if (escapes === 'fixed' && transformed) escapes = 'none';
+        const clips = style.overflowX !== 'visible' || style.overflowY !== 'visible';
+        if (clips && escapes === 'none') {
+          const box = node.getBoundingClientRect();
+          if (
+            point.x < box.left ||
+            point.x > box.right ||
+            point.y < box.top ||
+            point.y > box.bottom
+          )
+            return true;
+        }
+      }
+      if (escapes === 'none' && style.position === 'absolute') escapes = 'absolute';
+      if (style.position === 'fixed') escapes = 'fixed';
+    }
+    return false;
   }
 
   /**
