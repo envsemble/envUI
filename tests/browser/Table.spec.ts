@@ -271,9 +271,12 @@ test('selected rows report aria-selected and take the selection colors in both t
     const other = table.getByRole('row', { name: /Quarterly report/ });
     await expect(selected).toHaveAttribute('aria-selected', 'true');
     await expect(other).toHaveAttribute('aria-selected', 'false');
+    // Three quarters of the selection fill over the table's surface, so wide rows don't outweigh
+    // their content.
     const selection = await selected.evaluate((row) => {
       const probe = document.createElement('span');
-      probe.style.backgroundColor = 'var(--env-color-bg-selected)';
+      probe.style.backgroundColor =
+        'color-mix(in oklab, var(--env-color-bg-selected) 75%, var(--env-color-bg-raised))';
       row.closest('.env-theme')!.append(probe);
       const color = getComputedStyle(probe).backgroundColor;
       probe.remove();
