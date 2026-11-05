@@ -99,7 +99,7 @@ function membersOf(
     sections?: { id: string; blocks: { kind: string; markdown?: string }[] }[];
   },
   components: readonly string[],
-  props: ReturnType<typeof readProps>,
+  props: NonNullable<ReturnType<typeof readProps>>,
 ) {
   const members = components.filter(
     (name) =>
@@ -161,7 +161,8 @@ export function generateDocumentation() {
     // A guide names the exports it documents, such as LinkProvider, so a page that relates to one
     // links to it, and may carry a status, such as alpha.
     if (!sections) {
-      const members = frontmatter.components && membersOf(document, frontmatter.components, props);
+      const members =
+        frontmatter.components && props && membersOf(document, frontmatter.components, props);
       return {
         ...entry,
         ...(frontmatter.status && { status: frontmatter.status }),
@@ -170,7 +171,7 @@ export function generateDocumentation() {
       };
     }
     const members =
-      kind === 'component' && membersOf(document, frontmatter.components ?? [], props);
+      kind === 'component' && props && membersOf(document, frontmatter.components ?? [], props);
     const metadata = {
       ...(frontmatter.status && { status: frontmatter.status }),
       ...(frontmatter.since && { since: frontmatter.since }),

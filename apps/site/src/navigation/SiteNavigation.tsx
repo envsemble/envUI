@@ -90,6 +90,8 @@ function withMembers(
     link,
     ...(page.document?.members ?? []).map(
       (member): NavigationDrawerDestination => ({
+        // Two can lead to one heading, such as NavigationRail and NavigationBar.
+        id: `${page.path} ${member.name}`,
         group: link.group,
         label: member.name,
         href: routeHref(`${page.path}?section=${anchor(member)}`),
