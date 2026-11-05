@@ -715,6 +715,15 @@ test('every tile of the galleries is fitted: components at one scale, a scene at
       }),
     );
     expect(cutPopups, route).toEqual([]);
+    // A dialog that fits its stage, such as a confirm dialog's question and actions, is drawn
+    // whole, cut off nowhere.
+    if (route === '/components')
+      await expect(
+        page
+          .locator('.catalogue-gallery-tile')
+          .filter({ has: page.locator('.catalogue-gallery-name', { hasText: /^ConfirmDialog$/ }) })
+          .locator('.catalogue-related-canvas[data-fitted]'),
+      ).not.toHaveAttribute('data-cut', /./);
   }
 });
 
