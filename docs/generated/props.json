@@ -404,7 +404,7 @@
           "name": "icon",
           "type": "ReactNode",
           "required": false,
-          "description": "A decorative icon before the label, such as a check mark; hidden from assistive technology."
+          "description": "A decorative icon before the label, such as a check mark; hidden from assistive technology. A done badge has a check mark unless it is given another icon, or `null` for none."
         },
         {
           "name": "children",
@@ -423,7 +423,7 @@
           "type": "'neutral' | 'primary' | 'accent' | 'success' | 'warning' | 'danger' | 'done'",
           "required": false,
           "default": "'neutral'",
-          "description": "Meaning of the state: primary is the blue of what is current, accent the purple that stands out, done the quiet slate of completed work. Neutral by default. A count in the primary tone, solid, draws attention, such as unread messages that need an answer."
+          "description": "Meaning of the state: primary is the blue of what is current, accent the purple that stands out, done the quiet slate of completed work, which leads with a check mark. Neutral by default. A count in the primary tone, solid, draws attention, such as unread messages that need an answer."
         },
         {
           "name": "variant",
@@ -2528,7 +2528,7 @@
           "type": "'inline' | 'stacked' | 'auto'",
           "required": false,
           "default": "'auto'",
-          "description": "Where each label sits: inline, beside its value, in a column as wide as the longest label; stacked, above its value; auto, inline, stacked below 24 rem of the list's own width."
+          "description": "Where each label sits: inline, beside its value, in a column as wide as the longest label; stacked, above its value; auto, inline, stacked below 18 rem of the list's own width."
         },
         {
           "name": "size",

@@ -181,7 +181,7 @@ A Badge's label is its `children`, a state, a name or a category in a word or tw
 - `solid`: it fills the background with the tone.
 - `outline`: it draws a border.
 
-`tone` is `neutral`, the default, `primary`, the blue of what is current, `accent`, the purple that stands out, `success`, `warning`, `danger` or `done`. Done is the slate of completed work: a quiet blue-gray, so finished things recede, apart from the success green, the accent purple and the primary blue.
+`tone` is `neutral`, the default, `primary`, the blue of what is current, `accent`, the purple that stands out, `success`, `warning`, `danger` or `done`. Done is the slate of completed work: a quiet blue-gray in a fainter tint than neutral, so finished things recede, apart from the success green, the accent purple and the primary blue. A done badge leads with a check mark, which tells it from a neutral one by more than its hue; another `icon` replaces it, and `icon={null}` leaves it out.
 
 ```tsx
 <Badge tone="success">Ready</Badge>
@@ -229,6 +229,7 @@ The parts are the pill, `env-badge`, its icon, `env-badge > env-icon`, and its l
 
 ## Changelog
 
+- **1.0.0-prerelease.6**: A done badge leads with a check mark, and a soft one takes a fainter tint than neutral. On a selected Table row or List item, a soft badge lays its tint over the raised surface, so it stays apart from the selection's blue.
 - **1.0.0-prerelease.6**: The `done` tone is a quiet slate blue-gray, in place of a cyan that sat too close to the success green at table size: completed things recede.
 - **1.0.0-prerelease.5**: A little roomier: 3 px above and below its label and 10 px at the sides, edge included.
 - **1.0.0**: A soft badge in the accent, success, warning or danger tone takes the tone's stronger tint, and its label is semibold; at high contrast it keeps the softer tint.

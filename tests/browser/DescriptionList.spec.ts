@@ -24,7 +24,7 @@ test.describe('DescriptionList', () => {
     expect(shapes).toEqual(['DIV>DT+DD', 'DIV>DT+DD', 'DIV>DT+DD']);
   });
 
-  test('puts labels beside values, and above them below 24 rem', async ({ page }) => {
+  test('puts labels beside values, and above them below 18 rem', async ({ page }) => {
     await page.goto(fixture);
     const list = page.getByTestId('auto');
     const label = list.getByRole('term').first();
