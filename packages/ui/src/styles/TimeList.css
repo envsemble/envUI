@@ -48,7 +48,8 @@
     justify-content: center;
     block-size: var(--env-time-list-row);
     padding-inline: var(--env-space-2);
-    border-radius: var(--env-radius-sm);
+    /* A pill, as the chosen calendar day is round. */
+    border-radius: var(--env-radius-full);
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
     scroll-snap-align: center;

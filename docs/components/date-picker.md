@@ -259,8 +259,9 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 
 ## Changelog
 
-- **1.0.0-prerelease.6**: The chosen hour and minute take the chosen day's solid accent fill rather than the selection's tint, so a chosen day and time look alike; a wheel with fewer values than it shows rows, such as minutes every 15, no longer loops and shows a value twice, while its arrow keys still wrap around.
+- **1.0.0-prerelease.6**: The chosen hour and minute take the chosen day's solid accent fill rather than the selection's tint, and are pills, as the chosen day is round, so a chosen day and time look alike; a wheel with fewer values than it shows rows, such as minutes every 15, no longer loops and shows a value twice, while its arrow keys still wrap around.
 - **1.0.0-prerelease.6**: With a time, the wheels move under the calendar where the card has no room for them beside it, rather than running past its edge.
+- **1.0.0-prerelease.6**: Days outside `min` and `max` take the disabled text color, faded, so they can't be taken for days that can be chosen; today keeps its accent color.
 - **1.0.0-prerelease.6**: The `floating` variant and the `variant` prop are gone: the field is outlined, and takes `size="lg"` in a long form on a page. The field takes a text area's rounded corners rather than round ends, still as tall as a button.
 - **1.0.0-prerelease.6**: The calendar card takes the width of a field a little wider than it, up to 1 rem, so it ends with the field, and Today and Clear follow the calendar's six weeks closely.
 - **1.0.0-prerelease.5**: `defaultTime` is `placeholderTime`, as React Aria names it: `default` names an uncontrolled starting value elsewhere.
