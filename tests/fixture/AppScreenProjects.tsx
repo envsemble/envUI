@@ -81,6 +81,15 @@ const statusTone = {
   paused: 'neutral',
 } as const;
 
+/** A project's status: the routine one, healthy, outlined, so the states that need people stand out. */
+function StatusBadge({ status }: { status: Status }) {
+  return (
+    <Badge tone={statusTone[status]} variant={status === 'healthy' ? 'outline' : 'soft'}>
+      {statusLabel[status]}
+    </Badge>
+  );
+}
+
 const people = [
   'Priya Shah',
   'Sam Lee',
@@ -523,7 +532,7 @@ function ProjectsTable({ onOpen, openId }: { onOpen: (id: string) => void; openI
                 </Row>
               </Table.Cell>
               <Table.Cell label="Status" nowrap>
-                <Badge tone={statusTone[project.status]}>{statusLabel[project.status]}</Badge>
+                <StatusBadge status={project.status} />
               </Table.Cell>
               <Table.Cell label="Owner" nowrap>
                 <Row align="center" gap={2}>
@@ -600,7 +609,7 @@ function ProjectDetails({ project }: { project: Project }) {
             {project.repository}
           </Text>
         </Column>
-        <Badge tone={statusTone[project.status]}>{statusLabel[project.status]}</Badge>
+        <StatusBadge status={project.status} />
       </Row>
       <DescriptionList.Root aria-label={`About ${project.name}`}>
         <DescriptionList.Item label="Owner">
