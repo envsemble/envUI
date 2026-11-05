@@ -1,6 +1,6 @@
 import { Markdown } from '@envsemble/envui/content';
 import { useMedia } from '../motion/Autoplay';
-import { useTimeline } from '../motion/Motion';
+import { useHeldView, useTimeline } from '../motion/Motion';
 import { narrowGallery } from './Tiles';
 
 /**
@@ -25,5 +25,7 @@ const shortNotes = ['## Launch\n- Review it', '## Launch\n- Review it\n- Ship `v
 export default function MarkdownTile() {
   const step = useTimeline([1000, 4000]);
   const narrow = useMedia(narrowGallery);
+  // The added item grows below the note, which holds still.
+  useHeldView(true);
   return <Markdown>{(narrow ? shortNotes : notes)[step]}</Markdown>;
 }

@@ -55,14 +55,27 @@ export function mustShowOf(root: Element, anywhere = false): string[] {
 /** How many of each preview's parts hold its view, by the preview's root element. */
 const holding = new WeakMap<Element, number>();
 
-/** Holds a preview's view while it plays; returns the release. */
-export function holdView(root: Element) {
+/** How many of them lay it out from its window's top, by the preview's root element. */
+const fromTop = new WeakMap<Element, number>();
+
+/**
+ * Holds a preview's view while it plays, and with `top`, lays it out from its window's top, so what
+ * it adds as it plays, such as a list's next item, grows below what stays; returns the release.
+ */
+export function holdView(root: Element, top = false) {
   holding.set(root, (holding.get(root) ?? 0) + 1);
-  return () => void holding.set(root, (holding.get(root) ?? 1) - 1);
+  if (top) fromTop.set(root, (fromTop.get(root) ?? 0) + 1);
+  return () => {
+    holding.set(root, (holding.get(root) ?? 1) - 1);
+    if (top) fromTop.set(root, (fromTop.get(root) ?? 1) - 1);
+  };
 }
 
 /** Whether a preview's view holds while it plays. */
 export const holdsView = (root: Element) => (holding.get(root) ?? 0) > 0;
+
+/** Whether a preview lays out from its window's top (holdView). */
+export const holdsFromTop = (root: Element) => (fromTop.get(root) ?? 0) > 0;
 
 /*
  * Where a playing tile's pointer is heading (usePointer, Motion.tsx): the point of its current move,

@@ -23,10 +23,13 @@
      other tiles' do; a larger one, such as a picker, is cut off at its foot as a calendar is. A
      modal, such as a dialog, has the whole stage for its screen, its backdrop over all of it, and
      shows from its top where it is taller. A popup's tile is written to show whole, or as a window
-     onto it from its top (tiles/). */
+     onto it from its top (tiles/). A tile that holds its view, such as a picker resting open, is
+     drawn smaller where what its script acts on, such as the chosen row, would otherwise reach
+     into the fade at the stage's foot, but never smaller than `--catalogue-own-held-least`. */
   --catalogue-own-least: 12rem;
   --catalogue-own-least-block: 4.5rem;
   --catalogue-own-popup-least: 0.84;
+  --catalogue-own-held-least: 0.7;
 }
 
 .catalogue-gallery-grid {
@@ -50,9 +53,9 @@
 
 /* The stage of a gallery tile: wide and low, as most components are, so a row of controls
    doesn't stand in empty space and many components can be scanned at once; what is taller, such
-   as a calendar, is cut off at its foot after its last whole row, fading out. Each page's own tile lays out in its own window (tiles/Tiles.ts,
-   Related.css); a page without one shows its example in a window that counts whole
-   (Related.tsx), so it is drawn at the tiles' scale. */
+   as a calendar, is cut off at its foot, fading out through the rows there. Each page's own tile
+   lays out in its own window (tiles/Tiles.ts, Related.css); a page without one shows its example
+   in a window that counts whole (Related.tsx), so it is drawn at the tiles' scale. */
 .catalogue-gallery-stage.catalogue-gallery-stage {
   aspect-ratio: 16 / 9;
   max-block-size: none;
@@ -73,36 +76,44 @@
   aspect-ratio: 4 / 3;
 }
 
-/* A scene lays out from its window's top rather than its middle: at rest the view centres what it
-   paints either way (useFit.ts), and as it plays, what grows or shrinks in it, such as a list a
-   filter narrows or files added, changes below what stays, which holds still. */
-.catalogue-gallery-stage[data-scene] .catalogue-related-canvas {
+/* A component's picture, not its stage, is clipped to the stage's corners: a popup measures the room
+   it has against the boxes that clip it, and would shift off its trigger to fit inside the stage,
+   rather than open where it opens in an application and be framed there (useFit.ts). */
+.catalogue-gallery-grid:not([data-scenes]) .catalogue-gallery-stage.catalogue-gallery-stage {
+  overflow: visible;
+}
+
+.catalogue-gallery-grid:not([data-scenes]) .catalogue-related-crop {
+  clip-path: inset(0 round var(--env-radius-surface));
+}
+
+/* A scene lays out from its window's top rather than its middle, also with its overlay layer: at
+   rest the view centres what it paints either way (useFit.ts), and as it plays, what grows or
+   shrinks in it, such as a list a filter narrows or files added, changes below what stays, which
+   holds still. */
+.catalogue-gallery-stage[data-scene] .catalogue-related-canvas,
+.catalogue-gallery-stage[data-scene] .catalogue-related-canvas:has(> .catalogue-overlay-layer) {
   place-content: start stretch;
 }
 
 /* On a phone, components two to a row on lower stages, so the gallery stays short: each drawn at
    one of a few scales (useFit.ts), its own size where it fits its stage, else `--catalogue-own-floor`,
    laid out as wide as the stage shows at that scale, and an open popup down to its least,
-   `--catalogue-own-popup-least`; what is larger still is cut off at its end and its foot, fading
-   out. A pattern's scene keeps its own card, one to a row (above). */
+   `--catalogue-own-popup-least`, as legible as the tiles beside it; what is larger still is shown
+   from its top and cut off at its end and its foot, fading out, and only a held view, such as a
+   picker, is drawn smaller, down to `--catalogue-own-held-least` (above). A pattern's scene keeps
+   its own card, one to a row (above). */
 @container catalogue-gallery (width < 27.25rem) {
   .catalogue-gallery-grid:not([data-scenes]) {
     --catalogue-own-least: 0rem;
     --catalogue-own-floor: 0.85;
-    --catalogue-own-popup-least: 0.7;
+    --catalogue-own-popup-least: 0.85;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     row-gap: var(--env-space-5);
     column-gap: var(--env-space-4);
   }
-  /* The picture, not the stage, is clipped to the stage's corners: a popup measures the room it
-     has against the boxes that clip it, and would shift off its trigger to fit inside a stage
-     narrower than it, rather than run past the stage's end and be cut off there. */
   .catalogue-gallery-grid:not([data-scenes]) .catalogue-gallery-stage.catalogue-gallery-stage {
     aspect-ratio: 16 / 10;
-    overflow: visible;
-  }
-  .catalogue-gallery-grid:not([data-scenes]) .catalogue-related-crop {
-    clip-path: inset(0 round var(--env-radius-surface));
   }
   .catalogue-gallery-grid:not([data-scenes])
     .catalogue-gallery-stage.catalogue-gallery-stage
@@ -129,6 +140,13 @@
   inline-size: 16rem;
   block-size: 12rem;
   min-block-size: 0;
+}
+
+/* So does a tile that grows as it plays, such as a note gaining a line (useHeldView, Motion.tsx):
+   what it adds grows below what stays. */
+.catalogue-gallery-stage .catalogue-related-canvas[data-from-top],
+.catalogue-gallery-stage .catalogue-related-canvas[data-from-top]:has(> .catalogue-overlay-layer) {
+  place-content: start stretch;
 }
 
 /* The name under the picture, in body text of a medium weight, so a row of tiles reads by its
@@ -213,8 +231,8 @@
   --catalogue-crop-end: var(--catalogue-crop-fade);
 }
 
-/* A row cut off at the foot is hidden whole, and the fade starts where it did (useFit.ts), so the
-   picture ends on a whole row. */
+/* A row that would show only a sliver in the fade's faint end is hidden whole (useFit.ts); the
+   others fade out through the foot. */
 .catalogue-related-crop [data-catalogue-past] {
   visibility: hidden;
 }

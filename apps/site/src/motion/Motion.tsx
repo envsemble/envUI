@@ -554,11 +554,13 @@ export function useMustShow(...selectors: string[]) {
 /**
  * Holds a tile's view as it plays, for a tile whose still is its largest state, such as a select
  * resting with its list open: framed on that still, nothing in it is drawn smaller or moved while
- * its animation acts within it (MustShow.ts).
+ * its animation acts within it (MustShow.ts). With `top`, for a tile that grows as it plays, such
+ * as a note gaining a line, it lays out from its window's top, so what it adds grows downward and
+ * what stays holds still.
  */
-export function useHeldView() {
+export function useHeldView(top = false) {
   const { root } = use(PlaybackContext);
-  useEffect(() => (root ? holdView(root) : undefined), [root]);
+  useEffect(() => (root ? holdView(root, top) : undefined), [root, top]);
 }
 
 /**

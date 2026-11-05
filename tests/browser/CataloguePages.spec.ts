@@ -642,14 +642,16 @@ test('every tile of the galleries is fitted: components at one scale, a scene at
         if (!shown.length) return [`${name}: empty`];
         // A popup shown open is drawn about as its tile is: in a component's, no larger than the
         // one scale and no smaller than the least a component's popup is drawn at, or the one
-        // scale where that is smaller; in a scene, at about its own size, as the scene is, so its
-        // words read as the other tiles' do (Gallery.css).
+        // scale where that is smaller, or a held view's least for a tile that rests open, such as
+        // a picker, what its script acts on whole above its fade; in a scene, at about its own
+        // size, as the scene is, so its words read as the other tiles' do (Gallery.css).
         if (canvas.hasAttribute('data-popup')) {
           const at = Number(scaleOf(canvas));
           const own = canvas.hasAttribute('data-own-size');
           const most = own ? Number(one ?? 1) : 1;
+          const restsOpen = /^(Select|Combobox|Menubar|CommandPalette|\w+Picker)$/.test(name);
           // Every component's popup, a dialog's too, is drawn no smaller than one least (useFit.ts).
-          const least = Math.min(most, own ? 0.84 : 0.95);
+          const least = Math.min(most, own ? (restsOpen ? 0.7 : 0.84) : 0.95);
           return at >= least - 0.001 && at <= most ? [] : [`${name}: popup drawn at ${at}`];
         }
         if (canvas.hasAttribute('data-own-size'))
@@ -671,13 +673,20 @@ test('every tile of the galleries is fitted: components at one scale, a scene at
     expect(count).toBeGreaterThan(route === '/components' ? 60 : 10);
     for (let index = 0; index < count; index += 4) await tiles.nth(index).scrollIntoViewIfNeeded();
     await expect.poll(unfitted, { message: route }).toEqual([]);
-    // A picture cut off at its foot ends on a whole row: each row of a menu, a list, a table or a
-    // tree that shows ends inside its stage.
+    // A picture cut off at its foot is never cut through a row: each row of a menu, a list, a
+    // table or a tree that reaches past the foot fades out there, under a fade of at least half a
+    // rem, rather than ending in a slice through it.
     const cutRows = await tiles.evaluateAll((items) =>
       items.flatMap((tile) => {
         const canvas = tile.querySelector('.catalogue-related-canvas[data-cut~="bottom"]');
         if (!canvas) return [];
         const stage = tile.querySelector('.catalogue-related-stage')!.getBoundingClientRect();
+        const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
+        const length = getComputedStyle(canvas.parentElement!)
+          .getPropertyValue('--catalogue-crop-bottom')
+          .trim();
+        const fade = parseFloat(length) * (length.endsWith('rem') ? rem : 1);
+        if (fade >= rem / 2) return [];
         const rows = "[role^='menuitem'], [role='option'], [role='row'], [role='treeitem'], li, tr";
         return [...canvas.querySelectorAll(rows)]
           .filter((row) => !row.querySelector(rows))
@@ -904,6 +913,9 @@ test("a gallery tile that plays draws out what it opens inside its stage and res
   }
 });
 
+/** The edges a popup tile that rests open may be cut off at on a phone, by its name. */
+const phoneCut: Record<string, RegExp> = { Menubar: /top|bottom/, CommandPalette: /top|end/ };
+
 test('a popup tile rests open and holds one view from its still through its play', async ({
   page,
 }) => {
@@ -919,7 +931,9 @@ test('a popup tile rests open and holds one view from its still through its play
         has: page.locator('.catalogue-gallery-name', { hasText: new RegExp(`^${name}$`) }),
       });
       await tile.scrollIntoViewIfNeeded();
-      // At rest, the popup shows open, cut off nowhere.
+      // At rest, the popup shows open, cut off nowhere; on a phone, where it is larger than the
+      // stage at a popup's least, it runs on past the stage's edge, fading out there, rather than
+      // being drawn smaller: the menu bar's menu at its end, the command palette at its foot.
       if (name !== 'Avatar') {
         await expect(
           tile
@@ -931,7 +945,7 @@ test('a popup tile rests open and holds one view from its still through its play
         await expect(
           tile.locator('.catalogue-related-canvas[data-fitted]'),
           name,
-        ).not.toHaveAttribute('data-cut', /./);
+        ).not.toHaveAttribute('data-cut', width === 390 ? (phoneCut[name] ?? /./) : /./);
       }
       const { rest, frames } = await playTile(page, name, [], 4500);
       expect(frames.length, name).toBeGreaterThan(20);
@@ -1191,10 +1205,13 @@ test('on a phone, what a playing gallery tile opens shows inside its stage', asy
   await page.goto(`${siteDevUrl}/components`);
   for (const name of ['Menubar', 'Select']) {
     const { frames } = await playTile(page, name, []);
-    const outside = heldFrames(frames).flatMap(({ time, popups }) =>
+    // Past an edge it is cut off at, such as the menu bar's menu at the stage's end, it fades out.
+    const outside = heldFrames(frames).flatMap(({ time, popups, cut }) =>
       popups.flatMap((popup) =>
         Object.entries(popup).flatMap(([side, by]) =>
-          by > 1 ? [`${side} ${Math.round(by)} at ${Math.round(time)}`] : [],
+          by > 1 && !cut.split(' ').includes(side)
+            ? [`${side} ${Math.round(by)} at ${Math.round(time)}`]
+            : [],
         ),
       ),
     );
@@ -1497,7 +1514,9 @@ test("a playing preview draws its pointer's cursor over its stage, gone at rest 
   await expect(cursor).toHaveCount(0);
   const box = (await tile.boundingBox())!;
   await page.mouse.move(box.x + box.width / 2, box.y + 8);
-  const onStage = tile.locator('.catalogue-related-stage > .catalogue-pointer-cursor');
+  const onStage = tile.locator(
+    '.catalogue-related-stage > .catalogue-pointer-layer > .catalogue-pointer-cursor',
+  );
   await expect(onStage).toBeVisible();
   // Its tip is where the pointer no one sees is, inside the stage.
   const stage = (await tile.locator('.catalogue-related-stage').boundingBox())!;

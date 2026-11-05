@@ -6,8 +6,10 @@ const row = (part: string, value: string) =>
   `.env-time-list-column[data-part="${part}"] .env-time-list-row[data-value="${value}"]`;
 
 /**
- * Open on 9:30: 8:15 chosen, an hour and then its minutes, and 9:30 again; closed from its field
- * and opened again, as it began.
+ * Open on 9:30: 8:15 chosen, an hour and then its minutes, each a row above the chosen one, and
+ * 9:30 again, each wheel turned a row on under the pointer, as a mouse wheel turns it, so the
+ * pointer goes only to rows the tile shows whole; closed from its field and opened again, as it
+ * began.
  */
 const script: PointerStep[] = [
   { wait: 400 },
@@ -19,14 +21,14 @@ const script: PointerStep[] = [
   { wait: 250 },
   { click: true },
   { wait: 1100 },
-  { to: row('hour', '9'), duration: 450 },
+  { to: row('hour', '8'), duration: 450 },
   { wait: 200 },
-  { click: true },
-  { wait: 600 },
-  { to: row('minute', '30'), duration: 450 },
+  { wheel: 30, duration: 300 },
+  { wait: 700 },
+  { to: row('minute', '15'), duration: 450 },
   { wait: 200 },
-  { click: true },
-  { wait: 600 },
+  { wheel: 30, duration: 300 },
+  { wait: 700 },
   { to: '.env-date-picker-trigger', x: 0.4, duration: 450 },
   { wait: 250 },
   { click: true },
