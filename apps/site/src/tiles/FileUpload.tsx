@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Button, Column, DropZone, List, Progress } from '@envsemble/envui';
+import { Button, Column, DropZone, List, Progress, Surface } from '@envsemble/envui';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
 /*
@@ -41,33 +41,35 @@ export default function FileUploadTile() {
   return (
     <Column gap={3} style={{ inlineSize: '16rem' }}>
       <DropZone size="sm" multiple label="Add files" onFilesAccepted={() => setUploaded(0)} />
-      <List.Root aria-label="Files">
-        <List.Item label="annual-review.pdf" description="2.4 MB" />
-        {uploaded !== null && (
-          <List.Item
-            label="team-photo.jpg"
-            description={uploading ? undefined : '1.1 MB'}
-            end={
-              <Button
-                variant="text"
-                aria-label="Remove team-photo.jpg"
-                onClick={() => setUploaded(null)}
-              >
-                Remove
-              </Button>
-            }
-          >
-            {uploading && (
-              <Progress
-                label="Uploading"
-                value={uploaded}
-                max={size}
-                valueText={`${uploaded.toFixed(1)} of ${size} MB`}
-              />
-            )}
-          </List.Item>
-        )}
-      </List.Root>
+      <Surface background="muted" padding={1} radius="sm">
+        <List.Root aria-label="Files">
+          <List.Item label="annual-review.pdf" description="2.4 MB" />
+          {uploaded !== null && (
+            <List.Item
+              label="team-photo.jpg"
+              description={uploading ? undefined : '1.1 MB'}
+              end={
+                <Button
+                  variant="text"
+                  aria-label="Remove team-photo.jpg"
+                  onClick={() => setUploaded(null)}
+                >
+                  Remove
+                </Button>
+              }
+            >
+              {uploading && (
+                <Progress
+                  label="Uploading"
+                  value={uploaded}
+                  max={size}
+                  valueText={`${uploaded.toFixed(1)} of ${size} MB`}
+                />
+              )}
+            </List.Item>
+          )}
+        </List.Root>
+      </Surface>
     </Column>
   );
 }

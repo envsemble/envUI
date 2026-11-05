@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Column, List, SearchField, Text } from '@envsemble/envui';
+import { Button, Column, List, SearchField, Surface, Text } from '@envsemble/envui';
 import { IconSearchOff } from '@envsemble/envui/icons/SearchOff';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
@@ -35,11 +35,13 @@ export default function EmptyStatesTile() {
     <Column gap={4} style={{ inlineSize: '15rem', minBlockSize: '11.5rem' }}>
       <SearchField label="Search projects" value={query} onValueChange={setQuery} />
       {matches.length > 0 ? (
-        <List.Root aria-label="Projects">
-          {matches.map((name) => (
-            <List.Item key={name} label={name} />
-          ))}
-        </List.Root>
+        <Surface background="muted" padding={1} radius="sm">
+          <List.Root aria-label="Projects">
+            {matches.map((name) => (
+              <List.Item key={name} label={name} />
+            ))}
+          </List.Root>
+        </Surface>
       ) : (
         <Column gap={3} align="center">
           <Text render={<span />} emphasis="muted">

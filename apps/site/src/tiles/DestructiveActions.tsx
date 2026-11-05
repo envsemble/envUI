@@ -1,5 +1,13 @@
 import { useState } from 'react';
-import { Button, Column, List, PortalContainer, ToastProvider, useToast } from '@envsemble/envui';
+import {
+  Button,
+  Column,
+  List,
+  PortalContainer,
+  Surface,
+  ToastProvider,
+  useToast,
+} from '@envsemble/envui';
 import { IconArchive } from '@envsemble/envui/icons/Archive';
 import { usePointer, usePreviewLayer, type PointerStep } from '../motion/Motion';
 
@@ -40,27 +48,29 @@ function Projects() {
   // At the window's top, so the notification at its foot covers none of the rows.
   return (
     <Column style={{ minBlockSize: '11.5rem' }}>
-      <List.Root aria-label="Projects" style={{ inlineSize: '16rem' }}>
-        {projects
-          .filter((name) => !archived.includes(name))
-          .map((name) => (
-            <List.Item
-              key={name}
-              label={name}
-              end={
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  startIcon={<IconArchive />}
-                  aria-label={`Archive ${name}`}
-                  onClick={() => archive(name)}
-                >
-                  Archive
-                </Button>
-              }
-            />
-          ))}
-      </List.Root>
+      <Surface background="muted" padding={1} radius="sm">
+        <List.Root aria-label="Projects" style={{ inlineSize: '16rem' }}>
+          {projects
+            .filter((name) => !archived.includes(name))
+            .map((name) => (
+              <List.Item
+                key={name}
+                label={name}
+                end={
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    startIcon={<IconArchive />}
+                    aria-label={`Archive ${name}`}
+                    onClick={() => archive(name)}
+                  >
+                    Archive
+                  </Button>
+                }
+              />
+            ))}
+        </List.Root>
+      </Surface>
     </Column>
   );
 }

@@ -10,26 +10,40 @@ import {
 import { IconSend } from '@envsemble/envui/icons/Send';
 import { usePointer, usePreviewLayer, type PointerStep } from '../motion/Motion';
 
-/** The invitation sent: the button works a moment, and a notification says how it went. */
+/**
+ * The last invitation's notification dismissed, then another sent: the button works a moment, and
+ * a notification says how it went, in the place the last one held, so nothing moves.
+ */
 const script: PointerStep[] = [
   { wait: 400 },
-  { to: '.env-button' },
-  { wait: 400 },
+  { to: '.env-toast-dismiss' },
+  { wait: 300 },
+  { click: true },
+  { wait: 500 },
+  { to: '.env-button', duration: 450 },
+  { wait: 300 },
   { click: true },
   { wait: 300 },
   { leave: true },
-  { wait: 3600 },
+  { wait: 3200 },
 ];
+
+const sent = { tone: 'success', message: 'Invitation sent.', duration: Infinity } as const;
 
 function Invite() {
   const toast = useToast();
   const [sending, setSending] = useState(false);
   usePointer(script);
+  // The still shows how the last invitation went, so the scene keeps the notification's room.
+  useEffect(() => {
+    const id = toast.show(sent);
+    return () => toast.dismiss(id);
+  }, [toast]);
   useEffect(() => {
     if (!sending) return;
     const timer = setTimeout(() => {
       setSending(false);
-      toast.show({ tone: 'success', message: 'Invitation sent.', duration: 2400 });
+      toast.show(sent);
     }, 900);
     return () => clearTimeout(timer);
   }, [sending, toast]);
