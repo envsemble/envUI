@@ -176,6 +176,32 @@ test.describe('ConfirmDialog', () => {
     await expect(log).toHaveText('delete workspace,delete workspace');
   });
 
+  test('with confirmDisabled, neither its confirm button nor Enter in a field confirms', async ({
+    page,
+  }) => {
+    await page.goto(confirmDialogs);
+    const log = page.getByTestId('confirm-log');
+    await page.getByRole('button', { name: 'Delete repository' }).click();
+    const dialog = page.getByRole('alertdialog', { name: 'Delete acme/api?' });
+    const confirm = dialog.getByRole('button', { name: 'Delete repository' });
+    const field = dialog.getByRole('textbox', { name: 'Repository name' });
+    // Focus still starts on Cancel, and the field takes it when clicked.
+    await expect(dialog.getByRole('button', { name: 'Cancel' })).toBeFocused();
+    await expect(confirm).toBeDisabled();
+    await field.click();
+    await field.fill('acme/ap');
+    await field.press('Enter');
+    await expect(dialog).toBeVisible();
+    await expect(confirm).toBeDisabled();
+    await expect(log).toHaveText('');
+    // The right name enables it, and Enter confirms.
+    await field.fill('acme/api');
+    await expect(confirm).toBeEnabled();
+    await field.press('Enter');
+    await expect(dialog).toBeHidden();
+    await expect(log).toHaveText('delete repository');
+  });
+
   test('says while developing that a form in its content would nest in its own', async ({
     page,
   }) => {

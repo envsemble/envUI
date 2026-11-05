@@ -152,6 +152,7 @@ A ConfirmDialog opens from its `trigger`, such as a Button. Its `title` asks the
 
 - `cancelLabel` names the cancel button.
 - `children` holds more content between the heading and the actions, such as the one field a confirmation holds, where <kbd>Enter</kbd> confirms.
+- `confirmDisabled` disables the confirm button, and <kbd>Enter</kbd> in a field doesn't confirm, such as until a typed name matches.
 - A press outside doesn't close it.
 
 ```tsx source=DeleteProject
@@ -219,4 +220,5 @@ A ConfirmDialog is an alert dialog with Dialog's parts: the surface, `env-dialog
 ## Changelog
 
 - **1.0.0**: ConfirmDialog, an alert dialog with a neutral or danger tone that waits for its action and stays open when it fails.
+- **1.0.0-prerelease.6**: `confirmDisabled` disables the confirm button, such as for a confirmation that waits on a typed name.
 - **1.0.0-prerelease.5**: The dialog takes the popups' color and soft shadow, with no outline edge, as Dialog does.
