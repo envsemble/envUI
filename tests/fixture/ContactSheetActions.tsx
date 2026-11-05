@@ -255,14 +255,14 @@ function ConfirmAndCopy() {
               />
             </Cell>
           ))}
-          <Cell caption="Copied (after a click)" click="left">
+          <Cell caption="Copied (after a click)" click="left" tooltipRoom>
             <CopyButton
               aria-label="Copy the command"
               value="npm i @envsemble/envui"
               write={async () => {}}
             />
           </Cell>
-          <Cell caption="Failed (after a click)" click="left">
+          <Cell caption="Failed (after a click)" click="left" tooltipRoom>
             <CopyButton
               aria-label="Copy the command"
               value="npm i @envsemble/envui"
@@ -276,25 +276,14 @@ function ConfirmAndCopy() {
         <Strip label="Labelled, sizes">
           {sizes.map((size) => (
             <Cell key={size} caption={`label ${size}`}>
-              <CopyButton
-                aria-label="Copy the token"
-                value="token"
-                size={size}
-                variant="outline"
-                write={async () => {}}
-              >
-                {true}
+              <CopyButton value="token" size={size} variant="outline" write={async () => {}}>
+                Copy token
               </CopyButton>
             </Cell>
           ))}
-          <Cell caption="Labelled, copied" click="left">
-            <CopyButton
-              aria-label="Copy the token"
-              value="token"
-              variant="outline"
-              write={async () => {}}
-            >
-              {true}
+          <Cell caption="Labelled, copied" click="left" tooltipRoom>
+            <CopyButton value="token" variant="outline" write={async () => {}}>
+              Copy token
             </CopyButton>
           </Cell>
         </Strip>
@@ -366,7 +355,7 @@ function ThemeToggles() {
           ))}
           {sizes.map((size) => (
             <Cell key={size} caption={size}>
-              <ThemeToggle size={size} variant="ghost" />
+              <ThemeToggle size={size} />
             </Cell>
           ))}
         </Strip>

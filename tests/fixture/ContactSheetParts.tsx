@@ -23,6 +23,8 @@ interface CellProps {
   highlight?: string;
   markAs?: string;
   click?: string;
+  /** Room under the specimen for the tooltip a click opens, so it doesn't cover the caption. */
+  tooltipRoom?: boolean;
   width?: CSSProperties['inlineSize'];
   children: ReactNode;
 }
@@ -35,6 +37,7 @@ export function Cell({
   highlight,
   markAs,
   click,
+  tooltipRoom,
   width,
   children,
 }: CellProps) {
@@ -46,6 +49,7 @@ export function Cell({
       data-cs-highlight={highlight}
       data-cs-mark-as={markAs}
       data-cs-click={click}
+      data-cs-tooltip-room={tooltipRoom ? '' : undefined}
       style={width === undefined ? undefined : { inlineSize: width }}
     >
       <div className="cs-cell-body">{children}</div>
