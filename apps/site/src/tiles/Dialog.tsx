@@ -17,7 +17,7 @@ const script: PointerStep[] = [
   { erase: 4, into: field, every: 70 },
   { type: 'star', into: field, every: 90 },
   { wait: 300 },
-  { to: '.env-dialog .env-button:last-child', x: 0.4, y: 0.6, duration: 500 },
+  { to: '.env-dialog-actions .env-button:last-child', x: 0.4, y: 0.6, duration: 500 },
   { wait: 250 },
   { click: true },
   { wait: 900 },
