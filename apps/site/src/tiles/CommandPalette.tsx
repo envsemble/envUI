@@ -20,7 +20,10 @@ const script: PointerStep[] = [
   { wait: 900 },
 ];
 
-/** A command palette, open on two commands, with a short placeholder, to show whole in a tile. */
+/**
+ * A command palette, open on two commands, with a short placeholder. A gallery's low tile shows it
+ * whole across, from its search to its first command, cut off at its foot.
+ */
 export default function CommandPaletteTile() {
   const [query, setQuery] = useState('');
   usePointer(script, { onRest: () => setQuery('') });

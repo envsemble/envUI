@@ -22,7 +22,10 @@ const script: PointerStep[] = [
 
 type Open = 'file' | 'edit' | 'view' | null;
 
-/** An application's menu bar, its File menu open: two items to a menu, to show whole in a tile. */
+/**
+ * An application's menu bar, its File menu open, two items to a menu. A gallery's low tile shows
+ * the bar and the menu's first item, cut off at its foot, as a window onto the application.
+ */
 export default function MenubarTile() {
   const [open, setOpen] = useState<Open>('file');
   usePointer(script, { onRest: () => setOpen('file') });

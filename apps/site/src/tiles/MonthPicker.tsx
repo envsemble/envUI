@@ -4,20 +4,18 @@ import { usePointer, type PointerStep } from '../motion/Motion';
 
 const month = (value: string) => `.env-month-picker-month[data-month="${value}"]`;
 
-/** December chosen, then February, and October again, as it began. */
+/** March chosen, then January, and February again, as it began: the year's first row. */
 const script: PointerStep[] = [
   { wait: 300 },
-  { to: month('2026-11') },
-  { wait: 250 },
-  { to: month('2026-12'), duration: 400 },
+  { to: month('2026-03') },
   { wait: 300 },
   { click: true },
   { wait: 900 },
-  { to: month('2026-02'), duration: 600 },
+  { to: month('2026-01'), duration: 600 },
   { wait: 300 },
   { click: true },
   { wait: 900 },
-  { to: month('2026-10'), duration: 600 },
+  { to: month('2026-02'), duration: 400 },
   { wait: 300 },
   { click: true },
   { wait: 700 },
@@ -25,11 +23,14 @@ const script: PointerStep[] = [
   { wait: 400 },
 ];
 
-/** A month picker's year, October chosen. */
+/**
+ * A month picker's year, February chosen: in its first row, which a gallery's low tile shows from
+ * its top.
+ */
 export default function MonthPickerTile() {
-  const [value, setValue] = useState<string | null>('2026-10');
+  const [value, setValue] = useState<string | null>('2026-02');
   usePointer(script, {
-    onRest: () => setValue('2026-10'),
+    onRest: () => setValue('2026-02'),
   });
   return (
     <MonthPicker

@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { Button, Menu } from '@envsemble/envui';
+import { IconButton, Menu } from '@envsemble/envui';
 import { IconDelete } from '@envsemble/envui/icons/Delete';
 import { IconEdit } from '@envsemble/envui/icons/Edit';
-import { IconExpandMore } from '@envsemble/envui/icons/ExpandMore';
+import { IconMoreVert } from '@envsemble/envui/icons/MoreVert';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
 const item = (index: number) => `.env-menu-item:nth-child(${index} of .env-menu-item)`;
@@ -26,21 +26,21 @@ const script: PointerStep[] = [
   { wait: 400 },
 ];
 
-/** A menu, open below its button: two items, so it shows whole in a gallery's tile. */
+/**
+ * A menu, open beside the icon button that opens it: two items, so it shows whole at about its own
+ * size in a gallery's low tile.
+ */
 export default function MenuTile() {
   const [open, setOpen] = useState(true);
   usePointer(script, { onRest: () => setOpen(true) });
   return (
     <Menu.Root
       aria-label="Report actions"
+      side="inline-end"
       align="start"
       open={open}
       onOpenChange={setOpen}
-      trigger={
-        <Button variant="secondary" endIcon={<IconExpandMore />}>
-          Actions
-        </Button>
-      }
+      trigger={<IconButton variant="secondary" icon={<IconMoreVert />} aria-label="Actions" />}
     >
       <Menu.Item icon={<IconEdit />}>Rename</Menu.Item>
       <Menu.Item icon={<IconDelete />}>Delete</Menu.Item>

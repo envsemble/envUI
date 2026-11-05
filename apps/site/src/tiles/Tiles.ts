@@ -25,7 +25,6 @@ const pascal = (id: string) =>
  * the layout pages take a smaller one, drawn larger, as a drawing has no size of its own.
  */
 export const tileWindows: Readonly<Record<string, { width: number; height: number }>> = {
-  toast: { width: 16, height: 12 },
   'top-bar': { width: 17, height: 12.75 },
   page: { width: 16, height: 12 },
   scaffold: { width: 17, height: 12.75 },
@@ -42,10 +41,8 @@ export const tileWindows: Readonly<Record<string, { width: number; height: numbe
   tabs: { width: 15, height: 11.25 },
   breadcrumbs: { width: 15, height: 11.25 },
   'document-tabs': { width: 18, height: 13.5 },
-  dialog: { width: 20, height: 15 },
+  dialog: { width: 16, height: 12 },
   'confirm-dialog': { width: 16, height: 12 },
-  sheet: { width: 20, height: 15 },
-  'command-palette': { width: 20, height: 15 },
   'date-picker': { width: 20, height: 15 },
   'time-picker': { width: 24, height: 18 },
   'month-picker': { width: 27, height: 20.25 },
