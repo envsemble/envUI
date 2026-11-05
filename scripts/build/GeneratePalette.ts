@@ -95,7 +95,7 @@ export const hues = {
   },
   slate: {
     description:
-      'The low-chroma blue-gray of quiet tints: the dark theme’s selection. Seeded from 0.7’s light navigation hover and press and its dark selected option.',
+      'The low-chroma blue-gray of quiet tints: the dark theme’s selection, and done, the tone of completed work, which recedes beside the status hues. Seeded from 0.7’s light navigation hover and press and its dark selected option.',
     seeds: ['#ccd9ea', '#a7bfdc', '#364863'],
   },
   steel: {
@@ -106,11 +106,6 @@ export const hues = {
   teal: { description: 'The teal green of success toasts, seeded from 0.7’s.', seeds: ['#287156'] },
   amber: { description: 'Warning.', seeds: ['#f1bd55', '#855000'] },
   red: { description: 'Danger and errors.', seeds: ['#f5a9a3', '#b42318'] },
-  cyan: {
-    description:
-      'Done: completed work, a hue of its own between the success green and the brand blue.',
-    seeds: ['#94dde8', '#00687a'],
-  },
   purple: { description: 'The accent purple of important actions.', seeds: ['#9b4ab8'] },
   // The pastel hues of avatars, one palette rather than the hues above softened: a light seed for
   // the fill and a deep one for the initials and figure, each a shade of the same hue, at a shared

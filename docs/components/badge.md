@@ -172,7 +172,7 @@ A Badge's label is its `children`, a state, a name or a category in a word or tw
 
 #### Variants and tones
 
-`variant` is `soft`, the default, which tints the background without an edge, in the tone's stronger tint for primary, accent, success, warning and danger, with a semibold label, `solid`, which fills it with the tone, or `outline`, which draws a border. `tone` is `neutral`, the default, `primary`, the blue of what is current, `accent`, the purple that stands out, `success`, `warning`, `danger` or `done`, the cyan of completed work, a hue of its own apart from the accent's purple.
+`variant` is `soft`, the default, which tints the background without an edge, in the tone's stronger tint for primary, accent, success, warning and danger, with a semibold label, `solid`, which fills it with the tone, or `outline`, which draws a border. `tone` is `neutral`, the default, `primary`, the blue of what is current, `accent`, the purple that stands out, `success`, `warning`, `danger` or `done`, the slate of completed work: a quiet blue-gray, so finished things recede beside the status hues and stay apart from the success green, the accent purple and the primary blue.
 
 ```tsx
 <Badge tone="success">Ready</Badge>
@@ -220,6 +220,7 @@ The parts are the pill, `env-badge`, its icon, `env-badge > env-icon`, and its l
 
 ## Changelog
 
+- **1.0.0-prerelease.6**: The `done` tone is a quiet slate blue-gray, in place of a cyan that sat too close to the success green at table size: completed things recede.
 - **1.0.0-prerelease.5**: A little roomier: 3 px above and below its label and 10 px at the sides, edge included.
 - **1.0.0**: A soft badge in the accent, success, warning or danger tone takes the tone's stronger tint, and its label is semibold; at high contrast it keeps the softer tint.
 - **1.0.0**: InfoChip is Badge, a pill, and its page joins this one. The `subtle` variant is `soft`. `Counter` is a Badge with `count`, `.env-badge[data-count]` with `env-badge-count-label`, and `DiffCount` is `DiffStat`, with its props type and the `env-diff-stat-*` classes; the page is `badge`. DiffStat writes its numbers and its name in the locale, and its name comes from `messages.diffStat.label`. A control sets the badges inside it through the `--env-badge-*`, `--env-badge-count-*` and `--env-diff-stat-*` hooks.
