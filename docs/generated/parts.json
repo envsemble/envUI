@@ -1233,6 +1233,7 @@
       "uses": [
         "Button",
         "CopyButton",
+        "Field",
         "Icon",
         "IconButton",
         "Menu",
