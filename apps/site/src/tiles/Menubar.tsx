@@ -33,6 +33,9 @@ export default function MenubarTile() {
   const [open, setOpen] = useState<Open>('file');
   const narrow = useMedia(narrowGallery);
   const keys = (shortcut: string) => (narrow ? undefined : shortcut);
+  // In a phone's tile, the menus are as narrow as their items, so the bar and an open menu are drawn
+  // at their own size there.
+  const popup = narrow ? { minInlineSize: '6rem' } : undefined;
   usePointer(script, { onRest: () => setOpen('file') });
   const opens = (name: Exclude<Open, null>) => ({
     open: open === name,
@@ -41,15 +44,15 @@ export default function MenubarTile() {
   });
   return (
     <Menubar.Root aria-label="Application menu">
-      <Menubar.Menu label="File" {...opens('file')}>
+      <Menubar.Menu label="File" {...opens('file')} style={popup}>
         <Menu.Item shortcut={keys('Ctrl+N')}>New</Menu.Item>
         <Menu.Item shortcut={keys('Ctrl+O')}>Open…</Menu.Item>
       </Menubar.Menu>
-      <Menubar.Menu label="Edit" {...opens('edit')}>
+      <Menubar.Menu label="Edit" {...opens('edit')} style={popup}>
         <Menu.Item shortcut={keys('Ctrl+Z')}>Undo</Menu.Item>
         <Menu.Item shortcut={keys('Ctrl+C')}>Copy</Menu.Item>
       </Menubar.Menu>
-      <Menubar.Menu label="View" {...opens('view')}>
+      <Menubar.Menu label="View" {...opens('view')} style={popup}>
         <Menu.Item shortcut={keys('Ctrl++')}>Zoom in</Menu.Item>
         <Menu.Item shortcut={keys('Ctrl+-')}>Zoom out</Menu.Item>
       </Menubar.Menu>

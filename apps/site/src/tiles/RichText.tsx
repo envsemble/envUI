@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { RichTextEditor } from '@envsemble/envui/rich-text';
+import { useMedia } from '../motion/Autoplay';
 import { usePointer, type PointerStep } from '../motion/Motion';
 import { Renew } from '../motion/Renew';
+import { narrowGallery } from './Tiles';
 
 const line = '.ProseMirror p';
 const bold = '[aria-label="Bold"]';
@@ -33,17 +35,21 @@ const script: PointerStep[] = [
   { wait: 500 },
 ];
 
-/** A rich text editor: its formatting toolbar over a line whose word turns bold. */
+/**
+ * A rich text editor: its formatting toolbar over a line whose word turns bold; in a phone's
+ * tile narrower, with Bold alone beside undo and redo, so it is drawn at its own size there too.
+ */
 export default function RichTextTile() {
   const [round, setRound] = useState(0);
+  const narrow = useMedia(narrowGallery);
   usePointer(script, { onCue: () => setRound((count) => count + 1) });
   return (
     <Renew round={round}>
       <RichTextEditor
         aria-label="Launch note"
         defaultValue="Launch on Friday"
-        toolbar={['bold', 'italic']}
-        style={{ inlineSize: '12.5rem' }}
+        toolbar={narrow ? ['bold'] : ['bold', 'italic']}
+        style={{ inlineSize: narrow ? '8.5rem' : '12.5rem' }}
       />
     </Renew>
   );

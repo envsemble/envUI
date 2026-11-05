@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { DropZone } from '@envsemble/envui';
+import { useMedia } from '../motion/Autoplay';
 import { usePointer, type PointerStep } from '../motion/Motion';
+import { narrowGallery } from './Tiles';
 
 const zone = '.env-drop-zone-target';
 
@@ -17,9 +19,13 @@ const script: PointerStep[] = [
   { wait: 600 },
 ];
 
-/** A drop zone for documents, the small one, which shows whole in a gallery's low tile. */
+/**
+ * A drop zone for documents, the small one, which shows whole in a gallery's low tile; narrower in
+ * a phone's, so it is drawn at its own size there too.
+ */
 export default function DropZoneTile() {
   const [pending, setPending] = useState(false);
+  const narrow = useMedia(narrowGallery);
   usePointer(script);
   useEffect(() => {
     if (!pending) return;
@@ -33,7 +39,7 @@ export default function DropZoneTile() {
       description="PDF, up to 10 MB"
       pending={pending}
       onFilesAccepted={() => setPending(true)}
-      style={{ inlineSize: '12.5rem' }}
+      style={{ inlineSize: narrow ? '8.5rem' : '12.5rem' }}
     />
   );
 }
