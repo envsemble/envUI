@@ -78,3 +78,38 @@ export const preloadTile = (page: string) =>
 /** The tile of a page, by its id, where it has one of its own. */
 export const tileOf = (page: string): ComponentType | undefined =>
   tiles.get(`./${pascal(page)}.tsx`);
+
+/*
+ * The tiles of the exports documented on another's page, for the Related cards that name them,
+ * apps/site/src/tiles/members/<Export>.tsx, such as SearchField.tsx on the TextField page's: a
+ * small live picture of the export alone, written as a page's own tile is, where the page's
+ * examples show it in a larger scene than a card holds whole, or hold still where it acts.
+ */
+const memberLoaders = import.meta.glob<{ default: ComponentType }>('./members/*.tsx');
+const memberTiles = new Map(
+  Object.entries(memberLoaders).map(([path, load]) => [path, lazy(loadModule(load))]),
+);
+
+/** The exports a page's own tile already shows alone, by the id of that page. */
+const shownByPageTile: Readonly<Record<string, string>> = {
+  RichTextEditor: 'rich-text',
+  CodeBlock: 'code',
+};
+
+/** The windows of the member tiles that need a larger one than the tiles', by export. */
+export const memberTileWindows: Readonly<Record<string, { width: number; height: number }>> = {
+  MarkdownEditor: { width: 16, height: 12 },
+  PageHeader: { width: 16, height: 12 },
+};
+
+/** The tile of an export documented on another's page, where it has one. */
+export const memberTileOf = (component: string): ComponentType | undefined => {
+  const page = shownByPageTile[component];
+  return page ? tileOf(page) : memberTiles.get(`./members/${component}.tsx`);
+};
+
+/** The window of an export's tile, where it needs another than the tiles'. */
+export const memberTileWindow = (component: string) =>
+  shownByPageTile[component]
+    ? tileWindows[shownByPageTile[component]]
+    : memberTileWindows[component];
