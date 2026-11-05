@@ -3,7 +3,10 @@ import { usePointer, type PointerStep } from '../motion/Motion';
 
 const input = '.env-text-field-input';
 
-/** Clicked into, a name typed and, a moment later, erased again. */
+/**
+ * Clicked into, a name typed and, a moment later, selected by a drag across it and deleted, so the
+ * field is empty again, as it began.
+ */
 const script: PointerStep[] = [
   { wait: 300 },
   { to: input, x: 0.3 },
@@ -11,9 +14,15 @@ const script: PointerStep[] = [
   { click: true },
   { wait: 300 },
   { type: 'Northwind', into: input, every: 110 },
-  { wait: 1200 },
-  { erase: 9, into: input, every: 50 },
-  { wait: 300 },
+  { wait: 900 },
+  { to: input, text: 'Northwind', x: 0.02, duration: 350 },
+  { wait: 200 },
+  { press: true },
+  { to: input, text: 'Northwind', x: 1, duration: 450 },
+  { release: true, stay: true },
+  { wait: 800 },
+  { erase: 1, into: input },
+  { wait: 500 },
   { leave: true },
   { wait: 500 },
 ];
