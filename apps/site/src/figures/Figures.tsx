@@ -383,25 +383,6 @@ export function FigureSection({
         text = lead[1];
         showLead();
       }
-      // The sentence after an anatomy legend, on the parts the figure can't show, is a note to it.
-      const previous = groups[index - 1];
-      if (
-        previous &&
-        !Array.isArray(previous) &&
-        previous.kind === 'example' &&
-        previous.role === 'anatomy' &&
-        leadParagraph(text)?.[1].trim() === ''
-      ) {
-        content.push(
-          <Documentation
-            key={index}
-            markdown={text}
-            path={page.path}
-            className="site-figure-note"
-          />,
-        );
-        return;
-      }
       // A last subsection of text with one figure after it sits beside that figure.
       const next = groups[index + 1];
       const split = Array.isArray(next) && next.length === 1 && lastSubsection(text);

@@ -91,8 +91,6 @@ Past a limit, older notifications wait behind a count, and danger notifications 
 4. **Action** (`env-toast-action`, `action`)
 5. **Dismiss button** (`env-toast-dismiss`, `dismissible`)
 
-Not shown: the count of hidden notifications.
-
 ## Behaviour
 
 ### Duration

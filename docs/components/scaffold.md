@@ -99,8 +99,6 @@ The navigation and the top bar share one fill, flush with the window's edges and
 3. **Navigation** (`env-scaffold-rail`, `navigation`)
 4. **Body** (`env-scaffold-body`, `children`)
 
-Not shown: the skip links, and the places of the bar and the drawer.
-
 ## Behaviour
 
 ### Scrolling

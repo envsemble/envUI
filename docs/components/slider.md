@@ -54,8 +54,6 @@ examples:
 6. **Value** (`env-slider-value`, `formatValue`)
 7. **Description** (`env-field-description`, `description`)
 
-Not shown: the span the value moves along, which draws the faint ticks, and the row of the label and the value.
-
 ## Behaviour
 
 ### At rest

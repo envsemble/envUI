@@ -89,8 +89,6 @@ The toolbar shows the commands the content needs, in order, or none.
 5. **Task** (`env-rich-text-task`)
 6. **Description** (`env-field-description`, `description`)
 
-Not shown: the suggestions and the status.
-
 ## Behaviour
 
 ### Show saved content

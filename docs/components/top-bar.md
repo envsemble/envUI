@@ -71,8 +71,6 @@ The bar can be the window's own title bar in an installed web app: empty space d
 3. **Title** (`env-top-bar-title`, `title`)
 4. **Actions** (`env-top-bar-actions`, `actions`)
 
-Not shown: the page progress.
-
 ## Behaviour
 
 ### Adapting to width

@@ -73,8 +73,6 @@ Where the window has no room, a tooltip flips to the other side.
 1. **Tooltip** (`env-tooltip`, `content`)
 2. **Control** (`env-icon-button`, `children`)
 
-Not shown: the wrapper that lets a disabled control show a tooltip, and the dotted underline of text.
-
 ## Behaviour
 
 ### Menu trigger

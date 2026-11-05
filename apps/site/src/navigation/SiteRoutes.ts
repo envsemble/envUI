@@ -256,7 +256,7 @@ const docsPages: RoutePage[] = [
     section: 'Foundations',
     kind: 'tokens',
     summary:
-      'Every token as a CSS custom property, with its value in each theme and scale, generated from the token source.',
+      'Every token as a CSS custom property, with its value in each theme and scale.',
   },
   ...componentGroups.flatMap((group) =>
     componentDocuments

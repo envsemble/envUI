@@ -64,8 +64,6 @@ examples:
 6. **Clear** (`env-combobox-clear`, `clearable`)
 7. **Trigger** (`env-combobox-trigger`)
 
-Not shown: the control, which holds the chips, the input and the buttons, and takes the field's own box.
-
 ```tsx figure=ComboboxListAnatomy open
 
 ```
