@@ -558,8 +558,14 @@ export function usePlaying() {
     onPointerLeave: (event: PointerEvent) => {
       if (!isVirtual(event.nativeEvent)) setPointer(false);
     },
-    onFocus: (event: FocusEvent) => setKeyboard(event.target.matches(':focus-visible')),
-    onBlur: () => setKeyboard(false),
+    // The focus the pointer no one sees brings into a tile's preview, untrusted, isn't the
+    // reader's either: it would keep the tile playing once the reader's pointer left it.
+    onFocus: (event: FocusEvent) => {
+      if (event.nativeEvent.isTrusted) setKeyboard(event.target.matches(':focus-visible'));
+    },
+    onBlur: (event: FocusEvent) => {
+      if (event.nativeEvent.isTrusted) setKeyboard(false);
+    },
   };
   return [pointer || keyboard, handlers] as const;
 }
