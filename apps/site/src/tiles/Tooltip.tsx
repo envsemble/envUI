@@ -7,16 +7,21 @@ import { usePointer, type PointerStep } from '../motion/Motion';
 const button = (index: number) => `.env-icon-button:nth-child(${index} of .env-icon-button)`;
 
 /*
- * The pointer, resting on the middle button, moves to the next, whose tooltip opens once it rests
- * there for the tooltip's delay, and back, where the loop began. The delay is short, as it is
+ * The pointer, resting on the middle button, steps off it below, and its tooltip closes; once it
+ * has gone, the pointer moves onto the next button, whose tooltip opens once it rests there for
+ * the tooltip's delay, and the same back, where the loop began. The delay is short, as it is
  * between the buttons of a toolbar once one tooltip has shown, so the row is never long without
- * one.
+ * one, and no two tooltips show at once.
  */
 const script: PointerStep[] = [
   { to: button(2), y: 0.6 },
   { wait: 1500 },
+  { to: button(2), y: 1.25, duration: 200 },
+  { wait: 450 },
   { to: button(3), y: 0.6, duration: 300 },
   { wait: 2000 },
+  { to: button(3), y: 1.25, duration: 200 },
+  { wait: 450 },
   { to: button(2), y: 0.6, duration: 300 },
   { wait: 500 },
 ];

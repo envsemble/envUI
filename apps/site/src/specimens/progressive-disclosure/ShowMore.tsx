@@ -15,7 +15,10 @@ const script: PointerStep[] = [
   { to: toggle, x: 0.5, y: 0.6, duration: 450 },
   { wait: 300 },
   { click: true },
-  { wait: 700 },
+  { wait: 500 },
+  // Onto the list, which the wheel then scrolls, rather than the button the press redrew.
+  { to: '.env-list-item:nth-child(4 of .env-list-item)', x: 0.6, duration: 300 },
+  { wait: 200 },
   { wheel: 600, duration: 1400 },
   { wait: 500 },
   { to: toggle, x: 0.5, y: 0.6, duration: 400 },

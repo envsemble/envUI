@@ -10,10 +10,17 @@ const documents: DocumentTabsItem[] = ['Plan', 'Spec'].map((label) => ({
   label,
 }));
 
-/** The first line of each document, the panel under the strip, which the application renders. */
+/** A new document's name, as an application names one until it is named. */
+const untitled = 'Untitled';
+
+/**
+ * The first line of each document, the panel under the strip, which the application renders; a
+ * new one is empty, its placeholder in its place.
+ */
 const firstLines: Record<string, string> = {
   Plan: 'Launch in May.',
   Spec: 'Five screens.',
+  [untitled]: 'Start writing.',
 };
 
 const tab = (id: string) => `.env-document-tabs-tab[data-tab-id="${id}"]`;
@@ -21,26 +28,23 @@ const close = (id: string) =>
   `.env-document-tabs-item:has(> ${tab(id)}) > .env-document-tabs-close`;
 
 /*
- * Spec shown, then closed by its button, which shows Plan beside it, opened again by New
- * document, and Plan shown, as it began.
+ * Spec shown, then a new document opened from New document, Untitled, empty, which shows; closed
+ * by its button, which shows Spec beside it again, and Plan shown, as it began.
  */
-const closing: PointerStep[] = [
+const script: PointerStep[] = [
   { wait: 300 },
   { to: tab('Spec') },
   { wait: 400 },
   { click: true },
   { wait: 900 },
-  { to: close('Spec'), duration: 350 },
-  { wait: 250 },
-  { click: true },
-  { wait: 900 },
-];
-const script: PointerStep[] = [
-  ...closing,
   { to: '.env-document-tabs-end .env-icon-button', duration: 350 },
   { wait: 200 },
   { click: true },
-  { wait: 900 },
+  { wait: 1000 },
+  { to: close(untitled), duration: 350 },
+  { wait: 250 },
+  { click: true },
+  { wait: 700 },
   { to: tab('Plan'), duration: 500 },
   { wait: 200 },
   { click: true },
@@ -50,7 +54,19 @@ const script: PointerStep[] = [
 ];
 
 /* On a phone, without New document: Spec shown and closed, and both open again as it rests. */
-const short: PointerStep[] = [...closing, { leave: true }, { wait: 400 }];
+const short: PointerStep[] = [
+  { wait: 300 },
+  { to: tab('Spec') },
+  { wait: 400 },
+  { click: true },
+  { wait: 900 },
+  { to: close('Spec'), duration: 350 },
+  { wait: 250 },
+  { click: true },
+  { wait: 900 },
+  { leave: true },
+  { wait: 400 },
+];
 
 /**
  * Two open documents, Plan shown, over the start of its page, short enough to show whole; on a
@@ -89,10 +105,9 @@ export default function DocumentTabsTile() {
               variant="ghost"
               size="sm"
               onClick={() => {
-                const missing = documents.find((item) => !tabs.includes(item));
-                if (!missing) return;
-                setTabs([...tabs, missing]);
-                setValue(missing.value);
+                if (tabs.some((item) => item.value === untitled)) return;
+                setTabs([...tabs, { value: untitled, label: untitled }]);
+                setValue(untitled);
               }}
             />
           )

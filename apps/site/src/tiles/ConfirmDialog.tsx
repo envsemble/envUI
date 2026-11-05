@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
-import { Button, ConfirmDialog } from '@envsemble/envui';
+import { ConfirmDialog, IconButton } from '@envsemble/envui';
+import { IconDelete } from '@envsemble/envui/icons/Delete';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
 /**
@@ -24,10 +25,17 @@ const script: PointerStep[] = [
 const deleting = 1000;
 
 /**
- * A confirm dialog, open over the button that opens it: its question and its actions alone, so a
- * gallery's low tile shows them at about their own size. Stopped, it is open again rather than drawn anew,
- * which would bring it in again; a deletion still running then ends at once, and no longer closes
- * it.
+ * The button, at the start of the screen the stage is, beside the dialog it opens rather than
+ * under it, so it never shows through the dialog as it comes and goes; the dialog as narrow as its
+ * actions allow, so they leave it room.
+ */
+const beside = { display: 'flex', inlineSize: '100%', paddingInline: '0.5rem' } as const;
+const narrow = { inlineSize: '12.5rem' } as const;
+
+/**
+ * A confirm dialog, open beside the button that opens it, drawn whole: its question, what it
+ * deletes and its actions. Stopped, it is open again rather than drawn anew, which would bring it
+ * in again; a deletion still running then ends at once, and no longer closes it.
  */
 export default function ConfirmDialogTile() {
   const [open, setOpen] = useState(true);
@@ -42,24 +50,28 @@ export default function ConfirmDialogTile() {
     },
   });
   return (
-    <ConfirmDialog
-      open={open}
-      onOpenChange={(next, { reason }) => {
-        if (!next && reason === 'imperative-action' && confirmedIn.current !== round.current)
-          return;
-        setOpen(next);
-      }}
-      trigger={<Button variant="secondary">Delete</Button>}
-      tone="danger"
-      title="Delete plan?"
-      confirmLabel="Delete"
-      onConfirm={() => {
-        confirmedIn.current = round.current;
-        return new Promise<void>((resolve) => {
-          done.current = resolve;
-          setTimeout(resolve, deleting);
-        });
-      }}
-    />
+    <div style={beside}>
+      <ConfirmDialog
+        open={open}
+        onOpenChange={(next, { reason }) => {
+          if (!next && reason === 'imperative-action' && confirmedIn.current !== round.current)
+            return;
+          setOpen(next);
+        }}
+        trigger={<IconButton variant="secondary" icon={<IconDelete />} aria-label="Delete plan" />}
+        tone="danger"
+        title="Delete plan?"
+        description="Its 12 tasks go with it."
+        style={narrow}
+        confirmLabel="Delete"
+        onConfirm={() => {
+          confirmedIn.current = round.current;
+          return new Promise<void>((resolve) => {
+            done.current = resolve;
+            setTimeout(resolve, deleting);
+          });
+        }}
+      />
+    </div>
   );
 }

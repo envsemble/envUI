@@ -133,6 +133,7 @@ export function TilePreview({
               ({
                 '--catalogue-tile-width': `${preview.window.width}rem`,
                 '--catalogue-tile-height': `${preview.window.height}rem`,
+                '--catalogue-own-popup-least': preview.window.popupLeast,
               } as CSSProperties)
             }
             inert
