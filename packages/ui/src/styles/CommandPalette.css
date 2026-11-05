@@ -71,6 +71,8 @@
     --env-text-field-start-inset: calc(
       var(--env-popup-row-padding-inline) - var(--env-control-border-width)
     );
+    /* While results load, a small spinner sits at its end, inset as its icon is at the start. */
+    --env-text-field-end-inset: var(--env-text-field-start-inset);
     /* The containing block of its focus edge, below. */
     position: relative;
     flex: 0 0 auto;
@@ -129,40 +131,37 @@
     clip-path: inset(50%);
     white-space: nowrap;
   }
-  /* The empty state, in place of the list: a quiet icon on a muted circle, as DropZone draws its
-     icon, then the title and a quieter description, centred. */
+  /* The empty state, in place of the list: one muted line at an option's height and inset, as a
+     combobox says it has no options, so the palette keeps about its height as results come and go.
+     An icon an application passes sits where an option's icon does; the description follows the
+     title after a dot. */
   .env-command-palette-status[data-empty] {
-    display: grid;
-    justify-items: center;
-    gap: var(--env-space-1);
-    padding: var(--env-space-7) var(--env-space-4) var(--env-space-5);
-    color: var(--env-color-fg-default);
-    text-align: center;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    min-block-size: var(--env-control-height-md);
+    margin-block-start: var(--env-popup-group-gap);
+    padding: var(--env-space-1) var(--env-popup-row-padding-inline);
+    color: var(--env-color-fg-muted);
+    font: var(--env-font-weight-body) var(--env-font-size-body) / 1.35 var(--env-font-family);
     overflow-wrap: break-word;
   }
   .env-command-palette-empty-icon {
-    --env-command-palette-empty-icon-size: 1.5rem;
-    display: grid;
-    place-items: center;
-    inline-size: var(--env-control-height-touch);
-    block-size: var(--env-control-height-touch);
-    margin-block-end: var(--env-space-2);
-    border-radius: var(--env-radius-full);
-    background: var(--env-color-bg-neutral-muted);
-    color: var(--env-color-fg-muted);
+    display: inline-flex;
+    flex: none;
+    margin-inline-end: var(--env-popup-row-gap);
   }
   .env-command-palette-empty-icon > .env-icon {
-    inline-size: var(--env-command-palette-empty-icon-size);
-    block-size: var(--env-command-palette-empty-icon-size);
-  }
-  .env-command-palette-empty-title {
-    font-weight: var(--env-font-weight-medium);
+    inline-size: var(--env-control-icon-size);
+    block-size: var(--env-control-icon-size);
   }
   .env-command-palette-empty-description {
-    max-inline-size: 48ch;
-    color: var(--env-color-fg-muted);
-    font: var(--env-type-body-sm);
+    margin-inline-start: var(--env-space-1);
     text-wrap: pretty;
+  }
+  .env-command-palette-empty-description::before {
+    content: '·' / '';
+    margin-inline-end: var(--env-space-1);
   }
   /* The footer stands apart from the options by space, its small muted text and its keys, with no
      line. */

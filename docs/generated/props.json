@@ -1728,7 +1728,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "The results are on their way, such as from a server. With none to show yet, the empty state says loadingLabel beside a spinner; results already shown stay, marked busy, and the search field's icon turns into a spinner."
+          "description": "The results are on their way, such as from a server. A spinner shows at the search field's end; with no results to show yet, the empty state's line says loadingLabel, and results already shown stay, marked busy."
         },
         {
           "name": "loadingLabel",
@@ -1742,21 +1742,20 @@
           "type": "ReactNode",
           "required": false,
           "default": "'Type to search' while the search field is empty and 'No results' when its text finds nothing, or EnvUIProvider's messages.commandPalette.emptyQuery and empty",
-          "description": "The empty state's title, shown in place of the list when there are no options, and announced."
+          "description": "The empty state's title, the start of the one muted line shown in place of the list when there are no options, and announced."
         },
         {
           "name": "emptyDescription",
           "type": "ReactNode",
           "required": false,
           "default": "None while the search field is empty; when its text finds nothing, 'Nothing matches “…”. Check the spelling or try other words.', or messages.commandPalette.emptyHint",
-          "description": "Quieter text under the empty state's title, such as what the palette searches; null or false shows none."
+          "description": "Text after the empty state's title on its line, such as what the palette searches; null or false shows none."
         },
         {
           "name": "emptyIcon",
           "type": "ReactNode",
           "required": false,
-          "default": "Search while the search field is empty, SearchOff when its text finds nothing",
-          "description": "The empty state's decorative icon, above its title; null or false shows none."
+          "description": "A decorative icon at the start of the empty state's line, in an option's icon place, such as an error icon when the search failed; none by default."
         },
         {
           "name": "hints",

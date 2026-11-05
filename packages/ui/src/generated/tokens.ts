@@ -46,9 +46,9 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#9948b6',
-      dark: '#d683f5',
+      dark: '#dab0ec',
       'light-high-contrast': '#6d1888',
-      'dark-high-contrast': '#f2d2ff',
+      'dark-high-contrast': '#f2d3ff',
     },
   },
   /** An accent primary action under the pointer: a grade further from its label, darker in light and lighter in dark. */
@@ -57,18 +57,18 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#83319f',
-      dark: '#e7a8ff',
+      dark: '#eec6ff',
       'light-high-contrast': '#63047d',
       'dark-high-contrast': '#f7e4ff',
     },
   },
-  /** An accent primary action while pressed: a grade past its hover, further from its label. */
+  /** An accent primary action while pressed: in light a grade past its hover, further from its label. In dark, where lightening further would turn the soft fill nearly white, it is instead a small step deeper than rest, still clear of its dark label, so it reads as pressed rather than highlighted. */
   'color.bg.accent.emphasis.pressed': {
     cssVariable: '--env-color-bg-accent-emphasis-pressed',
     type: 'color',
     values: {
       light: '#6d1888',
-      dark: '#efc6ff',
+      dark: '#d29ee7',
       'light-high-contrast': '#57006e',
       'dark-high-contrast': '#faedff',
     },
@@ -79,9 +79,9 @@ export const tokens = {
     type: 'color',
     values: {
       light: 'rgb(142 60 170 / 0.12)',
-      dark: 'rgb(231 168 255 / 0.14)',
+      dark: 'rgb(218 176 236 / 0.14)',
       'light-high-contrast': 'rgb(99 4 125 / 0.08)',
-      'dark-high-contrast': 'rgb(242 210 255 / 0.1)',
+      'dark-high-contrast': 'rgb(242 211 255 / 0.1)',
     },
   },
   /** The tint of a soft accent badge: in light the accent purple at 5%, so the purple text keeps 4.5:1 over it; in dark and at high contrast it is color.bg.accent.muted. */
@@ -90,9 +90,9 @@ export const tokens = {
     type: 'color',
     values: {
       light: 'rgb(142 60 170 / 0.05)',
-      dark: 'rgb(231 168 255 / 0.14)',
+      dark: 'rgb(218 176 236 / 0.14)',
       'light-high-contrast': 'rgb(99 4 125 / 0.08)',
-      'dark-high-contrast': 'rgb(242 210 255 / 0.1)',
+      'dark-high-contrast': 'rgb(242 211 255 / 0.1)',
     },
   },
   /** A solid accent fill, such as a solid accent badge; paired with fg.on-emphasis. */
@@ -101,9 +101,9 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#8e3caa',
-      dark: '#d683f5',
+      dark: '#dab0ec',
       'light-high-contrast': '#63047d',
-      'dark-high-contrast': '#f2d2ff',
+      'dark-high-contrast': '#f2d3ff',
     },
   },
   /** The accent purple of accent actions, such as Button's accent tone, in both themes; paired with fg.on-strong. */
@@ -156,7 +156,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: 'rgb(142 60 170 / 0.14)',
-      dark: 'rgb(231 168 255 / 0.17)',
+      dark: 'rgb(218 176 236 / 0.17)',
       'light-high-contrast': 'rgb(99 4 125 / 0.14)',
       'dark-high-contrast': 'rgb(247 228 255 / 0.14)',
     },
@@ -167,7 +167,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: 'rgb(142 60 170 / 0.22)',
-      dark: 'rgb(231 168 255 / 0.25)',
+      dark: 'rgb(218 176 236 / 0.25)',
       'light-high-contrast': 'rgb(99 4 125 / 0.22)',
       'dark-high-contrast': 'rgb(247 228 255 / 0.22)',
     },
@@ -299,29 +299,29 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#b72b20',
-      dark: '#dd7c74',
+      dark: '#ee9c95',
       'light-high-contrast': '#7a0200',
       'dark-high-contrast': '#ffd3cf',
     },
   },
-  /** A destructive primary action under the pointer: a grade further from its label, darker in light and lighter in dark, as every primary steps. */
+  /** A destructive primary action under the pointer: a grade further from its label, darker in light and lighter in dark, as every primary hovers. */
   'color.bg.danger.emphasis.hover': {
     cssVariable: '--env-color-bg-danger-emphasis-hover',
     type: 'color',
     values: {
       light: '#9f0300',
-      dark: '#ee9c95',
+      dark: '#ffbeb8',
       'light-high-contrast': '#6b0100',
       'dark-high-contrast': '#ffe4e2',
     },
   },
-  /** A destructive primary action while pressed: a grade past its hover, further from its label. */
+  /** A destructive primary action while pressed: in light a grade past its hover, further from its label. In dark, where lightening further would turn the soft fill nearly white, it is instead a small step deeper than rest, still clear of its dark label, so it reads as pressed rather than highlighted. */
   'color.bg.danger.emphasis.pressed': {
     cssVariable: '--env-color-bg-danger-emphasis-pressed',
     type: 'color',
     values: {
       light: '#7a0200',
-      dark: '#f8aca6',
+      dark: '#e68c84',
       'light-high-contrast': '#5a0100',
       'dark-high-contrast': '#ffedeb',
     },
@@ -810,13 +810,13 @@ export const tokens = {
       'dark-high-contrast': '#cddefc',
     },
   },
-  /** A primary action while pressed: a grade past its hover, further from its label. */
+  /** A primary action while pressed: in light a grade past its hover, further from its label. In dark, where lightening further would turn the soft fill nearly white, it is instead a small step deeper than rest, still clear of its dark label, so it reads as pressed rather than highlighted. */
   'color.bg.primary.emphasis.pressed': {
     cssVariable: '--env-color-bg-primary-emphasis-pressed',
     type: 'color',
     values: {
       light: '#004aa2',
-      dark: '#dbe8fd',
+      dark: '#8ab3f5',
       'light-high-contrast': '#002f6d',
       'dark-high-contrast': '#e0ebfd',
     },
@@ -1190,7 +1190,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: 'rgb(142 60 170 / 0.55)',
-      dark: 'rgb(231 168 255 / 0.55)',
+      dark: 'rgb(218 176 236 / 0.55)',
       'light-high-contrast': 'rgb(99 4 125 / 0.55)',
       'dark-high-contrast': 'rgb(247 228 255 / 0.55)',
     },
@@ -1509,7 +1509,7 @@ export const tokens = {
     type: 'color',
     values: {
       light: '#83319f',
-      dark: '#e7a8ff',
+      dark: '#dab0ec',
       'light-high-contrast': '#63047d',
       'dark-high-contrast': '#f7e4ff',
     },
@@ -1745,6 +1745,28 @@ export const tokens = {
       'dark-high-contrast': '#ffd3cf',
     },
   },
+  /** A danger text button under the pointer: a grade darker in light and in dark, as a link is. */
+  'color.fg.danger.hover': {
+    cssVariable: '--env-color-fg-danger-hover',
+    type: 'color',
+    values: {
+      light: '#9f0300',
+      dark: '#ee9c95',
+      'light-high-contrast': '#6b0100',
+      'dark-high-contrast': '#ffedeb',
+    },
+  },
+  /** A danger text button while pressed: a grade past its hover. */
+  'color.fg.danger.pressed': {
+    cssVariable: '--env-color-fg-danger-pressed',
+    type: 'color',
+    values: {
+      light: '#7a0200',
+      dark: '#e68c84',
+      'light-high-contrast': '#5a0100',
+      'dark-high-contrast': '#fff6f5',
+    },
+  },
   /** Body text and the labels of rows, fields and choice controls. */
   'color.fg.default': {
     cssVariable: '--env-color-fg-default',
@@ -1844,12 +1866,12 @@ export const tokens = {
       'dark-high-contrast': '#eaf2ff',
     },
   },
-  /** A link while pressed. */
+  /** A link while pressed: a grade past its hover in light. */
   'color.fg.link.pressed': {
     cssVariable: '--env-color-fg-link-pressed',
     type: 'color',
     values: {
-      light: '#00408f',
+      light: '#00377c',
       dark: '#75a5f2',
       'light-high-contrast': '#00275c',
       'dark-high-contrast': '#f4f8ff',

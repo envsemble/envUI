@@ -20,7 +20,6 @@ import { useFormatters } from '../internal/useFormatters.js';
 import { commandPalette } from '../foundations/messages/commandPalette.js';
 import { useTheme } from '../foundations/Theme.js';
 import { IconSearch } from '../icons/Search.js';
-import { IconSearchOff } from '../icons/SearchOff.js';
 import { IconClose } from '../icons/Close.js';
 import { IconButton } from '../actions/Button.js';
 import { dialog } from '../foundations/messages/dialog.js';
@@ -108,9 +107,9 @@ export interface CommandPaletteProps
   /** Shown in the empty search field, such as "Search documents by name or folder". */
   placeholder?: string;
   /**
-   * The results are on their way, such as from a server. With none to show yet, the empty state
-   * says loadingLabel beside a spinner; results already shown stay, marked busy, and the search
-   * field's icon turns into a spinner.
+   * The results are on their way, such as from a server. A spinner shows at the search field's end;
+   * with no results to show yet, the empty state's line says loadingLabel, and results already
+   * shown stay, marked busy.
    * @default false
    */
   loading?: boolean;
@@ -120,21 +119,22 @@ export interface CommandPaletteProps
    */
   loadingLabel?: ReactNode;
   /**
-   * The empty state's title, shown in place of the list when there are no options, and announced.
+   * The empty state's title, the start of the one muted line shown in place of the list when there
+   * are no options, and announced.
    * @default 'Type to search' while the search field is empty and 'No results' when its text
    * finds nothing, or EnvUIProvider's messages.commandPalette.emptyQuery and empty
    */
   emptyLabel?: ReactNode;
   /**
-   * Quieter text under the empty state's title, such as what the palette searches; null or false
-   * shows none.
+   * Text after the empty state's title on its line, such as what the palette searches; null or
+   * false shows none.
    * @default None while the search field is empty; when its text finds nothing, 'Nothing matches
    * “…”. Check the spelling or try other words.', or messages.commandPalette.emptyHint
    */
   emptyDescription?: ReactNode;
   /**
-   * The empty state's decorative icon, above its title; null or false shows none.
-   * @default Search while the search field is empty, SearchOff when its text finds nothing
+   * A decorative icon at the start of the empty state's line, in an option's icon place, such as
+   * an error icon when the search failed; none by default.
    */
   emptyIcon?: ReactNode;
   /**
@@ -216,18 +216,9 @@ export function CommandPalette({
   // A hint for Enter, alone or with a modifier, chooses the highlighted option: with none to
   // choose, while results load or when nothing matches, it would promise what can't run.
   const shownHints = empty ? hints?.filter((hint) => !hint.keys.includes('Enter')) : hints;
-  // While loading, the empty state says so instead, with a spinner in its icon's place.
-  const icon = loading ? (
-    <Spinner />
-  ) : emptyIcon === undefined ? (
-    typed ? (
-      <IconSearchOff />
-    ) : (
-      <IconSearch />
-    )
-  ) : (
-    emptyIcon
-  );
+  // While loading, the empty state's line says so, with no icon: the spinner is at the search
+  // field's end.
+  const icon = loading ? null : emptyIcon;
   const title = loading
     ? (loadingLabel ?? messages.loading)
     : (emptyLabel ?? (typed ? messages.empty : messages.emptyQuery));
@@ -349,7 +340,8 @@ export function CommandPalette({
                       floatingLabel
                       variant="ghost"
                       size="lg"
-                      startIcon={loading && !empty ? <Spinner size="sm" /> : <IconSearch />}
+                      startIcon={<IconSearch />}
+                      endAction={loading ? <Spinner size="sm" /> : undefined}
                       className="env-command-palette-search"
                     >
                       <BaseAutocomplete.Input
@@ -409,9 +401,9 @@ export function CommandPalette({
                       : renderItem}
                   </BaseAutocomplete.List>
                   {/* One polite status: the number of results as they change, or the loading label
-                    while they load, read by assistive technology only, or the empty state, shown in
-                    place of the list: its title and description are announced, and its icon is
-                    decorative. */}
+                    while they load, read by assistive technology only, or the empty state, one
+                    muted line in place of the list, so the palette keeps about its height: its
+                    title and description are announced, and its icon is decorative. */}
                   <BaseAutocomplete.Status
                     className="env-command-palette-status"
                     data-empty={flag(empty)}
@@ -420,7 +412,7 @@ export function CommandPalette({
                       <>
                         {icon != null && icon !== false && (
                           <span className="env-command-palette-empty-icon">
-                            {loading ? icon : <DecorativeIcon>{icon}</DecorativeIcon>}
+                            <DecorativeIcon>{icon}</DecorativeIcon>
                           </span>
                         )}
                         <span className="env-command-palette-empty-title">{title}</span>

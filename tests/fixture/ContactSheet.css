@@ -71,6 +71,9 @@ body:has(.cs-root) {
   align-items: center;
   max-inline-size: 100%;
 }
+.cs-cell[data-cs-tooltip-room] .cs-cell-body {
+  padding-block-end: 2.5rem;
+}
 .cs-cell[style] .cs-cell-body,
 .cs-cell[style] .cs-cell-body > * {
   inline-size: 100%;

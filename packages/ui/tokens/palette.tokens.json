@@ -1812,11 +1812,7 @@
         "$value": { "colorSpace": "oklch", "components": [0.9337, 0.0474, 316.2], "hex": "#f6e0ff" }
       },
       "8": {
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [0.9236, 0.0555, 316.64],
-          "hex": "#f5dbff"
-        }
+        "$value": { "colorSpace": "oklch", "components": [0.9227, 0.0549, 315.6], "hex": "#f4dbff" }
       },
       "9": {
         "$value": {
@@ -1828,8 +1824,8 @@
       "10": {
         "$value": {
           "colorSpace": "oklch",
-          "components": [0.9044, 0.0693, 316.17],
-          "hex": "#f2d2ff"
+          "components": [0.9062, 0.0676, 315.93],
+          "hex": "#f2d3ff"
         }
       },
       "11": {
@@ -1840,47 +1836,51 @@
         }
       },
       "12": {
-        "$value": { "colorSpace": "oklch", "components": [0.888, 0.082, 316.35], "hex": "#f0caff" }
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.8872, 0.0815, 315.62],
+          "hex": "#efcaff"
+        }
       },
       "13": {
         "$value": {
           "colorSpace": "oklch",
-          "components": [0.8799, 0.0884, 316.41],
-          "hex": "#efc6ff"
+          "components": [0.8791, 0.0879, 315.73],
+          "hex": "#eec6ff"
         }
       },
       "14": {
-        "$value": { "colorSpace": "oklch", "components": [0.8692, 0.096, 316.01], "hex": "#edc1ff" }
-      },
-      "15": {
         "$value": {
           "colorSpace": "oklch",
-          "components": [0.8612, 0.1023, 316.07],
-          "hex": "#ecbdff"
+          "components": [0.8694, 0.0915, 316.11],
+          "hex": "#ecc2fd"
         }
       },
+      "15": {
+        "$value": { "colorSpace": "oklch", "components": [0.8602, 0.0917, 316.1], "hex": "#e9bffa" }
+      },
       "20": {
-        "$value": { "colorSpace": "oklch", "components": [0.8204, 0.1358, 316.4], "hex": "#e7a8ff" }
+        "$value": { "colorSpace": "oklch", "components": [0.8143, 0.094, 315.6], "hex": "#dab0ec" }
       },
       "25": {
         "$value": {
           "colorSpace": "oklch",
-          "components": [0.7804, 0.1681, 316.13],
-          "hex": "#e193ff"
+          "components": [0.7729, 0.1156, 315.97],
+          "hex": "#d29ee7"
         }
       },
       "30": {
         "$value": {
           "colorSpace": "oklch",
-          "components": [0.7395, 0.1785, 316.27],
-          "hex": "#d683f5"
+          "components": [0.7337, 0.1354, 316.06],
+          "hex": "#ca8de2"
         }
       },
       "35": {
         "$value": {
           "colorSpace": "oklch",
-          "components": [0.6989, 0.1788, 316.49],
-          "hex": "#c976e7"
+          "components": [0.6969, 0.1565, 316.19],
+          "hex": "#c37cde"
         }
       },
       "40": {
@@ -1993,7 +1993,7 @@
       "98": {
         "$value": { "colorSpace": "oklch", "components": [0.1563, 0.077, 315.08], "hex": "#180022" }
       },
-      "$description": "The accent purple of important actions."
+      "$description": "The accent purple of important actions. Its light seed, a lilac at the chroma of the dark theme’s soft blue, keeps the dark accent fill as soft as the primary’s; from grade 40 the purple keeps its full chroma."
     },
     "powder": {
       "2": {

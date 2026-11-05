@@ -245,8 +245,8 @@
     "CommandPalette": {
       "env-command-palette": "The command palette's dialog.",
       "env-command-palette-close": "The close button after the search, shown under a coarse pointer.",
-      "env-command-palette-empty-description": "The empty state's quieter text under its title.",
-      "env-command-palette-empty-icon": "The empty state's icon on its circle.",
+      "env-command-palette-empty-description": "The empty state's text after its title, on its line.",
+      "env-command-palette-empty-icon": "The empty state's icon, at the start of its line.",
       "env-command-palette-empty-title": "The empty state's title.",
       "env-command-palette-footer": "The footer with the keyboard hints.",
       "env-command-palette-footer-content": "The content of the footer.",

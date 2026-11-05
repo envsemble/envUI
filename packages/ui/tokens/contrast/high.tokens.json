@@ -396,7 +396,15 @@
         "$value": "{contrast-high.color.fg.warning}"
       },
       "danger": {
-        "$value": "{contrast-high.color.fg.danger}"
+        "$root": {
+          "$value": "{contrast-high.color.fg.danger}"
+        },
+        "hover": {
+          "$value": "{contrast-high.color.fg.danger.hover}"
+        },
+        "pressed": {
+          "$value": "{contrast-high.color.fg.danger.pressed}"
+        }
       },
       "done": {
         "$value": "{contrast-high.color.fg.done}"

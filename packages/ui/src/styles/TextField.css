@@ -521,7 +521,8 @@
     pointer-events: none;
   }
   .env-text-field-end {
-    inset-inline-end: var(--env-space-2);
+    /* Where the end action sits; the command palette's search insets its spinner as its icon. */
+    inset-inline-end: var(--env-text-field-end-inset, var(--env-space-2));
   }
   .env-text-field-start .env-icon {
     width: var(--env-control-icon-size);
@@ -648,7 +649,7 @@
       var(--env-control-target-min),
       calc(var(--env-field-height) - var(--env-space-2))
     );
-    inset-inline-end: var(--env-space-1);
+    inset-inline-end: var(--env-text-field-end-inset, var(--env-space-1));
   }
   .env-text-field:not([data-tall])
     .env-text-field-control[data-end-action]

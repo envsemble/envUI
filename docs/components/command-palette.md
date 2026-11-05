@@ -200,13 +200,13 @@ Name commands with a verb and what they act on, such as Invite people.
 
 Ask for the palette's states in these words.
 
-| Words            | In code                                                  | Use for                                                        |
-| ---------------- | -------------------------------------------------------- | -------------------------------------------------------------- |
-| Suggestions      | `suggestedItems`, with a `group` such as Suggested       | Options shown before people type.                              |
-| Recent items     | `suggestedItems`, with a `group` such as Recently opened | The items people opened last, before they type.                |
-| Type to search   | The empty state with an empty query: `emptyDescription`  | Inviting a search, and what it finds, with nothing to suggest. |
-| No results       | `emptyLabel`, `emptyDescription` and `emptyHint`         | Saying that the text found nothing, and what to try.           |
-| Without the icon | `emptyIcon={null}`                                       | An empty state of words alone, such as one that loads.         |
+| Words          | In code                                                  | Use for                                                        |
+| -------------- | -------------------------------------------------------- | -------------------------------------------------------------- |
+| Suggestions    | `suggestedItems`, with a `group` such as Suggested       | Options shown before people type.                              |
+| Recent items   | `suggestedItems`, with a `group` such as Recently opened | The items people opened last, before they type.                |
+| Type to search | The empty state with an empty query: `emptyDescription`  | Inviting a search, and what it finds, with nothing to suggest. |
+| No results     | `emptyLabel`, `emptyDescription` and `emptyHint`         | Saying that the text found nothing, and what to try.           |
+| With an icon   | `emptyIcon`                                              | Marking an empty state, such as a search that failed.          |
 
 ## Compose
 
@@ -240,11 +240,12 @@ Each CommandPaletteItem has an `id` and a `label`, with `textValue` for a label 
 
 `suggestedItems` show while the field is empty, or holds only spaces, in place of `items`, such as recent documents or suggested pages with a `group` heading; they are options like any other, highlighted, chosen with <kbd>Enter</kbd> or <kbd>Ctrl</kbd>+<kbd>Enter</kbd> and passed to `onAction`.
 
-With no options, the empty state shows in place of the list: an icon on a muted circle, a title and a quieter description, as the polite status.
+With no options, the empty state shows in place of the list as the polite status: one muted line at an option's height, its title and then its description after a dot, so the palette keeps about its height as results come and go.
 
-- While the field is empty: the Search icon and Type to search, with no description; `emptyDescription` says what the palette finds.
-- When the text finds nothing: SearchOff, No results, and a hint that quotes the trimmed text.
-- `emptyLabel`, `emptyDescription` and `emptyIcon` replace the title, the description and the icon in either state; `null` or `false` hides the description or the icon. Pass a value that depends on the query to change one state only.
+- While the field is empty: Type to search, with no description; `emptyDescription` says what the palette finds.
+- When the text finds nothing: No results, and a hint that quotes the trimmed text.
+- While results load: the loading label, with a spinner at the search field's end, which also shows while results already found stay.
+- `emptyLabel` and `emptyDescription` replace the title and the description in either state, `null` or `false` hiding the description, and `emptyIcon` puts an icon at the start of the line, where an option's sits, such as an error icon. Pass a value that depends on the query to change one state only.
 - The icon is decorative and hidden from assistive technology; the title and description are announced.
 
 ```tsx
@@ -369,6 +370,7 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 ## Changelog
 
 - **1.0.0**: Opens from a Button with the shortcut's keys in its new `end` slot, in place of the SearchTrigger component. Rebuilt on Base UI's autocomplete: `inputValue`, `onInputValueChange`, `onAction` and `closeOnAction` for `query`, `onQueryChange`, `onSelect` and `closeOnSelect`, and `CommandPaletteActionDetails`; items take `description`, `end` and `disabled`; options are list rows; the number of results is announced; `className`, `style`, `ref` and data attributes reach the surface. A group's label, `env-command-palette-heading`, is `env-command-palette-group-label`, as in Menu.
+- **1.0.0-prerelease.6**: The empty state is one muted line at an option's height, its title and description after a dot, rather than an icon on a circle over a centred title, so the palette keeps about its height as results come and go; it shows an icon only when `emptyIcon` gives one. While results load, a spinner turns at the search field's end, rather than in place of its icon or the empty state's.
 - **1.0.0-prerelease.6**: While it holds the caret, the search's edge takes the focus color as a hairline, rather than a ring that read as a second frame.
 - **1.0.0-prerelease.6**: A key hint for <kbd>Enter</kbd> hides while there is no option to choose, as results load or when nothing matches.
 - **1.0.0-prerelease.6**: Under a coarse pointer the palette hides the keys, the shortcuts in its items and the key hints of its footer, and shows a close button after the search field, `env-command-palette-close`, for touch screens with no <kbd>Esc</kbd>; the two share a row, `env-command-palette-header`.

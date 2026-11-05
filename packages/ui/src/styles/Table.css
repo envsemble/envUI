@@ -208,6 +208,8 @@
     --env-color-fg-link: var(--env-color-fg-on-selected);
     --env-color-fg-link-hover: var(--env-color-fg-on-selected);
     --env-color-fg-link-pressed: var(--env-color-fg-on-selected);
+    --env-color-fg-danger-hover: var(--env-color-fg-danger);
+    --env-color-fg-danger-pressed: var(--env-color-fg-danger);
     /* The bar's color, which a skeleton clears. */
     --env-table-selection-bar: var(--env-color-fg-on-selected);
     --env-avatar-group-ring-tint: var(--env-color-bg-selected);
