@@ -59,6 +59,24 @@
   .env-checkbox:has(input:disabled) > * {
     opacity: var(--env-state-disabled-opacity);
   }
+  /* A checked or mixed box that is unavailable reads as unavailable rather than as a lighter brand
+     color, as an unavailable button does: the neutral fill, with its mark in the disabled text
+     color, at full strength while its label fades. */
+  .env-checkbox:has(input:disabled:is(:checked, :indeterminate)) > .env-checkbox-box {
+    opacity: 1;
+  }
+  .env-checkbox-input:is(:checked, :indeterminate):disabled {
+    background: var(--env-color-bg-neutral-muted);
+  }
+  .env-checkbox-input:is(:checked, :indeterminate):disabled + .env-checkbox-indicator {
+    color: var(--env-color-fg-disabled);
+  }
+  /* Read-only (aria-readonly), as a finished checklist is: the box keeps its colors and its state,
+     and doesn't answer the pointer. */
+  .env-checkbox:has(input[aria-readonly='true']) {
+    cursor: default;
+    pointer-events: none;
+  }
   /* A checkbox without a visible label is no wider than its box: an invisible hit area centered on
      it takes presses across the minimum target, and the touch target under a coarse pointer, while
      the box and the layout around it stay as they are. */

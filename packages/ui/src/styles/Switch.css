@@ -71,6 +71,18 @@
   .env-switch:has(input:disabled) > * {
     opacity: var(--env-state-disabled-opacity);
   }
+  /* A switch that is on and unavailable reads as unavailable rather than as a lighter brand color,
+     as an unavailable button does: the neutral fill, with its thumb in the disabled text color, at
+     full strength while its label fades. */
+  .env-switch:has(input:disabled:checked) > .env-switch-input {
+    opacity: 1;
+  }
+  .env-switch-input:checked:disabled {
+    background: var(--env-color-bg-neutral-muted);
+  }
+  .env-switch-input:checked:disabled::before {
+    background: var(--env-color-fg-disabled);
+  }
   @media (pointer: coarse) {
     .env-switch {
       --env-switch-row: var(--env-control-height-touch);
