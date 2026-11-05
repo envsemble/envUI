@@ -152,6 +152,7 @@ The track, `env-segmented-control`, carries `data-size` and `data-full-width`; e
 
 ## Changelog
 
+- **1.0.0-prerelease.6**: Under the pointer and pressed, a segment not chosen takes the text color and no fill, so only the thumb reads as chosen, in dark too.
 - **1.0.0-prerelease.6**: SegmentedControl is segments in a recessed track, the chosen one raised on a thumb with a soft shadow, rather than Material's connected outlined segments: no outline, no lines between the segments and no check, and a chosen segment shows its icon. Tabs keep their indicator under the selected tab, so the two still read differently. The check, `env-segmented-control-item-indicator`, is gone. `--env-segmented-control-container` sets the track, the neutral fill by default, `--env-segmented-control-outline` an outline around it, none by default, and `--env-segmented-control-selected` the thumb.
 - **1.0.0-prerelease.5**: It can be uncontrolled, with `defaultValue`.
 - **1.0.0-prerelease.2**: SegmentedControl looks like Material's segmented buttons: connected segments in one outline, the chosen one in the selected fill, `--env-color-bg-selected`, with a check, `env-segmented-control-item-check`, in place of its icon, so it reads differently from Tabs. `--env-segmented-control-outline` sets the outline. The API stays.

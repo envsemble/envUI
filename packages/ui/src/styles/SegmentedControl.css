@@ -188,13 +188,12 @@
   .env-segmented-control-item:focus-visible:not([data-checked]):not([data-disabled]) {
     background: var(--env-segmented-control-custom-fill, transparent);
   }
-  .env-segmented-control-item:hover:not([data-checked]):not([data-disabled]) {
-    background: var(--env-segmented-control-custom-fill, var(--env-color-bg-neutral-subtle-hover));
+  /* Under the pointer and pressed, a segment not chosen takes the text color and no fill of its own,
+     so only the thumb reads as chosen, in dark too, where a fill would look like it. The
+     application's colors keep their state layer. */
+  .env-segmented-control-item:is(:hover, :active):not([data-checked]):not([data-disabled]) {
+    background: var(--env-segmented-control-custom-fill, transparent);
     color: var(--env-segmented-control-option-hover-color, var(--env-color-fg-default));
-  }
-  .env-segmented-control-item:active:not([data-checked]):not([data-disabled]) {
-    /* prettier-ignore */
-    background: var(--env-segmented-control-custom-fill, var(--env-color-bg-neutral-subtle-pressed));
   }
   /* The chosen segment rises on its thumb, which stays as it is under the pointer, as it is chosen
      already. */
