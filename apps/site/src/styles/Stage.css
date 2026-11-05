@@ -669,6 +669,18 @@
   align-content: start;
 }
 
+/* The layer the cursor is drawn in, as large as the stage and clipping it to the stage's corners,
+   so neither the cursor nor its chip is drawn past the stage, also where the stage itself lets
+   what it shows reach past it (Gallery.css). */
+.catalogue-pointer-layer {
+  position: absolute;
+  inset: 0;
+  z-index: var(--env-z-raised);
+  overflow: clip;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
 /* The cursor of the pointer no one sees (motion/PointerCursor.ts), over a playing preview's stage:
    a plain arrow in the text's color, edged in the page's, at the scale the preview is drawn at,
    its tip where the pointer is, a little smaller while it presses. */
@@ -716,6 +728,13 @@
   color: var(--env-color-fg-default);
   font: var(--env-type-body-sm);
   white-space: nowrap;
+}
+/* Near the stage's end, the chip goes before the arrow's tip, and near its foot, above it. */
+.catalogue-pointer-file[data-before] {
+  inset-inline: auto calc(100% + 0.25rem);
+}
+.catalogue-pointer-file[data-above] {
+  inset-block: auto calc(100% + 0.25rem);
 }
 .catalogue-pointer-file-icon {
   display: flex;
