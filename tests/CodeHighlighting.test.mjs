@@ -53,7 +53,8 @@ test('a token without high-contrast styles takes its standard color at high cont
 });
 
 test('every highlighted token is readable on its code background, in code blocks and diffs', async () => {
-  const { wcagContrast, differenceEuclidean } = await import('culori');
+  const { wcagContrast, differenceEuclidean, oklch } = await import('culori');
+  const chroma = (color) => oklch(color).c ?? 0;
   const { codeTheme, diffTintColors } = await import(
     '../packages/ui/dist/content/internal/codeThemes.js'
   );
@@ -214,21 +215,29 @@ test('every highlighted token is readable on its code background, in code blocks
             wcagContrast(theme.colors[key], block) >= target,
             `${scheme} ${contrast} ${kind} on ${block}`,
           );
-        for (const block of blocks) {
-          const line = over(tints[kind], diffTintOpacity.line, block);
-          const word = over(tints[kind], diffTintOpacity.word, line);
-          // A tint people can see: a step from the block, as the block is from its surface.
+        // In dark a line keeps less of the change color's chroma than its gutter, which carries
+        // the change; at high contrast both are as dark as the tokens need.
+        if (scheme === 'dark' && contrast === 'standard')
           assert.ok(
-            differenceEuclidean('oklab')(line, block) >= 0.01,
-            `${scheme} ${contrast} ${kind} line ${line} on ${block}`,
+            chroma(tints[kind]) < chroma(tints[`${kind}Gutter`]),
+            `${scheme} ${contrast} ${kind}: the line's tint is quieter than the gutter's`,
           );
-          for (const color of textColors(theme))
-            for (const tint of [line, word])
-              assert.ok(
-                wcagContrast(color, tint) >= target,
-                `diff ${scheme} ${contrast} ${color} on ${tint}: ${wcagContrast(color, tint)}`,
-              );
-        }
+        for (const fill of [tints[kind], tints[`${kind}Gutter`]])
+          for (const block of blocks) {
+            const line = over(fill, diffTintOpacity.line, block);
+            const word = over(fill, diffTintOpacity.word, line);
+            // A tint people can see: a step from the block, as the block is from its surface.
+            assert.ok(
+              differenceEuclidean('oklab')(line, block) >= 0.01,
+              `${scheme} ${contrast} ${kind} line ${line} on ${block}`,
+            );
+            for (const color of textColors(theme))
+              for (const tint of [line, word])
+                assert.ok(
+                  wcagContrast(color, tint) >= target,
+                  `diff ${scheme} ${contrast} ${color} on ${tint}: ${wcagContrast(color, tint)}`,
+                );
+          }
       }
     }
 });

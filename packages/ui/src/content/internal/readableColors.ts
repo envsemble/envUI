@@ -83,6 +83,12 @@ function fromOklch(lightness: number, chroma: number, hue: number) {
   return formatHex(oklabToLinear(at(fits)).map(fromLinear) as Rgb);
 }
 
+/** The color with its OKLCH chroma scaled by `factor`, at the same lightness and hue. */
+export function scaleChroma(color: string, factor: number) {
+  const [lightness, a, b] = toOklab(color);
+  return fromOklch(lightness, Math.hypot(a, b) * factor, Math.atan2(b, a));
+}
+
 /** A color at an opacity over a background, as the browser composites it. */
 export function over(color: string, alpha: number, background: string) {
   const [top, bottom] = [parseHex(color), parseHex(background)];
