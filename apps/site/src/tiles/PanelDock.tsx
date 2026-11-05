@@ -27,36 +27,40 @@ const start: PanelDockPanel[] = [
     id: 'notes',
     title: 'Notes',
     mode: 'open',
-    // As tall as its header, the title under the window controls, whole: its note runs on below,
-    // where the panel scrolls.
-    height: 5.25,
     preferredWidth: 7,
     minWidth: 7,
   },
 ];
 
 /**
- * The window the panels dock in, outlined, so the bottom edge they stand on shows, a few rows of
- * its page beside the panel: as low as a gallery's tile shows whole at its own size; on a phone's
- * narrower tile, narrower, so it is drawn at about its own size there too.
+ * The window the panels dock in, outlined, so the bottom edge they stand on shows, over a few rows
+ * of its page: as low as a gallery's tile shows whole at its own size; on a phone's narrower tile,
+ * narrower, so it is drawn at about its own size there too. Its dock is narrower than `stackBelow`,
+ * so the open panel fills it, as one does in a narrow window: its header, the title under the
+ * window controls, and its note's one line, above the bottom edge.
  */
 const edges = {
   position: 'relative',
   inlineSize: '12rem',
-  blockSize: '6.25rem',
+  blockSize: '6.75rem',
   padding: '0.5rem 0.75rem',
   boxSizing: 'border-box',
   border: '0.0625rem solid var(--env-color-border-muted)',
   overflow: 'hidden',
 } as const;
-const narrowEdges = { ...edges, inlineSize: '10rem', paddingInline: '0.5rem' } as const;
+const narrowEdges = {
+  ...edges,
+  inlineSize: '10rem',
+  blockSize: '6.5rem',
+  paddingInline: '0.5rem',
+} as const;
 
 const rows = ['Plan', 'Team', 'Docs'];
 const narrowRows = ['Q1', 'Q2', 'Q3'];
 
 /**
  * A notes panel docked at the bottom edge of a window, at rest, whose tab takes its place there
- * minimized. Stopped, it puts its panels back rather than being drawn anew, which would raise the
+ * minimized, uncovering the page. Stopped, it puts its panels back rather than being drawn anew, which would raise the
  * notes in again.
  */
 export default function PanelDockTile() {
@@ -74,7 +78,7 @@ export default function PanelDockTile() {
       </Column>
       <PanelDock.Root
         panels={panels}
-        stackBelow={narrow ? '8rem' : '10rem'}
+        stackBelow="16rem"
         onModeChange={(id, mode) =>
           setPanels((current) =>
             current.map((panel) => (panel.id === id ? { ...panel, mode } : panel)),
@@ -87,7 +91,7 @@ export default function PanelDockTile() {
         {(panel) => (
           <>
             <PanelDock.Header title={panel.title} />
-            <Text emphasis="muted" style={{ padding: '0 1.5rem 1.5rem' }}>
+            <Text emphasis="muted" style={{ paddingInline: '1.25rem 0.75rem' }}>
               Moves to May.
             </Text>
           </>

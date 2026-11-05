@@ -41,9 +41,10 @@ const scriptOf = ({ phrase, last }: typeof wide): PointerStep[] => [
 const scripts = { wide: scriptOf(wide), short: scriptOf(short) };
 
 /**
- * A rich text editor: its formatting toolbar over a line whose phrase turns bold; in a phone's
- * tile narrower, with Bold alone beside undo and redo, on a shorter line that stays one line, so it
- * is drawn whole at its own size there too.
+ * A rich text editor with its fewest tools, Bold beside undo and redo, over a line whose phrase
+ * turns bold; in a phone's tile narrower, on a shorter line that stays one line. Its document is
+ * never lower than 10 rem, taller than a gallery's stage, so it shows from its top: the toolbar and
+ * the line whole, cut off in the empty document below them.
  */
 export default function RichTextTile() {
   const [round, setRound] = useState(0);
@@ -58,7 +59,7 @@ export default function RichTextTile() {
         aria-label="Launch note"
         key={words.text}
         defaultValue={words.text}
-        toolbar={narrow ? ['bold'] : ['bold', 'italic']}
+        toolbar={['bold']}
         style={{ inlineSize: narrow ? '8.5rem' : '12.5rem' }}
       />
     </Renew>
