@@ -206,6 +206,17 @@ function fit(room: HTMLElement, layer: HTMLElement) {
     next.right = Math.max(0, all.right - own.right) / scale;
     next.bottom = Math.max(0, all.bottom - own.bottom) / scale;
     next.left = Math.max(0, own.left - all.left) / scale;
+    // The room's padding at its sides narrows what opens the popups: text, such as a sentence with
+    // a link that opens a hover card, would wrap to it, move its link and the popup with it, and be
+    // padded narrower again, down to a column of a word or two. What opens them keeps at least
+    // the widest popup's width, so a popup about as wide as the stage leaves the text as wide.
+    const widest = Math.max(...anchored.map((box) => box.width)) / scale;
+    const spare = Math.max(0, room.clientWidth - widest);
+    const sides = next.left + next.right;
+    if (sides > spare) {
+      next.left *= spare / sides;
+      next.right *= spare / sides;
+    }
   }
   // A popup is placed at whole pixels, and moving the room by a fraction of one can round it to
   // the next: padding that followed every such step would set it trembling, a pixel each frame.

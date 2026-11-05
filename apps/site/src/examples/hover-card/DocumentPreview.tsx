@@ -3,7 +3,7 @@ import { HoverCard, Link, Column, Text } from '@envsemble/envui';
 export default function DocumentPreview() {
   return (
     <Text>
-      The launch depends on the{' '}
+      The launch depends on the pricing review and the{' '}
       <HoverCard
         // Shown open in the docs; without defaultOpen, it opens on hover and focus.
         defaultOpen
@@ -15,8 +15,8 @@ export default function DocumentPreview() {
           </Text>
           <Text emphasis="muted">Changed today by Alex Morgan. 3 open decisions, 1 blocked.</Text>
         </Column>
-      </HoverCard>{' '}
-      and the pricing review.
+      </HoverCard>
+      .
     </Text>
   );
 }
