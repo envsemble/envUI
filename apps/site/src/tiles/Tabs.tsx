@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Tabs, Text } from '@envsemble/envui';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
@@ -22,25 +23,29 @@ const script: PointerStep[] = [
   { wait: 400 },
 ];
 
-/** Three tabs of a project, Summary chosen, over its one-line panel. */
+const panels = [
+  { value: 'summary', label: 'Summary', text: 'Plans and owners.' },
+  { value: 'files', label: 'Files', text: 'Twelve files.' },
+  { value: 'activity', label: 'Activity', text: 'Updated today.' },
+];
+
+/**
+ * Three tabs of a project, Summary chosen, over its one-line panel. A panel's line goes at once as
+ * another tab is chosen, while the next one fades in, so two lines never show over each other.
+ */
 export default function TabsTile() {
+  const [value, setValue] = useState('summary');
   usePointer(script);
   return (
     <Tabs
       aria-label="Project views"
-      items={[
-        {
-          value: 'summary',
-          label: 'Summary',
-          content: <Text>Plans and owners.</Text>,
-        },
-        { value: 'files', label: 'Files', content: <Text>Twelve files.</Text> },
-        {
-          value: 'activity',
-          label: 'Activity',
-          content: <Text>Updated today.</Text>,
-        },
-      ]}
+      value={value}
+      onValueChange={(next) => next && setValue(next)}
+      items={panels.map((panel) => ({
+        value: panel.value,
+        label: panel.label,
+        content: <Text style={{ opacity: panel.value === value ? 1 : 0 }}>{panel.text}</Text>,
+      }))}
     />
   );
 }
