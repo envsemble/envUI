@@ -15,8 +15,8 @@
 .catalogue-gallery-grid {
   /* The least box a component drawn at its own size is drawn whole at, with the inset around it
      (useFit.ts): as wide as five to a row, and as tall as a row of controls with room around it;
-     what is taller, such as a menu open under its button, is cut off at its foot rather than drawn
-     smaller. */
+     what is taller, such as a calendar, is cut off at its foot rather than drawn smaller, and an
+     open popup, such as a menu under its button, is drawn smaller to show whole. */
   --catalogue-own-least: 12rem;
   --catalogue-own-least-block: 4.5rem;
   display: grid;
@@ -39,7 +39,7 @@
 
 /* The stage of a gallery tile: wide and low, as most components are, so a row of controls
    doesn't stand in empty space and many components can be scanned at once; what is taller, such
-   as a menu open under its button, is cut off at its foot after its last whole row, fading out. Each page's own tile lays out in its own window (tiles/Tiles.ts,
+   as a calendar, is cut off at its foot after its last whole row, fading out. Each page's own tile lays out in its own window (tiles/Tiles.ts,
    Related.css); a page without one shows its example in a window that counts whole
    (Related.tsx), so it is drawn at the tiles' scale. */
 .catalogue-gallery-stage.catalogue-gallery-stage {
@@ -50,8 +50,8 @@
 /* On a phone, components two to a row on lower stages, so the gallery stays short: each drawn as
    small as fits its stage's width, but no smaller than 0.7 of its own size (useFit.ts), laid out
    as wide as the stage shows at that scale; what is larger still is cut off at its end and its
-   foot, fading out, such as a popup under its trigger, the trigger and the top of the popup in
-   view. A pattern's scene keeps its taller tile, one to a row. */
+   foot, fading out, but an open popup, which is drawn whole. A pattern's scene keeps its taller
+   tile, one to a row. */
 @container catalogue-gallery (width < 27.25rem) {
   .catalogue-gallery-grid:not([data-scenes]) {
     --catalogue-own-least: 0rem;
@@ -125,6 +125,14 @@
   inline-size: max(100% - 2rem, var(--catalogue-own-least));
   block-size: max(100% - 2rem, var(--catalogue-tile-height, 10.5rem));
   min-block-size: 0;
+}
+
+/* A popup shown open is drawn whole, as small as it needs (useFit.ts), so it lays out in its tile's
+   own window, as wide as it was written for, such as a dialog's, also on a phone. */
+.catalogue-gallery-grid
+  .catalogue-gallery-stage.catalogue-gallery-stage
+  .catalogue-related-canvas[data-own-size][data-popup] {
+  inline-size: max(100% - 2rem, var(--catalogue-tile-width, 14rem));
 }
 
 /* A command palette and a notification leave the window's gutter beside them; drawn at their

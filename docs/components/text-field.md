@@ -163,8 +163,6 @@ An icon at the start only decorates the field.
 7. **End action** (`env-text-field-end`, `endAction`)
 8. **Description** (`env-field-description`, `description`)
 
-Not shown: the suffix, the error and a text area's resize edge.
-
 ## Behaviour
 
 ### States

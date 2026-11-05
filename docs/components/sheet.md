@@ -86,8 +86,6 @@ A medium side sheet takes the whole width of a compact window, and a large one o
 5. **Content** (`env-sheet env-checkbox`, `children`)
 6. **Action** (`env-dialog-actions > env-button`, `actions`)
 
-Not shown: the backdrop behind a modal sheet, and the handle on a resizable sheet's inner edge.
-
 ## Behaviour
 
 ### A dialog at the edge

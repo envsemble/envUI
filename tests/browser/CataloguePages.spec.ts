@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { siteDevUrl } from './helpers/Servers';
 import { chooseScheme } from './helpers/CatalogueThemes';
 import { documents, componentDocuments } from '../../apps/site/src/pages/PageModel';
-import { version, goTo } from './helpers/SiteSpecHelpers';
+import { goTo } from './helpers/SiteSpecHelpers';
 import { pagesOf } from '../../apps/site/src/navigation/SiteRoutes';
 import { bannerDrawingIndex, bannerSubject } from '../../apps/site/src/layout/CatalogueBannerOrder';
 
@@ -375,29 +375,35 @@ test("the overview's hero says what envUI is, leads to setting it up and gives t
   const hero = page.locator('.catalogue-overview-hero');
   await expect(hero.getByRole('heading', { level: 1 })).toHaveAccessibleName('envUI');
   await expect(hero.locator('.catalogue-overview-lede')).toContainText('A React design system');
-  // The install command names packages/ui/package.json's version and copies; the catalogue's
-  // counts sit under it.
+  // The install command is short and copies; under it, a line leads to the registry access it
+  // needs, and the catalogue's counts sit under that.
   const code = hero.locator('.catalogue-overview-install code');
-  await expect(code).toHaveText(`npm install @envsemble/envui@${version}`);
+  await expect(code).toHaveText('npm i @envsemble/envui');
   await expect(code).toBeVisible();
   await expect(hero.getByRole('button', { name: 'Copy install command' })).toBeVisible();
   await expect(hero.locator('.catalogue-overview-facts')).toContainText(
     `${componentDocuments.filter(({ id }) => id !== 'field').length} components`,
   );
-  // One way on of its own, to setting envUI up; the sidebar and the Explore cards lead elsewhere.
-  await expect(hero.getByRole('link')).toHaveText(['Get started']);
+  // One way on of its own, to setting envUI up, and the setup's registry access; the sidebar and
+  // the Explore cards lead elsewhere.
+  await expect(hero.getByRole('link')).toHaveText(['Get started', 'registry access']);
   await expect(hero.getByRole('link', { name: 'Get started' })).toHaveAttribute('href', '/docs');
+  await expect(hero.getByRole('link', { name: 'registry access' })).toHaveAttribute(
+    'href',
+    '/docs#registry-access',
+  );
   // The command is as tall as Get started beside it.
   const start = hero.getByRole('link', { name: 'Get started' });
   const install = hero.locator('.catalogue-overview-install');
   const height = async (locator: typeof install) => (await locator.boundingBox())!.height;
   expect(await height(install)).toBeCloseTo(await height(start), 0);
-  // A phone shows the same command, the one the button copies, whole and on one line, so the
-  // package and its version never read as two.
+  // A phone shows the same command, the one the button copies, whole and on one line, with room
+  // to spare before the copy button.
   await page.setViewportSize({ width: 390, height: 844 });
   await expect
     .poll(() => code.evaluate((element) => element.scrollWidth - element.clientWidth))
     .toBe(0);
+  expect((await install.boundingBox())!.width).toBeLessThan(390 * 0.75);
   await expect(code).toHaveCSS('white-space', 'nowrap');
 });
 
@@ -553,7 +559,9 @@ test('every tile of the galleries is fitted: components at one scale, a scene at
       const scaleOf = (canvas: Element | null) =>
         (canvas as HTMLElement | null)?.style.transform.match(/scale\(([^)]+)\)/)?.[1];
       const one = items
-        .map((tile) => scaleOf(tile.querySelector('[data-own-size][data-fitted]')))
+        .map((tile) =>
+          scaleOf(tile.querySelector('[data-own-size][data-fitted]:not([data-popup])')),
+        )
         .find(Boolean);
       return items.flatMap((tile) => {
         const name = tile.querySelector('.catalogue-gallery-name')?.textContent ?? '';
@@ -626,6 +634,10 @@ test('every tile of the galleries is fitted: components at one scale, a scene at
           .filter((box) => box.width > scale && box.height > scale)
           .filter((box) => box.width < window.width - 1 || box.height < window.height - 1);
         if (!shown.length) return [`${name}: empty`];
+        // A popup shown open, in a component's tile or a scene, is drawn whole, as much smaller
+        // as it needs, and no larger than the one scale.
+        if (canvas.hasAttribute('data-popup'))
+          return Number(scaleOf(canvas)) <= Number(one ?? 1) ? [] : [`${name}: popup drawn larger`];
         if (canvas.hasAttribute('data-own-size'))
           return scaleOf(canvas) === one && Number(one) <= 1 ? [] : [`${name}: not at one scale`];
         if (canvas.parentElement?.classList.contains('catalogue-related-crop'))
@@ -667,6 +679,35 @@ test('every tile of the galleries is fitted: components at one scale, a scene at
       }),
     );
     expect(cutRows, route).toEqual([]);
+    // A popup shown open, such as a menu under its button or a dialog, is whole in its stage: no
+    // edge or corner of its card is cut off or faded out.
+    const cutPopups = await tiles.evaluateAll((items) =>
+      items.flatMap((tile) => {
+        const stage = tile.querySelector('.catalogue-related-stage')!.getBoundingClientRect();
+        const layer = tile.querySelector('.catalogue-overlay-layer');
+        if (!layer) return [];
+        // A card: the outermost popup or dialog, such as a menu, a palette or a hover card.
+        const card =
+          ".env-popup, [role='menu'], [role='dialog'], [role='alertdialog'], [role='tooltip']";
+        const cards = [...layer.querySelectorAll<HTMLElement>(card)]
+          .filter((element) => !element.parentElement?.closest(card))
+          .filter((element) => element.checkVisibility());
+        const name = tile.querySelector('.catalogue-gallery-name')?.textContent;
+        return cards
+          .filter((card) => {
+            const box = card.getBoundingClientRect();
+            return (
+              box.left < stage.left - 1 ||
+              box.top < stage.top - 1 ||
+              box.right > stage.right + 1 ||
+              box.bottom > stage.bottom + 1 ||
+              tile.querySelector('.catalogue-related-canvas[data-cut]') !== null
+            );
+          })
+          .map((card) => `${name}: ${card.className}`);
+      }),
+    );
+    expect(cutPopups, route).toEqual([]);
   }
 });
 

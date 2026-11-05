@@ -171,8 +171,6 @@ Small, medium and large, the control heights of the [scale](../foundations/spaci
 3. **Label** (`env-button::text`)
 4. **End icon** (`env-button > env-icon:last-child`, `endIcon`)
 
-Not shown: quiet content at the far end, after the end icon, such as the shortcut on the [button that opens a CommandPalette](command-palette.md#opening-it-the-button-and-the-shortcut).
-
 ## Behaviour
 
 ### States

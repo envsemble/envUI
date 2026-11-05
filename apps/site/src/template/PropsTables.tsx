@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Link, Column, Table, Text } from '@envsemble/envui';
+import { Column, Table, Text } from '@envsemble/envui';
 import { PlainCode } from './SimpleTable';
 import type { ExportEntry, PropEntry } from '../shared/DocumentationTypes';
 import type { Documentation } from '../pages/PageModel';
@@ -171,23 +171,8 @@ function ExportProps({ name, entry }: { name: string; entry: ExportEntry }) {
 
 /** The Props view: every component and part the page documents, generated from their types. */
 export function PropsTables({ document }: { document: Documentation }) {
-  const sources = [...new Set(Object.values(document.props ?? {}).map(({ source }) => source))];
   return (
     <Column gap={7}>
-      <Text emphasis="muted">
-        Generated from the TypeScript source,{' '}
-        {sources.map((source, index) => (
-          <span key={source}>
-            {index > 0 && ', '}
-            <Link
-              href={`https://github.com/envsemble/envUI/blob/${__ENVUI_SOURCE_REVISION__}/${source}`}
-            >
-              {source.replace('packages/ui/src/', '')}
-            </Link>
-          </span>
-        ))}
-        ; the packaged Markdown carries the same tables.
-      </Text>
       {Object.entries(document.props ?? {}).map(([name, entry]) => (
         <ExportProps key={name} name={name} entry={entry} />
       ))}

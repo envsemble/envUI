@@ -303,15 +303,41 @@ export function useFit(
         parseFloat(canvasStyle.getPropertyValue('--catalogue-own-least-block')) * rem || 0;
       const downScale = leastBlock > 0 ? height / leastBlock : 1;
       const floor = parseFloat(canvasStyle.getPropertyValue('--catalogue-own-floor'));
-      const scale = ownSize
-        ? floor > 0
+      // A popup shown open, such as a menu under its button or a dialog, is drawn whole, its edges
+      // and corners in view, also in a pattern's scene: what holds one is drawn as much smaller as
+      // it needs to fit the stage, never cut off, and a component lays out in its tile's own
+      // window (`data-popup`, Gallery.css), as wide as it was written for. Once fitted, a tile
+      // keeps its scale as it plays, so a popup that closes and opens again doesn't resize it.
+      const popup = boxes.some(({ element }) => element.closest('.catalogue-overlay-layer'));
+      if ((ownSize || legible) && popup && canvasElement.dataset.fitted === undefined)
+        canvasElement.dataset.popup = '';
+      const wholeScale = Math.min(width / (right - left), height / (bottom - top));
+      const own =
+        floor > 0
           ? Math.max(floor, Math.min(1, width / (right - left), downScale))
-          : Math.min(1, width / least, downScale)
-        : legible
-          ? Math.max(legibleScale, Math.min(1, windowScale))
-          : tile
-            ? windowScale
-            : Math.min(whole ? windowScale : 1, width / (right - left), height / (bottom - top));
+          : Math.min(1, width / least, downScale);
+      const scene = Math.max(legibleScale, Math.min(1, windowScale));
+      const scale =
+        (ownSize || legible) &&
+        tile &&
+        playingNow.current &&
+        canvasElement.dataset.fitted !== undefined
+          ? view.scale
+          : ownSize
+            ? popup
+              ? Math.min(own, wholeScale)
+              : own
+            : legible
+              ? popup
+                ? Math.min(scene, wholeScale)
+                : scene
+              : tile
+                ? windowScale
+                : Math.min(
+                    whole ? windowScale : 1,
+                    width / (right - left),
+                    height / (bottom - top),
+                  );
       // A tile in place eases to where it is fitted next; anything else is placed at once.
       const eases = tile && canvasElement.dataset.fitted !== undefined && !still.matches;
       let toX = ((left + right) / 2) * scale;

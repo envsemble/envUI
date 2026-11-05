@@ -127,8 +127,6 @@ The [top bar](../components/top-bar.md)'s progress bar shows the next page is on
 4. **Description bars** (`env-card-description`)
 5. **Action shape** (`env-card-footer`)
 
-Not shown: the inert content inside the root, which has no box of its own.
-
 ## Behaviour
 
 ### When it shows

@@ -97,8 +97,6 @@ A cell can line its content up for comparing, keep it on one line, or head its r
 6. **Row** (`env-table-body > env-table-row:last-child`)
 7. **Cell** (`env-table-cell:last-child`)
 
-Not shown: a column's resize handle, and a stacked cell's label.
-
 ## Behaviour
 
 ### Sort by a column

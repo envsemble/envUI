@@ -72,8 +72,6 @@ examples:
 7. **Window controls** (`env-panel-dock-controls`)
 8. **Tab** (`env-panel-dock-tab`)
 
-Not shown: the resize handle, an invisible strip along an open panel's top edge.
-
 ## Behaviour
 
 ### The header

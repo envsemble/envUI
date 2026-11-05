@@ -234,10 +234,13 @@ test("the Design and Code switch keeps the reader's section where the other page
   await partSwitch.getByRole('link', { name: 'Design', exact: true }).click();
   await expect(page).toHaveURL(`${siteDevUrl}/patterns/forms#sending`);
   await expect(page.locator('#sending')).toBeInViewport();
-  // The switch is the one way across from a page with one: the corner has no link to the other part.
+  // The corner leads across too, as on every page, here to the same page in the Docs.
   await expect(
-    page.locator('.site-page-actions').getByRole('link', { name: 'Docs', exact: true }),
-  ).toHaveCount(0);
+    page.locator('.site-page-actions .site-wide-only').getByRole('link', {
+      name: 'Docs',
+      exact: true,
+    }),
+  ).toHaveAttribute('href', '/docs/patterns/forms');
   // A section the other page doesn't have, such as the props, opens it at its top.
   await goTo(page, '/docs/components/button#props');
   await partSwitch.getByRole('link', { name: 'Design', exact: true }).click();

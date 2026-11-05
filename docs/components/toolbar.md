@@ -83,8 +83,6 @@ Where people scan its icons by pointing at them, its buttons can show their name
 3. **Button** (`env-toolbar-button`, `icon`)
 4. **Separator** (`env-toolbar-separator`)
 
-Not shown: the tooltip.
-
 ## Behaviour
 
 ### Names and toggles

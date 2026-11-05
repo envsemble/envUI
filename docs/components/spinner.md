@@ -67,8 +67,6 @@ examples:
 1. **Spinner** (`env-spinner`)
 2. **Arc** (`env-spinner-arc`)
 
-Not shown: the label beside the arc, where it shows.
-
 ## Behaviour
 
 ### Reduced motion

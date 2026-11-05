@@ -135,19 +135,15 @@
   margin-block-start: var(--env-space-2);
 }
 
-/* A code block in a page's Markdown (Documentation.tsx): the code alone, snug, with its copy
-   button in the top end corner and, for a language other than the usual TypeScript and JSX, its
-   name beside the button. The code keeps clear of the corner. */
-/* The code keeps clear of its corner, the copy button and any language, on every line: the button
-   is as wide as a small control, and under a coarse pointer as the touch size (Button.css). */
+/* A code block in a page's Markdown (Documentation.tsx): the code alone, snug, unlabelled, with its
+   copy button in the top end corner. The code keeps clear of the corner on every line, so the
+   button never covers it: the button is as wide as a small control, and under a coarse pointer as
+   the touch size (Button.css). */
 .site-code-block {
   --site-code-button: var(--env-control-height-sm);
   --site-code-corner: calc(var(--site-code-button) + var(--env-space-2));
   position: relative;
   min-inline-size: 0;
-}
-.site-code-block[data-language] {
-  --site-code-corner: calc(var(--site-code-button) + var(--env-space-2) + 3rem);
 }
 @media (pointer: coarse) {
   .site-code-block {
@@ -167,48 +163,67 @@
   inset-inline-end: var(--env-space-2);
   display: flex;
   align-items: center;
-  gap: var(--env-space-1);
-}
-.site-code-block-language {
-  color: var(--env-code-foreground);
-  font: var(--env-code-font-size) / 1 var(--site-code-font-family);
 }
 
-/* Code wider than its block scrolls sideways (Figures.css): while more of it lies beyond the end
-   edge, the lines fade out there, over a few characters, so a line cut short reads clearly as
-   going on rather than ending mid-word, and the fade is gone once the end is in view. The same in
-   the Docs' blocks, such as a page's Usage, and in an example's code opened under its figure.
-   Code that fits, and a browser without scroll-driven animations, shows no fade. */
-@property --site-code-fade {
+/* Code wider than its block scrolls sideways (Figures.css): while more of it lies beyond an edge,
+   the lines fade out there, over a few characters, so a line cut short reads clearly as going on
+   rather than ending mid-word, short of the copy button: at the end edge until the end is in view,
+   at the start edge once it is scrolled. The same in the Docs' blocks, such as a page's Usage, and
+   in an example's code opened under its figure. Code that fits, and a browser without
+   scroll-driven animations, shows no fade. The lengths register with a unitless zero, as a
+   registered initial value can't be in rem. */
+@property --site-code-fade-start {
   syntax: '<length>';
   inherits: false;
-  initial-value: 0rem;
+  initial-value: 0;
 }
-@keyframes site-code-fade {
+@property --site-code-fade-end {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0;
+}
+@keyframes site-code-fade-start {
   from {
-    --site-code-fade: var(--env-space-9);
+    --site-code-fade-start: 0rem;
   }
   to {
-    --site-code-fade: 0rem;
+    --site-code-fade-start: var(--env-space-9);
+  }
+}
+@keyframes site-code-fade-end {
+  from {
+    --site-code-fade-end: var(--env-space-9);
+  }
+  to {
+    --site-code-fade-end: 0rem;
   }
 }
 @supports (animation-timeline: scroll()) {
   :is(.site-code-block, .site-example-source) pre:not(:focus-visible) {
     mask-image: linear-gradient(
-      to left,
+      to right,
       transparent,
-      var(--env-color-fg-default) var(--site-code-fade)
+      var(--env-color-fg-default) var(--site-code-fade-start),
+      var(--env-color-fg-default) calc(100% - var(--site-code-fade-end)),
+      transparent
     );
-    animation: site-code-fade linear both;
-    animation-timeline: scroll(self inline);
-    /* Whole until the end is near, then gone as it comes into view. */
-    animation-range: calc(100% - var(--env-space-9)) 100%;
+    animation:
+      site-code-fade-start linear both,
+      site-code-fade-end linear both;
+    animation-timeline: scroll(self inline), scroll(self inline);
+    /* The start fades in over the first stretch scrolled; the end is whole until it is near, then
+       gone as it comes into view. */
+    animation-range:
+      0 var(--env-space-9),
+      calc(100% - var(--env-space-9)) 100%;
   }
   :is(.site-code-block, .site-example-source) pre:dir(rtl):not(:focus-visible) {
     mask-image: linear-gradient(
-      to right,
+      to left,
       transparent,
-      var(--env-color-fg-default) var(--site-code-fade)
+      var(--env-color-fg-default) var(--site-code-fade-start),
+      var(--env-color-fg-default) calc(100% - var(--site-code-fade-end)),
+      transparent
     );
   }
 }

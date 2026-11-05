@@ -60,8 +60,7 @@
 }
 /* The install command beside Get started: code on the cards' fill, with its copy button at its
    end, as tall as the button beside it, so the two read as one row. It stays on one line, whole on
-   a phone; on a narrower screen still it scrolls rather than wrap, so the package and its version
-   never read as two. */
+   a phone; on a narrower screen still it scrolls rather than wrap. */
 .catalogue-overview-install {
   display: inline-flex;
   align-items: center;
@@ -80,7 +79,10 @@
   white-space: nowrap;
   scrollbar-width: none;
 }
-/* The counts, a middle dot between each, each whole. */
+/* What installing needs first, and under it the counts, a middle dot between each, each whole. */
+.catalogue-overview-note {
+  margin: 0;
+}
 .catalogue-overview-facts {
   margin: 0;
   font-variant-numeric: tabular-nums;

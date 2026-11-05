@@ -74,8 +74,6 @@ examples:
 3. **Label** (`env-drop-zone-label`, `label`)
 4. **Description** (`env-drop-zone-description`, `description`)
 
-Not shown: the target people press, which takes the drop zone's own box.
-
 ## Behaviour
 
 ### States

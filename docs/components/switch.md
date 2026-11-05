@@ -53,8 +53,6 @@ examples:
 2. **Track** (`env-switch-input`)
 3. **Label** (`env-switch-label`, `label`)
 
-The thumb is drawn by the track and has no element of its own.
-
 ## Behaviour
 
 ### States

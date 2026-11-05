@@ -1,6 +1,5 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { isAbsolute, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -100,30 +99,8 @@ const agentFileTypes = {
   'llms.txt': 'text/plain; charset=utf-8',
 };
 
-/**
- * The revision the catalogue's links to source files point at: the release tag when the build is
- * of a release's commit, and otherwise the commit itself, as for archived and next builds, so a
- * link shows the source the page was generated from. Without Git, the package version's tag.
- */
-function sourceRevision() {
-  const manifest = new URL('../../packages/ui/package.json', import.meta.url);
-  const tag = `v${JSON.parse(readFileSync(manifest, 'utf8')).version}`;
-  const git = (...args: string[]) =>
-    execFileSync('git', args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
-  try {
-    return git('tag', '--points-at', 'HEAD').split(/\s+/).includes(tag)
-      ? tag
-      : git('rev-parse', 'HEAD');
-  } catch {
-    return tag;
-  }
-}
-
 export default defineConfig(() => {
   return {
-    define: {
-      __ENVUI_SOURCE_REVISION__: JSON.stringify(sourceRevision()),
-    },
     plugins: [
       // Tells the browser tests which checkout this server serves.
       checkoutMarker(),
