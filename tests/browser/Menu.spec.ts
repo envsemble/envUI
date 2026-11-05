@@ -76,11 +76,12 @@ test.describe('Menus', () => {
     const menu = page.getByRole('menu', { name: 'View options' });
     await expect(menu).toBeVisible();
     await settled(menu);
-    // Frosted: the popup color at 88 % in light over a blur, no visible edge, a soft shadow.
+    // Frosted: the popup color, white in light as the raised surfaces are, at 88 % over a blur, no
+    // visible edge, and a soft shadow that parts it from a white card or table beneath.
     const [popup] = await tokenColors(menu, ['--env-color-bg-popup']);
-    expect(popup).toBe('rgb(245, 245, 247)');
+    expect(popup).toBe('rgb(255, 255, 255)');
     const frosted = await popupSurface(menu);
-    expect(frosted.background).toBe('color(srgb 0.960784 0.960784 0.968627 / 0.88)');
+    expect(frosted.background).toBe('color(srgb 1 1 1 / 0.88)');
     expect(frosted.borderColor).toBe('rgba(0, 0, 0, 0)');
     expect(frosted.shadow).not.toBe('none');
     expect(frosted.filter).toBe('blur(22px) saturate(1.4)');
@@ -177,10 +178,19 @@ test.describe('Menus', () => {
         why === 'high contrast' ? '--env-elevation-3-border' : '--env-elevation-2-border',
       ]);
       const solid = await popupSurface(menu);
-      // Opaque: the popup color itself.
-      expect(popup).toBe('rgb(245, 245, 247)');
-      expect(solid.background).toBe('color(srgb 0.960784 0.960784 0.968627)');
+      // Opaque: the popup color itself, white in light as the raised surfaces are; high contrast
+      // keeps its own steps, the popup a gray between its page and its raised surfaces. With no
+      // shadow, the edge alone parts it from a surface of its color beneath, so the edge is an
+      // opaque color apart from the fill.
+      const [expected, srgb] =
+        why === 'high contrast'
+          ? ['rgb(245, 245, 247)', 'color(srgb 0.960784 0.960784 0.968627)']
+          : ['rgb(255, 255, 255)', 'color(srgb 1 1 1)'];
+      expect(popup).toBe(expected);
+      expect(solid.background).toBe(srgb);
       expect(solid.borderColor).toBe(edge);
+      expect(edge).toMatch(/^rgb\(/);
+      expect(edge).not.toBe(popup);
       expect(solid.borderWidth).toBe(1);
       expect(solid.shadow).toBe('none');
       expect(solid.filter).toBe('blur(0px) saturate(1.4)');

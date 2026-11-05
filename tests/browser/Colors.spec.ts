@@ -49,18 +49,7 @@ const sources: Record<string, readonly [rest: string, hover: string, pressed: st
     '--env-color-bg-selected-hover',
     '--env-color-bg-selected-pressed',
   ],
-  // A selected tab is a text tab whatever its button's variant: no fill at rest, and the neutral
-  // state layer under the pointer and pressed.
-  'tab-primary': [
-    '--env-color-bg-neutral-subtle',
-    '--env-color-bg-neutral-subtle-hover',
-    '--env-color-bg-neutral-subtle-pressed',
-  ],
-  'tab-secondary': [
-    '--env-color-bg-neutral-subtle',
-    '--env-color-bg-neutral-subtle-hover',
-    '--env-color-bg-neutral-subtle-pressed',
-  ],
+  // Tabs take no fill in any state: their hover and press are checked with the compositions.
 };
 
 /** A control of the color fixture by its name: the drawer's items by whether they are current. */
@@ -74,43 +63,6 @@ function colorControl(page: import('@playwright/test').Page, theme: string, name
       .getByTestId(`${theme}-navigation`)
       .locator('.env-navigation-drawer-item[data-current]');
   return page.getByTestId(`${theme}-${name}`);
-}
-
-/**
- * HSL lightness of a control's fill as painted on its theme canvas. Translucent fills are calibrated
- * against the canvas; with `layered`, the fills of the ancestors in between are painted too.
- */
-async function lightness(
-  control: import('@playwright/test').Locator,
-  token?: string,
-  { layered = false } = {},
-) {
-  return control.evaluate(
-    (element, { name, layered }) => {
-      const probe = document.createElement('span');
-      if (name) {
-        probe.style.backgroundColor = `var(${name})`;
-        element.append(probe);
-      }
-      const layers = [getComputedStyle(name ? probe : element).backgroundColor];
-      for (let node = element.parentElement; node; node = node.parentElement) {
-        const isCanvas = node.classList.contains('env-theme');
-        if (layered || isCanvas) layers.unshift(getComputedStyle(node).backgroundColor);
-        if (isCanvas) break;
-      }
-      const canvas = document.createElement('canvas');
-      canvas.width = canvas.height = 1;
-      const ctx = canvas.getContext('2d')!;
-      for (const color of layers) {
-        ctx.fillStyle = color;
-        ctx.fillRect(0, 0, 1, 1);
-      }
-      const rgb = [...ctx.getImageData(0, 0, 1, 1).data].slice(0, 3).map((value) => value / 255);
-      probe.remove();
-      return (Math.max(...rgb) + Math.min(...rgb)) * 50;
-    },
-    { name: token, layered },
-  );
 }
 
 /** The computed color a custom property resolves to inside an element. */
@@ -131,7 +83,6 @@ test('action and navigation fills paint their precomputed hover and pressed toke
   for (const theme of ['light', 'dark']) {
     for (const [name, [rest, hover, pressed]] of Object.entries(sources)) {
       const control = colorControl(page, theme, name);
-      if (name.startsWith('tab-')) await control.press('Enter');
       const colors = {
         rest: await tokenColor(control, rest),
         hover: await tokenColor(control, hover),
@@ -313,21 +264,43 @@ test('compositions reuse primitive colors while unrelated roles stay independent
     const selectedFill = await selected.evaluate(
       (element) => getComputedStyle(element).backgroundColor,
     );
-    const rail = boundary.locator('.env-tabs-list');
-    const railLightness = await lightness(rail, undefined, { layered: true });
+    // An unselected tab under the pointer and pressed shows no block, which would read as a second
+    // kind of selection: its label takes the text color and a faint underline in that color stands
+    // where the indicator would, never as strong as the indicator.
+    const markAlpha = (tab: import('@playwright/test').Locator) =>
+      tab.evaluate((element) => {
+        const probe = document.createElement('canvas').getContext('2d')!;
+        probe.fillStyle = getComputedStyle(element, '::after').backgroundColor;
+        probe.fillRect(0, 0, 1, 1);
+        return probe.getImageData(0, 0, 1, 1).data[3] / 255;
+      });
     for (const id of ['tab-primary', 'tab-secondary']) {
       const inactive = page.getByTestId(`${theme}-${id}`);
+      const [muted, text] = [
+        await tokenColor(inactive, '--env-color-fg-muted'),
+        await tokenColor(inactive, '--env-color-fg-default'),
+      ];
+      expect(text, `${theme} text and muted labels differ`).not.toBe(muted);
       await expect(inactive).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+      await expect(inactive).toHaveCSS('color', muted);
+      expect(await markAlpha(inactive)).toBe(0);
       await inactive.hover();
-      // Hover is a translucent state layer over the rail, clearly visible in both themes.
-      const shift =
-        ((await lightness(inactive, undefined, { layered: true })) - railLightness) *
-        (railLightness < 50 ? 1 : -1);
-      expect(shift).toBeGreaterThan(4);
-      expect(shift).toBeLessThan(9);
+      await expect(inactive).toHaveCSS('color', text);
+      await expect(inactive).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+      const hoverMark = await markAlpha(inactive);
+      expect(hoverMark).toBeGreaterThan(0.15);
+      expect(hoverMark).toBeLessThan(0.5);
       await expect(inactive).toHaveAttribute('aria-selected', 'false');
       await expect(selected).toHaveCSS('background-color', selectedFill);
+      // A press selects the tab, still with no fill: the faint mark gives way to the indicator.
+      await page.mouse.down();
+      await expect(inactive).toHaveAttribute('aria-selected', 'true');
+      await expect(inactive).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+      expect(await markAlpha(inactive)).toBe(1);
+      await page.mouse.up();
       await page.mouse.move(0, 0);
+      await selected.press('Enter');
+      await expect(inactive).toHaveAttribute('aria-selected', 'false');
     }
     const disabled = page.getByTestId(`${theme}-tab-disabled`);
     await disabled.hover();
