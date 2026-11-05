@@ -63,8 +63,7 @@ export default function AccountAndOrganizationsTile() {
           open={open}
           onOpenChange={setOpen}
           trigger={
-            // Its name selects no text as the press opens the menu and the view moves under it.
-            <Button variant="secondary" endIcon={<IconUnfoldMore />} style={{ userSelect: 'none' }}>
+            <Button variant="secondary" endIcon={<IconUnfoldMore />}>
               {active?.label}
             </Button>
           }

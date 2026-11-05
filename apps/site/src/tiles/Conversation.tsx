@@ -11,17 +11,20 @@ interface Entry {
 
 const history: Entry[] = [
   { id: 1, from: 'self', text: 'Who owns the press kit?' },
-  { id: 2, from: 'other', text: 'Priya Shah. She expects the photos today.' },
+  { id: 2, from: 'other', text: 'Priya Shah, for Friday.' },
 ];
 
-// One line, so the exchange it ends shows whole in the log, as the first one does.
-const reply = 'Sam Lee has them.';
+// An answer to the question it follows, one line, as the first one is.
+const question = 'Is the copy final?';
+const reply = 'Yes, Sam signed it off.';
 
 const input = '.env-composer-input';
 
 /*
- * A question typed and sent: the log moves up to it, the assistant works a moment, the reply grows a few words at a time while
- * the send button is Stop, and once it is complete, the log is scrolled back up to where it began.
+ * A question typed and sent: it joins the thread under the first exchange, the assistant works a
+ * moment, the reply grows a few words at a time while the send button is Stop, the log following
+ * the thread to its end as it outgrows it; a while to read it, and the thread is back to the first
+ * exchange.
  */
 const script: PointerStep[] = [
   { wait: 400 },
@@ -29,16 +32,14 @@ const script: PointerStep[] = [
   { wait: 250 },
   { click: true },
   { wait: 200 },
-  { type: 'And the prices?', into: input, every: 70 },
+  { type: question, into: input, every: 70 },
   { wait: 300 },
   { to: '.env-composer-action', duration: 450 },
   { wait: 200 },
   { click: true },
   { wait: 3000 },
   { to: '.env-message-list', x: 0.5, y: 0.4, duration: 500 },
-  { wait: 200 },
-  { cue: 'back' },
-  { wait: 1300 },
+  { wait: 1200 },
   { cue: 'reset' },
   { leave: true },
   { wait: 500 },
@@ -50,32 +51,19 @@ export default function ConversationTile() {
   const [replying, setReplying] = useState(false);
   // Before its first words arrive, the log's busy row stands where the reply will show.
   const [thinking, setThinking] = useState(false);
-  // The log is as tall as the exchange it starts with, and scrolls to what comes after.
-  const [height, setHeight] = useState<number>();
   const log = useRef<HTMLDivElement>(null);
   const timer = useRef<number>(undefined);
   const pause = useRef<number>(undefined);
-  // Where the log is going: the latest question at its top, the reply under it, or its start, read
-  // again.
-  const goal = useRef<'end' | 'start'>('end');
   const frame = useRef(0);
 
-  // Glides the log to where it is going, a little each frame, so it follows the reply smoothly.
+  // Glides the log, a little each frame, to its end, so it follows the thread as it grows.
   const follow = useCallback(() => {
     if (frame.current) return;
     const step = () => {
       const node = log.current;
       if (!node) return;
-      const latest = node.querySelector<HTMLElement>('[data-latest]');
-      const target =
-        goal.current === 'end' && latest
-          ? Math.min(
-              node.scrollHeight - node.clientHeight,
-              latest.getBoundingClientRect().top -
-                node.getBoundingClientRect().top +
-                node.scrollTop,
-            )
-          : 0;
+      // At the end, as a log keeps the newest message in view while people are at its end.
+      const target = node.scrollHeight - node.clientHeight;
       const left = target - node.scrollTop;
       if (Math.abs(left) < 1) {
         node.scrollTop = target;
@@ -89,8 +77,7 @@ export default function ConversationTile() {
     frame.current = requestAnimationFrame(step);
   }, []);
 
-  useLayoutEffect(() => setHeight(log.current?.offsetHeight), []);
-  useLayoutEffect(follow, [entries, follow]);
+  useLayoutEffect(follow, [entries, thinking, follow]);
   useEffect(
     () => () => {
       window.clearInterval(timer.current);
@@ -102,20 +89,13 @@ export default function ConversationTile() {
 
   usePointer(script, {
     onCue: (cue) => {
-      if (cue === 'back') goal.current = 'start';
-      if (cue === 'reset') {
-        // Scrolled back to the start, what came after is out of view, so it goes unseen.
-        goal.current = 'end';
-        setEntries(history);
-      }
-      follow();
+      if (cue === 'reset') setEntries(history);
     },
   });
 
   function send(text: string) {
     const words = reply.split(' ');
     let shown = 1;
-    goal.current = 'end';
     setEntries([...history, { id: 3, from: 'self', text }]);
     setReplying(true);
     setThinking(true);
@@ -142,13 +122,13 @@ export default function ConversationTile() {
         aria-label="Conversation with the assistant"
         busy={thinking}
         busyAuthor="Assistant"
-        // Room past its end, as tall as the log, so the latest question can come to its top
-        // with no line of the earlier exchange cut off above it.
-        style={{ blockSize: height, paddingBlockEnd: height, overflowY: 'hidden' }}
+        // A set height with room under the first exchange for the next, which the thread grows
+        // into, scrolling once it runs past it.
+        style={{ blockSize: '9.5rem', overflowY: 'hidden' }}
       >
         {entries.map((entry) =>
           entry.from === 'self' ? (
-            <Message key={entry.id} from="self" data-latest={entry.id === 3 || undefined}>
+            <Message key={entry.id} from="self">
               {entry.text}
             </Message>
           ) : (
