@@ -514,6 +514,12 @@
     align-items: center;
     color: var(--env-color-fg-muted);
   }
+  /* Two actions at the end, as a clear button before a chevron or a calendar, stand a step apart,
+     so their icons don't crowd each other in a small field; the fields that hold two keep room for
+     the step (Combobox.css, DatePicker.css). */
+  .env-text-field-end {
+    gap: var(--env-space-1);
+  }
   .env-text-field-start {
     /* Where the start icon sits; the command palette's search lines it up with its options'. */
     inset-inline-start: var(--env-text-field-start-inset, var(--env-space-4));

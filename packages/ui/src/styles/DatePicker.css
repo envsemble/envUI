@@ -42,7 +42,7 @@
     align-items: center;
     padding-inline-end: calc(
       var(--env-date-picker-end) + var(--env-date-picker-actions) * var(--env-date-picker-action) +
-        var(--env-space-1)
+        var(--env-date-picker-actions) * var(--env-space-1)
     );
     text-align: start;
     cursor: pointer;
