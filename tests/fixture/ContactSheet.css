@@ -53,6 +53,12 @@ body:has(.cs-root) {
   gap: 1.25rem 1.5rem;
   align-items: flex-start;
 }
+.cs-strip-cells[data-cs-middle] {
+  align-items: stretch;
+}
+.cs-strip-cells[data-cs-middle] > .cs-cell {
+  grid-template-rows: 1fr auto;
+}
 .cs-cell {
   display: grid;
   gap: 0.375rem;

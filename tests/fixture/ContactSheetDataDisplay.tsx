@@ -163,7 +163,7 @@ function Badges() {
   return (
     <Section name="Badge and DiffStat">
       {(['soft', 'solid', 'outline'] as const).map((variant) => (
-        <Strip key={variant} label={variant}>
+        <Strip key={variant} label={variant} middle>
           {badgeTones.map((tone) => (
             <Cell key={tone} caption={tone}>
               <Badge tone={tone} variant={variant}>

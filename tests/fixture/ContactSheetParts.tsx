@@ -54,12 +54,26 @@ export function Cell({
   );
 }
 
-/** A row of cells, with a label at its start. */
-export function Strip({ label, children }: { label?: string; children: ReactNode }) {
+/**
+ * A row of cells, with a label at its start. `middle` centres the cells' specimens on one line and
+ * their captions on another, for specimens of different heights that sit side by side in use, such
+ * as a badge and a count.
+ */
+export function Strip({
+  label,
+  middle = false,
+  children,
+}: {
+  label?: string;
+  middle?: boolean;
+  children: ReactNode;
+}) {
   return (
     <div className="cs-strip">
       <div className="cs-strip-label">{label}</div>
-      <div className="cs-strip-cells">{children}</div>
+      <div className="cs-strip-cells" data-cs-middle={middle ? '' : undefined}>
+        {children}
+      </div>
     </div>
   );
 }
