@@ -31,6 +31,9 @@ import { IconButton } from '@envsemble/envui';
 import { Cell, Section, Stage, Strip, interactionStates } from './ContactSheetParts.js';
 
 const sizes = ['sm', 'md', 'lg'] as const;
+/** sm is for a field with its label hidden, as in a toolbar: one that shows its label takes md. */
+const sizeLabel = (size: (typeof sizes)[number]) =>
+  size === 'sm' ? { showLabel: false, caption: 'sm, label hidden' } : { caption: size };
 const fieldWidth = '15rem';
 
 /** The states a text-like field is shown in, with the props each takes, and its error when invalid. */
@@ -66,16 +69,33 @@ function TextFields() {
         </Strip>
       ))}
       <Strip label="Sizes">
-        {sizes.map((size) => (
-          <Cell key={size} caption={size} width={fieldWidth}>
-            <TextField size={size} label="Project name" defaultValue="Northwind" />
-          </Cell>
-        ))}
-        {sizes.map((size) => (
-          <Cell key={`ghost-${size}`} caption={`ghost ${size}`} width={fieldWidth}>
-            <TextField variant="ghost" size={size} label="Project name" defaultValue="Northwind" />
-          </Cell>
-        ))}
+        {sizes.map((size) => {
+          const { caption, showLabel } = sizeLabel(size);
+          return (
+            <Cell key={size} caption={caption} width={fieldWidth}>
+              <TextField
+                size={size}
+                label="Project name"
+                showLabel={showLabel}
+                defaultValue="Northwind"
+              />
+            </Cell>
+          );
+        })}
+        {sizes.map((size) => {
+          const { caption, showLabel } = sizeLabel(size);
+          return (
+            <Cell key={`ghost-${size}`} caption={`ghost ${caption}`} width={fieldWidth}>
+              <TextField
+                variant="ghost"
+                size={size}
+                label="Project name"
+                showLabel={showLabel}
+                defaultValue="Northwind"
+              />
+            </Cell>
+          );
+        })}
       </Strip>
       <Strip label="Content">
         <Cell caption="Description" width={fieldWidth}>
@@ -212,12 +232,21 @@ function Selects() {
         ))}
       </Strip>
       <Strip label="Sizes, open">
-        {sizes.map((size) => (
-          <Cell key={size} caption={size} width={fieldWidth}>
-            <Select size={size} label="Plan" items={plans} defaultValue="starter" />
-          </Cell>
-        ))}
-        <Cell caption="Label hidden" width={fieldWidth}>
+        {sizes.map((size) => {
+          const { caption, showLabel } = sizeLabel(size);
+          return (
+            <Cell key={size} caption={caption} width={fieldWidth}>
+              <Select
+                size={size}
+                label="Plan"
+                showLabel={showLabel}
+                items={plans}
+                defaultValue="starter"
+              />
+            </Cell>
+          );
+        })}
+        <Cell caption="md, label hidden" width={fieldWidth}>
           <Select label="Plan" showLabel={false} items={plans} defaultValue="starter" />
         </Cell>
         <Cell caption="Open, cursor on Team" highlight="[role=option]:nth-child(2)">
@@ -266,11 +295,20 @@ function Comboboxes() {
             defaultValue={['sam.lee', 'priya.shah']}
           />
         </Cell>
-        {sizes.map((size) => (
-          <Cell key={size} caption={size} width={fieldWidth}>
-            <Combobox size={size} label="Owner" items={people} defaultValue="alex.morgan" />
-          </Cell>
-        ))}
+        {sizes.map((size) => {
+          const { caption, showLabel } = sizeLabel(size);
+          return (
+            <Cell key={size} caption={caption} width={fieldWidth}>
+              <Combobox
+                size={size}
+                label="Owner"
+                showLabel={showLabel}
+                items={people}
+                defaultValue="alex.morgan"
+              />
+            </Cell>
+          );
+        })}
       </Strip>
       <Strip label="Open">
         <Cell caption="Open, cursor on Sam Lee" highlight="[role=option]:nth-child(2)">
@@ -530,17 +568,21 @@ function Pickers() {
           ))}
         </Strip>
         <Strip label="Sizes, open">
-          {sizes.map((size) => (
-            <Cell key={size} caption={`${size}, clearable`} width={fieldWidth}>
-              <DatePicker
-                size={size}
-                label="Due date"
-                locale="en-GB"
-                defaultValue="2026-11-20"
-                clearable
-              />
-            </Cell>
-          ))}
+          {sizes.map((size) => {
+            const { caption, showLabel } = sizeLabel(size);
+            return (
+              <Cell key={size} caption={`${caption}, clearable`} width={fieldWidth}>
+                <DatePicker
+                  size={size}
+                  label="Due date"
+                  showLabel={showLabel}
+                  locale="en-GB"
+                  defaultValue="2026-11-20"
+                  clearable
+                />
+              </Cell>
+            );
+          })}
           <Cell caption="Open, day">
             <Stage height="27rem" width="21rem">
               <DatePicker

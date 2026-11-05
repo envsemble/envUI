@@ -72,6 +72,7 @@ export interface PickerFieldProps
   /**
    * The field's height, as on every control: sm, md or lg in the current scale. Without it, the
    * field takes the control height of its container, md unless the container sets another.
+   * sm is for a field with its label hidden; one that shows its label takes the md height.
    */
   size?: ControlSize;
   /**

@@ -66,7 +66,6 @@ export default function RowsThatStack() {
         <Select
           label="Sort by"
           showLabel
-          size="sm"
           items={orders}
           value={`${sort.column} ${sort.direction}`}
           onValueChange={(value) => {

@@ -61,9 +61,10 @@
     --env-control-height: var(--env-control-height-lg);
   }
   /* A single-line field that shows its label is at least the md control height, so the label and
-     the value each keep room: a small one takes the md height, and at md and lg it is as tall as the
-     buttons of its size. A field with its label hidden, as a search in a toolbar, keeps its size's
-     height at sm too. Select, Combobox and the pickers take it too. */
+     the value each keep room, and at md and lg it is as tall as the buttons of its size. sm is for a
+     field with its label hidden, as a search in a toolbar, which keeps the sm height; a small one that
+     shows its label takes md, and FieldFrame says so while developing. Select, Combobox and the
+     pickers take it too. */
   .env-text-field:not([data-tall], [data-label-hidden]):has(> .env-text-field-control > label) {
     --env-text-field-least: var(--env-control-height-md);
   }
