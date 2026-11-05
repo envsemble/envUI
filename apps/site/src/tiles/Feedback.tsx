@@ -23,9 +23,12 @@ const script: PointerStep[] = [
   { to: '.env-button', duration: 450 },
   { wait: 300 },
   { click: true },
-  { wait: 300 },
+  { wait: 80 },
+  // Off the button it pressed, so its spinner shows clear while it works.
+  { to: '.env-button', x: 1.35, y: 1.9, duration: 300 },
+  { wait: 250 },
   { leave: true },
-  { wait: 3200 },
+  { wait: 2600 },
 ];
 
 const sent = { tone: 'success', message: 'Invitation sent.', duration: Infinity } as const;

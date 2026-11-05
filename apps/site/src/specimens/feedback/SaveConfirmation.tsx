@@ -17,7 +17,10 @@ const script: PointerStep[] = [
   { to: send, x: 0.5, y: 0.6, duration: 450 },
   { wait: 350 },
   { click: true },
-  { wait: 300 },
+  { wait: 80 },
+  // Off the button it pressed, so its spinner shows clear while it works.
+  { to: send, x: 1.3, y: 1.8, duration: 300 },
+  { wait: 200 },
   { leave: true },
   // The work, then the notification's own time on the stage, and its leaving.
   { wait: 11000 },
