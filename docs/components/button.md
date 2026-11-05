@@ -64,7 +64,9 @@ examples:
     caption: Beside others like it, each button names what it removes.
   ButtonAnatomy: anatomy
   Variants: variants
-  PrimaryTones: example
+  PrimaryTones:
+    role: example
+    caption: The three primary tones side by side, to compare them; a group still has one primary.
   QuietToolbar: example
   ButtonLinks: example
   PendingAction: example
@@ -102,17 +104,7 @@ examples:
 
 ### Tones
 
-Only the main action and links are blue.
-
-- The neutral tone keeps the variant's own color: a brand blue fill on a primary, link blue on a text button, and the text color on the others.
-- The danger tone colors the label, or a primary's fill. On the quiet variants it tints hover and press too.
-
-### Primary tones
-
-A danger primary carries the most weight of a group, and an accent primary is never louder than the main one beside it.
-
-- The neutral and accent primaries take the same grade of their tone: in light a saturated fill with white text, in dark a soft fill with dark text.
-- A danger primary is a saturated red with white text in both themes, so in dark it is the deepest fill beside the soft ones.
+Only the main action and links are blue: the neutral tone keeps each variant's own color, and the danger tone colors the label, or a primary's fill.
 
 ```tsx figure=PrimaryTones
 
@@ -156,7 +148,7 @@ A ButtonGroup joins related buttons in a row or a column.
 
 ### Sizes
 
-Small, medium and large, the control heights of the [scale](../foundations/spacing.md). A button without a size of its own takes its container's, such as small in a table cell.
+Small, medium and large, the control heights of the [scale](../foundations/spacing.md). A button without a size of its own takes its container's, such as small in a table cell, and beside a field it takes the field's.
 
 <!-- specimen: Sizes -->
 
