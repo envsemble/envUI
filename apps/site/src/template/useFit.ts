@@ -997,7 +997,19 @@ export function useFit(
         const lower = [...(phone ? steps : [popupLeast]), least]
           .filter((each) => each < scale - 0.0005 && each >= least - 0.0005)
           .sort((a, b) => b - a);
-        return lower.find((each) => heldTop(each) !== null) ?? lower.at(-1) ?? scale;
+        const found = lower.find((each) => heldTop(each) !== null);
+        if (found !== undefined || phone) return found ?? lower.at(-1) ?? scale;
+        // On a wider page, where even that scale doesn't, such as a date picker's chosen week on a
+        // lower stage, it is drawn just as much smaller as it needs, no smaller than `heldLeast`.
+        let low = heldLeast;
+        let high = lower.at(-1) ?? scale;
+        if (!heldTop(low)) return high;
+        for (let count = 0; count < 16; count++) {
+          const middle = (low + high) / 2;
+          if (heldTop(middle)) low = middle;
+          else high = middle;
+        }
+        return Math.floor(low * 1000) / 1000;
       };
       // On a phone, a tile is drawn at one of its scales where it reaches past its stage at its
       // own size.
@@ -1017,14 +1029,14 @@ export function useFit(
         screen = true;
       if (!playingNow.current) fadeAt = null;
       if (screen) {
-        // A modal overlay, such as a dialog, is drawn at the overlays' one scale, shown from its
-        // top where it is taller than the stage; on a phone, smaller as far as it needs to show
-        // whole, down to its window's least (Tiles.ts).
+        // A modal overlay, such as a dialog, is drawn at the overlays' one scale, or smaller as far
+        // as it needs to show whole, down to its window's least (Tiles.ts), shown from its top
+        // where it is taller than the stage still.
         if (overlay)
           screenFit(
             boxes,
             overlay,
-            (scale) => (phone ? Math.max(Math.min(overlay, popupLeast), scale) : overlay),
+            (scale) => Math.max(Math.min(overlay, popupLeast), scale),
             true,
           );
         else
@@ -1561,6 +1573,12 @@ const heldTopLeast = 4;
 
 /** How long the cursor is, in rem, from its tip (Stage.css), at the scale its preview is drawn at. */
 const cursorLength = 1.25;
+
+/**
+ * The least a held view is drawn at on a wider page, where what its script acts on shows above
+ * its fade only smaller than the popups' scale (useFit): about a modal's least (Tiles.ts).
+ */
+const heldLeast = 0.6;
 
 /** The least room, in px, the cursor keeps from its stage's foot (useFit). */
 const cursorRoom = 0;

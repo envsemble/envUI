@@ -27,8 +27,9 @@
      such a window too, what its script acts on, such as the chosen row, above the fade at its
      foot. So a popup is drawn at its own size or at that one scale, never between. The overlays,
      such as a notification, a popover, a sheet and a dialog, are drawn at one scale,
-     `--catalogue-overlay-scale`, a dialog taller than its stage shown from its top; on a phone a
-     smaller one, and a dialog smaller still only where it shows whole no larger (Tiles.ts). */
+     `--catalogue-overlay-scale`, on a phone a smaller one, and a dialog smaller still only as far
+     as it needs to show whole, down to its own least (Tiles.ts). A held view, such as a picker
+     resting open, is drawn smaller only as far as what its script acts on needs (useFit.ts). */
   --catalogue-own-least: 12rem;
   --catalogue-own-least-block: 4.5rem;
   --catalogue-own-popup-least: 0.84;
