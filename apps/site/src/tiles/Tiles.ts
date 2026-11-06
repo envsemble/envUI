@@ -32,16 +32,11 @@ export interface TileWindow {
 /**
  * The windows of the tiles whose component doesn't fit the tiles' 14 by 10.5 rem, by page id: a
  * larger one, drawn smaller, such as a calendar's. Every other tile shares the one window, so
- * components show at one scale across the galleries, about their own size; only the drawings of
- * the layout pages take a smaller one, drawn larger, as a drawing has no size of its own.
+ * components show at one scale across the galleries, about their own size; only LineArt's
+ * drawing takes a smaller one, drawn larger, as a drawing has no size of its own.
  */
 export const tileWindows: Readonly<Record<string, TileWindow>> = {
-  // The layout drawings, each drawn about as large as LineArt's, whose lines they share.
   'line-art': { width: 10, height: 7.5 },
-  box: { width: 8.4, height: 6.3 },
-  row: { width: 7.2, height: 5.4 },
-  column: { width: 8.5, height: 6.375 },
-  grid: { width: 7.9, height: 5.925 },
   accordion: { width: 15, height: 11.25 },
   'navigation-drawer': { width: 17, height: 12.75 },
   tabs: { width: 15, height: 11.25 },
