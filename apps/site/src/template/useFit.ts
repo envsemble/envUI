@@ -114,7 +114,8 @@ function shownBoxes(canvas: HTMLElement) {
         box.width >= area.width - 1 &&
         box.height >= area.height - 1 &&
         /absolute|fixed/.test(style.position);
-      if (box.width > 1 && box.height > 1 && !covers && paints(child, style))
+      // A hairline counts, such as a toolbar's separator a px wide, whatever the scale rounds it to.
+      if (box.width > 0.5 && box.height > 0.5 && !covers && paints(child, style))
         found.push({ element: child, box });
       // Text counts as far as it runs, also past a box narrower than it, such as a heatmap's
       // month names over columns of no width.
