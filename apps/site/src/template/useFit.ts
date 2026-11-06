@@ -1144,7 +1144,34 @@ export function useFit(
           : tile
             ? windowScale
             : Math.min(whole ? windowScale : 1, width / (right - left), height / (bottom - top));
-      const fitted = ownSize || legible ? heldScale(drawn) : drawn;
+      // A held component view that names what it shows (useMustShow), such as a docked panel or
+      // a strip of tabs written as wide as its largest state, shows whole in the stage's room, a
+      // margin from its edges, as a component a little larger than the inset leaves room for is
+      // (inRoom): where the one scale doesn't allow that,
+      // it is drawn at the largest of the scales tiles are drawn at that does, as a held picker is
+      // (heldScale), else as much smaller as it needs, down to a held view's least, through its
+      // whole loop (`data-held-scale`).
+      const subject =
+        ownSize && !popup && holdsView(canvasElement) && mustShowOf(canvasElement, true).length > 0;
+      const subjectScale = (scale: number) => {
+        const wants = Math.min(
+          (stageElement.clientWidth - 2 * margin) / (right - left),
+          (stageElement.clientHeight - 2 * margin) / (bottom - top),
+        );
+        if (wants >= scale - 0.0005) return scale;
+        const overlayLeast =
+          parseFloat(canvasStyle.getPropertyValue('--catalogue-overlay-scale')) || scale;
+        const found = [...(phone ? steps : [popupLeast]), overlayLeast]
+          .filter((each) => each < scale - 0.0005)
+          .sort((a, b) => b - a)
+          .find((each) => each <= wants + 0.0005);
+        return found ?? Math.max(heldLeast, Math.floor(wants * 1000) / 1000);
+      };
+      const framedAt = ownSize || legible ? heldScale(drawn) : drawn;
+      const fitted = subject ? Math.min(framedAt, subjectScale(drawn)) : framedAt;
+      const heldSmaller = subject && fitted < drawn - 0.0005;
+      if (canvasElement.hasAttribute('data-held-scale') !== heldSmaller)
+        canvasElement.toggleAttribute('data-held-scale', heldSmaller);
       // Measured again, a box may come out a hair larger or smaller, a ten-millionth of the scale:
       // that is the same scale, so the view holds still and a tile shows as soon as it is fitted.
       const scale = Math.abs(fitted - view.rest) < 0.0005 ? view.rest : fitted;
