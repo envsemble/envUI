@@ -6,10 +6,7 @@ import {
   holdsFromTop,
   holdsView,
   mustShowOf,
-  stateViewEvent,
-  stateViewOf,
   type Heading,
-  type StateViews,
 } from '../motion/MustShow';
 import { aimedElement } from '../motion/PointerPlan';
 
@@ -834,16 +831,6 @@ export function useFit(
         canvasElement.toggleAttribute('data-from-top', growsDown);
       const boxes = shownBoxes(canvasElement);
       if (!boxes.length) return;
-      // A tile that shows one view per state is framed on the state it is in (stateFit).
-      const views = stateViewOf(canvasElement);
-      if (views && tile && (ownSize || legible)) {
-        stateFit(views, boxes);
-        return;
-      }
-      if (canvasElement.hasAttribute('data-state-views')) {
-        canvasElement.removeAttribute('data-state-views');
-        canvasElement.style.removeProperty('inline-size');
-      }
       // At rest, what scrolls shows its still as it was written, ending on a whole line.
       if (!playingNow.current)
         for (const region of canvasElement.querySelectorAll<HTMLElement>(
@@ -977,11 +964,12 @@ export function useFit(
       /**
        * Where a held view's top goes in its stage, drawn at a scale: the inset from the stage's top,
        * or higher, up to `heldTopLeast` from it, as far as keeps what its script acts on above its
-       * foot, the fade starting below it, and the cursor on its lowest point inside the stage; or
-       * none where the scale doesn't allow that. With `next`, the row after it shows whole too,
-       * in the fade, so the view ends on a whole row that fades out rather than on the chosen one.
+       * foot, a fade at least `fade` long below it, and the cursor on its lowest point inside the
+       * stage; or none where the scale doesn't allow that. With `next`, the row after it shows whole
+       * too, in the fade, so the view ends on a whole row that fades out rather than on the chosen
+       * one.
        */
-      const heldTop = (scale: number, next = false) => {
+      const heldTop = (scale: number, next = false, fade = heldFadeLeast) => {
         if (!chosen || !keep || (next && keep === chosen)) return null;
         const size = stageElement.clientHeight;
         const cursorFoot =
@@ -989,18 +977,18 @@ export function useFit(
         const reach = next ? keep : chosen;
         const at = Math.min(
           inset,
-          size - heldFadeLeast - (reach.bottom - top) * scale,
+          size - (next ? 0 : fade) - (reach.bottom - top) * scale,
           size - cursorRoom - cursorFoot,
         );
         return at >= heldTopLeast - 0.5 ? { at, fadeAt: chosen.bottom } : null;
       };
       /** The largest scale from `low` to `high` at which a held view shows as `heldTop` says. */
-      const heldAtMost = (low: number, high: number, next: boolean) => {
-        if (heldTop(high, next)) return high;
-        if (!heldTop(low, next)) return null;
+      const heldAtMost = (low: number, high: number, next: boolean, fade = heldFadeLeast) => {
+        if (heldTop(high, next, fade)) return high;
+        if (!heldTop(low, next, fade)) return null;
         for (let count = 0; count < 16; count++) {
           const middle = (low + high) / 2;
-          if (heldTop(middle, next)) low = middle;
+          if (heldTop(middle, next, fade)) low = middle;
           else high = middle;
         }
         return Math.floor(low * 1000) / 1000;
@@ -1028,11 +1016,15 @@ export function useFit(
           .filter((each) => each < scale - 0.0005 && each >= least - 0.0005)
           .sort((a, b) => b - a);
         const found = lower.find((each) => heldTop(each) !== null);
-        if (found !== undefined || phone) return found ?? lower.at(-1) ?? scale;
-        // On a wider page, where even that scale doesn't, such as a date picker's chosen week on a
-        // lower stage, it is drawn just as much smaller as it needs, no smaller than `heldLeast`.
+        if (found !== undefined) return found;
+        // Where even that scale doesn't, such as a date picker's chosen week on a phone's lower
+        // stage, it is drawn just as much smaller as it needs, with its fade, else without it, no
+        // smaller than `heldLeast`, where it shows from the stage's top and the lowest row its
+        // script acts on fades out through the foot (below).
         const high = lower.at(-1) ?? scale;
-        return heldAtMost(heldLeast, high, false) ?? high;
+        return (
+          heldAtMost(heldLeast, high, false) ?? heldAtMost(heldLeast, high, false, 0) ?? heldLeast
+        );
       };
       // On a phone, a tile is drawn at one of its scales where it reaches past its stage at its
       // own size.
@@ -1227,12 +1219,13 @@ export function useFit(
         // nearer it as keeps what its script acts on, with the row below a picker's chosen one
         // where there is room, whole above its foot, which fades out below it (heldTop). Where
         // even the least scale doesn't, it shows from as near the top as it is moved, and the fade
-        // starts no higher than the top of the lowest row its script acts on, which fades out
-        // through the stage's foot rather than being cut there.
+        // starts no higher than the middle of the lowest row its script acts on, whose words show
+        // above it, and which fades out through the stage's foot rather than being cut there.
         const placed = heldTop(scale, true) ??
-          heldTop(scale) ?? {
+          heldTop(scale) ??
+          heldTop(scale, false, 0) ?? {
             at: heldTopLeast,
-            fadeAt: lowest!.top + rowSlack + 1,
+            fadeAt: Math.max(lowest!.top + rowSlack + 1, (lowest!.top + lowest!.bottom) / 2),
           };
         toY = top * scale + stageElement.clientHeight / 2 - placed.at;
         fadeAt = placed.fadeAt;
@@ -1525,128 +1518,6 @@ export function useFit(
       settle(scale, across / 2, toY, boxes);
       trim(playingNow.current);
     };
-    // The view a tile that shows one per state was last placed on, and the box of the part it
-    // goes to, until that has held its place from one frame to the next (stateFit).
-    let stateAt: string | null = null;
-    let statePending: Box | null = null;
-    /**
-     * A tile that shows one view per state, such as a date picker on a phone's low stage, its field
-     * while closed and its popup while open (MustShow.ts): at rest drawn at the one scale at which
-     * each of its views that is there shows whole, and kept at it as it plays. Each view is the
-     * part its state is about, centred, or where it is taller than the stage's room, from its top,
-     * the inset from the stage's or nearer; a picker's popup only down to the row after its chosen
-     * one, which fades out at the stage's foot (nextRow). As its state changes, the view cuts to
-     * the next once that part has held its place from one frame to the next, as a popup is placed
-     * a frame after it opens, rather than panning through the room between them.
-     */
-    const stateFit = (views: StateViews, boxes: Shown[]) => {
-      const across = stageElement.clientWidth;
-      const down = stageElement.clientHeight;
-      const canvasStyle = getComputedStyle(canvasElement);
-      const floor = parseFloat(canvasStyle.getPropertyValue('--catalogue-own-floor')) || 1;
-      const regionOf = (selector: string) => {
-        let element: Element | undefined;
-        try {
-          element = [...canvasElement.querySelectorAll(selector)].find(
-            (each) => each.checkVisibility() && !each.closest('[data-ending-style]'),
-          );
-        } catch {
-          return null;
-        }
-        if (!element) return null;
-        const holder = element.closest('.env-popup-positioner, .env-menu-positioner') ?? element;
-        const box = partOf(holder, canvasElement);
-        const chosen = holder.querySelector("[aria-selected='true']");
-        const moves = settling(element, canvasElement);
-        if (!chosen) return { box, fadeAt: null, moves };
-        const own = partOf(chosen, canvasElement);
-        const next = nextRow(chosen, canvasElement);
-        const end = next.length ? Math.max(...next.map((row) => row.bottom)) : own.bottom;
-        return { box: { ...box, bottom: Math.min(box.bottom, end) }, fadeAt: own.bottom, moves };
-      };
-      // The scale every view that is there shows whole at: the popup's down to the stage's foot,
-      // where its last row fades out, the inset left only a few px above it.
-      const fitsAt = (region: { box: Box; fadeAt: number | null; moves: boolean }) => {
-        const wide = region.box.right - region.box.left;
-        const tall = region.box.bottom - region.box.top;
-        return Math.min(
-          (across - 2 * margin) / wide,
-          (down - (region.fadeAt === null ? 2 * inset : heldTopLeast)) / tall,
-        );
-      };
-      // It lays out in its tile's own window, as wide as it was written for, also on a phone, so
-      // a popup is as wide as it is in an application's window, such as a calendar's month name
-      // on one line.
-      if (!canvasElement.hasAttribute('data-state-views')) {
-        canvasElement.setAttribute('data-state-views', '');
-        canvasElement.style.inlineSize = 'var(--catalogue-tile-width, 14rem)';
-        update();
-        return;
-      }
-      const plays = playingNow.current && canvasElement.dataset.fitted !== undefined;
-      const regions = views.all.map(regionOf).filter((region) => region !== null);
-      const scale = plays
-        ? view.rest
-        : Math.floor(Math.min(floor, ...regions.map(fitsAt)) * 1000) / 1000;
-      const region = regionOf(views.now);
-      if (!region) {
-        // Its part isn't there yet, such as a popup about to open: the view stays where it is.
-        if (canvasElement.dataset.fitted === undefined && regions[0])
-          placeState(regions[0], scale, boxes, views.all[0]!);
-        return;
-      }
-      // What opens is placed by its style a frame or two after it shows, and comes in: the view
-      // cuts to it once it is in and has held its place from one frame to the next.
-      if (region.moves) {
-        statePending = null;
-        update();
-        return;
-      }
-      if (stateAt !== null && stateAt !== views.now && canvasElement.dataset.fitted !== undefined) {
-        const held =
-          statePending && covers(statePending, region.box) && covers(region.box, statePending);
-        if (!held) {
-          statePending = region.box;
-          update();
-          return;
-        }
-      }
-      statePending = null;
-      placeState(region, scale, boxes, views.now);
-    };
-    /** Places a tile that shows one view per state on one of them, at once where it changed. */
-    const placeState = (
-      region: { box: Box; fadeAt: number | null; moves: boolean },
-      scale: number,
-      boxes: Shown[],
-      now: string,
-    ) => {
-      const down = stageElement.clientHeight;
-      const { box } = region;
-      const tall = (box.bottom - box.top) * scale;
-      const at = Math.min(Math.max(inset, (down - tall) / 2), down - tall);
-      const toX = ((box.left + box.right) / 2) * scale;
-      const toY = box.top * scale + down / 2 - at;
-      fadeAt = region.fadeAt;
-      // What reaches past its foot, such as the popup below its field closing, fades out there.
-      const cut = cutSides(boxes, toX, toY, scale).split(' ').includes('bottom');
-      if (cut) canvasElement.dataset.cut = 'bottom';
-      else delete canvasElement.dataset.cut;
-      const changed = stateAt !== null && stateAt !== now;
-      stateAt = now;
-      if (changed && canvasElement.dataset.fitted !== undefined) {
-        cancelAnimationFrame(view.frame);
-        view.frame = 0;
-        view.x = view.toX = toX;
-        view.y = view.toY = toY;
-        view.scale = view.toScale = view.rest = scale;
-        place();
-        for (const { element } of boxes) resize.observe(element);
-        return;
-      }
-      settle(scale, toX, toY, boxes);
-      trim(playingNow.current);
-    };
     resize.observe(stageElement);
     resize.observe(canvasElement);
     // The example renders once its module loads, and its overlays open into a canvas that keeps
@@ -1675,7 +1546,6 @@ export function useFit(
     canvasElement.addEventListener('animationend', update);
     // As the pointer heads somewhere else, the view keeps where it goes in the stage.
     canvasElement.addEventListener(headingEvent, update);
-    canvasElement.addEventListener(stateViewEvent, update);
     void document.fonts?.ready.then(update);
     // An overlay may size to the window, such as a sheet as tall as it.
     window.addEventListener('resize', update);
@@ -1686,7 +1556,6 @@ export function useFit(
       canvasElement.removeEventListener('transitionend', update);
       canvasElement.removeEventListener('animationend', update);
       canvasElement.removeEventListener(headingEvent, update);
-      canvasElement.removeEventListener(stateViewEvent, update);
       for (const property of [
         'inline-size',
         'block-size',
@@ -1800,8 +1669,11 @@ function inkOf(element: Element, canvas: HTMLElement): Box {
   };
 }
 
-/** The least of the fade, in px, a held view keeps below what its script acts on (useFit). */
-const heldFadeLeast = 0;
+/**
+ * The least of the fade, in px, a held view keeps below what its script acts on where the row after
+ * it doesn't show whole (useFit), so its crop reads as fading out rather than cut off.
+ */
+const heldFadeLeast = 8;
 
 /**
  * The least room, in px, a held view keeps above what it shows from, such as a picker's field,
@@ -1813,8 +1685,8 @@ const heldTopLeast = 4;
 const cursorLength = 1.25;
 
 /**
- * The least a held view is drawn at on a wider page, where what its script acts on shows above
- * its fade only smaller than the popups' scale (useFit): about a modal's least (Tiles.ts).
+ * The least a held view is drawn at, where what its script acts on shows above its fade only
+ * smaller than the popups' scale (useFit): about a modal's least (Tiles.ts).
  */
 const heldLeast = 0.6;
 
