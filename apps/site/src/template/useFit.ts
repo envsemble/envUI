@@ -977,23 +977,38 @@ export function useFit(
        * shows whole inside the stage, in that fade, as far as `reach`. A picker's chosen row and the
        * next above the fade with the row after them in it; those two above the fade, or where only
        * the floor allows that, above the foot; else the chosen row above the fade with the next in
-       * it; else the chosen row alone, above the fade or at least above the foot.
+       * it, or for a view without rows, such as a menu's, what its script acts on above the foot;
+       * else the chosen row alone, above the fade or at least above the foot.
        */
       const ways: HeldWay[] =
         chosen && keep && keepFurther
           ? [
-              ...(keepFurther !== keep
-                ? [{ whole: keep, reach: keepFurther, fade: heldFadeLeast, least: heldRowsLeast }]
-                : []),
-              ...(keep !== chosen
+              ...(further.length
                 ? [
-                    { whole: keep, reach: keep, fade: heldFadeLeast, least: heldLeast },
-                    { whole: keep, reach: keep, fade: 0, least: heldLeast },
-                    { whole: chosen, reach: keep, fade: 0, least: heldNextLeast },
+                    {
+                      whole: keep,
+                      reach: keepFurther,
+                      fade: heldFadeLeast,
+                      least: heldRowsLeast,
+                      slack: rowSlack,
+                    },
                   ]
                 : []),
-              { whole: chosen, reach: chosen, fade: heldFadeLeast, least: heldLeast },
-              { whole: chosen, reach: chosen, fade: 0, least: heldLeast },
+              ...(below.length
+                ? [
+                    {
+                      whole: keep,
+                      reach: keep,
+                      fade: heldFadeLeast,
+                      least: heldLeast,
+                      slack: rowSlack,
+                    },
+                    { whole: keep, reach: keep, fade: 0, least: heldLeast, slack: rowSlack },
+                  ]
+                : []),
+              { whole: chosen, reach: keep, fade: 0, least: heldNextLeast, slack: 0 },
+              { whole: chosen, reach: chosen, fade: heldFadeLeast, least: heldLeast, slack: 0 },
+              { whole: chosen, reach: chosen, fade: 0, least: heldLeast, slack: 0 },
             ]
           : [];
       /**
@@ -1001,8 +1016,8 @@ export function useFit(
        * inset from the stage's top, or higher, up to `heldTopLeast` from it, as far as keeps what
        * shows whole above the fade, what reaches into it inside the stage, and the cursor on its
        * lowest point inside the stage; or none where the scale doesn't allow that. The fade starts
-       * below what shows whole above it. A row at the foot may reach a row's slack past it, as it
-       * still shows whole there (trimRows).
+       * below what shows whole above it. A picker's row at the foot may reach its slack past it,
+       * as it still shows whole there (trimRows).
        */
       const heldTop = (scale: number, way: HeldWay) => {
         const size = stageElement.clientHeight;
@@ -1010,8 +1025,8 @@ export function useFit(
           pointerFoot === null ? -Infinity : (pointerFoot - top + cursorLength * rem) * scale;
         const at = Math.min(
           inset,
-          size - way.fade - (way.whole.bottom - top) * scale + (way.fade ? 0 : rowSlack),
-          size + rowSlack - (way.reach.bottom - top) * scale,
+          size - way.fade - (way.whole.bottom - top) * scale + (way.fade ? 0 : way.slack),
+          size + way.slack - (way.reach.bottom - top) * scale,
           size - cursorRoom - cursorFoot,
         );
         return at >= heldTopLeast - 0.5 ? { at, fadeAt: way.whole.bottom } : null;
@@ -1781,13 +1796,15 @@ const heldRowsLeast = 0.65;
 
 /**
  * A way a held view shows what its script acts on (useFit): what shows whole above a fade at least
- * `fade` long, what shows whole in that fade as far as `reach`, and the least scale it takes.
+ * `fade` long, what shows whole in that fade as far as `reach`, the least scale it takes,
+ * and how far, in px, a row at the foot may reach past it (rowSlack).
  */
 interface HeldWay {
   whole: Box;
   reach: Box;
   fade: number;
   least: number;
+  slack: number;
 }
 
 /**
