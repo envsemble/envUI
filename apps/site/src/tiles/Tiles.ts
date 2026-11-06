@@ -43,7 +43,7 @@ export interface TileWindow {
  * drawing takes a smaller one, drawn larger, as a drawing has no size of its own.
  */
 export const tileWindows: Readonly<Record<string, TileWindow>> = {
-  'line-art': { width: 10, height: 7.5 },
+  'line-art': { width: 6, height: 3.75 },
   accordion: { width: 15, height: 11.25 },
   'navigation-drawer': { width: 17, height: 12.75 },
   tabs: { width: 15, height: 11.25 },
