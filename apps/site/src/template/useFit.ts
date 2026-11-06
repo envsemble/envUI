@@ -204,9 +204,9 @@ function trimRows(canvas: HTMLElement, played = false, fadeFrom: number | null =
  * Marks a region of a canvas that scrolls as it plays, such as a page's body in its box, while its
  * content runs on past its foot (`data-catalogue-runs-on`), so it fades out there (Related.css),
  * as the crop does where the stage cuts a picture off, rather than ending in a slice through a
- * line. Only the foot: what stays at its top, such as a sticky header, isn't cut. A region on its
- * way open or closed, such as a panel easing to its height, isn't one, nor one that fades its own
- * edges.
+ * line. Only the foot, and only where text or a picture reaches past it, not the room under its
+ * last line: what stays at its top, such as a sticky header, isn't cut. A region on its way open or
+ * closed, such as a panel easing to its height, isn't one, nor one that fades its own edges.
  */
 function markRunsOn(regions: Iterable<Element>) {
   for (const region of regions) {
@@ -222,10 +222,30 @@ function markRunsOn(regions: Iterable<Element>) {
       region.scrollTop + region.clientHeight < region.scrollHeight - 1 &&
       style.overflowY !== 'visible' &&
       !ownFade &&
-      !moving(region);
+      !moving(region) &&
+      inkPastFoot(region);
     if (runsOn) region.dataset.catalogueRunsOn = '';
     else delete region.dataset.catalogueRunsOn;
   }
+}
+
+/** Whether text or a picture in a region that scrolls reaches past its foot, where it is cut. */
+function inkPastFoot(region: HTMLElement) {
+  const box = region.getBoundingClientRect();
+  const ratio = box.height / region.offsetHeight || 1;
+  const foot = box.top + (region.clientTop + region.clientHeight) * ratio + 0.5 * ratio;
+  const walker = document.createTreeWalker(region, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT);
+  for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+    if (node instanceof Element) {
+      if (pictures.test(node.localName) && node.getBoundingClientRect().bottom > foot) return true;
+      continue;
+    }
+    if (!node.textContent?.trim()) continue;
+    const range = document.createRange();
+    range.selectNodeContents(node);
+    if (range.getBoundingClientRect().bottom > foot) return true;
+  }
+  return false;
 }
 
 /** The part of a box inside a clip, empty where none is, or the box where nothing clips it. */
@@ -852,7 +872,14 @@ export function useFit(
         : Math.min(1, width / least, downScale);
       // A component's modal, such as a dialog, a sheet or a command palette, over its backdrop:
       // the stage is its screen, decided on its still, so it stays one as the modal closes.
-      if (ownSize && tile && !playingNow.current && canvasElement.querySelector(modal))
+      // A tile first fitted as it plays, its picture loaded while the pointer is on it, decides it
+      // then, so its modal's screen and backdrop fill the stage as at rest.
+      if (
+        ownSize &&
+        tile &&
+        (!playingNow.current || canvasElement.dataset.fitted === undefined) &&
+        canvasElement.querySelector(modal)
+      )
         screen = true;
       if (!playingNow.current) fadeAt = null;
       if (screen) {
