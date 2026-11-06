@@ -1085,8 +1085,22 @@ export function useFit(
       // shows whole so, what it opens from the inset from the edges and the popup a little room
       // (anchoredScale), else the popups' one scale, whole there or a window onto it from its top,
       // fading out at its foot.
-      const popupScale = (atMost: number) =>
-        Math.max(wholeScale, roomScale) >= atMost - 0.0005 ? atMost : Math.min(atMost, popupLeast);
+      // On a phone, a held popup that runs past the stage's end at the popups' least but shows
+      // whole a little smaller, such as a menu bar's menu opened from its last menu, is drawn whole
+      // at that scale, down to a held view's least, rather than cut off at the stage's end; it
+      // lays out as wide as at the popups' least, so its width doesn't follow its scale (below).
+      const acrossScale =
+        anchored && phone && holdsView(canvasElement)
+          ? anchoredScale(anchored, stageElement.clientWidth, Infinity)
+          : Infinity;
+      const narrower =
+        acrossScale < popupLeast - 0.0005 && roomScale >= heldNextLeast - 0.0005
+          ? Math.floor(roomScale * 1000) / 1000
+          : null;
+      const popupScale = (atMost: number) => {
+        if (Math.max(wholeScale, roomScale) >= atMost - 0.0005) return atMost;
+        return narrower ?? Math.min(atMost, popupLeast);
+      };
       const scene = Math.max(legibleScale, Math.min(1, windowScale));
       // As a gallery's tile plays, its view is drawn out for all it shows (playFit), never below
       // the least it is drawn at (its popup's or a scene's), so its words stay legible.
@@ -1130,7 +1144,9 @@ export function useFit(
         !playingNow.current &&
         canvasElement.dataset.popup !== undefined
       ) {
-        const drawnAt = String(Math.round(scale * 1000) / 1000);
+        const drawnAt = String(
+          Math.round((narrower !== null && scale === narrower ? popupLeast : scale) * 1000) / 1000,
+        );
         if (canvasElement.style.getPropertyValue('--catalogue-canvas-scale') !== drawnAt)
           canvasElement.style.setProperty('--catalogue-canvas-scale', drawnAt);
       }
