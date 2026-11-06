@@ -12,16 +12,17 @@ const people = [
 
 /**
  * Hovered, the pile spreads its people apart; resting on the count, its tooltip names the people
- * it stands for; left, the pile gathers again.
+ * it stands for; left, the tooltip closes and the pile gathers again, and rests gathered a while
+ * before it plays again.
  */
 const script: PointerStep[] = [
   { wait: 300 },
   { to: '.env-avatar-group > :first-child' },
   { wait: 700 },
   { to: '.env-avatar-group-overflow', duration: 450 },
-  { wait: 2600 },
+  { wait: 2200 },
   { leave: true },
-  { wait: 900 },
+  { wait: 2400 },
 ];
 
 /**
