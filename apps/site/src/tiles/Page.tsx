@@ -17,8 +17,9 @@ const scrollTakes = 400;
 const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
 
 /**
- * A page in a box that scrolls, as a window does, at its own size and as low as its header and one
- * whole section: its still is scrolled past the overview to Summary, under the header stuck at the
+ * A page in a box that scrolls, as a window does, at its own size and as low as its header, one
+ * whole section and the room the fade at its foot takes as it plays (useFit.ts), so the fade falls
+ * below the section's last line rather than through it: its still is scrolled past the overview to Summary, under the header stuck at the
  * top with the fill it takes once content scrolls beneath it, and it scrolls down a section at a
  * time and back to it, so the still is a moment the scroll passes through. Each step rests with
  * one whole section just under the header, snapped to its start; the sections stand further apart
@@ -65,7 +66,7 @@ export default function PageTile() {
       ref={box}
       style={{
         inlineSize: narrow ? '10rem' : '12.5rem',
-        blockSize: '6.25rem',
+        blockSize: narrow ? '6.875rem' : '7.25rem',
         overflow: 'hidden',
         borderRadius: 'var(--env-radius-lg)',
         background: 'var(--env-color-bg-page)',
@@ -83,7 +84,9 @@ export default function PageTile() {
               <Text variant="title" render={<h4 />}>
                 {section}
               </Text>
-              <Text emphasis="muted">Figures by quarter.</Text>
+              <Text variant="body-sm" emphasis="muted">
+                Figures by quarter.
+              </Text>
             </Column>
           ))}
         </Column>
