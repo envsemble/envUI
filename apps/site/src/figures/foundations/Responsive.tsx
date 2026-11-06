@@ -47,7 +47,9 @@ function Profile() {
 /**
  * The profile in one frame whose width sweeps from a narrow pane to room to spare and back, slowly
  * and held at each end, its ruler naming the window class alone, as the page shows no lengths; the
- * legend's two entries, below it, say what changes at each.
+ * legend's two entries, below it, say what changes at each. On a stage too narrow for its widest
+ * at a legible scale, such as a phone's, the frame is cut off and panned across rather than
+ * narrowed, so the actions beside the name still show.
  */
 function WidthsFigure({ legend }: { legend: readonly LegendEntry[] }) {
   return (
@@ -69,7 +71,7 @@ function WidthsFigure({ legend }: { legend: readonly LegendEntry[] }) {
         </div>
       }
     >
-      <WidthSweep widths={[18, 44]} hold={1600} classes="only">
+      <WidthSweep widths={[18, 44]} hold={1600} classes="only" crop>
         <Profile />
       </WidthSweep>
     </Figure>

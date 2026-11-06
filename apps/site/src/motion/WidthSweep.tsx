@@ -9,7 +9,8 @@ import { usePlayback } from './Motion';
  * the page asks. The figure keeps one height throughout, the tallest the example takes on the way,
  * and the frame, centred, is drawn at one scale, chosen once for the stage, so a wide frame is never clipped
  * or drawn in tiny text: where the widest width doesn't fit even at the least scale, the frame
- * sweeps only as wide as the stage can show.
+ * sweeps only as wide as the stage can show, or with `crop`, as wide as it is, cut off at the
+ * stage's edges (cropSweep).
  */
 
 /** The least scale a frame is drawn at; a stage narrower than that shows a narrower sweep. */
@@ -27,6 +28,8 @@ const firstHold = 400;
 const travelTime = (from: number, to: number) => 700 + 70 * Math.abs(to - from);
 /** Eases a move in and out, gently, as a window's edge dragged by hand. */
 const ease = (t: number) => (1 - Math.cos(Math.PI * t)) / 2;
+/** How long a cropped frame takes to pan from its end to its start, at its widest, in ms. */
+const panTime = 1600;
 /** How finely the example's height is sampled along the sweep, in rem. */
 const sampleStep = 0.25;
 
@@ -58,23 +61,38 @@ const orderOf = (count: number) =>
         ...Array.from({ length: count - 2 }, (_, index) => count - 2 - index),
       ];
 
-/** The frame's width at a time of its loop, which holds at each width and then moves on. */
-function widthAt(time: number, stops: readonly number[], hold: number) {
+/**
+ * The frame's width at a time of its loop, which holds at each width and then moves on, and where
+ * a frame cut off at the stage's edges is seen from (`camera`), 0 from its start, 1 from its end:
+ * from its end, the edge that moves, as it widens; from its start as it narrows; and at its widest,
+ * held longer with `pan`, panning from its end to its start, so a row wider than the stage shows
+ * whole along the way.
+ */
+function widthAt(time: number, stops: readonly number[], hold: number, pan: boolean) {
   const order = orderOf(stops.length);
+  const widest = Math.max(...stops);
   const legs = order.map((index, leg) => {
     const from = stops[index]!;
     const to = stops[order[(leg + 1) % order.length]!]!;
-    return { from, to, travel: from === to ? 0 : travelTime(from, to) };
+    const still = pan && from === widest ? hold + panTime : hold;
+    return { from, to, still, travel: from === to ? 0 : travelTime(from, to) };
   });
-  const length = legs.reduce((sum, leg) => sum + hold + leg.travel, 0);
+  const length = legs.reduce((sum, leg) => sum + leg.still + leg.travel, 0);
   let left = time % length;
+  let camera = 0;
   for (const leg of legs) {
-    if (left < hold) return leg.from;
-    left -= hold;
-    if (left < leg.travel) return leg.from + (leg.to - leg.from) * ease(left / leg.travel);
+    if (left < leg.still) {
+      if (leg.still === hold) return { width: leg.from, camera };
+      const panned = Math.min(1, Math.max(0, (left - hold / 2) / panTime));
+      return { width: leg.from, camera: 1 - ease(panned) };
+    }
+    left -= leg.still;
+    camera = leg.to > leg.from ? 1 : 0;
+    if (left < leg.travel)
+      return { width: leg.from + (leg.to - leg.from) * ease(left / leg.travel), camera };
     left -= leg.travel;
   }
-  return stops[0]!;
+  return { width: stops[0]!, camera: 0 };
 }
 
 /**
@@ -85,7 +103,10 @@ function widthAt(time: number, stops: readonly number[], hold: number) {
  * at a width, such as opening a sheet at the narrow end, driven by a useTimeline step or a cue.
  * `classes` names the window class beside the width, for an example that changes at one, or in
  * its place with `'only'`, on a page that shows no lengths, such as a foundation's; `fit` draws the
- * frame smaller where it must, to 0.6, to reach its widest width on the stage; `ruler={false}`
+ * frame smaller where it must, to 0.6, to reach its widest width on the stage; `crop` draws it at
+ * the least scale still and cuts it off at the stage's edges instead, the view following the edge
+ * that moves and panning across it at its widest, for an example whose wide layout needs more
+ * room than a phone's stage has at a legible scale; `ruler={false}`
  * leaves the ruler out, for a figure whose point isn't the width in numbers; and `outline={false}`
  * leaves the frame's dashed edge out too, for a figure that only needs a width of its own, drawn
  * smaller on a narrower stage, such as a dock with room for two panels.
@@ -96,6 +117,7 @@ export function WidthSweep({
   hold = holdTime,
   classes = false,
   fit = false,
+  crop = false,
   ruler: showRuler = true,
   outline = true,
   children,
@@ -105,6 +127,7 @@ export function WidthSweep({
   hold?: number;
   classes?: boolean | 'only';
   fit?: boolean;
+  crop?: boolean;
   ruler?: boolean;
   outline?: boolean;
   children: ReactNode;
@@ -115,8 +138,13 @@ export function WidthSweep({
   const frame = useRef<HTMLDivElement>(null);
   const ruler = useRef<HTMLDivElement>(null);
   const reading = useRef<HTMLSpanElement>(null);
-  /** The scale the frame is drawn at, and the widths it sweeps between on this stage. */
-  const layout = useRef({ scale: 1, stops: widths });
+  /**
+   * The scale the frame is drawn at, the widths it sweeps between on this stage, whether it is cut
+   * off at the stage's edges (`crop`), and the room it shows in, in px, inside its outline.
+   */
+  const layout = useRef({ scale: 1, stops: widths, room: 0, cropped: false });
+  /** Where a cropped frame is seen from: 0 from its start, 1 from its end (widthAt). */
+  const camera = useRef(0);
   /** The width the frame shows now, in rem. */
   const shown = useRef(widths[at ?? 0] ?? 0);
   /** Where the sweep is in its loop, in ms of play; below 0 before it first plays. */
@@ -125,12 +153,30 @@ export function WidthSweep({
   const move = useRef<{ from: number; to: number; elapsed: number; duration: number } | null>(null);
   const key = widths.join(' ');
 
-  /** Draws the frame at a width: its size, the ruler's, and the ruler's words. */
-  const draw = (width: number) => {
+  /**
+   * Draws the frame at a width: its size, the ruler's, and the ruler's words; cropped, where it is
+   * seen from, and which of its edges are cut off.
+   */
+  const draw = (width: number, from = camera.current) => {
     shown.current = width;
-    const { scale, stops } = layout.current;
+    camera.current = from;
+    const { scale, stops, room, cropped } = layout.current;
     frame.current?.style.setProperty('inline-size', `${width}rem`);
-    ruler.current?.style.setProperty('--catalogue-sweep-width', `${width * scale}rem`);
+    let rulerWidth = width * scale;
+    if (cropped && place.current) {
+      const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+      // How far the frame, centred, runs out past the room, and the pan that shows its start
+      // (half of that) or its end.
+      const over = Math.max(0, width * scale * rem - room);
+      const pan = (0.5 - from) * over;
+      frame.current?.style.setProperty('translate', `${pan}px 0`);
+      const cut = [over > 0.5 && from < 1 - 1e-3 && 'end', over > 0.5 && from > 1e-3 && 'start']
+        .filter(Boolean)
+        .join(' ');
+      if (place.current.dataset.cut !== cut) place.current.dataset.cut = cut;
+      rulerWidth = Math.min(rulerWidth, room / rem);
+    }
+    ruler.current?.style.setProperty('--catalogue-sweep-width', `${rulerWidth}rem`);
     if (reading.current) {
       // At a width the page gives, its exact value; on the way, and at a width the stage narrowed,
       // whole rem, which change calmly.
@@ -168,10 +214,11 @@ export function WidthSweep({
       const least = fit ? leastFitScale : leastScale;
       let scale = Math.min(1, space / (widest * rem));
       let limit = Infinity;
+      const cropped = crop && scale < least;
       if (scale < least) {
         scale = least;
         // In whole rem, so the ruler names the narrower width as it names the others.
-        limit = Math.floor(space / (least * rem));
+        if (!crop) limit = Math.floor(space / (least * rem));
       }
       const shownStops = stops.map((width) => Math.min(width, limit));
       const narrowest = Math.min(...shownStops);
@@ -189,8 +236,18 @@ export function WidthSweep({
         }
         tallestOf.set(range, tallest);
       }
-      layout.current = { scale, stops: shownStops };
-      spot.style.setProperty('--catalogue-sweep-widest', `${most * scale}rem`);
+      layout.current = { scale, stops: shownStops, room: space, cropped };
+      if (cropped) spot.dataset.cropped = '';
+      else {
+        delete spot.dataset.cropped;
+        delete spot.dataset.cut;
+        box.style.removeProperty('translate');
+      }
+      // Cropped, the place is the stage's width, and the frame runs out past it.
+      spot.style.setProperty(
+        '--catalogue-sweep-widest',
+        `${cropped ? space / rem : most * scale}rem`,
+      );
       spot.style.setProperty('--catalogue-sweep-height', `${tallest * scale}px`);
       spot.style.setProperty('--catalogue-sweep-scale', String(scale));
       drawRef.current(Math.min(Math.max(shown.current, narrowest), most));
@@ -223,7 +280,7 @@ export function WidthSweep({
       resize.disconnect();
       content.disconnect();
     };
-  }, [key, fit]);
+  }, [key, fit, crop]);
 
   // Given `at`, the frame moves to its width whenever it changes.
   useEffect(() => {
@@ -240,7 +297,7 @@ export function WidthSweep({
       if (rest === 'start') {
         clock.current = -1;
         move.current = null;
-        drawRef.current(layout.current.stops[at ?? 0] ?? shown.current);
+        drawRef.current(layout.current.stops[at ?? 0] ?? shown.current, 0);
       }
       return;
     }
@@ -252,7 +309,13 @@ export function WidthSweep({
       if (at === undefined) {
         if (clock.current < 0) clock.current = hold - firstHold;
         clock.current += passed;
-        drawRef.current(widthAt(clock.current, layout.current.stops, hold));
+        const { width, camera: from } = widthAt(
+          clock.current,
+          layout.current.stops,
+          hold,
+          layout.current.cropped,
+        );
+        drawRef.current(width, from);
       } else if (move.current) {
         const current = move.current;
         current.elapsed = Math.min(current.duration, current.elapsed + passed);
