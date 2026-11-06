@@ -177,7 +177,9 @@ function trimRows(
 ) {
   const crop = canvas.parentElement;
   if (!crop?.classList.contains('catalogue-related-crop')) return;
-  if (!canvas.dataset.cut?.split(' ').includes('bottom')) {
+  // A screen's edge cuts what reaches past it, also where a box in it clips that first, such as a
+  // page's body as tall as the screen: there too a row shows whole or not at all.
+  if (!edge && !canvas.dataset.cut?.split(' ').includes('bottom')) {
     for (const row of canvas.querySelectorAll<HTMLElement>('[data-catalogue-past]'))
       delete row.dataset.cataloguePast;
     crop.style.removeProperty('--catalogue-crop-bottom');
