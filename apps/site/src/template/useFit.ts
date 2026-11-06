@@ -1196,10 +1196,14 @@ export function useFit(
         toY = top * scale + stageElement.clientHeight / 2 - placed.at;
         fadeAt = placed.fadeAt;
       } else if (fromTop) toY = top * scale + height / 2;
-      // A tile that grows as it plays is shown from its top, the inset from the stage's, so what
-      // it adds below has the room the still leaves under it (useHeldView).
+      // A tile that grows as it plays is shown from its top, so what it adds below has the room
+      // the still leaves under it: its still, written as its largest state, centred where it fits
+      // the stage, as other tiles are, else the inset from the stage's top (useHeldView).
       if (growsDown && (ownSize || legible))
-        toY = top * scale + stageElement.clientHeight / 2 - inset;
+        toY =
+          top * scale +
+          stageElement.clientHeight / 2 -
+          Math.max(inset, (stageElement.clientHeight - (bottom - top) * scale) / 2);
       // At rest, a tile is framed as it plays, on what its pointer heads to (onCourse); moved
       // for it, it is cut off where it reaches past the stage's edges. A held view taller than
       // its stage is placed down it on what its script acts on (heldTop), and across on its course.
