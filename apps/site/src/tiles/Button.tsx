@@ -9,8 +9,9 @@ const script: PointerStep[] = [
   { wait: 600 },
   { click: true },
   { wait: 80 },
-  // Just off the button it pressed, so its spinner shows clear while it saves.
-  { to: '.env-button', x: 1.12, y: 1.5, duration: 300 },
+  // Just below the button it pressed, toward the stage's middle, so its spinner shows clear
+  // while it saves and the pointer stays well inside the stage.
+  { to: '.env-button', x: 0.72, y: 1.4, duration: 300 },
   { wait: 1520 },
   { leave: true },
   { wait: 500 },

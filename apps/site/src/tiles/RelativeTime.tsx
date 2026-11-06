@@ -8,10 +8,12 @@ import { narrowGallery } from './Tiles';
 const now = Date.UTC(2026, 9, 14, 9, 41, 30);
 const minute = 60_000;
 
-/** A document's recent events, each when it happened. */
+/**
+ * A document's recent events, each when it happened: two, so the stage has the room above them
+ * for a time's tooltip at their own size, and nothing moves as it opens.
+ */
 const events = [
   { label: 'Saved', at: now - 20_000 },
-  { label: 'Edited', at: now - 3 * 60 * minute },
   { label: 'Shared', at: now - 2 * 24 * 60 * minute },
 ];
 

@@ -57,6 +57,8 @@ const PlaybackContext = createContext<
     claimRest?: () => () => void;
     /** Counts a timeline that sets the preview's props while it is there; returns the release. */
     countTimeline?: () => () => void;
+    /** Counts any animation of the preview, a pointer's script too, while it is there (Playback). */
+    countAnimation?: () => () => void;
   }
 >({ playing: false, rest: 'start', root: null });
 
@@ -70,11 +72,14 @@ export function Playback({
   rest,
   root,
   countTimeline,
+  countAnimation,
   redraw = false,
   children,
 }: PlaybackValue & {
   /** Counts the timelines in it, whose figure is a recording the reader can't take over. */
   countTimeline?: () => () => void;
+  /** Counts its animations, timelines and pointers' scripts, such as a tile's, which a still lacks. */
+  countAnimation?: () => () => void;
   /**
    * Whether it is drawn anew as it stops whatever its animations do, as a tile is, whose still
    * draws without motion (Related.css): what an animation left behind that it can't set back, such
@@ -91,6 +96,7 @@ export function Playback({
       rest={rest}
       root={root}
       countTimeline={countTimeline}
+      countAnimation={countAnimation}
       redraw={redraw}
     >
       {children}
@@ -103,10 +109,12 @@ function PlaybackOf({
   rest,
   root,
   countTimeline,
+  countAnimation,
   redraw,
   children,
 }: PlaybackValue & {
   countTimeline?: () => () => void;
+  countAnimation?: () => () => void;
   redraw: boolean;
   children: ReactNode;
 }) {
@@ -125,7 +133,7 @@ function PlaybackOf({
     if (!playing && rest === 'start' && (redraw || !claims.current)) setRound(round + 1);
   }
   return (
-    <PlaybackContext value={{ playing, rest, root, claimRest, countTimeline }}>
+    <PlaybackContext value={{ playing, rest, root, claimRest, countTimeline, countAnimation }}>
       <Fragment key={round}>{children}</Fragment>
     </PlaybackContext>
   );
@@ -170,9 +178,16 @@ export function PreviewOverlays({ children }: { children: ReactNode }) {
   );
 }
 
-/** Counts a timeline in its preview's while it is there. */
+/** Counts a timeline in its preview's while it is there, and as one of its animations. */
 function useCounted(countTimeline: (() => () => void) | undefined) {
   useEffect(() => countTimeline?.(), [countTimeline]);
+  useCountedAnimation();
+}
+
+/** Counts an animation in its preview's while it is there. */
+function useCountedAnimation() {
+  const { countAnimation } = use(PlaybackContext);
+  useEffect(() => countAnimation?.(), [countAnimation]);
 }
 
 /**
@@ -351,6 +366,7 @@ export function usePointer(
   }: { onCue?: (cue: string) => void; onRest?: () => void; clock?: string } = {},
 ) {
   const { playing, rest, root, claimRest } = use(PlaybackContext);
+  useCountedAnimation();
   const cueTo = useRef(onCue);
   const restTo = useRef(onRest);
   useEffect(() => {

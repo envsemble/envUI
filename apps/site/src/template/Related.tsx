@@ -82,12 +82,25 @@ export function TilePreview({
   // The canvas, for the pointer no one sees, which finds the preview's elements in it.
   const [canvasElement, setCanvasElement] = useState<HTMLDivElement | null>(null);
   const shown = Boolean(preview && near);
+  // How many animations its picture has, a pointer's script or a timeline: one without any, such
+  // as a list of shortcuts, has no play to promise, and draws no ring under the pointer.
+  const [animations, setAnimations] = useState(0);
+  const [countAnimation] = useState(() => () => {
+    setAnimations((count) => count + 1);
+    return () => setAnimations((count) => count - 1);
+  });
   const subject =
     preview &&
     (Composition ? (
       <TileBoundary>
         <Suspense fallback={null}>
-          <Playback playing={plays} rest="start" root={canvasElement} redraw>
+          <Playback
+            playing={plays}
+            rest="start"
+            root={canvasElement}
+            countAnimation={countAnimation}
+            redraw
+          >
             <Composition />
           </Playback>
         </Suspense>
@@ -113,6 +126,7 @@ export function TilePreview({
       data-empty={preview ? undefined : ''}
       data-playing={plays ? '' : undefined}
       data-scene={legible ? '' : undefined}
+      data-still={Composition && animations > 0 ? undefined : ''}
     >
       {!preview ? (
         <IconArticle className="catalogue-related-placeholder" aria-hidden />
