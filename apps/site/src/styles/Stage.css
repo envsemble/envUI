@@ -459,21 +459,6 @@
   margin: auto;
 }
 
-/* A command palette in a figure, shown open on its backdrop or playing: narrower than the stage and
-   nearer its top than a screen's, so the backdrop frames it on every side, as a window frames it. An
-   anatomy figure, which shows no backdrop, keeps it as it is. */
-:is(.site-live-example, .site-verdict-stage)
-  .catalogue-open-example
-  .env-command-palette-positioner,
-.catalogue-motion-subject .env-command-palette-positioner {
-  padding-block: var(--env-space-6);
-}
-
-:is(.site-live-example, .site-verdict-stage) .catalogue-open-example .env-command-palette,
-.catalogue-motion-subject .env-command-palette {
-  inline-size: min(28rem, 100% - 2 * var(--env-space-8));
-}
-
 /* What opens it sits at the stage's top start, where an application's search does, beside the
    palette rather than under its frosted panel, where it would show through as a blur. */
 :is(.site-live-example, .site-verdict-stage) .catalogue-open-example:has(.env-command-palette) {
@@ -561,17 +546,6 @@
   box-shadow: none;
 }
 
-/* A field's description lies under the list or calendar that opens below the field, and would
-   peek past the popup's rounded corner: a figure that plays, or shows a field open, gives the
-   popup that room while it is open. */
-:is(
-    .catalogue-motion-subject,
-    :is(.site-live-example, .site-verdict-stage) .catalogue-open-example
-  ):has(.env-select-popup, .env-combobox-popup, .env-picker-popup)
-  .env-field-description {
-  visibility: hidden;
-}
-
 /* The keys a figure's keyboard presses (PressedKeys.tsx), over what opens in it, backdrop included. */
 .catalogue-pressed-keys {
   z-index: var(--env-z-tooltip);
@@ -652,21 +626,6 @@
 .catalogue-overlay-layer:has(.env-dialog-backdrop, .env-sheet-backdrop)
   > .catalogue-field-selection {
   visibility: hidden;
-}
-
-/* A tree whose density steps in a figure (specimens/tree/RowDensity.tsx): its rows glide to their
-   new places, rather than jumping, as the density changes. Their height, which the tree measures,
-   changes at once. */
-.catalogue-density-steps .env-tree-item {
-  transition:
-    background-color var(--env-motion-duration-fast) var(--env-motion-ease),
-    transform var(--env-motion-duration-medium) var(--env-motion-ease);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .catalogue-density-steps .env-tree-item {
-    transition: none;
-  }
 }
 
 /* A figure whose room is for what opens below what it shows, such as a select's list: what it

@@ -18,10 +18,7 @@ function Densities() {
   return (
     <>
       <span className="catalogue-corner-label">{name}</span>
-      <div
-        className="catalogue-density-steps"
-        style={{ display: 'grid', justifyItems: 'center', inlineSize: '100%' }}
-      >
+      <div style={{ display: 'grid', justifyItems: 'center', inlineSize: '100%' }}>
         <RowDensity density={density} />
       </div>
     </>
