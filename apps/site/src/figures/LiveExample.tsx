@@ -213,17 +213,32 @@ export const leastFitScale = 0.7;
  * A frame of a given width for an example, drawn smaller where its stage is narrower than the
  * frame and its outline, down to `leastFitScale`, so the frames of an Adapting to width figure fit
  * a column beside the page's contents; the example still lays out at the frame's own width, as it
- * is scaled rather than resized. A frame that would need to be smaller still keeps its size, and
- * the stage scrolls, as on a phone.
+ * is scaled rather than resized. A frame that would need to be smaller still keeps its size, as on
+ * a phone: it scrolls across the stage, seen from its start, and fades out at an edge where it runs
+ * on past it, as a cropped sweep or device does, rather than ending in a slice through its words.
  */
 function WidthBox({ width, children }: { width: number; children: ReactNode }) {
   const fit = useRef<HTMLDivElement>(null);
   const box = useRef<HTMLDivElement>(null);
   const [scaled, setScaled] = useState<{ scale: number; width: number; height: number }>();
+  /** Whether the frame is wider than its stage even at `leastFitScale`, and scrolls across it. */
+  const [cropped, setCropped] = useState(false);
   useLayoutEffect(() => {
     const frame = box.current;
-    const stage = fit.current?.parentElement;
-    if (!frame || !stage || typeof ResizeObserver === 'undefined') return;
+    const place = fit.current;
+    const stage = place?.parentElement;
+    if (!frame || !place || !stage || typeof ResizeObserver === 'undefined') return;
+    /** Marks the edges where the frame runs on past its place, which fade out. */
+    const markCuts = () => {
+      const most = place.scrollWidth - place.clientWidth;
+      // From the start, whichever way the text runs: scrollLeft counts down from 0 right to left.
+      const along = Math.abs(place.scrollLeft);
+      const cut = [along > 0.5 && 'start', most - along > 0.5 && 'end'].filter(Boolean).join(' ');
+      if ((place.dataset.cut ?? '') !== cut) {
+        if (cut) place.dataset.cut = cut;
+        else delete place.dataset.cut;
+      }
+    };
     const measure = () => {
       const style = getComputedStyle(stage);
       const room =
@@ -238,6 +253,8 @@ function WidthBox({ width, children }: { width: number; children: ReactNode }) {
         scale < 1 && scale >= leastFitScale
           ? { scale, width: frame.offsetWidth * scale, height: frame.offsetHeight * scale }
           : undefined;
+      setCropped(scale < leastFitScale);
+      markCuts();
       // Unchanged sizes keep the state, so the stage, which grows with the frame, settles.
       setScaled((current) =>
         current &&
@@ -256,9 +273,13 @@ function WidthBox({ width, children }: { width: number; children: ReactNode }) {
     });
     observer.observe(stage);
     observer.observe(frame);
+    // Its place too, which takes the stage's width once the frame is cropped.
+    observer.observe(place);
+    place.addEventListener('scroll', markCuts, { passive: true });
     return () => {
       cancelAnimationFrame(frameRequest);
       observer.disconnect();
+      place.removeEventListener('scroll', markCuts);
     };
   }, []);
   return (
@@ -266,6 +287,7 @@ function WidthBox({ width, children }: { width: number; children: ReactNode }) {
       ref={fit}
       className="catalogue-width-fit"
       data-scaled={scaled ? '' : undefined}
+      data-cropped={cropped ? '' : undefined}
       style={scaled && { inlineSize: scaled.width, blockSize: scaled.height }}
     >
       <div
