@@ -11,15 +11,15 @@ const panes = '.env-panes';
  * The pointer drags the gap toward the start, past where the details stop at their widest; then
  * toward the end, past where they stop at their least width. It lets go, and the keyboard takes the
  * gap: four presses of the left arrow widen the details a step each, back to where they began. The
- * points it heads to span both stops, so a window cut off at a phone's width holds one view as the
- * gap moves.
+ * points it heads to span both stops, near enough together that a window cut off at a phone's width
+ * keeps them, and the details, in one view as the gap moves.
  */
 const script: PointerStep[] = [
   { wait: 500 },
   { to: divider, x: 0.5, y: 0.5 },
   { wait: 400 },
   { press: true },
-  { to: panes, x: 0.47, y: 0.5, duration: 1000 },
+  { to: panes, x: 0.56, y: 0.5, duration: 1000 },
   { wait: 400 },
   { to: panes, x: 0.83, y: 0.5, duration: 1300 },
   { wait: 300 },

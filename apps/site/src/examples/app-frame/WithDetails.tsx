@@ -44,7 +44,10 @@ export default function WithDetails() {
           </Column>
         </Panes.Main>
         <Panes.Supporting label="Details">
-          <Column padding={4}>
+          <Column gap={2} padding={4}>
+            <Text variant="title" render={<h3 />}>
+              Quarterly report
+            </Text>
             <Text emphasis="muted">Owner: Sam Lee</Text>
           </Column>
         </Panes.Supporting>

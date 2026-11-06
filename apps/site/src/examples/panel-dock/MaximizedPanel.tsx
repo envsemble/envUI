@@ -8,15 +8,15 @@ import {
 } from '@envsemble/envui';
 
 const notes: Record<string, string> = {
-  plan: 'The launch moves to the first week of May, with the press release a day earlier.',
+  plan: 'The launch moves to the first week of May.',
   press: 'Northwind asked for a quote from Priya Shah by Friday.',
   pricing: 'Two plans, monthly and yearly, with a free trial of 14 days.',
 };
 
 export default function MaximizedPanel() {
   const [panels, setPanels] = useState<PanelDockPanel[]>([
-    { id: 'plan', title: 'Launch plan', mode: 'maximized', active: true },
-    { id: 'press', title: 'Press release', mode: 'open', height: 16.25 },
+    { id: 'plan', title: 'Launch plan', mode: 'maximized', active: true, preferredWidth: 20 },
+    { id: 'press', title: 'Press release', mode: 'open', height: 16.25, preferredWidth: 20 },
     { id: 'pricing', title: 'Pricing', mode: 'minimized' },
   ]);
   const update = (change: (panel: PanelDockPanel) => PanelDockPanel) =>
