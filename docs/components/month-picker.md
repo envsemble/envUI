@@ -162,7 +162,7 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 ## Changelog
 
 - **1.0.0**: MonthPicker, for a month of a year, with `min` and `max`.
-- **1.0.0-prerelease.6**: The year buttons show larger arrows, 1.25 rem, at the same button size, and the header keeps a little room under it, as the calendar's.
+- **1.0.0-prerelease.6**: The year buttons show larger arrows, 1.25 rem, on slightly smaller buttons, and the header keeps a little room under it, as the calendar's.
 - **1.0.0-prerelease.6**: The grid's month names keep one length where the locale makes nearly all of them that long, such as Sep rather than Sept among en-GB's three-letter months; names with punctuation, and locales whose names vary, keep the locale's own.
 - **1.0.0-prerelease.6**: Months outside `min` and `max` take the disabled text color, faded, as a calendar's unavailable days do; this month keeps its accent color.
 - **1.0.0-prerelease.6**: The `floating` variant and the `variant` prop are gone: the field is outlined, and takes `size="lg"` in a long form on a page. The field takes a text area's rounded corners rather than round ends. A small one with a visible label takes the medium height, so its floated label and its value each have room, and says so in the console while developing: `sm` is for a field with its label hidden.
