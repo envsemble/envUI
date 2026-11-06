@@ -1,5 +1,11 @@
 import { useState } from 'react';
-import { Box, Column, NavigationDrawer, Text, type Destination } from '@envsemble/envui';
+import {
+  Box,
+  Column,
+  NavigationDrawer,
+  Text,
+  type NavigationDrawerDestination,
+} from '@envsemble/envui';
 import { useMedia } from '../motion/Autoplay';
 import { usePointer, type PointerStep } from '../motion/Motion';
 import { narrowGallery } from './Tiles';
@@ -74,7 +80,7 @@ export default function DrawerTile() {
     current: current === id,
     onClick: () => setCurrent(id),
   });
-  const destinations: Destination[] = [
+  const destinations: NavigationDrawerDestination[] = [
     { label: 'Inbox', ...destination('inbox') },
     { label: 'Starred', ...destination('starred') },
   ];
