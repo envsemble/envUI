@@ -19,7 +19,11 @@ export default function ResizableDetails() {
           <Text variant="title" render={<h3 />}>
             Launch banner
           </Text>
-          <Text>The banner for the spring launch, on the home page and in the newsletter.</Text>
+          <Text>
+            The banner for the spring launch, on the home page and in the newsletter. It leads with
+            the new subscriptions and links to the pricing page. The copy is final; the illustration
+            is due from the design team on Friday.
+          </Text>
         </Surface>
       </Panes.Main>
       <Panes.Divider label="Resize details" />
