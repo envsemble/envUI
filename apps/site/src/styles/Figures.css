@@ -178,6 +178,43 @@
   transform-origin: top right;
 }
 
+/* A frame wider than its stage even drawn smaller (WidthBox): at its own size, it scrolls across
+   its place, which is as wide as the stage and keeps room for the outline on every side, and fades
+   out over the last stretch at an edge where it runs on, as a cropped sweep does (below). */
+.catalogue-width-fit[data-cropped] {
+  --catalogue-width-edge: calc(var(--env-space-2) + 0.0625rem);
+  --catalogue-width-fade: 1.75rem;
+  --catalogue-width-start: 0rem;
+  --catalogue-width-end: 0rem;
+  box-sizing: border-box;
+  max-inline-size: calc(100% + 2 * var(--catalogue-width-edge));
+  margin: calc(-1 * var(--catalogue-width-edge));
+  padding: var(--catalogue-width-edge);
+  overflow-x: auto;
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    var(--env-color-fg-default) var(--catalogue-width-start),
+    var(--env-color-fg-default) calc(100% - var(--catalogue-width-end)),
+    transparent
+  );
+}
+.catalogue-width-fit[data-cropped]:dir(rtl) {
+  mask-image: linear-gradient(
+    to left,
+    transparent,
+    var(--env-color-fg-default) var(--catalogue-width-start),
+    var(--env-color-fg-default) calc(100% - var(--catalogue-width-end)),
+    transparent
+  );
+}
+.catalogue-width-fit[data-cut~='start'] {
+  --catalogue-width-start: var(--catalogue-width-fade);
+}
+.catalogue-width-fit[data-cut~='end'] {
+  --catalogue-width-end: var(--catalogue-width-fade);
+}
+
 /* An example in a frame whose width sweeps (`widths` with `sweep` on its fence, WidthSweep.tsx):
    across its stage, a place as wide as the widest width at the frame's scale, and as tall as the
    ruler and the tallest the example gets, so the figure keeps one height; in it, the ruler and the
@@ -220,6 +257,14 @@
   transform: translateX(-50%) scale(var(--catalogue-sweep-scale, 1));
   transform-origin: top center;
 }
+/* The layer the frame's overlays render into (WidthSweep.tsx), at its top start corner and of no
+   size of its own, so it covers nothing: the frame places what opens in it. */
+.catalogue-width-sweep-overlays {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+}
+
 /* A frame wider than the stage at a legible scale (`crop`): seen from its start and cut off at the
    stage's end, where it fades out over the last stretch as a device cut off does (DeviceFrame.css),
    and the ruler stops at what shows, unmarked where the frame runs on. */

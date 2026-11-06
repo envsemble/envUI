@@ -1,5 +1,5 @@
-import { useEffect, useLayoutEffect, useRef, type ReactNode } from 'react';
-import { windowClasses, type WindowClass } from '@envsemble/envui';
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
+import { PortalContainer, windowClasses, type WindowClass } from '@envsemble/envui';
 import { usePlayback } from './Motion';
 
 /*
@@ -10,7 +10,8 @@ import { usePlayback } from './Motion';
  * and the frame, centred, is drawn at one scale, chosen once for the stage, so a wide frame is never clipped
  * or drawn in tiny text: where the widest width doesn't fit even at the least scale, the frame
  * sweeps only as wide as the stage can show, or with `crop`, as wide as it is, cut off at the
- * stage's end, seen from its start.
+ * stage's end, seen from its start. What the example opens, such as a sheet or a menu, opens in the
+ * frame, as it would in a window of that width, rather than over the whole stage.
  */
 
 /** The least scale a frame is drawn at; a stage narrower than that shows a narrower sweep. */
@@ -121,6 +122,8 @@ export function WidthSweep({
   const frame = useRef<HTMLDivElement>(null);
   const ruler = useRef<HTMLDivElement>(null);
   const reading = useRef<HTMLSpanElement>(null);
+  /** The layer in the frame that the example's overlays render into. */
+  const [overlays, setOverlays] = useState<HTMLDivElement | null>(null);
   /**
    * The scale the frame is drawn at, the widths it sweeps between on this stage, whether it is cut
    * off at the stage's edges (`crop`), and the room it shows in, in px, inside its outline.
@@ -317,7 +320,13 @@ export function WidthSweep({
             className="catalogue-width-sweep-frame"
             data-outline={outline ? undefined : 'none'}
           >
-            {children}
+            {/* The frame stands in for the window: its overlays belong to it, and its transform
+                makes it their fixed overlays' containing block, so a sheet opens across the
+                frame's width and its backdrop covers the frame, not the stage. */}
+            <PortalContainer container={overlays} contained>
+              {children}
+            </PortalContainer>
+            <div ref={setOverlays} className="catalogue-width-sweep-overlays" />
           </div>
         </div>
       </div>

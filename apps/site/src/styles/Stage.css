@@ -484,6 +484,14 @@
   animation: none;
 }
 
+/* An animated figure's example as it is drawn anew with a crossfade (Renew.tsx): the one that ends
+   fades out over the new one. */
+@keyframes catalogue-renew-out {
+  to {
+    opacity: 0;
+  }
+}
+
 /* An animated figure (MotionStage.tsx): its subject centred on the stage as an example's is, and
    its pause button at the stage's bottom end, inside its padding.
    Its overlays open in a layer over the whole stage, which its layout containment makes their
