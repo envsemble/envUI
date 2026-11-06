@@ -880,16 +880,10 @@ export function useFit(
             .filter((element) => element.checkVisibility())
         : [];
       const filled = (box: Box) => box.right > box.left && box.bottom > box.top;
-      // Below what is chosen in a picker's grid or wheel, the row after it shows whole too, so the
-      // chosen row stands in the picker rather than at its foot.
-      const below = held
-        .flatMap((element) => {
-          const row = element.closest('tr, .env-time-list-row');
-          const next = row?.nextElementSibling;
-          return next && canvasElement.contains(next) && next.checkVisibility() ? [next] : [];
-        })
-        .map((element) => partOf(element, canvasElement))
-        .filter(filled);
+      // Below what is chosen in a picker's grid or wheel, the row after it shows whole too, in the
+      // fade at the foot, so the chosen row stands in the picker, which reads as going on, rather
+      // than at its foot (nextRow).
+      const below = held.flatMap((element) => nextRow(element, canvasElement)).filter(filled);
       const laidOut = held
         .flatMap((element) => laidOutOf(element, canvasElement) ?? [])
         .filter(filled);
@@ -963,24 +957,34 @@ export function useFit(
       const pointerFoot = aims.length ? Math.max(...aims.map(({ y }) => y)) : null;
       /**
        * Where a held view's top goes in its stage, drawn at a scale: the inset from the stage's top,
-       * or higher, up to `heldTopLeast` from it, as far as keeps what its script acts on, with the
-       * row after it where there is room, above its foot, the fade starting below it, and the
-       * cursor on its lowest point inside the stage; or none where the scale doesn't allow that.
+       * or higher, up to `heldTopLeast` from it, as far as keeps what its script acts on above its
+       * foot, the fade starting below it, and the cursor on its lowest point inside the stage; or
+       * none where the scale doesn't allow that. With `next`, the row after it shows whole too,
+       * in the fade, so the view ends on a whole row that fades out rather than on the chosen one.
        */
-      const heldTop = (scale: number) => {
-        if (!chosen || !keep) return null;
+      const heldTop = (scale: number, next = false) => {
+        if (!chosen || !keep || (next && keep === chosen)) return null;
         const size = stageElement.clientHeight;
         const cursorFoot =
           pointerFoot === null ? -Infinity : (pointerFoot - top + cursorLength * rem) * scale;
-        for (const reach of keep === chosen ? [chosen] : [keep, chosen]) {
-          const at = Math.min(
-            inset,
-            size - heldFadeLeast - (reach.bottom - top) * scale,
-            size - cursorRoom - cursorFoot,
-          );
-          if (at >= heldTopLeast - 0.5) return { at, fadeAt: reach.bottom };
+        const reach = next ? keep : chosen;
+        const at = Math.min(
+          inset,
+          size - heldFadeLeast - (reach.bottom - top) * scale,
+          size - cursorRoom - cursorFoot,
+        );
+        return at >= heldTopLeast - 0.5 ? { at, fadeAt: chosen.bottom } : null;
+      };
+      /** The largest scale from `low` to `high` at which a held view shows as `heldTop` says. */
+      const heldAtMost = (low: number, high: number, next: boolean) => {
+        if (heldTop(high, next)) return high;
+        if (!heldTop(low, next)) return null;
+        for (let count = 0; count < 16; count++) {
+          const middle = (low + high) / 2;
+          if (heldTop(middle, next)) low = middle;
+          else high = middle;
         }
-        return null;
+        return Math.floor(low * 1000) / 1000;
       };
       // On a phone, the largest of its scales a picture fits at, no smaller than `low`.
       const steps = phoneSteps(floor, popupLeast);
@@ -993,7 +997,12 @@ export function useFit(
        * phone, its field and its chosen row whole together.
        */
       const heldScale = (scale: number) => {
-        if (!chosen || (bottom - top) * scale <= height + inset || heldTop(scale)) return scale;
+        if (!chosen || (bottom - top) * scale <= height + inset) return scale;
+        // With the row after the chosen one whole in the fade, as large as allows that, down to
+        // `heldNextLeast`; else as large as shows the chosen row whole above the foot.
+        const next = heldAtMost(heldNextLeast, scale, true);
+        if (next !== null) return next;
+        if (heldTop(scale)) return scale;
         const least =
           parseFloat(canvasStyle.getPropertyValue('--catalogue-overlay-scale')) || scale;
         const lower = [...(phone ? steps : [popupLeast]), least]
@@ -1003,15 +1012,8 @@ export function useFit(
         if (found !== undefined || phone) return found ?? lower.at(-1) ?? scale;
         // On a wider page, where even that scale doesn't, such as a date picker's chosen week on a
         // lower stage, it is drawn just as much smaller as it needs, no smaller than `heldLeast`.
-        let low = heldLeast;
-        let high = lower.at(-1) ?? scale;
-        if (!heldTop(low)) return high;
-        for (let count = 0; count < 16; count++) {
-          const middle = (low + high) / 2;
-          if (heldTop(middle)) low = middle;
-          else high = middle;
-        }
-        return Math.floor(low * 1000) / 1000;
+        const high = lower.at(-1) ?? scale;
+        return heldAtMost(heldLeast, high, false) ?? high;
       };
       // On a phone, a tile is drawn at one of its scales where it reaches past its stage at its
       // own size.
@@ -1165,10 +1167,11 @@ export function useFit(
         // even the least scale doesn't, it shows from as near the top as it is moved, and the fade
         // starts no higher than the top of the lowest row its script acts on, which fades out
         // through the stage's foot rather than being cut there.
-        const placed = heldTop(scale) ?? {
-          at: heldTopLeast,
-          fadeAt: lowest!.top + rowSlack + 1,
-        };
+        const placed = heldTop(scale, true) ??
+          heldTop(scale) ?? {
+            at: heldTopLeast,
+            fadeAt: lowest!.top + rowSlack + 1,
+          };
         toY = top * scale + stageElement.clientHeight / 2 - placed.at;
         fadeAt = placed.fadeAt;
       } else if (fromTop) toY = top * scale + height / 2;
@@ -1581,6 +1584,21 @@ const cursorLength = 1.25;
  * its fade only smaller than the popups' scale (useFit): about a modal's least (Tiles.ts).
  */
 const heldLeast = 0.6;
+
+/**
+ * The least a held view is drawn at to show the row after its chosen one whole in the fade at its
+ * foot (useFit): about the overlays' scale on a phone, so its words stay legible.
+ */
+const heldNextLeast = 0.7;
+
+/**
+ * The row after the one an element is chosen in, of a picker's grid or wheel, in its canvas's own
+ * px; none where it is the last.
+ */
+function nextRow(element: Element, canvas: HTMLElement): Box[] {
+  const next = element.closest('tr, .env-time-list-row')?.nextElementSibling;
+  return next && canvas.contains(next) && next.checkVisibility() ? [partOf(next, canvas)] : [];
+}
 
 /** The least room, in px, the cursor keeps from its stage's foot (useFit). */
 const cursorRoom = 0;
