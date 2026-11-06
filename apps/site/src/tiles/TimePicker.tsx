@@ -43,9 +43,10 @@ const script: PointerStep[] = [
 /**
  * A time picker on 9:30, its label hidden and its field small, as a field whose purpose is clear
  * without its label is. It rests open, its hours and minutes under its field, framed from the
- * field's top down past the chosen time, so as it plays the wheels turn and the popup closes and
- * opens again in place, and nothing in its tile moves (useHeldView); a phone's lower stage draws it
- * smaller to show them together (useFit.ts). Stopped, it is on 9:30 again, as it rests.
+ * field's top down past the chosen time and the row after it, whole, so as it plays the wheels turn
+ * and the popup closes and opens again in place, and nothing in its tile moves (useHeldView); its
+ * stage draws it as much smaller as that takes (useFit.ts). Stopped, it is on 9:30 again, as it
+ * rests.
  */
 export default function TimePickerTile() {
   const [value, setValue] = useState<string | null>('09:30');

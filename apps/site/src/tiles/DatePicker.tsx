@@ -46,11 +46,12 @@ const script: PointerStep[] = [
 /**
  * A date picker on March 4th, its label hidden and its field small, as a field whose purpose is
  * clear without its label is. It rests open, its calendar under its field, framed from the field's
- * top down past the chosen day's week, so as it plays the day is chosen, the month paged and the
- * popup closes and opens again in place, and nothing in its tile moves (useHeldView); a phone's
- * lower stage draws it smaller to show them together (useFit.ts). March 2026 starts on a Sunday, so
- * its first week is a whole one; April, a Wednesday, so paged to it, its first week's days move
- * along the row. Stopped, it is on the 4th again, as it rests.
+ * top down past the chosen day's week and the next, whole, and the one after where there is room,
+ * so it reads as a month; as it plays the day is chosen, the month paged and the popup closes and
+ * opens again in place, and nothing in its tile moves (useHeldView); its stage draws it as much
+ * smaller as that takes (useFit.ts). March 2026 starts on a Sunday, so its first week is a whole
+ * one; April, a Wednesday, so paged to it, its first week's days move along the row. Stopped, it is
+ * on the 4th again, as it rests.
  */
 export default function DatePickerTile() {
   const [value, setValue] = useState<string | null>('2026-03-04');

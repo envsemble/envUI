@@ -62,8 +62,8 @@ export const tileWindows: Readonly<Record<string, TileWindow>> = {
   // A confirm dialog with its button beside it is wider than a tile's stage at a popup's least.
   'confirm-dialog': { width: 15, height: 11.25, popupLeast: 0.56, overlay: true },
   'date-picker': { width: 20, height: 15 },
-  'time-picker': { width: 24, height: 18 },
-  'month-picker': { width: 27, height: 20.25 },
+  'time-picker': { width: 20, height: 15 },
+  'month-picker': { width: 20, height: 15 },
   table: { width: 16, height: 12 },
   list: { width: 16, height: 12 },
   'key-figures': { width: 18, height: 13.5 },
