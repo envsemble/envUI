@@ -6,9 +6,10 @@ import { outlined } from './Outline';
 const durations = [600, 6500];
 
 /**
- * The golden section on a surface, as LineArt sits behind a banner or a header: covering the
- * surface, resting on its foot and cropped from its start, its hairlines in their own muted color
- * on the surface's fill, as an application shows them. The surface is small, in a tile's window as
+ * The golden section on a recessed well, as LineArt sits behind an empty state: covering the
+ * well, resting on its foot and cropped from its start, its hairlines in their own muted color on
+ * the well's fill, as an application shows them; the recessed fill, the deepest in dark, is the
+ * one they stand out from most there, where they are fainter. The surface is small, in a tile's window as
  * small (Tiles.ts), so it is drawn large and its hairlines thick enough to read in dark too, where
  * they are fainter. Playing, its lines run out past their ends
  * and draw themselves in again, one after another from the rectangle that frames it, so the
@@ -18,7 +19,7 @@ export default function LineArtTile() {
   const step = useTimeline(durations);
   return (
     <Surface
-      background="default"
+      background="recessed"
       style={{
         position: 'relative',
         overflow: 'hidden',
