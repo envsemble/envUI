@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Checkbox, Column, IconButton, Sheet, Text } from '@envsemble/envui';
+import { Avatar, Checkbox, Column, IconButton, List, Row, Sheet, Text } from '@envsemble/envui';
 import { IconFilterList } from '@envsemble/envui/icons/FilterList';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
@@ -18,48 +18,49 @@ const script: PointerStep[] = [
   { wait: 500 },
 ];
 
-/**
- * The page the sheet opens at the edge of, outlined, as large as the tile's window: the button in
- * its middle, over two short rows, so closed, the page stands in the middle of the stage.
- */
+/** The page the sheet opens over, as large as the tile's window. */
 const page = {
   inlineSize: '100%',
   blockSize: '100%',
   padding: '0.75rem',
   boxSizing: 'border-box',
-  border: '0.0625rem solid var(--env-color-border-muted)',
   overflow: 'hidden',
-  alignItems: 'center',
-  justifyContent: 'center',
 } as const;
 
-const rows = ['Plans', 'Team'];
+const projects = ['Northwind', 'Starter plan', 'Q3 launch'];
 
 /**
- * A side sheet, open at the end edge beside the button that opens it, over a list of projects: its
- * title, its cross and a filter, with no actions below, so it shows whole in its low window
- * (Tiles.ts) and what closes it is in view, beside a strip of the page under its backdrop, on a
- * phone too. Stopped, it is open again rather than drawn anew, which would bring it in again.
+ * A side sheet that filters a list of projects, open at the end edge over the page: its title, its
+ * cross and a filter, with no actions below, so it shows whole in its low window (Tiles.ts) and
+ * what closes it is in view. The button that opens it is at the end of the list's heading, under
+ * the sheet, and the list's start, each project's avatar and name, shows beside the sheet under
+ * its backdrop, on a phone too. Stopped, it is open again rather than drawn anew, which would
+ * bring it in again.
  */
 export default function SheetTile() {
   const [open, setOpen] = useState(true);
   usePointer(script, { onRest: () => setOpen(true) });
   return (
-    <Column gap={2} style={page}>
-      <Sheet
-        open={open}
-        onOpenChange={setOpen}
-        trigger={<IconButton variant="secondary" icon={<IconFilterList />} aria-label="Filters" />}
-        width={9.5}
-        title="Filters"
-      >
-        <Checkbox label="Active" defaultChecked />
-      </Sheet>
-      {rows.map((row) => (
-        <Text key={row} variant="body-sm" style={{ whiteSpace: 'nowrap' }}>
-          {row}
-        </Text>
-      ))}
+    <Column gap={1} style={page}>
+      <Row align="center" justify="between" gap={2}>
+        <Text variant="title">Projects</Text>
+        <Sheet
+          open={open}
+          onOpenChange={setOpen}
+          trigger={
+            <IconButton variant="ghost" size="sm" icon={<IconFilterList />} aria-label="Filters" />
+          }
+          width={9.5}
+          title="Filters"
+        >
+          <Checkbox label="Active" defaultChecked />
+        </Sheet>
+      </Row>
+      <List.Root aria-label="Projects" density="sm">
+        {projects.map((name) => (
+          <List.Item key={name} start={<Avatar name={name} size="sm" />} label={name} />
+        ))}
+      </List.Root>
     </Column>
   );
 }

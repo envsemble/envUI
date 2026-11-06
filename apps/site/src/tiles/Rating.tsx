@@ -1,11 +1,10 @@
 import { Rating } from '@envsemble/envui';
-import { useTimeline } from '../motion/Motion';
 
-/* The score as reviews come in, a half star at a time, down and up again. */
-const scores = [4.5, 4, 3.5, 4, 4.5, 5];
-
-/** A rating of four and a half stars, with its number. */
+/**
+ * A rating of four and a half stars, with its number. It holds still as its tile plays: a rating
+ * only shows a score, and nothing on a stage could change it plausibly, so the card shows it as it
+ * reads in a product's header rather than a score that changes with no cause.
+ */
 export default function RatingTile() {
-  const value = scores[useTimeline([900, 500, 700, 500, 500, 900])]!;
-  return <Rating value={value} showValue />;
+  return <Rating value={4.5} showValue />;
 }

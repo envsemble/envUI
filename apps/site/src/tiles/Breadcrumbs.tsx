@@ -1,15 +1,15 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Breadcrumbs } from '@envsemble/envui';
 import { usePointer, type PointerStep } from '../motion/Motion';
-import { Renew } from '../motion/Renew';
 
 const link = (index: number) => `.env-breadcrumbs-item:nth-child(${index}) > .env-breadcrumbs-link`;
 
 /**
  * Along the trail, then a press on Plans, a level back: the trail ends there, Plans now the current
- * page, and holds so a moment; then it is drawn anew as it began, with a short fade (Renew), since
- * nothing on the trail leads forward again, and the pointer walks it again, so the loop is paced
- * across the whole of a look at the card rather than holding still after its first seconds.
+ * page, and holds so a while, the pointer gone; then, as the loop starts over, it is drawn anew as
+ * it began, crossfading into the whole trail (Crossfade), since nothing on the trail leads forward
+ * again, and the pointer walks it again, so the loop is paced across the whole of a look at the
+ * card rather than holding still after its first seconds.
  */
 const script: PointerStep[] = [
   { wait: 300 },
@@ -20,10 +20,86 @@ const script: PointerStep[] = [
   { click: true },
   { wait: 300 },
   { leave: true },
-  { wait: 1600 },
+  { wait: 2100 },
   { cue: 'renew' },
-  { wait: 600 },
+  { wait: 500 },
 ];
+
+/** How long the trail drawn anew takes to crossfade in over the one it replaces. */
+const fade = 280;
+
+/**
+ * Draws its children anew whenever `round` changes, the new ones fading in over the old, which
+ * fade out under them once they are half in, in one place, so what the two share, such as a
+ * trail's first levels, holds still and the tile is never empty between them.
+ */
+function Crossfade({ round, children }: { round: number; children: ReactNode }) {
+  const [rounds, setRounds] = useState({ current: round, leaving: null as number | null });
+  if (rounds.current !== round) setRounds({ current: round, leaving: rounds.current });
+  const { leaving } = rounds;
+  useEffect(() => {
+    if (leaving === null) return;
+    const timer = window.setTimeout(
+      () => setRounds((now) => ({ current: now.current, leaving: null })),
+      fade,
+    );
+    return () => window.clearTimeout(timer);
+  }, [leaving]);
+  return (
+    <div style={{ display: 'grid', justifyItems: 'center', inlineSize: '100%' }}>
+      <Layer key={rounds.current} entering={leaving !== null}>
+        {children}
+      </Layer>
+      {leaving !== null && (
+        <Layer key={leaving} leaving>
+          {children}
+        </Layer>
+      )}
+    </div>
+  );
+}
+
+/** One round of a crossfade: fading in as it arrives, or out under it as it goes, unreachable then. */
+function Layer({
+  entering = false,
+  leaving = false,
+  children,
+}: {
+  entering?: boolean;
+  leaving?: boolean;
+  children: ReactNode;
+}) {
+  const element = useRef<HTMLDivElement>(null);
+  const arrived = useRef(!entering);
+  useEffect(() => {
+    if (arrived.current) return;
+    arrived.current = true;
+    element.current?.animate([{ opacity: 0 }, { opacity: 1 }], { duration: fade, easing: 'ease' });
+  }, []);
+  useEffect(() => {
+    if (!leaving) return;
+    element.current?.animate([{ opacity: 1 }, { opacity: 1, offset: 0.5 }, { opacity: 0 }], {
+      duration: fade,
+      fill: 'forwards',
+    });
+  }, [leaving]);
+  return (
+    <div
+      ref={element}
+      aria-hidden={leaving || undefined}
+      inert={leaving}
+      style={{
+        gridArea: '1 / 1',
+        zIndex: leaving ? 0 : 1,
+        inlineSize: '100%',
+        display: 'grid',
+        justifyItems: 'center',
+      }}
+    >
+      {children}
+    </div>
+  );
+}
 
 const levels = [
   { label: 'Home', href: '/' },
@@ -67,7 +143,7 @@ export default function BreadcrumbsTile() {
   const [round, setRound] = useState(0);
   usePointer(script, { onCue: () => setRound((count) => count + 1) });
   return (
-    <Renew round={round}>
+    <Crossfade round={round}>
       <div style={{ display: 'grid', justifyItems: 'start' }}>
         <div style={{ gridArea: '1 / 1' }}>
           <Trail />
@@ -76,6 +152,6 @@ export default function BreadcrumbsTile() {
           <Trail />
         </div>
       </div>
-    </Renew>
+    </Crossfade>
   );
 }

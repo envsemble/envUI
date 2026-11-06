@@ -53,33 +53,41 @@ const script: PointerStep[] = [
   { wait: 400 },
 ];
 
-/* On a phone, without New document: Spec shown and closed, and both open again as it rests. */
+/*
+ * On a phone, Plan alone open: a new document opened from New document, Untitled, empty, which
+ * shows, the strip scrolled to it; closed by its button, which shows Plan again, as it began.
+ */
 const short: PointerStep[] = [
   { wait: 300 },
-  { to: tab('Spec') },
+  { to: '.env-document-tabs-end .env-icon-button' },
   { wait: 400 },
   { click: true },
-  { wait: 900 },
-  { to: close('Spec'), duration: 350 },
+  { wait: 1000 },
+  { to: close(untitled), duration: 350 },
   { wait: 250 },
   { click: true },
-  { wait: 900 },
+  { wait: 800 },
   { leave: true },
   { wait: 400 },
 ];
 
 /**
  * Two open documents, Plan shown, over the start of its page, short enough to show whole; on a
- * phone's narrower tile, narrower, without the New document button, so it is drawn at about its
- * own size there too. Stopped, both documents are open again, Plan shown.
+ * phone's narrower tile, Plan alone, narrower, so it is drawn at about its own size there too,
+ * with New document beside it. Stopped, its documents are open again, Plan shown.
  */
 export default function DocumentTabsTile() {
   const narrow = useMedia(narrowGallery);
-  const [tabs, setTabs] = useState(documents);
+  return <Strip key={String(narrow)} narrow={narrow} />;
+}
+
+function Strip({ narrow }: { narrow: boolean }) {
+  const open = narrow ? documents.slice(0, 1) : documents;
+  const [tabs, setTabs] = useState(open);
   const [value, setValue] = useState<string | null>(documents[0]!.value);
   usePointer(narrow ? short : script, {
     onRest: () => {
-      setTabs(documents);
+      setTabs(open);
       setValue(documents[0]!.value);
     },
   });
@@ -98,19 +106,17 @@ export default function DocumentTabsTile() {
             setValue(remaining[Math.min(index, remaining.length - 1)]?.value ?? null);
         }}
         end={
-          narrow ? undefined : (
-            <IconButton
-              icon={<IconAdd />}
-              aria-label="New document"
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                if (tabs.some((item) => item.value === untitled)) return;
-                setTabs([...tabs, { value: untitled, label: untitled }]);
-                setValue(untitled);
-              }}
-            />
-          )
+          <IconButton
+            icon={<IconAdd />}
+            aria-label="New document"
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              if (tabs.some((item) => item.value === untitled)) return;
+              setTabs([...tabs, { value: untitled, label: untitled }]);
+              setValue(untitled);
+            }}
+          />
         }
       />
       <Text variant="body-sm" emphasis="muted" style={{ padding: '1rem' }}>

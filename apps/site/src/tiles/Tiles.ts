@@ -49,11 +49,12 @@ export const tileWindows: Readonly<Record<string, TileWindow>> = {
   tabs: { width: 15, height: 11.25 },
   breadcrumbs: { width: 15, height: 11.25 },
   // The overlays, each drawn at the overlays' one scale. A dialog with a field is taller than a
-  // tile's window: it lays out whole in a taller one, and its title, field and actions show whole
-  // drawn smaller than the overlays' scale, down to its own least.
+  // tile's window and than a wide page's stage at that scale: it lays out whole in a taller one and
+  // isn't one of them, so its title, field and actions show whole, drawn as small as that takes,
+  // down to its own least, at every width.
   toast: { width: 14, height: 10.5, overlay: true },
   popover: { width: 14, height: 10.5, overlay: true },
-  dialog: { width: 14, height: 13, popupLeast: 0.56, overlay: true },
+  dialog: { width: 14, height: 13, popupLeast: 0.56 },
   // A sheet of a title and a filter is as tall as its window: lower than a tile's, it shows whole.
   sheet: { width: 14, height: 7, overlay: true },
   // A confirm dialog with its button beside it is wider than a tile's stage at a popup's least.

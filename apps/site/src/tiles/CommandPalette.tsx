@@ -27,22 +27,22 @@ const script: PointerStep[] = [
 ];
 
 /**
- * On a phone, one command: a search typed that finds it, and erased, as it began. One that finds
- * none would show the palette's message, taller than the stage shows.
+ * On a phone, whose stage shows the first command: a search typed that finds the other, which
+ * takes its place, and erased, as it began. One that finds none would show the palette's message,
+ * taller than the stage shows.
  */
 const narrowScript: PointerStep[] = [
   { wait: 600 },
-  { type: 'new', into: input, every: 220 },
+  { type: 'inv', into: input, every: 220 },
   { wait: 1400 },
   { erase: 3, into: input, every: 120 },
   { wait: 1200 },
 ];
 
 /**
- * A command palette, open with its two commands under its search, on a phone's lower stage one:
- * the palette shows whole, its foot in view. Framed on all of it, so as a search narrows the list
- * and is erased, the palette, which stays at its top, changes in place and nothing in its tile
- * moves.
+ * A command palette, open with its two commands under its search, which a phone's lower stage
+ * shows down to the first. Framed on all of it, so as a search narrows the list and is erased, the
+ * palette, which stays at its top, changes in place and nothing in its tile moves.
  */
 export default function CommandPaletteTile() {
   const narrow = useMedia(narrowGallery);
@@ -53,7 +53,6 @@ function Palette({ narrow }: { narrow: boolean }) {
   const [query, setQuery] = useState('');
   useHeldView();
   usePointer(narrow ? narrowScript : script, { onRest: () => setQuery('') });
-  const commands = narrow ? items.slice(0, 1) : items;
   return (
     <CommandPalette
       open
@@ -62,9 +61,7 @@ function Palette({ narrow }: { narrow: boolean }) {
       placeholder="Search"
       inputValue={query}
       onInputValueChange={setQuery}
-      items={commands.filter((item) =>
-        String(item.label).toLowerCase().includes(query.toLowerCase()),
-      )}
+      items={items.filter((item) => String(item.label).toLowerCase().includes(query.toLowerCase()))}
       onAction={() => {}}
     />
   );

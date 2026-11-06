@@ -5,37 +5,33 @@ import { narrowGallery } from './Tiles';
 
 const trigger = (index: number) => `.env-accordion-item:nth-child(${index}) .env-accordion-trigger`;
 
-/**
- * The first question opened; the second opened, which closes the first; and the second closed
- * again, as it began.
- */
+/** The second question opened, which closes the first; and the first opened again, as it began. */
 const script: PointerStep[] = [
   { wait: 300 },
-  { to: trigger(1), x: 0.35 },
+  { to: trigger(2), x: 0.35 },
   { wait: 300 },
   { click: true },
-  { wait: 1300 },
-  { to: trigger(2), x: 0.35, duration: 450 },
+  { wait: 1400 },
+  { to: trigger(1), x: 0.35, duration: 450 },
   { wait: 300 },
   { click: true },
-  { wait: 1300 },
-  { click: true },
-  { wait: 700 },
+  { wait: 900 },
   { leave: true },
   { wait: 600 },
 ];
 
 /**
- * An accordion of two questions, both closed at rest, laid out from the stage's top, so the
- * questions stay where they are as either answer opens below its own, and the stage shows both
- * with either answer open (useHeldView); in a phone's lower tile a little narrower.
+ * An accordion of two questions, the first open at rest: one answer is open in every state, so the
+ * still is as tall as the accordion gets and the stage shows it whole, clear of the card's foot,
+ * and the view holds as either answer opens below its question (useHeldView); in a phone's lower
+ * tile a little narrower.
  */
 export default function AccordionTile() {
   const narrow = useMedia(narrowGallery);
   usePointer(script);
-  useHeldView(true);
+  useHeldView();
   return (
-    <Accordion.Root style={{ inlineSize: narrow ? '9.5rem' : '12rem' }}>
+    <Accordion.Root defaultValue={['see']} style={{ inlineSize: narrow ? '9.5rem' : '12rem' }}>
       <Accordion.Item value="see" title="Who sees it?">
         Your team.
       </Accordion.Item>
