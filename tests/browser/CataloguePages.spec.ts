@@ -678,8 +678,17 @@ test('every tile of the galleries is fitted: components at one scale, a scene at
             ? []
             : [`${name}: popup drawn at ${at}`];
         }
-        if (canvas.hasAttribute('data-own-size'))
-          return scaleOf(canvas) === one && Number(one) <= 1 ? [] : [`${name}: not at one scale`];
+        // A held view taller than its stage at the one scale, such as a docked panel framed whole,
+        // is drawn at the other scale tiles are drawn at, a popup's least (useFit.ts).
+        if (canvas.hasAttribute('data-own-size')) {
+          const popupLeast = parseFloat(
+            getComputedStyle(canvas).getPropertyValue('--catalogue-own-popup-least'),
+          );
+          const at = Number(scaleOf(canvas));
+          return (scaleOf(canvas) === one || Math.abs(at - popupLeast) <= 0.001) && Number(one) <= 1
+            ? []
+            : [`${name}: not at one scale`];
+        }
         if (canvas.parentElement?.classList.contains('catalogue-related-crop'))
           return Number(scaleOf(canvas)) >= 0.95 ? [] : [`${name}: too small to read`];
         const outside =
