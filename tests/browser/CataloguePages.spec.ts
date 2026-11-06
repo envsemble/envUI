@@ -566,7 +566,9 @@ test('every tile of the galleries is fitted: components at one scale, a scene at
         (canvas as HTMLElement | null)?.style.transform.match(/scale\(([^)]+)\)/)?.[1];
       const one = items
         .map((tile) =>
-          scaleOf(tile.querySelector('[data-own-size][data-fitted]:not([data-popup])')),
+          scaleOf(
+            tile.querySelector('[data-own-size][data-fitted]:not([data-popup], [data-held-scale])'),
+          ),
         )
         .find(Boolean);
       return items.flatMap((tile) => {
@@ -677,6 +679,15 @@ test('every tile of the galleries is fitted: components at one scale, a scene at
           return near(Number(one ?? 1)) || near(popupLeast) || held
             ? []
             : [`${name}: popup drawn at ${at}`];
+        }
+        // A held view that names what it shows, such as a docked panel framed whole, is drawn
+        // smaller than the one scale only where it shows whole no larger, down to a held view's
+        // least, and then whole: cut off nowhere (`data-held-scale`, useFit.ts).
+        if (canvas.hasAttribute('data-held-scale')) {
+          const at = Number(scaleOf(canvas));
+          return at < Number(one ?? 1) && at >= 0.6 - 0.001 && !canvas.dataset.cut
+            ? []
+            : [`${name}: held view drawn at ${at}`];
         }
         if (canvas.hasAttribute('data-own-size'))
           return scaleOf(canvas) === one && Number(one) <= 1 ? [] : [`${name}: not at one scale`];

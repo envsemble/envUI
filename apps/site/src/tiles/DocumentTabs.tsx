@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { DocumentTabs, IconButton, Surface, Text, type DocumentTabsItem } from '@envsemble/envui';
 import { IconAdd } from '@envsemble/envui/icons/Add';
 import { useMedia } from '../motion/Autoplay';
-import { usePointer, type PointerStep } from '../motion/Motion';
+import { useHeldView, useMustShow, usePointer, type PointerStep } from '../motion/Motion';
 import { narrowGallery } from './Tiles';
 
 const documents: DocumentTabsItem[] = ['Plan', 'Spec'].map((label) => ({
@@ -73,8 +73,10 @@ const short: PointerStep[] = [
 
 /**
  * Two open documents, Plan shown, over the start of its page, short enough to show whole; on a
- * phone's narrower tile, Plan alone, narrower, so it is drawn at about its own size there too,
- * with New document beside it. Stopped, its documents are open again, Plan shown.
+ * phone's narrower tile, Plan alone, with New document beside it, as wide as the strip is with
+ * Untitled open beside Plan, so the open tabs and Untitled's close button show whole as it plays:
+ * there it is drawn as much smaller as shows that whole, through its whole loop (useHeldView).
+ * Stopped, its documents are open again, Plan shown.
  */
 export default function DocumentTabsTile() {
   const narrow = useMedia(narrowGallery);
@@ -92,7 +94,12 @@ function Strip({ narrow }: { narrow: boolean }) {
     },
   });
   return (
-    <Surface background="default" padding={0} style={{ inlineSize: narrow ? '10rem' : '12.5rem' }}>
+    <Surface
+      background="default"
+      padding={0}
+      style={{ inlineSize: narrow ? '12.75rem' : '12.5rem' }}
+    >
+      {narrow && <HeldWhole />}
       <DocumentTabs
         aria-label="Open documents"
         items={tabs}
@@ -124,4 +131,11 @@ function Strip({ narrow }: { narrow: boolean }) {
       </Text>
     </Surface>
   );
+}
+
+/** Holds the tile's view as it plays, drawn whole (useHeldView, useMustShow). */
+function HeldWhole() {
+  useHeldView();
+  useMustShow('.env-document-tabs');
+  return null;
 }
