@@ -62,24 +62,15 @@ export const useOnScreen = () => use(OnScreen);
 const leastScale: Record<DeviceKind, number> = { phone: 0.8, window: 0.75 };
 const leastText = 10;
 
-/**
- * Where a view starts across a screen cut off at its end, in the device's px, where its figure
- * names nothing to keep in view, such as a still one: a frame of an application shows where its
- * navigation meets its page, the page from halfway in, so a narrow stage shows as much of the
- * page's content as of the navigation's labels.
- */
-function boundaryStart(row: Element, scale: number, size: number) {
-  const body = row.querySelector('.env-scaffold-body');
-  if (!body || !row.querySelector('.env-scaffold-navigation')) return 0;
-  const start = (body.getBoundingClientRect().left - row.getBoundingClientRect().left) / scale;
-  return Math.max(0, start - size / 2);
-}
-
 /** Room kept around a point the pointer heads to, in the device's px: its cursor and a margin. */
 const pointRoom = 40;
 
-/** Room kept below a window's lowest words where it is cut off below them, in the device's px. */
-const footRoom = 96;
+/**
+ * Room kept below a window's lowest words where it is cut off below them, in the device's px, and
+ * below the lowest point its pointer heads to, whose box already keeps room for the cursor, past
+ * the fade of the cut edge.
+ */
+const footRoom = { words: 96, point: 16 };
 
 /** A box in the device's own px, from its top left corner. */
 interface Box {
@@ -262,12 +253,16 @@ function gapStart(
 const grown = (a: [number, number] | undefined, b: [number, number] | undefined) =>
   a && b ? ([Math.min(a[0], b[0]), Math.max(a[1], b[1])] as [number, number]) : (a ?? b);
 
-/** What a view has needed so far at the size it is drawn (`size`), and the screen's words. */
+/**
+ * What a view has needed so far down the screen at the size it is drawn (`size`), the screen's
+ * words, and the view across it the screen's state holds (`state`, which of its points show).
+ */
 interface Held {
   size: string;
-  x?: [number, number];
   y?: [number, number];
   words?: Box[];
+  state?: string;
+  across?: { x: number; width: number; outset: { start: number; end: number } };
 }
 
 interface Fit {
@@ -294,15 +289,15 @@ const sameFit = (a: Fit, b: Fit) =>
 /**
  * A device at its own size, scaled to fit its stage's width and at most `--site-device-most` high,
  * never drawn larger than it is nor smaller than its kind's least scale (leastScale): where it
- * would need to be, it is cut off at the stage's end and foot, its top start in view, and its cut
- * edges fade out. A cut edge falls in a gap between words where one is in reach, such as where the
- * navigation meets the page, rather than through a word (gapStart). A window whose page shows
- * little is cut off below it, rather than shown mostly empty. On an animated figure, the view
- * keeps every point its pointer heads to in it, and what it names with `useMustShow`, as far as
- * they have reached, and holds still while they fit together, so what moves on the screen moves
- * in a still view; where they don't fit, it follows the pointer, so what it acts on is never cut
- * off (MustShow.ts). A side that is cut off runs out over the stage's padding to its edge. The
- * place it holds on the stage is its view, so the stage is as tall as what it shows.
+ * would need to be, it is cut off at the stage's end and foot, its top start in view, so a
+ * window's bar and navigation show whole, and its cut edges fade out. A window whose page shows
+ * little is cut off below it, rather than shown mostly empty. On an animated figure, each state of
+ * the screen has one view across it, held while the state lasts: from the start where what the
+ * state needs fits there, the points its pointer heads to that show and what it names with
+ * `useMustShow` (MustShow.ts); else as near the start as keeps them whole, with its cut edges in
+ * gaps between words (gapStart), or at the screen's end. The view never pans: it changes only as
+ * the state does, at once. A side that is cut off runs out over the stage's padding to its edge.
+ * The place it holds on the stage is its view, so the stage is as tall as what it shows.
  */
 export function DeviceStage({ kind, children }: { kind: DeviceKind; children: ReactNode }) {
   const stage = useRef<HTMLDivElement>(null);
@@ -316,8 +311,7 @@ export function DeviceStage({ kind, children }: { kind: DeviceKind; children: Re
     // The animated figure's preview, whose pointer's points the view keeps.
     const root = stageElement.closest('.catalogue-motion-subject');
     const view = { x: 0, y: 0 };
-    // Whether the view has a place yet, and what it has needed so far at the size it is drawn.
-    let placed = false;
+    // What the view has needed so far at the size it is drawn, and the view each state holds.
     let held: Held = { size: '' };
     // Whether the update follows a change on the screen as the figure plays, not its layout.
     let fromMutation = false;
@@ -356,24 +350,15 @@ export function DeviceStage({ kind, children }: { kind: DeviceKind; children: Re
       };
       // The scale the row is drawn at now, which its points are measured in.
       const drawn = rowElement.getBoundingClientRect().width / width || scale;
-      // What the figure needs in view, as much as it has needed so far at this size: the view
-      // holds where it keeps all of it, so what moves on the screen, such as a divider dragged,
-      // moves within a still view rather than the view following each step.
-      const size = `${width}x${height}@${scale}`;
-      if (held.size !== size) {
-        held = { size };
-        placed = false;
-      }
-      const boxes = root
-        ? [
-            ...courseOf(root).flatMap((point) => pointBox(rowElement, drawn, point) ?? []),
-            ...namedBoxes(rowElement, drawn, root),
-          ]
-        : [];
-      held.x = grown(
-        held.x,
-        spanOf(boxes, (box) => [box.left, box.right]),
-      );
+      // What the figure needs in view: the points its pointer heads to that show on the screen now,
+      // and what it names (useMustShow). Down the screen, as much as it has needed so far at this
+      // size, so the view holds as the figure plays.
+      const size = `${width}x${height}@${scale}@${room}`;
+      if (held.size !== size) held = { size };
+      const points = root ? courseOf(root).map((point) => pointBox(rowElement, drawn, point)) : [];
+      const named = root ? namedBoxes(rowElement, drawn, root) : [];
+      const course = points.filter((box): box is Box => box !== undefined);
+      const boxes = [...course, ...named];
       held.y = grown(
         held.y,
         spanOf(boxes, (box) => [box.top, box.bottom]),
@@ -387,10 +372,10 @@ export function DeviceStage({ kind, children }: { kind: DeviceKind; children: Re
       // room under it, rather than shown mostly empty; never lower than two fifths of its width.
       if (kind === 'window') {
         const content = Math.max(
-          ...words.map((word) => word.bottom),
-          held.y ? held.y[1] - pointRoom : 0,
+          ...words.map((word) => word.bottom + footRoom.words),
+          held.y ? held.y[1] + footRoom.point : 0,
         );
-        const low = Math.max(content + footRoom, (0.4 * shown.width) / scale);
+        const low = Math.max(content, (0.4 * shown.width) / scale);
         if (low < 0.85 * height) shown.height = Math.min(shown.height, low * scale);
       }
       view.y = viewStart(
@@ -402,47 +387,70 @@ export function DeviceStage({ kind, children }: { kind: DeviceKind; children: Re
         fade / scale,
       );
       const rows: [number, number] = [view.y, view.y + shown.height / scale];
+      // Across, what the view keeps whole: all of it where it fits, else what the figure names,
+      // else where the pointer heads.
+      const needs = [
+        spanOf(boxes, (box) => [box.left, box.right]),
+        spanOf(named, (box) => [box.left, box.right]),
+        focus && ([focus.left, focus.right] as [number, number]),
+      ];
+      const needed = (size: number) =>
+        needs.find((span) => span !== undefined && span[1] - span[0] <= size);
+      /**
+       * Where a view as wide as `shownWidth` starts: at the screen's start, so its bar and its
+       * navigation show whole, where what it needs fits there; else as near the start as keeps it
+       * whole, with its cut edges in gaps between words, or at the screen's end, which shows its
+       * frame.
+       */
       const along = (shownWidth: number) => {
         const size = shownWidth / scale;
         const last = Math.max(0, width - size);
         const clamp = (value: number) => Math.min(last, Math.max(0, value));
-        const span = held.x;
-        if (span && span[1] - span[0] > size)
-          // More than fits: the view follows where the pointer heads.
-          return viewStart(
-            width,
-            size,
-            span,
-            focus && [focus.left, focus.right],
-            view.x,
-            fade / scale,
-          );
-        // Anywhere that keeps what it needs in view, with its cut edges in gaps between words; a
-        // still figure's, near where its navigation meets its page.
-        const least = span ? clamp(span[1] - size) : 0;
-        const latest = span ? clamp(span[0]) : last;
-        if (root && placed && view.x >= least - 0.5 && view.x <= latest + 0.5) return clamp(view.x);
-        const near = span ? least : Math.min(last, boundaryStart(rowElement, drawn, size));
-        return gapStart(words, width, size, least, latest, near, fade / scale, rows);
+        const span = needed(size);
+        if (!span || span[1] <= size) return 0;
+        const least = clamp(span[1] - size);
+        const latest = clamp(span[0]);
+        return gapStart(words, width, size, least, latest, least, fade / scale, rows);
       };
-      let x = along(shown.width);
+      // Each state of the screen, which of the pointer's points show and what the figure names,
+      // has one view across it, held while the state lasts: what moves in it, such as a divider
+      // dragged, moves in a still view, and a state whose subject lies past the view's end, such
+      // as a pane that opens there, has a view of its own rather than one sliding after it.
+      const state = `${points.map((box) => (box ? 1 : 0)).join('')}/${named.length}`;
+      const kept = held.state === state ? held.across : undefined;
+      const keeps = (place: NonNullable<Held['across']>) => {
+        const span = needed(place.width / scale);
+        return (
+          !span || (span[0] >= place.x - 0.5 && span[1] <= place.x + place.width / scale + 0.5)
+        );
+      };
+      let x = 0;
       const outset = { start: 0, end: 0 };
-      if (across && width * scale <= room + pad.start + pad.end) {
-        // Whole over the padding: it sits in the middle of the stage.
-        outset.start = outset.end = (width * scale - room) / 2;
-      } else if (across) {
-        // A side that isn't cut keeps the stage's padding.
-        const startCut = x > 0.5;
-        const endCut = x + shown.width / scale < width - 0.5;
-        outset.start = startCut ? pad.start : 0;
-        outset.end = endCut ? pad.end : 0;
-        shown.width = room + outset.start + outset.end;
-        if (!startCut) x = 0;
-        else if (!endCut) x = width - shown.width / scale;
-        else x = along(shown.width);
+      if (kept && keeps(kept)) {
+        x = kept.x;
+        shown.width = kept.width;
+        Object.assign(outset, kept.outset);
+      } else {
+        x = along(shown.width);
+        if (across && width * scale <= room + pad.start + pad.end) {
+          // Whole over the padding: it sits in the middle of the stage.
+          outset.start = outset.end = (width * scale - room) / 2;
+          x = 0;
+        } else if (across) {
+          // A side that isn't cut keeps the stage's padding.
+          const startCut = x > 0.5;
+          const endCut = x + shown.width / scale < width - 0.5;
+          outset.start = startCut ? pad.start : 0;
+          outset.end = endCut ? pad.end : 0;
+          shown.width = room + outset.start + outset.end;
+          if (!startCut) x = 0;
+          else if (!endCut) x = width - shown.width / scale;
+          else x = along(shown.width);
+        }
+        held.state = state;
+        held.across = { x, width: shown.width, outset: { ...outset } };
       }
       view.x = x;
-      placed = true;
       const cut = [
         view.y > 0.5 && 'top',
         view.y + shown.height / scale < height - 0.5 && 'bottom',

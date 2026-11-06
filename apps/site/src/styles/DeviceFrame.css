@@ -107,13 +107,6 @@
   visibility: visible;
 }
 
-/* A view that follows an animated figure's pointer pans to where it heads. */
-@media (prefers-reduced-motion: no-preference) {
-  .site-device-row[data-fitted] {
-    transition: translate var(--env-motion-duration-medium) var(--env-motion-ease);
-  }
-}
-
 /* The device's body: one solid stroke all round, a share of the device's own size, with large
    rounded corners, and the screen right up to its inner edge. */
 .site-device {
