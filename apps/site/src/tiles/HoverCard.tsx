@@ -5,21 +5,21 @@ import { usePointer, type PointerStep } from '../motion/Motion';
 const trigger = '.env-link';
 
 /*
- * From the open card, as it rests: the pointer, on the name, moves onto the card, which stays open
- * while it is there, and on past it, and the card closes after its close delay; the pointer comes
- * straight back to the name and rests, and after the card's delay it opens again, where the loop
- * began.
+ * From the open card, as it rests: the pointer comes to the name and moves onto the card, which
+ * stays open while it is there; it moves off, well before the name's start and clear of the card,
+ * and the card closes after its close delay; the pointer comes back to the name and rests, and
+ * after the card's delay it opens again, where the loop began.
  */
 const script: PointerStep[] = [
   { cue: 'live' },
   { to: trigger, x: 0.6, y: 0.6 },
-  { wait: 700 },
+  { wait: 600 },
   { to: '.env-hover-card strong', x: 0.5, y: 0.6, duration: 450 },
-  { wait: 1100 },
-  { to: trigger, x: 1.5, y: 0.5, duration: 350 },
-  { wait: 650 },
-  { to: trigger, x: 0.6, y: 0.6, duration: 350 },
-  { wait: 2400 },
+  { wait: 900 },
+  { to: trigger, x: -0.75, y: 0.4, duration: 400 },
+  { wait: 1000 },
+  { to: trigger, x: 0.6, y: 0.6, duration: 450 },
+  { wait: 2200 },
 ];
 
 /** How long the pointer rests on the name before the card opens: brief, so it is never long shut. */
