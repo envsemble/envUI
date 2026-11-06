@@ -7,21 +7,22 @@ const link = (index: number) => `.env-breadcrumbs-item:nth-child(${index}) > .en
 
 /**
  * Along the trail, then a press on Plans, a level back: the trail ends there, Plans now the current
- * page, and holds so for the rest of a look at the card; only then, long after, is it drawn anew as
- * it began, with a short fade (Renew), since nothing on the trail leads forward again.
+ * page, and holds so a moment; then it is drawn anew as it began, with a short fade (Renew), since
+ * nothing on the trail leads forward again, and the pointer walks it again, so the loop is paced
+ * across the whole of a look at the card rather than holding still after its first seconds.
  */
 const script: PointerStep[] = [
   { wait: 300 },
   { to: link(1), y: 0.6 },
-  { wait: 500 },
+  { wait: 600 },
   { to: link(2), y: 0.6, duration: 450 },
-  { wait: 400 },
+  { wait: 450 },
   { click: true },
   { wait: 300 },
   { leave: true },
-  { wait: 9000 },
+  { wait: 1600 },
   { cue: 'renew' },
-  { wait: 500 },
+  { wait: 600 },
 ];
 
 const levels = [
