@@ -365,8 +365,13 @@ export function DeviceStage({ kind, children }: { kind: DeviceKind; children: Re
       );
       const heading = root && headingOf(root);
       const focus = heading ? pointBox(rowElement, drawn, heading) : undefined;
-      // The words, measured once a layout, not on every step the figure plays.
-      if (!held.words || !fromMutation) held.words = wordBoxes(rowElement, drawn);
+      // Each state of the screen, which of the pointer's points show and what the figure names,
+      // has one view across it (below).
+      const state = `${points.map((box) => (box ? 1 : 0)).join('')}/${named.length}`;
+      // The words, measured once a layout and once a state, such as a panel that fills the screen
+      // with its text, not on every step the figure plays.
+      if (!held.words || !fromMutation || held.state !== state)
+        held.words = wordBoxes(rowElement, drawn);
       const words = held.words;
       // A window whose page shows little, such as a heading and a line, is cut off below it, with
       // room under it, rather than shown mostly empty; never lower than two fifths of its width.
@@ -387,12 +392,21 @@ export function DeviceStage({ kind, children }: { kind: DeviceKind; children: Re
         fade / scale,
       );
       const rows: [number, number] = [view.y, view.y + shown.height / scale];
-      // Across, what the view keeps whole: all of it where it fits, else what the figure names,
-      // else where the pointer heads.
+      // Across, what the view keeps whole: all of it where it fits; else what the figure names
+      // with where the pointer heads, with the room around what it names or, where that is too
+      // wide, without it, such as a pane that opens with the page that opened it; else where the
+      // pointer heads, so what it presses is in view; else what the figure names.
+      const sideways = (box: Box): [number, number] => [box.left, box.right];
+      const aim = focus && sideways(focus);
+      const namedSpan = spanOf(named, sideways);
+      const bareSpan = spanOf(named, (box) => [box.left + pointRoom, box.right - pointRoom]);
       const needs = [
-        spanOf(boxes, (box) => [box.left, box.right]),
-        spanOf(named, (box) => [box.left, box.right]),
-        focus && ([focus.left, focus.right] as [number, number]),
+        spanOf(boxes, sideways),
+        grown(namedSpan, aim),
+        grown(bareSpan, aim),
+        aim,
+        namedSpan,
+        bareSpan,
       ];
       const needed = (size: number) =>
         needs.find((span) => span !== undefined && span[1] - span[0] <= size);
@@ -412,11 +426,9 @@ export function DeviceStage({ kind, children }: { kind: DeviceKind; children: Re
         const latest = clamp(span[0]);
         return gapStart(words, width, size, least, latest, least, fade / scale, rows);
       };
-      // Each state of the screen, which of the pointer's points show and what the figure names,
-      // has one view across it, held while the state lasts: what moves in it, such as a divider
+      // Each state's view across is held while the state lasts: what moves in it, such as a divider
       // dragged, moves in a still view, and a state whose subject lies past the view's end, such
       // as a pane that opens there, has a view of its own rather than one sliding after it.
-      const state = `${points.map((box) => (box ? 1 : 0)).join('')}/${named.length}`;
       const kept = held.state === state ? held.across : undefined;
       const keeps = (place: NonNullable<Held['across']>) => {
         const span = needed(place.width / scale);
