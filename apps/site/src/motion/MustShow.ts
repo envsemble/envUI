@@ -123,6 +123,38 @@ export const headingOf = (root: Element) => headings.get(root) ?? null;
  * (useFit.ts).
  */
 
+/*
+ * A tile whose stage is too low to show all it opens with what opens it, such as a date picker on
+ * a phone, shows one view per state instead (useStateView, Motion.tsx): the part of it the state
+ * is about, such as its field while closed and its popup while open, whole, every view at the one
+ * scale that fits the largest of them, and the view cuts from one to the next rather than panning
+ * through the room between them (useFit.ts).
+ */
+
+/** A tile's views: each state's part, by its selector, and the one it is in now. */
+export interface StateViews {
+  all: readonly string[];
+  now: string;
+}
+
+/** Each preview's views, by the preview's root element. */
+const stateViews = new WeakMap<Element, StateViews>();
+
+/** The event a preview's root hears as its tile goes to another view. */
+export const stateViewEvent = 'catalogue-state-view';
+
+/** Names a preview's views and the one it is in now; returns the release. */
+export function showStateView(root: Element, views: StateViews) {
+  stateViews.set(root, views);
+  root.dispatchEvent(new Event(stateViewEvent));
+  return () => {
+    if (stateViews.get(root) === views) stateViews.delete(root);
+  };
+}
+
+/** A preview's views and the one it is in now, if it shows one per state. */
+export const stateViewOf = (root: Element) => stateViews.get(root) ?? null;
+
 /** The points each preview's pointer heads to, by the preview's root element. */
 const courses = new WeakMap<Element, Set<readonly Heading[]>>();
 

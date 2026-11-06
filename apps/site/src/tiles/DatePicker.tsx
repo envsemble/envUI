@@ -1,11 +1,14 @@
 import { useState } from 'react';
 import { DatePicker } from '@envsemble/envui';
 import { useMedia } from '../motion/Autoplay';
-import { useHeldView, usePointer, type PointerStep } from '../motion/Motion';
+import { useHeldView, usePointer, useStateView, type PointerStep } from '../motion/Motion';
 import { narrowGallery } from './Tiles';
 
 const day = (date: string) => `.env-calendar-day[data-date="${date}"]`;
 const field = '.env-date-picker-trigger';
+const popup = '.env-date-picker-popup';
+/** What a phone's tile shows: its field while closed, its popup while open (useStateView). */
+const views = [field, popup];
 
 /*
  * Open on March 4th: the 6th chosen, which closes it and shows the 6th in its field; opened again,
@@ -46,50 +49,40 @@ const script: PointerStep[] = [
 ];
 
 /**
- * Closed at rest, as on a phone: opened from its field first, the 6th chosen, and opened again
- * and closed by the 4th at the end. A phone's stage shows a calendar's heading or its chosen week,
- * not both, so it doesn't page to April, whose days it wouldn't show.
+ * On a phone, the 6th chosen, which closes it; opened again from its field, the 4th chosen, and
+ * opened again, as it rests. It doesn't page to April: its view shows its field or its popup, and
+ * paging would only change the days under the pointer.
  */
-const closedScript: PointerStep[] = [
-  { wait: 300 },
-  { to: field, x: 0.4, duration: 450 },
-  { wait: 200 },
-  { click: true },
-  { wait: 700 },
-  ...script.slice(1, 10),
-  ...script.slice(-11, -7),
-  { wait: 900 },
-  { leave: true },
-  { wait: 400 },
-];
+const phoneScript: PointerStep[] = [...script.slice(0, 10), ...script.slice(-11)];
 
 /**
  * A date picker on March 4th, its label hidden and its field small, as a field whose purpose is
- * clear without its label is. On a wide page it rests open, its calendar under its field, framed
- * from the field's top down past the chosen day's week, so as it plays the day is chosen, the
- * month paged and the popup closes and opens again in place, and nothing in its tile moves. March
- * 2026 starts on a Sunday, so its first week is a whole one; April, a Wednesday, so paged to it,
- * its first week's days move along the row. A phone's lower stage doesn't show the field and the
- * chosen week together at the popups' scale: there it rests closed and opens as it plays.
- * Stopped, it is on the 4th again, as it rests.
+ * clear without its label is. It rests open, its calendar under its field. On a wide page it is
+ * framed from the field's top down past the chosen day's week, so as it plays the day is chosen,
+ * the month paged and the popup closes and opens again in place, and nothing in its tile moves.
+ * March 2026 starts on a Sunday, so its first week is a whole one; April, a Wednesday, so paged to
+ * it, its first week's days move along the row. A phone's lower stage doesn't show the field and
+ * the chosen week together legibly: there it shows its field while closed and its popup while
+ * open, each whole at one scale, cutting from one to the other (useStateView). Stopped, it is on
+ * the 4th again, as it rests.
  */
 export default function DatePickerTile() {
   const narrow = useMedia(narrowGallery);
-  return <Picker key={narrow ? 'closed' : 'open'} rests={!narrow} />;
+  return <Picker key={narrow ? 'phone' : 'wide'} phone={narrow} />;
 }
 
-function Picker({ rests }: { rests: boolean }) {
+function Picker({ phone }: { phone: boolean }) {
   const [value, setValue] = useState<string | null>('2026-03-04');
-  const [open, setOpen] = useState(rests);
-  usePointer(rests ? script : closedScript, {
+  const [open, setOpen] = useState(true);
+  usePointer(phone ? phoneScript : script, {
     onRest: () => {
       setValue('2026-03-04');
-      setOpen(rests);
+      setOpen(true);
     },
   });
   return (
     <>
-      {rests && <HeldView />}
+      {phone ? <StateView open={open} /> : <HeldView />}
       <DatePicker
         label="Publish on"
         showLabel={false}
@@ -107,5 +100,11 @@ function Picker({ rests }: { rests: boolean }) {
 /** Holds the tile's view as it plays (useHeldView). */
 function HeldView() {
   useHeldView();
+  return null;
+}
+
+/** Shows the tile its field while closed and its popup while open (useStateView). */
+function StateView({ open }: { open: boolean }) {
+  useStateView(views, open ? popup : field);
   return null;
 }
