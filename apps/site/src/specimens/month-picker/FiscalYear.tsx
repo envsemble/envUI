@@ -1,7 +1,7 @@
 import { Column } from '@envsemble/envui';
 import FiscalYear from '../../examples/month-picker/FiscalYear';
 import { usePointer, type PointerStep } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage, rowsAnd } from '../../motion/MotionStage';
 
 /*
  * The pointer opens Budget month, where the months before April are unavailable, and presses Next
@@ -30,8 +30,9 @@ const script: PointerStep[] = [
 
 function Paging() {
   usePointer(script);
+  // The field and the room its popup opens into, as tall as the two are open.
   return (
-    <Column align="center" style={{ inlineSize: '100%', blockSize: '26rem' }}>
+    <Column align="center" style={{ inlineSize: '100%', blockSize: rowsAnd(5.625, 9.75) }}>
       <FiscalYear />
     </Column>
   );

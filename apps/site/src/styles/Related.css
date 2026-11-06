@@ -173,10 +173,15 @@
   min-block-size: 0;
 }
 
-/* A command palette in a tile sits in the tile's window without the room a screen leaves above it,
-   which its stylesheet measures on the browser's window, not the tile's; the view centres it. */
+/* A command palette in a tile keeps the room its stylesheet leaves above it, a share of the window's
+   height (CommandPalette.css), measured on the tile's window rather than on the browser's, which
+   the tile stands in for: the palette's own rule, with the tile's height for the window's. */
 .catalogue-related-canvas[data-tile] .env-command-palette-positioner {
-  padding-block: var(--env-space-4);
+  padding-block: max(
+      var(--env-viewport-gutter),
+      min(0.12 * var(--catalogue-tile-height, 10.5rem), 6rem)
+    )
+    var(--env-viewport-gutter);
 }
 
 /* A region that scrolls in a tile, such as a page's body in its box, fades out at its foot while

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import OfficeHours from '../../examples/time-picker/OfficeHours';
 import { usePointer, type PointerStep } from '../../motion/Motion';
-import { MotionStage } from '../../motion/MotionStage';
+import { MotionStage, rowsAnd } from '../../motion/MotionStage';
 import { PressedKeys } from '../../motion/PressedKeys';
 import { Renew } from '../../motion/Renew';
 
@@ -76,8 +76,9 @@ function Booking() {
   return (
     <>
       <PressedKeys keys={escapes ? ['Esc'] : null} press={escapes} />
-      {/* The field at the top of the room its popup opens into, below it. */}
-      <div style={{ display: 'grid', inlineSize: '100%', blockSize: '22rem' }}>
+      {/* The field at the top of the room its popup opens into, below it, as tall as the two are
+          open, so they sit in the middle of the stage. */}
+      <div style={{ display: 'grid', inlineSize: '100%', blockSize: rowsAnd(7.125, 1.625) }}>
         <Renew round={round}>
           <OfficeHours />
         </Renew>
