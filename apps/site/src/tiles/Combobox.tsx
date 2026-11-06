@@ -53,7 +53,7 @@ export default function ComboboxTile() {
         items={labels}
         defaultValue={['design']}
         defaultOpen
-        style={{ inlineSize: '12rem' }}
+        style={{ inlineSize: 'min(12rem, 100%)' }}
       />
     </Renew>
   );

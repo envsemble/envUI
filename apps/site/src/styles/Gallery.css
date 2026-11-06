@@ -79,14 +79,15 @@
   aspect-ratio: 4 / 3;
 }
 
-/* A component's picture, not its stage, is clipped to the stage's corners: a popup measures the room
-   it has against the boxes that clip it, and would shift off its trigger to fit inside the stage,
+/* A component's picture, not its stage, is clipped to the stage's corners, in a gallery and in
+   Related: a popup measures the room it has against the boxes that clip it, and would shift off its trigger to fit inside the stage,
    rather than open where it opens in an application and be framed there (useFit.ts). */
-.catalogue-gallery-grid:not([data-scenes]) .catalogue-gallery-stage.catalogue-gallery-stage {
+:is(.catalogue-gallery-grid, .catalogue-related-tiles):not([data-scenes])
+  .catalogue-gallery-stage.catalogue-gallery-stage {
   overflow: visible;
 }
 
-.catalogue-gallery-grid:not([data-scenes]) .catalogue-related-crop {
+:is(.catalogue-gallery-grid, .catalogue-related-tiles):not([data-scenes]) .catalogue-related-crop {
   clip-path: inset(0 round var(--env-radius-surface));
 }
 
@@ -125,23 +126,28 @@
     .catalogue-related-canvas[data-own-size] {
     inline-size: min(14rem, (100% - 2rem) / var(--catalogue-own-floor));
   }
-  /* A popup shown open, a notification too, lays out no wider than the stage's room shows at a
-     popup's least, the fit's inset from its edges (useFit.ts), so what fits its window fits the
-     stage; one narrower is drawn larger. */
+  /* A popup shown open lays out no wider than the stage's room shows at the scale it is drawn
+     at, `--catalogue-canvas-scale` (useFit.ts), first a popup's least, the fit's inset from its
+     edges, so what fits its window fits the stage; one narrower is drawn larger. */
   .catalogue-gallery-grid:not([data-scenes])
     .catalogue-gallery-stage.catalogue-gallery-stage
     .catalogue-related-canvas[data-own-size][data-popup] {
     inline-size: min(
       var(--catalogue-tile-width, 14rem),
-      (100% - 2rem) / var(--catalogue-own-popup-least)
+      (100% - 2rem) / var(--catalogue-canvas-scale, var(--catalogue-own-popup-least))
     );
   }
-  /* An overlay lays out as wide as the stage's room shows at the overlays' scale, about the fit's
-     inset from its edges, with the gutters a notification keeps around it, so a notification shows
-     its message on one line (useFit.ts). */
+  /* An overlay lays out as wide as the stage's room shows at the overlays' scale, so a popover
+     keeps the inset from both edges; a notification with the gutters it keeps around it, about
+     the fit's inset from the stage's edges, so it shows its message on one line (useFit.ts). */
   .catalogue-gallery-grid:not([data-scenes])
     .catalogue-gallery-stage.catalogue-gallery-stage
     .catalogue-related-canvas[data-own-size][data-popup][data-overlay] {
+    inline-size: calc((100% - 2rem) / var(--catalogue-overlay-scale));
+  }
+  .catalogue-gallery-grid:not([data-scenes])
+    .catalogue-gallery-stage.catalogue-gallery-stage
+    .catalogue-related-canvas[data-own-size][data-popup][data-overlay]:has(.env-toast-viewport) {
     inline-size: calc((100% - 1.75rem) / var(--catalogue-overlay-scale) + 1.5rem);
   }
 }

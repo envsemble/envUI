@@ -194,17 +194,22 @@ function trimRows(
   // How far up from the foot a row's top shows no more than a sliver: in a fade's faint end, or
   // anywhere in a fade too short to fade a row out.
   const sliver = length < remSize() / 2 ? length + 0.5 : length / 2;
+  // A fade shortened below what a held view's script acts on is too short to fade a row out: a
+  // row below it that reaches past the foot is hidden whole, so the window stops on a whole row
+  // rather than on one cut through its glyphs, also as the tile plays, its view held.
+  const short = !edge && fadeFrom !== null && length < fade - 0.5;
   for (const row of canvas.querySelectorAll<HTMLElement>(rowSelector)) {
     const box = row.getBoundingClientRect();
     // As a tile plays, its view drawn out for all it shows, a row it showed stays as the view
     // moves, cut off by the fade, rather than going and coming back. At a screen's edge, which
     // doesn't fade, a row shows whole or not at all.
+    const below = short && box.top - top >= fadeFrom - rowSlack;
     if (
       !row.querySelector(rowSelector) &&
       box.bottom - top > height + rowSlack &&
-      (edge || box.top - top > height - sliver)
+      (edge || below || box.top - top > height - sliver)
     ) {
-      if (!played || edge) row.dataset.cataloguePast = '';
+      if (!played || edge || below) row.dataset.cataloguePast = '';
     } else delete row.dataset.cataloguePast;
   }
   if (edge) crop.style.setProperty('--catalogue-crop-bottom', '0px');
@@ -444,6 +449,8 @@ export function useFit(
       const across = stageElement.clientWidth / 2 - 4;
       const down = stageElement.clientHeight / 2 - 4;
       let held: Box | null = null;
+      // Whether the first is larger than the stage along an axis, so shown from its start.
+      let fromStart = { x: false, y: false };
       // What the tile names anywhere (useMustShow), such as a panel it opens in place, as far as
       // it paints (inkOf), first.
       const named = mustShowOf(canvasElement, true).flatMap((selector) => {
@@ -451,8 +458,22 @@ export function useFit(
         return element?.checkVisibility() ? [inkOf(element, canvasElement)] : [];
       });
       const aims = courseOf(canvasElement).map(aimBox);
-      for (const box of [...named, ...aims]) {
-        if (!box || box.right <= box.left || box.bottom <= box.top) continue;
+      for (const found of [...named, ...aims]) {
+        if (!found || found.right <= found.left || found.bottom <= found.top) continue;
+        // The first, larger than the stage, such as a divider as tall as its panes, shows from its
+        // start, a margin from the stage's edge, as the play shows it (playFit), so the pointer
+        // coming in moves nothing.
+        let box = found;
+        if (!held) {
+          const right = found.left + (2 * (across - margin) - 0.5) / scale;
+          const bottom = found.top + (2 * (down - margin) - 0.5) / scale;
+          fromStart = { x: found.right > right, y: found.bottom > bottom };
+          box = {
+            ...found,
+            right: Math.min(found.right, right),
+            bottom: Math.min(found.bottom, bottom),
+          };
+        }
         const next: Box = join(held, box)!;
         if (
           (next.right - next.left) * scale > 2 * (across - margin) ||
@@ -463,8 +484,12 @@ export function useFit(
       }
       if (!held) return { toX, toY };
       return {
-        toX: contain(toX, held.left * scale, held.right * scale, across),
-        toY: contain(toY, held.top * scale, held.bottom * scale, down),
+        toX: fromStart.x
+          ? held.left * scale + across - margin
+          : contain(toX, held.left * scale, held.right * scale, across),
+        toY: fromStart.y
+          ? held.top * scale + down - margin
+          : contain(toY, held.top * scale, held.bottom * scale, down),
       };
     };
     /**
@@ -495,6 +520,18 @@ export function useFit(
         bottom: Math.min(box.bottom, y + reach / 2),
       };
     };
+    /**
+     * Each point a tile's pointer heads to over its script that is there at rest: the part of the
+     * canvas it takes in (aimBox), and the point its cursor's tip is at, in the canvas's own px.
+     */
+    const restingAims = () =>
+      courseOf(canvasElement).flatMap((aim) => {
+        const element = aimedElement(canvasElement, aim.selector);
+        const box = aimBox(aim);
+        if (!element || !box || box.right <= box.left || box.bottom <= box.top) return [];
+        const own = partOf(element, canvasElement);
+        return [{ box, y: own.top + (own.bottom - own.top) * aim.y }];
+      });
     const glide = (now: number) => {
       const elapsed = Math.min(64, now - (view.last || now - 16));
       view.last = now;
@@ -732,11 +769,28 @@ export function useFit(
           box.right * view.toScale,
           across / 2 - 4,
         );
-        // Where the view moves for it, above the stage's foot by more than its edges, out of the
-        // fade's faint end there; what is in view already moves nothing.
-        const keepIn = (room: number) =>
-          contain(view.toY, box.top * view.toScale, box.bottom * view.toScale + room, down / 2 - 4);
-        const toY = keepIn(0) === view.toY ? view.toY : keepIn(headRoom);
+        // Down the stage, it is kept above the whole fade at the stage's foot where it fades, and
+        // the cursor on it inside the stage; what is there already moves nothing.
+        const scale = view.toScale;
+        const fade = canvasElement.dataset.cut?.split(' ').includes('bottom')
+          ? parseFloat(
+              getComputedStyle(canvasElement.parentElement!).getPropertyValue(
+                '--catalogue-crop-fade',
+              ),
+            ) * remSize() || 0
+          : 0;
+        const aim = headingOf(canvasElement);
+        const aimed = aim && aimedElement(canvasElement, aim.selector);
+        const own = aimed ? partOf(aimed, canvasElement) : null;
+        const tip = own && aim ? own.top + (own.bottom - own.top) * aim.y : box.bottom;
+        const foot = Math.max(
+          box.bottom * scale + fade,
+          (tip + cursorLength * remSize()) * scale + cursorRoom,
+        );
+        const toY = Math.min(
+          Math.max(view.toY, foot - down / 2),
+          box.top * scale + down / 2 - margin,
+        );
         if (Math.hypot(toX - view.toX, toY - view.toY) >= 1) {
           view.toX = toX;
           view.toY = toY;
@@ -887,27 +941,68 @@ export function useFit(
         ? parseFloat(canvasStyle.getPropertyValue('--catalogue-overlay-scale')) || 0
         : 0;
       // A tile that holds its view is framed once on its still, the largest it shows: what its
-      // script acts on there, such as a time picker's chosen hour under its field, shows whole in
-      // it from its top, above the fade at its foot, at the popups' scale.
-      const chosen = join(
+      // script acts on there, such as a time picker's chosen hour under its field, a menu's items
+      // or a contents list's entries, every point its pointer heads to that is there at rest,
+      // shows whole in it from its top, above the fade at its foot, with the cursor on it.
+      const aims = holdsView(canvasElement) ? restingAims() : [];
+      const acted = [
         ...held.map((element) => partOf(element, canvasElement)).filter(filled),
         ...laidOut,
+        ...aims.map(({ box }) => box),
+      ];
+      const chosen = join(...acted);
+      // The top of the lowest of them, such as a date picker's chosen week.
+      const lowest = acted.reduce<Box | null>(
+        (low, box) => (!low || box.bottom > low.bottom ? box : low),
+        null,
       );
       const keep = chosen && join(chosen, ...below);
-      const keepScale = keep
-        ? (stageElement.clientHeight - inset - heldFade) / (keep.bottom - top)
-        : Infinity;
+      // The lowest point the pointer presses at rest, where its cursor's tip is.
+      const pointerFoot = aims.length ? Math.max(...aims.map(({ y }) => y)) : null;
+      /**
+       * Where a held view's top goes in its stage, drawn at a scale: the inset from the stage's top,
+       * or higher, up to `heldTopLeast` from it, as far as keeps what its script acts on, with the
+       * row after it where there is room, above its foot, the fade starting below it, and the
+       * cursor on its lowest point inside the stage; or none where the scale doesn't allow that.
+       */
+      const heldTop = (scale: number) => {
+        if (!chosen || !keep) return null;
+        const size = stageElement.clientHeight;
+        const cursorFoot =
+          pointerFoot === null ? -Infinity : (pointerFoot - top + cursorLength * rem) * scale;
+        for (const reach of keep === chosen ? [chosen] : [keep, chosen]) {
+          const at = Math.min(
+            inset,
+            size - heldFadeLeast - (reach.bottom - top) * scale,
+            size - cursorRoom - cursorFoot,
+          );
+          if (at >= heldTopLeast - 0.5) return { at, fadeAt: reach.bottom };
+        }
+        return null;
+      };
       // On a phone, the largest of its scales a picture fits at, no smaller than `low`.
       const steps = phoneSteps(floor, popupLeast);
       const step = (scale: number, low: number) =>
         steps.find((each) => each >= low - 0.0005 && each <= scale + 0.0005) ?? low;
-      // On a phone, a tile that holds its view, such as a contents list, is drawn smaller, at one
-      // of its scales, where what its script acts on would reach past its stage at its own size.
+      /**
+       * A held view taller than its stage at a scale is drawn at the largest of the scales tiles
+       * are drawn at, down to the overlays' one, `--catalogue-overlay-scale` (Gallery.css), at which
+       * what its script acts on shows above its fade (heldTop): so is a picker resting open on a
+       * phone, its field and its chosen row whole together.
+       */
+      const heldScale = (scale: number) => {
+        if (!chosen || (bottom - top) * scale <= height + inset || heldTop(scale)) return scale;
+        const least =
+          parseFloat(canvasStyle.getPropertyValue('--catalogue-overlay-scale')) || scale;
+        const lower = [...(phone ? steps : [popupLeast]), least]
+          .filter((each) => each < scale - 0.0005 && each >= least - 0.0005)
+          .sort((a, b) => b - a);
+        return lower.find((each) => heldTop(each) !== null) ?? lower.at(-1) ?? scale;
+      };
+      // On a phone, a tile is drawn at one of its scales where it reaches past its stage at its
+      // own size.
       const own = phone
-        ? step(
-            Math.min(1, width / (right - left), downScale, keep && !popup ? keepScale : Infinity),
-            floor,
-          )
+        ? step(Math.min(1, width / (right - left), downScale), floor)
         : Math.min(1, width / least, downScale);
       // A component's modal, such as a dialog, a sheet or a command palette, over its backdrop:
       // the stage is its screen, decided on its still, so it stays one as the modal closes.
@@ -987,7 +1082,7 @@ export function useFit(
         );
         return;
       }
-      const fitted = ownSize
+      const drawn = ownSize
         ? popup
           ? overlay
             ? Math.min(overlay, popupScale(phone ? 1 : own))
@@ -1000,9 +1095,24 @@ export function useFit(
           : tile
             ? windowScale
             : Math.min(whole ? windowScale : 1, width / (right - left), height / (bottom - top));
+      const fitted = ownSize || legible ? heldScale(drawn) : drawn;
       // Measured again, a box may come out a hair larger or smaller, a ten-millionth of the scale:
       // that is the same scale, so the view holds still and a tile shows as soon as it is fitted.
       const scale = Math.abs(fitted - view.rest) < 0.0005 ? view.rest : fitted;
+      // On a phone, a popup shown open lays out as wide as the stage's room shows at the scale it
+      // is drawn at (`--catalogue-canvas-scale`, Gallery.css), so what is as wide as its window,
+      // such as a field, keeps the inset from both edges.
+      if (
+        phone &&
+        ownSize &&
+        !overlay &&
+        !playingNow.current &&
+        canvasElement.dataset.popup !== undefined
+      ) {
+        const drawnAt = String(Math.round(scale * 1000) / 1000);
+        if (canvasElement.style.getPropertyValue('--catalogue-canvas-scale') !== drawnAt)
+          canvasElement.style.setProperty('--catalogue-canvas-scale', drawnAt);
+      }
       let toX = ((left + right) / 2) * scale;
       let toY = ((top + bottom) / 2) * scale;
       // Drawn at its own size, what is larger than the stage shows from its start, as a window
@@ -1034,28 +1144,30 @@ export function useFit(
       // above the results it filters, and stays centred across. A tile that holds its view shows
       // from its top down to what its script acts on, whole above the fade at its foot.
       const fromTop = (ownSize || legible) && down > height && !inRoom;
-      if (fromTop && keep && chosen) {
-        const size = stageElement.clientHeight;
-        // What it shows from, such as a picker's field with its label floating over its edge, the
-        // inset from the stage's top; the row below the chosen one whole above the fade where the
-        // stage has the room, or above a shorter one where it has a little less; else as much of
-        // it as the stage shows, fading out below the chosen row.
-        toY = top * scale + size / 2 - inset;
-        // Where even the chosen row reaches into the fade, the fade is as long as anywhere, and
-        // the rows past the foot fade out or are hidden through it (trimRows).
-        const above = (bottom: number) =>
-          bottom * scale - toY + size / 2 <= size - heldFadeLeast + 0.5;
-        fadeAt = above(keep.bottom) ? keep.bottom : above(chosen.bottom) ? chosen.bottom : null;
+      if (fromTop && keep) {
+        // What it shows from, such as a picker's field, the inset from the stage's top, or as much
+        // nearer it as keeps what its script acts on, with the row below a picker's chosen one
+        // where there is room, whole above its foot, which fades out below it (heldTop). Where
+        // even the least scale doesn't, it shows from as near the top as it is moved, and the fade
+        // starts no higher than the top of the lowest row its script acts on, which fades out
+        // through the stage's foot rather than being cut there.
+        const placed = heldTop(scale) ?? {
+          at: heldTopLeast,
+          fadeAt: lowest!.top + rowSlack + 1,
+        };
+        toY = top * scale + stageElement.clientHeight / 2 - placed.at;
+        fadeAt = placed.fadeAt;
       } else if (fromTop) toY = top * scale + height / 2;
       // A tile that grows as it plays is shown from its top, the inset from the stage's, so what
       // it adds below has the room the still leaves under it (useHeldView).
       if (growsDown && (ownSize || legible))
         toY = top * scale + stageElement.clientHeight / 2 - inset;
       // At rest, a tile is framed as it plays, on what its pointer heads to (onCourse); moved
-      // for it, it is cut off where it reaches past the stage's edges.
+      // for it, it is cut off where it reaches past the stage's edges. A held view taller than
+      // its stage is placed down it on what its script acts on (heldTop), and across on its course.
       const course =
-        (ownSize || legible) && tile && !playingNow.current && !keep
-          ? onCourse(toX, toY, scale)
+        (ownSize || legible) && tile && !playingNow.current
+          ? { ...onCourse(toX, toY, scale), ...(fromTop && keep ? { toY } : {}) }
           : null;
       const shifted =
         course !== null && (Math.abs(course.toX - toX) >= 0.5 || Math.abs(course.toY - toY) >= 0.5);
@@ -1325,7 +1437,12 @@ export function useFit(
       canvasElement.removeEventListener('transitionend', update);
       canvasElement.removeEventListener('animationend', update);
       canvasElement.removeEventListener(headingEvent, update);
-      for (const property of ['inline-size', 'block-size', 'min-block-size'])
+      for (const property of [
+        'inline-size',
+        'block-size',
+        'min-block-size',
+        '--catalogue-canvas-scale',
+      ])
         canvasElement.style.removeProperty(property);
       canvasElement.parentElement?.style.removeProperty('--catalogue-crop-top');
       cancelAnimationFrame(frame);
@@ -1434,10 +1551,19 @@ function inkOf(element: Element, canvas: HTMLElement): Box {
 }
 
 /** The least of the fade, in px, a held view keeps below what its script acts on (useFit). */
-const heldFade = 10;
+const heldFadeLeast = 0;
 
-/** The least of the fade, in px, below the row after a held view's chosen one (useFit). */
-const heldFadeLeast = 5;
+/**
+ * The least room, in px, a held view keeps above what it shows from, such as a picker's field,
+ * where it is moved up from the inset so what its script acts on shows above its foot (useFit).
+ */
+const heldTopLeast = 4;
+
+/** How long the cursor is, in rem, from its tip (Stage.css), at the scale its preview is drawn at. */
+const cursorLength = 1.25;
+
+/** The least room, in px, the cursor keeps from its stage's foot (useFit). */
+const cursorRoom = 0;
 
 /**
  * How far, in px, a popup and what it opens from may reach into the inset, both edges together,
@@ -1620,9 +1746,6 @@ interface Run {
  */
 const triggers =
   "[data-popup-open], [aria-haspopup][aria-expanded='true'], [role='combobox'][aria-expanded='true']";
-
-/** How much further, in px, a playing tile's view keeps what its pointer heads to from its foot. */
-const headRoom = 10;
 
 /** How far, in px, from a stage's edges a playing tile's view keeps what it opens and its trigger. */
 const playMargin = 10;
