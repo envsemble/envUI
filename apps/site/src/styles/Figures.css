@@ -220,6 +220,14 @@
   transform: translateX(-50%) scale(var(--catalogue-sweep-scale, 1));
   transform-origin: top center;
 }
+/* The layer the frame's overlays render into (WidthSweep.tsx), at its top start corner and of no
+   size of its own, so it covers nothing: the frame places what opens in it. */
+.catalogue-width-sweep-overlays {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+}
+
 /* A frame wider than the stage at a legible scale (`crop`): seen from its start and cut off at the
    stage's end, where it fades out over the last stretch as a device cut off does (DeviceFrame.css),
    and the ruler stops at what shows, unmarked where the frame runs on. */
