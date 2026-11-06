@@ -732,13 +732,11 @@ export function useFit(
           box.right * view.toScale,
           across / 2 - 4,
         );
-        // Above the stage's foot by more than its edges, out of the fade's faint end there.
-        const toY = contain(
-          view.toY,
-          box.top * view.toScale,
-          box.bottom * view.toScale + headRoom,
-          down / 2 - 4,
-        );
+        // Where the view moves for it, above the stage's foot by more than its edges, out of the
+        // fade's faint end there; what is in view already moves nothing.
+        const keepIn = (room: number) =>
+          contain(view.toY, box.top * view.toScale, box.bottom * view.toScale + room, down / 2 - 4);
+        const toY = keepIn(0) === view.toY ? view.toY : keepIn(headRoom);
         if (Math.hypot(toX - view.toX, toY - view.toY) >= 1) {
           view.toX = toX;
           view.toY = toY;
