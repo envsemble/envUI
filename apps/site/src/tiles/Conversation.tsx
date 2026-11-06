@@ -124,7 +124,7 @@ export default function ConversationTile() {
         busyAuthor="Assistant"
         // A set height with room under the first exchange for the next, which the thread grows
         // into, scrolling once it runs past it.
-        style={{ blockSize: '9.5rem', overflowY: 'hidden' }}
+        style={{ blockSize: '9.375rem', overflowY: 'hidden' }}
       >
         {entries.map((entry) =>
           entry.from === 'self' ? (
