@@ -56,9 +56,10 @@
     padding-inline: var(--env-space-1);
     border-radius: var(--env-radius-full);
     overflow-wrap: break-word;
-    transition:
-      background-color var(--env-motion-duration-fast) var(--env-motion-ease),
-      color var(--env-motion-duration-fast) var(--env-motion-ease);
+    /* The neutral hover fill eases in and out. The chosen fill and its text color change at once
+       as it is chosen, and as it is left only the fill fades, under text already back in its own
+       color, so its text is never white on a fill half gone. */
+    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
   }
   .env-month-picker-month:hover:not([aria-disabled='true'], [aria-selected='true'])
     > .env-month-picker-month-mark {
@@ -73,6 +74,7 @@
     font-weight: var(--env-font-weight-semibold);
   }
   .env-month-picker-month[aria-selected='true'] > .env-month-picker-month-mark {
+    transition: none;
     background: var(--env-color-bg-primary-emphasis);
     box-shadow: none;
     color: var(--env-color-fg-on-emphasis);
