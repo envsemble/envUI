@@ -25,8 +25,9 @@ const script: PointerStep[] = [
  * panel, as tabs in a pane do, so the strip stays where it is as the panels change. The component
  * fades the panel leaving out as the one coming fades in, in the same place, so the two panels the
  * card moves between hold their content apart: Plan a short line at the start, Files its count and
- * upload button at the end. Its names are short, the same at every width, so the strip is drawn at about
- * its own size in a phone's narrower and lower tile too, its panels whole and apart.
+ * upload button at the end. Its names are the same at every width; in a phone's narrower and lower
+ * tile the strip is a little wider than the stage shows at its own size, so it is drawn at the one
+ * smaller scale the other navigation cards there take, its panels whole and apart.
  */
 export default function TabsTile() {
   const [value, setValue] = useState('summary');
@@ -61,7 +62,7 @@ export default function TabsTile() {
         },
         {
           value: 'activity',
-          label: 'Log',
+          label: 'Activity',
           content: <Text>Sam edited the brief.</Text>,
         },
       ]}
