@@ -4,8 +4,13 @@ import { useMedia } from '../motion/Autoplay';
 import { usePointer, type PointerStep } from '../motion/Motion';
 import { narrowGallery } from './Tiles';
 
-/** The page's sections: an overview, then the three it rests on in turn. */
-const sections = ['Overview', 'Summary', 'Revenue', 'Costs'];
+/** The page's sections, each with its own line: an overview, then the three it rests on in turn. */
+const sections = [
+  { title: 'Overview', line: 'A year of steady growth.' },
+  { title: 'Summary', line: 'Revenue rose 18% to $4.2M.' },
+  { title: 'Revenue', line: 'Subscriptions made $3.1M.' },
+  { title: 'Costs', line: 'Spending held at $2.6M.' },
+];
 
 /**
  * About a section's pitch, in px: a turn of the wheel this far scrolls one section on, and the box,
@@ -68,7 +73,8 @@ export default function PageTile() {
         inlineSize: narrow ? '10rem' : '12.5rem',
         blockSize: narrow ? '6.875rem' : '7.25rem',
         overflowY: 'auto',
-        scrollbarWidth: 'none',
+        // The window's own scrollbar, as a page scrolled in an application shows it.
+        scrollbarWidth: 'thin',
         scrollSnapType: 'y mandatory',
         borderRadius: 'var(--env-radius-lg)',
         background: 'var(--env-color-bg-page)',
@@ -76,18 +82,18 @@ export default function PageTile() {
     >
       <Page header={<PageHeader headingLevel={3} sticky title="Annual report" />}>
         <Column gap={9} style={{ paddingBlockEnd: '3rem' }}>
-          {sections.map((section) => (
+          {sections.map(({ title, line }) => (
             <Column
-              key={section}
+              key={title}
               gap={1}
               render={<section />}
               style={{ scrollSnapAlign: 'start', paddingBlockEnd: 'var(--env-space-2)' }}
             >
               <Text variant="title" render={<h4 />}>
-                {section}
+                {title}
               </Text>
               <Text variant="body-sm" emphasis="muted">
-                Figures by quarter.
+                {line}
               </Text>
             </Column>
           ))}

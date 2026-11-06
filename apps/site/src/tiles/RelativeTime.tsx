@@ -64,7 +64,7 @@ function Events({ narrow }: { narrow: boolean }) {
       {events.map(({ label, at }) => (
         <div key={label} data-event={label} style={{ display: 'contents' }}>
           <Text emphasis="muted">{label}</Text>
-          <Text style={{ justifySelf: 'end' }}>
+          <Text>
             <RelativeTime
               value={at}
               now={now + (later ? minute : 0)}

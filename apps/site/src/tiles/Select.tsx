@@ -11,7 +11,8 @@ const option = (index: number) => `.env-select-item:nth-child(${index})`;
 
 /**
  * Down the open list, Private chosen, which closes it; opened again from its trigger and Team
- * chosen; opened once more, as it began.
+ * chosen; opened once more, as it began. Each choice is held closed about a second, and the open
+ * list rests a while before the loop starts over.
  */
 const script: PointerStep[] = [
   { wait: 300 },
@@ -20,7 +21,7 @@ const script: PointerStep[] = [
   { to: option(2), duration: 400 },
   { wait: 400 },
   { click: true },
-  { wait: 900 },
+  { wait: 1700 },
   { to: trigger, duration: 400 },
   { wait: 200 },
   { click: true },
@@ -28,13 +29,13 @@ const script: PointerStep[] = [
   { to: option(1), duration: 400 },
   { wait: 300 },
   { click: true },
-  { wait: 900 },
+  { wait: 1700 },
   { to: trigger, duration: 400 },
   { wait: 200 },
   { click: true },
   { wait: 600 },
   { leave: true },
-  { wait: 400 },
+  { wait: 1600 },
 ];
 
 /**

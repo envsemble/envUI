@@ -4,22 +4,21 @@ import { usePointer, type PointerStep } from '../motion/Motion';
 import { outlined } from './Outline';
 
 /*
- * A photo removed from the files and dragged in again from the desktop: dropped, it uploads,
- * leaving the files as they began.
+ * A photo removed from the files and dragged in again, its file chip beside the hand: dropped,
+ * it uploads, leaving the files as they began.
  */
 const script: PointerStep[] = [
   { wait: 400 },
   { to: '[aria-label="Remove team-photo.jpg"]', duration: 600 },
   { wait: 700 },
   { click: true },
-  { wait: 300 },
-  // Off to the desktop for the photo, and back with it.
-  { leave: true },
-  { wait: 500 },
+  { wait: 600 },
+  // The photo picked up again where it was, its chip beside the hand, and carried up over the
+  // zone, which shows it would take it, so the drop is seen to bring it back.
   { carry: 'team-photo.jpg', as: 'image/jpeg' },
-  { to: '.env-drop-zone-target', x: 0.85, y: 0.8 },
-  { to: '.env-drop-zone-target', x: 0.5, y: 0.5, duration: 500 },
-  { wait: 300 },
+  { wait: 400 },
+  { to: '.env-drop-zone-target', x: 0.6, y: 0.55, duration: 1100 },
+  { wait: 700 },
   { drop: true },
   { wait: 200 },
   // The hand moves off the zone while the photo goes up, about two seconds, and the files rest
