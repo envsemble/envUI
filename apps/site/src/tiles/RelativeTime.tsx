@@ -17,13 +17,14 @@ const events = [
 
 /*
  * A minute on, the save that was just now is a minute ago, as the shared clock moves each time on
- * once a minute; hovered, the last time shows its date and time, its tooltip over the one before.
+ * once a minute; hovered, that time shows its date and time, its tooltip above the list, where
+ * it covers no other time.
  */
 const script: PointerStep[] = [
   { wait: 1000 },
   { cue: 'minute' },
   { wait: 900 },
-  { to: '[data-event="Shared"] .env-relative-time', x: 0.5 },
+  { to: '[data-event="Saved"] .env-relative-time', x: 0.5 },
   { wait: 2800 },
   { leave: true },
   { wait: 600 },

@@ -23,11 +23,13 @@ const script: PointerStep[] = [
 /**
  * The assistant's answer, with an action to copy it at its end, so Copied, above the action, shows
  * beside the answer's line rather than over it.
- * In a phone's narrower tile it is narrower too, so it is drawn at about its own size there.
+ * In a phone's narrower tile it is narrower too, so it is drawn at about its own size there, and
+ * its action is the icon alone, named in its tooltip, so Copied still shows beside the line.
  */
 export default function MessageTile() {
   const narrow = useMedia(narrowGallery);
   usePointer(script);
+  const text = 'Yes, it’s shared.';
   return (
     <MessageList aria-label="Conversation" style={{ inlineSize: narrow ? '8.75rem' : '12rem' }}>
       <Message
@@ -35,11 +37,15 @@ export default function MessageTile() {
         author="Assistant"
         actions={
           <Row justify="end" style={{ flex: '1 1 auto' }}>
-            <CopyButton value="Yes, it’s shared.">Copy</CopyButton>
+            {narrow ? (
+              <CopyButton value={text} aria-label="Copy" />
+            ) : (
+              <CopyButton value={text}>Copy</CopyButton>
+            )}
           </Row>
         }
       >
-        Yes, it’s shared.
+        {text}
       </Message>
     </MessageList>
   );
