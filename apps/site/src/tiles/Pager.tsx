@@ -1,5 +1,5 @@
 import { useState, type MouseEvent } from 'react';
-import { Pager } from '@envsemble/envui';
+import { Column, Pager, Text } from '@envsemble/envui';
 import { useMedia } from '../motion/Autoplay';
 import { usePointer, type PointerStep } from '../motion/Motion';
 import { narrowGallery } from './Tiles';
@@ -29,8 +29,9 @@ const script: PointerStep[] = [
 ];
 
 /**
- * The links before and after a page of a guide, side by side, so both show in a gallery's low
- * tile. A page at either end of the guide shows only the link it has.
+ * The foot of a page of a guide: the page's title, then the links before and after it, side by
+ * side, so both show in a gallery's low tile, and each press shows which page it led to. A page at
+ * either end of the guide shows only the link it has.
  * In a phone's narrower tile it is narrower too, so it is drawn at about its own size there.
  */
 export default function PagerTile() {
@@ -53,9 +54,17 @@ export default function PagerTile() {
   const previous = link(page - 1);
   const next = link(page + 1);
   return (
-    <Pager.Root aria-label="Guide pages" style={{ inlineSize: narrow ? '10.5rem' : '12rem' }}>
-      {previous && <Pager.Previous {...previous} />}
-      {next && <Pager.Next {...next} />}
-    </Pager.Root>
+    <Column
+      gap={3}
+      style={{ inlineSize: 'max-content', maxInlineSize: narrow ? '10.5rem' : '12rem' }}
+    >
+      <Text variant="title" render={<h2 />}>
+        {pages[page]}
+      </Text>
+      <Pager.Root aria-label="Guide pages">
+        {previous && <Pager.Previous {...previous} />}
+        {next && <Pager.Next {...next} />}
+      </Pager.Root>
+    </Column>
   );
 }
