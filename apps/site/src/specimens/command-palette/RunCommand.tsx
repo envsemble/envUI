@@ -55,9 +55,10 @@ function Running() {
     },
   });
   return (
-    // As tall as the button and what it says it ran, so the button stays put as that comes; on a
-    // narrow stage, where the commands wrap, as tall as the palette's whole list.
-    <div style={{ minBlockSize: roomFor(4.5, 24, 30) }}>
+    // As tall as the palette's whole list, with the button and what it says it ran at its foot,
+    // below where the palette opens, so the frosted panel never blurs the button behind it, and
+    // the button stays put as what it ran comes.
+    <div style={{ display: 'grid', alignContent: 'end', minBlockSize: roomFor(23, 24, 30) }}>
       <PressedKeys keys={pressed?.keys ?? null} press={pressed?.press ?? 0} />
       <RunCommand key={round} />
     </div>

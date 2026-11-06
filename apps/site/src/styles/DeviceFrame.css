@@ -11,13 +11,20 @@
 }
 
 /* The place the device holds on the stage, its view at its scale, centred. A device too large to
-   show whole at a legible scale is cut off there (DeviceStage), and what is cut off at an edge
-   fades out over the last stretch, as a tile's crop does (Gallery.css), rather than ending in a
-   slice through a line. */
+   show whole at a legible scale is cut off there (DeviceStage), out to the stage's edge, and what
+   is cut off at an edge fades out over the last stretch, as a tile's crop does (Gallery.css),
+   rather than ending in a slice through a line. The fade eases in and out, so the window's own
+   surfaces and lines, running into it side by side, dissolve without the band a straight ramp
+   leaves where it meets the solid part. */
 .site-device-fit {
   --site-device-fade: 1.75rem;
   /* Any opaque color: the mask reads only its alpha. */
   --site-device-opaque: var(--env-color-fg-default);
+  --site-device-1: color-mix(in srgb, var(--site-device-opaque) 3%, transparent);
+  --site-device-2: color-mix(in srgb, var(--site-device-opaque) 16%, transparent);
+  --site-device-3: color-mix(in srgb, var(--site-device-opaque) 50%, transparent);
+  --site-device-4: color-mix(in srgb, var(--site-device-opaque) 84%, transparent);
+  --site-device-5: color-mix(in srgb, var(--site-device-opaque) 97%, transparent);
   --site-device-top: 0rem;
   --site-device-bottom: 0rem;
   --site-device-start: 0rem;
@@ -48,15 +55,35 @@
     linear-gradient(
       to bottom,
       transparent,
+      var(--site-device-1) calc(var(--site-device-top) * 0.15),
+      var(--site-device-2) calc(var(--site-device-top) * 0.3),
+      var(--site-device-3) calc(var(--site-device-top) * 0.5),
+      var(--site-device-4) calc(var(--site-device-top) * 0.7),
+      var(--site-device-5) calc(var(--site-device-top) * 0.85),
       var(--site-device-opaque) var(--site-device-top),
       var(--site-device-opaque) calc(100% - var(--site-device-bottom)),
+      var(--site-device-5) calc(100% - var(--site-device-bottom) * 0.85),
+      var(--site-device-4) calc(100% - var(--site-device-bottom) * 0.7),
+      var(--site-device-3) calc(100% - var(--site-device-bottom) * 0.5),
+      var(--site-device-2) calc(100% - var(--site-device-bottom) * 0.3),
+      var(--site-device-1) calc(100% - var(--site-device-bottom) * 0.15),
       transparent
     ),
     linear-gradient(
       to right,
       transparent,
+      var(--site-device-1) calc(var(--site-device-start) * 0.15),
+      var(--site-device-2) calc(var(--site-device-start) * 0.3),
+      var(--site-device-3) calc(var(--site-device-start) * 0.5),
+      var(--site-device-4) calc(var(--site-device-start) * 0.7),
+      var(--site-device-5) calc(var(--site-device-start) * 0.85),
       var(--site-device-opaque) var(--site-device-start),
       var(--site-device-opaque) calc(100% - var(--site-device-end)),
+      var(--site-device-5) calc(100% - var(--site-device-end) * 0.85),
+      var(--site-device-4) calc(100% - var(--site-device-end) * 0.7),
+      var(--site-device-3) calc(100% - var(--site-device-end) * 0.5),
+      var(--site-device-2) calc(100% - var(--site-device-end) * 0.3),
+      var(--site-device-1) calc(100% - var(--site-device-end) * 0.15),
       transparent
     );
   mask-composite: intersect;

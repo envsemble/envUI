@@ -4,16 +4,18 @@ import { MotionStage } from '../../motion/MotionStage';
 
 /*
  * The pointer turns the wheel over the body: the list scrolls under the top bar and beside the
- * navigation, which stay where they are, and back to its start.
+ * navigation, which stay where they are, and back to its start. The pointer rests on the body
+ * itself, not on a row, so it stays over the list as the rows move under it, and turns the wheel a
+ * few rows' worth: the list is not much longer than the screen.
  */
 const script: PointerStep[] = [
   { wait: 500 },
-  { to: '.env-list-item:nth-child(2 of .env-list-item)', x: 0.6, y: 0.5 },
+  { to: '.env-scaffold-body', x: 0.6, y: 0.45 },
   { wait: 400 },
-  { wheel: 220, duration: 1300 },
-  { wait: 1100 },
-  { wheel: -220, duration: 1300 },
-  { wait: 500 },
+  { wheel: 150, duration: 1600 },
+  { wait: 1200 },
+  { wheel: -150, duration: 1600 },
+  { wait: 600 },
   { leave: true },
   { wait: 700 },
 ];

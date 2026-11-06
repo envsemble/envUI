@@ -1,5 +1,5 @@
 import ResizableDetails from '../../examples/panes/ResizableDetails';
-import { usePointer, type PointerStep } from '../../motion/Motion';
+import { useMustShow, usePointer, type PointerStep } from '../../motion/Motion';
 import { MotionStage } from '../../motion/MotionStage';
 import { useOnScreen } from '../../figures/DeviceFrame';
 import { WidthSweep } from '../../motion/WidthSweep';
@@ -8,8 +8,8 @@ const divider = '.env-panes-divider';
 const panes = '.env-panes';
 
 /*
- * The pointer drags the gap toward the start, and the details widen; then toward the end, past
- * where they stop at their least width. It lets go, and the keyboard takes the gap: four presses
+ * The pointer drags the gap toward the start, and the details widen to their widest; then toward
+ * the end, past where they stop at their least width. It lets go, and the keyboard takes the gap: four presses
  * of the left arrow widen the details a step each, back to where they began.
  */
 const script: PointerStep[] = [
@@ -17,7 +17,7 @@ const script: PointerStep[] = [
   { to: divider, x: 0.5, y: 0.5 },
   { wait: 400 },
   { press: true },
-  { to: panes, x: 0.4, y: 0.5, duration: 1000 },
+  { to: panes, x: 0.55, y: 0.5, duration: 1000 },
   { wait: 400 },
   { to: panes, x: 0.78, y: 0.5, duration: 1300 },
   { wait: 300 },
@@ -41,6 +41,8 @@ const script: PointerStep[] = [
 
 function Resizing() {
   usePointer(script);
+  // The details stay in view beside the gap, on a window's screen cut off at a phone's width too.
+  useMustShow('.env-panes-supporting .env-description-list-value');
   // A frame of a medium window, where the panes sit side by side, drawn smaller on a narrow stage;
   // on a window's screen, the window itself.
   const onScreen = useOnScreen();

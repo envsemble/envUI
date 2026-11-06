@@ -17,7 +17,7 @@ import { IconRefresh } from '@envsemble/envui/icons/Refresh';
 import { IconSignalCellular4Bar } from '@envsemble/envui/icons/SignalCellular4Bar';
 import { IconSignalWifi4Bar } from '@envsemble/envui/icons/SignalWifi4Bar';
 import type { DeviceKind } from '../shared/DocumentationTypes';
-import { courseOf, headingEvent, headingOf, type Heading } from '../motion/MustShow';
+import { courseOf, headingEvent, headingOf, mustShowOf, type Heading } from '../motion/MustShow';
 
 /*
  * A device drawn around a page's figure: a phone or a browser's window whose screen is a window of
@@ -88,9 +88,35 @@ function pointBox(row: Element, scale: number, { selector, x, y }: Heading): Box
 }
 
 /**
+ * The boxes, in the device's own px, of what a figure names to keep in view (useMustShow): each
+ * around its content, such as a value's text rather than the width of its row, with room for the
+ * fade of a cut edge.
+ */
+function namedBoxes(row: Element, scale: number, root: Element): Box[] {
+  const own = row.getBoundingClientRect();
+  const range = document.createRange();
+  return mustShowOf(root, true).flatMap((selector) =>
+    [...row.querySelectorAll(selector)]
+      .filter((element) => element.getClientRects().length > 0)
+      .map((element) => {
+        range.selectNodeContents(element);
+        const box = range.getBoundingClientRect();
+        return {
+          left: (box.left - own.left) / scale - pointRoom,
+          top: (box.top - own.top) / scale - pointRoom,
+          right: (box.right - own.left) / scale + pointRoom,
+          bottom: (box.bottom - own.top) / scale + pointRoom,
+        };
+      }),
+  );
+}
+
+/**
  * Where a view of `size` starts along one side of a device of `whole`: so it shows `span` where
  * it fits, as near the start as it can; where it doesn't, so it shows `focus`, moving no more
- * than it must from `from`; else at the span's start, or the device's.
+ * than it must from `from`; else at the span's start, or the device's. A view that would stop
+ * within `snap` of the device's start or end goes on to it, where what it shows still fits, so a
+ * sliver of the device isn't left in the fade of a cut edge.
  */
 function viewStart(
   whole: number,
@@ -98,12 +124,20 @@ function viewStart(
   span: [number, number] | undefined,
   focus: [number, number] | undefined,
   from: number,
+  snap: number,
 ) {
   const most = Math.max(0, whole - size);
   const clamp = (value: number) => Math.min(most, Math.max(0, value));
-  if (span && span[1] - span[0] <= size) return clamp(Math.min(span[0], span[1] - size));
-  if (focus) return clamp(Math.min(Math.max(from, focus[1] - size), focus[0]));
-  return clamp(span ? span[0] : 0);
+  const fits = span && span[1] - span[0] <= size;
+  const start = fits
+    ? clamp(Math.min(span[0], span[1] - size))
+    : focus
+      ? clamp(Math.min(Math.max(from, focus[1] - size), focus[0]))
+      : clamp(span ? span[0] : 0);
+  const shows = fits ? span : focus;
+  if (start < snap && (!shows || shows[1] <= size)) return 0;
+  if (start > most - snap && (!shows || shows[0] >= most)) return most;
+  return start;
 }
 
 /** The span of boxes along one side, or nothing where there are none. */
@@ -124,11 +158,15 @@ interface Fit {
   x: number;
   y: number;
   cut: string;
+  /** How far the view runs out over the stage's padding at its start and its end. */
+  outset: { start: number; end: number };
 }
 
 const sameFit = (a: Fit, b: Fit) =>
   a.scale === b.scale &&
   a.cut === b.cut &&
+  Math.abs(a.outset.start - b.outset.start) < 0.5 &&
+  Math.abs(a.outset.end - b.outset.end) < 0.5 &&
   Math.abs(a.width - b.width) < 0.5 &&
   Math.abs(a.height - b.height) < 0.5 &&
   Math.abs(a.x - b.x) < 0.5 &&
@@ -139,9 +177,10 @@ const sameFit = (a: Fit, b: Fit) =>
  * never drawn larger than it is nor smaller than its kind's least scale (leastScale): where it
  * would need to be, it is cut off at the stage's end and foot, its top start, the bar and the
  * navigation, in view, and its cut edges fade out. On an animated figure, the view keeps every
- * point its pointer heads to in it, where they fit together, or else follows the pointer, so what
- * it acts on is never cut off (MustShow.ts). The place it holds on the stage is its view, so the
- * stage is as tall as what it shows.
+ * point its pointer heads to in it, and what it names with `useMustShow`, where they fit together,
+ * or else follows the pointer, so what it acts on is never cut off (MustShow.ts). A side that is
+ * cut off runs out over the stage's padding to its edge. The place it holds on the stage is its
+ * view, so the stage is as tall as what it shows.
  */
 export function DeviceStage({ kind, children }: { kind: DeviceKind; children: ReactNode }) {
   const stage = useRef<HTMLDivElement>(null);
@@ -150,7 +189,8 @@ export function DeviceStage({ kind, children }: { kind: DeviceKind; children: Re
   useLayoutEffect(() => {
     const stageElement = stage.current;
     const rowElement = row.current;
-    if (!stageElement || !rowElement) return;
+    const fitElement = rowElement?.parentElement;
+    if (!stageElement || !rowElement || !fitElement) return;
     // The animated figure's preview, whose pointer's points the view keeps.
     const root = stageElement.closest('.catalogue-motion-subject');
     let view = { x: 0, y: 0 };
@@ -159,6 +199,10 @@ export function DeviceStage({ kind, children }: { kind: DeviceKind; children: Re
       const most =
         parseFloat(getComputedStyle(stageElement).getPropertyValue('--site-device-most')) * rem ||
         Infinity;
+      // How long a cut edge's fade is, in the stage's px (DeviceFrame.css).
+      const fade =
+        (parseFloat(getComputedStyle(fitElement).getPropertyValue('--site-device-fade')) || 0) *
+        rem;
       // offsetWidth and offsetHeight are the row's own, before its scale.
       const width = rowElement.offsetWidth;
       const height = rowElement.offsetHeight;
@@ -166,31 +210,63 @@ export function DeviceStage({ kind, children }: { kind: DeviceKind; children: Re
       if (!width || !height || !room) return;
       const fits = Math.min(1, room / width, most / height);
       const scale = Math.min(1, Math.max(fits, leastScale[kind]));
+      // A device cut off at its start or end runs out to the stage's edge there, over its padding,
+      // so it fades out at the edge of the stage rather than in a strip inside it.
+      const host = stageElement.closest('.site-live-example');
+      const hostStyle = host && getComputedStyle(host);
+      const pad = {
+        start: hostStyle ? parseFloat(hostStyle.paddingLeft) || 0 : 0,
+        end: hostStyle ? parseFloat(hostStyle.paddingRight) || 0 : 0,
+      };
+      const across = width * scale > room + 0.5;
       const shown = {
-        width: Math.min(width * scale, room),
+        width: across ? Math.min(width * scale, room + pad.start + pad.end) : width * scale,
         height: Math.min(height * scale, most),
       };
       // The scale the row is drawn at now, which its points are measured in.
       const drawn = rowElement.getBoundingClientRect().width / width || scale;
       const boxes = root
-        ? courseOf(root).flatMap((point) => pointBox(rowElement, drawn, point) ?? [])
+        ? [
+            ...courseOf(root).flatMap((point) => pointBox(rowElement, drawn, point) ?? []),
+            ...namedBoxes(rowElement, drawn, root),
+          ]
         : [];
       const heading = root && headingOf(root);
       const focus = heading ? pointBox(rowElement, drawn, heading) : undefined;
-      view = {
-        x: viewStart(
+      const along = (size: number) =>
+        viewStart(
           width,
-          shown.width / scale,
+          size / scale,
           spanOf(boxes, (box) => [box.left, box.right]),
           focus && [focus.left, focus.right],
           view.x,
-        ),
+          fade / scale,
+        );
+      let x = along(shown.width);
+      const outset = { start: 0, end: 0 };
+      if (across && width * scale <= room + pad.start + pad.end) {
+        // Whole over the padding: it sits in the middle of the stage.
+        outset.start = outset.end = (width * scale - room) / 2;
+      } else if (across) {
+        // A side that isn't cut keeps the stage's padding.
+        const startCut = x > 0.5;
+        const endCut = x + shown.width / scale < width - 0.5;
+        outset.start = startCut ? pad.start : 0;
+        outset.end = endCut ? pad.end : 0;
+        shown.width = room + outset.start + outset.end;
+        if (!startCut) x = 0;
+        else if (!endCut) x = width - shown.width / scale;
+        else x = along(shown.width);
+      }
+      view = {
+        x,
         y: viewStart(
           height,
           shown.height / scale,
           spanOf(boxes, (box) => [box.top, box.bottom]),
           focus && [focus.top, focus.bottom],
           view.y,
+          fade / scale,
         ),
       };
       const cut = [
@@ -201,7 +277,7 @@ export function DeviceStage({ kind, children }: { kind: DeviceKind; children: Re
       ]
         .filter(Boolean)
         .join(' ');
-      const next = { scale, ...shown, ...view, cut };
+      const next = { scale, ...shown, ...view, cut, outset };
       setFit((current) => (current && sameFit(current, next) ? current : next));
     };
     update();
@@ -238,7 +314,16 @@ export function DeviceStage({ kind, children }: { kind: DeviceKind; children: Re
       <div
         className="site-device-fit"
         data-cut={fit?.cut || undefined}
-        style={fit && { inlineSize: fit.width, blockSize: fit.height }}
+        style={
+          fit && {
+            inlineSize: fit.width,
+            blockSize: fit.height,
+            ...(fit.outset.start + fit.outset.end > 0 && {
+              marginLeft: -fit.outset.start,
+              marginRight: -fit.outset.end,
+            }),
+          }
+        }
       >
         <div
           ref={row}

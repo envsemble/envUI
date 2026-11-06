@@ -89,7 +89,7 @@ An installed app that draws its own title bar runs it across the whole window, a
 - A [Menubar](../components/menubar.md) goes at its start, where the app has one.
 - Only the body scrolls below it, so the window's controls never cover a scrollbar.
 
-```tsx figure=InstalledWindow stage=shaded
+```tsx figure=InstalledWindow stage=shaded widths="40"
 
 ```
 
