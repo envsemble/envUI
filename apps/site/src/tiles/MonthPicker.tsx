@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { MonthPicker } from '@envsemble/envui';
-import { useHeldView, usePointer, type PointerStep } from '../motion/Motion';
+import { useMedia } from '../motion/Autoplay';
+import { useHeldView, useMustShow, usePointer, type PointerStep } from '../motion/Motion';
+import { narrowGallery } from './Tiles';
 
 const month = (value: string) => `.env-month-picker-month[data-month="${value}"]`;
 const field = '.env-date-picker-trigger';
@@ -36,9 +38,21 @@ const script: PointerStep[] = [
  * clear without its label is. It rests open, its year under its field, framed from the field's top
  * to past the chosen month's row, so as it plays the popup closes and opens again in place, and
  * nothing in its tile moves (useHeldView); a phone's lower stage draws it smaller to show them
- * together (useFit.ts). Stopped, it is on February again, as it rests.
+ * together (useFit.ts), with the row below them, named to show, so it reads as a year of months
+ * rather than one row. Stopped, it is on February again, as it rests.
  */
 export default function MonthPickerTile() {
+  const narrow = useMedia(narrowGallery);
+  return narrow ? <PhonePicker /> : <Picker />;
+}
+
+/** On a phone, the picker with its second row of months named to show (useMustShow). */
+function PhonePicker() {
+  useMustShow(month('2026-05'));
+  return <Picker />;
+}
+
+function Picker() {
   const [value, setValue] = useState<string | null>('2026-02');
   const [open, setOpen] = useState(true);
   useHeldView();
