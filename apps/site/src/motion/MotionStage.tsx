@@ -374,13 +374,26 @@ function useTallest(stage: RefObject<HTMLDivElement | null>, height: string | un
   }, [stage, height]);
 }
 
+/** A room's height: rem, or a CSS length, such as one that follows the scale (rowsAnd). */
+type Room = number | string;
+const lengthOf = (room: Room) => (typeof room === 'number' ? `${room}rem` : room);
+
 /**
  * A figure's room for its tallest state, as a CSS length for its content's min-height: `wide`,
- * and `narrow` where its stage is narrower than `below` (all in rem), where its rows wrap and
+ * and `narrow` where its stage is narrower than `below` (in rem), where its rows wrap and
  * stand taller. With it the stage is that tall from the start, rather than growing the first time
  * the figure reaches that state (useTallest). A step of the stage's width, the container it lays
  * out in: the difference is huge and positive below `below`, so `narrow` wins, and negative from
  * it on, so `wide` does.
  */
-export const roomFor = (wide: number, narrow: number, below: number) =>
-  `max(${wide}rem, min(${narrow}rem, (${below}rem - 100cqi) * 1000))`;
+export const roomFor = (wide: Room, narrow: Room, below: number) =>
+  `max(${lengthOf(wide)}, min(${lengthOf(narrow)}, (${below}rem - 100cqi) * 1000))`;
+
+/**
+ * A room as tall as `rows` rows of a list, which are taller at the comfortable scale than at the
+ * compact one, and `rem` more: the height of a popup of rows, such as a calendar, with the field
+ * that opens it, so the stage keeps no more room than the open popup fills at either scale, and
+ * the two sit in its middle rather than at its top.
+ */
+export const rowsAnd = (rows: number, rem: number) =>
+  `calc(${rows} * var(--env-row-height) + ${rem}rem)`;
