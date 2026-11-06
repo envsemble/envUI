@@ -210,8 +210,14 @@ function fit(room: HTMLElement, layer: HTMLElement) {
     // a link that opens a hover card, would wrap to it, move its link and the popup with it, and be
     // padded narrower again, down to a column of a word or two. What opens them keeps at least
     // the widest popup's width, so a popup about as wide as the stage leaves the text as wide.
+    // What is narrower than the room has left it, such as a menu's trigger, is at its own width
+    // and keeps only that, with a pixel to spare, so a popup wider than it still centres with it
+    // on a narrow stage.
     const widest = Math.max(...anchored.map((box) => box.right - box.left)) / scale;
-    const spare = Math.max(0, room.clientWidth - widest);
+    const ownWidth = (own.right - own.left) / scale;
+    const available = room.clientWidth - padding.left - padding.right;
+    const keep = ownWidth < available - 1 ? Math.min(widest, ownWidth + 2) : widest;
+    const spare = Math.max(0, room.clientWidth - keep);
     const sides = next.left + next.right;
     if (sides > spare) {
       next.left *= spare / sides;
