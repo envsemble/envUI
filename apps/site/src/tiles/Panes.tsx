@@ -14,10 +14,12 @@ const half = 0.5;
 /**
  * The list's width, in rem, at rest and widened, and its least, for the stage's width: what the
  * stage shows of the panes splits about a third to the list at rest and three fifths widened, a
- * drag long enough to follow, and the detail's short heading stays whole beside it at both.
+ * drag long enough to follow, and the detail's short heading stays whole beside it at both; on a
+ * phone, from the list's least, a shorter drag, so the heading and its date stay clear of the
+ * fade at the stage's end throughout.
  */
 const wide = { list: 5.25, widened: 9, least: 5 };
-const narrow = { list: 5.25, widened: 7.5, least: 5 };
+const narrow = { list: 5, widened: 6.5, least: 5 };
 
 /** Where a list as wide as `width` ends, as a share of the panes' width. */
 const at = (width: number) => (width + half) / across;
@@ -51,8 +53,8 @@ const scripts = { wide: scriptOf(wide), narrow: scriptOf(narrow) };
 export default function PanesTile() {
   const sizes = useMedia(narrowGallery) ? narrow : wide;
   usePointer(sizes === narrow ? scripts.narrow : scripts.wide);
-  // The detail's heading, which the drag moves, stays in view; a phone's stage has no room to keep
-  // it whole beside a widened list, so there the divider does, as the heading fades at its end.
+  // The detail's heading, which the drag moves, stays in view; on a phone, where it stays clear of
+  // the fade by the shorter drag, the divider is named, so the view holds on the panes' start.
   useMustShow(sizes === narrow ? '.env-panes-divider' : '.env-panes-detail h3');
   return (
     <Panes.Root
