@@ -69,8 +69,9 @@
   .env-prose p {
     font: var(--env-type-body);
   }
+  /* Bold stands out from the regular body text, in semibold rather than a heading's medium. */
   .env-prose strong {
-    font-weight: var(--env-font-weight-medium);
+    font-weight: var(--env-font-weight-semibold);
   }
   /* Lists: each item's marker sits in a narrow column at its start, on the middle of the item's first
      line, and the item's text starts a gap after it; items stand a full step apart, so a list breaks
