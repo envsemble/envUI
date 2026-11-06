@@ -153,6 +153,7 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 ## Changelog
 
 - **1.0.0**: TimePicker, for a time of day chosen on wheels of hours, minutes and day periods on the locale's clock, with `minuteStep`, `min` and `max`.
+- **1.0.0-prerelease.6**: As a wheel turns to a row pressed or scrolled to, the fill stays on that row rather than passing over the rows on the way, and a row's text takes the fill's color only while it is on the fill, so a value it leaves is never white on the popup; the field shows the new time once the wheel comes to rest.
 - **1.0.0-prerelease.6**: `hourCycle`, `h12` or `h23`, sets the clock of the field and its wheels whatever the locale's, such as 18:00 with no AM/PM wheel in English; the value stays `HH:mm`.
 - **1.0.0-prerelease.6**: The wheels' rows are a little less than a row height tall, as the calendar's days are, 24 px at the compact scale; touch screens keep the touch height.
 - **1.0.0-prerelease.6**: A clearable field's clear button and its clock icon stand a step apart, so they don't crowd each other in a small field.

@@ -400,6 +400,63 @@ test(
   },
 );
 
+test('while a wheel turns, only the row on the fill takes its colors, and the field waits for it to settle', async ({
+  page,
+}) => {
+  const start = field(page, 'Start time');
+  await start.click();
+  const hours = wheel(page.getByRole('dialog', { name: 'Start time' }), 'Hours');
+  await expect(hours).toHaveAttribute('aria-valuenow', '9');
+  // Each frame of the turn: the rows whose text has the fill's color, the rows on the fill, the
+  // wheel's position and the field's value.
+  await hours.evaluate((column) => {
+    const frames: { white: string[]; filled: string[]; top: number; field: string }[] = [];
+    (window as unknown as { frames_: typeof frames }).frames_ = frames;
+    const trigger = document.querySelector('[role="combobox"]')!;
+    const started = performance.now();
+    const sample = () => {
+      const rows = [...column.querySelectorAll<HTMLElement>('.env-time-list-row')];
+      const label = (row: HTMLElement) => row.dataset.value!;
+      frames.push({
+        white: rows
+          .filter((row) => getComputedStyle(row).color === 'rgb(255, 255, 255)')
+          .map(label),
+        filled: rows
+          .filter((row) => getComputedStyle(row).backgroundColor !== 'rgba(0, 0, 0, 0)')
+          .map(label),
+        top: column.scrollTop,
+        field: trigger.textContent ?? '',
+      });
+      if (performance.now() - started < 1500) requestAnimationFrame(sample);
+    };
+    requestAnimationFrame(sample);
+  });
+  await (await rowFromMiddle(hours, -1)).click();
+  await expect(start).toHaveText('08:30');
+  await page.waitForTimeout(1600);
+  const frames = await page.evaluate(
+    () =>
+      (
+        window as unknown as {
+          frames_: { white: string[]; filled: string[]; top: number; field: string }[];
+        }
+      ).frames_,
+  );
+  // One row is on the fill in every frame, and it alone has the fill's text color: 9 until the
+  // click, then 8 as the wheel turns to it, never flickering back.
+  for (const frame of frames) {
+    expect(frame.filled).toHaveLength(1);
+    expect(frame.white).toEqual(frame.filled);
+  }
+  const filled = frames.map((frame) => frame.filled[0]);
+  expect(filled.slice(filled.indexOf('8'))).not.toContain('9');
+  // The field shows 8:30 only once the wheel has come to rest.
+  const changed = frames.findIndex((frame) => frame.field === '08:30');
+  expect(changed).toBeGreaterThan(0);
+  expect(frames.slice(changed).every((frame) => frame.top === frames.at(-1)!.top)).toBe(true);
+  expect(frames.slice(0, changed).some((frame) => frame.top !== frames.at(-1)!.top)).toBe(true);
+});
+
 /** Each popup action's label and the number of lines it takes. */
 const actionLines = (popup: Locator) =>
   popup.locator('.env-date-picker-actions .env-button').evaluateAll((buttons) =>
