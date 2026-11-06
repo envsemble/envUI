@@ -55,6 +55,8 @@ export const tileWindows: Readonly<Record<string, TileWindow>> = {
   toast: { width: 14, height: 10.5, overlay: true },
   popover: { width: 14, height: 10.5, overlay: true },
   dialog: { width: 14, height: 13, popupLeast: 0.56 },
+  // A palette with its two commands is taller than a phone's stage at a popup's least.
+  'command-palette': { width: 14, height: 10.5, popupLeast: 0.7 },
   // A sheet of a title and a filter is as tall as its window: lower than a tile's, it shows whole.
   sheet: { width: 14, height: 7, overlay: true },
   // A confirm dialog with its button beside it is wider than a tile's stage at a popup's least.
