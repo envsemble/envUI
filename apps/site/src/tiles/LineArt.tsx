@@ -8,7 +8,9 @@ const durations = [600, 6500];
 /**
  * The golden section on a surface, as LineArt sits behind a banner or a header: covering the
  * surface, resting on its foot and cropped from its start, its hairlines in their own muted color
- * on the surface's fill, as an application shows them. Playing, its lines run out past their ends
+ * on the surface's fill, as an application shows them. The surface is small, in a tile's window as
+ * small (Tiles.ts), so it is drawn large and its hairlines thick enough to read in dark too, where
+ * they are fainter. Playing, its lines run out past their ends
  * and draw themselves in again, one after another from the rectangle that frames it, so the
  * drawing is never empty, and rest: LineArt's own play motion.
  */
@@ -20,7 +22,7 @@ export default function LineArtTile() {
       style={{
         position: 'relative',
         overflow: 'hidden',
-        inlineSize: '9.5rem',
+        inlineSize: '6rem',
         aspectRatio: '16 / 10',
         ...outlined,
       }}

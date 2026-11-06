@@ -1,3 +1,4 @@
+import { useLayoutEffect, useRef, useState } from 'react';
 import { CalendarHeatmap, type CalendarHeatmapDay } from '@envsemble/envui';
 import { useMedia } from '../motion/Autoplay';
 import { useHeldView, usePointer, type PointerStep } from '../motion/Motion';
@@ -33,22 +34,41 @@ const dayOf = (date: string) => days.format(new Date(`${date}T00:00:00Z`));
 
 /**
  * A calendar heatmap of nine weeks of edits; in a phone's tile eight, so it is drawn larger. Its
- * stage shows it from its months down past the days it hovers, the weekend's rows fading out at
- * its foot.
+ * stage shows it from its months down to Saturday's row, cropped there, on a whole row, rather
+ * than fading out partway through Sunday's: the crop's height is read off that row, so it follows
+ * the days' size, which grows on a touch screen.
  */
 export default function CalendarHeatmapTile() {
   const narrow = useMedia(narrowGallery);
+  const crop = useRef<HTMLDivElement>(null);
+  const [height, setHeight] = useState<number>();
   // Framed from its months down to the days it hovers, it holds that view as their tooltips open.
   useHeldView();
   usePointer(script);
+  useLayoutEffect(() => {
+    const element = crop.current;
+    const saturday = element?.querySelector('tbody tr:nth-child(6)');
+    if (!element || !saturday) return;
+    const measure = () => {
+      const box = element.getBoundingClientRect();
+      const scale = box.width / element.offsetWidth || 1;
+      setHeight(Math.ceil((saturday.getBoundingClientRect().bottom - box.top) / scale) + 1);
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(saturday);
+    return () => observer.disconnect();
+  }, []);
   return (
-    <CalendarHeatmap
-      aria-label={narrow ? 'Edits in eight weeks' : 'Edits in nine weeks'}
-      data={narrow ? data.slice(0, 56) : data}
-      levels={4}
-      weekStart={1}
-      formatValue={edits}
-      formatDate={dayOf}
-    />
+    <div ref={crop} style={{ blockSize: height, overflow: 'hidden' }}>
+      <CalendarHeatmap
+        aria-label={narrow ? 'Edits in eight weeks' : 'Edits in nine weeks'}
+        data={narrow ? data.slice(0, 56) : data}
+        levels={4}
+        weekStart={1}
+        formatValue={edits}
+        formatDate={dayOf}
+      />
+    </div>
   );
 }
