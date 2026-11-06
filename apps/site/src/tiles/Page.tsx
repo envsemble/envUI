@@ -4,11 +4,14 @@ import { useMedia } from '../motion/Autoplay';
 import { usePointer, type PointerStep } from '../motion/Motion';
 import { narrowGallery } from './Tiles';
 
-/** The page's sections, each with its own line: an overview, then the three it rests on in turn. */
+/**
+ * The page's sections, each with its own line, short enough to fit on one at a phone's width: an
+ * overview, then the three it rests on in turn.
+ */
 const sections = [
-  { title: 'Overview', line: 'A year of steady growth.' },
-  { title: 'Summary', line: 'Revenue rose 18% to $4.2M.' },
-  { title: 'Revenue', line: 'Subscriptions made $3.1M.' },
+  { title: 'Overview', line: 'A year of growth.' },
+  { title: 'Summary', line: 'Revenue rose 18%.' },
+  { title: 'Revenue', line: 'Plans brought $3.1M.' },
   { title: 'Costs', line: 'Spending held at $2.6M.' },
 ];
 

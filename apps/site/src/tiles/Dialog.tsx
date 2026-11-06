@@ -38,7 +38,8 @@ const narrow = { inlineSize: '12rem' } as const;
 /**
  * A dialog that renames a project, open over the project's row, its name and the button that
  * opens it, in the middle of the screen the stage is: its field named by the title above it, its
- * label hidden and small, as a rename's is. Rename renames the project in its row. Stopped, it is
+ * label hidden and small, as a rename's is. The name in the row is a title, as a project's header
+ * shows it, so the renamed row reads once the dialog closes. Rename renames the project in its row. Stopped, it is
  * open again with the first name rather than drawn anew, which would bring it in again.
  */
 export default function DialogTile() {
@@ -54,7 +55,7 @@ export default function DialogTile() {
   });
   return (
     <Row gap={1} align="center">
-      <Text variant="body-sm">{name}</Text>
+      <Text variant="title">{name}</Text>
       <Dialog
         open={open}
         onOpenChange={(next) => {
