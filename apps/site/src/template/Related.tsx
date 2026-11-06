@@ -128,6 +128,7 @@ export function TilePreview({
             className="catalogue-related-canvas"
             data-tile={preview.tile ? '' : undefined}
             data-own-size={ownSize ? '' : undefined}
+            data-overlay={ownSize && preview.window?.overlay ? '' : undefined}
             style={
               preview.window &&
               ({

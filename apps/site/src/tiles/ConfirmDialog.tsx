@@ -29,12 +29,12 @@ const deleting = 1000;
  * under it, so it never shows through the dialog as it comes and goes; the dialog as narrow as its
  * actions allow, so they leave it room.
  */
-const beside = { display: 'flex', inlineSize: '100%', paddingInline: '0.5rem' } as const;
-const narrow = { inlineSize: '12.5rem' } as const;
+const beside = { display: 'flex', inlineSize: '100%', paddingInline: '0.375rem' } as const;
+const narrow = { inlineSize: '12rem' } as const;
 
 /**
- * A confirm dialog, open beside the button that opens it, drawn whole: its question, what it
- * deletes and its actions. Stopped, it is open again rather than drawn anew, which would bring it
+ * A confirm dialog, open beside the button that opens it, drawn whole: its question and its
+ * actions, low enough to show whole at the overlays' scale (Tiles.ts). Stopped, it is open again rather than drawn anew, which would bring it
  * in again; a deletion still running then ends at once, and no longer closes it.
  */
 export default function ConfirmDialogTile() {
@@ -61,7 +61,6 @@ export default function ConfirmDialogTile() {
         trigger={<IconButton variant="secondary" icon={<IconDelete />} aria-label="Delete plan" />}
         tone="danger"
         title="Delete plan?"
-        description="Its 12 tasks go with it."
         style={narrow}
         confirmLabel="Delete"
         onConfirm={() => {

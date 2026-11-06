@@ -8,7 +8,10 @@ const script: PointerStep[] = [
   { to: '.env-button' },
   { wait: 600 },
   { click: true },
-  { wait: 1900 },
+  { wait: 80 },
+  // Just off the button it pressed, so its spinner shows clear while it saves.
+  { to: '.env-button', x: 1.12, y: 1.5, duration: 300 },
+  { wait: 1520 },
   { leave: true },
   { wait: 500 },
 ];

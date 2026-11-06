@@ -32,21 +32,20 @@ const script: PointerStep[] = [
 
 const named = 'Northwind';
 
-/**
- * A dialog as narrow as a gallery's tile shows across at its own size, so its words read as the
- * other tiles' do; taller than the tile, it shows from its top.
- */
-const narrow = { inlineSize: '12.5rem' } as const;
+/** A dialog as narrow as a gallery's tile shows across at the overlays' scale (Tiles.ts). */
+const narrow = { inlineSize: '12rem' } as const;
 
 /**
  * The button, at the start of the screen the stage is, beside the dialog it opens rather than
  * under it, so it never shows through the dialog as it comes and goes.
  */
-const beside = { display: 'flex', inlineSize: '100%', paddingInline: '0.5rem' } as const;
+const beside = { display: 'flex', inlineSize: '100%', paddingInline: '0.375rem' } as const;
 
 /**
- * A dialog that renames a project, open beside the button that opens it, drawn whole. Stopped, it
- * is open again with the first name rather than drawn anew, which would bring it in again.
+ * A dialog that renames a project, open beside the button that opens it, drawn whole: its field
+ * named by the title above it, its label hidden and small, as a rename's is, so it is as low as a
+ * dialog with a field can be. Stopped, it is open again with the first name rather than drawn
+ * anew, which would bring it in again.
  */
 export default function DialogTile() {
   const [open, setOpen] = useState(true);
@@ -68,7 +67,7 @@ export default function DialogTile() {
         closeLabel="Cancel"
         actions={<DialogClose variant="primary">Rename</DialogClose>}
       >
-        <TextField label="Name" value={name} onValueChange={setName} />
+        <TextField label="Name" showLabel={false} size="sm" value={name} onValueChange={setName} />
       </Dialog>
     </div>
   );
