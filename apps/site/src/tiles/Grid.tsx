@@ -27,7 +27,7 @@ const quarters = ['Q1', 'Q2', 'Q3', 'Q4'];
  * does when the room it has changes.
  */
 export default function GridTile() {
-  const step = useTimeline([1100, 1800]);
+  const step = useTimeline([2200, 2200]);
   const narrow = useMedia(narrowGallery);
   return (
     <Surface
