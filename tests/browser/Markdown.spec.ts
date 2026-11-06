@@ -41,6 +41,17 @@ test('a rule is a hairline across the whole text column', async ({ page }) => {
   expect(own).toBeCloseTo(column, 0);
 });
 
+test('bold is semibold, heavier than the regular body text and a heading', async ({ page }) => {
+  await page.goto(fixture);
+  const prose = page.getByTestId('english');
+  await expect(prose.locator('strong')).toHaveCSS('font-weight', '600');
+  await expect(prose.locator('p').filter({ has: page.locator('strong') })).toHaveCSS(
+    'font-weight',
+    '400',
+  );
+  await expect(prose.locator('h2')).toHaveCSS('font-weight', '500');
+});
+
 test('list markers are plain: a spark in the text color or a muted number on the first line, quieter one level in', async ({
   page,
 }) => {

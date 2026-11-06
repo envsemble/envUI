@@ -16,6 +16,8 @@ const document = `## Prices
 | --- | ------ |
 | Tab | Next   |
 
+Prices are **per seat**, billed monthly.
+
 ---
 
 - [x] Draft the brief

@@ -107,7 +107,8 @@ export function TimeWheel({
     0,
     entries.findIndex((entry) => entry.value === current),
   );
-  // The row in the middle while it scrolls, which takes the middle row's look.
+  // The row that takes the middle row's look: the one a turn is heading for, or else the one in the
+  // middle while it scrolls.
   const [centred, setCentred] = useState(middleCopy * count + currentIndex);
   // What a wheel settling later, after a pause or a turn, chooses from: the latest render's entries
   // and choice, never those of the render that started it, so a choice made on another wheel in
@@ -277,7 +278,9 @@ export function TimeWheel({
     let at = centredRow(wheel);
     // A long fling that reaches the last rows goes on from the middle copy rather than stopping.
     if (loop && (at < 3 || at > copies * count - 4)) at = recentre(wheel, at);
-    if (at !== centred) setCentred(at);
+    // A turn the wheel makes itself keeps the middle row's look on the row it is heading for, so the
+    // look doesn't flicker between the rows it passes; scrolling by hand moves it row by row.
+    if (target.current === null && at !== centred) setCentred(at);
     clearTimeout(settleTimer.current);
     // A browser without scrollend, or one that misses it after snapping, settles on a pause.
     if (!turn.current) settleTimer.current = setTimeout(settle, 200);
