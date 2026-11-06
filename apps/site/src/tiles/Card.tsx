@@ -1,12 +1,20 @@
-import type { CSSProperties } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
 import { Button, Card } from '@envsemble/envui';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
-/** The pointer on the card's action, which takes its hover fill, then left. */
+/**
+ * Open pressed: the project loads, its spinner turning over the button a moment, as an application
+ * shows while it opens what the card stands for; then the pointer leaves.
+ */
 const script: PointerStep[] = [
   { wait: 400 },
   { to: '.env-card .env-button', x: 0.45 },
-  { wait: 1800 },
+  { wait: 500 },
+  { click: true },
+  { wait: 80 },
+  // Just off the button it pressed, so its spinner shows clear while the project loads.
+  { to: '.env-card .env-button', x: -0.2, y: 0.6, duration: 300 },
+  { wait: 1500 },
   { leave: true },
   { wait: 800 },
 ];
@@ -23,13 +31,19 @@ const outlined = { '--env-card-outline': 'var(--env-color-border-muted)' } as CS
  * phone's stage at its own size.
  */
 export default function CardTile() {
-  usePointer(script);
+  const [pending, setPending] = useState(false);
+  usePointer(script, { onRest: () => setPending(false) });
+  useEffect(() => {
+    if (!pending) return;
+    const timer = setTimeout(() => setPending(false), 1400);
+    return () => clearTimeout(timer);
+  }, [pending]);
   return (
     <Card
       title="Northwind"
       meta="Today"
       actions={
-        <Button variant="secondary" size="sm">
+        <Button variant="secondary" size="sm" pending={pending} onClick={() => setPending(true)}>
           Open
         </Button>
       }
