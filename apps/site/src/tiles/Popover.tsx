@@ -1,9 +1,7 @@
 import { useState } from 'react';
 import { Button, Column, IconButton, Popover, Text } from '@envsemble/envui';
 import { IconInfo } from '@envsemble/envui/icons/Info';
-import { useMedia } from '../motion/Autoplay';
 import { usePointer, type PointerStep } from '../motion/Motion';
-import { narrowGallery } from './Tiles';
 
 const trigger = '.env-button[aria-haspopup]';
 const action = '.env-popover .env-button';
@@ -39,8 +37,6 @@ type Period = keyof typeof periods;
 export default function PopoverTile() {
   const [open, setOpen] = useState(true);
   const [period, setPeriod] = useState<Period>('monthly');
-  // Two to a row, it opens below its button, inside the narrow stage.
-  const narrow = useMedia(narrowGallery);
   usePointer(script, {
     onRest: () => {
       setPeriod('monthly');
@@ -54,8 +50,7 @@ export default function PopoverTile() {
       onOpenChange={setOpen}
       // Named rather than headed, so it is low enough to show whole beside its button.
       aria-label="Billing period"
-      side={narrow ? 'bottom' : 'inline-end'}
-      align={narrow ? 'start' : 'center'}
+      side="inline-end"
       trigger={<IconButton variant="secondary" icon={<IconInfo />} aria-label="Billing" />}
     >
       {(close) => (

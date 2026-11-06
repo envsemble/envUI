@@ -17,25 +17,11 @@ const people = [
 const row = (index: number) =>
   `.env-list-item:nth-child(${index} of .env-list-item) [data-row-target]`;
 
-/* Down the rows, the last one opened, which makes it the current row, and the second again. */
-const wide: PointerStep[] = [
-  { wait: 300 },
-  { to: row(1), x: 0.5 },
-  { wait: 450 },
-  { to: row(3), x: 0.5, duration: 600 },
-  { wait: 300 },
-  { click: true },
-  { wait: 1200 },
-  { to: row(2), x: 0.5, duration: 450 },
-  { wait: 300 },
-  { click: true },
-  { wait: 600 },
-  { leave: true },
-  { wait: 500 },
-];
-
-/* On a phone's two rows: the first opened, which makes it the current row, and the second again. */
-const short: PointerStep[] = [
+/*
+ * On the two rows the stage shows whole, so its view never moves: the first opened, which makes it
+ * the current row, and the second again.
+ */
+const script: PointerStep[] = [
   { wait: 300 },
   { to: row(1), x: 0.5 },
   { wait: 400 },
@@ -50,13 +36,14 @@ const short: PointerStep[] = [
 ];
 
 /**
- * A list of people, each row opening that person, Sam Lee's the current one; on a phone's lower,
- * narrower tile, its first two rows, narrower, so it is drawn whole at about its own size there.
+ * A list of people, each row opening that person, Sam Lee's the current one: its first two rows
+ * whole, the third fading out at the stage's foot; on a phone's lower, narrower tile, its first
+ * two rows alone, narrower, so it is drawn whole at about its own size there.
  */
 export default function ListTile() {
   const [current, setCurrent] = useState('sam');
   const narrow = useMedia(narrowGallery);
-  usePointer(narrow ? short : wide);
+  usePointer(script);
   return (
     <List.Root aria-label="People" style={{ inlineSize: narrow ? '10rem' : '12rem' }}>
       {(narrow ? people.slice(0, 2) : people).map(({ id, name, role }) => (

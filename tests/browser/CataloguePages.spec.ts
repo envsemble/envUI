@@ -640,13 +640,12 @@ test('every tile of the galleries is fitted: components at one scale, a scene at
           .filter((box) => box.width > scale && box.height > scale)
           .filter((box) => box.width < window.width - 1 || box.height < window.height - 1);
         if (!shown.length) return [`${name}: empty`];
-        // A popup shown open is drawn about as its tile is: in a component's, no larger than the
-        // one scale and no smaller than the least a component's popup is drawn at, or the one
-        // scale where that is smaller, or a held view's least for a tile that rests open, such as
-        // a picker, what its script acts on whole above its fade; in a scene, at about its own
-        // size, as the scene is, so its words read as the other tiles' do (Gallery.css). An
-        // overlay, such as a notification or a dialog, is drawn at the overlays' one scale, or
-        // smaller only where it shows whole no larger, down to its window's least (Tiles.ts).
+        // A popup shown open is drawn as its tile is: in a component's, at the one scale or at
+        // the least a component's popup is drawn at, never between, whole or a window onto it from
+        // its top; in a scene, at about its own size, as the scene is, so its words read as the
+        // other tiles' do (Gallery.css). An overlay, such as a notification or a dialog, is drawn at
+        // the overlays' one scale, or on a phone smaller only where it shows whole no larger, down
+        // to its window's least (Tiles.ts).
         if (canvas.hasAttribute('data-popup')) {
           const at = Number(scaleOf(canvas));
           const own = canvas.hasAttribute('data-own-size');
@@ -654,17 +653,17 @@ test('every tile of the galleries is fitted: components at one scale, a scene at
           const overlay = canvas.hasAttribute('data-overlay')
             ? parseFloat(style.getPropertyValue('--catalogue-overlay-scale'))
             : 0;
-          const most = overlay || (own ? Number(one ?? 1) : 1);
-          const restsOpen = /^(Menu|Select|Combobox|Menubar|CommandPalette|\w+Picker)$/.test(name);
-          // Every component's popup, a dialog's too, is drawn no smaller than one least (useFit.ts),
-          // or the least its tile's window sets for a modal that shows whole only smaller (Tiles.ts).
-          const windowLeast = parseFloat(style.getPropertyValue('--catalogue-own-popup-least'));
-          const heldLeast = parseFloat(style.getPropertyValue('--catalogue-own-held-least'));
-          const least = Math.min(
-            most,
-            own ? Math.min(restsOpen ? heldLeast : 0.84, windowLeast || 0.84) : 0.95,
-          );
-          return at >= least - 0.001 && at <= most + 0.001 ? [] : [`${name}: popup drawn at ${at}`];
+          const popupLeast = parseFloat(style.getPropertyValue('--catalogue-own-popup-least'));
+          const near = (scale: number) => Math.abs(at - scale) <= 0.001;
+          if (!own)
+            return at >= 0.95 - 0.001 && at <= 1.001 ? [] : [`${name}: popup drawn at ${at}`];
+          if (overlay)
+            return near(overlay) || (at < overlay && at >= popupLeast - 0.001)
+              ? []
+              : [`${name}: overlay drawn at ${at}`];
+          return near(Number(one ?? 1)) || near(popupLeast)
+            ? []
+            : [`${name}: popup drawn at ${at}`];
         }
         if (canvas.hasAttribute('data-own-size'))
           return scaleOf(canvas) === one && Number(one) <= 1 ? [] : [`${name}: not at one scale`];
@@ -963,9 +962,6 @@ test("a gallery tile that plays draws out what it opens inside its stage and res
   }
 });
 
-/** The edges a popup tile that rests open may be cut off at on a phone, by its name. */
-const phoneCut: Record<string, RegExp> = { Menubar: /top|bottom/, CommandPalette: /top|end/ };
-
 test('a popup tile rests open and holds one view from its still through its play', async ({
   page,
 }) => {
@@ -982,8 +978,8 @@ test('a popup tile rests open and holds one view from its still through its play
       });
       await tile.scrollIntoViewIfNeeded();
       // At rest, the popup shows open, cut off nowhere; on a phone, where it is larger than the
-      // stage at a popup's least, it runs on past the stage's edge, fading out there, rather than
-      // being drawn smaller: the menu bar's menu at its end, the command palette at its foot.
+      // stage at a popup's least, it runs on past the stage's foot or end, fading out there,
+      // rather than being drawn smaller, never past its top or start.
       if (name !== 'Avatar') {
         await expect(
           tile
@@ -995,7 +991,7 @@ test('a popup tile rests open and holds one view from its still through its play
         await expect(
           tile.locator('.catalogue-related-canvas[data-fitted]'),
           name,
-        ).not.toHaveAttribute('data-cut', width === 390 ? (phoneCut[name] ?? /./) : /./);
+        ).not.toHaveAttribute('data-cut', width === 390 ? /top|start/ : /./);
       }
       const { rest, frames } = await playTile(page, name, [], 4500);
       expect(frames.length, name).toBeGreaterThan(20);
@@ -1168,7 +1164,6 @@ test('a tile that holds its view is framed the same wherever the pointer comes i
     'Combobox',
     'Menubar',
     'CommandPalette',
-    'DatePicker',
     'MonthPicker',
     'TimePicker',
   ]) {

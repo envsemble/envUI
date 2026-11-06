@@ -24,14 +24,14 @@
      modal, such as a dialog, has the whole stage for its screen, its backdrop over all of it, and
      shows from its top where it is taller. A popup's tile is written to show whole, or as a window
      onto it from its top (tiles/). A tile that holds its view, such as a picker resting open, is
-     drawn smaller where what its script acts on, such as the chosen row, would otherwise reach
-     into the fade at the stage's foot, but never smaller than `--catalogue-own-held-least`. The
-     overlays, such as a notification, a popover, a sheet and a dialog, are drawn at one scale,
-     `--catalogue-overlay-scale`, or smaller only where one shows whole no larger (Tiles.ts). */
+     such a window too, what its script acts on, such as the chosen row, above the fade at its
+     foot. So a popup is drawn at its own size or at that one scale, never between. The overlays,
+     such as a notification, a popover, a sheet and a dialog, are drawn at one scale,
+     `--catalogue-overlay-scale`, a dialog taller than its stage shown from its top; on a phone a
+     smaller one, and a dialog smaller still only where it shows whole no larger (Tiles.ts). */
   --catalogue-own-least: 12rem;
   --catalogue-own-least-block: 4.5rem;
   --catalogue-own-popup-least: 0.84;
-  --catalogue-own-held-least: 0.62;
   --catalogue-overlay-scale: 0.84;
 }
 
@@ -103,15 +103,15 @@
    one of a few scales (useFit.ts), its own size where it fits its stage, else `--catalogue-own-floor`,
    laid out as wide as the stage shows at that scale, and an open popup down to its least,
    `--catalogue-own-popup-least`, as legible as the tiles beside it; what is larger still is shown
-   from its top and cut off at its end and its foot, fading out, and only a held view, such as a
-   picker, is drawn smaller, down to `--catalogue-own-held-least` (above). A pattern's scene keeps
-   its own card, one to a row (above). */
+   from its top and cut off at its end and its foot, fading out. Only an overlay, such as a
+   notification or a dialog, is drawn smaller, at `--catalogue-overlay-scale` (above): one of a
+   notification's width shows whole there. A pattern's scene keeps its own card, one to a row
+   (above). */
 @container catalogue-gallery (width < 27.25rem) {
   .catalogue-gallery-grid:not([data-scenes]) {
     --catalogue-own-least: 0rem;
     --catalogue-own-floor: 0.85;
     --catalogue-own-popup-least: 0.85;
-    --catalogue-own-held-least: 0.6;
     --catalogue-overlay-scale: 0.75;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     row-gap: var(--env-space-5);
@@ -125,24 +125,24 @@
     .catalogue-related-canvas[data-own-size] {
     inline-size: min(14rem, (100% - 2rem) / var(--catalogue-own-floor));
   }
-  /* A popup shown open lays out no wider than the stage's room shows at a popup's least, a
-     margin from its edges, where it is drawn whole (useFit.ts), so what fits its window fits the
-     stage, such as a notification at its own width, its message on one line; one narrower is drawn
-     larger. */
+  /* A popup shown open, a notification too, lays out no wider than the stage's room shows at a
+     popup's least, the fit's inset from its edges (useFit.ts), so what fits its window fits the
+     stage; one narrower is drawn larger. */
   .catalogue-gallery-grid:not([data-scenes])
     .catalogue-gallery-stage.catalogue-gallery-stage
     .catalogue-related-canvas[data-own-size][data-popup] {
     inline-size: min(
       var(--catalogue-tile-width, 14rem),
-      (100% - 0.75rem) / var(--catalogue-own-popup-least)
+      (100% - 2rem) / var(--catalogue-own-popup-least)
     );
   }
-  /* An overlay lays out at its own window's width, as it does on a wide page, such as a
-     notification with its message on one line, and is drawn smaller to fit (useFit.ts). */
+  /* An overlay lays out as wide as the stage's room shows at the overlays' scale, about the fit's
+     inset from its edges, with the gutters a notification keeps around it, so a notification shows
+     its message on one line (useFit.ts). */
   .catalogue-gallery-grid:not([data-scenes])
     .catalogue-gallery-stage.catalogue-gallery-stage
     .catalogue-related-canvas[data-own-size][data-popup][data-overlay] {
-    inline-size: var(--catalogue-tile-width, 14rem);
+    inline-size: calc((100% - 1.75rem) / var(--catalogue-overlay-scale) + 1.5rem);
   }
 }
 

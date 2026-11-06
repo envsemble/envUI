@@ -19,8 +19,8 @@ const script: PointerStep[] = [
 ];
 
 /**
- * The page the sheet opens at the edge of, outlined, as large as the tile's window: the button at
- * its top, over two short rows whose words end before the sheet, so it ends on whole rows.
+ * The page the sheet opens at the edge of, outlined, as large as the tile's window: the button in
+ * its middle, over two short rows, so closed, the page stands in the middle of the stage.
  */
 const page = {
   inlineSize: '100%',
@@ -29,6 +29,8 @@ const page = {
   boxSizing: 'border-box',
   border: '0.0625rem solid var(--env-color-border-muted)',
   overflow: 'hidden',
+  alignItems: 'center',
+  justifyContent: 'center',
 } as const;
 
 const rows = ['Plans', 'Team'];
