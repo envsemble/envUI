@@ -424,7 +424,7 @@ export function DeviceStage({ kind, children }: { kind: DeviceKind; children: Re
           !span || (span[0] >= place.x - 0.5 && span[1] <= place.x + place.width / scale + 0.5)
         );
       };
-      let x = 0;
+      let x: number;
       const outset = { start: 0, end: 0 };
       if (kept && keeps(kept)) {
         x = kept.x;
