@@ -355,7 +355,7 @@ export function LiveExample({
           {...keepLinksInPlace}
         >
           <MotionStage label="the example's width changing" stage={stage}>
-            <WidthSweep widths={widths} classes={classes} fit={fit}>
+            <WidthSweep widths={widths} classes={classes} fit={fit} crop>
               {render}
             </WidthSweep>
           </MotionStage>

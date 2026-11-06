@@ -28,8 +28,8 @@ const firstHold = 400;
 const travelTime = (from: number, to: number) => 700 + 70 * Math.abs(to - from);
 /** Eases a move in and out, gently, as a window's edge dragged by hand. */
 const ease = (t: number) => (1 - Math.cos(Math.PI * t)) / 2;
-/** How long a cropped frame takes to pan from its end to its start, at its widest, in ms. */
-const panTime = 1600;
+/** How long a cropped frame takes to pan across, from its start to its end or back, in ms. */
+const panTime = 1200;
 /** How finely the example's height is sampled along the sweep, in rem. */
 const sampleStep = 0.25;
 
@@ -64,9 +64,8 @@ const orderOf = (count: number) =>
 /**
  * The frame's width at a time of its loop, which holds at each width and then moves on, and where
  * a frame cut off at the stage's edges is seen from (`camera`), 0 from its start, 1 from its end:
- * from its end, the edge that moves, as it widens; from its start as it narrows; and at its widest,
- * held longer with `pan`, panning from its end to its start, so a row wider than the stage shows
- * whole along the way.
+ * from its start, where its content begins, but at its widest, held longer with `pan`, where it
+ * pans to its end and back, so a row wider than the stage shows whole along the way.
  */
 function widthAt(time: number, stops: readonly number[], hold: number, pan: boolean) {
   const order = orderOf(stops.length);
@@ -74,22 +73,23 @@ function widthAt(time: number, stops: readonly number[], hold: number, pan: bool
   const legs = order.map((index, leg) => {
     const from = stops[index]!;
     const to = stops[order[(leg + 1) % order.length]!]!;
-    const still = pan && from === widest ? hold + panTime : hold;
+    const still = pan && from === widest ? hold + 2 * panTime : hold;
     return { from, to, still, travel: from === to ? 0 : travelTime(from, to) };
   });
   const length = legs.reduce((sum, leg) => sum + leg.still + leg.travel, 0);
   let left = time % length;
-  let camera = 0;
   for (const leg of legs) {
     if (left < leg.still) {
-      if (leg.still === hold) return { width: leg.from, camera };
-      const panned = Math.min(1, Math.max(0, (left - hold / 2) / panTime));
-      return { width: leg.from, camera: 1 - ease(panned) };
+      if (leg.still === hold) return { width: leg.from, camera: 0 };
+      // A third of the hold at the start, the pan out, a third at the end, the pan back.
+      const out = (left - hold / 3) / panTime;
+      const back = (left - (2 * hold) / 3 - panTime) / panTime;
+      const clamp = (value: number) => Math.min(1, Math.max(0, value));
+      return { width: leg.from, camera: ease(clamp(out)) - ease(clamp(back)) };
     }
     left -= leg.still;
-    camera = leg.to > leg.from ? 1 : 0;
     if (left < leg.travel)
-      return { width: leg.from + (leg.to - leg.from) * ease(left / leg.travel), camera };
+      return { width: leg.from + (leg.to - leg.from) * ease(left / leg.travel), camera: 0 };
     left -= leg.travel;
   }
   return { width: stops[0]!, camera: 0 };
@@ -103,10 +103,10 @@ function widthAt(time: number, stops: readonly number[], hold: number, pan: bool
  * at a width, such as opening a sheet at the narrow end, driven by a useTimeline step or a cue.
  * `classes` names the window class beside the width, for an example that changes at one, or in
  * its place with `'only'`, on a page that shows no lengths, such as a foundation's; `fit` draws the
- * frame smaller where it must, to 0.6, to reach its widest width on the stage; `crop` draws it at
- * the least scale still and cuts it off at the stage's edges instead, the view following the edge
- * that moves and panning across it at its widest, for an example whose wide layout needs more
- * room than a phone's stage has at a legible scale; `ruler={false}`
+ * frame smaller where it must, to 0.6, to reach its widest width on the stage; `crop`, where the
+ * widest doesn't fit even so, draws it at 0.8 and cuts it off at the stage's edges instead, the
+ * view following the edge that moves and panning across it at its widest, so a wide layout that
+ * needs more room than a phone's stage has still shows, legibly; `ruler={false}`
  * leaves the ruler out, for a figure whose point isn't the width in numbers; and `outline={false}`
  * leaves the frame's dashed edge out too, for a figure that only needs a width of its own, drawn
  * smaller on a narrower stage, such as a dock with room for two panels.
@@ -215,10 +215,13 @@ export function WidthSweep({
       let scale = Math.min(1, space / (widest * rem));
       let limit = Infinity;
       const cropped = crop && scale < least;
-      if (scale < least) {
+      if (cropped) {
+        // Cut off, at the scale that keeps its text legible, rather than at a fit's least.
+        scale = leastScale;
+      } else if (scale < least) {
         scale = least;
         // In whole rem, so the ruler names the narrower width as it names the others.
-        if (!crop) limit = Math.floor(space / (least * rem));
+        limit = Math.floor(space / (least * rem));
       }
       const shownStops = stops.map((width) => Math.min(width, limit));
       const narrowest = Math.min(...shownStops);
@@ -307,7 +310,12 @@ export function WidthSweep({
       const passed = now - last;
       last = now;
       if (at === undefined) {
-        if (clock.current < 0) clock.current = hold - firstHold;
+        if (clock.current < 0) {
+          // A cropped frame that starts at its widest starts as its pan there ends.
+          const { stops, cropped } = layout.current;
+          const panned = cropped && stops[0] === Math.max(...stops);
+          clock.current = (panned ? hold + 2 * panTime : hold) - firstHold;
+        }
         clock.current += passed;
         const { width, camera: from } = widthAt(
           clock.current,
