@@ -9,6 +9,7 @@ import {
   type Heading,
 } from '../motion/MustShow';
 import { aimedElement } from '../motion/PointerPlan';
+import { narrowGallery } from '../tiles/Tiles';
 
 /** The least room, in px, between a preview and its stage's edges. */
 const inset = 16;
@@ -356,6 +357,11 @@ export function useFit(
     let following = false;
     // What the fit at hand was decided on, measured before it moves anything (shapeOf).
     let measured: Shape | null = null;
+    // Whether a held popup is drawn whole a little smaller (narrower, below), and at what scale,
+    // decided as it is first fitted, for its stage's size: a popup is placed again as the view
+    // changes, a little higher or lower against the window's edge, and a choice that followed it
+    // would go back and forth.
+    let wholeFor: { room: string; narrower: number | null; whole: number } | null = null;
     // Where a held view's fade at its foot starts at the latest, in the canvas's own px: below what
     // its script acts on, such as a picker's chosen row.
     let fadeAt: number | null = null;
@@ -1091,18 +1097,34 @@ export function useFit(
       // shows whole so, what it opens from the inset from the edges and the popup a little room
       // (anchoredScale), else the popups' one scale, whole there or a window onto it from its top,
       // fading out at its foot.
-      // On a phone, a held popup that runs past the stage's end at the popups' least but shows
-      // whole a little smaller, such as a menu bar's menu opened from its last menu, is drawn whole
-      // at that scale, down to a held view's least, rather than cut off at the stage's end; it
-      // lays out as wide as at the popups' least, so its width doesn't follow its scale (below).
-      const acrossScale =
-        anchored && phone && holdsView(canvasElement)
-          ? anchoredScale(anchored, stageElement.clientWidth, Infinity)
-          : Infinity;
-      const narrower =
-        acrossScale < popupLeast - 0.0005 && roomScale >= heldNextLeast - 0.0005
-          ? Math.floor(roomScale * 1000) / 1000
-          : null;
+      // On a phone, in a gallery or in Related, a held popup that runs past the stage's end or foot
+      // at the popups' least but shows whole a little smaller, such as a menu bar's menu opened
+      // from its last menu or a select's list on a lower stage, is drawn whole at that scale, a
+      // little room from the stage's foot, down to `heldNextLeast`, rather than cut off at the
+      // stage's edge; it lays out as wide as at the popups' least, so its width doesn't follow its
+      // scale (below). On a wider page a popup is drawn at one of two scales, never between.
+      const stageRoom = `${stageElement.clientWidth} ${stageElement.clientHeight}`;
+      if (canvasElement.dataset.fitted === undefined || wholeFor?.room !== stageRoom) {
+        const whole =
+          anchored && holdsView(canvasElement) && (phone || matchMedia(narrowGallery).matches)
+            ? anchoredScale(
+                anchored.map(({ box }) => ({ box, pad: wholeRoom })),
+                stageElement.clientWidth,
+                stageElement.clientHeight,
+              )
+            : 0;
+        wholeFor = {
+          room: stageRoom,
+          whole,
+          narrower:
+            roomScale < popupLeast - 0.0005 &&
+            whole < popupLeast - 0.0005 &&
+            whole >= heldNextLeast - 0.0005
+              ? Math.floor(whole * 1000) / 1000
+              : null,
+        };
+      }
+      const { narrower, whole: heldWhole } = wholeFor;
       const popupScale = (atMost: number) => {
         if (Math.max(wholeScale, roomScale) >= atMost - 0.0005) return atMost;
         return narrower ?? Math.min(atMost, popupLeast);
@@ -1159,7 +1181,10 @@ export function useFit(
           .find((each) => each <= wants + 0.0005);
         return found ?? Math.max(heldLeast, Math.floor(wants * 1000) / 1000);
       };
-      const framedAt = ownSize || legible ? heldScale(drawn) : drawn;
+      // Drawn whole a little smaller (narrower), or at the overlays' scale where that shows it
+      // whole so too, it is framed whole, centred, as it is.
+      const drawnWhole = narrower !== null && drawn <= heldWhole + 0.0005;
+      const framedAt = (ownSize || legible) && !drawnWhole ? heldScale(drawn) : drawn;
       const fitted = subject ? Math.min(framedAt, subjectScale(drawn)) : framedAt;
       const heldSmaller = subject && fitted < drawn - 0.0005;
       if (canvasElement.hasAttribute('data-held-scale') !== heldSmaller)
@@ -1194,9 +1219,11 @@ export function useFit(
       // than the inset leaves room for, is centred on it, cut off nowhere; a popup, with what it
       // opens from, only where it keeps the inset from every edge, else shown from its start, the
       // inset from the stage's top and start, and cut off past the inset's room.
-      const inRoom = anchored
-        ? down <= height + insetSlack && across <= width + insetSlack
-        : down <= room.height + 0.5 && across <= room.width + 0.5;
+      const inRoom =
+        drawnWhole ||
+        (anchored
+          ? down <= height + insetSlack && across <= width + insetSlack
+          : down <= room.height + 0.5 && across <= room.width + 0.5);
       // So is a component a little wider than the inset leaves room for, such as a strip of tabs,
       // across: it is cut off at its foot alone, as every other one is, not at its side.
       const acrossRoom = across <= (anchored ? width + insetSlack : room.width + 0.5);
@@ -1770,6 +1797,13 @@ const heldItems = [
  * one, the view can still give it that.
  */
 const popupRoom = 5;
+
+/**
+ * The room, in px, a held popup drawn whole a little smaller than the popups' least keeps from its
+ * stage's edges, with what it opens from (useFit): more than the room a popup keeps where it is
+ * drawn at its own size, so its foot doesn't sit on the stage's.
+ */
+const wholeRoom = 8;
 
 /** How far, in px, a resting preview's popup is placed again before its view follows it. */
 const followSlack = 4;
