@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Avatar, Checkbox, Column, IconButton, List, Row, Sheet, Text } from '@envsemble/envui';
+import { Checkbox, Column, IconButton, List, Row, Sheet, Text } from '@envsemble/envui';
 import { IconFilterList } from '@envsemble/envui/icons/FilterList';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
@@ -27,14 +27,15 @@ const page = {
   overflow: 'hidden',
 } as const;
 
-const projects = ['Northwind', 'Starter plan', 'Q3 launch'];
+/** Two projects, as many as the stage shows whole, with names short enough to read beside the sheet. */
+const projects = ['Billing', 'Search'];
 
 /**
  * A side sheet that filters a list of projects, open at the end edge over the page: its title, its
  * cross and a filter, with no actions below, so it shows whole in its low window (Tiles.ts) and
  * what closes it is in view. The button that opens it is at the end of the list's heading, under
- * the sheet, and the list's start, each project's avatar and name, shows beside the sheet under
- * its backdrop, on a phone too. Stopped, it is open again rather than drawn anew, which would
+ * the sheet, and the list's start, each project's name, shows beside the sheet under its backdrop,
+ * on a phone too. Stopped, it is open again rather than drawn anew, which would
  * bring it in again.
  */
 export default function SheetTile() {
@@ -58,7 +59,7 @@ export default function SheetTile() {
       </Row>
       <List.Root aria-label="Projects" density="sm">
         {projects.map((name) => (
-          <List.Item key={name} start={<Avatar name={name} size="sm" />} label={name} />
+          <List.Item key={name} label={name} />
         ))}
       </List.Root>
     </Column>
