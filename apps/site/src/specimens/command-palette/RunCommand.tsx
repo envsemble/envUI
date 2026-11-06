@@ -9,8 +9,8 @@ const input = '.env-command-palette-input';
 /*
  * The pointer presses Run a command: the palette opens on the commands, with their shortcuts and a
  * badge. The arrow keys move the highlight down to Switch theme, and Enter runs it, closing the
- * palette; each key shows as a cap in the stage's corner as it is pressed. The example is drawn
- * anew at the end, which clears what it says it ran.
+ * palette; each key shows as a cap beside the palette's field as it is pressed. The example is
+ * drawn anew at the end, which clears what it says it ran.
  */
 const script: PointerStep[] = [
   { wait: 500 },
@@ -43,7 +43,7 @@ const script: PointerStep[] = [
 
 function Running() {
   const [round, setRound] = useState(0);
-  // The key just pressed, as a cap in the stage's corner, since no pointer shows it.
+  // The key just pressed, as a cap beside the field it goes to, since no pointer shows it.
   const [pressed, setPressed] = useState<{ keys: string[]; press: number } | null>(null);
   usePointer(script, {
     onCue: (cue) => {
@@ -59,7 +59,7 @@ function Running() {
     // below where the palette opens, so the frosted panel never blurs the button behind it, and
     // the button stays put as what it ran comes.
     <div style={{ display: 'grid', alignContent: 'end', minBlockSize: roomFor(23, 24, 30) }}>
-      <PressedKeys keys={pressed?.keys ?? null} press={pressed?.press ?? 0} />
+      <PressedKeys keys={pressed?.keys ?? null} press={pressed?.press ?? 0} beside={input} />
       <RunCommand key={round} />
     </div>
   );
