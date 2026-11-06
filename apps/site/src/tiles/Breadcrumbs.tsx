@@ -6,7 +6,8 @@ const link = (index: number) => `.env-breadcrumbs-item:nth-child(${index}) > .en
 
 /**
  * Along the trail, then a press on Plans, a level back: the trail ends there, Plans now the current
- * page, and holds so a while, the pointer gone; then, as the loop starts over, it is drawn anew as
+ * page, the pointer resting on it a moment so the press reads as what shortened it, and holds so a
+ * while, the pointer gone; then, as the loop starts over, it is drawn anew as
  * it began, crossfading into the whole trail (Crossfade), since nothing on the trail leads forward
  * again, and the pointer walks it again, so the loop is paced across the whole of a look at the
  * card rather than holding still after its first seconds.
@@ -18,9 +19,9 @@ const script: PointerStep[] = [
   { to: link(2), y: 0.6, duration: 450 },
   { wait: 450 },
   { click: true },
-  { wait: 300 },
+  { wait: 700 },
   { leave: true },
-  { wait: 2100 },
+  { wait: 1700 },
   { cue: 'renew' },
   { wait: 500 },
 ];
