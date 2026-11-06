@@ -59,9 +59,10 @@ const leastScale: Record<DeviceKind, number> = { phone: 0.8, window: 0.75 };
 const leastText = 10;
 
 /**
- * Where a still figure's view starts across a screen cut off at its end, in the device's px: a
- * frame of an application shows where its navigation meets its page, the page from halfway in, so
- * a narrow stage shows as much of the page's content as of the navigation's labels.
+ * Where a view starts across a screen cut off at its end, in the device's px, where its figure
+ * names nothing to keep in view, such as a still one: a frame of an application shows where its
+ * navigation meets its page, the page from halfway in, so a narrow stage shows as much of the
+ * page's content as of the navigation's labels.
  */
 function boundaryStart(row: Element, scale: number, size: number) {
   const body = row.querySelector('.env-scaffold-body');
@@ -253,7 +254,7 @@ export function DeviceStage({ kind, children }: { kind: DeviceKind; children: Re
       const heading = root && headingOf(root);
       const focus = heading ? pointBox(rowElement, drawn, heading) : undefined;
       const along = (size: number) =>
-        root
+        boxes.length || focus
           ? viewStart(
               width,
               size / scale,
