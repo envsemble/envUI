@@ -25,11 +25,14 @@
      shows from its top where it is taller. A popup's tile is written to show whole, or as a window
      onto it from its top (tiles/). A tile that holds its view, such as a picker resting open, is
      drawn smaller where what its script acts on, such as the chosen row, would otherwise reach
-     into the fade at the stage's foot, but never smaller than `--catalogue-own-held-least`. */
+     into the fade at the stage's foot, but never smaller than `--catalogue-own-held-least`. The
+     overlays, such as a notification, a popover, a sheet and a dialog, are drawn at one scale,
+     `--catalogue-overlay-scale`, or smaller only where one shows whole no larger (Tiles.ts). */
   --catalogue-own-least: 12rem;
   --catalogue-own-least-block: 4.5rem;
   --catalogue-own-popup-least: 0.84;
-  --catalogue-own-held-least: 0.7;
+  --catalogue-own-held-least: 0.62;
+  --catalogue-overlay-scale: 0.84;
 }
 
 .catalogue-gallery-grid {
@@ -108,6 +111,8 @@
     --catalogue-own-least: 0rem;
     --catalogue-own-floor: 0.85;
     --catalogue-own-popup-least: 0.85;
+    --catalogue-own-held-least: 0.6;
+    --catalogue-overlay-scale: 0.75;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     row-gap: var(--env-space-5);
     column-gap: var(--env-space-4);
@@ -131,6 +136,13 @@
       var(--catalogue-tile-width, 14rem),
       (100% - 0.75rem) / var(--catalogue-own-popup-least)
     );
+  }
+  /* An overlay lays out at its own window's width, as it does on a wide page, such as a
+     notification with its message on one line, and is drawn smaller to fit (useFit.ts). */
+  .catalogue-gallery-grid:not([data-scenes])
+    .catalogue-gallery-stage.catalogue-gallery-stage
+    .catalogue-related-canvas[data-own-size][data-popup][data-overlay] {
+    inline-size: var(--catalogue-tile-width, 14rem);
   }
 }
 

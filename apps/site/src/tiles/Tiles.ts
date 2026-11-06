@@ -27,6 +27,13 @@ export interface TileWindow {
    * (Gallery.css): for a modal whose least whole size is taller than a tile's stage at that scale.
    */
   popupLeast?: number;
+  /**
+   * Whether it is an overlay, such as a notification, a popover, a sheet or a dialog: it lays out
+   * at its window's width at every stage's width, so it is drawn as it is in an application, and is
+   * drawn at the overlays' one scale, `--catalogue-overlay-scale` (Gallery.css), or smaller only
+   * where it shows whole no larger, so the overlays read as one row.
+   */
+  overlay?: boolean;
 }
 
 /**
@@ -46,13 +53,16 @@ export const tileWindows: Readonly<Record<string, TileWindow>> = {
   'navigation-drawer': { width: 17, height: 12.75 },
   tabs: { width: 15, height: 11.25 },
   breadcrumbs: { width: 15, height: 11.25 },
-  // A dialog with a field is taller than a tile's window: it lays out whole in a taller one, and
-  // its title, field and actions show whole drawn smaller than a popup's least.
-  dialog: { width: 14, height: 13, popupLeast: 0.56 },
+  // The overlays, each drawn at the overlays' one scale. A dialog with a field is taller than a
+  // tile's window: it lays out whole in a taller one, and its title, field and actions show whole
+  // drawn smaller than the overlays' scale, down to its own least.
+  toast: { width: 14, height: 10.5, overlay: true },
+  popover: { width: 14, height: 10.5, overlay: true },
+  dialog: { width: 14, height: 13, popupLeast: 0.56, overlay: true },
   // A sheet of a title and a filter is as tall as its window: lower than a tile's, it shows whole.
-  sheet: { width: 14, height: 7 },
+  sheet: { width: 14, height: 7, overlay: true },
   // A confirm dialog with its button beside it is wider than a tile's stage at a popup's least.
-  'confirm-dialog': { width: 15, height: 11.25, popupLeast: 0.56 },
+  'confirm-dialog': { width: 15, height: 11.25, popupLeast: 0.56, overlay: true },
   'date-picker': { width: 20, height: 15 },
   'time-picker': { width: 24, height: 18 },
   'month-picker': { width: 27, height: 20.25 },

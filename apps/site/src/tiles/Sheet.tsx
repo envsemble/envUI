@@ -1,9 +1,7 @@
 import { useState } from 'react';
 import { Checkbox, Column, IconButton, Sheet, Text } from '@envsemble/envui';
 import { IconFilterList } from '@envsemble/envui/icons/FilterList';
-import { useMedia } from '../motion/Autoplay';
 import { usePointer, type PointerStep } from '../motion/Motion';
-import { narrowGallery } from './Tiles';
 
 /** Closed by its cross, toward its edge; opened again from its button. */
 const script: PointerStep[] = [
@@ -38,13 +36,11 @@ const rows = ['Plans', 'Team'];
 /**
  * A side sheet, open at the end edge beside the button that opens it, over a list of projects: its
  * title, its cross and a filter, with no actions below, so it shows whole in its low window
- * (Tiles.ts) and what closes it is in view. On a phone's narrower tile it takes its own width, the
- * whole width of a window that narrow, rather than leave a sliver of the page beside it. Stopped, it is open again rather than drawn anew, which
- * would bring it in again.
+ * (Tiles.ts) and what closes it is in view, beside a strip of the page under its backdrop, on a
+ * phone too. Stopped, it is open again rather than drawn anew, which would bring it in again.
  */
 export default function SheetTile() {
   const [open, setOpen] = useState(true);
-  const narrow = useMedia(narrowGallery);
   usePointer(script, { onRest: () => setOpen(true) });
   return (
     <Column gap={2} style={page}>
@@ -52,7 +48,7 @@ export default function SheetTile() {
         open={open}
         onOpenChange={setOpen}
         trigger={<IconButton variant="secondary" icon={<IconFilterList />} aria-label="Filters" />}
-        width={narrow ? undefined : 9.5}
+        width={9.5}
         title="Filters"
       >
         <Checkbox label="Active" defaultChecked />

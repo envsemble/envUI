@@ -644,22 +644,27 @@ test('every tile of the galleries is fitted: components at one scale, a scene at
         // one scale and no smaller than the least a component's popup is drawn at, or the one
         // scale where that is smaller, or a held view's least for a tile that rests open, such as
         // a picker, what its script acts on whole above its fade; in a scene, at about its own
-        // size, as the scene is, so its words read as the other tiles' do (Gallery.css).
+        // size, as the scene is, so its words read as the other tiles' do (Gallery.css). An
+        // overlay, such as a notification or a dialog, is drawn at the overlays' one scale, or
+        // smaller only where it shows whole no larger, down to its window's least (Tiles.ts).
         if (canvas.hasAttribute('data-popup')) {
           const at = Number(scaleOf(canvas));
           const own = canvas.hasAttribute('data-own-size');
-          const most = own ? Number(one ?? 1) : 1;
-          const restsOpen = /^(Select|Combobox|Menubar|CommandPalette|\w+Picker)$/.test(name);
+          const style = getComputedStyle(canvas);
+          const overlay = canvas.hasAttribute('data-overlay')
+            ? parseFloat(style.getPropertyValue('--catalogue-overlay-scale'))
+            : 0;
+          const most = overlay || (own ? Number(one ?? 1) : 1);
+          const restsOpen = /^(Menu|Select|Combobox|Menubar|CommandPalette|\w+Picker)$/.test(name);
           // Every component's popup, a dialog's too, is drawn no smaller than one least (useFit.ts),
           // or the least its tile's window sets for a modal that shows whole only smaller (Tiles.ts).
-          const windowLeast = parseFloat(
-            getComputedStyle(canvas).getPropertyValue('--catalogue-own-popup-least'),
-          );
+          const windowLeast = parseFloat(style.getPropertyValue('--catalogue-own-popup-least'));
+          const heldLeast = parseFloat(style.getPropertyValue('--catalogue-own-held-least'));
           const least = Math.min(
             most,
-            own ? Math.min(restsOpen ? 0.7 : 0.84, windowLeast || 0.84) : 0.95,
+            own ? Math.min(restsOpen ? heldLeast : 0.84, windowLeast || 0.84) : 0.95,
           );
-          return at >= least - 0.001 && at <= most ? [] : [`${name}: popup drawn at ${at}`];
+          return at >= least - 0.001 && at <= most + 0.001 ? [] : [`${name}: popup drawn at ${at}`];
         }
         if (canvas.hasAttribute('data-own-size'))
           return scaleOf(canvas) === one && Number(one) <= 1 ? [] : [`${name}: not at one scale`];
@@ -741,6 +746,44 @@ test('every tile of the galleries is fitted: components at one scale, a scene at
     );
     expect(cutPopups, route).toEqual([]);
   }
+});
+
+test('on a phone, no gallery tile breaks a word across lines', async ({ page }) => {
+  // Each component lays out as wide as it is written for, such as a notification at its own width,
+  // and is drawn smaller to fit its stage, rather than squeezed until a word breaks mid-way.
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(`${siteDevUrl}/components`);
+  const tiles = page.locator('.catalogue-gallery-tile');
+  await expect(tiles.first()).toBeVisible();
+  const count = await tiles.count();
+  for (let index = 0; index < count; index += 4) await tiles.nth(index).scrollIntoViewIfNeeded();
+  const broken = () =>
+    tiles.evaluateAll((items) =>
+      items.flatMap((tile) => {
+        const canvas = tile.querySelector('.catalogue-related-canvas[data-fitted]');
+        if (!canvas) return [`${tile.textContent}: not fitted`];
+        const name = tile.querySelector('.catalogue-gallery-name')?.textContent;
+        const walker = document.createTreeWalker(canvas, NodeFilter.SHOW_TEXT);
+        const found: string[] = [];
+        for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+          if (!node.parentElement?.checkVisibility({ visibilityProperty: true })) continue;
+          for (const word of node.textContent!.matchAll(/\S{2,}/g)) {
+            const range = document.createRange();
+            range.setStart(node, word.index);
+            range.setEnd(node, word.index + word[0].length);
+            // The lines a word's boxes stand on: more than one where it breaks.
+            const lines = new Set(
+              [...range.getClientRects()]
+                .filter((box) => box.width > 0)
+                .map((box) => Math.round(box.bottom)),
+            );
+            if (lines.size > 1) found.push(`${name}: ${word[0]}`);
+          }
+        }
+        return found;
+      }),
+    );
+  await expect.poll(broken).toEqual([]);
 });
 
 /** A gallery tile's view: the translate and scale its canvas is drawn at (useFit.ts). */
@@ -1120,6 +1163,7 @@ test('a tile that holds its view is framed the same wherever the pointer comes i
   await expect(page.locator('.catalogue-related-canvas[data-fitted]').first()).toBeVisible();
   for (const name of [
     'Avatar',
+    'Menu',
     'Select',
     'Combobox',
     'Menubar',

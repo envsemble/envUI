@@ -168,7 +168,13 @@ const rowSlack = 2;
  * fade starts no higher, so what is above it shows whole. A row that holds others, such as a tree's
  * branch, is left to its rows.
  */
-function trimRows(canvas: HTMLElement, played = false, fadeFrom: number | null = null) {
+function trimRows(
+  canvas: HTMLElement,
+  played = false,
+  fadeFrom: number | null = null,
+  /** Whether the crop's foot is a screen's edge, which cuts off rather than fades (screenFit). */
+  edge = false,
+) {
   const crop = canvas.parentElement;
   if (!crop?.classList.contains('catalogue-related-crop')) return;
   if (!canvas.dataset.cut?.split(' ').includes('bottom')) {
@@ -180,23 +186,29 @@ function trimRows(canvas: HTMLElement, played = false, fadeFrom: number | null =
   const { top, height } = crop.getBoundingClientRect();
   const fade =
     parseFloat(getComputedStyle(crop).getPropertyValue('--catalogue-crop-fade')) * remSize();
-  const length = fadeFrom === null ? fade : Math.max(0, Math.min(fade, height - fadeFrom));
+  const length = edge
+    ? 0
+    : fadeFrom === null
+      ? fade
+      : Math.max(0, Math.min(fade, height - fadeFrom));
   // How far up from the foot a row's top shows no more than a sliver: in a fade's faint end, or
   // anywhere in a fade too short to fade a row out.
   const sliver = length < remSize() / 2 ? length + 0.5 : length / 2;
   for (const row of canvas.querySelectorAll<HTMLElement>(rowSelector)) {
     const box = row.getBoundingClientRect();
     // As a tile plays, its view drawn out for all it shows, a row it showed stays as the view
-    // moves, cut off by the fade, rather than going and coming back.
+    // moves, cut off by the fade, rather than going and coming back. At a screen's edge, which
+    // doesn't fade, a row shows whole or not at all.
     if (
       !row.querySelector(rowSelector) &&
       box.bottom - top > height + rowSlack &&
-      box.top - top > height - sliver
+      (edge || box.top - top > height - sliver)
     ) {
-      if (!played) row.dataset.cataloguePast = '';
+      if (!played || edge) row.dataset.cataloguePast = '';
     } else delete row.dataset.cataloguePast;
   }
-  if (fadeFrom === null) crop.style.removeProperty('--catalogue-crop-bottom');
+  if (edge) crop.style.setProperty('--catalogue-crop-bottom', '0px');
+  else if (fadeFrom === null) crop.style.removeProperty('--catalogue-crop-bottom');
   else crop.style.setProperty('--catalogue-crop-bottom', `${length}px`);
 }
 
@@ -339,12 +351,16 @@ export function useFit(
     // Where a held view's fade at its foot starts at the latest, in the canvas's own px: below what
     // its script acts on, such as a picker's chosen row (heldTop).
     let fadeAt: number | null = null;
-    /** Hides the rows past the crop's foot and fades it out there, below `fadeAt` (trimRows). */
+    /**
+     * Hides the rows past the crop's foot and fades it out there, below `fadeAt`; a modal's screen
+     * is cut off at the stage's edges, as at a screen's, its backdrop whole (trimRows).
+     */
     const trim = (played = false) =>
       trimRows(
         canvasElement,
         played,
         fadeAt === null ? null : stageElement.clientHeight / 2 - view.y + fadeAt * view.scale,
+        screen,
       );
     /** What a fit at rest is decided on, where the canvas is in its stage, if that shows whole. */
     const shapeOf = (boxes: Shown[]): Shape => {
@@ -761,8 +777,11 @@ export function useFit(
         !playingNow.current &&
         canvasElement.dataset.fitted !== undefined &&
         boxes.some(({ element }) => settling(element, canvasElement))
-      )
+      ) {
+        // What comes in meanwhile, such as a palette's results, is trimmed where it stands.
+        trim();
         return;
+      }
       // At rest, a preview framed on what it shows holds that view, and after it played, eases back
       // to it, rather than framing it again on where its popups were placed meanwhile (holdsFrame).
       measured = playingNow.current ? null : shapeOf(boxes);
@@ -778,8 +797,9 @@ export function useFit(
           else delete canvasElement.dataset.cut;
           fadeAt = framed.fadeAt;
           settle(scale, toX, toY, boxes);
-          trim();
         }
+        // What it shows anew in that view, such as a palette's results cleared, is trimmed too.
+        trim();
         return;
       }
       // A tile that holds its view is framed on its largest state: what its script acts on, also
@@ -798,6 +818,16 @@ export function useFit(
             .filter((element) => element.checkVisibility())
         : [];
       const filled = (box: Box) => box.right > box.left && box.bottom > box.top;
+      // Below what is chosen in a picker's grid or wheel, the row after it shows whole too, so the
+      // chosen row stands in the picker rather than at its foot (heldTop).
+      const below = held
+        .flatMap((element) => {
+          const row = element.closest('tr, .env-time-list-row');
+          const next = row?.nextElementSibling;
+          return next && canvasElement.contains(next) && next.checkVisibility() ? [next] : [];
+        })
+        .map((element) => partOf(element, canvasElement))
+        .filter(filled);
       const laidOut = held
         .flatMap((element) => laidOutOf(element, canvasElement) ?? [])
         .filter(filled);
@@ -845,14 +875,20 @@ export function useFit(
         canvasElement.dataset.popup = '';
       const popupLeast =
         parseFloat(canvasStyle.getPropertyValue('--catalogue-own-popup-least')) || legibleScale;
+      // An overlay, such as a notification or a dialog, is drawn at the overlays' one scale, or
+      // smaller where it shows whole only so (Tiles.ts, Gallery.css).
+      const overlay = canvasElement.hasAttribute('data-overlay')
+        ? parseFloat(canvasStyle.getPropertyValue('--catalogue-overlay-scale')) || 0
+        : 0;
       // A tile that holds its view is framed once on its still, the largest it shows: what its
       // script acts on there, such as a time picker's chosen hour under its field, shows whole in
       // it from its top, above the fade at its foot (heldTop), drawn smaller for that where it must,
       // down to `--catalogue-own-held-least` (Gallery.css).
-      const keep = join(
+      const chosen = join(
         ...held.map((element) => partOf(element, canvasElement)).filter(filled),
         ...laidOut,
       );
+      const keep = chosen && join(chosen, ...below);
       const heldLeast =
         parseFloat(canvasStyle.getPropertyValue('--catalogue-own-held-least')) || popupLeast;
       const keepScale = keep
@@ -883,9 +919,17 @@ export function useFit(
         screen = true;
       if (!playingNow.current) fadeAt = null;
       if (screen) {
-        screenFit(boxes, phone ? 1 : own, (scale) =>
-          phone ? step(scale, popupLeast) : Math.max(Math.min(own, popupLeast), scale),
-        );
+        if (overlay)
+          screenFit(
+            boxes,
+            overlay,
+            (scale) => Math.max(Math.min(overlay, popupLeast), scale),
+            true,
+          );
+        else
+          screenFit(boxes, phone ? 1 : own, (scale) =>
+            phone ? step(scale, popupLeast) : Math.max(Math.min(own, popupLeast), scale),
+          );
         return;
       }
       const wholeScale = Math.min(width / (right - left), height / (bottom - top));
@@ -917,9 +961,20 @@ export function useFit(
         : marginScale;
       // Whole where it fits at the popup's least, what it opens from the inset from the edges, else
       // as much of the inset as the room leaves it; else a window onto it from its top, drawn
-      // smaller, down to a held view's least, only where what its script acts on needs it.
+      // smaller, down to a held view's least, only where what its script acts on needs it. A held
+      // view a little larger, such as a menu bar with its last menu open, is drawn whole, down to
+      // that least, with what it opens from the inset from the edges, or on a phone a margin.
       const popupScale = (atMost: number) => {
         const lowest = Math.min(atMost, popupLeast);
+        const heldRoom = Math.min(atMost, Math.max(roomScale, phone ? marginScale : 0));
+        if (
+          keep &&
+          wholeScale < lowest &&
+          roomScale < lowest &&
+          marginScale < lowest &&
+          heldRoom >= heldLeast
+        )
+          return heldRoom;
         const low = keep && keepScale < lowest ? Math.min(atMost, heldLeast) : lowest;
         const across = width / (right - left);
         const fits =
@@ -954,7 +1009,9 @@ export function useFit(
       }
       const fitted = ownSize
         ? popup
-          ? popupScale(phone ? 1 : own)
+          ? overlay
+            ? Math.min(overlay, popupScale(phone ? 1 : own))
+            : popupScale(phone ? 1 : own)
           : own
         : legible
           ? popup
@@ -1001,13 +1058,20 @@ export function useFit(
       // above the results it filters, and stays centred across. A tile that holds its view shows
       // from its top down to what its script acts on, whole above the fade at its foot (heldTop).
       const fromTop = (ownSize || legible) && down > height && !inRoom;
-      if (fromTop && keep) {
+      if (fromTop && keep && chosen) {
         const trigger = [...canvasElement.querySelectorAll(triggers)].find(
           (element) => !element.closest('.catalogue-overlay-layer') && element.checkVisibility(),
         );
         const anchor = trigger ? partOf(trigger, canvasElement).top : top;
-        toY = heldTop(top, anchor, keep.bottom, scale, stageElement.clientHeight);
-        fadeAt = keep.bottom;
+        const size = stageElement.clientHeight;
+        // The row below the chosen one whole above the fade where the stage has the room, or above
+        // a shorter one where it has a little less; else as much of it as the stage shows, fading
+        // out below the chosen row.
+        toY = heldTop(top, anchor, keep.bottom, scale, size);
+        fadeAt =
+          keep.bottom * scale - toY + size / 2 <= size - heldFadeLeast + 0.5
+            ? keep.bottom
+            : chosen.bottom;
       } else if (fromTop) toY = top * scale + height / 2;
       // A tile that grows as it plays is shown from its top, the inset from the stage's, so what
       // it adds below has the room the still leaves under it (useHeldView).
@@ -1132,21 +1196,35 @@ export function useFit(
      * scale, `atMost`, or smaller as far as the modal needs to show whole, down to the least a
      * popup is drawn at (`stepped`). Taller than the stage still, the screen is as tall as the
      * modal needs and shows from its top; as the tile plays, the view pans down it, easing, to
-     * what the pointer heads to, so what it presses is in view before the press.
+     * what the pointer heads to, so what it presses is in view before the press. An overlay
+     * (`centred`) is drawn whole where its surface fits the stage a margin from its edges, the
+     * gutters of backdrop around it cut off where they don't, centred on it.
      */
-    const screenFit = (boxes: Shown[], atMost: number, stepped: (scale: number) => number) => {
+    const screenFit = (
+      boxes: Shown[],
+      atMost: number,
+      stepped: (scale: number) => number,
+      centred = false,
+    ) => {
       const across = stageElement.clientWidth;
       const down = stageElement.clientHeight;
       const px = (value: string) => parseFloat(value) || 0;
       // The room each modal needs: as tall as its content and the gutters around it, a sheet as
-      // tall as the screen it spans, and as wide where it is wider than the screen.
+      // tall as the screen it spans, and as wide where it is wider than the screen; and how tall
+      // its surface is alone.
       let needHeight = 0;
       let needWidth = 0;
+      let surfaceHeight = 0;
       for (const surface of canvasElement.querySelectorAll<HTMLElement>(modalSurfaces)) {
         if (!surface.checkVisibility() || surface.closest('[data-ending-style]')) continue;
         const holder = surface.closest<HTMLElement>(modalPositioners) ?? surface.parentElement!;
         const itself = getComputedStyle(surface);
         const around = getComputedStyle(holder);
+        if (!surface.matches('.env-sheet'))
+          surfaceHeight = Math.max(
+            surfaceHeight,
+            surface.scrollHeight + surface.offsetHeight - surface.clientHeight,
+          );
         if (!surface.matches('.env-sheet'))
           needHeight = Math.max(
             needHeight,
@@ -1168,7 +1246,7 @@ export function useFit(
       }
       const fits = Math.min(
         atMost,
-        needHeight ? down / needHeight : Infinity,
+        needHeight ? (centred ? (down - 2 * margin) / surfaceHeight : down / needHeight) : Infinity,
         needWidth ? across / needWidth : Infinity,
       );
       // As it plays, the screen stays as it was at rest, as the modal closes and opens again.
@@ -1186,8 +1264,11 @@ export function useFit(
       const highest = down / 2;
       const lowest = Math.max(highest, tall * scale - down / 2);
       const along = (y: number) => Math.min(Math.max(y, highest), lowest);
-      // At rest, framed as it plays, on what its pointer heads to (onCourse).
-      let toY = plays ? view.toY : along(onCourse(across / 2, highest, scale).toY);
+      // At rest, framed as it plays, on what its pointer heads to (onCourse); an overlay centred on
+      // its surface, which its positioner centres on the screen.
+      let toY = plays
+        ? view.toY
+        : along(centred ? (tall / 2) * scale : onCourse(across / 2, highest, scale).toY);
       if (plays) {
         toY = along(toY);
         const box = heading();
@@ -1203,6 +1284,8 @@ export function useFit(
         .join(' ');
       if (sides) canvasElement.dataset.cut = sides;
       else delete canvasElement.dataset.cut;
+      // Its screen's top is the stage's edge too, cut off there rather than faded (trimRows).
+      canvasElement.parentElement?.style.setProperty('--catalogue-crop-top', '0px');
       settle(scale, across / 2, toY, boxes);
       trim(playingNow.current);
     };
@@ -1246,6 +1329,7 @@ export function useFit(
       canvasElement.removeEventListener(headingEvent, update);
       for (const property of ['inline-size', 'block-size', 'min-block-size'])
         canvasElement.style.removeProperty(property);
+      canvasElement.parentElement?.style.removeProperty('--catalogue-crop-top');
       cancelAnimationFrame(frame);
       cancelAnimationFrame(view.frame);
       changes.disconnect();
@@ -1370,6 +1454,9 @@ function heldTop(top: number, anchor: number, bottom: number, scale: number, siz
 
 /** The least of the fade, in px, a held view keeps below what its script acts on (heldTop). */
 const heldFade = 10;
+
+/** The least of the fade, in px, below the row after a held view's chosen one (useFit). */
+const heldFadeLeast = 5;
 
 /** A box a preview paints and the room, in px, it keeps from its stage's edges (anchoredScale). */
 interface Padded {
