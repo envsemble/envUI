@@ -8,7 +8,8 @@
   .env-rich-text-document {
     min-inline-size: 0;
     max-inline-size: 100%;
-    min-block-size: 10rem;
+    /* 10 rem, or the lines minRows asks for and the document's padding (RichTextEditor). */
+    min-block-size: var(--env-rich-text-min-block-size, 10rem);
     padding: var(--env-space-4);
     border-radius: inherit;
     outline: none;

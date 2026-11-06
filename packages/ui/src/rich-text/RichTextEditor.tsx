@@ -1,6 +1,14 @@
 'use client';
 
-import { useEffect, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import {
+  useEffect,
+  useImperativeHandle,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+} from 'react';
 import { Extension } from '@tiptap/core';
 import { EditorContent, useEditor, useEditorState } from '@tiptap/react';
 import { Suggestion, exitSuggestion } from '@tiptap/suggestion';
@@ -71,8 +79,10 @@ export function RichTextEditor({
   description,
   error,
   variant = 'outline',
+  minRows,
   id,
   className,
+  style,
   'aria-describedby': describedBy,
   'aria-invalid': invalid,
   'aria-label': ariaLabel,
@@ -449,6 +459,14 @@ export function RichTextEditor({
       {...props}
       ref={ref}
       className={classNames('env-rich-text-editor', className)}
+      style={
+        minRows === undefined
+          ? style
+          : ({
+              '--env-rich-text-min-block-size': `calc(${Math.max(1, Math.round(minRows))} * 1lh + 2 * var(--env-space-4))`,
+              ...style,
+            } as CSSProperties)
+      }
       data-disabled={flag(disabled)}
       data-readonly={flag(readOnly)}
     >

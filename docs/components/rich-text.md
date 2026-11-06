@@ -205,7 +205,7 @@ RichText renders the Markdown in its `children`, also on a server. Pass it the e
 
 #### Toolbar and variants
 
-`toolbar` takes the commands to show, in order, or `false` for none; Undo and Redo, and Attach files with `onUpload`, follow them. `variant` is `outline`, the default, or `ghost`.
+`toolbar` takes the commands to show, in order, or `false` for none; Undo and Redo, and Attach files with `onUpload`, follow them. `variant` is `outline`, the default, or `ghost`. The document is at least 10 rem tall; `minRows` makes it as tall as that many lines instead, such as `minRows={2}` for a short note in a card, and it grows with its text either way.
 
 #### References and slash commands
 
@@ -266,6 +266,7 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 - **1.0.0**: A reference source's `char` is `trigger` and its `items` lookup is `search`, and a reference's `char` is `trigger`; The Markdown saved before keeps working.
 - **1.0.0**: RichTextEditor takes the field vocabulary: `description` instead of `hint`, and the variants `outline`, `underline` and `ghost` instead of `outlined`, `plain` and `quiet`, which drew as outlined. The document sits in the field's box, with its border, its states and a disabled field whose label stays readable, and task items show envUI's checkboxes beside their text. The toolbar is the Toolbar MarkdownEditor shares, with tooltips, the link dialog is the shared one, and every word comes from EnvUIProvider's `messages`. Suggestions are rows of a listbox in the editor, above a Dialog it sits in, and close as focus leaves; a controlled editor raises no `flushSync` warning. The `./rich-text` entry is alpha.
 - **1.0.0**: Tiptap, marked, Shiki and the Pierre themes are no longer peer dependencies; applications that import the rich-text entry install them, as [Setup](../setup.md#public-entry-points) lists.
+- **1.0.0-prerelease.6**: RichTextEditor takes `minRows`, the lines of text its document is tall enough for, for a short editor rather than one at least 10 rem tall.
 - **1.0.0-prerelease.6**: Bold text in a document is semibold rather than medium, as in Markdown, so it stands out from the body text around it.
 - **1.0.0-prerelease.6**: Where the toolbar is wider than the editor, its groups wrap onto more rows rather than scrolling sideways, so Undo and Redo stay in view. The editor's label takes the size, weight and muted color of a field's floated label.
 - **1.0.0-prerelease.6**: In RichText and a read-only editor, a task's checkbox is read-only rather than disabled: in full color, with `aria-readonly`, out of the tab order and not answering the pointer. A disabled editor's tasks stay disabled. The checkbox sits on the middle of its text's first line rather than a little above it.
