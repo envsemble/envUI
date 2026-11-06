@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import { TimePicker } from '@envsemble/envui';
+import { useMedia } from '../motion/Autoplay';
 import { useHeldView, usePointer, type PointerStep } from '../motion/Motion';
+import { narrowGallery } from './Tiles';
 
+const field = '.env-date-picker-trigger';
 const row = (part: string, value: string) =>
   `.env-time-list-column[data-part="${part}"] .env-time-list-row[data-value="${value}"]`;
 
@@ -29,7 +32,7 @@ const script: PointerStep[] = [
   { wait: 200 },
   { wheel: 30, duration: 300 },
   { wait: 700 },
-  { to: '.env-date-picker-trigger', x: 0.4, duration: 450 },
+  { to: field, x: 0.4, duration: 450 },
   { wait: 250 },
   { click: true },
   { wait: 900 },
@@ -39,29 +42,60 @@ const script: PointerStep[] = [
   { wait: 400 },
 ];
 
+/** Closed at rest, as on a phone: opened from its field first, and closed from it at the end. */
+const closedScript: PointerStep[] = [
+  { wait: 300 },
+  { to: field, x: 0.4, duration: 450 },
+  { wait: 200 },
+  { click: true },
+  { wait: 700 },
+  ...script.slice(1, -5),
+  { wait: 700 },
+  { leave: true },
+  { wait: 400 },
+];
+
 /**
- * A time picker resting open on 9:30, its hours and minutes under its field, framed from the
- * field's top down past the chosen time, so as it plays the wheels turn and the popup closes and
- * opens again in place, and nothing in its tile moves. Stopped, it is open on 9:30 again.
+ * A time picker on 9:30, its label hidden and its field small, as a field whose purpose is clear
+ * without its label is. On a wide page it rests open, its hours and minutes under its field,
+ * framed from the field's top down past the chosen time, so as it plays the wheels turn and the
+ * popup closes and opens again in place, and nothing in its tile moves. A phone's lower stage
+ * doesn't show the field and the chosen time together at the popups' scale: there it rests closed
+ * and opens as it plays. Stopped, it is on 9:30 again, as it rests.
  */
 export default function TimePickerTile() {
+  const narrow = useMedia(narrowGallery);
+  return <Picker key={narrow ? 'closed' : 'open'} rests={!narrow} />;
+}
+
+function Picker({ rests }: { rests: boolean }) {
   const [value, setValue] = useState<string | null>('09:30');
-  const [open, setOpen] = useState(true);
-  useHeldView();
-  usePointer(script, {
+  const [open, setOpen] = useState(rests);
+  usePointer(rests ? script : closedScript, {
     onRest: () => {
       setValue('09:30');
-      setOpen(true);
+      setOpen(rests);
     },
   });
   return (
-    <TimePicker
-      label="Starts at"
-      value={value}
-      onValueChange={setValue}
-      open={open}
-      onOpenChange={setOpen}
-      style={{ inlineSize: '8.5rem' }}
-    />
+    <>
+      {rests && <HeldView />}
+      <TimePicker
+        label="Starts at"
+        showLabel={false}
+        size="sm"
+        value={value}
+        onValueChange={setValue}
+        open={open}
+        onOpenChange={setOpen}
+        style={{ inlineSize: '8.5rem' }}
+      />
+    </>
   );
+}
+
+/** Holds the tile's view as it plays (useHeldView). */
+function HeldView() {
+  useHeldView();
+  return null;
 }
