@@ -5,11 +5,11 @@ import { outlined } from './Outline';
 import { narrowGallery } from './Tiles';
 
 /**
- * The inset, step by step: a large one, a small one, and back; a phone's lower stage holds a
- * little less.
+ * The inset, step by step: a large one, a small one, and back; a phone's lower stage holds less,
+ * so the whole surface, its action too, shows at the larger inset.
  */
 const paddings: SpaceStep[] = [5, 1];
-const narrowPaddings: SpaceStep[] = [4, 1];
+const narrowPaddings: SpaceStep[] = [3, 1];
 
 /**
  * An invitation inset by a Box in an outlined surface as wide as its content, as a region holds
