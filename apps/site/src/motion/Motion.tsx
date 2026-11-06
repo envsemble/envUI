@@ -12,7 +12,7 @@ import {
 } from 'react';
 import { PortalContainer } from '@envsemble/envui';
 import { isVirtual, VirtualPointer, type Aimed } from './VirtualPointer';
-import { headFor, holdView, nameCourse, nameMustShow } from './MustShow';
+import { headFor, holdView, nameCourse, nameMustShow, showStateView } from './MustShow';
 import {
   aimsOf,
   ease,
@@ -577,6 +577,21 @@ export function useMustShow(...selectors: string[]) {
 export function useHeldView(top = false) {
   const { root } = use(PlaybackContext);
   useEffect(() => (root ? holdView(root, top) : undefined), [root, top]);
+}
+
+/**
+ * Shows a tile one view per state, for a tile whose stage is too low to show what it opens with
+ * what opens it, such as a date picker on a phone: `views` names each state's part by a selector,
+ * and `now` the one it is in, whole in its stage at one scale, cut to rather than panned to
+ * (MustShow.ts).
+ */
+export function useStateView(views: readonly string[], now: string) {
+  const { root } = use(PlaybackContext);
+  const key = views.join('\n');
+  useEffect(
+    () => (root ? showStateView(root, { all: key.split('\n'), now }) : undefined),
+    [root, key, now],
+  );
 }
 
 /**
