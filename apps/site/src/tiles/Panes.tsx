@@ -13,11 +13,11 @@ const half = 0.5;
 
 /**
  * The list's width, in rem, at rest and widened, and its least, for the stage's width: what the
- * stage shows of the panes splits about a third to the list at rest and three fifths widened, far
- * from the list's least, and the detail's heading stays in view beside it.
+ * stage shows of the panes splits about a third to the list at rest and three fifths widened, a
+ * drag long enough to follow, and the detail's short heading stays whole beside it at both.
  */
-const wide = { list: 5.75, widened: 8.5, least: 5.5 };
-const narrow = { list: 6, widened: 7.5, least: 6 };
+const wide = { list: 5.25, widened: 9, least: 5 };
+const narrow = { list: 5.25, widened: 7.5, least: 5 };
 
 /** Where a list as wide as `width` ends, as a share of the panes' width. */
 const at = (width: number) => (width + half) / across;
@@ -60,7 +60,7 @@ export default function PanesTile() {
       splitAt="medium"
       defaultWidth={sizes.list}
       minWidth={sizes.least}
-      style={{ inlineSize: `${across}rem`, blockSize: '6rem' }}
+      style={{ inlineSize: `${across}rem`, blockSize: '7rem' }}
     >
       <Panes.List label="Inbox">
         <Surface padding={1} render={<Column gap={1} />} style={{ minBlockSize: '100%' }}>
@@ -68,20 +68,20 @@ export default function PanesTile() {
             Inbox
           </Text>
           <List.Root aria-label="Messages" density="xs">
-            <List.Item label="Launch" current />
-            <List.Item label="Budget" />
+            <List.Item label="Plan" current />
+            <List.Item label="Team" />
           </List.Root>
         </Surface>
       </Panes.List>
       <Panes.Divider label="Resize the inbox" />
-      <Panes.Detail label="Launch">
+      <Panes.Detail label="Plan">
         <Surface
           padding={2}
           render={<Column gap={1} align="start" />}
           style={{ minBlockSize: '100%' }}
         >
           <Text variant="title" render={<h3 />}>
-            Launch
+            Plan
           </Text>
           <Text variant="body-sm" emphasis="muted">
             May 4

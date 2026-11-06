@@ -57,6 +57,7 @@ export default function RichTextTile() {
         aria-label="Launch note"
         defaultValue={words.text}
         toolbar={['bold']}
+        variant="ghost"
         style={{ inlineSize: narrow ? '8.5rem' : '12.5rem' }}
       />
     </Renew>

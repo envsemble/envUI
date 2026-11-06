@@ -1,8 +1,8 @@
 import { createElement, type CSSProperties, type ReactNode } from 'react';
 
 /*
- * The layout tiles' shared pieces, drawn as the catalogue banners' figures are, as a draughtsman
- * sets out a plan: every line one screen pixel wide at any scale, in the default edge color, nothing
+ * The pieces of the foundations' layout drawings (Glance.tsx), drawn as the catalogue banners'
+ * figures are, as a draughtsman sets out a plan: every line one screen pixel wide at any scale, in the default edge color, nothing
  * filled. The outlines stand for a layout box's edges and the content it lays out; a few marks
  * show what it sets out, such as a gap, an inset or the line its content aligns to. A change of
  * layout is drawn at once, as the layout components make it: nothing glides.

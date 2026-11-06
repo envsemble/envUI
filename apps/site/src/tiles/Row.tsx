@@ -1,46 +1,47 @@
-import { Row } from '@envsemble/envui';
+import { Row, Surface, Text } from '@envsemble/envui';
+import { useMedia } from '../motion/Autoplay';
 import { useTimeline } from '../motion/Motion';
-import { edges, gap, Item, Mark } from './Reflow';
+import { outlined } from './Outline';
+import { narrowGallery } from './Tiles';
 
-/** The blocks' widths, in rem, at a height of 1.25: two squares between longer blocks. */
-const items = [1.75, 1.25, 1.5, 1.25];
+/** The cards' names, each card as wide as the others; a phone's narrower tile holds three. */
+const cards = ['Plan', 'Docs', 'Team', 'Ops'];
+const narrowCards = ['Plan', 'Docs', 'Ops'];
 
-/** The width of the first `count` blocks and the gaps between them, so the row holds them exactly. */
-const fit = (count: number) =>
-  `calc(${items.slice(0, count).reduce((sum, width) => sum + width, 0)}rem + ${count - 1} * var(--env-space-2))`;
+/** A card's width, in rem. */
+const card = 2.75;
+
+/** The width of `count` cards and the gaps between them, so the row holds them exactly. */
+const fit = (count: number) => `calc(${count * card}rem + ${count - 1} * var(--env-space-2))`;
 
 /**
  * The row's widths, step by step: all on one line, the last wrapped, all on one line again, two and
- * two.
+ * two; of three, the last wrapped, all on one line, and the last wrapped again.
  */
 const widths = [fit(4), fit(3), fit(4), fit(2)];
+const narrowWidths = [fit(3), fit(2), fit(3), fit(2)];
 
 /**
- * The gap between the first two blocks, which stay where they are, marked in the padding above,
- * against the blocks, its ends on the edges either side of the gap, which it continues.
- */
-const firstGap = gap('inline', {
-  from: `calc(var(--env-space-2) + ${items[0]}rem)`,
-  across: 'var(--env-space-2)',
-  off: 'calc(var(--env-space-2) - var(--env-space-1))',
-});
-
-/**
- * A row of four blocks in a frame, drawn in hairlines, the gap between them marked, that wraps as
- * it narrows, a block and then two, and widens again. Each width lays the row out at once, as a
- * Row does when the room it has changes.
+ * Four small outlined cards in a row, three on a phone, a gap apart, that wraps as it narrows, a
+ * card and then two, and widens again. Each width lays the row out at once, as a Row does when the
+ * room it has changes.
  */
 export default function RowTile() {
   const step = useTimeline([1000, 1400, 1300, 1600]);
+  const narrow = useMedia(narrowGallery);
   return (
-    <div style={{ position: 'relative', padding: 'var(--env-space-2)', inlineSize: 'max-content' }}>
-      {edges()}
-      <Mark {...firstGap} />
-      <Row wrap gap={2} style={{ position: 'relative', inlineSize: widths[step] }}>
-        {items.map((width, index) => (
-          <Item key={index} width={`${width}rem`} height="1.25rem" />
-        ))}
-      </Row>
-    </div>
+    <Row wrap gap={2} style={{ inlineSize: (narrow ? narrowWidths : widths)[step] }}>
+      {(narrow ? narrowCards : cards).map((name) => (
+        <Surface
+          key={name}
+          background="default"
+          radius="sm"
+          padding={2}
+          style={{ ...outlined, inlineSize: `${card}rem`, boxSizing: 'border-box' }}
+        >
+          <Text variant="body-sm">{name}</Text>
+        </Surface>
+      ))}
+    </Row>
   );
 }

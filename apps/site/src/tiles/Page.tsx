@@ -4,7 +4,8 @@ import { useMedia } from '../motion/Autoplay';
 import { useTimeline } from '../motion/Motion';
 import { narrowGallery } from './Tiles';
 
-const sections = ['Summary', 'Revenue', 'Costs'];
+/** The page's sections: an overview, then the three it rests on in turn. */
+const sections = ['Overview', 'Summary', 'Revenue', 'Costs'];
 
 /**
  * How long a scroll to the next section takes, in ms: brief beside the hold on each, so the page
@@ -17,11 +18,13 @@ const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2
 
 /**
  * A page in a box that scrolls, as a window does, at its own size and as low as its header and one
- * whole section: its still is scrolled to the first section, under the header stuck at the top
- * with its fill, and it scrolls down a section at a time and back. Each step rests with one whole
- * section just under the header, snapped to its start; room after the last lets it scroll there
- * too. In a phone's narrower tile the box is narrower, so the page is drawn at about its own size
- * there.
+ * whole section: its still is scrolled past the overview to Summary, under the header stuck at the
+ * top with the fill it takes once content scrolls beneath it, and it scrolls down a section at a
+ * time and back to it, so the still is a moment the scroll passes through. Each step rests with
+ * one whole section just under the header, snapped to its start; the sections stand further apart
+ * than the header is tall, so at rest none runs on above it at the box's top; room after the last
+ * lets it scroll there too. In a phone's narrower tile the box is narrower, so the page is drawn at
+ * about its own size there.
  */
 export default function PageTile() {
   const step = useTimeline([2000, 2000, 2000]);
@@ -32,14 +35,14 @@ export default function PageTile() {
     const element = box.current;
     if (!element) return;
     const from = element.scrollTop;
-    const section = element.querySelectorAll('section')[step];
+    const section = element.querySelectorAll('section')[step + 1];
     const header = element.querySelector<HTMLElement>('.env-page-header');
-    // The section's top in the box's content, read through the tile's scale, just under the header
-    // stuck at the box's top.
+    // The section's top in the box's content, read through the tile's scale, at the foot of the
+    // header stuck at the box's top; the section's own inset parts the two.
     const frameBox = element.getBoundingClientRect();
     const scale = frameBox.height / element.offsetHeight || 1;
     const top = section ? (section.getBoundingClientRect().top - frameBox.top) / scale + from : 0;
-    const to = header ? Math.round(top - header.offsetHeight - 4) : 0;
+    const to = header ? Math.round(top - header.offsetHeight) : 0;
     if (from === to) return;
     // Its still is drawn there at once rather than scrolled to.
     if (!placed.current) {
@@ -69,9 +72,14 @@ export default function PageTile() {
       }}
     >
       <Page header={<PageHeader headingLevel={3} sticky title="Annual report" />}>
-        <Column gap={5} style={{ paddingBlockEnd: '3rem' }}>
+        <Column gap={9} style={{ paddingBlockEnd: '3rem' }}>
           {sections.map((section) => (
-            <Column key={section} gap={1} render={<section />}>
+            <Column
+              key={section}
+              gap={1}
+              render={<section />}
+              style={{ paddingBlockStart: 'var(--env-space-1)' }}
+            >
               <Text variant="title" render={<h4 />}>
                 {section}
               </Text>

@@ -2,20 +2,20 @@ import { Column, Link, Text } from '@envsemble/envui';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
 /**
- * Pressed, a fill behind it, held a while, as the press is what shows on a link already underlined;
- * let go, and left. Only the pointer acts: a focus ring arriving with no key to see would come
- * from nowhere.
+ * Hovered, its underline drawn in full and its color a step deeper; pressed, a fill behind it,
+ * briefly, as a click is; let go, and left, its underline back to its lighter rest. Only the
+ * pointer acts: a focus ring arriving with no key to see would come from nowhere.
  */
 const script: PointerStep[] = [
   { wait: 300 },
   { to: '.env-link', x: 0.3 },
-  { wait: 500 },
+  { wait: 900 },
   { press: true },
-  { wait: 1700 },
+  { wait: 450 },
   { release: true },
   { wait: 600 },
   { leave: true },
-  { wait: 900 },
+  { wait: 800 },
 ];
 
 /** A link on a line of its own under a line of text, a step apart. Its click stays in the tile. */
