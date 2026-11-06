@@ -8,25 +8,29 @@ import { narrowGallery } from './Tiles';
 const minimize = '.env-panel-dock-panel[data-panel-id="notes"] [aria-label="Minimize"]';
 const notesTab = '.env-panel-dock-tab[data-panel-id="notes"] .env-panel-dock-tab-restore';
 
-/** The open panel minimized to its tab at the window's foot, and brought back from it. */
+/**
+ * The open panel minimized to its tab at the window's foot, and brought back from it, each held a
+ * while once it has settled, so neither is seen only on its way.
+ */
 const script: PointerStep[] = [
   { wait: 500 },
-  { to: minimize },
+  { to: minimize, duration: 450 },
   { wait: 300 },
   { click: true },
-  { wait: 600 },
+  { wait: 900 },
   { to: notesTab, duration: 450 },
   { wait: 300 },
   { click: true },
-  { wait: 800 },
+  { wait: 1100 },
   { leave: true },
-  { wait: 500 },
+  { wait: 450 },
 ];
 
 /**
- * The panel as tall as its header and one line of notes, so its content fits it and never scrolls,
- * and most of the region's width: narrower than a header that keeps its window controls beside the
- * title, so they take their row above it, as in any narrow panel.
+ * The panel as tall as its header and one line of notes with room below it, so its content fits it
+ * and never scrolls and its line doesn't sit on the region's bottom edge, and most of the region's
+ * width: narrower than a header that keeps its window controls beside the title, so they take
+ * their row above it, as in any narrow panel.
  */
 const start: PanelDockPanel[] = [
   {
@@ -35,8 +39,8 @@ const start: PanelDockPanel[] = [
     mode: 'open',
     preferredWidth: 9.75,
     minWidth: 8.5,
-    height: 6.625,
-    minHeight: 6.625,
+    height: 7.25,
+    minHeight: 7.25,
   },
 ];
 
@@ -52,7 +56,7 @@ const region = {
   ...outlined,
   position: 'relative',
   inlineSize: '12.25rem',
-  blockSize: '8.125rem',
+  blockSize: '8.75rem',
   overflow: 'hidden',
 } as const;
 const narrowRegion = { ...region, inlineSize: '11rem' } as const;
