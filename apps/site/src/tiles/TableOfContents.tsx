@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, type MouseEvent } from 'react';
 import { TableOfContents } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../motion/Motion';
+import { useHeldView, usePointer, type PointerStep } from '../motion/Motion';
 
 /** How tall the unseen article's view and each of its sections are, in px. */
 const view = 100;
@@ -43,6 +43,8 @@ export default function TableOfContentsTile() {
   const scroller = useRef<HTMLDivElement>(null);
   const glide = useRef(0);
   useEffect(() => () => cancelAnimationFrame(glide.current), []);
+  // Framed once on the whole list, it holds that view as the reader's place moves through it.
+  useHeldView();
   // Stopped, the unseen article goes back to its top rather than the tile being drawn anew, which
   // would grow the marks again from nothing as the contents measure it.
   usePointer(script, {

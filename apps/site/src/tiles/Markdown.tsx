@@ -1,5 +1,5 @@
 import { Markdown } from '@envsemble/envui/content';
-import { useTimeline } from '../motion/Motion';
+import { useHeldView, useTimeline } from '../motion/Motion';
 
 /**
  * A short note as it is written, step by step: a heading over one item, then a second, a version
@@ -15,5 +15,7 @@ const notes = ['## Launch\n- Review it', '## Launch\n- Review it\n- Ship `v2.0`'
  */
 export default function MarkdownTile() {
   const step = useTimeline([1000, 4000]);
+  // The added item grows below the note, which holds still.
+  useHeldView(true);
   return <Markdown>{notes[step]}</Markdown>;
 }
