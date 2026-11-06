@@ -1,8 +1,10 @@
-import { Badge, Text } from '@envsemble/envui';
+import { useState } from 'react';
+import { Badge, Button, Text } from '@envsemble/envui';
 import { IconEditNote } from '@envsemble/envui/icons/EditNote';
 import { IconRateReview } from '@envsemble/envui/icons/RateReview';
 import { IconRocketLaunch } from '@envsemble/envui/icons/RocketLaunch';
 import { useMedia } from '../motion/Autoplay';
+import { usePointer, type PointerStep } from '../motion/Motion';
 import { narrowGallery } from './Tiles';
 
 /* A piece of work's states, each in its tone. */
@@ -12,17 +14,35 @@ const states = {
   released: { tone: 'done', label: 'Released', icon: <IconRocketLaunch /> },
 } as const;
 
+type State = keyof typeof states;
+
+const action = '.env-button';
+
+/** The work in review released with its button, then reopened, as it began. */
+const script: PointerStep[] = [
+  { wait: 500 },
+  { to: action },
+  { wait: 400 },
+  { click: true },
+  { wait: 1600 },
+  { click: true },
+  { wait: 600 },
+  { leave: true },
+  { wait: 600 },
+];
+
 /**
- * A few pieces of work, each with a badge naming its state, in its tone. A badge shows a state it is
- * given and changes only when the state does, so the tile holds still. Its names are short, the
- * same at every width; in a phone's narrower tile they sit closer to their badges, so it is drawn
- * at about its own size there.
+ * Two pieces of work, each with a badge naming its state, in its tone. A badge shows the state it
+ * is given, so it changes only when the state does: here as the work in review is released with
+ * a button under them, and reopened. Its names are short, the same at every width; in a phone's narrower
+ * tile they sit closer to their badges, so it is drawn at about its own size there.
  */
 export default function BadgeTile() {
   const narrow = useMedia(narrowGallery);
+  const [launch, setLaunch] = useState<State>('review');
+  usePointer(script);
   const work = [
-    { name: 'Launch', state: 'review' },
-    { name: 'Brand', state: 'released' },
+    { name: 'Launch', state: launch },
     { name: 'Pricing', state: 'draft' },
   ] as const;
   return (
@@ -46,6 +66,14 @@ export default function BadgeTile() {
           </div>
         );
       })}
+      <Button
+        size="sm"
+        variant="outline"
+        style={{ gridColumn: '1 / -1', justifySelf: 'start' }}
+        onClick={() => setLaunch(launch === 'review' ? 'released' : 'review')}
+      >
+        {launch === 'review' ? 'Release Launch' : 'Reopen Launch'}
+      </Button>
     </div>
   );
 }
