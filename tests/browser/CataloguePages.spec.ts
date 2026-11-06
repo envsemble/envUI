@@ -661,6 +661,12 @@ test('every tile of the galleries is fitted: components at one scale, a scene at
             return near(overlay) || (at < overlay && at >= popupLeast - 0.001)
               ? []
               : [`${name}: overlay drawn at ${at}`];
+          // A modal that isn't one of the overlays, such as a dialog with a field, is drawn as
+          // large as shows it whole, down to its window's least.
+          if (canvas.querySelector('.env-dialog-backdrop'))
+            return at >= popupLeast - 0.001 && at <= Number(one ?? 1) + 0.001
+              ? []
+              : [`${name}: modal drawn at ${at}`];
           return near(Number(one ?? 1)) || near(popupLeast)
             ? []
             : [`${name}: popup drawn at ${at}`];
