@@ -35,8 +35,9 @@ const dayOf = (date: string) => days.format(new Date(`${date}T00:00:00Z`));
 /**
  * A calendar heatmap of nine weeks of edits; in a phone's tile eight, so it is drawn larger. Its
  * stage shows it from its months down to Saturday's row, cropped there, on a whole row, rather
- * than fading out partway through Sunday's: the crop's height is read off that row, so it follows
- * the days' size, which grows on a touch screen.
+ * than fading out partway through Sunday's; a phone's lower stage down to Friday's, the working
+ * week, so it keeps the inset from the stage's foot every tile keeps. The crop's height is read
+ * off that row, so it follows the days' size, which grows on a touch screen.
  */
 export default function CalendarHeatmapTile() {
   const narrow = useMedia(narrowGallery);
@@ -47,18 +48,18 @@ export default function CalendarHeatmapTile() {
   usePointer(script);
   useLayoutEffect(() => {
     const element = crop.current;
-    const saturday = element?.querySelector('tbody tr:nth-child(6)');
-    if (!element || !saturday) return;
+    const last = element?.querySelector(`tbody tr:nth-child(${narrow ? 5 : 6})`);
+    if (!element || !last) return;
     const measure = () => {
       const box = element.getBoundingClientRect();
       const scale = box.width / element.offsetWidth || 1;
-      setHeight(Math.ceil((saturday.getBoundingClientRect().bottom - box.top) / scale) + 1);
+      setHeight(Math.ceil((last.getBoundingClientRect().bottom - box.top) / scale) + 1);
     };
     measure();
     const observer = new ResizeObserver(measure);
-    observer.observe(saturday);
+    observer.observe(last);
     return () => observer.disconnect();
-  }, []);
+  }, [narrow]);
   return (
     <div ref={crop} style={{ blockSize: height, overflow: 'hidden' }}>
       <CalendarHeatmap
