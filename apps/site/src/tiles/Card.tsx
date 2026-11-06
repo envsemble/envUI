@@ -1,22 +1,21 @@
-import { useEffect, useState, type CSSProperties } from 'react';
-import { Button, Card } from '@envsemble/envui';
+import type { CSSProperties } from 'react';
+import { Card, Column, Text } from '@envsemble/envui';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
 /**
- * Open pressed: the project loads, its spinner turning over the button a moment, as an application
- * shows while it opens what the card stands for; then the pointer leaves.
+ * The card hovered, its fill taking the hover layer; pressed and held a moment, the pressed layer
+ * over it as it settles a little; released, which opens the project; then the pointer leaves.
  */
 const script: PointerStep[] = [
   { wait: 400 },
-  { to: '.env-card .env-button', x: 0.45 },
-  { wait: 500 },
-  { click: true },
-  { wait: 80 },
-  // Just off the button it pressed, so its spinner shows clear while the project loads.
-  { to: '.env-card .env-button', x: -0.2, y: 0.6, duration: 300 },
-  { wait: 1500 },
+  { to: '.env-card', x: 0.6, y: 0.55 },
+  { wait: 1100 },
+  { press: true },
+  { wait: 600 },
+  { release: true },
+  { wait: 900 },
   { leave: true },
-  { wait: 800 },
+  { wait: 1200 },
 ];
 
 /**
@@ -26,29 +25,20 @@ const script: PointerStep[] = [
 const outlined = { '--env-card-outline': 'var(--env-color-border-muted)' } as CSSProperties;
 
 /**
- * A project's card, laid out as a Card lays out its parts, unlike a plain surface: the title row
- * with a short fact at its end, and the strip of its actions along the bottom; small enough for a
- * phone's stage at its own size.
+ * A project's card that is one button, as a list of projects opens each from its card: its name and
+ * when it was last updated; small enough for a phone's stage at its own size. As it plays, the
+ * pointer hovers and presses it, so the whole card reads as the target.
  */
 export default function CardTile() {
-  const [pending, setPending] = useState(false);
-  usePointer(script, { onRest: () => setPending(false) });
-  useEffect(() => {
-    if (!pending) return;
-    const timer = setTimeout(() => setPending(false), 1400);
-    return () => clearTimeout(timer);
-  }, [pending]);
+  usePointer(script);
   return (
-    <Card
-      title="Northwind"
-      meta="Today"
-      actions={
-        <Button variant="secondary" size="sm" pending={pending} onClick={() => setPending(true)}>
-          Open
-        </Button>
-      }
-      padding={4}
-      style={{ inlineSize: '9.5rem', ...outlined }}
-    />
+    <Card onClick={() => {}} padding={4} style={{ inlineSize: '9.5rem', ...outlined }}>
+      <Column gap={1}>
+        <Text variant="title">Northwind</Text>
+        <Text variant="body-sm" emphasis="muted">
+          Updated today
+        </Text>
+      </Column>
+    </Card>
   );
 }
