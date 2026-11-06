@@ -50,10 +50,26 @@ const OnScreen = createContext(false);
 export const useOnScreen = () => use(OnScreen);
 
 /**
- * The least each kind is drawn at, so its text stays legible, about 10 px: a device that would
- * need to be drawn smaller is drawn at it instead and cut off at the stage's edges.
+ * The least each kind is drawn at, and the least its small text (body-sm) is drawn at, about
+ * 10 px, whichever is larger: a device that would need to be drawn smaller is drawn at it instead
+ * and cut off at the stage's edges. The compact scale's small text needs 0.84, the comfortable
+ * scale's, a touch screen's, the kind's least.
  */
 const leastScale: Record<DeviceKind, number> = { phone: 0.8, window: 0.75 };
+const leastText = 10;
+
+/**
+ * Where a view starts across a screen cut off at its end, in the device's px, where its figure
+ * names nothing to keep in view, such as a still one: a frame of an application shows where its
+ * navigation meets its page, the page from halfway in, so a narrow stage shows as much of the
+ * page's content as of the navigation's labels.
+ */
+function boundaryStart(row: Element, scale: number, size: number) {
+  const body = row.querySelector('.env-scaffold-body');
+  if (!body || !row.querySelector('.env-scaffold-navigation')) return 0;
+  const start = (body.getBoundingClientRect().left - row.getBoundingClientRect().left) / scale;
+  return Math.max(0, start - size / 2);
+}
 
 /** Room kept around a point the pointer heads to, in the device's px: its cursor and a margin. */
 const pointRoom = 40;
@@ -209,7 +225,11 @@ export function DeviceStage({ kind, children }: { kind: DeviceKind; children: Re
       const room = stageElement.clientWidth;
       if (!width || !height || !room) return;
       const fits = Math.min(1, room / width, most / height);
-      const scale = Math.min(1, Math.max(fits, leastScale[kind]));
+      const small = parseFloat(
+        getComputedStyle(rowElement).getPropertyValue('--env-font-size-body-sm'),
+      );
+      const least = Math.max(leastScale[kind], small ? leastText / (small * rem) : 0);
+      const scale = Math.min(1, Math.max(fits, least));
       // A device cut off at its start or end runs out to the stage's edge there, over its padding,
       // so it fades out at the edge of the stage rather than in a strip inside it.
       const host = stageElement.closest('.site-live-example');
@@ -234,14 +254,16 @@ export function DeviceStage({ kind, children }: { kind: DeviceKind; children: Re
       const heading = root && headingOf(root);
       const focus = heading ? pointBox(rowElement, drawn, heading) : undefined;
       const along = (size: number) =>
-        viewStart(
-          width,
-          size / scale,
-          spanOf(boxes, (box) => [box.left, box.right]),
-          focus && [focus.left, focus.right],
-          view.x,
-          fade / scale,
-        );
+        boxes.length || focus
+          ? viewStart(
+              width,
+              size / scale,
+              spanOf(boxes, (box) => [box.left, box.right]),
+              focus && [focus.left, focus.right],
+              view.x,
+              fade / scale,
+            )
+          : Math.min(width - size / scale, boundaryStart(rowElement, drawn, size / scale));
       let x = along(shown.width);
       const outset = { start: 0, end: 0 };
       if (across && width * scale <= room + pad.start + pad.end) {

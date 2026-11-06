@@ -36,7 +36,7 @@ export default function GoToDocument() {
   return (
     <Column gap={3} align="center">
       <Button variant="secondary" startIcon={<IconSearch />} onClick={() => setOpen(true)}>
-        Go to document
+        Search
       </Button>
       <CommandPalette
         open={open}

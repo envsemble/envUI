@@ -220,6 +220,35 @@
   transform: translateX(-50%) scale(var(--catalogue-sweep-scale, 1));
   transform-origin: top center;
 }
+/* A frame wider than the stage at a legible scale (`crop`): cut off at the stage's edges, where it
+   fades out over the last stretch as a device cut off does (DeviceFrame.css), and the ruler stops
+   at what shows, unmarked where the frame runs on. */
+.catalogue-width-sweep-place[data-cropped] {
+  --catalogue-sweep-fade: 1.75rem;
+  --catalogue-sweep-start: 0rem;
+  --catalogue-sweep-end: 0rem;
+  overflow-x: clip;
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    var(--env-color-fg-default) var(--catalogue-sweep-start),
+    var(--env-color-fg-default) calc(100% - var(--catalogue-sweep-end)),
+    transparent
+  );
+}
+.catalogue-width-sweep-place[data-cut~='start'] {
+  --catalogue-sweep-start: var(--catalogue-sweep-fade);
+}
+.catalogue-width-sweep-place[data-cut~='end'] {
+  --catalogue-sweep-end: var(--catalogue-sweep-fade);
+}
+.catalogue-width-sweep-place[data-cut~='start'] .catalogue-width-ruler {
+  border-inline-start-color: transparent;
+}
+.catalogue-width-sweep-place[data-cut~='end'] .catalogue-width-ruler {
+  border-inline-end-color: transparent;
+}
+
 /* A frame of a width of its own, without its edge, for a figure whose point isn't the width. */
 .catalogue-width-sweep-frame[data-outline='none'] {
   outline-color: transparent;

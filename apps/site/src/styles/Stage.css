@@ -474,6 +474,12 @@
   inline-size: min(28rem, 100% - 2 * var(--env-space-8));
 }
 
+/* What opens it sits at the stage's top start, where an application's search does, beside the
+   palette rather than under its frosted panel, where it would show through as a blur. */
+:is(.site-live-example, .site-verdict-stage) .catalogue-open-example:has(.env-command-palette) {
+  place-items: start;
+}
+
 /* The layer envUI's overlays render into, through PortalContainer, over the room. */
 .catalogue-overlay-layer {
   position: absolute;

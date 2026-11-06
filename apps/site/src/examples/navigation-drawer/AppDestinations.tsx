@@ -22,6 +22,10 @@ const messages = [
   { label: 'Sam Lee', description: 'Re: Quarterly report figures' },
   { label: 'Jordan Kim', description: 'Invitation: Mobile release review' },
   { label: 'Alex Morgan', description: 'Onboarding guide, second draft' },
+  { label: 'Maya Chen', description: 'Design review notes from Tuesday' },
+  { label: 'Leo Novak', description: 'Budget 2026: final numbers' },
+  { label: 'Nina Park', description: 'Welcome to the support team' },
+  { label: 'Omar Haddad', description: 'Office closed on Friday' },
 ];
 
 export default function AppDestinations() {
