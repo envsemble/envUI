@@ -288,6 +288,8 @@ function WidthBox({ width, children }: { width: number; children: ReactNode }) {
       className="catalogue-width-fit"
       data-scaled={scaled ? '' : undefined}
       data-cropped={cropped ? '' : undefined}
+      // Cropped, it scrolls across the stage, so the keyboard can scroll it too.
+      tabIndex={cropped ? 0 : undefined}
       style={scaled && { inlineSize: scaled.width, blockSize: scaled.height }}
     >
       <div
@@ -392,15 +394,12 @@ export function LiveExample({
         >
           {widths.map((width) => (
             <figure key={width} className="catalogue-width-frame">
-              {/* The stage scrolls where the frame is wider than the page, so the keyboard can
-                  scroll it too. */}
               <Column
                 render={<Theme {...theme} />}
                 container="env-window"
                 gap={0}
                 className="site-live-example"
                 data-stage={stage}
-                tabIndex={0}
                 aria-label={`${width} rem wide`}
                 role="group"
               >
