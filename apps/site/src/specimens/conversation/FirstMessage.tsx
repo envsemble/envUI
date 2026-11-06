@@ -8,7 +8,8 @@ const suggestion = '[data-env-layout="row"] > .env-button:nth-child(3)';
 
 /*
  * The pointer presses "What is still open for the launch?": it becomes the first message, the
- * suggestions leave, and the reply arrives. Then the conversation starts anew.
+ * suggestions leave, and the reply arrives. Then the conversation starts anew, the welcome showing
+ * through as the thread fades out over it.
  */
 const script: PointerStep[] = [
   { wait: 500 },
@@ -27,7 +28,7 @@ function Asking() {
   const [round, setRound] = useState(0);
   usePointer(script, { onCue: () => setRound((count) => count + 1) });
   return (
-    <Renew round={round}>
+    <Renew round={round} crossfade>
       <FirstMessage />
     </Renew>
   );
