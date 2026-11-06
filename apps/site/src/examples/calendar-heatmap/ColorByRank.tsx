@@ -1,8 +1,8 @@
 import { CalendarHeatmap, type CalendarHeatmapDay } from '@envsemble/envui';
 
-/** Stands in for twenty weeks of edits: a few very busy days among quiet ones. */
-const data: CalendarHeatmapDay[] = Array.from({ length: 140 }, (_, index) => {
-  const time = Date.UTC(2025, 10, 12) + index * 86_400_000;
+/** Stands in for sixteen weeks of edits: a few very busy days among quiet ones. */
+const data: CalendarHeatmapDay[] = Array.from({ length: 112 }, (_, index) => {
+  const time = Date.UTC(2025, 11, 10) + index * 86_400_000;
   const busy = index % 17 === 3 ? 40 : 0;
   return {
     date: new Date(time).toISOString().slice(0, 10),
