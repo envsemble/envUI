@@ -16,6 +16,23 @@
   list-style: none;
 }
 
+/* On a phone, as the gallery's (Gallery.css): components two to a row, on its lower stages of 16:10,
+   so a small one doesn't stand in empty space; a pattern's scene keeps a row and its stage. */
+@container (width < 27.25rem) {
+  .catalogue-related-tiles.catalogue-related-tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--env-space-4);
+  }
+  .catalogue-related-tile:has(> * > .catalogue-gallery-stage[data-scene]),
+  .catalogue-related-tile:has(> .catalogue-gallery-stage[data-scene]) {
+    grid-column: 1 / -1;
+  }
+  .catalogue-related-tiles
+    .catalogue-gallery-stage.catalogue-gallery-stage.catalogue-gallery-stage:not([data-scene]) {
+    aspect-ratio: 16 / 10;
+  }
+}
+
 @container (width >= 24rem) {
   .catalogue-related-tiles:is(
     [data-count='1'],
