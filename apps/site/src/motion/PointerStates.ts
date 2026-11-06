@@ -20,6 +20,15 @@ export function mark(element: Element, name: string, on: boolean) {
   element.toggleAttribute(name, on);
 }
 
+/** The mark that stands in for each state. */
+const marks = {
+  hover: hoverMark,
+  active: pressMark,
+  'focus-visible': focusMark,
+  'focus-within': focusWithinMark,
+  focus: focusMark,
+};
+
 /** The site's rules for :hover and :active, written again for the pointer's marks. */
 const mirror = typeof CSSStyleSheet === 'undefined' ? null : new CSSStyleSheet();
 let mirroredSheets = -1;
@@ -31,12 +40,17 @@ function mirrorRules(rules: CSSRuleList, out: string[], wrap: Wrap) {
   for (const rule of rules) {
     if (rule instanceof CSSStyleRule) {
       const selector = rule.selectorText;
-      // A rule for what isn't hovered would hold for the marked element still; it is left alone.
-      if (
-        !/:(hover|active|focus)/.test(selector) ||
-        /:not\([^)]*:(hover|active|focus)/.test(selector)
-      )
+      if (!/:(hover|active|focus)/.test(selector)) continue;
+      // A rule for what isn't hovered would hold for the marked element still, such as a labelled
+      // field's placeholder hidden while it isn't focused: it learns the marks in its own selector.
+      if (/:not\([^)]*:(hover|active|focus)/.test(selector)) {
+        if (!selector.includes('data-catalogue-'))
+          rule.selectorText = selector.replace(
+            /:(hover|active|focus-visible|focus-within|focus)\b(?!-)/g,
+            (state, name: keyof typeof marks) => `:is(${state}, [${marks[name]}])`,
+          );
         continue;
+      }
       const marked = selector
         .replace(/:hover\b/g, `[${hoverMark}]`)
         .replace(/:active\b/g, `[${pressMark}]`)
