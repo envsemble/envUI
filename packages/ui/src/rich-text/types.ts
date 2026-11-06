@@ -198,6 +198,11 @@ export interface RichTextEditorProps
    * @default 'outline'
    */
   variant?: FieldVariant;
+  /**
+   * Lines of text the document is tall enough for while it holds fewer, such as 2 for a short note
+   * in a card; it grows with its text. Without it the document is at least 10 rem tall.
+   */
+  minRows?: number;
 }
 export interface RichTextProps
   extends RichTextRenderOptions,

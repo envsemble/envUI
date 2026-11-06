@@ -23,9 +23,9 @@ const script: PointerStep[] = [
 /**
  * Three tabs of a project, Plan chosen, over its panel, filling a box of the height of the tallest
  * panel, as tabs in a pane do, so the strip stays where it is as the panels change. The component
- * fades the panel leaving out as the one coming fades in, in the same place, so the two panels the
- * card moves between hold their content apart: Plan a short line at the start, Files its count and
- * upload button at the end. Its names are the same at every width; in a phone's narrower and lower
+ * fades the panel leaving out as the one coming fades in, in the same place; both panels the card
+ * moves between start at the panel's start, as a pane's content does: Plan a short line, Files its
+ * count beside its upload button. Its names are the same at every width; in a phone's narrower and lower
  * tile the strip is a little wider than the stage shows at its own size, so it is drawn at the one
  * smaller scale the other navigation cards there take, its panels whole and apart.
  */
@@ -49,7 +49,7 @@ export default function TabsTile() {
           value: 'files',
           label: 'Files',
           content: (
-            <Row gap={2} justify="end" align="center">
+            <Row gap={2} align="center">
               <Text emphasis="muted">2 files</Text>
               <IconButton
                 size="sm"

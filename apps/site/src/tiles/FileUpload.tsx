@@ -31,8 +31,12 @@ const script: PointerStep[] = [
 /** How much of the photo has gone up, in MB, of 1.1. */
 const size = 1.1;
 
-/** Adding files: a drop zone over the files added, one uploading as it goes up. */
+/**
+ * Adding files: a drop zone over the files added, each with its Remove action, one uploading as it
+ * goes up.
+ */
 export default function FileUploadTile() {
+  const [report, setReport] = useState(true);
   const [uploaded, setUploaded] = useState<number | null>(size);
   usePointer(script);
   const uploading = uploaded !== null && uploaded < size;
@@ -46,7 +50,21 @@ export default function FileUploadTile() {
       <DropZone size="sm" multiple label="Add files" onFilesAccepted={() => setUploaded(0)} />
       <Surface background="muted" padding={1} radius="sm" style={outlined}>
         <List.Root aria-label="Files">
-          <List.Item label="annual-review.pdf" description="2.4 MB" />
+          {report && (
+            <List.Item
+              label="annual-review.pdf"
+              description="2.4 MB"
+              end={
+                <Button
+                  variant="text"
+                  aria-label="Remove annual-review.pdf"
+                  onClick={() => setReport(false)}
+                >
+                  Remove
+                </Button>
+              }
+            />
+          )}
           {uploaded !== null && (
             <List.Item
               label="team-photo.jpg"

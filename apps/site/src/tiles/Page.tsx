@@ -1,73 +1,75 @@
-import { useEffect, useRef } from 'react';
+import { useLayoutEffect, useRef } from 'react';
 import { Column, Page, PageHeader, Text } from '@envsemble/envui';
 import { useMedia } from '../motion/Autoplay';
-import { useTimeline } from '../motion/Motion';
+import { usePointer, type PointerStep } from '../motion/Motion';
 import { narrowGallery } from './Tiles';
 
 /** The page's sections: an overview, then the three it rests on in turn. */
 const sections = ['Overview', 'Summary', 'Revenue', 'Costs'];
 
 /**
- * How long a scroll to the next section takes, in ms: brief beside the hold on each, so the page
- * is mostly seen resting on a section's start rather than with lines passing under its header.
+ * About a section's pitch, in px: a turn of the wheel this far scrolls one section on, and the box,
+ * which snaps to its sections' starts, settles on that section's start under the header.
  */
-const scrollTakes = 400;
-
-/** Eases a scroll in and out, as a wheel's does. */
-const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
+const pitch = 95;
 
 /**
- * A page in a box that scrolls, as a window does, at its own size and as low as its header, one
- * whole section and the room the fade at its foot takes as it plays (useFit.ts), so the fade falls
- * below the section's last line rather than through it: its still is scrolled past the overview to Summary, under the header stuck at the
- * top with the fill it takes once content scrolls beneath it, and it scrolls down a section at a
- * time and back to it, so the still is a moment the scroll passes through. Each step rests with
- * one whole section just under the header, snapped to its start; the sections stand further apart
- * than the header is tall, so at rest none runs on above it at the box's top; room after the last
- * lets it scroll there too. In a phone's narrower tile the box is narrower, so the page is drawn at
- * about its own size there.
+ * The pointer comes over the page and turns the wheel a section on, twice, Summary to Revenue to
+ * Costs, then back up to Summary, as a person reads a report, so the cursor shows why the page
+ * scrolls under its header.
+ */
+const script: PointerStep[] = [
+  { wait: 300 },
+  // Over the section below the header: the page's content is taller than the box, so it is aimed
+  // at from the header, which stays where it is.
+  { to: '.env-page-header', x: 0.7, y: 1.7 },
+  { wait: 500 },
+  { wheel: pitch, duration: 450 },
+  { wait: 1300 },
+  { wheel: pitch, duration: 450 },
+  { wait: 1300 },
+  { wheel: -2 * pitch, duration: 650 },
+  { wait: 900 },
+  { leave: true },
+  { wait: 400 },
+];
+
+/**
+ * A page in a box that scrolls, as a window does, at its own size and as low as its header and one
+ * whole section: its still is scrolled past the overview to Summary, under the header stuck at the
+ * top with the fill it takes once content scrolls beneath it. As it plays, the pointer's wheel
+ * scrolls it a section at a time and back; the box snaps to the sections' starts, each held clear
+ * of the header by the Page's own scroll margin, so each turn rests with one whole section under
+ * it; each section ends in room as deep as that margin's, so the one above is wholly past the
+ * header's top. Room after the last lets it scroll there too. In a phone's narrower tile the box is
+ * narrower, so the page is drawn at about its own size there.
  */
 export default function PageTile() {
-  const step = useTimeline([2000, 2000, 2000]);
   const narrow = useMedia(narrowGallery);
   const box = useRef<HTMLDivElement>(null);
-  const placed = useRef(false);
-  useEffect(() => {
+  usePointer(script);
+  // Its still is drawn at Summary's start at once.
+  useLayoutEffect(() => {
     const element = box.current;
-    if (!element) return;
-    const from = element.scrollTop;
-    const section = element.querySelectorAll('section')[step + 1];
-    const header = element.querySelector<HTMLElement>('.env-page-header');
-    // The section's top in the box's content, read through the tile's scale, at the foot of the
-    // header stuck at the box's top; the section's own inset parts the two.
+    const section = element?.querySelectorAll('section')[1];
+    if (!element || !section) return;
     const frameBox = element.getBoundingClientRect();
     const scale = frameBox.height / element.offsetHeight || 1;
-    const top = section ? (section.getBoundingClientRect().top - frameBox.top) / scale + from : 0;
-    const to = header ? Math.round(top - header.offsetHeight) : 0;
-    if (from === to) return;
-    // Its still is drawn there at once rather than scrolled to.
-    if (!placed.current) {
-      placed.current = true;
-      element.scrollTop = to;
-      return;
-    }
-    const start = performance.now();
-    let frame = 0;
-    const tick = (now: number) => {
-      const progress = Math.min(1, (now - start) / scrollTakes);
-      element.scrollTop = from + (to - from) * ease(progress);
-      if (progress < 1) frame = requestAnimationFrame(tick);
-    };
-    frame = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frame);
-  }, [step]);
+    const top =
+      (section.getBoundingClientRect().top - frameBox.top) / scale +
+      element.scrollTop -
+      parseFloat(getComputedStyle(section).scrollMarginBlockStart || '0');
+    element.scrollTop = Math.round(top);
+  }, [narrow]);
   return (
     <div
       ref={box}
       style={{
         inlineSize: narrow ? '10rem' : '12.5rem',
         blockSize: narrow ? '6.875rem' : '7.25rem',
-        overflow: 'hidden',
+        overflowY: 'auto',
+        scrollbarWidth: 'none',
+        scrollSnapType: 'y mandatory',
         borderRadius: 'var(--env-radius-lg)',
         background: 'var(--env-color-bg-page)',
       }}
@@ -79,7 +81,7 @@ export default function PageTile() {
               key={section}
               gap={1}
               render={<section />}
-              style={{ paddingBlockStart: 'var(--env-space-1)' }}
+              style={{ scrollSnapAlign: 'start', paddingBlockEnd: 'var(--env-space-2)' }}
             >
               <Text variant="title" render={<h4 />}>
                 {section}

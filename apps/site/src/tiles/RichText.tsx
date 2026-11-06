@@ -41,9 +41,9 @@ const script: PointerStep[] = [
 
 /**
  * A rich text editor with its fewest tools, Bold beside undo and redo, over a line whose phrase
- * turns bold; in a phone's tile narrower, its line still one line. Its document is
- * never lower than 10 rem, taller than a gallery's stage, so it shows from its top: the toolbar and
- * the line whole, cut off in the empty document below them.
+ * turns bold; in a phone's tile narrower, its line still one line. Its document is as tall as two
+ * lines, as a short note's editor is, so the editor shows whole in a gallery's stage, its edge and
+ * focus ring closed below the line.
  */
 export default function RichTextTile() {
   const [round, setRound] = useState(0);
@@ -58,6 +58,7 @@ export default function RichTextTile() {
         defaultValue={words.text}
         toolbar={['bold']}
         variant="ghost"
+        minRows={2}
         style={{ inlineSize: narrow ? '8.5rem' : '12.5rem' }}
       />
     </Renew>

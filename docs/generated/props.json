@@ -6641,6 +6641,12 @@
           "description": "The document's look, as a text area's: outline, in a bordered box on what it sits on; or ghost, only its text at rest, with a soft fill under the pointer and while it has focus. The document is always tall, with its label above it."
         },
         {
+          "name": "minRows",
+          "type": "number",
+          "required": false,
+          "description": "Lines of text the document is tall enough for while it holds fewer, such as 2 for a short note in a card; it grows with its text. Without it the document is at least 10 rem tall."
+        },
+        {
           "name": "extensions",
           "type": "AnyExtension[]",
           "required": false,
