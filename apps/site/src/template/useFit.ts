@@ -791,14 +791,14 @@ export function useFit(
         framed &&
         holdsFrame(framed.shape, measured)
       ) {
-        if (view.toX !== framed.toX || view.toY !== framed.toY || view.toScale !== framed.scale) {
-          const { scale, toX, toY, cut } = framed;
-          if (cut) canvasElement.dataset.cut = cut;
-          else delete canvasElement.dataset.cut;
-          fadeAt = framed.fadeAt;
+        // Cut off where its still was, also where its play, in the same view, showed less, such as
+        // a palette's one result; and what it shows anew there, its results cleared, is trimmed.
+        const { scale, toX, toY, cut } = framed;
+        if (cut) canvasElement.dataset.cut = cut;
+        else delete canvasElement.dataset.cut;
+        fadeAt = framed.fadeAt;
+        if (view.toX !== toX || view.toY !== toY || view.toScale !== scale)
           settle(scale, toX, toY, boxes);
-        }
-        // What it shows anew in that view, such as a palette's results cleared, is trimmed too.
         trim();
         return;
       }
