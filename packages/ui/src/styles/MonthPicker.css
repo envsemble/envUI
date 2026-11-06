@@ -57,9 +57,9 @@
     padding-inline: var(--env-space-1);
     border-radius: var(--env-radius-full);
     overflow-wrap: break-word;
-    /* The neutral hover fill eases in and out. The chosen fill and its text color change at once
-       as it is chosen, and as it is left only the fill fades, under text already back in its own
-       color, so its text is never white on a fill half gone. */
+    /* The neutral hover fill eases in and out. The chosen fill and its white text come and go at
+       once, the fill as an image over the background color, which doesn't transition, so its text
+       is never white on a fill half gone and the choice never shows on two at once. */
     transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
   }
   .env-month-picker-month:hover:not([aria-disabled='true'], [aria-selected='true'])
@@ -75,8 +75,10 @@
     font-weight: var(--env-font-weight-semibold);
   }
   .env-month-picker-month[aria-selected='true'] > .env-month-picker-month-mark {
-    transition: none;
-    background: var(--env-color-bg-primary-emphasis);
+    background: linear-gradient(
+      var(--env-color-bg-primary-emphasis),
+      var(--env-color-bg-primary-emphasis)
+    );
     box-shadow: none;
     color: var(--env-color-fg-on-emphasis);
     font-weight: var(--env-font-weight-semibold);
@@ -118,7 +120,7 @@
     }
     .env-month-picker-month[aria-selected='true'] > .env-month-picker-month-mark {
       forced-color-adjust: none;
-      background-color: Highlight;
+      background: Highlight;
       color: HighlightText;
     }
     .env-month-picker-month[aria-selected='true']:focus-visible > .env-month-picker-month-mark {
