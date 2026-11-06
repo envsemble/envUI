@@ -256,21 +256,24 @@
   visibility: hidden;
 }
 
+/* The fade is gone a quarter of its length before the edge, so what it fades out, such as a
+   picker's popup, ends in the stage's own fill rather than at its edge, where it would read as
+   cut off there, also in light, where a popup is as light as the stage. */
 .catalogue-related-crop:has(> [data-cut]) {
   mask-image:
     linear-gradient(
       to bottom,
-      transparent,
+      transparent calc(var(--catalogue-crop-top) / 4),
       var(--catalogue-crop-opaque) var(--catalogue-crop-top),
       var(--catalogue-crop-opaque) calc(100% - var(--catalogue-crop-bottom)),
-      transparent
+      transparent calc(100% - var(--catalogue-crop-bottom) / 4)
     ),
     linear-gradient(
       to right,
-      transparent,
+      transparent calc(var(--catalogue-crop-start) / 4),
       var(--catalogue-crop-opaque) var(--catalogue-crop-start),
       var(--catalogue-crop-opaque) calc(100% - var(--catalogue-crop-end)),
-      transparent
+      transparent calc(100% - var(--catalogue-crop-end) / 4)
     );
   mask-composite: intersect;
 }

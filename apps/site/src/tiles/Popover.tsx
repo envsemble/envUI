@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { Button, Column, IconButton, Popover, Text } from '@envsemble/envui';
 import { IconInfo } from '@envsemble/envui/icons/Info';
-import { usePointer, type PointerStep } from '../motion/Motion';
+import { useMedia } from '../motion/Autoplay';
+import { useHeldView, usePointer, type PointerStep } from '../motion/Motion';
+import { narrowGallery } from './Tiles';
 
 const trigger = '.env-button[aria-haspopup]';
 const action = '.env-popover .env-button';
@@ -31,12 +33,15 @@ type Period = keyof typeof periods;
 /**
  * A popover that tells the billing period, open beside the icon button that opens it, so it shows
  * whole at about its own size in a gallery's low tile, with the action that switches the period,
- * which closes it. Stopped, it is monthly and open again rather than drawn anew, which
+ * which closes it; on a phone's narrower tile, under its button. It rests open, its largest state,
+ * so as it closes and opens again nothing in its tile moves (useHeldView). Stopped, it is monthly and open again rather than drawn anew, which
  * would bring it in again.
  */
 export default function PopoverTile() {
   const [open, setOpen] = useState(true);
   const [period, setPeriod] = useState<Period>('monthly');
+  const narrow = useMedia(narrowGallery);
+  useHeldView();
   usePointer(script, {
     onRest: () => {
       setPeriod('monthly');
@@ -50,7 +55,7 @@ export default function PopoverTile() {
       onOpenChange={setOpen}
       // Named rather than headed, so it is low enough to show whole beside its button.
       aria-label="Billing period"
-      side="inline-end"
+      side={narrow ? 'bottom' : 'inline-end'}
       trigger={<IconButton variant="secondary" icon={<IconInfo />} aria-label="Billing" />}
     >
       {(close) => (
