@@ -644,8 +644,8 @@ test('every tile of the galleries is fitted: components at one scale, a scene at
         // the least a component's popup is drawn at, never between, whole or a window onto it from
         // its top; in a scene, at about its own size, as the scene is, so its words read as the
         // other tiles' do (Gallery.css). An overlay, such as a notification or a dialog, is drawn at
-        // the overlays' one scale, or on a phone smaller only where it shows whole no larger, down
-        // to its window's least (Tiles.ts).
+        // the overlays' one scale, or smaller only where it shows whole no larger, down to its
+        // window's least (Tiles.ts).
         if (canvas.hasAttribute('data-popup')) {
           const at = Number(scaleOf(canvas));
           const own = canvas.hasAttribute('data-own-size');
@@ -667,7 +667,14 @@ test('every tile of the galleries is fitted: components at one scale, a scene at
             return at >= popupLeast - 0.001 && at <= Number(one ?? 1) + 0.001
               ? []
               : [`${name}: modal drawn at ${at}`];
-          return near(Number(one ?? 1)) || near(popupLeast)
+          // A held view, such as a picker resting open, framed down to what its script acts on
+          // with its fade shortened below it, is drawn smaller only as far as that needs, down
+          // to a held view's least (useFit.ts).
+          const held =
+            canvas.parentElement!.style.getPropertyValue('--catalogue-crop-bottom') !== '' &&
+            at < popupLeast &&
+            at >= 0.6 - 0.001;
+          return near(Number(one ?? 1)) || near(popupLeast) || held
             ? []
             : [`${name}: popup drawn at ${at}`];
         }
