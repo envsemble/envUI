@@ -13,11 +13,13 @@
 /* The place the device holds on the stage, its view at its scale, centred. A device too large to
    show whole at a legible scale is cut off there (DeviceStage), out to the stage's edge, and what
    is cut off at an edge fades out over the last stretch, as a tile's crop does (Gallery.css),
-   rather than ending in a slice through a line. The fade eases in and out, so the window's own
+   rather than ending in a slice through a line. Every cut edge, a side or the foot, fades alike,
+   over a stretch long enough that a line of text cut at a side, such as a page beside a window's
+   navigation, reads as running on past it. The fade eases in and out, so the window's own
    surfaces and lines, running into it side by side, dissolve without the band a straight ramp
    leaves where it meets the solid part. */
 .site-device-fit {
-  --site-device-fade: 1.75rem;
+  --site-device-fade: 3rem;
   /* Any opaque color: the mask reads only its alpha. */
   --site-device-opaque: var(--env-color-fg-default);
   --site-device-1: color-mix(in srgb, var(--site-device-opaque) 3%, transparent);
