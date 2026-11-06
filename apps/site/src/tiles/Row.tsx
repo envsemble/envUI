@@ -28,7 +28,7 @@ const narrowWidths = [fit(3), fit(2), fit(3), fit(2)];
  * it has changes.
  */
 export default function RowTile() {
-  const step = useTimeline([1000, 1400, 1300, 1600]);
+  const step = useTimeline([1800, 2000, 1800, 2000]);
   const narrow = useMedia(narrowGallery);
   return (
     <Surface

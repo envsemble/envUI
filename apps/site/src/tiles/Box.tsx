@@ -1,9 +1,15 @@
 import { Box, Button, Column, Surface, Text, type SpaceStep } from '@envsemble/envui';
+import { useMedia } from '../motion/Autoplay';
 import { useTimeline } from '../motion/Motion';
 import { outlined } from './Outline';
+import { narrowGallery } from './Tiles';
 
-/** The inset, step by step: a small one, a larger one, and back. */
-const paddings: SpaceStep[] = [2, 5];
+/**
+ * The inset, step by step: a large one, a small one, and back; a phone's lower stage holds a
+ * little less.
+ */
+const paddings: SpaceStep[] = [5, 1];
+const narrowPaddings: SpaceStep[] = [4, 1];
 
 /**
  * An invitation inset by a Box in an outlined surface as wide as its content, as a region holds
@@ -11,7 +17,8 @@ const paddings: SpaceStep[] = [2, 5];
  * shrinking again. Each step lays the box out at once, as a Box does when its padding changes.
  */
 export default function BoxTile() {
-  const step = useTimeline([1100, 1800]);
+  const step = useTimeline([2200, 2200]);
+  const narrow = useMedia(narrowGallery);
   return (
     <Surface
       background="default"
@@ -19,7 +26,7 @@ export default function BoxTile() {
       padding={0}
       style={{ ...outlined, inlineSize: 'max-content' }}
     >
-      <Box padding={paddings[step]}>
+      <Box padding={(narrow ? narrowPaddings : paddings)[step]}>
         <Column gap={1} align="start">
           <Text variant="body">Invite your team</Text>
           <Text variant="body-sm" emphasis="muted">
