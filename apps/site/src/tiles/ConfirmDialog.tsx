@@ -4,16 +4,16 @@ import { IconDelete } from '@envsemble/envui/icons/Delete';
 import { usePointer, type PointerStep } from '../motion/Motion';
 
 /**
- * Confirmed, which waits for the action, pending, and closes on the plan's row, which offers to
- * undo it; undone, and the dialog opened again from the row's button, held open a while before
- * the loop starts over.
+ * Confirmed, which waits for the action, pending, and closes on the plan's row, which says it is
+ * deleted and offers to undo it, held a while so it reads; undone, and the dialog opened again
+ * from the row's button, held open a while before the loop starts over.
  */
 const script: PointerStep[] = [
   { wait: 400 },
   { to: '.env-dialog .env-button[type="submit"]', x: 0.4, y: 0.6 },
   { wait: 600 },
   { click: true },
-  { wait: 2100 },
+  { wait: 3600 },
   { to: '.env-button:not([aria-haspopup])', duration: 400 },
   { wait: 250 },
   { click: true },
