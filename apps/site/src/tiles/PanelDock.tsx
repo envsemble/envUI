@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { Column, PanelDock, Text, type PanelDockPanel } from '@envsemble/envui';
+import { Column, PanelDock, Surface, Text, type PanelDockPanel } from '@envsemble/envui';
 import { useMedia } from '../motion/Autoplay';
 import { usePointer, type PointerStep } from '../motion/Motion';
+import { outlined } from './Outline';
 import { narrowGallery } from './Tiles';
 
 const minimize = '.env-panel-dock-panel[data-panel-id="notes"] [aria-label="Minimize"]';
@@ -27,50 +28,44 @@ const start: PanelDockPanel[] = [
     id: 'notes',
     title: 'Notes',
     mode: 'open',
-    preferredWidth: 7,
-    minWidth: 7,
+    preferredWidth: 7.5,
+    minWidth: 7.5,
+    height: 5,
   },
 ];
 
 /**
- * The window the panels dock in, outlined, so the bottom edge they stand on shows, over a few rows
- * of its page: as low as a gallery's tile shows whole at its own size; on a phone's narrower tile,
- * narrower, so it is drawn at about its own size there too. Its dock is narrower than `stackBelow`,
- * so the open panel fills it, as one does in a narrow window: its header, the title under the
- * window controls, and its note's one line, above the bottom edge.
+ * The region the panels dock in, a surface outlined so its bottom edge shows, over a few rows of
+ * its page: as low as a gallery's tile shows whole at its own size, with the room an open panel's
+ * header, its window controls over its title, takes above the edge it stands on; on a phone's
+ * narrower tile, narrower. Its dock is wider than `stackBelow`, so the open panel keeps its own
+ * width at the bottom inline-end edge, as on a desktop, over the end of the rows, whose starts
+ * show beside it.
  */
-const edges = {
+const region = {
+  ...outlined,
   position: 'relative',
   inlineSize: '12rem',
-  blockSize: '6.75rem',
-  padding: '0.5rem 0.75rem',
-  boxSizing: 'border-box',
-  border: '0.0625rem solid var(--env-color-border-muted)',
+  blockSize: '6.25rem',
   overflow: 'hidden',
 } as const;
-const narrowEdges = {
-  ...edges,
-  inlineSize: '10rem',
-  blockSize: '6.5rem',
-  paddingInline: '0.5rem',
-} as const;
+const narrowRegion = { ...region, inlineSize: '11rem' } as const;
 
-const rows = ['Plan', 'Team', 'Docs'];
-const narrowRows = ['Q1', 'Q2', 'Q3'];
+const rows = ['Plan the launch', 'Review the budget', 'Update the docs'];
 
 /**
- * A notes panel docked at the bottom edge of a window, at rest, whose tab takes its place there
- * minimized, uncovering the page. Stopped, it puts its panels back rather than being drawn anew, which would raise the
- * notes in again.
+ * A notes panel docked at the bottom end of a page, at rest, whose tab takes its place there
+ * minimized, uncovering the rows beneath it. Stopped, it puts its panels back rather than being
+ * drawn anew, which would raise the notes in again.
  */
 export default function PanelDockTile() {
   const [panels, setPanels] = useState(start);
   const narrow = useMedia(narrowGallery);
   usePointer(script, { onRest: () => setPanels(start) });
   return (
-    <div style={narrow ? narrowEdges : edges}>
+    <Surface background="default" radius="sm" padding={3} style={narrow ? narrowRegion : region}>
       <Column gap={2}>
-        {(narrow ? narrowRows : rows).map((row) => (
+        {rows.map((row) => (
           <Text key={row} variant="body-sm" style={{ whiteSpace: 'nowrap' }}>
             {row}
           </Text>
@@ -78,7 +73,7 @@ export default function PanelDockTile() {
       </Column>
       <PanelDock.Root
         panels={panels}
-        stackBelow="16rem"
+        stackBelow="9rem"
         onModeChange={(id, mode) =>
           setPanels((current) =>
             current.map((panel) => (panel.id === id ? { ...panel, mode } : panel)),
@@ -88,15 +83,8 @@ export default function PanelDockTile() {
         // The one panel keeps its resting look: the accent edge marks the front one of several.
         onActivate={() => {}}
       >
-        {(panel) => (
-          <>
-            <PanelDock.Header title={panel.title} />
-            <Text emphasis="muted" style={{ paddingInline: '1.25rem 0.75rem' }}>
-              Moves to May.
-            </Text>
-          </>
-        )}
+        {(panel) => <PanelDock.Header title={panel.title} />}
       </PanelDock.Root>
-    </div>
+    </Surface>
   );
 }
