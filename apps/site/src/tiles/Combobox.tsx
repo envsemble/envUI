@@ -3,7 +3,7 @@ import { Combobox, type ComboboxItem } from '@envsemble/envui';
 import { useHeldView, usePointer, type PointerStep } from '../motion/Motion';
 import { Renew } from '../motion/Renew';
 
-const labels: ComboboxItem[] = ['Design', 'Docs'].map((name) => ({
+const labels: ComboboxItem[] = ['Bug', 'Docs'].map((name) => ({
   value: name.toLowerCase(),
   label: name,
 }));
@@ -36,9 +36,10 @@ const script: PointerStep[] = [
 
 /**
  * A combobox of two labels, several to choose, one already chosen as a chip beside the field's
- * text, so at rest it reads as a field to type in rather than a select; short labels, so two chips
- * share the field's one row. It rests with its list open, framed on the field and the list, so as
- * it plays the list narrows, closes and opens again in place, and nothing in its tile moves.
+ * text, so at rest it reads as a field to type in rather than a select; labels short enough that
+ * two chips share the field's one row, on a phone's narrower tile too. It rests with its list open,
+ * framed on the field and the list, so as it plays the list narrows, closes and opens again in
+ * place, and nothing in its tile moves.
  */
 export default function ComboboxTile() {
   const [round, setRound] = useState(0);
@@ -51,7 +52,7 @@ export default function ComboboxTile() {
         label="Labels"
         placeholder="Add a label"
         items={labels}
-        defaultValue={['design']}
+        defaultValue={['bug']}
         defaultOpen
         style={{ inlineSize: 'min(12rem, 100%)' }}
       />
