@@ -1185,10 +1185,18 @@ export function useFit(
         );
         return;
       }
+      // An overlay, such as a notification, is measured by its own surface, which keeps a popup's
+      // room from the stage's edges, not by the inset a trigger keeps: the largest scale it shows
+      // whole across at (anchoredScale). Where it doesn't at its scale, it is drawn as much smaller
+      // as that takes, down to the popups' least.
+      const overlayWhole =
+        overlay && anchored
+          ? anchoredScale(anchored, stageElement.clientWidth, Infinity)
+          : Infinity;
       const drawn = ownSize
         ? popup
           ? overlay
-            ? Math.min(overlay, popupScale(phone ? 1 : own))
+            ? Math.min(overlay, popupScale(phone ? 1 : own), Math.max(popupLeast, overlayWhole))
             : popupScale(phone ? 1 : own)
           : own
         : legible
@@ -1258,11 +1266,14 @@ export function useFit(
       // What fits the stage's room, a margin from its edges, such as a component a little taller
       // than the inset leaves room for, is centred on it, cut off nowhere; a popup, with what it
       // opens from, only where it keeps the inset from every edge, else shown from its start, the
-      // inset from the stage's top and start, and cut off past the inset's room.
+      // inset from the stage's top and start, and cut off past the inset's room. An overlay that
+      // shows whole across as it is drawn (overlayWhole), its surface a popup's room from the edges,
+      // and fits down, isn't faded at an edge.
       const inRoom =
         drawnWhole ||
         (anchored
-          ? down <= height + insetSlack && across <= width + insetSlack
+          ? (overlay > 0 && scale <= overlayWhole + 0.0005 && down <= height + insetSlack) ||
+            (down <= height + insetSlack && across <= width + insetSlack)
           : down <= room.height + 0.5 && across <= room.width + 0.5);
       // So is a component a little wider than the inset leaves room for, such as a strip of tabs,
       // across: it is cut off at its foot alone, as every other one is, not at its side.
