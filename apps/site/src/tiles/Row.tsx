@@ -22,26 +22,38 @@ const widths = [fit(4), fit(3), fit(4), fit(2)];
 const narrowWidths = [fit(3), fit(2), fit(3), fit(2)];
 
 /**
- * Four small outlined cards in a row, three on a phone, a gap apart, that wraps as it narrows, a
- * card and then two, and widens again. Each width lays the row out at once, as a Row does when the
- * room it has changes.
+ * Four small outlined cards in a row, three on a phone, a gap apart, in an outlined panel whose
+ * width changes, so its edge shows the room the row has: the row wraps as the panel narrows, a card
+ * and then two, and widens again. Each width lays the row out at once, as a Row does when the room
+ * it has changes.
  */
 export default function RowTile() {
   const step = useTimeline([1000, 1400, 1300, 1600]);
   const narrow = useMedia(narrowGallery);
   return (
-    <Row wrap gap={2} style={{ inlineSize: (narrow ? narrowWidths : widths)[step] }}>
-      {(narrow ? narrowCards : cards).map((name) => (
-        <Surface
-          key={name}
-          background="default"
-          radius="sm"
-          padding={2}
-          style={{ ...outlined, inlineSize: `${card}rem`, boxSizing: 'border-box' }}
-        >
-          <Text variant="body-sm">{name}</Text>
-        </Surface>
-      ))}
-    </Row>
+    <Surface
+      background="muted"
+      radius="sm"
+      padding={2}
+      style={{
+        ...outlined,
+        inlineSize: (narrow ? narrowWidths : widths)[step],
+        boxSizing: 'content-box',
+      }}
+    >
+      <Row wrap gap={2}>
+        {(narrow ? narrowCards : cards).map((name) => (
+          <Surface
+            key={name}
+            background="default"
+            radius="sm"
+            padding={2}
+            style={{ ...outlined, inlineSize: `${card}rem`, boxSizing: 'border-box' }}
+          >
+            <Text variant="body-sm">{name}</Text>
+          </Surface>
+        ))}
+      </Row>
+    </Surface>
   );
 }
