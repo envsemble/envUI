@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Column, PanelDock, Surface, Text, type PanelDockPanel } from '@envsemble/envui';
+import { PanelDock, Surface, Text, type PanelDockPanel } from '@envsemble/envui';
 import { useMedia } from '../motion/Autoplay';
 import { usePointer, type PointerStep } from '../motion/Motion';
 import { outlined } from './Outline';
@@ -23,6 +23,10 @@ const script: PointerStep[] = [
   { wait: 500 },
 ];
 
+/**
+ * The panel as tall as its header, the window controls over the title, so its content fits it and
+ * never scrolls: a line of notes below them would take the panel past the stage's height.
+ */
 const start: PanelDockPanel[] = [
   {
     id: 'notes',
@@ -30,32 +34,30 @@ const start: PanelDockPanel[] = [
     mode: 'open',
     preferredWidth: 7.5,
     minWidth: 7.5,
-    height: 5,
+    height: 5.125,
+    minHeight: 5.125,
   },
 ];
 
 /**
- * The region the panels dock in, a surface outlined so its bottom edge shows, over a few rows of
- * its page: as low as a gallery's tile shows whole at its own size, with the room an open panel's
- * header, its window controls over its title, takes above the edge it stands on; on a phone's
- * narrower tile, narrower. Its dock is wider than `stackBelow`, so the open panel keeps its own
- * width at the bottom inline-end edge, as on a desktop, over the end of the rows, whose starts
- * show beside it.
+ * The region the panels dock in, a surface outlined so its bottom edge shows, under the top line of
+ * its page: the open panel stands on its bottom edge below that line, so no text lies under the
+ * panel, and the region is as low as the line and the panel, so it shows whole in a gallery's tile
+ * at its own size; on a phone's narrower tile, narrower. Its dock is wider than `stackBelow`, so
+ * the open panel keeps its own width at the bottom inline-end edge, as on a desktop.
  */
 const region = {
   ...outlined,
   position: 'relative',
   inlineSize: '12rem',
-  blockSize: '6.25rem',
+  blockSize: '6.875rem',
   overflow: 'hidden',
 } as const;
 const narrowRegion = { ...region, inlineSize: '11rem' } as const;
 
-const rows = ['Plan the launch', 'Review the budget', 'Update the docs'];
-
 /**
  * A notes panel docked at the bottom end of a page, at rest, whose tab takes its place there
- * minimized, uncovering the rows beneath it. Stopped, it puts its panels back rather than being
+ * minimized, uncovering the page beneath it. Stopped, it puts its panel back rather than being
  * drawn anew, which would raise the notes in again.
  */
 export default function PanelDockTile() {
@@ -63,14 +65,10 @@ export default function PanelDockTile() {
   const narrow = useMedia(narrowGallery);
   usePointer(script, { onRest: () => setPanels(start) });
   return (
-    <Surface background="default" radius="sm" padding={3} style={narrow ? narrowRegion : region}>
-      <Column gap={2}>
-        {rows.map((row) => (
-          <Text key={row} variant="body-sm" style={{ whiteSpace: 'nowrap' }}>
-            {row}
-          </Text>
-        ))}
-      </Column>
+    <Surface background="default" radius="sm" padding={2} style={narrow ? narrowRegion : region}>
+      <Text variant="caption" style={{ whiteSpace: 'nowrap' }}>
+        Launch plan, due in May
+      </Text>
       <PanelDock.Root
         panels={panels}
         stackBelow="9rem"
