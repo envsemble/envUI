@@ -774,12 +774,17 @@ export function useFit(
         // Down the stage, it is kept above the whole fade at the stage's foot where it fades, and
         // the cursor on it inside the stage; what is there already moves nothing.
         const scale = view.toScale;
+        // The fade as long as it is drawn, shortened below what its pointer heads to at rest.
+        const shortened =
+          canvasElement.parentElement!.style.getPropertyValue('--catalogue-crop-bottom');
         const fade = canvasElement.dataset.cut?.split(' ').includes('bottom')
-          ? parseFloat(
-              getComputedStyle(canvasElement.parentElement!).getPropertyValue(
-                '--catalogue-crop-fade',
-              ),
-            ) * remSize() || 0
+          ? shortened
+            ? parseFloat(shortened) || 0
+            : parseFloat(
+                getComputedStyle(canvasElement.parentElement!).getPropertyValue(
+                  '--catalogue-crop-fade',
+                ),
+              ) * remSize() || 0
           : 0;
         const aim = headingOf(canvasElement);
         const aimed = aim && aimedElement(canvasElement, aim.selector);
@@ -1182,8 +1187,12 @@ export function useFit(
       // At rest, a tile is framed as it plays, on what its pointer heads to (onCourse); moved
       // for it, it is cut off where it reaches past the stage's edges. A held view taller than
       // its stage is placed down it on what its script acts on (heldTop), and across on its course.
+      // A tile first fitted as it plays, its picture loaded while the pointer is on it, is framed
+      // so too, as at rest.
       const course =
-        (ownSize || legible) && tile && !playingNow.current
+        (ownSize || legible) &&
+        tile &&
+        (!playingNow.current || canvasElement.dataset.fitted === undefined)
           ? { ...onCourse(toX, toY, scale), ...(fromTop && keep ? { toY } : {}) }
           : null;
       const shifted =
@@ -1213,6 +1222,45 @@ export function useFit(
         const sides = cut.filter(Boolean).join(' ');
         if (sides) canvasElement.dataset.cut = sides;
         else delete canvasElement.dataset.cut;
+        // At rest, where what its pointer heads to over its script reaches into the fade at its
+        // foot, such as a list's second row, the fade starts no higher than its foot, and the rows
+        // below it that the foot cuts through are hidden whole (trimRows): what it presses reads
+        // as whole and live, as it plays, and the view needn't move to bring it out of the fade.
+        if (course && fadeAt === null && sides.split(' ').includes('bottom')) {
+          const size = stageElement.clientHeight;
+          const fade =
+            parseFloat(
+              getComputedStyle(canvasElement.parentElement!).getPropertyValue(
+                '--catalogue-crop-fade',
+              ),
+            ) * rem || 0;
+          const at = (point: number) => size / 2 - toY + point * scale;
+          const inFade = (foot: number) => at(foot) > size - fade && at(foot) <= size + rowSlack;
+          const feet = restingAims()
+            .map(({ box }) => box.bottom)
+            .filter(inFade);
+          // So does a list's last row whole in the stage, where all that reaches past its foot is
+          // rows below it, hidden whole: it ends on that row, rather than on one faded half out,
+          // which reads as disabled.
+          const rows = [...canvasElement.querySelectorAll(rowSelector)]
+            .filter((row) => !row.querySelector(rowSelector) && row.checkVisibility())
+            .map((row) => ({ row, box: partOf(row, canvasElement) }));
+          const last = rows
+            .filter(({ box }) => box.bottom > box.top && inFade(box.bottom))
+            .reduce<Box | null>(
+              (low, { box }) => (!low || box.bottom > low.bottom ? box : low),
+              null,
+            );
+          const onlyRows =
+            last !== null &&
+            boxes.every(({ element, box }) => {
+              if (at(box.bottom) <= size + rowSlack) return true;
+              const row = element.closest(rowSelector);
+              return row !== null && partOf(row, canvasElement).top >= last.bottom - rowSlack;
+            });
+          if (onlyRows) feet.push(last.bottom);
+          if (feet.length) fadeAt = Math.max(...feet);
+        }
         trim(run !== null);
       }
       // As a page's own tile plays, the view stays where it is while what it shows stays in the
