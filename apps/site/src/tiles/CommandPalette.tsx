@@ -27,9 +27,8 @@ const script: PointerStep[] = [
 ];
 
 /**
- * On a phone, whose stage shows the first command: a search typed that finds the other, which
- * takes its place, and erased, as it began. One that finds none would show the palette's message,
- * taller than the stage shows.
+ * On a phone: a search typed that finds the other, which takes its place, and erased, as it began.
+ * One that finds none would show the palette's message, taller than the stage shows.
  */
 const narrowScript: PointerStep[] = [
   { wait: 600 },
@@ -41,7 +40,7 @@ const narrowScript: PointerStep[] = [
 
 /**
  * A command palette, open with its two commands under its search, which a phone's lower stage
- * shows down to the first. Framed on all of it, so as a search narrows the list and is erased, the
+ * shows whole too, drawn as small as that takes (Tiles.ts). Framed on all of it, so as a search narrows the list and is erased, the
  * palette, which stays at its top, changes in place and nothing in its tile moves.
  */
 export default function CommandPaletteTile() {
