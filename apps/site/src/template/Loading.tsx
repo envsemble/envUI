@@ -48,13 +48,17 @@ export function HoldPlaceholder({ part, children }: { part: string; children: Re
   let hold = holds.get(part);
   if (!hold && at !== undefined && left <= 1) shownAt.delete(part);
   if (!hold && left > 1) {
-    hold = new Promise<void>((resolve) => window.setTimeout(resolve, left)).then(() => {
-      holds.delete(part);
-      shownAt.delete(part);
-    });
+    hold = new Promise<void>((resolve) => window.setTimeout(resolve, left));
     holds.set(part, hold);
   }
+  // The render after the wait reads the same, now settled, promise, as React asks of a component
+  // that suspended; the wait is forgotten once that render is committed.
   if (hold) use(hold);
+  useEffect(() => {
+    if (!hold || holds.get(part) !== hold) return;
+    holds.delete(part);
+    shownAt.delete(part);
+  }, [hold, part]);
   return children;
 }
 
