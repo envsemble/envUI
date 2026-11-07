@@ -822,6 +822,7 @@
       "env-tree-chevron": "The chevron that expands an item.",
       "env-tree-description": "An item's description.",
       "env-tree-end": "The end of an item, for a count or actions.",
+      "env-tree-group": "The rows an expanding or collapsing item reveals or hides, while they grow or shrink.",
       "env-tree-icon": "An item's icon.",
       "env-tree-item": "One item.",
       "env-tree-label": "An item's label.",
