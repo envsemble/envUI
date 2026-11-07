@@ -156,7 +156,34 @@ export class VirtualPointer {
   /** Whether the press may select text by dragging: no one took it for itself. */
   private selects = false;
 
+  /** Where the preview was, in the viewport, as the pointer last moved over it. */
+  private scopeAt: Point | null = null;
+
+  /**
+   * The reader's scroll of the page carries the pointer with the preview, as a hand on it would
+   * be, rather than leaving it where it was in the window: what it is over and drags stays the
+   * same, also between the moves of its script and while it waits. A real mouse stays where it is
+   * in the window, and the components follow it there, such as a list's lifted row, which would
+   * otherwise stay in the window too, off its list.
+   */
+  private readonly followScroll = () => {
+    const at = this.at;
+    const from = this.scopeAt;
+    if (!at || !from) return;
+    const box = this.scope.getBoundingClientRect();
+    const [dx, dy] = [box.left - from.x, box.top - from.y];
+    if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) return;
+    this.moveTo({ x: at.x + dx, y: at.y + dy });
+  };
+
+  /** Notes where the preview is, as the pointer moves over it. */
+  private noteScope() {
+    const box = this.scope.getBoundingClientRect();
+    this.scopeAt = { x: box.left, y: box.top };
+  }
+
   constructor(private readonly scope: Element) {
+    document.addEventListener('scroll', this.followScroll, { capture: true, passive: true });
     keepCaptures();
     holdReaderMoves();
     captures.set(this.id, null);
@@ -284,6 +311,23 @@ export class VirtualPointer {
     return chain;
   }
 
+  /**
+   * Gives an event the pointer's position on the page's content as its page position: the page
+   * here scrolls in a box rather than the window, so the browser's would be the viewport's. A
+   * component that follows a drag by how far its page position moves, such as React Aria's color
+   * area, then takes the pointer carried along with the content as the page scrolls for no move.
+   */
+  private onContent<T extends MouseEvent>(event: T): T {
+    let [x, y] = [event.clientX, event.clientY];
+    for (let node = this.scope.parentElement; node; node = node.parentElement) {
+      x += node.scrollLeft;
+      y += node.scrollTop;
+    }
+    Object.defineProperty(event, 'pageX', { value: x });
+    Object.defineProperty(event, 'pageY', { value: y });
+    return event;
+  }
+
   private send(target: Element, type: string, init: PointerEventInit = {}) {
     const point = this.at ?? { x: 0, y: 0 };
     const options: PointerEventInit = {
@@ -301,12 +345,12 @@ export class VirtualPointer {
       ...this.modifiers,
       ...init,
     };
-    const sent = target.dispatchEvent(new PointerEvent(type, options));
+    const sent = target.dispatchEvent(this.onContent(new PointerEvent(type, options)));
     // A press the page takes for itself, by preventing its default, sends no mouse events after.
     if (type === 'pointerdown') this.mouseless = !sent;
     const twin = mouseTwin[type];
     if (twin && !(this.mouseless && /down|move|up/.test(twin))) {
-      const twinSent = target.dispatchEvent(new MouseEvent(twin, options));
+      const twinSent = target.dispatchEvent(this.onContent(new MouseEvent(twin, options)));
       return sent && twinSent;
     }
     return sent;
@@ -363,6 +407,7 @@ export class VirtualPointer {
   /** Moves a carried file over the preview: the elements it enters, leaves and is over hear it. */
   private dragTo(point: Point, aimed: Aimed | null) {
     this.at = point;
+    this.noteScope();
     const target = aimed?.point === point ? aimed.target : this.hit(point);
     const chain = this.chain(target);
     for (const element of this.over.filter((item) => !chain.includes(item)))
@@ -399,6 +444,7 @@ export class VirtualPointer {
     if (this.rests(point)) return;
     const from = this.at;
     this.at = point;
+    this.noteScope();
     const target = aimed?.point === point ? aimed.target : this.hit(point);
     const chain = this.chain(target);
     const previous = this.over[0] ?? null;
@@ -844,6 +890,7 @@ export class VirtualPointer {
   }
 
   dispose() {
+    document.removeEventListener('scroll', this.followScroll, { capture: true });
     this.endWheel();
     keyboardFocused.delete(this.scope);
     this.focus(null);

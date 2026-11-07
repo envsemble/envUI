@@ -426,6 +426,8 @@ export function usePointer(
     let known: AimPoints = new Map();
     /** Whether something happened in this frame, which may have changed what the pointer is over. */
     let acted = false;
+    /** Where the preview was as the aims were read, in the viewport. */
+    let readAt = { x: 0, y: 0 };
     const together = clockName ? joinClock(clockName, 0) : null;
     /** Moves the pointer on to a time of the plan, sending what happens on the way. */
     const advance = (to: number, still = false) => {
@@ -495,6 +497,8 @@ export function usePointer(
       last = now;
       aimed = null;
       known = new Map();
+      const box = scope.getBoundingClientRect();
+      readAt = { x: box.left, y: box.top };
       const time = next >= plan.length ? next % plan.length : next;
       // Where it is heading, which its tile's view keeps in the stage (MustShow.ts).
       headFor(scope, headingAt(plan, time));
@@ -517,6 +521,13 @@ export function usePointer(
       next = null;
       const state = clock.current;
       acted = false;
+      // The reader scrolled the page since the aims were read: they are where the preview was, so
+      // the frame reads them again where it is now.
+      const box = scope.getBoundingClientRect();
+      if (Math.abs(box.left - readAt.x) >= 0.5 || Math.abs(box.top - readAt.y) >= 0.5) {
+        aimed = null;
+        known = new Map();
+      }
       // While another preview's pointer holds its button down, this one waits: a page has one
       // mouse, and a move without a button, on the document, would end the other's drag. A
       // script of keys alone, which never moves the pointer, goes on, and so does one where it
