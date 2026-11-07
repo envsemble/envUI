@@ -133,7 +133,9 @@ function Shell() {
     // An address that a link of the page's contents wrote has shown its section already.
     if (takeShownAddress()) return;
     if (firstLoad.current) firstLoad.current = false;
-    else mainElement.current?.focus({ preventScroll: true });
+    // After the microtasks of the commit, in which a popup of the page that left hands the focus
+    // back to what it was opened from, so the page keeps it.
+    else queueMicrotask(() => mainElement.current?.focus({ preventScroll: true }));
     // The Design and Code switch keeps the reader's section where the page it shows has it too,
     // and names it in the address; elsewhere the page opens at its top.
     const switched =
