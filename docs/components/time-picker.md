@@ -74,7 +74,7 @@ The same value on a 12-hour and a 24-hour clock, as people there write it, and o
 
 ### Steps
 
-The minutes wheel offers a time on each step of `minuteStep`, here every quarter hour, every 5 minutes and every minute. A wheel with fewer values than it shows rows, such as every 15 minutes, stops at its ends rather than going round.
+The minutes wheel offers a time on each step the field sets, here every quarter hour, every 5 minutes and every minute. A wheel with fewer values than it shows rows, such as every 15 minutes, stops at its ends rather than going round.
 
 ```tsx figure=MinuteSteps
 

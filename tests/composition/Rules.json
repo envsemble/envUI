@@ -577,8 +577,8 @@
         {
           "stylesheet": "PickerPopup.css",
           "classes": ["env-calendar"],
-          "properties": ["row-gap", "justify-items"],
-          "note": "The picker card reads whether its body is a calendar alone, with :has(), to size itself, place the calendar and set the gap above its footer; it never styles the calendar."
+          "properties": ["row-gap", "justify-items", "contain"],
+          "note": "The picker card reads whether its body is a calendar alone, with :has(), to size itself, place the calendar and set the gap above its footer, and sizes a calendar alone to fill it: containing its inline size, so the card measures it at its seven days, and stretching it to the card's width; it never styles the calendar."
         }
       ]
     }

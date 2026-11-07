@@ -8,9 +8,9 @@ import {
   columnResizeStep,
   resizeColumns,
 } from './tableColumns.js';
+import { scrolledBy } from '../../internal/scrolledBy.js';
 import '../../styles/Base.css';
 import '../../styles/Table.css';
-import { scrolledBy } from '../../internal/scrolledBy.js';
 
 /** What a table with resizable columns gives its header cells. */
 export interface TableColumns {
