@@ -15,7 +15,7 @@ import type { DeviceKind, StageFill } from '../shared/DocumentationTypes';
 import { FigureDevice, OnDevice } from './DeviceFrame';
 import { LoadBoundary, loadModule, reloadModule } from '../template/LoadBoundary';
 import { OpenExample } from './OpenExample';
-import { CodeSkeleton, exampleLines, StageSkeleton } from '../template/Loading';
+import { CodeSkeleton, exampleLines, HoldPlaceholder, StageSkeleton } from '../template/Loading';
 import { MotionStage } from '../motion/MotionStage';
 import { WidthSweep } from '../motion/WidthSweep';
 import { SpecimenRender } from './Specimen';
@@ -192,9 +192,11 @@ export function ExampleRender({
       }}
     >
       <Suspense fallback={fallback}>
-        {/* The example is looked up among module-level lazy components, not created here. */}
-        {/* eslint-disable-next-line react-hooks/static-components */}
-        <Example />
+        <HoldPlaceholder part={`example:${page}/${name}`}>
+          {/* The example is looked up among module-level lazy components, not created here. */}
+          {/* eslint-disable-next-line react-hooks/static-components */}
+          <Example />
+        </HoldPlaceholder>
       </Suspense>
     </LoadBoundary>
   );

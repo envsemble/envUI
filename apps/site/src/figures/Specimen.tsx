@@ -2,7 +2,7 @@ import { lazy, Suspense, use, useState, type ComponentType } from 'react';
 import { SpecimenHeadingLevel } from './Example';
 import { SpecimenArea } from './SpecimenArea';
 import { LoadBoundary, loadModule, reloadModule } from '../template/LoadBoundary';
-import { StageSkeleton } from '../template/Loading';
+import { HoldPlaceholder, StageSkeleton } from '../template/Loading';
 import { VerdictMotion } from '../motion/MotionStage';
 
 /**
@@ -58,9 +58,11 @@ export function SpecimenRender({
           />
         }
       >
-        {/* The specimen is looked up among module-level lazy components, not created here. */}
-        {/* eslint-disable-next-line react-hooks/static-components */}
-        <Component />
+        <HoldPlaceholder part={`specimen:${page}/${name}`}>
+          {/* The specimen is looked up among module-level lazy components, not created here. */}
+          {/* eslint-disable-next-line react-hooks/static-components */}
+          <Component />
+        </HoldPlaceholder>
       </Suspense>
     </LoadBoundary>
   );
