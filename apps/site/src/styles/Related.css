@@ -155,13 +155,6 @@
   }
 }
 
-/* A picture that played crossfades into its still as it stops: a copy of it as it was, held still,
-   fades out over it as it is drawn anew underneath (fadeOutCopy, Related.tsx). With motion reduced,
-   it is drawn anew at once. */
-.catalogue-related-canvas[data-catalogue-leaving] {
-  pointer-events: none;
-}
-
 /* A tile at rest draws its still without motion: drawn anew as it stops (Playback's `redraw`,
    Motion.tsx), what it shows open, such as a menu or a hover card, is there at once rather than
    coming in again, and nothing is caught on its way. */

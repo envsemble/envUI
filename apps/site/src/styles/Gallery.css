@@ -59,7 +59,7 @@
    the name under it, unseen; under the pointer, or with the keyboard on its link, both slide up a
    little together, `--catalogue-gallery-rise`, as far as the name needs to show whole, and the
    name fades in, quick at first and settling, as the picture comes alive; as the pointer leaves,
-   they slide back quicker, easing out of their place. Where the reader can't hover, the name
+   they slide back as calmly, the name fading out quicker. Where the reader can't hover, the name
    always shows. */
 .catalogue-gallery-tile {
   --catalogue-gallery-meta-height: 2.25rem;
@@ -83,7 +83,7 @@
   .catalogue-gallery-picture,
   .catalogue-gallery-meta {
     transition:
-      translate var(--env-motion-duration-fast) var(--env-motion-ease-exit),
+      translate var(--env-motion-duration-medium) var(--env-motion-ease),
       opacity var(--env-motion-duration-fast) var(--env-motion-ease-exit);
   }
   .catalogue-gallery-tile:is(:hover, :has(:focus-visible))
