@@ -19,9 +19,15 @@
   .env-picker-popup-body {
     min-inline-size: 0;
   }
-  /* A calendar alone, its days touching, keeps its width and sits in the middle of the card. */
-  .env-picker-popup-body:has(> .env-calendar) {
-    justify-items: center;
+  /* A calendar alone fills the card, so on a card as wide as its field its month buttons end at the
+     card's edge, over Clear, and its weeks spread across the card, each day in the middle of its
+     column, rather than standing narrow in the middle with empty sides. To the card it counts as
+     its seven days, so the card takes no more than those or its field's width. */
+  .env-picker-popup-body > .env-calendar {
+    justify-self: stretch;
+    inline-size: auto;
+    min-inline-size: calc(7 * var(--env-calendar-day));
+    contain: inline-size;
   }
   /* From a medium window up, beside a field a little wider than the calendar, up to 1 rem, the card
      takes the field's width, so it ends with the field; beside a wider one it keeps the calendar's.

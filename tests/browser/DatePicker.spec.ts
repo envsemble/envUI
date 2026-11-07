@@ -61,8 +61,9 @@ test('the field shows its value in the locale and the calendar follows the date 
   await expect(grid.locator('td[tabindex="0"]')).toHaveCount(1);
   await expect(grid.locator('[data-date="2026-10-20"]')).toHaveAttribute('aria-selected', 'true');
   await expect(grid.locator('[data-date="2026-10-14"]')).toHaveAttribute('aria-current', 'date');
-  // Today is in the accent color with no ring; the days of a week touch, a little less than a row
-  // height wide, 32 px at the comfortable scale; the month's name leads the header, its buttons after it.
+  // Today is in the accent color with no ring; a day is a little less than a row height wide, 32 px
+  // at the comfortable scale, and the calendar fills the card, its days never closer than touching;
+  // the month's name leads the header, its buttons after it.
   const look = await dialog.evaluate(async (card) => {
     // The card grows in; its boxes have their final size once the transition has run.
     await Promise.allSettled(card.getAnimations().map(({ finished }) => finished));
@@ -79,7 +80,10 @@ test('the field shows its value in the locale and the calendar follows the date 
     );
     const heading = card.querySelector('.env-calendar-title')!.getBoundingClientRect();
     const previous = card.querySelector('.env-calendar-previous')!.getBoundingClientRect();
+    const body = card.querySelector('.env-picker-popup-body')!.getBoundingClientRect();
+    const calendar = card.querySelector('.env-calendar')!.getBoundingClientRect();
     return {
+      fills: Math.abs(calendar.width - body.width) < 0.5,
       todayColor: today.color === accent,
       ring: today.boxShadow,
       width: first!.width,
@@ -88,8 +92,9 @@ test('the field shows its value in the locale and the calendar follows the date 
     };
   });
   expect(look.width).toBeCloseTo(32, 0);
-  expect(look.gap).toBeCloseTo(0, 0);
+  expect(look.gap).toBeGreaterThanOrEqual(-0.5);
   expect({ ...look, width: 0, gap: 0 }).toEqual({
+    fills: true,
     todayColor: true,
     ring: 'none',
     width: 0,
