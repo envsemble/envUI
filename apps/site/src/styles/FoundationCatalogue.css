@@ -50,18 +50,38 @@
   color: var(--env-color-fg-default);
   border-radius: 0;
   text-decoration: none;
+  position: relative;
   cursor: pointer;
   transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
 }
 
-/* Under the pointer, the pane a shade deeper in the light themes and lighter in the dark ones, as
-   a gallery tile's canvas (Stage.css). */
+/* Under the pointer, a hairline ring inside the pane's edge, eased in, as a gallery tile's stage
+   takes (Stage.css): a shade of the fill alone was lost in the dark themes, where the recessed well
+   has little room to lighten. The ring is drawn over the pane, so it takes no room. */
+.catalogue-foundation-pane::after {
+  position: absolute;
+  inset: 0;
+  border: 1px solid transparent;
+  pointer-events: none;
+  content: '';
+  transition: border-color var(--env-motion-duration-fast) var(--env-motion-ease);
+}
+
+/* The first pane and the last span the sheet's width in every layout: their rings round at the
+   sheet's corners, which clip the panes. */
+.catalogue-foundation-pane:first-child::after {
+  border-start-start-radius: var(--env-radius-surface);
+  border-start-end-radius: var(--env-radius-surface);
+}
+
+.catalogue-foundation-pane:last-child::after {
+  border-end-start-radius: var(--env-radius-surface);
+  border-end-end-radius: var(--env-radius-surface);
+}
+
 @media (hover: hover) {
-  .catalogue-foundation-pane:hover {
-    background-color: light-dark(
-      oklch(from var(--env-color-bg-recessed) calc(l - 0.03) c h),
-      oklch(from var(--env-color-bg-recessed) calc(l + 0.01) c h)
-    );
+  .catalogue-foundation-pane:hover::after {
+    border-color: var(--env-color-border-default);
   }
 }
 
@@ -111,6 +131,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .catalogue-foundation-pane,
+  .catalogue-foundation-pane::after,
   .catalogue-foundation-pane-arrow {
     transition: none;
   }
