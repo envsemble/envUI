@@ -1,10 +1,11 @@
 // Records the size of every figure's subject that loads with its page, an example, a specimen or a
 // guide's demo, in apps/site/src/template/PartSizes.json: its skeleton keeps that size while it
-// loads (StageSkeleton in template/Loading.tsx), so the page doesn't move when it lands. It opens
-// every page of the catalogue and the Docs in a desktop window with the parts held back, notes
-// where each skeleton is, lets the parts load and measures what took each one's place. It records
-// the room of each group of the token reference and each release of the changelog too, which
-// their skeletons keep.
+// loads (StageSkeleton in template/Loading.tsx), so the page doesn't move when it lands. Of an
+// example shown open, it records its stage too, which keeps that height until its overlays rest
+// open in it (reserveStage in OpenExample.tsx). It opens every page of the catalogue and the Docs
+// in a desktop window with the parts held back, notes where each skeleton is, lets the parts load
+// and measures what took each one's place. It records the room of each group of the token
+// reference and each release of the changelog too, which their skeletons keep.
 //
 //   npm run site:part-sizes                the site at http://127.0.0.1:8770 (npm run dev)
 //   npm run site:part-sizes -- <site URL>  another running site
@@ -113,6 +114,25 @@ async function measure(page: Page, route: string) {
     }
     return result;
   });
+  // The stage of each example shown open, with its overlays resting open in it, which it keeps
+  // from as it starts loading until they rest there (reserveStage in OpenExample.tsx).
+  Object.assign(
+    sizes,
+    await page.evaluate(() => {
+      const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
+      const round = (value: number) => Math.round((value / rem) * 100) / 100;
+      const result: Record<string, [number, number]> = {};
+      for (const room of document.querySelectorAll<HTMLElement>(
+        '[data-catalogue-reserve][data-placed]',
+      )) {
+        const stage = room.closest('.site-live-example');
+        if (!stage) continue;
+        const box = stage.getBoundingClientRect();
+        result[room.dataset.catalogueReserve!] = [round(box.width), round(box.height)];
+      }
+      return result;
+    }),
+  );
   // The long parts, whose skeletons keep the room they take once loaded: each group of the token
   // reference, with its heading, and each release of the changelog, from its heading to the next.
   await page

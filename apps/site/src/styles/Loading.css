@@ -28,10 +28,30 @@
 }
 
 /* A part that is its own stage, such as a specimen that plays an example: the stage itself, the
-   recessed canvas of every figure (Stage.css), at the least height a stage takes. */
+   recessed canvas of every figure (Stage.css), at the least height a stage takes, with a filled
+   shape in its middle, inside the stage's padding, where what it plays will be. */
 .site-loading-stage {
+  position: relative;
   inline-size: 100%;
   min-block-size: 8rem;
+}
+/* The stage is there from the first frame, as the figure's stage will be, so the page shows where
+   the figure goes at once; only the shape in it waits its moment, so a quick load never flashes. */
+.site-loading-stage:not([data-shown]) {
+  opacity: 1;
+}
+.site-loading-stage:not([data-shown]) > .site-loading-stage-subject {
+  visibility: hidden;
+}
+.site-loading-stage-subject {
+  position: absolute;
+  inset-block: var(--env-space-5);
+  inset-inline: 0;
+  inline-size: min(100% - 2 * var(--env-space-6), 28rem);
+  margin-inline: auto;
+  border-radius: var(--env-radius-md);
+  forced-color-adjust: none;
+  background-image: var(--env-skeleton-paint);
 }
 
 /* A long part (LongPartSkeleton): the whole of it laid out unseen to keep its room, and a skeleton

@@ -50,8 +50,11 @@ let pageParts: { sizes: Record<string, [number, number]>; lines: Record<string, 
   sizes: {},
   lines: {},
 };
-/** The key of a part of one page, an example or a specimen, with the page's id. */
-const pagePart = /^(?:example|specimen):([^/]+)\//;
+/**
+ * The key of a part of one page, an example, a specimen or the stage of an example shown open, with
+ * the page's id.
+ */
+const pagePart = /^(?:example|specimen|open):([^/]+)\//;
 
 /**
  * Data the site's pages read from the repository when the site app builds or serves, as

@@ -8,7 +8,7 @@ import {
   type CSSProperties,
   type ReactNode,
 } from 'react';
-import { motionDuration, reducedMotion } from '../motion/MotionTokens';
+import { motionDuration, motionEase, reducedMotion } from '../motion/MotionTokens';
 import { Surface } from '@envsemble/envui';
 import { CodeBlock } from '@envsemble/envui/content';
 import sharedSizes from 'virtual:envui-part-sizes';
@@ -72,14 +72,12 @@ function useArrival(skeleton: { current: HTMLElement | null }) {
       // Once React has put what it stands for in its place, before the page paints.
       queueMicrotask(() => {
         if (!parent.isConnected || reducedMotion()) return;
-        const easing = getComputedStyle(document.documentElement)
-          .getPropertyValue('--env-motion-ease')
-          .trim();
+        const easing = motionEase();
         for (const child of parent.children)
           if (!before.has(child) && !child.classList.contains('site-loading'))
             child.animate([{ opacity: 0 }, { opacity: 1 }], {
               duration: motionDuration('medium'),
-              easing: easing || 'ease',
+              easing,
             });
       });
     };
@@ -245,7 +243,8 @@ export function LongPartSkeleton({
 
 /**
  * A figure's subject while it loads, an example, a specimen or a demo: on a stage of its own, a
- * skeleton stage at the subject's recorded size and with the stage's fill; on the stage that will
+ * skeleton stage at the subject's recorded size and with the stage's fill, with a filled shape in
+ * its middle where the subject will be, as a subject on its stage has; on the stage that will
  * show it, a skeleton of the subject's recorded size in its place. A part with no record keeps the
  * stage's least height.
  */
@@ -280,7 +279,9 @@ export function StageSkeleton({
           minBlockSize: stage ? undefined : 0,
         }
       }
-    />
+    >
+      {stage && <span className="site-loading-stage-subject" />}
+    </PartSkeleton>
   );
 }
 
