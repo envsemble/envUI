@@ -33,6 +33,7 @@ examples:
   TimePickerAnatomy: anatomy
   TimePickerPopupAnatomy: anatomy
   ClockConventions: example
+  MinuteSteps: example
   OfficeHours: example
 ---
 
@@ -68,6 +69,14 @@ examples:
 The same value on a 12-hour and a 24-hour clock, as people there write it, and on the 24-hour clock in New York too, where the field sets its own clock. The value itself stays on the 24-hour clock.
 
 ```tsx figure=ClockConventions
+
+```
+
+### Steps
+
+The minutes wheel offers a time on each step of `minuteStep`, here every quarter hour, every 5 minutes and every minute. A wheel with fewer values than it shows rows, such as every 15 minutes, stops at its ends rather than going round.
+
+```tsx figure=MinuteSteps
 
 ```
 
@@ -153,6 +162,7 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 ## Changelog
 
 - **1.0.0**: TimePicker, for a time of day chosen on wheels of hours, minutes and day periods on the locale's clock, with `minuteStep`, `min` and `max`.
+- **1.0.0-prerelease.6**: A mouse drags a wheel as a finger does: the rows follow the pointer while its button is down, and a quick drag let go glides on and eases into a row; a press that doesn't move still chooses the row under it.
 - **1.0.0-prerelease.6**: As a wheel turns to a row pressed or scrolled to, the fill stays on that row rather than passing over the rows on the way, and a row's text takes the fill's color only while it is on the fill, so a value it leaves is never white on the popup; the field shows the new time once the wheel comes to rest.
 - **1.0.0-prerelease.6**: `hourCycle`, `h12` or `h23`, sets the clock of the field and its wheels whatever the locale's, such as 18:00 with no AM/PM wheel in English; the value stays `HH:mm`.
 - **1.0.0-prerelease.6**: The wheels' rows are a little less than a row height tall, as the calendar's days are, 24 px at the compact scale; touch screens keep the touch height.

@@ -366,6 +366,52 @@ test(
 );
 
 test(
+  'a mouse drags a wheel as a finger does, and a quick drag let go glides on',
+  { tag: '@engines' },
+  async ({ page }) => {
+    const start = field(page, 'Start time');
+    await start.click();
+    const dialog = page.getByRole('dialog', { name: 'Start time' });
+    const hours = wheel(dialog, 'Hours');
+    const box = (await hours.boundingBox())!;
+    const row = await hours
+      .locator('.env-time-list-row')
+      .first()
+      .evaluate((each) => (each as HTMLElement).offsetHeight);
+    const [x, y] = [box.x + box.width / 2, box.y + box.height / 2];
+    // Dragged up two rows and held still before it is let go, the wheel stops two hours on.
+    await page.mouse.move(x, y);
+    await page.mouse.down();
+    await page.mouse.move(x, y - 2 * row, { steps: 12 });
+    await expect(hours).toHaveAttribute('data-dragging');
+    await page.waitForTimeout(150);
+    await page.mouse.up();
+    await expect(start).toHaveText('11:30');
+    await expect(hours).not.toHaveAttribute('data-dragging');
+    // The click that ends the drag pressed no row.
+    await expect(hours.locator('[data-centered]')).toHaveText('11');
+    // Down a row on the minutes, which don't loop.
+    const minutes = wheel(dialog, 'Minutes');
+    const minuteBox = (await minutes.boundingBox())!;
+    const minuteX = minuteBox.x + minuteBox.width / 2;
+    await page.mouse.move(minuteX, y);
+    await page.mouse.down();
+    await page.mouse.move(minuteX, y + row, { steps: 8 });
+    await page.waitForTimeout(150);
+    await page.mouse.up();
+    await expect(start).toHaveText('11:15');
+    // A quick drag let go while moving glides on past where the pointer stopped.
+    await page.mouse.move(x, y);
+    await page.mouse.down();
+    await page.mouse.move(x, y + row, { steps: 2 });
+    await page.mouse.up();
+    await expect(hours).not.toHaveAttribute('data-turning');
+    const hour = Number(await hours.getAttribute('aria-valuenow'));
+    expect(hour).toBeLessThan(10);
+  },
+);
+
+test(
   'switching between AM and PM keeps the hour and minutes and moves the time by 12 hours',
   { tag: '@engines' },
   async ({ page }) => {

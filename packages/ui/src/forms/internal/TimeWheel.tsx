@@ -1,6 +1,13 @@
 'use client';
 
-import { useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent } from 'react';
+import {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type KeyboardEvent,
+  type PointerEvent,
+} from 'react';
 import { matchTyped } from '../../internal/calendarDays.js';
 import { typeaheadTimeout } from '../../internal/typeahead.js';
 import { prefersReducedMotion } from '../../internal/reducedMotion.js';
@@ -69,6 +76,15 @@ const notchPixels = 50;
  * this many ms, so quick notches add up to one turn that glides on and settles calmly.
  */
 const turnEasing = 90;
+/** A mouse that moves this many pixels with its button down drags the wheel rather than pressing a row. */
+const dragThreshold = 4;
+/**
+ * A drag let go while moving flings the wheel on by its speed, in pixels a millisecond, over this
+ * many milliseconds, before it eases into the nearest row; one held still first stops where it is.
+ */
+const flingMs = 160;
+/** A drag held still for this long before it is let go flings nothing. */
+const flingRestMs = 80;
 
 /**
  * One column of a time list: a spinbutton drawn as a wheel whose middle row is its value. Hours and
@@ -76,7 +92,7 @@ const turnEasing = 90;
  * copy near either end; the day periods don't, nor minutes with fewer values than the wheel shows
  * rows, such as every 15 minutes, which would show a value twice. The keys still wrap around them. The row that settles in the middle as scrolling
  * ends is chosen, and an unavailable one gives way to the nearest available. A mouse wheel turns it
- * a row a notch, easing into place, rather than as far as a page would scroll.
+ * a row a notch, easing into place, rather than as far as a page would scroll, and a mouse drags it as a finger does.
  */
 export function TimeWheel({
   ref,
@@ -97,6 +113,17 @@ export function TimeWheel({
   const turn = useRef<{ position: number; frame: number; time: number } | null>(null);
   // A touchpad's scrolling not yet turned into a whole row, in pixels.
   const wheelRest = useRef(0);
+  // A mouse dragging the wheel, from the press of its button until it is let go.
+  const drag = useRef<{
+    pointer: number;
+    startY: number;
+    y: number;
+    time: number;
+    speed: number;
+    moved: boolean;
+  } | null>(null);
+  // A drag just let go, whose click presses no row.
+  const dragged = useRef(false);
   const count = entries.length;
   // Hours and minutes wrap around under the keys; they loop on the wheel where they fill it.
   const wraps = part !== 'dayPeriod';
@@ -134,11 +161,11 @@ export function TimeWheel({
     return rowIndex * row + (loop ? 0 : offset) - offset;
   }
 
-  /** The row whose middle is at the wheel's middle. */
-  function centredRow(wheel: HTMLDivElement) {
+  /** The row whose middle is at the wheel's middle, at its scroll position or another. */
+  function centredRow(wheel: HTMLDivElement, top = wheel.scrollTop) {
     const { row, offset } = metrics(wheel);
     const padding = loop ? 0 : offset;
-    return Math.round((wheel.scrollTop + offset - padding) / row);
+    return Math.round((top + offset - padding) / row);
   }
 
   function stopTurn(wheel: HTMLDivElement | null) {
@@ -251,8 +278,8 @@ export function TimeWheel({
   /** Chooses the entry that settled in the middle, or turns to the nearest available one. */
   function settle() {
     const wheel = wheelRef.current;
-    // A turn the wheel is easing through settles once it ends.
-    if (!wheel || turn.current) return;
+    // A turn the wheel is easing through settles once it ends, and a drag once it is let go.
+    if (!wheel || turn.current || drag.current?.moved) return;
     clearTimeout(settleTimer.current);
     // A turn the wheel makes itself that another one cut short settles nothing; the last settles.
     if (target.current !== null && centredRow(wheel) !== target.current) return;
@@ -283,7 +310,64 @@ export function TimeWheel({
     if (target.current === null && at !== centred) setCentred(at);
     clearTimeout(settleTimer.current);
     // A browser without scrollend, or one that misses it after snapping, settles on a pause.
-    if (!turn.current) settleTimer.current = setTimeout(settle, 200);
+    if (!turn.current && !drag.current?.moved) settleTimer.current = setTimeout(settle, 200);
+  }
+
+  /**
+   * Turns the wheel to a row, easing there, within the ends of a wheel that doesn't loop; on one
+   * that does, a row far from the middle copy moves back to it first, so a long spin never ends.
+   */
+  function turnTo(wheel: HTMLDivElement, next: number) {
+    if (!loop) next = Math.min(Math.max(next, 0), count - 1);
+    else if (next < count || next >= (copies - 1) * count) {
+      const shift = middleCopy * count + (((next % count) + count) % count) - next;
+      shiftRows(wheel, shift);
+      next += shift;
+    }
+    clearTimeout(settleTimer.current);
+    scrollToRow(next, true);
+  }
+
+  // A mouse drags the wheel as a finger does: the rows follow it while its button is down, and let
+  // go, the wheel glides on by the drag's speed and eases into the nearest row. A press that doesn't
+  // move still presses a row. Touch keeps the browser's own scrolling.
+  function handleDragMove(event: PointerEvent<HTMLDivElement>) {
+    const state = drag.current;
+    const wheel = event.currentTarget;
+    if (!state || event.pointerId !== state.pointer) return;
+    if (!(event.buttons & 1)) {
+      endDrag(event);
+      return;
+    }
+    if (!state.moved) {
+      if (Math.abs(event.clientY - state.startY) < dragThreshold) return;
+      state.moved = true;
+      wheel.setPointerCapture(event.pointerId);
+      // Snapping stays off while the rows follow the pointer, as it would pull them back to a row.
+      wheel.dataset.dragging = '';
+      clearTimeout(settleTimer.current);
+    }
+    const moved = event.clientY - state.y;
+    const elapsed = Math.max(event.timeStamp - state.time, 1);
+    // The speed, smoothed over the last few moves, so one uneven move doesn't set the fling.
+    state.speed = 0.6 * (moved / elapsed) + 0.4 * state.speed;
+    state.y = event.clientY;
+    state.time = event.timeStamp;
+    wheel.scrollTop -= moved;
+  }
+
+  function endDrag(event: PointerEvent<HTMLDivElement>) {
+    const state = drag.current;
+    const wheel = event.currentTarget;
+    if (!state || event.pointerId !== state.pointer) return;
+    drag.current = null;
+    if (!state.moved) return;
+    dragged.current = true;
+    if (wheel.hasPointerCapture(event.pointerId)) wheel.releasePointerCapture(event.pointerId);
+    delete wheel.dataset.dragging;
+    const speed = event.timeStamp - state.time > flingRestMs ? 0 : state.speed;
+    const fling = prefersReducedMotion() ? 0 : speed * flingMs;
+    turnTo(wheel, centredRow(wheel, wheel.scrollTop - fling));
   }
 
   // A mouse wheel turns the wheel a row a notch, and a touchpad as far as it scrolls, easing into
@@ -311,16 +395,7 @@ export function TimeWheel({
         wheelRest.current -= rows * row;
       }
       if (!rows) return;
-      let next = (target.current ?? centredRow(wheel)) + rows;
-      if (!loop) next = Math.min(Math.max(next, 0), count - 1);
-      else if (next < count || next >= (copies - 1) * count) {
-        // Far from the middle copy, the wheel moves back to it first, so a long spin never ends.
-        const shift = middleCopy * count + (((next % count) + count) % count) - next;
-        shiftRows(wheel, shift);
-        next += shift;
-      }
-      clearTimeout(settleTimer.current);
-      scrollToRow(next, true);
+      turnTo(wheel, (target.current ?? centredRow(wheel)) + rows);
     }
     wheel.addEventListener('wheel', handleWheel, { passive: false });
     return () => wheel.removeEventListener('wheel', handleWheel);
@@ -404,6 +479,26 @@ export function TimeWheel({
       onPointerDown={(event) => {
         stopTurn(event.currentTarget);
         target.current = null;
+        dragged.current = false;
+        if (event.pointerType === 'mouse' && event.button === 0)
+          drag.current = {
+            pointer: event.pointerId,
+            startY: event.clientY,
+            y: event.clientY,
+            time: event.timeStamp,
+            speed: 0,
+            moved: false,
+          };
+      }}
+      onPointerMove={handleDragMove}
+      onPointerUp={endDrag}
+      onPointerCancel={endDrag}
+      onLostPointerCapture={endDrag}
+      // The click that ends a drag presses no row.
+      onClickCapture={(event) => {
+        if (!dragged.current) return;
+        dragged.current = false;
+        event.stopPropagation();
       }}
       onTouchStart={(event) => {
         stopTurn(event.currentTarget);

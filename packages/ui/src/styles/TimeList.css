@@ -43,9 +43,14 @@
       var(--env-time-list-fade-edge)
     );
   }
-  /* While the wheel eases into a row by itself, snapping would pull each step back. */
-  .env-time-list-column[data-turning] {
+  /* While the wheel eases into a row by itself, or follows a mouse dragging it, snapping would pull
+     each step back. */
+  .env-time-list-column:is([data-turning], [data-dragging]) {
     scroll-snap-type: none;
+  }
+  .env-time-list-column[data-dragging],
+  .env-time-list-column[data-dragging] > .env-time-list-row {
+    cursor: grabbing;
   }
   .env-time-list-column::-webkit-scrollbar {
     display: none;

@@ -6719,6 +6719,15 @@
           ]
         },
         {
+          "attribute": "data-dragging",
+          "values": [
+            ""
+          ],
+          "parts": [
+            "env-time-list-column"
+          ]
+        },
+        {
           "attribute": "data-loop",
           "values": [
             ""
