@@ -1,6 +1,7 @@
 import { Button, IconButton, Kbd, Row, Tooltip } from '@envsemble/envui';
 import { IconSearch } from '@envsemble/envui/icons/Search';
 import { applePlatform, commandKey } from './SearchShortcut';
+import { preloadSearch } from './SiteSearch';
 
 /** The keys of the search shortcut, as the button shows them, and as aria-keyshortcuts names them. */
 const keys = [commandKey, 'K'];
@@ -10,7 +11,7 @@ const ariaKeyShortcuts = applePlatform ? 'Meta+K' : 'Control+K';
  * The button that opens the documentation's search, built as the search trigger pattern shows: a
  * secondary Button with the search icon, its label and the shortcut's keys at the end, or the icon
  * alone in a ghost IconButton with the label and keys in a tooltip. The catalogue handles the
- * shortcut itself, in App.
+ * shortcut itself, in App. A pointer or focus on it starts loading search's index.
  */
 export function SearchButton({
   iconOnly = false,
@@ -37,6 +38,8 @@ export function SearchButton({
           aria-label="Search"
           aria-keyshortcuts={ariaKeyShortcuts}
           onClick={onClick}
+          onPointerEnter={preloadSearch}
+          onFocus={preloadSearch}
           className={className}
         />
       </Tooltip>
@@ -49,6 +52,8 @@ export function SearchButton({
       end={<Kbd keys={keys} aria-hidden className="site-search-keys" />}
       aria-keyshortcuts={ariaKeyShortcuts}
       onClick={onClick}
+      onPointerEnter={preloadSearch}
+      onFocus={preloadSearch}
       className={className}
     >
       Search

@@ -29,8 +29,9 @@ let loadIndexModule: () => Promise<IndexModule> = () => import('./SearchIndex');
 let indexLoad: Promise<IndexModule> | undefined;
 
 /**
- * Loads the index once, on its own file in the hosted site, when search first opens. After a
- * failure, the next load asks for it again, under a new address in development.
+ * Loads the index once, on its own file in the hosted site, when search first opens or before
+ * (preloadSearch). After a failure, the next load asks for it again, under a new address in
+ * development.
  */
 function loadIndex() {
   indexLoad ??= loadIndexModule().catch((error: unknown) => {
@@ -41,6 +42,28 @@ function loadIndex() {
   });
   return indexLoad;
 }
+
+/**
+ * Loads the index ahead of search opening, so its results are there as people type: once the page
+ * is idle, and as a pointer or focus reaches the search button (SearchButton.tsx). The index is
+ * parsed as it loads, which takes a moment, so not on a key of the shortcut, where it would hold up
+ * the palette opening.
+ */
+export function preloadSearch() {
+  void loadIndex().catch(() => {});
+}
+
+/** Loads the index once the page has been idle a while after it started. */
+function preloadWhenIdle() {
+  if (typeof window === 'undefined') return;
+  const start = () =>
+    typeof requestIdleCallback === 'function'
+      ? requestIdleCallback(preloadSearch, { timeout: 4000 })
+      : window.setTimeout(preloadSearch, 2000);
+  if (document.readyState === 'complete') start();
+  else addEventListener('load', start, { once: true });
+}
+preloadWhenIdle();
 
 /** The groups results are shown in, by what they find. */
 const groups: Record<SearchResult['kind'], string> = {
