@@ -176,7 +176,11 @@ test('the pulse runs in step across the page, slower with reduced motion, and st
         })),
     );
   const kinds = async () =>
-    [...new Set((await pulses()).map(({ name, duration }) => `${name} ${duration}`))].sort();
+    [
+      ...new Set(
+        (await pulses()).map(({ name, duration }) => `${name} ${Math.round(Number(duration))}`),
+      ),
+    ].sort();
   /** The root's pulse and its bar's paint at a point of the breath, the animation held there. */
   const at = (fraction: number) =>
     page.getByTestId('card-skeleton').evaluate((root, share) => {
@@ -194,7 +198,7 @@ test('the pulse runs in step across the page, slower with reduced motion, and st
       return result;
     }, fraction);
   // The surface over placeholders and the card that is a skeleton itself, started at once: a breath
-  // of 1.8 s, from the strong tone to the faint one and back.
+  // of 7.5 slow durations, 1.8 s, from the strong tone to the faint one and back.
   await expect.poll(async () => (await pulses()).length).toBeGreaterThanOrEqual(2);
   expect(new Set((await pulses()).map(({ start }) => start))).toEqual(new Set([0]));
   expect(await kinds()).toEqual(['env-skeleton-pulse 1800']);
@@ -218,7 +222,7 @@ test('the pulse runs in step across the page, slower with reduced motion, and st
   ).toBe(0);
   // Reduced motion: slower, and half as deep, a change of tone only.
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await expect.poll(kinds).toEqual(['env-skeleton-pulse-reduced 3200']);
+  await expect.poll(kinds).toEqual(['env-skeleton-pulse-reduced 3240']);
   expect((await at(0.5)).pulse).toBe('0.5');
   // Forced colors: the bars stand still in the system gray.
   await page.emulateMedia({ forcedColors: 'active', reducedMotion: 'no-preference' });

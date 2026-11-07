@@ -171,3 +171,4 @@ The parts are the bar, `env-top-bar`, its start, `env-top-bar-start`, its title,
 ## Changelog
 
 - **1.0.0**: TopBar, which replaces AppShell.Header and WindowFrame.TitleBar, with `sticky`, `titleBar` and `loading`.
+- **1.0.0-prerelease.6**: The loading bar follows the motion tokens: it completes in `--env-motion-duration-slow` with `--env-motion-ease-enter`, fades out in `--env-motion-duration-fast` with `--env-motion-ease-exit`, and is removed once its fade has ended; at once with durations of `0s`.

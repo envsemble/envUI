@@ -258,3 +258,4 @@ A skeleton's root takes `aria-busy` and its content is inert, in `env-skeleton-c
 ## Changelog
 
 - **1.0.0**: Skeletons are the components themselves, with `skeleton` and `placeholders()`, in place of hand-built Skeleton placeholders. The page is on the figure template.
+- **1.0.0-prerelease.6**: A skeleton's breath lasts seven and a half times `--env-motion-duration-slow`, as long as before, with `--env-motion-ease`, so durations of `0s` stop it.

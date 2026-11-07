@@ -118,3 +118,4 @@ The parts are the spinner, `env-spinner`, its arc, `env-spinner-arc`, and with `
 ## Changelog
 
 - **1.0.0**: `showLabel` shows the label beside the spinner, in a busy status, for loading with no known shape, in place of the LoadingState component of 1.0.0-prerelease.0. `size` is `sm`, `md` or `lg`, as `data-size`; the drawing is hidden from assistive technology also when the spinner has a label.
+- **1.0.0-prerelease.6**: A turn lasts six times `--env-motion-duration-slow`, about as long as before, with `--env-motion-ease`, so durations of `0s` stop it.

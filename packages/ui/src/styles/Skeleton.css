@@ -97,7 +97,8 @@
     text-decoration-thickness: 0.8em;
     text-decoration-skip-ink: none;
     /* The pulse (Motion, below). */
-    animation: env-skeleton-pulse 1.8s ease-in-out infinite;
+    animation: env-skeleton-pulse calc(var(--env-motion-duration-slow) * 7.5) var(--env-motion-ease)
+      infinite;
   }
   /* Text that is there, once the script has measured it (skeletonText.ts): no line through it, but a
      rounded bar over each of its line boxes, all drawn by one layer over the content in the skeleton's
@@ -230,9 +231,10 @@
     mask-composite: intersect, add, add;
   }
 
-  /* Motion: the tone breathes from strong to faint and back, 1.8 s a breath, every skeleton's in
-     step, as the component aligns their start. With a reduced-motion preference it breathes half as
-     deep and slower: only the tone changes, nothing moves. */
+  /* Motion: the tone breathes from strong to faint and back, 7.5 times the slow duration a breath
+     (1.8 s), every skeleton's in step, as the component aligns their start. With a reduced-motion
+     preference it breathes half as deep and slower: only the tone changes, nothing moves. Motion
+     tokens of 0s stop it. */
   @keyframes env-skeleton-pulse {
     0%,
     100% {
@@ -253,7 +255,8 @@
   }
   @media (prefers-reduced-motion: reduce) {
     [data-env-skeleton]:not(env-none) {
-      animation: env-skeleton-pulse-reduced 3.2s ease-in-out infinite;
+      animation: env-skeleton-pulse-reduced calc(var(--env-motion-duration-slow) * 13.5)
+        var(--env-motion-ease) infinite;
     }
   }
   /* A popup, dialog or sheet that is a skeleton stops pulsing as it closes: it is removed once its
