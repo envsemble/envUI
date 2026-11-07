@@ -1,10 +1,14 @@
 import { Fragment, useEffect, useState, type CSSProperties, type ReactNode } from 'react';
+import { motionDuration } from './MotionTokens';
 
 /** How long the example takes to fade out, and then in again, as it is drawn anew. */
-const fade = 200;
+const fade = 'medium';
 
 /** How long the example drawn anew takes to show through the one that fades out, with `crossfade`. */
-const crossfadeTime = 220;
+const crossfadeTime = 'slow';
+
+/** A motion token's duration, for a style. */
+const durationOf = (speed: 'medium' | 'slow') => `var(--env-motion-duration-${speed})`;
 
 /** Laid out as the stage lays out the example: as wide as the stage, the example centred. */
 const layout: CSSProperties = { display: 'grid', justifyItems: 'center', inlineSize: '100%' };
@@ -30,7 +34,10 @@ export function Renew({
   const fading = shown !== round;
   useEffect(() => {
     if (!fading) return;
-    const timer = window.setTimeout(() => setShown(round), crossfade ? crossfadeTime : fade);
+    const timer = window.setTimeout(
+      () => setShown(round),
+      motionDuration(crossfade ? crossfadeTime : fade),
+    );
     return () => window.clearTimeout(timer);
   }, [fading, round, crossfade]);
   if (crossfade)
@@ -47,7 +54,7 @@ export function Renew({
               ...layout,
               gridArea: 'renew',
               ...(each !== round && {
-                animation: `catalogue-renew-out ${crossfadeTime}ms ease-out forwards`,
+                animation: `catalogue-renew-out ${durationOf(crossfadeTime)} var(--env-motion-ease) forwards`,
               }),
             }}
           >
@@ -57,7 +64,13 @@ export function Renew({
       </div>
     );
   return (
-    <div style={{ ...layout, opacity: fading ? 0 : 1, transition: `opacity ${fade}ms ease` }}>
+    <div
+      style={{
+        ...layout,
+        opacity: fading ? 0 : 1,
+        transition: `opacity ${durationOf(fade)} var(--env-motion-ease)`,
+      }}
+    >
       <Fragment key={shown}>{children}</Fragment>
     </div>
   );

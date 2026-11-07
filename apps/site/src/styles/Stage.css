@@ -441,6 +441,23 @@
   inline-size: 100%;
 }
 
+/* It shows once its room is made for its overlays resting open, fading in once, so nothing in it
+   moves as it appears (OpenExample.tsx); while its example loads, the skeleton in it shows. */
+.catalogue-open-example:not([data-placed], :has(.site-loading)) {
+  opacity: 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .catalogue-open-example[data-placed] {
+    animation: catalogue-open-example-appear var(--env-motion-duration-medium)
+      var(--env-motion-ease);
+  }
+}
+@keyframes catalogue-open-example-appear {
+  from {
+    opacity: 0;
+  }
+}
+
 :is(.site-live-example, .site-verdict-stage):has(.catalogue-open-example) {
   contain: layout;
   overflow: clip;

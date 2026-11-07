@@ -9,6 +9,7 @@ import {
   type Heading,
 } from '../motion/MustShow';
 import { aimedElement } from '../motion/PointerPlan';
+import { motionDuration } from '../motion/MotionTokens';
 import { narrowGallery } from '../tiles/Tiles';
 
 /** The least room, in px, between a preview and its stage's edges. */
@@ -541,11 +542,14 @@ export function useFit(
         const own = partOf(element, canvasElement);
         return [{ box, y: own.top + (own.bottom - own.top) * aim.y }];
       });
+    // The glide's time constant: three of it take it 95 % of the way, in the slow motion token.
+    const glidePace = motionDuration('slow') / 3;
     const glide = (now: number) => {
       const elapsed = Math.min(64, now - (view.last || now - 16));
       view.last = now;
-      // As a tile plays, it keeps pace with what opens, which takes the room as it comes in.
-      const share = 1 - Math.exp(-elapsed / (run ? 70 : 110));
+      // As a tile plays, it keeps pace with what opens, which takes the room as it comes in: most
+      // of the way there in the slow motion token, and at rest in half as long again.
+      const share = 1 - Math.exp(-elapsed / (run ? glidePace : 1.5 * glidePace));
       view.x += (view.toX - view.x) * share;
       view.y += (view.toY - view.y) * share;
       view.scale += (view.toScale - view.scale) * share;

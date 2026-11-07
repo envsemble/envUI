@@ -62,3 +62,31 @@ export function createDisplayBootstrapScript() {
   const scaleMark = JSON.stringify(ownScaleSource(''));
   return `(function(){var r=document.documentElement;try{var c=localStorage.getItem(${contrastKey}),q=new URLSearchParams(location.search).get("scale"),s=q==="compact"||q==="comfortable"||q==="system"?q:localStorage.getItem(${scaleKey});if(c==="high"||c==="standard"){r.setAttribute("data-env-contrast",c);r.setAttribute(${contrastSource},${contrastMark}+c)}if(s==="compact"||s==="comfortable"){r.setAttribute("data-env-scale",s);r.setAttribute(${scaleSource},${scaleMark}+s)}}catch(e){}})();`;
 }
+
+/**
+ * A style sheet for the document head that gives the page its background from the first paint,
+ * before the site's style sheets arrive: the root's `--env-color-bg-page` for each theme and
+ * contrast, as `tokensCss` (envUI's Tokens.css) sets it, under the same selectors, so it follows
+ * the theme the bootstrap script applies rather than painting white first and flashing in a dark
+ * theme. In a layer of its own ahead of every other, so envUI's own rule for the background,
+ * which sets the same color, takes over once it loads.
+ */
+export function createFirstPaintStyle(tokensCss: string) {
+  const rules: string[] = [];
+  const open: string[] = [];
+  for (const line of tokensCss.split('\n')) {
+    const text = line.trim();
+    if (text.endsWith('{')) open.push(text.slice(0, -1).trim());
+    else if (text === '}') open.pop();
+    else {
+      const value = /^--env-color-bg-page:\s*([^;]+);/.exec(text)?.[1];
+      const selector = open.at(-1);
+      if (!value || !selector?.startsWith('.env-theme')) continue;
+      const rule = `html${selector}{background:${value}}`;
+      const media = open.find((block) => block.startsWith('@media'));
+      rules.push(media ? `${media}{${rule}}` : rule);
+    }
+  }
+  if (!rules.length) throw new Error('Tokens.css sets no --env-color-bg-page on .env-theme.');
+  return `@layer site-first-paint{${rules.join('')}}`;
+}

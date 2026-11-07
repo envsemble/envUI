@@ -174,11 +174,33 @@ export function openerBox(subject: HTMLElement): Edges | undefined {
 }
 
 /**
+ * Whether an overlay is on its way in or out: starting or ending its entrance, or in a transition
+ * or an animation that ends, unlike a spinner's turn. Its box is then on the way, not where it
+ * rests.
+ */
+const moving = (overlay: HTMLElement) =>
+  overlay.closest('[data-starting-style], [data-ending-style]') !== null ||
+  overlay.querySelector('[data-starting-style], [data-ending-style]') !== null ||
+  overlay
+    .getAnimations({ subtree: true })
+    .some(
+      (animation) =>
+        animation.playState === 'running' &&
+        animation.effect?.getComputedTiming().iterations !== Infinity,
+    );
+
+/**
  * Makes room in the figure for its open overlays, and centres them with what opens them: a popup
  * beside its trigger widens the room on its side, so the two together sit in the middle of the
  * stage; a dialog, a sheet or a toast, placed on the stage, makes the room as tall as it needs.
+ * It measures the overlays only where they rest, never on their way in or out. With `hold`, a live
+ * figure's, the room the overlays rest open in stays while they are closed, so what opens them
+ * stays where it is as they close and open again. Returns whether the room was already made for
+ * them, as they rest open: nothing changed.
  */
-function fit(room: HTMLElement, layer: HTMLElement) {
+function fit(room: HTMLElement, layer: HTMLElement, hold: boolean) {
+  const found = overlays(layer);
+  if (found.some(moving) || (hold && !found.length)) return false;
   const style = getComputedStyle(room);
   // What the viewport measures is drawn at the stage's scale; the room's padding and height are
   // in its own px.
@@ -192,7 +214,7 @@ function fit(room: HTMLElement, layer: HTMLElement) {
   const content = inFlow(room, layer);
   const anchored: Edges[] = [];
   let grow: number | undefined;
-  for (const overlay of overlays(layer)) {
+  for (const overlay of found) {
     if (placedOnStage(overlay, layer)) {
       const height = content.length ? union(content).bottom - union(content).top : 0;
       grow = Math.max(grow ?? -Infinity, shortfall(overlay, layer, stageOf(room), height));
@@ -227,16 +249,32 @@ function fit(room: HTMLElement, layer: HTMLElement) {
   // A popup is placed at whole pixels, and moving the room by a fraction of one can round it to
   // the next: padding that followed every such step would set it trembling, a pixel each frame.
   // Within a pixel, the room stays as it is.
+  let changed = false;
   for (const side of ['top', 'right', 'bottom', 'left'] as const)
-    if (Math.abs(next[side] - padding[side]) > 1)
+    if (Math.abs(next[side] - padding[side]) > 1) {
       room.style.setProperty(`padding-${side}`, `${next[side]}px`);
+      changed = true;
+    }
   // The room grows, or shrinks back, by what the stage lacks or has to spare.
   if (grow !== undefined && Math.abs(grow) > 0.5) {
     const height = (room.getBoundingClientRect().height + grow) / scale;
     const next = `${Math.max(0, Math.ceil(height))}px`;
-    if (room.style.minBlockSize !== next) room.style.minBlockSize = next;
-  } else if (grow === undefined && room.style.minBlockSize) room.style.minBlockSize = '';
+    if (room.style.minBlockSize !== next) {
+      room.style.minBlockSize = next;
+      changed = true;
+    }
+  } else if (grow === undefined && room.style.minBlockSize) {
+    room.style.minBlockSize = '';
+    changed = true;
+  }
+  return found.length > 0 && !changed;
 }
+
+/**
+ * How long a figure's room may wait, in ms, for overlays to rest open in before it shows anyway,
+ * such as for an example that opens none.
+ */
+const placeWait = 600;
 
 /**
  * How far a box scrolls to show an item it holds, by the item's `block` alignment as
@@ -472,27 +510,51 @@ export function OpenExample({
     const roomElement = room.current;
     if (!roomElement || !layer) return;
     let frame = 0;
+    let timer = 0;
+    // The figure shows once its room is made for its overlays resting open, fading in, so nothing
+    // in it moves as it appears (Stage.css): or a while after its example has loaded, whatever
+    // they do. While the example loads, its skeleton shows in the room.
+    const place = () => {
+      roomElement.dataset.placed = '';
+    };
     const update = () => {
       cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(() => fit(roomElement, layer));
+      frame = requestAnimationFrame(() => {
+        if (fit(roomElement, layer, live)) place();
+        else if (!timer && !roomElement.querySelector('.site-loading'))
+          timer = window.setTimeout(place, placeWait);
+      });
     };
     update();
-    // The room follows the overlays as they open, are placed and resize, and the stage's width.
+    // The room follows the overlays as they open, are placed, come to rest and resize, and the
+    // stage's width.
     const resize = new ResizeObserver(update);
     resize.observe(roomElement);
     const mutation = new MutationObserver(update);
     mutation.observe(roomElement, {
       childList: true,
       subtree: true,
-      attributeFilter: ['class', 'style', 'data-side', 'hidden'],
+      attributeFilter: [
+        'class',
+        'style',
+        'data-side',
+        'hidden',
+        'data-starting-style',
+        'data-ending-style',
+      ],
     });
+    roomElement.addEventListener('transitionend', update);
+    roomElement.addEventListener('animationend', update);
     void document.fonts?.ready.then(update);
     return () => {
       cancelAnimationFrame(frame);
+      window.clearTimeout(timer);
       resize.disconnect();
       mutation.disconnect();
+      roomElement.removeEventListener('transitionend', update);
+      roomElement.removeEventListener('animationend', update);
     };
-  }, [layer]);
+  }, [layer, live]);
   return (
     <div
       ref={(element) => {

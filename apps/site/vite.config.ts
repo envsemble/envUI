@@ -18,6 +18,7 @@ import { tokensVitePlugin } from '../../scripts/build/BuildTokens.ts';
 import { createThemeBootstrapScript } from '../../packages/ui/src/foundations/themeBootstrap.ts';
 import {
   createDisplayBootstrapScript,
+  createFirstPaintStyle,
   createStorageMigrationScript,
   displayStorageKeys,
 } from './src/theme/DisplayStorage.ts';
@@ -108,7 +109,8 @@ export default defineConfig(() => {
       resetClosedConnections(),
       {
         // The stored theme, contrast and scale apply before the catalogue loads, so a dark theme
-        // does not flash light and a compact page does not start at the comfortable size.
+        // does not flash light and a compact page does not start at the comfortable size; the
+        // page's background, in that theme, paints from the first frame.
         name: 'envui-theme-bootstrap',
         // The script goes right after <meta charset>, which has to stay within the first 1024
         // bytes, and before the styles, so it runs before the first paint.
@@ -124,7 +126,13 @@ export default defineConfig(() => {
                   createStorageMigrationScript() +
                   createThemeBootstrapScript({ storageKey: displayStorageKeys.theme }) +
                   createDisplayBootstrapScript()
-                }</script>`,
+                }</script>
+    <style>${createFirstPaintStyle(
+      readFileSync(
+        fileURLToPath(new URL('../../packages/ui/src/styles/Tokens.css', import.meta.url)),
+        'utf8',
+      ),
+    )}</style>`,
             );
           },
         },

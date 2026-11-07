@@ -19,6 +19,7 @@ import type { StageFill } from '../shared/DocumentationTypes';
 import { useVerdictFit } from '../template/VerdictFit';
 import { useDisplaySettings } from '../theme/DisplaySettings';
 import { Playback, PreviewOverlays, useInView } from './Motion';
+import { motionDuration } from './MotionTokens';
 import { FigureDevice, OnDevice } from '../figures/DeviceFrame';
 
 /** What the reader can operate in a figure: a stage with none of it stays a recording. */
@@ -164,6 +165,7 @@ export function MotionStage({
   const tallest = useRef<HTMLDivElement>(null);
   useVerdictFit(stage, box, square);
   useTallest(square ? tallest : stage, height);
+  useThemeFade(subject);
   // Another figure the reader has taken over holds this one where it is, unless the reader plays it.
   const held = useTakeover(live);
   const paused = live || (own && own.over === motionPaused ? own.paused : held || motionPaused);
@@ -372,6 +374,39 @@ function useTallest(stage: RefObject<HTMLDivElement | null>, height: string | un
       element.style.minBlockSize = own;
     };
   }, [stage, height]);
+}
+
+/** The attributes of a nested theme that change its colors (Theme, ThemePreferenceProvider). */
+const themeAttributes = ['data-env-theme', 'data-env-contrast'];
+
+/**
+ * Marks an animated figure's subject while a theme in it switches, such as the account menu's
+ * theme changing, `data-catalogue-theme-fading`, for as long as its colors take to ease
+ * (ThemeFade.css): the mark is set as the theme's attribute changes, before the page restyles, so
+ * the change eases, and only then, so the parts' own transitions, such as a key's hover, keep
+ * their own timing the rest of the time.
+ */
+function useThemeFade(subject: HTMLElement | null) {
+  useEffect(() => {
+    if (!subject) return;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const observer = new MutationObserver((changes) => {
+      if (!changes.some(({ target }) => target !== subject)) return;
+      subject.dataset.catalogueThemeFading = '';
+      clearTimeout(timer);
+      // The fade takes one and a half of the slow token, and a frame to start.
+      timer = setTimeout(
+        () => delete subject.dataset.catalogueThemeFading,
+        1.5 * motionDuration('slow') + 50,
+      );
+    });
+    observer.observe(subject, { subtree: true, attributeFilter: themeAttributes });
+    return () => {
+      observer.disconnect();
+      clearTimeout(timer);
+      delete subject.dataset.catalogueThemeFading;
+    };
+  }, [subject]);
 }
 
 /** A room's height: rem, or a CSS length, such as one that follows the scale (rowsAnd). */

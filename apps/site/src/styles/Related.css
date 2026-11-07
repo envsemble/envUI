@@ -138,7 +138,7 @@
    the boxes the fit measures keep their place. */
 .catalogue-related-canvas[data-fitted] {
   opacity: 1;
-  animation: catalogue-tile-appear var(--env-motion-duration-medium) var(--env-motion-ease) both;
+  animation: catalogue-tile-appear var(--env-motion-duration-medium) var(--env-motion-ease);
 }
 
 @keyframes catalogue-tile-appear {
@@ -150,6 +150,22 @@
 @media (prefers-reduced-motion: reduce) {
   .catalogue-related-canvas[data-fitted] {
     animation: none;
+  }
+}
+
+/* A picture that played fades out quickly as it stops, and in again once it is drawn anew at its
+   still (TilePreview, Related.tsx), rather than jumping back to where it started. With motion
+   reduced, it is drawn anew at once. */
+.catalogue-related-canvas[data-fitted][data-leaving] {
+  opacity: 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .catalogue-related-canvas[data-fitted] {
+    transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);
+  }
+  .catalogue-related-canvas[data-fitted][data-leaving] {
+    transition-duration: var(--env-motion-duration-fast);
+    transition-timing-function: var(--env-motion-ease-exit);
   }
 }
 

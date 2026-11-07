@@ -1,10 +1,14 @@
 import {
+  use,
   useEffect,
+  useLayoutEffect,
+  useRef,
   useState,
   useSyncExternalStore,
   type CSSProperties,
   type ReactNode,
 } from 'react';
+import { motionDuration, reducedMotion } from '../motion/MotionTokens';
 import { Surface } from '@envsemble/envui';
 import { CodeBlock } from '@envsemble/envui/content';
 import sharedSizes from 'virtual:envui-part-sizes';
@@ -16,11 +20,71 @@ import sharedLines from 'virtual:envui-example-lines';
  * envUI skeleton, in its place and at its size, so nothing moves when it lands. Each skeleton is a
  * busy region whose content assistive technology skips, and one polite status for the whole page,
  * LoadingStatus, says what is loading. A placeholder shows only once a load has taken a noticeable
- * moment, and keeps its space meanwhile, so a quick load never flashes it.
+ * moment, and keeps its space meanwhile, so a quick load never flashes it; once shown, it stays a
+ * moment too (HoldPlaceholder), so it never flickers. What it stood for fades in as it lands.
  */
 
 /** How long a part may take before its skeleton shows: quick loads never flash it. */
-const placeholderDelay = 200;
+const placeholderDelay = 240;
+
+/** How long a skeleton that shows stays at least, so it never flickers. */
+const placeholderLeast = 240;
+
+/** When each part's skeleton showed, by the part's key, while it shows. */
+const shownAt = new Map<string, number>();
+
+/** A wait for each part whose skeleton showed only a moment ago, until it has shown its least. */
+const holds = new Map<string, Promise<void>>();
+
+/**
+ * Holds what a part's skeleton stands for, inside the Suspense boundary the skeleton is the
+ * fallback of, until the skeleton has shown for a moment: a part that lands just after its
+ * skeleton showed keeps it a little longer rather than flicker. A part whose skeleton never showed
+ * renders at once.
+ */
+export function HoldPlaceholder({ part, children }: { part: string; children: ReactNode }) {
+  const at = shownAt.get(part);
+  const left = at === undefined ? 0 : at + placeholderLeast - performance.now();
+  let hold = holds.get(part);
+  if (!hold && at !== undefined && left <= 1) shownAt.delete(part);
+  if (!hold && left > 1) {
+    hold = new Promise<void>((resolve) => window.setTimeout(resolve, left)).then(() => {
+      holds.delete(part);
+      shownAt.delete(part);
+    });
+    holds.set(part, hold);
+  }
+  if (hold) use(hold);
+  return children;
+}
+
+/**
+ * Fades in what took a skeleton's place in its parent, once, as the skeleton leaves for it: the
+ * parts the parent didn't hold before. In the motion tokens' time; with motion reduced, at once.
+ */
+function useArrival(skeleton: { current: HTMLElement | null }) {
+  useLayoutEffect(() => {
+    const element = skeleton.current;
+    const parent = element?.parentElement;
+    if (!element || !parent) return;
+    return () => {
+      const before = new Set(parent.children);
+      // Once React has put what it stands for in its place, before the page paints.
+      queueMicrotask(() => {
+        if (!parent.isConnected || reducedMotion()) return;
+        const easing = getComputedStyle(document.documentElement)
+          .getPropertyValue('--env-motion-ease')
+          .trim();
+        for (const child of parent.children)
+          if (!before.has(child) && !child.classList.contains('site-loading'))
+            child.animate([{ opacity: 0 }, { opacity: 1 }], {
+              duration: motionDuration('medium'),
+              easing: easing || 'ease',
+            });
+      });
+    };
+  }, [skeleton]);
+}
 
 /** What each skeleton that shows is loading, in the order they showed, for LoadingStatus. */
 let loading: readonly string[] = [];
@@ -48,16 +112,17 @@ function useDelayPassed() {
  * Whether a placeholder shows yet, as useDelayPassed says. From then until it leaves, LoadingStatus
  * counts what it is loading.
  */
-function usePlaceholderShown(what: string) {
+function usePlaceholderShown(what: string, part?: string) {
   const shown = useDelayPassed();
   useEffect(() => {
     if (!shown) return;
+    if (part !== undefined) shownAt.set(part, performance.now());
     setLoading([...loading, what]);
     return () => {
       const index = loading.indexOf(what);
       setLoading(loading.filter((_, at) => at !== index));
     };
-  }, [shown, what]);
+  }, [shown, what, part]);
   return shown;
 }
 
@@ -130,9 +195,12 @@ export function PartSkeleton({
   style?: CSSProperties;
   children?: ReactNode;
 }) {
-  const shown = usePlaceholderShown(what);
+  const shown = usePlaceholderShown(what, part);
+  const element = useRef<HTMLDivElement>(null);
+  useArrival(element);
   return (
     <Surface
+      ref={element}
       skeleton
       padding={0}
       radius="none"
@@ -207,6 +275,9 @@ export function StageSkeleton({
         size && {
           inlineSize: stage ? undefined : `min(100%, ${size[0]}rem)`,
           blockSize: `${size[1]}rem`,
+          // At its recorded height, also where that is less than a skeleton's least, so the stage
+          // keeps its height as the part lands.
+          minBlockSize: stage ? undefined : 0,
         }
       }
     />
