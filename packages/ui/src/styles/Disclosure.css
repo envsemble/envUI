@@ -30,8 +30,8 @@
     padding-inline: var(--env-space-1);
     border-radius: var(--env-radius-sm);
     transition:
-      background-color var(--env-motion-duration-fast) var(--env-motion-ease),
-      color var(--env-motion-duration-fast) var(--env-motion-ease);
+      background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter),
+      color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   .env-disclosure > summary::-webkit-details-marker {
     display: none;
