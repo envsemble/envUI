@@ -96,21 +96,18 @@
   }
 }
 
-/* Where the reader can't hover, nothing slides: the cell shows its picture and all of what is
-   under it, as long as that is, such as a Related tile's two lines at the touch scale. The name
-   sits close under its own picture, and the rows stand well apart, so each name reads as its
-   picture's rather than the next one's. */
+/* Where the reader can't hover, nothing slides and nothing is written: the cell shows its picture
+   alone. Its name is still there, unseen, for a screen reader, and its link still covers the cell,
+   so a tap on the picture opens the page. */
 @media (hover: none) {
   .catalogue-gallery-tile {
-    grid-template-rows: auto auto;
+    grid-template-rows: auto 0;
     overflow: visible;
   }
-  .catalogue-gallery-tile > .catalogue-gallery-meta:not(.catalogue-related-meta) {
-    padding-block: var(--env-space-2) 0;
-  }
-  .catalogue-gallery-grid,
-  .catalogue-related-tiles {
-    row-gap: var(--env-space-6);
+  .catalogue-gallery-tile > .catalogue-gallery-meta {
+    block-size: 0;
+    padding: 0;
+    opacity: 0;
   }
 }
 
