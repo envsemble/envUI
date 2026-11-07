@@ -10,6 +10,7 @@ import {
   type ReactNode,
   type RefObject,
 } from 'react';
+import { Tooltip as BaseTooltip } from '@base-ui/react/tooltip';
 import { PortalContainer } from '@envsemble/envui';
 import { isVirtual, VirtualPointer, type Aimed } from './VirtualPointer';
 import { headFor, holdView, nameCourse, nameMustShow } from './MustShow';
@@ -165,16 +166,21 @@ export function usePreviewLayer() {
  * pointer no one sees finds them in the preview. The box around it that is a containing block,
  * a tile's canvas or a figure's stage, places them: a dialog's backdrop covers it, not the page.
  * Render it as a direct child of the preview's root (Playback), where usePreviewLayer finds it.
+ *
+ * Its tooltips take turns among themselves alone: a tooltip opening closes the one open before it
+ * only in the same preview, so a figure's playing pointer never closes the tooltip the reader opened
+ * on a live example, nor another figure's. With no wait for the next one past a tooltip closing,
+ * as envUI's tooltips have outside any group.
  */
 export function PreviewOverlays({ children }: { children: ReactNode }) {
   const [layer, setLayer] = useState<HTMLDivElement | null>(null);
   return (
-    <>
+    <BaseTooltip.Provider timeout={0}>
       <PortalContainer container={layer} contained>
         {children}
       </PortalContainer>
       <div ref={setLayer} className="catalogue-overlay-layer" />
-    </>
+    </BaseTooltip.Provider>
   );
 }
 
