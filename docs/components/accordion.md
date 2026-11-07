@@ -132,5 +132,6 @@ The parts are the accordion, `env-accordion`; each item, `env-accordion-item`, w
 ## Changelog
 
 - **1.0.0**: Accordion.
+- **1.0.0-prerelease.6**: Colors under the pointer and while pressed change with `--env-motion-ease-enter`, rather than easing in slowly, so hover and press show from the first frame.
 - **1.0.0-prerelease.6**: A panel's content fades in and out as it grows and shrinks, and the plus and minus fade into each other.
 - **1.0.0-prerelease.6**: A heading lays the shared state layer on hover and press, inset from the hairlines, with its focus ring tracing it; the title and panel sit 8 px in from the hairlines to match.

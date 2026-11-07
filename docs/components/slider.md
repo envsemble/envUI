@@ -212,6 +212,7 @@ The field marks what it shows besides its text and fill:
 
 - **1.0.0**: `onValueCommit` is `onValueCommitted`, as Base UI names it, `hint` is `description`, and `inputRef` is `ref`, which reaches the native range input as a field's does, while the root takes `className`, `style` and the other native props. The value is formatted in EnvUIProvider's `locale`, or the one Slider takes. The row of the label and the value, `env-slider-heading`, is `env-slider-header`.
 - **1.0.0**: Sliders in the dark theme reach 3:1 contrast on every surface.
+- **1.0.0-prerelease.6**: Colors under the pointer and while pressed change with `--env-motion-ease-enter`, rather than easing in slowly, so hover and press show from the first frame.
 - **1.0.0-prerelease.6**: A press on the track or a key glides the fill and the handle to the value, and a drag past the ends eases back without overshooting.
 - **1.0.0-prerelease.5**: `error`, as on a field.
 - **1.0.0-prerelease.2**: Slider is a field: as tall as the fields and with their corners, its label inside at the start, its value at the end in the text style of a field, with numbers of one width and a fill from the start, with a thin handle and faint ticks under the pointer and on focus, both fading where they pass under the text. The track has no outline. `--env-slider-indicator` colors the fill alone, and `--env-slider-content` the label, value, handle and ticks.

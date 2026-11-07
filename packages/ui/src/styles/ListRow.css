@@ -21,7 +21,7 @@
     cursor: pointer;
     outline: none;
     user-select: none;
-    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
+    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   .env-list-row:is([data-highlighted], [data-popup-open]) {
     background: var(--env-color-bg-neutral-muted);

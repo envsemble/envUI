@@ -75,7 +75,7 @@
     /* The neutral hover fill eases in and out. The chosen fill and its white text come and go at
        once, the fill as an image over the background color, which doesn't transition, so its text
        is never white on a fill half gone and the choice never shows on two at once. */
-    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
+    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   /* Under the pointer a day takes the neutral fill, as a popup's rows do. */
   .env-calendar-day:hover:not([aria-disabled='true'], [aria-selected='true'])

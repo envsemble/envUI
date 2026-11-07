@@ -138,7 +138,7 @@
     place-items: center;
     border-radius: var(--env-radius-md);
     background: var(--env-navigation-rail-item-custom-fill, transparent);
-    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
+    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   .env-navigation-rail-label {
     max-inline-size: 100%;

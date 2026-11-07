@@ -2341,7 +2341,7 @@ export const tokens = {
       'dark-high-contrast': '1.4',
     },
   },
-  /** A small change, such as a state layer or a color under the pointer: 120 ms. */
+  /** A small change, such as a state layer, a color under the pointer or a tooltip: 120 ms. */
   'motion.duration.fast': {
     cssVariable: '--env-motion-duration-fast',
     type: 'duration',
@@ -2385,7 +2385,7 @@ export const tokens = {
       'dark-high-contrast': 'cubic-bezier(0.45, 0, 0.2, 1)',
     },
   },
-  /** Elements entering decelerate into place. */
+  /** Elements entering, their fade included, and feedback under the pointer start at once and decelerate into place. */
   'motion.ease-enter': {
     cssVariable: '--env-motion-ease-enter',
     type: 'cubicBezier',

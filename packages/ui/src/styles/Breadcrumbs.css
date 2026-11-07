@@ -30,7 +30,7 @@
     font: inherit;
     text-decoration: none;
     cursor: pointer;
-    transition: color var(--env-motion-duration-fast) var(--env-motion-ease);
+    transition: color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   .env-breadcrumbs-link:hover {
     color: var(--env-color-fg-default);

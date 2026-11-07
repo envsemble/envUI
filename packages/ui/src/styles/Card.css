@@ -53,7 +53,7 @@
     text-decoration: none;
     overflow-wrap: break-word;
     cursor: pointer;
-    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
+    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   .env-card[data-interactive]:hover:not(:disabled):not([aria-disabled='true']) {
     --env-card-layer: calc(var(--env-state-hover-opacity) * 100%);
@@ -152,7 +152,7 @@
     .env-card[data-interactive] {
       transition-property: background-color, color, border-color, transform;
       transition-duration: var(--env-motion-duration-fast);
-      transition-timing-function: var(--env-motion-ease);
+      transition-timing-function: var(--env-motion-ease-enter);
     }
     .env-card[data-interactive]:active:not(:disabled):not([aria-disabled='true']) {
       transform: scale(0.99);

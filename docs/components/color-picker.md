@@ -309,6 +309,8 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 ## Changelog
 
 - **1.0.0**: ColorPicker, ColorPickerButton and ColorSwatch come from `@envsemble/envui/color`, on React Aria's color hooks: hex, RGB and HSL fields named by their letters, with a format menu, an alpha slider and field with `alpha`, a copy button, the browser's eyedropper and preset `swatches`. Values are CSS color strings or React Aria's `Color`, and `onValueChange` receives both. The area is square with the hue and alpha strips upright at its side, all with square corners, and the fields are quiet. ColorSwatch is a small square that writes its color in a `format`, with a `label` and a small size. ColorPickerButton has no fill of its own, as fields have none. Before, the color area and the hue were envUI's own, on Base UI's Slider, with a HEX field.
+- **1.0.0-prerelease.6**: Colors under the pointer and while pressed change with `--env-motion-ease-enter`, rather than easing in slowly, so hover and press show from the first frame.
+- **1.0.0-prerelease.6**: ColorPickerButton's popover opens over `--env-motion-duration-medium`, fading in and growing from 98 % with `--env-motion-ease-enter`, rather than growing from 96 % over the slow duration, so it shows from its first frames rather than late.
 - **1.0.0-prerelease.6**: The error shows the error icon before its message, as under every field.
 - **1.0.0-prerelease.5**: ColorPickerButton takes `open` and `onOpenChange`, and passes `ref` and the native props on to its button.
 - **1.0.0-prerelease.5**: `copy` is `copyable`, as on CodeBlock. `onValueChange` receives the string alone, without React Aria's `Color`.

@@ -162,6 +162,8 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 ## Changelog
 
 - **1.0.0**: MonthPicker, for a month of a year, with `min` and `max`.
+- **1.0.0-prerelease.6**: Colors under the pointer and while pressed change with `--env-motion-ease-enter`, rather than easing in slowly, so hover and press show from the first frame.
+- **1.0.0-prerelease.6**: The popup opens over `--env-motion-duration-medium`, fading in and growing from 98 % with `--env-motion-ease-enter`, rather than growing from 96 % over the slow duration, so it shows from its first frames rather than late.
 - **1.0.0-prerelease.6**: The year buttons show larger arrows, 1.25 rem, on slightly smaller buttons, and the header keeps a little room under it, as the calendar's.
 - **1.0.0-prerelease.6**: The grid's month names keep one length where the locale makes nearly all of them that long, such as Sep rather than Sept among en-GB's three-letter months; names with punctuation, and locales whose names vary, keep the locale's own.
 - **1.0.0-prerelease.6**: Months outside `min` and `max` take the disabled text color, faded, as a calendar's unavailable days do; this month keeps its accent color.

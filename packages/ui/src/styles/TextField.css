@@ -292,7 +292,7 @@
       --env-text-field-ghost-solid,
       color-mix(in srgb, var(--env-color-bg-neutral-muted) 25%, transparent)
     );
-    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
+    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   .env-text-field-control[data-variant='ghost']:not(
       :has(> .env-text-field-input:is(:disabled, [readonly], [aria-readonly='true'])),

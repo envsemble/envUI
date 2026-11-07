@@ -23,7 +23,7 @@
     padding-block: var(--env-space-4);
     padding-inline: var(--env-page-header-inset);
     background: var(--env-color-bg-page);
-    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
+    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   .env-page-header[data-sticky][data-scrolled] {
     background-color: var(--env-color-bg-muted);

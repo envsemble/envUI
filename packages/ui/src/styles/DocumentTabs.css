@@ -128,8 +128,8 @@
     cursor: pointer;
     user-select: none;
     transition:
-      background-color var(--env-motion-duration-fast) var(--env-motion-ease),
-      color var(--env-motion-duration-fast) var(--env-motion-ease);
+      background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter),
+      color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   /* While a tab is dragged, the pointer passing over the others is not a hover: they keep their
      fills and hide their close buttons. */

@@ -25,8 +25,8 @@
     overflow-wrap: break-word;
     cursor: pointer;
     transition:
-      border-color var(--env-motion-duration-medium) var(--env-motion-ease),
-      background-color var(--env-motion-duration-fast) var(--env-motion-ease);
+      border-color var(--env-motion-duration-medium) var(--env-motion-ease-enter),
+      background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   .env-drop-zone-icon {
     display: grid;
@@ -36,7 +36,7 @@
     border-radius: 50%;
     background: var(--env-color-bg-neutral-muted);
     color: var(--env-color-fg-muted);
-    transition: color var(--env-motion-duration-fast) var(--env-motion-ease);
+    transition: color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   .env-drop-zone-icon > .env-icon {
     inline-size: 1.5rem;
