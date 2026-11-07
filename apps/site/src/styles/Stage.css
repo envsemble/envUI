@@ -79,9 +79,15 @@
 .site-foundation-stage[data-figure='example'],
 .site-figures :is(.catalogue-specimen-grid, .catalogue-matrix-scroll),
 .catalogue-fan-card {
-  /* Near-white in the light themes, as the stages have always been; the deeper near-black in the
-     dark ones. */
-  --catalogue-card-fill: light-dark(var(--env-color-bg-raised), var(--env-color-bg-recessed));
+  /* Near-white in the light themes, as the stages have always been, but a shade below white:
+     the filled and raised surfaces are white there, so list and radio rows, cards and tables on a
+     white stage would vanish into it. Halfway from white to the recessed well keeps them apart and
+     stays lighter than the well, so every pair the gate measures on the well holds on it. The
+     deeper near-black in the dark ones. */
+  --catalogue-card-fill: light-dark(
+    color-mix(in oklab, var(--env-color-bg-raised), var(--env-color-bg-recessed)),
+    var(--env-color-bg-recessed)
+  );
   background-color: var(--catalogue-card-fill);
   /* Every canvas, an example's, a tile's or a card's, lifts off the page a little in the light
      themes. */
