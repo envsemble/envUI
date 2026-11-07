@@ -109,20 +109,19 @@
     text-decoration-skip-ink: none;
   }
 
-  /* Motion: the value it changed from fades out quickly as the new one fades in, so the number is
-     never gone. Without a reduced-motion preference they roll: up when it grows, the old value out
-     at the top as the new one comes in from below, and down when it shrinks. */
+  /* Motion: the value it changed from fades out quickly, and the new one fades in just after it, so
+     the two never read over each other and the number is never gone. Without a reduced-motion
+     preference they roll a whole line, inside the number's clipped box: up when it grows, the old
+     value out at the top as the new one comes in from below, and down when it shrinks. */
   .env-animated-number-value[data-direction] {
-    animation: env-motion-fade-in var(--env-motion-duration-medium) var(--env-motion-ease-enter);
+    animation: env-motion-fade-in var(--env-motion-duration-medium) var(--env-motion-ease-enter)
+      calc(var(--env-motion-duration-fast) / 2) both;
   }
   .env-animated-number-previous[data-direction] {
     animation: env-animated-number-fade-out var(--env-motion-duration-fast)
       var(--env-motion-ease-exit) both;
   }
   @media (prefers-reduced-motion: no-preference) {
-    .env-animated-number-value[data-direction] {
-      animation: var(--env-motion-duration-medium) var(--env-motion-ease-enter) both;
-    }
     .env-animated-number-value[data-direction='up'] {
       animation-name: env-motion-roll-up;
     }
@@ -144,27 +143,25 @@
   @keyframes env-animated-number-roll-out-up {
     to {
       opacity: 0;
-      /* stylelint-disable-next-line unit-disallowed-list -- as far as the new value rolls in, which follows the number's own size */
-      transform: translateY(-0.6em);
+      transform: translateY(-1lh);
     }
   }
   @keyframes env-animated-number-roll-out-down {
     to {
       opacity: 0;
-      /* stylelint-disable-next-line unit-disallowed-list -- as far as the new value rolls in, which follows the number's own size */
-      transform: translateY(0.6em);
+      transform: translateY(1lh);
     }
   }
   @keyframes env-motion-roll-up {
     from {
       opacity: 0;
-      transform: translateY(0.6em);
+      transform: translateY(1lh);
     }
   }
   @keyframes env-motion-roll-down {
     from {
       opacity: 0;
-      transform: translateY(-0.6em);
+      transform: translateY(-1lh);
     }
   }
 }
