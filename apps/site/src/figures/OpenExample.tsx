@@ -482,21 +482,37 @@ function reserveStage(room: HTMLElement, part: string | undefined) {
   const height = part === undefined ? undefined : recordedSize(part)?.[1];
   const stage = height === undefined ? null : stageOf(room);
   let held = stage !== null && stage !== room;
-  if (held) stage!.style.minBlockSize = `${height}rem`;
+  // Unseen, it is that height exactly, also as the room passes through a size on its way to the
+  // one it is made at, such as a popup placed for a frame where it doesn't rest; shown, at least.
+  let unseen = true;
+  const hold = () => {
+    stage!.style.minBlockSize = `${height}rem`;
+    stage!.style.blockSize = unseen ? `${height}rem` : '';
+  };
+  const free = () => {
+    stage!.style.minBlockSize = '';
+    stage!.style.blockSize = '';
+  };
+  if (held) hold();
   return {
     measured<T>(measure: () => T): T {
       if (!held) return measure();
-      stage!.style.minBlockSize = '';
+      free();
       try {
         return measure();
       } finally {
-        stage!.style.minBlockSize = `${height}rem`;
+        hold();
       }
+    },
+    /** The room shows before it is made: the stage grows with it, if it must, from then on. */
+    shown() {
+      unseen = false;
+      if (held) hold();
     },
     release() {
       if (!held) return;
       held = false;
-      stage!.style.minBlockSize = '';
+      free();
     },
   };
 }
@@ -553,17 +569,20 @@ export function OpenExample({
     // The figure shows once its room is made for its overlays resting open, fading in, so nothing
     // in it moves as it appears (Stage.css): or a while after its example has loaded, whatever
     // they do. While the example loads, its skeleton shows in the room.
+    // Shown before its room is made, after the wait, the stage keeps its recorded height until the
+    // room is made, so the room growing for its overlays then moves nothing outside it.
     const reserved = reserveStage(roomElement, part);
-    const place = () => {
+    const place = (made: boolean) => {
       roomElement.dataset.placed = '';
-      reserved.release();
+      if (made) reserved.release();
+      else reserved.shown();
     };
     const update = () => {
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => {
-        if (reserved.measured(() => fit(roomElement, layer, live))) place();
+        if (reserved.measured(() => fit(roomElement, layer, live))) place(true);
         else if (!timer && !roomElement.querySelector('.site-loading'))
-          timer = window.setTimeout(place, placeWait);
+          timer = window.setTimeout(() => place(false), placeWait);
       });
     };
     update();
