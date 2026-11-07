@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { Column, Link, Row, Text, Theme } from '@envsemble/envui';
+import { Column, Link, Row, Text } from '@envsemble/envui';
 import { IconArrowForward } from '@envsemble/envui/icons/ArrowForward';
 import { routeHref } from '../navigation/Address';
 import type { RoutePage } from '../navigation/SiteRoutes';
@@ -7,7 +7,7 @@ import { useAutoplay } from '../motion/Autoplay';
 import { usePlaying } from '../motion/Motion';
 import { TilePreview, useNear } from '../template/Related';
 import { frameOf, previewOf, type Preview } from '../template/RelatedPages';
-import { preloadTile, tileScheme } from '../tiles/Tiles';
+import { preloadTile } from '../tiles/Tiles';
 
 /** One group of a gallery, such as a kind of component or what people are doing. */
 export interface GalleryGroup {
@@ -25,8 +25,7 @@ export function galleryPreviewOf(page: RoutePage): Preview | undefined {
 
 /**
  * One page's tile, a cell of the gallery's grid: its preview, rendered once near the viewport, in
- * the theme that suits what it shows, light or dark, whatever the reader's (tileScheme, Tiles.ts),
- * and its name under it. The name shows as the pointer or the keyboard comes onto the tile, and
+ * the reader's theme, and its name under it. The name shows as the pointer or the keyboard comes onto the tile, and
  * always where the reader can't hover; it is a heading one level under the gallery's group, or
  * under the page's title where the gallery has no groups. The preview plays while the pointer or
  * the keyboard is on the tile, and where the reader can't hover, while it is the tile in the middle
@@ -40,7 +39,7 @@ function GalleryTile({ page, level }: { page: RoutePage; level: 2 | 3 }) {
   const Heading = level === 2 ? 'h2' : 'h3';
   return (
     <li ref={tile} className="catalogue-gallery-tile" {...playOn}>
-      <Theme theme={tileScheme(page.document?.id)} className="catalogue-gallery-theme">
+      <div className="catalogue-gallery-picture">
         <TilePreview
           preview={galleryPreviewOf(page)}
           near={near}
@@ -52,7 +51,7 @@ function GalleryTile({ page, level }: { page: RoutePage; level: 2 | 3 }) {
           ownSize={frameOf(page.document?.id) === 'own'}
           legible={frameOf(page.document?.id) === 'legible'}
         />
-      </Theme>
+      </div>
       <Row align="center" justify="between" gap={2} className="catalogue-gallery-meta">
         {/* The name is the link; it stretches over the picture, so the whole tile leads to the page. */}
         <Text render={<Heading />} className="catalogue-gallery-name">

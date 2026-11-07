@@ -1,10 +1,14 @@
 /* The galleries of components and patterns (Gallery.tsx): by group, a cell for each page: its live
-   picture, inert, flat and square-cornered, in the theme that suits it, light or dark, whatever the
-   reader's, and under it its name, which slides into view as the pointer comes onto the cell: a
-   component at its own size, a pattern's scene scaled to fit. Cells are of one size, so the
-   pictures line up in rows. */
+   picture, inert, flat and square-cornered, in the reader's theme, and under it its name, which
+   slides into view as the pointer comes onto the cell: a component at its own size, a pattern's
+   scene scaled to fit. Cells are of one size, so the pictures line up in rows. */
 /* The groups stand a page's section gap apart (Shell.css), as every section does. */
 .catalogue-gallery {
+  /* As wide as the page's whole pane, past the column the text keeps to, less a gutter at either
+     side, and centred on it: 100cqi is the pane's width (site-page-layout, Shell.css). */
+  inline-size: calc(100cqi - 2 * var(--site-gutter));
+  max-inline-size: none;
+  margin-inline: calc(50% - 50cqi + var(--site-gutter));
   text-align: start;
   container: catalogue-gallery / inline-size;
 }
@@ -39,9 +43,9 @@
 
 .catalogue-gallery-grid {
   display: grid;
-  /* As many to a row as fit at 14 rem, four on a laptop's page and more on a wider one, and two on a
-     phone (below). */
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+  /* As many to a row as fit at 24 rem, as a pattern's cells: two on a laptop's page, three or more
+     on a wider one, and two on a phone (below). */
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 24rem), 1fr));
   gap: var(--env-space-3);
   max-inline-size: none;
   margin: 0;
@@ -66,20 +70,18 @@
   overflow: clip;
 }
 
-/* The picture in its own theme (Gallery.tsx), light or dark by what it shows: only the picture
-   takes the theme's colors; the cell around it keeps the page's. */
-.catalogue-gallery-theme {
+/* The picture, which slides as a whole with what it shows (Gallery.tsx). */
+.catalogue-gallery-picture {
   min-inline-size: 0;
-  background: none;
 }
 
-.catalogue-gallery-theme,
+.catalogue-gallery-picture,
 .catalogue-gallery-meta {
   transition: translate var(--env-motion-duration-slow) var(--env-motion-ease-enter);
 }
 
 @media (hover: hover) {
-  .catalogue-gallery-tile:not(:hover, :has(:focus-visible)) .catalogue-gallery-theme {
+  .catalogue-gallery-tile:not(:hover, :has(:focus-visible)) .catalogue-gallery-picture {
     translate: 0 var(--catalogue-gallery-slide);
   }
   .catalogue-gallery-tile:not(:hover, :has(:focus-visible)) .catalogue-gallery-meta {
@@ -88,7 +90,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .catalogue-gallery-theme,
+  .catalogue-gallery-picture,
   .catalogue-gallery-meta {
     transition: none;
   }
@@ -132,7 +134,7 @@
    one piece of an application 17rem across, low enough to show whole as it plays, so each sits
    centred in its stage with the same margins (tiles/). */
 .catalogue-gallery-grid[data-scenes] {
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 24rem), 1fr));
 }
 
 /* So do Related's tiles where one of them is a scene, so they line up in a row. */
