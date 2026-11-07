@@ -145,8 +145,8 @@ export function useDisplaySettings() {
 
 /**
  * Changes the page's colors, a theme or a contrast chosen in the Display menu, crossfading the
- * whole window from the old ones to the new over the medium motion token (ThemeFade.css), rather
- * than swapping them in one frame. The new colors are drawn at once underneath, with nothing in the
+ * whole window from the old ones to the new (ThemeFade.css), rather than swapping them in one
+ * frame. The new colors are drawn at once underneath, with nothing in the
  * page transitioning (ThemePreferenceProvider). With motion reduced, or in a browser without view
  * transitions, they change at once.
  */
