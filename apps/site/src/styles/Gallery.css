@@ -96,12 +96,22 @@
   }
 }
 
-/* The picture: square corners, no edge and no shadow. */
-.catalogue-gallery-grid .catalogue-gallery-stage.catalogue-gallery-stage {
+/* Where the reader can't hover, nothing slides: the cell shows its picture and all of what is
+   under it, as long as that is, such as a Related tile's two lines at the touch scale. */
+@media (hover: none) {
+  .catalogue-gallery-tile {
+    grid-template-rows: auto auto;
+    overflow: visible;
+  }
+}
+
+/* The picture: square corners, no edge and no shadow, in a gallery and in Related alike. */
+:is(.catalogue-gallery-grid, .catalogue-related-tiles)
+  .catalogue-gallery-stage.catalogue-gallery-stage {
   border-radius: 0;
   box-shadow: none;
 }
-.catalogue-gallery-grid .catalogue-related-crop {
+:is(.catalogue-gallery-grid, .catalogue-related-tiles) .catalogue-related-crop {
   clip-path: inset(0);
 }
 
@@ -146,10 +156,6 @@
 :is(.catalogue-gallery-grid, .catalogue-related-tiles):not([data-scenes])
   .catalogue-gallery-stage.catalogue-gallery-stage {
   overflow: visible;
-}
-
-.catalogue-related-tiles:not([data-scenes]) .catalogue-related-crop {
-  clip-path: inset(0 round var(--env-radius-surface));
 }
 
 /* A scene lays out from its window's top rather than its middle, also with its overlay layer: at

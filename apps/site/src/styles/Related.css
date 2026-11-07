@@ -10,7 +10,8 @@
   --catalogue-related-gap: var(--env-space-5);
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: var(--env-space-6) var(--catalogue-related-gap);
+  /* Rows as close as a gallery's: each tile keeps the room its name and why slide into. */
+  gap: var(--env-space-3) var(--catalogue-related-gap);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -69,13 +70,24 @@
   }
 }
 
-.catalogue-related-tile {
-  position: relative;
+/* A Related tile is a gallery's cell (Gallery.css): its picture, and under it its name and when to
+   pick it, which slide into view with it. That row is taller than a gallery's, for its two lines of
+   why, cut short after the second. */
+.catalogue-related-tile.catalogue-gallery-tile {
+  --catalogue-gallery-meta-height: 4.5rem;
+}
+.catalogue-related-meta {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
   align-content: start;
-  row-gap: var(--env-space-2);
-  min-inline-size: 0;
+  row-gap: var(--env-space-1);
+  padding-block-start: var(--env-space-2);
+}
+.catalogue-related-meta .catalogue-related-line .env-markdown > * {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
 }
 
 /* The name's link covers the tile's picture and name, so the whole preview leads to the page. The
@@ -148,15 +160,6 @@
   transition: none;
 }
 
-/* A tile whose picture has no animation, such as a list of shortcuts, draws no ring under the
-   pointer, which would promise a play (Stage.css); the keyboard on its link still rings it. */
-@media (hover: hover) {
-  .catalogue-related-tile:hover:not(:has(:focus-visible))
-    .catalogue-related-stage[data-still]::after {
-    border-color: transparent;
-  }
-}
-
 /* Room for an overlay shown open, such as a dialog over the page. */
 .catalogue-related-canvas:has(> .catalogue-overlay-layer) {
   min-block-size: 28rem;
@@ -203,8 +206,16 @@
 }
 
 .catalogue-related-name {
-  padding-block-start: var(--env-space-2);
+  min-inline-size: 0;
+  overflow: hidden;
   font-weight: var(--env-font-weight-medium);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.catalogue-related-link,
+.catalogue-related-link:hover {
+  color: var(--env-color-fg-default);
+  text-decoration: none;
 }
 
 .catalogue-related-line .env-markdown {

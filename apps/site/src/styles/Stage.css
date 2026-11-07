@@ -117,13 +117,10 @@
   box-shadow: var(--catalogue-card-shadow-subtle);
 }
 
-/* A Related tile under the pointer, or with the keyboard on its link, as its picture comes alive
-   (motion/Motion.tsx): a hairline ring drawn inside its stage's edge, over the picture, eased in.
-   A gallery's cell draws none: its picture slides up instead (Gallery.css).
-   Its fill stays as it is: a shade of it would match a surface the picture paints, such as a top
-   bar's band or a page's body, which would vanish into it. The ring is a layer of its own, the
-   stage's last, so nothing the picture opens, a popup, a dialog's backdrop or a sheet, covers it:
-   the stage isolates what it shows, and the ring stands at the top of it. */
+/* A tile's stage keeps a layer of its own, the stage's last, for the ring the keyboard draws on its
+   picture (Gallery.css); under the pointer a tile's picture slides up instead and draws no ring.
+   Nothing the picture opens, a popup, a dialog's backdrop or a sheet, covers that layer: the stage
+   isolates what it shows, and the ring stands at the top of it. */
 .catalogue-related-stage {
   isolation: isolate;
 }
@@ -137,16 +134,6 @@
   pointer-events: none;
   content: '';
   transition: border-color var(--env-motion-duration-fast) var(--env-motion-ease);
-}
-
-@media (hover: hover) {
-  .catalogue-related-tile:hover .catalogue-related-stage::after {
-    border-color: var(--env-color-border-default);
-  }
-}
-
-.catalogue-related-tile:has(:focus-visible) .catalogue-related-stage::after {
-  border-color: var(--env-color-border-default);
 }
 
 /* `stage="shaded"`, for a figure that shows a whole window, such as a Scaffold with its

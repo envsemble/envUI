@@ -9,7 +9,8 @@ import {
   type ReactNode,
   type RefObject,
 } from 'react';
-import { Column, Link, Text, Theme, useTheme } from '@envsemble/envui';
+import { Column, Link, Row, Text, Theme, useTheme } from '@envsemble/envui';
+import { IconArrowForward } from '@envsemble/envui/icons/ArrowForward';
 import { IconArticle } from '@envsemble/envui/icons/Article';
 import type { DocumentationMetadata } from '../shared/DocumentationTypes';
 import { Documentation } from '../pages/Documentation';
@@ -366,8 +367,9 @@ function whenIdle(task: () => Promise<unknown> | void) {
 /**
  * One alternative's tile, whose preview plays while the pointer or the keyboard is on it, and where
  * the reader can't hover, while it is the tile in the middle of the viewport, as a gallery's does.
- * It is framed as a gallery's tile is (Gallery.tsx): on a stage of one shape, a component at its
- * own size and a pattern's scene at a legible scale.
+ * It is a gallery's cell (Gallery.tsx, Gallery.css): on a stage of one shape, a component at its
+ * own size and a pattern's scene at a legible scale, and under it its name and when to pick it,
+ * which slide into view with the picture as the pointer comes on.
  */
 function RelatedTile({
   preview,
@@ -384,17 +386,19 @@ function RelatedTile({
   const [playing, playOn] = usePlaying();
   const autoplay = useAutoplay(tile, playing);
   return (
-    <li ref={tile} className="catalogue-related-tile" {...playOn}>
-      <TilePreview
-        preview={preview}
-        near={near}
-        playing={playing || autoplay}
-        className="catalogue-related-stage catalogue-gallery-stage"
-        whole
-        ownSize={frame === 'own'}
-        legible={frame === 'legible'}
-      />
-      {children}
+    <li ref={tile} className="catalogue-related-tile catalogue-gallery-tile" {...playOn}>
+      <div className="catalogue-gallery-picture">
+        <TilePreview
+          preview={preview}
+          near={near}
+          playing={playing || autoplay}
+          className="catalogue-related-stage catalogue-gallery-stage"
+          whole
+          ownSize={frame === 'own'}
+          legible={frame === 'legible'}
+        />
+      </div>
+      <div className="catalogue-gallery-meta catalogue-related-meta">{children}</div>
     </li>
   );
 }
@@ -415,15 +419,18 @@ function Tiles({ alternatives, path }: { alternatives: Alternative[]; path: stri
         <RelatedTile key={key} preview={preview} near={near} frame={frame}>
           {/* The name is the link; it stretches over the picture, so a pointer can follow it from
               there too without a link around the preview, whose example may hold links itself. */}
-          <Text render={<span />} className="catalogue-related-name">
-            {href ? (
-              <Link href={href} className="catalogue-related-link">
-                {name}
-              </Link>
-            ) : (
-              name
-            )}
-          </Text>
+          <Row align="center" justify="between" gap={2}>
+            <Text render={<span />} className="catalogue-related-name">
+              {href ? (
+                <Link href={href} underline={false} className="catalogue-related-link">
+                  {name}
+                </Link>
+              ) : (
+                name
+              )}
+            </Text>
+            <IconArrowForward className="catalogue-gallery-arrow" aria-hidden="true" />
+          </Row>
           <div className="catalogue-related-line">
             <Documentation markdown={line} path={path} />
           </div>
