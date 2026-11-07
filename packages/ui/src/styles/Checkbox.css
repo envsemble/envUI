@@ -216,21 +216,28 @@
     .env-checkbox-box {
       transition-property: background-color, color, border-color, transform;
       transition-duration: var(--env-motion-duration-fast);
-      transition-timing-function: var(--env-motion-ease);
+      transition-timing-function: var(--env-motion-ease-enter);
     }
     .env-checkbox-box::before {
-      transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
+      transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
+    }
+    /* The box fills and empties with its mark, from the first frame, so the mark's fade shows on
+       the fill. */
+    .env-checkbox-input {
+      transition:
+        background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter),
+        border-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
     }
     .env-checkbox:active:not(:has(input:disabled)) .env-checkbox-box {
       transform: scale(0.9);
     }
-    /* The mark settles in from a little smaller as the box is checked, and fades out, quicker, as it
-       is cleared, at its size, then hides. */
+    /* The mark settles in from a little smaller as the box is checked, and fades out, quicker, with
+       the fill as it is cleared, at its size, then hides. */
     .env-checkbox-indicator {
       opacity: 0;
       scale: 0.8;
       transition:
-        opacity var(--env-motion-duration-fast) var(--env-motion-ease-exit),
+        opacity var(--env-motion-duration-fast) var(--env-motion-ease-enter),
         scale 0s linear var(--env-motion-duration-fast),
         visibility 0s linear var(--env-motion-duration-fast);
     }

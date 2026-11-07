@@ -19,6 +19,19 @@ test('icon-only buttons keep their square size where their container is squeezed
   }
 });
 
+/**
+ * The channels of an rgb() or color(srgb …) color, 0–255, and its alpha; NaN for another space,
+ * such as the oklab() of a color midway through a transition.
+ */
+function channels(color: string) {
+  const numbers = color.match(/[\d.]+/g)?.map(Number) ?? [];
+  const scale = color.startsWith('color(srgb') ? 255 : color.startsWith('rgb') ? 1 : NaN;
+  return {
+    rgb: numbers.slice(0, 3).map((value) => value * scale),
+    alpha: Number.isNaN(scale) ? NaN : (numbers[3] ?? 1),
+  };
+}
+
 /** The WCAG contrast ratio of two opaque rgb() colors. */
 function contrast(first: string, second: string) {
   const luminance = (color: string) => {
@@ -77,13 +90,20 @@ test('quiet buttons take the icon color, a state layer and the focus ring in bot
     expect(contrast(icon, canvas)).toBeGreaterThanOrEqual(4.5);
     expect(contrast(icon, paneFill)).toBeGreaterThanOrEqual(4.5);
     // Hover lays the state layer under the icon, which takes the text color, and a press lays it
-    // twice: the layer as the fill with the same layer as an image over it.
+    // twice, as one color, so it eases: the layer's color at the opacity of two such layers.
     await toggle.hover();
     await expect(toggle).toHaveCSS('background-color', hover);
     await expect(toggle).toHaveCSS('color', text);
     await page.mouse.down();
-    await expect(toggle).toHaveCSS('background-color', hover);
-    await expect(toggle).toHaveCSS('background-image', /linear-gradient/);
+    const layer = channels(hover);
+    const pressed = () =>
+      toggle.evaluate((element) => getComputedStyle(element).backgroundColor).then(channels);
+    await expect
+      .poll(async () => Math.abs((await pressed()).alpha - layer.alpha * (2 - layer.alpha)))
+      .toBeLessThan(0.002);
+    for (const [index, value] of (await pressed()).rgb.entries())
+      expect(value).toBeCloseTo(layer.rgb[index]!, 0);
+    await expect(toggle).toHaveCSS('background-image', 'none');
     await page.mouse.up();
     await page.mouse.move(0, 0);
     // The keyboard shows the shared focus ring.

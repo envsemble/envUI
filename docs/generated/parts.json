@@ -6170,6 +6170,10 @@
           "description": "The end of an item, for a count or actions."
         },
         {
+          "class": "env-tree-group",
+          "description": "The rows an expanding or collapsing item reveals or hides, while they grow or shrink."
+        },
+        {
           "class": "env-tree-icon",
           "description": "An item's icon."
         },
@@ -6197,6 +6201,15 @@
           ],
           "parts": [
             "env-tree"
+          ]
+        },
+        {
+          "attribute": "data-ending-style",
+          "values": [
+            ""
+          ],
+          "parts": [
+            "env-tree-group"
           ]
         },
         {
@@ -6239,6 +6252,7 @@
             ""
           ],
           "parts": [
+            "env-tree-group",
             "env-tree-item"
           ]
         }

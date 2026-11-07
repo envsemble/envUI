@@ -6,9 +6,9 @@
     margin: 0;
     box-sizing: border-box;
     transition:
-      background-color var(--env-motion-duration-fast) var(--env-motion-ease),
-      color var(--env-motion-duration-fast) var(--env-motion-ease),
-      border-color var(--env-motion-duration-fast) var(--env-motion-ease);
+      background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter),
+      color var(--env-motion-duration-fast) var(--env-motion-ease-enter),
+      border-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
     /* Badges inside take the button's text color as an outlined pill (Badge.css's hooks; the
        count and diff stat hooks are further down). */
     --env-badge-fg: currentColor;
@@ -255,7 +255,7 @@
     color: var(--env-button-content, var(--env-button-text-icon-color, var(--env-color-fg-link)));
     transition-property: background-color, color;
     transition-duration: var(--env-motion-duration-fast);
-    transition-timing-function: var(--env-motion-ease);
+    transition-timing-function: var(--env-motion-ease-enter);
   }
 
   /* A container that lines a text icon button's icon up with its own edge, rather than the button's
@@ -301,7 +301,7 @@
     cursor: pointer;
     transition-property: background-color, color;
     transition-duration: var(--env-motion-duration-fast);
-    transition-timing-function: var(--env-motion-ease);
+    transition-timing-function: var(--env-motion-ease-enter);
   }
 
   /* Hover lays the state layer and a press lays it twice, an even step further; its label stays the
@@ -322,9 +322,10 @@
   }
 
   .env-button:where([data-variant='ghost']):active:not(:disabled):not([aria-disabled='true']) {
+    /* The layer twice, as one color, so the press eases as the other variants' do. */
     background: var(
       --env-button-custom-fill,
-      linear-gradient(var(--env-button-ghost-layer) 0 0) var(--env-button-ghost-layer)
+      rgb(from var(--env-button-ghost-layer) r g b / calc(alpha * (2 - alpha)))
     );
     color: var(--env-button-content, var(--env-color-fg-default));
   }
@@ -636,7 +637,7 @@
     .env-button {
       transition-property: background-color, color, border-color, transform;
       transition-duration: var(--env-motion-duration-fast);
-      transition-timing-function: var(--env-motion-ease);
+      transition-timing-function: var(--env-motion-ease-enter);
     }
     .env-button:active:not(:disabled):not([aria-disabled='true']) {
       transform: scale(0.97);

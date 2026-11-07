@@ -135,6 +135,37 @@ const rowRem: Record<RowDensity, number> = { xs: 1.5, sm: 1.75, md: 2.25, lg: 2.
 /** No rows arriving. */
 const noValues: ReadonlySet<string> = new Set();
 
+/**
+ * A row expanding or collapsing: the rows it reveals or hides, which grow or shrink as one group
+ * from start, the index of its first row, while the rows below follow the group's end.
+ */
+interface TreeMotion<Item extends TreeItem> {
+  kind: 'open' | 'close';
+  start: number;
+  rows: readonly Item[];
+}
+
+/**
+ * The motion from one list of rows to the next: rows that arrive as one block among unchanged rows
+ * open, and rows that leave as one block close. Any other change, such as new items altogether,
+ * has none.
+ */
+function treeMotion<Item extends TreeItem>(
+  before: readonly Item[],
+  after: readonly Item[],
+): TreeMotion<Item> | null {
+  const count = after.length - before.length;
+  if (count === 0) return null;
+  const [longer, shorter] = count > 0 ? [after, before] : [before, after];
+  let start = 0;
+  while (start < shorter.length && shorter[start]!.value === longer[start]!.value) start += 1;
+  const size = Math.abs(count);
+  for (let index = start; index < shorter.length; index += 1) {
+    if (shorter[index]!.value !== longer[index + size]!.value) return null;
+  }
+  return { kind: count > 0 ? 'open' : 'close', start, rows: longer.slice(start, start + size) };
+}
+
 /** A row id safe for id references, whatever characters the item id contains. */
 function rowElementId(treeId: string, itemId: string) {
   return `${treeId}-row-${itemId.replace(
@@ -212,16 +243,35 @@ export function Tree<Item extends TreeItem>({
   }, [items]);
   const { positions, sizes } = useMemo(() => siblingPositions(items), [items]);
 
-  // The rows that arrive with new items, such as an expanded row's children, fade in from their
-  // starting style; the first rows, and rows that only scroll into view, show at once.
-  const shownValues = useRef<ReadonlySet<string> | null>(null);
-  const arriving = useMemo(() => {
-    const before = shownValues.current;
-    if (!before) return noValues;
-    return new Set(items.filter((item) => !before.has(item.value)).map((item) => item.value));
+  // The rows that arrive with new items fade in from their starting style; the first rows, and rows
+  // that only scroll into view, show at once. Where a row expands or collapses, its rows instead
+  // grow or shrink as one group, as an accordion's panel does, kept until the group has closed.
+  // The same rows passed again, as a new list, keep the change that is playing.
+  const shownItems = useRef<readonly Item[] | null>(null);
+  const lastChange = useRef<{ arriving: ReadonlySet<string>; motion: TreeMotion<Item> | null }>({
+    arriving: noValues,
+    motion: null,
+  });
+  const { arriving, motion } = useMemo(() => {
+    const before = shownItems.current;
+    if (!before) return lastChange.current;
+    const same =
+      before.length === items.length &&
+      before.every((item, index) => item.value === items[index]!.value);
+    if (same) return lastChange.current;
+    const motion = treeMotion(before, items);
+    if (motion) return { arriving: noValues, motion };
+    const values = new Set(before.map((item) => item.value));
+    return {
+      arriving: new Set(items.filter((item) => !values.has(item.value)).map((item) => item.value)),
+      motion: null,
+    };
   }, [items]);
   useLayoutEffect(() => {
-    shownValues.current = new Set(items.map((item) => item.value));
+    lastChange.current = { arriving, motion };
+  }, [arriving, motion]);
+  useLayoutEffect(() => {
+    shownItems.current = items;
   }, [items]);
   useLayoutEffect(function arrive() {
     const rows = container.current?.querySelectorAll('.env-tree-item[data-starting-style]');
@@ -229,6 +279,33 @@ export function Tree<Item extends TreeItem>({
     void getComputedStyle(rows[0]!).opacity;
     for (const row of rows) row.removeAttribute('data-starting-style');
   });
+  // A motion renders first from where the rows were, then moves to where they go, and ends once its
+  // transitions have finished: at once under a reduced-motion preference.
+  const rowsElement = useRef<HTMLDivElement>(null);
+  const [movingMotion, setMovingMotion] = useState<TreeMotion<Item> | null>(null);
+  const [settledMotion, setSettledMotion] = useState<TreeMotion<Item> | null>(null);
+  const activeMotion = motion && motion !== settledMotion ? motion : null;
+  const moving = activeMotion !== null && activeMotion === movingMotion;
+  useLayoutEffect(() => {
+    const element = rowsElement.current;
+    if (!activeMotion || !element) return;
+    // Reading the style makes the browser take the starting positions before they change.
+    void getComputedStyle(element).getPropertyValue('--env-tree-shift');
+    if (!moving) {
+      setMovingMotion(activeMotion);
+      return;
+    }
+    const group = element.querySelector('.env-tree-group');
+    const transitions = [...element.getAnimations(), ...(group?.getAnimations() ?? [])];
+    let current = true;
+    const settle = () => {
+      if (current) setSettledMotion(activeMotion);
+    };
+    void Promise.all(transitions.map((transition) => transition.finished)).then(settle, settle);
+    return () => {
+      current = false;
+    };
+  }, [activeMotion, moving]);
 
   // The active row falls back to the selected or first row when it leaves the visible rows.
   const lastActiveIndex = useRef(0);
@@ -426,9 +503,105 @@ export function Tree<Item extends TreeItem>({
     items.length - 1,
     Math.ceil((scrollTop + shownHeight) / rowHeight) + overscan,
   );
+  const inView = (index: number) => index >= first && index <= last;
   const indexes: number[] = [];
   for (let index = first; index <= last; index += 1) indexes.push(index);
-  if (activeIndex !== -1 && (activeIndex < first || activeIndex > last)) indexes.push(activeIndex);
+  if (activeIndex !== -1 && !inView(activeIndex)) {
+    indexes.push(activeIndex);
+    indexes.sort((a, b) => a - b);
+  }
+
+  /** A row at its index, placed top pixels down its parent; a leaving row is only shown. */
+  function row(item: Item, index: number, top: number, leaving = false) {
+    return (
+      <div
+        key={item.value}
+        id={leaving ? undefined : rowElementId(treeId, item.value)}
+        role="treeitem"
+        aria-level={item.depth + 1}
+        aria-posinset={leaving ? undefined : positions[index]}
+        aria-setsize={leaving ? undefined : sizes[index]}
+        aria-expanded={item.expandable ? Boolean(item.expanded) : undefined}
+        aria-selected={item.value === selectedId}
+        aria-disabled={item.disabled || undefined}
+        title={item.tooltip}
+        className="env-tree-item"
+        data-id={item.value}
+        data-highlighted={!leaving && index === activeIndex ? '' : undefined}
+        data-starting-style={arriving.has(item.value) ? '' : undefined}
+        style={
+          {
+            '--env-tree-depth': item.depth,
+            transform: `translateY(${top}px)`,
+          } as CSSProperties
+        }
+      >
+        <span
+          className="env-tree-chevron"
+          aria-hidden="true"
+          data-expanded={item.expanded ? '' : undefined}
+        >
+          {item.expandable && (
+            <span className="env-icon">
+              <IconChevronRight />
+            </span>
+          )}
+        </span>
+        {item.icon != null && (
+          <span className="env-icon env-tree-icon" aria-hidden="true">
+            {item.icon}
+          </span>
+        )}
+        <span className="env-tree-label">{item.label}</span>
+        {item.description != null && (
+          <>
+            {' '}
+            <span className="env-tree-description">{item.description}</span>
+          </>
+        )}
+        {item.end != null && <span className="env-tree-end">{item.end}</span>}
+      </div>
+    );
+  }
+
+  // While a row expands or collapses, its rows sit in a group that grows or shrinks from the row's
+  // end, and the rows below follow the group's end: they start where they were, moved by the shift,
+  // which eases to 0.
+  let rows: ReactNode;
+  let shift = 0;
+  if (activeMotion) {
+    const { kind, start, rows: groupRows } = activeMotion;
+    const size = groupRows.length;
+    const groupEnd = kind === 'open' ? start + size : start;
+    if (!moving) shift = (kind === 'open' ? -size : size) * rowHeight;
+    rows = (
+      <>
+        {indexes
+          .filter((index) => index < start)
+          .map((index) => row(items[index]!, index, index * rowHeight))}
+        <div
+          className="env-tree-group"
+          aria-hidden={kind === 'close' || undefined}
+          inert={kind === 'close'}
+          data-starting-style={kind === 'open' && !moving ? '' : undefined}
+          data-ending-style={kind === 'close' && moving ? '' : undefined}
+          style={{
+            transform: `translateY(${start * rowHeight}px)`,
+            blockSize: `calc(${kind === 'open' ? size * rowHeight : 0}px + var(--env-tree-shift))`,
+          }}
+        >
+          {groupRows.map((item, offset) =>
+            inView(start + offset)
+              ? row(item, start + offset, offset * rowHeight, kind === 'close')
+              : null,
+          )}
+        </div>
+        {indexes
+          .filter((index) => index >= groupEnd)
+          .map((index) => row(items[index]!, index, index * rowHeight))}
+      </>
+    );
+  } else rows = indexes.map((index) => row(items[index]!, index, index * rowHeight));
 
   const tree = (
     <div
@@ -468,59 +641,19 @@ export function Tree<Item extends TreeItem>({
         if (item) setActiveId(item.value);
       }}
     >
-      <div className="env-tree-rows" style={{ blockSize: items.length * rowHeight }}>
-        {indexes.map((index) => {
-          const item = items[index]!;
-          return (
-            <div
-              key={item.value}
-              id={rowElementId(treeId, item.value)}
-              role="treeitem"
-              aria-level={item.depth + 1}
-              aria-posinset={positions[index]}
-              aria-setsize={sizes[index]}
-              aria-expanded={item.expandable ? Boolean(item.expanded) : undefined}
-              aria-selected={item.value === selectedId}
-              aria-disabled={item.disabled || undefined}
-              title={item.tooltip}
-              className="env-tree-item"
-              data-id={item.value}
-              data-highlighted={index === activeIndex ? '' : undefined}
-              data-starting-style={arriving.has(item.value) ? '' : undefined}
-              style={
-                {
-                  '--env-tree-depth': item.depth,
-                  transform: `translateY(${index * rowHeight}px)`,
-                } as CSSProperties
-              }
-            >
-              <span
-                className="env-tree-chevron"
-                aria-hidden="true"
-                data-expanded={item.expanded ? '' : undefined}
-              >
-                {item.expandable && (
-                  <span className="env-icon">
-                    <IconChevronRight />
-                  </span>
-                )}
-              </span>
-              {item.icon != null && (
-                <span className="env-icon env-tree-icon" aria-hidden="true">
-                  {item.icon}
-                </span>
-              )}
-              <span className="env-tree-label">{item.label}</span>
-              {item.description != null && (
-                <>
-                  {' '}
-                  <span className="env-tree-description">{item.description}</span>
-                </>
-              )}
-              {item.end != null && <span className="env-tree-end">{item.end}</span>}
-            </div>
-          );
-        })}
+      <div
+        ref={rowsElement}
+        className="env-tree-rows"
+        style={
+          {
+            blockSize: items.length * rowHeight,
+            '--env-tree-shift': `${shift}px`,
+            // The starting shift applies at once; only the way back to 0 eases.
+            transition: shift ? 'none' : undefined,
+          } as CSSProperties
+        }
+      >
+        {rows}
       </div>
     </div>
   );

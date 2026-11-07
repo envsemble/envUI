@@ -184,11 +184,6 @@
       "count": 2
     }
   },
-  "packages/ui/src/styles/Text.css": {
-    "unit-disallowed-list": {
-      "count": 2
-    }
-  },
   "packages/ui/src/styles/Toast.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 6

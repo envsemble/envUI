@@ -1,4 +1,11 @@
 @layer env.components {
+  /* How far the rows below an expanding or collapsing row are from where they go, which Tree sets
+     and eases to 0; a length, so the rows glide and the group's end moves with them. */
+  @property --env-tree-shift {
+    syntax: '<length>';
+    inherits: true;
+    initial-value: 0;
+  }
   /* A virtualized tree: the tree scrolls itself and positions its rendered rows by index. Rows follow
      navigation colors: transparent at rest, the row state layer on hover, and the navigation
      selection, which always reads stronger than the hover. */
@@ -35,6 +42,22 @@
     position: relative;
     min-inline-size: 0;
   }
+  /* The rows an expanding row reveals grow from its end to their height and fade in, and the rows a
+     collapsing row hides shrink and fade out, as an accordion's panel does, on the entering curve, so
+     the press shows from its first frame: the group stays until it has closed, and the rows below
+     follow its end. */
+  .env-tree-group {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline: 0;
+    overflow: hidden;
+  }
+  .env-tree-group:is([data-starting-style], [data-ending-style]) {
+    opacity: 0;
+  }
+  .env-tree-group ~ .env-tree-item {
+    translate: 0 var(--env-tree-shift);
+  }
   .env-tree-item {
     box-sizing: border-box;
     position: absolute;
@@ -51,7 +74,7 @@
     user-select: none;
     white-space: nowrap;
     transition:
-      background-color var(--env-motion-duration-fast) var(--env-motion-ease),
+      background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter),
       opacity var(--env-motion-duration-medium) var(--env-motion-ease);
   }
   /* The rows an expanded row reveals fade in where they arrive, from their starting style; the rows
@@ -151,6 +174,14 @@
         var(--env-control-height-touch),
         calc(var(--env-row-content-height) + 2 * var(--env-tree-item-padding))
       );
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .env-tree-rows {
+      transition: --env-tree-shift var(--env-motion-duration-medium) var(--env-motion-ease-enter);
+    }
+    .env-tree-group {
+      transition: opacity var(--env-motion-duration-fast) var(--env-motion-ease-enter);
     }
   }
   /* Under a reduced-motion preference fills change, the chevron turns and revealed rows show at
