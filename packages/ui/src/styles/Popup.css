@@ -146,7 +146,7 @@
     outline: none;
     /* Motion: it fades in, and grows from the origin its positioner sets. */
     transform-origin: var(--transform-origin, center);
-    transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);
+    transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease-enter);
   }
   .env-popup[data-elevation='1'] {
     --env-popup-border: var(--env-elevation-1-border);
@@ -168,12 +168,12 @@
   @media (prefers-reduced-motion: no-preference) {
     .env-popup {
       transition:
-        opacity var(--env-motion-duration-medium) var(--env-motion-ease),
-        transform var(--env-motion-duration-slow) var(--env-motion-ease-enter);
+        opacity var(--env-motion-duration-medium) var(--env-motion-ease-enter),
+        transform var(--env-motion-duration-medium) var(--env-motion-ease-enter);
     }
     .env-popup[data-starting-style],
     .env-popup[data-ending-style] {
-      transform: scale(0.96);
+      transform: scale(0.98);
     }
     .env-popup[data-ending-style] {
       transition-duration: var(--env-motion-duration-fast);

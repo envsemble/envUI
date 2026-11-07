@@ -162,6 +162,7 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 ## Changelog
 
 - **1.0.0**: TimePicker, for a time of day chosen on wheels of hours, minutes and day periods on the locale's clock, with `minuteStep`, `min` and `max`.
+- **1.0.0-prerelease.6**: The popup opens over `--env-motion-duration-medium`, fading in and growing from 98 % with `--env-motion-ease-enter`, rather than growing from 96 % over the slow duration, so it shows from its first frames rather than late.
 - **1.0.0-prerelease.6**: A mouse drags a wheel as a finger does: the rows follow the pointer while its button is down, and a quick drag let go glides on and eases into a row; a press that doesn't move still chooses the row under it.
 - **1.0.0-prerelease.6**: As a wheel turns to a row pressed or scrolled to, the fill stays on that row rather than passing over the rows on the way, and a row's text takes the fill's color only while it is on the fill, so a value it leaves is never white on the popup; the field shows the new time once the wheel comes to rest.
 - **1.0.0-prerelease.6**: `hourCycle`, `h12` or `h23`, sets the clock of the field and its wheels whatever the locale's, such as 18:00 with no AM/PM wheel in English; the value stays `HH:mm`.

@@ -134,7 +134,7 @@
     border-radius: var(--env-radius-sm);
     white-space: normal;
     overflow-wrap: break-word;
-    transition: color var(--env-motion-duration-medium) var(--env-motion-ease);
+    transition: color var(--env-motion-duration-medium) var(--env-motion-ease-enter);
   }
   /* Every tab is a text tab, whatever its button's variant: no fill or edge of its own, its label
      quieter than the text. Under the pointer no block or bar shows, as either would read as a
@@ -339,14 +339,17 @@
     min-inline-size: 0;
     opacity: 1;
     transition:
-      opacity var(--env-motion-duration-medium) var(--env-motion-ease),
-      transform var(--env-motion-duration-medium) var(--env-motion-ease);
+      opacity var(--env-motion-duration-medium) var(--env-motion-ease-enter),
+      transform var(--env-motion-duration-medium) var(--env-motion-ease-enter);
   }
   .env-tabs-panel[hidden] {
     display: none;
   }
+  /* The incoming panel starts half faded, not from nothing: the outgoing one is gone by its first
+     frame, and a panel that started invisible would leave the frames before its fade gets going
+     empty, a blink between the two. */
   .env-tabs-panel[data-starting-style] {
-    opacity: 0;
+    opacity: 0.5;
     transform: translateY(var(--env-space-1));
   }
   /* The outgoing panel goes at once, out of flow, so the two panels never show over each other and
@@ -369,6 +372,7 @@
       transition: none;
     }
     .env-tabs-panel[data-starting-style] {
+      opacity: 1;
       transform: none;
     }
   }

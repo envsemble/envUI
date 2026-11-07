@@ -62,9 +62,8 @@
     --env-kbd-font-size: var(--env-font-size-caption);
     --env-kbd-separator-padding-inline: calc(0.1 * var(--env-popup-row-height));
     --env-kbd-separator-font: 0 / 1 var(--env-font-family);
-    /* Motion: it fades in, below, and grows from the origin its positioner sets. */
-    transform-origin: var(--transform-origin, center);
-    transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);
+    /* Motion: it fades in, below. */
+    transition: opacity var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   .env-tooltip-disabled-target {
     display: inline-flex;
@@ -76,29 +75,15 @@
     outline-offset: 0.125rem;
   }
 
-  /* Motion: a tooltip fades in and grows from its trigger. Movement only without a reduced-motion
-     preference. Base UI's positioner sets the origin. */
+  /* Motion: a tooltip only fades, quickly, with any motion preference: a label that small needs no
+     growth to show where it came from. It takes no part of the popups' scale. */
   .env-tooltip[data-starting-style],
   .env-tooltip[data-ending-style] {
     opacity: 0;
+    transform: none;
   }
   .env-tooltip[data-ending-style] {
     transition-duration: var(--env-motion-duration-fast);
     transition-timing-function: var(--env-motion-ease-exit);
-  }
-  @media (prefers-reduced-motion: no-preference) {
-    .env-tooltip {
-      transition:
-        opacity var(--env-motion-duration-medium) var(--env-motion-ease),
-        transform var(--env-motion-duration-slow) var(--env-motion-ease-enter);
-    }
-    .env-tooltip[data-starting-style],
-    .env-tooltip[data-ending-style] {
-      transform: scale(0.96);
-    }
-    .env-tooltip[data-ending-style] {
-      transition-duration: var(--env-motion-duration-fast);
-      transition-timing-function: var(--env-motion-ease-exit);
-    }
   }
 }
