@@ -98,6 +98,18 @@ test.describe('PortalContainer, contained', () => {
       'hidden',
     );
     expect(await page.evaluate(() => getComputedStyle(document.body).overflow)).not.toBe('hidden');
+    // As the page scrolls, the menu stays where it opened on the region, not on the window.
+    const scrolled = await page.evaluate(async () => {
+      const before = scrollY;
+      scrollBy(0, 80);
+      await new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(done)));
+      return scrollY - before;
+    });
+    expect(scrolled).toBeGreaterThan(40);
+    const moved = (await region.boundingBox())!;
+    await expect
+      .poll(async () => (await menu.boundingBox())!.y - moved.y)
+      .toBeCloseTo(opened.y - box.y, 0);
     // A press outside the container leaves it open; Esc on the menu closes it.
     await page.getByTestId('outside').click();
     await expect(menu).toBeVisible();

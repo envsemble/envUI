@@ -4,6 +4,7 @@ import { ContextMenu as BaseContextMenu } from '@base-ui/react/context-menu';
 import { Menu as BaseMenu } from '@base-ui/react/menu';
 import { useRender } from '@base-ui/react/use-render';
 import {
+  useMemo,
   useRef,
   useState,
   type CSSProperties,
@@ -86,6 +87,22 @@ function isContextMenuKey(event: KeyboardEvent) {
 function pointAnchor(point: ContextMenuPoint) {
   return {
     getBoundingClientRect: () => DOMRect.fromRect({ x: point.x, y: point.y, width: 0, height: 0 }),
+  };
+}
+
+/**
+ * A point on an element, which moves with it: the menu opened there stays at the same place of the
+ * element as a page or a box around it scrolls, rather than at the same place of the window.
+ */
+function pointOnElement(point: ContextMenuPoint, element: Element) {
+  const start = element.getBoundingClientRect();
+  const [dx, dy] = [point.x - start.left, point.y - start.top];
+  return {
+    getBoundingClientRect: () => {
+      const rect = element.getBoundingClientRect();
+      return DOMRect.fromRect({ x: rect.left + dx, y: rect.top + dy, width: 0, height: 0 });
+    },
+    contextElement: element,
   };
 }
 
@@ -266,7 +283,7 @@ function ContainedContextMenu({
   const open = controlledOpen ?? uncontrolledOpen;
   const [target, setTarget] = useState<Element | null>(null);
   const [anchor, setAnchor] = useState<{
-    at: ReturnType<typeof pointAnchor> | ReturnType<typeof elementAnchor>;
+    at: ReturnType<typeof pointOnElement> | ReturnType<typeof elementAnchor>;
     pointer: boolean;
   } | null>(null);
   const region = useRef<HTMLElement>(null);
@@ -287,7 +304,12 @@ function ContainedContextMenu({
     if (!offersMenu(element)) return;
     event.preventDefault();
     setTarget(element);
-    setAnchor({ at: pointAnchor({ x: event.clientX, y: event.clientY }), pointer: true });
+    // The page around a contained menu goes on scrolling, so the point is the element's, not the
+    // window's.
+    setAnchor({
+      at: pointOnElement({ x: event.clientX, y: event.clientY }, element ?? event.currentTarget),
+      pointer: true,
+    });
     setOpen(true);
   }
 
@@ -309,8 +331,20 @@ function ContainedContextMenu({
     ref: region,
     props: { onContextMenu: openAtPointer, onKeyDown: openFromKeyboard },
   });
-  const controlledAnchor = controlledOpen !== undefined && anchorPoint;
-  const at = controlledAnchor ? pointAnchor(anchorPoint) : anchor?.at;
+  const controlledAnchor = controlledOpen !== undefined && anchorPoint !== undefined;
+  // A point given while controlled is the region's from the moment it is given, so it too moves
+  // with the region as the page scrolls.
+  const { x, y } = anchorPoint ?? { x: 0, y: 0 };
+  const givenAnchor = useMemo(
+    () =>
+      controlledAnchor
+        ? region.current
+          ? pointOnElement({ x, y }, region.current)
+          : pointAnchor({ x, y })
+        : null,
+    [controlledAnchor, x, y],
+  );
+  const at = givenAnchor ?? anchor?.at;
   // At the pointer its first row is under the pointer, as Base UI places a context menu; at a
   // point or an element it opens below its start.
   const pointer = !controlledAnchor && anchor?.pointer;
