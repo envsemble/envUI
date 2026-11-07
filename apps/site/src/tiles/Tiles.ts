@@ -84,6 +84,57 @@ export const tileWindows: Readonly<Record<string, TileWindow>> = {
 };
 
 /**
+ * The tiles a gallery draws in the dark theme, by page id, whatever the reader's: each picture is
+ * dark or light by what suits what it shows, such as a command palette or code in the dark, a form
+ * or a table in the light, so a row of tiles mixes the two as an application's screens do. Every
+ * other tile is light.
+ */
+const darkTiles: ReadonlySet<string> = new Set([
+  'toolbar',
+  'menu',
+  'command-palette',
+  'combobox',
+  'switch',
+  'slider',
+  'time-picker',
+  'color-picker',
+  'composer',
+  'tabs',
+  'navigation-drawer',
+  'document-tabs',
+  'tree',
+  'meter',
+  'calendar-heatmap',
+  'animated-number',
+  'avatar',
+  'code',
+  'markdown',
+  'kbd',
+  'message',
+  'toast',
+  'tooltip',
+  'progress',
+  'spinner',
+  'hover-card',
+  'dialog',
+  'panel-dock',
+  'panes',
+  'top-bar',
+  'scaffold',
+  'graphic',
+  'conversation',
+  'key-figures',
+  'app-frame',
+  'data-tables',
+  'filtering',
+  'navigation',
+]);
+
+/** The theme a gallery draws a page's tile in, by its id (darkTiles). */
+export const tileScheme = (page: string | undefined): 'light' | 'dark' =>
+  page && darkTiles.has(page) ? 'dark' : 'light';
+
+/**
  * About the widths at which the components' gallery stands two to a row (Gallery.css), whose
  * stages are too narrow for a popup beside its button: there a tile opens it below.
  */

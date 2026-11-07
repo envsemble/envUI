@@ -1,7 +1,8 @@
-/* The galleries of components and patterns (Gallery.tsx): by group, a tile for each page, its
-   live picture on the recessed canvas every example sits on, inert, with its name under it: a
-   component at its own size, a pattern's scene scaled to fit. Tiles are of one size, so the
-   pictures line up in rows. */
+/* The galleries of components and patterns (Gallery.tsx): by group, a sheet of cells across the
+   page's whole column, meeting at hairlines, one for each page: its live picture, inert, flat, in
+   the theme that suits it, light or dark, whatever the reader's, and under it its name, shown as
+   the pointer comes onto the cell, which rises as a card: a component at its own size, a
+   pattern's scene scaled to fit. Cells are of one size, so the pictures line up in rows. */
 /* The groups stand a page's section gap apart (Shell.css), as every section does. */
 .catalogue-gallery {
   text-align: start;
@@ -38,21 +39,94 @@
 
 .catalogue-gallery-grid {
   display: grid;
-  /* Four to a row on a wide page, five on the widest, and two on a phone (below). */
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr));
-  gap: var(--env-space-7) var(--env-space-5);
-  margin: 0;
+  /* As many to a row as fit at 14 rem, four on a laptop's page and more on a wider one, and two on a
+     phone (below). */
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+  gap: 0;
+  /* A sheet of cells across the whole of the page's column, out to its edges past the page's
+     gutter, with a hairline over its first row; each cell draws the hairlines at its end and its
+     foot, so the cells meet at hairlines. */
+  inline-size: calc(100% + 2 * var(--site-gutter));
+  max-inline-size: none;
+  margin: 0 calc(-1 * var(--site-gutter));
   padding: 0;
+  border-block-start: 1px solid var(--env-color-border-muted);
   list-style: none;
 }
 
+/* A cell of the sheet: its picture, flat on the page, and its name under it. */
 .catalogue-gallery-tile {
   position: relative;
+  isolation: isolate;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   align-content: start;
-  row-gap: var(--env-space-2);
+  row-gap: var(--env-space-3);
   min-inline-size: 0;
+  padding: var(--env-space-4) var(--env-space-4) var(--env-space-3);
+  border-inline-end: 1px solid var(--env-color-border-muted);
+  border-block-end: 1px solid var(--env-color-border-muted);
+}
+
+/* Under the pointer, or with the keyboard on its link, the cell rises as a card around its picture
+   and name, on the raised surface with a soft shadow, eased in, and its name shows. */
+.catalogue-gallery-tile::before {
+  position: absolute;
+  inset: var(--env-space-2);
+  border-radius: var(--env-radius-lg);
+  background-color: var(--env-color-bg-raised);
+  box-shadow: 0 0.5rem 1.5rem oklch(from var(--env-color-fg-default) l c h / 0.1);
+  opacity: 0;
+  content: '';
+  transition: opacity var(--env-motion-duration-fast) var(--env-motion-ease);
+}
+@media (hover: hover) {
+  .catalogue-gallery-tile:hover::before {
+    opacity: 1;
+  }
+}
+.catalogue-gallery-tile:has(:focus-visible)::before {
+  opacity: 1;
+}
+
+/* The picture in its own theme (Gallery.tsx), light or dark by what it shows: only the picture
+   takes the theme's colors; the cell around it keeps the page's. */
+.catalogue-gallery-theme {
+  position: relative;
+  min-inline-size: 0;
+  background: none;
+}
+
+/* The picture, flat: a small corner and a hairline edge in its own theme, no shadow, so a light
+   picture keeps its edge on a light page and a dark one on a dark page. */
+.catalogue-gallery-grid .catalogue-gallery-stage.catalogue-gallery-stage {
+  border-radius: var(--env-radius-md);
+  box-shadow: none;
+}
+.catalogue-gallery-grid .catalogue-gallery-stage.catalogue-gallery-stage::after {
+  border-color: var(--env-color-border-muted);
+}
+.catalogue-gallery-grid :is(.catalogue-related-crop) {
+  clip-path: inset(0 round var(--env-radius-md));
+}
+
+/* The name and an arrow to its page, under the picture: hidden while the pointer is elsewhere, so
+   the sheet reads by its pictures, and shown as it comes onto the cell; always shown where the
+   reader can't hover. The row keeps its room either way, so nothing moves. */
+.catalogue-gallery-meta {
+  /* Positioned, as the picture is, so both lie over the cell's card, drawn before them. */
+  position: relative;
+  min-inline-size: 0;
+  transition: opacity var(--env-motion-duration-fast) var(--env-motion-ease);
+}
+@media (hover: hover) {
+  .catalogue-gallery-tile:not(:hover, :has(:focus-visible)) .catalogue-gallery-meta {
+    opacity: 0;
+  }
+}
+.catalogue-gallery-arrow {
+  flex: none;
+  color: var(--env-color-fg-muted);
 }
 
 /* The stage of a gallery tile: wide and low, as most components are, so a row of controls
@@ -65,13 +139,13 @@
   max-block-size: none;
 }
 
-/* A pattern's scene takes a larger card than a component's: three to a row on a wide page, two on
+/* A pattern's scene takes a larger cell than a component's: three to a row on a wide page, two on
    a narrower one and one on a phone, on a stage of 4:3, so the whole window its scene is written
    for shows at about its own size and its words read as a page's do (useFit.ts). Every scene is
    one piece of an application 17rem across, low enough to show whole as it plays, so each sits
    centred in its stage with the same margins (tiles/). */
 .catalogue-gallery-grid[data-scenes] {
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
 }
 
 /* So do Related's tiles where one of them is a scene, so they line up in a row. */
@@ -88,7 +162,7 @@
   overflow: visible;
 }
 
-:is(.catalogue-gallery-grid, .catalogue-related-tiles):not([data-scenes]) .catalogue-related-crop {
+.catalogue-related-tiles:not([data-scenes]) .catalogue-related-crop {
   clip-path: inset(0 round var(--env-radius-surface));
 }
 
@@ -116,8 +190,9 @@
     --catalogue-own-popup-least: 0.85;
     --catalogue-overlay-scale: 0.75;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    row-gap: var(--env-space-5);
-    column-gap: var(--env-space-4);
+  }
+  .catalogue-gallery-grid .catalogue-gallery-tile {
+    padding: var(--env-space-3) var(--env-space-3) var(--env-space-2);
   }
   .catalogue-gallery-grid:not([data-scenes]) .catalogue-gallery-stage.catalogue-gallery-stage {
     aspect-ratio: 16 / 10;
@@ -168,34 +243,38 @@
   place-content: start stretch;
 }
 
-/* The name under the picture, in body text of a medium weight, so a row of tiles reads by its
-   names; the group headings still lead. */
+/* The name under the picture, in body text of a medium weight, on one line; the group headings
+   still lead. */
 .catalogue-gallery-name {
+  min-inline-size: 0;
   margin: 0;
+  overflow: hidden;
   font-weight: var(--env-font-weight-medium);
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .catalogue-gallery-group {
   margin: 0;
 }
 
-.catalogue-gallery-link {
+.catalogue-gallery-link,
+.catalogue-gallery-link:hover {
   color: var(--env-color-fg-default);
+  text-decoration: none;
 }
 
 /* The name's link covers the tile, so the whole picture leads to the page. */
 .catalogue-gallery-link::after {
   position: absolute;
   inset: 0;
-  border-radius: var(--env-radius-surface);
   content: '';
 }
 
-/* The keyboard on a tile's link rings its picture, as focus does; the pointer draws a hairline
-   ring inside its edge (Stage.css). */
-.catalogue-gallery-tile:has(.catalogue-gallery-link:focus-visible) .catalogue-gallery-stage {
+/* The keyboard on a tile's link rings its cell's card. */
+.catalogue-gallery-tile:has(.catalogue-gallery-link:focus-visible)::before {
   outline: 0.125rem solid var(--env-color-border-focus);
-  outline-offset: 0.125rem;
+  outline-offset: -0.125rem;
 }
 
 /* Drawn at its own size, a component lays out as wide as the stage's room, less the fit's inset,
