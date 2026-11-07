@@ -21,9 +21,14 @@ async function motionChoice(page: Page, name: 'Play' | 'Pause') {
 const tile = (page: Page, name: string) =>
   page.locator('.catalogue-gallery-tile', { has: page.getByRole('link', { name, exact: true }) });
 
-/** Whether the Switch tile's switch is on. */
+/**
+ * Whether the Switch tile's switch is on: its canvas's, not the copy of the picture as it played
+ * that fades out over it as it stops (fadeOutCopy, Related.tsx).
+ */
 const switchOn = (tileOf: Locator) =>
-  tileOf.locator('input').evaluate((input) => (input as HTMLInputElement).checked);
+  tileOf
+    .locator('.catalogue-related-canvas:not([data-catalogue-leaving]) input')
+    .evaluate((input) => (input as HTMLInputElement).checked);
 
 /** The Slider page's figure of a slider under the pointer, whose value starts at 30, by its own
  * pause button's name, which stays its own however its subject redraws. */
@@ -50,7 +55,7 @@ test('a tile plays its preview while the pointer is on it, and rests at its stil
   // On the tile, it plays: the switch turns on.
   await switchTile.hover();
   await expect.poll(() => switchOn(switchTile)).toBe(true);
-  // Off it, it goes back to the still at once.
+  // Off it, it goes back to the still at once, under the picture as it played, which fades out.
   await page.mouse.move(1, 1);
   await expect.poll(() => switchOn(switchTile)).toBe(false);
 });

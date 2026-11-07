@@ -1,6 +1,7 @@
 import { Fragment, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { PortalContainer } from '@envsemble/envui';
 import { sitePopupOpen } from '../motion/SitePopup';
+import { recordedSize } from '../template/Loading';
 
 /** The least room a dialog, a sheet or a toast keeps from the stage's edges, in px. */
 const gutter = 16;
@@ -470,6 +471,37 @@ function useRestOpen(room: HTMLElement | null, layer: HTMLElement | null, live: 
 }
 
 /**
+ * Keeps an open example's stage at the height it was recorded at, its overlays resting open in it
+ * (scripts/site/RecordPartSizes.ts), from as it starts loading until its room is made for them and
+ * it fades in: the page below holds still as the example lands, the room grows for its overlays
+ * unseen, and it appears once, at its size. The room is measured as it would be without the
+ * reservation (`measured`), so it is made for the overlays alone; `release` lets the stage go to
+ * its own height. A stage with no record keeps its own height throughout.
+ */
+function reserveStage(room: HTMLElement, part: string | undefined) {
+  const height = part === undefined ? undefined : recordedSize(part)?.[1];
+  const stage = height === undefined ? null : stageOf(room);
+  let held = stage !== null && stage !== room;
+  if (held) stage!.style.minBlockSize = `${height}rem`;
+  return {
+    measured<T>(measure: () => T): T {
+      if (!held) return measure();
+      stage!.style.minBlockSize = '';
+      try {
+        return measure();
+      } finally {
+        stage!.style.minBlockSize = `${height}rem`;
+      }
+    },
+    release() {
+      if (!held) return;
+      held = false;
+      stage!.style.minBlockSize = '';
+    },
+  };
+}
+
+/**
  * An example shown with its overlays open, as a picture: its dialogs, menus, tooltips and toasts
  * render into a layer of the figure through envUI's PortalContainer, contained, so they neither
  * lock the page's scroll, take focus nor close when the reader presses elsewhere, and sit inside
@@ -482,11 +514,18 @@ function useRestOpen(room: HTMLElement | null, layer: HTMLElement | null, live: 
 export function OpenExample({
   name,
   live = false,
+  part,
   children,
 }: {
   name: string;
   /** Whether people can use it, its overlay pressed open where the example doesn't open it. */
   live?: boolean;
+  /**
+   * The key its stage's height is recorded by in PartSizes.json, such as
+   * open:dialog/ProjectDetails, which the stage keeps until the room is made for its overlays
+   * (reserveStage).
+   */
+  part?: string;
   children: ReactNode;
 }) {
   const room = useRef<HTMLDivElement>(null);
@@ -514,13 +553,15 @@ export function OpenExample({
     // The figure shows once its room is made for its overlays resting open, fading in, so nothing
     // in it moves as it appears (Stage.css): or a while after its example has loaded, whatever
     // they do. While the example loads, its skeleton shows in the room.
+    const reserved = reserveStage(roomElement, part);
     const place = () => {
       roomElement.dataset.placed = '';
+      reserved.release();
     };
     const update = () => {
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => {
-        if (fit(roomElement, layer, live)) place();
+        if (reserved.measured(() => fit(roomElement, layer, live))) place();
         else if (!timer && !roomElement.querySelector('.site-loading'))
           timer = window.setTimeout(place, placeWait);
       });
@@ -549,12 +590,13 @@ export function OpenExample({
     return () => {
       cancelAnimationFrame(frame);
       window.clearTimeout(timer);
+      reserved.release();
       resize.disconnect();
       mutation.disconnect();
       roomElement.removeEventListener('transitionend', update);
       roomElement.removeEventListener('animationend', update);
     };
-  }, [layer, live]);
+  }, [layer, live, part]);
   return (
     <div
       ref={(element) => {
@@ -563,6 +605,7 @@ export function OpenExample({
       }}
       className="catalogue-open-example"
       data-open-example={name}
+      data-catalogue-reserve={part}
       data-live={live ? '' : undefined}
       inert={!live}
     >

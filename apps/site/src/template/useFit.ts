@@ -9,7 +9,7 @@ import {
   type Heading,
 } from '../motion/MustShow';
 import { aimedElement } from '../motion/PointerPlan';
-import { motionDuration } from '../motion/MotionTokens';
+import { motionDuration, motionEasing } from '../motion/MotionTokens';
 import { narrowGallery } from '../tiles/Tiles';
 
 /** The least room, in px, between a preview and its stage's edges. */
@@ -326,10 +326,10 @@ export function useFit(
     refit.current = update;
     const resize = new ResizeObserver(update);
     const largest = tile ? most : 1;
-    // The view: where the canvas is and the scale it is drawn at, and where it eases to. Each frame
-    // closes a share of the way left, so a target that moves as the preview changes is followed
-    // without restarting. `rest` is the scale it is fitted at resting, and `zoomed` whether it is
-    // drawn smaller than that as it plays, or on its way back.
+    // The view: where the canvas is and the scale it is drawn at, and where it eases to (glide), a
+    // target that moves as the preview changes followed on the way. `rest` is the scale it is
+    // fitted at resting, and `zoomed` whether it is drawn smaller than that as it plays, or on its
+    // way back.
     const view = {
       x: 0,
       y: 0,
@@ -340,7 +340,6 @@ export function useFit(
       rest: 1,
       zoomed: false,
       frame: 0,
-      last: 0,
     };
     // Before it shows, the frames its fit has held where it is, and when it was first fitted: a
     // popup is placed by its style a frame or two after it opens, and a preview shown before then
@@ -542,25 +541,49 @@ export function useFit(
         const own = partOf(element, canvasElement);
         return [{ box, y: own.top + (own.bottom - own.top) * aim.y }];
       });
-    // The glide's time constant: three of it take it 95 % of the way, in the slow motion token.
-    const glidePace = motionDuration('slow') / 3;
+    // The glide: from where the view is to where it goes, in the slow motion token on the standard
+    // easing, so it starts, moves and settles in a bounded time. A target that moves on the way,
+    // as a tile's popups open and are placed, is taken up from where the view is then, the glide's
+    // time left kept, so the view doesn't stop and start again: only near its end does it start
+    // a glide of its own to the new place.
+    const ease = motionEasing('ease');
+    let course: {
+      from: [number, number, number];
+      to: [number, number, number];
+      start: number;
+      length: number;
+    } | null = null;
     const glide = (now: number) => {
-      const elapsed = Math.min(64, now - (view.last || now - 16));
-      view.last = now;
-      // As a tile plays, it keeps pace with what opens, which takes the room as it comes in: most
-      // of the way there in the slow motion token, and at rest in half as long again.
-      const share = 1 - Math.exp(-elapsed / (run ? glidePace : 1.5 * glidePace));
-      view.x += (view.toX - view.x) * share;
-      view.y += (view.toY - view.y) * share;
-      view.scale += (view.toScale - view.scale) * share;
-      const settled =
-        Math.abs(view.toX - view.x) < 0.25 &&
-        Math.abs(view.toY - view.y) < 0.25 &&
-        Math.abs(view.toScale - view.scale) < 0.001;
+      const to: [number, number, number] = [view.toX, view.toY, view.toScale];
+      const at: [number, number, number] = [view.x, view.y, view.scale];
+      const length = motionDuration('slow');
+      if (!course) course = { from: at, to, start: now, length };
+      else if (to.some((value, index) => value !== course!.to[index])) {
+        const share = ease((now - course.start) / course.length);
+        // Late in a glide, a new one; before then, the same, bent to the new place: from a start
+        // that puts the view where it is now at this point of the curve.
+        if (share > 0.85) course = { from: at, to, start: now, length };
+        else
+          course = {
+            ...course,
+            to,
+            from: at.map((value, index) => (value - to[index]! * share) / (1 - share)) as [
+              number,
+              number,
+              number,
+            ],
+          };
+      }
+      const share = ease((now - course.start) / course.length);
+      const settled = now - course.start >= course.length;
+      view.x = course.from[0] + (to[0] - course.from[0]) * share;
+      view.y = course.from[1] + (to[1] - course.from[1]) * share;
+      view.scale = course.from[2] + (to[2] - course.from[2]) * share;
       if (settled) {
         view.x = view.toX;
         view.y = view.toY;
         view.scale = view.toScale;
+        course = null;
       }
       place();
       view.frame = settled ? 0 : requestAnimationFrame(glide);
@@ -578,7 +601,7 @@ export function useFit(
         view.scale = view.toScale;
         place();
       } else if (!view.frame) {
-        view.last = 0;
+        course = null;
         view.frame = requestAnimationFrame(glide);
       }
     };
@@ -1470,7 +1493,7 @@ export function useFit(
       if (eases && (view.toScale === scale || zooms)) {
         view.toScale = scale;
         if (!view.frame) {
-          view.last = 0;
+          course = null;
           view.frame = requestAnimationFrame(glide);
         }
       } else {

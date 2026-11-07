@@ -56,13 +56,16 @@
 /* A cell of the gallery: its picture, square-cornered and flat on the page, with no edge, and its
    name under it, out of the cell's view. The cell is as tall as the picture and the name together
    and shows only that much: at rest the picture sits in its middle, half the name's row lower, and
-   the name below it, out of view; under the pointer, or with the keyboard on its link, both slide
-   up together, the picture to the cell's top and the name into the room it leaves, quick at first
-   and settling, as the picture comes alive; as the pointer leaves, they slide back quicker, easing
-   out of their place. Where the reader can't hover, the name always shows. */
+   the name under it, unseen; under the pointer, or with the keyboard on its link, both slide up a
+   little together, `--catalogue-gallery-rise`, as far as the name needs to show whole, and the
+   name fades in, quick at first and settling, as the picture comes alive; as the pointer leaves,
+   they slide back quicker, easing out of their place. Where the reader can't hover, the name
+   always shows. */
 .catalogue-gallery-tile {
   --catalogue-gallery-meta-height: 2.25rem;
   --catalogue-gallery-slide: calc(var(--catalogue-gallery-meta-height) / 2);
+  /* The name's line, centred in its row, shows whole with the picture risen this far. */
+  --catalogue-gallery-rise: 0.75rem;
   position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -79,20 +82,28 @@
 @media (prefers-reduced-motion: no-preference) {
   .catalogue-gallery-picture,
   .catalogue-gallery-meta {
-    transition: translate var(--env-motion-duration-fast) var(--env-motion-ease-exit);
+    transition:
+      translate var(--env-motion-duration-fast) var(--env-motion-ease-exit),
+      opacity var(--env-motion-duration-fast) var(--env-motion-ease-exit);
   }
   .catalogue-gallery-tile:is(:hover, :has(:focus-visible))
     :is(.catalogue-gallery-picture, .catalogue-gallery-meta) {
-    transition: translate var(--env-motion-duration-slow) var(--env-motion-ease-enter);
+    transition:
+      translate var(--env-motion-duration-medium) var(--env-motion-ease-enter),
+      opacity var(--env-motion-duration-medium) var(--env-motion-ease-enter);
   }
 }
 
 @media (hover: hover) {
+  .catalogue-gallery-tile :is(.catalogue-gallery-picture, .catalogue-gallery-meta) {
+    translate: 0 calc(var(--catalogue-gallery-slide) - var(--catalogue-gallery-rise));
+  }
   .catalogue-gallery-tile:not(:hover, :has(:focus-visible)) .catalogue-gallery-picture {
     translate: 0 var(--catalogue-gallery-slide);
   }
   .catalogue-gallery-tile:not(:hover, :has(:focus-visible)) .catalogue-gallery-meta {
-    translate: 0 calc(var(--catalogue-gallery-meta-height) + var(--catalogue-gallery-slide));
+    translate: 0 var(--catalogue-gallery-slide);
+    opacity: 0;
   }
 }
 

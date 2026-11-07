@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Breadcrumbs } from '@envsemble/envui';
 import { usePointer, type PointerStep } from '../motion/Motion';
+import { motionDuration, motionEase } from '../motion/MotionTokens';
 
 const link = (index: number) => `.env-breadcrumbs-item:nth-child(${index}) > .env-breadcrumbs-link`;
 
@@ -26,8 +27,8 @@ const script: PointerStep[] = [
   { wait: 500 },
 ];
 
-/** How long the trail drawn anew takes to crossfade in over the one it replaces. */
-const fade = 280;
+/** How long the trail drawn anew takes to crossfade in over the one it replaces: the slow token. */
+const fade = () => motionDuration('slow');
 
 /**
  * Draws its children anew whenever `round` changes, the new ones fading in over the old, which
@@ -42,7 +43,7 @@ function Crossfade({ round, children }: { round: number; children: ReactNode }) 
     if (leaving === null) return;
     const timer = window.setTimeout(
       () => setRounds((now) => ({ current: now.current, leaving: null })),
-      fade,
+      fade(),
     );
     return () => window.clearTimeout(timer);
   }, [leaving]);
@@ -75,12 +76,15 @@ function Layer({
   useEffect(() => {
     if (arrived.current) return;
     arrived.current = true;
-    element.current?.animate([{ opacity: 0 }, { opacity: 1 }], { duration: fade, easing: 'ease' });
+    element.current?.animate([{ opacity: 0 }, { opacity: 1 }], {
+      duration: fade(),
+      easing: motionEase(),
+    });
   }, []);
   useEffect(() => {
     if (!leaving) return;
     element.current?.animate([{ opacity: 1 }, { opacity: 1, offset: 0.5 }, { opacity: 0 }], {
-      duration: fade,
+      duration: fade(),
       fill: 'forwards',
     });
   }, [leaving]);

@@ -71,10 +71,12 @@
 }
 
 /* A Related tile is a gallery's cell (Gallery.css): its picture, and under it its name and when to
-   pick it, which slide into view with it. That row is taller than a gallery's, for its two lines of
+   pick it, which slide and fade into view with it. That row is taller than a gallery's, for its two lines of
    why, cut short after the second. */
 .catalogue-related-tile.catalogue-gallery-tile {
   --catalogue-gallery-meta-height: 4.5rem;
+  /* Its two lines of why show whole only with the picture risen to the cell's top. */
+  --catalogue-gallery-rise: var(--catalogue-gallery-slide);
 }
 .catalogue-related-meta {
   display: grid;
@@ -153,20 +155,11 @@
   }
 }
 
-/* A picture that played fades out quickly as it stops, and in again once it is drawn anew at its
-   still (TilePreview, Related.tsx), rather than jumping back to where it started. With motion
-   reduced, it is drawn anew at once. */
-.catalogue-related-canvas[data-fitted][data-leaving] {
-  opacity: 0;
-}
-@media (prefers-reduced-motion: no-preference) {
-  .catalogue-related-canvas[data-fitted] {
-    transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);
-  }
-  .catalogue-related-canvas[data-fitted][data-leaving] {
-    transition-duration: var(--env-motion-duration-fast);
-    transition-timing-function: var(--env-motion-ease-exit);
-  }
+/* A picture that played crossfades into its still as it stops: a copy of it as it was, held still,
+   fades out over it as it is drawn anew underneath (fadeOutCopy, Related.tsx). With motion reduced,
+   it is drawn anew at once. */
+.catalogue-related-canvas[data-catalogue-leaving] {
+  pointer-events: none;
 }
 
 /* A tile at rest draws its still without motion: drawn anew as it stops (Playback's `redraw`,

@@ -349,7 +349,7 @@ test.describe('hosted build', () => {
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Foundations');
   });
 
-  test('search loads its index from its own file, when it first opens', async ({ page }) => {
+  test('search loads its index from its own file, once the page is idle', async ({ page }) => {
     requireSite();
     const files = moduleFiles('src/search/SearchIndex.ts');
     const requested: string[] = [];
@@ -360,10 +360,10 @@ test.describe('hosted build', () => {
       failure: 'missing',
     });
     await openCatalogue(page, `${siteUrl}/`);
-    expect(requested.filter((path) => files.includes(path))).toEqual([]);
+    // Ahead of search opening, so its results are there as people type.
+    await expect.poll(() => requested).toContain(files[0]);
     await search(page, 'hamburger');
     await expect.poll(() => highlighted(page)).toBe('page:navigation-drawer');
-    expect(requested).toContain(files[0]);
     await page.keyboard.press('Enter');
     await expect(page).toHaveURL(`${siteUrl}/components/navigation-drawer`);
 

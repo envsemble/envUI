@@ -360,7 +360,7 @@ export function LiveExample({
 }) {
   const theme = useTheme();
   const render = open ? (
-    <OpenExample name={name} live={live}>
+    <OpenExample name={name} live={live} part={`open:${page}/${name}`}>
       <ExampleRender page={page} name={name} />
     </OpenExample>
   ) : (

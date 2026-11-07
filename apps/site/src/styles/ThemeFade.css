@@ -3,7 +3,7 @@
    figure that plays, every part's colors, fills and edges transition briefly, only while the theme
    switches (data-catalogue-theme-fading, MotionStage.tsx), so the rest of the time a part's own
    transitions, such as a key's hover, keep their timing. The figure's nested theme only, not the page's or an
-   example stage's, which follow the reader's choice at once, as the page does. Below envUI's
+   example stage's, which follow the reader's choice with the page, crossfading with it (below). Below envUI's
    component layer, so a part with transitions of its own, such as a button's, keeps them. The
    catalogue's, not envUI's. */
 @layer env.base.catalogue-theme-fade {
@@ -25,5 +25,18 @@
     .catalogue-motion-subject[data-catalogue-theme-fading] .env-theme ::after {
       transition: none;
     }
+  }
+}
+
+/* The page's own colors, a theme or a contrast chosen in the Display menu, crossfade over the whole
+   window as they change (switchColors, DisplaySettings.tsx): the view transition's old picture of
+   the page fades into the new one, in the medium motion token. With motion reduced, there is no
+   view transition, and the colors change at once. */
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-group(root),
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: var(--env-motion-duration-medium);
+    animation-timing-function: var(--env-motion-ease);
   }
 }

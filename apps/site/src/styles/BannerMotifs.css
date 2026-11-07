@@ -44,7 +44,8 @@
 @media (prefers-reduced-motion: no-preference) {
   .catalogue-motif-art > * {
     animation: docs-motif-enter calc(var(--env-motion-duration-slow) * 4)
-      var(--env-motion-ease-enter) calc(var(--catalogue-motif-place, 0) * 70ms) backwards;
+      var(--env-motion-ease-enter)
+      calc(var(--catalogue-motif-place, 0) * var(--env-motion-duration-fast) / 2) backwards;
   }
 }
 
