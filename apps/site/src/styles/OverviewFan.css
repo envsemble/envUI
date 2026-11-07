@@ -129,6 +129,11 @@
   font-weight: var(--env-font-weight-medium);
 }
 
+/* The calendar, narrower and shorter than the card, in the middle of it. */
+.catalogue-fan-calendar {
+  margin: auto;
+}
+
 /* A card's key figure: large, in tabular figures, on one line. */
 .catalogue-fan-figure {
   font-size: 1.75rem;

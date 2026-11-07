@@ -179,8 +179,9 @@ const cards: {
     narrowPlace: 1,
     lift: 0.2,
     content: (
-      // The month's own heading names the card, as a calendar's does.
-      <Calendar defaultValue="2026-11-18" />
+      // The month's own heading names the card; January 2027 fills all six of its weeks, so no row is
+      // left empty at its foot.
+      <Calendar defaultValue="2027-01-20" className="catalogue-fan-calendar" />
     ),
   },
 ];
