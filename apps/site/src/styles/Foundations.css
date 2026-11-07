@@ -184,10 +184,16 @@
 .catalogue-rows-steps > * {
   align-self: center;
 }
+/* With motion reduced, the padding changes at once. */
 .catalogue-breathing-table :is(.env-table-cell, .env-table-header-cell) {
-  transition:
-    padding calc(2 * var(--env-motion-duration-slow)) var(--env-motion-ease),
-    background-color var(--env-motion-duration-fast) var(--env-motion-ease);
+  transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .catalogue-breathing-table :is(.env-table-cell, .env-table-header-cell) {
+    transition:
+      padding calc(2 * var(--env-motion-duration-slow)) var(--env-motion-ease),
+      background-color var(--env-motion-duration-fast) var(--env-motion-ease);
+  }
 }
 
 /* Tall things: a button whose container narrows, so its label wraps, beside a field that fills
@@ -207,6 +213,11 @@
   justify-content: flex-end;
   inline-size: 9.5rem;
   transition: inline-size calc(2 * var(--env-motion-duration-slow)) var(--env-motion-ease);
+}
+@media (prefers-reduced-motion: reduce) {
+  .catalogue-tall-box {
+    transition: none;
+  }
 }
 .catalogue-tall-box[data-narrow] {
   inline-size: 6.5rem;
