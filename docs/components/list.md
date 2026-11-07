@@ -41,6 +41,7 @@ examples:
   SettingsRows: overview
   OnAPane: example
   ExtraContent: example
+  RowDensity: example
   ListAnatomy: anatomy
   OpenFromRow: example
   CurrentRow: example
@@ -78,6 +79,10 @@ More content can follow the description, such as a status.
 ### Density
 
 Rows pack more or less tightly, from extra small to large, which changes only their padding, never the text.
+
+```tsx figure=RowDensity motion
+
+```
 
 ## Anatomy
 
