@@ -161,7 +161,7 @@ A checked box submits its `name` with its `value`; an unchecked one submits noth
 ## Changelog
 
 - **1.0.0**: `className` and `style` style the root, `env-checkbox`, rather than the input, which keeps `ref` and the other native props. The classes follow the component: `env-choice-control` is `env-checkbox`, `env-checkbox-control` `env-checkbox-input` and `env-checkbox-mark` `env-checkbox-indicator`.
-- **1.0.0-prerelease.6**: The check mark settles in from a little smaller, and fades out as the box is cleared.
+- **1.0.0-prerelease.6**: The check mark settles in from a little smaller, and fades out as the box is cleared; the box fills and empties with it, from the first frame.
 - **1.0.0-prerelease.6**: A checked or mixed box that is unavailable takes the neutral fill, with its mark in `--env-color-fg-disabled`, rather than a faded accent, as an unavailable button does. A read-only box, with `aria-readonly`, keeps its colors and doesn't answer the pointer.
 - **1.0.0-prerelease.6**: Beside a label that wraps or has a description, the box sits on the middle of its first line rather than across both lines.
 - **1.0.0-prerelease.6**: Under the pointer and while pressed, a halo of the shared state layer rings the box, checked or not, a step stronger while pressed; an unchecked box's edge also darkens to the text color, and the box stays empty, so it doesn't read as a checked one that is unavailable.
