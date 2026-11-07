@@ -119,6 +119,11 @@
   inline-size: min(48%, 42rem);
   mask-image: linear-gradient(to right, transparent 25%, var(--site-banner-lines-opaque) 70%);
 }
+/* The drawing draws itself in once a session (BannerAppear.ts), shorter than LineArt's own: in
+   four of the slow motion token, each line in half of it, one beat after another. */
+.catalogue-banner-lines {
+  --env-line-art-duration: calc(var(--env-motion-duration-slow) * 4);
+}
 /* On the dark banner, the same contrast reads louder than in light: the lines are quieter there,
    so they keep light's presence. High contrast keeps them whole. */
 :where([data-env-theme='dark']) :is(.catalogue-banner-lines, .docs-banner-lines) {
