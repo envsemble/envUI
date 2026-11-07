@@ -30,8 +30,17 @@ test('segmented controls choose one option with the pointer and arrow keys', asy
       probe.remove();
       return color;
     });
-    await expect(open).toHaveCSS('background-color', thumb);
-    await expect(open).not.toHaveCSS('box-shadow', 'none');
+    // One thumb, which travels between the segments, lies under the chosen one; the segment draws
+    // none of its own.
+    const raised = group.locator('.env-segmented-control-thumb');
+    await expect(raised).toHaveCSS('background-color', thumb);
+    await expect(raised).not.toHaveCSS('box-shadow', 'none');
+    const under = async (segment: typeof open) => {
+      const [a, b] = [(await raised.boundingBox())!, (await segment.boundingBox())!];
+      return Math.abs(a.x - b.x) < 1 && Math.abs(a.width - b.width) < 1;
+    };
+    await expect.poll(() => under(open)).toBe(true);
+    await expect(open).toHaveCSS('box-shadow', 'none');
     await expect(blocked).toHaveCSS('box-shadow', 'none');
     await expect(group.locator('.env-segmented-control-item-indicator')).toHaveCount(0);
     await expect(group).toHaveCSS('outline-color', 'rgba(0, 0, 0, 0)');
@@ -43,6 +52,7 @@ test('segmented controls choose one option with the pointer and arrow keys', asy
     await expect(value).toHaveText(/^blocked/);
     await expect(blocked).toHaveAttribute('aria-checked', 'true');
     await expect(open).toHaveAttribute('aria-checked', 'false');
+    await expect.poll(() => under(blocked)).toBe(true);
 
     // Arrow keys move and choose, skipping the disabled option.
     await blocked.focus();

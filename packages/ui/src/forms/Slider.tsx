@@ -23,6 +23,7 @@ import { FieldFrame } from './internal/FieldFrame.js';
 import { fieldMessageIds } from './internal/useFieldMetadata.js';
 import { subscribeFormReset } from './internal/subscribeFormReset.js';
 import { followOverdrag } from './internal/sliderOverdrag.js';
+import { followDrag } from './internal/sliderGlide.js';
 import '../styles/Base.css';
 import '../styles/Slider.css';
 
@@ -222,6 +223,13 @@ export function Slider({
     },
     [disabled],
   );
+  // A press on the track or a key glides the fill and the handle to the value; a drag moves them at
+  // once.
+  useEffect(function followDragging() {
+    const element = control.current;
+    if (!element) return;
+    return followDrag(element, element.closest<HTMLElement>('.env-slider') ?? element);
+  }, []);
   useEffect(function veilOnResize() {
     const element = control.current;
     if (!element || typeof ResizeObserver === 'undefined') return;
@@ -229,7 +237,19 @@ export function Slider({
     observer.observe(element);
     for (const text of element.querySelectorAll('.env-slider-label, .env-slider-value'))
       observer.observe(text);
-    return () => observer.disconnect();
+    // Measured again where the handle comes to rest after a glide.
+    const settle = (event: TransitionEvent) => {
+      if (
+        event.propertyName !== 'opacity' &&
+        (event.target as Element).matches('.env-slider-thumb')
+      )
+        veilIndicatorUnderText(element);
+    };
+    element.addEventListener('transitionend', settle);
+    return () => {
+      observer.disconnect();
+      element.removeEventListener('transitionend', settle);
+    };
   }, []);
   // Faint ticks mark the steps, or, where they are many, the large steps, so they never crowd.
   const ticks = tickCount(min, max, step, largeStep);

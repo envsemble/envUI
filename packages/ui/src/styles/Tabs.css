@@ -39,6 +39,7 @@
     /* The height the rail draws at: its size's, or the touch height under a coarse pointer. */
     --env-tabs-height: var(--env-tabs-rail);
     --env-tabs-inset: 0rem;
+    --env-tabs-active-padding: var(--env-space-3);
     --env-control-height: var(--env-tabs-height);
     inline-size: fit-content;
     max-inline-size: 100%;
@@ -187,6 +188,51 @@
   .env-tabs-list > .env-tabs-tab[data-active]::after {
     background: var(--env-tabs-indicator-color, var(--env-color-border-primary-emphasis));
   }
+  /* One indicator moves from tab to tab: Base UI's, placed by the selected tab's box
+     (--active-tab-*, physical), under its label inside its inline padding, as each tab's own shape
+     above is, which it takes the place of once it has measured. The selected tab's inline padding,
+     which the rail reads for the indicator: a button's, or a text button's slimmer one. */
+  .env-tabs-list:has(> .env-tabs-tab[data-active][data-variant='text']) {
+    --env-tabs-active-padding: var(--env-space-1);
+  }
+  .env-tabs-list > .env-tabs-indicator {
+    /* Base UI sets the tab's box inline as it measures it; until then the indicator is hidden. */
+    --active-tab-left: 0rem;
+    --active-tab-top: 0rem;
+    --active-tab-width: 0rem;
+    --active-tab-height: 0rem;
+    /* The padding before the label, at the tab's start: none on a horizontal rail's first tab. */
+    --env-tabs-indicator-start: var(--env-tabs-active-padding);
+    position: absolute;
+    /* Physical, as Base UI measures the tab. */
+    top: 0;
+    left: 0;
+    inline-size: calc(
+      var(--active-tab-width) - var(--env-tabs-indicator-start) - var(--env-tabs-active-padding)
+    );
+    block-size: var(--env-tabs-indicator-size);
+    border-start-start-radius: var(--env-tabs-indicator-size);
+    border-start-end-radius: var(--env-tabs-indicator-size);
+    background: var(--env-tabs-indicator-color, var(--env-color-border-primary-emphasis));
+    translate: calc(var(--active-tab-left) + var(--env-tabs-indicator-start))
+      calc(var(--active-tab-top) + var(--active-tab-height) - var(--env-tabs-indicator-size));
+    pointer-events: none;
+  }
+  .env-tabs-list:not([data-orientation='vertical']) > .env-tabs-indicator {
+    pointer-events: none;
+  }
+  .env-tabs-list:not([data-orientation='vertical']):has(> .env-tabs-tab:first-child[data-active])
+    > .env-tabs-indicator {
+    --env-tabs-indicator-start: 0rem;
+  }
+  /* In right-to-left text the tab's start is its right side. */
+  .env-tabs-list > .env-tabs-indicator:dir(rtl) {
+    translate: calc(var(--active-tab-left) + var(--env-tabs-active-padding))
+      calc(var(--active-tab-top) + var(--active-tab-height) - var(--env-tabs-indicator-size));
+  }
+  .env-tabs-list:has(> .env-tabs-indicator:not([hidden])) > .env-tabs-tab[data-active]::after {
+    background: transparent;
+  }
   /* A vertical rail's indicator stands at the start of the selected tab. */
   .env-tabs-list[data-orientation='vertical'] > .env-tabs-tab {
     justify-content: flex-start;
@@ -200,6 +246,33 @@
     border-radius: 0;
     border-start-end-radius: var(--env-tabs-indicator-size);
     border-end-end-radius: var(--env-tabs-indicator-size);
+  }
+  .env-tabs-list[data-orientation='vertical'] > .env-tabs-indicator {
+    inline-size: var(--env-tabs-indicator-size);
+    block-size: calc(var(--active-tab-height) - 2 * var(--env-space-2));
+    border-radius: 0;
+    border-start-end-radius: var(--env-tabs-indicator-size);
+    border-end-end-radius: var(--env-tabs-indicator-size);
+    translate: var(--active-tab-left) calc(var(--active-tab-top) + var(--env-space-2));
+  }
+  .env-tabs-list[data-orientation='vertical'] > .env-tabs-indicator:dir(rtl) {
+    translate: calc(
+        var(--active-tab-left) + var(--active-tab-width) - var(--env-tabs-indicator-size)
+      )
+      calc(var(--active-tab-top) + var(--env-space-2));
+  }
+  /* It slides and resizes to the tab selected, once a tab has been selected, not as it first
+     measures. */
+  @media (prefers-reduced-motion: no-preference) {
+    .env-tabs-list
+      > .env-tabs-indicator:is([data-activation-direction]):not(
+        [data-activation-direction='none']
+      ) {
+      transition:
+        translate var(--env-motion-duration-medium) var(--env-motion-ease),
+        inline-size var(--env-motion-duration-medium) var(--env-motion-ease),
+        block-size var(--env-motion-duration-medium) var(--env-motion-ease);
+    }
   }
   .env-tabs-list > .env-tabs-tab:focus-visible {
     outline: 2px solid var(--env-color-border-focus);
@@ -276,15 +349,15 @@
     opacity: 0;
     transform: translateY(var(--env-space-1));
   }
-  /* The outgoing panel fades out of flow, so content after the tabs settles when the tab changes
-     instead of jumping when the fade ends. */
+  /* The outgoing panel goes at once, out of flow, so the two panels never show over each other and
+     content after the tabs settles as the tab changes; the incoming one fades in. */
   .env-tabs-panel[data-ending-style] {
     position: absolute;
     inset-inline: 0;
     inset-block-start: 0;
     opacity: 0;
-    transform: translateY(calc(-1 * var(--env-space-1)));
     pointer-events: none;
+    transition: none;
   }
   .env-tabs-panel:focus-visible {
     outline: 0.125rem solid var(--env-color-border-focus);
@@ -295,7 +368,7 @@
     .env-tabs-panel {
       transition: none;
     }
-    .env-tabs-panel:is([data-starting-style], [data-ending-style]) {
+    .env-tabs-panel[data-starting-style] {
       transform: none;
     }
   }
@@ -310,7 +383,8 @@
     .env-tabs-list > .env-tabs-tab[data-active] :where(*) {
       color: inherit;
     }
-    .env-tabs-list > .env-tabs-tab[data-active]::after {
+    .env-tabs-list > .env-tabs-tab[data-active]::after,
+    .env-tabs-list > .env-tabs-indicator {
       forced-color-adjust: none;
       background: Highlight;
     }

@@ -93,14 +93,39 @@
     padding-inline-start: var(--env-space-5);
   }
 
-  /* Motion: an open panel fades in, and without a reduced-motion preference the summary's
-     indicator turns. */
-  .env-disclosure[open] > .env-disclosure-panel {
-    animation: env-motion-fade-in var(--env-motion-duration-slow) var(--env-motion-ease-enter);
-  }
+  /* Motion: without a reduced-motion preference the summary's indicator turns, and the details grow
+     to their height as they open and shrink as they close, fading in and out, as an accordion's
+     panel does, and stay until they have closed. Where the browser can't size them to their
+     content they show at once and fade in; under a reduced-motion preference they open and close at
+     once, as an accordion's panel does. */
   @media (prefers-reduced-motion: no-preference) {
+    .env-disclosure[open] > .env-disclosure-panel {
+      animation: env-motion-fade-in var(--env-motion-duration-fast) var(--env-motion-ease);
+    }
     .env-disclosure-indicator {
       transition: transform var(--env-motion-duration-medium) var(--env-motion-ease);
+    }
+    @supports (block-size: calc-size(auto, size)) {
+      .env-disclosure[open] > .env-disclosure-panel {
+        animation: none;
+      }
+      /* The details' own box holds the panel's margin, so nothing is left when it closes; it clips
+         what lies past it as it grows, but no focus ring of the panel's content. */
+      .env-disclosure::details-content {
+        display: flow-root;
+        block-size: 0;
+        overflow: clip;
+        overflow-clip-margin: var(--env-space-1);
+        opacity: 0;
+        transition:
+          block-size var(--env-motion-duration-medium) var(--env-motion-ease),
+          opacity var(--env-motion-duration-fast) var(--env-motion-ease),
+          content-visibility var(--env-motion-duration-medium) allow-discrete;
+      }
+      .env-disclosure[open]::details-content {
+        block-size: calc-size(auto, size);
+        opacity: 1;
+      }
     }
   }
 }

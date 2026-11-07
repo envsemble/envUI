@@ -230,7 +230,11 @@ export function PickerField({
 
   const portal = usePortalContainer();
   const showClear = clearable && Boolean(serialized) && !disabled && !readOnly;
-  const labelFloats = Boolean(serialized) || open;
+  // The field keeps its open look, its frame and its floated label, until the popup has closed, as
+  // focus comes back to it, rather than settling while the popup fades and rising again.
+  const [popupShown, setPopupShown] = useState(open);
+  if (open && !popupShown) setPopupShown(true);
+  const labelFloats = Boolean(serialized) || popupShown;
 
   function renderControlBox(boxProps: FieldControlBoxProps) {
     return (
@@ -239,6 +243,7 @@ export function PickerField({
         ref={controlRef}
         className={`${boxProps.className} env-date-picker-control`}
         data-label-floating={flag(labelFloats)}
+        data-popup-open={flag(popupShown)}
         data-action-count={showClear ? '2' : '1'}
       />
     );
@@ -250,6 +255,9 @@ export function PickerField({
       onOpenChange={(next, details) => {
         if (keepsOpen(portal, next, details)) details.cancel();
         else setOpen(next, details.reason as PopoverOpenChangeReason);
+      }}
+      onOpenChangeComplete={(next) => {
+        if (!next) setPopupShown(false);
       }}
     >
       <FieldFrame

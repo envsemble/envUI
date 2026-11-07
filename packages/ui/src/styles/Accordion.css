@@ -59,22 +59,25 @@
   /* The indicator sits on the title's first line, centered on it. */
   .env-accordion-indicator {
     flex: none;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    /* The two icons share one cell, so one fades into the other. */
+    display: inline-grid;
+    place-items: center;
     inline-size: var(--env-accordion-indicator-size);
     block-size: 1lh;
     color: var(--env-color-fg-muted);
     transition: color var(--env-motion-duration-fast) var(--env-motion-ease);
   }
   .env-accordion-indicator > svg {
+    grid-area: 1 / 1;
     inline-size: var(--env-accordion-indicator-size);
     block-size: var(--env-accordion-indicator-size);
   }
-  /* A plus while closed, a minus while open: one of the two icons shows. */
+  /* A plus while closed, a minus while open: one of the two icons shows, and the other fades out
+     as it fades in. */
   .env-accordion-trigger:not([data-panel-open]) .env-accordion-indicator > svg:last-child,
   .env-accordion-trigger[data-panel-open] .env-accordion-indicator > svg:first-child {
-    display: none;
+    opacity: 0;
+    visibility: hidden;
   }
   .env-accordion-trigger:not([data-disabled]):hover .env-accordion-indicator {
     color: var(--env-color-fg-default);
@@ -82,14 +85,18 @@
   .env-accordion-label {
     min-inline-size: 0;
   }
-  /* The panel grows to its content's height as it opens and shrinks as it closes. */
+  /* The panel grows to its content's height as it opens and shrinks as it closes, its content
+     fading in and out, and stays until it has closed. */
   .env-accordion-panel {
     block-size: var(--accordion-panel-height, auto);
     overflow: hidden;
-    transition: block-size var(--env-motion-duration-medium) var(--env-motion-ease);
+    transition:
+      block-size var(--env-motion-duration-medium) var(--env-motion-ease),
+      opacity var(--env-motion-duration-fast) var(--env-motion-ease);
   }
   .env-accordion-panel:is([data-starting-style], [data-ending-style]) {
     block-size: 0;
+    opacity: 0;
   }
   .env-accordion-content {
     padding-block-end: var(--env-space-4);
@@ -112,6 +119,19 @@
   @media (pointer: coarse) {
     .env-accordion-trigger {
       min-block-size: var(--env-control-height-touch);
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .env-accordion-indicator > svg {
+      transition:
+        opacity var(--env-motion-duration-fast) var(--env-motion-ease),
+        visibility 0s linear var(--env-motion-duration-fast);
+    }
+    .env-accordion-trigger:not([data-panel-open]) .env-accordion-indicator > svg:first-child,
+    .env-accordion-trigger[data-panel-open] .env-accordion-indicator > svg:last-child {
+      transition:
+        opacity var(--env-motion-duration-fast) var(--env-motion-ease),
+        visibility 0s;
     }
   }
   @media (prefers-reduced-motion: reduce) {

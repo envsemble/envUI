@@ -230,7 +230,7 @@ function usersOf(css, name) {
   return [
     ...css
       .replace(/\/\*[\s\S]*?\*\//g, '')
-      .matchAll(new RegExp(String.raw`([^{}]+)\{[^}]*box-shadow:\s*var\(${name}\)`, 'g')),
+      .matchAll(new RegExp(String.raw`([^{}]+)\{[^{}]*box-shadow:\s*var\(${name}\)`, 'g')),
   ].map(([, selector]) => selector.trim().replace(/\s+/g, ' '));
 }
 
@@ -325,7 +325,11 @@ test('the chosen segment’s shadow is small, follows the theme, gives way at hi
     .filter(([property]) => property === '--env-segmented-control-high-contrast-edge')
     .map(([, value]) => value.replace(/\s+/g, ' '));
   assert.match(edgeValue, /^var\(--env-theme-high-contrast\) inset 0 0 0 /);
-  assert.deepEqual(usersOf(css, segmentShadow), ['.env-segmented-control-item[data-checked]']);
+  // The chosen segment, and the thumb that travels to it.
+  assert.deepEqual(usersOf(css, segmentShadow), [
+    '.env-segmented-control-item[data-checked]',
+    '.env-segmented-control-thumb:not([hidden])',
+  ]);
 });
 
 test('the check tells drop shadows from rings', () => {

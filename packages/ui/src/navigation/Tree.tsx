@@ -132,6 +132,8 @@ const overscan = 8;
 const unmeasuredRows = 24;
 /** Each density's row height in rem in the comfortable scale, until a row can be measured. */
 const rowRem: Record<RowDensity, number> = { xs: 1.5, sm: 1.75, md: 2.25, lg: 2.75 };
+/** No rows arriving. */
+const noValues: ReadonlySet<string> = new Set();
 
 /** A row id safe for id references, whatever characters the item id contains. */
 function rowElementId(treeId: string, itemId: string) {
@@ -209,6 +211,24 @@ export function Tree<Item extends TreeItem>({
     return map;
   }, [items]);
   const { positions, sizes } = useMemo(() => siblingPositions(items), [items]);
+
+  // The rows that arrive with new items, such as an expanded row's children, fade in from their
+  // starting style; the first rows, and rows that only scroll into view, show at once.
+  const shownValues = useRef<ReadonlySet<string> | null>(null);
+  const arriving = useMemo(() => {
+    const before = shownValues.current;
+    if (!before) return noValues;
+    return new Set(items.filter((item) => !before.has(item.value)).map((item) => item.value));
+  }, [items]);
+  useLayoutEffect(() => {
+    shownValues.current = new Set(items.map((item) => item.value));
+  }, [items]);
+  useLayoutEffect(function arrive() {
+    const rows = container.current?.querySelectorAll('.env-tree-item[data-starting-style]');
+    if (!rows?.length) return;
+    void getComputedStyle(rows[0]!).opacity;
+    for (const row of rows) row.removeAttribute('data-starting-style');
+  });
 
   // The active row falls back to the selected or first row when it leaves the visible rows.
   const lastActiveIndex = useRef(0);
@@ -466,6 +486,7 @@ export function Tree<Item extends TreeItem>({
               className="env-tree-item"
               data-id={item.value}
               data-highlighted={index === activeIndex ? '' : undefined}
+              data-starting-style={arriving.has(item.value) ? '' : undefined}
               style={
                 {
                   '--env-tree-depth': item.depth,

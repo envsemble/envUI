@@ -1831,6 +1831,15 @@
           "parts": [
             "env-date-picker"
           ]
+        },
+        {
+          "attribute": "data-popup-open",
+          "values": [
+            ""
+          ],
+          "parts": [
+            "env-date-picker-control"
+          ]
         }
       ],
       "uses": [
@@ -4561,6 +4570,10 @@
         {
           "class": "env-segmented-control-item-label",
           "description": "A segment's label."
+        },
+        {
+          "class": "env-segmented-control-thumb",
+          "description": "The raised thumb that travels to the chosen segment, hidden until it has measured it."
         }
       ],
       "states": [
@@ -5338,6 +5351,10 @@
           "description": "The tabs."
         },
         {
+          "class": "env-tabs-indicator",
+          "description": "The indicator that moves to the selected tab, hidden until it has measured it."
+        },
+        {
           "class": "env-tabs-list",
           "description": "The list of tabs."
         },
@@ -5559,6 +5576,15 @@
           ],
           "parts": [
             "env-text-field"
+          ]
+        },
+        {
+          "attribute": "data-popup-open",
+          "values": [
+            ""
+          ],
+          "parts": [
+            "env-text-field-control"
           ]
         },
         {
@@ -6203,6 +6229,15 @@
         {
           "attribute": "data-id",
           "values": [],
+          "parts": [
+            "env-tree-item"
+          ]
+        },
+        {
+          "attribute": "data-starting-style",
+          "values": [
+            ""
+          ],
           "parts": [
             "env-tree-item"
           ]

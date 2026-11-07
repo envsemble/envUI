@@ -334,20 +334,21 @@
   .env-navigation-drawer-item > .env-navigation-drawer-chevron {
     margin-inline-start: auto;
   }
-  /* The chevron points down, and up while the section is open: it flips over its horizontal axis,
-     as Select's does, rather than turning half a circle. */
+  /* The chevron points down, and up while the section is open: it turns half a circle, as Select's
+     does. */
   .env-navigation-drawer-chevron {
     inline-size: var(--env-control-icon-size);
     block-size: var(--env-control-icon-size);
-    transform: rotate(90deg) scaleX(1);
+    transform: rotate(90deg);
   }
   /* Its trigger, the heading's row or the link's button, says the section is open. */
   .env-navigation-drawer-item[aria-expanded='true'] > .env-navigation-drawer-chevron,
   .env-navigation-drawer-toggle[aria-expanded='true'] > .env-navigation-drawer-chevron {
-    transform: rotate(90deg) scaleX(-1);
+    transform: rotate(270deg);
   }
-  /* The nested destinations grow to their height as the section opens and shrink as it closes. A
-     closed section keeps them in the page, hidden until found. */
+  /* The nested destinations grow to their height as the section opens and shrink as it closes,
+     fading in and out, as an accordion's panel does. A closed section keeps them in the page, hidden
+     until found. */
   .env-navigation-drawer-children {
     display: flex;
     flex-direction: column;
@@ -358,13 +359,16 @@
     list-style: none;
     block-size: var(--collapsible-panel-height, auto);
     overflow: hidden;
-    transition: block-size var(--env-motion-duration-medium) var(--env-motion-ease);
+    transition:
+      block-size var(--env-motion-duration-medium) var(--env-motion-ease),
+      opacity var(--env-motion-duration-fast) var(--env-motion-ease);
   }
   .env-navigation-drawer-children > li:first-child {
     margin-block-start: var(--env-space-1);
   }
   .env-navigation-drawer-children:is([data-starting-style], [data-ending-style]) {
     block-size: 0;
+    opacity: 0;
   }
   .env-navigation-drawer-children[hidden]:not([hidden='until-found']) {
     display: none;
@@ -390,7 +394,7 @@
       );
     }
   }
-  /* Under a reduced-motion preference, fills change at once. */
+  /* Under a reduced-motion preference, fills change and sections open and close at once. */
   @media (prefers-reduced-motion: reduce) {
     .env-navigation-drawer-item,
     .env-navigation-drawer-toggle,
@@ -398,7 +402,7 @@
       transition: none;
     }
   }
-  /* Motion: a section's chevron flips, only without a reduced-motion preference. */
+  /* Motion: a section's chevron turns, only without a reduced-motion preference. */
   @media (prefers-reduced-motion: no-preference) {
     .env-navigation-drawer-chevron {
       transition: transform var(--env-motion-duration-medium) var(--env-motion-ease);

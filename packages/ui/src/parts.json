@@ -668,6 +668,7 @@
     "SegmentedControl": {
       "env-segmented-control": "The segmented control: the track the segments sit in.",
       "env-segmented-control-item": "One segment; the chosen one rises on a raised thumb.",
+      "env-segmented-control-thumb": "The raised thumb that travels to the chosen segment, hidden until it has measured it.",
       "env-segmented-control-item-count": "A segment's count.",
       "env-segmented-control-item-label": "A segment's label."
     },
@@ -749,6 +750,7 @@
       "env-tabs-list": "The list of tabs.",
       "env-tabs-panel": "One panel.",
       "env-tabs-panels": "The panels.",
+      "env-tabs-indicator": "The indicator that moves to the selected tab, hidden until it has measured it.",
       "env-tabs-tab": "One tab: a text tab, the selected one with an indicator under it."
     },
     "Text": {

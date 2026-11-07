@@ -85,8 +85,11 @@ test(
     await expect(opacity).toHaveAttribute('aria-valuenow', '25');
     await expect(page.getByTestId('commits-light')).toHaveText('25');
     const thumb = scope.locator('.env-slider-thumb').first();
+    // The thumb glides to the value pressed, then is centered on it along the track.
+    await thumb.evaluate((element) =>
+      Promise.all(element.getAnimations().map((animation) => animation.finished)),
+    );
     const thumbBox = (await thumb.boundingBox())!;
-    // The thumb is centered on the value along the track.
     expect(thumbBox.x + thumbBox.width / 2).toBeCloseTo(box.x + box.width * 0.25, 0);
     await page.mouse.move(thumbBox.x + thumbBox.width / 2, thumbBox.y + thumbBox.height / 2);
     await page.mouse.down();

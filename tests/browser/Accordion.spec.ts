@@ -7,7 +7,8 @@ const fixture = `${fixtureUrl}/?fixture=accordions`;
 const indicator = (trigger: Locator) =>
   trigger.evaluate((element) => {
     const [plus, minus] = element.querySelectorAll('.env-accordion-indicator > svg');
-    const shown = (icon: Element) => getComputedStyle(icon).display !== 'none';
+    // The two share a cell and fade into each other; the one not shown is hidden.
+    const shown = (icon: Element) => getComputedStyle(icon).visibility !== 'hidden';
     return {
       plus: shown(plus),
       minus: shown(minus),

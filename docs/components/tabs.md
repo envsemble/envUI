@@ -219,6 +219,7 @@ The rail has no fill unless its container color sets one.
 ## Changelog
 
 - **1.0.0**: The arrow keys follow the text direction, from EnvUIProvider's `dir` or the direction at the tabs; only the tab list takes it, so a panel keeps the direction around it. The tab and panel classes are `env-tabs-tab` and `env-tabs-panel` (were `env-tab` and `env-tab-panel`).
+- **1.0.0-prerelease.6**: One indicator, `env-tabs-indicator`, slides and resizes to the selected tab, and the outgoing panel goes at once while the new one fades in, so two panels never show over each other.
 - **1.0.0-prerelease.6**: A vertical rail's tabs are as tall as a medium control, like other navigation rows; a small rail keeps its smaller tabs.
 - **1.0.0-prerelease.6**: The labels of the tabs not selected are a step stronger than the muted text, so a disabled tab stands apart from them.
 - **1.0.0-prerelease.6**: Under the pointer a tab shows no fill and no bar: only its label takes the text color, so the indicator alone marks the selected tab; pressed, it also lays a faint state layer, a step past hover.

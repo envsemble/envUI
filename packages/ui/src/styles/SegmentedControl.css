@@ -101,6 +101,19 @@
       0.1875rem
     );
     --env-segmented-control-gap: 0.125rem;
+    /* The chosen segment's thumb: a soft shadow under it and a hairline of the text color around it,
+       derived from the theme's colors, so the shadow is faint on a light page and deeper on a dark
+       one. At high contrast an edge at 4.5:1 replaces both (see Theme.css). */
+    --env-segmented-control-high-contrast-edge: var(--env-theme-high-contrast) inset 0 0 0
+      var(--env-control-border-width) var(--env-color-border-default);
+    --env-segmented-control-shadow: var(
+      --env-segmented-control-high-contrast-edge,
+      0 1px 2px oklch(from var(--env-color-bg-page) calc(l * 0.25) c h / calc(0.62 - l * 0.48)),
+      0 0 0 0.5px oklch(from var(--env-color-fg-default) l c h / 0.08)
+    );
+    /* The track places the thumb, which travels under the segments. */
+    position: relative;
+    isolation: isolate;
     box-sizing: border-box;
     inline-size: fit-content;
     max-inline-size: 100%;
@@ -153,16 +166,6 @@
     --env-segmented-control-selected-fill: var(
       --env-segmented-control-selected-layered,
       var(--env-segmented-control-custom-selected)
-    );
-    /* The chosen segment's thumb: a soft shadow under it and a hairline of the text color around it,
-       derived from the theme's colors, so the shadow is faint on a light page and deeper on a dark
-       one. At high contrast an edge at 4.5:1 replaces both (see Theme.css). */
-    --env-segmented-control-high-contrast-edge: var(--env-theme-high-contrast) inset 0 0 0
-      var(--env-control-border-width) var(--env-color-border-default);
-    --env-segmented-control-shadow: var(
-      --env-segmented-control-high-contrast-edge,
-      0 1px 2px oklch(from var(--env-color-bg-page) calc(l * 0.25) c h / calc(0.62 - l * 0.48)),
-      0 0 0 0.5px oklch(from var(--env-color-fg-default) l c h / 0.08)
     );
     position: relative;
     border: 0;
@@ -227,6 +230,47 @@
     color: var(--env-segmented-control-selected-color, var(--env-color-fg-default));
     box-shadow: var(--env-segmented-control-shadow);
   }
+  /* Without a reduced-motion preference one thumb travels from segment to segment, and the chosen
+     segment, its label over it, draws none of its own: SegmentedControl places it over the chosen
+     segment (--env-segmented-control-thumb-*), and shows it once it has measured it. Until then, as
+     in the server's markup, and under a reduced-motion preference, the chosen segment draws its own
+     thumb, which fades across to the next. */
+  .env-segmented-control-thumb {
+    display: none;
+  }
+  @media (prefers-reduced-motion: no-preference) and (not (forced-colors: active)) {
+    .env-segmented-control-thumb:not([hidden]) {
+      display: block;
+      position: absolute;
+      z-index: calc(var(--env-z-base) - var(--env-z-raised));
+      /* Physical, as the thumb is measured. */
+      top: 0;
+      left: 0;
+      inline-size: var(--env-segmented-control-thumb-width);
+      block-size: var(--env-segmented-control-thumb-height);
+      translate: var(--env-segmented-control-thumb-left) var(--env-segmented-control-thumb-top);
+      border-radius: var(--env-radius-full);
+      background: var(--env-segmented-control-custom-selected, var(--env-segmented-control-thumb));
+      box-shadow: var(--env-segmented-control-shadow);
+      pointer-events: none;
+      transition:
+        translate var(--env-motion-duration-medium) var(--env-motion-ease),
+        inline-size var(--env-motion-duration-medium) var(--env-motion-ease),
+        block-size var(--env-motion-duration-medium) var(--env-motion-ease),
+        background-color var(--env-motion-duration-fast) var(--env-motion-ease);
+    }
+    /* Over the thumb, the chosen segment lays only the state layer of the application's colors. */
+    .env-segmented-control:has(> .env-segmented-control-thumb:not([hidden]))
+      > .env-segmented-control-item[data-checked] {
+      --env-segmented-control-thumb-layer: color-mix(
+        in srgb,
+        var(--env-segmented-control-custom-selected) 0%,
+        color-mix(in srgb, transparent, currentColor var(--env-segmented-control-layer))
+      );
+      background: var(--env-segmented-control-thumb-layer, transparent);
+      box-shadow: none;
+    }
+  }
   /* The ring follows the segment's edge, inside it, as the track clips what reaches past it. */
   .env-segmented-control-item:focus-visible {
     outline: 2px solid var(--env-color-border-focus);
@@ -288,11 +332,6 @@
       text-overflow: clip;
       overflow-wrap: break-word;
       text-align: center;
-    }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .env-segmented-control-item {
-      transition: none;
     }
   }
 

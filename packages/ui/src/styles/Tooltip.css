@@ -94,7 +94,7 @@
     }
     .env-tooltip[data-starting-style],
     .env-tooltip[data-ending-style] {
-      transform: scale(0.94);
+      transform: scale(0.96);
     }
     .env-tooltip[data-ending-style] {
       transition-duration: var(--env-motion-duration-fast);
