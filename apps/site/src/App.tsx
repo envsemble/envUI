@@ -40,7 +40,7 @@ import {
   drawerless,
 } from './navigation/SiteNavigation';
 import { PageNavigation } from './navigation/PageNavigation';
-import { RouterLink } from './navigation/RouterLink';
+import { RouterLink, usePendingRoute } from './navigation/RouterLink';
 import {
   docsRoute,
   homeRoute,
@@ -179,10 +179,12 @@ function Shell() {
       </Column>
     </>
   );
+  // A pressed link's destination shows in the navigation at once, while its page loads.
+  const pendingPath = usePendingRoute()?.split('?')[0];
   const navigation = (inSheet: boolean) => {
     const props = {
       page,
-      routePath,
+      routePath: pendingPath ?? routePath,
       inSheet,
       // A page chosen in the sheet closes it and sends focus to the page.
       onChoose: inSheet
