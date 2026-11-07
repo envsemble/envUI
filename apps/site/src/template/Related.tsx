@@ -16,6 +16,7 @@ import type { DocumentationMetadata } from '../shared/DocumentationTypes';
 import { Documentation } from '../pages/Documentation';
 import { useAutoplay } from '../motion/Autoplay';
 import { Playback, PreviewOverlays, usePlaying } from '../motion/Motion';
+import { motionDuration, reducedMotion } from '../motion/MotionTokens';
 import { useDisplaySettings } from '../theme/DisplaySettings';
 import { ExampleRender } from '../figures/LiveExample';
 import { PageSpecimen } from '../figures/PageSpecimens';
@@ -77,7 +78,7 @@ export function TilePreview({
   const Composition = preview?.composition;
   const theme = useTheme();
   const { motionPaused } = useDisplaySettings();
-  const plays = playing && !motionPaused;
+  const playingNow = playing && !motionPaused;
   const stage = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLDivElement>(null);
   // The canvas, for the pointer no one sees, which finds the preview's elements in it.
@@ -90,6 +91,27 @@ export function TilePreview({
     setAnimations((count) => count + 1);
     return () => setAnimations((count) => count - 1);
   });
+  // As it stops, a picture that played fades out quickly before it is drawn anew at its still, and
+  // fades in again, rather than jumping back to where it started (Related.css): it plays on
+  // meanwhile, and the pointer coming back on it before then carries on.
+  const [plays, setPlays] = useState(playingNow);
+  const leaving = plays && !playingNow && animations > 0 && !reducedMotion();
+  if (plays !== playingNow && !leaving) setPlays(playingNow);
+  useEffect(() => {
+    if (!leaving) return;
+    const stop = () => setPlays(false);
+    if (!canvasElement) return stop();
+    const faded = (event: TransitionEvent) => {
+      if (event.target === canvasElement && event.propertyName === 'opacity') stop();
+    };
+    canvasElement.addEventListener('transitionend', faded);
+    // In case the fade doesn't run, such as in a tab in the background.
+    const timer = window.setTimeout(stop, 2 * motionDuration('fast'));
+    return () => {
+      canvasElement.removeEventListener('transitionend', faded);
+      window.clearTimeout(timer);
+    };
+  }, [leaving, canvasElement]);
   const subject =
     preview &&
     (Composition ? (
@@ -142,6 +164,7 @@ export function TilePreview({
             }}
             className="catalogue-related-canvas"
             data-tile={preview.tile ? '' : undefined}
+            data-leaving={leaving ? '' : undefined}
             data-own-size={ownSize ? '' : undefined}
             data-overlay={ownSize && preview.window?.overlay ? '' : undefined}
             style={

@@ -58,7 +58,8 @@
    and shows only that much: at rest the picture sits in its middle, half the name's row lower, and
    the name below it, out of view; under the pointer, or with the keyboard on its link, both slide
    up together, the picture to the cell's top and the name into the room it leaves, quick at first
-   and settling, as the picture comes alive. Where the reader can't hover, the name always shows. */
+   and settling, as the picture comes alive; as the pointer leaves, they slide back quicker, easing
+   out of their place. Where the reader can't hover, the name always shows. */
 .catalogue-gallery-tile {
   --catalogue-gallery-meta-height: 2.25rem;
   --catalogue-gallery-slide: calc(var(--catalogue-gallery-meta-height) / 2);
@@ -75,9 +76,15 @@
   min-inline-size: 0;
 }
 
-.catalogue-gallery-picture,
-.catalogue-gallery-meta {
-  transition: translate var(--env-motion-duration-slow) var(--env-motion-ease-enter);
+@media (prefers-reduced-motion: no-preference) {
+  .catalogue-gallery-picture,
+  .catalogue-gallery-meta {
+    transition: translate var(--env-motion-duration-fast) var(--env-motion-ease-exit);
+  }
+  .catalogue-gallery-tile:is(:hover, :has(:focus-visible))
+    :is(.catalogue-gallery-picture, .catalogue-gallery-meta) {
+    transition: translate var(--env-motion-duration-slow) var(--env-motion-ease-enter);
+  }
 }
 
 @media (hover: hover) {
@@ -86,13 +93,6 @@
   }
   .catalogue-gallery-tile:not(:hover, :has(:focus-visible)) .catalogue-gallery-meta {
     translate: 0 calc(var(--catalogue-gallery-meta-height) + var(--catalogue-gallery-slide));
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .catalogue-gallery-picture,
-  .catalogue-gallery-meta {
-    transition: none;
   }
 }
 
