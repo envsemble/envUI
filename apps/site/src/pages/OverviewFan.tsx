@@ -1,7 +1,22 @@
 import type { CSSProperties, ReactNode } from 'react';
-import { Badge, Card, Column, List, Meter, Table, Text } from '@envsemble/envui';
-import { IconCheckCircle } from '@envsemble/envui/icons/CheckCircle';
-import { IconIncompleteCircle } from '@envsemble/envui/icons/IncompleteCircle';
+import {
+  AvatarGroup,
+  Badge,
+  Button,
+  CalendarHeatmap,
+  Card,
+  Column,
+  Composer,
+  DiffStat,
+  Message,
+  MessageList,
+  Row,
+  SegmentedControl,
+  Slider,
+  Switch,
+  Text,
+  type CalendarHeatmapDay,
+} from '@envsemble/envui';
 
 /** A card's name at its top, with a short note under it. */
 function CardHeader({ title, note }: { title: string; note: string }) {
@@ -24,36 +39,34 @@ function CardNote({ children }: { children: ReactNode }) {
   );
 }
 
-/** The deploys card's rows: a service, the state of its latest deploy, and how long ago it started. */
-const deploys = [
-  { service: 'api', status: 'Live', tone: 'success', age: '2m' },
-  { service: 'web', status: 'Building', tone: 'primary', age: '1m' },
-  { service: 'worker', status: 'Failed', tone: 'danger', age: '1h' },
-] as const;
+/** The people reviewing the agent's pull request. */
+const reviewers = [
+  { id: 'priya', name: 'Priya Shah' },
+  { id: 'sam', name: 'Sam Lee' },
+  { id: 'alex', name: 'Alex Morgan' },
+];
 
-/** The agent run's steps, done and under way, each marked by its state's icon. */
-const steps = [
-  { label: 'Read 14 files', state: 'done' },
-  { label: 'Ran 212 tests', state: 'done' },
-  { label: 'Writing the fix', state: 'running' },
-] as const;
-const stepIcons = {
-  done: <IconCheckCircle className="catalogue-fan-step" data-state="done" />,
-  running: <IconIncompleteCircle className="catalogue-fan-step" data-state="running" />,
-};
-
-/** The services on the status card, and how each is doing. */
-const services = [
-  { name: 'API', status: 'Operational', tone: 'success' },
-  { name: 'Inference', status: 'Degraded', tone: 'warning' },
-  { name: 'Webhooks', status: 'Operational', tone: 'success' },
-] as const;
+/** Stands in for ten weeks of deploys: busier midweek, quieter at weekends. */
+function deploysPerDay(): CalendarHeatmapDay[] {
+  const end = Date.UTC(2026, 9, 31);
+  return Array.from({ length: 70 }, (_, index) => {
+    const time = end - (69 - index) * 86_400_000;
+    const weekday = new Date(time).getUTCDay();
+    const wave = Math.sin(index / 5) + Math.sin((index * 5) / 13) + 1.1;
+    const weekend = weekday === 0 || weekday === 6;
+    const count = Math.max(0, Math.round(wave * 2.2 * (weekend ? 0.25 : 1)));
+    return { date: new Date(time).toISOString().slice(0, 10), value: count };
+  });
+}
+const deploys = deploysPerDay();
 
 /**
  * The cards in the hand, from the back to the front, each a small moment of a B2B or AI product
- * built with envUI. `place` is the card's place in the fan, from the middle; on a narrower page the
- * first goes and the rest take `narrowPlace`, and on a narrow one only those with a `compactPlace`
- * stay: the agent's run and the services' status, the richer two, drawn smaller on a phone.
+ * built with envUI, and each of different components: an agent's pull request in review, a
+ * conversation with an assistant, ten weeks of deploys, and a workspace's settings. `place` is the
+ * card's place in the fan, from the middle; on a narrower page the first goes and the rest take
+ * `narrowPlace`, and on a narrow one only those with a `compactPlace` stay: the conversation and
+ * the settings, the richer two, drawn smaller on a phone.
  */
 const cards: {
   id: string;
@@ -65,86 +78,97 @@ const cards: {
   content: ReactNode;
 }[] = [
   {
-    id: 'deploys',
+    id: 'review',
     place: -1.5,
     lift: 0.25,
     content: (
       <>
-        <CardHeader title="Deploys" note="Production" />
-        <Table.Root aria-label="Deploys" density="xs" className="catalogue-fan-body">
-          <Table.Head>
-            <Table.Row>
-              <Table.HeaderCell>Service</Table.HeaderCell>
-              <Table.HeaderCell>Status</Table.HeaderCell>
-              <Table.HeaderCell numeric>Age</Table.HeaderCell>
-            </Table.Row>
-          </Table.Head>
-          <Table.Body>
-            {deploys.map((deploy) => (
-              <Table.Row key={deploy.service}>
-                <Table.Cell nowrap>{deploy.service}</Table.Cell>
-                <Table.Cell nowrap>
-                  <Badge tone={deploy.tone}>{deploy.status}</Badge>
-                </Table.Cell>
-                <Table.Cell numeric>{deploy.age}</Table.Cell>
-              </Table.Row>
-            ))}
-          </Table.Body>
-        </Table.Root>
-      </>
-    ),
-  },
-  {
-    id: 'agent-run',
-    place: -0.5,
-    narrowPlace: -1,
-    compactPlace: -0.5,
-    lift: -0.15,
-    content: (
-      <>
-        <CardHeader title="Agent run" note="Fix the flaky checkout test" />
-        <List.Root aria-label="Steps" density="sm" className="catalogue-fan-body">
-          {steps.map((step) => (
-            <List.Item key={step.label} start={stepIcons[step.state]} label={step.label} />
-          ))}
-        </List.Root>
-      </>
-    ),
-  },
-  {
-    id: 'usage',
-    place: 0.5,
-    narrowPlace: 0,
-    lift: 0.1,
-    content: (
-      <>
-        <CardHeader title="Usage" note="This billing period" />
-        <Column gap={3} className="catalogue-fan-body">
-          <span className="catalogue-fan-figure">1.24M</span>
-          <Meter label="Tokens, 62% of 2M" value={1.24} max={2} />
+        <CardHeader title="Fix the flaky checkout test" note="#482 · opened by the agent" />
+        <Column gap={4} className="catalogue-fan-body">
+          <Row align="center" justify="between" gap={2}>
+            <DiffStat additions={128} deletions={34} />
+            <AvatarGroup people={reviewers} size="sm" />
+          </Row>
+          <Row wrap gap={2}>
+            <Badge tone="success">12 checks passed</Badge>
+            <Badge tone="primary">2 approvals</Badge>
+          </Row>
+          <Row gap={2}>
+            <Button variant="primary">Merge</Button>
+            <Button variant="outline">Review</Button>
+          </Row>
         </Column>
       </>
     ),
   },
   {
-    id: 'status',
+    id: 'assistant',
+    place: -0.5,
+    narrowPlace: -1,
+    compactPlace: -0.5,
+    lift: -0.15,
+    content: (
+      <Column gap={4}>
+        <MessageList aria-label="Conversation with the assistant">
+          <Message from="self">Why did checkout fail?</Message>
+          <Message from="other" author="Assistant">
+            A race in the cart test. I wrote a fix and opened #482.
+          </Message>
+        </MessageList>
+        <Composer aria-label="Message the assistant" placeholder="Ask anything" />
+      </Column>
+    ),
+  },
+  {
+    id: 'deploys',
+    place: 0.5,
+    narrowPlace: 0,
+    lift: 0.1,
+    content: (
+      <>
+        <CardHeader title="Deploys" note="Last 10 weeks" />
+        <Column gap={3} className="catalogue-fan-body">
+          <Row align="center" gap={2}>
+            <span className="catalogue-fan-figure">186</span>
+            <Badge tone="success">+18%</Badge>
+          </Row>
+          <CalendarHeatmap
+            aria-label="Deploys in the last 10 weeks"
+            data={deploys}
+            tone="success"
+          />
+        </Column>
+      </>
+    ),
+  },
+  {
+    id: 'settings',
     place: 1.5,
     narrowPlace: 1,
     compactPlace: 0.5,
     lift: 0.2,
     content: (
       <>
-        <CardHeader title="Services" note="All regions" />
-        <List.Root aria-label="Services" density="sm" className="catalogue-fan-body">
-          {services.map((service) => (
-            <List.Item
-              key={service.name}
-              label={service.name}
-              // Every service's state is a badge of its tone, so the rows line up.
-              end={<Badge tone={service.tone}>{service.status}</Badge>}
-            />
-          ))}
-        </List.Root>
+        <CardHeader title="Workspace" note="Preferences" />
+        <Column gap={4} className="catalogue-fan-body">
+          <SegmentedControl
+            aria-label="Theme"
+            size="sm"
+            defaultValue="dark"
+            items={[
+              { value: 'light', label: 'Light' },
+              { value: 'dark', label: 'Dark' },
+              { value: 'system', label: 'System' },
+            ]}
+          />
+          <Switch label="Weekly digest" defaultChecked />
+          <Slider
+            label="Keep logs"
+            defaultValue={30}
+            max={90}
+            formatValue={(days) => `${days} days`}
+          />
+        </Column>
       </>
     ),
   },
