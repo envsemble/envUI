@@ -101,9 +101,6 @@
   border-radius: 0;
   box-shadow: none;
 }
-.catalogue-gallery-grid .catalogue-gallery-stage.catalogue-gallery-stage::after {
-  border-color: transparent;
-}
 .catalogue-gallery-grid .catalogue-related-crop {
   clip-path: inset(0);
 }
