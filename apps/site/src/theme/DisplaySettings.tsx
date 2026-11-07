@@ -1,4 +1,5 @@
 import { createContext, use, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { flushSync } from 'react-dom';
 import {
   Button,
   IconButton,
@@ -12,6 +13,7 @@ import {
 } from '@envsemble/envui';
 import { IconTune } from '@envsemble/envui/icons/Tune';
 import { displayStorageKeys } from './DisplayStorage';
+import { reducedMotion } from '../motion/MotionTokens';
 
 const themes: readonly ThemePreference[] = ['system', 'light', 'dark'];
 const contrasts: readonly ThemeContrast[] = ['system', 'standard', 'high'];
@@ -142,6 +144,18 @@ export function useDisplaySettings() {
 }
 
 /**
+ * Changes the page's colors, a theme or a contrast chosen in the Display menu, crossfading the
+ * whole window from the old ones to the new over the medium motion token (ThemeFade.css), rather
+ * than swapping them in one frame. The new colors are drawn at once underneath, with nothing in the
+ * page transitioning (ThemePreferenceProvider). With motion reduced, or in a browser without view
+ * transitions, they change at once.
+ */
+function switchColors(change: () => void) {
+  if (typeof document.startViewTransition !== 'function' || reducedMotion()) return change();
+  document.startViewTransition(() => flushSync(change));
+}
+
+/**
  * The Display menu: the theme, the contrast, the scale and the motion, each stored as it is chosen,
  * four groups of plain choices alike. Motion pauses every animation of the site, the tiles' and the
  * figures', on every page, or plays them again; a figure's own button overrides it for that figure
@@ -173,7 +187,9 @@ export function DisplayMenu({ iconOnly = false }: { iconOnly?: boolean }) {
       <Menu.RadioGroup
         label="Theme"
         value={preference}
-        onValueChange={(next) => setPreference(themes.find((value) => value === next)!)}
+        onValueChange={(next) =>
+          switchColors(() => setPreference(themes.find((value) => value === next)!))
+        }
       >
         <Menu.RadioItem value="system" closeOnClick={false}>
           System
@@ -189,7 +205,9 @@ export function DisplayMenu({ iconOnly = false }: { iconOnly?: boolean }) {
       <Menu.RadioGroup
         label="Contrast"
         value={contrast}
-        onValueChange={(next) => setContrast(contrasts.find((value) => value === next)!)}
+        onValueChange={(next) =>
+          switchColors(() => setContrast(contrasts.find((value) => value === next)!))
+        }
       >
         <Menu.RadioItem value="system" closeOnClick={false}>
           System
