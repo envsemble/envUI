@@ -1113,8 +1113,8 @@ const registry: readonly ContrastPair[] = merged([
   ...(['success', 'info', 'danger'] as const).flatMap((tone) =>
     nonText(
       `--env-color-fg-${tone}-on-strong`,
-      [[`toast-icon-disc-${tone}`, '--env-color-bg-neutral-strong']],
-      'A toast’s tone icon, on its disc over the toast’s neutral strong fill',
+      ['--env-color-bg-neutral-strong'],
+      'A toast’s tone icon, on the toast’s neutral strong fill',
     ),
   ),
   ...text(
@@ -2905,6 +2905,13 @@ function apiReviewRenames() {
  * is, or has since been dropped or renamed onward in turn.
  */
 export const renamed: readonly { from: string; to: string; rationale: string }[] = [
+  // A toast's tone icon stands bare on the toast, without its disc.
+  ...(['success', 'info', 'danger'] as const).map((tone) => ({
+    from: `--env-color-fg-${tone}-on-strong on toast-icon-disc-${tone} over --env-color-bg-neutral-strong`,
+    to: `--env-color-fg-${tone}-on-strong on --env-color-bg-neutral-strong`,
+    rationale:
+      'A toast’s tone icon is drawn bare, larger, level with the message’s first line, so it is measured on the toast’s neutral strong fill itself.',
+  })),
   // Meter's and Progress's track is the neutral fill, as a Slider's track is.
   ...[
     '--env-color-bg-default',
@@ -3214,7 +3221,6 @@ const ofLabel = (formula: string, token: string) =>
 
 const separator = markedColor('packages/ui/src/styles/Button.css', 'button-end-separator');
 const badgeOutline = markedColor('packages/ui/src/styles/Button.css', 'badge-outline');
-const toastIconDisc = markedColor('packages/ui/src/styles/Toast.css', 'toast-icon-disc');
 const tooltipFill = markedColor('packages/ui/src/styles/Tooltip.css', 'tooltip-frosted');
 const tooltipKeyFill = markedColor('packages/ui/src/styles/Tooltip.css', 'tooltip-key');
 
@@ -3225,12 +3231,6 @@ export const derived: Readonly<Record<string, string>> = {
     ),
   ),
   'badge-outline-primary': ofLabel(badgeOutline, '--env-color-fg-on-emphasis'),
-  ...Object.fromEntries(
-    ['success', 'info', 'danger'].map((tone) => [
-      `toast-icon-disc-${tone}`,
-      ofLabel(toastIconDisc, `--env-color-fg-${tone}-on-strong`),
-    ]),
-  ),
   'badge-outline-important': ofLabel(badgeOutline, '--env-color-fg-on-strong'),
   'heatmap-accent-lowest':
     'color-mix(in srgb, var(--env-color-fg-primary) 30%, var(--env-color-bg-page))',

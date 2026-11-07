@@ -28,10 +28,14 @@ export function ToastBody({
   action?: ReactNode;
   dismiss?: ReactNode;
 }) {
+  // The tone icon and the message stand together, the icon level with the message's first line,
+  // and the two are centred in the toast as one, beside the action and the dismiss button.
   return (
     <>
-      <StatusIcon tone={tone} />
-      {message}
+      <div className="env-toast-content">
+        <StatusIcon tone={tone} />
+        {message}
+      </div>
       {action}
       {dismiss}
     </>

@@ -791,6 +791,7 @@
       "env-toast-message": "A notification's message.",
       "env-toast-theme": "The theme boundary around the notifications.",
       "env-toast-queued-count": "The count of notifications waiting.",
+      "env-toast-content": "A notification's tone icon and message, side by side, the icon level with the message's first line.",
       "env-toast-status-icon": "The icon of a notification's tone.",
       "env-toast-viewport": "The region that holds the notifications."
     },

@@ -67,7 +67,7 @@
     color: var(--env-toast-text);
     flex-wrap: nowrap;
   }
-  /* The tone is the status icon, in the tone's light grade, on a disc of it. */
+  /* The tone is the status icon, in the tone's light grade. */
   .env-toast:where([data-tone='success']) {
     --env-toast-tone: var(--env-color-fg-success-on-strong);
   }
@@ -76,6 +76,15 @@
   }
   .env-toast:where([data-tone='danger']) {
     --env-toast-tone: var(--env-color-fg-danger-on-strong);
+  }
+  /* The tone icon and the message, side by side, centred in the toast as one: the icon stays level
+     with the message's first line however many lines it wraps to. */
+  .env-toast-content {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: flex-start;
+    gap: calc(var(--env-space-2) + var(--env-space-1) / 2);
+    min-width: 0;
   }
   .env-toast-message {
     flex: 1 1 auto;
@@ -94,20 +103,16 @@
     font: inherit;
     margin: 0;
   }
-  /* The icon sits on a disc of its tone, its center where the bare icon's would be, so the message
-     keeps its place; with the application's text color, it takes that color. */
+  /* The icon alone, in its tone, as large as a control's icon, its middle on the middle of the
+     message's first line: below the message's own inset, by half of what a line has over the icon.
+     With the application's text color, it takes that color. */
   .env-toast-status-icon {
-    --env-toast-icon-inset: 0.3125rem;
-    box-sizing: content-box;
+    --env-toast-icon-size: 1.25rem;
     flex: 0 0 auto;
-    width: 1.125rem;
-    height: 1.125rem;
-    margin-inline: calc(-1 * var(--env-toast-icon-inset)) 0;
-    padding: var(--env-toast-icon-inset);
-    border-radius: var(--env-radius-full);
+    width: var(--env-toast-icon-size);
+    height: var(--env-toast-icon-size);
+    margin-block-start: calc(var(--env-space-1) + (1lh - var(--env-toast-icon-size)) / 2);
     color: var(--env-toast-content, var(--env-toast-tone, currentColor));
-    /* contrast: toast-icon-disc */
-    background: color-mix(in srgb, currentColor 16%, transparent);
   }
   /* The action keeps its label on one line and the message wraps instead; only a label longer than
      half the toast wraps. */

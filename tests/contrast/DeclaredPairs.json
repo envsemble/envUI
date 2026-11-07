@@ -2255,7 +2255,7 @@
         "high": 7
       }
     },
-    "--env-color-fg-danger-on-strong on toast-icon-disc-danger over --env-color-bg-neutral-strong": {
+    "--env-color-fg-danger-on-strong on --env-color-bg-neutral-strong": {
       "kind": "non-text",
       "minimum": {
         "standard": 3,
@@ -3361,7 +3361,7 @@
         "high": 7
       }
     },
-    "--env-color-fg-info-on-strong on toast-icon-disc-info over --env-color-bg-neutral-strong": {
+    "--env-color-fg-info-on-strong on --env-color-bg-neutral-strong": {
       "kind": "non-text",
       "minimum": {
         "standard": 3,
@@ -5539,7 +5539,7 @@
         "high": 4.5
       }
     },
-    "--env-color-fg-success-on-strong on toast-icon-disc-success over --env-color-bg-neutral-strong": {
+    "--env-color-fg-success-on-strong on --env-color-bg-neutral-strong": {
       "kind": "non-text",
       "minimum": {
         "standard": 3,
@@ -7060,6 +7060,7 @@
     "--env-color-fg-danger on --env-color-list-item-bg",
     "--env-color-fg-danger on catalogue-canvas",
     "--env-color-fg-danger-hover on catalogue-canvas",
+    "--env-color-fg-danger-on-strong on toast-icon-disc-danger over --env-color-bg-neutral-strong",
     "--env-color-fg-danger-pressed on catalogue-canvas",
     "--env-color-fg-default on --env-color-bg-accent-muted over --env-color-bg-default",
     "--env-color-fg-default on --env-color-bg-accent-muted over --env-color-bg-muted",
@@ -7168,6 +7169,7 @@
     "--env-color-fg-done on --env-color-bg-done-muted over catalogue-canvas",
     "--env-color-fg-done on --env-color-list-item-bg",
     "--env-color-fg-done on catalogue-canvas",
+    "--env-color-fg-info-on-strong on toast-icon-disc-info over --env-color-bg-neutral-strong",
     "--env-color-fg-link on --env-color-list-item-bg",
     "--env-color-fg-link on catalogue-canvas",
     "--env-color-fg-link-hover on catalogue-canvas",
@@ -7566,6 +7568,7 @@
     "--env-color-fg-success on --env-color-bg-success-subtle-pressed over --env-color-bg-success-subtle-hover over catalogue-canvas",
     "--env-color-fg-success on --env-color-list-item-bg",
     "--env-color-fg-success on catalogue-canvas",
+    "--env-color-fg-success-on-strong on toast-icon-disc-success over --env-color-bg-neutral-strong",
     "--env-color-fg-warning on --env-color-bg-warning-muted over --env-color-list-item-bg",
     "--env-color-fg-warning on --env-color-bg-warning-muted over catalogue-canvas",
     "--env-color-fg-warning on --env-color-bg-warning-subtle-hover over --env-color-bg-warning-muted over catalogue-canvas",

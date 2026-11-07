@@ -5798,6 +5798,10 @@
           "description": "The announcements of notifications."
         },
         {
+          "class": "env-toast-content",
+          "description": "A notification's tone icon and message, side by side, the icon level with the message's first line."
+        },
+        {
           "class": "env-toast-dismiss",
           "description": "A notification's dismiss button."
         },
