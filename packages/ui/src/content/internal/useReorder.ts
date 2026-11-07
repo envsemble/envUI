@@ -10,6 +10,7 @@ import {
   type PointerEvent,
   type RefObject,
 } from 'react';
+import { scrolledBy } from '../../internal/scrolledBy.js';
 
 type AnnouncementValues = { label: string; position: string; count: string };
 
@@ -62,7 +63,9 @@ interface Move {
     startY: number;
     lastY: number;
     scroller: Element;
-    startScroll: number;
+    /** The row, and how far the boxes around it had scrolled it as the press began. */
+    row: HTMLElement;
+    startScrolled: number;
     /** Whether the pointer has moved far enough to start dragging, rather than pressing. */
     dragging: boolean;
   };
@@ -92,9 +95,12 @@ function scrollerOf(element: HTMLElement): Element {
   return document.scrollingElement ?? document.documentElement;
 }
 
-/** How far the pointer has moved the row, with what the scroll area scrolled meanwhile. */
+/**
+ * How far the pointer has moved the row, with what the boxes around it, the page among them,
+ * scrolled meanwhile: the row stays under a pointer held still while one of them scrolls.
+ */
 function pointerOffset(pointer: NonNullable<Move['pointer']>) {
-  return pointer.lastY - pointer.startY + pointer.scroller.scrollTop - pointer.startScroll;
+  return pointer.lastY - pointer.startY + scrolledBy(pointer.row, 'y') - pointer.startScrolled;
 }
 
 /**
@@ -366,7 +372,8 @@ function createReorder(read: () => ReorderOptions, announce: (text: string) => v
         startY: event.clientY,
         lastY: event.clientY,
         scroller,
-        startScroll: scroller.scrollTop,
+        row,
+        startScrolled: scrolledBy(row, 'y'),
         dragging: false,
       };
       handle.setPointerCapture?.(event.pointerId);

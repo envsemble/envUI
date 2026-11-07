@@ -90,3 +90,37 @@ test('the resize edge is a named separator that the arrow keys and Home move', a
   await page.keyboard.press('Home');
   await expect.poll(async () => (await field.boundingBox())!.height).toBeCloseTo(before, 0);
 });
+
+test('dragging the resize edge follows the pointer on the content as the page scrolls', async ({
+  page,
+}) => {
+  await page.goto(`${fixtureUrl}/?fixture=forms`);
+  // Room below, so the page can scroll whatever the fixture's height.
+  await page.evaluate(() => {
+    document.body.style.paddingBlockEnd = '200vh';
+  });
+  const field = page.getByRole('textbox', { name: 'Two fixed lines', exact: true });
+  const edge = page
+    .locator('.env-text-field-control', { has: field })
+    .getByRole('separator', { name: 'Resize text area', exact: true });
+  await edge.scrollIntoViewIfNeeded();
+  const before = (await field.boundingBox())!.height;
+  const box = (await edge.boundingBox())!;
+  const [x, y] = [box.x + box.width / 2, box.y + box.height / 2];
+  await page.mouse.move(x, y);
+  await page.mouse.down();
+  await page.mouse.move(x, y + 20, { steps: 4 });
+  await expect.poll(async () => (await field.boundingBox())!.height).toBeCloseTo(before + 20, 0);
+  // The page scrolls under a pointer held still: the edge follows the pointer down the content.
+  const scrolled = await page.evaluate(() => {
+    const from = scrollY;
+    scrollBy(0, 30);
+    return scrollY - from;
+  });
+  expect(scrolled).toBeGreaterThan(10);
+  await page.mouse.move(x, y + 21);
+  await expect
+    .poll(async () => (await field.boundingBox())!.height)
+    .toBeCloseTo(before + 21 + scrolled, 0);
+  await page.mouse.up();
+});

@@ -11,6 +11,7 @@ import {
 import { useEnvUI } from './EnvUIContext.js';
 import { remPixels, roundToHundredth } from './lengths.js';
 import type { ResizeDetails } from './resizeDetails.js';
+import { scrolledBy } from './scrolledBy.js';
 
 export interface ResizeOptions {
   /**
@@ -145,8 +146,12 @@ export function useResize({
     setRoomMax((previous) => (previous === upper ? previous : upper));
   };
 
+  // Where the pointer is on the content, so a box that scrolls around the handle, the page among
+  // them, moves the drag as the pointer's own move would, never as far again.
   const position = (event: ReactPointerEvent<HTMLElement>) =>
-    axis === 'inline' ? event.clientX : event.clientY;
+    axis === 'inline'
+      ? event.clientX + scrolledBy(event.currentTarget, 'x')
+      : event.clientY + scrolledBy(event.currentTarget, 'y');
 
   const onPointerDown = (event: ReactPointerEvent<HTMLElement>) => {
     if (disabled || event.button !== 0 || !event.isPrimary) return;

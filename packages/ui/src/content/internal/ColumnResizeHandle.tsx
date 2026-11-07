@@ -10,6 +10,7 @@ import {
 } from './tableColumns.js';
 import '../../styles/Base.css';
 import '../../styles/Table.css';
+import { scrolledBy } from '../../internal/scrolledBy.js';
 
 /** What a table with resizable columns gives its header cells. */
 export interface TableColumns {
@@ -51,19 +52,26 @@ export function ColumnResizeHandle({
   const width = widths[column]!;
   const { min, max } = columnBounds(widths, minimums, column);
 
+  /**
+   * How far the pointer has moved the boundary, as a share of the table, on the content: a box
+   * scrolled around the table, such as its own, moves it as the pointer's move would.
+   */
+  function deltaOf(event: ReactPointerEvent<HTMLDivElement>) {
+    const current = drag.current!;
+    const x = event.clientX + scrolledBy(event.currentTarget, 'x');
+    return ((x - current.startX) * current.direction * 100) / current.tableWidth;
+  }
+
   function dragTo(event: ReactPointerEvent<HTMLDivElement>) {
     const current = drag.current!;
-    const delta = ((event.clientX - current.startX) * current.direction * 100) / current.tableWidth;
-    change(resizeColumns(current.widths, minimums, column, delta), false);
+    change(resizeColumns(current.widths, minimums, column, deltaOf(event)), false);
   }
 
   function finish(event: ReactPointerEvent<HTMLDivElement>) {
     const current = drag.current;
     if (!current || current.pointerId !== event.pointerId) return;
     if (event.type === 'pointerup') {
-      const delta =
-        ((event.clientX - current.startX) * current.direction * 100) / current.tableWidth;
-      change(resizeColumns(current.widths, minimums, column, delta), true);
+      change(resizeColumns(current.widths, minimums, column, deltaOf(event)), true);
     }
     // A cancelled drag, such as one the browser took over for scrolling, returns to where it began.
     else change([...current.widths], true);
@@ -95,7 +103,7 @@ export function ColumnResizeHandle({
         event.currentTarget.setPointerCapture(event.pointerId);
         drag.current = {
           pointerId: event.pointerId,
-          startX: event.clientX,
+          startX: event.clientX + scrolledBy(event.currentTarget, 'x'),
           tableWidth,
           widths,
           direction: inlineDirection(event.currentTarget),
