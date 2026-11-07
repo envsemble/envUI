@@ -98,6 +98,14 @@
   .catalogue-fan-card[data-compact='hidden'] {
     display: none;
   }
+  /* On a touch screen the components take their touch sizes, the composer and the heatmap's days
+     among them: the two cards are taller, and as tall as each other, and the fan with them. */
+  @media (pointer: coarse) {
+    .catalogue-fan-stack {
+      --catalogue-fan-card-height: 20.5rem;
+      --catalogue-fan-height: 22.5rem;
+    }
+  }
 }
 /* A phone keeps the fan, as a smaller hand of the same cards, so the home still shows envUI's
    components side by side. */

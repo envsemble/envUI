@@ -1,8 +1,9 @@
-import type { CSSProperties, ReactNode } from 'react';
+import { useSyncExternalStore, type CSSProperties, type ReactNode } from 'react';
 import {
   AvatarGroup,
   Badge,
   Button,
+  Calendar,
   CalendarHeatmap,
   Card,
   Column,
@@ -11,9 +12,6 @@ import {
   Message,
   MessageList,
   Row,
-  SegmentedControl,
-  Slider,
-  Switch,
   Text,
   type CalendarHeatmapDay,
 } from '@envsemble/envui';
@@ -60,13 +58,56 @@ function deploysPerDay(): CalendarHeatmapDay[] {
 }
 const deploys = deploysPerDay();
 
+const touchQuery = '(pointer: coarse)';
+/** Whether the pointer is a finger, which gives a heatmap's days a touch target's size. */
+function useCoarsePointer() {
+  return useSyncExternalStore(
+    (changed) => {
+      const query = matchMedia(touchQuery);
+      query.addEventListener('change', changed);
+      return () => query.removeEventListener('change', changed);
+    },
+    () => matchMedia(touchQuery).matches,
+    () => false,
+  );
+}
+
+/**
+ * The deploys card: the count and a heatmap of the latest weeks, as many as fit the card whole: ten,
+ * under the count drawn large, or on a touch screen, whose days take a touch target's size, five,
+ * with the count in the note, so the card stays as tall as the one beside it.
+ */
+function DeploysCard() {
+  const touch = useCoarsePointer();
+  const weeks = touch ? 5 : 10;
+  const count = touch ? 94 : 186;
+  return (
+    <>
+      <CardHeader title="Deploys" note={touch ? `${count} in the last 5 weeks` : 'Last 10 weeks'} />
+      <Column gap={3} className="catalogue-fan-body">
+        {touch ? null : (
+          <Row align="center" gap={2}>
+            <span className="catalogue-fan-figure">{count}</span>
+            <Badge tone="success">+18%</Badge>
+          </Row>
+        )}
+        <CalendarHeatmap
+          aria-label={`Deploys in the last ${weeks} weeks`}
+          data={deploys.slice(-weeks * 7)}
+          tone="success"
+        />
+      </Column>
+    </>
+  );
+}
+
 /**
  * The cards in the hand, from the back to the front, each a small moment of a B2B or AI product
  * built with envUI, and each of different components: an agent's pull request in review, a
- * conversation with an assistant, ten weeks of deploys, and a workspace's settings. `place` is the
+ * conversation with an assistant, ten weeks of deploys, and a calendar to pick a launch day. `place` is the
  * card's place in the fan, from the middle; on a narrower page the first goes and the rest take
  * `narrowPlace`, and on a narrow one only those with a `compactPlace` stay: the conversation and
- * the settings, the richer two, drawn smaller on a phone.
+ * the deploys, drawn smaller on a phone.
  */
 const cards: {
   id: string;
@@ -108,68 +149,38 @@ const cards: {
     compactPlace: -0.5,
     lift: -0.15,
     content: (
-      <Column gap={4}>
+      <>
         <MessageList aria-label="Conversation with the assistant">
           <Message from="self">Why did checkout fail?</Message>
           <Message from="other" author="Assistant">
             A race in the cart test. I wrote a fix and opened #482.
           </Message>
         </MessageList>
-        <Composer aria-label="Message the assistant" placeholder="Ask anything" />
-      </Column>
+        {/* On the card's foot, where a conversation's composer waits. */}
+        <Composer
+          aria-label="Message the assistant"
+          placeholder="Ask anything"
+          className="catalogue-fan-body"
+        />
+      </>
     ),
   },
   {
     id: 'deploys',
     place: 0.5,
     narrowPlace: 0,
+    compactPlace: 0.5,
     lift: 0.1,
-    content: (
-      <>
-        <CardHeader title="Deploys" note="Last 10 weeks" />
-        <Column gap={3} className="catalogue-fan-body">
-          <Row align="center" gap={2}>
-            <span className="catalogue-fan-figure">186</span>
-            <Badge tone="success">+18%</Badge>
-          </Row>
-          <CalendarHeatmap
-            aria-label="Deploys in the last 10 weeks"
-            data={deploys}
-            tone="success"
-          />
-        </Column>
-      </>
-    ),
+    content: <DeploysCard />,
   },
   {
-    id: 'settings',
+    id: 'launch',
     place: 1.5,
     narrowPlace: 1,
-    compactPlace: 0.5,
     lift: 0.2,
     content: (
-      <>
-        <CardHeader title="Workspace" note="Preferences" />
-        <Column gap={4} className="catalogue-fan-body">
-          <SegmentedControl
-            aria-label="Theme"
-            size="sm"
-            defaultValue="dark"
-            items={[
-              { value: 'light', label: 'Light' },
-              { value: 'dark', label: 'Dark' },
-              { value: 'system', label: 'System' },
-            ]}
-          />
-          <Switch label="Weekly digest" defaultChecked />
-          <Slider
-            label="Keep logs"
-            defaultValue={30}
-            max={90}
-            formatValue={(days) => `${days} days`}
-          />
-        </Column>
-      </>
+      // The month's own heading names the card, as a calendar's does.
+      <Calendar defaultValue="2026-11-18" />
     ),
   },
 ];
