@@ -43,8 +43,9 @@
     border-radius: var(--env-radius-sm);
     color: var(--env-color-fg-muted);
     text-decoration: none;
-    /* A label that becomes current takes the text color as the shape arrives beside it. */
-    transition: color var(--env-motion-duration-medium) var(--env-motion-ease);
+    /* A label that becomes current takes the text color as the shape arrives beside it, in the
+       shape's slow duration and standard easing, and the one it leaves fades with it. */
+    transition: color var(--env-motion-duration-slow) var(--env-motion-ease);
     /* Long labels wrap, and a long word breaks rather than overflowing the column. */
     overflow-wrap: break-word;
   }
@@ -107,6 +108,16 @@
   }
   .env-table-of-contents .env-table-of-contents-link:active:is(*, [aria-current]) {
     color: var(--env-color-fg-muted-pressed);
+  }
+  /* The pointer's own colors land from the first frame. */
+  .env-table-of-contents-link:is(:hover, :active) {
+    transition: color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
+  }
+  /* Under a reduced-motion preference the shape moves at once, and so does the label's color. */
+  @media (prefers-reduced-motion: reduce) {
+    .env-table-of-contents-link {
+      transition: none;
+    }
   }
 
   /* Forced colors: the system paints the links, so the current one takes its selection color, and
