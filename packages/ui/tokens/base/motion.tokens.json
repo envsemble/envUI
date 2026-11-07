@@ -29,7 +29,7 @@
     "ease-exit": {
       "$type": "cubicBezier",
       "$description": "Leaving elements accelerate away.",
-      "$value": [0.3, 0, 0.8, 0.15]
+      "$value": [0.4, 0, 1, 1]
     }
   }
 }

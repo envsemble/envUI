@@ -220,7 +220,7 @@
   --env-motion-duration-slow: 0.24s;
   --env-motion-ease: cubic-bezier(0.45, 0, 0.2, 1);
   --env-motion-ease-enter: cubic-bezier(0.05, 0.7, 0.1, 1);
-  --env-motion-ease-exit: cubic-bezier(0.3, 0, 0.8, 0.15);
+  --env-motion-ease-exit: cubic-bezier(0.4, 0, 1, 1);
   --env-picture-size-lg: 3rem;
   --env-picture-size-md: 2rem;
   --env-picture-size-sm: 1.5rem;
