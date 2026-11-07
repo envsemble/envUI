@@ -248,8 +248,13 @@ test('compositions reuse primitive colors while unrelated roles stay independent
       await page.mouse.move(0, 0);
       await tab.blur();
       await expect(tab).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+      // The one indicator, which moves to the selected tab.
       const indicator = () =>
-        tab.evaluate((element) => getComputedStyle(element, '::after').backgroundColor);
+        tab.evaluate(
+          (element) =>
+            getComputedStyle(element.parentElement!.querySelector('.env-tabs-indicator')!)
+              .backgroundColor,
+        );
       const before = await indicator();
       await boundary.evaluate((root) =>
         (root as HTMLElement).style.setProperty('--env-color-border-primary-emphasis', '#d02780'),
@@ -266,9 +271,15 @@ test('compositions reuse primitive colors while unrelated roles stay independent
       (element) => getComputedStyle(element).backgroundColor,
     );
     // An unselected tab under the pointer and pressed shows no block and no bar, either of which
-    // would read as a second selection: only its label takes the text color.
+    // would read as a second selection: only its label takes the text color. The bar is the one
+    // indicator that moves between the tabs, lying under the selected tab once it has arrived.
     const markAlpha = (tab: import('@playwright/test').Locator) =>
       tab.evaluate((element) => {
+        const moving = element.parentElement?.querySelector('.env-tabs-indicator:not([hidden])');
+        if (moving) {
+          const [bar, box] = [moving.getBoundingClientRect(), element.getBoundingClientRect()];
+          return bar.left >= box.left - 0.5 && bar.right <= box.right + 0.5 ? 1 : 0;
+        }
         const probe = document.createElement('canvas').getContext('2d')!;
         probe.fillStyle = getComputedStyle(element, '::after').backgroundColor;
         probe.fillRect(0, 0, 1, 1);
@@ -294,7 +305,7 @@ test('compositions reuse primitive colors while unrelated roles stay independent
       await page.mouse.down();
       await expect(inactive).toHaveAttribute('aria-selected', 'true');
       await expect(inactive).not.toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
-      expect(await markAlpha(inactive)).toBe(1);
+      await expect.poll(() => markAlpha(inactive)).toBe(1);
       await page.mouse.up();
       await page.mouse.move(0, 0);
       await selected.press('Enter');

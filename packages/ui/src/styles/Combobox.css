@@ -71,13 +71,12 @@
   .env-combobox .env-combobox-control > .env-combobox-input:read-only {
     cursor: default;
   }
-  /* The chevron points down, and up while the popup is open, flipping over as Select's does rather
-     than turning through pointing sideways. */
+  /* The chevron points down, and up while the popup is open, turning half a circle as Select's does. */
   .env-combobox-trigger .env-icon {
-    transform: rotate(90deg) scaleX(1);
+    transform: rotate(90deg);
   }
   .env-combobox-trigger[data-popup-open] .env-icon {
-    transform: rotate(90deg) scaleX(-1);
+    transform: rotate(270deg);
   }
   .env-combobox-control:has(> .env-combobox-input:disabled)
     .env-combobox-end
@@ -318,7 +317,7 @@
   }
 
   /* Motion: the chevron, always in the field, doesn't settle in as the field's other actions do,
-     and flips as the list opens without a reduced-motion preference. */
+     and turns as the list opens without a reduced-motion preference. */
   .env-combobox-trigger {
     animation: none;
   }

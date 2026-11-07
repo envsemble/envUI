@@ -104,7 +104,8 @@ test('every style sheet is imported once and puts its rules in a layer of env', 
 
 test("the library's custom properties take the --env- prefix", async () => {
   // Base UI's positioners set these on the popup inside, its drawer the swipe's movement and its
-  // accordion and collapsible the panel's height; envUI only reads them.
+  // accordion and collapsible the panel's height, and its tabs' indicator the selected tab's box;
+  // envUI only reads them.
   const baseUi = new Set([
     '--anchor-height',
     '--anchor-width',
@@ -115,6 +116,10 @@ test("the library's custom properties take the --env- prefix", async () => {
     '--drawer-swipe-movement-y',
     '--accordion-panel-height',
     '--collapsible-panel-height',
+    '--active-tab-left',
+    '--active-tab-top',
+    '--active-tab-width',
+    '--active-tab-height',
   ]);
   const problems = [];
   for (const file of await readdir(styles)) {

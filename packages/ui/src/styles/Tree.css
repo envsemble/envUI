@@ -50,7 +50,14 @@
     cursor: pointer;
     user-select: none;
     white-space: nowrap;
-    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
+    transition:
+      background-color var(--env-motion-duration-fast) var(--env-motion-ease),
+      opacity var(--env-motion-duration-medium) var(--env-motion-ease);
+  }
+  /* The rows an expanded row reveals fade in where they arrive, from their starting style; the rows
+     scrolled into view don't. */
+  .env-tree-item[data-starting-style] {
+    opacity: 0;
   }
   /* A tree marks its selection with a light tint, so its rows' layers stay below it: hover at three
      quarters of the row hover layer and a press at the full one, a step quieter than a table's
@@ -94,7 +101,7 @@
   .env-tree-chevron .env-icon {
     inline-size: 100%;
     block-size: 100%;
-    transition: transform var(--env-motion-duration-fast) var(--env-motion-ease);
+    transition: transform var(--env-motion-duration-medium) var(--env-motion-ease);
   }
   .env-tree-chevron:dir(rtl) .env-icon {
     transform: scaleX(-1);
@@ -146,6 +153,8 @@
       );
     }
   }
+  /* Under a reduced-motion preference fills change, the chevron turns and revealed rows show at
+     once, as an accordion's panel does. */
   @media (prefers-reduced-motion: reduce) {
     .env-tree-item,
     .env-tree-chevron .env-icon {

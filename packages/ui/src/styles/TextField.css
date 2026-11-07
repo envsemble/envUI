@@ -151,7 +151,9 @@
     line-height: 1;
     white-space: nowrap;
     visibility: hidden;
-    transition: max-inline-size var(--env-motion-duration-fast) var(--env-motion-ease);
+    /* The notch opens and closes with the label as it floats and settles, at the label's pace, so
+       the edge never crosses it. */
+    transition: max-inline-size var(--env-motion-duration-medium) var(--env-motion-ease);
   }
   .env-text-field-border > legend > span {
     display: inline-block;
@@ -164,7 +166,8 @@
         :has(> .env-text-field-input:disabled),
         [data-disabled],
         :focus-within,
-        :has(> .env-text-field-input[aria-expanded='true'])
+        :has(> .env-text-field-input[aria-expanded='true']),
+        [data-popup-open]
       ) {
       --env-text-field-border-color: var(--env-text-field-interaction-hover);
     }
@@ -178,8 +181,13 @@
   /* Focus draws the frame in the accent at twice its width, all the way round the notch, in every
      variant: a ghost field too, whose frame shows only while it has focus. A field whose list or
      calendar is open, a Select's, a Combobox's or a picker's, keeps that frame while focus is in the
-     popup, as when it opens under the pointer, so the field reads as the list's. */
-  .env-text-field-control:is(:focus-within, :has(> .env-text-field-input[aria-expanded='true'])) {
+     popup, as when it opens under the pointer, so the field reads as the list's; a picker's keeps it
+     until its popup has closed (data-popup-open), as focus comes back. */
+  .env-text-field-control:is(
+    :focus-within,
+    :has(> .env-text-field-input[aria-expanded='true']),
+    [data-popup-open]
+  ) {
     --env-text-field-border-color: var(--env-text-field-interaction-color);
     --env-text-field-frame: var(
       --env-text-field-ghost-focus-frame,
@@ -255,12 +263,15 @@
     > .env-text-field-border
     > legend {
     max-inline-size: calc(100% - var(--env-space-4));
-    transition-duration: var(--env-motion-duration-medium);
   }
   .env-text-field-control:has(> label) > .env-text-field-input:not(:focus)::placeholder {
     color: transparent;
   }
-  .env-text-field-control:is(:focus-within, :has(> .env-text-field-input[aria-expanded='true']))
+  .env-text-field-control:is(
+      :focus-within,
+      :has(> .env-text-field-input[aria-expanded='true']),
+      [data-popup-open]
+    )
     > label {
     color: var(--env-text-field-label-accent, var(--env-color-fg-primary));
   }

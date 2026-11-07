@@ -125,19 +125,18 @@
     pointer-events: none;
     inset-inline-end: var(--env-select-end);
   }
-  /* The chevron points down, and up while the list is open. It flips over its horizontal axis rather
-     than turning half a circle, which swings it through pointing sideways, as a submenu's chevron
-     does, in a frame or two: the list's trigger would twitch as it opens and closes. */
+  /* The chevron points down, and up while the list is open: it turns half a circle, so it keeps its
+     shape all the way, where flipping it over would squash it flat halfway. */
   .env-select-end > .env-icon.env-select-icon {
     display: grid;
     place-items: center;
     inline-size: var(--env-select-action);
     block-size: var(--env-select-action);
     color: var(--env-text-field-text, var(--env-color-fg-default));
-    transform: rotate(90deg) scaleX(1);
+    transform: rotate(90deg);
   }
   .env-select-control:has(> [aria-expanded='true']) .env-select-icon {
-    transform: rotate(90deg) scaleX(-1);
+    transform: rotate(270deg);
   }
   .env-select-icon > svg {
     inline-size: var(--env-control-icon-size);
@@ -202,7 +201,7 @@
     }
   }
 
-  /* Motion: the chevron flips. Movement only without a reduced-motion preference. The chevron,
+  /* Motion: the chevron turns. Movement only without a reduced-motion preference. The chevron,
      always in the field, doesn't settle in as the field's other actions do. */
   .env-select-icon {
     animation: none;

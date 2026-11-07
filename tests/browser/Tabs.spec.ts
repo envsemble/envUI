@@ -142,12 +142,21 @@ test('every tab is a text tab, the selected one with an indicator under it', asy
       const style = getComputedStyle(element, '::after');
       return { content: style.content, height: style.blockSize, color: style.backgroundColor };
     });
+  // Each tab draws the indicator's shape, transparent once the one indicator, which moves between
+  // the tabs, has measured the selected tab and lies under its label.
   const shown = await indicator(selected);
   expect(shown.content).toBe('""');
   expect(Number.parseFloat(shown.height)).toBeGreaterThan(0);
-  // The others draw the indicator's shape transparent.
   expect((await indicator(other)).color).toBe('rgba(0, 0, 0, 0)');
-  expect(shown.color).not.toBe('rgba(0, 0, 0, 0)');
+  const moving = rail.locator('.env-tabs-indicator');
+  await expect(moving).toBeVisible();
+  expect(shown.color).toBe('rgba(0, 0, 0, 0)');
+  await expect(moving).not.toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+  const [bar, tab] = [(await moving.boundingBox())!, (await selected.boundingBox())!];
+  expect(bar.height).toBeGreaterThan(0);
+  expect(bar.x).toBeGreaterThanOrEqual(tab.x - 0.5);
+  expect(bar.x + bar.width).toBeLessThanOrEqual(tab.x + tab.width + 0.5);
+  expect(Math.abs(bar.y + bar.height - (tab.y + tab.height))).toBeLessThan(1);
   // Under the pointer a tab takes no fill and no bar, only the text color on its label: the
   // indicator is the selected tab's alone.
   const restColor = await other.evaluate((element) => getComputedStyle(element).color);

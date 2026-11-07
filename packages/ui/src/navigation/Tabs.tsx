@@ -223,6 +223,9 @@ export function Tabs({
             )}
           />
         ))}
+        {/* One indicator, which moves to the selected tab; until it has measured the tab, as in the
+            server's markup, the selected tab draws its own. */}
+        <BaseTabs.Indicator className="env-tabs-indicator" />
       </BaseTabs.List>
     </DirectionProvider>
   );

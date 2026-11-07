@@ -1,9 +1,9 @@
 import { expect, type Locator } from '@playwright/test';
 
-// The chevron of a Select or Combobox trigger, which flips as its popup opens and closes.
+// The chevron of a Select or Combobox trigger, which turns as its popup opens and closes.
 
 /**
- * Slows a chevron's flip, so a test can seek through it while it runs. Only the duration changes:
+ * Slows a chevron's turn, so a test can seek through it while it runs. Only the duration changes:
  * the transition, and whether reduced motion leaves it out, stay the style sheet's.
  */
 export async function slowChevron(icon: Locator) {
@@ -13,9 +13,9 @@ export async function slowChevron(icon: Locator) {
 }
 
 /**
- * Where the chevron's tip points through its running flip, as [x, y] on the screen at eleven even
+ * Where the chevron's tip points through its running turn, as [x, y] on the screen at eleven even
  * steps: the drawn chevron points right, so its tip follows the transform's first column. The
- * flip then finishes.
+ * turn then finishes.
  */
 export async function chevronTips(icon: Locator) {
   await expect.poll(() => icon.evaluate((element) => element.getAnimations().length)).toBe(1);
@@ -35,11 +35,11 @@ export async function chevronTips(icon: Locator) {
 }
 
 /**
- * Checks a flip from pointing one way to the other along the vertical: from down (1) to up (-1)
- * or back, never leaning sideways on the way, as a half turn does through pointing right.
+ * Checks a half turn from pointing one way to the other along the vertical: from down (1) to up
+ * (-1) or back, keeping its shape all the way, never squashed flat as a flip over is halfway.
  */
-export function expectVerticalFlip(tips: [number, number][], from: 1 | -1) {
-  for (const [x] of tips) expect(Math.abs(x)).toBeLessThan(0.01);
+export function expectHalfTurn(tips: [number, number][], from: 1 | -1) {
+  for (const [x, y] of tips) expect(Math.hypot(x, y)).toBeCloseTo(1, 2);
   expect(tips[0][1]).toBeCloseTo(from, 2);
   expect(tips.at(-1)![1]).toBeCloseTo(-from, 2);
 }

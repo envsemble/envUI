@@ -224,8 +224,23 @@
     .env-checkbox:active:not(:has(input:disabled)) .env-checkbox-box {
       transform: scale(0.9);
     }
+    /* The mark settles in from a little smaller as the box is checked, and fades out, quicker, as it
+       is cleared, at its size, then hides. */
+    .env-checkbox-indicator {
+      opacity: 0;
+      scale: 0.8;
+      transition:
+        opacity var(--env-motion-duration-fast) var(--env-motion-ease-exit),
+        scale 0s linear var(--env-motion-duration-fast),
+        visibility 0s linear var(--env-motion-duration-fast);
+    }
     .env-checkbox-input:is(:checked, :indeterminate) + .env-checkbox-indicator {
-      animation: env-motion-pop-in var(--env-motion-duration-medium) var(--env-motion-ease-enter);
+      opacity: 1;
+      scale: 1;
+      transition:
+        opacity var(--env-motion-duration-medium) var(--env-motion-ease-enter),
+        scale var(--env-motion-duration-medium) var(--env-motion-ease-enter),
+        visibility 0s;
     }
   }
 

@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { chevronTips, expectVerticalFlip, slowChevron } from './helpers/Chevron';
+import { chevronTips, expectHalfTurn, slowChevron } from './helpers/Chevron';
 import { fixtureUrl } from './helpers/Servers';
 
 test.beforeEach(async ({ page }) => {
@@ -268,20 +268,19 @@ test('a Select opened with the pointer leaves focus where Base UI puts it', asyn
   await page.keyboard.press('Escape');
 });
 
-test("a Select's chevron flips as the list opens and closes, never pointing sideways", async ({
+test("a Select's chevron turns as the list opens and closes, keeping its shape", async ({
   page,
 }) => {
-  // A half turn swings the chevron through pointing right in a frame or two, a twitch beside the
-  // opening list. It flips over instead.
+  // A flip over would squash the chevron flat halfway; it turns half a circle instead.
   const trigger = page.getByRole('combobox', { name: 'Plan', exact: true });
   const icon = trigger.locator('xpath=..').locator('.env-select-icon');
   await slowChevron(icon);
   await trigger.click();
   await expect(page.getByRole('listbox')).toBeVisible();
-  expectVerticalFlip(await chevronTips(icon), 1);
+  expectHalfTurn(await chevronTips(icon), 1);
   await page.keyboard.press('Escape');
   await expect(page.getByRole('listbox')).toHaveCount(0);
-  expectVerticalFlip(await chevronTips(icon), -1);
+  expectHalfTurn(await chevronTips(icon), -1);
   // With reduced motion it points the other way at once, at the style sheet's own duration.
   await icon.evaluate((element: HTMLElement) =>
     element.style.removeProperty('transition-duration'),

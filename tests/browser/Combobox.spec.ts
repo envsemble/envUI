@@ -1,5 +1,5 @@
 import { test, expect, type Browser, type Locator, type Page } from '@playwright/test';
-import { chevronTips, expectVerticalFlip, slowChevron } from './helpers/Chevron';
+import { chevronTips, expectHalfTurn, slowChevron } from './helpers/Chevron';
 import { fixtureUrl } from './helpers/Servers';
 
 const comboboxFixture = `${fixtureUrl}/?fixture=combobox`;
@@ -186,19 +186,17 @@ test('the list opens 8 px clear of the field, at its start edge', async ({ page 
   expect(box.x).toBeCloseTo(well.x, 0);
 });
 
-test('the chevron flips as the popup opens and closes, never pointing sideways', async ({
-  page,
-}) => {
+test('the chevron turns as the popup opens and closes, keeping its shape', async ({ page }) => {
   const owner = field(page, 'Owner light');
   const chevron = wellOf(owner).locator('.env-combobox-trigger');
   const icon = chevron.locator('.env-icon');
   await slowChevron(icon);
   await chevron.click();
   await expect(page.getByRole('listbox')).toBeVisible();
-  expectVerticalFlip(await chevronTips(icon), 1);
+  expectHalfTurn(await chevronTips(icon), 1);
   await chevron.click();
   await expect(page.getByRole('listbox')).toHaveCount(0);
-  expectVerticalFlip(await chevronTips(icon), -1);
+  expectHalfTurn(await chevronTips(icon), -1);
 });
 
 test('several options show as chips that Backspace, the arrow keys and their buttons remove', async ({

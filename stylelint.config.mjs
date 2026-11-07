@@ -147,7 +147,7 @@ export default {
           { message: (name) => `Class "${name}": library classes are env-<component>-<part>.` },
         ],
         'custom-property-pattern': [
-          '^(?:env(?:-[a-z0-9]+)+|accordion-panel-height|anchor-width|available-height|available-width|collapsible-panel-height|drawer-swipe-movement-[xy]|transform-origin)$',
+          '^(?:env(?:-[a-z0-9]+)+|accordion-panel-height|active-tab-(?:left|top|width|height)|anchor-width|available-height|available-width|collapsible-panel-height|drawer-swipe-movement-[xy]|transform-origin)$',
           { message: (name) => `Custom property "${name}": library properties are --env-….` },
         ],
       },

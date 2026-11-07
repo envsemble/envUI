@@ -92,6 +92,9 @@ export function SegmentedControl({
 }: SegmentedControlProps) {
   // The arrow keys follow the text direction, which Base UI only knows from its own provider.
   const scope = useDirectionScope<HTMLDivElement>(ref);
+  // The thumb travels to the chosen segment.
+  const thumb = useRef<HTMLSpanElement>(null);
+  useLayoutEffect(() => (thumb.current ? followThumb(thumb.current) : undefined), []);
   return (
     <DirectionProvider direction={scope.direction}>
       <RadioGroup
@@ -113,6 +116,7 @@ export function SegmentedControl({
         {items.map((item) => (
           <Segment key={item.value} item={item} fullWidth={fullWidth} />
         ))}
+        <span ref={thumb} className="env-segmented-control-thumb" aria-hidden="true" hidden />
       </RadioGroup>
     </DirectionProvider>
   );
@@ -165,4 +169,68 @@ function Segment({ item, fullWidth }: { item: SegmentedControlItem; fullWidth: b
       {cut && <TooltipPopup content={item.label} side="top" />}
     </BaseTooltip.Root>
   );
+}
+
+/**
+ * Places a segmented control's thumb over its chosen segment (the item with data-checked): its box,
+ * measured against the track, as --env-segmented-control-thumb-left, -top, -width and -height,
+ * physical, set on the thumb directly, so a change renders nothing. The thumb shows once it has
+ * measured a chosen segment and hides while none is chosen; until then, as in the server's markup,
+ * the chosen segment draws its own. It follows the choice, the segments' sizes and the track's.
+ * Returns the cleanup.
+ */
+function followThumb(thumb: HTMLElement): () => void {
+  const track = thumb.parentElement;
+  if (!track) return () => {};
+  const place = () => {
+    const chosen = track.querySelector<HTMLElement>(
+      ':scope > .env-segmented-control-item[data-checked]',
+    );
+    if (!chosen) {
+      thumb.hidden = true;
+      return;
+    }
+    const box = chosen.getBoundingClientRect();
+    const trackBox = track.getBoundingClientRect();
+    // The track's own scale, such as a dialog's as it grows in, which the layout sizes leave out.
+    const scaleX = track.offsetWidth > 0 ? trackBox.width / track.offsetWidth : 1;
+    const scaleY = track.offsetHeight > 0 ? trackBox.height / track.offsetHeight : 1;
+    const left = (box.left - trackBox.left) / scaleX + track.scrollLeft - track.clientLeft;
+    const top = (box.top - trackBox.top) / scaleY + track.scrollTop - track.clientTop;
+    thumb.style.setProperty('--env-segmented-control-thumb-left', `${left}px`);
+    thumb.style.setProperty('--env-segmented-control-thumb-top', `${top}px`);
+    thumb.style.setProperty('--env-segmented-control-thumb-width', `${box.width / scaleX}px`);
+    thumb.style.setProperty('--env-segmented-control-thumb-height', `${box.height / scaleY}px`);
+    thumb.hidden = false;
+  };
+  place();
+  const view = track.ownerDocument.defaultView;
+  const resize =
+    view && 'ResizeObserver' in view ? new view.ResizeObserver(() => place()) : undefined;
+  const observeSegments = () => {
+    if (!resize) return;
+    resize.disconnect();
+    resize.observe(track);
+    for (const segment of track.querySelectorAll(':scope > .env-segmented-control-item'))
+      resize.observe(segment);
+  };
+  observeSegments();
+  // The choice, and segments added or taken away.
+  const mutations =
+    view && 'MutationObserver' in view
+      ? new view.MutationObserver((records) => {
+          if (records.some((record) => record.type === 'childList')) observeSegments();
+          place();
+        })
+      : undefined;
+  mutations?.observe(track, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ['data-checked'],
+  });
+  return () => {
+    resize?.disconnect();
+    mutations?.disconnect();
+  };
 }

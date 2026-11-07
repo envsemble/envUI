@@ -5,13 +5,14 @@ const fixture = `${fixtureUrl}/?fixture=fields`;
 
 /**
  * Parts that paint a fill as content or by design, not as a field's well: a color picker's area,
- * thumbs and swatch, and Select's trigger, a Button.
+ * thumbs and swatch, Select's trigger, a Button, and the indicator of an editor's tabs.
  */
 const content = [
   'env-color-picker-area',
   'env-color-picker-thumb',
   'env-color-swatch-sample',
   'env-select-trigger',
+  'env-tabs-indicator',
 ];
 
 test('fields and editors take the background of what they sit on', async ({ page }) => {
