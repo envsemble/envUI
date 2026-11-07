@@ -28,14 +28,16 @@ import {
   type TableOfContentsItem,
 } from './internal/contentsOutline.js';
 import {
-  springAtRest,
-  springStep,
+  glideAt,
+  glideStep,
+  glideTo,
   wavePath,
   wavePlace,
-  type Spring,
+  type Glide,
   type WaveLayout,
 } from './internal/contentsWave.js';
 import { prefersReducedMotion, reducedMotionQuery } from '../internal/reducedMotion.js';
+import { easingFunction, motionDuration, motionEasing } from '../internal/motionTokens.js';
 import type { HeadingLevel } from '../foundations/headingLevel.js';
 import '../styles/Base.css';
 import '../styles/TableOfContents.css';
@@ -199,13 +201,10 @@ function List({ items, current, passed, depth, onNavigate }: ListProps) {
 }
 
 /**
- * The springs the shape moves on, in radians a second: its place, quick and barely past its
- * mark; its stretch and lean, a little looser, so it wobbles once as it lands; and the swell under
- * the pointer, which pops a little past its size.
+ * How far the reader's place may move between two frames, in entries, and still be followed as it
+ * is, as the scroll moves it; a larger step, such as a jump to a chosen section, glides there.
  */
-const placeSpring = { frequency: 20, damping: 0.7 };
-const shapeSpring = { frequency: 18, damping: 0.55, inertia: 1.3 };
-const hoverSpring = { frequency: 26, damping: 0.55 };
+const followStep = 0.2;
 
 /**
  * Where the entries sit beside the shape, in layout pixels from the top of the list's box, which
@@ -325,26 +324,20 @@ export function TableOfContents({
     let frame = 0;
 
     // The shape: drawn every frame the reader's place moves, by writing its outline directly,
-    // without rendering the list again. The drawn place follows the measured one on a spring, so a
-    // mouse wheel's steps and a chosen section's jump travel rather than jump, and two more springs
-    // follow its motion: the bulge stretches and leans back as it travels, and wobbles once as it
-    // lands. No frame is drawn once all three rest. At once, without the wobble, where reduced
-    // motion is preferred.
+    // without rendering the list again. It keeps its shape and follows the scroll as it is; a
+    // larger step, such as a chosen section's jump or a mouse wheel's without smooth scrolling,
+    // glides there in the slow duration with the standard easing, never past it, while the label
+    // there takes the text color. The swell under the pointer grows and fades in the fast one. No
+    // frame is drawn once they rest. At once where reduced motion is preferred or the motion
+    // tokens are 0s.
     let layout: WaveLayout | null = null;
     let target: number | null = null;
-    const place: Spring = { value: 0, velocity: 0 };
+    const place: Glide = glideAt(0);
     let placed = false;
-    const lean: Spring = { value: 0, velocity: 0 };
-    const stretch: Spring = { value: 0, velocity: 0 };
     // How far each entry's swell under the pointer has grown, and the entry under it.
-    let hovers: Spring[] = [];
+    let hovers: Glide[] = [];
     let hovered = -1;
     let drawFrame = 0;
-    let drawn = 0;
-    const rest = (spring: Spring, value: number) => {
-      spring.value = value;
-      spring.velocity = 0;
-    };
     const draw = (now: number) => {
       drawFrame = 0;
       const body = root.current;
@@ -353,63 +346,34 @@ export function TableOfContents({
       if (!layout) {
         layout = measureWave(body, shape.current);
         if (!layout) return;
-        hovers = layout.anchors.map((_, index) => ({
-          value: index === hovered ? 1 : 0,
-          velocity: 0,
-        }));
+        hovers = layout.anchors.map((_, index) => glideAt(index === hovered ? 1 : 0));
       }
       const instant = reducedMotion?.matches ?? false;
-      // A frame's time since the last drawn, in seconds, or a frame's at the start of a move.
-      const elapsed = drawn === 0 ? 1 / 60 : Math.min(0.05, Math.max(0, (now - drawn) / 1000));
-      drawn = now;
+      const travel = instant ? 0 : motionDuration(body, 'slow');
+      const swell = instant ? 0 : motionDuration(body, 'fast');
+      const ease = easingFunction(motionEasing(body, 'ease'));
       let moving = false;
-      if (target === null || !placed || instant) {
-        // The first place, or none, or reduced motion: drawn where it is, at rest.
+      if (target === null || !placed) {
+        // The first place, or none: drawn where it is, at rest.
         placed = target !== null;
-        rest(place, target ?? 0);
-        rest(lean, 0);
-        rest(stretch, 0);
+        Object.assign(place, glideAt(target ?? 0));
       } else {
-        const before = place.velocity;
-        springStep(place, target, placeSpring.frequency, placeSpring.damping, elapsed);
-        // The bulge, in entries a second: stretched out by its speed, and carried like a jelly,
-        // lagging behind as it sets off and running on past as it slows, before it springs back.
-        const speed = place.velocity;
-        const surge = elapsed > 0 ? Math.max(-400, Math.min(400, (speed - before) / elapsed)) : 0;
-        const leanTarget = Math.max(-0.4, Math.min(0.4, speed * 0.03));
-        const stretchTarget = Math.min(0.7, Math.abs(speed) * 0.05);
-        springStep(lean, leanTarget, shapeSpring.frequency, shapeSpring.damping, elapsed, {
-          push: surge * shapeSpring.inertia,
-        });
-        springStep(stretch, stretchTarget, shapeSpring.frequency, shapeSpring.damping, elapsed);
-        if (
-          springAtRest(place, target, 0.002) &&
-          springAtRest(lean, leanTarget, 0.002) &&
-          springAtRest(stretch, stretchTarget, 0.002)
-        ) {
-          rest(place, target);
-          rest(lean, 0);
-          rest(stretch, 0);
-        } else moving = true;
+        glideTo(place, target, now, followStep);
+        moving = glideStep(place, now, travel, ease);
       }
-      hovers.forEach((swell, index) => {
-        const goal = index === hovered ? 1 : 0;
-        if (instant) rest(swell, goal);
-        else springStep(swell, goal, hoverSpring.frequency, hoverSpring.damping, elapsed);
-        if (springAtRest(swell, goal, 0.005)) rest(swell, goal);
-        else moving = true;
+      hovers.forEach((glide, index) => {
+        glideTo(glide, index === hovered ? 1 : 0, now);
+        if (glideStep(glide, now, swell, ease)) moving = true;
       });
       path.setAttribute(
         'd',
         wavePath(
           layout,
           placed ? place.value : null,
-          hovers.map((swell) => Math.max(0, swell.value)),
-          { lean: lean.value, stretch: stretch.value },
+          hovers.map((glide) => glide.value),
         ),
       );
       if (moving) drawFrame = requestAnimationFrame(draw);
-      else drawn = 0;
     };
     const redraw = () => {
       if (drawFrame === 0) drawFrame = requestAnimationFrame(draw);

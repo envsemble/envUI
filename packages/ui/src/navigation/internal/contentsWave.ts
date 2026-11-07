@@ -2,9 +2,8 @@ import { roundToHundredth } from '../../internal/lengths.js';
 /**
  * The shape beside the contents that marks the reader's place: one stroke down the list, swelling
  * into a broad bulge at the reader's place and running thin a few entries away, like a brush's.
- * As the place moves, the bulge stretches along the way it travels, leaning back like a drop, and
- * settles with a short wobble when it arrives: three springs, stepped every frame it moves. At the
- * list's first and last entries it stays whole: smaller, so it tapers before the shape ends.
+ * It keeps its shape as the place moves, gliding there (`glideTo` and `glideStep`). At the list's
+ * first and last entries it stays whole: smaller, so it tapers before the shape ends.
  */
 
 /** How many entries away from the reader's place the shape still swells: two and a half. */
@@ -34,18 +33,6 @@ export interface WaveLayout {
   full: number;
 }
 
-/**
- * How the bulge is deformed as it moves, each from 0 at rest. `lean`, from -1 to 1, draws out its
- * upper side and draws in its lower one as it moves down, the other way as it moves up. `stretch`
- * makes it taller and thinner above 0, shorter and fuller below: squashed as it lands.
- */
-export interface WaveMotion {
-  lean: number;
-  stretch: number;
-}
-
-const still: WaveMotion = { lean: 0, stretch: 0 };
-
 /** A smooth bell: 1 at 0, easing to 0 at 1 and beyond, either way. */
 function bell(distance: number): number {
   const d = Math.min(1, Math.abs(distance));
@@ -57,25 +44,6 @@ const edge = Math.exp(-((waveSpread / waveFall) ** waveRound));
 function swellAround(distance: number): number {
   const fall = Math.exp(-(Math.abs(distance / waveFall) ** waveRound));
   return Math.max(0, (fall - edge) / (1 - edge));
-}
-
-/** How much a lean draws out the trailing side, and a stretch the bulge's height and width. */
-const leanReach = 0.2;
-const stretchReach = 0.18;
-const stretchThin = 0.18;
-
-/**
- * How tall the bulge is on each side of the reader's place, as a share of its height at rest, and
- * how wide at its fullest, for its motion.
- */
-function deform({ lean, stretch }: WaveMotion) {
-  const tall = Math.max(0.6, 1 + stretch * stretchReach);
-  return {
-    above: tall * Math.max(0.5, 1 + lean * leanReach),
-    below: tall * Math.max(0.5, 1 - lean * leanReach),
-    // Squashed, it grows a little past its fullest, into the gap before the labels.
-    across: Math.min(1.05, Math.max(0.6, 1 - stretch * stretchThin)),
-  };
 }
 
 /**
@@ -101,7 +69,7 @@ function entryAt(anchors: readonly number[], y: number): number {
   return to > from ? index + (y - from) / (to - from) : index;
 }
 
-/** How far a swell reaches either way, in entries at rest: past it, under 3% of its fullest. */
+/** How far a swell reaches either way, in entries: past it, under 3% of its fullest. */
 const waveFoot = waveFall * Math.log(1 / 0.03) ** (1 / waveRound);
 /** How much room a swell leaves before the shape's end for the thin stroke's round end, in entries. */
 const endTip = 0.12;
@@ -121,9 +89,9 @@ function fitBetween(before: number, after: number, foot: number): number {
 }
 
 /**
- * How far the shape swells at a fractional entry index, from 0 to 1, or a little more where it
- * lands: 1 at the reader's place, half 0.9 entries away and nothing two and a half away, drawn out
- * and in by its motion, and shorter by `reach` in a short list; with a smaller swell at each entry
+ * How far the shape swells at a fractional entry index, from 0 to 1: 1 at the reader's place, half
+ * 0.9 entries away and nothing two and a half away, and shorter by `reach` in a short list; with a
+ * smaller swell at each entry
  * under the pointer, by how far its own has grown (`hovers`, from 0 to 1 per entry), which merges
  * with the bulge where they meet. Without a place, only those. Near either of the shape's `ends`,
  * fractional indexes, the bulge is drawn smaller, the same shape, and a little toward the middle,
@@ -133,26 +101,21 @@ export function swellAt(
   index: number,
   place: number | null,
   hovers: readonly number[],
-  motion: WaveMotion = still,
   reach = 1,
   ends: readonly [number, number] = [-Infinity, Infinity],
 ): number {
   const [start, end] = ends;
   let swell = 0;
   if (place !== null) {
-    const { above, below, across } = deform(motion);
-    const upper = waveFoot * above * reach;
-    const lower = waveFoot * below * reach;
+    const foot = waveFoot * reach;
     // Where the bulge would reach past an end, it moves a little away from it, then fits the rest.
     const short = (room: number, foot: number) => Math.max(0, foot + endTip - room);
-    const at = place + endDrift * (short(place - start, upper) - short(end - place, lower));
+    const at = place + endDrift * (short(place - start, foot) - short(end - place, foot));
     const fit = Math.min(
-      fitBetween(at - start, Infinity, upper),
-      fitBetween(Infinity, end - at, lower),
+      fitBetween(at - start, Infinity, foot),
+      fitBetween(Infinity, end - at, foot),
     );
-    const distance = index - at;
-    const side = (distance < 0 ? above : below) * reach * fit;
-    swell = across * fit * swellAround(distance / side);
+    swell = fit * swellAround((index - at) / (reach * fit));
   }
   for (let entry = 0; entry < hovers.length; entry += 1) {
     const amount = hovers[entry]!;
@@ -180,40 +143,57 @@ export function wavePlace(position: number): number {
   return index + progress * progress * (3 - 2 * progress);
 }
 
-/** A value on a spring and how fast it moves, per second. */
-export interface Spring {
+/**
+ * A value that glides to its target: from where it was when the target was set, at `start`, in ms,
+ * eased over a duration, so it never passes the target and comes to rest on it.
+ */
+export interface Glide {
   value: number;
-  velocity: number;
+  from: number;
+  to: number;
+  start: number;
+}
+
+/** A glide resting at `value`. */
+export function glideAt(value: number): Glide {
+  return { value, from: value, to: value, start: 0 };
 }
 
 /**
- * Moves a spring toward its target over `elapsed` seconds, in small steps so a long frame stays
- * steady: `frequency` in radians per second, `damping` 1 for no overshoot, less for a wobble, and
- * `push` a steady force on it over the time, per second squared, such as its carrier's inertia.
+ * Sets a glide's target at `now`. A step no larger than `follow` carries the glide's end along with
+ * it, so a target that moves a little every frame, as the scroll does, is followed without a pause;
+ * at rest the value takes it at once. A larger step glides there from where the value is drawn.
  */
-export function springStep(
-  spring: Spring,
-  target: number,
-  frequency: number,
-  damping: number,
-  elapsed: number,
-  { push = 0 }: { push?: number } = {},
-): void {
-  const steps = Math.max(1, Math.ceil(elapsed / 0.004));
-  const dt = elapsed / steps;
-  for (let index = 0; index < steps; index += 1) {
-    const pull =
-      frequency * frequency * (target - spring.value) -
-      2 * damping * frequency * spring.velocity +
-      push;
-    spring.velocity += pull * dt;
-    spring.value += spring.velocity * dt;
+export function glideTo(glide: Glide, target: number, now: number, follow = 0): void {
+  if (target === glide.to) return;
+  const resting = glide.value === glide.to;
+  if (Math.abs(target - glide.to) <= follow) {
+    glide.to = target;
+    if (resting) glide.value = glide.from = target;
+    return;
   }
+  glide.from = glide.value;
+  glide.to = target;
+  glide.start = now;
 }
 
-/** Whether a spring has come to rest on its target, within `near`. */
-export function springAtRest(spring: Spring, target: number, near: number): boolean {
-  return Math.abs(target - spring.value) < near && Math.abs(spring.velocity) < near * 10;
+/**
+ * Draws a glide at `now`, over `duration` ms with `ease`, a function of progress: at its target at
+ * once when the duration is 0. Whether it is still moving.
+ */
+export function glideStep(
+  glide: Glide,
+  now: number,
+  duration: number,
+  ease: (progress: number) => number,
+): boolean {
+  const progress = duration > 0 ? (now - glide.start) / duration : 1;
+  if (progress >= 1 || glide.value === glide.to) {
+    glide.value = glide.from = glide.to;
+    return false;
+  }
+  glide.value = glide.from + (glide.to - glide.from) * ease(Math.max(0, progress));
+  return true;
 }
 
 /**
@@ -241,7 +221,6 @@ export function wavePath(
   layout: WaveLayout,
   place: number | null,
   hovers: readonly number[],
-  motion: WaveMotion = still,
 ): string {
   const { anchors, top, bottom, full } = layout;
   if (anchors.length === 0 || !(bottom > top) || !(full > 0)) return '';
@@ -252,7 +231,7 @@ export function wavePath(
       ? ([entryAt(anchors, top), entryAt(anchors, bottom)] as const)
       : ([-Infinity, Infinity] as const);
   const width = (y: number) => {
-    const swell = swellAt(entryAt(anchors, y), place, hovers, motion, reach, ends);
+    const swell = swellAt(entryAt(anchors, y), place, hovers, reach, ends);
     return full * (waveThin + (1 - waveThin) * swell);
   };
   // The ends are round and never overlap. Each starts where the shape is as wide as the round end,

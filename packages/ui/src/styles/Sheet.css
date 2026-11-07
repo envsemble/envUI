@@ -191,7 +191,8 @@
   }
 
   /* Motion: the sheet fades and slides in from its edge. Movement only without a reduced-motion
-     preference, and none while a finger moves it. */
+     preference, and none while a finger moves it. As it slides, the surface is solid within the
+     fast duration, so the page never shows through it; the backdrop takes the slower fade. */
   .env-sheet[data-starting-style],
   .env-sheet[data-ending-style] {
     opacity: 0;
@@ -209,7 +210,7 @@
       --env-sheet-offset-x: 2rem;
       --env-sheet-offset-y: 0rem;
       transition:
-        opacity var(--env-motion-duration-medium) var(--env-motion-ease),
+        opacity var(--env-motion-duration-fast) var(--env-motion-ease-enter),
         transform var(--env-motion-duration-slow) var(--env-motion-ease-enter);
     }
     .env-sheet:is([data-side='start'], [data-side='end']:dir(rtl)) {

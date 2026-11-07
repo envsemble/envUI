@@ -143,17 +143,17 @@ test('the style sheet draws text as bars, shapes and missing text, and pulses ge
     css,
     /\[data-env-skeleton\]:not\(env-none\) :empty::before \{[^}]*display: var\(--env-skeleton-placeholder\);/,
   );
-  // The pulse: a breath of 1.8 s, slower and half as deep with a reduced-motion preference, and
-  // none in forced colors.
+  // The pulse: a breath of 7.5 slow durations, 1.8 s, from the motion tokens, so tokens of 0s stop
+  // it; slower and half as deep with a reduced-motion preference, and none in forced colors.
   assert.match(
     css,
-    /\[data-env-skeleton\]:not\(env-none\) \{[^}]*animation: env-skeleton-pulse 1\.8s ease-in-out infinite;/,
+    /\[data-env-skeleton\]:not\(env-none\) \{[^}]*animation: env-skeleton-pulse calc\(var\(--env-motion-duration-slow\) \* 7\.5\) var\(--env-motion-ease\)\s+infinite;/,
   );
   const block = (start) =>
     css.slice(css.indexOf(start), css.indexOf('\n  }\n', css.indexOf(start)));
   assert.match(
     block('@media (prefers-reduced-motion: reduce)'),
-    /animation: env-skeleton-pulse-reduced 3\.2s ease-in-out infinite;/,
+    /animation: env-skeleton-pulse-reduced calc\(var\(--env-motion-duration-slow\) \* 13\.5\)\s+var\(--env-motion-ease\) infinite;/,
   );
   assert.match(block('@keyframes env-skeleton-pulse-reduced'), /--env-skeleton-pulse: 0\.5;/);
   assert.match(block('@media (forced-colors: active)'), /animation: none;/);

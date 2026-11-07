@@ -62,6 +62,8 @@ The number can be written in any format, such as a currency. By default it is wr
 1. **Window** (`env-animated-number`)
 2. **Value** (`env-animated-number-value`, `value`)
 
+While the number changes, the value it changed from rolls out as the new one rolls in.
+
 ## Behaviour
 
 ### Rolling to a new value
@@ -72,7 +74,7 @@ AnimatedNumber rolls up as the value grows and down as it shrinks.
 
 ### Reduced motion
 
-With a reduced-motion preference, the new value only fades in.
+With a reduced-motion preference, the old value fades out as the new one fades in.
 
 ## Rules
 
@@ -129,3 +131,4 @@ AnimatedNumber is the root, `env-animated-number`, around the value, `env-animat
 ## Changelog
 
 - **1.0.0**: The default format follows EnvUIProvider's `locale`. `format` is `formatValue`, as on Slider and CalendarHeatmap.
+- **1.0.0-prerelease.6**: The value it changed from rolls out quickly, `env-animated-number-previous`, as the new one rolls in, so the number never blinks out; with reduced motion they cross-fade.

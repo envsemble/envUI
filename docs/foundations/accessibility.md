@@ -95,7 +95,7 @@ import { IconChevronRight } from '@envsemble/envui/icons/ChevronRight';
 | Reduced motion | `prefers-reduced-motion` keeps only opacity changes; spinners turn and skeletons pulse slowly                                              |
 | Forced colors  | States a fill or shadow carried take system colors, such as Highlight and GrayText; swatches and heatmaps keep theirs                      |
 | Touch          | Under a coarse pointer, controls and rows grow to at least 44 px; as Touch on [Spacing & density](spacing.md) says                         |
-| Motion tokens  | `--env-motion-duration-fast`, `--env-motion-duration-medium` and `--env-motion-ease`, for the application's own transitions                |
+| Motion tokens  | The `--env-motion-*` tokens, for your own motion; `0s` switches envUI's off, as [Customize and extend](../customizing.md#motion) says      |
 
 #### The words of the page
 

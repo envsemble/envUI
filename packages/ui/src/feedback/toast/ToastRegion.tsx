@@ -18,12 +18,12 @@ import { useModalOpen } from '../internal/useModalPresence.js';
 import { IconClose } from '../../icons/Close.js';
 import { prefersReducedMotion } from '../../internal/reducedMotion.js';
 import { flag } from '../../internal/flag.js';
+import { motionDuration, motionEasing } from '../../internal/motionTokens.js';
 import '../../styles/Base.css';
 import '../../styles/Toast.css';
 
 const glideId = 'env-toast-glide';
 const revealId = 'env-toast-reveal';
-const glideEasing = 'cubic-bezier(0.05, 0.7, 0.1, 1)';
 
 /** The vertical offset a running glide currently adds to a notice. */
 function glideOffset(item: HTMLElement) {
@@ -213,9 +213,13 @@ export function ToastRegion({
   useLayoutEffect(() => {
     const element = viewport.current;
     if (!element) return;
-    // Without the Web Animations API, such as in jsdom, notices move without motion.
+    // Without the Web Animations API, such as in jsdom, notices move without motion, and so they do
+    // where the application sets the motion tokens to 0s. The glide takes the slow duration, a
+    // revealed notice's fade the medium one, both decelerating as notices entering do.
     const animates = typeof element.animate === 'function';
-    const glide = animates && !prefersReducedMotion();
+    const easing = animates ? motionEasing(element, 'ease-enter') : '';
+    const revealDuration = animates ? motionDuration(element, 'medium') : 0;
+    const glideDuration = animates && !prefersReducedMotion() ? motionDuration(element, 'slow') : 0;
     const leavingIds = new Set(
       toastStore.toasts
         .filter((toast) => toast.transitionStatus === 'ending')
@@ -277,25 +281,25 @@ export function ToastRegion({
       next.set(id, top);
       if (previous === undefined) {
         // Revealed from the hidden ones, the notice fades in; new notices have their own entrance.
-        if (animates && hiddenIds.current.has(id))
+        if (revealDuration > 0 && hiddenIds.current.has(id))
           item
             .animate([{ opacity: 0 }, { opacity: 1 }], {
               id: revealId,
-              duration: 200,
-              easing: glideEasing,
+              duration: revealDuration,
+              easing,
             })
             .finished.then(settle, settle);
         continue;
       }
-      if (!glide || Math.abs(previous - top) < 1) continue;
+      if (glideDuration === 0 || Math.abs(previous - top) < 1) continue;
       // Start where the notice was drawn before this change, including an interrupted glide.
       const offset = glideOffset(item);
       for (const animation of animationsOf(item)) if (animation.id === glideId) animation.cancel();
       item
         .animate([{ translate: `0 ${previous + offset - top}px` }, { translate: '0 0' }], {
           id: glideId,
-          duration: 240,
-          easing: glideEasing,
+          duration: glideDuration,
+          easing,
         })
         .finished.then(settle, settle);
     }

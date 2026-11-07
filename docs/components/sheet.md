@@ -239,6 +239,7 @@ A Sheet shares Dialog's parts: its heading, `env-dialog-heading`, with the title
 ## Changelog
 
 - **1.0.0**: Sheet, which was Drawer in 1.0.0-prerelease.0, adds `side="bottom"`, and its widths follow the window classes of its container. Drawer, for the panels that were Dialog's `placement="right"`, with `side`, `width`, a swipe to close and the text direction.
+- **1.0.0-prerelease.6**: As it slides in, the sheet is solid within `--env-motion-duration-fast`, so the page doesn't show through a sheet as wide as a phone's window; the backdrop keeps the slower fade.
 - **1.0.0-prerelease.6**: While a sheet is `pending`, every DialogClose inside is disabled as its close button is, and its last action, where it is a Button that sets no `pending` of its own, shows it pending.
 - **1.0.0-prerelease.5**: A Sheet has no edge line: its fill and its scrim set it apart, and its edge returns at high contrast. A side sheet keeps its actions at its foot, however little its body holds.
 - **1.0.0-prerelease.5**: A Sheet is on the navigation's background, `--env-color-bg-default`, rather than the popup's, in every theme, so navigation that opens in it in a narrow window keeps its color.

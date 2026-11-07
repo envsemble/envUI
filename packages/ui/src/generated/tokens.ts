@@ -2401,10 +2401,10 @@ export const tokens = {
     cssVariable: '--env-motion-ease-exit',
     type: 'cubicBezier',
     values: {
-      light: 'cubic-bezier(0.3, 0, 0.8, 0.15)',
-      dark: 'cubic-bezier(0.3, 0, 0.8, 0.15)',
-      'light-high-contrast': 'cubic-bezier(0.3, 0, 0.8, 0.15)',
-      'dark-high-contrast': 'cubic-bezier(0.3, 0, 0.8, 0.15)',
+      light: 'cubic-bezier(0.4, 0, 1, 1)',
+      dark: 'cubic-bezier(0.4, 0, 1, 1)',
+      'light-high-contrast': 'cubic-bezier(0.4, 0, 1, 1)',
+      'dark-high-contrast': 'cubic-bezier(0.4, 0, 1, 1)',
     },
   },
   /** A picture beside a name with a second line, such as an account header. */

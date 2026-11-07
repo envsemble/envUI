@@ -109,6 +109,34 @@ function GreenArea({ children }: { children: React.ReactNode }) {
 
 envUI's contrast gate measures its own tokens and the colors its components compose, in all four themes. It can't measure colors an application chooses: keep text at 4.5:1 on your container, 7:1 at high contrast, and boundaries and icons at 3:1, also on the state layers. Under forced colors, the system's colors take the place of yours.
 
+## Motion
+
+Every component moves with six system tokens, its loops included, such as a spinner's turn and a skeleton's pulse, which last a multiple of the slow duration. Set them to tune envUI's motion, and use them in the application's own:
+
+| Token                          | Value                             | For                                                                                    |
+| ------------------------------ | --------------------------------- | -------------------------------------------------------------------------------------- |
+| `--env-motion-duration-fast`   | `0.12s`                           | A small change, such as a state layer or a color under the pointer, and a part leaving |
+| `--env-motion-duration-medium` | `0.16s`                           | A part that opens, moves or fades in, such as a popup or a field's floating label      |
+| `--env-motion-duration-slow`   | `0.24s`                           | A larger movement, such as a sheet sliding in or a dialog's backdrop                   |
+| `--env-motion-ease`            | `cubic-bezier(0.45, 0, 0.2, 1)`   | A change on screen, which speeds up and then settles                                   |
+| `--env-motion-ease-enter`      | `cubic-bezier(0.05, 0.7, 0.1, 1)` | A part entering, which decelerates into place                                          |
+| `--env-motion-ease-exit`       | `cubic-bezier(0.4, 0, 1, 1)`      | A part leaving, which accelerates away                                                 |
+
+### Switch motion off
+
+Durations of `0s` switch off every component's motion, the motion it runs from script included: parts appear, move and leave at once, and loops stand still. Set them on `.env-theme`, outside cascade layers, so every Theme takes them, the ones envUI's popups render in too:
+
+```css
+.env-theme {
+  --env-motion-duration-fast: 0s;
+  --env-motion-duration-medium: 0s;
+  --env-motion-duration-slow: 0s;
+}
+```
+
+- **Slower or quicker.** Longer or shorter durations change all of envUI's motion in proportion.
+- **Reduced motion is built in.** Under `prefers-reduced-motion: reduce`, components keep only fades, a spinner turns slowly and a skeleton pulses gently, without these settings.
+
 ## Compose one root
 
 [Surface](components/surface.md) supplies fill, padding and corners; [Row](components/row.md), [Column](components/column.md) and [Grid](components/grid.md) supply layout. `render` puts both on one element, with the semantic tag on the element it supplies. A custom render component passes native props, `className`, `style`, `children` and `ref` to its root.

@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect, useReducer } from 'react';
+import { useEffect, useReducer, useRef } from 'react';
 import { classNames } from '../../internal/classNames.js';
 import { useMessages } from '../../internal/EnvUIContext.js';
 import { common } from '../../foundations/messages/common.js';
+import { motionTime } from '../../internal/motionTokens.js';
 import '../../styles/Base.css';
 import '../../styles/LoadingBar.css';
 
@@ -21,9 +22,6 @@ export interface LoadingBarProps {
 
 type Phase = 'idle' | 'waiting' | 'running' | 'finishing';
 type LoadingBarEvent = 'start' | 'show' | 'stop' | 'hide';
-
-/** How long the bar takes to complete and fade out; matches the finishing transitions in CSS. */
-const finishDuration = 400;
 
 function reduce(
   state: { phase: Phase; run: number },
@@ -59,17 +57,37 @@ export function LoadingBar({
 }: LoadingBarProps) {
   const messages = useMessages('common', common);
   const [state, dispatch] = useReducer(reduce, { phase: 'idle', run: 0 });
+  const indicator = useRef<HTMLDivElement>(null);
 
   useEffect(() => dispatch(active ? 'start' : 'stop'), [active]);
 
   useEffect(() => {
-    if (state.phase !== 'waiting' && state.phase !== 'finishing') return;
-    const timer = setTimeout(
-      () => dispatch(state.phase === 'waiting' ? 'show' : 'hide'),
-      state.phase === 'waiting' ? delay : finishDuration,
-    );
+    if (state.phase !== 'waiting') return;
+    const timer = setTimeout(() => dispatch('show'), delay);
     return () => clearTimeout(timer);
   }, [state.phase, delay]);
+
+  // Finishing, the bar completes and fades out, and is removed once its fade has ended: at once
+  // where the motion tokens are 0s. A timer at the transitions' length stands in for an end event
+  // that never comes, such as in a hidden container, where nothing transitions.
+  useEffect(() => {
+    const element = indicator.current;
+    if (state.phase !== 'finishing' || !element) return;
+    const time = motionTime(element, 'transition');
+    if (time === 0) {
+      dispatch('hide');
+      return;
+    }
+    const end = (event: TransitionEvent) => {
+      if (event.target === element && event.propertyName === 'opacity') dispatch('hide');
+    };
+    element.addEventListener('transitionend', end);
+    const timer = setTimeout(() => dispatch('hide'), time + 100);
+    return () => {
+      element.removeEventListener('transitionend', end);
+      clearTimeout(timer);
+    };
+  }, [state.phase, state.run]);
 
   if (state.phase === 'idle' || state.phase === 'waiting') return null;
   return (
@@ -80,7 +98,7 @@ export function LoadingBar({
       className={classNames('env-loading-bar', contained && 'env-loading-bar-contained', className)}
       data-state={state.phase}
     >
-      <div className="env-loading-bar-indicator" />
+      <div ref={indicator} className="env-loading-bar-indicator" />
     </div>
   );
 }

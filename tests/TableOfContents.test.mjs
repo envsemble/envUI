@@ -1,5 +1,5 @@
 // TableOfContents: the outline it builds from headings, the current section it finds from where
-// the page has scrolled, the shape that marks the reader's place and the springs it moves on, and
+// the page has scrolled, the shape that marks the reader's place and the glide it moves on, and
 // its server markup, which lists the sections given as items and marks none until the page
 // hydrates.
 import { test } from 'node:test';
@@ -43,8 +43,9 @@ const {
   uniqueId,
   currentSection,
   swellAt,
-  springStep,
-  springAtRest,
+  glideAt,
+  glideTo,
+  glideStep,
   waveReach,
   wavePath,
   wavePlace,
@@ -197,47 +198,39 @@ test("the shape swells at the reader's place, half 0.9 entries away, and none tw
   // In a short list, the bulge is shorter, so the thin stroke still shows.
   assert.equal(waveReach(12), 1);
   assert.equal(waveReach(3), 0.85);
-  assert.ok(swellAt(4.9, 4, [], undefined, 0.85) < swellAt(4.9, 4, []));
+  assert.ok(swellAt(4.9, 4, [], 0.85) < swellAt(4.9, 4, []));
 });
 
-test('moving, the bulge leans back and stretches; landing, it squashes a little past its fullest', () => {
-  const lean = { lean: 0.5, stretch: 0 };
-  // Moving down, its upper side is drawn out and its lower side drawn in.
-  assert.ok(swellAt(2.5, 4, [], lean) > swellAt(2.5, 4, []));
-  assert.ok(swellAt(5.5, 4, [], lean) < swellAt(5.5, 4, []));
-  // Stretched, taller and thinner; squashed, shorter and fuller, never more than 8% past.
-  const stretched = { lean: 0, stretch: 0.6 };
-  assert.ok(swellAt(4, 4, [], stretched) < 1);
-  assert.ok(swellAt(6, 4, [], stretched) > swellAt(6, 4, []));
-  const squashed = { lean: 0, stretch: -1 };
-  assert.ok(swellAt(4, 4, [], squashed) > 1 && swellAt(4, 4, [], squashed) <= 1.05);
-});
-
-test('a spring overshoots a little when underdamped, never when critically damped, and rests', () => {
-  const peak = (damping) => {
-    const spring = { value: 0, velocity: 0 };
-    let most = 0;
-    for (let frame = 0; frame < 120; frame += 1) {
-      springStep(spring, 1, 20, damping, 1 / 60);
-      most = Math.max(most, spring.value);
-    }
-    return [most, spring];
-  };
-  const [under, rested] = peak(0.5);
-  assert.ok(under > 1.1 && under < 1.25);
-  assert.ok(springAtRest(rested, 1, 0.002));
-  const [critical] = peak(1);
-  assert.ok(critical <= 1);
-  // A long frame is stepped in small steps, so it lands where short frames do.
-  const long = { value: 0, velocity: 0 };
-  const short = { value: 0, velocity: 0 };
-  springStep(long, 1, 20, 0.7, 0.048);
-  for (let frame = 0; frame < 3; frame += 1) springStep(short, 1, 20, 0.7, 0.016);
-  assert.ok(Math.abs(long.value - short.value) < 0.01);
-  // A push, such as its carrier slowing, moves it off its target.
-  const pushed = { value: 0, velocity: 0 };
-  springStep(pushed, 0, 18, 0.4, 0.05, { push: -100 });
-  assert.ok(pushed.value < 0);
+test('the place glides to a far target without passing it, and follows small steps as they come', () => {
+  const ease = (progress) => progress;
+  const place = glideAt(0);
+  // A jump glides there over the duration, eased, never past it, and rests.
+  glideTo(place, 3, 0, 0.2);
+  const drawn = [10, 120, 230, 250].map((now) => [glideStep(place, now, 240, ease), place.value]);
+  assert.deepEqual(
+    drawn.map(([moving]) => moving),
+    [true, true, true, false],
+  );
+  assert.ok(
+    drawn.every(([, value], index) => value <= 3 && (index === 0 || value > drawn[index - 1][1])),
+  );
+  assert.equal(place.value, 3);
+  // At rest, a step as small as the scroll's is taken at once.
+  glideTo(place, 3.1, 300, 0.2);
+  assert.equal(place.value, 3.1);
+  assert.equal(glideStep(place, 300, 240, ease), false);
+  // While gliding, a small step carries the glide's end along, without starting again.
+  glideTo(place, 5, 400, 0.2);
+  glideStep(place, 520, 240, ease);
+  const halfway = place.value;
+  glideTo(place, 5.1, 520, 0.2);
+  assert.equal(place.start, 400);
+  glideStep(place, 640, 240, ease);
+  assert.ok(place.value > halfway && Math.abs(place.value - 5.1) < 1e-9);
+  // Without a duration, as under reduced motion or motion tokens of 0s, it is there at once.
+  glideTo(place, 1, 700, 0.2);
+  assert.equal(glideStep(place, 700, 0, ease), false);
+  assert.equal(place.value, 1);
 });
 
 test("the shape's outline is straight at its start, widest beside the reader's place, with round ends", () => {
