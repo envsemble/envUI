@@ -82,7 +82,8 @@
     },
     "AnimatedNumber": {
       "env-animated-number": "The number, which animates when its value changes.",
-      "env-animated-number-value": "The digits as they change."
+      "env-animated-number-value": "The digits as they change.",
+      "env-animated-number-previous": "The value it changed from, while it leaves; hidden from assistive technology, its text drawn from data-value."
     },
     "Avatar": {
       "env-avatar": "The avatar: an image, initials or a figure in a circle.",

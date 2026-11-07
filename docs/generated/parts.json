@@ -178,6 +178,10 @@
           "description": "The number, which animates when its value changes."
         },
         {
+          "class": "env-animated-number-previous",
+          "description": "The value it changed from, while it leaves; hidden from assistive technology, its text drawn from data-value."
+        },
+        {
           "class": "env-animated-number-value",
           "description": "The digits as they change."
         }
@@ -190,7 +194,15 @@
             "up"
           ],
           "parts": [
+            "env-animated-number-previous",
             "env-animated-number-value"
+          ]
+        },
+        {
+          "attribute": "data-value",
+          "values": [],
+          "parts": [
+            "env-animated-number-previous"
           ]
         }
       ]
