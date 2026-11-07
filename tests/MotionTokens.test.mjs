@@ -1,5 +1,6 @@
 // internal/motionTokens: the motion tokens as script reads them, so motion run from script stops
-// where an application sets the durations to 0s, and the easings it draws frame by frame.
+// where an application sets the durations to 0s, and the easings it draws frame by frame; and the
+// site's own reading of them (apps/site/src/motion/MotionTokens.ts).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { join } from 'node:path';
@@ -18,6 +19,17 @@ await build({
   logLevel: 'error',
 });
 const { parseTime, easingFunction } = await import(pathToFileURL(output).href);
+const siteOutput = join(repository, '.cache/unit/SiteMotionTokens.mjs');
+await build({
+  absWorkingDir: repository,
+  entryPoints: [join(repository, 'apps/site/src/motion/MotionTokens.ts')],
+  bundle: true,
+  platform: 'node',
+  format: 'esm',
+  outfile: siteOutput,
+  logLevel: 'error',
+});
+const site = await import(pathToFileURL(siteOutput).href);
 
 test('a duration reads in milliseconds, and as 0 where it is 0s, unset or not a time', () => {
   assert.equal(parseTime(' 0.24s'), 240);
@@ -41,4 +53,35 @@ test('an easing is drawn as CSS draws it, from 0 to 1 and never past either', ()
   }
   // An easing it can't read is the standard ease.
   assert.equal(easingFunction('steps(4)')(0.5), easingFunction('ease')(0.5));
+});
+
+test("the site's script motion follows an easing token set to any CSS easing", () => {
+  const tokens = {};
+  globalThis.document = { documentElement: {} };
+  globalThis.getComputedStyle = () => ({ getPropertyValue: (name) => tokens[name] ?? '' });
+  // What Chromium's CSS.supports takes for a timing function, closely enough for these values.
+  globalThis.CSS = {
+    supports: (_, value) =>
+      /^(linear|ease(-in|-out|-in-out)?|(cubic-bezier|steps)\(.*\))$/.test(value),
+  };
+  try {
+    // Unset, the designed curve.
+    assert.equal(site.motionEase('ease-exit'), 'cubic-bezier(0.4, 0, 1, 1)');
+    for (const value of ['linear', 'ease-out', 'steps(4)', 'cubic-bezier(0.2, 0, 0, 1)']) {
+      tokens['--env-motion-ease'] = ` ${value}`;
+      assert.equal(site.motionEase(), value);
+    }
+    // Frame by frame, a keyword draws the curve it names.
+    tokens['--env-motion-ease'] = 'linear';
+    assert.ok(Math.abs(site.motionEasing()(0.3) - 0.3) < 1e-4);
+    tokens['--env-motion-ease'] = 'ease-out';
+    assert.ok(Math.abs(site.motionEasing()(0.5) - easingFunction('ease-out')(0.5)) < 1e-4);
+    // What isn't an easing reads as the designed curve.
+    tokens['--env-motion-ease'] = 'fast';
+    assert.equal(site.motionEase(), 'cubic-bezier(0.45, 0, 0.2, 1)');
+  } finally {
+    delete globalThis.document;
+    delete globalThis.getComputedStyle;
+    delete globalThis.CSS;
+  }
 });

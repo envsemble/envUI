@@ -26,25 +26,48 @@ const designedEases = {
 
 type Ease = keyof typeof designedEases;
 
-/** The control points of an easing token, as the page's root sets it, such as `--env-motion-ease`. */
+/** The curves CSS names by a keyword, which an easing token may be set to as well. */
+const keywordEases: Record<string, readonly number[]> = {
+  ease: [0.25, 0.1, 0.25, 1],
+  'ease-in': [0.42, 0, 1, 1],
+  'ease-out': [0, 0, 0.58, 1],
+  'ease-in-out': [0.42, 0, 0.58, 1],
+  linear: [0, 0, 1, 1],
+};
+
+/** An easing token's value as the page's root sets it, such as `--env-motion-ease`; '' unset. */
+const easeValue = (name: Ease) =>
+  typeof document === 'undefined'
+    ? ''
+    : getComputedStyle(document.documentElement).getPropertyValue(`--env-motion-${name}`).trim();
+
+/**
+ * The control points of an easing token's curve: its `cubic-bezier()` or the curve its keyword
+ * names, such as `linear` or `ease-out`; the designed curve for anything else.
+ */
 function easePoints(name: Ease): readonly number[] {
-  const value =
-    typeof document === 'undefined'
-      ? ''
-      : getComputedStyle(document.documentElement).getPropertyValue(`--env-motion-${name}`);
-  const points = /cubic-bezier\(([^)]+)\)/.exec(value)?.[1]?.split(',').map(Number);
-  return points?.length === 4 && points.every(Number.isFinite) ? points : designedEases[name];
+  const value = easeValue(name);
+  const points = /^cubic-bezier\(([^)]+)\)$/.exec(value)?.[1]?.split(',').map(Number);
+  if (points?.length === 4 && points.every(Number.isFinite)) return points;
+  return keywordEases[value] ?? designedEases[name];
 }
 
 /**
  * An easing token as CSS, for an animation the site starts from script, such as `element.animate`:
- * the token's own curve, so a theme that changes it changes the animation with it.
+ * the token's own value, any CSS easing, such as `linear` or `steps(4)`, so a theme that changes it
+ * changes the animation with it; the designed curve where it is unset or no easing.
  */
-export const motionEase = (name: Ease = 'ease') => `cubic-bezier(${easePoints(name).join(', ')})`;
+export function motionEase(name: Ease = 'ease') {
+  const value = easeValue(name);
+  if (value && typeof CSS !== 'undefined' && CSS.supports('animation-timing-function', value))
+    return value;
+  return `cubic-bezier(${designedEases[name].join(', ')})`;
+}
 
 /**
  * An easing token as a function from the share of the time gone, 0 to 1, to the share of the way,
- * for motion the site steps itself frame by frame: the cubic Bézier curve the token names.
+ * for motion the site steps itself frame by frame: the cubic Bézier curve the token sets or its
+ * keyword names; for another easing, such as `steps()`, the designed curve.
  */
 export function motionEasing(name: Ease = 'ease'): (time: number) => number {
   const [x1, y1, x2, y2] = easePoints(name) as [number, number, number, number];

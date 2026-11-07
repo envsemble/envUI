@@ -3,7 +3,6 @@ import {
   startTransition,
   Suspense,
   useEffect,
-  useLayoutEffect,
   useRef,
   useState,
   type CSSProperties,
@@ -17,7 +16,6 @@ import type { DocumentationMetadata } from '../shared/DocumentationTypes';
 import { Documentation } from '../pages/Documentation';
 import { useAutoplay } from '../motion/Autoplay';
 import { Playback, PreviewOverlays, usePlaying } from '../motion/Motion';
-import { motionDuration, motionEase, reducedMotion } from '../motion/MotionTokens';
 import { useDisplaySettings } from '../theme/DisplaySettings';
 import { ExampleRender } from '../figures/LiveExample';
 import { PageSpecimen } from '../figures/PageSpecimens';
@@ -79,7 +77,9 @@ export function TilePreview({
   const Composition = preview?.composition;
   const theme = useTheme();
   const { motionPaused } = useDisplaySettings();
-  const playingNow = playing && !motionPaused;
+  // As it stops, a picture that played shows its still at once, drawn anew (Playback's `redraw`):
+  // a crossfade from it as it played would show both, such as a spinner over the label it hid.
+  const plays = playing && !motionPaused;
   const stage = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLDivElement>(null);
   // The canvas, for the pointer no one sees, which finds the preview's elements in it.
@@ -92,19 +92,6 @@ export function TilePreview({
     setAnimations((count) => count + 1);
     return () => setAnimations((count) => count - 1);
   });
-  // As it stops, a picture that played crossfades into its still, rather than jumping back to where
-  // it started: a copy of it as it was is left over the still, drawn anew under it at once, and
-  // fades out (fadeOutCopy). The pointer coming back on it before then plays it again at once.
-  const [plays, setPlays] = useState(playingNow);
-  const stopping = plays && !playingNow;
-  const crossfades = stopping && animations > 0 && canvasElement !== null && !reducedMotion();
-  if (stopping && !crossfades) setPlays(false);
-  else if (!plays && playingNow) setPlays(true);
-  useLayoutEffect(() => {
-    if (!crossfades || !canvasElement) return;
-    fadeOutCopy(canvasElement);
-    setPlays(false);
-  }, [crossfades, canvasElement]);
   const subject =
     preview &&
     (Composition ? (
@@ -180,71 +167,6 @@ export function TilePreview({
       {shown && <TileSkeleton />}
     </Theme>
   );
-}
-
-/** The style properties an animation of an element changes, as its keyframes name them. */
-function animatedProperties(animation: Animation): string[] {
-  if (animation instanceof CSSTransition) return [animation.transitionProperty];
-  const effect = animation.effect;
-  if (!(effect instanceof KeyframeEffect)) return [];
-  const named = new Set<string>();
-  for (const frame of effect.getKeyframes())
-    for (const key of Object.keys(frame))
-      if (!['offset', 'computedOffset', 'easing', 'composite'].includes(key)) named.add(key);
-  return [...named];
-}
-
-/** A property as a style declaration names it, such as `backgroundColor` as background-color. */
-const cssName = (property: string) =>
-  property.startsWith('--') ? property : property.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`);
-
-/**
- * Leaves a copy of a tile's canvas as it shows now over it, which fades out over the canvas drawn
- * anew under it: a crossfade from the picture as it played to its still, with nothing empty
- * between. The copy holds still: each part that was moving keeps the style it had, and nothing in
- * it starts again. It is a picture, unreachable and unnamed, and leaves once it has faded.
- */
-function fadeOutCopy(canvas: HTMLElement) {
-  const copy = canvas.cloneNode(true) as HTMLElement;
-  copy.removeAttribute('data-fitted');
-  copy.dataset.catalogueLeaving = '';
-  for (const element of [copy, ...copy.querySelectorAll('[id]')]) element.removeAttribute('id');
-  // Each moving part's style as it is now, from the part the copy was made of.
-  const originals = [canvas, ...canvas.querySelectorAll('*')];
-  const copies = [copy, ...copy.querySelectorAll('*')];
-  const copyOf = new Map(originals.map((element, index) => [element, copies[index]]));
-  const held = new Map<Element, Set<string>>();
-  for (const animation of canvas.getAnimations({ subtree: true })) {
-    const target = (animation.effect as KeyframeEffect | null)?.target;
-    if (!target || !copyOf.has(target)) continue;
-    const properties = held.get(target) ?? new Set<string>();
-    for (const property of animatedProperties(animation)) properties.add(property);
-    held.set(target, properties);
-  }
-  for (const [element, properties] of held) {
-    const style = getComputedStyle(element);
-    const into = (copyOf.get(element) as HTMLElement | SVGElement).style;
-    for (const property of properties) {
-      const name = cssName(property);
-      into.setProperty(name, style.getPropertyValue(name));
-    }
-  }
-  for (const element of copies)
-    if (element instanceof HTMLElement || element instanceof SVGElement) {
-      element.style.animation = 'none';
-      element.style.transition = 'none';
-    }
-  copy.style.opacity = '1';
-  canvas.after(copy);
-  const fade = copy.animate([{ opacity: 1 }, { opacity: 0 }], {
-    duration: motionDuration('medium'),
-    easing: motionEase(),
-    fill: 'forwards',
-  });
-  const remove = () => copy.remove();
-  void fade.finished.then(remove, remove);
-  // In case the fade doesn't run, such as in a tab in the background.
-  window.setTimeout(remove, 2 * motionDuration('medium') + 100);
 }
 
 /**

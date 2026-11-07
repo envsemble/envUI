@@ -21,13 +21,10 @@ async function motionChoice(page: Page, name: 'Play' | 'Pause') {
 const tile = (page: Page, name: string) =>
   page.locator('.catalogue-gallery-tile', { has: page.getByRole('link', { name, exact: true }) });
 
-/**
- * Whether the Switch tile's switch is on: its canvas's, not the copy of the picture as it played
- * that fades out over it as it stops (fadeOutCopy, Related.tsx).
- */
+/** Whether the Switch tile's switch is on. */
 const switchOn = (tileOf: Locator) =>
   tileOf
-    .locator('.catalogue-related-canvas:not([data-catalogue-leaving]) input')
+    .locator('.catalogue-related-canvas input')
     .evaluate((input) => (input as HTMLInputElement).checked);
 
 /** The Slider page's figure of a slider under the pointer, whose value starts at 30, by its own
@@ -55,9 +52,10 @@ test('a tile plays its preview while the pointer is on it, and rests at its stil
   // On the tile, it plays: the switch turns on.
   await switchTile.hover();
   await expect.poll(() => switchOn(switchTile)).toBe(true);
-  // Off it, it goes back to the still at once, under the picture as it played, which fades out.
+  // Off it, it shows its still at once, with no copy of the picture as it played over it.
   await page.mouse.move(1, 1);
   await expect.poll(() => switchOn(switchTile)).toBe(false);
+  await expect(switchTile.locator('.catalogue-related-canvas')).toHaveCount(1);
 });
 
 test('an animated figure plays by itself, and its pause button holds it where it is', async ({
