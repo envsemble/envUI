@@ -202,7 +202,7 @@
      row's other controls. */
   .env-list > .env-list-item[data-interactive] {
     position: relative;
-    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
+    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   /* The target is as wide as its label, which wraps only where the row is too narrow: a button's
      percentage cap would count it as no width in the row's text, which then wraps the label to the

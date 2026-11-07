@@ -40,7 +40,7 @@
     max-block-size: none;
     outline: none;
     transform: translate(var(--env-sheet-swipe-x), var(--env-sheet-swipe-y));
-    transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);
+    transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease-enter);
   }
   /* Its heading, body and actions stack in a column no taller than the sheet: the body scrolls on its
      own, so the heading and the actions stay in view in a sheet too short for all it holds. The body

@@ -201,7 +201,7 @@
     .env-radio-input {
       transition-property: background-color, color, border-color, transform;
       transition-duration: var(--env-motion-duration-fast);
-      transition-timing-function: var(--env-motion-ease);
+      transition-timing-function: var(--env-motion-ease-enter);
     }
     .env-radio[data-orientation='vertical']:active:not(:has(input:disabled)) {
       transform: scale(0.99);

@@ -4,7 +4,7 @@
     "duration": {
       "$type": "duration",
       "fast": {
-        "$description": "A small change, such as a state layer or a color under the pointer: 120 ms.",
+        "$description": "A small change, such as a state layer, a color under the pointer or a tooltip: 120 ms.",
         "$value": { "value": 0.12, "unit": "s" }
       },
       "medium": {
@@ -23,7 +23,7 @@
     },
     "ease-enter": {
       "$type": "cubicBezier",
-      "$description": "Elements entering decelerate into place.",
+      "$description": "Elements entering, their fade included, and feedback under the pointer start at once and decelerate into place.",
       "$value": [0.05, 0.7, 0.1, 1]
     },
     "ease-exit": {

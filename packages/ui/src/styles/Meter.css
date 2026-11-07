@@ -35,9 +35,10 @@
   }
   .env-progress[data-indeterminate] .env-progress-indicator {
     inline-size: 40%;
-    /* A sweep takes five times the slow duration, 1.2 s, so motion tokens of 0s stop it. */
-    animation: env-progress-indeterminate calc(var(--env-motion-duration-slow) * 5)
-      var(--env-motion-ease) infinite;
+    /* A sweep takes five times the slow duration, 1.2 s, so motion tokens of 0s stop it. It runs at
+       an even pace, as a spinner turns: an easing would linger where the bar is off the track, and the
+       empty track would read as a stall. The bar enters as the last one leaves. */
+    animation: env-progress-indeterminate calc(var(--env-motion-duration-slow) * 5) linear infinite;
   }
   /* The sweep runs toward the end of the line, so right to left in right-to-left text. */
   .env-progress[data-indeterminate]:dir(rtl) .env-progress-indicator {

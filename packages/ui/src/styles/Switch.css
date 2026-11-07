@@ -116,7 +116,7 @@
       inset 0 0 0 1px var(--env-switch-ring, var(--env-color-border-default)),
       var(--env-switch-halo);
     cursor: inherit;
-    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
+    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   .env-switch-input::before {
     content: '';
@@ -133,7 +133,7 @@
     /* Its color changes with the track's, as it slides. */
     transition:
       transform var(--env-motion-duration-fast) var(--env-motion-ease),
-      background-color var(--env-motion-duration-fast) var(--env-motion-ease);
+      background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   .env-switch-input:checked {
     background: var(--env-switch-on-fill, var(--env-color-bg-primary-emphasis));
@@ -185,7 +185,7 @@
     .env-switch-input {
       transition-property: background-color, color, border-color, box-shadow, transform;
       transition-duration: var(--env-motion-duration-fast);
-      transition-timing-function: var(--env-motion-ease);
+      transition-timing-function: var(--env-motion-ease-enter);
     }
     .env-switch:active:not(:has(input:disabled)) .env-switch-input {
       transform: scale(0.9);

@@ -87,7 +87,7 @@
     user-select: none;
     background: var(--env-menu-item-custom-fill, transparent);
     color: var(--env-menu-item-content, var(--env-color-fg-default));
-    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
+    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   .env-menu-item:has(> :is(.env-menu-item-indicator-slot, .env-icon):first-child) {
     padding-inline-start: calc(

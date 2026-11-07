@@ -191,8 +191,8 @@
     border-radius: var(--env-radius-sm);
     cursor: text;
     transition:
-      background-color var(--env-motion-duration-fast) var(--env-motion-ease),
-      box-shadow var(--env-motion-duration-fast) var(--env-motion-ease);
+      background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter),
+      box-shadow var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   @media (hover: hover) {
     .env-color-picker-field:hover:not(:has(:disabled, [readonly])) {
@@ -310,7 +310,7 @@
     font: var(--env-type-body-sm);
     font-variant-numeric: tabular-nums;
     cursor: pointer;
-    transition: border-color var(--env-motion-duration-medium) var(--env-motion-ease);
+    transition: border-color var(--env-motion-duration-medium) var(--env-motion-ease-enter);
     --env-color-picker-button-border: var(--env-color-border-default);
   }
   .env-color-picker-button[data-size='sm'] {

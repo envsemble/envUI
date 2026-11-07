@@ -208,6 +208,7 @@ Its popup is frosted, as every popup is: `--env-popup-opacity`, `--env-popup-blu
 
 - **1.0.0**: `options` is `items`, and `SelectOption` is `SelectItem`; `hint` is `description`; `variant="outlined"` is `variant="outline"`. `className` and `style` style the field's root rather than the trigger, which takes `ref`. The trigger is a Button, the popup the shared popup and the options its rows: `env-dropdown-trigger` is `env-select-trigger`, `env-dropdown-options` `env-select-popup`, `env-dropdown-list` `env-select-list`, `env-dropdown-option` `env-select-item` and `env-dropdown-option-check` `env-select-item-indicator`.
 - **1.0.0**: The open list takes the level-2 elevation edge, with no shadow.
+- **1.0.0-prerelease.6**: The list opens over `--env-motion-duration-medium`, fading in and growing from 98 % with `--env-motion-ease-enter`, rather than growing from 96 % over the slow duration, so it shows from its first frames rather than late.
 - **1.0.0-prerelease.6**: The chevron turns half a circle as the list opens and closes, rather than flipping over.
 - **1.0.0-prerelease.6**: While its list is open, the field keeps its focused frame, the accent edge and label, also when focus is in the popup, as when it opens under the pointer.
 - **1.0.0-prerelease.6**: In an option with a description, the check mark and the leading content sit on the label's line rather than across both lines.

@@ -167,8 +167,8 @@
     background: var(--env-color-border-muted);
     opacity: 0;
     transition:
-      opacity var(--env-motion-duration-fast) var(--env-motion-ease),
-      background-color var(--env-motion-duration-fast) var(--env-motion-ease);
+      opacity var(--env-motion-duration-fast) var(--env-motion-ease-enter),
+      background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   .env-panel-dock-resize-handle:is(:hover, :focus-visible)::after,
   .env-panel-dock-panel[data-resizing] > .env-panel-dock-resize-handle::after {
@@ -251,7 +251,7 @@
      panel's raised one toward the page, which sets it apart without a line, so text its edge cuts
      reads as scrolled away rather than broken. */
   .env-panel-dock-header {
-    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
+    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   .env-panel-dock-header[data-scrolled] {
     background-color: var(--env-color-bg-default);
@@ -310,7 +310,7 @@
     white-space: nowrap;
     cursor: pointer;
     outline: none;
-    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
+    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   .env-panel-dock-tab-restore:hover {
     background: var(--env-color-bg-neutral-subtle-hover);

@@ -268,7 +268,7 @@
     inset: 0;
     border-radius: inherit;
     pointer-events: none;
-    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
+    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   .env-avatar-group-item:hover::after {
     background: var(--env-color-bg-neutral-subtle-hover);

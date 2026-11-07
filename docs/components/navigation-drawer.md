@@ -346,6 +346,7 @@ The parts the anatomy doesn't show: a section's row, `env-navigation-drawer-bran
 ## Changelog
 
 - **1.0.0**: NavigationDrawer, the navigation drawer, NavigationRail, the navigation rail, and NavigationBar, the navigation bar; together they replace NavList and the sidebar's rail. NavList.Item's `selected` is a destination's `current`, its `end` count is `count`, and NavList.Group is a destination's `group`.
+- **1.0.0-prerelease.6**: Colors under the pointer and while pressed change with `--env-motion-ease-enter`, rather than easing in slowly, so hover and press show from the first frame.
 - **1.0.0-prerelease.6**: A section's chevron turns half a circle rather than flipping over, and its destinations fade in and out as they grow and shrink.
 - **1.0.0-prerelease.6**: Nested destinations under a section with an icon sit in past it, so their labels start a step inside the section's label rather than before it.
 - **1.0.0-prerelease.6**: The indicators are rounded rectangles with the medium corner, rather than Material's pills: NavigationRail's and NavigationBar's around the icon, narrower at 2.75 rem, and each NavigationDrawer item. A NavigationRail item's keyboard focus ring rings its indicator, 2 px out, rather than the whole item.

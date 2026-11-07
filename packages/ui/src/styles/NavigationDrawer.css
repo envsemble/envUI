@@ -188,8 +188,8 @@
     text-decoration: none;
     overflow-wrap: break-word;
     transition:
-      background-color var(--env-motion-duration-fast) var(--env-motion-ease),
-      color var(--env-motion-duration-fast) var(--env-motion-ease);
+      background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter),
+      color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   .env-navigation-drawer-item > .env-icon {
     flex: none;
@@ -300,7 +300,7 @@
     background: transparent;
     color: var(--env-color-fg-muted);
     cursor: pointer;
-    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
+    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   /* Over the current destination, the button takes its content color. */
   .env-navigation-drawer-branch-row:has(> [data-current]) > .env-navigation-drawer-toggle {

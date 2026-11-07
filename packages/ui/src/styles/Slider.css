@@ -82,7 +82,7 @@
     scale: calc(1 + var(--env-slider-stretch)) calc(1 - var(--env-slider-stretch) / 2);
     transform-origin: var(--env-slider-stretch-origin, left) center;
     transition:
-      --env-slider-veil var(--env-motion-duration-fast) var(--env-motion-ease),
+      --env-slider-veil var(--env-motion-duration-fast) var(--env-motion-ease-enter),
       --env-slider-stretch var(--env-slider-stretch-spring, var(--env-motion-duration-slow))
         var(--env-motion-ease);
   }
@@ -114,7 +114,7 @@
     );
     opacity: 0;
     pointer-events: none;
-    transition: opacity var(--env-motion-duration-fast) var(--env-motion-ease);
+    transition: opacity var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   .env-slider-control[data-handle] .env-slider-indicator::after {
     opacity: var(--env-slider-veil);
@@ -148,7 +148,7 @@
           )
       )
     );
-    transition: opacity var(--env-motion-duration-fast) var(--env-motion-ease);
+    transition: opacity var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   .env-slider-thumb:dir(rtl) {
     --env-slider-thumb-side: -1;
@@ -171,7 +171,7 @@
       0 0 / calc(100% / (var(--env-slider-ticks) - 1)) 100% repeat-x;
     opacity: 0;
     pointer-events: none;
-    transition: opacity var(--env-motion-duration-fast) var(--env-motion-ease);
+    transition: opacity var(--env-motion-duration-fast) var(--env-motion-ease-enter);
     /* Under the label and the value the ticks fade to a quarter, as the handle does: a mask at a
        quarter outside the clear stretch between them, which Slider measures from the track's left
        side. Its stops are in this box, which starts one part along the track. */
@@ -271,7 +271,7 @@
     }
     .env-slider-thumb {
       transition:
-        opacity var(--env-motion-duration-fast) var(--env-motion-ease),
+        opacity var(--env-motion-duration-fast) var(--env-motion-ease-enter),
         inset-inline-start var(--env-slider-glide, var(--env-motion-duration-medium))
           var(--env-motion-ease);
     }

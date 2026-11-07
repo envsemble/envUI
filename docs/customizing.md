@@ -113,14 +113,14 @@ envUI's contrast gate measures its own tokens and the colors its components comp
 
 Every component moves with six system tokens, its loops included, such as a spinner's turn and a skeleton's pulse, which last a multiple of the slow duration. Set them to tune envUI's motion, and use them in the application's own:
 
-| Token                          | Value                             | For                                                                                    |
-| ------------------------------ | --------------------------------- | -------------------------------------------------------------------------------------- |
-| `--env-motion-duration-fast`   | `0.12s`                           | A small change, such as a state layer or a color under the pointer, and a part leaving |
-| `--env-motion-duration-medium` | `0.16s`                           | A part that opens, moves or fades in, such as a popup or a field's floating label      |
-| `--env-motion-duration-slow`   | `0.24s`                           | A larger movement, such as a sheet sliding in or a dialog's backdrop                   |
-| `--env-motion-ease`            | `cubic-bezier(0.45, 0, 0.2, 1)`   | A change on screen, which speeds up and then settles                                   |
-| `--env-motion-ease-enter`      | `cubic-bezier(0.05, 0.7, 0.1, 1)` | A part entering, which decelerates into place                                          |
-| `--env-motion-ease-exit`       | `cubic-bezier(0.4, 0, 1, 1)`      | A part leaving, which accelerates away                                                 |
+| Token                          | Value                             | For                                                                                                |
+| ------------------------------ | --------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `--env-motion-duration-fast`   | `0.12s`                           | A small change, such as a state layer, a color under the pointer or a tooltip, and a part leaving  |
+| `--env-motion-duration-medium` | `0.16s`                           | A part that opens, moves or fades in, such as a popup or a field's floating label                  |
+| `--env-motion-duration-slow`   | `0.24s`                           | A larger movement, such as a sheet sliding in or a dialog's backdrop                               |
+| `--env-motion-ease`            | `cubic-bezier(0.45, 0, 0.2, 1)`   | A change on screen, which speeds up and then settles                                               |
+| `--env-motion-ease-enter`      | `cubic-bezier(0.05, 0.7, 0.1, 1)` | A part entering, its fade included, and feedback under the pointer, which start at once and settle |
+| `--env-motion-ease-exit`       | `cubic-bezier(0.4, 0, 1, 1)`      | A part leaving, which accelerates away                                                             |
 
 ### Switch motion off
 

@@ -203,7 +203,7 @@
     box-sizing: border-box;
     /* Motion: it fades in, below; the toast list has no positioner, so it scales from the center. */
     transform-origin: var(--transform-origin, center);
-    transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);
+    transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease-enter);
   }
   .env-toast-viewport > .env-toast[data-limited] {
     display: none;
@@ -252,7 +252,7 @@
     opacity: 0;
   }
   .env-toast {
-    transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);
+    transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease-enter);
   }
   @media (prefers-reduced-motion: reduce) {
     .env-toast {
@@ -269,7 +269,7 @@
   @media (prefers-reduced-motion: no-preference) {
     .env-toast-viewport > .env-toast {
       transition:
-        opacity var(--env-motion-duration-medium) var(--env-motion-ease),
+        opacity var(--env-motion-duration-medium) var(--env-motion-ease-enter),
         transform var(--env-motion-duration-slow) var(--env-motion-ease-enter);
     }
     .env-toast-viewport[data-placement='bottom-end'] > .env-toast[data-starting-style],

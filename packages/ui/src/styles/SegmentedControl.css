@@ -176,9 +176,9 @@
     white-space: nowrap;
     cursor: pointer;
     transition:
-      background-color var(--env-motion-duration-fast) var(--env-motion-ease),
-      color var(--env-motion-duration-fast) var(--env-motion-ease),
-      box-shadow var(--env-motion-duration-fast) var(--env-motion-ease);
+      background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter),
+      color var(--env-motion-duration-fast) var(--env-motion-ease-enter),
+      box-shadow var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   /* A press anywhere across the track's height lands on a segment, in its inset and between two. */
   .env-segmented-control-item::before {
@@ -257,7 +257,7 @@
         translate var(--env-motion-duration-medium) var(--env-motion-ease),
         inline-size var(--env-motion-duration-medium) var(--env-motion-ease),
         block-size var(--env-motion-duration-medium) var(--env-motion-ease),
-        background-color var(--env-motion-duration-fast) var(--env-motion-ease);
+        background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
     }
     /* Over the thumb, the chosen segment lays only the state layer of the application's colors. */
     .env-segmented-control:has(> .env-segmented-control-thumb:not([hidden]))

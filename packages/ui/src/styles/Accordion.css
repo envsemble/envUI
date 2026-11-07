@@ -35,7 +35,7 @@
     overflow-wrap: break-word;
     cursor: pointer;
     outline: none;
-    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
+    transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   /* Hover and press lay the shared state layer over the heading, inset from the hairlines by its
      inline padding, which the panel's content matches. */
@@ -65,7 +65,7 @@
     inline-size: var(--env-accordion-indicator-size);
     block-size: 1lh;
     color: var(--env-color-fg-muted);
-    transition: color var(--env-motion-duration-fast) var(--env-motion-ease);
+    transition: color var(--env-motion-duration-fast) var(--env-motion-ease-enter);
   }
   .env-accordion-indicator > svg {
     grid-area: 1 / 1;

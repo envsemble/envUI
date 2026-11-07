@@ -37,7 +37,7 @@
     margin-right: max(var(--env-viewport-gutter), env(safe-area-inset-right));
     /* Motion: it fades in, below; it has no positioner, so it scales from the center. */
     transform-origin: var(--transform-origin, center);
-    transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);
+    transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease-enter);
   }
   .env-dialog[data-width='lg'] {
     width: min(44rem, 100% - var(--env-dialog-gutters));
@@ -128,7 +128,7 @@
   @media (prefers-reduced-motion: no-preference) {
     .env-dialog {
       transition:
-        opacity var(--env-motion-duration-medium) var(--env-motion-ease),
+        opacity var(--env-motion-duration-medium) var(--env-motion-ease-enter),
         transform var(--env-motion-duration-slow) var(--env-motion-ease-enter);
     }
     .env-dialog[data-starting-style],
