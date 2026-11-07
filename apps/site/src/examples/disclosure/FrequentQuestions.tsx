@@ -17,7 +17,7 @@ const questions = [
 
 export default function FrequentQuestions() {
   return (
-    <Column gap={3}>
+    <Column gap={3} style={{ inlineSize: 'min(100%, 28rem)' }}>
       {questions.map(({ question, answer }, index) => (
         // A shared name lets one answer stay open at a time, where the browser supports it; the
         // first starts open.
