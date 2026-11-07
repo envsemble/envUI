@@ -89,7 +89,12 @@ test(
       .evaluateAll((links) => new Set(links.map((link) => getComputedStyle(link).fontWeight)).size);
     expect(weights).toBe(1);
     // Only the current section reads in the text color: the passed ones are as quiet as those
-    // still to come.
+    // still to come, once the labels' color transitions have finished.
+    await contents
+      .locator('.env-table-of-contents-link')
+      .evaluateAll((links) =>
+        Promise.all(links.flatMap((link) => link.getAnimations().map((each) => each.finished))),
+      );
     const color = (link: Locator) => link.evaluate((element) => getComputedStyle(element).color);
     const quiet = await color(contents.locator('[data-passed]').first());
     expect(quiet).not.toBe(await color(current(contents)));
@@ -203,7 +208,7 @@ test('a smooth scroll to a section moves the marks through the sections on the w
       return first === (await outline());
     })
     .toBe(true);
-  // Still after longer than a landing's wobble lasts, about 400 ms.
+  // Still after longer than a glide lasts, the slow duration, 240 ms.
   const rested = await outline();
   await page.evaluate(() => new Promise((done) => setTimeout(done, 400)));
   expect(await outline()).toBe(rested);

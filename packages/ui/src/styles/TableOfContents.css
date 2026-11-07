@@ -43,6 +43,8 @@
     border-radius: var(--env-radius-sm);
     color: var(--env-color-fg-muted);
     text-decoration: none;
+    /* A label that becomes current takes the text color as the shape arrives beside it. */
+    transition: color var(--env-motion-duration-medium) var(--env-motion-ease);
     /* Long labels wrap, and a long word breaks rather than overflowing the column. */
     overflow-wrap: break-word;
   }
