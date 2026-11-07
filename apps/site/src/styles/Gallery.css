@@ -97,11 +97,20 @@
 }
 
 /* Where the reader can't hover, nothing slides: the cell shows its picture and all of what is
-   under it, as long as that is, such as a Related tile's two lines at the touch scale. */
+   under it, as long as that is, such as a Related tile's two lines at the touch scale. The name
+   sits close under its own picture, and the rows stand well apart, so each name reads as its
+   picture's rather than the next one's. */
 @media (hover: none) {
   .catalogue-gallery-tile {
     grid-template-rows: auto auto;
     overflow: visible;
+  }
+  .catalogue-gallery-tile > .catalogue-gallery-meta:not(.catalogue-related-meta) {
+    padding-block: var(--env-space-2) 0;
+  }
+  .catalogue-gallery-grid,
+  .catalogue-related-tiles {
+    row-gap: var(--env-space-6);
   }
 }
 
