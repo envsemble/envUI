@@ -112,3 +112,62 @@ export function lendSelection(scope: Element | undefined, run: () => void) {
     for (const each of kept) selection.addRange(each);
   }
 }
+
+/** What a preview's own scrolling stays inside: a tile's window and a page's figure. */
+const previews = '.catalogue-related-canvas, .site-live-example';
+
+/** Whether a box scrolls along the block axis, its content taller than it. */
+const scrollsDown = (box: Element) =>
+  box.scrollHeight > box.clientHeight &&
+  /auto|scroll|overlay/.test(getComputedStyle(box).overflowY);
+/** Whether a box scrolls along the inline axis, its content wider than it. */
+const scrollsAcross = (box: Element) =>
+  box.scrollWidth > box.clientWidth && /auto|scroll|overlay/.test(getComputedStyle(box).overflowX);
+
+/** How far a box scrolls along an axis to bring a span into it, by where it is to show there. */
+function scrollFor(start: number, end: number, from: number, to: number, place: string) {
+  if (place === 'start') return start - from;
+  if (place === 'end') return end - to;
+  if (place === 'center') return (start + end) / 2 - (from + to) / 2;
+  // Nearest: as little as brings it in, none where it is in already.
+  if (start < from) return start - from;
+  if (end > to) return Math.min(end - to, start - from);
+  return 0;
+}
+
+/**
+ * Keeps what a component scrolls into view inside the preview it is in, such as the chosen row of
+ * a select resting open in a gallery tile: the boxes that scroll inside the preview scroll as the
+ * browser would scroll them, and the page never does. The browser's own scrollIntoView scrolls
+ * every box around the element, the page among them, so a tile loaded below the fold would pull
+ * the page down to it as it appears. Elsewhere, scrolling into view is the browser's, as before.
+ */
+export function keepScrollInPreviews() {
+  const proto = Element.prototype;
+  if ((proto as { catalogueScroll?: boolean }).catalogueScroll) return;
+  (proto as { catalogueScroll?: boolean }).catalogueScroll = true;
+  const { scrollIntoView } = proto;
+  proto.scrollIntoView = function (options?: boolean | ScrollIntoViewOptions) {
+    const preview = this.closest(previews);
+    if (!preview) return scrollIntoView.call(this, options);
+    const block =
+      typeof options === 'object'
+        ? (options.block ?? 'start')
+        : options === false
+          ? 'end'
+          : 'start';
+    const inline = typeof options === 'object' ? (options.inline ?? 'nearest') : 'nearest';
+    for (let box = this.parentElement; box && preview.contains(box); box = box.parentElement) {
+      const down = scrollsDown(box);
+      const across = scrollsAcross(box);
+      if (!down && !across) continue;
+      const shown = box.getBoundingClientRect();
+      const target = this.getBoundingClientRect();
+      box.scrollBy({
+        top: down ? scrollFor(target.top, target.bottom, shown.top, shown.bottom, block) : 0,
+        left: across ? scrollFor(target.left, target.right, shown.left, shown.right, inline) : 0,
+        behavior: 'instant',
+      });
+    }
+  };
+}

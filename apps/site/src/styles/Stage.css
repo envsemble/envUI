@@ -117,8 +117,9 @@
   box-shadow: var(--catalogue-card-shadow-subtle);
 }
 
-/* A tile under the pointer, or with the keyboard on its link, as its picture comes alive
+/* A Related tile under the pointer, or with the keyboard on its link, as its picture comes alive
    (motion/Motion.tsx): a hairline ring drawn inside its stage's edge, over the picture, eased in.
+   A gallery's cell draws none: its picture slides up instead (Gallery.css).
    Its fill stays as it is: a shade of it would match a surface the picture paints, such as a top
    bar's band or a page's body, which would vanish into it. The ring is a layer of its own, the
    stage's last, so nothing the picture opens, a popup, a dialog's backdrop or a sheet, covers it:
@@ -139,13 +140,12 @@
 }
 
 @media (hover: hover) {
-  :is(.catalogue-gallery-tile, .catalogue-related-tile):hover .catalogue-related-stage::after {
+  .catalogue-related-tile:hover .catalogue-related-stage::after {
     border-color: var(--env-color-border-default);
   }
 }
 
-:is(.catalogue-gallery-tile, .catalogue-related-tile):has(:focus-visible)
-  .catalogue-related-stage::after {
+.catalogue-related-tile:has(:focus-visible) .catalogue-related-stage::after {
   border-color: var(--env-color-border-default);
 }
 

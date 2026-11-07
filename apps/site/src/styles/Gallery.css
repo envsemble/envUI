@@ -1,9 +1,14 @@
-/* The galleries of components and patterns (Gallery.tsx): by group, a tile for each page, its
-   live picture on the recessed canvas every example sits on, inert, with its name under it: a
-   component at its own size, a pattern's scene scaled to fit. Tiles are of one size, so the
-   pictures line up in rows. */
+/* The galleries of components and patterns (Gallery.tsx): by group, a cell for each page: its live
+   picture, inert, flat and square-cornered, in the reader's theme, and under it its name, which
+   slides into view as the pointer comes onto the cell: a component at its own size, a pattern's
+   scene scaled to fit. Cells are of one size, so the pictures line up in rows. */
 /* The groups stand a page's section gap apart (Shell.css), as every section does. */
 .catalogue-gallery {
+  /* As wide as the page's whole pane, past the column the text keeps to, less a gutter at either
+     side, and centred on it: 100cqi is the pane's width (site-page-layout, Shell.css). */
+  inline-size: calc(100cqi - 2 * var(--site-gutter));
+  max-inline-size: none;
+  margin-inline: calc(50% - 50cqi + var(--site-gutter));
   text-align: start;
   container: catalogue-gallery / inline-size;
 }
@@ -38,21 +43,76 @@
 
 .catalogue-gallery-grid {
   display: grid;
-  /* Four to a row on a wide page, five on the widest, and two on a phone (below). */
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr));
-  gap: var(--env-space-7) var(--env-space-5);
+  /* As many to a row as fit at 24 rem, as a pattern's cells: two on a laptop's page, three or more
+     on a wider one, and two on a phone (below). */
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 24rem), 1fr));
+  gap: var(--env-space-3);
+  max-inline-size: none;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
+/* A cell of the gallery: its picture, square-cornered and flat on the page, with no edge, and its
+   name under it, out of the cell's view. The cell is as tall as the picture and the name together
+   and shows only that much: at rest the picture sits in its middle, half the name's row lower, and
+   the name below it, out of view; under the pointer, or with the keyboard on its link, both slide
+   up together, the picture to the cell's top and the name into the room it leaves, quick at first
+   and settling, as the picture comes alive. Where the reader can't hover, the name always shows. */
 .catalogue-gallery-tile {
+  --catalogue-gallery-meta-height: 2.25rem;
+  --catalogue-gallery-slide: calc(var(--catalogue-gallery-meta-height) / 2);
   position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  align-content: start;
-  row-gap: var(--env-space-2);
+  grid-template-rows: auto var(--catalogue-gallery-meta-height);
   min-inline-size: 0;
+  overflow: clip;
+}
+
+/* The picture, which slides as a whole with what it shows (Gallery.tsx). */
+.catalogue-gallery-picture {
+  min-inline-size: 0;
+}
+
+.catalogue-gallery-picture,
+.catalogue-gallery-meta {
+  transition: translate var(--env-motion-duration-slow) var(--env-motion-ease-enter);
+}
+
+@media (hover: hover) {
+  .catalogue-gallery-tile:not(:hover, :has(:focus-visible)) .catalogue-gallery-picture {
+    translate: 0 var(--catalogue-gallery-slide);
+  }
+  .catalogue-gallery-tile:not(:hover, :has(:focus-visible)) .catalogue-gallery-meta {
+    translate: 0 calc(var(--catalogue-gallery-meta-height) + var(--catalogue-gallery-slide));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .catalogue-gallery-picture,
+  .catalogue-gallery-meta {
+    transition: none;
+  }
+}
+
+/* The picture: square corners, no edge and no shadow. */
+.catalogue-gallery-grid .catalogue-gallery-stage.catalogue-gallery-stage {
+  border-radius: 0;
+  box-shadow: none;
+}
+.catalogue-gallery-grid .catalogue-related-crop {
+  clip-path: inset(0);
+}
+
+/* The name and an arrow to its page, in the row under the picture. */
+.catalogue-gallery-meta {
+  min-inline-size: 0;
+  padding-inline: var(--env-space-1);
+}
+.catalogue-gallery-arrow {
+  flex: none;
+  color: var(--env-color-fg-muted);
 }
 
 /* The stage of a gallery tile: wide and low, as most components are, so a row of controls
@@ -65,13 +125,13 @@
   max-block-size: none;
 }
 
-/* A pattern's scene takes a larger card than a component's: three to a row on a wide page, two on
+/* A pattern's scene takes a larger cell than a component's: three to a row on a wide page, two on
    a narrower one and one on a phone, on a stage of 4:3, so the whole window its scene is written
    for shows at about its own size and its words read as a page's do (useFit.ts). Every scene is
    one piece of an application 17rem across, low enough to show whole as it plays, so each sits
    centred in its stage with the same margins (tiles/). */
 .catalogue-gallery-grid[data-scenes] {
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 24rem), 1fr));
 }
 
 /* So do Related's tiles where one of them is a scene, so they line up in a row. */
@@ -88,7 +148,7 @@
   overflow: visible;
 }
 
-:is(.catalogue-gallery-grid, .catalogue-related-tiles):not([data-scenes]) .catalogue-related-crop {
+.catalogue-related-tiles:not([data-scenes]) .catalogue-related-crop {
   clip-path: inset(0 round var(--env-radius-surface));
 }
 
@@ -116,9 +176,8 @@
     --catalogue-own-popup-least: 0.85;
     --catalogue-overlay-scale: 0.75;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    row-gap: var(--env-space-5);
-    column-gap: var(--env-space-4);
   }
+
   .catalogue-gallery-grid:not([data-scenes]) .catalogue-gallery-stage.catalogue-gallery-stage {
     aspect-ratio: 16 / 10;
   }
@@ -168,34 +227,38 @@
   place-content: start stretch;
 }
 
-/* The name under the picture, in body text of a medium weight, so a row of tiles reads by its
-   names; the group headings still lead. */
+/* The name under the picture, in body text of a medium weight, on one line; the group headings
+   still lead. */
 .catalogue-gallery-name {
+  min-inline-size: 0;
   margin: 0;
+  overflow: hidden;
   font-weight: var(--env-font-weight-medium);
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .catalogue-gallery-group {
   margin: 0;
 }
 
-.catalogue-gallery-link {
+.catalogue-gallery-link,
+.catalogue-gallery-link:hover {
   color: var(--env-color-fg-default);
+  text-decoration: none;
 }
 
 /* The name's link covers the tile, so the whole picture leads to the page. */
 .catalogue-gallery-link::after {
   position: absolute;
   inset: 0;
-  border-radius: var(--env-radius-surface);
   content: '';
 }
 
-/* The keyboard on a tile's link rings its picture, as focus does; the pointer draws a hairline
-   ring inside its edge (Stage.css). */
-.catalogue-gallery-tile:has(.catalogue-gallery-link:focus-visible) .catalogue-gallery-stage {
-  outline: 0.125rem solid var(--env-color-border-focus);
-  outline-offset: 0.125rem;
+/* The keyboard on a tile's link rings its picture, inside its edge, as the cell clips what lies
+   outside it. */
+.catalogue-gallery-tile:has(.catalogue-gallery-link:focus-visible) .catalogue-gallery-stage::after {
+  border: 0.125rem solid var(--env-color-border-focus);
 }
 
 /* Drawn at its own size, a component lays out as wide as the stage's room, less the fit's inset,

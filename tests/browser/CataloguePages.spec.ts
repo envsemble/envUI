@@ -1,4 +1,4 @@
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect, type Locator, type Page } from '@playwright/test';
 import { siteDevUrl } from './helpers/Servers';
 import { chooseScheme } from './helpers/CatalogueThemes';
 import { documents, componentDocuments } from '../../apps/site/src/pages/PageModel';
@@ -536,7 +536,7 @@ test('a Related tile of a page without an example shows its specimen', async ({ 
   // and shows a few of the icons, fitted to its stage as an example is.
   await page.goto(`${siteDevUrl}/components/avatar`);
   const tile = page.locator('.catalogue-related-tile').filter({ hasText: /^Icon/ });
-  await tile.scrollIntoViewIfNeeded();
+  await showTile(tile);
   await expect(tile.getByRole('link', { name: 'Icon', exact: true })).toHaveAttribute(
     'href',
     '/foundations/icons',
@@ -827,6 +827,13 @@ type PlayFrame = {
 };
 
 /**
+ * Brings a gallery tile wholly into view, in the middle of the window: a large tile only partly in
+ * view counts as visible to scrollIntoViewIfNeeded, and a pointer aimed at its edge would miss it.
+ */
+const showTile = (tile: Locator) =>
+  tile.evaluate((element) => element.scrollIntoView({ block: 'center', behavior: 'instant' }));
+
+/**
  * Hovers a gallery tile from rest for `duration` ms and records each frame of its play: its view,
  * where it is cut off, how far what `targets` select reaches past the stage's edges, and how far
  * each popup it opens does. Then rests it, back at its still's scale.
@@ -836,7 +843,7 @@ async function playTile(page: Page, name: string, targets: string[], duration = 
     has: page.locator('.catalogue-gallery-name', { hasText: new RegExp(`^${name}$`) }),
   });
   const canvas = tile.locator('.catalogue-related-canvas[data-fitted]');
-  await tile.scrollIntoViewIfNeeded();
+  await showTile(tile);
   await expect(canvas).toHaveCount(1);
   await page.mouse.move(0, 0);
   await expect(tile.locator('[data-playing]')).toHaveCount(0);
@@ -1000,7 +1007,7 @@ test('a popup tile rests open and holds one view from its still through its play
       const tile = page.locator('.catalogue-gallery-tile').filter({
         has: page.locator('.catalogue-gallery-name', { hasText: new RegExp(`^${name}$`) }),
       });
-      await tile.scrollIntoViewIfNeeded();
+      await showTile(tile);
       // At rest, the popup shows open, cut off nowhere; on a phone, where it is larger than the
       // stage at a popup's least, it runs on past the stage's foot or end, fading out there,
       // rather than being drawn smaller, never past its top or start.
@@ -1195,7 +1202,7 @@ test('a tile that holds its view is framed the same wherever the pointer comes i
       has: page.locator('.catalogue-gallery-name', { hasText: new RegExp(`^${name}$`) }),
     });
     const canvas = tile.locator('.catalogue-related-canvas[data-fitted]');
-    await tile.scrollIntoViewIfNeeded();
+    await showTile(tile);
     await page.mouse.move(0, 0);
     await expect(canvas).toHaveCount(1);
     const still = () =>
@@ -1218,7 +1225,7 @@ test('a tile that holds its view is framed the same wherever the pointer comes i
       [0.5, 0.4],
       [0.97, 0.7],
     ] as const) {
-      await tile.scrollIntoViewIfNeeded();
+      await showTile(tile);
       const box = (await tile.locator('.catalogue-related-stage').boundingBox())!;
       await page.mouse.move(box.x + box.width * x, box.y + box.height * y);
       await expect(tile.locator('[data-playing]')).toHaveCount(1);
@@ -1464,7 +1471,7 @@ async function deadClicks(page: Page, names: string[]) {
       has: page.locator('.catalogue-gallery-name', { hasText: new RegExp(`^${name}$`) }),
     });
     const canvas = tile.locator('.catalogue-related-canvas[data-fitted]');
-    await tile.scrollIntoViewIfNeeded();
+    await showTile(tile);
     await expect(canvas, name).toHaveCount(1);
     await page.mouse.move(0, 0);
     await expect(tile.locator('[data-playing]')).toHaveCount(0);
@@ -1578,7 +1585,7 @@ test("a playing preview draws its pointer's cursor over its stage, gone at rest 
   const tile = page.locator('.catalogue-gallery-tile').filter({
     has: page.locator('.catalogue-gallery-name', { hasText: /^Select$/ }),
   });
-  await tile.scrollIntoViewIfNeeded();
+  await showTile(tile);
   await expect(tile.locator('.catalogue-related-canvas[data-fitted]')).toHaveCount(1);
   const cursor = page.locator('.catalogue-pointer-cursor');
   await expect(cursor).toHaveCount(0);
@@ -1616,7 +1623,7 @@ test('a playing pointer that carries a file names it in a chip beside its cursor
   const tile = page.locator('.catalogue-gallery-tile').filter({
     has: page.locator('.catalogue-gallery-name', { hasText: /^DropZone$/ }),
   });
-  await tile.scrollIntoViewIfNeeded();
+  await showTile(tile);
   await expect(tile.locator('.catalogue-related-canvas[data-fitted]')).toHaveCount(1);
   const chip = tile.locator('.catalogue-pointer-cursor .catalogue-pointer-file');
   await expect(chip).toHaveCount(0);
