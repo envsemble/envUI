@@ -729,3 +729,73 @@ test(
     await expect(firstRow('Inner')).toHaveCSS('display', 'table-row');
   },
 );
+
+test(
+  'tables scroll sideways in a focusable region and keep a sticky header',
+  { tag: '@engines' },
+  async ({ page }) => {
+    await page.goto(`${fixtureUrl}/?fixture=data-display`);
+    for (const theme of ['light', 'dark']) {
+      const table = page.getByRole('table', { name: `Plans ${theme}` });
+      await expect(table).toBeVisible();
+      const region = page.getByRole('region', { name: `Plans ${theme}` });
+      await expect(region).toHaveAttribute('tabindex', '0');
+      expect(await region.evaluate((element) => element.scrollWidth > element.clientWidth)).toBe(
+        true,
+      );
+      await expect(table.getByRole('columnheader', { name: 'Decisions' })).toHaveCSS(
+        'text-align',
+        'end',
+      );
+      await expect(table.getByRole('cell', { name: '7', exact: true }).first()).toHaveCSS(
+        'font-variant-numeric',
+        'tabular-nums',
+      );
+
+      const header = table.getByRole('columnheader', { name: 'Plan' });
+      await region.evaluate((element) => (element.scrollTop = 400));
+      // The caption scrolls away; the header row stays at the top of the region.
+      const top = await region.evaluate(
+        (element) => element.getBoundingClientRect().top + element.clientTop,
+      );
+      await expect.poll(async () => (await header.boundingBox())!.y).toBeCloseTo(top, 0);
+      // The opaque header covers the rows scrolled beneath it.
+      const background = await header.evaluate(
+        (element) => getComputedStyle(element).backgroundImage,
+      );
+      expect(background).toContain('gradient');
+    }
+    const compact = page.getByRole('table', { name: 'Compact light' });
+    await expect(compact.getByRole('rowheader', { name: 'Total' })).toBeVisible();
+  },
+);
+
+test(
+  'wheeling over a table with a sticky header scrolls the page when the table cannot scroll further',
+  { tag: '@engines' },
+  async ({ page }) => {
+    await page.setViewportSize({ width: 900, height: 500 });
+    await page.goto(`${fixtureUrl}/?fixture=data-display`);
+    const region = page.getByRole('region', { name: 'Plans light' });
+    const pageTop = () => page.evaluate(() => document.scrollingElement!.scrollTop);
+    const wheelOver = async (deltaY: number) => {
+      const box = (await region.boundingBox())!;
+      await page.mouse.move(box.x + box.width / 2, Math.min(Math.max(box.y, 0) + 40, 460));
+      const before = await pageTop();
+      await page.mouse.wheel(0, deltaY);
+      await expect.poll(async () => Math.sign((await pageTop()) - before)).toBe(Math.sign(deltaY));
+    };
+    // At its start, the region hands an upward wheel on to the page.
+    await region.scrollIntoViewIfNeeded();
+    await page.evaluate(() => window.scrollBy(0, 200));
+    await region.evaluate((element) => (element.scrollTop = 0));
+    await wheelOver(-150);
+    // Without a height, the region has nothing to scroll: the wheel moves the page at once.
+    await region.evaluate((element) => (element.style.maxBlockSize = 'none'));
+    expect(await region.evaluate((element) => element.scrollHeight > element.clientHeight)).toBe(
+      false,
+    );
+    await region.scrollIntoViewIfNeeded();
+    await wheelOver(300);
+  },
+);

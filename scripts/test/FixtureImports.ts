@@ -2,7 +2,7 @@
 // `?fixture=<name>` of tests/fixture/App.tsx or a page such as RichText.html, or renders library
 // source it writes out (`import { Table } from '@envsemble/envui'`); each fixture imports library
 // components by name, and those import the modules and style sheets they draw with. TestScope.ts
-// selects specs with it; tests/TestScope.test.mjs covers it.
+// selects specs with it; tests/tooling/TestScope.test.mjs covers it.
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { posix, resolve } from 'node:path';
 

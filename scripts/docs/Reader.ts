@@ -24,7 +24,10 @@ import {
   type PageSection,
   type PropsFile,
 } from './Schema.ts';
-import { readPage, readPartNames, validateFrontmatter, type PartNames } from './Validation.ts';
+import { readPage } from './Validation.ts';
+import { validateFrontmatter } from './validation/Frontmatter.ts';
+import { readPartNames } from './validation/Legends.ts';
+import type { PartNames } from './validation/PageReading.ts';
 
 /** A page of docs/ as readDocumentation reads it. */
 export interface DocumentRecord {

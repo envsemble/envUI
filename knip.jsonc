@@ -12,7 +12,7 @@
         // Run by hand: after the favicon's SVG changes, and to check the site's contents lists.
         "scripts/build/GenerateFavicons.ts",
         "scripts/test/CheckContents.ts",
-        "tests/*.test.mjs",
+        "tests/*/*.test.mjs",
         "tests/browser/*.spec.ts",
         "tests/accessibility/*.spec.ts",
         // The fixture's pages, each loading one of these.
@@ -46,10 +46,8 @@
         "terrazzo.config.mjs",
       ],
       "project": ["src/**/*.{ts,tsx}"],
-      // Pending, for the library's refactor: the issues below but the generated token module's,
-      // whose exports are the whole list.
+      // Pending, for the library's refactor.
       "ignoreIssues": {
-        "src/generated/**": ["exports", "types"],
         "src/content/internal/codeColors.ts": ["types"],
         "src/internal/motionTokens.ts": ["exports"],
         "src/navigation/internal/contentsWave.ts": ["exports"],

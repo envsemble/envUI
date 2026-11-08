@@ -79,3 +79,16 @@ test('a checkbox without a visible label takes presses across a 24 px target, or
     await context.close();
   }
 });
+
+test('a controlled mixed checkbox retains its DOM state when the owner retains mixed', async ({
+  page,
+}) => {
+  await page.goto(`${fixtureUrl}/?fixture=forms`);
+  const fixed = page.getByTestId('frozen-checkbox');
+  await expect(fixed).toHaveJSProperty('indeterminate', true);
+  await fixed.click();
+  await expect(page.getByTestId('frozen-request')).toHaveText('true');
+  await expect(fixed).toHaveAttribute('aria-checked', 'mixed');
+  await expect(fixed).toHaveJSProperty('indeterminate', true);
+  await expect(fixed).not.toBeChecked();
+});

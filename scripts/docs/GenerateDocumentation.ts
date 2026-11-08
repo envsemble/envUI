@@ -50,7 +50,8 @@ export {
   splitFrontmatter,
   statuses,
 } from './Schema.ts';
-export { fenceFor, isPropsTable, readPartNames } from './Validation.ts';
+export { fenceFor, isPropsTable } from './validation/MarkdownBlocks.ts';
+export { readPartNames } from './validation/Legends.ts';
 export { readDocumentation } from './Reader.ts';
 export {
   compileDocument,

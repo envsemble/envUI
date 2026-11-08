@@ -4,7 +4,7 @@
 
 # Every page, the Site's and the Docs' under /docs, including routes answered with index.html. Pages are
 # checked for changes on each load, and only the reader's browser keeps a copy. Only the site may
-# frame its pages, so framing is same-origin rather than denied (tests/SiteHeaders.test.mjs).
+# frame its pages, so framing is same-origin rather than denied (tests/site/SiteHeaders.test.mjs).
 /*
   Cache-Control: private, no-cache
   X-Content-Type-Options: nosniff

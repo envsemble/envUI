@@ -274,3 +274,84 @@ test.describe('List', () => {
     await expect(page.getByTestId('slides-rtl-order')).toHaveText('Roadmap,Intro,Budget,Questions');
   });
 });
+
+/**
+ * Waits two frames, so a state change has started its transitions, and then until the element's
+ * own transitions have finished: what it shows then is where it settles.
+ */
+async function settled(element: Locator) {
+  await element.evaluate(
+    () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+  );
+  await expect
+    .poll(() =>
+      element.evaluate(
+        (node) =>
+          node.getAnimations().filter((animation) => animation.playState === 'running').length,
+      ),
+    )
+    .toBe(0);
+}
+
+test('interactive rows react to hover, presses and focus, and open from anywhere', async ({
+  page,
+}) => {
+  // With motion, as pressed controls shrink: a press on the row still follows its link.
+  await page.goto(`${fixtureUrl}/?fixture=data-display`);
+  for (const theme of ['light', 'dark']) {
+    const rows = page.getByRole('list', { name: `Rows ${theme}` }).getByRole('listitem');
+    const [open, plain] = [rows.first(), rows.last()];
+    const link = open.getByRole('link', { name: 'Roadmap' });
+    const action = open.getByRole('button', { name: 'More actions' });
+    const fill = (row: typeof open) =>
+      row.evaluate((element) => getComputedStyle(element).backgroundColor);
+    const rest = await fill(open);
+    expect(await fill(plain)).toBe(rest);
+    await expect(open).toHaveCSS('position', 'relative');
+    await plain.hover();
+    await settled(plain);
+    expect(await fill(plain)).toBe(rest);
+    // The row reacts to the pointer anywhere on it, and to keyboard focus inside it.
+    await open.hover({ position: { x: 8, y: 8 } });
+    await expect.poll(() => fill(open)).not.toBe(rest);
+    await settled(open);
+    const hovered = await fill(open);
+    await page.mouse.move(0, 0);
+    await expect.poll(() => fill(open)).toBe(rest);
+    // Keyboard focus inside the row highlights it (the action: WebKit's Tab skips links).
+    await link.focus();
+    await page.keyboard.press('Tab');
+    await expect(action).toBeFocused();
+    await expect.poll(() => fill(open)).toBe(hovered);
+    await action.blur();
+    await expect.poll(() => fill(open)).toBe(rest);
+    // A press beside the title follows the link that covers the row, and the row shows it.
+    const box = (await open.boundingBox())!;
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height - 6);
+    await page.mouse.down();
+    await settled(open);
+    const pressed = await fill(open);
+    expect(pressed).not.toBe(hovered);
+    await page.mouse.up();
+    await expect(page.getByTestId(`row-result-${theme}`)).toHaveText('open roadmap');
+    // The action keeps its own press: the row does not darken, and stays plain once the pointer
+    // leaves, though a click may leave focus on the action.
+    const actionBox = (await action.boundingBox())!;
+    await page.mouse.move(actionBox.x + actionBox.width / 2, actionBox.y + actionBox.height / 2);
+    await page.mouse.down();
+    await settled(open);
+    expect(await fill(open)).toBe(hovered);
+    await page.mouse.up();
+    await expect(page.getByTestId(`row-result-${theme}`)).toHaveText('more actions');
+    await page.mouse.move(0, 0);
+    await expect.poll(() => fill(open)).toBe(rest);
+    // The covering link is not dragged as a link where the engine supports it.
+    const drag = await link.evaluate(
+      (element) =>
+        (getComputedStyle(element) as CSSStyleDeclaration & { webkitUserDrag?: string })
+          .webkitUserDrag,
+    );
+    if (drag !== undefined) expect(drag).toBe('none');
+    await expect(link).toHaveAttribute('draggable', 'false');
+  }
+});

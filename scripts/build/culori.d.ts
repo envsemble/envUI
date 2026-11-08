@@ -1,4 +1,4 @@
-// The parts of culori that scripts/build/GeneratePalette.ts uses: culori ships no types.
+// The parts of culori that scripts/build uses: culori ships no types.
 declare module 'culori' {
   export interface Rgb {
     mode: 'rgb';
@@ -14,7 +14,14 @@ declare module 'culori' {
     h?: number;
     alpha?: number;
   }
-  export type Color = Rgb | Oklch;
+  export interface Hsl {
+    mode: 'hsl';
+    h: number;
+    s: number;
+    l: number;
+    alpha?: number;
+  }
+  export type Color = Rgb | Oklch | Hsl;
   export function converter(mode: 'rgb'): (color: Color | undefined) => Rgb;
   export function converter(mode: 'oklch'): (color: Color | undefined) => Oklch;
   export function formatHex(color: Color | undefined): string;

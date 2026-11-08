@@ -59,3 +59,23 @@ test('a field takes a fill from its container property', async ({ page }) => {
     'rgb(1, 2, 3)',
   );
 });
+
+test('fields associate labels, hints, and validation messages', async ({ page }) => {
+  await page.goto(`${fixtureUrl}/?fixture=forms`);
+  const project = page.getByRole('textbox', { name: 'Project name', exact: true });
+  await expect(project).toHaveAccessibleDescription('A descriptive name');
+  await expect(
+    page.getByRole('textbox', { name: 'Notes', exact: true }),
+  ).toHaveAccessibleDescription('Optional supporting details');
+  const invalid = page.getByRole('textbox', { name: 'Invalid sample', exact: true });
+  await expect(invalid).toHaveAttribute('aria-invalid', 'true');
+  await expect(invalid).toHaveAccessibleDescription('Please correct this value');
+  // The frame is Field's: Field.Root around the control, Field.Description and Field.Error.
+  const field = page.locator('.env-field', { has: invalid });
+  await expect(field).toHaveAttribute('data-invalid', '');
+  await expect(field.locator('> .env-field-error')).toHaveText('Please correct this value');
+  await expect(
+    page.locator('.env-field', { has: project }).locator('> .env-field-description'),
+  ).toHaveText('A descriptive name');
+  await expect(page.locator('.env-field', { has: project })).not.toHaveAttribute('data-invalid');
+});

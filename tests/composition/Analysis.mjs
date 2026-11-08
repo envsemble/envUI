@@ -1,5 +1,5 @@
 // Reads packages/ui/src against tests/composition/Rules.json and finds what breaks each composition
-// rule. tests/Composition.test.mjs compares the findings with tests/composition/Exceptions.json.
+// rule. tests/library/Composition.test.mjs compares the findings with tests/composition/Exceptions.json.
 import { readFileSync, readdirSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { join, posix, relative, resolve, sep } from 'node:path';
@@ -438,7 +438,7 @@ export function analyze() {
   return {
     problems,
     layers: order,
-    // Who owns what, for tests/StyleImports.test.mjs: each module's component, each component's
+    // Who owns what, for tests/library/StyleImports.test.mjs: each module's component, each component's
     // style sheets, and a class's owner, a component or 'shared'.
     ownership: { componentOf, components, ownerOf: (token) => ownerOf(token, 'a test') },
     findings: {

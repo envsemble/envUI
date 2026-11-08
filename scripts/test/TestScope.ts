@@ -7,7 +7,7 @@
 // most specific few; a changed spec runs itself; a changed helper runs the specs that import it;
 // and `exceptions` lists the shared files and the catalogue, which name no component. A path that
 // matches nothing runs no browser spec: `npm run verify` covers it. Check.ts runs the result, and
-// tests/TestScope.test.mjs covers the logic.
+// tests/tooling/TestScope.test.mjs covers the logic.
 import { execFileSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { posix, resolve } from 'node:path';
@@ -22,8 +22,7 @@ export const repositoryRoot = resolve(fileURLToPath(new URL('../..', import.meta
  */
 export const aliases: Record<string, string[]> = {
   SearchField: ['TextField'],
-  Field: ['Forms'],
-  FieldFrame: ['Forms', 'TextField'],
+  FieldFrame: ['TextField'],
   Popover: ['Dialog'],
   Spinner: ['Meter', 'Skeleton'],
   Badge: ['DiffStat'],
@@ -32,16 +31,14 @@ export const aliases: Record<string, string[]> = {
   LinkProvider: ['Button'],
   ActionElement: ['Button'],
   QuietButtons: ['Button'],
-  ContextMenu: ['Menu'],
   MenuPopup: ['Menu', 'Menubar'],
-  useResizableWidth: ['Navigation', 'Sheet'],
-  ResizeHandle: ['Primitives', 'Panes'],
+  ResizeHandle: ['ResizeHandle', 'Panes'],
   useResize: ['Panes', 'PanelDock'],
-  PopupSurface: ['Primitives', 'PortalContainer'],
+  PopupSurface: ['PopupSurface', 'PortalContainer'],
   PortalContainerContext: ['PortalContainer'],
   useDirection: ['Direction'],
   Theme: ['ThemePreference', 'ThemeContrast', 'WindowClasses'],
-  Popup: ['WindowClasses', 'Primitives'],
+  Popup: ['WindowClasses', 'PopupSurface'],
   windowClasses: ['WindowClasses'],
   themeBootstrap: ['ThemePreference', 'ThemeContrast'],
   'theme-bootstrap': ['ThemePreference', 'ThemeContrast'],
@@ -59,14 +56,13 @@ export const aliases: Record<string, string[]> = {
   useWheelGestures: ['DatePicker', 'TimePicker'],
   MonthGrid: ['MonthPicker', 'ForcedColors'],
   Code: ['CodeBlock'],
-  RichText: ['RichTextEditor'],
   TooltipPopup: ['Tooltip'],
   accessibleName: ['Tooltip'],
   DialogParts: ['Dialog', 'Skeleton'],
   skeleton: ['Skeleton'],
   inSkeleton: ['Skeleton'],
   skeletonShift: ['Skeleton'],
-  Listbox: ['Forms', 'Combobox'],
+  Listbox: ['Select', 'Combobox'],
   ListRow: ['List'],
   'rich-text': ['RichTextEditor'],
   color: ['ColorPicker'],
@@ -79,7 +75,13 @@ const catalogue = [
   'SiteRoutes',
   'SiteShell',
   'SiteFailures',
-  'CataloguePages',
+  'CatalogueComponentPages',
+  'CatalogueFigures',
+  'CatalogueBanners',
+  'CatalogueGallery',
+  'CatalogueTilePlayback',
+  'CatalogueRelated',
+  'CatalogueOverlays',
   'CataloguePlainLanguage',
   'DocsPages',
   'CatalogueSearch',
@@ -88,7 +90,7 @@ const catalogue = [
 /** Paths that name no component, by prefix, and the specs they run. */
 const exceptions: [RegExp, string[]][] = [
   [
-    /^packages\/ui\/(?:tokens\/|terrazzo\.config\.mjs|src\/generated\/tokens|src\/styles\/(?:Tokens\w*|Theme)\.css)|^tests\/contrast\/|^scripts\/build\/(?:BuildTokens|GeneratePalette)\.ts$/,
+    /^packages\/ui\/(?:tokens\/|terrazzo\.config\.mjs|src\/generated\/tokens|src\/styles\/(?:Tokens\w*|Theme)\.css)|^tests\/contrast\/|^scripts\/build\/(?:(?:BuildTokens|GeneratePalette)\.ts$|tokens\/)/,
     shared,
   ],
   [
@@ -247,7 +249,7 @@ export function selectScope(paths: readonly string[], root = repositoryRoot) {
     // Generated files: tokens with the lint packages' copies, icons, and the documentation the
     // sources and docs/ make.
     if (
-      /^packages\/ui\/(?:tokens\/|terrazzo\.config\.mjs|src\/generated\/tokens|src\/styles\/Tokens\w*\.css)|^scripts\/build\/(?:BuildTokens|GeneratePalette|SyncLintPackages|LintPackageTokens)\.[jt]s$|^packages\/(?:eslint-plugin\/src|stylelint-config)\/(?:tokens\.js|data\/tokens\.json)$/.test(
+      /^packages\/ui\/(?:tokens\/|terrazzo\.config\.mjs|src\/generated\/tokens|src\/styles\/Tokens\w*\.css)|^scripts\/build\/(?:(?:BuildTokens|GeneratePalette|SyncLintPackages|LintPackageTokens)\.[jt]s$|tokens\/)|^packages\/(?:eslint-plugin\/src|stylelint-config)\/(?:tokens\.js|data\/tokens\.json)$/.test(
         path,
       )
     )
@@ -294,7 +296,6 @@ export function serversFor(names: readonly string[], root = repositoryRoot) {
 // ---------------------------------------------------------------------------------------------
 // Changed files
 
-/** Parses `git diff --name-status -z` output into { status, path, from } entries. */
 /** A changed file, and for a rename or copy the path it came from. */
 export interface Change {
   status: string;
@@ -302,6 +303,7 @@ export interface Change {
   from?: string;
 }
 
+/** Parses `git diff --name-status -z` output into { status, path, from } entries. */
 export function parseNameStatus(text: string): Change[] {
   const fields = text.split('\0').filter((field) => field !== '');
   const entries: Change[] = [];
@@ -392,7 +394,7 @@ const read = (root: string, path: string) => readFileSync(resolve(root, path), '
  */
 export function unitTestFiles(root = repositoryRoot) {
   const files = [
-    ...walk(root, 'tests', /\.test\.mjs$/).filter((file) => !file.slice(6).includes('/')),
+    ...walk(root, 'tests', /\.test\.mjs$/).filter((file) => /^tests\/[^/]+\/[^/]+$/.test(file)),
     ...walk(root, 'packages', /\.test\.mjs$/).filter((file) =>
       /^packages\/[^/]+\/test\/[^/]+$/.test(file),
     ),

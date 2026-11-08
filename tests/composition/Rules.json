@@ -1,5 +1,5 @@
 {
-  "$comment": "The architecture tests/Composition.test.mjs enforces. Paths are relative to packages/ui/src; stylesheets are relative to packages/ui/src/styles.",
+  "$comment": "The architecture tests/library/Composition.test.mjs enforces. Paths are relative to packages/ui/src; stylesheets are relative to packages/ui/src/styles.",
   "layers": {
     "$comment": "Imports go down this list or stay in their layer. A module's layer is its exact entry under modules, else the longest matching entry under directories. Every component module is listed: base for a control that renders no other component, composites for one that does, so a base control cannot import a composite.",
     "order": ["internal", "foundations", "base", "composites", "shell", "entries"],
@@ -8,7 +8,6 @@
       "foundations/": "foundations",
       "foundations/messages/": "internal",
       "icons/": "foundations",
-      "generated/": "foundations",
       "actions/": "base",
       "content/": "base",
       "feedback/": "base",
