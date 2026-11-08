@@ -3,7 +3,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import postcss from 'postcss';
+import { declarations } from '../support/cssDeclarations.mjs';
 
 // Hover and focus inside never change a component's layout. A part that grows under the pointer
 // can push its neighbours, wrap the row it sits in and move out from under the pointer, which
@@ -47,45 +47,35 @@ const sheets = readdirSync(styles).filter(
 
 test('no hover or focus-within rule sets a layout property', () => {
   const found = [];
-  for (const file of sheets) {
-    postcss.parse(readFileSync(join(styles, file), 'utf8')).walkRules((rule) => {
-      if (!isState(rule.selector)) return;
-      const selector = rule.selector.replace(/\s+/g, ' ');
-      if (allowed.has(`${file} ${selector}`)) return;
-      rule.walkDecls((declaration) => {
-        if (layout.test(declaration.prop))
-          found.push(`${file} ${selector} { ${declaration.prop} }`);
-      });
-    });
-  }
+  for (const file of sheets)
+    for (const { selector, prop } of declarations(readFileSync(join(styles, file), 'utf8')))
+      if (isState(selector) && !allowed.has(`${file} ${selector}`) && layout.test(prop))
+        found.push(`${file} ${selector} { ${prop} }`);
   assert.deepEqual(found, []);
 });
 
 test('no custom property set on hover or with focus inside reaches a layout property', () => {
   const found = [];
   for (const file of sheets) {
-    const sheet = postcss.parse(readFileSync(join(styles, file), 'utf8'));
+    const sheet = declarations(readFileSync(join(styles, file), 'utf8'));
+    const custom = sheet.filter(({ prop }) => prop.startsWith('--'));
     // The custom properties a state rule sets, and those computed from them.
-    const changing = new Set();
-    sheet.walkRules((rule) => {
-      if (!isState(rule.selector)) return;
-      rule.walkDecls(/^--/, (declaration) => changing.add(declaration.prop));
-    });
+    const changing = new Set(
+      custom.filter(({ selector }) => isState(selector)).map(({ prop }) => prop),
+    );
     const reads = (value) => [...changing].some((name) => value.includes(`var(${name}`));
     for (let grew = true; grew;) {
       grew = false;
-      sheet.walkDecls(/^--/, (declaration) => {
-        if (!changing.has(declaration.prop) && reads(declaration.value)) {
-          changing.add(declaration.prop);
+      for (const { prop, value } of custom)
+        if (!changing.has(prop) && reads(value)) {
+          changing.add(prop);
           grew = true;
         }
-      });
     }
-    sheet.walkDecls((declaration) => {
-      const name = `${file} ${declaration.parent.selector} { ${declaration.prop} }`;
-      if (layout.test(declaration.prop) && reads(declaration.value) && !allowedReads.has(name))
-        found.push(name);
-    });
+    for (const { selector, prop, value } of sheet) {
+      const name = `${file} ${selector} { ${prop} }`;
+      if (layout.test(prop) && reads(value) && !allowedReads.has(name)) found.push(name);
+    }
   }
   assert.deepEqual(found, []);
 });

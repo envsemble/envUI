@@ -8,6 +8,7 @@ import assert from 'node:assert/strict';
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { declarations } from '../support/cssDeclarations.mjs';
 
 const repository = fileURLToPath(new URL('../../', import.meta.url));
 
@@ -26,21 +27,6 @@ function styleSheets() {
           css: readFileSync(join(repository, directory, name), 'utf8'),
         });
   return sheets;
-}
-
-/** Each declaration of a style sheet with the selector of its rule, the innermost block around it. */
-function* declarations(css) {
-  const source = css.replace(/\/\*[\s\S]*?\*\//g, '');
-  for (const [, selector, body] of source.matchAll(/([^{};]+)\{([^{}]*)\}/g))
-    for (const declaration of body.split(';')) {
-      const colon = declaration.indexOf(':');
-      if (colon < 0) continue;
-      yield {
-        selector: selector.trim().replace(/\s+/g, ' '),
-        prop: declaration.slice(0, colon).trim(),
-        value: declaration.slice(colon + 1).trim(),
-      };
-    }
 }
 
 /** A radius that rounds a box fully whatever its size: a share of it, or an endless length. */
