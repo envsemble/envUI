@@ -2,6 +2,7 @@ import { createContext, useContext, useLayoutEffect, useRef, type ReactNode } fr
 import { Column, Text, type SpaceStep } from '@envsemble/envui';
 import { StillMark } from './StillMark';
 import { pixelTolerance, remeasure } from '../shared/Remeasure';
+import { classNames } from '@envui-internal/internal/classNames';
 
 /**
  * The level of a specimen's title: 2 where the specimen is a section of its own, 3 where it sits in
@@ -48,7 +49,7 @@ export function SpecimenFrame({
       render={<section />}
       gap={gap}
       data-size={size}
-      className={['site-example', className].filter(Boolean).join(' ')}
+      className={classNames('site-example', className)}
     >
       {title && actions ? (
         <div className="catalogue-example-heading">
@@ -169,7 +170,7 @@ export function MatrixScroll({
   return (
     <div
       ref={area}
-      className={['catalogue-matrix-scroll', className].filter(Boolean).join(' ')}
+      className={classNames('catalogue-matrix-scroll', className)}
       role="region"
       aria-label={label}
     >

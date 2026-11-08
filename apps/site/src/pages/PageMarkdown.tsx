@@ -10,6 +10,7 @@ import { currentRoute } from '../routes/useSiteRoute';
 import { headingSlugger } from '@docs-model/SearchAnchors';
 import { headingsOnly, useSectionOutline } from '../template/SectionOutline';
 import { marked, type Token, type Tokens } from 'marked';
+import { classNames } from '@envui-internal/internal/classNames';
 
 /** The current route scrolled to `section`, keeping its other parameters. */
 function sectionOfCurrentRoute(section: string) {
@@ -261,9 +262,7 @@ export function PageMarkdown(
   return (
     <Markdown
       components={elements}
-      className={
-        [guidance && 'site-guidance', props.className].filter(Boolean).join(' ') || undefined
-      }
+      className={classNames(guidance && 'site-guidance', props.className) || undefined}
       rehypePlugins={plugins}
       renderLink={({ href, children, ...link }: MarkdownLinkProps) =>
         props.linkless ? (

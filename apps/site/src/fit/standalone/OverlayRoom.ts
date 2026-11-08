@@ -5,7 +5,6 @@
  * toast placed on the stage. reserveStage holds the stage at its recorded height while that
  * happens.
  */
-import { recordedSize } from '../../loading/RecordedSizes';
 import { inset, union, type Box } from '../FitGeometry';
 import { pixelTolerance } from '../../shared/Remeasure';
 
@@ -113,38 +112,75 @@ function placement(overlay: HTMLElement, placer: HTMLElement | undefined, gaps: 
 }
 
 /**
+ * An overlay placed on the stage, as shortfall reads it, in viewport px: its full `height`, the
+ * stage's `above` and `below` it and the stage's own `area` height, where it sits (`side`), the
+ * space the stage keeps around it (`space`, the stage's padding, at least the inset), the gaps its
+ * positioner keeps on its far sides (`gaps`), and the room's content height for a toast, which has
+ * no positioner (`content`, else 0).
+ */
+interface OnStage {
+  height: number;
+  above: number;
+  below: number;
+  area: number;
+  side: ReturnType<typeof placement>;
+  space: number;
+  gaps: { top: number; bottom: number };
+  content: number;
+}
+
+/**
  * How much taller the stage must grow for an overlay placed on it, in viewport px (negative when
- * it is taller than needed). The stage needs the overlay's full height, plus a space (the stage's
- * padding, at least the inset):
+ * it is taller than needed). The stage needs the overlay's full height, plus a space:
  * - on both sides of a centred overlay;
  * - on the far side of one placed at an edge, such as a palette near the top or a toast at the
  *   bottom, which keeps its own gap at its edge. If its positioner keeps a gap on the far side,
  *   such as the space above a bottom sheet, the stage makes space for that too;
  * - none for a sheet that stretches to the stage's height.
- * A toast (with no positioner) also leaves the room's content, `content` px tall and centred,
- * clear of it.
+ * A toast also leaves the room's content, centred, clear of it.
+ * @internal
  */
-function shortfall(overlay: HTMLElement, layer: HTMLElement, stage: HTMLElement, content: number) {
-  const box = overlay.getBoundingClientRect();
-  const area = stage.getBoundingClientRect();
-  const space = Math.max(inset, parseFloat(getComputedStyle(stage).paddingTop)) * scaleOf(stage);
-  const above = box.top - area.top;
-  const below = area.bottom - box.bottom;
-  const height = box.height + cutOff(overlay);
-  const placer = placerOf(overlay, layer);
-  const side = placement(overlay, placer, [above, below]);
-  const placerStyle = placer && getComputedStyle(placer);
-  const far = (gap: string | undefined) =>
-    Math.max(space, (parseFloat(gap ?? '') || 0) * scaleOf(stage));
+export function stageShortfall({
+  height,
+  above,
+  below,
+  area,
+  side,
+  space,
+  gaps,
+  content,
+}: OnStage) {
   let needed = {
-    start: above + height + far(placerStyle?.paddingBottom),
-    end: far(placerStyle?.paddingTop) + height + below,
+    start: above + height + Math.max(space, gaps.bottom),
+    end: Math.max(space, gaps.top) + height + below,
     center: height + 2 * space,
     stretch: height,
   }[side];
-  if (!placer && content && (side === 'start' || side === 'end'))
+  if (content && (side === 'start' || side === 'end'))
     needed = Math.max(needed, content + 2 * (space + height + Math.min(above, below)));
-  return needed - area.height;
+  return needed - area;
+}
+
+/** How much taller the stage must grow for an overlay placed on it (stageShortfall). */
+function shortfall(overlay: HTMLElement, layer: HTMLElement, stage: HTMLElement, content: number) {
+  const box = overlay.getBoundingClientRect();
+  const area = stage.getBoundingClientRect();
+  const scale = scaleOf(stage);
+  const above = box.top - area.top;
+  const below = area.bottom - box.bottom;
+  const placer = placerOf(overlay, layer);
+  const placerStyle = placer && getComputedStyle(placer);
+  const gap = (length: string | undefined) => (parseFloat(length ?? '') || 0) * scale;
+  return stageShortfall({
+    height: box.height + cutOff(overlay),
+    above,
+    below,
+    area: area.height,
+    side: placement(overlay, placer, [above, below]),
+    space: Math.max(inset, parseFloat(getComputedStyle(stage).paddingTop)) * scale,
+    gaps: { top: gap(placerStyle?.paddingTop), bottom: gap(placerStyle?.paddingBottom) },
+    content: placer ? 0 : content,
+  });
 }
 
 /**
@@ -187,6 +223,56 @@ const moving = (overlay: HTMLElement) =>
         animation.effect?.getComputedTiming().iterations !== Infinity,
     );
 
+/** A box's padding on each side, in px. */
+interface Sides {
+  top: number;
+  right: number;
+  bottom: number;
+  left: number;
+}
+
+/**
+ * The room's padding, in its own px, that centres the popups beside their trigger with what opens
+ * them: on each side, as far as the popups reach past the room's content (`own`). The boxes are in
+ * viewport px, at the stage's `scale`; `width` is the room's width inside its borders and `padding`
+ * its padding now.
+ *
+ * Side padding narrows what opens the popups. Text, such as a sentence with a link that opens a
+ * hover card, would rewrap, move the link and the popup, and get padded narrower again, down to a
+ * column of a word or two. So the content keeps at least the widest popup's width (`keep`), and a
+ * popup about as wide as the stage leaves the text as wide. Content narrower than the room's
+ * space, such as a menu's trigger, keeps only its own width plus 2 px, so a popup wider than it
+ * still centres with it on a narrow stage. The side padding is scaled down to fit what is left
+ * (`spare`).
+ * @internal
+ */
+export function popupPadding(
+  own: Box,
+  anchored: Box[],
+  scale: number,
+  width: number,
+  padding: Sides,
+) {
+  const all = union(anchored);
+  const next = {
+    top: Math.max(0, own.top - all.top) / scale,
+    right: Math.max(0, all.right - own.right) / scale,
+    bottom: Math.max(0, all.bottom - own.bottom) / scale,
+    left: Math.max(0, own.left - all.left) / scale,
+  };
+  const widest = Math.max(...anchored.map((box) => box.right - box.left)) / scale;
+  const ownWidth = (own.right - own.left) / scale;
+  const available = width - padding.left - padding.right;
+  const keep = ownWidth < available - 1 ? Math.min(widest, ownWidth + 2) : widest;
+  const spare = Math.max(0, width - keep);
+  const sides = next.left + next.right;
+  if (sides > spare) {
+    next.left *= spare / sides;
+    next.right *= spare / sides;
+  }
+  return next;
+}
+
 /**
  * Makes space in the figure for its open overlays, and centres them with what opens them:
  * - a popup beside its trigger adds padding to the room on the popup's side, so the two together
@@ -205,7 +291,7 @@ export function makeRoom(room: HTMLElement, layer: HTMLElement, hold: boolean) {
   // Viewport measurements are at the stage's scale; the room's padding and height are in its own
   // px.
   const scale = scaleOf(stageOf(room));
-  const padding = {
+  const padding: Sides = {
     top: parseFloat(style.paddingTop),
     right: parseFloat(style.paddingRight),
     bottom: parseFloat(style.paddingBottom),
@@ -220,32 +306,10 @@ export function makeRoom(room: HTMLElement, layer: HTMLElement, hold: boolean) {
       grow = Math.max(grow ?? -Infinity, shortfall(overlay, layer, stageOf(room), height));
     } else anchored.push(overlay.getBoundingClientRect());
   }
-  const next = { top: 0, right: 0, bottom: 0, left: 0 };
-  if (content.length && anchored.length) {
-    const own = union(content);
-    const all = union(anchored);
-    next.top = Math.max(0, own.top - all.top) / scale;
-    next.right = Math.max(0, all.right - own.right) / scale;
-    next.bottom = Math.max(0, all.bottom - own.bottom) / scale;
-    next.left = Math.max(0, own.left - all.left) / scale;
-    // Side padding narrows what opens the popups. Text, such as a sentence with a link that opens
-    // a hover card, would rewrap, move the link and the popup, and get padded narrower again,
-    // down to a column of a word or two. So the content keeps at least the widest popup's width
-    // (`keep`), and a popup about as wide as the stage leaves the text as wide. Content narrower
-    // than the room's space, such as a menu's trigger, keeps only its own width plus 2 px, so a
-    // popup wider than it still centres with it on a narrow stage. The side padding is scaled
-    // down to fit what is left (`spare`).
-    const widest = Math.max(...anchored.map((box) => box.right - box.left)) / scale;
-    const ownWidth = (own.right - own.left) / scale;
-    const available = room.clientWidth - padding.left - padding.right;
-    const keep = ownWidth < available - 1 ? Math.min(widest, ownWidth + 2) : widest;
-    const spare = Math.max(0, room.clientWidth - keep);
-    const sides = next.left + next.right;
-    if (sides > spare) {
-      next.left *= spare / sides;
-      next.right *= spare / sides;
-    }
-  }
+  const next =
+    content.length && anchored.length
+      ? popupPadding(union(content), anchored, scale, room.clientWidth, padding)
+      : { top: 0, right: 0, bottom: 0, left: 0 };
   // A popup is placed at whole pixels, and moving the room by a fraction of one can round the
   // popup to the next pixel. Padding that followed every such step would tremble a pixel each
   // frame, so a change of 1 px or less is ignored.
@@ -271,11 +335,11 @@ export function makeRoom(room: HTMLElement, layer: HTMLElement, hold: boolean) {
 }
 
 /**
- * Holds an open example's stage at its recorded height (the height with its overlays resting
- * open, recorded by scripts/site/RecordPartSizes.ts) from when it starts loading until its room is
- * made and it fades in. The page below stays still as the example loads, the room grows for its
- * overlays unseen, and the example appears once, at its final size. A stage with no recorded
- * height is not held.
+ * Holds an open example's stage at its recorded `height`, in rem (the height with its overlays
+ * resting open, recorded by scripts/site/RecordPartSizes.ts), from when it starts loading until
+ * its room is made and it fades in. The page below stays still as the example loads, the room
+ * grows for its overlays unseen, and the example appears once, at its final size. A stage with no
+ * recorded height is not held.
  *
  * Returns:
  * - `measured(fn)`: runs `fn` with the hold lifted, so the room is measured for the overlays
@@ -283,8 +347,7 @@ export function makeRoom(room: HTMLElement, layer: HTMLElement, hold: boolean) {
  * - `shown()`: call when the room shows; from then on the stage may grow past the recorded height;
  * - `release()`: lets the stage go to its own height.
  */
-export function reserveStage(room: HTMLElement, part: string | undefined) {
-  const height = part === undefined ? undefined : recordedSize(part)?.[1];
+export function reserveStage(room: HTMLElement, height: number | undefined) {
   const stage = height === undefined ? null : stageOf(room);
   let held = stage !== null && stage !== room;
   // Before it shows, the stage is exactly the recorded height, even while the room passes through

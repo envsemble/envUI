@@ -1,6 +1,7 @@
 import { Fragment, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { PortalContainer } from '@envsemble/envui';
 import { makeRoom, overlays, reserveStage } from '../fit/standalone/OverlayRoom';
+import { recordedSize } from '../loading/RecordedSizes';
 import { remeasure } from '../shared/Remeasure';
 import { sitePopupOpen } from '../motion/SitePopup';
 import { press, triggerOf } from './PressTrigger';
@@ -169,7 +170,10 @@ export function OpenExample({
     // they do. While the example loads, its skeleton shows in the room.
     // Shown before its room is made, after the wait, the stage keeps its recorded height until the
     // room is made, so the room growing for its overlays then moves nothing outside it.
-    const reserved = reserveStage(roomElement, part);
+    const reserved = reserveStage(
+      roomElement,
+      part === undefined ? undefined : recordedSize(part)?.[1],
+    );
     const place = (made: boolean) => {
       roomElement.dataset.placed = '';
       if (made) reserved.release();

@@ -4,14 +4,14 @@ Draws a tile's or a figure's picture so it fits its stage. Each fitter measures 
 
 ## The fitters
 
-| What is fitted                                                                     | Fitter                                                                                                        |
-| ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| A gallery's tile, a page's own tile, and an example's or a specimen's picture      | `useFit.ts`, by its `FitKind` (`FitKind.ts`), deciding in `FitScreen.ts`, `FitPlaying.ts` and `FitResting.ts` |
-| An application's tile, which fills its card                                        | `standalone/useAppFit.ts`                                                                                     |
-| A device figure: a phone or a window around its example                            | `standalone/useDeviceFit.ts`, deciding in `standalone/DeviceFit.ts`                                           |
-| An Adapting to width figure's frames, and an anatomy figure's subject from a width | `standalone/WidthFit.tsx`                                                                                     |
-| An open example's room for the overlays it rests open on                           | `standalone/OverlayRoom.ts`                                                                                   |
-| A do or don't figure's example, also as its animated specimen plays it             | `standalone/useVerdictFit.ts`                                                                                 |
+| What is fitted                                                                     | Fitter                                                                                                          |
+| ---------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| A gallery's tile, a page's own tile, and an example's or a specimen's picture      | `useFit.ts`, by its `FitKind` (`FitKind.ts`), deciding in `FitScreen.ts`, `FitPlaying.ts` and `FitResting.ts`   |
+| An application's tile, which fills its card                                        | `standalone/useAppFit.ts`                                                                                       |
+| A device figure: a phone or a window around its example                            | `standalone/useDeviceFit.ts`, measuring in `standalone/DeviceMeasure.ts`, deciding in `standalone/DeviceFit.ts` |
+| An Adapting to width figure's frames, and an anatomy figure's subject from a width | `standalone/WidthFit.tsx`                                                                                       |
+| An open example's room for the overlays it rests open on                           | `standalone/OverlayRoom.ts`                                                                                     |
+| A do or don't figure's example, also as its animated specimen plays it             | `standalone/useVerdictFit.ts`                                                                                   |
 
 The standalone fitters differ from `useFit` in what they measure and set, not only in how they choose a scale:
 

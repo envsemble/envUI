@@ -8,6 +8,7 @@ import { createContext, useContext, type ReactNode } from 'react';
 import { Text } from '@envsemble/envui';
 import { ExampleCode } from '../LiveExample';
 import { MotionStage } from '../../motion/MotionStage';
+import { classNames } from '@envui-internal/internal/classNames';
 
 /**
  * The example file whose source a foundation's figure shows as its code: the file of its name in
@@ -46,10 +47,7 @@ export function Figure({
           {children}
         </MotionStage>
       ) : (
-        <div
-          className={['site-foundation-stage', className].filter(Boolean).join(' ')}
-          data-figure="example"
-        >
+        <div className={classNames('site-foundation-stage', className)} data-figure="example">
           {children}
         </div>
       )}

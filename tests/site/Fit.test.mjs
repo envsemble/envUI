@@ -2,7 +2,8 @@
 // how its view is placed, boxes, the scales a tile's picture is drawn at, a still framed on its
 // pointer's course, where a playing tile's view goes and where it is cut off, a held view's scale
 // and place, a modal's screen, a popup's and a resting picture's scale, whether a resting picture
-// holds its frame, and the view's glide.
+// holds its frame, the view's glide, the crop's trimmed rows, a device figure's scale and view, and
+// an open example's room for its overlays.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { importSource } from '../support/importSource.mjs';
@@ -14,6 +15,9 @@ const kinds = await importSource('FitKind', 'apps/site/src/fit/FitKind.ts');
 const screen = await importSource('FitScreen', 'apps/site/src/fit/FitScreen.ts');
 const playing = await importSource('FitPlaying', 'apps/site/src/fit/FitPlaying.ts');
 const popups = await importSource('FitResting', 'apps/site/src/fit/FitResting.ts');
+const device = await importSource('DeviceFit', 'apps/site/src/fit/standalone/DeviceFit.ts');
+const draw = await importSource('FitDraw', 'apps/site/src/fit/FitDraw.ts');
+const room = await importSource('OverlayRoom', 'apps/site/src/fit/standalone/OverlayRoom.ts');
 
 const box = (left, top, right, bottom) => ({ left, top, right, bottom });
 
@@ -491,4 +495,159 @@ test('a resting component keeps the scale it rested at, and a held subject is dr
     }).layoutScale;
   assert.equal(phoneScale(), '0.85');
   assert.equal(phoneScale({ playing: true }), null);
+});
+
+test('a device is drawn to fit its stage, no smaller than its least scale, and cut where not', () => {
+  const read = { fade: 0, smallText: 0, pad: { start: 0, end: 0 }, most: Infinity };
+  const scaleOf = (at) => device.deviceScale({ ...read, ...at });
+  assert.equal(scaleOf({ kind: 'phone', width: 0, height: 600, room: 400 }), null);
+  // It fits whole, never drawn larger than it is.
+  const whole = scaleOf({ kind: 'window', width: 600, height: 400, room: 800 });
+  assert.equal(whole.scale, 1);
+  assert.deepEqual(whole.shown, { width: 600, height: 400 });
+  assert.equal(whole.across, false);
+  // Small text set at 12 px may be drawn no smaller than 10 px, more than the phone's least, 0.8;
+  // the phone is then cut across, over the example's padding.
+  const phone = scaleOf({
+    kind: 'phone',
+    width: 400,
+    height: 800,
+    room: 300,
+    smallText: 12,
+    pad: { start: 16, end: 16 },
+  });
+  assert.equal(phone.scale, 10 / 12);
+  assert.equal(phone.across, true);
+  assert.equal(phone.shown.width, 332);
+  // Its height fits `most`, down to the window's least scale, 0.75, and is cut below that.
+  const tall = scaleOf({ kind: 'window', width: 400, height: 1000, room: 800, most: 500 });
+  assert.equal(tall.scale, 0.75);
+  assert.deepEqual(tall.shown, { width: 300, height: 500 });
+});
+
+test('a device figure needs its course and named elements in view, the span down only growing', () => {
+  const held = { size: '' };
+  const point = box(10, 100, 50, 140);
+  const named = box(20, 300, 80, 320);
+  const needs = device.deviceNeeds(held, [point, undefined], [named], undefined);
+  assert.deepEqual(needs.boxes, [point, named]);
+  // The screen's state: which points show, and how many named elements.
+  assert.equal(needs.state, '10/1');
+  assert.deepEqual(held.y, [100, 320]);
+  // As the figure plays, what it needs higher up adds to the span; it never shrinks.
+  device.deviceNeeds(held, [box(10, 40, 50, 80)], [], undefined);
+  assert.deepEqual(held.y, [40, 320]);
+});
+
+test("a device's view shows what its figure needs, cutting its edges between words", () => {
+  const read = { fade: 0, smallText: 0, pad: { start: 0, end: 0 }, most: Infinity };
+  const place = (at, { named = [], focus, words = [] } = {}, held = { size: '' }) => {
+    const scaled = device.deviceScale({ ...read, ...at });
+    const needs = device.deviceNeeds(held, [], named, focus);
+    return device.placeDevice(at.kind, scaled, { ...needs, words }, held, { x: 0, y: 0 });
+  };
+  // A phone that fits shows whole, uncut.
+  assert.deepEqual(place({ kind: 'phone', width: 300, height: 600, room: 400 }), {
+    scale: 1,
+    width: 300,
+    height: 600,
+    x: 0,
+    y: 0,
+    cut: '',
+    outset: { start: 0, end: 0 },
+  });
+  // A phone too tall for `most` shows down to its heading, cut above and below.
+  const tall = place(
+    { kind: 'phone', width: 300, height: 1000, room: 400, most: 500 },
+    { focus: box(100, 800, 140, 840) },
+  );
+  assert.deepEqual([tall.scale, tall.height, tall.y, tall.cut], [0.8, 500, 215, 'top bottom']);
+  // A window whose page shows little is cut off below it, at least two fifths as tall as wide.
+  const little = place(
+    { kind: 'window', width: 800, height: 1000, room: 800 },
+    { words: [box(10, 10, 100, 30)] },
+  );
+  assert.deepEqual([little.height, little.cut], [320, 'bottom']);
+  // A window too wide for its stage shows what it names at its end, the cut edge clear of a word,
+  // and extends over the example's padding on its cut side only.
+  const held = { size: '' };
+  const wide = { kind: 'window', width: 1000, height: 400, room: 600, pad: { start: 20, end: 20 } };
+  const needs = { named: [box(900, 10, 960, 30)], words: [box(100, 0, 130, 20)] };
+  const across = place(wide, needs, held);
+  assert.deepEqual(
+    [across.width, across.cut, across.outset],
+    [620, 'start', { start: 20, end: 0 }],
+  );
+  assert.ok(Math.abs(across.x - (1000 - 620 / 0.75)) < 1e-9);
+  // While the screen's state lasts, its view across holds.
+  assert.equal(place(wide, needs, held).x, across.x);
+});
+
+test('a device fit is the same within the pixel tolerance, and differs by its cut', () => {
+  const fit = {
+    scale: 1,
+    width: 300,
+    height: 600,
+    x: 0,
+    y: 0,
+    cut: '',
+    outset: { start: 0, end: 0 },
+  };
+  assert.ok(device.sameFit(fit, { ...fit, width: 300.2, y: 0.3 }));
+  assert.ok(!device.sameFit(fit, { ...fit, cut: 'end' }));
+  assert.ok(!device.sameFit(fit, { ...fit, x: 1 }));
+});
+
+test("a crop's bottom hides a row whole that would show only a sliver in its fade", () => {
+  const trim = (fadeFrom = null, edge = false, played = false) =>
+    draw.cropTrim(200, 32, fadeFrom, edge, played, 16);
+  const { length, hides } = trim();
+  assert.equal(length, 32);
+  assert.equal(hides(150, 180), false);
+  // Past the bottom with its top in the fade's faint half, it is hidden; higher, it fades out.
+  assert.equal(hides(190, 210), true);
+  assert.equal(hides(170, 210), false);
+  // While the tile plays, such a row keeps its state as the view moves.
+  assert.equal(trim(null, false, true).hides(190, 210), undefined);
+  // At a modal screen's edge there is no fade, and every row past it is hidden.
+  const edge = trim(null, true, true);
+  assert.equal(edge.length, 0);
+  assert.equal(edge.hides(170, 210), true);
+  // A fade shortened to start below a held view's chosen row hides the rows below it, also while
+  // the tile plays, and leaves the rows above it whole.
+  const held = trim(190, false, true);
+  assert.equal(held.length, 10);
+  assert.equal(held.hides(189, 210), true);
+  assert.equal(held.hides(100, 210), false);
+});
+
+test("an open example's room is padded so its popup centres with what opens it", () => {
+  const none = { top: 0, right: 0, bottom: 0, left: 0 };
+  const trigger = box(100, 100, 200, 130);
+  const popup = box(100, 130, 300, 250);
+  // As far as the popup reaches past the trigger, in the room's own px.
+  assert.deepEqual(room.popupPadding(trigger, [popup], 1, 600, none), {
+    top: 0,
+    right: 100,
+    bottom: 120,
+    left: 0,
+  });
+  assert.deepEqual(room.popupPadding(trigger, [popup], 2, 600, none).bottom, 60);
+  // On a narrow stage, the trigger keeps its width and 2 px, and the side padding fits the rest.
+  assert.equal(room.popupPadding(trigger, [popup], 1, 150, none).right, 48);
+});
+
+test('a stage grows for an overlay placed on it by its full height and the space around it', () => {
+  const overlay = { above: 0, below: 0, area: 400, space: 16, gaps: { top: 0, bottom: 0 } };
+  const short = (at) => room.stageShortfall({ ...overlay, content: 0, ...at });
+  // A centred dialog takes the space on both sides; the stage has room to spare.
+  assert.equal(short({ side: 'center', height: 300 }), -68);
+  assert.equal(short({ side: 'center', height: 400 }), 32);
+  // One placed at an edge keeps its own gap there, and the space on its far side, or its
+  // positioner's gap there where that is larger, such as above a bottom sheet.
+  assert.equal(short({ side: 'start', height: 200, above: 40 }), -144);
+  assert.equal(short({ side: 'end', height: 300, gaps: { top: 48, bottom: 0 } }), -52);
+  assert.equal(short({ side: 'stretch', height: 400 }), 0);
+  // A toast also leaves the room's content clear of it, centred.
+  assert.equal(short({ side: 'end', height: 60, above: 300, below: 20, content: 100 }), -108);
 });

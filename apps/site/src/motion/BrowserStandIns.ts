@@ -226,17 +226,13 @@ function scrollFor(start: number, end: number, from: number, to: number, place: 
 }
 
 /**
- * How far a box scrolls vertically to show an item inside it, by the item's `block` alignment as
- * scrollIntoView takes it. `nearest` scrolls only as far as the item needs.
+ * A box's scrollport on the page, the edges scrollIntoView aligns to: inside its borders and
+ * scrollbars.
  */
-function scrollDelta(item: DOMRect, box: Element, block: ScrollLogicalPosition) {
-  const top = item.top - box.getBoundingClientRect().top - box.clientTop;
-  const bottom = top + item.height;
-  if (block === 'start') return top;
-  if (block === 'end') return bottom - box.clientHeight;
-  if (block === 'center') return (top + bottom - box.clientHeight) / 2;
-  if (top < 0) return top;
-  return Math.max(0, bottom - box.clientHeight);
+function scrollport(box: Element) {
+  const { top, left } = box.getBoundingClientRect();
+  const from = { top: top + box.clientTop, left: left + box.clientLeft };
+  return { ...from, bottom: from.top + box.clientHeight, right: from.left + box.clientWidth };
 }
 
 /** The block alignment scrollIntoView takes from its argument. */
@@ -272,7 +268,7 @@ function scrollInStage(target: Element, stage: Element, options?: boolean | Scro
     const down = scrollsDown(box);
     const across = scrollsAcross(box);
     if (!down && !across) continue;
-    const shown = box.getBoundingClientRect();
+    const shown = scrollport(box);
     const item = target.getBoundingClientRect();
     box.scrollBy({
       top: down ? scrollFor(item.top, item.bottom, shown.top, shown.bottom, block) : 0,
@@ -289,9 +285,13 @@ function scrollInExample(
 ) {
   const block = blockOf(options);
   for (let box = target.parentElement; box && box !== example; box = box.parentElement) {
-    if (box.scrollHeight <= box.clientHeight) continue;
-    if (!/auto|scroll/.test(getComputedStyle(box).overflowY)) continue;
-    box.scrollTop += scrollDelta(target.getBoundingClientRect(), box, block);
+    if (!scrollsDown(box)) continue;
+    const shown = scrollport(box);
+    const item = target.getBoundingClientRect();
+    box.scrollBy({
+      top: scrollFor(item.top, item.bottom, shown.top, shown.bottom, block),
+      behavior: 'instant',
+    });
   }
 }
 

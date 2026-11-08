@@ -2,7 +2,8 @@ import { useLayoutEffect, useState, type RefObject } from 'react';
 import type { DeviceKind } from '@docs-model/DocumentationTypes';
 import { remeasure } from '../../shared/Remeasure';
 import type { ScriptReader } from '../FitKind';
-import { deviceFit, sameFit, type DeviceFit, type DeviceFitting } from './DeviceFit';
+import { sameFit, type DeviceFit } from './DeviceFit';
+import { deviceFit, type DeviceFitting } from './DeviceMeasure';
 
 /**
  * The fit of a device figure in its stage (deviceFit, for DeviceStage in DeviceFrame.tsx), or

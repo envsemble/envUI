@@ -35,6 +35,7 @@ import {
 import { FigureCode } from './foundations/Figure';
 import { pendingAttribute, useSectionOutline } from '../template/SectionOutline';
 import { useVerdictFit } from '../fit/standalone/useVerdictFit';
+import { classNames } from '@envui-internal/internal/classNames';
 
 type ExampleBlock = Extract<DocumentationBlock, { kind: 'example' }>;
 type FoundationBlock = Extract<DocumentationBlock, { kind: 'figure' }>;
@@ -454,7 +455,12 @@ export function FigureSection({
       data-section={section.id}
       {...pendingAttribute(outline)}
     >
-      <div className={`site-figure-section-heading${headingHidden ? ' site-visually-hidden' : ''}`}>
+      <div
+        className={classNames(
+          'site-figure-section-heading',
+          headingHidden && 'site-visually-hidden',
+        )}
+      >
         <PageMarkdown markdown={title} path={page.path} />
       </div>
       {content}

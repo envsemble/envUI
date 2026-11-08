@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { classNames } from '@envui-internal/internal/classNames';
 
 /*
  * Parts of the foundations' animated figures that step through states, such as a card at each text
@@ -22,7 +23,7 @@ export function StepStack({
   className?: string;
 }) {
   return (
-    <div className={['catalogue-step-stack', className].filter(Boolean).join(' ')}>
+    <div className={classNames('catalogue-step-stack', className)}>
       {Array.from({ length: count }, (_, index) => (
         <div key={index} data-current={index === at || undefined}>
           {render(index)}

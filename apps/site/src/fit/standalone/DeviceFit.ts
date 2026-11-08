@@ -1,14 +1,13 @@
 /*
- * Fits a device figure (a phone or a window around an example) in its stage (useDeviceFit.ts,
- * DeviceFrame.tsx). It decides the scale the device is drawn at, and which part of the device the
- * stage shows (the view), down and across the screen, so that what the figure needs shows whole
- * and the cut edges fall between words. Boxes are in the device's own px, from its top left
- * corner.
+ * The decisions of a device figure's fit (a phone or a window around an example; useDeviceFit.ts,
+ * DeviceFrame.tsx): the scale the device is drawn at, and which part of the device the stage
+ * shows (the view), down and across the screen, so that what the figure needs shows whole and the
+ * cut edges fall between words. Boxes are in the device's own px, from its top left corner.
+ * DeviceMeasure.ts reads what they are decided from; nothing here reads the page, so
+ * tests/site/Fit.test.mjs tests it directly.
  */
 import type { DeviceKind } from '@docs-model/DocumentationTypes';
-import { remPixels } from '@envui-internal/internal/dom/lengths';
 import type { Box } from '../FitGeometry';
-import type { Aim, ScriptReader } from '../FitKind';
 import { pixelTolerance } from '../../shared/Remeasure';
 
 /**
@@ -22,7 +21,7 @@ const leastScale: Record<DeviceKind, number> = { phone: 0.8, window: 0.75 };
 const leastText = 10;
 
 /** Space kept around a point the pointer heads to, in the device's px: the cursor and a margin. */
-const pointRoom = 40;
+export const pointRoom = 40;
 
 /**
  * Space kept, in the device's px, past the fade of a cut bottom edge: below a window's lowest
@@ -30,54 +29,6 @@ const pointRoom = 40;
  * heads to (`point`), whose box already includes space for the cursor.
  */
 const footRoom = { words: 96, point: 16 };
-
-/**
- * The box, in the device's own px, around a point the pointer heads to, with pointRoom around it;
- * undefined when no matching element is visible.
- */
-function pointBox(row: Element, scale: number, { selector, x, y }: Aim): Box | undefined {
-  // The first visible match: a closed pane may keep its parts in the page, hidden.
-  const element = [...row.querySelectorAll(selector)].find(
-    (candidate) =>
-      candidate.getClientRects().length > 0 &&
-      candidate.checkVisibility({ opacityProperty: true, visibilityProperty: true }),
-  );
-  if (!element) return undefined;
-  const own = row.getBoundingClientRect();
-  const box = element.getBoundingClientRect();
-  const left = (box.left - own.left + x * box.width) / scale;
-  const top = (box.top - own.top + y * box.height) / scale;
-  return {
-    left: left - pointRoom / 2,
-    top: top - pointRoom / 2,
-    right: left + pointRoom,
-    bottom: top + pointRoom,
-  };
-}
-
-/**
- * The boxes, in the device's own px, of the elements a figure names to keep in view (useMustShow).
- * Each box is around the element's content, such as a value's text rather than its whole row,
- * grown by pointRoom so it clears the fade of a cut edge.
- */
-function namedBoxes(row: Element, scale: number, selectors: readonly string[]): Box[] {
-  const own = row.getBoundingClientRect();
-  const range = document.createRange();
-  return selectors.flatMap((selector) =>
-    [...row.querySelectorAll(selector)]
-      .filter((element) => element.getClientRects().length > 0)
-      .map((element) => {
-        range.selectNodeContents(element);
-        const box = range.getBoundingClientRect();
-        return {
-          left: (box.left - own.left) / scale - pointRoom,
-          top: (box.top - own.top) / scale - pointRoom,
-          right: (box.right - own.left) / scale + pointRoom,
-          bottom: (box.bottom - own.top) / scale + pointRoom,
-        };
-      }),
-  );
-}
 
 /**
  * Where a view of length `size` starts along one axis of a device of length `whole`:
@@ -119,34 +70,6 @@ function spanOf(boxes: Box[], pick: (box: Box) => [number, number]) {
           [Infinity, -Infinity],
         )
     : undefined;
-}
-
-/**
- * The box of each visible word on the screen, in the device's own px, from its top left corner.
- * Stops after 800 words.
- */
-function wordBoxes(row: Element, scale: number): Box[] {
-  const own = row.getBoundingClientRect();
-  const range = document.createRange();
-  const words: Box[] = [];
-  const walker = document.createTreeWalker(row, NodeFilter.SHOW_TEXT);
-  for (let node = walker.nextNode(); node && words.length < 800; node = walker.nextNode()) {
-    const parent = node.parentElement;
-    if (!parent?.checkVisibility({ opacityProperty: true, visibilityProperty: true })) continue;
-    for (const word of (node.textContent ?? '').matchAll(/\S+/g)) {
-      range.setStart(node, word.index);
-      range.setEnd(node, word.index + word[0].length);
-      for (const box of range.getClientRects())
-        if (box.width >= 1 && box.height >= 1)
-          words.push({
-            left: (box.left - own.left) / scale,
-            top: (box.top - own.top) / scale,
-            right: (box.right - own.left) / scale,
-            bottom: (box.bottom - own.top) / scale,
-          });
-    }
-  }
-  return words;
 }
 
 /**
@@ -222,7 +145,7 @@ const grown = (
  * - `state` and `across`: the screen's current state (which points show, how many named
  *   elements), and the view across it held for that state.
  */
-interface Held {
+export interface Held {
   size: string;
   y?: [number, number];
   words?: Box[];
@@ -255,54 +178,38 @@ export const sameFit = (a: DeviceFit, b: DeviceFit) =>
   Math.abs(a.x - b.x) < pixelTolerance &&
   Math.abs(a.y - b.y) < pixelTolerance;
 
-/** A device stage's elements, read by its fit, and what the fit keeps between runs. */
-export interface DeviceFitting {
+/**
+ * What the device fit reads of its stage and its device, in px: the row's own size, before its
+ * scale transform (`width`, `height`); the stage's width inside its borders (`room`); the most
+ * height the device is drawn at (`most`, `--site-device-most`, Infinity where unset); the length
+ * of a cut edge's fade (`fade`, DeviceFrame.css); the size small text (body-sm) is set at
+ * (`smallText`, 0 where unset); and the example's padding at the stage's start and end (`pad`).
+ */
+export interface DeviceRead {
   kind: DeviceKind;
-  stage: HTMLElement;
-  /** The box the view is drawn in, and the row inside it that holds the device at its own size. */
-  box: HTMLElement;
-  row: HTMLElement;
-  /** The animated figure's root, whose pointer's points the view keeps in view; null if none. */
-  root: Element | null;
-  /** Reads the script of the figure's picture (StageScript). */
-  readScript: ScriptReader['read'];
-  /** Where the view starts, in the device's own px. */
-  view: { x: number; y: number };
-  /** What the fit keeps between runs (Held). */
-  held: Held;
+  width: number;
+  height: number;
+  room: number;
+  most: number;
+  fade: number;
+  smallText: number;
+  pad: { start: number; end: number };
 }
 
 /**
  * The scale a device is drawn at (DeviceStage), and how much of it shows before the view is
  * decided. Null before the row and the stage have a size.
  *
- * The scale fits the device to the stage's width and to `--site-device-most` in height, capped at
- * 1 and no smaller than the least scale (leastScale, leastText).
+ * The scale fits the device to the stage's width and to `most` in height, capped at 1 and no
+ * smaller than the least scale (leastScale, leastText).
  */
-function deviceScale({ kind, stage, box, row }: DeviceFitting) {
-  const rem = remPixels();
-  const most =
-    parseFloat(getComputedStyle(stage).getPropertyValue('--site-device-most')) * rem || Infinity;
-  // The length of a cut edge's fade, in the stage's px (DeviceFrame.css).
-  const fade =
-    (parseFloat(getComputedStyle(box).getPropertyValue('--site-device-fade')) || 0) * rem;
-  // offsetWidth and offsetHeight are the row's own size, before its scale transform.
-  const width = row.offsetWidth;
-  const height = row.offsetHeight;
-  const room = stage.clientWidth;
+export function deviceScale({ kind, width, height, room, most, fade, smallText, pad }: DeviceRead) {
   if (!width || !height || !room) return null;
   const fits = Math.min(1, room / width, most / height);
-  const small = parseFloat(getComputedStyle(row).getPropertyValue('--env-font-size-body-sm'));
-  const least = Math.max(leastScale[kind], small ? leastText / (small * rem) : 0);
+  const least = Math.max(leastScale[kind], smallText ? leastText / smallText : 0);
   const scale = Math.min(1, Math.max(fits, least));
   // A device cut off at its start or end extends over the stage's padding to the stage's edge,
   // so it fades out at that edge rather than in a strip inside the stage.
-  const host = stage.closest('.site-live-example');
-  const hostStyle = host && getComputedStyle(host);
-  const pad = {
-    start: hostStyle ? parseFloat(hostStyle.paddingLeft) || 0 : 0,
-    end: hostStyle ? parseFloat(hostStyle.paddingRight) || 0 : 0,
-  };
   const across = width * scale > room + pixelTolerance;
   return {
     fade,
@@ -322,42 +229,31 @@ function deviceScale({ kind, stage, box, row }: DeviceFitting) {
 type DeviceScale = NonNullable<ReturnType<typeof deviceScale>>;
 
 /**
- * What the figure needs in view: the boxes of the pointer's course points that are visible now,
- * and of the elements it names (useMustShow), plus a box around the current heading (`focus`).
+ * What the figure needs in view, from the boxes of the pointer's course points (undefined where a
+ * point is not visible now), of the elements it names (useMustShow) and of its current heading
+ * (`focus`). The screen's state is which points show and how many named elements.
  *
  * Down the screen, the needed span only grows at one drawn size (`held.y`), so the view holds
- * while the figure plays. Across, each state of the screen (which points show and how many named
- * elements) gets one view (viewAcross). Words are measured again on a resize, or when a mutation
- * changes the state, not on every mutation the figure's play causes (`fromMutation`).
+ * while the figure plays. Across, each state of the screen gets one view (viewAcross).
  */
-function deviceNeeds(
-  f: DeviceFitting,
-  { width, height, scale, room }: DeviceScale,
-  fromMutation: boolean,
+export function deviceNeeds(
+  held: Held,
+  points: readonly (Box | undefined)[],
+  named: Box[],
+  focus: Box | undefined,
 ) {
-  const { row, root } = f;
-  // The scale the row is drawn at now; its points are measured at this scale.
-  const drawn = row.getBoundingClientRect().width / width || scale;
-  const size = `${width}x${height}@${scale}@${room}`;
-  if (f.held.size !== size) f.held = { size };
-  const { held } = f;
-  const script = root && f.readScript(root);
-  const points = script ? script.course.map((point) => pointBox(row, drawn, point)) : [];
-  const named = script ? namedBoxes(row, drawn, script.anywhere) : [];
   const course = points.filter((box): box is Box => box !== undefined);
   const boxes = [...course, ...named];
   held.y = grown(
     held.y,
     spanOf(boxes, (box) => [box.top, box.bottom]),
   );
-  const heading = script?.heading;
-  const focus = heading ? pointBox(row, drawn, heading) : undefined;
   const state = `${points.map((box) => (box ? 1 : 0)).join('')}/${named.length}`;
-  if (!held.words || !fromMutation || held.state !== state) held.words = wordBoxes(row, drawn);
-  return { boxes, named, focus, state, words: held.words };
+  return { boxes, named, focus, state };
 }
 
-type DeviceNeeds = ReturnType<typeof deviceNeeds>;
+/** What the figure needs in view (deviceNeeds), with the screen's word boxes (`words`). */
+type DeviceNeeds = ReturnType<typeof deviceNeeds> & { words: Box[] };
 
 /**
  * The view across a device: where it starts (`x`), how wide it is, and how far it extends over
@@ -375,7 +271,7 @@ type DeviceNeeds = ReturnType<typeof deviceNeeds>;
  * as a pane opening there, gets its own view instead of one sliding after it.
  */
 function viewAcross(
-  { held }: DeviceFitting,
+  held: Held,
   { width, scale, room, pad, across, fade }: DeviceScale,
   { boxes, named, focus, state, words }: DeviceNeeds,
   shownWidth: number,
@@ -444,20 +340,22 @@ function viewAcross(
 }
 
 /**
- * Decides a device's fit in its stage (DeviceFit), or null before it has a size. `fromMutation`
- * is true when only mutations or events (not a resize) caused this run.
+ * Places a device in its stage (DeviceFit) from its scale and what it needs, and moves `view`,
+ * where the view starts in the device's own px, there.
  */
-export function deviceFit(f: DeviceFitting, fromMutation: boolean): DeviceFit | null {
-  const scaled = deviceScale(f);
-  if (!scaled) return null;
+export function placeDevice(
+  kind: DeviceKind,
+  scaled: DeviceScale,
+  needs: DeviceNeeds,
+  held: Held,
+  view: { x: number; y: number },
+): DeviceFit {
   const { width, height, scale, fade } = scaled;
   const shown = { ...scaled.shown };
-  const needs = deviceNeeds(f, scaled, fromMutation);
-  const { held, view } = f;
   // A window whose page shows little, such as a heading and a line, is cut off below its content
   // (with footRoom under it) rather than shown mostly empty. It stays at least two fifths as tall
   // as it is wide, and is cut only when that saves more than 15% of its height.
-  if (f.kind === 'window') {
+  if (kind === 'window') {
     const content = Math.max(
       ...needs.words.map((word) => word.bottom + footRoom.words),
       held.y ? held.y[1] + footRoom.point : 0,
@@ -474,7 +372,7 @@ export function deviceFit(f: DeviceFitting, fromMutation: boolean): DeviceFit | 
     fade / scale,
   );
   const rows: [number, number] = [view.y, view.y + shown.height / scale];
-  const placed = viewAcross(f, scaled, needs, shown.width, rows);
+  const placed = viewAcross(held, scaled, needs, shown.width, rows);
   shown.width = placed.width;
   view.x = placed.x;
   const cut = [

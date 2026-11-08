@@ -8,6 +8,7 @@ import type { FitKind, Moment, StageScript } from './FitKind';
 import {
   cursorLength,
   inset,
+  inside,
   legibleScale,
   ownScale,
   phoneSteps,
@@ -35,7 +36,6 @@ import {
   type Shown,
 } from './PaintedBoxes';
 import { restingAims } from './PointerCourse';
-import { pixelTolerance } from '../shared/Remeasure';
 
 /** A stage's size in px: its inner width (`across`) and height (`down`). */
 export interface StageSize {
@@ -258,16 +258,11 @@ export function shapeOf(stage: HTMLElement, canvas: HTMLElement, boxes: Shown[])
  */
 function wholeInView(element: Element) {
   const box = element.getBoundingClientRect();
-  const inside = (around: { left: number; top: number; right: number; bottom: number }) =>
-    box.left >= around.left - pixelTolerance &&
-    box.top >= around.top - pixelTolerance &&
-    box.right <= around.right + pixelTolerance &&
-    box.bottom <= around.bottom + pixelTolerance;
-  if (!inside({ left: 0, top: 0, right: innerWidth, bottom: innerHeight })) return false;
+  if (!inside({ left: 0, top: 0, right: innerWidth, bottom: innerHeight }, box)) return false;
   for (let node = element.parentElement; node; node = node.parentElement) {
     const style = getComputedStyle(node);
     if (style.overflowX === 'visible' && style.overflowY === 'visible') continue;
-    if (!inside(node.getBoundingClientRect())) return false;
+    if (!inside(node.getBoundingClientRect(), box)) return false;
   }
   return true;
 }
