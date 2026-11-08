@@ -3,7 +3,6 @@
 import { Combobox as BaseCombobox } from '@base-ui/react/combobox';
 import { DirectionProvider } from '@base-ui/react/direction-provider';
 import {
-  useMemo,
   useRef,
   useState,
   type ComponentPropsWithoutRef,
@@ -12,6 +11,7 @@ import {
   type Ref,
   type RefObject,
 } from 'react';
+import { classNames } from '../internal/classNames.js';
 import { setRef } from '../internal/setRef.js';
 import { useDirection } from '../internal/provider/useDirection.js';
 import { useLocale, useMessages } from '../internal/provider/EnvUIContext.js';
@@ -36,8 +36,8 @@ import {
 } from './internal/comboboxItems.js';
 import { useComboboxOpen } from './internal/useComboboxOpen.js';
 import { useComboboxOptions } from './internal/useComboboxOptions.js';
+import { useComboboxSelection, type ComboboxSelection } from './internal/useComboboxSelection.js';
 import { useFieldMetadata } from '../internal/field/useFieldMetadata.js';
-import { useFormReset } from '../internal/field/useFormReset.js';
 import type { OverlayOpenChangeReason } from '../internal/popup/overlayOpenChangeReason.js';
 import '../styles/Base.css';
 import '../styles/Combobox.css';
@@ -162,9 +162,6 @@ interface ComboboxMultipleProps<Item extends ComboboxItem> {
 export type ComboboxProps<Item extends ComboboxItem = ComboboxItem> = ComboboxSharedProps<Item> &
   (ComboboxSingleProps<Item> | ComboboxMultipleProps<Item>);
 
-/** The chosen value as Base UI takes it: a list of values, one value, or none. */
-type Selection = readonly string[] | string | null;
-
 /** Changes of the typed text that people make, rather than the field filling in a chosen label. */
 const typedChanges = new Set(['input-change', 'input-clear', 'clear-press', 'escape-key']);
 
@@ -236,26 +233,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
   // closes and as the field takes focus.
   const [direction, readDirection] = useDirection(inputRef, popupOpen);
 
-  // The chosen value: the one it is given, or one the field keeps itself, which a native form reset
-  // restores to the default; as Base UI takes it, a list of values for a field that takes several.
-  const defaultSelection: Selection = props.multiple
-    ? [...(props.defaultValue ?? [])]
-    : (props.defaultValue ?? null);
-  const [uncontrolledValue, setUncontrolledValue] = useState<Selection>(defaultSelection);
-  const controlled = value !== undefined;
-  const selection = controlled ? (isMultiple ? value : (value ?? null)) : uncontrolledValue;
-  useFormReset(
-    nativeRef,
-    function applyReset() {
-      if (!controlled) setUncontrolledValue(defaultSelection);
-    },
-    form,
-  );
-  // One array per selection, so the options known by value are rebuilt only when it changes.
-  const selectedValues = useMemo(
-    () => (typeof selection === 'string' ? [selection] : (selection ?? [])),
-    [selection],
-  );
+  const { selection, selectedValues, keep } = useComboboxSelection(props, nativeRef);
 
   const {
     known,
@@ -272,8 +250,8 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
   const reportedQuery = useRef('');
 
   /** Keeps a value people chose, where the field keeps its own, and reports it with its options. */
-  function choose(next: Selection) {
-    if (!controlled) setUncontrolledValue(next);
+  function choose(next: ComboboxSelection) {
+    keep(next);
     // Base UI's selection is a list of values for a field that takes several, else one or none.
     if (props.multiple) {
       const values = [...((next as readonly string[] | null) ?? [])];
@@ -287,7 +265,10 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
     }
   }
 
-  function handleValueChange(next: Selection, details: BaseCombobox.Root.ChangeEventDetails) {
+  function handleValueChange(
+    next: ComboboxSelection,
+    details: BaseCombobox.Root.ChangeEventDetails,
+  ) {
     if (details.isCanceled) return;
     // Esc and emptying the text clear only a clearable single field that has a value. They keep
     // the value otherwise, and Esc never removes chips, which go one at a time or with the clear
@@ -378,7 +359,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
           floatingLabel
           size={size}
           visibleLabel={visibleLabel}
-          className={className ? `env-combobox ${className}` : 'env-combobox'}
+          className={classNames('env-combobox', className)}
           style={style}
           renderControlBox={controlBox({
             multiple: isMultiple,
