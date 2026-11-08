@@ -1,6 +1,6 @@
 import { CalendarHeatmap, Column, Text, Theme, useTheme } from '@envsemble/envui';
 import ColorByRank from '../../examples/calendar-heatmap/ColorByRank';
-import { useTimeline } from '../../motion/Motion';
+import { useTimeline } from '../../motion/Timeline';
 import { MotionStage } from '../../motion/MotionStage';
 
 // The example's heatmap, whose data and thresholds the figure toggles.

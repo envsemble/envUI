@@ -4,7 +4,8 @@ import { IconEditNote } from '@envsemble/envui/icons/EditNote';
 import { IconRateReview } from '@envsemble/envui/icons/RateReview';
 import { IconRocketLaunch } from '@envsemble/envui/icons/RocketLaunch';
 import { useMedia } from '../motion/Autoplay';
-import { usePointer, type PointerStep } from '../motion/Motion';
+import type { PointerStep } from '../motion/PointerPlan';
+import { usePointer } from '../motion/PointerPlayback';
 import { narrowGallery } from './Tiles';
 
 /* A piece of work's states, each in its tone. */

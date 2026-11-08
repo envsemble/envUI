@@ -9,7 +9,7 @@ import {
 } from 'react';
 import { Theme, useTheme } from '@envsemble/envui';
 import { IconArticle } from '@envsemble/envui/icons/Article';
-import { Playback, StageOverlays } from '../motion/Motion';
+import { Playback, StageOverlays } from '../motion/Playback';
 import { useDisplaySettings } from '../theme/DisplaySettings';
 import { ExampleRender } from './LiveExample';
 import { FoundationTile } from '../tiles/foundations/FoundationTiles';
@@ -40,7 +40,7 @@ class TileBoundary extends Component<{ children: ReactNode }, { failed: boolean 
  * same way, and from then until it shows, a skeleton of the stage. Without either, a page icon. A page's own
  * tile, or a gallery's composition, takes the example's place. A gallery's tile passes its own
  * stage class. While `playing`, unless the sidebar paused every animation, its animation plays
- * (motion/Motion.tsx), and it rests at its still once that ends.
+ * (motion/Playback.tsx), and it rests at its still once that ends.
  */
 export function TileStage({
   picture,

@@ -1,5 +1,6 @@
 import MeetingTime from '../../examples/date-picker/MeetingTime';
-import { usePointer, type PointerStep } from '../../motion/Motion';
+import type { PointerStep } from '../../motion/PointerPlan';
+import { usePointer } from '../../motion/PointerPlayback';
 import { MotionStage, roomFor, rowsAnd } from '../../motion/MotionStage';
 
 const field = '.env-date-picker-control';

@@ -1093,7 +1093,7 @@ test('a popup tile rests open and holds one view from its still through its play
 }) => {
   // A select, a combobox, a menu bar and a command palette rest with their popup open, framed on
   // it whole; as they play, the list closes and opens again in place, and nothing is drawn smaller
-  // or moved (useHeldView, Motion.tsx). So does the avatar pile as its tooltip opens.
+  // or moved (useHeldView, Playback.tsx). So does the avatar pile as its tooltip opens.
   test.setTimeout(120_000);
   for (const width of [1440, 390]) {
     await page.setViewportSize({ width, height: width === 1440 ? 900 : 844 });

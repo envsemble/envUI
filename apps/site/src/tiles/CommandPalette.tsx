@@ -3,7 +3,9 @@ import { CommandPalette, type CommandPaletteItem } from '@envsemble/envui';
 import { IconNoteAdd } from '@envsemble/envui/icons/NoteAdd';
 import { IconPersonAdd } from '@envsemble/envui/icons/PersonAdd';
 import { useMedia } from '../motion/Autoplay';
-import { useHeldView, usePointer, type PointerStep } from '../motion/Motion';
+import { useHeldView } from '../motion/Playback';
+import type { PointerStep } from '../motion/PointerPlan';
+import { usePointer } from '../motion/PointerPlayback';
 import { narrowGallery } from './Tiles';
 
 const items: CommandPaletteItem[] = [

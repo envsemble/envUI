@@ -27,7 +27,9 @@ import { IconAdd } from '@envsemble/envui/icons/Add';
 import { useState } from 'react';
 import type { FoundationFigure } from './FoundationFigures';
 import { MarkedSubject } from './Marks';
-import { usePointer, useTimeline, type PointerStep } from '../../motion/Motion';
+import type { PointerStep } from '../../motion/PointerPlan';
+import { usePointer } from '../../motion/PointerPlayback';
+import { useTimeline } from '../../motion/Timeline';
 import { CornerLabel, StepStack } from './Steps';
 import { Figure, NumberedLegend, type LegendEntry } from './Topic';
 

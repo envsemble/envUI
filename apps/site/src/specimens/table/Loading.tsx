@@ -1,6 +1,6 @@
 import { placeholders, Table } from '@envsemble/envui';
 import { Example } from '../../figures/Example';
-import { useTimeline } from '../../motion/Motion';
+import { useTimeline } from '../../motion/Timeline';
 import { MotionStage } from '../../motion/MotionStage';
 
 interface File {

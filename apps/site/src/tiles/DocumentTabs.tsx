@@ -2,7 +2,9 @@ import { useState } from 'react';
 import { DocumentTabs, IconButton, Surface, Text, type DocumentTabsItem } from '@envsemble/envui';
 import { IconAdd } from '@envsemble/envui/icons/Add';
 import { useMedia } from '../motion/Autoplay';
-import { useHeldView, useMustShow, usePointer, type PointerStep } from '../motion/Motion';
+import { useHeldView, useMustShow } from '../motion/Playback';
+import type { PointerStep } from '../motion/PointerPlan';
+import { usePointer } from '../motion/PointerPlayback';
 import { narrowGallery } from './Tiles';
 
 const documents: DocumentTabsItem[] = ['Plan', 'Spec'].map((label) => ({

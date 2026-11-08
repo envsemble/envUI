@@ -262,7 +262,7 @@
   min-block-size: 0;
 }
 
-/* So does a tile that grows as it plays, such as a note gaining a line (useHeldView, Motion.tsx):
+/* So does a tile that grows as it plays, such as a note gaining a line (useHeldView, Playback.tsx):
    what it adds grows below what stays. */
 .catalogue-gallery-stage .catalogue-related-canvas[data-from-top],
 .catalogue-gallery-stage .catalogue-related-canvas[data-from-top]:has(> .catalogue-overlay-layer) {

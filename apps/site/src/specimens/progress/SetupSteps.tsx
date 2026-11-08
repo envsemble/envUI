@@ -1,5 +1,5 @@
 import { Progress } from '@envsemble/envui';
-import { useTimeline } from '../../motion/Motion';
+import { useTimeline } from '../../motion/Timeline';
 import { MotionStage } from '../../motion/MotionStage';
 import { useRounds } from './Rounds';
 

@@ -4,7 +4,7 @@ import { IconArrowForward } from '@envsemble/envui/icons/ArrowForward';
 import type { DocumentationMetadata } from '@docs-model/DocumentationTypes';
 import { Documentation } from '../pages/Documentation';
 import { useAutoplay } from '../motion/Autoplay';
-import { usePlaying } from '../motion/Motion';
+import { usePlaying } from '../motion/usePlaying';
 import { TileStage } from '../figures/TileStage';
 import { useNear } from '../figures/useNear';
 import { alternativesOf, type Alternative, type TilePicture } from './RelatedPages';

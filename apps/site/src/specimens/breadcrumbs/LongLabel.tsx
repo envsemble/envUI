@@ -1,6 +1,7 @@
 import OneLine from '../../examples/breadcrumbs/OneLine';
 import { Example } from '../../figures/Example';
-import { usePointer, type PointerStep } from '../../motion/Motion';
+import type { PointerStep } from '../../motion/PointerPlan';
+import { usePointer } from '../../motion/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
 
 /* The pointer rests on the current page, cut short, and its tooltip shows the whole name. */

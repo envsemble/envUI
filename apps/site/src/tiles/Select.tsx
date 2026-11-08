@@ -1,5 +1,7 @@
 import { Select } from '@envsemble/envui';
-import { useHeldView, usePointer, type PointerStep } from '../motion/Motion';
+import { useHeldView } from '../motion/Playback';
+import type { PointerStep } from '../motion/PointerPlan';
+import { usePointer } from '../motion/PointerPlayback';
 
 const options = [
   { value: 'team', label: 'Team' },

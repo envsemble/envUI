@@ -1,4 +1,4 @@
-import type { PointerStep } from '../../motion/Motion';
+import type { PointerStep } from '../../motion/PointerPlan';
 
 /** The clock the do and the don't of a zone during uploads play on together. */
 export const zoneClock = 'file-upload-zone';

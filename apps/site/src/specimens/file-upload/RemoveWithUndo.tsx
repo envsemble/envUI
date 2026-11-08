@@ -1,5 +1,6 @@
 import RemoveWithUndo from '../../examples/file-upload/RemoveWithUndo';
-import { usePointer, type PointerStep } from '../../motion/Motion';
+import type { PointerStep } from '../../motion/PointerPlan';
+import { usePointer } from '../../motion/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
 
 const remove = '[aria-label="Remove budget-2026.xlsx"]';

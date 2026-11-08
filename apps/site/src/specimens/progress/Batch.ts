@@ -1,4 +1,4 @@
-import { useSharedTimeline } from '../../motion/Motion';
+import { useSharedTimeline } from '../../motion/Timeline';
 import { useRounds } from './Rounds';
 
 /**

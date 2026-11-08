@@ -1,5 +1,6 @@
 import TopCenter from '../../examples/toast/TopCenter';
-import { usePointer, type PointerStep } from '../../motion/Motion';
+import type { PointerStep } from '../../motion/PointerPlan';
+import { usePointer } from '../../motion/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
 
 const dismiss = '.env-toast[data-tone="danger"] .env-toast-dismiss';

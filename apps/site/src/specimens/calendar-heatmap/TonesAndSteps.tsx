@@ -8,7 +8,7 @@ import {
   type CalendarHeatmapProps,
 } from '@envsemble/envui';
 import { Example } from '../../figures/Example';
-import { useTimeline } from '../../motion/Motion';
+import { useTimeline } from '../../motion/Timeline';
 import { MotionStage } from '../../motion/MotionStage';
 
 /** Stands in for sixteen weeks of edits: busier midweek, with a quiet stretch. */

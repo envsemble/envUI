@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { Checkbox, Column, Link, Row, Table, Text, Toolbar } from '@envsemble/envui';
 import { IconArchive } from '@envsemble/envui/icons/Archive';
 import { IconDelete } from '@envsemble/envui/icons/Delete';
-import { usePointer, type PointerStep } from '../motion/Motion';
+import type { PointerStep } from '../motion/PointerPlan';
+import { usePointer } from '../motion/PointerPlayback';
 
 const projects = [
   { id: 'website', name: 'Website refresh', tasks: 12 },

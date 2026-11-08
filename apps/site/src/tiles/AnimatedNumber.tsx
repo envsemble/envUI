@@ -1,5 +1,5 @@
 import { AnimatedNumber, Text } from '@envsemble/envui';
-import { useTimeline } from '../motion/Motion';
+import { useTimeline } from '../motion/Timeline';
 
 /* A count that grows, shrinks and grows back, rolling up or down each time. */
 const counts = [1280, 1312, 1296, 1341];

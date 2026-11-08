@@ -17,7 +17,8 @@ import {
 import { IconLogout } from '@envsemble/envui/icons/Logout';
 import { IconManageAccounts } from '@envsemble/envui/icons/ManageAccounts';
 import { IconPalette } from '@envsemble/envui/icons/Palette';
-import { usePointer, type PointerStep } from '../../motion/Motion';
+import type { PointerStep } from '../../motion/PointerPlan';
+import { usePointer } from '../../motion/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
 
 const user = { name: 'Alex Morgan', email: 'alex.morgan@example.com' };

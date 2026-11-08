@@ -1,5 +1,7 @@
 import ResizableDetails from '../../examples/panes/ResizableDetails';
-import { useMustShow, usePointer, type PointerStep } from '../../motion/Motion';
+import { useMustShow } from '../../motion/Playback';
+import type { PointerStep } from '../../motion/PointerPlan';
+import { usePointer } from '../../motion/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
 import { useOnScreen } from '../../figures/DeviceFrame';
 import { WidthSweep } from '../../motion/WidthSweep';

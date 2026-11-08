@@ -1,4 +1,4 @@
-import type { PointerStep } from '../../motion/Motion';
+import type { PointerStep } from '../../motion/PointerPlan';
 
 /*
  * The do's and the don't's pointer turn their switch off and on again together, the don't's a

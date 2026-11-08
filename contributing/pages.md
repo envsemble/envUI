@@ -308,7 +308,7 @@ The visual baseline captures a page's specimens, or its first example when it ha
 
 ### Animated specimens and playbacks
 
-Where a section is about a change, such as a slider stretching past its ends or a reply arriving, a specimen plays it: the live component on a `MotionStage` (`apps/site/src/motion/MotionStage.tsx`), driven by a script of a pointer no one sees (`usePointer`) or by steps of its props (`useTimeline`), both in `apps/site/src/motion/Motion.tsx`.
+Where a section is about a change, such as a slider stretching past its ends or a reply arriving, a specimen plays it: the live component on a `MotionStage` (`apps/site/src/motion/MotionStage.tsx`), driven by a script of a pointer no one sees (`usePointer`, `apps/site/src/motion/PointerPlayback.ts`) or by steps of its props (`useTimeline`, `apps/site/src/motion/Timeline.ts`).
 
 - **The component's own behaviour.** The pointer hovers, presses, drags, types and uses keys as a person would, so the component shows its own states; change props only where no person could.
 - **It loops**, ending where it began, at one height, so the page never moves; give `MotionStage` a `height` that holds what opens, or `roomFor` where wrapped rows grow it, and `top` where that room is for what opens below the control, such as a select's list.
@@ -317,7 +317,7 @@ Where a section is about a change, such as a slider stretching past its ends or 
 - **In place of an example**: an example the catalogue plays takes `motion`, on its fence or as `motion: true` in an overview's entry, and its playback, the specimen named after it, imports it, or draws it again where it must change what the example holds, and plays it. The figure keeps the example's caption and code; the Docs and the package keep the example.
 - **A playback depends on its example.** Changing an example can break its playback's script, and renaming one leaves its playback behind: change and rename them together. The catalogue fails on a playback without its example, and `npm test` on a specimen that no page places or plays.
 - **Pairs in step**: a do and a don't that play one sequence take their steps from `useSharedTimeline`, or `usePointer` with the same `clock`.
-- `PointerStep` in `Motion.tsx` lists what the pointer can do, `PressedKeys` shows the keys it presses, and `Renew` redraws an example a loop can't put back.
+- `PointerStep` in `PointerPlan.ts` lists what the pointer can do, `PressedKeys` shows the keys it presses, and `Renew` redraws an example a loop can't put back.
 
 ## Tiles
 
@@ -327,7 +327,7 @@ The galleries and Related show each page by a tile: `apps/site/src/tiles/<Page>.
 - **A still that is its animation's first frame.** On hover or focus it plays a short script of the component in use, and on a touch screen the tile nearest the middle plays once scrolling settles. The script ends where it began.
 - **Its window** is 14 by 10.5 rem, the same for every tile, so components show at one scale; only a component too large for it takes a larger one in `tileWindows` (`apps/site/src/tiles/Tiles.ts`).
 - **A still with a popup open** keeps it in state and puts it back with `usePointer`'s `onRest`.
-- **A popup whose script opens, closes and changes it**, such as a select's list, rests open in its largest state, through the component's own `defaultOpen` or `open`, and calls `useHeldView` (`apps/site/src/motion/Motion.tsx`): framed on that still, its view holds while it plays. Where it is taller than the stage, such as a picker, it shows from its field down to what its script acts on and what is chosen, whole above the fade at the stage's foot, so the script aims only at what shows whole.
+- **A popup whose script opens, closes and changes it**, such as a select's list, rests open in its largest state, through the component's own `defaultOpen` or `open`, and calls `useHeldView` (`apps/site/src/motion/Playback.tsx`): framed on that still, its view holds while it plays. Where it is taller than the stage, such as a picker, it shows from its field down to what its script acts on and what is chosen, whole above the fade at the stage's foot, so the script aims only at what shows whole.
 - **A tile that grows as it plays**, such as a note gaining a line, calls `useHeldView(true)`: it lays out from its window's top and is shown from its top, so what it adds grows downward.
 
 ## Pattern pages

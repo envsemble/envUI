@@ -1,5 +1,5 @@
 import SpinnerInPlace from '../../examples/loading/SpinnerInPlace';
-import { useSharedTimeline } from '../../motion/Motion';
+import { useSharedTimeline } from '../../motion/Timeline';
 import { MotionStage } from '../../motion/MotionStage';
 import { members, membersClock, membersSteps } from './Members';
 

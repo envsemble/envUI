@@ -1,5 +1,5 @@
 import { Button, Column, Surface, Text, type LayoutAlign } from '@envsemble/envui';
-import { useTimeline } from '../motion/Motion';
+import { useTimeline } from '../motion/Timeline';
 import { outlined } from './Outline';
 
 /** Step by step: at the start, centred, at the end, and back. */

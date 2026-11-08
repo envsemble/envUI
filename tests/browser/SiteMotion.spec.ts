@@ -3,7 +3,7 @@ import { siteDevUrl } from './helpers/Servers';
 import { displayStorageKeys } from '../../apps/site/src/theme/DisplayStorage';
 
 /*
- * The site's animations (apps/site/src/motion/Motion.tsx): a tile plays its own preview while
+ * The site's animations (apps/site/src/motion/): a tile plays its own preview while
  * the pointer is on it and rests at its still, the animation's first step, once it leaves; an
  * animated figure on a page plays by itself, with a pause button that holds it where it is; the
  * Display menu's Motion pauses them all, is stored, and is what a reader who prefers reduced motion

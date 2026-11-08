@@ -1,5 +1,5 @@
 import RowDensity from '../../examples/list/RowDensity';
-import { useTimeline } from '../../motion/Motion';
+import { useTimeline } from '../../motion/Timeline';
 import { MotionStage } from '../../motion/MotionStage';
 
 const densities = [

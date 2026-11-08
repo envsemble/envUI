@@ -8,7 +8,9 @@ import {
   useToast,
 } from '@envsemble/envui';
 import { IconSend } from '@envsemble/envui/icons/Send';
-import { usePointer, useStageLayer, type PointerStep } from '../motion/Motion';
+import { useStageLayer } from '../motion/Playback';
+import type { PointerStep } from '../motion/PointerPlan';
+import { usePointer } from '../motion/PointerPlayback';
 
 /**
  * The last invitation's notification dismissed, then another sent: the button works a moment, and

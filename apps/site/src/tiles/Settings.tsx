@@ -1,5 +1,6 @@
 import { Column, List, Surface, Switch, Text } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../motion/Motion';
+import type { PointerStep } from '../motion/PointerPlan';
+import { usePointer } from '../motion/PointerPlayback';
 import { outlined } from './Outline';
 
 const toggle = (index: number) =>

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Column, List, Row, SearchField, Select, Surface, Text } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../motion/Motion';
+import type { PointerStep } from '../motion/PointerPlan';
+import { usePointer } from '../motion/PointerPlayback';
 import { outlined } from './Outline';
 
 const projects = [

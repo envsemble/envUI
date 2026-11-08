@@ -1,7 +1,8 @@
 import { useRef, type MouseEvent } from 'react';
 import { Column, Row, Surface, TableOfContents, Text } from '@envsemble/envui';
 import { Example } from '../../figures/Example';
-import { usePointer, type PointerStep } from '../../motion/Motion';
+import type { PointerStep } from '../../motion/PointerPlan';
+import { usePointer } from '../../motion/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
 
 /** The guide's sections, with ids of the figure's own, as a page holds them once. */

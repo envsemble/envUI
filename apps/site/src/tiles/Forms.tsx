@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Button, Column, Row, TextField } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../motion/Motion';
+import type { PointerStep } from '../motion/PointerPlan';
+import { usePointer } from '../motion/PointerPlayback';
 
 const email = '.env-text-field:nth-child(2 of .env-text-field) .env-text-field-input';
 

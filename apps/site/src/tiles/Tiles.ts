@@ -6,7 +6,7 @@ import { moduleRegistry } from '../loading/ModuleRegistry';
  * in the galleries and in Related, apps/site/src/tiles/<Page>.tsx, named after the page's id in
  * PascalCase (segmented-control is SegmentedControl.tsx), with a default-exported component. It
  * shows the component alone, large and centred, with as little else as it needs to be recognised,
- * and its animation, a timeline (useTimeline in motion/Motion.tsx) that plays on hover from that
+ * and its animation, a timeline (useTimeline in motion/Timeline.ts) that plays on hover from that
  * still. A page without one shows the example its tile picks (Gallery.tsx, Related.tsx).
  */
 const tiles = moduleRegistry(import.meta.glob<{ default: ComponentType }>('/src/tiles/*.tsx'));

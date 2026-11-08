@@ -18,7 +18,8 @@ import { IconPlayArrow } from '@envsemble/envui/icons/PlayArrow';
 import type { StageFill } from '@docs-model/DocumentationTypes';
 import { useVerdictFit } from '../fit/useVerdictFit';
 import { useDisplaySettings } from '../theme/DisplaySettings';
-import { Playback, StageOverlays, useInView } from './Motion';
+import { Playback, StageOverlays } from './Playback';
+import { useInView } from './useInView';
 import { rootMotionDuration } from './RootMotionTokens';
 import { FigureDevice, OnDevice } from '../figures/DeviceFrame';
 

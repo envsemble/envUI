@@ -7,7 +7,8 @@ import {
   type NavigationDrawerDestination,
 } from '@envsemble/envui';
 import { useMedia } from '../motion/Autoplay';
-import { usePointer, type PointerStep } from '../motion/Motion';
+import type { PointerStep } from '../motion/PointerPlan';
+import { usePointer } from '../motion/PointerPlayback';
 import { narrowGallery } from './Tiles';
 
 const item = (index: number) =>

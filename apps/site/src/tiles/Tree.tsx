@@ -4,7 +4,8 @@ import { IconDescription } from '@envsemble/envui/icons/Description';
 import { IconFolder } from '@envsemble/envui/icons/Folder';
 import { IconFolderOpen } from '@envsemble/envui/icons/FolderOpen';
 import { useMedia } from '../motion/Autoplay';
-import { usePointer, type PointerStep } from '../motion/Motion';
+import type { PointerStep } from '../motion/PointerPlan';
+import { usePointer } from '../motion/PointerPlayback';
 import { narrowGallery } from './Tiles';
 
 const row = (id: string) => `.env-tree-item[data-id="${id}"]`;

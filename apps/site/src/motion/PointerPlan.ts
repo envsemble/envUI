@@ -1,5 +1,5 @@
 /*
- * The script of the pointer no one sees, as usePointer (Motion.tsx) plays it: the steps a figure
+ * The script of the pointer no one sees, as usePointer (PointerPlayback.ts) plays it: the steps a figure
  * writes, and the plan they make of its time, where the pointer is and what it does when, at the
  * site's brisk pace.
  */

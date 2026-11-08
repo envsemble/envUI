@@ -2,7 +2,9 @@ import { useState } from 'react';
 import { Button, Column, IconButton, Popover, Text } from '@envsemble/envui';
 import { IconInfo } from '@envsemble/envui/icons/Info';
 import { useMedia } from '../motion/Autoplay';
-import { useHeldView, usePointer, type PointerStep } from '../motion/Motion';
+import { useHeldView } from '../motion/Playback';
+import type { PointerStep } from '../motion/PointerPlan';
+import { usePointer } from '../motion/PointerPlayback';
 import { narrowGallery } from './Tiles';
 
 const trigger = '.env-button[aria-haspopup]';

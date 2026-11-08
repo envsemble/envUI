@@ -10,7 +10,7 @@ import {
   type ThemeContrast,
   type ColorScheme,
 } from '@envsemble/envui';
-import { useTimeline } from '../../motion/Motion';
+import { useTimeline } from '../../motion/Timeline';
 import { CornerLabel } from './Steps';
 import { Figure } from './Topic';
 import type { FigureWords } from './ColorFigures';

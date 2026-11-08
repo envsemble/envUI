@@ -1,7 +1,8 @@
 import { Column } from '@envsemble/envui';
 import ReportMonth from '../../examples/month-picker/ReportMonth';
 import { Example } from '../../figures/Example';
-import { usePointer, type PointerStep } from '../../motion/Motion';
+import type { PointerStep } from '../../motion/PointerPlan';
+import { usePointer } from '../../motion/PointerPlayback';
 import { MotionStage, rowsAnd } from '../../motion/MotionStage';
 
 const field = '.env-date-picker-control';

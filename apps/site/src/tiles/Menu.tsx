@@ -3,7 +3,9 @@ import { Button, IconButton, Menu, Row, Text } from '@envsemble/envui';
 import { IconDelete } from '@envsemble/envui/icons/Delete';
 import { IconEdit } from '@envsemble/envui/icons/Edit';
 import { IconMoreVert } from '@envsemble/envui/icons/MoreVert';
-import { useHeldView, usePointer, type PointerStep } from '../motion/Motion';
+import { useHeldView } from '../motion/Playback';
+import type { PointerStep } from '../motion/PointerPlan';
+import { usePointer } from '../motion/PointerPlayback';
 
 const item = (index: number) => `.env-menu-item:nth-child(${index} of .env-menu-item)`;
 const trigger = '.env-button[aria-haspopup]';

@@ -1,5 +1,5 @@
 import { Box, Button, Column, Text, type SpaceStep } from '@envsemble/envui';
-import { useTimeline } from '../../motion/Motion';
+import { useTimeline } from '../../motion/Timeline';
 import { MotionStage } from '../../motion/MotionStage';
 
 /** The inset steps up from 4 to 8, down to none and back, a beat at each. */
