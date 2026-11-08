@@ -237,9 +237,9 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
 
   // The chosen value: the one it is given, or one the field keeps itself, which a native form reset
   // restores to the default; as Base UI takes it, a list of values for a field that takes several.
-  const defaultSelection: Selection = isMultiple
-    ? [...((defaultValue as readonly string[] | undefined) ?? [])]
-    : ((defaultValue as string | null | undefined) ?? null);
+  const defaultSelection: Selection = props.multiple
+    ? [...(props.defaultValue ?? [])]
+    : (props.defaultValue ?? null);
   const [uncontrolledValue, setUncontrolledValue] = useState<Selection>(defaultSelection);
   const controlled = value !== undefined;
   const selection = controlled ? (isMultiple ? value : (value ?? null)) : uncontrolledValue;
@@ -250,9 +250,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
     },
     form,
   );
-  const selectedValues = (
-    Array.isArray(selection) ? selection : selection == null ? [] : [selection]
-  ) as readonly string[];
+  const selectedValues = typeof selection === 'string' ? [selection] : (selection ?? []);
 
   const {
     known,
@@ -263,7 +261,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
     grouped,
   } = useComboboxOptions({ items, filter, locale, selectedValues });
 
-  const singleItem = isMultiple || selection == null ? undefined : known.get(selection as string);
+  const singleItem = typeof selection === 'string' ? known.get(selection) : undefined;
   // The text the input shows, which starts as the chosen option's label, and the query
   // onInputValueChange reported last.
   const [inputText, setInputText] = useState(singleItem?.label ?? '');
@@ -344,6 +342,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
       <BaseCombobox.Root<string, boolean, Item>
         items={collection}
         multiple={isMultiple}
+        // Base UI's value type takes a mutable list of values; it only reads this one.
         value={selection as string[] | string | null}
         onValueChange={handleValueChange}
         onInputValueChange={handleInputValueChange}
