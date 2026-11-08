@@ -37,7 +37,7 @@ export function ThemeToggle({
   const label = ownLabel ?? (theme === 'light' ? messages.toDark : messages.toLight);
   return (
     <IconButton
-      {...(props as IconButtonProps)}
+      {...props}
       className={classNames('env-theme-toggle', className)}
       icon={theme === 'light' ? <IconDarkMode /> : <IconLightMode />}
       aria-label={label}

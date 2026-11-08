@@ -150,7 +150,7 @@ function useControl(children: ReactElement<TriggerProps>, forwarded: Forwarded) 
   );
   return Object.keys(forwarded).length > 0
     ? cloneElement(children, {
-        ...(mergeProps(forwarded as object, children.props as object) as TriggerProps),
+        ...mergeProps(forwarded, children.props),
         ref: forwardedRef && childRef ? controlRef : (childRef ?? forwardedRef),
       })
     : children;
@@ -186,7 +186,7 @@ export function Tooltip(props: TooltipProps) {
         'A Tooltip wraps one element that takes props and a ref, such as a Button or an IconButton; ' +
           `it got ${isValidElement(children) ? 'a Fragment' : typeof children}, and shows no tooltip.`,
     );
-    return <>{children as ReactNode}</>;
+    return <>{children}</>;
   }
   // Around an envUI component that takes its control as trigger, such as Menu.Root or Popover,
   // the tooltip goes to that control, where the component's own props, ref and popup stay its own.

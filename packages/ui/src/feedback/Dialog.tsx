@@ -211,7 +211,7 @@ export function Dialog({
           eventDetails.cancel();
           return;
         }
-        onOpenChange?.(next, { reason: eventDetails.reason as DialogOpenChangeReason });
+        onOpenChange?.(next, { reason: eventDetails.reason });
       }}
       modal={containedModal(portal, modal)}
       disablePointerDismissal={disablePointerDismissal}

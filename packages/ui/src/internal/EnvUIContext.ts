@@ -38,7 +38,7 @@ export function useMessages<Namespace extends keyof EnvUIMessages>(
 ): EnvUIMessages[Namespace] {
   const overrides = useContext(EnvUIContext).messages[namespace];
   return useMemo(
-    () => (overrides ? ({ ...defaults, ...overrides } as EnvUIMessages[Namespace]) : defaults),
+    () => (overrides ? { ...defaults, ...overrides } : defaults),
     [defaults, overrides],
   );
 }

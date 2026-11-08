@@ -63,22 +63,18 @@ export function ActionElement({
       'data-underline': flag(variant === 'text' && emphasis.underline),
     };
   }
-  const props = (
-    pending
-      ? {
-          ...rest,
-          'aria-busy': true,
-          'aria-disabled': true,
-          'data-pending': '',
-          onClick: preventActivation,
-        }
-      : rest
-  ) as typeof rest;
+  const props = pending
+    ? {
+        ...rest,
+        'aria-busy': true,
+        'aria-disabled': true,
+        'data-pending': '',
+        onClick: preventActivation,
+      }
+    : rest;
   const LinkComponent = useLinkComponent();
   if (props.href !== undefined) {
-    const { href, onClick, tabIndex, ...anchorProps } = props as ComponentPropsWithRef<'a'> & {
-      href: string;
-    };
+    const { href, onClick, tabIndex, ...anchorProps } = props;
     const sharedProps = {
       ...anchorProps,
       role: anchorProps.role ?? (disabled ? 'link' : undefined),
@@ -95,6 +91,6 @@ export function ActionElement({
       <LinkComponent {...sharedProps} href={href} onClick={onClick} />
     );
   }
-  const { type = 'button', ...buttonProps } = props as ComponentPropsWithRef<'button'>;
+  const { type = 'button', ...buttonProps } = props;
   return <button {...buttonProps} type={type} disabled={disabled} />;
 }

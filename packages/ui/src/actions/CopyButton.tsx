@@ -179,7 +179,7 @@ export function CopyButton({
         fallbackVariant: 'primary',
         startIcon: symbol,
         'aria-label': name,
-        children: children as CopyButtonLabel,
+        children,
       } as ButtonBaseProps)}
     />
   );

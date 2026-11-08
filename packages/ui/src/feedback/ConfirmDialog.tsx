@@ -220,7 +220,7 @@ export function ConfirmDialog({
           return;
         }
         change(next, {
-          reason: eventDetails.reason as DialogOpenChangeDetails['reason'],
+          reason: eventDetails.reason,
         });
       }}
     >

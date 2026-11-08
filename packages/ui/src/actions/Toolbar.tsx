@@ -280,13 +280,11 @@ function Link({ icon, label, className, ...props }: LinkProps) {
   if (off)
     return (
       <IconButton
-        {...({
-          ...props,
-          icon,
-          disabled: true,
-          'aria-label': label,
-          className: classNames('env-toolbar-button', className),
-        } as IconButtonProps)}
+        {...props}
+        icon={icon}
+        disabled
+        aria-label={label}
+        className={classNames('env-toolbar-button', className)}
       />
     );
   return (
@@ -294,12 +292,10 @@ function Link({ icon, label, className, ...props }: LinkProps) {
       <BaseToolbar.Link
         render={
           <IconButton
-            {...({
-              ...props,
-              icon,
-              'aria-label': label,
-              className: classNames('env-toolbar-button', className),
-            } as IconButtonProps)}
+            {...props}
+            icon={icon}
+            aria-label={label}
+            className={classNames('env-toolbar-button', className)}
           />
         }
       />

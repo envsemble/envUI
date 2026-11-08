@@ -160,7 +160,7 @@ function primitive(
     'data-gap': gap,
     'data-align': align,
     'data-justify': justify,
-    style: Object.keys(custom).length > 0 ? ({ ...custom, ...style } as CSSProperties) : style,
+    style: Object.keys(custom).length > 0 ? { ...custom, ...style } : style,
   });
 }
 
@@ -172,7 +172,7 @@ export function Box<RenderedElement extends HTMLElement = HTMLDivElement>({
   render,
   ...props
 }: BoxProps<RenderedElement>) {
-  return primitive('box', render, props as AnyPrimitiveProps);
+  return primitive('box', render, props);
 }
 
 /**
@@ -184,7 +184,7 @@ export function Row<RenderedElement extends HTMLElement = HTMLDivElement>({
   wrap,
   ...props
 }: RowProps<RenderedElement>) {
-  return primitive('row', render, props as AnyPrimitiveProps, { 'data-wrap': flag(wrap) });
+  return primitive('row', render, props, { 'data-wrap': flag(wrap) });
 }
 
 /**
@@ -195,7 +195,7 @@ export function Column<RenderedElement extends HTMLElement = HTMLDivElement>({
   render,
   ...props
 }: ColumnProps<RenderedElement>) {
-  return primitive('column', render, props as AnyPrimitiveProps);
+  return primitive('column', render, props);
 }
 
 /** The `grid-template-columns` of a Grid's columns. */
@@ -217,7 +217,7 @@ export function Grid<RenderedElement extends HTMLElement = HTMLDivElement>({
   return primitive(
     'grid',
     render,
-    props as AnyPrimitiveProps,
+    props,
     { 'data-columns': flag(columns !== undefined) },
     columns === undefined ? {} : { '--env-grid-columns': gridTemplate(columns) },
   );

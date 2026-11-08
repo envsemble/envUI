@@ -149,7 +149,7 @@ export function HoverCard({
       open={open}
       onOpenChange={(next, details) => {
         if (keepsOpen(portal, next, details, triggerRef.current)) details.cancel();
-        else setOpen(next, details.reason as PopoverOpenChangeReason);
+        else setOpen(next, details.reason);
       }}
     >
       {/* A Tooltip as the trigger, or around the HoverCard, shows no tooltip (see Tooltip). */}

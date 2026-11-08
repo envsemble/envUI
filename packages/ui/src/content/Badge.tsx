@@ -74,7 +74,7 @@ export function Badge({
   ...props
 }: BadgeProps) {
   if (count != null) {
-    const { 'aria-label': label, ...rest } = props as Omit<CountBadgeProps, 'count'>;
+    const { 'aria-label': label, ...rest } = props;
     return (
       <span
         {...rest}

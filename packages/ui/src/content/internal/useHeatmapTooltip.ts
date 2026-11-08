@@ -141,7 +141,7 @@ export function useHeatmapTooltip(
       show(cell, !byMouse);
     },
     onBlur(event: FocusEvent<HTMLTableElement>) {
-      if (grid.current?.contains(event.relatedTarget as Node | null)) return;
+      if (grid.current?.contains(event.relatedTarget)) return;
       // A tooltip the pointer rests on stays, on the days or on the tooltip itself.
       if (!grid.current?.matches(':hover') && !popup.current?.matches(':hover')) hide();
     },

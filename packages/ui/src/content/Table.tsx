@@ -364,7 +364,7 @@ interface TableCellLayout {
 
 function cellAttributes({ align, numeric, nowrap }: TableCellLayout) {
   return {
-    'data-align': (align ?? (numeric ? 'end' : 'start')) as string,
+    'data-align': align ?? (numeric ? 'end' : 'start'),
     'data-numeric': flag(numeric),
     'data-nowrap': flag(nowrap),
   };

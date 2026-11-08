@@ -22,11 +22,7 @@ import { setRef } from '../internal/setRef.js';
 import { useEnvUI, useMessages, type Direction } from '../internal/EnvUIContext.js';
 import { dialog } from '../foundations/messages/dialog.js';
 import { useTheme } from '../foundations/Theme.js';
-import type {
-  DialogFocusTarget,
-  DialogOpenChangeDetails,
-  DialogOpenChangeReason,
-} from './Dialog.js';
+import type { DialogFocusTarget, DialogOpenChangeDetails } from './Dialog.js';
 import {
   DialogActions,
   DialogBackdrop,
@@ -361,7 +357,7 @@ export function Sheet({
           return;
         }
         if (open === undefined) setUncontrolledOpen(next);
-        onOpenChange?.(next, { reason: eventDetails.reason as DialogOpenChangeReason });
+        onOpenChange?.(next, { reason: eventDetails.reason });
       }}
       modal={containedModal(portal, modal)}
       disablePointerDismissal={disablePointerDismissal}

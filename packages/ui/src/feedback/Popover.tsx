@@ -126,7 +126,7 @@ export function Popover({
       open={open}
       onOpenChange={(next, details) => {
         if (keepsOpen(portal, next, details, triggerRef.current)) details.cancel();
-        else setOpen(next, details.reason as PopoverOpenChangeReason);
+        else setOpen(next, details.reason);
       }}
     >
       <BasePopover.Trigger ref={triggerRef} render={trigger} />
