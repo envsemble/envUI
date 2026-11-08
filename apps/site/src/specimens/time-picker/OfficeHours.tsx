@@ -4,6 +4,7 @@ import { usePointer, type PointerStep } from '../../motion/Motion';
 import { MotionStage, rowsAnd } from '../../motion/MotionStage';
 import { PressedKeys } from '../../motion/PressedKeys';
 import { Renew } from '../../motion/Renew';
+import { remPixels } from '../../shared/Lengths';
 
 const field = '.env-date-picker-control';
 const hours = '.env-time-list-column[data-part="hour"]';
@@ -18,7 +19,7 @@ const lastHour = 18;
 function rowHeight() {
   const root = document.querySelector('.env-theme') ?? document.documentElement;
   const style = getComputedStyle(root);
-  const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+  const rem = remPixels();
   const length = (name: string) => (parseFloat(style.getPropertyValue(name)) || 0) * rem;
   return matchMedia('(pointer: coarse)').matches
     ? length('--env-control-height-touch')

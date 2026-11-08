@@ -3,6 +3,7 @@ import { Grid, Page, Surface, type PageWidth } from '@envsemble/envui';
 import { Example } from '../../figures/Example';
 import { useTimeline } from '../../motion/Motion';
 import { MotionStage } from '../../motion/MotionStage';
+import { remPixels } from '../../shared/Lengths';
 
 /** The window the page sits in, in rem: wider than the large column, so Full reads as wider. */
 const frame = { width: 88, height: 17 };
@@ -34,7 +35,7 @@ function Widening() {
     const element = area.current;
     if (!element) return;
     const fit = () => {
-      const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+      const rem = remPixels();
       // A little room on either side, so the window reads as one on the stage.
       setScale(Math.min(1, (0.92 * element.clientWidth) / (frame.width * rem)));
     };

@@ -13,18 +13,18 @@ export function motionDuration(speed: 'fast' | 'medium' | 'slow') {
   return value.endsWith('ms') ? amount : amount * 1000;
 }
 
+/** The media query of a reader who asks for less motion. */
+export const reducedMotionQuery = '(prefers-reduced-motion: reduce)';
+
 /** Whether the reader asks for less motion. */
 export const reducedMotion = () =>
-  typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  typeof matchMedia !== 'undefined' && matchMedia(reducedMotionQuery).matches;
 
-/** Each easing token's designed curve, for where the page's root sets none. */
-const designedEases = {
-  ease: [0.45, 0, 0.2, 1],
-  'ease-enter': [0.05, 0.7, 0.1, 1],
-  'ease-exit': [0.4, 0, 1, 1],
-} as const;
-
-type Ease = keyof typeof designedEases;
+/**
+ * The easing tokens, `--env-motion-<name>`. The page's root sets them, as the Theme does (Tokens.css);
+ * where it sets none, as outside a browser, script motion eases as CSS's `ease`, as the library's does.
+ */
+type Ease = 'ease' | 'ease-enter' | 'ease-exit';
 
 /** The curves CSS names by a keyword, which an easing token may be set to as well. */
 const keywordEases: Record<string, readonly number[]> = {
@@ -43,31 +43,31 @@ const easeValue = (name: Ease) =>
 
 /**
  * The control points of an easing token's curve: its `cubic-bezier()` or the curve its keyword
- * names, such as `linear` or `ease-out`; the designed curve for anything else.
+ * names, such as `linear` or `ease-out`; `ease`'s for anything else.
  */
 function easePoints(name: Ease): readonly number[] {
   const value = easeValue(name);
   const points = /^cubic-bezier\(([^)]+)\)$/.exec(value)?.[1]?.split(',').map(Number);
   if (points?.length === 4 && points.every(Number.isFinite)) return points;
-  return keywordEases[value] ?? designedEases[name];
+  return keywordEases[value] ?? keywordEases.ease!;
 }
 
 /**
  * An easing token as CSS, for an animation the site starts from script, such as `element.animate`:
  * the token's own value, any CSS easing, such as `linear` or `steps(4)`, so a theme that changes it
- * changes the animation with it; the designed curve where it is unset or no easing.
+ * changes the animation with it; `ease` where it is unset or no easing.
  */
 export function motionEase(name: Ease = 'ease') {
   const value = easeValue(name);
   if (value && typeof CSS !== 'undefined' && CSS.supports('animation-timing-function', value))
     return value;
-  return `cubic-bezier(${designedEases[name].join(', ')})`;
+  return 'ease';
 }
 
 /**
  * An easing token as a function from the share of the time gone, 0 to 1, to the share of the way,
  * for motion the site steps itself frame by frame: the cubic Bézier curve the token sets or its
- * keyword names; for another easing, such as `steps()`, the designed curve.
+ * keyword names; for another easing, such as `steps()`, `ease`'s.
  */
 export function motionEasing(name: Ease = 'ease'): (time: number) => number {
   const [x1, y1, x2, y2] = easePoints(name) as [number, number, number, number];

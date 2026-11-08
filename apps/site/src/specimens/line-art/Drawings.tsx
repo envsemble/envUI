@@ -25,6 +25,7 @@ import { IconInkEraser } from '@envsemble/envui/icons/InkEraser';
 import { IconPlayArrow } from '@envsemble/envui/icons/PlayArrow';
 import { IconRepeat } from '@envsemble/envui/icons/Repeat';
 import { SpecimenGrid, SpecimenHeadingLevel } from '../../figures/Example';
+import { reducedMotion } from '../../motion/MotionTokens';
 
 /** Each drawing's name, as people say it. */
 const names: Record<LineArtDrawing, string> = {
@@ -158,7 +159,7 @@ function DrawingCard({ drawing }: { drawing: LineArtDrawing }) {
   const play = (motion: LineArtMotion) => {
     if (motion === 'loop' && looping) {
       // Where reduced motion is preferred, a loop is already still and whole.
-      const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const reduced = reducedMotion();
       setPlayed(({ turn }) => (reduced ? { turn: turn + 1 } : { motion, turn, stopping: true }));
     } else setPlayed(({ turn }) => ({ motion, turn: turn + 1 }));
   };

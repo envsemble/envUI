@@ -53,9 +53,7 @@ function requestedScale(): ThemeScale | undefined {
  * play them.
  */
 function initialMotion() {
-  const reduced =
-    typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
-  return readStored(displayStorageKeys.motion, motions, reduced ? 'paused' : 'playing');
+  return readStored(displayStorageKeys.motion, motions, reducedMotion() ? 'paused' : 'playing');
 }
 
 interface DisplaySettingsValue {

@@ -42,6 +42,7 @@ import { otherPartRoute } from './Counterparts';
 import { docsTree, type DocsGroup } from './DocsTree';
 import { docsRoute, homeRoute, routeHref } from './Address';
 import { keepSection, otherPart } from './OtherPart';
+import { remPixels } from '../shared/Lengths';
 
 /** The icon of each of the catalogue's destinations in its rail. */
 const sectionIcons: Record<CatalogueSection, typeof IconHome> = {
@@ -134,8 +135,7 @@ function useCurrentInView() {
     const at = (item: Element) => item.getBoundingClientRect().top - frame.top + list.scrollTop;
     const linkAt = at(link);
     const fade = parseFloat(getComputedStyle(list).getPropertyValue('--site-drawer-fade-length'));
-    const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
-    const clear = (fade || 0) * rem;
+    const clear = (fade || 0) * remPixels();
     const heading = link
       .closest('.env-navigation-drawer-section')
       ?.querySelector('.env-navigation-drawer-group-label');

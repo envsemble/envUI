@@ -13,6 +13,7 @@
 import { createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { IconDescription } from '@envsemble/envui/icons/Description';
+import { remPixels } from '../shared/Lengths';
 
 /** The stages a cursor is drawn in: a gallery's or a Related tile's, and a page's figure's. */
 const stages = '.catalogue-related-stage, .catalogue-motion-stage';
@@ -69,7 +70,7 @@ export class PointerCursor {
   private room(x: number, y: number, scale: number, stage: HTMLElement) {
     const chip = this.chip?.element;
     if (!chip?.isConnected) return;
-    const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+    const rem = remPixels();
     const rtl = getComputedStyle(stage).direction === 'rtl';
     const fromStart = rtl ? stage.clientWidth - x : x;
     const end = fromStart + (0.875 * rem + chip.offsetWidth) * scale;

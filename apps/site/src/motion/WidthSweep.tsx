@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { PortalContainer, windowClasses, type WindowClass } from '@envsemble/envui';
 import { usePlayback } from './Motion';
+import { remPixels } from '../shared/Lengths';
 
 /*
  * An Adapting to width figure that plays: the example in one frame whose width sweeps between the
@@ -147,7 +148,7 @@ export function WidthSweep({
     frame.current?.style.setProperty('inline-size', `${width}rem`);
     let rulerWidth = width * scale;
     if (cropped && place.current) {
-      const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+      const rem = remPixels();
       // How far the frame, centred, runs out past the room: moved by half of that, it shows from
       // its start.
       const over = Math.max(0, width * scale * rem - room);
@@ -186,7 +187,7 @@ export function WidthSweep({
     /** The tallest the example is along a sweep, by the root's font size and the sweep's ends. */
     const tallestOf = new Map<string, number>();
     const measure = () => {
-      const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+      const rem = remPixels();
       const outline = getComputedStyle(box);
       const edge = parseFloat(outline.outlineOffset) + parseFloat(outline.outlineWidth) || 0;
       const space = room.clientWidth - 2 * edge;

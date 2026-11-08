@@ -5,6 +5,7 @@
  */
 import type { CarriedFile } from './VirtualPointer';
 import { textPoint } from './VirtualSelection';
+import { remPixels } from '../shared/Lengths';
 
 /**
  * One step of what the pointer no one sees does, or of what happens around it:
@@ -313,7 +314,7 @@ function readPoint(scope: Element, aim: Aim) {
 function asideOf(element: Element, box: DOMRect, point: { x: number; y: number }) {
   const own = element instanceof HTMLElement && element.offsetWidth ? element.offsetWidth : 0;
   const scale = own ? box.width / own : 1;
-  const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+  const rem = remPixels();
   const end = getComputedStyle(element).direction === 'rtl' ? -1 : 1;
   const room = end > 0 ? box.right - point.x : point.x - box.left;
   const step = Math.max(0, Math.min(asideReach * rem * scale, room - 4 * scale));
