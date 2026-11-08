@@ -6,8 +6,8 @@
  * resized.
  */
 import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
-import { remPixels } from '../shared/Lengths';
-import { pixelTolerance } from './FitMath';
+import { remPixels } from '../../shared/Lengths';
+import { pixelTolerance } from '../FitGeometry';
 
 /** The least a width frame is drawn at to fit its stage; one that would need less scrolls. */
 const leastFitScale = 0.7;

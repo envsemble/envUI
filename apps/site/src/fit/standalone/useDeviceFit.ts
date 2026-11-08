@@ -1,6 +1,6 @@
 import { useLayoutEffect, useState, type RefObject } from 'react';
-import type { DeviceKind } from '../../../../scripts/docs/model/DocumentationTypes';
-import { headingEvent } from '../motion/MustShow';
+import type { DeviceKind } from '@docs-model/DocumentationTypes';
+import { headingEvent } from '../../motion/MustShow';
 import { deviceFit, sameFit, type DeviceFit, type DeviceFitting } from './DeviceFit';
 
 /**

@@ -23,7 +23,7 @@ import {
 } from './foundations/FoundationFigures';
 import { FigureCode } from './foundations/Topic';
 import { pendingAttribute, useSectionOutline } from '../template/SectionOutline';
-import { useVerdictFit } from '../fit/useVerdictFit';
+import { useVerdictFit } from './useVerdictFit';
 
 type ExampleBlock = Extract<DocumentationBlock, { kind: 'example' }>;
 type FoundationBlock = Extract<DocumentationBlock, { kind: 'figure' }>;

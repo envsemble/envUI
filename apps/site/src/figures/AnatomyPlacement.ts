@@ -4,7 +4,7 @@
  * variant's name beside its item. Nothing here reads the page (tests/site/AnatomyPlacement.test.mjs).
  */
 
-import { union, type Box } from '../fit/FitMath';
+import { union, type Box } from '../fit/FitGeometry';
 
 type Side = 'top' | 'bottom' | 'left' | 'right';
 

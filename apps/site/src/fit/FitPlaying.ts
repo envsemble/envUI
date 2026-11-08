@@ -1,11 +1,11 @@
 /*
- * A gallery's tile as it plays (useFit.ts): its view stays where it rested, and is drawn out only
- * for what it opens.
+ * A gallery's tile as it plays (FitPicture.ts): its view stays where it rested, and is drawn out
+ * only for what it opens. Each step eases the view from where the one before left it.
  */
 import { headingOf, holdsView, mustShowOf } from '../motion/MustShow';
 import { aimedElement } from '../motion/PointerPlan';
 import { remPixels } from '../shared/Lengths';
-import { cropFade } from './Crop';
+import { cropFade, trim } from './FitDraw';
 import {
   contain,
   covers,
@@ -14,12 +14,15 @@ import {
   cutSides,
   drawOut,
   join,
+  legibleScale,
   margin,
   scaleTolerance,
+  stagePoint,
   type Box,
-} from './FitMath';
-import { trim, type Fitting } from './Fitting';
-import { inkOf, partOf, settling, type Shown } from './PaintedBoxes';
+} from './FitGeometry';
+import type { Scales } from './FitMeasure';
+import type { Fitting } from './FitState';
+import { elementsOf, inkOf, inPopup, partOf, settling, type Shown } from './PaintedBoxes';
 import { heading } from './PointerCourse';
 import { glideTo } from './ViewEasing';
 
@@ -45,8 +48,19 @@ export interface Run {
 const triggers =
   "[data-popup-open], [aria-haspopup][aria-expanded='true'], [role='combobox'][aria-expanded='true']";
 
-/** Whether an element is in a picture's overlay layer, a popup. */
-const layered = (element: Element) => element.closest('.catalogue-overlay-layer') !== null;
+/**
+ * As a gallery's tile plays, its view is drawn out for all it shows (playFit), never below the
+ * least it is drawn at (its popup's or a scene's), so its words stay legible. A component's is
+ * drawn at its still's scale or at that least, never between.
+ */
+export function fitPlaying(f: Fitting, boxes: Shown[], { popupLeast }: Scales) {
+  const { kind, view } = f;
+  const component = kind.scale === 'own';
+  const low = Math.min(view.rest, component ? popupLeast : legibleScale);
+  playFit(f, boxes, low, (scale) =>
+    component ? (scale >= view.rest - scaleTolerance ? view.rest : low) : scale,
+  );
+}
 
 /**
  * As a gallery's tile plays, its view stays where it rested, as the pointer comes in and while
@@ -58,15 +72,11 @@ const layered = (element: Element) => element.closest('.catalogue-overlay-layer'
  * every time it plays it does the same. What still doesn't fit is shown from its start, cut off
  * past the stage's edge, where it fades out.
  */
-export function playFit(
-  f: Fitting,
-  boxes: Shown[],
-  least: number,
-  stepped: (scale: number) => number,
-) {
-  const { canvas, view } = f;
-  f.run ??= {
+function playFit(f: Fitting, boxes: Shown[], least: number, stepped: (scale: number) => number) {
+  const { canvas, view, kept } = f;
+  kept.run ??= {
     rested: boxes.reduce(
+      // Each element's boxes joined: join of a box and another is never none.
       (rested, { element, box }) => rested.set(element, join(rested.get(element) ?? null, box)!),
       new Map<Element, Box>(),
     ),
@@ -76,7 +86,7 @@ export function playFit(
     cut: canvas.dataset.cut?.split(' ') ?? [],
     moved: false,
   };
-  const run = f.run;
+  const run = kept.run;
   // A tile that holds its view, its still written as its largest state, moves for nothing.
   const holds = holdsView(canvas);
   drawOutForOpened(f, run, boxes, least, stepped, holds);
@@ -94,6 +104,7 @@ export function playFit(
     holds
       ? run.cut
       : cutSides(
+          // A fit plays only what paints something (shownBoxes), so their join is a box.
           join(...boxes.map(({ box }) => box))!,
           f.stage.clientWidth,
           f.stage.clientHeight,
@@ -127,15 +138,9 @@ function drawOutForOpened(
   const down = f.stage.clientHeight;
   // What the script acts on in a popup, such as a select's options, and what the tile names
   // anywhere, such as a panel it opens (MustShow.ts).
-  const query = (selector: string) => {
-    try {
-      return [...canvas.querySelectorAll(selector)];
-    } catch {
-      return [];
-    }
-  };
+  const query = (selector: string) => elementsOf(canvas, selector);
   const named = [
-    ...mustShowOf(canvas).flatMap(query).filter(layered),
+    ...mustShowOf(canvas).flatMap(query).filter(inPopup),
     ...mustShowOf(canvas, true).flatMap(query),
   ]
     .filter((element) => element.checkVisibility({ visibilityProperty: true }))
@@ -146,7 +151,7 @@ function drawOutForOpened(
   const opened = boxes
     .filter(({ element, box }) => {
       // What is closing needs no room.
-      if (!layered(element) || element.closest('[data-ending-style]')) return false;
+      if (!inPopup(element) || element.closest('[data-ending-style]')) return false;
       const still = run.rested.get(element);
       return !still || !covers(still, box);
     })
@@ -159,8 +164,7 @@ function drawOutForOpened(
     });
   const must = join(...named, ...opened);
   const at = { x: view.toX, y: view.toY, scale: view.toScale };
-  // Where a point of the canvas is in the stage, along an axis `size` long.
-  const screen = (point: number, to: number, size: number) => size / 2 - to + point * at.scale;
+  const screen = (point: number, to: number, size: number) => stagePoint(point, to, size, at.scale);
   // What the view shows already, such as a popup that closes and opens again, moves nothing.
   const shown =
     must &&
@@ -179,7 +183,7 @@ function drawOutForOpened(
   // stage shows it.
   const trigger = [...canvas.querySelectorAll(triggers)].find(
     (element) =>
-      !layered(element) &&
+      !inPopup(element) &&
       element.checkVisibility({ opacityProperty: true, visibilityProperty: true }),
   );
   const label = trigger?.closest('.env-field')?.querySelector('.env-field-label');
@@ -208,12 +212,14 @@ function followHeading(f: Fitting) {
   const down = f.stage.clientHeight;
   const toX = contain(view.toX, box.left * view.toScale, box.right * view.toScale, across / 2 - 4);
   const scale = view.toScale;
-  // The fade as long as it is drawn, shortened below what its pointer heads to at rest.
-  const shortened = canvas.parentElement!.style.getPropertyValue('--catalogue-crop-bottom');
+  // The fade as long as it is drawn, shortened below what its pointer heads to at rest. A tile's
+  // canvas plays in its crop (TileStage.tsx).
+  const crop = canvas.parentElement!;
+  const shortened = crop.style.getPropertyValue('--catalogue-crop-bottom');
   const fade = canvas.dataset.cut?.split(' ').includes('bottom')
     ? shortened
       ? parseFloat(shortened) || 0
-      : cropFade(canvas.parentElement!) || 0
+      : cropFade(crop) || 0
     : 0;
   const aim = headingOf(canvas);
   const aimed = aim && aimedElement(canvas, aim.selector);

@@ -16,7 +16,7 @@ import { IconRefresh } from '@envsemble/envui/icons/Refresh';
 import { IconSignalCellular4Bar } from '@envsemble/envui/icons/SignalCellular4Bar';
 import { IconSignalWifi4Bar } from '@envsemble/envui/icons/SignalWifi4Bar';
 import type { DeviceKind } from '@docs-model/DocumentationTypes';
-import { useDeviceFit } from '../fit/useDeviceFit';
+import { useDeviceFit } from '../fit/standalone/useDeviceFit';
 
 /*
  * A device drawn around a page's figure: a phone or a browser's window whose screen is a window of

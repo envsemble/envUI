@@ -4,10 +4,10 @@
  * whole and its cut edges fall between words. Boxes are in the device's own px, from its top left
  * corner.
  */
-import type { DeviceKind } from '../../../../scripts/docs/model/DocumentationTypes';
-import { courseOf, headingOf, mustShowOf, type Heading } from '../motion/MustShow';
-import { remPixels } from '../shared/Lengths';
-import type { Box } from './FitMath';
+import type { DeviceKind } from '@docs-model/DocumentationTypes';
+import { courseOf, headingOf, mustShowOf, type Heading } from '../../motion/MustShow';
+import { remPixels } from '../../shared/Lengths';
+import type { Box } from '../FitGeometry';
 
 /**
  * The least each kind is drawn at, and the least its small text (body-sm) is drawn at, about

@@ -4,13 +4,13 @@
  * taller the stage grows for a dialog, a sheet or a toast placed on it; and the stage's recorded
  * height, held while the room is made.
  */
-import { recordedSize } from '../loading/Loading';
-import { inset, union, type Box } from './FitMath';
+import { recordedSize } from '../../loading/Loading';
+import { inset, union, type Box } from '../FitGeometry';
 
 /**
  * The box that places the figure's dialogs, sheets and toasts: the stage, or in an anatomy figure,
  * the room, which keeps them clear of the stage's padding, where the callouts go, or on a do or
- * don't figure's square, the box over it that is drawn smaller to fit it (useVerdictFit.ts).
+ * don't figure's square, the box over it that is drawn smaller to fit it (figures/useVerdictFit.ts).
  */
 const stageOf = (element: HTMLElement) => {
   const room = element.closest<HTMLElement>('.catalogue-open-example');
@@ -152,11 +152,10 @@ function inFlow(room: HTMLElement, layer: Element) {
  */
 export function openerBox(subject: HTMLElement): Box | undefined {
   const room = subject.querySelector<HTMLElement>('.catalogue-open-example');
-  const layer = room?.querySelector('.catalogue-overlay-layer');
+  const layer = room?.querySelector<HTMLElement>('.catalogue-overlay-layer');
   if (!room || !layer) return undefined;
-  const found = overlays(layer as HTMLElement);
-  if (!found.length || found.some((overlay) => placedOnStage(overlay, layer as HTMLElement)))
-    return undefined;
+  const found = overlays(layer);
+  if (!found.length || found.some((overlay) => placedOnStage(overlay, layer))) return undefined;
   const content = inFlow(room, layer);
   return content.length ? union(content) : undefined;
 }
@@ -274,12 +273,14 @@ export function reserveStage(room: HTMLElement, part: string | undefined) {
   // one it is made at, such as a popup placed for a frame where it doesn't rest; shown, at least.
   let unseen = true;
   const hold = () => {
-    stage!.style.minBlockSize = `${height}rem`;
-    stage!.style.blockSize = unseen ? `${height}rem` : '';
+    if (!stage) return;
+    stage.style.minBlockSize = `${height}rem`;
+    stage.style.blockSize = unseen ? `${height}rem` : '';
   };
   const free = () => {
-    stage!.style.minBlockSize = '';
-    stage!.style.blockSize = '';
+    if (!stage) return;
+    stage.style.minBlockSize = '';
+    stage.style.blockSize = '';
   };
   if (held) hold();
   return {

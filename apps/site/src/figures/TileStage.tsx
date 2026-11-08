@@ -15,10 +15,10 @@ import { ExampleRender } from './LiveExample';
 import { FoundationTile } from '../tiles/foundations/FoundationTiles';
 import type { TilePicture } from '../template/RelatedPages';
 import { TileSkeleton } from '../loading/Loading';
-import { cropped, fitKindOf } from '../fit/Fitting';
+import { cropped, fitKindOf } from '../fit/FitKind';
 import { useFit } from '../fit/useFit';
 import { AppScreen } from './AppTile';
-import { useAppFit } from '../fit/useAppFit';
+import { useAppFit } from '../fit/standalone/useAppFit';
 import { appTileFrame } from '../tiles/Tiles';
 
 /**

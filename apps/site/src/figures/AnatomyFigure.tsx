@@ -12,7 +12,7 @@ import { Theme, useTheme } from '@envsemble/envui';
 import type { AnatomyLegendItem, StageFill } from '@docs-model/DocumentationTypes';
 import { Documentation } from '../pages/Documentation';
 import { ExampleCode, ExampleRender } from './LiveExample';
-import { FitFrame } from '../fit/WidthFit';
+import { FitFrame } from '../fit/standalone/WidthFit';
 import { OpenExample } from './OpenExample';
 import { legendOf, partDescription } from '../template/Parts';
 import { legendName } from '@docs-model/CatalogueContent';

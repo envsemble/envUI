@@ -15,7 +15,7 @@ import { OpenExample } from './OpenExample';
 import { CodeSkeleton, exampleLines, HoldPlaceholder, StageSkeleton } from '../loading/Loading';
 import { MotionStage } from '../motion/MotionStage';
 import { WidthSweep } from '../motion/WidthSweep';
-import { WidthBox } from '../fit/WidthFit';
+import { WidthBox } from '../fit/standalone/WidthFit';
 import { ExamplePlayback } from './Specimen';
 import { StillMark } from './StillMark';
 

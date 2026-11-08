@@ -1,14 +1,15 @@
 import { useLayoutEffect, useRef, type RefObject } from 'react';
 import { headingEvent } from '../motion/MustShow';
-import { markRunsOn } from './Crop';
-import { fit } from './Fit';
-import { newFitting, type FitKind } from './Fitting';
+import { markRunsOn } from './FitDraw';
+import type { FitKind } from './FitKind';
+import { fitPicture } from './FitPicture';
+import { newFitting } from './FitState';
 
 /** How a picture is fitted to its stage (useFit). */
 export interface FitOptions {
   /** Whether it is fitted at all: its picture is shown. */
   on: boolean;
-  /** What it is fitted as (fitKindOf). */
+  /** What it is fitted as (fitKindOf, FitKind.ts). */
   kind: FitKind;
   /** Whether it plays now, which draws it out for what it opens. */
   playing: boolean;
@@ -23,10 +24,11 @@ export interface FitOptions {
  * gallery's tile framed as it plays, with what its pointer heads to in view (onCourse). As it
  * plays, its view stays where it is, so what happens in it, such as notifications stacking, happens
  * in place; it moves only when something would leave the stage, easing just far enough to keep it
- * in. In a gallery, it is drawn out once for all its animation acts on and opens (playFit), and
- * eases back to centre the still at its scale once the tile rests.
+ * in. In a gallery, it is drawn out once for all its animation acts on and opens (FitPlaying.ts),
+ * and eases back to centre the still at its scale once the tile rests.
  *
- * Fit.ts fits it once; this hook fits it again as anything that changes it does.
+ * FitPicture.ts fits it once; this hook fits it again as anything that changes it does, until the
+ * picture goes or changes.
  */
 export function useFit(
   stage: RefObject<HTMLElement | null>,
@@ -49,12 +51,13 @@ export function useFit(
     let frame = 0;
     const update = () => {
       cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(() => fit(fitting));
+      frame = requestAnimationFrame(() => fitPicture(fitting));
     };
     refit.current = update;
     const fitting = newFitting(
       stageElement,
       canvasElement,
+      // Made again from the parts the effect follows, so it is one of the kinds there are.
       { scale, tile } as FitKind,
       playingNow,
       update,
@@ -81,7 +84,9 @@ export function useFit(
       attributeFilter: ['style', 'class', 'hidden'],
     });
     // A region that scrolls as the tile plays fades at its foot while its content runs on past it.
-    const scrolled = (event: Event) => markRunsOn([event.target as Element]);
+    const scrolled = ({ target }: Event) => {
+      if (target instanceof Element) markRunsOn([target]);
+    };
     canvasElement.addEventListener('scroll', scrolled, true);
     // An overlay that opens with a transition measures its final box once it ends.
     canvasElement.addEventListener('transitionend', update);

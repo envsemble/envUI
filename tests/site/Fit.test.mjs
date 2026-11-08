@@ -1,36 +1,37 @@
 // The fit's pure calculations (apps/site/src/fit/): what a picture is fitted as and how its view
-// is placed, boxes, the scales a tile's picture is drawn at, where a playing tile's view goes, a held view's scale and place, whether a resting picture
-// holds its frame, and the view's glide.
+// is placed, boxes, the scales a tile's picture is drawn at, a still framed on its pointer's
+// course, where a playing tile's view goes, a held view's scale and place, whether a resting
+// picture holds its frame, and the view's glide.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { importSource } from '../support/importSource.mjs';
 
-const math = await importSource('FitMath', 'apps/site/src/fit/FitMath.ts');
+const math = await importSource('FitGeometry', 'apps/site/src/fit/FitGeometry.ts');
 const held = await importSource('HeldView', 'apps/site/src/fit/HeldView.ts');
 const easing = await importSource('ViewEasing', 'apps/site/src/fit/ViewEasing.ts');
-const fitting = await importSource('Fitting', 'apps/site/src/fit/Fitting.ts');
+const kinds = await importSource('FitKind', 'apps/site/src/fit/FitKind.ts');
 
 const box = (left, top, right, bottom) => ({ left, top, right, bottom });
 
 test('a tile is fitted as one of four kinds, by how its page frames it and what it is', () => {
   const tile = { tile: true };
   const drawing = { tile: true, window: { width: 10 } };
-  assert.deepEqual(fitting.fitKindOf(tile, 'own'), { scale: 'own', tile: true });
-  assert.deepEqual(fitting.fitKindOf({}, 'own'), { scale: 'own', tile: false });
+  assert.deepEqual(kinds.fitKindOf(tile, 'own'), { scale: 'own', tile: true });
+  assert.deepEqual(kinds.fitKindOf({}, 'own'), { scale: 'own', tile: false });
   // A drawing, whose window is narrower than the tiles', is drawn at its window's scale.
-  assert.deepEqual(fitting.fitKindOf(drawing, 'own'), { scale: 'window', tile: true });
-  assert.deepEqual(fitting.fitKindOf(drawing, 'legible'), { scale: 'legible', tile: true });
-  assert.deepEqual(fitting.fitKindOf({}, 'legible'), { scale: 'legible', tile: false });
-  assert.deepEqual(fitting.fitKindOf(tile, undefined), { scale: 'window', tile: true });
-  assert.deepEqual(fitting.fitKindOf(undefined, undefined), { scale: 'content', tile: false });
-  assert.ok(fitting.cropped({ scale: 'own', tile: false }));
-  assert.ok(fitting.cropped({ scale: 'legible', tile: true }));
-  assert.ok(!fitting.cropped({ scale: 'window', tile: true }));
-  assert.ok(!fitting.cropped({ scale: 'content', tile: false }));
+  assert.deepEqual(kinds.fitKindOf(drawing, 'own'), { scale: 'window', tile: true });
+  assert.deepEqual(kinds.fitKindOf(drawing, 'legible'), { scale: 'legible', tile: true });
+  assert.deepEqual(kinds.fitKindOf({}, 'legible'), { scale: 'legible', tile: false });
+  assert.deepEqual(kinds.fitKindOf(tile, undefined), { scale: 'window', tile: true });
+  assert.deepEqual(kinds.fitKindOf(undefined, undefined), { scale: 'content', tile: false });
+  assert.ok(kinds.cropped({ scale: 'own', tile: false }));
+  assert.ok(kinds.cropped({ scale: 'legible', tile: true }));
+  assert.ok(!kinds.cropped({ scale: 'window', tile: true }));
+  assert.ok(!kinds.cropped({ scale: 'content', tile: false }));
 });
 
 test('a fit is placed on its screen, drawn out as a cropped tile plays once shown, else at rest', () => {
-  const mode = (kind, moment, screen = false) => fitting.fitModeOf({ kind, screen }, moment);
+  const mode = (kind, moment, screen = false) => kinds.fitModeOf(kind, screen, moment);
   const component = { scale: 'own', tile: true };
   const playing = { playing: true, shown: true };
   assert.equal(mode(component, playing, true), 'screen');
@@ -57,7 +58,7 @@ test('each kind is drawn at rest at its own scale', () => {
   };
   const scale = (kind, change = {}) => math.restingScale(kind, { ...resting, ...change });
   assert.equal(scale({ scale: 'own', tile: true }), 0.85);
-  // A component's popup is drawn as popupFit says, at most its own size.
+  // A component's popup is drawn as decidePopups says, at most its own size.
   assert.equal(scale({ scale: 'own', tile: true }, { popup: true }), 0.75);
   // An overlay at the overlays' scale, or smaller where it shows whole across only so, down to
   // the popups' least.
@@ -111,6 +112,33 @@ test('a playing view stays while what it shows is in the stage, else moves just 
   assert.equal(math.contain(0, -130, 50, 100), -30 - math.margin);
   // What can't fit is centred.
   assert.equal(math.contain(0, 0, 400, 100), 200);
+});
+
+test('a point of the canvas is in its stage by the view and the scale it is drawn at', () => {
+  // A stage 200 px long, the view at 50, drawn at twice its size: the point at 10 is 70 in.
+  assert.equal(math.stagePoint(10, 50, 200, 2), 70);
+  assert.equal(math.stagePoint(0, 0, 200, 1), 100);
+});
+
+test("a still is framed on its pointer's course, as many of its points as fit together", () => {
+  const frame = (parts, toX = 0, toY = 0, scale = 1) =>
+    math.frameOnCourse(parts, 200, 100, toX, toY, scale);
+  // With nothing on its course, or nothing that shows, the view stays.
+  assert.deepEqual(frame([]), { toX: 0, toY: 0 });
+  assert.deepEqual(frame([null, box(10, 10, 10, 20)]), { toX: 0, toY: 0 });
+  // What is in the stage moves nothing; what is past its edge brings the view just far enough,
+  // and a margin, to keep it in.
+  assert.deepEqual(frame([box(-20, -10, 20, 10)]), { toX: 0, toY: 0 });
+  assert.deepEqual(frame([box(150, -10, 180, 10)]), { toX: 90, toY: 0 });
+  // A point that doesn't fit the stage with the ones before it is left out.
+  assert.deepEqual(frame([box(150, -10, 180, 10), box(-300, -10, -280, 10)]), {
+    toX: 90,
+    toY: 0,
+  });
+  // The first, larger than the stage, shows from its start, a margin from the stage's edge.
+  assert.deepEqual(frame([box(0, -10, 500, 10)]), { toX: 90, toY: 0 });
+  // Drawn smaller, it fits again.
+  assert.deepEqual(frame([box(0, -10, 500, 10)], 0, 0, 0.25), { toX: 35, toY: 0 });
 });
 
 test('a picture is cut off at the sides it reaches past the stage at', () => {

@@ -6,9 +6,9 @@
 import type { AnatomyLegendItem } from '@docs-model/DocumentationTypes';
 import { remPixels } from '../shared/Lengths';
 import { partSelector } from '../template/Parts';
-import { union, type Box } from '../fit/FitMath';
+import { union, type Box } from '../fit/FitGeometry';
 import type { AnatomyGeometry, Corners, Part, UseSize, VariantGeometry } from './AnatomyPlacement';
-import { openerBox } from '../fit/OverlayRoom';
+import { openerBox } from '../fit/standalone/OverlayRoom';
 
 /**
  * Whether an element is only text, such as a label or a description, with no fill or edge of its

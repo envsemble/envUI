@@ -1,11 +1,13 @@
 /*
- * How a picture's view moves to where its fit places it (useFit.ts): at once until it shows, then
- * easing there, in the slow motion token on the standard easing.
+ * How a picture's view moves to where its fit places it (FitPicture.ts): at once until it shows,
+ * then easing there, in the slow motion token on the standard easing. The view and its glide are
+ * the fit's animation state (`view`, FitState.ts).
  */
 import { prefersReducedMotion } from '../../../../packages/ui/src/internal/reducedMotion';
 import { rootMotionDuration } from '../motion/RootMotionTokens';
-import { place, type Fitting } from './Fitting';
-import type { Shown } from './PaintedBoxes';
+import { place } from './FitDraw';
+import type { Seen } from './FitMeasure';
+import type { Fitting } from './FitState';
 
 type Point = [x: number, y: number, scale: number];
 
@@ -65,21 +67,21 @@ export function glideAt(course: Course, now: number, ease: (time: number) => num
 function glide(f: Fitting, now: number) {
   const { view } = f;
   const to: Point = [view.toX, view.toY, view.toScale];
-  f.course = steer(
-    f.course,
+  view.course = steer(
+    view.course,
     [view.x, view.y, view.scale],
     to,
     now,
     rootMotionDuration('slow'),
-    f.ease,
+    view.ease,
   );
-  const { at, settled } = glideAt(f.course, now, f.ease);
+  const { at, settled } = glideAt(view.course, now, view.ease);
   [view.x, view.y, view.scale] = at;
   if (settled) {
     view.x = view.toX;
     view.y = view.toY;
     view.scale = view.toScale;
-    f.course = null;
+    view.course = null;
   }
   place(f);
   view.frame = settled ? 0 : requestAnimationFrame((time) => glide(f, time));
@@ -90,7 +92,7 @@ function glide(f: Fitting, now: number) {
 /** Starts the view's glide where it isn't on one already. */
 function startGlide(f: Fitting) {
   if (f.view.frame) return;
-  f.course = null;
+  f.view.course = null;
   f.view.frame = requestAnimationFrame((time) => glide(f, time));
 }
 
@@ -113,10 +115,16 @@ export function glideTo(f: Fitting) {
 
 /**
  * Places the view at a scale and a point, `toX` and `toY`: until the picture shows, at once, and
- * from then on, in place, easing there.
+ * from then on, in place, easing there. At rest, it keeps where it is framed, on the shape it was
+ * measured as (hold).
  */
-export function settle(f: Fitting, scale: number, toX: number, toY: number, boxes: Shown[]) {
+export function settle(
+  f: Fitting,
+  { scale, toX, toY }: { scale: number; toX: number; toY: number },
+  { boxes, shape }: Pick<Seen, 'boxes' | 'shape'>,
+) {
   const { canvas, view } = f;
+  const { first } = view;
   // A tile in place eases to where it is fitted next; anything else is placed at once.
   const eases = f.kind.tile && canvas.dataset.fitted !== undefined && !prefersReducedMotion();
   // Until it shows, it is placed at once, and shows only once its place has held for a few
@@ -126,19 +134,19 @@ export function settle(f: Fitting, scale: number, toX: number, toY: number, boxe
   // its tiles load, frames come slowly, and a count would keep it hidden for seconds.
   if (canvas.dataset.fitted === undefined) {
     const held =
-      f.first.calm > 0 &&
+      first.calm > 0 &&
       view.scale === scale &&
       Math.abs(view.x - toX) < 0.5 &&
       Math.abs(view.y - toY) < 0.5;
-    f.first.calm = held ? f.first.calm + 1 : 1;
-    f.first.start ||= performance.now();
+    first.calm = held ? first.calm + 1 : 1;
+    first.start ||= performance.now();
     view.x = view.toX = toX;
     view.y = view.toY = toY;
     view.scale = view.toScale = view.rest = scale;
     place(f);
-    hold(f, scale, toX, toY);
+    hold(f, { scale, toX, toY }, shape);
     for (const { element } of boxes) f.resize.observe(element);
-    if (f.first.calm >= 3 || performance.now() - f.first.start >= 250) canvas.dataset.fitted = '';
+    if (first.calm >= 3 || performance.now() - first.start >= 250) canvas.dataset.fitted = '';
     else f.update();
     return;
   }
@@ -165,23 +173,20 @@ export function settle(f: Fitting, scale: number, toX: number, toY: number, boxe
     view.toScale = scale;
     jump(f);
   }
-  hold(f, scale, toX, toY);
+  hold(f, { scale, toX, toY }, shape);
   canvas.dataset.fitted = '';
   for (const { element } of boxes) f.resize.observe(element);
 }
 
 /** At rest, keeps where the view is framed and on what, held from then on (holdsFrame). */
-function hold(f: Fitting, scale: number, toX: number, toY: number) {
-  if (f.playing.current || !f.measured) return;
+function hold(
+  { playing, canvas, kept }: Fitting,
+  at: { scale: number; toX: number; toY: number },
+  shape: Seen['shape'],
+) {
+  if (playing.current || !shape) return;
   // Framed anew, it may follow its popups again (holdsFrame).
-  if (!f.follow.following) f.follow.count = 0;
-  f.follow.following = false;
-  f.framed = {
-    shape: f.measured,
-    scale,
-    toX,
-    toY,
-    cut: f.canvas.dataset.cut,
-    fadeAt: f.fadeAt,
-  };
+  if (!kept.follow.following) kept.follow.count = 0;
+  kept.follow.following = false;
+  kept.framed = { shape, ...at, cut: canvas.dataset.cut, fadeAt: kept.fadeAt };
 }
