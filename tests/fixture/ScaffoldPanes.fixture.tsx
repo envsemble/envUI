@@ -27,8 +27,8 @@ const destinations: Destination[] = [
 ];
 
 /**
- * The default arrangement of an application, mounted with ?fixture=scaffold-panes: a Scaffold whose
- * document scrolls, with a TopBar and the real NavigationBar, NavigationRail and NavigationDrawer, around a Page with a sticky
+ * The default arrangement of an application: a Scaffold whose document scrolls, with a TopBar
+ * and the real NavigationBar, NavigationRail and NavigationDrawer, around a Page with a sticky
  * header whose content is supporting Panes. The main pane is a long list of messages, each a
  * button, and the supporting pane, a sheet below expanded, holds a message's details.
  */

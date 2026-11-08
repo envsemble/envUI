@@ -95,7 +95,7 @@ function BaseDirectionProbe({ testId }: { testId: string }) {
 
 /**
  * Components whose keyboard follows the text direction, in RTL from a dir attribute and from
- * EnvUIProvider's dir, mounted with ?fixture=direction; a region whose dir attribute changes; and
+ * EnvUIProvider's dir; a region whose dir attribute changes; and
  * what Base UI's parts read inside a toolbar.
  */
 export default function DirectionFixture() {

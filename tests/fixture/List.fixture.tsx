@@ -95,7 +95,7 @@ function WrappedSlides({ bare = false }: { bare?: boolean }) {
 }
 
 /**
- * Lists, mounted with ?fixture=list: reorderable slides with a current one, the same in
+ * Lists: reorderable slides with a current one, the same in
  * right-to-left text, slides in a row component, people with avatars in the start slot, and rows
  * chosen by checkboxes. With &bare-rows, slides in a row component that drops List.Root's props.
  */

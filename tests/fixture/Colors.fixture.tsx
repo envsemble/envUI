@@ -1,4 +1,3 @@
-import type { CSSProperties } from 'react';
 import {
   Theme,
   Button,
@@ -189,13 +188,11 @@ function ColorOverrides() {
       <Theme
         theme="light"
         data-testid="override-area"
-        style={
-          {
-            '--env-color-bg-primary-emphasis': '#176f35',
-            '--env-color-bg-primary-emphasis-hover': '#115a2a',
-            '--env-color-bg-primary-emphasis-pressed': '#0b4520',
-          } as CSSProperties
-        }
+        style={{
+          '--env-color-bg-primary-emphasis': '#176f35',
+          '--env-color-bg-primary-emphasis-hover': '#115a2a',
+          '--env-color-bg-primary-emphasis-pressed': '#0b4520',
+        }}
       >
         <Button data-testid="override-inside">Inside the area</Button>
         <Switch label="Inside the area" defaultChecked data-testid="override-switch" />

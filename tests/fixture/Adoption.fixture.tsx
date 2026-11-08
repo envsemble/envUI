@@ -48,7 +48,7 @@ function RecordingLink({ href, onClick, ...props }: LinkComponentProps) {
   );
 }
 
-/** Components added for application adoption, mounted with ?fixture=adoption. */
+/** Components added for application adoption. */
 export default function AdoptionFixture() {
   const [query, setQuery] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);

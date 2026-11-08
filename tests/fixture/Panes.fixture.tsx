@@ -8,7 +8,7 @@ const params = () => new URLSearchParams(location.search);
 const projects = ['Northwind launch', 'Website refresh', 'Annual report'];
 
 /**
- * Panes in a frame whose width the test sets, mounted with ?fixture=panes: supporting Panes with a
+ * Panes in a frame whose width the test sets: supporting Panes with a
  * divider and a button that opens the supporting pane, and list-detail Panes whose list opens a
  * project. ?split= sets splitAt, ?persist= the cookie, ?kept= the width the server read from it,
  * ?size= the default width, ?divider=none leaves out both dividers, ?uncontrolled leaves the
@@ -16,6 +16,7 @@ const projects = ['Northwind launch', 'Website refresh', 'Annual report'];
  */
 export default function PanesFixture() {
   const query = params();
+  // The tests ask only for split points that exist.
   const splitAt = (query.get('split') ?? undefined) as Panes.SplitAt | undefined;
   const divider = query.get('divider') !== 'none';
   const [width, setWidth] = useState(query.get('width') ?? '60rem');

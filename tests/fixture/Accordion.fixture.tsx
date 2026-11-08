@@ -3,7 +3,7 @@ import { Accordion, Button, Column, Theme } from '@envsemble/envui';
 
 export const mount = 'standalone';
 
-/** Single, multiple, controlled and skeleton accordions, mounted with ?fixture=accordion. */
+/** Single, multiple, controlled and skeleton accordions. */
 export default function AccordionFixture() {
   const [open, setOpen] = useState<string[]>([]);
   const [changes, setChanges] = useState<string[]>([]);

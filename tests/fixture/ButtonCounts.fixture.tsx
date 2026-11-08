@@ -24,7 +24,7 @@ const emphasis = {
 } as const;
 const variants = ['primary', 'secondary', 'outlined', 'text', 'important'] as const;
 
-/** Counts, badges and numbers inside buttons and tabs, mounted with ?fixture=button-counts. */
+/** Counts, badges and numbers inside buttons and tabs. */
 export default function ButtonCountsFixture({ theme }: { theme: ColorScheme }) {
   const [tab, setTab] = useState('submissions');
   const [view, setView] = useState('editor');

@@ -7,8 +7,8 @@ function describe(element: Element | null) {
 }
 
 /**
- * A notes window's menubar with access keys, mounted with ?fixture=menubar; with &open, its Edit
- * menu starts open through defaultOpen.
+ * A notes window's menubar with access keys; with &open, its Edit menu starts open through
+ * defaultOpen.
  */
 export default function MenubarFixture() {
   const [log, setLog] = useState<string[]>([]);

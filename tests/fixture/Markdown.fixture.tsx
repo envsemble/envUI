@@ -46,7 +46,7 @@ const keys = `- <kbd>Ctrl</kbd>+<kbd>K</kbd> opens search
 `;
 
 /**
- * Markdown tables, tasks, inline code in a cell and lists, mounted with ?fixture=markdown.
+ * Markdown tables, tasks, inline code in a cell and lists.
  */
 /**
  * Markdown under a parent that renders again, with an inline renderLink, a new function each time,

@@ -97,27 +97,32 @@ const people = [
   'Lena Fischer',
 ];
 
-const projects: Project[] = [
-  ['billing-api', 'Billing API', 'northwind/billing-api', 'healthy', 0, 'Production', 4, 12],
-  ['checkout-web', 'Checkout web', 'northwind/checkout', 'deploying', 1, 'Staging', 11, 3],
-  ['search-indexer', 'Search indexer', 'northwind/indexer', 'failing', 2, 'Production', 23, 38],
-  ['mobile-gateway', 'Mobile gateway', 'northwind/gateway', 'healthy', 3, 'Production', 2, 95],
-  ['data-pipeline', 'Data pipeline', 'northwind/pipeline', 'healthy', 4, 'Production', 7, 180],
-  ['docs-site', 'Docs site', 'northwind/docs', 'paused', 5, 'Preview', 0, 1440],
-  ['auth-service', 'Auth service', 'northwind/auth', 'healthy', 6, 'Production', 5, 2600],
-  ['email-worker', 'Email worker', 'northwind/email-worker', 'deploying', 7, 'Staging', 9, 4300],
-  ['feature-flags', 'Feature flags', 'northwind/flags', 'healthy', 0, 'Production', 1, 7200],
-  ['ml-scoring', 'ML scoring', 'northwind/scoring', 'failing', 1, 'Staging', 16, 10100],
-].map(([id, name, repository, status, owner, environment, issues, minutes]) => ({
-  id: id as string,
-  name: name as string,
-  repository: repository as string,
-  status: status as Status,
-  owner: people[owner as number],
-  members: people.filter((_, index) => (index + (owner as number)) % 3 !== 0).slice(0, 5),
-  environment: environment as string,
-  issues: issues as number,
-  updated: minutesAgo(minutes as number),
+/** Each project as id, name, repository, status, owner, environment, issues, minutes ago. */
+type ProjectRow = [string, string, string, Status, number, string, number, number];
+
+const projects: Project[] = (
+  [
+    ['billing-api', 'Billing API', 'northwind/billing-api', 'healthy', 0, 'Production', 4, 12],
+    ['checkout-web', 'Checkout web', 'northwind/checkout', 'deploying', 1, 'Staging', 11, 3],
+    ['search-indexer', 'Search indexer', 'northwind/indexer', 'failing', 2, 'Production', 23, 38],
+    ['mobile-gateway', 'Mobile gateway', 'northwind/gateway', 'healthy', 3, 'Production', 2, 95],
+    ['data-pipeline', 'Data pipeline', 'northwind/pipeline', 'healthy', 4, 'Production', 7, 180],
+    ['docs-site', 'Docs site', 'northwind/docs', 'paused', 5, 'Preview', 0, 1440],
+    ['auth-service', 'Auth service', 'northwind/auth', 'healthy', 6, 'Production', 5, 2600],
+    ['email-worker', 'Email worker', 'northwind/email-worker', 'deploying', 7, 'Staging', 9, 4300],
+    ['feature-flags', 'Feature flags', 'northwind/flags', 'healthy', 0, 'Production', 1, 7200],
+    ['ml-scoring', 'ML scoring', 'northwind/scoring', 'failing', 1, 'Staging', 16, 10100],
+  ] satisfies ProjectRow[]
+).map(([id, name, repository, status, owner, environment, issues, minutes]) => ({
+  id,
+  name,
+  repository,
+  status,
+  owner: people[owner],
+  members: people.filter((_, index) => (index + owner) % 3 !== 0).slice(0, 5),
+  environment,
+  issues,
+  updated: minutesAgo(minutes),
 }));
 
 const statuses = [
@@ -663,7 +668,7 @@ function ProjectDetails({ project }: { project: Project }) {
             {activity.map((entry) => (
               <List.Item
                 key={entry.text}
-                style={{ '--env-list-item-container': 'transparent' } as CSSProperties}
+                style={{ '--env-list-item-container': 'transparent' }}
                 start={<Avatar name={entry.who} size="sm" fallback="initials" />}
                 label={entry.text}
                 description={

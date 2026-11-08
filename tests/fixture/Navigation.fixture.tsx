@@ -41,8 +41,8 @@ function useDestinations(start: string) {
 }
 
 /**
- * NavigationBar, NavigationRail and NavigationDrawer over the same destinations, in both themes, mounted with
- * ?fixture=navigation: icon fill, counts, groups, the NavigationBar's More menu, landmark names and routing.
+ * NavigationBar, NavigationRail and NavigationDrawer over the same destinations, in both themes:
+ * icon fill, counts, groups, the NavigationBar's More menu, landmark names and routing.
  */
 export default function NavigationFixture({ theme }: { theme: ColorScheme }) {
   const icons = useDestinations('Home');

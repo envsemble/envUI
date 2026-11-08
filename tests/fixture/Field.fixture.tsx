@@ -61,7 +61,7 @@ function Fields() {
 
 /**
  * Every field and editor on the page, a card, a muted surface and a popup surface, as on a sheet
- * or in a dialog, in the light and the dark theme, mounted with ?fixture=field.
+ * or in a dialog, in the light and the dark theme.
  */
 export default function FieldFixture() {
   return (

@@ -64,7 +64,7 @@ const pseudoMessages = Object.fromEntries(
       }),
     ),
   ]),
-) as EnvUIMessagesInput;
+) as EnvUIMessagesInput; // Object.fromEntries forgets the namespaces and keys it was given.
 
 /** Overlays and feedback: an alert, a loading state and bar, a drawer, notices and a palette. */
 function FeedbackStrings() {
@@ -167,9 +167,9 @@ function InlineMessages() {
 }
 
 /**
- * The components whose strings come from EnvUIProvider's messages, under the pseudo-locale,
- * mounted with ?fixture=messages. Each batch that moves a family's strings adds its components
- * here; tests/browser/library/Messages.spec.ts fails on any English default left in them.
+ * The components whose strings come from EnvUIProvider's messages, under the pseudo-locale. Each
+ * batch that moves a family's strings adds its components here;
+ * tests/browser/library/Messages.spec.ts fails on any English default left in them.
  */
 export default function MessagesFixture() {
   return (

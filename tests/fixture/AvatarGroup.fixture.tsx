@@ -82,6 +82,7 @@ export default function AvatarGroupFixture({ theme }: { theme: ColorScheme }) {
         data-testid="endless-counts"
         people={people.slice(0, 2)}
         total={Number.POSITIVE_INFINITY}
+        // A null max, which no type allows but plain JavaScript can pass.
         max={null as unknown as number}
       />
       <AvatarGroup

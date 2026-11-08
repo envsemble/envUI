@@ -108,9 +108,12 @@ export default function PanelDockFixture({ theme }: { theme: ColorScheme }) {
       return;
     }
     if (!activeId) return;
-    const mode = (
-      { KeyM: 'minimized', KeyX: 'maximized', KeyO: 'open' } as Record<string, PanelDockMode>
-    )[event.code];
+    const modes: Record<string, PanelDockMode> = {
+      KeyM: 'minimized',
+      KeyX: 'maximized',
+      KeyO: 'open',
+    };
+    const mode = modes[event.code];
     if (!mode) return;
     event.preventDefault();
     changeMode(activeId, mode);

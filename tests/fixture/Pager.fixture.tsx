@@ -4,7 +4,7 @@ export const mount = 'standalone';
 
 /**
  * A pager that mixes the previous prop with a Pager.Next child, and one whose strings come from
- * EnvUIProvider, mounted with ?fixture=pager.
+ * EnvUIProvider.
  */
 export default function PagerFixture() {
   return (

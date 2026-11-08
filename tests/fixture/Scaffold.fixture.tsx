@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from 'react';
+import { useState } from 'react';
 import {
   IconButton,
   Page,
@@ -57,7 +57,9 @@ export function TallPage({ paragraphs = 200 }: { paragraphs?: number }) {
 export default function ScaffoldFixture() {
   const query = params();
   const [width, setWidth] = useState(query.get('width') ?? '80rem');
-  const forms = query.get('forms') ? (JSON.parse(query.get('forms')!) as ScaffoldForms) : undefined;
+  const formsParameter = query.get('forms');
+  // The tests write valid forms.
+  const forms = formsParameter ? (JSON.parse(formsParameter) as ScaffoldForms) : undefined;
   const only = query.get('only')?.split(',');
   const scroll = query.get('scroll') === 'document' ? 'document' : 'body';
   const given = only
@@ -76,7 +78,7 @@ export default function ScaffoldFixture() {
         className="fixture-scaffold-frame"
         data-testid="frame"
         data-scroll={scroll}
-        style={{ inlineSize: width } as CSSProperties}
+        style={{ inlineSize: width }}
       >
         <Scaffold
           className="fixture-scaffold"

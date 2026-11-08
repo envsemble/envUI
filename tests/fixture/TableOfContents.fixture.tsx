@@ -10,7 +10,6 @@ const short = { blockSize: '3rem', margin: 0 };
  * A page under a sticky bar that reads its article's headings, h2 and h3, leaving out an example's
  * own heading and an h4; and sections of its own, cards in a box that scrolls, also in a box drawn
  * at half its size; and a modal dialog that adds a section while the page behind it is hidden.
- * Mounted with ?fixture=table-of-contents.
  */
 export default function TableOfContentsFixture() {
   const article = useRef<HTMLElement>(null);

@@ -70,6 +70,7 @@ function Page() {
         {variants.map(([name, emphasis]) => (
           <Button
             key={name}
+            // Each pair in variants is one Button takes, which a union of them doesn't show.
             {...({ ...emphasis, children: name } as ButtonProps)}
             data-testid={`variant-${name}`}
           />
@@ -237,5 +238,6 @@ function Page() {
   );
 }
 
+// ForcedColors.html has the #root.
 createRoot(document.getElementById('root')!).render(<Page />);
 document.body.dataset.stylesReady = '';

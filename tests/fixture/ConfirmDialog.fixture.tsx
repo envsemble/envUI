@@ -4,7 +4,7 @@ import { Button, ConfirmDialog, Menu, Column, Text, TextField } from '@envsemble
 export const mount = 'standalone';
 
 /**
- * Confirm dialogs, mounted with ?fixture=confirm-dialog: a neutral one that confirms at once, a
+ * Confirm dialogs: a neutral one that confirms at once, a
  * danger one whose action takes a moment and can fail, one whose action resolves at once, one
  * opened from a menu item that returns focus to the menu's button, a controlled one that stays
  * open after its action, and one with a typed name, inside a form of the page's own, whose action

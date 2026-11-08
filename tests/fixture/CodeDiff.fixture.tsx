@@ -28,7 +28,7 @@ function SwitchedDiff() {
 
 /**
  * A code block above a diff of the same JSON, on the page and on a card, in the light and the dark
- * theme, and a diff whose theme switches, mounted with ?fixture=code-diff.
+ * theme, and a diff whose theme switches.
  */
 export default function CodeDiffFixture() {
   return (

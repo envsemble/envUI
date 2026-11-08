@@ -627,7 +627,7 @@ const densitySections: Record<DensitySection, () => ReactNode> = {
 /** One section in each scale, one above the other. */
 function ScaledSection({ name, theme }: { name: string; theme: ColorScheme }) {
   const Section = (densitySectionNames as readonly string[]).includes(name)
-    ? densitySections[name as DensitySection]
+    ? densitySections[name as DensitySection] // includes() doesn't narrow name.
     : undefined;
   return (
     <div className="density-section" data-density-section={name} data-density-theme={theme}>
@@ -655,6 +655,7 @@ export default function ScaleFixture() {
   const sections: string[] = section
     ? [section]
     : densitySectionNames.filter((name) => name !== 'menu');
+  // The tests ask only for light or dark.
   const themes: ColorScheme[] = theme ? [theme as ColorScheme] : ['light', 'dark'];
   return (
     <div className="density-fixture">

@@ -394,7 +394,7 @@ function LocaleProbe() {
   return <output data-testid="locale">{useLocale() ?? 'runtime'}</output>;
 }
 
-/** The primitives batch A adds, mounted with ?fixture=primitives. */
+/** The primitives batch A adds. */
 export default function PrimitivesFixture() {
   return (
     <Column gap={6}>

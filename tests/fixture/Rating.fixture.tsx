@@ -16,7 +16,7 @@ const german = {
   },
 };
 
-/** Read-only ratings and a color swatch on a button, mounted with ?fixture=rating. */
+/** Read-only ratings and a color swatch on a button. */
 export default function RatingFixture({ theme }: { theme: ColorScheme }) {
   return (
     <Theme theme={theme} data-testid={`ratings-${theme}`} className="fixture-section">
