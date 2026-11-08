@@ -12,10 +12,10 @@ import {
 } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { Grid } from '../layout/Layout.js';
-import { DecorativeIcon } from '../internal/DecorativeIcon.js';
+import { DecorativeIcon } from '../internal/icon/DecorativeIcon.js';
 import { ActionElement } from '../internal/control/ActionElement.js';
 import { FileInput } from './internal/FileInput.js';
-import { setRef } from '../internal/setRef.js';
+import { setRef } from '../internal/react/setRef.js';
 import { Spinner } from '../feedback/Spinner.js';
 import { IconCloudUpload } from '../icons/CloudUpload.js';
 import * as Field from './Field.js';

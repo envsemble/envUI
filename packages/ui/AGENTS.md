@@ -7,7 +7,7 @@ The rules for `packages/ui`, beside [the rules for the whole repository](../../A
 - Put a component in the family folder of its page's category under `packages/ui/src`, such as Overlays in `overlays/`; `tests/library/ComponentFolders.test.mjs` maps them.
 - Name its file after its main export: PascalCase for a component, a context or a namespace; `useX` for a hook; camelCase for other modules; entry points lowercase.
 - Keep a namespace's parts in its file, or, when they are many, in a folder of its own whose entry is the namespace's file and holds the parts' names, as `actions/menu/Menu.tsx` does.
-- Put code one family uses in its `internal/` folder, and code two families use in the top-level `internal/`, grouped by concern, such as `internal/field/`. ESLint rejects an import of another family's `internal/`.
+- Put code one family uses in its `internal/` folder, and code two families use in the top-level `internal/`, grouped by concern, such as `internal/field/`; only a helper most families use, such as `flag.ts`, or a module whose concern no other shares, such as `useCopy.ts`, stays at its top. ESLint rejects an import of another family's `internal/`.
 - A component with many private modules may take its own folder in its family, with its own `internal/`, such as `feedback/toast/` and `forms/color/`.
 
 ## Entry points

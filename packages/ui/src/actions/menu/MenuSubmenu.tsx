@@ -3,7 +3,7 @@
 import { Menu as BaseMenu } from '@base-ui/react/menu';
 import { useRef, type CSSProperties, type ReactNode, type Ref } from 'react';
 import { IconChevronRight } from '../../icons/ChevronRight.js';
-import { setRef } from '../../internal/setRef.js';
+import { setRef } from '../../internal/react/setRef.js';
 import {
   containedOpenChange,
   usePortalContainer,

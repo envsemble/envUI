@@ -3,7 +3,7 @@
 import { Autocomplete as BaseAutocomplete } from '@base-ui/react/autocomplete';
 import type { ReactNode } from 'react';
 import { commandPalette } from '../../foundations/messages/commandPalette.js';
-import { DecorativeIcon } from '../../internal/DecorativeIcon.js';
+import { DecorativeIcon } from '../../internal/icon/DecorativeIcon.js';
 import { useMessages } from '../../internal/provider/EnvUIContext.js';
 import { flag } from '../../internal/flag.js';
 import { useFormatters } from '../../internal/provider/useFormatters.js';

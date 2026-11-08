@@ -3,7 +3,7 @@
 'use client';
 
 import { Icon, type SymbolIconProps } from '../foundations/Icon.js';
-import { useSymbolIconFill } from '../internal/SymbolIconFill.js';
+import { useSymbolIconFill } from '../internal/icon/SymbolIconFill.js';
 
 export function IconPrintAdd({ filled: requestedFill, ...props }: SymbolIconProps) {
   const filled = useSymbolIconFill(requestedFill);

@@ -6,7 +6,7 @@ import { IconAdd } from '../icons/Add.js';
 import { IconRemove } from '../icons/Remove.js';
 import { classNames } from '../internal/classNames.js';
 import { inSkeleton, given, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
-import { withDisplayName } from '../internal/withDisplayName.js';
+import { withDisplayName } from '../internal/react/withDisplayName.js';
 import type { HeadingLevel } from '../foundations/headingLevel.js';
 import '../styles/Base.css';
 import '../styles/Accordion.css';

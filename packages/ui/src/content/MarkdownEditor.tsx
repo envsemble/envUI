@@ -9,7 +9,7 @@ import { markdownEditor as markdownEditorMessages } from '../foundations/message
 import { classNames } from '../internal/classNames.js';
 import { Grid } from '../layout/Layout.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
-import { setRef } from '../internal/setRef.js';
+import { setRef } from '../internal/react/setRef.js';
 import type { TextareaProps } from '../forms/Textarea.js';
 import { EditorStatus } from '../internal/editor/EditorStatus.js';
 import { EditorToolbar } from '../internal/editor/EditorToolbar.js';

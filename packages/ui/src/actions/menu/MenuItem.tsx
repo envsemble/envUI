@@ -3,7 +3,7 @@
 import { Menu as BaseMenu } from '@base-ui/react/menu';
 import { useId, type AriaAttributes, type MouseEvent, type ReactNode } from 'react';
 import { classNames } from '../../internal/classNames.js';
-import { DecorativeIcon } from '../../internal/DecorativeIcon.js';
+import { DecorativeIcon } from '../../internal/icon/DecorativeIcon.js';
 import { Kbd } from '../../content/Kbd.js';
 import { useLinkComponent } from '../../internal/provider/LinkComponentContext.js';
 import { keyShortcuts, shortcutChords } from '../internal/shortcuts.js';

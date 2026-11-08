@@ -1,7 +1,7 @@
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { Grid, Row } from '../layout/Layout.js';
-import { DecorativeIcon } from '../internal/DecorativeIcon.js';
+import { DecorativeIcon } from '../internal/icon/DecorativeIcon.js';
 import { AlertDismiss } from './internal/AlertDismiss.js';
 import { inSkeleton, given, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import { IconCheckCircle } from '../icons/CheckCircle.js';

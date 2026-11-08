@@ -6,7 +6,7 @@ import {
   type ReactElement,
   type Ref,
 } from 'react';
-import { classNames } from './classNames.js';
+import { classNames } from '../classNames.js';
 import { setRef } from './setRef.js';
 
 type Props = Record<string, unknown> & { className?: string; style?: CSSProperties };

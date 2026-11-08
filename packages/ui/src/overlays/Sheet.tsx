@@ -17,7 +17,7 @@ import { Column } from '../layout/Layout.js';
 import { IconClose } from '../icons/Close.js';
 import { classNames } from '../internal/classNames.js';
 import { markTriggerOwner } from '../internal/popup/triggerOwner.js';
-import { setRef } from '../internal/setRef.js';
+import { setRef } from '../internal/react/setRef.js';
 import { useEnvUI, useMessages, type Direction } from '../internal/provider/EnvUIContext.js';
 import { dialog } from '../foundations/messages/dialog.js';
 import { useTheme } from '../foundations/Theme.js';

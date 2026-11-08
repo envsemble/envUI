@@ -15,7 +15,7 @@ import { scaffold } from '../foundations/messages/scaffold.js';
 import type { WindowClass } from '../foundations/windowClasses.js';
 import { classNames } from '../internal/classNames.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
-import { setRef } from '../internal/setRef.js';
+import { setRef } from '../internal/react/setRef.js';
 import { useScrollKeys } from './internal/useScrollKeys.js';
 import { resolveNavigationForms } from './internal/navigationForms.js';
 import { focusRegion } from './internal/scaffoldFocus.js';

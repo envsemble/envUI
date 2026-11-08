@@ -5,7 +5,7 @@ import { createContext, useContext, type ComponentProps, type ReactNode } from '
 import { IconError } from '../icons/Error.js';
 import { classNames } from '../internal/classNames.js';
 import { Grid, Row } from '../layout/Layout.js';
-import { withDisplayName } from '../internal/withDisplayName.js';
+import { withDisplayName } from '../internal/react/withDisplayName.js';
 import type { ControlSize } from '../foundations/Theme.js';
 import '../styles/Base.css';
 import '../styles/Field.css';

@@ -1,5 +1,5 @@
 import type { ComponentPropsWithRef, CSSProperties, ReactElement, Ref } from 'react';
-import { renderElement } from '../internal/renderElement.js';
+import { renderElement } from '../internal/react/renderElement.js';
 import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/Layout.css';

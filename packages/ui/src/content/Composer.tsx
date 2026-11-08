@@ -17,7 +17,7 @@ import { IconArrowUpward } from '../icons/ArrowUpward.js';
 import { IconStop } from '../icons/Stop.js';
 import { classNames } from '../internal/classNames.js';
 import { Grid, Row } from '../layout/Layout.js';
-import { setRef } from '../internal/setRef.js';
+import { setRef } from '../internal/react/setRef.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { composer as composerMessages } from '../foundations/messages/composer.js';
 import { useFormReset } from '../internal/field/useFormReset.js';

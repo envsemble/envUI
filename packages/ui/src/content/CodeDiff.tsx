@@ -21,7 +21,7 @@ import type { DiffTintColors } from './internal/codeThemes.js';
 import { useCodeContrast } from './internal/useCodeContrast.js';
 import { Column } from '../layout/Layout.js';
 import { Text } from '../foundations/Text.js';
-import { DecorativeIcon } from '../internal/DecorativeIcon.js';
+import { DecorativeIcon } from '../internal/icon/DecorativeIcon.js';
 import { IconError } from '../icons/Error.js';
 import { useTheme } from '../foundations/Theme.js';
 import { Spinner } from '../feedback/Spinner.js';

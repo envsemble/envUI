@@ -156,7 +156,7 @@
       "internal/popup/DialogParts.tsx": "base",
       "internal/popup/useModalPresence.ts": "base",
       "internal/rangeBarProps.ts": "base",
-      "internal/useStripWheel.ts": "base"
+      "internal/dom/useStripWheel.ts": "base"
     },
     "private": {
       "$comment": "Modules in these directories are private to the listed modules, besides each other.",

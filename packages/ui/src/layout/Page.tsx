@@ -1,6 +1,6 @@
 import type { ComponentPropsWithRef, ReactElement, ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { renderElement } from '../internal/renderElement.js';
+import { renderElement } from '../internal/react/renderElement.js';
 import '../styles/Base.css';
 import '../styles/Page.css';
 

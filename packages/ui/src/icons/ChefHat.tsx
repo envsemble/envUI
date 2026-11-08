@@ -3,7 +3,7 @@
 'use client';
 
 import { Icon, type SymbolIconProps } from '../foundations/Icon.js';
-import { useSymbolIconFill } from '../internal/SymbolIconFill.js';
+import { useSymbolIconFill } from '../internal/icon/SymbolIconFill.js';
 
 /** The path both styles start with. */
 const start = "M400-400q17 0 28.5-11.5T440-440v-120q0-17-11.5-28.5T400-600q-17 0-28.5 11.5T360-560v120q0 17 11.5 28.5T400-400Zm-200";

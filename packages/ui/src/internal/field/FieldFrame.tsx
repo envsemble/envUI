@@ -9,7 +9,7 @@ import {
   type Ref,
 } from 'react';
 import * as Field from '../../forms/Field.js';
-import { DecorativeIcon } from '../DecorativeIcon.js';
+import { DecorativeIcon } from '../icon/DecorativeIcon.js';
 import { ControlDefaults } from '../control/ControlDefaults.js';
 import { classNames } from '../classNames.js';
 import type { ControlSize } from '../../foundations/Theme.js';

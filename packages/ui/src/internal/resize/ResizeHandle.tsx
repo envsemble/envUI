@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, type ComponentPropsWithRef } from 'react';
 import { classNames } from '../classNames.js';
-import { setRef } from '../setRef.js';
+import { setRef } from '../react/setRef.js';
 import { useResize, type ResizeOptions } from './useResize.js';
 import { useLatest } from '../useLatest.js';
 import { flag } from '../flag.js';

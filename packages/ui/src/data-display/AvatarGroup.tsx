@@ -21,7 +21,7 @@ import {
 import { Tooltip } from '../overlays/Tooltip.js';
 import { ActionElement } from '../internal/control/ActionElement.js';
 import { classNames } from '../internal/classNames.js';
-import { setRef } from '../internal/setRef.js';
+import { setRef } from '../internal/react/setRef.js';
 import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { useFormatters } from '../internal/provider/useFormatters.js';
 import { avatarGroup as avatarGroupMessages } from '../foundations/messages/avatarGroup.js';
