@@ -3,7 +3,6 @@
 import { Combobox as BaseCombobox } from '@base-ui/react/combobox';
 import { DirectionProvider } from '@base-ui/react/direction-provider';
 import {
-  useCallback,
   useRef,
   useState,
   type ComponentPropsWithoutRef,
@@ -14,11 +13,6 @@ import {
 import { setRef } from '../internal/setRef.js';
 import { useDirection } from '../internal/useDirection.js';
 import { useLocale, useMessages } from '../internal/EnvUIContext.js';
-import {
-  keepsOpen,
-  useKeepPageVisible,
-  usePortalContainer,
-} from '../internal/PortalContainerContext.js';
 import { type ControlSize } from '../foundations/Theme.js';
 import { IconButton } from '../actions/Button.js';
 import { IconChevronRight } from '../icons/ChevronRight.js';
@@ -30,8 +24,8 @@ import {
   type FieldControlBoxProps,
   type FieldProps,
 } from './internal/FieldFrame.js';
-import { standIn } from './internal/comboboxItems.js';
 import { ComboboxPopup } from './internal/ComboboxPopup.js';
+import { useComboboxOpen } from './internal/useComboboxOpen.js';
 import { useComboboxOptions } from './internal/useComboboxOptions.js';
 import { useComboboxSelection } from './internal/useComboboxSelection.js';
 import { useFieldMetadata } from './internal/useFieldMetadata.js';
@@ -241,10 +235,11 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
   // The query onInputValueChange reported last.
   const reportedQuery = useRef('');
 
-  const { selection, selectedValues, keep } = useComboboxSelection({
+  const { selection, selectedValues, choose } = useComboboxSelection<Item>({
     multiple: isMultiple,
     value,
     defaultValue,
+    onValueChange,
     nativeRef,
     form,
   });
@@ -256,27 +251,20 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
     hasStart,
     grouped,
   } = useComboboxOptions({ items, filter, locale, selectedValues });
-
-  // The typed text, to show the chosen option's start content only while the field shows its label.
-  const singleItem = isMultiple || selection == null ? undefined : known.get(selection as string);
-  const [inputText, setInputText] = useState(() => singleItem?.label ?? '');
-  const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen ?? false);
-  const popupOpen = open ?? uncontrolledOpen;
-  const portal = usePortalContainer();
-  // Base UI hides the rest of the page while the list is open; a contained one leaves it in reach.
-  useKeepPageVisible(
-    portal,
-    popupOpen,
-    useCallback(() => [popupRef.current, inputRef.current], []),
-  );
+  const { popupOpen, changeOpen, handleOpenChange } = useComboboxOpen({
+    open,
+    defaultOpen,
+    onOpenChange,
+    popupRef,
+    inputRef,
+  });
   // The chips' arrow keys and the popup follow the text direction, read as the popup opens or
   // closes and as the field takes focus.
   const [direction, readDirection] = useDirection(inputRef, popupOpen);
 
-  function changeOpen(next: boolean, reason: string) {
-    if (open === undefined) setUncontrolledOpen(next);
-    onOpenChange?.(next, { reason });
-  }
+  // The typed text, to show the chosen option's start content only while the field shows its label.
+  const singleItem = isMultiple || selection == null ? undefined : known.get(selection as string);
+  const [inputText, setInputText] = useState(() => singleItem?.label ?? '');
 
   function handleValueChange(next: string[] | string | null, details: ChangeDetails) {
     if (details.isCanceled) return;
@@ -292,20 +280,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
       if (details.reason === 'input-clear' && !popupOpen) changeOpen(true, details.reason);
       return;
     }
-    keep(next);
-    if (isMultiple) {
-      const values = [...((next as readonly string[] | null) ?? [])];
-      (onValueChange as ComboboxMultipleProps<Item>['onValueChange'])?.(
-        values,
-        values.map((selected) => known.get(selected) ?? standIn<Item>(selected)),
-      );
-    } else {
-      const single = (next as string | null) ?? null;
-      (onValueChange as ComboboxSingleProps<Item>['onValueChange'])?.(
-        single,
-        single == null ? null : (known.get(single) ?? null),
-      );
-    }
+    choose(next, known);
   }
 
   function handleInputValueChange(next: string, details: ChangeDetails) {
@@ -379,10 +354,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
         // the Combobox's implementation; Combobox.Root's type leaves it out, hence the cast.
         autoHighlight={'always' as unknown as boolean}
         open={popupOpen}
-        onOpenChange={(next, details) => {
-          if (keepsOpen(portal, next, details)) details.cancel();
-          else changeOpen(next, details.reason);
-        }}
+        onOpenChange={handleOpenChange}
         name={name}
         form={form}
         required={required}

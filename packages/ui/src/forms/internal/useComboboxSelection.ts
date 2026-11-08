@@ -1,32 +1,34 @@
 'use client';
 
 import { useState, type RefObject } from 'react';
+import type { ComboboxItem, ComboboxProps } from '../Combobox.js';
+import { standIn } from './comboboxItems.js';
 import { useFormReset } from './useFormReset.js';
+
+type Selection = readonly string[] | string | null;
 
 /**
  * A combobox's chosen value: the one it is given, or one it keeps itself, which a native form reset
- * restores to the default. Returns it as Base UI takes it, and as a list of values.
+ * restores to the default. Returns it as Base UI takes it, as a list of values, and a function that
+ * takes a value people chose: it keeps it, where the field keeps its own, and reports it with its
+ * options.
  */
-export function useComboboxSelection({
+export function useComboboxSelection<Item extends ComboboxItem>({
   multiple,
   value,
   defaultValue,
+  onValueChange,
   nativeRef,
   form,
-}: {
+}: Pick<ComboboxProps<Item>, 'value' | 'defaultValue' | 'onValueChange' | 'form'> & {
   multiple: boolean;
-  value: readonly string[] | string | null | undefined;
-  defaultValue: readonly string[] | string | null | undefined;
   /** The hidden input Base UI submits, whose form resets the field. */
   nativeRef: RefObject<HTMLInputElement | null>;
-  form: string | undefined;
 }) {
-  const defaultSelection = multiple
+  const defaultSelection: Selection = multiple
     ? [...((defaultValue as readonly string[] | undefined) ?? [])]
     : ((defaultValue as string | null | undefined) ?? null);
-  const [uncontrolledValue, setUncontrolledValue] = useState<readonly string[] | string | null>(
-    defaultSelection,
-  );
+  const [uncontrolledValue, setUncontrolledValue] = useState<Selection>(defaultSelection);
   const controlled = value !== undefined;
   const selection = controlled ? (multiple ? value : (value ?? null)) : uncontrolledValue;
 
@@ -38,6 +40,25 @@ export function useComboboxSelection({
     form,
   );
 
+  /** Keeps and reports a value people chose, with the options known by value. */
+  function choose(next: Selection, known: ReadonlyMap<string, Item>) {
+    if (!controlled) setUncontrolledValue(next);
+    // The props are a union on multiple, which the field has already told apart.
+    if (multiple) {
+      const values = [...((next as readonly string[] | null) ?? [])];
+      (onValueChange as ((value: string[], items: Item[]) => void) | undefined)?.(
+        values,
+        values.map((selected) => known.get(selected) ?? standIn<Item>(selected)),
+      );
+    } else {
+      const single = (next as string | null) ?? null;
+      (onValueChange as ((value: string | null, item: Item | null) => void) | undefined)?.(
+        single,
+        single == null ? null : (known.get(single) ?? null),
+      );
+    }
+  }
+
   return {
     selection,
     selectedValues: (Array.isArray(selection)
@@ -45,9 +66,6 @@ export function useComboboxSelection({
       : selection == null
         ? []
         : [selection]) as readonly string[],
-    /** Keeps a value people chose, where the field keeps its own. */
-    keep: (next: readonly string[] | string | null) => {
-      if (!controlled) setUncontrolledValue(next);
-    },
+    choose,
   };
 }
