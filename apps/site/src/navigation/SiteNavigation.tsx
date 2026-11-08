@@ -28,7 +28,8 @@ import { EnvUILogo } from '../brand/EnvUILogo';
 import { SearchButton } from '../search/SearchButton';
 import { DisplayMenu } from '../theme/DisplaySettings';
 import { drawerWidthKey } from '../theme/DisplayStorage';
-import { motionDuration, motionEase, reducedMotion } from '../motion/MotionTokens';
+import { prefersReducedMotion } from '../../../../packages/ui/src/internal/reducedMotion';
+import { rootMotionDuration, rootMotionEasing } from '../motion/RootMotionTokens';
 import { pageBadge } from './PageBadges';
 import {
   pagesOf,
@@ -451,12 +452,12 @@ function useDrawerMotion(
         '.site-sidebar > :is(.env-navigation-drawer-list, .env-navigation-drawer-footer)',
       ) ?? []),
     ];
-    const from = reducedMotion() ? { opacity: 0 } : { opacity: 0, translate: '-0.75rem 0' };
-    const to = reducedMotion() ? { opacity: 1 } : { opacity: 1, translate: '0 0' };
+    const from = prefersReducedMotion() ? { opacity: 0 } : { opacity: 0, translate: '-0.75rem 0' };
+    const to = prefersReducedMotion() ? { opacity: 1 } : { opacity: 1, translate: '0 0' };
     const animations = parts.map((part) =>
       part.animate([from, to], {
-        duration: motionDuration('medium'),
-        easing: motionEase('ease-enter'),
+        duration: rootMotionDuration('medium'),
+        easing: rootMotionEasing('ease-enter'),
       }),
     );
     let current = true;

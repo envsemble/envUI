@@ -19,7 +19,7 @@ import type { StageFill } from '../../../../scripts/docs/model/DocumentationType
 import { useVerdictFit } from '../fit/useVerdictFit';
 import { useDisplaySettings } from '../theme/DisplaySettings';
 import { Playback, StageOverlays, useInView } from './Motion';
-import { motionDuration } from './MotionTokens';
+import { rootMotionDuration } from './RootMotionTokens';
 import { FigureDevice, OnDevice } from '../figures/DeviceFrame';
 
 /** What the reader can operate in a figure: a stage with none of it stays a recording. */
@@ -393,7 +393,7 @@ function useThemeFade(subject: HTMLElement | null) {
       // The fade takes one and a half of the slow token, and a frame to start.
       timer = setTimeout(
         () => delete subject.dataset.catalogueThemeFading,
-        1.5 * motionDuration('slow') + 50,
+        1.5 * rootMotionDuration('slow') + 50,
       );
     });
     observer.observe(subject, { subtree: true, attributeFilter: themeAttributes });

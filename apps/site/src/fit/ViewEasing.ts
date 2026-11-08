@@ -2,7 +2,8 @@
  * How a picture's view moves to where its fit places it (useFit.ts): at once until it shows, then
  * easing there, in the slow motion token on the standard easing.
  */
-import { motionDuration, reducedMotion } from '../motion/MotionTokens';
+import { prefersReducedMotion } from '../../../../packages/ui/src/internal/reducedMotion';
+import { rootMotionDuration } from '../motion/RootMotionTokens';
 import { place, type Fitting } from './Fitting';
 import type { Shown } from './PaintedBoxes';
 
@@ -64,7 +65,14 @@ export function glideAt(course: Course, now: number, ease: (time: number) => num
 function glide(f: Fitting, now: number) {
   const { view } = f;
   const to: Point = [view.toX, view.toY, view.toScale];
-  f.course = steer(f.course, [view.x, view.y, view.scale], to, now, motionDuration('slow'), f.ease);
+  f.course = steer(
+    f.course,
+    [view.x, view.y, view.scale],
+    to,
+    now,
+    rootMotionDuration('slow'),
+    f.ease,
+  );
   const { at, settled } = glideAt(f.course, now, f.ease);
   [view.x, view.y, view.scale] = at;
   if (settled) {
@@ -99,7 +107,7 @@ function jump(f: Fitting) {
 
 /** Eases the view to where it goes, or with motion reduced, places it there at once. */
 export function glideTo(f: Fitting) {
-  if (reducedMotion()) jump(f);
+  if (prefersReducedMotion()) jump(f);
   else startGlide(f);
 }
 
@@ -110,7 +118,7 @@ export function glideTo(f: Fitting) {
 export function settle(f: Fitting, scale: number, toX: number, toY: number, boxes: Shown[]) {
   const { canvas, view } = f;
   // A tile in place eases to where it is fitted next; anything else is placed at once.
-  const eases = f.tile && canvas.dataset.fitted !== undefined && !reducedMotion();
+  const eases = f.tile && canvas.dataset.fitted !== undefined && !prefersReducedMotion();
   // Until it shows, it is placed at once, and shows only once its place has held for a few
   // frames, or after a quarter of a second, whatever is still moving, such as a popup placed again
   // against the stage's edges as the view moves: it appears in place, as every picture does, by

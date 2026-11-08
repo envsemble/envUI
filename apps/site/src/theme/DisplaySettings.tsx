@@ -13,7 +13,7 @@ import {
 } from '@envsemble/envui';
 import { IconTune } from '@envsemble/envui/icons/Tune';
 import { displayStorageKeys } from './DisplayStorage';
-import { reducedMotion } from '../motion/MotionTokens';
+import { prefersReducedMotion } from '../../../../packages/ui/src/internal/reducedMotion';
 
 const themes: readonly ThemePreference[] = ['system', 'light', 'dark'];
 const contrasts: readonly ThemeContrast[] = ['system', 'standard', 'high'];
@@ -53,7 +53,11 @@ function requestedScale(): ThemeScale | undefined {
  * play them.
  */
 function initialMotion() {
-  return readStored(displayStorageKeys.motion, motions, reducedMotion() ? 'paused' : 'playing');
+  return readStored(
+    displayStorageKeys.motion,
+    motions,
+    prefersReducedMotion() ? 'paused' : 'playing',
+  );
 }
 
 interface DisplaySettingsValue {
@@ -149,7 +153,7 @@ export function useDisplaySettings() {
  * transitions, they change at once.
  */
 function switchColors(change: () => void) {
-  if (typeof document.startViewTransition !== 'function' || reducedMotion()) return change();
+  if (typeof document.startViewTransition !== 'function' || prefersReducedMotion()) return change();
   document.startViewTransition(() => flushSync(change));
 }
 

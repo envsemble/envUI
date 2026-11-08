@@ -8,7 +8,8 @@ import {
   type CSSProperties,
   type ReactNode,
 } from 'react';
-import { motionDuration, motionEase, reducedMotion } from '../motion/MotionTokens';
+import { prefersReducedMotion } from '../../../../packages/ui/src/internal/reducedMotion';
+import { rootMotionDuration, rootMotionEasing } from '../motion/RootMotionTokens';
 import { Surface } from '@envsemble/envui';
 import { CodeBlock } from '@envsemble/envui/content';
 import sharedSizes from 'virtual:envui-part-sizes';
@@ -140,11 +141,11 @@ function leaveInPlace(element: HTMLElement) {
     fade() {
       window.clearTimeout(timer);
       if (gone) return;
-      if (!copy.isConnected || reducedMotion()) return remove();
+      if (!copy.isConnected || prefersReducedMotion()) return remove();
       copy
         .animate([{ opacity: 1 }, { opacity: 0 }], {
-          duration: motionDuration('fast'),
-          easing: motionEase('ease-exit'),
+          duration: rootMotionDuration('fast'),
+          easing: rootMotionEasing('ease-exit'),
           fill: 'forwards',
         })
         .finished.then(remove, remove);
@@ -212,11 +213,11 @@ function useArrival(skeleton: { current: HTMLElement | null }) {
           return;
         }
         leaving?.fade();
-        if (reducedMotion()) return;
-        const easing = motionEase('ease-enter');
+        if (prefersReducedMotion()) return;
+        const easing = rootMotionEasing('ease-enter');
         for (const child of arrived)
           child.animate([{ opacity: 0 }, { opacity: 1 }], {
-            duration: motionDuration('medium'),
+            duration: rootMotionDuration('medium'),
             easing,
           });
       });
