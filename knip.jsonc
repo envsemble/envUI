@@ -45,7 +45,7 @@
     },
     "packages/ui": {
       "entry": [
-        "src/{index,content,rich-text,diff,color,theme-bootstrap,dev,messages}.ts",
+        "src/{index,code,markdown,rich-text,diff,color,theme-bootstrap,dev,messages}.ts",
         "src/icons/*.tsx",
         "terrazzo.config.mjs",
       ],

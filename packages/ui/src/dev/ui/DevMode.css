@@ -106,7 +106,7 @@
   :where(.env-dev-wrap) {
     overflow-wrap: anywhere;
   }
-  /* Code in dev mode's own panels, in the code type: the Code component lives in the content entry,
+  /* Code in dev mode's own panels, in the code type: the Code component lives in the code entry,
      whose optional peers an app may not have installed. */
   :where(.env-dev-code) {
     font-family: var(--env-code-font-family, ui-monospace, monospace);
