@@ -5,6 +5,7 @@
  * here reads the page (tests/site/PlaceCallouts.test.mjs).
  */
 import { union, type Box } from '../../fit/FitGeometry';
+import { pixelTolerance } from '../../shared/Remeasure';
 
 export type Side = 'top' | 'bottom' | 'left' | 'right';
 
@@ -103,10 +104,10 @@ const square: Corners = { topLeft: 0, topRight: 0, bottomLeft: 0, bottomRight: 0
 
 /** Whether a box lies inside another, to half a px. */
 const inside = (outer: Box, inner: Box) =>
-  inner.left >= outer.left - 0.5 &&
-  inner.right <= outer.right + 0.5 &&
-  inner.top >= outer.top - 0.5 &&
-  inner.bottom <= outer.bottom + 0.5;
+  inner.left >= outer.left - pixelTolerance &&
+  inner.right <= outer.right + pixelTolerance &&
+  inner.top >= outer.top - pixelTolerance &&
+  inner.bottom <= outer.bottom + pixelTolerance;
 
 /**
  * Where a part's outline gives way: across the labels its edge runs through, such as a field's
@@ -122,10 +123,10 @@ export function gapsIn(box: Box, labels: Box[]) {
       label.top < box.bottom &&
       label.bottom > box.top &&
       !(
-        label.left >= box.left - 0.5 &&
-        label.right <= box.right + 0.5 &&
-        label.top >= box.top - 0.5 &&
-        label.bottom <= box.bottom + 0.5
+        label.left >= box.left - pixelTolerance &&
+        label.right <= box.right + pixelTolerance &&
+        label.top >= box.top - pixelTolerance &&
+        label.bottom <= box.bottom + pixelTolerance
       ),
   );
   return gaps.length
@@ -304,12 +305,12 @@ function clearAt({ found, geometry }: Layout, side: Side, box: Box) {
   );
   const inWay = others.filter((other) =>
     side === 'top'
-      ? other.top < box.top - 0.5
+      ? other.top < box.top - pixelTolerance
       : side === 'bottom'
-        ? other.bottom > box.bottom + 0.5
+        ? other.bottom > box.bottom + pixelTolerance
         : side === 'left'
-          ? other.left < box.left - 0.5
-          : other.right > box.right + 0.5,
+          ? other.left < box.left - pixelTolerance
+          : other.right > box.right + pixelTolerance,
   );
   const across = (other: Box): [number, number] =>
     vertical ? [other.left - 10, other.right + 10] : [other.top - 10, other.bottom + 10];

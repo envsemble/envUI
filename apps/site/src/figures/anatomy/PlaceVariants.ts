@@ -9,7 +9,7 @@ import { union, type Box } from '../../fit/FitGeometry';
 import type { Callout, Side } from './PlaceCallouts';
 
 /** The room, in px, a variants figure's names take beside its items: on the start side or above. */
-export interface Room {
+export interface CalloutMargins {
   start: number;
   bottom: number;
   end?: number;
@@ -164,7 +164,7 @@ export function stackedVariants(
   start: number,
   lines: (string[] | undefined)[],
   uses: { beside?: UseSize[]; under?: UseSize[]; column: boolean },
-): { callouts: Callout[]; room: Room; beside: boolean } {
+): { callouts: Callout[]; room: CalloutMargins; beside: boolean } {
   const { items, rtl } = geometry;
   const { beside, under } = uses;
   const side: Side = rtl ? 'right' : 'left';

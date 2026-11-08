@@ -15,6 +15,7 @@ import {
 } from './PointerPlan';
 import { joinClock } from '../Timeline';
 import { useLatest } from '@envui-internal/internal/useLatest';
+import { pixelTolerance } from '../../shared/Remeasure';
 
 /*
  * Plays a pointer's script over a stage's live component (usePointer): a virtual pointer
@@ -226,7 +227,10 @@ function playPointer(
     // The reader scrolled the page since the aims were read. They are where the stage was then, so
     // the frame reads them again where it is now.
     const box = scope.getBoundingClientRect();
-    if (Math.abs(box.left - readAt.x) >= 0.5 || Math.abs(box.top - readAt.y) >= 0.5) {
+    if (
+      Math.abs(box.left - readAt.x) >= pixelTolerance ||
+      Math.abs(box.top - readAt.y) >= pixelTolerance
+    ) {
       aimed = null;
       known = new Map();
     }

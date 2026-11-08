@@ -24,6 +24,7 @@ import { KeyboardControl } from '../KeyboardControl';
 import { DragControl, type CarriedFile } from '../DragControl';
 import { WheelControl } from '../WheelControl';
 import { captures, keyboardFocused } from '../BrowserStandIns';
+import { pixelTolerance } from '../../shared/Remeasure';
 
 /** The ids of the virtual pointers count up from here, clear of a real pointer's. */
 let nextId = 9000;
@@ -58,7 +59,7 @@ export class VirtualPointer {
     if (!at || !from) return;
     const box = this.scope.getBoundingClientRect();
     const [dx, dy] = [box.left - from.x, box.top - from.y];
-    if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) return;
+    if (Math.abs(dx) < pixelTolerance && Math.abs(dy) < pixelTolerance) return;
     this.moveTo({ x: at.x + dx, y: at.y + dy });
   };
 

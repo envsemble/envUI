@@ -18,7 +18,7 @@ import {
   stackedVariants,
   roomsForUses,
   variantsInRow,
-  type Room,
+  type CalloutMargins,
 } from './PlaceVariants';
 
 /** A subject at most this wide and tall, in CSS pixels, is small enough to show larger. */
@@ -67,7 +67,7 @@ export function useAnatomyLayout(
   { legend, open, enlarged, variants, uses, onOrder, onBeside }: LayoutOptions,
 ) {
   const [callouts, setCallouts] = useState<Callout[]>([]);
-  const [room, setRoom] = useState<Room>({ start: 0, bottom: 0 });
+  const [room, setRoom] = useState<CalloutMargins>({ start: 0, bottom: 0 });
   useLayoutEffect(() => {
     const stageElement = stage.current;
     const subjectElement = subject.current;
@@ -137,7 +137,7 @@ function layOutVariants(
   labels: Map<string, number> = new Map(),
   /** What each legend item's variant is for, in lines, from the option table after the figure. */
   uses?: (string[] | undefined)[],
-): { callouts: Callout[]; room: Room; beside?: boolean } {
+): { callouts: Callout[]; room: CalloutMargins; beside?: boolean } {
   const geometry = measureVariantItems(stage, subject, legend);
   const { items, elements } = geometry;
   if (!items.length) return { callouts: [], room: { start: 0, bottom: 0 } };

@@ -441,10 +441,10 @@ function useThemeFade(subject: HTMLElement | null) {
 }
 
 /**
- * A room's height: a number of rem, or a CSS length, such as one that follows the scale (rowsAnd).
+ * A height: a number of rem, or a CSS length, such as one that follows the scale (rowsAnd).
  */
-type Room = number | string;
-const lengthOf = (room: Room) => (typeof room === 'number' ? `${room}rem` : room);
+type HeightLength = number | string;
+const lengthOf = (room: HeightLength) => (typeof room === 'number' ? `${room}rem` : room);
 
 /**
  * A figure's room for its tallest state, as a CSS length for its content's min-height: `wide`, or
@@ -454,7 +454,7 @@ const lengthOf = (room: Room) => (typeof room === 'number' ? `${room}rem` : room
  * out in): the difference is huge and positive below `below`, so `narrow` wins, and negative from
  * there on, so `wide` wins.
  */
-export const roomFor = (wide: Room, narrow: Room, below: number) =>
+export const roomFor = (wide: HeightLength, narrow: HeightLength, below: number) =>
   `max(${lengthOf(wide)}, min(${lengthOf(narrow)}, (${below}rem - 100cqi) * 1000))`;
 
 /**

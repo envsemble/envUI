@@ -7,7 +7,7 @@ import {
   type RefObject,
 } from 'react';
 import { PortalContainer, windowClasses, type WindowClass } from '@envsemble/envui';
-import { remeasure } from '../shared/Remeasure';
+import { pixelTolerance, remeasure } from '../shared/Remeasure';
 import { usePlayback } from './Playback';
 import { remPixels } from '@envui-internal/internal/dom/lengths';
 import { useLatest } from '@envui-internal/internal/useLatest';
@@ -368,7 +368,7 @@ export function WidthSweep({
       // start.
       const over = Math.max(0, width * scale * rem - room);
       frame.current?.style.setProperty('translate', `${over / 2}px 0`);
-      const cut = over > 0.5 ? 'end' : '';
+      const cut = over > pixelTolerance ? 'end' : '';
       if (place.current.dataset.cut !== cut) place.current.dataset.cut = cut;
       rulerWidth = Math.min(rulerWidth, room / rem);
     }
