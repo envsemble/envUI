@@ -1,8 +1,8 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { dateFormat, withHourCycle } from '../../internal/calendarDays.js';
-import { useResolvedLocale } from '../../internal/useFormatters.js';
+import { dateFormat, withHourCycle } from '../../internal/time/calendarDays.js';
+import { useResolvedLocale } from '../../internal/provider/useFormatters.js';
 
 /**
  * The value of a date, time or month picker as its owner holds it: the one it is given, or one it

@@ -4,8 +4,8 @@ import { useId, useMemo, useState, type ComponentPropsWithRef } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { Grid, Row } from '../layout/Layout.js';
 import { useHydrated } from '../internal/useHydrated.js';
-import { useMessages } from '../internal/EnvUIContext.js';
-import { useResolvedLocale } from '../internal/useFormatters.js';
+import { useMessages } from '../internal/provider/EnvUIContext.js';
+import { useResolvedLocale } from '../internal/provider/useFormatters.js';
 import { calendar as calendarMessages } from '../foundations/messages/calendar.js';
 import { IconButton } from '../actions/Button.js';
 import { IconChevronLeft } from '../icons/ChevronLeft.js';
@@ -22,12 +22,12 @@ import {
   parseDay,
   toUtcDate,
   type Weekday,
-} from '../internal/calendarDays.js';
+} from '../internal/time/calendarDays.js';
 import { useActiveCell } from './internal/useActiveCell.js';
 import '../styles/Base.css';
 import '../styles/Calendar.css';
 
-export type { Weekday } from '../internal/calendarDays.js';
+export type { Weekday } from '../internal/time/calendarDays.js';
 
 export interface CalendarProps extends Omit<
   ComponentPropsWithRef<'div'>,

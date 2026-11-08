@@ -11,7 +11,7 @@ import {
   type PopupParts,
   type PopupSide,
   type PopupSurfaceProps,
-} from '../../internal/PopupSurface.js';
+} from '../../internal/popup/PopupSurface.js';
 import '../../styles/Base.css';
 import '../../styles/Menu.css';
 

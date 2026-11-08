@@ -4,7 +4,7 @@ import {
   windowClasses as windowClassStarts,
   type WindowClass,
 } from '../foundations/windowClasses.js';
-import { roundToHundredth } from '../internal/lengths.js';
+import { roundToHundredth } from '../internal/dom/lengths.js';
 
 export type { WindowClass };
 

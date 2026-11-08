@@ -3,7 +3,10 @@
 // @client-module It provides the link context, which React reads only in client modules.
 
 import type { ComponentType, ReactNode } from 'react';
-import { LinkComponentContext, type LinkComponentProps } from '../internal/LinkComponentContext.js';
+import {
+  LinkComponentContext,
+  type LinkComponentProps,
+} from '../internal/provider/LinkComponentContext.js';
 
 export type { LinkComponentProps };
 

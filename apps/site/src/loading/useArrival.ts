@@ -1,5 +1,5 @@
 import { useLayoutEffect } from 'react';
-import { prefersReducedMotion } from '@envui-internal/internal/reducedMotion';
+import { prefersReducedMotion } from '@envui-internal/internal/motion/reducedMotion';
 import { rootMotionDuration, rootMotionEasing } from '../motion/RootMotionTokens';
 
 /**

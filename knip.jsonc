@@ -61,7 +61,7 @@
       "entry": ["test/*.test.mjs"],
       "project": ["**/*.{js,mjs}"],
       // A copy of the shared color policy, whose stand-in for an expression the ESLint plugin uses.
-      "ignoreIssues": { "colorPolicy.js": ["exports"] },
+      "ignoreIssues": { "src/colorPolicy.js": ["exports"] },
     },
     "apps/site": {
       "project": ["src/**/*.{ts,tsx}"],

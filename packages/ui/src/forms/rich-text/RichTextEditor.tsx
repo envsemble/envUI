@@ -12,8 +12,8 @@ import { FieldFrame, type FieldControlBoxProps } from '../../internal/field/Fiel
 import { LinkDialog } from '../../internal/editor/LinkDialog.js';
 import { useFieldMetadata } from '../../internal/field/useFieldMetadata.js';
 import { classNames } from '../../internal/classNames.js';
-import { useMessages } from '../../internal/EnvUIContext.js';
-import { FileInput } from '../../internal/FileInput.js';
+import { useMessages } from '../../internal/provider/EnvUIContext.js';
+import { FileInput } from '../internal/FileInput.js';
 import { flag } from '../../internal/flag.js';
 import { useLatest } from '../../internal/useLatest.js';
 import {

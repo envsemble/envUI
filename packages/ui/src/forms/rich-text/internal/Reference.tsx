@@ -3,7 +3,7 @@
 import { createContext, useContext } from 'react';
 import { NodeViewWrapper, ReactNodeViewRenderer, type NodeViewProps } from '@tiptap/react';
 import { Button } from '../../../actions/Button.js';
-import { ActionElement } from '../../../internal/ActionElement.js';
+import { ActionElement } from '../../../internal/control/ActionElement.js';
 import { referenceFromAttributes, safeRichTextUrl } from './referenceAttributes.js';
 import type { RichTextReference, RichTextRenderOptions } from '../types.js';
 import '../../../styles/Base.css';

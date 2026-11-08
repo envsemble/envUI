@@ -14,10 +14,13 @@ import { Button } from '../actions/Button.js';
 import { useTheme } from '../foundations/Theme.js';
 import { confirmDialog } from '../foundations/messages/confirmDialog.js';
 import { classNames } from '../internal/classNames.js';
-import { markTriggerOwner } from '../internal/triggerOwner.js';
-import { ResetControlDefaults } from '../internal/ControlDefaults.js';
-import { useMessages } from '../internal/EnvUIContext.js';
-import { containedOpenChange, usePortalContainer } from '../internal/PortalContainerContext.js';
+import { markTriggerOwner } from '../internal/popup/triggerOwner.js';
+import { ResetControlDefaults } from '../internal/control/ControlDefaults.js';
+import { useMessages } from '../internal/provider/EnvUIContext.js';
+import {
+  containedOpenChange,
+  usePortalContainer,
+} from '../internal/popup/PortalContainerContext.js';
 import { Alert } from '../feedback/Alert.js';
 import { DialogClose, type DialogFocusTarget, type DialogOpenChangeDetails } from './Dialog.js';
 import {
@@ -27,9 +30,9 @@ import {
   DialogHeader,
   DialogSurface,
   OverlayTheme,
-} from '../internal/DialogParts.js';
+} from '../internal/popup/DialogParts.js';
 import { reportInDevelopment } from '../internal/developmentReport.js';
-import { useOpenState } from '../internal/useOpenState.js';
+import { useOpenState } from '../internal/popup/useOpenState.js';
 import '../styles/Base.css';
 import '../styles/Dialog.css';
 

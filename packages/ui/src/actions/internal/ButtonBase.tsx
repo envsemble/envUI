@@ -1,9 +1,9 @@
 import type { ReactNode } from 'react';
 import { classNames } from '../../internal/classNames.js';
 import { DecorativeIcon } from '../../internal/DecorativeIcon.js';
-import { ActionElement, type ActionElementProps } from '../../internal/ActionElement.js';
-import { SpinnerArc } from '../../internal/SpinnerArc.js';
-import { textRuns } from '../../internal/textRuns.js';
+import { ActionElement, type ActionElementProps } from '../../internal/control/ActionElement.js';
+import { SpinnerArc } from '../../internal/control/SpinnerArc.js';
+import { textRuns } from '../../internal/control/textRuns.js';
 import type { ButtonAppearanceProps, ButtonVariant } from '../Button.js';
 import { flag } from '../../internal/flag.js';
 import '../../styles/Base.css';

@@ -13,7 +13,7 @@ import type {
 } from './model.js';
 import { layoutKinds } from './model.js';
 import { queriesFor, thresholdsFor } from './queries.js';
-import { roundToHundredth } from '../internal/lengths.js';
+import { roundToHundredth } from '../internal/dom/lengths.js';
 import { toRem, windowClassOf } from './units.js';
 
 /** A measurement read: its text, each node's line and problems, and every problem. */

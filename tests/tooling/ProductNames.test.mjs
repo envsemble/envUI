@@ -64,15 +64,11 @@ const sources = [
   { path: 'packages/eslint-plugin/index.d.ts', read: 'code' },
   { directory: 'packages/eslint-plugin/src', extensions: ['.js'], read: 'code' },
   { directory: 'packages/eslint-plugin/src/data', extensions: ['.json'], read: 'whole' },
-  { directory: 'packages/eslint-plugin/data', extensions: ['.json'], read: 'whole' },
   { directory: 'packages/eslint-plugin/scripts', extensions: ['.mjs'], read: 'code' },
   { directory: 'packages/eslint-plugin/test', extensions: ['.mjs'], read: 'code' },
   { path: 'packages/stylelint-config/README.md', read: 'whole' },
-  { path: 'packages/stylelint-config/index.js', read: 'code' },
-  { path: 'packages/stylelint-config/tokens.js', read: 'code' },
-  { directory: 'packages/stylelint-config/plugins', extensions: ['.js'], read: 'code' },
-  { directory: 'packages/stylelint-config/data', extensions: ['.json'], read: 'whole' },
-  { directory: 'packages/stylelint-config/scripts', extensions: ['.mjs'], read: 'code' },
+  { directory: 'packages/stylelint-config/src', extensions: ['.js'], read: 'code' },
+  { directory: 'packages/stylelint-config/src/data', extensions: ['.json'], read: 'whole' },
   { directory: 'packages/stylelint-config/test', extensions: ['.mjs'], read: 'code' },
 ];
 

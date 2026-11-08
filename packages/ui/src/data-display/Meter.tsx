@@ -4,7 +4,7 @@ import { Meter as BaseMeter } from '@base-ui/react/meter';
 import type { RangeBarProps } from '../internal/rangeBarProps.js';
 import { classNames } from '../internal/classNames.js';
 import { Grid, Row } from '../layout/Layout.js';
-import { useLocale } from '../internal/EnvUIContext.js';
+import { useLocale } from '../internal/provider/EnvUIContext.js';
 import '../styles/Base.css';
 import '../styles/Meter.css';
 

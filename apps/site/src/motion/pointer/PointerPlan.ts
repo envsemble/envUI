@@ -5,7 +5,7 @@
  */
 import type { CarriedFile } from '../DragControl';
 import { textPoint } from './VirtualSelection';
-import { remPixels } from '@envui-internal/internal/lengths';
+import { remPixels } from '@envui-internal/internal/dom/lengths';
 
 /**
  * One step of what the pointer no one sees does, or of what happens around it:

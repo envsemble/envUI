@@ -20,15 +20,12 @@
     "directory": "packages/stylelint-config"
   },
   "files": [
-    "index.js",
-    "colorPolicy.js",
-    "tokens.js",
-    "data",
+    "src",
     "README.md",
     "CHANGELOG.md"
   ],
   "exports": {
-    ".": "./index.js",
+    ".": "./src/index.js",
     "./package.json": "./package.json"
   },
   "engines": {

@@ -1,4 +1,4 @@
-import { roundToHundredth } from '../../internal/lengths.js';
+import { roundToHundredth } from '../../internal/dom/lengths.js';
 import '../../styles/Base.css';
 import '../../styles/Skeleton.css';
 // Text that is there in a skeleton, such as a heading that doesn't wait for data, drawn as bars like

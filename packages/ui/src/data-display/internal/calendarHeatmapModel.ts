@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react';
-import type { Formatters } from '../../internal/useFormatters.js';
-import { dayParts, formatDay, parseDay } from '../../internal/calendarDays.js';
+import type { Formatters } from '../../internal/provider/useFormatters.js';
+import { dayParts, formatDay, parseDay } from '../../internal/time/calendarDays.js';
 import type { CalendarHeatmapCell, CalendarHeatmapDay } from '../CalendarHeatmap.js';
 
 /** The locale's short month names, from January, and weekday names, from Sunday. */

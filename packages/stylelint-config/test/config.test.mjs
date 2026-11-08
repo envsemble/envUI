@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import stylelint from 'stylelint';
-import config, { hairlineProperties, rawColorFunction, stackingValues } from '../index.js';
+import config, { hairlineProperties, rawColorFunction, stackingValues } from '../src/index.js';
 import { lintPackages, staleFiles } from '../../../scripts/build/SyncLintPackages.ts';
 
 const readme = readFileSync(new URL('../README.md', import.meta.url), 'utf8');

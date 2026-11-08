@@ -9,7 +9,7 @@ import {
   type PointerEvent,
   type RefObject,
 } from 'react';
-import { scrolledBy } from '../../internal/scrolledBy.js';
+import { scrolledBy } from '../../internal/dom/scrolledBy.js';
 import { useLatest } from '../../internal/useLatest.js';
 import {
   edgeScrollDelta,

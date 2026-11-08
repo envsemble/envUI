@@ -1,9 +1,9 @@
 'use client';
 
 import { useRef, type KeyboardEvent } from 'react';
-import { matchTyped } from '../../internal/calendarDays.js';
+import { matchTyped } from '../../internal/time/calendarDays.js';
 import { typeaheadTimeout } from '../../internal/typeahead.js';
-import { isRightToLeft } from '../../internal/direction.js';
+import { isRightToLeft } from '../../internal/dom/direction.js';
 import { flag } from '../../internal/flag.js';
 import { useWheelGestures, type WheelDrag } from './useWheelGestures.js';
 import { useWheelTurn } from './useWheelTurn.js';

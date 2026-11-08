@@ -9,7 +9,7 @@ import { classNames } from '../internal/classNames.js';
 import { Text } from '../foundations/Text.js';
 import { Column, Row, type SpaceStep } from './Layout.js';
 import { Surface } from './Surface.js';
-import { ActionElement } from '../internal/ActionElement.js';
+import { ActionElement } from '../internal/control/ActionElement.js';
 import { given, type SkeletonProps } from '../internal/skeleton.js';
 import type { HeadingLevel } from '../foundations/headingLevel.js';
 import { flag } from '../internal/flag.js';

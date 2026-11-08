@@ -1,7 +1,7 @@
 'use client';
 
 import { useLayoutEffect, useRef, useState, type KeyboardEvent } from 'react';
-import { isRightToLeft } from '../../internal/direction.js';
+import { isRightToLeft } from '../../internal/dom/direction.js';
 
 /**
  * The active cell of a grid of dates to choose one from, such as Calendar's days or MonthPicker's

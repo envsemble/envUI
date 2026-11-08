@@ -3,7 +3,7 @@
  * shows, then easing there, in the slow motion token on the standard easing. The view is this
  * file's: only it writes `view`, where the fit asks it to go (glideTo, settle).
  */
-import { prefersReducedMotion } from '@envui-internal/internal/reducedMotion';
+import { prefersReducedMotion } from '@envui-internal/internal/motion/reducedMotion';
 import { rootEasingFunction, rootMotionDuration } from '../motion/RootMotionTokens';
 import { place } from './FitDraw';
 import type { Seen } from './FitMeasure';

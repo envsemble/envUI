@@ -13,7 +13,7 @@ import {
   monthOfDay,
   now,
   toUtcDate,
-} from '../../internal/calendarDays.js';
+} from '../../internal/time/calendarDays.js';
 import { useActiveCell } from './useActiveCell.js';
 import '../../styles/Base.css';
 import '../../styles/MonthPicker.css';

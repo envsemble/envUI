@@ -19,17 +19,17 @@ import {
   type FieldSizeProps,
   type TextFieldDecorationProps,
 } from '../internal/field/FieldFrame.js';
-import { PopupSurface } from '../internal/PopupSurface.js';
+import { PopupSurface } from '../internal/popup/PopupSurface.js';
 import {
   containedModal,
   containedOpenChange,
   usePortalContainer,
-} from '../internal/PortalContainerContext.js';
-import type { OverlayOpenChangeReason } from '../internal/overlayOpenChangeReason.js';
+} from '../internal/popup/PortalContainerContext.js';
+import type { OverlayOpenChangeReason } from '../internal/popup/overlayOpenChangeReason.js';
 import { Grid } from '../layout/Layout.js';
-import { ListRow } from '../internal/ListRow.js';
+import { ListRow } from '../internal/popup/ListRow.js';
 import { setRef } from '../internal/setRef.js';
-import { useOpenState } from '../internal/useOpenState.js';
+import { useOpenState } from '../internal/popup/useOpenState.js';
 import { classNames } from '../internal/classNames.js';
 import { flag } from '../internal/flag.js';
 import { useFormReset } from '../internal/field/useFormReset.js';

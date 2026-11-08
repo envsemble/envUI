@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useLayoutEffect, useRef, useState, type RefObject } from 'react';
-import { prefersReducedMotion } from '../../internal/reducedMotion.js';
+import { prefersReducedMotion } from '../../internal/motion/reducedMotion.js';
 import { useLatest } from '../../internal/useLatest.js';
 import {
   centredRow,

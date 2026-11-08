@@ -1,7 +1,7 @@
 import type { ComponentPropsWithRef } from 'react';
 import { Avatar, type AvatarProps } from './Avatar.js';
 import { Tooltip } from '../overlays/Tooltip.js';
-import { ActionElement } from '../internal/ActionElement.js';
+import { ActionElement } from '../internal/control/ActionElement.js';
 import { classNames } from '../internal/classNames.js';
 import '../styles/Base.css';
 import '../styles/AvatarButton.css';

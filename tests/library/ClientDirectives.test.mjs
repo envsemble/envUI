@@ -42,7 +42,7 @@ test("every module that uses client-only APIs, and only such a module, says 'use
     assert.equal(module.client, false, `${entry} stays a server module`);
   }
   // Menu.Item is a part of a client module; the Menu namespace is an `export * as` in the entry.
-  assert.ok(modules.find(({ file }) => file === 'actions/Menu.tsx').client);
+  assert.ok(modules.find(({ file }) => file === 'actions/menu/Menu.tsx').client);
 });
 
 test('the check sees what makes a module a client module, also by name and through types', () => {
@@ -224,12 +224,12 @@ test('a server component imports envUI and renders it on the server', () => {
     assert.ok(main.client.includes(name), `${name} is a client reference`);
   // The page's client components receive only what a server can send them.
   const page = JSON.stringify(result.page);
-  assert.match(page, /"client":"actions\/Menu\.js#Item"/);
+  assert.match(page, /"client":"actions\/menu\/Menu\.js#Item"/);
   assert.match(page, /"client":"icons\/Home\.js#IconHome"/);
   // A pending Button hands ActionElement a boolean, not a click handler.
   assert.match(
     page,
-    /"client":"internal\/ActionElement\.js#ActionElement","props":\{"pending":true/,
+    /"client":"internal\/control\/ActionElement\.js#ActionElement","props":\{"pending":true/,
   );
   assert.match(page, /"element":"div","props":\{"role":"status","className":"env-alert"/);
   // A List without onReorder ships no client module, and its current rows say so in the server's
@@ -267,7 +267,7 @@ test('a Tooltip a server component writes around a Menu.Root describes its trigg
   const { renderToString } = await import('react-dom/server');
   const ui = await import('@envsemble/envui');
   const { isTriggerOwner, isTooltip } = await import(
-    new URL('../../packages/ui/dist/internal/triggerOwner.js', import.meta.url).href
+    new URL('../../packages/ui/dist/internal/popup/triggerOwner.js', import.meta.url).href
   );
   const trigger = h('button', { type: 'button', 'aria-label': 'Sort' });
   // The tooltip moves onto the menu's trigger, which Base UI's tooltip trigger marks.

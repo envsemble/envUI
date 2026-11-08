@@ -6,7 +6,7 @@
  * resized.
  */
 import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
-import { remPixels } from '@envui-internal/internal/lengths';
+import { remPixels } from '@envui-internal/internal/dom/lengths';
 import { pixelTolerance } from '../FitGeometry';
 import { remeasure } from '../Remeasure';
 import { flag } from '@envui-internal/internal/flag';

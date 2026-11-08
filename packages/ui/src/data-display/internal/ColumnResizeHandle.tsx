@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useResize } from '../../internal/useResize.js';
+import { useResize } from '../../internal/resize/useResize.js';
 import {
   columnBounds,
   columnResizeLargeStep,

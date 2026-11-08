@@ -1,4 +1,4 @@
-// internal/motionTokens: the motion tokens as script reads them, so motion run from script stops
+// internal/motion/motionTokens: the motion tokens as script reads them, so motion run from script stops
 // where an application sets the durations to 0s, and the easings it draws frame by frame; and the
 // site's reading of them on the page's root (apps/site/src/motion/RootMotionTokens.ts).
 import { test } from 'node:test';
@@ -7,7 +7,7 @@ import { importSource } from '../support/importSource.mjs';
 
 const { parseTime, easingFunction } = await importSource(
   'MotionTokens',
-  'packages/ui/src/internal/motionTokens.ts',
+  'packages/ui/src/internal/motion/motionTokens.ts',
 );
 const site = await importSource('RootMotionTokens', 'apps/site/src/motion/RootMotionTokens.ts');
 

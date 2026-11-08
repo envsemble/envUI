@@ -2,7 +2,7 @@
 
 import { DirectionProvider } from '@base-ui/react/direction-provider';
 import { useContext, useMemo, useState, type ReactNode } from 'react';
-import { EnvUIContext, useLocale, type Direction } from '../internal/EnvUIContext.js';
+import { EnvUIContext, useLocale, type Direction } from '../internal/provider/EnvUIContext.js';
 import type { EnvUIMessages, EnvUIMessagesInput } from './messages/defaultMessages.js';
 import '../styles/Base.css';
 

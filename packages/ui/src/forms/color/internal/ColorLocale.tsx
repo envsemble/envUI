@@ -2,7 +2,7 @@
 
 import type { ReactNode } from 'react';
 import { I18nProvider } from '@react-aria/i18n';
-import { useResolvedLocale } from '../../../internal/useFormatters.js';
+import { useResolvedLocale } from '../../../internal/provider/useFormatters.js';
 import type { Color } from '@react-stately/color';
 import { formatColor, type ColorFormat } from './colorValue.js';
 

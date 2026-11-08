@@ -3,7 +3,7 @@
 import { Progress as BaseProgress } from '@base-ui/react/progress';
 import { classNames } from '../internal/classNames.js';
 import { Grid, Row } from '../layout/Layout.js';
-import { useLocale, useMessages } from '../internal/EnvUIContext.js';
+import { useLocale, useMessages } from '../internal/provider/EnvUIContext.js';
 import { common } from '../foundations/messages/common.js';
 import type { RangeBarProps } from '../internal/rangeBarProps.js';
 import { flag } from '../internal/flag.js';

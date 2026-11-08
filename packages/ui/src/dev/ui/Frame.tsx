@@ -8,7 +8,7 @@
 
 import { useEffect, useRef, type HTMLAttributes, type KeyboardEvent } from 'react';
 import { Text } from '../../foundations/Text.js';
-import { roundToHundredth } from '../../internal/lengths.js';
+import { roundToHundredth } from '../../internal/dom/lengths.js';
 import { windowClasses, windowClassOf } from '../units.js';
 
 /** The smallest and largest the frame lays the page out at, in rem. */

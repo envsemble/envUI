@@ -8,11 +8,11 @@ import {
   type KeyboardEvent as ReactKeyboardEvent,
   type PointerEvent as ReactPointerEvent,
 } from 'react';
-import { useEnvUI } from './EnvUIContext.js';
-import { remPixels, roundToHundredth } from './lengths.js';
-import type { ResizeDetails } from '../layout/resizeDetails.js';
-import { scrolledBy } from './scrolledBy.js';
-import { flag } from './flag.js';
+import { useEnvUI } from '../provider/EnvUIContext.js';
+import { remPixels, roundToHundredth } from '../dom/lengths.js';
+import type { ResizeDetails } from '../../layout/resizeDetails.js';
+import { scrolledBy } from '../dom/scrolledBy.js';
+import { flag } from '../flag.js';
 
 export interface ResizeOptions {
   /**

@@ -1,7 +1,7 @@
 'use client';
 
 import type { ComponentPropsWithRef, MouseEvent } from 'react';
-import { useLinkComponent } from './LinkComponentContext.js';
+import { useLinkComponent } from '../provider/LinkComponentContext.js';
 import {
   resolveEmphasis,
   useControlDefaults,
@@ -9,7 +9,7 @@ import {
   type ControlVariant,
 } from './ControlDefaults.js';
 import type { ControlSize } from './controlTypes.js';
-import { flag } from './flag.js';
+import { flag } from '../flag.js';
 
 /**
  * A button's emphasis as Button gives it: its own variant, tone and size, which win, and the

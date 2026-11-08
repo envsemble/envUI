@@ -1,7 +1,7 @@
 'use client';
 
 import { useLayoutEffect, useState } from 'react';
-import { roundToHundredth } from '../../../internal/lengths.js';
+import { roundToHundredth } from '../../../internal/dom/lengths.js';
 import type { PanelDockPanel } from '../panelDockTypes.js';
 import { clampRound, type HeightBounds } from './dockLayout.js';
 import type { DockMeasurements } from './useDockMeasurements.js';

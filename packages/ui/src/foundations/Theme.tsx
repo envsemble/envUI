@@ -23,7 +23,7 @@ export type ThemeContrast = 'standard' | 'high' | 'system';
  */
 export type ThemeScale = 'comfortable' | 'compact' | 'system';
 
-export type { ControlSize } from '../internal/controlTypes.js';
+export type { ControlSize } from '../internal/control/controlTypes.js';
 
 /**
  * How tightly a data component, such as a Table, Tree or List, packs its rows: only the rows' block

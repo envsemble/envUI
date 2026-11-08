@@ -14,10 +14,13 @@ import {
 } from 'react';
 import { setRef } from '../../internal/setRef.js';
 import { useHydrated } from '../../internal/useHydrated.js';
-import { useOpenState } from '../../internal/useOpenState.js';
-import { useDirection } from '../../internal/useDirection.js';
-import { containedOpenChange, usePortalContainer } from '../../internal/PortalContainerContext.js';
-import type { OverlayOpenChangeReason } from '../../internal/overlayOpenChangeReason.js';
+import { useOpenState } from '../../internal/popup/useOpenState.js';
+import { useDirection } from '../../internal/provider/useDirection.js';
+import {
+  containedOpenChange,
+  usePortalContainer,
+} from '../../internal/popup/PortalContainerContext.js';
+import type { OverlayOpenChangeReason } from '../../internal/popup/overlayOpenChangeReason.js';
 import type { PopoverOpenChangeReason } from '../../overlays/Popover.js';
 import { IconButton } from '../../actions/Button.js';
 import { IconClose } from '../../icons/Close.js';

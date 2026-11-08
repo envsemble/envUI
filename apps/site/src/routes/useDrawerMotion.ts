@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useState, type RefObject } from 'react';
-import { prefersReducedMotion } from '@envui-internal/internal/reducedMotion';
+import { prefersReducedMotion } from '@envui-internal/internal/motion/reducedMotion';
 import { rootMotionDuration, rootMotionEasing } from '../motion/RootMotionTokens';
 import type { CatalogueSection } from './SiteRoutes';
 import { useLatest } from '@envui-internal/internal/useLatest';

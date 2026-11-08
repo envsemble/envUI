@@ -11,15 +11,15 @@ import {
   type KeyboardEvent,
   type ReactNode,
 } from 'react';
-import { TooltipPopup } from '../internal/TooltipPopup.js';
+import { TooltipPopup } from '../internal/popup/TooltipPopup.js';
 import { classNames } from '../internal/classNames.js';
 import { Grid, Row } from '../layout/Layout.js';
-import { useMessages } from '../internal/EnvUIContext.js';
+import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { calendarHeatmap as calendarHeatmapMessages } from '../foundations/messages/calendarHeatmap.js';
 import type { BadgeTone } from './Badge.js';
-import { isRightToLeft } from '../internal/direction.js';
+import { isRightToLeft } from '../internal/dom/direction.js';
 import { reportInDevelopment } from '../internal/developmentReport.js';
-import type { Weekday } from '../internal/calendarDays.js';
+import type { Weekday } from '../internal/time/calendarDays.js';
 import {
   calendarHeatmapModel,
   heatmapKeyTarget,

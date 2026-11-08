@@ -14,20 +14,20 @@ import {
   type ReactNode,
   type RefObject,
 } from 'react';
-import { Theme, useTheme } from '../foundations/Theme.js';
-import { classNames } from './classNames.js';
-import { ResetControlDefaults } from './ControlDefaults.js';
-import { useEnvUI, type Direction } from './EnvUIContext.js';
-import { setRef } from './setRef.js';
+import { Theme, useTheme } from '../../foundations/Theme.js';
+import { classNames } from '../classNames.js';
+import { ResetControlDefaults } from '../control/ControlDefaults.js';
+import { useEnvUI, type Direction } from '../provider/EnvUIContext.js';
+import { setRef } from '../setRef.js';
 import {
   containedCollisionAvoidance,
   containedPopupStyle,
   usePortalContainer,
 } from './PortalContainerContext.js';
-import { inSkeleton, skeletonAttributes } from './skeleton.js';
-import { computedDirection } from './direction.js';
-import '../styles/Base.css';
-import '../styles/Popup.css';
+import { inSkeleton, skeletonAttributes } from '../skeleton.js';
+import { computedDirection } from '../dom/direction.js';
+import '../../styles/Base.css';
+import '../../styles/Popup.css';
 
 /** A side of the anchor; inline-start and inline-end follow the text direction. */
 export type PopupSide = 'top' | 'bottom' | 'left' | 'right' | 'inline-start' | 'inline-end';

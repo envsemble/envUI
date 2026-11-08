@@ -5,9 +5,9 @@ import { ReactRenderer } from '@tiptap/react';
 import { exitSuggestion, type SuggestionOptions, type SuggestionProps } from '@tiptap/suggestion';
 import { PluginKey } from '@tiptap/pm/state';
 import { richText as richTextMessages } from '../../../foundations/messages/richText.js';
-import { useMessages } from '../../../internal/EnvUIContext.js';
+import { useMessages } from '../../../internal/provider/EnvUIContext.js';
 import { Listbox } from './Listbox.js';
-import { useActiveDescendant } from '../../../internal/useRovingFocus.js';
+import { useActiveDescendant } from '../../internal/useRovingFocus.js';
 import type { RichTextReference, RichTextReferenceSource } from '../types.js';
 import '../../../styles/Base.css';
 // Rich text's rules refine the prose typography, so Prose.css comes first.

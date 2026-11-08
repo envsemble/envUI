@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useLayoutEffect, useRef, useState, type RefObject } from 'react';
-import { remPixels } from '../../../internal/lengths.js';
+import { remPixels } from '../../../internal/dom/lengths.js';
 import type { PanelDockPanel } from '../panelDockTypes.js';
 import { fillCandidates, isAtRowEnd, overflows, scrollToRowEnd } from './dockLayout.js';
 

@@ -13,8 +13,8 @@ import {
   type RefObject,
 } from 'react';
 import { setRef } from '../internal/setRef.js';
-import { useDirection } from '../internal/useDirection.js';
-import { useLocale, useMessages } from '../internal/EnvUIContext.js';
+import { useDirection } from '../internal/provider/useDirection.js';
+import { useLocale, useMessages } from '../internal/provider/EnvUIContext.js';
 import { IconButton } from '../actions/Button.js';
 import { IconChevronRight } from '../icons/ChevronRight.js';
 import { IconClose } from '../icons/Close.js';
@@ -38,7 +38,7 @@ import { useComboboxOpen } from './internal/useComboboxOpen.js';
 import { useComboboxOptions } from './internal/useComboboxOptions.js';
 import { useFieldMetadata } from '../internal/field/useFieldMetadata.js';
 import { useFormReset } from '../internal/field/useFormReset.js';
-import type { OverlayOpenChangeReason } from '../internal/overlayOpenChangeReason.js';
+import type { OverlayOpenChangeReason } from '../internal/popup/overlayOpenChangeReason.js';
 import '../styles/Base.css';
 import '../styles/Combobox.css';
 

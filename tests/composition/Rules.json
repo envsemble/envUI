@@ -20,6 +20,7 @@
       "layout/panel-dock/": "shell",
       "forms/color/": "composites",
       "forms/rich-text/": "composites",
+      "actions/menu/": "composites",
       "dev/": "shell"
     },
     "modules": {
@@ -79,7 +80,7 @@
       "overlays/Popover.tsx": "base",
       "feedback/Spinner.tsx": "base",
       "feedback/internal/SpinnerLabel.tsx": "base",
-      "internal/SpinnerArc.tsx": "base",
+      "internal/control/SpinnerArc.tsx": "base",
       "overlays/Tooltip.tsx": "base",
       "overlays/internal/tooltipTriggerName.ts": "base",
       "feedback/internal/AlertDismiss.tsx": "composites",
@@ -122,7 +123,6 @@
       "navigation/Breadcrumbs.tsx": "composites",
       "actions/ContextMenu.tsx": "base",
       "navigation/DocumentTabs.tsx": "composites",
-      "actions/Menu.tsx": "composites",
       "actions/Menubar.tsx": "base",
       "navigation/NavigationBar.tsx": "composites",
       "navigation/NavigationDrawer.tsx": "base",
@@ -137,9 +137,9 @@
       "navigation/internal/treeModel.ts": "composites",
       "navigation/internal/useTreeTransitions.ts": "composites",
       "navigation/internal/useTreeViewport.ts": "composites",
-      "internal/PopupSurface.tsx": "foundations",
+      "internal/popup/PopupSurface.tsx": "foundations",
       "internal/skeleton.tsx": "foundations",
-      "internal/TooltipPopup.tsx": "base",
+      "internal/popup/TooltipPopup.tsx": "base",
       "layout/Layout.tsx": "foundations",
       "layout/Surface.tsx": "foundations",
       "layout/internal/LoadingBar.tsx": "base",
@@ -153,8 +153,8 @@
       "internal/field/TextareaResizeEdge.tsx": "base",
       "internal/editor/EditorStatus.tsx": "base",
       "internal/editor/editorCommands.ts": "base",
-      "internal/DialogParts.tsx": "base",
-      "internal/useModalPresence.ts": "base",
+      "internal/popup/DialogParts.tsx": "base",
+      "internal/popup/useModalPresence.ts": "base",
       "internal/rangeBarProps.ts": "base",
       "internal/useStripWheel.ts": "base"
     },
@@ -192,7 +192,7 @@
       "gridcell"
     ],
     "leafControls": {
-      "internal/ActionElement.tsx": ["a", "button"],
+      "internal/control/ActionElement.tsx": ["a", "button"],
       "forms/TextField.tsx": ["input"],
       "internal/field/TextareaControl.tsx": ["textarea"],
       "forms/Checkbox.tsx": ["input"],
@@ -204,7 +204,7 @@
       "forms/Calendar.tsx": ["role=\"grid\""],
       "forms/internal/MonthGrid.tsx": ["role=\"grid\""],
       "data-display/CalendarHeatmap.tsx": ["role=\"grid\"", "role=\"gridcell\""],
-      "internal/FileInput.tsx": ["input"],
+      "forms/internal/FileInput.tsx": ["input"],
       "forms/rich-text/internal/Listbox.tsx": ["role=\"listbox\"", "role=\"option\""],
       "forms/color/ColorPickerButton.tsx": ["button"],
       "forms/color/internal/ColorArea.tsx": ["input"],
@@ -307,7 +307,7 @@
         "modules": ["feedback/internal/AlertDismiss.tsx"]
       },
       "Spinner": {
-        "modules": ["feedback/internal/SpinnerLabel.tsx", "internal/SpinnerArc.tsx"]
+        "modules": ["feedback/internal/SpinnerLabel.tsx", "internal/control/SpinnerArc.tsx"]
       },
       "Scaffold": {
         "modules": [
@@ -336,7 +336,7 @@
       },
       "Dialog": {
         "modules": [
-          "internal/DialogParts.tsx",
+          "internal/popup/DialogParts.tsx",
           "overlays/internal/DialogPendingAction.tsx",
           "overlays/ConfirmDialog.tsx"
         ],
@@ -349,7 +349,7 @@
         "styles": ["Popover.css"]
       },
       "Tooltip": {
-        "modules": ["internal/TooltipPopup.tsx", "overlays/internal/tooltipTriggerName.ts"],
+        "modules": ["internal/popup/TooltipPopup.tsx", "overlays/internal/tooltipTriggerName.ts"],
         "slots": ["env-tooltip-disabled-target"]
       },
       "CommandPalette": {
@@ -440,7 +440,13 @@
         "classes": ["env-navigation-rail"]
       },
       "Menu": {
-        "modules": ["actions/ContextMenu.tsx", "actions/internal/MenuPopup.tsx"]
+        "modules": [
+          "actions/ContextMenu.tsx",
+          "actions/internal/MenuPopup.tsx",
+          "actions/menu/MenuItem.tsx",
+          "actions/menu/MenuSubmenu.tsx",
+          "actions/menu/MenuChoices.tsx"
+        ]
       },
       "Menubar": {
         "modules": ["actions/internal/useMenubarAccessKeys.ts"]

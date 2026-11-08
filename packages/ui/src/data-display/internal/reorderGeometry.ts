@@ -1,4 +1,4 @@
-import { scrolledBy } from '../../internal/scrolledBy.js';
+import { scrolledBy } from '../../internal/dom/scrolledBy.js';
 
 /** A row being moved, from the press or key that lifted it until it is dropped or put back. */
 export interface Move {

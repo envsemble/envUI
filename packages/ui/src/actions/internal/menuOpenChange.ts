@@ -1,4 +1,4 @@
-import type { OverlayOpenChangeReason } from '../../internal/overlayOpenChangeReason.js';
+import type { OverlayOpenChangeReason } from '../../internal/popup/overlayOpenChangeReason.js';
 
 /**
  * Why a menu asks to open or close, as Base UI says: its trigger, hover or focus, a press outside,

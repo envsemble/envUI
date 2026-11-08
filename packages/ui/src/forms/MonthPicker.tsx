@@ -1,6 +1,6 @@
 'use client';
 
-import { useMessages } from '../internal/EnvUIContext.js';
+import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { monthPicker as monthPickerMessages } from '../foundations/messages/monthPicker.js';
 import { Button } from '../actions/Button.js';
 import { IconCalendarMonth } from '../icons/CalendarMonth.js';
@@ -15,7 +15,7 @@ import {
   now,
   parseMonth,
   toUtcDate,
-} from '../internal/calendarDays.js';
+} from '../internal/time/calendarDays.js';
 import '../styles/Base.css';
 import '../styles/DatePicker.css';
 

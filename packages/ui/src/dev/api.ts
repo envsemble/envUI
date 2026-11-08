@@ -5,7 +5,7 @@ import { measure, resolveRoot } from './measure.js';
 import type { LayoutProblem } from './model.js';
 import { read, type Reading } from './readout.js';
 import { skeletonShift, type SkeletonShiftOptions } from './skeletonShift.js';
-import { remPixels } from '../internal/lengths.js';
+import { remPixels } from '../internal/dom/lengths.js';
 import { toPx, windowClassOf, type WindowClass } from './units.js';
 
 export interface LayoutOptions {

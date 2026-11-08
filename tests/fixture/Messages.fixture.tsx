@@ -45,7 +45,7 @@ import {
   RelativeTime,
 } from '@envsemble/envui';
 // Internal: the hook envUI's components read their strings with.
-import { useMessages } from '../../packages/ui/src/internal/EnvUIContext.js';
+import { useMessages } from '../../packages/ui/src/internal/provider/EnvUIContext.js';
 import { common } from '../../packages/ui/src/foundations/messages/common.js';
 
 /**

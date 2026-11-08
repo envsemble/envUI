@@ -9,7 +9,7 @@ import {
 } from '@tiptap/react';
 import { Checkbox } from '../../Checkbox.js';
 import { richText as richTextMessages } from '../../../foundations/messages/richText.js';
-import { useMessages } from '../../../internal/EnvUIContext.js';
+import { useMessages } from '../../../internal/provider/EnvUIContext.js';
 import { RichTextRenderingContext } from './Reference.js';
 import { readOnlyCheckboxProps } from './readOnlyCheckbox.js';
 import '../../../styles/Base.css';

@@ -4067,7 +4067,7 @@
     },
     "Menu": {
       "kind": "namespace",
-      "source": "packages/ui/src/actions/Menu.tsx",
+      "source": "packages/ui/src/actions/menu/Menu.tsx",
       "description": "",
       "parts": [
         "Menu.Root",
@@ -4086,7 +4086,7 @@
     },
     "Menu.CheckboxItem": {
       "kind": "component",
-      "source": "packages/ui/src/actions/Menu.tsx",
+      "source": "packages/ui/src/actions/menu/Menu.tsx",
       "description": "An independent on/off option; a check mark shows while it is on.",
       "props": [
         {
@@ -4166,7 +4166,7 @@
     },
     "Menu.Group": {
       "kind": "component",
-      "source": "packages/ui/src/actions/Menu.tsx",
+      "source": "packages/ui/src/actions/menu/Menu.tsx",
       "description": "A labelled group of related items, with a small heading above its rows.",
       "props": [
         {
@@ -4191,7 +4191,7 @@
     },
     "Menu.Header": {
       "kind": "component",
-      "source": "packages/ui/src/actions/Menu.tsx",
+      "source": "packages/ui/src/actions/menu/Menu.tsx",
       "description": "Non-interactive context at the top of a menu, such as the signed-in account.",
       "props": [
         {
@@ -4210,7 +4210,7 @@
     },
     "Menu.Item": {
       "kind": "component",
-      "source": "packages/ui/src/actions/Menu.tsx",
+      "source": "packages/ui/src/actions/menu/Menu.tsx",
       "description": "One action (onClick) or destination (href) in a Menu. Destinations use the LinkProvider's link and close the menu as they are followed.",
       "props": [
         {
@@ -4309,7 +4309,7 @@
     },
     "Menu.RadioGroup": {
       "kind": "component",
-      "source": "packages/ui/src/actions/Menu.tsx",
+      "source": "packages/ui/src/actions/menu/Menu.tsx",
       "description": "One choice among several items; the checked item shows a check mark.",
       "props": [
         {
@@ -4359,7 +4359,7 @@
     },
     "Menu.RadioItem": {
       "kind": "component",
-      "source": "packages/ui/src/actions/Menu.tsx",
+      "source": "packages/ui/src/actions/menu/Menu.tsx",
       "description": "One option of a Menu.RadioGroup.",
       "props": [
         {
@@ -4420,7 +4420,7 @@
     },
     "Menu.Root": {
       "kind": "component",
-      "source": "packages/ui/src/actions/Menu.tsx",
+      "source": "packages/ui/src/actions/menu/Menu.tsx",
       "description": "A list of actions and destinations that opens from a trigger; keyboard and focus follow the menu pattern. The popup is raised above the page, with rows of the scale's row height, full-width hairline separators and small keys for shortcuts.",
       "props": [
         {
@@ -4498,7 +4498,7 @@
     },
     "Menu.Separator": {
       "kind": "component",
-      "source": "packages/ui/src/actions/Menu.tsx",
+      "source": "packages/ui/src/actions/menu/Menu.tsx",
       "description": "Separates groups of menu items.",
       "props": [],
       "native": [
@@ -4510,7 +4510,7 @@
     },
     "Menu.Submenu": {
       "kind": "component",
-      "source": "packages/ui/src/actions/Menu.tsx",
+      "source": "packages/ui/src/actions/menu/Menu.tsx",
       "description": "A row that opens a nested menu beside it, on hover or with the keyboard. The submenu opens in the theme of its menu, and lines its first row up with the row that opened it.",
       "props": [
         {
@@ -9172,7 +9172,7 @@
     },
     "useLocale": {
       "kind": "function",
-      "source": "packages/ui/src/internal/EnvUIContext.ts",
+      "source": "packages/ui/src/internal/provider/EnvUIContext.ts",
       "description": "The locale of the nearest EnvUIProvider, for formatting in step with envUI, or undefined where no provider sets one: the runtime's locale applies then.",
       "signature": "(): string | undefined",
       "entries": [

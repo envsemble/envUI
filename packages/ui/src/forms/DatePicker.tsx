@@ -1,7 +1,7 @@
 'use client';
 
 import { useId, type ButtonHTMLAttributes, type CSSProperties, type Ref } from 'react';
-import { useMessages } from '../internal/EnvUIContext.js';
+import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { datePicker as datePickerMessages } from '../foundations/messages/datePicker.js';
 import { Button } from '../actions/Button.js';
 import { Grid, Row } from '../layout/Layout.js';
@@ -32,7 +32,7 @@ import {
   parseTime,
   toUtcDate,
   type Weekday,
-} from '../internal/calendarDays.js';
+} from '../internal/time/calendarDays.js';
 import '../styles/Base.css';
 import '../styles/DatePicker.css';
 

@@ -2,7 +2,7 @@
 
 import { useCallback, useLayoutEffect, useRef, useState, type RefObject } from 'react';
 import type { RowDensity } from '../../foundations/Theme.js';
-import { remPixels } from '../../internal/lengths.js';
+import { remPixels } from '../../internal/dom/lengths.js';
 import '../../styles/Base.css';
 import '../../styles/Tree.css';
 

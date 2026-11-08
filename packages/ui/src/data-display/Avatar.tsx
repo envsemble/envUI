@@ -4,7 +4,7 @@ import { Avatar as BaseAvatar } from '@base-ui/react/avatar';
 import type { ComponentPropsWithRef } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { IconCheck } from '../icons/Check.js';
-import { useResolvedLocale } from '../internal/useFormatters.js';
+import { useResolvedLocale } from '../internal/provider/useFormatters.js';
 import { flag } from '../internal/flag.js';
 import '../styles/Base.css';
 import '../styles/Avatar.css';

@@ -62,7 +62,7 @@ Colors come from envUI's semantic color tokens, so they follow the theme and kee
 
 Custom properties are checked too, including inline overrides of envUI's own tokens.
 
-The token names in the messages come from [`data/tokens.json`](data/tokens.json). Before every pack, the envUI repository's `scripts/build/SyncLintPackages.ts` rewrites it from the library's generated token list (`packages/ui/src/generated/tokens.json`), so a release names the tokens of the same envUI release, and the tests fail when a message or this README names a token that does not exist.
+The token names in the messages come from [`src/data/tokens.json`](src/data/tokens.json). Before every pack, the envUI repository's `scripts/build/SyncLintPackages.ts` rewrites it from the library's generated token list (`packages/ui/src/generated/tokens.json`), so a release names the tokens of the same envUI release, and the tests fail when a message or this README names a token that does not exist.
 
 ### Stacking order
 

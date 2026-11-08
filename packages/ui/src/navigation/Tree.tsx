@@ -13,11 +13,11 @@ import {
 } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { setRef } from '../internal/setRef.js';
-import { useMessages } from '../internal/EnvUIContext.js';
+import { useMessages } from '../internal/provider/EnvUIContext.js';
 import { tree as treeMessages } from '../foundations/messages/tree.js';
 import type { RowDensity } from '../foundations/Theme.js';
 import { ContextMenu } from '../actions/ContextMenu.js';
-import { isRightToLeft } from '../internal/direction.js';
+import { isRightToLeft } from '../internal/dom/direction.js';
 import {
   rowElementId,
   siblingPositions,

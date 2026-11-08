@@ -1,5 +1,5 @@
 import { classNames } from '../internal/classNames.js';
-import type { ActionElementProps } from '../internal/ActionElement.js';
+import type { ActionElementProps } from '../internal/control/ActionElement.js';
 import { Button } from './Button.js';
 import '../styles/Base.css';
 import '../styles/Button.css';

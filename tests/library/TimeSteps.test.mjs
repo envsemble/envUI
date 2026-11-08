@@ -1,4 +1,4 @@
-// internal/calendarDays: the minutes a time list offers, the entry typed keys name, and the
+// internal/time/calendarDays: the minutes a time list offers, the entry typed keys name, and the
 // YYYY-MM months of MonthPicker.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -15,7 +15,7 @@ const {
   monthFirstDay,
   parseDay,
   formatDay,
-} = await importSource('CalendarDays', 'packages/ui/src/internal/calendarDays.ts');
+} = await importSource('CalendarDays', 'packages/ui/src/internal/time/calendarDays.ts');
 
 test('the step is a whole number of minutes from 1 to 60, 15 by default', () => {
   assert.equal(minuteStepOf(undefined), 15);

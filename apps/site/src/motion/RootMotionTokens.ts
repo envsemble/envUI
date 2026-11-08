@@ -9,7 +9,7 @@ import {
   motionEasing,
   type MotionDuration,
   type MotionEasing,
-} from '@envui-internal/internal/motionTokens';
+} from '@envui-internal/internal/motion/motionTokens';
 
 const root = () => (typeof document === 'undefined' ? null : document.documentElement);
 

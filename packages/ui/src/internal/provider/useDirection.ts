@@ -11,8 +11,8 @@ import {
 } from 'react';
 import { flushSync } from 'react-dom';
 import { EnvUIContext, type Direction } from './EnvUIContext.js';
-import { setRef } from './setRef.js';
-import { computedDirection } from './direction.js';
+import { setRef } from '../setRef.js';
+import { computedDirection } from '../dom/direction.js';
 
 /**
  * The text direction for a component's keyboard and placement logic: the nearest EnvUIProvider's

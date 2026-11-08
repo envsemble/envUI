@@ -9,7 +9,7 @@ import {
   type FocusEvent,
   type ReactNode,
 } from 'react';
-import { useResize } from '../../../internal/useResize.js';
+import { useResize } from '../../../internal/resize/useResize.js';
 import { Column } from '../../Layout.js';
 import { PanelDockPanelContext, type PanelDockPanelContextValue } from './PanelDockPanelContext.js';
 import { pixels, rems, type HeightBounds, type Placement } from './dockLayout.js';

@@ -15,7 +15,7 @@ import type {
 import { layoutKinds } from './model.js';
 import { partClassOf } from './parts.js';
 import { pageContainerQueries } from './queries.js';
-import { remPixels } from '../internal/lengths.js';
+import { remPixels } from '../internal/dom/lengths.js';
 import { isOpenOverlay, outermost, overlayKind, overlaySelector } from './overlays.js';
 
 /** The attribute every primitive and scaffold renders on its root, with its kind. */

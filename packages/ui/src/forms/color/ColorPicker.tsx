@@ -15,7 +15,7 @@ import { colorPicker as colorPickerMessages } from '../../foundations/messages/c
 import { IconColorize } from '../../icons/Colorize.js';
 import * as Field from '../Field.js';
 import { classNames } from '../../internal/classNames.js';
-import { useMessages } from '../../internal/EnvUIContext.js';
+import { useMessages } from '../../internal/provider/EnvUIContext.js';
 import { setRef } from '../../internal/setRef.js';
 import { ColorArea } from './internal/ColorArea.js';
 import { ColorLocale } from './internal/ColorLocale.js';
