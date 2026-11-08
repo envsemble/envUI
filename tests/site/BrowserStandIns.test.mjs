@@ -2,7 +2,9 @@
 // once, each calls the browser's own method for anything it doesn't stand in for.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { importSource } from '../support/importSource.mjs';
+import { join } from 'node:path';
+import { pathToFileURL } from 'node:url';
+import { importSource, repository } from '../support/importSource.mjs';
 
 const standIns = await importSource('BrowserStandIns', 'apps/site/src/motion/BrowserStandIns.ts');
 
@@ -125,4 +127,26 @@ test('the pointers no one sees keep their capture here, a real pointer’s the b
   } finally {
     standIns.captures.clear();
   }
+});
+
+test('evaluated again, as on a hot reload, the module keeps the state its stand-ins read', async () => {
+  const { Element, calls } = realm();
+  // The same bundle, evaluated again as a module of its own.
+  const bundle = pathToFileURL(join(repository, '.cache/unit/BrowserStandIns.mjs')).href;
+  const again = await import(`${bundle}?evaluated=again`);
+  assert.notEqual(again.installBrowserStandIns, standIns.installBrowserStandIns);
+  assert.equal(again.captures, standIns.captures);
+  assert.equal(again.keyboardFocused, standIns.keyboardFocused);
+  // A pointer its callers register now is one the installed stand-ins capture for.
+  const element = new Element();
+  again.captures.set(41, null);
+  element.setPointerCapture(41);
+  assert.equal(again.captures.get(41), element);
+  assert.ok(element.hasPointerCapture(41));
+  again.captures.delete(41);
+  assert.deepEqual(calls, []);
+  // Installing from it changes nothing on a realm that has the stand-ins.
+  const wrapped = Element.prototype.setPointerCapture;
+  again.installBrowserStandIns({ Element, HTMLElement: class extends Element {} });
+  assert.equal(Element.prototype.setPointerCapture, wrapped);
 });

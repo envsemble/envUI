@@ -117,6 +117,8 @@ One word for each thing the site shows, and one folder in `apps/site/src` for ea
 
 A playback depends on its example: change or rename the two together. What the site and its build scripts both read, the documentation's model and the search's terms and anchors, is in `scripts/docs/model/`, which the site imports as `@docs-model/<Module>`. The site uses the library through its entry points, and `@envui-internal/<path>`, `packages/ui/src/<path>`, is its only door into what they don't export, such as `internal/reducedMotion`. Its tsconfig, Vite config and `tests/support/importSource.mjs` alias both, and ESLint rejects a relative path into `packages/ui/src` or `scripts/`.
 
+Where a component behaves differently on the site than in a fixture, look first at `apps/site/src/motion/BrowserStandIns.ts`: the site wraps browser methods there, such as focus, pointer capture and scrollIntoView, for its stages.
+
 Other words for these, such as preview, demo, showcase and sample, are older names; don't add new uses.
 
 Every folder of `apps/site/src` has its row above, and ESLint rejects a name the site declares with preview in it.
