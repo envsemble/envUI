@@ -16,7 +16,7 @@ Dev mode takes a page apart, layer by layer, to show how it is built and what is
 
 Below is dev mode's 3D view of a small application. Try dev mode opens the real dev mode over it, with `root` set to the application: its three fixed columns squeeze the cards at a narrow width, and the problems name them.
 
-<!-- demo: DevModeDemo -->
+<!-- demo: TryDevMode -->
 
 ## What it helps you notice
 

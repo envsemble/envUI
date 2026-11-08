@@ -1,5 +1,5 @@
 // The hosted site loads envUI's dev mode, `@envsemble/envui/dev`, on the Docs' dev mode page only:
-// that page's demo (apps/site/src/figures/dev-mode/DevModeDemo.tsx) imports it lazily, and no
+// that page's Try dev mode (apps/site/src/figures/dev-mode/TryDevMode.tsx) imports it lazily, and no
 // other file holds any of it, not even the page's pictures of dev mode (DevModePictures.tsx).
 // FinalizeSite.ts checks the build with checkDevModeChunks before it turns Vite's manifest into
 // module-files.json.
@@ -8,9 +8,9 @@ import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import type { ViteManifest } from './SiteModuleFiles.ts';
 
-/** The dev entry and the demo that loads it, as Vite's manifest keys them. */
+/** The dev entry and Try dev mode, which loads it, as Vite's manifest keys them. */
 export const devEntry = '../../packages/ui/src/dev.ts';
-export const devModeDemo = 'src/figures/dev-mode/DevModeDemo.tsx';
+export const tryDevMode = 'src/figures/dev-mode/TryDevMode.tsx';
 /** Text only dev mode's own code holds: the attribute on the element its UI renders into. */
 export const devMarker = 'data-env-dev-host';
 
@@ -42,10 +42,10 @@ export function devModeProblems(
   const ownFiles = new Set(own.map((key) => manifest[key]!.file));
 
   for (const [key, chunk] of Object.entries(manifest))
-    if (chunk.dynamicImports?.includes(devEntry) && key !== devModeDemo)
-      problems.push(`${key} loads ${devEntry}; only ${devModeDemo} may.`);
-  if (!manifest[devModeDemo]?.dynamicImports?.includes(devEntry))
-    problems.push(`${devModeDemo} doesn't load ${devEntry} lazily.`);
+    if (chunk.dynamicImports?.includes(devEntry) && key !== tryDevMode)
+      problems.push(`${key} loads ${devEntry}; only ${tryDevMode} may.`);
+  if (!manifest[tryDevMode]?.dynamicImports?.includes(devEntry))
+    problems.push(`${tryDevMode} doesn't load ${devEntry} lazily.`);
   for (const key of Object.keys(manifest))
     if (key !== devEntry && closure(key).has(devEntry))
       problems.push(`${key} imports ${devEntry} with it, rather than lazily.`);

@@ -5,7 +5,7 @@ import { readdir, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { devEntry, devMarker, devModeDemo, devModeProblems } from '../scripts/site/SiteDevMode.ts';
+import { devEntry, devMarker, tryDevMode, devModeProblems } from '../scripts/site/SiteDevMode.ts';
 
 const repository = fileURLToPath(new URL('../', import.meta.url));
 
@@ -16,13 +16,13 @@ function build() {
       file: 'assets/index-1.js',
       isEntry: true,
       imports: ['_react-1.js', '_Button-1.js'],
-      dynamicImports: [devModeDemo, 'src/examples/button/CreateProject.tsx'],
+      dynamicImports: [tryDevMode, 'src/examples/button/CreateProject.tsx'],
     },
     '_react-1.js': { file: 'assets/react-1.js' },
     '_Button-1.js': { file: 'assets/Button-1.js', imports: ['_react-1.js'] },
     '_View3D-1.js': { file: 'assets/View3D-1.js', imports: ['_react-1.js'] },
-    [devModeDemo]: {
-      file: 'assets/DevModeDemo-1.js',
+    [tryDevMode]: {
+      file: 'assets/TryDevMode-1.js',
       isDynamicEntry: true,
       imports: ['_Button-1.js'],
       dynamicImports: [devEntry],
@@ -43,7 +43,7 @@ function build() {
     'assets/react-1.js': 'react',
     'assets/Button-1.js': 'button',
     'assets/View3D-1.js': 'view',
-    'assets/DevModeDemo-1.js': 'demo',
+    'assets/TryDevMode-1.js': 'demo',
     'assets/dev-1.js': `host.setAttribute('${devMarker}', '')`,
     'assets/CreateProject-1.js': 'example',
   };
@@ -88,5 +88,5 @@ test('every demo a guide page places is one the catalogue has', async () => {
       assert.match(guide, new RegExp(`^  ${demo}: lazyPart\\(`, 'm'), `${name} places ${demo}`);
     }
   }
-  assert.ok(placed.includes('DevModeDemo'), 'docs/dev-mode.md places the dev mode demo');
+  assert.ok(placed.includes('TryDevMode'), 'docs/dev-mode.md places the dev mode demo');
 });

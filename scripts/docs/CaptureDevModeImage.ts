@@ -24,7 +24,7 @@ import { defaultPorts } from '../test/CheckoutMarker.ts';
 const root = fileURLToPath(new URL('../../', import.meta.url));
 const site = (process.argv[2] ?? `http://127.0.0.1:${defaultPorts.site}`).replace(/\/$/, '');
 const page = 'docs/dev-mode';
-/** The 3D picture's shape, width to height, as DevModeDemo.tsx declares it, and its margin in px. */
+/** The 3D picture's shape, width to height, as TryDevMode.tsx declares it, and its margin in px. */
 const aspect = 16 / 10;
 const margin = 24;
 const scale = 2;
