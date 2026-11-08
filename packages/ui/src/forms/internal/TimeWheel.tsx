@@ -1,18 +1,13 @@
 'use client';
 
-import {
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-  type KeyboardEvent,
-  type PointerEvent,
-} from 'react';
+import { useRef, type KeyboardEvent } from 'react';
 import { matchTyped } from '../../internal/calendarDays.js';
 import { typeaheadTimeout } from '../../internal/typeahead.js';
-import { prefersReducedMotion } from '../../internal/reducedMotion.js';
 import { isRightToLeft } from '../../internal/direction.js';
 import { flag } from '../../internal/flag.js';
+import { useWheelGestures, type WheelDrag } from './useWheelGestures.js';
+import { useWheelTurn } from './useWheelTurn.js';
+import { copiesOf, nearestAvailable, shownRows, wrap } from './wheelRows.js';
 import '../../styles/Base.css';
 import '../../styles/TimeList.css';
 
@@ -45,54 +40,14 @@ interface TimeWheelProps {
   onSideways: (direction: -1 | 1) => void;
 }
 
-/** The rows a wheel shows, --env-time-list-rows in TimeList.css. */
-const shownRows = 5;
-
-/** How many times a looping wheel repeats its entries: enough rows to scroll on in both ways. */
-function copiesOf(count: number) {
-  return Math.max(5, 2 * Math.ceil(30 / count) + 1);
-}
-
-/** The nearest entry at or around an index, in a direction or either, that can be chosen. */
-function nearestAvailable(entries: Entry[], index: number, loop: boolean, direction: 0 | 1 | -1) {
-  const count = entries.length;
-  for (let distance = 0; distance < count; distance++) {
-    for (const sign of direction ? [direction] : [1, -1]) {
-      let candidate = index + sign * distance;
-      if (loop) candidate = ((candidate % count) + count) % count;
-      if (candidate >= 0 && candidate < count && !entries[candidate]!.disabled) return candidate;
-    }
-  }
-  return -1;
-}
-
-/**
- * A wheel event of at least this many pixels is one notch of a mouse wheel, which turns the wheel
- * by one row; smaller ones, from a touchpad, turn it by as far as they scroll.
- */
-const notchPixels = 50;
-/**
- * How quickly a turn eases into its row: each frame closes the distance left with a time constant of
- * this many ms, so quick notches add up to one turn that glides on and settles calmly.
- */
-const turnEasing = 90;
-/** A mouse that moves this many pixels with its button down drags the wheel rather than pressing a row. */
-const dragThreshold = 4;
-/**
- * A drag let go while moving flings the wheel on by its speed, in pixels a millisecond, over this
- * many milliseconds, before it eases into the nearest row; one held still first stops where it is.
- */
-const flingMs = 160;
-/** A drag held still for this long before it is let go flings nothing. */
-const flingRestMs = 80;
-
 /**
  * One column of a time list: a spinbutton drawn as a wheel whose middle row is its value. Hours and
  * minutes loop endlessly, their entries repeated with the scroll position moved back to the middle
  * copy near either end; the day periods don't, nor minutes with fewer values than the wheel shows
- * rows, such as every 15 minutes, which would show a value twice. The keys still wrap around them. The row that settles in the middle as scrolling
- * ends is chosen, and an unavailable one gives way to the nearest available. A mouse wheel turns it
- * a row a notch, easing into place, rather than as far as a page would scroll, and a mouse drags it as a finger does.
+ * rows, such as every 15 minutes, which would show a value twice. The keys still wrap around them.
+ * The row that settles in the middle as scrolling ends is chosen, and an unavailable one gives way
+ * to the nearest available. A mouse wheel turns it a row a notch, easing into place, rather than as
+ * far as a page would scroll, and a mouse drags it as a finger does.
  */
 export function TimeWheel({
   ref,
@@ -104,309 +59,31 @@ export function TimeWheel({
   onSideways,
 }: TimeWheelProps) {
   const wheelRef = useRef<HTMLDivElement>(null);
+  const dragRef = useRef<WheelDrag | null>(null);
   const typed = useRef({ text: '', at: 0 });
-  const settleTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
-  const shown = useRef<{ current: number; count: number } | null>(null);
-  // The row a turn the wheel makes itself is heading for, until it comes to rest.
-  const target = useRef<number | null>(null);
-  // A turn the wheel is easing through: its scroll position, kept unrounded, and its next frame.
-  const turn = useRef<{ position: number; frame: number; time: number } | null>(null);
-  // A touchpad's scrolling not yet turned into a whole row, in pixels.
-  const wheelRest = useRef(0);
-  // A mouse dragging the wheel, from the press of its button until it is let go.
-  const drag = useRef<{
-    pointer: number;
-    startY: number;
-    y: number;
-    time: number;
-    speed: number;
-    moved: boolean;
-  } | null>(null);
-  // A drag just let go, whose click presses no row.
-  const dragged = useRef(false);
   const count = entries.length;
   // Hours and minutes wrap around under the keys; they loop on the wheel where they fill it.
   const wraps = part !== 'dayPeriod';
   const loop = wraps && count >= shownRows;
   const copies = loop ? copiesOf(count) : 1;
-  const middleCopy = Math.floor(copies / 2);
   const currentIndex = Math.max(
     0,
     entries.findIndex((entry) => entry.value === current),
   );
-  // The row that takes the middle row's look: the one a turn is heading for, or else the one in the
-  // middle while it scrolls.
-  const [centred, setCentred] = useState(middleCopy * count + currentIndex);
-  // What a wheel settling later, after a pause or a turn, chooses from: the latest render's entries
-  // and choice, never those of the render that started it, so a choice made on another wheel in
-  // the meantime, such as AM or PM, stays.
-  const latest = useRef({ entries, currentIndex, onChoose });
-  // The row this wheel chose that the value doesn't show yet: the end of a turn and the end of its
-  // scrolling both settle it, and it chooses once.
-  const chosenAt = useRef<number | null>(null);
-  useLayoutEffect(() => {
-    latest.current = { entries, currentIndex, onChoose };
-    chosenAt.current = null;
+  const turning = useWheelTurn({
+    wheelRef,
+    dragRef,
+    entries,
+    currentIndex,
+    onChoose,
+    loop,
+    copies,
   });
-
-  /** The row height, and the offset of the middle row from the wheel's top. */
-  function metrics(wheel: HTMLDivElement) {
-    const row = wheel.querySelector<HTMLElement>('.env-time-list-row')?.offsetHeight || 1;
-    return { row, offset: (wheel.clientHeight - row) / 2 };
-  }
-
-  /** The scroll position that puts a row in the middle. */
-  function topOf(wheel: HTMLDivElement, rowIndex: number) {
-    const { row, offset } = metrics(wheel);
-    return rowIndex * row + (loop ? 0 : offset) - offset;
-  }
-
-  /** The row whose middle is at the wheel's middle, at its scroll position or another. */
-  function centredRow(wheel: HTMLDivElement, top = wheel.scrollTop) {
-    const { row, offset } = metrics(wheel);
-    const padding = loop ? 0 : offset;
-    return Math.round((top + offset - padding) / row);
-  }
-
-  function stopTurn(wheel: HTMLDivElement | null) {
-    if (!turn.current) return;
-    cancelAnimationFrame(turn.current.frame);
-    turn.current = null;
-    if (wheel) delete wheel.dataset.turning;
-  }
-
-  /** Eases the wheel towards the target row, a frame at a time, and settles once it is there. */
-  function turnFrame(time: number) {
-    const wheel = wheelRef.current;
-    const state = turn.current;
-    if (!wheel || !state || target.current === null) {
-      stopTurn(wheel);
-      return;
-    }
-    const goal = topOf(wheel, target.current);
-    const elapsed = Math.min(Math.max(time - state.time, 0), 64);
-    state.time = time;
-    state.position += (goal - state.position) * (1 - Math.exp(-elapsed / turnEasing));
-    if (Math.abs(goal - state.position) < 0.5) {
-      wheel.scrollTop = goal;
-      stopTurn(wheel);
-      settle();
-      return;
-    }
-    wheel.scrollTop = state.position;
-    state.frame = requestAnimationFrame(turnFrame);
-  }
-
-  function scrollToRow(rowIndex: number, smooth: boolean) {
-    const wheel = wheelRef.current;
-    if (!wheel) return;
-    target.current = rowIndex;
-    chosenAt.current = null;
-    setCentred(rowIndex);
-    if (!smooth || prefersReducedMotion()) {
-      stopTurn(wheel);
-      wheel.scrollTo({ top: topOf(wheel, rowIndex), behavior: 'instant' });
-      return;
-    }
-    // A turn under way heads for the new row from where it is.
-    if (turn.current) return;
-    // Snapping stays off while the wheel eases, as it would pull each frame back to a row.
-    wheel.dataset.turning = '';
-    turn.current = {
-      position: wheel.scrollTop,
-      time: performance.now(),
-      frame: requestAnimationFrame(turnFrame),
-    };
-  }
-
-  /** The row of an entry nearest the middle row, so the wheel turns the short way. */
-  function nearestRow(index: number) {
-    const wheel = wheelRef.current;
-    if (!loop || !wheel) return index;
-    const at = target.current ?? centredRow(wheel);
-    const base = at - (((at % count) + count) % count);
-    return [base - count, base, base + count]
-      .map((start) => start + index)
-      .reduce((best, candidate) =>
-        Math.abs(candidate - at) < Math.abs(best - at) ? candidate : best,
-      );
-  }
-
-  // The current entry turns to the middle as the wheel appears and whenever it changes; it jumps
-  // there as the wheel appears or its entries change, and turns there otherwise.
-  useLayoutEffect(() => {
-    const previous = shown.current;
-    shown.current = { current: currentIndex, count };
-    if (previous && previous.count === count) {
-      const wheel = wheelRef.current;
-      const at = wheel ? (target.current ?? centredRow(wheel)) : undefined;
-      if (at !== undefined && ((at % count) + count) % count === currentIndex) return;
-      scrollToRow(nearestRow(currentIndex), true);
-    } else scrollToRow(middleCopy * count + currentIndex, false);
-    // The rows' positions depend on nothing else.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentIndex, count]);
-
-  useEffect(
-    () => () => {
-      clearTimeout(settleTimer.current);
-      if (turn.current) cancelAnimationFrame(turn.current.frame);
-    },
-    [],
-  );
-
-  /**
-   * Moves a looping wheel by whole copies of its entries, onto the same rows, unseen, with the turn
-   * it is making and the row it is heading for.
-   */
-  function shiftRows(wheel: HTMLDivElement, rows: number) {
-    const pixels = rows * metrics(wheel).row;
-    wheel.scrollTop += pixels;
-    if (turn.current) turn.current.position += pixels;
-    if (target.current !== null) target.current += rows;
-    setCentred((row) => row + rows);
-  }
-
-  /** Moves a looping wheel back to its middle copy, onto the same rows, unseen. */
-  function recentre(wheel: HTMLDivElement, at: number) {
-    if (!loop || (at >= count && at < (copies - 1) * count)) return at;
-    const moved = middleCopy * count + (((at % count) + count) % count);
-    shiftRows(wheel, moved - at);
-    return moved;
-  }
-
-  /** Chooses the entry that settled in the middle, or turns to the nearest available one. */
-  function settle() {
-    const wheel = wheelRef.current;
-    // A turn the wheel is easing through settles once it ends, and a drag once it is let go.
-    if (!wheel || turn.current || drag.current?.moved) return;
-    clearTimeout(settleTimer.current);
-    // A turn the wheel makes itself that another one cut short settles nothing; the last settles.
-    if (target.current !== null && centredRow(wheel) !== target.current) return;
-    target.current = null;
-    const { entries: rows, currentIndex: chosen, onChoose: choose } = latest.current;
-    const at = recentre(wheel, centredRow(wheel));
-    const index = loop ? ((at % count) + count) % count : Math.min(Math.max(at, 0), count - 1);
-    const available = nearestAvailable(rows, index, loop, 0);
-    if (available === -1) return;
-    if (available !== index) {
-      scrollToRow(loop ? at + (available - index) : available, true);
-      return;
-    }
-    if (index !== chosen && chosenAt.current !== index) {
-      chosenAt.current = index;
-      choose(rows[index]!.value);
-    }
-  }
-
-  function handleScroll() {
-    const wheel = wheelRef.current;
-    if (!wheel) return;
-    let at = centredRow(wheel);
-    // A long fling that reaches the last rows goes on from the middle copy rather than stopping.
-    if (loop && (at < 3 || at > copies * count - 4)) at = recentre(wheel, at);
-    // A turn the wheel makes itself keeps the middle row's look on the row it is heading for, so the
-    // look doesn't flicker between the rows it passes; scrolling by hand moves it row by row.
-    if (target.current === null && at !== centred) setCentred(at);
-    clearTimeout(settleTimer.current);
-    // A browser without scrollend, or one that misses it after snapping, settles on a pause.
-    if (!turn.current && !drag.current?.moved) settleTimer.current = setTimeout(settle, 200);
-  }
-
-  /**
-   * Turns the wheel to a row, easing there, within the ends of a wheel that doesn't loop; on one
-   * that does, a row far from the middle copy moves back to it first, so a long spin never ends.
-   */
-  function turnTo(wheel: HTMLDivElement, next: number) {
-    if (!loop) next = Math.min(Math.max(next, 0), count - 1);
-    else if (next < count || next >= (copies - 1) * count) {
-      const shift = middleCopy * count + (((next % count) + count) % count) - next;
-      shiftRows(wheel, shift);
-      next += shift;
-    }
-    clearTimeout(settleTimer.current);
-    scrollToRow(next, true);
-  }
-
-  // A mouse drags the wheel as a finger does: the rows follow it while its button is down, and let
-  // go, the wheel glides on by the drag's speed and eases into the nearest row. A press that doesn't
-  // move still presses a row. Touch keeps the browser's own scrolling.
-  function handleDragMove(event: PointerEvent<HTMLDivElement>) {
-    const state = drag.current;
-    const wheel = event.currentTarget;
-    if (!state || event.pointerId !== state.pointer) return;
-    if (!(event.buttons & 1)) {
-      endDrag(event);
-      return;
-    }
-    if (!state.moved) {
-      if (Math.abs(event.clientY - state.startY) < dragThreshold) return;
-      state.moved = true;
-      wheel.setPointerCapture(event.pointerId);
-      // Snapping stays off while the rows follow the pointer, as it would pull them back to a row.
-      wheel.dataset.dragging = '';
-      clearTimeout(settleTimer.current);
-    }
-    const moved = event.clientY - state.y;
-    const elapsed = Math.max(event.timeStamp - state.time, 1);
-    // The speed, smoothed over the last few moves, so one uneven move doesn't set the fling.
-    state.speed = 0.6 * (moved / elapsed) + 0.4 * state.speed;
-    state.y = event.clientY;
-    state.time = event.timeStamp;
-    wheel.scrollTop -= moved;
-  }
-
-  function endDrag(event: PointerEvent<HTMLDivElement>) {
-    const state = drag.current;
-    const wheel = event.currentTarget;
-    if (!state || event.pointerId !== state.pointer) return;
-    drag.current = null;
-    if (!state.moved) return;
-    dragged.current = true;
-    if (wheel.hasPointerCapture(event.pointerId)) wheel.releasePointerCapture(event.pointerId);
-    delete wheel.dataset.dragging;
-    const speed = event.timeStamp - state.time > flingRestMs ? 0 : state.speed;
-    const fling = prefersReducedMotion() ? 0 : speed * flingMs;
-    turnTo(wheel, centredRow(wheel, wheel.scrollTop - fling));
-  }
-
-  // A mouse wheel turns the wheel a row a notch, and a touchpad as far as it scrolls, easing into
-  // place rather than scrolling as fast as a page. The listener is added outside React, whose wheel
-  // listeners are passive and can't keep the browser from scrolling on its own.
-  useEffect(() => {
-    const wheel = wheelRef.current;
-    if (!wheel) return;
-    function handleWheel(event: WheelEvent) {
-      // Zooming, and scrolling sideways, are left to the browser.
-      if (!wheel || event.ctrlKey || Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
-      event.preventDefault();
-      const { row } = metrics(wheel);
-      let rows: number;
-      if (event.deltaMode !== WheelEvent.DOM_DELTA_PIXEL) {
-        // Lines or pages: a notch is three lines, as Firefox reports one.
-        rows = Math.sign(event.deltaY) * Math.max(1, Math.round(Math.abs(event.deltaY) / 3));
-        wheelRest.current = 0;
-      } else if (Math.abs(event.deltaY) >= notchPixels) {
-        rows = Math.sign(event.deltaY);
-        wheelRest.current = 0;
-      } else {
-        wheelRest.current += event.deltaY;
-        rows = Math.trunc(wheelRest.current / row);
-        wheelRest.current -= rows * row;
-      }
-      if (!rows) return;
-      turnTo(wheel, (target.current ?? centredRow(wheel)) + rows);
-    }
-    wheel.addEventListener('wheel', handleWheel, { passive: false });
-    return () => wheel.removeEventListener('wheel', handleWheel);
-    // The handler measures the wheel as it runs; it needs adding again only for other rows.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [count, copies]);
+  const gestures = useWheelGestures({ wheelRef, dragRef, turning, loop, count, copies });
+  const { centred, scrollToRow } = turning;
 
   function step(index: number, direction: 1 | -1) {
-    let next = index;
-    if (wraps) next = ((next % count) + count) % count;
-    else next = Math.min(Math.max(next, 0), count - 1);
+    const next = wraps ? wrap(index, count) : Math.min(Math.max(index, 0), count - 1);
     const available = nearestAvailable(entries, next, wraps, direction);
     if (available !== -1 && available !== currentIndex) onChoose(entries[available]!.value);
   }
@@ -473,37 +150,10 @@ export function TimeWheel({
       data-value={entry?.value}
       data-loop={flag(loop)}
       onKeyDown={handleKeyDown}
-      onScroll={handleScroll}
-      onScrollEnd={settle}
-      // Someone dragging the wheel, or pressing a row, takes over from a turn it makes itself.
-      onPointerDown={(event) => {
-        stopTurn(event.currentTarget);
-        target.current = null;
-        dragged.current = false;
-        if (event.pointerType === 'mouse' && event.button === 0)
-          drag.current = {
-            pointer: event.pointerId,
-            startY: event.clientY,
-            y: event.clientY,
-            time: event.timeStamp,
-            speed: 0,
-            moved: false,
-          };
-      }}
-      onPointerMove={handleDragMove}
-      onPointerUp={endDrag}
-      onPointerCancel={endDrag}
-      onLostPointerCapture={endDrag}
-      // The click that ends a drag presses no row.
-      onClickCapture={(event) => {
-        if (!dragged.current) return;
-        dragged.current = false;
-        event.stopPropagation();
-      }}
-      onTouchStart={(event) => {
-        stopTurn(event.currentTarget);
-        target.current = null;
-      }}
+      onScroll={turning.handleScroll}
+      onScrollEnd={turning.settle}
+      {...gestures}
+      onTouchStart={(event) => turning.interrupt(event.currentTarget)}
     >
       {Array.from({ length: copies }, (_, copy) =>
         entries.map((item, index) => {
