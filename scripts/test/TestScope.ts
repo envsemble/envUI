@@ -88,7 +88,7 @@ const catalogue = [
 /** Paths that name no component, by prefix, and the specs they run. */
 const exceptions: [RegExp, string[]][] = [
   [
-    /^packages\/ui\/(?:tokens\/|terrazzo\.config\.mjs|src\/generated\/tokens|src\/styles\/(?:Tokens\w*|Theme)\.css)|^tests\/contrast\/|^scripts\/build\/(?:BuildTokens|GeneratePalette)\.ts$/,
+    /^packages\/ui\/(?:tokens\/|terrazzo\.config\.mjs|src\/generated\/tokens|src\/styles\/(?:Tokens\w*|Theme)\.css)|^tests\/contrast\/|^scripts\/build\/(?:(?:BuildTokens|GeneratePalette)\.ts$|tokens\/)/,
     shared,
   ],
   [
@@ -247,7 +247,7 @@ export function selectScope(paths: readonly string[], root = repositoryRoot) {
     // Generated files: tokens with the lint packages' copies, icons, and the documentation the
     // sources and docs/ make.
     if (
-      /^packages\/ui\/(?:tokens\/|terrazzo\.config\.mjs|src\/generated\/tokens|src\/styles\/Tokens\w*\.css)|^scripts\/build\/(?:BuildTokens|GeneratePalette|SyncLintPackages|LintPackageTokens)\.[jt]s$|^packages\/(?:eslint-plugin\/src|stylelint-config)\/(?:tokens\.js|data\/tokens\.json)$/.test(
+      /^packages\/ui\/(?:tokens\/|terrazzo\.config\.mjs|src\/generated\/tokens|src\/styles\/Tokens\w*\.css)|^scripts\/build\/(?:(?:BuildTokens|GeneratePalette|SyncLintPackages|LintPackageTokens)\.[jt]s$|tokens\/)|^packages\/(?:eslint-plugin\/src|stylelint-config)\/(?:tokens\.js|data\/tokens\.json)$/.test(
         path,
       )
     )
@@ -294,7 +294,6 @@ export function serversFor(names: readonly string[], root = repositoryRoot) {
 // ---------------------------------------------------------------------------------------------
 // Changed files
 
-/** Parses `git diff --name-status -z` output into { status, path, from } entries. */
 /** A changed file, and for a rename or copy the path it came from. */
 export interface Change {
   status: string;
@@ -302,6 +301,7 @@ export interface Change {
   from?: string;
 }
 
+/** Parses `git diff --name-status -z` output into { status, path, from } entries. */
 export function parseNameStatus(text: string): Change[] {
   const fields = text.split('\0').filter((field) => field !== '');
   const entries: Change[] = [];
