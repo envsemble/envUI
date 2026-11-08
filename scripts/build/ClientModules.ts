@@ -18,7 +18,7 @@
 // tests/library/ClientDirectives.test.mjs runs the check, and checks the built dist and a server render.
 import { readFile, readdir, writeFile } from 'node:fs/promises';
 import { join, relative, resolve } from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
+import { fileURLToPath } from 'node:url';
 import ts from 'typescript';
 
 const repositoryRoot = fileURLToPath(new URL('../../', import.meta.url));
@@ -422,4 +422,4 @@ async function main() {
   console.log(`Added ${missing.length} and removed ${needless.length} directives.`);
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) await main();
+if (import.meta.main) await main();

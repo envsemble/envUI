@@ -20,11 +20,10 @@
 //
 // --check writes nothing and fails when the committed palette differs from a fresh build. The
 // palette is internal: semantic tokens in packages/ui/tokens alias it, components never do.
-import { readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { converter, formatHex, parse, wcagLuminance, type Oklch, type Rgb } from 'culori';
-import { format, resolveConfig } from 'prettier';
+import { formatted, readIfExists, writeIfChanged } from './GeneratedFiles.ts';
 
 const repositoryRoot = fileURLToPath(new URL('../../', import.meta.url));
 export const paletteFile = resolve(repositoryRoot, 'packages/ui/tokens/palette.tokens.json');
@@ -319,30 +318,18 @@ function compact(node: unknown, indent = ''): string {
   return `{\n${entries.join(',\n')}\n${indent}}`;
 }
 
-async function formatted(document: unknown) {
-  return format(compact(document), {
-    ...(await resolveConfig(paletteFile)),
-    filepath: paletteFile,
-  });
-}
-
 /** Writes the palette, or with `check` compares it and throws when the committed one is stale. */
 export async function writePalette({ check = false } = {}) {
-  const contents = await formatted(paletteDocument());
-  const existing = await readFile(paletteFile, 'utf8').catch((error) => {
-    if (error.code === 'ENOENT') return null;
-    throw error;
-  });
-  if (existing === contents) return false;
-  if (check)
+  const contents = await formatted(paletteFile, compact(paletteDocument()));
+  if (!check) return writeIfChanged(paletteFile, contents);
+  if (readIfExists(paletteFile) !== contents)
     throw new Error(
       'packages/ui/tokens/palette.tokens.json is stale: run `npm run palette:generate` and commit the result.',
     );
-  await writeFile(paletteFile, contents);
-  return true;
+  return false;
 }
 
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+if (import.meta.main) {
   const check = process.argv.includes('--check');
   if (process.argv.slice(2).some((argument) => argument !== '--check'))
     throw new Error('Usage: GeneratePalette.ts [--check]');

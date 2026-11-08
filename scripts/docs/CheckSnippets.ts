@@ -578,7 +578,7 @@ export function snippetPages(root = repositoryRoot): string[] {
   return pages.sort();
 }
 
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+if (import.meta.main) {
   const started = performance.now();
   const pages = snippetPages();
   const snippets = pages.flatMap((page) =>

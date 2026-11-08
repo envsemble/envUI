@@ -13,10 +13,11 @@
 // of listing some 280 attributes; props declared by Base UI are listed with their source. Props
 // types that are unions of forms, such as Button's icon-only form, are merged: a prop required in
 // only some forms names the prop that selects them, such as `iconOnly` being `true`.
-import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
-import { dirname, relative, resolve, sep } from 'node:path';
+import { readFileSync } from 'node:fs';
+import { relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Node, Project, ts } from 'ts-morph';
+import { readIfExists, writeIfChanged } from '../build/GeneratedFiles.ts';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
 const libraryDirectory = resolve(root, 'packages/ui');
@@ -738,17 +739,11 @@ export function readProps() {
   return JSON.parse(readFileSync(propsFile, 'utf8'));
 }
 
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+if (import.meta.main) {
   const check = process.argv.includes('--check');
   const output = serializeProps(extractProps());
-  let current = '';
-  try {
-    current = readFileSync(propsFile, 'utf8');
-  } catch {
-    // A missing file differs from any output.
-  }
   if (check) {
-    if (current !== output) {
+    if (readIfExists(propsFile) !== output) {
       console.error(
         'docs/generated/props.json differs from the TypeScript source. Run `npm run docs:props` and commit the result.',
       );
@@ -756,8 +751,7 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     }
     console.log('docs/generated/props.json matches the TypeScript source.');
   } else {
-    mkdirSync(dirname(propsFile), { recursive: true });
-    if (current !== output) writeFileSync(propsFile, output);
+    writeIfChanged(propsFile, output);
     const count = Object.keys(JSON.parse(output).exports).length;
     console.log(`Extracted ${count} public exports into docs/generated/props.json.`);
   }

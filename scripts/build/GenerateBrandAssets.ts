@@ -1,6 +1,7 @@
-import { readFile, writeFile } from 'node:fs/promises';
+import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { writeIfChanged } from './GeneratedFiles.ts';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
 
@@ -54,16 +55,10 @@ export function EnvUILogo({ label = 'envUI', ...props }: EnvUILogoProps) {
 }
 `;
   const target = resolve(root, 'apps/site/src/brand/EnvUILogo.tsx');
-  let existing: string | undefined;
-  try {
-    existing = await readFile(target, 'utf8');
-  } catch (error) {
-    if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
-  }
-  if (existing !== output) await writeFile(target, output);
+  writeIfChanged(target, output);
 }
 
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+if (import.meta.main) {
   await generateBrandAssets();
   console.log('Generated the theme-aware envUI logo from the supplied SVG assets.');
 }

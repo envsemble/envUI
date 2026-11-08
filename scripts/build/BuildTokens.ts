@@ -8,22 +8,17 @@
 // --check writes nothing and fails when a committed output differs from a fresh build, like
 // `npm run icons:check`. The catalogue's and the test fixture's Vite servers rebuild on every token
 // change through tokensVitePlugin(), so token edits hot-reload like any other library source.
-import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { readFile } from 'node:fs/promises';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { isAbsolute, relative, resolve } from 'node:path';
 import { build, defineConfig, Logger, parse } from '@terrazzo/parser';
-import { format, resolveConfig } from 'prettier';
 import type { ViteDevServer } from 'vite';
+import { formatted, readIfExists, writeIfChanged } from './GeneratedFiles.ts';
 import { createConfig } from './tokens/Config.ts';
 
 const repositoryRoot = fileURLToPath(new URL('../../', import.meta.url));
 const libraryDirectory = resolve(repositoryRoot, 'packages/ui');
-export const tokensDirectory = resolve(libraryDirectory, 'tokens');
-
-/** `contents` as Prettier formats the file at `path`. */
-export async function formatted(path: string, contents: string) {
-  return format(contents, { ...(await resolveConfig(path)), filepath: path });
-}
+const tokensDirectory = resolve(libraryDirectory, 'tokens');
 
 /**
  * Builds the tokens. With `check`, compares instead of writing and throws when anything is stale.
@@ -56,17 +51,8 @@ export async function buildTokens({
   const stale: string[] = [];
   for (const { path, contents } of outputs) {
     const text = await formatted(path, String(contents));
-    const existing = await readFile(path, 'utf8').catch((error) => {
-      if (error.code === 'ENOENT') return null;
-      throw error;
-    });
-    if (existing === text) continue;
+    if (check ? readIfExists(path) === text : !writeIfChanged(path, text)) continue;
     stale.push(relative(repositoryRoot, path).replaceAll('\\', '/'));
-    // Unchanged files keep their timestamps, so watchers don't reload for nothing.
-    if (!check) {
-      await mkdir(resolve(path, '..'), { recursive: true });
-      await writeFile(path, text);
-    }
   }
   if (check && stale.length > 0)
     throw new Error(
@@ -105,7 +91,7 @@ export function tokensVitePlugin() {
   };
 }
 
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+if (import.meta.main) {
   const check = process.argv.includes('--check');
   if (process.argv.slice(2).some((argument) => argument !== '--check'))
     throw new Error('Usage: BuildTokens.ts [--check]');
