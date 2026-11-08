@@ -321,6 +321,31 @@ test(
   },
 );
 
+test('a pressed link whose page takes a moment shows a bar at the top of the page until it shows', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto(`${siteDevUrl}/components/button`);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
+  const held: Route[] = [];
+  await page.route(/\/generated\/pages\/link\.json/, (route) => void held.push(route));
+  await page.locator('.site-sidebar').getByRole('link', { name: 'Link', exact: true }).click();
+  const bar = page.getByRole('progressbar', { name: 'Loading page' });
+  await expect(bar).toBeVisible();
+  // Over the page's column, beside the navigation, along its top.
+  const [box, body] = await Promise.all([
+    bar.boundingBox(),
+    page.locator('#site-main').boundingBox(),
+  ]);
+  expect(box?.y).toBe(0);
+  expect(box?.x).toBeCloseTo(body!.x, 0);
+  // The page before stays until the next one has loaded.
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
+  for (const route of held) await route.continue();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Link');
+  await expect(bar).toHaveCount(0);
+});
+
 test('a page the history shows before it has loaded is a skeleton of its shape, then where the reader was', async ({
   page,
 }) => {
