@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { subscribeFormReset } from '../../forms/internal/subscribeFormReset.js';
 import { sameColor, toColor, type ColorValue } from './colorValue.js';
+import { useLatest } from '../../internal/useLatest.js';
 
 /**
  * Keeps a controlled color's precision: while the application's value is the color the picker
@@ -32,10 +33,7 @@ export function useFormResetOf(
   form: string | undefined,
 ) {
   const resetting = useRef(false);
-  const latest = useRef(apply);
-  useEffect(() => {
-    latest.current = apply;
-  });
+  const latest = useLatest(apply);
   useEffect(() => {
     const owner = input.current?.form;
     if (!owner) return;
@@ -57,6 +55,6 @@ export function useFormResetOf(
       clearTimeout(timer);
       unsubscribe();
     };
-  }, [input, form]);
+  }, [input, form, latest]);
   return resetting;
 }

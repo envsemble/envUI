@@ -3,7 +3,6 @@
 import {
   useEffect,
   useLayoutEffect,
-  useRef,
   useState,
   type KeyboardEvent,
   type MouseEvent,
@@ -11,6 +10,7 @@ import {
   type RefObject,
 } from 'react';
 import { scrolledBy } from '../../internal/scrolledBy.js';
+import { useLatest } from '../../internal/useLatest.js';
 
 type AnnouncementValues = { label: string; position: string; count: string };
 
@@ -479,10 +479,7 @@ export function useReorder(
   formatNumber: (value: number) => string,
 ) {
   const [announcement, setAnnouncement] = useState<Announcement>({ text: '', count: 0 });
-  const latest = useRef({ onReorder, announcements, formatNumber });
-  useLayoutEffect(() => {
-    latest.current = { onReorder, announcements, formatNumber };
-  });
+  const latest = useLatest({ onReorder, announcements, formatNumber });
   const [controller] = useState(() =>
     createReorder(
       () => ({ list: list.current, ...latest.current }),

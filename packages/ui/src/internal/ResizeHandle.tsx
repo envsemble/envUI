@@ -4,6 +4,7 @@ import { useEffect, useRef, type ComponentPropsWithRef } from 'react';
 import { classNames } from './classNames.js';
 import { setRef } from './setRef.js';
 import { useResize, type ResizeOptions } from './useResize.js';
+import { useLatest } from './useLatest.js';
 import '../styles/Base.css';
 import '../styles/ResizeHandle.css';
 
@@ -62,8 +63,7 @@ export function ResizeHandle({
   // The largest value it reports follows the room around it, read once it is placed and again as
   // the window resizes, so it is right before the handle is focused or moved.
   const element = useRef<HTMLDivElement | null>(null);
-  const latestMeasure = useRef(measure);
-  latestMeasure.current = measure;
+  const latestMeasure = useLatest(measure);
   const measures = room !== undefined;
   useEffect(() => {
     const handle = element.current;
@@ -73,7 +73,7 @@ export function ResizeHandle({
     const view = handle.ownerDocument.defaultView;
     view?.addEventListener('resize', read);
     return () => view?.removeEventListener('resize', read);
-  }, [measures]);
+  }, [measures, latestMeasure]);
   return (
     <div
       {...props}
