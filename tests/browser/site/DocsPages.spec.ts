@@ -126,8 +126,8 @@ test("a page's guide in the Docs complements its page in the catalogue, and Fiel
   await expect(page.locator('[data-section="overview"]')).toHaveCount(1);
   await expect(page.locator('.catalogue-related')).toHaveCount(0);
   // A component's guide repeats no section of the catalogue: it goes from its header to Import,
-  // then Usage, which opens with one compact preview of the component, its overview example live
-  // without its code, as the code follows it.
+  // then Usage, which opens with the component's overview example, live and compact, without its
+  // code, as the code follows it.
   await page.goto(`${siteDevUrl}/docs/components/button`);
   const shown = page.locator('.docs-api .site-live-example-entry');
   await expect(shown).toHaveCount(1);
