@@ -339,7 +339,7 @@ test('the navigation shows the current page, and focus moves to the page only on
   await expect(page.getByRole('navigation', { name: 'Catalogue' })).toBeVisible();
 });
 
-test("the catalogue's drawer comes in beside the rail and goes again, and the page beside it never moves", async ({
+test("the catalogue's drawer comes in beside the rail, goes again and brings in another destination's list, and the page beside it never moves", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1280, height: 720 });
@@ -353,11 +353,11 @@ test("the catalogue's drawer comes in beside the rail and goes again, and the pa
   await expect(list).toBeVisible();
   await expect(drawer).not.toHaveAttribute('data-site-drawer');
   const besideDrawer = await bodyStart();
-  // Records, on every frame from now on, the drawer's motion, its list's opacity and where the
-  // page beside it starts.
+  // Records, on every frame from now on, the drawer's motion, its list's opacity, where the page
+  // beside it starts, how many drawers there are and where search is.
   const record = () =>
     page.evaluate(() => {
-      const frames: [string, number, number][] = [];
+      const frames: [string, number, number, number, number][] = [];
       (window as unknown as { frames: typeof frames }).frames = frames;
       const tick = () => {
         const sidebar = document.querySelector<HTMLElement>('.site-sidebar');
@@ -366,13 +366,19 @@ test("the catalogue's drawer comes in beside the rail and goes again, and the pa
           sidebar ? (sidebar.dataset.siteDrawer ?? 'still') : 'none',
           items ? Number(getComputedStyle(items).opacity) : 0,
           document.querySelector('.env-scaffold-body')!.getBoundingClientRect().left,
+          document.querySelectorAll('.site-sidebar').length,
+          document
+            .querySelector('.site-drawer-search, .site-page-search-button')!
+            .getBoundingClientRect().left,
         ]);
         if (frames.length < 90) requestAnimationFrame(tick);
       };
       requestAnimationFrame(tick);
     });
   const frames = () =>
-    page.evaluate(() => (window as unknown as { frames: [string, number, number][] }).frames);
+    page.evaluate(
+      () => (window as unknown as { frames: [string, number, number, number, number][] }).frames,
+    );
   // To the Overview, which has none, it fades out laid over the page, which takes its room at once.
   await record();
   await rail.getByRole('link', { name: 'Overview', exact: true }).click();
@@ -396,9 +402,29 @@ test("the catalogue's drawer comes in beside the rail and goes again, and the pa
   const back = (await frames()).filter(([motion]) => motion !== 'none');
   expect(back.some(([, opacity]) => opacity > 0 && opacity < 1)).toBe(true);
   expect(back.every(([, , start]) => start === besideDrawer)).toBe(true);
-  // To Patterns, which has a drawer too, its list changes in place, with no entrance.
+  const searchAt = (await frames()).at(-1)![4];
+  // To Patterns, which has a drawer too, the panel stays and the new list comes in once the page
+  // has painted: one drawer and one list all along, search and the page where they were.
   await record();
   await rail.getByRole('link', { name: 'Patterns', exact: true }).click();
+  await expect(page.getByRole('navigation', { name: 'Patterns' })).toBeVisible();
+  await expect
+    .poll(async () => (await frames()).some(([motion]) => motion === 'switching'))
+    .toBe(true);
+  await expect(drawer).not.toHaveAttribute('data-site-drawer');
+  const switched = await frames();
+  expect(switched.some(([, opacity]) => opacity > 0 && opacity < 1)).toBe(true);
+  expect(
+    switched.every(
+      ([, , start, drawers, search]) =>
+        start === besideDrawer && drawers === 1 && search === searchAt,
+    ),
+  ).toBe(true);
+  // A page of the same destination, such as a pattern from its gallery, changes which is current,
+  // and nothing moves.
+  await record();
+  await page.locator('.catalogue-gallery-link').first().click();
+  await expect(page).not.toHaveURL(`${siteDevUrl}/patterns`);
   await expect(page.getByRole('navigation', { name: 'Patterns' })).toBeVisible();
   await page.evaluate(() => new Promise(requestAnimationFrame));
   expect((await frames()).every(([motion, opacity]) => motion === 'still' && opacity === 1)).toBe(

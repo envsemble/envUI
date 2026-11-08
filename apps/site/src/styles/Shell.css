@@ -77,7 +77,8 @@ body {
    list slides out of the rail's edge a short way as it fades in; its header, search, stays still,
    where the page without the drawer has it. Going, it is laid over the page's start, its header
    hidden over the page's own search, and fades out quicker as its list slides back. Under reduced
-   motion it only fades. */
+   motion it only fades. Going to another destination with a drawer, its panel stays and its new
+   list comes in as an entrance's does, from script (useDrawerMotion). */
 .site-sidebar[data-site-drawer] {
   transition: background-color var(--env-motion-duration-medium) var(--env-motion-ease-enter);
 }
