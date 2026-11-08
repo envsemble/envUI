@@ -27,6 +27,8 @@ export async function importSource(name, sources) {
     platform: 'node',
     format: 'esm',
     packages: 'external',
+    // The documentation's model, as the site imports it (apps/site/tsconfig.json).
+    alias: { '@docs-model': './scripts/docs/model' },
     jsx: 'automatic',
     outfile: output,
     logLevel: 'error',

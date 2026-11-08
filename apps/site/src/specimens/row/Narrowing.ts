@@ -1,4 +1,4 @@
-import { useSharedTimeline } from '../../motion/Motion';
+import { useSharedTimeline } from '../../motion/Timeline';
 
 /** The pane's widths, in rem: wide enough for both actions on one line, and narrow. */
 export const widths = [26, 15];

@@ -28,7 +28,7 @@ const windowBox: CSSProperties = { blockSize: '30rem' };
  * drawer, and a page of cards and a list. With `fixedColumns`, the cards keep three columns at any
  * width, which squeezes them in a narrow window: the problem dev mode finds.
  */
-export function DemoApp({ fixedColumns = false }: { fixedColumns?: boolean }) {
+export function SmallApplication({ fixedColumns = false }: { fixedColumns?: boolean }) {
   const [current, setCurrent] = useState('/projects');
   const destinations: Destination[] = places.map((place) => ({
     ...place,

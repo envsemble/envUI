@@ -92,28 +92,31 @@ The website (`apps/site`) has two parts. **site** names the whole website: its s
 
 One word for each thing the site shows, and one folder in `apps/site/src` for each:
 
-| Word          | Means                                                           | Where                                                |
-| ------------- | --------------------------------------------------------------- | ---------------------------------------------------- |
-| example       | A page's usage file, live with its code, placed by `figure=`    | `examples/<page>/`                                   |
-| specimen      | A picture of the catalogue's own, with no code                  | `specimens/<page>/`                                  |
-| tile          | A gallery's small live picture of a page                        | `tiles/`; its stage in `figures/TileStage.tsx`       |
-| figure        | The frame that shows an example or a specimen on a page         | `figures/`; a foundation's in `figures/foundations/` |
-| fit           | Drawing a tile's or a figure's picture to fit its stage         | `fit/`                                               |
-| motion        | Scripted playback on a stage, where a tile or figure plays live | `motion/`                                            |
-| loading       | Skeletons, load boundaries and retries while a part loads       | `loading/`                                           |
-| template      | The sections of a component or pattern page, in their order     | `template/`                                          |
-| page          | A route's page in the catalogue or the Docs, and its data       | `pages/`                                             |
-| route         | Addresses old and new, the rail, drawers, trails and the pager  | `navigation/`                                        |
-| banner        | A page's banner, contents, footer and failure                   | `layout/`                                            |
-| display       | The Display menu: theme, contrast, scale, motion and palette    | `theme/`                                             |
-| search        | The site's search and its index                                 | `search/`                                            |
-| brand         | The wordmarks and logos                                         | `brand/`                                             |
-| release notes | The highlights on the Docs' Changelog page                      | `releases/release-notes.md`                          |
-| shared        | What the site and its build scripts both read                   | `shared/`                                            |
-| style         | The site's style sheets                                         | `styles/`                                            |
-| generated     | The site's data, written by `scripts/`: never edit it           | `generated/`                                         |
-| documentation | The Markdown in `docs/` and the model generated from it         | `scripts/docs/`, its model in `scripts/docs/model/`  |
-| Docs          | The part under /docs, and nothing else                          | `docs-` classes, `Docs*` names                       |
+| Word          | Means                                                            | Where                                                |
+| ------------- | ---------------------------------------------------------------- | ---------------------------------------------------- |
+| example       | A page's usage file, live with its code, placed by `figure=`     | `examples/<page>/`                                   |
+| specimen      | A picture of the catalogue's own, with no code, or a playback    | `specimens/<page>/`                                  |
+| playback      | An example played, or held in a moment: the specimen of its name | `specimens/<page>/<Example>.tsx`                     |
+| tile          | A gallery's small live picture of a page                         | `tiles/`; its stage in `figures/TileStage.tsx`       |
+| figure        | The frame that shows an example or a specimen on a page          | `figures/`; a foundation's in `figures/foundations/` |
+| fit           | Drawing a tile's or a figure's picture to fit its stage          | `fit/`                                               |
+| motion        | Scripts that play a stage, where a tile or figure plays live     | `motion/`                                            |
+| loading       | Skeletons, load boundaries and retries while a part loads        | `loading/`                                           |
+| template      | The sections of a component or pattern page, in their order      | `template/`                                          |
+| page          | A route's page in the catalogue or the Docs, and its data        | `pages/`                                             |
+| route         | Addresses old and new, the rail, drawers, trails and the pager   | `navigation/`                                        |
+| banner        | A page's banner, contents, footer and failure                    | `layout/`                                            |
+| display       | The Display menu: theme, contrast, scale, motion and palette     | `theme/`                                             |
+| search        | The site's search and its index                                  | `search/`                                            |
+| brand         | The wordmarks and logos                                          | `brand/`                                             |
+| release notes | The highlights on the Docs' Changelog page                       | `releases/release-notes.md`                          |
+| shared        | Helpers several of the site's folders use, such as `remPixels`   | `shared/`                                            |
+| style         | The site's style sheets                                          | `styles/`                                            |
+| generated     | The site's data, written by `scripts/`: never edit it            | `generated/`                                         |
+| documentation | The Markdown in `docs/` and the model generated from it          | `scripts/docs/`, its model in `scripts/docs/model/`  |
+| Docs          | The part under /docs, and nothing else                           | `docs-` classes, `Docs*` names                       |
+
+A playback depends on its example: change or rename the two together. What the site and its build scripts both read, the documentation's model and the search's terms and anchors, is in `scripts/docs/model/`, which the site imports as `@docs-model/<Module>` (its tsconfig, Vite config and `tests/support/importSource.mjs` alias it).
 
 Other words for these, such as preview, demo, showcase and sample, are older names; don't add new uses.
 

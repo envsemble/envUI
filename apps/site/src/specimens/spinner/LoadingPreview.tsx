@@ -1,5 +1,5 @@
 import LoadingPreview from '../../examples/spinner/LoadingPreview';
-import { useTimeline } from '../../motion/Motion';
+import { useTimeline } from '../../motion/Timeline';
 import { MotionStage } from '../../motion/MotionStage';
 
 /*

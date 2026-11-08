@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 import { Grid, Page, Surface, type PageWidth } from '@envsemble/envui';
 import { Example } from '../../figures/Example';
-import { useTimeline } from '../../motion/Motion';
+import { useTimeline } from '../../motion/Timeline';
 import { MotionStage } from '../../motion/MotionStage';
 import { remPixels } from '../../shared/Lengths';
 

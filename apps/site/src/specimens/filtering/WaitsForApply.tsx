@@ -1,5 +1,5 @@
 import WaitsForApply from '../../examples/filtering/WaitsForApply';
-import { usePointer } from '../../motion/Motion';
+import { usePointer } from '../../motion/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
 import { statusClock, statusScript } from './Status';
 

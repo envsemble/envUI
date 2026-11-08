@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useReducer, useRef } from 'react';
-import { motionDuration, reducedMotion } from '../motion/MotionTokens';
+import { prefersReducedMotion } from '../../../../packages/ui/src/internal/reducedMotion';
+import { rootMotionDuration } from '../motion/RootMotionTokens';
 import { usePendingRoute } from './RouterLink';
 
 /**
@@ -54,14 +55,14 @@ export function RouteProgress() {
   useEffect(() => {
     const element = indicator.current;
     if (phase !== 'finishing' || !element) return;
-    if (reducedMotion()) return dispatch('hide');
+    if (prefersReducedMotion()) return dispatch('hide');
     const end = (event: TransitionEvent) => {
       if (event.target === element && event.propertyName === 'opacity') dispatch('hide');
     };
     element.addEventListener('transitionend', end);
     const timer = window.setTimeout(
       () => dispatch('hide'),
-      motionDuration('slow') + motionDuration('fast') + 100,
+      rootMotionDuration('slow') + rootMotionDuration('fast') + 100,
     );
     return () => {
       element.removeEventListener('transitionend', end);

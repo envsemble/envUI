@@ -6,10 +6,10 @@ import {
   guideExportStatus,
   otherFrontmatter,
   pageSchemas,
-  statuses,
   type ExampleEntry,
   type Frontmatter,
 } from '../Schema.ts';
+import { pageStatuses } from '../model/DocumentationTypes.ts';
 import { deviceKinds, stageFills } from './Figures.ts';
 
 /** What a page's frontmatter is checked against: its kind, and the versions its since may name. */
@@ -153,8 +153,8 @@ export function validateFrontmatter(
         for (const [name, status] of Object.entries<unknown>(value)) {
           if (!listed.includes(name))
             problems.push(`${key} names ${name}, which components does not list`);
-          if (!statuses.includes(status as string))
-            problems.push(`${key} of ${name} must be one of ${statuses.join(', ')}`);
+          if (!(pageStatuses as readonly unknown[]).includes(status))
+            problems.push(`${key} of ${name} must be one of ${pageStatuses.join(', ')}`);
           else if (
             status === (schema ? frontmatter.status : (frontmatter.status ?? guideExportStatus))
           )

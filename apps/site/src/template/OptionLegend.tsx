@@ -1,5 +1,5 @@
 import { Documentation } from '../pages/Documentation';
-import { optionPieces, type OptionTable } from '../../../../scripts/docs/model/CatalogueContent';
+import { optionPieces, type OptionTable } from '@docs-model/CatalogueContent';
 import { useSectionOutline } from './SectionOutline';
 
 /**

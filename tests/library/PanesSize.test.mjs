@@ -1,7 +1,7 @@
 // readPanesWidth reads the width Panes keeps under its persist key from a Cookie header.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { importSource } from './support/importSource.mjs';
+import { importSource } from '../support/importSource.mjs';
 
 const { readPanesWidth } = await importSource('PanesSize', 'packages/ui/src/layout/panesSize.ts');
 

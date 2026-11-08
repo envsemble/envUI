@@ -1,5 +1,6 @@
 import { LineArt, Surface, Theme, type ThemeContrast, type ColorScheme } from '@envsemble/envui';
-import { Example, Specimen, SpecimenGrid } from '../../figures/Example';
+import { Example, SpecimenGrid } from '../../figures/Example';
+import { SpecimenPart } from '../../figures/Specimen';
 
 const themes: { title: string; theme: ColorScheme; contrast: ThemeContrast }[] = [
   { title: 'Light', theme: 'light', contrast: 'standard' },
@@ -18,7 +19,7 @@ export default function Themes() {
     <Example size="collection">
       <SpecimenGrid size="small">
         {themes.map(({ title, theme, contrast }) => (
-          <Specimen key={title} title={title}>
+          <SpecimenPart key={title} title={title}>
             <Theme
               theme={theme}
               contrast={contrast} // The theme's own box, rounded as the surface in it is.
@@ -36,7 +37,7 @@ export default function Themes() {
                 <LineArt drawing="gothic-tracery" />
               </Surface>
             </Theme>
-          </Specimen>
+          </SpecimenPart>
         ))}
       </SpecimenGrid>
     </Example>

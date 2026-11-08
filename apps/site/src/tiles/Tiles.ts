@@ -1,22 +1,21 @@
-import { lazy, type ComponentType } from 'react';
-import { loadModule } from '../loading/LoadBoundary';
+import type { ComponentType } from 'react';
+import { moduleRegistry } from '../loading/ModuleRegistry';
 
 /*
  * The tiles' own pictures: for a component or pattern, a small live picture written for its tile
  * in the galleries and in Related, apps/site/src/tiles/<Page>.tsx, named after the page's id in
  * PascalCase (segmented-control is SegmentedControl.tsx), with a default-exported component. It
  * shows the component alone, large and centred, with as little else as it needs to be recognised,
- * and its animation, a timeline (useTimeline in motion/Motion.tsx) that plays on hover from that
+ * and its animation, a timeline (useTimeline in motion/Timeline.ts) that plays on hover from that
  * still. A page without one shows the example its tile picks (Gallery.tsx, Related.tsx).
  */
-const loaders = import.meta.glob<{ default: ComponentType }>('./*.tsx');
-const tiles = new Map(
-  Object.entries(loaders).map(([path, load]) => [path, lazy(loadModule(load))]),
-);
+const tiles = moduleRegistry(import.meta.glob<{ default: ComponentType }>('/src/tiles/*.tsx'));
 
 /** A page's id in PascalCase, as its tile's file is named: segmented-control, SegmentedControl. */
 const pascal = (id: string) =>
   id.replace(/(^|-)([a-z\d])/g, (_, __: string, letter: string) => letter.toUpperCase());
+
+const tilePath = (id: string) => `/src/tiles/${pascal(id)}.tsx`;
 
 /** A tile's window, in rem, and the least scale its open popup is drawn at, where not a popup's. */
 export interface TileWindow {
@@ -110,12 +109,11 @@ export const narrowGallery = '(width < 29rem)';
  * Starts loading a page's tile, where it has one, well before it nears the view, so it is drawn as
  * it comes in rather than after.
  */
-export const preloadTile = (page: string) =>
-  loaders[`./${pascal(page)}.tsx`]?.().catch(() => undefined);
+export const preloadTile = (page: string) => tiles.preload(tilePath(page));
 
 /** The tile of a page, by its id, where it has one of its own. */
 export const tileOf = (page: string): ComponentType | undefined =>
-  tiles.get(`./${pascal(page)}.tsx`);
+  tiles.has(tilePath(page)) ? tiles.component(tilePath(page)) : undefined;
 
 /*
  * The tiles of the exports documented on another's page, for the Related cards that name them,
@@ -123,9 +121,8 @@ export const tileOf = (page: string): ComponentType | undefined =>
  * small live picture of the export alone, written as a page's own tile is, where the page's
  * examples show it in a larger scene than a card holds whole, or hold still where it acts.
  */
-const memberLoaders = import.meta.glob<{ default: ComponentType }>('./members/*.tsx');
-const memberTiles = new Map(
-  Object.entries(memberLoaders).map(([path, load]) => [path, lazy(loadModule(load))]),
+const memberTiles = moduleRegistry(
+  import.meta.glob<{ default: ComponentType }>('/src/tiles/members/*.tsx'),
 );
 
 /** The exports a page's own tile already shows alone, by the id of that page. */
@@ -143,7 +140,9 @@ const memberTileWindows: Readonly<Record<string, { width: number; height: number
 /** The tile of an export documented on another's page, where it has one. */
 export const memberTileOf = (component: string): ComponentType | undefined => {
   const page = shownByPageTile[component];
-  return page ? tileOf(page) : memberTiles.get(`./members/${component}.tsx`);
+  if (page) return tileOf(page);
+  const path = `/src/tiles/members/${component}.tsx`;
+  return memberTiles.has(path) ? memberTiles.component(path) : undefined;
 };
 
 /** The window of an export's tile, where it needs another than the tiles'. */

@@ -272,7 +272,7 @@ function pageProblems(page: PageReading) {
       );
     if (role === 'overview' && motion && !specimens.has(name))
       problems.push(
-        `example ${name} has motion but no specimen apps/site/src/specimens/${document.id}/${name}.tsx to play it`,
+        `example ${name} has motion but no playback apps/site/src/specimens/${document.id}/${name}.tsx, named after it, to play it`,
       );
   }
   // A foundation's example file is the code of its figure of the same name.

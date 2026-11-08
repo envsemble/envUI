@@ -1,5 +1,5 @@
 import StateInLabel from '../../examples/switch/StateInLabel';
-import { usePointer } from '../../motion/Motion';
+import { usePointer } from '../../motion/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
 import { toggling } from './Toggling';
 

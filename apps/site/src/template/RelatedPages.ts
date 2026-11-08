@@ -1,16 +1,13 @@
 /*
  * The pages a page relates to, for its Related tiles and the galleries: which page documents a
- * component, the address of a related page, and the example or specimen a tile shows.
+ * component, the address of a related page, and and what a tile shows: an example, or a foundation's tile.
  */
 import type { ComponentType } from 'react';
-import type {
-  DocumentationMetadata,
-  StageFill,
-} from '../../../../scripts/docs/model/DocumentationTypes';
+import type { DocumentationMetadata, StageFill } from '@docs-model/DocumentationTypes';
 import { routeHref } from '../navigation/Address';
 import { pageHref, groupedPages, routeOfDocument } from '../navigation/SiteRoutes';
 import { documents, type DocumentSummary } from '../pages/PageModel';
-import { hasPageSpecimen } from '../figures/PageSpecimens';
+import { hasFoundationTile } from '../tiles/foundations/FoundationTiles';
 import {
   memberTileOf,
   memberTileWindow,
@@ -46,8 +43,8 @@ export interface TilePicture {
   open: boolean;
   /** The fill its figure's stage takes, where the page's would hide it. */
   stage?: StageFill;
-  /** A page without an example, such as a foundation's: the id of its specimen (PageSpecimens.tsx). */
-  specimen?: string;
+  /** A foundation's page, without an example: its id, for its tile (tiles/foundations/FoundationTiles.tsx). */
+  foundation?: string;
   /**
    * A composition drawn for the tile instead of an example: the page's own tile (tiles/Tiles.ts).
    */
@@ -77,7 +74,7 @@ const memberExamples: Record<string, string> = {
  * open; else the Overview's first example, its lead example. For an export that isn't the page's
  * first, such as SearchField on the TextField page, its own tile (tiles/members/), else the example
  * that renders it (memberExamples), else the first named after it, where there is one. A page
- * without one, such as a foundation's, shows its specimen.
+ * without one, such as a foundation's, shows its foundation tile.
  */
 export function tilePictureOf(
   document: DocumentSummary,
@@ -126,8 +123,8 @@ export function tilePictureOf(
       ));
   const chosen = named || (!own && anatomy?.open ? anatomy : lead);
   if (!chosen)
-    return hasPageSpecimen(document.id)
-      ? { page: document.id, name: document.id, open: false, specimen: document.id }
+    return hasFoundationTile(document.id)
+      ? { page: document.id, name: document.id, open: false, foundation: document.id }
       : undefined;
   return {
     page: document.id,

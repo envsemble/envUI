@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Breadcrumbs } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../motion/Motion';
-import { motionDuration, motionEase } from '../motion/MotionTokens';
+import type { PointerStep } from '../motion/PointerPlan';
+import { usePointer } from '../motion/PointerPlayback';
+import { rootMotionDuration, rootMotionEasing } from '../motion/RootMotionTokens';
 
 const link = (index: number) => `.env-breadcrumbs-item:nth-child(${index}) > .env-breadcrumbs-link`;
 
@@ -28,7 +29,7 @@ const script: PointerStep[] = [
 ];
 
 /** How long the trail drawn anew takes to crossfade in over the one it replaces: the slow token. */
-const fade = () => motionDuration('slow');
+const fade = () => rootMotionDuration('slow');
 
 /**
  * Draws its children anew whenever `round` changes, the new ones fading in over the old, which
@@ -78,7 +79,7 @@ function Layer({
     arrived.current = true;
     element.current?.animate([{ opacity: 0 }, { opacity: 1 }], {
       duration: fade(),
-      easing: motionEase(),
+      easing: rootMotionEasing(),
     });
   }, []);
   useEffect(() => {

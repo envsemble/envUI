@@ -1,7 +1,8 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 import { Button, Checkbox, Column, IconButton, Kbd, Row, TextField } from '@envsemble/envui';
 import { IconMoreVert } from '@envsemble/envui/icons/MoreVert';
-import { usePointer, type PointerStep } from '../../motion/Motion';
+import type { PointerStep } from '../../motion/PointerPlan';
+import { usePointer } from '../../motion/PointerPlayback';
 import type { FoundationFigure } from './FoundationFigures';
 import { CornerLabel } from './Steps';
 import { Figure } from './Topic';
@@ -13,7 +14,7 @@ import { Figure } from './Topic';
 
 /**
  * The marks the pointer no one sees gives what holds focus, which the site's :focus-visible and
- * :focus-within rules follow (VirtualPointer.ts): an animated figure is inert, so it can't hold
+ * :focus-within rules follow (KeyboardControl.ts): an animated figure is inert, so it can't hold
  * real focus.
  */
 const focusMark = 'data-catalogue-focus';

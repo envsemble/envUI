@@ -4,7 +4,7 @@ import { IconArrowForward } from '@envsemble/envui/icons/ArrowForward';
 import { routeHref } from '../navigation/Address';
 import type { RoutePage } from '../navigation/SiteRoutes';
 import { useAutoplay } from '../motion/Autoplay';
-import { usePlaying } from '../motion/Motion';
+import { usePlaying } from '../motion/usePlaying';
 import { TileStage } from './TileStage';
 import { useNear } from './useNear';
 import { frameOf, tilePictureOf, type TilePicture } from '../template/RelatedPages';

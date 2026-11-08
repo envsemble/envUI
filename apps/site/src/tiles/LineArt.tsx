@@ -1,5 +1,5 @@
 import { LineArt } from '@envsemble/envui';
-import { useTimeline } from '../motion/Motion';
+import { useTimeline } from '../motion/Timeline';
 
 /** The drawing at rest, then playing, a little longer than its motion takes, which ends still. */
 const durations = [600, 6500];

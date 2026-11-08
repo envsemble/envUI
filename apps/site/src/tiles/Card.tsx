@@ -1,6 +1,7 @@
 import type { CSSProperties } from 'react';
 import { Card, Column, Text } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../motion/Motion';
+import type { PointerStep } from '../motion/PointerPlan';
+import { usePointer } from '../motion/PointerPlayback';
 
 /**
  * The card hovered, its fill taking the hover layer; pressed and held a moment, the pressed layer

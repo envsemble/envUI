@@ -2,7 +2,8 @@ import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from
 import { Button, Column, Composer, Grid, Message, MessageList } from '@envsemble/envui';
 import { Markdown } from '@envsemble/envui/content';
 import { IconArrowDownward } from '@envsemble/envui/icons/ArrowDownward';
-import { usePointer, type PointerStep } from '../../motion/Motion';
+import type { PointerStep } from '../../motion/PointerPlan';
+import { usePointer } from '../../motion/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
 import { Renew } from '../../motion/Renew';
 

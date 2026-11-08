@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef, useState } from 'react';
-import { usePointer, type PointerStep } from '../../motion/Motion';
+import type { PointerStep } from '../../motion/PointerPlan';
+import { usePointer } from '../../motion/PointerPlayback';
 
 /*
  * The do and the don't of a ConfirmDialog's tone play one timeline, side by side, by keyboard
@@ -23,7 +24,7 @@ const script: PointerStep[] = [
 ];
 
 /**
- * What marks focus for the site's :focus-visible rules (VirtualPointer.ts): an animated figure is
+ * What marks focus for the site's :focus-visible rules (KeyboardControl.ts): an animated figure is
  * inert, so the dialog can't take real focus there, as it does outside one.
  */
 const focusMark = 'data-catalogue-focus';

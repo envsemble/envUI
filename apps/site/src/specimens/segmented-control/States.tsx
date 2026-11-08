@@ -2,8 +2,10 @@ import { useState } from 'react';
 import { SegmentedControl } from '@envsemble/envui';
 import { IconViewList } from '@envsemble/envui/icons/ViewList';
 import { IconViewModule } from '@envsemble/envui/icons/ViewModule';
-import { Example, Specimen, SpecimenGrid } from '../../figures/Example';
-import { usePointer, type PointerStep } from '../../motion/Motion';
+import { Example, SpecimenGrid } from '../../figures/Example';
+import { SpecimenPart } from '../../figures/Specimen';
+import type { PointerStep } from '../../motion/PointerPlan';
+import { usePointer } from '../../motion/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
 import { PressedKeys } from '../../motion/PressedKeys';
 
@@ -62,15 +64,15 @@ function Choosing() {
   return (
     <SpecimenGrid>
       <PressedKeys keys={pressed?.keys ?? null} press={pressed?.press ?? 0} />
-      <Specimen title="With counts">
+      <SpecimenPart title="With counts">
         <SegmentedControl
           aria-label="Work items"
           value="open"
           onValueChange={ignore}
           items={statuses}
         />
-      </Specimen>
-      <Specimen title="With icons">
+      </SpecimenPart>
+      <SpecimenPart title="With icons">
         <SegmentedControl
           aria-label="Layout"
           value={layout}
@@ -80,8 +82,8 @@ function Choosing() {
             { value: 'board', label: 'Board', icon: <IconViewModule /> },
           ]}
         />
-      </Specimen>
-      <Specimen title="A disabled option">
+      </SpecimenPart>
+      <SpecimenPart title="A disabled option">
         <SegmentedControl
           aria-label="Period"
           value={period}
@@ -92,8 +94,8 @@ function Choosing() {
             { value: 'quarter', label: 'Quarter', disabled: true },
           ]}
         />
-      </Specimen>
-      <Specimen title="Disabled">
+      </SpecimenPart>
+      <SpecimenPart title="Disabled">
         <SegmentedControl
           aria-label="Work items, unavailable"
           value="blocked"
@@ -101,7 +103,7 @@ function Choosing() {
           items={statuses}
           disabled
         />
-      </Specimen>
+      </SpecimenPart>
     </SpecimenGrid>
   );
 }

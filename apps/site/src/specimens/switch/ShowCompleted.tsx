@@ -1,5 +1,6 @@
 import ShowCompleted from '../../examples/switch/ShowCompleted';
-import { usePointer, type PointerStep } from '../../motion/Motion';
+import type { PointerStep } from '../../motion/PointerPlan';
+import { usePointer } from '../../motion/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
 
 const control = '.env-switch-input';

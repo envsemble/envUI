@@ -527,17 +527,17 @@ test('an example the catalogue plays, or an anatomy held in a moment, needs its 
     await rejects(
       frontmatter.replace('  Basic: overview', '  Basic:\n    role: overview\n    motion: true') +
         body,
-      /example Basic has motion but no specimen apps\/site\/src\/specimens\/switch\/Basic\.tsx/,
+      /example Basic has motion but no playback apps\/site\/src\/specimens\/switch\/Basic\.tsx/,
     );
     await rejects(
       frontmatter +
         body.replace('figure=Narrow widths="16 30"', 'figure=Narrow motion widths="16 30"'),
-      /example Narrow has motion but no specimen/,
+      /example Narrow has motion but no playback/,
     );
     // An anatomy figure held in a moment needs its specimen of the same name too.
     await rejects(
       frontmatter + body.replace('figure=Parts\n', 'figure=Parts specimen\n'),
-      /anatomy Parts has specimen but no specimen apps\/site\/src\/specimens\/switch\/Parts\.tsx/,
+      /anatomy Parts has specimen but no playback apps\/site\/src\/specimens\/switch\/Parts\.tsx/,
     );
     // With its specimen, an example the catalogue plays says so, in the Overview and on its fence.
     await writeFile(join(specimens, 'switch', 'Basic.tsx'), 'export default function Basic() {}\n');

@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react';
 import { Surface, Text, type SurfaceRadius } from '@envsemble/envui';
-import { useTimeline } from '../motion/Motion';
+import { useTimeline } from '../motion/Timeline';
 
 /**
  * Step by step, its corners: a pane's large ones, a card's small ones, square, and back. Its edge,

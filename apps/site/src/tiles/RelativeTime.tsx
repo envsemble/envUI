@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { RelativeTime, Text } from '@envsemble/envui';
 import { useMedia } from '../motion/Autoplay';
-import { usePointer, type PointerStep } from '../motion/Motion';
+import type { PointerStep } from '../motion/PointerPlan';
+import { usePointer } from '../motion/PointerPlayback';
 import { narrowGallery } from './Tiles';
 
 /** The moment the tile's clock reads: fixed, so the times and the tooltip's date never change. */

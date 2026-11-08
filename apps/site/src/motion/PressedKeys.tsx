@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 import { createPortal } from 'react-dom';
 import { Kbd } from '@envsemble/envui';
-import { useStageLayer } from './Motion';
+import { useStageLayer } from './Playback';
 
 /** The room kept between the cap and what it sits beside, in px. */
 const gap = 12;

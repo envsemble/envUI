@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useState, type CSSProperties, type ReactNode } from 'react';
-import { motionDuration } from './MotionTokens';
+import { rootMotionDuration } from './RootMotionTokens';
 
 /** How long the example takes to fade out, and then in again, as it is drawn anew. */
 const fade = 'medium';
@@ -36,7 +36,7 @@ export function Renew({
     if (!fading) return;
     const timer = window.setTimeout(
       () => setShown(round),
-      motionDuration(crossfade ? crossfadeTime : fade),
+      rootMotionDuration(crossfade ? crossfadeTime : fade),
     );
     return () => window.clearTimeout(timer);
   }, [fading, round, crossfade]);

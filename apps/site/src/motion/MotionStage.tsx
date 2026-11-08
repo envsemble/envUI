@@ -15,11 +15,12 @@ import { flushSync } from 'react-dom';
 import { IconButton, Tooltip } from '@envsemble/envui';
 import { IconPause } from '@envsemble/envui/icons/Pause';
 import { IconPlayArrow } from '@envsemble/envui/icons/PlayArrow';
-import type { StageFill } from '../../../../scripts/docs/model/DocumentationTypes';
+import type { StageFill } from '@docs-model/DocumentationTypes';
 import { useVerdictFit } from '../fit/useVerdictFit';
 import { useDisplaySettings } from '../theme/DisplaySettings';
-import { Playback, StageOverlays, useInView } from './Motion';
-import { motionDuration } from './MotionTokens';
+import { Playback, StageOverlays } from './Playback';
+import { useInView } from './useInView';
+import { rootMotionDuration } from './RootMotionTokens';
 import { FigureDevice, OnDevice } from '../figures/DeviceFrame';
 
 /** What the reader can operate in a figure: a stage with none of it stays a recording. */
@@ -393,7 +394,7 @@ function useThemeFade(subject: HTMLElement | null) {
       // The fade takes one and a half of the slow token, and a frame to start.
       timer = setTimeout(
         () => delete subject.dataset.catalogueThemeFading,
-        1.5 * motionDuration('slow') + 50,
+        1.5 * rootMotionDuration('slow') + 50,
       );
     });
     observer.observe(subject, { subtree: true, attributeFilter: themeAttributes });

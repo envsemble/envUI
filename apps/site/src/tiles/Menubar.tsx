@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { Menu, Menubar } from '@envsemble/envui';
 import { useMedia } from '../motion/Autoplay';
-import { useHeldView, usePointer, type PointerStep } from '../motion/Motion';
+import { useHeldView } from '../motion/Playback';
+import type { PointerStep } from '../motion/PointerPlan';
+import { usePointer } from '../motion/PointerPlayback';
 import { narrowGallery } from './Tiles';
 
 const menu = (label: string) => `.env-menubar-trigger:nth-child(${label} of .env-menubar-trigger)`;

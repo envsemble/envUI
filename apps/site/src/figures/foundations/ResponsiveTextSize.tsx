@@ -8,7 +8,7 @@ import {
   Surface,
 } from '@envsemble/envui';
 import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
-import { useTimeline } from '../../motion/Motion';
+import { useTimeline } from '../../motion/Timeline';
 import { remPixels } from '../../shared/Lengths';
 import { AtTextSize, CornerLabel, StepStack } from './Steps';
 import { Figure } from './Topic';

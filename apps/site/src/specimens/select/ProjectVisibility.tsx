@@ -1,5 +1,6 @@
 import ProjectVisibility from '../../examples/select/ProjectVisibility';
-import { usePointer, type PointerStep } from '../../motion/Motion';
+import type { PointerStep } from '../../motion/PointerPlan';
+import { usePointer } from '../../motion/PointerPlayback';
 import { MotionStage, rowsAnd } from '../../motion/MotionStage';
 
 const highlighted = '.env-select-item[data-highlighted]';

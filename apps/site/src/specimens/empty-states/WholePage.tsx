@@ -3,7 +3,7 @@ import { Button, Column, Page, Scaffold, Text, TopBar } from '@envsemble/envui';
 import { IconLock } from '@envsemble/envui/icons/Lock';
 import { IconSearchOff } from '@envsemble/envui/icons/SearchOff';
 import { IconWifiOff } from '@envsemble/envui/icons/WifiOff';
-import { useTimeline } from '../../motion/Motion';
+import { useTimeline } from '../../motion/Timeline';
 import { MotionStage } from '../../motion/MotionStage';
 import { Renew } from '../../motion/Renew';
 

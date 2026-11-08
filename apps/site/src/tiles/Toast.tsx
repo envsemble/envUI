@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { PortalContainer, ToastProvider, useToast } from '@envsemble/envui';
-import { usePointer, useStageLayer, type PointerStep } from '../motion/Motion';
+import { useStageLayer } from '../motion/Playback';
+import type { PointerStep } from '../motion/PointerPlan';
+import { usePointer } from '../motion/PointerPlayback';
 
 /*
  * Undo pressed on the notification of an archived project: it leaves, and a notification that the

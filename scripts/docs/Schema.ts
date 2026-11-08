@@ -2,7 +2,7 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { isAbsolute, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parse as parseYaml } from 'yaml';
-import type { DocumentationBlock } from './model/DocumentationTypes.ts';
+import { pageStatuses, type DocumentationBlock } from './model/DocumentationTypes.ts';
 
 export const documentationDirectory = fileURLToPath(new URL('../../docs/', import.meta.url));
 
@@ -44,8 +44,6 @@ export const componentGroups = [
   'Overlays',
   'App frame & layout',
 ];
-/** A page's or an export's status, a ladder from alpha to stable, then deprecated. */
-export const statuses = ['alpha', 'beta', 'stable', 'deprecated'];
 /**
  * The status of an export a guide or foundations page documents, such as EnvUIProvider or
  * useContainerSize, unless the page's `statuses` gives it another, or a guide's `status`.
@@ -308,7 +306,7 @@ export function withImport<Section extends PageSection>(
 export const frontmatterSchema: FrontmatterSchema = {
   title: { type: 'string', required: true },
   summary: { type: 'string', required: true },
-  status: { type: 'string', required: true, values: statuses },
+  status: { type: 'string', required: true, values: pageStatuses },
   /** The status of an export that differs from the page's, such as a beta editor on a stable page. */
   statuses: { type: 'statuses' },
   since: { type: 'string', required: true, pattern: /^\d+\.\d+\.\d+$/ },
@@ -325,7 +323,7 @@ export const frontmatterSchema: FrontmatterSchema = {
 const compositionFrontmatter: FrontmatterSchema = {
   title: { type: 'string', required: true },
   summary: { type: 'string', required: true },
-  status: { type: 'string', required: true, values: statuses },
+  status: { type: 'string', required: true, values: pageStatuses },
   since: { type: 'string', required: true, pattern: /^\d+\.\d+\.\d+$/ },
   aliases: { type: 'strings', required: true, nonEmpty: true },
   useWhen: { type: 'strings', required: true, nonEmpty: true },

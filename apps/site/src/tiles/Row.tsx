@@ -1,6 +1,6 @@
 import { Row, Surface, Text } from '@envsemble/envui';
 import { useMedia } from '../motion/Autoplay';
-import { useTimeline } from '../motion/Motion';
+import { useTimeline } from '../motion/Timeline';
 import { outlined } from './Outline';
 import { narrowGallery } from './Tiles';
 

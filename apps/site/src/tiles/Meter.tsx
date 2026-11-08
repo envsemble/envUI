@@ -1,5 +1,5 @@
 import { Meter } from '@envsemble/envui';
-import { useTimeline } from '../motion/Motion';
+import { useTimeline } from '../motion/Timeline';
 
 /* Seats assigned one by one until the plan is full, then three of them freed again. */
 const seats = [2, 3, 4, 5];

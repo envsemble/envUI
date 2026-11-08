@@ -46,9 +46,9 @@ export const deviceKinds = ['phone', 'window'];
  * other. With `widths`, `sweep` shows one
  * frame whose width sweeps between them and back, `classes` names the window class on its ruler,
  * and `fit` draws the frame smaller where it must to reach its widest width on the stage; `motion`
- * plays the example in the catalogue: its animated specimen of the same name takes its place; and
- * `specimen` numbers an anatomy figure's parts on its specimen of the same name, which holds the
- * example in a moment its parts show apart, such as a value caught as it rolls in.
+ * plays the example in the catalogue: its playback, the specimen of the same name, takes its place; and
+ * `specimen` numbers an anatomy figure's parts on its playback, the specimen of the same name, held in
+ * a moment its parts show apart, such as a value caught as it rolls in.
  */
 const figureFlags = new Set([
   'open',
@@ -239,12 +239,12 @@ function exampleFigure(
   if (attributes.motion === true) block.motion = true;
   if (block.motion && !specimens.has(name))
     problems.push(
-      `example ${name} has motion but no specimen apps/site/src/specimens/${document.id}/${name}.tsx to play it`,
+      `example ${name} has motion but no playback apps/site/src/specimens/${document.id}/${name}.tsx, named after it, to play it`,
     );
   if (attributes.specimen === true) block.specimen = true;
   if (block.specimen && !specimens.has(name))
     problems.push(
-      `anatomy ${name} has specimen but no specimen apps/site/src/specimens/${document.id}/${name}.tsx to number`,
+      `anatomy ${name} has specimen but no playback apps/site/src/specimens/${document.id}/${name}.tsx, named after it, to number`,
     );
   return block;
 }

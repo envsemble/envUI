@@ -1,6 +1,7 @@
 import { Column } from '@envsemble/envui';
 import Choices from '../../examples/menu/Choices';
-import { usePointer, type PointerStep } from '../../motion/Motion';
+import type { PointerStep } from '../../motion/PointerPlan';
+import { usePointer } from '../../motion/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
 
 const radio = (index: number) =>

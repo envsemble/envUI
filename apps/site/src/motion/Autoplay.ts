@@ -1,6 +1,6 @@
 import { useEffect, useSyncExternalStore, type RefObject } from 'react';
 import { useDisplaySettings } from '../theme/DisplaySettings';
-import { reducedMotionQuery } from './MotionTokens';
+import { reducedMotionQuery } from '../../../../packages/ui/src/internal/reducedMotion';
 
 /*
  * Tiles that play by themselves where the reader can't hover, as on a phone, where the galleries
@@ -114,15 +114,19 @@ function subscribe(listener: () => void) {
   return () => listeners.delete(listener);
 }
 
-/** Whether a media query matches now, following it as it changes. */
-export function useMedia(query: string) {
+/**
+ * Whether a media query matches now, following it as it changes: the query, or what gives its list,
+ * such as the library's reducedMotionQuery.
+ */
+export function useMedia(query: string | (() => MediaQueryList | null)) {
+  const list = () => (typeof query === 'string' ? matchMedia(query) : query());
   return useSyncExternalStore(
     (change) => {
-      const list = matchMedia(query);
-      list.addEventListener('change', change);
-      return () => list.removeEventListener('change', change);
+      const media = list();
+      media?.addEventListener('change', change);
+      return () => media?.removeEventListener('change', change);
     },
-    () => matchMedia(query).matches,
+    () => list()?.matches ?? false,
     () => false,
   );
 }

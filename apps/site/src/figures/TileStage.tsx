@@ -9,10 +9,10 @@ import {
 } from 'react';
 import { Theme, useTheme } from '@envsemble/envui';
 import { IconArticle } from '@envsemble/envui/icons/Article';
-import { Playback, StageOverlays } from '../motion/Motion';
+import { Playback, StageOverlays } from '../motion/Playback';
 import { useDisplaySettings } from '../theme/DisplaySettings';
 import { ExampleRender } from './LiveExample';
-import { PageSpecimen } from './PageSpecimens';
+import { FoundationTile } from '../tiles/foundations/FoundationTiles';
 import type { TilePicture } from '../template/RelatedPages';
 import { TileSkeleton } from '../loading/Loading';
 import { useFit } from '../fit/useFit';
@@ -36,11 +36,11 @@ class TileBoundary extends Component<{ children: ReactNode }, { failed: boolean 
 
 /**
  * A tiny live picture of an alternative on the recessed canvas: its example, inert and scaled down
- * to fit, rendered once the tiles near the viewport; for a page without one, its specimen, in the
+ * to fit, rendered once the tiles near the viewport; for a page without one, a foundation's tile, in the
  * same way, and from then until it shows, a skeleton of the stage. Without either, a page icon. A page's own
  * tile, or a gallery's composition, takes the example's place. A gallery's tile passes its own
  * stage class. While `playing`, unless the sidebar paused every animation, its animation plays
- * (motion/Motion.tsx), and it rests at its still once that ends.
+ * (motion/Playback.tsx), and it rests at its still once that ends.
  */
 export function TileStage({
   picture,
@@ -104,8 +104,8 @@ export function TileStage({
           </Playback>
         </Suspense>
       </TileBoundary>
-    ) : picture.specimen ? (
-      <PageSpecimen id={picture.specimen} />
+    ) : picture.foundation ? (
+      <FoundationTile id={picture.foundation} />
     ) : (
       <ExampleRender page={picture.page} name={picture.name} fallback={null} />
     ));
@@ -130,8 +130,8 @@ export function TileStage({
       {...theme}
       ref={stage}
       className={className}
-      data-example={picture?.specimen || Composition ? undefined : picture?.name}
-      data-catalogue-specimen={picture?.specimen}
+      data-example={picture?.foundation || Composition ? undefined : picture?.name}
+      data-catalogue-specimen={picture?.foundation}
       data-stage={picture?.stage}
       data-empty={picture ? undefined : ''}
       data-playing={plays ? '' : undefined}

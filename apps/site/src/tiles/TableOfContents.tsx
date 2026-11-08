@@ -1,7 +1,9 @@
 import { useEffect, useId, useRef, type MouseEvent } from 'react';
 import { TableOfContents } from '@envsemble/envui';
-import { useHeldView, usePointer, type PointerStep } from '../motion/Motion';
-import { reducedMotion } from '../motion/MotionTokens';
+import { useHeldView } from '../motion/Playback';
+import type { PointerStep } from '../motion/PointerPlan';
+import { usePointer } from '../motion/PointerPlayback';
+import { prefersReducedMotion } from '../../../../packages/ui/src/internal/reducedMotion';
 
 /** How tall the unseen article's view and each of its sections are, in px. */
 const view = 100;
@@ -66,7 +68,7 @@ export default function TableOfContentsTile() {
     cancelAnimationFrame(glide.current);
     const from = area.scrollTop;
     const to = element.offsetTop - view / 4;
-    if (reducedMotion()) {
+    if (prefersReducedMotion()) {
       area.scrollTop = to;
       return;
     }

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@envsemble/envui';
-import { usePointer, type PointerStep } from '../motion/Motion';
+import type { PointerStep } from '../motion/PointerPlan';
+import { usePointer } from '../motion/PointerPlayback';
 
 /**
  * Hovered, pressed and released, the button saves: pending a moment, then ready again, which it

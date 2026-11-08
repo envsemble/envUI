@@ -10,21 +10,18 @@ import {
   type RefObject,
 } from 'react';
 import { Theme, useTheme } from '@envsemble/envui';
-import type {
-  AnatomyLegendItem,
-  StageFill,
-} from '../../../../scripts/docs/model/DocumentationTypes';
+import type { AnatomyLegendItem, StageFill } from '@docs-model/DocumentationTypes';
 import { remPixels } from '../shared/Lengths';
 import { Documentation } from '../pages/Documentation';
 import { ExampleCode, ExampleRender, leastFitScale } from './LiveExample';
 import { OpenExample } from './OpenExample';
 import { legendOf, partDescription } from '../template/Parts';
-import { legendName } from '../../../../scripts/docs/model/CatalogueContent';
+import { legendName } from '@docs-model/CatalogueContent';
 import { OptionLegend } from '../template/OptionLegend';
-import { SpecimenRender } from './Specimen';
+import { ExamplePlayback } from './Specimen';
 import { measure, measureVariants } from './AnatomyLayout';
 import type { Callout, Room } from './AnatomyPlacement';
-import type { OptionTable } from '../../../../scripts/docs/model/CatalogueContent';
+import type { OptionTable } from '@docs-model/CatalogueContent';
 
 /** A subject at most this wide and tall, in CSS pixels, is small enough to show larger. */
 const smallSubject = { width: 240, height: 48 };
@@ -338,7 +335,7 @@ function AnatomyStage({
     onBeside,
   });
   const example = specimen ? (
-    <SpecimenRender page={page} name={name} onStage />
+    <ExamplePlayback page={page} name={name} onStage />
   ) : (
     <ExampleRender page={page} name={name} />
   );

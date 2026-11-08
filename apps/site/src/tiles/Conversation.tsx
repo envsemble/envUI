@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Column, Composer, Message, MessageList } from '@envsemble/envui';
 import { Markdown } from '@envsemble/envui/content';
-import { usePointer, type PointerStep } from '../motion/Motion';
+import type { PointerStep } from '../motion/PointerPlan';
+import { usePointer } from '../motion/PointerPlayback';
 
 interface Entry {
   id: number;

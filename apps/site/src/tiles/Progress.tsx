@@ -1,5 +1,5 @@
 import { Progress } from '@envsemble/envui';
-import { useTimeline } from '../motion/Motion';
+import { useTimeline } from '../motion/Timeline';
 
 /**
  * An upload that advances, finishes, and the next one fills again to where the first began: the

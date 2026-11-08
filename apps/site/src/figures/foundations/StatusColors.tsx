@@ -7,7 +7,7 @@ import { IconInfo } from '@envsemble/envui/icons/Info';
 import { IconRadioButtonChecked } from '@envsemble/envui/icons/RadioButtonChecked';
 import { IconTaskAlt } from '@envsemble/envui/icons/TaskAlt';
 import { IconWarning } from '@envsemble/envui/icons/Warning';
-import { useTimeline } from '../../motion/Motion';
+import { useTimeline } from '../../motion/Timeline';
 import { CornerLabel } from './Steps';
 import { Figure } from './Topic';
 

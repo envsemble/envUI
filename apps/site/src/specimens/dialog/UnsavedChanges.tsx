@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import UnsavedChanges from '../../examples/dialog/UnsavedChanges';
-import { usePointer, type PointerStep } from '../../motion/Motion';
+import type { PointerStep } from '../../motion/PointerPlan';
+import { usePointer } from '../../motion/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
 import { Renew } from '../../motion/Renew';
 

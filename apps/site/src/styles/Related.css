@@ -155,7 +155,7 @@
 }
 
 /* A tile at rest draws its still without motion: drawn anew as it stops (Playback's `redraw`,
-   Motion.tsx), what it shows open, such as a menu or a hover card, is there at once rather than
+   Playback.tsx), what it shows open, such as a menu or a hover card, is there at once rather than
    coming in again, and nothing is caught on its way. */
 .catalogue-related-canvas[data-tile]:not([data-playing] *) * {
   transition: none;
@@ -222,65 +222,65 @@
   margin: 0;
 }
 
-/* A page's specimen in a tile, for a page without an example, such as a foundation's
-   (PageSpecimens.tsx): drawn with tokens, scaled to fit the stage as an example is. */
-.catalogue-page-specimen-icons {
+/* A foundation's tile, for a page without an example (tiles/foundations/FoundationTiles.tsx):
+   drawn with tokens, scaled to fit the stage as an example is. */
+.catalogue-foundation-tile-icons {
   color: var(--env-color-fg-default);
 }
 
-.catalogue-page-specimen-swatches > span {
+.catalogue-foundation-tile-swatches > span {
   inline-size: 3.5rem;
   block-size: 3.5rem;
   border-radius: var(--env-radius-lg);
   background: var(--env-color-bg-neutral-emphasis);
 }
-.catalogue-page-specimen-swatches > [data-role='primary'] {
+.catalogue-foundation-tile-swatches > [data-role='primary'] {
   background: var(--env-color-bg-primary-emphasis);
 }
-.catalogue-page-specimen-swatches > [data-role='accent'] {
+.catalogue-foundation-tile-swatches > [data-role='accent'] {
   background: var(--env-color-bg-accent-strong);
 }
-.catalogue-page-specimen-swatches > [data-role='success'] {
+.catalogue-foundation-tile-swatches > [data-role='success'] {
   background: var(--env-color-bg-success-emphasis);
 }
-.catalogue-page-specimen-swatches > [data-role='warning'] {
+.catalogue-foundation-tile-swatches > [data-role='warning'] {
   background: var(--env-color-bg-warning-emphasis);
 }
-.catalogue-page-specimen-swatches > [data-role='danger'] {
+.catalogue-foundation-tile-swatches > [data-role='danger'] {
   background: var(--env-color-bg-danger-emphasis);
 }
 
-.catalogue-page-specimen-spacing > span {
+.catalogue-foundation-tile-spacing > span {
   block-size: var(--env-space-3);
   border-radius: var(--env-radius-xs);
   background: var(--env-color-bg-primary-solid);
 }
-.catalogue-page-specimen-spacing > [data-step='1'] {
+.catalogue-foundation-tile-spacing > [data-step='1'] {
   inline-size: calc(4 * var(--env-space-1));
 }
-.catalogue-page-specimen-spacing > [data-step='2'] {
+.catalogue-foundation-tile-spacing > [data-step='2'] {
   inline-size: calc(4 * var(--env-space-2));
 }
-.catalogue-page-specimen-spacing > [data-step='3'] {
+.catalogue-foundation-tile-spacing > [data-step='3'] {
   inline-size: calc(4 * var(--env-space-3));
 }
-.catalogue-page-specimen-spacing > [data-step='4'] {
+.catalogue-foundation-tile-spacing > [data-step='4'] {
   inline-size: calc(4 * var(--env-space-4));
 }
-.catalogue-page-specimen-spacing > [data-step='5'] {
+.catalogue-foundation-tile-spacing > [data-step='5'] {
   inline-size: calc(4 * var(--env-space-5));
 }
-.catalogue-page-specimen-spacing > [data-step='6'] {
+.catalogue-foundation-tile-spacing > [data-step='6'] {
   inline-size: calc(4 * var(--env-space-6));
 }
-.catalogue-page-specimen-spacing > [data-step='7'] {
+.catalogue-foundation-tile-spacing > [data-step='7'] {
   inline-size: calc(4 * var(--env-space-7));
 }
-.catalogue-page-specimen-spacing > [data-step='8'] {
+.catalogue-foundation-tile-spacing > [data-step='8'] {
   inline-size: calc(4 * var(--env-space-8));
 }
 
-.catalogue-page-specimen-windows > span {
+.catalogue-foundation-tile-windows > span {
   display: grid;
   place-items: end center;
   padding: var(--env-space-1);
@@ -289,26 +289,26 @@
   background: var(--env-color-bg-default);
   white-space: nowrap;
 }
-.catalogue-page-specimen-windows > [data-size='compact'] {
+.catalogue-foundation-tile-windows > [data-size='compact'] {
   inline-size: 4.5rem;
   block-size: 7rem;
 }
-.catalogue-page-specimen-windows > [data-size='medium'] {
+.catalogue-foundation-tile-windows > [data-size='medium'] {
   inline-size: 7rem;
   block-size: 8rem;
 }
-.catalogue-page-specimen-windows > [data-size='expanded'] {
+.catalogue-foundation-tile-windows > [data-size='expanded'] {
   inline-size: 11rem;
   block-size: 7rem;
 }
 
 /* The focus ring keyboard use shows, drawn on the button at rest. */
-.catalogue-page-specimen-focus {
+.catalogue-foundation-tile-focus {
   outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: 0.125rem;
 }
 
-.catalogue-page-specimen-content {
+.catalogue-foundation-tile-content {
   text-align: center;
 }
 

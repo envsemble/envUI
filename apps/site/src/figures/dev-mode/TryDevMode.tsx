@@ -3,7 +3,7 @@ import { Button, Column, Row, Text, Theme, useTheme } from '@envsemble/envui';
 import { IconViewInAr } from '@envsemble/envui/icons/ViewInAr';
 import type { DevModeHandle } from '@envsemble/envui/dev';
 import { keepLinksInPlace } from '../LiveExample';
-import { DemoApp } from './DemoApp';
+import { SmallApplication } from './SmallApplication';
 // The 3D view of the application below, captured from the real dev mode by
 // scripts/docs/CaptureDevModeImage.ts (npm run docs:dev-mode-image).
 import viewLight from './dev-mode-3d-light.webp';
@@ -19,7 +19,7 @@ const viewSize = { width: 960, height: 600 };
  * reader's theme, and Try dev mode, which puts the application in the picture's place and opens
  * the real dev mode over it at once. Nothing of dev mode loads before it is pressed.
  */
-export function DevModeDemo() {
+export function TryDevMode() {
   const { theme } = useTheme();
   const [started, setStarted] = useState(false);
   const [devMode, setDevMode] = useState<DevModeHandle | null>(null);
@@ -106,7 +106,7 @@ function LiveApplication({
     >
       <div ref={root} data-dev-mode-demo="">
         {/* Its three fixed columns squeeze the cards at a narrow width: the problem dev mode finds. */}
-        <DemoApp fixedColumns />
+        <SmallApplication fixedColumns />
       </div>
     </Column>
   );

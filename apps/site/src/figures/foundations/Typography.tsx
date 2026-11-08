@@ -9,7 +9,7 @@ import {
   useTheme,
   type TextVariant,
 } from '@envsemble/envui';
-import { useTimeline } from '../../motion/Motion';
+import { useTimeline } from '../../motion/Timeline';
 import { WidthSweep } from '../../motion/WidthSweep';
 import type { FoundationFigure } from './FoundationFigures';
 import { MarkedSubject } from './Marks';

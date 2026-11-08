@@ -44,7 +44,7 @@ test('each Related tile shows the component it names, also one documented on ano
       const metadata = full?.default.metadata;
       for (const { name, picture } of metadata?.avoidWhen ? related.alternativesOf(metadata) : []) {
         // A page's own export shows the page's tile; a pattern or a guide is no component.
-        if (!related.pageOf(name) || !picture || picture.tile || picture.specimen) continue;
+        if (!related.pageOf(name) || !picture || picture.tile || picture.foundation) continue;
         const { default: source } = (await load(
           `/src/examples/${picture.page}/${picture.name}.tsx?raw`,
         )) as { default: string };

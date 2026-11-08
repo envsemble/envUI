@@ -10,10 +10,10 @@ import { StageSkeleton } from '../loading/Loading';
  * scripts/site/SiteDevMode.ts checks the hosted build for it.
  */
 const demos = {
-  DevModeDemo: lazyPart(
-    () => import('../figures/dev-mode/DevModeDemo'),
-    (module) => module.DevModeDemo,
-    'src/figures/dev-mode/DevModeDemo.tsx',
+  TryDevMode: lazyPart(
+    () => import('../figures/dev-mode/TryDevMode'),
+    (module) => module.TryDevMode,
+    'src/figures/dev-mode/TryDevMode.tsx',
   ),
   // The guide's pictures of dev mode at work, which load none of it.
   DevModeButtonPicture: lazyPart(

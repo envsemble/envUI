@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { AvatarButton, IconButton, Surface, Text, TopBar } from '@envsemble/envui';
 import { IconRefresh } from '@envsemble/envui/icons/Refresh';
 import { useMedia } from '../motion/Autoplay';
-import { usePointer, type PointerStep } from '../motion/Motion';
+import type { PointerStep } from '../motion/PointerPlan';
+import { usePointer } from '../motion/PointerPlayback';
 import { outlined } from './Outline';
 import { narrowGallery } from './Tiles';
 

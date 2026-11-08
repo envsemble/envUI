@@ -1,6 +1,7 @@
 import PagesOfAList from '../../examples/pagination/PagesOfAList';
 import { Example } from '../../figures/Example';
-import { usePointer, type PointerStep } from '../../motion/Motion';
+import type { PointerStep } from '../../motion/PointerPlan';
+import { usePointer } from '../../motion/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
 
 const previous = '.env-pagination-button:nth-child(1 of .env-pagination-button)';

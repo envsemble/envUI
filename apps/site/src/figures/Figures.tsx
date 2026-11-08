@@ -7,15 +7,15 @@ import type {
   DocumentationBlock,
   DocumentationSection,
   StageFill,
-} from '../../../../scripts/docs/model/DocumentationTypes';
+} from '@docs-model/DocumentationTypes';
 import { Documentation } from '../pages/Documentation';
 import type { Documentation as Document } from '../pages/PageModel';
 import { AnatomyFigure } from './AnatomyFigure';
 import { ExampleCode, ExampleRender, keepLinksInPlace, LiveExample } from './LiveExample';
 import { OpenExample } from './OpenExample';
 import { SiteMarkdown } from '../template/OptionLegend';
-import { optionPieces, type OptionTable } from '../../../../scripts/docs/model/CatalogueContent';
-import { Specimen, SpecimenRender } from './Specimen';
+import { optionPieces, type OptionTable } from '@docs-model/CatalogueContent';
+import { ExamplePlayback, Specimen } from './Specimen';
 import { VerdictMotion } from '../motion/MotionStage';
 import {
   useFoundationFigures,
@@ -110,7 +110,7 @@ export function VerdictFigure({
     >
       {motion && page ? (
         <VerdictMotion value={wide ? 'wide' : 'square'}>
-          <SpecimenRender page={page} name={name ?? ''} />
+          <ExamplePlayback page={page} name={name ?? ''} />
         </VerdictMotion>
       ) : (
         <Column

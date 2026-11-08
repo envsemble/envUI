@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import ZoneBusyWhileUploading from '../../examples/file-upload/ZoneBusyWhileUploading';
-import { usePointer } from '../../motion/Motion';
+import { usePointer } from '../../motion/PointerPlayback';
 import { MotionStage } from '../../motion/MotionStage';
 import { Renew } from '../../motion/Renew';
 import { busyScript, zoneClock } from './Zone';

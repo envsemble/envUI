@@ -2,7 +2,7 @@
  * One picture's fit as it runs (useFit.ts): its stage and canvas, what it was asked for, its view,
  * and what it keeps from one fit to the next.
  */
-import { motionEasing } from '../motion/MotionTokens';
+import { rootEasingFunction } from '../motion/RootMotionTokens';
 import { trimRows } from './Crop';
 import type { Follow, Framed, Shape } from './HeldView';
 import type { Run } from './PlayFit';
@@ -100,7 +100,7 @@ export function newFitting(
     resize: new ResizeObserver(update),
     view: { x: 0, y: 0, scale: 1, toX: 0, toY: 0, toScale: 1, rest: 1, zoomed: false, frame: 0 },
     course: null,
-    ease: motionEasing('ease'),
+    ease: rootEasingFunction('ease'),
     first: { calm: 0, start: 0 },
     run: null,
     screen: false,

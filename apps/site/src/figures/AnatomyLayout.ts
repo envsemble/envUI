@@ -4,7 +4,7 @@
  * its item, with the room the names take. The geometry is measured in AnatomyGeometry.ts and the
  * callouts placed from it in AnatomyPlacement.ts.
  */
-import type { AnatomyLegendItem } from '../../../../scripts/docs/model/DocumentationTypes';
+import type { AnatomyLegendItem } from '@docs-model/DocumentationTypes';
 import {
   anatomyGeometry,
   labelWidths,

@@ -1,9 +1,9 @@
 /*
  * What a playing tile keeps in view (fit/useFit.ts): the elements its animation acts on. A
  * pointer's script names them itself, every element it moves to, types into or presses keys on
- * (usePointer in Motion.tsx), and what they open shows as it opens. A tile whose animation acts on
+ * (usePointer in PointerPlayback.ts), and what they open shows as it opens. A tile whose animation acts on
  * something its script doesn't name, such as a row a timeline changes, names it with
- * `useMustShow` (Motion.tsx):
+ * `useMustShow` (Playback.tsx):
  *
  *     useMustShow('.env-list-item:nth-child(4)', '.env-badge');
  *
@@ -47,7 +47,7 @@ export function mustShowOf(root: Element, anywhere = false): string[] {
 
 /*
  * A tile whose still shows what its animation acts on open, such as a select with its list open,
- * holds its view as it plays (useHeldView, Motion.tsx): it is framed once, at rest, on its still,
+ * holds its view as it plays (useHeldView, Playback.tsx): it is framed once, at rest, on its still,
  * written to be its largest state, and what happens in it, the highlight moving, the list closing
  * and opening again, happens in place, with nothing drawn smaller or moved.
  */
@@ -78,7 +78,7 @@ export const holdsView = (root: Element) => (holding.get(root) ?? 0) > 0;
 export const holdsFromTop = (root: Element) => (fromTop.get(root) ?? 0) > 0;
 
 /*
- * Where a playing tile's pointer is heading (usePointer, Motion.tsx): the point of its current move,
+ * Where a playing tile's pointer is heading (usePointer, PointerPlayback.ts): the point of its current move,
  * or of the last it made, as an element's selector and fractions of its box. A tile's view pans to
  * keep it in the stage, so what the pointer goes to, and presses there, is in view before the press
  * (useFit.ts). Each change is announced to the stage's root as a `headingEvent`.
