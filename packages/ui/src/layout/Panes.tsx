@@ -8,7 +8,6 @@ import {
   useLayoutEffect,
   useMemo,
   useRef,
-  useState,
   type ComponentPropsWithRef,
   type CSSProperties,
   type KeyboardEvent,
@@ -32,7 +31,7 @@ import type { ResizeDetails } from './resizeDetails.js';
 import { IconClose } from '../icons/Close.js';
 import { remPixels, roundToHundredth } from '../internal/lengths.js';
 import { useResizableWidth } from '../internal/useResizableWidth.js';
-import { useLatest } from '../internal/useLatest.js';
+import { useOpenState } from '../internal/useOpenState.js';
 import type { OverlayOpenChangeReason } from '../internal/overlayOpenChangeReason.js';
 import { flag } from '../internal/flag.js';
 import { keepTabInside, useSupportingSheet } from './internal/useSupportingSheet.js';
@@ -298,18 +297,9 @@ function Root({
     if (kept !== undefined) restore(kept);
   }, [persist, restore]);
 
-  const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
-  const open = controlledOpen ?? uncontrolledOpen;
-  const latestOpen = useLatest({ controlled: controlledOpen !== undefined, onOpenChange });
-  const setOpen = useCallback(
-    (next: boolean, reason: OpenChangeReason) => {
-      if (!latestOpen.current.controlled) setUncontrolledOpen(next);
-      latestOpen.current.onOpenChange?.(next, { reason });
-    },
-    [latestOpen],
-  );
-  const close = useCallback((reason: OpenChangeReason) => setOpen(false, reason), [setOpen]);
-  const show = useCallback(() => setOpen(true, 'trigger-press'), [setOpen]);
+  const [open, setOpen] = useOpenState({ open: controlledOpen, defaultOpen, onOpenChange });
+  const close = useCallback((reason: OpenChangeReason) => setOpen(false, { reason }), [setOpen]);
+  const show = useCallback(() => setOpen(true, { reason: 'trigger-press' }), [setOpen]);
   const resizedId = `${useId()}-resized`;
   const listRef = useRef<HTMLDivElement>(null);
   const context = useMemo<PanesContextValue>(
