@@ -1389,11 +1389,18 @@ test("an overlay's overview rests open, and people can close it and open it agai
   await page.goto(`${siteDevUrl}/components/command-palette`);
   const palette = page.locator('[data-section="overview"] .catalogue-open-example').first();
   const search = palette.getByRole('button', { name: 'Search', exact: true });
+  // Where it is within the figure's frame, which pressing a key in the palette may scroll.
+  const inFrame = () =>
+    search.evaluate((button) => {
+      const box = button.getBoundingClientRect();
+      const frame = button.closest('.site-live-example')!.getBoundingClientRect();
+      return { x: box.x - frame.x, y: box.y - frame.y, width: box.width, height: box.height };
+    });
   await expect(palette.locator('.env-command-palette')).toBeVisible();
-  const open = await search.boundingBox();
+  const open = await inFrame();
   await palette.getByRole('combobox').press('Escape');
   await expect(palette.locator('.env-command-palette')).toHaveCount(0);
-  expect(await search.boundingBox()).toEqual(open);
+  expect(await inFrame()).toEqual(open);
   // A select's list takes the pointer too, and its choice sticks.
   await page.goto(`${siteDevUrl}/components/select`);
   const select = page.locator('[data-section="overview"] .catalogue-open-example').first();
