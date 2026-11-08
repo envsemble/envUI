@@ -18,14 +18,18 @@ Each has one folder in `apps/site/src`:
 | specimen      | A picture of the catalogue's own, with no code, or a playback    | `specimens/<page>/`                                  |
 | playback      | An example played, or held in a moment: the specimen of its name | `specimens/<page>/<Example>.tsx`                     |
 | tile          | A gallery's small live picture of a page                         | `tiles/`; its stage in `figures/TileStage.tsx`       |
+| member tile   | The tile of an export documented on another's page               | `tiles/members/`, such as SearchField on TextField's |
 | figure        | The frame that shows an example or a specimen on a page          | `figures/`; a foundation's in `figures/foundations/` |
 | fit           | Drawing a tile's or a figure's picture to fit its stage          | [`fit/`](src/fit/README.md), its words               |
+| standalone    | A fitter of one kind of figure that doesn't build on `useFit`    | `fit/standalone/`, listed in the fit's README        |
 | motion        | Scripts that play a stage, where a tile or figure plays live     | `motion/`                                            |
 | shared        | The measuring loop and motion tokens that several folders use    | `shared/`                                            |
 | loading       | Skeletons, load boundaries and retries while a part loads        | `loading/`                                           |
 | template      | The sections of a component or pattern page, in their order      | `template/`                                          |
+| markdown      | A page's Markdown, also with its option tables as legends        | `markdown/`                                          |
 | page          | A route's page in the catalogue or the Docs, and its data        | `pages/`                                             |
-| route         | Addresses old and new, the rail, drawers, trails and the pager   | `routes/`                                            |
+| route         | Addresses old and new, the page list, trails and scroll places   | `routes/`                                            |
+| navigation    | The rail, drawers, pager, page actions and the site's link       | `navigation/`                                        |
 | banner        | A page's banner, contents, footer and failure                    | `banner/`                                            |
 | display       | The Display menu: theme, contrast, scale, motion and palette     | `display/`                                           |
 | search        | The site's search and its index                                  | `search/`                                            |
@@ -39,6 +43,12 @@ Each has one folder in `apps/site/src`:
 - Give every folder of `apps/site/src` its row above.
 - Other words for these, such as preview, demo, showcase and sample, are older names; don't add new uses. ESLint rejects a name the site declares with preview in it.
 - A playback depends on its example: change or rename the two together.
+
+## Imports run down the folders
+
+- A folder of `apps/site/src` imports only the folders below it in this order, and `App.tsx` and `main.tsx` any: navigation, pages, banner, search, brand, template, specimens, figures, markdown, tiles, motion, fit, routes, loading, display, examples, shared, generated. ESLint rejects an import up the list, from the same list in `eslint.config.mjs` (`siteFolders`): change the two together.
+- What two folders both need sits in the lower one or below it. Where a lower folder needs to know something of a higher one, the higher one passes it in, as the figures pass `fit/` what a script tells it (`ScriptReader`, [`fit/`](src/fit/README.md)).
+- A new folder takes its place in the order.
 
 ## What the site shares with the scripts and the library
 
