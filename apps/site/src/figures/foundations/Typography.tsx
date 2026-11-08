@@ -14,7 +14,7 @@ import { WidthSweep } from '../../motion/WidthSweep';
 import type { FoundationFigure } from './FoundationFigures';
 import { MarkedSubject } from './Marks';
 import { AtTextSize, CornerLabel, StepStack } from './Steps';
-import { Figure, NumberedLegend, type LegendEntry } from './Topic';
+import { Figure, NumberedLegend, type LegendEntry } from './Figure';
 
 /*
  * The figures of the Typography foundation. Its words are in docs/foundations/typography.md, the

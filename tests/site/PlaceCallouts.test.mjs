@@ -1,4 +1,4 @@
-// An anatomy figure's callout placement (apps/site/src/figures/AnatomyPlacement.ts): badges spread
+// An anatomy figure's callout placement (apps/site/src/figures/anatomy/PlaceCallouts.ts): badges spread
 // along a side, lines that meet a rounded part on its curve, the parts the legend names alone, the
 // side each part's callout takes, the reading order, and a variants figure's names.
 import { test } from 'node:test';
@@ -6,8 +6,8 @@ import assert from 'node:assert/strict';
 import { importSource } from '../support/importSource.mjs';
 
 const placement = await importSource(
-  'AnatomyPlacement',
-  'apps/site/src/figures/AnatomyPlacement.ts',
+  'PlaceCallouts',
+  'apps/site/src/figures/anatomy/PlaceCallouts.ts',
 );
 
 const box = (left, top, right, bottom) => ({ left, top, right, bottom });

@@ -1,10 +1,10 @@
 /*
- * Where an anatomy figure's callouts sit, from its geometry (AnatomyGeometry.ts): a numbered one on
- * each part, on the side it is nearest to, spread so none overlap; for a variants figure, each
- * variant's name beside its item. Nothing here reads the page (tests/site/AnatomyPlacement.test.mjs).
+ * Where an anatomy figure's callouts are placed (useAnatomyLayout.ts), from what is measured of its
+ * subject (MeasureAnatomy.ts): a numbered one on each part, on the side it is nearest to, spread so
+ * none overlap; for a variants figure, each variant's name beside its item. Nothing here reads the
+ * page (tests/site/PlaceCallouts.test.mjs).
  */
-
-import { union, type Box } from '../fit/FitMath';
+import { union, type Box } from '../../fit/FitGeometry';
 
 type Side = 'top' | 'bottom' | 'left' | 'right';
 
@@ -43,7 +43,7 @@ export interface Callout {
   gaps?: { x: number; y: number; width: number; height: number }[];
 }
 
-/** One part a legend item names, as measured in the subject (anatomyGeometry). */
+/** One part a legend item names, as measured in the subject (measureParts). */
 export interface Part {
   /** Its legend item's number, from 1. */
   number: number;
@@ -65,7 +65,7 @@ export interface Part {
   repeated: boolean;
 }
 
-/** An anatomy figure's subject as measured (anatomyGeometry), in the stage's coordinates. */
+/** An anatomy figure's subject as measured (measureParts), in the stage's coordinates. */
 export interface AnatomyGeometry {
   /** The stage's size, and whether it reads right to left. */
   width: number;
@@ -520,7 +520,7 @@ const useGap = 6;
 /** The least room, in rem, what a variant is for takes under its item. */
 const underLeast = 10;
 
-/** One item of a variants figure, as measured (variantGeometry). */
+/** One item of a variants figure, as measured (measureVariantItems). */
 export interface VariantItem {
   /** Its legend item's number, from 1, and the variant's name. */
   number: number;
@@ -533,7 +533,7 @@ export interface VariantItem {
   added: number;
 }
 
-/** A variants figure's subject as measured (variantGeometry). */
+/** A variants figure's subject as measured (measureVariantItems). */
 export interface VariantGeometry {
   /** The stage's width, the room inside its padding, and its padding on the start side. */
   width: number;

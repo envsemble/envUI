@@ -352,7 +352,7 @@ A foundation page, such as Spacing & density, explains how envUI handles one sub
 - **The same structure**, with Options in place of Variants, Accessibility only where it has something to say, and its tokens and values under Compose.
 - **How envUI handles it, in pictures.** Each block explains one idea, such as "space shows what belongs together", on a real envUI example rather than a ladder of values, with what the idea is marked on it and a numbered legend in plain words.
 - **Its figures are the catalogue's**, in `apps/site/src/figures/foundations/`, registered by name in `FoundationFigures.ts`, with their words from the legend after their fence, `1. **Name**: what it means`. A figure that shows what an application writes has an example of its name as its code; a pure illustration, such as the palette, has none.
-- **Animated figures**: `Figure` (`figures/foundations/Topic.tsx`) with `motion` plays one on a `MotionStage`; a nested `Theme` in it cross-fades between themes.
+- **Animated figures**: `Figure` (`figures/foundations/Figure.tsx`) with `motion` plays one on a `MotionStage`; a nested `Theme` in it cross-fades between themes.
 - **The words to use**: an option table whose In code column maps each phrase to the props and tokens it means.
 
 Its frontmatter has `title`, `summary`, `aliases`, its figures under `examples` and its related pages under `avoidWhen`, and may list the exports it documents under `components`.

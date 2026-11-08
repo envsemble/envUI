@@ -1,6 +1,6 @@
 import { Fragment, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { PortalContainer } from '@envsemble/envui';
-import { makeRoom, overlays, reserveStage } from '../fit/OverlayRoom';
+import { makeRoom, overlays, reserveStage } from '../fit/standalone/OverlayRoom';
 import { sitePopupOpen } from '../motion/SitePopup';
 import { press, triggerOf } from './PressTrigger';
 

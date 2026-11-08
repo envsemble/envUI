@@ -23,7 +23,7 @@ import { IconLuggage } from '@envsemble/envui/icons/Luggage';
 import { IconMap } from '@envsemble/envui/icons/Map';
 import { useTimeline } from '../../motion/Timeline';
 import { CornerLabel } from './Steps';
-import { Figure } from './Topic';
+import { Figure } from './Figure';
 import { useHighContrast, useNarrow, type FigureWords } from './ColorFigures';
 
 /**

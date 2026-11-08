@@ -1,8 +1,8 @@
 /*
- * The fit's pure calculations (useFit.ts): boxes in a canvas's own px, the scales a picture is
+ * The fit's pure calculations (FitPicture.ts): boxes in a canvas's own px, the scales a picture is
  * drawn at, and where its view goes. Nothing here reads the page (tests/site/Fit.test.mjs).
  */
-import type { FitKind } from './Fitting';
+import type { FitKind } from './FitKind';
 
 /** A box, by its edges: in a canvas's own px here, in whatever px its user measures elsewhere. */
 export interface Box {
@@ -88,6 +88,10 @@ export function join(...boxes: (Box | null)[]): Box | null {
   return some.length ? union(some) : null;
 }
 
+/** Where a point of a canvas drawn at `scale` is in its stage, along an axis `size` long. */
+export const stagePoint = (point: number, to: number, size: number, scale: number) =>
+  size / 2 - to + point * scale;
+
 /** Whether a box holds another, to a couple of px, as a popup ends its entrance. */
 export const covers = (outer: Box, inner: Box) =>
   inner.left >= outer.left - 2 &&
@@ -127,6 +131,61 @@ export function cutSides(
   return [top && 'top', bottom && 'bottom', start && 'start', end && 'end']
     .filter(Boolean)
     .join(' ');
+}
+
+/**
+ * A still framed as its play is (onCourse, PointerCourse.ts): of the parts its pointer heads to, in
+ * order, as many as fit together in a stage `across` by `down`, kept in it as the play keeps them
+ * (contain), so the pointer coming in and going moves nothing; the view at `toX` and `toY` where
+ * there are none.
+ */
+export function frameOnCourse(
+  parts: readonly (Box | null)[],
+  across: number,
+  down: number,
+  toX: number,
+  toY: number,
+  scale: number,
+) {
+  const halfAcross = across / 2 - 4;
+  const halfDown = down / 2 - 4;
+  let held: Box | null = null;
+  // Whether the first is larger than the stage along an axis, so shown from its start.
+  let fromStart = { x: false, y: false };
+  for (const found of parts) {
+    if (!found || found.right <= found.left || found.bottom <= found.top) continue;
+    // The first, larger than the stage, such as a divider as tall as its panes, shows from its
+    // start, a margin from the stage's edge, as the play shows it (playFit), so the pointer coming
+    // in moves nothing.
+    let box = found;
+    if (!held) {
+      const right = found.left + (2 * (halfAcross - margin) - 0.5) / scale;
+      const bottom = found.top + (2 * (halfDown - margin) - 0.5) / scale;
+      fromStart = { x: found.right > right, y: found.bottom > bottom };
+      box = {
+        ...found,
+        right: Math.min(found.right, right),
+        bottom: Math.min(found.bottom, bottom),
+      };
+    }
+    // Joined with a box, the parts held so far are one.
+    const next: Box = join(held, box)!;
+    if (
+      (next.right - next.left) * scale > 2 * (halfAcross - margin) ||
+      (next.bottom - next.top) * scale > 2 * (halfDown - margin)
+    )
+      continue;
+    held = next;
+  }
+  if (!held) return { toX, toY };
+  return {
+    toX: fromStart.x
+      ? held.left * scale + halfAcross - margin
+      : contain(toX, held.left * scale, held.right * scale, halfAcross),
+    toY: fromStart.y
+      ? held.top * scale + halfDown - margin
+      : contain(toY, held.top * scale, held.bottom * scale, halfDown),
+  };
 }
 
 /** A box a picture paints and the room, in px, it keeps from its stage's edges (anchoredScale). */
@@ -238,7 +297,7 @@ export interface Resting {
   popup: boolean;
   /** Whether it is on a phone, the popups' least scale, and the overlays' where it is one, or 0. */
   scales: { phone: boolean; popupLeast: number; overlay: number };
-  /** The scale a popup shown open is drawn at, at most `atMost` (popupFit, Fit.ts). */
+  /** The scale a popup shown open is drawn at, at most `atMost` (decidePopups, FitResting.ts). */
   popupScale: (atMost: number) => number;
   /** The largest scale an overlay shows whole across at, or Infinity for any other picture. */
   overlayWhole: number;
@@ -259,7 +318,7 @@ export function restingScale(kind: FitKind, resting: Resting) {
 }
 
 /**
- * A component at its own size; a popup shown open as popupFit draws it, at most its own size, or
+ * A component at its own size; a popup shown open as decidePopups draws it, at most its own size, or
  * on a phone, where its own size is one of the phone's scales, at most 1; and an overlay, such as a
  * notification, at the overlays' scale, or as much smaller as shows it whole across, down to the
  * popups' least.
@@ -303,7 +362,7 @@ export interface DrawOut {
 }
 
 /**
- * Where a playing tile's view goes to take in what it opened (playFit): where all of it fits the
+ * Where a playing tile's view goes to take in what it opened (playFit, FitPlaying.ts): where all of it fits the
  * stage at the scale it is drawn at, it keeps that scale, the view moving just far enough; else
  * about the trigger, as much smaller as keeps it where it is; without one in view, as small as all
  * of it needs; either way, no smaller than `least`. The trigger is never panned out of view: where
@@ -311,14 +370,14 @@ export interface DrawOut {
  * what it opened.
  */
 export function drawOut({ must, anchor, at, across, down, scale: drawn, least, stepped }: DrawOut) {
-  // Where a point of the canvas is in the stage, along an axis `size` long.
-  const screen = (point: number, to: number, size: number) => size / 2 - to + point * at.scale;
+  const screen = (point: number, to: number, size: number) => stagePoint(point, to, size, at.scale);
   const inView =
     anchor &&
     screen(anchor.left, at.x, across) >= 0 &&
     screen(anchor.right, at.x, across) <= across &&
     screen(anchor.top, at.y, down) >= 0 &&
     screen(anchor.bottom, at.y, down) <= down;
+  // What opened is a box, so it and the trigger join into one.
   const needed = join(must, anchor)!;
   const middle =
     anchor && inView

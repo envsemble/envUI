@@ -17,7 +17,8 @@ const checked = ['packages/ui/src', 'apps/site/src', 'scripts', 'tests'];
  * Folders whose agents fix their own dangling names in this round: checked by a test marked todo,
  * which reports without failing. Empty this list to make the check strict everywhere.
  */
-const pending = ['apps/site/src', 'packages/ui/src/forms', 'packages/ui/src/navigation'];
+/** @type {string[]} */
+const pending = [];
 
 /** Generated from pinned inputs, and the fixtures' sample code: no comments of the repository's. */
 const skipped = ['packages/ui/src/icons/', 'apps/site/src/generated/', 'tests/visual/snapshots/'];

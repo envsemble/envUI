@@ -16,7 +16,7 @@ import { IconRefresh } from '@envsemble/envui/icons/Refresh';
 import { IconSignalCellular4Bar } from '@envsemble/envui/icons/SignalCellular4Bar';
 import { IconSignalWifi4Bar } from '@envsemble/envui/icons/SignalWifi4Bar';
 import type { DeviceKind } from '@docs-model/DocumentationTypes';
-import { useDeviceFit } from '../fit/useDeviceFit';
+import { useDeviceFit } from '../fit/standalone/useDeviceFit';
 
 /*
  * A device drawn around a page's figure: a phone or a browser's window whose screen is a window of
@@ -66,7 +66,7 @@ export const useOnScreen = () => use(OnScreen);
  * the state does, at once. A side that is cut off runs out over the stage's padding to its edge.
  * The place it holds on the stage is its view, so the stage is as tall as what it shows.
  */
-export function DeviceStage({ kind, children }: { kind: DeviceKind; children: ReactNode }) {
+function DeviceStage({ kind, children }: { kind: DeviceKind; children: ReactNode }) {
   const stage = useRef<HTMLDivElement>(null);
   const row = useRef<HTMLDivElement>(null);
   const fit = useDeviceFit(stage, row, kind);

@@ -31,7 +31,7 @@
 
 /* A subject that needs a width to show its parts (`width` on its fence): it fills the stage, or,
    where the stage is narrower, is laid out at that width and drawn smaller from its start corner
-   into the scaled place it takes (FitFrame, fit/WidthFit.tsx). */
+   into the scaled place it takes (FitFrame, fit/standalone/WidthFit.tsx). */
 .catalogue-anatomy-fit {
   inline-size: 100%;
 }
@@ -124,7 +124,7 @@
 }
 
 /* A variants figure's names: plain, quiet text by each item, on the start side of items one under
-   another, or under items side by side (AnatomyPlacement.ts), with no line or outline, so the
+   another, or under items side by side (PlaceCallouts.ts), with no line or outline, so the
    variants themselves are what stands out. */
 .catalogue-variant-label {
   position: absolute;
@@ -147,7 +147,7 @@
 }
 
 /* What a variant is for, beside its item on the other side from its name, where every item's fits
-   (AnatomyPlacement.ts): its sentence, and under it any detail the option table adds, such as its
+   (PlaceCallouts.ts): its sentence, and under it any detail the option table adds, such as its
    tones. */
 .catalogue-variant-use {
   position: absolute;
@@ -172,7 +172,7 @@
 }
 
 /* Where it doesn't fit beside, as in a narrow stage, it sits under its item, and the next item
-   stands apart by the room it takes (AnatomyPlacement.ts). */
+   stands apart by the room it takes (PlaceCallouts.ts). */
 .catalogue-variant-use[data-side='bottom'] {
   translate: 0 0;
 }

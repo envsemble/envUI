@@ -11,7 +11,7 @@ import {
 import { WidthSweep } from '../../motion/WidthSweep';
 import type { FoundationFigure } from './FoundationFigures';
 import { ClassTextSizeFigure } from './ResponsiveTextSize';
-import { Figure, type LegendEntry } from './Topic';
+import { Figure, type LegendEntry } from './Figure';
 
 /*
  * The figures of the Adapting to width foundation. Its words are in docs/foundations/responsive.md,

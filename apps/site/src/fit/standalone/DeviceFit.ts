@@ -5,9 +5,9 @@
  * corner.
  */
 import type { DeviceKind } from '@docs-model/DocumentationTypes';
-import { courseOf, headingOf, mustShowOf, type Heading } from '../motion/MustShow';
+import { courseOf, headingOf, mustShowOf, type Heading } from '../../motion/MustShow';
 import { remPixels } from '@envui-internal/internal/lengths';
-import type { Box } from './FitMath';
+import type { Box } from '../FitGeometry';
 
 /**
  * The least each kind is drawn at, and the least its small text (body-sm) is drawn at, about

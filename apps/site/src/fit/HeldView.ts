@@ -4,7 +4,7 @@
  * script acts on shows whole in it from its top, above the fade at its foot, with the cursor on
  * it. Nothing here reads the page (tests/site/Fit.test.mjs).
  */
-import { cursorRoom, inset, join, scaleTolerance, type Box } from './FitMath';
+import { cursorRoom, inset, join, scaleTolerance, type Box } from './FitGeometry';
 
 /** How far, in px, a row may reach past the crop's foot and still count as whole (trimRows). */
 export const rowSlack = 2;
@@ -114,6 +114,7 @@ export function heldWays({ chosen, keep, keepFurther, below, further }: HeldRows
 export function heldRows(acted: readonly Box[], below: readonly Box[], further: readonly Box[]) {
   const chosen = join(...acted);
   if (!chosen) return null;
+  // Joined with what is chosen, the rows are a box.
   const keep = join(chosen, ...below)!;
   return {
     chosen,

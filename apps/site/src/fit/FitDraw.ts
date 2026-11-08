@@ -1,10 +1,96 @@
 /*
- * Where a picture is cut off (useFit.ts): the crop's fade at its foot, the rows hidden whole there,
- * and the regions that scroll as it plays, which fade at their own foot.
+ * What a fit draws (FitPicture.ts): the layout a decision lays its canvas out at, the sides it is
+ * cut off at, the canvas where its view is (place), and the crop's fade at its foot, with the rows
+ * hidden whole there and the regions that scroll as it plays, which fade at their own foot. Where
+ * the view goes, it eases to (settle, ViewEasing.ts).
  */
 import { remPixels } from '@envui-internal/internal/lengths';
+import type { Fitting } from './FitState';
 import { rowSlack } from './HeldView';
 import { moving, pictures } from './PaintedBoxes';
+
+/**
+ * Where a decision places a picture's view (FitResting.ts, FitScreen.ts): the scale it is drawn at
+ * and the point it is centred on, the sides it is cut off at (`data-cut`), or undefined where they
+ * stay as they are, where its fade at its foot starts, and how its crop is trimmed there (trimRows):
+ * as a tile's that played, and whether its screen's top is the stage's edge.
+ */
+export interface Placement {
+  scale: number;
+  toX: number;
+  toY: number;
+  cut: string | undefined;
+  fadeAt: number | null;
+  played: boolean;
+  screenTop?: boolean;
+}
+
+/** Draws where a decision cuts the picture off, and trims its crop there, before its view moves. */
+export function drawCut(f: Fitting, { cut, fadeAt, played, screenTop }: Placement) {
+  const { canvas, kept } = f;
+  if (cut !== undefined) {
+    if (cut) canvas.dataset.cut = cut;
+    else delete canvas.dataset.cut;
+  }
+  kept.fadeAt = fadeAt;
+  // Its screen's top is the stage's edge too, cut off there rather than faded (trimRows).
+  if (screenTop) canvas.parentElement?.style.setProperty('--catalogue-crop-top', '0px');
+  if (cut !== undefined) trim(f, played);
+}
+
+/**
+ * Draws a held view's scale on its canvas (decideRestingScale), before its view is placed there:
+ * whether its subject is drawn smaller (`data-held-scale`), and on a phone the scale a popup shown
+ * open lays out at (`--catalogue-canvas-scale`), which lays it out anew.
+ */
+export function drawLayoutScale(
+  canvas: HTMLElement,
+  { heldSmaller, layoutScale }: { heldSmaller: boolean; layoutScale: string | null },
+) {
+  if (canvas.hasAttribute('data-held-scale') !== heldSmaller)
+    canvas.toggleAttribute('data-held-scale', heldSmaller);
+  if (
+    layoutScale !== null &&
+    canvas.style.getPropertyValue('--catalogue-canvas-scale') !== layoutScale
+  )
+    canvas.style.setProperty('--catalogue-canvas-scale', layoutScale);
+}
+
+/**
+ * Lays a modal's canvas out as large as its stage shows at its scale (decideScreenScale), at least
+ * as tall as the modal needs, `tall` in the canvas's own px, so its backdrop covers the stage as it
+ * covers a screen.
+ */
+export function drawScreenSize(f: Fitting, scale: number, tall: number) {
+  const style = f.canvas.style;
+  const size = (value: number) => `${Math.round(value * 100) / 100}px`;
+  const across = size(f.stage.clientWidth / scale);
+  if (style.inlineSize !== across) style.inlineSize = across;
+  if (style.blockSize !== size(tall)) style.blockSize = size(tall);
+  style.minBlockSize = '0px';
+}
+
+/**
+ * Hides the rows past the crop's foot and fades it out there, below `fadeAt`; a modal's screen is
+ * cut off at the stage's edges, as at a screen's, its backdrop whole (trimRows).
+ */
+export const trim = (f: Fitting, played = false) =>
+  trimRows(
+    f.canvas,
+    played,
+    f.kept.fadeAt === null
+      ? null
+      : f.stage.clientHeight / 2 - f.view.y + f.kept.fadeAt * f.view.scale,
+    f.kept.screen,
+  );
+
+/** Draws the canvas where the view is, and trims its crop there. */
+export function place(f: Fitting) {
+  const { canvas, view, kept } = f;
+  const transform = `translate(${-view.x}px, ${-view.y}px) scale(${view.scale})`;
+  if (canvas.style.transform !== transform) canvas.style.transform = transform;
+  trim(f, kept.run !== null || (kept.screen && f.playing.current));
+}
 
 /**
  * The rows of a list, a menu, a table, a tree or a picker's column, the cards of a pager, and the
@@ -35,11 +121,11 @@ export const cropFade = (crop: Element) =>
  * top, such as below a picker's chosen row, the fade starts no higher, so what is above it shows
  * whole. A row that holds others, such as a tree's branch, is left to its rows.
  */
-export function trimRows(
+function trimRows(
   canvas: HTMLElement,
   played = false,
   fadeFrom: number | null = null,
-  /** Whether the crop's foot is a screen's edge, which cuts off rather than fades (screenFit). */
+  /** Whether the crop's foot is a screen's edge, which cuts off rather than fades (FitScreen.ts). */
   edge = false,
 ) {
   const crop = canvas.parentElement;

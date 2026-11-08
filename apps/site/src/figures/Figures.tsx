@@ -10,20 +10,25 @@ import type {
 } from '@docs-model/DocumentationTypes';
 import { Documentation } from '../pages/Documentation';
 import type { Documentation as Document } from '../pages/PageModel';
-import { AnatomyFigure } from './AnatomyFigure';
+import { AnatomyFigure } from './anatomy/AnatomyFigure';
 import { ExampleCode, ExampleRender, keepLinksInPlace, LiveExample } from './LiveExample';
 import { OpenExample } from './OpenExample';
 import { SiteMarkdown } from '../template/OptionLegend';
-import { optionPieces, type OptionTable } from '@docs-model/CatalogueContent';
+import {
+  lastSubsection,
+  leadParagraph,
+  optionPieces,
+  type OptionTable,
+} from '@docs-model/CatalogueContent';
 import { ExamplePlayback, Specimen } from './Specimen';
 import { VerdictMotion } from '../motion/MotionStage';
 import {
   useFoundationFigures,
   type FoundationFigure as Figure,
 } from './foundations/FoundationFigures';
-import { FigureCode } from './foundations/Topic';
+import { FigureCode } from './foundations/Figure';
 import { pendingAttribute, useSectionOutline } from '../template/SectionOutline';
-import { useVerdictFit } from '../fit/useVerdictFit';
+import { useVerdictFit } from './useVerdictFit';
 
 type ExampleBlock = Extract<DocumentationBlock, { kind: 'example' }>;
 type FoundationBlock = Extract<DocumentationBlock, { kind: 'figure' }>;
@@ -66,7 +71,7 @@ const verdicts = {
  * keeps a stage as wide as the column and as tall as its example. A foundation page's figure
  * passes what it shows as `children` instead, which has no code of its own.
  */
-export function VerdictFigure({
+function VerdictFigure({
   page,
   name,
   verdict,
@@ -244,37 +249,6 @@ export function UsageFigure({ page }: { page: Document }) {
       />
     </div>
   );
-}
-
-/**
- * Markdown cut before its last `###` subsection, when that subsection is text a figure can sit
- * beside: no table, no fence, and not only a list.
- */
-export function lastSubsection(markdown: string): [string, string] | undefined {
-  const lines = markdown.split('\n');
-  let fence = false;
-  let start = -1;
-  lines.forEach((line, index) => {
-    if (/^\s{0,3}(`{3,}|~{3,})/.test(line)) fence = !fence;
-    if (!fence && /^### /.test(line)) start = index;
-  });
-  if (start === -1) return undefined;
-  const body = lines.slice(start + 1).filter((line) => line.trim());
-  if (!body.length || body.some((line) => /^\s*(\||`{3,}|~{3,})/.test(line))) return undefined;
-  if (/^([-*+]|\d+[.)]) /.test(body[0])) return undefined;
-  return [lines.slice(0, start).join('\n'), lines.slice(start).join('\n')];
-}
-
-/**
- * Markdown cut after the paragraph that opens it, when it opens with one: a section's lead, which
- * the catalogue sets larger than the text below it (SiteText.css).
- */
-export function leadParagraph(markdown: string): [string, string] | undefined {
-  const text = markdown.replace(/^(?:[ \t]*\n)+/, '');
-  if (!text.trim() || /^\s{0,3}(#|\||[-*+] |\d+[.)] |`{3,}|~{3,}|<!--)/.test(text))
-    return undefined;
-  const end = text.search(/\n[ \t]*\n/);
-  return end === -1 ? [text, ''] : [text.slice(0, end), text.slice(end)];
 }
 
 /**

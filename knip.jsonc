@@ -65,15 +65,6 @@
     },
     "apps/site": {
       "project": ["src/**/*.{ts,tsx}"],
-      // Pending, for the site's refactor.
-      "ignoreIssues": {
-        "src/figures/DeviceFrame.tsx": ["exports"],
-        "src/figures/Example.tsx": ["exports"],
-        "src/figures/Figures.tsx": ["exports"],
-        "src/figures/Gallery.tsx": ["exports"],
-        "src/figures/LiveExample.tsx": ["exports"],
-        "src/figures/foundations/Topic.tsx": ["exports", "types"],
-      },
     },
   },
 }

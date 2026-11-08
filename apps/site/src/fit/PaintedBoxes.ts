@@ -1,8 +1,26 @@
 /*
- * What a picture paints, measured in its canvas's own px (useFit.ts): what is centred is what
+ * What a picture paints, measured in its canvas's own px (FitMeasure.ts): what is centred is what
  * shows, rather than the boxes that lay it out.
  */
-import type { Box } from './FitMath';
+import type { Box } from './FitGeometry';
+
+/** The layer a picture's popups open in (StageOverlays, motion/Playback.tsx). */
+export const overlayLayer = '.catalogue-overlay-layer';
+
+/** Whether an element is in a picture's overlay layer, a popup. */
+export const inPopup = (element: Element) => element.closest(overlayLayer) !== null;
+
+/**
+ * The elements of a canvas a selector names, such as one a tile names for its view to keep
+ * (MustShow.ts); a selector that doesn't parse names none.
+ */
+export function elementsOf(canvas: Element, selector: string) {
+  try {
+    return [...canvas.querySelectorAll(selector)];
+  } catch {
+    return [];
+  }
+}
 
 /** Whether a color paints anything: not transparent, nor of no alpha. */
 const opaque = (color: string) =>

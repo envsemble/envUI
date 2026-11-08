@@ -12,7 +12,7 @@ import {
 } from '@envsemble/envui';
 import { useTimeline } from '../../motion/Timeline';
 import { CornerLabel } from './Steps';
-import { Figure } from './Topic';
+import { Figure } from './Figure';
 import type { FigureWords } from './ColorFigures';
 
 /** The theme and contrast of each sample, in the legend's order. */

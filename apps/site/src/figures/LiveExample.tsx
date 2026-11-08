@@ -17,7 +17,7 @@ import { exampleLines } from '../loading/RecordedSizes';
 import { HoldPlaceholder } from '../loading/LoadingStore';
 import { MotionStage } from '../motion/MotionStage';
 import { WidthSweep } from '../motion/WidthSweep';
-import { WidthBox } from '../fit/WidthFit';
+import { WidthBox } from '../fit/standalone/WidthFit';
 import { ExamplePlayback } from './Specimen';
 import { StillMark } from './StillMark';
 

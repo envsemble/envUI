@@ -1,14 +1,15 @@
 /*
- * What an anatomy figure's callouts are placed by, measured in its stage (AnatomyLayout.ts): what
- * shows of each part a legend item names, its corners and edge, the labels in the subject, and in
- * a variants figure, its items and the room their names and uses take.
+ * What an anatomy figure's callouts are placed by (PlaceCallouts.ts), measured in its stage
+ * (useAnatomyLayout.ts): what shows of each part a legend item names, its corners and edge, the
+ * labels in the subject, and in a variants figure, its items and the room their names and uses
+ * take. Nothing here changes the figure.
  */
 import type { AnatomyLegendItem } from '@docs-model/DocumentationTypes';
+import { union, type Box } from '../../fit/FitGeometry';
+import { openerBox } from '../../fit/standalone/OverlayRoom';
 import { remPixels } from '@envui-internal/internal/lengths';
-import { partSelector } from '../template/Parts';
-import { union, type Box } from '../fit/FitMath';
-import type { AnatomyGeometry, Corners, Part, UseSize, VariantGeometry } from './AnatomyPlacement';
-import { openerBox } from '../fit/OverlayRoom';
+import { partSelector } from '../../template/Parts';
+import type { AnatomyGeometry, Corners, Part, UseSize, VariantGeometry } from './PlaceCallouts';
 
 /**
  * Whether an element is only text, such as a label or a description, with no fill or edge of its
@@ -125,6 +126,7 @@ function boxOf(element: Element, text: boolean, origin: DOMRect): Box | undefine
 function labelBoxes(subject: Element, origin: DOMRect): Box[] {
   return [...subject.querySelectorAll('label')].flatMap((label) => {
     const rect = label.getBoundingClientRect();
+    // A label that shows has a box of its own (boxOf).
     return rect.width > 1 && rect.height > 1 ? [boxOf(label, false, origin)!] : [];
   });
 }
@@ -160,7 +162,7 @@ const holdsSeveral = (element: Element) =>
  * The parts the legend names, as they show in the subject, in the stage's coordinates, with what
  * the callouts keep clear of: the labels in the subject and what opens a popup shown open.
  */
-export function anatomyGeometry(
+export function measureParts(
   stage: HTMLElement,
   subject: HTMLElement,
   legend: AnatomyLegendItem[],
@@ -226,7 +228,7 @@ const added = (element: Element) =>
  * or else the example's items in the legend's order, the children of its root, or of the wrapper
  * the root holds alone, that show, leaving out such as a select's hidden input.
  */
-export function variantGeometry(
+export function measureVariantItems(
   stage: HTMLElement,
   subject: HTMLElement,
   legend: AnatomyLegendItem[],
@@ -295,6 +297,7 @@ export function labelWidths(stage: HTMLElement, texts: string[], known: Map<stri
     );
     for (const probe of probes) probe.remove();
   }
+  // Each is measured above where it wasn't before.
   return texts.map((text) => known.get(keyOf(text))!);
 }
 
@@ -329,27 +332,9 @@ export function sizesOfUses(
     });
     for (const probe of probes) probe.remove();
   }
+  // Each is measured above where it wasn't before.
   return uses.map((lines) => ({
     width: known.get(keyOf(lines, 'width'))!,
     height: known.get(keyOf(lines, 'height'))!,
   }));
-}
-
-/**
- * Stands each item that much further from the one before (`data-catalogue-spread`), so what that
- * one is for shows under it, by its item, rather than again in a legend under the figure.
- */
-export function spreadItems(elements: Element[], room: number[]) {
-  elements.forEach((element, index) => {
-    if (!(element instanceof HTMLElement)) return;
-    const margin = room[index] ? `${room[index]}px` : '';
-    if (margin) {
-      if (element.style.marginBlockStart !== margin) element.style.marginBlockStart = margin;
-      if (!element.hasAttribute('data-catalogue-spread'))
-        element.setAttribute('data-catalogue-spread', '');
-    } else if (element.hasAttribute('data-catalogue-spread')) {
-      element.style.marginBlockStart = '';
-      element.removeAttribute('data-catalogue-spread');
-    }
-  });
 }

@@ -16,7 +16,7 @@ import { IconButton, Tooltip } from '@envsemble/envui';
 import { IconPause } from '@envsemble/envui/icons/Pause';
 import { IconPlayArrow } from '@envsemble/envui/icons/PlayArrow';
 import type { StageFill } from '@docs-model/DocumentationTypes';
-import { useVerdictFit } from '../fit/useVerdictFit';
+import { useVerdictFit } from '../figures/useVerdictFit';
 import { useDisplaySettings } from '../theme/DisplaySettings';
 import { Playback, StageOverlays } from './Playback';
 import { useInView } from './useInView';

@@ -11,7 +11,7 @@ import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 import { useTimeline } from '../../motion/Timeline';
 import { remPixels } from '@envui-internal/internal/lengths';
 import { AtTextSize, CornerLabel, StepStack } from './Steps';
-import { Figure } from './Topic';
+import { Figure } from './Figure';
 
 /*
  * The Adapting to width foundation's figure of the reader's text size: one profile in a frame of

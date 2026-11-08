@@ -2,7 +2,7 @@ import { useLayoutEffect, useRef, useState } from 'react';
 import { Button, Column, Row, Surface, Text, useTheme } from '@envsemble/envui';
 import { ColorSwatch } from '@envsemble/envui/color';
 import { MarkedSubject } from './Marks';
-import { Figure } from './Topic';
+import { Figure } from './Figure';
 import { useHighContrast, useNarrow, type FigureWords } from './ColorFigures';
 
 /**
