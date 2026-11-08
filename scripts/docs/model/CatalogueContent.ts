@@ -141,10 +141,7 @@ export function codeColumns(markdown: string): string {
 }
 
 /** A section's Markdown as the catalogue shows it: without what envUI and the application provide. */
-function catalogueMarkdown(
-  section: Pick<DocumentationSection, 'id'>,
-  markdown: string,
-): string {
+function catalogueMarkdown(section: Pick<DocumentationSection, 'id'>, markdown: string): string {
   return withoutCodeColumns(
     providesSections.has(section.id) ? withoutProvides(markdown) : markdown,
   );
