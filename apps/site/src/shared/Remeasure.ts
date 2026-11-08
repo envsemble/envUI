@@ -12,7 +12,7 @@
  */
 export const pixelTolerance = 0.5;
 
-/** What caused a measure to run: a call to `update`, a resize, a mutation, an event, or the fonts. */
+/** What caused a measure to run: `update`, a resize, a mutation, an event, or the fonts. */
 export type Change = 'update' | 'resize' | 'mutation' | 'event' | 'fonts';
 
 /** What `remeasure` watches. */

@@ -1,7 +1,7 @@
 /*
- * What a fit measures before it decides anything (useFit.ts): what the picture paints, the room
- * its stage has, the scales its style sets, what a held view shows of what its script acts on, and
- * the shape a resting picture is framed on. Nothing here writes to the page.
+ * What a fit measures before it decides anything (useFit.ts): the stage's size, what the picture
+ * paints, the scale settings its style sets, what a held view must show of what its script acts
+ * on, and the shape a resting picture is framed on. Nothing here writes to the page.
  */
 import { remPixels } from '@envui-internal/internal/lengths';
 import type { FitKind, Moment, StageScript } from './FitKind';
@@ -50,8 +50,9 @@ export const stageSize = (stage: HTMLElement): StageSize => ({
 });
 
 /**
- * What every fit starts from: what the picture paints, when it runs, whether it grows as it plays
- * (`data-from-top`), and at rest, the shape it is framed on (shapeOf).
+ * What every fit starts from: the boxes the picture paints, the moment it runs in, whether the
+ * picture grows downwards as it plays (`data-from-top`), and, at rest, the shape it is framed on
+ * (shapeOf; null while playing).
  */
 export interface Seen {
   boxes: Shown[];
@@ -61,12 +62,11 @@ export interface Seen {
 }
 
 /**
- * The scales its style sets a picture's tiles at (Gallery.css): the least box it is drawn whole in
- * across (`--catalogue-own-least`, in px) and down (`--catalogue-own-least-block`), a phone's
- * floor, a popup's least, and an overlay's scale where it is one.
+ * The scale settings a picture's style sets (Gallery.css), read from its canvas: those of
+ * OwnScales and HeldScales, and the overlays' scale when the picture is an overlay.
  */
 export interface Scales extends HeldScales, OwnScales {
-  /** The overlays' scale where the picture is an overlay, else 0. */
+  /** The overlays' scale when the picture is an overlay (`data-overlay`), else 0. */
   overlay: number;
 }
 
@@ -84,46 +84,50 @@ function scalesOf(canvas: HTMLElement): Scales {
     steps: phoneSteps(floor, popupLeast),
     popupLeast,
     overlayScale: read('--catalogue-overlay-scale'),
-    // An overlay, such as a notification or a dialog, is drawn at the overlays' one scale, or
-    // smaller where it shows whole only so (Tiles.ts, Gallery.css).
+    // An overlay, such as a notification or a dialog, is drawn at the overlays' scale, or smaller
+    // when only that shows it whole (Tiles.ts, Gallery.css).
     overlay: canvas.hasAttribute('data-overlay') ? read('--catalogue-overlay-scale') || 0 : 0,
   };
 }
 
-/** What a fit past its waits and holds is decided on, measured before it moves anything. */
+/**
+ * The measurements a fit decides on, taken before it changes anything. Measured only when the fit
+ * gets past its early returns (waiting for a popup to settle, keeping a held frame).
+ */
 export interface Measured {
   extent: Extent;
-  /** What it paints, each box with whether it is in a popup. */
+  /** The boxes it paints, each with whether it is in a popup. */
   painted: { box: Box; popup: boolean }[];
   /**
-   * The parts a tile that holds its view is framed on (heldElements), what of them is laid out
-   * elsewhere as it plays (laidOutOf), and the rows after them (rowsAfter).
+   * For a tile that holds its view: the elements it is framed on (heldElements), the boxes where
+   * transformed ones are laid out (laidOutOf), and the next and second rows after them in a
+   * picker (`below`, `further`, rowsAfter).
    */
   heldParts: Element[];
   laidOut: Box[];
   below: Box[];
   further: Box[];
-  /** The scale its window fits the stage at (windowScale). */
+  /** The scale the picture's window fits the stage at (windowScale). */
   window: number;
   scales: Scales;
-  /** The scale a component is drawn at, at its own size (ownScale). */
+  /** The scale a component is drawn at (ownScale). */
   own: number;
-  /** Whether it shows a popup open, in its overlay layer, and whether that is a dialog's backdrop. */
+  /** Whether a popup is open in its overlay layer, and whether a dialog's backdrop is open. */
   popup: boolean;
   dialog: boolean;
 }
 
-/** Measures what a fit past its waits and holds is decided on (Measured). */
+/** Takes the measurements a fit decides on (Measured). */
 export function measure(
   { stage, canvas, kind }: { stage: HTMLElement; canvas: HTMLElement; kind: FitKind },
   boxes: Shown[],
   script: StageScript,
 ): Measured {
-  // A tile that holds its view is framed on its largest state (heldElements).
+  // A tile that holds its view is framed on its largest state (heldElements); others hold none.
   const heldParts = heldElements(canvas, script);
-  // Below what is chosen in a picker's grid or wheel, the rows after it show whole too, so the
-  // picker reads as a month, a day's hours or a year rather than a strip of one row: the next above
-  // the fade at the foot, and where there is room the one after it in the fade (rowsAfter).
+  // In a picker's grid or wheel, the rows after the chosen one show too, so the picker reads as a
+  // month, a day's hours or a year rather than a strip of one row: the next row above the fade,
+  // and when there is space the row after it inside the fade (rowsAfter).
   const after = heldParts.map((element) => rowsAfter(element, canvas));
   const below = after.flatMap((rows) => rows.slice(0, 1)).filter(filled);
   const further = after.flatMap((rows) => rows.slice(1, 2)).filter(filled);
@@ -152,8 +156,8 @@ export function measure(
 }
 
 /**
- * What a tile that holds its view shows of what its script acts on (HeldView.ts): what it is, its
- * lowest part, the rows after it, the ways it may show them, and its stage's room for them.
+ * What a held view must show (HeldView.ts): the rows of what its script acts on, the lowest of
+ * those boxes, the ways it may show them (heldWays), and the heights it is placed by.
  */
 export interface Held {
   rows: ReturnType<typeof heldRows>;
@@ -163,18 +167,18 @@ export interface Held {
 }
 
 /**
- * What a tile that holds its view shows of what its script acts on, as Held says, measured as it
- * is laid out to be drawn (`data-popup`).
+ * Measures what a held view must show (Held). Called after the canvas has been laid out for
+ * drawing (`data-popup`), so the boxes are those it will be drawn with.
  */
 export function measureHeld(
   { stage, canvas }: { stage: HTMLElement; canvas: HTMLElement },
   { heldParts, laidOut, below, further, extent }: Measured,
   script: StageScript,
 ): Held {
-  // A tile that holds its view is framed once on its still, the largest it shows: what its script
-  // acts on there, such as a time picker's chosen hour under its field, a menu's items or a
-  // contents list's entries, every point its pointer heads to that is there at rest, shows whole
-  // in it from its top, above the fade at its foot, with the cursor on it.
+  // A held view is framed once, on its still. What must show whole from its top, above the fade
+  // and with the cursor on it: what its script acts on, such as a time picker's chosen hour under
+  // its field, a menu's items or a contents list's entries, and every point of the pointer's
+  // course that is visible at rest.
   const aims = script.holdsView ? restingAims(canvas, script) : [];
   const acted = [
     ...heldParts.map((element) => partOf(element, canvas)).filter(filled),
@@ -184,29 +188,30 @@ export function measureHeld(
   const rows = heldRows(acted, below, further);
   return {
     rows,
-    // The top of the lowest of them, such as a date picker's chosen week.
+    // The lowest of those boxes, such as a date picker's chosen week.
     lowest: lowestOf(acted),
     ways: rows ? heldWays(rows) : [],
     heights: {
       stage: stage.clientHeight,
       top: extent.top,
-      // The lowest point the pointer presses at rest, where its cursor's tip is.
+      // The lowest point the pointer presses at rest (where the cursor's tip is).
       pointerFoot: aims.length ? Math.max(...aims.map(({ y }) => y)) : null,
       cursor: cursorLength * remPixels(),
     },
   };
 }
 
-/** Whether a box holds anything. */
+/** Whether a box has a positive width and height. */
 const filled = (box: Box) => box.right > box.left && box.bottom > box.top;
 
-/** The box that reaches lowest, or none. */
+/** The box whose bottom is lowest, or null for none. */
 export const lowestOf = (boxes: readonly Box[]) =>
   boxes.reduce<Box | null>((low, box) => (!low || box.bottom > low.bottom ? box : low), null);
 
 /**
- * What a held view's still shows whole of the popup it rests open on: a menu's items, and what is
- * chosen in it, such as a date picker's day or the row in the middle of a time picker's wheels.
+ * The parts of the popup a held view rests open on that its still shows whole: a menu's items,
+ * and what is selected in it, such as a date picker's day or the centred row of a time picker's
+ * wheel.
  */
 const heldItems = [
   ...['menuitem', 'menuitemradio', 'menuitemcheckbox'].map((role) => `[role='${role}']`),
@@ -217,10 +222,10 @@ const heldItems = [
   .join(', ');
 
 /**
- * A tile that holds its view is framed on its largest state: what its script acts on, also where
- * it is laid out, such as a pile's avatars in the row they spread into as it plays, so its view is
- * the same whenever and wherever the pointer comes in, and what it rests open on (heldItems). Any
- * other tile holds nothing.
+ * The visible elements a tile that holds its view is framed on: everything its script names, and
+ * the parts of the popup it rests open on (heldItems). measure adds where transformed ones are
+ * laid out, such as a pile's avatars in the row they spread into, so the view is the same wherever
+ * the pointer happens to be. A tile that does not hold its view returns none.
  */
 function heldElements(canvas: HTMLElement, script: StageScript) {
   if (!script.holdsView) return [];
@@ -230,8 +235,9 @@ function heldElements(canvas: HTMLElement, script: StageScript) {
 }
 
 /**
- * What a fit at rest is decided on (holdsFrame, HeldView.ts), where the canvas is in its stage, if
- * that shows whole.
+ * The shape a resting picture is framed on (Shape, compared by holdsFrame in HeldView.ts): the
+ * stage's and the canvas's sizes, whether the stage is whole in the window, where the canvas is
+ * in the stage, and the painted boxes with the popups they belong to.
  */
 export function shapeOf(stage: HTMLElement, canvas: HTMLElement, boxes: Shown[]): Shape {
   const canvasBox = canvas.getBoundingClientRect();
@@ -246,8 +252,9 @@ export function shapeOf(stage: HTMLElement, canvas: HTMLElement, boxes: Shown[])
 }
 
 /**
- * Whether an element shows whole: inside the window and every box around it that clips it, such as
- * the page's body that scrolls, so a popup in it is placed against nothing but the stage's edges.
+ * Whether an element is whole in view: inside the window and inside every ancestor that clips it,
+ * such as the page's scrolling body. Only then is a popup in it placed against the stage's edges
+ * and nothing else.
  */
 function wholeInView(element: Element) {
   const box = element.getBoundingClientRect();
@@ -266,8 +273,8 @@ function wholeInView(element: Element) {
 }
 
 /**
- * The popup an element is part of, open in a picture's overlay layer: the outermost box its theme
- * holds, such as a menu's positioner, or none for what is not in a popup.
+ * The popup an element is part of, as its outermost box inside the layer's theme, such as a menu's
+ * positioner; null for an element outside the overlay layer.
  */
 function layerRoot(element: Element) {
   let root: Element | null = null;

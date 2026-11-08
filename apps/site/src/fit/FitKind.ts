@@ -21,7 +21,7 @@ export type FitKind =
   | { scale: 'legible'; tile: boolean }
   /** A page's own tile drawn at its window's scale, such as a drawing or a foundation's tile. */
   | { scale: 'window'; tile: true }
-  /** An example or a specimen, drawn as large as fits what it paints, at most its window's scale. */
+  /** An example or a specimen, as large as fits what it paints, at most its window's scale. */
   | { scale: 'content'; tile: false };
 
 /** The tiles' window's width, in rem (Tile.css). A tile written for a narrower one is a drawing. */
@@ -89,10 +89,10 @@ export interface StageScript {
    */
   named: readonly string[];
   anywhere: readonly string[];
-  /** Where the pointer heads now (the heading), and every point it heads to, in order (the course). */
+  /** Where the pointer heads now (the heading), and all the points it heads to (the course). */
   heading: Aim | null;
   course: readonly Aim[];
-  /** The element of the canvas that a selector of the script aims at, found as the pointer finds it. */
+  /** The canvas element a selector of the script aims at, found the way the pointer finds it. */
   aimed: (selector: string) => Element | null;
   /**
    * Whether the components' gallery shows two tiles to a row (narrowGallery, Tiles.ts). Its
