@@ -60,11 +60,12 @@ export function easingFunction(easing: string): (progress: number) => number {
   const value = easing.trim();
   if (value === 'linear') return (progress) => clamp(progress);
   const match = /^cubic-bezier\(([^)]*)\)$/.exec(value);
-  const points = match?.[1]!.split(',').map(Number.parseFloat);
+  const points = match?.[1]?.split(',').map(Number.parseFloat);
   const [x1, y1, x2, y2] =
     points?.length === 4 && points.every(Number.isFinite)
       ? points
       : (keywords[value] ?? keywords.ease!);
+  // Four numbers: four points, or a keyword's, or ease's.
   return (progress) => bezier(clamp(progress), x1!, y1!, x2!, y2!);
 }
 

@@ -104,6 +104,7 @@ export async function highlightCode(
     .map((line) =>
       line.map((token) => ({
         content: token.content,
+        // Shiki gives each token a variant for every theme it is asked for, light and dark among them.
         light: token.variants.light!,
         dark: token.variants.dark!,
         lightHigh: token.variants.lightHigh,

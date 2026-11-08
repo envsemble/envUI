@@ -82,20 +82,22 @@ export function RichText({
       },
       markMapping: {
         code: ({ children: content }) => <Code>{content}</Code>,
-        link: ({ mark, children: content }) =>
-          safeRichTextUrl(mark.attrs?.href ?? '') ? (
+        link: ({ mark, children: content }) => {
+          const href = mark.attrs?.href ?? '';
+          return safeRichTextUrl(href) ? (
             <Link
-              href={mark.attrs!.href}
+              href={href}
               target={typeof mark.attrs?.target === 'string' ? mark.attrs.target : undefined}
               rel={typeof mark.attrs?.rel === 'string' ? mark.attrs.rel : undefined}
               title={typeof mark.attrs?.title === 'string' ? mark.attrs.title : undefined}
-              onClick={(event) => onLinkClick?.(mark.attrs!.href, event)}
+              onClick={(event) => onLinkClick?.(href, event)}
             >
               {content}
             </Link>
           ) : (
             <span>{content}</span>
-          ),
+          );
+        },
       },
     },
   });

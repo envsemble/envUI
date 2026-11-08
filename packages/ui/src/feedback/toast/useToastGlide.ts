@@ -125,6 +125,7 @@ export function useToastGlide(
     const next = new Map<string, number>();
     const hidden = new Set<string>();
     for (const item of items) {
+      // noticesOf finds the notices by their data-toast-id.
       const id = item.dataset.toastId!;
       if (item.hasAttribute('data-leaving')) continue;
       if (item.hasAttribute('data-limited')) {
