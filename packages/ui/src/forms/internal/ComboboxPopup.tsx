@@ -25,7 +25,6 @@ export function ComboboxPopup<Item extends ComboboxItem>({
   loading,
   loadingLabel,
   emptyLabel,
-  grouped,
   startSlot,
 }: {
   popupRef: Ref<HTMLDivElement>;
@@ -33,8 +32,6 @@ export function ComboboxPopup<Item extends ComboboxItem>({
   loading: boolean;
   loadingLabel: ReactNode;
   emptyLabel: ReactNode;
-  /** The options come in groups. */
-  grouped: boolean;
   /** Some option has start content, so every row keeps room for it. */
   startSlot: boolean;
 }) {
@@ -67,10 +64,10 @@ export function ComboboxPopup<Item extends ComboboxItem>({
         aria-busy={loading || undefined}
       >
         {(entry: Item | ComboboxGroup<Item>) =>
-          grouped && isGroup(entry) ? (
+          isGroup(entry) ? (
             <BaseCombobox.Group
               key={entry.label}
-              items={entry.items as Item[]}
+              items={entry.items}
               render={<Grid />}
               className="env-combobox-group"
             >
@@ -84,11 +81,7 @@ export function ComboboxPopup<Item extends ComboboxItem>({
               </BaseCombobox.Collection>
             </BaseCombobox.Group>
           ) : (
-            <ComboboxOption
-              key={(entry as Item).value}
-              item={entry as Item}
-              startSlot={startSlot}
-            />
+            <ComboboxOption key={entry.value} item={entry} startSlot={startSlot} />
           )
         }
       </BaseCombobox.List>

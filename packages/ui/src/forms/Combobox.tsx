@@ -263,7 +263,6 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
     collection,
     filter: baseFilter,
     hasStart,
-    grouped,
   } = useComboboxOptions({ items, filter, locale, selectedValues });
 
   const singleItem = typeof selection === 'string' ? known.get(selection) : undefined;
@@ -438,7 +437,6 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
           loading={loading}
           loadingLabel={loadingLabel ?? messages.loading}
           emptyLabel={emptyLabel ?? messages.empty}
-          grouped={grouped}
           startSlot={hasStart}
         />
       </BaseCombobox.Root>

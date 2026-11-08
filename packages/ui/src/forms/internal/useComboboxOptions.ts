@@ -4,7 +4,6 @@ import { Combobox as BaseCombobox } from '@base-ui/react/combobox';
 import { useLayoutEffect, useMemo, useRef } from 'react';
 import {
   flattenItems,
-  isGroup,
   type ComboboxFilter,
   type ComboboxGroup,
   type ComboboxItem,
@@ -70,6 +69,5 @@ export function useComboboxOptions<Item extends ComboboxItem>({
     filter: baseFilter,
     /** Whether an option has start content, for which every option keeps room. */
     hasStart: flatItems.some((item) => item.start != null),
-    grouped: flatItems.length > 0 && isGroup(items[0]!),
   };
 }
