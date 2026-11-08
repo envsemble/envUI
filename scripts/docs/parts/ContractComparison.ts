@@ -1,14 +1,8 @@
 // What a part contract lost against the one on the integration branch, and whether a major
 // changeset names each removal: part classes, state attributes and color properties are public, so
 // one that goes is a breaking change.
-import { execFileSync } from 'node:child_process';
-import { existsSync, readdirSync, readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
-import { baseCandidates } from '../../test/TestScope.ts';
-import { partsPath, type PartsContract } from './Contract.ts';
-import { root } from './Library.ts';
-
-const changesetDirectory = resolve(root, '.changeset');
+import { isMajor, names } from '../ContractHistory.ts';
+import type { PartsContract } from './Contract.ts';
 
 /** A name of a contract: a part, a color property, a state attribute, or one of its values. */
 interface ContractItem {
@@ -72,15 +66,6 @@ function contractClasses(parts: PartsContract | undefined) {
   return { classes, states, colors };
 }
 
-/** Whether a changeset's front matter makes it a major change of @envsemble/envui. */
-const isMajor = (changeset: string) =>
-  /^---\r?\n[\s\S]*?^\s*['"]?@envsemble\/envui['"]?\s*:\s*major\s*$[\s\S]*?^---/m.test(changeset);
-/** Whether a text names a name whole, so a changeset about env-card-header doesn't name env-card. */
-const names = (text: string, name: string) =>
-  new RegExp(String.raw`(?<![\w-])${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![\w-])`).test(
-    text,
-  );
-
 /**
  * What a contract lost against an older one: each part, state attribute or value, or color property
  * that is gone, with whether a major changeset of @envsemble/envui names it: the class; the
@@ -120,47 +105,4 @@ export function removedParts(
         ),
       });
   return removed;
-}
-
-function git(args: string[]) {
-  return execFileSync('git', args, {
-    cwd: root,
-    encoding: 'utf8',
-    stdio: ['ignore', 'pipe', 'ignore'],
-  });
-}
-
-/**
- * The contract at the merge-base with the integration branch, from the first of the check tiers'
- * bases whose merge-base has it, and what each base skipped lacked.
- */
-export function baseParts(base: string | undefined): {
-  ref: string | undefined;
-  parts: PartsContract | undefined;
-  skipped: string[];
-} {
-  const skipped: string[] = [];
-  for (const ref of baseCandidates(base)) {
-    let mergeBase: string;
-    try {
-      mergeBase = git(['merge-base', 'HEAD', ref]).trim();
-    } catch {
-      skipped.push(`${ref} does not exist here`);
-      continue;
-    }
-    try {
-      return { ref, parts: JSON.parse(git(['show', `${mergeBase}:${partsPath}`])), skipped };
-    } catch {
-      skipped.push(`${ref} has no ${partsPath} at the merge-base ${mergeBase.slice(0, 10)}`);
-    }
-  }
-  return { ref: undefined, parts: undefined, skipped };
-}
-
-/** The pending changesets' text, one per changeset, of which a major one must name a removal. */
-export function pendingChangesets() {
-  if (!existsSync(changesetDirectory)) return [];
-  return readdirSync(changesetDirectory)
-    .filter((name) => name.endsWith('.md') && name !== 'README.md')
-    .map((name) => readFileSync(resolve(changesetDirectory, name), 'utf8'));
 }

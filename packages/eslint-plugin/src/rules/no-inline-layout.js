@@ -1,4 +1,11 @@
-import { documentationUrl, jsxName, propertyName, resolveVariable, walk } from '../utilities.js';
+import {
+  documentationUrl,
+  jsxName,
+  propertyName,
+  resolveVariable,
+  unwrapExpression,
+  walk,
+} from '../utilities.js';
 
 /** The display values that lay out a row, a column or a grid by hand, and the primitive for each. */
 const layoutDisplays = new Map([
@@ -14,7 +21,8 @@ const layoutDisplays = new Map([
  * `open ? 'flex' : 'none'` or `wide && 'grid'`, and the string a `const` of the file holds, as in
  * `display: d` with `const d = 'flex'`, reported where the style names it.
  */
-function staticStrings(sourceCode, node, seen = new Set()) {
+function staticStrings(sourceCode, expression, seen = new Set()) {
+  const node = unwrapExpression(expression);
   if (!node) return [];
   const strings = (child) => staticStrings(sourceCode, child, seen);
   if (node.type === 'Literal' && typeof node.value === 'string')
@@ -24,8 +32,6 @@ function staticStrings(sourceCode, node, seen = new Set()) {
   if (node.type === 'ConditionalExpression')
     return [...strings(node.consequent), ...strings(node.alternate)];
   if (node.type === 'LogicalExpression') return [...strings(node.left), ...strings(node.right)];
-  if (node.type === 'TSAsExpression' || node.type === 'TSSatisfiesExpression')
-    return strings(node.expression);
   if (node.type === 'Identifier') {
     const init = constantInit(sourceCode, node);
     if (!init || seen.has(init)) return [];
@@ -33,19 +39,6 @@ function staticStrings(sourceCode, node, seen = new Set()) {
     return strings(init).map(({ value }) => ({ node, value }));
   }
   return [];
-}
-
-/** An expression without the TypeScript assertions around it: `{ … } as const` is the object. */
-function unwrap(node) {
-  let current = node;
-  while (
-    current &&
-    (current.type === 'TSAsExpression' ||
-      current.type === 'TSSatisfiesExpression' ||
-      current.type === 'TSNonNullExpression')
-  )
-    current = current.expression;
-  return current;
 }
 
 /** The value a `const` of the file holds, when a name refers to one, without `as const`. */
@@ -58,7 +51,7 @@ function constantInit(sourceCode, identifier) {
     definition.node.id.type !== 'Identifier'
   )
     return null;
-  return unwrap(definition.node.init) ?? null;
+  return unwrapExpression(definition.node.init) ?? null;
 }
 
 /**
@@ -143,7 +136,7 @@ export default {
      * argument the call may turn into anything, and is not checked.
      */
     function visitDirect(node) {
-      const value = unwrap(node);
+      const value = unwrapExpression(node);
       if (value?.type === 'Identifier') {
         const object = constantObject(sourceCode, value);
         if (object) checkObject(object);
@@ -154,7 +147,7 @@ export default {
       ) {
         const object = constantObject(sourceCode, value.object);
         const member = object && findProperty(object, [value.property.name]);
-        const memberValue = member && unwrap(member.value);
+        const memberValue = member && unwrapExpression(member.value);
         if (memberValue?.type === 'ObjectExpression') checkObject(memberValue);
       } else if (value?.type === 'ConditionalExpression') {
         visitDirect(value.consequent);

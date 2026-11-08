@@ -8,8 +8,7 @@ import { ListRow } from '../../internal/ListRow.js';
 import { Column, Grid } from '../../foundations/Layout.js';
 import { Spinner } from '../../feedback/Spinner.js';
 import { IconCheck } from '../../icons/Check.js';
-import type { ComboboxGroup, ComboboxItem } from '../Combobox.js';
-import { isGroup } from './comboboxItems.js';
+import { isGroup, type ComboboxGroup, type ComboboxItem } from './comboboxItems.js';
 import '../../styles/Base.css';
 import '../../styles/Combobox.css';
 

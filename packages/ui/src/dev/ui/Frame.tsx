@@ -8,7 +8,8 @@
 
 import { useEffect, useRef, type HTMLAttributes, type KeyboardEvent } from 'react';
 import { Text } from '../../foundations/Text.js';
-import { round, windowClasses, windowClassOf } from '../units.js';
+import { roundToHundredth } from '../../internal/lengths.js';
+import { windowClasses, windowClassOf } from '../units.js';
 
 /** The smallest and largest the frame lays the page out at, in rem. */
 const frameMin = 15;
@@ -220,7 +221,7 @@ export function Frame({
   const text = [
     size.device,
     `${Math.round(width)}×${Math.round(height)}px`,
-    `${round(width / rootPx)}×${round(height / rootPx)}rem`,
+    `${roundToHundredth(width / rootPx)}×${roundToHundredth(height / rootPx)}rem`,
     windowClass,
   ]
     .filter(Boolean)

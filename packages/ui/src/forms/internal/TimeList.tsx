@@ -14,7 +14,8 @@ import {
   toUtcDate,
   withHourCycle,
 } from '../../internal/calendarDays.js';
-import { TimeWheel, type Entry, type Part } from './TimeWheel.js';
+import { TimeWheel } from './TimeWheel.js';
+import type { Entry, Part } from './wheelRows.js';
 import '../../styles/Base.css';
 import '../../styles/TimeList.css';
 import '../../styles/DatePicker.css';

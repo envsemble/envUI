@@ -7,23 +7,11 @@ import { isRightToLeft } from '../../internal/direction.js';
 import { flag } from '../../internal/flag.js';
 import { useWheelGestures, type WheelDrag } from './useWheelGestures.js';
 import { useWheelTurn } from './useWheelTurn.js';
-import { copiesOf, nearestAvailable, shownRows, wrap } from './wheelRows.js';
+import { copiesOf, nearestAvailable, shownRows, wrap, type Entry, type Part } from './wheelRows.js';
 import '../../styles/Base.css';
 import '../../styles/TimeList.css';
 
 // One column of a TimeList: a wheel of hours, minutes or day periods.
-
-/** The part of the time a column chooses. */
-export type Part = 'hour' | 'minute' | 'dayPeriod';
-
-export interface Entry {
-  /** The hour (of the day, or of its half on a 12-hour clock), the minute, or 0 for AM and 1 for PM. */
-  value: number;
-  label: string;
-  disabled: boolean;
-  /** What typing names it: digits, or the start of the day period's name. */
-  keys: string[];
-}
 
 /** Page Up and Page Down step this many entries. */
 const pageRows = 5;
@@ -38,18 +26,6 @@ interface TimeWheelProps {
   onChoose: (value: number) => void;
   /** Moves focus to the column before (-1) or after (1). */
   onSideways: (direction: -1 | 1) => void;
-}
-
-// The wheel's states that its turning and dragging set on it directly, between React's renders.
-
-function markTurning(wheel: HTMLElement, turning: boolean) {
-  if (turning) wheel.dataset.turning = '';
-  else delete wheel.dataset.turning;
-}
-
-function markDragging(wheel: HTMLElement, dragging: boolean) {
-  if (dragging) wheel.dataset.dragging = '';
-  else delete wheel.dataset.dragging;
 }
 
 /**
@@ -90,7 +66,6 @@ export function TimeWheel({
     onChoose,
     loop,
     copies,
-    markTurning,
   });
   const gestures = useWheelGestures({
     wheelRef,
@@ -99,7 +74,6 @@ export function TimeWheel({
     loop,
     count,
     copies,
-    markDragging,
   });
   const { centred, scrollToRow } = turning;
 

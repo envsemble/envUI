@@ -15,7 +15,7 @@ import type {
 import { layoutKinds } from './model.js';
 import { partClassOf } from './parts.js';
 import { pageContainerQueries } from './queries.js';
-import { rootFontPx } from './units.js';
+import { remPixels } from '../internal/lengths.js';
 import { isOpenOverlay, outermost, overlayKind, overlaySelector } from './overlays.js';
 
 /** The attribute every primitive and scaffold renders on its root, with its kind. */
@@ -357,7 +357,7 @@ function isShown(element: HTMLElement) {
 
 /** Measures the page under a root, with the open overlays anywhere in the document. */
 export function measure(root: HTMLElement, options: MeasureOptions = {}): Snapshot {
-  const rootPx = rootFontPx();
+  const rootPx = remPixels(root);
   const minTextCharacters = options.minTextCharacters ?? 8;
   const queries = pageContainerQueries(rootPx);
   const windowBox: Box = { x: 0, y: 0, w: window.innerWidth, h: window.innerHeight };

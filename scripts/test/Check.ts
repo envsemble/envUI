@@ -203,6 +203,14 @@ if (scope.generated.has('docs'))
         ...(option('--base') ? ['--base', option('--base')!] : []),
       ),
     ),
+    task(
+      'docs:check exports',
+      node(
+        'scripts/docs/GenerateExports.ts',
+        '--check',
+        ...(option('--base') ? ['--base', option('--base')!] : []),
+      ),
+    ),
     task('docs:check pages', node('scripts/docs/GenerateDocumentation.ts', '--check')),
     task('docs:check snippets', node('scripts/docs/CheckSnippets.ts')),
   );

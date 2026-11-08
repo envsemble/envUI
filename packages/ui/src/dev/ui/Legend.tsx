@@ -4,7 +4,8 @@
 import type { ReactNode } from 'react';
 import { Row } from '../../foundations/Layout.js';
 import { Text } from '../../foundations/Text.js';
-import { round, windowClasses } from '../units.js';
+import { roundToHundredth } from '../../internal/lengths.js';
+import { windowClasses } from '../units.js';
 
 /** One entry of a legend: a swatch drawn as a plane is, and its name. */
 function Swatch({
@@ -49,7 +50,7 @@ export function Legend({ colorBy, rootPx }: { colorBy: 'kind' | 'window'; rootPx
               <Swatch
                 key={windowClass.name}
                 plane={{ 'data-window': windowClass.name, 'data-container': '' }}
-                title={`${range}rem, ${round((next?.from ?? windowClass.from) * rootPx)}px`}
+                title={`${range}rem, ${roundToHundredth((next?.from ?? windowClass.from) * rootPx)}px`}
               >
                 {windowClass.name}{' '}
                 <Text variant="caption" emphasis="subtle" render={<span />}>

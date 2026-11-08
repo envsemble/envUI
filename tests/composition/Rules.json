@@ -106,8 +106,6 @@
       "forms/internal/comboboxItems.ts": "composites",
       "forms/internal/useComboboxOpen.ts": "composites",
       "forms/internal/useComboboxOptions.ts": "composites",
-      "forms/internal/useComboboxQuery.ts": "composites",
-      "forms/internal/useComboboxSelection.ts": "composites",
       "forms/Composer.tsx": "composites",
       "forms/DatePicker.tsx": "composites",
       "forms/TimePicker.tsx": "composites",
@@ -298,8 +296,7 @@
         "modules": [
           "layout/internal/useScrollKeys.ts",
           "layout/internal/scaffoldFocus.ts",
-          "layout/internal/useNavigationFocusHandoff.ts",
-          "layout/internal/useScaffoldBarSizes.ts"
+          "layout/internal/useNavigationFocusHandoff.ts"
         ]
       },
       "Panes": {
@@ -307,9 +304,6 @@
       },
       "List": {
         "modules": ["content/internal/ReorderableList.tsx"]
-      },
-      "Slider": {
-        "modules": ["forms/internal/useSliderVeil.ts"]
       },
       "Table": {
         "modules": ["content/internal/ColumnResizeHandle.tsx"]
@@ -320,9 +314,7 @@
           "forms/internal/ComboboxPopup.tsx",
           "forms/internal/comboboxItems.ts",
           "forms/internal/useComboboxOpen.ts",
-          "forms/internal/useComboboxOptions.ts",
-          "forms/internal/useComboboxQuery.ts",
-          "forms/internal/useComboboxSelection.ts"
+          "forms/internal/useComboboxOptions.ts"
         ]
       },
       "Dialog": {

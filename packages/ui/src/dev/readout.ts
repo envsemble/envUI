@@ -13,7 +13,8 @@ import type {
 } from './model.js';
 import { layoutKinds } from './model.js';
 import { queriesFor, thresholdsFor } from './queries.js';
-import { round, toRem, windowClassOf } from './units.js';
+import { roundToHundredth } from '../internal/lengths.js';
+import { toRem, windowClassOf } from './units.js';
 
 /** A measurement read: its text, each node's line and problems, and every problem. */
 export interface Reading {
@@ -246,7 +247,7 @@ class Reader {
     if (!spills && wider > 1)
       this.overflowing.set(
         node.index,
-        `${label}: its content is ${round(wider / rootPx)}rem wider than it (${this.rem(node.scrollSize.clientW)}rem) and it doesn't scroll${clips ? ', so the content is cut off' : ''}. Let the content wrap or shrink (min-inline-size: 0), or let it scroll.`,
+        `${label}: its content is ${roundToHundredth(wider / rootPx)}rem wider than it (${this.rem(node.scrollSize.clientW)}rem) and it doesn't scroll${clips ? ', so the content is cut off' : ''}. Let the content wrap or shrink (min-inline-size: 0), or let it scroll.`,
       );
   }
 
