@@ -43,7 +43,8 @@ const byText = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0);
 type PartDescriptions = Record<string, any>;
 
 /** The hand-written part of the contract. */
-const readPartDescriptions = (): PartDescriptions => JSON.parse(readFileSync(partDescriptionsFile, 'utf8'));
+const readPartDescriptions = (): PartDescriptions =>
+  JSON.parse(readFileSync(partDescriptionsFile, 'utf8'));
 
 /** A component, namespace or shared anatomy, whose classes take its prefix. */
 interface Group {
@@ -167,7 +168,9 @@ function checkProperties(
           `${group}: ${property} needs a use, set or read, in packages/ui/src/partDescriptions.json`,
         );
       if (typeof description !== 'string' || !description.trim())
-        problems.push(`${group}: ${property} has no description in packages/ui/src/partDescriptions.json`);
+        problems.push(
+          `${group}: ${property} has no description in packages/ui/src/partDescriptions.json`,
+        );
     }
 }
 
@@ -183,7 +186,9 @@ function checkColors(colors: Record<string, Record<string, string>>, problems: s
           `${group}: its color property ${property} is not registered in the style sheets as a property that doesn't inherit`,
         );
       if (typeof description !== 'string' || !description.trim())
-        problems.push(`${group}: ${property} has no description in packages/ui/src/partDescriptions.json`);
+        problems.push(
+          `${group}: ${property} has no description in packages/ui/src/partDescriptions.json`,
+        );
     }
   for (const property of registered.keys())
     if (!listedColors.has(property))
@@ -201,7 +206,9 @@ function checkDescriptions(
 ) {
   for (const name of parts)
     if (typeof described[name] !== 'string' || !described[name].trim())
-      problems.push(`${group}: ${name} has no description in packages/ui/src/partDescriptions.json`);
+      problems.push(
+        `${group}: ${name} has no description in packages/ui/src/partDescriptions.json`,
+      );
   for (const name of Object.keys(described))
     if (!parts.includes(name))
       problems.push(
@@ -222,7 +229,9 @@ function checkListedGroups(
       );
   for (const name of Object.keys(colors))
     if (!(name in output.components))
-      problems.push(`packages/ui/src/partDescriptions.json lists colors of ${name}, which is no component`);
+      problems.push(
+        `packages/ui/src/partDescriptions.json lists colors of ${name}, which is no component`,
+      );
   for (const name of Object.keys(descriptions))
     if (!(name in output.components) && !(name in output.shared))
       problems.push(`packages/ui/src/partDescriptions.json describes ${name}, which has no parts`);
