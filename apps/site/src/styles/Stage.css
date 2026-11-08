@@ -479,7 +479,7 @@
 
 /* It shows once its room is made for its overlays resting open, fading in once, so nothing in it
    moves as it appears (OpenExample.tsx); while its example loads, the skeleton in it shows, and
-   stays over it until then, fading out as it fades in (loading/Loading.tsx). */
+   stays over it until then, fading out as it fades in (loading/useArrival.ts). */
 .catalogue-open-example:not([data-placed], :has(.site-loading)) {
   opacity: 0;
 }

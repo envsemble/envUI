@@ -9,6 +9,7 @@ import { TileStage } from '../figures/TileStage';
 import { useNear } from '../figures/useNear';
 import { alternativesOf, type Alternative, type TilePicture } from './RelatedPages';
 import { pendingAttribute, useSectionOutline } from './SectionOutline';
+import { flag } from '@envui-internal/internal/flag';
 
 /**
  * One alternative's tile, whose picture plays while the pointer or the keyboard is on it, and where
@@ -58,7 +59,7 @@ function Tiles({ alternatives, path }: { alternatives: Alternative[]; path: stri
       className="catalogue-related-tiles"
       data-count={alternatives.length}
       // A scene's tile takes a larger stage, as in its gallery: so does every tile beside it.
-      data-scenes={alternatives.some(({ frame }) => frame === 'legible') ? '' : undefined}
+      data-scenes={flag(alternatives.some(({ frame }) => frame === 'legible'))}
     >
       {alternatives.map(({ key, name, href, picture, line, frame }, index) => (
         <RelatedTile key={key} picture={picture} near={near} frame={frame}>

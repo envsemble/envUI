@@ -1,4 +1,5 @@
 import { createContext, useContext } from 'react';
+import { flag } from '@envui-internal/internal/flag';
 
 /**
  * Whether a section of a page renders as its outline alone while it waits its turn to show
@@ -16,7 +17,7 @@ export const useSectionOutline = () => useContext(SectionOutline);
 
 /** The attribute of a section's root while it renders as its outline. */
 export const pendingAttribute = (outline: boolean) => ({
-  'data-site-pending': outline ? '' : undefined,
+  'data-site-pending': flag(outline),
 });
 
 /**

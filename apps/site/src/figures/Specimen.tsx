@@ -12,7 +12,8 @@ import { PartHeadingLevel, SpecimenHeadingLevel } from './Example';
 import { hasExample } from './ExampleRegistry';
 import { LoadBoundary } from '../loading/LoadBoundary';
 import { moduleRegistry } from '../loading/ModuleRegistry';
-import { HoldPlaceholder, StageSkeleton } from '../loading/Loading';
+import { HoldPlaceholder } from '../loading/LoadingStore';
+import { StageSkeleton } from '../loading/Skeletons';
 import { VerdictMotion } from '../motion/MotionStage';
 
 /*

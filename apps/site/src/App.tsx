@@ -70,7 +70,7 @@ import { SearchButton } from './search/SearchButton';
 import { useSiteRoute } from './navigation/useSiteRoute';
 import { DisplaySettingsProvider } from './theme/DisplaySettings';
 import { SiteSearch } from './search/SiteSearch';
-import { LoadingStatus } from './loading/Loading';
+import { LoadingStatus } from './loading/LoadingStore';
 import { restoreScroll, scrolled } from './navigation/ScrollRestoration';
 import { PageSkeleton } from './loading/PageSkeleton';
 

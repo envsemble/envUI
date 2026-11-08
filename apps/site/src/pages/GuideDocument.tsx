@@ -1,7 +1,7 @@
 import { Fragment, Suspense } from 'react';
 import type { Documentation as Document } from './PageModel';
 import { Documentation } from './Documentation';
-import { StageSkeleton } from '../loading/Loading';
+import { StageSkeleton } from '../loading/Skeletons';
 import { useFoundationFigures } from '../figures/foundations/FoundationFigures';
 
 /**

@@ -4,7 +4,7 @@
  * taller the stage grows for a dialog, a sheet or a toast placed on it; and the stage's recorded
  * height, held while the room is made.
  */
-import { recordedSize } from '../loading/Loading';
+import { recordedSize } from '../loading/RecordedSizes';
 import { inset, union, type Box } from './FitMath';
 
 /**

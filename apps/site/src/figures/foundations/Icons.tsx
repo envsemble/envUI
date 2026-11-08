@@ -26,7 +26,7 @@ import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';
 import { useTimeline } from '../../motion/Timeline';
 import { LoadBoundary, lazyPart } from '../../loading/LoadBoundary';
-import { PartSkeleton, placeholderText } from '../../loading/Loading';
+import { PartSkeleton, placeholderText } from '../../loading/Skeletons';
 import { Example } from '../Example';
 import type { FoundationFigure } from './FoundationFigures';
 import { Figure } from './Topic';

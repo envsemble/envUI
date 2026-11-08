@@ -14,7 +14,7 @@ import { useDisplaySettings } from '../theme/DisplaySettings';
 import { ExampleRender } from './LiveExample';
 import { FoundationTile } from '../tiles/foundations/FoundationTiles';
 import type { TilePicture } from '../template/RelatedPages';
-import { TileSkeleton } from '../loading/Loading';
+import { TileSkeleton } from '../loading/Skeletons';
 import { cropped, fitKindOf } from '../fit/Fitting';
 import { useFit } from '../fit/useFit';
 import { AppScreen } from './AppTile';
