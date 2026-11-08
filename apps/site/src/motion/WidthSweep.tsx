@@ -8,7 +8,7 @@ import {
 } from 'react';
 import { PortalContainer, windowClasses, type WindowClass } from '@envsemble/envui';
 import { usePlayback } from './Playback';
-import { remPixels } from '../shared/Lengths';
+import { remPixels } from '@envui-internal/internal/lengths';
 
 /*
  * An Adapting to width figure that plays: the example in one frame whose width sweeps between the

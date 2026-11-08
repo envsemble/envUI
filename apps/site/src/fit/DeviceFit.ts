@@ -4,9 +4,9 @@
  * whole and its cut edges fall between words. Boxes are in the device's own px, from its top left
  * corner.
  */
-import type { DeviceKind } from '../../../../scripts/docs/model/DocumentationTypes';
+import type { DeviceKind } from '@docs-model/DocumentationTypes';
 import { courseOf, headingOf, mustShowOf, type Heading } from '../motion/MustShow';
-import { remPixels } from '../shared/Lengths';
+import { remPixels } from '@envui-internal/internal/lengths';
 import type { Box } from './FitMath';
 
 /**

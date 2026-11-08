@@ -346,14 +346,6 @@ body {
 .site-wide-only {
   display: none;
 }
-@container env-scaffold (width >= 52.5rem) {
-  .site-narrow-only {
-    display: none;
-  }
-  .site-wide-only {
-    display: contents;
-  }
-}
 /* A wide window's page with no drawer beside the rail, such as Overview, has search at its top
    start, level with the page's actions across from it: a row of no height that sticks to the
    body's top, as the compact controls below do. */
@@ -369,11 +361,6 @@ body {
   /* Level with search at the top of a drawer: the drawer's top padding. */
   inset-block-start: var(--env-space-4);
   inset-inline-start: calc(var(--site-search-start) - var(--site-rail-width));
-}
-@container env-scaffold (width >= 52.5rem) {
-  .site-page-search {
-    display: block;
-  }
 }
 /* Below an expanded window, where the navigation is in a sheet, the menu button, the wordmark and
    search start one bar across the top of the page, in the page's color, which the other area and
@@ -407,7 +394,18 @@ body {
 .site-compact-controls-bar .docs-brand-docs {
   block-size: 0.768rem;
 }
+/* From an expanded window, as the library's windowClasses.expanded starts it (CSS can't read a
+   custom property in a query): the drawer beside the rail in place of the sheet and its bar. */
 @container env-scaffold (width >= 52.5rem) {
+  .site-narrow-only {
+    display: none;
+  }
+  .site-wide-only {
+    display: contents;
+  }
+  .site-page-search {
+    display: block;
+  }
   .site-compact-controls {
     display: none;
   }

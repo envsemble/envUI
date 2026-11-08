@@ -18,6 +18,8 @@ import {
   Sheet,
   Text,
   Tooltip,
+  useModifierKey,
+  windowClasses,
 } from '@envsemble/envui';
 import { IconMenu } from '@envsemble/envui/icons/Menu';
 import {
@@ -116,15 +118,16 @@ const pagesWithoutContents = new Set<RoutePage['kind']>([
  * that handles the keys itself, such as for a link, keeps them.
  */
 function useSearchShortcut(setSearchOpen: Dispatch<SetStateAction<boolean>>) {
+  const { key } = useModifierKey();
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.defaultPrevented || !isSearchShortcut(event)) return;
+      if (event.defaultPrevented || !isSearchShortcut(event, key)) return;
       event.preventDefault();
       setSearchOpen((open) => !open);
     };
     addEventListener('keydown', onKeyDown);
     return () => removeEventListener('keydown', onKeyDown);
-  }, [setSearchOpen]);
+  }, [key, setSearchOpen]);
 }
 
 /**
@@ -167,7 +170,7 @@ function usePagePlace(route: string, title: string, main: RefObject<HTMLElement 
 function useSheetClosesWhenWide(open: boolean, setOpen: (open: boolean) => void) {
   useEffect(() => {
     if (!open) return;
-    const wide = window.matchMedia('(width >= 52.5rem)');
+    const wide = window.matchMedia(`(width >= ${windowClasses.expanded})`);
     const close = () => wide.matches && setOpen(false);
     close();
     wide.addEventListener('change', close);

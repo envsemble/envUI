@@ -16,12 +16,12 @@ import { tokensVitePlugin } from '../../scripts/build/BuildTokens.ts';
 // @envsemble/envui/theme-bootstrap, is its build in dist/, which a checkout has only after
 // npm run build, so the library's source module is imported instead.
 import { createThemeBootstrapScript } from '../../packages/ui/src/foundations/themeBootstrap.ts';
+import { displayStorageKeys } from './src/theme/DisplayStorage.ts';
 import {
   createDisplayBootstrapScript,
   createFirstPaintStyle,
   createStorageMigrationScript,
-  displayStorageKeys,
-} from './src/theme/DisplayStorage.ts';
+} from './src/theme/HeadScripts.ts';
 import { checkoutMarker } from '../../scripts/test/CheckoutMarker.ts';
 import { resetClosedConnections } from '../../scripts/test/ServerSockets.ts';
 import { readReleaseNotes, releaseNotesSources } from '../../scripts/site/ReleaseNotes.ts';
@@ -98,6 +98,8 @@ const resolvedId = (id: string) => `\0${id}`;
 const iconList = fileURLToPath(new URL('../../packages/ui/src/icons/index.ts', import.meta.url));
 /** The documentation's model (scripts/docs/model), which the site imports as @docs-model. */
 const docsModel = fileURLToPath(new URL('../../scripts/docs/model', import.meta.url));
+/** The library's source, the site's only door into what its entry points don't export. */
+const libraryInternals = fileURLToPath(new URL('../../packages/ui/src', import.meta.url));
 
 /** The files for coding agents at the site's root, with the type each is served as. */
 const agentFileTypes = {
@@ -314,6 +316,8 @@ export default defineConfig(() => {
         'envui-icon-list': iconList,
         // The documentation's model, which the site and the scripts that build it both read.
         '@docs-model': docsModel,
+        // What the library's entry points don't export, such as its reduced-motion query.
+        '@envui-internal': libraryInternals,
       },
     },
     // That list has thousands of modules; serve it as one lazy dependency in dev.

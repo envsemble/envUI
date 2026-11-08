@@ -1,11 +1,6 @@
-import { Button, IconButton, Kbd, Row, Tooltip } from '@envsemble/envui';
+import { Button, IconButton, Kbd, Row, Tooltip, useModifierKey } from '@envsemble/envui';
 import { IconSearch } from '@envsemble/envui/icons/Search';
-import { applePlatform, commandKey } from './SearchShortcut';
 import { preloadSearch } from './SiteSearch';
-
-/** The keys of the search shortcut, as the button shows them, and as aria-keyshortcuts names them. */
-const keys = [commandKey, 'K'];
-const ariaKeyShortcuts = applePlatform ? 'Meta+K' : 'Control+K';
 
 /**
  * The button that opens the documentation's search, built as the search trigger pattern shows: a
@@ -22,6 +17,10 @@ export function SearchButton({
   onClick: () => void;
   className?: string;
 }) {
+  // The keys of the search shortcut, as the button shows them, and as aria-keyshortcuts names them.
+  const modifier = useModifierKey();
+  const keys = [modifier.label, 'K'];
+  const ariaKeyShortcuts = `${modifier.key}+K`;
   if (iconOnly)
     return (
       <Tooltip

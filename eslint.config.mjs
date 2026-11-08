@@ -132,6 +132,26 @@ export default defineConfig(
     rules: { 'no-restricted-syntax': ['error', ...previewNames] },
   },
   {
+    // The site reaches the library through its entry points, and what they don't export through
+    // @envui-internal, the scripts' documentation model through @docs-model (AGENTS.md): a relative
+    // path into either would break unseen when a file there moves.
+    files: ['apps/site/src/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              regex: String.raw`^(\.\./)+(packages/ui/src|scripts)(/|$)`,
+              message:
+                'Import the library from @envsemble/envui, its internals from @envui-internal/* and the documentation model from @docs-model/* (AGENTS.md).',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
     // Examples and templates are the code applications and agents copy, so they follow the rules
     // envUI asks of applications: envUI's components over raw elements and no raw colors.
     ...envui.configs.recommended,

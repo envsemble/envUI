@@ -1,5 +1,5 @@
 import { useLayoutEffect, type RefObject } from 'react';
-import { remPixels } from '../shared/Lengths';
+import { remPixels } from '@envui-internal/internal/lengths';
 
 /**
  * Lays the canvas of an application's tile out over its stage, less the margin the frame keeps

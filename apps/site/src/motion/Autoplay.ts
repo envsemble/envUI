@@ -1,6 +1,6 @@
 import { useEffect, useSyncExternalStore, type RefObject } from 'react';
 import { useDisplaySettings } from '../theme/DisplaySettings';
-import { reducedMotionQuery } from '../../../../packages/ui/src/internal/reducedMotion';
+import { reducedMotionQuery } from '@envui-internal/internal/reducedMotion';
 
 /*
  * Tiles that play by themselves where the reader can't hover, as on a phone, where the galleries

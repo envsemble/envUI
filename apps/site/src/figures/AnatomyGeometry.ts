@@ -4,7 +4,7 @@
  * a variants figure, its items and the room their names and uses take.
  */
 import type { AnatomyLegendItem } from '@docs-model/DocumentationTypes';
-import { remPixels } from '../shared/Lengths';
+import { remPixels } from '@envui-internal/internal/lengths';
 import { partSelector } from '../template/Parts';
 import { union, type Box } from '../fit/FitMath';
 import type { AnatomyGeometry, Corners, Part, UseSize, VariantGeometry } from './AnatomyPlacement';

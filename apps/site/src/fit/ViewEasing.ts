@@ -2,7 +2,7 @@
  * How a picture's view moves to where its fit places it (useFit.ts): at once until it shows, then
  * easing there, in the slow motion token on the standard easing.
  */
-import { prefersReducedMotion } from '../../../../packages/ui/src/internal/reducedMotion';
+import { prefersReducedMotion } from '@envui-internal/internal/reducedMotion';
 import { rootMotionDuration } from '../motion/RootMotionTokens';
 import { place, type Fitting } from './Fitting';
 import type { Shown } from './PaintedBoxes';

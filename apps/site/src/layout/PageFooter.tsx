@@ -1,5 +1,5 @@
 import { Link, Row, Text } from '@envsemble/envui';
-import { version } from '../../../../packages/ui/package.json';
+import { version } from '@envsemble/envui/package.json';
 import { EnvUILogo } from '../brand/EnvUILogo';
 import { docsRoute, homeRoute, routeHref } from '../navigation/Address';
 

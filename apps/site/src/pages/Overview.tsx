@@ -3,7 +3,7 @@ import { IconArrowForward } from '@envsemble/envui/icons/ArrowForward';
 import { IconWidgets } from '@envsemble/envui/icons/Widgets';
 import { IconPattern } from '@envsemble/envui/icons/Pattern';
 import { IconPalette } from '@envsemble/envui/icons/Palette';
-import { name } from '../../../../packages/ui/package.json';
+import { name } from '@envsemble/envui/package.json';
 import { EnvUILogo } from '../brand/EnvUILogo';
 import { docsRoute, routeHref } from '../navigation/Address';
 import { pagesOf, sectionHome } from '../navigation/SiteRoutes';

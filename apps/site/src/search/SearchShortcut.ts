@@ -1,25 +1,12 @@
-/**
- * Apple keyboards name the Command key; other platforms use Ctrl for the same shortcuts. Decided by
- * the platform, not by the user agent, which some engines set to a Mac's elsewhere.
- */
-export const applePlatform =
-  typeof navigator !== 'undefined' &&
-  /mac|iphone|ipad|ipod/i.test(
-    (navigator as Navigator & { userAgentData?: { platform?: string } }).userAgentData?.platform ||
-      navigator.platform ||
-      '',
-  );
-
-/** The modifier of the search shortcut, as a key hint shows it. */
-export const commandKey = applePlatform ? '⌘' : 'Ctrl';
+import type { ModifierKey } from '@envsemble/envui';
 
 /**
- * Whether a key press asks for search: ⌘K on Apple platforms and Ctrl+K elsewhere, so Ctrl+K stays
- * free on a Mac, where text fields use it to delete to the end of the line.
+ * Whether a key press asks for search: the platform's modifier with K, ⌘K on Apple platforms and
+ * Ctrl+K elsewhere (useModifierKey), so Ctrl+K stays free on a Mac, where text fields use it to
+ * delete to the end of the line.
  */
-export function isSearchShortcut(event: KeyboardEvent) {
-  const modifier = applePlatform
-    ? event.metaKey && !event.ctrlKey
-    : event.ctrlKey && !event.metaKey;
-  return modifier && !event.altKey && !event.shiftKey && event.key.toLowerCase() === 'k';
+export function isSearchShortcut(event: KeyboardEvent, modifier: ModifierKey['key']) {
+  const held =
+    modifier === 'Meta' ? event.metaKey && !event.ctrlKey : event.ctrlKey && !event.metaKey;
+  return held && !event.altKey && !event.shiftKey && event.key.toLowerCase() === 'k';
 }

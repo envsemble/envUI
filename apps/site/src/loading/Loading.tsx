@@ -8,7 +8,7 @@ import {
   type CSSProperties,
   type ReactNode,
 } from 'react';
-import { prefersReducedMotion } from '../../../../packages/ui/src/internal/reducedMotion';
+import { prefersReducedMotion } from '@envui-internal/internal/reducedMotion';
 import { rootMotionDuration, rootMotionEasing } from '../motion/RootMotionTokens';
 import { Surface } from '@envsemble/envui';
 import { CodeBlock } from '@envsemble/envui/content';

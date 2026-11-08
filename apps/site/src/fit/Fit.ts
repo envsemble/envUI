@@ -4,7 +4,7 @@
  * (FitMode), and the decision is drawn on the canvas.
  */
 import { holdsFromTop, holdsView, mustShowOf } from '../motion/MustShow';
-import { remPixels } from '../shared/Lengths';
+import { remPixels } from '@envui-internal/internal/lengths';
 import { narrowGallery } from '../tiles/Tiles';
 import { cropFade, rowSelector } from './Crop';
 import {

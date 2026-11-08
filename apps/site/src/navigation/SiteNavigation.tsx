@@ -22,13 +22,13 @@ import { IconHome } from '@envsemble/envui/icons/Home';
 import { IconWidgets } from '@envsemble/envui/icons/Widgets';
 import { IconPattern } from '@envsemble/envui/icons/Pattern';
 import { IconPalette } from '@envsemble/envui/icons/Palette';
-import { version } from '../../../../packages/ui/package.json';
+import { version } from '@envsemble/envui/package.json';
 import { EnvUIDocsLogo } from '../brand/EnvUIDocsLogo';
 import { EnvUILogo } from '../brand/EnvUILogo';
 import { SearchButton } from '../search/SearchButton';
 import { DisplayMenu } from '../theme/DisplaySettings';
 import { drawerWidthKey } from '../theme/DisplayStorage';
-import { prefersReducedMotion } from '../../../../packages/ui/src/internal/reducedMotion';
+import { prefersReducedMotion } from '@envui-internal/internal/reducedMotion';
 import { rootMotionDuration, rootMotionEasing } from '../motion/RootMotionTokens';
 import { pageBadge } from './PageBadges';
 import {
@@ -43,7 +43,7 @@ import { otherPartRoute } from './Counterparts';
 import { docsTree, type DocsGroup } from './DocsTree';
 import { docsRoute, homeRoute, routeHref } from './Address';
 import { keepSection, otherPart } from './OtherPart';
-import { remPixels } from '../shared/Lengths';
+import { remPixels } from '@envui-internal/internal/lengths';
 
 /** The icon of each of the catalogue's destinations in its rail. */
 const sectionIcons: Record<CatalogueSection, typeof IconHome> = {
