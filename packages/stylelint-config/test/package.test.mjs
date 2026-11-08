@@ -60,11 +60,11 @@ test('the package ships the config, its color policy, its token names and its do
   assert.deepEqual(files, [
     'CHANGELOG.md',
     'README.md',
-    'colorPolicy.js',
-    'data/tokens.json',
-    'index.js',
     'package.json',
-    'tokens.js',
+    'src/colorPolicy.js',
+    'src/data/tokens.json',
+    'src/index.js',
+    'src/tokens.js',
   ]);
 });
 

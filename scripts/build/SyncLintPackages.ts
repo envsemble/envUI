@@ -1,5 +1,5 @@
-// Writes the files the lint packages share: in the ESLint plugin (src/) and the Stylelint config,
-// data/tokens.json, the envUI tokens their messages name, from the library's generated token list
+// Writes the files the lint packages share, into each package's src/: data/tokens.json, the envUI
+// tokens their messages name, from the library's generated token list
 // (packages/ui/src/generated/tokens.json); tokens.js, the helper that reads it, from
 // scripts/build/LintPackageTokens.js; and colorPolicy.js, what both count as a raw color, from
 // scripts/build/LintPackageColorPolicy.js. Each package ships its own copies, so it works on its
@@ -23,7 +23,7 @@ const copiedModules = {
 /** Where each lint package keeps its copied modules, with data/tokens.json beside them. */
 export const lintPackages = {
   '@envsemble/eslint-plugin-envui': 'packages/eslint-plugin/src',
-  '@envsemble/stylelint-config-envui': 'packages/stylelint-config',
+  '@envsemble/stylelint-config-envui': 'packages/stylelint-config/src',
 };
 
 const comment = `The custom properties of envUI's public tokens, by DTCG type, that the package's messages suggest. scripts/build/SyncLintPackages.ts writes this file from the library's generated token list (${libraryTokens}) before every pack; source says where the names came from.`;
