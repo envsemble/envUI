@@ -17,7 +17,8 @@ import { legendOf, partDescription } from '../template/Parts';
 import { legendName } from '../shared/CatalogueContent';
 import { OptionLegend } from '../template/OptionLegend';
 import { SpecimenRender } from './Specimen';
-import { measure, measureVariants, type Callout, type Room } from './AnatomyLayout';
+import { measure, measureVariants } from './AnatomyLayout';
+import type { Callout, Room } from './AnatomyPlacement';
 import type { OptionTable } from '../shared/CatalogueContent';
 
 /** A subject at most this wide and tall, in CSS pixels, is small enough to show larger. */
