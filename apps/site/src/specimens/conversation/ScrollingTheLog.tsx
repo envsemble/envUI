@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Button, Column, Composer, Grid, Message, MessageList } from '@envsemble/envui';
-import { Markdown } from '@envsemble/envui/content';
+import { Markdown } from '@envsemble/envui/markdown';
 import { IconArrowDownward } from '@envsemble/envui/icons/ArrowDownward';
 import type { PointerStep } from '../../motion/pointer/PointerPlan';
 import { usePointer } from '../../motion/pointer/PointerPlayback';

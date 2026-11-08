@@ -1,4 +1,4 @@
-import { CodeBlock } from '@envsemble/envui/content';
+import { CodeBlock } from '@envsemble/envui/code';
 
 export default function CodeBlockAnatomy() {
   return (

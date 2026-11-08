@@ -148,7 +148,7 @@ On Apple keyboards, <kbd>Cmd</kbd> replaces <kbd>Ctrl</kbd>.
 
 ### Usage
 
-Markdown and MarkdownEditor come from `@envsemble/envui/content`. Markdown renders the string in `children`: CommonMark with tables, strikethrough, task lists, automatic links and footnotes.
+Markdown and MarkdownEditor come from `@envsemble/envui/markdown`. Markdown renders the string in `children`: CommonMark with tables, strikethrough, task lists, automatic links and footnotes.
 
 - Raw HTML is ignored, except keys written as `<kbd>`, which render as Kbd.
 - `headingOffset` adds to the document's heading levels, capped at h6: set it so the first heading sits one level below the page's.

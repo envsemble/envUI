@@ -126,7 +126,8 @@ export const reportedCodes = new Map<number, string>([
 /** The entries an unimported name may come from, in order of preference. */
 const entries = [
   '@envsemble/envui',
-  '@envsemble/envui/content',
+  '@envsemble/envui/code',
+  '@envsemble/envui/markdown',
   '@envsemble/envui/rich-text',
   '@envsemble/envui/diff',
   '@envsemble/envui/color',

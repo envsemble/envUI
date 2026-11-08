@@ -24,7 +24,8 @@
     },
     "modules": {
       "index.ts": "entries",
-      "content.ts": "entries",
+      "code.ts": "entries",
+      "markdown.ts": "entries",
       "diff.ts": "entries",
       "color.ts": "entries",
       "rich-text.ts": "entries",

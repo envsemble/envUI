@@ -194,7 +194,7 @@ Focus stays in the composer after a send, while a reply runs and after Stop, so 
 A conversation is a MessageList above a Composer, in a Column of a set height: the list takes the space and scrolls, and the composer sits at its foot.
 
 - Each entry is a Message, `from="self"` for the person using the app and `from="other"` for an assistant or anyone else.
-- An assistant's text renders through Markdown, from `@envsemble/envui/content`.
+- An assistant's text renders through Markdown, from `@envsemble/envui/markdown`.
 - CopyButton in `actions` copies a complete answer.
 
 ```tsx source=AssistantChat

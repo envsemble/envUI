@@ -67,7 +67,7 @@ ruleTester.run('no-html-elements', rule, {
     'import * as ui from \'@envsemble/envui\'; <><ui.Popover role="dialog" /><ui.Table.Root role="table" /></>;',
     'import { Popover as Card } from \'@envsemble/envui\'; <Card role="dialog" />;',
     'import { Spinner } from \'@envsemble/envui\'; <Spinner role="progressbar" label="Saving" />;',
-    'import { MarkdownEditor } from \'@envsemble/envui/content\'; <MarkdownEditor role="textbox" />;',
+    'import { MarkdownEditor } from \'@envsemble/envui/markdown\'; <MarkdownEditor role="textbox" />;',
     'import { RichTextEditor } from \'@envsemble/envui/rich-text\'; <RichTextEditor role="textbox" />;',
     // Without an import, the full name decides.
     '<Table.Root role="table" />',

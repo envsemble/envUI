@@ -113,7 +113,7 @@ test('a packed consumer resolves compiled public exports and its own React insta
     assert.ok(!resolved.exports.includes(name), `The main entry no longer exports ${name}`);
   assert.equal(installedManifest.dependencies['react-colorful'], undefined);
   assert.equal(installedManifest.exports['./color'].import, './dist/color.js');
-  // Basic UI installs without the content, rich-text, diff and color stacks; apps using those entries add
+  // Basic UI installs without the code, markdown, rich-text, diff and color stacks; apps using those entries add
   // them. They aren't peers either, as npm installs every peer the registry doesn't mark optional.
   assert.deepEqual(Object.keys(installedManifest.dependencies), ['@base-ui/react']);
   assert.deepEqual(Object.keys(installedManifest.peerDependencies).sort(), ['react', 'react-dom']);

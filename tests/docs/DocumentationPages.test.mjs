@@ -30,7 +30,7 @@ const undocumentedExports = [];
  * each icon by its own path, as the setup guide asks, rather than through the icons barrel.
  */
 const publicModules =
-  /^(?:react|@envsemble\/envui(?:\/(?:content|diff|rich-text|color|icons\/[A-Za-z\d]+))?)$/;
+  /^(?:react|@envsemble\/envui(?:\/(?:code|markdown|diff|rich-text|color|icons\/[A-Za-z\d]+))?)$/;
 
 /**
  * Every module a source loads: static imports and re-exports, imports for their side effects, and
@@ -261,7 +261,7 @@ test('the import reader finds the runtime names a source takes from envUI', () =
       [
         "import { Button, type ButtonProps, Row as Line } from '@envsemble/envui';",
         "import type { Theme } from '@envsemble/envui';",
-        "import { CodeBlock } from '@envsemble/envui/content';",
+        "import { CodeBlock } from '@envsemble/envui/code';",
         "import { IconClose } from '@envsemble/envui/icons/Close';",
         "import { useState } from 'react';",
       ].join('\n'),

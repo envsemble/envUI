@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Column, Composer, Message, MessageList } from '@envsemble/envui';
-import { Markdown } from '@envsemble/envui/content';
+import { Markdown } from '@envsemble/envui/markdown';
 import type { PointerStep } from '../motion/pointer/PointerPlan';
 import { usePointer } from '../motion/pointer/PointerPlayback';
 

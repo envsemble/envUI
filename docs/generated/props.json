@@ -1013,7 +1013,7 @@
         "code"
       ],
       "entries": [
-        "@envsemble/envui/content"
+        "@envsemble/envui/code"
       ]
     },
     "CodeBlock": {
@@ -1058,7 +1058,7 @@
         "div"
       ],
       "entries": [
-        "@envsemble/envui/content"
+        "@envsemble/envui/code"
       ]
     },
     "CodeDiff": {
@@ -3947,7 +3947,7 @@
         "div"
       ],
       "entries": [
-        "@envsemble/envui/content"
+        "@envsemble/envui/markdown"
       ]
     },
     "MarkdownEditor": {
@@ -4062,7 +4062,7 @@
         "textarea"
       ],
       "entries": [
-        "@envsemble/envui/content"
+        "@envsemble/envui/markdown"
       ]
     },
     "Menu": {

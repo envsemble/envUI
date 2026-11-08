@@ -15,7 +15,7 @@ import {
   TimePicker,
 } from '@envsemble/envui';
 import { ColorPicker, ColorPickerButton } from '@envsemble/envui/color';
-import { MarkdownEditor } from '@envsemble/envui/content';
+import { MarkdownEditor } from '@envsemble/envui/markdown';
 import { RichTextEditor } from '@envsemble/envui/rich-text';
 import { people } from './Comboboxes.js';
 import { dialogOptions } from './SelectOptions.js';

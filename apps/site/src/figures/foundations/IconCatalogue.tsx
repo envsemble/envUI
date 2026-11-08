@@ -1,6 +1,6 @@
 import { useId, useMemo, useRef, useState } from 'react';
 import { Button, SearchField, Column, Row, Switch, Text, Sheet } from '@envsemble/envui';
-import { CodeBlock } from '@envsemble/envui/content';
+import { CodeBlock } from '@envsemble/envui/code';
 // This browser of every icon loads the full set, from the library's generated list of them, which
 // the package doesn't export: applications import each icon by its own path. The site's Vite
 // config and tsconfig point envui-icon-list at packages/ui/src/icons/index.ts.

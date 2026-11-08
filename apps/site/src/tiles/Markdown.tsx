@@ -1,4 +1,4 @@
-import { Markdown } from '@envsemble/envui/content';
+import { Markdown } from '@envsemble/envui/markdown';
 
 /**
  * A short note: a heading over two items, the second a version in inline code, which renders as a

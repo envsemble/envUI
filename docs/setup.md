@@ -336,7 +336,8 @@ A server component passes a client component only serializable values, no functi
 
 - `@envsemble/envui` for ordinary UI.
 - `@envsemble/envui/icons/<Name>` for individual official symbols, each `Icon<Name>`.
-- `@envsemble/envui/content` when the feature needs code or Markdown.
+- `@envsemble/envui/code` when the feature shows code: [Code and CodeBlock](components/code.md).
+- `@envsemble/envui/markdown` when the feature shows or edits Markdown: [Markdown and MarkdownEditor](components/markdown.md).
 - `@envsemble/envui/diff` when the feature shows code diffs.
 - `@envsemble/envui/rich-text` when the feature needs formatted editing or rendering.
 - `@envsemble/envui/color` when the feature chooses or shows colors: [ColorPicker, ColorPickerButton and ColorSwatch](components/color-picker.md).
@@ -344,9 +345,15 @@ A server component passes a client component only serializable values, no functi
 - `@envsemble/envui/dev` for [dev mode](dev-mode.md), in development only: load it with a dynamic `import()` behind a development check, so production builds contain none of it.
 - `@envsemble/envui/assets/*` for raw assets, such as the Geist font file.
 
-The content, rich-text, diff and color entries need libraries that envUI doesn't list as dependencies, so an application that uses only the main entry never installs them. One that imports an entry installs its libraries, in these versions or later ones of the same major:
+The code, markdown, rich-text, diff and color entries need libraries that envUI doesn't list as dependencies, so an application that uses only the main entry never installs them. One that imports an entry installs its libraries, in these versions or later ones of the same major:
 
-- `@envsemble/envui/content`:
+- `@envsemble/envui/code`:
+
+  ```sh
+  npm install shiki@^4.5.0 @shikijs/langs@^4.5.0
+  ```
+
+- `@envsemble/envui/markdown`:
 
   ```sh
   npm install shiki@^4.5.0 @shikijs/langs@^4.5.0 react-markdown@^10.1.0 remark-gfm@^4.0.1

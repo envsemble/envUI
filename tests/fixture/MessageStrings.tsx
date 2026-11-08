@@ -31,7 +31,8 @@ import {
   Spinner,
 } from '@envsemble/envui';
 import { ColorPicker, ColorPickerButton } from '@envsemble/envui/color';
-import { CodeBlock, Markdown, MarkdownEditor } from '@envsemble/envui/content';
+import { CodeBlock } from '@envsemble/envui/code';
+import { Markdown, MarkdownEditor } from '@envsemble/envui/markdown';
 import { defaultMessages } from '@envsemble/envui/messages';
 // Content and display, whose strings and numbers follow the provider.
 import {

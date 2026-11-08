@@ -1,4 +1,4 @@
-import { CodeBlock } from '@envsemble/envui/content';
+import { CodeBlock } from '@envsemble/envui/code';
 import { useMedia } from '../motion/Autoplay';
 import type { PointerStep } from '../motion/pointer/PointerPlan';
 import { usePointer } from '../motion/pointer/PointerPlayback';

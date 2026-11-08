@@ -88,7 +88,7 @@ function pack(directory) {
 
 /**
  * React, the tools the tests run in the consumer, and the libraries the setup guide names for the
- * content, rich-text, diff and color entries, at the versions of the repository's manifests.
+ * code, markdown, rich-text, diff and color entries, at the versions of the repository's manifests.
  */
 async function consumerDependencies() {
   const read = async (path) => JSON.parse(await readFile(join(repository, path), 'utf8'));

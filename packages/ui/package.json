@@ -50,11 +50,17 @@
       "import": "./dist/rich-text.js",
       "default": "./dist/rich-text.js"
     },
-    "./content": {
-      "envui-source": "./src/content.ts",
-      "types": "./dist/content.d.ts",
-      "import": "./dist/content.js",
-      "default": "./dist/content.js"
+    "./code": {
+      "envui-source": "./src/code.ts",
+      "types": "./dist/code.d.ts",
+      "import": "./dist/code.js",
+      "default": "./dist/code.js"
+    },
+    "./markdown": {
+      "envui-source": "./src/markdown.ts",
+      "types": "./dist/markdown.d.ts",
+      "import": "./dist/markdown.js",
+      "default": "./dist/markdown.js"
     },
     "./diff": {
       "envui-source": "./src/diff.ts",

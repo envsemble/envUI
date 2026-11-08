@@ -1,5 +1,5 @@
 import { EnvUIProvider, Column } from '@envsemble/envui';
-import { CodeBlock } from '@envsemble/envui/content';
+import { CodeBlock } from '@envsemble/envui/code';
 
 const source = 'npm install @envsemble/envui\nnpm run build';
 

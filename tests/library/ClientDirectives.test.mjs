@@ -16,7 +16,16 @@ const dist = join(repository, 'packages/ui/dist');
 const modules = await libraryModules();
 
 /** The entry points, whose `export *` and `export * as` lines a server component imports through. */
-const entries = ['index', 'content', 'diff', 'color', 'rich-text', 'theme-bootstrap', 'dev'];
+const entries = [
+  'index',
+  'code',
+  'markdown',
+  'diff',
+  'color',
+  'rich-text',
+  'theme-bootstrap',
+  'dev',
+];
 
 const startsWithDirective = (code) => /^\s*(['"])use client\1;?/.test(code);
 

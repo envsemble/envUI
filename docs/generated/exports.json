@@ -291,6 +291,12 @@
     "windowClassOf": "function",
     "windowClasses": "const"
   },
+  "@envsemble/envui/code": {
+    "Code": "function",
+    "CodeBlock": "function",
+    "CodeBlockProps": "interface",
+    "CodeProps": "type"
+  },
   "@envsemble/envui/color": {
     "Color": "interface",
     "ColorFormat": "type",
@@ -302,20 +308,6 @@
     "ColorSwatch": "function",
     "ColorSwatchProps": "interface",
     "ColorValue": "type"
-  },
-  "@envsemble/envui/content": {
-    "Code": "function",
-    "CodeBlock": "function",
-    "CodeBlockProps": "interface",
-    "CodeProps": "type",
-    "Markdown": "function",
-    "MarkdownCommand": "type",
-    "MarkdownEditor": "function",
-    "MarkdownEditorProps": "interface",
-    "MarkdownLink": "interface",
-    "MarkdownLinkProps": "interface",
-    "MarkdownLinkRequest": "interface",
-    "MarkdownProps": "interface"
   },
   "@envsemble/envui/dev": {
     "DevModeHandle": "interface",
@@ -336,6 +328,16 @@
     "CodeDiff": "function",
     "CodeDiffProps": "interface",
     "countDiffLines": "function"
+  },
+  "@envsemble/envui/markdown": {
+    "Markdown": "function",
+    "MarkdownCommand": "type",
+    "MarkdownEditor": "function",
+    "MarkdownEditorProps": "interface",
+    "MarkdownLink": "interface",
+    "MarkdownLinkProps": "interface",
+    "MarkdownLinkRequest": "interface",
+    "MarkdownProps": "interface"
   },
   "@envsemble/envui/messages": {
     "EnvUIMessages": "type",

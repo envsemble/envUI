@@ -35,7 +35,8 @@ function ownersOf(entry) {
  */
 const componentEntryPoints = new Set([
   '@envsemble/envui',
-  '@envsemble/envui/content',
+  '@envsemble/envui/code',
+  '@envsemble/envui/markdown',
   '@envsemble/envui/diff',
   '@envsemble/envui/color',
   '@envsemble/envui/rich-text',

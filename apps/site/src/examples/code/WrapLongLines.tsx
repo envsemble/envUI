@@ -1,4 +1,4 @@
-import { CodeBlock } from '@envsemble/envui/content';
+import { CodeBlock } from '@envsemble/envui/code';
 
 const description =
   'Long lines wrap when reading them matters more than keeping the source layout. ' +

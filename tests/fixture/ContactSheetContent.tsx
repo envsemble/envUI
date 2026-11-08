@@ -8,7 +8,8 @@ import {
   Message,
   MessageList,
 } from '@envsemble/envui';
-import { Code, CodeBlock, Markdown, MarkdownEditor } from '@envsemble/envui/content';
+import { Code, CodeBlock } from '@envsemble/envui/code';
+import { Markdown, MarkdownEditor } from '@envsemble/envui/markdown';
 import { CodeDiff } from '@envsemble/envui/diff';
 import { IconAttachFile } from '@envsemble/envui/icons/AttachFile';
 import { Cell, Section, Strip, interactionStates } from './ContactSheetParts.js';

@@ -166,7 +166,7 @@ Keep blocks short, and link to the whole file.
 
 ### Usage
 
-Code and CodeBlock come from `@envsemble/envui/content`, and CodeDiff and `countDiffLines` from `@envsemble/envui/diff`. Code wraps a command, a value or a file name inside text.
+Code and CodeBlock come from `@envsemble/envui/code`, and CodeDiff and `countDiffLines` from `@envsemble/envui/diff`. Code wraps a command, a value or a file name inside text.
 
 ```tsx
 <Text>

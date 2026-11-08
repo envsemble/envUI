@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { MarkdownEditor } from '@envsemble/envui/content';
+import { MarkdownEditor } from '@envsemble/envui/markdown';
 
 export default function EditDescription() {
   const [description, setDescription] = useState(

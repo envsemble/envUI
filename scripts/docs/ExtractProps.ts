@@ -27,7 +27,8 @@ export const propsFile = resolve(root, 'docs/generated/props.json');
 /** Public entry points and the module specifier consumers import them from. */
 const entries: [file: string, specifier: string][] = [
   ['index.ts', '@envsemble/envui'],
-  ['content.ts', '@envsemble/envui/content'],
+  ['code.ts', '@envsemble/envui/code'],
+  ['markdown.ts', '@envsemble/envui/markdown'],
   ['diff.ts', '@envsemble/envui/diff'],
   ['color.ts', '@envsemble/envui/color'],
   ['rich-text.ts', '@envsemble/envui/rich-text'],
