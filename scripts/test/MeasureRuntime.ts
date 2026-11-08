@@ -36,6 +36,7 @@ import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { chromium, type Browser, type Page } from '@playwright/test';
 import { build, preview, type PreviewServer } from 'vite';
+import { median } from './Median.ts';
 
 /** What the benchmarks' page (tests/fixture/perf.tsx) gives the script, as window.envuiPerf. */
 interface PerfPage {
@@ -87,9 +88,11 @@ function summarize(results: Record<string, number>[]) {
   const summary: Record<string, { median: number; min: number; max: number }> = {};
   for (const key of Object.keys(results[0] ?? {})) {
     const values = results.map((result) => result[key]).sort((a, b) => a - b);
-    const middle = Math.floor(values.length / 2);
-    const median = values.length % 2 ? values[middle] : (values[middle - 1] + values[middle]) / 2;
-    summary[key] = { median: tenth(median), min: tenth(values[0]), max: tenth(values.at(-1)!) };
+    summary[key] = {
+      median: tenth(median(values)),
+      min: tenth(values[0]),
+      max: tenth(values[values.length - 1]),
+    };
   }
   return summary;
 }

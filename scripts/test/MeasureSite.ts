@@ -40,6 +40,7 @@ import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { chromium } from '@playwright/test';
+import { median } from './Median.ts';
 
 const lighthouseVersion = '13.6.0';
 const root = resolve(fileURLToPath(new URL('../..', import.meta.url)));
@@ -115,13 +116,6 @@ for (const form of chosenForms)
 const label = options.label ?? new Date().toISOString().replace(/[:.]/g, '-');
 /** The build served: dist/site, or --site's. */
 const site = resolve(root, options.site ?? 'dist/site');
-
-const median = (values: number[]) => {
-  const sorted = values.filter((value) => Number.isFinite(value)).sort((a, b) => a - b);
-  if (!sorted.length) return NaN;
-  const middle = Math.floor(sorted.length / 2);
-  return sorted.length % 2 ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2;
-};
 
 /** A command line for the shell, which npm's commands need on Windows. */
 const commandLine = (parts: string[]) =>
