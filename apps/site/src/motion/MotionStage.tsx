@@ -25,11 +25,16 @@ import { FigureDevice, OnDevice } from '../figures/DeviceFrame';
 import { flag } from '@envui-internal/internal/flag';
 import { useBrowserStandIns } from './BrowserStandIns';
 
-/** What the reader can operate in a figure: a stage with none of it stays a recording. */
+/**
+ * The elements a reader can operate in a figure. A stage that has none of them stays a recording.
+ */
 const operable =
   'a[href], button:not(:disabled), input:not(:disabled, [type="hidden"]), select:not(:disabled), textarea:not(:disabled), [contenteditable="true"], [tabindex]:not([tabindex="-1"])';
 
-/** The press a reader's first click on a recording meant, sent to what is under it once live. */
+/**
+ * Replays a reader's first click on a recording, once the example is live: a press, and a click, on
+ * the element under the pointer.
+ */
 function pressAt(x: number, y: number, subject: HTMLElement) {
   const target = document.elementFromPoint(x, y);
   if (!target || !subject.contains(target)) return;
@@ -54,9 +59,9 @@ function pressAt(x: number, y: number, subject: HTMLElement) {
 }
 
 /**
- * How many figures on the page the reader has taken over. While any has, the others hold where
- * they are: their pointer's presses would reach the page as a press outside what the reader opened,
- * such as a calendar, and close it.
+ * How many figures on the page the reader has taken over. While there is one, the other figures
+ * hold still: their virtual pointers' presses would reach the page as a press outside what the
+ * reader opened, such as a calendar, and close it.
  */
 let takenOver = 0;
 const takeoverListeners = new Set<() => void>();
@@ -83,16 +88,16 @@ function useTakeover(live: boolean) {
   );
 }
 
-/** Whether a press on a stage is on its pause button, which the reader's takeover leaves alone. */
+/** Whether a press on a stage is on its pause button, which the reader's takeover ignores. */
 const onPause = (event: { target: EventTarget }) =>
   event.target instanceof Element && Boolean(event.target.closest('.catalogue-motion-pause'));
 
 /**
- * The reader taking a figure's example over (MotionStage): whether it is `live`, the reader's, and
- * whether it is `takeable`, with something to operate and no timeline setting its props, which
- * `countTimeline` counts; and the stage's `handlers`. A click on the recording, or the keyboard
- * reaching the stage, makes it live; the keyboard leaving a live example it did nothing with makes
- * it a recording again.
+ * Lets the reader take over a figure's example (MotionStage). Returns whether the example is `live`
+ * (the reader's), whether it is `takeable` (it has something to operate and no timeline that sets
+ * its props; `countTimeline` counts the timelines), and the stage's event `handlers`. A click on
+ * the recording, or the keyboard reaching the stage, makes it live. The keyboard leaving a live
+ * example that the reader did nothing with makes it a recording again.
  */
 function useReaderTakeover(stage: RefObject<HTMLDivElement | null>, subject: HTMLElement | null) {
   // Whether the reader has the example, and whether they did anything with it.
@@ -111,7 +116,7 @@ function useReaderTakeover(stage: RefObject<HTMLDivElement | null>, subject: HTM
     const check = () =>
       setTakeable(timelines.current === 0 && Boolean(subject.querySelector(operable)));
     check();
-    // An example that loads late settles a moment after.
+    // An example that loads late is checked again a moment later.
     const timer = setTimeout(check, 1000);
     return () => clearTimeout(timer);
   }, [subject, live]);
@@ -121,16 +126,16 @@ function useReaderTakeover(stage: RefObject<HTMLDivElement | null>, subject: HTM
   };
   const recordingHandlers = takeable &&
     !live && {
-      // A click on the recording, by mouse or by touch, reaches the stage, its content being
-      // inert: the example goes live and the click goes on to what is there.
+      // A click on the recording, by mouse or by touch, reaches the stage, because its content is
+      // inert: the example goes live and the click is replayed on what is under it.
       onClick: (event: MouseEvent) => {
         if (onPause(event) || !event.nativeEvent.isTrusted || !subject) return;
         goLive();
         touched.current = true;
         pressAt(event.clientX, event.clientY, subject);
       },
-      // The keyboard on the stage: the example goes live and focus moves into it, to its last
-      // stop where the keyboard came back from after it.
+      // The keyboard reaching the stage: the example goes live and focus moves into it, to its
+      // first stop, or to its last when the keyboard came back from after it.
       onFocus: (event: FocusEvent) => {
         const element = stage.current;
         if (event.target !== element || !element.matches(':focus-visible') || !subject) return;
@@ -151,7 +156,7 @@ function useReaderTakeover(stage: RefObject<HTMLDivElement | null>, subject: HTM
     onKeyDown: (event: KeyboardEvent) => {
       if (!['Tab', 'Shift'].includes(event.key) && !onPause(event)) touched.current = true;
     },
-    // The keyboard leaving an example it did nothing with: the recording plays again.
+    // The keyboard leaving an example the reader did nothing with: the recording plays again.
     onBlur: (event: FocusEvent) => {
       const next = event.relatedTarget;
       if (touched.current || (next instanceof Node && stage.current?.contains(next))) return;
@@ -168,37 +173,40 @@ function useReaderTakeover(stage: RefObject<HTMLDivElement | null>, subject: HTM
 }
 
 /**
- * Whether an animated figure plays a do or don't figure's example: its stage is then that figure's
- * (VerdictFigure), joined to its Do or Don't bar, a square, or with `wide`, as wide as the column.
+ * Whether an animated figure plays the example of a do or don't figure. Its stage is then that
+ * figure's (VerdictFigure), joined to its Do or Don't bar: a square, or with `wide`, as wide as the
+ * column.
  */
 export const VerdictMotion = createContext<false | 'square' | 'wide'>(false);
 
 /**
- * The stage of an animated figure on a page, such as a slider stretching past its ends: the live
- * component on the recessed canvas, playing its timeline (useTimeline) in a loop while it is in
- * view, and a small pause button in its bottom end corner, shown as the pointer or the keyboard
- * reaches the figure (Stage.css). The Display menu's Motion pauses every
- * figure; a figure's own button overrides it for that figure, until the menu's changes or the
- * page does. Paused, a figure holds where it is. `foundation` sets it on a foundation figure's
- * stage rather than an example's, with `className` for that figure's own layout, and `stage` is
- * the fill an example's fence gives it; `top` places what it shows at the stage's top, where the
- * room the stage keeps is for what opens below it, such as a select's list.
+ * The stage of an animated figure on a page, such as a slider stretching past its ends. It shows
+ * the live component on the recessed canvas, plays its timeline (useTimeline) in a loop while it is
+ * in view, and has a small pause button in its bottom end corner that shows when the pointer or the
+ * keyboard reaches the figure (Stage.css).
  *
- * While it plays, what it shows is a recording, inert. A figure the pointer no one sees plays is
- * the example itself, so the reader can take it over: a click on the stage, or the keyboard
- * reaching it, stops the playback, puts the example back at its start and hands it to the reader,
- * live, the click going on to what it was on. Its overlays then open as they do in an application.
- * The play button plays it again; the keyboard leaving it untouched does too. A figure whose
- * timeline sets its props, or with nothing to operate, stays a recording. While the reader has one
- * figure, the page's others hold where they are (useTakeover), so their pointers' presses never
- * close what the reader opened.
+ * The Display menu's Motion setting pauses every figure. A figure's own button overrides that for
+ * the figure until the menu's setting or the page changes. A paused figure holds where it is.
  *
- * Playing, its overlays, such as a menu, a dialog or a tooltip, open inside the stage, as a tile's
- * do (StageOverlays): a dialog's backdrop covers the stage, not the page, and nothing leaves it.
- * `height`, a CSS length, keeps the stage as tall as what opens in it from the start, so the
- * figure keeps one height as it plays. Whatever the figure, the stage keeps the tallest height it
- * has reached at its width (useTallest), so a figure that grows for a moment as it plays never
- * shrinks back and moves the page below it on every loop.
+ * Props: `foundation` marks a foundation figure's stage rather than an example's, and `className`
+ * gives that figure its own layout. `stage` is the fill set in the example's fence. `top` places
+ * the content at the stage's top, when the room the stage keeps is for something that opens below
+ * it, such as a select's list. `height`, a CSS length, makes the stage as tall as what opens in it
+ * from the start, so the figure keeps one height while it plays.
+ *
+ * While it plays, the content is a recording and is inert. When the virtual pointer plays the
+ * example itself, the reader can take it over: a click on the stage, or the keyboard reaching it,
+ * stops the playback, resets the example to its start and makes it live, and the click is replayed
+ * on what it was on. Its overlays then open as they do in an application. The play button plays it
+ * again, and so does the keyboard leaving it untouched. A figure whose timeline sets its props, or
+ * that has nothing to operate, stays a recording. While the reader has one figure, the page's other
+ * figures hold still (useTakeover), so their pointers' presses never close what the reader opened.
+ *
+ * While it plays, its overlays, such as a menu, a dialog or a tooltip, open inside the stage, as a
+ * tile's do (StageOverlays): a dialog's backdrop covers the stage, not the page, and nothing leaves
+ * it. The stage also keeps the tallest height it has reached at its width (useTallest), so a figure
+ * that grows for a moment while it plays doesn't shrink back and move the page below it on every
+ * loop.
  */
 export function MotionStage({
   label,
@@ -220,25 +228,27 @@ export function MotionStage({
   useBrowserStandIns();
   const { motionPaused } = useDisplaySettings();
   const verdict = use(VerdictMotion);
-  // The figure's own choice, and the Display menu's at the time, which it overrides only while that holds.
+  // The figure's own choice, and the Display menu's setting when it was made: the choice applies
+  // only while the menu's setting stays the same.
   const [own, setOwn] = useState<{ paused: boolean; over: boolean } | null>(null);
   const stage = useRef<HTMLDivElement>(null);
   const [subject, setSubject] = useState<HTMLDivElement | null>(null);
   const inView = useInView(stage);
   const { live, setLive, takeable, countTimeline, handlers } = useReaderTakeover(stage, subject);
-  // On a do or don't figure's square, the subject keeps its tallest height in a box drawn smaller
-  // where it needs more room than the square (useVerdictFit), rather than the stage growing.
+  // On a do or don't figure's square, the subject keeps its tallest height in a box that is drawn
+  // smaller where it needs more room than the square (useVerdictFit), so the stage doesn't grow.
   const square = verdict === 'square';
   const box = useRef<HTMLDivElement>(null);
   const tallest = useRef<HTMLDivElement>(null);
   useVerdictFit(stage, box, { on: square, shape: 'square' });
   useTallest(square ? tallest : stage, height);
   useThemeFade(subject);
-  // Another figure the reader has taken over holds this one where it is, unless the reader plays it.
+  // While the reader has taken over another figure, this one holds still, unless the reader plays
+  // it.
   const held = useTakeover(live);
   const paused = live || (own && own.over === motionPaused ? own.paused : held || motionPaused);
   const action = paused ? `Play ${label}` : `Pause ${label}`;
-  // Live, the example at its start, as the reader would find it in an application.
+  // Live, the example starts from its start, as the reader would find it in an application.
   const content = live ? (
     <Playback key="live" playing={false} rest="start" root={subject}>
       {children}
@@ -248,7 +258,8 @@ export function MotionStage({
       <StageOverlays>{children}</StageOverlays>
     </Playback>
   );
-  // On a page's figure drawn on a device, the device stands on the stage, what plays on its screen.
+  // On a figure drawn on a device, the device stands on the stage and the content plays on its
+  // screen.
   const device = use(FigureDevice);
   const shown = device && !verdict ? <OnDevice kind={device}>{content}</OnDevice> : content;
   const subjectProps = {
@@ -398,10 +409,10 @@ function useTallest(stage: RefObject<HTMLDivElement | null>, height: string | un
 const themeAttributes = ['data-env-theme', 'data-env-contrast'];
 
 /**
- * Marks an animated figure's subject while a theme in it switches, such as the account menu's
- * theme changing, `data-catalogue-theme-fading`, for as long as its colors take to ease
- * (ThemeFade.css): the mark is set as the theme's attribute changes, before the page restyles, so
- * the change eases, and only then, so the parts' own transitions, such as a key's hover, keep
+ * Marks an animated figure's subject with `data-catalogue-theme-fading` while a theme inside it
+ * switches, such as when the account menu changes the theme, for as long as the colors take to ease
+ * (ThemeFade.css). The mark is set when the theme's attribute changes, before the page restyles, so
+ * the change eases. It is set only then, so the parts' own transitions, such as a key's hover, keep
  * their own timing the rest of the time.
  */
 function useThemeFade(subject: HTMLElement | null) {
@@ -412,7 +423,7 @@ function useThemeFade(subject: HTMLElement | null) {
       if (!changes.some(({ target }) => target !== subject)) return;
       subject.dataset.catalogueThemeFading = '';
       clearTimeout(timer);
-      // The fade takes one and a half of the slow token, and a frame to start.
+      // The fade takes one and a half times the slow motion token, plus a frame to start.
       timer = setTimeout(
         () => delete subject.dataset.catalogueThemeFading,
         1.5 * rootMotionDuration('slow') + 50,
@@ -427,26 +438,28 @@ function useThemeFade(subject: HTMLElement | null) {
   }, [subject]);
 }
 
-/** A room's height: rem, or a CSS length, such as one that follows the scale (rowsAnd). */
+/**
+ * A room's height: a number of rem, or a CSS length, such as one that follows the scale (rowsAnd).
+ */
 type Room = number | string;
 const lengthOf = (room: Room) => (typeof room === 'number' ? `${room}rem` : room);
 
 /**
- * A figure's room for its tallest state, as a CSS length for its content's min-height: `wide`,
- * and `narrow` where its stage is narrower than `below` (in rem), where its rows wrap and
- * stand taller. With it the stage is that tall from the start, rather than growing the first time
- * the figure reaches that state (useTallest). A step of the stage's width, the container it lays
- * out in: the difference is huge and positive below `below`, so `narrow` wins, and negative from
- * it on, so `wide` does.
+ * A figure's room for its tallest state, as a CSS length for its content's min-height: `wide`, or
+ * `narrow` where its stage is narrower than `below` rem, where its rows wrap and stand taller. With
+ * it the stage is that tall from the start, rather than growing the first time the figure reaches
+ * that state (useTallest). The CSS is a step function of the stage's width (the container it lays
+ * out in): the difference is huge and positive below `below`, so `narrow` wins, and negative from
+ * there on, so `wide` wins.
  */
 export const roomFor = (wide: Room, narrow: Room, below: number) =>
   `max(${lengthOf(wide)}, min(${lengthOf(narrow)}, (${below}rem - 100cqi) * 1000))`;
 
 /**
- * A room as tall as `rows` rows of a list, which are taller at the comfortable scale than at the
- * compact one, and `rem` more: the height of a popup of rows, such as a calendar, with the field
- * that opens it, so the stage keeps no more room than the open popup fills at either scale, and
- * the two sit in its middle rather than at its top.
+ * A room as tall as `rows` rows of a list plus `rem` more: the height of a popup of rows, such as a
+ * calendar, with the field that opens it. Rows are taller at the comfortable scale than at the
+ * compact one, so the stage keeps no more room than the open popup fills at either scale, and the
+ * field and popup sit in the middle of the stage rather than at its top.
  */
 export const rowsAnd = (rows: number, rem: number) =>
   `calc(${rows} * var(--env-row-height) + ${rem}rem)`;

@@ -1,14 +1,16 @@
 /*
- * A copy of a field's text, laid on the field in its box and type, so its text lies on the
- * field's: what paints a field's selection, which an unfocused field doesn't paint
- * (`.catalogue-field-selection`, Stage.css), and what measures where a character of its value is
- * (VirtualSelection.ts).
+ * A copy of a field's text, laid over the field with the field's box and font, so that its text
+ * sits exactly on the field's. It is used to paint a field's selection, which an unfocused field
+ * doesn't paint (`.catalogue-field-selection`, Stage.css), and to measure where a character of the
+ * field's value is (VirtualSelection.ts).
  */
 
 /** A field whose text a drag selects. */
 export type Field = HTMLInputElement | HTMLTextAreaElement;
 
-/** The properties a copy of a field's text takes from the field, so its text lies on the field's. */
+/**
+ * The properties a copy of a field's text takes from the field, so its text sits on the field's.
+ */
 const copied = [
   'boxSizing',
   'fontFamily',
@@ -43,13 +45,13 @@ const copied = [
 ] as const;
 
 /**
- * Paints a field's selection over it: a copy of its text, in the field's place and box, whose
+ * Paints a field's selection over it: a copy of its text in the field's place and box, whose
  * selected part takes the selection's colours and whose rest is transparent, so the field shows
- * through. A field of the stage's content has it in the stage's overlay layer, first, under
- * what opens there, so a dialog and its backdrop cover it as they cover the field (Stage.css hides it
- * while a modal one is open, which takes the field's focus); a field in what opens there, such as
- * a dialog, or a stage without that layer, has it in the box the field is placed in. The
- * component's own elements stay as they are.
+ * through. For a field in the stage's content, the copy goes first in the stage's overlay layer,
+ * under whatever opens there, so a dialog and its backdrop cover it as they cover the field
+ * (Stage.css hides it while a modal is open, which takes the field's focus). For a field inside
+ * what opens there, such as a dialog, or in a stage without that layer, the copy goes in the box
+ * the field is positioned in. The component's own elements are left as they are.
  */
 export function paintField(
   field: Field,
@@ -75,7 +77,7 @@ export function paintField(
   }
   shapeLike(copy, field);
   if (layer) {
-    // In layout pixels, as the stage may be drawn scaled.
+    // In layout pixels, since the stage may be drawn scaled.
     const frame = layer.getBoundingClientRect();
     const box = field.getBoundingClientRect();
     const scale = frame.width / layer.offsetWidth || 1;
@@ -97,7 +99,9 @@ export function paintField(
   return copy;
 }
 
-/** Gives a copy of a field's text the field's box, type and scroll, so its text lies on the field's. */
+/**
+ * Gives a copy of a field's text the field's box, font and scroll, so its text sits on the field's.
+ */
 function shapeLike(copy: HTMLElement, field: Field) {
   const style = getComputedStyle(field);
   for (const property of copied) copy.style[property] = style[property];
@@ -107,7 +111,7 @@ function shapeLike(copy: HTMLElement, field: Field) {
   copy.style.height = `${field.offsetHeight}px`;
   const area = field instanceof HTMLTextAreaElement;
   copy.dataset.field = area ? 'textarea' : 'input';
-  // A textarea's scrollbar takes from the width its lines wrap in.
+  // A textarea's scrollbar reduces the width its lines wrap in.
   if (area) {
     const scrollbar =
       field.offsetWidth -

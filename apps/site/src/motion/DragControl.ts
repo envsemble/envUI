@@ -1,7 +1,7 @@
 /*
- * Files the pointer no one sees carries in from outside, as a drag from the desktop does
- * (VirtualPointer.ts): while it carries them, its moves are a drag, which the elements it enters,
- * leaves and is over hear, until it drops them.
+ * Files the virtual pointer carries in from outside the page, as a drag from the desktop does
+ * (VirtualPointer.ts). While it carries them, its moves are a drag: the elements it enters, leaves
+ * and moves over receive drag events, until it drops the files.
  */
 import { chainOf, hitAt, type Aimed, type Point, type PointerSpot } from './pointer/PointerTargets';
 
@@ -13,8 +13,8 @@ export interface CarriedFile {
 }
 
 /**
- * A small picture for a carried image file, in its type where the browser can write it: a circle
- * in the theme's brand color on its selected fill, as a person's logo or photo would show.
+ * A small picture for a carried image file, in the file's type where the browser can encode it: a
+ * circle in the theme's brand color on its selected fill, as a person's logo or photo would show.
  */
 function pictureOf(type: string, scope: Element) {
   if (!/^image\/(png|jpeg|webp)$/.test(type)) return null;
@@ -35,12 +35,12 @@ function pictureOf(type: string, scope: Element) {
 }
 
 export class DragControl {
-  /** The files the pointer carries in from outside, as a drag from the desktop does. */
+  /** The files the pointer carries in from outside the page, as a drag from the desktop does. */
   private carried: DataTransfer | null = null;
 
   constructor(private readonly spot: PointerSpot) {}
 
-  /** Whether the pointer carries files, so its moves are a drag. */
+  /** Whether the pointer carries files, which makes its moves a drag. */
   get carrying() {
     return Boolean(this.carried);
   }
@@ -51,10 +51,10 @@ export class DragControl {
   }
 
   /**
-   * Picks up files, as a person drags them in from the desktop: its moves are a drag now. Each is
-   * as large as its `size` in bytes; without one, an image is a real picture, a mark in the theme's
-   * brand color, so a thumbnail of it shows something, and anything else a few bytes. Picked up again
-   * before a drop, it carries them all together.
+   * Picks up files, as a person drags them in from the desktop, so the pointer's moves become a
+   * drag. Each file is `size` bytes. Without a size, an image is a real picture (a mark in the
+   * theme's brand color), so a thumbnail of it shows something, and any other file is a few bytes.
+   * Picking up again before a drop carries all the files together.
    */
   carry(files: readonly CarriedFile[]) {
     this.carried ??= new DataTransfer();
@@ -84,7 +84,7 @@ export class DragControl {
     );
   }
 
-  /** Drops the carried file where the pointer is. */
+  /** Drops the carried files where the pointer is. */
   drop() {
     const target = this.spot.over[0];
     if (!this.carried || !target) return;
@@ -94,7 +94,10 @@ export class DragControl {
     this.spot.drawCursor();
   }
 
-  /** Moves a carried file over the stage: the elements it enters, leaves and is over hear it. */
+  /**
+   * Moves the carried files over the stage: the elements they enter, leave and move over receive
+   * the drag events.
+   */
   moveTo(point: Point, aimed: Aimed | null) {
     const spot = this.spot;
     spot.at = point;
@@ -110,7 +113,7 @@ export class DragControl {
     spot.drawCursor();
   }
 
-  /** Takes the carried files off the stage: what they were over hears them leave. */
+  /** Takes the carried files off the stage: the element they were over receives a drag leave. */
   leave() {
     for (const element of this.spot.over) this.sendDrag(element, 'dragleave');
     this.carried = null;

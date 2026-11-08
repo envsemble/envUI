@@ -17,22 +17,25 @@ import { joinClock } from '../Timeline';
 import { useLatest } from '@envui-internal/internal/useLatest';
 
 /*
- * A pointer's script played over a stage's live component (usePointer): a pointer no one sees
- * (VirtualPointer.ts) moves along the script's plan (PointerPlan.ts) a frame at a time, with the
- * page's other playing pointers.
+ * Plays a pointer's script over a stage's live component (usePointer): a virtual pointer
+ * (VirtualPointer.ts) moves along the script's plan (PointerPlan.ts) one frame at a time, together
+ * with the page's other playing pointers.
  */
 
-/** A playing pointer's frame: what it reads of the layout, then, in the next frame, what it does. */
+/**
+ * A playing pointer's frame: what it reads of the layout, then, in the next frame, what it does.
+ */
 interface PointerFrame {
   read: (now: number) => void;
   write: () => void;
 }
 
 /**
- * The frames of the pointers playing now, run together. Each moves in an animation frame, and
- * reads where it goes next once the page has rendered that frame, when its layout is up to date:
- * so no pointer's read lays the page out again, whatever moved in the frame, a pointer's events or
- * a transition. The pointer acts on a layout a frame old, which no one sees.
+ * The frames of the pointers playing now, run together. Each pointer moves in an animation frame,
+ * and reads where it goes next once the page has rendered that frame, when its layout is up to
+ * date. So no pointer's read forces the page to lay out again, whatever moved in the frame (a
+ * pointer's events or a transition). The pointer acts on a layout one frame old, which no one can
+ * see.
  */
 const pointerFrames = new Set<PointerFrame>();
 let pointerFramesRun = false;
@@ -43,11 +46,11 @@ function writePointerFrames() {
     pointerFramesRun = false;
     return;
   }
-  // Posted first, so the reads come before any rendering that the moves below schedule; the
-  // channel is made as the first frame joins (joinPointerFrames).
+  // Posted first, so the reads come before any rendering that the moves below schedule. The channel
+  // is created when the first frame joins (joinPointerFrames).
   afterFrame!.postMessage(undefined);
   const frames = [...pointerFrames];
-  // A pointer whose stage stopped on another's move stops here too.
+  // A pointer whose stage stopped because of another pointer's move stops here too.
   for (const frame of frames) if (pointerFrames.has(frame)) frame.write();
 }
 
@@ -61,7 +64,7 @@ function readPointerFrames() {
   requestAnimationFrame(writePointerFrames);
 }
 
-/** Plays a pointer's frame with the others from the next frame on; returns its stop. */
+/** Plays a pointer's frame with the others from the next frame on. Returns the stop. */
 function joinPointerFrames(frame: PointerFrame) {
   pointerFrames.add(frame);
   if (!afterFrame) {
@@ -84,7 +87,7 @@ function send(
   happening: Plan['happenings'][number],
   onCue: ((cue: string) => void) | undefined,
 ) {
-  // planOf gives each kind what it acts on: a cue or a key its cue, a typing its target and a
+  // planOf gives each kind what it acts on: a cue or a key its cue, a typing its target, and a
   // carry its files.
   switch (happening.kind) {
     case 'cue':
@@ -113,7 +116,10 @@ function send(
   }
 }
 
-/** Turns the wheel where the pointer is, from `done` to `to`, eased in and out, as a hand's flick. */
+/**
+ * Turns the wheel where the pointer is, from `done` to `to` px, eased in and out, like a flick of
+ * the hand.
+ */
 function turnWheels(current: VirtualPointer, plan: Plan, done: number, to: number) {
   for (const wheel of plan.wheels) {
     if (wheel.end <= done || wheel.start > to) continue;
@@ -124,16 +130,17 @@ function turnWheels(current: VirtualPointer, plan: Plan, done: number, to: numbe
   }
 }
 
-/** Where a pointer's script is: the time it has played to, and the last time it acted on. */
+/** Where a pointer's script is: the time it has played to, and the last time it acted at. */
 interface PointerClock {
   time: number;
   done: number;
 }
 
 /**
- * Plays a pointer's script over `scope` from where its clock is, a frame at a time, reading where
- * it goes with the page's other pointers and then moving it (joinPointerFrames); `clockName` plays
- * it on a shared clock (joinClock). Returns the stop, which keeps where it is for the next play.
+ * Plays a pointer's script over `scope` from where its clock is, one frame at a time: it reads
+ * where the pointer goes together with the page's other pointers, then moves it
+ * (joinPointerFrames). `clockName` plays it on a shared clock (joinClock). Returns the stop, which
+ * keeps the position for the next play.
  */
 function playPointer(
   scope: HTMLElement,
@@ -150,17 +157,17 @@ function playPointer(
   },
 ) {
   let last = performance.now();
-  /** The time the next frame moves the pointer to, and where that is, read after the last one. */
+  /** The time the next frame moves the pointer to, and where that is, read after the last frame. */
   let next: number | null = null;
   let aimed: { time: number; at: { x: number; y: number }; target: Aimed | null } | null = null;
   /**
-   * Where the aims were when read. Something happening in the frame, such as a press, moves the
-   * pointer by them still: what it changed shows in the next frame's.
+   * Where the aims were when they were read. When something happens in the frame, such as a press,
+   * the pointer still moves by them: what it changed shows in the next frame's reading.
    */
   let known: AimPoints = new Map();
-  /** Whether something happened in this frame, which may have changed what the pointer is over. */
+  /** Whether something happened in this frame that may have changed what the pointer is over. */
   let acted = false;
-  /** Where the stage was as the aims were read, in the viewport. */
+  /** Where the stage was in the viewport when the aims were read. */
   let readAt = { x: 0, y: 0 };
   const together = clockName ? joinClock(clockName, 0) : null;
   /** Moves the pointer on to a time of the plan, sending what happens on the way. */
@@ -196,7 +203,8 @@ function playPointer(
     const time = next >= plan.length ? next % plan.length : next;
     // Where it is heading, which its tile's view keeps in the stage (MustShow.ts).
     headFor(scope, headingAt(plan, time));
-    // Where what happens on the way to it happens, through the end of the loop where it ends.
+    // Where the things that happen on the way to it happen, through the end of the loop if it ends
+    // there.
     const { done, time: from } = clockRef.current;
     const loops = next >= plan.length || next < from;
     for (const happening of plan.happenings) {
@@ -215,18 +223,18 @@ function playPointer(
     next = null;
     const state = clockRef.current;
     acted = false;
-    // The reader scrolled the page since the aims were read: they are where the stage was, so
+    // The reader scrolled the page since the aims were read. They are where the stage was then, so
     // the frame reads them again where it is now.
     const box = scope.getBoundingClientRect();
     if (Math.abs(box.left - readAt.x) >= 0.5 || Math.abs(box.top - readAt.y) >= 0.5) {
       aimed = null;
       known = new Map();
     }
-    // While another stage's pointer holds its button down, this one waits: a page has one
-    // mouse, and a move without a button, on the document, would end the other's drag. A
-    // script of keys alone, which never moves the pointer, goes on, and so does one where it
-    // only stays where it is meanwhile, waiting or turning the wheel. On a
-    // shared clock, its time goes on meanwhile.
+    // While another stage's pointer holds its button down, this one waits: a page has one mouse,
+    // and a move without a button on the document would end the other pointer's drag. A script of
+    // keys alone, which never moves the pointer, continues, and so does a script that meanwhile
+    // only stays where it is, waiting or turning the wheel. On a shared clock, its time keeps
+    // running meanwhile.
     let still = false;
     if (plan.moves.length > 0 && !current.resume()) {
       const quiet =
@@ -249,7 +257,7 @@ function playPointer(
     advance(state.time, still);
   };
   const stop = joinPointerFrames({ read, write });
-  // Its cursor shows while it plays, and goes as it stops or pauses.
+  // Its cursor shows while it plays, and goes when it stops or pauses.
   current.showCursor(true);
   return () => {
     stop();
@@ -260,9 +268,11 @@ function playPointer(
   };
 }
 
-/** Names what a pointer's script acts on and where it heads, which its tile's view keeps. */
+/**
+ * Names what a pointer's script acts on and where it heads, which its tile's view keeps in view.
+ */
 function usePointerCourse(root: HTMLElement | null, plan: Plan) {
-  // What it acts on stays in its tile's view as it plays (MustShow.ts).
+  // What it acts on stays in its tile's view while it plays (MustShow.ts).
   useEffect(() => (root ? nameMustShow(root, aimsOf(plan)) : undefined), [root, plan]);
   // Where it heads, which its tile's still is framed on, as its play is (useFit.ts).
   useEffect(
@@ -278,16 +288,17 @@ function usePointerCourse(root: HTMLElement | null, plan: Plan) {
 }
 
 /**
- * Plays a script of what the pointer no one sees does over the stage's live component, in a loop
- * while the stage plays: it hovers, presses, drags and releases it by the same events a mouse
- * sends, so the component shows its own hover, press and drag (VirtualPointer.ts). Its clock runs
- * only while the stage plays, so a paused figure holds mid-drag. Write the script to end where it
- * began, off the stage and released, so the loop starts again from the still.
- * - `onCue` hears its cues, the moments where the stage itself changes.
- * - `onRest`, where given, takes the stage back to its still as it stops, in place of drawing
- *   it anew, such as dismissing what a cue showed.
- * - `clock`, a name, plays the script on the clock of the stages that name it, as
- *   useSharedTimeline does, for a do and a don't whose pointers act side by side in step: give
+ * Plays a script of what the virtual pointer does over the stage's live component, in a loop while
+ * the stage plays. The pointer hovers, presses, drags and releases with the same events a mouse
+ * sends, so the component shows its own hover, press and drag states (VirtualPointer.ts). The
+ * script's clock runs only while the stage plays, so a paused figure holds mid-drag. Write the
+ * script to end where it began, off the stage and released, so the loop starts again from the
+ * still.
+ * - `onCue` receives its cues: the moments where the stage itself changes.
+ * - `onRest`, where given, returns the stage to its still when it stops, instead of the stage being
+ *   drawn again, such as by dismissing what a cue showed.
+ * - `clock`, a name, plays the script on the clock shared by the stages that name it, as
+ *   useSharedTimeline does, for a do and a don't whose pointers act side by side in step. Give
  *   their scripts the same length.
  */
 export function usePointer(
@@ -308,8 +319,8 @@ export function usePointer(
   const clock = useRef<PointerClock>({ time: 0, done: -1 });
   const [plan] = useState(() => planOf(script));
   usePointerCourse(root, plan);
-  // The pointer's events go out after React's commit, as a component may answer them by
-  // rendering at once, which React refuses from inside an effect.
+  // The pointer's events go out after React's commit, since a component may respond to them by
+  // rendering at once, which React refuses inside an effect.
   useEffect(
     () => () => {
       const gone = pointer.current;
@@ -318,8 +329,8 @@ export function usePointer(
     },
     [],
   );
-  // Stopped, a stage that goes back to its still by itself does: the pointer goes, and the
-  // script starts again from the beginning next time.
+  // When a stage that returns to its still by itself stops, the pointer leaves, and the script
+  // starts again from the beginning next time.
   useEffect(() => {
     if (playing || rest !== 'start' || !restTo.current) return;
     clock.current = { time: 0, done: -1 };
