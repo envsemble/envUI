@@ -72,6 +72,63 @@ body {
   block-size: 100%;
   padding: var(--env-space-4) var(--env-space-3);
 }
+/* The drawer coming and going beside the rail (useDrawerMotion, SiteNavigation.tsx): the page
+   beside it takes its room at once, so nothing on it moves. Coming in, its panel fades in and its
+   list slides out of the rail's edge a short way as it fades in; its header, search, stays still,
+   where the page without the drawer has it. Going, it is laid over the page's start, its header
+   hidden over the page's own search, and fades out quicker as its list slides back. Under reduced
+   motion it only fades. */
+.site-sidebar[data-site-drawer] {
+  transition: background-color var(--env-motion-duration-medium) var(--env-motion-ease-enter);
+}
+.site-sidebar[data-site-drawer] > :is(.env-navigation-drawer-list, .env-navigation-drawer-footer) {
+  transition:
+    opacity var(--env-motion-duration-medium) var(--env-motion-ease-enter),
+    translate var(--env-motion-duration-medium) var(--env-motion-ease-enter);
+}
+/* Arriving, until the page beside it has painted, it waits where it comes in from, so its
+   entrance plays in frames the reader sees rather than in the page's first, long one. */
+.site-sidebar[data-site-drawer='arriving'] {
+  background-color: transparent;
+}
+.site-sidebar[data-site-drawer='arriving']
+  > :is(.env-navigation-drawer-list, .env-navigation-drawer-footer) {
+  opacity: 0;
+}
+.site-sidebar[data-site-drawer='arriving'],
+.site-sidebar[data-site-drawer='arriving']
+  > :is(.env-navigation-drawer-list, .env-navigation-drawer-footer) {
+  transition: none;
+}
+.site-sidebar[data-site-drawer='leaving'] {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: var(--site-rail-width);
+  z-index: var(--env-z-raised);
+  pointer-events: none;
+  background-color: transparent;
+  transition-duration: var(--env-motion-duration-fast);
+  transition-timing-function: var(--env-motion-ease-exit);
+}
+.site-sidebar[data-site-drawer='leaving'] > .env-navigation-drawer-header {
+  visibility: hidden;
+}
+.site-sidebar[data-site-drawer='leaving']
+  > :is(.env-navigation-drawer-list, .env-navigation-drawer-footer) {
+  opacity: 0;
+  transition-duration: var(--env-motion-duration-fast);
+  transition-timing-function: var(--env-motion-ease-exit);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .site-sidebar[data-site-drawer='arriving']
+    > :is(.env-navigation-drawer-list, .env-navigation-drawer-footer) {
+    translate: -0.75rem 0;
+  }
+  .site-sidebar[data-site-drawer='leaving']
+    > :is(.env-navigation-drawer-list, .env-navigation-drawer-footer) {
+    translate: -0.5rem 0;
+  }
+}
 /* In the sheet, the navigation fills the sheet's height, so the drawer keeps its top and foot in
    view there too and scrolls its list: the sheet's body, which would scroll, passes it the whole
    height and scrolls nothing itself. */
