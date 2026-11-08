@@ -2,12 +2,10 @@ import { useEffect, useState } from 'react';
 import { normalizeRoute } from './OldAddresses';
 import { oldHashRoute, replaceAddress, subscribeToAddress, writtenRoute } from './Address';
 
-function readRoute() {
+/** The route the address names now, such as components/button/props?section=props-Button-variant. */
+export function currentRoute() {
   return normalizeRoute(writtenRoute() || 'overview');
 }
-
-/** The route the address names now, such as components/button/props?section=props-Button-variant. */
-export const currentRoute = readRoute;
 
 /**
  * An old address, such as a page's old name or a view pages had before the catalogue and the Docs
@@ -30,15 +28,15 @@ export function useSiteRoute() {
   // An old hash address is redirected before the first render, which reads the path.
   const [route, setRoute] = useState(() => {
     if (oldHashRoute() !== undefined) correctAddress();
-    return readRoute();
+    return currentRoute();
   });
   useEffect(() => {
     correctAddress();
     // An address that changed before this effect, such as an old one corrected, is read again.
-    setRoute(readRoute());
+    setRoute(currentRoute());
     return subscribeToAddress(() => {
       correctAddress();
-      setRoute(readRoute());
+      setRoute(currentRoute());
     });
   }, []);
   return route;
