@@ -5,6 +5,8 @@ import {
   useRef,
   useState,
   type ButtonHTMLAttributes,
+  type ComponentPropsWithRef,
+  type RefObject,
   type CSSProperties,
   type KeyboardEvent,
   type ReactNode,
@@ -104,8 +106,90 @@ export function usePickerOpen({
   return [shown, setOpen] as const;
 }
 
+/** The value a picker field shows, or its placeholder while it has none. */
+function PickerValue({ display, placeholder }: { display: string; placeholder: ReactNode }) {
+  const hydrated = useHydrated();
+  if (!display) return <span className="env-date-picker-placeholder">{placeholder}</span>;
+  // As in RelativeTime: should the browser format the hydrated value differently from the server,
+  // the server's text stays until hydration ends, then the browser's replaces it, without a
+  // mismatch error.
+  return (
+    <span className="env-date-picker-value" suppressHydrationWarning>
+      {hydrated ? display : [display]}
+    </span>
+  );
+}
+
 function ignoreChange() {
   // The visually hidden input only carries the value for native forms.
+}
+
+/**
+ * A picker field's label. A press on it closes the open popup, as a press outside it does; the
+ * click that follows would open it again, as it opens a closed one.
+ */
+function PickerLabel({
+  id,
+  labelId,
+  open,
+  triggerRef,
+  children,
+}: {
+  /** The trigger's id, which the label is for. */
+  id: string;
+  labelId: string;
+  open: boolean;
+  triggerRef: RefObject<HTMLButtonElement | null>;
+  children: ReactNode;
+}) {
+  // Whether the popup was open when the press began.
+  const pressOpen = useRef(false);
+  return (
+    <label
+      htmlFor={id}
+      id={labelId}
+      className="env-date-picker-label"
+      onPointerDown={() => {
+        pressOpen.current = open;
+      }}
+      onClick={(event) => {
+        if (!pressOpen.current) return;
+        pressOpen.current = false;
+        event.preventDefault();
+        triggerRef.current?.focus();
+      }}
+    >
+      {children}
+    </label>
+  );
+}
+
+/** The visually hidden input that carries a picker field's value for native forms. */
+function PickerNativeInput({
+  ref,
+  triggerRef,
+  readOnly,
+  ...inputProps
+}: Pick<
+  ComponentPropsWithRef<'input'>,
+  'ref' | 'name' | 'form' | 'value' | 'required' | 'disabled' | 'readOnly'
+> & { triggerRef: RefObject<HTMLButtonElement | null> }) {
+  return (
+    <input
+      {...inputProps}
+      ref={ref}
+      className="env-date-picker-native"
+      // Like a read-only input, a read-only field is not validated, so an empty required one never
+      // keeps its form from submitting.
+      readOnly={readOnly}
+      tabIndex={-1}
+      aria-hidden="true"
+      autoComplete="off"
+      onChange={ignoreChange}
+      // The browser focuses an invalid required field on submit; the field takes it instead.
+      onFocus={() => triggerRef.current?.focus()}
+    />
+  );
 }
 
 /** What PickerField takes from its owner beside the field's own props. */
@@ -194,11 +278,8 @@ export function PickerField({
   const controlRef = useRef<HTMLDivElement>(null);
   const nativeRef = useRef<HTMLInputElement>(null);
   const popupRef = useRef<HTMLDivElement>(null);
-  // Whether the popup was open when a press on the label began, which closes it.
-  const labelPressOpen = useRef(false);
   // Read as the popup opens, which takes the field's direction into its portal.
   const [direction] = useDirection(triggerRef, open);
-  const hydrated = useHydrated();
   // The field and its popup take the application's own aria-labelledby, else the label, else the
   // aria-label.
   const accessibleName: PickerName = {
@@ -256,24 +337,9 @@ export function PickerField({
         id={id}
         label={
           label != null ? (
-            <label
-              htmlFor={id}
-              id={labelId}
-              className="env-date-picker-label"
-              onPointerDown={() => {
-                labelPressOpen.current = open;
-              }}
-              onClick={(event) => {
-                // A press on the label closes the open popup, as a press outside it does; the
-                // click that follows would open it again, as it opens a closed one.
-                if (!labelPressOpen.current) return;
-                labelPressOpen.current = false;
-                event.preventDefault();
-                triggerRef.current?.focus();
-              }}
-            >
+            <PickerLabel id={id} labelId={labelId} open={open} triggerRef={triggerRef}>
               {label}
-            </label>
+            </PickerLabel>
           ) : null
         }
         description={description}
@@ -302,16 +368,7 @@ export function PickerField({
           className="env-text-field-input env-date-picker-trigger"
           onKeyDown={handleKeyDown}
         >
-          {display ? (
-            // As in RelativeTime: should the browser format the hydrated value differently from
-            // the server, the server's text stays until hydration ends, then the browser's
-            // replaces it, without a mismatch error.
-            <span className="env-date-picker-value" suppressHydrationWarning>
-              {hydrated ? display : [display]}
-            </span>
-          ) : (
-            <span className="env-date-picker-placeholder">{placeholder}</span>
-          )}
+          <PickerValue display={display} placeholder={placeholder} />
         </BasePopover.Trigger>
         <span className="env-text-field-end env-date-picker-end">
           {showClear && (
@@ -331,23 +388,15 @@ export function PickerField({
             {icon}
           </span>
         </span>
-        <input
+        <PickerNativeInput
           ref={nativeRef}
-          className="env-date-picker-native"
           name={name}
           form={form}
           value={serialized}
           required={required}
           disabled={disabled}
-          // Like a read-only input, a read-only field is not validated, so an empty required one
-          // never keeps its form from submitting.
           readOnly={readOnly}
-          tabIndex={-1}
-          aria-hidden="true"
-          autoComplete="off"
-          onChange={ignoreChange}
-          // The browser focuses an invalid required field on submit; the field takes it instead.
-          onFocus={() => triggerRef.current?.focus()}
+          triggerRef={triggerRef}
         />
       </FieldFrame>
       <PickerPopup
